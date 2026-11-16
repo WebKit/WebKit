@@ -1,0 +1,5 @@
+Test for rdar://problem/7094146 Reproducible crash at RenderObject::localToAbsolute().
+
+This crash occurred after an object’s position changed directly from absolute to fixed, and it was not added to the RenderView’s positioned objects list nor removed from its old container’s list.
+
+

@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="/js-test-resources/js-test.js"></script>
+<script>
+description("Tests that JS prompts are allowed in same-origin but different-domain iframes");
+jsTestIsAsync = true;
+
+if (window.internals)
+    window.internals.settings.setTreatIPAddressAsDomain(true);
+document.domain="0.0.1";
+
+onmessage = (e) => {
+  if (e.data == "done")
+    finishJSTest();
+  else
+    debug(e.data);
+}
+</script>
+<iframe src="http://127.0.0.1:8000/security/resources/cross-origin-js-prompt-allowed.html"></iframe>
+</body>
+</html>

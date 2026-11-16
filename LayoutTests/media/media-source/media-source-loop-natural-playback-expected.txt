@@ -1,0 +1,26 @@
+This tests that a looping MediaSource video keeps looping while playing through its whole duration without any seek.
+
+RUN(video.src = URL.createObjectURL(source))
+EVENT(sourceopen)
+RUN(audioSourceBuffer = source.addSourceBuffer(audioLoader.type()))
+RUN(audioSourceBuffer.appendBuffer(audioLoader.initSegment()))
+RUN(audioSourceBuffer.appendBuffer(audioLoader.mediaSegment(0)))
+RUN(audioSourceBuffer.appendBuffer(audioLoader.mediaSegment(1)))
+RUN(source.endOfStream())
+-
+Play from the start with loop enabled and never seek.
+RUN(video.play())
+++ loop 1 completed.
+EXPECTED (video.paused == 'false') OK
+EXPECTED (video.ended == 'false') OK
+++ playback progressing after loop 1.
+++ loop 2 completed.
+EXPECTED (video.paused == 'false') OK
+EXPECTED (video.ended == 'false') OK
+++ playback progressing after loop 2.
+++ loop 3 completed.
+EXPECTED (video.paused == 'false') OK
+EXPECTED (video.ended == 'false') OK
+++ playback progressing after loop 3.
+END OF TEST
+

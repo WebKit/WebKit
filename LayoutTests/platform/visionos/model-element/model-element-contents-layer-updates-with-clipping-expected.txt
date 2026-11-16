@@ -1,0 +1,35 @@
+ Before Changing Source:
+(platform layer
+  (position 158.00 83.00)
+  (bounds 300.00 150.00)
+  (children
+    (contents clipping layer
+      (position 0.00 0.00)
+      (bounds 300.00 150.00)
+      (children
+        (contents layer (hosted model)
+          (position 0.00 0.00)
+          (bounds 300.00 150.00)
+        )
+      )
+    )
+  )
+)
+After Changing Source:
+(platform layer
+  (position 158.00 83.00)
+  (bounds 300.00 150.00)
+  (children
+    (contents clipping layer
+      (position 0.00 0.00)
+      (bounds 300.00 150.00)
+      (children
+        (contents layer (hosted model)
+          (position 0.00 0.00)
+          (bounds 300.00 150.00)
+        )
+      )
+    )
+  )
+)
+

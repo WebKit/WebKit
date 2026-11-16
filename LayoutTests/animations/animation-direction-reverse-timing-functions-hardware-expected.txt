@@ -1,0 +1,13 @@
+normal
+alternate
+reverse
+alternate-reverse
+PASS - "webkitTransform" property for "box1" element at 0.2s saw something close to: 1,0,0,1,18,0
+PASS - "webkitTransform" property for "box2" element at 0.2s saw something close to: 1,0,0,1,18,0
+PASS - "webkitTransform" property for "box3" element at 0.2s saw something close to: 1,0,0,1,198,0
+PASS - "webkitTransform" property for "box4" element at 0.2s saw something close to: 1,0,0,1,198,0
+PASS - "webkitTransform" property for "box1" element at 2.2s saw something close to: 1,0,0,1,18,0
+PASS - "webkitTransform" property for "box2" element at 2.2s saw something close to: 1,0,0,1,198,0
+PASS - "webkitTransform" property for "box3" element at 2.2s saw something close to: 1,0,0,1,198,0
+PASS - "webkitTransform" property for "box4" element at 2.2s saw something close to: 1,0,0,1,18,0
+

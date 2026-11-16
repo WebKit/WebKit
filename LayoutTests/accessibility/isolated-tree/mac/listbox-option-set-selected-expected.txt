@@ -1,0 +1,25 @@
+This test ensures that setting AXSelected on an option of a list box changes the selection as users can, and is not otherwise observable.
+
+PASS: selectedOptions('single') === 'singleGreen'
+single: events after setting AXSelected to true on singleGreen: input, change
+PASS: document.activeElement.id === 'start'
+PASS: selectedOptions('single') === 'singleGreen'
+single: events after setting AXSelected to false on singleGreen: none
+PASS: document.activeElement.id === 'start'
+PASS: selectedOptions('multiple') === 'multipleRed,multipleGreen'
+multiple: events after setting AXSelected to true on multipleGreen: input, change
+PASS: document.activeElement.id === 'start'
+PASS: selectedOptions('multiple') === 'multipleGreen'
+multiple: events after setting AXSelected to false on multipleRed: input, change
+PASS: document.activeElement.id === 'start'
+PASS: selectedOptions('base') === 'baseGreen'
+base: events after setting AXSelected to true on baseGreen: input, change
+PASS: document.activeElement.id === 'start'
+PASS: selectedOptions('base') === 'baseGreen'
+base: events after setting AXSelected to false on baseGreen: none
+PASS: document.activeElement.id === 'start'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

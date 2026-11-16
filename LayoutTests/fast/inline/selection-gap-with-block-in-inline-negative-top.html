@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>This tests that selection gaps are painted for a line whose selection top is above its block container.</title>
+<style>
+  ::selection { background-color: green; }
+  body { margin: 0; font: 20px/20px Ahem; color: transparent; }
+  #container { position: absolute; top: 400px; left: 0; width: 200px; }
+  .block { display: block; width: 0; height: 50px; margin-left: 200px; margin-top: -300px; }
+  #cover { position: absolute; top: 380px; left: 0; width: 300px; height: 100px; background-color: white; z-index: 1; }
+</style>
+</head>
+<body>
+<div id="container"><span id="inline">x<img class="block"></span></div>
+<div id="cover"></div>
+<script>
+  window.getSelection().setBaseAndExtent(document.getElementById("inline").firstChild, 0, document.getElementById("inline"), 2);
+</script>
+</body>
+</html>

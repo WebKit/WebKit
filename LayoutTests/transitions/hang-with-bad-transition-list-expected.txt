@@ -1,0 +1,2 @@
+If you can see this then we didn't hang!!!
+Number of active animations before transition is (0) as expected

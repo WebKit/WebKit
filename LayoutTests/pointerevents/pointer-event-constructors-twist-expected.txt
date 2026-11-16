@@ -1,0 +1,6 @@
+PASS event.twist is 0
+PASS event.twist is 50
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+<body oncopy="copy(event)" onpaste="paste(event)">
+<div>This file tests the basic functionality and properties of DataTransferItems. This test requires DRT.</div>
+<div id="console"></div>
+
+<script src="../editing.js"></script>
+<script>
+var undefined;
+var pendingCallbacks = 0;
+var savedDataTransferItems = null;
+var savedDataTransferItem = null;
+
+function log(text)
+{
+    var console = document.getElementById('console');
+    console.appendChild(document.createTextNode(text));
+    console.appendChild(document.createElement('br'));
+}
+
+function removeFontName(text)
+{
+    if (!text)
+        return text;
+    return text.replace(/font-family: [^;]+;/g, '');
+}
+
+function handleEvent(data)
+{
+    log(data);
+    if (--pendingCallbacks == 0) {
+        window.testRunner.notifyDone();
+    }
+}
+
+function copy(ev)
+{
+    var items = event.clipboardData.items;
+    log('Populating DataTransferItems...');
+    items.add('Hello World!', 'text/plain');
+    items.add('<b>Hello World!', 'text/html');
+
+    // Check that an exception is properly raised when attempting to add a duplicate string type.
+    try {
+        items.add('Moo', 'text/plain');
+    } catch (e) {
+        log('Caught exception "' + e + '" as expected.');
+    }
+
+    // Check that the container didn't change.
+    log('Verifying contents of DataTransferItems...');
+    log('items.length: ' + items.length);
+    log('items[0].kind: ' + items[0].kind);
+    log('items[0].type: ' + items[0].type);
+    log('items[1].kind: ' + items[1].kind);
+    log('items[1].type: ' + items[1].type);
+    items[0].getAsString(function (data) { handleEvent('copy: items[0] value: ' + data); });
+    pendingCallbacks++;
+    items[1].getAsString(function (data) { handleEvent('copy: items[1] value: ' + data); });
+    pendingCallbacks++;
+
+    log('Checking if items past the end of the collection can be indexed:');
+    log('items[2] is undefined: ' + typeof items[2]);
+}
+
+function paste(ev)
+{
+    var items = event.clipboardData.items;
+
+    // Cache references to make sure they aren't accessible outside the event handler.
+    savedDataTransferItems = items;
+    savedDataTransferItem = items[0];
+
+    var originalLength = items.length;
+    log('Checking that a read-only DataTransferItems cannot be mutated...');
+    // Should be immutable.
+    items.add('Hello World!', 'text/plain');
+    log('items.length: ' + items.length);
+    log('items[0].kind: ' + items[0].kind);
+    log('items[0].type: ' + items[0].type);
+    items[0].getAsString(function (data) { handleEvent('paste: items[0] value: ' + removeFontName(data)); });
+    pendingCallbacks++;
+    log('items[1].kind: ' + items[1].kind);
+    log('items[1].type: ' + items[1].type);
+    items[1].getAsString(function (data) { handleEvent('paste: items[1] value: ' + removeFontName(data)); });
+    pendingCallbacks++;
+    log('items[2] is undefined: ' + typeof items[2]);
+}
+
+function runTest() {
+    if (!window.testRunner)
+        return;
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+
+    eventSender.mouseMoveTo(0, 0);
+    for (var i = 0; i < 3; i++) {
+        eventSender.mouseDown();
+        eventSender.mouseUp();
+    }
+    copyCommand();
+    pasteCommand();
+
+    log('Testing if DataTransferItems can be accessed outside an event handler...');
+    if (savedDataTransferItems.length != 0) {
+        log('DataTransferItems.length non-zero outside event handler!');
+    }
+    savedDataTransferItems.add('Security?', 'text/foo');
+    if (savedDataTransferItems.length != 0) {
+        log('DataTransferItems mutated outside event handler!');
+    }
+    if (typeof savedDataTransferItems[0] == 'undefined') {
+        log('DataTransferItem accessed outside event handler!');
+    }
+    if (typeof savedDataTransferItem == 'undefined') {
+        log('DataTransferItem accessed outside event handler!');
+    }
+}
+
+runTest();
+
+</script>
+</body>
+</html>

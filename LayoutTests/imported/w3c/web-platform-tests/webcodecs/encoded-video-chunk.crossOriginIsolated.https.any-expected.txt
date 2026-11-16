@@ -1,0 +1,4 @@
+
+PASS Test construction and copyTo() using a SharedArrayBuffer
+PASS Test construction and copyTo() using a Uint8Array(SharedArrayBuffer)
+

@@ -1,0 +1,5 @@
+
+PASS e.style['x'] = "10" should not set the property value
+PASS e.style['x'] = "auto" should not set the property value
+PASS e.style['x'] = "10px 20px" should not set the property value
+

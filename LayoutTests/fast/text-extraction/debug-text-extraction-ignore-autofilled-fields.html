@@ -1,0 +1,52 @@
+<!-- webkit-test-runner [ useFlexibleViewport=true textExtractionEnabled=true ] -->
+<!DOCTYPE html>
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="utf-8">
+<head>
+<style>
+body {
+    white-space: pre-wrap;
+}
+
+input {
+    font-size: 18px;
+}
+</style>
+<script src="../../resources/ui-helper.js"></script>
+</head>
+<body>
+<div><input type="email" placeholder="Enter your email"></div>
+<div><input type="password" placeholder="Enter your password"></div>
+<div><input type="number" placeholder="Security code"></div>
+<script>
+addEventListener("load", async () => {
+    if (!window.testRunner)
+        return;
+
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+
+    const emailField = document.querySelector("input[type='email']");
+    const passwordField = document.querySelector("input[type='password']");
+    const numberField = document.querySelector("input[type='number']");
+
+    emailField.value = "test@webkit.org";
+    passwordField.value = "hunter2";
+    numberField.value = "123456";
+
+    internals.setAutofilled(emailField, true);
+    internals.setAutofilledAndViewable(passwordField, true);
+
+    document.body.textContent = await UIHelper.requestDebugText({
+        includeRects: false,
+        includeURLs: false,
+        nodeIdentifierInclusion: "none",
+        includeTextInAutoFilledControls: false,
+    });
+
+    testRunner.notifyDone();
+});
+</script>
+</body>
+</html>

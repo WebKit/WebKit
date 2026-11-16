@@ -1,0 +1,54 @@
+
+PASS Test that logical border-*-width properties are supported.
+PASS Test that border-inline-width shorthand sets longhands and serializes correctly.
+PASS Test that border-block-width shorthand sets longhands and serializes correctly.
+PASS Test that border-width shorthand sets longhands and serializes correctly.
+PASS Test that logical border-*-width properties share computed values with their physical associates, with 'writing-mode: horizontal-tb; direction: ltr; '.
+PASS Test that border-*-width shorthands set the computed value of both logical and physical longhands, with 'writing-mode: horizontal-tb; direction: ltr; '.
+PASS Test that border-*-width properties honor order of appearance when both logical and physical associates are declared, with 'writing-mode: horizontal-tb; direction: ltr; '.
+PASS Test that border-*-width properties honor selector specificty when both logical and physical associates are declared, with 'writing-mode: horizontal-tb; direction: ltr; '.
+PASS Test that logical border-*-width properties share computed values with their physical associates, with 'writing-mode: horizontal-tb; direction: rtl; '.
+PASS Test that border-*-width shorthands set the computed value of both logical and physical longhands, with 'writing-mode: horizontal-tb; direction: rtl; '.
+PASS Test that border-*-width properties honor order of appearance when both logical and physical associates are declared, with 'writing-mode: horizontal-tb; direction: rtl; '.
+PASS Test that border-*-width properties honor selector specificty when both logical and physical associates are declared, with 'writing-mode: horizontal-tb; direction: rtl; '.
+PASS Test that logical border-*-width properties share computed values with their physical associates, with 'writing-mode: vertical-rl; direction: rtl; '.
+PASS Test that border-*-width shorthands set the computed value of both logical and physical longhands, with 'writing-mode: vertical-rl; direction: rtl; '.
+PASS Test that border-*-width properties honor order of appearance when both logical and physical associates are declared, with 'writing-mode: vertical-rl; direction: rtl; '.
+PASS Test that border-*-width properties honor selector specificty when both logical and physical associates are declared, with 'writing-mode: vertical-rl; direction: rtl; '.
+PASS Test that logical border-*-width properties share computed values with their physical associates, with 'writing-mode: sideways-rl; direction: rtl; '.
+PASS Test that border-*-width shorthands set the computed value of both logical and physical longhands, with 'writing-mode: sideways-rl; direction: rtl; '.
+PASS Test that border-*-width properties honor order of appearance when both logical and physical associates are declared, with 'writing-mode: sideways-rl; direction: rtl; '.
+PASS Test that border-*-width properties honor selector specificty when both logical and physical associates are declared, with 'writing-mode: sideways-rl; direction: rtl; '.
+PASS Test that logical border-*-width properties share computed values with their physical associates, with 'writing-mode: vertical-rl; direction: ltr; '.
+PASS Test that border-*-width shorthands set the computed value of both logical and physical longhands, with 'writing-mode: vertical-rl; direction: ltr; '.
+PASS Test that border-*-width properties honor order of appearance when both logical and physical associates are declared, with 'writing-mode: vertical-rl; direction: ltr; '.
+PASS Test that border-*-width properties honor selector specificty when both logical and physical associates are declared, with 'writing-mode: vertical-rl; direction: ltr; '.
+PASS Test that logical border-*-width properties share computed values with their physical associates, with 'writing-mode: sideways-rl; direction: ltr; '.
+PASS Test that border-*-width shorthands set the computed value of both logical and physical longhands, with 'writing-mode: sideways-rl; direction: ltr; '.
+PASS Test that border-*-width properties honor order of appearance when both logical and physical associates are declared, with 'writing-mode: sideways-rl; direction: ltr; '.
+PASS Test that border-*-width properties honor selector specificty when both logical and physical associates are declared, with 'writing-mode: sideways-rl; direction: ltr; '.
+PASS Test that logical border-*-width properties share computed values with their physical associates, with 'writing-mode: vertical-lr; direction: rtl; '.
+PASS Test that border-*-width shorthands set the computed value of both logical and physical longhands, with 'writing-mode: vertical-lr; direction: rtl; '.
+PASS Test that border-*-width properties honor order of appearance when both logical and physical associates are declared, with 'writing-mode: vertical-lr; direction: rtl; '.
+PASS Test that border-*-width properties honor selector specificty when both logical and physical associates are declared, with 'writing-mode: vertical-lr; direction: rtl; '.
+PASS Test that logical border-*-width properties share computed values with their physical associates, with 'writing-mode: sideways-lr; direction: ltr; '.
+PASS Test that border-*-width shorthands set the computed value of both logical and physical longhands, with 'writing-mode: sideways-lr; direction: ltr; '.
+PASS Test that border-*-width properties honor order of appearance when both logical and physical associates are declared, with 'writing-mode: sideways-lr; direction: ltr; '.
+PASS Test that border-*-width properties honor selector specificty when both logical and physical associates are declared, with 'writing-mode: sideways-lr; direction: ltr; '.
+PASS Test that logical border-*-width properties share computed values with their physical associates, with 'writing-mode: vertical-lr; direction: ltr; '.
+PASS Test that border-*-width shorthands set the computed value of both logical and physical longhands, with 'writing-mode: vertical-lr; direction: ltr; '.
+PASS Test that border-*-width properties honor order of appearance when both logical and physical associates are declared, with 'writing-mode: vertical-lr; direction: ltr; '.
+PASS Test that border-*-width properties honor selector specificty when both logical and physical associates are declared, with 'writing-mode: vertical-lr; direction: ltr; '.
+PASS Test that logical border-*-width properties share computed values with their physical associates, with 'writing-mode: sideways-lr; direction: rtl; '.
+PASS Test that border-*-width shorthands set the computed value of both logical and physical longhands, with 'writing-mode: sideways-lr; direction: rtl; '.
+PASS Test that border-*-width properties honor order of appearance when both logical and physical associates are declared, with 'writing-mode: sideways-lr; direction: rtl; '.
+PASS Test that border-*-width properties honor selector specificty when both logical and physical associates are declared, with 'writing-mode: sideways-lr; direction: rtl; '.
+PASS Test that logical border-*-width properties share computed values with their physical associates, with '-webkit-writing-mode: horizontal-bt; direction: ltr; '.
+PASS Test that border-*-width shorthands set the computed value of both logical and physical longhands, with '-webkit-writing-mode: horizontal-bt; direction: ltr; '.
+PASS Test that border-*-width properties honor order of appearance when both logical and physical associates are declared, with '-webkit-writing-mode: horizontal-bt; direction: ltr; '.
+PASS Test that border-*-width properties honor selector specificty when both logical and physical associates are declared, with '-webkit-writing-mode: horizontal-bt; direction: ltr; '.
+PASS Test that logical border-*-width properties share computed values with their physical associates, with '-webkit-writing-mode: horizontal-bt; direction: rtl; '.
+PASS Test that border-*-width shorthands set the computed value of both logical and physical longhands, with '-webkit-writing-mode: horizontal-bt; direction: rtl; '.
+PASS Test that border-*-width properties honor order of appearance when both logical and physical associates are declared, with '-webkit-writing-mode: horizontal-bt; direction: rtl; '.
+PASS Test that border-*-width properties honor selector specificty when both logical and physical associates are declared, with '-webkit-writing-mode: horizontal-bt; direction: rtl; '.
+

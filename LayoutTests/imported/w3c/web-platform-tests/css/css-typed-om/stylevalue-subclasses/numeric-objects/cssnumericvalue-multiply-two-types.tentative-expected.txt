@@ -1,0 +1,9 @@
+
+PASS Multiplying two types with different non-null percent hints throws TypeError
+PASS Multiplying two types with same base types adds exponents
+PASS Multiplying two types with different base types adds exponents
+PASS Multiplying two types respects the sign of the exponents
+PASS Multiplying a type with no exponents is a no-op
+PASS Multiplying a type with percent hint applies the percent hint
+PASS Multiplying two types with same percent hint applies the percent hint
+

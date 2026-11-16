@@ -1,0 +1,7 @@
+PASS window.visualViewport.scale > 1 is true
+PASS Math.abs(internals.layoutViewportRect().height - window.keyboardTopInView) <= 1 is true
+PASS Math.abs(internals.visualViewportRect().height - window.keyboardTopInView / window.visualViewport.scale) <= 1 is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

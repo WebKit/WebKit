@@ -1,0 +1,8 @@
+Anchor Anchor Other Button
+Anchor
+Child div
+
+FAIL InterestEvent is not dispatched unless the anchor has an href assert_true: interest should now be fired expected true got false
+FAIL InterestEvent dispatches on anchor hover assert_true: InterestEvent is fired expected true got false
+FAIL Nested invoker and invokee assert_array_equals: Hovering anchor should show interest lengths differ, expected array ["interest"] length 1, got [] length 0
+

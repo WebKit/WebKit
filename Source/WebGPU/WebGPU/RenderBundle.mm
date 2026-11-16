@@ -1,0 +1,235 @@
+/*
+ * Copyright (c) 2021-2023 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#import "config.h"
+#import "RenderBundle.h"
+
+#import "APIConversions.h"
+#import "BindGroup.h"
+#import "RenderBundleEncoder.h"
+#import "TextureOrTextureView.h"
+#import <wtf/TZoneMallocInlines.h>
+
+@implementation ResourceUsageAndRenderStage
+- (instancetype)initWithUsage:(MTLResourceUsage)usage renderStages:(MTLRenderStages)renderStages entryUsage:(OptionSet<WebGPU::Metal::BindGroupEntryUsage>)entryUsage binding:(uint32_t)binding resource:(WebGPU::Metal::BindGroupEntryUsageData::Resource)resource
+{
+    if (!(self = [super init]))
+        return nil;
+
+    _usage = usage;
+    _renderStages = renderStages;
+    _entryUsage = entryUsage;
+    _binding = binding;
+    _resource = resource;
+
+    return self;
+}
+@end
+
+namespace WebGPU::Metal {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderBundle);
+
+RenderBundle::RenderBundle(NSArray<RenderBundleICBWithResources*> *resources, Vector<WebGPU::Metal::BindableResources>&& bindableResources, RefPtr<RenderBundleEncoder> encoder, std::span<const std::optional<WebGPU::TextureFormat>> colorFormats, std::optional<WebGPU::TextureFormat> depthStencilFormat, uint32_t sampleCount, bool depthReadOnly, bool stencilReadOnly, uint64_t commandCount, bool makeSubmitInvalid, HashSet<RefPtr<const BindGroup>>&& bindGroups, Device& device)
+    : m_device(device)
+    , m_renderBundleEncoder(encoder)
+    , m_renderBundlesResources(resources)
+    , m_resources(WTF::move(bindableResources))
+    , m_colorFormats(colorFormats)
+    , m_depthStencilFormat(depthStencilFormat)
+    , m_sampleCount(sampleCount)
+    , m_depthReadOnly(depthReadOnly)
+    , m_stencilReadOnly(stencilReadOnly)
+    , m_bindGroups(bindGroups)
+    , m_commandCount(commandCount)
+    , m_makeSubmitInvalid(makeSubmitInvalid)
+{
+    // This bundle's indirect command buffer references these bind groups' argument buffers, and its
+    // residency snapshot is frozen here. See BindGroup::updateExternalTextures().
+    for (RefPtr bindGroup : m_bindGroups)
+        bindGroup->addRenderBundleConsumer();
+
+    ASSERT(m_renderBundleEncoder || m_renderBundlesResources);
+}
+
+RenderBundle::RenderBundle(Device& device, NSString* errorString)
+    : m_device(device)
+    , m_lastErrorString(errorString)
+{
+}
+
+RenderBundle::~RenderBundle()
+{
+    for (RefPtr bindGroup : m_bindGroups)
+        bindGroup->removeRenderBundleConsumer();
+}
+
+bool RenderBundle::isValid() const
+{
+    return m_renderBundleEncoder || m_renderBundlesResources;
+}
+
+void RenderBundle::setLabel(String&& label)
+{
+    m_renderBundlesResources.firstObject.indirectCommandBuffer.label = label.createNSString().get();
+}
+
+void RenderBundle::replayCommands(RenderPassEncoder& renderPassEncoder, float minDepth, float maxDepth) const
+{
+    if (RefPtr renderBundleEncoder = m_renderBundleEncoder)
+        renderBundleEncoder->replayCommands(renderPassEncoder, minDepth, maxDepth);
+}
+
+bool RenderBundle::requiresCommandReplay() const
+{
+    return !!m_renderBundleEncoder.get();
+}
+
+void RenderBundle::updateMinMaxDepths(float minDepth, float maxDepth)
+{
+    if (m_minDepth == minDepth && m_maxDepth == maxDepth)
+        return;
+
+    m_minDepth = minDepth;
+    m_maxDepth = maxDepth;
+    std::array<float, 2> twoFloats = { m_minDepth, m_maxDepth };
+    for (RenderBundleICBWithResources* icb in m_renderBundlesResources) {
+        m_device->getQueue()->writeBuffer(icb.fragmentDynamicOffsetsBuffer, 0, asWritableBytes(std::span(twoFloats)));
+        for (auto headerOffset : icb.fragmentDynamicOffsetsHeaderOffsets)
+            m_device->getQueue()->writeBuffer(icb.fragmentDynamicOffsetsBuffer, headerOffset, asWritableBytes(std::span(twoFloats)));
+    }
+}
+
+uint64_t RenderBundle::drawCount() const
+{
+    return m_commandCount;
+}
+
+bool RenderBundle::validateRenderPass(bool depthReadOnly, bool stencilReadOnly, const Vector<TextureOrTextureView>& colorAttachmentViews, const std::optional<TextureOrTextureView>& depthStencilView) const
+{
+    if (depthReadOnly && !m_depthReadOnly)
+        return false;
+
+    if (stencilReadOnly && !m_stencilReadOnly)
+        return false;
+
+    if (m_colorFormats.size() != colorAttachmentViews.size())
+        return false;
+
+    uint32_t defaultRasterSampleCount = 0;
+    for (size_t i = 0, colorFormatCount = std::max(colorAttachmentViews.size(), m_colorFormats.size()); i < colorFormatCount; ++i) {
+        auto descriptorColorFormat = i < m_colorFormats.size() ? m_colorFormats[i] : std::nullopt;
+        if (i >= colorAttachmentViews.size()) {
+            if (!descriptorColorFormat)
+                continue;
+            return false;
+        }
+        auto& attachmentView = colorAttachmentViews[i];
+        if (!attachmentView) {
+            if (!descriptorColorFormat)
+                continue;
+            return false;
+        }
+        if (descriptorColorFormat != attachmentView.format())
+            return false;
+        defaultRasterSampleCount = attachmentView.sampleCount();
+    }
+
+    if (depthStencilView) {
+        if (!*depthStencilView) {
+            if (m_depthStencilFormat)
+                return false;
+        } else {
+            auto& texture = *depthStencilView;
+            if (texture.format() != m_depthStencilFormat)
+                return false;
+            defaultRasterSampleCount = texture.sampleCount();
+        }
+    } else if (m_depthStencilFormat)
+        return false;
+
+    if (m_sampleCount != defaultRasterSampleCount)
+        return false;
+
+    return true;
+}
+
+bool RenderBundle::validatePipeline(const RenderPipeline*)
+{
+    return true;
+}
+
+NSString* RenderBundle::lastError() const
+{
+    return m_lastErrorString;
+}
+
+bool RenderBundle::makeSubmitInvalid() const
+{
+    return m_makeSubmitInvalid;
+}
+
+bool RenderBundle::rebindSamplersIfNeeded() const
+{
+    bool result = true;
+    for (RefPtr bindGroup : m_bindGroups)
+        result = bindGroup->rebindSamplersIfNeeded() && result;
+
+    return result;
+}
+
+void RenderBundle::releaseDestroyedResources()
+{
+    if (!replaceDestroyedResourcesWithPlaceholders(m_resources))
+        return;
+
+    m_makeSubmitInvalid = true;
+
+    if (RefPtr renderBundleEncoder = m_renderBundleEncoder)
+        renderBundleEncoder->releaseDestroyedResources();
+}
+
+} // namespace WebGPU::Metal
+
+#pragma mark WGPU Stubs
+
+NODELETE void wgpuRenderBundleAddRef(WGPURenderBundle renderBundle)
+{
+    WebGPU::Metal::fromAPI(renderBundle).ref();
+}
+
+void wgpuRenderBundleRelease(WGPURenderBundle renderBundle)
+{
+    @autoreleasepool {
+        WebGPU::Metal::fromAPI(renderBundle).deref();
+    }
+}
+
+void wgpuRenderBundleSetLabel(WGPURenderBundle renderBundle, WGPUStringView label)
+{
+    @autoreleasepool {
+        protect(WebGPU::Metal::fromAPI(renderBundle))->setLabel(WebGPU::Metal::fromAPI(label));
+    }
+}

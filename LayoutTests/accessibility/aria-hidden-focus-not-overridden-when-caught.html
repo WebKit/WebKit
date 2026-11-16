@@ -1,0 +1,61 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<div id="content">
+<button id="outside">Outside</button>
+<div id="container" aria-hidden="true">
+    <button id="button1">Button 1</button>
+    <button id="button2">Button 2</button>
+</div>
+</div>
+
+<script>
+var output = "This tests that aria-hidden is NOT overridden when a focus handler moves focus out before the next animation frame.\n\n";
+
+if (window.accessibilityController) {
+    jsTestIsAsync = true;
+
+    // Install a focus handler that immediately moves focus back out.
+    document.getElementById("button1").addEventListener("focus", function() {
+        document.getElementById("outside").focus();
+    });
+
+    // Initially, buttons inside aria-hidden should not be accessible.
+    var button1 = accessibilityController.accessibleElementById("button1");
+    output += expect("!button1 || !button1.isValid", "true");
+
+    // Focus button1 inside the aria-hidden region. The focus handler will
+    // immediately move focus to "outside", before the next animation frame.
+    document.getElementById("button1").focus();
+
+    // Wait for focus to land on outside, then wait a reasonable amount of time
+    // to confirm the override does NOT take effect.
+    (async function() {
+        await waitFor(() => {
+            return accessibilityController.focusedElement.domIdentifier === "outside";
+        });
+        output += expect("accessibilityController.focusedElement.domIdentifier", "'outside'");
+
+        // Wait 100ms to give any pending rendering updates time to fire,
+        // then verify the override did not happen.
+        await new Promise(resolve => setTimeout(resolve, 100));
+
+        button1 = accessibilityController.accessibleElementById("button1");
+        output += expect("!button1 || !button1.isValid", "true");
+
+        var button2 = accessibilityController.accessibleElementById("button2");
+        output += expect("!button2 || !button2.isValid", "true");
+
+        document.getElementById("content").style.display = "none";
+        debug(output);
+        finishJSTest();
+    })();
+}
+</script>
+</body>
+</html>

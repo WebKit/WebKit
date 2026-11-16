@@ -1,0 +1,29 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<div id="menu" role="menu">
+    <div id="menuitem" role="menuitem">Foo</div>
+    <div role="menuitem">Bar</div>
+</div>
+    
+<script>
+var output = "This test ensures we return the correct supported paramterized attributes for menu-related items.\n\n";
+// Prior to the commit that introduced this layout test, we didn't support AXUIElementsForSearchPredicate for menu items,
+// which VoiceOver relies on for navigation. This meant VoiceOver skipped over menu items. There's no discernible reason
+// for menu items not to support the other standard paramterized attributes like everything else, too, at least at the
+// time of this writing.
+
+if (window.accessibilityController) {
+    output += `#menu supported paramterized attributes:\n${accessibilityController.accessibleElementById("menu").parameterizedAttributeNames()}\n\n`;
+    output += `#menuitem supported paramterized attributes:\n${accessibilityController.accessibleElementById("menuitem").parameterizedAttributeNames()}\n\n`;
+    debug(output);
+}
+</script>
+</body>
+</html>
+

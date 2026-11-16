@@ -1,0 +1,37 @@
+<base href="http://localhost:8000/"></base>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+var requestCount = 0;
+
+function preflightRequest() {
+    var xhr = new XMLHttpRequest();
+    xhr.onsuccess = function() { finish("FAIL"); }
+    xhr.onerror = function() {
+        if (requestCount == 5) {
+            finish("PASS");
+            return;
+        }
+        requestCount++;
+        // This hack of showing and hiding the inspector greatly increases the likelihood
+        // that references to the CachedResource underlying the XHR get cleaned out.
+        if (window.testRunner) {
+            testRunner.showWebInspector();
+            testRunner.closeWebInspector();
+        }
+        preflightRequest();
+    }
+    xhr.open("GET", "xmlhttprequest/resources/access-control-basic-denied.cgi");
+    xhr.send();
+}
+
+function finish(result) {
+    document.body.appendChild(document.createTextNode(result));
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+</script>
+<body onload="preflightRequest()"></body>

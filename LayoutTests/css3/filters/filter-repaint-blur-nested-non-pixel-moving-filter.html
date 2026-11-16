@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>The blur ancestor must be found through an intermediate filter that does not move pixels</title>
+<link rel="match" href="filter-repaint-blur-nested-non-pixel-moving-filter-expected.html">
+<script src="../../resources/ui-helper.js"></script>
+<style>
+    body {
+        margin: 0;
+    }
+
+    .blurred {
+        position: absolute;
+        left: 100px;
+        top: 100px;
+        width: 200px;
+        height: 200px;
+        filter: blur(10px);
+    }
+
+    .hue-rotated {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 200px;
+        height: 200px;
+        filter: hue-rotate(90deg);
+    }
+
+    .inner {
+        position: absolute;
+        left: 50px;
+        top: 50px;
+        width: 100px;
+        height: 100px;
+        background-color: red;
+    }
+</style>
+<script>
+window.testRunner?.waitUntilDone();
+window.testRunner?.dontForceRepaint();
+
+async function runTest()
+{
+    await UIHelper.renderingUpdate();
+    document.querySelector(".inner").style.backgroundColor = "green";
+    await UIHelper.renderingUpdate();
+    await UIHelper.renderingUpdate();
+    window.testRunner?.notifyDone();
+}
+
+window.addEventListener("load", runTest);
+</script>
+</head>
+<body>
+    <div class="blurred">
+        <div class="hue-rotated">
+            <div class="inner"></div>
+        </div>
+    </div>
+</body>
+</html>

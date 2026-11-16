@@ -1,0 +1,41 @@
+appearance: base-select renders <select multiple size=1> as a dropdown box whose options toggle without closing the picker.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS getComputedStyle(select).display is "inline-flex"
+PASS select.matches(':open') is false
+PASS select.selectedOptions.length is 0
+
+The button reports how many options are selected, or the label of the only one.
+PASS buttonText() is "0 Items"
+PASS buttonText() is "two"
+PASS buttonText() is "2 Items"
+PASS buttonText() is "0 Items"
+
+Clicking the select opens the picker and focuses the first option.
+PASS select.matches(':open') is true
+PASS document.activeElement is one
+
+Clicking options toggles them and leaves the picker open.
+PASS select.matches(':open') is true
+PASS one.selected is true
+PASS select.selectedOptions.length is 1
+PASS select.matches(':open') is true
+PASS one.selected is true
+PASS two.selected is true
+PASS select.selectedOptions.length is 2
+PASS one.selected is true
+PASS two.selected is false
+PASS select.selectedOptions.length is 1
+
+A disabled option cannot be toggled.
+PASS disabledOption.selected is false
+PASS select.selectedOptions.length is 1
+
+Clicking the select again closes the picker.
+PASS select.matches(':open') is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

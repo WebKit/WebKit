@@ -1,0 +1,127 @@
+<!DOCTYPE HTML><!-- webkit-test-runner [ AccessibilityFormErrorDetectionEnabled=true IsAccessibilityIsolatedTreeEnabled=true ] -->
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+<style>
+.field-error { color: #c62828; }
+.field-status { color: #555555; }
+.field-warning { color: #856404; }
+</style>
+</head>
+<body>
+
+<div id="root">
+  <header>
+    <label for="query">Search</label><input id="query" type="text">
+    <div id="query-error" class="field-error"></div>
+    <div id="go" role="button" tabindex="0">Go</div>
+  </header>
+
+  <div id="checkout">
+    <label for="name">Name</label><input id="name" type="text">
+    <div id="name-error" class="field-error"></div>
+    <label for="email">Email</label><input id="email" type="text" value="someone@example.com">
+    <div id="email-error" class="field-error"></div>
+    <div id="email-warning" class="field-warning"></div>
+    <label for="phone">Phone</label><input id="phone" type="tel" value="555 0100">
+    <div id="phone-status" class="field-status"></div>
+    <div id="save" role="button" tabindex="0">Save for later</div>
+    <div id="more" role="button" tabindex="0" aria-expanded="false">More options</div>
+    <button id="paypal" type="button" role="tab">PayPal</button>
+    <button id="send-code" type="button">Send code</button>
+    <button id="verify-email" type="button">Verify email</button>
+    <button id="place-order">Place order</button>
+  </div>
+</div>
+
+<script>
+var output = "This tests that only activating a control that looks like it submits the fields around it starts a watch for errors, and that after anything short of a real submission only text colored as an error counts. A script calling click(), a control that expands something, and a button made into a tab submit nothing. Text a button writes under a field the user filled in, whether in a neutral color or in the amber of a warning, is status rather than an error. A search box in the page header is not part of the checkout below it, however the page wraps the two. The control that does submit still finds its errors afterwards.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+    internals.setAccessibilityFormErrorSettleDelay(0.1);
+
+    var notifications = 0;
+    var payload = "";
+    accessibilityController.addNotificationListener((element, notification, userInfo) => {
+        if (notification != "AXPossibleFormValidationError")
+            return;
+        ++notifications;
+        payload = formatFormValidationUserInfo(userInfo);
+    });
+
+    var handledClicks = 0;
+    function writeMessage(id, text) {
+        ++handledClicks;
+        document.getElementById(id).textContent = text;
+    }
+
+    document.getElementById("save").addEventListener("click", () => writeMessage("name-error", "Enter your name."));
+    document.getElementById("more").addEventListener("click", () => writeMessage("email-error", "Enter a valid email address."));
+    document.getElementById("paypal").addEventListener("click", () => writeMessage("name-error", "Enter the name on your account."));
+    document.getElementById("send-code").addEventListener("click", () => writeMessage("phone-status", "We sent a code to your phone."));
+    document.getElementById("verify-email").addEventListener("click", () => writeMessage("email-warning", "This address looks unusual."));
+    document.getElementById("go").addEventListener("click", () => writeMessage("query-error", "Enter a search term."));
+    document.getElementById("place-order").addEventListener("click", () => {
+        writeMessage("name-error", "Enter your name.");
+        writeMessage("email-error", "Enter a valid email address.");
+    });
+
+    function axElement(id) {
+        return accessibilityController.accessibleElementById(id);
+    }
+
+    function invalidStatus(id) {
+        return axElement(id).stringAttributeValue("AXInvalid");
+    }
+
+    function isWatching() {
+        return internals.isWatchingForAccessibilityFormErrors();
+    }
+
+    // Detection decides whether to watch before the page's own listener runs, so once that listener has, it has decided.
+    async function press(id) {
+        var handled = handledClicks;
+        axElement(id).press();
+        await waitFor(() => handledClicks > handled);
+        return `axElement('${id}').press();\n`;
+    }
+
+    setTimeout(async function() {
+        // Read the field first, since nothing arms detection on a page no assistive technology has looked at.
+        output += expect("invalidStatus('name')", "'false'");
+
+        // These two do start a watch, which has to end before the others, or it would claim what they write.
+        output += await press("send-code");
+        output += await press("verify-email");
+        output += await expectAsync("isWatching()", "false");
+
+        output += evalAndReturn("document.getElementById('save').click();");
+        output += expect("isWatching()", "false");
+        output += await press("more");
+        output += expect("isWatching()", "false");
+        output += await press("paypal");
+        output += expect("isWatching()", "false");
+        output += await press("go");
+        output += expect("isWatching()", "false");
+
+        output += expect("notifications", "0");
+        output += expect("invalidStatus('name')", "'false'");
+        output += expect("invalidStatus('email')", "'false'");
+        output += expect("invalidStatus('query')", "'false'");
+
+        output += evalAndReturn("axElement('place-order').press();");
+        output += await expectAsync("notifications", "1");
+        output += expect("payload", "'AXFormValidationUnannouncedText: Enter your name. | Enter a valid email address.\\nAXFormValidationErrorFieldCount: 2\\n'");
+        output += await expectAsync("invalidStatus('name')", "'true'");
+        output += await expectAsync("invalidStatus('email')", "'true'");
+        output += expect("invalidStatus('query')", "'false'");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,5 @@
+
+PASS The window is cross-origin isolated
+PASS postMessaging a wasm module to a same-origin iframe succeeds
+PASS postMessaging a wasm module to a same-site cross-origin iframe fails
+

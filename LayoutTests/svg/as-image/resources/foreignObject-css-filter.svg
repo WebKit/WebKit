@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200">
+  <foreignObject width="200" height="200">
+    <div xmlns="http://www.w3.org/1999/xhtml" style="width: 100px; height: 100px; margin: 50px; background-color: green; border-radius: 50%; filter: drop-shadow(4px 4px 0 black) saturate(0.5);"></div>
+  </foreignObject>
+</svg>

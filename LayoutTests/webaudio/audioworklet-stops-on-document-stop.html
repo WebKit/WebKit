@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../resources/js-test.js"></script>
+<script>
+description("Tests that stopping a document destroys its AudioWorklet global scope.");
+jsTestIsAsync = true;
+
+if (!window.internals) {
+    testFailed("Test requires internals");
+    finishJSTest();
+} else {
+    const frame = document.createElement("iframe");
+    window.addEventListener("message", (event) => {
+        if (event.data !== "ready") {
+            testFailed(event.data);
+            finishJSTest();
+            return;
+        }
+        // Keep the detached window alive so a GC of the AudioContext cannot
+        // be what destroys the worklet. Document stop has to do it.
+        const innerWindow = frame.contentWindow;
+        frame.remove();
+        let checks = 0;
+        const handle = setInterval(() => {
+            if (innerWindow && !internals.isAnyWorkletGlobalScopeAlive()) {
+                clearInterval(handle);
+                testPassed("AudioWorklet global scope was destroyed");
+                finishJSTest();
+                return;
+            }
+            if (++checks > 200) {
+                clearInterval(handle);
+                testFailed("AudioWorklet global scope leaked after the document stopped");
+                finishJSTest();
+            }
+        }, 10);
+    });
+    document.body.appendChild(frame);
+    frame.src = "resources/audioworklet-stops-on-document-stop-frame.html";
+}
+</script>
+</body>
+</html>

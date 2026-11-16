@@ -1,0 +1,4 @@
+
+PASS Hiding the page unloads a <model> nested in a spatial portal, and showing it reloads it
+PASS Both <model>s in a spatial portal are unloaded and reloaded together
+

@@ -1,0 +1,6 @@
+
+PASS Send and receive messages using a message port in a same origin iframe.
+PASS Send and receive messages using a message port in a sandboxed same origin iframe.
+PASS Send and receive messages using a message port in a blob iframe.
+PASS Send and receive messages using a message port in an iframe srcdoc.
+

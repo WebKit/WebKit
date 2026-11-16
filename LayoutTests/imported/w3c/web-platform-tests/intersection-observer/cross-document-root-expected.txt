@@ -1,0 +1,4 @@
+
+PASS Observer with explicit root which is the document, observing a target in a same-origin iframe.
+PASS First rAF.
+

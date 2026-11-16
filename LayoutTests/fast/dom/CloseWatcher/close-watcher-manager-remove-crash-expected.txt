@@ -1,0 +1,5 @@
+Test for a crash in CloseWatcherManager::remove() caused by mutating m_groups while range-iterating over it.
+
+remove() iterates m_groups with a range-for and, when a group becomes empty, calls m_groups.removeFirst(group) inside the loop. WTF::Vector::removeAt shifts the surviving groups down in place and shrinks the size; the range-for's end iterator (captured before the shrink) then points past the live size, so the following iterations read out-of-bounds slots of the m_groups buffer (flagged as a contiguous-container overflow under ASAN). We build many groups and remove the watcher in the first one so the loop walks the maximal shifted range.
+
+PASS: did not crash.

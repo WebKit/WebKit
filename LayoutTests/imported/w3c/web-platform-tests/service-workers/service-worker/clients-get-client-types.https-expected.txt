@@ -1,0 +1,3 @@
+
+PASS Test Clients.get() with window and worker clients
+

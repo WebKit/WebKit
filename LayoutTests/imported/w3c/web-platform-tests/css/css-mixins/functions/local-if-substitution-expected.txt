@@ -1,0 +1,26 @@
+
+PASS var() in if() condition's custom property value substitutes locally
+PASS var() in if() condition's specified value substitutes locally
+PASS var() in if() declaration value substitutes locally
+PASS var() in if() condition's custom property value substitutes locally, argument
+PASS var() in if() condition's specified value substitutes locally, argument
+PASS var() in if() declaration value substitutes locally, argument
+PASS dashed function in if() declaration value
+PASS dashed function with argument in if() declaration value
+PASS if() cycle through local
+PASS if() cycle in condition custom property through local
+PASS if() cycle in condition specified value through local
+PASS if() cycle through function
+PASS if() no cycle in overridden local
+PASS if() no cycle in overridden argument
+PASS CSS-wide keywords are interpreted locally (initial)
+PASS CSS-wide keywords are interpreted locally (inherit)
+PASS CSS-wide keywords are interpreted locally (guaranteed-invalid, initial)
+PASS CSS-wide keywords are interpreted locally (guaranteed-invalid, unset)
+PASS CSS-wide keywords are interpreted locally (revert)
+PASS CSS-wide keywords are interpreted locally (revert-layer)
+PASS Local shadows a registered custom property in if() condition
+PASS Parameter shadows a registered custom property in if() condition
+PASS Local shadows a registered custom property left at its initial value
+PASS A name the function does not declare keeps the registration
+

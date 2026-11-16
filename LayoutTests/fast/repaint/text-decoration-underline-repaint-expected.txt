@@ -1,0 +1,5 @@
+PASS if underline is all blue
+(repaint rects
+  (rect 8 58 600 143)
+)
+

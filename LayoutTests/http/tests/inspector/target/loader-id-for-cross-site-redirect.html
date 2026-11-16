@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("Target.PSON.LoaderId");
+
+    suite.addTestCase({
+        name: "CrossSiteRedirect",
+        description: "Check that a navigation keeps its loaderId when a cross-site redirect moves it to another process.",
+        async test() {
+            const finalURL = "http://localhost:8000/inspector/target/loader-id-for-cross-site-redirect.html";
+            const redirectURL = "/resources/redirect.py?url=" + encodeURIComponent(finalURL);
+
+            let provisionalTargetCreated = false;
+            let targetAddedListener = WI.targetManager.addEventListener(WI.TargetManager.Event.TargetAdded, (event) => {
+                let {target} = event.data;
+                if (target instanceof WI.PageTarget && target.isProvisional)
+                    provisionalTargetCreated = true;
+            });
+
+            let originalMainFrame = WI.networkManager.mainFrame;
+            let initialLoaderIdentifier = null;
+            let provisionalLoadStartedListener = originalMainFrame.addEventListener(WI.Frame.Event.ProvisionalLoadStarted, (event) => {
+                let resource = event.target.provisionalMainResource;
+                if (!initialLoaderIdentifier && resource.url.includes("/resources/redirect.py"))
+                    initialLoaderIdentifier = resource.loaderIdentifier;
+            });
+
+            let pageLoadedPromise = InspectorTest.awaitEvent(FrontendTestHarness.Event.TestPageDidLoad);
+            WI.mainTarget.RuntimeAgent.evaluate(`location.href = ${JSON.stringify(redirectURL)}`);
+            await pageLoadedPromise;
+            while (WI.networkManager.mainFrame?.mainResource.url !== finalURL)
+                await WI.networkManager.awaitEvent(WI.NetworkManager.Event.MainFrameDidChange);
+
+            WI.targetManager.removeEventListener(WI.TargetManager.Event.TargetAdded, targetAddedListener);
+            originalMainFrame.removeEventListener(WI.Frame.Event.ProvisionalLoadStarted, provisionalLoadStartedListener);
+
+            InspectorTest.expectThat(provisionalTargetCreated, "Should create a provisional page target for the redirect target.");
+            InspectorTest.expectThat(!!initialLoaderIdentifier, "Should start a provisional load for the initial request in the original target.");
+            InspectorTest.expectThat(WI.networkManager.mainFrame.loaderIdentifier === initialLoaderIdentifier, "Main frame loaded in the new target should have the loaderId of the initial request.");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Test that a navigation keeps its loaderId when a cross-site redirect makes it continue in another process.</p>
+</body>
+</html>

@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+description("Tests that Event.initEvent()'s first parameter is mandatory.");
+var event = document.createEvent("Event");
+shouldThrowErrorName("event.initEvent()", "TypeError");
+shouldNotThrow("event.initEvent('click')");
+shouldBeEqualToString("event.type", "click");
+shouldBeFalse("event.bubbles");
+shouldBeFalse("event.cancelable");
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

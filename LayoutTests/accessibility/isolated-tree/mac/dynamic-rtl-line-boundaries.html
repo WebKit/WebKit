@@ -1,0 +1,53 @@
+<!DOCTYPE HTML><!-- webkit-test-runner [ IsAccessibilityIsolatedTreeEnabled=true ] -->
+<html>
+<head>
+<script src="../../../resources/accessibility-helper.js"></script>
+<script src="../../../resources/js-test.js"></script>
+<style>
+#target { width: 6ch; font: 16px/1 monospace; }
+</style>
+</head>
+<body>
+
+<p id="target">aaa bbb ccc</p>
+
+<script>
+var output = "This test ensures line start and end stay logical positions after direction is flipped to right-to-left at runtime, rather than becoming the leftmost and rightmost positions on the line. The text is replaced at the same time so the assertion cannot pass against a value cached from before the flip.\n\n";
+
+function lineTextFrom(offset)
+{
+    var target = accessibilityController.accessibleElementById("target").childAtIndex(0);
+    var textStart = target.startTextMarkerForTextMarkerRange(target.textMarkerRangeForElement(target));
+    var marker = target.textMarkerForIndex(target.indexForTextMarker(textStart) + offset);
+    var lineEnd = target.nextLineEndTextMarkerForTextMarker(marker);
+    var lineStart = target.previousLineStartTextMarkerForTextMarker(lineEnd);
+    // The space at a soft wrap is included by the isolated tree and not by the live tree.
+    return target.stringForTextMarkerRange(target.textMarkerRangeForMarkers(lineStart, lineEnd)).trim();
+}
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    output += "Left to right, the three wrapped lines are read in logical order.\n";
+    output += expect("lineTextFrom(2)", "'aaa'");
+    output += expect("lineTextFrom(6)", "'bbb'");
+    output += expect("lineTextFrom(10)", "'ccc'");
+
+    setTimeout(async function() {
+        document.getElementById("target").dir = "rtl";
+        document.getElementById("target").textContent = "xxx yyy zzz";
+
+        output += "\nRight to left, the first line is still the one the text starts with.\n";
+        output += await expectAsync("lineTextFrom(2)", "'xxx'");
+        output += expect("lineTextFrom(6)", "'yyy'");
+        output += expect("lineTextFrom(10)", "'zzz'");
+
+        document.getElementById("target").style.display = "none";
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

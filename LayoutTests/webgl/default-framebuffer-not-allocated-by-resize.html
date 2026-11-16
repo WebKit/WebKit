@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>WebGL default framebuffer is not allocated by resizing a canvas that is not drawn to</title>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+<div id="description"></div>
+<div id="console"></div>
+<script>
+description("Tests that resizing a canvas that has not been drawn to does not allocate the default framebuffer storage, also after the next rendering update and after a context restore, and that resizing a canvas that has been drawn to reallocates the storage at the next rendering update.");
+
+jsTestIsAsync = true;
+
+// The errors that the GPU process reports are printed asynchronously, which would make the output
+// depend on timing. The tests check the errors with getError().
+if (window.internals)
+    internals.settings.setWebGLErrorsToConsoleEnabled(false);
+
+var canvas;
+var gl;
+var extension;
+var pixel;
+
+function allocatedSize()
+{
+    return internals.webglDefaultFramebufferAllocatedSize(gl).join("x");
+}
+
+function readPixel(x, y)
+{
+    var result = new Uint8Array(4);
+    gl.readPixels(x, y, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, result);
+    return result.toString();
+}
+
+// The animation frame callbacks run before the canvases are presented in the rendering update. A
+// task posted from the callback runs after the rendering update.
+function afterNextRenderingUpdate()
+{
+    return new Promise(resolve => requestAnimationFrame(() => setTimeout(resolve, 0)));
+}
+
+function loseAndRestoreContext()
+{
+    return new Promise(function(resolve, reject) {
+        canvas.addEventListener("webglcontextlost", function(event) {
+            event.preventDefault();
+            setTimeout(function() { extension.restoreContext(); }, 0);
+        }, { once: true });
+        canvas.addEventListener("webglcontextrestored", function() { resolve(); }, { once: true });
+        setTimeout(function() { reject(new Error("timed out waiting for the context to be restored")); }, 10000);
+        extension.loseContext();
+    });
+}
+
+function releaseContext()
+{
+    if (gl && !gl.isContextLost())
+        extension.loseContext();
+    if (canvas && canvas.parentNode)
+        canvas.parentNode.removeChild(canvas);
+    canvas = null;
+    gl = null;
+    extension = null;
+    pixel = null;
+    gc();
+}
+
+// The canvas is in the document, so that the rendering update prepares it for display.
+function createContext(version, parameters)
+{
+    releaseContext();
+    canvas = document.createElement("canvas");
+    canvas.width = 4;
+    canvas.height = 4;
+    document.body.appendChild(canvas);
+    gl = canvas.getContext(version == 2 ? "webgl2" : "webgl", parameters);
+    if (!gl) {
+        testFailed("Unable to create the context.");
+        return false;
+    }
+    extension = gl.getExtension("WEBGL_lose_context");
+    return true;
+}
+
+async function testResizeWithoutDrawing(version, parameters)
+{
+    debug("");
+    debug("WebGL " + version + " " + JSON.stringify(parameters) + ": resizing a canvas that has not been drawn to does not allocate the default framebuffer.");
+    if (!createContext(version, parameters))
+        return;
+    shouldBeEqualToString("allocatedSize()", "0x0");
+    canvas.width = 8;
+    canvas.height = 6;
+    shouldBe("gl.drawingBufferWidth", "8");
+    shouldBe("gl.drawingBufferHeight", "6");
+    shouldBeEqualToString("allocatedSize()", "0x0");
+    await afterNextRenderingUpdate();
+    shouldBeEqualToString("allocatedSize()", "0x0");
+    // A smaller size does not allocate the storage either.
+    canvas.width = 2;
+    canvas.height = 2;
+    await afterNextRenderingUpdate();
+    shouldBeEqualToString("allocatedSize()", "0x0");
+    gl.clearColor(0, 1, 0, 1);
+    gl.clear(gl.COLOR_BUFFER_BIT);
+    shouldBeEqualToString("allocatedSize()", "2x2");
+    pixel = readPixel(1, 1);
+    shouldBeEqualToString("pixel", "0,255,0,255");
+    shouldBe("gl.getError()", "gl.NO_ERROR");
+    shouldBeFalse("gl.isContextLost()");
+}
+
+async function testResizeAfterContextRestore(version, parameters)
+{
+    debug("");
+    debug("WebGL " + version + " " + JSON.stringify(parameters) + ": resizing a canvas that has not been drawn to since the context was restored does not allocate the default framebuffer.");
+    if (!createContext(version, parameters))
+        return;
+    gl.clearColor(0, 1, 0, 1);
+    gl.clear(gl.COLOR_BUFFER_BIT);
+    shouldBeEqualToString("allocatedSize()", "4x4");
+    await loseAndRestoreContext();
+    shouldBeEqualToString("allocatedSize()", "0x0");
+    canvas.width = 8;
+    canvas.height = 6;
+    await afterNextRenderingUpdate();
+    shouldBeEqualToString("allocatedSize()", "0x0");
+    shouldBeFalse("gl.isContextLost()");
+}
+
+async function testResizeAfterDrawing(version, parameters)
+{
+    debug("");
+    debug("WebGL " + version + " " + JSON.stringify(parameters) + ": resizing a canvas that has been drawn to reallocates the default framebuffer at the next rendering update.");
+    if (!createContext(version, parameters))
+        return;
+    gl.clearColor(0, 1, 0, 1);
+    gl.clear(gl.COLOR_BUFFER_BIT);
+    shouldBeEqualToString("allocatedSize()", "4x4");
+    await afterNextRenderingUpdate();
+    // The new size does not shrink the storage, so the storage is not reallocated right away.
+    canvas.width = 8;
+    canvas.height = 6;
+    shouldBeEqualToString("allocatedSize()", "4x4");
+    // The display buffer is replaced with the cleared drawing buffer of the new size.
+    await afterNextRenderingUpdate();
+    shouldBeEqualToString("allocatedSize()", "8x6");
+    pixel = readPixel(7, 5);
+    shouldBeEqualToString("pixel", "0,0,0,0");
+    shouldBe("gl.getError()", "gl.NO_ERROR");
+}
+
+var configurations = [
+    { antialias: false, preserveDrawingBuffer: false },
+    { antialias: true, preserveDrawingBuffer: false },
+    { antialias: false, preserveDrawingBuffer: true },
+    { antialias: true, preserveDrawingBuffer: true },
+];
+(async () => {
+    if (!window.internals) {
+        testFailed("This test requires internals.webglDefaultFramebufferAllocatedSize().");
+        finishJSTest();
+        return;
+    }
+    for (var parameters of configurations) {
+        for (var version of [1, 2]) {
+            await testResizeWithoutDrawing(version, parameters);
+            await testResizeAfterContextRestore(version, parameters);
+            await testResizeAfterDrawing(version, parameters);
+        }
+    }
+    releaseContext();
+    finishJSTest();
+})();
+</script>
+</body>
+</html>

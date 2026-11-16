@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:xl="http://www.w3.org/1999/xlink" version="1.1" viewBox="83 263 638 448" width="638" height="448">
+  <defs>
+    <font-face font-family="Monaco" font-size="12" units-per-em="1000" underline-position="-37.597656" underline-thickness="75.68359" slope="0" x-height="545.41016" cap-height="757.8125" ascent="1e3" descent="-250" font-weight="400">
+      <font-face-src>
+        <font-face-name name="Monaco"/>
+      </font-face-src>
+    </font-face>
+    <marker orient="auto" overflow="visible" markerUnits="strokeWidth" id="FilledArrow_Marker" stroke-linejoin="miter" stroke-miterlimit="10" viewBox="-1 -2 5 4" markerWidth="5" markerHeight="4" color="#ff2f92">
+      <g>
+        <path d="M 2.4 0 L 0 -.9 L 0 .9 Z" fill="currentColor" stroke="currentColor" stroke-width="1"/>
+      </g>
+    </marker>
+    <font-face font-family="Helvetica Neue" font-size="16" panose-1="2 11 4 3 2 2 2 2 2 4" units-per-em="1000" underline-position="-75" underline-thickness="50" slope="937.5" x-height="514" cap-height="714" ascent="966.9952" descent="-212.99744" font-style="italic" font-weight="300">
+      <font-face-src>
+        <font-face-name name="HelveticaNeue-ThinItalic"/>
+      </font-face-src>
+    </font-face>
+    <font-face font-family="Helvetica Neue" font-size="11" panose-1="2 0 4 3 0 0 0 9 0 4" units-per-em="1000" underline-position="-100" underline-thickness="50" slope="-1090.9091" x-height="523" cap-height="721" ascent="951.004" descent="-212.99744" font-style="italic" font-weight="300">
+      <font-face-src>
+        <font-face-name name="HelveticaNeue-LightItalic"/>
+      </font-face-src>
+    </font-face>
+    <marker orient="auto" overflow="visible" markerUnits="strokeWidth" id="FilledArrow_Marker_2" stroke-linejoin="miter" stroke-miterlimit="10" viewBox="-1 -2 5 4" markerWidth="5" markerHeight="4" color="#ff2f92">
+      <g>
+        <path d="M 2.4 0 L 0 -.9 L 0 .9 Z" fill="currentColor" stroke="currentColor" stroke-width="1"/>
+      </g>
+    </marker>
+  </defs>
+  <metadata> Produced by OmniGraffle 7.15.1 
+    <dc:date>2020-04-23 17:05:47 +0000</dc:date>
+  </metadata>
+  <g id="Canvas_1" stroke-opacity="1" fill="none" fill-opacity="1" stroke-dasharray="none" stroke="none">
+    <title>Canvas 1</title>
+    <rect fill="white" x="83" y="263" width="638" height="448"/>
+    <g id="Canvas_1: Layer 1">
+      <title>Layer 1</title>
+      <g id="Graphic_2">
+        <rect x="214" y="591.24845" width="244.5" height="25.751996" fill="white"/>
+        <rect x="214" y="591.24845" width="244.5" height="25.751996" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(219 596.1235)" fill="black">
+          <tspan font-family="Monaco" font-size="12" font-weight="400" fill="black" x="0" y="12">Call</tspan>
+        </text>
+      </g>
+      <g id="Graphic_3">
+        <rect x="214" y="264" width="244.5" height="25.751996" fill="white"/>
+        <rect x="214" y="264" width="244.5" height="25.751996" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(219 268.87502)" fill="black">
+          <tspan font-family="Monaco" font-size="12" font-weight="400" fill="black" x="0" y="12">PutByOffset(“f”)</tspan>
+        </text>
+      </g>
+      <g id="Graphic_4">
+        <rect x="214" y="310.74978" width="244.5" height="25.751996" fill="white"/>
+        <rect x="214" y="310.74978" width="244.5" height="25.751996" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(219 315.6248)" fill="black">
+          <tspan font-family="Monaco" font-size="12" font-weight="400" fill="black" x="0" y="12">PutByOffset(“g”)</tspan>
+        </text>
+      </g>
+      <g id="Graphic_5">
+        <rect x="214" y="357.49956" width="244.5" height="25.751996" fill="white"/>
+        <rect x="214" y="357.49956" width="244.5" height="25.751996" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(219 362.37458)" fill="black">
+          <tspan font-family="Monaco" font-size="12" font-weight="400" fill="black" x="0" y="12">PutByOffset(“h”)</tspan>
+        </text>
+      </g>
+      <g id="Graphic_6">
+        <rect x="214" y="404.24933" width="244.5" height="25.751996" fill="white"/>
+        <rect x="214" y="404.24933" width="244.5" height="25.751996" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(219 409.12436)" fill="black">
+          <tspan font-family="Monaco" font-size="12" font-weight="400" fill="black" x="0" y="12">PutByOffset(“i”)</tspan>
+        </text>
+      </g>
+      <g id="Graphic_7">
+        <rect x="214" y="450.9991" width="244.5" height="25.751996" fill="white"/>
+        <rect x="214" y="450.9991" width="244.5" height="25.751996" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(219 455.87413)" fill="black">
+          <tspan font-family="Monaco" font-size="12" font-weight="400" fill="black" x="0" y="12">PutByOffset(“j”)</tspan>
+        </text>
+      </g>
+      <g id="Graphic_8">
+        <rect x="214" y="497.7489" width="244.5" height="25.751996" fill="white"/>
+        <rect x="214" y="497.7489" width="244.5" height="25.751996" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(219 502.6239)" fill="black">
+          <tspan font-family="Monaco" font-size="12" font-weight="400" fill="black" x="0" y="12">GetByOffset(“h”)</tspan>
+        </text>
+      </g>
+      <g id="Graphic_9">
+        <rect x="214" y="544.4987" width="244.5" height="25.751996" fill="white"/>
+        <rect x="214" y="544.4987" width="244.5" height="25.751996" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(219 549.3737)" fill="black">
+          <tspan font-family="Monaco" font-size="12" font-weight="400" fill="black" x="0" y="12">GetByOffset(“j”)</tspan>
+        </text>
+      </g>
+      <g id="Graphic_10">
+        <rect x="214" y="637.9982" width="244.5" height="25.751996" fill="white"/>
+        <rect x="214" y="637.9982" width="244.5" height="25.751996" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(219 642.87325)" fill="black">
+          <tspan font-family="Monaco" font-size="12" font-weight="400" fill="black" x="0" y="12">GetByOffset(“f”)</tspan>
+        </text>
+      </g>
+      <g id="Graphic_11">
+        <rect x="214" y="684.748" width="244.5" height="25.751996" fill="white"/>
+        <rect x="214" y="684.748" width="244.5" height="25.751996" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(219 689.623)" fill="black">
+          <tspan font-family="Monaco" font-size="12" font-weight="400" fill="black" x="0" y="12">GetByOffset(“g”)</tspan>
+        </text>
+      </g>
+      <g id="Line_17">
+        <path d="M 214 510.7991 C 214 510.7991 125 469.78403 125 430.00133 C 125 397.4992 184.40538 378.30625 206.14868 372.3699" marker-end="url(#FilledArrow_Marker)" stroke="#ff2f92" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+      </g>
+      <g id="Line_18">
+        <path d="M 214 557.5489 C 214 557.5489 154.16667 531.1951 154.16667 504.65686 C 154.16667 484.1234 189.98642 470.9503 206.19626 466.04025" marker-end="url(#FilledArrow_Marker)" stroke="#ff2f92" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+      </g>
+      <g id="Line_19">
+        <path d="M 214 603.9502 C 214 603.9502 118.87255 563.18487 118.87255 523.5009 C 118.87255 490.8391 183.31247 471.5508 206.11816 465.7473" marker-end="url(#FilledArrow_Marker)" stroke="#ff2f92" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+      </g>
+      <g id="Line_20">
+        <path d="M 214 603.9502 C 214 603.9502 115.44118 565.9186 115.44118 512.9902 C 115.44118 468.9056 183.8153 431.7528 206.66455 420.5679" marker-end="url(#FilledArrow_Marker)" stroke="#ff2f92" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+      </g>
+      <g id="Line_21">
+        <path d="M 214 603.9502 C 214 603.9502 107.10784 563.92176 107.10784 497.7489 C 107.10784 441.84445 183.39976 389.48895 207.07708 374.5865" marker-end="url(#FilledArrow_Marker)" stroke="#ff2f92" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+      </g>
+      <g id="Line_22">
+        <path d="M 214 603.9502 C 214 603.9502 94.85294 559.69377 94.85294 479.90196 C 94.85294 411.57244 182.2272 344.699 207.33025 326.896" marker-end="url(#FilledArrow_Marker)" stroke="#ff2f92" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+      </g>
+      <g id="Line_23">
+        <path d="M 214 603.9502 C 214 603.9502 84.80392 556.7565 84.80392 464.04934 C 84.80392 383.854 181.48039 302.2225 207.57548 281.64906" marker-end="url(#FilledArrow_Marker)" stroke="#ff2f92" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+      </g>
+      <g id="Line_24">
+        <path d="M 214 697.4498 C 214 697.4498 154.16667 671.0466 154.16667 644.55774 C 154.16667 624.0651 189.97738 610.9761 206.19012 606.10034" marker-end="url(#FilledArrow_Marker)" stroke="#ff2f92" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+      </g>
+      <g id="Line_25">
+        <path d="M 214 650.7 C 214 650.7 173.63636 638.955 173.63636 625.7106 C 173.63636 616.2118 194.39772 609.1452 206.14086 605.9079" marker-end="url(#FilledArrow_Marker)" stroke="#ff2f92" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+      </g>
+      <g id="Graphic_35">
+        <rect x="521" y="561.50204" width="199" height="148.99796" fill="white"/>
+        <path d="M 521 561.50204 L 720 561.50204 L 720 710.5 L 521 710.5 Z" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="1.0,4.0" stroke-width="1"/>
+        <text transform="translate(526 566.50204)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="16" font-style="italic" font-weight="300" fill="black" x="69.444" y="15">Legend</tspan>
+        </text>
+      </g>
+      <g id="Graphic_34">
+        <text transform="translate(590 659.5294)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="11" font-style="italic" font-weight="300" fill="black" x="0" y="10">Dependence edges </tspan>
+          <tspan font-family="Helvetica Neue" font-size="11" font-style="italic" font-weight="300" fill="black" x="0" y="22.307999">implicitly represented by </tspan>
+          <tspan font-family="Helvetica Neue" font-size="11" font-style="italic" font-weight="300" fill="black" x="0" y="34.615997">results of clobberize.</tspan>
+        </text>
+      </g>
+      <g id="Graphic_32">
+        <rect x="538.5" y="605.50204" width="30" height="30" fill="white"/>
+        <rect x="538.5" y="605.50204" width="30" height="30" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Graphic_30">
+        <text transform="translate(590 608.19404)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="11" font-style="italic" font-weight="300" fill="black" x="0" y="10">Instructions explicitly </tspan>
+          <tspan font-family="Helvetica Neue" font-size="11" font-style="italic" font-weight="300" fill="black" x="0" y="22.307999">represented in IR.</tspan>
+        </text>
+      </g>
+      <g id="Line_36">
+        <path d="M 568.5 695.8846 C 568.5 695.8846 537.1988 685.3709 538.5 676.65385 C 539.3862 670.71705 555.1107 667.5149 565.0511 666.0762" marker-end="url(#FilledArrow_Marker_2)" stroke="#ff2f92" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+      </g>
+      <g id="Line_37">
+        <path d="M 214 603.9502 C 214 603.9502 173.63636 592.20525 173.63636 578.9608 C 173.63636 569.46205 194.39772 562.39546 206.14086 559.15815" marker-end="url(#FilledArrow_Marker_2)" stroke="#ff2f92" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+      </g>
+      <g id="Line_38">
+        <path d="M 214 604.2987 C 214 604.2987 154.16667 577.8955 154.16667 551.40664 C 154.16667 530.91396 189.97738 517.825 206.19012 512.94924" marker-end="url(#FilledArrow_Marker_2)" stroke="#ff2f92" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+      </g>
+    </g>
+  </g>
+</svg>

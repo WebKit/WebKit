@@ -1,0 +1,36 @@
+
+PASS new Notification(): Setup
+PASS new Notification(): Attribute exists with expected value: title
+PASS new Notification(): Attribute exists with expected value: dir
+PASS new Notification(): Attribute exists with expected value: lang
+PASS new Notification(): Attribute exists with expected value: body
+PASS new Notification(): Attribute exists with expected value: tag
+PASS new Notification(): Attribute exists with expected value: icon
+FAIL new Notification(): Attribute exists with expected value: requireInteraction assert_true: expected true got undefined
+PASS new Notification(): Attribute exists with expected value: silent
+PASS new Notification(): Attribute exists with expected value: data
+FAIL new Notification(): Attribute exists with expected value: actions promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'n.actions.entries')"
+PASS Service worker test setup
+PASS getNotifications(): Setup
+PASS getNotifications(): Attribute exists with expected value: title
+PASS getNotifications(): Attribute exists with expected value: dir
+PASS getNotifications(): Attribute exists with expected value: lang
+PASS getNotifications(): Attribute exists with expected value: body
+PASS getNotifications(): Attribute exists with expected value: tag
+PASS getNotifications(): Attribute exists with expected value: icon
+FAIL getNotifications(): Attribute exists with expected value: requireInteraction assert_true: expected true got undefined
+PASS getNotifications(): Attribute exists with expected value: silent
+PASS getNotifications(): Attribute exists with expected value: data
+FAIL getNotifications(): Attribute exists with expected value: actions promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'n.actions.entries')"
+PASS notificationclose: Setup
+PASS notificationclose: Attribute exists with expected value: title
+PASS notificationclose: Attribute exists with expected value: dir
+PASS notificationclose: Attribute exists with expected value: lang
+PASS notificationclose: Attribute exists with expected value: body
+PASS notificationclose: Attribute exists with expected value: tag
+PASS notificationclose: Attribute exists with expected value: icon
+FAIL notificationclose: Attribute exists with expected value: requireInteraction assert_true: expected true got undefined
+PASS notificationclose: Attribute exists with expected value: silent
+PASS notificationclose: Attribute exists with expected value: data
+FAIL notificationclose: Attribute exists with expected value: actions promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'n.actions.entries')"
+

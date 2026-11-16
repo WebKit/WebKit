@@ -1,0 +1,8 @@
+Description
+
+This test verifies that, for the resources fetched in a message handler in a shared worker thread, the initiator_url reported is the shared worker script that sets up the message handler.
+
+
+FAIL check initiatorUrl for resources fetched in message handler in worker thread assert_equals: initiatorUrl for resources fetched
+    in message handler in worker thread expected (string) "http://web-platform.test:8800/resource-timing/resources/message-handler-in-shared-worker.js" but got (undefined) undefined
+

@@ -1,0 +1,28 @@
+<html>
+  <script>
+    function runTest()
+    {
+      if (!window.eventSender)
+        return;
+
+      eventSender.mouseMoveTo(20, 120);
+      eventSender.mouseDown();
+      eventSender.leapForward(500);
+      eventSender.mouseMoveTo(200, 50);
+      eventSender.mouseUp();
+      frames[0].waitForImageLoad();
+    }
+    var numFramesLoaded = 0;
+    function frameLoaded()
+    {
+      if (++numFramesLoaded == 2)
+        runTest();
+    }
+    if (window.testRunner)
+        testRunner.waitUntilDone();
+  </script>
+  <frameset rows="100px, 100px, *">
+    <frame onload="frameLoaded()" src="resources/standalone-image-drag-to-editable-frame.html">
+    <frame src="resources/greenbox.png" onload="frameLoaded()">
+  </frameset>
+</html>

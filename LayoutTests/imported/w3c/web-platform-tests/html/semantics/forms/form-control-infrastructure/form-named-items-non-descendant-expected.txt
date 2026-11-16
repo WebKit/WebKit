@@ -1,0 +1,8 @@
+
+PASS Elements the parser associates with a form that isn't their ancestor are added to the form's named items after a lookup
+PASS Inserting an input associated with a form via the form attribute after a lookup adds it to the form's named items
+PASS Renaming an img associated with a form that isn't its ancestor updates the form's named items
+PASS Removing an img associated with a form that isn't its ancestor removes it from the form's named items
+
+
+

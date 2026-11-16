@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<meta charset=utf-8>
+<title>The login status API is not exposed in a non-secure context</title>
+<script src=/resources/testharness.js></script>
+<script src=/resources/testharnessreport.js></script>
+<script src=/common/get-host-info.sub.js></script>
+<script>
+// localhost is potentially trustworthy, so run the test from an origin that is not.
+if (location.origin != get_host_info().UNAUTHENTICATED_ORIGIN) {
+    location = get_host_info().UNAUTHENTICATED_ORIGIN + location.pathname;
+    promise_test(() => new Promise(() => { }), "Stall tests on the wrong host.");
+} else {
+    test(() => {
+        assert_false(self.isSecureContext, "precondition");
+        assert_false("setStatus" in navigator);
+        assert_false("isLoggedIn" in navigator);
+    }, "navigator.setStatus() and navigator.isLoggedIn() are not exposed");
+}
+</script>

@@ -1,0 +1,9 @@
+This test ensures stitched text across inline elements gets a multi-line path.
+
+PASS: supportsPath === true
+PASS: hasPathSegments === true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Some text with italic and bold formatting that wraps across several lines in this narrow container

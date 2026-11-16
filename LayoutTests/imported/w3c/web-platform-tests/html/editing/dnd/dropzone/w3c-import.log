@@ -1,0 +1,26 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/dropzone/001.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/dropzone/002.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/dropzone/003.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/dropzone/004.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/dropzone/005.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/dropzone/006.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/dropzone/007.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/dropzone/008.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/dropzone/009.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/dropzone/010.html

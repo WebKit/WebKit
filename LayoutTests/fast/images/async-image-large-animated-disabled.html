@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<script src="../../resources/js-test.js"></script>
+<style>
+    canvas {
+        width: 100px;
+        height: 100px;
+    }
+</style>
+<body>
+    <canvas id="canvas1"></canvas>
+    <canvas id="canvas2"></canvas>
+    <canvas id="canvas3"></canvas>
+    <script>
+        function drawImageToCanvas(canvas) {
+            let context = canvas.getContext("2d");
+            context.drawImage(image, 0, 0, canvas.width, canvas.height);
+        }
+
+        function drawImageFrame(index) {
+            requestAnimationFrame(() => {
+                drawImageToCanvas(document.getElementById("canvas" + (index + 1)));
+                if (index < 2) {
+                    drawImageFrame(index + 1);
+                    return;
+                }
+
+                if (window.internals)
+                    shouldBeZero("internals.imageDecodeCount(image)");
+                finishJSTest();
+            });
+        }
+
+        description('This tests large animated images are decoded synchronously unless AnimatedImageAsyncDecoding is enabled.');
+        jsTestIsAsync = true;
+
+        if (window.internals) {
+            internals.settings.setAnimatedImageDebugCanvasDrawingEnabled(true);
+            internals.settings.setAnimatedImageAsyncDecodingEnabled(false);
+            internals.clearMemoryCache();
+        }
+
+        let image = new Image;
+        image.onload = () => { 
+            drawImageFrame(0);
+        }
+        image.src = "resources/animated-red-green-blue-400x400.gif";
+    </script>
+</body>

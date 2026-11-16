@@ -1,0 +1,51 @@
+<!doctype html>
+
+<title>Body background is propagated when an element is fixed-positioned with negative z-order</title>
+
+<style>
+  body {
+    margin: 100px;
+    border: 1px black solid;
+    color: white;
+    background-color: red;
+  }
+
+  #fixedpos-text {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: -1;
+    border: 1px black solid;
+  }
+</style>
+
+<body id="body">
+
+<div id="fixedpos-text">Fixed-positioned with negative z-order</div>
+<p>Body element. The page background should be all green with no red.</p>
+
+<script>
+  function rafPromise() {
+    return new Promise(r => requestAnimationFrame(r));
+  }
+
+  onload = async () => {
+    if (window.testRunner) {
+      testRunner.dontForceRepaint();
+      testRunner.waitUntilDone();
+    }
+
+    await rafPromise();
+    await rafPromise();
+
+    body.style.backgroundColor = "green";
+
+    await rafPromise();
+    await rafPromise();
+
+    if (window.testRunner)
+      testRunner.notifyDone();
+  };
+</script>
+
+</body>

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Encrypted ClearKey WebM Event</title>
+    <script src="../medias-enc.js"></script>
+    <script src="../../video-test.js"></script>
+    <script src="../../media-source/media-source-loader-simple.js"></script>
+    <script>
+    var onEncryptedEvent;
+
+    function runTest() {
+        if (!navigator.requestMediaKeySystemAccess) {
+            logResult(false, "EME API is not supported");
+            return;
+        } else {
+            logResult(true, "EME API is supported");
+        }
+
+        findMediaElement();
+
+        waitForEventOn(video, "encrypted", encrypted);
+
+        function encrypted(event) {
+            onEncryptedEvent = event;
+            testExpected("onEncryptedEvent.target", video);
+            testExpected("onEncryptedEvent", window.MediaEncryptedEvent, "instanceof");
+            testExpected("onEncryptedEvent.initDataType.toLowerCase()", "webm");
+            testExpected("onEncryptedEvent.initData", null, "!=");
+            endTest();
+        }
+
+        var ms = new MediaSourceLoaderSimple(video);
+
+        ms.onready = function() {
+            logResult(true, "Media source is opened");
+            ms.createSourceBuffer(streamMedias["simpleClearKeyWebMMSE"].video, 1);
+        };
+    }
+    </script>
+</head>
+<body onload="runTest()">
+    <video></video>
+</body>
+</html>

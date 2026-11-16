@@ -1,0 +1,12 @@
+<html><!-- webkit-test-runner [ AlwaysAllowLocalWebarchive=true ] -->
+<script>
+    if (window.testRunner) {
+        testRunner.dumpFrameLoadCallbacks();
+        testRunner.waitUntilDone();
+        testRunner.dumpAsText();
+    }
+    if (window.internals)
+        internals.setAlwaysAllowLocalWebarchive(true);
+    window.location="resources/top.webarchive";
+</script>
+</html>

@@ -1,0 +1,20 @@
+
+FAIL error in createParserOptions is rethrown from default policy for streamHTMLUnsafe assert_throws_js: error in createParserOptions is rethrown function "() => d[method]().getWriter()" threw object "TypeError: d[method] is not a function. (In 'd[method]()', 'd[method]' is undefined)" ("TypeError") expected instance of function "function Error() {
+    [native code]
+}" ("Error")
+FAIL error in createParserOptions is rethrown from default policy for streamAppendHTMLUnsafe assert_throws_js: error in createParserOptions is rethrown function "() => d[method]().getWriter()" threw object "TypeError: d[method] is not a function. (In 'd[method]()', 'd[method]' is undefined)" ("TypeError") expected instance of function "function Error() {
+    [native code]
+}" ("Error")
+FAIL error in createParserOptions is rethrown from default policy for streamPrependHTMLUnsafe assert_throws_js: error in createParserOptions is rethrown function "() => d[method]().getWriter()" threw object "TypeError: d[method] is not a function. (In 'd[method]()', 'd[method]' is undefined)" ("TypeError") expected instance of function "function Error() {
+    [native code]
+}" ("Error")
+FAIL error in createParserOptions is rethrown from default policy for streamBeforeHTMLUnsafe assert_throws_js: error in createParserOptions is rethrown function "() => d[method]().getWriter()" threw object "TypeError: d[method] is not a function. (In 'd[method]()', 'd[method]' is undefined)" ("TypeError") expected instance of function "function Error() {
+    [native code]
+}" ("Error")
+FAIL error in createParserOptions is rethrown from default policy for streamAfterHTMLUnsafe assert_throws_js: error in createParserOptions is rethrown function "() => d[method]().getWriter()" threw object "TypeError: d[method] is not a function. (In 'd[method]()', 'd[method]' is undefined)" ("TypeError") expected instance of function "function Error() {
+    [native code]
+}" ("Error")
+FAIL error in createParserOptions is rethrown from named policy assert_throws_js: error in createParserOptions is rethrown function "() => policy.createParserOptions({ runScripts: true })" threw object "TypeError: policy.createParserOptions is not a function. (In 'policy.createParserOptions({ runScripts: true })', 'policy.createParserOptions' is undefined)" ("TypeError") expected instance of function "function Error() {
+    [native code]
+}" ("Error")
+

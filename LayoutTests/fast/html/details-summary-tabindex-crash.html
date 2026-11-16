@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>This tests calling tabIndex on the summary element inside a details element. WebKit should not hit any assertions.</p>
+<details tabindex=0>
+<summary>summary content</summary>
+summary details
+</details>
+<script>
+
+if (window.internals) {
+    testRunner.dumpAsText();
+
+    var detailsShadow = internals.shadowRoot(document.querySelector('details'));
+    detailsShadow.querySelector('summary').tabIndex;
+
+    document.write('PASS');
+} else
+    document.write('FAIL - This test requires window.internals');
+
+
+</script>
+</body>
+</html>

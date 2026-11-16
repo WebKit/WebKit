@@ -1,0 +1,211 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x68
+  RenderBlock {html} at (0,0) size 800x68
+    RenderBody {body} at (8,16) size 784x36
+      RenderBlock {p} at (0,0) size 784x36
+        RenderText {#text} at (0,0) size 763x36
+          text run at (0,0) width 763: "In the div below the text is distributed over the whole SVG area. But when you scroll around the invisible text does not"
+          text run at (0,18) width 132: "appear (Bug 12163)."
+layer at (10,68) size 502x502 clip at (11,69) size 485x485 scrollY 550 scrollWidth 5000 scrollHeight 5004
+  RenderBlock (positioned) {div} at (10,68) size 502x502 [border: (1px solid #AAAAAA)]
+    RenderSVGRoot {svg} at (11,68) size 501x476
+      RenderSVGText {text} at (0,2) size 78x23 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 78x23
+          chunk 1 text run 1 at (0.00,20.00) startOffset 0 endOffset 11 width 77.76: "just a text"
+      RenderSVGText {text} at (100,2) size 78x23 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 78x23
+          chunk 1 text run 1 at (100.00,20.00) startOffset 0 endOffset 11 width 77.76: "just a text"
+      RenderSVGText {text} at (200,2) size 78x23 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 78x23
+          chunk 1 text run 1 at (200.00,20.00) startOffset 0 endOffset 11 width 77.76: "just a text"
+      RenderSVGText {text} at (300,2) size 78x23 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 78x23
+          chunk 1 text run 1 at (300.00,20.00) startOffset 0 endOffset 11 width 77.76: "just a text"
+      RenderSVGText {text} at (400,2) size 78x23 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 78x23
+          chunk 1 text run 1 at (400.00,20.00) startOffset 0 endOffset 11 width 77.76: "just a text"
+      RenderSVGText {text} at (500,2) size 78x23 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 78x23
+          chunk 1 text run 1 at (500.00,20.00) startOffset 0 endOffset 11 width 77.76: "just a text"
+      RenderSVGText {text} at (0,102) size 78x23 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 78x23
+          chunk 1 text run 1 at (0.00,120.00) startOffset 0 endOffset 11 width 77.76: "just a text"
+      RenderSVGText {text} at (100,102) size 78x23 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 78x23
+          chunk 1 text run 1 at (100.00,120.00) startOffset 0 endOffset 11 width 77.76: "just a text"
+      RenderSVGText {text} at (200,102) size 78x23 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 78x23
+          chunk 1 text run 1 at (200.00,120.00) startOffset 0 endOffset 11 width 77.76: "just a text"
+      RenderSVGText {text} at (300,102) size 78x23 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 78x23
+          chunk 1 text run 1 at (300.00,120.00) startOffset 0 endOffset 11 width 77.76: "just a text"
+      RenderSVGText {text} at (400,102) size 78x23 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 78x23
+          chunk 1 text run 1 at (400.00,120.00) startOffset 0 endOffset 11 width 77.76: "just a text"
+      RenderSVGText {text} at (500,102) size 78x23 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 78x23
+          chunk 1 text run 1 at (500.00,120.00) startOffset 0 endOffset 11 width 77.76: "just a text"
+      RenderSVGText {text} at (0,202) size 78x23 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 78x23
+          chunk 1 text run 1 at (0.00,220.00) startOffset 0 endOffset 11 width 77.76: "just a text"
+      RenderSVGText {text} at (100,202) size 78x23 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 78x23
+          chunk 1 text run 1 at (100.00,220.00) startOffset 0 endOffset 11 width 77.76: "just a text"
+      RenderSVGText {text} at (200,202) size 78x23 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 78x23
+          chunk 1 text run 1 at (200.00,220.00) startOffset 0 endOffset 11 width 77.76: "just a text"
+      RenderSVGText {text} at (300,202) size 78x23 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 78x23
+          chunk 1 text run 1 at (300.00,220.00) startOffset 0 endOffset 11 width 77.76: "just a text"
+      RenderSVGText {text} at (400,202) size 78x23 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 78x23
+          chunk 1 text run 1 at (400.00,220.00) startOffset 0 endOffset 11 width 77.76: "just a text"
+      RenderSVGText {text} at (500,202) size 78x23 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 78x23
+          chunk 1 text run 1 at (500.00,220.00) startOffset 0 endOffset 11 width 77.76: "just a text"
+      RenderSVGText {text} at (0,302) size 78x23 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 78x23
+          chunk 1 text run 1 at (0.00,320.00) startOffset 0 endOffset 11 width 77.76: "just a text"
+      RenderSVGText {text} at (100,302) size 78x23 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 78x23
+          chunk 1 text run 1 at (100.00,320.00) startOffset 0 endOffset 11 width 77.76: "just a text"
+      RenderSVGText {text} at (200,302) size 78x23 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 78x23
+          chunk 1 text run 1 at (200.00,320.00) startOffset 0 endOffset 11 width 77.76: "just a text"
+      RenderSVGText {text} at (300,302) size 78x23 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 78x23
+          chunk 1 text run 1 at (300.00,320.00) startOffset 0 endOffset 11 width 77.76: "just a text"
+      RenderSVGText {text} at (400,302) size 78x23 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 78x23
+          chunk 1 text run 1 at (400.00,320.00) startOffset 0 endOffset 11 width 77.76: "just a text"
+      RenderSVGText {text} at (500,302) size 78x23 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 78x23
+          chunk 1 text run 1 at (500.00,320.00) startOffset 0 endOffset 11 width 77.76: "just a text"
+      RenderSVGText {text} at (0,402) size 78x23 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 78x23
+          chunk 1 text run 1 at (0.00,420.00) startOffset 0 endOffset 11 width 77.76: "just a text"
+      RenderSVGText {text} at (100,402) size 78x23 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 78x23
+          chunk 1 text run 1 at (100.00,420.00) startOffset 0 endOffset 11 width 77.76: "just a text"
+      RenderSVGText {text} at (200,402) size 78x23 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 78x23
+          chunk 1 text run 1 at (200.00,420.00) startOffset 0 endOffset 11 width 77.76: "just a text"
+      RenderSVGText {text} at (300,402) size 78x23 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 78x23
+          chunk 1 text run 1 at (300.00,420.00) startOffset 0 endOffset 11 width 77.76: "just a text"
+      RenderSVGText {text} at (400,402) size 78x23 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 78x23
+          chunk 1 text run 1 at (400.00,420.00) startOffset 0 endOffset 11 width 77.76: "just a text"
+      RenderSVGText {text} at (500,402) size 78x23 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 78x23
+          chunk 1 text run 1 at (500.00,420.00) startOffset 0 endOffset 11 width 77.76: "just a text"
+      RenderSVGText {text} at (0,502) size 78x23 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 78x23
+          chunk 1 text run 1 at (0.00,520.00) startOffset 0 endOffset 11 width 77.76: "just a text"
+      RenderSVGText {text} at (100,502) size 78x23 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 78x23
+          chunk 1 text run 1 at (100.00,520.00) startOffset 0 endOffset 11 width 77.76: "just a text"
+      RenderSVGText {text} at (200,502) size 78x23 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 78x23
+          chunk 1 text run 1 at (200.00,520.00) startOffset 0 endOffset 11 width 77.76: "just a text"
+      RenderSVGText {text} at (300,502) size 78x23 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 78x23
+          chunk 1 text run 1 at (300.00,520.00) startOffset 0 endOffset 11 width 77.76: "just a text"
+      RenderSVGText {text} at (400,502) size 78x23 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 78x23
+          chunk 1 text run 1 at (400.00,520.00) startOffset 0 endOffset 11 width 77.76: "just a text"
+      RenderSVGText {text} at (500,502) size 78x23 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 78x23
+          chunk 1 text run 1 at (500.00,520.00) startOffset 0 endOffset 11 width 77.76: "just a text"
+      RenderSVGText {text} at (0,602) size 78x23 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 78x23
+          chunk 1 text run 1 at (0.00,620.00) startOffset 0 endOffset 11 width 77.76: "just a text"
+      RenderSVGText {text} at (100,602) size 78x23 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 78x23
+          chunk 1 text run 1 at (100.00,620.00) startOffset 0 endOffset 11 width 77.76: "just a text"
+      RenderSVGText {text} at (200,602) size 78x23 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 78x23
+          chunk 1 text run 1 at (200.00,620.00) startOffset 0 endOffset 11 width 77.76: "just a text"
+      RenderSVGText {text} at (300,602) size 78x23 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 78x23
+          chunk 1 text run 1 at (300.00,620.00) startOffset 0 endOffset 11 width 77.76: "just a text"
+      RenderSVGText {text} at (400,602) size 78x23 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 78x23
+          chunk 1 text run 1 at (400.00,620.00) startOffset 0 endOffset 11 width 77.76: "just a text"
+      RenderSVGText {text} at (500,602) size 78x23 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 78x23
+          chunk 1 text run 1 at (500.00,620.00) startOffset 0 endOffset 11 width 77.76: "just a text"
+      RenderSVGText {text} at (0,702) size 78x23 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 78x23
+          chunk 1 text run 1 at (0.00,720.00) startOffset 0 endOffset 11 width 77.76: "just a text"
+      RenderSVGText {text} at (100,702) size 78x23 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 78x23
+          chunk 1 text run 1 at (100.00,720.00) startOffset 0 endOffset 11 width 77.76: "just a text"
+      RenderSVGText {text} at (200,702) size 78x23 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 78x23
+          chunk 1 text run 1 at (200.00,720.00) startOffset 0 endOffset 11 width 77.76: "just a text"
+      RenderSVGText {text} at (300,702) size 78x23 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 78x23
+          chunk 1 text run 1 at (300.00,720.00) startOffset 0 endOffset 11 width 77.76: "just a text"
+      RenderSVGText {text} at (400,702) size 78x23 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 78x23
+          chunk 1 text run 1 at (400.00,720.00) startOffset 0 endOffset 11 width 77.76: "just a text"
+      RenderSVGText {text} at (500,702) size 78x23 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 78x23
+          chunk 1 text run 1 at (500.00,720.00) startOffset 0 endOffset 11 width 77.76: "just a text"
+      RenderSVGText {text} at (0,802) size 78x23 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 78x23
+          chunk 1 text run 1 at (0.00,820.00) startOffset 0 endOffset 11 width 77.76: "just a text"
+      RenderSVGText {text} at (100,802) size 78x23 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 78x23
+          chunk 1 text run 1 at (100.00,820.00) startOffset 0 endOffset 11 width 77.76: "just a text"
+      RenderSVGText {text} at (200,802) size 78x23 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 78x23
+          chunk 1 text run 1 at (200.00,820.00) startOffset 0 endOffset 11 width 77.76: "just a text"
+      RenderSVGText {text} at (300,802) size 78x23 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 78x23
+          chunk 1 text run 1 at (300.00,820.00) startOffset 0 endOffset 11 width 77.76: "just a text"
+      RenderSVGText {text} at (400,802) size 78x23 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 78x23
+          chunk 1 text run 1 at (400.00,820.00) startOffset 0 endOffset 11 width 77.76: "just a text"
+      RenderSVGText {text} at (500,802) size 78x23 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 78x23
+          chunk 1 text run 1 at (500.00,820.00) startOffset 0 endOffset 11 width 77.76: "just a text"
+      RenderSVGText {text} at (0,902) size 78x23 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 78x23
+          chunk 1 text run 1 at (0.00,920.00) startOffset 0 endOffset 11 width 77.76: "just a text"
+      RenderSVGText {text} at (100,902) size 78x23 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 78x23
+          chunk 1 text run 1 at (100.00,920.00) startOffset 0 endOffset 11 width 77.76: "just a text"
+      RenderSVGText {text} at (200,902) size 78x23 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 78x23
+          chunk 1 text run 1 at (200.00,920.00) startOffset 0 endOffset 11 width 77.76: "just a text"
+      RenderSVGText {text} at (300,902) size 78x23 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 78x23
+          chunk 1 text run 1 at (300.00,920.00) startOffset 0 endOffset 11 width 77.76: "just a text"
+      RenderSVGText {text} at (400,902) size 78x23 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 78x23
+          chunk 1 text run 1 at (400.00,920.00) startOffset 0 endOffset 11 width 77.76: "just a text"
+      RenderSVGText {text} at (500,902) size 78x23 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 78x23
+          chunk 1 text run 1 at (500.00,920.00) startOffset 0 endOffset 11 width 77.76: "just a text"
+      RenderSVGText {text} at (0,1002) size 78x23 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 78x23
+          chunk 1 text run 1 at (0.00,1020.00) startOffset 0 endOffset 11 width 77.76: "just a text"
+      RenderSVGText {text} at (100,1002) size 78x23 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 78x23
+          chunk 1 text run 1 at (100.00,1020.00) startOffset 0 endOffset 11 width 77.76: "just a text"
+      RenderSVGText {text} at (200,1002) size 78x23 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 78x23
+          chunk 1 text run 1 at (200.00,1020.00) startOffset 0 endOffset 11 width 77.76: "just a text"
+      RenderSVGText {text} at (300,1002) size 78x23 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 78x23
+          chunk 1 text run 1 at (300.00,1020.00) startOffset 0 endOffset 11 width 77.76: "just a text"
+      RenderSVGText {text} at (400,1002) size 78x23 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 78x23
+          chunk 1 text run 1 at (400.00,1020.00) startOffset 0 endOffset 11 width 77.76: "just a text"
+      RenderSVGText {text} at (500,1002) size 78x23 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 78x23
+          chunk 1 text run 1 at (500.00,1020.00) startOffset 0 endOffset 11 width 77.76: "just a text"
+    RenderText {#text} at (0,0) size 0x0

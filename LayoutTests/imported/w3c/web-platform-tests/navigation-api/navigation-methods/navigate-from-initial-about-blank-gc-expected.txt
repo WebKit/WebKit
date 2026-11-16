@@ -1,0 +1,4 @@
+
+
+PASS navigate() from <iframe> with src="" but still on initial about:blank doesn't cause a crash on GC
+

@@ -1,0 +1,17 @@
+<body style="margin: 0; font: 20px/40px monospace;">
+<div id="content"></div>
+<script>
+let markup = "";
+for (let i = 0; i < 30; i++)
+    markup += `<div>token${i} selectable line</div>`;
+document.getElementById("content").innerHTML = markup;
+
+document.addEventListener("selectionchange", () => {
+    window.top.postMessage("selection:" + getSelection().toString(), "*");
+});
+document.addEventListener("scroll", () => {
+    window.top.postMessage("scrollY:" + document.scrollingElement.scrollTop, "*");
+});
+window.top.postMessage("ready", "*");
+</script>
+</body>

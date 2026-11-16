@@ -1,0 +1,7 @@
+
+PASS document.innerText assigned via policy (successful HTML transformation).
+PASS `document.innerText = string` throws.
+PASS 'document.innerText = null' throws
+PASS 'document.innerText = string' assigned via default policy (successful HTML transformation).
+PASS 'document.innerText = null' assigned via default policy does not throw
+

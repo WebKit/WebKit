@@ -1,0 +1,21 @@
+
+Test mediaUsageState.
+
+EVENT(canplaythrough)
+
+** Check state before playback, there should be no usage state.
+NotSupportedError: The operation is not supported.
+
+** Mute video, there should still be no usage state.
+RUN(video.muted = true)
+NotSupportedError: The operation is not supported.
+
+** Unmute video, there should still be no usage state.
+RUN(video.muted = false)
+NotSupportedError: The operation is not supported.
+
+** Try to play without user gesture, there should still be no usage state.
+EVENT(playing)
+NotSupportedError: The operation is not supported.
+END OF TEST
+

@@ -1,0 +1,28 @@
+<!doctype html>
+<script src="../../../resources/js-test-pre.js"></script>
+<input type=color>
+<script>
+function log(swatch) {
+  evalAndLogResult("getComputedStyle(swatch).backgroundColor");
+  evalAndLogResult("swatch.innerHTML");
+}
+
+const control = document.querySelector("input");
+const swatch = internals.shadowRoot(control).firstChild.firstChild;
+
+debug(`initial state\n`);
+log(swatch);
+
+for (const value of [ "papayawhip", "#44444444", "color(display-p3 2 none .5 / .7)", "rgba(40,40,40,.6)" ]) {
+  for (const colorSpace of ["limited-srgb", "display-p3"]) {
+    for (const alpha of [false, true]) {
+      control.alpha = alpha;
+      control.colorSpace = colorSpace;
+      control.value = value;
+
+      debug(`\nalpha: ${alpha}, colorSpace: ${colorSpace}, value: ${value}\n`);
+      log(swatch);
+    }
+  }
+}
+</script>

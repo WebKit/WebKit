@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<div id="log"></div>
+<canvas id="canvas" lang="tr" dir="rtl"></canvas>
+<script>
+function contexts()
+{
+    return [
+        ['canvas', document.getElementById('canvas').getContext('2d')],
+        ['offscreen', new OffscreenCanvas(100, 50).getContext('2d')],
+    ];
+}
+
+for (const [name, ctx] of contexts()) {
+    test(() => {
+        ctx.reset();
+        assert_equals(ctx.lang, 'inherit');
+        assert_equals(ctx.direction, 'inherit');
+    }, `${name}: initial values`);
+
+    test(() => {
+        ctx.reset();
+        for (const value of ['en', 'tr', '', 'not a language tag', 'inherit']) {
+            ctx.lang = value;
+            assert_equals(ctx.lang, value);
+        }
+    }, `${name}: lang keeps any value`);
+
+    test(() => {
+        ctx.reset();
+        ctx.lang = 'en';
+        ctx.direction = 'ltr';
+        ctx.save();
+        ctx.lang = 'tr';
+        ctx.direction = 'rtl';
+        assert_equals(ctx.lang, 'tr');
+        assert_equals(ctx.direction, 'rtl');
+        ctx.restore();
+        assert_equals(ctx.lang, 'en');
+        assert_equals(ctx.direction, 'ltr');
+    }, `${name}: save() and restore()`);
+
+    test(() => {
+        ctx.reset();
+        ctx.lang = 'en';
+        ctx.direction = 'rtl';
+        ctx.reset();
+        assert_equals(ctx.lang, 'inherit');
+        assert_equals(ctx.direction, 'inherit');
+    }, `${name}: reset() restores the defaults`);
+
+    test(() => {
+        ctx.reset();
+        ctx.lang = 'en';
+        ctx.font = '20px serif';
+        assert_equals(ctx.lang, 'en');
+    }, `${name}: lang survives setting font`);
+}
+</script>

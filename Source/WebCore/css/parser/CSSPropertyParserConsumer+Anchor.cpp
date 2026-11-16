@@ -1,0 +1,400 @@
+/*
+ * Copyright (C) 2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2024 Igalia S.L.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#include "config.h"
+#include "CSSPropertyParserConsumer+Anchor.h"
+
+#include "CSSCustomIdentValue.h"
+#include "CSSParserContext.h"
+#include "CSSParserTokenRange.h"
+#include "CSSPropertyParserConsumer+Ident.h"
+#include "CSSPropertyParserState.h"
+#include "CSSValue.h"
+#include "CSSValueList.h"
+#include "CSSValuePair.h"
+#include "RenderStyleConstants.h"
+#include "StyleKeyword+Mappings.h"
+
+#if ENABLE(SPATIAL_PORTAL)
+#include "CSSPinnedAnchorNameValue.h"
+#endif
+
+namespace WebCore {
+namespace CSSPropertyParserHelpers {
+
+// <position-area> syntax, rewritten for expository purpose:
+//
+// <position-area> =
+//   [ <physical-area>
+//   | <logical-area> | <self-logical-area>
+//   | <ambiguous-logical-area> | <self-ambiguous-logical-area> ]
+//
+// // Keywords that doesn't depend on an axis. That is, the result is the same,
+// // no matter which axis is used.
+// <axisless-keyword> = [ center | span-all ]
+//
+// // Keywords that refer to a physical axis.
+// <physical-area> = [ <physical-area-x> || <physical-area-y> ]
+// <physical-area-x> =
+//   [ left | right | span-left | span-right
+//   | x-start | x-end | span-x-start | span-x-end
+//   | x-self-start | x-self-end | span-x-self-start | span-x-self-end ] | <axisless-keyword>
+// <physical-area-y> =
+//   [ top | bottom | span-top | span-bottom
+//   | y-start | y-end | span-y-start | span-y-end
+//   | y-self-start | y-self-end | span-y-self-start | span-y-self-end ] | <axisless-keyword>
+//
+// // Keywords that refer to an explicit logical (block/inline) axis. The axis is
+// // resolved using the containing block's writing mode.
+// <logical-area> = [ <logical-area-block> || <logical-area-inline> ]
+// <logical-area-block> =
+//   [ block-start | block-end | span-block-start | span-block-end ] | <axisless-keyword>
+// <logical-area-inline> =
+//   [ inline-start | inline-end | span-inline-start | span-inline-end ] | <axisless-keyword>
+//
+// // Keywords that refer to an explicit logical (block/inline) axis. The axis is
+// // resolved using the element's own writing mode.
+// <self-logical-area> = [ <self-logical-area-block> || <self-logical-area-inline> ]
+// <self-logical-area-block> =
+//   [ self-block-start | self-block-end | span-self-block-start | span-self-block-end ] | <axisless-keyword>
+// <self-logical-area-inline> =
+//   [ self-inline-start | self-inline-end | span-self-inline-start | span-self-inline-end ] | <axisless-keyword>
+//
+// // Similar to <logical-area>, but the axis is ambiguous (can be block or inline)
+// // and must be resolved.
+// <ambiguous-logical-area> = <ambiguous-logical-area-keyword>{1, 2}
+// <ambiguous-logical-area-keyword> = [ start | end | span-start | span-end ] | <axisless-keyword>
+//
+// // Similar to <self-logical-area> but the axis is ambiguous.
+// <self-ambiguous-logical-area> = <self-ambiguous-logical-area-keyword>{1, 2}
+// <self-ambiguous-logical-area-keyword> = [ self-start | self-end | span-self-start | span-self-end ] | <axisless-keyword>
+
+enum class KeywordType : uint8_t {
+    // <physical-area-x>
+    PhysicalX,
+    // <physical-area-y>
+    PhysicalY,
+
+    // <logical-area-block>
+    LogicalBlock,
+    // <self-logical-area-block>
+    SelfLogicalBlock,
+
+    // <logical-area-inline>
+    LogicalInline,
+    // <self-logical-area-inline>
+    SelfLogicalInline,
+
+    // <ambiguous-position-area>
+    Ambiguous,
+    // <self-ambiguous-position-area>
+    SelfAmbiguous,
+
+    // <axisless-keyword>
+    Axisless
+};
+
+NODELETE static std::optional<KeywordType> getKeywordType(CSSValueID id)
+{
+    switch (id) {
+    case CSSValueID::Left:
+    case CSSValueID::Right:
+    case CSSValueID::SpanLeft:
+    case CSSValueID::SpanRight:
+    case CSSValueID::XStart:
+    case CSSValueID::XEnd:
+    case CSSValueID::SpanXStart:
+    case CSSValueID::SpanXEnd:
+    case CSSValueID::SelfXStart:
+    case CSSValueID::SelfXEnd:
+    case CSSValueID::SpanSelfXStart:
+    case CSSValueID::SpanSelfXEnd:
+        return KeywordType::PhysicalX;
+
+    case CSSValueID::Top:
+    case CSSValueID::Bottom:
+    case CSSValueID::SpanTop:
+    case CSSValueID::SpanBottom:
+    case CSSValueID::YStart:
+    case CSSValueID::YEnd:
+    case CSSValueID::SpanYStart:
+    case CSSValueID::SpanYEnd:
+    case CSSValueID::SelfYStart:
+    case CSSValueID::SelfYEnd:
+    case CSSValueID::SpanSelfYStart:
+    case CSSValueID::SpanSelfYEnd:
+        return KeywordType::PhysicalY;
+
+    case CSSValueID::BlockStart:
+    case CSSValueID::BlockEnd:
+    case CSSValueID::SpanBlockStart:
+    case CSSValueID::SpanBlockEnd:
+        return KeywordType::LogicalBlock;
+
+    case CSSValueID::InlineStart:
+    case CSSValueID::InlineEnd:
+    case CSSValueID::SpanInlineStart:
+    case CSSValueID::SpanInlineEnd:
+        return KeywordType::LogicalInline;
+
+    case CSSValueID::SelfBlockStart:
+    case CSSValueID::SelfBlockEnd:
+    case CSSValueID::SpanSelfBlockStart:
+    case CSSValueID::SpanSelfBlockEnd:
+        return KeywordType::SelfLogicalBlock;
+
+    case CSSValueID::SelfInlineStart:
+    case CSSValueID::SelfInlineEnd:
+    case CSSValueID::SpanSelfInlineStart:
+    case CSSValueID::SpanSelfInlineEnd:
+        return KeywordType::SelfLogicalInline;
+
+    case CSSValueID::Start:
+    case CSSValueID::End:
+    case CSSValueID::SpanStart:
+    case CSSValueID::SpanEnd:
+        return KeywordType::Ambiguous;
+
+    case CSSValueID::SelfStart:
+    case CSSValueID::SelfEnd:
+    case CSSValueID::SpanSelfStart:
+    case CSSValueID::SpanSelfEnd:
+        return KeywordType::SelfAmbiguous;
+
+    case CSSValueID::Center:
+    case CSSValueID::SpanAll:
+        return KeywordType::Axisless;
+
+    default:
+        return { };
+    }
+}
+
+// Check if the two keyword types are compatible with each other. For example,
+// <physical-area-x> must go with <physical-area-y> or <axisless-keyword>
+NODELETE static bool typesAreCompatible(KeywordType dim1Type, KeywordType dim2Type)
+{
+    switch (dim1Type) {
+    case KeywordType::PhysicalX:
+        return (dim2Type == KeywordType::PhysicalY || dim2Type == KeywordType::Axisless);
+
+    case KeywordType::PhysicalY:
+        return (dim2Type == KeywordType::PhysicalX || dim2Type == KeywordType::Axisless);
+
+    case KeywordType::LogicalBlock:
+        return (dim2Type == KeywordType::LogicalInline || dim2Type == KeywordType::Axisless);
+
+    case KeywordType::LogicalInline:
+        return (dim2Type == KeywordType::LogicalBlock || dim2Type == KeywordType::Axisless);
+
+    case KeywordType::SelfLogicalBlock:
+        return (dim2Type == KeywordType::SelfLogicalInline || dim2Type == KeywordType::Axisless);
+
+    case KeywordType::SelfLogicalInline:
+        return (dim2Type == KeywordType::SelfLogicalBlock || dim2Type == KeywordType::Axisless);
+
+    case KeywordType::Ambiguous:
+        return (dim2Type == KeywordType::Ambiguous || dim2Type == KeywordType::Axisless);
+
+    case KeywordType::SelfAmbiguous:
+        return (dim2Type == KeywordType::SelfAmbiguous || dim2Type == KeywordType::Axisless);
+
+    case KeywordType::Axisless:
+        return true;
+    }
+
+    ASSERT_NOT_REACHED();
+    return false;
+}
+
+// Check if a keyword type is explicit about its axis.
+NODELETE static bool typeIsAxisExplicit(KeywordType type)
+{
+    switch (type) {
+    case KeywordType::PhysicalX:
+    case KeywordType::PhysicalY:
+    case KeywordType::LogicalBlock:
+    case KeywordType::SelfLogicalBlock:
+    case KeywordType::LogicalInline:
+    case KeywordType::SelfLogicalInline:
+        return true;
+
+    default:
+        return false;
+    }
+}
+
+// Check if a keyword type refers to the X or block axis.
+NODELETE static bool typeIsBlockOrXAxis(KeywordType type)
+{
+    switch (type) {
+    case KeywordType::PhysicalX:
+    case KeywordType::LogicalBlock:
+    case KeywordType::SelfLogicalBlock:
+        return true;
+
+    default:
+        return false;
+    }
+}
+
+// Check if a keyword type refers to the Y or inline axis.
+NODELETE static bool typeIsInlineOrYAxis(KeywordType type)
+{
+    switch (type) {
+    case KeywordType::PhysicalY:
+    case KeywordType::LogicalInline:
+    case KeywordType::SelfLogicalInline:
+        return true;
+
+    default:
+        return false;
+    }
+}
+
+NODELETE static CSSValueID makeAmbiguous(CSSValueID dim)
+{
+    switch (dim) {
+    case CSSValueID::BlockStart: return CSSValueID::Start;
+    case CSSValueID::SpanBlockStart: return CSSValueID::SpanStart;
+    case CSSValueID::SelfBlockStart: return CSSValueID::SelfStart;
+    case CSSValueID::SpanSelfBlockStart: return CSSValueID::SpanSelfStart;
+
+    case CSSValueID::BlockEnd: return CSSValueID::End;
+    case CSSValueID::SpanBlockEnd: return CSSValueID::SpanEnd;
+    case CSSValueID::SelfBlockEnd: return CSSValueID::SelfEnd;
+    case CSSValueID::SpanSelfBlockEnd: return CSSValueID::SpanSelfEnd;
+
+    case CSSValueID::InlineStart: return CSSValueID::Start;
+    case CSSValueID::SpanInlineStart: return CSSValueID::SpanStart;
+    case CSSValueID::SelfInlineStart: return CSSValueID::SelfStart;
+    case CSSValueID::SpanSelfInlineStart: return CSSValueID::SpanSelfStart;
+
+    case CSSValueID::InlineEnd: return CSSValueID::End;
+    case CSSValueID::SpanInlineEnd: return CSSValueID::SpanEnd;
+    case CSSValueID::SelfInlineEnd: return CSSValueID::SelfEnd;
+    case CSSValueID::SpanSelfInlineEnd: return CSSValueID::SpanSelfEnd;
+
+    case CSSValueID::Center: return CSSValueID::Center;
+
+    default:
+        ASSERT_NOT_REACHED();
+        return dim;
+    }
+}
+
+RefPtr<CSSValue> valueForPositionArea(CSSValueID dim1, CSSValueID dim2, ValueType context)
+{
+    auto maybeDim1Type = getKeywordType(dim1);
+    if (!maybeDim1Type)
+        return nullptr;
+    auto dim1Type = *maybeDim1Type;
+
+    auto maybeDim2Type = getKeywordType(dim2);
+    if (!maybeDim2Type)
+        return nullptr;
+    auto dim2Type = *maybeDim2Type;
+
+    if (!typesAreCompatible(dim1Type, dim2Type))
+        return nullptr;
+
+    if (dim1 == CSSValueID::SpanAll && typeIsAxisExplicit(dim2Type))
+        return CSSKeywordValue::create(dim2);
+    if (typeIsAxisExplicit(dim1Type) && dim2 == CSSValueID::SpanAll)
+        return CSSKeywordValue::create(dim1);
+
+    // Ensure the X/block axis keyword goes first in the pair.
+    if (typeIsInlineOrYAxis(dim1Type) || typeIsBlockOrXAxis(dim2Type)) {
+        std::swap(dim1, dim2);
+        std::swap(dim1Type, dim2Type);
+    }
+
+    if (context == ValueType::Computed) {
+        // If one keyword is on the block axis and the other keyword is on the inline axis,
+        // strip the block-/inline- prefix on the keywords.
+        // e.g "block-start inline-end" is equivalent to "start end".
+        // See https://drafts.csswg.org/css-anchor-position-1/#position-area-computed
+        if ((dim1Type == KeywordType::LogicalBlock && (dim2Type == KeywordType::LogicalInline || dim2Type == KeywordType::Axisless))
+            || (dim1Type == KeywordType::SelfLogicalBlock && (dim2Type == KeywordType::SelfLogicalInline || dim2Type == KeywordType::Axisless))
+            || (dim1Type == KeywordType::Axisless && (dim2Type == KeywordType::LogicalInline || dim2Type == KeywordType::SelfLogicalInline))) {
+            dim1 = makeAmbiguous(dim1);
+            dim2 = makeAmbiguous(dim2);
+        }
+    }
+
+    return CSSValuePair::create(CSSKeywordValue::create(dim1), CSSKeywordValue::create(dim2));
+}
+
+RefPtr<CSSValue> consumePositionArea(CSSParserTokenRange& range, CSS::PropertyParserState&)
+{
+    // <'position-area'> = none | <position-area>
+    // https://drafts.csswg.org/css-anchor-position-1/#propdef-position-area
+
+    auto maybeDim1 = consumeIdentRaw(range);
+    if (!maybeDim1)
+        return nullptr;
+    auto dim1 = *maybeDim1;
+    if (dim1 == CSSValueID::None)
+        return CSSKeywordValue::create(CSSValueID::None);
+
+    auto maybeDim2 = consumeIdentRaw(range);
+    if (!maybeDim2) {
+        if (!getKeywordType(dim1))
+            return nullptr;
+        return CSSKeywordValue::create(dim1);
+    }
+    auto dim2 = *maybeDim2;
+
+    return valueForPositionArea(dim1, dim2, ValueType::Specified);
+}
+
+RefPtr<CSSValue> consumePinnedAnchorName(CSSParserTokenRange& range, CSS::PropertyParserState& state)
+{
+    // <pinned-anchor-name> = <anchor-name> [ '#' <ident> ]?
+    //
+    // With the spatial portal feature enabled, <anchor-name> may be followed by '#' and an identifier
+    // naming an attachment point in the anchor's model asset. The '#' must be adjacent:
+    // "--macbook#lid" parses, "--macbook #lid" does not. Grammar notation can't express adjacency,
+    // hence the token peeking.
+    //
+    // The attachment point is proposed in the Spatial CSS explainer, not yet in a specification.
+    // https://github.com/WebKit/explainers/blob/main/css-spatial/explainer.md
+
+#if ENABLE(SPATIAL_PORTAL)
+    if (state.context.propertySettings.spatialPortalEnabled
+        && range.peek().type() == IdentToken && range.peek().value().startsWith("--"_s)
+        && range.peek(1).type() == HashToken && range.peek(1).getHashTokenType() == HashTokenId) {
+        auto name = range.consume().value().toAtomString();
+        auto attachment = range.consumeIncludingWhitespace().value().toAtomString();
+        return CSSPinnedAnchorNameValue::create(CSS::CustomIdent { WTF::move(name) }, CSS::CustomIdent { WTF::move(attachment) });
+    }
+#endif
+
+    return consumeDashedIdent(range, state);
+}
+
+} // namespace CSSPropertyParserHelpers
+} // namespace WebCore

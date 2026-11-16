@@ -1,0 +1,3 @@
+
+PASS navigate() and intercept() with a fulfilled promise
+

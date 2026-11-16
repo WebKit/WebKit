@@ -1,0 +1,6 @@
+
+PASS Basic step_wait() test
+PASS step_wait() isn't invoked too often
+FAIL step_wait() takes an argument cond is not a function. (In 'cond()', 'cond' is undefined)
+PASS async step_wait()
+

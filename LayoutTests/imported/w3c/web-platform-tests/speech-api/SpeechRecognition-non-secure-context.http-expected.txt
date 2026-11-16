@@ -1,0 +1,10 @@
+
+PASS This page is not a secure context
+PASS SpeechRecognition is not exposed
+PASS SpeechRecognitionErrorEvent is not exposed
+PASS SpeechRecognitionAlternative is not exposed
+PASS SpeechRecognitionResult is not exposed
+PASS SpeechRecognitionResultList is not exposed
+PASS SpeechRecognitionEvent is not exposed
+PASS SpeechRecognitionPhrase is not exposed
+

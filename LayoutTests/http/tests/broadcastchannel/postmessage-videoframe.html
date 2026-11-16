@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+<body>
+<pre id="output"></pre>
+<script src="resources/broadcastchannel-test-harness.js"></script>
+<script>
+broadcastChannelTest(function() {
+    var data = new Uint8Array(2 * 2 * 4);
+    return new VideoFrame(data, {format: "RGBA", codedWidth: 2, codedHeight: 2, timestamp: 0});
+}, "VideoFrame:2x2");
+</script>
+</body>
+</html>

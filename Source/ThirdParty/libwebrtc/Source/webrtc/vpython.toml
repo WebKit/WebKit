@@ -1,0 +1,21 @@
+requires-python = '>=3.11,<3.12'
+dependencies = [
+  'psutil==5.8.0+chromium.3',
+  'packaging==16.8',
+  'httplib2==0.22.0',
+  'pyparsing==3.1.1',
+  "pywin32==306; (sys_platform == 'win32' and platform_machine == 'x86') or (sys_platform == 'win32' and (platform_machine == 'AMD64' or platform_machine == 'x86_64'))",
+  'grpcio==1.57.0',
+  'six==1.16.0',
+  'pbr==5.9.0',
+  'funcsigs==1.0.2',
+  'mock==4.0.3',
+  'protobuf==7.36.0',
+  'requests==2.31.0',
+  'idna==3.4',
+  'urllib3==2.1.0',
+  'certifi==2023.11.17',
+  'charset-normalizer==3.3.2',
+  'brotli==1.0.9',
+  'asn1crypto==1.0.1'
+]

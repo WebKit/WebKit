@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html><head>
+  <title> scheduler: event listener defined by script in a document in history</title>
+  <script src="/resources/testharness.js"></script>
+  <script src="/resources/testharnessreport.js"></script>
+  <script src="testlib/testlib.js"></script>
+</head>
+<body>
+
+  <div id="log">FAILED (This TC requires JavaScript enabled)</div>
+  <iframe src="about:blank"></iframe>
+  <script>
+    log('inline script #1');
+    function fireFooEvent(){
+      var evt=document.createEvent('Event');
+      evt.initEvent('foo', true, true);
+      document.dispatchEvent(evt);
+    }
+    var doc = frames[0].document;
+    doc.open('text/html');
+    doc.write('<script>top.log("IFRAME script");top.document.addEventListener("foo", function(e){ top.log("event: "+e.type); }, false)<\/script>');
+    log('end script #1');
+  </script>
+  <script>
+    fireFooEvent();
+    // Starts an asynchronous navigation; the document that defined the event
+    // listener stays fully active until the navigation completes, so the
+    // fireFooEvent() call in the next script block still fires the listener.
+    frames[0].location='about:blank';
+  </script>
+  <script>
+    fireFooEvent();
+  </script>
+  <script type="text/javascript">
+  log( 'inline script #2' );
+  var t = async_test()
+
+  function test() {
+    assert_equals(frames[0].location.toString(), "about:blank");
+    // The final fireFooEvent() must not invoke the listener: after the
+    // navigation completes, the listener callback's realm belongs to a Window
+    // whose associated document is no longer fully active. See
+    // https://dom.spec.whatwg.org/#concept-event-listener-inner-invoke
+    assert_array_equals(eventOrder, ['inline script #1',
+      'IFRAME script',
+      'end script #1',
+      'event: foo',
+      'event: foo',
+      'inline script #2'
+    ]);
+    t.done();
+  }
+  onload = function() {setTimeout(t.step_func(function() {fireFooEvent(); test()}), 80)};
+  </script>
+
+</body></html>

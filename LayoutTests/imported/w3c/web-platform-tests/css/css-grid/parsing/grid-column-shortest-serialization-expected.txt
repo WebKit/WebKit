@@ -1,0 +1,18 @@
+
+PASS Property grid-column value 'auto / auto'
+PASS Property grid-column value 'auto'
+PASS Property grid-column value '10 / auto'
+PASS Property grid-column value '10'
+PASS Property grid-column value '-10 / auto'
+PASS Property grid-column value '-10'
+PASS Property grid-column value 'first / first'
+PASS Property grid-column value 'first'
+PASS Property grid-column value 'span 2 / auto'
+PASS Property grid-column value 'span 2'
+PASS Property grid-column value '2 first / auto'
+PASS Property grid-column value '2 first'
+PASS Property grid-column value 'span first / auto'
+PASS Property grid-column value 'span first'
+PASS Property grid-column value 'span 2 first / auto'
+PASS Property grid-column value 'span 2 first'
+

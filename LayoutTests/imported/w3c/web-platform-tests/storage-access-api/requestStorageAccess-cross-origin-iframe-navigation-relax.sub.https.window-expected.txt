@@ -1,0 +1,4 @@
+
+PASS Same-site-initiated same-origin navigations preserve storage access
+PASS Same-site-initiated cross-origin navigations do not preserve storage access
+

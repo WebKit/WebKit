@@ -1,0 +1,22 @@
+
+FAIL SVGNumberList (rotate on text): animVal read before an attribute change reports the new item count assert_equals: animVal after the change expected 2 but got 3
+FAIL SVGNumberList (rotate on text): animVal read before an attribute change reports the new value assert_equals: expected 40 but got 10
+PASS SVGNumberList (rotate on text): the animVal list object survives an attribute change
+PASS SVGNumberList (rotate on text): animVal reports the new item count after a baseVal DOM change
+PASS SVGNumberList (rotate on text): animVal items are read only
+FAIL SVGLengthList (x on text): animVal read before an attribute change reports the new item count assert_equals: animVal after the change expected 2 but got 3
+FAIL SVGLengthList (x on text): animVal read before an attribute change reports the new value assert_equals: expected 7 but got 1
+PASS SVGLengthList (x on text): the animVal list object survives an attribute change
+PASS SVGLengthList (x on text): animVal reports the new item count after a baseVal DOM change
+PASS SVGLengthList (x on text): animVal items are read only
+FAIL SVGPointList (points on polyline, animatedPoints): animVal read before an attribute change reports the new item count assert_equals: animVal after the change expected 2 but got 3
+FAIL SVGPointList (points on polyline, animatedPoints): animVal read before an attribute change reports the new value assert_equals: expected 11 but got 1
+PASS SVGPointList (points on polyline, animatedPoints): the animVal list object survives an attribute change
+PASS SVGPointList (points on polyline, animatedPoints): animVal reports the new item count after a baseVal DOM change
+PASS SVGPointList (points on polyline, animatedPoints): animVal items are read only
+FAIL SVGTransformList (gradientTransform on linearGradient): animVal read before an attribute change reports the new item count assert_equals: animVal after the change expected 2 but got 3
+FAIL SVGTransformList (gradientTransform on linearGradient): animVal read before an attribute change reports the new value assert_equals: expected 11 but got 1
+PASS SVGTransformList (gradientTransform on linearGradient): the animVal list object survives an attribute change
+PASS SVGTransformList (gradientTransform on linearGradient): animVal reports the new item count after a baseVal DOM change
+PASS SVGTransformList (gradientTransform on linearGradient): animVal items are read only
+

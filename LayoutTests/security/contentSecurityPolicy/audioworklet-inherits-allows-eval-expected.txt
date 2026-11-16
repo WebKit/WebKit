@@ -1,0 +1,3 @@
+This tests that the Content Security Policy (CSP) of the owner document allows an AudioWorklet to use eval() because the CSP lists unsafe-eval in script-src.
+
+PASS eval() was allowed by CSP.

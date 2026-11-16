@@ -1,0 +1,12 @@
+
+PASS Sec-Speculation-Tags [ruleset-based]: integer tag
+PASS Sec-Speculation-Tags [ruleset-based]: object tag
+PASS Sec-Speculation-Tags [ruleset-based]: null value tag
+PASS Sec-Speculation-Tags [ruleset-based]: non-printable character tag
+PASS Sec-Speculation-Tags [ruleset-based]: string with non-printable character tag
+PASS Sec-Speculation-Tags [ruleset-based]: non-ascii string tag
+PASS Sec-Speculation-Tags [ruleset-based]: 0x19 tag
+PASS Sec-Speculation-Tags [ruleset-based]: 0x20 tag
+PASS Sec-Speculation-Tags [ruleset-based]: 0x7E tag
+PASS Sec-Speculation-Tags [ruleset-based]: 0x7F tag
+

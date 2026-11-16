@@ -1,0 +1,23 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<style>
+    * {
+        border: none;
+    }
+    :focus-within {
+        border: 2px solid green;
+    }
+</style>
+</head>
+<body>
+    <form id="form">
+    </form>
+    <div>
+        <input form="form" id="input" autofocus>
+    </div>
+    <script>
+        document.getElementById("input").focus();
+    </script>
+</body>
+</html>

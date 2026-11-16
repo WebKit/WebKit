@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Filter outsets must not expand an empty clip into non-empty composited bounds</title>
+<style>
+.collapsed {
+    height: 0;
+    overflow: hidden;
+}
+.blurred {
+    height: 100px;
+    background: green;
+    filter: blur(8px);
+    will-change: filter;
+}
+</style>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+window.onload = () => {
+    requestAnimationFrame(() => {
+        document.getElementById("layers").textContent = internals.layerTreeAsText(document);
+        if (window.testRunner)
+            testRunner.notifyDone();
+    });
+};
+</script>
+</head>
+<body>
+<div class="collapsed">
+    <div class="blurred"></div>
+</div>
+<pre id="layers"></pre>
+</body>
+</html>

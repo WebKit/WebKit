@@ -1,0 +1,19 @@
+Test passes if it does not crash.
+<iframe id=target></iframe>
+<span id=result></span>
+<script>
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+
+    const target = document.getElementById("target");
+    const contentWindow = target.contentWindow;
+    contentWindow.requestAnimationFrame(() => {
+        target.remove();
+        if (window.testRunner) {
+            setTimeout(() => { testRunner.notifyDone(); }, 0);
+        }
+    });
+    contentWindow.requestAnimationFrame(() => { });
+</script>

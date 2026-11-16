@@ -1,0 +1,8 @@
+This tests that an out-of-flow (position:absolute) image, which sits on no inline line box, still has a line of its own. Reading its line by text marker returns the object-replacement character so that line-by-line navigation announces the image instead of nothing. Should pass with the accessibility isolated tree both on and off.
+
+PASS: imageLineIsObjectReplacement === true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

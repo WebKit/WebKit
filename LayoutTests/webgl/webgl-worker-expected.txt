@@ -1,0 +1,7 @@
+WebGL supported in Worker: true
+
+WebGL2 supported in Worker: true
+
+WebGL supported in nested Worker: true
+
+WebGL2 supported in nested Worker: true

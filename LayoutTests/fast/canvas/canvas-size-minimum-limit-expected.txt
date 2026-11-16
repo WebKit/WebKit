@@ -1,0 +1,10 @@
+The limit on the canvas size should be at least 8192x8192.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS pixelColors[0] is 0
+PASS pixelColors[1] is 128
+PASS pixelColors[2] is 0
+PASS pixelColors[3] is 255
+

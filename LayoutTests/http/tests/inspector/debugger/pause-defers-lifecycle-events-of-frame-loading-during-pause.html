@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../resources/inspector-test.js"></script>
+<script>
+window.frameLoadEvents = 0;
+
+function addFrame()
+{
+    let iframe = document.createElement("iframe");
+    iframe.addEventListener("load", () => frameLoadEvents++);
+    iframe.src = "/inspector/debugger/resources/lifecycle-events-frame.html?stallFor=3";
+    document.body.appendChild(iframe);
+}
+
+function pauseHere()
+{
+    debugger;
+    return "resumed";
+}
+
+function test() {
+    let suite = InspectorTest.createAsyncSuite("Debugger.PauseDefersLifecycleEventsOfFrameLoadingDuringPause");
+
+    async function evaluate(expression) {
+        let {result} = await InspectorTest.mainFrameTarget.RuntimeAgent.evaluate.invoke({expression, objectGroup: "test", returnByValue: true});
+        return result.value;
+    }
+
+    async function waitForExpression(expression) {
+        for (let i = 0; i < 100; ++i) {
+            if (await evaluate(expression))
+                return true;
+            await new Promise((resolve) => setTimeout(resolve, 100));
+        }
+        return false;
+    }
+
+    suite.addTestCase({
+        name: "Debugger.PauseDefersLifecycleEventsOfFrameLoadingDuringPause.LoadFinishesWhilePaused",
+        description: "A frame that finishes loading while the page is paused should get its lifecycle events after resuming.",
+        async test() {
+            let target = InspectorTest.mainFrameTarget;
+            await evaluate("addFrame()");
+            InspectorTest.expectThat(await waitForExpression(`frames[0]?.document.readyState === "interactive"`), "The frame should be parsed while its image is still loading.");
+
+            let paused = WI.debuggerManager.awaitEvent(WI.DebuggerManager.Event.Paused);
+            target.RuntimeAgent.evaluate.invoke({expression: "pauseHere()", objectGroup: "test"}).catch(() => { });
+            await paused;
+
+            InspectorTest.expectThat(await waitForExpression(`frames[0].document.readyState === "complete"`), "The frame should finish loading while the page is paused.");
+            InspectorTest.expectEqual(await evaluate("frames[0].events.join(', ')"), "readystatechange:interactive, DOMContentLoaded", "The events after the frame was parsed should not be dispatched while the page is paused.");
+
+            let resumed = WI.debuggerManager.awaitEvent(WI.DebuggerManager.Event.Resumed);
+            await WI.debuggerManager.resume();
+            await resumed;
+
+            InspectorTest.expectThat(await waitForExpression(`frames[0].events.some((event) => event.startsWith("pageshow")) && frameLoadEvents`), "The frame should get its events after resuming.");
+            InspectorTest.log(`Events: ${await evaluate("frames[0].events.join(', ')")}`);
+            InspectorTest.expectEqual(await evaluate("frameLoadEvents"), 1, "The iframe element should get one load event.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "Debugger.PauseDefersLifecycleEventsOfFrameLoadingDuringPause.FrameRemovedWhileEventsAreDeferred",
+        description: "Removing a frame whose lifecycle events are deferred must not break the page after resuming.",
+        async test() {
+            await evaluate(`document.querySelector("iframe").remove()`);
+            await evaluate("frameLoadEvents = 0");
+            await evaluate("addFrame()");
+            InspectorTest.expectThat(await waitForExpression(`frames[0]?.document.readyState === "interactive"`), "The new frame should be parsed while its image is still loading.");
+
+            let paused = WI.debuggerManager.awaitEvent(WI.DebuggerManager.Event.Paused);
+            InspectorTest.mainFrameTarget.RuntimeAgent.evaluate.invoke({expression: "pauseHere()", objectGroup: "test"}).catch(() => { });
+            await paused;
+
+            InspectorTest.expectThat(await waitForExpression(`frames[0].document.readyState === "complete"`), "The new frame should finish loading while the page is paused.");
+            await evaluate(`document.querySelector("iframe").remove()`);
+            InspectorTest.expectEqual(await evaluate("frames.length"), 0, "The frame should be removed while the page is paused.");
+
+            let resumed = WI.debuggerManager.awaitEvent(WI.DebuggerManager.Event.Resumed);
+            await WI.debuggerManager.resume();
+            await resumed;
+
+            await new Promise((resolve) => setTimeout(resolve, 100));
+            let loadEventsBefore = await evaluate("frameLoadEvents");
+
+            await evaluate("addFrame()");
+            InspectorTest.expectThat(await waitForExpression(`frames[0]?.events?.some((event) => event.startsWith("pageshow")) && frameLoadEvents > ${loadEventsBefore}`), "A frame added after resuming should load normally.");
+            InspectorTest.expectEqual(await evaluate(`frameLoadEvents - ${loadEventsBefore}`), 1, "The new iframe element should get one load event.");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Test that a frame that finishes loading while the debugger is paused gets its load, readystatechange, pageshow and image load events after resuming.</p>
+</body>
+</html>

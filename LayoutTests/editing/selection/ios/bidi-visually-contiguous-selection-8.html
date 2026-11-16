@@ -1,0 +1,81 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true VisuallyContiguousBidiTextSelectionEnabled=true ] -->
+<html>
+<head>
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="utf-8">
+<style>
+body, html {
+    font-size: 18px;
+    font-family: system-ui;
+}
+
+div.overlay {
+    position: fixed;
+    background-color: tomato;
+    opacity: 0.15;
+    pointer-events: none;
+}
+
+p[dir="rtl"] {
+    max-width: 350px;
+    border: 1px solid tomato;
+    padding: 12px;
+    line-height: 2;
+}
+</style>
+<script>
+jsTestIsAsync = true;
+
+addEventListener("load", async () => {
+    description("Verifies that the selection extends to select the contents of the second line, and the ending selection handle is placed on the left.");
+
+    let paragraph = document.querySelector("p[dir='rtl']");
+    firstLineBounds = UIHelper.computeLineBounds(paragraph, 0, 1);
+    lastLineBounds = UIHelper.computeLineBounds(paragraph, 2, 3);
+
+    let overlay = document.querySelector("div.overlay");
+    overlay.style.top = `${firstLineBounds.top}px`;
+    overlay.style.left = `${firstLineBounds.left}px`;
+    overlay.style.width = `${firstLineBounds.width}px`;
+    overlay.style.height = `${firstLineBounds.height}px`;
+
+    await UIHelper.longPressAtPoint(firstLineBounds.left + firstLineBounds.width - 5, firstLineBounds.top + 5);
+    await UIHelper.waitForSelectionToAppear();
+
+    const endHandlePoint = UIHelper.midPointOfRect(await UIHelper.getSelectionEndGrabberViewRect());
+    const finalOffsetX = endHandlePoint.x - 0.5 * firstLineBounds.width;
+    const finalOffsetY = UIHelper.selectionHitTestOffset() + lastLineBounds.top + lastLineBounds.height / 2;
+    await UIHelper.sendEventStream(new UIHelper.EventStreamBuilder()
+        .begin(endHandlePoint.x, endHandlePoint.y)
+        .move(finalOffsetX, finalOffsetY, 0.8)
+        .wait(0.2)
+        .end()
+        .takeResult());
+    await UIHelper.ensurePresentationUpdate();
+
+    isVisuallyContiguous = await UIHelper.isSelectionVisuallyContiguous();
+    finalEndHandlePoint = UIHelper.midPointOfRect(await UIHelper.getSelectionEndGrabberViewRect());
+    shouldBeTrue("isVisuallyContiguous");
+    widthOfPeriod = (() => {
+        const span = document.createElement("span");
+        document.body.appendChild(span);
+        span.textContent = ".";
+        const width = span.getBoundingClientRect().width;
+        span.remove();
+        return width;
+    })();
+    shouldBeLessThanOrEqual("lastLineBounds.left - finalEndHandlePoint.x", "widthOfPeriod + 4");
+    shouldBeTrue("getSelection().toString().includes('The quick brown fox jumped over the lazy dog')");
+    finishJSTest();
+});
+</script>
+</head>
+<body>
+    <p dir="rtl">هذه جملة باللغة الإنجليزية: The quick brown fox jumped over the lazy dog.</p>
+    <div class="overlay"></div>
+    <div id="description"></div>
+    <div id="console"></div>
+</body>
+</html>

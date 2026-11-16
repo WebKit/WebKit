@@ -1,0 +1,9 @@
+This test verifies that hit testing returns the right element when an iframe is scrolled.
+
+PASS: accessibilityController.elementAtPoint(iframeCenterX + 100, iframeCenterY + 100).stringValue === 'AXValue: hello'
+PASS: accessibilityController.elementAtPoint(iframeCenterX + 100, iframeCenterY + 100).stringValue === 'AXValue: world'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

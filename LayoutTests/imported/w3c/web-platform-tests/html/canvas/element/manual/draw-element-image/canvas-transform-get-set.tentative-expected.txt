@@ -1,0 +1,31 @@
+
+
+
+FAIL getElementTransform() defaults to identity DOMMatrix The operation is not supported.
+FAIL getElementTransform() returns a new DOMMatrix object each time The operation is not supported.
+FAIL updateElementGeometry() with 2D DOMMatrix and reading back The operation is not supported.
+FAIL updateElementGeometry() with 3D DOMMatrix and reading back The operation is not supported.
+FAIL clearElementGeometry() and updateElementGeometry() resetting matrix to identity The operation is not supported.
+FAIL updateElementGeometry() with invalid DOMMatrixInit throws TypeError assert_throws_js: function "() => {
+        canvas.updateElementGeometry(inside, {canvasTransform: {a: 1, m11: 2}});
+      }" threw object "NotSupportedError: The operation is not supported." ("NotSupportedError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL getElementTransform() and updateElementGeometry() on disconnected elements throw InvalidStateError assert_throws_dom: function "() => {
+        canvas.getElementTransform(disconnected);
+      }" threw object "NotSupportedError: The operation is not supported." that is not a DOMException InvalidStateError: property "code" is equal to 9, expected 11
+FAIL getElementTransform() and updateElementGeometry() on elements outside <canvas> throw InvalidStateError assert_throws_dom: function "() => {
+        canvas.getElementTransform(outside);
+      }" threw object "NotSupportedError: The operation is not supported." that is not a DOMException InvalidStateError: property "code" is equal to 9, expected 11
+FAIL getElementTransform() and updateElementGeometry() on elements inside different <canvas> throw InvalidStateError assert_throws_dom: function "() => {
+        canvas.getElementTransform(otherInside);
+      }" threw object "NotSupportedError: The operation is not supported." that is not a DOMException InvalidStateError: property "code" is equal to 9, expected 11
+FAIL getElementTransform() and updateElementGeometry() on canvas without content=drawable throw InvalidStateError assert_throws_dom: function "() => {
+        canvasNotDrawable.getElementTransform(insideNotDrawable);
+      }" threw object "NotSupportedError: The operation is not supported." that is not a DOMException InvalidStateError: property "code" is equal to 9, expected 11
+FAIL getElementTransform() and updateElementGeometry() on non-drawable nested descendants throw InvalidStateError assert_throws_dom: function "() => {
+        canvas.getElementTransform(nestedNonDrawable);
+      }" threw object "NotSupportedError: The operation is not supported." that is not a DOMException InvalidStateError: property "code" is equal to 9, expected 11
+FAIL getElementTransform() and updateElementGeometry() on drawable nested descendants The operation is not supported.
+FAIL getElementTransform() and updateElementGeometry() on SVG element The operation is not supported.
+

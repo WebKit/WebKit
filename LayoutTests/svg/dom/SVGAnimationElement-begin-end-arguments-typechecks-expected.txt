@@ -1,0 +1,22 @@
+Check that invalid values of arguments throw TypeError.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+SVGAnimationElement
+
+beginElementAt(float offset)
+PASS animateElement.beginElementAt(0) did not throw exception.
+PASS animateElement.beginElementAt(NaN) threw exception TypeError: The provided value is non-finite.
+PASS animateElement.beginElementAt(Infinity) threw exception TypeError: The provided value is non-finite.
+PASS animateElement.beginElementAt() threw exception TypeError: Not enough arguments.
+
+endElementAt(float offset)
+PASS animateElement.endElementAt(0) did not throw exception.
+PASS animateElement.endElementAt(NaN) threw exception TypeError: The provided value is non-finite.
+PASS animateElement.endElementAt(Infinity) threw exception TypeError: The provided value is non-finite.
+PASS animateElement.endElementAt() threw exception TypeError: Not enough arguments.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

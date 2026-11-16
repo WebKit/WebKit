@@ -1,0 +1,6 @@
+
+PASS anchor-positioned element using anchor() in horizontal, right-to-left scroller
+PASS anchor-positioned element using position-area in horizontal, right-to-left scroller
+FAIL anchor-positioned element using anchor() in vertical-rl scroller assert_array_equals: expected property 0 to be 73 but got 58 (expected array [73, 158, 93, 178] got [58, 158, 78, 178])
+FAIL anchor-positioned element using position-area in vertical-rl scroller assert_array_equals: expected property 0 to be 73 but got 58 (expected array [73, 158, 93, 178] got [58, 158, 78, 178])
+

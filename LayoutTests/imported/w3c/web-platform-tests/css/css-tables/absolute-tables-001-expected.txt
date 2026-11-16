@@ -1,0 +1,20 @@
+Tests that percent lengths of an absolutely positioned table is resolved against the padding box of the parent.
+
+
+
+PASS .tbl 1
+PASS .tbl 2
+PASS .tbl 3
+PASS .tbl 4
+PASS .tbl 5
+PASS .tbl 6
+PASS .tbl 7
+PASS .tbl 8
+abc
+abc
+abc
+abc
+abc
+abc
+abc
+abc

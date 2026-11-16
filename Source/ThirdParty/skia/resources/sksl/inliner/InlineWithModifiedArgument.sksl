@@ -1,0 +1,12 @@
+uniform half4 colorGreen;
+
+inline half parameterWrite(half x) {
+    x *= x;
+    return x;
+}
+
+half4 main(float2 coords) {
+    half4 c = colorGreen;
+    c.g = parameterWrite(c.g);
+    return c;
+}

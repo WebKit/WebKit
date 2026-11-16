@@ -1,0 +1,77 @@
+<!DOCTYPE html><!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<script src="../../../../../resources/ui-helper.js"></script>
+<script src="../../../../../resources/js-test.js"></script>
+<style>
+#target {
+    width: 300px;
+    height: 300px;
+    border: 1px solid green;
+}
+
+#target-wrapper {
+    width: 320px;
+    height: 320px;
+    border: 1px solid blue;
+}
+</style>
+<script>
+jsTestIsAsync = true;
+receivedMouseOutOnTarget = false;
+receivedMouseOverOnWrapper = false;
+mouseOutRelatedTargetId = "none";
+mouseOverRelatedTargetId = "none";
+window.internals?.settings.setContentChangeObserverEnabled(true);
+window.internals?.setTopDocumentURLForQuirks("https://www.youtube.com");
+
+function idOf(node)
+{
+    return node ? node.id : "null";
+}
+
+addEventListener("load", async () => {
+    description("Verifies that the synthetic mouseout after a click moves the hover to the tapped element's parent instead of clearing it. Clearing it tells every enclosing element that the pointer left the page, which is enough for a site to dismiss its own controls.");
+
+    let targetContainer = document.getElementById("target-wrapper");
+    let target = document.getElementById("target");
+
+    target.addEventListener("click", () => testPassed("Clicked target"));
+
+    target.addEventListener("mouseout", event => {
+        receivedMouseOutOnTarget = true;
+        mouseOutRelatedTargetId = idOf(event.relatedTarget);
+    });
+
+    targetContainer.addEventListener("mouseover", event => {
+        if (event.target !== targetContainer)
+            return;
+        receivedMouseOverOnWrapper = true;
+        mouseOverRelatedTargetId = idOf(event.relatedTarget);
+    });
+
+    await UIHelper.activateElement(target);
+
+    // The tapped element still gets its mouseout, which is what dismisses a tooltip.
+    await shouldBecomeEqual("receivedMouseOutOnTarget", "true");
+
+    // The pointer moved to the parent rather than to nothing, so the event says where it went.
+    shouldBeEqualToString("mouseOutRelatedTargetId", "target-wrapper");
+
+    // The parent is now the hovered element, dispatched in the same step as the mouseout above.
+    shouldBeTrue("receivedMouseOverOnWrapper");
+    shouldBeEqualToString("mouseOverRelatedTargetId", "target");
+
+    finishJSTest();
+});
+</script>
+</head>
+<body>
+    <div id="target-wrapper">
+        <div id="target"></div>
+    </div>
+    <pre id="description"></pre>
+    <pre id="console"></pre>
+</body>
+</html>

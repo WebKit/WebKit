@@ -1,0 +1,60 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true SelectionHonorsOverflowScrolling=true contentInset.top=100 ] -->
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="utf-8">
+<script src="../../../resources/ui-helper.js"></script>
+<script src="../../../resources/js-test.js"></script>
+<style>
+body, html {
+    font-size: 16px;
+    font-family: system-ui;
+    margin: 0;
+}
+
+.target {
+    text-align: center;
+    font-size: 40px;
+    line-height: 40px;
+}
+
+.target > span {
+    border: 1px solid orange;
+}
+</style>
+<script>
+jsTestIsAsync = true;
+
+addEventListener("load", async () => {
+    description("Verifies that the selection appears in the right location after the view becomes first responder, after being reparented");
+
+    await UIHelper.longPressElement(document.querySelector(".target > span"));
+    selectionRectsBefore = await UIHelper.waitForSelectionToAppear();
+
+    await UIHelper.removeViewFromWindow();
+    await new Promise(resolve => {
+        testRunner.runUIScript(`
+            uiController.addViewToWindow();
+            uiController.becomeFirstResponder()
+        `, resolve);
+    });
+
+    selectionRectsAfter = await UIHelper.waitForSelectionToAppear();
+
+    shouldBe("selectionRectsBefore.length", "1");
+    shouldBe("selectionRectsAfter.length", "1");
+    shouldBe("selectionRectsBefore[0].top", "selectionRectsAfter[0].top");
+    shouldBe("selectionRectsBefore[0].left", "selectionRectsAfter[0].left");
+    shouldBe("selectionRectsBefore[0].width", "selectionRectsAfter[0].width");
+    shouldBe("selectionRectsBefore[0].height", "selectionRectsAfter[0].height");
+
+    finishJSTest();
+});
+</script>
+</head>
+<body>
+    <p class="target"><span>Select</span> me</p>
+    <div id="description"></div>
+    <div id="console"></div>
+</body>
+</html>

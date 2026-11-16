@@ -1,0 +1,7 @@
+PASS textContentTypeForLoneTextField is ''
+PASS textContentTypeForTextFieldBeforePassword is 'username'
+PASS textContentTypeForTextFieldWithAutocompleteUsername is 'username'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,12 @@
+<style>
+@keyframes anim {
+  from { color:red; }
+  to { color:green; }
+}
+.flex { display:flex; }
+.host::before { display:inline-block; content:'On the same'; }
+.host::after { display:inline-block; content:'line'; animation-duration:0s; animation-name:anim; animation-fill-mode:forwards; }
+</style>
+<div class=flex>
+<div class=host> </div>
+</div>

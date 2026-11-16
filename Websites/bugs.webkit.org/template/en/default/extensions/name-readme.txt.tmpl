@@ -1,0 +1,24 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+Normal templates go in this directory. You can load them in your
+code like this:
+
+use Bugzilla::Error;
+my $template = Bugzilla->template;
+$template->process('[% name FILTER lower %]/some-template.html.tmpl')
+  or ThrowTemplateError($template->error());
+
+That would be how to load a file called <kbd>some-template.html.tmpl</kbd> that
+was in this directory.
+
+Note that you have to be careful that the full path of your template
+never conflicts with a template that exists in Bugzilla or in 
+another extension, or your template might override that template. That's why
+we created this directory called '[% name FILTER lower %]' for you, so you
+can put your templates in here to help avoid conflicts.

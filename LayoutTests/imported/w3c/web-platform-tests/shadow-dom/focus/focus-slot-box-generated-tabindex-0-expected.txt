@@ -1,0 +1,4 @@
+Content
+
+PASS slot with tabindex=0 that generates a box should be focusable
+

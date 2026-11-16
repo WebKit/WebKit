@@ -1,0 +1,8 @@
+Test element
+Button element Link element
+
+PASS Regular div should not match :active by default
+PASS Button should not match :active by default
+PASS Link should not match :active by default
+PASS No elements should match :active by default via querySelectorAll
+

@@ -1,0 +1,18 @@
+<!DOCTYPE html><!-- webkit-test-runner [ SmartListsAvailable=true ] -->
+<html>
+<head>
+<script src="../editing.js"></script>
+<script src="../../resources/dump-as-markup.js"></script>
+</head>
+<body>
+<div id="test" contenteditable></div>
+<script>
+Markup.description('Typing a multi-digit number (up to 3 digits) followed by ". " at the start of two consecutive lines should auto-convert them into an ordered list whose start attribute matches the first number typed.');
+
+var test = document.getElementById('test');
+test.focus();
+[...'123. Hello\n125. World'].forEach(typeCharacterCommand);
+Markup.dump('test');
+</script>
+</body>
+</html>

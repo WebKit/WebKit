@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Performance test for :where()/:is() class rule indexing</title>
+</head>
+<body>
+<div id="container" style="height: 1px; overflow: hidden;"></div>
+<script src="../resources/runner.js"></script>
+<script>
+
+var ruleClasses = ['heading-1', 'heading-2', 'heading-3', 'heading-4', 'heading-5', 'heading-6',
+    'paragraph', 'link', 'quote', 'bold', 'italic', 'mono', 'pre', 'list-ord', 'list-unord',
+    'list-item', 'tbl', 'image', 'rule', 'def-list'];
+var style = document.createElement('style');
+var css = '';
+for (var i = 0; i < ruleClasses.length; i++)
+    css += '.prose :where(.' + ruleClasses[i] + '):not(:where([class~="not-prose"], [class~="not-prose"] *)) { margin: ' + (i + 1) + 'px; }\n';
+style.textContent = css;
+document.head.appendChild(style);
+
+var container = document.getElementById('container');
+for (var i = 0; i < 25000; i++) {
+    var el = document.createElement('div');
+    el.textContent = 'x';
+    if (i % 500 === 0)
+        el.className = 'not-prose';
+    container.appendChild(el);
+}
+
+PerfTestRunner.measureRunsPerSecond({
+    description: "Style recalculation with :where(.class) rules on a large DOM. Tests that single-argument :where()/:is() rules are indexed by class.",
+    run: function() {
+        container.classList.add('prose');
+        container.offsetHeight;
+
+        container.classList.remove('prose');
+        container.offsetHeight;
+    }
+});
+</script>
+</body>
+</html>

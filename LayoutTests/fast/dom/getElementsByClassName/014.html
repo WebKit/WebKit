@@ -1,0 +1,14 @@
+<html class="a A">
+ <head>
+  <title>document.getElementsByClassName(): case sensitive (quirks mode)</title>
+  <script src="resources/common.js"></script>
+ </head>
+ <body class="a a">
+  <p id="r">FAIL (script did not run)</p>
+  <script>
+    // We differ from Opera's implementation here.  We are case-insensitive in quirks mode.
+    // t(document.getElementsByClassName("A a"), [document.documentElement])
+    t(document.getElementsByClassName("A a"), [document.documentElement, document.body])
+  </script>
+ </body>
+</html>

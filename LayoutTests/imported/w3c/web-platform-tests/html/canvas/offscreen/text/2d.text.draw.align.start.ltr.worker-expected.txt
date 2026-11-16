@@ -1,0 +1,3 @@
+
+PASS textAlign start with ltr is the left edge
+

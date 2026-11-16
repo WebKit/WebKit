@@ -1,0 +1,4 @@
+X
+
+FAIL cross-origin(anonymous) blocks cross-origin font loading without CORS headers assert_false: Cross-origin font without CORS headers should not load with cross-origin(anonymous) expected false got true
+

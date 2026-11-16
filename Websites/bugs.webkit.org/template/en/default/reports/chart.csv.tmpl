@@ -1,0 +1,32 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[% colsepchar = user.settings.csv_colsepchar.value %]
+
+[% data = chart.data %]
+Date\Series
+[% FOREACH label = chart.labels %]
+  [% colsepchar %][% label FILTER csv %]
+[% END %]
+[%# The data, which is in the correct format for GD, is conceptually the wrong
+  # way round for CSV output. So, we need to invert it here, which is why 
+  # these loops aren't just plain FOREACH.
+  #%]
+[% i = 0 %]
+[% WHILE i < data.0.size %]
+  [% j = 0 %]
+  [% WHILE j < data.size %]
+    [% IF j > 0 %]
+      [% colsepchar %]
+    [% END %]
+    [% data.$j.$i %]
+    [% j = j + 1 %]
+  [% END %]
+  [% i = i + 1 %]
+  
+[% END %]  

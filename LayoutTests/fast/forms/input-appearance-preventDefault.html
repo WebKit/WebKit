@@ -1,0 +1,34 @@
+<html>
+<head>
+<script>
+async function test()
+{
+    if (!window.testRunner)
+        return;
+
+    testRunner.waitUntilDone();
+    await eventSender.asyncMouseMoveTo(25, 55);
+    await eventSender.asyncMouseDown();
+    await eventSender.asyncMouseUp();
+    testRunner.notifyDone();
+}
+
+function prevDefaultForEvent( evt ) {
+    log(evt.type + " on target " + evt.target);
+    evt.preventDefault();
+}
+
+function log(text) {
+    document.getElementById('result').innerHTML = document.getElementById('result').innerHTML + "<br>" + text;
+}
+</script>
+</head>
+<body onload="test()">
+<br>
+This tests that preventDefault called onmousedown will prevent a caret from being placed in the text field.
+<input id="tf1" style="-khtml-appearance: textfield; position: absolute; top: 50; left: 10;" onmousedown="prevDefaultForEvent(event)" value="No caret should be here"></input>
+<div id="result" style="position: absolute; top: 70; left: 10;">
+</div>
+</body>
+</html>
+

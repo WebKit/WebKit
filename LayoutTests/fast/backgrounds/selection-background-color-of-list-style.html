@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<style>
+ul>li::selection { background: green; }
+ol>li::selection { background: yellow; }
+</style>
+<div>
+  Test passes if backgrounds of list style in ul and ol are each green and yellow.
+  <ul>
+    <li>One</li>
+    <li>Two</li>
+  </ul>
+  <ol>
+    <li>One</li>
+    <li>Two</li>
+  </ol>
+</div>
+<script>
+var range = document.createRange();
+range.setStartBefore(document.querySelector('ul'));
+range.setEndAfter(document.querySelector('ol'));
+getSelection().addRange(range);
+</script>

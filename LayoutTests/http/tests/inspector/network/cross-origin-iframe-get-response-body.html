@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../resources/inspector-test.js"></script>
+<script>
+function loadCrossOriginIframe() {
+    let iframe = document.createElement("iframe");
+    // Main page is served from 127.0.0.1:8000; localhost:8000 is cross-origin.
+    // Under Site Isolation, this iframe loads in a separate WebContent process.
+    iframe.src = "http://localhost:8000/inspector/network/resources/echo.py?mimetype=text/plain&content=cross-origin-response-body-test";
+    document.body.appendChild(iframe);
+}
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("Network.getResponseBody.CrossOriginIframe");
+
+    suite.addTestCase({
+        name: "Network.getResponseBody.CrossOriginIframe.TextContent",
+        description: "Should be able to retrieve response body for a resource loaded in a cross-origin iframe.",
+        test(resolve, reject) {
+            WI.Frame.awaitEvent(WI.Frame.Event.ChildFrameWasAdded)
+                .then((event) => {
+                    let childFrame = event.data.childFrame;
+                    InspectorTest.log("Child frame added: " + childFrame.url);
+                    InspectorTest.expectThat(childFrame.url.includes("localhost"), "Child frame should be cross-origin (localhost).");
+
+                    let mainResource = childFrame.mainResource;
+                    InspectorTest.expectThat(mainResource instanceof WI.Resource, "Child frame should have a main resource.");
+
+                    // Wait for the resource to finish loading if it hasn't already.
+                    if (mainResource.finished)
+                        return mainResource.requestContent();
+
+                    return new Promise((resolveLoad) => {
+                        mainResource.singleFireEventListener(WI.Resource.Event.LoadingDidFinish, () => resolveLoad());
+                    }).then(() => mainResource.requestContent());
+                })
+                .then(({error, sourceCode, content, rawBase64Encoded}) => {
+                    InspectorTest.expectThat(!error, "Should not have an error retrieving content.");
+                    InspectorTest.expectEqual(rawBase64Encoded, false, "Content should not be base64 encoded.");
+                    InspectorTest.expectEqual(content, "cross-origin-response-body-test", "Content should match expected response body.");
+                })
+                .then(resolve, reject);
+
+            InspectorTest.evaluateInPage("loadCrossOriginIframe()");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests that Network.getResponseBody works for resources loaded in a cross-origin iframe. Under Site Isolation, this exercises the BackendResourceDataStore and reverse IPC path through ProxyingNetworkAgent.</p>
+</body>
+</html>

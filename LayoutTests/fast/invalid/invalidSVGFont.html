@@ -1,0 +1,22 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <style type="text/css">
+    @font-face {
+        font-family: My DejaVu Sans Mono;
+        src: url(resources/svgFontWrongNamespace.svg#MyDejaVuSansMono) format("svg"), local("DejaVu Sans Mono");
+    }
+    .customFont {
+        font-family: My DejaVu Sans Mono;
+    }
+    </style>
+</head>
+<body>
+<p>Test case for bug <a href="https://bugs.webkit.org/show_bug.cgi?id=18862">18862</a>: Crash while handling SVG font in the wrong namespace imported with @font-face</p>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+</script>
+<p class="customFont"> PASSED (did not crash or ASSERT)</p>
+</body></html>

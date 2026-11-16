@@ -1,0 +1,15 @@
+Test that a frame commit produces exactly one Page.frameNavigated under Site Isolation, so the frontend's frame tree and resource lists are not wiped by a duplicate.
+
+
+== Running test suite: SiteIsolation.Page.FrameNavigatedSingleReport
+-- Running test case: SiteIsolation.Page.FrameNavigatedSingleReport.SameOriginNestedIFrames
+PASS: Same-origin child frame should appear in WI.networkManager.frames.
+PASS: Same-origin grandchild frame should appear in WI.networkManager.frames.
+PASS: Frame (subframe) should be reported by exactly one Page.frameNavigated, got 1.
+PASS: Frame (subframe) should be reported by exactly one Page.frameNavigated, got 1.
+PASS: Child's parent should be the main frame.
+PASS: Grandchild's parent should still be the child frame.
+PASS: Child frame should still list the grandchild as a child.
+PASS: Child frame's stylesheet subresource should still be in its resource collection.
+PASS: Page target should resolve the proxy-reported frameId and return the child frame's content.
+

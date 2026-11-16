@@ -1,0 +1,6 @@
+
+PASS Inserting and removing text in a descendant of the placeholder label option
+PASS Changing the data of text in a descendant of the placeholder label option
+PASS Inserting and removing an element containing text in a descendant of the placeholder label option
+PASS Moving text into and out of a descendant of the placeholder label option
+

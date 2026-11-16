@@ -1,0 +1,35 @@
+Testing the MediaControls constructor.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS mediaControls.element.localName is "div"
+PASS mediaControls.element.className is "media-controls"
+
+PASS mediaControls.width is 300
+PASS mediaControls.height is 150
+PASS mediaControls.layoutTraits is an instance of MacOSLayoutTraits
+PASS mediaControls.layoutTraits.isFullscreen is false
+
+PASS mediaControls.playPauseButton is an instance of PlayPauseButton
+PASS mediaControls.airplayButton is an instance of AirplayButton
+PASS mediaControls.pipButton is an instance of PiPButton
+PASS mediaControls.fullscreenButton is an instance of FullscreenButton
+PASS mediaControls.statusLabel is an instance of StatusLabel
+PASS mediaControls.timeControl is an instance of TimeControl
+PASS mediaControls.airplayPlacard is an instance of AirplayPlacard
+PASS mediaControls.invalidPlacard is an instance of InvalidPlacard
+PASS mediaControls.pipPlacard is an instance of PiPPlacard
+
+PASS mediaControls.bottomControlsBar is an instance of ControlsBar
+PASS mediaControls.bottomControlsBar.element.localName is "div"
+PASS mediaControls.bottomControlsBar.element.classList.contains('controls-bar') is true
+PASS mediaControls.bottomControlsBar.element.classList.contains('bottom') is true
+
+PASS mediaControlsWithArguments.width is 600
+PASS mediaControlsWithArguments.height is 300
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,13 @@
+<script>
+if (window.testRunner)
+     testRunner.dumpEditingCallbacks();
+</script>
+<p>This tests inserting a paragraph separator before a table.  There should be an empty paragraph before the table and the caret should be just before the table.</p>
+<div contenteditable="true" id="div"><table border="1"><tr><td>foo</td></tr></table></div>
+
+<script>
+var sel = window.getSelection();
+var div = document.getElementById("div");
+sel.setPosition(div, 0);
+document.execCommand("InsertParagraph");
+</script>

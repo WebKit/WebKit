@@ -1,0 +1,82 @@
+This license applies to all parts of web-tooling-benchmark that are not
+externally maintained libraries. The externally maintained libraries
+used by web-tooling-benchmark are:
+
+  - The Backbone.js distribution, located in third_party/backbone-1.6.1.js.
+    This is copyrighted by Jeremy Ashkenas, DocumentCloud, and released
+    under the terms of the MIT license.
+
+  - The lexer from the CoffeeScript project, located in
+    third_party/coffeescript-lexer-2.0.1.coffee, which is copyrighted by
+    Jeremy Ashkenas, and relased under the terms of the MIT license.
+
+  - The jQuery distribution, located in third_party/jquery-3.7.1.js. This
+    is copyrighted by the JS Foundation and other contributors, and
+    released under the terms of the MIT license.
+
+  - The Lodash distribution, located in third_party/lodash.core-4.17.21.js
+    and third_party/lodash-4.17.4.min.js.map. This is copyrighted by
+    the JS Foundation and other contributors, and released under the
+    terms of the MIT license.
+
+  - The MooTools distribution, located in third_party/mootools-core-1.6.0.js.
+    This is copyrighted by Valerio Proietti, and released under the
+    terms of the MIT license.
+
+  - The Preact distribution, located in third_party/preact-8.2.5.js and
+    third_party/preact-10.27.1.min.module.js.map. This is copyrighted by Jason Miller,
+    and released under the terms of the MIT license.
+
+  - The Redux distribution, located in third_party/redux-5.0.1.min.js.
+    This is copyrighted by Dan Abramov, and released under the terms
+    of the MIT license.
+
+  - The source-map distribution, located in
+    third_party/source-map.min-0.5.7.map. This is copyrighted by the
+    Mozilla Foundation and contributors, and released under the terms
+    of a 3-clause BSD license.
+
+  - Several tests from the TodoMVC distribution, located in
+    third_party/speedometer-es2015-test-2.0.js and third_party/todomvc.
+    These are copyrighted by Addy Osmani, Sindre Sorhus, Pascal
+    Hartig, Stephen Sawchuk, and released under the terms of the
+    MIT license.
+
+  - The Underscore.js distribution, located in
+    third_party/underscore-1.13.7.js and
+    third_party/underscore-1.13.7.min.js.map. This is copyrighted by
+    Jeremy Ashkenas, and released under the terms of the MIT license.
+
+  - The VueJS distribution, located in
+    third_party/vue-3.5.18.runtime.esm-browser.js. This is copyrighted
+    Yuxi (Evan) You, and released under the terms of the MIT license.
+
+These libraries have their own licenses; we recommend you read them,
+as their terms may differ from the terms below.
+
+Copyright 2017, the V8 project authors. All rights reserved.
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are
+met:
+
+    * Redistributions of source code must retain the above copyright
+      notice, this list of conditions and the following disclaimer.
+    * Redistributions in binary form must reproduce the above
+      copyright notice, this list of conditions and the following
+      disclaimer in the documentation and/or other materials provided
+      with the distribution.
+    * Neither the name of Google Inc. nor the names of its
+      contributors may be used to endorse or promote products derived
+      from this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.

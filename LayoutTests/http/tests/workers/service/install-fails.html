@@ -1,0 +1,26 @@
+<html>
+<head>
+<script src="resources/sw-test-pre.js"></script>
+</head>
+<body>
+<script>
+navigator.serviceWorker.register("resources/install-fails-worker.js", { }).then(function(r) {
+     registration = r;
+     worker = registration.installing;
+     worker.addEventListener("statechange", function() {
+         if (worker.state === "redundant") {
+             log("PASS: Worker became redundant");
+             if (registration.installing)
+                 log("FAIL: registration.installing should be null");
+             else
+                 log("PASS: registration.installing should be null");
+             finishSWTest();
+         }
+     });
+     waitForState(registration.installing, "installed").then(function() {
+         registration.waiting.postMessage("CheckReceivedPageState");
+     });
+});
+</script>
+</body>
+</html>

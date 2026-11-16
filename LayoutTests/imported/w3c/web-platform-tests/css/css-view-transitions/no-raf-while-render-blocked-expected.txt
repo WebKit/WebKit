@@ -1,0 +1,3 @@
+
+PASS rAF is blocked until prepare callback
+

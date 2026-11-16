@@ -1,0 +1,16 @@
+Policy delegate: attempt to load http://127.0.0.1:8000/security/resources/empty.html?denied-immediately with navigation type 'other'
+Policy delegate: attempt to load http://127.0.0.1:8000/security/resources/empty.html?denied-later with navigation type 'other'
+Tests that a cross-document navigation.navigate() that the client denies fires the navigate event, then navigateerror, and rejects its finished promise, whether the client answers right away or later.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+The client denies the navigation right away:
+PASS events is "[\"navigate\",\"navigateerror: AbortError\",\"finished rejected: AbortError\"]"
+The client denies the navigation later:
+PASS events is "[\"navigate\",\"navigateerror: AbortError\",\"finished rejected: AbortError\"]"
+PASS frameURL is originalFrameURL
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

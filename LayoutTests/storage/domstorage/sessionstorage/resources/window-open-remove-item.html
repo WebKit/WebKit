@@ -1,0 +1,15 @@
+<html>
+<body>
+<script>
+
+if (sessionStorage.getItem("key") != "value")
+    localStorage.setItem("result", "fail");
+else {
+    sessionStorage.removeItem("key");
+    sessionStorage.setItem("key", "newValue");
+    localStorage.setItem("result", "pass");
+}
+
+</script>
+</body>
+</html>

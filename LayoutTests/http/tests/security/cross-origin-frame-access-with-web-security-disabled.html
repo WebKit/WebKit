@@ -1,0 +1,23 @@
+<!DOCTYPE html><!-- webkit-test-runner [ WebSecurityEnabled=false SiteIsolationEnabled=false ] -->
+<script src="/js-test-resources/testharness.js"></script>
+<script src="/js-test-resources/testharnessreport.js"></script>
+<body>
+<script>
+promise_test(async () => {
+    const frame = document.createElement("iframe");
+    const loaded = new Promise(resolve => frame.onload = resolve);
+    frame.src = "http://localhost:8000/security/resources/blank.html";
+    document.body.append(frame);
+    await loaded;
+    assert_equals(frame.contentDocument.URL, frame.src);
+}, "With web security disabled, a document can access a cross-site frame in another agent cluster");
+
+promise_test(async t => {
+    const url = "http://localhost:8000/security/resources/blank.html";
+    const popup = window.open(url);
+    t.add_cleanup(() => popup.close());
+    // The listener is added to the initial about:blank Window, so it only fires if the document reuses that Window.
+    await new Promise(resolve => popup.addEventListener("load", resolve));
+    assert_equals(popup.document.URL, url);
+}, "With web security disabled, a popup's initial Window is reused for a cross-site document in another agent cluster");
+</script>

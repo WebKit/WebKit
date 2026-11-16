@@ -1,0 +1,11 @@
+Verifies that it is possible to tap a button after long pressing an image with active event listeners. To manually run the test, long press the image to show the context menu, and then tap the button.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+PASS Presented the context menu
+PASS Dismissed the context menu
+PASS Clicked the button
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Tap here

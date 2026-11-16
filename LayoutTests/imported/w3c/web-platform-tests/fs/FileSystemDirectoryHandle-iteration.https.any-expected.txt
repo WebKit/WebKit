@@ -1,0 +1,8 @@
+
+PASS returning early from an iteration doesn't crash
+PASS @@asyncIterator: full iteration works
+PASS entries: full iteration works
+PASS values: full iteration works
+PASS keys: full iteration works
+PASS iteration while iterator gets garbage collected
+

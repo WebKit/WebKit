@@ -1,0 +1,28 @@
+[Worker] Test generating a RSA keypair using RSA-OAEP algorithm in workers.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Starting worker: resources/rsa-generate-key.js
+PASS [Worker] crypto.subtle.generateKey({name: "RSA-OAEP", modulusLength: 2048, publicExponent: publicExponent, hash: "sha-1"}, extractable, ["sign"]) rejected promise  with SyntaxError: A required parameter was missing or out-of-range.
+PASS [Worker] crypto.subtle.generateKey({name: "RSASSA-PKCS1-v1_5", modulusLength: 0, publicExponent: publicExponent, hash: "sha-1"}, extractable, ["sign", "verify"]) rejected promise  with OperationError: The operation failed for an operation-specific reason.
+[Worker] Generating a key...
+PASS [Worker] keyPair.toString() is '[object Object]'
+PASS [Worker] keyPair.publicKey.type is 'public'
+PASS [Worker] keyPair.publicKey.extractable is true
+PASS [Worker] keyPair.publicKey.algorithm.name is 'RSA-OAEP'
+PASS [Worker] keyPair.publicKey.algorithm.modulusLength is 2048
+PASS [Worker] bytesToHexString(keyPair.publicKey.algorithm.publicExponent) is '010001'
+PASS [Worker] keyPair.publicKey.algorithm.hash.name is 'SHA-1'
+PASS [Worker] keyPair.publicKey.usages is ['encrypt', 'wrapKey']
+PASS [Worker] keyPair.privateKey.type is 'private'
+PASS [Worker] keyPair.privateKey.extractable is true
+PASS [Worker] keyPair.privateKey.algorithm.name is 'RSA-OAEP'
+PASS [Worker] keyPair.privateKey.algorithm.modulusLength is 2048
+PASS [Worker] bytesToHexString(keyPair.privateKey.algorithm.publicExponent) is '010001'
+PASS [Worker] keyPair.privateKey.algorithm.hash.name is 'SHA-1'
+PASS [Worker] keyPair.privateKey.usages is ['decrypt', 'unwrapKey']
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,54 @@
+<style>
+    .checkbox {
+        width: 44px;
+        height: 44px;
+        font: 11px system-ui;
+        border: 0.3em solid currentColor;
+        border-radius: 0.5em;
+        vertical-align: text-top;
+        display: inline-block;
+        margin: 2px;
+        margin-top: 3px;
+    }
+
+    .checkmark {
+        font: 40px system-ui;
+        text-align: center;
+        display: content;
+        height: 100%;
+        width: 100%;
+        line-height: 100%; 
+    }
+
+    .enabled .checkbox {
+        color: darkblue;
+    }
+
+    .disabled .checkbox {
+        color: darkgreen;
+        border-color: color-mix(in srgb, currentColor 30%, transparent);
+        background-color: color-mix(in srgb, currentColor 10%, transparent);
+    }
+
+    .disabled .checkmark {
+        color: color-mix(in srgb, currentColor 30%, transparent);
+     }
+
+    .container {
+        display: inline-block;
+    }
+</style>
+<body>
+    <div class="enabled container">
+        <div class="checkbox"></div>
+        <div class="checkbox">
+            <div class="checkmark">&#x2713;</div>
+        </div>
+    </div>
+    <div class="disabled container">
+        <div class="checkbox"></div>
+        <div class="checkbox">
+            <div class="checkmark">&#x2713;</div>
+        </div>
+    </div>
+</body>

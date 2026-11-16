@@ -1,0 +1,23 @@
+Tests font metric overrides across local font cache entries and URL fonts, including updates to loaded descriptors.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS reference.offsetWidth is 100
+PASS urlFont.offsetWidth is 100
+PASS noOverride.offsetHeight is 100
+PASS reference.offsetHeight is 70
+PASS ascent.offsetHeight is 120
+PASS descent.offsetHeight is 130
+PASS lineGap.offsetHeight is 140
+PASS urlFont.offsetHeight is 200
+PASS reference.offsetHeight is 120
+PASS reference.offsetHeight is 70
+PASS reference.offsetHeight is 130
+PASS reference.offsetHeight is 70
+PASS reference.offsetHeight is 140
+PASS reference.offsetHeight is 70
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,36 @@
+<html>
+    <head>
+        <title>Limit cloneChild Recursion Test</title>
+        <script>
+            window?.testRunner?.dumpAsText();
+
+            function runTest() {
+                const rootContainer = document.createElement("div");
+                document.body.appendChild(rootContainer);
+
+                let tempNode = rootContainer;
+                for (let i = 0; i < 1030; i++) {
+                    tempNode.appendChild(document.createElement("div"));
+                    tempNode = tempNode.children[0];
+                }
+
+                let clonedRootContainer = rootContainer.cloneNode(true);
+                let totalDepth = 0;
+                while (clonedRootContainer.childNodes.length > 0) {
+                    totalDepth++;
+                    clonedRootContainer = clonedRootContainer.childNodes[0];
+                }
+                document.getElementById("result").innerHTML =
+                    totalDepth == 1024
+                        ? "PASS"
+                        : `FAIL (Actual depth: ${totalDepth})`;
+            }
+        </script>
+    </head>
+
+    <body onload="runTest()">
+        <p>Test to validate upper limit on recursion depth for cloneChild.</p>
+        <div>Should say PASS:</div>
+        <div id="result"></div>
+    </body>
+</html>

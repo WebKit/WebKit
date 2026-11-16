@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>This tests moving the focus backward across a shadow host whose slot has no assigned nodes and no fallback content.<br>
+To manually test, focus the second input element and press Shift+Tab. WebKit should focus the first input element.</p>
+<div id="container">
+<input id="first">
+<div id="host"></div>
+<input id="second">
+</div>
+<pre id="log"></pre>
+<script>
+
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+host.attachShadow({mode: 'closed'}).innerHTML = '<slot></slot>';
+
+second.focus();
+if (window.eventSender) {
+    eventSender.keyDown('\t', ['shiftKey']);
+    log.textContent = document.activeElement == first ? 'PASS' : 'FAIL';
+    container.remove();
+}
+
+</script>
+</body>
+</html>

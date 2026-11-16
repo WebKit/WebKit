@@ -1,0 +1,34 @@
+Tests getUserMedia called from a background thread.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+tabState = 'background'
+PASS navigator.mediaDevices.getUserMedia({audio:true}).then(gotStream).catch(fail) did not throw exception.
+PASS navigator.mediaDevices.getUserMedia({audio:true}).then(gotStream).catch(fail) did not throw exception.
+PASS navigator.mediaDevices.getUserMedia({audio:true}).then(gotStream).catch(fail) did not throw exception.
+PASS navigator.mediaDevices.getUserMedia({audio:true}).then(gotStream).catch(fail) did not throw exception.
+
+** timer fired **
+PASS tabState is 'background'
+tabState = 'foreground'
+
+** getUserMedia() promise resolved **
+PASS tabState is 'foreground'
+PASS stream.getAudioTracks().length is 1
+
+** getUserMedia() promise resolved **
+PASS tabState is 'foreground'
+PASS stream.getAudioTracks().length is 1
+
+** getUserMedia() promise resolved **
+PASS tabState is 'foreground'
+PASS stream.getAudioTracks().length is 1
+
+** getUserMedia() promise resolved **
+PASS tabState is 'foreground'
+PASS stream.getAudioTracks().length is 1
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

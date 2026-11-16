@@ -1,0 +1,6 @@
+
+PASS Parent listener on contentWindow of a sandbox='allow-same-origin' iframe is invoked and can cancel the event
+PASS Parent listener on contentDocument of a sandbox='allow-same-origin' iframe is invoked and can cancel the event
+PASS Parent listener on an element in a sandbox='allow-same-origin' iframe is invoked and can cancel the event
+PASS Inline event handler attribute in a sandbox='allow-same-origin' iframe is not invoked
+

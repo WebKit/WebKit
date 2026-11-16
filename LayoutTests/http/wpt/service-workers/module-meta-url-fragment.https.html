@@ -1,0 +1,74 @@
+<html>
+<head>
+<title>Service Worker Fetch Modules Fragment of import.meta.url</title>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+</head>
+<body>
+<script>
+const scope = "resources/module-meta-url-fragment.html";
+let registration;
+
+function withFrame(url)
+{
+    return new Promise((resolve, reject) => {
+        let frame = document.createElement('iframe');
+        let counter = 0;
+        function next() {
+            if (++counter === 2)
+                resolve(frame);
+        }
+        window.addEventListener('message', function(ev) {
+            try {
+                if (ev.origin !== document.location.origin)
+                    return;
+                let metaURLs = JSON.parse(ev.data);
+                assert_equals(metaURLs.length, 4);
+                // We are reusing Response#url from ServiceWorker directly without considering fragment propagation.
+                assert_equals(metaURLs[0], `https://localhost:9443/WebKit/service-workers/resources/module-meta-url.js#fragment`);
+                assert_equals(metaURLs[1], `https://localhost:9443/WebKit/service-workers/resources/module-meta-url.js#fragment`);
+                assert_equals(metaURLs[2], `https://localhost:9443/WebKit/service-workers/resources/module-meta-url.js#fragment`);
+                assert_equals(metaURLs[3], `https://localhost:9443/WebKit/service-workers/resources/module-meta-url.js#fragment`);
+                next();
+            } catch (error) {
+                reject(error);
+            }
+        }, false);
+        frame.onload = () => { next(); };
+        frame.src = url;
+        document.body.appendChild(frame);
+    });
+}
+
+async function registerServiceWorker(scope)
+{
+    let registration = await navigator.serviceWorker.register("module-meta-url-fragment-worker.js", { scope : scope });
+    let activeWorker = registration.active;
+    if (activeWorker)
+        return;
+    activeWorker = registration.installing;
+    return new Promise(resolve => {
+        activeWorker.addEventListener('statechange', () => {
+            if (activeWorker.state === "activated")
+                resolve(registration);
+        });
+    });
+}
+
+promise_test(async (test) => {
+    registration = await registerServiceWorker(scope);
+}, "Setup worker");
+
+promise_test(async (test) => {
+    let frame = await withFrame(scope);
+    assert_true(frame.contentWindow.navigator.serviceWorker.controller !== null);
+    frame.remove();
+}, "Frame to a registered scope");
+
+promise_test(async (test) => {
+    registration.unregister();
+}, "Clean-up");
+
+</script>
+</body>
+</html>

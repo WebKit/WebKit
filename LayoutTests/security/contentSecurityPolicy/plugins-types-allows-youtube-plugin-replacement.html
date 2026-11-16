@@ -1,0 +1,38 @@
+<!-- webkit-test-runner [ dumpJSConsoleLogInStdErr=true ] -->
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Security-Policy" content="plugin-types application/x-shockwave-flash">
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+// The 'plugin-types' directive has been removed from the CSP specification and
+// should be ignored.  Verify that the YouTube plugin replacement still creates
+// an iframe even when the obsolete directive is present.
+window.addEventListener("load", () => {
+    setTimeout(() => {
+        const embed = document.querySelector("embed");
+        const shadowRoot = window.internals ? internals.shadowRoot(embed) : null;
+        if (shadowRoot && shadowRoot.querySelector("iframe")) {
+            document.getElementById("result").textContent = "PASS: YouTube plugin replacement iframe was created.";
+        } else {
+            document.getElementById("result").textContent = "FAIL: No iframe created for YouTube plugin replacement.";
+        }
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }, 0);
+});
+</script>
+</head>
+<body>
+<p>Test that the removed 'plugin-types' CSP directive does not block YouTube plugin replacement.</p>
+<p id="result"></p>
+<object width="425" height="350" classid="clsid:d27cdb6e-ae6d-11cf-96b8-444553540000"
+    codebase="http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=6,0,40,0">
+    <embed width="425" height="350" type="application/x-shockwave-flash" src="https://www.youtube.com/v/UF8uR6Z6KLc">
+</object>
+</body>
+</html>

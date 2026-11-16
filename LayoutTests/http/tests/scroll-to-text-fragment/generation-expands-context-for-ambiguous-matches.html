@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<head>
+<meta charset="utf-8" />
+<title>Scroll to text fragment generation - ensure that we expand context if necessary for ambiguous selections</title>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+window.addEventListener('load', () => {
+    const range = document.createRange();
+    range.selectNode(document.getElementById("test"));
+    document.body.innerText = internals.textFragmentDirectiveForRange(range).split('#')[1];
+});
+</script>
+</head>
+<body><span id="test">one two three four five six seven eight nine ten A one two three four five six seven eight nine ten B one two three four five six seven eight nine ten C one two three four five six seven eight nine ten D one two three four five six seven eight nine ten E one two three four five six seven eight nine ten F one two three four five six seven eight nine ten G one two three four five six seven eight nine ten H one two three four five six seven eight nine</span> ten I one two three four five six seven eight nine ten J one two three four five six seven eight nine ten K one two three four five six seven eight nine ten L one two three four five six seven eight nine ten M one two three four five six seven eight nine ten N one two three four five six seven eight nine ten O one two three four five six seven eight nine ten P one two three four five six seven eight nine ten Q one two three four five six seven eight nine ten R</body>
+</html>
+

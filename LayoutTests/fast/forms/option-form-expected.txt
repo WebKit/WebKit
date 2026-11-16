@@ -1,0 +1,16 @@
+This tests option element's form IDL attribute returns null when it's not associated with a select element.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS option1.form is null
+PASS option2.form is null
+PASS option3.form is form3
+PASS option4.form is form4
+PASS option5.form is form5a
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+
+

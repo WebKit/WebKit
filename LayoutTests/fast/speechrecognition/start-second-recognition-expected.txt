@@ -1,0 +1,16 @@
+Verify that starting a second recognition aborts ongoing one.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS recognition = new webkitSpeechRecognition(); did not throw exception.
+PASS recognition.start() did not throw exception.
+PASS secondRecognition = new webkitSpeechRecognition(); did not throw exception.
+PASS secondRecognition.start() did not throw exception.
+PASS receivedStart is true
+PASS event.error is "aborted"
+PASS event.message is "Another request is started"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,58 @@
+<!doctype html>
+<html>
+ <head>
+   <title>invisible operators</title>
+   <meta charset="utf-8"/>
+ </head>
+ <body>
+
+   <!-- These examples are taken from http://www.w3.org/TR/MathML/chapter3.html#presm.invisibleops.
+        The invisible operator glyphs should render as empty box and, per the operator dictionary, should not have space around them. -->
+   <math>
+     <mrow>
+       <mi>f</mi>
+       <mo>&#x2061;<!--FUNCTION APPLICATION--></mo>
+       <mrow>
+         <mo>(</mo>
+         <mi>x</mi>
+         <mo>)</mo>
+       </mrow>
+     </mrow>
+   </math>
+   <math>
+     <mrow>
+       <mi>sin</mi>
+       <mo>&#x2061;<!--FUNCTION APPLICATION--></mo>
+       <mi>x</mi>
+     </mrow>
+   </math>
+   <math>
+     <mrow>
+       <mi>x</mi>
+       <mo>&#x2062;<!--INVISIBLE TIMES--></mo>
+       <mi>y</mi>
+     </mrow>
+   </math>
+   <math>
+     <msub>
+       <mi>m</mi>
+       <mrow>
+         <mn>1</mn>
+         <mo>&#x2063;<!--INVISIBLE SEPARATOR--></mo>
+         <mn>2</mn>
+       </mrow>
+     </msub>
+   </math>
+   <math>
+     <mrow>
+       <mn>2</mn>
+       <mo>&#x2064;<!-- INVISIBLE PLUS --></mo>
+       <mfrac>
+         <mn>3</mn>
+         <mn>4</mn>
+       </mfrac>
+     </mrow>
+   </math>
+
+ </body>
+</html>

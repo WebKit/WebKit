@@ -1,0 +1,89 @@
+/*
+ * Copyright (C) 2015-2023 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#pragma once
+
+#include <JavaScriptCore/Debugger.h>
+#include <JavaScriptCore/InspectorAgentBase.h>
+#include <JavaScriptCore/InspectorBackendDispatchers.h>
+#include <JavaScriptCore/InspectorFrontendDispatchers.h>
+#include <wtf/Noncopyable.h>
+#include <wtf/TZoneMalloc.h>
+
+namespace JSC {
+class Profile;
+}
+
+namespace Inspector {
+
+// Note: This uses CanMakeThreadSafeCheckedPtr because a JSC::JSGlobalObject (and thus its
+// JSGlobalObjectInspectorController, which keeps CheckedPtrs to its agents) may get destroyed
+// on a different thread than the one it got created on, when the VM is torn down.
+class JS_EXPORT_PRIVATE InspectorScriptProfilerAgent final : public InspectorAgentBase, public ScriptProfilerBackendDispatcherHandler, public JSC::Debugger::ProfilingClient, public CanMakeThreadSafeCheckedPtr<InspectorScriptProfilerAgent> {
+    WTF_MAKE_NONCOPYABLE(InspectorScriptProfilerAgent);
+    WTF_MAKE_TZONE_ALLOCATED(InspectorScriptProfilerAgent);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(InspectorScriptProfilerAgent);
+public:
+    OVERRIDE_ABSTRACT_CAN_MAKE_CHECKEDPTR(CanMakeThreadSafeCheckedPtr);
+
+    InspectorScriptProfilerAgent(AgentContext&);
+    ~InspectorScriptProfilerAgent() final;
+
+    // InspectorAgentBase
+    void didCreateFrontendAndBackend() final;
+    void willDestroyFrontendAndBackend(DisconnectReason) final;
+
+    // ScriptProfilerBackendDispatcherHandler
+    Protocol::ErrorStringOr<void> startTracking(std::optional<bool>&& includeSamples) final;
+    Protocol::ErrorStringOr<void> stopTracking() final;
+
+    // JSC::Debugger::ProfilingClient
+    bool isAlreadyProfiling() const final;
+    Seconds willEvaluateScript() final;
+    void didEvaluateScript(Seconds, JSC::ProfilingReason) final;
+
+    // Called when a debugger comes into existence after tracking has already started, so that
+    // scripts evaluated against it are recorded for the rest of the session.
+    void installProfilingClientIfTracking(JSC::Debugger&);
+
+private:
+    void installProfilingClient(JSC::Debugger&);
+    void installProfilingClientOnCoveredDebuggers();
+    void clearProfilingClientFromAllDebuggers();
+    void addEvent(Seconds startTime, Seconds endTime, JSC::ProfilingReason);
+    void trackingComplete();
+    void stopSamplingWhenDisconnecting();
+
+    const UniqueRef<ScriptProfilerFrontendDispatcher> m_frontendDispatcher;
+    const Ref<ScriptProfilerBackendDispatcher> m_backendDispatcher;
+    WeakRef<InspectorEnvironment> m_environment;
+    bool m_tracking { false };
+#if ENABLE(SAMPLING_PROFILER)
+    bool m_enabledSamplingProfiler { false };
+#endif
+    bool m_activeEvaluateScript { false };
+};
+
+} // namespace Inspector

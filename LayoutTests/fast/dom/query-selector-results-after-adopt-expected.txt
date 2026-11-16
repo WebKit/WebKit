@@ -1,0 +1,177 @@
+Cached querySelector() and querySelectorAll() results must not follow a node into another document. The cache lives in the Document, so adoption has to drop the entry, or the new document asserts on the next query and the old document can later serve a stale answer.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+Fast adoption path
+
+ordinaryElement
+PASS div.querySelector('.a') is span
+PASS div.querySelector('.a') is span
+PASS div.ownerDocument === away is true
+PASS div.querySelector('.a') is span
+PASS div.querySelectorAll('.a').length is 1
+PASS div.querySelector('.a') is null
+PASS div.querySelectorAll('.a').length is 0
+
+roundTrip
+PASS div.querySelector('.a') is non-null.
+PASS div.ownerDocument === home is true
+PASS div.querySelector('.a') is null
+PASS div.querySelectorAll('.a').length is 0
+
+roundTripTagName
+PASS div.querySelector('em') is non-null.
+PASS div.querySelector('em') is null
+
+openShadowRoot
+PASS shadow.querySelector('.a') is shadowSpan
+PASS host.ownerDocument === away is true
+PASS shadow.ownerDocument === away is true
+PASS shadow.querySelector('.a') is shadowSpan
+PASS shadow.querySelectorAll('.a').length is 1
+PASS shadow.querySelector('.a') is null
+PASS shadow.querySelectorAll('.a').length is 0
+
+userAgentShadowRoot
+PASS uaDiv is non-null.
+PASS input.ownerDocument === away is true
+PASS uaRoot.querySelector('div') is uaDiv
+
+cachedOnDescendant
+PASS inner.querySelector('.a') is leaf
+PASS outer.querySelector('.a') is leaf
+PASS inner.ownerDocument === away is true
+PASS inner.querySelector('.a') is leaf
+PASS outer.querySelector('.a') is leaf
+PASS inner.querySelector('.a') is null
+PASS outer.querySelector('.a') is null
+
+classChangeAfterAdopt
+PASS div.querySelectorAll('.a').length is 1
+PASS div.querySelectorAll('.a').length is 1
+PASS div.querySelectorAll('.a').length is 2
+PASS div.querySelectorAll('.a').length is 1
+PASS div.querySelector('.a') is div.lastChild
+
+sameDocumentAdoption
+PASS div.querySelector('.a') is non-null.
+PASS div.querySelector('.a') is span
+PASS div.querySelector('.a') is null
+
+Slow adoption path (live Range in the old document)
+
+ordinaryElement
+PASS div.querySelector('.a') is span
+PASS div.querySelector('.a') is span
+PASS div.ownerDocument === away is true
+PASS div.querySelector('.a') is span
+PASS div.querySelectorAll('.a').length is 1
+PASS div.querySelector('.a') is null
+PASS div.querySelectorAll('.a').length is 0
+
+roundTrip
+PASS div.querySelector('.a') is non-null.
+PASS div.ownerDocument === home is true
+PASS div.querySelector('.a') is null
+PASS div.querySelectorAll('.a').length is 0
+
+roundTripTagName
+PASS div.querySelector('em') is non-null.
+PASS div.querySelector('em') is null
+
+openShadowRoot
+PASS shadow.querySelector('.a') is shadowSpan
+PASS host.ownerDocument === away is true
+PASS shadow.ownerDocument === away is true
+PASS shadow.querySelector('.a') is shadowSpan
+PASS shadow.querySelectorAll('.a').length is 1
+PASS shadow.querySelector('.a') is null
+PASS shadow.querySelectorAll('.a').length is 0
+
+userAgentShadowRoot
+PASS uaDiv is non-null.
+PASS input.ownerDocument === away is true
+PASS uaRoot.querySelector('div') is uaDiv
+
+cachedOnDescendant
+PASS inner.querySelector('.a') is leaf
+PASS outer.querySelector('.a') is leaf
+PASS inner.ownerDocument === away is true
+PASS inner.querySelector('.a') is leaf
+PASS outer.querySelector('.a') is leaf
+PASS inner.querySelector('.a') is null
+PASS outer.querySelector('.a') is null
+
+classChangeAfterAdopt
+PASS div.querySelectorAll('.a').length is 1
+PASS div.querySelectorAll('.a').length is 1
+PASS div.querySelectorAll('.a').length is 2
+PASS div.querySelectorAll('.a').length is 1
+PASS div.querySelector('.a') is div.lastChild
+
+sameDocumentAdoption
+PASS div.querySelector('.a') is non-null.
+PASS div.querySelector('.a') is span
+PASS div.querySelector('.a') is null
+
+Adoption between iframes
+
+ordinaryElement
+PASS div.querySelector('.a') is span
+PASS div.querySelector('.a') is span
+PASS div.ownerDocument === away is true
+PASS div.querySelector('.a') is span
+PASS div.querySelectorAll('.a').length is 1
+PASS div.querySelector('.a') is null
+PASS div.querySelectorAll('.a').length is 0
+
+roundTrip
+PASS div.querySelector('.a') is non-null.
+PASS div.ownerDocument === home is true
+PASS div.querySelector('.a') is null
+PASS div.querySelectorAll('.a').length is 0
+
+roundTripTagName
+PASS div.querySelector('em') is non-null.
+PASS div.querySelector('em') is null
+
+openShadowRoot
+PASS shadow.querySelector('.a') is shadowSpan
+PASS host.ownerDocument === away is true
+PASS shadow.ownerDocument === away is true
+PASS shadow.querySelector('.a') is shadowSpan
+PASS shadow.querySelectorAll('.a').length is 1
+PASS shadow.querySelector('.a') is null
+PASS shadow.querySelectorAll('.a').length is 0
+
+userAgentShadowRoot
+PASS uaDiv is non-null.
+PASS input.ownerDocument === away is true
+PASS uaRoot.querySelector('div') is uaDiv
+
+cachedOnDescendant
+PASS inner.querySelector('.a') is leaf
+PASS outer.querySelector('.a') is leaf
+PASS inner.ownerDocument === away is true
+PASS inner.querySelector('.a') is leaf
+PASS outer.querySelector('.a') is leaf
+PASS inner.querySelector('.a') is null
+PASS outer.querySelector('.a') is null
+
+classChangeAfterAdopt
+PASS div.querySelectorAll('.a').length is 1
+PASS div.querySelectorAll('.a').length is 1
+PASS div.querySelectorAll('.a').length is 2
+PASS div.querySelectorAll('.a').length is 1
+PASS div.querySelector('.a') is div.lastChild
+
+sameDocumentAdoption
+PASS div.querySelector('.a') is non-null.
+PASS div.querySelector('.a') is span
+PASS div.querySelector('.a') is null
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

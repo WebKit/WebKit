@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+.test {
+    width: 100px;
+    height: 25px;
+    background: red;
+}
+</style>
+</head>
+<body>
+<p>Test passes if you see a single 100px by 100px green box below.</p> 
+<div id="host1" class="test"></div>
+<div id="host2" class="test"></div>
+<div id="host3" class="test"></div>
+<div id="host4" class="test" attr="red"></div>
+<script>
+
+var host1 = document.getElementById('host1');
+host1.attachShadow({mode: 'closed'}).innerHTML = `
+    <style>
+    :host(.green) {
+        background: green !important;
+    }
+    </style>
+`;
+
+getComputedStyle(host1).backgroundColor;
+host1.classList.toggle('green');
+
+var host2 = document.getElementById('host2');
+host2.attachShadow({mode: 'closed'}).innerHTML = `
+    <style>
+    :host(#greenID) {
+        background: green !important;
+    }
+    </style>
+`;
+
+getComputedStyle(host2).backgroundColor;
+host2.id = 'greenID';
+
+var host3 = document.getElementById('host3');
+host3.attachShadow({mode: 'closed'}).innerHTML = `
+    <style>
+    :host([greenAttr]) {
+        background: green !important;
+    }
+    </style>
+`;
+
+getComputedStyle(host3).backgroundColor;
+host3.setAttribute('greenAttr', '');
+
+var host4 = document.getElementById('host4');
+host4.attachShadow({mode: 'closed'}).innerHTML = `
+    <style>
+    :host([attr=green]) {
+        background: green !important;
+    }
+    </style>
+`;
+
+getComputedStyle(host4).backgroundColor;
+host4.setAttribute('attr', 'green');
+
+</script>
+</body>
+</html>

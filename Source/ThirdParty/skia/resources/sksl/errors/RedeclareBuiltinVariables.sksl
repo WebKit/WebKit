@@ -1,0 +1,29 @@
+// These definitions already exist verbatim in sksl_frag.
+
+layout(builtin=15) in float4 sk_FragCoord;
+layout(builtin=17) in bool sk_Clockwise;  // Similar to gl_FrontFacing, but defined in device space.
+
+layout(location=0,index=0,builtin=10001) out half4 sk_FragColor;
+layout(builtin=10008) half4 sk_LastFragColor;
+layout(builtin=10012) out half4 sk_SecondaryFragColor;
+
+// We only allow variables to be declared with `builtin` within a module.
+layout (builtin=123) in float mysteryIn;
+layout (builtin=456) out float mysteryOut;
+layout (builtin=789) float mysteryGlobal;
+
+/*%%*
+layout qualifier 'builtin' is not permitted here
+symbol 'sk_FragCoord' was already defined
+layout qualifier 'builtin' is not permitted here
+symbol 'sk_Clockwise' was already defined
+layout qualifier 'builtin' is not permitted here
+symbol 'sk_FragColor' was already defined
+layout qualifier 'builtin' is not permitted here
+symbol 'sk_LastFragColor' was already defined
+layout qualifier 'builtin' is not permitted here
+symbol 'sk_SecondaryFragColor' was already defined
+layout qualifier 'builtin' is not permitted here
+layout qualifier 'builtin' is not permitted here
+layout qualifier 'builtin' is not permitted here
+*%%*/

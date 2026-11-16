@@ -1,0 +1,36 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/wasm/jsapi/esm-integration/resources/dep.wasm
+/LayoutTests/imported/w3c/web-platform-tests/wasm/jsapi/esm-integration/resources/exports.wasm
+/LayoutTests/imported/w3c/web-platform-tests/wasm/jsapi/esm-integration/resources/globals.js
+/LayoutTests/imported/w3c/web-platform-tests/wasm/jsapi/esm-integration/resources/globals.wasm
+/LayoutTests/imported/w3c/web-platform-tests/wasm/jsapi/esm-integration/resources/invalid-export-name-wasm-js.wasm
+/LayoutTests/imported/w3c/web-platform-tests/wasm/jsapi/esm-integration/resources/invalid-export-name.wasm
+/LayoutTests/imported/w3c/web-platform-tests/wasm/jsapi/esm-integration/resources/invalid-import-module.wasm
+/LayoutTests/imported/w3c/web-platform-tests/wasm/jsapi/esm-integration/resources/invalid-import-name-wasm-js.wasm
+/LayoutTests/imported/w3c/web-platform-tests/wasm/jsapi/esm-integration/resources/invalid-import-name.wasm
+/LayoutTests/imported/w3c/web-platform-tests/wasm/jsapi/esm-integration/resources/js-string-builtins.wasm
+/LayoutTests/imported/w3c/web-platform-tests/wasm/jsapi/esm-integration/resources/js-string-constants.wasm
+/LayoutTests/imported/w3c/web-platform-tests/wasm/jsapi/esm-integration/resources/js-string-constants.wat
+/LayoutTests/imported/w3c/web-platform-tests/wasm/jsapi/esm-integration/resources/js-wasm-cycle.js
+/LayoutTests/imported/w3c/web-platform-tests/wasm/jsapi/esm-integration/resources/js-wasm-cycle.wasm
+/LayoutTests/imported/w3c/web-platform-tests/wasm/jsapi/esm-integration/resources/log.js
+/LayoutTests/imported/w3c/web-platform-tests/wasm/jsapi/esm-integration/resources/mutable-global-export.wasm
+/LayoutTests/imported/w3c/web-platform-tests/wasm/jsapi/esm-integration/resources/mutable-global-reexport.wasm
+/LayoutTests/imported/w3c/web-platform-tests/wasm/jsapi/esm-integration/resources/resolve-export.js
+/LayoutTests/imported/w3c/web-platform-tests/wasm/jsapi/esm-integration/resources/resolve-export.wasm
+/LayoutTests/imported/w3c/web-platform-tests/wasm/jsapi/esm-integration/resources/source-phase-identity.js
+/LayoutTests/imported/w3c/web-platform-tests/wasm/jsapi/esm-integration/resources/wasm-export-to-wasm.wasm
+/LayoutTests/imported/w3c/web-platform-tests/wasm/jsapi/esm-integration/resources/wasm-import-from-wasm.wasm

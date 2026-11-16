@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <style>
+    .box {
+      display: inline-block;
+      height: 120px;
+      width: 400px;
+      margin: 10px;
+      border: 1px solid black;
+      background-repeat: no-repeat;
+    }
+
+    .linear1 {
+      background-image: -webkit-repeating-linear-gradient(0deg, green 150px, blue 175px, blue 200px);
+      background-image: -moz-repeating-linear-gradient(0deg, green 150px, blue 175px, blue 200px);
+    }
+  </style>
+  <script>
+    if (window.testRunner) {
+      var dumpPixels = true;
+      testRunner.dumpAsText(dumpPixels);
+    }
+  </script>
+</head>
+<body>
+
+  <div class="linear1 box"></div>
+
+</body>
+</html>

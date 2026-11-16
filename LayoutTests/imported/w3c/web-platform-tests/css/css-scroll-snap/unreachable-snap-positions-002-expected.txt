@@ -1,0 +1,6 @@
+
+PASS Unreachable snap point with `scroll-snap-align: end`
+PASS Unreachable snap point with `scroll-snap-align: center`
+PASS Unreachable snap point with `scroll-snap-align: end` in RTL
+PASS Unreachable snap point with `scroll-snap-align: center` in RTL
+

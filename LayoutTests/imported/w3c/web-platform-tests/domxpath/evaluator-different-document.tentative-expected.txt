@@ -1,0 +1,10 @@
+
+PASS evaluate operation on XML document, context node in XML document, no namespace resolver
+PASS evaluate operation on HTML document, context node in HTML document, no namespace resolver
+PASS evaluate operation on XML document, context node in HTML document, no namespace resolver
+PASS evaluate operation on HTML document, context node in XML document, no namespace resolver
+PASS evaluate operation on XML document, context node in XML document, with namespace resolver
+PASS evaluate operation on HTML document, context node in HTML document, with namespace resolver
+PASS evaluate operation on XML document, context node in HTML document, with namespace resolver
+PASS evaluate operation on HTML document, context node in XML document, with namespace resolver
+

@@ -1,0 +1,76 @@
+Tests contextual computed role mappings defined in HTML-AAM, where the returned computed role is expected to change based on the context. Most test names correspond to a unique ID defined in the spec.
+
+These should remain in alphabetical order.
+
+x x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+
+x
+x
+x
+x
+x
+x
+x
+x
+labelledby
+
+PASS el-a
+PASS el-aside
+PASS el-aside-in-main
+PASS el-aside-in-article-in-main-with-name
+PASS el-aside-in-article-with-name
+PASS el-aside-in-aside-with-name
+PASS el-aside-in-nav-with-name
+PASS el-aside-in-nav-with-role
+PASS el-aside-in-section-with-name
+PASS el-aside-in-section-aria-labelledby
+PASS el-aside-in-section-title
+PASS el-footer-ancestorbody
+PASS el-header-ancestorbody
+FAIL el-img-no-name assert_equals: <img data-testname="el-img-no-name" data-expectedrole="image" class="ex" src="data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw=="> expected "image" but got "none"
+PASS el-img-empty-alt-aria-label
+PASS el-img-empty-alt-aria-labelledby
+PASS el-section
+PASS el-section-aria-labelledby
+PASS el-section-title
+PASS el-a-no-href
+PASS el-aside-in-article-in-main
+PASS el-aside-in-article
+PASS el-aside-in-aside
+PASS el-aside-in-nav
+PASS el-aside-in-section
+PASS el-aside-in-section-aria-label-empty
+PASS el-aside-in-section-aria-label-whitespace
+PASS el-aside-in-section-aria-labelledby-non-existing
+PASS el-aside-in-section-title-empty
+PASS el-img-empty-alt-aria-label-empty
+PASS el-img-empty-alt-aria-label-whitespace
+PASS el-img-empty-alt-title
+PASS el-img-empty-alt-title-empty
+PASS el-section-no-name
+PASS el-section-aria-label-empty
+PASS el-section-aria-label-whitespace
+PASS el-section-aria-labelledby-non-existing
+PASS el-section-title-empty
+

@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<meta name="viewport" content="width=device-width">
+<head>
+<style>
+    body {
+        width: 100%;
+        height: 100%;
+        margin: 0;
+    }
+
+    img {
+        width: 100px;
+        height: 100px;
+    }
+
+    #target1 {
+        left: 0;
+        top: 200px;
+    }
+
+    #target2 {
+        left: 200px;
+        top: 0;
+    }
+
+    #target3 {
+        left: 200px;
+        top: 200px;
+    }
+
+    .target {
+        position: absolute;
+        background-color: red;
+        border-radius: 50%;
+        width: 100px;
+        height: 100px;
+        color: white;
+        text-align: center;
+        line-height: 90px;
+    }
+
+    #description {
+        padding-top: 250px;
+        display: block;
+    }
+
+    #container {
+        position: relative;
+    }
+</style>
+</head>
+
+<body>
+    <div id="container">
+    <img src="apple.gif"></img>
+    <div id="target1" class="target"></div>
+    <div id="target2" class="target"></div>
+    <div id="target3" class="target"></div>
+    <code id="description">
+        <div>To test this manually, drag the image onto each of the three red circles.</div>
+        <div>Each red circle should turn green upon dragging over it.</div>
+        <div>Upon drop, the text "PASS" should appear in each target.</div>
+    </code>
+    </div>
+</body>
+
+<script>
+    function elementAtMouseEvent(e) {
+        if (window.usePageCoordinates)
+            return document.elementFromPoint(e.pageX - pageXOffset, e.pageY - pageYOffset);
+        return document.elementFromPoint(e.clientX, e.clientY);
+    }
+
+    function targetAtEvent(e) {
+        let target = elementAtMouseEvent(e);
+        return target && target.classList.contains("target") ? target : null;
+    }
+
+    function resetTestState() {
+        target1.style.backgroundColor = "";
+        target2.style.backgroundColor = "";
+        target3.style.backgroundColor = "";
+        target1.innerHTML = "";
+        target2.innerHTML = "";
+        target3.innerHTML = "";
+    }
+
+    document.body.addEventListener("dragstart", resetTestState);
+    document.body.addEventListener("dragenter", event => {
+        let target = targetAtEvent(event);
+        if (target)
+            target.style.backgroundColor = "green";
+        event.preventDefault();
+    });
+
+    document.body.addEventListener("dragover", event => {
+        let target = targetAtEvent(event);
+        if (target)
+            target.style.backgroundColor = "green";
+        event.preventDefault();
+    });
+
+    document.body.addEventListener("drop", event => {
+        let target = targetAtEvent(event);
+        if (target)
+            target.innerHTML = `<code>PASS</code>`;
+        event.preventDefault();
+    });
+</script>
+</html>

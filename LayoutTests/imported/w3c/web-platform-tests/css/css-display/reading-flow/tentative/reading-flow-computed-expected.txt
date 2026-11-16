@@ -1,0 +1,9 @@
+
+FAIL Property reading-flow value 'normal' assert_true: reading-flow doesn't seem to be supported in the computed style expected true got false
+FAIL Property reading-flow value 'flex-visual' assert_true: reading-flow doesn't seem to be supported in the computed style expected true got false
+FAIL Property reading-flow value 'flex-flow' assert_true: reading-flow doesn't seem to be supported in the computed style expected true got false
+FAIL Property reading-flow value 'grid-rows' assert_true: reading-flow doesn't seem to be supported in the computed style expected true got false
+FAIL Property reading-flow value 'grid-columns' assert_true: reading-flow doesn't seem to be supported in the computed style expected true got false
+FAIL Property reading-flow value 'grid-order' assert_true: reading-flow doesn't seem to be supported in the computed style expected true got false
+FAIL Property reading-flow value 'source-order' assert_true: reading-flow doesn't seem to be supported in the computed style expected true got false
+

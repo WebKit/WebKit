@@ -1,0 +1,8 @@
+
+PASS DataTransferItemList.prototype exposes exactly length, add(), remove() and clear()
+PASS Supported property indices return a DataTransferItem
+PASS Unsupported property indices return undefined
+PASS length is the number of items in the drag data store item list
+PASS Indexed properties are enumerable, configurable and non-writable
+PASS Indexed properties are enumerated and iterated in index order
+

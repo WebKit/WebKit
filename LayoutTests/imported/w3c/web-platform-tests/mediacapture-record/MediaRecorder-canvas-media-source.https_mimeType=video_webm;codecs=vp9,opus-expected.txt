@@ -1,0 +1,3 @@
+
+PASS MediaRecorder returns frames containing video content
+

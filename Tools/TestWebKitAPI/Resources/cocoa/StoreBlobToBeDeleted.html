@@ -1,0 +1,48 @@
+<script>
+
+var dbName = "StoreBlobToBeDeleted";
+var db;
+
+function sendMessage(text)
+{
+    window.webkit.messageHandlers.testHandler.postMessage(text);
+}
+
+function deleteDatabase(successHandler)
+{
+    var request = window.indexedDB.deleteDatabase(dbName);
+    request.onsuccess = successHandler;
+    request.onerror = function() {
+        sendMessage('Error deleting database');
+    }
+}
+
+function storeBlobInDatabase()
+{
+    var request = window.indexedDB.open(dbName);
+    request.onupgradeneeded = function(e) {
+        db = e.target.result;
+        var objectStore = db.createObjectStore("TestStore");
+
+        const blobData = ["fun ", "times ", "all ", "around!"];
+        let blob = new Blob(blobData, { type: "text/plain" });
+
+        var addRequest = objectStore.add(blob, "BlobKey");
+        addRequest.onerror = function() {
+            sendMessage('Error storing blob in database');
+        }
+    }
+
+    request.onsuccess = function() {
+        db.close();
+        sendMessage('Success');
+    }
+
+    request.onerror = function() {
+        sendMessage('Error storing blob in database');
+    }
+}
+    
+deleteDatabase(storeBlobInDatabase);
+
+</script>

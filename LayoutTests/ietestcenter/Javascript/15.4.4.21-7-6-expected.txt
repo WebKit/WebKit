@@ -1,0 +1,11 @@
+15.4.4.21-7-6 (TestCases/chapter15/15.4/15.4.4/15.4.4.21/15.4.4.21-7-6.js) Array.prototype.reduce returns initialValue if 'length' is 0 and initialValue is present (subclassed Array, length overridden with obj with valueOf)
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS ES5Harness.preconditionPassed is true
+PASS ES5Harness.testPassed is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,5 @@
+Body needed for test_driver.click()
+
+PASS Verify write and read clipboard (multiple types)
+PASS navigator.clipboard.read() does not crash if clipboard data has null values
+

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/js-test.js"></script>
+</head>
+<body>
+<script>
+description("This test ensures a deprecation warning is logged to the console when using XSLTProcessor.");
+
+jsTestIsAsync = true;
+
+var xslText = `<?xml version="1.0"?>
+<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+  <xsl:output method="text"/>
+  <xsl:template match="/">
+    <xsl:value-of select="."/>
+  </xsl:template>
+</xsl:stylesheet>`;
+
+var xmlText = `<?xml version="1.0"?>
+<doc>Hello World</doc>`;
+
+var parser = new DOMParser();
+var xslDoc = parser.parseFromString(xslText, "application/xml");
+var xmlDoc = parser.parseFromString(xmlText, "application/xml");
+
+var processor = new XSLTProcessor();
+processor.importStylesheet(xslDoc);
+var result = processor.transformToFragment(xmlDoc, document);
+
+shouldBeNonNull("result");
+shouldBeEqualToString("result.textContent.trim()", "Hello World");
+
+finishJSTest();
+</script>
+</body>
+</html>

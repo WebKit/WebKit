@@ -1,0 +1,5 @@
+
+PASS random() whose 'max' argument fails to resolve is invalid at computed-value time (falls back to initial 'auto')
+PASS random() whose 'min' argument fails to resolve is invalid at computed-value time (falls back to initial 'auto')
+PASS random() with resolvable arguments produces a value within [min, max]
+

@@ -1,0 +1,50 @@
+This tests that a fieldset's title UI element is its legend.
+
+#plain titleUIElement: #plainLegend
+#noLegend titleUIElement: null
+#noLegendLabelledby titleUIElement: #externalLabel
+#legendAndLabelledby titleUIElement: #externalLabel
+#roleOverride titleUIElement: #roleOverrideLegend
+#twoLegends titleUIElement: #firstLegend
+#nestedLegend titleUIElement: null
+#displayNoneLegend titleUIElement: null
+#displayContentsFieldset titleUIElement: #externalLabel
+#ariaHiddenLegend titleUIElement: #ariaHiddenLegendLegend
+#displayContentsWithLegend titleUIElement: null
+#deeplyNestedLegend titleUIElement: null
+#shallowBeatsDeep titleUIElement: #shallowLegend
+#outerWithoutLegend titleUIElement: null
+#innerWithLegend titleUIElement: #innerLegend
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+External label Plain
+Name:
+Name:
+Name:
+Legend wins
+Name:
+Role overridden
+Name:
+First
+Second
+Name:
+
+Nested
+Name:
+Name:
+Display contents
+Name:  Aria hidden
+Name:
+Display contents with legend
+Name:
+Deeply nested
+Name:
+
+Deep
+Shallow
+Name:
+
+Inner
+Name:

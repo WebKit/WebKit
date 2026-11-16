@@ -1,0 +1,48 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/hpack/test/test_fixtures/haskell-http2-linear-huffman/story_00.json
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/hpack/test/test_fixtures/haskell-http2-linear-huffman/story_01.json
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/hpack/test/test_fixtures/haskell-http2-linear-huffman/story_02.json
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/hpack/test/test_fixtures/haskell-http2-linear-huffman/story_03.json
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/hpack/test/test_fixtures/haskell-http2-linear-huffman/story_04.json
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/hpack/test/test_fixtures/haskell-http2-linear-huffman/story_05.json
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/hpack/test/test_fixtures/haskell-http2-linear-huffman/story_06.json
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/hpack/test/test_fixtures/haskell-http2-linear-huffman/story_07.json
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/hpack/test/test_fixtures/haskell-http2-linear-huffman/story_08.json
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/hpack/test/test_fixtures/haskell-http2-linear-huffman/story_09.json
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/hpack/test/test_fixtures/haskell-http2-linear-huffman/story_10.json
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/hpack/test/test_fixtures/haskell-http2-linear-huffman/story_11.json
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/hpack/test/test_fixtures/haskell-http2-linear-huffman/story_12.json
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/hpack/test/test_fixtures/haskell-http2-linear-huffman/story_13.json
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/hpack/test/test_fixtures/haskell-http2-linear-huffman/story_14.json
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/hpack/test/test_fixtures/haskell-http2-linear-huffman/story_15.json
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/hpack/test/test_fixtures/haskell-http2-linear-huffman/story_16.json
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/hpack/test/test_fixtures/haskell-http2-linear-huffman/story_17.json
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/hpack/test/test_fixtures/haskell-http2-linear-huffman/story_18.json
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/hpack/test/test_fixtures/haskell-http2-linear-huffman/story_19.json
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/hpack/test/test_fixtures/haskell-http2-linear-huffman/story_20.json
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/hpack/test/test_fixtures/haskell-http2-linear-huffman/story_21.json
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/hpack/test/test_fixtures/haskell-http2-linear-huffman/story_22.json
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/hpack/test/test_fixtures/haskell-http2-linear-huffman/story_23.json
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/hpack/test/test_fixtures/haskell-http2-linear-huffman/story_24.json
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/hpack/test/test_fixtures/haskell-http2-linear-huffman/story_25.json
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/hpack/test/test_fixtures/haskell-http2-linear-huffman/story_26.json
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/hpack/test/test_fixtures/haskell-http2-linear-huffman/story_27.json
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/hpack/test/test_fixtures/haskell-http2-linear-huffman/story_28.json
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/hpack/test/test_fixtures/haskell-http2-linear-huffman/story_29.json
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/hpack/test/test_fixtures/haskell-http2-linear-huffman/story_30.json
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/hpack/test/test_fixtures/haskell-http2-linear-huffman/story_31.json

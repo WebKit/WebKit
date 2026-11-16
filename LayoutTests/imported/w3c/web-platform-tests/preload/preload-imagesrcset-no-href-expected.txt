@@ -1,0 +1,5 @@
+
+PASS Dynamically added preload with imagesrcset (w descriptors) and no href
+PASS Dynamically added preload with imagesrcset (x descriptors) and no href
+PASS Inline preload link with imagesrcset and no href fires load event
+

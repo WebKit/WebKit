@@ -1,0 +1,3 @@
+
+PASS Feature-Policy header should not block features (use Permissions-Policy instead)
+

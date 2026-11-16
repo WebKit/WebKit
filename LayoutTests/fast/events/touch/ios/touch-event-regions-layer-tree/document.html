@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<!-- Legacy touch event rects equivalent: fast/events/touch/ios/touch-event-regions/document.html -->
+
+<html>
+<head>
+    <script src="resources/touch-regions-helper.js"></script>
+    <script>
+        prepareForTest();
+        window.addEventListener('load', dumpRegions, false);
+    </script>
+</head>
+<body>
+    <script>
+        document.addEventListener('touchstart', function() { }, { passive: false });
+    </script>
+</body>
+</html>

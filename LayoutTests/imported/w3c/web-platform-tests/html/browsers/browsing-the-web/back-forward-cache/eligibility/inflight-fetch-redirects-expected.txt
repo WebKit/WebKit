@@ -1,0 +1,6 @@
+
+FAIL Eligibility (in-flight fetch): Redirect header received when in BFCache promise_test: Unhandled rejection with value: object "TypeError: Load failed"
+FAIL Eligibility (in-flight fetch): Redirect header received when in BFCache w/ CSP passing promise_test: Unhandled rejection with value: object "TypeError: Load failed"
+FAIL Eligibility (in-flight fetch): Cross-origin redirect header received when in BFCache promise_test: Unhandled rejection with value: object "TypeError: Load failed"
+PASS Eligibility (in-flight fetch): Cross-origin redirect header received when in BFCache w/ CSP failing
+

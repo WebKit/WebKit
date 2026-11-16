@@ -1,0 +1,36 @@
+<!DOCTYPE html><!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<html>
+<head>
+<script src="/js-test-resources/js-test.js"></script>
+<script src="/js-test-resources/ui-helper.js"></script>
+<script>
+description("Dragging inside a cross-origin iframe nested inside a same-site subframe that is both offset and scrolled must deliver touches at coordinates local to that iframe.");
+jsTestIsAsync = true;
+
+let events = [];
+addEventListener("message", (event) => {
+    if (event.data.startsWith("scrolled")) {
+        shouldBeEqualToString("event.data", "scrolled 100");
+        UIHelper.dragFromPointToPoint(400, 350, 500, 400, 0.5);
+        return;
+    }
+
+    if (event.data === "ready")
+        return;
+
+    events.push(event.data);
+    if (event.data.startsWith("touchend")) {
+        shouldBe("events[0]", "'touchstart 50,50'");
+        shouldBe("events[events.length - 1]", "'touchend 150,100'");
+        shouldBeTrue("events.some((each) => each.startsWith('touchmove'))");
+        finishJSTest();
+    }
+});
+
+addEventListener("touchstart", () => { testFailed("This event listener should not be called.") });
+</script>
+</head>
+<body>
+<iframe style="position: absolute; left: 350px; top: 300px; width: 300px; height: 250px; border: none;" src="http://127.0.0.1:8000/site-isolation/touch-events/resources/samesite-scrolled-container-touch.html"></iframe>
+</body>
+</html>

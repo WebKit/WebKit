@@ -1,0 +1,15 @@
+
+
+PASS Select All, then, Backspace
+PASS Select All, then, Delete
+PASS execCommand("selectall"), then, Backspace
+PASS execCommand("selectall"), then, Delete
+PASS Select All, then, execCommand("forwarddelete")
+PASS Select All, then, execCommand("delete")
+PASS execCommand("selectall"), then, execCommand("forwarddelete")
+PASS execCommand("selectall"), then, execCommand("delete")
+PASS getSelection().selectAllChildren(document.documentElement), then, Backspace
+PASS getSelection().selectAllChildren(document.documentElement), then, Delete
+PASS getSelection().selectAllChildren(document.documentElement), then, execCommand("forwarddelete")
+PASS getSelection().selectAllChildren(document.documentElement), then, execCommand("delete")
+

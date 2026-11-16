@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>:focus-visible matches on accesskey after a previous element was focused via mouse</title>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<style>
+:focus {
+  background: lime;
+}
+:focus-visible {
+  outline: solid 5px blue;
+}
+</style>
+
+<div id="initial" tabindex="0">Initial</div>
+<div id="target" tabindex="0" accesskey="t">Target</div>
+
+<script>
+
+function pressAccessKey(key)
+{
+    if (navigator.userAgent.search(/\bMac OS X\b/) != -1)
+        modifiers = ["ctrlKey", "altKey"];
+    else
+        modifiers = ["altKey"];
+    eventSender.keyDown(key, modifiers);
+}
+
+function clickElement(element)
+{
+    eventSender.mouseMoveTo(element.offsetLeft + element.offsetWidth / 2, element.offsetTop + element.offsetTop / 2);
+    eventSender.mouseDown();
+    eventSender.mouseUp()
+}
+
+test(() => {
+    clickElement(initial);
+    assert_equals(document.activeElement, initial);
+    assert_equals(getComputedStyle(initial).backgroundColor, "rgb(0, 255, 0)", `background-color for ${initial.tagName}#${initial.id} shoult be lime`);
+    assert_not_equals(getComputedStyle(initial).outlineColor, "rgb(0, 0, 255)", `outline-color for ${initial.tagName}#${initial.id} shoult NOT be blue`);
+}, "Initial element focused via click does NOT match :focus-visible");
+
+test(() => {
+    pressAccessKey("t");
+    assert_equals(document.activeElement, target);
+    assert_equals(getComputedStyle(target).backgroundColor, "rgb(0, 255, 0)", `background-color for ${target.tagName}#${target.id} shoult be lime`);
+    assert_equals(getComputedStyle(target).outlineColor, "rgb(0, 0, 255)", `outline-color for ${target.tagName}#${target.id} shoult be blue`);
+}, "Target element focused via accesskey matches :focus-visible");
+</script>

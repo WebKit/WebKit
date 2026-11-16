@@ -1,0 +1,25 @@
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+function run() {
+    time.appendChild(document.createElement("body"));
+    form.appendChild(item);
+    window.getSelection().collapse(div);
+    document.execCommand("insertOrderedList", false);
+
+    if (window.testRunner) {
+        document.body.innerHTML = "<p>Test inserting list with a body child. The test passes if WebKit doesn't crash or hit an assertion.</p>";
+        testRunner.notifyDone();
+    }
+}
+</script>
+<body onload=run()>
+<form id="form" style="-webkit-user-modify: read-write;">
+<div id="div"></div>
+<li id="item">
+<video></video>
+<marquee>
+<time id="time">

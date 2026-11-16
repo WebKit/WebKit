@@ -1,0 +1,18 @@
+--- !tapi-tbd
+tbd-version:     4
+targets:         [ i386-ios-simulator, i386-tvos-simulator, i386-watchos-simulator,
+                   x86_64-ios-simulator, x86_64-maccatalyst, x86_64-tvos-simulator,
+                   x86_64-watchos-simulator, x86_64h-maccatalyst, armv7-ios, armv7-watchos, armv7s-ios,
+                   arm64-ios, arm64-tvos, arm64-watchos, arm64_32-watchos, arm64e-ios, arm64e-maccatalyst,
+                   arm64e-tvos, arm64e-watchos, arm64-ios-simulator, arm64-maccatalyst, arm64-watchos-simulator,
+                   arm64-tvos-simulator, arm64-xros, arm64e-xros, x86_64-xros-simulator, arm64-xros-simulator ]
+install-name:    '/usr/local/lib/libTestWTFAlwaysMissing.dylib'
+exports:
+  - targets:         [ i386-ios-simulator, i386-tvos-simulator, i386-watchos-simulator,
+                       x86_64-ios-simulator, x86_64-maccatalyst, x86_64-tvos-simulator,
+                       x86_64-watchos-simulator, x86_64h-maccatalyst, armv7-ios, armv7-watchos, armv7s-ios,
+                       arm64-ios, arm64-tvos, arm64-watchos, arm64_32-watchos, arm64e-ios, arm64e-maccatalyst,
+                       arm64e-tvos, arm64e-watchos, arm64-ios-simulator, arm64-maccatalyst, arm64-watchos-simulator,
+                       arm64-tvos-simulator, arm64-xros, arm64e-xros, x86_64-xros-simulator, arm64-xros-simulator ]
+    symbols:         [ _TestWTFAlwaysMissing, _TestWTFAlwaysMissingWithoutAttributeWeakImport ]
+...

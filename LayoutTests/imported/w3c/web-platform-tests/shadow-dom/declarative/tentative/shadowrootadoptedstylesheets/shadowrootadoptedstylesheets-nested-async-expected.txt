@@ -1,0 +1,3 @@
+
+FAIL Nested shadow roots independently resolve async adoptedStyleSheets. assert_equals: Outer root: expected 1 placeholder(s). expected 1 but got 0
+

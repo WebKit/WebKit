@@ -1,0 +1,55 @@
+<!DOCTYPE HTML><!-- webkit-test-runner [ ARIAActionsSupportEnabled=true IsAccessibilityIsolatedTreeEnabled=true ] -->
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<button id="source" aria-actions="action">Source</button>
+<button id="action">Delete</button>
+
+<script>
+var output = "This test verifies that invoking an aria-actions custom action while nothing is focused leaves focus cleared, rather than moving it to the (focusable) action target, and that the transient focus movement is not surfaced to assistive technology.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    var actionClicked = false;
+    document.getElementById("action").addEventListener("click", () => actionClicked = true);
+
+    var focusNotificationCount = 0;
+    accessibilityController.addNotificationListener((axElement, notification) => {
+        if (notification == "AXFocusChanged")
+            ++focusNotificationCount;
+    });
+
+    var source = accessibilityController.accessibleElementById("source");
+
+    setTimeout(async () => {
+        // Nothing is focused up front.
+        output += "Nothing is focused before invoking the action:\n";
+        output += expect("document.activeElement === document.body", "true");
+        output += "\n";
+
+        output += "Invoking the custom action clicks the focusable action target:\n";
+        output += expect("source.invokeCustomActionAtIndex(0)", "true");
+        output += expect("actionClicked", "true");
+        output += "\n";
+
+        output += "Focus is left cleared, rather than moving to the action target:\n";
+        output += expect("document.activeElement === document.body", "true");
+        output += "\n";
+
+        // Give any (unexpected) focus notification a chance to be delivered before asserting none fired.
+        await new Promise(resolve => setTimeout(resolve, 0));
+        output += "No accessibility focus notification was surfaced for the transient focus movement:\n";
+        output += expect("focusNotificationCount", "0");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

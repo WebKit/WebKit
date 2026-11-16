@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test() {
+    let suite = InspectorTest.createSyncSuite("IDLExtensions.CanvasRenderingContext2D");
+
+    suite.addTestCase({
+        name: "IDLExtensions.CanvasRenderingContext2D.getPath.Isolated",
+        description: "Ensure that Path2D returned by getPath are isolated from the CanvasRenderingContext2D.",
+        test() {
+            let context = document.createElement("canvas").getContext("2d");
+            InspectorTest.assert(context.currentX === 0);
+            InspectorTest.assert(context.currentY === 0);
+
+            let copiedPath = context.getPath();
+            InspectorTest.expectEqual(context.currentX, 0, "Should not modify X after getting path.");
+            InspectorTest.expectEqual(context.currentY, 0, "Should not modify Y after getting path.");
+
+            copiedPath.moveTo(1, 1);
+            InspectorTest.expectEqual(context.currentX, 0, "Should not modify X after moving copied path.");
+            InspectorTest.expectEqual(context.currentY, 0, "Should not modify Y after moving copied path.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "IDLExtensions.CanvasRenderingContext2D.getPath.NewObject",
+        description: "Ensure that Path2D returned by getPath are always a new object.",
+        test() {
+            let context = document.createElement("canvas").getContext("2d");
+
+            let path1 = context.getPath();
+            let path2 = context.getPath();
+
+            InspectorTest.expectNotEqual(path1, path2, "Should not return the same object twice.");
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Test that the IDL extensions for CanvasRenderingContext2D work correctly.</p>
+</body>
+</html>

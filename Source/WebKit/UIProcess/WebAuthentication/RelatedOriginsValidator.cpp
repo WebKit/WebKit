@@ -1,0 +1,81 @@
+/*
+ * Copyright (C) 2026 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#include "config.h"
+#include "RelatedOriginsValidator.h"
+
+#if ENABLE(WEB_AUTHN)
+
+#include "Logging.h"
+#include "WellKnownResourceFetcher.h"
+#include <WebCore/WellKnownOriginList.h>
+#include <wtf/Borrow.h>
+
+namespace WebKit {
+
+static constexpr auto webAuthnWellKnownPath = "/.well-known/webauthn"_s;
+static constexpr auto webAuthnOriginsMember = "origins"_s;
+
+void RelatedOriginsValidation::validate(WebPageProxy& page, const WebCore::SecurityOriginData& callerOrigin, const String& relyingPartyIdentifier, CompletionHandler<void(Result&&)>&& completionHandler)
+{
+    validate(page, Vector<WebCore::SecurityOriginData> { callerOrigin }, relyingPartyIdentifier, WTF::move(completionHandler));
+}
+
+void RelatedOriginsValidation::validate(WebPageProxy& page, Vector<WebCore::SecurityOriginData>&& originsToCheck, const String& relyingPartyIdentifier, CompletionHandler<void(Result&&)>&& completionHandler)
+{
+    auto url = WebCore::wellKnownURL(relyingPartyIdentifier, webAuthnWellKnownPath);
+    if (!url.isValid()) {
+        RELEASE_LOG_ERROR(WebAuthn, "Related origins: relying party identifier is not a host.");
+        completionHandler({ });
+        return;
+    }
+
+    WellKnownResourceFetcher::fetch(page, WTF::move(url), { }, [originsToCheck = WTF::move(originsToCheck), completionHandler = WTF::move(completionHandler)](WellKnownFetchResult&& result) mutable {
+        if (!result.succeeded()) {
+            RELEASE_LOG_ERROR(WebAuthn, "Related origins: fetch failed (%" PUBLIC_LOG_STRING ").", wellKnownFetchStatusDescription(result.status).characters());
+            completionHandler({ });
+            return;
+        }
+
+        Borrow borrowedBody = result.body;
+        auto origins = WebCore::parseOriginsFromWellKnownList(borrowedBody->span(), webAuthnOriginsMember);
+        bool allFound = !originsToCheck.isEmpty();
+        for (auto& originToCheck : borrow(originsToCheck)) {
+            auto found = WebCore::findOriginInWellKnownList(originToCheck, borrowedBody->span(), webAuthnOriginsMember);
+            if (found == WebCore::WellKnownOriginListResult::Malformed)
+                RELEASE_LOG_ERROR(WebAuthn, "Related origins: well-known resource is malformed.");
+            if (found != WebCore::WellKnownOriginListResult::Found) {
+                allFound = false;
+                break;
+            }
+        }
+
+        completionHandler({ allFound, WTF::move(origins) });
+    });
+}
+
+} // namespace WebKit
+
+#endif // ENABLE(WEB_AUTHN)

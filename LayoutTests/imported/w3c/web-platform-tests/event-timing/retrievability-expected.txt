@@ -1,0 +1,4 @@
+Generate a 'click' event
+
+PASS Event Timing: make sure event-timing entries are not retrievable by performance.getEntries*.
+

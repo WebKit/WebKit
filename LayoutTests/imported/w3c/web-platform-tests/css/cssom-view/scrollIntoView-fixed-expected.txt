@@ -1,0 +1,11 @@
+The orange boxes are position: fixed. Clicking ScrollIntoView in each box will attempt to scroll into view the blue target element inside that fixed container to block/inline: start (i.e. aligned with top left corner in RTL).
+
+scrollIntoView from a position:fixed element must not scroll its containing frame; however, it must scroll further ancestor scrollers as the element isn't fixed in relation to them.
+
+Box A ScrollIntoView Box C ScrollIntoView
+
+PASS [Box A] scrollIntoView from unscrollable position:fixed
+FAIL [Box B] scrollIntoView from unscrollable position:fixed in iframe null is not an object (evaluating 'container.querySelector')
+PASS [Box C] scrollIntoView from scrollable position:fixed
+FAIL [Box D] scrollIntoView from scrollable position:fixed in iframe null is not an object (evaluating 'container.querySelector')
+

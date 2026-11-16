@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<meta charset="utf-8" />
+<title>Scroll to text fragment - prefix near document start must be word-bounded</title>
+<link rel="help" href="https://wicg.github.io/scroll-to-text-fragment/">
+<meta name="assert" content="A text directive prefix that is not at a word boundary must not match. The target should resolve to the later occurrence whose prefix is word-bounded, not the one at the start of the document.">
+<meta name="fuzzy" content="maxDifference=0-2; totalPixels=0-1500" />
+<style>
+  ::target-text { background-color: pink; }
+</style>
+
+<p>Pass condition: only the word in the final sentence below is highlighted; the heading is not.</p>
+<h2>II</h2>
+<p>The Pool of Tears</p>
+<p>Let me think: was I the same when I got up this morning?</p>
+
+<script>
+  location.href = "#:~:text=i-,the";
+</script>
+</html>

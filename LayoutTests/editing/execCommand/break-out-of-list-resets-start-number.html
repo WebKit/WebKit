@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../editing.js"></script>
+<script src="../../resources/dump-as-markup.js"></script>
+</head>
+<body>
+<div id="test" contenteditable>
+<ol start="11"><li>eleven</li><li id="target">twelve</li><li>thirteen</li><li>fourteen</li></ol>
+</div>
+<script>
+Markup.description('This tests that pressing Enter twice to break out of a list resets the start attribute to 1 on the second half of the split list.');
+
+Markup.dump('test', 'Before');
+
+var target = document.getElementById('target');
+var selection = window.getSelection();
+var range = document.createRange();
+range.selectNodeContents(target);
+range.collapse(false);
+selection.removeAllRanges();
+selection.addRange(range);
+
+document.execCommand('InsertParagraph', false, '');
+document.execCommand('InsertParagraph', false, '');
+
+Markup.dump('test', 'After');
+</script>
+</body>
+</html>

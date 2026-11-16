@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<style>
+html { scroll-snap-type: y mandatory; }
+body { margin: 0; }
+.box { height: 100vh; scroll-snap-align: start; background: repeating-linear-gradient(#ff7e5f, #feb47b 100px); }
+</style>
+<body>
+<div class="box"></div>
+<div class="box"></div>
+<div class="box"></div>
+<div class="box"></div>
+<script>
+addEventListener('message', (event) => {
+    event.source.postMessage({ snapping: internals.isScrollSnapInProgress(document.scrollingElement) }, '*');
+});
+
+parent.postMessage({ loaded: true }, '*');
+</script>
+</body>

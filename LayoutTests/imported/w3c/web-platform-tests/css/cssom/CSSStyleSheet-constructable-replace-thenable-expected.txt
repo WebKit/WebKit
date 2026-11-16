@@ -1,0 +1,3 @@
+
+PASS CSSStyleSheet.replace/replaceSync() when stylesheet is a thenable
+

@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 200">
+    <!-- Reference: the same scene with no compositing, so the text paints fully at (200,120). -->
+    <g style="opacity: 0.99">
+        <g><rect x="10" y="10" width="60" height="60" fill="blue"/></g>
+        <text x="200" y="120" font-family="Ahem" font-size="40" fill="green">XXXX</text>
+    </g>
+</svg>

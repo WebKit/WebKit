@@ -1,0 +1,8 @@
+Time
+Customer Name
+...	Ricki
+...	Ricki
+...	Anna
+
+PASS CSSOM: Setting style.backgroundColor on table rows
+

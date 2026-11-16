@@ -1,0 +1,4 @@
+
+PASS permissions policy allow="payment" allows same-origin navigation in an iframe.
+PASS permissions policy allow="payment" disallows cross-origin navigation in an iframe.
+

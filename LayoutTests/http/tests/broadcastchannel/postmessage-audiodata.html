@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<body>
+<pre id="output"></pre>
+<script src="resources/broadcastchannel-test-harness.js"></script>
+<script>
+broadcastChannelTest(function() {
+    return new AudioData({
+        format: 'f32',
+        sampleRate: 44100,
+        numberOfFrames: 4,
+        numberOfChannels: 1,
+        timestamp: 0,
+        data: new Float32Array([0.5, 0.5, 0.5, 0.5])
+    });
+}, "AudioData:1:4");
+</script>
+</body>
+</html>

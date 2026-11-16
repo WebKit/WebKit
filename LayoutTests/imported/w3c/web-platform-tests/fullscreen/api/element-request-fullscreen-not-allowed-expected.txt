@@ -1,0 +1,3 @@
+
+PASS requestFullscreen() when not allowed to request fullscreen
+

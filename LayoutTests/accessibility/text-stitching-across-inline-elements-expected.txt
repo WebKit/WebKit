@@ -1,0 +1,33 @@
+This test ensures text after a link stitches with text inside inline formatting elements.
+
+Test 1 (italic):
+
+{AXRole: AXLink}
+
+{AXRole: AXStaticText AXValue: Easter}
+
+{AXRole: AXStaticText AXValue: . The text of the Shepherd Cantata was written by }
+
+{AXRole: AXLink}
+
+{AXRole: AXStaticText AXValue: Picander}
+
+Test 2 (span):
+
+{AXRole: AXLink}
+
+{AXRole: AXStaticText AXValue: Easter}
+
+{AXRole: AXStaticText AXValue: . The text of the Shepherd Cantata was written by }
+
+{AXRole: AXLink}
+
+{AXRole: AXStaticText AXValue: Picander}
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Easter. The text of the Shepherd Cantata was written by Picander
+
+Easter. The text of the Shepherd Cantata was written by Picander

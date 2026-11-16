@@ -1,0 +1,3 @@
+
+PASS Verify getImageData() behavior in invalid cases.
+

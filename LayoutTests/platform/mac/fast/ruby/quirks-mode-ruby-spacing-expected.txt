@@ -1,0 +1,80 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderText {#text} at (0,0) size 767x36
+        text run at (0,0) width 618: "This test is checking to make sure that ruby elements properly inherit line-height and don't reset it. "
+        text run at (618,0) width 149: "There should be double"
+        text run at (0,18) width 208: "spacing between all lines below. "
+        text run at (208,18) width 265: "The three blocks should line up perfectly. "
+      RenderBlock {DIV} at (475,20) size 80x166 [border: (1px solid #000000)]
+        RenderText {#text} at (3,10) size 64x18
+          text run at (3,10) width 64: "Line One."
+        RenderBR {BR} at (67,24) size 0x0
+        RenderText {#text} at (3,42) size 67x18
+          text run at (3,42) width 67: "Line Two."
+        RenderBR {BR} at (70,56) size 0x0
+        RenderRuby (inline) {RUBY} at (0,0) size 74x18
+          RenderRubyRun (anonymous) at (3,67) size 74x32
+            RenderRubyText {RT} at (0,-6) size 74x13
+              RenderText {#text} at (34,0) size 5x13
+                text run at (34,0) width 5: "3"
+            RenderRubyBase (anonymous) at (0,0) size 74x32
+              RenderText {#text} at (0,7) size 74x18
+                text run at (0,7) width 74: "Line Three."
+        RenderBR {BR} at (77,88) size 0x0
+        RenderRuby (inline) {RUBY} at (0,0) size 67x18
+          RenderRubyRun (anonymous) at (3,99) size 67x32
+            RenderRubyText {RT} at (0,-6) size 67x13
+              RenderText {#text} at (31,0) size 5x13
+                text run at (31,0) width 5: "4"
+            RenderRubyBase (anonymous) at (0,0) size 67x32
+              RenderText {#text} at (0,7) size 67x18
+                text run at (0,7) width 67: "Line Four."
+        RenderBR {BR} at (70,120) size 0x0
+        RenderText {#text} at (3,138) size 65x18
+          text run at (3,138) width 65: "Line Five."
+      RenderText {#text} at (557,18) size 4x18
+        text run at (557,18) width 4: " "
+      RenderBlock {DIV} at (563,20) size 80x166 [border: (1px solid #000000)]
+        RenderText {#text} at (3,10) size 64x18
+          text run at (3,10) width 64: "Line One."
+        RenderBR {BR} at (67,24) size 0x0
+        RenderText {#text} at (3,42) size 67x18
+          text run at (3,42) width 67: "Line Two."
+        RenderBR {BR} at (70,56) size 0x0
+        RenderText {#text} at (3,74) size 74x18
+          text run at (3,74) width 74: "Line Three."
+        RenderBR {BR} at (77,88) size 0x0
+        RenderText {#text} at (3,106) size 67x18
+          text run at (3,106) width 67: "Line Four."
+        RenderBR {BR} at (70,120) size 0x0
+        RenderText {#text} at (3,138) size 65x18
+          text run at (3,138) width 65: "Line Five."
+      RenderText {#text} at (645,18) size 4x18
+        text run at (645,18) width 4: " "
+      RenderBlock {DIV} at (651,20) size 80x166 [border: (1px solid #000000)]
+        RenderRuby (inline) {RUBY} at (0,0) size 64x18
+          RenderRubyRun (anonymous) at (3,3) size 64x32
+            RenderRubyBase (anonymous) at (0,0) size 64x32
+              RenderText {#text} at (0,7) size 64x18
+                text run at (0,7) width 64: "Line One."
+        RenderBR {BR} at (67,24) size 0x0
+        RenderText {#text} at (3,42) size 67x18
+          text run at (3,42) width 67: "Line Two."
+        RenderBR {BR} at (70,56) size 0x0
+        RenderRuby (inline) {RUBY} at (0,0) size 74x18
+          RenderRubyRun (anonymous) at (3,67) size 74x32
+            RenderRubyBase (anonymous) at (0,0) size 74x32
+              RenderText {#text} at (0,7) size 74x18
+                text run at (0,7) width 74: "Line Three."
+        RenderBR {BR} at (77,88) size 0x0
+        RenderRuby (inline) {RUBY} at (0,0) size 67x18
+          RenderRubyRun (anonymous) at (3,99) size 67x32
+            RenderRubyBase (anonymous) at (0,0) size 67x32
+              RenderText {#text} at (0,7) size 67x18
+                text run at (0,7) width 67: "Line Four."
+        RenderBR {BR} at (70,120) size 0x0
+        RenderText {#text} at (3,138) size 65x18
+          text run at (3,138) width 65: "Line Five."

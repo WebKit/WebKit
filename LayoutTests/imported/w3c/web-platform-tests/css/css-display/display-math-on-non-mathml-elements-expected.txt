@@ -1,0 +1,13 @@
+
+
+FAIL computed display on <div style="display: math;"> assert_equals: expected "inline" but got "block"
+FAIL computed display on <div style="display: inline math;"> assert_equals: expected "inline" but got "block"
+FAIL computed display on <div style="display: math inline;"> assert_equals: expected "inline" but got "block"
+PASS computed display on <div style="display: block math;">
+PASS computed display on <div style="display: math block;">
+PASS computed display on <svg style="display: math;">
+PASS computed display on <svg style="display: inline math;">
+PASS computed display on <svg style="display: math inline;">
+FAIL computed display on <svg style="display: block math;"> assert_equals: expected "block" but got "inline"
+FAIL computed display on <svg style="display: math block;"> assert_equals: expected "block" but got "inline"
+

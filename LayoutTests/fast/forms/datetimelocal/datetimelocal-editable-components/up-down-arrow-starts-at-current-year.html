@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/common.js"></script>
+<script src="../../../../resources/js-test.js"></script>
+<script src="../../../../resources/ui-helper.js"></script>
+</head>
+<body>
+
+<input id="input1" type="datetime-local" />
+<input id="input2" type="datetime-local" />
+
+<script>
+window.jsTestIsAsync = true;
+
+var currentYear = new Date().getFullYear();
+
+addEventListener("load", async () => {
+    description("Tests that pressing the up or down arrow on the year field of a date input starts the value at the current year.");
+
+    const numberOfFieldsInDatetimeLocal = 6;
+    for (let i = 0; i < numberOfFieldsInDatetimeLocal; i++) {
+        UIHelper.keyDown("\t", ["altKey"]);
+        UIHelper.keyDown("upArrow");
+        UIHelper.keyDown("upArrow");
+    }
+    shouldBeTrue("new Date(input1.value).getFullYear() === currentYear + 1");
+
+    for (let i = 0; i < numberOfFieldsInDatetimeLocal; i++) {
+        UIHelper.keyDown("\t", ["altKey"]);
+        UIHelper.keyDown("downArrow");
+        UIHelper.keyDown("downArrow");
+    }
+    shouldBeTrue("new Date(input2.value).getFullYear() === currentYear - 1");
+
+    finishJSTest();
+});
+</script>
+</body>
+</html>
+

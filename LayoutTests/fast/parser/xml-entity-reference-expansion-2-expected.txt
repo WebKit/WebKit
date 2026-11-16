@@ -1,0 +1,4 @@
+This tests parsing deeply nested entity references. WebKit should not hang or crash.
+
+PASS
+

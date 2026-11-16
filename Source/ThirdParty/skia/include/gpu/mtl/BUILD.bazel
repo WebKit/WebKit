@@ -1,0 +1,19 @@
+load("//bazel:skia_rules.bzl", "skia_filegroup")
+
+package(
+    default_applicable_licenses = ["//:license"],
+)
+
+licenses(["notice"])
+
+skia_filegroup(
+    name = "public_hdrs",
+    srcs = [
+        "MtlMemoryAllocator.h",
+    ],
+    visibility = [
+        "//src/gpu/ganesh/mtl:__pkg__",
+        "//src/gpu/graphite/mtl:__pkg__",
+        "//src/gpu/mtl:__pkg__",
+    ],
+)

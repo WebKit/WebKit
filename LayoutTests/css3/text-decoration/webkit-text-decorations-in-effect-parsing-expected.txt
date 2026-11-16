@@ -1,0 +1,8 @@
+Test underline
+Test spelling-error
+Test grammar-error
+
+PASS -webkit-text-decorations-in-effect: underline can be set directly
+PASS -webkit-text-decorations-in-effect: spelling-error can be set directly
+PASS -webkit-text-decorations-in-effect: grammar-error can be set directly
+

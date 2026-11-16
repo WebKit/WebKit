@@ -1,0 +1,78 @@
+
+PASS Margin properties on a
+PASS Margin properties on a (rtl)
+PASS Margin properties on a (no margin-collapsing)
+PASS Margin properties on maction
+PASS Margin properties on maction (rtl)
+PASS Margin properties on maction (no margin-collapsing)
+PASS Margin properties on menclose
+PASS Margin properties on menclose (rtl)
+PASS Margin properties on menclose (no margin-collapsing)
+PASS Margin properties on merror
+PASS Margin properties on merror (rtl)
+PASS Margin properties on merror (no margin-collapsing)
+PASS Margin properties on mfrac
+PASS Margin properties on mfrac (rtl)
+PASS Margin properties on mfrac (no margin-collapsing)
+PASS Margin properties on mi
+PASS Margin properties on mi (rtl)
+PASS Margin properties on mi (no margin-collapsing)
+PASS Margin properties on mmultiscripts
+PASS Margin properties on mmultiscripts (rtl)
+PASS Margin properties on mmultiscripts (no margin-collapsing)
+PASS Margin properties on mn
+PASS Margin properties on mn (rtl)
+PASS Margin properties on mn (no margin-collapsing)
+PASS Margin properties on mo
+PASS Margin properties on mo (rtl)
+PASS Margin properties on mo (no margin-collapsing)
+PASS Margin properties on mover
+PASS Margin properties on mover (rtl)
+PASS Margin properties on mover (no margin-collapsing)
+PASS Margin properties on mpadded
+PASS Margin properties on mpadded (rtl)
+PASS Margin properties on mpadded (no margin-collapsing)
+PASS Margin properties on mphantom
+PASS Margin properties on mphantom (rtl)
+PASS Margin properties on mphantom (no margin-collapsing)
+PASS Margin properties on mroot
+PASS Margin properties on mroot (rtl)
+PASS Margin properties on mroot (no margin-collapsing)
+PASS Margin properties on mrow
+PASS Margin properties on mrow (rtl)
+PASS Margin properties on mrow (no margin-collapsing)
+PASS Margin properties on ms
+PASS Margin properties on ms (rtl)
+PASS Margin properties on ms (no margin-collapsing)
+PASS Margin properties on mspace
+PASS Margin properties on msqrt
+PASS Margin properties on msqrt (rtl)
+PASS Margin properties on msqrt (no margin-collapsing)
+PASS Margin properties on mstyle
+PASS Margin properties on mstyle (rtl)
+PASS Margin properties on mstyle (no margin-collapsing)
+PASS Margin properties on msub
+PASS Margin properties on msub (rtl)
+PASS Margin properties on msub (no margin-collapsing)
+PASS Margin properties on msubsup
+PASS Margin properties on msubsup (rtl)
+PASS Margin properties on msubsup (no margin-collapsing)
+PASS Margin properties on msup
+PASS Margin properties on msup (rtl)
+PASS Margin properties on msup (no margin-collapsing)
+PASS Margin properties on mtable
+PASS Margin properties on mtable (rtl)
+PASS Margin properties on mtable (no margin-collapsing)
+PASS Margin properties on mtext
+PASS Margin properties on mtext (rtl)
+PASS Margin properties on mtext (no margin-collapsing)
+PASS Margin properties on munder
+PASS Margin properties on munder (rtl)
+PASS Margin properties on munder (no margin-collapsing)
+PASS Margin properties on munderover
+PASS Margin properties on munderover (rtl)
+PASS Margin properties on munderover (no margin-collapsing)
+PASS Margin properties on semantics
+PASS Margin properties on semantics (rtl)
+PASS Margin properties on semantics (no margin-collapsing)
+

@@ -1,0 +1,8 @@
+
+
+PASS select[multiple][style="writing-mode: horizontal-tb"] has visually correct option order
+PASS select[multiple][style="writing-mode: vertical-lr"] has visually correct option order
+PASS select[multiple][style="writing-mode: vertical-rl"] has visually correct option order
+PASS select[multiple][style="writing-mode: sideways-lr"] has visually correct option order
+PASS select[multiple][style="writing-mode: sideways-rl"] has visually correct option order
+

@@ -1,0 +1,83 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+var successfullyParsed = false;
+</script>
+<style>
+table, th, td {
+    border: 1px solid black;
+}
+</style>
+</head>
+<body>
+
+<table>
+<thead><tr>
+<td></td>
+<th aria-label="ColHeader1">ColHeader1</th>
+<th aria-label="ColHeader2" colspan="2">ColHeader2</th>
+</tr></thead>
+
+<tbody>
+<tr>
+<th aria-label="Rowheader1">Rowheader1</th>
+<td id="content1">content1</td>
+<td id="content2">content2</td>
+<td>content3</td>
+</tr>
+<tr>
+<th aria-label="Rowheader2" rowspan="2">RowHeader2</th>
+<td>content4</td>
+<td>content5</td>
+<td>content6</td>
+</tr>
+<tr>
+<td id="content7">content7</td>
+<td>content8</td>
+<td id="content9">content9</td>
+</tr>
+</tbody>
+</table>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This test makes sure that cells are getting the correct header elements.");
+    
+    if (window.accessibilityController) {
+        
+        var cell;
+        var colDescription, rowDescription;
+        var rowHeaderLabel1 = "Rowheader1";
+        var rowHeaderLabel2 = "Rowheader2";
+        var colHeaderLabel1 = "ColHeader1";
+        var colHeaderLabel2 = "ColHeader2";
+        
+        verifyCellAndHeaders("content1", colHeaderLabel1, rowHeaderLabel1);
+        verifyCellAndHeaders("content2", colHeaderLabel2, rowHeaderLabel1);
+        verifyCellAndHeaders("content7", colHeaderLabel1, rowHeaderLabel2);
+        verifyCellAndHeaders("content9", colHeaderLabel2, rowHeaderLabel2);
+    }
+    
+    function verifyCellAndHeaders(cellID, colHeader, rowHeader) {
+        cell = accessibilityController.accessibleElementById(cellID);
+        colDescription = "AXLabel: " + colHeader;
+        rowDescription = "AXLabel: " + rowHeader;
+        debug("Verifying \"" + cellID + "\" with col header: \"" + colHeader + "\" row header: \"" + rowHeader + "\".");
+        shouldBe("cell.headerElementAtIndex(0).description", "colDescription");
+        shouldBe("cell.headerElementAtIndex(1).description", "rowDescription");
+        debug("\n");
+    }
+
+    successfullyParsed = true;
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+
+</body>
+</html>
+

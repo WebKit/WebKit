@@ -1,0 +1,18 @@
+
+PASS postMessaging to a dedicated worker allows them to see each others' modifications with DataView
+PASS postMessaging to a dedicated worker allows them to see each others' modifications with Int8Array
+PASS postMessaging to a dedicated worker allows them to see each others' modifications with Uint8Array
+PASS postMessaging to a dedicated worker allows them to see each others' modifications with Uint8ClampedArray
+PASS postMessaging to a dedicated worker allows them to see each others' modifications with Int16Array
+PASS postMessaging to a dedicated worker allows them to see each others' modifications with Uint16Array
+PASS postMessaging to a dedicated worker allows them to see each others' modifications with Int32Array
+PASS postMessaging to a dedicated worker allows them to see each others' modifications with Uint32Array
+PASS postMessaging to a dedicated worker allows them to see each others' modifications with BigInt64Array
+PASS postMessaging to a dedicated worker allows them to see each others' modifications with BigUint64Array
+PASS postMessaging to a dedicated worker allows them to see each others' modifications with Float16Array
+PASS postMessaging to a dedicated worker allows them to see each others' modifications with Float32Array
+PASS postMessaging to a dedicated worker allows them to see each others' modifications with Float64Array
+PASS postMessaging to a same-origin iframe allows them to see each others' modifications
+PASS postMessaging to a same-origin deeply-nested iframe allows them to see each others' modifications
+PASS postMessaging to a same-origin opened window allows them to see each others' modifications
+

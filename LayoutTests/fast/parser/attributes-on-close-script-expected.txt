@@ -1,0 +1,10 @@
+ALERT: PASS (as long as this test doesn't trigger an ASSERT)
+| <html>
+|   <head>
+|     <script>
+|       src="../../resources/dump-as-markup.js"
+|     "\n"
+|     <script>
+|       "\nalert("PASS (as long as this test doesn't trigger an ASSERT)");\n"
+|     "\n"
+|   <body>

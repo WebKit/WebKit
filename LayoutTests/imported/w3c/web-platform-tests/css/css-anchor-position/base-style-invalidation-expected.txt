@@ -1,0 +1,3 @@
+
+PASS The chosen position fallbacks changes when the base style differs
+

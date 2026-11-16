@@ -1,0 +1,56 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ ShouldIgnoreMetaViewport=true ] -->
+<html>
+<head>
+<meta name="viewport" content="width=1000">
+<style>
+body, html {
+    margin: 0;
+}
+
+#bar {
+    width: 100%;
+    height: 100px;
+    background: linear-gradient(to right, red 0%, green 50%, blue 100%);
+}
+
+#description {
+    width: 300px;
+    overflow: scroll;
+}
+</style>
+<script src="../../../resources/ui-helper.js"></script>
+<script src="../../../resources/js-test.js"></script>
+<script>
+jsTestIsAsync = true;
+
+description("This test verifies that a page with a constant width viewport bigger than the actual view width is scaled to fit the view.");
+
+addEventListener("load", async () => {
+    if (!window.testRunner)
+        return;
+
+    await UIHelper.ensurePresentationUpdate();
+    minScale = (await UIHelper.minimumZoomScale()).toFixed(2);
+
+    const isEnhancedWindowingEnabled = await UIHelper.enhancedWindowingEnabled();
+    if (isEnhancedWindowingEnabled) {
+        // Since iOS 26, stage manager support has been introduced to all iPads.
+        // With this change, the innerWidth is now expected to be the screen.width / expectedScale rather than just 1000.
+        expectedScale = (Math.max(screen.width, Math.min(1000, internals.minimumShrinkToFitWidthWhenPreferringHorizontalScrolling())) / 1000).toFixed(2);
+        expectedInnerWidth = Math.round(screen.width / parseFloat(expectedScale));
+    } else {
+        expectedScale = (screen.width / 1000).toFixed(2);
+        expectedInnerWidth = 1000;
+    }
+
+    shouldBe("minScale", "expectedScale");
+    shouldBe("innerWidth", "expectedInnerWidth");
+    finishJSTest();
+});
+</script>
+</head>
+<body>
+<div id="bar"></div>
+<div id="description"></div>
+</body>
+</html>

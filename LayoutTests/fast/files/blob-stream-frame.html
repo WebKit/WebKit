@@ -1,0 +1,15 @@
+<script>
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+    window.addEventListener("message", function(event) {
+        event.data.stream().getReader().read().then(function({ done, value }) {
+            alert(String.fromCharCode(value[0]) == "7" ? "PASS" : "FAIL");
+            if (window.testRunner) {
+                testRunner.notifyDone();
+            }
+        });
+    });
+</script>
+<iframe src="resources/blob-stream-iframe.html"></iframe>

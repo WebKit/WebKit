@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../fast/repaint/resources/text-based-repaint.js"></script>
+</head>
+<body>
+<svg style="position: absolute; top: 0px; left: 0px; width: 400px; height: 400px">
+    <g transform="translate(100 100)">
+        <g id="target" transform="scale(0.5)">
+            <text x="10" y="50" font-size="20" fill="#080" stroke="#080" stroke-width="20"><tspan vector-effect="non-scaling-stroke">Hg</tspan></text>
+        </g>
+    </g>
+</svg>
+<script>
+    function repaintTest() {
+        document.getElementById("target").setAttribute("transform", "scale(0.25)");
+    }
+    onload = runRepaintTest;
+</script>
+</body>
+</html>

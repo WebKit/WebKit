@@ -1,0 +1,5 @@
+
+PASS org.w3.clearkey test MediaKeys attribute syntax
+PASS org.w3.clearkey test MediaKeys setServerCertificate() exceptions.
+PASS org.w3.clearkey test MediaKeys setServerCertificate() syntax with non-empty certificate.
+

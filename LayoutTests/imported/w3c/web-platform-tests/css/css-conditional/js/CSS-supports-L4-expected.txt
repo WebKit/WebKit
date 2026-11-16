@@ -1,0 +1,20 @@
+
+PASS selector() function accepts a selector
+PASS selector() function doesn't accept a selector list
+PASS selector() function rejects unknown webkit pseudo-elements.
+PASS selector() function accepts known pseudo-elements
+PASS selector() with simple combinators
+PASS selector() with unknown combinators
+PASS selector() with forgiving :is, 1 arg
+PASS selector() with forgiving :is, multiple args
+PASS selector() with forgiving :where, 1 arg
+PASS selector() with forgiving :where, multiple args
+PASS selector() with forgiving :has, 1 arg
+PASS selector() with forgiving :has, multiple args
+PASS selector() with unforgiving :nth-child, 1 arg
+PASS selector() with unforgiving :nth-last-child, 1 arg
+PASS selector() with unforgiving :nth-child, multiple args
+PASS selector() with unforgiving :nth-last-child, multiple args
+PASS selector() with a non-identifier after :nth-child's An+B index
+PASS selector() with a non-identifier after :nth-last-child's An+B index
+

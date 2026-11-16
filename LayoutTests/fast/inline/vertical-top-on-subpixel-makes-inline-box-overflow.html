@@ -1,0 +1,20 @@
+<style>
+#container {
+  overflow-y: hidden;
+}
+
+.inline {
+  border-top: 0.5px solid green;
+  background-color: red;
+  width: 100px;
+  height: 100px;
+  display: inline-block;
+  vertical-align: top;
+}
+</style><div id=container><div class=inline></div></div>
+<pre id=result></pre>
+<script>
+if (window.testRunner)
+  testRunner.dumpAsText();
+result.innerText = container.offsetHeight;
+</script>

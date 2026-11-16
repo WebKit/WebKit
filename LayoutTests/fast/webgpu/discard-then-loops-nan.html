@@ -1,0 +1,149 @@
+<script src="../../resources/js-test.js"></script>
+<script>
+
+jsTestIsAsync = true;
+
+description("A fragment shader with two discards, the second nested inside an if, followed by a branch " +
+           "containing a dozen small loops. Every texel of the colour attachment must either keep the clear " +
+           "value, because the fragment was discarded, or hold the finite colour the shader returns. The " +
+           "iteration cap WGSL wraps around each loop to keep a shader from hanging the GPU used to be a " +
+           "volatile local; declared inside conditional control flow, after the fragment had already reached " +
+           "discard_fragment(), that miscompiled and the fragment's colour came out of uninitialized data, so " +
+           "NaN and Inf landed in the attachment for fragments that were never discarded. Both the number of " +
+           "loops and their being nested in a branch after the discards matter, so the shape below is kept " +
+           "exactly.");
+
+const SIZE = 128;
+const FRAMES = 8;
+const LOOPS = 12;
+
+// 12 copies of a three-iteration loop. The iteration count does not matter, the number of loops does:
+// six copies never reproduced the fault and nine always did.
+const loops = Array.from({ length: LOOPS }, () =>
+    `        for (var k = 0; k < 3; k++) {
+            sum += p.x * 0.001;
+            p = p * 2.0 + 1.0;
+        }
+`).join('');
+
+const code = `
+    @group(0) @binding(0) var<uniform> frame: u32;
+
+    @vertex fn vs(@builtin(vertex_index) i: u32) -> @builtin(position) vec4f {
+        // One triangle covering the whole attachment.
+        let xy = vec2f(f32(i & 1u) * 4.0 - 1.0, f32(i >> 1u) * 4.0 - 1.0);
+        return vec4f(xy, 0.0, 1.0);
+    }
+
+    @fragment fn fs(@builtin(position) pos: vec4f) -> @location(0) vec4f {
+        if (fract(pos.x * 0.37 + f32(frame) * 0.11) > 0.9) {
+            discard;
+        }
+        // The second discard has to be nested for the fault to appear.
+        if (pos.x > 1.0) {
+            if (fract(pos.y * 0.29 + f32(frame) * 0.07) > 0.6) {
+                discard;
+            }
+        }
+        var c = vec3f(0.5);
+        // The loops have to sit in a branch, and after the discards.
+        if (pos.y > 1.0) {
+            var p = pos.xy * 0.01;
+            var sum = 0.0;
+${loops}            c = vec3f(sum);
+        }
+        return vec4f(c, 1.0);
+    }
+`;
+
+// p is never large enough for the arithmetic above to overflow f32, so a non-finite half here is
+// never a computed value.
+function halfToFloat(h)
+{
+    const sign = (h >> 15) ? -1 : 1;
+    const exponent = (h >> 10) & 0x1f;
+    const mantissa = h & 0x3ff;
+    if (exponent === 0x1f)
+        return mantissa ? NaN : sign * Infinity;
+    if (!exponent)
+        return sign * mantissa * Math.pow(2, -24);
+    return sign * (1 + mantissa / 1024) * Math.pow(2, exponent - 15);
+}
+
+async function main() {
+    let adapter = await navigator.gpu.requestAdapter({});
+    let device = await adapter.requestDevice({});
+    device.pushErrorScope('validation');
+
+    let module = device.createShaderModule({ code });
+    let pipeline = device.createRenderPipeline({
+        layout: 'auto',
+        vertex: { module, entryPoint: 'vs' },
+        fragment: { module, entryPoint: 'fs', targets: [{ format: 'rgba16float' }] },
+        primitive: { topology: 'triangle-list' },
+    });
+
+    let uniform = device.createBuffer({ size: 16, usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST });
+    let bindGroup = device.createBindGroup({
+        layout: pipeline.getBindGroupLayout(0),
+        entries: [{ binding: 0, resource: { buffer: uniform } }],
+    });
+    let texture = device.createTexture({
+        size: [SIZE, SIZE],
+        format: 'rgba16float',
+        usage: GPUTextureUsage.RENDER_ATTACHMENT | GPUTextureUsage.COPY_SRC,
+    });
+    // rgba16float is 8 bytes a texel and 128 * 8 is already a multiple of 256.
+    const bytesPerRow = SIZE * 8;
+    let readback = device.createBuffer({ size: bytesPerRow * SIZE, usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.MAP_READ });
+
+    // The discard pattern moves with the frame index, and which fragments came out wrong moved with it,
+    // so sample several frames rather than one.
+    let nonFinite = 0;
+    for (let frame = 0; frame < FRAMES; ++frame) {
+        device.queue.writeBuffer(uniform, 0, new Uint32Array([frame]));
+
+        let commandEncoder = device.createCommandEncoder();
+        let pass = commandEncoder.beginRenderPass({
+            colorAttachments: [{
+                view: texture.createView(),
+                loadOp: 'clear',
+                storeOp: 'store',
+                clearValue: { r: 0, g: 0, b: 0, a: 1 },
+            }],
+        });
+        pass.setPipeline(pipeline);
+        pass.setBindGroup(0, bindGroup);
+        pass.draw(3);
+        pass.end();
+        commandEncoder.copyTextureToBuffer({ texture }, { buffer: readback, bytesPerRow }, [SIZE, SIZE]);
+        device.queue.submit([commandEncoder.finish()]);
+
+        await readback.mapAsync(GPUMapMode.READ);
+        let halves = new Uint16Array(readback.getMappedRange());
+        for (let i = 0; i < SIZE * SIZE; ++i) {
+            for (let channel = 0; channel < 3; ++channel) {
+                if (!isFinite(halfToFloat(halves[i * 4 + channel]))) {
+                    ++nonFinite;
+                    break;
+                }
+            }
+        }
+        readback.unmap();
+    }
+
+    window.nonFinite = nonFinite;
+    shouldBe('nonFinite', '0');
+
+    let error = await device.popErrorScope();
+    if (error)
+        testFailed(error.message);
+}
+
+main().catch(e => {
+    testFailed("Exception: " + e);
+}).finally(() => {
+    finishJSTest();
+});
+
+</script>

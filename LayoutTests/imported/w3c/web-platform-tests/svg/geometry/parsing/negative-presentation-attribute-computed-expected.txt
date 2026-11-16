@@ -1,0 +1,6 @@
+
+PASS negative rx presentation attribute computes to auto
+PASS negative ry presentation attribute computes to auto
+PASS negative r presentation attribute computes to 0px
+PASS negative cx presentation attribute is accepted
+

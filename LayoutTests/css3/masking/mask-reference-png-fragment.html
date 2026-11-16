@@ -1,0 +1,31 @@
+ <style>
+    .container {
+        display: inline-block;
+        border: 1px solid black;
+    }
+    .box {
+        background-color: green;
+        width: 100px;
+        height: 100px;
+    }
+    .green-background {
+        background-color: green;
+    }
+    .blue-background {
+        background-color: blue;
+    }
+    .mask-bitmap-top-fragment {
+        mask-image: url(resources/red-100x100.png#xywh=0,0,100,50);
+    }
+    .mask-bitmap-bottom-fragment {
+        mask-image: url(resources/red-100x100.png#xywh=0,50,100,50);
+    }
+</style>
+<body>
+    <div class="container">
+        <div class="box green-background mask-bitmap-top-fragment"></div>
+    </div>
+    <div class="container">
+        <div class="box blue-background mask-bitmap-bottom-fragment"></div>
+    </div>
+</body>

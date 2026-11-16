@@ -1,0 +1,66 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<!DOCTYPE html>
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="../network/resources/frame-load-rows-test-utilities.js"></script>
+<script>
+function navigateFrame(url) {
+    document.getElementById("navigating").src = url;
+}
+
+function test() {
+    // Unique per run, so repeated runs in one process don't hit the memory cache.
+    const token = String(Math.random()).slice(2);
+    const url = `http://localhost:8000/site-isolation/inspector/network/resources/iframe-with-script.html?navigating-${token}`;
+
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Page.EnableDuringProvisionalIFrameLoad");
+
+    suite.addTestCase({
+        name: "SiteIsolation.Page.EnableDuringProvisionalIFrameLoad.ReportsTheLoad",
+        description: "Enabling Page and Network while an iframe's load is provisional in another process should still report that load.",
+        async test() {
+            let crossOriginFrame = await awaitChildFrame((frame) => frame.mainResource.url.includes("?cross-origin"));
+            InspectorTest.assert(crossOriginFrame, "Cross-origin frame should be in the frame model.");
+            if (!crossOriginFrame)
+                return;
+
+            let recorder = new FrameLoadRowRecorder;
+
+            // Hold the provisional load, as provisional-frame-target-pausing.html does.
+            let originalResumeIfPaused = WI.Target.prototype._resumeIfPaused;
+            WI.Target.prototype._resumeIfPaused = function() { };
+            InspectorTest.evaluateInPage(`navigateFrame("${url}")`);
+            let provisionalTarget = await pollUntil(() => WI.targetManager.targets.find((target) => target.type === WI.TargetType.Frame && target.isProvisional));
+            WI.Target.prototype._resumeIfPaused = originalResumeIfPaused;
+            InspectorTest.expectThat(provisionalTarget?.isPaused, "Provisional frame target should be paused.");
+            if (!provisionalTarget?.isPaused)
+                return;
+
+            // Enable both domains again, as a frontend attaching now would, while the cross-origin frame's process hosts the provisional frame.
+            await WI.backendTarget.PageAgent.disable();
+            await WI.backendTarget.PageAgent.enable();
+            await WI.backendTarget.NetworkAgent.disable();
+            await WI.backendTarget.NetworkAgent.enable();
+
+            provisionalTarget._resumeIfPaused();
+            let committed = await pollUntil(() => !provisionalTarget.isProvisional);
+            InspectorTest.expectThat(!!committed, "Provisional load should commit.");
+
+            let frame = await awaitChildFrame((frame) => frame.mainResource.url === url);
+            InspectorTest.expectThat(!!frame, "Navigated frame should be attached to the main frame.");
+            if (frame) {
+                await expectSingleFinishedDocument(recorder, frame, "Document");
+                await expectSingleFinishedSubresource(recorder, frame, `iframe-script.js?navigating-${token}`, "Script");
+            }
+
+            recorder.stop();
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+<body onload="runTest()">
+<p>Tests that an iframe load which is provisional in another process when Page and Network are enabled is still reported under Site Isolation.</p>
+<iframe src="http://localhost:8000/site-isolation/inspector/network/resources/iframe-with-script.html?cross-origin"></iframe>
+<iframe id="navigating" src="../network/resources/iframe-with-script.html?navigating"></iframe>
+</body>

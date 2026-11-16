@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>WebCrypto API Demo: AES-GCM</title>
+    <script type="text/javascript" src="common.js"></script>
+    <script type="text/javascript">
+    var keyData = hexStringToUint8Array("2b7e151628aed2a6abf7158809cf4f3c2b7e151628aed2a6abf7158809cf4f3c");
+    var iv = hexStringToUint8Array("000102030405060708090a0b0c0d0e0f");
+
+    function AES_GCM_encrypt()
+    {
+        crypto.subtle.importKey("raw", keyData, "aes-gcm", false, ["encrypt"]).then(function(key) {
+            var plainText = document.getElementById("plainTextGCM").value;
+            return crypto.subtle.encrypt({name: "aes-gcm", iv: iv}, key, asciiToUint8Array(plainText));
+        }, failAndLog).then(function(cipherText) {
+            document.getElementById("cipherTextGCM").value = bytesToHexString(cipherText);
+        }, failAndLog);
+    }
+    function AES_GCM_decrypt()
+    {
+        crypto.subtle.importKey("raw", keyData, "aes-gcm", false, ["decrypt"]).then(function(key) {
+            var cipherText = document.getElementById("cipherTextGCM").value;
+            return crypto.subtle.decrypt({name: "aes-gcm", iv: iv}, key, hexStringToUint8Array(cipherText));
+        }, failAndLog).then(function(plainText) {
+            document.getElementById("resultGCM").innerHTML = "Result: " + bytesToASCIIString(plainText);
+        }, function(result) {
+            document.getElementById("resultGCM").innerHTML = "Result: " + result;
+        });
+    }
+    function AES_CBC_encrypt()
+    {
+        crypto.subtle.importKey("raw", keyData, "aes-cbc", false, ["encrypt"]).then(function(key) {
+            var plainText = document.getElementById("plainTextGCM").value;
+            return crypto.subtle.encrypt({name: "aes-cbc", iv: iv}, key, asciiToUint8Array(plainText));
+        }, failAndLog).then(function(cipherText) {
+            document.getElementById("cipherTextGCM").value = bytesToHexString(cipherText);
+        }, failAndLog);
+    }
+    function AES_CBC_decrypt()
+    {
+        crypto.subtle.importKey("raw", keyData, "aes-cbc", false, ["decrypt"]).then(function(key) {
+            var cipherText = document.getElementById("cipherTextGCM").value;
+            return crypto.subtle.decrypt({name: "aes-cbc", iv: iv}, key, hexStringToUint8Array(cipherText));
+        }, failAndLog).then(function(plainText) {
+            document.getElementById("resultGCM").innerHTML = "Result: " + bytesToASCIIString(plainText);
+        }, failAndLog);
+    }
+    </script>
+</head>
+<body>
+    <h1>AES-GCM</h1>
+    <p>Click the corresponding buttons to do AES-CBC/GCM encryption/decryption. In the middle, try to modify the cipher text to see how AES-CBC/GCM responds.</p>
+    <div>
+        Plain Text: <input type="text" id="plainTextGCM" value="Hello, World!">
+        <button type="button" onclick="AES_GCM_encrypt()">encryptGCM</button>
+        <button type="button" onclick="AES_CBC_encrypt()">encryptCBC</button>
+    </div>
+    <div>
+        Cipher Text: <input type="text" id="cipherTextGCM" size="50">
+        <button type="button" onclick="AES_GCM_decrypt()">decryptGCM</button>
+        <button type="button" onclick="AES_CBC_decrypt()">decryptCBC</button>
+    </div>
+    <div id="resultGCM">
+        Result:
+    </div>
+</body>
+</html>

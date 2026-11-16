@@ -1,0 +1,59 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ AsyncOverflowScrollingEnabled=true ] -->
+<html>
+  <head>
+    <style>
+        #scroll-container {
+            overflow-y: scroll;
+            height: 500px;
+            width: 500px;
+            border: 1px solid black;
+        }
+
+        .container {
+            position: relative;
+            z-index: 0;
+            background-color: silver; /* This obscures .child when the bug occurs */
+            height: 500px;
+        }
+
+        .child {
+            position: relative;
+            width: 500px;
+            z-index: 0;
+            height: 200px;
+            background-color: green;
+        }
+
+        .outer-trigger, .mid-trigger, .inner-trigger {
+            position: relative;
+            top: 20px;
+            left: 10px;
+            height: 30px;
+            width: 50px;
+            z-index: 1;
+            background-color: orange;
+        }
+        
+        .content {
+            background-color: green;
+            height: 400px;
+        }
+    </style>
+  </head>
+  <body>
+    <div id="scroll-container">
+        <div class="container">
+
+            <div class="child">
+            </div>
+
+            <div class="outer-trigger">
+                <div class="mid-trigger">
+                    <div class="inner-trigger"></div>
+                </div>
+            </div>
+        </div>
+        <div style="height: 600px;"></div>
+    </div>
+  </body>
+</html>

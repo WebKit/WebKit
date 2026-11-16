@@ -1,0 +1,8 @@
+Text
+
+
+PASS Styles applied to ::part(...)
+PASS Styles applied to ::part(...):checked
+PASS Styles applied via grouped selector including matched ::part(...):checked
+PASS Styles applied via grouped selector including unmatched ::part(...):checked
+

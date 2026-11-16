@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+body {
+    margin: 0;
+}
+
+.changing {
+    height: 400px;
+}
+
+.content {
+    height: 10000px;
+    background: repeating-linear-gradient(white, silver 200px);
+}
+</style>
+<script src="../../../resources/ui-helper.js"></script>
+<script src="../../../resources/js-test.js"></script>
+<script>
+jsTestIsAsync = true;
+
+async function waitForScrollToTop()
+{
+    for (let i = 0; i < 300 && window.scrollY; ++i)
+        await UIHelper.renderingUpdate();
+}
+
+async function runTest()
+{
+    description("Scroll anchoring adjustments do not stop a smooth scroll.");
+
+    window.scrollTo(0, 5000);
+    await UIHelper.renderingUpdate();
+
+    window.scrollTo({ top: 0, behavior: "smooth" });
+    // Adjusted in the same rendering update as the smooth scroll request.
+    document.querySelector(".changing").style.height = "600px";
+    await waitForScrollToTop();
+    shouldBe("window.scrollY", "0");
+
+    finishJSTest();
+}
+
+window.addEventListener("load", runTest);
+</script>
+</head>
+<body>
+<div class="changing"></div>
+<div class="content"></div>
+<div id="console"></div>
+</body>
+</html>

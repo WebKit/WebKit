@@ -1,0 +1,11 @@
+Test that ApplePayReferenceSession is not exposed when Apple Pay is off, even with ApplePayReferenceSessionEnabled on.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS typeof ApplePayReferenceSession is "undefined"
+PASS typeof ApplePaySession is "undefined"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

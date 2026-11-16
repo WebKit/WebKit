@@ -1,0 +1,3 @@
+
+PASS Test that the javascript: src is allowed to run
+

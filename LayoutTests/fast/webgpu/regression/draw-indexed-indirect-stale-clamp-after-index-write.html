@@ -1,0 +1,110 @@
+<script src="../../../resources/js-test.js"></script>
+<script>
+
+jsTestIsAsync = true;
+
+description("Regression test for rdar://182324564: drawIndexedIndirect's clamp-skip verdict is cached on the " +
+           "indirect args buffer, but it was reached by inspecting the index buffer's values. " +
+           "indirectIndexedBufferRequiresRecomputation() compared only args-buffer state (indirectOffset, " +
+           "minVertexCount, minInstanceCount, indexType, indexBufferOffsetInBytes, drawType), so rewriting the " +
+           "index buffer left the verdict matching and the clamp pass was skipped entirely - the new index " +
+           "values were never bounds-checked. Rewriting the index buffer does not touch the args buffer, so no " +
+           "high-water-mark trick is needed to reach this. The vertex shader derives position from " +
+           "@builtin(vertex_index) so both outcomes are deterministic regardless of what the attribute fetch " +
+           "returns. minVertexCount is 3. frame0 draws with indices 0,1,2 (green) and caches the verdict; " +
+           "frame1 uses indices 3,4,5, which are out of bounds, so the clamp pass must re-run and zero " +
+           "indexCount, leaving the red clear. A stale verdict would skip the clamp, draw green, and fetch " +
+           "vertex attributes past the end of the 3-vertex buffer.");
+
+async function main() {
+    let adapter = await navigator.gpu.requestAdapter({});
+    let device = await adapter.requestDevice({});
+    device.pushErrorScope('validation');
+
+    const format = 'rgba8unorm';
+    // @location(0) is declared so the pipeline has a required vertex-step-mode buffer and minVertexCount is
+    // enforced (the clamp path runs at all), but position comes from @builtin(vertex_index) and the color is a
+    // constant, so neither depends on the attribute fetch. An unclamped draw therefore paints green
+    // deterministically rather than painting whatever the out-of-bounds fetch happened to return.
+    let module = device.createShaderModule({ code: `
+        @vertex fn vs(@location(0) unused: vec2f, @builtin(vertex_index) vi: u32) -> @builtin(position) vec4f {
+            var corners = array<vec2f, 3>(vec2f(-1, -3), vec2f(-1, 1), vec2f(3, 1));
+            return vec4f(corners[vi % 3u], 0, 1);
+        }
+        @fragment fn fs() -> @location(0) vec4f { return vec4f(0, 1, 0, 1); }
+    ` });
+    let pipeline = device.createRenderPipeline({
+        layout: 'auto',
+        vertex: {
+            module,
+            entryPoint: 'vs',
+            buffers: [{ arrayStride: 8, attributes: [{ shaderLocation: 0, offset: 0, format: 'float32x2' }] }],
+        },
+        fragment: { module, entryPoint: 'fs', targets: [{ format }] },
+        primitive: { topology: 'triangle-list' },
+    });
+
+    // 24 bytes / arrayStride 8 => minVertexCount 3, so index values >= 3 are out of bounds.
+    let vertexData = new Float32Array([-1, -3, -1, 1, 3, 1]);
+    let vertexBuffer = device.createBuffer({ size: vertexData.byteLength, usage: GPUBufferUsage.VERTEX | GPUBufferUsage.COPY_DST });
+    device.queue.writeBuffer(vertexBuffer, 0, vertexData);
+
+    let indexBuffer = device.createBuffer({ size: 8, usage: GPUBufferUsage.INDEX | GPUBufferUsage.COPY_DST });
+    device.queue.writeBuffer(indexBuffer, 0, new Uint16Array([0, 1, 2, 0])); // 8 bytes: uint16 index buffer must be > 4 bytes
+
+    // MTLDrawIndexedPrimitivesIndirectArguments layout: indexCount, instanceCount, firstIndex, baseVertex, firstInstance.
+    // Written once and never again: rewriting it would invalidate the args buffer's own cache and defeat the setup.
+    let argsBuffer = device.createBuffer({ size: 20, usage: GPUBufferUsage.INDIRECT | GPUBufferUsage.COPY_DST });
+    device.queue.writeBuffer(argsBuffer, 0, new Uint32Array([3, 1, 0, 0, 0]));
+
+    let texture = device.createTexture({ size: [1, 1], format, usage: GPUTextureUsage.RENDER_ATTACHMENT | GPUTextureUsage.COPY_SRC });
+    let readback = device.createBuffer({ size: 256, usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.MAP_READ });
+
+    async function drawAndReadback() {
+        let commandEncoder = device.createCommandEncoder();
+        let pass = commandEncoder.beginRenderPass({
+            colorAttachments: [{ view: texture.createView(), loadOp: 'clear', storeOp: 'store', clearValue: { r: 1, g: 0, b: 0, a: 1 } }],
+        });
+        pass.setPipeline(pipeline);
+        pass.setVertexBuffer(0, vertexBuffer);
+        pass.setIndexBuffer(indexBuffer, 'uint16');
+        pass.drawIndexedIndirect(argsBuffer, 0);
+        pass.end();
+        commandEncoder.copyTextureToBuffer({ texture }, { buffer: readback, bytesPerRow: 256 }, [1, 1]);
+        device.queue.submit([commandEncoder.finish()]);
+        await device.queue.onSubmittedWorkDone();
+        await readback.mapAsync(GPUMapMode.READ);
+        let pixel = [...new Uint8Array(readback.getMappedRange(0, 4))];
+        readback.unmap();
+        return pixel;
+    }
+
+    // Frame 0: indices 0,1,2 are all below minVertexCount, so the clamp pass runs, passes, and
+    // indirectIndexedBufferRecomputed() caches the verdict on argsBuffer.
+    let frame0 = await drawAndReadback();
+
+    // Rewrite only the index buffer, with values at or above minVertexCount. This bumps the index buffer's
+    // generation but touches nothing on argsBuffer, where the verdict lives.
+    device.queue.writeBuffer(indexBuffer, 0, new Uint16Array([3, 4, 5, 0]));
+
+    // Frame 1: same pipeline, same buffers, same offsets - every term the old predicate compared is unchanged.
+    // The clamp pass must still re-run, find indices >= minVertexCount, and zero indexCount, leaving the clear.
+    let frame1 = await drawAndReadback();
+
+    window.frame0 = frame0;
+    window.frame1 = frame1;
+    shouldBeEqualToString('frame0.join()', '0,255,0,255');
+    shouldBeEqualToString('frame1.join()', '255,0,0,255');
+
+    let error = await device.popErrorScope();
+    if (error)
+        testFailed(error.message);
+}
+
+main().catch(e => {
+    testFailed("Exception: " + e);
+}).finally(() => {
+    finishJSTest();
+});
+
+</script>

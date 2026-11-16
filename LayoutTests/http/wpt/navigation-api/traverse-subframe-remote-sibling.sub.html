@@ -1,0 +1,101 @@
+<!doctype html><!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<meta charset="utf-8">
+<title>Navigation API: subframe traversal must not abandon a local sibling frame when a cross-origin RemoteFrame sibling precedes it (Site Isolation)</title>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<body>
+<!--
+  Child order matters: the main frame's FIRST child is a cross-origin RemoteFrame
+  (iframeRemote), followed by a same-origin LocalFrame (iframeLocal). iframeLocal
+  builds several cross-document back/forward entries; a joint back traversal rooted
+  at the main frame must still re-navigate iframeLocal even though the RemoteFrame
+  sibling precedes it in tree order.
+-->
+<script>
+const REMOTE = "http://{{hosts[alt][]}}:{{ports[http][0]}}/WebKit/navigation-api/resources/traverse-subframe-child.html?p=remote";
+const LOCAL = "resources/traverse-subframe-child.html";
+
+function makeIframe(name, src) {
+  return new Promise(resolve => {
+    const f = document.createElement("iframe");
+    f.name = name;
+    f.src = src;
+    f.onload = () => resolve(f);
+    document.body.appendChild(f);
+  });
+}
+
+function navigateLocal(iframe, url) {
+  return new Promise(resolve => {
+    iframe.onload = () => resolve();
+    iframe.contentWindow.location.href = url;
+  });
+}
+
+// Poll until iframeLocal's Navigation currentEntry reaches the expected index.
+// Used instead of awaiting traverseTo().committed so the test measures the
+// observable navigation directly (see comment at the traversal site).
+function waitForLocalIndex(expected, timeoutMs) {
+  return new Promise((resolve, reject) => {
+    const start = Date.now();
+    const tick = () => {
+      const nav = iframeLocal.contentWindow.navigation;
+      if (nav && nav.currentEntry && nav.currentEntry.index === expected) {
+        resolve();
+        return;
+      }
+      if (Date.now() - start >= timeoutMs) {
+        reject(new Error(`timed out waiting for iframeLocal index ${expected}; still at ${nav && nav.currentEntry ? nav.currentEntry.index : "?"}`));
+        return;
+      }
+      setTimeout(tick, 25);
+    };
+    tick();
+  });
+}
+
+let iframeRemote, iframeLocal;
+
+promise_test(async t => {
+  // Remote first => first child in the main frame's tree.
+  iframeRemote = await makeIframe("iframeRemote", REMOTE);
+  iframeLocal = await makeIframe("iframeLocal", LOCAL + "?p=0");
+
+  // Let the initial loads settle so subsequent navigations are push, not replace.
+  await new Promise(r => t.step_timeout(r, 0));
+
+  // Give iframeLocal at least one back entry. These location.href navigations are cross-document but
+  // lack transient activation, so past the first push the rest replace; we don't hardcode the resulting
+  // count and only require one back entry (asserted below), which is enough to exercise the joint back
+  // traversal past the RemoteFrame sibling.
+  await navigateLocal(iframeLocal, LOCAL + "?p=1");
+  await navigateLocal(iframeLocal, LOCAL + "?p=2");
+  await navigateLocal(iframeLocal, LOCAL + "?p=3");
+
+  const localNav = iframeLocal.contentWindow.navigation;
+  const startIndex = localNav.currentEntry.index;
+  const startSearch = iframeLocal.contentWindow.location.search;
+  assert_greater_than_equal(startIndex, 1,
+    `iframeLocal must have at least one back entry (index=${startIndex}, len=${localNav.entries().length})`);
+
+  // The immediately-previous entry is our traversal target.
+  const target = localNav.entries()[startIndex - 1];
+  const targetKey = target.key;
+  const targetUrl = new URL(target.url);
+
+  // Joint back traversal rooted at the main frame; the gather walk reaches the
+  // RemoteFrame sibling before iframeLocal. Assert on the observable navigation
+  // (index + URL) rather than the traverseTo() promise, because whether a subframe
+  // target's committed/finished promise settles under Site Isolation is a separate
+  // concern this test does not cover.
+  iframeLocal.contentWindow.navigation.traverseTo(targetKey);
+
+  await waitForLocalIndex(startIndex - 1, 4000);
+
+  assert_equals(iframeLocal.contentWindow.navigation.currentEntry.index, startIndex - 1,
+    `iframeLocal traversed back one entry (${startIndex} -> ${startIndex - 1}) despite the preceding RemoteFrame sibling`);
+  assert_equals(iframeLocal.contentWindow.location.search, targetUrl.search,
+    `iframeLocal document moved to the previous entry's URL (${startSearch} -> ${targetUrl.search})`);
+}, "Subframe traversal re-navigates a same-origin LocalFrame even when a cross-origin RemoteFrame sibling precedes it (Site Isolation)");
+</script>
+</body>

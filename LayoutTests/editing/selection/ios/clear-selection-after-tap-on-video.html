@@ -1,0 +1,64 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+<style>
+body, html {
+    font-family: system-ui;
+    font-size: 18px;
+}
+
+video {
+    border: 1px solid tomato;
+    display: block;
+    max-width: 300px;
+    margin: 1em 0;
+    width: 300px;
+    height: 240px;
+    position: absolute;
+    top: 2em;
+    z-index: -1;
+}
+
+#placeholder {
+    width: 300px;
+    height: 240px;
+    border: 1px solid black;
+}
+
+#bottom {
+    text-align: center;
+}
+</style>
+<script>
+jsTestIsAsync = true;
+addEventListener("load", async () => {
+    description("Verifies that tapping over a video element clears the selection instead of toggling edit menu visibility. To manually run the test, select from 'Foo' to 'Bar' and then tap the video in between; the selection should be cleared");
+
+    await UIHelper.longPressElement(document.getElementById("bottom"));
+    await UIHelper.waitForSelectionToAppear();
+
+    getSelection().selectAllChildren(document.getElementById("container"));
+    await UIHelper.ensurePresentationUpdate();
+
+    await UIHelper.activateElement(document.querySelector("video"));
+    await UIHelper.waitForSelectionToDisappear();
+
+    testPassed("Cleared selection");
+    finishJSTest();
+});
+</script>
+</head>
+<body>
+    <video controls src="../../../media/resources/white.mp4"></video>
+    <div id="container">
+        <p id="top">Foo</p>
+        <div id="placeholder"></div>
+        <h1 id="bottom">Bar</h1>
+    </div>
+    <p id="description"></p>
+    <p id="console"></p>
+</body>
+</html>

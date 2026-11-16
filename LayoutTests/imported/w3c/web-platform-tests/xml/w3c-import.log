@@ -1,0 +1,22 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/xml/attlist-defaults.html
+/LayoutTests/imported/w3c/web-platform-tests/xml/eol-normalization.html
+/LayoutTests/imported/w3c/web-platform-tests/xml/onreadystatechange-crash-on-stop.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/xml/retain_redundant_xmlns.html
+/LayoutTests/imported/w3c/web-platform-tests/xml/retain_undeclared_xmlns.html
+/LayoutTests/imported/w3c/web-platform-tests/xml/xml-bom.html
+/LayoutTests/imported/w3c/web-platform-tests/xml/xml-doc-innerHTML-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/xml/xml-prolog-accepted-versions.html

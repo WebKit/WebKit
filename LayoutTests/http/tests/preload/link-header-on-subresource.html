@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<script>
+    if (window.testRunner) {
+        testRunner.dumpAsText()
+        testRunner.waitUntilDone();
+        jsTestIsAsync = true;
+    }
+</script>
+<script src="/js-test-resources/js-test.js"></script>
+<link rel=stylesheet href="resources/dummy-preloads-subresource.css.py">
+<script>
+    // Link headers on subresources must not trigger preloads; only the main frame's main resource may.
+    window.addEventListener("load", function() {
+        setTimeout(function() {
+            shouldBeFalse('internals.isPreloaded("resources/dummy.js")');
+            shouldBeFalse('internals.isPreloaded("resources/dummy.js?media")');
+            finishJSTest();
+        }, 500);
+    });
+</script>

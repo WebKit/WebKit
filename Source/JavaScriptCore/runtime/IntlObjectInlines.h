@@ -1,0 +1,421 @@
+/*
+ * Copyright (C) 2016 Yusuke Suzuki <yusuke.suzuki@sslab.ics.keio.ac.jp>
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#pragma once
+
+#include "BuiltinNames.h"
+#include "ExceptionHelpers.h"
+#include "IntlObject.h"
+#include "JSArray.h"
+#include "JSBoundFunction.h"
+#include "JSObject.h"
+#include "ObjectConstructor.h"
+#include <unicode/ucol.h>
+#include <wtf/SIMDHelpers.h>
+#include <wtf/UnalignedAccess.h>
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
+namespace JSC {
+
+template<typename StringType>
+static constexpr uint32_t computeTwoCharacters16Code(const StringType& string)
+{
+    return static_cast<uint16_t>(string.codeUnitAt(0)) | (static_cast<uint32_t>(static_cast<uint16_t>(string.codeUnitAt(1))) << 16);
+}
+
+template<typename Predicate> String bestAvailableLocale(const String& locale, Predicate predicate)
+{
+    // BestAvailableLocale (availableLocales, locale)
+    // https://tc39.github.io/ecma402/#sec-bestavailablelocale
+
+    String candidate = locale;
+    while (!candidate.isEmpty()) {
+        if (predicate(candidate))
+            return candidate;
+
+        size_t pos = candidate.reverseFind('-');
+        if (pos == notFound)
+            return String();
+
+        if (pos >= 2 && candidate[pos - 2] == '-')
+            pos -= 2;
+
+        candidate = candidate.left(pos);
+    }
+
+    return String();
+}
+
+template<typename Constructor, typename Factory>
+JSValue constructIntlInstanceWithWorkaroundForLegacyIntlConstructor(JSGlobalObject* globalObject, JSValue thisValue, Constructor* callee, Factory factory)
+{
+    // FIXME: Workaround to provide compatibility with ECMA-402 1.0 call/apply patterns.
+    // https://bugs.webkit.org/show_bug.cgi?id=153679
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    auto* instance = factory(vm);
+    RETURN_IF_EXCEPTION(scope, JSValue());
+
+    if (thisValue.isObject()) {
+        JSObject* thisObject = asObject(thisValue);
+        ASSERT(!callee->template inherits<JSBoundFunction>());
+        JSValue prototype = callee->getDirect(vm, vm.propertyNames->prototype); // Passed constructors always have `prototype` which cannot be deleted.
+        ASSERT(prototype);
+        bool hasInstance = JSObject::defaultHasInstance(globalObject, thisObject, prototype);
+        RETURN_IF_EXCEPTION(scope, JSValue());
+        if (hasInstance) {
+            PropertyDescriptor descriptor(instance, PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum | PropertyAttribute::DontDelete);
+            scope.release();
+            thisObject->methodTable()->defineOwnProperty(thisObject, globalObject, globalObject->intlLegacyConstructedSymbol(), descriptor, true);
+            return thisObject;
+        }
+    }
+    return instance;
+}
+
+template<typename InstanceType>
+InstanceType* unwrapForLegacyIntlConstructor(JSGlobalObject* globalObject, JSValue thisValue, JSObject* constructor)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    JSObject* thisObject = dynamicDowncast<JSObject>(thisValue);
+    if (!thisObject) [[unlikely]]
+        return nullptr;
+
+    auto* instance = dynamicDowncast<InstanceType>(thisObject);
+    if (instance) [[likely]]
+        return instance;
+
+    ASSERT(!constructor->template inherits<JSBoundFunction>());
+    JSValue prototype = constructor->getDirect(vm, vm.propertyNames->prototype); // Passed constructors always have `prototype` which cannot be deleted.
+    ASSERT(prototype);
+    bool hasInstance = JSObject::defaultHasInstance(globalObject, thisObject, prototype);
+    RETURN_IF_EXCEPTION(scope, nullptr);
+    if (!hasInstance)
+        return nullptr;
+
+    JSValue value = thisObject->get(globalObject, globalObject->intlLegacyConstructedSymbol());
+    RETURN_IF_EXCEPTION(scope, nullptr);
+    return dynamicDowncast<InstanceType>(value);
+}
+
+template<typename ResultType>
+ResultType intlOption(JSGlobalObject* globalObject, JSObject* options, PropertyName property, std::initializer_list<std::pair<ASCIILiteral, ResultType>> values, ASCIILiteral notFoundMessage, ResultType fallback)
+{
+    // GetOption (options, property, type="string", values, fallback)
+    // https://tc39.github.io/ecma402/#sec-getoption
+
+    ASSERT(values.size() > 0);
+
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    if (!options)
+        return fallback;
+
+    JSValue value = options->get(globalObject, property);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    if (!value.isUndefined()) {
+        String stringValue = value.toWTFString(globalObject);
+        RETURN_IF_EXCEPTION(scope, { });
+
+        for (const auto& entry : values) {
+            if (entry.first == stringValue)
+                return entry.second;
+        }
+        throwException(globalObject, scope, createRangeError(globalObject, notFoundMessage));
+        return { };
+    }
+
+    return fallback;
+}
+
+template<typename ResultType>
+ResultType intlStringOrBooleanOption(JSGlobalObject* globalObject, JSObject* options, PropertyName property, ResultType trueValue, ResultType falsyValue, std::initializer_list<std::pair<ASCIILiteral, ResultType>> values, ASCIILiteral notFoundMessage, ResultType fallback)
+{
+    // https://tc39.es/proposal-intl-numberformat-v3/out/negotiation/diff.html#sec-getstringorbooleanoption
+
+    ASSERT(values.size() > 0);
+
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    if (!options)
+        return fallback;
+
+    JSValue value = options->get(globalObject, property);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    if (value.isUndefined())
+        return fallback;
+
+    if (value.isBoolean() && value.asBoolean())
+        return trueValue;
+
+    bool valueBoolean = value.toBoolean(globalObject);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    if (!valueBoolean)
+        return falsyValue;
+
+    String stringValue = value.toWTFString(globalObject);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    // FIXME: We need to know whether this fallback is actually correct.
+    // https://github.com/tc39/proposal-intl-numberformat-v3/issues/111
+    if (stringValue == "true"_s || stringValue == "false"_s)
+        return fallback;
+
+    for (const auto& entry : values) {
+        if (entry.first == stringValue)
+            return entry.second;
+    }
+
+    throwRangeError(globalObject, scope, notFoundMessage);
+    return { };
+}
+
+ALWAYS_INLINE bool canUseASCIIUCADUCETComparison(char16_t character)
+{
+    return isASCII(character) && ducetLevel1Weights[character];
+}
+
+ALWAYS_INLINE bool canUseASCIIUCADUCETComparison(Latin1Character character)
+{
+    return ducetLevel1Weights[character];
+}
+
+ALWAYS_INLINE bool followedByNonLatinCharacter(std::span<const char16_t> characters, size_t index)
+{
+    size_t nextIndex = index + 1;
+    if (characters.size() > nextIndex)
+        return !isLatin1(characters[nextIndex]);
+    return false;
+}
+
+ALWAYS_INLINE bool followedByNonLatinCharacter(std::span<const Latin1Character>, size_t)
+{
+    return false;
+}
+
+template<typename CharacterType1, typename CharacterType2>
+UCollationResult compareASCIIWithUCADUCETLevel3(std::span<const CharacterType1> characters1, std::span<const CharacterType2> characters2)
+{
+    auto* data1 = characters1.data();
+    auto* data2 = characters2.data();
+    ASSERT(characters1.size() == characters2.size());
+    for (size_t position = 0; position < characters1.size(); ++position) {
+        auto lhs = data1[position];
+        auto rhs = data2[position];
+        uint8_t leftWeight = ducetLevel3Weights[lhs];
+        uint8_t rightWeight = ducetLevel3Weights[rhs];
+        if (leftWeight == rightWeight)
+            continue;
+        return leftWeight > rightWeight ? UCOL_GREATER : UCOL_LESS;
+    }
+    return UCOL_EQUAL;
+}
+
+// Every byte in [0x20, 0x7E] has a non-zero DUCET level-1 weight, so a run of identical such bytes cannot
+// decide the comparison at any level. The overlapping final loads only revisit bytes already known to be
+// part of that run.
+ALWAYS_INLINE size_t identicalPrintableASCIIPrefixLength(const Latin1Character* characters1, const Latin1Character* characters2, size_t length)
+{
+    constexpr size_t stride = SIMD::stride<uint8_t>;
+    if (length >= stride) {
+        auto findStop = [&](size_t offset) {
+            auto input1 = SIMD::load(std::bit_cast<const uint8_t*>(characters1 + offset));
+            auto input2 = SIMD::load(std::bit_cast<const uint8_t*>(characters2 + offset));
+            auto different = SIMD::bitNot(SIMD::equal(input1, input2));
+            auto control = SIMD::lessThan(input1, SIMD::splat<uint8_t>(0x20));
+            auto deleteOrNonASCII = SIMD::greaterThan(input1, SIMD::splat<uint8_t>(0x7E));
+            return SIMD::findFirstNonZeroIndex(SIMD::bitOr(different, control, deleteOrNonASCII));
+        };
+        size_t position = 0;
+        for (; position + stride <= length; position += stride) {
+            if (auto index = findStop(position))
+                return position + *index;
+        }
+        if (position == length)
+            return length;
+        if (auto index = findStop(length - stride))
+            return length - stride + *index;
+        return length;
+    }
+
+    if (length >= sizeof(uint64_t)) {
+        // Only the lowest set bit is exact: borrows and carries out of a flagged byte can flag the bytes above it.
+        auto findStop = [&](size_t offset) -> std::optional<size_t> {
+            uint64_t word1 = WTF::unalignedLoad<uint64_t>(characters1 + offset);
+            uint64_t word2 = WTF::unalignedLoad<uint64_t>(characters2 + offset);
+            uint64_t nonPrintable = (word1 | (word1 - 0x2020202020202020ULL) | (word1 + 0x0101010101010101ULL)) & 0x8080808080808080ULL;
+            if (uint64_t stop = (word1 ^ word2) | nonPrintable)
+                return std::countr_zero(stop) / 8;
+            return std::nullopt;
+        };
+        if (auto index = findStop(0))
+            return *index;
+        if (auto index = findStop(length - sizeof(uint64_t)))
+            return length - sizeof(uint64_t) + *index;
+        return length;
+    }
+
+    return 0;
+}
+
+template<typename CharacterType1, typename CharacterType2>
+inline std::optional<UCollationResult> compareASCIIWithUCADUCET(std::span<const CharacterType1> characters1, std::span<const CharacterType2> characters2)
+{
+    auto* data1 = characters1.data();
+    auto* data2 = characters2.data();
+    size_t commonLength = std::min(characters1.size(), characters2.size());
+    size_t position = 0;
+
+    if constexpr (std::is_same_v<CharacterType1, Latin1Character> && std::is_same_v<CharacterType2, Latin1Character>)
+        position = identicalPrintableASCIIPrefixLength(data1, data2, commonLength);
+    else if (characters1.size() == characters2.size() && equal(data1, characters2))
+        return UCOL_EQUAL;
+
+    size_t firstDifference = commonLength;
+    for (; position < commonLength; ++position) {
+        auto lhs = data1[position];
+        auto rhs = data2[position];
+
+        if (lhs == rhs) {
+            if (canUseASCIIUCADUCETComparison(lhs)) [[likely]]
+                continue;
+            if constexpr (std::is_same_v<CharacterType1, Latin1Character> && std::is_same_v<CharacterType2, Latin1Character>) {
+                if (firstDifference == commonLength && characters1.size() == characters2.size() && equal(data1 + position, characters2.subspan(position)))
+                    return UCOL_EQUAL;
+            }
+            return std::nullopt;
+        }
+        if (firstDifference == commonLength)
+            firstDifference = position;
+
+        if (!canUseASCIIUCADUCETComparison(lhs) || !canUseASCIIUCADUCETComparison(rhs))
+            return std::nullopt;
+
+        uint8_t leftWeight = ducetLevel1Weights[lhs];
+        uint8_t rightWeight = ducetLevel1Weights[rhs];
+        if (leftWeight == rightWeight)
+            continue;
+
+        // If the following character is a non-latin, then it is possible that current and next characters can be combined into different character.
+        if (followedByNonLatinCharacter(characters1, position) || followedByNonLatinCharacter(characters2, position))
+            return std::nullopt;
+
+        return leftWeight > rightWeight ? UCOL_GREATER : UCOL_LESS;
+    }
+
+    if (characters1.size() == characters2.size()) {
+        if (firstDifference == commonLength)
+            return UCOL_EQUAL;
+        return compareASCIIWithUCADUCETLevel3(characters1.subspan(firstDifference), characters2.subspan(firstDifference));
+    }
+
+    // If the next character is valid, then we do not need to look into the rest of characters.
+    if (characters1.size() > characters2.size()) {
+        auto lhs = data1[characters2.size()];
+        if (!canUseASCIIUCADUCETComparison(lhs))
+            return std::nullopt;
+        return UCOL_GREATER;
+    }
+
+    auto rhs = data2[characters1.size()];
+    if (!canUseASCIIUCADUCETComparison(rhs))
+        return std::nullopt;
+    return UCOL_LESS;
+}
+
+// https://tc39.es/ecma402/#sec-getoptionsobject
+inline JSObject* intlGetOptionsObject(JSGlobalObject* globalObject, JSValue options)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    if (options.isUndefined())
+        return nullptr;
+    if (options.isObject()) [[likely]]
+        return asObject(options);
+    throwTypeError(globalObject, scope, "options argument is not an object or undefined"_s);
+    return nullptr;
+}
+
+// https://tc39.es/ecma402/#sec-coerceoptionstoobject
+inline JSObject* intlCoerceOptionsToObject(JSGlobalObject* globalObject, JSValue optionsValue)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    if (optionsValue.isUndefined())
+        return nullptr;
+    JSObject* options = optionsValue.toObject(globalObject);
+    RETURN_IF_EXCEPTION(scope, nullptr);
+    return options;
+}
+
+template<typename Container>
+JSArray* createArrayFromStringVector(JSGlobalObject* globalObject, const Container& elements)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    JSArray* result = JSArray::tryCreate(vm, globalObject->arrayStructureForIndexingTypeDuringAllocation(ArrayWithContiguous), elements.size());
+    if (!result) {
+        throwOutOfMemoryError(globalObject, scope);
+        return nullptr;
+    }
+    for (unsigned index = 0; index < elements.size(); ++index) {
+        result->putDirectIndex(globalObject, index, jsString(vm, elements[index]));
+        RETURN_IF_EXCEPTION(scope, { });
+    }
+    return result;
+}
+
+template<typename Container>
+JSArray* createArrayFromIntVector(JSGlobalObject* globalObject, const Container& elements)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    JSArray* result = JSArray::tryCreate(vm, globalObject->arrayStructureForIndexingTypeDuringAllocation(ArrayWithContiguous), elements.size());
+    if (!result) {
+        throwOutOfMemoryError(globalObject, scope);
+        return nullptr;
+    }
+    for (unsigned index = 0; index < elements.size(); ++index) {
+        result->putDirectIndex(globalObject, index, jsNumber(elements[index]));
+        RETURN_IF_EXCEPTION(scope, { });
+    }
+    return result;
+}
+
+} // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

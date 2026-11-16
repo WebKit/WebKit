@@ -1,0 +1,9 @@
+
+PASS Negative value not allowed
+PASS Value too large (2^53)
+PASS Positive infinity
+PASS Negative infinity
+PASS NaN
+PASS Cannot convert to long: "Foo"
+PASS Cannot convert to long: object
+

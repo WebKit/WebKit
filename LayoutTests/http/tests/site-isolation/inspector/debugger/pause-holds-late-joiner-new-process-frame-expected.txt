@@ -1,0 +1,17 @@
+Test that an iframe inserted while a frame is paused, in a site that has no process yet, is held until the pause ends.
+
+
+
+== Running test suite: SiteIsolation.Debugger.PauseHoldsLateJoiner.NewProcessFrame
+-- Running test case: SiteIsolation.Debugger.PauseHoldsLateJoiner.NewProcessFrame.Setup
+PASS: Should find the frame target for frame A.
+PASS: Frame A should be in a different process than the main frame.
+
+-- Running test case: SiteIsolation.Debugger.PauseHoldsLateJoiner.NewProcessFrame.InsertedFrame
+PASS: Should find the frame target for the inserted frame.
+PASS: The inserted frame should be in a new process, not frame A's.
+PASS: The inserted frame should be in a new process, not the main frame's.
+PASS: The inserted frame's interval should not advance while frame A is paused.
+PASS: The inserted frame's interval after resuming should advance.
+PASS: The main frame's interval after resuming should advance.
+

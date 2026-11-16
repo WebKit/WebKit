@@ -1,0 +1,7 @@
+CONSOLE MESSAGE: A capture MediaStreamTrack was destroyed without having been stopped explicitly
+CONSOLE MESSAGE: A capture MediaStreamTrack was destroyed without having been stopped explicitly
+
+
+PASS Add an audio track while playing video
+PASS Add an audio track while playing audio
+

@@ -1,0 +1,27 @@
+<html><!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<head>
+<script src="/js-test-resources/accessibility-helper.js"></script>
+<script src="/js-test-resources/js-test.js"></script>
+<script src="../resources/follow-link-in-iframe.js"></script>
+</head>
+<body>
+
+<button>Before</button>
+<iframe id="iframe"></iframe>
+<button>After</button>
+
+<script>
+var output = "Tests that the accessibility tree is updated when a cross-site iframe follows a link to another page on its own site, staying in its process.\n\n";
+
+window.jsTestIsAsync = true;
+if (window.accessibilityController) {
+    followLinkInIframe("http://localhost:8000/site-isolation/accessibility/resources/iframe-with-link.html",
+        "http://localhost:8000/site-isolation/accessibility/resources/iframe-after-navigation.html").then(result => {
+        output += result;
+        debug(output);
+        finishJSTest();
+    });
+}
+</script>
+</body>
+</html>

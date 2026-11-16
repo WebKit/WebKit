@@ -1,0 +1,3 @@
+
+FAIL Anchor selection prioritized focused element. assert_equals: y coordinate expected 458 but got 3358
+

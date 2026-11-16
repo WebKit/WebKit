@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>CSS Grid, display: contents &amp; ::before/::after</title>
+    <style>
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(5, 150px);
+        }
+
+        span {
+            width: 100px;
+            height: 100px;
+            background-color: green;
+        }
+    </style>
+</head>
+<body>
+    <div class="grid">
+        <span>before</span>
+        <span>after</span>
+        <span>span</span>
+        <span>before</span>
+        <span>after</span>
+    </div>
+</body>
+</html>

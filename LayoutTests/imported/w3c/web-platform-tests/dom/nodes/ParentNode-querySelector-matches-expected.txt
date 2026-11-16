@@ -1,0 +1,10 @@
+Foo
+
+Bar
+
+
+PASS matches with ancestor ID and descendant type selector
+PASS matches returns false for non-matching ID selector
+PASS matches with :not() pseudo-class
+PASS matches with simple type selector
+

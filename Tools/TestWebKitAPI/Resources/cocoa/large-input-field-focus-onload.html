@@ -1,0 +1,38 @@
+<html>
+
+<head>
+    <style>
+        body {
+            margin: 0;
+        }
+
+        input {
+            width: 100vw;
+            height: 100vh;
+            font-size: 50vh;
+        }
+    </style>
+    <script type="text/javascript">
+        function loaded() {
+            document.querySelector("input").focus();
+        }
+
+        function focused() {
+            setTimeout(() => window.webkit.messageHandlers.testHandler.postMessage("focused"), 0);
+        }
+
+        function input() {
+            setTimeout(() => window.webkit.messageHandlers.testHandler.postMessage("input"), 0);
+        }
+
+        function mousedown() {
+            setTimeout(() => window.webkit.messageHandlers.testHandler.postMessage("mousedown"), 0);
+        }
+    </script>
+</head>
+
+<body onload=loaded()>
+    <input onfocus=focused() oninput=input() onmousedown=mousedown()></input>
+</body>
+
+</html>

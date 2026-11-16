@@ -1,0 +1,39 @@
+<!DOCTYPE HTML><!-- webkit-test-runner [ IsAccessibilityIsolatedTreeEnabled=true ] -->
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<!--
+A text control whose value ends in a line break renders an empty final line, which is given a line
+box by a placeholder <br> whose newline is no character of the value. Text runs model rendered text,
+so they do include that newline, which puts the control's last text position past it — one offset
+beyond the position the caret reports on that line (covered by
+accessibility/mac/textarea-line-range-with-trailing-newline.html). The line there is the same empty
+final line, so it must not stretch back over the newline.
+-->
+
+<textarea id="textarea" rows="3" cols="10">one
+</textarea>
+
+<script>
+var output = "This test ensures the line at a text control's last text position is its empty final line.\n\n";
+
+if (window.accessibilityController) {
+    var textarea = accessibilityController.accessibleElementById("textarea");
+    var lastMarker = textarea.endTextMarker;
+    var lineRange = textarea.lineTextMarkerRangeForTextMarker(lastMarker);
+    var lineStart = textarea.startTextMarkerForTextMarkerRange(lineRange);
+
+    output += expect("textarea.stringForTextMarkerRange(lineRange)", "''");
+    output += expect("textarea.textMarkerRangeLength(lineRange)", "0");
+    // Holding no text, the line starts where it ends: at the position asked about.
+    output += expect("lineStart.isEqual(lastMarker)", "true");
+
+    debug(output);
+}
+</script>
+</body>
+</html>

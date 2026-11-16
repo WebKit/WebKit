@@ -1,0 +1,37 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=0.94, minimum-scale=0.94">
+    <style>
+    #description {
+        margin-top: 100px;
+    }
+
+    body {
+        margin: 0;
+        width: 100%;
+        height: 100%;
+    }
+    </style>
+    <script src="../../../resources/ui-helper.js"></script>
+    <script>
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+
+    addEventListener("load", async () => {
+        const zoomScale = (await UIHelper.zoomScale()).toFixed(5);
+        const minimumZoomScale = (await UIHelper.minimumZoomScale()).toFixed(5);
+        output.textContent = `The current scale is ${zoomScale}, and the minimum scale is ${minimumZoomScale}`;
+        testRunner.notifyDone();
+    });
+    </script>
+</head>
+
+<body>
+    <pre id="output"></pre>
+    <p id="description">This test verifies that specifying initial and minimum scales of 0.94 sets the current and
+    minimum zoom scales to exactly 0.94. This is best run under WebKitTestRunner.</p>
+</body>
+</html>

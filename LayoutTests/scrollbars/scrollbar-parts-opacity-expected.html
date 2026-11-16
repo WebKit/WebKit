@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <style>
+        body {
+            margin: 0;
+        }
+        .bar-background {
+            position: absolute;
+            background-color: green;
+            opacity: 0.75;
+        }
+        
+        .bar-background.vertical {
+            left: 340px;
+            width: 60px;
+            height: 340px;
+        }
+
+        .bar-background.horizontal {
+            top: 340px;
+            height: 60px;
+            width: 340px;
+        }
+
+        .thumb {
+            position: absolute;
+            background-color: navy;
+            opacity: 0.5;
+        }
+        
+        .vertical > .thumb {
+            width: 60px;
+            height: 145px;
+        }
+
+        .horizontal > .thumb {
+            width: 145px;
+            height: 60px;
+        }
+
+        .backdrop {
+            position: absolute;
+            top: 100px;
+            left: 100px;
+            height: 400px;
+            width: 400px;
+            background-color: gray;
+        }
+        
+        .backdrop.vertical {
+            width: 150px;
+        }
+
+        .backdrop.horizontal {
+            height: 150px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="backdrop vertical"></div>
+    <div class="backdrop horizontal"></div>
+
+    <div class="bar-background vertical">
+        <div class="thumb"></div>
+    </div>
+    <div class="bar-background horizontal">
+        <div class="thumb"></div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,4 @@
+
+PASS Constructed `ExtendableMessageEvent` objects have no real origins.
+PASS Posted `ExtendableMessageEvent` objects have origins.
+

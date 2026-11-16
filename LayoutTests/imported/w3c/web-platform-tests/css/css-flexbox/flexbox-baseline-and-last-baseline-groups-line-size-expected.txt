@@ -1,0 +1,8 @@
+x
+x
+x
+x
+
+PASS A line holding one 'last baseline' and one 'baseline' item is as tall as the taller item
+PASS The line's cross size does not depend on the order the two baseline groups appear in
+

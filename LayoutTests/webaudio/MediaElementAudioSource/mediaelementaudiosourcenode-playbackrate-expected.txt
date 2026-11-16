@@ -1,0 +1,10 @@
+
+PASS # AUDIT TASK RUNNER STARTED.
+PASS Executing "mediaelementsourcenode-playbackrate"
+PASS Audit report
+PASS > [mediaelementsourcenode-playbackrate] Verify playbackRate at 2.0 generates correctly pitched audio
+PASS   frequencyData[305hz] == 0 is true.
+PASS   frequencyData[610hz] > 0 is true.
+PASS < [mediaelementsourcenode-playbackrate] All assertions passed. (total 2 assertions)
+PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully.
+

@@ -1,0 +1,16 @@
+
+PASS :comments:
+PASS :line_comment_eof:
+PASS :line_comment_terminators:blankspace=["%20","space"]
+PASS :line_comment_terminators:blankspace=["%5Ct","tab"]
+PASS :line_comment_terminators:blankspace=["%5Cn","line_feed"]
+PASS :line_comment_terminators:blankspace=["%5Cu000b","vertical_tab"]
+PASS :line_comment_terminators:blankspace=["%5Cf","form_feed"]
+PASS :line_comment_terminators:blankspace=["%5Cr","carriage_return"]
+PASS :line_comment_terminators:blankspace=["%5Cr%5Cn","carriage_return_line_feed"]
+PASS :line_comment_terminators:blankspace=["%C2%85","next_line"]
+PASS :line_comment_terminators:blankspace=["%E2%80%A8","line_separator"]
+PASS :line_comment_terminators:blankspace=["%E2%80%A9","paragraph_separator"]
+PASS :unterminated_block_comment:terminated=true
+PASS :unterminated_block_comment:terminated=false
+

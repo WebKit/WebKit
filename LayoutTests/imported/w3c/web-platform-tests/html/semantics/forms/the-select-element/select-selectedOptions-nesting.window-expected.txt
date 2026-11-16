@@ -1,0 +1,13 @@
+
+PASS <select> containing <option><option selected>
+PASS <select> containing <hr><option selected>
+PASS <select> containing <select><option selected>
+PASS <select><optgroup> containing <option><option selected>
+PASS <select><optgroup> containing <hr><option selected>
+PASS <select><optgroup> containing <select><option selected>
+PASS <select><optgroup> containing <optgroup><option selected>
+PASS <select><div><optgroup><div> containing <option><option selected>
+PASS <select><div><optgroup><div> containing <hr><option selected>
+PASS <select><div><optgroup><div> containing <select><option selected>
+PASS <select><div><optgroup><div> containing <optgroup><option selected>
+

@@ -1,0 +1,10 @@
+
+PASS Zero-duration exponentialRampToValueAtTime at frame 546 renders finite values
+PASS Zero-duration exponentialRampToValueAtTime at frame 546.25 renders finite values
+PASS Zero-duration exponentialRampToValueAtTime at frame 546.5 renders finite values
+PASS Zero-duration exponentialRampToValueAtTime at frame 546.75 renders finite values
+PASS Zero-duration linearRampToValueAtTime at frame 546 renders finite values
+PASS Zero-duration linearRampToValueAtTime at frame 546.25 renders finite values
+PASS Zero-duration linearRampToValueAtTime at frame 546.5 renders finite values
+PASS Zero-duration linearRampToValueAtTime at frame 546.75 renders finite values
+

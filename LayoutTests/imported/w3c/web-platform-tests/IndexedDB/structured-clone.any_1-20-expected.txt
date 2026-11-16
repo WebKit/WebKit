@@ -1,0 +1,22 @@
+
+PASS undefined: undefined
+PASS object: null
+PASS boolean: false
+PASS boolean: true
+PASS number: NaN
+PASS number: -Infinity
+PASS number: -1.7976931348623157e+308
+PASS number: -4294967295
+PASS number: -2147483648
+PASS number: -2147483647
+PASS number: -1
+PASS number: -5e-324
+PASS number: -0
+PASS number: 0
+PASS number: 1
+PASS number: 5e-324
+PASS number: 2147483647
+PASS number: 2147483648
+PASS number: 4294967295
+PASS number: 1.7976931348623157e+308
+

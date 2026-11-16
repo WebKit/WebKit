@@ -1,0 +1,29 @@
+This tests that when seeking and play into unbuffered time, currentTime doesn't appear to go backward.
+
+RUN(video.src = URL.createObjectURL(source))
+EVENT(sourceopen)
+RUN(videoSourceBuffer = source.addSourceBuffer(videoLoader.type()))
+RUN(audioSourceBuffer = source.addSourceBuffer(audioLoader.type()))
+-
+Load video sourceBuffer
+RUN(videoSourceBuffer.appendBuffer(videoLoader.initSegment()))
+RUN(videoSourceBuffer.appendBuffer(videoLoader.mediaSegment(0)))
+-
+Load audio sourceBuffer
+RUN(audioSourceBuffer.appendBuffer(audioLoader.initSegment()))
+RUN(audioSourceBuffer.appendBuffer(audioLoader.mediaSegment(0)))
+-
+Ensure video sourceBuffer is shorter
+RUN(minBuffered = Math.min(videoSourceBuffer.buffered.end(0), audioSourceBuffer.buffered.end(0)))
+RUN(audioSourceBuffer.remove(minBuffered, video.duration))
+RUN(videoSourceBuffer.remove(minBuffered - 0.01, video.duration))
+-
+Seek into the unbuffered video range; should timeout
+RUN(video.currentTime = video.duration)
+EXPECTED (video.seeking == 'true') OK
+-
+End loading; should cause seeked event to fire
+RUN(source.endOfStream())
+EVENT(seeked)
+END OF TEST
+

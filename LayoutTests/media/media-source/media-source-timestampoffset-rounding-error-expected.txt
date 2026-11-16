@@ -1,0 +1,34 @@
+
+EXPECTED (source.readyState == 'closed') OK
+EVENT(sourceopen)
+RUN(sourceBuffer = source.addSourceBuffer("video/mock; codecs=mock"))
+RUN(sourceBuffer.appendBuffer(makeVideo(0, 6)))
+EVENT(updateend)
+RUN(sourceBuffer.timestampOffset = 1)
+RUN(sourceBuffer.appendBuffer(makeVideo(1, 6)))
+EVENT(updateend)
+RUN(sourceBuffer.timestampOffset = 1.5)
+RUN(sourceBuffer.appendBuffer(makeVideo(2, 5)))
+EVENT(updateend)
+Buffered:
+{PTS({0/6 = 0.000000}), DTS({0/6 = 0.000000}), duration({1/6 = 0.166667}), flags(1), generation(0)}
+{PTS({1/6 = 0.166667}), DTS({1/6 = 0.166667}), duration({1/6 = 0.166667}), flags(0), generation(0)}
+{PTS({2/6 = 0.333333}), DTS({2/6 = 0.333333}), duration({1/6 = 0.166667}), flags(1), generation(0)}
+{PTS({3/6 = 0.500000}), DTS({3/6 = 0.500000}), duration({1/6 = 0.166667}), flags(0), generation(0)}
+{PTS({4/6 = 0.666667}), DTS({4/6 = 0.666667}), duration({1/6 = 0.166667}), flags(1), generation(0)}
+{PTS({5/6 = 0.833333}), DTS({5/6 = 0.833333}), duration({1/6 = 0.166667}), flags(0), generation(0)}
+{PTS({6/6 = 1.000000}), DTS({6/6 = 1.000000}), duration({1/6 = 0.166667}), flags(1), generation(1)}
+{PTS({7/6 = 1.166667}), DTS({7/6 = 1.166667}), duration({1/6 = 0.166667}), flags(0), generation(1)}
+{PTS({8/6 = 1.333333}), DTS({8/6 = 1.333333}), duration({1/6 = 0.166667}), flags(1), generation(1)}
+{PTS({15/10 = 1.500000}), DTS({15/10 = 1.500000}), duration({1/5 = 0.200000}), flags(1), generation(2)}
+{PTS({17/10 = 1.700000}), DTS({17/10 = 1.700000}), duration({1/5 = 0.200000}), flags(0), generation(2)}
+{PTS({19/10 = 1.900000}), DTS({19/10 = 1.900000}), duration({1/5 = 0.200000}), flags(1), generation(2)}
+{PTS({21/10 = 2.100000}), DTS({21/10 = 2.100000}), duration({1/5 = 0.200000}), flags(0), generation(2)}
+{PTS({23/10 = 2.300000}), DTS({23/10 = 2.300000}), duration({1/5 = 0.200000}), flags(1), generation(2)}
+{PTS({25/10 = 2.500000}), DTS({25/10 = 2.500000}), duration({1/5 = 0.200000}), flags(0), generation(2)}
+{PTS({27/10 = 2.700000}), DTS({27/10 = 2.700000}), duration({1/5 = 0.200000}), flags(1), generation(2)}
+{PTS({29/10 = 2.900000}), DTS({29/10 = 2.900000}), duration({1/5 = 0.200000}), flags(0), generation(2)}
+{PTS({31/10 = 3.100000}), DTS({31/10 = 3.100000}), duration({1/5 = 0.200000}), flags(1), generation(2)}
+{PTS({33/10 = 3.300000}), DTS({33/10 = 3.300000}), duration({1/5 = 0.200000}), flags(0), generation(2)}
+END OF TEST
+

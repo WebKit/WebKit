@@ -1,0 +1,34 @@
+<!DOCTYPE html><!-- webkit-test-runner [ CSSMeshGradientsEnabled=true ] -->
+<html>
+<head>
+<meta charset="utf-8">
+<title>CSS Images Module Level 5: getComputedStyle().backgroundImage with mesh-gradient()</title>
+<link rel="help" href="https://github.com/w3c/csswg-drafts/pull/14655">
+<meta name="assert" content="mesh-gradient() computed value resolves colors and lengths.">
+<script src="../../../resources/testharness.js"></script>
+<script src="../../../resources/testharnessreport.js"></script>
+<script src="../../../imported/w3c/web-platform-tests/css/support/computed-testcommon.js"></script>
+</head>
+<body>
+<div id="target" style="color: lime"></div>
+<script>
+// Grid of colors.
+test_computed_value("background-image", "mesh-gradient(red, blue; green, yellow)", "mesh-gradient(rgb(255, 0, 0), rgb(0, 0, 255); rgb(0, 128, 0), rgb(255, 255, 0))");
+test_computed_value("background-image", "mesh-gradient(currentcolor, blue; green, yellow)", "mesh-gradient(rgb(0, 255, 0), rgb(0, 0, 255); rgb(0, 128, 0), rgb(255, 255, 0))");
+
+// Absolute positions.
+test_computed_value("background-image", "mesh-gradient(red 0px 0px, blue 100% 0%; green left bottom, yellow right bottom)", "mesh-gradient(rgb(255, 0, 0) 0px 0px, rgb(0, 0, 255) 100% 0%; rgb(0, 128, 0) 0% 100%, rgb(255, 255, 0) 100% 100%)");
+test_computed_value("background-image", "mesh-gradient(red 0px 0px with 1in 0px / calc(10px + 10%) 0px, blue; green, yellow)", "mesh-gradient(rgb(255, 0, 0) 0px 0px with 96px 0px / calc(10% + 10px) 0px, rgb(0, 0, 255); rgb(0, 128, 0), rgb(255, 255, 0))");
+test_computed_value("background-image", "mesh-gradient(red 0px 0px with 1in 0px / 2px 2px / 1in 0px / 2px 2px, blue; green, yellow)", "mesh-gradient(rgb(255, 0, 0) 0px 0px with 96px 0px / 2px 2px / 96px 0px / 2px 2px, rgb(0, 0, 255); rgb(0, 128, 0), rgb(255, 255, 0))");
+
+// Relative positions.
+test_computed_value("background-image", "mesh-gradient(red, blue by 1in 0px with 1px 2px from origin / 3px 4px; green, yellow by 10% 1in)", "mesh-gradient(rgb(255, 0, 0), rgb(0, 0, 255) by 96px 0px with 1px 2px from origin / 3px 4px; rgb(0, 128, 0), rgb(255, 255, 0) by 10% 96px)");
+test_computed_value("background-image", "mesh-gradient(red, blue by 0px 0px with 1in 0px; green, yellow)", "mesh-gradient(rgb(255, 0, 0), rgb(0, 0, 255) by 0px 0px with 96px 0px; rgb(0, 128, 0), rgb(255, 255, 0))");
+
+// Color interpolation method and color.
+test_computed_value("background-image", "mesh-gradient(in oklab, red, blue; green, yellow)", "mesh-gradient(in oklab, rgb(255, 0, 0), rgb(0, 0, 255); rgb(0, 128, 0), rgb(255, 255, 0))");
+test_computed_value("background-image", "mesh-gradient(in hsl longer hue, red, blue; green, yellow)", "mesh-gradient(in hsl longer hue, rgb(255, 0, 0), rgb(0, 0, 255); rgb(0, 128, 0), rgb(255, 255, 0))");
+test_computed_value("background-image", "mesh-gradient(white in srgb, red, blue; green, yellow)", "mesh-gradient(in srgb rgb(255, 255, 255), rgb(255, 0, 0), rgb(0, 0, 255); rgb(0, 128, 0), rgb(255, 255, 0))");
+</script>
+</body>
+</html>

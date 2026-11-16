@@ -1,0 +1,3 @@
+
+PASS table tracks correct use of rowspan
+

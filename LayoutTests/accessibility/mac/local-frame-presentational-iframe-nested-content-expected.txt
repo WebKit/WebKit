@@ -1,0 +1,14 @@
+This test ensures that when a presentational (accessibility-ignored) iframe hosts a document that itself contains an iframe, the nested iframe's content is reachable from the host, and the hoisted children's parents are consistent with the host's children.
+
+PASS: host.childAtIndex(0).domIdentifier === 'before'
+PASS: host.childAtIndex(host.childrenCount - 1).domIdentifier === 'after'
+PASS: descendantsInclude(host, button, 0) === true
+PASS: hostChildrenAreAllReachable() === true
+PASS: hostChildrenParentsAreHost() === true
+PASS: (button && host ? ancestryReaches(button, host) : false) === true
+PASS: (button && root ? ancestryReaches(button, root) : false) === true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Before  After

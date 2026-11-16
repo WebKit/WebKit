@@ -1,0 +1,30 @@
+Test IDBIndex.getAllRecords() with direction 'prev' in private browsing mode.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
+
+indexedDB.deleteDatabase(dbname)
+indexedDB.open(dbname)
+PASS records.length is 5
+PASS records[0].key is "E"
+PASS records[0].primaryKey is "e"
+PASS records[0].value.indexKey is "E"
+PASS records[0].value.value is "epsilon"
+PASS records[1].key is "D"
+PASS records[1].primaryKey is "d"
+PASS records[1].value.value is "delta"
+PASS records[2].key is "C"
+PASS records[2].primaryKey is "c"
+PASS records[2].value.value is "gamma"
+PASS records[3].key is "B"
+PASS records[3].primaryKey is "b"
+PASS records[3].value.value is "beta"
+PASS records[4].key is "A"
+PASS records[4].primaryKey is "a"
+PASS records[4].value.value is "alpha"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

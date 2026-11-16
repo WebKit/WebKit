@@ -1,0 +1,46 @@
+
+PASS Set valueless cookie to its name with empty value
+PASS Set a nameless cookie (that has an = in its value)
+PASS Set a nameless cookie (that has multiple ='s in its value)
+PASS Set a nameless cookie
+PASS Remove trailing WSP characters from the name string
+PASS Remove leading WSP characters from the name string
+PASS Only return the new cookie (with the same name)
+PASS Ignore invalid attributes after nameless cookie
+PASS Ignore invalid attributes after valid name (that looks like Cookie2 Version attribute)
+PASS Set a cookie that has whitespace in its name
+PASS Set a nameless cookie ignoring characters after first ;
+PASS Set a nameless cookie ignoring characters after first ; (2)
+PASS Return the most recent nameless cookie
+PASS Return the most recent nameless cookie, without leading =
+PASS Return the most recent nameless cookie, even if preceded by =
+PASS Return the most recent nameless cookie, even if preceded by =, in addition to other valid cookie
+PASS Use last value for cookies with identical names
+PASS Keep first-in, first-out name order
+PASS Keep first-in, first-out single-char name order
+PASS Keep non-alphabetic first-in, first-out name order
+PASS Keep first-in, first-out order if comma-separated
+PASS Set nameless cookie, given `Set-Cookie: =test16`
+PASS Overwrite nameless cookie
+PASS Ignore cookie with empty name and empty value
+PASS Ignore cookie with no name or value
+PASS URL-encoded cookie name is not decoded
+PASS Name is set as expected for a=test
+PASS Name is set as expected for 1=test
+PASS Name is set as expected for $=test
+PASS Name is set as expected for !a=test
+PASS Name is set as expected for @a=test
+PASS Name is set as expected for #a=test
+PASS Name is set as expected for $a=test
+PASS Name is set as expected for %a=test
+PASS Name is set as expected for ^a=test
+PASS Name is set as expected for &a=test
+PASS Name is set as expected for *a=test
+PASS Name is set as expected for (a=test
+PASS Name is set as expected for )a=test
+PASS Name is set as expected for -a=test
+PASS Name is set as expected for _a=test
+PASS Name is set as expected for +=test
+PASS Name is set as expected for "a=test
+PASS Name is set as expected for "a=b"=test
+

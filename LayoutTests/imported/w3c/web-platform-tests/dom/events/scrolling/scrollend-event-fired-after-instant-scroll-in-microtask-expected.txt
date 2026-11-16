@@ -1,0 +1,3 @@
+
+PASS scrolling state is false at the end of the test
+

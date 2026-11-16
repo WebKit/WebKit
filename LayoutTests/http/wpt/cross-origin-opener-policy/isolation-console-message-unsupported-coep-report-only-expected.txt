@@ -1,0 +1,2 @@
+CONSOLE MESSAGE: The Cross-Origin-Embedder-Policy-Report-Only header value 'credentialless' is not supported and is ignored (treated as 'unsafe-none').
+crossOriginIsolated: false

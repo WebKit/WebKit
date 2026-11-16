@@ -1,0 +1,4 @@
+
+PASS textIndent responsive to style changes
+PASS textIndent responsive to inherited textIndent changes
+

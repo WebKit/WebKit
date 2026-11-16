@@ -1,0 +1,11 @@
+Test that ClearKey session identifiers do not persist across MediaKeySystem instances.
+-
+Create the first pair of sessions
+EXPECTED (session1.sessionId == '0') OK
+EXPECTED (session2.sessionId == '1') OK
+-
+Create the second pair of sessions
+EXPECTED (session1.sessionId == '0') OK
+EXPECTED (session2.sessionId == '1') OK
+END OF TEST
+

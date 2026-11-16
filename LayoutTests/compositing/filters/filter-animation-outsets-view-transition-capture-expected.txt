@@ -1,0 +1,1 @@
+Captures include the filter animation outsets: true

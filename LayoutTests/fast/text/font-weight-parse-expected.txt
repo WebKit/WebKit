@@ -1,0 +1,17 @@
+PASS window.getComputedStyle(document.getElementById('test19')).font is "100 extra-condensed 48px / 49px Helvetica Neue"
+PASS window.getComputedStyle(document.getElementById('test20')).font is "100 extra-condensed 48px / 49px Helvetica Neue"
+PASS window.getComputedStyle(document.getElementById('test21')).font is "extra-condensed 48px / 49px Helvetica Neue"
+PASS window.getComputedStyle(document.getElementById('test22')).font is "100 48px / 49px Helvetica Neue"
+PASS window.getComputedStyle(document.getElementById('test23')).font is "italic small-caps 100 extra-expanded 48px / 49px Helvetica Neue"
+FAIL window.getComputedStyle(document.getElementById('test24')).font should be 123 48px / 49px Helvetica Neue. Was italic small-caps 123 extra-expanded 48px / 49px Helvetica Neue.
+PASS document.getElementById('test19').style.font is "100 extra-condensed 48px / 49px Helvetica Neue"
+PASS document.getElementById('test20').style.font is "100 extra-condensed 48px / 49px Helvetica Neue"
+PASS document.getElementById('test21').style.font is "extra-condensed 48px / 49px Helvetica Neue"
+PASS document.getElementById('test22').style.font is "100 48px / 49px Helvetica Neue"
+PASS document.getElementById('test23').style.font is "italic small-caps 100 extra-expanded 48px / 49px Helvetica Neue"
+PASS document.getElementById('test24').style.font is "italic small-caps 123 extra-expanded 48px / 49px Helvetica Neue"
+PASS successfullyParsed is true
+Some tests failed.
+
+TEST COMPLETE
+

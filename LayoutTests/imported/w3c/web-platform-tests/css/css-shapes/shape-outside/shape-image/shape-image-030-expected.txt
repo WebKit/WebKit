@@ -1,0 +1,17 @@
+
+
+
+
+
+
+
+
+
+
+
+PASS shape-margin: 60000px covers the whole float margin box
+PASS shape-margin: 65535px covers the whole float margin box
+PASS shape-margin: 65536px covers the whole float margin box
+PASS shape-margin: 65537px covers the whole float margin box
+PASS shape-margin: 70000px covers the whole float margin box
+

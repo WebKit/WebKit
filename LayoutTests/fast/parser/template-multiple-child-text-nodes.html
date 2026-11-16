@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<script src="../../resources/js-test.js"></script>
+<body>
+<script>
+
+for (character of "<template>hello</template>")
+    document.write(character);
+
+for (character of "<template><div></div>world<div></div></template>")
+    document.write(character);
+
+description('This tests inserting multiple text tokens inside a template element. WebKit should create a single contiguous text node.');
+
+const templates = Array.from(document.querySelectorAll('template'));
+shouldBeEqualToString('templates[0].content.firstChild.data', 'hello');
+shouldBeEqualToString('templates[1].content.childNodes[1].data', 'world');
+
+</script>
+</body>
+</html>

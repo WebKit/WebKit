@@ -1,0 +1,5 @@
+ abcd 111 efgh 222 ijkl 333 mnop 444 qrst
+
+FAIL Navigate after deleting <br> assert_equals: Caret moved to span with 'efgh' expected Text node " efgh " but got Text node " abcd "
+FAIL Insert text after deleting <br> assert_equals: Inserting a 'S' char betwen 'n' and 'o' expected " mnSop " but got " mnop "
+

@@ -1,0 +1,8 @@
+This text should turn green while it is active.
+
+This text should turn green while it is active.
+
+
+PASS a:active
+PASS button:active
+

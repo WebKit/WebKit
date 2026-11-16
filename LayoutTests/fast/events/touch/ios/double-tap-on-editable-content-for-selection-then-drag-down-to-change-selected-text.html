@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../../../../resources/basic-gestures.js"></script>
+    <script src="../../../../resources/ui-helper.js"></script>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+
+        async function runTest()
+        {
+            if (!testRunner.runUIScript)
+                return;
+
+            var output = '';
+            var editableTargetRect = document.getElementById('editable').getBoundingClientRect();
+
+            var tapPointX = editableTargetRect.x + editableTargetRect.width / 2;
+            var tapPointY = editableTargetRect.y + editableTargetRect.height / 2;
+            
+            var fontHeight = 30;
+
+            var selectionChangedCount = 0;
+            var lastSelectionChangeCount = 0;
+            document.addEventListener("selectionchange", () => {
+                selectionChangedCount++;
+            });
+
+            await UIHelper.tapAt(tapPointX, tapPointY);
+            if (document.getSelection().type == "Caret")
+                output += 'PASS: Has Caret Selection';
+            else
+                output += 'FAIL: failed to activate caret as a result of a tap. Incorrect Selection: ' + document.getSelection().toString();
+            output += '<br>';
+
+            await didShowKeyboard();
+
+            await UIHelper.doubleTapAt(tapPointX, tapPointY);
+            if (document.getSelection().toString() != "")
+                output += 'PASS: Has Selection';
+            else
+                output += 'FAIL: failed to select a word as a result of a double tap.';
+            output += '<br>';
+
+            await UIHelper.waitForDoubleTapDelay();
+
+            var grabberMidpoint = UIHelper.midPointOfRect(await UIHelper.getSelectionEndGrabberViewRect());
+
+            await touchAndDragFromPointToPoint(grabberMidpoint.x, grabberMidpoint.y, grabberMidpoint.x, grabberMidpoint.y + (fontHeight * 2));
+
+            if (selectionChangedCount > lastSelectionChangeCount)
+                output += 'PASS: Selection Changed </br>';
+            else
+                output += 'FAIL: Selection did not change <br>' + selectionChangedCount;
+
+            lastSelectionChangeCount = selectionChangedCount;
+            grabberMidpoint = UIHelper.midPointOfRect(await UIHelper.getSelectionEndGrabberViewRect());
+            await touchAndDragFromPointToPoint(grabberMidpoint.x, grabberMidpoint.y, grabberMidpoint.x, grabberMidpoint.y - (fontHeight));
+
+            if (selectionChangedCount > lastSelectionChangeCount)
+                output += 'PASS: Selection Changed </br>';
+            else
+                output += 'FAIL: Selection did not change <br>' + selectionChangedCount;
+
+            lastSelectionChangeCount = selectionChangedCount;
+            grabberMidpoint = UIHelper.midPointOfRect(await UIHelper.getSelectionEndGrabberViewRect());
+            await touchAndDragFromPointToPoint(grabberMidpoint.x, grabberMidpoint.y, grabberMidpoint.x, grabberMidpoint.y - (fontHeight * 4));
+
+            if (selectionChangedCount > lastSelectionChangeCount)
+                output += 'PASS: Selection Changed </br>';
+            else
+                output += 'FAIL: Selection did not change <br>' + selectionChangedCount;
+
+            var editableElement = document.getElementById('editable');
+            editableElement.parentNode.removeChild(editableElement);
+            document.getElementById('target').innerHTML = output;
+            testRunner.notifyDone();
+        }
+
+        window.addEventListener('load', runTest, false);
+    </script>
+    <style>
+        #target {
+            height: 50px;
+            width: 300px;
+            background-color: silver;
+            font-family: monospace;
+            font-size: 18px;
+        }
+        #editable {
+            height: 300px;
+            width: 300px;
+            background-color: silver;
+            font-family: monospace;
+            font-size: 30px;
+        }
+    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+    <div id="target">
+        This test requires UIScriptController to run.
+    </div>
+    <div id="editable" contenteditable>
+        <p>Here's to the crazy ones. The misfits. The rebels. The troublemakers. The round pegs in the square holes.</p>
+    </div>
+</body>
+</html>

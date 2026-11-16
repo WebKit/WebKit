@@ -1,0 +1,6 @@
+html5lib parser tests
+
+
+PASS 1<script>document.write("2")</script>3
+PASS 1<script>document.write("<script>document.write('2')</scr"+ "ipt><script>document.write('3')</scr" + "ipt>")</script>4
+

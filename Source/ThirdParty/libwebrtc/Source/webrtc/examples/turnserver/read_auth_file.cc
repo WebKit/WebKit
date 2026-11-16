@@ -1,0 +1,42 @@
+/*
+ *  Copyright 2018 The WebRTC Project Authors. All rights reserved.
+ *
+ *  Use of this source code is governed by a BSD-style license
+ *  that can be found in the LICENSE file in the root of the source
+ *  tree. An additional intellectual property rights grant can be found
+ *  in the file PATENTS.  All contributing project authors may
+ *  be found in the AUTHORS file in the root of the source tree.
+ */
+
+#include "examples/turnserver/read_auth_file.h"
+
+#include <cstddef>
+#include <cstdint>
+#include <istream>
+#include <map>
+#include <span>
+#include <string>
+
+#include "absl/strings/string_view.h"
+#include "rtc_base/span_helpers.h"
+#include "rtc_base/string_encode.h"
+
+namespace webrtc_examples {
+
+std::map<std::string, std::string> ReadAuthFile(std::istream* s) {
+  std::map<std::string, std::string> name_to_key;
+  for (std::string line; std::getline(*s, line);) {
+    const size_t sep = line.find('=');
+    if (sep == std::string::npos)
+      continue;
+    uint8_t buf[32];
+    std::span<uint8_t> decoded =
+        webrtc::HexDecode(buf, absl::string_view(line).substr(sep + 1));
+    if (!decoded.empty()) {
+      name_to_key.emplace(line.substr(0, sep), webrtc::AsStringView(decoded));
+    }
+  }
+  return name_to_key;
+}
+
+}  // namespace webrtc_examples

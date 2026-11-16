@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>Tests for providing `modifiers` to `PaymentRequestUpdateEvent.prototype.updateWith`.</title>
+<script src="/js-test-resources/ui-helper.js"></script>
+<script src="/resources/payment-request.js"></script>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<body>
+<script>
+setup({ explicit_done: true, explicit_timeout: true });
+
+const method = validPaymentMethod();
+
+const detailsInit = validPaymentDetails();
+detailsInit.modifiers = [
+    {
+        supportedMethods: method.supportedMethods,
+        total: {
+            label: "TotalModifier",
+            amount: {currency: "USD", value: "20.00"},
+        },
+        additionalDisplayItems: [
+            {
+                label: "AdditionalDisplayItem",
+                amount: {
+                    currency: "USD",
+                    value: "25.00",
+                },
+            },
+        ],
+        data: {
+            paymentMethodType: "credit",
+        },
+    },
+];
+
+const detailsUpdate = {
+    modifiers: [
+        {
+            supportedMethods: method.supportedMethods,
+            total: {
+                label: "NewTotalModifier",
+                amount: {currency: "USD", value: "30.00"},
+            },
+            additionalDisplayItems: [
+                {
+                    label: "NewAdditionalDisplayItem",
+                    amount: {
+                        currency: "USD",
+                        value: "35.00",
+                    },
+                },
+            ],
+            data: {
+                paymentMethodType: "credit",
+            },
+        },
+    ],
+};
+
+user_activation_test(async (test) => {
+    let request = new PaymentRequest([method], detailsInit);
+    request.addEventListener("merchantvalidation", (event) => {
+        event.complete({ });
+    });
+    request.addEventListener("shippingaddresschange", (event) => {
+        event.updateWith(detailsUpdate);
+        internals.mockPaymentCoordinator.acceptPayment();
+    });
+
+    let showPromise = request.show();
+    internals.mockPaymentCoordinator.changePaymentMethod({type: "credit"});
+    let response = await showPromise;
+
+    assert_equals(internals.mockPaymentCoordinator.total.label, detailsUpdate.modifiers[0].total.label, "label of modifier total should change");
+    assert_equals(internals.mockPaymentCoordinator.total.amount, detailsUpdate.modifiers[0].total.amount.value, "value of modifier total should change");
+    assert_equals(internals.mockPaymentCoordinator.lineItems.length, detailsInit.displayItems.length + detailsUpdate.modifiers[0].additionalDisplayItems.length, "number of display items should change");
+    for (let i = 0; i < detailsInit.displayItems.length; ++i) {
+        assert_equals(internals.mockPaymentCoordinator.lineItems[i].label, detailsInit.displayItems[i].label, `display item ${i} label should not change`);
+        assert_equals(internals.mockPaymentCoordinator.lineItems[i].amount, detailsInit.displayItems[i].amount.value, `display item ${i} value should not change`);
+    }
+    for (let i = 0; i < detailsUpdate.modifiers[0].additionalDisplayItems.length; ++i) {
+        assert_equals(internals.mockPaymentCoordinator.lineItems[i + detailsInit.displayItems.length].label, detailsUpdate.modifiers[0].additionalDisplayItems[i].label, `modifier additional display item ${i} label should change`);
+        assert_equals(internals.mockPaymentCoordinator.lineItems[i + detailsInit.displayItems.length].amount, detailsUpdate.modifiers[0].additionalDisplayItems[i].amount.value, `modifier additional display item ${i} value should change`);
+    }
+
+    await response.complete("success");
+}, "Calling `updateWith` with a new `modifiers` should not update any other values.");
+
+done();
+</script>
+

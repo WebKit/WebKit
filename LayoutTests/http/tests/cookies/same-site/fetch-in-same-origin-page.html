@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="/js-test-resources/js-test.js"></script>
+<script src="../resources/cookie-utilities.js"></script>
+<body>
+<script>
+window.jsTestIsAsync = true;
+
+description("Tests that Same-Site cookies for 127.0.0.1 are sent with a request initiated same origin.");
+
+async function runTest()
+{
+    await resetCookies();
+    await setCookie("strict", "2", {"SameSite": "Strict", "Max-Age": 100, "path": "/"});
+    await setCookie("implicit-strict", "2", {"SameSite": null, "Max-Age": 100, "path": "/"});
+    await setCookie("strict-because-invalid-SameSite-value", "2", {"SameSite": "invalid", "Max-Age": 100, "path": "/"});
+    await setCookie("lax", "2", {"SameSite": "Lax", "Max-Age": 100, "path": "/"});
+
+    debug("Cookies sent with HTTP request:");
+    await shouldHaveCookieWithValue("strict", "2");
+    await shouldHaveCookieWithValue("implicit-strict", "2");
+    await shouldHaveCookieWithValue("strict-because-invalid-SameSite-value", "2");
+    await shouldHaveCookieWithValue("lax", "2");
+
+    debug("<br>Cookies visible in DOM:");
+    shouldHaveDOMCookieWithValue("strict", "2");
+    shouldHaveDOMCookieWithValue("implicit-strict", "2");
+    shouldHaveDOMCookieWithValue("strict-because-invalid-SameSite-value", "2");
+    shouldHaveDOMCookieWithValue("lax", "2");
+
+    await resetCookies();
+    finishJSTest();
+}
+runTest();
+</script>
+</body>
+</html>

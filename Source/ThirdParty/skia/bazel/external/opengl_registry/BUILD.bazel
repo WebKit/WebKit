@@ -1,0 +1,27 @@
+load("@rules_cc//cc:cc_library.bzl", "cc_library")
+
+exports_files(["xml/gl.xml"])
+
+cc_library(
+    name = "opengl_registry",
+    hdrs = [
+        "api/GL/glcorearb.h",
+        "api/GL/glext.h",
+        "api/GL/glxext.h",
+        "api/GL/wgl.h",
+        "api/GL/wglext.h",
+        "api/GLES/egl.h",
+        "api/GLES/gl.h",
+        "api/GLES/glext.h",
+        "api/GLES/glplatform.h",
+        "api/GLES2/gl2.h",
+        "api/GLES2/gl2ext.h",
+        "api/GLES2/gl2platform.h",
+        "api/GLES3/gl3.h",
+        "api/GLES3/gl31.h",
+        "api/GLES3/gl32.h",
+        "api/GLES3/gl3platform.h",
+    ],
+    includes = ["api"],
+    visibility = ["//visibility:public"],
+)

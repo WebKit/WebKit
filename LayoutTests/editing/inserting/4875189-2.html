@@ -1,0 +1,12 @@
+<p>This tests for a bug when replacing the contents of a floating element.  Just its contents should be removed during the replace.</p>
+<div contenteditable="true">This shouldn't be in the bordered div.<div id="div" style="float:left; border: 1px solid blue;">You shouldn't see this.</div></div>
+
+<script>
+var r = document.createRange();
+var div = document.getElementById("div");
+r.setStart(div, 0);
+r.setEnd(div, div.childNodes.length);
+var selection = window.getSelection();
+selection.addRange(r);
+document.execCommand("InsertHTML", false, "This should be in a floating blue bordered div.")
+</script>

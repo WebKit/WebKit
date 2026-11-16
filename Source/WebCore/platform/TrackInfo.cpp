@@ -1,0 +1,59 @@
+/*
+ * Copyright (C) 2025 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#include "config.h"
+#include "TrackInfo.h"
+
+#if PLATFORM(COCOA)
+#include <CoreMedia/CMFormatDescription.h>
+#endif
+#include <wtf/NeverDestroyed.h>
+
+namespace WebCore {
+
+String convertEnumerationToString(TrackInfoTrackType type)
+{
+    static const std::array<NeverDestroyed<String>, 4> values {
+        MAKE_STATIC_STRING_IMPL("Unknown"),
+        MAKE_STATIC_STRING_IMPL("Audio"),
+        MAKE_STATIC_STRING_IMPL("Video"),
+        MAKE_STATIC_STRING_IMPL("Text"),
+    };
+    static_assert(!static_cast<size_t>(TrackInfoTrackType::Unknown), "TrackInfoTrackType::Unknown is not 0 as expected");
+    static_assert(static_cast<size_t>(TrackInfoTrackType::Audio) == 1, "TrackInfoTrackType::Video is not 1 as expected");
+    static_assert(static_cast<size_t>(TrackInfoTrackType::Video) == 2, "TrackInfoTrackType::Audio is not 2 as expected");
+    static_assert(static_cast<size_t>(TrackInfoTrackType::Text) == 3, "TrackInfoTrackType::Text is not 3 as expected");
+    ASSERT(static_cast<size_t>(type) < std::size(values));
+    return values[static_cast<size_t>(type)];
+}
+
+Ref<TrackInfo> TrackInfo::fromVariant(Variant<Ref<AudioInfo>, Ref<VideoInfo>> variant)
+{
+    return WTF::visit(WTF::makeVisitor([](auto&& info) -> Ref<TrackInfo> {
+        return WTF::move(info);
+    }), WTF::move(variant));
+}
+
+} // namespace WebCore

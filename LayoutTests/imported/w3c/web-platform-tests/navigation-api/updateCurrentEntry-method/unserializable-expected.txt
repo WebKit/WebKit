@@ -1,0 +1,5 @@
+
+
+PASS updateCurrentEntry() must throw if state is unserializable (WritableStream)
+PASS updateCurrentEntry() must throw if state is unserializable (SharedArrayBuffer)
+

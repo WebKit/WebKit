@@ -1,0 +1,5 @@
+xxxx xxxx
+(repaint rects
+  (rect 0 60 80 60)
+)
+

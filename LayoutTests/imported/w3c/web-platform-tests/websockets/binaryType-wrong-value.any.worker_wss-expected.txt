@@ -1,0 +1,3 @@
+
+PASS Create WebSocket - set binaryType to something other than blob or arraybuffer - SYNTAX_ERR is returned - Connection should be closed
+

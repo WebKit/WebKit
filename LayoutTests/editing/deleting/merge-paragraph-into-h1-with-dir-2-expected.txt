@@ -1,0 +1,18 @@
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 5 of DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldDeleteDOMRange:range from 5 of #text > H1 > DIV > BODY > HTML > #document to 0 of P > DIV > BODY > HTML > #document
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 2 of DIV > BODY > HTML > #document to 2 of DIV > BODY > HTML > #document toDOMRange:range from 5 of #text > H1 > DIV > BODY > HTML > #document to 5 of #text > H1 > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: webViewDidEndEditing:WebViewDidEndEditingNotification
+This tests deleting line break after h1 inside a block with dir attribute.
+WebKit should not add direction or unicode-bidi properties while merging paragraphs.
+| "\n"
+| <h1>
+|   "hello<#selection-caret>"
+|   <b>
+|     "worl"
+|   "d"
+| "\n"

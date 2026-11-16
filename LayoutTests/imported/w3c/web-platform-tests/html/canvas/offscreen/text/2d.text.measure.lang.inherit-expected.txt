@@ -1,0 +1,7 @@
+2d.text.measure.lang.inherit
+
+Testing the lang attribute
+
+
+FAIL Testing the lang attribute assert_true: tr_width > en_width expected true got false
+

@@ -1,0 +1,13 @@
+This test verifies no mouseenter, mouseleave or mousemove event sent to web page when window is inactive.
+To manually test, open another app to make window visible but inactive, then move mouse to red box area. On success, you should not see color change.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS mousemoveDetected is false
+PASS mouseenterCount is 0
+PASS mouseleaveCount is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

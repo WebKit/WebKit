@@ -1,0 +1,137 @@
+<!DOCTYPE html><!-- webkit-test-runner [ SourceBufferChangeTypeEnabled=true ] -->
+ <html>
+<head>
+    <title>media-source-append-media-before-init</title>
+    <script src="media-source-loader.js"></script>
+    <script src="../video-test.js"></script>
+    <script>
+    var loader;
+    var source;
+    var sourceBuffer;
+    var freeBox;
+    var initWithPrefix;
+    var gotError;
+    var video;
+
+    function makeFreeBox(size) {
+        var buffer = new ArrayBuffer(size);
+        var view = new DataView(buffer);
+        view.setUint32(0, size);
+        view.setUint32(4, 0x66726565); // 'free'
+        return buffer;
+    }
+
+    function prependData(prefix, buffer) {
+        var combined = new Uint8Array(prefix.byteLength + buffer.byteLength);
+        combined.set(new Uint8Array(prefix), 0);
+        combined.set(new Uint8Array(buffer), prefix.byteLength);
+        return combined.buffer;
+    }
+
+    async function createSourceBuffer() {
+        source = new MediaSource();
+        video.src = URL.createObjectURL(source);
+        await waitFor(source, 'sourceopen');
+        sourceBuffer = source.addSourceBuffer(loader.type());
+        return sourceBuffer;
+    }
+
+    function waitForErrorAndUpdateEnd(target) {
+        return new Promise((resolve) => {
+            var gotError = false;
+            target.addEventListener('error', () => { gotError = true; }, { once: true });
+            target.addEventListener('updateend', () => { resolve(gotError); }, { once: true });
+        });
+    }
+
+    window.addEventListener('load', async event => {
+        try {
+            video = document.querySelector('video');
+            loader = new MediaSourceLoader('content/test-fragmented-video-manifest.json');
+            await loaderPromise(loader);
+
+            consoleWrite('');
+            consoleWrite('Test 1: Append media segment before any init segment - should error');
+            await createSourceBuffer();
+            sourceBuffer.appendBuffer(loader.mediaSegment(0));
+            gotError = await waitForErrorAndUpdateEnd(sourceBuffer);
+            testExpected('gotError', true);
+            testExpected('sourceBuffer.buffered.length', 0);
+            consoleWrite('PASS');
+
+            consoleWrite('');
+            consoleWrite('Test 2: Non-segment boxes before init should be silently dropped');
+            await createSourceBuffer();
+            freeBox = makeFreeBox(64);
+            sourceBuffer.appendBuffer(freeBox);
+            await waitFor(sourceBuffer, 'updateend');
+            testExpected('sourceBuffer.buffered.length', 0);
+            consoleWrite('PASS');
+
+            consoleWrite('');
+            consoleWrite('Test 3: Init segment after dropped boxes should succeed');
+            sourceBuffer.appendBuffer(loader.initSegment());
+            await waitFor(sourceBuffer, 'updateend');
+            sourceBuffer.appendBuffer(loader.mediaSegment(0));
+            await waitFor(sourceBuffer, 'updateend');
+            testExpected('sourceBuffer.buffered.length', 1);
+            consoleWrite('PASS');
+
+            consoleWrite('');
+            consoleWrite('Test 4: Init segment preceded by free box in same append');
+            await createSourceBuffer();
+            initWithPrefix = prependData(makeFreeBox(32), loader.initSegment());
+            sourceBuffer.appendBuffer(initWithPrefix);
+            await waitFor(sourceBuffer, 'updateend');
+            sourceBuffer.appendBuffer(loader.mediaSegment(0));
+            await waitFor(sourceBuffer, 'updateend');
+            testExpected('sourceBuffer.buffered.length', 1);
+            consoleWrite('PASS');
+
+            consoleWrite('');
+            consoleWrite('Test 5: After changeType, media segment without init should error');
+            await createSourceBuffer();
+            sourceBuffer.appendBuffer(loader.initSegment());
+            await waitFor(sourceBuffer, 'updateend');
+            sourceBuffer.appendBuffer(loader.mediaSegment(0));
+            await waitFor(sourceBuffer, 'updateend');
+            testExpected('sourceBuffer.buffered.length', 1);
+            sourceBuffer.changeType(loader.type());
+            sourceBuffer.appendBuffer(loader.mediaSegment(1));
+            gotError = await waitForErrorAndUpdateEnd(sourceBuffer);
+            testExpected('gotError', true);
+            consoleWrite('PASS');
+
+            consoleWrite('');
+            consoleWrite('Test 6: After changeType, appending init then media should succeed');
+            await createSourceBuffer();
+            sourceBuffer.appendBuffer(loader.initSegment());
+            await waitFor(sourceBuffer, 'updateend');
+            sourceBuffer.appendBuffer(loader.mediaSegment(0));
+            await waitFor(sourceBuffer, 'updateend');
+            sourceBuffer.changeType(loader.type());
+            sourceBuffer.appendBuffer(loader.initSegment());
+            await waitFor(sourceBuffer, 'updateend');
+            sourceBuffer.appendBuffer(loader.mediaSegment(0));
+            await waitFor(sourceBuffer, 'updateend');
+            testExpected('sourceBuffer.buffered.length', 1);
+            consoleWrite('PASS');
+
+            endTest();
+        } catch (e) {
+            failTest(`Caught exception: "${e}"`);
+        }
+    });
+
+    function loaderPromise(loader) {
+        return new Promise((resolve, reject) => {
+            loader.onload = resolve;
+            loader.onerror = reject;
+        });
+    }
+    </script>
+</head>
+<body>
+    <video></video>
+</body>
+</html>

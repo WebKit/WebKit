@@ -1,0 +1,6 @@
+This tests that calling abort() on an XHR object stops the load, causing the relevant resource load delegates to be sent.
+
+http://127.0.0.1:8000/xmlhttprequest/abort-should-cancel-load.html - willSendRequest <NSURLRequest URL http://127.0.0.1:8000/xmlhttprequest/abort-should-cancel-load.html, main document URL http://127.0.0.1:8000/xmlhttprequest/abort-should-cancel-load.html, http method GET> redirectResponse (null)
+http://127.0.0.1:8000/xmlhttprequest/abort-should-cancel-load.html - didReceiveResponse <NSURLResponse http://127.0.0.1:8000/xmlhttprequest/abort-should-cancel-load.html, http status code 200>
+http://127.0.0.1:8000/xmlhttprequest/abort-should-cancel-load.html - didFinishLoading
+http://127.0.0.1:8000/xmlhttprequest/resources/endlessxml.py - willSendRequest <NSURLRequest URL http://127.0.0.1:8000/xmlhttprequest/resources/endlessxml.py, main document URL http://127.0.0.1:8000/xmlhttprequest/abort-should-cancel-load.html, http method GET> redirectResponse (null)

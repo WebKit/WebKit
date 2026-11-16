@@ -1,0 +1,3 @@
+
+PASS A generic event with only passive listeners remains cancelable
+

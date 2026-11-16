@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Security-Policy" content="font-src 'none'">
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+description("This test makes sure that the promise of a FontFace with no FontFaceSources gets rejected.")
+
+window.jsTestIsAsync = true;
+
+var face = new FontFace("WebFont", "url(../../resources/Ahem.woff) format('woff')", { });
+
+var rejectedException;
+var loading = face.load().then(function() {
+    testFailed("Promise should not resolve successfully.");
+    finishJSTest();
+}, function(e) {
+    rejectedException = e;
+    shouldBe("rejectedException.code", "rejectedException.NETWORK_ERR");
+    finishJSTest();
+});
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+
+<style>
+select, ::picker(select) {
+    appearance: base-select;
+}
+</style>
+<select id="baseSelect">
+  <option>option</option>
+</select>
+<select id="menulistSelect" style="appearance: auto">
+  <option>option</option>
+</select>
+
+<script>
+  test(function() {
+    assert_equals(getComputedStyle(baseSelect, '::picker-icon').content, 'picker-down / ""');
+  }, 'The user agent stylesheet gives select::picker-icon a glyph keyword, which computes to itself.');
+
+  test(function() {
+    assert_equals(getComputedStyle(menulistSelect, '::picker-icon').content, 'picker-down / ""');
+  }, 'select::picker-icon computes the same regardless of the used appearance.');
+
+  test(function() {
+    baseSelect.style.setProperty('content', 'picker-up');
+    assert_equals(baseSelect.style.getPropertyValue('content'), '');
+    baseSelect.style.removeProperty('content');
+  }, 'A glyph keyword cannot be set through CSSOM either.');
+</script>

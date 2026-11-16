@@ -1,0 +1,7 @@
+
+FAIL Element.scrollTo promise after scroller removal assert_unreached: unresolved scroll_promise Reached unreachable code
+FAIL Element.scrollBy promise after scroller removal assert_unreached: unresolved scroll_promise Reached unreachable code
+FAIL Element.scrollIntoView promise after outer scroller removal assert_unreached: unresolved scroll_promise Reached unreachable code
+FAIL Element.scrollIntoView promise after inner scroller removal assert_unreached: unresolved scroll_promise Reached unreachable code
+FAIL Element.scrollBy promise after iframe removal assert_unreached: unresolved scroll_promise Reached unreachable code
+

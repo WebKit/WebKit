@@ -1,0 +1,21 @@
+<script>
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+
+    function run() {
+        var iframe = document.createElement('iframe');
+        iframe.setAttribute("onload", "iframeLoad()");
+        select.appendChild(iframe);
+        document.execCommand("indent", false);
+        document.body.innerText = "Tests asynchronous indenting and list insertion commands. The test passes if WebKit doesn't crash or hit an ssertion.";
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }
+    function iframeLoad() {
+        document.execCommand("insertUnorderedList", false);
+        window.getSelection().collapse(select);
+}
+</script>
+<body onload=run() contentEditable=true><details id=details open="true"><div>a</div><form hidden="hidden"><select id=select></select></form>b</details>

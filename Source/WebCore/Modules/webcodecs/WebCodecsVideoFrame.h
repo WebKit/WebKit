@@ -1,0 +1,182 @@
+/*
+ * Copyright (C) 2022 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#pragma once
+
+#if ENABLE(WEB_CODECS)
+
+#include <WebCore/CanvasImageSource.h>
+#include <WebCore/ContextDestructionObserver.h>
+#include <WebCore/DOMRectReadOnly.h>
+#include <WebCore/JSDOMPromiseDeferredForward.h>
+#include <WebCore/PlaneLayout.h>
+#include <WebCore/PredefinedColorSpace.h>
+#include <WebCore/VideoColorSpaceInit.h>
+#include <WebCore/WebCodecsAlphaOption.h>
+#include <WebCore/WebCodecsVideoFrameData.h>
+
+namespace WebCore {
+
+class BufferSource;
+class CSSStyleImageValue;
+class ConcreteObjectSize;
+class DOMRectReadOnly;
+class HTMLCanvasElement;
+class HTMLImageElement;
+class HTMLVideoElement;
+class Image;
+class ImageBitmap;
+class ImageBuffer;
+class IntSize;
+class NativeImage;
+class OffscreenCanvas;
+class SVGImageElement;
+class VideoColorSpace;
+
+struct ImageOrientation;
+
+template<typename> class ExceptionOr;
+
+class WebCodecsVideoFrame : public RefCounted<WebCodecsVideoFrame>, public ContextDestructionObserver {
+public:
+    ~WebCodecsVideoFrame();
+
+    // ContextDestructionObserver.
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
+
+    enum class AlphaOption { Keep, Discard };
+    struct Init {
+        std::optional<uint64_t> duration;
+        std::optional<int64_t> timestamp;
+        WebCodecsAlphaOption alpha { WebCodecsAlphaOption::Keep };
+
+        std::optional<DOMRectInit> visibleRect;
+        double rotation { 0 };
+        bool flip { false };
+
+        std::optional<size_t> displayWidth;
+        std::optional<size_t> displayHeight;
+    };
+    struct BufferInit {
+        std::optional<VideoPixelFormat> format;
+        size_t codedWidth { 0 };
+        size_t codedHeight { 0 };
+        int64_t timestamp { 0 };
+        std::optional<uint64_t> duration { };
+
+        std::optional<Vector<PlaneLayout>> layout { };
+
+        std::optional<DOMRectInit> visibleRect { };
+        double rotation { 0 };
+        bool flip { false };
+
+        std::optional<size_t> displayWidth { };
+        std::optional<size_t> displayHeight { };
+
+        std::optional<VideoColorSpaceInit> colorSpace { };
+        Vector<Ref<JSC::ArrayBuffer>> transfer { };
+    };
+
+    static ExceptionOr<Ref<WebCodecsVideoFrame>> create(ScriptExecutionContext&, CanvasImageSource&&, Init&&);
+    static ExceptionOr<Ref<WebCodecsVideoFrame>> create(ScriptExecutionContext&, BufferSource&&, BufferInit&&);
+    static ExceptionOr<Ref<WebCodecsVideoFrame>> create(ScriptExecutionContext&, ImageBuffer&, IntSize, Init&&);
+    WEBCORE_EXPORT static ExceptionOr<Ref<WebCodecsVideoFrame>> create(ScriptExecutionContext&, Ref<NativeImage>&&, Init&&);
+    WEBCORE_EXPORT static Ref<WebCodecsVideoFrame> create(ScriptExecutionContext&, Ref<VideoFrame>&&, BufferInit&&);
+    static Ref<WebCodecsVideoFrame> create(ScriptExecutionContext& context, WebCodecsVideoFrameData&& data) { return adoptRef(*new WebCodecsVideoFrame(context, WTF::move(data))); }
+
+    std::optional<VideoPixelFormat> format() const { return m_data.format; }
+    size_t codedWidth() const { return m_data.codedWidth; }
+    size_t codedHeight() const { return m_data.codedHeight; }
+
+    DOMRectReadOnly* codedRect() const;
+    DOMRectReadOnly* visibleRect() const;
+
+    size_t displayWidth() const { return m_data.displayWidth; }
+    size_t displayHeight() const { return m_data.displayHeight; }
+    std::optional<uint64_t> duration() const { return m_data.duration; }
+    int64_t timestamp() const { return m_data.timestamp; }
+    VideoColorSpace& colorSpace() const;
+
+    double rotation() const;
+    bool flip() const;
+
+    struct CopyToOptions {
+        std::optional<DOMRectInit> rect;
+        std::optional<Vector<PlaneLayout>> layout;
+        std::optional<VideoPixelFormat> format;
+        std::optional<PredefinedColorSpace> colorSpace;
+    };
+    ExceptionOr<size_t> allocationSize(const CopyToOptions&);
+
+    using CopyToPromise = DOMPromiseDeferred<IDLSequence<IDLDictionary<PlaneLayout>>>;
+    void copyTo(BufferSource&&, CopyToOptions&&, CopyToPromise&&);
+    ExceptionOr<Ref<WebCodecsVideoFrame>> clone(ScriptExecutionContext&);
+    void close();
+
+    bool isDetached() const { return m_isDetached; }
+    RefPtr<VideoFrame> internalFrame() const { return m_data.internalFrame; }
+    // Returns the frame to render, without its rotation if WebCodecsVideoFrameRotationEnabled is off.
+    RefPtr<VideoFrame> internalFrameForRendering(ScriptExecutionContext&) const;
+
+    NODELETE void setDisplaySize(size_t, size_t);
+    NODELETE void setVisibleRect(const DOMRectInit&);
+
+    const WebCodecsVideoFrameData& data() const LIFETIME_BOUND { return m_data; }
+
+    size_t memoryCost() const { return m_data.memoryCost(); }
+
+private:
+    explicit WebCodecsVideoFrame(ScriptExecutionContext&);
+    WebCodecsVideoFrame(ScriptExecutionContext&, WebCodecsVideoFrameData&&);
+
+    static ExceptionOr<Ref<WebCodecsVideoFrame>> create(ScriptExecutionContext&, Ref<HTMLImageElement>&&, Init&&);
+    static ExceptionOr<Ref<WebCodecsVideoFrame>> create(ScriptExecutionContext&, Ref<SVGImageElement>&&, Init&&);
+#if ENABLE(VIDEO)
+    static ExceptionOr<Ref<WebCodecsVideoFrame>> create(ScriptExecutionContext&, Ref<HTMLVideoElement>&&, Init&&);
+#endif
+    static ExceptionOr<Ref<WebCodecsVideoFrame>> create(ScriptExecutionContext&, Ref<HTMLCanvasElement>&&, Init&&);
+#if ENABLE(OFFSCREEN_CANVAS)
+    static ExceptionOr<Ref<WebCodecsVideoFrame>> create(ScriptExecutionContext&, Ref<OffscreenCanvas>&&, Init&&);
+#endif
+    static ExceptionOr<Ref<WebCodecsVideoFrame>> create(ScriptExecutionContext&, Ref<ImageBitmap>&&, Init&&);
+    static ExceptionOr<Ref<WebCodecsVideoFrame>> create(ScriptExecutionContext&, Ref<WebCodecsVideoFrame>&&, Init&&);
+    static ExceptionOr<Ref<WebCodecsVideoFrame>> create(ScriptExecutionContext&, Ref<CSSStyleImageValue>&&, Init&&);
+    static ExceptionOr<Ref<WebCodecsVideoFrame>> createFromImageElement(ScriptExecutionContext&, auto&, Init&&);
+
+    static ExceptionOr<Ref<WebCodecsVideoFrame>> initializeFrameFromOtherFrame(ScriptExecutionContext&, Ref<WebCodecsVideoFrame>&&, Init&&, VideoFrame::ShouldClone);
+    static ExceptionOr<Ref<WebCodecsVideoFrame>> initializeFrameFromOtherFrame(ScriptExecutionContext&, Ref<VideoFrame>&&, Init&&, VideoFrame::ShouldClone);
+    static ExceptionOr<Ref<WebCodecsVideoFrame>> initializeFrameWithResourceAndSize(ScriptExecutionContext&, Ref<NativeImage>&&, Init&&, std::optional<IntSize> defaultDisplaySize = std::nullopt);
+
+    WebCodecsVideoFrameData m_data;
+    mutable RefPtr<VideoColorSpace> m_colorSpace;
+    mutable RefPtr<DOMRectReadOnly> m_codedRect;
+    mutable RefPtr<DOMRectReadOnly> m_visibleRect;
+    bool m_isDetached { false };
+};
+
+}
+
+#endif

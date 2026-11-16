@@ -1,0 +1,14 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ LayoutFormattingContextEnabled=true InlineFormattingContextIntegrationEnabled=false ] -->
+<style>
+.float_like {
+  position: absolute;
+  background-color: blue;
+  width: 50px;
+  height: 50px;
+}
+</style>
+<div style="width: 300px; height: 170px; background-color: green;"></div>
+<div class=float_like style="top: 8px; left: 8px;"></div>
+<div class=float_like style="top: 58px; left: 258px; height: 60px;"></div>
+<div class=float_like style="top: 118px; left: 258px; height: 60px"></div>
+<div class=float_like style="top: 118px; left: 8px;"></div>

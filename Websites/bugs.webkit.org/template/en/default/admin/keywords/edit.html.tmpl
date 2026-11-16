@@ -1,0 +1,59 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[%# INTERFACE:
+  # keyword: A Bugzilla::Keyword object.
+  #%]
+
+[% PROCESS global/header.html.tmpl
+  title = "Edit keyword"
+  style_urls = ['skins/standard/admin.css']
+%]
+
+<form method="post" action="editkeywords.cgi">
+  <table id="admin_table_edit">
+    <tr>
+      <th>Name:</th>
+      <td><input size="64" maxlength="64" name="name" 
+                 value="[% keyword.name FILTER html %]" required></td>
+    </tr>
+    <tr>
+      <th>Description:</th>
+      <td>
+        [% INCLUDE global/textarea.html.tmpl
+          name           = 'description'
+          minrows        = 4
+          cols           = 64
+          wrap           = 'virtual'
+          defaultcontent = keyword.description
+          mandatory      = 1
+        %]
+      </td>
+    </tr>
+    <tr>
+      <th>[% terms.Bugs %]:</th>
+      <td>
+        [% IF keyword.bug_count > 0 %]
+          <a href="buglist.cgi?keywords=[% keyword.name FILTER uri %]">
+            [% keyword.bug_count FILTER html %]</a>
+        [% ELSE %]
+          none
+        [% END %]
+      </td>
+    </tr>
+  </table>
+
+  <input type="submit" id="update" value="Save Changes">
+  <input type="hidden" name="action" value="update">
+  <input type="hidden" name="id" value="[% keyword.id FILTER html %]">
+  <input type="hidden" name="token" value="[% token FILTER html %]">
+</form>
+
+<p><a href="editkeywords.cgi">Edit other keywords</a>.</p>
+
+[% PROCESS global/footer.html.tmpl %]

@@ -1,0 +1,3 @@
+
+FAIL Importing a WebAssembly module should be allowed by script-src CSP. assert_array_equals: lengths differ, expected array ["executed"] length 1, got [] length 0
+

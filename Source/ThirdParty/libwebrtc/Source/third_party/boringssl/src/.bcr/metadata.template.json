@@ -1,0 +1,25 @@
+{
+  "homepage": "https://boringssl.googlesource.com/boringssl/",
+  "maintainers": [
+    {
+      "email": "agl@google.com",
+      "github": "agl",
+      "name": "Adam Langley"
+    },
+    {
+      "email": "davidben@google.com",
+      "github": "davidben",
+      "name": "David Benjamin"
+    },
+    {
+      "email": "dadrian@google.com",
+      "github": "dadrian",
+      "name": "David Adrian"
+    }
+  ],
+  "repository": [
+    "github:google/boringssl"
+  ],
+  "versions": [],
+  "yanked_versions": {}
+}

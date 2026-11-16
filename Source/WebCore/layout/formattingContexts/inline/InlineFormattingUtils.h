@@ -1,0 +1,93 @@
+/*
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#pragma once
+
+#include "BlockLayoutState.h"
+#include "FloatingContext.h"
+#include "InlineLineRun.h"
+#include "LineLayoutResult.h"
+#include <WebCore/InlineLineTypes.h>
+
+namespace WebCore {
+namespace Layout {
+
+class InlineFormattingContext;
+class InlineLevelBox;
+class LineBox;
+enum class IntrinsicWidthMode;
+
+class InlineFormattingUtils {
+public:
+    NODELETE InlineFormattingUtils(const InlineFormattingContext&);
+
+    InlineLayoutUnit logicalTopForNextLine(const LineLayoutResult&, const InlineRect& lineLogicalRect, const FloatingContext&) const;
+
+    enum class IsIntrinsicWidthMode : bool { No, Yes };
+    enum class PreviousLineEndsParagraph : bool { No, Yes };
+    InlineLayoutUnit computedTextIndent(IsIntrinsicWidthMode, IsFirstFormattedLine, std::optional<PreviousLineEndsParagraph>, InlineLayoutUnit availableWidth) const;
+    static InlineLayoutUnit computedTextIndentForFirstLine(const ElementBox& root, InlineLayoutUnit availableWidth);
+
+    bool inlineLevelBoxAffectsLineBox(const InlineLevelBox&, const LineBox&) const;
+
+    InlineLayoutUnit initialLineHeight(bool isFirstLine) const;
+
+    FloatingContext::Constraints floatConstraintsForLine(InlineLayoutUnit lineLogicalTop, InlineLayoutUnit contentLogicalHeight, const FloatingContext&) const;
+
+    NODELETE static InlineRect flipVisualRectToLogicalForWritingMode(const InlineRect& visualRect, WritingMode);
+
+    static InlineLayoutUnit horizontalAlignmentOffset(const Style::ComputedStyle& rootStyle, InlineLayoutUnit contentLogicalRight, InlineLayoutUnit lineLogicalRight, InlineLayoutUnit hangingTrailingWidth, bool isLastLineOrLineEndsWithForcedLineBreak, std::optional<TextDirection> inlineBaseDirectionOverride = std::nullopt);
+
+    NODELETE static InlineItemPosition leadingInlineItemPositionForNextLine(const LineLayoutResult&, std::optional<InlineItemPosition> previousLineContentEnd, InlineItemPosition layoutRangeEnd);
+
+    InlineLayoutUnit inlineItemWidth(const InlineItem&, InlineLayoutUnit contentLogicalLeft, bool useFirstLineStyle) const;
+    InlineLayoutUnit intrinsicMarginBoxWidth(const ElementBox&, IntrinsicWidthMode) const;
+
+    size_t nextWrapOpportunity(size_t startIndex, const InlineItemRange& layoutRange, std::span<const InlineItem>, std::optional<IntrinsicWidthMode> = { }) const;
+
+    static std::pair<InlineLayoutUnit, InlineLayoutUnit> textEmphasisForInlineBox(const Box&, const ElementBox& rootBox);
+
+    NODELETE static LineEndingTruncationPolicy lineEndingTruncationPolicy(const Style::ComputedStyle& rootStyle, size_t numberOfContentfulLines, std::optional<size_t> numberOfVisibleLinesAllowed, bool currentLineIsContentful);
+
+    NODELETE static std::optional<LineLayoutResult::InlineContentEnding> inlineContentEnding(const LineResult&);
+
+    NODELETE bool shouldDiscardRemainingContentInBlockDirection() const;
+
+    // numberOfPrecedingLines: the lines before this one in a layout that does not go through the layout state's line count
+    // (the content constrainer lays out the whole content on its own). By default the lines laid out so far are used.
+    std::optional<BlockOverflowEllipsis> blockEllipsisForLine(std::optional<size_t> numberOfPrecedingLines = { }) const;
+
+private:
+    bool isAtSoftWrapOpportunity(const InlineItem& previous, const InlineItem& next, std::optional<IntrinsicWidthMode>) const;
+
+    const InlineFormattingContext& formattingContext() const LIFETIME_BOUND { return m_inlineFormattingContext; }
+
+private:
+    const InlineFormattingContext& m_inlineFormattingContext;
+};
+
+}
+}
+

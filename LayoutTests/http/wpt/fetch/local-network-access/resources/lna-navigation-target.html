@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script>
+// Loads only if the navigation to it was permitted, so its message is the signal that the Local
+// Network Access check allowed the navigation. Reports to the test page, which is the popup's opener
+// or, when the initiator is an iframe, the top frame.
+const label = new URL(location.href).searchParams.get('label');
+(top.opener || top).postMessage({ from: label, result: 'child-loaded' }, '*');
+</script>
+</body>
+</html>

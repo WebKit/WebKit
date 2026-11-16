@@ -1,0 +1,10 @@
+Tests that removing and inserting an input element always invalidates the cache in the labels node list
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS input.labels.length is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

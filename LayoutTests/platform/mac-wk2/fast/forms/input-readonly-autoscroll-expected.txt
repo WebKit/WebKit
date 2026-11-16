@@ -1,0 +1,29 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x18
+        RenderText {#text} at (0,0) size 54x18
+          text run at (0,0) width 54: "Test for "
+        RenderInline {A} at (53,0) size 68x18 [color=#0000EE]
+          RenderText {#text} at (53,0) size 68x18
+            text run at (53,0) width 68: "bug 11534"
+        RenderText {#text} at (120,0) size 5x18
+          text run at (120,0) width 5: "."
+      RenderBlock {P} at (0,34) size 784x18
+        RenderText {#text} at (0,0) size 358x18
+          text run at (0,0) width 358: "Readonly text fields don't scroll when selecting content."
+      RenderBlock (anonymous) at (0,68) size 784x21
+        RenderTextControl {INPUT} at (0,0) size 154x21 [bgcolor=#FFFFFF] [border: (2px inset #808080)]
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {DIV} at (0,89) size 784x18
+        RenderText {#text} at (0,0) size 90x18
+          text run at (0,0) width 90: "ScrollLeft: 13"
+        RenderBR {BR} at (89,0) size 1x18
+layer at (15,80) size 140x13 scrollX 13 scrollWidth 153
+  RenderBlock {DIV} at (7,4) size 140x13
+    RenderText {#text} at (0,0) size 154x13
+      text run at (0,0) width 154: "abcdefghijklmnopqrstuvwxyz"
+selection start: position 1 of child 0 {#text} of child 0 {DIV} of {#document-fragment} of child 5 {INPUT} of body
+selection end:   position 26 of child 0 {#text} of child 0 {DIV} of {#document-fragment} of child 5 {INPUT} of body

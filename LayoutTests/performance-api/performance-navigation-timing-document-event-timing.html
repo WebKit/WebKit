@@ -1,0 +1,35 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+<script>
+
+window.jsTestIsAsync = true;
+description("PerformanceNavigationTiming document event timing attributes should be non-zero after load.");
+
+window.addEventListener("load", () => {
+    setTimeout(() => {
+        window.entries = performance.getEntriesByType("navigation");
+        shouldBe("entries.length", "1");
+
+        window.nav = entries[0];
+        shouldBeGreaterThanOrEqual("nav.domInteractive", "1");
+        shouldBeGreaterThanOrEqual("nav.domContentLoadedEventStart", "1");
+        shouldBeGreaterThanOrEqual("nav.domContentLoadedEventEnd", "1");
+        shouldBeGreaterThanOrEqual("nav.domComplete", "1");
+        shouldBeGreaterThanOrEqual("nav.loadEventStart", "1");
+
+        shouldBeGreaterThanOrEqual("nav.domContentLoadedEventStart", "nav.domInteractive");
+        shouldBeGreaterThanOrEqual("nav.domContentLoadedEventEnd", "nav.domContentLoadedEventStart");
+        shouldBeGreaterThanOrEqual("nav.domComplete", "nav.domContentLoadedEventEnd");
+        shouldBeGreaterThanOrEqual("nav.loadEventStart", "nav.domComplete");
+
+        finishJSTest();
+    }, 0);
+}, false);
+
+</script>
+</body>
+</html>

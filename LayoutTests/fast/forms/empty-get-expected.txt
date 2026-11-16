@@ -1,0 +1,4 @@
+Test for bug 8051: Empty forms are submitted incorrectly.
+
+
+Success

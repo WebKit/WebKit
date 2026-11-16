@@ -1,0 +1,58 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="../../../resources/ui-helper.js"></script>
+<script src="../../../resources/js-test.js"></script>
+<style>
+body, html {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+}
+
+input {
+    width: 250px;
+    font-size: 20px;
+    padding: 10px;
+    display: block;
+}
+</style>
+<script>
+jsTestIsAsync = true;
+
+addEventListener("load", async () => {
+    description("This test verifies that <code>caret-color</code> is applied upon focusing an input field. To manually test, focus the input field, dismiss the software keyboard, and then focus the input field again. The caret color should be default after initial focus, but red upon refocusing.");
+    let input = document.querySelector("input");
+    input.addEventListener("blur", () => {
+        testPassed("Blurred input field.");
+        input.style.caretColor = "red";
+    });
+
+    if (!window.testRunner)
+        return;
+
+    await UIHelper.activateElementAndWaitForInputSession(input);
+    await UIHelper.ensurePresentationUpdate();
+    originalCaretBackgroundColor = await UIHelper.selectionCaretBackgroundColor();
+
+    await UIHelper.resignFirstResponder();
+    await UIHelper.waitForKeyboardToHide();
+    await UIHelper.activateElementAndWaitForInputSession(input);
+    await UIHelper.ensurePresentationUpdate();
+    newCaretBackgroundColor = await UIHelper.selectionCaretBackgroundColor();
+
+    shouldBeEqualToString("newCaretBackgroundColor", "rgb(255, 0, 0)");
+    shouldNotBe("originalCaretBackgroundColor", "newCaretBackgroundColor");
+
+    input.blur();
+    await UIHelper.waitForKeyboardToHide();
+    finishJSTest();
+});
+</script>
+</head>
+<body>
+<input placeholder="Focus me"></input>
+<pre id="console"></pre>
+</body>
+</html>

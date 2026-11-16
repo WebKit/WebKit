@@ -1,0 +1,43 @@
+<html> 
+<head>
+
+<style>
+.editing { 
+    border: 2px solid red; 
+    padding: 12px; 
+    font-size: 24px; 
+    word-wrap: break-word;
+    -khtml-nbsp-mode: space;
+    -khtml-line-break: after-white-space;
+}
+</style>
+<script src=../editing.js language="JavaScript" type="text/JavaScript" ></script>
+
+<script>
+
+function editingTest() {
+    for (i = 0; i < 28; i++)
+        moveSelectionForwardByCharacterCommand();    
+    for (i = 0; i < 2; i++)
+        extendSelectionForwardByCharacterCommand();    
+    deleteCommand();
+}
+
+</script>
+
+<title>Editing Test</title> 
+</head> 
+<body>
+<p>This testcase demonstrates a bug (9441).  When 'as' is deleted, there should be a space before and after the caret.  Editing produces a tree that should result in two spaces, but for some reason it isn't rendered.</p>
+<div contenteditable id="root" class="editing">
+<span id="test">in Liberty<i>F    and seven</i> years <b>  as </b>our fathers  f upon this
+continent, a new nation, conceived &nbsp;&nbsp; in Liberty,                 and dedicated to the
+proposition that all</span>
+</div>
+
+<script>
+runEditingTest();
+</script>
+
+</body>
+</html>

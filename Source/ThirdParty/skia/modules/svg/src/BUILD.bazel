@@ -1,0 +1,69 @@
+load("//bazel:skia_rules.bzl", "skia_filegroup")
+
+package(
+    default_applicable_licenses = ["//:license"],
+)
+
+licenses(["notice"])
+
+# This group is exported as //modules/svg/svg.gni:skia_svg_sources.
+skia_filegroup(
+    name = "private_hdrs",
+    srcs = [
+        "SkSVGRectPriv.h",
+        "SkSVGTextPriv.h",
+    ],
+    visibility = ["//modules/svg:__pkg__"],
+)
+
+# This group is exported as //modules/svg/svg.gni:skia_svg_sources.
+skia_filegroup(
+    name = "srcs",
+    srcs = [
+        "SkSVGAttribute.cpp",
+        "SkSVGAttributeParser.cpp",
+        "SkSVGCircle.cpp",
+        "SkSVGClipPath.cpp",
+        "SkSVGContainer.cpp",
+        "SkSVGDOM.cpp",
+        "SkSVGEllipse.cpp",
+        "SkSVGFe.cpp",
+        "SkSVGFeBlend.cpp",
+        "SkSVGFeColorMatrix.cpp",
+        "SkSVGFeComponentTransfer.cpp",
+        "SkSVGFeComposite.cpp",
+        "SkSVGFeDisplacementMap.cpp",
+        "SkSVGFeFlood.cpp",
+        "SkSVGFeGaussianBlur.cpp",
+        "SkSVGFeImage.cpp",
+        "SkSVGFeLightSource.cpp",
+        "SkSVGFeLighting.cpp",
+        "SkSVGFeMerge.cpp",
+        "SkSVGFeMorphology.cpp",
+        "SkSVGFeOffset.cpp",
+        "SkSVGFeTurbulence.cpp",
+        "SkSVGFilter.cpp",
+        "SkSVGFilterContext.cpp",
+        "SkSVGGradient.cpp",
+        "SkSVGImage.cpp",
+        "SkSVGLine.cpp",
+        "SkSVGLinearGradient.cpp",
+        "SkSVGMask.cpp",
+        "SkSVGNode.cpp",
+        "SkSVGOpenTypeSVGDecoder.cpp",
+        "SkSVGPath.cpp",
+        "SkSVGPattern.cpp",
+        "SkSVGPoly.cpp",
+        "SkSVGRadialGradient.cpp",
+        "SkSVGRect.cpp",
+        "SkSVGRenderContext.cpp",
+        "SkSVGSVG.cpp",
+        "SkSVGShape.cpp",
+        "SkSVGStop.cpp",
+        "SkSVGText.cpp",
+        "SkSVGTransformableNode.cpp",
+        "SkSVGUse.cpp",
+        "SkSVGValue.cpp",
+    ],
+    visibility = ["//modules/svg:__pkg__"],
+)

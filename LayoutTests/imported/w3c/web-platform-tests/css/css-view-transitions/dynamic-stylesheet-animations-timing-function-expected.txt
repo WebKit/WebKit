@@ -1,0 +1,5 @@
+
+PASS The transform property with ease on ::view-transition-group()
+PASS The sizing properties with linear on ::view-transition-group()
+PASS Changing the timing function of ::view-transition-group() when animating
+

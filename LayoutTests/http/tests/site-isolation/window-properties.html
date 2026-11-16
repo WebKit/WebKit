@@ -1,0 +1,17 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<iframe src="http://localhost:8000/site-isolation/resources/window-properties-child.html"></iframe>
+<script>
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+}
+messagesReceived = 0;
+addEventListener("message", (e) => {
+    alert("postMessage received: " + e.data);
+    messagesReceived = messagesReceived + 1;
+    if (messagesReceived == 3 && window.testRunner) { testRunner.notifyDone() }
+});
+window.customFunction = function() {
+    alert("custom function called");
+}
+</script>

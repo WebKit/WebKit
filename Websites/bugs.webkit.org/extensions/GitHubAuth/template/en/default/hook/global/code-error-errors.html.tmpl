@@ -1,0 +1,30 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[% IF error == "github_missing_code" %]
+  [% title = "Missing GitHub Auth Code" %]
+  Expected a <em>code</em> parameter in the GitHub OAuth2 callback.
+
+[% ELSIF error == "github_bad_response" %]
+  [% title = "Bad Response from GitHub" %]
+  Received unexpected response from GitHub: [% message FILTER html %]
+
+[% ELSIF error == "github_error" %]
+  [% title = "GitHub Error" %]
+  GitHub returned an error: [% response.message FILTER html %]
+
+[% ELSIF error == "github_invalid_target" %]
+  [% terms.Bugzilla %] cannot log you into an external site via GitHub.
+
+[% ELSIF error == "github_insecure_referer" %]
+  [% terms.Bugzilla %] prevented you from logging in from a page containing private information.
+
+[% ELSIF error == "github_invalid_request" %]
+  Invalid GitHub log in attempt (reason: [% reason FILTER html %])
+
+[% END %]

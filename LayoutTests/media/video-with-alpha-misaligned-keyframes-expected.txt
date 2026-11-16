@@ -1,0 +1,20 @@
+
+EVENT(canplaythrough)
+
+Seek within the aligned beginning; alpha decodes from the first frame.
+EVENT(seeked)
+EXPECTED (pixelAlpha(40, 60) < '32') OK
+EXPECTED (pixelAlpha(120, 60) > '224') OK
+
+Seek to the color keyframe at 1s, where the alpha frame is a delta: no error, and the opaque half stays opaque.
+EVENT(seeked)
+EXPECTED (video.error == 'null') OK
+EXPECTED (pixelAlpha(120, 60) > '224') OK
+
+Seek past the alpha stream's own keyframe at 1.5s; alpha must recover.
+EVENT(seeked)
+EXPECTED (video.error == 'null') OK
+EXPECTED (pixelAlpha(40, 60) < '32') OK
+EXPECTED (pixelAlpha(120, 60) > '224') OK
+END OF TEST
+

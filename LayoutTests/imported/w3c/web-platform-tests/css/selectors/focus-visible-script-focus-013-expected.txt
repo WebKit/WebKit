@@ -1,0 +1,10 @@
+This test checks that a script focus after blur after a keyboard focus does match :focus-visible.
+
+Type TAB key.
+If the element that says "Focused" has a red background then the test result is FAILURE, if it has a green outline then the test result is SUCCESS.
+Focus me
+Focused
+
+PASS ":focus-visible" should be a valid selector
+PASS Script focus after blur after keyboard focus does match :focus-visible
+

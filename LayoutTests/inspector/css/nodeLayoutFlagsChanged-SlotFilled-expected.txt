@@ -1,0 +1,30 @@
+
+== Running test suite: CSS.nodeLayoutFlagsChanged.SlotFilled
+-- Running test case: CSS.nodeLayoutFlagsChanged.SlotFilled.Named.Empty
+PASS: Should not be filled.
+Changing slot of child...
+PASS: Should be filled.
+Adding child with slot...
+PASS: Should be filled.
+
+-- Running test case: CSS.nodeLayoutFlagsChanged.SlotFilled.Named.Filled
+PASS: Should be filled.
+Removing first assigned node...
+PASS: Should be filled.
+Removing last assigned node...
+PASS: Should not be filled.
+
+-- Running test case: CSS.nodeLayoutFlagsChanged.SlotFilled.Manual.Empty
+PASS: Should not be filled.
+Adding second child as assigned node...
+PASS: Should be filled.
+Adding first child as assigned node...
+PASS: Should be filled.
+
+-- Running test case: CSS.nodeLayoutFlagsChanged.SlotFilled.Manual.Filled
+PASS: Should be filled.
+Removing first assigned node...
+PASS: Should be filled.
+Removing last assigned node...
+PASS: Should not be filled.
+

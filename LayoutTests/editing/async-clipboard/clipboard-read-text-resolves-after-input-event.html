@@ -1,0 +1,67 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true AsyncClipboardAPIEnabled=true DOMPasteAllowed=false ] -->
+<html>
+<meta charset="utf8">
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/ui-helper.js"></script>
+<style>
+input { display: block; font-size: 40px; width: 300px; }
+button { width: 300px; padding: 1em; }
+</style>
+</head>
+<script>
+jsTestIsAsync = true;
+doneWritingText = false;
+order = [];
+done = false;
+
+async function runTest() {
+    description("Regression test for bug 223597: navigator.clipboard.readText() called inside a 'paste' handler that does not preventDefault must resolve in a separate task — after the native paste's 'input' event has fired. Order of observed events should be ['input', 'readText'].");
+
+    const copyButton = document.querySelector("button");
+    const field = document.querySelector("input");
+
+    copyButton.addEventListener("click", async () => {
+        await navigator.clipboard.writeText("hello");
+        doneWritingText = true;
+    });
+
+    field.addEventListener("paste", () => {
+        navigator.clipboard.readText().then(text => {
+            order.push(`readText:${text}`);
+            if (order.length === 2)
+                done = true;
+        });
+    });
+
+    field.addEventListener("input", () => {
+        order.push("input");
+        if (order.length === 2)
+            done = true;
+    });
+
+    if (!window.testRunner)
+        return;
+
+    await UIHelper.activateElement(copyButton);
+    await new Promise(resolve => shouldBecomeEqual("doneWritingText", "true", resolve));
+    await UIHelper.activateElementAndWaitForInputSession(field);
+    await UIHelper.paste();
+    await new Promise(resolve => shouldBecomeEqual("done", "true", resolve));
+
+    shouldBeEqualToString("order[0]", "input");
+    shouldBeEqualToString("order[1]", "readText:hello");
+
+    field.blur();
+    await UIHelper.waitForKeyboardToHide();
+    finishJSTest();
+}
+
+addEventListener("load", runTest);
+</script>
+<body>
+<button>Copy</button>
+<input>
+</body>
+</html>

@@ -1,0 +1,22 @@
+
+EVENT(sourceopen)
+Test: appendBuffer while updating must throw InvalidStateError
+EXPECTED (sourceBuffer.updating == 'true') OK
+EXPECTED (thrownError.name == 'InvalidStateError') OK
+Test: remove while updating must throw InvalidStateError
+EXPECTED (thrownError.name == 'InvalidStateError') OK
+EVENT(updateend)
+Test: abort while not updating does not throw
+EXPECTED (thrownError == 'null') OK
+Test: set duration while updating must throw InvalidStateError
+EXPECTED (sourceBuffer.updating == 'true') OK
+EXPECTED (thrownError.name == 'InvalidStateError') OK
+EVENT(updateend)
+Test: endOfStream while updating must throw InvalidStateError
+EXPECTED (thrownError.name == 'InvalidStateError') OK
+EVENT(updateend)
+Test: addSourceBuffer when ended must throw InvalidStateError
+EXPECTED (source.readyState == 'ended') OK
+EXPECTED (thrownError.name == 'InvalidStateError') OK
+END OF TEST
+

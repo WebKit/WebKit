@@ -1,0 +1,5 @@
+
+PASS AbortSignal.timeout() returns a non-aborted signal
+PASS Signal returned by AbortSignal.timeout() times out
+PASS AbortSignal timeouts fire in order
+

@@ -1,0 +1,27 @@
+::before gets a box when 'content', 'animation' or 'transition' come from var(), and reset rules that can't generate a box also match.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Reset rules only
+PASS none.offsetHeight is 0
+
+Reset rules and a rule that sets 'content'
+PASS reset.offsetHeight is 25
+
+'content' from var()
+PASS varContent.offsetHeight is 25
+
+'animation' from var()
+PASS varAnimation.offsetHeight is 25
+
+'transition' from var()
+PASS varTransition.offsetHeight is 25
+varTransition.classList.remove('content')
+PASS varTransition.offsetHeight is 25
+varTransition.getAnimations({ subtree: true })[0].finish()
+PASS varTransition.offsetHeight is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

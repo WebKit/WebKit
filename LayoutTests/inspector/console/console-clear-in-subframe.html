@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+<!-- This test is symlinked and run from a different location to test site isolated behaviors. Attempt to find the test driver from two possible places. -->
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="../../../../../inspector/resources/inspector-test.js"></script>
+<script>
+function addSubframe() {
+    const iframe = document.createElement("iframe");
+    iframe.src = "resources/console-subframe.html";
+    document.body.appendChild(iframe);
+}
+
+function tellSubframe(what) {
+    frames[0].postMessage(what, "*");
+}
+
+function mainFrameError(text) {
+    console.error(text);
+}
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("Console.ClearInSubframe");
+
+    let subframeTarget = null;
+
+    // Distinct message text per case: a repeat of a stored message takes a different path.
+    async function addSubframeOnce() {
+        if (subframeTarget)
+            return;
+
+        let [readyEvent] = await Promise.all([
+            WI.consoleManager.awaitEvent(WI.ConsoleManager.Event.MessageAdded),
+            InspectorTest.evaluateInPage(`addSubframe()`),
+        ]);
+        subframeTarget = readyEvent.data.message.target;
+
+        await subframeTarget.ConsoleAgent.setConsoleClearAPIEnabled(true);
+    }
+
+    async function logFromMainFrame(text) {
+        let [event] = await Promise.all([
+            WI.consoleManager.awaitEvent(WI.ConsoleManager.Event.MessageAdded),
+            InspectorTest.evaluateInPage(`mainFrameError("${text}")`),
+        ]);
+        return event.data.message.target;
+    }
+
+    async function clearFromSubframe() {
+        await Promise.all([
+            WI.consoleManager.awaitEvent(WI.ConsoleManager.Event.Cleared),
+            InspectorTest.evaluateInPage(`tellSubframe("clear")`),
+        ]);
+    }
+
+    suite.addTestCase({
+        name: "Console.ClearInSubframe.NothingLeftToReplay",
+        description: "console.clear() in a subframe should leave no main frame messages to replay.",
+        async test() {
+            await addSubframeOnce();
+
+            let mainFrameTarget = await logFromMainFrame("clear-in-subframe-replay");
+            await clearFromSubframe();
+
+            // Re-enabling Console replays whatever the agent still buffers.
+            let replayed = [];
+            let listener = WI.consoleManager.addEventListener(WI.ConsoleManager.Event.MessageAdded, (event) => {
+                if (event.data.message.target === mainFrameTarget)
+                    replayed.push(event.data.message.messageText);
+            });
+
+            await mainFrameTarget.ConsoleAgent.disable();
+            await mainFrameTarget.ConsoleAgent.enable();
+
+            WI.consoleManager.removeEventListener(WI.ConsoleManager.Event.MessageAdded, listener);
+
+            InspectorTest.expectEqual(replayed.length, 0, "The main frame should have no messages left to replay after console.clear() in a subframe.");
+            for (let messageText of replayed)
+                InspectorTest.log(`    Unexpectedly replayed: ${JSON.stringify(messageText)}`);
+        },
+    });
+
+    suite.addTestCase({
+        name: "Console.ClearInSubframe.RelogAfterClear",
+        description: "After console.clear() in a subframe, re-logging a message from the main frame should show it again.",
+        async test() {
+            await addSubframeOnce();
+
+            await logFromMainFrame("clear-in-subframe-relog");
+            await clearFromSubframe();
+
+            let [event] = await Promise.all([
+                Promise.race([
+                    WI.consoleManager.awaitEvent(WI.ConsoleManager.Event.MessageAdded).then(() => "message-added"),
+                    WI.consoleManager.awaitEvent(WI.ConsoleManager.Event.PreviousMessageRepeatCountUpdated).then(() => "repeat-count-updated"),
+                ]),
+                InspectorTest.evaluateInPage(`mainFrameError("clear-in-subframe-relog")`),
+            ]);
+
+            // A repeat count update would be dropped: the clear discarded the message it applies to.
+            InspectorTest.expectEqual(event, "message-added", "A message logged after console.clear() should arrive as a new message.");
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>console.clear() in a subframe should clear the console for every frame.</p>
+</body>
+</html>

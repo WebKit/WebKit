@@ -1,0 +1,11 @@
+
+PASS #1 Reinitialize the default imports
+PASS #2 Test that WebAssembly compilation succeeds (imports1.wast:1)
+PASS #3 Reinitialize the default imports
+PASS #4 Test that WebAssembly compilation succeeds (imports1.wast:1)
+PASS #5 Test that WebAssembly instantiation succeeds (imports1.wast:1)
+PASS #6 Test that a WebAssembly code returns a specific result (imports1.wast:12)
+PASS #7 Test that a WebAssembly code returns a specific result (imports1.wast:13)
+PASS #8 Test that a WebAssembly code returns a specific result (imports1.wast:14)
+PASS #9 Test that a WebAssembly code traps (imports1.wast:15)
+

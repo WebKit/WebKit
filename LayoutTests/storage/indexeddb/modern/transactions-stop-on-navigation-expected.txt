@@ -1,0 +1,2 @@
+Makes sure transactions stop on navigation to a new page. If the previous page's transaction is blindly charging forward, this test will probably timeout. If the previous page's connection/transactions did not clean up properly, the delete request in this test will incorrectly be blocked. If every thing is peachy keen, the delete request in this test will correctly succeed.
+Delete request was successful.Done.

@@ -1,0 +1,67 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="../debugger/resources/site-isolation-debugger-test-utilities.js"></script>
+<script>
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Network.CrossOriginIFrameLoadingLifecycle");
+
+    suite.addTestCase({
+        name: "SiteIsolation.Network.CrossOriginIFrame.LoadingDidFinish",
+        description: "A successful fetch from a cross-origin iframe should fire LoadingDidFinish.",
+        async test() {
+            let frameTarget = await frameTargetForURLContaining("iframe-with-fetch.html");
+            InspectorTest.assert(frameTarget instanceof WI.FrameTarget, "Cross-origin fetch iframe frame target should exist.");
+            await waitForExpressionInTarget(frameTarget, "typeof triggerFetch === 'function'");
+
+            // Trigger the fetch and wait for the resource.
+            let resourceAddedPromise = WI.Frame.awaitEvent(WI.Frame.Event.ResourceWasAdded);
+            await frameTarget.RuntimeAgent.evaluate.invoke({expression: "triggerFetch()", objectGroup: "test"});
+            let resourceEvent = await resourceAddedPromise;
+            let resource = resourceEvent.data.resource;
+
+            InspectorTest.expectThat(resource instanceof WI.Resource, "Resource should be created.");
+
+            // Wait for loading to finish if it hasn't already.
+            if (!resource.finished)
+                await resource.awaitEvent(WI.Resource.Event.LoadingDidFinish);
+
+            InspectorTest.expectThat(resource.finished, "Resource should be marked as finished.");
+            InspectorTest.expectThat(!resource.failed, "Resource should not be marked as failed.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Network.CrossOriginIFrame.FailedLoadFiresLoadingDidFail",
+        description: "A failed network load in a cross-origin iframe should fire LoadingDidFail.",
+        async test() {
+            let frameTarget = await frameTargetForURLContaining("iframe-with-failed-fetch.html");
+            InspectorTest.assert(frameTarget instanceof WI.FrameTarget, "Cross-origin failed-fetch iframe frame target should exist.");
+            await waitForExpressionInTarget(frameTarget, "typeof triggerFailedFetch === 'function'");
+
+            // Trigger a load that fails at the network layer (connection refused / blocked) and
+            // wait for the resource. Unlike an aborted fetch, a genuine load failure goes through
+            // SubresourceLoader::didFail, so it exercises the Network fail-path routing under SI.
+            let resourceAddedPromise = WI.Frame.awaitEvent(WI.Frame.Event.ResourceWasAdded);
+            await frameTarget.RuntimeAgent.evaluate.invoke({ expression: "triggerFailedFetch()", objectGroup: "test" });
+            let resourceEvent = await resourceAddedPromise;
+            let resource = resourceEvent.data.resource;
+
+            InspectorTest.expectThat(resource instanceof WI.Resource, "Resource should be created.");
+
+            // Wait for loading to fail if it hasn't already.
+            if (!resource.failed)
+                await resource.awaitEvent(WI.Resource.Event.LoadingDidFail);
+
+            InspectorTest.expectThat(resource.failed, "Resource should be marked as failed.");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+
+<body onload="runTest()">
+<p>Test that cross-origin iframe resource loading lifecycle events fire correctly for a completed fetch and a failed network load.</p>
+<iframe src="http://localhost:8000/site-isolation/inspector/network/resources/iframe-with-fetch.html"></iframe>
+<iframe src="http://localhost:8000/site-isolation/inspector/network/resources/iframe-with-failed-fetch.html"></iframe>
+</body>

@@ -1,0 +1,13 @@
+
+PASS get() resolves with a PhoneNumberPossessionCredential.
+PASS get() returns encryptedResult, carrierPubKey and portingZKP.
+PASS get() returns the carrier's domain and configuration ID.
+PASS get() returns encryptedDecryptionKey.
+PASS Members the platform leaves out are null.
+PASS encryptedResult only includes the phone number when it was requested.
+PASS clientDataJSON defaults the RP ID to the document's effective domain.
+PASS clientDataJSON uses an explicit RP ID.
+PASS A 15 digit phoneNumberSuffixHint is accepted.
+PASS A 32 byte pnpiSuffixHint is accepted.
+PASS A 1024 byte knownCarrierPubKey is accepted.
+

@@ -1,0 +1,52 @@
+<!DOCTYPE HTML><!-- webkit-test-runner [ AccessibilityFormErrorDetectionEnabled=true ] -->
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<form id="form">
+  <label for="origin">From</label><input id="origin" type="text">
+  <div id="origin-error" style="visibility: hidden;"><span>Please enter a valid origin.</span></div>
+
+  <label for="destination">To</label><input id="destination" type="text">
+  <div id="destination-error" style="opacity: 0;"><span>Please enter a valid destination.</span></div>
+
+  <button id="submit" type="submit">Search</button>
+</form>
+
+<script>
+var output = "This tests that a message already in the document is found when the submit reveals it without changing the tree, which is what happens when a site hides its error slot with visibility or opacity rather than display. No element is inserted and no text changes, so nothing about the message is reported as a mutation.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+    internals.setAccessibilityFormErrorSettleDelay(0.1);
+
+    document.getElementById("form").addEventListener("submit", (event) => {
+        event.preventDefault();
+        document.getElementById("origin-error").style.visibility = "visible";
+        document.getElementById("destination-error").style.opacity = "1";
+    });
+
+    function axElement(id) {
+        return accessibilityController.accessibleElementById(id);
+    }
+
+    setTimeout(async function() {
+        output += expect("axElement('origin').stringAttributeValue('AXInvalid')", "'false'");
+
+        document.getElementById("submit").click();
+
+        output += await expectAsync("axElement('origin').stringAttributeValue('AXInvalid')", "'true'");
+        output += await expectAsync("errorMessageText(axElement('origin'))", "'Please enter a valid origin.'");
+        output += await expectAsync("axElement('destination').stringAttributeValue('AXInvalid')", "'true'");
+        output += await expectAsync("errorMessageText(axElement('destination'))", "'Please enter a valid destination.'");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

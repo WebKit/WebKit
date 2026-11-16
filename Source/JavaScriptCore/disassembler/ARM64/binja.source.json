@@ -1,0 +1,24 @@
+{
+    "project": "binja.c",
+    "target": "binja_impl.c.h",
+    "sources": [
+        "binja/decode_fields32.c",
+        "binja/decode_scratchpad.c",
+        "binja/decode.c",
+        "binja/decode0.c",
+        "binja/decode1.c",
+        "binja/decode2.c",
+        "binja/encodings_dec.c",
+        "binja/encodings_fmt.c",
+        "binja/format.c",
+        "binja/gofer.c",
+        "binja/operations.c",
+        "binja/pcode.c",
+        "binja/regs.c",
+        "binja/sysregs_fmt_gen.c",
+        "binja/sysregs_gen.c"
+    ],
+    "include_paths": [
+        "binja"
+    ]
+}

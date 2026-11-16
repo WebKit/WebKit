@@ -1,0 +1,17 @@
+<body>
+<p>This test passes if it doesn't crash</p>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+onload = () => {
+    let firstObject = document.getElementById("firstObject");
+    let secondObject = document.getElementById("secondObject");
+    secondObject.data = "x";
+    let secondObjectDocument = secondObject.contentDocument;
+    secondObject.align = "left";
+    secondObjectDocument.adoptNode(firstObject);
+    firstObject.reportValidity();
+}
+</script>
+<object id="firstObject"></object>
+<object id="secondObject"></object>

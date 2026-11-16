@@ -1,0 +1,26 @@
+<!DOCTYPE html><!-- webkit-test-runner [ FontFaceSetConstructorEnabled=true ] -->
+<html>
+<head>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+let fontArray = [];
+for (let counter = 0; counter < 0x10; counter++)
+    fontArray.push(new FontFace("MyFont" + counter, 'url(font2.otf?a=' + ((Math.random() *0x10000) % 0x10000) + ')'));
+
+let fontFaceSet = new FontFaceSet(fontArray);
+
+let counter = 0;
+for (fontFace of fontFaceSet) {
+    if (counter == 10) {
+        while (fontArray.length > 1)
+            fontFaceSet.delete(fontArray.pop());
+    }
+    counter++;
+}
+</script>
+<body>
+This test passes if there is no crash or ASSERT().
+</body>
+</html>

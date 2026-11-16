@@ -1,0 +1,8 @@
+
+
+PASS load event fires synchronously on <iframe> element created with no src
+PASS load event fires synchronously on <iframe> element created with src=''
+PASS load event fires synchronously on <iframe> element created with src='about:blank'
+PASS load event fires synchronously on <iframe> element created with src='about:blank#foo'
+PASS load event fires synchronously on <iframe> element created with src='about:blank?foo'
+

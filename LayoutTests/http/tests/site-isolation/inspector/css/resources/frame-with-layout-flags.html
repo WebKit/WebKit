@@ -1,0 +1,25 @@
+<style>
+    .grid {
+        display: grid;
+    }
+</style>
+<script>
+function setDisplay(id, value)
+{
+    document.getElementById(id).style.display = value;
+    document.body.offsetHeight;
+}
+</script>
+<p id="shown">Rendered paragraph.</p>
+<p id="hidden" style="display: none">Hidden paragraph.</p>
+<div id="grid" class="grid">
+    <div></div>
+    <div></div>
+</div>
+<div id="wrapper">
+    <div>
+        <div id="deep-grid" class="grid">
+            <div></div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,6 @@
+
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT A repeated setPointerCapture call does not redispatch capture events Test timed out
+NOTRUN A failed setPointerCapture call does not affect existing capture
+

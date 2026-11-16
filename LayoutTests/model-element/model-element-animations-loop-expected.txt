@@ -1,0 +1,8 @@
+
+PASS <model> with loop=false should stop after reaching its duration
+PASS <model> with negative playbackRate and loop=false should stop after seeking near the beginning
+PASS <model> with loop=true should loop and continue playing after reaching its duration
+PASS <model> with negative playbackRate and loop=true should loop and continue playing after reaching the beginning
+PASS <model> with loop=false should have currentTime equal to duration after animation completes
+PASS <model> with loop=false should be replayable after animation completes
+

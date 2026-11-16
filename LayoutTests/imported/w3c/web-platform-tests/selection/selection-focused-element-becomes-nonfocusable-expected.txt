@@ -1,0 +1,10 @@
+button1  button2button3
+
+FAIL Focused element is removed assert_equals: button2 should be focused expected Element node <button id="button2">button2</button> but got Element node <body>
+  <button id="button1">button1</button>
+  <button ...
+FAIL Focused element is disabled assert_equals: button2 should be focused expected Element node <button id="button2">button2</button> but got Element node <body>
+  <button id="button1">button1</button>
+
+  <butt...
+

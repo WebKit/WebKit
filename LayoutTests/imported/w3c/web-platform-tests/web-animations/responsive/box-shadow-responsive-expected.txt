@@ -1,0 +1,4 @@
+
+PASS Animating to inherit responsive to change in style
+PASS Animating from inherit responsive to change in style
+

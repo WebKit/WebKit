@@ -1,0 +1,33 @@
+Tests that createImageBitmap() of an HDR image preserves its HDR values, and that drawImage() of the result keeps them in a float16 canvas and clamps them in an SDR one.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+canvas.dataset.colorSpace: srgb
+canvas.dataset.renderingMode: Accelerated
+
+- globalCompositeOperation = "source-over"
+PASS HDR ImageBitmap -> float16 ("source-over"): peaks within the expected HDR range
+PASS HDR ImageBitmap -> unorm8 ("source-over"): is within the SDR range
+PASS SDR ImageBitmap -> float16 ("source-over"): is within the SDR range
+PASS SDR ImageBitmap -> unorm8 ("source-over"): is within the SDR range
+
+- globalCompositeOperation = "copy"
+PASS HDR ImageBitmap -> float16 ("copy"): peaks within the expected HDR range
+PASS HDR ImageBitmap -> unorm8 ("copy"): is within the SDR range
+PASS SDR ImageBitmap -> float16 ("copy"): is within the SDR range
+PASS SDR ImageBitmap -> unorm8 ("copy"): is within the SDR range
+
+- globalCompositeOperation = "source-in"
+PASS HDR ImageBitmap -> float16 ("source-in"): peaks within the expected HDR range
+PASS HDR ImageBitmap -> unorm8 ("source-in"): is within the SDR range
+PASS SDR ImageBitmap -> float16 ("source-in"): is within the SDR range
+PASS SDR ImageBitmap -> unorm8 ("source-in"): is within the SDR range
+
+- destination rect covers the canvas
+PASS HDR ImageBitmap -> float16 (covers canvas): peaks within the expected HDR range
+PASS HDR ImageBitmap -> unorm8 (covers canvas): is within the SDR range
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

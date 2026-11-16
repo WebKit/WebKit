@@ -1,0 +1,5 @@
+
+PASS getMatchedCSSRules() should not exist
+PASS webkitHidden should not exist
+PASS webkitVisibilityState should not exist
+

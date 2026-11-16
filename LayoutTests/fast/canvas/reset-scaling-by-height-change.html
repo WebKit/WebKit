@@ -1,0 +1,50 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<canvas></canvas>
+<script>
+
+description("The test to ensure resetting scaling by height change");
+
+function assertPixelApprox(ctx, x,y, r,g,b,a, tolerance)
+{
+    var imgdata = ctx.getImageData(x, y, 1, 1);
+    var diff = Math.max(Math.abs(r-imgdata.data[0]), Math.abs(g-imgdata.data[1]), Math.abs(b-imgdata.data[2]), Math.abs(a-imgdata.data[3]));
+    shouldBeFalse((diff > tolerance).toString());
+}
+
+function quadToPath(quad)
+{
+    ctx.beginPath();
+    ctx.moveTo(quad[0].x, quad[0].y);
+    ctx.lineTo(quad[1].x, quad[1].y);
+    ctx.lineTo(quad[2].x, quad[2].y);
+    ctx.lineTo(quad[3].x, quad[3].y);
+    ctx.closePath();
+}
+
+window.canvas = document.querySelector("canvas");
+window.ctx = canvas.getContext("2d");
+
+for (var i=0; i<100; i++) {
+    ctx.scale(10, 10);
+}
+// Setting width or height resets the transform of the canvas context
+canvas.width = 200;
+canvas.height = 100;
+
+quadToPath([{x:0,y:0},{x:0,y:100},{x:100,y:100},{x:100,y:0}]);
+ctx.fillStyle = 'rgb(0, 255, 0)';
+ctx.fill();
+
+assertPixelApprox(ctx, 50, 50, 0, 255, 0, 255, 0);
+assertPixelApprox(ctx, 150, 50, 0, 0, 0, 0, 0);
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>
+

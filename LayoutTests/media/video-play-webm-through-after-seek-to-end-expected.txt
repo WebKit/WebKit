@@ -1,0 +1,10 @@
+
+Test that a WebM video plays through to its end after seeking near the end and back to the start.
+
+++ seek near the end, seek back to the start, then play through the whole clip.
+++ seek to the end completed.
+++ seek to the start completed.
+RUN(video.play())
+++ ended.
+END OF TEST
+

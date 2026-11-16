@@ -1,0 +1,4 @@
+First other focusable element  Toggle popover Second other focusable element
+
+FAIL Cases where the popover invoker has different tabindex assert_equals: Popover should be skipped since its invoker has different tabindex expected Element node <span tabindex="0">First other focusable element</span> but got Element node <span tabindex="0">Second other focusable element</span>
+

@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+<script>
+description("Basic testing for beforeprint / afterprint events");
+jsTestIsAsync = true;
+let receivedBeforePrintEvent = false;
+
+addEventListener("beforeprint", () => {
+    debug("* Received beforeprint event");
+    receivedBeforePrintEvent = true;
+});
+
+addEventListener("afterprint", () => {
+    debug("* Received afterprint event");
+    shouldBeTrue("receivedBeforePrintEvent");
+    finishJSTest();
+});
+
+onload = () => {
+    evalAndLog("window.print()");
+};
+</script>
+</body>
+</html>

@@ -1,0 +1,4 @@
+
+PASS captureStream() on OffscreenCanvas with 2D context using transferToImageBitmap().
+PASS captureStream() on OffscreenCanvas with WebGL context using transferToImageBitmap().
+

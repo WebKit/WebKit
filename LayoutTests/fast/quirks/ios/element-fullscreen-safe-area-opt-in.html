@@ -1,0 +1,49 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ NeedsSiteSpecificQuirks=true FullscreenSafeAreaQuirkEnabled=true  ] -->
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width">
+<title>Element fullscreen is disabled for pages that do not opt into safe area insets</title>
+<script>
+// Results are buffered and reported once js-test.js has loaded at the end of <body>. Loading it here
+// would block the parser, and a blocked parser lets the preload scanner process later <meta> tags early.
+const results = [];
+function check(label, expected) {
+    const actual = "requestFullscreen" in Element.prototype ? "present" : "absent";
+    results.push({ label, expected, actual });
+}
+function report() {
+    for (const { label, expected, actual } of results) {
+        if (actual === expected)
+            testPassed(`${label}: requestFullscreen is ${actual}`);
+        else
+            testFailed(`${label}: requestFullscreen is ${actual}, expected ${expected}`);
+    }
+}
+
+// The viewport meta above has already been processed by the time this runs, so the quirk has already
+// resolved and the API is already gone. Nothing observes it appearing and then disappearing.
+check("after viewport meta, during head parse", "absent");
+</script>
+</head>
+<body>
+<script>
+check("end of body parse", "absent");
+
+document.addEventListener("DOMContentLoaded", () => {
+    check("DOMContentLoaded", "absent");
+
+    // Adding viewport-fit=cover now must not turn the API back on: the platform does not start
+    // honoring safe area insets for a page that opts in after load, so neither does the quirk.
+    const meta = document.createElement("meta");
+    meta.name = "viewport";
+    meta.content = "width=device-width, viewport-fit=cover";
+    document.head.appendChild(meta);
+    check("after adding viewport-fit=cover", "absent");
+
+    report();
+});
+</script>
+<script src="../../../resources/js-test.js"></script>
+</body>
+</html>

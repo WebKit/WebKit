@@ -1,0 +1,15 @@
+Test hover over overlay scrollbar
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Document
+enabled
+Hovering vertical scrollbar should show expanded scrollbar
+PASS Scrollbar state: enabled,expanded,visible_track,visible_thumb
+Unhovering vertical scrollbar should hide it
+PASS Thumb and track hidden
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

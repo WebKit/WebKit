@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="preload" href="../network/resources/search.svg?get-resource-tree-url-fragment-preload" as="image">
+<script src="../resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    const url = "http://127.0.0.1:8000/inspector/network/resources/search.svg?get-resource-tree-url-fragment";
+
+    let suite = InspectorTest.createAsyncSuite("Page.getResourceTree.URLFragment");
+
+    function expectSearchIcon(resource, fragment) {
+        InspectorTest.expectThat(resource, `Should find the resource by its URL with the '#${fragment}' fragment.`);
+        InspectorTest.expectEqual(resource?.type, WI.Resource.Type.Image, "Resource type should be Image.");
+        InspectorTest.expectEqual(resource?.mimeType, "image/svg+xml", "Resource MIME type should be 'image/svg+xml'.");
+    }
+
+    suite.addTestCase({
+        name: "Page.getResourceTree.URLFragment.MainFrame",
+        description: "Should include the fragment the main frame requested the resource with.",
+        async test() {
+            expectSearchIcon(WI.networkManager.mainFrame.resourcesForURL(url + "#dark").firstValue, "dark");
+        }
+    });
+
+    suite.addTestCase({
+        name: "Page.getResourceTree.URLFragment.ChildFrame",
+        description: "Should include the fragment the child frame requested the resource with, even though it shares a cached resource with the main frame.",
+        async test() {
+            let [childFrame] = WI.networkManager.mainFrame.childFrameCollection;
+            InspectorTest.expectThat(childFrame, "Should have a child frame.");
+            expectSearchIcon(childFrame?.resourcesForURL(url + "#light").firstValue, "light");
+        }
+    });
+
+    suite.addTestCase({
+        name: "Page.getResourceTree.URLFragment.Preload",
+        description: "Should include the fragment of a later request when the resource was first preloaded without one.",
+        async test() {
+            expectSearchIcon(WI.networkManager.mainFrame.resourcesForURL(url + "-preload#dark").firstValue, "dark");
+        }
+    });
+
+    suite.addTestCase({
+        name: "Resource.createObjectURL.URLFragment",
+        description: "Should keep the fragment so that previews show the group matched by :target, while still returning the exact object URL to revoke.",
+        async test() {
+            let resource = WI.networkManager.mainFrame.resourcesForURL(url + "#dark").firstValue;
+            await resource.requestContent();
+
+            let {url: previewURL, objectURL} = resource.createObjectURL();
+            InspectorTest.expectFalse(objectURL.includes("#"), "Object URL should not have a fragment.");
+            InspectorTest.expectEqual(previewURL, objectURL + "#dark", "URL should be the object URL with the '#dark' fragment.");
+            URL.revokeObjectURL(objectURL);
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Test that Page.getResourceTree includes the fragment each frame requested a resource with, and that the resource's object URL keeps it.</p>
+<button style="background-image: url(../network/resources/search.svg?get-resource-tree-url-fragment#dark)">Search</button>
+<button style="background-image: url(../network/resources/search.svg?get-resource-tree-url-fragment-preload#dark)">Search</button>
+<iframe srcdoc="<button style='background-image: url(../network/resources/search.svg?get-resource-tree-url-fragment#light)'>Search</button>"></iframe>
+</body>
+</html>

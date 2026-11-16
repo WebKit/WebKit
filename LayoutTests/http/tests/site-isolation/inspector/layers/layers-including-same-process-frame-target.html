@@ -1,0 +1,37 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="../debugger/resources/site-isolation-debugger-test-utilities.js"></script>
+<script>
+    function test() {
+        let suite = InspectorTest.createAsyncSuite("SiteIsolation.LayerTree.LayersIncludingSameProcessFrame");
+
+        function nodeForLayer(layer) {
+            return WI.domManager.nodeForId(layer.nodeId);
+        }
+
+        suite.addTestCase({
+            name: "SiteIsolation.LayerTree.LayersIncludingSameProcessFrame.IncludesFrameLayersOnce",
+            description: "The page target should report the layers of a frame in the main frame's process, and they should not be fetched again from the frame's own target.",
+            async test() {
+                let mainDocument = await WI.domManager.requestDocument();
+                let layers = await new Promise((resolve) => WI.layerTreeManager.layersForNodeIncludingFrames(mainDocument, resolve));
+
+                let iframeLayer = layers.find((layer) => nodeForLayer(layer)?.localName() === "iframe");
+                InspectorTest.expectNotNull(iframeLayer, "Should report the layer hosting the iframe.");
+                InspectorTest.expectNull(iframeLayer?.contentFrameRect || null, "Layer hosting the iframe should not report a content box, since the frame's layers are included.");
+
+                InspectorTest.expectThat(layers.every((layer) => layer.target === WI.assumingMainTarget()), "Should only include layers reported by the page target.");
+
+                let innerLayers = layers.filter((layer) => nodeForLayer(layer)?.getAttribute("id") === "inner");
+                InspectorTest.expectEqual(innerLayers.length, 1, "Should include the child frame's composited element exactly once.");
+            }
+        });
+
+        suite.runTestCasesAndFinish();
+    }
+</script>
+
+<body onload="runTest()">
+    <p>Test that the Layers tab includes the layers of a frame in the main frame's process once under site isolation.</p>
+    <iframe src="resources/same-origin-frame.html"></iframe>
+</body>

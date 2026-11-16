@@ -1,0 +1,15 @@
+load("//crowbar", "crowbar_workflow")
+
+crowbar_workflow(
+    origin_files = glob(["assets/shaders/decode/etc2.comp"]),
+    transformations = [
+        core.move("src/assets/shaders/decode/etc2.comp", "src/etc_decoder.h"),
+        core.replace(
+            before = "#version 450\n",
+            after = "",
+            paths = glob(["src/etc_decoder.h"]),
+            multiline = True,
+        ),
+        patch.apply(patches = ["patches/0001-adapt-for-angle.patch"]),
+    ],
+)

@@ -1,0 +1,8 @@
+
+PASS Listing multiple origins is illegal: "",http://example.com,http://web-platform.test:8800
+PASS Listing multiple origins is illegal: "",http://example.com,*
+PASS Listing multiple origins is illegal: "",http://web-platform.test:8800,http://web-platform.test:8800
+PASS Listing multiple origins is illegal: *,http://example.com,*
+PASS Listing multiple origins is illegal: *,http://example.com,http://web-platform.test:8800
+PASS Listing multiple origins is illegal: ,http://example.com,https://example2.com
+

@@ -1,0 +1,8 @@
+
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT Close event on port2 is fired when port1 is explicitly closed Test timed out
+PASS Close event on port1 is not fired when port1 is explicitly closed
+TIMEOUT Close event on port2 is fired when port1, which is in a different window, is explicitly closed. Test timed out
+NOTRUN Close event on port2 is fired when port1, in a different window, is closed during the transfer of port2.
+

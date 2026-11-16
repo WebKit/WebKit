@@ -1,0 +1,10 @@
+
+== Running test suite: TimelineEvent.ScreenshotsMultipleFrames
+-- Running test case: TimelineEvent.ScreenshotsMultipleFrames.RenderingNotifications
+PASS: The page should complete all requested rendering updates.
+PASS: Successive rendering updates should produce multiple screenshots.
+PASS: Every screenshot should contain image data.
+PASS: Successive screenshots should have increasing timestamps.
+PASS: Successive rendering updates should complete multiple composite records.
+PASS: Each composite record should finish after it starts.
+

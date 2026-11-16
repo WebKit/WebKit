@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<meta charset="utf-8" />
+<title>Scroll to text fragment - ensure that we don't get into a cycle when scrolling changes a pages style</title>
+<meta name="assert" content="This test checks that loading a stylesheet doesn't cause the page to re-scroll.">
+
+<head>
+<script src="/js-test-resources/ui-helper.js"></script>
+<style>
+    .banner {
+        position: relative;
+        width: 400px;
+        height: 100px;
+        top: 0;
+        left: 100px;
+        background-color: lightblue;
+    }
+    .banner.stuck {
+        position: fixed;
+    }
+</style>
+
+<script>
+
+    var savedScrollPosition = 0;
+    var haveTopElement = false;
+    const yOffsets = [];
+    document.addEventListener('scroll', () => {
+        adjustStyle();
+        yOffsets.push(window.pageYOffset);
+    });
+
+    function adjustStyle() {
+        const banner = document.querySelector('.banner');
+        if (window.pageYOffset > 0 && window.pageYOffset > savedScrollPosition) {
+           
+           banner.classList.add('stuck');
+
+        } else if (window.pageYOffset < savedScrollPosition) {
+            
+            banner.classList.remove('stuck');
+
+        }
+        savedScrollPosition = window.pageYOffset;
+    }
+
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+
+  
+ async function runTest()
+ {
+    if (!testRunner.runUIScript)
+        return;
+
+    location.href = "#:~:text=Scroll%20Point";
+    var output = "";
+
+    for (i = 0; i < 3; i++) {
+        await UIHelper.ensurePresentationUpdate();
+    }
+
+    if (window.pageYOffset > 0)
+        output += "PASS: Page scrolls to correct Text Fragment.";
+    else 
+        output += "FAIL: Page does not scroll to correct Text Fragment.";
+    output += '<br>';
+
+    // make sure we're always scrolling down
+    if (yOffsets.every((offset, i) => i === yOffsets.length - 1 || offset <= yOffsets[i + 1]))
+        output += "PASS: No Scroll loop detected.";
+    else
+        output += "FAIL: Scrolled backwards.";
+
+    var target = document.getElementById('target');
+    target.innerHTML = output;
+
+    if (window.testRunner)
+        testRunner.notifyDone();
+  }
+
+  window.addEventListener('load', () => {
+    runTest();
+  }, false);
+</script>
+</head>
+
+<body style="height: 10000px; margin-top: 1000px;">
+    <div class="banner"></div>
+    <div id="target">
+
+        <p>Scroll Point</p>
+
+    </div>
+</body>
+</html>
+
+
+

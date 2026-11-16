@@ -1,0 +1,72 @@
+This test ensures the accessibility tree is correct after table rows with an aria-controls relationship dynamically change their hidden status.
+
+
+{#table AXRole: AXTable}
+
+{#r0 AXRole: AXRow}
+
+{#r0c0 AXRole: AXCell}
+
+{AXRole: AXStaticText AXValue: Author}
+
+{#r0c1 AXRole: AXCell}
+
+{AXRole: AXStaticText AXValue: Title}
+
+{#r1 AXRole: AXRow}
+
+{#r1c0 AXRole: AXCell}
+
+{AXRole: AXButton}
+
+{#r1c1 AXRole: AXCell}
+
+{AXRole: AXStaticText AXValue: A Brief History of Time}
+
+PASS: output.includes('Carl Sagan') === false
+PASS: table.rowCount === 2 === true
+
+
+Traversal after un-hiding #r2:
+
+{#table AXRole: AXTable}
+
+{#r0 AXRole: AXRow}
+
+{#r0c0 AXRole: AXCell}
+
+{AXRole: AXStaticText AXValue: Author}
+
+{#r0c1 AXRole: AXCell}
+
+{AXRole: AXStaticText AXValue: Title}
+
+{#r1 AXRole: AXRow}
+
+{#r1c0 AXRole: AXCell}
+
+{AXRole: AXButton}
+
+{#r1c1 AXRole: AXCell}
+
+{AXRole: AXStaticText AXValue: A Brief History of Time}
+
+{#r2 AXRole: AXRow}
+
+{#r2c0 AXRole: AXCell}
+
+{AXRole: AXStaticText AXValue: Carl Sagan}
+
+{#r2c1 AXRole: AXCell}
+
+{AXRole: AXStaticText AXValue: Cosmos}
+
+PASS: table.rowCount === 3 === true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+This is a table caption
+Author	Title
+Toggle second row	A Brief History of Time
+Carl Sagan	Cosmos

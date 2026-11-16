@@ -1,0 +1,4 @@
+
+PASS DIP requires a secure context
+PASS A document with DIP that is not a secure context is not cross-origin isolated and does not expose SharedArrayBuffer
+

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/runner.js"></script>
+<script>
+"use strict";
+
+const targetBounces = 1000;
+
+let currentSender = null;
+let currentReceiver = null;
+let bouncesRemaining = 0;
+let iterationStart = 0;
+
+function onReceive()
+{
+    if (--bouncesRemaining === 0) {
+        const elapsed = PerfTestRunner.now() - iterationStart;
+        if (!PerfTestRunner.measureValueAsync(elapsed))
+            return;
+        setTimeout(runIteration, 0);
+        return;
+    }
+    bounce();
+}
+
+function bounce()
+{
+    const channel = new MessageChannel();
+    currentSender = channel.port1;
+    currentReceiver = channel.port2;
+    currentReceiver.onmessage = onReceive;
+    currentSender.postMessage(0);
+}
+
+function runIteration()
+{
+    bouncesRemaining = targetBounces;
+    iterationStart = PerfTestRunner.now();
+    bounce();
+}
+
+PerfTestRunner.prepareToMeasureValuesAsync({
+    description: 'Time to deliver ' + targetBounces + ' messages, each on a freshly '
+        + 'constructed same-context MessageChannel. Measures combined channel-construction '
+        + 'plus single-message-delivery cost. This kind of logic is representative of a '
+        + 'requestIdleCallback() polyfill found on the web',
+    unit: 'ms',
+});
+
+setTimeout(runIteration, 0);
+</script>
+</body>
+</html>

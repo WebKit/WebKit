@@ -1,0 +1,9 @@
+
+PASS Outer selectorText text mutation with inner style rule
+PASS Outer selectorText text mutation with inner @media rule
+PASS Outer selectorText text mutation with inner @supports rule
+PASS Outer selectorText text mutation with inner @layer rule
+PASS Outer selectorText text mutation with inner @container rule
+PASS Outer selectorText text mutation with inner @scope rule
+PASS Outer selectorText text mutation with inner nested decl. rule
+

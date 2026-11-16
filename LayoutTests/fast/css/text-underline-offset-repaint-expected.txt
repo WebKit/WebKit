@@ -1,0 +1,6 @@
+Text
+
+(repaint rects
+  (rect 8 20 784 20)
+)
+

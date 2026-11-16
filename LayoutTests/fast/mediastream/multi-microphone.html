@@ -1,0 +1,59 @@
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script>
+let track1, track2;
+
+promise_test(async () => {
+    const stream1 = await navigator.mediaDevices.getUserMedia({ audio: true });
+    track1 = stream1.getAudioTracks()[0];
+    assert_true(track1.getSettings().echoCancellation, "test1");
+
+    const devices = await navigator.mediaDevices.enumerateDevices();
+    const microphones = devices.filter(device => device.kind === "audioinput");
+
+    assert_greater_than(devices.length, 1);
+
+    const configurationChangePromise = new Promise(resolve => track1.onconfigurationchange = resolve);
+    const stream2 = await navigator.mediaDevices.getUserMedia({ audio: { deviceId:microphones[microphones.length - 1].deviceId } });
+    track2 = stream2.getAudioTracks()[0];
+    assert_true(track2.getSettings().echoCancellation, "test2");
+
+    if (window.internals && !internals.supportsMultiMicrophoneCaptureWithoutEchoCancellation()) {
+        if (track1.readyState === "ended")
+            return;
+        return new Promise(resolve => track1.onended = resolve);
+    }
+
+    await configurationChangePromise;
+    assert_false(track1.getSettings().echoCancellation, "test3");
+}, "Capturing with different microphones should move previous capture out of echo cancellation");
+
+promise_test(async (t) => {
+    if (window.internals && !internals.supportsMultiMicrophoneCaptureWithoutEchoCancellation())
+        return;
+
+    const configurationChangePromise = new Promise(resolve => track2.onconfigurationchange = resolve);
+    const applyPromise = track1.applyConstraints({ echoCancellation: true });
+    await Promise.all([applyPromise, configurationChangePromise]);
+
+    assert_true(track1.getSettings().echoCancellation, "test1");
+    assert_false(track2.getSettings().echoCancellation, "test2");
+}, "Enable echo cancellation with applyConstraints should disallow echo cancellation for other device tracks");
+
+promise_test(async (t) => {
+    if (window.internals && !internals.supportsMultiMicrophoneCaptureWithoutEchoCancellation())
+        return;
+
+    const configurationChangePromise = new Promise(resolve => track1.onconfigurationchange = resolve);
+    const applyPromise = track2.applyConstraints({ echoCancellation: true });
+    await Promise.all([applyPromise, configurationChangePromise]);
+
+    assert_false(track1.getSettings().echoCancellation, "test1");
+    assert_true(track2.getSettings().echoCancellation, "test2");
+}, "Enable echo cancellation with applyConstraints should disallow echo cancellation for the other track again");
+
+promise_test(async () => {
+    track1.stop();
+    track2.stop();
+}, "Stopping tracks");
+</script>

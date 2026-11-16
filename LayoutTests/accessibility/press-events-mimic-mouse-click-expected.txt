@@ -1,0 +1,32 @@
+This test ensures that pressing an element via accessibility (e.g. with VoiceOver) dispatches the same events as a click of the primary mouse button, while keyboard activation and element.click() still dispatch a click that no pointing device produced.
+
+Accessibility press:
+pointerdown: detail 1, button 0, buttons 1, isTrusted true, pointerId 1, pointerType "mouse", isPrimary true
+mousedown: detail 1, button 0, buttons 1, isTrusted true
+pointerup: detail 1, button 0, buttons 0, isTrusted true, pointerId 1, pointerType "mouse", isPrimary true
+mouseup: detail 1, button 0, buttons 0, isTrusted true
+click: detail 1, button 0, buttons 0, isTrusted true, pointerId 1, pointerType "mouse", isPrimary true
+
+Accessibility press, with pointerdown canceled:
+pointerdown: detail 1, button 0, buttons 1, isTrusted true, pointerId 1, pointerType "mouse", isPrimary true
+pointerup: detail 1, button 0, buttons 0, isTrusted true, pointerId 1, pointerType "mouse", isPrimary true
+click: detail 1, button 0, buttons 0, isTrusted true, pointerId 1, pointerType "mouse", isPrimary true
+
+element.click():
+click: detail 0, button 0, buttons 0, isTrusted false, pointerId -1, pointerType "", isPrimary true
+
+Enter key:
+click: detail 0, button 0, buttons 0, isTrusted true, pointerId -1, pointerType "", isPrimary true
+
+Mouse click, for comparison:
+pointerdown: detail 1, button 0, buttons 1, isTrusted true, pointerId 1, pointerType "mouse", isPrimary true
+mousedown: detail 1, button 0, buttons 1, isTrusted true
+pointerup: detail 1, button 0, buttons 0, isTrusted true, pointerId 1, pointerType "mouse", isPrimary true
+mouseup: detail 1, button 0, buttons 0, isTrusted true
+click: detail 1, button 0, buttons 0, isTrusted true, pointerId 1, pointerType "mouse", isPrimary true
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Button Cancels pointerdown

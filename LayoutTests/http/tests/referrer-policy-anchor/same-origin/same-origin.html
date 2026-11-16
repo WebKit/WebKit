@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<body onload="clickLink()">
+<script>
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+function clickLink() {
+    // Should be the full URL because we are same-origin.
+    let expected = "http://127.0.0.1:8000/referrer-policy-anchor/same-origin/same-origin.html";
+    let a = document.createElement("a");
+    let policy = "same-origin";
+    a.referrerPolicy = policy;
+    a.href = "http://127.0.0.1:8000/referrer-policy/resources/check-referrer.py?expected=" + expected + "&policy=" + policy;
+    a.click();
+}
+</script>
+</body>
+</html>

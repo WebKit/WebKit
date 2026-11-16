@@ -1,0 +1,6 @@
+html5lib parser tests
+
+
+PASS <table><tr><script>var t=document.querySelector('table');document.documentElement.remove();document.appendChild(t)</script><b>
+PASS <table><tr><script>var t=document.querySelector('table');document.documentElement.remove();document.appendChild(t)</script>FOSTERTEXT
+

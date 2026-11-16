@@ -1,0 +1,54 @@
+<!DOCTYPE html><!-- webkit-test-runner [ IPCTestingAPIEnabled=true ] -->
+<script>
+  window.testRunner?.waitUntilDone();
+    window.testRunner?.dumpAsText();
+
+    function test() {
+        var pass = document.getElementById('pass');
+        if (window.IPC) {
+            import('./coreipc.js').then(({
+                CoreIPC
+            }) => {
+                CoreIPC.Networking.NetworkStorageManager.GetAllDatabaseNamesAndVersions(0, {
+                    requestIdentifier: {
+                        m_idbConnectionIdentifier: {},
+                        m_resourceNumber: {
+                            optionalValue: 1234
+                        }
+                    },
+                    origin: {
+                        topOrigin: {
+                            data: {
+                                variantType: 'WebCore::SecurityOriginData::Tuple',
+                                variant: {
+                                    protocol: '',
+                                    host: '',
+                                    port: {}
+                                }
+                            }
+                        },
+                        clientOrigin: {
+                            data: {
+                                variantType: 'WebCore::SecurityOriginData::Tuple',
+                                variant: {
+                                    protocol: '',
+                                    host: '',
+                                    port: {}
+                                }
+                            }
+                        }
+                    }
+                });
+                pass.innerText = "PASS";
+                window.testRunner?.notifyDone();
+            });
+        } else {
+            pass.innerText = "PASS";
+            window.testRunner?.notifyDone();
+        }
+    }
+</script>
+<body onload="test()">
+  <p>This test passes if webkit does not crash</p>
+  <div id="pass"></div>
+</body>

@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body>
+<script src="../../resources/js-test.js"></script>
+<script>
+description('This tests inserting a style element dynamically. document.styleSheets should immediately list the element.');
+
+const styleElement = document.createElement('style');
+styleElement.type = 'text/css';
+styleElement.rel = 'stylesheet';
+
+shouldBe('document.styleSheets.length', '1');
+shouldBe('document.head.appendChild(styleElement); document.styleSheets.length', '2');
+shouldBe('styleElement.sheet', 'document.styleSheets[1]');
+
+</script>
+</body>
+</html>

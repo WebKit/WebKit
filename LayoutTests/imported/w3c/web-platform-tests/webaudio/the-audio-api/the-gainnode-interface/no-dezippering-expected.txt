@@ -1,0 +1,5 @@
+
+PASS Compare value setter and setValueAtTime
+PASS Automation effects
+PASS Dezippering of GainNode removed
+

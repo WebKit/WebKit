@@ -1,0 +1,39 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+<style>
+meter, progress {
+  appearance: none;
+}
+</style>
+</head>
+<body>
+
+<meter id="meter" min="0" max="7" value="4">
+  4 of 7
+</meter>
+
+<progress id="progress" min="0" max="7" value="4">
+  4 of 7
+</progress>
+
+<script>
+    var testOutput = "This test ensures that &lt;meter&gt; and &lt;progress&gt; elements with appearance:none are accessible.\n\n";
+
+    if (window.accessibilityController) {
+        var progress = accessibilityController.accessibleElementById("progress");
+        testOutput += expect("progress.role", "'AXRole: AXProgressIndicator'");
+        testOutput += expect("progress.intValue", "4");
+
+        var meter = accessibilityController.accessibleElementById("meter");
+        testOutput += expect("meter.role", "'AXRole: AXLevelIndicator'");
+        testOutput += expect("meter.valueDescription.includes('4 of 7')", "true");
+
+        debug(testOutput);
+    }
+</script>
+</body>
+</html>
+

@@ -1,0 +1,11 @@
+10.6-10-c-ii-2 (TestCases/chapter10/10.6/10.6-10-c-ii-2.js) arguments[i] map to actual parameter
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS ES5Harness.preconditionPassed is true
+PASS ES5Harness.testPassed is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

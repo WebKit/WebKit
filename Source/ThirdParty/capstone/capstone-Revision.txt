@@ -1,0 +1,2 @@
+capstone remote url: https://github.com/capstone-engine/capstone.git
+capstone revision: accf4df62f1fba6f92cae692985d27063552601c

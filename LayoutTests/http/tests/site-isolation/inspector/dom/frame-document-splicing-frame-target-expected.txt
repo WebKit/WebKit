@@ -1,0 +1,30 @@
+Test that a frame target's document is spliced into the page tree when its owner element reaches the frontend, and that attaching a frame target does not load page nodes by itself.
+
+
+
+== Running test suite: SiteIsolation.DOM.FrameDocumentSplicing
+-- Running test case: Setup
+PASS: Should find the child frame target.
+PASS: Should find the grandchild frame target.
+PASS: Child and grandchild should be distinct targets.
+
+-- Running test case: SiteIsolation.DOM.FrameDocumentSplicing.NoEagerPageLoad
+PASS: `DOM.getDocument` should have provided <body>.
+PASS: <body>'s children should not be loaded yet.
+Named page nodes known to the frontend: #document, HTML, HEAD, BODY
+
+-- Running test case: SiteIsolation.DOM.FrameDocumentSplicing.SpliceWhenOwnerElementArrives
+PASS: The child frame's document should not be spliced in yet.
+PASS: Should find #frame-wrapper.
+PASS: Should find the <iframe> inside #frame-wrapper.
+PASS: The child frame's document should be spliced into the <iframe>.
+PASS: The <iframe> should have exactly one child.
+PASS: The <iframe>'s only child should be the child frame's document.
+
+-- Running test case: SiteIsolation.DOM.FrameDocumentSplicing.SpliceIntoFrameTargetTree
+PASS: The grandchild frame's document should not be spliced in yet.
+PASS: Should find <body> in the child frame.
+PASS: Should find the nested <iframe> in the child frame.
+PASS: The grandchild frame's document should be spliced into the child frame's <iframe>.
+PASS: The nested <iframe>'s first child should be the grandchild frame's document.
+

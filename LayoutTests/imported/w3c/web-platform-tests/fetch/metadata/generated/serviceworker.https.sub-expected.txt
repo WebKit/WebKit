@@ -1,0 +1,12 @@
+
+PASS sec-fetch-site - Same origin, no options - registration
+PASS sec-fetch-site - Same origin, no options - updating
+PASS sec-fetch-mode - options: type=classic - registration
+PASS sec-fetch-mode - options: type=classic - updating
+PASS sec-fetch-mode - no options - registration
+PASS sec-fetch-mode - no options - updating
+PASS sec-fetch-dest - no options - registration
+PASS sec-fetch-dest - no options - updating
+PASS sec-fetch-user - no options - registration
+PASS sec-fetch-user - no options - updating
+

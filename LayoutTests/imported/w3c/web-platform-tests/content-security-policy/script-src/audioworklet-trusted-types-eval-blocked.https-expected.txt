@@ -1,0 +1,5 @@
+This test loads an AudioWorklet that tries to call eval(). The eval() call should be blocked by CSP because of require-trusted-types-for 'script'. There is no TrustedTypePolicyFactory in Worklet globals, so there is no way of allowing it.
+
+
+PASS eval() in an AudioWorklet should be blocked by CSP
+

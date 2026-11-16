@@ -1,0 +1,84 @@
+abc
+
+def
+
+PASS Leading white-space should not appear if white-spaces are collapsible
+PASS Leading white-spaces should not appear if white-spaces are collapsible
+PASS Leading tab should not appear if white-spaces are collapsible
+PASS Leading tabs should not appear if white-spaces are collapsible
+PASS Leading linefeed should not appear if it's collapsible
+PASS Leading linefeeds should not appear if they are collapsible
+FAIL Leading mixed white-spaces should not appear if they are collapsible assert_equals: expected "\nabc" but got "\n abc"
+PASS Leading CR should be normalized to LF and should not appear if linefeeds are collapsible
+PASS Leading CRs should be normalized to LFs and should not appear if linefeeds are collapsible
+PASS Trailing white-space should not appear if white-spaces are collapsible
+PASS Trailing white-spaces should not appear if white-spaces are collapsible
+PASS Trailing tab should not appear if white-spaces are collapsible
+PASS Trailing tabs should not appear if white-spaces are collapsible
+PASS Trailing linefeed should not appear if it's collapsible
+PASS Trailing linefeeds should not appear if they are collapsible
+FAIL Trailing mixed white-spaces should not appear if they are collapsible assert_equals: expected "abc\n" but got "abc \n"
+PASS Trailing CR should be normalized to LF and should not appear if linefeeds are collapsible
+PASS Trailing CRs should be normalized to LFs and should not appear if linefeeds are collapsible
+PASS Only single collapsible space should be invisible
+PASS Only single collapsible tab should be invisible
+PASS Only single collapsible linefeed should be invisible
+PASS Only single collapsible CR should be invisible
+PASS Only multiple collapsible spaces should be invisible
+PASS Only multiple collapsible tabs should be invisible
+PASS Only multiple collapsible linefeeds should be invisible
+PASS Only multiple collapsible CRs should be invisible
+PASS Single collapsible tab should be converted to an ASCII space
+PASS Single collapsible linefeed should be converted to an ASCII space
+PASS Single collapsible CR should be converted to an ASCII space, or otherwise, a linefeed
+PASS Multiple white-spaces between words may be invisible if they are collapsible
+PASS Multiple mixed white-spaces between words may be invisible if they are collapsible #1
+PASS Multiple mixed white-spaces between words may be invisible if they are collapsible #2
+FAIL Multiple mixed white-spaces between words may be invisible if they are collapsible #3 assert_equals: expected "abc\ndef" but got "abc\n def"
+FAIL Multiple mixed white-spaces between words may be invisible if they are collapsible #4 assert_equals: expected "abc\ndef" but got "abc \ndef"
+FAIL white-space before <br> should be invisible if it's collapsible assert_equals: expected "abc\ndef" but got "abc \ndef"
+FAIL white-spaces before <br> should be invisible if they are collapsible assert_equals: expected "abc\ndef" but got "abc \ndef"
+FAIL tab before <br> should be invisible if it's collapsible assert_equals: expected "abc\ndef" but got "abc \ndef"
+PASS linefeed before <br> should be invisible if it's collapsible
+PASS CR before <br> should be invisible if it's collapsible
+FAIL white-space after <br> should be invisible if it's collapsible assert_equals: expected "abc\ndef" but got "abc\n def"
+FAIL white-spaces after <br> should be invisible if they are collapsible assert_equals: expected "abc\ndef" but got "abc\n def"
+FAIL tab after <br> should be invisible if it's collapsible assert_equals: expected "abc\ndef" but got "abc\n def"
+PASS linefeed after <br> should be invisible if it's collapsible
+PASS CR after <br> should be invisible if it's collapsible
+PASS white-space between <br>s should be invisible if it's collapsible
+PASS white-spaces between <br>s should be invisible if they are collapsible
+PASS tab between <br>s should be invisible if it's collapsible
+PASS linefeed between <br>s should be invisible if it's collapsible
+PASS CR between <br>s should be invisible if it's collapsible
+PASS white-space before <hr> should be invisible if it's collapsible
+PASS white-spaces before <hr> should be invisible if they are collapsible
+PASS tab before <hr> should be invisible if it's collapsible
+FAIL linefeed before <hr> should be invisible if it's collapsible assert_equals: expected "abc\n\ndef" but got "abc\ndef"
+FAIL CR before <hr> should be invisible if it's collapsible assert_equals: expected "abc\n\ndef" but got "abc\ndef"
+FAIL white-space after <hr> should be invisible if it's collapsible assert_equals: expected "abc\ndef" but got "abc\n def"
+FAIL white-spaces after <hr> should be invisible if they are collapsible assert_equals: expected "abc\ndef" but got "abc\n def"
+FAIL tab after <hr> should be invisible if it's collapsible assert_equals: expected "abc\ndef" but got "abc\n def"
+PASS linefeed after <hr> should be invisible if it's collapsible
+PASS CR after <hr> should be invisible if it's collapsible
+FAIL white-space between <hr>s should be invisible if it's collapsible assert_equals: expected "abc\ndef" but got "abc\n def"
+FAIL white-spaces between <hr>s should be invisible if they are collapsible assert_equals: expected "abc\ndef" but got "abc\n def"
+FAIL tab between <hr>s should be invisible if it's collapsible assert_equals: expected "abc\ndef" but got "abc\n def"
+FAIL linefeed between <hr>s should be invisible if it's collapsible assert_equals: expected "abc\n\n\ndef" but got "abc\n\ndef"
+FAIL CR between <hr>s should be invisible if it's collapsible assert_equals: expected "abc\n\n\ndef" but got "abc\n\ndef"
+PASS white-space before <div> should be invisible if it's collapsible
+PASS white-spaces before <div> should be invisible if they are collapsible
+PASS tab before <div> should be invisible if it's collapsible
+FAIL linefeed before <div> should be invisible if it's collapsible assert_equals: expected "abc\n\ndef" but got "abc\ndef"
+FAIL CR before <div> should be invisible if it's collapsible assert_equals: expected "abc\n\ndef" but got "abc\ndef"
+FAIL white-space after <div> should be invisible if it's collapsible assert_equals: expected "abc\ndef" but got "abc\n def"
+FAIL white-spaces after <div> should be invisible if they are collapsible assert_equals: expected "abc\ndef" but got "abc\n def"
+FAIL tab after <div> should be invisible if it's collapsible assert_equals: expected "abc\ndef" but got "abc\n def"
+PASS linefeed after <div> should be invisible if it's collapsible
+PASS CR after <div> should be invisible if it's collapsible
+FAIL white-space between <div>s should be invisible if it's collapsible assert_equals: expected "abc\ndef" but got "abc\n def"
+FAIL white-spaces between <div>s should be invisible if they are collapsible assert_equals: expected "abc\ndef" but got "abc\n def"
+FAIL tab between <div>s should be invisible if it's collapsible assert_equals: expected "abc\ndef" but got "abc\n def"
+FAIL linefeed between <div>s should be invisible if it's collapsible assert_equals: expected "abc\n\n\ndef" but got "abc\n\ndef"
+FAIL CR between <div>s should be invisible if it's collapsible assert_equals: expected "abc\n\n\ndef" but got "abc\n\ndef"
+

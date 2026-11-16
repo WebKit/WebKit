@@ -1,0 +1,42 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+   "http://www.w3.org/TR/html4/loose.dtd">
+
+<html lang="en">
+<head>
+    <style type="text/css" media="screen">
+        #box {
+            display: inline-block;
+            width: 100px;
+            height: 100px;
+            margin: 10px;
+            background-color: blue;
+            opacity: 0;
+            -webkit-transition: opacity 1s linear;
+        }
+        
+        #box.faded {
+            opacity: 1;
+        }
+    </style>
+
+    <script src="../resources/transition-test-helpers.js" type="text/javascript" charset="utf-8"></script>
+    <script type="text/javascript" charset="utf-8">
+
+    const expectedValues = [
+      // [time, element-id, property, expected-value, tolerance]
+      [0.5, 'box', 'opacity', 0.5, 0.1],
+    ];
+  
+    function setupTest()
+    {
+      document.getElementById('box').className = 'faded';
+    }
+  
+    runTransitionTest(expectedValues, setupTest, usePauseAPI);
+    </script>
+</head>
+<body>
+    <div id="box"></div>
+    <div id="result"></div>
+</body>
+</html>

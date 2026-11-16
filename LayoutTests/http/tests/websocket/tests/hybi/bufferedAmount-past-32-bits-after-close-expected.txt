@@ -1,0 +1,14 @@
+WebSocket: bufferedAmount past 32 bits after the socket is closed.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Connected
+Closed
+PASS ws.bufferedAmount is 0
+PASS expectedBufferedAmount > Math.pow(2, 32) is true
+PASS ws.bufferedAmount is expectedBufferedAmount
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

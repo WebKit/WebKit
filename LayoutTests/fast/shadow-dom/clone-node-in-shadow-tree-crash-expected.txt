@@ -1,0 +1,4 @@
+This tests cloning a node in a shadow tree and inserts it into body.
+WebKit should not hit any debug or release assertions.
+
+

@@ -1,0 +1,27 @@
+<!-- webkit-test-runner [ runSingly=true ] -->
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="../../../../resources/ui-helper.js"></script>
+    </head>
+<body>
+    <select>
+        <option>Test</option>
+    </select>
+</body>
+<script>
+
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+addEventListener("load", async () => {
+    if (window.testRunner)
+        testRunner.setWindowIsKey(false);
+
+    await UIHelper.renderingUpdate();
+    if (window.testRunner)
+        testRunner.notifyDone();
+});
+
+</script>
+</html>

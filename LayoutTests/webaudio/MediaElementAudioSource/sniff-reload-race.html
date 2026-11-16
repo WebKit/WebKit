@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<script src="../../resources/js-test-pre.js"></script>
+<body>
+<script>
+description("Tests that swapping a MediaElementAudioSourceNode's media element to a mis-declared resource (WebM body declared video/mp4), which drives MediaPlayer::attemptSniffAndReload(), does not race the audio render thread on MediaPlayer::m_private.");
+jsTestIsAsync = true;
+
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+async function run() {
+    const ctx = new AudioContext({ sampleRate: 44100 });
+    await ctx.resume();
+
+    const audio = document.createElement('audio');
+    audio.autoplay = true;
+    audio.loop = true;
+    audio.src = 'resources/sniff-reload-race.wav';
+    document.body.appendChild(audio);
+    if (audio.paused)
+        await new Promise(r => audio.addEventListener('playing', r, { once: true }));
+
+    // Wire the element into the graph so MediaElementAudioSourceNode::process()
+    // runs provideInput() -> MediaPlayer::audioSourceProvider() on the render thread.
+    const src = ctx.createMediaElementSource(audio);
+    const analyser = ctx.createAnalyser();
+    analyser.fftSize = 256;
+    src.connect(analyser);
+    analyser.connect(ctx.destination);
+
+    // Wait for real samples so setFormat() has populated the node and process()
+    // is past its early-out.
+    const buf = new Float32Array(analyser.fftSize);
+    for (let tries = 0; tries < 60; tries++) {
+        await sleep(100);
+        analyser.getFloatTimeDomainData(buf);
+        if (buf.some(v => Math.abs(v) > 0.0005))
+            break;
+    }
+
+    // Swap in a WebM body declared video/mp4 via <source> so the declared type
+    // reaches MediaPlayer::m_loadOptions.contentType. Engine selection picks AVF,
+    // it fails with FormatError before HaveMetadata, the fallback chain exhausts
+    // and attemptSniffAndReload() re-runs engine selection with the sniffed type.
+    audio.removeAttribute('src');
+    const srcEl = document.createElement('source');
+    srcEl.type = 'video/mp4';
+    srcEl.src = 'resources/sniff-reload-race.webm';
+    audio.appendChild(srcEl);
+    audio.load();
+
+    for (let i = 0; i < 60; i++)
+        await sleep(50);
+
+    testPassed("No crash.");
+    finishJSTest();
+}
+
+run().catch(e => { testFailed(String(e)); finishJSTest(); });
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>

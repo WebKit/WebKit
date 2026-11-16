@@ -1,0 +1,227 @@
+/*
+ *  Copyright (C) 2022 Igalia, S.L
+ *
+ *  This library is free software; you can redistribute it and/or
+ *  modify it under the terms of the GNU Lesser General Public
+ *  License as published by the Free Software Foundation; either
+ *  version 2 of the License, or (at your option) any later version.
+ *
+ *  This library is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *  Lesser General Public License for more details.
+ *
+ *  You should have received a copy of the GNU Lesser General Public
+ *  License along with this library; if not, write to the Free Software
+ *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+
+#include "config.h"
+#include "GStreamerVideoSinkCommon.h"
+
+#if ENABLE(VIDEO)
+
+#include "MediaPlayerPrivateGStreamer.h"
+#include <gst/app/gstappsink.h>
+
+GST_DEBUG_CATEGORY(webkit_gst_video_sink_common_debug);
+#define GST_CAT_DEFAULT webkit_gst_video_sink_common_debug
+
+namespace WebCore {
+
+void WebKitVideoSinkProbeOwner::handleFlushEvent([[maybe_unused]] const GRefPtr<GstPad>& pad, GstPadProbeInfo* info)
+{
+    // We need to operate from the main thread, this is a requirement for usage of
+    // AbortableTaskQueue start/finishAborting.
+    ASSERT(isMainThread());
+
+    RefPtr player = m_player.get();
+    if (!player)
+        return;
+
+    if (GST_EVENT_TYPE(GST_PAD_PROBE_INFO_EVENT(info)) == GST_EVENT_FLUSH_START) {
+        if (!m_isFlushing) {
+            GST_DEBUG_OBJECT(pad.get(), "FLUSH_START received, aborting all pending tasks in the player sinkTaskQueue.");
+            m_isFlushing = true;
+            player->sinkTaskQueue().startAborting();
+#if USE(GSTREAMER_GL)
+            GST_DEBUG_OBJECT(pad.get(), "Flushing current buffer in response to %" GST_PTR_FORMAT, info->data);
+            player->flushCurrentBuffer();
+#endif
+        } else
+            GST_DEBUG_OBJECT(pad.get(), "Received FLUSH_START while already flushing, ignoring.");
+        return;
+    }
+
+    RELEASE_ASSERT(GST_EVENT_TYPE(GST_PAD_PROBE_INFO_EVENT(info)) == GST_EVENT_FLUSH_STOP);
+    if (m_isFlushing) {
+        GST_DEBUG_OBJECT(pad.get(), "FLUSH_STOP received, allowing operation in the player sinkTaskQueue again.");
+        m_isFlushing = false;
+        player->sinkTaskQueue().finishAborting();
+        return;
+    }
+
+    GST_DEBUG_OBJECT(pad.get(), "Received FLUSH_STOP without a FLUSH_START, ignoring.");
+}
+
+GstPadProbeReturn WebKitVideoSinkProbeOwner::doProbe([[maybe_unused]] const GRefPtr<GstPad>& pad, GstPadProbeInfo* info)
+{
+    RefPtr player = m_player.get();
+    if (!player)
+        return GST_PAD_PROBE_REMOVE;
+
+    // Usually flushes propagate in the main thread as a synchronous consequence of a seek.
+    // However, this doesn't have to be the case:
+    //
+    // As a notable example, when matroskademux receives a seek before it has parsed the
+    // entire file header, it stores the event and returns without flushing anything.
+    // Later, the streaming thread finishes parsing the file header and handles the stored
+    // seek event from that same thread. This sends a flush from the streaming thread.
+    if (info->type & GST_PAD_PROBE_TYPE_EVENT_FLUSH) {
+        callOnMainThreadAndWait([&] {
+            handleFlushEvent(pad, info);
+        });
+    }
+    if (m_isFlushing)
+        return GST_PAD_PROBE_OK; // do not process regular (non-flush) events during a flush
+
+    if (info->type & GST_PAD_PROBE_TYPE_EVENT_DOWNSTREAM && GST_EVENT_TYPE(GST_PAD_PROBE_INFO_EVENT(info)) == GST_EVENT_TAG) {
+        GstTagList* tagList;
+        gst_event_parse_tag(GST_PAD_PROBE_INFO_EVENT(info), &tagList);
+        GST_DEBUG_OBJECT(pad.get(), "Tag event received, video orientation may need to be updated. %" GST_PTR_FORMAT, tagList);
+        player->updateVideoOrientation(tagList);
+    }
+
+    if (info->type & GST_PAD_PROBE_TYPE_QUERY_DOWNSTREAM && GST_QUERY_TYPE(GST_PAD_PROBE_INFO_QUERY(info)) == GST_QUERY_ALLOCATION) {
+        auto query = GST_PAD_PROBE_INFO_QUERY(info);
+        gst_query_add_allocation_meta(query, GST_VIDEO_META_API_TYPE, nullptr);
+
+        GstCaps* caps;
+        gboolean needPool;
+        gst_query_parse_allocation(query, &caps, &needPool);
+        if (!caps) [[unlikely]]
+            return GST_PAD_PROBE_OK;
+        if (!needPool)
+            return GST_PAD_PROBE_OK;
+
+        unsigned size;
+#if GST_CHECK_VERSION(1, 24, 0)
+        if (gst_video_is_dma_drm_caps(caps)) {
+            GstVideoInfoDmaDrm drmInfo;
+            if (!gst_video_info_dma_drm_from_caps(&drmInfo, caps))
+                return GST_PAD_PROBE_OK;
+            size = GST_VIDEO_INFO_SIZE(&drmInfo.vinfo);
+        } else
+#endif
+            {
+                GstVideoInfo info;
+                if (!gst_video_info_from_caps(&info, caps))
+                    return GST_PAD_PROBE_OK;
+                size = GST_VIDEO_INFO_SIZE(&info);
+            }
+        gst_query_add_allocation_pool(query, nullptr, size, 3, 0);
+    }
+
+#if USE(GSTREAMER_GL)
+    // In some platforms (e.g. OpenMAX on the Raspberry Pi) when a resolution change occurs the
+    // pipeline has to be drained before a frame with the new resolution can be decoded.
+    // In this context, it's important that we don't hold references to any previous frame
+    // (e.g. m_sample) so that decoding can continue.
+    // We are also not supposed to keep the original frame after a flush.
+    if (info->type & GST_PAD_PROBE_TYPE_QUERY_DOWNSTREAM && GST_QUERY_TYPE(GST_PAD_PROBE_INFO_QUERY(info)) == GST_QUERY_DRAIN) {
+        GST_DEBUG_OBJECT(pad.get(), "Flushing current buffer in response to %" GST_PTR_FORMAT, info->data);
+        player->flushCurrentBuffer();
+    }
+#endif
+
+    return GST_PAD_PROBE_OK;
+}
+
+struct MediaPlayerPrivateNotifier {
+    MediaPlayerPrivateNotifier(const ThreadSafeWeakPtr<MediaPlayerPrivateGStreamer>& player)
+        : m_player(player)
+    {
+    }
+
+    static void destruct(void* notifier, GClosure*)
+    {
+        delete static_cast<MediaPlayerPrivateNotifier*>(notifier);
+    }
+
+    ThreadSafeWeakPtr<MediaPlayerPrivateGStreamer> m_player;
+};
+
+WebKitVideoSinkSignalIdentifiers webKitVideoSinkSetMediaPlayerPrivate(GstElement* appSink, const ThreadSafeWeakPtr<MediaPlayerPrivateGStreamer>& player)
+{
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [] {
+        GST_DEBUG_CATEGORY_INIT(webkit_gst_video_sink_common_debug, "webkitvideosinkcommon", 0, "WebKit Video Sink Common utilities");
+    });
+
+    WebKitVideoSinkSignalIdentifiers identifiers;
+    identifiers.newSample = g_signal_connect_data(appSink, "new-sample", G_CALLBACK(+[](GstElement* sink, MediaPlayerPrivateNotifier* notifier) -> GstFlowReturn {
+        GRefPtr<GstSample> sample = adoptGRef(gst_app_sink_pull_sample(GST_APP_SINK_CAST(sink)));
+#ifndef GST_DISABLE_GST_DEBUG
+        GstBuffer* buffer = gst_sample_get_buffer(sample.get());
+        GST_TRACE_OBJECT(sink, "new-sample with PTS=%" GST_TIME_FORMAT, GST_TIME_ARGS(GST_BUFFER_PTS(buffer)));
+#endif
+        RefPtr player = notifier->m_player.get();
+        if (!player)
+            return GST_FLOW_OK;
+
+        player->triggerRepaint(WTF::move(sample));
+        return GST_FLOW_OK;
+    }), new MediaPlayerPrivateNotifier { player }, MediaPlayerPrivateNotifier::destruct, static_cast<GConnectFlags>(0));
+    identifiers.newPreroll = g_signal_connect_data(appSink, "new-preroll", G_CALLBACK(+[](GstElement* sink, MediaPlayerPrivateNotifier* notifier) -> GstFlowReturn {
+        GRefPtr<GstSample> sample = adoptGRef(gst_app_sink_pull_preroll(GST_APP_SINK_CAST(sink)));
+#ifndef GST_DISABLE_GST_DEBUG
+        GstBuffer* buffer = gst_sample_get_buffer(sample.get());
+        GST_DEBUG_OBJECT(sink, "new-preroll with PTS=%" GST_TIME_FORMAT, GST_TIME_ARGS(GST_BUFFER_PTS(buffer)));
+#endif
+        RefPtr player = notifier->m_player.get();
+        if (!player)
+            return GST_FLOW_OK;
+
+        player->triggerRepaint(WTF::move(sample));
+        return GST_FLOW_OK;
+    }), new MediaPlayerPrivateNotifier { player }, MediaPlayerPrivateNotifier::destruct, static_cast<GConnectFlags>(0));
+
+    GRefPtr<GstPad> pad = adoptGRef(gst_element_get_static_pad(appSink, "sink"));
+
+    identifiers.padProbeOwner = WebKitVideoSinkProbeOwner::create(player);
+    identifiers.padProbeHandle = PadProbeHandle<WebKitVideoSinkProbeOwner>::create(*identifiers.padProbeOwner, GRefPtr(pad), static_cast<GstPadProbeType>(GST_PAD_PROBE_TYPE_PUSH | GST_PAD_PROBE_TYPE_QUERY_DOWNSTREAM | GST_PAD_PROBE_TYPE_EVENT_FLUSH | GST_PAD_PROBE_TYPE_EVENT_DOWNSTREAM),
+        [](const auto& probeOwner, const auto& pad, auto info) -> GstPadProbeReturn {
+            return probeOwner->doProbe(pad, info);
+        });
+
+    RefPtr strongPlayer = player.get();
+    if (!strongPlayer) [[unlikely]]
+        return identifiers;
+
+    if (!strongPlayer->requiresVideoSinkCapsNotifications())
+        return identifiers;
+
+    identifiers.notifyCaps = g_signal_connect_data(pad.get(), "notify::caps", G_CALLBACK(+[](GstPad* videoSinkPad, GParamSpec*, MediaPlayerPrivateNotifier* notifier) {
+        RefPtr player = notifier->m_player.get();
+        if (!player)
+            return;
+        player->videoSinkCapsChanged(videoSinkPad);
+    }), new MediaPlayerPrivateNotifier { player }, MediaPlayerPrivateNotifier::destruct, static_cast<GConnectFlags>(0));
+    return identifiers;
+}
+
+void webKitVideoSinkDisconnectSignalHandlers(GstElement* appSink, const WebKitVideoSinkSignalIdentifiers& identifiers)
+{
+    g_signal_handler_disconnect(appSink, identifiers.newPreroll);
+    g_signal_handler_disconnect(appSink, identifiers.newSample);
+
+    GRefPtr pad = adoptGRef(gst_element_get_static_pad(appSink, "sink"));
+    if (identifiers.notifyCaps)
+        g_signal_handler_disconnect(pad.get(), identifiers.notifyCaps);
+}
+
+} // namespace WebCore
+
+#undef GST_CAT_DEFAULT
+
+#endif // ENABLE(VIDEO)

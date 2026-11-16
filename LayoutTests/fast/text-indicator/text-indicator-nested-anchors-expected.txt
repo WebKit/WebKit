@@ -1,0 +1,10 @@
+PASS innerAnchorRect.x is outerAnchorRect.x
+PASS innerAnchorRect.y is outerAnchorRect.y
+PASS innerAnchorRect.width is outerAnchorRect.width
+PASS innerAnchorRect.height is outerAnchorRect.height
+PASS successfullyParsed is true
+
+TEST COMPLETE
+hello
+Apple's website
+

@@ -1,0 +1,3 @@
+
+PASS Paint: 'context-fill' and 'context-stroke' invalidation test
+

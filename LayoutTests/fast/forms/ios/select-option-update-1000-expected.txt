@@ -1,0 +1,11 @@
+This test verifies that updating a <select> element's menu while it is visible does not result in a hang.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS items.length is 1
+PASS items.length is 1001
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

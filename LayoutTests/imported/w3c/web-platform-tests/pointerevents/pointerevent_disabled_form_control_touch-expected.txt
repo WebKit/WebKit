@@ -1,0 +1,13 @@
+Pointer Event: pointerevents fire to disabled form controls
+
+Follow the test instructions with touch. If you don't have the device skip it.
+
+Test Description: Pointerevents are dispatched to disabled form controls.
+
+Use the mouse or pen to press on the purple button. Or with touch, tap on the purple box.
+Disabled button
+
+Harness Error (TIMEOUT), message = null
+
+NOTRUN touch pointerevent attributes
+

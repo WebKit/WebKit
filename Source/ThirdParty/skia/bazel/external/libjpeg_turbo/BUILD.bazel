@@ -1,0 +1,281 @@
+# This file will be copied into //third_party/externals/libjpeg-turbo via the new_local_repository
+# rule in WORKSPACE.bazel, so all files should be relative to that path.
+load("@bazel_skylib//lib:selects.bzl", "selects")
+load("@rules_cc//cc:cc_library.bzl", "cc_library")
+
+config_setting(
+    name = "mac_arm64",
+    constraint_values = [
+        "@platforms//cpu:arm64",
+        "@platforms//os:macos",
+    ],
+)
+
+config_setting(
+    name = "debug_build",
+    values = {"compilation_mode": "dbg"},
+)
+
+config_setting(
+    name = "fast_build",
+    values = {"compilation_mode": "fastbuild"},
+)
+
+config_setting(
+    name = "release_build",
+    values = {"compilation_mode": "opt"},
+)
+
+selects.config_setting_group(
+    name = "arm_or_arm64",
+    match_any = [
+        "@platforms//cpu:arm",
+        "@platforms//cpu:arm64",
+    ],
+)
+
+LIBJPEG_HEADERS = [
+    "src/jconfig.h",
+    "src/jerror.h",
+    "src/jdct.h",
+    "src/jinclude.h",
+    "src/jpeglib.h",
+    "src/jpeglibmangler.h",
+    "src/jmorecfg.h",
+    "src/jconfigint.h",
+    "src/jpegint.h",
+    "src/jpegapicomp.h",
+    "src/jpeg_nbits.h",
+    "src/jsimddct.h",
+    "src/jversion.h",
+    "src/jdhuff.h",
+]
+
+# Based on
+# https://github.com/libjpeg-turbo/libjpeg-turbo/blob/20ade4de/CMakeLists.txt#L605
+#
+# Starting in 3.x, libjpeg-turbo supports runtime-selectable precision.
+# This requires compiling some source sets multiple times, with different
+# BITS_IN_JSAMPLE defines (16, 12, and the default 8), to generate precision-
+# specific symbols (e.g. jpeg16_read_scanlines vs jpeg12_read_scanlines vs
+# jpeg_read_scanlines).
+
+JPEG16_SRCS = [
+    "src/jcapistd.c",
+    "src/jccolor.c",
+    "src/jcdiffct.c",
+    "src/jclossls.c",
+    "src/jcmainct.c",
+    "src/jcprepct.c",
+    "src/jcsample.c",
+    "src/jdapistd.c",
+    "src/jdcolor.c",
+    "src/jddiffct.c",
+    "src/jdlossls.c",
+    "src/jdmainct.c",
+    "src/jdmainct.h",
+    "src/jdpostct.c",
+    "src/jdsample.c",
+    "src/jdsample.h",
+    "src/jutils.c",
+    "src/jsimd.h",
+    "src/jlossls.h",
+    "src/jdmaster.c",
+    "src/jdmaster.h",
+    "src/jdmerge.h",
+    "src/jmemsys.h",
+]
+
+JPEG12_SRCS = JPEG16_SRCS + [
+    "src/jccoefct.c",
+    "src/jcdctmgr.c",
+    "src/jdcoefct.c",
+    "src/jddctmgr.c",
+    "src/jdmerge.c",
+    "src/jfdctfst.c",
+    "src/jfdctint.c",
+    "src/jidctflt.c",
+    "src/jidctfst.c",
+    "src/jidctint.c",
+    "src/jidctred.c",
+    "src/jquant1.c",
+    "src/jquant2.c",
+    "src/jdcoefct.h",
+]
+
+JPEGTURBO_SRCS = JPEG12_SRCS + [
+    "src/jchuff.c",
+    "src/jchuff.h",
+    "src/jaricom.c",
+    "src/jcapimin.c",
+    "src/jcarith.c",
+    "src/jcicc.c",
+    "src/jcinit.c",
+    "src/jclhuff.c",
+    "src/jcmarker.c",
+    "src/jcmaster.c",
+    "src/jcmaster.h",
+    "src/jcomapi.c",
+    "src/jcparam.c",
+    "src/jcphuff.c",
+    "src/jctrans.c",
+    "src/jdapimin.c",
+    "src/jdarith.c",
+    "src/jdatadst.c",
+    "src/jdatasrc.c",
+    "src/jdhuff.c",
+    "src/jdicc.c",
+    "src/jdinput.c",
+    "src/jdlhuff.c",
+    "src/jdmarker.c",
+    "src/jdphuff.c",
+    "src/jdtrans.c",
+    "src/jerror.c",
+    "src/jfdctflt.c",
+    "src/jmemmgr.c",
+    "src/jmemnobs.c",
+    "src/jpeg_nbits.c",
+]
+
+JPEGTURBO_TEXT_HDRS = [
+    "src/jccolext.c",
+    "src/jdmrgext.c",
+    "src/jdcolext.c",
+    "src/jdcol565.c",
+    "src/jdmrg565.c",
+    "src/jstdhuff.c",
+    "src/jsamplecomp.h",
+] + select({
+    ":arm_or_arm64": [
+        "simd/arm/jdmrgext-neon.c",
+        "simd/arm/jcgryext-neon.c",
+        "simd/arm/jdcolext-neon.c",
+    ],
+    "//conditions:default": [],
+}) + select({
+    "@platforms//cpu:arm": [
+        "simd/arm/aarch32/jccolext-neon.c",
+    ],
+    "@platforms//cpu:arm64": [
+        "simd/arm/aarch64/jccolext-neon.c",
+    ],
+    "//conditions:default": [],
+})
+
+JPEGTURBO_DEFINES = [
+    # Add support for arithmetic encoding (C_) and decoding (D_).
+    # This matches Android. Note that such JPEGs are likely rare, given lack of
+    # support by major browsers.
+    "C_ARITH_CODING_SUPPORTED=1",
+    "D_ARITH_CODING_SUPPORTED=1",
+] + select({
+    ":arm_or_arm64": [
+        "NEON_INTRINSICS",
+        "WITH_SIMD",
+    ],
+    "//conditions:default": [],
+}) + select({
+    # Cuts a 64K table.
+    "//conditions:default": ["USE_CLZ_INTRINSIC"],
+    ":mac_arm64": [],  # disabled on M1 macs already
+    "@platforms//os:windows": [],
+})
+
+JPEGTURBO_COPTS = select({
+    ":debug_build": [
+        "--optimize=0",
+        "--debug",
+    ],
+    ":release_build": [
+        "--optimize=3",
+        # Strip dead code (in conjunction with linkopts)
+        "-fdata-sections",
+        "-ffunction-sections",
+    ],
+    ":fast_build": [
+        "--optimize=0",
+        "-g1",
+    ],
+})
+
+cc_library(
+    name = "libjpeg16",
+    srcs = JPEG16_SRCS,
+    hdrs = LIBJPEG_HEADERS,
+    copts = JPEGTURBO_COPTS,
+    includes = ["src"],
+    local_defines = [
+        "NO_GETENV",
+        "NO_PUTENV",
+        "BITS_IN_JSAMPLE=16",
+        "C_ARITH_CODING_SUPPORTED=1",
+        "D_ARITH_CODING_SUPPORTED=1",
+    ],
+    textual_hdrs = JPEGTURBO_TEXT_HDRS,
+)
+
+cc_library(
+    name = "libjpeg12",
+    srcs = JPEG12_SRCS,
+    hdrs = LIBJPEG_HEADERS,
+    copts = JPEGTURBO_COPTS,
+    includes = ["src"],
+    local_defines = [
+        "NO_GETENV",
+        "NO_PUTENV",
+        "BITS_IN_JSAMPLE=12",
+        "C_ARITH_CODING_SUPPORTED=1",
+        "D_ARITH_CODING_SUPPORTED=1",
+    ],
+    textual_hdrs = JPEGTURBO_TEXT_HDRS,
+)
+
+cc_library(
+    name = "libjpeg_turbo",
+    srcs = JPEGTURBO_SRCS + select({
+        ":arm_or_arm64": [
+            "simd/arm/jccolor-neon.c",
+            "simd/arm/jcgray-neon.c",
+            "simd/arm/jchuff.h",
+            "simd/arm/jcphuff-neon.c",
+            "simd/arm/jcsample-neon.c",
+            "simd/arm/jdcolor-neon.c",
+            "simd/arm/jdmerge-neon.c",
+            "simd/arm/jdsample-neon.c",
+            "simd/arm/jfdctfst-neon.c",
+            "simd/arm/jfdctint-neon.c",
+            "simd/arm/jidctfst-neon.c",
+            "simd/arm/jidctint-neon.c",
+            "simd/arm/jidctred-neon.c",
+            "simd/arm/jquanti-neon.c",
+            "simd/arm/neon-compat.h",
+            "simd/jsimd.h",
+        ],
+        "//conditions:default": [],
+    }) + select({
+        "@platforms//cpu:arm": [
+            "simd/arm/aarch32/jchuff-neon.c",
+            "simd/arm/aarch32/jsimd.c",
+        ],
+        "@platforms//cpu:arm64": [
+            "simd/arm/aarch64/jchuff-neon.c",
+            "simd/arm/aarch64/jsimd.c",
+            "simd/arm/align.h",
+        ],
+        "//conditions:default": [],
+    }),
+    hdrs = LIBJPEG_HEADERS,
+    copts = JPEGTURBO_COPTS,
+    includes = [
+        # There are some #include "neon-compat.h" etc that need this on the search path
+        "simd/arm",
+        "src",
+    ],
+    local_defines = JPEGTURBO_DEFINES,
+    textual_hdrs = JPEGTURBO_TEXT_HDRS,
+    visibility = ["//visibility:public"],
+    deps = [
+        ":libjpeg12",
+        ":libjpeg16",
+    ],
+)

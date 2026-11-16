@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Reflected position:sticky renderer should not be asked sticky questions about the replica's layer</title>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+</script>
+<style>
+.sticky-reflected {
+    position: sticky;
+    top: 0;
+    width: 100px;
+    height: 100px;
+    background-color: green;
+    -webkit-box-reflect: above;
+}
+
+.scroller {
+    overflow: scroll;
+    width: 200px;
+    height: 200px;
+}
+
+.tall {
+    height: 400px;
+}
+</style>
+</head>
+<body>
+PASS if no assert in debug.
+
+<!-- Reflection created while resolving style for the first time. -->
+<div class="sticky-reflected"></div>
+
+<!-- Same, but with an enclosing overflow clip layer to exercise the other branch
+     of RenderLayerCompositor::isAsyncScrollableStickyLayer(). -->
+<div class="scroller">
+    <div class="sticky-reflected"></div>
+    <div class="tall"></div>
+</div>
+
+<div id="later" class="sticky-reflected" style="-webkit-box-reflect: none"></div>
+
+<script>
+// Reflection created from RenderLayer::styleChanged() on an already-sticky renderer.
+document.body.offsetTop;
+document.getElementById("later").style.webkitBoxReflect = "below";
+document.body.offsetTop;
+</script>
+</body>
+</html>

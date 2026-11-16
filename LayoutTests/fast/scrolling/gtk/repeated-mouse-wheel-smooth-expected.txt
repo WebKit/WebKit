@@ -1,0 +1,7 @@
+PASS Scroll downwards by 1 tick
+PASS Scroll downwards by another tick
+PASS Scroll downwards by two more ticks, interrupting the first
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

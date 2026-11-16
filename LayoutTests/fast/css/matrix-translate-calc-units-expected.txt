@@ -1,0 +1,15 @@
+Verify invalid DOMMatrix strings throw, and more importantly don't crash
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS new DOMMatrix('translate(min(0em))') threw exception SyntaxError: The string did not match the expected pattern..
+PASS new DOMMatrix('translateX(max(0ex))') threw exception SyntaxError: The string did not match the expected pattern..
+PASS new DOMMatrix('translateY(calc(0ch))') threw exception SyntaxError: The string did not match the expected pattern..
+PASS new DOMMatrix('translateZ(calc(11ic))') threw exception SyntaxError: The string did not match the expected pattern..
+PASS new DOMMatrix('translateZ(calc(123lh))') threw exception SyntaxError: The string did not match the expected pattern..
+PASS new DOMMatrix('translate(max(123px))') did not throw exception.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

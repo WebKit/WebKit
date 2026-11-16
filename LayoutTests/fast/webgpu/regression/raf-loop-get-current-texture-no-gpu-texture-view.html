@@ -1,0 +1,74 @@
+<script>
+  globalThis.testRunner?.waitUntilDone();
+  globalThis.testRunner?.dumpAsText();
+</script>
+<script>
+  onload = async () => {
+    const adapter = await navigator.gpu?.requestAdapter();
+    const device = await adapter?.requestDevice();
+    if (!device) {
+      document.body.append('FAIL: WebGPU not supported');
+      globalThis.testRunner?.notifyDone();
+      return;
+    }
+
+    const canvas = document.createElement('canvas');
+    canvas.width = 64;
+    canvas.height = 64;
+    document.body.append(canvas);
+
+    const context = canvas.getContext('webgpu');
+    const presentationFormat = navigator.gpu.getPreferredCanvasFormat();
+    context.configure({ device, format: presentationFormat });
+
+    const renderPassDescriptor = {
+      colorAttachments: [
+        {
+          // view and resolveTarget intentionally set to GPUTexture (not GPUTextureView)
+          // to test that this produces a validation error without crashing.
+          clearValue: [0.3, 0.3, 0.3, 1],
+          loadOp: 'clear',
+          storeOp: 'store',
+        },
+      ],
+    };
+
+    let renderTarget;
+    let frameCount = 0;
+
+    let render = async () => {
+      const canvasTexture = context.getCurrentTexture();
+      const { width, height } = canvasTexture;
+
+      if (renderTarget?.width !== width || renderTarget?.height !== height) {
+        renderTarget?.destroy();
+        renderTarget = device.createTexture({
+          size: [width, height],
+          format: presentationFormat,
+          usage: GPUTextureUsage.RENDER_ATTACHMENT,
+          sampleCount: 4,
+        });
+      }
+
+      renderPassDescriptor.colorAttachments[0].view = renderTarget;
+      renderPassDescriptor.colorAttachments[0].resolveTarget = canvasTexture;
+
+      device.pushErrorScope('validation');
+      const encoder = device.createCommandEncoder();
+      const pass = encoder.beginRenderPass(renderPassDescriptor);
+      pass.end();
+      device.queue.submit([encoder.finish()]);
+      await device.queue.onSubmittedWorkDone();
+      await device.popErrorScope();
+
+      if (++frameCount < 5) {
+        requestAnimationFrame(render);
+      } else {
+        renderTarget?.destroy();
+        document.body.append('PASS');
+        globalThis.testRunner?.notifyDone();
+      }
+    };
+    requestAnimationFrame(render);
+  };
+</script>

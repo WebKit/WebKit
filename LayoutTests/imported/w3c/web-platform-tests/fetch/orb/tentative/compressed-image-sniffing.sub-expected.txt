@@ -1,0 +1,3 @@
+
+PASS ORB shouldn't block compressed images
+

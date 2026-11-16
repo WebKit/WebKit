@@ -1,0 +1,72 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<ul id="list" aria-setsize="100">
+    <li id="item1" aria-posinset="3">3</li>
+    <li id="item2">4</li>
+</ul>
+
+<script>
+    let output = "This test verifies that aria-posinset and aria-setsize are exposed to accessibility correctly.\n\n";
+
+    if (window.accessibilityController) {
+        window.jsTestIsAsync = true;
+
+        var axList = accessibilityController.accessibleElementById("list");
+        output += "Verify that the list supports setsize.\n";
+        output += expect("axList.isAttributeSupported('AXARIASetSize')", "true");
+        output += "Verify that the list returns the correct value for setsize.\n";
+        output += expect("axList.numberAttributeValue('AXARIASetSize')", "100");
+
+        var axItem1 = accessibilityController.accessibleElementById("item1");
+        var axItem2 = accessibilityController.accessibleElementById("item2");
+
+        output += "Verify that the first item in the list exposes posinset attributes.\n";
+        output += expect("axItem1.isAttributeSupported('AXARIAPosInSet')", "true");
+        output += expect("axItem1.numberAttributeValue('AXARIAPosInSet')", "3");
+
+        output += "Verify that the second item in the list does not support setsize and posinset.\n";
+        output += expect("axItem2.isAttributeSupported('AXARIASetSize')", "false");
+        output += expect("axItem2.isAttributeSupported('AXARIAPosInSet')", "false");
+
+        output += "Update aria-posinset to 4 for the item1.\n";
+        item1.ariaPosInSet = "4";
+        setTimeout(async function() {
+            output += await expectAsync("axItem1.numberAttributeValue('AXARIAPosInSet')", "4"); 
+
+            output += "Set aria-posinset to foo and verify that posinset = 1 for invalid value fallback.\n";
+            item1.ariaPosInSet = "foo";
+            output += await expectAsync("axItem1.numberAttributeValue('AXARIAPosInSet')", "1"); 
+    
+            output += "Set aria-posinset to -50 and verify that posinset = 1 for invalid value fallback.\n";
+            item1.ariaPosInSet = "-50";
+            output += await expectAsync("axItem1.numberAttributeValue('AXARIAPosInSet')", "1"); 
+
+            output += "Update aria-setsize to 101.\n";
+            list.ariaSetSize = "101";
+            output += await expectAsync("axList.numberAttributeValue('AXARIASetSize')", "101");
+
+
+            output += "Set aria-setsize to -1 and verify that the list still exposes the number of items.\n";
+            list.ariaSetSize = "-1";
+            output += await expectAsync("axList.numberAttributeValue('AXARIASetSize')", "-1"); 
+            output += await expectAsync("axList.isAttributeSupported('AXARIASetSize')", "true");
+
+            output += "Set aria-setsize to foo and verify that the list still exposes the number of items.\n";
+            list.ariaSetSize = "foo";
+            output += await expectAsync("axList.numberAttributeValue('AXARIASetSize')", "-1"); 
+            output += await expectAsync("axList.isAttributeSupported('AXARIASetSize')", "true");
+
+            list.style.visibility = 'hidden';
+            debug(output);
+            finishJSTest();
+        }, 0);
+    }
+</script>
+</body>
+</html>

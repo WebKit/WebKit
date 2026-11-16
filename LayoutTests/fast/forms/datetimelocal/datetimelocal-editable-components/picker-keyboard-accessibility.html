@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/common.js"></script>
+<script src="../../../../resources/js-test.js"></script>
+<script src="../../../../resources/ui-helper.js"></script>
+</head>
+<body>
+
+<input id="input" type="datetime-local" value="2020-09-16T10:45"/>
+
+<script>
+window.jsTestIsAsync = true;
+
+function clickOnMonthField() {
+    const shadowRoot = internals.shadowRoot(input);
+    const monthField = getElementByPseudoId(shadowRoot, "-webkit-datetime-edit-month-field");
+    const rect = monthField.getBoundingClientRect();
+    eventSender.mouseMoveTo(rect.left + rect.width / 2, rect.top + rect.height / 2);
+    eventSender.mouseDown();
+    eventSender.mouseUp();
+}
+
+addEventListener("load", async () => {
+    description("Tests that focus is properly managed when alternating between activating the picker with the keyboard and with a mouse click.");
+
+    await UIHelper.ensurePresentationUpdate();
+    // Tab to focus the second subfield of the date input.
+    UIHelper.keyDown("\t", ["altKey"]);
+    UIHelper.keyDown("\t", ["altKey"]);
+    // Press space to open the picker.
+    UIHelper.keyDown(" ");
+    await UIHelper.ensurePresentationUpdate();
+    showingPicker = await UIHelper.isShowingDateTimePicker();
+    shouldBeTrue("showingPicker");
+
+    // Move to the 17th day of the month via the keyboard.
+    UIHelper.keyDown("rightArrow");
+    // Accept the day using space so the <input> is updated.
+    UIHelper.keyDown(" ");
+    shouldBeEqualToString("input.value", "2020-09-17T10:45")
+
+    clickOnMonthField();
+    // Now that we've focused on a date subfield, keypresses should go to that rather than the picker.
+    UIHelper.keyDown("downArrow");
+    shouldBeEqualToString("input.value", "2020-08-17T10:45")
+    // The picker should still be showing though.
+    showingPicker = await UIHelper.isShowingDateTimePicker();
+
+    // Pressing space while focused on a date subfield should move focus back into the picker.
+    UIHelper.keyDown(" ");
+    // Move focus to the 16th day inside the picker.
+    UIHelper.keyDown("leftArrow");
+    // Accept that value.
+    UIHelper.keyDown(" ");
+    shouldBeEqualToString("input.value", "2020-08-16T10:45")
+
+    // Escape should close the picker and return focus to the subfield we were on before opening the picker (the month field).
+    UIHelper.keyDown("escape");
+    await UIHelper.ensurePresentationUpdate();
+    showingPicker = await UIHelper.isShowingDateTimePicker();
+    shouldBeFalse("showingPicker");
+
+    // Move to the year field and update the value.
+    UIHelper.keyDown("\t", ["altKey"]);
+    UIHelper.keyDown("\t", ["altKey"]);
+    UIHelper.keyDown("downArrow");
+    shouldBeEqualToString("input.value", "2019-08-16T10:45")
+
+    finishJSTest();
+});
+</script>
+</body>
+</html>
+

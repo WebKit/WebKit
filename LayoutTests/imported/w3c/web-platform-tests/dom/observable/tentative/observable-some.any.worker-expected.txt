@@ -1,0 +1,9 @@
+
+PASS some(): subscriber is inactive after the first value that passes the predicate, because the source was unsubscribed from
+PASS observable-some
+PASS observable-some 1
+PASS some(): The returned promise rejects with an error if the predicate errors
+PASS some(): The returned promise rejects with an error if the source observable errors
+PASS some(): The returned promise resolves as false if the source observable completes without emitting a value
+PASS some(): The return promise rejects with a DOMException if the signal is aborted
+

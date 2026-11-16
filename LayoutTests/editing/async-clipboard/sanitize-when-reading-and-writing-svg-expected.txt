@@ -1,0 +1,16 @@
+
+PASS HTML script elements are removed from pasted SVG
+PASS SVG script elements are removed from pasted SVG
+PASS foreignObject elements are removed from pasted SVG
+PASS style elements are removed from pasted SVG
+PASS base/link/meta/title elements are removed from pasted SVG
+PASS use elements are removed from pasted SVG
+PASS embed/frame/iframe/object elements are removed from pasted SVG
+PASS on* event handler attributes are removed from pasted SVG
+PASS attributes with javascript: URLs are removed from pasted SVG
+PASS SVG animation of a navigating attribute to a javascript: URL is neutralized
+PASS comment nodes are removed from pasted SVG
+PASS display:none content is removed from pasted SVG
+PASS display:none content from a style sheet is removed from pasted SVG
+PASS benign SVG content is preserved through a clipboard round-trip
+

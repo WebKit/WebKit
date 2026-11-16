@@ -1,0 +1,11 @@
+
+
+FAIL OpaqueRange can be added to and deleted from a Highlight (input) el.createValueRange is not a function. (In 'el.createValueRange(0, 5)', 'el.createValueRange' is undefined)
+FAIL OpaqueRange mixed with DOM Range in same Highlight (input) el.createValueRange is not a function. (In 'el.createValueRange(0, 3)', 'el.createValueRange' is undefined)
+FAIL Disconnected OpaqueRange remains in Highlight but is collapsed (input) el.createValueRange is not a function. (In 'el.createValueRange(1, 4)', 'el.createValueRange' is undefined)
+FAIL OpaqueRange in Highlight is collapsed after element removal (input) el.createValueRange is not a function. (In 'el.createValueRange(0, 5)', 'el.createValueRange' is undefined)
+FAIL OpaqueRange can be added to and deleted from a Highlight (textarea) el.createValueRange is not a function. (In 'el.createValueRange(0, 5)', 'el.createValueRange' is undefined)
+FAIL OpaqueRange mixed with DOM Range in same Highlight (textarea) el.createValueRange is not a function. (In 'el.createValueRange(0, 3)', 'el.createValueRange' is undefined)
+FAIL Disconnected OpaqueRange remains in Highlight but is collapsed (textarea) el.createValueRange is not a function. (In 'el.createValueRange(1, 4)', 'el.createValueRange' is undefined)
+FAIL OpaqueRange in Highlight is collapsed after element removal (textarea) el.createValueRange is not a function. (In 'el.createValueRange(0, 5)', 'el.createValueRange' is undefined)
+

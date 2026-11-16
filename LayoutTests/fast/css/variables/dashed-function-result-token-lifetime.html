@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<style>
+@function --f(--a) {
+  result: aaaa var(--a);
+}
+#target {
+  --x: --f(bbbb);
+}
+</style>
+<div id="target"></div>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+var v = getComputedStyle(target).getPropertyValue('--x');
+document.write("PASS if no crash. Got: " + v);
+</script>

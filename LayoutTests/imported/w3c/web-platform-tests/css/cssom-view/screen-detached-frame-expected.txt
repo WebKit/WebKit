@@ -1,0 +1,3 @@
+
+PASS Window.screen on detached frame
+

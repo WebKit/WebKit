@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<style>
+    div.container {
+        display: inline-block;
+        margin-right: 20px; 
+        margin-bottom: 10px; 
+        width: 100px; 
+        vertical-align: top;
+    }
+    div.horizontal {
+        width: 102px;
+        height: 52px;
+    }
+    div.vertical {
+        width: 52px;
+        height: 102px;
+    }
+    img {
+        border: 1px solid black;
+        image-orientation: from-image;
+    }
+</style>
+<body>
+    <b>The images of the  &lt;img&gt; elements should ignore their EXIF orientation after setting their style image-orientation to "none".</b>
+    <br>
+    <br>
+    <div class="container">
+        <div class="horizontal">
+            <img id="img1" src="resources/exif-orientation-1-ul.jpg">
+        </div>
+        <br>Normal
+    </div>
+    <div class="container">
+        <div class="horizontal">
+            <img id="img2" src="resources/exif-orientation-2-ur.jpg">
+        </div>
+        <br>Flipped horizontally
+    </div>
+    <div class="container">
+        <div class="horizontal">
+            <img id="img3" src="resources/exif-orientation-3-lr.jpg">
+        </div>
+        <br>Rotated 180&deg;
+    </div>
+    <div class="container">
+        <div class="horizontal">
+            <img id="img4" src="resources/exif-orientation-4-lol.jpg">
+        </div>
+        <br>Flipped vertically
+    </div>
+    <br>
+    <div class="container">
+        <div class="vertical">
+            <img id="img5" src="resources/exif-orientation-5-lu.jpg">
+        </div>
+        <br>Rotated 90&deg; CCW and flipped vertically
+    </div>
+    <div class="container">
+        <div class="vertical">
+            <img id="img6" src="resources/exif-orientation-6-ru.jpg">
+        </div>
+        <br>Rotated 90&deg; CCW
+    </div>
+    <div class="container">
+        <div class="vertical">
+            <img id="img7" src="resources/exif-orientation-7-rl.jpg">
+        </div>
+        <br>Rotated 90&deg; CW and flipped vertically
+    </div>
+    <div class="container">
+        <div class="vertical">
+            <img id="img8" src="resources/exif-orientation-8-llo.jpg">
+        </div>
+        <br>Rotated 90&deg; CW
+    </div>
+    <br>
+    <div class="container">
+        <div class="horizontal">
+            <img id="img9" src="resources/exif-orientation-9-u.jpg">
+        </div>
+        <br>Undefined (invalid value)
+    </div>
+    <br>
+    <ul id="console"></ul>
+    <script>
+        function log(str) {
+            var li = document.createElement("li");
+            li.appendChild(document.createTextNode(str));
+            var console = document.getElementById("console");
+            console.appendChild(li);
+        }
+
+        function imageSize(el) {
+            var computedStyle = window.getComputedStyle(el);
+            return computedStyle.width + " by " + computedStyle.height;
+        }
+
+        window.addEventListener('load', (event) => {
+            for(var i = 1; i <= 9; i++)
+                document.getElementById("img" + i).style.imageOrientation = "none";
+            for(var i = 1; i <= 9; i++)
+                log("img" + i + " size = " + imageSize(document.getElementById("img" + i)));
+        });
+    </script>
+</body>

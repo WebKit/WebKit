@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style>
+
+:root {
+    --custom-color: blue;
+}
+
+.target {
+    width: 100px;
+    height: 100px;
+    background: linear-gradient(var(--custom-color), green);
+    transition-duration: 1s;
+}
+
+.target.transition {
+    margin-left: 100px;
+}
+
+</style>
+<body>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<script>
+
+'use strict';
+
+promise_test(async test => {
+    const target = document.body.appendChild(document.createElement("div"));
+    target.classList.add("target");
+
+    await new Promise(requestAnimationFrame);
+    target.classList.add("transition");
+
+    const animations = target.getAnimations();
+    assert_equals(animations.length, 1, "There is only one animation applied to the target.");
+    assert_true(animations[0] instanceof CSSTransition, "The single animation applied to the target is a CSS transition.");
+    assert_equals(animations[0].transitionProperty, "margin-left", "The single CSS transition applied to the target is for the margin-left property.");
+}, `An element with a background-image set to a CSS gradient with a stop color set by a custom property does not yield a background-image transition when another CSS property changes.`);
+
+</script>
+</body>

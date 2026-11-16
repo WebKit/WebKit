@@ -1,0 +1,34 @@
+drawImage() of a VideoFrame must honor globalCompositeOperation, including the modes that affect the whole canvas (copy, source-in, destination-in) and the ones that change how the frame is blended (destination-over, multiply).
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS the frame draws an opaque pixel
+
+copy:
+PASS pixel at (50, 50) is the frame color
+PASS pixel at (150, 50) is transparent
+PASS pixel at (5, 5) is transparent
+
+source-in:
+PASS pixel at (50, 50) is the frame color
+PASS pixel at (150, 50) is transparent
+PASS pixel at (5, 5) is transparent
+
+destination-in:
+PASS pixel at (50, 50) is red
+PASS pixel at (150, 50) is transparent
+PASS pixel at (5, 5) is transparent
+
+destination-over:
+PASS pixel at (60, 60) is red
+PASS pixel at (30, 30) is the frame color
+PASS pixel at (150, 50) is transparent
+
+multiply:
+PASS pixel at (50, 50) is the frame color multiplied by red
+PASS pixel at (150, 50) is red
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

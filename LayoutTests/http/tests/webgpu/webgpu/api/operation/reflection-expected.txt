@@ -1,0 +1,8 @@
+
+PASS :buffer_reflection_attributes:
+PASS :buffer_creation_from_reflection:
+PASS :texture_reflection_attributes:
+PASS :texture_creation_from_reflection:
+PASS :query_set_reflection_attributes:
+PASS :query_set_creation_from_reflection:
+

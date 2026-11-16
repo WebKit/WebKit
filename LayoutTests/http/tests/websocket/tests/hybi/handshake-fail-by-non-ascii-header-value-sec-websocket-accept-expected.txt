@@ -1,0 +1,9 @@
+Test whether WebSocket handshake fails if the server sends header with non-ascii characters in name.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+PASS closeEvent.wasClean is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

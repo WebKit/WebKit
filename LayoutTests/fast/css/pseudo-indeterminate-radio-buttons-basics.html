@@ -1,0 +1,206 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<style>
+    input {
+        background-color: blue;
+        width: 15px;
+        height: 15px;
+        -webkit-appearance: none;
+    }
+    :checked {
+        border: 2px solid red;
+    }
+    :indeterminate {
+        background-color: green;
+    }
+    :disabled {
+        border-left: 3px solid orange;
+    }
+</style>
+</head>
+<body>
+    <div>
+        <input type="radio">
+        <input type="radio">
+        <input type="radio" name="group1">
+        <input type="radio" name="group1">
+        <input type="radio" name="group2">
+        <span><input type="radio" name="group2"></span>
+        <input type="radio" name="group3">
+        <input type="radio" name="group3" checked>
+        <input type="radio" name="group4">
+        <span><input type="radio" name="group4" checked></span>
+        <input type="radio" disabled>
+        <input type="radio" name="group5" disabled>
+        <input type="radio" name="group5" disabled>
+        <input type="radio" name="group6" disabled>
+        <span><input type="radio" name="group6" disabled></span>
+        <input type="radio" name="group7" disabled>
+        <input type="radio" name="group7" checked disabled>
+        <input type="radio" name="group8" disabled>
+        <span><input type="radio" name="group8" checked disabled></span>
+        <input type="radio" readonly>
+        <input type="radio" name="group9" readonly>
+        <input type="radio" name="group9" readonly>
+        <input type="radio" name="group10" readonly>
+        <span><input type="radio" name="group10" readonly></span>
+        <input type="radio" name="group11" readonly>
+        <input type="radio" name="group11" checked readonly>
+        <input type="radio" name="group12" readonly>
+        <span><input type="radio" name="group12" checked readonly></span>
+    </div>
+    <form>
+        <input type="radio">
+        <input type="radio">
+        <input type="radio" name="group1">
+        <input type="radio" name="group1">
+        <input type="radio" name="group2">
+        <span><input type="radio" name="group2"></span>
+        <input type="radio" name="group3">
+        <input type="radio" name="group3" checked>
+        <input type="radio" name="group4">
+        <span><input type="radio" name="group4" checked></span>
+        <input type="radio" disabled>
+        <input type="radio" name="group5" disabled>
+        <input type="radio" name="group5" disabled>
+        <input type="radio" name="group6" disabled>
+        <span><input type="radio" name="group6" disabled></span>
+        <input type="radio" name="group7" disabled>
+        <input type="radio" name="group7" checked disabled>
+        <input type="radio" name="group8" disabled>
+        <span><input type="radio" name="group8" checked disabled></span>
+        <input type="radio" readonly>
+        <input type="radio" name="group9" readonly>
+        <input type="radio" name="group9" readonly>
+        <input type="radio" name="group10" readonly>
+        <span><input type="radio" name="group10" readonly></span>
+        <input type="radio" name="group11" readonly>
+        <input type="radio" name="group11" checked readonly>
+        <input type="radio" name="group12" readonly>
+        <span><input type="radio" name="group12" checked readonly></span>
+    </form>
+    <form disabled>
+        <input type="radio">
+        <input type="radio">
+        <input type="radio" name="group1">
+        <input type="radio" name="group1">
+        <input type="radio" name="group2">
+        <span><input type="radio" name="group2"></span>
+        <input type="radio" name="group3">
+        <input type="radio" name="group3" checked>
+        <input type="radio" name="group4">
+        <span><input type="radio" name="group4" checked></span>
+        <input type="radio" disabled>
+        <input type="radio" name="group5" disabled>
+        <input type="radio" name="group5" disabled>
+        <input type="radio" name="group6" disabled>
+        <span><input type="radio" name="group6" disabled></span>
+        <input type="radio" name="group7" disabled>
+        <input type="radio" name="group7" checked disabled>
+        <input type="radio" name="group8" disabled>
+        <span><input type="radio" name="group8" checked disabled></span>
+        <input type="radio" readonly>
+        <input type="radio" name="group9" readonly>
+        <input type="radio" name="group9" readonly>
+        <input type="radio" name="group10" readonly>
+        <span><input type="radio" name="group10" readonly></span>
+        <input type="radio" name="group11" readonly>
+        <input type="radio" name="group11" checked readonly>
+        <input type="radio" name="group12" readonly>
+        <span><input type="radio" name="group12" checked readonly></span>
+    </form>
+    <fieldset disabled>
+        <input type="radio">
+        <input type="radio">
+        <input type="radio" name="group1">
+        <input type="radio" name="group1">
+        <input type="radio" name="group2">
+        <span><input type="radio" name="group2"></span>
+        <input type="radio" name="group3">
+        <input type="radio" name="group3" checked>
+        <input type="radio" name="group4">
+        <span><input type="radio" name="group4" checked></span>
+        <input type="radio" disabled>
+        <input type="radio" name="group5" disabled>
+        <input type="radio" name="group5" disabled>
+        <input type="radio" name="group6" disabled>
+        <span><input type="radio" name="group6" disabled></span>
+        <input type="radio" name="group7" disabled>
+        <input type="radio" name="group7" checked disabled>
+        <input type="radio" name="group8" disabled>
+        <span><input type="radio" name="group8" checked disabled></span>
+        <input type="radio" readonly>
+        <input type="radio" name="group9" readonly>
+        <input type="radio" name="group9" readonly>
+        <input type="radio" name="group10" readonly>
+        <span><input type="radio" name="group10" readonly></span>
+        <input type="radio" name="group11" readonly>
+        <input type="radio" name="group11" checked readonly>
+        <input type="radio" name="group12" readonly>
+        <span><input type="radio" name="group12" checked readonly></span>
+    </fieldset>
+    <form>
+        <fieldset disabled>
+            <input type="radio">
+            <input type="radio">
+            <input type="radio" name="group1">
+            <input type="radio" name="group1">
+            <input type="radio" name="group2">
+            <span><input type="radio" name="group2"></span>
+            <input type="radio" name="group3">
+            <input type="radio" name="group3" checked>
+            <input type="radio" name="group4">
+            <span><input type="radio" name="group4" checked></span>
+            <input type="radio" disabled>
+            <input type="radio" name="group5" disabled>
+            <input type="radio" name="group5" disabled>
+            <input type="radio" name="group6" disabled>
+            <span><input type="radio" name="group6" disabled></span>
+            <input type="radio" name="group7" disabled>
+            <input type="radio" name="group7" checked disabled>
+            <input type="radio" name="group8" disabled>
+            <span><input type="radio" name="group8" checked disabled></span>
+            <input type="radio" readonly>
+            <input type="radio" name="group9" readonly>
+            <input type="radio" name="group9" readonly>
+            <input type="radio" name="group10" readonly>
+            <span><input type="radio" name="group10" readonly></span>
+            <input type="radio" name="group11" readonly>
+            <input type="radio" name="group11" checked readonly>
+            <input type="radio" name="group12" readonly>
+            <span><input type="radio" name="group12" checked readonly></span>
+        </fieldset>
+        <fieldset>
+            <input type="radio">
+            <input type="radio">
+            <input type="radio" name="group1">
+            <input type="radio" name="group1">
+            <input type="radio" name="group2">
+            <span><input type="radio" name="group2"></span>
+            <input type="radio" name="group3">
+            <input type="radio" name="group3" checked>
+            <input type="radio" name="group4">
+            <span><input type="radio" name="group4" checked></span>
+            <input type="radio" disabled>
+            <input type="radio" name="group5" disabled>
+            <input type="radio" name="group5" disabled>
+            <input type="radio" name="group6" disabled>
+            <span><input type="radio" name="group6" disabled></span>
+            <input type="radio" name="group7" disabled>
+            <input type="radio" name="group7" checked disabled>
+            <input type="radio" name="group8" disabled>
+            <span><input type="radio" name="group8" checked disabled></span>
+            <input type="radio" readonly>
+            <input type="radio" name="group9" readonly>
+            <input type="radio" name="group9" readonly>
+            <input type="radio" name="group10" readonly>
+            <span><input type="radio" name="group10" readonly></span>
+            <input type="radio" name="group11" readonly>
+            <input type="radio" name="group11" checked readonly>
+            <input type="radio" name="group12" readonly>
+            <span><input type="radio" name="group12" checked readonly></span>
+        </fieldset>
+    </form>
+</body>
+</html>

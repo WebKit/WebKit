@@ -1,0 +1,37 @@
+<style>
+body {
+  font-family: Ahem;
+  font-size: 10px;
+}
+
+.float {
+  float:left;
+  width: 10px;
+  height: 30px;
+  background-color: green;
+}
+
+.block_box {
+  margin-top: 50px;
+  background-color: transparent;
+  width: 10px;
+  height: 10px;
+}
+</style>
+<div>
+  <div class=float></div>
+  <span>
+    <div class=block_box></div>
+  </span>
+  after
+</div>
+
+<div style="padding: 1px"></div>
+
+<div>
+  <div class=float style="clear: both"></div>
+  <span>
+    <div class=block_box></div>
+  </span>
+  after
+</div>

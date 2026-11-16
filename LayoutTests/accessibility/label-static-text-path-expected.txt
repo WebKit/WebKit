@@ -1,0 +1,9 @@
+This test ensures labels remapped to StaticText get a multi-line path.
+
+PASS: textLabelSupportsPath === true
+PASS: pathSegmentCountOfID('label', 'Line to') > 4 === true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+This is a label containing only static text that spans several lines in this narrow container

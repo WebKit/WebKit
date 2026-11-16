@@ -1,0 +1,10 @@
+
+PASS Same-site top-level navigation should be able to set SameSite=* cookies.
+PASS Cross-site top-level navigation should be able to set SameSite=* cookies.
+PASS Same-site top-level POST should be able to set SameSite=* cookies.
+PASS Cross-site top-level POST should be able to set SameSite=* cookies.
+PASS Same-site to same-site iframe navigation should be able to set SameSite=* cookies.
+FAIL Cross-site to same-site iframe navigation should only be able to set SameSite=None cookies. assert_false: `samesite_strict=0.21151226660250522` in cookies expected false got true
+FAIL Same-site to cross-site-site iframe navigation should only be able to set SameSite=None cookies. assert_false: `samesite_unspecified=0.5588253465393292` in cookies expected false got true
+FAIL Cross-site to cross-site iframe navigation should only be able to set SameSite=None cookies. assert_false: `samesite_unspecified=0.8549968017632548` in cookies expected false got true
+

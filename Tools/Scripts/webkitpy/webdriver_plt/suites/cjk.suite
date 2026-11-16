@@ -1,0 +1,16 @@
+{
+    "urls": [
+        "https://www.sogou.com",
+        "https://www.sogou.com/web?query=webkit",
+        "https://cn.nytimes.com",
+        "https://cn.nytimes.com/usa",
+        "https://www.yahoo.co.jp",
+        "https://news.yahoo.co.jp/pickup/6252672",
+        "https://www.rakuten.co.jp",
+        "https://event.rakuten.co.jp",
+        "http://kakaku.com",
+        "http://kakaku.com/pc/lcd-monitor",
+        "https://www.naver.com",
+        "https://section.blog.naver.com"
+    ]
+}

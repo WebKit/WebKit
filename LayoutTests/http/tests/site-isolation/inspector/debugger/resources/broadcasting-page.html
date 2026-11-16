@@ -1,0 +1,13 @@
+<script>
+window.tickTimes = [];
+setInterval(() => { window.tickTimes.push(Date.now()); }, 50);
+
+let channel = new BroadcastChannel(new URLSearchParams(location.search).get("channel"));
+channel.onmessage = (event) => {
+    if (event.data === "close")
+        window.close();
+    else
+        channel.postMessage(window.tickTimes);
+};
+</script>
+<p>Page that records when its interval runs and sends the times on a broadcast channel when asked, for debugger tests of pages without an opener.</p>

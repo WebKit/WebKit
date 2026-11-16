@@ -1,0 +1,3 @@
+caching enabled, page sets max-age=12345: max-age=12345
+caching disabled, no page header: no-cache
+caching disabled, page sets max-age=12345: max-age=12345

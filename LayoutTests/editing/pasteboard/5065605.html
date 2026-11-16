@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<body>
+<div id="div" contenteditable="true"><br></div>
+<script src="../../resources/dump-as-markup.js"></script>
+<script>
+var div = document.getElementById("div");
+div.focus();
+
+if (window.testRunner)
+    testRunner.dumpEditingCallbacks();
+
+document.execCommand("InsertText", false, "This text should be red.");
+document.execCommand("InsertParagraph");
+document.execCommand("InsertText", false, "This text should be red.");
+document.execCommand("SelectAll");
+document.execCommand("ForeColor", false, "red");
+document.execCommand("Copy");
+window.getSelection().modify("move", "forward", "character");
+document.execCommand("InsertParagraph");
+document.execCommand("Paste");
+
+Markup.description('This tests for a bug where text copied with Select All + Copy would lose its color.');
+Markup.dump('div');
+
+</script>
+</body>
+</html>

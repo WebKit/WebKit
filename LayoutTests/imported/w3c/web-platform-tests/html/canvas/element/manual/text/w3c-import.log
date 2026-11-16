@@ -1,0 +1,69 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/text/canvas.2d.direction-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/text/canvas.2d.direction.dynamic-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/text/canvas.2d.direction.inherit.canvas-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/text/canvas.2d.direction.inherit.canvas.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/text/canvas.2d.direction.inherit.disconnected.canvas-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/text/canvas.2d.direction.inherit.disconnected.canvas.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/text/canvas.2d.direction.inherit.document-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/text/canvas.2d.direction.inherit.document.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/text/canvas.2d.direction.inherit.dynamic.canvas-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/text/canvas.2d.direction.inherit.dynamic.canvas.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/text/canvas.2d.direction.inherit.style-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/text/canvas.2d.direction.inherit.style.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/text/canvas.2d.disconnected-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/text/canvas.2d.disconnected-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/text/canvas.2d.disconnected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/text/canvas.2d.fontStretch-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/text/canvas.2d.fontStretch.condensed-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/text/canvas.2d.fontStretch.condensed.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/text/canvas.2d.fontStretch.expanded-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/text/canvas.2d.fontStretch.expanded.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/text/canvas.2d.fontStretch.extra-condensed-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/text/canvas.2d.fontStretch.extra-condensed.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/text/canvas.2d.fontStretch.extra-expanded-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/text/canvas.2d.fontStretch.extra-expanded.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/text/canvas.2d.fontStretch.normal-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/text/canvas.2d.fontStretch.normal.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/text/canvas.2d.fontStretch.semi-condensed-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/text/canvas.2d.fontStretch.semi-condensed.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/text/canvas.2d.fontStretch.semi-expanded-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/text/canvas.2d.fontStretch.semi-expanded.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/text/canvas.2d.fontStretch.ultra-condensed-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/text/canvas.2d.fontStretch.ultra-condensed.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/text/canvas.2d.fontStretch.ultra-expanded-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/text/canvas.2d.fontStretch.ultra-expanded.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/text/canvas.2d.lang-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/text/canvas.2d.lang-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/text/canvas.2d.lang.dynamic-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/text/canvas.2d.lang.dynamic-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/text/canvas.2d.lang.dynamic.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/text/canvas.2d.lang.empty-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/text/canvas.2d.lang.empty.canvas-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/text/canvas.2d.lang.empty.canvas.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/text/canvas.2d.lang.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/text/canvas.2d.lang.inherit-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/text/canvas.2d.lang.inherit.disconnected.canvas-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/text/canvas.2d.lang.inherit.disconnected.canvas.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/text/canvas.2d.lang.inherit.disconnected.canvas.no.lang-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/text/canvas.2d.lang.inherit.disconnected.canvas.no.lang.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/text/canvas.2d.lang.inherit.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/text/canvas.2d.unknown.lang-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/text/canvas_text_font_001-expected.htm
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/text/canvas_text_font_001-ref.htm
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/text/canvas_text_font_001.htm

@@ -1,0 +1,6 @@
+
+PASS import.meta.resolve() given an import mapped bare specifier
+PASS import.meta.resolve() given an import mapped  URL-like specifier
+PASS Testing the ToString() step of import.meta.resolve() via import maps
+PASS import(import.meta.resolve(x)) can be different from import(x)
+

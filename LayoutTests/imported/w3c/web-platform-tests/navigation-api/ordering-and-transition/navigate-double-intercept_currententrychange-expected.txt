@@ -1,0 +1,3 @@
+
+PASS event and promise ordering when navigate() is called repeatedly and handled by intercept()
+

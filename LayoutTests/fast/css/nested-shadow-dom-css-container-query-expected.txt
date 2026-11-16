@@ -1,0 +1,3 @@
+Tests CSS container queries don't break when using nested shadow DOM
+
+PASS if not crash

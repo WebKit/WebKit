@@ -1,0 +1,21 @@
+Tests 2d context non-invertible ctm
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS ctx.getTransform().toString() is "matrix(1, 0, 0, 1, 0, 0)"
+PASS ctx.getTransform().toString() is "matrix(0, 0, 0, 0, 0, 0)"
+PASS ctx.getTransform().toString() is "matrix(0, 0, 0, 0, 0, 0)"
+PASS ctx.getTransform().toString() is "matrix(0, 0, 0, 0, 0, 0)"
+PASS ctx.getTransform().toString() is "matrix(1, 0, 0, 1, 0, 0)"
+PASS ctx.getTransform().toString() is "matrix(1, 0, 0, 1, 1, 1)"
+PASS ctx.getTransform().toString() is "matrix(2147483647, 2147483648, 4294967296, -1, 65535, 536870911)"
+PASS ctx.getTransform().toString() is "matrix(2305843008139952000, 2305843009213694000, 21474836480, -5, 65535, 536870911)"
+PASS ctx.getTransform().toString() is "matrix(-2305843008139952000, -2305843009213694000, 6.1897001935445976e+26, 6.189700196426902e+26, 9.903520399599234e+27, 9.903520311977199e+27)"
+PASS ctx.getTransform().toString() is "matrix(-2305843008139952000, -2305843009213694000, 6.1897001935445976e+26, 6.189700196426902e+26, 9.903520399599234e+27, 9.903520311977199e+27)"
+PASS ctx.getTransform().toString() is "matrix(-2305843008139952000, -2305843009213694000, 6.1897001935445976e+26, 6.189700196426902e+26, 9.903520399599234e+27, 9.903520311977199e+27)"
+PASS ctx.getTransform().toString() is "matrix(2305843008139952000, 2305843009213694000, 21474836480, -5, 65535, 536870911)"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

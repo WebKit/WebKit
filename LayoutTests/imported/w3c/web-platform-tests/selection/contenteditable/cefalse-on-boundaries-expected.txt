@@ -1,0 +1,10 @@
+ 
+Lorem ipsum dolor sit amet.
+
+ 
+
+PASS Selection can start on cE=false element at the beginning of the cE=true element
+PASS Selection can end on cE=false element at the end of the cE=true element
+PASS Selection can start and end on cE=false elements at the boundaries of cE=true element
+PASS Range#selectNodeContents() correctly select contents of cE=true element with cE=false elements on boundaries
+

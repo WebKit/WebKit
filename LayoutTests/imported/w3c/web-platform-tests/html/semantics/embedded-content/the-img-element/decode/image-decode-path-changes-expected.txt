@@ -1,0 +1,10 @@
+
+PASS HTMLImageElement.prototype.decode(), src/srcset mutation tests. src changes fail decode.
+PASS HTMLImageElement.prototype.decode(), src/srcset mutation tests. src changes fail decode; following good png decode succeeds.
+PASS HTMLImageElement.prototype.decode(), src/srcset mutation tests. src changes fail decode; following good svg decode succeeds.
+PASS HTMLImageElement.prototype.decode(), src/srcset mutation tests. src changes fail decode; following bad decode fails.
+PASS HTMLImageElement.prototype.decode(), src/srcset mutation tests. src changes to the same path succeed.
+PASS HTMLImageElement.prototype.decode(), src/srcset mutation tests. srcset changes fail decode.
+PASS HTMLImageElement.prototype.decode(), src/srcset mutation tests. srcset changes fail decode; following good decode succeeds.
+PASS HTMLImageElement.prototype.decode(), src/srcset mutation tests. srcset changes fail decode; following bad decode fails.
+

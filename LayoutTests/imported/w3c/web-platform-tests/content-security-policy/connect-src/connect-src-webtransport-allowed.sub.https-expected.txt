@@ -1,0 +1,5 @@
+
+PASS CSP connect-src url vs WebTransport. Expecting undefined
+PASS CSP connect-src url vs WebTransport. Expecting connect-src
+FAIL CSP connect-src url vs serverCertificateHashes. Expecting connect-src assert_equals: expected (string) "connect-src" but got (undefined) undefined
+

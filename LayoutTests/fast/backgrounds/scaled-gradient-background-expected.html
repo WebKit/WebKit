@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <style>
+    .box {
+        position: absolute;
+        top: 50px;
+        left: 50px;
+        height: 100px;
+        width: 100px;
+        margin: 100px;
+        background-color: green;
+        border: 1px solid black;
+    }
+
+    .clipper {
+        position: absolute;
+        top: 78px;
+        left: 78px;
+        height: 205px;
+        width: 205px;
+        border: 20px solid gray;
+    }
+    </style>
+</head>
+<body>
+
+<p>Green background should not appear stripey</p>
+<div class="box" style="transform: scale(2.19)"></div>
+
+<div class="clipper"></div>
+
+</body>
+</html>

@@ -1,0 +1,7 @@
+Before shadow root
+
+After shadow root
+
+
+FAIL Test that extending Selection collapses it if crossing a shadow DOM boundary assert_equals: Selection should have exactly 1 range after extend(). expected 1 but got 0
+

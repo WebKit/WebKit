@@ -1,0 +1,110 @@
+
+FAIL Streaming setter streamHTML targeting an HTML <script> element throws NotSupportedError and preserves children assert_throws_dom: function "() => {
+        target[method]();
+      }" threw object "TypeError: target[method] is not a function. (In 'target[method]()', 'target[method]' is undefined)" that is not a DOMException NotSupportedError: property "code" is equal to undefined, expected 9
+FAIL Streaming setter streamAppendHTML targeting an HTML <script> element throws NotSupportedError and preserves children assert_throws_dom: function "() => {
+        target[method]();
+      }" threw object "TypeError: target[method] is not a function. (In 'target[method]()', 'target[method]' is undefined)" that is not a DOMException NotSupportedError: property "code" is equal to undefined, expected 9
+FAIL Streaming setter streamPrependHTML targeting an HTML <script> element throws NotSupportedError and preserves children assert_throws_dom: function "() => {
+        target[method]();
+      }" threw object "TypeError: target[method] is not a function. (In 'target[method]()', 'target[method]' is undefined)" that is not a DOMException NotSupportedError: property "code" is equal to undefined, expected 9
+FAIL Streaming setter streamHTMLUnsafe targeting an HTML <script> element throws NotSupportedError and preserves children assert_throws_dom: function "() => {
+        target[method]();
+      }" threw object "TypeError: target[method] is not a function. (In 'target[method]()', 'target[method]' is undefined)" that is not a DOMException NotSupportedError: property "code" is equal to undefined, expected 9
+FAIL Streaming setter streamAppendHTMLUnsafe targeting an HTML <script> element throws NotSupportedError and preserves children assert_throws_dom: function "() => {
+        target[method]();
+      }" threw object "TypeError: target[method] is not a function. (In 'target[method]()', 'target[method]' is undefined)" that is not a DOMException NotSupportedError: property "code" is equal to undefined, expected 9
+FAIL Streaming setter streamPrependHTMLUnsafe targeting an HTML <script> element throws NotSupportedError and preserves children assert_throws_dom: function "() => {
+        target[method]();
+      }" threw object "TypeError: target[method] is not a function. (In 'target[method]()', 'target[method]' is undefined)" that is not a DOMException NotSupportedError: property "code" is equal to undefined, expected 9
+FAIL Streaming setter streamBeforeHTML targeting an HTML <script> element throws NotSupportedError and preserves children assert_throws_dom: function "() => {
+        target[method]();
+      }" threw object "TypeError: target[method] is not a function. (In 'target[method]()', 'target[method]' is undefined)" that is not a DOMException NotSupportedError: property "code" is equal to undefined, expected 9
+FAIL Streaming setter streamAfterHTML targeting an HTML <script> element throws NotSupportedError and preserves children assert_throws_dom: function "() => {
+        target[method]();
+      }" threw object "TypeError: target[method] is not a function. (In 'target[method]()', 'target[method]' is undefined)" that is not a DOMException NotSupportedError: property "code" is equal to undefined, expected 9
+FAIL Streaming setter streamReplaceWithHTML targeting an HTML <script> element throws NotSupportedError and preserves children assert_throws_dom: function "() => {
+        target[method]();
+      }" threw object "TypeError: target[method] is not a function. (In 'target[method]()', 'target[method]' is undefined)" that is not a DOMException NotSupportedError: property "code" is equal to undefined, expected 9
+FAIL Streaming setter streamBeforeHTMLUnsafe targeting an HTML <script> element throws NotSupportedError and preserves children assert_throws_dom: function "() => {
+        target[method]();
+      }" threw object "TypeError: target[method] is not a function. (In 'target[method]()', 'target[method]' is undefined)" that is not a DOMException NotSupportedError: property "code" is equal to undefined, expected 9
+FAIL Streaming setter streamAfterHTMLUnsafe targeting an HTML <script> element throws NotSupportedError and preserves children assert_throws_dom: function "() => {
+        target[method]();
+      }" threw object "TypeError: target[method] is not a function. (In 'target[method]()', 'target[method]' is undefined)" that is not a DOMException NotSupportedError: property "code" is equal to undefined, expected 9
+FAIL Streaming setter streamReplaceWithHTMLUnsafe targeting an HTML <script> element throws NotSupportedError and preserves children assert_throws_dom: function "() => {
+        target[method]();
+      }" threw object "TypeError: target[method] is not a function. (In 'target[method]()', 'target[method]' is undefined)" that is not a DOMException NotSupportedError: property "code" is equal to undefined, expected 9
+FAIL Streaming setter streamHTML targeting an SVG <script> element throws NotSupportedError and preserves children assert_throws_dom: function "() => {
+        target[method]();
+      }" threw object "TypeError: target[method] is not a function. (In 'target[method]()', 'target[method]' is undefined)" that is not a DOMException NotSupportedError: property "code" is equal to undefined, expected 9
+FAIL Streaming setter streamAppendHTML targeting an SVG <script> element throws NotSupportedError and preserves children assert_throws_dom: function "() => {
+        target[method]();
+      }" threw object "TypeError: target[method] is not a function. (In 'target[method]()', 'target[method]' is undefined)" that is not a DOMException NotSupportedError: property "code" is equal to undefined, expected 9
+FAIL Streaming setter streamPrependHTML targeting an SVG <script> element throws NotSupportedError and preserves children assert_throws_dom: function "() => {
+        target[method]();
+      }" threw object "TypeError: target[method] is not a function. (In 'target[method]()', 'target[method]' is undefined)" that is not a DOMException NotSupportedError: property "code" is equal to undefined, expected 9
+FAIL Streaming setter streamHTMLUnsafe targeting an SVG <script> element throws NotSupportedError and preserves children assert_throws_dom: function "() => {
+        target[method]();
+      }" threw object "TypeError: target[method] is not a function. (In 'target[method]()', 'target[method]' is undefined)" that is not a DOMException NotSupportedError: property "code" is equal to undefined, expected 9
+FAIL Streaming setter streamAppendHTMLUnsafe targeting an SVG <script> element throws NotSupportedError and preserves children assert_throws_dom: function "() => {
+        target[method]();
+      }" threw object "TypeError: target[method] is not a function. (In 'target[method]()', 'target[method]' is undefined)" that is not a DOMException NotSupportedError: property "code" is equal to undefined, expected 9
+FAIL Streaming setter streamPrependHTMLUnsafe targeting an SVG <script> element throws NotSupportedError and preserves children assert_throws_dom: function "() => {
+        target[method]();
+      }" threw object "TypeError: target[method] is not a function. (In 'target[method]()', 'target[method]' is undefined)" that is not a DOMException NotSupportedError: property "code" is equal to undefined, expected 9
+FAIL Streaming setter streamBeforeHTML targeting an SVG <script> element throws NotSupportedError and preserves children assert_throws_dom: function "() => {
+        target[method]();
+      }" threw object "TypeError: target[method] is not a function. (In 'target[method]()', 'target[method]' is undefined)" that is not a DOMException NotSupportedError: property "code" is equal to undefined, expected 9
+FAIL Streaming setter streamAfterHTML targeting an SVG <script> element throws NotSupportedError and preserves children assert_throws_dom: function "() => {
+        target[method]();
+      }" threw object "TypeError: target[method] is not a function. (In 'target[method]()', 'target[method]' is undefined)" that is not a DOMException NotSupportedError: property "code" is equal to undefined, expected 9
+FAIL Streaming setter streamReplaceWithHTML targeting an SVG <script> element throws NotSupportedError and preserves children assert_throws_dom: function "() => {
+        target[method]();
+      }" threw object "TypeError: target[method] is not a function. (In 'target[method]()', 'target[method]' is undefined)" that is not a DOMException NotSupportedError: property "code" is equal to undefined, expected 9
+FAIL Streaming setter streamBeforeHTMLUnsafe targeting an SVG <script> element throws NotSupportedError and preserves children assert_throws_dom: function "() => {
+        target[method]();
+      }" threw object "TypeError: target[method] is not a function. (In 'target[method]()', 'target[method]' is undefined)" that is not a DOMException NotSupportedError: property "code" is equal to undefined, expected 9
+FAIL Streaming setter streamAfterHTMLUnsafe targeting an SVG <script> element throws NotSupportedError and preserves children assert_throws_dom: function "() => {
+        target[method]();
+      }" threw object "TypeError: target[method] is not a function. (In 'target[method]()', 'target[method]' is undefined)" that is not a DOMException NotSupportedError: property "code" is equal to undefined, expected 9
+FAIL Streaming setter streamReplaceWithHTMLUnsafe targeting an SVG <script> element throws NotSupportedError and preserves children assert_throws_dom: function "() => {
+        target[method]();
+      }" threw object "TypeError: target[method] is not a function. (In 'target[method]()', 'target[method]' is undefined)" that is not a DOMException NotSupportedError: property "code" is equal to undefined, expected 9
+FAIL streamHTML on <script> throws NotSupportedError before validating sanitizer config assert_throws_dom: function "() => {
+        script[method]({ sanitizer: { elements: ["div"], removeElements: ["div"] } });
+      }" threw object "TypeError: script[method] is not a function. (In 'script[method]({ sanitizer: { elements: ["div"], removeElements: ["div"] } })', 'script[method]' is undefined)" that is not a DOMException NotSupportedError: property "code" is equal to undefined, expected 9
+FAIL streamAppendHTML on <script> throws NotSupportedError before validating sanitizer config assert_throws_dom: function "() => {
+        script[method]({ sanitizer: { elements: ["div"], removeElements: ["div"] } });
+      }" threw object "TypeError: script[method] is not a function. (In 'script[method]({ sanitizer: { elements: ["div"], removeElements: ["div"] } })', 'script[method]' is undefined)" that is not a DOMException NotSupportedError: property "code" is equal to undefined, expected 9
+FAIL streamPrependHTML on <script> throws NotSupportedError before validating sanitizer config assert_throws_dom: function "() => {
+        script[method]({ sanitizer: { elements: ["div"], removeElements: ["div"] } });
+      }" threw object "TypeError: script[method] is not a function. (In 'script[method]({ sanitizer: { elements: ["div"], removeElements: ["div"] } })', 'script[method]' is undefined)" that is not a DOMException NotSupportedError: property "code" is equal to undefined, expected 9
+FAIL streamHTMLUnsafe on <script> throws NotSupportedError before validating sanitizer config assert_throws_dom: function "() => {
+        script[method]({ sanitizer: { elements: ["div"], removeElements: ["div"] } });
+      }" threw object "TypeError: script[method] is not a function. (In 'script[method]({ sanitizer: { elements: ["div"], removeElements: ["div"] } })', 'script[method]' is undefined)" that is not a DOMException NotSupportedError: property "code" is equal to undefined, expected 9
+FAIL streamAppendHTMLUnsafe on <script> throws NotSupportedError before validating sanitizer config assert_throws_dom: function "() => {
+        script[method]({ sanitizer: { elements: ["div"], removeElements: ["div"] } });
+      }" threw object "TypeError: script[method] is not a function. (In 'script[method]({ sanitizer: { elements: ["div"], removeElements: ["div"] } })', 'script[method]' is undefined)" that is not a DOMException NotSupportedError: property "code" is equal to undefined, expected 9
+FAIL streamPrependHTMLUnsafe on <script> throws NotSupportedError before validating sanitizer config assert_throws_dom: function "() => {
+        script[method]({ sanitizer: { elements: ["div"], removeElements: ["div"] } });
+      }" threw object "TypeError: script[method] is not a function. (In 'script[method]({ sanitizer: { elements: ["div"], removeElements: ["div"] } })', 'script[method]' is undefined)" that is not a DOMException NotSupportedError: property "code" is equal to undefined, expected 9
+FAIL streamBeforeHTML on child of <script> throws NotSupportedError before validating sanitizer config assert_throws_dom: function "() => {
+        initialChild[method]({ sanitizer: { elements: ["div"], removeElements: ["div"] } });
+      }" threw object "TypeError: initialChild[method] is not a function. (In 'initialChild[method]({ sanitizer: { elements: ["div"], removeElements: ["div"] } })', 'initialChild[method]' is undefined)" that is not a DOMException NotSupportedError: property "code" is equal to undefined, expected 9
+FAIL streamAfterHTML on child of <script> throws NotSupportedError before validating sanitizer config assert_throws_dom: function "() => {
+        initialChild[method]({ sanitizer: { elements: ["div"], removeElements: ["div"] } });
+      }" threw object "TypeError: initialChild[method] is not a function. (In 'initialChild[method]({ sanitizer: { elements: ["div"], removeElements: ["div"] } })', 'initialChild[method]' is undefined)" that is not a DOMException NotSupportedError: property "code" is equal to undefined, expected 9
+FAIL streamReplaceWithHTML on child of <script> throws NotSupportedError before validating sanitizer config assert_throws_dom: function "() => {
+        initialChild[method]({ sanitizer: { elements: ["div"], removeElements: ["div"] } });
+      }" threw object "TypeError: initialChild[method] is not a function. (In 'initialChild[method]({ sanitizer: { elements: ["div"], removeElements: ["div"] } })', 'initialChild[method]' is undefined)" that is not a DOMException NotSupportedError: property "code" is equal to undefined, expected 9
+FAIL streamBeforeHTMLUnsafe on child of <script> throws NotSupportedError before validating sanitizer config assert_throws_dom: function "() => {
+        initialChild[method]({ sanitizer: { elements: ["div"], removeElements: ["div"] } });
+      }" threw object "TypeError: initialChild[method] is not a function. (In 'initialChild[method]({ sanitizer: { elements: ["div"], removeElements: ["div"] } })', 'initialChild[method]' is undefined)" that is not a DOMException NotSupportedError: property "code" is equal to undefined, expected 9
+FAIL streamAfterHTMLUnsafe on child of <script> throws NotSupportedError before validating sanitizer config assert_throws_dom: function "() => {
+        initialChild[method]({ sanitizer: { elements: ["div"], removeElements: ["div"] } });
+      }" threw object "TypeError: initialChild[method] is not a function. (In 'initialChild[method]({ sanitizer: { elements: ["div"], removeElements: ["div"] } })', 'initialChild[method]' is undefined)" that is not a DOMException NotSupportedError: property "code" is equal to undefined, expected 9
+FAIL streamReplaceWithHTMLUnsafe on child of <script> throws NotSupportedError before validating sanitizer config assert_throws_dom: function "() => {
+        initialChild[method]({ sanitizer: { elements: ["div"], removeElements: ["div"] } });
+      }" threw object "TypeError: initialChild[method] is not a function. (In 'initialChild[method]({ sanitizer: { elements: ["div"], removeElements: ["div"] } })', 'initialChild[method]' is undefined)" that is not a DOMException NotSupportedError: property "code" is equal to undefined, expected 9
+

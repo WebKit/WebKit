@@ -1,0 +1,10 @@
+
+FAIL Missing type argument assert_throws_js: First argument (type) is required, so was expecting a TypeError. function "function() {
+        new SnapEvent();
+      }" threw object "ReferenceError: Can't find variable: SnapEvent" ("ReferenceError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL the event is an instance of SnapEvent Can't find variable: SnapEvent
+FAIL default init dict Can't find variable: SnapEvent
+FAIL event constructor type is honored Can't find variable: SnapEvent
+

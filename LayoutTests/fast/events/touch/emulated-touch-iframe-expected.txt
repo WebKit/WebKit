@@ -1,0 +1,8 @@
+
+Test touchend events are emulated in iframes correctly.
+
+touchend (test will time out if broken)
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

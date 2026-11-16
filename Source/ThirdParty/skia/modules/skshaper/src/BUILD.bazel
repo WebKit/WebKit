@@ -1,0 +1,47 @@
+load("//bazel:skia_rules.bzl", "skia_filegroup")
+
+package(
+    default_applicable_licenses = ["//:license"],
+)
+
+licenses(["notice"])
+
+skia_filegroup(
+    name = "harfbuzz_srcs",
+    srcs = ["SkShaper_harfbuzz.cpp"],
+    visibility = ["//modules/skshaper:__pkg__"],
+)
+
+skia_filegroup(
+    name = "skunicode_srcs",
+    srcs = ["SkShaper_skunicode.cpp"],
+    visibility = ["//modules/skshaper:__pkg__"],
+)
+
+skia_filegroup(
+    name = "coretext_srcs",
+    srcs = ["SkShaper_coretext.cpp"],
+    visibility = ["//modules/skshaper:__pkg__"],
+)
+
+skia_filegroup(
+    name = "base_srcs",
+    srcs = [
+        "SkShaper.cpp",
+        "SkShaper_factory.cpp",
+        "SkShaper_primitive.cpp",
+    ],
+    visibility = [
+        "//modules/skshaper:__pkg__",
+    ],
+)
+
+skia_filegroup(
+    name = "core_srcs",
+    srcs = [
+        "SkShaper.cpp",
+        "SkShaper_factory.cpp",
+        "SkShaper_primitive.cpp",
+    ],
+    visibility = ["//modules/skshaper:__pkg__"],
+)

@@ -1,0 +1,83 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ ManagedMediaSourceEnabled=true MediaSourceEnabled=true ] -->
+<html>
+<head>
+    <title>managedmediasource-resume-after-seek</title>
+    <script src="media-source-loader.js"></script>
+    <script src="../video-test.js"></script>
+    <script src="../utilities.js"></script>
+    <script>
+    var loader;
+    var source;
+    var sourceBuffer;
+    var seekTime;
+
+    function loaderPromise(loader) {
+        return new Promise((resolve, reject) => {
+            loader.onload = resolve;
+            loader.onerror = reject;
+        });
+    }
+
+    window.addEventListener('load', async event => {
+        try {
+            findMediaElement();
+
+            let manifests = [ 'content/test-opus-manifest.json', 'content/test-vorbis-manifest.json', 'content/test-48khz-manifest.json', 'content/test-xhe-aac-manifest.json' ];
+            for (const manifest of manifests) {
+                loader = new MediaSourceLoader(manifest);
+                await loaderPromise(loader);
+                if (ManagedMediaSource.isTypeSupported(loader.type()))
+                    break;
+            }
+
+            waitFor(video, 'error').then(failTest);
+
+            video.disableRemotePlayback = true;
+            source = new ManagedMediaSource();
+            run('video.src = URL.createObjectURL(source)');
+
+            await waitFor(source, 'sourceopen');
+            await waitFor(source, 'startstreaming');
+
+            run('sourceBuffer = source.addSourceBuffer(loader.type())');
+            run('sourceBuffer.appendBuffer(loader.initSegment())');
+            await waitFor(sourceBuffer, 'update');
+
+            // Make the media longer than what will ever be buffered so that a position past the
+            // buffered range is still seekable.
+            run('source.duration = 300');
+
+            // Append content until enough is buffered for the ManagedMediaSource to stop streaming.
+            const endStreaming = waitFor(source, 'endstreaming');
+            while (source.streaming) {
+                sourceBuffer.appendBuffer(loader.mediaSegment(0));
+                await once(sourceBuffer, 'update');
+                sourceBuffer.timestampOffset = sourceBuffer.buffered.end(sourceBuffer.buffered.length - 1);
+            }
+            await endStreaming;
+            testExpected('source.streaming', false);
+
+            // Seeking to a time with no buffered media must resume streaming so that the content
+            // required to complete the seek can be appended.
+            seekTime = sourceBuffer.buffered.end(0) + 30;
+            run('video.currentTime = seekTime');
+            await waitFor(source, 'startstreaming');
+            testExpected('source.streaming', true);
+            testExpected('video.seeking', true);
+
+            run('sourceBuffer.timestampOffset = seekTime');
+            run('sourceBuffer.appendBuffer(loader.mediaSegment(0))');
+            await waitFor(video, 'seeked');
+            testExpected('video.currentTime >= seekTime', true);
+
+            endTest();
+        } catch (e) {
+            failTest(`Caught exception: "${e}"`);
+        }
+    });
+    </script>
+</head>
+<body>
+    <video controls></video>
+</body>
+</html>

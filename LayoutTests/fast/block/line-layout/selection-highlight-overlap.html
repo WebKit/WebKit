@@ -1,0 +1,11 @@
+<style>
+    body { font-size: 64px; font-family: ahem; color: transparent; }
+    div { outline: 1px dashed green; }
+    div::selection { background-color: rgba(0, 0, 255, .4); }
+</style>
+<div id="start" style="line-height: 30px;">queue theory</div>
+<div>problem</div>
+<div id="end" style="margin-top: -10px;">information</div>
+<script>
+	getSelection().setBaseAndExtent(document.getElementById("start").firstChild, 2, document.getElementById("end").firstChild, 4);
+</script>

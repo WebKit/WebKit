@@ -1,0 +1,16 @@
+
+PASS observer.rootMargin using 'px'
+PASS observer.scrollMargin using 'px'
+PASS observer.rootMargin using 'cm'
+PASS observer.scrollMargin using 'cm'
+PASS observer.rootMargin using 'mm'
+PASS observer.scrollMargin using 'mm'
+PASS observer.rootMargin using 'q'
+PASS observer.scrollMargin using 'q'
+PASS observer.rootMargin using 'in'
+PASS observer.scrollMargin using 'in'
+PASS observer.rootMargin using 'pt'
+PASS observer.scrollMargin using 'pt'
+PASS observer.rootMargin using 'pc'
+PASS observer.scrollMargin using 'pc'
+

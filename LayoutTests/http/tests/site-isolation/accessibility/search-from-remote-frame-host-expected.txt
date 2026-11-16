@@ -1,0 +1,15 @@
+Tests that a search whose start element is the element hosting an out-of-process frame,
+sent to that same host, returns nothing rather than the frame.
+
+PASS: !!frameHost === true
+PASS: search(frameHost, null, true, 1) === '[remote element]'
+PASS: search(frameHost, frameHost, true, 1) === '[]'
+PASS: search(frameHost, frameHost, true, 20) === '[]'
+PASS: search(frameHost, frameHost, false, 1) === '[]'
+PASS: search(webArea, frameHost, true, 1) === '[AXButton "After"]'
+PASS: search(webArea, frameHost, false, 1) === '[AXButton "Before"]'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Before  After

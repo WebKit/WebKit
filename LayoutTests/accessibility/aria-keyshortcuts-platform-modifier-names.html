@@ -1,0 +1,75 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+<button id="meta" aria-keyshortcuts="Meta+Shift+M">a</button>
+<button id="alt" aria-keyshortcuts="Alt+Shift+M">b</button>
+<button id="control" aria-keyshortcuts="Control+Shift+X">c</button>
+<button id="alt-graph" aria-keyshortcuts="AltGraph+Q">d</button>
+<button id="multiple-shortcuts" aria-keyshortcuts="meta+k Alt+P">e</button>
+<button id="hyphen-delimited" aria-keyshortcuts="Alt-Q">f</button>
+<button id="space-delimited" aria-keyshortcuts="Shift Q">g</button>
+<button id="surrounding-whitespace" aria-keyshortcuts=" Shift Plus Q ">h</button>
+<button id="empty-key" aria-keyshortcuts="Meta++Q">i</button>
+<button id="modifier-name-prefix" aria-keyshortcuts="Metadata+Alternate+Q">j</button>
+<button id="dynamic">k</button>
+
+<script>
+var output = "This test ensures the platform-neutral aria-keyshortcuts modifier names Meta and Alt are exposed with the names printed on Apple keyboards.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    var metaButton = accessibilityController.accessibleElementById("meta");
+    var altButton = accessibilityController.accessibleElementById("alt");
+    var controlButton = accessibilityController.accessibleElementById("control");
+    var altGraphButton = accessibilityController.accessibleElementById("alt-graph");
+    var multipleShortcutsButton = accessibilityController.accessibleElementById("multiple-shortcuts");
+    var hyphenDelimitedButton = accessibilityController.accessibleElementById("hyphen-delimited");
+    var spaceDelimitedButton = accessibilityController.accessibleElementById("space-delimited");
+    var surroundingWhitespaceButton = accessibilityController.accessibleElementById("surrounding-whitespace");
+    var emptyKeyButton = accessibilityController.accessibleElementById("empty-key");
+    var modifierNamePrefixButton = accessibilityController.accessibleElementById("modifier-name-prefix");
+    var dynamicButton = accessibilityController.accessibleElementById("dynamic");
+
+    output += expect("metaButton.stringAttributeValue('AXKeyShortcutsValue')", "'Command+Shift+M'");
+    output += expect("altButton.stringAttributeValue('AXKeyShortcutsValue')", "'Option+Shift+M'");
+
+    output += "\nModifiers Apple keyboards label the same way are left alone.\n";
+    output += expect("controlButton.stringAttributeValue('AXKeyShortcutsValue')", "'Control+Shift+X'");
+    output += expect("altGraphButton.stringAttributeValue('AXKeyShortcutsValue')", "'AltGraph+Q'");
+
+    output += "\nEvery shortcut in a space-delimited list is mapped, and key names match case-insensitively.\n";
+    output += expect("multipleShortcutsButton.stringAttributeValue('AXKeyShortcutsValue')", "'Command+k Option+P'");
+
+    output += "\nMalformed shortcuts are passed through as authored. Only whole key names are renamed, so\n";
+    output += "neither Alt-Q nor Metadata+Alternate+Q is rewritten.\n";
+    output += expect("hyphenDelimitedButton.stringAttributeValue('AXKeyShortcutsValue')", "'Alt-Q'");
+    output += expect("spaceDelimitedButton.stringAttributeValue('AXKeyShortcutsValue')", "'Shift Q'");
+    output += expect("surroundingWhitespaceButton.stringAttributeValue('AXKeyShortcutsValue')", "' Shift Plus Q '");
+    output += expect("emptyKeyButton.stringAttributeValue('AXKeyShortcutsValue')", "'Command++Q'");
+    output += expect("modifierNamePrefixButton.stringAttributeValue('AXKeyShortcutsValue')", "'Metadata+Alternate+Q'");
+
+    setTimeout(async function() {
+        output += "\nSet aria-keyshortcuts to Alt+Meta+Z for #dynamic\n";
+        document.getElementById("dynamic").setAttribute("aria-keyshortcuts", "Alt+Meta+Z");
+        output += await expectAsync("dynamicButton.stringAttributeValue('AXKeyShortcutsValue')", "'Option+Command+Z'");
+
+        output += "\nUpdate aria-keyshortcuts to Meta+Shift+Z for #dynamic\n";
+        document.getElementById("dynamic").setAttribute("aria-keyshortcuts", "Meta+Shift+Z");
+        output += await expectAsync("dynamicButton.stringAttributeValue('AXKeyShortcutsValue')", "'Command+Shift+Z'");
+
+        output += "\nUpdate aria-keyshortcuts to a newline-delimited list for #dynamic\n";
+        document.getElementById("dynamic").setAttribute("aria-keyshortcuts", "Meta+K\nAlt+P");
+        output += await expectAsync("dynamicButton.stringAttributeValue('AXKeyShortcutsValue')", "'Command+K\\nOption+P'");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

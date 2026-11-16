@@ -1,0 +1,42 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[% INCLUDE global/header.html.tmpl title = "Your Linkified Text" %]
+[% USE Bugzilla %]
+[% cgi = Bugzilla.cgi %]
+
+<p>
+  Copy and paste the text below:
+</p>
+
+<hr>
+
+<p>
+<pre class="bz_comment_text">
+[%- cgi.param("text") FILTER quoteUrls FILTER html -%]
+</pre>
+</p>
+
+<hr>
+
+<p>
+  If you place it in <code>&lt;pre&gt;</code> tags,
+  the text will end up looking like this:
+</p>
+
+<hr>
+
+<p>
+<pre class="bz_comment_text">
+[%- cgi.param("text") FILTER quoteUrls -%]
+</pre>
+</p>
+
+<hr>
+
+[% INCLUDE global/footer.html.tmpl %]

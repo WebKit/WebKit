@@ -1,0 +1,8 @@
+Test that audio session is deactivated when the last media element with audio is deleted.
+
+** iframe loaded.
+EVENT(playing)
+EXPECTED (internals.audioSessionActive() == 'true') OK
+EXPECTED (internals.audioSessionActive() == 'false') OK
+END OF TEST
+

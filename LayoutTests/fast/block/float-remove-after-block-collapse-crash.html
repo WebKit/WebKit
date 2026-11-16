@@ -1,0 +1,44 @@
+<style>
+body, div, span, ol, li {
+  -webkit-column-break-inside: avoid;
+  border-bottom-style: groove;
+  break-after: column;
+}
+
+#x5 {
+  float: left;
+}
+
+:scope { 
+  columns: 40;
+  writing-mode: vertical-lr;
+}
+
+:empty { 
+  float: left;
+  list-style: url(data:image/gif;base64,++==)
+}
+</style>
+<script>
+window.testRunner?.dumpAsText();
+
+function main() {
+  document.body.offsetHeight;
+  x1.scrollAmount = 10;
+  x10.reportValidity();
+  
+  document.body.offsetHeight;
+  x57.setAttribute("reversed","");
+  
+  document.body.offsetHeight;
+  document.styleSheets[0].media.appendMedium("print (foobar)");
+}
+</script>
+<body onload="main()">
+<div><div> </div><span> </span></div>
+<marquee id="x1" scrollamount="0"> </marquee>
+<span id="x5"><span><div></div></span></span>
+<textarea id="x10" required="">
+</textarea>
+PASS if no crash or assert.<div><li> </li>A</div>
+<ol id="x57"> <li></li></ol>

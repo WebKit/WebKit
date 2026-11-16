@@ -1,0 +1,2 @@
+Test that a simple animation on an element with a layer doesn't generate compositing updates.
+compositingUpdateCount: 0

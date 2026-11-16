@@ -1,0 +1,20 @@
+Tests that page and frame targets tell which process they run in.
+
+
+
+== Running test suite: SiteIsolation.Target.ProcessIdentifier
+-- Running test case: SiteIsolation.Target.ProcessIdentifier.FrameTargets
+PASS: Should find the main frame's target.
+PASS: Should find the same-site frame's target.
+PASS: Should find the cross-origin frame's target.
+PASS: Every frame target should have a process identifier.
+PASS: Every frame target's process identifier should match the process in its target ID.
+PASS: The same-site frame should share the main frame's process identifier.
+PASS: The cross-origin frame should not share the main frame's process identifier.
+PASS: The page target should share the main frame's process identifier.
+
+-- Running test case: SiteIsolation.Target.ProcessIdentifier.ProvisionalFrameTarget
+PASS: Should find the cross-origin frame's target.
+PASS: The provisional frame target should share the process identifier of the other frame from its site.
+PASS: The provisional frame target should commit.
+

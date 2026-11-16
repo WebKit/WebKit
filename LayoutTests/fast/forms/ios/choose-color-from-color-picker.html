@@ -1,0 +1,28 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+        <script src="../../../resources/js-test.js"></script>
+        <script src="../../../resources/ui-helper.js"></script>
+    </head>
+<body>
+    <input type="color" id="input"/>
+</body>
+<script>
+jsTestIsAsync = true;
+
+addEventListener("load", async () => {
+    description("This test verifies that tapping a color input and selecting a color using the color picker updates element's value.");
+
+    shouldBeEqualToString("input.value", "#000000");
+
+    input.addEventListener("change", () => {
+        shouldBeEqualToString("input.value", "#ff0000");
+        finishJSTest();
+    });
+
+    await UIHelper.activateFormControl(input);
+    await UIHelper.setSelectedColorForColorPicker(1, 0, 0);
+});
+</script>
+</html>

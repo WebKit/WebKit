@@ -1,0 +1,49 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+        <script src="../../../resources/js-test.js"></script>
+        <script src="../../../resources/ui-helper.js"></script>
+    </head>
+<body>
+<select multiple id="select">
+    <option>A</option>
+    <option>B</option>
+    <option>C</option>
+    <hr>
+    <option>D</option>
+    <option>E</option>
+</select>
+</body>
+<script>
+jsTestIsAsync = true;
+
+function valuesForSelectElement(element)
+{
+    return Array.from(element.selectedOptions).map(o => o.value).toString();
+}
+
+async function selectRowAndAssertValues(row, values)
+{
+    await UIHelper.ensurePresentationUpdate();
+    await UIHelper.selectFormAccessoryPickerRow(row);
+    await UIHelper.ensurePresentationUpdate();
+
+    selectValues = valuesForSelectElement(select);
+    shouldBeEqualToString("selectValues", values);
+}
+
+addEventListener("load", async () => {
+    description("This test verifies that choosing options in a &lt;select multiple&gt; with an &lt;hr&gt; child works as expected.");
+
+    selectValues = valuesForSelectElement(select);
+    shouldBeEqualToString("selectValues", "");
+
+    await UIHelper.activateElement(select);
+    await selectRowAndAssertValues(3, "D");
+    await selectRowAndAssertValues(4, "D,E");
+
+    finishJSTest();
+});
+</script>
+</html>

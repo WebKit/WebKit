@@ -1,0 +1,30 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true AsyncFrameScrollingEnabled=true ] -->
+<!DOCTYPE html>
+<html class="reftest-wait">
+<meta charset="utf-8">
+<title>A cross-site frame in the scrolled-to part of a same-site frame paints</title>
+<script src="/js-test-resources/ui-helper.js"></script>
+<script src="../resources/frame-geometry-test.js"></script>
+<style>
+body { margin: 0 }
+#child {
+    position: absolute;
+    left: 200px;
+    top: 100px;
+    width: 300px;
+    height: 250px;
+    border: 0;
+}
+</style>
+<body>
+<iframe id="child" src="http://127.0.0.1:8000/site-isolation/resources/frame-geometry-scrolled-child-same-site-with-green-grandchild.html?label=child"></iframe>
+<script>
+addEventListener("load", async () => {
+    await waitForExposedRect("grandchild", rect => !rect.isEmpty);
+    await UIHelper.ensurePresentationUpdate();
+    await UIHelper.renderingUpdate();
+    document.documentElement.classList.remove("reftest-wait");
+});
+</script>
+</body>
+</html>

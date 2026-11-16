@@ -1,0 +1,19 @@
+CONSOLE MESSAGE: The language '-sl' is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: The language 'zhHant' is not a valid BCP 47 language tag.
+Test that TextTrackBase.validBCP47Language is set and reset correctly.
+
+
+EXPECTED (internals.textTrackBCP47Language(track1.track) == 'zh') OK
+EXPECTED (track1.track.language == 'zh') OK
+EXPECTED (internals.textTrackBCP47Language(track1.track) == 'zh-Hant') OK
+EXPECTED (track1.track.language == 'zh-Hant') OK
+EXPECTED (internals.textTrackBCP47Language(track1.track) == '') OK
+EXPECTED (track1.track.language == 'zhHant') OK
+EXPECTED (internals.textTrackBCP47Language(track1.track) == 'zh-cmn-Hans-CN') OK
+EXPECTED (track1.track.language == 'zh-cmn-Hans-CN') OK
+EXPECTED (internals.textTrackBCP47Language(track2.track) == '') OK
+EXPECTED (track2.track.language == '-sl') OK
+EXPECTED (internals.textTrackBCP47Language(track2.track) == 'sl-rozaj-biske') OK
+EXPECTED (track2.track.language == 'sl-rozaj-biske') OK
+END OF TEST
+

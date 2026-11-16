@@ -1,0 +1,17 @@
+
+PASS Mutations in a removed subtree are observed until mutation observers are notified
+PASS Attribute mutations in a removed subtree are observed until mutation observers are notified
+PASS Mutations in a subtree removed by replaceChildren() are observed until mutation observers are notified
+PASS takeRecords() does not stop observing a removed subtree
+PASS A removed subtree is no longer observed after mutation observers are notified
+PASS A removed subtree is no longer observed after mutation observers are notified, even if no record was queued
+PASS A removed subtree is no longer observed after mutation observers are notified, even if the callback was not invoked
+PASS A subtree removed from a removed subtree is no longer observed after mutation observers are notified
+PASS Removing a node from an observed subtree queues the mutation observer microtask
+PASS disconnect() stops observing a removed subtree
+PASS disconnect() stops observing a subtree removed from a removed subtree
+PASS disconnect() does not affect another observer observing a removed subtree
+PASS observe() stops observing a removed subtree through the target, but not through other targets
+PASS observe() stops observing subtrees removed from a removed subtree
+PASS observe() on a node in a removed subtree keeps observing it after mutation observers are notified
+

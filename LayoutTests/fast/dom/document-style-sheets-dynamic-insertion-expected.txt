@@ -1,0 +1,12 @@
+This tests inserting a style element dynamically. document.styleSheets should immediately list the element.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS document.styleSheets.length is 1
+PASS document.head.appendChild(styleElement); document.styleSheets.length is 2
+PASS styleElement.sheet is document.styleSheets[1]
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

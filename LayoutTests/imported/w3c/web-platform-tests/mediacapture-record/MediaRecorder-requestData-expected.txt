@@ -1,0 +1,8 @@
+
+PASS requestData() immediately after start() fires dataavailable with empty data for video
+PASS requestData() immediately after start() fires dataavailable with empty data for audio
+PASS requestData() immediately after start() fires dataavailable with empty data for audio/video
+FAIL requestData() after onstart fires dataavailable with non-empty data for video assert_greater_than: requestData() after onstart should produce non-empty blob expected a number greater than 0 but got 0
+FAIL requestData() after onstart fires dataavailable with non-empty data for audio assert_greater_than: requestData() after onstart should produce non-empty blob expected a number greater than 0 but got 0
+FAIL requestData() after onstart fires dataavailable with non-empty data for audio/video assert_greater_than: requestData() after onstart should produce non-empty blob expected a number greater than 0 but got 0
+

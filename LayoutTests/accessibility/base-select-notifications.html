@@ -1,0 +1,58 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+<style>
+select, select::picker(select) {
+    appearance: base-select;
+}
+</style>
+</head>
+<body>
+
+<select id="select">
+    <option>Alpha</option>
+    <option selected>Bravo</option>
+    <option>Charlie</option>
+</select>
+
+<script>
+var output = "This test verifies accessibility notifications for base-appearance selects (appearance: base-select).\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    var select = accessibilityController.accessibleElementById("select");
+
+    setTimeout(async function() {
+        select.press();
+        output += await expectAsync("select.isExpanded", "true");
+        select.press();
+        output += await expectAsync("select.isExpanded", "false");
+
+        output += expect("select.stringValue.includes('Bravo')", "true");
+
+        // Verify we post a notification when the selected item changes.
+        window.receivedNotification = false;
+        function listener(notification) {
+            if (notification == "AXMenuItemSelected")
+                window.receivedNotification = true;
+        }
+        select.addNotificationListener(listener);
+
+        document.getElementById("select").selectedIndex = 2;
+
+        output += await expectAsync("window.receivedNotification", "true");
+        // We should not have to await this change -- the stringValue should be right at notification time.
+        output += expect("select.stringValue.includes('Charlie')", "true");
+
+        select.removeNotificationListener(listener);
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

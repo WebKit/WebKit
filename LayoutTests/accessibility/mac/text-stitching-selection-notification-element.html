@@ -1,0 +1,50 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN"><!-- webkit-test-runner [ AccessibilityTextStitchingEnabled=true ] -->
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<p>Hello <b>World</b> and then some more text.</p>
+
+<script>
+var output = "This test ensures that when the caret moves (via the accessibility selection API) into a stitched-away text run, the AXSelectedTextChanged notification reports the stitch-group representative, which is present in the tree, rather than the removed member. Otherwise an assistive technology client can be handed an element that is absent from its parent's children, which may cause navigation problems.\n\n";
+
+var webArea;
+var changeElement;
+
+function notificationCallback(notification, userInfo) {
+    if (notification != "AXSelectedTextChanged" || !userInfo)
+        return;
+
+    changeElement = userInfo["AXTextChangeElement"];
+    if (!changeElement)
+        return;
+
+    // The caret was set inside the stitched-away "World" member. The reported change element must
+    // be the stitch-group representative, whose value spans the whole run ("Hello World and then
+    // some more text."), not the "World" member alone (which stitching removed from its parent's
+    // exposed children).
+    output += expect("changeElement.role.includes('AXStaticText')", "true");
+    output += expect("changeElement.stringValue.includes('and then some more text')", "true");
+
+    webArea.removeNotificationListener();
+    debug(output);
+    finishJSTest();
+}
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+    accessibilityController.enableEnhancedAccessibility(true);
+
+    webArea = accessibilityController.rootElement.childAtIndex(0);
+    output += expect("webArea.addNotificationListener(notificationCallback)", "true");
+
+    // Move the caret into the stitched-away "World" run ("Hello Wo|rld ...", index 8).
+    var marker = webArea.textMarkerForIndex(8);
+    webArea.setSelectedTextMarkerRange(webArea.textMarkerRangeForMarkers(marker, marker));
+}
+</script>
+</body>
+</html>

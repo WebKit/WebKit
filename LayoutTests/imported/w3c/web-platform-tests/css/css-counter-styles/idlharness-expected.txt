@@ -1,0 +1,39 @@
+
+PASS idl_test setup
+PASS idl_test validation
+PASS Partial interface CSSRule: original interface defined
+PASS Partial interface CSSRule: member names are unique
+PASS CSSCounterStyleRule interface: existence and properties of interface object
+PASS CSSCounterStyleRule interface object length
+PASS CSSCounterStyleRule interface object name
+PASS CSSCounterStyleRule interface: existence and properties of interface prototype object
+PASS CSSCounterStyleRule interface: existence and properties of interface prototype object's "constructor" property
+PASS CSSCounterStyleRule interface: existence and properties of interface prototype object's @@unscopables property
+PASS CSSCounterStyleRule interface: attribute name
+PASS CSSCounterStyleRule interface: attribute system
+PASS CSSCounterStyleRule interface: attribute symbols
+PASS CSSCounterStyleRule interface: attribute additiveSymbols
+PASS CSSCounterStyleRule interface: attribute negative
+PASS CSSCounterStyleRule interface: attribute prefix
+PASS CSSCounterStyleRule interface: attribute suffix
+PASS CSSCounterStyleRule interface: attribute range
+PASS CSSCounterStyleRule interface: attribute pad
+PASS CSSCounterStyleRule interface: attribute speakAs
+PASS CSSCounterStyleRule interface: attribute fallback
+PASS CSSCounterStyleRule must be primary interface of counter
+PASS Stringification of counter
+PASS CSSCounterStyleRule interface: counter must inherit property "name" with the proper type
+PASS CSSCounterStyleRule interface: counter must inherit property "system" with the proper type
+PASS CSSCounterStyleRule interface: counter must inherit property "symbols" with the proper type
+PASS CSSCounterStyleRule interface: counter must inherit property "additiveSymbols" with the proper type
+PASS CSSCounterStyleRule interface: counter must inherit property "negative" with the proper type
+PASS CSSCounterStyleRule interface: counter must inherit property "prefix" with the proper type
+PASS CSSCounterStyleRule interface: counter must inherit property "suffix" with the proper type
+PASS CSSCounterStyleRule interface: counter must inherit property "range" with the proper type
+PASS CSSCounterStyleRule interface: counter must inherit property "pad" with the proper type
+PASS CSSCounterStyleRule interface: counter must inherit property "speakAs" with the proper type
+PASS CSSCounterStyleRule interface: counter must inherit property "fallback" with the proper type
+PASS CSSRule interface: counter must inherit property "COUNTER_STYLE_RULE" with the proper type
+PASS CSSRule interface: constant COUNTER_STYLE_RULE on interface object
+PASS CSSRule interface: constant COUNTER_STYLE_RULE on interface prototype object
+

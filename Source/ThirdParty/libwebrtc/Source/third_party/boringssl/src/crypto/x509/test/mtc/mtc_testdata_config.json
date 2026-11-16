@@ -1,0 +1,232 @@
+{
+  "Version": "plants-07",
+  "ID": "32473.1",
+  "LogNumber": 1,
+  "Cosigners": [
+    {
+      "CosignerID": "32473.1",
+      "SignatureAlgorithm": "mldsa44",
+      "PrivateKey": "MDQCAQAwCwYJYIZIAWUDBAMRBCKAIAABAgMEBQYHCAkKCwwNDg8QERITFBUWFxgZGhscHR4f"
+    },
+    {
+      "CosignerID": "32473.2.1",
+      "SignatureAlgorithm": "ecdsa_p256_sha256",
+      "PrivateKey": "MIGHAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBG0wawIBAQQgthrguld6LZNJw6UMbhyTkML7u3BMcdEyomQIwB+N2o6hRANCAAR6nKeTu+M2OxL7HCjH/i0+lnIx7OE0b3DnXWVue+5TBVDq8aG6KqFq+xprV5ll6QtPJb+TTBp+Kv1IRpDxMpxt"
+    },
+    {
+      "CosignerID": "32473.2.2",
+      "SignatureAlgorithm": "mldsa65",
+      "PrivateKey": "MDQCAQAwCwYJYIZIAWUDBAMSBCKAIAABAgMEBQYHCAkKCwwNDg8QERITFBUWFxgZGhscHR4f"
+    }
+  ],
+  "CACert": {
+    "NotBefore": "2020-01-01T00:00:00Z",
+    "NotAfter": "2030-12-31T23:59:59Z",
+    "IsCA": true,
+    "KeyUsage": ["CertSign"],
+    "//0": "MinSerial and MaxSerial are set to exclude some of the certs specified below, to exercise serial number checking.",
+    "MinSerial": {"Log": 1, "Index": 8},
+    "MaxSerial": {"Log": 1, "Index": 4096}
+  },
+  "Entries": [
+    {
+      "Repeat": 2,
+      "PublicKey": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEyxiC16lts+SOL87OwHhGDzK9/dyUd7sM80jAf53VL+AV38HoHKpmA7LJoYLf4yVhcVleNcxufsAfcPueTLX0Vg==",
+      "NotBefore": "2020-01-01T00:00:00Z",
+      "NotAfter": "2030-12-31T23:59:59Z",
+      "DNSNames": ["a.example"],
+      "KeyUsage": ["DigitalSignature"],
+      "ExtKeyUsage": ["ServerAuth"]
+    },
+    {
+      "//0": "This cert is invalid because it falls under minSerial for the CA.",
+      "PublicKey": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEyxiC16lts+SOL87OwHhGDzK9/dyUd7sM80jAf53VL+AV38HoHKpmA7LJoYLf4yVhcVleNcxufsAfcPueTLX0Vg==",
+      "NotBefore": "2020-01-01T00:00:00Z",
+      "NotAfter": "2030-12-31T23:59:59Z",
+      "DNSNames": ["z.example"],
+      "KeyUsage": ["DigitalSignature"],
+      "ExtKeyUsage": ["ServerAuth"],
+      "Certificates": [
+        {"SubtreeStart": 0, "SubtreeEnd": 4, "Cosigners": ["32473.1"]}
+      ]
+    },
+    {
+      "Repeat": 7,
+      "PublicKey": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEyxiC16lts+SOL87OwHhGDzK9/dyUd7sM80jAf53VL+AV38HoHKpmA7LJoYLf4yVhcVleNcxufsAfcPueTLX0Vg==",
+      "NotBefore": "2020-01-01T00:00:00Z",
+      "NotAfter": "2030-12-31T23:59:59Z",
+      "DNSNames": ["a.example"],
+      "KeyUsage": ["DigitalSignature"],
+      "ExtKeyUsage": ["ServerAuth"]
+    },
+    {
+      "PublicKey": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEyxiC16lts+SOL87OwHhGDzK9/dyUd7sM80jAf53VL+AV38HoHKpmA7LJoYLf4yVhcVleNcxufsAfcPueTLX0Vg==",
+      "NotBefore": "2020-01-01T00:00:00Z",
+      "NotAfter": "2030-12-31T23:59:59Z",
+      "DNSNames": ["b.example", "*.blah.b.example"],
+      "KeyUsage": ["DigitalSignature"],
+      "ExtKeyUsage": ["ServerAuth"],
+      "Checkpoints": ["fast"],
+      "Certificates": [
+        {"Checkpoint": "fast", "Cosigners": ["32473.1", "32473.2.1", "32473.2.2"]},
+        {"SubtreeStart": 8, "SubtreeEnd": 16, "Cosigners": ["32473.1", "32473.2.2"]}
+      ]
+    },
+    {
+      "Null": true
+    },
+    {
+      "Repeat": 10,
+      "PublicKey": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEyxiC16lts+SOL87OwHhGDzK9/dyUd7sM80jAf53VL+AV38HoHKpmA7LJoYLf4yVhcVleNcxufsAfcPueTLX0Vg==",
+      "NotBefore": "2020-01-01T00:00:00Z",
+      "NotAfter": "2030-12-31T23:59:59Z",
+      "DNSNames": ["c.example"],
+      "KeyUsage": ["DigitalSignature"],
+      "ExtKeyUsage": ["ServerAuth"]
+    },
+    {
+      "Repeat": 10,
+      "Null": true
+    },
+    {
+      "PublicKey": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEyxiC16lts+SOL87OwHhGDzK9/dyUd7sM80jAf53VL+AV38HoHKpmA7LJoYLf4yVhcVleNcxufsAfcPueTLX0Vg==",
+      "Subject": {"CommonName": "No extensions and a common name"},
+      "NotBefore": "2020-01-01T00:00:00Z",
+      "NotAfter": "2030-12-31T23:59:59Z",
+      "Certificates": [
+        {"Checkpoint": "fast", "Cosigners": ["32473.1", "32473.2.1", "32473.2.2"]}
+      ]
+    },
+    {
+      "PublicKey": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEyxiC16lts+SOL87OwHhGDzK9/dyUd7sM80jAf53VL+AV38HoHKpmA7LJoYLf4yVhcVleNcxufsAfcPueTLX0Vg==",
+      "NotBefore": "2020-01-01T00:00:00Z",
+      "NotAfter": "2030-12-31T23:59:59Z",
+      "DNSNames": ["d.example"],
+      "KeyUsage": ["DigitalSignature"],
+      "ExtKeyUsage": ["ServerAuth"],
+      "Checkpoints": ["fast"],
+      "//0": "The first two certs specified below are valid. The next 8 exercise various error cases.",
+      "//1": "The last cert is valid. It has an empty cosignature from an unrecognized cosigner, which must be ignored.",
+      "Certificates": [
+        {"Checkpoint": "fast", "Cosigners": ["32473.1", "32473.2.1", "32473.2.2"]},
+        {"SubtreeStart": 32, "SubtreeEnd": 64, "Cosigners": ["32473.1"]},
+        {"SubtreeStart": 32, "SubtreeEnd": 64, "Cosigners": ["32473.1"], "BitFlipProof": true},
+        {"SubtreeStart": 32, "SubtreeEnd": 64, "Cosigners": ["32473.1"], "UnusedBit": true},
+        {"SubtreeStart": 32, "SubtreeEnd": 64, "Cosigners": ["32473.2.2"]},
+        {"SubtreeStart": 32, "SubtreeEnd": 64, "Cosigners": ["32473.2.2", "32473.1"], "DontSortCosigners": true},
+        {"SubtreeStart": 32, "SubtreeEnd": 64, "Cosigners": ["32473.1", "32473.1", "32473.2.2"], "DontSortCosigners": true},
+        {"SubtreeStart": 32, "SubtreeEnd": 64, "Cosigners": ["32473.1", "32473.2.2", "32473.2.2"], "DontSortCosigners": true},
+        {"SubtreeStart": 32, "SubtreeEnd": 64, "Cosigners": ["32473.1"], "OverrideSignatureAlgorithm": "MAsGCWCGSAFlAwQDEQ=="},
+        {"SubtreeStart": 32, "SubtreeEnd": 64, "Cosigners": ["32473.1"], "OverrideTBSSignatureAlgorithm": "MAsGCWCGSAFlAwQDEQ=="},
+        {"SubtreeStart": 32, "SubtreeEnd": 64, "Cosigners": ["32473.1"], "OverrideSignatureAlgorithm": "MAwGCisGAQQBgtpLLwA=", "OverrideTBSSignatureAlgorithm": "MAwGCisGAQQBgtpLLwA="},
+        {"SubtreeStart": 32, "SubtreeEnd": 64, "Cosigners": ["32473.1"], "ExtraCosignatures": [{"CosignerID": "32473.2.99", "Signature": ""}]}
+      ]
+    },
+    {
+      "//0": "Well-formed MTCEntryExtensions of unrecognized types 1 and 2, which are ignored: 0001 0000 0002 0001 ff",
+      "MTCEntryExtensions": "AAEAAAACAAH/",
+      "PublicKey": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEyxiC16lts+SOL87OwHhGDzK9/dyUd7sM80jAf53VL+AV38HoHKpmA7LJoYLf4yVhcVleNcxufsAfcPueTLX0Vg==",
+      "NotBefore": "2020-01-01T00:00:00Z",
+      "NotAfter": "2030-12-31T23:59:59Z",
+      "DNSNames": ["a.example"],
+      "KeyUsage": ["DigitalSignature"],
+      "ExtKeyUsage": ["ServerAuth"],
+      "Certificates": [
+        {"SubtreeStart": 32, "SubtreeEnd": 64, "Cosigners": ["32473.1"]}
+      ]
+    },
+    {
+      "//0": "Invalid because MTCEntryExtensions is truncated: 0001 0005 ff",
+      "MTCEntryExtensions": "AAEABf8=",
+      "PublicKey": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEyxiC16lts+SOL87OwHhGDzK9/dyUd7sM80jAf53VL+AV38HoHKpmA7LJoYLf4yVhcVleNcxufsAfcPueTLX0Vg==",
+      "NotBefore": "2020-01-01T00:00:00Z",
+      "NotAfter": "2030-12-31T23:59:59Z",
+      "DNSNames": ["a.example"],
+      "KeyUsage": ["DigitalSignature"],
+      "ExtKeyUsage": ["ServerAuth"],
+      "Certificates": [
+        {"SubtreeStart": 32, "SubtreeEnd": 64, "Cosigners": ["32473.1"]}
+      ]
+    },
+    {
+      "//0": "Invalid because MTCEntryExtensions has a duplicate type: 0001 0000 0001 0000",
+      "MTCEntryExtensions": "AAEAAAABAAA=",
+      "PublicKey": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEyxiC16lts+SOL87OwHhGDzK9/dyUd7sM80jAf53VL+AV38HoHKpmA7LJoYLf4yVhcVleNcxufsAfcPueTLX0Vg==",
+      "NotBefore": "2020-01-01T00:00:00Z",
+      "NotAfter": "2030-12-31T23:59:59Z",
+      "DNSNames": ["a.example"],
+      "KeyUsage": ["DigitalSignature"],
+      "ExtKeyUsage": ["ServerAuth"],
+      "Certificates": [
+        {"SubtreeStart": 32, "SubtreeEnd": 64, "Cosigners": ["32473.1"]}
+      ]
+    },
+    {
+      "//0": "Invalid because MTCEntryExtensions types are in descending order: 0002 0000 0001 0000",
+      "MTCEntryExtensions": "AAIAAAABAAA=",
+      "PublicKey": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEyxiC16lts+SOL87OwHhGDzK9/dyUd7sM80jAf53VL+AV38HoHKpmA7LJoYLf4yVhcVleNcxufsAfcPueTLX0Vg==",
+      "NotBefore": "2020-01-01T00:00:00Z",
+      "NotAfter": "2030-12-31T23:59:59Z",
+      "DNSNames": ["a.example"],
+      "KeyUsage": ["DigitalSignature"],
+      "ExtKeyUsage": ["ServerAuth"],
+      "Certificates": [
+        {"SubtreeStart": 32, "SubtreeEnd": 64, "Cosigners": ["32473.1"]}
+      ]
+    },
+    {
+      "Repeat": 1996,
+      "Subject": {"CommonName": "Some more filler certificates"},
+      "PublicKey": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEyxiC16lts+SOL87OwHhGDzK9/dyUd7sM80jAf53VL+AV38HoHKpmA7LJoYLf4yVhcVleNcxufsAfcPueTLX0Vg==",
+      "NotBefore": "2020-01-01T00:00:00Z",
+      "NotAfter": "2030-12-31T23:59:59Z"
+    },
+    {
+      "PublicKey": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEyxiC16lts+SOL87OwHhGDzK9/dyUd7sM80jAf53VL+AV38HoHKpmA7LJoYLf4yVhcVleNcxufsAfcPueTLX0Vg==",
+      "NotBefore": "2020-01-01T00:00:00Z",
+      "NotAfter": "2030-12-31T23:59:59Z",
+      "Subject": {
+        "CommonName": "https://github.com/ietf-plants-wg/merkle-tree-certs/issues/146"
+      },
+      "DNSNames": ["e.example"],
+      "KeyUsage": ["CertSign"],
+      "IsCA": true,
+      "MaxPathLen": 5,
+      "Certificates": [
+        {"Checkpoint": "fast", "Cosigners": ["32473.1", "32473.2.1", "32473.2.2"]}
+      ]
+    },
+    {
+      "PublicKey": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEyxiC16lts+SOL87OwHhGDzK9/dyUd7sM80jAf53VL+AV38HoHKpmA7LJoYLf4yVhcVleNcxufsAfcPueTLX0Vg==",
+      "NotBefore": "2020-01-01T00:00:00Z",
+      "NotAfter": "2030-12-31T23:59:59Z",
+      "DNSNames": ["e.example"],
+      "KeyUsage": ["DigitalSignature"],
+      "ExtKeyUsage": ["ServerAuth"],
+      "Checkpoints": ["fast"],
+      "Certificates": [
+        {"Checkpoint": "fast", "Cosigners": ["32473.1", "32473.2.1", "32473.2.2"]}
+      ]
+    },
+    {
+      "Repeat": 3000,
+      "Subject": {"CommonName": "Some more filler certificates"},
+      "PublicKey": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEyxiC16lts+SOL87OwHhGDzK9/dyUd7sM80jAf53VL+AV38HoHKpmA7LJoYLf4yVhcVleNcxufsAfcPueTLX0Vg==",
+      "NotBefore": "2020-01-01T00:00:00Z",
+      "NotAfter": "2030-12-31T23:59:59Z"
+    },
+    {
+      "//0": "This cert is invalid because it falls above maxSerial for the CA.",
+      "PublicKey": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEyxiC16lts+SOL87OwHhGDzK9/dyUd7sM80jAf53VL+AV38HoHKpmA7LJoYLf4yVhcVleNcxufsAfcPueTLX0Vg==",
+      "NotBefore": "2020-01-01T00:00:00Z",
+      "NotAfter": "2030-12-31T23:59:59Z",
+      "DNSNames": ["f.example"],
+      "KeyUsage": ["DigitalSignature"],
+      "ExtKeyUsage": ["ServerAuth"],
+      "Checkpoints": ["fast"],
+      "Certificates": [
+        {"Checkpoint": "fast", "Cosigners": ["32473.1"]}
+      ]
+    }
+  ]
+}

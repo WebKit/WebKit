@@ -1,0 +1,2 @@
+Typing "ABC * DEF" should not trigger smart-list conversion because the "* " marker is not at the start of a line.
+| "ABC * DEF<#selection-caret>"

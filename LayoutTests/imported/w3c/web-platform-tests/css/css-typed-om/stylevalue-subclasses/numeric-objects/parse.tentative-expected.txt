@@ -1,0 +1,13 @@
+
+PASS Parsing an invalid string throws SyntaxError
+PASS Parsing a string with a non numeric token throws SyntaxError
+PASS Parsing a string with left over numeric tokens throws SyntaxError
+PASS Parsing a calc with incompatible units throws a SyntaxError
+PASS Parsing a <dimension-token> with invalid units throws a SyntaxError
+PASS Parsing ignores surrounding spaces
+PASS Parsing min() is successful
+PASS Parsing max() is successful
+PASS Parsing clamp() is successful
+PASS Parsing sum of multiple min() is successful
+PASS Parsing product of multiple min() is successful
+

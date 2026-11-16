@@ -1,0 +1,38 @@
+
+<html>
+<head>
+    <title>Poster should continue to display after first video frame is available</title>
+    <script src=video-test.js></script>
+    <script src=media-file.js></script>
+    <script>
+
+        window.addEventListener('load', async () => {
+            failTestIn(15000);
+
+            findMediaElement();
+
+            video.src = findMediaFile("video", "content/test");
+            video.poster = 'content/greenbox.png';
+
+            if (window.internals)
+                await testExpectedEventually('internals.elementShouldDisplayPosterImage(video)', true);
+
+            await waitFor(video, 'canplaythrough');
+
+            if (window.internals)
+                await testExpectedEventually('internals.elementShouldDisplayPosterImage(video)', true);
+
+            video.currentTime = video.duration / 2;
+
+            if (window.internals)
+                await testExpectedEventually('internals.elementShouldDisplayPosterImage(video)', false);
+
+            endTest();
+        });
+
+    </script>
+</head>
+<body>
+    <video controls preload=auto width=320></video>
+</body>
+</html>

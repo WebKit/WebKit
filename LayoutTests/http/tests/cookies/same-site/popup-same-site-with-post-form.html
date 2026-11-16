@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<script src="/js-test-resources/testharness.js"></script>
+<script src="/js-test-resources/testharnessreport.js"></script>
+<script src="../resources/testharness-helpers.js"></script>
+<script>
+promise_test(async t => {
+    const data = await openPopupAndTriggerPost("about:blank");
+    assert_equals(data.http[LAX_DOM], "1", "lax");
+    assert_equals(data.http[NORMAL_DOM], "1", "normal");
+    assert_equals(data.http[STRICT_DOM], "1", "strict");
+}, "popup opened as 'about:blank', then post navigation to 127.0.0.1, so samesite cookies are sent.");
+
+promise_test(async t => {
+    const data = await openPopupAndTriggerPost("http://127.0.0.1:8000");
+    assert_equals(data.http[LAX_DOM], "1", "lax");
+    assert_equals(data.http[NORMAL_DOM], "1", "normal");
+    assert_equals(data.http[STRICT_DOM], "1", "strict");
+}, "popup opened as '127.0.0.1', then post navigation to 127.0.0.1, so samesite cookies are sent.");
+
+promise_test(async t => {
+    const data = await loadPopupThenTriggerPost();
+    assert_equals(data.http[LAX_DOM], "1", "lax");
+    assert_equals(data.http[NORMAL_DOM], "1", "normal");
+    assert_equals(data.http[STRICT_DOM], "1", "strict");
+}, "popup loaded as '127.0.0.1', then post navigation to 127.0.0.1, so samesite cookies are sent.");
+</script>

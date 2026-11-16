@@ -1,0 +1,46 @@
+[
+    {
+        "action": {
+            "type": "css-display-none",
+            "selector": ".hidden1"
+        },
+        "trigger": {
+            "url-filter": "css-display-none-after-ignore-"
+        }
+    },
+    {
+        "action": {
+            "type": "css-display-none",
+            "selector": ".hidden2"
+        },
+        "trigger": {
+            "url-filter": "after-ignore-previous-rules.html"
+        }
+    },
+    {
+        "action": {
+            "type": "ignore-previous-rules"
+        },
+        "trigger": {
+            "url-filter": "css-display-none-after-ignore-previous-rules\\.html$"
+        }
+    },
+    {
+        "action": {
+            "type": "css-display-none",
+            "selector": ".hidden3"
+        },
+        "trigger": {
+            "url-filter": "css-display-none-after-ignore-"
+        }
+    },
+    {
+        "action": {
+            "type": "css-display-none",
+            "selector": ".hidden4"
+        },
+        "trigger": {
+            "url-filter": "css-display-none-after-ignore-previous-rules\\.html$"
+        }
+    }
+]

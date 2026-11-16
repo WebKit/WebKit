@@ -1,0 +1,36 @@
+
+PASS [["formatblock","p"]] "<div><p contenteditable=false><span contenteditable>[foo]</span></p></div>" compare innerHTML
+PASS [["formatblock","p"]] "<div><p contenteditable=false><span contenteditable>[foo]</span></p></div>" queryCommandIndeterm("formatblock") before
+PASS [["formatblock","p"]] "<div><p contenteditable=false><span contenteditable>[foo]</span></p></div>" queryCommandState("formatblock") before
+PASS [["formatblock","p"]] "<div><p contenteditable=false><span contenteditable>[foo]</span></p></div>" queryCommandValue("formatblock") before
+PASS [["formatblock","p"]] "<div><p contenteditable=false><span contenteditable>[foo]</span></p></div>" queryCommandIndeterm("formatblock") after
+PASS [["formatblock","p"]] "<div><p contenteditable=false><span contenteditable>[foo]</span></p></div>" queryCommandState("formatblock") after
+PASS [["formatblock","p"]] "<div><p contenteditable=false><span contenteditable>[foo]</span></p></div>" queryCommandValue("formatblock") after
+FAIL [["formatblock","div"]] "<div><div contenteditable=false><p contenteditable>[foo]</p></div></div>": execCommand("formatblock", false, "div") return value assert_equals: expected false but got true
+PASS [["formatblock","div"]] "<div><div contenteditable=false><p contenteditable>[foo]</p></div></div>" checks for modifications to non-editable content
+FAIL [["formatblock","div"]] "<div><div contenteditable=false><p contenteditable>[foo]</p></div></div>" compare innerHTML assert_equals: Unexpected innerHTML (after normalizing inline style) expected "<div><div contenteditable=\"false\"><p contenteditable=\"\">foo</p></div></div>" but got "<div><div contenteditable=\"false\"><p contenteditable=\"\"><div>foo</div></p></div></div>"
+PASS [["formatblock","div"]] "<div><div contenteditable=false><p contenteditable>[foo]</p></div></div>" queryCommandIndeterm("formatblock") before
+PASS [["formatblock","div"]] "<div><div contenteditable=false><p contenteditable>[foo]</p></div></div>" queryCommandState("formatblock") before
+PASS [["formatblock","div"]] "<div><div contenteditable=false><p contenteditable>[foo]</p></div></div>" queryCommandValue("formatblock") before
+PASS [["formatblock","div"]] "<div><div contenteditable=false><p contenteditable>[foo]</p></div></div>" queryCommandIndeterm("formatblock") after
+PASS [["formatblock","div"]] "<div><div contenteditable=false><p contenteditable>[foo]</p></div></div>" queryCommandState("formatblock") after
+FAIL [["formatblock","div"]] "<div><div contenteditable=false><p contenteditable>[foo]</p></div></div>" queryCommandValue("formatblock") after assert_equals: Wrong result returned expected "" but got "div"
+PASS [["formatblock","p"]] "<div><div contenteditable=false><div contenteditable>[foo]</div></div></div>": execCommand("formatblock", false, "p") return value
+PASS [["formatblock","p"]] "<div><div contenteditable=false><div contenteditable>[foo]</div></div></div>" checks for modifications to non-editable content
+PASS [["formatblock","p"]] "<div><div contenteditable=false><div contenteditable>[foo]</div></div></div>" compare innerHTML
+PASS [["formatblock","p"]] "<div><div contenteditable=false><div contenteditable>[foo]</div></div></div>" queryCommandIndeterm("formatblock") before
+PASS [["formatblock","p"]] "<div><div contenteditable=false><div contenteditable>[foo]</div></div></div>" queryCommandState("formatblock") before
+PASS [["formatblock","p"]] "<div><div contenteditable=false><div contenteditable>[foo]</div></div></div>" queryCommandValue("formatblock") before
+PASS [["formatblock","p"]] "<div><div contenteditable=false><div contenteditable>[foo]</div></div></div>" queryCommandIndeterm("formatblock") after
+PASS [["formatblock","p"]] "<div><div contenteditable=false><div contenteditable>[foo]</div></div></div>" queryCommandState("formatblock") after
+PASS [["formatblock","p"]] "<div><div contenteditable=false><div contenteditable>[foo]</div></div></div>" queryCommandValue("formatblock") after
+PASS [["formatblock","div"]] "<div><div contenteditable=false><div contenteditable>[foo]</div></div></div>": execCommand("formatblock", false, "div") return value
+PASS [["formatblock","div"]] "<div><div contenteditable=false><div contenteditable>[foo]</div></div></div>" checks for modifications to non-editable content
+PASS [["formatblock","div"]] "<div><div contenteditable=false><div contenteditable>[foo]</div></div></div>" compare innerHTML
+PASS [["formatblock","div"]] "<div><div contenteditable=false><div contenteditable>[foo]</div></div></div>" queryCommandIndeterm("formatblock") before
+PASS [["formatblock","div"]] "<div><div contenteditable=false><div contenteditable>[foo]</div></div></div>" queryCommandState("formatblock") before
+PASS [["formatblock","div"]] "<div><div contenteditable=false><div contenteditable>[foo]</div></div></div>" queryCommandValue("formatblock") before
+PASS [["formatblock","div"]] "<div><div contenteditable=false><div contenteditable>[foo]</div></div></div>" queryCommandIndeterm("formatblock") after
+PASS [["formatblock","div"]] "<div><div contenteditable=false><div contenteditable>[foo]</div></div></div>" queryCommandState("formatblock") after
+PASS [["formatblock","div"]] "<div><div contenteditable=false><div contenteditable>[foo]</div></div></div>" queryCommandValue("formatblock") after
+

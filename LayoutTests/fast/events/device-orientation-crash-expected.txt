@@ -1,0 +1,1 @@
+PASS: handler not supported or did not crash when removing Windows during ondeviceorientation event

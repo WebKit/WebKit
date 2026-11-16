@@ -1,0 +1,60 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<div id="test-content">
+    <button type="button" id="controller1" commandfor="mypopover" command="toggle-popover">Controller 1</button>
+    <button type="button" id="controller2" commandfor="mypopover" command="show-popover">Controller 2</button>
+    <div id="extra" aria-controls="mypopover" role="button">Extra controller</div>
+
+    <span id="popover-label">Popover Label</span>
+    <div id="mypopover" popover aria-labelledby="popover-label">Popover content</div>
+</div>
+
+<script>
+var output = "This test ensures we don't crash when a popover controller is removed from the DOM and the popover is immediately removed afterwards.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    // Step 1: Touch the accessibility tree to ensure AX objects exist for everything.
+    touchAccessibilityTree(accessibilityController.rootElement);
+
+    setTimeout(async () => {
+        // Show the popover so that hiding it (via removal) triggers onPopoverToggle.
+        document.getElementById("mypopover").showPopover();
+        await waitFor(() => {
+            return document.getElementById("mypopover").matches(":popover-open");
+        });
+        output += "PASS: Popover is open.\n";
+
+        // Step 2: Remove one of the controllers and dirty the aria-labelledby
+        // relationship at the same time. This modifies the DOM tree and the tree
+        // scope's ID-to-element ordered map while relations are still cached.
+        document.getElementById("controller1").remove();
+        document.getElementById("popover-label").id = "popover-label-changed";
+
+        // Step 3: Immediately remove the popover. This triggers hidePopoverInternal
+        // during removedFromAncestor, which calls onPopoverToggle -> controllers() ->
+        // relatedObjectIDsFor -> updateRelationsForTree. The relation update walks the
+        // tree and resolves ID-based attributes (aria-controls, commandfor,
+        // aria-labelledby, etc.) via getElementById. The tree scope's ordered map can
+        // be inconsistent at this point, which previously caused a crash.
+        document.getElementById("mypopover").remove();
+
+        // Step 4: Touch the accessibility tree again to verify no crash.
+        touchAccessibilityTree(accessibilityController.rootElement);
+
+        output += "PASS: No crash after removing a popover controller and then the popover.\n";
+        debug(output);
+        document.getElementById("test-content").style.display = "none";
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

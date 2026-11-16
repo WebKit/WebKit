@@ -1,0 +1,6 @@
+
+PASS The iframe's document lays out again when the zoom changes from 0.5 to 1 but the iframe's box does not
+PASS The iframe's document lays out again when the zoom changes from 0.5 to 2 but the iframe's box does not
+PASS The iframe's document follows a zoom change made while the iframe was not rendered
+PASS A zoomed iframe does not fire a resize event when it loads
+

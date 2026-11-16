@@ -1,0 +1,14 @@
+
+When changing the source for a video, we shouldn't get duplicate in-band tracks.
+
+EVENT(canplaythrough)
+
+** Storing number of tracks and reloading video
+EXPECTED (video.textTracks.length > '0') OK
+RUN(numTracks = video.textTracks.length)
+EVENT(canplaythrough)
+
+** Loaded video again, checking if tracks number is the same
+EXPECTED (video.textTracks.length == 'numTracks') OK
+END OF TEST
+

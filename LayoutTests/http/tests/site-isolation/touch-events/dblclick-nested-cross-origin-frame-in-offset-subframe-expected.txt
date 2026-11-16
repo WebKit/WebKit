@@ -1,0 +1,10 @@
+A dblclick from a double tap on a cross-origin iframe that is nested inside an offset same-site subframe must reach the iframe. Regression test for the same double-counted-offset hazard as tap-nested-cross-origin-frame-in-offset-subframe.html, but for the forwarded dblclick dispatch.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS The nested cross-origin iframe received the dblclick.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

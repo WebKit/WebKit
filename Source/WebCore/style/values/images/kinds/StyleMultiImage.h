@@ -1,0 +1,108 @@
+/*
+ * Copyright (C) 2000 Lars Knoll (knoll@kde.org)
+ *           (C) 2000 Antti Koivisto (koivisto@kde.org)
+ *           (C) 2000 Dirk Mueller (mueller@kde.org)
+ * Copyright (C) 2003-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2020 Noam Rosenthal (noam@webkit.org)
+ * Copyright (C) 2026 Samuel Weinig <sam@webkit.org>
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public License
+ * along with this library; see the file COPYING.LIB.  If not, write to
+ * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ * Boston, MA 02110-1301, USA.
+ *
+ */
+
+#pragma once
+
+#include "StyleImage.h"
+#include "StyleInvalidImage.h"
+#include "StylePrimitiveNumeric.h"
+#include "StyleString.h"
+#include <wtf/TZoneMalloc.h>
+
+namespace WebCore {
+
+class Document;
+
+namespace Style {
+
+struct ImageWithResolution {
+    RefPtr<Image> image { InvalidImage::create() };
+    Style::Resolution<> resolution { 1 };
+    std::optional<FunctionNotation<CSSValueID::Type, Style::String>> mimeType;
+
+    bool operator==(const ImageWithResolution& other) const
+    {
+        return image == other.image && resolution == other.resolution;
+    }
+};
+
+class MultiImage : public Image {
+    WTF_MAKE_TZONE_ALLOCATED(MultiImage);
+public:
+    virtual ~MultiImage();
+
+protected:
+    MultiImage(Type);
+
+    bool equals(const MultiImage& other) const;
+
+    virtual ImageWithResolution selectBestFitImage(const Document&) = 0;
+    NODELETE WebCore::CachedImage* cachedImage() const final;
+
+private:
+    NODELETE WrappedImagePtr data() const final;
+
+    bool canRender(const RenderElement*) const final;
+    bool isPending() const final { return m_isPending; }
+    void load(CachedResourceLoader&, const ResourceLoaderOptions&) final;
+    bool isLoaded(const RenderElement*) const final;
+    NODELETE bool errorOccurred() const final;
+    bool hasDecodedImage() const final;
+    NaturalDimensions naturalDimensions(const RenderElement&, const ImageSizingContext&) const final;
+    ImageRenditionOptions renditionOptionsForRenderer(const RenderElement&, ImageRenditionOptions) const override;
+    void addClient(RenderElement&) final;
+    void removeClient(RenderElement&) final;
+    bool hasClient(RenderElement&) const final;
+    ImageDrawResult draw(GraphicsContext&, const RenderElement&, const ImageDrawDescriptor&, const FloatRect& destination, const FloatRect& source, bool isForFirstLine) const final;
+    ImageDrawResult drawAsPattern(GraphicsContext&, const RenderElement&, const ImageDrawDescriptor&, const FloatRect& destination, const FloatRect& tile, const AffineTransform&, const FloatPoint& phase, const FloatSize& spacing, bool isForFirstLine) const final;
+    ImageDrawResult drawTiled(GraphicsContext&, const RenderElement&, const ImageDrawDescriptor&, const FloatRect& destination, const FloatPoint& phase, const FloatSize& tileSize, const FloatSize& spacing, bool isForFirstLine) const final;
+    ImageDrawResult drawNinePiece(GraphicsContext&, const RenderElement&, const ImageDrawDescriptor&, const NinePieceGeometry&) const final;
+    RefPtr<NativeImage> nativeImage(const RenderElement&, const ImageDrawDescriptor&, float resolutionScale) const final;
+    bool currentFrameIsComplete(const RenderElement*) const final;
+    std::optional<IntPoint> hotSpot() const final;
+    Resolution<> imageResolution() const final;
+    bool knownToBeOpaque(const RenderElement&) const final;
+    bool canDraw(const RenderElement&) const final;
+    bool containsCurrentColor() const final;
+    bool canDrawAtSize(const RenderElement&, const FloatSize&) const final;
+    bool drawsSVGImage() const final;
+    WTF::String accessibilityDescription() const final;
+    bool isAnimated() const final;
+    void startAnimation() final;
+    void stopAnimation() final;
+    void clearAnimationOverride() final;
+    void resetAnimation() final;
+    DecodingMode decodingModeForImageDraw(const RenderBoxModelObject&, const PaintInfo&) const final;
+    InterpolationQuality interpolationQualityForImageDraw(GraphicsContext&, const RenderElement&, ConcreteObjectSize, const void* layer, const LayoutSize&) const final;
+    FloatRect mapChangedRectToSource(const RenderElement&, ConcreteObjectSize, const FloatRect& changedRect) const final;
+    const Image* selectedImage() const final { return m_selectedImage.get(); }
+    Image* selectedImage() final { return m_selectedImage.get(); }
+
+    RefPtr<Image> m_selectedImage;
+    bool m_isPending { true };
+};
+
+} // namespace Style
+} // namespace WebCore

@@ -1,0 +1,4 @@
+
+PASS Screen size is unchanged during element fullscreen
+FAIL Screen size is unchanged during tab-capture element fullscreen assert_equals: expected "browser" but got "monitor"
+

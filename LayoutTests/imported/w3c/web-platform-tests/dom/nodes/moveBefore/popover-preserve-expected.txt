@@ -1,0 +1,4 @@
+Popover
+
+PASS when reparenting an open popover, it shouldn't be closed automatically
+

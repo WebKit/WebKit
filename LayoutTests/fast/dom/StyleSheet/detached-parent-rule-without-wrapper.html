@@ -1,0 +1,25 @@
+<html>
+<head>
+<style>
+@media all { #test { color: green; } }
+</style>
+<script src="../../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<div id="test"></div>
+<script>
+description("Test that CSS stylesheets lacking wrappers are pruned from detached CSSOM subtrees. " + 
+"This is surprising behavior, but it's a very rare situation, and the behavior actually matches " +
+"what both WebKit and Gecko do for DOM nodes in detached subtrees.");
+
+let rules = document.getElementsByTagName("style")[0].sheet.rules;
+shouldBe('rules.length', '1');
+rule = rules[0];
+rules = null;
+debug("Removing &lt;style>...");
+document.getElementsByTagName("style")[0].remove();
+shouldBe("rule.parentRule", "null");
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

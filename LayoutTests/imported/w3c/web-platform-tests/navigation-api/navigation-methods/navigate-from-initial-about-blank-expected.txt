@@ -1,0 +1,4 @@
+
+
+PASS navigate() from <iframe> still on initial about:blank works
+

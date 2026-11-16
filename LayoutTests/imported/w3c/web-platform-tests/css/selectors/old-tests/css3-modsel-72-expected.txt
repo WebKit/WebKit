@@ -1,0 +1,5 @@
+This paragraph should have a green background and there should be no red anywhere.
+
+
+PASS NEGATED :root pseudo-class
+

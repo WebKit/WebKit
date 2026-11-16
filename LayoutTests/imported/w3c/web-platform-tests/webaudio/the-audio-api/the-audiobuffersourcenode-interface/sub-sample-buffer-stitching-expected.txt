@@ -1,0 +1,4 @@
+
+PASS buffer-stitching-1
+PASS buffer-stitching-2
+

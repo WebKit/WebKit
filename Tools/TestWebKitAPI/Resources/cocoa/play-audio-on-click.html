@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        div {
+            width: 400px;
+            height: 400px;
+            background-color: red;
+        }
+        body {
+            margin: 0;
+        }
+    </style>
+    <script>
+        var audio;
+
+        function playFirstTrack()
+        {
+            audio = document.createElement("audio");
+            audio.src = "video-with-audio.mp4";
+            audio.id = "first";
+            audio.onplaying = audioPlayingHandler("first");
+            audio.onended = playSecondTrack;
+            audio.play();
+        }
+
+        function playSecondTrack()
+        {
+            audio = document.createElement("audio");
+            audio.src = "large-video-with-audio.mp4";
+            audio.id = "second";
+            audio.onplaying = audioPlayingHandler("second");
+            audio.play();
+        }
+
+        function seekToEnd()
+        {
+            audio.currentTime = audio.duration - 0.5;
+        }
+
+        function audioPlayingHandler(id)
+        {
+            return function() {
+                try {
+                    window.webkit.messageHandlers.testHandler.postMessage("playing-" + id);
+                } catch(e) {}
+            }
+        }
+    </script>
+</head>
+<body>
+    <div onmousedown=playFirstTrack()>Click me to start playing!</div>
+</body>
+</html>

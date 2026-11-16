@@ -1,0 +1,30 @@
+<style></style>
+<script>
+testRunner?.dumpAsText();
+testRunner?.waitUntilDone();
+(async () => {
+  const styleSheet = document.styleSheets[0];
+  styleSheet.disabled = true;
+  styleSheet.insertRule(`:where(*) { display: table-cell; }`);
+
+  const audio = document.createElement('audio');
+  document.documentElement.append(audio);
+  audio.controls = true;
+  audio.focus({ preventScroll: true });
+
+  await new Promise((resolve) => setTimeout(resolve));
+
+  styleSheet.insertRule(`audio { content: linear-gradient(red, blue rem(562pt, 7.86dvmin)) }`, styleSheet.length);
+  document.execCommand('SelectAll');
+  styleSheet.disabled = false;
+  getSelection().extend(document.documentElement);
+  document.designMode = 'on';
+  document.execCommand('FontSize', false, '6');
+
+  // The following is just to reduce noise in the output.
+  await new Promise(resolve => requestAnimationFrame(resolve));
+  styleSheet.disabled = true;
+  testRunner?.notifyDone();
+})();
+</script>
+<p>This test passes if it doesn't crash.</p>

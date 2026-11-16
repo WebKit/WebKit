@@ -1,0 +1,14 @@
+Test that the toneMapping member of CanvasRenderingContext2DSettings is unsupported when CanvasColorTypeEnabled=false.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS testSettings.toneMapping is undefined.
+PASS testSettings.toneMapping is undefined.
+PASS testSettings.toneMapping is undefined.
+PASS testSettings.toneMapping is undefined.
+PASS testSettings.toneMapping is undefined.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

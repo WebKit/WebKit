@@ -1,0 +1,46 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script>
+var successfullyParsed = false;
+</script>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<ul role="tree" id="tree1">
+<li role="treeitem" aria-expanded="false" aria-label="Projects" tabindex="0">
+  <div id="projects">Projects</div>
+  <ul role="group">
+    <li role="treeitem" style="display: none;">project-1.docx</li>
+  </ul>
+</li>
+<li role="treeitem" aria-expanded="true" aria-label="Reports" tabindex="0">
+  <div id="reports">Reports</div>
+  <ul role="group">
+    <li role="treeitem" id="treeitem1" style="display: block;">report-1.docx</li>
+  </ul>
+</ul>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that the expanded status of a treeitem is exposed to its unignored children.");
+
+    if (window.accessibilityController) {
+
+        var treeitem1 = accessibilityController.accessibleElementById("projects");
+        var treeitem2 = accessibilityController.accessibleElementById("reports");
+        shouldBeFalse("treeitem1.isExpanded");
+        shouldBeTrue("treeitem2.isExpanded");
+    }
+
+    successfullyParsed = true;
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>
+

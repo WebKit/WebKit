@@ -1,0 +1,27 @@
+RUN(internals.settings.setInlineMediaPlaybackRequiresPlaysInlineAttribute(true))
+RUN(video.playsInline = false)
+EVENT(canplaythrough)
+RUN(video.play())
+EVENT(playing)
+EXPECTED (internals.isChangingPresentationMode(video) == 'false') OK
+EXPECTED (video.webkitDisplayingFullscreen == 'true') OK
+RUN(internals.settings.setInlineMediaPlaybackRequiresPlaysInlineAttribute(true))
+RUN(video.playsInline = true)
+EVENT(canplaythrough)
+RUN(video.play())
+EVENT(playing)
+EXPECTED (video.webkitDisplayingFullscreen == 'false') OK
+RUN(internals.settings.setInlineMediaPlaybackRequiresPlaysInlineAttribute(false))
+RUN(video.playsInline = false)
+EVENT(canplaythrough)
+RUN(video.play())
+EVENT(playing)
+EXPECTED (video.webkitDisplayingFullscreen == 'false') OK
+RUN(internals.settings.setInlineMediaPlaybackRequiresPlaysInlineAttribute(false))
+RUN(video.playsInline = true)
+EVENT(canplaythrough)
+RUN(video.play())
+EVENT(playing)
+EXPECTED (video.webkitDisplayingFullscreen == 'false') OK
+END OF TEST
+

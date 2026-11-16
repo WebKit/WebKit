@@ -1,0 +1,17 @@
+<style>
+#container { 
+  text-wrap: nowrap;
+  white-space-collapse: preserve-breaks;
+}
+</style><div id=container><div id=content>PASS if
+ this content is fully visible</div></div>
+<script>
+document.body.offsetHeight;
+content.remove();
+
+document.body.offsetHeight;
+container.style.whiteSpace = "normal";
+let same_content = document.createElement("div");
+same_content.appendChild(document.createTextNode("PASS if\n this content is fully visible"));
+container.appendChild(same_content);
+</script>

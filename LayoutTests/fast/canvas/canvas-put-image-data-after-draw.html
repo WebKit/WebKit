@@ -1,0 +1,14 @@
+<body style="margin:0">
+<canvas id="a"></canvas>
+<canvas id="b"></canvas>
+<script>
+const imageData = new ImageData(300, 150);
+imageData.data.forEach((item, index) => {
+    imageData.data[index] = 128;
+});
+const ctxA = a.getContext('2d');
+const ctxB = b.getContext('2d');
+ctxB.drawImage(a, 0, 0);
+ctxA.putImageData(imageData, 0, 0); // This should not affect canvas b.
+</script>
+</body>

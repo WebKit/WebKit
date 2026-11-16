@@ -1,0 +1,21 @@
+<style>
+html {
+    padding: 100%;
+    scroll-snap-type: x;
+}
+::-webkit-scrollbar {
+    background: #000;
+}
+::-webkit-scrollbar-button {
+    scroll-snap-align: center;
+}
+</style>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+onload = () => {
+    document.body.offsetTop;
+    document.body.dir = 'rtl';
+};
+</script>
+<p>This test passes if it does not crash</p>

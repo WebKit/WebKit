@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>media-source-play-zero-playbackrate</title>
+    <meta name="timeout" content="long">
+    <script src="media-source-loader.js"></script>
+    <script src="../video-test.js"></script>
+    <script>
+    var loader;
+    var source;
+    var sourceBuffer;
+    var oldPosition;
+
+    function loaderPromise(loader) {
+        return new Promise((resolve, reject) => {
+            loader.onload = resolve;
+            loader.onerror = reject;
+        });
+    }
+
+    window.addEventListener('load', async event => {
+        findMediaElement();
+
+        loader = new MediaSourceLoader('content/test-fragmented-manifest.json');
+        await loaderPromise(loader);
+
+        source = new MediaSource();
+        run('video.src = URL.createObjectURL(source)');
+        await waitFor(source, 'sourceopen');
+        waitFor(video, 'error').then(failTest);
+
+        run('sourceBuffer = source.addSourceBuffer(loader.type())');
+        run('sourceBuffer.appendBuffer(loader.initSegment())');
+        await waitFor(sourceBuffer, 'update');
+
+        consoleWrite('<br>Append all media segments')
+        for (i = 0; i < loader.mediaSegmentsLength(); i++) {
+            sourceBuffer.appendBuffer(loader.mediaSegment(i));
+            await waitFor(sourceBuffer, 'update', true);
+        }
+
+        consoleWrite('<br>RUN(video.play())')
+        await video.play();
+        testExpected('video.paused', false);
+        run('video.pause()');
+        testExpected('video.paused', true);
+        run('video.playbackRate = 0');
+        testExpected('video.playbackRate', 0);
+        consoleWrite('RUN(video.play())')
+        await video.play();
+        testExpected('video.paused', false);
+        // To deal with cached position shaenanigans.
+        await sleepFor(500);
+        oldPosition = video.currentTime;
+        await sleepFor(500);
+        testExpected('video.currentTime == oldPosition', true);
+
+        consoleWrite('')
+        run('video.playbackRate = 1');
+        testExpected('video.playbackRate', 1);
+        testExpected('video.paused', false);
+        await sleepFor(500);
+        testExpected('video.currentTime > oldPosition', true);
+        oldPosition = video.currentTime;
+        run('video.playbackRate = 0');
+        testExpected('video.playbackRate', 0);
+        run('video.pause()');
+        await sleepFor(500);
+        testExpected('video.currentTime == oldPosition', true);
+        run('video.playbackRate = 1');
+        testExpected('video.playbackRate', 1);
+        consoleWrite('RUN(video.play())')
+        await video.play();
+        await sleepFor(500);
+        testExpected('video.currentTime > oldPosition', true);
+
+        consoleWrite('')
+        run('video.currentTime = 5');
+        testExpected('video.currentTime', 5, '>=');
+        await sleepFor(5);
+        run('video.playbackRate = 0');
+        testExpected('video.playbackRate', 0);
+        await sleepFor(500);
+        oldPosition = video.currentTime;
+        await sleepFor(500);
+        testExpected('video.currentTime == oldPosition', true);
+
+        endTest();
+    });
+
+    </script>
+</head>
+<body>
+    <video controls></video>
+</body>
+</html>

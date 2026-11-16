@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<body style="margin: 0; width: 200px; height: 200px; background-color: green;">
+<script>
+let eventsReceived = [];
+
+async function addActiveTouchStartListener()
+{
+    internals.startTrackingRenderingUpdates();
+    document.body.addEventListener("touchstart", event => {
+        eventsReceived.push((event.cancelable ? "cancelable " : "") + event.type);
+    }, { passive: false });
+
+    // Adding the listener should schedule a rendering update in this process by itself, so wait for one
+    // without forcing it.
+    for (let i = 0; i < 25 && !internals.renderingUpdateCount(); ++i)
+        await new Promise(resolve => setTimeout(resolve, 20));
+    return internals.renderingUpdateCount() > 0;
+}
+
+addEventListener("message", async event => {
+    if (event.data == "addActiveTouchStartListener")
+        event.source.postMessage(await addActiveTouchStartListener(), "*");
+    else if (event.data == "getEventsReceived")
+        event.source.postMessage(eventsReceived.join(", ") || "none", "*");
+});
+</script>
+</body>
+</html>

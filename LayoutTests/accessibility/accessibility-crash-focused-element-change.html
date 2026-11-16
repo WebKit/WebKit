@@ -1,0 +1,32 @@
+<!DOCTYPE HTML>
+
+<body onload=jsfuzzer()>
+PASS if no crash.
+<script>
+
+if (window.accessibilityController) {
+    var button = accessibilityController.focusedElement;
+}
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+}
+
+function jsfuzzer() {
+    var a;
+     //trigger garbage collector
+    for(var i=0; i<100; i++) {
+        a = new Uint8Array(1024*1024);
+    }
+    document.implementation.createHTMLDocument("doc");
+}
+
+function eventhandler() {
+    try { htmlvar00007.remove(); } catch(e) { }
+}
+</script>
+
+<select id="htmlvar00007" onblur="eventhandler()" autofocus="autofocus" min="1" align="Right">
+</select>
+<button id="htmlvar00013" autofocus="autofocus" formmethod="post" formnovalidate="formnovalidate" formmethod="post" formtarget="htmlvar00004" inner="1" valign="middle"></button>
+</body>

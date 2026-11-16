@@ -1,0 +1,54 @@
+Testing WI.CSSQueryController
+
+
+== Running test suite: CSSQueryController
+-- Running test case: FindSpecialCharacterIndices
+PASS: The special characters in "margin" should match.
+PASS: The special characters in "MARGIN" should match.
+PASS: The special characters in "margin-right" should match.
+PASS: The special characters in "-webkit-mask" should match.
+PASS: The special characters in "--var-kebab-case" should match.
+PASS: The special characters in "--varCamelCase" should match.
+PASS: The special characters in "--varlowercase" should match.
+PASS: The special characters in "--VARUPPERCASE" should match.
+PASS: The special characters in "--var_snake_case" should match.
+PASS: The special characters in "var(--name)" should match.
+PASS: The special characters in "rgb(0, 0, 0)" should match.
+PASS: The special characters in "rgb(0 0 0 / 100%)" should match.
+PASS: The special characters in "rgb(0 0 0 / 0.1)" should match.
+
+-- Running test case: ExecuteQueryAgainstNoValues
+PASS: Should return no results.
+
+-- Running test case: ExecuteWhitespaceQueryOrEmptyQuery
+PASS: Whitespace query should return no results.
+PASS: Whitespace query should return no results.
+PASS: Whitespace query should return no results.
+PASS: Whitespace query should return no results.
+PASS: Empty query should return no results.
+
+-- Running test case: ExecuteQueryMatchNone
+PASS: Query "abcde" shouldn't match "abcd".
+PASS: Query "abcd-" shouldn't match "abcde".
+PASS: Query "abcde" shouldn't match "abced".
+
+-- Running test case: ExecuteQueryMatchesExpectedCharacters
+PASS: Query "abcd" should match "abcd" in "abcde".
+PASS: Query "a-bcde" should match "a    - bcde" in "abcde-abcde".
+PASS: Query "abcde" should match "A B C D E" in "AaBbCcDdEe".
+PASS: Query "abcde" should match "A   B  C De" in "AbcdBcdCdDe".
+PASS: Query "abcdex" should match "A B C d ex" in "AxBxCxdxexDxyxEF".
+PASS: Query "bc" should match " bC" in "abCd".
+PASS: Query "bb" should match " bB" in "abBc".
+
+-- Running test case: ExecuteQueryGeneralRankings
+PASS: Results should be ranked by descending relevancy.
+
+-- Running test case: ExecuteQueryPositionRankings
+PASS: Results should be ranked by descending relevancy.
+
+-- Running test case: GetMatchingTextRanges
+PASS: Result TextRanges should match the expected ranges.
+PASS: Result TextRanges should match the expected ranges.
+PASS: Result TextRanges should match the expected ranges.
+

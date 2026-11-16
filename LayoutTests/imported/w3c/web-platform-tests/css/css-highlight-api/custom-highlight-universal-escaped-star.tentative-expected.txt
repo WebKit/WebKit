@@ -1,0 +1,4 @@
+text
+
+PASS ::highlight(\*) computed style is the escaped literal name's rule, merged with the universal base
+

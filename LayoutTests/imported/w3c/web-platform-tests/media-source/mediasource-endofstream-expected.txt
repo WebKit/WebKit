@@ -1,0 +1,5 @@
+
+PASS MediaSource.endOfStream(): duration truncated to 0 when there are no buffered coded frames
+PASS MediaSource.endOfStream(): media element notified that it now has all of the media data
+PASS MediaSource.endOfStream(): duration and buffered range end time before and after endOfStream
+

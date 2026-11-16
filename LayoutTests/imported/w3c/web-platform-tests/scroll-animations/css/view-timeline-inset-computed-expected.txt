@@ -1,0 +1,19 @@
+
+PASS Property view-timeline-inset value 'initial'
+PASS Property view-timeline-inset value 'inherit'
+PASS Property view-timeline-inset value 'unset'
+PASS Property view-timeline-inset value 'revert'
+PASS Property view-timeline-inset value '1px'
+PASS Property view-timeline-inset value '1%'
+PASS Property view-timeline-inset value 'calc(1% + 1px)'
+PASS Property view-timeline-inset value '1px 2px'
+PASS Property view-timeline-inset value '1px 2em'
+PASS Property view-timeline-inset value 'calc(1px + 1em) 2px'
+PASS Property view-timeline-inset value '1px 2px, 3px 4px'
+PASS Property view-timeline-inset value '1px auto, auto 4px'
+PASS Property view-timeline-inset value '1px, 2px, 3px'
+PASS Property view-timeline-inset value '1px 1px, 2px 3px'
+PASS Property view-timeline-inset value 'auto auto, auto auto'
+PASS The view-timeline-inset property shows up in CSSStyleDeclaration enumeration
+PASS The view-timeline-inset property shows up in CSSStyleDeclaration.cssText
+

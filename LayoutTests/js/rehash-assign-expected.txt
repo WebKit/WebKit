@@ -1,0 +1,10 @@
+Tests that assignments to global variables behave properly when the property table is rehashed.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS 1 is 1
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

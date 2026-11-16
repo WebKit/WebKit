@@ -1,0 +1,14 @@
+function fn(arg, other) {
+  arg = arg === undefined ? 1 : arg;
+  other = other === undefined ? 3 : other;
+  return other;
+}
+
+assertEqual(fn(), 3);
+assertEqual(fn(1, 2), 2);
+
+test(function() {
+  fn();
+  fn(2);
+  fn(2, 4);
+});

@@ -1,0 +1,3 @@
+
+PASS scrollbar-width thin on the root overridess ::-webkit-scrollbar
+

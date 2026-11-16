@@ -1,0 +1,6 @@
+sibling
+
+PASS Hiding a popover restores :hover on the ancestors of slotted content it was showing.
+PASS Hover still applies after removing the hovered slotted content of a showing popover.
+PASS Removing pressed slotted content does not leave :active on the popover.
+

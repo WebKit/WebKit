@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Canvas font-size keywords 'larger' and 'smaller' scale by the same ratio as CSS</title>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+</head>
+<body>
+<div id="log"></div>
+<!-- The canvas inherits its font-size from the container, so the canvas element and the reference
+     span resolve 'larger'/'smaller' against the same parent size. -->
+<div id="container" style="font-size: 20px">
+    <canvas id="canvas"></canvas>
+    <span id="reference"></span>
+</div>
+<script>
+const canvas = document.getElementById('canvas');
+const reference = document.getElementById('reference');
+const container = document.getElementById('container');
+const ctx = canvas.getContext('2d');
+
+const parentSize = 20;
+
+function resolvedCanvasFontSize(size)
+{
+    ctx.font = `${size} sans-serif`;
+    const match = /^(\d+(?:\.\d+)?)px sans-serif$/.exec(ctx.font);
+    assert_not_equals(match, null, `ctx.font serialized as a px size, got "${ctx.font}"`);
+    return parseFloat(match[1]);
+}
+
+function resolvedCSSFontSize(size)
+{
+    reference.style.fontSize = size;
+    return parseFloat(getComputedStyle(reference).fontSize);
+}
+
+// https://drafts.csswg.org/css-fonts-4/#typedef-relative-size
+// "User agents may instead use a simple ratio to increase or decrease the font size relative to the
+//  parent element. The specific ratio is unspecified, but should be around 1.2-1.5."
+//
+// The ratio is up to the UA, so rather than hard coding WebKit's choice these tests assert the two
+// things the specification does constrain: that the ratio is in the 1.2-1.5 range, and that canvas
+// agrees with CSS. A ratio of 1.02, which is what canvas used, satisfies neither.
+
+test(function() {
+    // Everything below compares canvas against CSS, which is only meaningful if the canvas element
+    // and the reference span resolve the keyword against the same parent size.
+    assert_equals(getComputedStyle(canvas).fontSize, `${parentSize}px`, 'the canvas element inherits the container font-size');
+    assert_equals(getComputedStyle(reference).fontSize, `${parentSize}px`, 'the reference span inherits the container font-size');
+}, 'The canvas element and the reference element start from the same font-size');
+
+test(function(t) {
+    t.add_cleanup(() => { reference.style.fontSize = ''; });
+
+    const ratio = resolvedCanvasFontSize('larger') / parentSize;
+    assert_greater_than_equal(ratio, 1.2, 'larger scales up by at least 1.2');
+    assert_less_than_equal(ratio, 1.5, 'larger scales up by at most 1.5');
+}, `canvas 'larger' scales up by a ratio in the 1.2-1.5 range the specification recommends`);
+
+test(function(t) {
+    t.add_cleanup(() => { reference.style.fontSize = ''; });
+
+    const ratio = parentSize / resolvedCanvasFontSize('smaller');
+    assert_greater_than_equal(ratio, 1.2, 'smaller scales down by at least 1.2');
+    assert_less_than_equal(ratio, 1.5, 'smaller scales down by at most 1.5');
+}, `canvas 'smaller' scales down by a ratio in the 1.2-1.5 range the specification recommends`);
+
+test(function(t) {
+    t.add_cleanup(() => { reference.style.fontSize = ''; });
+
+    assert_approx_equals(resolvedCanvasFontSize('larger'), resolvedCSSFontSize('larger'), 0.01,
+        'canvas and CSS agree on larger');
+}, `canvas 'larger' resolves to the same size as CSS font-size: larger`);
+
+test(function(t) {
+    t.add_cleanup(() => { reference.style.fontSize = ''; });
+
+    assert_approx_equals(resolvedCanvasFontSize('smaller'), resolvedCSSFontSize('smaller'), 0.01,
+        'canvas and CSS agree on smaller');
+}, `canvas 'smaller' resolves to the same size as CSS font-size: smaller`);
+
+test(function(t) {
+    t.add_cleanup(() => {
+        container.style.fontSize = '20px';
+        reference.style.fontSize = '';
+    });
+
+    // The keyword resolves against the parent size each time it is set, so it has to track a change
+    // to the font-size the canvas element inherits.
+    const initial = resolvedCanvasFontSize('larger');
+
+    container.style.fontSize = '40px';
+    const doubled = resolvedCanvasFontSize('larger');
+    assert_approx_equals(doubled, initial * 2, 0.01, 'larger tracks the parent font-size');
+    assert_approx_equals(doubled, resolvedCSSFontSize('larger'), 0.01, 'canvas and CSS still agree');
+}, `canvas 'larger' tracks the font-size of the canvas element`);
+
+test(function(t) {
+    t.add_cleanup(() => { reference.style.fontSize = ''; });
+
+    // 'larger' and 'smaller' are relative, so they must compose in opposite directions rather than
+    // both being near no-ops.
+    const larger = resolvedCanvasFontSize('larger');
+    const smaller = resolvedCanvasFontSize('smaller');
+    assert_greater_than(larger, parentSize, 'larger is bigger than the parent size');
+    assert_less_than(smaller, parentSize, 'smaller is smaller than the parent size');
+    assert_approx_equals(larger / parentSize, parentSize / smaller, 0.01,
+        'larger and smaller use the same ratio in opposite directions');
+}, `canvas 'larger' and 'smaller' are inverses of each other`);
+</script>
+</body>
+</html>

@@ -1,0 +1,3 @@
+
+PASS <form method=dialog> should not submit across shadow boundaries.
+

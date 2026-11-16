@@ -1,0 +1,14 @@
+{
+    "urls": [
+        "https://www.google.com",
+        "https://www.google.com/search?q=webkit",
+        "https://search.yahoo.com",
+        "https://search.yahoo.com/search?p=webkit",
+        "https://www.yandex.com",
+        "https://www.yandex.com/search/?text=webkit",
+        "http://www.bing.com",
+        "http://www.bing.com/search?q=webkit",
+        "https://duckduckgo.com",
+        "https://duckduckgo.com/?q=webkit"
+    ]
+}

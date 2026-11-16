@@ -1,0 +1,8 @@
+
+PASS Category L: medium, root, rem, em and initial follow the text scale
+PASS Category L: px font sizes are not scaled
+PASS Category L: absolute-size keywords follow the text scale
+PASS Category XXXL: medium, root, rem, em and initial follow the text scale
+PASS Category XXXL: px font sizes are not scaled
+PASS Category XXXL: absolute-size keywords follow the text scale
+

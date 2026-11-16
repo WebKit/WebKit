@@ -1,0 +1,35 @@
+<html>
+<body>
+Tests that sending undefined or null results in an empty request body.
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+var console_messages = document.createElement("ul");
+document.body.appendChild(console_messages);
+
+function log(message)
+{
+    var item = document.createElement("li");
+    item.appendChild(document.createTextNode(message));
+    console_messages.appendChild(item);
+}
+
+xhr = new XMLHttpRequest;
+xhr.open("POST", "resources/post-echo.cgi", false);
+xhr.send(undefined);
+if (!xhr.responseText.length)
+    log("PASS for undefined");
+else
+    log("FAILED: The posted content when sending 'undefined' is '" + xhr.responseText +"'. It should have been ''.");
+
+xhr = new XMLHttpRequest;
+xhr.open("POST", "resources/post-echo.cgi", false);
+xhr.send(null);
+if (!xhr.responseText.length)
+    log("PASS for null");
+else
+    log("FAILED: The posted content when sending 'null' is '" + xhr.responseText +"'. It should have been ''.");
+</script>
+</body>
+</html>

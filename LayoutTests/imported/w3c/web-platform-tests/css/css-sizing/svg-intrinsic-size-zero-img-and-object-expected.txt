@@ -1,0 +1,17 @@
+
+
+PASS <img> of svg-width-100-height-0-viewBox-1-1.svg
+PASS <object> of svg-width-100-height-0-viewBox-1-1.svg
+PASS <img> of svg-width-100-height-0.svg
+PASS <object> of svg-width-100-height-0.svg
+PASS <img> of svg-width-0-height-100-viewBox-1-1.svg
+PASS <object> of svg-width-0-height-100-viewBox-1-1.svg
+PASS <img> of svg-width-0-height-100.svg
+PASS <object> of svg-width-0-height-100.svg
+PASS <img> of svg-width-0-height-0-viewBox-1-1.svg
+PASS <object> of svg-width-0-height-0-viewBox-1-1.svg
+PASS <img> of svg-width-100-height-0-viewBox-2-1.svg with aspect-ratio: 1 / 1
+PASS <object> of svg-width-100-height-0-viewBox-2-1.svg with aspect-ratio: 1 / 1
+PASS <img> of svg-width-100-height-0.svg with aspect-ratio: 1 / 1
+PASS <object> of svg-width-100-height-0.svg with aspect-ratio: 1 / 1
+

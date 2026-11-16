@@ -1,0 +1,224 @@
+Test aborting transaction reverts changes maded to index records
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
+
+indexedDB.deleteDatabase(dbname)
+indexedDB.open(dbname)
+
+prepareDatabase():
+store = database.createObjectStore('store')
+store.createIndex('timestampIndex', 'timestamp', { unique: true })
+store.createIndex('groupIndex', 'group', { unique: false })
+store.createIndex('groupCountIndex', ['group', 'count'])
+store.createIndex('categoriesIndex', 'categories', { multiEntry: true })
+store.add({ timestamp: 101, group: 'a', count: 1, categories: 'xx' }, 'key1')
+store.add({ timestamp: 102, group: 'b', count: 2, categories: 'yy' }, 'key2')
+store.add({ timestamp: 103, group: 'b', count: 2, categories: 'zz' }, 'key3')
+store.add({ timestamp: 104, categories: ['xx', 'yy', 'zz'] }, 'key4')
+
+Validating records for: timestampIndex
+index = store.index('timestampIndex')
+PASS recordsCount is 4
+will getAllKeys
+done getAllKeys
+Getting index record with key: 101
+PASS indexRecordValues is "[\"key1\"]"
+will getAllKeys
+done getAllKeys
+Getting index record with key: 102
+PASS indexRecordValues is "[\"key2\"]"
+will getAllKeys
+done getAllKeys
+Getting index record with key: 103
+PASS indexRecordValues is "[\"key3\"]"
+will getAllKeys
+done getAllKeys
+Getting index record with key: 104
+PASS indexRecordValues is "[\"key4\"]"
+
+Validating records for: groupIndex
+index = store.index('groupIndex')
+PASS recordsCount is 3
+will getAllKeys
+done getAllKeys
+Getting index record with key: a
+PASS indexRecordValues is "[\"key1\"]"
+will getAllKeys
+done getAllKeys
+Getting index record with key: b
+PASS indexRecordValues is "[\"key2\",\"key3\"]"
+
+Validating records for: groupCountIndex
+index = store.index('groupCountIndex')
+PASS recordsCount is 3
+will getAllKeys
+done getAllKeys
+Getting index record with key: a,1
+PASS indexRecordValues is "[\"key1\"]"
+will getAllKeys
+done getAllKeys
+Getting index record with key: b,2
+PASS indexRecordValues is "[\"key2\",\"key3\"]"
+
+Validating records for: categoriesIndex
+index = store.index('categoriesIndex')
+PASS recordsCount is 6
+will getAllKeys
+done getAllKeys
+Getting index record with key: xx
+PASS indexRecordValues is "[\"key1\",\"key4\"]"
+will getAllKeys
+done getAllKeys
+Getting index record with key: yy
+PASS indexRecordValues is "[\"key2\",\"key4\"]"
+will getAllKeys
+done getAllKeys
+Getting index record with key: zz
+PASS indexRecordValues is "[\"key3\",\"key4\"]"
+
+onDatabaseOpen():
+transcation = database.transaction('store', 'readwrite')
+store = transcation.objectStore('store')
+store.add({ timestamp: 105, group: 'c', count: 3, categories: 'ww' }, 'key5')
+store.put({ timestamp: 106, group: 'c', count: 3, categories: ['ww', 'yy'] }, 'key3')
+store.delete('key4')
+
+Validating records for: timestampIndex
+index = store.index('timestampIndex')
+PASS recordsCount is 4
+will getAllKeys
+done getAllKeys
+Getting index record with key: 101
+PASS indexRecordValues is "[\"key1\"]"
+will getAllKeys
+done getAllKeys
+Getting index record with key: 102
+PASS indexRecordValues is "[\"key2\"]"
+will getAllKeys
+done getAllKeys
+Getting index record with key: 105
+PASS indexRecordValues is "[\"key5\"]"
+will getAllKeys
+done getAllKeys
+Getting index record with key: 106
+PASS indexRecordValues is "[\"key3\"]"
+
+Validating records for: groupIndex
+index = store.index('groupIndex')
+PASS recordsCount is 4
+will getAllKeys
+done getAllKeys
+Getting index record with key: a
+PASS indexRecordValues is "[\"key1\"]"
+will getAllKeys
+done getAllKeys
+Getting index record with key: b
+PASS indexRecordValues is "[\"key2\"]"
+will getAllKeys
+done getAllKeys
+Getting index record with key: c
+PASS indexRecordValues is "[\"key3\",\"key5\"]"
+
+Validating records for: groupCountIndex
+index = store.index('groupCountIndex')
+PASS recordsCount is 4
+will getAllKeys
+done getAllKeys
+Getting index record with key: a,1
+PASS indexRecordValues is "[\"key1\"]"
+will getAllKeys
+done getAllKeys
+Getting index record with key: b,2
+PASS indexRecordValues is "[\"key2\"]"
+will getAllKeys
+done getAllKeys
+Getting index record with key: c,3
+PASS indexRecordValues is "[\"key3\",\"key5\"]"
+
+Validating records for: categoriesIndex
+index = store.index('categoriesIndex')
+PASS recordsCount is 5
+will getAllKeys
+done getAllKeys
+Getting index record with key: ww
+PASS indexRecordValues is "[\"key3\",\"key5\"]"
+will getAllKeys
+done getAllKeys
+Getting index record with key: xx
+PASS indexRecordValues is "[\"key1\"]"
+will getAllKeys
+done getAllKeys
+Getting index record with key: yy
+PASS indexRecordValues is "[\"key2\",\"key3\"]"
+store.add({ timestamp: 107 }, 'key1')
+
+onTransactionAbort():
+transcation = database.transaction('store', 'readwrite')
+store = transcation.objectStore('store')
+
+Validating records for: timestampIndex
+index = store.index('timestampIndex')
+PASS recordsCount is 4
+will getAllKeys
+done getAllKeys
+Getting index record with key: 101
+PASS indexRecordValues is "[\"key1\"]"
+will getAllKeys
+done getAllKeys
+Getting index record with key: 102
+PASS indexRecordValues is "[\"key2\"]"
+will getAllKeys
+done getAllKeys
+Getting index record with key: 103
+PASS indexRecordValues is "[\"key3\"]"
+will getAllKeys
+done getAllKeys
+Getting index record with key: 104
+PASS indexRecordValues is "[\"key4\"]"
+
+Validating records for: groupIndex
+index = store.index('groupIndex')
+PASS recordsCount is 3
+will getAllKeys
+done getAllKeys
+Getting index record with key: a
+PASS indexRecordValues is "[\"key1\"]"
+will getAllKeys
+done getAllKeys
+Getting index record with key: b
+PASS indexRecordValues is "[\"key2\",\"key3\"]"
+
+Validating records for: groupCountIndex
+index = store.index('groupCountIndex')
+PASS recordsCount is 3
+will getAllKeys
+done getAllKeys
+Getting index record with key: a,1
+PASS indexRecordValues is "[\"key1\"]"
+will getAllKeys
+done getAllKeys
+Getting index record with key: b,2
+PASS indexRecordValues is "[\"key2\",\"key3\"]"
+
+Validating records for: categoriesIndex
+index = store.index('categoriesIndex')
+PASS recordsCount is 6
+will getAllKeys
+done getAllKeys
+Getting index record with key: xx
+PASS indexRecordValues is "[\"key1\",\"key4\"]"
+will getAllKeys
+done getAllKeys
+Getting index record with key: yy
+PASS indexRecordValues is "[\"key2\",\"key4\"]"
+will getAllKeys
+done getAllKeys
+Getting index record with key: zz
+PASS indexRecordValues is "[\"key3\",\"key4\"]"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

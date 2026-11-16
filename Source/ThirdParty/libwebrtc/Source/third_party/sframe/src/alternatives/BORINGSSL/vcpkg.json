@@ -1,0 +1,14 @@
+{
+  "name": "mlspp",
+  "version-string": "0.1",
+  "description": "Cisco MLS C++ library (BoringSSL 1.1)",
+  "dependencies": [
+    {
+      "name": "boringssl",
+      "version>=": "2023-10-13"
+    },
+    "doctest",
+    "nlohmann-json"
+  ],
+  "builtin-baseline": "eb33d2f7583405fca184bcdf7fdd5828ec88ac05"
+}

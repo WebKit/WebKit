@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../resources/js-test.js"></script>
+<script>
+function runTest() {
+    const outer = document.getElementById("outer");
+    const inner = document.getElementById("inner");
+    const editable = document.getElementById("editable");
+    const result = document.getElementById("result");
+    editable.focus();
+    let accessibilityElement;
+    if (window.accessibilityController)
+        accessibilityElement = accessibilityController.focusedElement;
+    inner.removeChild(editable);
+    outer.removeChild(inner);
+    // This should not cause a crash.
+    if (window.accessibilityController)
+        accessibilityElement.allAttributes();
+}
+</script>
+</head>
+<body onload="runTest()">
+This test passes if there is no crash.
+<div id="outer" style="display: none;">
+    <div id="inner" style="display: none;">
+        <div id="editable" contenteditable="true" style="display: none;">
+            This is some throwaway text
+        </div>
+    </div>
+</div>
+<div id="result"></div>
+</body>
+</html>

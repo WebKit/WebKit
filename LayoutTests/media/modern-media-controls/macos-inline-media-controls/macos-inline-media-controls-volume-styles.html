@@ -1,0 +1,54 @@
+<script src="../../../resources/js-test-pre.js"></script>
+<script src="../resources/media-controls-utils.js" type="text/javascript"></script>
+<script src="../resources/media-controls-loader.js" type="text/javascript"></script>
+<body>
+<script type="text/javascript">
+
+description("Testing the <code>MacOSInlineMediaControls</code> computed styles.");
+
+window.jsTestIsAsync = true;
+
+const mediaControls = new MacOSInlineMediaControls({ width: 680, height: 300 });
+document.body.appendChild(mediaControls.element);
+
+let volumeSliderContainerStyle, volumeSliderStyle;
+
+mediaControls._setupVolumeSliderConfiguration();
+
+function waitForVolumeSliderReady() {
+    return mediaControls._volumeSliderSetupComplete &&
+           mediaControls.volumeSlider.parent &&
+           mediaControls.volumeSlider.parent.element;
+}
+
+    if (!mediaControls._volumeSliderSetupComplete) {
+        mediaControls._setupVolumeSliderConfiguration();
+    }
+
+    mediaControls.handleEvent({ type: "mouseenter", currentTarget: mediaControls.muteButton.element });
+
+    shouldBecomeEqual("mediaControls.volumeSlider.parent ? mediaControls.volumeSlider.parent.element.parentNode : null", "mediaControls.element", () => {
+        volumeSliderContainerStyle = window.getComputedStyle(mediaControls.volumeSlider.parent.element);
+        debug("volumeSliderContainerStyle.position " + String(volumeSliderContainerStyle.position));
+        debug("volumeSliderContainerStyle.left " + String(volumeSliderContainerStyle.left));
+        debug("volumeSliderContainerStyle.top " + String(volumeSliderContainerStyle.top));
+        debug("volumeSliderContainerStyle.width " + String(volumeSliderContainerStyle.width));
+        debug("volumeSliderContainerStyle.height " + String(volumeSliderContainerStyle.height));
+
+        volumeSliderStyle = window.getComputedStyle(mediaControls.volumeSlider.element);
+        debug("volumeSliderStyle.marginLeft " + String(volumeSliderStyle.marginLeft));
+        debug("volumeSliderStyle.width " + String(volumeSliderStyle.width));
+        debug("volumeSliderStyle.height " + String(volumeSliderStyle.height));
+
+        mediaControls.element.remove();
+
+        debug("");
+        finishMediaControlsTest();
+    });
+
+// Simulate the mouse entering the volume button.
+window.requestAnimationFrame(() => mediaControls.muteButton.element.dispatchEvent(new MouseEvent("mouseenter")));
+
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>

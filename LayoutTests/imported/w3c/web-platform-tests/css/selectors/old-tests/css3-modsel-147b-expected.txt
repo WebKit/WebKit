@@ -1,0 +1,21 @@
+This line should be unstyled.
+This line should be green.
+This line should be unstyled.
+This line should be unstyled.
+This line should be green.
+This line should be unstyled.
+This line should be unstyled.
+This line should be unstyled.
+This line should be green.
+This line should be unstyled.
+This line should be unstyled.
+This line should be green.
+This line should be unstyled.
+This line should be green.
+This line should be unstyled.
+This line should be unstyled.
+This line should be green.
+This line should be unstyled.
+
+PASS nth-last-of-type with collapsed elements
+

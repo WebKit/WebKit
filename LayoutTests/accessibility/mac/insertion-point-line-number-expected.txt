@@ -1,0 +1,30 @@
+This tests the insertionPointLineNumber api with single-line and multi-line text fields.
+
+Focusing text field with id: input
+PASS: axElement.insertionPointLineNumber === 0
+Moving to end of text field
+PASS: axElement.insertionPointLineNumber === 0
+
+Focusing text field with id: textarea
+PASS: axElement.insertionPointLineNumber === 0
+Moving to end of text field
+PASS: axElement.insertionPointLineNumber === 2
+
+Focusing text field with id: textbox_singleline
+PASS: axElement.insertionPointLineNumber === 0
+Moving to end of text field
+PASS: axElement.insertionPointLineNumber === 0
+
+Focusing text field with id: textbox_multiline
+PASS: axElement.insertionPointLineNumber === 0
+Moving to end of text field
+PASS: axElement.insertionPointLineNumber === 2
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+
+This ARIA text box has aria-multiline=false
+This ARIA text box has aria-multiline=true

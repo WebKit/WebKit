@@ -1,0 +1,36 @@
+<!-- Identical to offscreen-canvas2d-measuretext-uaf.html, but exercising CanvasRenderingContext2D path -->
+<!DOCTYPE html>
+<p>This test passes if it does not crash.</p>
+<script>
+  if (window.testRunner)
+    testRunner.dumpAsText();
+
+  let face = new FontFace('MyTestFam', 'local(Helvetica)');
+  face.loaded;
+  document.fonts.add(face);
+
+  let context = document.createElement('canvas').getContext('2d');
+
+  context.save();
+  context.lineWidth = 0.5;
+
+  context.font = '10px MyTestFam';
+
+  let reentered = false;
+  Object.defineProperty(FontFace.prototype, 'then', {
+    configurable: true,
+    get() {
+      if (reentered)
+        return undefined;
+      reentered = true;
+      for (let i = 0; i < 18; i++) {
+        context.save();
+        context.lineWidth = 1 + i;
+      }
+      reentered = false;
+      return undefined;
+    }
+  });
+
+  context.measureText('a');
+</script>

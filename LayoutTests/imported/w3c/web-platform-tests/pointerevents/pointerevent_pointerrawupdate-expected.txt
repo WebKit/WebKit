@@ -1,0 +1,4 @@
+
+PASS pointerrawupdate event is not fired
+PASS onpointerrawupdate is not exposed
+

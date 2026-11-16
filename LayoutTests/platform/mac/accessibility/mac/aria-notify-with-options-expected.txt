@@ -1,0 +1,31 @@
+Tests that ariaNotify sends the right userInfo when options are specified.
+
+Received announcement request:
+AnnouncementKey: San Francisco
+AXARIAAnnouncementInterruptBehavior: None
+AXARIAAnnouncementPriority: High
+AXAnnouncementLanguageKey: en
+
+Received announcement request:
+AnnouncementKey: Chicago
+AXARIAAnnouncementInterruptBehavior: All
+AXARIAAnnouncementPriority: High
+AXAnnouncementLanguageKey: en
+
+Received announcement request:
+AnnouncementKey: Boston
+AXARIAAnnouncementInterruptBehavior: Pending
+AXARIAAnnouncementPriority: High
+AXAnnouncementLanguageKey: da
+
+Received announcement request:
+AnnouncementKey: Boston
+AXARIAAnnouncementInterruptBehavior: None
+AXARIAAnnouncementPriority: High
+AXAnnouncementLanguageKey: da
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Hej

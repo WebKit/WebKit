@@ -1,0 +1,17 @@
+Test that Canvas.requestContent can retrieve the presented content of a WebGPU canvas.
+
+
+== Running test suite: Canvas.requestContent.WebGPU
+-- Running test case: Canvas.requestContent.WebGPU.HTMLCanvasElement
+PASS: Content should match the presented HTML canvas.
+PASS: Repeated content should match the same presented HTML canvas.
+
+-- Running test case: Canvas.requestContent.WebGPU.OffscreenCanvas
+PASS: Content should match the presented OffscreenCanvas.
+
+-- Running test case: Canvas.requestContent.WebGPU.MultipleCanvases
+PASS: Requesting content with multiple configured canvases should return an error.
+
+-- Running test case: Canvas.requestContent.WebGPU.NoCanvases
+PASS: Requesting content without a configured canvas should return an error.
+

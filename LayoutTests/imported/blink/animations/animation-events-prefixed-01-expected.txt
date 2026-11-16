@@ -1,0 +1,3 @@
+
+PASS Tests that prefixed animation events are correctly fired
+

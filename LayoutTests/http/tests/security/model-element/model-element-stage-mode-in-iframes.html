@@ -1,0 +1,79 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true SiteIsolationEnabled=true ModelElementEnabled=true ModelProcessEnabled=true ] -->
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Stage mode interaction with a &lt;model> in a same-site or cross-site iframe</title>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/js-test-resources/basic-gestures.js"></script>
+<script src="/js-test-resources/ui-helper.js"></script>
+<script src="/root/model-element/resources/model-utils.js"></script>
+<style>
+    body {
+        margin: 0;
+    }
+
+    iframe {
+        position: absolute;
+        left: 20px;
+        width: 200px;
+        height: 200px;
+        border: none;
+    }
+</style>
+<body>
+<iframe id="same-site" style="top: 20px" src="resources/model-in-iframe.html"></iframe>
+<iframe id="cross-site" style="top: 260px" src="http://localhost:8000/security/model-element/resources/model-in-iframe.html"></iframe>
+<script>
+'use strict';
+
+const sameSiteFrame = document.getElementById("same-site");
+const crossSiteFrame = document.getElementById("cross-site");
+
+const nextMessageFromFrame = (iframe, predicate) => new Promise(resolve => {
+    window.addEventListener("message", function listener(event) {
+        if (event.source !== iframe.contentWindow || !predicate(event.data))
+            return;
+        window.removeEventListener("message", listener);
+        resolve(event.data);
+    });
+});
+
+const frameReady = new Map([sameSiteFrame, crossSiteFrame].map(iframe => [iframe, nextMessageFromFrame(iframe, data => typeof data === "string")]));
+
+async function entityTransform(iframe) {
+    const reply = nextMessageFromFrame(iframe, data => data.entityTransform);
+    iframe.contentWindow.postMessage("getEntityTransform", "*");
+    return (await reply).entityTransform;
+}
+
+async function pan(iframe, startX, endX, y) {
+    const x = offset => iframe.offsetLeft + offset;
+    const top = iframe.offsetTop + y;
+    const midX = (startX + endX) / 2;
+    await touchAndDragFromPointToPoint(x(startX), top, x(midX), top);
+    await UIHelper.renderingUpdate();
+    await continueTouchAndDragFromPointToPoint(x(midX), top, x(endX), top);
+    await liftUpAtPoint(x(endX), top);
+}
+
+const transformsAreEqual = (a, b) => a.toFloat64Array().every((value, index) => value === b.toFloat64Array()[index]);
+
+for (const iframe of [sameSiteFrame, crossSiteFrame]) {
+    promise_test(async () => {
+        assert_equals(await frameReady.get(iframe), "ready");
+        await UIHelper.ensurePresentationUpdate();
+
+        const initialTransform = await entityTransform(iframe);
+        await pan(iframe, 180, 120, 150);
+        await sleepForSeconds(1);
+        assert_3d_matrix_equals(await entityTransform(iframe), initialTransform);
+    }, `Panning outside the <model> in a ${iframe.id} iframe does not rotate it`);
+
+    promise_test(async () => {
+        const initialTransform = await entityTransform(iframe);
+        await pan(iframe, 90, 10, 50);
+        await waitFor(async () => !transformsAreEqual(await entityTransform(iframe), initialTransform), "the entity transform to change");
+    }, `Panning the <model> in a ${iframe.id} iframe rotates it`);
+}
+</script>
+</body>

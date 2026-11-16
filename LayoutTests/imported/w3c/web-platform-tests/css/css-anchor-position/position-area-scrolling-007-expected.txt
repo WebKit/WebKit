@@ -1,0 +1,6 @@
+
+PASS initial position
+PASS Scroll down to 0,150
+PASS Scroll right to 50,150
+PASS Scroll up to 50,0
+

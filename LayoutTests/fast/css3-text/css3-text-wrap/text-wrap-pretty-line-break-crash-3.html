@@ -1,0 +1,38 @@
+<style></style>
+<script>
+   nodes = new Map([['n0', new WeakRef(document.documentElement)]]);
+   function storeNode(key, node) {
+   weak = new WeakRef(node);
+   nodes.set(key, weak);
+   }
+   function getNodeSafe(key) {
+   weak = nodes.get(key);
+   node = weak.deref();
+   return node;
+   }
+   (async => {
+   (() => {
+   })();
+   let ss0 = document.styleSheets[0];
+   let sr0 = ss0.rules;
+   try { let = (()=> {
+   ss0?.insertRule(`& { text-wrap-style: pretty; text-indent: hanging 679ic; }`);
+   })(); } catch {}
+   try { (() => {
+   n1 = document.createElement('a'); getNodeSafe('n0').prepend(n1);
+   storeNode('n1', n1);
+   })(); } catch {}
+   try { (() => {
+   n2 = document.createElement('b'); getNodeSafe('n1').appendChild(n2);
+   storeNode('n2', n2);
+   })(); } catch {}
+   try { (() => {
+   n22 = document.createElement('c'); n22.id = getNodeSafe('n2').append(n22);
+   storeNode('n22', n22);
+   })(); } catch {}
+   try { getNodeSafe('n22').before("This test passes if it doesn't crash."); } catch {}
+   })();
+   if (window.testRunner) {
+      testRunner.dumpAsText();
+   }
+</script>

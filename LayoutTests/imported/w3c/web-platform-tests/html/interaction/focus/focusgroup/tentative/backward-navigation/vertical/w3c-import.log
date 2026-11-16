@@ -1,0 +1,24 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/interaction/focus/focusgroup/tentative/backward-navigation/vertical/ascends-to-parent-focusgroup.html
+/LayoutTests/imported/w3c/web-platform-tests/html/interaction/focus/focusgroup/tentative/backward-navigation/vertical/does-not-ascend-out-of-non-extending-focusgroup.html
+/LayoutTests/imported/w3c/web-platform-tests/html/interaction/focus/focusgroup/tentative/backward-navigation/vertical/does-not-move-when-axis-not-supported.html
+/LayoutTests/imported/w3c/web-platform-tests/html/interaction/focus/focusgroup/tentative/backward-navigation/vertical/does-not-wrap-in-orthogonal-axis.html
+/LayoutTests/imported/w3c/web-platform-tests/html/interaction/focus/focusgroup/tentative/backward-navigation/vertical/moves-when-only-current-axis-supported.html
+/LayoutTests/imported/w3c/web-platform-tests/html/interaction/focus/focusgroup/tentative/backward-navigation/vertical/skips-focusgroup-that-extends-in-orthogonal-axis-complex-case.html
+/LayoutTests/imported/w3c/web-platform-tests/html/interaction/focus/focusgroup/tentative/backward-navigation/vertical/skips-focusgroup-that-extends-in-orthogonal-axis.html
+/LayoutTests/imported/w3c/web-platform-tests/html/interaction/focus/focusgroup/tentative/backward-navigation/vertical/wraps-in-axis.html

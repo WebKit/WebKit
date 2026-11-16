@@ -1,0 +1,11 @@
+<script>
+window.addEventListener("message", event => {
+    if (event.data !== "report")
+        return;
+
+    parent.postMessage({
+        innerWidth: innerWidth,
+        windowClipWidth: internals.windowClipRect().width,
+    }, "*");
+});
+</script>

@@ -1,0 +1,6 @@
+
+FAIL Focus behavior of popover elements inside shadow DOM assert_equals: Focus should move forward from host/invoker to host/target1 expected Element node <input type="checkbox" id="target1"></input> but got Element node <body><my-element id="host">
+
+</my-element>
+<my-element...
+

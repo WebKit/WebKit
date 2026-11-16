@@ -1,0 +1,56 @@
+<html>
+    <head>
+        <script src=media-file.js></script>
+        <script src=video-test.js></script>
+
+        <script>
+
+            function playing()
+            {
+                consoleWrite("EVENT(playing)<br>");
+                endTest();
+            }
+
+            function canplaythrough()
+            {
+                consoleWrite("EVENT(canplaythrough)");
+                consoleWrite("");
+                run("document.getElementById('parent').appendChild(mediaElement)");
+                run("mediaElement.play()");
+                consoleWrite("");
+            }
+
+            function start()
+            {
+                run("mediaElement = document.createElement('audio')");
+
+                mediaElement.setAttribute('oncanplaythrough', "canplaythrough()");
+                mediaElement.setAttribute('onplaying', "playing()");
+
+                waitForEvent("loadstart");
+                waitForEvent("waiting");
+                waitForEvent("ratechange");
+                waitForEvent("durationchange");
+                waitForEvent("pause");
+                waitForEvent("play");
+                waitForEvent("canplaythrough");
+                waitForEvent('loadeddata');
+
+                var mediaFile = findMediaFile("audio", "content/test");
+                run("mediaElement.src = '" + mediaFile + "'");
+                run("mediaElement.load()");
+
+                consoleWrite("");
+            }
+
+        </script>
+    </head>
+
+    <body onload="start()">
+
+    <p>Test that media file is not reloaded when an element is inserted into the DOM.</p>
+
+    <div id="parent"></div>
+    
+    </body>
+</html>

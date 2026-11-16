@@ -1,0 +1,18 @@
+Start outside shadow DOM
+outerHost
+End outside shadow DOM
+
+PASS If selection crosses shadow boundaries, getRangeAt(0) should throw an IndexSizeError because the end is not in the document tree.
+FAIL modify getRangeAt() range: setStart() to disconnected node will collapse and remove the live range from the selection. assert_true: expected true got false
+FAIL modify getRangeAt() range: setEnd() crosses shadow boundary into the shadow DOM and after start, which collapses live range. Composed selection range is not collapsed. assert_true: expected true got false
+FAIL modify getRangeAt() range: setStart() crosses shadow boundary into the shadow DOM and before end, which collapses live range. Composed selection range is not collapsed. assert_true: expected true got false
+FAIL modify getRangeAt() range: setStart() crosses shadow boundary into the shadow DOM and after end, which collapses both live range and composed selection range. assert_true: expected true got false
+FAIL modify getRangeAt() range: selectNode() innerHost for all ranges. assert_equals: expected DocumentFragment node with 5 children but got Text node "Start outside shadow DOM"
+PASS modify getRangeAt() range: collapse() collapses all ranges.
+FAIL modify createRange() range: adding to selection sets the selection assert_equals: expected Text node "innerHost
+
+  " but got null
+FAIL modify createRange() range: added to selection before setStart/setEnd calls. assert_equals: expected Text node "innerHost
+
+  " but got Document node with 2 children
+

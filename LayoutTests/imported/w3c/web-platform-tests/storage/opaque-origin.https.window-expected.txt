@@ -1,0 +1,8 @@
+
+PASS navigator.storage.persisted() in non-sandboxed iframe should not reject
+PASS navigator.storage.persisted() in sandboxed iframe should reject with TypeError
+PASS navigator.storage.estimate() in non-sandboxed iframe should not reject
+PASS navigator.storage.estimate() in sandboxed iframe should reject with TypeError
+PASS navigator.storage.persist() in non-sandboxed iframe should not reject
+PASS navigator.storage.persist() in sandboxed iframe should reject with TypeError
+

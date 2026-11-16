@@ -1,0 +1,13 @@
+Test that decoding an M4A file whose ftyp box has no "mp4" compatible brand succeeds
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Successfully decoded content
+PASS Decoding returned the right number of channels.
+PASS Decoding returned the right sample rate.
+PASS Decoding returned the right number of frames.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

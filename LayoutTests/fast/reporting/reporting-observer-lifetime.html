@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+jsTestIsAsync = true;
+if (!window.testRunner || !window.internals) {
+    testFailed("Requires testRunner and internals.");
+    finishJSTest();
+}
+
+let cb = () => { };
+let observer = new ReportingObserver(cb);
+observer.observe();
+
+function runTest()
+{
+    let weakCallback = new WeakRef(cb);
+    let weakObserver = new WeakRef(observer);
+    setTimeout(() => {
+        observer.disconnect();
+        observer = null;
+        cb = null;
+    }, 160);
+
+    var cnt = 0;
+    let handle = setInterval(() => {
+        gc();
+        cnt++;
+        if (!weakObserver.deref() && !weakCallback.deref()) {
+            clearInterval(handle);
+            testPassed("The ReportingObserver and callback were garbage collected.");
+            finishJSTest();
+        } else if (cnt >= 500) {
+            clearInterval(handle);
+            testFailed("The ReportingObserver and callback weren't collected in any reasonable time after clearing all references from JavaScript.");
+            finishJSTest();
+        }
+
+    }, 20);
+}
+onload = () => runTest();
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

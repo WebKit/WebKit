@@ -1,0 +1,77 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+    <head>
+        <script src="../../resources/js-test-pre.js"></script>
+    </head>
+    <body>
+        <script>
+            var pc;
+            var result;
+            var desc;
+            var candidate;
+
+            description("Test which overloaded RTCPeerConnection function that gets invoked (by return value)");
+
+            shouldNotThrow("pc = new RTCPeerConnection({iceServers:[{urls:'stun:foo.com'}]});");
+
+            // Test createOffer/Answer()
+            testCreateOfferOrAnswer("createOffer");
+            testCreateOfferOrAnswer("createAnswer");
+
+            function testCreateOfferOrAnswer(functionName) {
+                shouldNotThrow("result = pc." + functionName + "()");
+                shouldBeType("result", "Promise");
+
+                shouldNotThrow("result = pc." + functionName + "({})");
+                shouldBeType("result", "Promise");
+
+                shouldNotThrow("result = pc." + functionName + "(emptyFunc, emptyFunc)");
+                shouldBeType("result", "Promise");
+                result.then(() => { }, () => { });
+
+                shouldNotThrow("result = pc." + functionName + "(emptyFunc, emptyFunc, {})");
+                shouldBeType("result", "Promise");
+                result.then(() => { }, () => { });
+            }
+
+            // Test setLocal/RemoteDescription()
+            shouldNotThrow("desc = new RTCSessionDescription({ type: 'offer', sdp: 'x' });");
+
+            testSetLocalOrRemoteDescription("setLocalDescription")
+            testSetLocalOrRemoteDescription("setRemoteDescription")
+
+            function testSetLocalOrRemoteDescription(functionName) {
+                shouldNotThrow("result = pc." + functionName + "(desc)");
+                shouldBeType("result", "Promise");
+
+                shouldNotThrow("result = pc." + functionName + "(desc, emptyFunc, emptyFunc)");
+                shouldBeType("result", "Promise");
+            }
+
+            // Test addIceCandidate()
+            candidate = new RTCIceCandidate({ "candidate": "foo", "sdpMid": "bar" });
+
+            shouldNotThrow("result = pc.addIceCandidate(candidate)");
+            shouldBeType("result", "Promise");
+
+            shouldNotThrow("result = pc.addIceCandidate(candidate, emptyFunc, emptyFunc)");
+            shouldBeType("result", "Promise");
+
+            // Test getStats()
+            shouldNotThrow("result = pc.getStats()");
+            shouldBeType("result", "Promise");
+
+            shouldNotThrow("result = pc.getStats(null)");
+            shouldBeType("result", "Promise");
+
+            shouldNotThrow("result = pc.getStats(null, emptyFunc, emptyFunc)");
+            shouldBeType("result", "Promise");
+
+            function emptyFunc() { }
+
+            window.successfullyParsed = true;
+
+        </script>
+        <script src="../../resources/js-test-post.js"></script>
+    </body>
+</html>

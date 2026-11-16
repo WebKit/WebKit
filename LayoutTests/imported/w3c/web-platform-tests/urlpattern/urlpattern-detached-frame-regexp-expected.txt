@@ -1,0 +1,6 @@
+
+PASS Named regexp group matches after the owning frame is detached
+PASS Non-matching regexp input returns null after the owning frame is detached
+PASS Anonymous regexp group via test() after the owning frame is detached
+PASS Regexp groups across multiple components after the owning frame is detached
+

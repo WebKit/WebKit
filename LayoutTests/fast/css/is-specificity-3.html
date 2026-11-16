@@ -1,0 +1,42 @@
+<!doctype html>
+<html>
+<head>
+<style>
+    * {
+        background-color: blue;
+        color: blue;
+        border: 5px solid black;
+    }
+
+    :is(.classB, target, *) {
+        color: purple;
+        border: none;
+    }
+
+    target {
+        background-color: green;
+        color: white;
+    }
+    .classB {
+        background-color: blue;
+    }
+    body > * {
+        display: block;
+    }
+    html, body, p {
+        background-color: white;
+        color: black;
+    }
+</style>
+</head>
+<body>
+    <nottarget>Text</nottarget>
+    <target>Text</target>
+    <nottarget id="classA">Text</nottarget>
+    <target id="classA">Text</target>
+    <nottarget class="classB">Text</nottarget>
+    <target class="classB">Text</target>
+    <nottarget id="classA" class="classB">Text</nottarget>
+    <target id="classA" class="classB">Text</target>
+</body>
+</html>

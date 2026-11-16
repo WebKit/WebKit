@@ -1,0 +1,3 @@
+Tests the behavior of removing a control and then accessing its validity state afterward.
+
+Test has run: If no assertion or crash occurred, it passed.

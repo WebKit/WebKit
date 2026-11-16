@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+addEventListener("load", () => {
+    if (!window.HTMLAttachmentElement)
+        return;
+
+    HTMLAttachmentElement.getAttachmentIdentifier(document.querySelector("img"));
+});
+
+function servicesControlButton()
+{
+    return internals.shadowRoot(document.querySelector("img")).getElementById("image-controls-button");
+}
+
+async function waitForAndClickImageControls()
+{
+    if (!window.internals)
+        return;
+
+    let button = null;
+    do {
+        await new Promise(requestAnimationFrame);
+        button = servicesControlButton();
+    } while (!button);
+    button.click();
+}
+</script>
+</head>
+<body><img src="icon.png"></img></body>
+</html>

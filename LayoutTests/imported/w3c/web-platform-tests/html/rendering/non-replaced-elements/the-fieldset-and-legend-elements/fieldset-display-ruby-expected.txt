@@ -1,0 +1,10 @@
+x
+x x
+
+FAIL fieldset with display: block ruby assert_equals: display: block ruby is not supported expected "block ruby" but got "block"
+FAIL fieldset with display: ruby assert_equals: display: ruby is not supported expected "ruby" but got "block"
+FAIL fieldset with display: ruby-base assert_equals: display: ruby-base is not supported expected "ruby-base" but got "block"
+FAIL fieldset with display: ruby-text assert_equals: display: ruby-text is not supported expected "ruby-text" but got "block"
+FAIL fieldset with display: ruby-base-container assert_equals: display: ruby-base-container is not supported expected "ruby-base-container" but got "block"
+FAIL fieldset with display: ruby-text-container assert_equals: display: ruby-text-container is not supported expected "ruby-text-container" but got "block"
+

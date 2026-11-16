@@ -1,0 +1,18 @@
+<!-- webkit-test-runner [ LayoutFormattingContextEnabled=true InlineFormattingContextIntegrationEnabled=false ] -->
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        .container {
+            background-color: green;
+            border: 10px solid blue;
+            position: absolute;
+        }
+    </style>    
+</head>
+<body>
+<div class=container style="width: 116px; height: 116px; left: 20px; top: 20px;"></div>
+<div class=container style="width: 78px; height: 78px; left: 58px; top: 58px; z-index: 1"></div>
+<div class=container style="width: 40px; height: 40px; left: 96px; top: 96px; z-index: 2"></div>
+</body>
+</html>

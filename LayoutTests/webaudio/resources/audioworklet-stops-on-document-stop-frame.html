@@ -1,0 +1,9 @@
+<!DOCTYPE html>
+<script>
+const context = new OfflineAudioContext(1, 128, 44100);
+context.audioWorklet.addModule("audioworklet-empty-processor.js").then(() => {
+    parent.postMessage("ready", "*");
+}, (error) => {
+    parent.postMessage("error: " + error, "*");
+});
+</script>

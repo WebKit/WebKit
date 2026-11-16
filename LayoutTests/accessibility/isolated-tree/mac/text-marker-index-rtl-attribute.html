@@ -1,0 +1,43 @@
+<!DOCTYPE HTML><!-- webkit-test-runner [ IsAccessibilityIsolatedTreeEnabled=true ] -->
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../../resources/accessibility-helper.js"></script>
+<script src="../../../resources/ax-text-marker-helper.js"></script>
+<script src="../../../resources/js-test.js"></script>
+</head>
+<body>
+
+<p id="target" dir="rtl">alpha beta gamma</p>
+
+<script>
+var output = "This test ensures a dir=rtl paragraph of left-to-right words reports its text and index space in logical order. The words are drawn right to left while each word's letters are drawn left to right, so visual order and logical order disagree at the word level but not the letter level.\n\n";
+
+if (window.accessibilityController) {
+    var target = accessibilityController.accessibleElementById("target");
+    var targetRange = target.textMarkerRangeForElement(target);
+    var walk = checkRoundTripAllTextMarkerIndicesWithinContainer(target);
+
+    function text()
+    {
+        return target.stringForTextMarkerRange(targetRange);
+    }
+
+    output += "The first word in the DOM is the first word in the string, though it is drawn rightmost.\n";
+    output += expect("text()", "'alpha beta gamma'");
+    output += expect("text().indexOf('alpha')", "0");
+    output += expect("text().indexOf('gamma')", "11");
+
+    output += "\nEvery code unit has its own index, and it round-trips.\n";
+    output += expect("walk.containerTextLength", "16");
+    output += expect("walk.indicesChecked", "16");
+    output += expect("walk.worstRoundTripDrift", "0");
+    output += expect("walk.worstLengthDifference", "0");
+
+    document.getElementById("target").style.display = "none";
+
+    debug(output);
+}
+</script>
+</body>
+</html>

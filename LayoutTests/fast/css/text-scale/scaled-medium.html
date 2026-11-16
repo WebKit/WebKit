@@ -1,0 +1,68 @@
+<!DOCTYPE html><!-- webkit-test-runner [ MinimumLogicalFontSize=0 ] -->
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="text-scale" content="scale">
+<link rel="help" href="https://drafts.csswg.org/css-fonts-5/#text-scale-meta">
+<script src="../../../resources/testharness.js"></script>
+<script src="../../../resources/testharnessreport.js"></script>
+<script src="resources/text-scale-helpers.js"></script>
+<style>
+#rem { font-size: 1.5rem; }
+#em-parent { font-size: 2em; }
+#em-child { font-size: 0.5em; }
+#px { font-size: 20px; }
+#initial { font-size: initial; }
+#rem-width { width: 10rem; }
+#nested-px { font-size: 20px; }
+#nested-medium { font-size: medium; }
+</style>
+</head>
+<body>
+<div id="rem"></div>
+<div id="em-parent"><div id="em-child"></div></div>
+<div id="px"></div>
+<div id="nested-px"><div id="initial"></div><div id="nested-medium"></div></div>
+<div id="rem-width"></div>
+<div id="keywords"></div>
+<font id="font-size-4" size="4"></font>
+<script>
+const root = document.documentElement;
+
+for (const category of ["L", "XXXL"]) {
+    const scale = textScaleForCategory(category);
+    const medium = scaledMediumSize(scale);
+
+    test(t => {
+        setContentSizeCategory(t, category);
+        assert_equals(internals.textScaleMetaMode(), "scale");
+        assertFontSize(root, medium, "root");
+        assertFontSize(document.body, medium, "body");
+        assertFontSize(document.getElementById("rem"), 1.5 * medium, "1.5rem");
+        assertFontSize(document.getElementById("em-parent"), 2 * medium, "2em");
+        assertFontSize(document.getElementById("em-child"), medium, "0.5em of 2em");
+        assertFontSize(document.getElementById("initial"), medium, "font-size: initial");
+        assertFontSize(document.getElementById("nested-medium"), medium, "font-size: medium");
+        assert_approx_equals(document.getElementById("rem-width").getBoundingClientRect().width, 10 * medium, 0.05, "width: 10rem");
+    }, `Category ${category}: medium, root, rem, em and initial follow the text scale`);
+
+    test(t => {
+        setContentSizeCategory(t, category);
+        assertFontSize(document.getElementById("px"), 20, "20px");
+        assertFontSize(document.getElementById("nested-px"), 20, "20px with scaled parent");
+    }, `Category ${category}: px font sizes are not scaled`);
+
+    test(t => {
+        setContentSizeCategory(t, category);
+        const keywords = document.getElementById("keywords");
+        for (const keyword of Object.keys(keywordSizes)) {
+            keywords.style.fontSize = keyword;
+            assertFontSize(keywords, scaledKeywordSize(keyword, scale), keyword);
+        }
+        keywords.style.fontSize = "";
+        assertFontSize(document.getElementById("font-size-4"), scaledKeywordSize("large", scale), "<font size=4>");
+    }, `Category ${category}: absolute-size keywords follow the text scale`);
+}
+</script>
+</body>
+</html>

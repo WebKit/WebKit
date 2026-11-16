@@ -1,0 +1,18 @@
+CONSOLE MESSAGE: ReferenceError: Can't find variable: shouldBe
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x324
+  RenderBlock {HTML} at (0,0) size 800x324
+    RenderBody {BODY} at (8,8) size 784x308
+      RenderHTMLCanvas {CANVAS} at (0,0) size 300x150
+      RenderText {#text} at (300,136) size 4x18
+        text run at (300,136) width 4: " "
+      RenderHTMLCanvas {CANVAS} at (304,0) size 300x150
+      RenderText {#text} at (0,0) size 0x0
+      RenderHTMLCanvas {CANVAS} at (0,154) size 300x150
+      RenderText {#text} at (300,290) size 4x18
+        text run at (300,290) width 4: " "
+      RenderHTMLCanvas {CANVAS} at (304,154) size 300x150
+      RenderText {#text} at (0,0) size 0x0
+      RenderText {#text} at (0,0) size 0x0
+      RenderText {#text} at (0,0) size 0x0

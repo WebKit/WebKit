@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<title>A negative stdDeviation in a referenced filter must not assert while computing filter outsets</title>
+<svg xmlns="http://www.w3.org/2000/svg" width="0" height="0" version="1.1" style="position: absolute">
+  <defs>
+    <filter id="blur1">
+      <feGaussianBlur stdDeviation="-1"/>
+    </filter>
+    <filter id="blur2">
+      <feGaussianBlur stdDeviation="-1 -1"/>
+    </filter>
+    <filter id="blur3">
+      <feGaussianBlur stdDeviation="1 -1"/>
+    </filter>
+    <filter id="blur4">
+      <feGaussianBlur stdDeviation="-1 1"/>
+    </filter>
+    <filter id="shadow1">
+      <feDropShadow stdDeviation="-1"/>
+    </filter>
+    <filter id="shadow2">
+      <feDropShadow stdDeviation="-1 -1"/>
+    </filter>
+    <filter id="shadow3">
+      <feDropShadow stdDeviation="1 -1"/>
+    </filter>
+    <filter id="shadow4">
+      <feDropShadow stdDeviation="-1 1" dx="20" dy="20"/>
+    </filter>
+  </defs>
+</svg>
+<style>
+div {
+    width: 50px;
+    height: 20px;
+    margin: 10px;
+    background-color: green;
+}
+</style>
+<div style="filter: url(#blur1)"></div>
+<div style="filter: url(#blur2)"></div>
+<div style="filter: url(#blur3)"></div>
+<div style="filter: url(#blur4)"></div>
+<div style="filter: url(#shadow1)"></div>
+<div style="filter: url(#shadow2)"></div>
+<div style="filter: url(#shadow3)"></div>
+<div style="filter: url(#shadow4)"></div>
+</html>

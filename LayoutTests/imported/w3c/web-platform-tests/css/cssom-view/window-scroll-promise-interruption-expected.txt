@@ -1,0 +1,6 @@
+
+FAIL Window.scrollTo: interruption by auto scroll call promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'result1.interrupted')"
+FAIL Window.scrollBy: interruption by auto scroll call promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'result1.interrupted')"
+FAIL Window.scrollTo: interruption by smooth scroll call promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'result1.interrupted')"
+FAIL Window.scrollBy: interruption by smooth scroll call promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'result1.interrupted')"
+

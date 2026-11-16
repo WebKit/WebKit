@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+select:open { display: block; }
+</style>
+</head>
+<body>
+<p tabindex="1">This tests opening the popup of a select whose :open rule changes its display, which rebuilds its renderer. WebKit should show the popup instead of crashing.</p>
+<select>
+  <option>one</option>
+  <option>two</option>
+</select>
+<pre id="result"></pre>
+<script src="../../../../resources/ui-helper.js"></script>
+<script>
+
+const select = document.querySelector('select');
+
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+}
+
+function log(text) {
+    document.getElementById('result').textContent += text + '\n';
+}
+
+window.onload = async () => {
+    if (!window.testRunner)
+        return;
+
+    await UIHelper.activateElement(select);
+    log(internals.isSelectPopupVisible(select) ? 'PASS - popup opened' : 'FAIL - popup failed to open');
+    log(getComputedStyle(select).display == 'block' ? 'PASS - the :open rule applies' : 'FAIL - the :open rule does not apply');
+
+    document.querySelector('p').focus();
+    log(internals.isSelectPopupVisible(select) ? 'FAIL - popup was open after moving the focus' : 'PASS - popup closed by blur');
+
+    testRunner.notifyDone();
+}
+
+</script>
+</body>
+</html>

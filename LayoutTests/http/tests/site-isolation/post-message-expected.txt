@@ -1,0 +1,11 @@
+CONSOLE MESSAGE: Unable to post message to http://webkit.org. Recipient has origin http://localhost:8000.
+
+PASS posting a message to about:blank threw an exception: SyntaxError: The string did not match the expected pattern.
+PASS posting a non-serializable message threw an exception: DataCloneError: The object can not be cloned.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+PASS received 'iframe received hello' from http://localhost:8000
+PASS received 'iframe received world' from http://localhost:8000
+PASS received 'iframe received sending to event source' from http://localhost:8000
+

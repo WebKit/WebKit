@@ -1,0 +1,4 @@
+
+PASS e.style['isolation'] = "none" should not set the property value
+PASS e.style['isolation'] = "auto isolate" should not set the property value
+

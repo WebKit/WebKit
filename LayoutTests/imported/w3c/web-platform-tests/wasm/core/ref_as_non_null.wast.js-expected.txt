@@ -1,0 +1,16 @@
+
+PASS #1 Reinitialize the default imports
+PASS #2 Test that WebAssembly compilation succeeds (ref_as_non_null.wast:1)
+PASS #3 Test that WebAssembly compilation fails (ref_as_non_null.wast:31)
+PASS #4 Test that WebAssembly compilation succeeds (ref_as_non_null.wast:41)
+PASS #5 Reinitialize the default imports
+PASS #6 Test that WebAssembly compilation succeeds (ref_as_non_null.wast:1)
+PASS #7 Test that WebAssembly instantiation succeeds (ref_as_non_null.wast:1)
+PASS #8 Test that a WebAssembly code traps (ref_as_non_null.wast:25)
+PASS #9 Test that a WebAssembly code traps (ref_as_non_null.wast:27)
+PASS #10 Test that a WebAssembly code returns a specific result (ref_as_non_null.wast:28)
+PASS #11 Test that a WebAssembly code returns a specific result (ref_as_non_null.wast:29)
+PASS #12 Test that WebAssembly compilation fails (ref_as_non_null.wast:31)
+PASS #13 Test that WebAssembly compilation succeeds (ref_as_non_null.wast:41)
+PASS #14 Test that WebAssembly instantiation succeeds (ref_as_non_null.wast:41)
+

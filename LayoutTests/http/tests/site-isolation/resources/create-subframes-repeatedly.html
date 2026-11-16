@@ -1,0 +1,36 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script>
+// Create subframes as fast as possible, so that some of them are created while the process hosting
+// our parent document is removing the <iframe> element this frame lives in. The frames created in
+// a turn are only removed in the next one: a frame that is removed in the turn that appended it is
+// never created at all.
+let frames = [];
+
+function createSubframes()
+{
+    for (let frame of frames)
+        frame.remove();
+    frames = [];
+
+    for (let i = 0; i < 5; i++) {
+        let frame = document.createElement("iframe");
+        document.body.appendChild(frame);
+        frames.push(frame);
+    }
+
+    window.postMessage("again", "*");
+}
+
+window.addEventListener("message", (event) => {
+    if (event.data == "again")
+        createSubframes();
+});
+
+onload = () => {
+    // Ask the parent to remove us first, so that the frames created below are created while it is
+    // doing so.
+    parent.postMessage("creating", "*");
+    createSubframes();
+};
+</script>
+<body></body>

@@ -1,0 +1,4 @@
+
+
+PASS entries() should be correct after a traversal that navigates multiple browsing contexts
+

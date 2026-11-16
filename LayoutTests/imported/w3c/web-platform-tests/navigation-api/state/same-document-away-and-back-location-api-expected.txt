@@ -1,0 +1,3 @@
+
+PASS entry.getState() behavior after navigating away using a fragment change, then back
+

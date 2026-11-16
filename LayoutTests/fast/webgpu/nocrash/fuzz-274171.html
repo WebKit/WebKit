@@ -1,0 +1,28 @@
+<!-- webkit-test-runner [ enableMetalShaderValidation=true ] -->
+<script src="../../../resources/js-test-pre.js"></script>
+<script>
+async function run() {
+    let adapter = await navigator.gpu.requestAdapter();
+    let device = await adapter.requestDevice({ requiredFeatures: ['texture-compression-etc2'] });
+    let texture = device.createTexture({
+        size: { width: 7904, height: 240, depthOrArrayLayers: 1 },
+        mipLevelCount: 6,
+        format: 'etc2-rgba8unorm-srgb',
+        usage: GPUTextureUsage.COPY_DST | GPUTextureUsage.TEXTURE_BINDING,
+    });
+    device.queue.writeTexture(
+        { texture: texture, mipLevel: 5 },
+        new Int32Array(2318),
+        { offset: 934, bytesPerRow: 824 },
+        { width: 140, height: 8, depthOrArrayLayers: 1 }
+    );
+    await device.queue.onSubmittedWorkDone();
+    debug('Pass')
+    globalThis.testRunner?.notifyDone();
+}
+globalThis.testRunner?.dumpAsText();
+globalThis.testRunner?.waitUntilDone();
+
+run();
+</script>
+

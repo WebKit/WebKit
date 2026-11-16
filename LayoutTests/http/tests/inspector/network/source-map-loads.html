@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../resources/inspector-test.js"></script>
+<script>
+function triggerStylesheetResource() {
+    let link = document.createElement("link");
+    link.rel = "stylesheet";
+    link.href = "resources/stylesheet-with-sourcemap.css";
+    document.head.appendChild(link);
+}
+
+function triggerScriptResource() {
+    let script = document.createElement("script");
+    script.src = "resources/script-with-sourcemap.js";
+    document.body.appendChild(script);
+}
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("Network.SourceMap");
+
+    suite.addTestCase({
+        name: "Network.SourceMap.OriginalContent",
+        description: "Missing original source files report loading errors.",
+        async test() {
+            let payload = {
+                version: 3,
+                sources: ["missing-original-content.js", "inline-original-content.js"],
+                sourcesContent: [null, "const inlineOriginalValue = 42;"],
+                names: [],
+                mappings: "AAAA",
+            };
+            let source = `function originalContentProbe() {}\n//# sourceURL=original-content-probe.js\n//# sourceMappingURL=data:application/json;base64,${btoa(JSON.stringify(payload))}`;
+            await InspectorTest.evaluateInPage(`(() => { let script = document.createElement("script"); script.textContent = ${JSON.stringify(source)}; document.head.appendChild(script); })()`);
+            let sourceMap = null;
+            for (let i = 0; i < 200 && !sourceMap; ++i) {
+                sourceMap = WI.SourceMap.instances.find((sourceMap) => sourceMap.originalSourceCode.sourceURL === "original-content-probe.js");
+                if (!sourceMap)
+                    await Promise.delay(10);
+            }
+            InspectorTest.assert(sourceMap, "The generated script should have loaded its source map.");
+            let missingSource = sourceMap.resources.find((resource) => resource.displayName === "missing-original-content.js");
+            let {error: missingError} = await missingSource.requestContent();
+            InspectorTest.expectTrue(missingError, "A missing original source should return a loading error.");
+            InspectorTest.expectTrue(missingSource.failed, "A missing original source should be marked as failed.");
+
+            let inlineSource = sourceMap.resources.find((resource) => resource.displayName === "inline-original-content.js");
+            let {content: inlineContent, statusCode: inlineStatusCode} = await inlineSource.requestContentFromBackend();
+            InspectorTest.expectEqual(inlineContent, payload.sourcesContent[1], "An inline original source should preserve its content.");
+            InspectorTest.expectEqual(inlineStatusCode, 200, "An inline original source should have a successful status.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "Network.SourceMap.Stylesheet",
+        description: "Ensure a source map loads for a stylesheet resource.",
+        async test(resolve, reject) {
+            InspectorTest.evaluateInPage(`triggerStylesheetResource()`);
+            let resourceEvent = await WI.Frame.awaitEvent(WI.Frame.Event.ResourceWasAdded);
+            let resource = resourceEvent.data.resource;
+            InspectorTest.expectThat(resource.url.endsWith("stylesheet-with-sourcemap.css"), "Stylesheet Resource should be created.");
+            let sourceMapEvent = await resource.awaitEvent(WI.SourceCode.Event.SourceMapAdded);
+            InspectorTest.expectEqual(resource.sourceMaps.length, 1, "Resource should have loaded 1 SourceMap.");
+            InspectorTest.expectThat(resource.sourceMaps[0] instanceof WI.SourceMap, "SourceMap should be a WI.SourceMap instance.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "Network.SourceMap.Script",
+        description: "Ensure a source map loads for a script resource.",
+        async test(resolve, reject) {
+            InspectorTest.evaluateInPage(`triggerScriptResource()`);
+            let resourceEvent = await WI.Frame.awaitEvent(WI.Frame.Event.ResourceWasAdded);
+            let resource = resourceEvent.data.resource;
+            InspectorTest.expectThat(resource.url.endsWith("script-with-sourcemap.js"), "Script Resource should be created.");
+            let sourceMapEvent = await resource.awaitEvent(WI.SourceCode.Event.SourceMapAdded);
+            InspectorTest.expectEqual(resource.sourceMaps.length, 1, "Resource should have loaded 1 SourceMap.");
+            InspectorTest.expectThat(resource.sourceMaps[0] instanceof WI.SourceMap, "SourceMap should be a WI.SourceMap instance.");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Ensure a source map loads for resources with sourceMappingURLs.</p>
+</body>
+</html>

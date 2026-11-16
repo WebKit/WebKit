@@ -1,0 +1,21 @@
+load("@rules_go//go:def.bzl", "go_binary", "go_library")
+
+package(
+    default_applicable_licenses = ["//:license"],
+)
+
+licenses(["notice"])
+
+go_library(
+    name = "deps_parser_lib",
+    srcs = ["deps_parser.go"],
+    importpath = "go.skia.org/skia/bazel/deps_parser",
+    visibility = ["//visibility:private"],
+)
+
+go_binary(
+    name = "deps_parser",
+    data = ["@buildifier_prebuilt//:buildifier"],
+    embed = [":deps_parser_lib"],
+    visibility = ["//visibility:public"],
+)

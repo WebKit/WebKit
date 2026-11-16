@@ -1,0 +1,15 @@
+Test that reparenting a removed media tag doesn't crash the process.
+<script src=video-test.js></script>
+<script>
+setTimeout(function(){
+    var f = document.createElement('iframe');
+    document.documentElement.appendChild(f);
+    var w = f.contentWindow;
+    var div = w.document.createElement('div');
+    div.innerHTML = '<audio src="1">';
+    var node = div;
+    f.parentNode.removeChild(f);
+    document.body.appendChild(node);
+    endTestLater();
+})
+</script>

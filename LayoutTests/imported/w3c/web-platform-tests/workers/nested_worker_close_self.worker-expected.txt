@@ -1,0 +1,3 @@
+
+PASS Nested work that closes itself
+

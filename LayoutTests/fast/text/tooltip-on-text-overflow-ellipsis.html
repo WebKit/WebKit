@@ -1,0 +1,19 @@
+<style>
+#container {
+  border: 1px solid black;
+  width: 400px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: pre;
+}
+</style>
+<div id=container>This is a long text with text-overflow: ellipsis. PASS if tooltip shows up on hover.</div>
+<pre id=result></pre>
+
+<script>
+document.body.offsetHeight;
+if (window.internals) {
+  testRunner.dumpAsText();
+  result.innerText = internals.toolTipFromElement(container);
+}
+</script>

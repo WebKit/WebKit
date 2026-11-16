@@ -1,0 +1,15 @@
+<p>This tests for a bug where deleting the contents of an editable root that's inline would introduce a new line.</p>
+<div style="border: 1px solid black;"><span id="span" contenteditable="true">foo</span></div>
+
+<script>
+span = document.getElementById("span");
+selection = window.getSelection();
+selection.setPosition(span, 0);
+document.execCommand("SelectAll");
+document.execCommand("Delete");
+document.execCommand("InsertText", false, "x");
+document.execCommand("Delete");
+document.execCommand("InsertText", false, "x");
+document.execCommand("Delete");
+document.execCommand("InsertText", false, "There shouldn't be any blank lines in the black bordered area.");
+</script>

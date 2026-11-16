@@ -1,0 +1,12 @@
+Tests that when a gesture rubber-bands the main frame with the cursor over a subscroller, and the user holds at max stretch for longer than the latching-relevance timeout before releasing, the frame still snaps back on release.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS sawMainFrameStretch is true
+PASS document.scrollingElement.scrollTop is 0
+PASS subscroller.scrollTop is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

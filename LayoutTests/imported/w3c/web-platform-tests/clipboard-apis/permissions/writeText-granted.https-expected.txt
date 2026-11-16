@@ -1,0 +1,4 @@
+Body needed for test_driver.click()
+
+PASS navigator.clipboard.writeText() succeeds when permission granted
+

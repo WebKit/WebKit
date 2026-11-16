@@ -1,0 +1,24 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 205x19
+          text run at (0,0) width 205: "Test painting of transformed video"
+      RenderBlock (anonymous) at (0,36) size 784x333
+        RenderText {#text} at (0,91) size 4x19
+          text run at (0,91) width 4: " "
+        RenderBR {BR} at (210,106) size 0x0
+        RenderText {#text} at (0,202) size 4x19
+          text run at (0,202) width 4: " "
+        RenderBR {BR} at (210,217) size 0x0
+        RenderText {#text} at (0,313) size 4x19
+          text run at (0,313) width 4: " "
+        RenderBR {BR} at (210,328) size 0x0
+layer at (12,44) size 206x106
+  RenderVideo {VIDEO} at (4,0) size 206x106 [border: (3px solid #FF0000)]
+layer at (12,155) size 206x106
+  RenderVideo {VIDEO} at (4,111) size 206x106 [border: (3px solid #FF0000)]
+layer at (12,266) size 206x106
+  RenderVideo {VIDEO} at (4,222) size 206x106 [border: (3px solid #FF0000)]

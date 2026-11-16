@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+</script>
+<style>
+@font-face {
+    font-family: "WebFont";
+    src: url("../../resources/Ahem.ttf") format("truetype");
+}
+</style>
+</head>
+<body>
+<p>
+This test makes sure that drawing a variety of different kinds of fonts into canvas doesn't cause a crash. The test passes if there is no crash.
+</p>
+<canvas id="canvas" width="400" height="200"></canvas>
+<script>
+let context = document.getElementById("canvas").getContext("2d");
+document.fonts.keys().next().value.load().then(function() {
+    for (const font of ["WebFont", "Helvetica", "system-ui", "ui-serif", "ui-monospace", "ui-rounded", "-apple-menu", "-apple-status-bar", "lastresort", "-apple-system-monospaced-numbers"]) {
+        for (const weight of ["normal", "bold"]) {
+            context.fillStyle = font == "WebFont" ? "black" : "green";
+            context.font = `${weight} 48px ${font}`;
+            context.fillText("Hello", 0, 150);
+        }
+    }
+    for (const font of ["body", "headline", "subheadline", "caption1", "caption2", "footnote", "short-body", "short-headline", "short-subheadline", "short-caption1", "short-footnote", "tall-body", "title0", "title1", "title2", "title3", "title4"]) {
+        context.font = `-apple-system-${font}`;
+        context.fillText("Hello", 0, 150);
+    }
+    if (window.testRunner)
+        testRunner.notifyDone();
+});
+</script>
+</body>
+</html>

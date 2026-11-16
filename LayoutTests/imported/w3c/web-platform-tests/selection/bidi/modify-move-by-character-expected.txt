@@ -1,0 +1,36 @@
+Hello World
+مرحبا عالم
+אבגדהו
+Hello World
+Hello אבגדהו World
+אבגדהו Hello World
+
+PASS LTR text in LTR paragraph: move forward 2 chars
+PASS LTR text in LTR paragraph: move backward 2 chars
+PASS RTL text in RTL paragraph: move forward 2 chars
+PASS RTL text in RTL paragraph: move backward 2 chars
+PASS RTL text in LTR paragraph: move forward 2 chars
+PASS RTL text in LTR paragraph: move backward 2 chars
+PASS LTR text in RTL paragraph: move forward 2 chars
+PASS LTR text in RTL paragraph: move backward 2 chars
+PASS LTR-RTL context in LTR paragraph: move forward 3 chars
+PASS LTR-RTL context in LTR paragraph: move backward 3 chars
+PASS RTL-LTR context in LTR paragraph: move forward 3 chars
+PASS RTL-LTR context in LTR paragraph: move backward 3 chars
+PASS Mixed context in auto-dir paragraph: move forward 3 chars
+PASS Mixed context in auto-dir paragraph: move backward 3 chars
+PASS LTR text in LTR paragraph: move right 2 chars
+PASS LTR text in LTR paragraph: move left 2 chars
+PASS RTL text in RTL paragraph: move right 2 chars
+PASS RTL text in RTL paragraph: move left 2 chars
+PASS RTL text in LTR paragraph: move right 2 chars
+PASS RTL text in LTR paragraph: move left 2 chars
+PASS LTR text in RTL paragraph: move right 2 chars
+PASS LTR text in RTL paragraph: move left 2 chars
+PASS LTR-RTL context in LTR paragraph: move right 3 chars
+PASS LTR-RTL context in LTR paragraph: move left 3 chars
+PASS RTL-LTR context in LTR paragraph: move right 3 chars
+PASS RTL-LTR context in LTR paragraph: move left 3 chars
+PASS Mixed context in auto-dir paragraph: move right 3 chars
+PASS Mixed context in auto-dir paragraph: move left 3 chars
+

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+<div id="container" style="font-size: 17px">
+    <span id="plain">text</span>
+    <span id="em" style="font-size: 2em">text</span>
+    <span id="lineHeightNumber" style="line-height: 1.5">text</span>
+    <span id="lineHeightLength" style="line-height: 20px">text</span>
+    <span id="reset" style="-webkit-text-zoom: reset">text</span>
+    <svg><text id="svgText" style="font-size: 17px">text</text></svg>
+</div>
+<script>
+description("Text zoom is included in the computed font-size returned by getComputedStyle. Pages detect text zoom this way.");
+
+function check()
+{
+    shouldBeEqualToString("getComputedStyle(plain).fontSize", "34px");
+    shouldBeEqualToString("getComputedStyle(em).fontSize", "68px");
+    shouldBeEqualToString("getComputedStyle(plain).font", "34px -webkit-standard");
+    shouldBeEqualToString("getComputedStyle(lineHeightNumber).lineHeight", "51px");
+    shouldBeEqualToString("getComputedStyle(lineHeightLength).lineHeight", "40px");
+    shouldBeEqualToString("getComputedStyle(reset).fontSize", "17px");
+    shouldBeEqualToString("getComputedStyle(svgText).fontSize", "17px");
+}
+
+if (window.internals) {
+    debug("Text zoom 2:");
+    internals.setTextZoomFactor(2);
+    check();
+
+    debug("");
+    debug("Text zoom 2, page zoom 2:");
+    internals.setPageZoomFactor(2);
+    check();
+
+    internals.setPageZoomFactor(1);
+    internals.setTextZoomFactor(1);
+}
+</script>
+</body>
+</html>

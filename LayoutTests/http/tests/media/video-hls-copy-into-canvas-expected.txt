@@ -1,0 +1,14 @@
+
+Check that creating an ImageBitmap from a video succeeds.
+
+
+** Set video.src, wait for media data to load
+RUN(video.src = 'http://127.0.0.1:8000/media/resources/hls/metadata/prog_index.m3u8')
+
+EVENT(canplaythrough)
+EXPECTED (imageBitmap instanceof ImageBitmap == 'true') OK
+EXPECTED (imageBitmap.width != 0 == 'true') OK
+EXPECTED (imageBitmap.height != 0 == 'true') OK
+Image isn't all black \o/
+END OF TEST
+

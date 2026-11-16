@@ -1,0 +1,17 @@
+
+Verifies that the selection caret rect updates properly when inserting newlines in a textarea with vertical overflow.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+PASS caretRects[0].height is caretRects[1].height
+PASS caretRects[0].height is caretRects[2].height
+PASS caretRects[0].height is caretRects[3].height
+PASS caretRects[0].height is caretRects[4].height
+PASS caretRects[0].height is caretRects[5].height
+PASS caretRects[4].top is caretRects[5].top
+PASS caretRects[5].width is > 1
+PASS caretRects[5].height is > 1
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

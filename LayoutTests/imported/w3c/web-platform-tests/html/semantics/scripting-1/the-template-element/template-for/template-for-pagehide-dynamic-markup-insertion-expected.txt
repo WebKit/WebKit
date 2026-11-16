@@ -1,0 +1,10 @@
+
+FAIL document.open() in pagehide throws InvalidStateError during prepare content patching (via streamAppendHTMLUnsafe) promise_test: Unhandled rejection with value: object "TypeError: container.streamAppendHTMLUnsafe is not a function. (In 'container.streamAppendHTMLUnsafe()', 'container.streamAppendHTMLUnsafe' is undefined)"
+FAIL document.open() in pagehide throws InvalidStateError during prepare content patching (via document.write) assert_true: pagehide should have fired expected true got false
+FAIL document.write() in pagehide throws InvalidStateError during prepare content patching (via streamAppendHTMLUnsafe) promise_test: Unhandled rejection with value: object "TypeError: container.streamAppendHTMLUnsafe is not a function. (In 'container.streamAppendHTMLUnsafe()', 'container.streamAppendHTMLUnsafe' is undefined)"
+FAIL document.write() in pagehide throws InvalidStateError during prepare content patching (via document.write) assert_true: pagehide should have fired expected true got false
+FAIL document.writeln() in pagehide throws InvalidStateError during prepare content patching (via streamAppendHTMLUnsafe) promise_test: Unhandled rejection with value: object "TypeError: container.streamAppendHTMLUnsafe is not a function. (In 'container.streamAppendHTMLUnsafe()', 'container.streamAppendHTMLUnsafe' is undefined)"
+FAIL document.writeln() in pagehide throws InvalidStateError during prepare content patching (via document.write) assert_true: pagehide should have fired expected true got false
+FAIL document.close() in pagehide throws InvalidStateError during prepare content patching (via streamAppendHTMLUnsafe) promise_test: Unhandled rejection with value: object "TypeError: container.streamAppendHTMLUnsafe is not a function. (In 'container.streamAppendHTMLUnsafe()', 'container.streamAppendHTMLUnsafe' is undefined)"
+FAIL document.close() in pagehide throws InvalidStateError during prepare content patching (via document.write) assert_true: pagehide should have fired expected true got false
+

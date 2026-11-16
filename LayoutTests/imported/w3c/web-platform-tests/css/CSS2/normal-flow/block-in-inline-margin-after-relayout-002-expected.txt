@@ -1,0 +1,5 @@
+block
+
+
+PASS The margin after a block level box that is a sibling of inline content survives an incremental layout
+

@@ -1,0 +1,12 @@
+
+PASS Property text-transform value 'none'
+PASS Property text-transform value 'capitalize'
+PASS Property text-transform value 'uppercase'
+PASS Property text-transform value 'lowercase'
+PASS Property text-transform value 'full-width'
+PASS Property text-transform value 'full-size-kana'
+PASS Property text-transform value 'math-auto'
+PASS Property text-transform value 'capitalize full-width'
+PASS Property text-transform value 'full-width full-size-kana'
+PASS Property text-transform value 'uppercase full-width full-size-kana'
+

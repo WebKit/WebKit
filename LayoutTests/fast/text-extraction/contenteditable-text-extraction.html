@@ -1,0 +1,28 @@
+<!-- webkit-test-runner [ textExtractionEnabled=true ] -->
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+body {
+    white-space: pre-wrap;
+}
+</style>
+<script src="../../resources/ui-helper.js"></script>
+<script>
+addEventListener("load", async () => {
+    if (!window.testRunner)
+        return;
+
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+    document.body.textContent = await UIHelper.requestTextExtraction({
+        mergeParagraphs: true
+    });
+    testRunner.notifyDone();
+});
+</script>
+</head>
+<body>
+<div contenteditable="true" autofocus aria-label="Send a message">Check out <a href="https://webkit.org">this link</a>.</div>
+</body>
+</html>

@@ -1,0 +1,18 @@
+
+RUN(video.disableRemotePlayback = true)
+RUN(video.src = URL.createObjectURL(source))
+EVENT(sourceopen)
+RUN(sourceBuffer = source.addSourceBuffer('audio/aac'))
+RUN(sourceBuffer.appendBuffer(buffer))
+EVENT(updateend)
+EXPECTED (sourceBuffer.buffered.length == '1') OK
+EXPECTED (sourceBuffer.buffered.start(0) == '0') OK
+EXPECTED (fullEnd > 1.0 == 'true') OK
+RUN(sourceBuffer.remove(0, 1.0))
+EVENT(updateend)
+EXPECTED (sourceBuffer.buffered.length == '1') OK
+EXPECTED (sourceBuffer.buffered.start(0) >= 1.0 == 'true') OK
+EXPECTED (sourceBuffer.buffered.start(0) < 1.1 == 'true') OK
+EXPECTED (Math.abs(sourceBuffer.buffered.end(0) - fullEnd) < 0.05 == 'true') OK
+END OF TEST
+

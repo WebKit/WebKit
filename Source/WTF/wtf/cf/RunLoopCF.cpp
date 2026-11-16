@@ -1,0 +1,226 @@
+/*
+ * Copyright (C) 2010-2019 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#include "config.h"
+#include <wtf/RunLoop.h>
+
+#include <mach/mach.h>
+#include <wtf/AutodrainedPool.h>
+#include <wtf/SchedulePair.h>
+
+namespace WTF {
+
+static RetainPtr<CFRunLoopTimerRef> createTimer(Seconds interval, bool repeat, void(*timerFired)(CFRunLoopTimerRef, void*), void* info)
+{
+    CFRunLoopTimerContext context = { 0, info, 0, 0, 0 };
+    Seconds repeatInterval = repeat ? interval : 0_s;
+    return adoptCF(CFRunLoopTimerCreate(kCFAllocatorDefault, CFAbsoluteTimeGetCurrent() + interval.seconds(), repeatInterval.seconds(), 0, 0, timerFired, &context));
+}
+
+void RunLoop::performWork(void* context)
+{
+    AutodrainedPool pool;
+    static_cast<RunLoop*>(context)->performWork();
+}
+
+RunLoop::RunLoop()
+    : m_runLoop(CFRunLoopGetCurrent())
+{
+    CFRunLoopSourceContext context = { 0, this, 0, 0, 0, 0, 0, 0, 0, performWork };
+    lazyInitialize(m_runLoopSource, adoptCF(CFRunLoopSourceCreate(kCFAllocatorDefault, 0, &context)));
+    CFRunLoopAddSource(m_runLoop.get(), m_runLoopSource.get(), kCFRunLoopCommonModes);
+
+    if (m_runLoop == CFRunLoopGetMain()) {
+        mach_port_options_t options { };
+        options.flags = MPO_QLIMIT | MPO_INSERT_SEND_RIGHT;
+        options.mpl.mpl_qlimit = 1;
+        mach_port_t port = MACH_PORT_NULL;
+        if (mach_port_construct(mach_task_self(), &options, 0, &port) != KERN_SUCCESS)
+            return;
+
+        m_wakeUpPort = port;
+        CFRunLoopSourceContext1 wakeUpPortContext = {
+            1, this, nullptr, nullptr, nullptr, nullptr, nullptr,
+            [](void* context) -> mach_port_t {
+                return static_cast<RunLoop*>(context)->m_wakeUpPort;
+            },
+            [](void*, CFIndex, CFAllocatorRef, void* context) -> void* {
+                performWork(context);
+                return nullptr;
+            }
+        };
+
+        m_wakeUpPortSource = adoptCF(CFRunLoopSourceCreate(kCFAllocatorDefault, 0, reinterpret_cast<CFRunLoopSourceContext*>(&wakeUpPortContext)));
+        if (!m_wakeUpPortSource) {
+            mach_port_destruct(mach_task_self(), std::exchange(m_wakeUpPort, MACH_PORT_NULL), -1, 0);
+            return;
+        }
+        CFRunLoopAddSource(m_runLoop.get(), m_wakeUpPortSource.get(), kCFRunLoopCommonModes);
+    }
+}
+
+RunLoop::~RunLoop()
+{
+    CFRunLoopSourceInvalidate(m_runLoopSource.get());
+    if (m_wakeUpPortSource) {
+        CFRunLoopSourceInvalidate(m_wakeUpPortSource.get());
+        mach_port_destruct(mach_task_self(), m_wakeUpPort, -1, 0);
+    }
+}
+
+void RunLoop::wakeUp()
+{
+    // CFRunLoopWakeUp() holds the CFRunLoop lock across its mach_msg() call to the wake-up port,
+    // and the newly woken thread immediately tries to acquire that same lock. Send the wakeup
+    // message to the wakeup port we installed instead to avoid this.
+    if (m_wakeUpPort != MACH_PORT_NULL && CFRunLoopIsWaiting(m_runLoop.get())) {
+        mach_msg_header_t header { };
+        header.msgh_bits = MACH_MSGH_BITS(MACH_MSG_TYPE_COPY_SEND, 0);
+        header.msgh_size = sizeof(header);
+        header.msgh_remote_port = m_wakeUpPort;
+        auto result = mach_msg(&header, MACH_SEND_MSG | MACH_SEND_TIMEOUT, sizeof(header), 0, MACH_PORT_NULL, 0, MACH_PORT_NULL);
+        if (result == MACH_MSG_SUCCESS)
+            return;
+        if (result == MACH_SEND_TIMED_OUT) {
+            // A wake-up message is already queued on the port. Destroy the pseudo-received
+            // message header to release the copied send right.
+            mach_msg_destroy(&header);
+            return;
+        }
+    }
+
+    CFRunLoopSourceSignal(m_runLoopSource.get());
+    CFRunLoopWakeUp(m_runLoop.get());
+}
+
+RunLoop::CycleResult RunLoop::cycle(RunLoopMode mode)
+{
+    CFTimeInterval timeInterval = 0.05;
+    CFRunLoopRunInMode(mode, timeInterval, true);
+    return CycleResult::Continue;
+}
+
+void RunLoop::run()
+{
+    AutodrainedPool pool;
+    CFRunLoopRun();
+}
+
+void RunLoop::stop()
+{
+    ASSERT(m_runLoop == CFRunLoopGetCurrent());
+    CFRunLoopStop(m_runLoop.get());
+}
+
+void RunLoop::dispatch(const SchedulePairHashSet& schedulePairs, Function<void()>&& function)
+{
+    auto timer = createTimer(0_s, false, [] (CFRunLoopTimerRef timer, void* context) {
+        AutodrainedPool pool;
+
+        CFRunLoopTimerInvalidate(timer);
+
+        auto function = adopt(static_cast<Function<void()>::Impl*>(context));
+        function();
+    }, function.leak());
+
+    for (auto& schedulePair : schedulePairs)
+        CFRunLoopAddTimer(protect(schedulePair->runLoop()).get(), timer.get(), protect(schedulePair->mode()).get());
+}
+
+// RunLoop::Timer
+
+RunLoop::TimerBase::TimerBase(Ref<RunLoop>&& runLoop, ASCIILiteral description)
+    : m_runLoop(WTF::move(runLoop))
+    , m_description(description)
+{
+    m_runLoop->registerTimer(*this);
+}
+
+RunLoop::TimerBase::~TimerBase()
+{
+    stop();
+    m_runLoop->unregisterTimer(*this);
+}
+
+void RunLoop::TimerBase::start(Seconds interval, bool repeat)
+{
+    if (m_timer) {
+        bool canReschedule = !repeat && !CFRunLoopTimerDoesRepeat(m_timer.get()) && CFRunLoopTimerIsValid(m_timer.get());
+        if (canReschedule) {
+            CFRunLoopTimerSetNextFireDate(m_timer.get(), CFAbsoluteTimeGetCurrent() + interval.seconds());
+            return;
+        }
+
+        // Re-arm the timer by invalidating the old CFRunLoopTimer in place. Unlike stop(), this does
+        // NOT assert run-loop affinity: start() may legitimately be called from another thread to (re)arm
+        // a timer -- e.g. JSRunLoopTimer::Manager arms its per-VM timer from GC and Wasm compiler threads.
+        // This does not free the TimerBase, so it cannot cause the cross-thread use-after-free that stop()
+        // and the destructor guard against.
+        CFRunLoopTimerInvalidate(m_timer.get());
+        m_timer = nullptr;
+    }
+
+    m_timer = createTimer(interval, repeat, [] (CFRunLoopTimerRef cfTimer, void* context) {
+        AutodrainedPool pool;
+
+        auto timer = static_cast<TimerBase*>(context);
+        if (!CFRunLoopTimerDoesRepeat(cfTimer))
+            CFRunLoopTimerInvalidate(cfTimer);
+
+        timer->fired();
+    }, this);
+
+    CFRunLoopAddTimer(m_runLoop->m_runLoop.get(), m_timer.get(), kCFRunLoopCommonModes);
+}
+
+void RunLoop::TimerBase::stop()
+{
+    if (!m_timer)
+        return;
+
+    // An active timer must be stopped (and destroyed) on its run loop's thread: the CFRunLoopTimer
+    // holds a raw pointer to this TimerBase as its callback context, and CFRunLoopTimerInvalidate()
+    // does not synchronize with a callback already dispatching on the run loop's thread, so invalidating
+    // from another thread races with the in-flight callback and can leave it reading freed memory.
+    // (Starting a timer cross-thread is safe and supported -- that is how dispatch()/dispatchAfter()
+    // schedule work onto another run loop.)
+    assertIsCurrent(m_runLoop);
+    CFRunLoopTimerInvalidate(m_timer.get());
+    m_timer = nullptr;
+}
+
+bool RunLoop::TimerBase::isActive() const
+{
+    return m_timer && CFRunLoopTimerIsValid(m_timer.get());
+}
+
+Seconds RunLoop::TimerBase::secondsUntilFire() const
+{
+    if (isActive())
+        return std::max<Seconds>(Seconds { CFRunLoopTimerGetNextFireDate(m_timer.get()) - CFAbsoluteTimeGetCurrent() }, 0_s);
+    return 0_s;
+}
+
+} // namespace WTF

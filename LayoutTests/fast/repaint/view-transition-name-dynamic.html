@@ -1,0 +1,18 @@
+<!DOCTYPE HTML>
+<script src="resources/text-based-repaint.js"></script>
+<script>
+function repaintTest() {
+  document.getElementById('wc').style.viewTransitionName = 'something';
+}
+onload = runRepaintTest;
+</script>
+<style>
+body { margin: 0; }
+div { width: 100px; height: 100px; }
+#wc { background: red; position: relative; }
+#child { position: absolute; top: 0; left: 0; z-index: -1; background: green; }
+</style>
+<p style="height: 20px">Tests that dynamically setting view-transition-name invalidates for repaint. Setting it makes #wc a stacking context, painting the negative-z-index green child above #wc's red background. Passes if a repaint is issued for that region.</p>
+<div id="wc">
+  <div id="child"></div>
+</div>

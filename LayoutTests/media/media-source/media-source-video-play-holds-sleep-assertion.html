@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="media-source-loader.js"></script>
+<script src="../video-test.js"></script>
+<script src="../media-test.js"></script>
+<script>
+var loader;
+var source;
+var sourceBuffer;
+var i;
+
+function loaderPromise(loader) {
+    return new Promise((resolve, reject) => {
+        loader.onload = resolve;
+        loader.onerror = reject;
+    });
+}
+
+async function start() {
+    loader = new MediaSourceLoader('content/test-fragmented-manifest.json');
+    await loaderPromise(loader);
+
+    var videos = document.getElementsByTagName('video');
+    video = videos[0];
+
+    source = new MediaSource();
+    run('video.src = URL.createObjectURL(source)');
+    await waitFor(source, 'sourceopen');
+    waitFor(video, 'error').then(failTest);
+
+    run('sourceBuffer = source.addSourceBuffer(loader.type())');
+    run('sourceBuffer.appendBuffer(loader.initSegment())');
+    await waitFor(sourceBuffer, 'update');
+
+    consoleWrite('Append all media segments')
+    for (i = 0; i < loader.mediaSegmentsLength(); i++) {
+        sourceBuffer.appendBuffer(loader.mediaSegment(i));
+        await waitFor(sourceBuffer, 'update', true);
+    }
+    run('source.endOfStream()');
+    await waitFor(source, 'sourceended');
+
+    testExpected('internals.elementIsBlockingDisplaySleep(video)', false);
+
+    run('video.play()');
+    await waitFor(video, 'playing');
+    await waitFor(video, 'timeupdate');
+    testExpected('internals.elementIsBlockingDisplaySleep(video)', true);
+
+    run('video.pause()');
+    await waitFor(video, 'pause');
+    testExpected('internals.elementIsBlockingDisplaySleep(video)', false);
+
+    endTest();
+}
+</script>
+</head>
+<body onload="start()">
+    <video/>
+</body>
+</html>

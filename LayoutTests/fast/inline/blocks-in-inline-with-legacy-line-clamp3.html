@@ -1,0 +1,15 @@
+<!-- webkit-test-runner [ BlocksInInlineLayoutEnabled=true ] -->
+<style>
+.clamp {
+  display: -webkit-inline-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+</style>
+<div class="clamp">
+  <span>
+    first line<br>
+    <div>second line</div>
+    third line<br>
+  </span>
+</div>

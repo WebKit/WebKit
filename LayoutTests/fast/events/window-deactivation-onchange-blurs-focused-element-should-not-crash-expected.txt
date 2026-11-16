@@ -1,0 +1,4 @@
+This tests that the WebContent process does not crash when window deactivation fires a change event on a focused form control whose onchange handler removes focus from that control.
+
+
+PASS - did not crash

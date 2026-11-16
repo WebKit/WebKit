@@ -1,0 +1,15 @@
+
+RUN(internals.settings.setShouldManageAudioSessionCategory(true))
+RUN(video = document.querySelector("video"))
+RUN(video.src = findMediaFile("video", "content/test"))
+RUN(video.play())
+EVENT(loadedmetadata)
+EXPECTED (video.audioTracks.length == '1') OK
+EXPECTED (playOutcome == 'NotAllowedError') OK
+EXPECTED (video.paused == 'true') OK
+EXPECTED (activations == '0') OK
+RUN(video.play())
+EVENT(playing)
+EXPECTED (activations == '1') OK
+END OF TEST
+

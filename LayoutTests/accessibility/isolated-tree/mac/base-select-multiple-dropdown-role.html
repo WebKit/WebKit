@@ -1,0 +1,49 @@
+<!DOCTYPE html><!-- webkit-test-runner [ HTMLEnhancedSelectMultipleDropdownBoxEnabled=true IsAccessibilityIsolatedTreeEnabled=true ] -->
+<html>
+<head>
+<script src="../../../resources/accessibility-helper.js"></script>
+<script src="../../../resources/js-test.js"></script>
+<style>
+.base, .base::picker(select) {
+    appearance: base-select;
+}
+</style>
+</head>
+<body>
+
+<select id="dropdown" class="base" multiple size="1">
+    <option selected>Cheese</option>
+    <option>Ham</option>
+</select>
+
+<select id="listbox" class="base" multiple>
+    <option selected>Cheese</option>
+    <option>Ham</option>
+</select>
+
+<script>
+var output = "This test ensures that a base appearance multi-select dropdown box is exposed as a pop-up button, like a single-select one.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    setTimeout(async function() {
+        window.axDropdown = await waitForElementById("dropdown");
+        output += expect("axDropdown?.role", "'AXRole: AXPopUpButton'");
+        output += expect("axDropdown?.isExpanded", "false");
+        axDropdown?.press();
+        output += await expectAsync("axDropdown.isExpanded", "true");
+        output += await expectAsync("axDropdown?.childAtIndex(0)?.role", "'AXRole: AXMenu'");
+
+        window.axListBox = await waitForElementById("listbox");
+        output += expect("axListBox?.role", "'AXRole: AXList'");
+
+        for (const select of document.querySelectorAll("select"))
+            select.style.display = "none";
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

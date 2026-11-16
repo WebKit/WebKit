@@ -1,0 +1,11 @@
+This tests querying usage and quota using Quota API.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS usageData.usage is 0
+PASS usageData.quota is >= usageData.usage
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Test storagequota APIs in Dedicated Worker

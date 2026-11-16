@@ -1,0 +1,7 @@
+CONSOLE MESSAGE: http://www.goodreads.com:8000/quirks/resources/goodreads-focus-ring-inset-target.html has active WebKit quirks: NeedsStyleSheetInjectedQuirk. Visit https://docs.webkit.org/Infrastructure/Quirks.html for more information.
+Bio
+Unrelated
+quirk active: true
+bio: focus-visible true, outline-offset inset
+bioText: focus-visible true, outline-offset inset
+unrelated: focus-visible true, outline-offset 0px

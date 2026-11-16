@@ -1,0 +1,21 @@
+Test that workers spawned in cross-origin iframes are properly surfaced through the frame target's Worker domain under site isolation.
+
+
+== Running test suite: SiteIsolation.Worker.CrossOriginIFrame
+-- Running test case: SiteIsolation.Worker.CrossOrigin.Setup
+PASS: Frame target should be created.
+PASS: Parent target should have Frame type.
+PASS: Parent frame target should have the Worker domain.
+PASS: Worker target should be created.
+PASS: Worker target should have Worker type.
+PASS: Worker's parent target should be the frame target.
+Worker target name: CrossOriginWorker
+
+-- Running test case: SiteIsolation.Worker.CrossOrigin.EvaluateInWorker
+PASS: Evaluation should not throw.
+Resulting passphrase value: worker-in-cross-origin-iframe
+
+-- Running test case: SiteIsolation.Worker.CrossOrigin.RemoveIframe
+PASS: Worker target should be removed.
+PASS: Frame target should be removed.
+

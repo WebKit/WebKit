@@ -1,0 +1,5 @@
+
+PASS background-position sets background-position-x and background-position-y
+PASS background-position-x and background-position-y set background-position
+PASS background sets background-position-x and background-position-y
+

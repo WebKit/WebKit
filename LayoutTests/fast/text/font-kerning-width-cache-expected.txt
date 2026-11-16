@@ -1,0 +1,3 @@
+
+PASS font-kerning: none and normal measure independently once widths are cached
+

@@ -1,0 +1,20 @@
+This test verifies that invoking an aria-actions custom action preserves focus wherever it was rather than moving it to the (focusable) action target, and that the transient focus movement is not surfaced to assistive technology.
+
+With the element hosting the actions focused, invoking the action preserves focus on it:
+PASS: source.invokeCustomActionAtIndex(0) === true
+PASS: actionClicked === true
+PASS: document.activeElement.id === 'source'
+PASS: accessibilityController.focusedElement.domIdentifier === 'source'
+PASS: focusNotificationCount === 0
+
+With an unrelated element focused, invoking the action preserves focus on that element:
+PASS: source.invokeCustomActionAtIndex(0) === true
+PASS: actionClicked === true
+PASS: document.activeElement.id === 'other'
+PASS: accessibilityController.focusedElement.domIdentifier === 'other'
+PASS: focusNotificationCount === 0
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Source Delete Other

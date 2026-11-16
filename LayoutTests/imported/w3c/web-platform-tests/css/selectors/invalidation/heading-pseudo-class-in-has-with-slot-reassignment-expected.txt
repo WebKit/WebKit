@@ -1,0 +1,41 @@
+
+PASS Initial (h1 slotted into slot_a): #has_heading_1
+PASS Initial (h1 slotted into slot_a): #has_heading_3
+PASS Initial (h1 slotted into slot_a): #has_heading_5
+PASS h1.slot = 'b': #has_heading_1
+PASS h1.slot = 'b': #has_heading_3
+PASS h1.slot = 'b': #has_heading_5
+PASS h1.slot = 'nonexistent': #has_heading_1
+PASS h1.slot = 'nonexistent': #has_heading_3
+PASS h1.slot = 'nonexistent': #has_heading_5
+PASS h1.slot = 'a': #has_heading_1
+PASS h1.slot = 'a': #has_heading_3
+PASS h1.slot = 'a': #has_heading_5
+PASS slotA.name = 'c': #has_heading_1
+PASS slotA.name = 'c': #has_heading_3
+PASS slotA.name = 'c': #has_heading_5
+PASS slotB.name = 'a': #has_heading_1
+PASS slotB.name = 'a': #has_heading_3
+PASS slotB.name = 'a': #has_heading_5
+PASS Reset slot names: #has_heading_1
+PASS Reset slot names: #has_heading_3
+PASS Reset slot names: #has_heading_5
+PASS slotA.remove(): #has_heading_1
+PASS slotA.remove(): #has_heading_3
+PASS slotA.remove(): #has_heading_5
+PASS Re-insert slot_a: #has_heading_1
+PASS Re-insert slot_a: #has_heading_3
+PASS Re-insert slot_a: #has_heading_5
+PASS ancestor[headingoffset=2]: #has_heading_1
+PASS ancestor[headingoffset=2]: #has_heading_3
+PASS ancestor[headingoffset=2]: #has_heading_5
+PASS h1.slot = 'b' with ancestor[headingoffset=2]: #has_heading_1
+PASS h1.slot = 'b' with ancestor[headingoffset=2]: #has_heading_3
+PASS h1.slot = 'b' with ancestor[headingoffset=2]: #has_heading_5
+PASS ancestor[headingoffset=4]: #has_heading_1
+PASS ancestor[headingoffset=4]: #has_heading_3
+PASS ancestor[headingoffset=4]: #has_heading_5
+PASS ancestor with headingoffset removed: #has_heading_1
+PASS ancestor with headingoffset removed: #has_heading_3
+PASS ancestor with headingoffset removed: #has_heading_5
+

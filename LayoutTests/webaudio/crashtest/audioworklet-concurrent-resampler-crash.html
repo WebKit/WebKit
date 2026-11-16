@@ -1,0 +1,44 @@
+<html>
+<head>
+    <script>
+        let worklet_source = `
+            class Processor extends AudioWorkletProcessor {
+                process(inputs, outputs, parameters) {
+                    return true;
+                }
+            }
+            registerProcessor('P2', Processor);
+        `;
+
+        let blob = new Blob([worklet_source], { type: 'application/javascript' });
+        let worklet = URL.createObjectURL(blob);
+
+        var ctx = new AudioContext({ sampleRate: 44100});
+        const dest = ctx.destination;
+        dest.channelCountMode = "max";
+
+        async function main() {
+            await ctx.audioWorklet.addModule(worklet);
+            var script_processor = ctx.createScriptProcessor();
+            script_processor.onaudioprocess = function() {
+                dest.channelCount = 1;
+                audio_worklet.disconnect();
+                if (window.testRunner)
+                    testRunner.notifyDone();
+            }
+            var audio_worklet = new AudioWorkletNode(ctx, "P2");
+            script_processor.connect(audio_worklet);
+            audio_worklet.connect(dest);
+        }
+    </script>
+</head>
+<body onload="main()">
+    <p>This test passes if it does not crash.</p>
+    <script>
+    if (window.testRunner) {
+        testRunner.waitUntilDone();
+        testRunner.dumpAsText();
+    }
+    </script>
+</body>
+</html>

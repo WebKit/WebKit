@@ -1,0 +1,26 @@
+cbuffer _UniformBuffer : register(b0, space0)
+{
+    float4 _11_src : packoffset(c0);
+    float4 _11_dst : packoffset(c1);
+};
+
+
+static float4 sk_FragColor;
+
+struct SPIRV_Cross_Output
+{
+    float4 sk_FragColor : SV_Target0;
+};
+
+void frag_main()
+{
+    sk_FragColor = float4((_11_src.xyz + _11_dst.xyz) - (min(_11_src.xyz * _11_dst.w, _11_dst.xyz * _11_src.w) * 2.0f), _11_src.w + ((1.0f - _11_src.w) * _11_dst.w));
+}
+
+SPIRV_Cross_Output main()
+{
+    frag_main();
+    SPIRV_Cross_Output stage_output;
+    stage_output.sk_FragColor = sk_FragColor;
+    return stage_output;
+}

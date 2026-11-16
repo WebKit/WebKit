@@ -1,0 +1,14 @@
+This tests caret browsing when text soft line breaks and has trimmed spaces.
+
+PASS: webArea.role === 'AXRole: AXWebArea'
+PASS: caretBrowsingEnabled(webArea) === false
+PASS: accessibilityController.enhancedAccessibilityEnabled === true
+PASS: caretBrowsingEnabled(webArea) === true
+PASS: string === 'Good'
+PASS: string === 'morning'
+PASS: string === 'world'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Good morning world

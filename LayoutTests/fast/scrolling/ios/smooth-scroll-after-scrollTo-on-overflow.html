@@ -1,0 +1,53 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<head>
+    <style>
+        .scroll-container {
+            height: 250px;
+            width: 300px;
+            border: 1px solid black;
+            overflow: scroll;
+        }
+        
+        .contents {
+            height: 500%;
+            background-image: repeating-linear-gradient(white, silver 250px);
+        }
+    </style>
+    <script src="../../../resources/ui-helper.js"></script>
+    <script src="../../../resources/js-test-pre.js"></script>
+    <script>
+        jsTestIsAsync = true;
+
+        async function runTest()
+        {
+            scrollContainer = document.querySelector('.scroll-container');
+
+            if (window.eventSender)
+                await UIHelper.startMonitoringWheelEvents();
+
+            scrollContainer.scrollTo(0, 200);
+            scrollContainer.scrollBy({
+                top: 500,
+                behavior: 'smooth'
+            });
+            
+            await UIHelper.waitForScrollCompletion();
+            
+            shouldBe('scrollContainer.scrollTop', '700');
+            finishJSTest();
+        }
+    
+        window.addEventListener('load', () => {
+            setTimeout(runTest, 0);
+        }, false);
+    </script>
+</head>
+<body>
+    <div class="scroll-container">
+        <div class="contents"></div>
+    </div>
+    <div id="console"></div>
+    <script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

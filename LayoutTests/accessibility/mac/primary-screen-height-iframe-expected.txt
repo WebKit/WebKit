@@ -1,0 +1,9 @@
+This test ensures AXPrimaryScreenHeight is non-zero for an iframe whose accessibility tree is built after accessibility is already active (a height of 0 mirrors elements vertically).
+
+PASS: Main-frame root element AXPrimaryScreenHeight is > 0.
+PASS: Iframe descendant element AXPrimaryScreenHeight is > 0.
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

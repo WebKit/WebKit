@@ -1,0 +1,21 @@
+PASS window.getComputedStyle(document.getElementById('test1')).webkitTextOrientation is "upright"
+PASS window.getComputedStyle(document.getElementById('test2')).webkitTextOrientation is "upright"
+PASS window.getComputedStyle(document.getElementById('test3')).webkitTextOrientation is "upright"
+PASS window.getComputedStyle(document.getElementById('test4')).webkitTextOrientation is "upright"
+PASS window.getComputedStyle(document.getElementById('test5')).webkitTextOrientation is "upright"
+PASS window.getComputedStyle(document.getElementById('test6')).webkitTextOrientation is "upright"
+PASS window.getComputedStyle(document.getElementById('test1')).textOrientation is "upright"
+PASS window.getComputedStyle(document.getElementById('test2')).textOrientation is "upright"
+PASS window.getComputedStyle(document.getElementById('test3')).textOrientation is "upright"
+PASS window.getComputedStyle(document.getElementById('test4')).textOrientation is "upright"
+PASS window.getComputedStyle(document.getElementById('test5')).textOrientation is "upright"
+PASS window.getComputedStyle(document.getElementById('test6')).textOrientation is "upright"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+你好ABC
+你好ABC
+你好ABC
+你好ABC
+你好ABC
+你好ABC

@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/dump-as-markup.js"></script>
+<div id="editor" contenteditable>Test<picture><source srcset="resources/apple.gif" media="(min-width: 600px)"/><source srcset="resources/mozilla.gif"/><img src=""></picture></div>
+<script>
+
+Markup.description('Test deletion of <picture>.');
+
+var editor = document.querySelector('#editor');
+window.getSelection().setBaseAndExtent(editor, 2, editor, 2);
+Markup.dump(editor, 'Initial state');
+
+document.execCommand('Delete');
+Markup.dump(editor, 'After deletion');
+
+</script>
+</body>
+</html>

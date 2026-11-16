@@ -1,0 +1,18 @@
+This test verifies resumed animations start at the frame they were paused at.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Image was loaded successfully.
+Image frame 0 was displayed.
+PASS internals.imageFrameIndex(image) === currentlyDisplayedFrameIndex + 1 is true
+Image frame 1 was displayed.
+PASS internals.imageFrameIndex(image) === currentlyDisplayedFrameIndex + 1 is true
+Image frame 2 was displayed.
+PASS internals.imageFrameIndex(image) === currentlyDisplayedFrameIndex + 1 is true
+The animation was loaded and paused/resumed correctly.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+

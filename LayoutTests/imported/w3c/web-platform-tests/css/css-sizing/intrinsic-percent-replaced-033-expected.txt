@@ -1,0 +1,11 @@
+
+PASS .cb > canvas 1
+PASS .cb > canvas 2
+PASS .cb > canvas 3
+PASS .cb > canvas 4
+PASS .cb > canvas 5
+PASS .cb > canvas 6
+PASS .cb > canvas 7
+PASS .cb > canvas 8
+PASS .cb > canvas 9
+

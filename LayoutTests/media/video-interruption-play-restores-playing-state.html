@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="media-file.js"></script>
+        <script src="video-test.js"></script>
+        <script>
+
+            window.addEventListener('load', async event => {
+                if (!window.internals) {
+                    failTest('This test must be run in DumpRenderTree or WebKitTestRunner.');
+                    return;
+                }
+
+                findMediaElement();
+                run(`internals.setMediaElementRestrictions(video, 'NoRestrictions')`);
+                run('video.src = findMediaFile("video", "content/test")');
+                await waitFor(video, 'canplaythrough');
+
+                // The 'playing' event does not mean the session's playback admission settled: it
+                // waits on the audio session becoming active, so poll for the resulting state.
+                run('video.play()');
+                await waitFor(video, 'playing');
+                await testExpectedEventually('internals.mediaSessionState(video)', 'Playing', '==', 5000);
+
+                run('video.pause()');
+                await waitFor(video, 'pause');
+                testExpected('internals.mediaSessionState(video)', 'Paused');
+
+                run('internals.beginMediaSessionInterruption("System")');
+                testExpected('internals.mediaSessionState(video)', 'Interrupted');
+
+                // Playing again ends the interruption from inside the admission. The session must
+                // end up Playing: that is what claims exclusivity over the other sessions.
+                run('video.play()');
+                await waitFor(video, 'playing');
+                testExpected('video.paused', false);
+                await testExpectedEventually('internals.mediaSessionState(video)', 'Playing', '==', 5000);
+
+                endTest();
+            });
+
+        </script>
+    </head>
+    <body>
+        <video controls></video>
+    </body>
+</html>

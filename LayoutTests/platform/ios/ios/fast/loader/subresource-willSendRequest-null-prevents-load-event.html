@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+        testRunner.setWillSendRequestReturnsNull(true);
+    }
+
+    window.addEventListener("load", function(event) {
+        console.log("PASS");
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }, false);
+</script>
+</head>
+<body>
+<p>Ensure that a subresource load that is cancelled by a willSendRequest() delegate does not prevent the load event from firing. On success, 'PASS' will be logged to the console.</p>
+<img src="non-existant.jpg">
+</body>
+</html>

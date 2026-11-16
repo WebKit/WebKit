@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+<script>
+jsTestIsAsync = true;
+description("Tests that a setTimeout timer gets a nonzero alignment once it has reached the maximum nesting level.");
+
+if (!window.testRunner || !window.internals) {
+    testFailed("Test requires internals.");
+    finishJSTest();
+}
+
+
+const maxNestingLevel = 10;
+var timeoutsCount = 0;
+var timeoutHandle;
+
+function checkIfAligned(expectAligned)
+{
+    // We need to schedule a new timer here since the timer that fired to execute
+    // the current task is no longer being tracked by the context.
+    timeoutHandle = setTimeout(() => { }, 10);
+    shouldBe("internals.isTimerAligned(timeoutHandle)", `${expectAligned}`);
+    clearTimeout(timeoutHandle);
+}
+
+function timeoutFired()
+{
+    checkIfAligned(++timeoutsCount >= maxNestingLevel);
+
+    if (timeoutsCount > maxNestingLevel + 5)
+        return finishJSTest();
+
+    setTimeout(timeoutFired, 5);
+}
+
+window.addEventListener("load", () => setTimeout(timeoutFired, 5));
+</script>
+</body>
+</html>

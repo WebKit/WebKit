@@ -1,0 +1,9 @@
+
+PASS drop(): Observable should skip the first n values from the source observable, then pass through the rest of the values and completion
+PASS drop(): Observable passes through errors from source Observable
+PASS drop(): Observable passes through errors from source observable even before drop count is met
+PASS drop(): Observable passes through completions from source observable even before drop count is met
+PASS drop(): Unsubscribing from the Observable returned by drop() also unsubscribes from the source Observable
+PASS drop(): A drop amount of 0 simply mirrors the source Observable
+PASS drop(): Passing negative value wraps to maximum value
+

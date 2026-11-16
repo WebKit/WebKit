@@ -1,0 +1,10 @@
+a
+
+
+xx   yy
+a
+
+
+xx yy zz
+PASS consecutiveSpaces: width 115, widest line 115
+PASS lineSplitByInlineBox: width 102, widest line 102

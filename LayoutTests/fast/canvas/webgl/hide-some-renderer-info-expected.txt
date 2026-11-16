@@ -1,0 +1,3 @@
+PASS: Renderer was appropriately hidden for WebGL 1.
+PASS: Renderer was appropriately hidden for WebGL 2.
+

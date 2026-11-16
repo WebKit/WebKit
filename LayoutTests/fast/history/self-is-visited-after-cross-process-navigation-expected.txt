@@ -1,0 +1,16 @@
+main frame - has 1 onunload handler(s)
+main frame - has 1 onunload handler(s)
+Tests that a link is still marked as visited after the main frame has navigated to another process and come back.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS firstStyle.color became different from secondStyle.color
+PASS firstStyle.backgroundColor became different from secondStyle.backgroundColor
+PASS successfullyParsed is true
+
+TEST COMPLETE
+go away and come back
+These two links should be different colors (green and orange):
+
+One Two

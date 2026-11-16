@@ -1,0 +1,16 @@
+    Button
+    Button
+  A Legend
+
+PASS Input in disabled fieldset should match :disabled pseudo-class
+PASS Select in disabled fieldset should match :disabled pseudo-class
+PASS Button in disabled fieldset should match :disabled pseudo-class
+PASS Textarea in disabled fieldset should match :disabled pseudo-class
+PASS Disabled fieldset itself should match :disabled pseudo-class
+PASS Input in enabled fieldset should match :enabled pseudo-class
+PASS querySelectorAll(':disabled') should select all disabled elements in DOM order
+PASS querySelectorAll(':enabled') should not select elements in disabled fieldset
+PASS querySelector('input:enabled') should return the first enabled input
+PASS querySelectorAll('input:disabled') should select inputs with disabled attribute and in disabled fieldset
+PASS Fieldset with legend should not be considered disabled by default
+

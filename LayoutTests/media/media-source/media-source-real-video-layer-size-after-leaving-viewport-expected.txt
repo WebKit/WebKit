@@ -1,0 +1,15 @@
+
+RUN(video.src = URL.createObjectURL(source))
+EVENT(sourceopen)
+EVENT(updateend)
+EVENT(updateend)
+RUN(video.play())
+EVENT(playing)
+EXPECTED (boundsBefore.width > 0 && boundsBefore.height > 0 == 'true') OK
+RUN(window.scrollTo(0, 3000))
+The hosted video layer was removed while out of the viewport.
+RUN(window.scrollTo(0, 0))
+EXPECTED (boundsAfter.width == boundsBefore.width == 'true') OK
+EXPECTED (boundsAfter.height == boundsBefore.height == 'true') OK
+END OF TEST
+

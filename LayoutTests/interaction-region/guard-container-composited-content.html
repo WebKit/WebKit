@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+<style>
+    body { margin: 0; }
+
+    #test {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: flex-start;
+        gap: 20px;
+        padding: 20px;
+    }
+    a {
+        display: block;
+    }
+    button {
+        display: block;
+        appearance: none;
+        border: none;
+        background: transparent;
+        padding: 0;
+    }
+    svg {
+        display: block;
+    }
+    .thumbnail-link {
+        width: 200px;
+        padding-bottom: 12px;
+    }
+    .thumbnail {
+        width: 200px;
+        height: 112px;
+        border-radius: 12px;
+        overflow: hidden;
+        background: lightgray;
+    }
+    .sized {
+        width: 100px;
+        height: 60px;
+    }
+    .box {
+        width: 100px;
+        height: 60px;
+        border-radius: 12px;
+        background: lightgray;
+    }
+    .small {
+        width: 30px;
+        height: 20px;
+        background: gray;
+    }
+    .composited {
+        will-change: transform;
+    }
+    .with-before {
+        position: relative;
+    }
+    .with-before::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        will-change: transform;
+    }
+    .with-background {
+        position: relative;
+    }
+    .background-layer {
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+    }
+    .background {
+        position: absolute;
+        inset: 0;
+        z-index: -1;
+        border-radius: 28px;
+        background-color: lightgray;
+    }
+</style>
+<body>
+<!--
+    A transparent link or button whose only child is a shape is a guard container: it gets a Guard region and
+    its child's region gives the shape. If the child adds no region of its own for the container, the Guard
+    falls back to an Interaction region over the container's box, so the container still glows.
+
+    When the child is composited, its region is in its own layer, so the container's Guard must stay a Guard:
+    1. A link around a composited thumbnail. Turning the Guard into an Interaction over the link's box would
+       light up the strip below the thumbnail.
+    2. The same link around a thumbnail in the same layer.
+    3. A link around a composited child with a nested button. The child's region is still the link's.
+
+    When the child adds no region for the container, the Guard must still fall back, even though something
+    inside the container is composited:
+    4. A small black icon that is composited. An <svg> adds no region of its own box, and the icon is too hard
+       to highlight to get one.
+    5. The same icon in the same layer.
+    6. The composited child can't be hit (pointer-events: none).
+    7. The composited child is hidden.
+    8. A composited ::before, next to a child that can't be hit. Pseudo-elements add no region.
+    9. The composited child is empty.
+    10. The composited child is a button, which gets its own region.
+
+    11. A button whose background is painted by a sibling layer is not a guard container: it gets one region with
+        that background's shape, even when its child is composited.
+    12. A composited label child that isn't for a control. Its region still belongs to the button, so the button
+        keeps its Guard.
+-->
+<section id="test">
+    <a href="#" class="thumbnail-link"><div class="thumbnail composited"></div></a>
+    <a href="#" class="thumbnail-link"><div class="thumbnail"></div></a>
+    <a href="#" class="sized"><div class="sized composited"><button class="small"></button></div></a>
+    <button>
+        <svg class="composited" viewBox="0 0 1500 1200" width="40" height="40" xmlns="http://www.w3.org/2000/svg">
+            <rect x="10" y="20" width="800" height="600" rx="45" ry="45" fill="black" />
+        </svg>
+    </button>
+    <button>
+        <svg viewBox="0 0 1500 1200" width="40" height="40" xmlns="http://www.w3.org/2000/svg">
+            <rect x="10" y="20" width="800" height="600" rx="45" ry="45" fill="black" />
+        </svg>
+    </button>
+    <button class="sized"><div class="box composited" style="pointer-events: none"></div></button>
+    <button class="sized"><div class="box composited" style="visibility: hidden"></div></button>
+    <button class="sized with-before"><div class="box" style="pointer-events: none"></div></button>
+    <button class="sized"><div class="composited" style="width: 0; height: 0"></div></button>
+    <a href="#" class="sized"><button class="box composited"></button></a>
+    <div class="with-background">
+        <div class="background-layer"><span class="background"></span></div>
+        <button class="sized"><div class="box composited"></div></button>
+    </div>
+    <button class="sized"><label class="box composited" style="display: block"></label></button>
+</section>
+
+<pre id="results"></pre>
+<script>
+document.body.addEventListener("click", function(e) {
+    console.log(e, "event delegation");
+});
+
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+window.onload = function () {
+    if (!window.internals)
+        return;
+
+    results.textContent = internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_EVENT_REGION | internals.LAYER_TREE_INCLUDES_ROOT_LAYER_PROPERTIES);
+    document.getElementById("test").remove();
+};
+</script>
+</body>
+</html>

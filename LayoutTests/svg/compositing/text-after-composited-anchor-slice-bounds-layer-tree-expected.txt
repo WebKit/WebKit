@@ -1,0 +1,52 @@
+XXXX
+ (GraphicsLayer
+  (anchor 0.00 0.00)
+  (bounds 800.00 600.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 800.00 600.00)
+      (contentsOpaque 1)
+      (children 1
+        (GraphicsLayer
+          (bounds 400.00 200.00)
+          (drawsContent 1)
+          (children 1
+            (GraphicsLayer
+              (bounds 400.00 200.00)
+              (children 1
+                (GraphicsLayer
+                  (offsetFromRenderer width=10 height=10)
+                  (position 10.00 10.00)
+                  (anchor -0.03 -0.08)
+                  (bounds 350.00 118.00)
+                  (drawsContent 1)
+                  (children 1
+                    (GraphicsLayer
+                      (bounds 350.00 118.00)
+                      (opacity 0.99)
+                      (drawsContent 1)
+                      (children 2
+                        (GraphicsLayer
+                          (anchor -0.17 -0.17)
+                          (bounds 60.00 60.00)
+                          (drawsContent 1)
+                        )
+                        (GraphicsLayer
+                          (offsetFromRenderer width=190 height=78)
+                          (position 190.00 78.00)
+                          (bounds 160.00 40.00)
+                          (drawsContent 1)
+                        )
+                      )
+                    )
+                  )
+                )
+              )
+            )
+          )
+        )
+      )
+    )
+  )
+)
+

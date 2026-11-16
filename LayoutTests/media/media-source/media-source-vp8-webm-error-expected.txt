@@ -1,0 +1,11 @@
+
+RUN(video = document.getElementsByTagName('video')[0])
+RUN(ms = new MediaSource())
+RUN(video.src = URL.createObjectURL(ms))
+RUN(video.disableRemotePlayback = true)
+RUN(video.preload = "metadata")
+EVENT(sourceopen)
+metadataloaded
+received error event
+END OF TEST
+

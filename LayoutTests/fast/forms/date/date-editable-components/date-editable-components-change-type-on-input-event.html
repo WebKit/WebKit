@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../../resources/js-test.js"></script>
+<script src="../../../../resources/ui-helper.js"></script>
+</head>
+<body>
+
+<input id="input" type="date">
+
+<script>
+
+jsTestIsAsync = true;
+
+description("Test that changing the input type during an input event does not crash.");
+
+input.addEventListener("input", () => {
+    input.type = "text";
+});
+
+addEventListener("load", async () => {
+    input.focus();                                         // [mm]/dd/yyyy
+    UIHelper.keyDown("9");                                 // -> [09]/dd/yyyy
+    UIHelper.keyDown("rightArrow");                        // -> 09/[dd]/yyyy
+    UIHelper.keyDown("2");                                 // -> 09/[02]/yyyy
+    UIHelper.keyDown("rightArrow");                        // -> 09/02/[yyyy]
+    UIHelper.keyDown("2");                                 // -> 09/02/[0002]
+    UIHelper.keyDown("0");                                 // -> 09/02/[0020]
+    UIHelper.keyDown("1");                                 // -> 09/02/[0201]
+    UIHelper.keyDown("2");                                 // -> 09/02/[2012] -> input event fires -> type changes to text
+
+    shouldBeEqualToString("input.type", "text");
+
+    testPassed("Did not crash.");
+    finishJSTest();
+});
+
+</script>
+</body>
+</html>

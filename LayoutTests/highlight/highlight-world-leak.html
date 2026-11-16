@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../resources/js-test-pre.js"></script>
+<script src="../resources/gc.js"></script>
+<script>
+description("Tests that using Highlight does not cause the document to get leaked.");
+window.jsTestIsAsync = true;
+
+window.onload = function () {
+    testDocumentIsNotLeaked(
+        async function initAndRemove(frameCount)
+        {
+            let frames = await new Promise((resolve, reject) => {
+                let frames = [];
+                let counter = 0;
+                function onLoad() {
+                    counter++;
+                    if (counter == frameCount)
+                        resolve(frames);
+                }
+                for (let i = 0; i < frameCount; ++i) {
+                    let frame = document.createElement('iframe');
+                    frame.src = "resources/highlight-frame.html";
+                    frame.onload = onLoad;
+                    document.body.appendChild(frame);
+                    frames.push(frame);
+                }
+            });
+            let frameIdentifiers = [];
+            for (let i = 0; i < frameCount; ++i) {
+                let frame = frames[i];
+                frameIdentifiers.push(internals.documentIdentifier(frame.contentDocument));
+                frame.remove();
+            }
+            nukeArray(frames);
+            frames = null;
+            return frameIdentifiers;
+        }
+    ).then(
+        () => testPassed("Document did not leak"),
+        (error) => testFailed(error.message)
+    ).finally(finishJSTest);
+};
+
+</script>
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html>
+<body vlink="0080x">
+<a href="#bar">hello</a>
+<script>
+if (window.testRunner)
+    window.testRunner.keepWebHistory();
+if (location.hash != '#bar')
+    location.href = '#bar';
+</script>
+</body>
+</html>

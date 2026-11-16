@@ -1,0 +1,4 @@
+SCRIPTS_PATH ?= ../../Tools/Scripts
+# Opt out of workspace builds, as these projects are not part of any workspace.
+USE_WORKSPACE = NO
+include ../../Makefile.shared

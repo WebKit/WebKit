@@ -1,0 +1,6 @@
+2d.text.drawing.style.fontKerning
+Testing basic functionalities of fontKerning for canvas
+Actual output:
+
+PASS Testing basic functionalities of fontKerning for canvas
+

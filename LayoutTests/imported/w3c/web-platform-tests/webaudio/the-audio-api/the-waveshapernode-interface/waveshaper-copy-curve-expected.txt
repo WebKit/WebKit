@@ -1,0 +1,3 @@
+
+PASS test copying: Modifying curve should not modify WaveShaper
+

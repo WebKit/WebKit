@@ -1,0 +1,11 @@
+Test that synthetic click completes successfully when content change observation finishes in a iframe
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Synthetic click completed successfully in iframe.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+

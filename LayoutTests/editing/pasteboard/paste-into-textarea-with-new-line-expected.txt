@@ -1,0 +1,10 @@
+This tests pasting a multi-line text into a textarea that contains a single new line. WebKit should preserve the number of new lines.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS document.execCommand('InsertHTML', false, 'first<br><br>third'); textarea.value is 'first\n\nthird\n'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

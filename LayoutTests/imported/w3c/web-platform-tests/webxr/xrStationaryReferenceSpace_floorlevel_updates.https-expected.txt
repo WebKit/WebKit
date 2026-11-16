@@ -1,0 +1,6 @@
+
+PASS 'floor-level' XRStationaryReferenceSpace updates properly when the transform changes for immersive sessions - webgl
+PASS 'floor-level' XRStationaryReferenceSpace updates properly when the transform changes for immersive sessions - webgl2
+PASS 'floor-level' XRStationaryReferenceSpace updates properly when the transform changes for non-immersive sessions - webgl
+PASS 'floor-level' XRStationaryReferenceSpace updates properly when the transform changes for non-immersive sessions - webgl2
+

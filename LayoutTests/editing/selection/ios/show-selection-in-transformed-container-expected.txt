@@ -1,0 +1,15 @@
+
+
+Apply transform
+This test verifies that after focusing a visible input field in a body element that has been translated horizontally out of view, the caret is still visible. To run the test manually, first tap the input field and check that the caret shows up. Then, tap the button to apply the CSS transform, tap the input field again, and check that the caret is still visible.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+PASS caretBefore.top is caretAfter.top
+PASS caretBefore.left is caretAfter.left
+PASS caretBefore.width is caretAfter.width
+PASS caretBefore.height is caretAfter.height
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

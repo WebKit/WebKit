@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+<style>
+body {
+    height: 5000px;
+    margin: 0;
+}
+#container {
+    position: absolute;
+    top: 200px;
+    left: 10px;
+}
+iframe {
+    width: 200px;
+    height: 100px;
+    border: none;
+}
+</style>
+</head>
+<body>
+
+<div id="container">
+    <iframe id="iframe" onload="runTest()" src="data:text/html,<body style='margin:0'><button id='target' style='width:80px;height:30px'>Click me</button></body>"></iframe>
+</div>
+
+<script>
+window.jsTestIsAsync = true;
+
+var output = "This test verifies that scrolling the main page updates the screen position of elements inside an iframe.\n\n";
+
+var target, initialY, scrolledY, delta;
+function runTest() {
+    if (!window.accessibilityController)
+        return;
+
+    setTimeout(async function() {
+        target = await waitForIframeAccessibilityReady("container", "target");
+        initialY = target.y;
+
+        // Scroll the main page down by 300px.
+        window.scrollTo(0, 300);
+
+        // Wait for the element's absolute screen y to change after scroll.
+        await waitFor(() => {
+            target = accessibilityController.accessibleElementById("target");
+            return target && target.y !== initialY;
+        });
+
+        scrolledY = target.y;
+        delta = Math.abs(scrolledY - initialY);
+        output += expectNumber("delta", 300, /* Allowed variance */ 5);
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

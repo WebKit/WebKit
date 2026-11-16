@@ -1,0 +1,8 @@
+css-module-crossorigin
+
+
+
+PASS Imported CSS module, cross-origin with CORS
+PASS Imported CSS module, cross-origin, missing CORS ACAO header
+PASS Imported CSS module with parse error, cross-origin, with CORS
+

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+<div id="container"></div>
+<script>
+description("Tests that innerHTML parsing of a select with many options is not O(n²).");
+
+var optionCount = 20000;
+var html = '<select>';
+for (var i = 0; i < optionCount; i++)
+    html += '<option>option ' + i + '</option>';
+html += '</select>';
+
+document.getElementById('container').innerHTML = html;
+
+var select = document.querySelector('#container select');
+
+shouldBe("select.options.length", "optionCount");
+shouldBeEqualToString("select.value", "option 0");
+shouldBe("select.selectedIndex", "0");
+
+// Also test with an explicitly selected option in the middle.
+html = '<select>';
+for (var i = 0; i < optionCount; i++) {
+    if (i === optionCount - 1)
+        html += '<option selected>selected option</option>';
+    else
+        html += '<option>option ' + i + '</option>';
+}
+html += '</select>';
+
+document.getElementById('container').innerHTML = html;
+select = document.querySelector('#container select');
+
+shouldBe("select.options.length", "optionCount");
+shouldBeEqualToString("select.value", "selected option");
+shouldBe("select.selectedIndex", "optionCount - 1");
+</script>
+</body>
+</html>

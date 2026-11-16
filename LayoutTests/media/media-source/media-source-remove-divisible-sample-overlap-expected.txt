@@ -1,0 +1,13 @@
+
+RUN(video.src = URL.createObjectURL(source))
+EVENT(sourceopen)
+RUN(sourceBuffer = source.addSourceBuffer('audio/mp4; codecs="mp4a.40.2"'))
+RUN(sourceBuffer.appendBuffer(MP4.concat(seg1Init, seg1Media)))
+EVENT(updateend)
+RUN(sourceBuffer.appendBuffer(seg2Media))
+EVENT(updateend)
+RUN(sourceBuffer.remove(4200/44100, 4500/44100))
+EVENT(updateend)
+PASS: remove() returned without crashing
+END OF TEST
+

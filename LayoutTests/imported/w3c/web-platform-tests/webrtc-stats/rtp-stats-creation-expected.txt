@@ -1,0 +1,7 @@
+
+PASS No RTCRtpStreamStats exist when only remote description is set
+PASS No RTCRtpStreamStats exist when only local description is set
+PASS No RTCRtpOutboundStreamStats should exist before negotiation completes
+PASS No RTCInboundRtpStreamStats exist until packets have been received
+FAIL RTCAudioPlayoutStats should be present assert_unreached: Audio playout stats should become available Reached unreachable code
+

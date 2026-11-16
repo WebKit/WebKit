@@ -1,0 +1,4 @@
+
+PASS Expecting logs: ["Pass"]
+PASS fetch with keepalive should be allowed by CSP
+

@@ -1,0 +1,16 @@
+<p>This tests for a bug when moving the caret forward/backward by a line/paragraph.  The horizontal position of the caret would be lost when moving the caret into an empty paragraph, when it should be preserved.  The caret should be between the first and second 'x's in the third paragraph.</p>
+<div id="div" contenteditable="true">
+xxx<br>
+xxx<br>
+<br>
+xxx<br>
+</div>
+
+<script>
+var sel = window.getSelection();
+sel.setPosition(div, 0);
+sel.modify("move", "forward", "character");
+sel.modify("move", "forward", "line");
+sel.modify("move", "forward", "line");
+sel.modify("move", "forward", "line");
+</script>

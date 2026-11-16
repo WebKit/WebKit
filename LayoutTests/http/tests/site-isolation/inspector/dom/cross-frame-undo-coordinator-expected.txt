@@ -1,0 +1,33 @@
+Tests cross-frame Cmd+Z ordering through WI.DOMUndoCoordinator's LIFO of edited targets.
+
+
+
+== Running test suite: SiteIsolation.DOM.UndoCoordinator.CrossFrame
+-- Running test case: Setup
+PASS: Should find #parent-target in the main page.
+PASS: Should find a cross-origin frame target.
+PASS: Should find #container in the iframe.
+
+-- Running test case: EditFrameThenMain.UndoUndoesMainFirst
+PASS: Frame edit applied.
+PASS: Main edit applied.
+PASS: First undo reversed the main edit.
+PASS: First undo did NOT touch the iframe edit.
+PASS: Second undo reversed the iframe edit.
+
+-- Running test case: RedoFollowsLIFOInReverse
+PASS: First redo restored the iframe edit.
+PASS: First redo did NOT restore the main edit.
+PASS: Second redo restored the main edit.
+
+-- Running test case: MultipleEditsPerTargetReversedInOrder
+PASS: Both iframe edits reversed.
+PASS: Main edit reversed.
+
+-- Running test case: ExtraUndoIsHarmless
+PASS: Empty-stack undo() did not push to undoStack.
+PASS: Empty-stack undo() did not push to redoStack.
+PASS: Empty-stack redo() falls back to main exactly once.
+PASS: Empty-stack redo() did not push to undoStack.
+PASS: Empty-stack redo() did not push to redoStack.
+

@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<body>
+Test passes if no crash with ASAN.
+<input value="boom">
+<script>
+if (window.testRunner) {
+  testRunner.waitUntilDone();
+  testRunner.dumpAsText();
+}
+
+var input = document.getElementsByTagName('input')[0];
+function explode() {
+  var value = input.value;
+  if (value) {
+    input.value = value.substr(0, value.length - 1);
+    window.setTimeout(explode, 0);
+  } else {
+    window.location.href="javascript:''";
+    if (window.testRunner)
+      testRunner.notifyDone();
+  }
+}
+explode();
+</script>

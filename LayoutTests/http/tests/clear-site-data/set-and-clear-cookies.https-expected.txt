@@ -1,0 +1,48 @@
+CONSOLE MESSAGE: First party cookies before clear-site-data: test_first_party_cookie=1
+CONSOLE MESSAGE: First party cookies after clear-site-data:
+CONSOLE MESSAGE: First party cookies before clear-site-data: test_first_party_cookie=1
+CONSOLE MESSAGE: First party cookies after third-party clear-site-data: test_first_party_cookie=1
+Tests that first and third-party partitioned cookies are accepted.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+
+--------
+Frame: '<!--frame1-->'
+--------
+
+
+--------
+Frame: '<!--frame2-->'
+--------
+Cookies are: test_cookie = 1
+
+--------
+Frame: '<!--frame3-->'
+--------
+Cookies are: test_cookie = 1
+
+--------
+Frame: '<!--frame4-->'
+--------
+Cookies are: test_cookie = 1
+
+--------
+Frame: '<!--frame5-->'
+--------
+FOO
+
+--------
+Frame: '<!--frame6-->'
+--------
+Cookies are:
+
+--------
+Frame: '<!--frame7-->'
+--------
+

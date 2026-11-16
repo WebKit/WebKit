@@ -1,0 +1,4 @@
+AAAA
+
+PASS SVGTextContentElement.getCharNumAtPosition w/ multiple fragments per text box.
+

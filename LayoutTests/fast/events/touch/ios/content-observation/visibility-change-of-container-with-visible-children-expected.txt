@@ -1,0 +1,9 @@
+Target
+PASS targetClicked became true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+To run this test manually, tap "Target". It should respond to the first tap.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

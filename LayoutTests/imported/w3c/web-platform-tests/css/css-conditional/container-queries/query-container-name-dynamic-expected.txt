@@ -1,0 +1,5 @@
+
+PASS Initially selects #couter as --foo container, both match
+PASS Remove #couter --foo container-name, none match
+PASS Make #cinner a --foo container, #inner starts matching
+

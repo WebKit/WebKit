@@ -1,0 +1,24 @@
+<style>
+    canvas {
+        width: 100px;
+        height: 100px;
+    }
+</style>
+<script>
+    function run() {
+        var c = document.querySelector("canvas");
+        c.width = 1;
+        c.height = 1;
+        var ctx = c.getContext("2d");
+
+        var data = ctx.createImageData(1, 1);
+        data.data[0] = 0xff;
+        data.data[1] = 0xb4;
+        data.data[2] = 0x00;
+        data.data[3] = 0xa3;
+        ctx.putImageData(data, 0, 0);
+    }
+
+    window.addEventListener("load", run, false);
+</script>
+<canvas></canvas>

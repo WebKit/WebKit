@@ -1,0 +1,19 @@
+The upload path of a plain texImage2D (RGBA/UNSIGNED_BYTE, level 0) in WebGL 2 of vp9-p2-420-10bit-pq-videorange.webm played through MediaSource, from the video element and from VideoFrame(video): the default path with its reason and the pixel format (FourCC) given to the hardware path, the default, forced software and forced hardware uploads checked against the frame's own R'G'B' values (no colour management, no tone mapping), and forced hardware against forced software. A compressed pixel format is shown as the format it compresses. The pixel formats depend on the GPU and OS.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+vp9-p2-420-10bit-pq-videorange.webm: vp9 yuv420p10le bt2020/videorange/bt2020/smpte2084
+PASS vp9-p2-420-10bit-pq-videorange.webm (MSE) <video> default path: hardware (converted), pixel format x420
+PASS vp9-p2-420-10bit-pq-videorange.webm (MSE) <video> software path: software (forced)
+PASS vp9-p2-420-10bit-pq-videorange.webm (MSE) <video> hardware path: hardware (converted)
+PASS vp9-p2-420-10bit-pq-videorange.webm (MSE) <video> hardware vs software: match
+PASS vp9-p2-420-10bit-pq-videorange.webm (MSE) VideoFrame(video) (format null) default path: software (gate-videoframe-format)
+PASS vp9-p2-420-10bit-pq-videorange.webm (MSE) VideoFrame(video) (format null) software path: software (forced)
+vp9-p2-420-10bit-pq-videorange.webm (MSE) VideoFrame(video) (format null) hardware path: hardware not available (gate-videoframe-format)
+vp9-p2-420-10bit-pq-videorange.webm (MSE) VideoFrame(video) (format null) hardware vs software: not compared, hardware not available (gate-videoframe-format)
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

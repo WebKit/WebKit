@@ -1,0 +1,14 @@
+
+PASS find "e" in "Some sample text that can be searched" with selection disabled
+PASS find "o" in "Some sample text that can be searched" with selection disabled
+PASS find "y" in "Some sample text that can be searched" with selection disabled
+PASS find "t t" in "Some sample text that can be searched" with selection disabled
+PASS find "mount" in "insurmountable mountain" with selection disabled
+PASS find "Wally" in "insurmountable mountain" with selection disabled
+PASS find "e" in "Some sample text that can be searched" with selection enabled
+PASS find "o" in "Some sample text that can be searched" with selection enabled
+PASS find "y" in "Some sample text that can be searched" with selection enabled
+PASS find "t t" in "Some sample text that can be searched" with selection enabled
+PASS find "mount" in "insurmountable mountain" with selection enabled
+PASS find "Wally" in "insurmountable mountain" with selection enabled
+

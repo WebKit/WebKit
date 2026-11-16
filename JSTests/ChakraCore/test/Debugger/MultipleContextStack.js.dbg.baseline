@@ -1,0 +1,96 @@
+[
+  {
+    "callStack": [
+      {
+        "line": 44,
+        "column": 2,
+        "sourceText": "var x = 1",
+        "function": "Func1"
+      },
+      {
+        "line": 36,
+        "column": 2,
+        "sourceText": "Func1()",
+        "function": "Func2"
+      },
+      {
+        "line": 0,
+        "column": 66,
+        "sourceText": "scriptFunc2()",
+        "function": "Script1Func1"
+      },
+      {
+        "line": 0,
+        "column": 111,
+        "sourceText": "Script1Func1()",
+        "function": "Script1Func2"
+      },
+      {
+        "line": 0,
+        "column": 69,
+        "sourceText": "script1Func2()",
+        "function": "Script2Func1"
+      },
+      {
+        "line": 0,
+        "column": 115,
+        "sourceText": "Script2Func1()",
+        "function": "Script2Func2"
+      },
+      {
+        "line": 40,
+        "column": 2,
+        "sourceText": "script2.Script2Func2()",
+        "function": "Func3"
+      },
+      {
+        "line": 0,
+        "column": 157,
+        "sourceText": "scriptFunc3()",
+        "function": "Script1Func3"
+      },
+      {
+        "line": 0,
+        "column": 161,
+        "sourceText": "script1Func3()",
+        "function": "Script2Func3"
+      },
+      {
+        "line": 51,
+        "column": 0,
+        "sourceText": "script2.Script2Func3()",
+        "function": "Global code"
+      }
+    ]
+  },
+  {
+    "this": {
+      "telemetryLog": "function <large string>",
+      "console": "Object {...}",
+      "Func2": "function <large string>",
+      "Func3": "function <large string>",
+      "Func1": "function <large string>",
+      "script1": "Object {...}",
+      "script2": "Object {...}"
+    },
+    "arguments": {
+      "#__proto__": "Object {...}",
+      "length": "number 0",
+      "callee": "function <large string>",
+      "Symbol.iterator": "function <large string>"
+    },
+    "locals": {
+      "x": "undefined undefined"
+    },
+    "globals": {
+      "WScript": "Object {...}",
+      "print": "function print",
+      "console": "Object {...}",
+      "Func2": "function <large string>",
+      "Func3": "function <large string>",
+      "Func1": "function <large string>",
+      "script1": "Object {...}",
+      "script2": "Object {...}"
+    }
+  }
+]

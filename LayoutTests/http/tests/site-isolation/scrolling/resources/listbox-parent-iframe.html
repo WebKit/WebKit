@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<style>
+html, body { margin: 0; }
+body.tall { height: 2000px; }
+iframe { position: absolute; left: 0; top: 0; width: 300px; height: 200px; border: 0; }
+</style>
+<body>
+<script>
+const params = new URLSearchParams(location.search);
+if (params.has('tall'))
+    document.body.className = 'tall';
+
+const iframe = document.createElement('iframe');
+iframe.src = `${params.get('childOrigin')}/site-isolation/scrolling/resources/listbox-iframe.html?id=inner&${params.get('childQuery') ?? ''}`;
+document.body.appendChild(iframe);
+
+let maxScrollY = 0;
+addEventListener('scroll', () => { maxScrollY = Math.max(maxScrollY, scrollY); });
+
+addEventListener('message', (event) => {
+    if (event.data == 'query')
+        event.source.postMessage({ parentScrollY: scrollY, parentMaxScrollY: maxScrollY }, '*');
+});
+</script>
+</body>

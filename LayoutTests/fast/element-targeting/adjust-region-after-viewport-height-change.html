@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/ui-helper.js"></script>
+<style>
+html, body {
+    margin: 0;
+    overflow: hidden;
+}
+
+.box {
+    position: fixed;
+    left: 350px;
+    bottom: 0;
+    width: 100px;
+    height: 100px;
+    background: green;
+}
+
+.content {
+    width: 320px;
+    height: 200px;
+}
+</style>
+</head>
+<body>
+<div class="box"></div>
+<p class="content">This test requires WebKitTestRunner.</p>
+<script>
+testRunner.waitUntilDone();
+
+function addBottomBox() {
+    const box = document.createElement("div");
+    box.classList.add("box");
+    document.body.appendChild(box);
+    return box;
+}
+
+addEventListener("load", async () => {
+    await UIHelper.waitForCondition(() => document.documentElement.clientHeight === 600);
+
+    await UIHelper.adjustVisibilityForFrontmostTarget(document.querySelector(".box"));
+    await UIHelper.renderingUpdate();
+
+    await UIHelper.adjustVisibilityForFrontmostTarget(addBottomBox());
+    await UIHelper.renderingUpdate();
+
+    await UIHelper.resizeWindowTo(800, 700);
+    await UIHelper.waitForCondition(() => document.documentElement.clientHeight === 700);
+    await UIHelper.renderingUpdate();
+
+    for (let i = 0; i < 3; ++i)
+        addBottomBox();
+    await UIHelper.renderingUpdate();
+
+    testRunner.notifyDone();
+});
+</script>
+</body>
+</html>

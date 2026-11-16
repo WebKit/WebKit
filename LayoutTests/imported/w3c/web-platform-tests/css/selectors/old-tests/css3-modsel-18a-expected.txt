@@ -1,0 +1,12 @@
+The background color of this anchor (here) should turn to green when the pointing device hovers over it.
+
+The background color of this anchor (here) should remain green when you hover it.
+
+The background color of this anchor (here) should remain green when the pointing device hovers over it (do not follow that link).
+
+
+PASS Initial states
+PASS t1 hover
+PASS t2 hover
+PASS t3 hover
+

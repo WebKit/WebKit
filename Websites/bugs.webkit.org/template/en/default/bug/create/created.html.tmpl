@@ -1,0 +1,47 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[%# INTERFACE:
+  # id: number; the ID of the bug that was created.
+  # sentmail: array of hash; bugs for which BugMail should be sent, contains:
+  #     type: string; type of change for this bug, either 'created' if this bug
+  #         was created or 'dep' if it was added as a dependent/blocker
+  #     id: integer; the ID of the bug
+  # bug: object; Bugzilla::Bug object of the bug that was created (used in
+  #     template bug/edit.html.tmpl
+  #%]
+
+[% PROCESS "bug/show-header.html.tmpl" %]
+[% PROCESS global/header.html.tmpl
+  title = "$terms.Bug $id Submitted &ndash; $filtered_desc"
+  header = "$terms.Bug&nbsp;$id Submitted"
+%]
+
+[% header_done = 1 %]
+
+[% FOREACH item = sentmail %]
+  [% PROCESS bug/process/results.html.tmpl
+     type = item.type
+     id = item.id
+     sent_bugmail = item
+   %]
+[% END %]
+
+<br>
+
+<hr>
+
+[% PROCESS bug/edit.html.tmpl %]
+
+<hr>
+
+[% PROCESS bug/navigate.html.tmpl bottom_navigator => 1 %]
+
+<br>
+
+[% PROCESS global/footer.html.tmpl %]

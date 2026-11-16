@@ -1,0 +1,14 @@
+
+PASS [document] same-origin
+PASS [document] blocked due to DIP
+PASS [document] blocked due to DIP (with fragment)
+PASS [document] blocked during redirect
+PASS [dedicated worker] same-origin
+PASS [dedicated worker] blocked due to DIP
+PASS [dedicated worker] blocked due to DIP (with fragment)
+PASS [dedicated worker] blocked during redirect
+PASS [document with service worker] same-origin
+PASS [document with service worker] blocked due to DIP
+PASS [document with service worker] blocked due to DIP (with fragment)
+PASS [document with service worker] blocked during redirect
+

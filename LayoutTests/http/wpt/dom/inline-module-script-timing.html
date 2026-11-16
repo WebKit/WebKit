@@ -1,0 +1,36 @@
+<!doctype html>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+
+<script>
+
+// existence of this classic script is the key to this test failing.
+console.log(`in classic script => document.readyState = ${document.readyState}`);
+
+</script>
+
+This timing is critical to run with wpt testharness.js
+
+<script type="module">
+
+console.log(`[module script] in module script => document.readyState = ${document.readyState}`);
+promise_test(async t => {
+  console.log(`[module script] in promise_test => document.readyState = ${document.readyState}`);
+  t.step(() => {
+    assert_equals(document.readyState, "interactive", "readyState should be 'interactive' (after DOMContentLoaded, before load)");
+  });
+
+  await new Promise((resolve) => {
+    console.log(`[module script] in Promise() created`);
+    window.addEventListener('load', () => {
+      console.log(`[module script] in window.onload`);
+      t.step_timeout(resolve, 0);
+    });
+  });
+
+  t.step(() => {
+    assert_equals(document.readyState, "complete", "After Promise resolution (module), readyState should be 'complete'");
+  });
+}, "DOM loading state verification (module script)");
+
+</script>

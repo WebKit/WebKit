@@ -1,0 +1,10 @@
+This tests that cancelling an idle callback that has a timeout does not run it, nor crash, when the timeout fires while the cancelled request is still queued.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS cancelledCallbackRan is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

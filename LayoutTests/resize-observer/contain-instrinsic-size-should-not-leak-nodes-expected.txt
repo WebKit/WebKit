@@ -1,0 +1,6 @@
+This tests element is with CIS auto and removing the element from the document.
+The element should become eligible for GC at some point.
+
+PASS Remove nodes after observing
+PASS Remove nodes after skipping content
+

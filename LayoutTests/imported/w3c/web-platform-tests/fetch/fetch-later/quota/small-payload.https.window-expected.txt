@@ -1,0 +1,8 @@
+
+PASS fetchLater() accepts small payload in a POST request body of String.
+PASS fetchLater() accepts small payload in a POST request body of ArrayBuffer.
+PASS fetchLater() accepts small payload in a POST request body of FormData.
+PASS fetchLater() accepts small payload in a POST request body of URLSearchParams.
+PASS fetchLater() accepts small payload in a POST request body of Blob.
+PASS fetchLater() accepts small payload in a POST request body of File.
+

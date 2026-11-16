@@ -1,0 +1,9 @@
+2d.layer.invalid-calls.endLayer
+
+Raises exception on lone endLayer calls.
+
+
+FAIL Raises exception on lone endLayer calls. assert_throws_dom: function "function() {
+    ctx.endLayer();
+  }" did not throw
+

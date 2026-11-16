@@ -1,0 +1,17 @@
+
+PASS resolved width with styles {"width":"auto"}
+PASS resolved width with styles {"width":"auto","box-sizing":"border-box"}
+PASS resolved width with styles {"width":"calc-size(auto, size)"}
+PASS resolved width with styles {"width":"calc-size(auto, size)","box-sizing":"border-box"}
+PASS resolved width with styles {"width":"calc-size(auto, size * 2)"}
+PASS resolved width with styles {"width":"calc-size(auto, size * 2)","box-sizing":"content-box"}
+PASS resolved width with styles {"width":"calc-size(auto, size * 2)","box-sizing":"border-box"}
+PASS resolved width with styles {"width":"calc-size(min-content, size * 2)"}
+PASS resolved width with styles {"width":"calc-size(fit-content, size * 2)","box-sizing":"border-box"}
+PASS resolved width with styles {"min-width":"calc-size(min-content, size * 2)"}
+PASS resolved width with styles {"min-width":"calc-size(max-content, size * 2)","box-sizing":"border-box"}
+PASS resolved width with styles {"width":"200px","max-width":"calc-size(max-content, size * 2)"}
+PASS resolved width with styles {"width":"200px","max-width":"calc-size(min-content, size * 2)","box-sizing":"border-box"}
+PASS resolved width with styles {"width":"calc-size(11px, size * 2)"}
+PASS resolved width with styles {"width":"calc-size(11px, size * 2)","box-sizing":"border-box"}
+

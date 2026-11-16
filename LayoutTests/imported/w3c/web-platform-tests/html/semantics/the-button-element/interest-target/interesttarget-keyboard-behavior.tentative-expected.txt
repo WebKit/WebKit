@@ -1,0 +1,33 @@
+Button Link
+SVG A
+ Other button Another Button
+
+FAIL Basic keyboard behavior, <button> assert_true: Pressing the hot key should trigger interest expected true got false
+PASS Extra Shift modifier on the gain interest hot key, <button>
+PASS Extra Control modifier on the gain interest hot key, <button>
+PASS Extra Meta modifier on the gain interest hot key, <button>
+PASS canceling the interest event stops behavior, <button>
+FAIL Showing interest in a second element loses interest in the first, <button> assert_array_equals: first hotkey lengths differ, expected array ["target interest"] length 1, got [] length 0
+FAIL Cancelling loseinterest caused by keyboard-gained interest cancels interest, <button> assert_array_equals: setup lengths differ, expected array ["target interest"] length 1, got [] length 0
+FAIL Basic keyboard behavior, <a> assert_true: Pressing the hot key should trigger interest expected true got false
+PASS Extra Shift modifier on the gain interest hot key, <a>
+PASS Extra Control modifier on the gain interest hot key, <a>
+PASS Extra Meta modifier on the gain interest hot key, <a>
+PASS canceling the interest event stops behavior, <a>
+FAIL Showing interest in a second element loses interest in the first, <a> assert_array_equals: first hotkey lengths differ, expected array ["target interest"] length 1, got [] length 0
+FAIL Cancelling loseinterest caused by keyboard-gained interest cancels interest, <a> assert_array_equals: setup lengths differ, expected array ["target interest"] length 1, got [] length 0
+FAIL Basic keyboard behavior, <area> assert_equals: Elements should all be focusable expected Element node <area id="<area>" interesttarget="target" href="/" shape=... but got Element node <button id="another" interesttarget="anothertarget">Anoth...
+PASS Extra Shift modifier on the gain interest hot key, <area>
+PASS Extra Control modifier on the gain interest hot key, <area>
+PASS Extra Meta modifier on the gain interest hot key, <area>
+PASS canceling the interest event stops behavior, <area>
+FAIL Showing interest in a second element loses interest in the first, <area> assert_array_equals: first hotkey lengths differ, expected array ["target interest"] length 1, got [] length 0
+FAIL Cancelling loseinterest caused by keyboard-gained interest cancels interest, <area> assert_array_equals: setup lengths differ, expected array ["target interest"] length 1, got [] length 0
+FAIL Basic keyboard behavior, SVG <a> assert_true: Pressing the hot key should trigger interest expected true got false
+PASS Extra Shift modifier on the gain interest hot key, SVG <a>
+PASS Extra Control modifier on the gain interest hot key, SVG <a>
+PASS Extra Meta modifier on the gain interest hot key, SVG <a>
+PASS canceling the interest event stops behavior, SVG <a>
+FAIL Showing interest in a second element loses interest in the first, SVG <a> assert_array_equals: first hotkey lengths differ, expected array ["target interest"] length 1, got [] length 0
+FAIL Cancelling loseinterest caused by keyboard-gained interest cancels interest, SVG <a> assert_array_equals: setup lengths differ, expected array ["target interest"] length 1, got [] length 0
+

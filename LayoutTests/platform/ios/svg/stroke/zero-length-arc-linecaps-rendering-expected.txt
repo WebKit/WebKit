@@ -1,0 +1,19 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,3) size 104x101
+    RenderSVGContainer {g} at (0,3) size 104x101
+      RenderSVGContainer {g} at (0,3) size 54x101
+        RenderSVGContainer {use} at (5,5) size 40x90
+          RenderSVGContainer {g} at (5,5) size 40x90
+            RenderSVGEllipse {circle} at (5,5) size 40x40 [fill={[type=SOLID] [color=#FF0000]}] [cx=25.00] [cy=25.00] [r=20.00]
+            RenderSVGRect {rect} at (5,55) size 40x40 [fill={[type=SOLID] [color=#FF0000]}] [x=5.00] [y=55.00] [width=40.00] [height=40.00]
+        RenderSVGPath {path} at (3,3) size 44x44 [transform={m=((1.00,0.00)(0.00,1.00)) t=(25.00,25.00)}] [stroke={[type=SOLID] [color=#008000] [stroke width=40.00] [line cap=ROUND]}] [fill={[type=SOLID] [color=#000000]}] [data="M 0 0 L 0 0"]
+        RenderSVGPath {path} at (0,46) size 54x58 [stroke={[type=SOLID] [color=#008000] [stroke width=40.00] [line cap=SQUARE]}] [fill={[type=SOLID] [color=#000000]}] [data="M 25 75 L 25 75"]
+      RenderSVGContainer {g} at (46,3) size 58x101 [transform={m=((1.00,0.00)(0.00,1.00)) t=(50.00,0.00)}]
+        RenderSVGContainer {use} at (55,5) size 40x90
+          RenderSVGContainer {g} at (55,5) size 40x90
+            RenderSVGEllipse {circle} at (55,5) size 40x40 [fill={[type=SOLID] [color=#FF0000]}] [cx=25.00] [cy=25.00] [r=20.00]
+            RenderSVGRect {rect} at (55,55) size 40x40 [fill={[type=SOLID] [color=#FF0000]}] [x=5.00] [y=55.00] [width=40.00] [height=40.00]
+        RenderSVGPath {path} at (53,3) size 44x44 [transform={m=((1.00,0.00)(0.00,1.00)) t=(25.00,25.00)}] [stroke={[type=SOLID] [color=#008000] [stroke width=40.00] [line cap=ROUND]}] [fill={[type=SOLID] [color=#000000]}] [data="M 0 0 L 0 0"]
+        RenderSVGPath {path} at (46,46) size 58x58 [stroke={[type=SOLID] [color=#008000] [stroke width=40.00] [line cap=SQUARE]}] [fill={[type=SOLID] [color=#000000]}] [data="M 25 75 L 25 75"]

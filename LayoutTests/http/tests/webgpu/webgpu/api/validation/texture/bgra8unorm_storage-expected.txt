@@ -1,0 +1,8 @@
+
+PASS :create_texture:
+PASS :create_bind_group_layout:
+PASS :configure_storage_usage_on_canvas_context_without_bgra8unorm_storage:canvasType="onscreen"
+PASS :configure_storage_usage_on_canvas_context_without_bgra8unorm_storage:canvasType="offscreen"
+PASS :configure_storage_usage_on_canvas_context_with_bgra8unorm_storage:canvasType="onscreen"
+PASS :configure_storage_usage_on_canvas_context_with_bgra8unorm_storage:canvasType="offscreen"
+

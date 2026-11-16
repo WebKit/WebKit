@@ -1,0 +1,4 @@
+
+FAIL CSS Overflow Test: ::scroll-button and ::scroll-marker pseudo-elements are not present in event path assert_array_equals: ::scroll-button pseudo-element should not be in the event path value is null, expected array
+PASS CSS Overflow Test: ::scroll-button and ::scroll-marker pseudo-elements are not present in event path 1
+

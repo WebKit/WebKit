@@ -1,0 +1,47 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <script src="../../resources/testharness.js"></script>
+        <script src="../../resources/testharnessreport.js"></script>
+    </head>
+    <body>
+        <video id=video1 autoplay playsInline width=100px></video>
+        <video id=video2 autoplay playsInline width=100px></video>
+        <script>
+promise_test(async test => {
+    const stream1 = await navigator.mediaDevices.getUserMedia({ video: { width:640, height:480, frameRate : 30 } });
+    const stream2 = stream1.clone();
+    test.add_cleanup(() => stream1.getTracks().forEach(track => track.stop()));
+    test.add_cleanup(() => stream2.getTracks().forEach(track => track.stop()));
+
+    await stream2.getVideoTracks()[0].applyConstraints({ frameRate : 1 });
+
+    video1.srcObject = stream1;
+    video2.srcObject = stream2;
+
+    await video1.play();
+    await video2.play();
+
+    const metrics1 = video1.getVideoPlaybackQuality();
+    const metrics2 = video2.getVideoPlaybackQuality();
+
+    await new Promise(resolve => setTimeout(resolve, 2000));
+
+    const metrics3 = video1.getVideoPlaybackQuality();
+    const metrics4 = video2.getVideoPlaybackQuality();
+
+    assert_greater_than(metrics3.totalVideoFrames, 0, "test2");
+    assert_greater_than(metrics4.totalVideoFrames, 0, "test3");
+
+    assert_greater_than(metrics3.totalVideoFrames, metrics1.totalVideoFrames, "test4");
+    assert_greater_than(metrics3.totalVideoFrames, metrics4.totalVideoFrames, "test5");
+
+    assert_greater_than(metrics4.totalVideoFrames, metrics4.droppedVideoFrames, "test6");
+    assert_greater_than(metrics3.totalVideoFrames, metrics3.droppedVideoFrames, "test7");
+
+    assert_greater_than(metrics3.totalVideoFrames - metrics1.totalVideoFrames, metrics4.totalVideoFrames - metrics2.totalVideoFrames, "test8");
+}, "Check MediaStream backed HTMLVideoElement.getVideoPlaybackQuality");
+        </script>
+    </body>
+</html>

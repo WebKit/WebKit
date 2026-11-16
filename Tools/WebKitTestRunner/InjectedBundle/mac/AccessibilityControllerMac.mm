@@ -1,0 +1,391 @@
+/*
+ * Copyright (C) 2011 Google Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are
+ * met:
+ *
+ *     * Redistributions of source code must retain the above copyright
+ * notice, this list of conditions and the following disclaimer.
+ *     * Redistributions in binary form must reproduce the above
+ * copyright notice, this list of conditions and the following disclaimer
+ * in the documentation and/or other materials provided with the
+ * distribution.
+ *     * Neither the name of Google Inc. nor the names of its
+ * contributors may be used to endorse or promote products derived from
+ * this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+ * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+ * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+ * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#import "AccessibilityController.h"
+
+#import "AccessibilityCommonCocoa.h"
+#import "AccessibilityNotificationHandler.h"
+#import "AccessibilityUIElementClientMac.h"
+#import "DictionaryFunctions.h"
+#import "InjectedBundle.h"
+#import "InjectedBundlePage.h"
+#import "JSBasics.h"
+#import "JSWrapper.h"
+#import "WebCoreTestSupport.h"
+#import <JavaScriptCore/JSStringRefCF.h>
+#import <WebKit/WKBundle.h>
+#import <WebKit/WKBundleFramePrivate.h>
+#import <WebKit/WKBundlePage.h>
+#import <WebKit/WKBundlePagePrivate.h>
+#import <WebKit/WKBundlePrivate.h>
+
+#import <pal/spi/mac/HIServicesSPI.h>
+#import <wtf/MonotonicTime.h>
+
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+#import <pal/spi/cocoa/AccessibilitySupportSPI.h>
+#endif
+
+namespace WTR {
+
+void AccessibilityController::platformInitialize()
+{
+    // Override the client identifier to be kAXClientTypeWebKitTesting which is treated the same as the VoiceOver identifier in isolated tree mode.
+    // This also allows to enable some APIs during testing only for unit test purposes, not for other clients consumption.
+    _AXSetClientIdentificationOverride((AXClientType)kAXClientTypeWebKitTesting);
+}
+
+RefPtr<AccessibilityUIElement> AccessibilityController::focusedElement(JSContextRef context)
+{
+    if (!_WKAccessibilityRootObjectForTesting(WKBundleFrameForJavaScriptContext(context)))
+        return nullptr;
+
+    RetainPtr<PlatformUIElement> focus;
+    executeOnAXThreadAndWait([&focus] () {
+        focus = static_cast<PlatformUIElement>(WKAccessibilityFocusedUIElement());
+    });
+    if (focus)
+        return AccessibilityUIElement::create(focus.get());
+    return nullptr;
+}
+
+bool AccessibilityController::addNotificationListener(JSContextRef context, JSValueRef functionCallback)
+{
+    if (!functionCallback)
+        return false;
+
+    if (m_enableClientAccessibilityMode)
+        return addClientNotificationListener(context, functionCallback);
+
+    if (m_globalNotificationHandler)
+        return false;
+
+    // Ensure the accessibility tree is built before we start observing
+    // notifications, otherwise notifications may never be posted.
+    _WKAccessibilityRootObjectForTesting(WKBundleFrameForJavaScriptContext(context));
+
+    m_globalNotificationHandler = adoptNS([[AccessibilityNotificationHandler alloc] initWithContext:context]);
+    [m_globalNotificationHandler.get() setCallback:functionCallback];
+    [m_globalNotificationHandler.get() startObserving];
+
+    return true;
+}
+
+bool AccessibilityController::removeNotificationListener()
+{
+    if (m_clientNotificationCallback)
+        return removeClientNotificationListener();
+
+    ASSERT(m_globalNotificationHandler);
+
+    [m_globalNotificationHandler.get() stopObserving];
+    m_globalNotificationHandler.clear();
+
+    return true;
+}
+
+bool AccessibilityController::addClientNotificationListener(JSContextRef context, JSValueRef functionCallback)
+{
+    if (m_clientNotificationCallback)
+        return false;
+
+    // The UI process observes the web content processes with AXObserver, the way an assistive
+    // technology would, and forwards each notification back here as "AXClientNotification".
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+    WKTypeRef returnData = nullptr;
+    WKBundlePostSynchronousMessage(InjectedBundle::singleton().bundle(), toWK("AXAddNotificationListener").get(), nullptr, &returnData);
+    ALLOW_DEPRECATED_DECLARATIONS_END
+    WKRetainPtr result = adoptWK(returnData);
+    if (!result || WKGetTypeID(result.get()) != WKBooleanGetTypeID() || !WKBooleanGetValue(static_cast<WKBooleanRef>(result.get()))) {
+        postSynchronousMessage("AXRemoveNotificationListener");
+        return false;
+    }
+
+    m_clientNotificationContext = JSContextGetGlobalContext(context);
+    m_clientNotificationCallback = functionCallback;
+    JSValueProtect(m_clientNotificationContext.get(), m_clientNotificationCallback);
+    return true;
+}
+
+bool AccessibilityController::removeClientNotificationListener()
+{
+    postSynchronousMessage("AXRemoveNotificationListener");
+
+    JSValueUnprotect(m_clientNotificationContext.get(), m_clientNotificationCallback);
+    m_clientNotificationCallback = nullptr;
+    m_clientNotificationContext = nullptr;
+    return true;
+}
+
+// The inverse of TestController::axValueToWK: element tokens become client elements.
+static JSValueRef clientValueToJS(JSContextRef context, WKTypeRef value)
+{
+    auto typeID = WKGetTypeID(value);
+    if (typeID == WKStringGetTypeID())
+        return JSValueMakeString(context, toJS(static_cast<WKStringRef>(value)).get());
+    if (typeID == WKBooleanGetTypeID())
+        return JSValueMakeBoolean(context, WKBooleanGetValue(static_cast<WKBooleanRef>(value)));
+    if (typeID == WKDoubleGetTypeID())
+        return JSValueMakeNumber(context, WKDoubleGetValue(static_cast<WKDoubleRef>(value)));
+    if (typeID == WKUInt64GetTypeID())
+        return JSValueMakeNumber(context, WKUInt64GetValue(static_cast<WKUInt64Ref>(value)));
+    if (typeID == WKArrayGetTypeID()) {
+        auto array = static_cast<WKArrayRef>(value);
+        Vector<JSValueRef> items;
+        for (size_t i = 0; i < WKArrayGetSize(array); ++i)
+            items.append(clientValueToJS(context, WKArrayGetItemAtIndex(array, i)));
+        return JSObjectMakeArray(context, items.size(), items.span().data(), nullptr);
+    }
+    if (typeID == WKDictionaryGetTypeID()) {
+        auto dictionary = static_cast<WKDictionaryRef>(value);
+        if (auto token = WKDictionaryGetItemForKey(dictionary, toWK("AXUIElementToken").get()); token && WKGetTypeID(token) == WKUInt64GetTypeID())
+            return toJS(context, AccessibilityUIElementClientMac::create(WKUInt64GetValue(static_cast<WKUInt64Ref>(token))).ptr());
+
+        JSObjectRef object = JSObjectMake(context, nullptr, nullptr);
+        WKRetainPtr keys = adoptWK(WKDictionaryCopyKeys(dictionary));
+        for (size_t i = 0; i < WKArrayGetSize(keys.get()); ++i) {
+            auto key = static_cast<WKStringRef>(WKArrayGetItemAtIndex(keys.get(), i));
+            JSObjectSetProperty(context, object, toJS(key).get(), clientValueToJS(context, WKDictionaryGetItemForKey(dictionary, key)), kJSPropertyAttributeNone, nullptr);
+        }
+        return object;
+    }
+    return JSValueMakeUndefined(context);
+}
+
+void AccessibilityController::clientNotificationReceived(uint64_t elementToken, JSStringRef notificationName, WKTypeRef userInfo)
+{
+    if (!m_clientNotificationCallback)
+        return;
+
+    // Match the arguments a global listener gets in non-client mode: element, notification name, user info.
+    auto context = m_clientNotificationContext.get();
+    JSValueRef arguments[3];
+    arguments[0] = toJS(context, AccessibilityUIElementClientMac::create(elementToken).ptr());
+    arguments[1] = JSValueMakeString(context, notificationName);
+    arguments[2] = userInfo ? clientValueToJS(context, userInfo) : JSValueMakeUndefined(context);
+    JSObjectCallAsFunction(context, const_cast<JSObjectRef>(m_clientNotificationCallback), 0, 3, arguments, 0);
+}
+
+WKRetainPtr<WKTypeRef> AccessibilityController::sendClientAccessibilityRequest(const char* name, WKTypeRef body)
+{
+    auto requestID = m_nextClientAccessibilityRequestID++;
+    WKRetainPtr request = adoptWK(WKMutableDictionaryCreate());
+    setValue(request, "requestID", requestID);
+    setValue(request, "name", name);
+    if (body)
+        WKDictionarySetItem(request.get(), toWK("body").get(), body);
+    postPageMessage("AXAsyncRequest", request);
+
+    // Spin rather than block: serving the request can need this process's main thread, e.g. for a
+    // hit test, or for a search that reaches a remote frame.
+    auto timeout = MonotonicTime::now() + 10_s;
+    while (!m_clientAccessibilityReplies.contains(requestID) && MonotonicTime::now() < timeout)
+        CFRunLoopRunInMode(kCFRunLoopDefaultMode, .001, false);
+
+    return m_clientAccessibilityReplies.take(requestID);
+}
+
+void AccessibilityController::clientAccessibilityReplyReceived(uint64_t requestID, WKTypeRef result)
+{
+    if (requestID < m_nextClientAccessibilityRequestID)
+        m_clientAccessibilityReplies.set(requestID, result);
+}
+
+void AccessibilityController::resetToConsistentState()
+{
+    if (m_globalNotificationHandler || m_clientNotificationCallback)
+        removeNotificationListener();
+
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    // Clear any queued AX thread functions from the previous test and wait
+    // for any in-flight function to finish. This avoids running functions
+    // from one test in another.
+    if (m_accessibilityIsolatedTreeMode) {
+        AXThread::clearQueuedFunctions();
+        // Wait for any currently-executing function to complete.
+        std::atomic<bool> complete = false;
+        AXThread::dispatch([&complete] {
+            complete = true;
+        });
+        while (!complete)
+            spinMainRunLoop();
+    }
+#endif // ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+}
+
+static id findAccessibleObjectById(id obj, NSString *idAttribute)
+{
+    BEGIN_AX_OBJC_EXCEPTIONS
+    id objIdAttribute = [obj accessibilityAttributeValue:@"AXDOMIdentifier"];
+    if ([objIdAttribute isKindOfClass:[NSString class]] && [objIdAttribute isEqualToString:idAttribute])
+        return obj;
+    END_AX_OBJC_EXCEPTIONS
+
+    BEGIN_AX_OBJC_EXCEPTIONS
+    NSArray *children = [obj accessibilityAttributeValue:NSAccessibilityChildrenAttribute];
+    NSUInteger childrenCount = [children count];
+    for (NSUInteger i = 0; i < childrenCount; ++i) {
+        id result = findAccessibleObjectById([children objectAtIndex:i], idAttribute);
+        if (result)
+            return result;
+    }
+    END_AX_OBJC_EXCEPTIONS
+
+    return nil;
+}
+
+static RefPtr<AccessibilityUIElement> findElementByIdRecursive(AccessibilityUIElement* element, const String& targetId)
+{
+    if (!element || !element->isValid())
+        return nullptr;
+
+    if (RefPtr domId = element->domIdentifier()) {
+        if (toWTFString(domId.get()) == targetId)
+            return element;
+    }
+
+    unsigned count = element->childrenCount();
+    for (unsigned i = 0; i < count; i++) {
+        if (RefPtr<AccessibilityUIElement> found = findElementByIdRecursive(element->childAtIndex(i).get(), targetId))
+            return found;
+    }
+
+    return nullptr;
+}
+
+void AccessibilityController::injectAccessibilityPreference(JSStringRef domain, JSStringRef key, JSStringRef value)
+{
+    auto page = InjectedBundle::singleton().page()->page();
+    NSNumber *numberValue = @([[NSString stringWithJSStringRef:value] integerValue]);
+    NSData *encodedData = [NSKeyedArchiver archivedDataWithRootObject:numberValue requiringSecureCoding:YES error:nil];
+    NSString *encodedString = [encodedData base64EncodedStringWithOptions:0];
+    WKAccessibilityTestingInjectPreference(page, toWK(domain).get(), toWK(key).get(), toWK(encodedString).get());
+}
+
+RefPtr<AccessibilityUIElement> AccessibilityController::accessibleElementById(JSContextRef context, JSStringRef idAttribute)
+{
+    if (m_enableClientAccessibilityMode) {
+        auto root = AccessibilityUIElementClientMac::createForUIProcess();
+        return findElementByIdRecursive(root.ptr(), toWTFString(idAttribute));
+    }
+
+    WKRetainPtr<WKBundleFrameRef> frame = WKBundleFrameForJavaScriptContext(context);
+
+    NSString *attributeName = [NSString stringWithJSStringRef:idAttribute];
+    RetainPtr<id> result;
+    executeOnAXThreadAndWait([&frame, &attributeName, &result] {
+        PlatformUIElement root = static_cast<PlatformUIElement>(_WKAccessibilityRootObjectForTesting(frame.get()));
+        result = findAccessibleObjectById(root, attributeName);
+    });
+
+    if (result)
+        return AccessibilityUIElement::create(result.get());
+    return nullptr;
+}
+
+RefPtr<OpaqueJSString> AccessibilityController::platformName()
+{
+    return WTR::createJSString("mac");
+}
+
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+void AccessibilityController::updateIsolatedTreeMode()
+{
+    WebCoreTestSupport::setAccessibilityIsolatedTreeEnabled(m_accessibilityIsolatedTreeMode);
+    _AXSSetIsolatedTreeMode(m_accessibilityIsolatedTreeMode ? AXSIsolatedTreeModeSecondaryThread : AXSIsolatedTreeModeOff);
+}
+#endif
+
+void AccessibilityController::overrideClient(JSStringRef clientType)
+{
+    NSString *clientString = [NSString stringWithJSStringRef:clientType];
+    if ([clientString caseInsensitiveCompare:@"voiceover"] == NSOrderedSame)
+        _AXSetClientIdentificationOverride(kAXClientTypeVoiceOver);
+    else
+        _AXSetClientIdentificationOverride(kAXClientTypeNoActiveRequestFound);
+}
+
+void AccessibilityController::printTrees(JSContextRef context)
+{
+    PlatformUIElement root = static_cast<PlatformUIElement>(_WKAccessibilityRootObjectForTesting(WKBundleFrameForJavaScriptContext(context)));
+    [root accessibilityPerformAction:@"AXLogTrees"];
+}
+
+// AXThread implementation
+
+void AXThread::initializeRunLoop()
+{
+    // Initialize the run loop.
+    {
+        Locker locker { m_initializeRunLoopMutex };
+
+        m_threadRunLoop = CFRunLoopGetCurrent();
+
+        CFRunLoopSourceContext context = { 0, this, 0, 0, 0, 0, 0, 0, 0, threadRunLoopSourceCallback };
+        m_threadRunLoopSource = adoptCF(CFRunLoopSourceCreate(0, 0, &context));
+        CFRunLoopAddSource(CFRunLoopGetCurrent(), m_threadRunLoopSource.get(), kCFRunLoopDefaultMode);
+
+        m_initializeRunLoopConditionVariable.notifyAll();
+    }
+
+    ASSERT(isCurrentThread());
+
+    CFRunLoopRun();
+}
+
+void AXThread::wakeUpRunLoop()
+{
+    CFRunLoopSourceSignal(m_threadRunLoopSource.get());
+    CFRunLoopWakeUp(m_threadRunLoop.get());
+}
+
+void AXThread::threadRunLoopSourceCallback(void* axThread)
+{
+    static_cast<AXThread*>(axThread)->threadRunLoopSourceCallback();
+}
+
+void AXThread::threadRunLoopSourceCallback()
+{
+    @autoreleasepool {
+        dispatchFunctionsFromAXThread();
+    }
+}
+
+void AccessibilityController::platformInitializeClientAccessibility()
+{
+    setIsolatedTreeMode(true);
+
+    _WKAccessibilityAllowAuthenticationForTesting(true);
+
+    // This triggers WebKit's normal accessibility initialization flow via IPC
+    WTR::postSynchronousMessage("InitializeWebProcessAccessibility");
+}
+
+} // namespace WTR

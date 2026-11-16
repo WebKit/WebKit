@@ -1,0 +1,47 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<div role="group" id="form" aria-label="my form">
+    <input type="text" id="input">
+</div>
+<input id="checkbox" type="checkbox">
+
+<script>
+var output = "This test ensures we don't crash when deleting the parent of a text input that has had at least one value change.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    var input = accessibilityController.accessibleElementById("input");
+    output += expect("input.role", "'AXRole: AXTextField'");
+    output += expect("accessibilityController.accessibleElementById('form').childAtIndex(0).role", "'AXRole: AXTextField'");
+
+    setTimeout(async function() {
+        // This will cause the isolated object to be fully replaced (at the time this comment was written).
+        document.getElementById("input").value = "abc";
+        output += await expectAsync("input.stringValue", "'AXValue: abc'");
+
+        // Delete the parent of the text input. When we process deletions, we'll iterate through all descendants (including
+        // the text input), deleting them too.
+        document.getElementById("form").remove();
+
+        // Check a checkbox, which will post a platform notification, forcing an immediate flush of queued isolated tree updates,
+        // including the removals we queued just above.
+        document.getElementById("checkbox").checked = true;
+
+        // Should not cause a crash. The actual role value returned doesn't really matter.
+        output += await expectAsync("input.role", "'AXRole: '");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>
+

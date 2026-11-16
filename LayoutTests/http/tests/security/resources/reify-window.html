@@ -1,0 +1,8 @@
+<script>
+delete window.self;
+window.self = "secret";
+
+// Deleting window.parent exposes the div with id "parent" returned by the named property getter.
+delete window.parent;
+</script>
+<div id="parent"></div>

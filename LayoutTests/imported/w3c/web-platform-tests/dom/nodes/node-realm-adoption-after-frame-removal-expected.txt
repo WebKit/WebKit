@@ -1,0 +1,11 @@
+x
+
+x
+
+x
+
+
+PASS Never-wrapped node keeps its creation realm: subtree detached, iframe removed, then adopted
+PASS Never-wrapped node keeps its creation realm: iframe removed before adoption (subtree not pre-detached)
+PASS Node reached through the adopting document still reports its creation realm (frame removed before adoption)
+

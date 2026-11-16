@@ -1,0 +1,186 @@
+<!DOCTYPE html><!-- webkit-test-runner [ OptInPartitionedCookiesEnabled=true ] -->
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Test for cookies after cross-site redirect</title>
+    <script src="/js-test-resources/js-test.js"></script>
+    <script src="resources/util.js"></script>
+</head>
+<body>
+<script>
+    const partitionHost = "127.0.0.1:8443";
+    const partitionOrigin = `https://${partitionHost}`;
+    const thirdPartyOrigin = "https://localhost:8443";
+    const fragmentWithReturnUrl = "https://127.0.0.1:8443/resourceLoadStatistics/only-partitioned-cookies-after-redirect-fetch.https.html";
+    const thirdPartyUrlWithFragment = fragmentWithReturnUrl.replace("127.0.0.1", "localhost");
+
+    function finishTest() {
+        setEnableFeature(false, function() {
+            testRunner.notifyDone();
+        });
+    }
+
+    function runTest() {
+        switch (document.location.hash) {
+            case "#step1":
+                fetch(thirdPartyOrigin + "/cookies/resources/setCookies.cgi", { credentials: "include", headers: { "X-SET-COOKIE": "firstPartyCookieSetAsThirdParty=value;Path=/" } }).then((r) => r.text()).then((text) => {
+                    let expected = "";
+                    if (text == expected) {
+                        testPassed(`setCookies returned the expected value`);
+                        document.location.href = thirdPartyUrlWithFragment + "#step2";
+                    } else {
+                        testFailed(`setCookies returned ${text}, expected ${expected}`);
+                        finishTest();
+                    }
+                });
+                break;
+            case "#step2":
+                document.location.hash = "step3";
+                fetch(thirdPartyOrigin + "/cookies/resources/echo-cookies.py", { credentials: "include" }).then((r) => r.text()).then((text) => {
+                    let expected = "Cookies are:\n";
+                    if (text == expected) {
+                        testPassed(`step2: echo-cookies returned the expected value`);
+                        runTest();
+                    } else {
+                        testFailed(`step2: echo-cookies returned ${text}, expected ${expected}`);
+                        finishTest();
+                    }
+                });
+                break;
+            case "#step3":
+                document.location.hash = "step4";
+                fetch(thirdPartyOrigin + "/cookies/resources/setCookies.cgi", { credentials: "include", headers: { "X-SET-COOKIE": "firstPartyCookie=value;Path=/" } }).then((r) => r.text()).then((text) => {
+                    let expected = "";
+                    if (text == expected) {
+                        testPassed(`step3: setCookies returned the expected value`);
+                        runTest();
+                    } else {
+                        testFailed(`step3: setCookies returned ${text}, expected ${expected}`);
+                        finishTest();
+                    }
+                });
+                break;
+            case "#step4":
+                fetch(thirdPartyOrigin + "/cookies/resources/echo-cookies.py", { credentials: "include" }).then((r) => r.text()).then((text) => {
+                    let expected = "Cookies are:\nfirstPartyCookie = value\n";
+                    if (text == expected) {
+                        testPassed(`step4: echo-cookies returned the expected value`);
+                        document.location.href = fragmentWithReturnUrl + "#step5";
+                    } else {
+                        testFailed(`step4: echo-cookies returned ${text}, expected ${expected}`);
+                        finishTest();
+                    }
+                });
+                break;
+            case "#step5":
+                document.location.hash = "step6";
+                fetch(thirdPartyOrigin + "/cookies/resources/setCookies.cgi", { credentials: "include", headers: { "X-SET-COOKIE": "firstPartyCookieSetAsThirdParty=value;Path=/" } }).then((r) => r.text()).then((text) => {
+                    let expected = "";
+                    if (text == expected) {
+                        testPassed(`step5: setCookies returned the expected value`);
+                        runTest();
+                    } else {
+                        testFailed(`step5: setCookies returned ${text}, expected ${expected}`);
+                        finishTest();
+                    }
+                });
+                break;
+            case "#step6":
+                fetch("/resources/redirect.py?url=" + thirdPartyOrigin + "/cookies/resources/setCookies.cgi", { credentials: "include", headers: { "X-SET-COOKIE": "firstPartyCookieSetAsThirdPartyAfterRedirect=value;Path=/" } }).then((r) => r.text()).then((text) => {
+                    let expected = "";
+                    if (text == expected) {
+                        testPassed(`step6: setCookies returned the expected value`);
+                        document.location.href = thirdPartyUrlWithFragment + "#step7";
+                    } else {
+                        testFailed(`step6: setCookies returned ${text}, expected ${expected}`);
+                        finishTest();
+                    }
+                });
+                break;
+            case "#step7":
+                fetch(thirdPartyOrigin + "/cookies/resources/echo-cookies.py", { credentials: "include" }).then((r) => r.text()).then((text) => {
+                    let expected = "Cookies are:\nfirstPartyCookie = value\n";
+                    if (text == expected) {
+                        testPassed(`step7: echo-cookies returned the expected value`);
+                        document.location.href = fragmentWithReturnUrl + "#step8";
+                    } else {
+                        testFailed(`step7: echo-cookies returned ${text}, expected ${expected}`);
+                        finishTest();
+                    }
+                });
+                break;
+            case "#step8":
+                document.location.hash = "step9";
+                fetch("/resources/redirect.py?url=" + thirdPartyOrigin + "/cookies/resources/setCookies.cgi", { credentials: "include", headers: { "X-SET-COOKIE": "firstPartyCookieSetAsThirdPartyAfterRedirectPartitioned=value;Path=/;Secure;SameSite=None;Partitioned" } }).then((r) => r.text()).then((text) => {
+                    let expected = "";
+                    if (text == expected) {
+                        testPassed(`step8: setCookies returned the expected value`);
+                        runTest();
+                    } else {
+                        testFailed(`step8: setCookies returned ${text}, expected ${expected}`);
+                        finishTest();
+                    }
+                });
+                break;
+            case "#step9":
+                fetch(thirdPartyOrigin + "/cookies/resources/echo-cookies.py", { credentials: "include" }).then((r) => r.text()).then((text) => {
+                    let expected = "Cookies are:\nfirstPartyCookieSetAsThirdPartyAfterRedirectPartitioned = value\n";
+                    if (text == expected) {
+                        testPassed(`step9: echo-cookies returned the expected value`);
+                        document.location.href = thirdPartyUrlWithFragment + "#step10";
+                    } else {
+                        testFailed(`step9: echo-cookies returned ${text}, expected ${expected}`);
+                        finishTest();
+                    }
+                });
+                break;
+            case "#step10":
+                fetch(thirdPartyOrigin + "/cookies/resources/echo-cookies.py", { credentials: "include" }).then((r) => r.text()).then((text) => {
+                    let expected = "Cookies are:\nfirstPartyCookie = value\n";
+                    if (text == expected) {
+                        testPassed(`step10: echo-cookies returned the expected value`);
+                        document.location.href = fragmentWithReturnUrl + "#step11";
+                    } else {
+                        testFailed(`step10: echo-cookies returned ${text}, expected ${expected}`);
+                        finishTest();
+                    }
+                });
+                break;
+            case "#step11":
+                fetch(thirdPartyOrigin + "/resources/redirect.py?allowCrossOrigin=1&allowHeaders=X-SET-COOKIE&url=" + partitionOrigin + "/cookies/resources/setCookies.cgi", { credentials: "include", headers: { "X-SET-COOKIE": "firstPartyCookieSetAfterThirdPartyRedirect=value;Path=/" } }).then((r) => r.text()).then((text) => {
+                    let expected = "";
+                    if (text == expected) {
+                        testPassed(`step11: setCookies returned the expected value`);
+                        document.location.href = thirdPartyUrlWithFragment  + "#step12";
+                    } else {
+                        testFailed(`step11: setCookies returned ${text}, expected ${expected}`);
+                        finishTest();
+                    }
+                });
+                break;
+            case "#step12":
+               fetch(partitionOrigin + "/cookies/resources/echo-cookies.py", { credentials: "include" }).then((r) => r.text()).then((text) => {
+                    let expected = "Cookies are:\n";
+                    if (text == expected)
+                        testPassed(`step12: echo-cookies returned the expected value`);
+                    else
+                        testFailed(`step12: echo-cookies returned ${text}, expected ${expected}`);
+                    finishTest();
+                });
+                break;
+        }
+    }
+
+    if (document.location.host === partitionHost && document.location.hash == "" && window.testRunner) {
+        testRunner.waitUntilDone();
+        setEnableFeature(true, function() {
+            testRunner.dumpAsText();
+            document.location.hash = "step1";
+            testRunner.setStatisticsShouldBlockThirdPartyCookies(true, runTest, false, true);
+        });
+    } else {
+        testRunner.setStatisticsShouldBlockThirdPartyCookies(true, runTest, false, true);
+    }
+</script>
+</body>
+</html>

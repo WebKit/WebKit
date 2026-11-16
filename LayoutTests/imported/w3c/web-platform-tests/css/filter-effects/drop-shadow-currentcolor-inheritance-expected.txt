@@ -1,0 +1,4 @@
+
+PASS Test currentcolor inheritance in drop-shadow()
+PASS Test currentcolor inheritance in drop-shadow() after color mutation
+

@@ -1,0 +1,4 @@
+
+PASS supportedEntryTypes contains 'navigation'.
+PASS 'navigation' entries should be observable.
+

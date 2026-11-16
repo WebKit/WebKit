@@ -1,0 +1,6 @@
+
+PASS Showing an unrelated auto popover closes the picker.
+PASS Showing an unrelated manual popover leaves the picker open.
+PASS Showing an unrelated dialog closes the picker.
+PASS Showing an unrelated modal dialog closes the picker.
+

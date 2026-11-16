@@ -1,0 +1,18 @@
+<style>
+    body {
+        background-color: green;
+        margin: 0;
+        padding: 0;
+    }
+    .box {
+        width: 100px;
+        height:100px;
+        background-color: blue;
+    }
+</style>
+<body>
+    <div class="box"></div>
+    <script>
+        onload = () => { window.parent.postMessage("onload", "*"); }
+    </script>
+</body>

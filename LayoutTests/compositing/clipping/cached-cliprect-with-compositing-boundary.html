@@ -1,0 +1,56 @@
+<iframe style="width: 400px; height: 400px;" frameborder="0" src="data:text/html,
+<style>
+.overlap {
+	position: fixed;
+	top: 10px;
+	left: 10px;
+    width: 100px;
+    height: 100px;
+	background-color: silver;
+}
+
+.outer {
+	border: 5px solid green;
+	position: relative;
+	top: 50px;
+    left: 50px;
+	height: 250px;
+	width: 250px;
+}
+
+.middle {
+    overflow-y: scroll;
+    border: 5px solid orange;
+}
+
+.overflow-scroll {
+    height: 100%;
+    overflow-y: scroll;
+}
+
+.item {
+    height: 200px;
+    border: 5px solid blue;
+    background-color: yellow;
+}
+
+.layery {
+	position: relative;
+    padding: 10px;
+}
+</style>
+
+<div class=overlap></div>
+<div class=outer>
+  <div class=middle>
+	<div class=overflow-scroll>
+		<div class=item>Pass if this text is visible. Pass if this text is visible. Pass if this text is visible. Pass if this text is visible.
+		Pass if this text is visible. Pass if this text is visible. Pass if this text is visible. Pass if this text is visible. Pass if this text is visible.
+		Pass if this text is visible. Pass if this text is visible. Pass if this text is visible. Pass if this text is visible. Pass if this text is visible.
+		Pass if this text is visible. Pass if this text is visible. Pass if this text is visible. Pass if this text is visible. Pass if this text is visible.
+		Pass if this text is visible. Pass if this text is visible. Pass if this text is visible. Pass if this text is visible. Pass if this text is visible.
+		Pass if this text is visible. Pass if this text is visible. Pass if this text is visible. Pass if this text is visible. Pass if this text is visible.
+		<div class=layery>Thing with RenderLayer</div>
+    </div>
+</div>
+"></iframe>

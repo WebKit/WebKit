@@ -1,0 +1,5 @@
+
+PASS XRGPUBinding.getSubImage() throws InvalidStateError for a destroyed layer
+PASS XRGPUBinding.getViewSubImage() throws InvalidStateError for a destroyed layer
+PASS A session keeps rendering with a new WebGPU projection layer after the old one is destroyed
+

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test.js"></script>
+<script>
+description("Tests that DOMParser.parseFromString and Document.parseHTMLUnsafe build a complete, connected document from markup the HTML fast path parser accepts, and from markup it rejects partway.");
+
+function parse(markup) {
+    return new DOMParser().parseFromString(markup, "text/html");
+}
+
+function childNames(element) {
+    return Array.from(element.children, (child) => child.localName).join(" ");
+}
+
+debug("The document element has a head followed by a body holding the parsed content.");
+doc = parse("<p>Subtotal <b>$12</b></p>");
+shouldBeEqualToString("childNames(doc.documentElement)", "head body");
+shouldBeEqualToString("doc.body.innerHTML", "<p>Subtotal <b>$12</b></p>");
+
+debug("Parsed elements are connected and can be found by id.");
+doc = parse("<ul><li><span id=shipping-total>$4</span></li></ul>");
+shouldBeTrue("doc.getElementById('shipping-total').isConnected");
+doc = parse("<label for=contact-email>Contact email</label><input id=contact-email type=email>");
+shouldBe("doc.querySelector('label').control", "doc.querySelector('input')");
+
+debug("Radio buttons with the same name form one group, so only the last checked one stays checked.");
+doc = parse("<input type=radio name=gift-wrap value=Marigold checked><input type=radio name=gift-wrap value=Lavender checked>");
+shouldBeEqualToString("doc.querySelector('input:checked').value", "Lavender");
+
+debug("The last selected option is the selected one.");
+doc = parse("<select><option>Sunflower</option><option selected>Marigold</option><option selected>Lavender</option></select>");
+shouldBe("doc.querySelector('select').selectedIndex", "2");
+
+debug("Markup the fast path parser rejects partway is parsed by the full parser alone.");
+doc = parse("<p>Order notes</p><table><tr><td>Subtotal</td></tr></table>");
+shouldBe("doc.childNodes.length", "1");
+shouldBeEqualToString("childNames(doc.documentElement)", "head body");
+shouldBeEqualToString("childNames(doc.body)", "p table");
+
+debug("Document.parseHTMLUnsafe builds the same connected document.");
+doc = Document.parseHTMLUnsafe("<ul><li><span id=shipping-total>$4</span></li></ul>");
+shouldBeEqualToString("childNames(doc.documentElement)", "head body");
+shouldBeTrue("doc.getElementById('shipping-total').isConnected");
+doc = Document.parseHTMLUnsafe("<p>Order notes</p><table><tr><td>Subtotal</td></tr></table>");
+shouldBe("doc.childNodes.length", "1");
+shouldBeEqualToString("childNames(doc.body)", "p table");
+</script>
+</body>
+</html>

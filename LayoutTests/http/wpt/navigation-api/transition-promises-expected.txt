@@ -1,0 +1,4 @@
+
+PASS NavigationTransition finished promise is fulfilled on success
+PASS NavigationTransition finished promise is rejected on error
+

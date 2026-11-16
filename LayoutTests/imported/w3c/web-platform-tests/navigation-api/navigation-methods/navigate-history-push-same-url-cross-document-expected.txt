@@ -1,0 +1,4 @@
+
+
+PASS navigate() to the current URL with history: 'push' and allow it to go cross document
+

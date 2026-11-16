@@ -1,0 +1,44 @@
+Hello World
+مرحبا عالم
+مرحبا عالم Hello World
+Hello World مرحبا عالم
+Hello World مرحبا عالم Hello World
+مرحبا عالم Hello World مرحبا عالم
+
+PASS LTR text with left direction in ltr context
+PASS RTL text with left direction in ltr context
+PASS RTL+LTR text with left direction in ltr context
+PASS LTR+RTL text with left direction in ltr context
+PASS LTR+RTL+LTR text with left direction in ltr context
+PASS RTL+LTR+RTL text with left direction in ltr context
+PASS LTR text with right direction in ltr context
+PASS RTL text with right direction in ltr context
+PASS RTL+LTR text with right direction in ltr context
+PASS LTR+RTL text with right direction in ltr context
+PASS LTR+RTL+LTR text with right direction in ltr context
+PASS RTL+LTR+RTL text with right direction in ltr context
+PASS LTR text with left direction in rtl context
+PASS RTL text with left direction in rtl context
+PASS RTL+LTR text with left direction in rtl context
+PASS LTR+RTL text with left direction in rtl context
+PASS LTR+RTL+LTR text with left direction in rtl context
+PASS RTL+LTR+RTL text with left direction in rtl context
+PASS LTR text with right direction in rtl context
+PASS RTL text with right direction in rtl context
+PASS RTL+LTR text with right direction in rtl context
+PASS LTR+RTL text with right direction in rtl context
+PASS LTR+RTL+LTR text with right direction in rtl context
+PASS RTL+LTR+RTL text with right direction in rtl context
+PASS LTR text with left direction in ltr context (which was previously rtl)
+PASS RTL text with left direction in ltr context (which was previously rtl)
+PASS RTL+LTR text with left direction in ltr context (which was previously rtl)
+PASS LTR+RTL text with left direction in ltr context (which was previously rtl)
+PASS LTR+RTL+LTR text with left direction in ltr context (which was previously rtl)
+PASS RTL+LTR+RTL text with left direction in ltr context (which was previously rtl)
+PASS LTR text with right direction in ltr context (which was previously rtl)
+PASS RTL text with right direction in ltr context (which was previously rtl)
+PASS RTL+LTR text with right direction in ltr context (which was previously rtl)
+PASS LTR+RTL text with right direction in ltr context (which was previously rtl)
+PASS LTR+RTL+LTR text with right direction in ltr context (which was previously rtl)
+PASS RTL+LTR+RTL text with right direction in ltr context (which was previously rtl)
+

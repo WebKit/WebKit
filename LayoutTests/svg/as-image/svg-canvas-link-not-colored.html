@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../../resources/js-test.js"></script>
+</head>
+<body>
+    <script>
+        window.jsTestIsAsync = true;
+
+        var svg = new Image();
+        svg.src = "resources/link.svg";
+
+        svg.onload = function() {
+            var canvas = document.createElement("canvas");
+            var ctx = canvas.getContext("2d");
+
+            window.colorChannels = ctx.getImageData(0, 0, 1, 1).data;
+
+            shouldBe("window.colorChannels[0]", "0");
+            shouldBe("window.colorChannels[1]", "0");
+            shouldBe("window.colorChannels[2]", "0");
+
+            ctx.drawImage(svg, 0, 0);
+
+            window.colorChannels = ctx.getImageData(0, 0, 1, 1).data;
+
+            shouldBe("window.colorChannels[0]", "0");
+            shouldBe("window.colorChannels[1]", "128");
+            shouldBe("window.colorChannels[2]", "0");
+
+            finishJSTest();
+        };
+    </script>
+</body>
+</html>

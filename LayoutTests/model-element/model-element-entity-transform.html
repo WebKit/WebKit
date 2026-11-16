@@ -1,0 +1,130 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ ModelElementEnabled=true allowTestOnlyIPC=true ] -->
+<meta charset="utf-8">
+<title>&lt;model> entity transform</title>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<script src="resources/model-element-test-utils.js"></script>
+<script src="resources/model-utils.js"></script>
+<script src="../resources/js-test-pre.js"></script>
+<body>
+<script>
+'use strict';
+internals.disableModelLoadDelaysForTesting();
+
+promise_test(async t => {
+    const [model, source] = createModelAndSource(t);
+    assert_3d_matrix_is_identity(model.entityTransform, true);
+}, `<model> with empty source has entityTransform = identity`);
+
+promise_test(async t => {
+    const [model, source] = createModelAndSource(t, "resources/2x2x2-positive.usdz");
+    await model.ready;
+    let originalTransform = model.entityTransform;
+    assert_3d_matrix_is_identity(originalTransform, false);
+    let scaledTransform = originalTransform.scale(2, 2, 2);
+    model.entityTransform = scaledTransform;
+    assert_3d_matrix_equals(model.entityTransform, scaledTransform);
+}, `<model> gets the updated entityTransform after change`);
+
+promise_test(async t => {
+    const [model, source] = createModelAndSource(t, "resources/2x2x2-positive.usdz");
+    await model.ready;
+    let firstModelTransform = model.entityTransform;
+
+    source.src = "resources/heart.usdz";
+    await model.ready;
+    let secondModelTransform = model.entityTransform;
+    assert_3d_matrix_not_equals(firstModelTransform, secondModelTransform);
+}, `<model> gets the updated entityTransform after model source change`);
+
+promise_test(async t => {
+    const [model, source] = createModelAndSource(t, "resources/2x2x2-positive.usdz");
+    await model.ready;
+    assert_3d_matrix_is_identity(model.entityTransform, false);
+
+    return new Promise((resolve, reject) => {
+        model.addEventListener("error", event => {
+            assert_3d_matrix_is_identity(model.entityTransform, true);
+            resolve();
+        });
+        source.remove();
+    });
+}, `<model> gets the identity entityTransform after model source removal`);
+
+promise_test(async t => {
+    const [model, source] = createModelAndSource(t, "resources/2x2x2-positive.usdz");
+    await model.ready;
+    let originalTransform = model.entityTransform;
+    assert_equals(model.stageMode, "");
+    assert_3d_matrix_is_identity(originalTransform, false);
+
+    let scaledTransform = originalTransform.scale(2000, 2000, 2000);
+    model.entityTransform = scaledTransform;
+
+    assert_3d_matrix_equals(model.entityTransform, scaledTransform);
+    model.stageMode = "orbit";
+
+    await new Promise((resolve) => t.step_timeout(resolve, 100));
+
+    assert_equals(model.stageMode, "orbit");
+    assert_3d_matrix_not_equals(model.entityTransform, scaledTransform);
+    assert_3d_matrix_not_equals(model.entityTransform, originalTransform);
+    let orbitFitTransform = model.entityTransform;
+
+    shouldThrowErrorName(function() {
+        model.entityTransform = scaledTransform;
+        assert_3d_matrix_not_equals(model.entityTransform, scaledTransform);
+    }, "InvalidStateError");
+
+    model.stageMode = "none";
+    await new Promise((resolve) => t.step_timeout(resolve, 100));
+
+    assert_equals(model.stageMode, "none");
+    assert_3d_matrix_not_equals(model.entityTransform, scaledTransform);
+    assert_3d_matrix_not_equals(model.entityTransform, originalTransform);
+    assert_3d_matrix_equals(model.entityTransform, orbitFitTransform);
+}, `<model> ignores entityTransform when stagemode is set`);
+
+promise_test(async t => {
+    const [model, source] = createModelAndSource(t, "resources/cube.usdz");
+    await model.ready;
+
+    const angle = 57.64999999999886;
+    const rotationAmount = 10;
+
+    for (var iteration = 0; iteration < 6; ++iteration) {
+        try {
+            const matrix = new DOMMatrixReadOnly();
+            const newMatrix = matrix.translate(0, 0, -10).rotate(0, angle + iteration * rotationAmount, 0);
+            model.entityTransform = newMatrix;
+            assert_3d_matrix_equals(model.entityTransform, newMatrix);
+        } catch (error) {
+            console.error('Error setting transform: ' + error.name);
+        }
+    }
+}, `<model> gets the updated entityTransform after rotation`);
+
+promise_test(async t => {
+    const model1 = document.createElement("model");
+    model1.setAttribute("width", "40cm");
+    model1.setAttribute("height", "20cm");
+    document.body.appendChild(model1);
+    model1.appendChild(makeSource("resources/flat-rectangle.usdz"));
+    
+    const model2 = document.createElement("model");
+    model2.setAttribute("width", "80cm");
+    model2.setAttribute("height", "20cm");
+    document.body.appendChild(model2);
+    model2.appendChild(makeSource("resources/flat-rectangle.usdz"));
+
+    await model1.ready;
+    await model2.ready;
+
+    // Since the model should fit within the width of the portal,
+    // the scale ratio between entity transforms of the two models should
+    // match the scale ratio of their widths.
+    assert_3d_matrix_approx_equals(model1.entityTransform.scale3d(2), model2.entityTransform);
+}, `<model> with source that has zero depth should still scale to fit the portal`);
+
+</script>
+</body>

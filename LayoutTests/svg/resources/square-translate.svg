@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="250" height="250">
+  <rect id="rect" x="10" y="10" width="50" height="50" fill="red">
+    <animateTransform
+      attributeName="transform"
+      type="translate"
+      values="0,0; 30,0"
+      keyTimes="0; 0.5"
+      dur="0.1s"
+      begin="0s"
+      fill="freeze"
+      calcMode="discrete"
+    />
+  </rect>
+</svg>

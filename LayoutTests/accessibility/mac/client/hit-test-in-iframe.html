@@ -1,0 +1,73 @@
+<html><!-- webkit-test-runner [ runSingly=true ] -->
+<head>
+<script src="../../../resources/accessibility-helper.js"></script>
+<script src="../../../resources/js-test.js"></script>
+<style>
+body { margin: 0; }
+iframe { width: 400px; height: 100px; border: none; }
+</style>
+</head>
+<body>
+
+<input type="text" aria-label="Outer field">
+<h3>Iframe</h3>
+<iframe srcdoc="<input type=text aria-label='Inner first'> <input type=text aria-label='Inner second'>"></iframe>
+
+<script>
+var output = "Tests hit-testing the center of text fields in a same-process iframe via the client accessibility APIs, as XCUITest does before clicking.\n\n";
+
+function findByDescription(element, description, depth) {
+    if (!element || depth > 12)
+        return null;
+    if (element.description == description)
+        return element;
+    for (let i = 0; i < element.childrenCount; i++) {
+        const found = findByDescription(element.childAtIndex(i), description, depth + 1);
+        if (found)
+            return found;
+    }
+    return null;
+}
+
+// Whether the element's screen frame is inside the iframe's box. It isn't until the iframe's
+// frame geometry has arrived from the UI process.
+function isInsideIframe(element) {
+    const webArea = accessibilityController.rootElement.childAtIndex(0);
+    const box = document.querySelector("iframe").getBoundingClientRect();
+    const left = webArea.x + box.left;
+    const top = webArea.y + box.top;
+    return element.x >= left && element.y >= top && element.x + element.width <= left + box.width && element.y + element.height <= top + box.height;
+}
+
+function hitTestCenter(description) {
+    const target = findByDescription(accessibilityController.rootElement, description, 0);
+    if (!target)
+        return `${description}: FAIL, not found\n`;
+    const hit = accessibilityController.elementAtPoint(Math.round(target.x + target.width / 2), Math.round(target.y + target.height / 2));
+    return `${description}: ${hit && hit.isEqual(target) ? "PASS" : `FAIL, hit ${hit ? hit.role : "null"}`}\n`;
+}
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+    accessibilityController.setForceInitialFrameCaching(true);
+    accessibilityController.setClientAccessibilityMode(true);
+
+    setTimeout(async function() {
+        await waitForFrameGeometryReady();
+        await waitFor(() => {
+            const first = findByDescription(accessibilityController.rootElement, "Inner first", 0);
+            const second = findByDescription(accessibilityController.rootElement, "Inner second", 0);
+            return first && second && isInsideIframe(first) && isInsideIframe(second);
+        });
+
+        output += hitTestCenter("Outer field");
+        output += hitTestCenter("Inner first");
+        output += hitTestCenter("Inner second");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

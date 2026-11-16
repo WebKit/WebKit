@@ -1,0 +1,35 @@
+<!-- webkit-test-runner [ textExtractionEnabled=true ] -->
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+video {
+    width: 200px;
+    height: 100px;
+}
+</style>
+<script src="../../resources/ui-helper.js"></script>
+</head>
+<body>
+<video preload="none"></video>
+<video controls title="Video with controls" preload="none"></video>
+<audio controls title="Audio with controls" preload="none"></audio>
+<audio title="Audio without controls (not rendered)" preload="none"></audio>
+<script>
+addEventListener("load", async () => {
+    if (!window.testRunner)
+        return;
+
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+
+    document.body.textContent = await UIHelper.requestDebugText({
+        normalize: true,
+        includeAccessibilityAttributes: true,
+    });
+
+    testRunner.notifyDone();
+});
+</script>
+</body>
+</html>

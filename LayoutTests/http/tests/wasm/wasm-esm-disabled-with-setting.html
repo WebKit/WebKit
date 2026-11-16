@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Wasm/ESM integration flag test</title>
+<script>
+if (window.internals)
+    window.internals.settings.setWebAssemblyESMIntegrationEnabled(false);
+</script>
+<script src="/js-test-resources/js-test.js"></script>
+</head>
+<body>
+<script>
+description("Test that Wasm ESM integration is disabled when flag is off.");
+window.jsTestIsAsync = true;
+var error = null;
+function handler(ev) {
+    error = ev;
+    shouldBeTrue(`error.type === 'error'`);
+    finishJSTest();
+}
+if (window.testRunner)
+    testRunner.waitUntilDone();
+</script>
+<script type="module" src="./resources/empty-module.wasm" onerror="handler(event)"></script>
+</body>
+</html>

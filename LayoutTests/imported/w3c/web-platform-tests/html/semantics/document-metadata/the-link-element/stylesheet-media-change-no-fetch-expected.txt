@@ -1,0 +1,5 @@
+hello
+
+
+FAIL stylesheet should not re-fetch when media changes. The media change should apply immediately assert_equals: expected "rgb(0, 128, 0)" but got "rgb(255, 0, 0)"
+

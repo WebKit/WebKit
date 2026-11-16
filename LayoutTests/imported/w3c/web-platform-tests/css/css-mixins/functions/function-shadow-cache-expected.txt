@@ -1,0 +1,3 @@
+
+PASS Tree scope is respected for otherwise identical styles
+

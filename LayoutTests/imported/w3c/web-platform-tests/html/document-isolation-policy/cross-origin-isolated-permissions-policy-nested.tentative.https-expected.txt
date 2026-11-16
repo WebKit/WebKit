@@ -1,0 +1,4 @@
+
+PASS A cross-origin frame with isolate-and-require-corp without allow="cross-origin-isolated" is cross-origin isolated, but its child without a policy isn't
+PASS A cross-origin frame with isolate-and-require-corp and allow="cross-origin-isolated" is cross-origin isolated, and so is its child without a policy
+

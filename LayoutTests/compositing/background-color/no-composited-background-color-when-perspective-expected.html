@@ -1,0 +1,28 @@
+<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+<style>
+body {
+    margin: 0;
+}
+
+div {
+    position: absolute;
+    height: 200px;
+    width: 200px;
+}
+
+#container {
+    /* Force box decorations so no direct composited background */
+    /* This is just a black image */
+    background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAMAAAC6sdbXAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAAZQTFRFAAAA////pdmf3QAAAA5JREFUeNpiYMAHAAIMAAAeAAHMILKLAAAAAElFTkSuQmCC");
+    background-color: black;
+    -webkit-perspective: 400;
+}
+
+#face {
+    -webkit-transform: rotateX(45deg);
+    background-color: red;
+}
+</style>
+<div id="container">
+    <div id="face"></div>
+</div>

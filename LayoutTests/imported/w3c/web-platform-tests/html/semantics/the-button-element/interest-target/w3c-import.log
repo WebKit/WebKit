@@ -1,0 +1,35 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/the-button-element/interest-target/idlharness.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/the-button-element/interest-target/interestelement-interface.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/the-button-element/interest-target/interestevent-dispatch-shadow.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/the-button-element/interest-target/interestevent-interface.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/the-button-element/interest-target/interesttarget-anchor-event-dispatch.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/the-button-element/interest-target/interesttarget-area-event-dispatch.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/the-button-element/interest-target/interesttarget-basic-delays.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/the-button-element/interest-target/interesttarget-button-event-dispatch.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/the-button-element/interest-target/interesttarget-css-properties.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/the-button-element/interest-target/interesttarget-css-shorthands.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/the-button-element/interest-target/interesttarget-has-interest-pseudo.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/the-button-element/interest-target/interesttarget-hide-delay.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/the-button-element/interest-target/interesttarget-keyboard-behavior.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/the-button-element/interest-target/interesttarget-keyboard-invalidation-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/the-button-element/interest-target/interesttarget-keyboard-invalidation.tentative-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/the-button-element/interest-target/interesttarget-keyboard-invalidation.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/the-button-element/interest-target/interesttarget-on-popover-behavior.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/the-button-element/interest-target/interesttarget-show-delay.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/the-button-element/interest-target/interesttarget-svg-a-event-dispatch.tentative.html

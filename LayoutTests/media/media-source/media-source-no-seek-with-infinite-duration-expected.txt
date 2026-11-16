@@ -1,0 +1,15 @@
+This test checks if seeking status and currentTime when duration is infinity.
+
+RUN(video.currentTime = 1.0)
+RUN(source = new MediaSource())
+EVENT(sourceopen)
+EXPECTED (mediaElement.readyState == '0') OK
+RUN(source.duration = Infinity)
+RUN(sourceBuffer.appendBuffer(initSegment))
+EVENT(updateend)
+EXPECTED (mediaElement.seekable.length == '0') OK
+EXPECTED (mediaElement.currentTime == '0') OK
+EXPECTED (mediaElement.readyState == '1') OK
+EXPECTED (mediaElement.seeking == 'false') OK
+END OF TEST
+

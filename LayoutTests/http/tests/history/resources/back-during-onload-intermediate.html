@@ -1,0 +1,17 @@
+<script>
+onpageshow = function() {
+    if (window.localStorage.visitedIntermediate) {
+        // The two history.back() calls from the container page may go back twice, past this page,
+        // or only once, back to this page. Either way the test finishes on the starting page.
+        delete window.localStorage.visitedIntermediate;
+        window.location.replace('../back-during-onload-triggered-by-back.html');
+        return;
+    }
+    window.localStorage.visitedIntermediate = true;
+    // Navigate in a timeout to make sure we create a history entry.
+    setTimeout(function() {
+        window.location.href = 'back-during-onload-container.html';
+    }, 0);
+};
+</script>
+intermediate

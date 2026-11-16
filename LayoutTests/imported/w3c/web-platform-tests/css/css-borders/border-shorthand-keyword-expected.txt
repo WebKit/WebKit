@@ -1,0 +1,8 @@
+
+PASS border shorthand with CSS wide keywords
+PASS border related properties with var()
+PASS border shorthand clears when longhand is set to its initial value
+PASS border shorthand clears when position shorthand overrides inherited border
+PASS border: inherit set via cssText
+PASS border-top: inherit set via cssText
+

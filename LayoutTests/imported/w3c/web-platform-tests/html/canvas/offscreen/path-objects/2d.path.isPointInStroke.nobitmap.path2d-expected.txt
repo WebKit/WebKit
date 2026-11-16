@@ -1,0 +1,7 @@
+2d.path.isPointInStroke.nobitmap.path2d
+
+isPointInStroke(path) works on a canvas with no bitmap
+
+
+PASS isPointInStroke(path) works on a canvas with no bitmap
+

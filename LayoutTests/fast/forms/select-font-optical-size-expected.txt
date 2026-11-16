@@ -1,0 +1,9 @@
+This test makes sure that text-rendering: optimizeLegibility on a drop-down select element doesn't cause a hang.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

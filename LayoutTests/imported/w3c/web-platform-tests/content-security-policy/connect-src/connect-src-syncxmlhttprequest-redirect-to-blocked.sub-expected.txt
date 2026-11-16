@@ -1,0 +1,3 @@
+
+PASS Expecting logs: ["PASS Sync XMLHttpRequest.send() did not follow the disallowed redirect.","TEST COMPLETE","violated-directive=connect-src"]
+

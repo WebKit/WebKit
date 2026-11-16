@@ -1,0 +1,4 @@
+
+PASS Setup worker
+PASS Service worker cancelling event.request.body should cancel the page's upload stream
+

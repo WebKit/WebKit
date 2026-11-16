@@ -1,0 +1,27 @@
+Test that the type profiler and control flow profiler settings reach a cross-origin iframe's frame target under site isolation.
+
+
+
+== Running test suite: SiteIsolation.Runtime.ProfilerSettings
+-- Running test case: SiteIsolation.Runtime.ProfilerSettings.DisabledByDefault
+PASS: Cross-origin frame: control flow profiler state.
+PASS: Cross-origin frame: type profiler state.
+
+-- Running test case: SiteIsolation.Runtime.ProfilerSettings.EnableReachesFrameTarget
+PASS: Cross-origin frame: control flow profiler state.
+PASS: Cross-origin frame: type profiler state.
+PASS: Page: control flow profiler state.
+PASS: Page: type profiler state.
+
+-- Running test case: SiteIsolation.Runtime.ProfilerSettings.EnabledSettingsApplyToLateFrameTarget
+PASS: Late cross-origin frame: control flow profiler state.
+PASS: Late cross-origin frame: type profiler state.
+
+-- Running test case: SiteIsolation.Runtime.ProfilerSettings.DisableReachesFrameTarget
+PASS: Cross-origin frame: control flow profiler state.
+PASS: Cross-origin frame: type profiler state.
+PASS: Late cross-origin frame: control flow profiler state.
+PASS: Late cross-origin frame: type profiler state.
+PASS: Page: control flow profiler state.
+PASS: Page: type profiler state.
+

@@ -1,0 +1,3 @@
+
+PASS Test animateMotion with calcMode="discrete" and values attribute
+

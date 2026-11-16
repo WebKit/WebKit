@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<style>
+body { margin: 0; font: 8px/1 sans-serif; }
+#flex { display: flex; height: 120px; width: 300px; }
+#item { display: flow-root; }
+#percent { display: flow-root; height: 100%; }
+</style>
+<p>A percent-height block in a block-in-inline continuation of a stretched flex item should fill the item after it is restyled.</p>
+<div id="flex">
+    <div id="item">
+        <span id="inline">
+            <div>text</div>
+            <div id="percent">text</div>
+            text
+        </span>
+    </div>
+</div>
+<pre id="result"></pre>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+const percent = document.getElementById("percent");
+const results = [];
+function check(label, expected) {
+    const actual = percent.offsetHeight;
+    results.push((actual === expected ? "PASS" : "FAIL") + ": " + label + ": height is " + actual + (actual === expected ? "" : " (expected " + expected + ")"));
+}
+document.body.offsetHeight;
+check("initial", 120);
+document.getElementById("flex").style.height = "200px";
+check("after the flex container grows", 200);
+// Restyling the inline removes #percent from its block's percent-height descendants until it is laid out again.
+document.getElementById("inline").style.fontSize = "20px";
+check("after the inline is restyled", 200);
+document.getElementById("result").textContent = results.join("\n");
+</script>

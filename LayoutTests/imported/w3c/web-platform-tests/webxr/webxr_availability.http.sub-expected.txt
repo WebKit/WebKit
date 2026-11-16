@@ -1,0 +1,4 @@
+
+PASS Test webxr not available in insecure context
+PASS Test webxr not available in secure context in insecure context
+

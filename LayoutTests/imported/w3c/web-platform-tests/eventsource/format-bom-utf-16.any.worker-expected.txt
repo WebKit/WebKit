@@ -1,0 +1,4 @@
+
+PASS EventSource: UTF-16LE byte order mark is not used
+PASS EventSource: UTF-16BE byte order mark is not used
+

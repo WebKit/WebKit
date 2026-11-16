@@ -1,0 +1,18 @@
+<!DOCTYPE html><!-- webkit-test-runner [ SmartListsAvailable=true ] -->
+<html>
+<head>
+<script src="../editing.js"></script>
+<script src="../../resources/dump-as-markup.js"></script>
+</head>
+<body>
+<div id="test" contenteditable></div>
+<script>
+Markup.description('Pressing Enter on an empty list item (double newline) should break out of the list, moving the following text "C" outside the list as its own block.');
+
+var test = document.getElementById('test');
+test.focus();
+[...'* A\n* B\n\nC'].forEach(typeCharacterCommand);
+Markup.dump('test');
+</script>
+</body>
+</html>

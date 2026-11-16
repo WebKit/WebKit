@@ -1,0 +1,4 @@
+target
+
+PASS smooth scroll to anchor link target in snap container works.
+

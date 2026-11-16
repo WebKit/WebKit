@@ -1,0 +1,5 @@
+Tap me
+Tap me
+
+FAIL EventTiming: verify interactionCount for tap interaction step_wait_func: interactionCount did not increase enough Timed out waiting on condition
+

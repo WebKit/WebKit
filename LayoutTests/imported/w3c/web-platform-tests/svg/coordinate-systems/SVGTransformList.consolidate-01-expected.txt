@@ -1,0 +1,5 @@
+
+PASS SVGTransformList.prototype.consolidate, throws if read-only
+PASS SVGTransformList.prototype.consolidate, returns null for empty transform list
+PASS SVGTransformList.prototype.consolidate, consolidates
+

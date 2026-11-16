@@ -1,0 +1,51 @@
+Test naive parsing of CSS variable names with CSSProperty.findVariableNames
+
+
+== Running test suite: CSSProperty.findVariableNames
+-- Running test case: CSSProperty.findVariableNames.Empty
+PASS: "" should contain these CSS variable names: [].
+
+-- Running test case: CSSProperty.findVariableNames.EmptyFunction
+PASS: "var()" should contain these CSS variable names: [].
+
+-- Running test case: CSSProperty.findVariableNames.EmptyNoFunction
+PASS: "--one" should contain these CSS variable names: [].
+
+-- Running test case: CSSProperty.findVariableNames.Basic
+PASS: "var(--one)" should contain these CSS variable names: ["--one"].
+
+-- Running test case: CSSProperty.findVariableNames.BasicWithFallback
+PASS: "var(--one, red)" should contain these CSS variable names: ["--one"].
+
+-- Running test case: CSSProperty.findVariableNames.BasicWithVariableFallback
+PASS: "var(--one, var(--two, red))" should contain these CSS variable names: ["--one","--two"].
+
+-- Running test case: CSSProperty.findVariableNames.Whitespace
+PASS: "var(    --one    )" should contain these CSS variable names: ["--one"].
+
+-- Running test case: CSSProperty.findVariableNames.Newline
+PASS: "var(
+--one
+)" should contain these CSS variable names: ["--one"].
+
+-- Running test case: CSSProperty.findVariableNames.Tab
+PASS: "var(	--one	)" should contain these CSS variable names: ["--one"].
+
+-- Running test case: CSSProperty.findVariableNames.Nested
+PASS: "var(--one, var(--two, var(--three)))" should contain these CSS variable names: ["--one","--two","--three"].
+
+-- Running test case: CSSProperty.findVariableNames.Content
+PASS: "content: "var(--one)"" should contain these CSS variable names: ["--one"].
+
+-- Running test case: CSSProperty.findVariableNames.Dashed
+PASS: "var(----o--n--e)" should contain these CSS variable names: ["----o--n--e"].
+
+-- Running test case: CSSProperty.findVariableNames.NaiveWhitespace
+PASS: "var(--one --two --three)" should contain these CSS variable names: ["--one"].
+
+-- Running test case: CSSProperty.findVariableNames.NaiveDataURI
+PASS: "data:text/plain;base64,xxxvar(--one)xxx" should contain these CSS variable names: ["--one"].
+
+-- Running test case: CSSProperty.findVariableNames.NaiveMalformed
+PASS: "var(--var(one))" should contain these CSS variable names: ["--var(one"].
+

@@ -1,0 +1,73 @@
+/*
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#include "config.h"
+#include "WebGPUBindGroupDescriptor.h"
+
+#if ENABLE(GPU_PROCESS)
+
+#include "WebGPUConvertFromBackingContext.h"
+#include "WebGPUConvertToBackingContext.h"
+#include <WebCore/WebGPUCppAPI.h>
+#include <wtf/Borrow.h>
+
+namespace WebKit::WebGPU {
+
+std::optional<BindGroupDescriptor> ConvertToBackingContext::convertToBacking(const ::WebGPU::BindGroupDescriptor& bindGroupDescriptor)
+{
+    auto identifier = convertToBacking(protect(bindGroupDescriptor.layout).get());
+
+    Vector<BindGroupEntry> entries(ReserveCapacityTag { }, bindGroupDescriptor.entries.size());
+    for (const auto& entry : bindGroupDescriptor.entries) {
+        auto convertedEntry = convertToBacking(entry);
+        if (!convertedEntry)
+            return std::nullopt;
+        entries.append(WTF::move(*convertedEntry));
+    }
+
+    return { { { bindGroupDescriptor.label }, identifier, WTF::move(entries) } };
+}
+
+// The descriptor borrows the entries from entries.
+std::optional<::WebGPU::BindGroupDescriptor> ConvertFromBackingContext::convertFromBacking(const BindGroupDescriptor& bindGroupDescriptor, Vector<::WebGPU::BindGroupEntry>& entries)
+{
+    RefPtr bindGroupLayout = convertBindGroupLayoutFromBacking(bindGroupDescriptor.bindGroupLayout);
+    if (!bindGroupLayout)
+        return std::nullopt;
+
+    entries.reserveInitialCapacity(bindGroupDescriptor.entries.size());
+    for (const auto& backingEntry : borrow(bindGroupDescriptor.entries)) {
+        auto entry = convertFromBacking(backingEntry);
+        if (!entry)
+            return std::nullopt;
+        entries.append(WTF::move(*entry));
+    }
+
+    return ::WebGPU::BindGroupDescriptor { .label = bindGroupDescriptor.label, .layout = bindGroupLayout.releaseNonNull(), .entries = entries.span() };
+}
+
+} // namespace WebKit
+
+#endif // ENABLE(GPU_PROCESS)

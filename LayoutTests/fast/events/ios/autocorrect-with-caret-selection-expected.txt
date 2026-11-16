@@ -1,0 +1,10 @@
+To manually test, focus the editable element above, move the selection to the end, and select any text suggestion that appears in the keyboard. The text suggestion should be inserted.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS editable.textContent is "Hello world"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Hello world

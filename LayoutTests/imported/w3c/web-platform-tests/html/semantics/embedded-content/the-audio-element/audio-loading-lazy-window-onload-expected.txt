@@ -1,0 +1,4 @@
+
+
+PASS Audio with loading=lazy does not delay window onload event
+

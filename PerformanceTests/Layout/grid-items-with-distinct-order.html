@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../resources/runner.js"></script>
+<style>
+#grid {
+  display: grid;
+  grid-template-columns: repeat(16, 1fr);
+}
+
+#grid > div {
+  height: 8px;
+}
+</style>
+</head>
+<body>
+<div id="grid"></div>
+<script>
+// Each item gets a distinct order that differs from its DOM position.
+var itemCount = 10000;
+var grid = document.getElementById("grid");
+for (var i = 0; i < itemCount; ++i) {
+  var item = document.createElement("div");
+  item.style.order = (i * 3137) % itemCount;
+  grid.appendChild(item);
+}
+document.body.offsetHeight;
+
+// Changing the track list forces item placement, which is where the order iterator is rebuilt.
+var index = 0;
+PerfTestRunner.measureRunsPerSecond({run: function() {
+  grid.style.gridTemplateColumns = ++index % 2 ? "repeat(15, 1fr)" : "repeat(16, 1fr)";
+  document.body.offsetHeight;
+}});
+</script>
+</body>
+</html>

@@ -1,0 +1,114 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ ManagedMediaSourceEnabled=true MediaSourceEnabled=true ] -->
+<html>
+<head>
+    <title>MSE with WebVTT track</title>
+    <script src='../../media/video-test.js'></script>
+    <script>
+        const manifest = {
+            "url": "content/bip-bop-webvtt-frag.mp4",
+            'type':'video/mp4; codecs=\"avc1.64001e\"',
+            'init': {
+                'offset':0,
+                'size':1572
+             },
+            'media': [
+                { 'offset':1572,   'size':544776, 'timestamp':0,                  'duration':10.452961672473867 },
+                { 'offset':546348, 'size':168551, 'timestamp':0,                  'duration':27.317073170731707 },
+                { 'offset':714899, 'size':635,    'timestamp':0,                  'duration':0.5934233449477352 },
+                { 'offset':715534, 'size':188343, 'timestamp':10.452961672473867, 'duration':3.2613240418118465 },
+                { 'offset':903877, 'size':52489,  'timestamp':27.317073170731707, 'duration':8.529616724738675 },
+                { 'offset':956366, 'size':266,    'timestamp':0.5934233449477352, 'duration':0.16332752613240417 }
+            ]
+        };
+
+        async function fetchSegment(url, segmentManifest) {
+            let request = new Request(url);
+            request.headers.append('Range', `bytes=${segmentManifest.offset}-${segmentManifest.offset + segmentManifest.size - 1}`);
+            const response = await fetch(request);
+            return response.arrayBuffer();
+        }
+
+        async function loadSegment(sourceBuffer, segment) {
+            return new Promise((resolve) => {
+                sourceBuffer.addEventListener('updateend', resolve, { once: true });
+                sourceBuffer.appendBuffer(segment);
+            });
+        }
+
+        window.addEventListener('load', async event => {
+            try {
+                if (!!!window.ManagedMediaSource) {
+                    failTest('This test requires ManagedMediaSource');
+                    return;
+                }
+    
+                findMediaElement();
+
+                let canplaythroughPromise = waitFor(video, 'canplaythrough', true);
+
+                video.disableRemotePlayback = true;
+                let source = new ManagedMediaSource();
+                await new Promise((resolve) => {
+                    video.srcObject = source;
+                    source.addEventListener('sourceopen', resolve, { once: true });
+                });
+    
+                let sourceBuffer = source.addSourceBuffer(manifest.type);
+                const segment = await fetchSegment(manifest.url, manifest.init);
+                await loadSegment(sourceBuffer, segment);
+    
+                const fetchPromises = manifest.media.map(async (segment, index) => {
+                    return fetchSegment(manifest.url, segment);
+                });
+    
+                for (let i = 0; i < fetchPromises.length; i++) {
+                    await Promise.all(fetchPromises.slice(0, i - 1));
+                    const data = await fetchPromises[i];
+                    await loadSegment(sourceBuffer, data);
+                }                
+                source.endOfStream();
+
+                await canplaythroughPromise;
+
+                testExpected('video.videoTracks.length', 1);
+                testExpected('video.audioTracks.length', 1);
+
+                testExpected(`video.textTracks.length`, 1);
+                testExpected(`video.textTracks[0].language`, `eng`);
+                testExpected(`video.textTracks[0].kind`, `captions`);
+
+                run(`video.textTracks[0].mode = 'showing'`);
+                run(`video.play()`);
+                waitFor(video, 'play', true);
+
+                run(`video.pause()`);
+                waitFor(video, 'pause', true);
+
+                run(`track = video.textTracks[0]`);
+                run(`cues = track.cues`);
+                testExpected('cues.length', 13);
+
+                // Seek into the range of the first cue.
+                run(`video.currentTime = 1.1`);
+                await new Promise(resolve => cues[0].onenter = resolve);
+                testExpected('cues[0].text', 'Bip!');
+                testExpected('track.activeCues.length', 1);
+
+                // Play into the range of the second cue.
+                run(`video.play()`);
+                await new Promise(resolve => cues[1].onenter = resolve);
+                run(`video.pause()`);
+                testExpected('cues[1].text', 'Bop!');
+                testExpected('track.activeCues.length', 1);
+
+                endTest();
+            } catch (exception) {
+                failTest(`Caught exception: "${exception}"`);
+            }
+    });
+    </script>
+</head>
+<body>
+    <video controls muted></video>
+</body>
+</html>

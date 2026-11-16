@@ -1,0 +1,4 @@
+This link should be green.
+
+PASS Check that we match :link and not :visited for slotted anchor.
+

@@ -1,0 +1,4 @@
+This test checks that spelling suggestions in the context menu are not show when spellcheck="false". To test manually, right click on the text in the input box.
+
+
+SUCCESS

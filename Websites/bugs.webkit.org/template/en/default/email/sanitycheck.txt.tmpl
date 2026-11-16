@@ -1,0 +1,23 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+From: [% Param('mailfrom') %]
+To: [% addressee %]
+Subject: [[% terms.Bugzilla %]] Sanity Check Results
+X-Bugzilla-Type: sanitycheck
+
+[%+ urlbase %]sanitycheck.cgi
+
+Below can you read the sanity check results.
+[% IF error_found %]
+Some errors have been found.
+[% ELSE %]
+No errors have been found.
+[% END %]
+
+[% output %]

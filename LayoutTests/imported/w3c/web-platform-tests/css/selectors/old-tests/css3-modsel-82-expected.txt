@@ -1,0 +1,8 @@
+This paragraph should have green background.
+
+But this address should be unstyled.
+This paragraph should have green background.
+
+
+PASS NEGATED :only-of-type pseudo-class
+

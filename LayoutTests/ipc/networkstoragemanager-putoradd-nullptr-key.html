@@ -1,0 +1,107 @@
+<!DOCTYPE html><!-- webkit-test-runner [ IPCTestingAPIEnabled=true IgnoreInvalidMessageWhenIPCTestingAPIEnabled=true ] -->
+<html>
+<body>This test passes if the Network process does not crash when receiving a PutOrAdd message with an IDBKeyData using the std::nullptr_t variant (the empty sentinel of IDBKeyDataHashTraits).
+<div id="result">FAIL</div>
+<script>
+async function runTest()
+{
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+
+    if (!window.IPC) {
+        document.getElementById('result').textContent = 'PASS';
+        testRunner?.notifyDone();
+        return;
+    }
+
+    const { CoreIPC, IPCWireTap } = await import('./coreipc.js');
+
+    const tap = new IPCWireTap('Networking', 'Outgoing');
+    const captured = new Promise(resolve => {
+        tap.tapNext(IPC.messages.NetworkStorageManager_PutOrAdd.name, (...args) => resolve(args));
+    });
+
+    const db = await new Promise((resolve, reject) => {
+        const req = indexedDB.open('putoradd_nullptr_key_test', 1);
+        req.onupgradeneeded = e => e.target.result.createObjectStore('store');
+        req.onsuccess = e => resolve(e.target.result);
+        req.onerror = () => reject(req.error);
+    });
+
+    const tx = db.transaction('store', 'readwrite');
+    const store = tx.objectStore('store');
+    store.put('value', 1.0);
+    // Keep the transaction alive past the await below by holding an in-flight
+    // cursor request that we never advance.
+    store.openCursor();
+
+    const [, connectionID, , , msgArguments] = await captured;
+
+    // The wiretap parser unwraps Markable<T> down to its raw value, but the
+    // serializer expects { optionalValue: <raw> } for non-empty Markables, so
+    // we rebuild requestData with Markables explicitly wrapped.
+    const cap = msgArguments.requestData;
+    const requestData = {
+        m_serverConnectionIdentifier: cap.m_serverConnectionIdentifier,
+        m_requestIdentifier: {
+            m_idbConnectionIdentifier: { optionalValue: cap.m_requestIdentifier.m_idbConnectionIdentifier },
+            m_resourceNumber: { optionalValue: cap.m_requestIdentifier.m_resourceNumber },
+        },
+        m_transactionIdentifier: {
+            m_idbConnectionIdentifier: { optionalValue: cap.m_transactionIdentifier.m_idbConnectionIdentifier },
+            m_resourceNumber: { optionalValue: cap.m_transactionIdentifier.m_resourceNumber },
+        },
+        m_cursorIdentifier: {},
+        m_objectStoreIdentifier: { optionalValue: cap.m_objectStoreIdentifier },
+        m_indexIdentifier: {},
+        m_indexRecordType: cap.m_indexRecordType,
+        m_requestedVersion: cap.m_requestedVersion,
+        m_requestType: cap.m_requestType,
+    };
+
+    // Without the validator fix, this PutOrAdd passes IPC decoding and
+    // reaches MemoryObjectStore::addRecord, which inserts the key into a
+    // HashMap whose empty sentinel is exactly std::nullptr_t — crashing the
+    // Network process via key validation.
+    CoreIPC.Networking.NetworkStorageManager.PutOrAdd(connectionID, {
+        requestData,
+        key: {
+            isPlaceholder: false,
+            value: { variantType: 'std::nullptr_t', variant: null },
+        },
+        value: {
+            data: { m_impl: {} },
+            blobURLs: [],
+            blobFilePaths: [],
+            fileSystemHandleGlobalIdentifiers: [],
+        },
+        indexKeys: { alias: [] },
+        overwriteMode: 0, // Overwrite
+    });
+
+    // Wait briefly so the Network process has a chance to crash, then make a
+    // round-trip request to confirm it is still responsive.
+    await new Promise(r => setTimeout(r, 200));
+
+    const verifyDB = await new Promise((resolve, reject) => {
+        const req = indexedDB.open('putoradd_nullptr_key_test_2', 1);
+        req.onsuccess = e => resolve(e.target.result);
+        req.onerror = () => reject(req.error);
+    });
+
+    document.getElementById('result').textContent = 'PASS';
+    verifyDB.close();
+    db.close();
+    indexedDB.deleteDatabase('putoradd_nullptr_key_test');
+    indexedDB.deleteDatabase('putoradd_nullptr_key_test_2');
+    testRunner?.notifyDone();
+}
+runTest().catch(e => {
+    document.getElementById('result').textContent = 'FAIL: ' + e;
+    testRunner?.notifyDone();
+});
+</script>
+</body>
+</html>

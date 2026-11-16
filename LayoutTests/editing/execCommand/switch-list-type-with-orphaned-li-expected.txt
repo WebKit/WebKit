@@ -1,0 +1,18 @@
+This tests switching multiple lists with an orphaned list child to an ordered list.
+| "\n"
+| <ol>
+|   <li>
+|     "<#selection-anchor>webkit"
+|   <li>
+|     "rocks"
+|   "\n    "
+|   <li>
+|     "because of"
+|   "\n    "
+|   <li>
+|     "you<#selection-focus>"
+|   "\n"
+| "\n"
+| "\n"
+| "\n"
+| "\n"

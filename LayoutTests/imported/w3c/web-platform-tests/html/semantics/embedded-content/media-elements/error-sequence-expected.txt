@@ -1,0 +1,15 @@
+
+
+PASS empty src attribute
+PASS urlRecord failure
+FAIL fetch resource promise_test: Unhandled rejection with value: object "TypeError: MediaSourceUtil.fetchResourceOfManifest is not a function. (In 'MediaSourceUtil.fetchResourceOfManifest(
+    t,
+    '/media-source/webm/test-a-128k-44100Hz-1ch-manifest.json')', 'MediaSourceUtil.fetchResourceOfManifest' is undefined)"
+FAIL error event while HAVE_NOTHING promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'resource.type')"
+FAIL error attribute while HAVE_NOTHING promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'resource.type')"
+FAIL play() promise while HAVE_NOTHING promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'resource.type')"
+FAIL play() promise after error event while HAVE_NOTHING promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'resource.type')"
+FAIL error event while HAVE_METADATA promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'resource.type')"
+FAIL error event after HAVE_FUTURE_DATA promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'resource.type')"
+FAIL error attribute after DECODE_ERROR promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'resource.type')"
+

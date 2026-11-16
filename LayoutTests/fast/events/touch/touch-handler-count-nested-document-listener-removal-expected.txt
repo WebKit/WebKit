@@ -1,0 +1,12 @@
+Removing one of several touch event listeners on a node in a nested document must decrement its parent document's touch handler count.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS internals.touchEventHandlerCount() is 2
+PASS internals.touchEventHandlerCount() is 1
+PASS internals.touchEventHandlerCount() is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

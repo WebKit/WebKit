@@ -1,0 +1,13 @@
+Relevant issue: <embed> should support loading random HTML documents, like <object>
+
+
+
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT Wrapper: same-origin embed Test timed out
+NOTRUN Wrapper: Navigate to same-origin embed
+NOTRUN Wrapper: same-site embed
+NOTRUN Wrapper: Navigate to same-site embed
+NOTRUN Wrapper: cross-site embed
+NOTRUN Wrapper: Navigate to cross-site embed
+

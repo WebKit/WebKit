@@ -1,0 +1,12 @@
+ALERT: PASS
+Test click works when there is an event listner on shadow root.
+To manually test, click on "Click here" below.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS didClick is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Click here

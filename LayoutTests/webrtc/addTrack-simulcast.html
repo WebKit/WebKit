@@ -1,0 +1,67 @@
+<!doctype html><!-- webkit-test-runner [ WebRTCRemoteVideoFrameEnabled=true ] -->
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Testing basic video exchange from offerer to receiver</title>
+        <script src="../resources/testharness.js"></script>
+        <script src="../resources/testharnessreport.js"></script>
+    </head>
+    <body>
+<canvas id="canvas" width="640" height="480"></canvas>
+<script>
+function buildMaliciousOffer(nLayers) {
+  const rids = [];
+  for (let i = 0; i < nLayers; i++) rids.push('r' + i);
+  const ridLines = rids.map(r => `a=rid:${r} recv`).join('\r\n');
+  const simLayers = rids.map((r, i) => (i === nLayers - 1 ? r : '~' + r)).join(';');
+  return [
+    'v=0',
+    'o=- 1 2 IN IP4 127.0.0.1',
+    's=-',
+    't=0 0',
+    'a=group:BUNDLE 0',
+    'a=extmap-allow-mixed',
+    'a=msid-semantic: WMS',
+    'm=video 9 UDP/TLS/RTP/SAVPF 96',
+    'c=IN IP4 0.0.0.0',
+    'a=rtcp:9 IN IP4 0.0.0.0',
+    'a=ice-ufrag:aaaa',
+    'a=ice-pwd:bbbbbbbbbbbbbbbbbbbbbb',
+    'a=ice-options:trickle',
+    'a=fingerprint:sha-256 00:11:22:33:44:55:66:77:88:99:AA:BB:CC:DD:EE:FF:00:11:22:33:44:55:66:77:88:99:AA:BB:CC:DD:EE:FF',
+    'a=setup:actpass',
+    'a=mid:0',
+    'a=extmap:1 urn:ietf:params:rtp-hdrext:sdes:mid',
+    'a=extmap:2 urn:ietf:params:rtp-hdrext:sdes:rtp-stream-id',
+    'a=extmap:3 urn:ietf:params:rtp-hdrext:sdes:repaired-rtp-stream-id',
+    'a=sendrecv',
+    'a=rtcp-mux',
+    'a=rtcp-rsize',
+    'a=rtpmap:96 VP8/90000',
+    'a=rtcp-fb:96 nack',
+    'a=rtcp-fb:96 nack pli',
+    'a=rtcp-fb:96 ccm fir',
+    ridLines,
+    `a=simulcast:recv ${simLayers}`,
+    ''
+  ].join('\r\n');
+}
+
+promise_test(async t => {
+    const pc = new RTCPeerConnection();
+    const malOffer = buildMaliciousOffer(4);
+    await pc.setRemoteDescription({ type: 'offer', sdp: malOffer });
+
+    const context = canvas.getContext('2d');
+    context.fillStyle = `green`;
+    setInterval(() => {
+        context.fillRect(0, 0, canvas.width, canvas.height);
+    }, 30);
+    const localStream = canvas.captureStream(30);
+    pc.addTrack(localStream.getVideoTracks()[0], localStream);
+
+    const answer = await pc.createAnswer();
+    await pc.setLocalDescription(answer);
+}, "Trim simulcast encodings when using receive encodings for send encodings");
+</script>
+</body>

@@ -1,0 +1,14 @@
+Hello World!
+This tests SVGText elements and their content are properly handled as static text.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS text1.role is 'AXRole: AXGroup'
+PASS text1.childrenCount is 1
+PASS staticText.role is 'AXRole: AXStaticText'
+PASS staticText.stringValue is 'AXValue: Hello World!'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

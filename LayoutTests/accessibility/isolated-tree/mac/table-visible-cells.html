@@ -1,0 +1,37 @@
+<!DOCTYPE HTML><!-- webkit-test-runner [ IsAccessibilityIsolatedTreeEnabled=true ] -->
+<html>
+<head>
+<script src="../../../resources/accessibility-helper.js"></script>
+<script src="../../../resources/js-test.js"></script>
+</head>
+<body>
+
+<div id="grid" role="grid">
+<div role="row"><span role="gridcell">R0C0</span><span role="gridcell">R0C1</span><span role="gridcell">R0C2</span></div>
+<div role="row"><span role="gridcell">R1C0</span><span role="gridcell">R1C1</span><span role="gridcell">R1C2</span></div>
+</div>
+
+<script>
+var output = "This test ensures AXVisibleCells enumerates every cell of a fully-onscreen table row by row, left to right, and that each entry is the same object cellForColumnAndRow() returns for that position.\n\n";
+
+if (window.accessibilityController) {
+    var grid = accessibilityController.accessibleElementById("grid");
+    var visibleCells = grid.uiElementArrayAttributeValue("AXVisibleCells");
+
+    output += expect("grid.rowCount", "2");
+    output += expect("grid.columnCount", "3");
+    output += expect("visibleCells.length", "6");
+    output += expect("grid.uiElementArrayAttributeValue('AXVisibleCells').length", "6");
+
+    for (var row = 0; row < 2; row++) {
+        for (var column = 0; column < 3; column++)
+            output += expect(`visibleCells[${row * 3 + column}].isEqual(grid.cellForColumnAndRow(${column}, ${row}))`, "true");
+    }
+
+    document.getElementById("grid").style.display = "none";
+
+    debug(output);
+}
+</script>
+</body>
+</html>

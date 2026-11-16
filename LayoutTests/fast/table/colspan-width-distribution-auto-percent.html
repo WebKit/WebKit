@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Colspan width distribution with auto and percentage columns</title>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+</head>
+<body>
+<table id="test-table">
+    <tr>
+        <td colspan="2">
+            <div style="width: 100px; background: gold;">100px div</div>
+        </td>
+    </tr>
+    <tr id="test-row">
+        <td id="cell-a">A</td>
+        <td id="cell-b" width="50%">B</td>
+    </tr>
+</table>
+
+<script>
+test(function() {
+    var cellA = document.getElementById('cell-a');
+    var cellB = document.getElementById('cell-b');
+    
+    var cellAWidth = cellA.clientWidth;
+    var cellBWidth = cellB.clientWidth;
+    
+    assert_equals(cellAWidth + cellBWidth, 104, 
+        'Total width of cells should be 104px (100px content + borders/padding)');
+        
+}, 'Colspan with 100px content over auto and 50% columns distributes width correctly');
+</script>
+</body>
+</html>

@@ -1,0 +1,45 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<head>
+    <style>
+        .scroller {
+            border: 1px solid black;
+            margin: 10px;
+            padding: 10px;
+            overflow: scroll;
+            transform: translateZ(0px);
+        }
+        
+        .box {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            border: 2px solid blue;
+            background-color: green;
+            padding: 10px;
+        }
+        
+        body.changed .scroller {
+            overflow: visible;
+        }
+    </style>
+    <script>
+        if (window.testRunner)
+            testRunner.waitUntilDone();
+
+        window.addEventListener('load', () => {
+            requestAnimationFrame(() => {
+                document.body.classList.add('changed');
+                if (window.testRunner)
+                    testRunner.notifyDone();
+            });
+        }, false);
+    </script>
+</head>
+<body>
+    <div class="scroller">
+        You should see the entire green box below
+        <div class="box"></div>
+    </div>
+</body>
+</html>

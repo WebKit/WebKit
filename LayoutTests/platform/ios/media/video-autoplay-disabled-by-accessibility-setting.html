@@ -1,0 +1,57 @@
+<html>
+<head>
+<script src="../../../media/media-file.js"></script>
+<script src="../../../media/video-test.js"></script>
+<script>
+if (window.internals)
+    internals.setVideoAutoplayPreviewsEnabled(false);
+
+didFirePlay = false;
+
+async function runTest()
+{
+    video = document.createElement('video');
+    video.autoplay = true;
+    video.muted = true;
+    document.body.appendChild(video);
+
+    video.addEventListener('play', () => { didFirePlay = true; });
+
+    consoleWrite('** Setting video.src');
+    video.src = findMediaFile('video', '../../../media/content/test');
+
+    consoleWrite('** Waiting briefly to confirm the video stayed paused');
+    await new Promise(resolve => setTimeout(resolve, 250));
+
+    testExpected('video.paused', true);
+    testExpected('didFirePlay', false);
+
+    consoleWrite('** Calling video.play() without a user gesture, the promise should reject');
+    await shouldReject(video.play());
+    testExpected('video.paused', true);
+    testExpected('didFirePlay', false);
+
+    consoleWrite('** Calling video.play() within a simulated user gesture, playback should start');
+    let userGesturePlay;
+    runWithKeyDown(() => { userGesturePlay = video.play(); });
+    await waitFor(video, 'play');
+    await userGesturePlay;
+    testExpected('video.paused', false);
+
+    consoleWrite('** Pausing, then calling video.play() without a user gesture. The user-gesture-once restriction should now be cleared');
+    video.pause();
+    await waitFor(video, 'pause');
+    testExpected('video.paused', true);
+    await shouldResolve(video.play());
+    testExpected('video.paused', false);
+}
+
+window.addEventListener('load', event => {
+    runTest().then(endTest).catch(failTest);
+});
+</script>
+</head>
+<body>
+    <p>Test that &lt;video autoplay muted&gt; and explicit video.play() are blocked when the Auto-Play Video Previews accessibility setting is disabled, but a user-initiated play() starts playback and clears the user-gesture-required restriction for subsequent plays.</p>
+</body>
+</html>

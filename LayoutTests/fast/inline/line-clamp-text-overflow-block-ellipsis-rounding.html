@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>text-overflow keeps what fits of a block ellipsis when it only overflows by less than a layout unit</title>
+<style>
+div {
+    font: 11.3px/1.2 monospace;
+    /* "very long…" is a hundredth of a pixel wider than 10ch, and so is the box, but the box width gets floored to a layout unit. */
+    letter-spacing: 0.001px;
+    width: calc(10ch + 0.01px);
+    border: 1px solid;
+    margin: 4px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-clamp: 3 "very long block ellipsis";
+}
+</style>
+<div>text text text text text text text text</div>
+<div dir="rtl">text text text text text text text text</div>

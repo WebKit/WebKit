@@ -1,0 +1,7 @@
+
+Harness Error (TIMEOUT), message = null
+
+PASS Mixed-Content: Expects allowed for object-tag to same-https origin and no-redirect redirection from https context.
+TIMEOUT Mixed-Content: Expects blocked for object-tag to cross-http origin and no-redirect redirection from https context. Test timed out
+NOTRUN Mixed-Content: Expects blocked for object-tag to same-http origin and no-redirect redirection from https context.
+

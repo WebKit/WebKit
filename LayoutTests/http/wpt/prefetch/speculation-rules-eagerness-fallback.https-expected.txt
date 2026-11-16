@@ -1,0 +1,9 @@
+
+PASS Document rule with immediate eagerness prefetches immediately
+PASS Document rule with eager eagerness falls back to conservative
+PASS Document rule with moderate eagerness falls back to conservative
+PASS Document rule with conservative eagerness does not prefetch immediately
+PASS Document rule with eager eagerness prefetches on pointerdown
+PASS Document rule with moderate eagerness prefetches on pointerdown
+PASS Document rule with conservative eagerness prefetches on pointerdown
+

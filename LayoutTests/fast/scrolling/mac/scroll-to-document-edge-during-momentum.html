@@ -1,0 +1,149 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ EventHandlerDrivenSmoothKeyboardScrollingEnabled=true ScrollAnimatorEnabled=true ] -->
+<html>
+<head>
+<script src="../../../resources/ui-helper.js"></script>
+<script src="../../../resources/js-test.js"></script>
+<style>
+body {
+    height: 20000px;
+}
+</style>
+</head>
+<body>
+<script>
+description("Tests that scrolling to the start or end of the document during a momentum scroll ignores the rest of the momentum, so that it neither fights the animated scroll nor scrolls away from the edge afterwards.");
+jsTestIsAsync = true;
+
+var largestStepAwayFromEdge;
+var edgeScrollY;
+
+// The vertical scroll position of the root scrolling node in a dump of the UI process's scrolling tree, which is what is on screen.
+function scrollYFromScrollingTree(scrollingTree)
+{
+    const properties = scrollingTree.slice(0, scrollingTree.indexOf("(children"));
+    const match = properties.match(/\(scroll position \(([-\d.]+),([-\d.]+)\)\)/);
+    return match ? Math.round(parseFloat(match[2])) : 0;
+}
+
+// Samples the scrolling tree until stopSampling() is called.
+function startSamplingScrollingTree()
+{
+    const done = new Promise(resolve => {
+        testRunner.runUIScript(`(() => {
+            const samples = [];
+            let lastSampleTime = 0;
+            globalThis.samplingScrollingTree = true;
+            function sample() {
+                const now = Date.now();
+                if (now - lastSampleTime >= 4) {
+                    lastSampleTime = now;
+                    samples.push(uiController.scrollingTreeAsText);
+                }
+                if (globalThis.samplingScrollingTree)
+                    uiController.doAsyncTask(sample);
+                else
+                    uiController.uiScriptComplete(JSON.stringify(samples));
+            }
+            uiController.doAsyncTask(sample);
+        })()`, result => resolve(JSON.parse(result).map(scrollYFromScrollingTree)));
+    });
+
+    return {
+        stopSampling: () => {
+            testRunner.runUIScript(`globalThis.samplingScrollingTree = false; uiController.uiScriptComplete();`, () => { });
+            return done;
+        },
+    };
+}
+
+async function flickDownThenScrollToEdge(key, edge)
+{
+    scrollTo(0, 8000);
+    await UIHelper.renderingUpdate();
+    edgeScrollY = edge;
+
+    const sampler = startSamplingScrollingTree();
+
+    eventSender.mouseMoveTo(100, 100);
+    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -10, "began", "none");
+    await UIHelper.animationFrame();
+    for (let i = 0; i < 3; ++i) {
+        eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -30, "changed", "none");
+        await UIHelper.animationFrame();
+    }
+    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, "ended", "none");
+    await UIHelper.animationFrame();
+
+    // Momentum that lasts longer than the animated scroll to the edge (at most 1.6s), whatever the display refresh rate.
+    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -40, "none", "begin");
+    const momentumStartTime = performance.now();
+    let pressedKey = false;
+    while (performance.now() - momentumStartTime < 2000) {
+        await UIHelper.animationFrame();
+        const elapsedTime = performance.now() - momentumStartTime;
+        if (!pressedKey && elapsedTime >= 80) {
+            pressedKey = true;
+            await UIHelper.keyDown(key);
+        }
+        eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -40 * Math.pow(0.97, elapsedTime / 16.7), "none", "continue");
+    }
+    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, "none", "end");
+    await UIHelper.waitForTargetScrollAnimationToSettle(document.scrollingElement);
+
+    const distancesFromEdge = (await sampler.stopSampling()).map(scrollY => Math.abs(edge - scrollY));
+
+    // Once the animated scroll to the edge takes over, the page should only move toward the edge.
+    const farthestFromEdge = distancesFromEdge.indexOf(Math.max(...distancesFromEdge));
+    largestStepAwayFromEdge = 0;
+    for (let i = farthestFromEdge + 1; i < distancesFromEdge.length; ++i)
+        largestStepAwayFromEdge = Math.max(largestStepAwayFromEdge, distancesFromEdge[i] - distancesFromEdge[i - 1]);
+
+    shouldBe("largestStepAwayFromEdge", "0");
+    shouldBe("scrollY", "edgeScrollY");
+}
+
+var scrollYAfterGesture;
+
+async function flickUp()
+{
+    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 10, "began", "none");
+    await UIHelper.animationFrame();
+    for (let i = 0; i < 3; ++i) {
+        eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 30, "changed", "none");
+        await UIHelper.animationFrame();
+    }
+    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, "ended", "none");
+    await UIHelper.animationFrame();
+    await UIHelper.renderingUpdate();
+    scrollYAfterGesture = scrollY;
+
+    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 40, "none", "begin");
+    await UIHelper.animationFrame();
+    for (let frame = 0; frame < 20; ++frame) {
+        eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 40, "none", "continue");
+        await UIHelper.animationFrame();
+    }
+    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, "none", "end");
+    await UIHelper.waitForTargetScrollAnimationToSettle(document.scrollingElement);
+
+    shouldBeTrue("scrollY < scrollYAfterGesture");
+}
+
+async function runTest()
+{
+    debug("Home");
+    await flickDownThenScrollToEdge("home", 0);
+
+    debug("End");
+    await flickDownThenScrollToEdge("end", document.scrollingElement.scrollHeight - document.scrollingElement.clientHeight);
+
+    debug("Momentum after scrolling to the edge");
+    await flickUp();
+
+    finishJSTest();
+}
+
+window.addEventListener("load", runTest);
+</script>
+</body>
+</html>

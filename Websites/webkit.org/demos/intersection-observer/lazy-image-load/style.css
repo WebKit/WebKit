@@ -1,0 +1,164 @@
+
+body {
+    margin: 0 100px;
+    font-family: Times;
+    display: grid;
+    grid-template-columns: 30% 20% auto 20%;
+    grid-template-rows: auto;
+    grid-template-areas: 
+        "header header header header"
+        "main main main sidebar"
+        "stories stories stories sidebar"
+        "world world world world"
+        "local local local local"
+        "links links links links"
+        "footer footer footer footer";
+    
+    line-height: 1.4em;
+}
+
+section {
+    margin: 10px;
+}
+
+header {
+    grid-area: header;
+    font-size: 24pt;
+    text-align: center;
+    margin-top: 40px;
+    border-top: 1px solid gray;
+    border-bottom: 1px solid gray;
+}
+
+.main {
+    grid-area: main;
+
+    display: grid;
+    grid-template-columns: 40% auto;
+    grid-template-areas: 
+        "left right"
+        "left right"
+}
+
+.main img {
+    float: right;
+    margin: 5px;
+    width: 200px;
+    height: 150px;
+}
+
+.stories {
+    grid-area: stories;
+
+    display: grid;
+    grid-template-columns: 20% auto;
+    grid-template-areas: 
+        "opinions . ."
+        "opinions . ."
+        "opinions . ."
+        "more . ."
+        "more . ."
+        "more . .";
+}
+
+.world, .local {
+    display: grid;
+    grid-template-columns: auto auto auto;
+}
+
+.world {
+    grid-area: world;
+}
+
+.local {
+    grid-area: local;
+}
+
+.ad {
+    grid-area: ad;
+}
+
+.contents {
+    grid-area: contents;
+}
+
+.sidebar {
+    grid-area: sidebar;
+}
+
+
+.links {
+    grid-area: links;
+    border-top: 1px solid gray;
+    text-align: center;
+    margin: 20px;
+    padding: 20px;
+}
+
+.main-story {
+    padding: 10px;
+}
+
+.main-story img {
+    width: 520px;
+    height: 360px;
+}
+
+.top-story {
+    padding: 10px;
+}
+
+.top-story img {
+    float: right;
+    margin: 5px;
+}
+
+.mid-story img {
+    width: 200px;
+    height: 150px;
+}
+
+.link-group {
+    font-weight: bold;
+    font-family: Helvetica;
+    padding: 20px;
+}
+
+.link-group img {
+    display: block;
+    width: 100%;
+}
+
+.link-group ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+.link-group li {
+    display: block;
+    line-height: 1.5em;
+}
+
+footer {
+    grid-area: footer;
+    border-top: 1px solid gray;
+    border-bottom: 1px solid gray;
+
+    display: grid;
+    grid-template-columns: auto auto auto auto;
+}
+
+footer ul {
+    list-style-type: none;
+}
+
+footer a {
+    text-decoration: none;
+    color: black;
+}
+
+.footer-col {
+    float: left;
+}
+

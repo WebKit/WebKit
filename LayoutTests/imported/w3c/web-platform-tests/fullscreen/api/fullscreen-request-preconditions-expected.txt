@@ -1,0 +1,5 @@
+
+PASS requestFullscreen: rejects when the document is not allowed to use the fullscreen permission feature
+PASS requestFullscreen: succeeds when the element is a popover in hidden state
+PASS requestFullscreen: rejects when the element is a popover in showing state
+

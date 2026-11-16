@@ -1,0 +1,6 @@
+
+PASS Ensure that the framebuffer given by the WebGL layer works with stencil for non-immersive - webgl
+PASS Ensure that the framebuffer given by the WebGL layer works with stencil for non-immersive - webgl2
+PASS Ensure that the framebuffer given by the WebGL layer works with stencil for immersive - webgl
+PASS Ensure that the framebuffer given by the WebGL layer works with stencil for immersive - webgl2
+

@@ -1,0 +1,3 @@
+
+PASS Importmap should not be accepted due to wrong hash
+

@@ -1,0 +1,11 @@
+Testing the display of time labels with a video that is 10 minutes or more but less than 1 hour.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS mediaController.controls.timeControl.elapsedTimeLabel.element.textContent became "00:05"
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

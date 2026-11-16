@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src=../../media-resources/video-test.js></script>
+        <script>
+            async function runTest() {
+                findMediaElement();
+                const file = "white.mp4"
+                const resp = await fetch(file);
+                const blob = await resp.blob();
+                const blobUrl = URL.createObjectURL(blob);
+                waitForEventAndEnd('loadedmetadata');
+                waitForEventAndFail('error');
+                video.src = blobUrl;
+            }
+        </script>
+    </head>
+    <body onload="runTest()">
+        <video></video>
+    </body>
+</html>

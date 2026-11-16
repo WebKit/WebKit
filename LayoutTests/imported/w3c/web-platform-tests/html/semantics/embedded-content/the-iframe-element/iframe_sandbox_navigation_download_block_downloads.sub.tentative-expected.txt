@@ -1,0 +1,5 @@
+
+
+PASS Navigation resulted download in sandbox is blocked.
+PASS Navigation resulted download in sandbox from <object> is blocked.
+

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+    <style>
+        :root {
+            overflow: hidden;
+        }
+        .c {
+            position: absolute;
+            opacity: 0.8;
+            width: 100px;
+            height: 100px;
+            top: 200px;
+            left: 200px;
+        }
+        .c > div {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            top: -1000px;
+            left: -1000px;
+            border: 1000px solid;
+            border-right-color: green;
+            border-top-color: blue;
+            border-left-color: orange;
+            border-bottom-color: red;
+            will-change: transform;
+        }
+    </style>
+    <div class=c>
+        <div></div>
+    </div>
+</html>

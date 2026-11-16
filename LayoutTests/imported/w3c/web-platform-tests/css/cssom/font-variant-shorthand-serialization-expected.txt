@@ -1,0 +1,9 @@
+
+PASS font-variant: normal serialization
+PASS font-variant: none serialization
+PASS font-variant-ligatures: none serialization with non-default value for another longhand
+PASS font-variant: normal with non-default longhands
+PASS CSS-wide keyword in one longhand
+PASS CSS-wide keyword in shorthand
+PASS font: menu serialization
+

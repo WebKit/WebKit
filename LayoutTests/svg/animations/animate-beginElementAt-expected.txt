@@ -1,0 +1,2 @@
+This test verifies the animation behaviour of beginElement in SVG. See bug 26019
+Passed

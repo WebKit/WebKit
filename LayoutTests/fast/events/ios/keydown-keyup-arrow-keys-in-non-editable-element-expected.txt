@@ -1,0 +1,11 @@
+This tests that DOM keydown and keyup events are dispatched to a non-editable <body> on iOS when pressing the arrow keys on a hardware keyboard. To run this test manually, verify that two messages are emitted when you press the following keys: ↑, ↓, ←, →.
+
+type: keydown, key: ArrowUp, code: ArrowUp, keyIdentifier: Up, keyCode: 38, charCode: 0, keyCode: 38, which: 38
+type: keyup, key: ArrowUp, code: ArrowUp, keyIdentifier: Up, keyCode: 38, charCode: 0, keyCode: 38, which: 38
+type: keydown, key: ArrowDown, code: ArrowDown, keyIdentifier: Down, keyCode: 40, charCode: 0, keyCode: 40, which: 40
+type: keyup, key: ArrowDown, code: ArrowDown, keyIdentifier: Down, keyCode: 40, charCode: 0, keyCode: 40, which: 40
+type: keydown, key: ArrowLeft, code: ArrowLeft, keyIdentifier: Left, keyCode: 37, charCode: 0, keyCode: 37, which: 37
+type: keyup, key: ArrowLeft, code: ArrowLeft, keyIdentifier: Left, keyCode: 37, charCode: 0, keyCode: 37, which: 37
+type: keydown, key: ArrowRight, code: ArrowRight, keyIdentifier: Right, keyCode: 39, charCode: 0, keyCode: 39, which: 39
+type: keyup, key: ArrowRight, code: ArrowRight, keyIdentifier: Right, keyCode: 39, charCode: 0, keyCode: 39, which: 39
+

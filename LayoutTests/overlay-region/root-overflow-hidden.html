@@ -1,0 +1,78 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ OverlayRegionsEnabled=true AsyncOverflowScrollingEnabled=true AsyncFrameScrollingEnabled=true ContentInsetBackgroundFillEnabled=false ] -->
+<html>
+<head>
+    <meta charset="utf-8" />
+    <style>
+        html, body { margin: 0; padding: 0; }
+
+        html.scroll-locked { overflow: hidden; }
+
+        #content {
+            height: 3000px;
+            width: 100vw;
+        }
+
+        .modal {
+            position: fixed;
+            inset: 0;
+            z-index: 100;
+            background: rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-panel {
+            width: 60%;
+            height: 80%;
+            margin: 40px auto 0;
+            background: white;
+        }
+    </style>
+    <script src="../resources/ui-helper.js"></script>
+    <script src="./overlay-region-helper.js"></script>
+</head>
+<body>
+<div id="content"></div>
+
+<pre id="results"></pre>
+<script>
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+}
+
+async function dumpScrollingBehavior(description) {
+    await UIHelper.ensureStablePresentationUpdate();
+    return `${description}\n${filterUIViewTree(await UIHelper.getUIViewTree())}`;
+}
+
+window.onload = async function () {
+    if (!window.internals)
+        return;
+
+    let output = [];
+    output.push(await dumpScrollingBehavior("Scrollable page:"));
+
+    document.documentElement.classList.add("scroll-locked");
+    output.push(await dumpScrollingBehavior("After adding overflow: hidden to the root:"));
+
+    document.documentElement.classList.remove("scroll-locked");
+    output.push(await dumpScrollingBehavior("After removing overflow: hidden from the root:"));
+
+    let modal = document.createElement("div");
+    modal.className = "modal";
+    modal.innerHTML = `<div class="modal-panel"><button>Close</button></div>`;
+    document.body.appendChild(modal);
+    document.documentElement.classList.add("scroll-locked");
+    output.push(await dumpScrollingBehavior("After showing a modal and adding overflow: hidden to the root:"));
+
+    modal.remove();
+    document.documentElement.classList.remove("scroll-locked");
+    output.push(await dumpScrollingBehavior("After dismissing the modal and removing overflow: hidden from the root:"));
+
+    results.textContent = output.join("\n\n");
+    document.getElementById("content").remove();
+
+    testRunner.notifyDone();
+};
+</script>
+</body>
+</html>

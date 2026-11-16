@@ -1,0 +1,16 @@
+This test ensures turning on design mode gives content an editable ancestor even though no element carries contenteditable, because the web area itself becomes the editable root.
+
+With design mode off nothing above the paragraph is editable.
+PASS: editableAncestorRole() === 'none'
+
+With design mode on the web area is the editable root.
+PASS: editableAncestorRole() === 'AXRole: AXWebArea'
+PASS: highestEditableAncestorRole() === 'AXRole: AXWebArea'
+
+Turning it back off removes the editable ancestor again.
+PASS: editableAncestorRole() === 'none'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

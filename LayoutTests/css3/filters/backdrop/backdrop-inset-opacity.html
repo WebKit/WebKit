@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<style>
+  #b {
+      position: absolute;
+      background: green;
+      width: 100px;
+      height: 100px;
+      left: 150px;
+      top: 50px;
+      opacity: 0.5;
+      will-change: transform;
+  }
+  #c {
+      position: absolute;
+      background: blue;
+      width: 100px;
+      height: 100px;
+      left: 50px;
+      top: 50px;
+      will-change: transform;
+  }
+  #backdrop {
+      position: absolute;
+      left: 50px;
+      top: 100px;
+      width: 200px;
+      height: 200px;
+      backdrop-filter: invert();
+      clip-path: inset(20px);
+  }
+</style>
+<div id=b>
+  <div id=c></div>
+</div>
+<div id="backdrop"></div>

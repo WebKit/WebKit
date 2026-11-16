@@ -1,0 +1,6 @@
+
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT Initiator is same-origin with target frame. Test timed out
+TIMEOUT Initiator is cross-origin with target frame. Test timed out
+

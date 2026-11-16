@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText()
+    testRunner.waitUntilDone();
+    window.addEventListener("load", function() {
+        testRunner.notifyDone();
+    });
+}
+</script>
+<link id=link rel=preload href="../resources/dummy.js" as=fetch>
+<body>
+Test that restarting link preload doesn't assert or crash.
+</body>
+<script>
+link.setAttribute("rel", "preload");
+</script>

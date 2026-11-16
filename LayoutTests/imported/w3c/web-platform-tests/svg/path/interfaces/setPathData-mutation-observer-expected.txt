@@ -1,0 +1,7 @@
+
+FAIL setPathData() fires a MutationObserver record for the d attribute promise_test: Unhandled rejection with value: object "TypeError: path.setPathData is not a function. (In 'path.setPathData([
+    { type: "M", values: [0, 0] },
+    { type: "L", values: [10, 10] }
+  ])', 'path.setPathData' is undefined)"
+FAIL setPathData([]) fires a MutationObserver record promise_test: Unhandled rejection with value: object "TypeError: path.setPathData is not a function. (In 'path.setPathData([])', 'path.setPathData' is undefined)"
+

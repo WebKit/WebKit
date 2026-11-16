@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+.container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 200px;
+    height: 200px;
+    perspective: 800px;
+}
+.test {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    width: 100px;
+    height: 100px;
+    background: repeating-linear-gradient(90deg, black 0 1px, white 1px 2px);
+    transform: translateZ(20px);
+    will-change: transform;
+}
+</style>
+</head>
+<body>
+<div class="container">
+<div class="test"></div>
+</div>
+</body>
+</html>

@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="utf-8">
+<style>
+body, html {
+    margin: 0;
+    width: 100%;
+    height: 100%;
+    font-size: 16px;
+    -webkit-text-size-adjust: none;
+    color: white;
+}
+
+.fixed {
+    width: 200px;
+    height: 200px;
+    position: fixed;
+    background: tomato;
+    color: white;
+    text-align: center;
+    opacity: 0.75;
+}
+
+.container {
+    top: 0;
+    left: 0;
+}
+
+.absolute {
+    background: palevioletred;
+    width: 80px;
+    height: 80px;
+    position: absolute;
+    box-sizing: border-box;
+    border: 1px solid purple;
+}
+
+.bottom-right {
+    top: 110px;
+    left: 110px;
+}
+
+.bottom-left {
+    top: 110px;
+    left: 10px;
+}
+
+.top-right {
+    top: 10px;
+    left: 110px;
+}
+
+.box {
+    border: 1px solid black;
+    width: 250px;
+    height: 250px;
+    box-sizing: border-box;
+}
+
+.absolute-child {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+}
+
+.blue-dot {
+    width: 24px;
+    height: 24px;
+    border-radius: 12px;
+    background: blue;
+    opacity: 0.5;
+}
+
+section:has(.blue-dot) {
+    width: 50px;
+    height: 50px;
+}
+</style>
+</head>
+<body>
+    <div class="box"></div>
+    <div class="fixed container"></div>
+    <div class="absolute bottom-right">
+        <p class="absolute-child">Bottom Right</p>
+        <div class="absolute-child blue-dot"></div>
+    </div>
+    <div class="absolute bottom-left">
+        <div class="absolute-child">
+            <p>Bottom Left</p>
+            <div class="absolute-child blue-dot"></div>
+        </div>
+    </div>
+    <div class="absolute top-right">
+        <div class="outer">
+            <div class="inner">
+                <section>
+                    <div class="absolute-child blue-dot"></div>
+                    <p class="absolute-child">Top Right</p>
+                </section>
+            </div>
+        </div>
+    </div>
+    <main>Here’s to the crazy ones. The misfits. The rebels. The troublemakers. The round pegs in the square holes. The ones who see things differently. They’re not fond of rules. And they have no respect for the status quo. You can quote them, disagree with them, glorify or vilify them. About the only thing you can’t do is ignore them. Because they change things. They push the human race forward. And while some may see them as the crazy ones, we see genius. Because the people who are crazy enough to think they can change the world, are the ones who do.</main>
+    <script>
+        const overlays = [...document.querySelectorAll(".fixed, .absolute")];
+        function removeOverlays() {
+            overlays.forEach(overlay => overlay.remove());
+        }
+
+        function addOverlays() {
+            overlays.forEach(overlay => document.body.appendChild(overlay));
+        }
+    </script>
+</body>
+</html>

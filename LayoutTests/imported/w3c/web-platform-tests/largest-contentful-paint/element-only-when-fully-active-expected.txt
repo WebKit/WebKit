@@ -1,0 +1,3 @@
+
+PASS Only expose element attribute for fully active documents
+

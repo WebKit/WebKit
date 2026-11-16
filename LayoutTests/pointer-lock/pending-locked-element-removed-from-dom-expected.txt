@@ -1,0 +1,10 @@
+Test removing an element with a pending pointer lock cancels the lock.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS document.pointerLockElement is null
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

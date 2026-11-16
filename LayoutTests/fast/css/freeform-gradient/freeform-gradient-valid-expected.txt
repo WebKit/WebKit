@@ -1,0 +1,14 @@
+
+PASS e.style['background-image'] = "freeform-gradient(red center center)" should set the property value
+PASS e.style['background-image'] = "freeform-gradient(red left top, blue right bottom)" should set the property value
+PASS e.style['background-image'] = "freeform-gradient(red 0px 0px, blue 100% 100%, green 10px 50%)" should set the property value
+PASS e.style['background-image'] = "freeform-gradient(red 0, blue 100% 100%)" should set the property value
+PASS e.style['background-image'] = "freeform-gradient(red 0 0, blue 100% 100%)" should set the property value
+PASS e.style['background-image'] = "freeform-gradient(red left top / 0.5, blue right bottom / -2)" should set the property value
+PASS e.style['background-image'] = "freeform-gradient(red 10px 20px / 0, blue 100% 100%)" should set the property value
+PASS e.style['background-image'] = "freeform-gradient(red 0 0/1, blue 100% 100%)" should set the property value
+PASS e.style['background-image'] = "freeform-gradient(in oklab, red left top, blue right bottom)" should set the property value
+PASS e.style['background-image'] = "freeform-gradient(in srgb, red left top, blue right bottom)" should set the property value
+PASS e.style['background-image'] = "freeform-gradient(in hsl longer hue, red left top, blue right bottom)" should set the property value
+PASS e.style['background-image'] = "freeform-gradient(color(display-p3 1 0 0) left top, blue right bottom)" should set the property value
+

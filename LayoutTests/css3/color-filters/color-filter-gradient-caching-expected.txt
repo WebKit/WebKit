@@ -1,0 +1,33 @@
+Tests that same-size elements sharing a gradient with an -apple-color-filter share one cached gradient, that elements with different filters each get their own, and that a repaint reuses their pattern buffers.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+After the first paint:
+PASS plainCache.length is 1
+PASS plainCache[0].width is 100
+PASS plainCache[0].height is 100
+PASS plainCache[0].hasColorFilter is true
+PASS plainCache[0].patternBufferIdentifier is 0
+PASS borderedCache.length is 1
+PASS borderedCache[0].width is 100
+PASS borderedCache[0].height is 100
+PASS borderedCache[0].hasColorFilter is true
+PASS borderedCache[0].patternBufferIdentifier is not 0
+PASS mixedCache.length is 2
+PASS mixedCache.filter(entry => entry.hasColorFilter).length is 1
+PASS mixedCache.every(entry => entry.width == 100 && entry.height == 100 && entry.patternBufferIdentifier) is true
+PASS internals.repaintRectsAsText().includes('rect') is true
+
+After repainting:
+PASS plainCache.length is 1
+PASS plainCache[0].hasColorFilter is true
+PASS borderedCache.length is 1
+PASS borderedCache[0].hasColorFilter is true
+PASS borderedCache[0].patternBufferIdentifier is patternBufferIdentifier
+PASS mixedCache.length is 2
+PASS mixedCache.map(entry => entry.patternBufferIdentifier).join() is mixedPatternBufferIdentifiers
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

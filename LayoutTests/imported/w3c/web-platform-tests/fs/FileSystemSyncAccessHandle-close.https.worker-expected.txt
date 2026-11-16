@@ -1,0 +1,8 @@
+
+PASS SyncAccessHandle.close is idempotent
+PASS SyncAccessHandle.read fails after SyncAccessHandle.close
+PASS SyncAccessHandle.write fails after SyncAccessHandle.close
+PASS SyncAccessHandle.flush fails after SyncAccessHandle.close
+PASS SyncAccessHandle.getSize fails after SyncAccessHandle.close
+PASS SyncAccessHandle.truncate fails after SyncAccessHandle.handle.close
+

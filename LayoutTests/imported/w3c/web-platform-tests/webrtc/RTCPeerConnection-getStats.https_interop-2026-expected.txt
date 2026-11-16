@@ -1,0 +1,10 @@
+
+PASS getStats() with no argument should return stats report containing peer-connection stats on an empty PC
+PASS getStats() track with stream returns peer-connection and outbound-rtp stats
+PASS getStats() track without stream returns peer-connection and outbound-rtp stats
+PASS getStats() audio contains outbound-rtp stats
+PASS getStats() video contains outbound-rtp stats
+PASS getStats() on track associated with RTCRtpSender should return stats report containing outbound-rtp stats
+PASS getStats() on track associated with RTCRtpReceiver should return stats report containing inbound-rtp stats
+PASS getStats() audio contains candidate-pair stats
+

@@ -1,0 +1,16 @@
+
+PASS RTCDataChannel member maxRetransmitTime should not exist
+PASS RTCPeerConnection member addStream should not exist
+PASS RTCPeerConnection member getLocalStreams should not exist
+PASS RTCPeerConnection member getRemoteStreams should not exist
+PASS RTCPeerConnection member getStreamById should not exist
+PASS RTCPeerConnection member onaddstream should not exist
+PASS RTCPeerConnection member updateIce should not exist
+PASS RTCRtpTransceiver member setDirection should not exist
+PASS DataChannel interface should not exist
+PASS mozRTCIceCandidate interface should not exist
+PASS mozRTCPeerConnection interface should not exist
+PASS mozRTCSessionDescription interface should not exist
+PASS new RTCPeerConnection(config) - with url field should throw TypeError
+PASS setConfiguration(config) - with url field should throw TypeError
+

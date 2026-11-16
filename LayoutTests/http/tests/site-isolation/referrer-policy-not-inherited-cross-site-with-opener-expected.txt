@@ -1,0 +1,10 @@
+Tests that no-referrer referrer policy is not inherited via cross-site navigation with opener under site isolation.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS referrer is not ''
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

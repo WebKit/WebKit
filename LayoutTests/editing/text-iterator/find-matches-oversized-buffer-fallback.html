@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<body>
+<div id="container"></div>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+
+const target = "wkfindtoken";
+const container = document.getElementById("container");
+for (let i = 0; i < 50; i++)
+    container.appendChild(document.createElement("p")).textContent = target;
+
+window.jsTestIsAsync = true;
+
+shouldBe("internals.countMatchesForText(target, [], '')", "50");
+
+internals.setCachedFindMatchBufferLimitForTesting(5);
+container.appendChild(document.createElement("p")).textContent = target;
+
+shouldBe("internals.countMatchesForText(target, [], '')", "51");
+
+(async () => {
+    window.found = await testRunner.findString(target, []);
+    shouldBeTrue("found");
+    shouldBeEqualToString("getSelection().toString()", "wkfindtoken");
+
+    container.remove();
+    finishJSTest();
+})();
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

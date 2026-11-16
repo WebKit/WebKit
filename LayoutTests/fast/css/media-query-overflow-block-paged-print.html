@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<style>
+    :root {
+        color: blue;
+    }
+    @media (overflow-block: paged) {
+        :root {
+            color: green;
+        }
+    }
+    @media (overflow-block: scroll) {
+        :root {
+            color: red;
+        }
+    }
+    @media (overflow-block: none) {
+        :root {
+            color: red;
+        }
+    }
+</style>
+<p>This text should be green in paginated mode.</p>
+<script>
+if (window.internals)
+    internals.settings.setMediaTypeOverride("print");
+</script>
+</html>

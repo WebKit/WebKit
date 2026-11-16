@@ -1,0 +1,22 @@
+::before and ::after get a box from a rule that sets 'content', even when other rules without 'content' also match them.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS noContent.offsetHeight is 0
+PASS beforeContent.offsetHeight is 25
+PASS afterContent.offsetHeight is 25
+PASS bothContent.offsetHeight is 50
+
+dynamic.classList.add('before')
+PASS dynamic.offsetHeight is 25
+dynamic.classList.add('after')
+PASS dynamic.offsetHeight is 50
+dynamic.classList.remove('before')
+PASS dynamic.offsetHeight is 25
+dynamic.classList.remove('after')
+PASS dynamic.offsetHeight is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

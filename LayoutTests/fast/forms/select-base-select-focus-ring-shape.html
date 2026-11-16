@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel=match href="select-base-select-focus-ring-shape-expected.html">
+<style>
+select {
+    appearance: base-select;
+    font-size: 30px;
+    inline-size: 250px;
+    block-size: 50px;
+    color: transparent;
+}
+
+select::picker-icon {
+    color: transparent;
+    block-size: 80px;
+}
+</style>
+</head>
+<body>
+<select id="target">
+    <option>Option 1</option>
+</select>
+<script>
+    onload = () => target.focus();
+</script>
+</body>
+</html>

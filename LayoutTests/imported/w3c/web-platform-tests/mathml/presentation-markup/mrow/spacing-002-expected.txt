@@ -1,0 +1,19 @@
+
+FAIL Spacing properly set for <mo> with a previous sibling and a next sibling.. assert_approx_equals: expected 100 +/- 1 but got 0
+FAIL Spacing properly set for <mo> with only a next sibling. assert_approx_equals: expected 100 +/- 1 but got 0
+FAIL Spacing properly set for <mo> with only a previous sibling. assert_approx_equals: expected 100 +/- 1 but got 0
+FAIL Spacing properly set for <mo> with no previous/next siblings (aka embellished operator). assert_approx_equals: expected 100 +/- 1 but got 0
+1
+X
+2
+
+X
+2
+
+1
+X
+
+1
+X
+2
+

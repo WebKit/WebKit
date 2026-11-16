@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>media-source-get-tracks-crash</title>
+    <script src="../video-test.js"></script>
+    <script>
+    var source;
+    var sourceBuffer;
+
+    function runTest() {
+        findMediaElement();
+
+        source = new MediaSource();
+        waitForEvent('sourceopen', sourceOpen, false, false, source);
+        run('video.src = URL.createObjectURL(source)');
+    }
+
+    function sourceOpen() {
+        run('sourceBuffer = source.addSourceBuffer(\'video/mp4; codecs="avc1.4d401f"\')');
+        run('source.removeSourceBuffer(sourceBuffer)');
+
+        consoleWrite('Get the tracks, after removeSourceBuffer. Should not crash.')
+        testExpected('sourceBuffer.audioTracks.length', 0);
+        testExpected('sourceBuffer.videoTracks.length', 0);
+        testExpected('sourceBuffer.textTracks.length', 0);
+
+        endTest();
+    }
+
+    </script>
+</head>
+<body onload="runTest()">
+    <video></video>
+</body>
+</html>

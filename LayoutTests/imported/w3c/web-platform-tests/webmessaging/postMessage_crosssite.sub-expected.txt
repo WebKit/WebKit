@@ -1,0 +1,3 @@
+
+PASS cross-site windows can send transferred ArrayBuffer
+

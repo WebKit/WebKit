@@ -1,0 +1,5 @@
+This test verifies that the selection is visible after tapping near the bottom of a large editable area. To test manually, tap near the bottom of the screen and check that the page did not scroll, and that the selection is visible at the top of the editable area.
+
+Tap here
+The initial scroll offset is: 0,0
+The final scroll offset is: 0,0

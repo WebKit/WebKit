@@ -1,0 +1,18 @@
+XX
+XX
+XX
+XX
+XX
+XX
+XX XX
+XX
+XX
+XX
+XX
+XX
+XX
+XX XX
+
+PASS anchor() resolves against an anchor with insets in an inline box containing block in the second column
+PASS anchor() resolves against an anchor without insets in an inline box containing block in the second column
+

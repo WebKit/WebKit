@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function replaceAndTestPrototypeProperty(prototype, property, invokeOverriddenPropertyFunction) {
+    try {
+    let callCount = 0;
+
+    let originalPropertyDescriptor = Object.getOwnPropertyDescriptor(prototype, property);
+    Object.defineProperty(prototype, property, {
+        get() {
+            ++callCount;
+            return originalPropertyDescriptor?.value;
+        }
+    });
+
+    debugger;
+
+    // Preview an object.
+    console.log({a:1, b:2, c:{}});
+
+    invokeOverriddenPropertyFunction();
+
+    if (originalPropertyDescriptor)
+        Object.defineProperty(prototype, property, originalPropertyDescriptor);
+    else
+        delete prototype[property];
+
+    return callCount;
+    } catch (e) {
+        return String(e);
+    }
+}
+
+function replaceAndTestObject(objectString, invokeOverriddenObjectFunction) {
+    let callCount = 0;
+    
+    let originalObject = eval(objectString);
+    eval(`
+        ${objectString} = () => {
+            ++callCount;
+            return originalObject(...arguments);
+        };
+    `);
+
+    debugger;
+
+    // Preview an object.
+    console.log({a:1, b:2, c:{}});
+
+    invokeOverriddenObjectFunction();
+
+    eval(`${objectString} = originalObject;`);
+    console.log("count of " + callCount);
+    return callCount;
+}
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("InjectedScript.Observable");
+
+    function addPrototypePropertyTestCase({name, description, prototypeString, propertyString, invokeOverriddenPropertyFunction}) {
+        suite.addTestCase({
+            name,
+            description,
+            test(resolve, reject) {
+                InspectorTest.evaluateInPage(`replaceAndTestPrototypeProperty(${prototypeString}, ${propertyString}, ${invokeOverriddenPropertyFunction.toString()});`, (error, result) => {
+                    InspectorTest.expectEqual(result, 1, `${prototypeString}[${propertyString}] call count should be 1.`);
+                    resolve();
+                });
+
+                WI.debuggerManager.singleFireEventListener(WI.DebuggerManager.Event.Paused, (event) => {
+                    InspectorTest.pass("Paused.");
+                    WI.debuggerManager.resume().catch(reject);
+                });
+                WI.debuggerManager.singleFireEventListener(WI.DebuggerManager.Event.Resumed, (event) => {
+                    InspectorTest.pass("Resumed.");
+                });
+            },
+        });
+    }
+
+    function addObjectTestCase({name, description, objectString, invokeOverriddenObjectFunction}) {
+        suite.addTestCase({
+            name,
+            description,
+            test(resolve, reject) {
+                InspectorTest.evaluateInPage(`replaceAndTestObject("${objectString}", ${invokeOverriddenObjectFunction.toString()});`, (error, result) => {
+                    InspectorTest.expectEqual(result, 1, `${objectString} call count should be 1.`);
+                    resolve();
+                });
+
+                WI.debuggerManager.singleFireEventListener(WI.DebuggerManager.Event.Paused, (event) => {
+                    InspectorTest.pass("Paused.");
+                    WI.debuggerManager.resume().catch(reject);
+                });
+                WI.debuggerManager.singleFireEventListener(WI.DebuggerManager.Event.Resumed, (event) => {
+                    InspectorTest.pass("Resumed.");
+                });
+            },
+        });
+    }
+
+    addPrototypePropertyTestCase({
+        name: "InjectedScript.Observable:Array.prototype[Symbol.iterator]",
+        description: "Array iteration in Injected Script should not be observable.",
+        prototypeString: "Array.prototype",
+        propertyString: "Symbol.iterator",
+        invokeOverriddenPropertyFunction: () => {
+            let array = ["a", "b", "c"];
+            for (let x of array) { }
+
+            console.log(array);
+        },
+    });
+
+    addPrototypePropertyTestCase({
+        name: "InjectedScript.Observable:Set.prototype[Symbol.iterator]",
+        description: "Set iteration in Injected Script should not be observable.",
+        prototypeString: "Set.prototype",
+        propertyString: "Symbol.iterator",
+        invokeOverriddenPropertyFunction: () => {
+            let set = new Set(["a", "b", "c"]);
+            for (let x of set) { }
+
+            console.log(set);
+        },
+    });
+
+    addPrototypePropertyTestCase({
+        name: "InjectedScript.Observable:Map.prototype[Symbol.iterator]",
+        description: "Map iteration in Injected Script should not be observable.",
+        prototypeString: "Map.prototype",
+        propertyString: "Symbol.iterator",
+        invokeOverriddenPropertyFunction: () => {
+            let map = new Map([["a", "1"], ["b", "2"], ["c", "3"]]);
+            for (let x of map) { }
+
+            console.log(map);
+        },
+    });
+
+    addPrototypePropertyTestCase({
+        name: "InjectedScript.Observable:Array.prototype.push",
+        description: "Array.push in Injected Script should not be observable.",
+        prototypeString: "Array.prototype",
+        propertyString: "\"push\"",
+        invokeOverriddenPropertyFunction: () => {
+            let array = [];
+            array.push(42);
+        },
+    });
+
+    addPrototypePropertyTestCase({
+        name: "InjectedScript.Observable:Set.prototype.add",
+        description: "Set.add in Injected Script should not be observable.",
+        prototypeString: "Set.prototype",
+        propertyString: "\"add\"",
+        invokeOverriddenPropertyFunction: () => {
+            let set = new Set;
+            set.add(42);
+        },
+    });
+
+    addObjectTestCase({
+        name: "InjectedScript.Observable:String",
+        description: "String in Injected Script should not be observable.",
+        objectString: "String",
+        invokeOverriddenObjectFunction: () => {
+            let answer = String(42);
+        },
+    });
+
+    addPrototypePropertyTestCase({
+        name: "InjectedScript.Observable:Array.prototype.index",
+        description: "Overriden indexes in Array prototype in Injected Script should not be observable.",
+        prototypeString: "Array.prototype",
+        propertyString: "\"42\"",
+        invokeOverriddenPropertyFunction: () => {
+            let array = [];
+            array.push("hello");
+            console.log(array);
+            array[42];
+        },
+    });
+
+    addPrototypePropertyTestCase({
+        name: "InjectedScript.Observable:Object.prototype.destructuredProperty",
+        description: "Object destructuring (for `options` parameters) in Injected Script should not be observable.",
+        prototypeString: "Object.prototype",
+        propertyString: "\"fetchStart\"",
+        invokeOverriddenPropertyFunction: () => {
+            let x = {}.fetchStart;
+        },
+    });
+
+
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Test that Injected Script operations are not observable by user code.</p>
+</body>
+</html>

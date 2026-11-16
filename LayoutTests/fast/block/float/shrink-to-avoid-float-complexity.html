@@ -1,0 +1,214 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+
+<html>
+
+ <head>
+ <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+
+
+ 
+  <style type="text/css">
+  div.container
+  {
+  background-color: silver; 
+  /* height: 200px; */
+  margin: 1em 0em;
+  overflow: hidden;
+  width: 100%;
+  }
+
+  div.float
+  {
+  background-color: yellow;
+  border: green solid 4px;
+  float: left;
+  height: 128px;
+  padding: 2em;
+  width: 128px;
+  }
+  
+  /*
+
+  offsetHeight of div.float
+  -------------------------
+  
+      4px (border-top)
+  +
+     32px (padding-top)
+  +    
+    128px (height)
+  +
+     32px (padding-bottom)
+  +
+      4px (border-bottom)
+   =======
+    200px
+
+
+  offsetWidth of div.float
+  ------------------------
+  
+      4px (border-left)
+  +
+     32px (padding-left)
+  +    
+    128px (width)
+  +
+     32px (padding-right)
+  +
+      4px (border-right)
+   =======
+    200px
+
+  */
+
+  div.overflow
+  {
+  background-color: orange; 
+  /* height: 200px; */
+  overflow: hidden;
+  }
+  
+  li.correct
+  {
+  color: green;
+  font-weight: bolder;
+  }  
+
+  li.incorrect
+  {
+  color: red;
+  font-weight: bolder;
+  }  
+  
+  hr {margin: 3em;}
+  </style>
+
+ </head>
+
+ <body>
+
+ 
+  <!--
+  non-positioned block boxes created before and after the float box 
+  flow vertically as if the float did not exist.
+  http://www.w3.org/TR/CSS21/visuren.html#floats
+  
+  The border box of (...) an element in the normal flow that 
+  establishes a new block formatting context (such as an element with 
+  'overflow' other than 'visible') must not overlap the margin box of 
+  any floats in the same block formatting context as the element itself.
+  http://www.w3.org/TR/CSS21/visuren.html#floats
+  -->
+
+  <h2 id="test1">Test 1 (1 float)</h2>
+
+  <div class="container">
+    <div class="float">This yellow square is floated left and it has no margin.</div>
+    <div style="margin: 0px 100px" class="overflow">This orange rectangle:<br>
+        – establishes a <strong>new block formating context</strong> thanks to the CSS declaration <code>overflow: hidden</code>;<br>
+        – has a 100px left margin and a 100px right margin;<br><br>
+        This orange rectangle:<br>
+        – establishes a <strong>new block formating context</strong> thanks to the CSS declaration <code>overflow: hidden</code>;<br>
+        – has a 100px left margin and a 100px right margin;
+    </div>
+  </div><!-- .container -->
+
+
+  <hr>
+
+  <h2 id="test2">Test 2 (1 float)</h2>
+
+  <div class="container">
+    <div class="float">This yellow square is floated left and it has no margin.</div>
+    <div style="margin-left: 200px;" class="overflow">This orange rectangle:<br>
+        – establishes a <strong>new block formating context</strong> thanks to the CSS declaration <code>overflow: hidden</code>;<br>
+        – has a 200px left margin;<br><br>
+        This orange rectangle:<br>
+        – establishes a <strong>new block formating context</strong> thanks to the CSS declaration <code>overflow: hidden</code>;<br>
+        – has a 200px left margin;
+    </div>
+  </div><!-- .container -->
+
+
+  <hr>
+
+  <h2 id="test3">Test 3 (1 float)</h2>
+
+  <div class="container">
+    <div style="margin-right: 100px;" class="float">This yellow square is a floated left and it has a right margin of 100px.</div>
+
+    <div style="margin-right: 100px;" class="overflow">This orange rectangle:<br>
+        – establishes a <strong>new block formating context</strong> thanks to the CSS declaration <code>overflow: hidden</code>;<br>
+        – has a 0px left margin and a 100px right margin;<br><br>
+        This orange rectangle:<br>
+        – establishes a <strong>new block formating context</strong> thanks to the CSS declaration <code>overflow: hidden</code>;<br>
+        – has a 0px left margin and a 100px right margin;
+    </div>
+  </div><!-- .container -->
+
+ 
+  <hr>
+
+  <h2 id="test4">Test 4 (2 floats)</h2>
+
+  <div class="container">
+    <div class="float">This yellow square is floated left and it has no margin.</div>
+    <div style="float: right;" class="float">This yellow square is a floated right and it has no margin.</div>
+    <div style="margin: 0px 100px;" class="overflow">This orange rectangle:<br>
+        – establishes a <strong>new block formating context</strong> thanks to the CSS declaration <code>overflow: hidden</code>;<br>
+        – has a 100px left margin and a 100px right margin;<br><br>
+        This orange rectangle:<br>
+        – establishes a <strong>new block formating context</strong> thanks to the CSS declaration <code>overflow: hidden</code>;<br>
+        – has a 100px left margin and a 100px right margin;
+    </div>
+  </div><!-- .container -->
+  <hr>
+
+  <h2 id="test5">Test 5 (2 floats)</h2>
+
+  <div class="container">
+    <div class="float">This yellow square is floated left and it has no margin.</div>
+    <div style="float: right;" class="float">This yellow square is a floated right and it has no margin.</div>
+    <div style="margin-right: 200px;" class="overflow">This orange rectangle:<br>
+        – establishes a <strong>new block formating context</strong> thanks to the CSS declaration <code>overflow: hidden</code>;<br>
+        – has a 200px right margin;<br><br>
+        This orange rectangle:<br>
+        – establishes a <strong>new block formating context</strong> thanks to the CSS declaration <code>overflow: hidden</code>;<br>
+        – has a 200px right margin;
+    </div>
+  </div><!-- .container -->
+
+ 
+  <hr>
+
+  <h2 id="test6">Test 6 (2 floats)</h2>
+
+  <div class="container">
+    <div style="margin-right: 100px;" class="float">This yellow square is floated left and it has a right margin of 100px.</div>
+    <div style="float: right; margin-left: 100px;" class="float">This yellow square is floated right and it has a left margin of 100px.</div>
+    <div class="overflow">This orange rectangle:<br>
+        – establishes a <strong>new block formating context</strong> thanks to the CSS declaration <code>overflow: hidden</code>;<br>
+        – has a 0px left margin and a 0px right margin;<br><br>
+        This orange rectangle:<br>
+        – establishes a <strong>new block formating context</strong> thanks to the CSS declaration <code>overflow: hidden</code>;<br>
+        – has a 0px left margin and a 0px right margin;
+    </div>
+  </div><!-- .container -->
+
+  <!--
+  non-positioned block boxes created before and after the float box 
+  flow vertically as if the float did not exist.
+  http://www.w3.org/TR/CSS21/visuren.html#floats  
+  
+  The border box of (...) an element in the normal flow that 
+  establishes a new block formatting context (such as an element with 
+  'overflow' other than 'visible') must not overlap the margin box of 
+  any floats in the same block formatting context as the element itself.
+  http://www.w3.org/TR/CSS21/visuren.html#floats
+  -->
+
+ 
+
+ </body>
+</html>

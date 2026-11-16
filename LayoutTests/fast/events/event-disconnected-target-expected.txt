@@ -1,0 +1,10 @@
+This tests removing a event target from its ancestor. WebKit should keep the root node alive.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS savedEvent.target.getRootNode().localName is "span"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

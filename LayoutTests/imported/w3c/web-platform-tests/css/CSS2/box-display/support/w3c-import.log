@@ -1,0 +1,55 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/box-display/support/1x1-green.png
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/box-display/support/1x1-lime.png
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/box-display/support/1x1-maroon.png
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/box-display/support/1x1-navy.png
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/box-display/support/1x1-red.png
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/box-display/support/1x1-white.png
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/box-display/support/60x60-gg-rr.png
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/box-display/support/60x60-green.png
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/box-display/support/a-green.css
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/box-display/support/b-green.css
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/box-display/support/blue15x15.png
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/box-display/support/blue96x96.png
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/box-display/support/c-red.css
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/box-display/support/cat.png
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/box-display/support/diamond.png
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/box-display/support/green15x15.png
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/box-display/support/pattern-grg-rgr-grg.png
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/box-display/support/pattern-grg-rrg-rgg.png
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/box-display/support/pattern-rgr-grg-rgr.png
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/box-display/support/pattern-tr.png
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/box-display/support/ring.png
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/box-display/support/root-canvas-001a.html
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/box-display/support/square-purple.png
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/box-display/support/square-teal.png
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/box-display/support/square-white.png
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/box-display/support/swatch-blue.png
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/box-display/support/swatch-green.png
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/box-display/support/swatch-lime.png
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/box-display/support/swatch-orange.png
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/box-display/support/swatch-red.png
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/box-display/support/swatch-white.png
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/box-display/support/swatch-yellow.png
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/box-display/support/test-bl.png
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/box-display/support/test-br.png
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/box-display/support/test-outer.png
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/box-display/support/test-tl.png
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/box-display/support/test-tr.png
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/box-display/support/viewport-004-firstcanvas.htm
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/box-display/support/viewport-004-secondcanvas.htm

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../resources/js-test-pre.js"></script>
+<script>
+description("Tests silent WebAudio rendering in hidden pages.");
+jsTestIsAsync = true;
+
+let counter = 0;
+document.onvisibilitychange = async function() {
+    if (!counter) {
+         counter = 1;
+         shouldBeTrue("document.hidden");
+         shouldBe("context.state", "'running'");
+         showPage();
+         return;
+    }
+    shouldBeFalse("document.hidden");
+    shouldBe("context.state", "'running'");
+    finishJSTest();
+}
+
+function showPage()
+{
+    debug("* Setting page visibility to visible");
+    if (window.internals)
+        internals.setPageVisibility(true);
+}
+
+function hidePage()
+{
+    debug("* Setting page visibility to hidden");
+    if (window.internals)
+        internals.setPageVisibility(false);
+}
+
+onload = function() {
+    context = new AudioContext();
+
+    audioElement = document.createElement("audio");
+    audioElement.loop = true;
+    audioElement.muted = true;
+    audioElement.src = "../media/content/test.wav";
+    source = context.createMediaElementSource(audioElement);
+
+    var gainNode = context.createGain();
+    source.connect(gainNode);
+    gainNode.connect(context.destination);
+    gainNode.gain.value = 0; // Mute.
+
+    shouldBecomeEqual("context.state", "'running'", hidePage);
+}
+</script>
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

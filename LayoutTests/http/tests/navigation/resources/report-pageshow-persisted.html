@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script>
+const params = new URLSearchParams(location.search);
+const channel = new BroadcastChannel(params.get("channel"));
+channel.postMessage({ persisted: params.get("persisted") === "true" });
+channel.close();
+</script>
+</body>
+</html>

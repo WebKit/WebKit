@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width,initial-scale=1">
+        <style>
+            iframe {
+                width: 400px;
+                height: 400px;
+            }
+        </style>
+    </head>
+    <body>
+        <iframe frameBorder="none"></iframe>
+        <script>
+            doneLoadingSubframe = false;
+            addEventListener("load", () => {
+                let iframe = document.querySelector("iframe");
+                iframe.addEventListener("load", () => doneLoadingSubframe = true);
+                iframe.srcdoc = `
+                    <html>
+                        <head>
+                            <style>
+                                body, html {
+                                    margin: 0;
+                                }
+
+                                img {
+                                    display: block;
+                                    margin-top: 8000px;
+                                }
+                            </style>
+                        </head>
+                        <body>
+                            <img src='400x400-green.png' />
+                            <script>
+                                addEventListener('load', () => scrollBy(0, 10000));
+                            </script` + `>
+                        </body>
+                    </html>
+                `;
+            });
+        </script>
+    </body>
+</html>

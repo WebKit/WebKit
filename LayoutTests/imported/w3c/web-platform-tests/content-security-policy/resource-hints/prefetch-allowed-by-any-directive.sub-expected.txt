@@ -1,0 +1,7 @@
+
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT Prefetch should succeed when restricted by default-src but allowed by other directive Test timed out
+NOTRUN Prefetch should fail when restricted by default-src and different origin allowed by other directive
+NOTRUN Prefetch should succeed when restricted by default-src but origin allowed by other directive
+

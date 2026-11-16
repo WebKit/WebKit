@@ -1,0 +1,24 @@
+Tests that uiElementsForSearchPredicate returns headings across process boundaries.
+  1: domIdentifier=main-h1, role=AXRole: AXHeading
+  2: domIdentifier=main-h2, role=AXRole: AXHeading
+  3: (remote platform element)
+  4: (remote platform element)
+  5: (remote platform element)
+PASS: results.length === 5
+PASS: results[0].domIdentifier === 'main-h1'
+PASS: results[0].isRemotePlatformElement === false
+PASS: results[1].domIdentifier === 'main-h2'
+PASS: results[1].isRemotePlatformElement === false
+PASS: results[2].isRemotePlatformElement === true
+PASS: results[3].isRemotePlatformElement === true
+PASS: results[4].isRemotePlatformElement === true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Main Heading 1
+
+Main Heading 2
+
+
+Main Heading 3 (after iframe)

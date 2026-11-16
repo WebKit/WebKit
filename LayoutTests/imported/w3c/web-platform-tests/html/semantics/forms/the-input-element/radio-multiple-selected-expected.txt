@@ -1,0 +1,4 @@
+
+
+PASS Form should be valid since one of the radio elements is checked
+

@@ -1,0 +1,31 @@
+Tests that a DOM node pushed to the frontend from a frame target is looked up in that frame target's node id space.
+
+
+== Running test suite: SiteIsolation.DOM.FrameDOMAgent.PushNodeToFrontend
+-- Running test case: Setup
+PASS: Should find exactly one frame target for the main frame.
+PASS: Page target should have a document.
+PASS: Frame target should have a document.
+
+-- Running test case: NodeInShadowTree
+PASS: Evaluating the expression should produce a node.
+PASS: Should push a node id to the frontend.
+PASS: nodeForId should find the pushed node.
+PASS: Pushed node should be the input inside the shadow tree.
+PASS: Pushed node should be the shadow tree's Username input.
+PASS: Pushed node should be owned by the frame target that resolved it.
+PASS: nodeForId and nodeForIdInFrameTarget should agree.
+
+-- Running test case: NodeInDocumentTree
+PASS: Evaluating the expression should produce a node.
+PASS: Should push a node id to the frontend.
+PASS: nodeForId should find the pushed node.
+PASS: Pushed node should be the paragraph.
+PASS: Pushed node should be owned by the frame target that resolved it.
+
+-- Running test case: PageTargetIdsAreNotScoped
+PASS: Evaluating the expression should produce a node.
+PASS: Page target node ids should stay numeric.
+PASS: nodeForId should find the pushed node.
+PASS: Pushed node should be the paragraph.
+

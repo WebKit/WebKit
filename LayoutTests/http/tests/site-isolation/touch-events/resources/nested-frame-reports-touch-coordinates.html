@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+function coordinates(event) {
+    return event.pageX + "," + event.pageY;
+}
+
+addEventListener("touchstart", (event) => window.top.postMessage("touchstart " + coordinates(event), "*"));
+addEventListener("touchmove", (event) => window.top.postMessage("touchmove " + coordinates(event), "*"));
+addEventListener("touchend", (event) => window.top.postMessage("touchend " + coordinates(event), "*"));
+
+window.top.postMessage("ready", "*");
+</script>
+</head>
+<body>
+</body>
+</html>

@@ -1,0 +1,9 @@
+This tests that children of a  will be exposed in the AX hierarchy.
+fieldset description: AXDescription: Not link Link
+legend child 1: string value: AXValue: Not link
+legend child 2: title: AXTitle: Link
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="/js-test-resources/js-test.js"></script>
+<script src="resources/make-domains-prevalent.js"></script>
+</head>
+<body>
+<script>
+description("Tests that a script from the top site does not count as a prevalent domain script, even when ITP classifies that site as prevalent.");
+jsTestIsAsync = true;
+
+makeTestSitesPrevalent().then(() => loadScript("is-prevalent-domain-script-on-stack.js")).then(() => {
+    shouldBeFalse("resultFromScript");
+    finishJSTest();
+});
+</script>
+</body>
+</html>

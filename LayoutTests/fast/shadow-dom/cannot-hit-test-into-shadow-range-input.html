@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+<script>
+window.jsTestIsAsync = true;
+
+function runTest() {
+    const bounds = rangeInputElement.getBoundingClientRect();
+    range = document.caretRangeFromPoint(bounds.left + bounds.width / 2, bounds.top + bounds.height / 2);
+    shouldBe("range.commonAncestorContainer", "rangeInputElement");
+    finishJSTest();
+}
+</script>
+</head>
+<body onload="runTest()">
+    <input type="range" id="rangeInputElement" style="position:absolute; height: 30px; width: 100px;">
+</body>
+</html>

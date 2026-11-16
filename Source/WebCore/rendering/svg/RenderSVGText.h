@@ -1,0 +1,127 @@
+/*
+ * Copyright (C) 2006-2025 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Google Inc. All rights reserved.
+ * Copyright (C) 2007 Nikolas Zimmermann <zimmermann@kde.org>
+ * Copyright (C) Research In Motion Limited 2010-2012. All rights reserved.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public License
+ * along with this library; see the file COPYING.LIB.  If not, write to
+ * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ * Boston, MA 02110-1301, USA.
+ */
+
+#pragma once
+
+#include "AffineTransform.h"
+#include "RenderSVGBlock.h"
+#include "SVGBoundingBoxComputation.h"
+#include "SVGPaintServerCache.h"
+
+#include <wtf/UniqueRef.h>
+
+namespace WebCore {
+
+class RenderSVGInlineText;
+class SVGTextElement;
+
+class RenderSVGText final : public RenderSVGBlock {
+    WTF_MAKE_TZONE_ALLOCATED(RenderSVGText);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderSVGText);
+public:
+    RenderSVGText(SVGTextElement&, Style::ComputedStyle&&);
+    virtual ~RenderSVGText();
+
+    NODELETE SVGTextElement& textElement() const;
+
+    bool isChildAllowed(const RenderObject&, const Style::ComputedStyle&) const override;
+
+    void setNeedsPositioningValuesUpdate() { m_needsPositioningValuesUpdate = true; }
+    void setNeedsTextMetricsUpdate() { m_needsTextMetricsUpdate = true; }
+
+    // FIXME: [LBSE] Only needed for legacy SVG engine.
+    void setNeedsTransformUpdate() override { m_needsTransformUpdate = true; }
+
+    NODELETE static RenderSVGText* locateRenderSVGTextAncestor(RenderObject&);
+    NODELETE static const RenderSVGText* locateRenderSVGTextAncestor(const RenderObject&);
+
+    FloatRect objectBoundingBox() const final { return m_objectBoundingBox; }
+    FloatRect strokeBoundingBox() const final;
+    bool isObjectBoundingBoxValid() const;
+    FloatRect repaintRectInLocalCoordinates(RepaintRectCalculation = RepaintRectCalculation::Fast) const final;
+    FloatRect decoratedBoundingBox() const final;
+
+    LayoutRect visualOverflowRectEquivalent() const
+    {
+        if (!m_cachedVisualOverflowRect)
+            updateCachedVisualOverflowRect();
+        return *m_cachedVisualOverflowRect;
+    }
+
+    void updateCachedVisualOverflowRect() const { m_cachedVisualOverflowRect = SVGBoundingBoxComputation::computeVisualOverflowRect(*this); }
+    void invalidateCachedVisualOverflowRect() final { m_cachedVisualOverflowRect = std::nullopt; }
+    void invalidateNonScalingStrokeCaches();
+
+    void updatePositionAndOverflow(const FloatRect&);
+
+    void updateCachedNominalTransform() final;
+
+private:
+    void graphicsElement() const = delete;
+
+    ASCIILiteral renderName() const override { return "RenderSVGText"_s; }
+
+    void paint(PaintInfo&, const LayoutPoint&) override;
+    void paintInlineChildren(PaintInfo&, const LayoutPoint&) override;
+
+    bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) override;
+    bool hitTestInlineChildren(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) override;
+
+    void applyTransform(TransformationMatrix&, const Style::ComputedStyle&, const FloatRect& boundingBox, OptionSet<Style::TransformResolverOption>) const final;
+    PositionWithAffinity positionForPoint(const LayoutPoint&, HitTestSource, const RenderFragmentContainer*) override;
+
+    bool requiresLayer() const override;
+    void layout() override;
+
+    bool layoutInlineChildrenWithoutLineLayout();
+    void computePerCharacterLayoutInformation();
+
+    void updateFromStyle() final;
+    void styleDidChange(Style::Difference, const Style::ComputedStyle* oldStyle) final;
+
+    // FIXME: [LBSE] Begin code only needed for legacy SVG engine.
+    bool nodeAtFloatPoint(const HitTestRequest&, HitTestResult&, const FloatPoint& pointInParent, HitTestAction) override;
+    AffineTransform localTransform() const override { return m_localTransform; }
+    const AffineTransform& localToParentTransform() const LIFETIME_BOUND override { return m_localTransform; }
+    // FIXME: [LBSE] End code only needed for legacy SVG engine.
+
+    std::optional<AffineTransform> cachedNominalTransform() const final { return m_cachedNominalTransform; }
+
+    float strokeInflation(float strokeWidth) const;
+    void updateVisualOverflow();
+
+    SVGPaintServerCache* svgPaintServerCache() const final { return m_svgPaintServerCache.ptr(); }
+
+    bool m_needsPositioningValuesUpdate : 1 { false };
+    bool m_needsTransformUpdate : 1 { true }; // FIXME: [LBSE] Only needed for legacy SVG engine.
+    bool m_needsTextMetricsUpdate : 1 { false };
+    bool m_hasPerformedLayout : 1 { false }; // Needed to distinguish between when we perform a full pass of layout and everHadLayout (which can be set be content visibility for skipped content).
+    AffineTransform m_localTransform; // FIXME: [LBSE] Only needed for legacy SVG engine.
+    std::optional<AffineTransform> m_cachedNominalTransform;
+    FloatRect m_objectBoundingBox;
+    mutable std::optional<LayoutRect> m_cachedVisualOverflowRect;
+    const UniqueRef<SVGPaintServerCache> m_svgPaintServerCache { makeUniqueRef<SVGPaintServerCache>() };
+};
+
+} // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderSVGText, isRenderSVGText())

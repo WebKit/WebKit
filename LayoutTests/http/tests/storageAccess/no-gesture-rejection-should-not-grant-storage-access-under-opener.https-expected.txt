@@ -1,0 +1,17 @@
+Tests that a no-gesture requestStorageAccess() rejection in a popup's cross-site iframe does not fabricate user interaction that silently grants storage access under the opener.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS requestStorageAccess() was rejected without a user gesture in the popup iframe.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+
+--------
+Frame: '<!--frame1-->'
+--------
+Should not receive first-party cookie.
+Did not receive cookie named 'firstPartyCookie'.
+Client-side document.cookie:

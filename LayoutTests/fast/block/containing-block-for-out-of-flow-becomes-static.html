@@ -1,0 +1,29 @@
+<style>
+.boundary {
+  overflow: hidden;
+  width: 500px;
+  height: 200px;
+}
+
+#relpos {
+  position: relative;
+  border: 100px solid green;
+}
+
+#abspos {
+  position: absolute;
+  left: 0px;
+  top: 0px;
+}
+</style>
+<div style="position: relative;">
+  <div class=boundary>
+    <div id=relpos>
+      <div id=abspos>PASS if this text is at the top left corner of the green box.</div>
+    </div>
+  </div>
+</div>
+<script>
+document.body.offsetHeight;
+relpos.style.position="static";
+</script>

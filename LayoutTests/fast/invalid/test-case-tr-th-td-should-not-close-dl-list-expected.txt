@@ -1,0 +1,10 @@
+Test for bug 16913: TR, TH, TD elements incorrectly closes DL list
+
+There should be two green bars below.
+
+test
+
+test
+
+PASSED.
+PASSED.

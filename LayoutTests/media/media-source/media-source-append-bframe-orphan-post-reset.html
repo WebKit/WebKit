@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>media-source-append-bframe-orphan-post-reset</title>
+    <script src="mp4-generator.js"></script>
+    <script src="../video-test.js"></script>
+    <script>
+    // Regression coverage for MSE "Coded Frame Processing" when a step-1.6
+    // DTS-discontinuity reset is followed by a sync sample whose PTS lands
+    // inside an existing B-frame's presentation interval.
+    //
+    // The step-1.14 sync cascade uses findSampleAfterDecodeKey (upper_bound),
+    // which can break early if the immediate decode-order successor is a sync
+    // with pts > incoming.pts. The step-1.15 dependents sweep then starts at
+    // erasedSamples.begin() (the step-1.13 match), so samples whose decode key
+    // lies in [incoming.decodeKey, step-1.13-sample.decodeKey) are skipped by
+    // both. Among those, B-frames whose pts < incoming.pts become decoder
+    // orphans: no remaining sync has pts <= them. The post-205636@main cleanup
+    // block in processMediaSample filters that gap, evicting orphans while
+    // preserving valid next-GOP samples (pts >= incoming.pts).
+    //
+    // Scenario (timescale=1000):
+    //
+    //   Seg 1 is a B-frame GOP anchored past t=1s (seg-2 DTS will be non-zero
+    //   to avoid tripping Source/WebCore/platform/graphics/gstreamer/mse/
+    //   AppendPipeline.cpp's extendToTheBeginning hack, which fires on
+    //   DTS==0 ∧ PTS>0 ∧ sync):
+    //     (DTS=1050, PTS=1100, dur=100, sync)     — I-frame
+    //     (DTS=1150, PTS=1025, dur=100, non-sync) — B-frame, displays earlier than I
+    //     (DTS=1250, PTS=1075, dur=100, non-sync) — B-frame, PTS=1075 contains seg-2's PTS
+    //     (DTS=1350, PTS=1400, dur=100, sync)     — next I-frame
+    //
+    //   Seg 2 is a single sync (DTS=1000, PTS=1075, dur=20). DTS=1000 < seg 1's
+    //   lastDTS=1350 trips step 1.6 (reset). After the reset:
+    //     - Step 1.13 finds gen1@(1250, 1075) via findSampleContainingPresentationTime
+    //       and erases it.
+    //     - Step 1.14-first's range [1075, 1095) matches the same.
+    //     - Step 1.14 sync cascade: upper_bound((1000, 1075)) = gen1@(1050, 1100),
+    //       which is sync with pts=1100 > 1075 — cascade breaks, adds nothing.
+    //     - Step 1.15 main dependents sweep spans gen1@(1250, 1075) to next-sync
+    //       gen1@(1350, 1400), which is just gen1@(1250, 1075).
+    //     - The samplesWithHigherDecodeTimes block checks decode-key range
+    //         [(1000, 1075), erasedSamples.begin() = (1250, 1075))
+    //       which contains TWO samples: gen1@(1050, 1100) and gen1@(1150, 1025).
+    //       With the pts<=incoming.pts filter: gen1@(1050, 1100) has pts=1100 > 1075
+    //       and is preserved as a legit next-GOP I-frame; gen1@(1150, 1025) has
+    //       pts=1025 <= 1075 and is evicted as an orphan.
+    //
+    //   Final buffer with the narrowed block: [gen2@(1000, 1075), gen1@(1050, 1100),
+    //   gen1@(1350, 1400)]. Length 3.
+    //
+    //   Fail polarities:
+    //     - Over-erase (the pre-narrow 205636@main range, lower_bound inclusive
+    //       at begin): also evicts gen1@(1050, 1100), length 2.
+    //     - Under-erase (no block, ToT commit 10db45b1b25b): leaves gen1@(1150, 1025)
+    //       stranded, length 4.
+
+    let source;
+    let sourceBuffer;
+    let init;
+    let segment1;
+    let segment2;
+    let bufferedSamples;
+
+    async function runTest() {
+        findMediaElement();
+        if (!MediaSource.isTypeSupported(MP4.VIDEO_TYPE)) {
+            failTest(`${MP4.VIDEO_TYPE} is not supported`);
+            return;
+        }
+        source = new MediaSource();
+        run('video.src = URL.createObjectURL(source)');
+        await waitFor(source, 'sourceopen');
+        run(`sourceBuffer = source.addSourceBuffer('${MP4.VIDEO_TYPE}')`);
+
+        init = MP4.initSegment({
+            timescale: 1000,
+            tracks: [{ id: 1, type: 'video', timescale: 1000 }],
+        });
+        segment1 = MP4.mediaSegment({
+            sequenceNumber: 1,
+            tracks: [{ id: 1, type: 'video', baseDecodeTime: 1050, samples: [
+                { duration: 100, compositionTimeOffset:   50, isSync: true  }, // DTS=1050, PTS=1100
+                { duration: 100, compositionTimeOffset: -125, isSync: false }, // DTS=1150, PTS=1025
+                { duration: 100, compositionTimeOffset: -175, isSync: false }, // DTS=1250, PTS=1075
+                { duration: 100, compositionTimeOffset:   50, isSync: true  }, // DTS=1350, PTS=1400
+            ]}],
+        });
+        segment2 = MP4.mediaSegment({
+            sequenceNumber: 2,
+            tracks: [{ id: 1, type: 'video', baseDecodeTime: 1000, samples: [
+                { duration: 20, compositionTimeOffset: 75, isSync: true }, // DTS=1000, PTS=1075
+            ]}],
+        });
+
+        run('sourceBuffer.appendBuffer(MP4.concat(init, segment1))');
+        await waitFor(sourceBuffer, 'updateend');
+        run('sourceBuffer.appendBuffer(segment2)');
+        await waitFor(sourceBuffer, 'updateend');
+
+        bufferedSamples = await internals.bufferedSamplesForTrackId(sourceBuffer, 1);
+        bufferedSamples.forEach(consoleWrite);
+        testExpected('bufferedSamples.length', 3);
+
+        endTest();
+    }
+    </script>
+</head>
+<body onload="runTest()">
+    <video></video>
+</body>
+</html>

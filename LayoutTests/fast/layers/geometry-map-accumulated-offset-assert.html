@@ -1,0 +1,18 @@
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+onload = () => {
+  let prev = document.body
+  for (let i=0; i<100; i++) {
+    let d0 = document.createElement('form');
+    prev.appendChild(d0);
+    let d1 = document.createElement('big');
+    prev = prev.appendChild(d1);
+    let d2 = document.createElement('textarea');
+    prev.appendChild(d2);
+    let d3 = document.createElement('div');
+    prev = prev.appendChild(d3);
+  }
+}
+</script>
+<span>Tests geometry map with float acculated offset. The test passes if WebKit doesn't crash or hit an assertion.</span>

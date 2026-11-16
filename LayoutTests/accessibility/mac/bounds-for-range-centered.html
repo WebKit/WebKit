@@ -1,0 +1,46 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<!--
+Rendered like the following:
+```
+|  Good morning  |
+|     world      |
+```
+!-->
+
+<p id="horizontalContent" style="width: 200px; font-size: 20pt; text-align: center;">
+Good morning world
+</p>
+
+<p id="verticalContent" style="height: 200px; font-size: 20pt; text-align: center; writing-mode: vertical-lr; text-orientation: mixed;">
+Good morning world
+</p>    
+    
+<script>
+if (window.accessibilityController) {
+    let output = "This test verifies that text marker range bounds are correctly offset when text is not left-aligned.\n\n";
+    var textChild = accessibilityController.accessibleElementById("horizontalContent").childAtIndex(0);
+
+    output += expectRectWithVariance("textChild.boundsForRangeWithPagePosition(0, 4)", 29, 8, 61, 31, 10); // "Good"
+    output += expectRectWithVariance("textChild.boundsForRangeWithPagePosition(5, 7)", 95, 8, 92, 31, 10); // "Morning"
+    output += expectRectWithVariance("textChild.boundsForRangeWithPagePosition(13, 5)", 76, 39, 64, 31, 10); // "world"
+
+    var textChild = accessibilityController.accessibleElementById("verticalContent").childAtIndex(0);
+
+    output += expectRectWithVariance("textChild.boundsForRangeWithPagePosition(0, 4)", 34, 117, 32, 62, 10); // "Good"
+    output += expectRectWithVariance("textChild.boundsForRangeWithPagePosition(5, 7)", 34, 183, 32, 92, 10); // "Morning"
+    output += expectRectWithVariance("textChild.boundsForRangeWithPagePosition(13, 5)", 65, 165, 32, 63, 10); // "world"
+
+    debug(output);
+}
+</script>
+</body>
+</html>
+
+

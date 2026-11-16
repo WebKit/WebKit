@@ -1,0 +1,26 @@
+<style>
+
+div {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100px;
+    height: 100px;
+    background-color: black;
+
+    will-change: translate;
+    translate: 100px 100px;
+
+    animation-name: translate;
+    animation-delay: 1000s;
+    animation-duration: 1000s;
+}
+
+@keyframes translate {
+    from { translate: 200px 200px }
+    to { translate: 200px 200px }
+}
+    
+</style>
+<div></div>
+<script src="resources/wait-until-animations-are-committed.js"></script>

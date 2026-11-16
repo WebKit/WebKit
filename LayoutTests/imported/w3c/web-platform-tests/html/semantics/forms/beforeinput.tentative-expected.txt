@@ -1,0 +1,19 @@
+
+
+PASS <input type="text" onbeforeinput="onBeforeInput(event)" oninput="onInput(event)">
+PASS <input type="text">
+PASS <input type="search" onbeforeinput="onBeforeInput(event)" oninput="onInput(event)">
+PASS <input type="search">
+PASS <input type="tel" onbeforeinput="onBeforeInput(event)" oninput="onInput(event)">
+PASS <input type="tel">
+PASS <input type="url" onbeforeinput="onBeforeInput(event)" oninput="onInput(event)">
+PASS <input type="url">
+PASS <input type="email" onbeforeinput="onBeforeInput(event)" oninput="onInput(event)">
+PASS <input type="email">
+PASS <input type="password" onbeforeinput="onBeforeInput(event)" oninput="onInput(event)">
+PASS <input type="password">
+PASS <input type="number" onbeforeinput="onBeforeInput(event)" oninput="onInput(event)">
+PASS <input type="number">
+PASS <textarea onbeforeinput="onBeforeInput(event)" oninput="onInput(event)"></textarea>
+PASS <textarea></textarea>
+

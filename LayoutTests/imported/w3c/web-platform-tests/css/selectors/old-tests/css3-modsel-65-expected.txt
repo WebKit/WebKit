@@ -1,0 +1,5 @@
+The background color of all anchors should become green when they have the focus.
+
+
+PASS NEGATED :focus pseudo-class
+

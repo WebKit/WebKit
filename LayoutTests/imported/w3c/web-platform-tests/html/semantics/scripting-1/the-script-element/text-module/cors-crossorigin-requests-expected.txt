@@ -1,0 +1,7 @@
+text-module-crossorigin
+
+
+
+PASS Imported text module, cross-origin with CORS
+PASS Imported text module, cross-origin, missing CORS ACAO header
+

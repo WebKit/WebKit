@@ -1,0 +1,58 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+<style>
+input {
+    font-size: 20px;
+}
+</style>
+</head>
+<body>
+    <div><input value="foobar"></input></div>
+</body>
+<script>
+jsTestIsAsync = true;
+input = document.querySelector("input");
+
+async function activateAndWaitForInputSessionWithNewPageHandler(element)
+{
+    const x = element.offsetLeft + element.offsetWidth / 2;
+    const y = element.offsetTop + element.offsetHeight / 2;
+    await new Promise(resolve => {
+        testRunner.runUIScript(`
+            (function() {
+                uiController.willCreateNewPageCallback = () => {
+                    uiController.removeViewFromWindow();
+                    uiController.addViewToWindow();
+                };
+                uiController.didShowKeyboardCallback = () => uiController.uiScriptComplete();
+                uiController.singleTapAtPoint(${x}, ${y}, function() { });
+            })()`, resolve);
+    });
+}
+
+input.addEventListener("focus", () => {
+    input.select();
+    setTimeout(() => {
+        newWindow = open("about:blank");
+        newWindow.close();
+    }, 5);
+});
+
+addEventListener("load", async () => {
+    description("This test verifies that unparenting the web view due to creating a new tab on a zero delay timer after focusing a text field doesn't trigger a crash.");
+
+    if (!window.testRunner)
+        return;
+
+    await UIHelper.setHardwareKeyboardAttached(false);
+    await activateAndWaitForInputSessionWithNewPageHandler(input);
+    await UIHelper.resignFirstResponder();
+    testPassed("Did not crash");
+    finishJSTest();
+});
+</script>
+</html>

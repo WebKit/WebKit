@@ -1,0 +1,8 @@
+This test checks that unknown named areas are resolved properly considering all the implicit grid lines to have the given names.
+
+
+PASS .grid 1
+PASS .grid 2
+PASS .grid 3
+PASS .grid 4
+

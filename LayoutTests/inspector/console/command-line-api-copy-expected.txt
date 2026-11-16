@@ -1,0 +1,81 @@
+Tests for the `copy` function in the Command Line API.
+
+
+
+== Running test suite: Console.CommandLineAPI.Copy
+-- Running test case: Console.CommandLineAPI.Copy.Primitive.Boolean
+TEST: copy(true)
+PASS: Pasted value should be as expected.
+
+-- Running test case: Console.CommandLineAPI.Copy.Primitive.Number
+TEST: copy(1)
+PASS: Pasted value should be as expected.
+
+-- Running test case: Console.CommandLineAPI.Copy.Primitive.Number
+TEST: copy(123)
+PASS: Pasted value should be as expected.
+
+-- Running test case: Console.CommandLineAPI.Copy.Primitive.Number
+TEST: copy(123.456)
+PASS: Pasted value should be as expected.
+
+-- Running test case: Console.CommandLineAPI.Copy.Primitive.Number
+TEST: copy(-1e3)
+PASS: Pasted value should be as expected.
+
+-- Running test case: Console.CommandLineAPI.Copy.Primitive.String
+TEST: copy('string')
+PASS: Pasted value should be as expected.
+
+-- Running test case: Console.CommandLineAPI.Copy.Primitive.UnicodeString
+TEST: copy('Unicode…')
+PASS: Pasted value should be as expected.
+
+-- Running test case: Console.CommandLineAPI.Copy.Primitive.Undefined
+TEST: copy(undefined)
+PASS: Pasted value should be as expected.
+
+-- Running test case: Console.CommandLineAPI.Copy.Primitive.OtherNumbers
+TEST: copy(Math.PI)
+PASS: Pasted value should be as expected.
+
+-- Running test case: Console.CommandLineAPI.Copy.Primitive.OtherNumbers
+TEST: copy(NaN)
+PASS: Pasted value should be as expected.
+
+-- Running test case: Console.CommandLineAPI.Copy.Primitive.OtherNumbers
+TEST: copy(-Infinity)
+PASS: Pasted value should be as expected.
+
+-- Running test case: Console.CommandLineAPI.Copy.Null
+TEST: copy(null)
+PASS: Pasted value should be as expected.
+
+-- Running test case: Console.CommandLineAPI.Copy.Regex
+TEST: copy(/regex/i)
+PASS: Pasted value should be as expected.
+
+-- Running test case: Console.CommandLineAPI.Copy.Symbol
+TEST: copy(Symbol('test'))
+PASS: Pasted value should be as expected.
+
+-- Running test case: Console.CommandLineAPI.Copy.Function
+TEST: copy(function    foo( a, b ) {return 1})
+PASS: Pasted value should be as expected.
+
+-- Running test case: Console.CommandLineAPI.Copy.Array
+TEST: copy([1,2,3])
+PASS: Pasted value should be as expected.
+
+-- Running test case: Console.CommandLineAPI.Copy.Object
+TEST: copy({x:1, y:2})
+PASS: Pasted value should be as expected.
+
+-- Running test case: Console.CommandLineAPI.Copy.Object.Cyclic
+TEST: copy(window.cyclicObject)
+PASS: Pasted value should be as expected.
+
+-- Running test case: Console.CommandLineAPI.Copy.Node
+TEST: copy(document.getElementById('target'))
+PASS: Pasted value should be as expected.
+

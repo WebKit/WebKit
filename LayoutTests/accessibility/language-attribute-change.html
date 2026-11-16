@@ -1,0 +1,42 @@
+<html>
+<head>
+<meta http-equiv='content-language' content='de' />
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<!-- It is intentional that #wrapper is an ignored element, proving that we still respect lang attributes on ignored objects. -->
+<div id="wrapper">
+    <div id="content" lang="en">Hello World!</div>
+</div>
+
+<script>
+var output = "This test ensures the language attribute is correct even after dynamic page changes.\n";
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    var content = document.getElementById("content");
+    var accessibleContent = accessibilityController.accessibleElementById("content");
+    output += expect("accessibleContent.language", "'AXLanguage: en'");
+
+    content.setAttribute("lang", "es");
+    setTimeout(async function() {
+        output += await expectAsync("accessibleContent.language", "'AXLanguage: es'");
+
+        content.removeAttribute("lang");
+        document.getElementById("wrapper").setAttribute("lang", "fr");
+        output += await expectAsync("accessibleContent.language", "'AXLanguage: fr'");
+
+        document.getElementsByTagName("head")[0].innerHTML += "";
+        document.getElementById("wrapper").removeAttribute("lang");
+        // Fallback to the meta tag content language.
+        output += await expectAsync("accessibleContent.language", "'AXLanguage: de'");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

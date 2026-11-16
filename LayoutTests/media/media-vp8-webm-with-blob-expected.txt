@@ -1,0 +1,7 @@
+RUN(video = document.createElement("video"))
+RUN(video.controls = true)
+RUN(video.preload = "metadata")
+RUN(video.src = URL.createObjectURL(blob))
+RUN(document.body.append(video))
+RUN(video.play())
+

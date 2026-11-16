@@ -1,0 +1,8 @@
+
+FAIL copyTo() of a RGBX VideoFrame promise_test: Unhandled rejection with value: object "TypeError: Unable to copy data"
+FAIL copyTo() of a RGBX VideoFrame to RGBX promise_test: Unhandled rejection with value: object "TypeError: Unable to copy data"
+FAIL copyTo() of a clone of a RGBX VideoFrame promise_test: Unhandled rejection with value: object "TypeError: Unable to copy data"
+FAIL copyTo() of a BGRX VideoFrame promise_test: Unhandled rejection with value: object "TypeError: Unable to copy data"
+FAIL copyTo() of a BGRX VideoFrame to BGRX promise_test: Unhandled rejection with value: object "TypeError: Unable to copy data"
+FAIL copyTo() of a clone of a BGRX VideoFrame promise_test: Unhandled rejection with value: object "TypeError: Unable to copy data"
+

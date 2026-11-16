@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="../../../resources/js-test-pre.js"></script>
+    <script src="../../../resources/ui-helper.js"></script>
+</head>
+<body>
+    <div id="description">
+        <p>The selectionchange event should only be fired once when clicking a node that is being edited.</p>
+        <p>The selectionchange count in the editable node is: <span id="selectionChange">0</span></p>
+        <p>The caret position in the editable node is: <span id="selectionStart">0</span></p>
+    </div>
+    <input id="input" style:"width: 100%"/>
+</body>
+<script>
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    jsTestIsAsync = true;
+
+    const x = input.offsetLeft;
+    const y = input.offsetTop + input.offsetHeight / 2;
+    const string = "Thisisareallylongstringthatfillstheinputfield";
+    input.value = string;
+
+    UIHelper.activateAndWaitForInputSessionAt(x, y).then(() => {
+        selectionChangeCount = 0;
+        document.addEventListener("selectionchange", function(e) {
+            selectionChangeCount += 1;
+            selectionChange.textContent = selectionChangeCount;
+            selectionStart.textContent = input.selectionStart;
+        });
+
+        UIHelper.activateElement(input).then(() => {
+            shouldBeEqualToString("document.getElementById('selectionChange').textContent", `${selectionChangeCount}`);
+            shouldBeEqualToString("document.getElementById('selectionStart').textContent", `${string.length}`);
+            finishJSTest();
+        });
+    });
+}
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</html>

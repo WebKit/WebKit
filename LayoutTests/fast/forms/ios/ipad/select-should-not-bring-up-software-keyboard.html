@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<head>
+    <script src="../../../../resources/js-test.js"></script>
+    <script src="../../../../resources/ui-helper.js"></script>
+    <script>
+        jsTestIsAsync = true;
+
+        addEventListener("load", async () => {
+            description("This test verifies that tapping a select element on iPad does not bring up the software keyboard.");
+
+            if (!window.testRunner)
+                return;
+
+            await UIHelper.setHardwareKeyboardAttached(false);
+
+            const select = document.querySelector("select");
+            await UIHelper.activateElementAndWaitForInputSession(select);
+            isShowingKeyboardAfterFocusingSelect = await UIHelper.isShowingKeyboard();
+            select.blur();
+
+            const colorInput = document.querySelector("input");
+            await UIHelper.activateElementAndWaitForInputSession(colorInput);
+            isShowingKeyboardAfterFocusingColorInput = await UIHelper.isShowingKeyboard();
+            colorInput.blur();
+
+            shouldBeFalse("isShowingKeyboardAfterFocusingSelect");
+            shouldBeFalse("isShowingKeyboardAfterFocusingColorInput");
+            finishJSTest();
+        });
+    </script>
+</head>
+<body>
+    <select>
+        <option selected>Foo</option>
+        <option>Bar</option>
+        <option>Baz</option>
+    </select>
+    <input type="color"></input>
+</body>
+</html>

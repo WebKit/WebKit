@@ -1,0 +1,6 @@
+
+FAIL CSSPseudoElement can represent view transition pseudo-elements promise_test: Unhandled rejection with value: object "TypeError: html.pseudo is not a function. (In 'html.pseudo("::view-transition")', 'html.pseudo' is undefined)"
+FAIL CSSPseudoElement hierarchy is correctly built when querying sub-pseudo-elements promise_test: Unhandled rejection with value: object "TypeError: html.pseudo is not a function. (In 'html.pseudo("::view-transition-new(target)")', 'html.pseudo' is undefined)"
+FAIL CSSPseudoElement for view transitions is identity-consistent and can be fetched directly from originating element promise_test: Unhandled rejection with value: object "TypeError: html.pseudo is not a function. (In 'html.pseudo(type)', 'html.pseudo' is undefined)"
+FAIL CSSPseudoElement isolates view transitions with different names and validates them during traversal promise_test: Unhandled rejection with value: object "TypeError: html.pseudo is not a function. (In 'html.pseudo("::view-transition-group(target)")', 'html.pseudo' is undefined)"
+

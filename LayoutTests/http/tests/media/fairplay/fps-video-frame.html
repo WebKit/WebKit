@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>fps-hls</title>
+    <script src=../../../media-resources/video-test.js></script>
+    <script src=eme2016.js></script>
+    <script src=support.js></script>
+    <script>
+    window.addEventListener('load', async event => {
+        startTest().then(endTest).catch(failTest);
+    });
+
+    async function startTest() {
+        var video = document.querySelector('video');
+        video.src = 'content/prog_index.m3u8';
+        event = await waitFor(video, 'encrypted');
+
+        if (event.initDataType !== 'skd') {
+            consoleWrite('FAIL: expected event.initDataType === "skd", got ' + event.initDataType);
+            endTest();
+            return;
+        }
+
+        var initData = event.initData;
+        var keyURI = uInt8ArrayToString(new Uint8Array(initData));
+        var video = event.target;
+        var access = await navigator.requestMediaKeySystemAccess("com.apple.fps", [{
+            initDataTypes: ['skd'],
+            videoCapabilities: [{ contentType: 'application/vnd.apple.mpegurl', robustness: '' }],
+            distinctiveIdentifier: 'not-allowed',
+            persistentState: 'not-allowed',
+            sessionTypes: ['temporary'],
+        }]);
+
+        var keys = await access.createMediaKeys();
+        var certificateResponse = await fetch('resources/cert.der');
+        var arrayBuffer = await certificateResponse.arrayBuffer();
+        await keys.setServerCertificate(arrayBuffer);
+        var session = keys.createSession();
+
+        session.generateRequest('skd', initData);
+        let message = await waitFor(session, 'message');
+
+        let response = await getResponse(message);
+        await session.update(response);
+
+        video.setMediaKeys(keys);
+
+        await waitFor(video, 'canplay');
+        await video.play();
+
+        const width = 480;
+        const height = 360;
+        const frame = new VideoFrame(video);
+        await frame.copyTo(new Uint8Array(10000000));
+        canvas.getContext('2d').drawImage(frame, 0, 0, width,  height);
+        frame.close();
+
+        video.pause();
+
+        const data = canvas.getContext('2d').getImageData(0, 0, width, height).data;
+        let isBlack = true;
+        for (let i = 0; isBlack && i < width * height; ++i) {
+            let index = 4 * i;
+            if (!!data[index++] || !!data[index++] || !!data[index++] || !!data[index]) {
+                isBlack = false;
+                consoleWrite('frame is not black ' + data[4 * i] + ' ' + data[4 * i + 1] + ' ' + data[4 * i + 2] + ' ' + data[4 * i + 3]);
+                break;
+            }
+        }
+        consoleWrite('isBlack is ' + isBlack);
+    }
+    </script>
+</head>
+<body>
+    <video controls width="480"></video>
+    <canvas id=canvas></canvas>
+</body>
+</html>

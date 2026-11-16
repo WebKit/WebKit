@@ -1,0 +1,11 @@
+
+PASS Query condition should be valid but unknown: (width: random(--foo, 10px, 30px))
+PASS Query condition should be valid but unknown: (height: random(10px, 30px))
+PASS random() should be disallowed in @container style() query
+PASS random() in var() should be disallowed in @container style() query
+PASS comparing custom property to random() should be disallowed in @container style() query range
+PASS comparing custom property with random() value should be disallowed in @container style() query range
+PASS comparing two random() values should be disallowed in @container style() query range
+PASS comparing three random() values should be disallowed in @container style() query range
+PASS comparing custom properties to random() should be disallowed in @container style() query range
+

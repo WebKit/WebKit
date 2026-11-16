@@ -1,0 +1,5 @@
+
+
+PASS Input in render-blocked document targets root
+PASS Input in render-blocked subframe targets subframe root
+

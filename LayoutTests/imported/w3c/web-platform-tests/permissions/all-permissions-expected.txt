@@ -1,0 +1,21 @@
+
+PASS Query "geolocation" permission
+PASS Query "notifications" permission
+FAIL Query "persistent-storage" permission promise_test: Unhandled rejection with value: object "TypeError: Type error"
+PASS Query "push" permission
+FAIL Query "accelerometer" permission promise_test: Unhandled rejection with value: object "NotSupportedError: Permissions::query does not support this API"
+FAIL Query "ambient-light-sensor" permission promise_test: Unhandled rejection with value: object "TypeError: Type error"
+FAIL Query "background-fetch" permission promise_test: Unhandled rejection with value: object "NotSupportedError: Permissions::query does not support this API"
+FAIL Query "background-sync" permission promise_test: Unhandled rejection with value: object "TypeError: Type error"
+FAIL Query "bluetooth" permission promise_test: Unhandled rejection with value: object "NotSupportedError: Permissions::query does not support this API"
+FAIL Query "gyroscope" permission promise_test: Unhandled rejection with value: object "NotSupportedError: Permissions::query does not support this API"
+FAIL Query "magnetometer" permission promise_test: Unhandled rejection with value: object "NotSupportedError: Permissions::query does not support this API"
+FAIL Query "midi" permission promise_test: Unhandled rejection with value: object "NotSupportedError: Permissions::query does not support this API"
+FAIL Query "nfc" permission promise_test: Unhandled rejection with value: object "NotSupportedError: Permissions::query does not support this API"
+PASS Query "screen-wake-lock" permission
+PASS Query "camera" permission
+FAIL Query "display-capture" permission promise_test: Unhandled rejection with value: object "NotSupportedError: Permissions::query does not support this API"
+PASS Query "microphone" permission
+FAIL Query "speaker-selection" permission promise_test: Unhandled rejection with value: object "NotSupportedError: Permissions::query does not support this API"
+FAIL Query "xr-spatial-tracking" permission promise_test: Unhandled rejection with value: object "TypeError: Type error"
+

@@ -1,0 +1,55 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<div id="container">
+
+<label id="label1" for="input1" aria-label="aria label">Some text</label>
+<input id="input1" type="text" size=20>
+
+<label id="label2" for="input2">Some other text</label>
+<input id="input2" type="text" size=20>
+
+<label id="label3" for="input3" hidden aria-label="hidden aria label">hidden text</label>
+<input id="input3" type="text">
+
+<p id="p1">aria</p>
+<p id="p2">labelledby</p>
+<label for="input4" aria-labelledby="p1 p2">Some text</label>
+<input id="input4" type="text" size=20>
+
+</div>
+
+<script>
+let output = "This tests that the aria-label attribute works on <label> element.\n\n";
+
+if (window.accessibilityController) {
+    // The title of the input field should be the aria-label of the label element.
+    var input1 = accessibilityController.accessibleElementById("input1");
+    var titleUIElement1 = input1.titleUIElement();
+    output += expect("titleUIElement1.isEqual(accessibilityController.accessibleElementById('label1'))", "true");
+    output += expect("input1.title", "'AXTitle: aria label'");
+
+    // Normal case.
+    var input2 = accessibilityController.accessibleElementById("input2");
+    var titleUIElement2 = input2.titleUIElement();
+    output += expect("titleUIElement2.isEqual(accessibilityController.accessibleElementById('label2'))", "true");
+
+    // Make sure when the input element has no rendered label, it won't cause crash.
+    var input3 = accessibilityController.accessibleElementById("input3");
+    output += expect("input3.title", "'AXTitle: hidden aria label'");
+
+    // aria-labelledby also works.
+    var input4 = accessibilityController.accessibleElementById("input4");
+    output += expect("input4.title", "'AXTitle: aria labelledby'");
+
+    document.getElementById("container").style.visibility = "hidden";
+    debug(output);
+}
+</script>
+</body>
+</html>

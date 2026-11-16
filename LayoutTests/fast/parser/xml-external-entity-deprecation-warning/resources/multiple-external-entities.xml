@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html [
+<!ENTITY first SYSTEM "message.xml">
+<!ENTITY second SYSTEM "message.xml">
+<!ENTITY third SYSTEM "message.xml">
+]>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<body>
+<p id="first">&first;</p>
+<p id="second">&second;</p>
+<p id="third">&third;</p>
+</body>
+</html>

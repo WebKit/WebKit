@@ -1,0 +1,16 @@
+<head>
+<script>
+    
+navigator.serviceWorker.addEventListener('message', event => {
+    if (event.data != "echo")
+        return;
+
+    navigator.serviceWorker.getRegistration().then(function(registration) {
+        registration.active.postMessage("echo back");
+    });
+});
+
+</script>
+</head>
+<body>
+</body>

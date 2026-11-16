@@ -1,0 +1,60 @@
+<!doctype html>
+<html>
+<head>
+    <script src="../../resources/testharness.js"></script>
+    <script src="../../resources/testharnessreport.js"></script>
+</head>
+<body>
+<script type="application/javascript">
+test(() => {
+    assert_true(!!window.internals);
+    const setlike = internals.createInternalsSetLike();
+    assert_array_equals(setlike.items(), ["init"]);
+    assert_true(setlike.has("init"));
+
+    setlike.add("test");
+    assert_array_equals(setlike.items(), ["init", "test"]);
+    setlike.add("test");
+    assert_array_equals(setlike.items(), ["init", "test"]);
+    setlike.add("test2");
+    assert_array_equals(setlike.items(), ["init", "test", "test2"]);
+
+    setlike.delete("init");
+    assert_array_equals(setlike.items(), ["test", "test2"]);
+
+    assert_equals(setlike.size, 2, "size");
+
+    let entriesTest = "";
+    for (let entry of setlike.entries()) {
+        entriesTest += entry;
+    }
+    assert_equals(entriesTest, "test,testtest2,test2", "entries test");
+
+    let valuesTest = "";
+    for (let entry of setlike.values()) {
+        valuesTest += entry;
+    }
+    assert_equals(valuesTest, "testtest2", "values test");
+
+    let keysTest = "";
+    for (let entry of setlike.keys()) {
+        keysTest += entry;
+    }
+    assert_equals(keysTest, "testtest2", "keys test");
+
+    assert_equals(setlike.forEach.length, 1);
+    let forEachTest = "";
+    const forEachResult = setlike.forEach((key, value, object) => {
+        forEachTest += key;
+        forEachTest += value;
+        assert_equals(object, setlike);
+    });
+    assert_equals(forEachTest, "testtesttest2test2", "forEach test");
+    assert_equals(forEachResult, undefined);
+
+    setlike.clear();
+    assert_array_equals(setlike.items(), []);
+}, "Basic add/remove/clear functionality");
+</script>
+</body>
+</html>

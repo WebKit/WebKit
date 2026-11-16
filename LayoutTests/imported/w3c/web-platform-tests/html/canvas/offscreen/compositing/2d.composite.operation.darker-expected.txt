@@ -1,0 +1,5 @@
+2d.composite.operation.darker
+
+
+PASS OffscreenCanvas test: 2d.composite.operation.darker
+

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<button id="button-referencing-checkbox" aria-labelledby="checkbox-with-label">Toggle</button>
+<input type="checkbox" id="checkbox-with-label" value="checkbox-value">
+<label for="checkbox-with-label">Checkbox Label Text</label>
+
+<button id="button-referencing-checkbox-arialabel" aria-labelledby="checkbox-with-arialabel">Toggle</button>
+<input type="checkbox" id="checkbox-with-arialabel" value="checkbox-value" aria-label="Checkbox ARIA Label">
+<label for="checkbox-with-arialabel">Label for checkbox with aria-label</label>
+
+<button id="button-referencing-radio" aria-labelledby="radio-with-label">Toggle</button>
+<input type="radio" id="radio-with-label" name="radios" value="radio-value">
+<label for="radio-with-label">Radio Label Text</label>
+
+<script>
+var output = "This test verifies that when a button has aria-labelledby referencing a checkbox or radio, the button gets the checkbox/radio accessible name (from its label), not its value attribute.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    var buttonReferencingCheckbox = accessibilityController.accessibleElementById("button-referencing-checkbox");
+    output += expect("platformValueForW3CName(buttonReferencingCheckbox)", "'Checkbox Label Text'");
+
+    var buttonReferencingCheckboxAriaLabel = accessibilityController.accessibleElementById("button-referencing-checkbox-arialabel");
+    output += expect("platformValueForW3CName(buttonReferencingCheckboxAriaLabel)", "'Checkbox ARIA Label'");
+
+    var buttonReferencingRadio = accessibilityController.accessibleElementById("button-referencing-radio");
+    output += expect("platformValueForW3CName(buttonReferencingRadio)", "'Radio Label Text'");
+
+    var newLabel = document.createElement("label");
+    newLabel.setAttribute("for", "checkbox-with-label");
+    newLabel.id = "new-label";
+    newLabel.textContent = "Updated Checkbox Label";
+    document.querySelector("label[for='checkbox-with-label']").remove();
+    document.body.appendChild(newLabel);
+
+    setTimeout(async function() {
+        output += await expectAsync("platformValueForW3CName(buttonReferencingCheckbox)", "'Updated Checkbox Label'");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

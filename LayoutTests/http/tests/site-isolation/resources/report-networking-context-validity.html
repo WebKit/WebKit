@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script>
+let valid = "no internals";
+if (window.internals) {
+    try {
+        valid = internals.frameNetworkingContextIsValid();
+    } catch (e) {
+        valid = "threw " + e.name;
+    }
+}
+window.parent.postMessage({ networkingContextIsValid: valid }, "*");
+</script>
+</body>
+</html>

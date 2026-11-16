@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/js-test.js"></script>
+<style>
+body, html {
+    margin: 0;
+}
+img {
+    width: 200px;
+    height: 100px;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+</style>
+</head>
+<body>
+<img style="object-fit: fill;" src="../resources/green-400x400.png"></img>
+<img style="object-fit: contain;" src="../resources/green-400x400.png"></img>
+<img style="object-fit: cover;" src="../resources/green-400x400.png"></img>
+<img style="object-fit: none;" src="../resources/green-400x400.png"></img>
+<img style="object-fit: scale-down;" src="../resources/green-400x400.png"></img>
+<pre id="console"></pre>
+<script>
+function imageOverlayTextRect(image) {
+    let bounds = internals.shadowRoot(image).querySelector(".image-overlay-text").getBoundingClientRect();
+    return [ Math.round(bounds.left), Math.round(bounds.top), Math.round(bounds.width), Math.round(bounds.height) ];
+}
+
+addEventListener("load", async () => {
+    textRects = { };
+
+    document.querySelectorAll("img").forEach(image => {
+        internals.installImageOverlay(image, [
+            {
+                topLeft : new DOMPointReadOnly(0, 0),
+                topRight : new DOMPointReadOnly(0.5, 0),
+                bottomRight : new DOMPointReadOnly(0.5, 0.25),
+                bottomLeft : new DOMPointReadOnly(0, 0.25),
+                children: [
+                    {
+                        text : "foo",
+                        topLeft : new DOMPointReadOnly(0, 0),
+                        topRight : new DOMPointReadOnly(0.5, 0),
+                        bottomRight : new DOMPointReadOnly(0.5, 0.25),
+                        bottomLeft : new DOMPointReadOnly(0, 0.25),
+                    }
+                ]
+            }
+        ]);
+
+        textRects[getComputedStyle(image).objectFit] = imageOverlayTextRect(image);
+    });
+
+    shouldBe("textRects['fill']", "[0, 0, 100, 25]");
+    shouldBe("textRects['contain']", "[50, 0, 50, 25]");
+    shouldBe("textRects['cover']", "[0, -50, 100, 50]");
+    shouldBe("textRects['none']", "[-100, -150, 200, 100]");
+    shouldBe("textRects['scale-down']", "[50, 0, 50, 25]");
+});
+</script>
+</body>
+</html>

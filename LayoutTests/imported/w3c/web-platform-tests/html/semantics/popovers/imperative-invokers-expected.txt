@@ -1,0 +1,12 @@
+
+PASS normal opening
+PASS showPopover(unrelated)
+PASS showPopover(popover)
+PASS showPopover(contained)
+PASS togglePopover(true)
+PASS togglePopover({force})
+PASS togglePopover(unrelated)
+PASS togglePopover(popover)
+PASS togglePopover({force, popover})
+PASS null isn't a valid Element
+

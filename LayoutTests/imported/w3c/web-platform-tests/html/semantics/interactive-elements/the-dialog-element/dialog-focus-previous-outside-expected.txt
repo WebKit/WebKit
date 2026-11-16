@@ -1,0 +1,9 @@
+button 1 button 2
+
+PASS Focus should not be restored if the currently focused element is not inside the dialog.
+PASS Focus restore should not occur when the focused element is in a shadowroot outside of the dialog.
+PASS Focus restore should occur when the focused element is in a shadowroot inside the dialog.
+PASS Focus restore should occur when the focused element is slotted into a dialog.
+PASS Focus restore should always occur for modal dialogs.
+PASS Focus restore should work when the dialog itself is focused.
+

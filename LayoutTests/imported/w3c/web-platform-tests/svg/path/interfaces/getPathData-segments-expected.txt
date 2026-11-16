@@ -1,0 +1,10 @@
+
+FAIL path.getPathData() straight lines path.getPathData is not a function. (In 'path.getPathData()', 'path.getPathData' is undefined)
+FAIL path.getPathData() arc path.getPathData is not a function. (In 'path.getPathData()', 'path.getPathData' is undefined)
+FAIL path.getPathData() cubic path.getPathData is not a function. (In 'path.getPathData()', 'path.getPathData' is undefined)
+FAIL path.getPathData() relative forms (m, l, q, s, t) path.getPathData is not a function. (In 'path.getPathData()', 'path.getPathData' is undefined)
+FAIL path.getPathData() absolute L/Q/S/T commands path.getPathData is not a function. (In 'path.getPathData()', 'path.getPathData' is undefined)
+FAIL path.getPathData() relative forms (h, v, c, a) path.getPathData is not a function. (In 'path.getPathData()', 'path.getPathData' is undefined)
+FAIL path.getPathData() implicit repeated commands path.getPathData is not a function. (In 'path.getPathData()', 'path.getPathData' is undefined)
+FAIL path.getPathData() returns a fresh array on each call path.getPathData is not a function. (In 'path.getPathData()', 'path.getPathData' is undefined)
+

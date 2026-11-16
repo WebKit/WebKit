@@ -1,0 +1,75 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+<style>
+#wrapped { width: 7ch; font: 16px/1 monospace; }
+</style>
+</head>
+<body>
+
+<p id="broken">Alpha<br>bravo<br>charlie</p>
+<p id="wrapped">delta echo foxtrot</p>
+
+<script>
+var output = "This test ensures that stepping to the next word end and then back to the previous word start lands on the start of the word the marker began on, from any position within that word. Words separated by a br element and words separated by a soft wrap are both covered, because neither kind of line break should move a word boundary.\n\n";
+
+function baseIndexOf(paragraphId)
+{
+    var paragraph = accessibilityController.accessibleElementById(paragraphId);
+    return paragraph.indexForTextMarker(paragraph.startTextMarkerForTextMarkerRange(paragraph.textMarkerRangeForElement(paragraph)));
+}
+
+function wordStartOffsetFrom(paragraphId, offset)
+{
+    var paragraph = accessibilityController.accessibleElementById(paragraphId);
+    var base = baseIndexOf(paragraphId);
+    var wordEnd = paragraph.nextWordEndTextMarkerForTextMarker(paragraph.textMarkerForIndex(base + offset));
+    return paragraph.indexForTextMarker(paragraph.previousWordStartTextMarkerForTextMarker(wordEnd)) - base;
+}
+
+function wordTextFrom(paragraphId, offset)
+{
+    var paragraph = accessibilityController.accessibleElementById(paragraphId);
+    var base = baseIndexOf(paragraphId);
+    var wordEnd = paragraph.nextWordEndTextMarkerForTextMarker(paragraph.textMarkerForIndex(base + offset));
+    var wordStart = paragraph.previousWordStartTextMarkerForTextMarker(wordEnd);
+    return paragraph.stringForTextMarkerRange(paragraph.textMarkerRangeForMarkers(wordStart, wordEnd));
+}
+
+if (window.accessibilityController) {
+    output += "Words separated by a br element.\n";
+    output += expect("wordStartOffsetFrom('broken', 0)", "0");
+    output += expect("wordStartOffsetFrom('broken', 3)", "0");
+    output += expect("wordStartOffsetFrom('broken', 6)", "6");
+    output += expect("wordStartOffsetFrom('broken', 9)", "6");
+    output += expect("wordStartOffsetFrom('broken', 12)", "12");
+    output += expect("wordStartOffsetFrom('broken', 16)", "12");
+
+    output += "\nThe recovered range is the word, without the line break.\n";
+    output += expect("wordTextFrom('broken', 3)", "'Alpha'");
+    output += expect("wordTextFrom('broken', 9)", "'bravo'");
+    output += expect("wordTextFrom('broken', 16)", "'charlie'");
+
+    output += "\nWords separated by a soft wrap.\n";
+    output += expect("wordStartOffsetFrom('wrapped', 0)", "0");
+    output += expect("wordStartOffsetFrom('wrapped', 3)", "0");
+    output += expect("wordStartOffsetFrom('wrapped', 6)", "6");
+    output += expect("wordStartOffsetFrom('wrapped', 8)", "6");
+    output += expect("wordStartOffsetFrom('wrapped', 11)", "11");
+    output += expect("wordStartOffsetFrom('wrapped', 15)", "11");
+
+    output += "\nThe recovered range is the word, and the wrap adds nothing to it.\n";
+    output += expect("wordTextFrom('wrapped', 3)", "'delta'");
+    output += expect("wordTextFrom('wrapped', 8)", "'echo'");
+    output += expect("wordTextFrom('wrapped', 15)", "'foxtrot'");
+
+    document.getElementById("broken").style.display = "none";
+    document.getElementById("wrapped").style.display = "none";
+
+    debug(output);
+}
+</script>
+</body>
+</html>

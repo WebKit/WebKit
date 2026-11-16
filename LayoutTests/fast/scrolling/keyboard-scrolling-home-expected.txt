@@ -1,0 +1,5 @@
+PASS window.scrollY is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Scrolling via the "Home" key should leave this page at the top.

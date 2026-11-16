@@ -1,0 +1,58 @@
+<html>
+    <head>
+        <style>
+            div {
+                height: 9999px;
+                width: 9999px;
+            }
+        </style>
+        <script src="../../../resources/js-test-pre.js"></script>
+        <script>
+            jsTestIsAsync = true;
+
+            function runTest() {
+                description('Test the "scrollWidth" properties on the body element in quirks mode.');
+
+                debug("Initial values");
+                shouldBe("document.body.scrollWidth", "document.documentElement.scrollWidth");
+
+                debug("");
+                debug("Now we create a body element, it should not have a scrollWidth since it is not the first body element of the document.");
+                floatingBody = document.createElement('body');
+                shouldBe("document.body.scrollWidth", "document.documentElement.scrollWidth");
+                shouldBe("floatingBody.scrollWidth", "0");
+
+                secondSiblingBody = document.createElement('body');
+                document.documentElement.appendChild(secondSiblingBody);
+                debug("");
+                debug("We add a new body element after the first body element, this should have no impact on the state.");
+                shouldBe("document.body.scrollWidth", "document.documentElement.scrollWidth");
+                shouldBe("secondSiblingBody.scrollWidth", "secondSiblingBody.clientWidth");
+                shouldNotBe("document.body.scrollWidth", "secondSiblingBody.scrollWidth");
+
+                bodyChildOfMainBody = document.createElement('body');
+                document.body.appendChild(bodyChildOfMainBody);
+                debug("");
+                debug("We add a new body element inside the first body element, this should have no impact on the state.");
+                shouldBe("document.body.scrollWidth", "document.documentElement.scrollWidth");
+                shouldBe("bodyChildOfMainBody.scrollWidth", "bodyChildOfMainBody.clientWidth");
+                shouldNotBe("document.body.scrollWidth", "bodyChildOfMainBody.scrollWidth");
+
+                debug("");
+                debug("Getting the scrollWidth should not require a renderer.");
+                shouldBe("document.body.style.display = 'none'", "'none'");
+                shouldBe("document.body.scrollWidth", "document.documentElement.scrollWidth");
+
+                // Finally, let's clear the state to make this simpler for manual testing.
+                document.body.style.display = "block";
+                window.scrollTo(0, 0);
+
+                finishJSTest();
+            }
+        </script>
+    </head>
+    <body onload="runTest()">
+        <div></div>
+        <script src="../../../resources/js-test-post.js"></script>
+    </body>
+</html>

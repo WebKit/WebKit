@@ -1,0 +1,6 @@
+This test passes if it does not crash.
+::view-transition: PASS
+::view-transition-group(*): PASS
+::view-transition-image-pair(*): PASS
+::view-transition-old(*), ::view-transition-new(*): PASS
+

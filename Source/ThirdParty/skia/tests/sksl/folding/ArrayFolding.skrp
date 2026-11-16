@@ -1,0 +1,50 @@
+42 instructions
+
+[immutable slots]
+i0 = 0x00000001 (1.401298e-45)
+i1 = 0x00000003 (4.203895e-45)
+
+store_src_rg                   coords = src.rg
+init_lane_masks                CondMask = LoopMask = RetMask = true
+copy_constant                  globalValue = 0
+copy_constant                  _7_two = 0x00000002 (2.802597e-45)
+copy_slot_unmasked             _9_flatten1 = _7_two
+copy_slot_unmasked             $12 = _7_two
+add_imm_int                    $12 += 0xFFFFFFFF
+copy_slot_unmasked             _7_two = $12
+copy_constant                  value = 0x00000002 (2.802597e-45)
+add_imm_int                    globalValue += 0x00000001
+copy_slot_unmasked             $13 = value
+label                          label 0
+copy_constant                  $14 = 0x00000003 (4.203895e-45)
+copy_slot_unmasked             $0 = $12
+copy_slot_unmasked             _11_noFlatten0 = $0
+copy_constant                  value = 0x00000001 (1.401298e-45)
+add_imm_int                    globalValue += 0x00000001
+copy_slot_unmasked             $12 = value
+label                          label 0x00000001
+copy_constant                  $13 = 0x00000002 (2.802597e-45)
+copy_constant                  $14 = 0x00000003 (4.203895e-45)
+copy_slot_unmasked             $0 = $13
+copy_slot_unmasked             _12_noFlatten1 = $0
+copy_constant                  $12 = 0x00000001 (1.401298e-45)
+copy_slot_unmasked             $13 = _7_two
+add_imm_int                    $13 += 0x00000001
+copy_slot_unmasked             _7_two = $13
+copy_constant                  $14 = 0x00000003 (4.203895e-45)
+copy_slot_unmasked             $0 = $14
+copy_slot_unmasked             _13_noFlatten2 = $0
+copy_slot_unmasked             $0 = _11_noFlatten0
+cmpeq_imm_int                  $0 = equal($0, 0x00000001)
+copy_slot_unmasked             $1 = _9_flatten1
+copy_slot_unmasked             $2 = _12_noFlatten1
+cmpeq_int                      $1 = equal($1, $2)
+bitwise_and_int                $0 &= $1
+copy_slot_unmasked             $1 = _13_noFlatten2
+cmpeq_imm_int                  $1 = equal($1, 0x00000003)
+bitwise_and_int                $0 &= $1
+swizzle_4                      $0..3 = ($0..3).xxxx
+copy_4_uniforms                $4..7 = colorRed
+copy_4_uniforms                $8..11 = colorGreen
+mix_4_ints                     $0..3 = mix($4..7, $8..11, $0..3)
+load_src                       src.rgba = $0..3

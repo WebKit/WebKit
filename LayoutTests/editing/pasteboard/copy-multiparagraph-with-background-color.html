@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>This test verifies that copying multiple paragraphs from a container with a background-color
+preserves the background-color on the pasted block elements.</p>
+<p>To manually test, select all three paragraphs in the dark box, copy, and paste into the editable area below.</p>
+<div id="source" style="background-color: rgb(30, 30, 30); color: rgb(255, 255, 255);">
+<p>First paragraph</p>
+<p>Second paragraph</p>
+<p>Third paragraph</p>
+</div>
+<div id="destination" style="border: solid 1px black; padding: 20px;" contenteditable></div>
+<script src="../../resources/dump-as-markup.js"></script>
+<script>
+
+if (window.testRunner) {
+    var source = document.getElementById('source');
+    window.getSelection().setBaseAndExtent(source, 0, source, source.childNodes.length);
+    document.execCommand('Copy');
+
+    window.getSelection().setPosition(document.getElementById('destination'), 0);
+    document.execCommand('Paste');
+
+    Markup.description('Pasted content should preserve background-color on block elements.');
+    Markup.dump('destination', 'Pasted multi-paragraph content');
+} else
+    Markup.noAutoDump();
+
+</script>
+</body>
+</html>

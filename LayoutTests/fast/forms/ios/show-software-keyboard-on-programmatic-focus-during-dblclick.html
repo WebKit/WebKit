@@ -1,0 +1,37 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<meta name="viewport" content="initial-scale=1, width=device-width">
+<head>
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+<script>
+jsTestIsAsync = true;
+
+addEventListener("load", async () => {
+    description("Tests that a software keyboard is shown when a text field is progammatically double clicked.");
+
+    const input = document.querySelector("input");
+    const button = document.querySelector("button");
+    button.addEventListener("dblclick", () => {
+        input.focus();
+    });
+
+    if (!window.testRunner)
+        return;
+
+    const rect = button.getBoundingClientRect();
+    await UIHelper.setHardwareKeyboardAttached(false);
+    await UIHelper.doubleActivateAt(rect.left + (rect.width / 2), rect.top + (rect.height / 2));
+    await UIHelper.waitForKeyboardToShow();
+
+    input.blur();
+    await UIHelper.waitForKeyboardToHide();
+    finishJSTest();
+});
+</script>
+</head>
+<body>
+<button type="button">Double Click Me</button>
+<input>
+</body>
+</html>

@@ -1,0 +1,8 @@
+
+PASS ASCII name and utf-8 value
+PASS utf-8 name and ASCII value
+PASS ASCII name and quoted utf-8 value
+PASS utf-8 name and value
+PASS quoted utf-8 name and value
+PASS utf-8 name and value, with (invalid) utf-8 attribute
+

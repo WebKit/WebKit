@@ -1,0 +1,93 @@
+Tests for HAR import.
+
+
+== Running test suite: HAR.Import
+-- Running test case: HAR.Import.Empty
+PASS: Should be able to import a HAR with no resources.
+PASS: Should produce zero LocalResources.
+
+-- Running test case: HAR.Import.Full
+PASS: Should be able to import a HAR with many resources.
+Resources: 11
+https://webkit.org/
+https://webkit.org/wp-content/themes/webkit/style.css?20181220
+https://www.apple.com/wss/fonts?families=SF+Pro,v1
+https://webkit.org/wp/wp-includes/css/dist/block-library/style.min.css?ver=5.0.3
+https://webkit.org/wp-content/themes/webkit/scripts/global.js?ver=1.0
+https://webkit.org/wp/wp-includes/js/wp-embed.min.js?ver=5.0.3
+https://webkit.org/wp-content/themes/webkit/images/compass.svg
+https://webkit.org/wp-content/themes/webkit/images/webkit.svg
+https://webkit.org/wp-content/themes/webkit/images/menu-down.svg
+https://webkit.org/wp-content/themes/webkit/images/template.svg
+https://webkit.org/wp-content/themes/webkit/images/chevron.svg
+
+-- Running test case: HAR.Import.Basic
+PASS: Should be able to import a HAR with fake resources.
+PASS: Should produce two LocalResources.
+
+PASS: Bare Resource URL should be 'https://example.com/fake.js'.
+PASS: Bare Resource MIME Type should be 'text/javascript'.
+PASS: Bare Resource type should be 'resource-type-script'.
+PASS: Bare Resource requestMethod should be 'GET'.
+PASS: Bare Resource requestSentWalltime should be '1508723752.694'.
+PASS: Bare Resource does not have a statusCode
+PASS: Bare Resource does not have statusText.
+
+PASS: Full Resource URL should be 'https://example.com/fake.js'.
+PASS: Full Resource MIME Type should be 'text/javascript'.
+PASS: Full Resource type should be 'resource-type-script'.
+PASS: Full Resource requestMethod should be 'GET'.
+PASS: Full Resource requestSentWalltime should be '1508723752.694'.
+PASS: Full Resource statusCode should be '200'.
+PASS: Full Resource statusText should be 'OK'.
+PASS: Full Resource responseSource should be 'Symbol(network)'.
+PASS: Full Resource protocol should be 'http/1.1'.
+PASS: Full Resource priority should be 'Symbol(unknown)'.
+PASS: Full Resource remoteAddress should be '12.34.56.78'.
+PASS: Full Resource connectionIdentifier should be '1'.
+PASS: Full Resource requestHeadersTransferSize should be '100'.
+PASS: Full Resource requestBodyTransferSize should be '0'.
+PASS: Full Resource responseHeadersTransferSize should be '200'.
+PASS: Full Resource responseBodyTransferSize should be '800'.
+PASS: Full Resource timing startTime should be '0.001'.
+PASS: Full Resource timing redirectStart should be NaN.
+PASS: Full Resource timing redirectEnd should be NaN.
+PASS: Full Resource timing fetchStart should be '0.001'.
+PASS: Full Resource timing domainLookupStart should be '0.1'.
+PASS: Full Resource timing domainLookupEnd should be '0.2'.
+PASS: Full Resource timing connectStart should be '0.2'.
+PASS: Full Resource timing connectEnd should be '0.3'.
+PASS: Full Resource timing secureConnectionStart should be '0.25'.
+PASS: Full Resource timing requestStart should be '0.4'.
+PASS: Full Resource timing responseStart should be '0.5'.
+PASS: Full Resource timing responseEnd should be '0.6'.
+
+Request Headers:
+{
+  "Test-Request-Header": "Test Request Header Value"
+}
+
+Response Headers:
+{
+  "Test-Response-Header": "Test Response Header Value"
+}
+
+Content:
+Test Content
+
+-- Running test case: HAR.Import.BadVersion
+ERROR: HAR Import Error: unsupported HAR version
+PASS: Should fail to import a HAR with an unsupported version.
+
+-- Running test case: HAR.Import.Invalid
+ERROR: HAR Import Error: invalid JSON
+PASS: Should fail to import invalid JSON: null.
+ERROR: HAR Import Error: invalid JSON
+PASS: Should fail to import invalid JSON: 123.
+ERROR: HAR Import Error: invalid HAR
+PASS: Should fail to import invalid JSON: [].
+ERROR: HAR Import Error: invalid HAR
+PASS: Should fail to import invalid JSON: {}.
+ERROR: HAR Import Error: invalid HAR
+PASS: Should fail to import invalid JSON: {"pages":[],"entries":[]}.
+

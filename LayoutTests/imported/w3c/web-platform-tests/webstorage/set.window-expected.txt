@@ -1,0 +1,22 @@
+
+PASS Setting property for key 9 on localStorage
+PASS Setting property with toString for key 9 on localStorage
+PASS Setting property for key 9 on localStorage with data property on prototype
+PASS Setting property for key 9 on localStorage with data property on prototype and existing item
+FAIL Setting property for key 9 on localStorage with accessor property on prototype assert_unreached: Should not call [[Set]] on prototype Reached unreachable code
+PASS Setting property for key x on localStorage
+PASS Setting property with toString for key x on localStorage
+PASS Setting property for key x on localStorage with data property on prototype
+PASS Setting property for key x on localStorage with data property on prototype and existing item
+FAIL Setting property for key x on localStorage with accessor property on prototype assert_unreached: Should not call [[Set]] on prototype Reached unreachable code
+PASS Setting property for key 9 on sessionStorage
+PASS Setting property with toString for key 9 on sessionStorage
+PASS Setting property for key 9 on sessionStorage with data property on prototype
+PASS Setting property for key 9 on sessionStorage with data property on prototype and existing item
+FAIL Setting property for key 9 on sessionStorage with accessor property on prototype assert_unreached: Should not call [[Set]] on prototype Reached unreachable code
+PASS Setting property for key x on sessionStorage
+PASS Setting property with toString for key x on sessionStorage
+PASS Setting property for key x on sessionStorage with data property on prototype
+PASS Setting property for key x on sessionStorage with data property on prototype and existing item
+FAIL Setting property for key x on sessionStorage with accessor property on prototype assert_unreached: Should not call [[Set]] on prototype Reached unreachable code
+

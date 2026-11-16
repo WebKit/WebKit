@@ -1,0 +1,3 @@
+
+PASS Animations inside of display:contents should work properly.
+

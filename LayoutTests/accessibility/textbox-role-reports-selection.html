@@ -1,0 +1,61 @@
+<!DOCTYPE HTML PUBLIC>
+<html>
+<head>
+<script src="../resources/js-test.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
+</head>
+<body>
+This tests that the AXSelection property is correctly reported for non-native text boxes.<br>
+<div role="textbox" id="ariaTextBox" aria-multiline="false" tabindex="0">Some text in a textbox (34 chars).</div>
+<div id="console"></div>
+<script>
+    function assertEvaluatesTo(actual, expected, message) {
+        var actualValue = 0;
+        try {
+            actualValue = eval(actual);
+        } catch (e) {
+            debug("Evaluating " + actual + ": Threw exception " + e);
+            return;
+        }
+        if (actualValue === expected)
+            debug("PASS: " + actual + " is " + expected + (message ? " (" + message + ")" : ""));
+        else
+            debug("FAIL: " + actual + " should be " + expected + ", got " + actualValue + (message ? " (" + message + ")" : ""));
+    }
+
+    async function assertCorrectAXSelection(element, selection, message) {
+        element.focus();
+        var selectionValues = /\{(\d+), (\d+)\}/.exec(selection);
+        var selectionStart = eval(selectionValues[1]);
+        var selectionLength = eval(selectionValues[2]);
+        var selectionEnd = selectionStart + selectionLength;
+
+        window.getSelection().setBaseAndExtent(element.firstChild, selectionStart, element.firstChild, selectionEnd);
+        var axElement = accessibilityController.focusedElement;
+        await waitFor(() => {
+            axSelection = axElement.selectedTextRange;
+            return axSelection == selection;
+        });
+        assertEvaluatesTo("axSelection", selection, message);
+    }
+
+    if (window.testRunner && window.accessibilityController) {
+        window.jsTestIsAsync = true;
+        var ariaTextBox = document.getElementById("ariaTextBox");
+        var textLength = ariaTextBox.textContent.length;
+		
+        setTimeout(async () => {
+            await assertCorrectAXSelection(ariaTextBox, "{0, 0}", "Collapsed selection at start");
+            await assertCorrectAXSelection(ariaTextBox, "{" + textLength + ", 0}", "Collapsed selection at end");
+            await assertCorrectAXSelection(ariaTextBox, "{15, 0}", "Collapsed selection in the middle");
+            await assertCorrectAXSelection(ariaTextBox, "{15, 2}", "Non-collapsed selection in the middle");
+            await assertCorrectAXSelection(ariaTextBox, "{0, 15}", "Non-collapsed selection at the start");
+            await assertCorrectAXSelection(ariaTextBox, "{15, "+ (textLength - 15) + "}", "Non-collapsed selection at the end");
+			
+            finishJSTest();
+        }, 0);
+    }
+
+</script>
+</body>
+</html>

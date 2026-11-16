@@ -1,0 +1,4 @@
+
+
+FAIL Resizing <select multiple> should not autoscroll the listbox. assert_greater_than: The listbox width should increase when the resize handle is dragged. expected a number greater than 100 but got 100
+

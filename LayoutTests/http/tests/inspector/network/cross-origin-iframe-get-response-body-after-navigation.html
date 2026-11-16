@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../resources/inspector-test.js"></script>
+<script>
+let testIframe;
+
+function loadCrossOriginIframe() {
+    testIframe = document.createElement("iframe");
+    testIframe.src = "http://localhost:8000/inspector/network/resources/echo.py?mimetype=text/plain&content=before-navigation";
+    document.body.appendChild(testIframe);
+}
+
+function navigateIframe() {
+    testIframe.src = "http://localhost:8000/inspector/network/resources/echo.py?mimetype=text/plain&content=after-navigation";
+}
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("Network.getResponseBody.CrossOriginIframe.AfterNavigation");
+
+    suite.addTestCase({
+        name: "Network.getResponseBody.CrossOriginIframe.AfterNavigation",
+        description: "After an iframe navigates, the old resource's content should still be available (or explicitly unavailable) via getResponseBody.",
+        test(resolve, reject) {
+            let firstResource = null;
+
+            WI.Frame.awaitEvent(WI.Frame.Event.ChildFrameWasAdded)
+                .then((event) => {
+                    let childFrame = event.data.childFrame;
+                    firstResource = childFrame.mainResource;
+                    InspectorTest.log("First load: " + firstResource.url);
+
+                    if (firstResource.finished)
+                        return firstResource.requestContent();
+
+                    return new Promise((resolveLoad) => {
+                        firstResource.singleFireEventListener(WI.Resource.Event.LoadingDidFinish, () => resolveLoad());
+                    }).then(() => firstResource.requestContent());
+                })
+                .then(({error, content}) => {
+                    InspectorTest.expectThat(!error, "First load: Should retrieve content successfully.");
+                    InspectorTest.expectEqual(content, "before-navigation", "First load: Content should match.");
+
+                    InspectorTest.log("Navigating iframe...");
+                    // Navigate the iframe. This should trigger mainFrameNavigated -> clear() on the store.
+                    return new Promise((resolveNav) => {
+                        WI.Frame.awaitEvent(WI.Frame.Event.MainResourceDidChange).then(() => resolveNav());
+                        InspectorTest.evaluateInPage("navigateIframe()");
+                    });
+                })
+                .then(() => {
+                    InspectorTest.log("Iframe navigated. Requesting content of first resource again...");
+                    return firstResource.requestContent();
+                })
+                .then(({error, content}) => {
+                    // After navigation, the store was cleared. The first resource's content
+                    // may or may not be available depending on frontend caching.
+                    InspectorTest.log("After navigation requestContent returned.");
+                    InspectorTest.log("Content available: " + (content !== null && content !== undefined && content.length > 0));
+                })
+                .then(resolve, reject);
+
+            InspectorTest.evaluateInPage("loadCrossOriginIframe()");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests getResponseBody behavior for a cross-origin iframe resource after the iframe navigates to a new URL.</p>
+</body>
+</html>

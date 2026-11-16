@@ -1,0 +1,238 @@
+<script>
+if (window.testRunner) { testRunner.waitUntilDone(); testRunner.dumpAsText() }
+onload = async () => {
+  try {
+    let adapter0 = await navigator.gpu.requestAdapter(
+    {
+    }
+    );
+    
+    let device0 = await adapter0.requestDevice(
+    {
+    requiredLimits: {
+    maxVertexAttributes: 21,
+    maxVertexBufferArrayStride: 50123,
+    maxStorageTexturesPerShaderStage: 21,
+    maxBindingsPerBindGroup: 7503,
+    },
+    }
+    );
+
+    let bindGroupLayout0 = device0.createBindGroupLayout(
+    {
+    label: 'a',
+    entries: [
+    {
+    binding: 962,
+    visibility: GPUShaderStage.FRAGMENT,
+    sampler: {
+    type: 'filtering',
+    },
+    },
+    {
+    binding: 79,
+    visibility: GPUShaderStage.VERTEX | GPUShaderStage.COMPUTE,
+    buffer: {
+    hasDynamicOffset: true,
+    },
+    }
+    ],
+    }
+    );
+    
+    let pipelineLayout0 = device0.createPipelineLayout(
+    {
+    label: 'a',
+    bindGroupLayouts: [
+    bindGroupLayout0,
+    bindGroupLayout0,
+    bindGroupLayout0,
+    bindGroupLayout0
+    ],
+    }
+    );
+    
+    let shaderModule0 = device0.createShaderModule(
+    {
+    label: 'a',
+    code: `@group(3) @binding(962)
+    var<storage, read_write> global0: array<u32>;
+    @group(3) @binding(79)
+    var<storage, read_write> global1: array<u32>;
+    @group(0) @binding(79)
+    var<storage, read_write> field0: array<u32>;
+    @group(2) @binding(79)
+    var<storage, read_write> function0: array<u32>;
+    @group(2) @binding(79)
+    var<storage, read_write> field1: array<u32>;
+    @group(2) @binding(962)
+    var<storage, read_write> __DynamicOffsets0: array<u32>;
+    @compute @workgroup_size(2, 4, 2)
+    fn compute0(@builtin(global_invocation_id) global_id : vec3<u32>, @builtin(local_invocation_id) local_id : vec3<u32>) {
+      var x: u32 = 0;
+      loop {
+        field1[x] = global_id.x;
+        x += 1;
+        function0[global_id.y-global_id.x] = field1[x];
+        if (x > 2 * arrayLength(&global1)) {
+          break;
+        }
+      }
+    }
+    @compute @workgroup_size(5, 4, 2)
+    fn compute1(@builtin(global_invocation_id) global_id : vec3<u32>, @builtin(local_invocation_id) local_id : vec3<u32>) {
+      field1[global_id.x*local_id.x] = u32(function0[global_id.x*local_id.x]);
+    }
+
+    struct S {
+      @location(0) out0: vec4<f32>,
+      @location(1) out1: vec4<f32>,
+    }
+
+    struct S2 {
+      @location(0) out0: vec4<f32>,
+      out1: vec4<f32>,
+    }
+
+    struct S3 {
+      @location(0) out0: vec4<f32>,
+      out1: S4,
+    }
+
+    struct S4 {
+      @location(1) out2: vec4<f32>,
+      @location(2) out3: vec4<f32>,
+    }
+
+    @fragment
+    fn fragment0(@builtin(position) coord_in: vec4<f32>) -> @location(123) vec4<i32> {
+    return vec4<i32>();
+    }
+
+    @fragment
+    fn fragment1(@builtin(position) coord_in: vec4<f32>) -> @location(0) vec4<f32> {
+      return vec4<f32>(coord_in.x, coord_in.y, 0.0, 1.0);
+    }
+
+    @fragment
+    fn fragment2(@builtin(position) coord_in: vec4<f32>) -> S {
+    }
+
+    @fragment
+    fn fragment3(@builtin(position) coord_in: vec4<f32>) -> S {
+      return S();
+    }
+
+    @fragment
+    fn fragment4(@builtin(position) coord_in: vec4<f32>) -> S2 {
+      return S2();
+    }
+
+    @fragment
+    fn fragment5(x: S3) -> S3 {
+      return x;
+    }
+
+    @vertex
+    fn vertex0() -> @builtin(position) vec4<f32> {
+      return vec4<f32>(0.0, 0.0, 0.0, 1.0);
+    }
+
+    @vertex
+    fn vertex1(@builtin(vertex_index) v_index: u32, @builtin(instance_index) i_index: u32,) -> @builtin(position) vec4<f32> {
+      return vec4<f32>(f32(v_index), f32(i_index), 0.0, 1.0);
+    }
+
+    @vertex
+    fn vertex2(@builtin(vertex_index) v_index: u32, @builtin(instance_index) i_index: u32,) -> S {
+    }
+
+    @vertex
+    fn vertex3(@builtin(vertex_index) v_index: u32, @builtin(instance_index) i_index: u32,) -> S {
+      return S();
+    }
+    `,
+    sourceMap: {},
+    hints: {},
+    }
+    );
+
+    let pipeline8 = await device0.createRenderPipelineAsync(
+    {
+    label: 'a',
+    layout: pipelineLayout0,
+    vertex: {
+    module: shaderModule0,
+    entryPoint: 'vertex1',
+    buffers: [
+    {
+    arrayStride: 29196,
+    stepMode: 'vertex',
+    attributes: [
+    {
+    format: 'float16x2',
+    offset: 8500,
+    shaderLocation: 6,
+    },
+    {
+    format: 'float32',
+    offset: 19580,
+    shaderLocation: 2,
+    },
+    {
+    format: 'float16x4',
+    offset: 27964,
+    shaderLocation: 9,
+    }
+    ],
+    }
+    ],
+    },
+    primitive: {
+    topology: 'triangle-strip',
+    stripIndexFormat: 'uint32',
+    frontFace: 'ccw',
+    cullMode: 'none',
+    },
+    multisample: {
+    count: 4,
+    alphaToCoverageEnabled: true,
+    },
+    fragment: {
+    module: shaderModule0,
+    entryPoint: 'fragment0',
+    constants: {},
+    targets: [
+    {
+    format: 'rgba8sint',
+    writeMask: 0,
+    }
+    ],
+    },
+    depthStencil: {
+    depthWriteEnabled: true,
+    depthCompare: 'always',
+    format: 'depth24plus-stencil8',
+    stencilFront: {
+    compare: 'greater',
+    failOp: 'keep',
+    passOp: 'decrement-clamp',
+    },
+    stencilBack: {
+    compare: 'less-equal',
+    failOp: 'replace',
+    depthFailOp: 'increment-clamp',
+    passOp: 'invert',
+    },
+    stencilReadMask: 22,
+    stencilWriteMask: 95,
+    depthBias: 41,
+    depthBiasSlopeScale: 1,
+    },
+    }
+    );
+  } catch {}
+  if (window.testRunner) { testRunner.notifyDone() }
+};
+</script>
+This test passes if it does not crash.

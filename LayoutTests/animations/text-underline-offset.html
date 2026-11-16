@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="resources/animation-test-helpers.js"></script>
+<style>
+@keyframes TheAnimation {
+    from {
+        text-underline-offset: 0px;
+    }
+    to {
+        text-underline-offset: 100px;
+    }
+}
+
+#box {
+    text-decoration: underline;
+    animation-duration: 3s;
+    animation-timing-function: linear;
+}
+</style>
+</head>
+<body>
+<div id="box">Hello</div>
+<div id="result"></div>
+<script>
+var expectedValues = [
+    // [animation-name, time, element-id, property, expected-value, tolerance]
+    ["TheAnimation", 0.5, "box", "text-underline-offset", "16.6666", 5],
+    ["TheAnimation", 1.0, "box", "text-underline-offset", "33.3333", 5],
+    ["TheAnimation", 2.0, "box", "text-underline-offset", "66.6666", 5],
+];
+
+document.getElementById("box").style.animationName = "TheAnimation";
+runAnimationTest(expectedValues, undefined, undefined, undefined, false, undefined);
+</script>
+</body>
+</html>

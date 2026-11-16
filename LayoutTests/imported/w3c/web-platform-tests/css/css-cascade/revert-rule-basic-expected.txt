@@ -1,0 +1,6 @@
+
+PASS The revert-rule keyword rolls back to the previous rule
+PASS Cascade order determines the previous rule, not order of appearance
+PASS Reverting from style attribute reverts to regular rules
+PASS A chain of revert-rule works
+

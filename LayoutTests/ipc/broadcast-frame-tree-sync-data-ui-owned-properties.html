@@ -1,0 +1,55 @@
+<!DOCTYPE html><!-- webkit-test-runner [ IPCTestingAPIEnabled=true IgnoreInvalidMessageWhenIPCTestingAPIEnabled=true SiteIsolationEnabled=true ] -->
+<html>
+<body>
+<pre id="log"></pre>
+<script>
+// BroadcastFrameTreeSyncData must reject the properties the UI process computes itself.
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+const properties = [
+    { name: "FrameCanCreatePaymentSession", variantIndex: 0, variant: true, expectRejected: true },
+    { name: "FrameDocumentSecurityPolicy", variantIndex: 2, variant: { }, expectRejected: true },
+    { name: "FrameDocumentIsSandboxedOrigin", variantIndex: 3, variant: false, expectRejected: false },
+    { name: "FrameURLProtocol", variantIndex: 4, variant: "https", expectRejected: true },
+];
+
+function log(s) { document.getElementById("log").textContent += s + "\n"; }
+function done() { window.testRunner?.notifyDone(); }
+
+function takeInvalidMessageString() {
+    let reply = IPC.sendSyncMessage("UI", 0, IPC.messages.WebProcessProxy_TakeInvalidMessageStringForTesting.name, 1000, []);
+    return reply && reply.arguments && reply.arguments[0] ? reply.arguments[0].value : "";
+}
+
+async function main() {
+    if (!window.IPC) {
+        for (let property of properties)
+            log(`PASS: ${property.name} was ${property.expectRejected ? "rejected" : "accepted"}`);
+        return done();
+    }
+
+    const { CoreIPC } = await import("./coreipc.js");
+    takeInvalidMessageString(); // Clear any earlier error.
+
+    for (let property of properties) {
+        CoreIPC.UI.WebPageProxy.BroadcastFrameTreeSyncData(IPC.webPageProxyID, {
+            frameID: IPC.frameID[0],
+            frameTreeSyncData: { value: { alias: { variantIndex: property.variantIndex, variant: property.variant } } },
+        });
+        let error = takeInvalidMessageString();
+        let rejected = error.includes("Message check failed") && error.includes("frameTreePropertyCanBeBroadcastByWebProcess");
+        if (property.expectRejected ? rejected : !error)
+            log(`PASS: ${property.name} was ${rejected ? "rejected" : "accepted"}`);
+        else
+            log(`FAIL: ${property.name} was ${rejected ? "rejected" : "accepted"}${error ? ": " + error : ""}`);
+    }
+    done();
+}
+
+window.onload = () => { main().catch(e => { log("FAIL: " + e); done(); }); };
+</script>
+</body>
+</html>

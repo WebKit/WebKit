@@ -1,0 +1,22 @@
+Basic test coverage for fileSystemDirectoryReader.readEntries()
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS dataTransfer.items.length is 2
+PASS entry1.isFile is true
+PASS entry1.name is "test.txt"
+PASS entry1.fullPath is "/test.txt"
+PASS entryFound.isFile is true
+PASS entryFound.name is "test.txt"
+PASS entryFound.fullPath is "/test.txt"
+PASS entry2.isDirectory is true
+PASS entry2.name is "testFiles"
+PASS entry2.fullPath is "/testFiles"
+PASS entryFound.isDirectory is true
+PASS entryFound.name is "testFiles"
+PASS entryFound.fullPath is "/testFiles"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

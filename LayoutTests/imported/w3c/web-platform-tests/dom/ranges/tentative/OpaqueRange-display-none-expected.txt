@@ -1,0 +1,21 @@
+
+
+FAIL createValueRange works on display:none element (input) element.createValueRange is not a function. (In 'element.createValueRange(1, 4)', 'element.createValueRange' is undefined)
+FAIL OpaqueRange offsets survive repeated display:none cycles (input) element.createValueRange is not a function. (In 'element.createValueRange(1, 4)', 'element.createValueRange' is undefined)
+FAIL element.value replacement updates range during display:none (input) element.createValueRange is not a function. (In 'element.createValueRange(1, 4)', 'element.createValueRange' is undefined)
+FAIL setRangeText updates range during display:none (input) element.createValueRange is not a function. (In 'element.createValueRange(1, 4)', 'element.createValueRange' is undefined)
+FAIL setRangeText insert before range works during display:none (input) element.createValueRange is not a function. (In 'element.createValueRange(2, 4)', 'element.createValueRange' is undefined)
+FAIL setRangeText overlapping delete works during display:none (input) element.createValueRange is not a function. (In 'element.createValueRange(1, 3)', 'element.createValueRange' is undefined)
+FAIL Collapsed range insertion during display:none (input) element.createValueRange is not a function. (In 'element.createValueRange(3, 3)', 'element.createValueRange' is undefined)
+FAIL Geometry empty during display:none, restored after (input) element.createValueRange is not a function. (In 'element.createValueRange(0, 5)', 'element.createValueRange' is undefined)
+FAIL disconnect() works during display:none (input) element.createValueRange is not a function. (In 'element.createValueRange(1, 4)', 'element.createValueRange' is undefined)
+FAIL createValueRange works on display:none element (textarea) element.createValueRange is not a function. (In 'element.createValueRange(1, 4)', 'element.createValueRange' is undefined)
+FAIL OpaqueRange offsets survive repeated display:none cycles (textarea) element.createValueRange is not a function. (In 'element.createValueRange(1, 4)', 'element.createValueRange' is undefined)
+FAIL element.value replacement updates range during display:none (textarea) element.createValueRange is not a function. (In 'element.createValueRange(1, 4)', 'element.createValueRange' is undefined)
+FAIL setRangeText updates range during display:none (textarea) element.createValueRange is not a function. (In 'element.createValueRange(1, 4)', 'element.createValueRange' is undefined)
+FAIL setRangeText insert before range works during display:none (textarea) element.createValueRange is not a function. (In 'element.createValueRange(2, 4)', 'element.createValueRange' is undefined)
+FAIL setRangeText overlapping delete works during display:none (textarea) element.createValueRange is not a function. (In 'element.createValueRange(1, 3)', 'element.createValueRange' is undefined)
+FAIL Collapsed range insertion during display:none (textarea) element.createValueRange is not a function. (In 'element.createValueRange(3, 3)', 'element.createValueRange' is undefined)
+FAIL Geometry empty during display:none, restored after (textarea) element.createValueRange is not a function. (In 'element.createValueRange(0, 5)', 'element.createValueRange' is undefined)
+FAIL disconnect() works during display:none (textarea) element.createValueRange is not a function. (In 'element.createValueRange(1, 4)', 'element.createValueRange' is undefined)
+

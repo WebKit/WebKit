@@ -1,0 +1,18 @@
+<p>This tests for a crasher when deleting contents of a table cell. <a href="radr://problem/4845371">&lt;radr://problem/4845371&gt;</a></p>
+<div id="div" contenteditable="true"><table><tr><td>foo <a href="http://www.google.com/">bar</a></td><td>baz</td></tr></table></div>
+
+<script src="../editing.js"></script>
+<script>
+runDumpAsTextEditingTest(true);
+
+function editingTest() {
+    var div = document.getElementById("div");
+    var sel = window.getSelection();
+
+    sel.setPosition(div, 0);
+    moveSelectionForwardByCharacterCommand();
+    extendSelectionForwardByWordCommand();
+    extendSelectionForwardByWordCommand();
+    deleteCommand();
+}
+</script>

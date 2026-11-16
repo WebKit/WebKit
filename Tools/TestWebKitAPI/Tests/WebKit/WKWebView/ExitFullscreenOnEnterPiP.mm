@@ -1,0 +1,191 @@
+/*
+ * Copyright (C) 2018-2024 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#import "config.h"
+
+#if !PLATFORM(IOS_FAMILY_SIMULATOR) && ENABLE(FULLSCREEN_API)
+
+#import "Helpers/DeprecatedGlobalValues.h"
+#import "Helpers/PlatformUtilities.h"
+#import "Helpers/Test.h"
+#import "Helpers/cocoa/HTTPServer.h"
+#import "Helpers/cocoa/SiteIsolationTestUtilities.h"
+#import "Helpers/cocoa/TestNavigationDelegate.h"
+#import "Helpers/cocoa/TestWKWebView.h"
+#import <WebKit/WKPreferencesPrivate.h>
+#import <WebKit/WKUIDelegatePrivate.h>
+#import <WebKit/WKWebViewPrivateForTesting.h>
+#import <WebKit/_WKFullscreenDelegate.h>
+#import <wtf/RetainPtr.h>
+#import <wtf/Seconds.h>
+
+static bool pipDidEnterFullscreen;
+static bool pipDidExitFullscreen;
+
+@interface ExitFullscreenOnEnterPiPUIDelegate : NSObject <WKUIDelegate, _WKFullscreenDelegate>
+@end
+
+@implementation ExitFullscreenOnEnterPiPUIDelegate
+
+- (void)_webView:(WKWebView *)webView hasVideoInPictureInPictureDidChange:(BOOL)value
+{
+    if (value)
+        didEnterPiP = true;
+    else
+        didExitPiP = true;
+}
+
+- (void)_webViewDidEnterFullscreen:(WKWebView *)webView
+{
+    pipDidEnterFullscreen = true;
+}
+
+- (void)_webViewDidExitFullscreen:(WKWebView *)webView
+{
+    pipDidExitFullscreen = true;
+}
+@end
+
+namespace TestWebKitAPI {
+
+TEST(ExitFullscreenOnEnterPiP, VideoFullscreen)
+{
+    RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [configuration preferences].elementFullscreenEnabled = YES;
+    [configuration preferences]._allowsPictureInPictureMediaPlayback = YES;
+    RetainPtr<TestWKWebView> webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 300, 300) configuration:configuration.get() addToWindow:YES]);
+    RetainPtr<ExitFullscreenOnEnterPiPUIDelegate> handler = adoptNS([[ExitFullscreenOnEnterPiPUIDelegate alloc] init]);
+    [webView setUIDelegate:handler.get()];
+    [webView _setFullscreenDelegate:handler.get()];
+
+    [webView synchronouslyLoadTestPageNamed:@"ExitFullscreenOnEnterPiP"];
+
+    pipDidEnterFullscreen = false;
+    [webView evaluateJavaScript:@"document.getElementById('enter-video-fullscreen').click()" completionHandler: nil];
+    TestWebKitAPI::Util::run(&pipDidEnterFullscreen);
+    ASSERT_TRUE(pipDidEnterFullscreen);
+
+    didEnterPiP = false;
+    pipDidExitFullscreen = false;
+    [webView evaluateJavaScript:@"document.getElementById('enter-pip').click()" completionHandler: nil];
+    TestWebKitAPI::Util::run(&didEnterPiP);
+    TestWebKitAPI::Util::run(&pipDidExitFullscreen);
+
+    sleep(1_s); // Wait for PIPAgent to launch, or it won't call -pipDidClose: callback.
+
+    [webView evaluateJavaScript:@"document.getElementById('exit-pip').click()" completionHandler: nil];
+    TestWebKitAPI::Util::run(&didExitPiP);
+}
+
+TEST(ExitFullscreenOnEnterPiP, ElementFullscreen)
+{
+    [[NSUserDefaults standardUserDefaults] registerDefaults:@{
+        @"WebCoreLogging": @"Fullscreen=debug",
+        @"WebKit2Logging": @"Fullscreen=debug",
+    }];
+    RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [configuration preferences].elementFullscreenEnabled = YES;
+    [configuration preferences]._allowsPictureInPictureMediaPlayback = YES;
+    RetainPtr<TestWKWebView> webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 300, 300) configuration:configuration.get() addToWindow:YES]);
+    RetainPtr<ExitFullscreenOnEnterPiPUIDelegate> handler = adoptNS([[ExitFullscreenOnEnterPiPUIDelegate alloc] init]);
+    [webView setUIDelegate:handler.get()];
+    [webView _setFullscreenDelegate:handler.get()];
+
+    [webView synchronouslyLoadTestPageNamed:@"ExitFullscreenOnEnterPiP"];
+
+    [[NSUserDefaults standardUserDefaults] registerDefaults:@{
+        @"WebCoreLogging": @"",
+        @"WebKit2Logging": @"",
+    }];
+
+    pipDidEnterFullscreen = false;
+    [webView evaluateJavaScript:@"document.getElementById('enter-element-fullscreen').click()" completionHandler: nil];
+    ASSERT_TRUE(TestWebKitAPI::Util::runFor(&pipDidEnterFullscreen, 10_s));
+    ASSERT_TRUE(pipDidEnterFullscreen);
+
+    // Make the video the "main content" by playing with a user gesture.
+    __block bool didBeginPlaying = false;
+    [webView performAfterReceivingMessage:@"playing" action:^{ didBeginPlaying = true; }];
+    [webView evaluateJavaScript:@"document.getElementById('play').click()" completionHandler:nil];
+    ASSERT_TRUE(TestWebKitAPI::Util::runFor(&didBeginPlaying, 10_s));
+
+    didEnterPiP = false;
+    pipDidExitFullscreen = false;
+    [webView evaluateJavaScript:@"document.getElementById('enter-pip').click()" completionHandler: nil];
+    ASSERT_TRUE(TestWebKitAPI::Util::runFor(&didEnterPiP, 10_s));
+    ASSERT_TRUE(TestWebKitAPI::Util::runFor(&pipDidExitFullscreen, 10_s));
+
+    sleep(1_s); // Wait for PIPAgent to launch, or it won't call -pipDidClose: callback.
+
+    [webView evaluateJavaScript:@"document.getElementById('exit-pip').click()" completionHandler: nil];
+    ASSERT_TRUE(TestWebKitAPI::Util::runFor(&didExitPiP, 10_s));
+
+}
+
+TEST(ExitFullscreenOnEnterPiP, InitialRectInSiteIsolatedIframe)
+{
+    auto mainFrameHTML = "<body style='margin:0'><iframe src='https://webkit.org/subframe' style='position:absolute; left:50px; top:100px; width:300px; height:200px; border:0'></iframe></body>"_s;
+    auto subFrameHTML = "<body style='margin:0'><video src='/video-with-audio.mp4' playsinline style='display:block; width:200px; height:150px'></video></body>"_s;
+
+    RetainPtr<NSData> videoData = [NSData dataWithContentsOfFile:[NSBundle.test_resourcesBundle pathForResource:@"video-with-audio" ofType:@"mp4"] options:0 error:NULL];
+    HTTPServer server({
+        { "/mainframe"_s, { { { "Content-Type"_s, "text/html"_s } }, mainFrameHTML } },
+        { "/subframe"_s, { { { "Content-Type"_s, "text/html"_s } }, subFrameHTML } },
+        { "/video-with-audio.mp4"_s, { { { "Content-Type"_s, "video/mp4"_s } }, videoData.get() } },
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    RetainPtr configuration = server.httpsProxyConfiguration();
+    [configuration preferences]._allowsPictureInPictureMediaPlayback = YES;
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(configuration, CGRectMake(0, 0, 800, 600));
+    RetainPtr handler = adoptNS([[ExitFullscreenOnEnterPiPUIDelegate alloc] init]);
+    [webView setUIDelegate:handler.get()];
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    RetainPtr childFrame = [webView firstChildFrame];
+    [webView objectByCallingAsyncFunction:@"let video = document.querySelector('video'); if (video.readyState < HTMLMediaElement.HAVE_METADATA) await new Promise(resolve => video.addEventListener('loadedmetadata', resolve, { once: true }));" withArguments:@{ } inFrame:childFrame.get() inContentWorld:WKContentWorld.pageWorld];
+
+    didEnterPiP = false;
+    [webView objectByEvaluatingJavaScriptWithUserGesture:@"document.querySelector('video').webkitSetPresentationMode('picture-in-picture')" inFrame:childFrame.get()];
+    ASSERT_TRUE(TestWebKitAPI::Util::runFor(&didEnterPiP, 10_s));
+
+    // The rect sent to the UI process must be in main frame coordinates, not the iframe's.
+    CGRect initialRect = [webView _lastVideoPresentationSetupRectForTesting];
+    EXPECT_EQ(initialRect.origin.x, 50);
+    EXPECT_EQ(initialRect.origin.y, 100);
+    EXPECT_EQ(initialRect.size.width, 200);
+    EXPECT_EQ(initialRect.size.height, 150);
+
+    sleep(1_s); // Wait for PIPAgent to launch, or it won't call -pipDidClose: callback.
+
+    didExitPiP = false;
+    [webView objectByEvaluatingJavaScriptWithUserGesture:@"document.querySelector('video').webkitSetPresentationMode('inline')" inFrame:childFrame.get()];
+    ASSERT_TRUE(TestWebKitAPI::Util::runFor(&didExitPiP, 10_s));
+}
+
+} // namespace TestWebKitAPI
+
+#endif

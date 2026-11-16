@@ -1,0 +1,4 @@
+
+
+FAIL Input event data for inputType insertFromPaste should be set assert_equals: expected (string) "Copying" but got (undefined) undefined
+

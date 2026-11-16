@@ -1,0 +1,3 @@
+
+PASS isPointInPath() honours the fill rule on a canvas with no bitmap
+

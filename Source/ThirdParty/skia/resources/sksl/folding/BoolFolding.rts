@@ -1,0 +1,39 @@
+uniform half4 colorRed, colorGreen;
+
+bool test() {
+    bool a = 1 == 1 || 2 == 8;
+    bool b = 1 > 1  || 2 == 8;
+    bool c = 1 == 1 && 2 <= 8;
+    bool d = 1 == 2 && 2 == 8;
+    bool e = 1 == 1 ^^ 1 != 1;
+    bool f = 1 == 1 ^^ 1 == 1;
+    bool g = true == true;
+    bool h = false == true;
+    bool i = true == !false;
+    bool j = false == !false;
+
+    const bool TRUE = true;
+    const bool FALSE = false;
+    bool k = all(bool4(1 == 1, !false, 123 > 12, TRUE));       // all are true
+    bool l = all(bool3(TRUE, 1 == 2, true));                   // three out of four are true
+    bool m = any(bool4(true, 1 == 2, true, TRUE));             // three out of four are true
+    bool n = any(bool2(0 == 1, FALSE));                        // none are true
+    bool o = any(not(bool2(0 == 1, FALSE)));                   // all true
+    bool p = all(not(bool4(1 == 1, !false, 123 > 12, TRUE)));  // none are true
+
+    bool q = bool4(true) == bool4(true, true, true, true);
+    bool r = bool4(true) == bool4(true, false, true, true);
+    bool s = bool4(true, true, true, true) == bool4(true);
+    bool t = bool4(true, true, true, false) == bool4(true);
+
+    bool u = (!a == !a);
+    bool v = (!a != !a);
+
+    return a && !b && c && !d && e && !f && g && !h && i && !j && k && !l && m && !n && o && !p
+             && q && !r && s && !t && u && !v;
+}
+
+half4 main(float2 coords) {
+    return test() ? colorGreen : colorRed;
+}
+

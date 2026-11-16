@@ -1,0 +1,259 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns="http://www.w3.org/2000/svg" xmlns:xl="http://www.w3.org/1999/xlink" version="1.1" viewBox="197 75.14389 769.5 405.3561" width="769.5" height="405.3561">
+  <defs>
+    <font-face font-family="Monaco" font-size="14" units-per-em="1000" underline-position="-37.597656" underline-thickness="75.68359" slope="0" x-height="545.41016" cap-height="757.8125" ascent="1e3" descent="-250" font-weight="400">
+      <font-face-src>
+        <font-face-name name="Monaco"/>
+      </font-face-src>
+    </font-face>
+    <font-face font-family="Helvetica Neue" font-size="14" panose-1="2 0 4 3 0 0 0 9 0 4" units-per-em="1000" underline-position="-100" underline-thickness="50" slope="-857.1429" x-height="523" cap-height="721" ascent="951.004" descent="-212.99744" font-style="italic" font-weight="300">
+      <font-face-src>
+        <font-face-name name="HelveticaNeue-LightItalic"/>
+      </font-face-src>
+    </font-face>
+    <font-face font-family="Helvetica Neue" font-size="16" panose-1="2 11 4 3 2 2 2 2 2 4" units-per-em="1000" underline-position="-75" underline-thickness="50" slope="937.5" x-height="514" cap-height="714" ascent="966.9952" descent="-212.99744" font-style="italic" font-weight="300">
+      <font-face-src>
+        <font-face-name name="HelveticaNeue-ThinItalic"/>
+      </font-face-src>
+    </font-face>
+  </defs>
+  <metadata> Produced by OmniGraffle 7.15 
+    <dc:date>2020-04-08 02:43:18 +0000</dc:date>
+  </metadata>
+  <g id="Canvas_1" stroke="none" stroke-dasharray="none" fill-opacity="1" stroke-opacity="1" fill="none">
+    <title>Canvas 1</title>
+    <rect fill="white" x="197" y="75.14389" width="769.5" height="405.3561"/>
+    <g id="Canvas_1: Layer 1">
+      <title>Layer 1</title>
+      <g id="Graphic_2">
+        <rect x="197.5" y="231.348" width="112" height="25" fill="#ccc"/>
+        <rect x="197.5" y="231.348" width="112" height="25" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(202.5 234.26353)" fill="black">
+          <tspan font-family="Monaco" font-size="14" font-weight="400" fill="black" x="0" y="14">foo</tspan>
+        </text>
+      </g>
+      <g id="Graphic_3">
+        <rect x="197.5" y="256.348" width="112" height="25" fill="#ccc"/>
+        <rect x="197.5" y="256.348" width="112" height="25" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(202.5 259.26353)" fill="black">
+          <tspan font-family="Monaco" font-size="14" font-weight="400" fill="black" x="0" y="14">wat</tspan>
+        </text>
+      </g>
+      <g id="Graphic_4">
+        <rect x="197.5" y="281.348" width="112" height="25" fill="#ccc"/>
+        <rect x="197.5" y="281.348" width="112" height="25" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(202.5 284.26353)" fill="black">
+          <tspan font-family="Monaco" font-size="14" font-weight="400" fill="black" x="0" y="14">bar</tspan>
+        </text>
+      </g>
+      <g id="Graphic_5">
+        <rect x="429.5" y="105" width="196" height="25" fill="#c0c0ff"/>
+        <rect x="429.5" y="105" width="196" height="25" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(434.5 107.91553)" fill="black">
+          <tspan font-family="Monaco" font-size="14" font-weight="400" fill="black" x="0" y="14">CheckStructure</tspan>
+        </text>
+      </g>
+      <g id="Graphic_6">
+        <rect x="429.5" y="130" width="196" height="25" fill="#c0c0ff"/>
+        <rect x="429.5" y="130" width="196" height="25" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(434.5 132.91553)" fill="black">
+          <tspan font-family="Monaco" font-size="14" font-weight="400" fill="black" x="0" y="14">GetThingy</tspan>
+        </text>
+      </g>
+      <g id="Graphic_7">
+        <rect x="429.5" y="155" width="196" height="25" fill="#c0c0ff"/>
+        <rect x="429.5" y="155" width="196" height="25" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(434.5 157.91553)" fill="black">
+          <tspan font-family="Monaco" font-size="14" font-weight="400" fill="black" x="0" y="14">Foo</tspan>
+        </text>
+      </g>
+      <g id="Graphic_8">
+        <rect x="429.5" y="180" width="196" height="25" fill="#ffa2a1"/>
+        <rect x="429.5" y="180" width="196" height="25" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(434.5 182.91553)" fill="black">
+          <tspan font-family="Monaco" font-size="14" font-weight="400" fill="black" x="0" y="14">MovHint</tspan>
+        </text>
+      </g>
+      <g id="Graphic_12">
+        <rect x="429.5" y="230" width="196" height="25" fill="#c0c0ff"/>
+        <rect x="429.5" y="230" width="196" height="25" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(434.5 232.91553)" fill="black">
+          <tspan font-family="Monaco" font-size="14" font-weight="400" fill="black" x="0" y="14">CheckArray</tspan>
+        </text>
+      </g>
+      <g id="Graphic_11">
+        <rect x="429.5" y="255" width="196" height="25" fill="#c0c0ff"/>
+        <rect x="429.5" y="255" width="196" height="25" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(434.5 257.91553)" fill="black">
+          <tspan font-family="Monaco" font-size="14" font-weight="400" fill="black" x="0" y="14">Wat</tspan>
+        </text>
+      </g>
+      <g id="Graphic_10">
+        <rect x="429.5" y="280" width="196" height="25" fill="#ffa2a1"/>
+        <rect x="429.5" y="280" width="196" height="25" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(434.5 282.91553)" fill="black">
+          <tspan font-family="Monaco" font-size="14" font-weight="400" fill="black" x="0" y="14">Stuff</tspan>
+        </text>
+      </g>
+      <g id="Graphic_9">
+        <rect x="429.5" y="305" width="196" height="25" fill="#ffa2a1"/>
+        <rect x="429.5" y="305" width="196" height="25" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(434.5 307.91553)" fill="black">
+          <tspan font-family="Monaco" font-size="14" font-weight="400" fill="black" x="0" y="14">Derp</tspan>
+        </text>
+      </g>
+      <g id="Graphic_13">
+        <rect x="429.5" y="355" width="196" height="25" fill="#c0c0ff"/>
+        <rect x="429.5" y="355" width="196" height="25" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(434.5 357.91553)" fill="black">
+          <tspan font-family="Monaco" font-size="14" font-weight="400" fill="black" x="0" y="14">StartBar</tspan>
+        </text>
+      </g>
+      <g id="Graphic_14">
+        <rect x="429.5" y="380" width="196" height="25" fill="#ffa2a1"/>
+        <rect x="429.5" y="380" width="196" height="25" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(434.5 382.91553)" fill="black">
+          <tspan font-family="Monaco" font-size="14" font-weight="400" fill="black" x="0" y="14">MovHint</tspan>
+        </text>
+      </g>
+      <g id="Graphic_15">
+        <rect x="429.5" y="405" width="196" height="25" fill="#ffa2a1"/>
+        <rect x="429.5" y="405" width="196" height="25" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(434.5 407.91553)" fill="black">
+          <tspan font-family="Monaco" font-size="14" font-weight="400" fill="black" x="0" y="14">FinishBar</tspan>
+        </text>
+      </g>
+      <g id="Graphic_16">
+        <rect x="429.5" y="430" width="196" height="25" fill="#ffa2a1"/>
+        <rect x="429.5" y="430" width="196" height="25" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(434.5 432.91553)" fill="black">
+          <tspan font-family="Monaco" font-size="14" font-weight="400" fill="black" x="0" y="14">MovHint</tspan>
+        </text>
+      </g>
+      <g id="Line_17">
+        <line x1="309.5" y1="231.348" x2="429.5" y2="105" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="1.0,4.0" stroke-width="1"/>
+      </g>
+      <g id="Line_18">
+        <line x1="309.5" y1="256.348" x2="429.5" y2="205" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="1.0,4.0" stroke-width="1"/>
+      </g>
+      <g id="Line_19">
+        <line x1="309.5" y1="281.348" x2="429.5" y2="330" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="1.0,4.0" stroke-width="1"/>
+      </g>
+      <g id="Line_20">
+        <line x1="309.5" y1="306.348" x2="429.5" y2="455" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="1.0,4.0" stroke-width="1"/>
+      </g>
+      <g id="Graphic_21">
+        <text transform="translate(555.414 158.608)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="14" font-style="italic" font-weight="300" fill="black" x="0" y="13">has effects</tspan>
+        </text>
+      </g>
+      <g id="Graphic_22">
+        <text transform="translate(555.414 260)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="14" font-style="italic" font-weight="300" fill="black" x="0" y="13">has effects</tspan>
+        </text>
+      </g>
+      <g id="Graphic_24">
+        <text transform="translate(555.414 337.088)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="14" font-style="italic" font-weight="300" fill="black" x="0" y="13">has effects</tspan>
+        </text>
+      </g>
+      <g id="Graphic_25">
+        <text transform="translate(555.414 335.696)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="14" font-style="italic" font-weight="300" fill="black" x="0" y="13">has effects</tspan>
+        </text>
+      </g>
+      <g id="Graphic_26">
+        <text transform="translate(555.414 410)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="14" font-style="italic" font-weight="300" fill="black" x="0" y="13">has effects</tspan>
+        </text>
+      </g>
+      <g id="Graphic_27">
+        <text transform="translate(221.892 205.348)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="16" font-style="italic" font-weight="300" fill="black" x="17053026e-20" y="15">Bytecode</tspan>
+        </text>
+      </g>
+      <g id="Graphic_28">
+        <text transform="translate(503.196 80.14389)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="16" font-style="italic" font-weight="300" fill="black" x="8526513e-20" y="15">DFG IR</tspan>
+        </text>
+      </g>
+      <g id="Graphic_29">
+        <rect x="429.5" y="205" width="196" height="25" fill="#c0c0ff"/>
+        <rect x="429.5" y="205" width="196" height="25" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(434.5 207.91553)" fill="black">
+          <tspan font-family="Monaco" font-size="14" font-weight="400" fill="black" x="0" y="14">InvalidationPoint</tspan>
+        </text>
+      </g>
+      <g id="Graphic_30">
+        <rect x="429.5" y="330" width="196" height="25" fill="#c0c0ff"/>
+        <rect x="429.5" y="330" width="196" height="25" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(434.5 332.91553)" fill="black">
+          <tspan font-family="Monaco" font-size="14" font-weight="400" fill="black" x="0" y="14">InvalidationPoint</tspan>
+        </text>
+      </g>
+      <g id="Graphic_31">
+        <rect x="429.5" y="455" width="196" height="25" fill="#c0c0ff"/>
+        <rect x="429.5" y="455" width="196" height="25" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(434.5 457.91553)" fill="black">
+          <tspan font-family="Monaco" font-size="14" font-weight="400" fill="black" x="0" y="14">InvalidationPoint</tspan>
+        </text>
+      </g>
+      <g id="Graphic_32">
+        <text transform="translate(556.414 284.956)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="14" font-style="italic" font-weight="300" fill="black" x="0" y="13">has effects</tspan>
+        </text>
+      </g>
+      <g id="Graphic_33">
+        <text transform="translate(556.414 310.348)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="14" font-style="italic" font-weight="300" fill="black" x="0" y="13">has effects</tspan>
+        </text>
+      </g>
+      <g id="Graphic_34">
+        <text transform="translate(555.414 359.608)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="14" font-style="italic" font-weight="300" fill="black" x="0" y="13">has effects</tspan>
+        </text>
+      </g>
+      <g id="Graphic_41">
+        <rect x="667" y="347" width="299" height="133" fill="white"/>
+        <path d="M 667 347 L 966 347 L 966 480 L 667 480 Z" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="1.0,4.0" stroke-width="1"/>
+        <text transform="translate(672 352)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="16" font-style="italic" font-weight="300" fill="black" x="119.444" y="15">Legend</tspan>
+        </text>
+      </g>
+      <g id="Graphic_38">
+        <text transform="translate(740 399.804)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="14" font-style="italic" font-weight="300" fill="black" x="0" y="13">Speculation phase (exitOK == true)</tspan>
+        </text>
+      </g>
+      <g id="Graphic_37">
+        <text transform="translate(740 444.304)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="14" font-style="italic" font-weight="300" fill="black" x="0" y="13">Effect phase (exitOK == false)</tspan>
+        </text>
+      </g>
+      <g id="Graphic_42">
+        <rect x="685" y="395.5" width="34.824" height="25" fill="#c0c0ff"/>
+        <rect x="685" y="395.5" width="34.824" height="25" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Graphic_43">
+        <rect x="685" y="440" width="34.824" height="25" fill="#ffa2a1"/>
+        <rect x="685" y="440" width="34.824" height="25" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Graphic_44">
+        <text transform="translate(523.256 183.652)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="14" font-style="italic" font-weight="300" fill="black" x="0" y="13">has OSR effects</tspan>
+        </text>
+      </g>
+      <g id="Graphic_45">
+        <text transform="translate(523.256 383.608)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="14" font-style="italic" font-weight="300" fill="black" x="0" y="13">has OSR effects</tspan>
+        </text>
+      </g>
+      <g id="Graphic_46">
+        <text transform="translate(524.256 434.26)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="14" font-style="italic" font-weight="300" fill="black" x="0" y="13">has OSR effects</tspan>
+        </text>
+      </g>
+    </g>
+  </g>
+</svg>

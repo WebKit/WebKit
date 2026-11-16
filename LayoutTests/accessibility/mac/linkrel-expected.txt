@@ -1,0 +1,10 @@
+This tests that the relationship type of a link can be determined.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS relType is 'copyright'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

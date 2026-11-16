@@ -1,0 +1,15 @@
+Tests that an animated GIF in an out-of-process subframe stops while the page is hidden
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+The page is visible and the frame is inside the viewport, so the image should animate.
+PASS imageIsAnimating became "true"
+Hiding the page.
+PASS imageIsAnimating became "false"
+Showing the page again.
+PASS imageIsAnimating became "true"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

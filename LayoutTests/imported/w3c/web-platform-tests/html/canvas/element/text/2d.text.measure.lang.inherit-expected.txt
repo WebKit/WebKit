@@ -1,0 +1,6 @@
+2d.text.measure.lang.inherit
+Testing the lang attribute
+Actual output:
+
+PASS Testing the lang attribute
+

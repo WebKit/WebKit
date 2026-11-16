@@ -1,0 +1,5 @@
+
+FAIL #test-div 1 assert_equals:
+<div style="height: 100vh; width: 100px; background: orange; box-sizing: border-box; border-top: 3px solid blue; border-bottom: 3px solid blue;" id="test-div" data-expected-height="570"></div>
+height expected 570 but got 600
+

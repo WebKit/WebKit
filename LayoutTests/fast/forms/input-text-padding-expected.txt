@@ -1,0 +1,18 @@
+This test checks that padding applies to text inputs with native appearance.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+PASS getComputedStyle(input1).paddingTop is "22px"
+PASS getComputedStyle(input2).paddingRight is "22px"
+PASS getComputedStyle(input3).paddingBottom is "22px"
+PASS getComputedStyle(input4).paddingLeft is "22px"
+PASS getComputedStyle(input5).paddingBlockStart is "22px"
+PASS getComputedStyle(input6).paddingInlineEnd is "22px"
+PASS getComputedStyle(input7).paddingBlockEnd is "22px"
+PASS getComputedStyle(input8).paddingInlineStart is "22px"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

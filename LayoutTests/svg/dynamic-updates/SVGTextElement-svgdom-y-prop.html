@@ -1,0 +1,37 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="resources/SVGTestCase.js"></script>
+<script src="../../resources/js-test-pre.js"></script>
+<script src="../../fast/repaint/resources/repaint.js"></script>
+</head>
+<body onload="runRepaintTest()">
+<h1>SVG 1.1 dynamic update tests</h1>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+// [Name] SVGTextElement-svgdom-y-prop.js
+// [Expected rendering result] text message at 0x20 - and a series of PASS messages
+
+description("Tests dynamic updates of the 'y' property of the SVGTextElement object")
+createSVGTestCase();
+
+var textElement = createSVGElement("text");
+textElement.setAttribute("x", "0");
+textElement.setAttribute("y", "50");
+textElement.textContent="Text content";
+rootSVGElement.appendChild(textElement);
+
+shouldBe("textElement.y.baseVal.getItem(0).value", "50");
+
+function repaintTest() {
+    textElement.y.baseVal.getItem(0).value = 20;
+    shouldBe("textElement.y.baseVal.getItem(0).value", "20");
+
+    completeTest();
+}
+
+var successfullyParsed = true;
+</script>
+</body>
+</html>

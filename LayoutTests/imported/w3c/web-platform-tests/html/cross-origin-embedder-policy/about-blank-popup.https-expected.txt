@@ -1,0 +1,3 @@
+
+PASS Cross-Origin-Embedder-Policy is inherited by about:blank popup.
+

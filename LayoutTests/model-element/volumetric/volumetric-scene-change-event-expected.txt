@@ -1,0 +1,13 @@
+
+PASS Entering a volumetric scene fires volumetricchange on the model
+PASS Exiting a volumetric scene fires volumetricchange on the model
+PASS volumetricchange bubbles to the document
+PASS The onvolumetricchange event handler is invoked for each change
+PASS Entering and exiting a volumetric scene fires volumetricchange on the portal only
+PASS A rejected request does not fire volumetricchange
+PASS A request cancelled before its scene opens does not fire volumetricchange
+PASS A request rejected because another element is presented does not fire volumetricchange
+PASS Removing a presented portal from the document fires volumetricchange
+PASS Removing a presented model from the document fires volumetricchange on the disconnected model
+PASS Hiding the page fires volumetricchange
+

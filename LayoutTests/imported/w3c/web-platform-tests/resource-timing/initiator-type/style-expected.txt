@@ -1,0 +1,9 @@
+
+This content forces the 'list-style-image' resource to be fetched.
+This content forces the '@font-face' resource to be fetched.
+
+PASS The initiator type for 'background' attributes in <style> elements must be 'css'
+PASS The initiator type for 'cursor' attributes in <style> elements must be 'css'
+PASS The initiator type for 'list-style-image' attributes in <style> elements must be 'css'
+PASS The initiator type for '@font-face' resources must be 'css'
+

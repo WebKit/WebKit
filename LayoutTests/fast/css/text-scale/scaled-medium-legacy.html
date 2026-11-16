@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="text-scale" content="legacy">
+<link rel="help" href="https://drafts.csswg.org/css-fonts-5/#text-scale-meta">
+<script src="../../../resources/testharness.js"></script>
+<script src="../../../resources/testharnessreport.js"></script>
+<script src="resources/text-scale-helpers.js"></script>
+<style>
+#rem { font-size: 1.5rem; }
+#keyword { font-size: x-large; }
+</style>
+</head>
+<body>
+<div id="rem"></div>
+<div id="keyword"></div>
+<script>
+for (const category of ["L", "XXXL"]) {
+    test(t => {
+        setContentSizeCategory(t, category);
+        assert_equals(internals.textScaleMetaMode(), "legacy");
+        assertFontSize(document.documentElement, 16, "root");
+        assertFontSize(document.getElementById("rem"), 24, "1.5rem");
+        assertFontSize(document.getElementById("keyword"), 24, "x-large");
+    }, `Category ${category}: content=legacy does not scale font sizes`);
+
+    test(t => {
+        setContentSizeCategory(t, category);
+        const meta = document.querySelector("meta[name=text-scale]");
+        meta.remove();
+        t.add_cleanup(() => {
+            document.head.appendChild(meta);
+        });
+        assert_equals(internals.textScaleMetaMode(), "legacy");
+        assertFontSize(document.documentElement, 16, "root");
+        assertFontSize(document.getElementById("rem"), 24, "1.5rem");
+        assertFontSize(document.getElementById("keyword"), 24, "x-large");
+    }, `Category ${category}: no text-scale meta does not scale font sizes`);
+}
+</script>
+</body>
+</html>

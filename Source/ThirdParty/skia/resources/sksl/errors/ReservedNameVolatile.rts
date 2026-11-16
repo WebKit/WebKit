@@ -1,0 +1,5 @@
+int volatile;
+
+/*%%*
+name 'volatile' is reserved
+*%%*/

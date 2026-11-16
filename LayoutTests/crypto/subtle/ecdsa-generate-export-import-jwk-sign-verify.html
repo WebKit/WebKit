@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../../resources/js-test.js"></script>
+    <script src="../resources/common.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+description("This test tries to test whether the JWK format exporting/importing methods work as expected." +
+    "To do so, it first generates an EC Key Pair, then exports them into JWKs, then imports them back, and finally uses them to do signature verification.");
+
+jsTestIsAsync = true;
+
+var extractable = true;
+var ecKeyParams = {
+    name: "ECDSA",
+    namedCurve: "P-256",
+}
+var ecdsaParams = {
+    name: "ECDSA",
+    hash: "SHA-256",
+}
+var data = asciiToUint8Array("Hello, World!");
+
+debug("Generating a key pair...");
+crypto.subtle.generateKey(ecKeyParams, extractable, ["verify", "sign"]).then(function(result) {
+    keyPair = result;
+
+    debug("Exporting the private key in Jwk format...");
+    return crypto.subtle.exportKey("jwk", keyPair.privateKey);
+}, failAndFinishJSTest).then(function(result) {
+    jwkPrivateKey = result;
+    shouldBeDefined("jwkPrivateKey.x");
+    shouldBeDefined("jwkPrivateKey.y");
+    shouldBeDefined("jwkPrivateKey.d");
+
+    debug("Importing the JWK private key...");
+    return crypto.subtle.importKey("jwk", jwkPrivateKey, ecKeyParams, extractable, ["sign"]);
+}, failAndFinishJSTest).then(function(privateKey) {
+    debug("Signing the data...");
+    return crypto.subtle.sign(ecdsaParams, privateKey, data);
+}, failAndFinishJSTest).then(function(result) {
+    signature = result;
+    shouldBe("signature.byteLength", "64");
+
+    debug("Exporting the public key in Jwk format...");
+    return crypto.subtle.exportKey("jwk", keyPair.publicKey);
+}, failAndFinishJSTest).then(function(result) {
+    jwkPublicKey = result;
+    shouldBeDefined("jwkPublicKey.x");
+    shouldBeDefined("jwkPublicKey.y");
+
+    debug("Importing the JWK public key...");
+    return crypto.subtle.importKey("jwk", jwkPublicKey, ecKeyParams, extractable, ["verify"]);
+}, failAndFinishJSTest).then(function(publicKey) {
+    debug("Verifying the signature...");
+    return crypto.subtle.verify(ecdsaParams, publicKey, signature, data);
+}, failAndFinishJSTest).then(function(result) {
+    verified = result;
+
+    shouldBeTrue("verified");
+
+    finishJSTest();
+}, failAndFinishJSTest);
+</script>
+</body>
+</html>

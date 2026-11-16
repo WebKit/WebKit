@@ -1,0 +1,11 @@
+This test verifies that tapping a color input and selecting a color using the color picker updates element's value.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS input.value is "#000000"
+PASS input.value is "#ff0000"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

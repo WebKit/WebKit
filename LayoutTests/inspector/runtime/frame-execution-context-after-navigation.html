@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+var passphrase = "main-frame";
+
+function navigateSubframe() {
+    document.getElementById("subframe").src = "resources/frame-execution-context.html?after-navigation";
+}
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("Frame.ExecutionContextAfterNavigation");
+
+    function evaluatePassphrase() {
+        return new Promise((resolve, reject) => {
+            WI.runtimeManager.evaluateInInspectedWindow("passphrase", {objectGroup: "test"}, (remoteObject, wasThrown) => {
+                if (!remoteObject || wasThrown) {
+                    reject(new Error("Failed to evaluate the passphrase in the selected execution context."));
+                    return;
+                }
+
+                resolve(remoteObject.value);
+            });
+        });
+    }
+
+    suite.addTestCase({
+        name: "Frame.ExecutionContextAfterNavigation.ReplacePreviousContext",
+        description: "Navigating a frame should replace its previous page execution context.",
+        async test() {
+            let mainFrame = WI.networkManager.mainFrame;
+            let subframes = WI.networkManager.frames.filter((frame) => frame !== mainFrame);
+            InspectorTest.expectEqual(subframes.length, 1, "The test page should have one subframe.");
+
+            let subframe = subframes[0];
+            let previousExecutionContext = subframe.pageExecutionContext;
+            InspectorTest.expectNotNull(previousExecutionContext, "The subframe should have an initial page execution context.");
+
+            WI.runtimeManager.activeExecutionContext = previousExecutionContext;
+            InspectorTest.expectEqual(await evaluatePassphrase(), "before-navigation", "Evaluation should use the initial page execution context.");
+
+            let executionContextAddedPromise = new Promise((resolve) => {
+                let listener = subframe.addEventListener(WI.Frame.Event.ExecutionContextAdded, (event) => {
+                    let {context} = event.data;
+                    if (context.type !== WI.ExecutionContext.Type.Normal || context.id === previousExecutionContext.id)
+                        return;
+
+                    subframe.removeEventListener(WI.Frame.Event.ExecutionContextAdded, listener);
+                    resolve(context);
+                });
+            });
+
+            let [, newExecutionContext] = await Promise.all([
+                subframe.awaitEvent(WI.Frame.Event.MainResourceDidChange),
+                executionContextAddedPromise,
+                InspectorTest.evaluateInPage(`navigateSubframe()`),
+            ]);
+
+            InspectorTest.expectNotEqual(newExecutionContext.id, previousExecutionContext.id, "The navigated frame should have a new execution context identifier.");
+            InspectorTest.expectEqual(subframe.pageExecutionContext, newExecutionContext, "The new execution context should become the page execution context.");
+            InspectorTest.expectFalse(subframe.executionContextList.contexts.includes(previousExecutionContext), "The previous execution context should no longer belong to the frame.");
+            InspectorTest.expectTrue(subframe.executionContextList.contexts.includes(newExecutionContext), "The new execution context should belong to the frame.");
+
+            WI.runtimeManager.activeExecutionContext = newExecutionContext;
+            InspectorTest.expectEqual(await evaluatePassphrase(), "after-navigation", "Evaluation should use the new page execution context.");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<iframe id="subframe" src="resources/frame-execution-context.html"></iframe>
+<p>Tests that navigating a frame replaces its page execution context.</p>
+</body>
+</html>
+

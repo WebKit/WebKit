@@ -1,0 +1,20 @@
+Tests that resources loaded over https have certificate information under Site Isolation, in the main frame and in a cross-origin iframe.
+
+
+== Running test suite: SiteIsolation.Network.Resource.Security.Certificate
+-- Running test case: SiteIsolation.Network.Resource.Security.Certificate.MainFrame
+PASS: Resource should belong to the main frame.
+PASS: Resource should have been loaded securely.
+PASS: Security information should include certificate information.
+Subject: WebKit Layout Tests
+PASS: Certificate should have a validFrom date.
+PASS: Certificate should have a validUntil date.
+
+-- Running test case: SiteIsolation.Network.Resource.Security.Certificate.CrossOriginIFrame
+PASS: Resource should not belong to the main frame.
+PASS: Resource should have been loaded securely.
+PASS: Security information should include certificate information.
+Subject: WebKit Layout Tests
+PASS: Certificate should have a validFrom date.
+PASS: Certificate should have a validUntil date.
+

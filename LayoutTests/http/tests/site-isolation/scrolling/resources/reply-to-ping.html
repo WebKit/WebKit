@@ -1,0 +1,9 @@
+<body style="margin: 0; height: 10000px;">
+<script>
+onload = () => parent.postMessage("loaded", "*");
+onmessage = (event) => {
+    if (event.data === "ping")
+        parent.postMessage("pong", "*");
+};
+</script>
+</body>

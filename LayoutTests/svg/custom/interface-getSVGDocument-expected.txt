@@ -1,0 +1,8 @@
+Test: getSVGDocument on iframe, embed, frame and object elements
+
+
+PASS Testing getSVGDocument on iframe
+PASS Testing getSVGDocument on embed
+PASS Testing getSVGDocument on object
+PASS Testing getSVGDocument on frame (should not be exposed)
+

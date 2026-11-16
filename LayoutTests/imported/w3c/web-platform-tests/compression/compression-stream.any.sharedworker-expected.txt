@@ -1,0 +1,15 @@
+
+PASS CompressionStream constructor should throw on invalid format
+PASS deflate empty data should be reinflated back to its origin
+PASS deflate small amount data should be reinflated back to its origin
+PASS deflate large amount data should be reinflated back to its origin
+PASS deflate-raw empty data should be reinflated back to its origin
+PASS deflate-raw small amount data should be reinflated back to its origin
+PASS deflate-raw large amount data should be reinflated back to its origin
+PASS gzip empty data should be reinflated back to its origin
+PASS gzip small amount data should be reinflated back to its origin
+PASS gzip large amount data should be reinflated back to its origin
+PASS brotli empty data should be reinflated back to its origin
+PASS brotli small amount data should be reinflated back to its origin
+PASS brotli large amount data should be reinflated back to its origin
+

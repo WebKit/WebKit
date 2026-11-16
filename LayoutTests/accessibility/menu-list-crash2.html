@@ -1,0 +1,51 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+<script src="../resources/ui-helper.js"></script>
+</head>
+<body>
+
+TEST
+<div id="content">
+
+<select id="menulist">
+  <option selected>One</option>
+  <option>Two</option>
+  <option>Three</option>
+</select>
+
+</div>
+TEST
+
+<script>
+var testOutput = "This tests that there's no crash if we hide menu list and then try to access accessibility information.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    const menulist = document.getElementById("menulist");
+    menulist.selectedIndex = 1;
+
+    var axMenulist = accessibilityController.accessibleElementById("menulist");
+    const initialRole = axMenulist.role;
+    testOutput += `Role before removal: ${initialRole}\n`;
+
+    setTimeout(async function() {
+        menulist.style.display = "none";
+        await UIHelper.renderingUpdate();
+
+        await waitFor(() => axMenulist.isIgnored);
+
+        // Don't crash!
+        testOutput += `Role after becoming ignored: ${axMenulist.role}\n`;
+
+        debug(testOutput);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>
+

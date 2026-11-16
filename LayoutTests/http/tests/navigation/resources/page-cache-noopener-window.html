@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script>
+const params = new URLSearchParams(location.search);
+const channelName = params.get("channel");
+const crossSiteURL = params.get("crossSiteURL");
+
+window.addEventListener("pageshow", function(event) {
+    if (!sessionStorage.getItem("navigatedCrossSite")) {
+        sessionStorage.setItem("navigatedCrossSite", "1");
+        // A navigation from the load event would not create a history entry.
+        setTimeout(function() {
+            location.href = crossSiteURL;
+        }, 0);
+        return;
+    }
+
+    // Reached by restoring this document from the back/forward cache, or by
+    // reloading it, which is the failure these tests look for. The result is
+    // reported from a page on the test's own origin, which a BroadcastChannel
+    // from here cannot always reach.
+    sessionStorage.removeItem("navigatedCrossSite");
+    setTimeout(function() {
+        location.href = "http://127.0.0.1:8000/navigation/resources/report-pageshow-persisted.html?channel="
+            + encodeURIComponent(channelName) + "&persisted=" + event.persisted;
+    }, 0);
+}, false);
+</script>
+</body>
+</html>

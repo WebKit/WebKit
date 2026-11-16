@@ -1,0 +1,41 @@
+<!DOCTYPE HTML><!-- webkit-test-runner [ IsAriaLiveRegionManagementEnabled=true ] -->
+<html>
+<head>
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/accessibility-helper.js"></script>
+<meta http-equiv="content-language" content="en">
+</head>
+<body>
+
+<div id="text-region" aria-live="polite" aria-relevant="text">Initial text</div>
+
+<script>
+var output = "This tests that aria-relevant=text properly announces when setting textContent on a live region.\n\n";
+var testFinished = false;
+
+function notificationCallback(object, notification, userInfo) {
+    if (notification == "AXAnnouncementRequested") {
+        output += `Received announcement request:\n`;
+        output += formatAnnouncementUserInfo(userInfo);
+        output += `\n`;
+        testFinished = true;
+    }
+}
+
+if (accessibilityController) {
+    window.jsTestIsAsync = true;
+    accessibilityController.addNotificationListener(notificationCallback);
+    accessibilityController.accessibleElementById("text-region");
+
+    document.getElementById("text-region").textContent = "New Content";
+
+    setTimeout(async function() {
+        await waitFor(() => testFinished);
+        accessibilityController.removeNotificationListener();
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

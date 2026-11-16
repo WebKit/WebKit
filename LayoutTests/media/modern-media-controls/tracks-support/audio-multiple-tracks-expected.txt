@@ -1,0 +1,19 @@
+Check that the tracks button is shown if there's more than one audio track.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS shadowRoot.querySelector('button.overflow') became different from null
+PASS shadowRoot.querySelector('button.overflow').getBoundingClientRect().width became different from 0
+Tapping overflow button...
+PASS contextmenu.some((item) => item.title === 'Playback Speed') is true
+Dismissing contextmenu...
+PASS shadowRoot.querySelector('button.tracks') became different from null
+PASS shadowRoot.querySelector('button.tracks').getBoundingClientRect().width became different from 0
+Tapping tracks button...
+PASS contextmenu.some((item) => item.title === 'Languages') is true
+Dismissing contextmenu...
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

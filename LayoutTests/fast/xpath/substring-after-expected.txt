@@ -1,0 +1,14 @@
+Test for bug 15437 (http://bugs.webkit.org/show_bug.cgi?id=15437): XPath substring-after function is broken.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS document.evaluate("substring-after('abcde', 'd')", document, null, XPathResult.STRING_TYPE, null).stringValue is 'e'
+PASS document.evaluate("substring-after('abcde', 'f')", document, null, XPathResult.STRING_TYPE, null).stringValue is ''
+PASS document.evaluate("substring-after('abcde', '')", document, null, XPathResult.STRING_TYPE, null).stringValue is 'abcde'
+PASS document.evaluate("substring-after('1999/04/01', '/')", document, null, XPathResult.STRING_TYPE, null).stringValue is '04/01'
+PASS document.evaluate("substring-after('1999/04/01', '19')", document, null, XPathResult.STRING_TYPE, null).stringValue is '99/04/01'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

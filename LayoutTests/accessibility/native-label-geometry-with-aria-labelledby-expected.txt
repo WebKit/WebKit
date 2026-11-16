@@ -1,0 +1,12 @@
+This test ensures an input that has both aria-labelledby pointing to a visually-hidden element, and a native label with visible geometry, gets geometry from the native label.
+
+PASS: radioInput.width >= 195 === true
+PASS: radioInput.height >= 45 === true
+PASS: Math.abs(radioInput.pageX - 8) <= 2 === true
+PASS: Math.abs(radioInput.pageY - 8) <= 2 === true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+Sky Blue

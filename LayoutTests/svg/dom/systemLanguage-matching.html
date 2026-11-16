@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<title>systemLanguage matches only the primary user language, with parent-tag synthesis</title>
+<script src="../../resources/js-test.js"></script>
+<svg id="svg" width="400" height="400" style="position: absolute; top: -9999px;">
+</svg>
+<script>
+description("systemLanguage matches against the same primary user language that navigator.language exposes. Parent language tags are synthesized from the primary language per the SVG2 5.6.5 implementation note.");
+
+const svgNS = "http://www.w3.org/2000/svg";
+const svg = document.getElementById("svg");
+let savedLanguages;
+
+function isRendered(el) {
+    const bbox = el.getBoundingClientRect();
+    return bbox.width > 0 && bbox.height > 0;
+}
+
+function createRect(systemLanguage) {
+    const rect = document.createElementNS(svgNS, "rect");
+    rect.setAttribute("width", "10");
+    rect.setAttribute("height", "10");
+    rect.setAttribute("systemLanguage", systemLanguage);
+    svg.appendChild(rect);
+    return rect;
+}
+
+function setLanguages(langs) {
+    while (svg.firstChild)
+        svg.removeChild(svg.firstChild);
+    internals.setUserPreferredLanguages(langs);
+}
+
+function cleanup() {
+    while (svg.firstChild)
+        svg.removeChild(svg.firstChild);
+    internals.setUserPreferredLanguages(savedLanguages);
+}
+
+if (window.internals) {
+    savedLanguages = internals.userPreferredLanguages();
+
+    debug("--- User language en-US: parent-tag synthesis matches en, en-US, en-Latn-US ---");
+
+    setLanguages(["en-US"]);
+    shouldBeTrue('isRendered(createRect("en"))');
+    shouldBeTrue('isRendered(createRect("en-US"))');
+    shouldBeTrue('isRendered(createRect("en-Latn-US"))');
+    shouldBeFalse('isRendered(createRect("eng"))');
+    shouldBeFalse('isRendered(createRect("fr"))');
+
+    debug("");
+    debug("--- User language zh-Hans-CN: parent-tag synthesis matches zh, zh-Hans, zh-Hans-CN ---");
+
+    setLanguages(["zh-Hans-CN"]);
+    shouldBeTrue('isRendered(createRect("zh"))');
+    shouldBeTrue('isRendered(createRect("zh-Hans"))');
+    shouldBeTrue('isRendered(createRect("zh-Hans-CN"))');
+    // FIXME: RFC 4647 Basic Filtering with parent language tags causes "zh" to
+    // match "zh-Hant" even when the user prefers "zh-Hans". Extended Filtering
+    // (RFC 4647 3.3.2) would be script-aware but SVG2 specifies Basic Filtering.
+    // This matches Chrome and Firefox behavior.
+    shouldBeTrue('isRendered(createRect("zh-Hant"))');
+
+    debug("");
+    debug("--- Privacy: only the primary user language is matched, not secondary preferences ---");
+
+    setLanguages(["fr-FR", "en-US", "ja-JP"]);
+    // Primary "fr-FR" — matches and synthesizes parent "fr".
+    shouldBeTrue('isRendered(createRect("fr"))');
+    shouldBeTrue('isRendered(createRect("fr-FR"))');
+    // Secondary "en-US" — must NOT match. Matching would let a page probe the
+    // user's preference list with finer granularity than navigator.languages.
+    shouldBeFalse('isRendered(createRect("en"))');
+    shouldBeFalse('isRendered(createRect("en-US"))');
+    // Tertiary "ja-JP" — must NOT match for the same reason.
+    shouldBeFalse('isRendered(createRect("ja"))');
+    shouldBeFalse('isRendered(createRect("ja-JP"))');
+
+    cleanup();
+} else {
+    testFailed("This test requires window.internals");
+}
+</script>

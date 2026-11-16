@@ -1,0 +1,35 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/fetch/orb/resources/data.json
+/LayoutTests/imported/w3c/web-platform-tests/fetch/orb/resources/data_non_ascii.json
+/LayoutTests/imported/w3c/web-platform-tests/fetch/orb/resources/empty.json
+/LayoutTests/imported/w3c/web-platform-tests/fetch/orb/resources/font.ttf
+/LayoutTests/imported/w3c/web-platform-tests/fetch/orb/resources/image.png
+/LayoutTests/imported/w3c/web-platform-tests/fetch/orb/resources/js-unlabeled-utf16-without-bom.json
+/LayoutTests/imported/w3c/web-platform-tests/fetch/orb/resources/js-unlabeled.js
+/LayoutTests/imported/w3c/web-platform-tests/fetch/orb/resources/png-mislabeled-as-html.png
+/LayoutTests/imported/w3c/web-platform-tests/fetch/orb/resources/png-mislabeled-as-html.png.headers
+/LayoutTests/imported/w3c/web-platform-tests/fetch/orb/resources/png-unlabeled.png
+/LayoutTests/imported/w3c/web-platform-tests/fetch/orb/resources/script-asm-js-invalid.js
+/LayoutTests/imported/w3c/web-platform-tests/fetch/orb/resources/script-asm-js-valid.js
+/LayoutTests/imported/w3c/web-platform-tests/fetch/orb/resources/script-iso-8559-1.js
+/LayoutTests/imported/w3c/web-platform-tests/fetch/orb/resources/script-utf16-bom.js
+/LayoutTests/imported/w3c/web-platform-tests/fetch/orb/resources/script-utf16-without-bom.js
+/LayoutTests/imported/w3c/web-platform-tests/fetch/orb/resources/script.js
+/LayoutTests/imported/w3c/web-platform-tests/fetch/orb/resources/sound.mp3
+/LayoutTests/imported/w3c/web-platform-tests/fetch/orb/resources/text.txt
+/LayoutTests/imported/w3c/web-platform-tests/fetch/orb/resources/utils.js

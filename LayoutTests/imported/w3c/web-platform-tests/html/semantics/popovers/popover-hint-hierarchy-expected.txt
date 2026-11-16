@@ -1,0 +1,7 @@
+
+PASS Opening a hint popover will not hide unrelated auto popovers.
+PASS Opening a hint popover closes only other non-ancestor hint popovers.
+PASS Clicking outside consistently closes both auto and hint popovers.
+PASS Hiding an auto popover closes only its child popovers.
+PASS Opening an auto popover inside a hint popover is allowed and it downgrades to hint.
+

@@ -1,0 +1,1 @@
+Fetched manifest: http://localhost:8800/WebKit/content-security-policy/manifest.json, success: false

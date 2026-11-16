@@ -1,0 +1,252 @@
+/*
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+div#attachment-container {
+#if (defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY)
+#if (defined(WTF_PLATFORM_VISION) && WTF_PLATFORM_VISION)
+    --icon-margin: 8px;
+    --information-margin-end: 8px;
+    --width: 187px;
+#else
+    --icon-margin: 10px;
+    --information-margin-end: 26px;
+    --width: 338px;
+#endif
+    gap: 0;
+#else
+    --icon-margin: 14px;
+    gap: 4px;
+    --information-margin-end: 24px;
+    --width: 266px;
+#endif
+    --min-height: calc(var(--icon-size) + var(--icon-margin) * 2);
+    width: var(--width);
+    min-height: var(--min-height);
+    background-color: canvas;
+    border-radius: 8px;
+    font: caption;
+    direction: inherit;
+    text-align: start;
+    pointer-events: none;
+    user-select: none;
+    -webkit-user-select: none;
+    display: flex;
+}
+
+div#attachment-container.attachment-has-selection {
+    background-color: -apple-system-selected-text-background;
+}
+
+div#attachment-container.attachment-selection-continues-left {
+    border-top-left-radius: 0px;
+    border-bottom-left-radius: 0px;
+}
+
+div#attachment-container.attachment-selection-continues-right {
+    border-top-right-radius: 0px;
+    border-bottom-right-radius: 0px;
+}
+
+/* This div is needed to blend the transparent background color *over* the opaque container above. */
+div#attachment-background {
+#if (defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY)
+    background-color: -apple-system-quaternary-fill;
+#else
+    background-color: -apple-system-tertiary-fill;
+#endif
+    width: 100%;
+    border-radius: 8px;
+    display: flex;
+}
+
+div#attachment-preview-area {
+    display: grid;
+    align-items: center;
+    justify-items: end;
+    flex-shrink: 0;
+    margin: var(--icon-margin);
+}
+
+img#attachment-icon,
+div#attachment-placeholder,
+div#attachment-progress {
+    grid-area: 1 / 1;
+    align-self: center;
+    justify-self: center;
+}
+
+div#attachment-placeholder,
+div#attachment-progress {
+    width: calc(3/4 * var(--icon-size));
+    height: calc(3/4 * var(--icon-size));
+}
+
+img#attachment-icon {
+    max-width: var(--icon-size);
+    max-height: var(--icon-size);
+    object-fit: contain;
+}
+
+div#attachment-placeholder {
+    /* SF Symbol arrow.down.circle from https://copysfsymbols.apple.com, Regular */
+    mask-image: url('data:image/svg+xml,<svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><path d="M29.8071921,59.7070694 C45.9793308,59.7070694 59.4061427,46.3108516 59.4061427,30.1387129 C59.4061427,13.9665149 45.9486179,0.570297031 29.7764199,0.570297031 C13.6287565,0.570297031 0.238811882,13.9665149 0.238811882,30.1387129 C0.238811882,46.3108516 13.6594693,59.7070694 29.8071921,59.7070694 Z M29.8071921,54.7956773 C16.152202,54.7956773 5.20540991,43.8244159 5.20540991,30.1387129 C5.20540991,16.4529505 16.1214297,5.48168318 29.7764199,5.48168318 C43.4621823,5.48168318 54.4641625,16.4529505 54.4641625,30.1387129 C54.4641625,43.8244159 43.4928951,54.7956773 29.8071921,54.7956773 Z M29.8071921,15.3724159 C28.5699446,15.3724159 27.6526575,16.283406 27.6526575,17.5269505 L27.6526575,32.0522377 L27.8804198,38.1703961 L24.9597268,34.6780991 L21.5166773,31.1980397 C21.1471129,30.8284753 20.5993901,30.5700001 19.9776476,30.5700001 C18.7774099,30.5700001 17.8664198,31.4809902 17.8664198,32.6749307 C17.8664198,33.2659605 18.0634099,33.7829704 18.4574495,34.1707129 L28.1269545,43.8157426 C28.7299248,44.3942377 29.1916872,44.6220001 29.8071921,44.6220001 C30.4841822,44.6220001 30.9704199,44.3635248 31.5181426,43.8157426 L41.1939446,34.1707129 C41.5879842,33.7829704 41.7849743,33.2659605 41.7849743,32.6749307 C41.7849743,31.4809902 40.8432119,30.5700001 39.6737466,30.5700001 C39.052004,30.5700001 38.5042813,30.7977624 38.1347169,31.1980397 L34.7224397,34.6780991 L31.7646773,38.207406 L31.9924397,32.0522377 L31.9924397,17.5269505 C31.9924397,16.283406 31.0814496,15.3724159 29.8071921,15.3724159 Z" transform="translate(2 2)"></path></svg>');
+    mask-repeat: no-repeat;
+    mask-position: center;
+    background-color: -apple-system-label;
+}
+
+div#attachment-progress {
+    border-radius: 50%;
+    color: -apple-system-secondary-label;
+    background: conic-gradient(currentcolor calc(var(--progress) * 100%), transparent 0);
+}
+
+/* FIXME: Move the border into attachment-progress above, and remove this div, when rdar://107621207 is fixed (currently it produces artifacts at the edges). */
+div#attachment-progress::before {
+    content: "";
+    display: block;
+    width: 100%;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    border: 4px solid currentcolor;
+    box-sizing: border-box;
+}
+
+div#attachment-information-area {
+    display: flex;
+    align-items: center;
+    flex: 1 1;
+    margin-inline-end: var(--information-margin-end);
+}
+
+div#attachment-information-block {
+    display: grid;
+    width: 100%;
+}
+
+div#attachment-action {
+#if (defined(WTF_PLATFORM_VISION) && WTF_PLATFORM_VISION)
+    font-size: x-small;
+#else
+    font-size: small;
+#endif
+    grid-row: 1;
+    grid-column: 1;
+    justify-self: stretch;
+    font-weight: bold;
+    color: -apple-system-secondary-label;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    overflow: hidden;
+    -webkit-box-orient: vertical;
+}
+
+div#attachment-title {
+#if (defined(WTF_PLATFORM_VISION) && WTF_PLATFORM_VISION)
+    font-size: x-small;
+#else
+    font-size: small;
+#endif
+    grid-row: 2;
+    grid-column: 1;
+    justify-self: stretch;
+    font-weight: bold;
+    color: -apple-system-label;
+    overflow-wrap: anywhere;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
+    -webkit-box-orient: vertical;
+}
+
+div#attachment-subtitle {
+#if (defined(WTF_PLATFORM_VISION) && WTF_PLATFORM_VISION)
+    font-size: xx-small;
+#else
+    font-size: x-small;
+#endif
+    grid-row: 3;
+    grid-column: 1;
+    justify-self: stretch;
+    color: -apple-system-secondary-label;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    overflow: hidden;
+    -webkit-box-orient: vertical;
+}
+
+div#attachment-save-area {
+    grid-row: 1 / 4;
+    grid-column: 2;
+    justify-self: end;
+    align-self: center;
+    margin-inline-start: 10px;
+}
+
+button#attachment-save-button {
+#if (defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY)
+#if (defined(WTF_PLATFORM_VISION) && WTF_PLATFORM_VISION)
+    width: 28px;
+    height: 28px;
+#else
+    width: 40px;
+    height: 40px;
+#endif
+    background-color: -apple-system-tertiary-fill;
+    border: 0;
+#else
+    width: 28px;
+    height: 28px;
+    background-color: unset;
+    color: -apple-system-quaternary-label;
+    border: 1px solid;
+#endif
+    border-radius: 50%;
+    padding: 0;
+    pointer-events: initial;
+}
+
+button#attachment-save-button::before {
+#if (defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY)
+#if (defined(WTF_PLATFORM_VISION) && WTF_PLATFORM_VISION)
+    --mask-size: 14px;
+#else
+    --mask-size: 18px;
+#endif
+    background-color: -apple-system-blue;
+#else
+    --mask-size: 14px;
+    background-color: -apple-system-secondary-label;
+#endif
+    content: "";
+    display: block;
+    /* SF Symbol square-and-arrow-down from https://copysfsymbols.apple.com/bold.html */
+    mask-image: url('data:image/svg+xml,<svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><path d="M9.70427779,59.5060001 L41.1172223,59.5060001 C47.3186112,59.5060001 50.6939445,56.1251112 50.6939445,49.9771805 L50.6939445,23.9525556 C50.6939445,17.8017778 47.3186112,14.4237778 41.1172223,14.4237778 L33.7676667,14.4237778 L33.7676667,21.4344445 L40.3501667,21.4344445 C42.5082223,21.4344445 43.6961112,22.5026667 43.6961112,24.7991667 L43.6961112,49.1306001 C43.6961112,51.4430056 42.5082223,52.4924612 40.3501667,52.4924612 L10.4713889,52.4924612 C8.28600001,52.4924612 7.1253889,51.4430056 7.1253889,49.1306001 L7.1253889,24.7991667 C7.1253889,22.5026667 8.28600001,21.4344445 10.4713889,21.4344445 L17.038,21.4344445 L17.038,14.4237778 L9.70427779,14.4237778 C3.51883334,14.4237778 0.127777778,17.7960556 0.127777778,23.9525556 L0.127777778,49.9771805 C0.127777778,56.1308334 3.51883334,59.5060001 9.70427779,59.5060001 Z M25.4028334,42.3922778 C26.2584445,42.3922778 27.0635,42.1008334 27.8845,41.2957223 L36.8785001,32.6482223 C37.4297223,32.1128889 37.7371112,31.5327778 37.7371112,30.7405556 C37.7371112,29.1907778 36.4414445,28.1172778 35.0055556,28.1172778 C34.2292778,28.1172778 33.4977223,28.4433334 32.9623889,29.0263334 L29.6885556,32.5067223 L28.1213889,34.6002778 L28.5527223,30.6265001 L28.5527223,3.32666667 C28.5527223,1.66016667 27.1617223,0.224444445 25.4028334,0.224444445 C23.6598334,0.224444445 22.2688334,1.66016667 22.2688334,3.32666667 L22.2688334,30.6265001 L22.7001667,34.6031112 L21.1301111,32.5067223 L17.8534445,29.0263334 C17.3209445,28.4433334 16.5735,28.1172778 15.7972778,28.1172778 C14.3584445,28.1172778 13.0816111,29.1907778 13.0816111,30.7405556 C13.0816111,31.5327778 13.3889445,32.1128889 13.9242778,32.6482223 L22.9211667,41.2957223 C23.7552223,42.1008334 24.5631112,42.3922778 25.4028334,42.3922778 Z" transform="translate(6.444 2)"></path></svg>');
+    mask-repeat: no-repeat;
+    mask-size: var(--mask-size);
+    /* Slight vertical adjustment for better optical centering. (64 is the SVG natural size) */
+    mask-position: 50% calc(50% - (6/64) * var(--mask-size));
+    width: 100%;
+    height: 100%;
+}

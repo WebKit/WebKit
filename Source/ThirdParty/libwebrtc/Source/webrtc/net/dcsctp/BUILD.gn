@@ -1,0 +1,87 @@
+# Copyright (c) 2021 The WebRTC project authors. All Rights Reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS.  All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+import("../../webrtc.gni")
+
+if (rtc_include_tests) {
+  rtc_test_suite("dcsctp_unittests") {
+    tests = [
+      "common:math_test",
+      "common:sequence_numbers_test",
+      "fuzzers:dcsctp_fuzzers_test",
+      "packet:abort_chunk_test",
+      "packet:add_incoming_streams_request_parameter_test",
+      "packet:add_outgoing_streams_request_parameter_test",
+      "packet:bounded_byte_reader_test",
+      "packet:bounded_byte_writer_test",
+      "packet:chunk_validators_test",
+      "packet:cookie_ack_chunk_test",
+      "packet:cookie_echo_chunk_test",
+      "packet:cookie_received_while_shutting_down_cause_test",
+      "packet:crc32c_test",
+      "packet:data_chunk_test",
+      "packet:error_chunk_test",
+      "packet:forward_tsn_chunk_test",
+      "packet:forward_tsn_supported_parameter_test",
+      "packet:heartbeat_ack_chunk_test",
+      "packet:heartbeat_request_chunk_test",
+      "packet:idata_chunk_test",
+      "packet:iforward_tsn_chunk_test",
+      "packet:incoming_ssn_reset_request_parameter_test",
+      "packet:init_ack_chunk_test",
+      "packet:init_chunk_test",
+      "packet:invalid_mandatory_parameter_cause_test",
+      "packet:invalid_stream_identifier_cause_test",
+      "packet:missing_mandatory_parameter_cause_test",
+      "packet:no_user_data_cause_test",
+      "packet:out_of_resource_error_cause_test",
+      "packet:outgoing_ssn_reset_request_parameter_test",
+      "packet:parameter_test",
+      "packet:protocol_violation_cause_test",
+      "packet:reconfig_chunk_test",
+      "packet:reconfiguration_response_parameter_test",
+      "packet:restart_of_an_association_with_new_address_cause_test",
+      "packet:sack_chunk_test",
+      "packet:sctp_packet_test",
+      "packet:shutdown_ack_chunk_test",
+      "packet:shutdown_chunk_test",
+      "packet:shutdown_complete_chunk_test",
+      "packet:ssn_tsn_reset_request_parameter_test",
+      "packet:stale_cookie_error_cause_test",
+      "packet:state_cookie_parameter_test",
+      "packet:supported_extensions_parameter_test",
+      "packet:tlv_trait_test",
+      "packet:unrecognized_chunk_type_cause_test",
+      "packet:unrecognized_parameter_cause_test",
+      "packet:unresolvable_address_cause_test",
+      "packet:user_initiated_abort_cause_test",
+      "packet:zero_checksum_acceptable_chunk_parameter_test",
+      "public:mock_dcsctp_socket_test",
+      "public:types_test",
+      "rx:data_tracker_test",
+      "rx:interleaved_reassembly_streams_test",
+      "rx:reassembly_queue_test",
+      "rx:traditional_reassembly_streams_test",
+      "socket:dcsctp_socket_network_test",
+      "socket:dcsctp_socket_test",
+      "socket:heartbeat_handler_test",
+      "socket:packet_sender_test",
+      "socket:state_cookie_test",
+      "socket:stream_reset_handler_test",
+      "socket:transmission_control_block_test",
+      "timer:task_queue_timeout_test",
+      "timer:timer_test",
+      "tx:outstanding_data_test",
+      "tx:retransmission_error_counter_test",
+      "tx:retransmission_queue_test",
+      "tx:retransmission_timeout_test",
+      "tx:rr_send_queue_test",
+      "tx:stream_scheduler_test",
+    ]
+  }
+}

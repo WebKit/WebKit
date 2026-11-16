@@ -1,0 +1,6 @@
+
+Harness Error (FAIL), message = Timeout while running cleanup for test named "promise_test with asynchronous cleanup".
+
+PASS promise_test with asynchronous cleanup
+NOTRUN promise_test following timed out cleanup ('NOT RUN')
+

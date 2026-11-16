@@ -1,0 +1,28 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/META.yml
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/altering-dom-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/ellisize-rtl-text-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/inheritance.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/removing-collapsible-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/removing-collapsible-spaces-before-float-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-stroke-width-subpixel-expected-mismatch.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-stroke-width-subpixel-notref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-stroke-width-subpixel.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/whitespace-followed-by-cham-symbol-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/zwnj-renders-invisible-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/zwnj-renders-invisible.html

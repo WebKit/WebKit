@@ -1,0 +1,9 @@
+
+PASS Worker is terminated during top-level script evaluation
+PASS Worker is terminated during top-level script evaluation (module)
+PASS Worker is terminated during importScripts() call
+PASS Worker is terminated during nested importScripts() call
+PASS Worker is terminated during dynamic import()
+PASS Worker is terminated during dynamic import() (module)
+PASS Worker is terminated during top-level await
+

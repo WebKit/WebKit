@@ -1,0 +1,6 @@
+<script>
+    addEventListener("message", (event) => {
+        window.opener.postMessage("second opened window received: " + event.data, "*")
+    });
+    window.opener.postMessage("second ping", "*")
+</script>

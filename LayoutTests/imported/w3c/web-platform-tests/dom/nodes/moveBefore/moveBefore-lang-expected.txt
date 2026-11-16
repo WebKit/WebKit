@@ -1,0 +1,4 @@
+InnerTarget
+
+PASS moveBefore() correctly updates the computed lang for moved nodes
+

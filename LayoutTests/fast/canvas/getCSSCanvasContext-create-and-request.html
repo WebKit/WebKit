@@ -1,0 +1,18 @@
+<script src="../../resources/js-test.js"></script>
+<body>
+    <script>
+        description('Document.getCSSCanvasContext() should return null if the context was created with a different type.');
+
+        let types = ['2d', 'bitmaprenderer', 'webgl', 'webgl2'];
+        for (var type of types) {
+            debug("Creating CSSCanvasContext with type = " + type);
+            let name = type;
+            var context = document.getCSSCanvasContext(type, name, 0, 0);
+            shouldBeTrue("context != null");
+            for (var type2 of types) {
+                var context2 = document.getCSSCanvasContext(type2, name, 0, 0);
+                shouldBeTrue("type == type2 ? context2 == context : context2 == null");
+            }
+        }
+    </script>
+</body>

@@ -1,0 +1,154 @@
+<!--
+Copyright (c) 2026 The Khronos Group Inc.
+Use of this source code is governed by an MIT-style license that can be
+found in the LICENSE.txt file.
+-->
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>WebGL GLSL extension enable and disable late conformance test</title>
+<link rel="stylesheet" href="../../../resources/js-test-style.css"/>
+<script src="../../../js/js-test-pre.js"></script>
+<script src="../../../js/webgl-test-utils.js"> </script>
+</head>
+<body>
+<canvas id="example" width="4" height="4"></canvas>
+<div id="description"></div>
+<div id="console"></div>
+<script>
+"use strict";
+description(document.title);
+var wtu = WebGLTestUtils;
+
+var gl;
+
+// This test runs only under WebGL 1.0. WebGL 2.0 follows GLSL ES
+// 300's extension enabling and disabling rules.
+let contextVersion = wtu.getDefault3DContextVersion();
+if (contextVersion != 1) {
+  debug("Test only applies to WebGL 1.0.");
+} else {
+  gl = wtu.create3DContext("example");
+  if (!gl) {
+    testFailed("WebGL context creation failed");
+  } else {
+    // Check for the extension.
+    var ext = gl.getExtension("EXT_frag_depth");
+    if (!ext) {
+      debug("EXT_frag_depth not supported, skipping test.");
+    } else {
+      runTests();
+    }
+  }
+}
+
+function runTests() {
+  var vsSource = `
+    attribute vec4 position;
+    void main() {
+      gl_Position = position;
+    }
+  `;
+
+  // Case 1: LateEnableExtension (Should Succeed)
+  // Test that in WebGL1, extensions can be enabled late in the shader.
+  var fsSourceSuccess = `
+    precision mediump float;
+    void main()
+    {
+    #extension GL_EXT_frag_depth : enable
+        gl_FragDepthEXT = 1.0;
+    }
+  `;
+
+  // Case 2: LateDisableExtension - Case A (Should Fail)
+  // Test that in WebGL1, even though an extension can be enabled late in the shader, it cannot be disabled late.
+  var fsSourceFailA = `
+    #extension GL_EXT_frag_depth : enable
+    precision mediump float;
+    void main()
+    {
+        gl_FragDepthEXT = 1.0;
+    #extension GL_EXT_frag_depth : disable
+    }
+  `;
+
+  // Case 3: LateDisableExtension - Case B (Should Fail)
+  // Test that in WebGL1, even though an extension can be enabled late in the shader, it cannot be disabled late.
+  var fsSourceFailB = `
+    #extension GL_EXT_frag_depth : enable
+    precision mediump float;
+    void main()
+    {
+        gl_FragDepthEXT = 1.0;
+    }
+    #extension all : disable
+  `;
+
+  runShaderTest(vsSource, fsSourceSuccess, true, "LateEnableExtension (Should Succeed)");
+  runShaderTest(vsSource, fsSourceFailA, false, "LateDisableExtension Case A (Should Fail)");
+  runShaderTest(vsSource, fsSourceFailB, false, "LateDisableExtension Case B (Should Fail)");
+}
+
+function runShaderTest(vsSource, fsSource, shouldSucceed, desc) {
+  debug("");
+  debug("Testing: " + desc);
+  var vs = gl.createShader(gl.VERTEX_SHADER);
+  gl.shaderSource(vs, vsSource);
+  gl.compileShader(vs);
+  var vsCompileStatus = gl.getShaderParameter(vs, gl.COMPILE_STATUS);
+
+  var fs = gl.createShader(gl.FRAGMENT_SHADER);
+  gl.shaderSource(fs, fsSource);
+  gl.compileShader(fs);
+  var fsCompileStatus = gl.getShaderParameter(fs, gl.COMPILE_STATUS);
+
+  var programLinked = false;
+  var program = null;
+
+  if (vsCompileStatus && fsCompileStatus) {
+    program = gl.createProgram();
+    gl.attachShader(program, vs);
+    gl.attachShader(program, fs);
+    gl.linkProgram(program);
+    programLinked = gl.getProgramParameter(program, gl.LINK_STATUS);
+  }
+
+  var overallSuccess = vsCompileStatus && fsCompileStatus && programLinked;
+
+  if (shouldSucceed) {
+    if (overallSuccess) {
+      testPassed("Shader compiled and linked successfully as expected.");
+    } else {
+      testFailed("Shader failed to compile or link. VS compile: " + vsCompileStatus +
+                 ", FS compile: " + fsCompileStatus + ", Link: " + programLinked);
+      if (!vsCompileStatus) debug("VS info log: " + gl.getShaderInfoLog(vs));
+      if (!fsCompileStatus) debug("FS info log: " + gl.getShaderInfoLog(fs));
+      if (program && !programLinked) debug("Program info log: " + gl.getProgramInfoLog(program));
+    }
+  } else {
+    if (!overallSuccess) {
+      testPassed("Shader compilation or linking failed as expected. VS compile: " + vsCompileStatus +
+                 ", FS compile: " + fsCompileStatus + ", Link: " + programLinked);
+    } else {
+      testFailed("Shader compiled and linked successfully, but it should have failed.");
+    }
+  }
+
+  // Cleanup
+  if (program) {
+    gl.detachShader(program, vs);
+    gl.detachShader(program, fs);
+    gl.deleteProgram(program);
+  }
+  gl.deleteShader(vs);
+  gl.deleteShader(fs);
+}
+
+var successfullyParsed = true;
+</script>
+<script src="../../../js/js-test-post.js"></script>
+</body>
+</html>

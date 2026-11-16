@@ -1,0 +1,4 @@
+
+PASS script should fire error event for 404 response and not execute
+PASS script should fire error event for 503 response and not execute
+

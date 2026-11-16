@@ -1,0 +1,8 @@
+
+PASS :createQuerySet:type="occlusion";featureContainsTimestampQuery=false
+PASS :createQuerySet:type="occlusion";featureContainsTimestampQuery=true
+PASS :createQuerySet:type="timestamp";featureContainsTimestampQuery=false
+PASS :createQuerySet:type="timestamp";featureContainsTimestampQuery=true
+PASS :timestamp:featureContainsTimestampQuery=false
+PASS :timestamp:featureContainsTimestampQuery=true
+

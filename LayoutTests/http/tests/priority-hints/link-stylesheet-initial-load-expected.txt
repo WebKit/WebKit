@@ -1,0 +1,8 @@
+
+PASS all stylesheets must be fetched by the preload scanner
+PASS link-stylesheet-initial-load
+PASS link-stylesheet-initial-load 1
+PASS link-stylesheet-initial-load 2
+PASS link-stylesheet-initial-load 3
+PASS link-stylesheet-initial-load 4
+

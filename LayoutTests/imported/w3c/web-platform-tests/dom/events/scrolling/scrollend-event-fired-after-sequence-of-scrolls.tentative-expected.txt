@@ -1,0 +1,4 @@
+
+PASS Move down, up and down again, receive scrollend event only once
+PASS Move right, left and right again, receive scrollend event only once
+

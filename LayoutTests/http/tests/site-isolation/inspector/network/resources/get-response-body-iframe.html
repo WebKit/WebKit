@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<p>Cross-origin iframe that loads a text resource (via fetch) and a binary image (via &lt;img&gt;), for Network.getResponseBody testing under Site Isolation.</p>
+
+<script>
+window.addEventListener("message", (event) => {
+    if (event.data.type === "TriggerLoads")
+        triggerLoads();
+    else if (event.data.type === "TerminateProcess")
+        window.internals.terminateWebContentProcess();
+});
+
+function triggerLoads() {
+    // Text resource with deterministic content and an explicit text/plain MIME type.
+    // Same-origin to this iframe (localhost), so no CORS is involved, but a separate
+    // WebContent process from the main frame (127.0.0.1) under Site Isolation.
+    fetch("http://localhost:8000/inspector/network/resources/echo.py?mimetype=text/plain&content=si-cross-origin-response-body");
+
+    // Binary (image) resource -> base64-encoded response body.
+    let img = document.createElement("img");
+    img.src = "http://localhost:8000/inspector/network/resources/white.png?" + Math.random();
+    document.body.appendChild(img);
+}
+</script>

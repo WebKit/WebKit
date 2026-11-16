@@ -1,0 +1,3 @@
+
+FAIL navigateEvent.deferPageSwap: rejecting a handler does not stop navigation assert_array_equals: lengths differ, expected array ["navigate", "handler", "reject", "pagehide"] length 4, got ["navigate", "pagehide"] length 2
+

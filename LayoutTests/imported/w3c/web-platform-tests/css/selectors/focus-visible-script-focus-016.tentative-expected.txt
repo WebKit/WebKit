@@ -1,0 +1,12 @@
+This test checks that a script focus after a mouse click on a NOT focusable element after editing an input does match :focus-visible.
+
+Click on the input below and type some letter.
+Then click on the element that says "Click me".
+If the element that says "Focused" has a red background then the test result is FAILURE, if it has a green outline then the test result is SUCCESS.
+
+Click me
+Focused
+
+PASS ":focus-visible" should be a valid selector
+PASS Script focus after mouse click on a NOT focusable element after editing an input does match :focus-visible
+

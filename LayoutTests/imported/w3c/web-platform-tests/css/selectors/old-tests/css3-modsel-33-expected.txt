@@ -1,0 +1,8 @@
+1.1	1.2	green cell
+2.1	2.2	green cell
+3.1	3.2	green cell
+This paragraph contains a span that should have a green background and some text after it.
+
+
+PASS :last-child
+

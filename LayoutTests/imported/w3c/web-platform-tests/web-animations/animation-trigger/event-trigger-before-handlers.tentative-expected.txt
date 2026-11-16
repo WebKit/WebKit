@@ -1,0 +1,5 @@
+Click me!
+Watch me!
+
+FAIL Animation triggers are handled before registered event listeners promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: EventTrigger"
+

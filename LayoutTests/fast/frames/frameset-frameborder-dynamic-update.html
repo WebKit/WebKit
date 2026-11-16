@@ -1,0 +1,60 @@
+<!doctype html>
+
+<script src="../../resources/js-test.js"></script>
+
+<!--
+    Each frameset starts with frameborder="no" (border off, so the two columns
+    fill the 300px-wide iframe at 150px each). With border="10" turned back on
+    the single vertical border between the columns leaves 290px to split, so the
+    frames become 145px each. We use that 150<->145 difference to observe the
+    m_frameborder state after a dynamic change.
+-->
+<iframe id="restored-by-yes" data-assert-off-width="150" data-assert-on-width="145">
+    <!doctype html>
+    <frameset rows="*" cols="50,50" frameborder="no" border="10">
+        <frame src="data:text/html,<body bgcolor=red>">
+        <frame src="data:text/html,<body bgcolor=blue>">
+    </frameset>
+</iframe>
+
+<iframe id="restored-by-removal" data-assert-off-width="150" data-assert-on-width="145">
+    <!doctype html>
+    <frameset rows="*" cols="50,50" frameborder="no" border="10">
+        <frame src="data:text/html,<body bgcolor=red>">
+        <frame src="data:text/html,<body bgcolor=blue>">
+    </frameset>
+</iframe>
+
+<script>
+    description('Tests that the frameset frameborder state updates correctly on dynamic changes: ' +
+        'changing frameborder="no" to a true value restores the border, and removing the attribute ' +
+        'restores the default (true) rather than forcing it off.');
+
+    function framesetIn(iframe) {
+        // Can't use srcdoc since that wouldn't synchronously load the content.
+        iframe.contentDocument.write(iframe.textContent);
+        iframe.contentDocument.close();
+        return iframe.contentDocument.querySelector('frameset');
+    }
+
+    var offWidth = '150';
+    var onWidth = '145';
+
+    debug('Changing frameborder="no" to frameborder="yes" restores the border:');
+    var frameset = framesetIn(document.getElementById('restored-by-yes'));
+    var frames = frameset.querySelectorAll('frame');
+    shouldBe('frames[0].offsetWidth', offWidth);
+    frameset.setAttribute('frameborder', 'yes');
+    shouldBe('frames[0].offsetWidth', onWidth);
+    shouldBe('frames[1].offsetWidth', onWidth);
+    debug('<br>');
+
+    debug('Removing the frameborder attribute restores the default (true), not false:');
+    frameset = framesetIn(document.getElementById('restored-by-removal'));
+    frames = frameset.querySelectorAll('frame');
+    shouldBe('frames[0].offsetWidth', offWidth);
+    frameset.removeAttribute('frameborder');
+    shouldBe('frames[0].offsetWidth', onWidth);
+    shouldBe('frames[1].offsetWidth', onWidth);
+    debug('<br>');
+</script>

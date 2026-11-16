@@ -1,0 +1,19 @@
+Test that shadow root push events from a cross-origin iframe are routed to the frame target under site isolation.
+
+
+
+== Running test suite: SiteIsolation.DOM.FrameDOMAgent.ShadowRoot
+-- Running test case: Setup
+PASS: Should find a cross-origin frame target.
+PASS: Frame target should have a document.
+PASS: Should find #container.
+PASS: Should find #host.
+PASS: #host should be owned by the frame target.
+
+-- Running test case: SiteIsolation.DOM.ShadowRoot.Pushed
+PASS: Shadow root's parent should be #host.
+PASS: Inserted node should be a shadow root.
+PASS: Shadow root should be open.
+PASS: Shadow root should be owned by the frame target, not the main page.
+PASS: Shadow root should be reachable via its scoped id on the frame target.
+

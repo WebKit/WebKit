@@ -1,0 +1,29 @@
+
+Test anchorBounds during a mouse event:
+RUN(eventSender.mouseMoveTo(15, 25))
+RUN(eventSender.mouseDown(); eventSender.mouseUp())
+RUN(video.showCaptionDisplaySettings({}))
+EXPECTED (options.anchorBounds.x == '15') OK
+EXPECTED (options.anchorBounds.y == '25') OK
+EXPECTED (options.anchorBounds.width == '0') OK
+EXPECTED (options.anchorBounds.height == '0') OK
+-
+Test anchorBounds during a keyboard event:
+RUN(target.focus())
+RUN(eventSender.keyDown(" "))
+RUN(video.showCaptionDisplaySettings({}))
+EXPECTED (options.anchorBounds.x == '10') OK
+EXPECTED (options.anchorBounds.y == '20') OK
+EXPECTED (options.anchorBounds.width == '30') OK
+EXPECTED (options.anchorBounds.height == '40') OK
+-
+Test anchorBounds after a mouse event:
+RUN(eventSender.mouseMoveTo(35, 45))
+RUN(eventSender.mouseDown(); eventSender.mouseUp())
+RUN(video.showCaptionDisplaySettings({}))
+EXPECTED (options.anchorBounds.x == '35') OK
+EXPECTED (options.anchorBounds.y == '45') OK
+EXPECTED (options.anchorBounds.width == '0') OK
+EXPECTED (options.anchorBounds.height == '0') OK
+END OF TEST
+

@@ -1,0 +1,11 @@
+load("//crowbar", "crowbar_workflow")
+
+crowbar_workflow(
+    origin_files = glob([
+        "LICENSE",
+        "ffx-spd/**",
+    ]),
+    transformations = [
+        core.move("src/ffx-spd", "src"),
+    ],
+)

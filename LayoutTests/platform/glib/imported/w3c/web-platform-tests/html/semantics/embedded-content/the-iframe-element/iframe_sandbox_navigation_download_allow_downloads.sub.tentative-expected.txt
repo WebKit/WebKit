@@ -1,0 +1,7 @@
+
+
+Harness Error (TIMEOUT), message = null
+
+FAIL Navigation resulted download in sandbox is allowed by allow-downloads. undefined is not an object (evaluating 'anchor.href = "support/download_stash.py?token=" + token + "&finish-delay=" + StreamDownloadFinishDelay()')
+TIMEOUT Navigation resulted download in sandbox from <object> is allowed by allow-downloads. Test timed out
+

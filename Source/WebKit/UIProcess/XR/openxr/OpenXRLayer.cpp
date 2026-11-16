@@ -1,0 +1,447 @@
+/*
+ * Copyright (C) 2025-2026 Igalia, S.L.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#include "config.h"
+
+#if ENABLE(WEBXR) && USE(OPENXR)
+
+#include "OpenXRLayer.h"
+
+#include "OpenXRGraphicsBinding.h"
+#include <wtf/TZoneMallocInlines.h>
+
+namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(OpenXRLayer);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(OpenXRLayerProjection);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(OpenXRCompositionLayer);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(OpenXRQuadLayer);
+#if defined(XR_KHR_composition_layer_equirect2)
+WTF_MAKE_TZONE_ALLOCATED_IMPL(OpenXREquirectLayer);
+#endif
+#if defined(XR_KHR_composition_layer_cube)
+WTF_MAKE_TZONE_ALLOCATED_IMPL(OpenXRCubeLayer);
+#endif
+
+OpenXRLayer::OpenXRLayer(UniqueRef<OpenXRSwapchain>&& swapchain)
+    : m_swapchain(WTF::move(swapchain))
+{
+}
+
+OpenXRLayer::~OpenXRLayer() = default;
+
+OpenXRGraphicsBinding::ExportDescriptor OpenXRLayer::exportDescriptor() const
+{
+    return { .type = OpenXRGraphicsBinding::TextureType::Texture2D, .width = static_cast<uint32_t>(m_swapchain->width()), .height = static_cast<uint32_t>(m_swapchain->height()) };
+}
+
+void OpenXRLayer::releaseExportedTextures(OpenXRGraphicsBinding& graphicsBinding)
+{
+    m_swapchain->releaseExportedTextures(graphicsBinding);
+}
+
+// OpenXRLayerProjection
+
+std::unique_ptr<OpenXRLayerProjection> OpenXRLayerProjection::create(std::unique_ptr<OpenXRSwapchain>&& swapchain)
+{
+    return std::unique_ptr<OpenXRLayerProjection>(new OpenXRLayerProjection(makeUniqueRefFromNonNullUniquePtr(WTF::move(swapchain))));
+}
+
+OpenXRLayerProjection::OpenXRLayerProjection(UniqueRef<OpenXRSwapchain>&& swapchain)
+    : OpenXRLayer(WTF::move(swapchain))
+    , m_layerProjection(createOpenXRStruct<XrCompositionLayerProjection, XR_TYPE_COMPOSITION_LAYER_PROJECTION>())
+{
+}
+
+std::optional<PlatformXR::FrameData::LayerData> OpenXRLayerProjection::startFrame(OpenXRGraphicsBinding& graphicsBinding)
+{
+    auto texture = m_swapchain->acquireImage();
+    if (!texture)
+        return std::nullopt;
+
+    auto existingIndex = m_exportedTextures.getOptional(*texture);
+    bool needsExport = !existingIndex;
+
+    PlatformXR::FrameData::LayerData layerData;
+    layerData.renderingFrameIndex = m_renderingFrameIndex++;
+    layerData.textureData = {
+        .reusableTextureIndex = existingIndex.value_or(m_nextReusableTextureIndex),
+        .colorTexture = { },
+        .depthStencilBuffer = { },
+    };
+
+    if (!needsExport)
+        return layerData;
+
+    auto externalTexture = graphicsBinding.exportTexture(*texture, m_swapchain, exportDescriptor());
+    if (!externalTexture)
+        return std::nullopt;
+
+    m_exportedTextures.add(*texture, m_nextReusableTextureIndex++);
+    layerData.textureData->colorTexture = WTF::move(externalTexture.value());
+
+    auto halfWidth = m_swapchain->width() / 2;
+    layerData.layerSetup = {
+        .physicalSize = { { { static_cast<uint16_t>(m_swapchain->width()), static_cast<uint16_t>(m_swapchain->height()) } } },
+        .viewports = { },
+        .foveationRateMapDesc = { }
+    };
+    layerData.layerSetup->viewports[0] = { 0, 0, halfWidth, m_swapchain->height() };
+    layerData.layerSetup->viewports[1] = { halfWidth, 0, halfWidth, m_swapchain->height() };
+
+    return layerData;
+}
+
+Vector<XrCompositionLayerBaseHeader*> OpenXRLayerProjection::endFrame(OpenXRGraphicsBinding& graphicsBinding, const PlatformXR::DeviceLayer& layer, XrSpace space, const Vector<XrView>& frameViews)
+{
+    ASSERT(m_swapchain->acquiredTexture());
+
+    if (!m_exportedTextures.contains(m_swapchain->acquiredTexture())) {
+        m_swapchain->releaseImage();
+        return { };
+    }
+
+    graphicsBinding.commitFrame(m_swapchain->acquiredTexture(), m_swapchain, OpenXRGraphicsBinding::TextureType::Texture2D, { m_swapchain->acquiredTexture() });
+    auto viewCount = frameViews.size();
+    m_projectionViews.fill(createOpenXRStruct<XrCompositionLayerProjectionView, XR_TYPE_COMPOSITION_LAYER_PROJECTION_VIEW>(), viewCount);
+    for (uint32_t i = 0; i < viewCount; ++i) {
+        m_projectionViews[i].pose = frameViews[i].pose;
+        m_projectionViews[i].fov = frameViews[i].fov;
+        m_projectionViews[i].subImage.swapchain = m_swapchain->swapchain();
+
+        auto& viewport = layer.views[i].viewport;
+
+        m_projectionViews[i].subImage.imageRect.offset = { viewport.x(), viewport.y() };
+        m_projectionViews[i].subImage.imageRect.extent = { viewport.width(), viewport.height() };
+    }
+
+    m_layerProjection.layerFlags = XR_COMPOSITION_LAYER_BLEND_TEXTURE_SOURCE_ALPHA_BIT;
+    m_layerProjection.space = space;
+    m_layerProjection.viewCount = m_projectionViews.size();
+    m_layerProjection.views = m_projectionViews.span().data();
+
+    m_swapchain->releaseImage();
+
+    return { reinterpret_cast<XrCompositionLayerBaseHeader*>(&m_layerProjection) };
+}
+
+#if ENABLE(WEBXR_LAYERS)
+
+template<typename XrLayerType, XrStructureType StructureType>
+OpenXRTypedCompositionLayer<XrLayerType, StructureType>::OpenXRTypedCompositionLayer(UniqueRef<OpenXRSwapchain>&& swapchain, PlatformXR::LayerLayout layout)
+    : OpenXRCompositionLayer(WTF::move(swapchain), layout)
+{
+    m_layers.resize(layout == PlatformXR::LayerLayout::Mono ? 1 : 2);
+    m_layers.fill(createOpenXRStruct<XrLayerType, StructureType>());
+    int xOffset = 0;
+    int yOffset = 0;
+    int subImageWidth = layout == PlatformXR::LayerLayout::StereoLeftRight ? m_swapchain->width() / 2 : m_swapchain->width();
+    int subImageHeight = layout == PlatformXR::LayerLayout::StereoTopBottom ? m_swapchain->height() / 2 : m_swapchain->height();
+    XrExtent2Di subImageExtent = { subImageWidth, subImageHeight };
+    for (auto& xrLayer : m_layers) {
+        xrLayer.subImage.swapchain = m_swapchain->swapchain();
+        xrLayer.subImage.imageRect.offset = { xOffset, yOffset };
+        xrLayer.subImage.imageRect.extent = subImageExtent;
+        // FIXME: LayerLayout::Stereo (stereo texture array) is not handled yet, the right eye should use imageArrayIndex 1.
+        xrLayer.subImage.imageArrayIndex = 0;
+
+        xOffset += layout == PlatformXR::LayerLayout::StereoLeftRight ? subImageWidth : 0;
+        yOffset += layout == PlatformXR::LayerLayout::StereoTopBottom ? subImageHeight : 0;
+    }
+}
+
+OpenXRCompositionLayer::OpenXRCompositionLayer(UniqueRef<OpenXRSwapchain>&& swapchain, PlatformXR::LayerLayout layout)
+    : OpenXRLayer(WTF::move(swapchain))
+    , m_layout(layout)
+{
+}
+
+Vector<uint64_t> OpenXRCompositionLayer::committedImages()
+{
+    return { m_swapchain->acquiredTexture() };
+}
+
+void OpenXRCompositionLayer::releaseImages()
+{
+    m_swapchain->releaseImage();
+    releaseAdditionalImages();
+}
+
+Vector<XrCompositionLayerBaseHeader*> OpenXRCompositionLayer::endFrame(OpenXRGraphicsBinding& graphicsBinding, const PlatformXR::DeviceLayer& layer, XrSpace space, const Vector<XrView>&)
+{
+    ASSERT(m_swapchain->acquiredTexture());
+
+    // An image that could not be exported counts as not updated, so static layers keep it for the next frame instead of spending their only release on it.
+    bool isExported = m_exportedTextures.contains(m_swapchain->acquiredTexture());
+    auto submissionState = m_swapchain->submissionState(layer.contentUpdated && isExported);
+    if (submissionState == OpenXRSwapchain::SubmissionState::None)
+        return { };
+
+    bool isNewImage = submissionState == OpenXRSwapchain::SubmissionState::NewImage;
+    if (isNewImage && !isExported) {
+        releaseImages();
+        return { };
+    }
+
+    if (isNewImage)
+        graphicsBinding.commitFrame(m_swapchain->acquiredTexture(), m_swapchain, exportDescriptor().type, committedImages());
+
+    auto flags = layer.blendTextureSourceAlpha ? XR_COMPOSITION_LAYER_BLEND_TEXTURE_SOURCE_ALPHA_BIT : 0;
+    auto isLeftEyeIndex = [layout = m_layout](size_t layerIndex) {
+        switch (layout) {
+        case PlatformXR::LayerLayout::Mono:
+        case PlatformXR::LayerLayout::Stereo:
+        case PlatformXR::LayerLayout::StereoLeftRight:
+            return !layerIndex;
+        case PlatformXR::LayerLayout::StereoTopBottom:
+#if defined(XR_USE_GRAPHICS_API_OPENGL_ES) || defined(XR_USE_GRAPHICS_API_OPENGL)
+            // Origin of coordinates in OpenGL is bottom left, so the origin is on the half for the right side.
+            return layerIndex == 1;
+#elif defined(XR_USE_GRAPHICS_API_VULKAN)
+            // Origin of coordinates in Vulkan is top left, so the origin is on the half for the left side.
+            return !layerIndex;
+#endif
+        default:
+            ASSERT_NOT_REACHED_WITH_MESSAGE("Unrecognized layout for composition layer");
+            return false;
+        };
+    };
+
+    bool isMonoPresentation = layer.forceMonoPresentation || m_layout == PlatformXR::LayerLayout::Mono;
+
+    Vector<XrCompositionLayerBaseHeader*> layerHeaders;
+    layerHeaders.reserveCapacity(layerCount());
+    for (size_t i = 0; i < layerCount(); ++i) {
+        bool isLeftEye = isLeftEyeIndex(i);
+        if (isMonoPresentation && !isLeftEye)
+            continue;
+
+        auto eyeVisibility = isMonoPresentation ? XR_EYE_VISIBILITY_BOTH : (isLeftEye ? XR_EYE_VISIBILITY_LEFT : XR_EYE_VISIBILITY_RIGHT);
+        auto* header = fillLayer(i, eyeVisibility, layer);
+        header->layerFlags = flags;
+        header->space = space;
+        layerHeaders.append(header);
+    }
+
+    if (isNewImage)
+        releaseImages();
+
+    return layerHeaders;
+}
+
+std::unique_ptr<OpenXRQuadLayer> OpenXRQuadLayer::create(std::unique_ptr<OpenXRSwapchain>&& swapchain, PlatformXR::LayerLayout layout)
+{
+    return std::unique_ptr<OpenXRQuadLayer>(new OpenXRQuadLayer(makeUniqueRefFromNonNullUniquePtr(WTF::move(swapchain)), layout));
+}
+
+std::optional<PlatformXR::FrameData::LayerData> OpenXRCompositionLayer::startFrame(OpenXRGraphicsBinding& graphicsBinding)
+{
+    auto texture = m_swapchain->acquireImage();
+    if (!texture)
+        return std::nullopt;
+
+    if (!acquireAdditionalImages())
+        return std::nullopt;
+
+    auto existingIndex = m_exportedTextures.getOptional(*texture);
+    bool needsExport = !existingIndex;
+
+    PlatformXR::FrameData::LayerData layerData;
+    layerData.renderingFrameIndex = m_renderingFrameIndex++;
+    layerData.textureData = {
+        .reusableTextureIndex = existingIndex.value_or(m_nextReusableTextureIndex),
+        .colorTexture = { },
+        .depthStencilBuffer = { },
+    };
+
+    if (!needsExport)
+        return layerData;
+
+    auto descriptor = exportDescriptor();
+    auto externalTexture = graphicsBinding.exportTexture(*texture, m_swapchain, descriptor);
+    if (!externalTexture)
+        return std::nullopt;
+
+    m_exportedTextures.add(*texture, m_nextReusableTextureIndex++);
+    layerData.textureData->colorTexture = WTF::move(externalTexture.value());
+
+    layerData.layerSetup = {
+        .physicalSize = { { { static_cast<uint16_t>(descriptor.width), static_cast<uint16_t>(descriptor.height) } } },
+        .viewports = { },
+        .foveationRateMapDesc = { }
+    };
+
+    return layerData;
+}
+
+OpenXRQuadLayer::OpenXRQuadLayer(UniqueRef<OpenXRSwapchain>&& swapchain, PlatformXR::LayerLayout layout)
+    : OpenXRTypedCompositionLayer(WTF::move(swapchain), layout)
+{
+}
+
+XrCompositionLayerBaseHeader* OpenXRQuadLayer::fillLayer(size_t index, XrEyeVisibility eyeVisibility, const PlatformXR::DeviceLayer& layer)
+{
+    auto& xrLayer = m_layers[index];
+    xrLayer.eyeVisibility = eyeVisibility;
+
+    ASSERT(layer.quadLayerData);
+    auto pose = layer.quadLayerData->poseInLocalSpace;
+    xrLayer.pose.position = { pose.position.x(), pose.position.y(), pose.position.z() };
+    xrLayer.pose.orientation = { pose.orientation.x, pose.orientation.y, pose.orientation.z, pose.orientation.w };
+    xrLayer.size = { layer.quadLayerData->worldSize.width(), layer.quadLayerData->worldSize.height() };
+
+    return reinterpret_cast<XrCompositionLayerBaseHeader*>(&xrLayer);
+}
+
+#if defined(XR_KHR_composition_layer_equirect2)
+
+std::unique_ptr<OpenXREquirectLayer> OpenXREquirectLayer::create(std::unique_ptr<OpenXRSwapchain>&& swapchain, PlatformXR::LayerLayout layout)
+{
+    return std::unique_ptr<OpenXREquirectLayer>(new OpenXREquirectLayer(makeUniqueRefFromNonNullUniquePtr(WTF::move(swapchain)), layout));
+}
+
+OpenXREquirectLayer::OpenXREquirectLayer(UniqueRef<OpenXRSwapchain>&& swapchain, PlatformXR::LayerLayout layout)
+    : OpenXRTypedCompositionLayer(WTF::move(swapchain), layout)
+{
+}
+
+XrCompositionLayerBaseHeader* OpenXREquirectLayer::fillLayer(size_t index, XrEyeVisibility eyeVisibility, const PlatformXR::DeviceLayer& layer)
+{
+    auto& xrLayer = m_layers[index];
+    xrLayer.eyeVisibility = eyeVisibility;
+
+    ASSERT(layer.equirectLayerData);
+    auto& equirectData = *layer.equirectLayerData;
+    xrLayer.pose.position = { equirectData.poseInLocalSpace.position.x(), equirectData.poseInLocalSpace.position.y(), equirectData.poseInLocalSpace.position.z() };
+    xrLayer.pose.orientation = { equirectData.poseInLocalSpace.orientation.x, equirectData.poseInLocalSpace.orientation.y, equirectData.poseInLocalSpace.orientation.z, equirectData.poseInLocalSpace.orientation.w };
+    xrLayer.radius = equirectData.radius;
+    xrLayer.centralHorizontalAngle = equirectData.centralHorizontalAngle;
+    xrLayer.upperVerticalAngle = equirectData.upperVerticalAngle;
+    xrLayer.lowerVerticalAngle = equirectData.lowerVerticalAngle;
+
+    return reinterpret_cast<XrCompositionLayerBaseHeader*>(&xrLayer);
+}
+
+#endif
+
+#if defined(XR_KHR_composition_layer_cylinder)
+
+std::unique_ptr<OpenXRCylinderLayer> OpenXRCylinderLayer::create(std::unique_ptr<OpenXRSwapchain>&& swapchain, PlatformXR::LayerLayout layout)
+{
+    return std::unique_ptr<OpenXRCylinderLayer>(new OpenXRCylinderLayer(makeUniqueRefFromNonNullUniquePtr(WTF::move(swapchain)), layout));
+}
+
+OpenXRCylinderLayer::OpenXRCylinderLayer(UniqueRef<OpenXRSwapchain>&& swapchain, PlatformXR::LayerLayout layout)
+    : OpenXRTypedCompositionLayer(WTF::move(swapchain), layout)
+{
+}
+
+XrCompositionLayerBaseHeader* OpenXRCylinderLayer::fillLayer(size_t index, XrEyeVisibility eyeVisibility, const PlatformXR::DeviceLayer& layer)
+{
+    auto& xrLayer = m_layers[index];
+    xrLayer.eyeVisibility = eyeVisibility;
+
+    ASSERT(layer.cylinderLayerData);
+    auto& cylinderData = *layer.cylinderLayerData;
+    xrLayer.pose.position = { cylinderData.poseInLocalSpace.position.x(), cylinderData.poseInLocalSpace.position.y(), cylinderData.poseInLocalSpace.position.z() };
+    xrLayer.pose.orientation = { cylinderData.poseInLocalSpace.orientation.x, cylinderData.poseInLocalSpace.orientation.y, cylinderData.poseInLocalSpace.orientation.z, cylinderData.poseInLocalSpace.orientation.w };
+    xrLayer.radius = cylinderData.radius;
+    xrLayer.centralAngle = cylinderData.centralAngle;
+    xrLayer.aspectRatio = cylinderData.aspectRatio;
+
+    return reinterpret_cast<XrCompositionLayerBaseHeader*>(&xrLayer);
+}
+
+#endif
+
+#if defined(XR_KHR_composition_layer_cube)
+
+std::unique_ptr<OpenXRCubeLayer> OpenXRCubeLayer::create(std::unique_ptr<OpenXRSwapchain>&& swapchain, std::unique_ptr<OpenXRSwapchain>&& rightSwapchain, PlatformXR::LayerLayout layout)
+{
+    return std::unique_ptr<OpenXRCubeLayer>(new OpenXRCubeLayer(makeUniqueRefFromNonNullUniquePtr(WTF::move(swapchain)), WTF::move(rightSwapchain), layout));
+}
+
+OpenXRCubeLayer::OpenXRCubeLayer(UniqueRef<OpenXRSwapchain>&& swapchain, std::unique_ptr<OpenXRSwapchain>&& rightSwapchain, PlatformXR::LayerLayout layout)
+    : OpenXRCompositionLayer(WTF::move(swapchain), layout)
+    , m_rightSwapchain(WTF::move(rightSwapchain))
+{
+    m_layers.resize(cubeCount());
+    m_layers.fill(createOpenXRStruct<XrCompositionLayerCubeKHR, XR_TYPE_COMPOSITION_LAYER_CUBE_KHR>());
+    for (uint32_t cube = 0; cube < cubeCount(); ++cube) {
+        m_layers[cube].swapchain = swapchainForCube(cube).swapchain();
+        m_layers[cube].imageArrayIndex = 0;
+    }
+}
+
+OpenXRGraphicsBinding::ExportDescriptor OpenXRCubeLayer::exportDescriptor() const
+{
+    // The cube faces are laid out side by side (cubeCount * faceCount squares) in a single 2D buffer.
+    uint32_t faceSize = m_swapchain->width();
+    return { OpenXRGraphicsBinding::TextureType::Cubemap, faceCount * cubeCount() * faceSize, faceSize };
+}
+
+bool OpenXRCubeLayer::acquireAdditionalImages()
+{
+    return !m_rightSwapchain || m_rightSwapchain->acquireImage();
+}
+
+void OpenXRCubeLayer::releaseAdditionalImages()
+{
+    if (m_rightSwapchain)
+        m_rightSwapchain->releaseImage();
+}
+
+Vector<uint64_t> OpenXRCubeLayer::committedImages()
+{
+    Vector<uint64_t> cubeImages;
+    cubeImages.reserveCapacity(cubeCount());
+    for (uint32_t cube = 0; cube < cubeCount(); ++cube)
+        cubeImages.append(swapchainForCube(cube).acquiredTexture());
+    return cubeImages;
+}
+
+XrCompositionLayerBaseHeader* OpenXRCubeLayer::fillLayer(size_t index, XrEyeVisibility eyeVisibility, const PlatformXR::DeviceLayer& layer)
+{
+    auto& xrLayer = m_layers[index];
+    xrLayer.eyeVisibility = eyeVisibility;
+
+    ASSERT(layer.cubeLayerData);
+    XrQuaternionf orientation { 0, 0, 0, 1 };
+    if (layer.cubeLayerData) {
+        auto& cubeOrientation = layer.cubeLayerData->orientation;
+        orientation = { cubeOrientation.x, cubeOrientation.y, cubeOrientation.z, cubeOrientation.w };
+    }
+    xrLayer.orientation = orientation;
+
+    return reinterpret_cast<XrCompositionLayerBaseHeader*>(&xrLayer);
+}
+
+#endif
+
+#endif
+
+} // namespace WebKit
+
+#endif // ENABLE(WEBXR) && USE(OPENXR)

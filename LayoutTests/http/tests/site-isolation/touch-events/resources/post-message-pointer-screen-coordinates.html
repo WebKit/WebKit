@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<body style="margin: 0; width: 100vw; height: 100vh;">
+<div style="width: 100vw; height: 100vh;"></div>
+<script>
+function reportPointerEvent(event)
+{
+    window.parent.postMessage({
+        type: event.type,
+        screenX: event.screenX,
+        screenY: event.screenY,
+        clientX: event.clientX,
+        clientY: event.clientY,
+    }, "*");
+}
+addEventListener("pointerdown", reportPointerEvent);
+addEventListener("pointerup", reportPointerEvent);
+</script>
+</body>

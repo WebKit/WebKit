@@ -1,0 +1,4 @@
+
+
+PASS HTMLMediaElement will become the now playing info source if using mediaSession API
+

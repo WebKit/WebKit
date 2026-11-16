@@ -1,0 +1,60 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true allowTestOnlyIPC=true ] -->
+<!DOCTYPE html>
+<html>
+<head>
+<script src="/js-test-resources/js-test.js"></script>
+<script src="/media-resources/utilities.js"></script>
+</head>
+<body>
+<video id="video" loop src="/media-resources/content/test.mp4" style="width: 640px; height: 480px"></video>
+<script>
+description("Under site isolation, a remote-control command received when no media session is NowPlaying-eligible is still delivered to the current session, matching the non-site-isolated behavior. The video is loaded but never played, so it is not NowPlaying-eligible and the GPU process has no elected owner; a 'play' command injected at the GPU process must reach the video and start playback.");
+jsTestIsAsync = true;
+
+let video = document.getElementById("video");
+let videoIsCommandTarget = false;
+let videoIsElectedOwner = true;
+let videoStartedPlaying = false;
+
+onload = async () => {
+    if (!window.internals) {
+        testFailed("This test requires the Internals API");
+        finishJSTest();
+        return;
+    }
+
+    try {
+        await new Promise(resolve => {
+            video.addEventListener("canplaythrough", resolve, { once: true });
+            video.load();
+        });
+        video.volume = 0.001;
+
+        await waitUntil(async () => {
+            videoIsCommandTarget = await internals.elementIsRemoteCommandTargetInGPUProcess(video);
+            return videoIsCommandTarget;
+        }, { tries: 200, intervalMs: 10 });
+        shouldBeTrue("videoIsCommandTarget");
+
+        // The premise of the test: the video was never played, so no session is NowPlaying-eligible and the GPU
+        // process elected nobody. Without this the test could pass through the ordinary elected path instead.
+        videoIsElectedOwner = await internals.elementIsActiveNowPlayingSessionInGPUProcess(video);
+        shouldBeFalse("videoIsElectedOwner");
+
+        const playing = new Promise(resolve => video.addEventListener("playing", resolve, { once: true }));
+        internals.postSystemRemoteControlCommand("play");
+
+        await Promise.race([playing, delay(5000)]);
+
+        videoStartedPlaying = !video.paused;
+        shouldBeTrue("videoStartedPlaying");
+    } catch (e) {
+        testFailed(e.message);
+    }
+
+    video.pause();
+    finishJSTest();
+};
+</script>
+</body>
+</html>

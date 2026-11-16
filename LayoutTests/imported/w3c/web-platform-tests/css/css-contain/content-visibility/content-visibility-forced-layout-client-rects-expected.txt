@@ -1,0 +1,8 @@
+A line of a certain length...
+
+PASS one.getBoundingClientRect():
+PASS two.getBoundingClientRect():
+PASS three.getBoundingClientRect():
+PASS four.getBoundingClientRect():
+PASS five.getBoundingClientRect():
+

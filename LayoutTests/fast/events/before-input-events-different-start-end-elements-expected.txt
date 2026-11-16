@@ -1,0 +1,27 @@
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Fired `onbeforeinput` handler!
+Fired `oninput` handler!
+Fired `onbeforeinput` handler!
+Fired `oninput` handler!
+Fired `onbeforeinput` handler!
+Fired `oninput` handler!
+Fired `onbeforeinput` handler!
+Fired `oninput` handler!
+Fired `onbeforeinput` handler!
+Fired `oninput` handler!
+Fired `onbeforeinput` handler!
+Fired `oninput` handler!
+Fired `onbeforeinput` handler!
+Fired `oninput` handler!
+Fired `onbeforeinput` handler!
+Fired `oninput` handler!
+Fired `onbeforeinput` handler!
+Fired `oninput` handler!
+Fired `onbeforeinput` handler!
+Fired `oninput` handler!
+Fired `onbeforeinput` handler!
+Fired `oninput` handler!
+
+

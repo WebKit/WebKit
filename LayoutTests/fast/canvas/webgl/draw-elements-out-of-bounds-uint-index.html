@@ -1,0 +1,49 @@
+<html>
+<head>
+<script src="../../../resources/js-test.js"></script>
+<script src="resources/webgl-test.js"></script>
+</head>
+<body>
+<div id="description"></div>
+<div id="console"></div>
+
+<script>
+description("Test of drawElements with out-of-bounds parameters using OES_element_index_uint");
+
+if (window.internals)
+    window.internals.settings.setWebGLErrorsToConsoleEnabled(false);
+
+var context;
+function runTest(contextType, index) {
+    context = document.createElement("canvas").getContext(contextType);
+    let program = loadStandardProgram(context);
+    context.useProgram(program);
+    if (contextType == "webgl") {
+        if (!context.getExtension("OES_element_index_uint"))
+            testPassed("no extension");
+    }
+    let buffer = context.createBuffer();
+    context.bindBuffer(context.ARRAY_BUFFER, buffer);
+
+    let data = new Uint8Array(0x100);
+    context.bufferData(context.ARRAY_BUFFER, data, context.STATIC_DRAW);
+
+    buffer = context.createBuffer();
+    context.bindBuffer(context.ELEMENT_ARRAY_BUFFER, buffer);
+    context.bufferData(context.ELEMENT_ARRAY_BUFFER, new Uint32Array([index]), context.STATIC_DRAW);
+
+    context.enableVertexAttribArray(0);
+    context.enableVertexAttribArray(1);
+    context.vertexAttribPointer(0, 1, context.UNSIGNED_BYTE, false, 0, 0);
+    context.vertexAttribPointer(1, 1, context.UNSIGNED_BYTE, false, 0, 0);
+
+    shouldGenerateGLError(context, context.INVALID_OPERATION, "context.drawElements(context.LINES, 1, context.UNSIGNED_INT, 0)");
+}
+
+for (let index of [0xffffffff, 0xfffffffd, 0x80000000])
+    runTest("webgl", index);
+for (let index of [0xfffffffd, 0x80000000])
+    runTest("webgl2", index);
+</script>
+</body>
+</html>

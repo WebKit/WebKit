@@ -1,0 +1,5 @@
+
+PASS :abstract:inputSource="const"
+PASS :i32:inputSource="const"
+PASS :u32:inputSource="const"
+

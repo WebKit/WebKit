@@ -1,0 +1,7 @@
+<script src="../resources/js-test-pre.js"></script>
+<div style="transition-duration: 1s; transition-property: margin-left;"><span style="transition-duration: inherit;"></span></div>
+<script>
+description("Test the effect of 'transition-duration: inherit' on 'transition-property'.")
+shouldBe("getComputedStyle(document.querySelector('span')).transitionProperty", "'all'");
+</script>
+<script src="../resources/js-test-post.js"></script>    

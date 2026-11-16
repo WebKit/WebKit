@@ -1,0 +1,12 @@
+// Copyright 2019 Google LLC
+// Use of this source code is governed by a BSD-style license that can be found in the LICENSE file.
+#include "tools/fiddle/examples.h"
+REG_FIDDLE(IRect_MakeSize, 256, 256, true, 0) {
+void draw(SkCanvas* canvas) {
+    SkSize size = {25.5f, 35.5f};
+    SkIRect rect = SkIRect::MakeSize(size.toRound());
+    SkDebugf("round width: %d  height: %d\n", rect.width(), rect.height());
+    rect = SkIRect::MakeSize(size.toFloor());
+    SkDebugf("floor width: %d  height: %d\n", rect.width(), rect.height());
+}
+}  // END FIDDLE

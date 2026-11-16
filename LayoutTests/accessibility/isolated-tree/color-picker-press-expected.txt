@@ -1,0 +1,7 @@
+This test ensures that pressing a color picker via accessibility fires a click event.
+
+Click event received
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

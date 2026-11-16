@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+if (window.testRunner)
+    testRunner.waitUntilDone();
+window.setTimeout(function() {
+    document.getElementById("replaceme").textContent = "Test successful (no crash)";
+    if (window.testRunner)
+        testRunner.notifyDone();
+}, 0);
+</script>
+</head>
+<body>
+<div id="replaceme">&#x2038;&#x094d;&#x091f;</div>
+</body>
+</html>

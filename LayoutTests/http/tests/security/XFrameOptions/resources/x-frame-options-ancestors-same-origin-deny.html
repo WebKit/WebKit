@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+function checkIfDone() {
+    try {
+        var url = document.querySelector("iframe").contentWindow.location.href;
+        if (url)
+            console.log("FAIL: Could read contentWindow.location.href");
+        else
+            throw null;
+    } catch (e) {
+        if (e)
+            console.log(e);
+        console.log("PASS: Could not read contentWindow.location.href");
+    }
+    testRunner.notifyDone();
+}
+</script>
+</head>
+<body>
+<iframe src="http://127.0.0.1:8000/security/XFrameOptions/resources/x-frame-options-frame-ancestors-same-origin-deny.cgi" onload="checkIfDone()"></iframe>
+</body>
+</html>

@@ -1,0 +1,243 @@
+/*
+ * Copyright (C) 2000 Lars Knoll (knoll@kde.org)
+ *           (C) 2000 Antti Koivisto (koivisto@kde.org)
+ *           (C) 2000 Dirk Mueller (mueller@kde.org)
+ * Copyright (C) 2003-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Samuel Weinig <sam@webkit.org>
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public License
+ * along with this library; see the file COPYING.LIB.  If not, write to
+ * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ * Boston, MA 02110-1301, USA.
+ *
+ */
+
+#pragma once
+
+#include <WebCore/CSSValue.h>
+#include <WebCore/CachedImage.h>
+#include <WebCore/FloatSize.h>
+#include <WebCore/Image.h>
+#include <WebCore/RenderObject.h>
+#include <WebCore/StylePrimitiveNumeric.h>
+#include <WebCore/StyleURL.h>
+#include <wtf/RefCountedAndCanMakeWeakPtr.h>
+#include <wtf/RefPtr.h>
+#include <wtf/ScopedLambda.h>
+#include <wtf/TypeCasts.h>
+#include <wtf/WeakPtr.h>
+
+namespace WebCore {
+
+class AffineTransform;
+class CachedImage;
+class CachedResourceLoader;
+class CSSStyleDeclaration;
+class CSSValue;
+class CSSValuePool;
+class Document;
+class ImageBuffer;
+class ImageSizingContext;
+class LayoutSize;
+class NativeImage;
+class RenderBoxModelObject;
+class RenderElement;
+class RenderObject;
+struct NinePieceGeometry;
+struct PaintInfo;
+struct ResourceLoaderOptions;
+
+enum class NinePieceImageRule : uint8_t;
+
+namespace Style {
+
+class ComputedStyle;
+
+class Image : public RefCountedAndCanMakeWeakPtr<Image> {
+public:
+    virtual ~Image() = default;
+
+    virtual bool operator==(const Image&) const = 0;
+
+    // Computed Style representation.
+    virtual Ref<CSSValue> computedStyleValue(const Style::ComputedStyle&) const = 0;
+    virtual Ref<DeprecatedCSSOMValue> computedStyleDeprecatedCSSOMValue(CSSValuePool&, const Style::ComputedStyle&, CSSStyleDeclaration&) const = 0;
+
+    // Opaque representation.
+    NODELETE virtual WrappedImagePtr data() const = 0;
+
+    // Loading.
+    virtual bool isPending() const = 0;
+    virtual void load(CachedResourceLoader&, const ResourceLoaderOptions&) = 0;
+    virtual bool isLoaded(const RenderElement*) const { return true; }
+    NODELETE virtual bool errorOccurred() const { return false; }
+    virtual bool usesDataProtocol() const { return false; }
+    virtual bool hasImage() const { return false; }
+    virtual bool hasDecodedImage() const { return true; }
+    virtual URL url() const { return { }; }
+
+    // Clients.
+    virtual void addClient(RenderElement&) = 0;
+    virtual void removeClient(RenderElement&) = 0;
+    virtual bool hasClient(RenderElement&) const = 0;
+
+    // Size / scale.
+    virtual Resolution<> imageResolution() const { return 1; }
+    virtual NaturalDimensions naturalDimensions(const RenderElement&, const ImageSizingContext&) const = 0;
+
+    // https://drafts.csswg.org/css-images-3/#object-negotiation
+    ConcreteObjectSize negotiate(const RenderElement&, const ImageSizingContext&) const;
+
+    // Platform Image.
+    NODELETE virtual WebCore::CachedImage* cachedImage() const { return nullptr; }
+    virtual bool currentFrameIsComplete(const RenderElement*) const { return true; }
+    virtual std::optional<IntPoint> hotSpot() const { return std::nullopt; }
+
+    // Multiple Image selection.
+    virtual Image* selectedImage() { return this; }
+    virtual const Image* selectedImage() const { return this; }
+
+    // Rendering.
+    virtual bool canRender(const RenderElement*) const { return true; }
+    virtual ImageRenditionOptions renditionOptionsForRenderer(const RenderElement&, ImageRenditionOptions rendition) const { return rendition; }
+    virtual bool knownToBeOpaque(const RenderElement&) const = 0;
+    virtual bool canDraw(const RenderElement&) const { return true; }
+    virtual bool containsCurrentColor() const = 0;
+    virtual bool canDrawAtSize(const RenderElement&, const FloatSize& size) const { return !size.isEmpty(); }
+    virtual bool drawsSVGImage() const { return false; }
+    virtual WTF::String accessibilityDescription() const { return { }; }
+    virtual bool isAnimated() const { return false; }
+    virtual void startAnimation() { }
+    virtual void stopAnimation() { }
+    virtual void clearAnimationOverride() { }
+    virtual void resetAnimation() { }
+
+    // Drawing
+    virtual ImageDrawResult draw(GraphicsContext&, const RenderElement&, const ImageDrawDescriptor&, const FloatRect& destination, const FloatRect& source, bool isForFirstLine = false) const = 0;
+    virtual ImageDrawResult drawAsPattern(GraphicsContext&, const RenderElement&, const ImageDrawDescriptor&, const FloatRect& destination, const FloatRect& tile, const AffineTransform&, const FloatPoint& phase, const FloatSize& spacing, bool isForFirstLine) const = 0;
+    virtual ImageDrawResult drawTiled(GraphicsContext&, const RenderElement&, const ImageDrawDescriptor&, const FloatRect& destination, const FloatPoint& phase, const FloatSize& tileSize, const FloatSize& spacing, bool isForFirstLine = false) const;
+    virtual ImageDrawResult drawNinePiece(GraphicsContext&, const RenderElement&, const ImageDrawDescriptor&, const NinePieceGeometry&) const;
+    // Rasterizes the image at its concrete object size, with resolutionScale pixels per unit rounded up to whole pixels.
+    // A bitmap is its own pixels, whatever size it is asked for.
+    virtual RefPtr<NativeImage> nativeImage(const RenderElement&, const ImageDrawDescriptor&, float resolutionScale) const;
+
+    // Drawing options
+    virtual DecodingMode decodingModeForImageDraw(const RenderBoxModelObject&, const PaintInfo&) const { return DecodingMode::Synchronous; }
+    virtual InterpolationQuality interpolationQualityForImageDraw(GraphicsContext&, const RenderElement&, ConcreteObjectSize, const void*, const LayoutSize&) const { return InterpolationQuality::Default; }
+
+    // Invalidation.
+    virtual FloatRect mapChangedRectToSource(const RenderElement&, ConcreteObjectSize, const FloatRect& changedRect) const;
+
+    // Derived type.
+    ALWAYS_INLINE bool isCachedImage() const { return m_type == Type::CachedImage; }
+    ALWAYS_INLINE bool isCursorImage() const { return m_type == Type::CursorImage; }
+    ALWAYS_INLINE bool isImageSet() const { return m_type == Type::ImageSet; }
+    ALWAYS_INLINE bool isGeneratedImage() const { return isFilterImage() || isCanvasImage() || isCrossfadeImage() || isGradientImage() || isMeshGradientImage() || isNamedImage() || isColorImage() || isPaintImage() || isInvalidImage(); }
+    ALWAYS_INLINE bool isFilterImage() const { return m_type == Type::FilterImage; }
+    ALWAYS_INLINE bool isCanvasImage() const { return m_type == Type::CanvasImage; }
+    ALWAYS_INLINE bool isCrossfadeImage() const { return m_type == Type::CrossfadeImage; }
+    ALWAYS_INLINE bool isGradientImage() const { return m_type == Type::GradientImage; }
+    ALWAYS_INLINE bool isMeshGradientImage() const { return m_type == Type::MeshGradientImage; }
+    ALWAYS_INLINE bool isNamedImage() const { return m_type == Type::NamedImage; }
+    ALWAYS_INLINE bool isColorImage() const { return m_type == Type::ColorImage; }
+    ALWAYS_INLINE bool isPaintImage() const { return m_type == Type::PaintImage; }
+    ALWAYS_INLINE bool isInvalidImage() const { return m_type == Type::InvalidImage; }
+
+    bool hasCachedImage() const { return m_type == Type::CachedImage || selectedImage()->isCachedImage(); }
+
+protected:
+    enum class Type : uint8_t {
+        CachedImage,
+        CursorImage,
+        ImageSet,
+        FilterImage,
+        CanvasImage,
+        CrossfadeImage,
+        GradientImage,
+        MeshGradientImage,
+        NamedImage,
+        ColorImage,
+        InvalidImage,
+        PaintImage,
+    };
+
+    Image(Type type)
+        : m_type { type }
+    {
+    }
+
+    static FloatRect mapSourceToSize(const FloatRect&, ConcreteObjectSize, const FloatSize&);
+    static FloatRect mapSizeToSource(const FloatRect&, const FloatSize&, ConcreteObjectSize);
+
+    ImageDrawDescriptor descriptorForRenderer(const RenderElement&, const ImageDrawDescriptor&) const;
+
+    ImageDrawResult drawResolved(GraphicsContext&, const RenderElement&, WebCore::Image&, const ImageDrawDescriptor&, const FloatRect& destination, const FloatRect& source) const;
+    ImageDrawResult drawResolvedAsPattern(GraphicsContext&, const RenderElement&, WebCore::Image&, const ImageDrawDescriptor&, const FloatRect& destination, const FloatRect& tile, const AffineTransform&, const FloatPoint& phase, const FloatSize& spacing) const;
+    ImageDrawResult drawResolvedTiled(GraphicsContext&, const RenderElement&, WebCore::Image&, NaturalDimensions tileNaturalDimensions, const ImageDrawDescriptor&, const FloatRect& destination, const FloatPoint& phase, const FloatSize& tileSize, const FloatSize& spacing) const;
+    ImageDrawResult drawResolvedNinePiece(GraphicsContext&, const RenderElement&, WebCore::Image&, const ImageDrawDescriptor&, const NinePieceGeometry&) const;
+
+    static ImageDrawResult drawResolved(GraphicsContext&, NativeImage&, const ImageDrawDescriptor&, const FloatRect& destination, const FloatRect& source);
+    static ImageDrawResult drawResolvedAsPattern(GraphicsContext&, NativeImage&, const ImageDrawDescriptor&, const FloatRect& destination, const FloatRect& tile, const AffineTransform&, const FloatPoint& phase, const FloatSize& spacing);
+    static ImageDrawResult drawResolvedTiled(GraphicsContext&, NativeImage&, const ImageDrawDescriptor&, const FloatRect& destination, const FloatPoint& phase, const FloatSize& tileSize, const FloatSize& spacing);
+    static ImageDrawResult drawResolvedNinePiece(GraphicsContext&, NativeImage&, const ImageDrawDescriptor&, const NinePieceGeometry&);
+
+    static ImageDrawResult drawResolved(GraphicsContext&, ImageBuffer&, const ImageDrawDescriptor&, const FloatRect& destination, const FloatRect& source);
+    static ImageDrawResult drawResolvedAsPattern(GraphicsContext&, ImageBuffer&, const ImageDrawDescriptor&, const FloatRect& destination, const FloatRect& tile, const AffineTransform&, const FloatPoint& phase, const FloatSize& spacing);
+    static ImageDrawResult drawResolvedTiled(GraphicsContext&, ImageBuffer&, const ImageDrawDescriptor&, const FloatRect& destination, const FloatPoint& phase, const FloatSize& tileSize, const FloatSize& spacing);
+    static ImageDrawResult drawResolvedNinePiece(GraphicsContext&, ImageBuffer&, const ImageDrawDescriptor&, const NinePieceGeometry&);
+
+    static ImageDrawResult drawPatternBuffer(GraphicsContext&, ImageBuffer&, const FloatSize&, const ImageDrawDescriptor&, const FloatRect& destination, const FloatRect& tile, const AffineTransform&, const FloatPoint& phase, const FloatSize& spacing);
+
+    using DestinationPaint = ImageDrawResult(GraphicsContext&);
+    using PatternBufferPaint = void(GraphicsContext&);
+    using TiledDraw = ImageDrawResult(GraphicsContext&, ConcreteObjectSize, const FloatRect& destination, const FloatRect& source);
+    using TiledDrawPattern = ImageDrawResult(GraphicsContext&, ConcreteObjectSize, const FloatRect& destination, const FloatRect& tile, const AffineTransform&, const FloatPoint& phase, const FloatSize& spacing);
+
+    static ImageDrawResult drawIntoDestination(GraphicsContext& context, const ImageDrawDescriptor& descriptor, const FloatRect& destination, const FloatRect& source, NOESCAPE auto&& draw)
+    {
+        return drawIntoDestinationImpl(context, descriptor, destination, source, draw);
+    }
+
+    static RefPtr<ImageBuffer> createPatternBuffer(GraphicsContext& context, const ImageDrawDescriptor& descriptor, const FloatSize& size, NOESCAPE auto&& paint)
+    {
+        return createPatternBufferImpl(context, descriptor, size, paint);
+    }
+
+    static ImageDrawResult drawTiledUsing(GraphicsContext& context, NaturalDimensions naturalDimensions, NOESCAPE auto&& draw, NOESCAPE auto&& drawPattern, const ImageDrawDescriptor& descriptor, const FloatRect& destination, const FloatPoint& phase, const FloatSize& tileSize, const FloatSize& spacing)
+    {
+        return drawTiledUsingImpl(context, naturalDimensions, draw, drawPattern, descriptor, destination, phase, tileSize, spacing);
+    }
+
+    static ImageDrawResult drawNinePieceUsing(GraphicsContext& context, NOESCAPE auto&& draw, NOESCAPE auto&& drawPattern, ConcreteObjectSize concreteObjectSize, const NinePieceGeometry& geometry)
+    {
+        return drawNinePieceUsingImpl(context, draw, drawPattern, concreteObjectSize, geometry);
+    }
+
+private:
+    static ImageDrawResult drawIntoDestinationImpl(GraphicsContext&, const ImageDrawDescriptor&, const FloatRect& destination, const FloatRect& source, const ScopedLambda<DestinationPaint>&);
+    static RefPtr<ImageBuffer> createPatternBufferImpl(GraphicsContext&, const ImageDrawDescriptor&, const FloatSize&, const ScopedLambda<PatternBufferPaint>&);
+    static ImageDrawResult drawTiledUsingImpl(GraphicsContext&, NaturalDimensions, const ScopedLambda<TiledDraw>&, const ScopedLambda<TiledDrawPattern>&, const ImageDrawDescriptor&, const FloatRect& destination, const FloatPoint& phase, const FloatSize& tileSize, const FloatSize& spacing);
+    static ImageDrawResult drawTiledUsingImpl(GraphicsContext&, const ScopedLambda<TiledDrawPattern>&, ConcreteObjectSize, const FloatRect& destination, const FloatRect& source, const FloatSize& tileScaleFactor, NinePieceImageRule horizontalRule, NinePieceImageRule verticalRule);
+    static ImageDrawResult drawNinePieceUsingImpl(GraphicsContext&, const ScopedLambda<TiledDraw>&, const ScopedLambda<TiledDrawPattern>&, ConcreteObjectSize, const NinePieceGeometry&);
+
+protected:
+    Type m_type;
+};
+
+} // namespace Style
+} // namespace WebCore
+
+#define SPECIALIZE_TYPE_TRAITS_STYLE_IMAGE(ToClassName, predicate) \
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::Style::ToClassName) \
+    static bool isType(const WebCore::Style::Image& image) { return image.predicate(); } \
+SPECIALIZE_TYPE_TRAITS_END()

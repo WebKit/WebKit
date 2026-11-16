@@ -1,0 +1,41 @@
+
+Tests that internals.findCueMatches finds all matching cues across a text track with Lorem.
+
+
+** Verify track loaded all 100 cues.
+EXPECTED (cues.length == '100') OK
+
+** Search for a string that appears in every cue.
+RUN(matches = internals.findCueMatches('Lorem', []))
+EXPECTED (matches.length == '30') OK
+
+** Verify timestamps for the first 10 seconds.
+EXPECTED (matches.includes(1) == 'true') OK
+EXPECTED (matches.includes(2) == 'true') OK
+EXPECTED (matches.includes(3) == 'true') OK
+EXPECTED (matches.includes(4) == 'true') OK
+EXPECTED (matches.includes(5) == 'true') OK
+EXPECTED (matches.includes(6) == 'true') OK
+EXPECTED (matches.includes(7) == 'true') OK
+EXPECTED (matches.includes(8) == 'true') OK
+EXPECTED (matches.includes(9) == 'true') OK
+EXPECTED (matches.includes(10) == 'true') OK
+
+** Verify timestamps at every 10 second interval up to 100.
+** Timestamps after 30 should return false as the cue start time is longer than the duration of the video.
+EXPECTED (matches.includes(20) == 'true') OK
+EXPECTED (matches.includes(30) == 'true') OK
+EXPECTED (matches.includes(40) == 'false') OK
+EXPECTED (matches.includes(50) == 'false') OK
+EXPECTED (matches.includes(60) == 'false') OK
+EXPECTED (matches.includes(70) == 'false') OK
+EXPECTED (matches.includes(80) == 'false') OK
+EXPECTED (matches.includes(90) == 'false') OK
+EXPECTED (matches.includes(100) == 'false') OK
+
+** Verify a string that does not appear returns no matches.
+RUN(matches = internals.findCueMatches('zzzzz', []))
+EXPECTED (matches.length == '0') OK
+
+END OF TEST
+

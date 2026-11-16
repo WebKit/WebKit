@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<style>
+#container, #child1, #child2 { position: fixed; }
+#container { translate: 1px; }
+#container { display: grid; top: 1em; }
+#child1 { top: 1em; }
+#child2 { grid-area: 1 / c }
+</style>
+<iframe src="data:text/html,foo"></iframe>
+<div id="container">A<span id="child1"></span><span id="child2"></span></div>
+<script>
+  onload = () => {
+    testRunner?.dumpAsText();
+    testRunner?.waitUntilDone();
+    child1.prepend(child2);
+    requestAnimationFrame(() => {
+      document.body.innerHTML = "PASS if no crash.";
+      testRunner?.notifyDone();
+    });
+  }
+</script>
+</body>

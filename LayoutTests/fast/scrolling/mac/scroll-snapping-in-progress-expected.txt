@@ -1,0 +1,11 @@
+Scroll-snap offsets for 'container': vertical = { 0, 30, 150, 270, 390, 510, 615 }
+Initial state:
+PASS window.internals.isScrollSnapInProgress(container) is false
+
+Sending wheel events
+PASS container.scrollTop > 0 is true
+PASS window.internals.isScrollSnapInProgress(container) is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

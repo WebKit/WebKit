@@ -1,0 +1,41 @@
+From e1c6f5e39acf1022ddfc8e52e020f0bf7db7e8a0 Mon Sep 17 00:00:00 2001
+From: ChangSeok Oh <changseok@gatech.edu>
+Date: Fri, 22 May 2020 03:18:27 -0400
+Subject: [PATCH] Fix building with gcc-10
+
+gcc-10 defaults to -fno-common which reveals a symbol conflict with
+bit_string. See https://gcc.gnu.org/bugzilla/show_bug.cgi?id=85678
+---
+ crypto/math/datatypes.c | 2 +-
+ test/util.c             | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/crypto/math/datatypes.c b/crypto/math/datatypes.c
+index c0dfece..ec2fe6d 100644
+--- a/crypto/math/datatypes.c
++++ b/crypto/math/datatypes.c
+@@ -79,7 +79,7 @@ int octet_get_weight(uint8_t octet)
+ 
+ /* the value MAX_PRINT_STRING_LEN is defined in datatypes.h */
+ 
+-char bit_string[MAX_PRINT_STRING_LEN];
++static char bit_string[MAX_PRINT_STRING_LEN];
+ 
+ uint8_t srtp_nibble_to_hex_char(uint8_t nibble)
+ {
+diff --git a/test/util.c b/test/util.c
+index eb203f4..04e149c 100644
+--- a/test/util.c
++++ b/test/util.c
+@@ -47,7 +47,7 @@
+ #include <string.h>
+ #include <stdint.h>
+ 
+-char bit_string[MAX_PRINT_STRING_LEN];
++static char bit_string[MAX_PRINT_STRING_LEN];
+ 
+ static inline int hex_char_to_nibble(uint8_t c)
+ {
+-- 
+2.26.2
+

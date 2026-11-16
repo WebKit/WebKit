@@ -1,0 +1,57 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<!DOCTYPE html>
+<html>
+<head>
+<script src="/js-test-resources/js-test.js"></script>
+</head>
+<body>
+<script>
+description("Setting srcdoc on an already cross-site (out-of-process) iframe must bring the frame back into the parent's origin.");
+window.jsTestIsAsync = true;
+
+var iframeElem;
+var childDoc;
+var targetElem;
+function checkSrcdocInheritance()
+{
+    iframeElem = document.getElementById('test-iframe');
+    childDoc = iframeElem.contentDocument;
+    shouldNotBe("childDoc", "null");
+    if (!childDoc)
+        return;
+
+    shouldBeEqualToString("childDoc.URL", "about:srcdoc");
+
+    targetElem = childDoc.querySelector("#target");
+    shouldNotBe("targetElem", "null");
+    if (targetElem)
+        targetElem.textContent = "mutated by parent";
+    shouldBeEqualToString("targetElem && targetElem.textContent", "mutated by parent");
+
+    shouldBeTrue("iframeElem.contentWindow.parentIsReachable");
+    shouldBeTrue("iframeElem.contentWindow.origin === window.origin");
+    shouldBeTrue("childDoc.baseURI === document.baseURI");
+    shouldBeTrue("iframeElem.contentWindow.internals.processIdentifier === window.internals.processIdentifier");
+}
+
+async function runTest()
+{
+    const testIframe = document.getElementById('test-iframe');
+    testIframe.srcdoc = '<body><p id="target">original</p><script>window.parentIsReachable = !!parent.document;<\/script></body>';
+    await new Promise((resolve) => {
+        testIframe.addEventListener("load", () => { resolve(); }, { once: true } ); 
+    });
+    checkSrcdocInheritance();
+}
+
+onload = async () => {
+    await runTest();
+    finishJSTest();
+};
+
+</script>
+
+<iframe id="test-iframe" src="http://localhost:8000/site-isolation/resources/green-background.html"></iframe>
+
+</body>
+</html>

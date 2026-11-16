@@ -1,0 +1,59 @@
+diff --git a/JetStream-1.0.1/JetStreamDriver.js b/JetStream-1.0.1/JetStreamDriver.js
+index 73ee420..60f587c 100644
+--- a/JetStream-1.1/JetStreamDriver.js
++++ b/JetStream-1.1/JetStreamDriver.js
+@@ -448,6 +448,14 @@ var JetStream = (function() {
+ 
+         return rawResults;
+     }
++    
++    function computeRefinedResults(){
++        var results = {};
++        for (var i = 0; i < benchmarks.length; ++i) {
++            results[benchmarks[i].name] = {"metrics" : {"Score" : {"current" : [benchmarks[i].results]}}};
++        }
++        return {"JetStream": {"metrics" : {"Score" : ["Geometric"]}, "tests" : results}};
++    }
+ 
+     function end()
+     {
+@@ -458,6 +466,23 @@ var JetStream = (function() {
+         isRunning = false;
+         hasAlreadyRun = true;
+         prepareToStart();
++        // submit result to server
++        results = JSON.stringify(computeRefinedResults());
++        var xhr = new XMLHttpRequest();
++        xhr.open("POST", "/report");
++       
++        xhr.setRequestHeader("Content-type", "application/json");
++        xhr.setRequestHeader("Content-length", results.length);
++        xhr.setRequestHeader("Connection", "close");
++ 
++        xhr.onreadystatechange = function() {
++        if (xhr.readyState == XMLHttpRequest.DONE && xhr.status == 200) {
++                closeRequest = new XMLHttpRequest();
++                closeRequest.open("GET", "/shutdown");
++                closeRequest.send()
++            }
++        }
++        xhr.send(results);
+     }
+ 
+     function iterate()
+diff --git a/JetStream-1.0.1/index.html b/JetStream-1.0.1/index.html
+index e27535c..001087d 100644
+--- a/JetStream-1.1/index.html
++++ b/JetStream-1.1/index.html
+@@ -34,8 +34,10 @@
+     window.onerror = function() { allIsGood = false; }
+ 
+     function initialize() {
+-        if (allIsGood)
++        if (allIsGood) {
+             JetStream.initialize();
++            setTimeout(function(){window.location = "javascript:JetStream.start()"}, 3000);
++        }
+         else
+             document.getElementById("body").innerHTML = "<h1>ERROR</h1><p>Encountered errors during page load. Refusing to run a partial benchmark suite.</p>";
+     }

@@ -1,0 +1,8 @@
+
+PASS Inheritance
+PASS style data attribute
+PASS style IDL attribute
+PASS event handler data attribute
+PASS dataset attribute
+PASS blur()/focus()/tabIndex operations/attribute
+

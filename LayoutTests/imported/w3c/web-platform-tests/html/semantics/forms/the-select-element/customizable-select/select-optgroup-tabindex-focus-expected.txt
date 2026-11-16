@@ -1,0 +1,6 @@
+
+Apple
+Banana
+
+PASS An optgroup with a tabindex in a base appearance picker is focusable
+

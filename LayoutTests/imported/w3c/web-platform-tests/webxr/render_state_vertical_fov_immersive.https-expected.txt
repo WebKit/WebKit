@@ -1,0 +1,4 @@
+
+PASS inlineVerticalFieldOfView is set appropriately on immersively sessions - webgl
+PASS inlineVerticalFieldOfView is set appropriately on immersively sessions - webgl2
+

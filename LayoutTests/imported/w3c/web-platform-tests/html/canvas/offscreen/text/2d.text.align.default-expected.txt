@@ -1,0 +1,5 @@
+2d.text.align.default
+
+
+PASS OffscreenCanvas test: 2d.text.align.default
+

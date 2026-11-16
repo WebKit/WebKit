@@ -1,0 +1,13 @@
+Tests that a client-side accessibility notification listener receives AXSelectedTextChanged with its userInfo.
+
+PASS: accessibilityController.addNotificationListener(notificationCallback) === true
+PASS: userInfo.AXTextStateChangeType === 3
+PASS: userInfo.AXTextSelectionDirection === 4
+PASS: userInfo.AXTextSelectionGranularity === 2
+PASS: userInfo.AXSelectedTextMarkerRange.AXTextMarkerRangeString === 'hello'
+PASS: userInfo.AXTextChangeElement.domIdentifier === 'field'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

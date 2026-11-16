@@ -1,0 +1,43 @@
+<!DOCTYPE html><!-- webkit-test-runner [ ThreadedTimeBasedAnimationsEnabled=true ] -->
+<body>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="threaded-animations-utils.js"></script>
+<style>
+
+#target {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100px;
+    height: 100px;
+    background-color: black;
+}
+
+</style>
+</body>
+
+<div id="target"></div>
+
+<script>
+
+promise_test(async test => {
+    const target = document.getElementById("target");
+
+    // Create an animation that, initially, can be accelerated.
+    const animation = target.animate({ opacity: [1, 0] }, { duration: 1000*1000 });
+    await animationAcceleration(animation);
+    assert_equals(internals.acceleratedAnimationsForElement(target).length, 1);
+
+    // Now change its effect's keyframes to use a range which will disable acceleration.
+    animation.effect.setKeyframes([
+        { offset: { rangeName: "entry", offset: CSS.percent(0) }, opacity: 1 },
+        { offset: { rangeName: "entry", offset: CSS.percent(100) }, opacity: 0 }
+    ]);
+    await threadedAnimationsCommit();
+    assert_equals(internals.acceleratedAnimationsForElement(target).length, 0);
+}, "Updating an accelerated animation to use unresolved offset disables the accelerated animation.");
+
+</script>
+</body>
+</html>

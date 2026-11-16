@@ -1,0 +1,83 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[%# INTERFACE:
+  # classifications: array of hashes, with an 'object' key representing a
+  #                  classification object and 'products' the list of
+  #                  product objects the user can enter bugs into.
+  # target:   the script that displays this template.
+  #%]
+
+[% IF target == "enter_bug.cgi" %]
+  [% title = "Enter $terms.Bug" %]
+  [% subheader = "Select Product" %]
+  [% h2 = BLOCK %]
+    [% IF Param('useclassification') %]Next[% ELSE %]First[% END %],
+    you must pick a product on which to enter [% terms.abug %]:
+  [% END %]
+[% ELSIF target == "describecomponents.cgi" %]
+  [% title = "Browse" %]
+  [% h2 = "Select a product category to browse:" %]
+[% END %]
+
+[% DEFAULT title = "Choose a Product" %]
+[% PROCESS global/header.html.tmpl %]
+
+[% USE Bugzilla %]
+[% previous_params = Bugzilla.cgi.canonicalise_query('classification', 'product') %]
+
+<h2>[% h2 FILTER html %]</h2>
+
+<table id="choose_product">
+
+[% FOREACH c = classifications %]
+  [% IF c.object %]
+    <tr>
+      <th colspan="2" class="left">[% c.object.name FILTER html %]:
+      [%+ c.object.description FILTER html_light %]</th>
+    </tr>
+  [% END %]
+
+  [% FOREACH p = c.products %]
+    <tr>
+      <th class="right nowrap">
+        <a href="[% target %]?product=[% p.name FILTER uri -%]
+              [%- IF previous_params %]&amp;[% previous_params FILTER none %][% END -%]">
+        [% p.name FILTER html %]</a>:
+      </th>
+
+      <td>[% p.description FILTER html_light %]</td>
+    </tr>
+  [% END %]
+
+[%# if WEBKIT_CHANGES #%]
+    <!-- Custom Web Accessibility Link -->
+    <tr>
+      <th class="right nowrap">
+        <a href="https://webkit.org/new-ax-bug">Accessibility</a>:
+      </th>
+      <td>Accessibility-related bugs for WebKit</td>
+    </tr>
+
+    <!-- Custom Web Inspector Link -->
+    <tr>
+      <th class="right nowrap">
+        <a href="https://webkit.org/new-inspector-bug">Inspector</a>:
+      </th>
+      <td>The Web Inspector Developer Tools</td>
+    </tr>
+[%# endif // WEBKIT_CHANGES #%]
+
+  <tr>
+    <th colspan="2">&nbsp;</th>
+  </tr>
+[% END %]
+
+</table>
+
+[% PROCESS global/footer.html.tmpl %]

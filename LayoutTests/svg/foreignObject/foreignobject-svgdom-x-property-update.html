@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>foreignObject: SVG DOM 'x' property update repositions the element</title>
+<link rel="match" href="foreignobject-svgdom-x-property-update-expected.html">
+<!-- Setting SVGForeignObjectElement.x.baseVal.value must reposition the foreignObject.
+     layout() derives the viewport from the resolved style, so the x/y presentation
+     hint style has to be invalidated when the SVG DOM property changes. This green
+     block must end up at x=100, exactly overlapping the reference. -->
+<style>* { margin: 0; padding: 0; }</style>
+</head>
+<body>
+<svg xmlns="http://www.w3.org/2000/svg" width="300" height="200">
+  <foreignObject id="fo" x="-100" y="50" width="150" height="100">
+    <div xmlns="http://www.w3.org/1999/xhtml" style="background-color: green; width: 150px; height: 100px;"></div>
+  </foreignObject>
+</svg>
+<script>
+  var fo = document.getElementById("fo");
+  // Force an initial layout at the wrong position, then move via the SVG DOM property.
+  document.body.offsetTop;
+  fo.x.baseVal.value = 100;
+</script>
+</body>
+</html>

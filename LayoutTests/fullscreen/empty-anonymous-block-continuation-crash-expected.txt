@@ -1,0 +1,3 @@
+WebKit Bug 89386 - Crash in RenderInline::willBeDestroyed.
+Test passes if it does not crash.
+

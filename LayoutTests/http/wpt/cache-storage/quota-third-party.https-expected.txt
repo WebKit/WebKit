@@ -1,0 +1,6 @@
+
+
+PASS same origin iframe has regular quota
+PASS cross origin iframe has reduced quota
+PASS cross origin iframe has reduced quota after resetting quota
+

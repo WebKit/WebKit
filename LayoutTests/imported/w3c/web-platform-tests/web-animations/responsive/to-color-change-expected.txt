@@ -1,0 +1,15 @@
+
+PASS Background color responsive to currentColor changes
+PASS Fill color responsive to currentColor changes
+PASS Color interpolation uses pre-multiplied colors
+PASS Border color responsive to currentColor changes
+PASS Border color responsive to currentColor changes again
+PASS Outline color responsive to currentColor changes
+PASS Stroke color responsive to currentColor changes
+PASS Text decoration color responsive to currentColor changes
+PASS Color responsive to parent currentColor changes
+PASS Color responsive to repeated parent currentColor changes
+PASS Color animations do not expose visited status
+PASS Color animations do not expose parent visited status
+PASS Color animations respond to inherited changes
+

@@ -1,0 +1,2 @@
+This test performs an animation of the translate() and scale() operators. It animates over 1 seconds. At 0.25 and 0.5 seconds it takes a snapshot and expects the result to be within range.
+PASS

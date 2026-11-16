@@ -1,0 +1,68 @@
+<!DOCTYPE html><!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<head>
+<title>This tests that a mouseout listener added above the click target still turns the tap into a hover when the only new content is outside of the viewport</title>
+<script src="../../../../../resources/basic-gestures.js"></script>
+<style>
+#tapthis {
+    width: 400px;
+    height: 400px;
+    border: 1px solid green;
+}
+
+#offscreen {
+    display: none;
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100px;
+    height: 100px;
+    transform: translateX(-200vw);
+    background-color: green;
+}
+</style>
+<script>
+async function test() {
+    if (!window.testRunner || !testRunner.runUIScript)
+        return;
+    if (window.internals) {
+        internals.settings.setContentChangeObserverEnabled(true);
+        internals.setTopDocumentURLForQuirks("https://store.steampowered.com");
+    }
+
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+
+    let rect = tapthis.getBoundingClientRect();
+    let x = rect.left + rect.width / 2;
+    let y = rect.top + rect.height / 2;
+
+    await tapAtPoint(x, y);
+}
+</script>
+</head>
+<body onload="test()">
+<div id=tapthis>PASS if 'clicked' text is not shown below.</div>
+<div id=offscreen></div>
+<pre id=result></pre>
+<script>
+tapthis.addEventListener("mouseover", function( event ) {
+    offscreen.style.display = "block";
+    document.body.offsetHeight;
+    tapthis.addEventListener("mouseout", function( event ) { }, false);
+    setTimeout(function() {
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }, 300);
+}, false);
+
+offscreen.addEventListener("click", function( event ) {
+    result.innerHTML = "clicked offscreen";
+}, false);
+
+tapthis.addEventListener("click", function( event ) {
+    result.innerHTML = "clicked";
+}, false);
+</script>
+</body>
+</html>

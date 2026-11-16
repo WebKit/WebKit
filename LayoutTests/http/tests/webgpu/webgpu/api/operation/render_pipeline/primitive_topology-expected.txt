@@ -1,0 +1,22 @@
+
+PASS :basic:topology="point-list";indirect=false;primitiveRestart=false
+PASS :basic:topology="point-list";indirect=true;primitiveRestart=false
+PASS :basic:topology="line-list";indirect=false;primitiveRestart=false
+PASS :basic:topology="line-list";indirect=true;primitiveRestart=false
+PASS :basic:topology="line-strip";indirect=false;primitiveRestart=false
+PASS :basic:topology="line-strip";indirect=false;primitiveRestart=true
+PASS :basic:topology="line-strip";indirect=true;primitiveRestart=false
+PASS :basic:topology="line-strip";indirect=true;primitiveRestart=true
+PASS :basic:topology="triangle-list";indirect=false;primitiveRestart=false
+PASS :basic:topology="triangle-list";indirect=true;primitiveRestart=false
+PASS :basic:topology="triangle-strip";indirect=false;primitiveRestart=false
+PASS :basic:topology="triangle-strip";indirect=false;primitiveRestart=true
+PASS :basic:topology="triangle-strip";indirect=true;primitiveRestart=false
+PASS :basic:topology="triangle-strip";indirect=true;primitiveRestart=true
+PASS :unaligned_vertex_count:topology="line-list";indirect=false;drawCount=5
+PASS :unaligned_vertex_count:topology="line-list";indirect=true;drawCount=5
+PASS :unaligned_vertex_count:topology="triangle-list";indirect=false;drawCount=5
+PASS :unaligned_vertex_count:topology="triangle-list";indirect=false;drawCount=4
+PASS :unaligned_vertex_count:topology="triangle-list";indirect=true;drawCount=5
+PASS :unaligned_vertex_count:topology="triangle-list";indirect=true;drawCount=4
+

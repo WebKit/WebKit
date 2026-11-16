@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>media-source-real-remove-edges</title>
+    <script src="mp4-generator.js"></script>
+    <script src="../video-test.js"></script>
+    <script>
+    // Tests remove() at various boundary conditions through the real parser
+    // pipeline. Catches regressions in removeCodedFrames and eviction paths
+    // where invalid iterators or MediaTime::invalidTime comparisons caused
+    // infinite loops or crashes:
+    //   - SampleMap infinite loop with invalidTime (bug 304975)
+    //   - removeCodedFrames with start past end of presentation order (bug 304975)
+
+    var source;
+    var sourceBuffer;
+
+    async function runTest() {
+        findMediaElement();
+
+        source = new MediaSource();
+        video.src = URL.createObjectURL(source);
+        await waitFor(source, 'sourceopen');
+
+        sourceBuffer = source.addSourceBuffer(MP4.VIDEO_TYPE);
+
+        var initData = MP4.initSegment({
+            timescale: 1000,
+            tracks: [{ id: 1, type: 'video', timescale: 1000 }]
+        });
+        sourceBuffer.appendBuffer(initData);
+        await waitFor(sourceBuffer, 'updateend');
+
+        // 6 seconds of video, sync every 2s (at 0, 2, 4)
+        var media = MP4.mediaSegment({
+            sequenceNumber: 1,
+            tracks: [{ id: 1, type: 'video', baseDecodeTime: 0, samples: [
+                { duration: 1000, compositionTimeOffset: 0, isSync: true },
+                { duration: 1000, compositionTimeOffset: 0, isSync: false },
+                { duration: 1000, compositionTimeOffset: 0, isSync: true },
+                { duration: 1000, compositionTimeOffset: 0, isSync: false },
+                { duration: 1000, compositionTimeOffset: 0, isSync: true },
+                { duration: 1000, compositionTimeOffset: 0, isSync: false },
+            ]}]
+        });
+        sourceBuffer.appendBuffer(media);
+        await waitFor(sourceBuffer, 'updateend');
+
+        testExpected('sourceBuffer.buffered.length', 1);
+        testExpectedEqualWithTolerance('sourceBuffer.buffered.end(0)', 6, 0.01);
+
+        // Test 1: Remove exactly at sync frame boundary.
+        consoleWrite('Test 1: remove(0, 2) at sync frame boundary');
+        sourceBuffer.remove(0, 2);
+        await waitFor(sourceBuffer, 'updateend');
+        testExpected('sourceBuffer.buffered.length', 1);
+        testExpectedEqualWithTolerance('sourceBuffer.buffered.start(0)', 2, 0.01);
+
+        // Test 2: Remove at end of buffered data.
+        consoleWrite('Test 2: remove(4, 6) at end of buffer');
+        sourceBuffer.remove(4, 6);
+        await waitFor(sourceBuffer, 'updateend');
+        testExpected('sourceBuffer.buffered.length', 1);
+        testExpectedEqualWithTolerance('sourceBuffer.buffered.start(0)', 2, 0.01);
+        testExpectedEqualWithTolerance('sourceBuffer.buffered.end(0)', 4, 0.01);
+
+        // Test 3: Remove everything remaining.
+        consoleWrite('Test 3: remove(0, Infinity) removes all');
+        sourceBuffer.remove(0, Infinity);
+        await waitFor(sourceBuffer, 'updateend');
+        testExpected('sourceBuffer.buffered.length', 0);
+
+        // Test 4: Remove on empty buffer — should not crash or hang.
+        consoleWrite('Test 4: remove(0, Infinity) on empty buffer');
+        sourceBuffer.remove(0, Infinity);
+        await waitFor(sourceBuffer, 'updateend');
+        testExpected('sourceBuffer.buffered.length', 0);
+
+        testExpected('source.readyState', 'open');
+    }
+
+    window.addEventListener('load', event => {
+        runTest().then(endTest).catch(failTest);
+    });
+    </script>
+</head>
+<body>
+    <video></video>
+</body>
+</html>

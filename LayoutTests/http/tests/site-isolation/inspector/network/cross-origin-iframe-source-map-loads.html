@@ -1,0 +1,64 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script>
+function addCrossOriginIFrame() {
+    let crossOriginHost = location.hostname === "localhost" ? "127.0.0.1" : "localhost";
+    let iframe = document.createElement("iframe");
+    iframe.src = `http://${crossOriginHost}:8000/site-isolation/inspector/network/resources/iframe-with-source-map-stylesheet.html?${Math.random()}`;
+    document.body.appendChild(iframe);
+}
+
+function test() {
+    // A source map referenced by a stylesheet in a cross-origin iframe has to be loaded with Network.loadResource
+    // on the backend target (ProxyingNetworkAgent). The page target cannot resolve the remote frame.
+
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Network.CrossOriginIFrame.SourceMapLoads");
+
+    let stylesheetResource;
+    let sourceMap;
+
+    suite.addTestCase({
+        name: "SiteIsolation.Network.CrossOriginIFrame.SourceMapLoads.SourceMap",
+        description: "The source map of a stylesheet in a cross-origin iframe should load and attach to the stylesheet resource.",
+        async test() {
+            let resourceAddedPromise = new Promise((resolve) => {
+                function onResourceAdded(event) {
+                    if (!event.data.resource.url.includes("stylesheet-with-source-map.css"))
+                        return;
+                    WI.Frame.removeEventListener(WI.Frame.Event.ResourceWasAdded, onResourceAdded);
+                    resolve(event.data.resource);
+                }
+                WI.Frame.addEventListener(WI.Frame.Event.ResourceWasAdded, onResourceAdded);
+            });
+            InspectorTest.evaluateInPage("addCrossOriginIFrame()");
+            stylesheetResource = await resourceAddedPromise;
+            InspectorTest.expectThat(stylesheetResource.parentFrame !== WI.networkManager.mainFrame, "Stylesheet should belong to the cross-origin iframe.");
+
+            if (!stylesheetResource.sourceMaps.length)
+                await stylesheetResource.awaitEvent(WI.SourceCode.Event.SourceMapAdded);
+            InspectorTest.expectEqual(stylesheetResource.sourceMaps.length, 1, "Stylesheet should have loaded 1 SourceMap.");
+            sourceMap = stylesheetResource.sourceMaps[0];
+            InspectorTest.expectThat(sourceMap instanceof WI.SourceMap, "SourceMap should be a WI.SourceMap instance.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Network.CrossOriginIFrame.SourceMapLoads.SourceMapResourceContent",
+        description: "The original source listed by the source map should load its content.",
+        async test() {
+            if (!sourceMap) {
+                InspectorTest.fail("No source map; cannot request original source.");
+                return;
+            }
+            InspectorTest.expectEqual(sourceMap.resources.length, 1, "SourceMap should have 1 resource.");
+            let content = await sourceMap.resources[0].requestContent();
+            InspectorTest.expectThat(content.sourceCode.content?.includes("si-original-source"), "SourceMapResource should load the original source content.");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+<body onload="runTest()">
+<p>Tests that a source map for a stylesheet in a cross-origin iframe loads under Site Isolation, routed through the backend target's NetworkAgent.</p>
+</body>

@@ -1,0 +1,22 @@
+Tests enumeration of Window / Location properties cross origin.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS: Cross frame access by enumerating the window object was denied.
+PASS: Cross frame access by getting the keys of the window object was denied.
+PASS: Cross frame access by getting the property names of the window object was denied.
+PASS: Cross frame access by enumerating the Location object was denied.
+PASS: Cross frame access by getting the keys of the Location object was denied.
+PASS: Cross frame access by getting the property names of the Location object was denied.
+PASS: areArraysEqual(Object.getOwnPropertyNames(b_win).sort(), allowlistedWindowIndices.concat(allowlistedWindowPropNames).sort()) should be 'true' and is.
+PASS: areArraysEqual(indexedWindowProps, allowlistedWindowIndices) should be 'true' and is.
+PASS: areArraysEqual(stringWindowProps.sort(), allowlistedWindowPropNames) should be 'true' and is.
+PASS: areArraysEqual(symbolWindowProps, allowlistedSymbols) should be 'true' and is.
+PASS: areArraysEqual(Object.getOwnPropertyNames(b_win.location).sort(), allowlistedLocationPropNames.sort()) should be 'true' and is.
+PASS: areArraysEqual(stringLocationProps.sort(), allowlistedLocationPropNames) should be 'true' and is.
+PASS: areArraysEqual(symbolLocationProps, allowlistedSymbols) should be 'true' and is.
+PASS: successfullyParsed should be 'true' and is.
+
+TEST COMPLETE
+

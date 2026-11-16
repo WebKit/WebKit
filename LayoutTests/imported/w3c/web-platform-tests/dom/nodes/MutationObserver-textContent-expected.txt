@@ -1,0 +1,6 @@
+
+PASS Setting Element.textContent
+PASS Setting Element.textContent to the same value
+PASS Setting Element.textContent to a different value
+PASS Setting Element.textContent to the same value when the old node is a CDATASection
+

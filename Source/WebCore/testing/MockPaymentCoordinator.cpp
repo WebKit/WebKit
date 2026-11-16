@@ -1,0 +1,422 @@
+/*
+ * Copyright (C) 2017-2019 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#include "config.h"
+#include "MockPaymentCoordinator.h"
+
+#if ENABLE(APPLE_PAY)
+
+#include "ApplePayCouponCodeUpdate.h"
+#include "ApplePayLaterAvailability.h"
+#include "ApplePayPaymentAuthorizationResult.h"
+#include "ApplePayPaymentMethodUpdate.h"
+#include "ApplePaySessionPaymentRequest.h"
+#include "ApplePayShippingContactEditingMode.h"
+#include "ApplePayShippingContactUpdate.h"
+#include "ApplePayShippingMethodUpdate.h"
+#include "MockApplePaySetupFeature.h"
+#include "MockPayment.h"
+#include "MockPaymentContact.h"
+#include "MockPaymentMethod.h"
+#include "Page.h"
+#include "PaymentCoordinator.h"
+#include "PaymentInstallmentConfigurationWebCore.h"
+#include "PaymentSessionError.h"
+#include <wtf/CompletionHandler.h>
+#include <wtf/RunLoop.h>
+#include <wtf/TZoneMallocInlines.h>
+
+#include <wtf/URL.h>
+
+namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(MockPaymentCoordinator);
+
+Ref<MockPaymentCoordinator> MockPaymentCoordinator::create(Page& page)
+{
+    return adoptRef(*new MockPaymentCoordinator(page));
+}
+
+MockPaymentCoordinator::MockPaymentCoordinator(Page& page)
+    : m_page { page }
+{
+    m_availablePaymentNetworks.add("amex"_s);
+    m_availablePaymentNetworks.add("carteBancaire"_s);
+    m_availablePaymentNetworks.add("chinaUnionPay"_s);
+    m_availablePaymentNetworks.add("discover"_s);
+    m_availablePaymentNetworks.add("interac"_s);
+    m_availablePaymentNetworks.add("jcb"_s);
+    m_availablePaymentNetworks.add("masterCard"_s);
+    m_availablePaymentNetworks.add("privateLabel"_s);
+    m_availablePaymentNetworks.add("visa"_s);
+}
+
+std::optional<String> MockPaymentCoordinator::validatedPaymentNetwork(const String& paymentNetwork) const
+{
+    auto result = m_availablePaymentNetworks.find(paymentNetwork);
+    if (result == m_availablePaymentNetworks.end())
+        return std::nullopt;
+    return *result;
+}
+
+bool MockPaymentCoordinator::canMakePayments()
+{
+    return m_canMakePayments;
+}
+
+void MockPaymentCoordinator::canMakePaymentsWithActiveCard(const String&, const String&, CompletionHandler<void(bool)>&& completionHandler)
+{
+    RunLoop::mainSingleton().dispatch([completionHandler = WTF::move(completionHandler), canMakePaymentsWithActiveCard = m_canMakePaymentsWithActiveCard]() mutable {
+        completionHandler(canMakePaymentsWithActiveCard);
+    });
+}
+
+void MockPaymentCoordinator::openPaymentSetup(const String&, const String&, CompletionHandler<void(bool)>&& completionHandler)
+{
+    RunLoop::mainSingleton().dispatch([completionHandler = WTF::move(completionHandler)]() mutable {
+        completionHandler(true);
+    });
+}
+
+MockPaymentCoordinator::~MockPaymentCoordinator()
+{
+    ASSERT(m_showCount == m_hideCount);
+}
+
+void MockPaymentCoordinator::dispatchIfShowing(Function<void()>&& function)
+{
+    if (m_showCount <= m_hideCount)
+        return;
+
+    RunLoop::mainSingleton().dispatch([protectedThis = Ref { *this }, currentShowCount = m_showCount, function = WTF::move(function)]() {
+        if (protectedThis->m_showCount > protectedThis->m_hideCount && protectedThis->m_showCount == currentShowCount)
+            function();
+    });
+}
+
+bool MockPaymentCoordinator::showPaymentUI(const URL&, const Vector<URL>&, const ApplePaySessionPaymentRequest& request)
+{
+    if (request.shippingContact().pkContact().get())
+        m_shippingAddress = toMockPaymentAddress(request.shippingContact().toLocalizedApplePayPaymentContact(request.version()));
+    m_supportedCountries = request.supportedCountries();
+    m_shippingMethods = request.shippingMethods();
+    m_requiredBillingContactFields = toMockPaymentContactFields(request.requiredBillingContactFields());
+    m_requiredShippingContactFields = toMockPaymentContactFields(request.requiredShippingContactFields());
+#if ENABLE(APPLE_PAY_INSTALLMENTS)
+    if (auto& configuration = request.installmentConfiguration().applePayInstallmentConfiguration())
+        m_installmentConfiguration = *configuration;
+#endif
+#if ENABLE(APPLE_PAY_COUPON_CODE)
+    m_supportsCouponCode = request.supportsCouponCode();
+    m_couponCode = request.couponCode();
+#endif
+#if ENABLE(APPLE_PAY_SHIPPING_CONTACT_EDITING_MODE)
+    m_shippingContactEditingMode = request.shippingContactEditingMode();
+#endif
+#if ENABLE(APPLE_PAY_RECURRING_PAYMENTS)
+    m_recurringPaymentRequest = request.recurringPaymentRequest();
+#endif
+#if ENABLE(APPLE_PAY_AUTOMATIC_RELOAD_PAYMENTS)
+    m_automaticReloadPaymentRequest = request.automaticReloadPaymentRequest();
+#endif
+#if ENABLE(APPLE_PAY_MULTI_MERCHANT_PAYMENTS)
+    m_multiTokenContexts = request.multiTokenContexts();
+#endif
+#if ENABLE(APPLE_PAY_DEFERRED_PAYMENTS)
+    m_deferredPaymentRequest = request.deferredPaymentRequest();
+#endif
+#if ENABLE(APPLE_PAY_DISBURSEMENTS)
+    m_disbursementRequest = request.disbursementRequest();
+#endif
+#if ENABLE(APPLE_PAY_LATER_AVAILABILITY)
+    m_applePayLaterAvailability = request.applePayLaterAvailability();
+#endif
+#if ENABLE(APPLE_PAY_MERCHANT_CATEGORY_CODE)
+    m_merchantCategoryCode = request.merchantCategoryCode();
+#endif
+#if ENABLE(APPLE_PAY_DELEGATED_REQUEST)
+    m_isDelegatedRequest = request.isDelegatedRequest();
+#endif
+
+    RefPtr page = m_page.get();
+    if (!page)
+        return false;
+
+    ASSERT(m_showCount == m_hideCount);
+    ++m_showCount;
+    dispatchIfShowing([page = WTF::move(page)]() {
+        protect(page->paymentCoordinator())->validateMerchant(URL { "https://webkit.org/"_str });
+    });
+    return true;
+}
+
+void MockPaymentCoordinator::completeMerchantValidation(const PaymentMerchantSession&)
+{
+    RefPtr page = m_page.get();
+    if (!page)
+        return;
+
+    dispatchIfShowing([page = WTF::move(page), shippingAddress = m_shippingAddress]() mutable {
+        protect(page->paymentCoordinator())->didSelectShippingContact(MockPaymentContact { toLocalizedApplePayPaymentContact(shippingAddress) });
+    });
+}
+
+void MockPaymentCoordinator::completeShippingMethodSelection(std::optional<ApplePayShippingMethodUpdate>&& shippingMethodUpdate)
+{
+    if (!shippingMethodUpdate)
+        return;
+
+    m_total = WTF::move(shippingMethodUpdate->newTotal);
+    m_lineItems = WTF::move(shippingMethodUpdate->newLineItems);
+#if ENABLE(APPLE_PAY_UPDATE_SHIPPING_METHODS_WHEN_CHANGING_LINE_ITEMS)
+    m_shippingMethods = WTF::move(shippingMethodUpdate->newShippingMethods);
+#endif
+#if ENABLE(APPLE_PAY_RECURRING_PAYMENTS)
+    m_recurringPaymentRequest = WTF::move(shippingMethodUpdate->newRecurringPaymentRequest);
+#endif
+#if ENABLE(APPLE_PAY_AUTOMATIC_RELOAD_PAYMENTS)
+    m_automaticReloadPaymentRequest = WTF::move(shippingMethodUpdate->newAutomaticReloadPaymentRequest);
+#endif
+#if ENABLE(APPLE_PAY_MULTI_MERCHANT_PAYMENTS)
+    m_multiTokenContexts = WTF::move(shippingMethodUpdate->newMultiTokenContexts);
+#endif
+#if ENABLE(APPLE_PAY_DEFERRED_PAYMENTS)
+    m_deferredPaymentRequest = WTF::move(shippingMethodUpdate->newDeferredPaymentRequest);
+#endif
+#if ENABLE(APPLE_PAY_DISBURSEMENTS)
+    m_disbursementRequest = WTF::move(shippingMethodUpdate->newDisbursementRequest);
+#endif
+}
+
+static Vector<MockPaymentError> convert(Vector<Ref<ApplePayError>>&& errors)
+{
+    return WTF::map(WTF::move(errors), [] (auto&& error) -> MockPaymentError {
+        return { error->code(), error->message(), error->contactField() };
+    });
+}
+
+void MockPaymentCoordinator::completeShippingContactSelection(std::optional<ApplePayShippingContactUpdate>&& shippingContactUpdate)
+{
+    if (!shippingContactUpdate)
+        return;
+
+    m_total = WTF::move(shippingContactUpdate->newTotal);
+    m_lineItems = WTF::move(shippingContactUpdate->newLineItems);
+    m_shippingMethods = WTF::move(shippingContactUpdate->newShippingMethods);
+    m_errors = convert(WTF::move(shippingContactUpdate->errors));
+#if ENABLE(APPLE_PAY_RECURRING_PAYMENTS)
+    m_recurringPaymentRequest = WTF::move(shippingContactUpdate->newRecurringPaymentRequest);
+#endif
+#if ENABLE(APPLE_PAY_AUTOMATIC_RELOAD_PAYMENTS)
+    m_automaticReloadPaymentRequest = WTF::move(shippingContactUpdate->newAutomaticReloadPaymentRequest);
+#endif
+#if ENABLE(APPLE_PAY_MULTI_MERCHANT_PAYMENTS)
+    m_multiTokenContexts = WTF::move(shippingContactUpdate->newMultiTokenContexts);
+#endif
+#if ENABLE(APPLE_PAY_DEFERRED_PAYMENTS)
+    m_deferredPaymentRequest = WTF::move(shippingContactUpdate->newDeferredPaymentRequest);
+#endif
+#if ENABLE(APPLE_PAY_DISBURSEMENTS)
+    m_disbursementRequest = WTF::move(shippingContactUpdate->newDisbursementRequest);
+#endif
+
+}
+
+void MockPaymentCoordinator::completePaymentMethodSelection(std::optional<ApplePayPaymentMethodUpdate>&& paymentMethodUpdate)
+{
+    if (!paymentMethodUpdate)
+        return;
+
+    m_total = WTF::move(paymentMethodUpdate->newTotal);
+    m_lineItems = WTF::move(paymentMethodUpdate->newLineItems);
+#if ENABLE(APPLE_PAY_UPDATE_SHIPPING_METHODS_WHEN_CHANGING_LINE_ITEMS)
+    m_shippingMethods = WTF::move(paymentMethodUpdate->newShippingMethods);
+    m_errors = convert(WTF::move(paymentMethodUpdate->errors));
+#endif
+#if ENABLE(APPLE_PAY_RECURRING_PAYMENTS)
+    m_recurringPaymentRequest = WTF::move(paymentMethodUpdate->newRecurringPaymentRequest);
+#endif
+#if ENABLE(APPLE_PAY_AUTOMATIC_RELOAD_PAYMENTS)
+    m_automaticReloadPaymentRequest = WTF::move(paymentMethodUpdate->newAutomaticReloadPaymentRequest);
+#endif
+#if ENABLE(APPLE_PAY_MULTI_MERCHANT_PAYMENTS)
+    m_multiTokenContexts = WTF::move(paymentMethodUpdate->newMultiTokenContexts);
+#endif
+#if ENABLE(APPLE_PAY_DEFERRED_PAYMENTS)
+    m_deferredPaymentRequest = WTF::move(paymentMethodUpdate->newDeferredPaymentRequest);
+#endif
+#if ENABLE(APPLE_PAY_DISBURSEMENTS)
+    m_disbursementRequest = WTF::move(paymentMethodUpdate->newDisbursementRequest);
+#endif
+}
+
+#if ENABLE(APPLE_PAY_COUPON_CODE)
+
+void MockPaymentCoordinator::completeCouponCodeChange(std::optional<ApplePayCouponCodeUpdate>&& couponCodeUpdate)
+{
+    if (!couponCodeUpdate)
+        return;
+
+    m_total = WTF::move(couponCodeUpdate->newTotal);
+    m_lineItems = WTF::move(couponCodeUpdate->newLineItems);
+    m_shippingMethods = WTF::move(couponCodeUpdate->newShippingMethods);
+    m_errors = convert(WTF::move(couponCodeUpdate->errors));
+#if ENABLE(APPLE_PAY_RECURRING_PAYMENTS)
+    m_recurringPaymentRequest = WTF::move(couponCodeUpdate->newRecurringPaymentRequest);
+#endif
+#if ENABLE(APPLE_PAY_AUTOMATIC_RELOAD_PAYMENTS)
+    m_automaticReloadPaymentRequest = WTF::move(couponCodeUpdate->newAutomaticReloadPaymentRequest);
+#endif
+#if ENABLE(APPLE_PAY_MULTI_MERCHANT_PAYMENTS)
+    m_multiTokenContexts = WTF::move(couponCodeUpdate->newMultiTokenContexts);
+#endif
+#if ENABLE(APPLE_PAY_DEFERRED_PAYMENTS)
+    m_deferredPaymentRequest = WTF::move(couponCodeUpdate->newDeferredPaymentRequest);
+#endif
+}
+
+#endif // ENABLE(APPLE_PAY_COUPON_CODE)
+
+void MockPaymentCoordinator::changeShippingOption(String&& shippingOption)
+{
+    RefPtr page = m_page.get();
+    if (!page)
+        return;
+
+    dispatchIfShowing([page = WTF::move(page), shippingOption = WTF::move(shippingOption)]() mutable {
+        ApplePayShippingMethod shippingMethod;
+        shippingMethod.identifier = WTF::move(shippingOption);
+        protect(page->paymentCoordinator())->didSelectShippingMethod(shippingMethod);
+    });
+}
+
+void MockPaymentCoordinator::changePaymentMethod(ApplePayPaymentMethod&& paymentMethod)
+{
+    RefPtr page = m_page.get();
+    if (!page)
+        return;
+
+    dispatchIfShowing([page = WTF::move(page), paymentMethod = WTF::move(paymentMethod)]() mutable {
+        protect(page->paymentCoordinator())->didSelectPaymentMethod(MockPaymentMethod { WTF::move(paymentMethod) });
+    });
+}
+
+#if ENABLE(APPLE_PAY_COUPON_CODE)
+
+void MockPaymentCoordinator::changeCouponCode(String&& couponCode)
+{
+    RefPtr page = m_page.get();
+    if (!page)
+        return;
+
+    dispatchIfShowing([page = WTF::move(page), couponCode = WTF::move(couponCode)]() mutable {
+        protect(page->paymentCoordinator())->didChangeCouponCode(WTF::move(couponCode));
+    });
+}
+
+#endif // ENABLE(APPLE_PAY_COUPON_CODE)
+
+void MockPaymentCoordinator::acceptPayment()
+{
+    RefPtr page = m_page.get();
+    if (!page)
+        return;
+
+    dispatchIfShowing([page = WTF::move(page), shippingAddress = m_shippingAddress]() mutable {
+        ApplePayPayment payment;
+        payment.shippingContact = toApplePayPaymentContact(shippingAddress);
+        LocalizedApplePayPayment localizedPayment;
+        localizedPayment.shippingContact = toLocalizedApplePayPaymentContact(shippingAddress);
+        protect(page->paymentCoordinator())->didAuthorizePayment(MockPayment { WTF::move(payment), WTF::move(localizedPayment) });
+    });
+}
+
+void MockPaymentCoordinator::cancelPayment()
+{
+    RefPtr page = m_page.get();
+    if (!page)
+        return;
+
+    dispatchIfShowing([protectedThis = Ref { *this }, page = WTF::move(page)] {
+        protect(page->paymentCoordinator())->didCancelPaymentSession({ });
+        ++protectedThis->m_hideCount;
+        ASSERT(protectedThis->m_showCount == protectedThis->m_hideCount);
+    });
+}
+
+void MockPaymentCoordinator::completePaymentSession(ApplePayPaymentAuthorizationResult&& result)
+{
+    auto isFinalState = result.isFinalState();
+    m_errors = convert(WTF::move(result.errors));
+
+    if (!isFinalState)
+        return;
+
+    ++m_hideCount;
+    ASSERT(m_showCount == m_hideCount);
+}
+
+void MockPaymentCoordinator::abortPaymentSession()
+{
+    ++m_hideCount;
+    ASSERT(m_showCount == m_hideCount);
+}
+
+void MockPaymentCoordinator::cancelPaymentSession()
+{
+    ++m_hideCount;
+    ASSERT(m_showCount == m_hideCount);
+}
+
+void MockPaymentCoordinator::addSetupFeature(ApplePaySetupFeatureState state, ApplePaySetupFeatureType type, bool supportsInstallments)
+{
+    m_setupFeatures.append(MockApplePaySetupFeature::create(state, type, supportsInstallments));
+}
+
+void MockPaymentCoordinator::getSetupFeatures(const ApplePaySetupConfiguration& configuration, const URL&, CompletionHandler<void(Vector<Ref<ApplePaySetupFeature>>&&)>&& completionHandler)
+{
+    m_setupConfiguration = configuration;
+    auto setupFeaturesCopy = m_setupFeatures;
+    completionHandler(WTF::move(setupFeaturesCopy));
+}
+
+void MockPaymentCoordinator::beginApplePaySetup(const ApplePaySetupConfiguration& configuration, const URL&, Vector<Ref<ApplePaySetupFeature>>&&, CompletionHandler<void(bool)>&& completionHandler)
+{
+    m_setupConfiguration = configuration;
+    completionHandler(true);
+}
+
+bool MockPaymentCoordinator::installmentConfigurationReturnsNil() const
+{
+#if HAVE(PASSKIT_INSTALLMENTS)
+    return !PaymentInstallmentConfiguration(nullptr).platformConfiguration();
+#else
+    return true;
+#endif
+}
+
+} // namespace WebCore
+
+#endif // ENABLE(APPLE_PAY)

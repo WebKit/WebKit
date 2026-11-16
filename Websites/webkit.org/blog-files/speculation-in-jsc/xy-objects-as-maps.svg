@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xl="http://www.w3.org/1999/xlink" xmlns:dc="http://purl.org/dc/elements/1.1/" version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="277.5 .5 337.5 166" width="337.5" height="166">
+  <defs>
+    <font-face font-family="Helvetica Neue" font-size="12" panose-1="2 0 5 3 0 0 0 2 0 4" units-per-em="1000" underline-position="-100" underline-thickness="50" slope="0" x-height="517" cap-height="714" ascent="951.9958" descent="-212.99744" font-weight="400">
+      <font-face-src>
+        <font-face-name name="HelveticaNeue"/>
+      </font-face-src>
+    </font-face>
+  </defs>
+  <metadata> Produced by OmniGraffle 7.14.1 
+    <dc:date>2020-04-01 21:06:27 +0000</dc:date>
+  </metadata>
+  <g id="Canvas_1" stroke-opacity="1" stroke="none" fill-opacity="1" stroke-dasharray="none" fill="none">
+    <title>Canvas 1</title>
+    <rect fill="white" x="277.5" y=".5" width="337.5" height="166"/>
+    <g id="Canvas_1: Layer 1">
+      <title>Layer 1</title>
+      <g id="Graphic_75">
+        <circle cx="367" cy="33.5" r="32.5000519318116" fill="#fadaff"/>
+        <circle cx="367" cy="33.5" r="32.5000519318116" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(343.552 26.332)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="12" font-weight="400" fill="black" x="31974423e-20" y="11">{x:1, y:2}</tspan>
+        </text>
+      </g>
+      <g id="Graphic_92">
+        <circle cx="446.25" cy="133.5" r="32.5000519318116" fill="#fadaff"/>
+        <circle cx="446.25" cy="133.5" r="32.5000519318116" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(416.13 126.332)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="12" font-weight="400" fill="black" x="7993606e-19" y="11">{x:42, y:30}</tspan>
+        </text>
+      </g>
+      <g id="Graphic_93">
+        <circle cx="582" cy="116.5" r="32.5000519318116" fill="#fadaff"/>
+        <circle cx="582" cy="116.5" r="32.5000519318116" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(551.88 109.332)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="12" font-weight="400" fill="black" x="8029133e-19" y="11">{x:100, y:0}</tspan>
+        </text>
+      </g>
+      <g id="Graphic_94">
+        <circle cx="511" cy="42.5" r="32.5000519318116" fill="#ffffc0"/>
+        <circle cx="511" cy="42.5" r="32.5000519318116" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(480.88 35.332)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="12" font-weight="400" fill="black" x="7993606e-19" y="11">{y:0, x:100}</tspan>
+        </text>
+      </g>
+      <g id="Graphic_95">
+        <circle cx="310.5" cy="124.5" r="32.5000519318116" fill="#ffd3d3"/>
+        <circle cx="310.5" cy="124.5" r="32.5000519318116" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(287.382 110.164)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="12" font-weight="400" fill="black" x="3943512e-19" y="11">{x:2, y:4,</tspan>
+          <tspan font-family="Helvetica Neue" font-size="12" font-weight="400" fill="black" x="13.236" y="25.336">z:6}</tspan>
+        </text>
+      </g>
+    </g>
+  </g>
+</svg>

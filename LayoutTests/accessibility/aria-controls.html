@@ -1,0 +1,47 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/js-test.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
+</head>
+<body id="body">
+
+<ul id="tablist" role="tablist">
+<li id="tab1" role="tab" aria-controls="panel1 panel2"></li>
+</ul>
+
+<div id="panel1">Panel 1</div>
+<div id="panel2">Panel 2</div>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+    description("This tests that aria-controls returns correct element at the given index");
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+    var output = "";
+    var tablist;
+    var tab1;
+
+    setTimeout(function() {
+        tablist = accessibilityController.accessibleElementById("tablist");
+        tab1 = tablist.childAtIndex(0);
+
+        if (accessibilityController.platformName == "mac") {
+           output += expect("tab1.ariaControlsElementAtIndex(0).childAtIndex(0).stringValue", "'AXValue: Panel 1'");
+           output += expect("tab1.ariaControlsElementAtIndex(1).childAtIndex(0).stringValue", "'AXValue: Panel 2'");
+        } else {
+            output += expect("tab1.ariaControlsElementAtIndex(0).stringValue", "'AXValue: Panel 1'");
+            output += expect("tab1.ariaControlsElementAtIndex(1).stringValue", "'AXValue: Panel 2'");
+        }
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,17 @@
+<meta>
+<style>
+</style>
+<script>
+  if (window.testRunner)
+      testRunner.dumpAsText();
+  console.log("This test passes if it does not crash.")
+  onload = () => {
+    document.styleSheets[0].insertRule(`head, script, meta, input { display: block; }`);
+    document.styleSheets[0].insertRule(`input { text-indent: 1px; }`);
+    document.querySelector('meta').appendChild(document.createElement('input'));
+    document.execCommand('SelectAll');
+    document.designMode = 'on';
+    document.execCommand('Copy');
+    document.execCommand('PasteAsPlainText');
+  };
+</script>

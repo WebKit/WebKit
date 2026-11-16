@@ -1,0 +1,64 @@
+Check the basic features of the ":nth-child(An+B of selectorList)" with a selector which ending with selectors that never match.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Testing ":nth-child(n+1 of testcaseA[attribute3], :not(*))"
+PASS document.querySelectorAll('#test-root :nth-child(n+1 of testcaseA[attribute3], :not(*))').length is 7
+PASS document.querySelectorAll('#test-root :nth-child(n+1 of testcaseA[attribute3], :not(*))')[0].id is "testcase1"
+PASS document.querySelectorAll('#test-root :nth-child(n+1 of testcaseA[attribute3], :not(*))')[1].id is "testcase5"
+PASS document.querySelectorAll('#test-root :nth-child(n+1 of testcaseA[attribute3], :not(*))')[2].id is "testcase9"
+PASS document.querySelectorAll('#test-root :nth-child(n+1 of testcaseA[attribute3], :not(*))')[3].id is "testcase13"
+PASS document.querySelectorAll('#test-root :nth-child(n+1 of testcaseA[attribute3], :not(*))')[4].id is "testcase17"
+PASS document.querySelectorAll('#test-root :nth-child(n+1 of testcaseA[attribute3], :not(*))')[5].id is "testcase21"
+PASS document.querySelectorAll('#test-root :nth-child(n+1 of testcaseA[attribute3], :not(*))')[6].id is "testcase25"
+PASS styledElements is ["testcase1","testcase5","testcase9","testcase13","testcase17","testcase21","testcase25"]
+
+Testing ":nth-child(n+1 of testcaseA[attribute3], *:not(*))"
+PASS document.querySelectorAll('#test-root :nth-child(n+1 of testcaseA[attribute3], *:not(*))').length is 7
+PASS document.querySelectorAll('#test-root :nth-child(n+1 of testcaseA[attribute3], *:not(*))')[0].id is "testcase1"
+PASS document.querySelectorAll('#test-root :nth-child(n+1 of testcaseA[attribute3], *:not(*))')[1].id is "testcase5"
+PASS document.querySelectorAll('#test-root :nth-child(n+1 of testcaseA[attribute3], *:not(*))')[2].id is "testcase9"
+PASS document.querySelectorAll('#test-root :nth-child(n+1 of testcaseA[attribute3], *:not(*))')[3].id is "testcase13"
+PASS document.querySelectorAll('#test-root :nth-child(n+1 of testcaseA[attribute3], *:not(*))')[4].id is "testcase17"
+PASS document.querySelectorAll('#test-root :nth-child(n+1 of testcaseA[attribute3], *:not(*))')[5].id is "testcase21"
+PASS document.querySelectorAll('#test-root :nth-child(n+1 of testcaseA[attribute3], *:not(*))')[6].id is "testcase25"
+PASS styledElements is ["testcase1","testcase5","testcase9","testcase13","testcase17","testcase21","testcase25"]
+
+Testing ":nth-child(n+1 of testcaseA[attribute3], #foo#bar)"
+PASS document.querySelectorAll('#test-root :nth-child(n+1 of testcaseA[attribute3], #foo#bar)').length is 7
+PASS document.querySelectorAll('#test-root :nth-child(n+1 of testcaseA[attribute3], #foo#bar)')[0].id is "testcase1"
+PASS document.querySelectorAll('#test-root :nth-child(n+1 of testcaseA[attribute3], #foo#bar)')[1].id is "testcase5"
+PASS document.querySelectorAll('#test-root :nth-child(n+1 of testcaseA[attribute3], #foo#bar)')[2].id is "testcase9"
+PASS document.querySelectorAll('#test-root :nth-child(n+1 of testcaseA[attribute3], #foo#bar)')[3].id is "testcase13"
+PASS document.querySelectorAll('#test-root :nth-child(n+1 of testcaseA[attribute3], #foo#bar)')[4].id is "testcase17"
+PASS document.querySelectorAll('#test-root :nth-child(n+1 of testcaseA[attribute3], #foo#bar)')[5].id is "testcase21"
+PASS document.querySelectorAll('#test-root :nth-child(n+1 of testcaseA[attribute3], #foo#bar)')[6].id is "testcase25"
+PASS styledElements is ["testcase1","testcase5","testcase9","testcase13","testcase17","testcase21","testcase25"]
+
+Testing ":nth-child(n+1 of testcaseA[attribute3], #foo#bar, :not(*), *:not(*), foo:not(*))"
+PASS document.querySelectorAll('#test-root :nth-child(n+1 of testcaseA[attribute3], #foo#bar, :not(*), *:not(*), foo:not(*))').length is 7
+PASS document.querySelectorAll('#test-root :nth-child(n+1 of testcaseA[attribute3], #foo#bar, :not(*), *:not(*), foo:not(*))')[0].id is "testcase1"
+PASS document.querySelectorAll('#test-root :nth-child(n+1 of testcaseA[attribute3], #foo#bar, :not(*), *:not(*), foo:not(*))')[1].id is "testcase5"
+PASS document.querySelectorAll('#test-root :nth-child(n+1 of testcaseA[attribute3], #foo#bar, :not(*), *:not(*), foo:not(*))')[2].id is "testcase9"
+PASS document.querySelectorAll('#test-root :nth-child(n+1 of testcaseA[attribute3], #foo#bar, :not(*), *:not(*), foo:not(*))')[3].id is "testcase13"
+PASS document.querySelectorAll('#test-root :nth-child(n+1 of testcaseA[attribute3], #foo#bar, :not(*), *:not(*), foo:not(*))')[4].id is "testcase17"
+PASS document.querySelectorAll('#test-root :nth-child(n+1 of testcaseA[attribute3], #foo#bar, :not(*), *:not(*), foo:not(*))')[5].id is "testcase21"
+PASS document.querySelectorAll('#test-root :nth-child(n+1 of testcaseA[attribute3], #foo#bar, :not(*), *:not(*), foo:not(*))')[6].id is "testcase25"
+PASS styledElements is ["testcase1","testcase5","testcase9","testcase13","testcase17","testcase21","testcase25"]
+
+Testing ":nth-child(n+1 of testcaseA[attribute3], #foo#bar, :not(*), *:not(*), foo:not(*), #foo#bar, :not(*), *:not(*), foo:not(*))"
+PASS document.querySelectorAll('#test-root :nth-child(n+1 of testcaseA[attribute3], #foo#bar, :not(*), *:not(*), foo:not(*), #foo#bar, :not(*), *:not(*), foo:not(*))').length is 7
+PASS document.querySelectorAll('#test-root :nth-child(n+1 of testcaseA[attribute3], #foo#bar, :not(*), *:not(*), foo:not(*), #foo#bar, :not(*), *:not(*), foo:not(*))')[0].id is "testcase1"
+PASS document.querySelectorAll('#test-root :nth-child(n+1 of testcaseA[attribute3], #foo#bar, :not(*), *:not(*), foo:not(*), #foo#bar, :not(*), *:not(*), foo:not(*))')[1].id is "testcase5"
+PASS document.querySelectorAll('#test-root :nth-child(n+1 of testcaseA[attribute3], #foo#bar, :not(*), *:not(*), foo:not(*), #foo#bar, :not(*), *:not(*), foo:not(*))')[2].id is "testcase9"
+PASS document.querySelectorAll('#test-root :nth-child(n+1 of testcaseA[attribute3], #foo#bar, :not(*), *:not(*), foo:not(*), #foo#bar, :not(*), *:not(*), foo:not(*))')[3].id is "testcase13"
+PASS document.querySelectorAll('#test-root :nth-child(n+1 of testcaseA[attribute3], #foo#bar, :not(*), *:not(*), foo:not(*), #foo#bar, :not(*), *:not(*), foo:not(*))')[4].id is "testcase17"
+PASS document.querySelectorAll('#test-root :nth-child(n+1 of testcaseA[attribute3], #foo#bar, :not(*), *:not(*), foo:not(*), #foo#bar, :not(*), *:not(*), foo:not(*))')[5].id is "testcase21"
+PASS document.querySelectorAll('#test-root :nth-child(n+1 of testcaseA[attribute3], #foo#bar, :not(*), *:not(*), foo:not(*), #foo#bar, :not(*), *:not(*), foo:not(*))')[6].id is "testcase25"
+PASS styledElements is ["testcase1","testcase5","testcase9","testcase13","testcase17","testcase21","testcase25"]
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

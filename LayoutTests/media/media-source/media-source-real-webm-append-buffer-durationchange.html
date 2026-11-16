@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>media-source-real-webm-append-buffer-durationchange</title>
+    <script src="webm-generator.js"></script>
+    <script src="../video-test.js"></script>
+    <script>
+    // Real-WebM equivalent of media-source-append-buffer-durationchange.html
+    // Tests that duration changes from 0 to the sample end time after append.
+
+    var source;
+    var sourceBuffer;
+
+    async function runTest() {
+        findMediaElement();
+
+        if (!MediaSource.isTypeSupported(WebM.VIDEO_TYPE)) {
+            consoleWrite('SKIPPED: ' + WebM.VIDEO_TYPE + ' is not supported');
+            return;
+        }
+
+        source = new MediaSource();
+        run('video.src = URL.createObjectURL(source)');
+        await waitFor(source, 'sourceopen');
+
+        run('source.duration = 0');
+        run(`sourceBuffer = source.addSourceBuffer('${WebM.VIDEO_TYPE}')`);
+
+        var initData = WebM.initSegment({
+            tracks: [{ id: 1, type: 'video' }]
+        });
+        sourceBuffer.appendBuffer(initData);
+        await waitFor(sourceBuffer, 'updateend');
+        testExpected('source.duration', 0);
+
+        // 16 samples of 1 second each — should update duration to 16
+        var samples = [];
+        for (var i = 0; i < 16; i++) {
+            samples.push({
+                duration: 1000,
+                isSync: (i % 4) === 0
+            });
+        }
+        var media = WebM.mediaSegment({
+            sequenceNumber: 1,
+            tracks: [{ id: 1, type: 'video', baseDecodeTime: 0, samples: samples }]
+        });
+        sourceBuffer.appendBuffer(media);
+        await Promise.all([waitFor(sourceBuffer, 'updateend'), waitFor(video, 'durationchange')]);
+        testExpected('source.duration', 16);
+    }
+
+    window.addEventListener('load', event => {
+        runTest().then(endTest).catch(failTest);
+    });
+    </script>
+</head>
+<body>
+    <video></video>
+</body>
+</html>

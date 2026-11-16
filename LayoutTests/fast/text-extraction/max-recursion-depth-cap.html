@@ -1,0 +1,28 @@
+<!-- webkit-test-runner [ textExtractionEnabled=true ] -->
+<!DOCTYPE html>
+<html class="reftest-wait">
+<head>
+<style>
+body { white-space: pre; font: 12px monospace; margin: 0; }
+</style>
+<script src="../../resources/ui-helper.js"></script>
+</head>
+<body>
+<div id="nest"></div>
+<script>
+addEventListener("load", async () => {
+    let parent = document.getElementById("nest");
+    for (let i = 0; i < 350; i++) {
+        const child = document.createElement("div");
+        parent.appendChild(child);
+        parent = child;
+    }
+    parent.textContent = "leaf";
+
+    const result = await UIHelper.requestTextExtraction({ });
+    document.body.textContent = result;
+    document.documentElement.classList.remove("reftest-wait");
+});
+</script>
+</body>
+</html>

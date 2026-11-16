@@ -1,0 +1,17 @@
+<html><!-- webkit-test-runner [ AllowUniversalAccessFromFileURLs=false AllowFileAccessFromFileURLs=false ] -->
+<head>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+window.onload = function() {
+    parent.frames[1].location='no-file-access-frame-2.html';
+}
+</script>
+</head>
+<body>
+<p>This tests if a file URL can navigate a peer file URL frame.
+If the test failed it will hang and the frame to the right will remain blank.</p>
+</body>
+</html>

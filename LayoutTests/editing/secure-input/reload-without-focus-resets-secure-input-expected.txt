@@ -1,0 +1,12 @@
+Verify that reloading a page disables secure input state when the focused password input is not refocused after the load.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+After reload (no element refocused):
+PASS document.activeElement === input is false
+PASS testRunner.secureEventInputIsEnabled is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

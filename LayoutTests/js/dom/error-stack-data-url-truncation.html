@@ -1,0 +1,84 @@
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+description("Tests that a data: URL over 1024 characters is cut down in a stack frame, that the cut avoids %XX escapes, and that short URLs and other schemes are left alone.");
+
+window.jsTestIsAsync = true;
+
+const limit = 1024;
+
+// Makes a module whose data: URL is exactly totalLength characters.
+// percentAt puts a %20 escape at that index.
+function makeModuleURL(totalLength, percentAt)
+{
+    const prefix = "data:text/javascript,export%20function%20mk()%7Breturn%20new%20Error('t')%7D%3B%2F%2F";
+    let url = prefix;
+    while (url.length < totalLength) {
+        if (percentAt !== undefined && url.length === percentAt && totalLength - url.length >= 3) {
+            url += "%20";
+            continue;
+        }
+        if (percentAt !== undefined && url.length > percentAt - 3 && url.length < percentAt)
+            url += "a";
+        else
+            url += "abcdefghij".charAt(url.length % 10);
+    }
+    return url.substring(0, totalLength);
+}
+
+// A frame looks like fn@url:line:column. Pull out the url.
+function sourceURLOfDataFrame(stack)
+{
+    const frame = stack.split("\n").filter(function (each) { return each.indexOf("data:text/javascript,") !== -1; })[0];
+    if (!frame)
+        return null;
+    return frame.substring(frame.indexOf("data:text/javascript,")).replace(/:\d+:\d+$/, "");
+}
+
+async function urlLengthInStackFor(totalLength, percentAt)
+{
+    const module = await import(makeModuleURL(totalLength, percentAt));
+    const url = sourceURLOfDataFrame(module.mk().stack);
+    return url === null ? -1 : url.length;
+}
+
+// This file's own URL is not a data: URL, so it should stay whole.
+// Read it here: inside the async function below there is no caller frame.
+window.ordinaryFrameSurvives = new Error().stack.indexOf("error-stack-data-url-truncation.html") !== -1;
+
+async function runTests()
+{
+    try {
+        // Long data: URL, cut to 1024.
+        window.plainLength = await urlLengthInStackFor(5000);
+        shouldBe("plainLength", "1024");
+
+        // %20 starts at 1023, so cut before it.
+        window.escapeAtEndLength = await urlLengthInStackFor(5000, limit - 1);
+        shouldBe("escapeAtEndLength", "1023");
+
+        // %20 starts at 1022, so cut before it.
+        window.escapeStraddlingLength = await urlLengthInStackFor(5000, limit - 2);
+        shouldBe("escapeStraddlingLength", "1022");
+
+        // Under 1024, so unchanged.
+        window.shortLength = await urlLengthInStackFor(500);
+        shouldBe("shortLength", "500");
+
+        // Not a data: URL, so unchanged.
+        shouldBeTrue("ordinaryFrameSurvives");
+    } catch (exception) {
+        testFailed("threw " + exception);
+    }
+    finishJSTest();
+}
+
+runTests();
+</script>
+</body>
+</html>

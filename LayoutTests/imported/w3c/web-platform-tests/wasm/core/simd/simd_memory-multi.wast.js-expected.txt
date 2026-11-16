@@ -1,0 +1,7 @@
+
+PASS #1 Reinitialize the default imports
+PASS #2 Test that WebAssembly compilation succeeds (simd_memory-multi.wast:5)
+PASS #3 Reinitialize the default imports
+PASS #4 Test that WebAssembly compilation succeeds (simd_memory-multi.wast:5)
+PASS #5 Test that WebAssembly instantiation succeeds (simd_memory-multi.wast:5)
+

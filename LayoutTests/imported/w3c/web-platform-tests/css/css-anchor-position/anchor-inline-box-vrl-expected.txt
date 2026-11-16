@@ -1,0 +1,15 @@
+X
+A
+X
+X
+A
+A
+A
+A
+
+PASS .target 1
+PASS .target 2
+PASS .target 3
+PASS .target 4
+PASS .target 5
+

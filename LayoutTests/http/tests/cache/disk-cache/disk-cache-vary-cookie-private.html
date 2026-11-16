@@ -1,0 +1,46 @@
+<!-- webkit-test-runner [ useEphemeralSession=true ] -->
+<script src="/js-test-resources/js-test-pre.js"></script>
+<script src="resources/cache-test.js"></script>
+<body>
+<script>
+
+
+description("Test that Vary: Cookie in response is handled by caches.");
+
+function testCookies(testDiskCache, completionHandler)
+{
+    var tests = [
+      { responseHeaders: {'Cache-control': 'max-age=100'} },
+      { responseHeaders: {'Vary': 'Cookie', 'Cache-control': 'max-age=100'} },
+    ];
+
+    var options = { "ClearMemoryCache" : testDiskCache };
+    debug("Setting cookie and loading");
+    document.cookie = "cookie=" + Math.floor((Math.random() * 1000000000000));
+    loadResourcesWithOptions(tests, options, function () {
+        printResults(tests);
+        debug("Loading again");
+        loadResourcesWithOptions(tests, options, function () {
+            printResults(tests);
+            debug("Changing cookie and loading");
+            document.cookie = "cookie" + Math.floor((Math.random() * 1000000000000));
+            loadResourcesWithOptions(tests, options, function () {
+                printResults(tests);
+                debug("Loading again");
+                loadResourcesWithOptions(tests, options, function () {
+                   printResults(tests);
+                   completionHandler();
+                });
+            });
+        });
+    });
+}
+
+debug("Testing disk cache");
+debug("Testing memory cache in private browsing");
+testCookies(false, function () {
+    finishJSTest();
+});
+
+</script>
+<script src="/js-test-resources/js-test-post.js"></script>

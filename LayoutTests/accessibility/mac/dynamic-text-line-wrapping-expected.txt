@@ -1,0 +1,9 @@
+This tests that text runs are updated when a container is resized and text wraps.
+Line Count: 1
+Wrapping text to two lines:
+Line Count: 2
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Hello world.

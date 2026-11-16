@@ -1,0 +1,13 @@
+This test ensures an aria-labelledby reference recomputes its accessible name when the referenced element's name changes via aria-label, not just via text content.
+
+PASS: platformValueForW3CName(textSection) === 'Text name'
+PASS: platformValueForW3CName(labelSection) === 'Aria name'
+PASS: platformValueForW3CName(textSection) === 'New text name'
+PASS: platformValueForW3CName(labelSection) === 'New aria name'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+New text name
+
+Visual content

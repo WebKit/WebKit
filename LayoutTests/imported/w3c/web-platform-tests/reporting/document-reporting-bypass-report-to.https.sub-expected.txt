@@ -1,0 +1,5 @@
+This should be written into the document
+
+FAIL document policy violation observed promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ReportingObserver"
+FAIL Only the Reporting-Endpoints configured endpoint received reports. assert_unreached: A report of document-policy-violation from https://localhost:9443/reporting/document-reporting-bypass-report-to.https.sub.html is not found. Reached unreachable code
+

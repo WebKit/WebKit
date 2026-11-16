@@ -1,0 +1,4 @@
+
+PASS Setting src to the empty string on a connected classic script fires an error event
+PASS Setting src to the empty string on a connected module script fires an error event
+

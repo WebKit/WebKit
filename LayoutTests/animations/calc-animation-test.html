@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="resources/animation-test-helpers.js"></script>
+<style>
+
+@keyframes TheAnimation {
+    from { width: calc(100px*cos(0)); }
+    to   { width: calc(300px*sin(pi/2)); }
+}
+
+#box {
+    position:absolute;
+    height: 100px;
+    width: 100px;
+    background-color: blue;
+    animation-duration: 2s;
+    animation-timing-function: linear;
+    animation-name: TheAnimation;
+}
+</style>
+</head>
+<body>
+<div id="box"></div>
+<div id="result"></div>
+<script>
+var expectedValues = [
+    // [animation-name, time, element-id, property, expected-value, tolerance]
+    ["TheAnimation", 0.5, "box", "width", 150, 15],
+    ["TheAnimation", 1, "box", "width", 200, 15],
+    ["TheAnimation", 1.99, "box", "width", 300, 15],
+];
+runAnimationTest(expectedValues, undefined, undefined, undefined, false, undefined);
+</script>
+</body>
+</html>

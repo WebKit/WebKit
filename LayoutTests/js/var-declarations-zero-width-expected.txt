@@ -1,0 +1,12 @@
+This page tests if U+200C and U+200D are allowed as part of an identifier.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS var x‌ = 42; x‌ is 42
+PASS var x‍ = 43; x‍ is 43
+PASS var x‌‍ = 44; x‌‍ is 44
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

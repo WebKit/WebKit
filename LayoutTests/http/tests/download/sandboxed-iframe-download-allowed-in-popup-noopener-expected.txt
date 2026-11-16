@@ -1,0 +1,6 @@
+Download started.
+Downloading URL with suggested filename "PASS.txt"
+Download completed.
+This test passes if a download is started.
+
+

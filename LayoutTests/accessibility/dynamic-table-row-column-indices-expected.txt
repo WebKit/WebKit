@@ -1,0 +1,30 @@
+This tests that table row and column indicies update correctly after row/column insertions.
+
+Row Index [0]: 0
+Row Index [1]: 1
+Column Index [0]: 0
+Column Index [1]: 1
+
+Adding row at index 1:
+
+Row Index [0]: 0
+Row Index [1]: 1
+Row Index [2]: 2
+Column Index [0]: 0
+Column Index [1]: 1
+
+Adding cell to row 0:
+
+Row Index [0]: 0
+Row Index [1]: 1
+Row Index [2]: 2
+Column Index [0]: 0
+Column Index [1]: 1
+Column Index [2]: 2
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Cell 1	Cell 2	Cell 7
+Cell 5	Cell 6
+Cell 3	Cell 4

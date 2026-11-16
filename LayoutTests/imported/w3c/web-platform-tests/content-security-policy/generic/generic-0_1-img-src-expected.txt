@@ -1,0 +1,6 @@
+default-src should cascade to img-src directive
+
+
+PASS Verify cascading of default-src to img-src policy
+PASS Should fire violation events for every failed violation
+

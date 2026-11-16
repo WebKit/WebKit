@@ -1,0 +1,6 @@
+
+PASS classic script with empty src fires error event asynchronously
+PASS classic script with invalid src fires error event asynchronously
+PASS module script with empty src fires error event asynchronously
+PASS module script with invalid src fires error event asynchronously
+

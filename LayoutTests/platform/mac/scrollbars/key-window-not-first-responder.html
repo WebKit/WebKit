@@ -1,0 +1,30 @@
+<p>
+    Test for <i><a href="rdar://problem/6935192">rdar://problem/6935192</a>
+    REGRESSION (Safari 3-Safari 4): Scroll bars in key window draw as inactive
+    if the WebView is not active</i>.
+</p>
+<select id="list" size="4">
+    <option>One</option>
+    <option>Two</option>
+    <option>Three</option>
+    <option>Four</option>
+    <option>Five</option>
+</select>
+<script>
+    var list = document.getElementById("list");
+    for (var i = 0; i < 11; ++i)
+        document.body.appendChild(list.cloneNode(true));
+</script>
+<br>
+<div id="overflow" style="margin: 1px; display: inline-block; overflow-y: scroll; height: 400px; width: 50px;">
+    <div style="height: 600px;"></div>
+</div>
+<script>
+    var list = document.getElementById("overflow");
+    for (var i = 0; i < 11; ++i)
+        document.body.appendChild(list.cloneNode(true));
+</script>
+<script>
+    if (window.testRunner)
+        testRunner.setMainFrameIsFirstResponder(false);
+</script>

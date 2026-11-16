@@ -1,0 +1,100 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="resources/site-isolation-debugger-test-utilities.js"></script>
+<script>
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Debugger.SetBreakpoint");
+
+    let crossOriginTarget;
+    let breakpointId;
+    let crossOriginHost;
+
+    suite.addTestCase({
+        name: "SiteIsolation.Debugger.SetBreakpoint.Setup",
+        description: "Find the cross-origin frame target.",
+        async test() {
+            let frameTargets = WI.targets.filter((t) => t.type === WI.TargetType.Frame);
+            let urlTargetMap = await fetchDocumentURLsForTargets(frameTargets);
+            let mainFrameTarget = urlTargetMap.get(WI.networkManager.mainFrame.url);
+            crossOriginTarget = frameTargets.find((t) => t !== mainFrameTarget);
+
+            InspectorTest.expectNotNull(crossOriginTarget, "Should find a cross-origin frame target.");
+
+            let hostnameResponse = await crossOriginTarget.RuntimeAgent.evaluate.invoke({expression: "location.hostname", objectGroup: "test", returnByValue: true});
+            crossOriginHost = hostnameResponse.result.value;
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Debugger.SetBreakpoint.SetByUrl",
+        description: "Setting a breakpoint by URL should resolve in the frame target's script.",
+        async test() {
+            let scriptUrl = `http://${crossOriginHost}:8000/site-isolation/inspector/debugger/resources/debugger-frame-script.js`;
+            let result = await crossOriginTarget.DebuggerAgent.setBreakpointByUrl.invoke({
+                lineNumber: 8,
+                url: scriptUrl,
+            });
+
+            InspectorTest.expectNotNull(result.breakpointId, "Breakpoint should be set successfully.");
+            InspectorTest.expectGreaterThan(result.locations.length, 0, "Breakpoint should have at least one resolved location.");
+
+            breakpointId = result.breakpointId;
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Debugger.SetBreakpoint.HitsBreakpoint",
+        description: "Calling the function should hit the breakpoint.",
+        async test() {
+            let whenPausedPromise = WI.debuggerManager.awaitEvent(WI.DebuggerManager.Event.Paused);
+
+            crossOriginTarget.RuntimeAgent.evaluate.invoke({expression: "breakpointTarget(5)", objectGroup: "test"});
+
+            await whenPausedPromise;
+
+            InspectorTest.expectThat(WI.debuggerManager.paused, "Debugger should be paused at breakpoint.");
+
+            let targetData = WI.debuggerManager.dataForTarget(crossOriginTarget);
+            let topCallFrame = targetData.stackTrace.callFrames[0];
+            InspectorTest.expectEqual(topCallFrame.functionName, "breakpointTarget", "Should be paused in 'breakpointTarget'.");
+
+            let result = await crossOriginTarget.DebuggerAgent.evaluateOnCallFrame.invoke({
+                callFrameId: topCallFrame.id,
+                expression: "x",
+                objectGroup: "test",
+                returnByValue: true,
+            });
+            InspectorTest.expectEqual(result.result.value, 5, "Parameter 'x' should have value 5.");
+
+            await WI.debuggerManager.resume();
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Debugger.SetBreakpoint.RemoveBreakpoint",
+        description: "Removing the breakpoint should allow execution without pausing.",
+        async test() {
+            await crossOriginTarget.DebuggerAgent.removeBreakpoint(breakpointId);
+
+            let didPause = false;
+            let listener = WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.Paused, () => { didPause = true; });
+
+            let result = await crossOriginTarget.RuntimeAgent.evaluate.invoke({expression: "breakpointTarget(10)", objectGroup: "test", returnByValue: true});
+            InspectorTest.expectEqual(result.result.value, 21, "Function should return correct result (10 * 2 + 1 = 21).");
+
+            await new Promise((resolve) => setTimeout(resolve, 100));
+
+            InspectorTest.expectFalse(didPause, "Debugger should not pause after breakpoint removal.");
+
+            WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.Paused, listener);
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+
+<body onload="runTest()">
+<p>Test that breakpoints can be set and hit in cross-origin iframe scripts.</p>
+<iframe src="http://localhost:8000/site-isolation/inspector/debugger/resources/debugger-frame.html"></iframe>
+</body>

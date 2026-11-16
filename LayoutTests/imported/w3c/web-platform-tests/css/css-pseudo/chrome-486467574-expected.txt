@@ -1,0 +1,4 @@
+
+
+PASS computed ::selection color should follow the configured rule
+

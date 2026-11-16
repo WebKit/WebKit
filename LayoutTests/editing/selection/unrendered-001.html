@@ -1,0 +1,38 @@
+<html> 
+<head>
+
+<style>
+.editing { 
+    border: solid red 50px;
+    font-size: 24px; 
+    line-height: 48px; 
+    padding: 24px; 
+    margin: 64px;
+    width: 600px; 
+}
+</style>
+<script src=../editing.js language="JavaScript" type="text/JavaScript" ></script>
+
+<script>
+
+function editingTest() {
+    var elem = document.getElementById("test-2");
+    var selection = window.getSelection();
+    selection.setPosition(elem.firstChild, 2);
+}
+
+</script>
+
+<title>Editing Test</title> 
+</head> 
+<body>
+<div contenteditable id="root" class="editing">
+<span id="test-1">foo</span><span id="test-2" style='display: none;'>bar</span> baz
+</div>
+
+<script>
+runEditingTest();
+</script>
+
+</body>
+</html>

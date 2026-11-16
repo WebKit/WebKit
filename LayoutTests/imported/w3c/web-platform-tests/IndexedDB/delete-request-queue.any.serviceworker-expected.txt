@@ -1,0 +1,3 @@
+
+PASS Deletes are processed as a FIFO queue
+

@@ -1,0 +1,6 @@
+
+PASS scrollTop and scrollLeft should fire scroll event.
+PASS scrollTop and scrollLeft being set with the same value.
+PASS scrollTop and scrollLeft being set with invalid scroll offset.
+PASS scrollTop and scrollLeft when scrolling above maximum offset.
+

@@ -1,0 +1,5 @@
+Middle elements
+Should NOT be extracted
+
+PASS Range.extractContents should not extract out-of-bounds nodes if end container is removed during iframe unload
+

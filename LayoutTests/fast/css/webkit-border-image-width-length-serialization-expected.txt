@@ -1,0 +1,4 @@
+
+PASS -webkit-border-image width `5% 10px` (non-length before length) serializes
+PASS -webkit-border-image width `10px 5%` (length before non-length) serializes
+

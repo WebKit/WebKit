@@ -1,0 +1,4 @@
+
+
+PASS navigation.activation interaction with initial about:blank
+

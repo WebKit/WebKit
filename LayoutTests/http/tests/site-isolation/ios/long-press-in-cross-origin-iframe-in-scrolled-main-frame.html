@@ -1,0 +1,47 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="/js-test-resources/js-test.js"></script>
+<script src="/js-test-resources/ui-helper.js"></script>
+<script>
+description("Long-pressing text inside a cross-origin iframe should select the word under the finger while the main frame is scrolled, i.e. no layer between the UI process and the subframe process may apply the main frame's scroll offset a second time.");
+jsTestIsAsync = true;
+
+const mainFrameScroll = 200;
+const iframeTopInDocument = 400;
+const lineHeightInIframe = 40;
+const targetLineInIframe = 5;
+const pressXInDocument = 30;
+const pressYInDocument = iframeTopInDocument + (targetLineInIframe + 0.5) * lineHeightInIframe;
+
+let firstSelection = "";
+let anchorWord = "";
+addEventListener("message", (event) => {
+    if (event.data === "ready")
+        runTest();
+    else if (typeof event.data === "string" && event.data.startsWith("selection:")) {
+        const selection = event.data.substring("selection:".length);
+        if (selection.length && !firstSelection.length)
+            firstSelection = selection;
+    }
+});
+
+async function runTest() {
+    window.scrollTo(0, mainFrameScroll);
+    await UIHelper.ensurePresentationUpdate();
+
+    // Without this the test would pass however the point is converted.
+    shouldBeEqualToNumber("window.scrollY", mainFrameScroll);
+
+    // The long press is occasionally delivered before the subframe is ready to process it,
+    // producing no selection; retry until a word is selected inside the iframe.
+    for (let attempt = 0; attempt < 20 && !firstSelection.length; ++attempt) {
+        await UIHelper.longPressAtPoint(pressXInDocument, pressYInDocument);
+        for (let frame = 0; frame < 10 && !firstSelection.length; ++frame)
+            await UIHelper.animationFrame();
+    }
+    anchorWord = firstSelection.split(/\s+/)[0];
+    shouldBeEqualToString("anchorWord", "token" + targetLineInIframe);
+    finishJSTest();
+}
+</script>
+<div style="height: 2000px;"></div>
+<iframe style="position: absolute; left: 0; top: 400px; width: 400px; height: 320px; border: none;" src="http://localhost:8000/site-isolation/resources/multiline-selectable-text-frame.html"></iframe>

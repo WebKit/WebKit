@@ -1,0 +1,7 @@
+got class: NSCell
+
+created object: <NSCell>
+
+set string value: zoe
+
+PASS

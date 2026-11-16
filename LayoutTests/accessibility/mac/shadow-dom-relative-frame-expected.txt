@@ -1,0 +1,12 @@
+This test ensures we compute the relative frame of shadow DOM components correctly.
+
+Initial #h1 AXRelativeFrame: NSRect: {{8, 47}, {784, 38}}
+
+Increasing the size of the text before the header enough to cause the header to change position.
+
+Final #h1 AXRelativeFrame: NSRect: {{8, 4874}, {769, 38}}
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+I am some text before the header, and I exist only to take up some space and move the header around.

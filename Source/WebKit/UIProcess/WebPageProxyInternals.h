@@ -1,0 +1,620 @@
+/**
+ * Copyright (C) 2010-2023 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#pragma once
+
+#if ENABLE(WEBDRIVER_BIDI)
+#include "BidiDigitalCredentialsAgent.h"
+#endif
+#include "Connection.h"
+#include "ContentInversion.h"
+#include "ContextMenuContextData.h"
+#include "EditorState.h"
+#include "EnhancedSecurityTracking.h"
+#include "GeolocationPermissionRequestManagerProxy.h"
+#include "HiddenPageThrottlingAutoIncreasesCounter.h"
+#include "LayerTreeContext.h"
+#include "PDFDisplayMode.h"
+#include "PageLoadState.h"
+#include "ProcessActivityGroup.h"
+#include "ProcessTerminationReason.h"
+#include "ProcessThrottler.h"
+#include "ScrollingAccelerationCurve.h"
+#include "TextExtractionCache.h"
+#include "TextManipulationParameters.h"
+#include "VisibleWebPageCounter.h"
+#include "WebColorPicker.h"
+#include "WebDataListSuggestionsDropdown.h"
+#include "WebFrameProxy.h"
+#include "WebNotificationManagerMessageHandler.h"
+#include "WebPageProxy.h"
+#include "WebPageProxyMessageReceiverRegistration.h"
+#include "WebPopupMenuProxy.h"
+#include "WebURLSchemeHandlerIdentifier.h"
+#include "WindowKind.h"
+#include <WebCore/BackForwardItemIdentifier.h>
+#include <WebCore/CornerRadii.h>
+#include <WebCore/DevicePostureType.h>
+#include <WebCore/FixedContainerEdges.h>
+#include <WebCore/FrameIdentifier.h>
+#include <WebCore/FrameLoaderTypes.h>
+#include <WebCore/IntPointHash.h>
+#include <WebCore/PrivateClickMeasurement.h>
+#include <WebCore/RegistrableDomain.h>
+#include <WebCore/RemoteUserInputEventData.h>
+#include <WebCore/ResourceRequest.h>
+#include <WebCore/SecurityOriginData.h>
+#include <WebCore/ViewportSegments.h>
+#include <pal/HysteresisActivity.h>
+#include <wtf/CallbackAggregator.h>
+#include <wtf/Markable.h>
+#include <wtf/UUID.h>
+
+#if ENABLE(APPLE_PAY)
+#include "WebPaymentCoordinatorProxy.h"
+#endif
+
+#if __has_include(<WebKitAdditions/WebPageProxyAdditionsIncludes.h>)
+#include <WebKitAdditions/WebPageProxyAdditionsIncludes.h>
+#endif
+
+#if ENABLE(DRAG_SUPPORT)
+#include <WebCore/DragActions.h>
+#endif
+
+#if PLATFORM(MACCATALYST)
+#include "EndowmentStateTracker.h"
+#endif
+
+#if ENABLE(META_VIEWPORT)
+#include <WebCore/ViewportArguments.h>
+#endif
+
+#if ENABLE(SPEECH_SYNTHESIS)
+#include <WebCore/PlatformSpeechSynthesisUtterance.h>
+#include <WebCore/PlatformSpeechSynthesizer.h>
+#endif
+
+#if ENABLE(TOUCH_EVENTS)
+#include "NativeWebTouchEvent.h"
+#include <WebCore/EventTrackingRegions.h>
+#endif
+
+#if ENABLE(UI_SIDE_COMPOSITING)
+#include "VisibleContentRectUpdateInfo.h"
+#endif
+
+#if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS_FAMILY)
+#include <WebCore/WebMediaSessionManagerClient.h>
+#endif
+
+#if ENABLE(EXTENSION_CAPABILITIES)
+#include "MediaCapability.h"
+#endif
+
+#if PLATFORM(COCOA)
+#include "CocoaWindow.h"
+#include "InteractionInformationRequest.h"
+#endif
+
+#if PLATFORM(IOS_FAMILY) && ENABLE(MODEL_PROCESS)
+#include "PortalPresentationManagerProxy.h"
+#endif
+
+#if ENABLE(IMAGE_ANALYSIS)
+#include <WebCore/ImageAnalysisQueue.h>
+#endif
+
+#if USE(GLIB)
+#include "WebKitWebView.h"
+#include <wtf/glib/GWeakPtr.h>
+#endif
+
+namespace WebKit {
+
+struct PrivateClickMeasurementAndMetadata {
+    WebCore::PrivateClickMeasurement pcm;
+    String sourceDescription;
+    String purchaser;
+};
+
+struct PendingBackForwardIframeRestore {
+    WTF_MAKE_STRUCT_TZONE_ALLOCATED(PendingBackForwardIframeRestore);
+
+    WebCore::ProcessIdentifier mainFrameProcessIdentifier;
+    WebCore::BackForwardFrameItemIdentifier mainFrameItemID;
+    Vector<Ref<WebProcessProxy>> iframeProcesses;
+    Ref<MainRunLoopSuccessCallbackAggregator> aggregator;
+};
+
+#if ENABLE(SPEECH_SYNTHESIS)
+struct SpeechSynthesisData {
+    Ref<WebCore::PlatformSpeechSynthesizer> synthesizer;
+    RefPtr<WebCore::PlatformSpeechSynthesisUtterance> utterance;
+    CompletionHandler<void()> speakingStartedCompletionHandler;
+    CompletionHandler<void()> speakingFinishedCompletionHandler;
+    CompletionHandler<void()> speakingPausedCompletionHandler;
+    CompletionHandler<void()> speakingResumedCompletionHandler;
+
+};
+#endif
+
+#if ENABLE(TOUCH_EVENTS)
+
+struct QueuedTouchEvents {
+    QueuedTouchEvents(Ref<NativeWebTouchEvent>&& event)
+        : forwardedEvent(WTF::move(event))
+    {
+    }
+    Ref<NativeWebTouchEvent> forwardedEvent;
+    Vector<Ref<NativeWebTouchEvent>> deferredTouchEvents;
+};
+
+struct TouchEventTracking {
+    WebCore::TrackingType touchForceChangedTracking { WebCore::TrackingType::NotTracking };
+    WebCore::TrackingType touchStartTracking { WebCore::TrackingType::NotTracking };
+    WebCore::TrackingType touchMoveTracking { WebCore::TrackingType::NotTracking };
+    WebCore::TrackingType touchEndTracking { WebCore::TrackingType::NotTracking };
+
+    bool isTrackingAnything() const
+    {
+        return touchForceChangedTracking != WebCore::TrackingType::NotTracking
+            || touchStartTracking != WebCore::TrackingType::NotTracking
+            || touchMoveTracking != WebCore::TrackingType::NotTracking
+            || touchEndTracking != WebCore::TrackingType::NotTracking;
+    }
+
+    void reset()
+    {
+        touchForceChangedTracking = WebCore::TrackingType::NotTracking;
+        touchStartTracking = WebCore::TrackingType::NotTracking;
+        touchMoveTracking = WebCore::TrackingType::NotTracking;
+        touchEndTracking = WebCore::TrackingType::NotTracking;
+    }
+};
+
+#endif
+
+struct SubframeTerminationEvent {
+    unsigned identifier { 1 };
+    ProcessTerminationReason reason { ProcessTerminationReason::Crash };
+    bool clientNotified { false };
+};
+
+struct SubframeTerminationEventMarkableTraits {
+    static bool isEmptyValue(const SubframeTerminationEvent& event) { return !event.identifier; }
+    static SubframeTerminationEvent emptyValue() { return { .identifier = 0 }; }
+};
+
+struct WebPageProxy::Internals final : WebPopupMenuProxy::Client
+#if ENABLE(APPLE_PAY)
+    , WebPaymentCoordinatorProxy::Client
+#endif
+    , WebColorPickerClient
+#if PLATFORM(MACCATALYST)
+    , EndowmentStateTrackerClient
+#endif
+#if ENABLE(SPEECH_SYNTHESIS)
+    , WebCore::PlatformSpeechSynthesizerClient
+#endif
+#if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS_FAMILY)
+    , WebCore::WebMediaSessionManagerClient
+#endif
+    , ProcessActivityGroupContext
+{
+    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(WebPageProxy);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(Internals);
+
+public:
+    virtual ~Internals();
+
+#if ENABLE(WEB_AUTHN) && ENABLE(WEBDRIVER_BIDI)
+    std::optional<VirtualWalletBehavior> testingVirtualWalletBehavior;
+    CompletionHandler<void(std::expected<WebCore::DigitalCredentialsResponseData, WebCore::ExceptionData>&&)> testingPendingDigitalCredentialHandler;
+#endif
+
+    uint32_t checkedPtrCount() const { return WebPopupMenuProxy::Client::checkedPtrCount(); }
+    uint32_t checkedPtrCountWithoutThreadCheck() const { return WebPopupMenuProxy::Client::checkedPtrCountWithoutThreadCheck(); }
+    void incrementCheckedPtrCount() const { WebPopupMenuProxy::Client::incrementCheckedPtrCount(); }
+    void decrementCheckedPtrCount() const { WebPopupMenuProxy::Client::decrementCheckedPtrCount(); }
+    void setDidBeginCheckedPtrDeletion()
+    {
+        WebPopupMenuProxy::Client::setDidBeginCheckedPtrDeletion();
+#if ENABLE(APPLE_PAY)
+        WebPaymentCoordinatorProxy::Client::setDidBeginCheckedPtrDeletion();
+#endif
+        WebColorPickerClient::setDidBeginCheckedPtrDeletion();
+        ProcessActivityGroupContext::setDidBeginCheckedPtrDeletion();
+    }
+
+#if PLATFORM(MACCATALYST)
+    // EndowmentStateTrackerClient
+    void ref() const final { page->ref(); }
+    void deref() const final { page->deref(); }
+#else
+    void ref() const { page->ref(); }
+    void deref() const { page->deref(); }
+#endif
+
+    WeakRef<WebPageProxy> page;
+    OptionSet<WebCore::ActivityState> activityState;
+    RunLoop::Timer audibleActivityTimer;
+    std::optional<WebCore::Color> backgroundColor;
+    WebCore::LayoutSize baseLayoutViewportSize;
+    std::optional<WebCore::FontAttributes> cachedFontAttributesAtSelectionStart;
+    Vector<Function<void()>> callbackHandlersAfterProcessingPendingMouseEvents;
+    Vector<Function<void()>> callbackHandlersAfterProcessingPendingKeyEvents;
+#if ENABLE(TOUCH_EVENTS) && !ENABLE(IOS_TOUCH_EVENTS)
+    Vector<Function<void()>> callbackHandlersAfterProcessingPendingWheelEvents;
+    Vector<Function<void()>> callbackHandlersAfterProcessingPendingTouchEvents;
+#endif
+    ContentInversion contentInversion { ContentInversion::System };
+    WebCore::FloatSize defaultUnobscuredSize;
+    EditorState editorState;
+    WebCore::IntSize fixedLayoutSize;
+    GeolocationPermissionRequestManagerProxy geolocationPermissionRequestManager;
+    HiddenPageThrottlingAutoIncreasesCounter::Token hiddenPageDOMTimerThrottlingAutoIncreasesCount;
+    Deque<Ref<NativeWebKeyboardEvent>> keyEventQueue;
+    WebCore::RectEdges<bool> mainFramePinnedState { true, true, true, true };
+    WebCore::LayoutPoint maxStableLayoutViewportOrigin;
+    WebCore::FloatSize maximumUnobscuredSize;
+    RunLoop::Timer updatePlayingMediaDidChangeTimer;
+    WebCore::MediaProducerMediaStateFlags mediaState;
+    WebCore::MediaProducerMediaStateFlags mainFrameMediaState;
+    WebCore::LayoutPoint minStableLayoutViewportOrigin;
+    WebCore::IntSize minimumSizeForAutoLayout;
+    WebCore::FloatSize minimumUnobscuredSize;
+    Deque<Ref<NativeWebMouseEvent>> mouseEventQueue;
+    // Events retired from the queue because their process paused at the debugger. They finish dispatching in the
+    // paused process's nested run loop, and their late replies are still honored so they can reach remote frames.
+    Vector<Ref<NativeWebMouseEvent>> mouseEventsForPausedProcess;
+    std::optional<WebCore::FrameIdentifier> lastFrameHandlingMouseMove;
+    Vector<Ref<WebMouseEvent>> coalescedMouseEvents;
+    RunLoop::Timer remoteFrameMouseEventTimeoutTimer;
+    // The process the queue head is waiting on. One is enough: only the head event blocks the queue, and its hops
+    // are a sequential chain (each forward starts from the previous hop's reply), so it never awaits two at once.
+    std::optional<WebCore::ProcessIdentifier> processAwaitingMouseEventReply;
+    WebCore::MediaProducerMutedStateFlags mutedState;
+    WebNotificationManagerMessageHandler notificationManagerMessageHandler;
+    OptionSet<WebCore::LayoutMilestone> observedLayoutMilestones;
+    WebCore::Color pageExtendedBackgroundColor;
+    EffectivePageAppearance effectivePageAppearance { EffectivePageAppearance::Unknown };
+    UserObservablePageCounter::Token pageIsUserObservableCount;
+    std::optional<MonotonicTime> pageLoadStart;
+    PageLoadState pageLoadState;
+#if PLATFORM(MAC)
+    PrintProcessUseCounter::Token printProcessUseToken;
+#endif
+
+    TextExtractionCache textExtractionCache;
+    OptionSet<WebCore::ActivityState> potentiallyChangedActivityStateFlags;
+    ProcessSuppressionDisabledToken preventProcessSuppressionCount;
+    std::optional<PrivateClickMeasurementAndMetadata> privateClickMeasurement;
+    WebCore::MediaProducerMediaStateFlags reportedMediaCaptureState;
+    RunLoop::Timer resetRecentCrashCountTimer;
+    Markable<SubframeTerminationEvent, SubframeTerminationEventMarkableTraits> subframeTerminationEvent;
+    unsigned lastSubframeTerminationEventIdentifier { 0 };
+    WebCore::RectEdges<bool> rubberBandableEdges { true, true, true, true };
+    bool alwaysBounceVertical { true };
+    bool alwaysBounceHorizontal { true };
+    WebCore::Color sampledPageTopColor;
+#if __has_include(<WebKitAdditions/WebPageProxyInternalsAdditions.h>)
+#include <WebKitAdditions/WebPageProxyInternalsAdditions.h>
+#endif
+    WebCore::ScrollPinningBehavior scrollPinningBehavior { WebCore::ScrollPinningBehavior::DoNotPin };
+    WebCore::IntSize sizeToContentAutoSizeMaximumSize;
+    WebCore::Color themeColor;
+    WebCore::FloatBoxExtent obscuredContentInsets;
+#if HAVE(NSREFRESHCONTROLLER)
+    bool hasRefreshController { false };
+#endif
+#if PLATFORM(MAC)
+    std::optional<WebCore::FloatBoxExtent> pendingObscuredContentInsets;
+#endif
+    RunLoop::Timer tryCloseTimeoutTimer;
+    WebCore::Color underPageBackgroundColorOverride;
+    WebCore::Color underlayColor;
+    RunLoop::Timer updateReportedMediaCaptureStateTimer;
+    HashMap<WebURLSchemeHandlerIdentifier, Ref<WebURLSchemeHandler>> urlSchemeHandlersByIdentifier;
+    std::optional<WebCore::FloatRect> viewExposedRect;
+    std::optional<WebCore::FloatSize> viewportSizeForCSSViewportUnits;
+    WebCore::ViewportSegments viewportSegments;
+    VisibleWebPageToken visiblePageToken;
+    WebCore::IntRect visibleScrollerThumbRect;
+    WindowKind windowKind { WindowKind::Unparented };
+    RefPtr<ProcessThrottlerActivity> pageAllowedToRunInTheBackgroundActivityDueToTitleChanges;
+    RefPtr<ProcessThrottlerActivity> pageAllowedToRunInTheBackgroundActivityDueToNotifications;
+
+    WebPageProxyMessageReceiverRegistration messageReceiverRegistration;
+
+    WeakHashSet<WebPageProxy> m_openedPages;
+    HashMap<WebCore::SleepDisablerIdentifier, std::unique_ptr<WebCore::SleepDisabler>> sleepDisablers;
+
+    HashMap<WebCore::BackForwardItemIdentifier, Vector<Ref<WebFrameProxy>>> pendingBackForwardCachedChildren;
+    HashMap<WebCore::NavigationIdentifier, std::unique_ptr<PendingBackForwardIframeRestore>> pendingBackForwardIframeRestores;
+
+    // Each cross-origin remote frame's origin within its immediate parent frame, keyed by frame ID.
+    // Used to compute each frame's cumulative offset in main-frame coordinates (see
+    // WebPageProxy::updateRemoteFrameOffsetInMainFrame).
+    HashMap<WebCore::FrameIdentifier, WebCore::IntPoint> remoteFrameOffsetsInParent;
+
+#if ENABLE(APPLE_PAY)
+    RefPtr<WebPaymentCoordinatorProxy> paymentCoordinator;
+#endif
+
+#if PLATFORM(COCOA)
+    WeakObjCPtr<WKWebView> cocoaView;
+    std::optional<TransactionID> firstLayerTreeTransactionIdAfterDidCommitLoad;
+
+    struct OutstandingPositionInformationRequest {
+        InteractionInformationRequest request;
+        IPC::AsyncReplyID replyID;
+        WeakPtr<WebProcessProxy> process;
+    };
+    std::optional<OutstandingPositionInformationRequest> outstandingPositionInformationRequest;
+
+    Markable<WebCore::FrameIdentifier> interactionFrameID;
+#endif
+
+#if USE(GLIB)
+    GWeakPtr<WebKitWebView> platformView;
+#endif
+
+#if ENABLE(CONTEXT_MENUS)
+    ContextMenuContextData activeContextMenuContextData;
+    WeakPtr<WebProcessProxy> activeContextMenuProcess;
+#endif
+
+#if ENABLE(GAMEPAD)
+    PAL::HysteresisActivity recentGamepadAccessHysteresis;
+#endif
+
+#if HAVE(DISPLAY_LINK)
+    PAL::HysteresisActivity wheelEventActivityHysteresis;
+#endif
+
+    RefPtr<WebDataListSuggestionsDropdown> dataListSuggestionsDropdown;
+
+#if ENABLE(DRAG_SUPPORT)
+    WebCore::IntRect currentDragCaretEditableElementRect;
+    WebCore::IntRect currentDragCaretRect;
+    WebCore::DragHandlingMethod currentDragHandlingMethod { WebCore::DragHandlingMethod::None };
+    // The frame that handled the most recent drag controller action, after it was forwarded to any remote frame.
+    std::optional<WebCore::FrameIdentifier> currentDragTargetFrameID;
+
+    struct DragTarget {
+        std::optional<WebCore::FrameIdentifier> frameID;
+        WebCore::IntPoint clientPosition;
+    };
+    uint64_t lastDragEventNumber { 0 };
+    uint64_t lastResolvedDragEventNumber { 0 };
+    std::optional<DragTarget> lastDragTarget;
+    Vector<DragTarget> outdatedDragTargets;
+#endif
+
+    RefPtr<WebColorPicker> colorPicker;
+
+#if ENABLE(MAC_GESTURE_EVENTS)
+    Deque<Ref<NativeWebGestureEvent>> gestureEventQueue;
+    unsigned droppedGestureEventCount { 0 };
+#endif
+
+#if ENABLE(META_VIEWPORT)
+    std::optional<WebCore::ViewportArguments> overrideViewportArguments;
+    WebCore::FloatSize viewportConfigurationViewLayoutSize;
+#endif
+
+#if PLATFORM(IOS_FAMILY)
+    WebCore::FloatBoxExtent unobscuredSafeAreaInsets;
+#endif
+
+#if ENABLE(MOMENTUM_EVENT_DISPATCHER)
+    std::optional<ScrollingAccelerationCurve> lastSentScrollingAccelerationCurve;
+    std::optional<ScrollingAccelerationCurve> scrollingAccelerationCurve;
+#endif
+
+#if ENABLE(NOTIFICATIONS)
+    HashSet<WebCore::SecurityOriginData> notificationPermissionRequesters;
+#endif
+
+    CompletionHandler<void(bool)> serviceWorkerLaunchCompletionHandler;
+
+#if ENABLE(SPEECH_SYNTHESIS)
+    std::optional<SpeechSynthesisData> optionalSpeechSynthesisData;
+#endif
+
+#if ENABLE(TOUCH_EVENTS)
+    TouchEventTracking touchEventTracking;
+#endif
+
+#if ENABLE(TOUCH_EVENTS) && !ENABLE(IOS_TOUCH_EVENTS)
+    Deque<QueuedTouchEvents> touchEventQueue;
+#endif
+
+#if ENABLE(WRITING_TOOLS)
+    HashMap<WTF::UUID, RefPtr<WebCore::TextIndicator>> textIndicatorForAnimationID;
+#if ENABLE(WRITING_TOOLS_TEXT_EFFECTS)
+    HashMap<WTF::UUID, RefPtr<WebCore::TextIndicator>> decorationIndicatorForAnimationID;
+#endif
+    HashMap<WTF::UUID, CompletionHandler<void(WebCore::TextAnimationRunMode)>> completionHandlerForAnimationID;
+    HashMap<WTF::UUID, CompletionHandler<void(RefPtr<WebCore::TextIndicator>)>> completionHandlerForDestinationTextIndicatorForSourceID;
+    HashMap<WTF::UUID, WTF::UUID> sourceAnimationIDtoDestinationAnimationID;
+#endif
+
+    MonotonicTime didFinishDocumentLoadForMainFrameTimestamp;
+    MonotonicTime lastActivationTimestamp;
+    MonotonicTime lastConsumedDigitalCredentialsActivationTimestamp;
+    MonotonicTime didCommitLoadForMainFrameTimestamp;
+
+#if ENABLE(UI_SIDE_COMPOSITING)
+    std::optional<VisibleContentRectUpdateInfo> lastVisibleContentRectUpdate;
+#endif
+
+    bool needsFixedContainerEdgesUpdateAfterNextCommit { false };
+
+    WebCore::FixedContainerEdges mainFrameFixedContainerEdges;
+    bool topFixedContainerEdgeIsLocked { false };
+    WebCore::FixedContainerEdges resolvedFixedContainerEdges;
+    HashMap<WebCore::FrameIdentifier, std::optional<WebCore::FixedContainerEdges>> fixedContainerEdgeSamplingFrames;
+
+#if ENABLE(VIDEO_PRESENTATION_MODE)
+    std::optional<PlaybackSessionContextIdentifier> currentFullscreenVideoSessionIdentifier;
+#endif
+
+#if ENABLE(WEBXR)
+    RefPtr<PlatformXRSystem> xrSystem;
+#endif
+
+#if ENABLE(EXTENSION_CAPABILITIES)
+    RefPtr<MediaCapability> mediaCapability;
+    RefPtr<MediaCapability> displayCaptureCapability;
+#endif
+
+#if PLATFORM(GTK) || PLATFORM(WPE)
+    RunLoop::Timer activityStateChangeTimer;
+#endif
+
+#if PLATFORM(MAC)
+    WebCore::FloatPoint scrollPositionDuringLastEditorStateUpdate;
+    std::optional<WebCore::RemoteUserInputEventData> acceptsFirstMouseRemoteUserInputEventData;
+#endif
+
+#if PLATFORM(IOS_FAMILY) && ENABLE(MODEL_PROCESS)
+    RefPtr<PortalPresentationManagerProxy> portalPresentationManagerProxy;
+#endif
+
+    bool allowsLayoutViewportHeightExpansion { true };
+
+#if ENABLE(IMAGE_ANALYSIS)
+    std::optional<WebCore::ImageTranslationLanguageIdentifiers> imageTranslationLanguageIdentifiers;
+#endif
+
+    std::optional<TextManipulationParameters> textManipulationParameters;
+
+    // Non-empty while the client has told us it is presenting this page as a machine translation.
+    String displayedTranslationLocaleIdentifier;
+
+    EnhancedSecurityTracking enhancedSecurityTracker;
+
+    // Recorded by WebPageProxy::suspend() so resume() reaches exactly the processes that were
+    // suspended. The set of processes backing the page can change while it is suspended.
+    struct SuspendedProcess {
+        WeakPtr<WebProcessProxy> process;
+        WebCore::PageIdentifier pageID;
+    };
+    Vector<SuspendedProcess> suspendedProcesses;
+
+#if PLATFORM(IOS_FAMILY) && ENABLE(UNIFIED_PDF)
+    PDFPluginDisplayMode pdfDisplayMode { PDFPluginDisplayMode::SinglePageContinuous };
+    PDFPluginDisplayMode initialPDFDisplayMode { PDFPluginDisplayMode::SinglePageContinuous };
+#endif
+
+#if HAVE(NSVIEW_CORNER_CONFIGURATION)
+    WebCore::CornerRadii scrollbarAvoidanceCornerRadii;
+#endif
+
+    std::optional<WebCore::DevicePostureType> currentDevicePostureType;
+    bool forceNeedsSecureInputReevaluation { false };
+
+    explicit Internals(WebPageProxy&, bool processInheritedFromOpener);
+
+#if ENABLE(SPEECH_SYNTHESIS)
+    SpeechSynthesisData& speechSynthesisData() LIFETIME_BOUND;
+#endif
+
+    // WebPopupMenuProxy::Client
+#if !PLATFORM(IOS_FAMILY)
+    void valueChangedForPopupMenu(WebPopupMenuProxy*, int32_t newSelectedIndex) final;
+    NativeWebMouseEvent* currentlyProcessedMouseDownEvent() final;
+#endif
+#if !PLATFORM(COCOA)
+    void setTextFromItemForPopupMenu(WebPopupMenuProxy*, int32_t index) final;
+#endif
+#if PLATFORM(GTK) || PLATFORM(WPE)
+    void failedToShowPopupMenu() final;
+#endif
+
+#if ENABLE(APPLE_PAY)
+    // WebPaymentCoordinatorProxy::Client
+    IPC::Connection* paymentCoordinatorConnection(const WebPaymentCoordinatorProxy&) final;
+    const String& paymentCoordinatorBoundInterfaceIdentifier(const WebPaymentCoordinatorProxy&) final;
+    const String& paymentCoordinatorSourceApplicationBundleIdentifier(const WebPaymentCoordinatorProxy&) final;
+    const String& paymentCoordinatorSourceApplicationSecondaryIdentifier(const WebPaymentCoordinatorProxy&) final;
+    void paymentCoordinatorAddMessageReceiver(WebPaymentCoordinatorProxy&, IPC::ReceiverName, IPC::MessageReceiver&) final;
+    void paymentCoordinatorRemoveMessageReceiver(WebPaymentCoordinatorProxy&, IPC::ReceiverName) final;
+    void getPaymentCoordinatorEmbeddingUserAgent(WebPageProxyIdentifier, CompletionHandler<void(const String&)>&&) final;
+    std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebPaymentMessages() const final;
+#endif
+#if ENABLE(APPLE_PAY) && PLATFORM(IOS_FAMILY)
+    UIViewController *paymentCoordinatorPresentingViewController(const WebPaymentCoordinatorProxy&) final;
+    const String& paymentCoordinatorCTDataConnectionServiceType(const WebPaymentCoordinatorProxy&) final;
+    Ref<PaymentAuthorizationPresenter> paymentCoordinatorAuthorizationPresenter(WebPaymentCoordinatorProxy&, PKPaymentRequest *) final;
+#endif
+#if ENABLE(APPLE_PAY) && PLATFORM(IOS_FAMILY) && ENABLE(APPLE_PAY_REMOTE_UI_USES_SCENE)
+    void getWindowSceneAndBundleIdentifierForPaymentPresentation(WebPageProxyIdentifier, CompletionHandler<void(const String&, const String&)>&&) final;
+    void notifyWillPresentPaymentUI(WebPageProxyIdentifier) final;
+#endif
+#if ENABLE(APPLE_PAY)
+    CocoaWindow *paymentCoordinatorPresentingWindow(const WebPaymentCoordinatorProxy&) const final;
+#endif
+
+    // WebColorPickerClient
+    void didChooseColor(const WebCore::Color&) final;
+    void didEndColorPicker() final;
+
+#if PLATFORM(MACCATALYST)
+    // EndowmentStateTrackerClient
+    void isUserFacingChanged(bool) final;
+#endif
+
+#if ENABLE(SPEECH_SYNTHESIS)
+    // PlatformSpeechSynthesisUtteranceClient
+    void didStartSpeaking(WebCore::PlatformSpeechSynthesisUtterance&) final;
+    void didFinishSpeaking(WebCore::PlatformSpeechSynthesisUtterance&) final;
+    void didPauseSpeaking(WebCore::PlatformSpeechSynthesisUtterance&) final;
+    void didResumeSpeaking(WebCore::PlatformSpeechSynthesisUtterance&) final;
+    void speakingErrorOccurred(WebCore::PlatformSpeechSynthesisUtterance&) final;
+    void boundaryEventOccurred(WebCore::PlatformSpeechSynthesisUtterance&, WebCore::SpeechBoundary, unsigned characterIndex, unsigned characterLength) final;
+
+    // PlatformSpeechSynthesizerClient
+    void voicesDidChange() final;
+#endif
+
+#if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS_FAMILY)
+    // WebMediaSessionManagerClient
+    void setPlaybackTarget(WebCore::PlaybackTargetClientContextIdentifier, Ref<WebCore::MediaPlaybackTarget>&&) final;
+    void externalOutputDeviceAvailableDidChange(WebCore::PlaybackTargetClientContextIdentifier, bool) final;
+    void setShouldPlayToPlaybackTarget(WebCore::PlaybackTargetClientContextIdentifier, bool) final;
+    void playbackTargetPickerWasDismissed(WebCore::PlaybackTargetClientContextIdentifier) final;
+    bool alwaysOnLoggingAllowed() const final { return protect(page)->isAlwaysOnLoggingAllowed(); }
+    RetainPtr<CocoaView> platformView() const final;
+#endif
+
+    Vector<Ref<WebProcessProxy>> activityTargets() final;
+
+    bool processInheritedFromOpener { false };
+};
+
+} // namespace WebKit

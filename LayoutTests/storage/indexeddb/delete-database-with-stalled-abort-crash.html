@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<script>
+// The put must exceed the origin quota: the abort's own space check then queues behind the
+// resulting quota-increase round trip, leaving the transaction live when the delete runs.
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+    testRunner.setOriginQuotaRatioEnabled(false);
+}
+
+const databaseName = "delete-database-with-stalled-abort-crash";
+const openRequest = indexedDB.open(databaseName, 1);
+
+openRequest.onupgradeneeded = event => {
+    const store = event.target.result.createObjectStore("store");
+    for (let i = 0; i < 3; ++i)
+        store.put("value" + i, i);
+};
+
+openRequest.onsuccess = () => {
+    const database = openRequest.result;
+    const transaction = database.transaction("store", "readwrite");
+    const store = transaction.objectStore("store");
+    let openedCursors = 0;
+
+    const burst = () => {
+        store.put(new Uint8Array(8 * 1024 * 1024), 999);
+        indexedDB.deleteDatabase(databaseName);
+        transaction.abort();
+        database.close();
+        setTimeout(() => testRunner?.notifyDone(), 500);
+    };
+
+    // Firing from inside a cursor callback keeps the transaction active with cursors registered.
+    const churnCursor = () => {
+        const cursorRequest = store.openCursor();
+        cursorRequest.onsuccess = event => {
+            if (++openedCursors == 5) {
+                burst();
+                return;
+            }
+            const cursor = event.target.result;
+            if (cursor)
+                cursor.continue();
+            else
+                churnCursor();
+        };
+        cursorRequest.onerror = () => { };
+    };
+    churnCursor();
+};
+
+openRequest.onerror = () => testRunner?.notifyDone();
+</script>
+<div>
+    This test passes if it doesn't crash.
+</div>

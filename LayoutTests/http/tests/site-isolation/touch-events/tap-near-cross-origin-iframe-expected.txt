@@ -1,0 +1,10 @@
+Tapping just outside a cross-origin iframe whose content responds to clicks must deliver the click to the iframe's content, as when the iframe is same-origin.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS message is "child click"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

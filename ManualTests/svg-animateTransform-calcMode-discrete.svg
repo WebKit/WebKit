@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg">
+<text x="10" y="20">Testing calcMode="discrete" for &lt;animateTransform&gt;. The rect should jump by 100px at 2s.</text>
+<rect y="30" width="100px" height="100px" fill="green">
+    <animateTransform attributeName="transform" type="translate" from="0,0" to="100,0" calcMode="discrete" fill="freeze" dur="4s"/>
+</rect>
+</svg>

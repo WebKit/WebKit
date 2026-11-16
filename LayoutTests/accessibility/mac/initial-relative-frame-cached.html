@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body style="height: 1000px; width=1000px">
+
+<div style="height: 500px; overflow: auto;" id="scrollarea">
+    <div style="margin-top: 600px;" id="hidden-content">
+        <h1 id="heading1">Hello, world.</h1>
+
+        <img id="image" height=100 width=100 src="../resources/cake.png" alt="Cake in front of a glass door">
+
+        <ul id="list">
+            <li id="listitem">List item 1</li>
+            <li>List item 2</li>
+        </ul>
+    </div>
+</div>
+
+<script>
+let output = "This test verifies that when initial rough frame caching is enabled, frames are eventually correct.\n\n";
+
+if (window.accessibilityController) {
+    accessibilityController.setForceInitialFrameCaching(true);
+    window.jsTestIsAsync = true;
+
+    setTimeout(async function() {
+        // Scroll all content onscreen
+        let container = document.getElementById("scrollarea");
+        container.scrollTop = container.scrollHeight;
+
+        // Enable accessibility & trigger paint
+        accessibilityController.rootElement;
+
+        // Wait for the objects to be painted
+        await sleep(1000);
+
+        output += frameDebugString("heading1");
+        output += frameDebugString("image");
+        output += frameDebugString("list");
+        output += frameDebugString("listitem");
+
+        accessibilityController.setForceInitialFrameCaching(false);
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+
+
+function frameDebugString(id) {
+    let element = accessibilityController.accessibleElementById(id);
+    return `${id} has relative frame ${element.stringDescriptionOfAttributeValue('AXRelativeFrame')}.\n`;
+}
+
+</script>
+</body>
+</html>

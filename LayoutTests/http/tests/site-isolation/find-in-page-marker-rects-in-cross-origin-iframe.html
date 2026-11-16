@@ -1,0 +1,52 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+
+<!DOCTYPE html>
+<html>
+<body style="margin: 0">
+<script src="/js-test-resources/js-test.js"></script>
+<script>
+description("Tests that the rects of a find-in-page match in an out-of-process subframe are clipped by the part of the frame that the embedder can show");
+
+var jsTestIsAsync = true;
+var hasMarkerRects = "";
+var testFrame;
+
+// The subframe is cross-origin, so its internals object cannot be reached directly.
+window.addEventListener("message", function(event) {
+    if (event.data.startsWith("hasMarkerRects:"))
+        hasMarkerRects = event.data.substring("hasMarkerRects:".length);
+}, false);
+
+function runTest()
+{
+    testFrame = document.getElementById("testFrame");
+
+    // Ask repeatedly: the embedder-visible rect reaches the subframe's process asynchronously, one
+    // rendering update after the scroll.
+    setInterval(function() {
+        testFrame.contentWindow.postMessage("report", "*");
+    }, 50);
+
+    // The subframe cannot compute this itself: the clip that hides it is in the embedder's process.
+    debug("The frame starts outside the viewport, so the match has no rect.");
+    shouldBecomeEqualToString("hasMarkerRects", "false", scrollFrameIntoView);
+}
+
+function scrollFrameIntoView()
+{
+    debug("Scrolling the frame into view.");
+    window.scroll(0, 1000);
+    shouldBecomeEqualToString("hasMarkerRects", "true", scrollFrameOutOfView);
+}
+
+function scrollFrameOutOfView()
+{
+    debug("Scrolling the frame out of view again.");
+    window.scroll(0, 0);
+    shouldBecomeEqualToString("hasMarkerRects", "false", finishJSTest);
+}
+</script>
+<div style="width: 100px; height: 1000px;"></div>
+<iframe id="testFrame" src="http://localhost:8000/site-isolation/resources/marker-rects-frame.html" onload="runTest()"></iframe>
+</body>
+</html>

@@ -1,0 +1,155 @@
+PASS: Should produce an exception.
+Error: Must pass the test's harness as the first argument.
+PASS: Should produce an exception.
+Error: Must pass the test's harness as the first argument.
+PASS: Should produce an exception.
+Error: Must pass the test's harness as the first argument.
+PASS: Should produce an exception.
+Error: Must pass the test's harness as the first argument.
+PASS: Should produce an exception.
+TypeError: undefined is not an object (evaluating 'testcase.setup')
+PASS: Should produce an exception.
+Error: Tried to add non-object test case.
+PASS: Should produce an exception.
+Error: Tried to add test case without a name.
+PASS: Should produce an exception.
+Error: Tried to add test case without a name.
+PASS: Should produce an exception.
+Error: Tried to add test case without `test` function.
+PASS: Should produce an exception.
+Error: Tried to add test case with invalid `setup` parameter (must be a function).
+PASS: Should produce an exception.
+Error: Tried to add test case with invalid `setup` parameter (must be a function).
+PASS: Should produce an exception.
+Error: Tried to add test case with invalid `setup` parameter (must be a function).
+PASS: Should produce an exception.
+Error: Tried to add test case with invalid `teardown` parameter (must be a function).
+PASS: Should produce an exception.
+Error: Tried to add test case with invalid `teardown` parameter (must be a function).
+PASS: Should produce an exception.
+Error: Tried to add test case with invalid `teardown` parameter (must be a function).
+PASS: Should produce an exception.
+Error: Tried to pass a test case with an async `setup`, `test`, or `teardown` function, but this is a synchronous test suite.
+PASS: Should produce an exception.
+Error: Tried to pass a test case with an async `setup`, `test`, or `teardown` function, but this is a synchronous test suite.
+PASS: Should produce an exception.
+Error: Tried to pass a test case with an async `setup`, `test`, or `teardown` function, but this is a synchronous test suite.
+PASS: Should produce an exception.
+Error: Tried to call runTestCases() for suite with no test cases
+
+== Running test suite: SyncTestSuite.RunTwiceSuite
+-- Running test case: DummyTest0
+PASS: Return value of runTwiceSuite.runTestCases() should be true when all tests pass.
+PASS: Should produce an exception.
+Error: Tried to call runTestCases() more than once.
+
+== Running test suite: SyncTestSuite.SequentialExecution
+-- Running test case: 1 (Pass)
+-- Running test case: 2 (Pass)
+-- Running test case: 3 (Pass)
+-- Running test case: 4 (Pass)
+PASS: Return value of SyncTestSuite.SequentialExecution.runTestCases() should be true even if a test case fails.
+PASS: SyncTestSuite.SequentialExecution should have executed 4 tests.
+PASS: SyncTestSuite.SequentialExecution should have passed 4 tests.
+PASS: SyncTestSuite.SequentialExecution should have failed 0 tests.
+PASS: SyncTestSuite.SequentialExecution should have skipped 0 tests.
+
+== Running test suite: SyncTestSuite.ContinueOnFailure
+-- Running test case: 1 (Pass)
+-- Running test case: 2 (Fail)
+Throwing...
+!! EXCEPTION: {"x":"ContinueOnFailure throw"}
+Stack Trace: (suppressed)
+
+-- Running test case: 3 (Pass)
+-- Running test case: 4 (Fail)
+Failing...
+PASS: Return value of SyncTestSuite.ContinueOnFailure.runTestCases() should be true even if a test case fails.
+PASS: SyncTestSuite.ContinueOnFailure should have executed 4 tests.
+PASS: SyncTestSuite.ContinueOnFailure should have passed 2 tests.
+PASS: SyncTestSuite.ContinueOnFailure should have failed 2 tests.
+PASS: SyncTestSuite.ContinueOnFailure should have skipped 0 tests.
+
+== Running test suite: SyncTestSuite.SetupAndTeardown
+-- Running test setup.
+-- Running test case: TestWithSetupAndTeardown
+-- Running test teardown.
+-- Running test case: TestRunningAfterTeardown
+PASS: Return value of SyncTestSuite.SetupAndTeardown.runTestCases() should be true even if a test case fails.
+PASS: SyncTestSuite.SetupAndTeardown should have executed 2 tests.
+PASS: SyncTestSuite.SetupAndTeardown should have passed 2 tests.
+PASS: SyncTestSuite.SetupAndTeardown should have failed 0 tests.
+PASS: SyncTestSuite.SetupAndTeardown should have skipped 0 tests.
+
+== Running test suite: SyncTestSuite.SetupException
+-- Running test setup.
+Throwing...
+!! EXCEPTION: SetupException throw
+Stack Trace: (suppressed)
+
+-- Running test setup.
+PASS: Setup action should still execute if previous test's setup action threw an exception.
+-- Running test case: TestAfterSetupException
+PASS: Test should still execute if previous test's setup action threw an exception.
+-- Running test teardown.
+PASS: Teardown action should still execute if previous test's setup action threw an exception.
+PASS: Return value of SyncTestSuite.SetupException.runTestCases() should be true even if a test case fails.
+PASS: SyncTestSuite.SetupException should have executed 1 tests.
+PASS: SyncTestSuite.SetupException should have passed 1 tests.
+PASS: SyncTestSuite.SetupException should have failed 1 tests.
+PASS: SyncTestSuite.SetupException should have skipped 1 tests.
+
+== Running test suite: SyncTestSuite.SetupFailure
+-- Running test setup.
+Failing...
+!! SETUP FAILED
+
+-- Running test setup.
+PASS: Setup action should still execute if previous test's setup action failed.
+-- Running test case: TestAfterSetupException
+PASS: Test should still execute if previous test's setup action failed.
+-- Running test teardown.
+PASS: Teardown action should still execute if previous test's setup action failed.
+PASS: Return value of SyncTestSuite.SetupFailure.runTestCases() should be true even if a test case fails.
+PASS: SyncTestSuite.SetupFailure should have executed 1 tests.
+PASS: SyncTestSuite.SetupFailure should have passed 1 tests.
+PASS: SyncTestSuite.SetupFailure should have failed 1 tests.
+PASS: SyncTestSuite.SetupFailure should have skipped 1 tests.
+
+== Running test suite: SyncTestSuite.TeardownException
+-- Running test case: TestWithExceptionDuringTeardown
+-- Running test teardown.
+Throwing...
+!! EXCEPTION: TeardownException throw
+Stack Trace: (suppressed)
+
+-- Running test setup.
+PASS: Setup action should still execute if previous test's teardown action threw an exception.
+-- Running test case: TestAfterTeardownException
+PASS: Test should still execute if previous test's teardown action threw an exception.
+-- Running test teardown.
+PASS: Teardown action should still execute if previous test's teardown action threw an exception.
+PASS: Return value of SyncTestSuite.TeardownException.runTestCases() should be true even if a test case fails.
+PASS: SyncTestSuite.TeardownException should have executed 2 tests.
+PASS: SyncTestSuite.TeardownException should have passed 1 tests.
+PASS: SyncTestSuite.TeardownException should have failed 1 tests.
+PASS: SyncTestSuite.TeardownException should have skipped 0 tests.
+
+== Running test suite: SyncTestSuite.TeardownFailure
+-- Running test case: TestWithExceptionDuringTeardown
+-- Running test teardown.
+Failing...
+!! TEARDOWN FAILED
+
+-- Running test setup.
+PASS: Setup action should still execute if previous test's teardown action failed.
+-- Running test case: TestAfterTeardownException
+PASS: Test should still execute if previous test's teardown action failed.
+-- Running test teardown.
+PASS: Teardown action should still execute if previous test's teardown action failed.
+PASS: Return value of SyncTestSuite.TeardownFailure.runTestCases() should be true even if a test case fails.
+PASS: SyncTestSuite.TeardownFailure should have executed 2 tests.
+PASS: SyncTestSuite.TeardownFailure should have passed 1 tests.
+PASS: SyncTestSuite.TeardownFailure should have failed 1 tests.
+PASS: SyncTestSuite.TeardownFailure should have skipped 0 tests.
+

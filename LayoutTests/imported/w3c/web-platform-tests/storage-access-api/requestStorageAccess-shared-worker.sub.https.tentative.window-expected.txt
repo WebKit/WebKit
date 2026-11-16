@@ -1,0 +1,5 @@
+
+PASS SharedWorkers don't inherit storage access for fetch
+PASS SharedWorkers don't observe parent's storage access
+PASS SharedWorker WebSocket doesn't inherit storage access
+

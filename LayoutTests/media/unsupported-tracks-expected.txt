@@ -1,0 +1,4 @@
+
+
+PASS Test that QuickTime file with unsupported track types only, generates an error.
+

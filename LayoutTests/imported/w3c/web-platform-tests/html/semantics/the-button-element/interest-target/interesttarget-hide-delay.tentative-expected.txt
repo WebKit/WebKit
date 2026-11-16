@@ -1,0 +1,6 @@
+
+FAIL Test the harness assert_true: interesttarget is not supported expected true got false
+FAIL The interest-target-hide-delay causes interest to be lost after a delay assert_true: interesttarget is not supported expected true got false
+FAIL hovering the interest target element keeps the invoker from losing interest assert_true: interesttarget is not supported expected true got false
+FAIL moving hover between the invoker and the target prevents interest lost assert_true: interesttarget is not supported expected true got false
+

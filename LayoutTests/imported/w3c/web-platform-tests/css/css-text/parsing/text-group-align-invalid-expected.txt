@@ -1,0 +1,13 @@
+
+PASS e.style['text-group-align'] = "auto" should not set the property value
+PASS e.style['text-group-align'] = "match-parent" should not set the property value
+PASS e.style['text-group-align'] = "justify" should not set the property value
+PASS e.style['text-group-align'] = "wrap" should not set the property value
+PASS e.style['text-group-align'] = "left right" should not set the property value
+PASS e.style['text-group-align'] = "center start" should not set the property value
+PASS e.style['text-group-align'] = "end start" should not set the property value
+PASS e.style['text-group-align'] = "none center" should not set the property value
+PASS e.style['text-group-align'] = "start center" should not set the property value
+PASS e.style['text-group-align'] = "right center" should not set the property value
+PASS e.style['text-group-align'] = "5px" should not set the property value
+

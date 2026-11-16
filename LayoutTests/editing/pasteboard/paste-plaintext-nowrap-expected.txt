@@ -1,0 +1,6 @@
+Copying and pasting the text below in place should not crash.
+
+
+PASSED
+
+

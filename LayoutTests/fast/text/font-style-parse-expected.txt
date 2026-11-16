@@ -1,0 +1,25 @@
+PASS getComputedStyle(document.getElementById('test4')).fontStyle is "oblique 16deg"
+PASS getComputedStyle(document.getElementById('test5')).fontStyle is "oblique 14.25deg"
+PASS getComputedStyle(document.getElementById('test14')).fontStyle is "oblique 15.25deg"
+PASS getComputedStyle(document.getElementById('test2')).font is ""
+PASS getComputedStyle(document.getElementById('test3')).font is ""
+PASS getComputedStyle(document.getElementById('test4')).font is ""
+PASS getComputedStyle(document.getElementById('test5')).font is ""
+PASS getComputedStyle(document.getElementById('test14')).font is ""
+PASS getComputedStyle(document.getElementById('test15')).font is "italic 100 48px / 49px Helvetica Neue"
+PASS getComputedStyle(document.getElementById('test16')).font is "italic 100 48px / 49px Helvetica Neue"
+PASS getComputedStyle(document.getElementById('test17')).font is "100 48px / 49px Helvetica Neue"
+PASS getComputedStyle(document.getElementById('test18')).font is "italic 48px / 49px Helvetica Neue"
+PASS getComputedStyle(document.getElementById('test19')).font is "italic small-caps 100 extra-expanded 48px / 49px Helvetica Neue"
+PASS getComputedStyle(document.getElementById('test21')).font is "oblique small-caps 123 extra-expanded 48px / 49px Helvetica Neue"
+PASS getComputedStyle(document.getElementById('test22')).font is ""
+PASS document.getElementById('test15').style.font is "italic 100 48px / 49px Helvetica Neue"
+PASS document.getElementById('test16').style.font is "italic 100 48px / 49px Helvetica Neue"
+PASS document.getElementById('test17').style.font is "100 48px / 49px Helvetica Neue"
+PASS document.getElementById('test18').style.font is "italic 48px / 49px Helvetica Neue"
+PASS document.getElementById('test19').style.font is "italic small-caps 100 extra-expanded 48px / 49px Helvetica Neue"
+PASS document.getElementById('test21').style.font is "oblique 14deg small-caps 123 extra-expanded 48px / 49px Helvetica Neue"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,205 @@
+/*
+ * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
+ *           (C) 1999 Antti Koivisto (koivisto@kde.org)
+ *           (C) 2006 Allan Sandfeld Jensen (kde@carewolf.com) 
+ *           (C) 2006 Samuel Weinig (sam.weinig@gmail.com)
+ * Copyright (C) 2004, 2005, 2006, 2007, 2009, 2010, 2011 Apple Inc. All rights reserved.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public License
+ * along with this library; see the file COPYING.LIB.  If not, write to
+ * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ * Boston, MA 02110-1301, USA.
+ *
+ */
+
+#pragma once
+
+#include <WebCore/RenderImageResource.h>
+#include <WebCore/RenderReplaced.h>
+#include <wtf/Platform.h>
+
+namespace WebCore {
+
+class HTMLAreaElement;
+class HTMLMapElement;
+class ConcreteObjectSize;
+class GraphicsContext;
+class ImageBuffer;
+class NativeImage;
+class ShareableBitmap;
+
+enum ImageSizeChangeType {
+    ImageSizeChangeNone,
+    ImageSizeChangeForAltText
+};
+
+struct CreateShareableBitmapFromImageOptions {
+    enum class AllowAnimatedImages : bool { No, Yes };
+    enum class UseSnapshotForTransparentImages : bool { No, Yes };
+
+    std::optional<FloatSize> screenSizeInPixels;
+    AllowAnimatedImages allowAnimatedImages { AllowAnimatedImages::Yes };
+    UseSnapshotForTransparentImages useSnapshotForTransparentImages { UseSnapshotForTransparentImages::No };
+};
+
+class RenderImage : public RenderReplaced {
+    WTF_MAKE_TZONE_ALLOCATED(RenderImage);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderImage);
+public:
+    RenderImage(Type, Element&, Style::ComputedStyle&&, Style::Image* = nullptr, float currentPixelDensity = 1);
+    RenderImage(Type, Document&, Style::ComputedStyle&&, Style::Image* = nullptr);
+    virtual ~RenderImage();
+
+    RenderImageResource& imageResource() { return *m_imageResource; }
+    const RenderImageResource& imageResource() const { return *m_imageResource; }
+    CachedImage* cachedImage() const { return imageResource().cachedImage(); }
+
+    ImageSizeChangeType setImageSizeForAltText(CachedImage* newImage = nullptr);
+
+    void updateAltText();
+
+    RefPtr<HTMLMapElement> imageMap() const;
+    void areaElementFocusChanged(HTMLAreaElement*);
+    
+    void collectSelectionGeometries(Vector<SelectionGeometry>&, unsigned, unsigned) override;
+
+    void setIsGeneratedContent(bool generated = true) { m_isGeneratedContent = generated; }
+
+    bool isGeneratedContent() const { return m_isGeneratedContent; }
+
+    const String& altText() const LIFETIME_BOUND { return m_altText; }
+    void setAltText(const String& altText) { m_altText = altText; }
+
+    // https://html.spec.whatwg.org/multipage/images.html#current-pixel-density
+    float currentPixelDensity() const { return m_currentPixelDensity; }
+    void setCurrentPixelDensity(float);
+
+    void setHasShadowControls(bool hasShadowControls) { m_hasShadowControls = hasShadowControls; }
+    void setHasImageOverlay() { m_hasImageOverlay = true; }
+    
+    bool isShowingMissingOrImageError() const;
+    bool isShowingAltText() const;
+
+    virtual bool shouldDisplayBrokenImageIcon() const;
+
+    String accessibilityDescription() const;
+
+#if ENABLE(MULTI_REPRESENTATION_HEIC)
+    bool isMultiRepresentationHEIC() const;
+#endif
+
+    WEBCORE_EXPORT std::optional<FloatSize> usedImageSize() const final;
+
+    // FIXME: Condense these into fewer concrete categories of sizing algorithms once we know all the different sizing rules needed.
+    ConcreteObjectSize concreteObjectSizeForPainting() const;
+    ConcreteObjectSize concreteObjectSizeForInteractionRegion() const;
+    WEBCORE_EXPORT ConcreteObjectSize concreteObjectSizeForPasteboard() const;
+    ConcreteObjectSize concreteObjectSizeForAccessibility() const;
+    ConcreteObjectSize concreteObjectSizeForImageAnalysis() const;
+    ConcreteObjectSize concreteObjectSizeForDragImageOriginalSizeComparison() const;
+    WEBCORE_EXPORT ConcreteObjectSize concreteObjectSizeForPositionInformation() const;
+    WEBCORE_EXPORT ConcreteObjectSize concreteObjectSizeForElementImage() const;
+
+    // FIXME: Condense these into fewer concrete categories of bitmap extraction once we know all the different behaviors needed.
+    WEBCORE_EXPORT RefPtr<ShareableBitmap> createShareableBitmapForHitTestResult() const;
+    WEBCORE_EXPORT RefPtr<ShareableBitmap> createShareableBitmapForPositionInformation(FloatSize screenSizeInPixels) const;
+    WEBCORE_EXPORT RefPtr<ShareableBitmap> createShareableBitmapForImageBitmapRequest() const;
+    WEBCORE_EXPORT RefPtr<ShareableBitmap> createShareableBitmapForFullScreen() const;
+    WEBCORE_EXPORT RefPtr<ShareableBitmap> createShareableBitmapForImageServices() const;
+    WEBCORE_EXPORT Ref<NativePromise<Ref<ShareableBitmap>, void>> createShareableBitmapAsyncForImageAnalysis(CreateShareableBitmapFromImageOptions::UseSnapshotForTransparentImages) const;
+
+    // Returns an image as `paint()` would draw it. Sized and placed respecting 'object-fit', 'object-position', 'object-view-box', and orientation, and clipped to the content box.
+    RefPtr<NativeImage> createNativeImageAsPainted(float deviceScaleFactor, const FloatSize& maximumSize);
+
+    FloatSize preferredAspectRatioAsSize() const final;
+
+protected:
+    RenderImage(Type, Element&, Style::ComputedStyle&&, OptionSet<ReplacedFlag>, Style::Image* = nullptr, float currentPixelDensity = 1);
+    void willBeDestroyed() override;
+
+#if ENABLE(SMART_IMAGE_RESIZER)
+    void insertedIntoTree() override;
+#endif
+
+    bool shouldInvalidateContentWidths() const final;
+    RenderReplaced* embeddedSVGRoot() const final;
+    bool foregroundIsKnownToBeOpaqueInRect(const LayoutRect& localRect, unsigned maxDepthToTest) const override;
+
+    void styleWillChange(Style::Difference, const Style::ComputedStyle& newStyle) override;
+    void styleDidChange(Style::Difference, const Style::ComputedStyle*) override;
+
+    void imageChanged(WrappedImagePtr, const IntRect* = nullptr) override;
+    void forEachStyleImage(NOESCAPE const ScopedLambda<void(Style::Image&)>&) override final;
+
+    ImageDrawResult paintIntoRect(PaintInfo&, const FloatRect&);
+    void paint(PaintInfo&, const LayoutPoint&) final;
+    void layout() override;
+
+    void intrinsicSizeChanged() override
+    {
+        imageChanged(imageResource().imagePtr());
+    }
+
+    NaturalDimensions zoomedNaturalDimensions() const override;
+
+    ConcreteObjectSize defaultConcreteObjectSize() const;
+    ConcreteObjectSize defaultConcreteObjectSize(NaturalDimensions) const;
+
+    virtual RefPtr<ShareableBitmap> createShareableBitmap(const CreateShareableBitmapFromImageOptions& = { }) const;
+    virtual Ref<NativePromise<Ref<ShareableBitmap>, void>> createShareableBitmapAsync(const CreateShareableBitmapFromImageOptions& = { }) const;
+
+private:
+    ASCIILiteral renderName() const override { return "RenderImage"_s; }
+
+    bool canHaveChildren() const override;
+
+    bool isImage() const override { return true; }
+
+    void paintReplaced(PaintInfo&, const LayoutPoint&) override;
+    void paintIncompleteImageOutline(PaintInfo&, LayoutPoint, LayoutUnit) const;
+    void paintMissingImageState(PaintInfo&, const LayoutPoint&) const;
+
+    bool computeBackgroundIsKnownToBeObscured(const LayoutPoint& paintOffset) final;
+
+    LayoutUnit minimumReplacedHeight() const override;
+
+    void notifyFinished(CachedResource&, const NetworkLoadMetrics&, LoadWillContinueInAnotherProcess) final;
+    bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) final;
+
+    IntSize imageSizeForError(CachedImage*) const;
+    void repaintOrMarkForLayout(ImageSizeChangeType, const IntRect* = nullptr);
+    void updateIntrinsicSizeIfNeeded(const LayoutSize&);
+    // Update the size of the image to be rendered. Object-fit may cause this to be different from the CSS box's content rect.
+    IntSize imageContainerSize() const;
+
+    void paintAreaElementFocusRing(PaintInfo&, const LayoutPoint& paintOffset);
+
+    bool hasShadowContent() const { return m_hasShadowControls || m_hasImageOverlay; }
+
+    bool imageRepresentsNothing() const;
+
+    // Text to display as long as the image isn't available.
+    String m_altText;
+    const std::unique_ptr<RenderImageResource> m_imageResource;
+    bool m_needsToSetSizeForAltText { false };
+    bool m_isGeneratedContent { false };
+    bool m_hasShadowControls { false };
+    bool m_hasImageOverlay { false };
+    float m_currentPixelDensity { 1 };
+
+    friend class RenderImageScaleObserver;
+};
+
+} // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderImage, isRenderImage())

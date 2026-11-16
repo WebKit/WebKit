@@ -1,0 +1,40 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<canvas tabindex="-1">
+    <input id="input" type="tel">
+</canvas>
+
+<script>
+var output = "This tests that changing the type attribute of a non-rendered input updates its role description.\n\n";
+
+function roleDescriptionIncludes(substring) {
+    var input = accessibilityController.accessibleElementById("input");
+    return input && input.roleDescription && input.roleDescription.toLowerCase().includes(substring);
+}
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    document.querySelector("canvas").focus();
+
+    setTimeout(async () => {
+        await waitFor(() => roleDescriptionIncludes("telephone"));
+        output += expect("roleDescriptionIncludes('telephone')", "true");
+
+        document.getElementById("input").type = "email";
+        await waitFor(() => roleDescriptionIncludes("email"));
+        output += expect("roleDescriptionIncludes('email')", "true");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

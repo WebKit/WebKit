@@ -1,0 +1,7 @@
+default-src should cascade to script-src directive
+
+
+PASS Verify cascading of default-src to script-src policy: block
+PASS Verify cascading of default-src to script-src policy: allow
+PASS Should fire violation events for every failed violation
+

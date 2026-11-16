@@ -1,0 +1,5 @@
+
+PASS serialization test {name: ECDSA, namedCurve: P-256}
+PASS serialization test {name: ECDSA, namedCurve: P-384}
+PASS serialization test {name: ECDSA, namedCurve: P-521}
+

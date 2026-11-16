@@ -1,0 +1,3 @@
+
+PASS Verify that view-transition-group preserves subpixel translation
+

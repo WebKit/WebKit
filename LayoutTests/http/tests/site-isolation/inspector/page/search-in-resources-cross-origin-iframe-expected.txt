@@ -1,0 +1,13 @@
+Test that Page.searchInResources fans out across processes and aggregates matches from cross-origin iframes under site isolation.
+
+
+
+== Running test suite: SiteIsolation.Page.SearchInResources
+-- Running test case: SiteIsolation.Page.SearchInResources.AggregatesMatchesAcrossProcesses
+PASS: Result should be an array.
+PASS: Should report exactly one stylesheet hit for the cross-origin child's CSS.
+PASS: Stylesheet hit should report matchesCount=1.
+PASS: Stylesheet hit should carry a frameId.
+PASS: Stylesheet hit's frameId should be process-qualified (frame-<pid>.<id>).
+PASS: Searching for a string absent from all resources should return an empty array.
+

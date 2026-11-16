@@ -1,0 +1,79 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<head>
+    <style>
+        .box {
+            width: 100px;
+            height: 100px;
+            background-color: blue;
+        }
+        
+        .scroller {
+            margin-top: 250px;
+            width: 600px;
+            height: 200px;
+            overflow-x: hidden;
+            overflow-y: scroll;
+            border: 1px solid black;
+        }
+        
+        .contents {
+            width: 300%;
+            height: 1200%;
+            background-color: silver;
+        }
+        
+        body.changed .contents {
+            background-color: rgb(212, 212, 212);
+        }        
+    </style>
+    <script src="../resources/ui-helper.js"></script>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+
+        async function runTest()
+        {
+            await UIHelper.renderingUpdate();
+            document.body.classList.add('changed');
+            
+            const scroller = document.getElementsByClassName("scroller")[0];
+            const scrollerBounds = scroller.getBoundingClientRect();
+
+            if (window.eventSender) {
+                const startX = scrollerBounds.width - 8;
+                const eventY = scrollerBounds.top + 4;
+                eventSender.mouseMoveTo(startX, eventY);
+                eventSender.mouseDown();
+                eventSender.mouseMoveTo(startX, eventY + 10);
+
+                await UIHelper.renderingUpdate();
+                eventSender.mouseMoveTo(startX, eventY + 20);
+
+                await UIHelper.renderingUpdate();
+                eventSender.mouseMoveTo(startX, eventY + 30);
+                eventSender.mouseUp();
+            }
+
+            await UIHelper.ensurePresentationUpdate();
+
+            if (window.testRunner)
+                document.getElementById("result").innerText = `Scrolled to ${scroller.scrollTop}`;
+
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }
+    
+        window.addEventListener('load', runTest, false);
+    </script>
+</head>
+<body>
+    <div class="scroller">
+        <div class="contents"></div>
+    </div>
+    
+    <p id="result">Test did not run.</p>    
+</body>
+</html>

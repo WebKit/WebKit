@@ -1,0 +1,148 @@
+Check the basic features of the :default pseudo class
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Initial State
+PASS elementsStyledWithDefaultSelector() is ["button2", "input2", "input3", "input4", "button6", "input7", "input9", "input11", "option2", "option4"]
+PASS elementsMatchingDefaultSelector() is ["button2", "input2", "input3", "input4", "button6", "input7", "input9", "input11", "option2", "option4"]
+Changing input1 input a submit button, it should become the form's default button
+PASS elementsStyledWithDefaultSelector() is ["input1", "input2", "input3", "input4", "button6", "input7", "input9", "input11", "option2", "option4"]
+PASS elementsMatchingDefaultSelector() is ["input1", "input2", "input3", "input4", "button6", "input7", "input9", "input11", "option2", "option4"]
+Changing button order in the first form
+PASS elementsStyledWithDefaultSelector() is ["button2", "input2", "input3", "input4", "button6", "input7", "input9", "input11", "option2", "option4"]
+PASS elementsMatchingDefaultSelector() is ["button2", "input2", "input3", "input4", "button6", "input7", "input9", "input11", "option2", "option4"]
+Removing button2 from its form
+PASS elementsStyledWithDefaultSelector() is ["input1", "input2", "input3", "input4", "button6", "input7", "input9", "input11", "option2", "option4"]
+PASS elementsMatchingDefaultSelector() is ["input1", "input2", "input3", "input4", "button6", "input7", "input9", "input11", "option2", "option4"]
+PASS button2.matches(":default") is false
+Adding back button2
+PASS elementsStyledWithDefaultSelector() is ["button2", "input2", "input3", "input4", "button6", "input7", "input9", "input11", "option2", "option4"]
+PASS elementsMatchingDefaultSelector() is ["button2", "input2", "input3", "input4", "button6", "input7", "input9", "input11", "option2", "option4"]
+Setting button2 type to button
+PASS elementsStyledWithDefaultSelector() is ["input1", "input2", "input3", "input4", "button6", "input7", "input9", "input11", "option2", "option4"]
+PASS elementsMatchingDefaultSelector() is ["input1", "input2", "input3", "input4", "button6", "input7", "input9", "input11", "option2", "option4"]
+Setting button2 type to submit
+PASS elementsStyledWithDefaultSelector() is ["button2", "input2", "input3", "input4", "button6", "input7", "input9", "input11", "option2", "option4"]
+PASS elementsMatchingDefaultSelector() is ["button2", "input2", "input3", "input4", "button6", "input7", "input9", "input11", "option2", "option4"]
+Setting button2 type to reset
+PASS elementsStyledWithDefaultSelector() is ["input1", "input2", "input3", "input4", "button6", "input7", "input9", "input11", "option2", "option4"]
+PASS elementsMatchingDefaultSelector() is ["input1", "input2", "input3", "input4", "button6", "input7", "input9", "input11", "option2", "option4"]
+Setting button2 type to webkit
+PASS elementsStyledWithDefaultSelector() is ["button2", "input2", "input3", "input4", "button6", "input7", "input9", "input11", "option2", "option4"]
+PASS elementsMatchingDefaultSelector() is ["button2", "input2", "input3", "input4", "button6", "input7", "input9", "input11", "option2", "option4"]
+Removing the type attribute from button2
+PASS elementsStyledWithDefaultSelector() is ["button2", "input2", "input3", "input4", "button6", "input7", "input9", "input11", "option2", "option4"]
+PASS elementsMatchingDefaultSelector() is ["button2", "input2", "input3", "input4", "button6", "input7", "input9", "input11", "option2", "option4"]
+Removing input1, button2 is still the first button
+PASS elementsStyledWithDefaultSelector() is ["button2", "input2", "input3", "input4", "button6", "input7", "input9", "input11", "option2", "option4"]
+PASS elementsMatchingDefaultSelector() is ["button2", "input2", "input3", "input4", "button6", "input7", "input9", "input11", "option2", "option4"]
+PASS input1.matches(":default") is false
+Removing the form from the tree
+PASS elementsStyledWithDefaultSelector() is ["input2", "input3", "input4", "button6", "input7", "input9", "input11", "option2", "option4"]
+PASS elementsMatchingDefaultSelector() is ["input2", "input3", "input4", "button6", "input7", "input9", "input11", "option2", "option4"]
+PASS button2.matches(":default") is true
+PASS input1.matches(":default") is false
+Changing the type of input2 to password
+PASS elementsStyledWithDefaultSelector() is ["button3", "input3", "input4", "button6", "input7", "input9", "input11", "option2", "option4"]
+PASS elementsMatchingDefaultSelector() is ["button3", "input3", "input4", "button6", "input7", "input9", "input11", "option2", "option4"]
+Changing the type of input2 to image
+PASS elementsStyledWithDefaultSelector() is ["input2", "input3", "input4", "button6", "input7", "input9", "input11", "option2", "option4"]
+PASS elementsMatchingDefaultSelector() is ["input2", "input3", "input4", "button6", "input7", "input9", "input11", "option2", "option4"]
+Moving input2 to the form of input3, before input3
+PASS elementsStyledWithDefaultSelector() is ["button3", "input2", "input4", "button6", "input7", "input9", "input11", "option2", "option4"]
+PASS elementsMatchingDefaultSelector() is ["button3", "input2", "input4", "button6", "input7", "input9", "input11", "option2", "option4"]
+Moving button5 inside the first form, but button5 has a form attribute
+PASS elementsStyledWithDefaultSelector() is ["button5", "button3", "input2", "button6", "input7", "input9", "input11", "option2", "option4"]
+PASS elementsMatchingDefaultSelector() is ["button5", "button3", "input2", "button6", "input7", "input9", "input11", "option2", "option4"]
+Removing button 5
+PASS elementsStyledWithDefaultSelector() is ["button3", "input2", "input4", "button6", "input7", "input9", "input11", "option2", "option4"]
+PASS elementsMatchingDefaultSelector() is ["button3", "input2", "input4", "button6", "input7", "input9", "input11", "option2", "option4"]
+PASS button5.matches(":default") is false
+Moving input5 above button 6
+PASS elementsStyledWithDefaultSelector() is ["button3", "input2", "input4", "input5", "input7", "input9", "input11", "option2", "option4"]
+PASS elementsMatchingDefaultSelector() is ["button3", "input2", "input4", "input5", "input7", "input9", "input11", "option2", "option4"]
+Changing input5's type to submit
+PASS elementsStyledWithDefaultSelector() is ["button3", "input2", "input4", "input5", "input7", "input9", "input11", "option2", "option4"]
+PASS elementsMatchingDefaultSelector() is ["button3", "input2", "input4", "input5", "input7", "input9", "input11", "option2", "option4"]
+Changing input5's type to reset
+PASS elementsStyledWithDefaultSelector() is ["button3", "input2", "input4", "button6", "input7", "input9", "input11", "option2", "option4"]
+PASS elementsMatchingDefaultSelector() is ["button3", "input2", "input4", "button6", "input7", "input9", "input11", "option2", "option4"]
+Removing free-form-1
+PASS elementsStyledWithDefaultSelector() is ["button3", "input2", "button6", "input7", "input9", "input11", "option2", "option4"]
+PASS elementsMatchingDefaultSelector() is ["button3", "input2", "button6", "input7", "input9", "input11", "option2", "option4"]
+Changing input5's type to image
+PASS elementsStyledWithDefaultSelector() is ["button3", "input2", "input5", "input7", "input9", "input11", "option2", "option4"]
+PASS elementsMatchingDefaultSelector() is ["button3", "input2", "input5", "input7", "input9", "input11", "option2", "option4"]
+Removing input5
+PASS elementsStyledWithDefaultSelector() is ["button3", "input2", "button6", "input7", "input9", "input11", "option2", "option4"]
+PASS elementsMatchingDefaultSelector() is ["button3", "input2", "button6", "input7", "input9", "input11", "option2", "option4"]
+PASS input5.matches(":default") is false
+Removing button6
+PASS elementsStyledWithDefaultSelector() is ["button3", "input2", "input7", "input9", "input11", "option2", "option4"]
+PASS elementsMatchingDefaultSelector() is ["button3", "input2", "input7", "input9", "input11", "option2", "option4"]
+PASS button6.matches(":default") is false
+Setting input6 as checked
+PASS elementsStyledWithDefaultSelector() is ["button3", "input2", "input7", "input9", "input11", "option2", "option4"]
+PASS elementsMatchingDefaultSelector() is ["button3", "input2", "input7", "input9", "input11", "option2", "option4"]
+Setting the checked attribute to input6
+PASS elementsStyledWithDefaultSelector() is ["button3", "input2", "input6", "input7", "input9", "input11", "option2", "option4"]
+PASS elementsMatchingDefaultSelector() is ["button3", "input2", "input6", "input7", "input9", "input11", "option2", "option4"]
+Setting input7 as unchecked
+PASS elementsStyledWithDefaultSelector() is ["button3", "input2", "input6", "input7", "input9", "input11", "option2", "option4"]
+PASS elementsMatchingDefaultSelector() is ["button3", "input2", "input6", "input7", "input9", "input11", "option2", "option4"]
+Setting input7's checked attribute to 'WebKit'
+PASS elementsStyledWithDefaultSelector() is ["button3", "input2", "input6", "input7", "input9", "input11", "option2", "option4"]
+PASS elementsMatchingDefaultSelector() is ["button3", "input2", "input6", "input7", "input9", "input11", "option2", "option4"]
+Removing input7's checked attribute
+PASS elementsStyledWithDefaultSelector() is ["button3", "input2", "input6", "input9", "input11", "option2", "option4"]
+PASS elementsMatchingDefaultSelector() is ["button3", "input2", "input6", "input9", "input11", "option2", "option4"]
+Setting input7's selected attribute
+PASS elementsStyledWithDefaultSelector() is ["button3", "input2", "input6", "input9", "input11", "option2", "option4"]
+PASS elementsMatchingDefaultSelector() is ["button3", "input2", "input6", "input9", "input11", "option2", "option4"]
+Removing input6
+PASS elementsStyledWithDefaultSelector() is ["button3", "input2", "input9", "input11", "option2", "option4"]
+PASS elementsMatchingDefaultSelector() is ["button3", "input2", "input9", "input11", "option2", "option4"]
+PASS input6.matches(":default") is true
+Setting input8 as checked
+PASS elementsStyledWithDefaultSelector() is ["button3", "input2", "input9", "input11", "option2", "option4"]
+PASS elementsMatchingDefaultSelector() is ["button3", "input2", "input9", "input11", "option2", "option4"]
+Setting the checked attribute to input8
+PASS elementsStyledWithDefaultSelector() is ["button3", "input2", "input8", "input9", "input11", "option2", "option4"]
+PASS elementsMatchingDefaultSelector() is ["button3", "input2", "input8", "input9", "input11", "option2", "option4"]
+Setting input9 as unchecked
+PASS elementsStyledWithDefaultSelector() is ["button3", "input2", "input8", "input9", "input11", "option2", "option4"]
+PASS elementsMatchingDefaultSelector() is ["button3", "input2", "input8", "input9", "input11", "option2", "option4"]
+Setting input9's checked attribute to 'WebKit'
+PASS elementsStyledWithDefaultSelector() is ["button3", "input2", "input8", "input9", "input11", "option2", "option4"]
+PASS elementsMatchingDefaultSelector() is ["button3", "input2", "input8", "input9", "input11", "option2", "option4"]
+Removing input9's checked attribute
+PASS elementsStyledWithDefaultSelector() is ["button3", "input2", "input8", "input11", "option2", "option4"]
+PASS elementsMatchingDefaultSelector() is ["button3", "input2", "input8", "input11", "option2", "option4"]
+Setting input9's selected attribute
+PASS elementsStyledWithDefaultSelector() is ["button3", "input2", "input8", "input11", "option2", "option4"]
+PASS elementsMatchingDefaultSelector() is ["button3", "input2", "input8", "input11", "option2", "option4"]
+Removing input11
+PASS elementsStyledWithDefaultSelector() is ["button3", "input2", "input8", "option2", "option4"]
+PASS elementsMatchingDefaultSelector() is ["button3", "input2", "input8", "option2", "option4"]
+PASS input11.matches(":default") is true
+Add the selected attribute to option1
+PASS elementsStyledWithDefaultSelector() is ["button3", "input2", "input8", "option1", "option2", "option4"]
+PASS elementsMatchingDefaultSelector() is ["button3", "input2", "input8", "option1", "option2", "option4"]
+Remove the selected attribute from option2
+PASS elementsStyledWithDefaultSelector() is ["button3", "input2", "input8", "option1", "option4"]
+PASS elementsMatchingDefaultSelector() is ["button3", "input2", "input8", "option1", "option4"]
+Set the checked attribute on option2
+PASS elementsStyledWithDefaultSelector() is ["button3", "input2", "input8", "option1", "option4"]
+PASS elementsMatchingDefaultSelector() is ["button3", "input2", "input8", "option1", "option4"]
+Add the selected attribute to false on  option3
+PASS elementsStyledWithDefaultSelector() is ["button3", "input2", "input8", "option1", "option3", "option4"]
+PASS elementsMatchingDefaultSelector() is ["button3", "input2", "input8", "option1", "option3", "option4"]
+Remove option4
+PASS elementsStyledWithDefaultSelector() is ["button3", "input2", "input8", "option1", "option3"]
+PASS elementsMatchingDefaultSelector() is ["button3", "input2", "input8", "option1", "option3"]
+PASS option4.matches(":default") is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

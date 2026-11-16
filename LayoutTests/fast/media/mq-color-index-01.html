@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Media Queries - color-index media feature supported</title>
+<style>
+  /* One of the media queries below should match. */
+  @media (color-index: 0) {
+    #test::before {
+      content: "PASS";
+    }
+  }
+  @media (min-color-index: 1) {
+    #test::after {
+      content: "PASS";
+    }
+  }
+</style>
+<head>
+<body>
+  <p>You should see the word PASS exactly once below.</p>
+  <p id="test"></p>
+</body>
+</html>

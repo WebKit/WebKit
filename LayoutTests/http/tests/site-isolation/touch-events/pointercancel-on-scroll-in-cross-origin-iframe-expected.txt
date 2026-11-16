@@ -1,0 +1,11 @@
+Scrolling an overflow scroller inside a cross-origin iframe must dispatch pointercancel, not pointerup, to the iframe.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS result.scrollTop is > 0
+PASS result.events.join(' ') is "pointerdown pointercancel"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

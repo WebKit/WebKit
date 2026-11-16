@@ -1,0 +1,9 @@
+Test that Page.setShowPaintRects produces paint rects in cross-origin iframes under site isolation.
+
+
+
+== Running test suite: SiteIsolation.Page.SetShowPaintRectsCrossOriginIFrame
+-- Running test case: SiteIsolation.Page.SetShowPaintRects.Enabled
+Enabling paint rects...
+PASS: Cross-origin iframe should have paint rects after painting while enabled.
+

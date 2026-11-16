@@ -1,0 +1,6 @@
+
+PASS "pointermove" should not be fired when the preceding "pointerover" caused removing its target
+PASS "pointermove" should not be fired when the preceding "pointerover" caused replacing its target
+PASS "pointermove" should not be fired when the preceding "pointerover" caused removing the parent of its target
+PASS "pointermove" should not be fired when the preceding "pointerover" caused replacing the parent of its target
+

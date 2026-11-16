@@ -1,0 +1,5 @@
+PASS Finishing the invalid command encoder generated a validation error.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

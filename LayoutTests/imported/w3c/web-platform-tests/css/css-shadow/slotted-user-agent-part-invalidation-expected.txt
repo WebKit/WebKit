@@ -1,0 +1,5 @@
+Summary
+Details content
+
+PASS CSS Test: Style invalidation for ::slotted() combined with user-agent pseudo-elements
+

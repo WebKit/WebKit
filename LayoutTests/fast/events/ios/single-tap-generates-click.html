@@ -1,0 +1,60 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width">
+    <script id="ui-script" type="text/plain">
+        (function() {
+            uiController.singleTapAtPoint(50, 50, function() {
+                uiController.uiScriptComplete();
+            });
+        })();
+    </script>
+    <script>
+        var uiScriptHasCompleted = false;
+        var boxHasBeenClicked = false;
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+        
+        function getUIScript()
+        {
+            return document.getElementById('ui-script').text;
+        }
+
+        function runTest()
+        {
+            if (testRunner.runUIScript) {
+                testRunner.runUIScript(getUIScript(), function() {
+                    uiScriptHasCompleted = true;
+                    if (boxHasBeenClicked)
+                        testRunner.notifyDone();
+                });
+            }
+        }
+        
+        function boxClicked(event)
+        {
+            document.getElementById('target').textContent = 'PASS: received click event at ' + event.clientX + ' ' + event.clientY;
+            boxHasBeenClicked = true;
+            if (uiScriptHasCompleted && window.testRunner)
+                testRunner.notifyDone();
+        }
+    </script>
+    <style>
+        #target {
+            height: 100px;
+            width: 100px;
+            background-color: silver;
+        }
+    </style>
+</head>
+<body onload="runTest()">
+
+<div id="target" onclick="boxClicked(event)">
+    FAIL: did not receive click event.
+</div>
+
+</body>
+</html>

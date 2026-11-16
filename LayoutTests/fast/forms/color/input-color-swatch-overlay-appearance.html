@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/js-test-pre.js"></script>
+<script src="../../../resources/platform-helper.js"></script>
+<script src="../resources/common.js"></script>
+<style>
+#styled::-webkit-color-swatch {
+    appearance:none;
+}
+</style>
+</head>
+<input id='styled' type='color'>
+<input id='unstyled' type='color'>
+<script>
+description("Test that the used appearance for the swatch overlay is 'none' when the swatch uses `appearance: none` by comparing styles.");
+
+let overlayForUnstyledSwatch = getElementByPseudoId(internals.shadowRoot(unstyled), "-internal-color-swatch-overlay");
+let overlayForStyledSwatch = getElementByPseudoId(internals.shadowRoot(styled), "-internal-color-swatch-overlay");
+
+overlayForUnstyledSwatch.style.appearance = 'none';
+
+let overlayStylesForStyledSwatch = getComputedStyle(overlayForStyledSwatch);
+let overlayStylesForUnstyledSwatch = getComputedStyle(overlayForUnstyledSwatch);
+
+var mismatchOccurred = false;
+let propertiesToSkip = [`WebkitAppearance`, `webkitAppearance`, `appearance`, `-webkit-appearance`];
+
+for (const property in overlayStylesForStyledSwatch) {
+    if (!propertiesToSkip.includes(property)) {
+        let overlayPropertyForStyledSwatch = overlayStylesForStyledSwatch[property];
+        let overlayPropertyForUnstyledSwatch = overlayStylesForUnstyledSwatch[property];
+        
+        if (overlayPropertyForStyledSwatch != overlayPropertyForUnstyledSwatch) {
+            debug("Style mistmatch for property: " + property + ": " + overlayPropertyForStyledSwatch + " != " + overlayPropertyForUnstyledSwatch);
+            mismatchOccurred = true;
+        }
+    }
+}
+
+debug("The style of an swatch overlay with appearance forced to `none` is the same as the style of an overlay whose swatch has style `appearance: none`.");
+
+let testResult = mismatchOccurred ? "FAIL One or more of the non-appearance-related styles differed between overlays." : "PASS The non-appearance-related styles were the same for both overlays."
+
+debug(testResult);
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</html>

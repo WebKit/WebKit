@@ -1,0 +1,5 @@
+
+
+PASS navigate() to "javascript:void 0" with { history: 'replace' }
+PASS navigate() to "javascript:'foo'" with { history: 'replace' }
+

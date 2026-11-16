@@ -1,0 +1,25 @@
+Tests that a setTimeout timer gets a nonzero alignment once it has reached the maximum nesting level.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS internals.isTimerAligned(timeoutHandle) is false
+PASS internals.isTimerAligned(timeoutHandle) is false
+PASS internals.isTimerAligned(timeoutHandle) is false
+PASS internals.isTimerAligned(timeoutHandle) is false
+PASS internals.isTimerAligned(timeoutHandle) is false
+PASS internals.isTimerAligned(timeoutHandle) is false
+PASS internals.isTimerAligned(timeoutHandle) is false
+PASS internals.isTimerAligned(timeoutHandle) is false
+PASS internals.isTimerAligned(timeoutHandle) is false
+PASS internals.isTimerAligned(timeoutHandle) is true
+PASS internals.isTimerAligned(timeoutHandle) is true
+PASS internals.isTimerAligned(timeoutHandle) is true
+PASS internals.isTimerAligned(timeoutHandle) is true
+PASS internals.isTimerAligned(timeoutHandle) is true
+PASS internals.isTimerAligned(timeoutHandle) is true
+PASS internals.isTimerAligned(timeoutHandle) is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

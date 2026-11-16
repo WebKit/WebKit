@@ -1,0 +1,21 @@
+<script src="../resources/magnitude-perf.js"></script>
+<script>
+function setupFunction(magnitude)
+{
+    obj = {};
+    for (var i = 0; i < magnitude; i++) {
+        obj[i] = i;
+    }
+}
+
+function test(magnitude)
+{
+    Object.keys(obj);
+}
+
+Magnitude.initialMagnitude = 8;
+Magnitude.numPoints = 6;
+
+Magnitude.description("Tests that Object.keys is linear.");
+Magnitude.run(setupFunction, test, Magnitude.LINEAR);
+</script>

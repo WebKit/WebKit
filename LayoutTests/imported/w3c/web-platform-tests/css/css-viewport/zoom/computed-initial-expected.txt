@@ -1,0 +1,182 @@
+
+PASS border-block-end-width
+PASS border-block-start-width
+PASS border-bottom-left-radius
+PASS border-bottom-right-radius
+PASS border-bottom-width
+PASS border-end-end-radius
+PASS border-end-start-radius
+PASS border-inline-end-width
+PASS border-inline-start-width
+PASS border-left-width
+PASS border-right-width
+PASS border-start-end-radius
+PASS border-start-start-radius
+PASS border-top-left-radius
+PASS border-top-right-radius
+PASS border-top-width
+PASS column-rule-width
+PASS cx
+PASS cy
+PASS font-size
+PASS margin-block-end
+PASS margin-block-start
+PASS margin-bottom
+PASS margin-inline-end
+PASS margin-inline-start
+PASS margin-left
+PASS margin-right
+PASS margin-top
+PASS offset-distance
+PASS outline-offset
+PASS outline-width
+PASS overflow-clip-margin
+PASS padding-block-end
+PASS padding-block-start
+PASS padding-bottom
+PASS padding-inline-end
+PASS padding-inline-start
+PASS padding-left
+PASS padding-right
+PASS padding-top
+PASS r
+PASS scroll-margin-block-end
+PASS scroll-margin-block-start
+PASS scroll-margin-bottom
+PASS scroll-margin-inline-end
+PASS scroll-margin-inline-start
+PASS scroll-margin-left
+PASS scroll-margin-right
+PASS scroll-margin-top
+PASS shape-margin
+PASS stroke-dashoffset
+PASS stroke-width
+PASS text-decoration-inset
+PASS text-indent
+PASS word-spacing
+PASS x
+PASS y
+PASS -webkit-border-horizontal-spacing
+PASS -webkit-border-vertical-spacing
+PASS -webkit-text-stroke-width
+PASS border-block-end-width: initial;
+PASS border-block-start-width: initial;
+PASS border-bottom-left-radius: initial;
+PASS border-bottom-right-radius: initial;
+PASS border-bottom-width: initial;
+PASS border-end-end-radius: initial;
+PASS border-end-start-radius: initial;
+PASS border-inline-end-width: initial;
+PASS border-inline-start-width: initial;
+PASS border-left-width: initial;
+PASS border-right-width: initial;
+PASS border-start-end-radius: initial;
+PASS border-start-start-radius: initial;
+PASS border-top-left-radius: initial;
+PASS border-top-right-radius: initial;
+PASS border-top-width: initial;
+PASS column-rule-width: initial;
+PASS cx: initial;
+PASS cy: initial;
+PASS font-size: initial;
+PASS margin-block-end: initial;
+PASS margin-block-start: initial;
+PASS margin-bottom: initial;
+PASS margin-inline-end: initial;
+PASS margin-inline-start: initial;
+PASS margin-left: initial;
+PASS margin-right: initial;
+PASS margin-top: initial;
+PASS offset-distance: initial;
+PASS outline-offset: initial;
+PASS outline-width: initial;
+PASS overflow-clip-margin: initial;
+PASS padding-block-end: initial;
+PASS padding-block-start: initial;
+PASS padding-bottom: initial;
+PASS padding-inline-end: initial;
+PASS padding-inline-start: initial;
+PASS padding-left: initial;
+PASS padding-right: initial;
+PASS padding-top: initial;
+PASS r: initial;
+PASS scroll-margin-block-end: initial;
+PASS scroll-margin-block-start: initial;
+PASS scroll-margin-bottom: initial;
+PASS scroll-margin-inline-end: initial;
+PASS scroll-margin-inline-start: initial;
+PASS scroll-margin-left: initial;
+PASS scroll-margin-right: initial;
+PASS scroll-margin-top: initial;
+PASS shape-margin: initial;
+PASS stroke-dashoffset: initial;
+PASS stroke-width: initial;
+PASS text-decoration-inset: initial;
+PASS text-indent: initial;
+PASS word-spacing: initial;
+PASS x: initial;
+PASS y: initial;
+PASS -webkit-border-horizontal-spacing: initial;
+PASS -webkit-border-vertical-spacing: initial;
+PASS -webkit-text-stroke-width: initial;
+PASS border-block-end-width (all: initial)
+PASS border-block-start-width (all: initial)
+PASS border-bottom-left-radius (all: initial)
+PASS border-bottom-right-radius (all: initial)
+PASS border-bottom-width (all: initial)
+PASS border-end-end-radius (all: initial)
+PASS border-end-start-radius (all: initial)
+PASS border-inline-end-width (all: initial)
+PASS border-inline-start-width (all: initial)
+PASS border-left-width (all: initial)
+PASS border-right-width (all: initial)
+PASS border-start-end-radius (all: initial)
+PASS border-start-start-radius (all: initial)
+PASS border-top-left-radius (all: initial)
+PASS border-top-right-radius (all: initial)
+PASS border-top-width (all: initial)
+PASS column-rule-width (all: initial)
+PASS cx (all: initial)
+PASS cy (all: initial)
+PASS font-size (all: initial)
+PASS margin-block-end (all: initial)
+PASS margin-block-start (all: initial)
+PASS margin-bottom (all: initial)
+PASS margin-inline-end (all: initial)
+PASS margin-inline-start (all: initial)
+PASS margin-left (all: initial)
+PASS margin-right (all: initial)
+PASS margin-top (all: initial)
+PASS offset-distance (all: initial)
+PASS outline-offset (all: initial)
+PASS outline-width (all: initial)
+PASS overflow-clip-margin (all: initial)
+PASS padding-block-end (all: initial)
+PASS padding-block-start (all: initial)
+PASS padding-bottom (all: initial)
+PASS padding-inline-end (all: initial)
+PASS padding-inline-start (all: initial)
+PASS padding-left (all: initial)
+PASS padding-right (all: initial)
+PASS padding-top (all: initial)
+PASS r (all: initial)
+PASS scroll-margin-block-end (all: initial)
+PASS scroll-margin-block-start (all: initial)
+PASS scroll-margin-bottom (all: initial)
+PASS scroll-margin-inline-end (all: initial)
+PASS scroll-margin-inline-start (all: initial)
+PASS scroll-margin-left (all: initial)
+PASS scroll-margin-right (all: initial)
+PASS scroll-margin-top (all: initial)
+PASS shape-margin (all: initial)
+PASS stroke-dashoffset (all: initial)
+PASS stroke-width (all: initial)
+PASS text-decoration-inset (all: initial)
+PASS text-indent (all: initial)
+PASS word-spacing (all: initial)
+PASS x (all: initial)
+PASS y (all: initial)
+PASS -webkit-border-horizontal-spacing (all: initial)
+PASS -webkit-border-vertical-spacing (all: initial)
+PASS -webkit-text-stroke-width (all: initial)
+

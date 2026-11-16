@@ -1,0 +1,5 @@
+Tests if empty language declarations are supported
+
+
+PASS Test if empty language attributes are supported
+

@@ -1,0 +1,99 @@
+/*
+ * Copyright (C) 2010 Google Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1.  Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2.  Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS BE LIABLE FOR ANY
+ * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+ * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#ifndef AudioUtilities_h
+#define AudioUtilities_h
+
+#include <cmath>
+#include <span>
+#include <wtf/Forward.h>
+#include <wtf/MathExtras.h>
+
+namespace WebCore {
+
+namespace AudioUtilities {
+
+// https://www.w3.org/TR/webaudio/#render-quantum-size
+constexpr size_t renderQuantumSize = 128;
+
+// Standard functions for converting to and from decibel values from linear.
+float linearToDecibels(float);
+float decibelsToLinear(float);
+
+// timeConstant is the time it takes a first-order linear time-invariant system
+// to reach the value 1 - 1/e (around 63.2%) given a step input response.
+// discreteTimeConstantForSampleRate() will return the discrete time-constant for the specific sampleRate.
+double discreteTimeConstantForSampleRate(double timeConstant, double sampleRate);
+
+// How to do rounding when converting time to sample frame.
+enum class SampleFrameRounding {
+    Nearest,
+    Down,
+    Up
+};
+
+// Convert the time to a sample frame at the given sample rate.
+size_t timeToSampleFrame(double time, double sampleRate, SampleFrameRounding = SampleFrameRounding::Nearest);
+
+inline float linearToDecibels(float linear)
+{
+    ASSERT(linear >= 0);
+    return 20 * log10f(linear);
+}
+
+inline float decibelsToLinear(float decibels)
+{
+    return powf(10, 0.05f * decibels);
+}
+
+void applyNoise(std::span<float> values, float standardDeviation);
+
+WEBCORE_EXPORT Vector<uint8_t> extractAudioSpecificConfigFromESDescriptor(std::span<const uint8_t> esDescriptor);
+
+// Returns a copy of an OpusHead with its pre-skip set to 0.
+Vector<uint8_t> opusHeadWithoutPreSkip(std::span<const uint8_t>);
+
+// Returns the 'dfLa' magic cookie for a WebCodecs flac description, or an empty vector if the description is invalid.
+Vector<uint8_t> createFLACMagicCookie(std::span<const uint8_t> description);
+
+// Returns the WebCodecs flac description for a 'dfLa' magic cookie, or an empty vector if the cookie is invalid.
+WEBCORE_EXPORT Vector<uint8_t> flacDescriptionFromFLACMagicCookie(std::span<const uint8_t> cookie);
+
+// A nop on x86, where SSE arithmetic historically produced no denormals to flush because
+// the audio rendering path disabled them in hardware.
+inline float flushDenormalFloatToZero(float f)
+{
+// FIXME: Do any current ports fail this check?
+#if (COMPILER(GCC_COMPATIBLE) && defined(__SSE__)) || (OS(WINDOWS) && COMPILER(MSVC) && defined(_M_IX86_FP) && _M_IX86_FP)
+    return f;
+#else
+    return (std::abs(f) < FLT_MIN) ? 0.0f : f;
+#endif
+}
+
+} // AudioUtilites
+
+} // WebCore
+
+#endif // AudioUtilities_h

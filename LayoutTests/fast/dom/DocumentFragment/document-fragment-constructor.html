@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<body>
+<script src="../../../resources/js-test-pre.js"></script>
+<script>
+
+description('This tests that DocumentFragment is constructable.');
+
+shouldBe('new DocumentFragment().ownerDocument', 'document');
+
+shouldBe('typeof new DocumentFragment', '"object"');
+shouldBe('Object.prototype.toString.call(new DocumentFragment)', '"[object DocumentFragment]"');
+shouldBeTrue('new DocumentFragment instanceof DocumentFragment');
+shouldBe('Object.getPrototypeOf(new DocumentFragment)', 'DocumentFragment.prototype');
+
+var frame = document.createElement('iframe');
+document.body.appendChild(frame);
+var innerWindow = frame.contentWindow;
+var innerDocument = frame.contentDocument;
+
+shouldBe('new innerWindow.DocumentFragment().ownerDocument', 'innerDocument')
+shouldBeTrue('new innerWindow.DocumentFragment instanceof innerWindow.DocumentFragment');
+shouldBe('Object.getPrototypeOf(new innerWindow.DocumentFragment)', 'innerWindow.DocumentFragment.prototype');
+
+</script>
+<script src="../../../resources/js-test-post.js"></script>

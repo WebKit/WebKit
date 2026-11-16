@@ -1,0 +1,9 @@
+
+
+FAIL       <form action="/resource-timing/resources/document-navigated.html" method="post">        <input type="submit">        <select name="dangling"><option>     assert_equals: expected "error" but got "submit"
+FAIL       <div>        <form action="/resource-timing/resources/document-navigated.html" method="post">          <input type="submit">          <select name="dangling"><option>     assert_equals: expected "error" but got "submit"
+FAIL       <form action="/resource-timing/resources/document-navigated.html" method="post" id="form">        <input type="submit">      </form>      <select name="dangling" form="form"><option>     assert_equals: expected "error" but got "submit"
+FAIL       <form action="/resource-timing/resources/document-navigated.html" method="post">        <input type="submit">        <select name="dangling"><option label="yay">     assert_equals: expected "error" but got "submit"
+FAIL       <div>        <form action="/resource-timing/resources/document-navigated.html" method="post">          <input type="submit">          <select name="dangling"><option label="yay">     assert_equals: expected "error" but got "submit"
+FAIL       <form action="/resource-timing/resources/document-navigated.html" method="post" id="form">        <input type="submit">      </form>      <select name="dangling" form="form"><option label="yay">     assert_equals: expected "error" but got "submit"
+

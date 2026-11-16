@@ -1,0 +1,6 @@
+
+PASS portal-transform transitions rather than snapping to its target
+PASS portal-transform interpolates when only one side of the animation has a transform list
+PASS portal-transform is discrete between auto and none
+PASS portal-transform blends the lists on either side of auto independently
+

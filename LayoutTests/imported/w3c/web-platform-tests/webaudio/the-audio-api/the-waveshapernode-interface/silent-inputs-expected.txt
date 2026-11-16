@@ -1,0 +1,5 @@
+
+PASS test-0: curve output is non-zero for silent inputs
+PASS test-1: 2x curve output is non-zero for silent inputs
+PASS test-2: curve output is non-zero for no inputs
+

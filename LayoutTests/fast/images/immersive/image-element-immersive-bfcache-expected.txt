@@ -1,0 +1,15 @@
+A page whose <img> is immersive should not be immersive when restored from the back/forward cache, and re-entry should work.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS document.immersiveElement is image
+Navigating away to place the page in the back/forward cache.
+Restored from the back/forward cache.
+PASS document.immersiveElement is null
+PASS document.immersiveElement is image
+PASS Re-entered the immersive environment after restoring from the back/forward cache.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

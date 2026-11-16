@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title></title>
+<style>
+  div {
+    position: absolute;
+    left: 0.3px;
+    top: 0.3px;
+    width: 10px;
+    height: 10px;
+  }
+  
+  .child {
+    border: 0.5px solid red;
+    -webkit-transform: rotate(180deg);
+  }
+</style>
+</head>
+<body>
+<p id="container"></p>
+<script>
+  var container = document.getElementById("container");
+  adjustmentY = 0;
+  for (i = 0; i < 30; ++i) {
+    adjustmentX = 0;
+    adjustmentY += 0.1;
+    for (j = 0; j < 30; ++j) {
+      var e = document.createElement("div");
+      e.style.top = (14 * i) + j * adjustmentY + "px";
+      e.style.left = (14 * j) + i * adjustmentX + "px";
+
+      var c = document.createElement("div");
+      c.className = "child";
+      c.style.top = adjustmentY + "px";
+      c.style.left = adjustmentX + "px";
+
+      e.appendChild(c);
+      container.appendChild(e);
+      adjustmentX += 0.1;
+    }
+  }
+</script>
+</body>
+</html>

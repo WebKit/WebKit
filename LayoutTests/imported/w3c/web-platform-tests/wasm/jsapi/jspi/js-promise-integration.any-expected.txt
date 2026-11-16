@@ -1,0 +1,15 @@
+
+PASS Valid use of API
+PASS Promising function always entered
+PASS Always get a Promise
+PASS Suspend once
+PASS Suspend/resume in a loop
+PASS Suspending with mismatched args and via Proxy
+PASS Make sure we actually suspend
+PASS Do suspend even if the import's return value is not a Promise by wrapping it with Promise.resolve
+PASS Catch rejected promise
+PASS Test sandwich with suspension
+PASS Test sandwich with no suspension
+PASS Promising with no return
+PASS Suspend two modules
+

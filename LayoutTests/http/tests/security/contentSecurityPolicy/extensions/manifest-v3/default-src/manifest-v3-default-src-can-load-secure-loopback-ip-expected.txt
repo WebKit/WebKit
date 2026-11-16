@@ -1,0 +1,3 @@
+Test that CSP for manifest V3 extensions allows https loopback IP addresses for the default-src directive.
+
+PASS

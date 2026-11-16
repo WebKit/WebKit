@@ -1,0 +1,10 @@
+Long-pressing text inside a scrolled cross-origin iframe should select the word actually under the finger, accounting for the subframe's scroll offset (not double-counting or ignoring it).
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS selectedToken is "token3"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

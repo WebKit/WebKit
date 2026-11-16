@@ -1,0 +1,6 @@
+round: mask layer absent, expected absent - PASS
+square: mask layer absent, expected absent - PASS
+scoop: mask layer present, expected present - PASS
+bevel: mask layer present, expected present - PASS
+notch: mask layer present, expected present - PASS
+superellipse(-2): mask layer present, expected present - PASS

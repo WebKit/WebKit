@@ -1,0 +1,4 @@
+This tests opening a new window during beforeunload event. The page load should succeed.
+
+PASS
+

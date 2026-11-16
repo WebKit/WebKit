@@ -1,0 +1,24 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true UsesBackForwardCache=false UseUIProcessForBackForwardItemLoading=true ] -->
+<!-- This test checks that going back restores a cross-site child frame from session history after a navigation without a user gesture took the page to a process that doesn't host that frame. -->
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.dumpChildFramesAsText();
+    testRunner.waitUntilDone();
+}
+
+onload = () => {
+    if (sessionStorage.didNavigate) {
+        delete sessionStorage.didNavigate;
+        if (window.testRunner)
+            testRunner.notifyDone();
+        return;
+    }
+    sessionStorage.didNavigate = true;
+    setTimeout(() => {
+        location.href = "https://localhost:8443/site-isolation/history/resources/go-back.html";
+    }, 0);
+};
+</script>
+<p>The cross-site child frame below has to be restored from session history.</p>
+<iframe src="http://localhost:8000/site-isolation/history/resources/cross-site-child-frame-content.html"></iframe>

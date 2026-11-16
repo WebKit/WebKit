@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+
+let worker = new Worker("resources/worker-console.js");
+
+function test()
+{
+    let mainTarget = WI.mainTarget;
+    let workerTarget = Array.from(WI.targets).find((target) => target.type === WI.TargetType.Worker);
+    if (!workerTarget) {
+        InspectorTest.fail("Missing Worker Target");
+        InspectorTest.completeTest();
+        return;
+    }
+
+    let suite = InspectorTest.createAsyncSuite("console.screenshot");
+
+    function addTest({name, type, args, shouldError}) {
+        suite.addTestCase({
+            name,
+            async test() {
+                let [event] = await Promise.all([
+                    WI.consoleManager.awaitEvent(WI.ConsoleManager.Event.MessageAdded),
+                    InspectorTest.evaluateInPage(`worker.postMessage({method: "screenshot", type: "${type}", args: ${JSON.stringify(args)}});`),
+                ]);
+
+                let {message} = event.data;
+
+                if (message.level === WI.ConsoleMessage.MessageLevel.Error) {
+                    InspectorTest.expectThat(shouldError, "Error: " + message.messageText);
+                    return;
+                }
+
+                InspectorTest.expectEqual(message.type, WI.ConsoleMessage.MessageType.Image, "The added message should be an image.");
+                InspectorTest.expectNotEqual(message.messageText, "data:", "The image should not be empty.");
+
+                InspectorTest.assert(message.source === WI.ConsoleMessage.MessageSource.ConsoleAPI, "The added message should be from the console API.");
+                InspectorTest.assert(message.level === WI.ConsoleMessage.MessageLevel.Log, "The added message should be a log.");
+                InspectorTest.assert(message.timestamp, "The message should have a timestamp.");
+
+                try {
+                    let image = new Image;
+                    await new Promise((resolve, reject) => {
+                        image.addEventListener("load", resolve);
+                        image.addEventListener("error", reject);
+                        image.src = message.messageText;
+                    });
+
+                    InspectorTest.expectEqual(image.width, 2, "The image width should be 2px.");
+                    InspectorTest.expectEqual(image.height, 2, "The image height should be 2px.");
+                } catch {
+                    InspectorTest.expectThat(shouldError, "The image should not load.");
+                }
+            },
+        });
+    }
+
+    addTest({
+        name: "console.screenshot.ImageData",
+        type: "ImageData",
+        args: [],
+    });
+
+    addTest({
+        name: "console.screenshot.ImageBitmap",
+        type: "ImageBitmap",
+        args: [],
+    });
+
+    addTest({
+        name: "console.screenshot.OffscreenCanvas",
+        type: "OffscreenCanvas",
+        args: [],
+    });
+
+    addTest({
+        name: "console.screenshot.OffscreenCanvasRenderingContext2D",
+        type: "OffscreenCanvasRenderingContext2D",
+        args: [],
+    });
+
+    addTest({
+        name: "console.screenshot.String.Valid",
+        type: "primitive",
+        args: ["test"],
+        shouldError: true,
+    });
+
+    addTest({
+        name: "console.screenshot.String.dataURL.Valid",
+        type: "primitive",
+        args: ["data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAAXNSR0IArs4c6QAAABNJREFUCB1j/M/AAEQMDEwgAgQAHxcCAmtAm/sAAAAASUVORK5CYII="], // 2x2 red square
+    });
+
+    addTest({
+        name: "console.screenshot.String.dataURL.InvalidMIME",
+        type: "primitive",
+        args: ["data:fake/mime"],
+        shouldError: true,
+    });
+
+    addTest({
+        name: "console.screenshot.String.dataURL.InvalidContent",
+        type: "primitive",
+        args: ["data:image/png;base64,<INVALID>"],
+        shouldError: true,
+    });
+
+    addTest({
+        name: "console.screenshot.String.dataURL.InvalidNoContent",
+        type: "primitive",
+        args: ["data:image/png;a1=b2;base64,"],
+        shouldError: true,
+    });
+
+    addTest({
+        name: "console.screenshot.String.dataURL.ValidNoContent",
+        type: "primitive",
+        args: ["data:"],
+        shouldError: true,
+    });
+
+    addTest({
+        name: "console.screenshot.NonScreenshotableTarget",
+        type: "primitive",
+        args: [42],
+        shouldError: true,
+    });
+
+    addTest({
+        name: "console.screenshot.NoArguments",
+        type: "primitive",
+        args: [],
+        shouldError: true,
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Tests for the console.screenshot API in a Worker.</p>
+</body>
+</html>

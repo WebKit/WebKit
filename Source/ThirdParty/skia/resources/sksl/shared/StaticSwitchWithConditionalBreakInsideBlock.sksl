@@ -1,0 +1,15 @@
+uniform float unknownInput;
+
+void main() {
+    half value = 0.0;
+    switch (0) {
+        case 0:
+            value = 0.0;
+            if (unknownInput == 2) {
+                sk_FragColor = value.xxxx;
+                break;
+            }
+        case 1:
+            value = 1.0;
+    }
+}

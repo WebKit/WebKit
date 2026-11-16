@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+const codecStrings = [
+    // H.264 Baseline / Main / High at various levels
+    'video/mp4; codecs="avc1.42E01E"',  // Baseline 3.0
+    'video/mp4; codecs="avc1.4D401E"',  // Main 3.0
+    'video/mp4; codecs="avc1.64001E"',  // High 3.0
+    'video/mp4; codecs="avc1.640029"',  // High 4.1
+    'video/mp4; codecs="avc1.64002A"',  // High 4.2
+    'video/mp4; codecs="avc1.640033"',  // High 5.1
+    'video/mp4; codecs="avc1.42E00A"',  // Baseline 1.0
+    // HEVC Main / Main 10
+    'video/mp4; codecs="hvc1.1.6.L93.B0"',
+    'video/mp4; codecs="hvc1.1.6.L120.B0"',
+    'video/mp4; codecs="hvc1.2.4.L93.B0"',   // Main 10
+    'video/mp4; codecs="hev1.1.6.L93.B0"',
+    // AAC audio
+    'audio/mp4; codecs="mp4a.40.2"',   // AAC-LC
+    'audio/mp4; codecs="mp4a.40.5"',   // HE-AAC
+    'audio/mp4; codecs="mp4a.40.29"',  // HE-AAC v2
+    // Video + audio combined
+    'video/mp4; codecs="avc1.42E01E,mp4a.40.2"',
+    'video/mp4; codecs="avc1.640029,mp4a.40.5"',
+    // VP9 Profile 0 (8-bit 4:2:0) at various levels
+    'video/webm; codecs="vp09.00.10.08"',
+    'video/webm; codecs="vp09.00.20.08"',
+    'video/webm; codecs="vp09.00.30.08"',
+    'video/webm; codecs="vp09.00.40.08"',
+    'video/webm; codecs="vp09.00.41.08"',
+    'video/webm; codecs="vp09.00.50.08"',
+    'video/webm; codecs="vp09.00.51.08"',
+    // VP9 Profile 1 (8-bit 4:2:2/4:4:4)
+    'video/webm; codecs="vp09.01.41.08"',
+    // VP9 Profile 2 (10-bit 4:2:0)
+    'video/webm; codecs="vp09.02.10.10"',
+    'video/webm; codecs="vp09.02.41.10"',
+    'video/webm; codecs="vp09.02.51.10.01.09.16.09.01"',
+    // VP9 Profile 3 (10-bit 4:2:2/4:4:4)
+    'video/webm; codecs="vp09.03.41.10"',
+    // VP9 full codec string with all optional parameters
+    'video/webm; codecs="vp09.02.10.10.01.09.16.09.01"',
+    'video/webm; codecs="vp09.02.10.10.01.09.16.09.00"',
+    'video/webm; codecs="vp09.00.51.08.01.01.01.01.00"',
+    // VP9 short-form codec identifiers
+    'video/webm; codecs="vp9"',
+    'video/webm; codecs="vp9,opus"',
+    'video/webm; codecs="vp09.00.41.10"',
+    // Invalid codec strings
+    'video/mp4; codecs="avc1.ZZZZZZ"',
+    'video/mp4; codecs="notacodec"',
+    'audio/mp4; codecs="mp4a.99.99"',
+    'video/webm; codecs="vp09.00.70.08"',  // invalid level 70
+    'video/webm; codecs="vp09.04.41.08"',  // invalid profile 4
+];
+
+function runIsTypeSupportedBatch(iterations) {
+    const start = performance.now();
+    for (let i = 0; i < iterations; i++) {
+        for (const codec of codecStrings) {
+            ManagedMediaSource.isTypeSupported(codec);
+        }
+    }
+    return performance.now() - start;
+}
+
+function measurePerformance() {
+    if (typeof ManagedMediaSource === 'undefined')
+        return JSON.stringify({ error: "ManagedMediaSource not available" });
+
+    const iterations = 100;
+    const totalCalls = iterations * codecStrings.length;
+
+    // First pass: measures cold cache (first-ever calls in this process).
+    // This is where cross-process caching of container types matters.
+    const coldElapsed = runIsTypeSupportedBatch(1);
+    const coldCalls = codecStrings.length;
+
+    // Subsequent passes: measures warm cache (m_cachedResults hit).
+    const warmElapsed = runIsTypeSupportedBatch(iterations);
+
+    return JSON.stringify({
+        coldCalls: coldCalls,
+        coldElapsedMs: coldElapsed,
+        warmTotalCalls: totalCalls,
+        warmElapsedMs: warmElapsed,
+        avgPerCallUs: (warmElapsed * 1000) / totalCalls,
+    });
+}
+</script>
+</head>
+<body>
+</body>
+</html>

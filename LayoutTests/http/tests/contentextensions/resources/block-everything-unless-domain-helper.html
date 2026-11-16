@@ -1,0 +1,13 @@
+<head>
+<script>
+function bodyLoaded()
+{
+    console.log("helper loaded");
+    var anchor = document.getElementById("anchor");
+	anchor.click();
+}
+</script>
+</head>
+<body onload="bodyLoaded()">
+<a id="anchor" href="http://localhost:8000/contentextensions/resources/should-not-load.html">Clicking this should take you to a document that doesn't load with the content extension.</a>
+</body>

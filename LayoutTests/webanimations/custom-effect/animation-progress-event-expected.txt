@@ -1,0 +1,7 @@
+
+PASS Progress events are not dispatched once an animation is finished if it does not fill.
+PASS Progress events are not dispatched once an animation is finished even if it is filling.
+PASS Backward-filling animations dispatch a single 'progress' event during the before phase.
+PASS Progress events are dispatched as the animation is paused and seeked.
+PASS Custom effect callbacks are fired prior to 'progress' events being dispatched.
+

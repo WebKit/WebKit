@@ -1,0 +1,8 @@
+This test ensures that we don't crash when requesting the title of all objects after dynamic area element removal.
+
+PASS: No crash.
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+ 1

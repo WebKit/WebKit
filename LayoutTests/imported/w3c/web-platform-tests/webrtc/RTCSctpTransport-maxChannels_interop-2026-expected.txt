@@ -1,0 +1,3 @@
+
+PASS maxChannels gets instantiated after connecting
+

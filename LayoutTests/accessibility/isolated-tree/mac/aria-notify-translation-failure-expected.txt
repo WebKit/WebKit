@@ -1,0 +1,13 @@
+Tests that when the translation client declines to translate, the original announcement is used with its original language.
+
+Received announcement request:
+AnnouncementKey: San Francisco
+AXARIAAnnouncementInterruptBehavior: None
+AXARIAAnnouncementPriority: Normal
+AXAnnouncementLanguageKey: en
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

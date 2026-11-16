@@ -1,0 +1,14 @@
+
+
+
+
+
+
+
+
+
+
+
+PASS Size contained absolutely positioned box without insets in an inline box containing block is not split between columns
+PASS Size contained absolutely positioned box with insets in an inline box containing block is not split between columns
+

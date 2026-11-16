@@ -1,0 +1,29 @@
+<style>
+    .box {
+        width: 300px;
+        height: 300px;
+        position: absolute;
+        background-color: black;
+    }
+    .drop-shadow-red {
+        top: -800px;
+        left: -800px;
+        filter: drop-shadow(800px 800px 0 red);
+    }
+    .drop-shadow-green {
+        top: -800px;
+        left: -800px;
+        filter: drop-shadow(700px 700px 0 green);
+    }
+    .drop-shadow-blue {
+        top: -800px;
+        left: -800px;
+        filter: drop-shadow(600px 600px 0 blue);
+    }
+</style>
+<body>
+    Three overlapping boxes should be displayed.
+    <div class="box drop-shadow-red"></div>
+    <div class="box drop-shadow-green"></div>
+    <div class="box drop-shadow-blue"></div>
+</body>

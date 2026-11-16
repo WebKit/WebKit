@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "module": "None",
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitReturns": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "outDir": "build/",
+    "removeComments": true,
+    "strict": true,
+    "target": "ES5"
+  },
+  "include": [
+    "bindings/*.ts",
+    "interface/*.ts"
+  ]
+}

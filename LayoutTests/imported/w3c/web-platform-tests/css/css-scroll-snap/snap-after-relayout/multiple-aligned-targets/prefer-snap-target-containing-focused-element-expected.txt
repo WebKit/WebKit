@@ -1,0 +1,3 @@
+
+PASS Re-snap prefers snap target containing the focused element when multiple targets are aligned
+

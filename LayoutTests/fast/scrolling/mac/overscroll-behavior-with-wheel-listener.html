@@ -1,0 +1,24 @@
+<!doctype html>
+<script src="../../../resources/testharness.js"></script>
+<script src="../../../resources/testharnessreport.js"></script>
+<script src="../resources/overscroll-behavior-support.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+<link rel="help" href="https://drafts.csswg.org/css-overscroll-behavior">
+<style>
+    :root {
+        overscroll-behavior: contain;
+    }
+    body {
+        height: 5000px;
+    }
+</style>
+<script>
+    window.addEventListener('wheel', () => {}, { passive: false });
+
+    promise_test(async () => {
+        window.scrollTo(0, 0);
+        const delta = getDeltas("down");
+        await mouseWheelScrollAndWait(50, 50, delta.X, delta.Y, delta.X, delta.Y);
+        assert_greater_than(window.scrollY, 0, 'Page should have scrolled');
+    }, 'Main frame with overscroll-behavior: contain and a non-passive wheel listener should scroll');
+</script>

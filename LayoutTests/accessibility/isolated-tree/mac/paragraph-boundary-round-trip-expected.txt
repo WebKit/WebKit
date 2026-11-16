@@ -1,0 +1,19 @@
+This test ensures that stepping to the next paragraph end and then back to the previous paragraph start lands on the start of the paragraph the marker began on. Paragraph boundaries come from rendered newlines, so a br element starts a new paragraph and a soft wrap does not, and both are covered.
+
+A soft wrap does not start a new paragraph, so every line recovers the same start.
+PASS: paragraphStartOffsetFrom('wrapped', 5) === 0
+PASS: paragraphStartOffsetFrom('wrapped', 40) === 0
+PASS: paragraphTextFrom('wrapped', 40) === 'One paragraph long enough to wrap onto more than one line.'
+
+A br element does start a new paragraph, so the two halves recover different starts.
+PASS: paragraphStartOffsetFrom('broken', 5) === 0
+PASS: paragraphStartOffsetFrom('broken', 25) === 18
+
+Each half is recovered whole, without the line break.
+PASS: paragraphTextFrom('broken', 5) === 'Before the break.'
+PASS: paragraphTextFrom('broken', 25) === 'After the break.'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

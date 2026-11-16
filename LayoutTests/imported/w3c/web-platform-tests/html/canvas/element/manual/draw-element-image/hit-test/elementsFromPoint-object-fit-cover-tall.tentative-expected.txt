@@ -1,0 +1,3 @@
+
+FAIL Canvas descendants' transforms are correct when object-fit: cover is active. assert_array_equals: (5, 150) Should have returned a sequence with `[canvas, body, html]` lengths differ, expected array [Element node <canvas id="canvas" width="300" height="300" content="dra..., Element node <body><canvas id="canvas" width="300" height="300" conten..., Element node <html><head><title>Elements should appear in elementsFrom...] length 3, got [Element node <div drawable="" id="left"></div>, Element node <canvas id="canvas" width="300" height="300" content="dra..., Element node <body><canvas id="canvas" width="300" height="300" conten..., Element node <html><head><title>Elements should appear in elementsFrom...] length 4
+

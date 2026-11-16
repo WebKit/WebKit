@@ -1,0 +1,4 @@
+
+
+PASS MediaStream video should not be paused when audio route changes
+

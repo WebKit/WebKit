@@ -1,0 +1,3 @@
+
+PASS scroll: scroll() should clear the CSS :target element when the destination url contains no fragment
+

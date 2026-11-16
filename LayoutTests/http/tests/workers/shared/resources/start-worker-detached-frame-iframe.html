@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<script>
+onload = () => {
+    let parentWindow = window.parent;
+    // Detach iframe.
+    parentWindow.document.getElementById("testFrame").remove();
+    try {
+        new SharedWorker('../../navigation/resources/shared-worker-script.js');
+        parentWindow.testFailed("Starting the shared worker in a detached iframe did not throw an exception");
+    } catch (e) {
+	parentWindow.testPassed("Starting the shared worker in a detached iframe threw an exception: " + e);
+    }
+    parentWindow.finishJSTest();
+};
+</script>

@@ -1,0 +1,147 @@
+# Copyright (C) 2023 Apple Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1.  Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer.
+# 2.  Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in the
+#     documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS'' AND
+# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS BE LIABLE FOR
+# ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+#if USE(PASSKIT)
+
+webkit_platform_headers: "CoreIPCPassKit.h"
+secure_coding_header: <pal/cocoa/PassKitSoftLink.h>
+
+[CustomHeader, WebKitPlatform] class WebKit::CoreIPCPKContact {
+    std::optional<WebKit::CoreIPCPersonNameComponents> m_name;
+    String m_emailAddress;
+    std::optional<WebKit::CoreIPCCNPhoneNumber> m_phoneNumber;
+    std::optional<WebKit::CoreIPCCNPostalAddress> m_postalAddress;
+    String m_supplementarySublocality;
+}
+
+webkit_platform_headers: "CoreIPCPKSecureElementPass.h"
+[WebKitPlatform] class WebKit::CoreIPCPKSecureElementPass {
+    Vector<uint8_t> ipcData()
+}
+
+#if !HAVE(WK_SECURE_CODING_PKPAYMENTMERCHANTSESSION)
+[WebKitSecureCodingClass=PAL::getPKPaymentMerchantSessionClassSingleton(), SupportWKKeyedCoder, WebKitPlatform] webkit_secure_coding PKPaymentMerchantSession {
+    merchantIdentifier: String
+    merchantSessionIdentifier: String
+    nonce: String
+    epochTimestamp: Number
+    expiresAt: Number
+    domainName: String
+    displayName: String
+    signature: Data
+    retryNonce: String
+    initiativeContext: String
+    initiative: String
+    ampEnrollmentPinning: Data
+    operationalAnalyticsIdentifier: String
+    signedFields: Array<String>?
+#if ENABLE(APPLE_PAY_DELEGATED_REQUEST)
+    isDelegatedSession: Number
+    delegateDisplayName: String
+#endif
+}
+#endif
+
+#if !HAVE(WK_SECURE_CODING_PKPAYMENT)
+[WebKitSecureCodingClass=PAL::getPKPaymentClassSingleton(), SupportWKKeyedCoder, WebKitPlatform] webkit_secure_coding PKPayment {
+    token: PKPaymentToken
+    shippingContact: PKContact
+    billingContact: PKContact
+    shippingMethod: PKShippingMethod
+    credential: Data
+    authKitAuthenticationResults: Dictionary
+    biometryAttempts: Number
+    installmentAuthorizationToken: String
+}
+#endif
+
+#if !HAVE(WK_SECURE_CODING_PKPAYMENTTOKEN)
+[WebKitSecureCodingClass=PAL::getPKPaymentTokenClassSingleton(), SupportWKKeyedCoder, WebKitPlatform] webkit_secure_coding PKPaymentToken {
+    paymentInstrumentName: String?
+    paymentNetwork: String?
+    transactionIdentifier: String
+    paymentData: Data
+    paymentMethod: PKPaymentMethod
+    redeemURL: URL
+    retryNonce: String
+}
+#endif
+
+#if !HAVE(WK_SECURE_CODING_PKSHIPPINGMETHOD)
+[WebKitSecureCodingClass=PAL::getPKShippingMethodClassSingleton(), SupportWKKeyedCoder, WebKitPlatform] webkit_secure_coding PKShippingMethod {
+    label: String
+    amount: Number
+    type: Number
+    localizedTitle: String
+    localizedAmount: String
+    useDarkColor: Number
+    useLargeFont: Number
+    identifier: String
+    detail: String
+    dateComponentsRange: PKDateComponentsRange
+}
+#endif
+
+#if !HAVE(WK_SECURE_CODING_PKDATECOMPONENTSRANGE)
+[WebKitSecureCodingClass=PAL::getPKDateComponentsRangeClassSingleton(), SupportWKKeyedCoder, WebKitPlatform] webkit_secure_coding PKDateComponentsRange {
+    startDateComponents: NSDateComponents
+    endDateComponents: NSDateComponents
+}
+#endif
+
+additional_forward_declaration: OBJC_CLASS PKSecureElementPass
+#if !HAVE(WK_SECURE_CODING_PKPAYMENTMETHOD)
+[WebKitSecureCodingClass=PAL::getPKPaymentMethodClassSingleton(), SupportWKKeyedCoder, WebKitPlatform] webkit_secure_coding PKPaymentMethod {
+    type: Number
+    displayName: String
+    network: String
+    paymentPass: PKSecureElementPass
+    peerPaymentQuoteIdentifier: String
+    billingAddress: CNContact
+    installmentBindToken: String
+    usePeerPaymentBalance: Number
+}
+#endif
+
+#if !HAVE(WK_SECURE_CODING_PKPAYMENTSETUPFEATURE)
+additional_forward_declaration: OBJC_CLASS NSSet
+[WebKitSecureCodingClass=PAL::getPKPaymentSetupFeatureClassSingleton(), SupportWKKeyedCoder, WebKitPlatform] webkit_secure_coding PKPaymentSetupFeature {
+    identifiers: Set
+    localizedDisplayName: String
+    type: Number
+    state: Number
+    supportedOptions: Number
+    supportedDevices: Number
+    productIdentifier: String
+    partnerIdentifier: String
+    featureIdentifier: Number
+    lastUpdated: Date
+    expiry: Date
+    productType: Number
+    productState: Number
+    notificationTitle: String
+    notificationMessage: String
+    discoveryCardIdentifier: String
+}
+#endif
+
+#endif // USE(PASSKIT)

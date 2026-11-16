@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script>
+
+if (window.internals) {
+    // FIXME: out-of-viewport throttling is on by default, but Internals::resetToConsistentState()
+    // turns it off in layout tests. We may want to modify the test runner to not do that.
+    internals.setOutsideViewportThrottlingEnabled(true);
+}
+
+function step()
+{
+    requestAnimationFrame(step);
+}
+
+requestAnimationFrame(step);
+
+window.addEventListener("message", function() {
+    // Report only OutsideViewport. A cross-origin frame that has no user interaction can also be
+    // throttled due to NonInteractedCrossOriginFrame, but that's not what we're testing here.
+    var reasons = window.internals ? internals.requestAnimationFrameThrottlingReasons() : "no internals";
+    var throttlesAnimationFrames = reasons.includes("OutsideViewport");
+
+    var throttlesTimers = window.internals ? internals.areTimersThrottled() : false;
+
+    parent.postMessage("requestAnimationFrame=" + throttlesAnimationFrames + ",timers=" + throttlesTimers, "*");
+}, false);
+
+</script>
+</body>
+</html>

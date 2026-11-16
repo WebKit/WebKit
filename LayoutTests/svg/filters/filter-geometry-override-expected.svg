@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="500px" height="500px">
+    <defs>
+        <clipPath id="clip-path-1">
+            <rect x="0" y="0" width="100" height="100"></rect>
+        </clipPath>
+        <clipPath id="clip-path-2">
+            <rect x="150" y="0" width="100" height="100"></rect>
+        </clipPath>
+        <clipPath id="clip-path-3">
+            <rect x="0" y="150" width="100" height="100"></rect>
+        </clipPath>
+        <clipPath id="clip-path-4">
+            <rect x="150" y="150" width="100" height="100"></rect>
+        </clipPath>
+        <symbol id="rect-with-shadow"   >
+            <rect x="0" y="0" width="250" height="250" fill="cyan"/>
+            <rect x="50" y="50" width="150" height="150" fill="green"/>
+        </symbol>
+    </defs>
+    <use href="#rect-with-shadow" clip-path="url(#clip-path-1)" x="0" y="0" width="250" hright="250" />
+    <use href="#rect-with-shadow" clip-path="url(#clip-path-2)" x="0" y="0" width="250" hright="250" />
+    <use href="#rect-with-shadow" clip-path="url(#clip-path-3)" x="0" y="0" width="250" hright="250" />
+    <use href="#rect-with-shadow" clip-path="url(#clip-path-4)" x="0" y="0" width="250" hright="250" />
+</svg>

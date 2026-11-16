@@ -1,0 +1,22 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd" >
+<svg xmlns="http://www.w3.org/2000/svg">
+<metadata></metadata>
+<defs>
+<font id="Litherum" horiz-adv-x="1024">
+<font-face units-per-em="56" ascent="56" descent="-28"/>
+<glyph unicode="|" horiz-adv-x="56" d="M20 -28v84h16v-84z"/>
+<glyph unicode="_" horiz-adv-x="56" d="M1 -5v1h54v-1z"/>
+<glyph unicode="體" horiz-adv-x="56" d="M20 -28v84h16v-84z"/>
+<glyph unicode="現" horiz-adv-x="56" d="M20 -28v84h16v-84z"/>
+<glyph unicode="浪" horiz-adv-x="56" d="M20 -28v84h16v-84z"/>
+<glyph unicode="外" horiz-adv-x="56" d="M20 -28v84h16v-84z"/>
+<glyph unicode="装" horiz-adv-x="56" d="M20 -28v84h16v-84z"/>
+<glyph unicode="に" horiz-adv-x="56" d="M20 -28v84h16v-84z"/>
+<glyph unicode="일" horiz-adv-x="56" d="M20 -28v84h16v-84z"/>
+<glyph unicode="서" horiz-adv-x="56" d="M20 -28v84h16v-84z"/>
+<glyph unicode="공" horiz-adv-x="56" d="M20 -28v84h16v-84z"/>
+<glyph unicode="事" horiz-adv-x="56" d="M20 -28"/>
+</font>
+</defs>
+</svg>

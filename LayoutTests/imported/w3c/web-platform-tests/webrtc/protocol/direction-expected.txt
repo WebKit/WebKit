@@ -1,0 +1,4 @@
+
+PASS Rejects invalid modification of send direction
+PASS Rejects invalid modification of receive direction
+

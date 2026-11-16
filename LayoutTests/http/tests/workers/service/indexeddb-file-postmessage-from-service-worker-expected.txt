@@ -1,0 +1,2 @@
+PASS: read 'contents stored in IndexedDB' from the File posted by the service worker
+

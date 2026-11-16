@@ -1,0 +1,5 @@
+
+PASS Prefetch should include Sec-Purpose=prefetch and Sec-Fetch-Dest=empty headers
+PASS Prefetch should not include proprietary headers (X-moz/Purpose)
+PASS Prefetch should respect CORS mode
+

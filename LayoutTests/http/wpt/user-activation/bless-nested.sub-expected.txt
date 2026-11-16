@@ -1,0 +1,19 @@
+
+PASS the test server provides four distinct origins
+PASS bless in a same-origin iframe
+PASS bless in a cross-origin iframe
+PASS bless two same-origin iframes deep
+PASS bless in a cross-origin iframe inside a same-origin iframe
+PASS bless in a same-origin iframe inside a cross-origin iframe
+PASS bless in a cross-origin iframe inside a cross-origin iframe
+PASS bless in a cross-origin iframe inside a different cross-origin iframe
+PASS blessing a same-origin iframe does not activate its cross-origin child
+PASS blessing a cross-origin iframe does not activate its cross-origin child
+PASS bless in a same-origin iframe nested behind a cross-origin iframe
+PASS blessing a cross-origin iframe does not activate the same-origin iframe nested below it
+PASS blessing the outer iframe activates a same-origin descendant through a cross-origin frame, but not the cross-origin frame itself
+PASS bless three distinct cross-origins deep
+PASS blessing a cross-origin iframe does not activate its distinct cross-origin descendants
+PASS bless in a cross-origin iframe nested behind a same-origin and a cross-origin iframe
+PASS bless three same-origin iframes deep
+

@@ -1,0 +1,14 @@
+<div style="display: flex; flex-direction: column;">
+    <canvas style="background-color: blue; max-width: 600px">
+        <script>
+            if (window.testRunner)
+                testRunner.waitUntilDone();
+
+            window.requestAnimationFrame(function() {
+                document.querySelector("canvas").height = "300";
+                if (window.testRunner)
+                    testRunner.notifyDone();
+            });
+        </script>
+    </canvas>
+</div>

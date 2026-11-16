@@ -1,0 +1,136 @@
+/*
+ *  Copyright 2016 The WebRTC Project Authors. All rights reserved.
+ *
+ *  Use of this source code is governed by a BSD-style license
+ *  that can be found in the LICENSE file in the root of the source
+ *  tree. An additional intellectual property rights grant can be found
+ *  in the file PATENTS.  All contributing project authors may
+ *  be found in the AUTHORS file in the root of the source tree.
+ */
+
+#include "api/stats/rtc_stats_report.h"
+
+#include <memory>
+#include <string>
+#include <utility>
+
+#include "api/scoped_refptr.h"
+#include "api/stats/rtc_stats.h"
+#include "api/units/timestamp.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/strings/string_builder.h"
+
+namespace webrtc {
+
+RTCStatsReport::ConstIterator::ConstIterator(
+    const scoped_refptr<const RTCStatsReport>& report,
+    StatsMap::const_iterator it)
+    : report_(report), it_(it) {}
+
+RTCStatsReport::ConstIterator::ConstIterator(ConstIterator&& other) = default;
+
+RTCStatsReport::ConstIterator::~ConstIterator() {}
+
+RTCStatsReport::ConstIterator& RTCStatsReport::ConstIterator::operator++() {
+  ++it_;
+  return *this;
+}
+
+RTCStatsReport::ConstIterator& RTCStatsReport::ConstIterator::operator++(int) {
+  return ++(*this);
+}
+
+const RTCStats& RTCStatsReport::ConstIterator::operator*() const {
+  return *it_->second;
+}
+
+const RTCStats* RTCStatsReport::ConstIterator::operator->() const {
+  return it_->second.get();
+}
+
+bool RTCStatsReport::ConstIterator::operator==(
+    const RTCStatsReport::ConstIterator& other) const {
+  return it_ == other.it_;
+}
+
+bool RTCStatsReport::ConstIterator::operator!=(
+    const RTCStatsReport::ConstIterator& other) const {
+  return !(*this == other);
+}
+
+scoped_refptr<RTCStatsReport> RTCStatsReport::Create(Timestamp timestamp) {
+  return scoped_refptr<RTCStatsReport>(new RTCStatsReport(timestamp));
+}
+
+RTCStatsReport::RTCStatsReport(Timestamp timestamp) : timestamp_(timestamp) {}
+
+scoped_refptr<RTCStatsReport> RTCStatsReport::Copy() const {
+  scoped_refptr<RTCStatsReport> copy = Create(timestamp_);
+  for (auto it = stats_.begin(); it != stats_.end(); ++it) {
+    copy->AddStats(it->second->copy());
+  }
+  return copy;
+}
+
+void RTCStatsReport::AddStats(std::unique_ptr<const RTCStats> stats) {
+#if RTC_DCHECK_IS_ON
+  auto result =
+#endif
+      stats_.insert(std::make_pair(std::string(stats->id()), std::move(stats)));
+#if RTC_DCHECK_IS_ON
+  RTC_DCHECK(result.second)
+      << "A stats object with ID \"" << result.first->second->id() << "\" is "
+      << "already present in this stats report.";
+#endif
+}
+
+const RTCStats* RTCStatsReport::Get(const std::string& id) const {
+  StatsMap::const_iterator it = stats_.find(id);
+  if (it != stats_.cend())
+    return it->second.get();
+  return nullptr;
+}
+
+std::unique_ptr<const RTCStats> RTCStatsReport::Take(const std::string& id) {
+  StatsMap::iterator it = stats_.find(id);
+  if (it == stats_.end())
+    return nullptr;
+  std::unique_ptr<const RTCStats> stats = std::move(it->second);
+  stats_.erase(it);
+  return stats;
+}
+
+void RTCStatsReport::TakeMembersFrom(scoped_refptr<RTCStatsReport> other) {
+  for (StatsMap::iterator it = other->stats_.begin(); it != other->stats_.end();
+       ++it) {
+    AddStats(std::unique_ptr<const RTCStats>(it->second.release()));
+  }
+  other->stats_.clear();
+}
+
+RTCStatsReport::ConstIterator RTCStatsReport::begin() const {
+  return ConstIterator(scoped_refptr<const RTCStatsReport>(this),
+                       stats_.cbegin());
+}
+
+RTCStatsReport::ConstIterator RTCStatsReport::end() const {
+  return ConstIterator(scoped_refptr<const RTCStatsReport>(this),
+                       stats_.cend());
+}
+
+std::string RTCStatsReport::ToJson() const {
+  if (begin() == end()) {
+    return "";
+  }
+  StringBuilder sb;
+  sb << "[";
+  const char* separator = "";
+  for (ConstIterator it = begin(); it != end(); ++it) {
+    sb << separator << it->ToJson();
+    separator = ",";
+  }
+  sb << "]";
+  return sb.Release();
+}
+
+}  // namespace webrtc

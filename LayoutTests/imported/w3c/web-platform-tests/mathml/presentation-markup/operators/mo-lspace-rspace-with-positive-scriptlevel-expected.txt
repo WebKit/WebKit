@@ -1,0 +1,9 @@
+1
+O
+2
+3
+O
+4
+
+PASS default lspace/rspace in scriptlevel = 1 is just obtained by scaling down the one for scriptlevel = 0.
+

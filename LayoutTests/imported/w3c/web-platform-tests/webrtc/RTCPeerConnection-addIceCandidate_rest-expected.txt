@@ -1,0 +1,4 @@
+
+PASS addIceCandidate after close should reject with InvalidStateError
+PASS addIceCandidate should not recognize relayProtocol or url
+

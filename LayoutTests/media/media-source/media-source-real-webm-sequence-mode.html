@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>media-source-real-webm-sequence-mode</title>
+    <script src="webm-generator.js"></script>
+    <script src="../video-test.js"></script>
+    <script>
+    // Tests SourceBuffer "sequence" mode where timestampOffset is automatically
+    // updated after each coded frame group so segments are placed end-to-end.
+    // MSE spec section 3.1.1 and 3.3.1.
+
+    var source;
+    var sourceBuffer;
+
+    async function runTest() {
+        findMediaElement();
+
+        if (!MediaSource.isTypeSupported(WebM.VIDEO_TYPE)) {
+            consoleWrite('SKIPPED: ' + WebM.VIDEO_TYPE + ' is not supported');
+            return;
+        }
+
+        source = new MediaSource();
+        video.src = URL.createObjectURL(source);
+        await waitFor(source, 'sourceopen');
+
+        sourceBuffer = source.addSourceBuffer(WebM.VIDEO_TYPE);
+
+        testExpected('sourceBuffer.mode', 'segments');
+
+        run('sourceBuffer.mode = "sequence"');
+        testExpected('sourceBuffer.mode', 'sequence');
+        testExpected('sourceBuffer.timestampOffset', 0);
+
+        var initData = WebM.initSegment({
+            tracks: [{ id: 1, type: 'video' }]
+        });
+        sourceBuffer.appendBuffer(initData);
+        await waitFor(sourceBuffer, 'updateend');
+
+        // Append first segment: 2 seconds starting at DTS=0
+        var media1 = WebM.mediaSegment({
+            sequenceNumber: 1,
+            tracks: [{ id: 1, type: 'video', baseDecodeTime: 0, samples: [
+                { duration: 1000, isSync: true },
+                { duration: 1000, isSync: false },
+            ]}]
+        });
+        sourceBuffer.appendBuffer(media1);
+        await waitFor(sourceBuffer, 'updateend');
+
+        // First segment: placed at [0, 2).
+        // In sequence mode, timestampOffset is NOT updated on the initial group,
+        // it updates when a new coded frame group starts on the NEXT append.
+        testExpected('sourceBuffer.buffered.length', 1);
+        testExpectedEqualWithTolerance('sourceBuffer.buffered.start(0)', 0, 0.05);
+        testExpectedEqualWithTolerance('sourceBuffer.buffered.end(0)', 2, 0.05);
+
+        // Append second segment: also starts at DTS=0 in the container.
+        // Sequence mode detects this as a new group, sets timestampOffset to
+        // the end of the previous group (2), and places frames at [2, 4).
+        var media2 = WebM.mediaSegment({
+            sequenceNumber: 2,
+            tracks: [{ id: 1, type: 'video', baseDecodeTime: 0, samples: [
+                { duration: 1000, isSync: true },
+                { duration: 1000, isSync: false },
+            ]}]
+        });
+        sourceBuffer.appendBuffer(media2);
+        await waitFor(sourceBuffer, 'updateend');
+
+        // Should now have [0, 4) contiguously
+        testExpected('sourceBuffer.buffered.length', 1);
+        testExpectedEqualWithTolerance('sourceBuffer.buffered.start(0)', 0, 0.05);
+        testExpectedEqualWithTolerance('sourceBuffer.buffered.end(0)', 4, 0.05);
+
+        // Append a third segment to confirm the pattern continues
+        var media3 = WebM.mediaSegment({
+            sequenceNumber: 3,
+            tracks: [{ id: 1, type: 'video', baseDecodeTime: 0, samples: [
+                { duration: 1000, isSync: true },
+            ]}]
+        });
+        sourceBuffer.appendBuffer(media3);
+        await waitFor(sourceBuffer, 'updateend');
+
+        testExpected('sourceBuffer.buffered.length', 1);
+        testExpectedEqualWithTolerance('sourceBuffer.buffered.start(0)', 0, 0.05);
+        testExpectedEqualWithTolerance('sourceBuffer.buffered.end(0)', 5, 0.05);
+    }
+
+    window.addEventListener('load', event => {
+        runTest().then(endTest).catch(failTest);
+    });
+    </script>
+</head>
+<body>
+    <video></video>
+</body>
+</html>

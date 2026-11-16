@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src='resources/cookies-test-pre.js'></script>
+</head>
+<body>
+<script>
+description('This test checks that cookieStore.delete() removes a cookie that was set with a Unicode name, exercising the same name encoding used by cookieStore.set(). See: rdar://124266311 Correct the encoding of cookies sent/received from CFNetwork');
+jsTestIsAsync = true;
+
+onload = async () => {
+    await cookieStore.set('日本語cookie', 'value');
+
+    let item = await cookieStore.get('日本語cookie');
+    if (item && item.value === 'value')
+        testPassed("cookieStore.get('日本語cookie') found the cookie after it was set");
+    else
+        testFailed("cookieStore.get('日本語cookie') did not find the cookie after it was set");
+
+    await cookieStore.delete('日本語cookie');
+
+    item = await cookieStore.get('日本語cookie');
+    if (!item)
+        testPassed("cookieStore.get('日本語cookie') returned null after the cookie with a Unicode name was deleted");
+    else
+        testFailed("cookieStore.get('日本語cookie') unexpectedly found the cookie after it was deleted: " + item.value);
+
+    finishJSTest();
+};
+</script>
+<script src='resources/cookies-test-post.js'></script>
+</body>
+</html>

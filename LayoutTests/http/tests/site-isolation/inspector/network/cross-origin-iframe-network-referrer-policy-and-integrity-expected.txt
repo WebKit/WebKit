@@ -1,0 +1,17 @@
+Test that referrer policy and integrity metadata of requests reach the frontend under Site Isolation, for the main frame and a cross-origin iframe.
+
+
+
+== Running test suite: SiteIsolation.Network.ReferrerPolicyAndIntegrity
+-- Running test case: SiteIsolation.Network.ReferrerPolicyAndIntegrity.MainFrame
+PASS: Referrer policy should be origin.
+PASS: Integrity should be the supplied metadata.
+
+-- Running test case: SiteIsolation.Network.ReferrerPolicyAndIntegrity.MainFrameDefaults
+PASS: Referrer policy should be the document default.
+PASS: Integrity should be empty.
+
+-- Running test case: SiteIsolation.Network.ReferrerPolicyAndIntegrity.CrossOriginIFrame
+PASS: Referrer policy should be no-referrer.
+PASS: Integrity should be the supplied metadata.
+

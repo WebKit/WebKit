@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../resources/video-formats/video-formats-manifest.js"></script>
+<script src="../../resources/video-formats/video-formats-test-utils.js"></script>
+</head>
+<body>
+<p>Tests that 10-bit bi-planar video frames, HDR (PQ and HLG, BT.2020) and SDR (BT.709, video and full range, 4:2:0 and 4:2:2), come out of GPUDevice.importExternalTexture and of GPUQueue.copyExternalImageToTexture with the right colors, with HDR mapped to SDR, from both a video element and a WebCodecs VideoDecoder, and that both paths agree.</p>
+<pre id="log"></pre>
+<script>
+"use strict";
+
+// The 10-bit pixel buffers a frame can arrive in need different handling, and the two ways of
+// getting a frame reach different ones on the hardware decoders:
+//
+// * A video element plays into a lossless-compressed packed buffer ('&xv0', '&xv2', '&xf0'): three
+//   10-bit samples to 32 bits with no padding, which only the packed 10-bit Metal formats can read.
+//   It used to be read as 8-bit pairs, and a full range one was not read at all.
+// * A VideoDecoder, which is also what an AV1 decoder is, outputs a plain 'x420' or 'xf20' buffer:
+//   two planes, each 10-bit sample in the top bits of 16. It used to be read as 8-bit pairs, which
+//   scrambled Cb and Cr, and reading it as 16-bit without rescaling the YCbCr matrix tinted neutral
+//   grays green.
+//
+// A different decoder, or one without hardware, may hand over other buffers; the colors must come out
+// right whichever it is, so that is all this checks.
+//
+// HDR frames used to be taken as sRGB, which left the picture dark and flat. The expected values for
+// those follow the HDR to SDR mapping WebGPU applies, which matches how CoreGraphics draws the same
+// frame to a 2D canvas: decode PQ or HLG to linear light where 1.0 is 440 nits, roll off what is
+// brighter than half of that by luminance, convert BT.2020 primaries to sRGB, and encode with the
+// pure 2.4 gamma of ITU-R BT.1886. The pattern's gray patches pin that mapping down; its colored
+// patches are all bright enough to land at or near an sRGB corner, so they only show that chroma
+// reached the right place. An SDR frame is taken as already encoded for sRGB, so it comes out as the
+// video's own R'G'B'.
+//
+// A "video" source is a <video> element, a "decoder" source is the first frame decoded from the
+// video's chunk table. The VP9 video has no chunk table.
+const cases = [
+    { name: "hevc-420-10bit-pq-videorange.mp4", mode: "pq", sources: ["video", "decoder"] },
+    { name: "hevc-420-10bit-hlg-videorange.mp4", mode: "hlg", sources: ["video", "decoder"] },
+    { name: "vp9-p2-420-10bit-pq-videorange.webm", mode: "pq", sources: ["video"] },
+    { name: "hevc-420-10bit-bt709-videorange.mp4", mode: "sdr", sources: ["video", "decoder"] },
+    { name: "hevc-420-10bit-bt709-fullrange.mp4", mode: "sdr", sources: ["video", "decoder"] },
+    { name: "hevc-422-10bit-bt709-videorange.mp4", mode: "sdr", sources: ["video", "decoder"] },
+];
+const grays = new Set(["black", "gray16", "gray128", "gray235", "white"]);
+// Per channel, in 8-bit units. A gray tracks one luma code of decoder error within about 2 (PQ
+// gray128 is the steepest). A colored patch has independent chroma error on top, which HLG's
+// unclipped desaturated colors amplify most. SDR is a straight pass through, so it is tight.
+const grayTolerance = 5;
+const colorTolerance = 16;
+const sdrTolerance = 4;
+// Gray patches must come out with equal channels, which the green tint broke by about 5.
+const neutralTolerance = 2;
+// importExternalTexture and copyExternalImageToTexture run the same conversion in two shaders.
+const pathTolerance = 2;
+
+const bt2020ToSRGB = [
+    [1.6604910, -0.5876411, -0.0728499],
+    [-0.1245505, 1.1328999, -0.0083494],
+    [-0.0181508, -0.1005789, 1.1187297],
+];
+const bt2020Luminance = [0.2627, 0.6780, 0.0593];
+
+function dot(a, b) { return a[0] * b[0] + a[1] * b[1] + a[2] * b[2]; }
+
+function decodeHDR(encoded, isHLG)
+{
+    const referenceWhiteNits = 440;
+    if (!isHLG) {
+        const m1 = 0.1593017578125, m2 = 78.84375, c1 = 0.8359375, c2 = 18.8515625, c3 = 18.6875;
+        return encoded.map(e => {
+            const p = Math.pow(e, 1 / m2);
+            return Math.pow(Math.max(p - c1, 0) / (c2 - c3 * p), 1 / m1) * 10000 / referenceWhiteNits;
+        });
+    }
+    const a = 0.17883277, b = 0.28466892, c = 0.55991073;
+    const scene = encoded.map(e => e <= 0.5 ? e * e / 3 : (Math.exp((e - c) / a) + b) / 12);
+    const gain = Math.pow(Math.max(dot(scene, bt2020Luminance), 1e-6), 0.2) * 1000 / referenceWhiteNits;
+    return scene.map(v => v * gain);
+}
+
+function toneMap(linear)
+{
+    const knee = 0.5;
+    const luminance = dot(linear, bt2020Luminance);
+    if (luminance <= knee)
+        return linear;
+    const excess = luminance - knee;
+    const mapped = knee + (1 - knee) * excess / (excess + (1 - knee));
+    return linear.map(v => v * mapped / luminance);
+}
+
+// The frame's own R'G'B' (the manifest's "native" values, 0-255) to what an rgba8unorm target holds.
+function expectedColor(native, mode)
+{
+    if (mode === "sdr")
+        return native;
+    const linear = toneMap(decodeHDR(native.map(v => Math.min(Math.max(v / 255, 0), 1)), mode === "hlg"));
+    return bt2020ToSRGB.map(row => {
+        const v = dot(row, linear);
+        const encoded = Math.sign(v) * Math.pow(Math.abs(v), 1 / 2.4);
+        return Math.min(Math.max(encoded, 0), 1) * 255;
+    });
+}
+
+const shader = `
+struct VertexOut {
+    @builtin(position) position: vec4f,
+    @location(0) uv: vec2f,
+}
+
+@vertex fn vertexMain(@builtin(vertex_index) index: u32) -> VertexOut {
+    var positions = array<vec2f, 3>(vec2f(-1, -1), vec2f(3, -1), vec2f(-1, 3));
+    var uvs = array<vec2f, 3>(vec2f(0, 1), vec2f(2, 1), vec2f(0, -1));
+    return VertexOut(vec4f(positions[index], 0, 1), uvs[index]);
+}
+
+@group(0) @binding(0) var videoSampler: sampler;
+@group(0) @binding(1) var videoTexture: texture_external;
+
+@fragment fn fragmentMain(@location(0) uv: vec2f) -> @location(0) vec4f {
+    return textureSampleBaseClampToEdge(videoTexture, videoSampler, uv);
+}
+`;
+
+const lines = [];
+function log(message) { lines.push(message); }
+
+async function readTexture(device, texture, width, height)
+{
+    const bytesPerRow = Math.ceil(width * 4 / 256) * 256;
+    const buffer = device.createBuffer({ size: bytesPerRow * height, usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.MAP_READ });
+    const encoder = device.createCommandEncoder();
+    encoder.copyTextureToBuffer({ texture }, { buffer, bytesPerRow, rowsPerImage: height }, [width, height]);
+    device.queue.submit([encoder.finish()]);
+    await buffer.mapAsync(GPUMapMode.READ);
+    const mapped = new Uint8Array(buffer.getMappedRange());
+    const data = new Uint8Array(width * height * 4);
+    for (let y = 0; y < height; ++y)
+        data.set(mapped.subarray(y * bytesPerRow, y * bytesPerRow + width * 4), y * width * 4);
+    buffer.unmap();
+    buffer.destroy();
+    return { width, height, data };
+}
+
+function createTarget(device, width, height)
+{
+    return device.createTexture({
+        size: [width, height],
+        format: "rgba8unorm",
+        usage: GPUTextureUsage.RENDER_ATTACHMENT | GPUTextureUsage.COPY_DST | GPUTextureUsage.COPY_SRC,
+    });
+}
+
+async function sampleThroughExternalTexture(device, pipeline, source, width, height)
+{
+    const texture = createTarget(device, width, height);
+    // A GPUExternalTexture expires at the end of the task it was imported in, so import, encode and
+    // submit without yielding.
+    const bindGroup = device.createBindGroup({
+        layout: pipeline.getBindGroupLayout(0),
+        entries: [
+            { binding: 0, resource: device.createSampler() },
+            { binding: 1, resource: device.importExternalTexture({ source }) },
+        ],
+    });
+    const encoder = device.createCommandEncoder();
+    const pass = encoder.beginRenderPass({
+        colorAttachments: [{ view: texture.createView(), clearValue: [0, 0, 0, 1], loadOp: "clear", storeOp: "store" }],
+    });
+    pass.setPipeline(pipeline);
+    pass.setBindGroup(0, bindGroup);
+    pass.draw(3);
+    pass.end();
+    device.queue.submit([encoder.finish()]);
+    return readTexture(device, texture, width, height);
+}
+
+async function copyFromSource(device, source, width, height)
+{
+    const texture = createTarget(device, width, height);
+    device.queue.copyExternalImageToTexture({ source }, { texture }, [width, height]);
+    return readTexture(device, texture, width, height);
+}
+
+function formatColor(color) { return "(" + color.map(v => Math.round(v)).join(",") + ")"; }
+
+function checkPatches(label, readback, patches, mode)
+{
+    const failures = [];
+    for (const patch of patches) {
+        const observed = VideoFormats.samplePatch(readback, patch.rect).slice(0, 3);
+        const expected = expectedColor(patch.expected.slice(0, 3), mode);
+        const isGray = grays.has(patch.color);
+        const tolerance = mode === "sdr" ? sdrTolerance : (isGray ? grayTolerance : colorTolerance);
+        if (observed.some((v, i) => Math.abs(v - expected[i]) > tolerance))
+            failures.push(`${patch.cell} ${formatColor(observed)}, expected ${formatColor(expected)} within ${tolerance}`);
+        if (isGray && Math.max(...observed) - Math.min(...observed) > neutralTolerance)
+            failures.push(`${patch.cell} ${formatColor(observed)} is not neutral`);
+    }
+    log(failures.length ? `FAIL ${label}: ${failures.join("; ")}` : `PASS ${label}`);
+}
+
+function comparePaths(label, first, second, patches)
+{
+    const failures = [];
+    for (const patch of patches) {
+        const a = VideoFormats.samplePatch(first, patch.rect).slice(0, 3);
+        const b = VideoFormats.samplePatch(second, patch.rect).slice(0, 3);
+        if (a.some((v, i) => Math.abs(v - b[i]) > pathTolerance))
+            failures.push(`${patch.cell} ${formatColor(a)} vs ${formatColor(b)}`);
+    }
+    log(failures.length ? `FAIL ${label}: ${failures.join("; ")}` : `PASS ${label}`);
+}
+
+async function checkSource(device, pipeline, label, source, info, mode)
+{
+    const width = info.displayWidth, height = info.displayHeight;
+    const patches = VideoFormats.expectedPatches(info, { colorSpace: "native" }).filter(patch => patch.expected);
+
+    const sampled = await sampleThroughExternalTexture(device, pipeline, source, width, height);
+    const copied = await copyFromSource(device, source, width, height);
+    checkPatches(`${label}: importExternalTexture`, sampled, patches, mode);
+    checkPatches(`${label}: copyExternalImageToTexture`, copied, patches, mode);
+    comparePaths(`${label}: importExternalTexture and copyExternalImageToTexture agree`, sampled, copied, patches);
+}
+
+async function run()
+{
+    const adapter = await navigator.gpu?.requestAdapter();
+    const device = await adapter?.requestDevice();
+    if (!device) {
+        log("FAIL: no WebGPU device");
+        return;
+    }
+
+    const module = device.createShaderModule({ code: shader });
+    const pipeline = device.createRenderPipeline({
+        layout: "auto",
+        vertex: { module },
+        fragment: { module, targets: [{ format: "rgba8unorm" }] },
+    });
+
+    for (const { name, mode, sources } of cases) {
+        const info = VideoFormats.videoInfo(name);
+        for (const kind of sources) {
+            const label = `${name} from a ${kind === "video" ? "video element" : "VideoDecoder"}`;
+            if (kind === "video") {
+                const video = await VideoFormats.loadVideo(name);
+                await checkSource(device, pipeline, label, video, info, mode);
+                VideoFormats.releaseVideo(video);
+                continue;
+            }
+            const frames = await VideoFormats.decodeFrames(name);
+            await checkSource(device, pipeline, label, frames[0], info, mode);
+            for (const frame of frames)
+                frame.close();
+        }
+    }
+}
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+run().catch(error => log(`FAIL: ${error}`)).finally(() => {
+    document.getElementById("log").textContent = lines.join("\n");
+    if (window.testRunner)
+        testRunner.notifyDone();
+});
+</script>
+</body>
+</html>

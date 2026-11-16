@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>CSS subgrid page crash</title>
+    <style type="text/css">
+
+        div.grid {
+            display: grid;
+            grid-template-columns: 100px 100px;
+        }
+
+        div.subgrid {
+            display: grid;
+            grid-template-columns: subgrid;
+            grid-column-start: 1;
+            grid-column-end: -1; /* -1 seems relevant; it works with `grid-column-end: 3` */
+        }
+
+        div.label {
+            grid-column: 1;
+        }
+
+        div.value {
+            grid-column: 2;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="grid" id="root-div">
+        <div class="subgrid">
+            <div class="label">Label</div>
+            <div class="value">Value</div>
+        </div>
+    </div>
+</body>
+<script>
+onload = () => {
+  setTimeout(test, 1000);
+  if (window.testRunner)
+      testRunner.dumpAsText();
+
+  };
+function test() {
+  const grid = document.getElementById('root-div');
+  grid.style.gridTemplateColumns = '100px';
+}
+</script>
+</html>

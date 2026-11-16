@@ -1,0 +1,4 @@
+
+
+PASS window.open() fires navigate event in target window but not source
+

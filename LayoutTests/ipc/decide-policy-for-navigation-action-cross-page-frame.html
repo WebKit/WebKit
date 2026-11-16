@@ -1,0 +1,95 @@
+<!DOCTYPE html><!-- webkit-test-runner [ IPCTestingAPIEnabled=true ] -->
+<html>
+<head>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+function done() {
+    document.body.innerText = "PASS if no crash. A WebContent process that sends DecidePolicyForNavigationActionAsync naming a different WebPageProxy's WebFrameProxy must be rejected by MESSAGE_CHECK before the foreign frame is touched.";
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+function findUint64LE(u8, val) {
+    const lo = Number(val & 0xFFFFFFFFn);
+    const hi = Number((val >> 32n) & 0xFFFFFFFFn);
+    let hits = [];
+    for (let i = 0; i + 8 <= u8.length; i++) {
+        const a = u8[i] | (u8[i+1]<<8) | (u8[i+2]<<16) | (u8[i+3]<<24);
+        const b = u8[i+4] | (u8[i+5]<<8) | (u8[i+6]<<16) | (u8[i+7]<<24);
+        if ((a >>> 0) === (lo >>> 0) && (b >>> 0) === (hi >>> 0))
+            hits.push(i);
+    }
+    return hits;
+}
+
+function writeUint64LE(u8, off, val) {
+    for (let i = 0; i < 8; i++)
+        u8[off+i] = Number((val >> BigInt(8*i)) & 0xFFn);
+}
+
+let captured = null;
+let capturedDestID = null;
+
+async function main() {
+    if (!window.IPC)
+        return done();
+
+    const senderFrameID = BigInt(IPC.frameID[0]);
+
+    // Create a second WebPageProxy by opening a new window.
+    const targetWin = window.open("resources/cross-page-target.html", "_blank");
+    await new Promise(r => setTimeout(r, 200));
+
+    let targetFrameID;
+    try {
+        targetFrameID = BigInt(targetWin.IPC.frameID[0]);
+    } catch (e) {
+        // FrameIdentifier values are sequential per UI-process; the next main
+        // frame is senderFrameID + 1 in the low 32 bits.
+        targetFrameID = (senderFrameID & 0xFFFFFFFF00000000n) | ((senderFrameID & 0xFFFFFFFFn) + 1n);
+    }
+    if (targetFrameID === senderFrameID)
+        return done();
+
+    // Capture a real DecidePolicyForNavigationActionAsync from a subframe navigation.
+    const ifr = document.createElement("iframe");
+    ifr.src = "about:blank";
+    document.body.appendChild(ifr);
+    await new Promise(r => setTimeout(r, 50));
+    const iframeFrameID = BigInt(ifr.contentWindow.IPC.frameID[0]);
+
+    const msgName = IPC.messages.WebPageProxy_DecidePolicyForNavigationActionAsync.name;
+    IPC.addOutgoingMessageListener("UI", (m) => {
+        if (m.name === msgName && !captured) {
+            captured = m.buffer.slice(0);
+            capturedDestID = m.destinationID;
+        }
+    });
+    ifr.src = "data:text/html,x";
+    for (let i = 0; i < 50 && !captured; i++)
+        await new Promise(r => setTimeout(r, 20));
+    if (!captured)
+        return done();
+
+    // Patch frameInfo.frameID (last occurrence of the iframe's FrameIdentifier)
+    // to the second page's main-frame FrameIdentifier and replay.
+    const body = new Uint8Array(captured).slice(16);
+    const hits = findUint64LE(body, iframeFrameID);
+    if (!hits.length)
+        return done();
+    writeUint64LE(body, hits[hits.length - 1], targetFrameID);
+    IPC.sendMessage("UI", capturedDestID, msgName, body);
+
+    await new Promise(r => setTimeout(r, 200));
+    done();
+}
+
+window.onload = () => { main().catch(done); };
+</script>
+</head>
+<body></body>
+</html>

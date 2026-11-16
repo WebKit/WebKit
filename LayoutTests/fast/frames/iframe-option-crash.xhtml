@@ -1,0 +1,32 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+
+<script>
+function test()
+{
+    if (window.testRunner)
+        testRunner.waitUntilDone();
+
+    var frame = document.getElementsByTagName("iframe")[0];
+    var body = document.getElementById("body");
+    var dataFrame = document.getElementsByTagName("iframe")[1];
+    dataFrame.addEventListener("load", () => {
+        document.getElementById("result").appendChild(document.createTextNode("If no crash while painting, the test passed (requires pixel test mode)."));
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }, { once: true });
+
+    body.appendChild(document.getElementById("option"));
+    body.appendChild(frame);
+}
+</script>
+
+</head>
+
+<body id="body" onload="test()">
+      <div id="result"></div>
+      <iframe src="javascript:55"/>
+      <option id="option"><iframe src="data:text/html,11"/></option>
+</body>
+
+</html>

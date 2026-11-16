@@ -1,0 +1,4 @@
+
+PASS Events must not fire when state is UNSENT after abort()
+PASS Calling open/abort in readystatechange should not crash
+

@@ -1,0 +1,4 @@
+
+
+FAIL Using touch inputs should not deselect other options in a listbox <select multiple>. assert_true: option one should be selected after touching it. expected true got false
+

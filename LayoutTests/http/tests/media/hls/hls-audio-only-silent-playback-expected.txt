@@ -1,0 +1,18 @@
+
+Muted:
+RUN(video.muted = true)
+RUN(video.src = "../resources/hls/french/prog_index.m3u8")
+EVENT(canplay)
+RUN(video.play())
+EXPECTED (video.currentTime > '0') OK
+RUN(video.pause())
+
+Volume zero:
+RUN(video.volume = 0)
+RUN(video.src = "../resources/hls/french/prog_index.m3u8")
+EVENT(canplay)
+RUN(video.play())
+EXPECTED (video.currentTime > '0') OK
+RUN(video.pause())
+END OF TEST
+

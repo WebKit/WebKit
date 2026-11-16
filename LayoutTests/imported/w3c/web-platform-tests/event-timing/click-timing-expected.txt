@@ -1,0 +1,4 @@
+Generate a 'click' event
+
+PASS Event Timing: compare click timings.
+

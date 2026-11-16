@@ -1,0 +1,44 @@
+<style>
+#box {
+    position: relative;
+    height: 100px;
+    width: 100px;
+    background-color: blue;
+    animation-name: move;
+    animation-duration: 0.2s;
+    animation-iteration-count: infinite;
+    animation-timing-function: linear;
+    animation-delay: -999999s;
+}
+
+@keyframes move {
+      0% { left: 0; }
+    100% { left: 300px; }
+}
+</style>
+<script>
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+}
+
+function output(msg) {
+    document.getElementById('result').innerHTML += `${msg}<br>`;
+}
+
+function iterated(event) {
+    output("PASS: Saw iteration event. The animation did start.");
+
+    if (event.elapsedTime > 1000)
+        output("PASS: Elapsed time is large. The animation thinks it started a long time ago.");
+    else
+        output("FAIL: Elapsed time wasn't big enough.");
+
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+window.addEventListener("animationiteration", iterated, { once: true });
+</script>
+<div id="box"></div>
+<div id="result"></div>

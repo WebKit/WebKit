@@ -1,0 +1,6 @@
+2d.text.drawing.style.fontStretch.settings
+Testing value setting of fontStretch in Canvas
+Actual output:
+
+PASS Testing value setting of fontStretch in Canvas
+

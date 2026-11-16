@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test() {
+    let suite = InspectorTest.createAsyncSuite("DOM.getEventListenersForNode");
+
+    [
+        {
+            name: "DOM.getEventListenersForNode.Child.IncludeAncestors",
+            selector: "#x",
+        },
+        {
+            name: "DOM.getEventListenersForNode.Child.ExcludeAncestors",
+            selector: "#x",
+            includeAncestors: false,
+        },
+        {
+            name: "DOM.getEventListenersForNode.Body.IncludeAncestors",
+            selector: "body",
+            includeAncestors: true,
+        },
+        {
+            name: "DOM.getEventListenersForNode.Body.ExcludeAncestors",
+            selector: "body",
+            includeAncestors: false,
+        },
+    ].forEach(({name, selector, includeAncestors}) => {
+        suite.addTestCase({
+            name,
+            async test(resolve, reject) {
+                let documentNode = await WI.domManager.requestDocument();
+                let nodeId = await documentNode.querySelector(selector);
+                let {listeners} = await DOMAgent.getEventListenersForNode(nodeId, includeAncestors);
+                for (let eventListener of listeners) {
+                    InspectorTest.log(`Event: ${eventListener.type}`);
+                    if (eventListener.nodeId) {
+                        let node = WI.domManager.nodeForId(eventListener.nodeId);
+                        InspectorTest.log(`Target: ${node.displayName}`);
+                    }
+                    if (eventListener.onWindow)
+                        InspectorTest.log("Target: window");
+                    InspectorTest.log(`Capture: ${eventListener.useCapture}`);
+                    InspectorTest.log(`Attribute: ${eventListener.isAttribute}`);
+
+                    if (eventListener.handlerName)
+                        InspectorTest.log(`Handler Name: ${eventListener.handlerName}`);
+                    if (eventListener.passive)
+                        InspectorTest.log(`Passive: ${eventListener.passive}`);
+                    if (eventListener.once)
+                        InspectorTest.log(`Once: ${eventListener.once}`);
+                    if (eventListener.location)
+                        InspectorTest.log("The Event Listener has a source location.");
+
+                    InspectorTest.log("");
+                }
+            },
+        });
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Testing DOMAgent.getEventListenersForNode.</p>
+
+    <div id="x" onclick="(function xClick(event) { })()"></div>
+    <script>
+        class ObjectEventHandler {
+            handleEvent(event) { }
+        }
+
+        let element = document.getElementById("x");
+        element.addEventListener("A", function xA(event) { });
+        element.addEventListener("B", function xB(event) { }, {once: true});
+        element.addEventListener("C", (event) => { });
+        element.addEventListener("D", { handleEvent(event) { } });
+        element.addEventListener("E", new ObjectEventHandler);
+
+        document.body.addEventListener("A", function bodyA(event) { }, true);
+        document.body.addEventListener("B", (event) => {}, true);
+
+        document.addEventListener("A", function documentA(event) { }, {passive: true});
+        document.addEventListener("B", (event) => {}, {passive: true});
+    </script>
+</body>
+</html>

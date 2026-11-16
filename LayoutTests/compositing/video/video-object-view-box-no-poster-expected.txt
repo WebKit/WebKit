@@ -1,0 +1,64 @@
+This test verifies that a <video> with no poster is cropped for compositing according to object-view-box, using the video's own natural (intrinsic) size rather than a poster image's size, for each object-fit value.
+
+
+(GraphicsLayer
+  (anchor 0.00 0.00)
+  (bounds 800.00 600.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 800.00 600.00)
+      (contentsOpaque 1)
+      (children 4
+        (GraphicsLayer
+          (position 13.00 68.00)
+          (bounds 100.00 100.00)
+          (contents clipping layer
+            (position 0.00 0.00)
+            (bounds 100.00 100.00)
+          )
+          (contents layer (media)
+            (position 0.00 -12.00)
+            (bounds 100.00 112.00)
+          )
+        )
+        (GraphicsLayer
+          (position 13.00 173.00)
+          (bounds 100.00 100.00)
+          (contents clipping layer
+            (position 0.00 0.00)
+            (bounds 100.00 100.00)
+          )
+          (contents layer (media)
+            (position -24.00 -12.00)
+            (bounds 148.00 112.00)
+          )
+        )
+        (GraphicsLayer
+          (position 13.00 278.00)
+          (bounds 100.00 100.00)
+          (contents clipping layer
+            (position 0.00 16.00)
+            (bounds 100.00 68.00)
+          )
+          (contents layer (media)
+            (position 0.00 8.00)
+            (bounds 100.00 76.00)
+          )
+        )
+        (GraphicsLayer
+          (position 13.00 383.00)
+          (bounds 100.00 100.00)
+          (contents clipping layer
+            (position 0.00 0.00)
+            (bounds 100.00 100.00)
+          )
+          (contents layer (media)
+            (position -270.00 -215.00)
+            (bounds 640.00 480.00)
+          )
+        )
+      )
+    )
+  )
+)
+

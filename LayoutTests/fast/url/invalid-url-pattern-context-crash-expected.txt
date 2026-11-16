@@ -1,0 +1,5 @@
+This test passes if WebKit does not crash.
+
+
+PASS URLPattern with stopped document
+

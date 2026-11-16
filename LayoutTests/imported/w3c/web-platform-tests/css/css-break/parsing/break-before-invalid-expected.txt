@@ -1,0 +1,4 @@
+
+PASS e.style['break-before'] = "none" should not set the property value
+PASS e.style['break-before'] = "avoid region" should not set the property value
+

@@ -1,0 +1,12 @@
+
+EVENT(sourceopen)
+EVENT(updateend)
+EVENT(updateend)
+RUN(video.play())
+EVENT(playing)
+EXPECTED (video.currentTime >= '1') OK
+RUN(timeAfterLastSeek = video.currentTime)
+EXPECTED (video.currentTime > timeAfterLastSeek == 'true') OK
+RUN(video.pause())
+END OF TEST
+

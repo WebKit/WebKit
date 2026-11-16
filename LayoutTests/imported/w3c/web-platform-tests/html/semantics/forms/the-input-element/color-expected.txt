@@ -1,0 +1,29 @@
+
+PASS Empty value should return #000000
+PASS Missing value should return #000000
+PASS Valid simple color: should return #ffffff
+PASS Valid simple color (containing LATIN CAPITAL LETTERS): should return #ffffff (converted to ASCII lowercase)
+PASS Zero-padding
+PASS Valid simple color: 4 characters long
+PASS Invalid simple color: 8 characters long
+PASS Invalid simple color: no starting # sign
+PASS Invalid simple color: non ASCII hex digits
+PASS Invalid simple color: foobar
+PASS Invalid color: trailing Null (U+0000)
+PASS Invalid color: trailing ;
+PASS Valid color: leading space
+PASS Valid color: trailing space
+PASS Valid color: leading+trailing spaces
+PASS Valid color: keyword crimson
+PASS Valid color: keyword bisque
+PASS Valid color: currentColor
+PASS Invalid color: keyword transparent
+PASS Invalid color: keyword inherit
+PASS Valid color: rgb(1,1,1)
+PASS Valid color: rgb(1,1,1,1)
+PASS Invalid color: PILE OF POO (U+1F4A9)
+PASS Valid color: hsl(150deg 100 53.5)
+PASS Valid color: color(display-p3 .5 0 0)
+PASS Valid color: color(display-p3 1 0 0)
+PASS System colors are parsed
+

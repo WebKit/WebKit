@@ -1,0 +1,23 @@
+<html>
+<head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<script src=../editing.js language="JavaScript" type="text/JavaScript" ></script>
+<script>
+function editingTest() {
+    if (window.testRunner)
+        window.testRunner.dumpSelectionRect();
+    selectAllCommand();
+    moveSelectionBackwardByCharacterCommand();
+    extendSelectionForwardByLineCommand();
+}
+</script>
+</head>
+<body>
+<p>This tests that when a selection that ends at [replaced element, 0] is painted, the replaced element doesn't appear selected.  This test uses a select box for the replaced element.</p>
+<div id="test" contenteditable>
+abc<br>
+<select><option>this select box shouldn't be selected</option><option>2</option></select>
+</div>
+<script>runEditingTest()</script>
+</body>
+
+</html>

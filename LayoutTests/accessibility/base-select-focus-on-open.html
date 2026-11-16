@@ -1,0 +1,64 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+<style>
+select, select::picker(select) {
+    appearance: base-select;
+}
+</style>
+</head>
+<body>
+
+<select id="select">
+    <option>Alpha</option>
+    <option selected>Bravo</option>
+    <option>Charlie</option>
+</select>
+
+<script>
+var output = "This test verifies that when a base-appearance select opens, VoiceOver's focused element is the selected option.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    var select = accessibilityController.accessibleElementById("select");
+
+    var focusedElement;
+    setTimeout(async function() {
+        document.getElementById("select").focus();
+        await waitFor(() => {
+            focusedElement = accessibilityController.focusedElement;
+            return focusedElement && focusedElement.role.toLowerCase().includes("popup");
+        });
+
+        // Listen for FocusedUIElementChanged. When it fires, immediately query
+        // the focused element — this is exactly what VoiceOver does.
+        window.focusedRoleAtNotificationTime = null;
+        window.focusedTextAtNotificationTime = null;
+        accessibilityController.addNotificationListener(function(element, notification) {
+            if (notification === "AXFocusedUIElementChanged") {
+                var focused = accessibilityController.focusedElement;
+                window.focusedRoleAtNotificationTime = focused.role;
+                window.focusedTextAtNotificationTime = platformTextAlternatives(focused);
+            }
+        });
+
+        select.press();
+        output += await expectAsync("select.isExpanded", "true");
+        output += await expectAsync("window.focusedRoleAtNotificationTime != null", "true");
+
+        output += "\n--- Focused element at notification time should be the selected menu item ---\n";
+        output += expect("window.focusedRoleAtNotificationTime.toLowerCase().includes('menuitem')", "true");
+        output += focusedTextAtNotificationTime + "\n";
+        output += expect("window.focusedTextAtNotificationTime.includes('Bravo')", "true");
+
+        accessibilityController.removeNotificationListener();
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

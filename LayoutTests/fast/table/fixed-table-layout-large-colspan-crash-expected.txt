@@ -1,0 +1,4 @@
+Tests that large colspan in a fixed table layout does not result in crash.
+
+PASS
+

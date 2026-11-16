@@ -1,0 +1,9 @@
+.sort(comparator):
+has ['2']
+has ['5']
+set ['2'] = a
+set ['5'] = undefined
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

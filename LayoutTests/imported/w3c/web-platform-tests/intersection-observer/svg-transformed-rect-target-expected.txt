@@ -1,0 +1,6 @@
+
+PASS IntersectionObserver observing an SVG <rect> element with changing 'transform'
+PASS First rAF.
+PASS translated down by 150 units (out of SVG viewport)
+PASS translated down by 50 units
+

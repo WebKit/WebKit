@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+#target {
+    border: 1px solid;
+    width: 100px;
+    height: 100px;
+}
+</style>
+<script src="../../../resources/js-test-pre.js"></script>
+<script>
+var didDispatchWheel = false;
+
+jsTestIsAsync = true;
+
+function dispatchAndHandleGestureEvent(eventToWaitFor, scale, shouldPreventDefault) {
+    debug("");
+
+    return new Promise((resolve, reject) => {
+        function wheelHandler(event) {
+            debug(`Handling 'wheel' event at (${event.pageX}, ${event.pageY})...`);
+
+            shouldBeTrue("event.ctrlKey");
+            shouldBeCloseTo("event.deltaY", scale * -100, 0.01);
+
+            if (!shouldPreventDefault)
+                handled();
+        }
+
+        function gestureHandler(event) {
+            debug(`Handling '${event.type}' event at (${event.pageX}, ${event.pageY})...`);
+
+            if (!shouldPreventDefault)
+                return;
+
+            debug("Calling `preventDefault`...");
+            event.preventDefault();
+
+            if (event.type === eventToWaitFor) {
+                didDispatchWheel = false;
+                // Give time for a `"wheel"` event to be dispatched so failures can be found.
+                setTimeout(() => {
+                    shouldBeFalse("didDispatchWheel");
+                    handled();
+                });
+            }
+        }
+
+        function handled() {
+            target.removeEventListener("wheel", wheelHandler);
+            target.removeEventListener("gesturestart", gestureHandler);
+            target.removeEventListener("gesturechange", gestureHandler);
+            target.removeEventListener("gestureend", gestureHandler);
+            resolve();
+        }
+
+        target.addEventListener("wheel", wheelHandler, {once: true});
+
+        // Add listeners for each phase just in case multiple are dispatched (which would be wrong).
+        target.addEventListener("gesturestart", gestureHandler, {once: true});
+        target.addEventListener("gesturechange", gestureHandler, {once: true});
+        target.addEventListener("gestureend", gestureHandler, {once: true});
+
+        debug(`Dispatching '${eventToWaitFor}'...`);
+        switch (eventToWaitFor) {
+        case "gesturestart":
+            eventSender.scaleGestureStart(scale);
+            break;
+        case "gesturechange":
+            eventSender.scaleGestureChange(scale);
+            break;
+        case "gestureend":
+            eventSender.scaleGestureEnd(scale);
+            break;
+        }
+    });
+}
+
+async function runTest() {
+    if (!window.eventSender) {
+        debug("FAIL: This test requires window.eventSender.");
+        return;
+    }
+
+    eventSender.mouseMoveTo(target.offsetLeft + (target.offsetWidth / 2), target.offsetTop + (target.offsetHeight / 2));
+
+    debug("Test that wheel events are not dispatched if gesture events are not preventDefault.");
+    await dispatchAndHandleGestureEvent("gesturestart", 0.01, false);
+    await dispatchAndHandleGestureEvent("gesturechange", 0.02, false);
+    await dispatchAndHandleGestureEvent("gesturechange", 0.03, false);
+    await dispatchAndHandleGestureEvent("gestureend", 0.04, false);
+
+    debug("");
+
+    debug("Test that wheel events are not dispatched if gesture events are preventDefault.");
+    await dispatchAndHandleGestureEvent("gesturestart", 0.01, true);
+    await dispatchAndHandleGestureEvent("gesturechange", 0.02, true);
+    await dispatchAndHandleGestureEvent("gesturechange", 0.03, true);
+    await dispatchAndHandleGestureEvent("gestureend", 0.04, true);
+
+    debug("");
+    finishJSTest();
+}
+</script>
+</head>
+<body>
+<div id="target"></div>
+<div id="console"></div>
+<script>
+description("Tests wheel event dispatching for gesture events.");
+
+runTest();
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

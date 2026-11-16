@@ -1,0 +1,10 @@
+Tests that stopping a document destroys its AudioWorklet global scope.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS AudioWorklet global scope was destroyed
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

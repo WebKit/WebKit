@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<meta charset=utf-8>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+body { text-align: center; white-space: nowrap; font: 16px Helvetica, sans-serif; }
+img, #puzzleboard { box-shadow: 0 0 4px black; }
+img { margin: 32px 8px 0; }
+#puzzleboard { display: inline-flex; flex-direction: column; background-color: tan; padding: 16px; border-radius: 8px; }
+canvas { border: 2px solid; border-color: rgba(0, 0, 0, 0.2) rgba(255, 255, 255, 0.2) rgba(255, 255, 255, 0.2) rgba(0, 0, 0, 0.2); background-color: rgba(255, 255, 255, 0.2); padding: 2px; }
+label { padding-top: 16px; font-weight: bold; color: #864; text-shadow: 0px 2px 0px rgba(255, 255, 255, 0.3); color: rgb(104, 90, 70); border-radius: 8px; -webkit-user-select: none; user-select: none; text-align: center; }
+input { vertical-align: middle; }
+label span { display: none; }
+.warning { display: none; }
+.unsupported .warning { display: block; position: absolute; top: 0; left: 0; right: 0; }
+.warning span { background-color: rgba(0, 0, 0, 0.5); padding: 4px; border; border-radius: 4px; color: white; }
+.unsupported label { text-decoration: line-through; }
+@media (prefers-color-scheme: dark) {
+    html { background-color: black; }
+    img, #puzzleboard { box-shadow: 0 0 4px #fff8; }
+}
+@media (min-width: 500px) {
+    label span { display: inline; }
+    img { margin-right: 16px; }
+}
+@media (min-width: 1000px) {
+    img { margin-right: 32px; }
+}
+</style>
+<script>
+const SIZE = 3;
+const EMPTY_SQUARE = SIZE * SIZE - 1;
+const TILE_CORNER_RADIUS = 8;
+
+let supported = false;
+let width, height, board, blank;
+let canvas, ctx;
+let scale = 1;
+let animationX, animationY, animatedPosition, animationProgress, animationStartTime, animationActive;
+let complete = false;
+
+let cachedCanvases = {};
+
+matchMedia("(min-width: 500px)").onchange = relayout;
+matchMedia("(min-width: 1000px)").onchange = relayout;
+
+function generateGrain() {
+    let w = puzzleboard.offsetWidth;
+    let h = puzzleboard.offsetHeight;
+    let d = "";
+    let y = 0;
+    for (;;) {
+        y += 5 + Math.round(Math.random() * 5);
+        if (y >= h)
+            break;
+        let x = 0 + Math.round(Math.random() * w / 8);
+        let length = Math.round((3 + Math.random()) / 4 * w);
+        d += `M${x},${y}h${length}`;
+    }
+    let svg = `
+<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}">
+  <defs>
+    <path id="p" d="${d}"/>
+  </defs>
+  <g opacity="0.1">
+    <use href="#p" stroke="black"/>
+    <use href="#p" stroke="white" transform="translate(0,1)"/>
+  </g>
+</svg>`;
+    return "data:image/svg+xml;base64," + btoa(svg);
+}
+
+function canvasSupportsDisplayP3() {
+    let canvas = document.createElement("canvas");
+    try {
+        let context = canvas.getContext("2d", { colorSpace: "display-p3" });
+        return context.getContextAttributes().colorSpace == "display-p3";
+    } catch {
+    }
+    return false;
+}
+
+function init() {
+    supported = canvasSupportsDisplayP3();
+    if (!supported)
+        document.body.className = "unsupported";
+
+    canvas = placeholder;
+    width = image.naturalWidth;
+    height = image.naturalHeight;
+
+    board = [];
+    for (let position = 0; position < SIZE * SIZE; ++position)
+        board.push(position);
+
+    puzzleboard.style.backgroundImage = `url(${generateGrain()})`;
+    relayout();
+
+    blank = SIZE * SIZE - 1;
+
+    shuffle();
+    drawBoard();
+}
+
+function relayout() {
+    if (!canvas)
+        return;
+    if (window.innerWidth < 500)
+        scale = 3;
+    else if (window.innerWidth < 1000)
+        scale = 2;
+    else
+        scale = 1;
+    image.width = width / scale;
+    image.height = height / scale;
+    updateCanvas();
+}
+
+function shuffle() {
+    let lastBlank = blank;
+    for (let i = 0; i < 20; ++i) {
+        let validMoves = [];
+        if (blank % SIZE != 0 && lastBlank != blank - 1)
+            validMoves.push(blank - 1);
+        if (blank % SIZE != SIZE - 1 && lastBlank != blank + 1)
+            validMoves.push(blank + 1);
+        if (Math.floor(blank / SIZE) != 0 && lastBlank != blank - SIZE)
+            validMoves.push(blank - SIZE);
+        if (Math.floor(blank / SIZE) != SIZE - 1 && lastBlank != blank + SIZE)
+            validMoves.push(blank + SIZE);
+        let move = validMoves[Math.floor(Math.random() * validMoves.length)];
+        lastBlank = blank;
+        makeMove(move);
+    }
+}
+
+function makeMove(position) {
+    board[blank] = board[position];
+    board[position] = EMPTY_SQUARE;
+    blank = position;
+}
+
+function drawTile(position) {
+    let segment = board[position];
+    if (segment == EMPTY_SQUARE)
+        return;
+
+    let x = position % SIZE;
+    let y = Math.floor(position / SIZE);
+
+    let tileWidth = width / SIZE;
+    let tileHeight = height / SIZE;
+
+    let radius = TILE_CORNER_RADIUS * scale;
+    let tilePath = new Path2D(`
+      M ${2 + radius},2
+      h ${tileWidth - 4 - radius * 2}  a ${radius},${radius} 0 0 1  ${radius}, ${radius}
+      v ${tileWidth - 4 - radius * 2}  a ${radius},${radius} 0 0 1 -${radius}, ${radius}
+      h -${tileWidth - 4 - radius * 2} a ${radius},${radius} 0 0 1 -${radius},-${radius}
+      v -${tileWidth - 4 - radius * 2} a ${radius},${radius} 0 0 1  ${radius},-${radius}
+      z`);
+    ctx.save();
+    ctx.translate(x * tileWidth, y * tileHeight);
+    if (animationActive && position == animatedPosition)
+        ctx.translate(animationX * animationProgress, animationY * animationProgress);
+    ctx.clip(tilePath);
+    ctx.drawImage(image, (segment % SIZE) * tileWidth, Math.floor(segment / SIZE) * tileHeight, tileWidth, tileHeight, 0, 0, tileWidth, tileHeight);
+    ctx.restore();
+}
+
+function drawBoard() {
+    ctx.clearRect(0, 0, width, height);
+    if (complete) {
+        ctx.drawImage(image, 0, 0, width, height);
+    } else {
+        for (let position = 0; position < SIZE * SIZE; ++position)
+            drawTile(position);
+    }
+}
+
+function updateCanvas() {
+    let colorSpace = displayP3.checked && supported ? "display-p3" : "srgb";
+
+    let newCanvas = cachedCanvases[colorSpace];
+    if (newCanvas != canvas) {
+        if (!newCanvas) {
+            newCanvas = document.createElement("canvas");
+            newCanvas.width = image.naturalWidth;
+            newCanvas.height = image.naturalHeight;
+            newCanvas.addEventListener("mousedown", mouseDown, false);
+            cachedCanvases[colorSpace] = newCanvas;
+        }
+    }
+
+    canvas.replaceWith(newCanvas);
+    canvas = newCanvas;
+
+    canvas.style.width = `${width / scale}px`;
+    canvas.style.height = `${height / scale}px`;
+
+    ctx = canvas.getContext("2d", { colorSpace });
+
+    drawBoard();
+}
+
+function mouseDown(event) {
+    if (animationActive || complete)
+        return;
+
+    let tileWidth = width / SIZE;
+    let tileHeight = height / SIZE;
+
+    let x = event.offsetX * scale;
+    let y = event.offsetY * scale;
+
+    let position = Math.floor((x - 8) / tileWidth) + Math.floor((y - 8) / tileHeight) * SIZE;
+
+    if (blank == position - SIZE) {
+        animationX = 0;
+        animationY = -tileHeight;
+    } else if (blank == position + SIZE) {
+        animationX = 0;
+        animationY = tileHeight;
+    } else if (blank == position - 1 && (position % SIZE != 0)) {
+        animationX = -tileWidth;
+        animationY = 0;
+    } else if (blank == position + 1 && (position % SIZE != SIZE - 1)) {
+        animationX = tileWidth;
+        animationY = 0;
+    } else
+        return;
+
+    animatedPosition = position;
+    animationStartTime = Date.now();
+    animationActive = true;
+    requestAnimationFrame(animate);
+}
+
+function isComplete() {
+    for (let position = 0; position < SIZE * SIZE; ++position) {
+        if (board[position] != position)
+            return false;
+    }
+    return true;
+}
+
+function animate() {
+    animationProgress = (Date.now() - animationStartTime) / 100;
+
+    if (animationProgress < 1) {
+        drawBoard();
+        requestAnimationFrame(animate);
+        return;
+    }
+
+    animationActive = false;
+    makeMove(animatedPosition);
+    if (isComplete()) {
+        complete = true;
+    }
+    drawBoard();
+}
+</script>
+<img id="image" src="puzzle.jpg" onload="init()">
+<div id=puzzleboard>
+  <div id="placeholder"></div>
+  <label><input id=displayP3 type=checkbox onchange="updateCanvas()"> Use Display P3 <span>canvas</span></label>
+</div>
+<div class="warning"><span>This browser does not support Display P3 canvas.</span></div>

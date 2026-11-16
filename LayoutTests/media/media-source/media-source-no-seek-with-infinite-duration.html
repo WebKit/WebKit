@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>media-source-no-seek-with-infinite-duration</title>
+    <script src="mock-media-source.js"></script>
+    <script src="../video-test.js"></script>
+    <script>
+    var source;
+    var sourceBuffer;
+    var initSegment;
+
+    if (window.internals)
+        internals.initializeMockMediaSource();
+
+    window.addEventListener('load', async() => {
+        findMediaElement();
+
+        run('video.currentTime = 1.0');
+
+        run('source = new MediaSource()');
+
+        const mediaElement = document.createElement('source');
+        mediaElement.type = 'video/mock; codecs=mock';
+        mediaElement.src = URL.createObjectURL(source);
+        video.appendChild(mediaElement);
+        await waitFor(source, 'sourceopen');
+        testExpected('mediaElement.readyState', HTMLMediaElement.HAVE_NOTHING);
+
+        // Test seeking a mediaElement backed by a mediaSource with infinite duration and
+        // empty buffered ranges. These factors trigger special considerations for
+        // HTMLMediaElement.seekable.
+        run('source.duration = Infinity');
+
+        sourceBuffer = source.addSourceBuffer("video/mock; codecs=mock");
+        initSegment = makeAInit(0, [makeATrack(1, 'mock', TRACK_KIND.VIDEO)]);
+        run('sourceBuffer.appendBuffer(initSegment)');
+        await waitFor(sourceBuffer, 'updateend');
+
+        testExpected('mediaElement.seekable.length', 0);
+        testExpected('mediaElement.currentTime', 0);
+        testExpected('mediaElement.readyState', HTMLMediaElement.HAVE_METADATA);
+
+        // Seek should not actually occur because seekable is empty.
+        // From https://html.spec.whatwg.org/multipage/media.html#seeking,
+        // "If there are no ranges given in the seekable attribute then set the seeking IDL
+        // attribute to false and abort these steps."
+        testExpected('mediaElement.seeking', false);
+
+        endTest();
+    });
+    </script>
+</head>
+<body>
+    <div>This test checks if seeking status and currentTime when duration is infinity.</div>
+    <video></video>
+</body>
+</html>

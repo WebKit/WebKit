@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>:focus-visible should not match after focus() following a click inside a focused ancestor</title>
+    <script src="../../resources/testharness.js"></script>
+    <script src="../../resources/testharnessreport.js"></script>
+    <script src="../../resources/ui-helper.js"></script>
+    <style>
+        *:focus,
+        *:focus-visible {
+            outline: none;
+        }
+        #trigger:focus-visible {
+            outline: 3px solid red;
+        }
+        #close {
+            width: 60px;
+            height: 30px;
+        }
+    </style>
+</head>
+<body>
+    <p>Clicking a button that is not mouse-focusable should record a click focus trigger, even when
+    the button is inside an ancestor which is focusable and already focused, so that a later
+    element.focus() does not show :focus-visible.</p>
+
+    <button id="trigger" type="button">Open</button>
+
+    <div id="container" tabindex="-1"><button id="close" type="button"></button></div>
+
+    <script>
+    // This must be the document's first user interaction. Once a click has been recorded, nothing
+    // resets it -- a programmatic focus() deliberately leaves the recorded trigger alone -- so a
+    // second click-based test in this document would pass regardless of the behavior under test.
+    promise_test(async t => {
+        const trigger = document.getElementById("trigger");
+        const container = document.getElementById("container");
+        const close = document.getElementById("close");
+
+        // Focusing by script does not record a click trigger, so the container is focused but the
+        // document has still never seen a click.
+        container.focus();
+        assert_equals(document.activeElement, container, "container should be focused");
+
+        close.addEventListener("click", () => { trigger.focus(); }, { once: true });
+
+        // #close is empty, so the click lands on the button itself, and clicking a <button> does
+        // not focus it on macOS or iOS.
+        const rect = close.getBoundingClientRect();
+        await UIHelper.activateAt(rect.x + rect.width / 2, rect.y + rect.height / 2);
+
+        assert_equals(document.activeElement, trigger, "trigger should be focused");
+        assert_false(trigger.matches(":focus-visible"),
+            ":focus-visible should not match on trigger after focus() from a click on a button inside an already-focused ancestor");
+    }, "focus() after clicking a non-mouse-focusable button inside an already-focused ancestor should not show :focus-visible");
+    </script>
+</body>
+</html>

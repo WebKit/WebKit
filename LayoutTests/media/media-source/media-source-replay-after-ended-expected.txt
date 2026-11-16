@@ -1,0 +1,29 @@
+This tests that a MediaSource video that has ended plays through to the end again each time play() is called.
+
+RUN(video.src = URL.createObjectURL(source))
+EVENT(sourceopen)
+RUN(audioSourceBuffer = source.addSourceBuffer(audioLoader.type()))
+RUN(audioSourceBuffer.appendBuffer(audioLoader.initSegment()))
+RUN(audioSourceBuffer.appendBuffer(audioLoader.mediaSegment(0)))
+RUN(audioSourceBuffer.appendBuffer(audioLoader.mediaSegment(1)))
+RUN(source.endOfStream())
+-
+Play 1.
+RUN(video.play())
+EVENT(ended)
+EXPECTED (video.ended == 'true') OK
+EXPECTED (video.currentTime == video.duration == 'true') OK
+-
+Play 2.
+RUN(video.play())
+EVENT(ended)
+EXPECTED (video.ended == 'true') OK
+EXPECTED (video.currentTime == video.duration == 'true') OK
+-
+Play 3.
+RUN(video.play())
+EVENT(ended)
+EXPECTED (video.ended == 'true') OK
+EXPECTED (video.currentTime == video.duration == 'true') OK
+END OF TEST
+

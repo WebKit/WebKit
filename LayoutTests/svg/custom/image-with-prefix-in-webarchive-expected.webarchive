@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>WebMainResource</key>
+	<dict>
+		<key>WebResourceData</key>
+		<string>&lt;svg:svg xmlns:svg="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"&gt;
+ &lt;svg:script&gt;
+    if (window.testRunner)
+        testRunner.dumpDOMAsWebArchive();
+  &lt;/svg:script&gt;
+  &lt;svg:image xlink:href="../as-object/resources/lime100x100.png" width="100" height="100"/&gt;
+&lt;/svg:svg&gt;</string>
+		<key>WebResourceFrameName</key>
+		<string></string>
+		<key>WebResourceMIMEType</key>
+		<string>image/svg+xml</string>
+		<key>WebResourceTextEncodingName</key>
+		<string>UTF-8</string>
+		<key>WebResourceURL</key>
+		<string>file:///LayoutTests/svg/custom/image-with-prefix-in-webarchive.svg</string>
+	</dict>
+	<key>WebSubresources</key>
+	<array>
+		<dict>
+			<key>WebResourceData</key>
+			<data>
+			iVBORw0KGgoAAAANSUhEUgAAAGQAAABkCAYAAABw4pVUAAAAAXNS
+			R0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAgY0hSTQAAeiYAAICE
+			AAD6AAAAgOgAAHUwAADqYAAAOpgAABdwnLpRPAAAABh0RVh0U29m
+			dHdhcmUAUGFpbnQuTkVUIHYzLjA4ZXKc4QAAAeNJREFUeF7t0sER
+			gDAQw0DSf9FAqvA+lBRwGsnnef/fgwzcIH3HQDEwAxiOs9QVSUEw
+			AxjOapfO3YJgBjAcZ6krkoJgBjCc1S6duwXBDGA4zlJXJAXBDGA4
+			q106dwuCGcBwnKWuSAqCGcBwVrt07hYEM4DhOEtdkRQEM4DhrHbp
+			3C0IZgDDcZa6IikIZgDDWe3SuVsQzACG4yx1RVIQzACGs9qlc7cg
+			mAEMx1nqiqQgmAEMZ7VL525BMAMYjrPUFUlBMAMYzmqXzt2CYAYw
+			HGepK5KCYAYwnNUunbsFwQxgOM5SVyQFwQxgOKtdOncLghnAcJyl
+			rkgKghnAcFa7dO4WBDOA4ThLXZEUBDOA4ax26dwtCGYAw3GWuiIp
+			CGYAw1nt0rlbEMwAhuMsdUVSEMwAhrPapXO3IJgBDMdZ6oqkIJgB
+			DGe1S+duQTADGI6z1BVJQTADGM5ql87dgmAGMBxnqSuSgmAGMJzV
+			Lp27BcEMYDjOUlckBcEMYDirXTp3C4IZwHCcpa5ICoIZwHBWu3Tu
+			FgQzgOE4S12RFAQzgOGsduncLQhmAMNxlroiKQhmAMNZ7dK5WxDM
+			AIbjLHVFUhDMAIaz2qVztyCYAQzHWeqKpCCYAQxntUvnbkEwAxiO
+			s9QRyQemSBErQhZ+LAAAAABJRU5ErkJggg==
+			</data>
+			<key>WebResourceMIMEType</key>
+			<string>image/png</string>
+			<key>WebResourceResponse</key>
+			<dict>
+				<key>MIMEType</key>
+				<string>image/png</string>
+				<key>URL</key>
+				<string>file:///LayoutTests/svg/as-object/resources/lime100x100.png</string>
+				<key>expectedContentLength</key>
+				<integer>649</integer>
+			</dict>
+			<key>WebResourceURL</key>
+			<string>file:///LayoutTests/svg/as-object/resources/lime100x100.png</string>
+		</dict>
+	</array>
+</dict>
+</plist>

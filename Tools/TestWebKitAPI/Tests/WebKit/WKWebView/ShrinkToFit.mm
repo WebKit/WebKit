@@ -1,0 +1,106 @@
+/*
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#import "config.h"
+
+#import "Helpers/PlatformUtilities.h"
+#import "Helpers/cocoa/TestNavigationDelegate.h"
+#import <WebKit/WKWebViewPrivate.h>
+#import <wtf/RetainPtr.h>
+
+#if !PLATFORM(IOS_FAMILY)
+
+static bool shrinkToFitDone;
+static bool shrinkToFitAfterNavigationDone;
+static bool shrinkToFitDisabledDone;
+
+// rdar://136702089
+#if PLATFORM(MAC)
+TEST(WebKit, DISABLED_ShrinkToFit)
+#else
+TEST(WebKit, ShrinkToFit)
+#endif
+{
+    RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100)]);
+
+    [webView evaluateJavaScript:@"document.body.clientWidth" completionHandler:^(id result, NSError *error) {
+        EXPECT_EQ(100, [result integerValue]);
+
+        [webView _setLayoutMode:_WKLayoutModeDynamicSizeComputedFromMinimumDocumentSize];
+        shrinkToFitDone = true;
+    }];
+
+    TestWebKitAPI::Util::run(&shrinkToFitDone);
+
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"lots-of-text" withExtension:@"html"]];
+    [webView loadRequest:request];
+    [webView _test_waitForDidFinishNavigation];
+
+    // After loading a wide page, the view should be scaled to fit the width of the document.
+    [webView evaluateJavaScript:@"document.body.clientWidth" completionHandler:^(id result, NSError *error) {
+        EXPECT_EQ(808, [result integerValue]);
+        shrinkToFitAfterNavigationDone = true;
+    }];
+
+    TestWebKitAPI::Util::run(&shrinkToFitAfterNavigationDone);
+
+    [webView _setLayoutMode:_WKLayoutModeViewSize];
+    [webView evaluateJavaScript:@"document.body.clientWidth" completionHandler:^(id result, NSError *error) {
+        // This is 85 instead of 100 because after loading a large page, we now have a scrollbar.
+        EXPECT_EQ(85, [result integerValue]);
+        shrinkToFitDisabledDone = true;
+    }];
+
+    TestWebKitAPI::Util::run(&shrinkToFitDisabledDone);
+}
+
+TEST(WebKit, ViewScaleFactorAfterShrinkToFit)
+{
+    RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100)]);
+
+    EXPECT_EQ(1.0, [webView _viewScale]);
+
+    [webView _setLayoutMode:_WKLayoutModeDynamicSizeComputedFromMinimumDocumentSize];
+
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"lots-of-text" withExtension:@"html"]];
+    [webView loadRequest:request];
+    [webView _test_waitForDidFinishNavigation];
+
+    // The WebProcess scales the view down to fit the wide document during a
+    // compositing flush and then sends ViewScaleFactorDidChange back to the
+    // UIProcess. Both steps are asynchronous with respect to navigation, so
+    // poll until the cached scale reflects the auto-scale rather than assuming
+    // it has arrived after a single round-trip.
+    bool scaledDown = TestWebKitAPI::Util::waitFor([&] {
+        return [webView _viewScale] < 1.0;
+    });
+
+    // The cached value must reflect the auto-scale, not the default of 1.
+    EXPECT_TRUE(scaledDown);
+    EXPECT_LT([webView _viewScale], 1.0);
+    EXPECT_GT([webView _viewScale], 0.0);
+}
+
+#endif

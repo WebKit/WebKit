@@ -1,0 +1,125 @@
+<!doctype html>
+<meta charset=utf-8>
+<title>CustomEffect</title>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="../../imported/w3c/web-platform-tests/web-animations/testcommon.js"></script>
+<body>
+<script>
+'use strict';
+
+promise_test(async t => {
+    let numberOfEvents = 0;
+    let eventProgress = null;
+
+    await waitForAnimationFrames(1);
+    await new Promise(setTimeout);
+
+    const animation = createDiv(t).animate({ left: "100px" }, 1);
+    animation.onprogress = event => {
+        eventProgress = animation.effect.getComputedTiming().progress;
+        numberOfEvents++;
+    };
+
+    assert_equals(eventProgress, null, "A 'progress' event is not fired upon creating an animation.");
+
+    // The finished promise will be resolved prior to events being dispatched, so we also
+    // wait for the next run loop for events to have a had a chance to be dispatched.
+    await animation.finished;
+    await new Promise(setTimeout);
+    const numberOfEventsAfterEffectEnded = numberOfEvents;
+
+    await waitForAnimationFrames(1);
+    assert_equals(numberOfEventsAfterEffectEnded, numberOfEvents, "Events are no longer dispatched after the animation is finished.");
+    assert_equals(eventProgress, null, "By the time the 'progress' event is dispatched, progress is null.");
+}, "Progress events are not dispatched once an animation is finished if it does not fill.");
+
+promise_test(async t => {
+    let numberOfEvents = 0;
+    let eventProgress = null;
+
+    const animation = createDiv(t).animate({ left: "100px" }, { fill: "forwards", duration: 1 });
+    animation.onprogress = event => {
+        eventProgress = animation.effect.getComputedTiming().progress;
+        numberOfEvents++;
+    };
+
+    assert_equals(eventProgress, null, "A 'progress' event is not fired upon creating an animation.");
+
+    // The finished promise will be resolved prior to events being dispatched, so we also
+    // wait for the next run loop for events to have a had a chance to be dispatched.
+    await animation.finished;
+    await new Promise(setTimeout);
+    assert_equals(eventProgress, 1, "The 'progress' event was dispatched with progress = 1.");
+
+    const numberOfEventsAfterEffectEnded = numberOfEvents;
+
+    await waitForAnimationFrames(1);
+    assert_equals(numberOfEventsAfterEffectEnded, numberOfEvents, "Events are no longer dispatched after the animation is finished.");
+}, "Progress events are not dispatched once an animation is finished even if it is filling.");
+
+promise_test(async t => {
+    let numberOfEvents = 0;
+    let eventProgress = null;
+
+    // Create an animation that won't start until long into the future.
+    const animation = createDiv(t).animate({ left: "100px" }, { fill: "backwards", duration: 1 });
+    animation.startTime = document.timeline.currentTime + (100 * 1000);
+    animation.onprogress = event => {
+        eventProgress = animation.effect.getComputedTiming().progress;
+        numberOfEvents++;
+    };
+
+    assert_equals(eventProgress, null, "A 'progress' event is not fired upon creating an animation.");
+
+    await waitForAnimationFrames(1);
+    assert_equals(eventProgress, 0, "A 'progress' event is first fired with progress = 0.");
+
+    await waitForAnimationFrames(1);
+    assert_equals(numberOfEvents, 1, "Events are not dispatched after the first frame as the animation effect is still in the before phase and its progress hasn't changed.");
+}, "Backward-filling animations dispatch a single 'progress' event during the before phase.");
+
+promise_test(async t => {
+    let numberOfEvents = 0;
+    let eventProgress = null;
+
+    const duration = 1000;
+    const animation = createDiv(t).animate({ left: "100px" }, duration);
+    animation.onprogress = event => {
+        eventProgress = animation.effect.getComputedTiming().progress;
+        numberOfEvents++;
+    };
+
+    animation.pause();
+    assert_equals(eventProgress, null, "A 'progress' event is not fired upon creating an animation.");
+
+    await waitForAnimationFrames(1);
+    assert_equals(eventProgress, 0, "A 'progress' event is first fired with progress = 0.");
+
+    await waitForAnimationFrames(1);
+    assert_equals(numberOfEvents, 1, "Events are not dispatched while the animation is paused.");
+
+    animation.currentTime = animation.startTime + (duration * 0.2);
+    animation.currentTime = animation.startTime + (duration * 0.1);
+
+    await waitForAnimationFrames(1);
+    assert_equals(numberOfEvents, 2, "Only one 'progress' event is dispatched if the animation's current time is changed multiple times.");
+    assert_equals(eventProgress, 0.1);
+}, "Progress events are dispatched as the animation is paused and seeked.");
+
+promise_test(async t => {
+    let numberOfCallbacks = 0;
+    let numberOfEvents = 0;
+
+    const animation = document.timeline.animate(progress => numberOfCallbacks++, { fill: "forwards", duration: 1 });
+    animation.onprogress = event => numberOfEvents++;
+
+    await animation.finished;
+    assert_equals(numberOfCallbacks, numberOfEvents + 1, "A custom effect's callback is fired prior to a 'progress' being dispatched");
+
+    await new Promise(setTimeout);
+    assert_equals(numberOfCallbacks, numberOfEvents, "After the next run loop, a 'progress' event was dispatched");
+}, "Custom effect callbacks are fired prior to 'progress' events being dispatched.");
+
+</script>
+</body>

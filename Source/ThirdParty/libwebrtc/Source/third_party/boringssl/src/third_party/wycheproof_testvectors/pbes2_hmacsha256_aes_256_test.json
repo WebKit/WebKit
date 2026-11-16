@@ -1,0 +1,1228 @@
+{
+  "algorithm": "PbeWithHmacSha256AndAes_256",
+  "schema": "pbe_test_schema.json",
+  "generatorVersion": "0.9",
+  "numberOfTests": 84,
+  "header": [
+    "Test vector of type PbeTest are used for PBES1 or PBES2."
+  ],
+  "notes": {
+    "Ascii": {
+      "bugType": "FUNCTIONALITY",
+      "description": "The test vector contains a password consisting of ASCII characters."
+    },
+    "BmpString": {
+      "bugType": "FUNCTIONALITY",
+      "description": "The test vectors contains a password that is a valid BMPString as used in RFC 7292. This RFC uses big endian encoding and a null terminator."
+    },
+    "NonUtf8": {
+      "bugType": "FUNCTIONALITY",
+      "description": "The test vector contains a password that is not a valid UTF-8 string."
+    },
+    "Printable": {
+      "bugType": "FUNCTIONALITY",
+      "description": "The test vector contains a password consisting of printable ASCII characters."
+    },
+    "Utf8": {
+      "bugType": "FUNCTIONALITY",
+      "description": "The test vector contains a password that is a valid UTF-8 string."
+    }
+  },
+  "testGroups": [
+    {
+      "type": "PbeTest",
+      "tests": [
+        {
+          "tcId": 1,
+          "comment": "printable password",
+          "flags": [
+            "Printable"
+          ],
+          "password": "7743656734722c30",
+          "salt": "fcd9a324f025ef40",
+          "iterationCount": 4096,
+          "iv": "42f02ff71b8524d1678ab2e34f9e7d47",
+          "msg": "",
+          "ct": "e03383efa5cfd120d5df634b2448b103",
+          "result": "valid"
+        },
+        {
+          "tcId": 2,
+          "comment": "printable password",
+          "flags": [
+            "Printable"
+          ],
+          "password": "64395f4b48295839",
+          "salt": "bfb221ba6de64926",
+          "iterationCount": 4096,
+          "iv": "7a735848780923657c0c54bc2ff0d9f8",
+          "msg": "a3",
+          "ct": "6d2158ca2020909e87fbae167a3090e0",
+          "result": "valid"
+        },
+        {
+          "tcId": 3,
+          "comment": "printable password",
+          "flags": [
+            "Printable"
+          ],
+          "password": "3a787e4c2c604d70",
+          "salt": "dc64f1fd4705b4e5",
+          "iterationCount": 4096,
+          "iv": "579ff2437d6739742421b6e4e70d5c27",
+          "msg": "4204",
+          "ct": "e4cd170b4591a8b944654973dd669350",
+          "result": "valid"
+        },
+        {
+          "tcId": 4,
+          "comment": "printable password",
+          "flags": [
+            "Printable"
+          ],
+          "password": "2a67656a66296120",
+          "salt": "4c379a2bd962d19a",
+          "iterationCount": 4096,
+          "iv": "5bff9a5e8692229679cbd70fcfdebb74",
+          "msg": "ceb541",
+          "ct": "c345ad62e7745cc532ad0b90a34061ed",
+          "result": "valid"
+        },
+        {
+          "tcId": 5,
+          "comment": "printable password",
+          "flags": [
+            "Printable"
+          ],
+          "password": "3b55267d5f4b2d4c",
+          "salt": "08e041282eed4f00",
+          "iterationCount": 4096,
+          "iv": "17c5e988149370694c1b3b8cb0e44225",
+          "msg": "10d032a7",
+          "ct": "66454530862777c38563f0221d90e428",
+          "result": "valid"
+        },
+        {
+          "tcId": 6,
+          "comment": "printable password",
+          "flags": [
+            "Printable"
+          ],
+          "password": "4f317e2e525e517a",
+          "salt": "bd5c4b6f25a1f6ff",
+          "iterationCount": 4096,
+          "iv": "76e5e3eb771a4daec6fabdc0b0793195",
+          "msg": "29d9f1a701",
+          "ct": "7b322ef8ff216f1c8735daeeb05ea4b7",
+          "result": "valid"
+        },
+        {
+          "tcId": 7,
+          "comment": "printable password",
+          "flags": [
+            "Printable"
+          ],
+          "password": "6557766473282375",
+          "salt": "ea1efbb1c86b0c06",
+          "iterationCount": 4096,
+          "iv": "1f186ad98435e90fd7700695c986ef78",
+          "msg": "6f124d8a8248",
+          "ct": "de60d73214727446d883429735e79666",
+          "result": "valid"
+        },
+        {
+          "tcId": 8,
+          "comment": "printable password",
+          "flags": [
+            "Printable"
+          ],
+          "password": "543a5f48765a2542",
+          "salt": "f308bbcca74a2224",
+          "iterationCount": 4096,
+          "iv": "26bbbf2e18f06a4524e13bfd1ac00b37",
+          "msg": "a1163153287dfe",
+          "ct": "987adc98e8ca6f1e71381be99830df18",
+          "result": "valid"
+        },
+        {
+          "tcId": 9,
+          "comment": "printable password",
+          "flags": [
+            "Printable"
+          ],
+          "password": "695a3c642f457a52",
+          "salt": "7af3b0005c594502",
+          "iterationCount": 4096,
+          "iv": "6d9e8ea3d6ed355bf5e65b12995dbf6a",
+          "msg": "9b29df8b3b9862f4",
+          "ct": "4bcb30bde11dff1050914aed60ed7293",
+          "result": "valid"
+        },
+        {
+          "tcId": 10,
+          "comment": "printable password",
+          "flags": [
+            "Printable"
+          ],
+          "password": "2a772a233f216e60",
+          "salt": "172d5f4595c220dd",
+          "iterationCount": 4096,
+          "iv": "a5941967d4f6934431bd9951e20a93a6",
+          "msg": "fe51cf84289221b894",
+          "ct": "fa35a45533f263c9445b5f6f12bc788c",
+          "result": "valid"
+        },
+        {
+          "tcId": 11,
+          "comment": "printable password",
+          "flags": [
+            "Printable"
+          ],
+          "password": "793c43623652216f",
+          "salt": "d1d722eee2c5ebef",
+          "iterationCount": 4096,
+          "iv": "5cfe832947ec659f6847277ec1fab2f9",
+          "msg": "696eb8b4e6b2015abb91",
+          "ct": "cd145d184b9adb2344408f6e4a152624",
+          "result": "valid"
+        },
+        {
+          "tcId": 12,
+          "comment": "printable password",
+          "flags": [
+            "Printable"
+          ],
+          "password": "4854515c222a2230",
+          "salt": "843f5ff28978f214",
+          "iterationCount": 4096,
+          "iv": "430b247a435124754c83cc11203f18bd",
+          "msg": "d8405be7823b472459a2fc",
+          "ct": "04de69023e941da4a39b0557bb550cff",
+          "result": "valid"
+        },
+        {
+          "tcId": 13,
+          "comment": "printable password",
+          "flags": [
+            "Printable"
+          ],
+          "password": "48682a4d34266b40",
+          "salt": "783f344a1fa7c9a8",
+          "iterationCount": 4096,
+          "iv": "c707947121e5fc2da16990a78772e0ab",
+          "msg": "56c73b781c1bff72a8ae7faf",
+          "ct": "c53d0f69ae2ec9bd3f0678284db2588b",
+          "result": "valid"
+        },
+        {
+          "tcId": 14,
+          "comment": "printable password",
+          "flags": [
+            "Printable"
+          ],
+          "password": "293a746531294d5c",
+          "salt": "2c75641f991eb10b",
+          "iterationCount": 4096,
+          "iv": "96dabd858e4187d0e50f8299ab60f029",
+          "msg": "b07e8bbb45e9a17c124f6d5129",
+          "ct": "899c4064bc1c6b8488fe4bcb5ff28f89",
+          "result": "valid"
+        },
+        {
+          "tcId": 15,
+          "comment": "printable password",
+          "flags": [
+            "Printable"
+          ],
+          "password": "353377343f482b65",
+          "salt": "cf1620e7aabb73b7",
+          "iterationCount": 4096,
+          "iv": "8e6dd70b1dd1c39d0b8b593c556d812b",
+          "msg": "ff89eb184de11579cae7d110a350",
+          "ct": "6fcd290304343442991e2527dc7aa371",
+          "result": "valid"
+        },
+        {
+          "tcId": 16,
+          "comment": "printable password",
+          "flags": [
+            "Printable"
+          ],
+          "password": "614e2d4634335721",
+          "salt": "6dffc1db31767608",
+          "iterationCount": 4096,
+          "iv": "78c899bcdc4cf7d933ddc9016bc6e64e",
+          "msg": "5e859aac690c85646ffb3f2bbb0d9c",
+          "ct": "5cdc1029cf192b802e534280dbdc21e8",
+          "result": "valid"
+        },
+        {
+          "tcId": 17,
+          "comment": "printable password",
+          "flags": [
+            "Printable"
+          ],
+          "password": "6f5330325e22574e",
+          "salt": "798acc7c76739d75",
+          "iterationCount": 4096,
+          "iv": "5bfcfd6d7013eb8828f72455d7535c77",
+          "msg": "86059dc647ba7d0067099e16c3da8bb6",
+          "ct": "03a73bc4a4d35d9b774b25b559676161275661eaae98fe00bde7ef19ada52256",
+          "result": "valid"
+        },
+        {
+          "tcId": 18,
+          "comment": "printable password",
+          "flags": [
+            "Printable"
+          ],
+          "password": "3972245623494f42",
+          "salt": "da5421f23ac5b5e1",
+          "iterationCount": 4096,
+          "iv": "12293114ddb85319240682c1765e4533",
+          "msg": "fc9349cbd8c277786c888f3254342431a8",
+          "ct": "e2e31d9010e139fc6820af5f9d4fab12e24e1a442e2becf285fe1a3b7a310d2b",
+          "result": "valid"
+        },
+        {
+          "tcId": 19,
+          "comment": "printable password",
+          "flags": [
+            "Printable"
+          ],
+          "password": "464d2f76752b4d63",
+          "salt": "8cfea3c6783cfc41",
+          "iterationCount": 4096,
+          "iv": "9c84fe91476ab1c6ed30db9bb7f60280",
+          "msg": "ad10a3cdef856b0632f7ce200c11f6c569d2",
+          "ct": "c4eb3baddbab3bc06ee9513b0b4aa13ed7fa423207b55443a38443cd0e254c6b",
+          "result": "valid"
+        },
+        {
+          "tcId": 20,
+          "comment": "printable password",
+          "flags": [
+            "Printable"
+          ],
+          "password": "7951437c2b6f7079",
+          "salt": "caada2e55c49492f",
+          "iterationCount": 4096,
+          "iv": "3a0185b1423310796b052e9128334b04",
+          "msg": "be82c331a83dd0c472abc6ae8725d2ba48b3ad",
+          "ct": "f33ee7dec0cffb0cd62b0396b94c885d139d0078bdbb11ad944b396fc63f7318",
+          "result": "valid"
+        },
+        {
+          "tcId": 21,
+          "comment": "printable password",
+          "flags": [
+            "Printable"
+          ],
+          "password": "525c2424652a603d",
+          "salt": "26ea52da49513b47",
+          "iterationCount": 4096,
+          "iv": "b9c70ea8599e136a64b2a6733e8ceb40",
+          "msg": "d964c8b7fac0906c25654186f8d8e74b62dac5ac",
+          "ct": "ad9afa495c22f4ebdc378b6d078c370343bb66296d60be0c7be433beb12313aa",
+          "result": "valid"
+        },
+        {
+          "tcId": 22,
+          "comment": "printable password",
+          "flags": [
+            "Printable"
+          ],
+          "password": "6e446161627e6a3d",
+          "salt": "64c6e216305ac8e5",
+          "iterationCount": 4096,
+          "iv": "2e089b050bfcbb214a3904344b25a28d",
+          "msg": "00bba99a3d64657e16b70ee50c091488661c0af597",
+          "ct": "58cbd503781709356b9890bb49d15fe38d013e398b0d6c1e0f4504f9943d234d",
+          "result": "valid"
+        },
+        {
+          "tcId": 23,
+          "comment": "printable password",
+          "flags": [
+            "Printable"
+          ],
+          "password": "5b413d39776e3323",
+          "salt": "33017b20ba4a7af2",
+          "iterationCount": 4096,
+          "iv": "6fcf1307b562738a387c75885a7d6bf9",
+          "msg": "1f6c99446d139e9ea5d46af1667b733eb8748e5e0e18",
+          "ct": "167b8a7a60aec28c37f8b33e3bbceacf3975fd1a72593413adb8923bea307ede",
+          "result": "valid"
+        },
+        {
+          "tcId": 24,
+          "comment": "printable password",
+          "flags": [
+            "Printable"
+          ],
+          "password": "414838254a683628",
+          "salt": "127e43a6c714f168",
+          "iterationCount": 4096,
+          "iv": "21bb5b1c774409d06067597153422573",
+          "msg": "773f5e2ebe6ce60683cac6a9e2f0c9663556923582bdec",
+          "ct": "c2cea5f122d34b02893edd31b3b9d3d0c8a4be6e4a2feb2129c7de6c6d1ffff8",
+          "result": "valid"
+        },
+        {
+          "tcId": 25,
+          "comment": "printable password",
+          "flags": [
+            "Printable"
+          ],
+          "password": "3c202b435634305d",
+          "salt": "45f38c6678268b8e",
+          "iterationCount": 4096,
+          "iv": "348b3cca3ece503b42b20b2ae690c4eb",
+          "msg": "8ab193d18b1dec59400822dd0cea7239b3743327488e3d2d",
+          "ct": "0a233ec77b6070dccbef32422e861ff6017e6b70007c7a9c735c36157f20450d",
+          "result": "valid"
+        },
+        {
+          "tcId": 26,
+          "comment": "printable password",
+          "flags": [
+            "Printable"
+          ],
+          "password": "6e43225f5832705b",
+          "salt": "5911a7a49800e204",
+          "iterationCount": 4096,
+          "iv": "58b4f658efcf961c4715b0af0b0913b7",
+          "msg": "b336756c278ab89c0539047824350469b05918446a672b4215",
+          "ct": "41bab01079fb43f71eb058ebfc765e946776045db4ba43fecc51ea2904b51b68",
+          "result": "valid"
+        },
+        {
+          "tcId": 27,
+          "comment": "printable password",
+          "flags": [
+            "Printable"
+          ],
+          "password": "3f26723264514541",
+          "salt": "18a9d3dfa74d4024",
+          "iterationCount": 4096,
+          "iv": "497fe0d1a8c09aca8d98a11db8621077",
+          "msg": "6cd40dc20c7103a39b83da1f8c67855b0ffd77c250e1447414a9",
+          "ct": "6017eb513686778795c5559261180e2b951214a33da53bf864d56748cc8d6d96",
+          "result": "valid"
+        },
+        {
+          "tcId": 28,
+          "comment": "printable password",
+          "flags": [
+            "Printable"
+          ],
+          "password": "536d4a3b42714035",
+          "salt": "9025629f385862f5",
+          "iterationCount": 4096,
+          "iv": "575fd9464cc1a36fcd23d7fc4ed304de",
+          "msg": "40a37fae54940616cd6bb6cefb8f4521895fe9b7593492c2709003",
+          "ct": "c95d0d8da6acd587061c0a62b24520e64b738364f429c36a939233e75c871f62",
+          "result": "valid"
+        },
+        {
+          "tcId": 29,
+          "comment": "printable password",
+          "flags": [
+            "Printable"
+          ],
+          "password": "283d692b21263f41",
+          "salt": "4f9ca92d54e165d1",
+          "iterationCount": 4096,
+          "iv": "402239571eaf6f7162fd4fe620d55948",
+          "msg": "d47c8c9ec28820d760abfe731e9e9818d34abad20da255cff68fd374",
+          "ct": "ab61f2dced0996dab2ca98b825b24a321ced05c7d1a1d1b26c9d374f08f64c48",
+          "result": "valid"
+        },
+        {
+          "tcId": 30,
+          "comment": "printable password",
+          "flags": [
+            "Printable"
+          ],
+          "password": "3658665b3a546f47",
+          "salt": "5ae48edef6811519",
+          "iterationCount": 4096,
+          "iv": "2425c2af851d56445c8e11b4529e3287",
+          "msg": "5892825348e6160fd4f95f0a619a5a41604ee4b21ace4c9f61adf31ebc",
+          "ct": "d194d06fffbf7e408104767600299afd125390ccba8e92e81cdb10c6753a16e0",
+          "result": "valid"
+        },
+        {
+          "tcId": 31,
+          "comment": "printable password",
+          "flags": [
+            "Printable"
+          ],
+          "password": "257d78712275712a",
+          "salt": "e2a7c16a6fe6a1fc",
+          "iterationCount": 4096,
+          "iv": "9dc7a4ff8a5a9d04d1b88c14028092c5",
+          "msg": "596c0a1b3f9c251c98b15fb077da34c72e415ab9f4f01ac865421a7b89be",
+          "ct": "89d2787270de1caa0b8afc15c0d157b1a46db1c3400dd141c997a54932075023",
+          "result": "valid"
+        },
+        {
+          "tcId": 32,
+          "comment": "printable password",
+          "flags": [
+            "Printable"
+          ],
+          "password": "2b75433d3a69566c",
+          "salt": "a6d0b6f795cbe6a8",
+          "iterationCount": 4096,
+          "iv": "5804285758b9e6450148872a11dcc421",
+          "msg": "18e18b3cb96d6d9ff0730b2ff70ac2be9577a75555554f6c446ed30850c167",
+          "ct": "a8f90cd55c79d335e09251f2ba4243567182928bf625d89a8c954ffdcfade9b4",
+          "result": "valid"
+        },
+        {
+          "tcId": 33,
+          "comment": "printable password",
+          "flags": [
+            "Printable"
+          ],
+          "password": "252b6452647b4520",
+          "salt": "e817780ed7997728",
+          "iterationCount": 4096,
+          "iv": "ff2512297f3fd5aa2b859432b9f53006",
+          "msg": "8e9b1f95807a3c1bc95027ca72d2ae717b7e9dceac7437fc32a1aad2343ce69e",
+          "ct": "d10fd2b508a116f62c0981dc84bc931171b463e3b1d720863f85f5e4f3c9b1775421ac1b93ad6a7a7f2d9f696e8fc317",
+          "result": "valid"
+        },
+        {
+          "tcId": 34,
+          "comment": "password contains only ASCII characters",
+          "flags": [
+            "Ascii"
+          ],
+          "password": "4b2d6c600e66535c7f3d6d6c",
+          "salt": "7a4c02db8bd8fcc2",
+          "iterationCount": 4096,
+          "iv": "d62747fca1a7dfbee90597b3f57fffa2",
+          "msg": "52dd188a4585bbaa85ced8d529d880b3",
+          "ct": "85a196edfebb48c13515b3f37cf6eb1b9d109b640ce8a853a958fbb1d321721b",
+          "result": "valid"
+        },
+        {
+          "tcId": 35,
+          "comment": "password contains only ASCII characters",
+          "flags": [
+            "Ascii"
+          ],
+          "password": "706614257f522b6315345f7c",
+          "salt": "94ef44b92e15fa35",
+          "iterationCount": 4096,
+          "iv": "c489480ee8a00898f3151317c2c614b9",
+          "msg": "9cb42f3f2992357a7beeedfa37653f4d41",
+          "ct": "efed65c090a86144ef8f84b22d5370bd54d5fb10972838a6669723f4f3cd94b5",
+          "result": "valid"
+        },
+        {
+          "tcId": 36,
+          "comment": "password contains only ASCII characters",
+          "flags": [
+            "Ascii"
+          ],
+          "password": "1f4b7b354903545f2b07720b",
+          "salt": "62f91ea01f3a18aa2f122bd15c4a615b",
+          "iterationCount": 4096,
+          "iv": "05d867eae06fbfd2efda349bc3dcd473",
+          "msg": "64f33addb1e1671f867e96a3e8339ecd",
+          "ct": "16d79cb2c211a57a239a0a977000c2baefd50b49da83459c44f034b7ccc6baa3",
+          "result": "valid"
+        },
+        {
+          "tcId": 37,
+          "comment": "password contains only ASCII characters",
+          "flags": [
+            "Ascii"
+          ],
+          "password": "1e2e16140e4a4d19251b6f5f",
+          "salt": "bdf156b4d87a5e07cd9481b3d136887c",
+          "iterationCount": 4096,
+          "iv": "b64e4b7176cfafe46235e8b32b2508e6",
+          "msg": "9b31b854ff09e4cdd28b817fb2f2cdb6c9",
+          "ct": "26fb9df4885a2a67a5d0771cfe6a6245c4d16cb5cd9a85e2a5fa884a6b0176af",
+          "result": "valid"
+        },
+        {
+          "tcId": 38,
+          "comment": "password contains only ASCII characters",
+          "flags": [
+            "Ascii"
+          ],
+          "password": "15296b0933473119180f3c0645202d5221633803",
+          "salt": "d7412e4137fc4410",
+          "iterationCount": 4096,
+          "iv": "d227c8c98a652788944977f9bc73a20d",
+          "msg": "86159d5e3b903a51a833ce561f39ae0a",
+          "ct": "027cb7cd303e4000e6c16c5c8b1b86f354f2d6d5e1dbfd59e92c616502ae1641",
+          "result": "valid"
+        },
+        {
+          "tcId": 39,
+          "comment": "password contains only ASCII characters",
+          "flags": [
+            "Ascii"
+          ],
+          "password": "00017e1e176769476d2433302f3506590e632a0c",
+          "salt": "28c1759d783256fd",
+          "iterationCount": 4096,
+          "iv": "cf23a38fef611880acf9107ffa9e29a8",
+          "msg": "79532d85a40aa575377172611dd4f0047c",
+          "ct": "b22f34a0606549cf74fe8abe06d234a0a52883ec6763ccfc8d4930dd0b1289cc",
+          "result": "valid"
+        },
+        {
+          "tcId": 40,
+          "comment": "password contains only ASCII characters",
+          "flags": [
+            "Ascii"
+          ],
+          "password": "7a106c2773542c791d2f0a02632b69644f666278",
+          "salt": "a36350db68186d747254bd9835219487",
+          "iterationCount": 4096,
+          "iv": "568af67455f416a63d3ced652c32a74d",
+          "msg": "96687d00d01854bbc2151ed4fdec8732",
+          "ct": "4d34658594110622d1c39426c140bfeb97edb45fa5cadc43d8bb4d97a22da199",
+          "result": "valid"
+        },
+        {
+          "tcId": 41,
+          "comment": "password contains only ASCII characters",
+          "flags": [
+            "Ascii"
+          ],
+          "password": "350e2f050d444c09374977205a6b063736373067",
+          "salt": "3cadfed36847faa4af545c426b7bcbc5",
+          "iterationCount": 4096,
+          "iv": "1ee0658f81c645721618de5849c3baf1",
+          "msg": "89e4167cba0f8ca3a4b1640b023612d963",
+          "ct": "eeaec9c2f7a87f40d03df9414492d79f0e943f746cca1475b9e310e0b4e8b6f0",
+          "result": "valid"
+        },
+        {
+          "tcId": 42,
+          "comment": "password is a valid UTF-8 encoding",
+          "flags": [
+            "Utf8"
+          ],
+          "password": "d0a3d1bed38acc83",
+          "salt": "8dfae85c9f2072ae",
+          "iterationCount": 4096,
+          "iv": "13a77b4b2eb10b260ac889b432d7af1c",
+          "msg": "41a21ec6f04859724a1dfcdcf85e6c3a",
+          "ct": "97b58514f15f8dd8e1e4f768191cfd1a82d9572f4a0b4c9c9215d706e7bd9065",
+          "result": "valid"
+        },
+        {
+          "tcId": 43,
+          "comment": "password is a valid UTF-8 encoding",
+          "flags": [
+            "Utf8"
+          ],
+          "password": "d4b8cbbcc49bd9b6",
+          "salt": "657a212f745924eb",
+          "iterationCount": 4096,
+          "iv": "6529f3dc9f0197e2f5c6e889b1b6097f",
+          "msg": "231765341c414e93ec399b804a79a65dfc",
+          "ct": "421bc22f75d3d72b076234cd64c670bc10389b18cf3ee1146e72bd0d17e4fc10",
+          "result": "valid"
+        },
+        {
+          "tcId": 44,
+          "comment": "password is a valid UTF-8 encoding",
+          "flags": [
+            "Utf8"
+          ],
+          "password": "c299d292cd92dcb8",
+          "salt": "99c55e182238c8e0c385447685e9ba85",
+          "iterationCount": 4096,
+          "iv": "34d4cc26cd871885c8e781d6e8b9ec67",
+          "msg": "4bf1f98da6113ca66cc18283aedb4cc5",
+          "ct": "24f5a255bc8e1bf076ca1d44d2032b57692b726a1408ec84f6d9ed99425f0387",
+          "result": "valid"
+        },
+        {
+          "tcId": 45,
+          "comment": "password is a valid UTF-8 encoding",
+          "flags": [
+            "Utf8"
+          ],
+          "password": "da9dd3acdca2df8a",
+          "salt": "b5413f52391a2ff0fb19563c0b40a445",
+          "iterationCount": 4096,
+          "iv": "b4d3b1dbbc034d407ce552e6bc63fee1",
+          "msg": "e2e81593f6591df708582f4cce0b1c6d78",
+          "ct": "cc05f040ac5dff3e5b724ab46465a80db1489a445648d22a27956e16806485dd",
+          "result": "valid"
+        },
+        {
+          "tcId": 46,
+          "comment": "password is a valid UTF-8 encoding",
+          "flags": [
+            "Utf8"
+          ],
+          "password": "cfbec3b9d7acc7a9d585d1a5c28fcca119",
+          "salt": "e9c55717a1259a29",
+          "iterationCount": 4096,
+          "iv": "cd718713a05183c1aa4bc4c01794b382",
+          "msg": "1f4425a96b272fc27bcbfda0bb7e0dd8",
+          "ct": "4f3bb5af3d490ed0d95c3b1d1da5005ac34971d209b9c58ed7964cf1995e482b",
+          "result": "valid"
+        },
+        {
+          "tcId": 47,
+          "comment": "password is a valid UTF-8 encoding",
+          "flags": [
+            "Utf8"
+          ],
+          "password": "d492c59061cd9dd9b8c28fd39fcd9e24",
+          "salt": "09deec77ec44eb6e",
+          "iterationCount": 4096,
+          "iv": "0f958378c10c245540b9ce61d7781fd8",
+          "msg": "ae209895c5cb179e54649749cdb245b9ce",
+          "ct": "067bc0f1a8156a6a6a6be07e3e57240b74a4babb4e955aca201f93f7519ae818",
+          "result": "valid"
+        },
+        {
+          "tcId": 48,
+          "comment": "password is a valid UTF-8 encoding",
+          "flags": [
+            "Utf8"
+          ],
+          "password": "da9dd096cb93db88dbbed495ceaacf853c",
+          "salt": "200bba668b2010b1968b82091848937c",
+          "iterationCount": 4096,
+          "iv": "39d3e787c076007b3c173b75597b08c5",
+          "msg": "0b4e337297c6cdd5c51f8ee7e633ef8f",
+          "ct": "33f2804ce2a03cc8e8ced685f653cd2211c15effd6e340f4d5094937931910f5",
+          "result": "valid"
+        },
+        {
+          "tcId": 49,
+          "comment": "password is a valid UTF-8 encoding",
+          "flags": [
+            "Utf8"
+          ],
+          "password": "d9aacab7c2a0dbb5d89bc7acde9cceb50c",
+          "salt": "1d87767829bd386ad2038cea7a0b542f",
+          "iterationCount": 4096,
+          "iv": "cfb67f9bb8cfb0e05684fcba195f0f19",
+          "msg": "a9e289e0a985df90dfe23230c414dcb1fa",
+          "ct": "4946dfaea8045b4326da1c5819dcfc93bf392b9aa457da2b1befb1c0da8dea07",
+          "result": "valid"
+        },
+        {
+          "tcId": 50,
+          "comment": "password is a random byte string",
+          "flags": [
+            "NonUtf8"
+          ],
+          "password": "8423ec7ea4ca4b03",
+          "salt": "8dfae85c9f2072ae",
+          "iterationCount": 4096,
+          "iv": "13a77b4b2eb10b260ac889b432d7af1c",
+          "msg": "41a21ec6f04859724a1dfcdcf85e6c3a",
+          "ct": "81f16380a0b090555ab8007a937ebd8ddb2357ea213713dac74f7b08d5871639",
+          "result": "valid"
+        },
+        {
+          "tcId": 51,
+          "comment": "password is a random byte string",
+          "flags": [
+            "NonUtf8"
+          ],
+          "password": "7538a2fc091b6e76",
+          "salt": "657a212f745924eb",
+          "iterationCount": 4096,
+          "iv": "6529f3dc9f0197e2f5c6e889b1b6097f",
+          "msg": "231765341c414e93ec399b804a79a65dfc",
+          "ct": "4055d50d36dbe97513f1876871d4a56e6c846c618974f355317b1cb9291cb27a",
+          "result": "valid"
+        },
+        {
+          "tcId": 52,
+          "comment": "password is a random byte string",
+          "flags": [
+            "NonUtf8"
+          ],
+          "password": "48997492c3528738",
+          "salt": "99c55e182238c8e0c385447685e9ba85",
+          "iterationCount": 4096,
+          "iv": "34d4cc26cd871885c8e781d6e8b9ec67",
+          "msg": "4bf1f98da6113ca66cc18283aedb4cc5",
+          "ct": "acfbdb59fc594ebb6f53d99d25fcdbd013aed6329f0bac6fa10c88646957dd81",
+          "result": "valid"
+        },
+        {
+          "tcId": 53,
+          "comment": "password is a random byte string",
+          "flags": [
+            "NonUtf8"
+          ],
+          "password": "c69d34ec7722ffca",
+          "salt": "b5413f52391a2ff0fb19563c0b40a445",
+          "iterationCount": 4096,
+          "iv": "b4d3b1dbbc034d407ce552e6bc63fee1",
+          "msg": "e2e81593f6591df708582f4cce0b1c6d78",
+          "ct": "a032a050a1a8b0b6ae485da90226972c21d854818abe5c50aa35b0b81a2ef354",
+          "result": "valid"
+        },
+        {
+          "tcId": 54,
+          "comment": "password is a random byte string",
+          "flags": [
+            "NonUtf8"
+          ],
+          "password": "e3feb0f96dec61e9dd451465f88f132119",
+          "salt": "e9c55717a1259a29",
+          "iterationCount": 4096,
+          "iv": "cd718713a05183c1aa4bc4c01794b382",
+          "msg": "1f4425a96b272fc27bcbfda0bb7e0dd8",
+          "ct": "b7419da83ec5637c87a4b3b71fee02141342edcfba2c5fc34f88a5eac1aadb90",
+          "result": "valid"
+        },
+        {
+          "tcId": 55,
+          "comment": "password is a random byte string",
+          "flags": [
+            "NonUtf8"
+          ],
+          "password": "ed12a9502061d35d9678188f1cdf135e24",
+          "salt": "09deec77ec44eb6e",
+          "iterationCount": 4096,
+          "iv": "0f958378c10c245540b9ce61d7781fd8",
+          "msg": "ae209895c5cb179e54649749cdb245b9ce",
+          "ct": "b862e7ca221f2c3e7d2fb8ed38622df466fd3d287b84515d50a90a97c472355c",
+          "result": "valid"
+        },
+        {
+          "tcId": 56,
+          "comment": "password is a random byte string",
+          "flags": [
+            "NonUtf8"
+          ],
+          "password": "9e9d7c166ad3bec856fe5d15d3aacbc53c",
+          "salt": "200bba668b2010b1968b82091848937c",
+          "iterationCount": 4096,
+          "iv": "39d3e787c076007b3c173b75597b08c5",
+          "msg": "0b4e337297c6cdd5c51f8ee7e633ef8f",
+          "ct": "2d21bb4ef25175401edabbeda9bbe0bfc960251fc7018c8e1e08e6484b43f809",
+          "result": "valid"
+        },
+        {
+          "tcId": 57,
+          "comment": "password is a random byte string",
+          "flags": [
+            "NonUtf8"
+          ],
+          "password": "466a02b7d8a046f5161b41ecef9cc3b50c",
+          "salt": "1d87767829bd386ad2038cea7a0b542f",
+          "iterationCount": 4096,
+          "iv": "cfb67f9bb8cfb0e05684fcba195f0f19",
+          "msg": "a9e289e0a985df90dfe23230c414dcb1fa",
+          "ct": "cedbeea5f65a63ad83d099fe6670838cabd99317c7cb925d4318ee3f6d679537",
+          "result": "valid"
+        },
+        {
+          "tcId": 58,
+          "comment": "password is an ASCII string encoded as BMPString",
+          "flags": [
+            "Ascii",
+            "BmpString"
+          ],
+          "password": "002d0000",
+          "salt": "66a92292e6db2d9e",
+          "iterationCount": 4096,
+          "iv": "7911306933f1131299247a85b585bed8",
+          "msg": "63219964fd79651fe1be8ad5e90f414c",
+          "ct": "de450ec9d21386ea991ef2feace402741b77008659a197f7fbf8b93d61b5c83e",
+          "result": "valid"
+        },
+        {
+          "tcId": 59,
+          "comment": "password is an ASCII string encoded as BMPString",
+          "flags": [
+            "Ascii",
+            "BmpString"
+          ],
+          "password": "00470000",
+          "salt": "88abb902385f0efc",
+          "iterationCount": 4096,
+          "iv": "109f2c7a8aacc98d0aa176b1b43f2ece",
+          "msg": "34ce8c499c20714c34506b8e8b87b103d2",
+          "ct": "2c557710758eda61f49d27c43c416d5a7b95e1dee715c45e4486e25ee755c47e",
+          "result": "valid"
+        },
+        {
+          "tcId": 60,
+          "comment": "password is an ASCII string encoded as BMPString",
+          "flags": [
+            "Ascii",
+            "BmpString"
+          ],
+          "password": "004400640042004d0064006d000100790000",
+          "salt": "675617aaff664428",
+          "iterationCount": 4096,
+          "iv": "c08dd25d3aa04749850301e9b8f8eb28",
+          "msg": "4f5f5d4d0a21d463419db42fdff6ae6c",
+          "ct": "5e2760564bfbba4a062cb0a6eed3d05cca3e3299b591e9a25673c30fc76de5c0",
+          "result": "valid"
+        },
+        {
+          "tcId": 61,
+          "comment": "password is an ASCII string encoded as BMPString",
+          "flags": [
+            "Ascii",
+            "BmpString"
+          ],
+          "password": "007400760025002a0012005b005c00610000",
+          "salt": "957a9ab7ad9fc7de",
+          "iterationCount": 4096,
+          "iv": "126081b5c830984abd553ec39b080f39",
+          "msg": "ede5a5ea322b7972a789bb5af48f384218",
+          "ct": "228b0b001cba73e8890e632283fb6a8f2ec02c957649d2c9233d71da4c561959",
+          "result": "valid"
+        },
+        {
+          "tcId": 62,
+          "comment": "password is an ASCII string encoded as BMPString",
+          "flags": [
+            "Ascii",
+            "BmpString"
+          ],
+          "password": "0023000d00510069001d0077002a0009001200010034004d00520070006100290000",
+          "salt": "deea2dabe885caf6",
+          "iterationCount": 4096,
+          "iv": "698a466cec24214100bb3f30a6820bf7",
+          "msg": "930b94a70883efd733f63f841dfc3d17",
+          "ct": "bdd7e8873f29192ac7a37be8e72d74c81967d776c1441b7fe5bcbd7c9e165076",
+          "result": "valid"
+        },
+        {
+          "tcId": 63,
+          "comment": "password is an ASCII string encoded as BMPString",
+          "flags": [
+            "Ascii",
+            "BmpString"
+          ],
+          "password": "007300520057005c005600180030003c004b0050007c004f00020020002600390000",
+          "salt": "6ed69f23acf64114",
+          "iterationCount": 4096,
+          "iv": "59efebfe7a6056507dc17778e5c444c5",
+          "msg": "538705a997333fc2bf4f44f2bb90f3cd26",
+          "ct": "f1635822eb7fbb5497837ed82db858fd8f40a7930a8cce8b20d87058af016da1",
+          "result": "valid"
+        },
+        {
+          "tcId": 64,
+          "comment": "password is a BMPString",
+          "flags": [
+            "NonUtf8",
+            "BmpString"
+          ],
+          "password": "92ae0000",
+          "salt": "6978583ea9c24c49",
+          "iterationCount": 4096,
+          "iv": "0192ad10599677f253e7dea587373553",
+          "msg": "c06bcb3b5cd9c1317f5eb7ba50882530",
+          "ct": "be6df7b6bdc7e6a183a6d98f642107018099b89ccc7a484444ea0e502e6006fd",
+          "result": "valid"
+        },
+        {
+          "tcId": 65,
+          "comment": "password is a BMPString",
+          "flags": [
+            "NonUtf8",
+            "BmpString"
+          ],
+          "password": "38a90000",
+          "salt": "c217b8c980fe4698",
+          "iterationCount": 4096,
+          "iv": "890a0303475f07189a0fe14b4e509217",
+          "msg": "1ea8b43513275537d021c0f75849c01840",
+          "ct": "de844f8e9423c681c7d17e7545a2670f3e4008ec319e211940c34d74c94ab599",
+          "result": "valid"
+        },
+        {
+          "tcId": 66,
+          "comment": "password is a BMPString",
+          "flags": [
+            "NonUtf8",
+            "BmpString"
+          ],
+          "password": "4464c2cde4ed81790000",
+          "salt": "675617aaff664428",
+          "iterationCount": 4096,
+          "iv": "c08dd25d3aa04749850301e9b8f8eb28",
+          "msg": "4f5f5d4d0a21d463419db42fdff6ae6c",
+          "ct": "87100410e4153f3fa6cd600e44f410156f0d87b1b85e98a18270f6c9197c388c",
+          "result": "valid"
+        },
+        {
+          "tcId": 67,
+          "comment": "password is a BMPString",
+          "flags": [
+            "NonUtf8",
+            "BmpString"
+          ],
+          "password": "f4f6a52a925b00610000",
+          "salt": "957a9ab7ad9fc7de",
+          "iterationCount": 4096,
+          "iv": "126081b5c830984abd553ec39b080f39",
+          "msg": "ede5a5ea322b7972a789bb5af48f384218",
+          "ct": "277aa92ddc247b3422ddc443357c1df01ad6fc7808f92df206a12042bf3943ab",
+          "result": "valid"
+        },
+        {
+          "tcId": 68,
+          "comment": "password is a BMPString",
+          "flags": [
+            "NonUtf8",
+            "BmpString"
+          ],
+          "password": "a38d51691d77aa891281b44d52f061a90000",
+          "salt": "deea2dabe885caf6",
+          "iterationCount": 4096,
+          "iv": "698a466cec24214100bb3f30a6820bf7",
+          "msg": "930b94a70883efd733f63f841dfc3d17",
+          "ct": "4d97d3a58346a81dc25625d546f78d5caf24bdc59346c42a20dc37a63465c9a9",
+          "result": "valid"
+        },
+        {
+          "tcId": 69,
+          "comment": "password is a BMPString",
+          "flags": [
+            "NonUtf8",
+            "BmpString"
+          ],
+          "password": "f35257dc5698b0bccbd0fc4f02a026390000",
+          "salt": "6ed69f23acf64114",
+          "iterationCount": 4096,
+          "iv": "59efebfe7a6056507dc17778e5c444c5",
+          "msg": "538705a997333fc2bf4f44f2bb90f3cd26",
+          "ct": "4a16b15f44a9e3c3460915fa82861c3949496a3db81242e062229c46970f892b",
+          "result": "valid"
+        },
+        {
+          "tcId": 70,
+          "comment": "empty password",
+          "flags": [
+            "Printable"
+          ],
+          "password": "",
+          "salt": "79d4c53a51c41815",
+          "iterationCount": 4096,
+          "iv": "a8e86525fa4f365373045533b33902bd",
+          "msg": "a62c0d9b5bcb932f65058396367673e8",
+          "ct": "48181fe002e27823e3647e04aaab9d7d06fe33ed18f6422c79a26304a694d643",
+          "result": "valid"
+        },
+        {
+          "tcId": 71,
+          "comment": "empty password",
+          "flags": [
+            "Printable"
+          ],
+          "password": "",
+          "salt": "65f8fa8b52cd47b0",
+          "iterationCount": 4096,
+          "iv": "bfb545e71f39df509870139862965526",
+          "msg": "a3bae2fae05b77c7673d71901268eed173",
+          "ct": "8b85248c7c1e0bf70beb9101a40879c8d7c6c20fe1ddfefd15ebc19307d7b2be",
+          "result": "valid"
+        },
+        {
+          "tcId": 72,
+          "comment": "password is an empty BMPString",
+          "flags": [
+            "Ascii",
+            "BmpString"
+          ],
+          "password": "0000",
+          "salt": "f488f026badc3624",
+          "iterationCount": 4096,
+          "iv": "2979c2a734e4cd5da5d9a7e69c3f8b8e",
+          "msg": "d63088e9bf4e9105bc287f0ab6823af9",
+          "ct": "b64b1d37859b69d9e9a72600bfadd2ae645bfdf2abb74665e075825222386c21",
+          "result": "valid"
+        },
+        {
+          "tcId": 73,
+          "comment": "password is an empty BMPString",
+          "flags": [
+            "Ascii",
+            "BmpString"
+          ],
+          "password": "0000",
+          "salt": "542ada9132800d2c",
+          "iterationCount": 4096,
+          "iv": "844635e540de3a85c02f2df9413ff911",
+          "msg": "08dfdd58aa603d5fc4bdaa9cb24ce82bca",
+          "ct": "8619618f5d1a8e8d183388a8d6db75f844d29843bb7d20b3edada2f1c7beee96",
+          "result": "valid"
+        },
+        {
+          "tcId": 74,
+          "comment": "long password",
+          "flags": [
+            "Printable"
+          ],
+          "password": "61473a5f3441403c4a32204575314b24312d402225634c5653603d52756f247e414c3c2a4e2b3b25704140762170713a272526386448434b462a7a2c75395c725f",
+          "salt": "80f8e7ac4649fd77",
+          "iterationCount": 4096,
+          "iv": "43db6bbe8b43b065bf32cd67c023856f",
+          "msg": "e443a5541e1c0bd038030f78952195e0",
+          "ct": "bd90f8ea83d65f63e6449bffc828a265c9d3856f95df1ea1d548c9e2f0e587c4",
+          "result": "valid"
+        },
+        {
+          "tcId": 75,
+          "comment": "long password",
+          "flags": [
+            "Printable"
+          ],
+          "password": "7b2e6e6c462a24546c402c525a7e566e613a255c48422f364e51217b343a31253546355430315c2b2f352042385421323f5b47232e495329596c307d4f4153566746523b386023615b4c3f3a757131214d46662965645e44284d2268507a2364312d7568224751254a35273e5b69792773644555323039787e4e525647526a7d74",
+          "salt": "66b3a75c3d1de7a7",
+          "iterationCount": 4096,
+          "iv": "4929fb5d6adc043751411a8165325219",
+          "msg": "fc5d6ee5b19b873fac6f54160be4d52a",
+          "ct": "9bfdc16f91419e1656772c60425a8bfb634349beb840405f92e2aab0f9836883",
+          "result": "valid"
+        },
+        {
+          "tcId": 76,
+          "comment": "long password",
+          "flags": [
+            "Printable"
+          ],
+          "password": "2a4235363559523e265f4c2b48685b374e347c4b384347346a513c2251753927742c427d25732e532b4e202648522b395d5763457a705e4b637a5535216e4e4e3a523a5b5e546d7625614e2f3623557e46454d413032515f2c30214971277b23606242283e4b3445426c2e4d7c40346d47777c4e3f6e572e24664a5e286c34775c2f5e3f2960744f644b2d47532c77447a58405e335b7d3a6b5831507b642f392b3638365c4341425e46655f577e31533f41626b6056393e5d32213b716d455d2637762a4c693e6c4b5449383a504e7c5e2d442030735f7d3a56273c497d773f32427b57692f7d61373d29236f6021624b41787e603d70313e5c68334a2b534653",
+          "salt": "73e6c34cda6b6309",
+          "iterationCount": 4096,
+          "iv": "44f36e53ab4a6391acc5565de7358438",
+          "msg": "309b773bcd825e66bd3117097f536b0e",
+          "ct": "5ce985c3ce32f38deaadc79034a73703233e2481769554e3bc7dcb0216e74efd",
+          "result": "valid"
+        },
+        {
+          "tcId": 77,
+          "comment": "special case password",
+          "flags": [
+            "NonUtf8"
+          ],
+          "password": "ff",
+          "salt": "330226023aa6c045",
+          "iterationCount": 4096,
+          "iv": "c78e1ec445dbe9742d205432712442bf",
+          "msg": "4b8243aab5cba8be6853eeaa65e3ebb0",
+          "ct": "872606403817f43f957aa11b24490edbf77d0ff6feabad9f2589aabe2ebbdaca",
+          "result": "valid"
+        },
+        {
+          "tcId": 78,
+          "comment": "special case: truncated UTF-8 string",
+          "flags": [
+            "NonUtf8"
+          ],
+          "password": "c0",
+          "salt": "e19e4f175a64d35a",
+          "iterationCount": 4096,
+          "iv": "7545745f8d0bfe38f024371e12008a5f",
+          "msg": "9e21b64aeff5338eb9bc71b19ef8f8e7",
+          "ct": "2f5d473677a005e556ee918f0647c0d713bac24d7b5fd9a5b69c8ca30ab00789",
+          "result": "valid"
+        },
+        {
+          "tcId": 79,
+          "comment": "special case: invalid UTF-8 bytes",
+          "flags": [
+            "NonUtf8"
+          ],
+          "password": "ffffffffffffffff",
+          "salt": "1eb37da28a65f626",
+          "iterationCount": 4096,
+          "iv": "5e9d991fa22878ac5256759c6c9cb53e",
+          "msg": "319c92804c5560f840cc5bdace9c925d",
+          "ct": "03b861a7e51d3d003a44d0914fece78f6841fad42f103f92a8e51091bfa854e2",
+          "result": "valid"
+        },
+        {
+          "tcId": 80,
+          "comment": "special case: invalid 2 byte UTF-8 code points",
+          "flags": [
+            "NonUtf8"
+          ],
+          "password": "c0c0c0c0c0c0c0c0",
+          "salt": "2017b5e20a7cdbe0",
+          "iterationCount": 4096,
+          "iv": "7e42d185cab712e2982ca6ee4c2c61ec",
+          "msg": "0f5a93c6771fc66aff78996d77421735",
+          "ct": "2a3f8a3855879aa08eb41c2d723731b39a7774d5604c3400c48f5cba6b17b76c",
+          "result": "valid"
+        },
+        {
+          "tcId": 81,
+          "comment": "special case: invalid 3 byte UTF-8 code points",
+          "flags": [
+            "NonUtf8"
+          ],
+          "password": "eeeeeeeeeeeeeeee",
+          "salt": "84301f0aebda104f",
+          "iterationCount": 4096,
+          "iv": "4ba655c171677a0dfbc5f6312387c15d",
+          "msg": "86caabd40a5c738720de173597ea72f6",
+          "ct": "7eec675978bfba70ae3edf6f52b70a22cf6c2bca9b670e8c3eaae4fed4201c21",
+          "result": "valid"
+        },
+        {
+          "tcId": 82,
+          "comment": "special case: invalid UTF-8 code points",
+          "flags": [
+            "NonUtf8"
+          ],
+          "password": "f0f0f0f0f0f0f0f0",
+          "salt": "64baccfdd4e4b41b",
+          "iterationCount": 4096,
+          "iv": "d6b443472d2cf853c0c05f5327faced7",
+          "msg": "4e0ee09328663637f21410fb8ad057a1",
+          "ct": "0f9c2261407d7f91f92de3612190dbf515afdbc56087ec975731c5e61a260405",
+          "result": "valid"
+        },
+        {
+          "tcId": 83,
+          "comment": "special case for UTF-16",
+          "flags": [
+            "NonUtf8"
+          ],
+          "password": "dbdbdbdbdbdbdbdb",
+          "salt": "ba21795fffb901bc",
+          "iterationCount": 4096,
+          "iv": "753675f249b8c153997a797116495204",
+          "msg": "706c565ba28370ff433460cc9f8d845a",
+          "ct": "1b30f1fcf268eefa0e52e009e92dd6dcc13f840138285176f8707ee8380bf456",
+          "result": "valid"
+        },
+        {
+          "tcId": 84,
+          "comment": "special case: long all zero password",
+          "flags": [
+            "Ascii"
+          ],
+          "password": "0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+          "salt": "22871ffd379d9951",
+          "iterationCount": 4096,
+          "iv": "2e949af1052a230e7560d9ae1ce75042",
+          "msg": "16d1b65deb2d67fc3242792a19d5c227",
+          "ct": "cb22575424a6bb2614df322a5276b06ca0834bd10728b37d1d3b670dce760d9c",
+          "result": "valid"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<head>
+<meta charset="UTF-8">
+<script src="../../../resources/js-test.js"></script>
+<script src="resources/webgl-test-utils.js"></script>
+<script>
+function runTest() {
+    var canvas = document.createElement("canvas");
+    var webgl_ctx = canvas.getContext("webgl2");
+
+    webgl_ctx.getIndexedParameter(webgl_ctx.TRANSFORM_FEEDBACK_BUFFER_BINDING, 4);
+
+    testPassed("WebGL call did not crash.");
+}
+</script>
+</head>
+<body onload="runTest()">
+</body>
+</html>

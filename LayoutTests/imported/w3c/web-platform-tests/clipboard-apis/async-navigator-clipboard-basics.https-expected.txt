@@ -1,0 +1,22 @@
+Body needed for test_driver.click()
+
+PASS navigator.clipboard exists
+PASS navigator.clipboard.write([text/plain ClipboardItem]) succeeds
+FAIL navigator.clipboard.write([>1 ClipboardItems]) fails (not implemented) assert_unreached: Should have rejected: undefined Reached unreachable code
+PASS navigator.clipboard.write() fails (expect [ClipboardItem])
+PASS navigator.clipboard.write(null) fails (expect [ClipboardItem])
+PASS navigator.clipboard.write(DOMString) fails (expect [ClipboardItem])
+PASS navigator.clipboard.write(Blob) fails (expect [ClipboardItem])
+PASS navigator.clipboard.writeText(DOMString) succeeds
+PASS navigator.clipboard.writeText() fails (expect DOMString)
+PASS navigator.clipboard.write({string : DOMString}) succeeds
+PASS navigator.clipboard.write({string : image/png Blob}) succeeds
+PASS navigator.clipboard.write([text + png] succeeds
+FAIL navigator.clipboard.write(image/png DOMString) fails promise_rejects_js: function "function() { throw e; }" threw object "NotAllowedError: The request is not allowed by the user agent or the platform in the current context, possibly because the user denied permission." ("NotAllowedError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+PASS navigator.clipboard.read() succeeds
+PASS navigator.clipboard.readText() succeeds
+PASS navigator.clipboard.write(Promise<Blob>) succeeds
+PASS navigator.clipboard.write(Promise<Blob>s) succeeds
+

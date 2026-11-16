@@ -1,0 +1,5 @@
+This paragraph should be green.
+
+
+PASS NEGATED :target pseudo-class
+

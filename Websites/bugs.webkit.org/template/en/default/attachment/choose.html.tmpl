@@ -1,0 +1,34 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[% PROCESS global/header.html.tmpl
+   title = "Locate or Create Attachment"
+%]
+
+<form name="choose-id" method="get" action="attachment.cgi">
+  <p>Access an attachment by entering its ID into the form below:</p>
+  <p>Attachment ID: <input name="id" size="6" autofocus required>
+  <button name="action" value="edit" id="edit">Details</button>
+  <button name="action" value="view" id="view">View</button>
+  </p>
+</form>
+
+<form method="get" action="show_bug.cgi">
+  <p>Or, Access it from the list of attachments in its associated [% terms.bug %] report:</p>
+  <p>[% terms.Bug %] ID: <input name="id" size="6" required>
+  <input type="submit" name="action" value="View" id="action">
+  </p>
+</form>
+
+<form method="get" action="attachment.cgi">
+  <p>Or, Create a new attachment by entering its [% terms.bug %] Id below:</p>
+  <p>[% terms.Bug %] ID: <input name="bugid" size="6" required>
+    <button name="action" value="enter" id="action">New Attachment</button>
+  </p>
+</form>
+[% PROCESS global/footer.html.tmpl %]

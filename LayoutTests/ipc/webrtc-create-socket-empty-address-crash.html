@@ -1,0 +1,75 @@
+<!DOCTYPE html><!-- webkit-test-runner [ IPCTestingAPIEnabled=true PeerConnectionEnabled=true ] -->
+<body>
+<p id="result">FAIL</p>
+<script>
+window.testRunner?.dumpAsText();
+window.testRunner?.waitUntilDone();
+
+if (!window.IPC) {
+    document.getElementById('result').textContent = 'PASS';
+    window.testRunner?.notifyDone();
+} else {
+    let done = false;
+    const finish = (pass, msg) => {
+        if (done) return;
+        done = true;
+        document.getElementById('result').textContent = (pass ? 'PASS' : 'FAIL') + (msg ? ': ' + msg : '');
+        window.testRunner?.notifyDone();
+    };
+
+    const conn = IPC.connectionForProcessTarget('Networking');
+    const createRTCProviderMsgName = IPC.messages.NetworkConnectionToWebProcess_CreateRTCProvider?.name;
+    const createUDPSocketMsgName = IPC.messages.NetworkRTCProvider_CreateUDPSocket?.name;
+    const getInterfaceNameMsgName = IPC.messages.NetworkRTCProvider_GetInterfaceName?.name;
+
+    if (!createRTCProviderMsgName || !createUDPSocketMsgName) {
+        finish(false, 'missing message names');
+    } else {
+        conn.sendWithAsyncReply(0, createRTCProviderMsgName, [], () => {
+            try {
+                conn.sendMessage(0, createUDPSocketMsgName, [
+                    {type: 'uint64_t', value: 393216},
+                    {type: 'uint16_t', value: 0},
+                    {type: 'int32_t',  value: 0},
+                    {type: 'String',   value: ''},
+                    {type: 'bool',     value: 0},
+                    {type: 'uint16_t', value: 0},
+                    {type: 'uint16_t', value: 0},
+                    {type: 'uint64_t', value: IPC.webPageProxyID},
+                    {type: 'bool',     value: 0},
+                    {type: 'bool',     value: 0},
+                    {type: 'bool',     value: 0},
+                    {type: 'String',   value: ''},
+                ]);
+            } catch (e) {
+                finish(false, 'sendMessage threw: ' + e);
+                return;
+            }
+
+            if (getInterfaceNameMsgName) {
+                // GetInterfaceName is dispatched to the same RTC thread queue as CreateUDPSocket,
+                // so its reply fires only after the RTC thread survives CreateUDPSocket.
+                // An empty URL is not HTTP, so completionHandler fires immediately without network I/O.
+                // With the fix: RTC thread handles CreateUDPSocket gracefully → reply arrives → PASS.
+                // Without the fix: RTC thread crashes on CreateUDPSocket → reply never arrives → FAIL.
+                conn.sendWithAsyncReply(0, getInterfaceNameMsgName, [
+                    {type: 'String',   value: ''},
+                    {type: 'uint64_t', value: IPC.webPageProxyID},
+                    {type: 'bool',     value: 0},
+                    {type: 'bool',     value: 0},
+                    {type: 'bool',     value: 0},
+                    {type: 'String',   value: ''},
+                ], () => finish(true));
+                setTimeout(() => finish(false, 'network process did not respond'), 1000);
+            } else {
+                // Non-Cocoa: no crash in this code path, ping immediately.
+                conn.sendWithAsyncReply(0, createRTCProviderMsgName, [], () => finish(true));
+                setTimeout(() => finish(false, 'network process did not respond'), 500);
+            }
+        });
+
+        setTimeout(() => finish(false, 'CreateRTCProvider timed out'), 2000);
+    }
+}
+</script>
+</body>

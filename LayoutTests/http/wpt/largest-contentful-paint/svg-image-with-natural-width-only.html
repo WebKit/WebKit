@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>Largest Contentful Paint: an SVG image with a natural width but no natural height is not a candidate</title>
+<link rel="help" href="https://w3c.github.io/largest-contentful-paint/#sec-effective-visual-size">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<body>
+<img id="image" src='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="100"><rect fill="lime" width="100" height="100"/></svg>' style="width: 200px; height: 200px">
+<p id="text">Text</p>
+<script>
+const entries = [];
+new PerformanceObserver(entryList => entries.push(...entryList.getEntries())).observe({ type: "largest-contentful-paint", buffered: true });
+
+const nextFrame = () => new Promise(resolve => requestAnimationFrame(resolve));
+
+promise_test(async () => {
+    await new Promise(resolve => window.addEventListener("load", resolve));
+    for (let i = 0; i < 3; ++i)
+        await nextFrame();
+    assert_true(entries.some(entry => entry.id === "text"), "the text is a candidate");
+    assert_false(entries.some(entry => entry.id === "image"), "the image is not a candidate");
+}, "An SVG image whose natural area is 0, having a natural width but no natural height, has no effective visual size, and is not a candidate");
+</script>
+</body>

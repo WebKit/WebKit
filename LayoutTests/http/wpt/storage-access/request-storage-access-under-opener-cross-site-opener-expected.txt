@@ -1,0 +1,4 @@
+
+
+PASS Storage-access-under-opener with a cross-site opener does not terminate the opened window's web process
+

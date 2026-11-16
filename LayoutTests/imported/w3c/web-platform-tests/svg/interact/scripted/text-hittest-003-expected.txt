@@ -1,0 +1,5 @@
+MM
+
+FAIL elementFromPoint(...) on visibility=hidden <svg:text> with visible descendants assert_equals: element @ (175, 25) expected Element node <tspan visibility="visible">MM</tspan> but got Element node <svg width="400" height="400">
+  <text x="50" y="50" font...
+

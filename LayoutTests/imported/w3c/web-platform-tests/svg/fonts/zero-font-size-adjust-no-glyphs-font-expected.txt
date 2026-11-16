@@ -1,0 +1,4 @@
+ Text
+
+PASS Verify effect of font-size-adjust: 0 on no glyphs SVG Font
+

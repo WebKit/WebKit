@@ -1,0 +1,17 @@
+Tests array.splice behavior for array storage with no holes.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS a[0] is 1
+PASS a[1] is 2
+PASS a[2] is 3
+PASS a[3] is 4
+PASS a[4] is 6
+PASS a[5] is 7
+PASS a[6] is 8
+PASS a[7] is 9
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

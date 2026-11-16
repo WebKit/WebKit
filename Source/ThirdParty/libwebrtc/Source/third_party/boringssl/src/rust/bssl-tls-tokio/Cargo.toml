@@ -1,0 +1,43 @@
+[package]
+name = "bssl-tls-tokio"
+version = "0.1.0"
+edition = "2024"
+publish = false
+license = "Apache-2.0"
+
+[dependencies.tokio]
+version = "1.0"
+default-features = false
+features = ["net"]
+
+[dependencies.bssl-tls]
+path = "../bssl-tls"
+features = ["std"]
+
+[dependencies.hyper]
+version = "1.0"
+optional = true
+
+[dependencies.tower]
+version = "0.4"
+optional = true
+
+[dependencies.libc]
+version = "0.2"
+
+[dev-dependencies]
+tokio = { version = "1.0", features = ["full"] }
+futures = "0.3"
+bssl-x509 = { path = "../bssl-x509" }
+
+[dev-dependencies.hyper]
+version = "1.0"
+features = ["client", "server", "http1", "http2"]
+
+[dev-dependencies.hyper-util]
+version = "0.1"
+features = ["tokio"]
+
+[features]
+# `hyper` enables interop with `hyper` and `tower`
+hyper = ["dep:hyper", "dep:tower"]

@@ -1,0 +1,6 @@
+2d.path.isPointInStroke.nobitmap.transform
+isPointInStroke() honours the transformation matrix on a canvas with no bitmap
+Actual output:
+
+PASS isPointInStroke() honours the transformation matrix on a canvas with no bitmap
+

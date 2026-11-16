@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+<script>
+description("This test makes sure that a combining mark whose grapheme cluster base is a space is not painted on top of the glyph preceding the space, that a combining mark applied directly to an ideograph keeps overlapping that ideograph, and that a mark Core Text already fit inside the space is not moved out of it.");
+
+// The bug needs a wide spacing mark glyph: U+0336 COMBINING LONG STROKE OVERLAY is one em wide in
+// Hiragino, so pin the family. Other fonts take the trivial pass below.
+const ideograph = "陸";
+const mark = "̶";
+// U+0301 COMBINING ACUTE ACCENT is narrow enough that Core Text leaves the space's advance alone and
+// centers the accent inside it, so no compensation is owed and the accent must not move.
+const narrowMark = "́";
+const font = "64px 'Hiragino Kaku Gothic Pro', 'Hiragino Sans', sans-serif";
+const canvasWidth = 400;
+const canvasHeight = 128;
+const originX = 20;
+const baselineY = 96;
+const inkThreshold = 32;
+
+function createContext() {
+    const canvas = document.createElement("canvas");
+    canvas.width = canvasWidth;
+    canvas.height = canvasHeight;
+    const context = canvas.getContext("2d");
+    context.font = font;
+    context.fillStyle = "black";
+    context.textBaseline = "alphabetic";
+    return context;
+}
+
+// fillText() uses the same text painting path as the DOM, so it sees the same glyph origins.
+function render(text) {
+    const context = createContext();
+    context.fillText(text, originX, baselineY);
+    return context.getImageData(0, 0, canvasWidth, canvasHeight).data;
+}
+
+function alphaAt(pixels, x, y) {
+    return pixels[4 * (y * canvasWidth + x) + 3];
+}
+
+function inkColumnRange(pixels) {
+    let left = -1;
+    let right = -1;
+    for (let x = 0; x < canvasWidth; ++x) {
+        for (let y = 0; y < canvasHeight; ++y) {
+            if (alphaAt(pixels, x, y) > inkThreshold) {
+                if (left < 0)
+                    left = x;
+                right = x;
+                break;
+            }
+        }
+    }
+    return { left: left, right: right };
+}
+
+// Does drawing "text" put ink into any column of [left, right] where the ideograph alone had none?
+function addsInkInColumns(pixels, ideographOnly, left, right) {
+    for (let x = left; x <= right; ++x) {
+        for (let y = 0; y < canvasHeight; ++y) {
+            if (alphaAt(pixels, x, y) - alphaAt(ideographOnly, x, y) > inkThreshold)
+                return true;
+        }
+    }
+    return false;
+}
+
+// The columns "text" inks that "basePixels" did not, which for a mark is where the mark landed.
+function addedInkColumnRange(pixels, basePixels) {
+    let left = -1;
+    let right = -1;
+    for (let x = 0; x < canvasWidth; ++x) {
+        for (let y = 0; y < canvasHeight; ++y) {
+            if (alphaAt(pixels, x, y) - alphaAt(basePixels, x, y) > inkThreshold) {
+                if (left < 0)
+                    left = x;
+                right = x;
+                break;
+            }
+        }
+    }
+    return { left: left, right: right };
+}
+
+const metricsContext = createContext();
+const spaceAdvance = metricsContext.measureText(" ").width;
+const markMetrics = metricsContext.measureText(mark);
+// A lone combining mark always measures zero wide, so its ink box is the only proxy for its advance here.
+// Require ink entirely right of the origin and wider than a space; otherwise pass trivially.
+const triggerPresent = spaceAdvance > 0
+    && metricsContext.measureText(ideograph).width > 0
+    && markMetrics.actualBoundingBoxLeft <= 0.5
+    && markMetrics.actualBoundingBoxRight > spaceAdvance + 1;
+
+var markOnSpaceLeavesPrecedingIdeographUntouched = true;
+var markOnSpaceIsStillPainted = true;
+var markOnIdeographStillOverlapsIdeograph = true;
+var narrowMarkOnSpaceStaysInsideTheSpace = true;
+
+if (triggerPresent) {
+    const ideographOnly = render(ideograph);
+    const markOnSpace = render(ideograph + " " + mark);
+    const markOnIdeograph = render(ideograph + mark);
+    const ideographInk = inkColumnRange(ideographOnly);
+
+    // The stroke belongs in the gap after the space, so it must add no ink over the preceding ideograph.
+    markOnSpaceLeavesPrecedingIdeographUntouched = !addsInkInColumns(markOnSpace, ideographOnly, ideographInk.left, ideographInk.right);
+
+    // It does still have to be painted, somewhere to the right of the ideograph.
+    markOnSpaceIsStillPainted = inkColumnRange(markOnSpace).right > ideographInk.right;
+
+    // An ideograph base has no space advance to substitute, so Core Text's deliberate strike-through
+    // placement has to survive unchanged.
+    markOnIdeographStillOverlapsIdeograph = addsInkInColumns(markOnIdeograph, ideographOnly, ideographInk.left, ideographInk.right);
+
+    // Core Text already fits an accent this narrow inside the space, so nothing is owed to its origin and it must
+    // not move; Chrome and Firefox instead paint it past the space.
+    const narrowMarkOnSpace = render(ideograph + " " + narrowMark);
+    const narrowMarkInk = addedInkColumnRange(narrowMarkOnSpace, ideographOnly);
+    const spaceBoxRight = originX + metricsContext.measureText(ideograph).width + spaceAdvance;
+    // Only meaningful when the accent is in fact narrow enough to fit inside the space.
+    if (narrowMarkInk.left >= 0 && narrowMarkInk.right - narrowMarkInk.left < spaceAdvance)
+        narrowMarkOnSpaceStaysInsideTheSpace = narrowMarkInk.right <= spaceBoxRight + 1;
+}
+
+shouldBeTrue("markOnSpaceLeavesPrecedingIdeographUntouched");
+shouldBeTrue("markOnSpaceIsStillPainted");
+shouldBeTrue("markOnIdeographStillOverlapsIdeograph");
+shouldBeTrue("narrowMarkOnSpaceStaysInsideTheSpace");
+
+</script>
+</body>
+</html>

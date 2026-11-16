@@ -1,0 +1,20 @@
+<!DOCTYPE html><!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+<div style="position: absolute; top:-1000px;" id="hiddenEditor" contenteditable>hi<br></div>
+<script src="../../../resources/js-test.js"></script>
+<script>
+
+description(`This tests programming scrolling via element.focus to an element position well above the viewport top<br>
+WebKit should clamp the scroll top to 0px.`);
+
+hiddenEditor.focus();
+shouldBe('document.documentElement.scrollTop', '0');
+shouldBe('visualViewport.pageTop', '0');
+
+</script>
+</body>
+</html>

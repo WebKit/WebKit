@@ -1,0 +1,16 @@
+Test cloning a shared WebAssembly.Memory that was declared with a maximum of zero. Such a memory has no shared contents at all, which the memory cost computation has to tolerate.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS zeroI32.buffer.byteLength is 0
+PASS cloneI32 instanceof WebAssembly.Memory is true
+PASS cloneI32.buffer.byteLength is 0
+PASS cloneI32.grow(0) is 0
+PASS cloneI64 instanceof WebAssembly.Memory is true
+PASS cloneI64.buffer.byteLength is 0
+PASS cloneI64.grow(0n) is 0n
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

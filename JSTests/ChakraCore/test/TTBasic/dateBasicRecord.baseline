@@ -1,0 +1,6 @@
+x === y: true
+w !== z: true
+y.foo: 3
+x.foo: 3
+w - z > 0: true
+x - y: 0

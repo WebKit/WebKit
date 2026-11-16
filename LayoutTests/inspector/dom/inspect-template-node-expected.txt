@@ -1,0 +1,8 @@
+Test that document inside a template node can be passed to inspect() function in the console and referenced as $0.
+
+PASS: Evaluate an element in a template.
+PASS: Resolved js object id to DOM node id.
+PASS: Set $0 to the template element.
+PASS: Evaluate $0.
+PASS: Value of $0 is a <div> element.
+

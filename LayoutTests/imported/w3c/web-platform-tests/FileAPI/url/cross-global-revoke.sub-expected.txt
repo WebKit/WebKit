@@ -1,0 +1,5 @@
+
+PASS It is possible to revoke same-origin blob URLs from different frames.
+PASS It is possible to revoke same-origin blob URLs from a different worker global.
+PASS It is not possible to revoke cross-origin blob URLs.
+

@@ -1,0 +1,24 @@
+Tests for WI.StepsTimingFunction.
+
+
+== Running test suite: WI.StepsTimingFunction
+-- Running test case: WI.StepsTimingFunction.fromString.Valid
+PASS: Should parse 'steps(1)' as 'step-end'.
+PASS: Should parse 'steps(2, jump-start)' as 'steps(2, jump-start)'.
+PASS: Should parse 'steps(3, jump-end)' as 'steps(3, jump-end)'.
+PASS: Should parse 'steps(4, jump-none)' as 'steps(4, jump-none)'.
+PASS: Should parse 'steps(5, jump-both)' as 'steps(5, jump-both)'.
+PASS: Should parse 'steps(6, end)' as 'steps(6, end)'.
+PASS: Should parse 'steps(7, start)' as 'steps(7, start)'.
+PASS: Should parse 'step-start' as 'step-start'.
+PASS: Should parse 'step-end' as 'step-end'.
+
+-- Running test case: WI.StepsTimingFunction.fromString.Invalid
+PASS: Should not parse invalid 'steps()'.
+PASS: Should not parse invalid 'steps(0)'.
+PASS: Should not parse invalid 'steps(0, 1)'.
+PASS: Should not parse invalid 'steps(0, 1, 2)'.
+PASS: Should not parse invalid 'steps("test")'.
+PASS: Should not parse invalid 'steps(0, "test")'.
+PASS: Should not parse invalid 'steps(0, 1, "test")'.
+

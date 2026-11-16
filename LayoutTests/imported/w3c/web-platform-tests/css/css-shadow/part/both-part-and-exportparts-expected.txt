@@ -1,0 +1,3 @@
+
+PASS ::part() rules match elements having both @part and @exportparts
+

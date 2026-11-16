@@ -1,0 +1,19 @@
+
+EXPECTED (ManagedMediaSource.canConstructInDedicatedWorker == 'true') OK
+RUN(video.disableRemotePlayback = true)
+received handle message: [object MediaSourceHandle] OK
+info message from worker: 'sourceopen' event received OK
+info message from worker: loaderPromise resolved OK
+info message from worker: sourceBuffer 'update' event received for initsegment OK
+info message from worker: sourceBuffer 'update' event received OK
+info message from worker: sourceBuffer.audioTracks is undefined OK
+info message from worker: sourceBuffer.videoTracks is undefined OK
+info message from worker: sourceBuffer.textTracks is undefined OK
+EXPECTED (video.readyState >= '2') OK
+EXPECTED (video.buffered.length == '1') OK
+EXPECTED (video.audioTracks.length == '1') OK
+EXPECTED (video.audioTracks.item(0).language == 'eng') OK
+EXPECTED (video.videoTracks.length == '1') OK
+EXPECTED (video.videoTracks.item(0).language == 'eng') OK
+END OF TEST
+

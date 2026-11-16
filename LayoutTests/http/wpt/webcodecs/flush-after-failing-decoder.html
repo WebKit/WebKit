@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<header>
+<script src='/resources/testharness.js'></script>
+<script src='/resources/testharnessreport.js'></script>
+</header>
+<body>
+<script>
+promise_test(async t => {
+    const decoder = new VideoDecoder({
+        output: frame => { },
+        error: e => { }
+    });
+
+    decoder.configure({
+        codec: 'vp09.00.10.08',
+        codedWidth: 16,
+        codedHeight: 16,
+    });
+
+    decoder.decode(new EncodedVideoChunk({
+        timestamp: 0,
+        type: "key",
+        data: new ArrayBuffer(1024)
+    }));
+    await decoder.flush().then(() => { }, () => { });
+}, "Flush decoder that tried decoding bad data");
+</script>
+</body>
+</html>

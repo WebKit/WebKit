@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+function nextFrame(callback)
+{
+    requestAnimationFrame(() => requestAnimationFrame(callback));
+}
+
+function repaintTwice()
+{
+    let rect = document.getElementById("rect");
+    rect.setAttribute("fill", "#cc0000");
+    nextFrame(() => {
+        rect.setAttribute("fill", "#00cc00");
+        nextFrame(() => {
+            if (window.testRunner)
+                testRunner.notifyDone();
+        });
+    });
+}
+
+window.onload = () => nextFrame(repaintTwice);
+</script>
+</head>
+<body>
+<svg width="800" height="200">
+    <defs>
+        <filter id="filter" x="0%" y="0%" width="100%" height="100%">
+            <feOffset dx="0" dy="0"/>
+        </filter>
+    </defs>
+    <g transform="scale(1.1538)">
+        <rect id="rect" x="20" y="10" width="580" height="40" fill="#00cc00" filter="url(#filter)"/>
+    </g>
+</svg>
+</body>
+</html>

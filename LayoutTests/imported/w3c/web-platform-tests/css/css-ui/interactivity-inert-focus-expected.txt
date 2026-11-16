@@ -1,0 +1,8 @@
+
+
+
+
+PASS Focus outer input
+FAIL Try focus inert input assert_equals: expected Element node <input id="inp_outer"></input> but got Element node <input id="inp_inert"></input>
+PASS Focus non-inert input inside inert ancestry
+

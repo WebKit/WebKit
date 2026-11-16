@@ -1,0 +1,19 @@
+<html>
+<head>
+    <style>
+    body { margin: 0; }
+    .text { font: 16px/20px Ahem; }
+    .block { height: 20px; background-color: silver; }
+    </style>
+    <script>
+    if (window.internals) {
+        window.internals.settings.setTextAutosizingEnabled(true);
+        window.internals.settings.setTextAutosizingWindowSizeOverride(320, 480);
+    }
+    </script>
+</head>
+<body>
+    <p>The silver bar is a block level box on a line, not a line of text, so the text above it should be autosized as a single line.</p>
+    <div class="text">xxxx<span><div class="block"></div></span></div>
+</body>
+</html>

@@ -1,0 +1,5 @@
+
+PASS Descendant combinator
+PASS Descendant combinator with *
+PASS Child combinator
+

@@ -1,0 +1,15 @@
+<!-- webkit-test-runner [ MockScrollbarsEnabled=false, AsyncOverflowScrollingEnabled=true ] -->
+<script>
+  testRunner?.dumpAsText();
+  testRunner?.waitUntilDone();
+  onload = async () => {
+      // Needs two requestAnimationFrame here to fail the assertion.
+      await new Promise(requestAnimationFrame);
+      await new Promise(requestAnimationFrame);
+      testRunner?.notifyDone();
+  }
+</script>
+
+Pass if no crash.
+
+<div style='height:0;overflow:scroll'>TEST</div>

@@ -1,0 +1,21 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ LayerBasedSVGEngineEnabled=true ] -->
+<html>
+<head>
+<link rel="match" href="z-index-interleaving-expected.html">
+<style>body { margin: 0; }</style>
+</head>
+<body>
+<!-- Tests that SVG elements with z-index paint in correct z-order,
+     interleaving layered (z-indexed) and non-layered children. -->
+<svg width="300" height="200" viewBox="0 0 300 200">
+  <!-- z-index: 1 — should be on top of everything -->
+  <rect x="100" y="60" width="100" height="100" fill="green" style="z-index: 1;"/>
+
+  <!-- No z-index — non-layer child, effective z-index 0 -->
+  <rect x="70" y="40" width="100" height="100" fill="red"/>
+
+  <!-- z-index: -1 — should be behind everything -->
+  <rect x="40" y="20" width="100" height="100" fill="blue" style="z-index: -1;"/>
+</svg>
+</body>
+</html>

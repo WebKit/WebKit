@@ -1,0 +1,3 @@
+
+PASS location.href set multiple times gives correct event order
+

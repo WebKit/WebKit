@@ -1,0 +1,5 @@
+item1 item2
+item3 item4
+
+FAIL When the focus is set on the last item of a focusgroup that supports wrapping in the axis of the arrow key pressed and the first item is in an inner focusgroup that doesn't support wrapping in the same axis, the focus moves to the next item out of that inner focusgroup. assert_equals: expected Element node <span id="item3" tabindex="-1">item3</span> but got Element node <span id="item4" tabindex="0">item4</span>
+

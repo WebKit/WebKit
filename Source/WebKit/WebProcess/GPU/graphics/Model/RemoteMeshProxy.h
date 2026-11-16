@@ -1,0 +1,180 @@
+/*
+ * Copyright (C) 2025 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#pragma once
+
+#if ENABLE(GPU_PROCESS)
+
+#include "Mesh.h"
+#include "RemoteDeviceProxy.h"
+#include "WebModelIdentifier.h"
+#include <WebCore/StageModeOperations.h>
+#include <wtf/HashMap.h>
+#include <wtf/TZoneMalloc.h>
+
+#if PLATFORM(COCOA)
+#include "Float4x4.h"
+#include "ModelTypes.h"
+#include <simd/simd.h>
+#endif
+
+#if ENABLE(SPATIAL_PORTAL) && ENABLE(GPU_PROCESS_MODEL)
+#include <WebCore/PortalTransform.h>
+#endif
+
+namespace WebModel {
+struct ImageAsset;
+struct Float4x4;
+struct UpdateMeshDescriptor;
+struct UpdateTextureDescriptor;
+struct UpdateMaterialDescriptor;
+}
+
+namespace WebKit {
+
+class ModelConvertToBackingContext;
+
+class RemoteMeshProxy final : public Mesh {
+    WTF_MAKE_TZONE_ALLOCATED(RemoteMeshProxy);
+public:
+    static Ref<RemoteMeshProxy> create(Ref<RemoteGPUProxy>&& root, ModelConvertToBackingContext& convertToBackingContext, WebModelIdentifier identifier)
+    {
+        return adoptRef(*new RemoteMeshProxy(WTF::move(root), convertToBackingContext, identifier));
+    }
+
+    virtual ~RemoteMeshProxy();
+
+    RemoteGPUProxy& root() const { return m_root; }
+    static bool supportsTransform(const WebCore::TransformationMatrix&);
+
+private:
+    friend class ModelDowncastConvertToBackingContext;
+
+#if PLATFORM(COCOA)
+    struct ModelBounds {
+        simd_float4 minCorner { simd_make_float4(FLT_MAX, FLT_MAX, FLT_MAX, 1.f) };
+        simd_float4 maxCorner { simd_make_float4(-FLT_MAX, -FLT_MAX, -FLT_MAX, 1.f) };
+
+        bool boundsAreEmpty() const { return minCorner.x > maxCorner.x; }
+    };
+#endif
+
+    RemoteMeshProxy(Ref<RemoteGPUProxy>&&, ModelConvertToBackingContext&, WebModelIdentifier);
+
+    RemoteMeshProxy(const RemoteMeshProxy&) = delete;
+    RemoteMeshProxy(RemoteMeshProxy&&) = delete;
+    RemoteMeshProxy& operator=(const RemoteMeshProxy&) = delete;
+    RemoteMeshProxy& operator=(RemoteMeshProxy&&) = delete;
+
+    bool isRemoteMeshProxy() const final { return true; }
+
+    WebModelIdentifier backing() const { return m_backing; }
+
+    template<typename T>
+    [[nodiscard]] IPC::Error send(T&& message)
+    {
+        return protect(root().streamClientConnection())->send(std::forward<T>(message), backing());
+    }
+    template<typename T, typename C>
+    [[nodiscard]] std::optional<IPC::StreamClientConnection::AsyncReplyID> sendWithAsyncReply(T&& message, C&& completionHandler)
+    {
+        return protect(root().streamClientConnection())->sendWithAsyncReply(std::forward<T>(message), std::forward<C>(completionHandler), backing());
+    }
+    template<typename T>
+    [[nodiscard]] auto sendSync(T&& message)
+    {
+        return protect(root().streamClientConnection())->sendSync(std::forward<T>(message), backing());
+    }
+
+    void updateModel(WebCore::NodeIdentifier, Vector<WebModel::UpdateMeshDescriptor>&&) final;
+    void updateTexture(Vector<WebModel::UpdateTextureDescriptor>&&) final;
+    void updateMaterial(Vector<WebModel::UpdateMaterialDescriptor>&&) final;
+#if PLATFORM(COCOA)
+    std::pair<simd_float4, simd_float4> mergedCenterAndExtents() const;
+    std::optional<std::pair<simd_float4, simd_float4>> centerAndExtents(WebCore::NodeIdentifier) const final;
+    void removeModel(WebCore::NodeIdentifier) final;
+    void sizeDidChange(unsigned, unsigned, CompletionHandler<void(Vector<MachSendRight>&&)>&&) final;
+    void paintCurrentFrameToImageBuffer(WebCore::RenderingResourceIdentifier, uint32_t bufferIndex) final;
+#endif
+    void play(bool) final;
+
+    void render(uint32_t textureIndex, Function<void(bool)>&&) final;
+    void setLabelInternal(const String&) final;
+    void setEntityTransform(const WebModel::Float4x4&) final;
+    NODELETE void setEntityTransformInternal(const WebModel::Float4x4&);
+#if PLATFORM(COCOA)
+    std::optional<WebModel::Float4x4> entityTransform() const final;
+#endif
+    void setScale(float) final;
+    void setFOV(float);
+    void setViewportSize(float, float) final;
+    void setStageMode(WebCore::StageModeOperation) final;
+    void processRemovals(Vector<WebModel::TypedResourceId>&& meshRemovals, Vector<WebModel::TypedResourceId>&& materialRemovals, Vector<WebModel::TypedResourceId>&& textureRemovals, CompletionHandler<void(bool)>&&) final;
+#if ENABLE(GPU_PROCESS_MODEL)
+    void computeTransform();
+    void setRotation(float yaw, float pitch, float roll) final;
+#endif
+#if ENABLE(SPATIAL_PORTAL) && PLATFORM(COCOA)
+    void setPortalTransform(const WebCore::UsedPortalTransform&) final;
+    void setPortalChildTransform(WebCore::NodeIdentifier, const WebModel::Float4x4&) final;
+    std::optional<WebModel::Float4x4> resolvedPortalTransform() const final;
+#endif
+#if ENABLE(SPATIAL_PORTAL) && ENABLE(GPU_PROCESS_MODEL)
+    std::pair<simd_float4, simd_float4> portalContentCenterAndExtents(const simd_float4x4& transformBeforeAuto) const;
+#endif
+    void setEnvironmentMap(WebModel::UpdateTextureDescriptor&&) final;
+#if ENABLE(SPATIAL_PORTAL)
+    void setDefaultEnvironmentMap() final;
+    void removeEnvironmentMap() final;
+#endif
+    void updateContentsHeadroom(float) final;
+
+    const WebModelIdentifier m_backing;
+    const Ref<ModelConvertToBackingContext> m_convertToBackingContext;
+    const Ref<RemoteGPUProxy> m_root;
+#if PLATFORM(COCOA)
+    HashMap<WebCore::NodeIdentifier, ModelBounds> m_modelBounds;
+    std::optional<WebModel::Float4x4> m_transform;
+    std::optional<WebModel::Float4x4> m_computedTransform;
+#endif
+#if ENABLE(GPU_PROCESS_MODEL)
+    float m_viewportWidth { 0.f };
+    float m_viewportHeight { 0.f };
+    WebCore::StageModeOperation m_stageMode { WebCore::StageModeOperation::None };
+    bool m_entityTransformSetByScript { false };
+#endif
+#if ENABLE(SPATIAL_PORTAL) && ENABLE(GPU_PROCESS_MODEL)
+    std::optional<WebCore::UsedPortalTransform> m_portalTransform;
+    std::optional<WebModel::Float4x4> m_fittedPortalTransform;
+#endif
+};
+
+}
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebKit::RemoteMeshProxy)
+    static bool isType(const WebKit::Mesh& mesh) { return mesh.isRemoteMeshProxy(); }
+SPECIALIZE_TYPE_TRAITS_END()
+
+#endif // ENABLE(GPU_PROCESS)

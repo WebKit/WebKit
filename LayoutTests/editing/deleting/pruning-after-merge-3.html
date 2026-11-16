@@ -1,0 +1,12 @@
+<p>You should see:<br>b<b>arbaz</b></p>
+<div id="b" contenteditable="true">boo<b><br><div style="display:inline-block"><div>bar</div><div>baz</div></div></b></div>
+
+<script>
+var s = window.getSelection();
+
+s.setPosition(b, 0);
+s.modify("move", "forward", "character");
+s.modify("extend", "forward", "line");
+
+document.execCommand("Delete");
+</script>

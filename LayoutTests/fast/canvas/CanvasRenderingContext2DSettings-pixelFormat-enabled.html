@@ -1,0 +1,42 @@
+<!-- webkit-test-runner [ CanvasColorTypeEnabled=true ] -->
+<html>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+<script>
+    description("Test that the colorType member of CanvasRenderingContext2DSettings is supported when CanvasColorTypeEnabled=true.");
+
+    function testColorType(settings, expectedColorType, allowedException = "") {
+        let canvas = document.createElement("canvas");
+        if (!allowedException) {
+            let context = canvas.getContext("2d", settings);
+            window.testSettings = context.getContextAttributes();
+            shouldBeEqualToString("testSettings.colorType", expectedColorType);
+        } else {
+            try {
+                let context = canvas.getContext("2d", settings);
+                if (context.getContextAttributes().colorType == expectedColorType)
+                    testPassed(`getContext("2d", ${JSON.stringify(settings)}) set colorType == ${expectedColorType} or threw ${allowedException} as expected`);
+                else
+                    testPassed(`getContext("2d", ${JSON.stringify(settings)}) set colorType to "${context.getContextAttributes().colorType}" instead of ${expectedColorType}`);
+            } catch ({ name, message }) {
+                if (name == allowedException)
+                    testPassed(`getContext("2d", ${JSON.stringify(settings)}) set colorType == ${expectedColorType} or threw ${allowedException} as expected`);
+                else
+                    testFailed(`getContext("2d", ${JSON.stringify(settings)}) threw ${name} instead of ${allowedException}`);
+            }
+        }
+    }
+
+    // Test default value of colorType is "unorm8".
+    testColorType(undefined, "unorm8");
+
+    // Test setting colorType to a valid value works.
+    testColorType({ colorType: "unorm8" }, "unorm8");
+    testColorType({ colorType: "float16" }, "float16", "TypeError");
+
+    // Test setting colorType to an unsupported value.
+    shouldThrowErrorName(`document.createElement("canvas").getContext("2d", { colorType: "foo" })`, "TypeError")
+</script>
+</body>
+</html>

@@ -1,0 +1,15 @@
+
+PASS Absolute lineto: L 150,150
+PASS Relative lineto: l 100,100 from (50,50) equals L 150,150
+PASS Horizontal lineto: H 150 from (50,200) creates 100-unit line
+PASS Vertical lineto: V 150 from (200,50) creates 100-unit line
+PASS Multiple lineto coordinates: L 10,0 20,0 30,0
+PASS Multiple horizontal lineto: H 10 20 30
+PASS Multiple vertical lineto: V 10 20 30
+PASS Relative horizontal lineto: h 100 from (50,50)
+PASS Relative vertical lineto: v 100 from (50,50)
+PASS Negative relative lineto: h -50 v -50 from (100,100)
+PASS Combined lineto and closepath: creates square
+PASS Mixed absolute and relative lineto
+PASS Closepath: Z and z are case-insensitive
+

@@ -1,0 +1,48 @@
+
+(GraphicsLayer
+  (anchor 0.00 0.00)
+  (bounds 800.00 600.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 800.00 600.00)
+      (contentsOpaque 1)
+      (children 1
+        (GraphicsLayer
+          (position 8.00 8.00)
+          (bounds 504.00 404.00)
+          (drawsContent 1)
+          (children 1
+            (GraphicsLayer
+              (position 2.00 2.00)
+              (children 1
+                (GraphicsLayer
+                  (anchor 0.00 0.00)
+                  (bounds 500.00 400.00)
+                  (children 1
+                    (GraphicsLayer
+                      (anchor 0.00 0.00)
+                      (children 1
+                        (GraphicsLayer
+                          (anchor 0.00 0.00)
+                          (bounds 500.00 400.00)
+                          (children 1
+                            (GraphicsLayer
+                              (bounds 500.00 400.00)
+                              (drawsContent 1)
+                              (drawsHDRContent 1)
+                            )
+                          )
+                        )
+                      )
+                    )
+                  )
+                )
+              )
+            )
+          )
+        )
+      )
+    )
+  )
+)
+

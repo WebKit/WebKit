@@ -1,0 +1,49 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ UnifyDamagedRegions=false ] -->
+<html lang="en">
+  <head>
+    <link rel="stylesheet" href="./common.css">
+    <style>
+      .group {
+          position: fixed;
+          left: 10px;
+          top: 10px;
+          width: 50px;
+          height: 50px;
+          background-color: green;
+          will-change: transform;
+          /* Already blended, so the change below only flips the blend mode - it does not restructure
+             the layer tree the way introducing one would. */
+          mix-blend-mode: multiply;
+      }
+      /* Composited on its own and outside the group bounds, so the blend mode reaches pixels the
+         group's own rect does not cover. */
+      .descendant {
+          position: absolute;
+          left: 70px;
+          top: 0;
+          width: 50px;
+          height: 50px;
+          background-color: blue;
+          will-change: transform;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="group">
+      <div class="descendant"></div>
+    </div>
+    <script src="./common.js"></script>
+    <script>
+      setupTestCase({disableConsoleLog: true});
+
+      var group = document.getElementsByClassName("group")[0];
+
+      // The blend mode decides how the whole group is blended into what is beneath it, so changing it
+      // has to damage the subtree, not just the layer that carries it.
+      processAnimationFrameSequence({skipFirstFrameToEnsureInitialPaintingDone: true}, [
+          () => { group.style.mixBlendMode = "screen"; },
+          () => { assertRectsEq(latestFrameDamage().rects, [[10, 10, 50, 50], [80, 10, 50, 50]]); },
+      ], 0);
+    </script>
+  </body>
+</html>

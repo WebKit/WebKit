@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<pre id="log"></pre>
+<script>
+    if (window.testRunner && window.internals) {
+        testRunner.dumpAsText();
+        document.body.offsetTop;
+        internals.startTrackingLayoutUpdates();
+        document.documentElement.style.fontSizeAdjust = 'none';
+        document.body.offsetTop;
+        log.textContent = `Layout count: ${internals.layoutUpdateCount()}`;
+    }
+</script>

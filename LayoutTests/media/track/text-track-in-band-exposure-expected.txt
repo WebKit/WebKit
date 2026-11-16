@@ -1,0 +1,6 @@
+
+PASS TextTrack.inBandMetadataTrackDispatchType: IDL attribute exists, empty for non-in-band tracks
+PASS in-band track is exposed via addtrack on the media element
+PASS in-band non-metadata track: inBandMetadataTrackDispatchType is empty
+PASS in-band track does not block readyState progression (loaded immediately)
+

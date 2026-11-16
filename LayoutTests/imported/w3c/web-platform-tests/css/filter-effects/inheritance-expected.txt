@@ -1,0 +1,14 @@
+
+PASS Property backdrop-filter has initial value none
+PASS Property backdrop-filter does not inherit
+PASS Property color-interpolation-filters has initial value linearrgb
+PASS Property color-interpolation-filters inherits
+PASS Property filter has initial value none
+PASS Property filter does not inherit
+PASS Property flood-color has initial value rgb(0, 0, 0)
+PASS Property flood-color does not inherit
+PASS Property flood-opacity has initial value 1
+PASS Property flood-opacity does not inherit
+PASS Property lighting-color has initial value rgb(255, 255, 255)
+PASS Property lighting-color does not inherit
+

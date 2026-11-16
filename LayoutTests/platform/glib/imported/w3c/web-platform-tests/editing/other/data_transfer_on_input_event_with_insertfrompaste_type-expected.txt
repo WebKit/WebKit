@@ -1,0 +1,6 @@
+copyMe
+copyMe
+
+
+PASS The data transfer on input event with insertFromPaste type should not be null on contenteditable elements but null on textarea or input elements.
+

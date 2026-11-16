@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="../debugger/resources/site-isolation-debugger-test-utilities.js"></script>
+<script src="resources/frame-timeline-test-utilities.js"></script>
+<script src="resources/timeline-events.js"></script>
+<script>
+let iframe;
+
+function addCrossOriginIFrame()
+{
+    iframe = document.createElement("iframe");
+    iframe.src = "http://localhost:8000/site-isolation/inspector/timeline/resources/timeline-frame.html";
+    document.body.appendChild(iframe);
+}
+
+function removeIFrame()
+{
+    iframe.remove();
+}
+
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Timeline.FrameAddedAndRemovedDuringRecording");
+
+    let mainFrameTarget;
+    let iframeTarget;
+
+    suite.addTestCase({
+        name: "SiteIsolation.Timeline.FrameAddedAndRemovedDuringRecording.Added",
+        description: "A cross-origin iframe added during a recording should be recorded by its frame target.",
+        async test() {
+            mainFrameTarget = InspectorTest.mainFrameTarget;
+            await FrameTimelineTest.startCapturing([mainFrameTarget]);
+
+            await FrameTimelineTest.evaluateInTarget(mainFrameTarget, "addCrossOriginIFrame()");
+            iframeTarget = await waitForFrameTargetForURLContaining("timeline-frame.html");
+            InspectorTest.expectNotNull(iframeTarget, "Should find the frame target of the iframe added during the recording.");
+
+            await FrameTimelineTest.awaitTrackingEvent("capturingStarted", iframeTarget);
+            InspectorTest.pass("The frame target of the added iframe started tracking.");
+
+            // The frame target can be found before the iframe's scripts have loaded.
+            await waitForExpressionInTarget(iframeTarget, "typeof fireTimer === 'function'");
+
+            let recordPromise = FrameTimelineTest.awaitScriptRecord(iframeTarget, WI.ScriptTimelineRecord.EventType.TimerFired);
+            await FrameTimelineTest.evaluateInTarget(iframeTarget, "fireTimer()");
+            await recordPromise;
+            InspectorTest.pass("Recorded a timer from the frame target of the added iframe.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Timeline.FrameAddedAndRemovedDuringRecording.Removed",
+        description: "Removing the cross-origin iframe should not stop the recording, and the recording should still stop.",
+        async test() {
+            let targetRemovedPromise = new Promise((resolve) => {
+                let listener = WI.targetManager.addEventListener(WI.TargetManager.Event.TargetRemoved, (event) => {
+                    if (event.data.target !== iframeTarget)
+                        return;
+
+                    WI.targetManager.removeEventListener(WI.TargetManager.Event.TargetRemoved, listener);
+                    resolve();
+                });
+            });
+            await FrameTimelineTest.evaluateInTarget(mainFrameTarget, "removeIFrame()");
+            await targetRemovedPromise;
+            InspectorTest.pass("The frame target of the removed iframe was removed.");
+            InspectorTest.expectEqual(WI.timelineManager.capturingState, WI.TimelineManager.CapturingState.Active, "Capturing should still be active.");
+
+            let recordPromise = FrameTimelineTest.awaitScriptRecord(mainFrameTarget, WI.ScriptTimelineRecord.EventType.TimerFired);
+            await FrameTimelineTest.evaluateInTarget(mainFrameTarget, "fireTimer()");
+            await recordPromise;
+            InspectorTest.pass("Recorded a timer from the main frame target after the iframe was removed.");
+
+            await FrameTimelineTest.stopCapturing();
+            InspectorTest.pass("Capturing stopped.");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+
+<body onload="runTest()">
+<p>Test that under Site Isolation, a cross-origin iframe added during a Timeline recording is recorded, and that removing it neither stops the recording nor keeps it from stopping.</p>
+</body>

@@ -1,0 +1,77 @@
+<!DOCTYPE html><!-- webkit-test-runner [ IPCTestingAPIEnabled=true IgnoreInvalidMessageWhenIPCTestingAPIEnabled=true ] -->
+<title>Text animation messages with an empty unanimated range UUID must not crash the UI process</title>
+<p>This test passes if WebKit does not crash.</p>
+<script>
+testRunner?.dumpAsText();
+testRunner?.waitUntilDone();
+</script>
+<script type="module">
+if (!window.IPC) {
+    testRunner?.notifyDone();
+} else {
+
+const { CoreIPC } = await import('./coreipc.js');
+const page = CoreIPC.UI.WebPageProxy;
+const pageProxyID = IPC.webPageProxyID;
+
+// Writing tools, and with it the text animation messages, are not enabled on every port.
+if (!page.AddTextAnimationForAnimationIDWithCompletionHandler) {
+    testRunner?.notifyDone();
+} else {
+
+let nextAnimationID = 0;
+const animationID = () => ({ high: 660, low: ++nextAnimationID });
+const someUUID = { optionalValue: { high: 916, low: 765 } };
+// An empty Markable<WTF::UUID>. The all-zero UUID does not survive decoding, so this is the only way one arrives.
+const noUUID = { };
+const noTextIndicator = { };
+
+const Initial = 0, Source = 1, Final = 2;
+const RunAnimation = 2;
+
+const styleData = (style, overrides) => ({
+    style,
+    runMode: RunAnimation,
+    unanimatedRangeUUID: someUUID,
+    sourceAnimationUUID: someUUID,
+    destinationAnimationUUID: someUUID,
+    ...overrides,
+});
+
+const send = data => page.AddTextAnimationForAnimationID(pageProxyID, {
+    uuid: animationID(),
+    styleData: data,
+    textIndicator: noTextIndicator,
+});
+
+// Only rejected messages reply promptly: an accepted animation replies when it finishes running.
+const sendAndAwaitRejection = data => new Promise(resolve => {
+    page.AddTextAnimationForAnimationIDWithCompletionHandler(pageProxyID, {
+        uuid: animationID(),
+        styleData: data,
+        textIndicator: noTextIndicator,
+    }, resolve);
+});
+
+// A final animation can be sent with no unanimated range at all: TextAnimationController leaves the UUID empty when
+// the session range has no editable root left to bound it. It has to be accepted, not rejected.
+send(styleData(Final, { unanimatedRangeUUID: noUUID }));
+
+// An initial animation references no other animation at all.
+send(styleData(Initial, { unanimatedRangeUUID: noUUID, sourceAnimationUUID: noUUID, destinationAnimationUUID: noUUID }));
+
+// A source animation, on the other hand, dereferences destinationAnimationUUID to pair itself with the final
+// animation, so a message without one has to be rejected.
+await sendAndAwaitRejection(styleData(Source, { destinationAnimationUUID: noUUID }));
+
+// The message without a reply takes the other message check path.
+send(styleData(Source, { destinationAnimationUUID: noUUID }));
+
+// Messages are dispatched in order, so this reply means the UI process is done with all of the messages above.
+await sendAndAwaitRejection(styleData(Source, { destinationAnimationUUID: noUUID }));
+
+testRunner?.notifyDone();
+
+}
+}
+</script>

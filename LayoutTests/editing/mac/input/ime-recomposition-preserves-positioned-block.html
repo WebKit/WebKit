@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<script src="../../../resources/dump-as-markup.js"></script>
+<div id="editor" contenteditable="true"><div id="target" style="position: relative;">日本語</div></div>
+<script>
+Markup.description("Starting an IME recomposition should preserve the positioned block containing the selected text.");
+
+const target = document.getElementById("target");
+getSelection().setBaseAndExtent(target.firstChild, 0, target.firstChild, 3);
+Markup.dump("editor", "Before recomposition");
+
+if (window.textInputController) {
+    textInputController.setMarkedText("日本語", 0, 3);
+    Markup.dump("editor", "During recomposition");
+    textInputController.insertText("日本語");
+    Markup.dump("editor", "After committing recomposition");
+}
+</script>

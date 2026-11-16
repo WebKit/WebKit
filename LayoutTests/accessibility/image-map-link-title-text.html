@@ -1,0 +1,43 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<map id="apple" name="imagemap1">
+    <area id="link1" shape="rect" coords="10,10,133,72" href="http://www.apple.com" title="Link1" />
+    <area id="link2" shape="rect" coords="12,74,134,88" href="http://www.apple.com" summary="Link2" />
+    <area id="link3" shape="rect" coords="11,91,133,105" href="http://www.apple.com" summary="Link3-summary" title="Link3" />
+    <area shape="default" nohref="nohref" alt="" />
+</map>
+<img src="resources/cake.png" border="0" align="left" usemap="#imagemap1" vspace="1">
+<script>
+var output = "This test ensures we compute the correct title accessibility text for area-element links.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    output += expect("accessibilityController.accessibleElementById('link1').title", "'AXTitle: Link1'");
+    const platform = accessibilityController.platformName;
+    if (platform === "mac" || platform === "ios") {
+        // https://github.com/WebKit/WebKit/blob/f5a9393bdeff7c89685de21aa9f2df392139cc07/Source/WebCore/accessibility/atspi/AccessibilityObjectAtspi.cpp#L664
+        // ATSPI does not use summary text, which probably correct by-the-spec, since summary is not an allowed attribute of
+        // area elements. But Cocoa ports will be forgiving and use it if present, so run this testcase only for Cocoa.
+        output += expect("accessibilityController.accessibleElementById('link2').title", "'AXTitle: Link2'");
+    }
+    output += expect("accessibilityController.accessibleElementById('link3').title", "'AXTitle: Link3'");
+
+    document.getElementById("link1").setAttribute("title", "New title");
+    setTimeout(async function() {
+        output += await expectAsync("accessibilityController.accessibleElementById('link1').title", "'AXTitle: New title'");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>
+

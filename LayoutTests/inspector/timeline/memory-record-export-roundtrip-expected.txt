@@ -1,0 +1,28 @@
+Test that WI.MemoryTimelineRecord and WI.CPUTimelineRecord round-trip their timestamps through toJSON and fromJSON.
+
+
+== Running test suite: Timeline.MemoryRecordExportRoundtrip
+-- Running test case: Timeline.MemoryRecordExportRoundtrip.Memory
+PASS: The first record's startTime should be the sample time minus the sampling rate.
+PASS: The second record's startTime should be adjusted to the first record's endTime.
+PASS: Record 0 should import the same timestamp.
+PASS: Record 0 should import the same startTime.
+PASS: Record 0 should import the same endTime.
+PASS: Record 1 should import the same timestamp.
+PASS: Record 1 should import the same startTime.
+PASS: Record 1 should import the same endTime.
+PASS: Record 2 should import the same timestamp.
+PASS: Record 2 should import the same startTime.
+PASS: Record 2 should import the same endTime.
+
+-- Running test case: Timeline.MemoryRecordExportRoundtrip.CPUControl
+PASS: Record 0 should import the same timestamp.
+PASS: Record 0 should import the same startTime.
+PASS: Record 0 should import the same endTime.
+PASS: Record 1 should import the same timestamp.
+PASS: Record 1 should import the same startTime.
+PASS: Record 1 should import the same endTime.
+PASS: Record 2 should import the same timestamp.
+PASS: Record 2 should import the same startTime.
+PASS: Record 2 should import the same endTime.
+

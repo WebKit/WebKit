@@ -1,0 +1,27 @@
+Test that a <select multiple> fires the change event when a drag selection ends outside the element.
+
+
+Test 1: Drag selection ending far below the select element
+PASS document.getElementById('selectId').options[0].selected is true
+PASS document.getElementById('selectId').options[1].selected is true
+PASS document.getElementById('selectId').options[2].selected is true
+PASS changeCount is 1
+PASS inputCount is 1
+
+Test 2: Drag selection ending far to the right of the select element
+PASS document.getElementById('selectId').options[0].selected is true
+PASS document.getElementById('selectId').options[1].selected is true
+PASS document.getElementById('selectId').options[2].selected is true
+PASS changeCount is 1
+PASS inputCount is 1
+
+Test 3: Drag selection ending far above the select element
+PASS document.getElementById('selectId').options[0].selected is true
+PASS document.getElementById('selectId').options[1].selected is true
+PASS document.getElementById('selectId').options[2].selected is true
+PASS changeCount is 1
+PASS inputCount is 1
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

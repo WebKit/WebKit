@@ -1,0 +1,13 @@
+This tests that empty headings aren't exposed when appropriate.
+
+PASS: heading1.isIgnored === true
+PASS: heading1Text.isIgnored === false
+PASS: heading2.isIgnored === true
+PASS: heading3.isIgnored === false
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Hello world
+
+

@@ -1,0 +1,4 @@
+
+PASS COEP support on SharedWorker.
+PASS COEP-Report-Only support on SharedWorker.
+

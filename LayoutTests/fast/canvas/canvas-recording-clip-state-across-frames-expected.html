@@ -1,0 +1,24 @@
+<style>
+    canvas {
+        width: 200px;
+        height: 200px;
+    }
+</style>
+<body>
+    <p>This test verifies that clip state is preserved across canvas recording flush boundaries.</p>
+    <canvas id="canvas"></canvas>
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = 200;
+        canvas.height = 200;
+
+        // Green background.
+        ctx.fillStyle = 'green';
+        ctx.fillRect(0, 0, 200, 200);
+
+        // Blue square only in the clipped area.
+        ctx.fillStyle = 'blue';
+        ctx.fillRect(50, 50, 100, 100);
+    </script>
+</body>

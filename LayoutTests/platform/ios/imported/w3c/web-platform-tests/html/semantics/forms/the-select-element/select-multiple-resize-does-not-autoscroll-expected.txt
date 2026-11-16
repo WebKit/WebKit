@@ -1,0 +1,4 @@
+
+
+FAIL Resizing <select multiple> should not autoscroll the listbox. assert_greater_than: The listbox should be scrollable before resizing. expected a number greater than 98 but got 98
+

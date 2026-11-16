@@ -1,0 +1,11 @@
+audio.networkState - default state
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS "0" is "0"
+
+TEST COMPLETE
+spec reference
+
+

@@ -1,0 +1,4 @@
+
+PASS clear() removes string items from a read/write drag data store
+PASS clear() removes file items from a read/write drag data store
+

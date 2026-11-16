@@ -1,0 +1,5 @@
+This test verifies that adding many iframes during a popstate event triggered by history.back() does not cause a crash.
+
+PASS: Did not crash.
+
+

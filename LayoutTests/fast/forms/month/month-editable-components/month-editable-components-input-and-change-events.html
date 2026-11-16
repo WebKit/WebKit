@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../../resources/js-test.js"></script>
+<script src="../../../../resources/ui-helper.js"></script>
+</head>
+<body>
+
+<input id="input" type="month">
+
+<script>
+
+jsTestIsAsync = true;
+
+changeEventsFired = 0;
+function onChangeEvent() {
+    changeEventsFired++;
+}
+
+inputEventsFired = 0;
+function onInputEvent() {
+    inputEventsFired++;
+}
+
+input.addEventListener("change", onChangeEvent);
+input.addEventListener("input", onInputEvent);
+
+addEventListener("load", async () => {
+    description("Test for input and change events for &lt;input type=month&gt;");
+
+    input.focus();
+    UIHelper.keyDown("9");                                 // -> [09]/yyyy
+    shouldBe("inputEventsFired", "0");
+    shouldBe("changeEventsFired", "0");
+
+    UIHelper.keyDown("rightArrow");                        // -> 09/[yyyy]
+    UIHelper.keyDown("2");                                 // -> 09/[0002]
+    shouldBe("inputEventsFired", "1");
+    shouldBe("changeEventsFired", "0");
+
+    UIHelper.keyDown("0");                                 // -> 09/[0020]
+    shouldBe("inputEventsFired", "2");
+    shouldBe("changeEventsFired", "0");
+
+    UIHelper.keyDown("1");                                 // -> 09/[0201]
+    shouldBe("inputEventsFired", "3");
+    shouldBe("changeEventsFired", "0");
+
+    UIHelper.keyDown("2");                                 // -> 09/[2012]
+    shouldBe("inputEventsFired", "4");
+    shouldBe("changeEventsFired", "0");
+
+    UIHelper.keyDown("A");                                 // Ignored.
+    shouldBe("inputEventsFired", "4");
+    shouldBe("changeEventsFired", "0");
+
+    shouldBeEqualToString("input.value", "2012-09");
+
+    input.blur();
+    shouldBe("inputEventsFired", "4");
+    shouldBe("changeEventsFired", "1");
+
+    finishJSTest();
+});
+
+</script>
+</body>
+</html>

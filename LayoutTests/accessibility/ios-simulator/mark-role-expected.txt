@@ -1,0 +1,9 @@
+This test makes sure that the mark role exposes the right attributes.
+PASS: highlight1.isMarkAnnotation === true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+This is some
+highlighted
+text.

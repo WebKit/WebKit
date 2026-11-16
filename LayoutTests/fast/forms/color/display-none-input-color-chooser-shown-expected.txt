@@ -1,0 +1,3 @@
+Pick a color
+PASS: Color chooser was opened by activating the label of a display:none color input
+PASS: Color chooser was closed after blurring the input

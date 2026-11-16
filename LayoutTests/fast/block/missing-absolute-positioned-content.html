@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+div {
+  width: 100%;
+  height: 200px;
+}
+
+.inner {
+  width: 100px;
+  height: 100px;
+  background-color: green;
+  right: 0px;
+}
+
+.fixedCB {
+  filter: blur(0px);
+}
+
+.absCB {
+  position: absolute;
+}
+
+.fixed {
+  position: fixed;
+}
+
+.abs {
+  position: absolute;
+  top: 100px;
+}
+
+</style>
+</head>
+<body>
+<div class="fixedCB">
+  <div class="absCB" style="width:500px">
+    <div style="width: 100px;" id="mutate">
+      <div class="inner fixed"></div>
+      <div class="inner abs"></div>
+    </div>
+  </div>
+</div>
+
+</body>
+<script>
+document.body.offsetHeight;
+mutate.classList.add("fixedCB");
+document.body.offsetHeight;
+</script>
+</html>

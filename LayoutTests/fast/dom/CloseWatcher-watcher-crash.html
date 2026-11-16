@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<body>
+This test passes if it does not crash.
+<script>
+globalThis.testRunner?.waitUntilDone();
+globalThis.testRunner?.dumpAsText();
+
+function gc() {
+    if (globalThis.GCController) GCController.collect();
+    else if (globalThis.$vm) $vm.gc();
+    else for (let i = 0; i < 10000; i++) new ArrayBuffer(0x1000);
+}
+
+const ac = new AbortController();
+
+// Create the CloseWatcher in a nested call frame so its wrapper
+// pointer doesn't linger on the conservative-scanned stack.
+(function () {
+    new CloseWatcher({ signal: ac.signal }); // no listeners, result discarded
+})();
+
+// Churn stack and force full GC so JSCloseWatcher is finalized and
+// the C++ CloseWatcher's refcount drops to 1 (held only by CloseWatcherManager).
+for (let i = 0; i < 100; i++) new Uint8Array(0x100);
+gc(); gc(); gc();
+
+// Trigger: AbortSignal::runAbortSteps -> lambda(weakWatcher) -> destroy()
+// -> manager->remove(*this) deletes `this` -> m_active=false (UAF write)
+// -> RefPtr signal = m_signal (UAF read).
+ac.abort();
+
+globalThis.testRunner?.notifyDone();
+</script>
+</body>

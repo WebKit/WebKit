@@ -1,0 +1,6 @@
+
+PASS <dashed-function> in longhand
+PASS <dashed-function> with typed result in longhand
+PASS <dashed-function> with in inherited longhand
+PASS <dashed-function> with typed result in shorthand
+

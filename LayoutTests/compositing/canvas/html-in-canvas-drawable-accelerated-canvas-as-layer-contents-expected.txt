@@ -1,0 +1,47 @@
+Tests the layers of 2D canvases with content="drawable" for {small, large} x {no options, willReadFrequently}, before and after they become not drawable. An accelerated drawable canvas shows its pixels through a contents layer, while its own layer still paints so its drawable content gets recorded. An unaccelerated one has no contents layer. A canvas that is not drawable paints into the page layer.
+
+
+Drawable:
+(GraphicsLayer
+  (anchor 0.00 0.00)
+  (bounds 800.00 600.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 800.00 600.00)
+      (contentsOpaque 1)
+      (children 4
+        (GraphicsLayer
+          (position 8.00 184.00)
+          (bounds 20.00 20.00)
+          (drawsContent 1)
+          (contents layer (canvas)
+            (position 0.00 0.00)
+            (bounds 20.00 20.00)
+          )
+        )
+        (GraphicsLayer
+          (position 32.00 184.00)
+          (bounds 20.00 20.00)
+          (drawsContent 1)
+        )
+        (GraphicsLayer
+          (position 56.00 104.00)
+          (bounds 200.00 100.00)
+          (drawsContent 1)
+          (contents layer (canvas)
+            (position 0.00 0.00)
+            (bounds 200.00 100.00)
+          )
+        )
+        (GraphicsLayer
+          (position 260.00 104.00)
+          (bounds 200.00 100.00)
+          (drawsContent 1)
+        )
+      )
+    )
+  )
+)
+
+Not drawable:
+

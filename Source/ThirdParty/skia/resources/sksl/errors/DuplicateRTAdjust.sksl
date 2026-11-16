@@ -1,0 +1,9 @@
+MyInterfaceBlock {
+    float4 sk_RTAdjust;
+};
+
+float4 sk_RTAdjust;
+
+/*%%*
+symbol 'sk_RTAdjust' was already defined
+*%%*/

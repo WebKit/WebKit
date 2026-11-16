@@ -1,0 +1,4 @@
+
+PASS Property text-indent value 'calc(10% + 10px)' calc value no zoom
+PASS Property text-indent value 'calc(10% + 10px)' calc value with zoom: 2
+

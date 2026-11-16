@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+
+#editor {
+    width: 300px;
+    height: 20px;
+    border: 1px solid black;
+}
+
+.spelling-error {
+    color: red;
+    background-color: yellow;
+    text-decoration-line: underline;
+    text-decoration-style: wavy;
+    text-decoration-color: green;
+}
+
+.grammar-error {
+    color: darkred;
+    background-color: lightblue;
+    text-decoration-line: underline;
+    text-decoration-style: double;
+    text-decoration-color: red;
+}
+
+</style>
+</head>
+
+<body>
+<div id="editor" contenteditable="true">the <span class="grammar-error">the</span> <span class="spelling-error">adlj</span> <span class="spelling-error">adaasj</span> <span class="spelling-error">sdklj</span>. there <span class="grammar-error">there</span></div>
+</body>
+</html>

@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+<style>
+
+input {
+    border: none;
+    border-bottom: .125rem solid #969696;
+}
+
+</style>
+</head>
+<body>
+<p id="description"></p>
+
+<input id="input">
+
+<div id="console"></div>
+<script>
+
+description('This test checks that customizing the border of a text input removes any border radius set for the native appearance.');
+
+shouldBeEqualToString('getComputedStyle(input).borderRadius', '0px');
+
+</script>
+</body>
+</html>

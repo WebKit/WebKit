@@ -1,0 +1,4 @@
+
+PASS Test that exceptions during evaluation lead to error events on window, and that exceptions are remembered.
+
+

@@ -1,0 +1,62 @@
+<!-- webkit-test-runner [ MutationEventsEnabled=true ] -->
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+<script>
+description("DOMCharacterDataModified listeners that touch a processing instruction while setAttribute() is writing its data.");
+
+var pi;
+var listenerRan;
+
+debug("");
+debug("A listener that sets data invalidates the attribute map:");
+pi = document.createProcessingInstruction("target", 'a="1"');
+listenerRan = false;
+pi.addEventListener("DOMCharacterDataModified", function listener() {
+    pi.removeEventListener("DOMCharacterDataModified", listener);
+    listenerRan = true;
+    pi.data = 'x="2"';
+});
+pi.setAttribute("a", "updated");
+shouldBeTrue("listenerRan");
+shouldBeEqualToString("pi.data", 'x="2"');
+shouldBeEqualToString("pi.getAttribute('x')", "2");
+shouldBeNull("pi.getAttribute('a')");
+shouldBe("pi.getAttributeNames()", "['x']");
+
+debug("");
+debug("A listener that sets another attribute keeps both:");
+pi = document.createProcessingInstruction("target", 'a="1"');
+listenerRan = false;
+pi.addEventListener("DOMCharacterDataModified", function listener() {
+    pi.removeEventListener("DOMCharacterDataModified", listener);
+    listenerRan = true;
+    pi.setAttribute("b", "2");
+});
+pi.setAttribute("a", "updated");
+shouldBeTrue("listenerRan");
+shouldBeEqualToString("pi.getAttribute('a')", "updated");
+shouldBeEqualToString("pi.getAttribute('b')", "2");
+shouldBe("pi.getAttributeNames()", "['a', 'b']");
+
+debug("");
+debug("A listener that reads data during removeAttribute():");
+pi = document.createProcessingInstruction("target", 'a="1" b="2"');
+listenerRan = false;
+pi.addEventListener("DOMCharacterDataModified", function listener() {
+    pi.removeEventListener("DOMCharacterDataModified", listener);
+    listenerRan = true;
+    pi.data = 'c="3"';
+});
+pi.removeAttribute("a");
+shouldBeTrue("listenerRan");
+shouldBeEqualToString("pi.data", 'c="3"');
+shouldBe("pi.getAttributeNames()", "['c']");
+
+debug("");
+</script>
+</body>
+</html>

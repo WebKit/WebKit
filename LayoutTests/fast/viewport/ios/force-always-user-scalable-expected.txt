@@ -1,0 +1,14 @@
+This test has to run in iOS WebKitTestRunner.
+
+This tests that after we set forceAlwaysUserScalable, maximum-scale will be ignored.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Final zoom scale was: 3.5
+Maximum zoom scale was: 5
+Maximum zoom scale was reset to: 1
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

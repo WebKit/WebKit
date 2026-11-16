@@ -1,0 +1,3 @@
+
+PASS Removing an iframe does not make its window a secure context
+

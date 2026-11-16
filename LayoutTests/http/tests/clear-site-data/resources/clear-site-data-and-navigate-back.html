@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script>
+window.addEventListener("load", function() {
+    fetch("clear-site-data-cache.py").then((r) => {
+        history.back();
+    });
+});
+</script>
+</body>
+</html>

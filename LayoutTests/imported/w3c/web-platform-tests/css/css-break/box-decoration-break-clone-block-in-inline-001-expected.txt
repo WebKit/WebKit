@@ -1,0 +1,9 @@
+a
+c
+
+PASS An empty inline box between two block level boxes does not add a line
+PASS Two block level boxes with only an empty inline box in-between are adjacent
+PASS The empty inline box between the two block level boxes has no size
+PASS Cloned decoration still wraps the inline box fragments that do have content
+PASS Cloned decoration does not wrap the inline box fragments around the block level boxes
+

@@ -1,0 +1,4 @@
+This tests mutating SVG symbol element's subtree referenced by a SVG use element inside a event queue scope.
+WebKit should not hit any assertions or crash.
+
+PASS.

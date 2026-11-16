@@ -1,0 +1,18 @@
+
+PASS :buffer_state:srcBufferState="valid";dstBufferState="valid"
+PASS :buffer_state:srcBufferState="valid";dstBufferState="invalid"
+PASS :buffer_state:srcBufferState="valid";dstBufferState="destroyed"
+PASS :buffer_state:srcBufferState="invalid";dstBufferState="valid"
+PASS :buffer_state:srcBufferState="invalid";dstBufferState="invalid"
+PASS :buffer_state:srcBufferState="invalid";dstBufferState="destroyed"
+PASS :buffer_state:srcBufferState="destroyed";dstBufferState="valid"
+PASS :buffer_state:srcBufferState="destroyed";dstBufferState="invalid"
+PASS :buffer_state:srcBufferState="destroyed";dstBufferState="destroyed"
+PASS :buffer,device_mismatch:
+PASS :buffer_usage:
+PASS :copy_size_alignment:
+PASS :copy_offset_alignment:
+PASS :copy_overflow:
+PASS :copy_out_of_bounds:
+PASS :copy_within_same_buffer:
+

@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>media-source-pt-collision-cleanup</title>
+    <script src="mock-media-source.js"></script>
+    <script src="../video-test.js"></script>
+    <script>
+    // Regression coverage for the proposed MSE Coded Frame Processing
+    // amendment w3c/media-source#375 (presentation-timestamp collision
+    // cleanup). The same scenario inadvertently caused
+    // media-source-video-playback-quality.html to ship with a duplicate
+    // sample line whose presence flipped its playback-quality counters
+    // depending on whether the bug was present, masking the issue.
+    //
+    // When an incoming sample's (DTS, PT) coincides with an existing
+    // sample at the END of the buffer, none of the spec's existing cleanup
+    // steps in SourceBufferPrivate::processMediaSample populate
+    // erasedSamples:
+    //   - step 1.13 only fires post-reset (lastDTS invalid)
+    //   - step 1.14-first only fires post-reset (highestPT invalid)
+    //   - step 1.14-third's range [highestPT, frameEnd-tol) is past the
+    //     colliding sample at the buffer tail
+    //   - the cascade's findSampleAfterDecodeKey returns end()
+    //
+    // Without the unconditional #375 pass, trackBuffer.addSample of the
+    // incoming sample silently no-ops (SampleMap is std::map-backed and
+    // the duplicate-key insert collapses), and the original sample stays
+    // put. With the fix, the colliding sample is evicted first and the
+    // new sample inserts successfully.
+    //
+    // Detection: append (DTS=2, PT=2, DROPPED) followed immediately by a
+    // colliding (DTS=2, PT=2, SYNC). Observe droppedVideoFrames after
+    // playback:
+    //   - bug present: droppedVideoFrames=1 (DROPPED preserved, SYNC lost)
+    //   - bug fixed:   droppedVideoFrames=0 (DROPPED evicted, SYNC kept)
+
+    var source;
+    var sourceBuffer;
+    var initSegment;
+    var samples;
+    var quality;
+
+    if (window.internals)
+        internals.initializeMockMediaSource();
+
+    function runTest()
+    {
+        findMediaElement();
+
+        source = new MediaSource();
+        waitForEventOn(source, 'sourceopen', sourceOpen);
+        run('video.src = URL.createObjectURL(source)');
+    }
+
+    function sourceOpen()
+    {
+        run('sourceBuffer = source.addSourceBuffer("video/mock; codecs=mock")');
+        waitForEventOn(sourceBuffer, 'updateend', loadSamples, false, true);
+        initSegment = makeAInit(4, [makeATrack(1, 'mock', TRACK_KIND.VIDEO)]);
+        run('sourceBuffer.appendBuffer(initSegment)');
+    }
+
+    function loadSamples()
+    {
+        consoleWrite('Test that an incoming sample whose (DTS, PT) collides with the buffer tail evicts the existing sample (w3c/media-source#375).');
+        samples = concatenateSamples([
+            makeASample(0, 0, 1, 1, 1, SAMPLE_FLAG.SYNC),
+            makeASample(1, 1, 1, 1, 1, SAMPLE_FLAG.NONE),
+            makeASample(2, 2, 1, 1, 1, SAMPLE_FLAG.DROPPED),
+            makeASample(2, 2, 1, 1, 1, SAMPLE_FLAG.SYNC),
+            makeASample(3, 3, 1, 1, 1, SAMPLE_FLAG.NONE),
+        ]);
+        waitForEventOn(sourceBuffer, 'updateend', samplesAdded, false, true);
+        run('sourceBuffer.appendBuffer(samples)');
+    }
+
+    async function samplesAdded()
+    {
+        run('source.endOfStream()');
+        run('video.play()');
+        await waitFor(video, 'ended');
+        setTimeout(videoEnded, 300); // VideoPlaybackQuality is refreshed every 0.25s, wait a bit.
+    }
+
+    function videoEnded()
+    {
+        run('quality = video.getVideoPlaybackQuality()');
+        // Buffer holds 4 samples: (0,SYNC), (1,NONE), (2,SYNC) (the DROPPED
+        // one having been evicted by the #375 cleanup), (3,NONE). None of
+        // the rendered samples carry the DROPPED flag.
+        testExpected('quality.totalVideoFrames', 4);
+        testExpected('quality.droppedVideoFrames', 0);
+        endTest();
+    }
+    </script>
+</head>
+<body onload="runTest()">
+    <video></video>
+</body>
+</html>

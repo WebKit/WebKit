@@ -1,0 +1,89 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="../debugger/resources/site-isolation-debugger-test-utilities.js"></script>
+<script>
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Target.FrameTargetDisplayName");
+
+    async function waitForTargetName(target, urlSubstring) {
+        for (let i = 0; i < 100; ++i) {
+            if (target.displayName.includes(urlSubstring))
+                return true;
+            await new Promise((resolve) => setTimeout(resolve, 100));
+        }
+        return false;
+    }
+
+    suite.addTestCase({
+        name: "SiteIsolation.Target.FrameTargetDisplayName.Initial",
+        description: "Frame targets are named by the URL of the frame's current document.",
+        timeout: 30000,
+        async test() {
+            InspectorTest.expectThat(await waitForTargetName(InspectorTest.mainFrameTarget, "frame-target-display-name.html"), "The main frame's target should be named by the page's URL.");
+
+            let frameTarget = await waitForFrameTargetForURLContaining("frame-with-name.html?first");
+            InspectorTest.expectNotNull(frameTarget, "Should find the cross-site frame's target.");
+            if (!frameTarget)
+                return;
+            InspectorTest.expectThat(await waitForTargetName(frameTarget, "frame-with-name.html?first"), "The frame target should be named by the frame's URL.");
+            InspectorTest.expectEqual(frameTarget.displayName, "http://localhost:8000/site-isolation/inspector/target/resources/frame-with-name.html?first", "The name should be the frame's full URL.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Target.FrameTargetDisplayName.SameProcessNavigation",
+        description: "A frame target's name follows a navigation in the same process.",
+        timeout: 30000,
+        async test() {
+            let frameTarget = await waitForFrameTargetForURLContaining("frame-with-name.html?first");
+            InspectorTest.expectNotNull(frameTarget, "Should find the cross-site frame's target.");
+            if (!frameTarget)
+                return;
+            InspectorTest.expectThat(await waitForTargetName(frameTarget, "?first"), "The name should resolve before the navigation.");
+
+            InspectorTest.evaluateInPage(`document.getElementById("frame").src = "http://localhost:8000/site-isolation/inspector/target/resources/frame-with-name.html?second"`);
+            InspectorTest.expectThat(await waitForTargetName(frameTarget, "?second"), "The name should follow the navigation.");
+            InspectorTest.expectEqual(frameTarget.displayName, "http://localhost:8000/site-isolation/inspector/target/resources/frame-with-name.html?second", "The name should be the new URL.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Target.FrameTargetDisplayName.PlaceholderURLCorrection",
+        description: "Correcting the main resource's placeholder URL in place updates the frame target's name.",
+        timeout: 30000,
+        async test() {
+            let frameTarget = await waitForFrameTargetForURLContaining("frame-with-name.html");
+            InspectorTest.expectNotNull(frameTarget, "Should find the cross-site frame's target.");
+            if (!frameTarget)
+                return;
+
+            let frame = frameTarget.executionContext?.frame;
+            InspectorTest.expectNotNull(frame, "The target's execution context should have a frame.");
+            if (!frame)
+                return;
+
+            // The aggregated resource tree corrects a cross-origin frame's placeholder main resource
+            // URL in place, without replacing the main resource; the target's name must still follow.
+            let originalURL = frameTarget.displayName;
+            let correctedURL = originalURL + "?corrected";
+
+            let nameChanged = frameTarget.awaitEvent(WI.Target.Event.NameChanged);
+            frame.mainResource.updateInitialPlaceholderURL(correctedURL);
+            await nameChanged;
+            InspectorTest.expectEqual(frameTarget.displayName, correctedURL, "The name should follow the corrected URL.");
+
+            let nameRestored = frameTarget.awaitEvent(WI.Target.Event.NameChanged);
+            frame.mainResource.updateInitialPlaceholderURL(originalURL);
+            await nameRestored;
+            InspectorTest.expectEqual(frameTarget.displayName, originalURL, "The name should follow the restored URL.");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+
+<body onload="runTest()">
+<p>Tests that frame targets are named by the URL of the frame's current document.</p>
+<iframe id="frame" src="http://localhost:8000/site-isolation/inspector/target/resources/frame-with-name.html?first"></iframe>
+</body>

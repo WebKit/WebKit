@@ -1,0 +1,7 @@
+2d.canvas.host.type.delete
+
+OffscreenCanvas interface object is [[Configurable]]
+
+
+PASS OffscreenCanvas interface object is [[Configurable]]
+

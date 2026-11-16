@@ -1,0 +1,3 @@
+Tests that a RemoteObjectRegistry message addressed to a page that no longer exists is dropped instead of terminating the WebContent process.
+
+PASS if no crash.

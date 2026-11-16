@@ -1,0 +1,77 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ ManagedMediaSourceEnabled=true MediaSourceEnabled=true ] -->
+<html>
+<head>
+    <title>Ensure that appending data with different track ID doesn't stall</title>
+    <script src="../../media/media-source/media-source-loader.js"></script>
+    <script src="../../media/video-test.js"></script>
+    <script>
+    var loader1;
+    var loader2;
+    var source;
+    var sourceBuffer;
+
+    function loaderPromise(loader) {
+        return new Promise((resolve, reject) => {
+            loader.onload = resolve;
+            loader.onerror = reject;
+        });
+    }
+
+    window.addEventListener('load', async event => {
+        try {
+            findMediaElement();
+            video.disableRemotePlayback = true;
+
+            loader1 = new MediaSourceLoader('content/test-48khz-manifest.json');
+            await loaderPromise(loader1);
+
+            source = new ManagedMediaSource();
+            run('video.src = URL.createObjectURL(source)');
+            await waitFor(source, 'sourceopen');
+            waitFor(video, 'error').then(failTest);
+
+            run('sourceBuffer = source.addSourceBuffer(loader1.type())');
+            run('sourceBuffer.appendBuffer(loader1.initSegment())');
+            await waitFor(sourceBuffer, 'update');
+            consoleWrite('Append a media segment.')
+            run('sourceBuffer.appendBuffer(loader1.mediaSegment(0))');
+            await waitFor(sourceBuffer, 'update');
+            testExpected('sourceBuffer.buffered.length', '1');
+            // Remove data to force player to enter into a stall.
+            run('sourceBuffer.remove(0, sourceBuffer.buffered.end(0))');
+            await waitFor(sourceBuffer, 'update');
+            testExpected('sourceBuffer.buffered.length', '0');
+            loader2 = new MediaSourceLoader('content/test-48khz-new-track-id-manifest.json');
+            await loaderPromise(loader2);
+            run('sourceBuffer.appendBuffer(loader2.initSegment())');
+            await waitFor(sourceBuffer, 'update');
+            consoleWrite('Append a media segment.')
+            run('sourceBuffer.appendBuffer(loader2.mediaSegment(0))');
+            await waitFor(sourceBuffer, 'update');
+            testExpected('sourceBuffer.buffered.length', '1');
+            run('video.play()');
+            await testExpectedEventually('video.currentTime', 0.5, '>=');
+
+            // Overwrite a section of the sourceBuffer with a different track ID.
+            // |trackID=2|trackID=1|trackID=2|
+            // 0        0.3        0.6       1
+            run('sourceBuffer.appendWindowStart = 0.3');
+            run('sourceBuffer.appendWindowEnd = 0.6');
+            run('sourceBuffer.appendBuffer(loader1.initSegment())');
+            await waitFor(sourceBuffer, 'update');
+            run('sourceBuffer.appendBuffer(loader1.mediaSegment(0))');
+            await waitFor(sourceBuffer, 'update');
+            run('video.currentTime = 0');
+            await waitFor(video, 'seeked');
+            await testExpectedEventually('video.currentTime', 0.5, '>=');
+            endTest();
+        } catch (e) {
+            failTest(`Caught exception: "${e}"`);
+        }
+    });
+    </script>
+</head>
+<body>
+    <video controls></video>
+</body>
+</html>

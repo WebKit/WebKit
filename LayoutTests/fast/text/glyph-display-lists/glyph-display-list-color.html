@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<script>
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+}
+if (window.internals)
+    internals.setForceUseGlyphDisplayListForTesting(true);
+</script>
+<body onload="run()">
+<div id=text style="color: red;">Some text</div>
+<pre id=output></pre>
+<script>
+function run() {
+    requestAnimationFrame(function() {
+        requestAnimationFrame(function() {
+            if (window.internals) {
+                internals.setForceUseGlyphDisplayListForTesting(false);
+                output.textContent = internals.cachedGlyphDisplayListsForTextNode(text.firstChild);
+                text.remove();
+            }
+            if (window.testRunner)
+                testRunner.notifyDone();
+        });
+    });
+}
+</script>

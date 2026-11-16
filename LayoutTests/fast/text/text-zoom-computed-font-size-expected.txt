@@ -1,0 +1,28 @@
+Text zoom is included in the computed font-size returned by getComputedStyle. Pages detect text zoom this way.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Text zoom 2:
+PASS getComputedStyle(plain).fontSize is "34px"
+PASS getComputedStyle(em).fontSize is "68px"
+PASS getComputedStyle(plain).font is "34px -webkit-standard"
+PASS getComputedStyle(lineHeightNumber).lineHeight is "51px"
+PASS getComputedStyle(lineHeightLength).lineHeight is "40px"
+PASS getComputedStyle(reset).fontSize is "17px"
+PASS getComputedStyle(svgText).fontSize is "17px"
+
+Text zoom 2, page zoom 2:
+PASS getComputedStyle(plain).fontSize is "34px"
+PASS getComputedStyle(em).fontSize is "68px"
+PASS getComputedStyle(plain).font is "34px -webkit-standard"
+PASS getComputedStyle(lineHeightNumber).lineHeight is "51px"
+PASS getComputedStyle(lineHeightLength).lineHeight is "40px"
+PASS getComputedStyle(reset).fontSize is "17px"
+PASS getComputedStyle(svgText).fontSize is "17px"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+text text text text text
+text
+

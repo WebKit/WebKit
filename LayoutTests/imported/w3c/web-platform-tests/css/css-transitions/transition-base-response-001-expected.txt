@@ -1,0 +1,5 @@
+
+PASS em units respond to font-size transition
+PASS ex units respond to font-size transition
+PASS var() references respond to custom property transition
+

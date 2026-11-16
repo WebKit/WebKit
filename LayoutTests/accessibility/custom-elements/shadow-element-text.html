@@ -1,0 +1,34 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<my-button id="button1">Button One</my-button>
+<my-button id="button2"><div>Nested Button Two</div></my-button>
+
+<script>
+    class MyButton extends HTMLElement {
+        constructor() {
+            super();
+            const root = this.attachShadow({ mode: 'open' });
+            root.innerHTML = `<button id=${this.id}><slot></slot></button>`;
+        }
+    }
+    customElements.define('my-button', MyButton);
+
+    let output = "This test ensures that shadow dom elements return the right text.\n\n";
+
+    if (window.accessibilityController) {
+        var button1 = accessibilityController.accessibleElementById("button1");
+        output += `Button1 text: ${platformTextAlternatives(button1)}\n`;
+        
+        var button2 = accessibilityController.accessibleElementById("button2");
+        output += `Button2 text: ${platformTextAlternatives(button2)}\n`;
+        debug(output); 
+    }
+</script>
+</body>
+</html>

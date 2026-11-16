@@ -1,0 +1,24 @@
+<head>
+</head>
+<body>
+    <div class="app"></div>
+    <!-- only one element is fine -->
+    <div class="app"></div>
+    <script>
+        const attachApp = (element) => {
+            const root = element.attachShadow({mode: "open"})
+
+            const style = document.createElement('link')
+            style.rel= 'stylesheet'
+            style.href = 'resources/shared-resolver-host-invalidation.css'
+            root.append(style)
+
+            const div = document.createElement('div')
+            const p = document.createElement('p')
+            p.textContent = 'I should have a red background'
+            div.append(p)
+            root.append(div)
+        }
+        document.querySelectorAll('.app').forEach(attachApp)
+    </script>
+</body>

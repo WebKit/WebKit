@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<script>
+  function main() {
+    document.body.offsetHeight;
+    x2.setAttribute("rowspan", "0");
+    document.body.offsetHeight;
+    table.insertRow();
+  }
+  window.testRunner?.dumpAsText();
+</script>
+<body onload="main()">
+<p>This test passes if it doesn't crash.</p>
+<table id=table>
+  <tr style="display: none"></tr>
+  <tr><td id=x2></td></tr>
+</table>
+</body>

@@ -1,0 +1,43 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<p id="target">abc אבג def</p>
+
+<script>
+var output = "This test ensures text extracted after direction is flipped to right-to-left comes back in logical order, not in the order the glyphs are drawn. The text is replaced at the same time so the assertion cannot pass against a value cached from before the flip.\n\n";
+
+function text()
+{
+    var target = accessibilityController.accessibleElementById("target");
+    return target.stringForTextMarkerRange(target.textMarkerRangeForElement(target));
+}
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    output += expect("text()", "'abc אבג def'");
+
+    setTimeout(async function() {
+        document.getElementById("target").dir = "rtl";
+        document.getElementById("target").textContent = "xyz אבג uvw";
+
+        output += "\nAfter the flip the new text is still logical: the Latin run that comes first in the DOM comes first in the string.\n";
+        output += await expectAsync("text()", "'xyz אבג uvw'");
+        output += expect("text().indexOf('xyz')", "0");
+        output += expect("text().indexOf('uvw')", "8");
+
+        document.getElementById("target").style.display = "none";
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

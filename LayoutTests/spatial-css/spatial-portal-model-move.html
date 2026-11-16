@@ -1,0 +1,40 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ SpatialPortalEnabled=true ModelElementEnabled=true ModelProcessEnabled=true allowTestOnlyIPC=true ] -->
+<html>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<script src="../resources/ui-helper.js"></script>
+<style>
+    .portal { spatial: portal; width: 300px; height: 150px; }
+</style>
+<body>
+<div id="portalA" class="portal"></div>
+<div id="portalB" class="portal"></div>
+<script>
+'use strict';
+
+window.internals?.disableModelLoadDelaysForTesting();
+
+promise_test(async t => {
+    const portalA = document.getElementById("portalA");
+    const portalB = document.getElementById("portalB");
+
+    const model = document.createElement("model");
+    t.add_cleanup(() => model.remove());
+
+    portalA.appendChild(model);
+    const source = document.createElement("source");
+    source.src = "../model-element/resources/cube.usdz";
+    model.appendChild(source);
+
+    await model.ready;
+    assert_equals(internals.numberOfHostedModelsInSpatialPortal(portalA), 1, "portal A hosts the model after insertion");
+    assert_equals(internals.numberOfHostedModelsInSpatialPortal(portalB), 0, "portal B does not host the model before the move");
+
+    portalB.appendChild(model);
+    await UIHelper.ensureStablePresentationUpdate();
+    assert_equals(internals.numberOfHostedModelsInSpatialPortal(portalB), 1, "portal B hosts the model after the move");
+    assert_equals(internals.numberOfHostedModelsInSpatialPortal(portalA), 0, "portal A no longer hosts the model after the move");
+}, "A <model> moved into a spatial portal delegates to the destination portal");
+</script>
+</body>
+</html>

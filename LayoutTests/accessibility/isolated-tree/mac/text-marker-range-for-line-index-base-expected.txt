@@ -1,0 +1,11 @@
+This test ensures AXTextMarkerRangeForLine numbers lines from one while AXLineForTextMarker numbers them from zero, and that a marker taken out of one line's range reports the index that maps back to that same range.
+
+PASS: lineText(1) === 'Alpha'
+PASS: lineText(2) === 'Beta'
+PASS: container.lineIndexForTextMarker(markerInLine2) === 1
+PASS: lineText(container.lineIndexForTextMarker(markerInLine2) + 1) === 'Beta'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

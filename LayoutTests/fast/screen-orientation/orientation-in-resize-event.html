@@ -1,0 +1,43 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<head>
+<meta name="viewport" content="initial-scale=1.0">
+<script src="../../resources/js-test.js"></script
+</head>
+<body>
+<script>
+description("Checks that screen.orientation.type returns an up-to-date value in the 'resize' event listener.");
+jsTestIsAsync = true;
+
+function getRotationUIScript()
+{
+    return `
+        (function() {
+            uiController.simulateRotationLikeSafari('landscape-right', function() {
+                uiController.doAfterVisibleContentRectUpdate(function () {
+                    uiController.uiScriptComplete();
+                })
+            });
+        })();`
+}
+
+let wasPortrait = screen.orientation.type.startsWith("portrait");
+shouldBeTrue("wasPortrait");
+onload = () => {
+    debug("Simulating rotation to landscape");
+    testRunner.runUIScript(getRotationUIScript(), function(result) { });
+};
+
+onresize = (e) => {
+    let isLandscapeSize = window.innerWidth > window.innerHeight;
+    if (!isLandscapeSize)
+        return;
+
+    debug("* in resize event listener");
+    isLandscape = screen.orientation.type.startsWith("landscape");
+    shouldBeTrue("isLandscape");
+    finishJSTest();
+};
+</script>
+</body>
+</html>

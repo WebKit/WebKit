@@ -1,0 +1,16 @@
+
+Muted:
+RUN(video.muted = true)
+EVENT(canplay)
+RUN(video.play())
+EXPECTED (video.currentTime > '0') OK
+RUN(video.pause())
+
+Volume zero:
+RUN(video.volume = 0)
+EVENT(canplay)
+RUN(video.play())
+EXPECTED (video.currentTime > '0') OK
+RUN(video.pause())
+END OF TEST
+

@@ -1,0 +1,14 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x278
+  RenderBlock {HTML} at (0,0) size 800x278
+    RenderBody {BODY} at (8,8) size 784x262
+      RenderEmbeddedObject {OBJECT} at (0,0) size 258x258 [border: (1px solid #000000)]
+        layer at (0,0) size 256x512
+          RenderView at (0,0) size 241x241
+        layer at (0,0) size 241x512
+          RenderBlock {HTML} at (0,0) size 241x512
+            RenderBody {BODY} at (0,0) size 241x512
+              RenderBlock {DIV} at (0,0) size 256x256 [bgcolor=#FF0000]
+              RenderBlock {DIV} at (0,256) size 256x256 [bgcolor=#008000]
+      RenderText {#text} at (0,0) size 0x0

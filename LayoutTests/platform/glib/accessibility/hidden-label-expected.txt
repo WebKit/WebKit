@@ -1,0 +1,33 @@
+This test ensures we gather the text for hidden labels.
+
+#first-input:
+	AXTitle: first, visibility hidden label
+	AXDescription:
+
+#second-input:
+	AXTitle: second, display none label
+	AXDescription:
+
+Swapping labels.
+#first-input:
+	AXTitle: second, display none label
+	AXDescription:
+
+#second-input:
+	AXTitle: first, visibility hidden label
+	AXDescription:
+
+Removing for attributes entirely.
+#first-input:
+	AXTitle:
+	AXDescription:
+
+#second-input:
+	AXTitle:
+	AXDescription:
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+

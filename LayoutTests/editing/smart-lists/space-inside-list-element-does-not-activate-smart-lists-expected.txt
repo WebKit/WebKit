@@ -1,0 +1,11 @@
+Smart-list conversion should not fire when the selection is already inside a list element. After typing two bulleted items, typing "1. Hi" on a third list item inserts the literal text into the existing list rather than creating a new ordered list.
+| <ul>
+|   class="Apple-disc-list"
+|   style="list-style-type: disc;"
+|   <li>
+|     "A"
+|     <br>
+|   <li>
+|     "B"
+|   <li>
+|     "1. Hi<#selection-caret>"

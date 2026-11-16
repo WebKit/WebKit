@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test.js"></script>
+<script>
+description("Tests that navigation to a Blob URL does not fail if the URL is revoked right after triggering the navigation.");
+jsTestIsAsync = true;
+
+onload = () => {
+    let url = window.URL.createObjectURL(new Blob(["TEST", ], { type: 'text/html' }));
+    let link = document.createElement('a');
+    link.target = "testFrame";
+    link.href = url;
+
+    frame = document.getElementById("testFrame");
+    frame.onerror = () => {
+        testFailed("Failed to navigate the frame");
+        finishJSTest();
+    }
+
+    frame.onload = () => {
+        testPassed("Was able to navigate the frame");
+        shouldBeEqualToString("frame.contentDocument.body.innerText", "TEST");
+        finishJSTest();
+    };
+
+    link.click();
+
+    URL.revokeObjectURL(url);
+    link.remove();
+}
+
+</script>
+<iframe id="testFrame" name="testFrame" src="about:blank"></iframe>
+</body>
+</html>

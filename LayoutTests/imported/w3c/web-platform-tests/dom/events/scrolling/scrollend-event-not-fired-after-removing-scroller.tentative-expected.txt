@@ -1,0 +1,5 @@
+
+PASS No scrollend is received after removing parent div
+PASS No scrollend is received after removing scrolling element
+FAIL scrollend is received after removing descendant div promise_test: Unhandled rejection with value: "target_div did not receive scrollend event after vertical scroll."
+

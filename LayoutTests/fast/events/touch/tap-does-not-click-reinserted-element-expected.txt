@@ -1,0 +1,12 @@
+
+Tests that a tap does not dispatch click to the pressed element if it was removed and reinserted during pointerdown.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS reinsertedOnTouch is true
+PASS clickCount is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

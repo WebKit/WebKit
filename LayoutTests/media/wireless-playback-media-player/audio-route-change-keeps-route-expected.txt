@@ -1,0 +1,11 @@
+Test that an audio output device change while a MediaDeviceRoute is active does not replace the route, so a video that starts playing afterward is played on the route.
+
+RUN(internals.mockMediaDeviceRouteController.activateRoute(route))
+EXPECTED (internals.activeVideoRouteSupportsAirPlayVideo() == 'true') OK
+EVENT(canplaythrough)
+RUN(internals.simulateActiveOutputDeviceChange())
+EXPECTED (internals.activeVideoRouteSupportsAirPlayVideo() == 'true') OK
+RUN(video.play())
+Route received the video URL
+END OF TEST
+

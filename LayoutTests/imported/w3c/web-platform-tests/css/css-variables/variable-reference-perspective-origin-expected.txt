@@ -1,0 +1,8 @@
+
+PASS var() as first value of perspective-origin
+PASS var() as second value of perspective-origin
+PASS var() as both values of perspective-origin
+PASS same var() for both values of perspective-origin
+PASS var() as second value with keyword
+PASS var() as first value with keyword
+

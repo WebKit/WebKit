@@ -1,0 +1,3 @@
+
+PASS cancel and close event properties are correct
+

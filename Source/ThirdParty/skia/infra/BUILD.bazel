@@ -1,0 +1,18 @@
+load("//bazel:macros.bzl", "gazelle")
+
+package(
+    default_applicable_licenses = ["//:license"],
+)
+
+licenses(["notice"])
+
+gazelle(
+    name = "gazelle",
+    visibility = ["//visibility:public"],
+)
+
+alias(
+    name = "mockery",
+    actual = "@com_github_vektra_mockery_v2//:v2",
+    visibility = ["//visibility:public"],
+)

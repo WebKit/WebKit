@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html>
+<body>go back
+<script>
+// Navigate back to the suspended page. The UIProcess creates a ProvisionalPageProxy whose process()
+// is the suspended page's process -- the one running the forgery -- and sends it
+// WebPage_SetIsSuspended(false), which is the trigger the test listens for.
+setTimeout(function () { history.back(); }, 100);
+</script>
+</body>
+</html>

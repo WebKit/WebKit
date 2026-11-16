@@ -1,0 +1,32 @@
+function assertEq(actual, expected) {
+    if (actual != expected)
+        throw ("Expected: " + expected + ", actual: " + actual);
+}
+
+function foo(arr, regexp, str) {
+    regexp[Symbol.match](str);
+    arr[1] = 3.54484805889626e-310;
+    return arr[0];
+}
+
+let arr = [1.1, 2.2, 3.3];
+let regexp = /a/y;
+
+for (let i = 0; i < testLoopCount; i++)
+    foo(arr, regexp, "abcd");
+
+regexp.lastIndex = {
+    valueOf: () => {
+        arr[0] = arr;
+        return 0;
+    }
+};
+let result = foo(arr, regexp, "abcd");
+
+assertEq(arr[1], "3.54484805889626e-310");
+assertEq(arr[2], "3.3");
+
+// arr[0] was set to arr above, so foo returned the array itself. Check that by identity: arr is
+// cyclic, and converting a cyclic array to a string exhausts the stack.
+assertEq(arr[0] === arr, true);
+assertEq(result === arr, true);

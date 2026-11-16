@@ -1,0 +1,63 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/hanging-punctuation/WEB_FEATURES.yml
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/hanging-punctuation/hanging-punctuation-allow-end-001-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/hanging-punctuation/hanging-punctuation-allow-end-001.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/hanging-punctuation/hanging-punctuation-allow-end-basic-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/hanging-punctuation/hanging-punctuation-allow-end-basic.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/hanging-punctuation/hanging-punctuation-allow-end-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/hanging-punctuation/hanging-punctuation-allow-end-inlines-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/hanging-punctuation/hanging-punctuation-allow-end-inlines.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/hanging-punctuation/hanging-punctuation-allow-end.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/hanging-punctuation/hanging-punctuation-block-bound-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/hanging-punctuation/hanging-punctuation-block-bound-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/hanging-punctuation/hanging-punctuation-first-001-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/hanging-punctuation/hanging-punctuation-first-001.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/hanging-punctuation/hanging-punctuation-first-002-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/hanging-punctuation/hanging-punctuation-first-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/hanging-punctuation/hanging-punctuation-first-and-last-together-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/hanging-punctuation/hanging-punctuation-first-and-last-together.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/hanging-punctuation/hanging-punctuation-first-ascii-quote-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/hanging-punctuation/hanging-punctuation-first-ascii-quote.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/hanging-punctuation/hanging-punctuation-first-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/hanging-punctuation/hanging-punctuation-first-rtl-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/hanging-punctuation/hanging-punctuation-first-rtl.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/hanging-punctuation/hanging-punctuation-first-whitespace-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/hanging-punctuation/hanging-punctuation-first-whitespace.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/hanging-punctuation/hanging-punctuation-first.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/hanging-punctuation/hanging-punctuation-force-end-001-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/hanging-punctuation/hanging-punctuation-force-end-001.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/hanging-punctuation/hanging-punctuation-inline-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/hanging-punctuation/hanging-punctuation-inline-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/hanging-punctuation/hanging-punctuation-inline-bound-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/hanging-punctuation/hanging-punctuation-inline-bound-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/hanging-punctuation/hanging-punctuation-last-001-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/hanging-punctuation/hanging-punctuation-last-001.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/hanging-punctuation/hanging-punctuation-last-ascii-quote-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/hanging-punctuation/hanging-punctuation-last-ascii-quote.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/hanging-punctuation/hanging-punctuation-last-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/hanging-punctuation/hanging-punctuation-last-rtl-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/hanging-punctuation/hanging-punctuation-last-rtl.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/hanging-punctuation/hanging-punctuation-last-whitespace-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/hanging-punctuation/hanging-punctuation-last-whitespace.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/hanging-punctuation/hanging-punctuation-last.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/hanging-punctuation/hanging-punctuation-variable-font-size-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/hanging-punctuation/hanging-punctuation-variable-font-size.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/hanging-punctuation/hanging-punctuation-with-bidi-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/hanging-punctuation/hanging-punctuation-with-bidi.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/hanging-punctuation/hanging-scrollable-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/hanging-punctuation/hanging-scrollable-001.html

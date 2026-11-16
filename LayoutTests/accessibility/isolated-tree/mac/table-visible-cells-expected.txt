@@ -1,0 +1,17 @@
+This test ensures AXVisibleCells enumerates every cell of a fully-onscreen table row by row, left to right, and that each entry is the same object cellForColumnAndRow() returns for that position.
+
+PASS: grid.rowCount === 2
+PASS: grid.columnCount === 3
+PASS: visibleCells.length === 6
+PASS: grid.uiElementArrayAttributeValue('AXVisibleCells').length === 6
+PASS: visibleCells[0].isEqual(grid.cellForColumnAndRow(0, 0)) === true
+PASS: visibleCells[1].isEqual(grid.cellForColumnAndRow(1, 0)) === true
+PASS: visibleCells[2].isEqual(grid.cellForColumnAndRow(2, 0)) === true
+PASS: visibleCells[3].isEqual(grid.cellForColumnAndRow(0, 1)) === true
+PASS: visibleCells[4].isEqual(grid.cellForColumnAndRow(1, 1)) === true
+PASS: visibleCells[5].isEqual(grid.cellForColumnAndRow(2, 1)) === true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

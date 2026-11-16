@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+const sheetsPerRound = 6;
+const childrenPerSheet = 24;
+const rounds = 6;
+
+let css = "@media all {";
+for (let i = 0; i < childrenPerSheet; ++i)
+    css += " @media all { .a" + i + " { color: rgb(" + i + ", 7, 9) } }";
+css += " }";
+
+function makeRound()
+{
+    const styles = [];
+    for (let i = 0; i < sheetsPerRound; ++i) {
+        const style = document.createElement("style");
+        style.textContent = css;
+        document.head.appendChild(style);
+        styles.push(style);
+    }
+
+    const lists = [];
+    for (const style of styles) {
+        const children = style.sheet.cssRules[0].cssRules;
+        for (let i = 0; i < childrenPerSheet; ++i) {
+            const list = children[i].cssRules;
+            list.expando = 1;
+            lists.push(list);
+        }
+    }
+
+    for (const style of styles)
+        style.remove();
+
+    return lists;
+}
+
+let held = [];
+for (let round = 0; round < rounds; ++round) {
+    held.push(makeRound());
+    if (held.length > 2)
+        held.shift();
+    GCController.collect();
+}
+held = null;
+GCController.collect();
+
+document.write("PASS if no crash");
+</script>
+</body>
+</html>

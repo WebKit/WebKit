@@ -1,0 +1,5 @@
+html5lib parser tests
+
+
+PASS <body><table>\x00filler\x00text\x00
+

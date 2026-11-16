@@ -1,0 +1,5 @@
+
+
+FAIL Reload preserves scroll position for ASCII fragment assert_equals: scroll position should be preserved after reload, not scrolled to fragment expected 0 but got 608
+FAIL Reload preserves scroll position for non-ASCII fragment assert_equals: scroll position should be preserved after reload, not scrolled to fragment expected 0 but got 1226
+

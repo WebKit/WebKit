@@ -1,0 +1,4 @@
+
+PASS minHeight responsive to style changes
+PASS minHeight clamped to 0px on keyframes
+

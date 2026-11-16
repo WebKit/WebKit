@@ -1,0 +1,9 @@
+Test passes if the greenyellow/lightgreen area fills the screen after going fullscreen.
+
+Go fullscreen
+EXPECTED (target.offsetWidth > 400 == 'true') OK
+EXPECTED (target.offsetHeight > 400 == 'true') OK
+EXPECTED (child.offsetWidth > 400 == 'true') OK
+EXPECTED (child.offsetHeight > 400 == 'true') OK
+END OF TEST
+

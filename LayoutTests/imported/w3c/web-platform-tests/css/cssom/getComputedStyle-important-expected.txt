@@ -1,0 +1,4 @@
+
+PASS getComputedStyle should return !important stylesheet value over inline style
+PASS getComputedStyle should return !important stylesheet value rather than the subsequent stylesheet value
+

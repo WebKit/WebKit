@@ -1,0 +1,7 @@
+A  BC  D
+
+PASS First tspan starts at its specified x/y
+PASS Second tspan starts at its specified x/y, not offset by inter-tspan whitespace
+PASS Second character of multi-char tspan follows naturally without position shift
+PASS Third tspan starts at its specified x/y
+

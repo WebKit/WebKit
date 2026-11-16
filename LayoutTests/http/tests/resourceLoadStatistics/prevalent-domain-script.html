@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="/js-test-resources/js-test.js"></script>
+<script src="resources/make-domains-prevalent.js"></script>
+</head>
+<body>
+<div id="target"></div>
+<script>
+description("Tests that code from a script from a domain that ITP classifies as prevalent, and code that such a script creates, counts as prevalent domain script code, even when first-party script runs it later.");
+jsTestIsAsync = true;
+
+function check(caller, actual, expected)
+{
+    if (actual === expected)
+        testPassed(`${caller}: ${actual}`);
+    else
+        testFailed(`${caller}: ${actual}, expected ${expected}`);
+}
+
+function isPrevalentDomainScriptOnStackFromFirstPartyFunction()
+{
+    return internals.isPrevalentDomainScriptOnStack();
+}
+
+makeTestSitesPrevalent().then(() => loadScriptFromOtherSite("create-prevalent-domain-code.js")).then(() => {
+    setTimeout(() => {
+        check("Prevalent domain script", resultsFromPrevalentDomainScript.direct, true);
+        check("First-party function called by prevalent domain script", resultsFromPrevalentDomainScript.firstPartyFunction, true);
+        check("First-party script", internals.isPrevalentDomainScriptOnStack(), false);
+
+        check("Function defined by prevalent domain script", prevalentDomainFunction(), true);
+        check("Function created with eval() by prevalent domain script", functionCreatedWithEval(), true);
+        check("Function created with the Function constructor by prevalent domain script", functionCreatedWithFunctionConstructor(), true);
+        document.body.appendChild(prevalentDomainScriptElement);
+        check("Script element created by prevalent domain script", resultFromScriptElement, true);
+        document.getElementById("target").dispatchEvent(new Event("click"));
+        check("Event handler attribute set by prevalent domain script", resultFromEventHandlerAttribute, true);
+        check("String passed to setTimeout() by prevalent domain script", resultFromTimerString, true);
+        check("First-party script after running code created by prevalent domain script", internals.isPrevalentDomainScriptOnStack(), false);
+
+        Promise.resolve().then(internals.isPrevalentDomainScriptOnStack.bind(internals)).then((result) => {
+            check("Native function called by the Promise machinery", result, true);
+            finishJSTest();
+        });
+    }, 0);
+});
+</script>
+</body>
+</html>

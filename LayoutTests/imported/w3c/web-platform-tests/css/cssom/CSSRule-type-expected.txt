@@ -1,0 +1,16 @@
+
+PASS CSSStyleRule.type is STYLE_RULE (1)
+PASS CSSImportRule.type is IMPORT_RULE (3)
+PASS CSSNamespaceRule.type is NAMESPACE_RULE (10)
+PASS CSSMediaRule.type is MEDIA_RULE (4)
+PASS CSSSupportsRule.type is SUPPORTS_RULE (12)
+PASS CSSFontFaceRule.type is FONT_FACE_RULE (5)
+PASS CSSPageRule.type is PAGE_RULE (6)
+PASS CSSKeyframesRule.type is KEYFRAMES_RULE (7)
+PASS CSSKeyframeRule.type is KEYFRAME_RULE (8)
+PASS CSSCounterStyleRule.type is COUNTER_STYLE_RULE (11)
+PASS CSSLayerBlockRule.type is 0 (no constant defined)
+PASS CSSLayerStatementRule.type is 0 (no constant defined)
+PASS CSSContainerRule.type is 0 (no constant defined)
+PASS CSSScopeRule.type is 0 (no constant defined)
+

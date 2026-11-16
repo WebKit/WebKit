@@ -1,0 +1,4 @@
+
+PASS EvalError thrown if the callback of the default policy throws an error (eval).
+PASS EvalError thrown if the callback of the default policy throws an error (new Function).
+

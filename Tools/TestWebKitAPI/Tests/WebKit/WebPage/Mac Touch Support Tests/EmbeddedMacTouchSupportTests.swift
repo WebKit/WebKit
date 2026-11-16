@@ -1,0 +1,321 @@
+// Copyright (C) 2026 Apple Inc. All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted provided that the following conditions
+// are met:
+// 1. Redistributions of source code must retain the above copyright
+//    notice, this list of conditions and the following disclaimer.
+// 2. Redistributions in binary form must reproduce the above copyright
+//    notice, this list of conditions and the following disclaimer in the
+//    documentation and/or other materials provided with the distribution.
+//
+// THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+// THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+// PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+// BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+// CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+// SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+// INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+// CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+// ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+// THE POSSIBILITY OF SUCH DAMAGE.
+
+#if HAVE_APPKIT_GESTURES_SUPPORT
+
+import Foundation
+import struct Foundation.URL
+@_spi(Testing) import WebKit
+@_spi(Testing) import _WebKit_SwiftUI
+import SwiftUI
+import struct Swift.String
+private import struct TestWebKitAPILibrary.DOMRect
+import Testing
+@_spi(WebKitAdditions_Testing) private import TestWebKitAPILibrary
+private import Recap
+private import AppKit_Private.NSMenu_Private
+
+extension MacTouchSupportTests {
+    @MainActor
+    @Suite(.serialized, .timeLimit(.minutes(1)))
+    final class Embedded: MacTouchSupportTestSuite {
+        @MainActor
+        private final class ContentOffsetStorage {
+            var value = CGPoint.zero
+        }
+
+        static let text = "Here's to the crazy ones."
+
+        static let topInset: CGFloat = 100
+
+        let recap = Recap.shared
+
+        let page: WebPage = {
+            var configuration = WebPage.Configuration()
+            configuration.requiresUserActionForEditingControlsManager = true
+            return WebPage(configuration: configuration)
+        }()
+
+        let windowHost: TestWindowHost
+
+        private let windowSize = NSSize(width: 800, height: 600)
+        private let contentHeight: CGFloat = 2000
+
+        private var contentOffset = ContentOffsetStorage()
+
+        init() async throws {
+            self.windowHost = TestWindowHost(size: windowSize) { [windowSize, contentHeight, contentOffset, page] in
+                ScrollView {
+                    VStack(spacing: 0) {
+                        WebView(page)
+                            .frame(width: windowSize.width, height: windowSize.height)
+                            .webViewObscuredContentInsets(EdgeInsets(top: Self.topInset, leading: 0, bottom: 0, trailing: 0))
+                        Color.clear
+                            .frame(height: contentHeight - windowSize.height)
+                    }
+                }
+                .onScrollGeometryChange(for: CGPoint.self) { geometry in
+                    geometry.contentOffset
+                } action: { _, newContentOffset in
+                    contentOffset.value = newContentOffset
+                }
+            }
+
+            await NSApp.waitForActivation()
+        }
+    }
+}
+
+extension MacTouchSupportTests.Embedded {
+    @Test
+    func scrollOverNonScrollableWebViewPropagatesToEnclosingScrollView() async throws {
+        let html = """
+            <body style='margin:0; background: repeating-linear-gradient(to bottom, blue 0 50px, white 50px 100px);'>
+                <p>not scrollable</p>
+                <img id="img" src="400x400-green.png" style="display: block; margin: 50px;">
+            </body>
+            """
+
+        let baseURL = try #require(Bundle.testResources.resourceURL)
+
+        try await page.load(html: html, baseURL: baseURL).wait()
+        await page.waitForNextPresentationUpdate()
+
+        let cgScreenOrigin = screenBounds(ofPointInWindowCoordinates: .init(x: 0, y: windowSize.height))
+        let viewportInCGScreen = CGRect(origin: cgScreenOrigin, size: windowSize)
+
+        let dragDistance: CGFloat = 100
+        let center = viewportInCGScreen.center
+        let startPoint = CGPoint(x: center.x, y: center.y + dragDistance / 2)
+        let endPoint = CGPoint(x: center.x, y: center.y - dragDistance / 2)
+
+        let initialContentOffset = contentOffset.value
+
+        await recap.play { composer in
+            composer.drag(withStart: startPoint, end: endPoint, duration: 0.5)
+            composer.advanceTime(0.1)
+            composer.liftUpAtAllActivePoints()
+        }
+
+        await page.waitForNextPresentationUpdate()
+
+        // The test passes if the enclosing SwiftUI ScrollView scrolled.
+        #expect(contentOffset.value != initialContentOffset)
+    }
+
+    @Test
+    func holdAndDragOverTextInWebViewInsideEnclosingScrollViewCreatesSelection() async throws {
+        // Center the text vertically so the hold-and-drag stays well within the visible scroll area.
+        let html = """
+            <body style='margin:0;'>
+                <div id="div" style="font-size: 30px; padding-top: 280px;">\(Self.text)</div>
+            </body>
+            """
+
+        try await page.load(html: html).wait()
+        await page.waitForNextPresentationUpdate()
+
+        let toBounds = try await screenBoundsOfText("to")
+        let crazyBounds = try await screenBoundsOfText("crazy")
+
+        try await page.callJavaScript(JavaScriptMessages.SetSelection(in: "div", offset: 0))
+        await page.waitForNextPresentationUpdate()
+
+        await recap.play { composer in
+            composer.drag(
+                withStart: toBounds.center,
+                end: crazyBounds.center,
+                duration: .seconds(1.5),
+                tapAndWait: .seconds(1.0)
+            )
+        }
+
+        await page.waitForNextPresentationUpdate()
+
+        let selection = try await page.callJavaScript(JavaScriptMessages.GetSelection())
+
+        guard case .range = selection else {
+            Issue.record("expected a hold-and-drag over text in an enclosing scroll view to create a range selection, got \(selection)")
+            return
+        }
+    }
+
+    @Test
+    func quickDragOverTextInWebViewInsideEnclosingScrollViewScrolls() async throws {
+        let html = """
+            <body style='margin:0; background: repeating-linear-gradient(to bottom, blue 0 50px, white 50px 100px);'>
+                <div id="div" style="font-size: 30px; padding-top: 280px;">\(Self.text)</div>
+            </body>
+            """
+
+        try await page.load(html: html).wait()
+        await page.waitForNextPresentationUpdate()
+
+        let crazyBounds = try await screenBoundsOfText("crazy")
+
+        // A quick (non-hold) drag whose touch-down is over selectable text must still hand off to the
+        // enclosing scroll view, just like over an image.
+        let dragDistance: CGFloat = 100
+        let center = crazyBounds.center
+        let startPoint = CGPoint(x: center.x, y: center.y + dragDistance / 2)
+        let endPoint = CGPoint(x: center.x, y: center.y - dragDistance / 2)
+
+        let initialContentOffset = contentOffset.value
+
+        await recap.play { composer in
+            composer.drag(withStart: startPoint, end: endPoint, duration: 0.5)
+            composer.advanceTime(0.1)
+            composer.liftUpAtAllActivePoints()
+        }
+
+        await page.waitForNextPresentationUpdate()
+
+        #expect(contentOffset.value != initialContentOffset)
+    }
+
+    @Test(
+        .bug("rdar://181172720")
+    )
+    func dragOverSliderInWebViewInsideEnclosingScrollViewDragsSliderInsteadOfScrolling() async throws {
+        // Mirrors players which draw the scrubber with plain elements marked up as an ARIA slider, and handle
+        // it with mouse events (listening for moves on the window once the drag starts). The slider is
+        // vertical, so that dragging it moves along the axis the enclosing scroll view would otherwise scroll.
+        let html = """
+            <body style='margin:0;'>
+                <div id="slider" role="slider" aria-orientation="vertical" aria-valuemin="0" aria-valuemax="100" aria-valuenow="50"
+                     style="margin: 150px auto 0; width: 40px; height: 300px; background-color: red;"></div>
+                <script>
+                    window.sliderEvents = [];
+                    document.getElementById("slider").addEventListener("mousedown", event => {
+                        window.sliderEvents.push(event.type);
+                        event.preventDefault();
+                        window.addEventListener("mousemove", event => window.sliderEvents.push(event.type), true);
+                        window.addEventListener("mouseup", event => window.sliderEvents.push(event.type), true);
+                    });
+                </script>
+            </body>
+            """
+
+        try await page.load(html: html).wait()
+        await page.waitForNextPresentationUpdate()
+
+        let slider = try await screenBounds(ofElementWithID: "slider")
+        let startPoint = CGPoint(x: slider.midX, y: slider.minY + slider.height * 0.75)
+        let endPoint = CGPoint(x: slider.midX, y: slider.minY + slider.height * 0.25)
+
+        let initialContentOffset = contentOffset.value
+
+        await recap.play { composer in
+            composer.drag(withStart: startPoint, end: endPoint, duration: 0.5)
+            composer.advanceTime(0.1)
+            composer.liftUpAtAllActivePoints()
+        }
+
+        await page.waitForPendingMouseEvents()
+        await page.waitForNextPresentationUpdate()
+
+        let events = try await page.callJavaScript(returning: [String].self) {
+            """
+            return window.sliderEvents;
+            """
+        }
+
+        // The page should get the drag, rather than the enclosing scroll view scrolling it away.
+        #expect(events.first == "mousedown")
+        #expect(events.contains("mousemove"))
+        #expect(events.last == "mouseup")
+        #expect(contentOffset.value == initialContentOffset)
+    }
+
+    @Test
+    func doubleTappingSelectsWordWhenScrolledToTopWithObscuredContentInset() async throws {
+        let html = """
+            <body style="margin: 0">
+                <h2 id="div" style="display: inline-block; margin: 0; font-size: 30px;">\(Self.text)</h2>
+                <input id="search" type="search" style="display: block; margin: 0; width: 320px; height: 300px;">
+            </body>
+            """
+        try await page.load(html: html).wait()
+        await page.waitForNextPresentationUpdate()
+
+        let crazyRange = try #require(Self.text.utf16Range(of: "crazy"))
+        let crazySelection = JavaScriptSelection.range(
+            base: .init(in: "div", at: crazyRange.lowerBound),
+            extent: .init(in: "div", at: crazyRange.upperBound)
+        )
+
+        let crazyBounds = try await screenBoundsOfText("crazy")
+
+        await page.waitForNextPresentationUpdate()
+
+        await recap.play { composer in
+            composer.humanTap(at: crazyBounds.center, for: .seconds(0.1))
+            composer.advanceTime(0.1)
+            composer.humanTap(at: crazyBounds.center, for: .seconds(0.1))
+        }
+
+        await page.waitForNextPresentationUpdate()
+
+        let newSelection = try await page.callJavaScript(JavaScriptMessages.GetSelection())
+        #expect(newSelection == crazySelection)
+    }
+
+    @Test(
+        .bug("https://webkit.org/b/324477", "Interrupt an enclosing scroll view's deceleration follows the link below")
+    )
+    func interruptingEnclosingScrollViewDecelerationDoesNotFollowLink() async throws {
+        let html = """
+            <body style="margin: 0;">
+                <a id="link" href="about:blank"
+                   style="display: block; width: 100%; height: 100vh;
+                          background: repeating-linear-gradient(to bottom, blue 0 50px, white 50px 100px);">
+                </a>
+            </body>
+            """
+
+        let initialURL = try #require(URL(string: "http://webkit.org/"))
+        try await page.load(html: html, baseURL: initialURL).wait()
+        await page.waitForNextPresentationUpdate()
+
+        let cgScreenOrigin = screenBounds(ofPointInWindowCoordinates: .init(x: 0, y: windowSize.height))
+        let viewportInCGScreen = CGRect(origin: cgScreenOrigin, size: windowSize)
+
+        let center = viewportInCGScreen.center
+        let flickStart = CGPoint(x: center.x, y: center.y + 50)
+        let flickEnd = CGPoint(x: center.x, y: center.y - 50)
+
+        await recap.play { composer in
+            composer.flick(withStart: flickStart, end: flickEnd, duration: .seconds(0.1))
+            composer.advanceTime(0.05)
+            composer.humanTap(at: center, for: .seconds(0.05))
+        }
+
+        await page.waitForPendingMouseEvents()
+        await page.waitForNextPresentationUpdate()
+
+        try await Task.sleep(for: .seconds(1))
+        #expect(page.url == initialURL)
+    }
+}
+
+#endif // HAVE_APPKIT_GESTURES_SUPPORT

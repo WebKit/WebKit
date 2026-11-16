@@ -1,0 +1,49 @@
+ (repaint rects
+  (rect 124 24 270 270)
+  (rect 124 24 270 270)
+  (rect 68 8 382 302)
+  (rect 8 8 502 302)
+)
+(GraphicsLayer
+  (anchor 0.00 0.00)
+  (bounds 800.00 600.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 800.00 600.00)
+      (contentsOpaque 1)
+      (children 1
+        (GraphicsLayer
+          (position 8.00 8.00)
+          (bounds 502.00 302.00)
+          (drawsContent 1)
+          (children 1
+            (GraphicsLayer
+              (offsetFromRenderer width=1 height=1)
+              (position 1.00 1.00)
+              (bounds 500.00 300.00)
+              (children 1
+                (GraphicsLayer
+                  (offsetFromRenderer width=-27.50 height=-27.50)
+                  (position -27.50 -27.50)
+                  (anchor 0.11 0.11)
+                  (bounds 255.00 255.00)
+                  (drawsContent 1)
+                  (transform [1.50 0.00 0.00 0.00] [0.00 1.50 0.00 0.00] [0.00 0.00 1.00 0.00] [100.00 0.00 0.00 1.00])
+                  (children 1
+                    (GraphicsLayer
+                      (position 37.50 37.50)
+                      (bounds 180.00 180.00)
+                      (drawsContent 1)
+                      (transform [0.71 0.71 0.00 0.00] [-0.71 0.71 0.00 0.00] [0.00 0.00 1.00 0.00] [0.00 0.00 0.00 1.00])
+                    )
+                  )
+                )
+              )
+            )
+          )
+        )
+      )
+    )
+  )
+)
+

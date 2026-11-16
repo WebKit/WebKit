@@ -1,0 +1,50 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/worklets/resources/addmodule-window.html
+/LayoutTests/imported/w3c/web-platform-tests/worklets/resources/credentials-tests.js
+/LayoutTests/imported/w3c/web-platform-tests/worklets/resources/credentials.py
+/LayoutTests/imported/w3c/web-platform-tests/worklets/resources/csp-tests.js
+/LayoutTests/imported/w3c/web-platform-tests/worklets/resources/empty-worklet-script-with-cors-header.js
+/LayoutTests/imported/w3c/web-platform-tests/worklets/resources/empty-worklet-script-with-cors-header.js.headers
+/LayoutTests/imported/w3c/web-platform-tests/worklets/resources/empty-worklet-script.js
+/LayoutTests/imported/w3c/web-platform-tests/worklets/resources/import-cyclic-worklet-script.js
+/LayoutTests/imported/w3c/web-platform-tests/worklets/resources/import-empty-worklet-script-with-cors-header.js
+/LayoutTests/imported/w3c/web-platform-tests/worklets/resources/import-empty-worklet-script-with-cors-header.js.headers
+/LayoutTests/imported/w3c/web-platform-tests/worklets/resources/import-insecure-origin-empty-worklet-script.sub.js
+/LayoutTests/imported/w3c/web-platform-tests/worklets/resources/import-insecure-origin-redirected-empty-worklet-script.sub.js
+/LayoutTests/imported/w3c/web-platform-tests/worklets/resources/import-nested-internal-worklet-script.js
+/LayoutTests/imported/w3c/web-platform-tests/worklets/resources/import-nested-worklet-script.js
+/LayoutTests/imported/w3c/web-platform-tests/worklets/resources/import-non-existent-worklet-script.js
+/LayoutTests/imported/w3c/web-platform-tests/worklets/resources/import-referrer-checker-worklet-script.sub.js
+/LayoutTests/imported/w3c/web-platform-tests/worklets/resources/import-referrer-checker-worklet-script.sub.js.headers
+/LayoutTests/imported/w3c/web-platform-tests/worklets/resources/import-remote-origin-empty-worklet-script.sub.js
+/LayoutTests/imported/w3c/web-platform-tests/worklets/resources/import-remote-origin-redirected-empty-worklet-script.sub.js
+/LayoutTests/imported/w3c/web-platform-tests/worklets/resources/import-remote-origin-referrer-checker-worklet-script.sub.js
+/LayoutTests/imported/w3c/web-platform-tests/worklets/resources/import-remote-origin-referrer-checker-worklet-script.sub.js.headers
+/LayoutTests/imported/w3c/web-platform-tests/worklets/resources/import-same-origin-referrer-checker-worklet-script-from-remote-origin.sub.js
+/LayoutTests/imported/w3c/web-platform-tests/worklets/resources/import-same-origin-referrer-checker-worklet-script-from-remote-origin.sub.js.headers
+/LayoutTests/imported/w3c/web-platform-tests/worklets/resources/import-syntax-error-worklet-script.js
+/LayoutTests/imported/w3c/web-platform-tests/worklets/resources/import-tests.js
+/LayoutTests/imported/w3c/web-platform-tests/worklets/resources/referrer-checker.py
+/LayoutTests/imported/w3c/web-platform-tests/worklets/resources/referrer-tests.js
+/LayoutTests/imported/w3c/web-platform-tests/worklets/resources/referrer-window.html
+/LayoutTests/imported/w3c/web-platform-tests/worklets/resources/service-worker-interception-tests.js
+/LayoutTests/imported/w3c/web-platform-tests/worklets/resources/service-worker.js
+/LayoutTests/imported/w3c/web-platform-tests/worklets/resources/set-cookie.py
+/LayoutTests/imported/w3c/web-platform-tests/worklets/resources/syntax-error-worklet-script.js
+/LayoutTests/imported/w3c/web-platform-tests/worklets/resources/throwing-worklet-script.js
+/LayoutTests/imported/w3c/web-platform-tests/worklets/resources/worklet-test-utils.js

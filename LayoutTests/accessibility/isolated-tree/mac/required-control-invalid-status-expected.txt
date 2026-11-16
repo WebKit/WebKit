@@ -1,0 +1,18 @@
+This test ensures a control that fails native constraint validation reports AXInvalid true without the author setting aria-invalid, and that AXInvalid and checkValidity() agree as the control becomes valid.
+
+A required control left empty is invalid to both the DOM and accessibility.
+PASS: target.checkValidity() === false
+PASS: invalidStatus() === 'true'
+
+Satisfying the constraint clears both.
+PASS: target.checkValidity() === true
+PASS: invalidStatus() === 'false'
+
+aria-invalid is authored, so it wins over the native state.
+PASS: target.checkValidity() === true
+PASS: invalidStatus() === 'spelling'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

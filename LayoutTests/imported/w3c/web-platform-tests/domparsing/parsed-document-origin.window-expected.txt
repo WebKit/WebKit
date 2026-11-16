@@ -1,0 +1,9 @@
+
+PASS This document has a tuple origin (prerequisite for the tests below)
+PASS DOMParser's parseFromString() with text/html
+PASS DOMParser's parseFromString() with text/xml
+FAIL Document.parseHTML() Document.parseHTML is not a function. (In 'Document.parseHTML("")', 'Document.parseHTML' is undefined)
+PASS Document.parseHTMLUnsafe()
+PASS createDocument()
+PASS createHTMLDocument()
+

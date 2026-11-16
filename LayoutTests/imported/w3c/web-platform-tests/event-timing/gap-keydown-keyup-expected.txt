@@ -1,0 +1,4 @@
+Click me
+
+PASS keydown duration shouldn't wait for keyup.
+

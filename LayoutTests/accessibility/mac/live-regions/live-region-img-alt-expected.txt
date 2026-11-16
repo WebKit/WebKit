@@ -1,0 +1,14 @@
+This tests that alt text is properly handled in live regions.
+
+Received announcement request:
+AnnouncementKey: A picture of cake.{
+    AXLanguage = en;
+}
+AXPriorityKey: 10
+AXAnnouncementIsLiveRegionKey: true
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

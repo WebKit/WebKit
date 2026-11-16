@@ -1,0 +1,4 @@
+
+PASS Test addEventListener/removeEventListener on the window.
+PASS Test setting onanimationstart handler on the window.
+

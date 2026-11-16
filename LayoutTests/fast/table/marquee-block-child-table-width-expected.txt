@@ -1,0 +1,4 @@
+Text that has to wrap at a width of 200px!!!!
+
+PASS Horizontal marquee with block children does not expand parent table width
+

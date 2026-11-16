@@ -1,0 +1,52 @@
+<html>
+    <head>
+        <script src="../../resources/js-test-pre.js"></script>
+        <script>
+            
+            function resetField()
+            { 
+                event.target.value = '';
+            }
+
+            async function runTest()
+            {
+                if (window.testRunner) {
+                    testRunner.dumpAsText();
+                    testRunner.waitUntilDone();
+                    
+                    elementToDrag = document.getElementById("elementToDrag");
+                    x1 = elementToDrag.offsetLeft + elementToDrag.offsetWidth / 2;
+                    y1 = elementToDrag.offsetTop + elementToDrag.offsetHeight / 2;
+
+                    dragTarget = document.getElementById("dragTarget");
+                    x2 = dragTarget.offsetLeft + dragTarget.offsetWidth / 2;
+                    y2 = dragTarget.offsetTop + dragTarget.offsetHeight / 2;
+
+                    await eventSender.asyncMouseMoveTo(x1,y1);
+                    await eventSender.asyncMouseDown();
+                    eventSender.leapForward(400);
+                    await eventSender.asyncMouseMoveTo(x2, y2);
+                    await eventSender.asyncMouseUp();
+                    shouldBe("dragTarget.value", "elementToDrag.href");
+                    testPassed("Didn't crash.");
+                    //clean up output
+                    elementToDrag.parentNode.removeChild(elementToDrag);
+                    dragTarget.parentNode.removeChild(dragTarget);
+                    testRunner.notifyDone();
+                } else {
+                    debug('<br>To test this manually drag the link into the text field.')
+                }   
+            }
+        </script>
+    </head>
+    <body onload="runTest()">
+        <p id="description"></p>
+        <a id="elementToDrag" href="http://example.com">A link!</a>
+        <input id="dragTarget" type="text" value="Original Text" onfocus="resetField()" />
+        <div id="console"></div>
+        <script>
+             description("This tests that we don't lose data dropped onto an input field that changes its content during a drop event");
+        </script>
+        <script src="../../resources/js-test-post.js"></script>
+    </body>
+</html>

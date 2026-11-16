@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html class="reftest-wait">
+<title>Test anchor positioning vs overscroll</title>
+<link rel="help" href="https://drafts.csswg.org/css-anchor-1/#scroll">
+<link rel="help" href="https://drafts.csswg.org/css-anchor-1/#fallback-apply">
+<script src="resources/overscroll-behavior-support.js"></script>
+
+<style>
+* { box-sizing: border-box; }
+html {
+  border: solid black;
+  width: 200vw;
+  height: 200vh;
+  scrollbar-width: none;
+}
+body {
+  margin: 0;
+}
+
+#anchor {
+  anchor-name: --a;
+  width: 40vw;
+  height: 40vh;
+  margin-inline-start: 80vw;
+  margin-block-start: 80vh;
+  background: orange;
+}
+
+.anchored {
+  position: fixed;
+  width: 40vw;
+  height: 40vh;
+  position-anchor: --a;
+}
+.anchored.area {
+  position-area: start;
+  position-try: end start, start end, end end;
+  background: teal;
+}
+.anchored.inset {
+  position-try: --ia1, --ia2, --ia3;
+  inset-block-end: anchor(outside);
+  inset-inline-end: anchor(outside);
+  border: solid aqua 4px;
+}
+
+@position-try --ia1 {
+  inset: auto;
+  inset-block-start: anchor(outside);
+  inset-inline-end: anchor(outside);
+}
+@position-try --ia2 {
+  inset: auto;
+  inset-block-end: anchor(outside);
+  inset-inline-start: anchor(outside);
+}
+@position-try --ia3 {
+  inset: auto;
+  inset-block-start: anchor(outside);
+  inset-inline-start: anchor(outside);
+}
+</style>
+
+<div id="anchor"></div>
+<div class="anchored area" id=position-area></div>
+<div class="anchored inset" id=anchor-func></div>
+
+<script src="../../resources/ui-helper.js"></script>
+<script>
+async function run()
+{
+  // Scroll to end.
+  var scrollHeight = document.documentElement.offsetHeight / 2;
+  document.documentElement.scrollTop = scrollHeight - 10;
+  await new Promise(resolve => requestAnimationFrame(resolve));
+
+  // Scroll down into overscroll area.
+  await UIHelper.startMonitoringWheelEvents();
+  eventSender.mouseMoveTo(10, 10);
+  eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -53, "began", "none");
+  eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -53, "changed", "none");
+  await UIHelper.waitForTargetScrollAnimationToSettle(document.scrollingElement);
+  await new Promise(resolve => requestAnimationFrame(resolve));
+
+  document.documentElement.classList.remove('reftest-wait');
+}
+
+run();
+</script>
+

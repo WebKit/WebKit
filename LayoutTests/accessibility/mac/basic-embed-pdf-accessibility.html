@@ -1,0 +1,95 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/ui-helper.js"></script>
+</head>
+<body>
+
+<div id="embedContainer">
+    <embed id="pdfEmbed" width="75%" height="75%" name="plugin" src="../resources/simple-webkit-pages.pdf" type="application/pdf">
+</div>
+
+<script>
+let output = "This test ensures PDFs loaded in embed tags are exposed in the accessibility tree.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    var hitTestResult, pdfAxObject, pdfEmbedElement, pdfPageObject, searchResultElement;
+    internals?.registerPDFTest(async () => {
+        await UIHelper.waitForPDFFadeIn();
+        await waitFor(() => {
+            embedContainer = accessibilityController.accessibleElementById("embedContainer");
+            return embedContainer && embedContainer.childrenCount >= 1;
+        });
+        await waitFor(() => {
+            pdfEmbedElement = accessibilityController.accessibleElementById("pdfEmbed");
+            return pdfEmbedElement && pdfEmbedElement.childrenCount >= 1;
+        });
+        await waitFor(() => {
+            pdfAxObject = pdfEmbedElement.childAtIndex(0);
+            return pdfAxObject && pdfAxObject.childrenCount >= 1;
+        });
+        await waitFor(() => {
+            pdfPageObject = findFirstPageDescendant(pdfAxObject);
+            return pdfPageObject && pdfPageObject.childrenCount >= 1;
+        });
+
+        output += expect("pdfEmbedElement.domIdentifier", "'pdfEmbed'");
+        output += expect("pdfEmbedElement.role", "'AXRole: AXGroup'");
+        // Verify the group that contains the PDF AX object isn't considered empty via an AXEmptyGroup subrole.
+        output += expect("pdfEmbedElement.subrole", "'AXSubrole: AXApplicationGroup'");
+        output += expect("pdfEmbedElement.childrenCount", "1");
+
+        output += expect("pdfAxObject.stringAttributeValue('AXSubrole')", "'AXPDFPluginSubrole'");
+        output += expect("pdfAxObject.childrenCount", "1");
+        // Ensure the PDF accessibility object considers the embed element to be its parent.
+        output += expect("pdfAxObject.parentElement().domIdentifier", "'pdfEmbed'");
+
+        output += expect("pdfPageObject.role", "'AXRole: AXPage'");
+        await waitFor(() => {
+            pdfTextNode = traverseChildrenToFirstStaticText(pdfPageObject);
+            return pdfTextNode;
+        });
+
+        output += expect("pdfTextNode.stringAttributeValue('AXRole')", "'AXStaticText'");
+        // Get the first word in the string, since the hierarchy can differ for different OS versions.
+        output += expect("pdfTextNode.stringValue.split(' ')[1]", "'Welcome'");
+
+        let domPdfEmbedElement = document.getElementById("pdfEmbed");
+        hitTestResult = accessibilityController.elementAtPoint(
+            domPdfEmbedElement.offsetLeft + (domPdfEmbedElement.offsetWidth / 2),
+            domPdfEmbedElement.offsetTop + (domPdfEmbedElement.offsetHeight / 2),
+        );
+        let hitTestRole = hitTestResult.stringAttributeValue("AXRole");
+        if (hitTestRole == "AXGroup" || hitTestRole == "AXStaticText") {
+            // Depending on the PDFKit version, we may get a group or static text at the point we hit test.
+            // It doesn't matter much either way -- as long as it's something inside the PDF, we know hit testing works.
+            output += "PASS: Hit test role was an expected value\n";
+        } else
+            output += `FAIL: Hit test role was an unexpected value (${hitTestRole})\n`;
+
+        await waitFor(() => {
+            pdfTextNode = traverseChildrenToFirstStaticText(hitTestResult);
+            return pdfTextNode;
+        })
+        output += expect("pdfTextNode.stringAttributeValue('AXRole')", "'AXStaticText'");
+        output += expect("pdfTextNode.stringValue.split(' ')[1]", "'Welcome'");
+
+        // Ensure a search from the embed element returns the PDF accessibility object.
+        await waitFor(() => {
+            searchResultElement = pdfEmbedElement.uiElementForSearchPredicate(null, true, "AXAnyTypeSearchKey", "", false);
+            return searchResultElement;
+        });
+        output += expect("searchResultElement.stringAttributeValue('AXSubrole')", "'AXPDFPluginSubrole'");
+
+        debug(output);
+        finishJSTest();
+    }, plugin);
+}
+</script>
+</body>
+</html>
+

@@ -1,0 +1,32 @@
+This test ensures that stepping to the next line end and then back to the previous line start lands on the start of the line the marker began on, from any position within that line. Lines broken by a br element and lines broken only by wrapping are both covered.
+
+Lines broken by a br element.
+PASS: lineStartOffsetFrom('broken', 0) === 0
+PASS: lineStartOffsetFrom('broken', 3) === 0
+PASS: lineStartOffsetFrom('broken', 6) === 6
+PASS: lineStartOffsetFrom('broken', 9) === 6
+PASS: lineStartOffsetFrom('broken', 12) === 12
+PASS: lineStartOffsetFrom('broken', 16) === 12
+
+The recovered range spans the whole line, and stops before the line break.
+PASS: lineTextFrom('broken', 3) === 'Alpha'
+PASS: lineTextFrom('broken', 9) === 'Bravo'
+PASS: lineTextFrom('broken', 16) === 'Charlie'
+
+Lines broken only by wrapping.
+PASS: lineStartOffsetFrom('wrapped', 0) === 0
+PASS: lineStartOffsetFrom('wrapped', 2) === 0
+PASS: lineStartOffsetFrom('wrapped', 4) === 4
+PASS: lineStartOffsetFrom('wrapped', 6) === 4
+PASS: lineStartOffsetFrom('wrapped', 8) === 8
+PASS: lineStartOffsetFrom('wrapped', 10) === 8
+
+The recovered range spans the whole wrapped line.
+PASS: wrappedLineTextFrom(2) === 'aaa'
+PASS: wrappedLineTextFrom(6) === 'bbb'
+PASS: wrappedLineTextFrom(10) === 'ccc'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+if (window.testRunner) {
+  testRunner.dumpAsText();
+  testRunner.setShouldLogDownloadCallbacks(true);
+  testRunner.waitUntilDownloadFinished();
+}
+</script>
+</head>
+<body>
+<p>Test that synthetic clicks on an anchor with a download attribute are not ignored.</p>
+<p> This test passes if you see a 'Download started' message above and if the suggested filename is foo.pdf.</p>
+<a id="blob-url" download="foo.pdf">Blob URL</a>
+<script>
+function runTest()
+{
+    var string = "test";
+    var blob = new Blob([string], {type: "text/html"});
+    var link = document.getElementById("blob-url");
+    link.href = window.URL.createObjectURL(blob);
+    link.click();
+}
+runTest();
+</script>
+</body>
+</html>

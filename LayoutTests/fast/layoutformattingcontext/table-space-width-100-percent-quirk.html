@@ -1,0 +1,30 @@
+<!DOCTYPE html><!-- webkit-test-runner [ LayoutFormattingContextEnabled=true InlineFormattingContextIntegrationEnabled=false ] -->
+<style>
+td {
+  height: 10px;
+  background-color: blue;
+  padding: 0px;
+}
+
+table {
+  border-spacing: 0px;
+}
+
+body {
+  background-color: white;
+}
+
+td:nth-child(odd) {
+  background-color: green;
+}
+</style>
+<div style="width: 500px;">
+<table><tr><td style="width: 1px;"></td><td style="width: 50%;"></td></td></tr></table>
+<table><tr><td style="width: 10px;"></td><td style="width: 90%;"></td></td></tr></table>
+<table><tr><td style="width: 100px;"></td><td style="width: 99%;"></td></td></tr></table>
+<table><tr><td style="width: 1px;"></td><td style="width: 100%;"></td></td></tr></table>
+<table><tr><td style="width: 10px;"></td><td style="width: 100%;"></td></td></tr></table>
+<table><tr><td style="width: 100px;"></td><td style="width: 90%;"></td><td style="width: 10%;"></td></tr></table>
+<table><tr><td style="width: 100px;"></td><td style="width: 80%;"></td><td style="width: 10%;"></td><td style="width: 10%;"></td></tr></table>
+<table><tr><td style="width: 1px;"></td><td style="width: 200%;"></td></td></tr></table>
+</div>

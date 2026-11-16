@@ -1,0 +1,8 @@
+
+PASS Retrieving a same-origin resource without Timing-Allow-Origin should expose body size
+PASS Retrieving a same-origin resource with Timing-Allow-Origin should expose body size
+PASS Retrieving a no-cors resource without Timing-Allow-Origin should not expose body size
+FAIL Retrieving a no-cors resource with Timing-Allow-Origin should not expose body size assert_equals: expected 300 but got 0
+FAIL Retrieving a cors resource without Timing-Allow-Origin should expose body size assert_greater_than: expected a number greater than 0 but got 0
+FAIL Retrieving a cors resource with Timing-Allow-Origin should expose body size assert_greater_than: expected a number greater than 0 but got 0
+

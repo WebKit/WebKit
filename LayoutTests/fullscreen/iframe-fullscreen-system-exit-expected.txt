@@ -1,0 +1,4 @@
+
+
+PASS Test that WebFullScreenManagerProxy::RequestExitFullscreen works when fullscreen was initiated from an iframe
+

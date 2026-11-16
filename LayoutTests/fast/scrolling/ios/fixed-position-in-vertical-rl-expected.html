@@ -1,0 +1,40 @@
+<!DOCTYPE html><!-- webkit-test-runner [ useFlexibleViewport=true AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    :root {
+      scrollbar-width: none;
+    }
+    body {
+      writing-mode: vertical-rl;
+      margin: 0;
+    }
+
+    #overlay {
+      position: fixed;
+      background: red;
+      color: white;
+      width: 50%;
+      overflow: auto;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      border: 1px solid black;
+      box-sizing: border-box;
+    }
+
+    .scrollable-content {
+        width: 4000px;
+        height: 100%;
+        background-color: green;
+    }
+  </style>
+</head>
+<body>
+  <div class="scrollable-content"></div>
+  <div id="overlay">
+      <div class="scrollable-content"></div>
+  </div>
+</body>
+</html>

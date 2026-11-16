@@ -1,0 +1,68 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<!DOCTYPE html>
+<html>
+<body>
+<p>This test verifies RemoteDOMWindow property access security checks</p>
+<iframe id="child"></iframe>
+<script>
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+}
+
+function shouldBlock(targetWindow, property) {
+    try {
+        const value = targetWindow[property];
+        alert("FAIL: Accessing " + property + " should have thrown SecurityError");
+    } catch (e) {
+        if (e.name === 'SecurityError')
+            alert("PASS: Accessing " + property + " threw SecurityError");
+        else
+            alert("FAIL: Accessing " + property + " threw " + e.name + " instead of SecurityError");
+    }
+}
+
+function shouldAllow(targetWindow, property, isMethod) {
+    try {
+        if (isMethod)
+            targetWindow[property]();
+        else
+            var value = targetWindow[property];
+        alert("PASS: " + (isMethod ? property + "()" : "Accessing " + property) + " did not throw");
+    } catch (e) {
+        alert("FAIL: " + (isMethod ? property + "()" : "Accessing " + property) + " threw " + e.name);
+    }
+}
+
+const iframe = document.getElementById('child');
+iframe.onload = function() {
+    const crossOriginWindow = iframe.contentWindow;
+
+    const blockedProperties = ['document', '$vm', 'navigator', 'screen', 'history', 'innerHeight', 'innerWidth',
+                                'scrollX', 'scrollY', 'name', 'menubar', 'toolbar',
+                                'localStorage', 'sessionStorage', 'alert', 'confirm',
+                                'prompt', 'print', 'open', 'constructor', 'fetch'];
+    blockedProperties.forEach(function(property) {
+        shouldBlock(crossOriginWindow, property);
+    });
+
+    shouldAllow(crossOriginWindow, 'location', false);
+
+    try {
+        crossOriginWindow.postMessage('test', '*');
+        alert("PASS: postMessage did not throw");
+    } catch (e) {
+        alert("FAIL: postMessage threw " + e.name);
+    }
+
+    shouldAllow(crossOriginWindow, 'blur', true);
+    shouldAllow(crossOriginWindow, 'focus', true);
+    shouldAllow(crossOriginWindow, 'close', true);
+
+    if (window.testRunner)
+        testRunner.notifyDone();
+};
+iframe.src = 'http://localhost:8000/security/resources/blank.html';
+</script>
+</body>
+</html>

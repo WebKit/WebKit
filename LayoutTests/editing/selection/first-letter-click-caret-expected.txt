@@ -1,0 +1,6 @@
+Hello
+A
+test1 (first letter): PASS
+test2 (single char first letter): PASS
+test3 (remaining text): PASS
+

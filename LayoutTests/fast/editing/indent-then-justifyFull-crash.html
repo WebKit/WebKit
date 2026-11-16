@@ -1,0 +1,20 @@
+<script>
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+
+    function iframeOnload() {
+        document.execCommand("justifyFull", false);
+        CANVAS.toBlob(blob);
+    }
+
+    function blob() {
+        document.execCommand("selectAll", false);
+        document.execCommand("indent", false);
+        document.body.innerText = "Tests editing elements followed by other commands that remove those elements. The test passes if WebKit doesn't crash or hit an ssertion.";
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }
+</script>
+<body contentEditable=true><canvas id=CANVAS hidden="hidden"></canvas><iframe onload="iframeOnload()"></iframe><select></select>

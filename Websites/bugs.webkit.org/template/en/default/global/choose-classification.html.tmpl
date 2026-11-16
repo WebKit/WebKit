@@ -1,0 +1,56 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[%# INTERFACE:
+  # classifications: an array of classification objects containing
+  #                  at least one product accessible by the user.
+  #%]
+
+[% IF target == "enter_bug.cgi" %]
+  [% title = "Enter $terms.Bug" %]
+  [% subheader = "Select Classification" %]
+[% END %]
+
+[% DEFAULT title = "Choose the classification" %]
+[% PROCESS global/header.html.tmpl %]
+
+[% USE Bugzilla %]
+[% previous_params = Bugzilla.cgi.canonicalise_query('classification') %]
+
+<h2>First, you must pick a classification on which to enter [% terms.abug %]:</h2>
+<table id="choose_classification">
+  <tr>
+    <th class="right">
+      <a href="[% target FILTER uri %]?classification=__all
+            [%- IF previous_params %]&amp;[% previous_params FILTER none %][% END -%]">
+      All</a>:
+    </th>
+
+    <td>Show all products</td>
+  </tr>
+  <tr>
+    <th colspan="2">&nbsp;</th>
+  </tr>
+
+[% FOREACH class = classifications %]
+  <tr>
+    <th class="right">
+      <a href="[% target FILTER uri %]?classification=[% class.name FILTER uri -%]
+            [%- IF previous_params %]&amp;[% previous_params FILTER none %][% END -%]">
+      [% class.name FILTER html %]</a>:
+    </th>
+
+    [% IF class.description %]
+      <td>[% class.description FILTER html_light %]</td>
+    [% END %]
+  </tr>
+[% END %]
+
+</table>
+
+[% PROCESS global/footer.html.tmpl %]

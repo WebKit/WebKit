@@ -1,0 +1,11 @@
+Test setting custom properties on detached styles
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS element.attributes[0].name is "style"
+PASS inlineStyle.getPropertyValue("--cssvarc") is "inherit"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

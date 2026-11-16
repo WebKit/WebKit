@@ -1,0 +1,4 @@
+CONSOLE MESSAGE: End Script: user-script-plugin-document.html
+CONSOLE MESSAGE: Start Script: data:application/x-webkit-test-netscape,
+CONSOLE MESSAGE: End Script: data:application/x-webkit-test-netscape,
+

@@ -1,0 +1,6 @@
+CONSOLE MESSAGE: [Report Only] Refused to execute a script because 'unsafe-eval' and 'trusted-types-eval' does not appear in the script-src directive of the Content Security Policy.
+CONSOLE MESSAGE: [Report Only] Refused to execute a script because 'unsafe-eval' and 'trusted-types-eval' does not appear in the script-src directive of the Content Security Policy.
+CONSOLE MESSAGE: [Report Only] Refused to execute a script because 'unsafe-eval' and 'trusted-types-eval' does not appear in the script-src directive of the Content Security Policy.
+CONSOLE MESSAGE: [Report Only] Refused to execute a script because 'unsafe-eval' and 'trusted-types-eval' does not appear in the script-src directive of the Content Security Policy.
+CONSOLE MESSAGE: [Report Only] Refused to execute a script because 'unsafe-eval' and 'trusted-types-eval' does not appear in the script-src directive of the Content Security Policy.
+This tests that multiple violations on a page trigger multiple reports if and only if the violations are distinct. This test passes if five identical CSP violation console messages are visible in the output.

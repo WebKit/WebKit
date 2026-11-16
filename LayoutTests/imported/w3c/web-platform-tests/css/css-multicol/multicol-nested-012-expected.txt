@@ -1,0 +1,18 @@
+The word "WIN" should be seen below.
+
+W
+I
+N
+
+FAIL .outer 1 assert_equals:
+<div class="mc outer">
+  <div data-offset-x="0" data-offset-y="0">W</div>
+  <div class="mc">
+    <div data-offset-x="32" data-offset-y="0">
+      <span data-offset-x="32" data-offset-y="0" style="display:inline-block; width:100%;">I</span>
+    </div>
+    <div data-offset-x="48" data-offset-y="0" style="break-before:column;">N</div>
+  </div>
+</div>
+offsetLeft expected 32 but got 0
+

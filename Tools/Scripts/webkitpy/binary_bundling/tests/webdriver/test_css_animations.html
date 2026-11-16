@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D CSS Animation Test</title>
+    <style>
+        #cube {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(to right, red, yellow);
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform-style: preserve-3d;
+            animation: rotateCube 5s infinite linear;
+        }
+
+        @keyframes rotateCube {
+            from {
+                transform: rotateX(0deg) rotateY(0deg) rotateZ(0deg);
+            }
+            to {
+                transform: rotateX(360deg) rotateY(360deg) rotateZ(360deg);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="cube"></div>
+</body>
+</html>

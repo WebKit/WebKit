@@ -1,0 +1,4 @@
+
+
+PASS navigate() should resolve URLs assuming UTF-8, ignoring the document's encoding
+

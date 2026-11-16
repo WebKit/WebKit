@@ -1,0 +1,104 @@
+# Copyright 2024 Google LLC
+#
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+# PartitionAlloc is still depending on a couple of "common" `is_xxx` variables
+# shared by Chromium / Dawn / Pdfium / etc... Only Skia is really independent.
+#
+# While waiting for partition_alloc to do the same, they need to be set:
+is_asan = sanitize == "ASAN"
+is_hwasan = sanitize == "HWASAN"
+is_lsan = sanitize == "LSAN"
+is_msan = sanitize == "MSAN"
+is_tsan = sanitize == "TSAN"
+is_ubsan = sanitize == "UBSAN"
+is_castos = false
+is_cronet_build = false
+is_nacl = false
+is_posix = !is_win
+
+# Skia standalone isn't built as part of chromium.
+build_with_chromium = false
+
+# Contrary to Skia, Chrome/PartitionAlloc do not enforce strict aliasing rules.
+# Contrary to Clang, GCC is aggressively relying on the strict aliasing rule for
+# optimization and this breaks PartitionAlloc.
+# See https://crbug.com/379844655 for more details.
+partition_alloc_remove_configs = [ "//gn/skia:strict_aliasing" ]
+partition_alloc_add_configs = [ "//gn/skia:no_strict_aliasing" ]
+if (is_apple) {
+  # PartitionAlloc requires ARC overall on Apple platforms, but needs to know
+  # the explicit ARC config label to subtract it from low-level Objective-C
+  # memory interception shims where ARC would cause infinite recursion.
+  partition_alloc_add_configs += [ "//gn/skia:enable_arc" ]
+  partition_alloc_enable_arc_config = "//gn/skia:enable_arc"
+}
+
+# partition_alloc is performance critical and it should generally be optimized
+# for speed, even in debug mode.
+if (is_debug) {
+  partition_alloc_add_configs += [
+    "//gn/skia:optimize",
+    "//gn/skia:NDEBUG",
+  ]
+}
+
+# PartitionAlloc does not support MSVC's cl.exe compiler.
+_is_compiler_msvc = !is_clang && is_win
+
+# Emscripten WebAssembly (CanvasKit) lacks POSIX virtual memory primitives.
+_is_wasm = current_os == "wasm"
+
+# Xcode Clang (Apple's fork of Clang) is not supported by PartitionAlloc because
+# it lacks critical systems primitives:
+# 1. Global symbol hiding (`-fvisibility-global-new-delete=force-hidden`) to
+#    prevent dyld two-level namespace override errors during interception.
+# 2. Upstream SIMD alignment intrinsics (e.g. `__builtin_assume_aligned`) needed
+#    by PartitionAlloc's high-performance thread cache.
+# 3. Permissive pointer casting builtins required for `malloc_zone_t` swapping.
+
+_supported_compiler = is_clang && !_is_compiler_msvc && !is_xcode && !_is_wasm
+
+# Windows: debug CRT is not yet compatible with the allocator shim.
+# https://learn.microsoft.com/en-us/cpp/c-runtime-library/reference/free-dbg
+_supported_build_type = !is_win || (!is_component_build && !is_debug)
+
+# Sanitizers replace the allocator, don't replace it ourselves with
+# partition_alloc.
+_is_using_sanitizers = sanitize != ""
+
+_supported =
+    _supported_compiler && _supported_build_type && !_is_using_sanitizers
+
+use_partition_alloc_as_malloc_default = _supported
+use_allocator_shim_default = _supported
+enable_backup_ref_ptr_support_default = _supported
+put_ref_count_in_previous_slot_default = true
+enable_backup_ref_ptr_slow_checks_default = false
+enable_dangling_raw_ptr_checks_default = _supported
+shim_supports_sized_dealloc_default = false
+
+# This is the default build configuration for pointers/raw_ptr*.
+raw_ptr_zero_on_construct_default = true
+raw_ptr_zero_on_move_default = true
+raw_ptr_zero_on_destruct_default = false
+
+# For now, don't check for additional costly memory safety errors in Skia.
+# Some will be enforced in the future.
+can_unwind_with_frame_pointers = false
+dcheck_always_on = false
+dcheck_is_configurable = false
+enable_expensive_dchecks = false
+
+# Prefer speed by default, even in debug mode.
+partition_alloc_is_debug = false
+partition_alloc_dcheck_always_on = false
+
+# On Android, malloc interception is fragile as we use wrapped symbols.
+# the 'GrAHardwareBuffer_ImportAsSurface' test crashes on Pixel 4 (Adreno 640)
+# because Qualcomm's proprietary gralloc module
+# (/vendor/lib64/libgralloccore.so) managed to bypass PartitionAlloc for
+# malloc, but not for free. Enabling this option relax the previously strict
+# behavior of partition_alloc to allow this.
+partition_alloc_enable_system_free_fallback_default = is_android

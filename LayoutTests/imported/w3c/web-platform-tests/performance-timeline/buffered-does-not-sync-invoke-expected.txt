@@ -1,0 +1,3 @@
+
+PASS Buffered PerformanceObservers should not invoke callbacks synchronously.
+

@@ -1,0 +1,54 @@
+<!DOCTYPE html><!-- webkit-test-runner [ SiteIsolationEnabled=false ] -->
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../resources/inspector-test.js"></script>
+<script>
+function test() {
+    let suite = InspectorTest.createAsyncSuite("Target.ProcessIdentifier");
+
+    suite.addTestCase({
+        name: "Target.ProcessIdentifier.PageTarget",
+        description: "The page target tells which process it runs in.",
+        async test() {
+            InspectorTest.expectThat(typeof WI.pageTarget.processIdentifier === "string" && WI.pageTarget.processIdentifier.length, "The page target should have a process identifier.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "Target.ProcessIdentifier.ProvisionalPageTarget",
+        description: "A cross-site navigation creates a page target with the process identifier of the new process.",
+        async test() {
+            let previousProcessIdentifier = WI.pageTarget.processIdentifier;
+            let reloadPromise = InspectorTest.awaitEvent(FrontendTestHarness.Event.TestPageDidLoad);
+            let provisionalTargetPromise = new Promise((resolve) => {
+                let listener = WI.targetManager.addEventListener(WI.TargetManager.Event.TargetAdded, (event) => {
+                    let {target} = event.data;
+                    if (target.type !== WI.TargetType.Page || !target.isProvisional)
+                        return;
+
+                    WI.targetManager.removeEventListener(WI.TargetManager.Event.TargetAdded, listener);
+                    resolve(target);
+                });
+            });
+
+            WI.mainTarget.RuntimeAgent.evaluate("location.hostname = 'localhost'");
+
+            let provisionalTarget = await provisionalTargetPromise;
+            InspectorTest.expectThat(typeof provisionalTarget.processIdentifier === "string" && provisionalTarget.processIdentifier.length, "The provisional page target should have a process identifier.");
+            InspectorTest.expectNotEqual(provisionalTarget.processIdentifier, previousProcessIdentifier, "The provisional page target should not share the previous page target's process identifier.");
+
+            // Wait for the new page to load to avoid a race between flushing the results and completing the test.
+            await reloadPromise;
+            InspectorTest.expectEqual(WI.pageTarget, provisionalTarget, "The provisional page target should become the page target.");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests that the page target tells which process it runs in without site isolation.</p>
+</body>
+</html>

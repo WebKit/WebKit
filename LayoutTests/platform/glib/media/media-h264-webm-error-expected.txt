@@ -1,0 +1,6 @@
+RUN(video = document.createElement("video"))
+RUN(document.body.appendChild(video))
+RUN(video.src = "content/test-h264.mkv")
+metadataloaded: 1280x720
+END OF TEST
+

@@ -1,0 +1,14 @@
+target
+
+FAIL Tests the interactions between popover light dismiss and pointer/mouse events. eventName: pointerdown, capture: true assert_equals: The popover should be closed via light dismiss even when preventDefault is called. expected 0 but got 1
+FAIL Tests the interactions between popover light dismiss and pointer/mouse events. eventName: pointerup, capture: true assert_equals: The popover should be closed via light dismiss even when preventDefault is called. expected 0 but got 1
+FAIL Tests the interactions between popover light dismiss and pointer/mouse events. eventName: mousedown, capture: true assert_equals: The popover should be closed via light dismiss even when preventDefault is called. expected 0 but got 1
+FAIL Tests the interactions between popover light dismiss and pointer/mouse events. eventName: mouseup, capture: true assert_equals: The popover should be closed via light dismiss even when preventDefault is called. expected 0 but got 1
+FAIL Tests the interactions between popover light dismiss and pointer/mouse events. eventName: click, capture: true assert_equals: The popover should be closed via light dismiss even when preventDefault is called. expected 0 but got 1
+FAIL Tests the interactions between popover light dismiss and pointer/mouse events. eventName: pointerdown, capture: false assert_equals: The popover should be closed via light dismiss even when preventDefault is called. expected 0 but got 1
+FAIL Tests the interactions between popover light dismiss and pointer/mouse events. eventName: pointerup, capture: false assert_equals: The popover should be closed via light dismiss even when preventDefault is called. expected 0 but got 1
+FAIL Tests the interactions between popover light dismiss and pointer/mouse events. eventName: mousedown, capture: false assert_equals: The popover should be closed via light dismiss even when preventDefault is called. expected 0 but got 1
+FAIL Tests the interactions between popover light dismiss and pointer/mouse events. eventName: mouseup, capture: false assert_equals: The popover should be closed via light dismiss even when preventDefault is called. expected 0 but got 1
+FAIL Tests the interactions between popover light dismiss and pointer/mouse events. eventName: click, capture: false assert_equals: The popover should be closed via light dismiss even when preventDefault is called. expected 0 but got 1
+FAIL Tests the order of pointer/mouse events during popover light dismiss. assert_array_equals: pointer and popover events should be fired in the correct order. lengths differ, expected array ["pointerdown", "mousedown", "beforetoggle newState: closed", "pointerup", "mouseup", "click"] length 6, got [] length 0
+

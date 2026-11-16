@@ -1,0 +1,5 @@
+
+PASS Initialize global state
+PASS DedicatedWorker fetches with a "worker" Request.destination
+PASS SharedWorker fetches with a "sharedworker" Request.destination
+

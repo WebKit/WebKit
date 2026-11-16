@@ -1,0 +1,6 @@
+window-opener-persists-after-iframe-navigation-pop-up
+<script>
+  setTimeout(() => {
+    window.opener.postMessage('ping', '*');
+}, 1000);
+</script>

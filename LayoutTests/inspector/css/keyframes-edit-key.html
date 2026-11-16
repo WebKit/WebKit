@@ -1,0 +1,92 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test() {
+    let suite = InspectorTest.createAsyncSuite("CSS.Keyframes");
+
+    suite.addTestCase({
+        name: "CSS.Keyframes.EditKeyTextRestylesAnimation",
+        description: "Editing a keyframe key should restyle elements using the @keyframes.",
+        async test() {
+            let documentNode = await WI.domManager.requestDocument();
+            let domNodeStyles = WI.cssManager.stylesForNode(WI.domManager.nodeForId(await documentNode.querySelector("#target")));
+            await domNodeStyles.refresh();
+
+            InspectorTest.expectEqual(domNodeStyles.keyframes[0].selectorText, "0%", "First keyframe key is `0%`.");
+            InspectorTest.expectTrue(domNodeStyles.keyframes[0].style.selectorEditable, "Keyframe key is editable.");
+
+            await domNodeStyles.keyframes[1].setSelectorText("0%");
+            InspectorTest.expectEqual(domNodeStyles.keyframes[1].selectorText, "0%", "Second keyframe key persisted as `0%`.");
+
+            let after = await InspectorTest.evaluateInPage(`getComputedStyle(document.getElementById("target")).opacity`);
+            InspectorTest.expectEqual(after, "0.8", "Moving the `100%` key to `0%` restyles the paused animation to opacity 0.8.");
+
+            await domNodeStyles.refresh();
+            let targetRule = domNodeStyles.matchedRules.find((rule) => rule.selectorText === "#target");
+            InspectorTest.expectEqual(targetRule.style.propertyForName("animation").value, "anim 100s steps(1, end) paused", "Editing the key should preserve the following rule's declaration.");
+
+            let otherNodeStyles = WI.cssManager.stylesForNode(WI.domManager.nodeForId(await documentNode.querySelector("#other")));
+            await otherNodeStyles.refresh();
+            let otherRule = otherNodeStyles.matchedRules.find((rule) => rule.selectorText === "#other");
+            InspectorTest.expectEqual(otherRule.style.propertyForName("animation").value, "other 50s linear paused", "Editing the key should not associate a sibling rule with the selected element.");
+
+            let target = targetRule.ownerStyleSheet.owningTarget || WI.assumingMainTarget();
+            let {text} = await target.CSSAgent.getStyleSheetText(targetRule.ownerStyleSheet.id);
+            InspectorTest.expectFalse(text.includes("100%0%"), "The replacement key must replace the original source range rather than append to it.");
+            InspectorTest.expectEqual(domNodeStyles.keyframes.length, 2, "Reparsing the edited source should retain both keyframe rules.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "CSS.Keyframes.InvalidKeyTextPreservesRule",
+        description: "Invalid keyframe keys should not change the live rule or stylesheet text.",
+        async test() {
+            let documentNode = await WI.domManager.requestDocument();
+            let domNodeStyles = WI.cssManager.stylesForNode(WI.domManager.nodeForId(await documentNode.querySelector("#target")));
+            await domNodeStyles.refresh();
+
+            let keyframe = domNodeStyles.keyframes[0];
+            let target = keyframe.ownerStyleSheet.owningTarget || WI.assumingMainTarget();
+            let styleSheetId = keyframe.ownerStyleSheet.id;
+            let {text: originalText} = await target.CSSAgent.getStyleSheetText(styleSheetId);
+            let originalKey = keyframe.selectorText;
+
+            for (let invalidKey of ["bad", "-1%", "101%", "0%, bad", "0% trailing", "0% {} 100%"]) {
+                InspectorTest.log(`Setting key to ${JSON.stringify(invalidKey)}.`);
+
+                let didFail = false;
+                await target.CSSAgent.setRuleSelector(keyframe.id, invalidKey).catch(() => {
+                    didFail = true;
+                });
+                InspectorTest.expectTrue(didFail, "Setting an invalid key should fail.");
+
+                let {text} = await target.CSSAgent.getStyleSheetText(styleSheetId);
+                InspectorTest.expectEqual(text, originalText, "Invalid key should not change stylesheet text.");
+
+                await domNodeStyles.refresh();
+                keyframe = domNodeStyles.keyframes[0];
+                InspectorTest.expectEqual(keyframe.selectorText, originalKey, "Invalid key should not change the live rule.");
+            }
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<style>
+    @keyframes anim { 0% { opacity: 0.2; } 100% { opacity: 0.8; } }
+    @media (min-width: 0px) {
+        @supports (opacity: 0.5) {
+            @keyframes other { 0% { opacity: 0.3; } 100% { opacity: 0.9; } }
+        }
+    }
+    #target { animation: anim 100s steps(1, end) paused; }
+    #other { animation: other 50s linear paused; }
+</style>
+<div id="target"></div>
+<div id="other"></div>
+</body>
+</html>

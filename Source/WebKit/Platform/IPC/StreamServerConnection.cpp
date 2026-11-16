@@ -1,0 +1,394 @@
+/*
+ * Copyright (C) 2020-2023 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#include "config.h"
+#include "StreamServerConnection.h"
+
+#include "ArgumentCoders.h"
+#include "Connection.h"
+#include "IPCSemaphore.h"
+#include "MessageLog.h"
+#include "StreamConnectionWorkQueue.h"
+#include <mutex>
+#include <wtf/Borrow.h>
+#include <wtf/NeverDestroyed.h>
+
+namespace IPC {
+
+RefPtr<StreamServerConnection> StreamServerConnection::tryCreate(Handle&& handle, const StreamServerConnectionParameters& params)
+{
+    auto buffer = StreamServerConnectionBuffer::map(WTF::move(handle.buffer));
+    if (!buffer)
+        return { };
+
+    auto connection = IPC::Connection::createClientConnection(IPC::Connection::Identifier { WTF::move(handle.outOfStreamConnection) });
+
+#if ENABLE(IPC_TESTING_API)
+    if (params.ignoreInvalidMessageForTesting)
+        connection->setIgnoreInvalidMessageForTesting();
+#endif
+
+    return adoptRef(*new StreamServerConnection(WTF::move(connection), WTF::move(*buffer), WTF::move(handle.clientWaitSignal)));
+}
+
+StreamServerConnection::StreamServerConnection(Ref<Connection> connection, StreamServerConnectionBuffer&& stream, Signal&& clientWaitSignal)
+    : m_connection(WTF::move(connection))
+    , m_buffer(WTF::move(stream))
+    , m_clientWaitSignal(WTF::move(clientWaitSignal))
+{
+}
+
+StreamServerConnection::~StreamServerConnection()
+{
+    ASSERT(!m_connection->isValid());
+}
+
+void StreamServerConnection::open(Client& client, StreamConnectionWorkQueue& workQueue)
+{
+    m_client = &client;
+    m_workQueue = workQueue;
+    // FIXME(http://webkit.org/b/238986): Workaround for not being able to deliver messages from the dedicated connection to the work queue the client uses.
+    // This delivers both valid and invalid messages to *this.
+    m_connection->addMessageReceiveQueue(*this, { });
+    m_connection->open(*this, workQueue);
+    workQueue.addStreamConnection(*this);
+    // Establish the work queue's wake up semaphore. The client's backpressure Event came in with the
+    // handle, so this is all the client still needs from the server. Until it arrives the client just
+    // does not signal a wakeup, so this does not need to be waited for.
+    auto encoder = makeUniqueRef<Encoder>(MessageName::InitializeStreamClientConnection, 0);
+    encoder.get() << workQueue.wakeUpSemaphore();
+    m_connection->sendMessage(WTF::move(encoder), { });
+}
+
+void StreamServerConnection::invalidate()
+{
+    Ref connection = m_connection;
+    if (!m_workQueue) {
+        connection->invalidate();
+        return;
+    }
+    protect(m_workQueue)->removeStreamConnection(*this);
+    connection->invalidate();
+    connection->removeMessageReceiveQueue({ });
+    m_workQueue = nullptr;
+    m_client = nullptr;
+    Locker locker { m_outOfStreamMessagesLock };
+    m_outOfStreamMessages.clear();
+}
+
+void StreamServerConnection::startReceivingMessages(StreamMessageReceiver& receiver, ReceiverName receiverName, uint64_t destinationID)
+{
+    auto key = std::make_pair(static_cast<uint8_t>(receiverName), destinationID);
+    Locker locker { m_receiversLock };
+    auto result = m_receivers.add(key, receiver);
+    ASSERT_UNUSED(result, result.isNewEntry);
+}
+
+void StreamServerConnection::stopReceivingMessages(ReceiverName receiverName, uint64_t destinationID)
+{
+    auto key = std::make_pair(static_cast<uint8_t>(receiverName), destinationID);
+    Locker locker { m_receiversLock };
+    bool didRemove = m_receivers.remove(key);
+    ASSERT_UNUSED(didRemove, didRemove);
+}
+
+void StreamServerConnection::enqueueMessage(Connection&, UniqueRef<Decoder>&& message)
+{
+    {
+        Locker locker { m_outOfStreamMessagesLock };
+        m_outOfStreamMessages.append(WTF::move(message));
+    }
+    ASSERT(m_workQueue);
+    protect(m_workQueue)->wakeUp();
+}
+
+void StreamServerConnection::didReceiveMessage(Connection&, Decoder&)
+{
+    // All messages go to message queue.
+    ASSERT_NOT_REACHED();
+}
+void StreamServerConnection::didReceiveSyncMessage(Connection&, Decoder&, UniqueRef<Encoder>&)
+{
+    // All messages go to message queue.
+    ASSERT_NOT_REACHED();
+}
+
+void StreamServerConnection::didClose(Connection&)
+{
+    // Client is expected to listen to didClose from the main connection.
+}
+
+void StreamServerConnection::didReceiveInvalidMessage(Connection&, MessageName, const Vector<uint32_t>&)
+{
+    // All messages go to message queue.
+    ASSERT_NOT_REACHED();
+}
+
+StreamServerConnection::DispatchResult StreamServerConnection::dispatchStreamMessages(size_t messageLimit)
+{
+    RefPtr<StreamMessageReceiver> currentReceiver;
+    bool didDispatchMessage = false;
+    // FIXME: Implement WTF::isValid(ReceiverName).
+    uint8_t currentReceiverName = static_cast<uint8_t>(ReceiverName::Invalid);
+
+    for (size_t i = 0; i < messageLimit; ++i) {
+        auto span = m_buffer.tryAcquire();
+        if (!span) {
+            if (didDispatchMessage)
+                CheckedPtr { m_client }->didRunOutOfMessages();
+            return DispatchResult::HasNoMessages;
+        }
+        IPC::Decoder decoder { *span, m_currentDestinationID };
+        if (!decoder.isValid()) {
+            dispatchDidReceiveInvalidMessage(decoder);
+            return DispatchResult::HasNoMessages;
+        }
+        if (decoder.messageName() == MessageName::SetStreamDestinationID) {
+            if (!processSetStreamDestinationID(decoder, currentReceiver))
+                return DispatchResult::HasNoMessages;
+            continue;
+        }
+        if (decoder.messageName() == MessageName::ProcessOutOfStreamMessage) {
+            auto result = processOutOfStreamMessage(decoder);
+            if (result == ProcessResult::Deferred) {
+                // The marker stays in the stream and the message at the front of the out-of-stream messages.
+                if (didDispatchMessage)
+                    CheckedPtr { m_client }->didRunOutOfMessages();
+                return DispatchResult::HasNoMessages;
+            }
+            if (result == ProcessResult::Invalid)
+                return DispatchResult::HasNoMessages;
+            didDispatchMessage = true;
+            continue;
+        }
+        if (currentReceiverName != static_cast<uint8_t>(decoder.messageReceiverName())) {
+            currentReceiverName = static_cast<uint8_t>(decoder.messageReceiverName());
+            currentReceiver = nullptr;
+        }
+        if (!currentReceiver) {
+            auto key = std::make_pair(static_cast<uint8_t>(currentReceiverName), m_currentDestinationID);
+            Locker locker { m_receiversLock };
+            currentReceiver = m_receivers.get(key);
+        }
+        if (!currentReceiver) {
+            // Valid scenario is when receiver has been removed, but there are messages for it in the buffer.
+            // FIXME: Since we do not have a receiver, we don't know how to decode the message.
+            // This means we must timeout every receiver in the stream connection.
+            // Currently we assert that the receivers are empty, as we only have up to one receiver in
+            // a stream connection until possibility of skipping is implemented properly.
+            sendAsyncReplyCancelIfNeeded(decoder);
+            Locker locker { m_receiversLock };
+            ASSERT(m_receivers.isEmpty());
+            return DispatchResult::HasNoMessages;
+        }
+        auto result = processStreamMessage(decoder, *currentReceiver);
+        if (result == ProcessResult::Deferred) {
+            // The message stays in the stream and holds back the messages after it. The work queue goes on with
+            // the other connections, and dispatches this one again when woken up.
+            if (didDispatchMessage)
+                CheckedPtr { m_client }->didRunOutOfMessages();
+            return DispatchResult::HasNoMessages;
+        }
+        if (result == ProcessResult::Invalid)
+            return DispatchResult::HasNoMessages;
+        didDispatchMessage = true;
+    }
+    if (!m_buffer.tryAcquire()) {
+        if (didDispatchMessage)
+            CheckedPtr { m_client }->didRunOutOfMessages();
+        return DispatchResult::HasNoMessages;
+    }
+    return DispatchResult::HasMoreMessages;
+}
+
+bool StreamServerConnection::processSetStreamDestinationID(Decoder& decoder, RefPtr<StreamMessageReceiver>& currentReceiver)
+{
+    auto destinationID = decoder.decode<uint64_t>();
+    if (!destinationID) {
+        dispatchDidReceiveInvalidMessage(decoder);
+        return false;
+    }
+    if (m_currentDestinationID != *destinationID) {
+        m_currentDestinationID = *destinationID;
+        currentReceiver = nullptr;
+    }
+    auto result = m_buffer.release(decoder.currentBufferOffset());
+    if (result == WakeUpClient::Yes)
+        m_clientWaitSignal.signal();
+    return true;
+}
+
+auto StreamServerConnection::processStreamMessage(Decoder& decoder, StreamMessageReceiver& receiver) -> ProcessResult
+{
+    ASSERT(!m_isProcessingStreamMessage);
+    m_isProcessingStreamMessage = true;
+    auto processResult = dispatchDeferrableStreamMessage(decoder, receiver);
+    m_isProcessingStreamMessage = false;
+    if (processResult != ProcessResult::Processed) {
+        // A deferred message is not released: it is dispatched again from the same place in the stream.
+        return processResult;
+    }
+    WakeUpClient result = WakeUpClient::No;
+    if (decoder.isSyncMessage()) {
+        result = m_buffer.releaseAll();
+        if (m_syncReplyToDispatch)
+            protect(connection())->sendSyncReply(makeUniqueRefFromNonNullUniquePtr(WTF::move(m_syncReplyToDispatch)));
+    } else {
+        sendAsyncReplyCancelIfNeeded(decoder);
+        result = m_buffer.release(decoder.currentBufferOffset());
+    }
+    if (result == WakeUpClient::Yes)
+        m_clientWaitSignal.signal();
+    return ProcessResult::Processed;
+}
+
+void StreamServerConnection::sendAsyncReplyCancelIfNeeded(const Decoder& decoder)
+{
+    if (!decoder.isAsyncWithReplyMessage() || decoder.wasHandled())
+        return;
+    protect(connection())->sendAsyncReplyCancel(decoder.asyncReplyID());
+}
+
+auto StreamServerConnection::dispatchDeferrableStreamMessage(Decoder& decoder, StreamMessageReceiver& receiver) -> ProcessResult
+{
+    // The handler of a message with a reply takes the reply completion handler, so it cannot defer the message.
+    // A deferred message is decoded again, which the attachments that its arguments take prevent.
+    m_canCurrentlyDispatchedMessageWait = !decoder.isSyncMessage() && !decoder.isAsyncWithReplyMessage() && !decoder.hasAttachments();
+    bool didSucceed = dispatchStreamMessage(decoder, receiver);
+    m_canCurrentlyDispatchedMessageWait = false;
+    bool isDeferred = std::exchange(m_isCurrentlyDispatchedMessageDeferred, false);
+    if (!didSucceed)
+        return ProcessResult::Invalid;
+    if (isDeferred)
+        return ProcessResult::Deferred;
+    return ProcessResult::Processed;
+}
+
+auto StreamServerConnection::processOutOfStreamMessage(Decoder& decoder) -> ProcessResult
+{
+    std::unique_ptr<Decoder> message;
+    {
+        Locker locker { m_outOfStreamMessagesLock };
+        if (m_outOfStreamMessages.isEmpty())
+            return ProcessResult::Invalid;
+        message = m_outOfStreamMessages.takeFirst().moveToUniquePtr();
+    }
+
+    auto key = std::make_pair(static_cast<uint8_t>(message->messageReceiverName()), static_cast<uint64_t>(message->destinationID()));
+
+    if (!message->isValid()) {
+        // The ignoreInvalidMessageForTesting() path for sync messages that dispatchStreamMessage() has
+        //  is not supported here because it is likely we don't have a id to reply to. No clients for this.
+        sendAsyncReplyCancelIfNeeded(*message);
+        dispatchDidReceiveInvalidMessage(*message);
+        return ProcessResult::Invalid;
+    }
+
+    RefPtr<StreamMessageReceiver> receiver;
+    {
+        Locker locker { m_receiversLock };
+        receiver = m_receivers.get(key);
+    }
+    if (receiver) {
+        auto processResult = dispatchDeferrableStreamMessage(*message, *receiver);
+        if (processResult == ProcessResult::Invalid)
+            return ProcessResult::Invalid;
+        if (processResult == ProcessResult::Deferred) {
+            // Neither the marker nor the message is released: the message is dispatched again when the marker is.
+            message->rewindToArguments();
+            Locker locker { m_outOfStreamMessagesLock };
+            m_outOfStreamMessages.prepend(makeUniqueRefFromNonNullUniquePtr(WTF::move(message)));
+            return ProcessResult::Deferred;
+        }
+    }
+
+    // If the receiver does not exist it has been removed but messages are still pending to be
+    // processed; it's ok to skip such messages. Either way, if the async reply was not handled,
+    // tell the sender to cancel its pending reply handler so it is not orphaned.
+    sendAsyncReplyCancelIfNeeded(*message);
+    auto result = m_buffer.release(decoder.currentBufferOffset());
+    if (result == WakeUpClient::Yes)
+        m_clientWaitSignal.signal();
+    return ProcessResult::Processed;
+}
+
+bool StreamServerConnection::dispatchStreamMessage(Decoder& message, StreamMessageReceiver& receiver)
+{
+#if ASSERT_ENABLED
+    m_isDispatchingMessage = true;
+#endif
+    IPC::messageLog().add(message.messageName());
+    receiver.didReceiveStreamMessage(*this, message);
+#if ASSERT_ENABLED
+    m_isDispatchingMessage = false;
+#endif
+    auto didReceiveInvalidMessage = std::exchange(m_didReceiveInvalidMessage, false);
+    if (!didReceiveInvalidMessage && message.isValid())
+        return true;
+
+    Ref connection = m_connection;
+#if ENABLE(IPC_TESTING_API)
+    if (connection->ignoreInvalidMessageForTesting()) {
+        // Typically failed decodes are not expected, and thus they cause an assertion and stream
+        // timeout.
+        // Sync message decode error on IPC testing API is a special case. IPC testing API sends only
+        // out of stream messages and thus only expects out of stream replies.
+        if (!m_isProcessingStreamMessage && message.isSyncMessage()) {
+            connection->sendSyncReply(makeUniqueRef<Encoder>(MessageName::CancelSyncMessageReply, message.syncRequestID().toUInt64()));
+            return true;
+        }
+        return false;
+    }
+#endif
+    dispatchDidReceiveInvalidMessage(message);
+    return false;
+}
+
+void StreamServerConnection::dispatchDidReceiveInvalidMessage(Decoder& message)
+{
+    CheckedPtr { m_client }->didReceiveInvalidMessage(*this, message.messageName(), borrow(message)->indicesOfObjectsFailingDecoding());
+    invalidate();
+}
+
+void StreamServerConnection::markCurrentlyDispatchedMessageAsInvalid(ASCIILiteral error)
+{
+    UNUSED_PARAM(error);
+    ASSERT(m_isDispatchingMessage);
+    m_didReceiveInvalidMessage = true;
+}
+
+void StreamServerConnection::markCurrentlyDispatchedMessageAsInvalid(const String&)
+{
+    markCurrentlyDispatchedMessageAsInvalid(ASCIILiteral { });
+}
+
+void StreamServerConnection::markCurrentlyDispatchedMessageAsDeferred()
+{
+    ASSERT(m_isDispatchingMessage);
+    ASSERT(m_canCurrentlyDispatchedMessageWait);
+    m_isCurrentlyDispatchedMessageDeferred = m_canCurrentlyDispatchedMessageWait;
+}
+
+}

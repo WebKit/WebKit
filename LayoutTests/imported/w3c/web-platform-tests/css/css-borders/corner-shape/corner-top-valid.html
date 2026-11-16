@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>CSS Borders and Box Decorations 4 Test: Parsing 'corner-top' with valid values</title>
+<link rel="author" title="Chromium" href="https://chromium.org">
+<link rel="help" href="https://drafts.csswg.org/css-borders-4/#corner-shorthand">
+<meta name="assert" content="This test checks that 'corner-top' supports valid pair-corner values.">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/css/support/parsing-testcommon.js"></script>
+<script src="/css/support/shorthand-testcommon.js"></script>
+
+<script>
+// Each component alone; the omitted component resets to its initial value.
+test_valid_value("corner-top", "10px");
+test_valid_value("corner-top", "bevel");
+test_valid_value("corner-top", "round", "0px");
+
+// Order independence.
+test_valid_value("corner-top", "10px bevel", "bevel 10px");
+test_valid_value("corner-top", "bevel 10px 20px");
+test_valid_value("corner-top", "4px 2% squircle", "squircle 4px 2%");
+
+// The slash separates horizontal and vertical radii.
+test_valid_value("corner-top", "round 10% / 2rem", "10% / 2rem");
+test_valid_value("corner-top", "10px 20px / 5px bevel scoop", "bevel scoop 10px 20px / 5px");
+
+test_shorthand_value("corner-top", "10px bevel", {
+  "border-top-left-radius": "10px",
+  "corner-top-left-shape": "bevel",
+  "border-top-right-radius": "10px",
+  "corner-top-right-shape": "bevel",
+});
+test_shorthand_value("corner-top", "bevel", {
+  "border-top-left-radius": "0px",
+  "corner-top-left-shape": "bevel",
+  "border-top-right-radius": "0px",
+  "corner-top-right-shape": "bevel",
+});
+test_shorthand_value("corner-top", "10px 20px / 5px bevel scoop", {
+  "border-top-left-radius": "10px 5px",
+  "corner-top-left-shape": "bevel",
+  "border-top-right-radius": "20px 5px",
+  "corner-top-right-shape": "scoop",
+});
+</script>

@@ -1,0 +1,6 @@
+
+PASS @import inside @media rule is dropped
+PASS @import inside @supports rule is dropped
+PASS @namespace inside @media rule is dropped
+PASS @import inside @media is dropped but subsequent rules survive
+

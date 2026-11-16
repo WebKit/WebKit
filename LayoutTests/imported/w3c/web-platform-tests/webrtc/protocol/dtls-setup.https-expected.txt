@@ -1,0 +1,9 @@
+
+PASS PC should accept initial offer with setup=actpass
+PASS PC should accept initial offer with setup=active
+PASS PC should accept initial offer with setup=passive
+PASS PC with setup=actpass should have a dtlsRole of client
+PASS PC with setup=active should have a dtlsRole of server
+PASS PC with setup=passive should have a dtlsRole of client
+PASS dtlsRole is `unknown` before negotiation of the DTLS handshake
+

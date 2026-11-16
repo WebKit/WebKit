@@ -1,0 +1,12 @@
+Test for HeapAgent in a Worker.
+
+
+== Running test suite: Worker.Heap
+-- Running test case: Worker.Heap.GarbageCollected
+PASS: Event should come from the Worker target.
+PASS: Event should have GarbageCollection data.
+PASS: GarbageCollection type should be Full.
+
+-- Running test case: Worker.Heap.Terminate
+PASS: Terminating the Worker should remove its target.
+

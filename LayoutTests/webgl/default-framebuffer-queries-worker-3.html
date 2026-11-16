@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>WebGL default framebuffer queries in a worker, part 3 of 4</title>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+<div id="description"></div>
+<div id="console"></div>
+<script>
+description("Tests that the queries involving the default framebuffer of an OffscreenCanvas WebGL context in a worker give the same answers in every state of the context. Part 3 of 4.");
+
+jsTestIsAsync = true;
+startBufferingOutput();
+// Workers do not have internals.settings. The worker gets the settings of the page when it starts.
+if (window.internals)
+    internals.settings.setWebGLErrorsToConsoleEnabled(false);
+startWorker("resources/default-framebuffer-queries-worker.js#3-4");
+</script>
+</body>
+</html>

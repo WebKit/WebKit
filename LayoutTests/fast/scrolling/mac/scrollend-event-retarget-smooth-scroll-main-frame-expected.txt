@@ -1,0 +1,10 @@
+Interrupting a smooth scroll of the main frame with a new scrollTo() to a different target should retarget the running animation, so the scrollend event fires at the final destination rather than prematurely at the intermediate offset. useThreadedScrolling=false forces the main frame onto the main-thread ScrollAnimator, which is the path the fix touches.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS scrollYAtScrollend is finalTarget
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

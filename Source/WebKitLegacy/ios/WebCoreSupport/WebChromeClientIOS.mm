@@ -1,0 +1,410 @@
+/*
+ * Copyright (C) 2008-2025 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#import "WebChromeClientIOS.h"
+
+#if PLATFORM(IOS_FAMILY)
+
+#import "DOMNodeInternal.h"
+#import "PopupMenuIOS.h"
+#import "SearchPopupMenuIOS.h"
+#import "WebDelegateImplementationCaching.h"
+#import "WebFixedPositionContent.h"
+#import "WebFixedPositionContentInternal.h"
+#import "WebFormDelegate.h"
+#import "WebFrameIOS.h"
+#import "WebFrameInternal.h"
+#import "WebHistoryItemInternal.h"
+#import "WebOpenPanelResultListener.h"
+#import "WebUIDelegate.h"
+#import "WebUIDelegatePrivate.h"
+#import "WebUIKitDelegate.h"
+#import "WebView.h"
+#import "WebViewInternal.h"
+#import "WebViewPrivate.h"
+#import <WebCore/ContentChangeObserver.h>
+#import <WebCore/DisabledAdaptations.h>
+#import <WebCore/FileChooser.h>
+#import <WebCore/FloatRect.h>
+#import <WebCore/FocusControllerTypes.h>
+#import <WebCore/FocusOptions.h>
+#import <WebCore/Frame.h>
+#import <WebCore/FrameDestructionObserverInlines.h>
+#import <WebCore/GraphicsLayer.h>
+#import <WebCore/HTMLInputElement.h>
+#import <WebCore/HTMLNames.h>
+#import <WebCore/Icon.h>
+#import <WebCore/IntRect.h>
+#import <WebCore/LocalFrameInlines.h>
+#import <WebCore/NodeDocument.h>
+#import <WebCore/PlatformScreen.h>
+#import <WebCore/RenderBox.h>
+#import <WebCore/RenderObject.h>
+#import <WebCore/ScrollingConstraints.h>
+#import <WebCore/WAKWindow.h>
+#import <WebCore/WebCoreThreadMessage.h>
+#import <wtf/HashMap.h>
+#import <wtf/RefPtr.h>
+#import <wtf/RuntimeApplicationChecks.h>
+#import <wtf/TZoneMallocInlines.h>
+#import <wtf/WeakObjCPtr.h>
+#import <wtf/cocoa/VectorCocoa.h>
+
+NSString * const WebOpenPanelConfigurationAllowMultipleFilesKey = @"WebOpenPanelConfigurationAllowMultipleFilesKey";
+NSString * const WebOpenPanelConfigurationMediaCaptureTypeKey = @"WebOpenPanelConfigurationMediaCaptureTypeKey";
+NSString * const WebOpenPanelConfigurationMimeTypesKey = @"WebOpenPanelConfigurationMimeTypesKey";
+
+using namespace WebCore;
+
+#if ENABLE(MEDIA_CAPTURE)
+
+static WebMediaCaptureType webMediaCaptureType(MediaCaptureType type)
+{
+    switch (type) {
+    case MediaCaptureType::MediaCaptureTypeNone:
+        return WebMediaCaptureTypeNone;
+    case MediaCaptureType::MediaCaptureTypeUser:
+        return WebMediaCaptureTypeUser;
+    case MediaCaptureType::MediaCaptureTypeEnvironment:
+        return WebMediaCaptureTypeEnvironment;
+    }
+
+    ASSERT_NOT_REACHED();
+    return WebMediaCaptureTypeNone;
+}
+
+#endif
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebChromeClientIOS);
+
+void WebChromeClientIOS::setWindowRect(const WebCore::FloatRect& r)
+{
+    RetainPtr webView = this->webView();
+    [[webView _UIDelegateForwarder] webView:webView setFrame:r];
+}
+
+FloatRect WebChromeClientIOS::windowRect() const
+{
+    RetainPtr webView = this->webView();
+    CGRect windowRect = [[webView _UIDelegateForwarder] webViewFrame:webView];
+    return enclosingIntRect(windowRect);
+}
+
+void WebChromeClientIOS::focus()
+{
+    RetainPtr webView = this->webView();
+    [[webView _UIDelegateForwarder] webViewFocus:webView];
+}
+
+void WebChromeClientIOS::runJavaScriptAlert(LocalFrame& frame, const WTF::String& message)
+{
+    RetainPtr webView = this->webView();
+    WebThreadLockPushModal();
+    [[webView _UIDelegateForwarder] webView:webView runJavaScriptAlertPanelWithMessage:message.createNSString().get() initiatedByFrame:protect(kit(&frame))];
+    WebThreadLockPopModal();
+}
+
+bool WebChromeClientIOS::runJavaScriptConfirm(LocalFrame& frame, const WTF::String& message)
+{
+    RetainPtr webView = this->webView();
+    WebThreadLockPushModal();
+    bool result = [[webView _UIDelegateForwarder] webView:webView runJavaScriptConfirmPanelWithMessage:message.createNSString().get() initiatedByFrame:protect(kit(&frame))];
+    WebThreadLockPopModal();
+    return result;
+}
+
+bool WebChromeClientIOS::runJavaScriptPrompt(LocalFrame& frame, const WTF::String& prompt, const WTF::String& defaultText, WTF::String& result)
+{
+    RetainPtr webView = this->webView();
+    WebThreadLockPushModal();
+    result = [[webView _UIDelegateForwarder] webView:webView runJavaScriptTextInputPanelWithPrompt:prompt.createNSString().get() defaultText:defaultText.createNSString().get() initiatedByFrame:protect(kit(&frame))];
+    WebThreadLockPopModal();
+    return !result.isNull();
+}
+
+void WebChromeClientIOS::runOpenPanel(LocalFrame&, FileChooser& chooser)
+{
+    auto& settings = chooser.settings();
+    BOOL allowMultipleFiles = settings.allowsMultipleFiles;
+    auto listener = adoptNS([[WebOpenPanelResultListener alloc] initWithChooser:chooser]);
+
+    WebMediaCaptureType captureType = WebMediaCaptureTypeNone;
+#if ENABLE(MEDIA_CAPTURE)
+    captureType = webMediaCaptureType(settings.mediaCaptureType);
+#endif
+    RetainPtr configuration = @{
+        WebOpenPanelConfigurationAllowMultipleFilesKey: @(allowMultipleFiles),
+        WebOpenPanelConfigurationMimeTypesKey: createNSArray(settings.acceptMIMETypes).get(),
+        WebOpenPanelConfigurationMediaCaptureTypeKey: @(captureType)
+    };
+
+    if (WebThreadIsCurrent()) {
+        RunLoop::mainSingleton().dispatch([weakWebView = WeakObjCPtr<WebView>(protect(webView())), listener = WTF::move(listener), configuration = WTF::move(configuration)] {
+            RetainPtr webView = weakWebView.get();
+            [[webView _UIKitDelegateForwarder] webView:webView runOpenPanelForFileButtonWithResultListener:listener.get() configuration:configuration.get()];
+        });
+    } else {
+        RetainPtr webView = this->webView();
+        [[webView _UIKitDelegateForwarder] webView:webView runOpenPanelForFileButtonWithResultListener:listener.get() configuration:configuration];
+    }
+}
+
+void WebChromeClientIOS::showShareSheet(ShareDataWithParsedURL&&, CompletionHandler<void(bool)>&&)
+{
+}
+
+#if ENABLE(IOS_TOUCH_EVENTS)
+
+void WebChromeClientIOS::didPreventDefaultForEvent()
+{
+    RetainPtr webView = this->webView();
+    [[webView _UIKitDelegateForwarder] webViewDidPreventDefaultForEvent:webView];
+}
+
+#endif
+
+void WebChromeClientIOS::didReceiveMobileDocType(bool isMobileDoctype)
+{
+    RetainPtr webView = this->webView();
+    if (isMobileDoctype)
+        [[webView _UIKitDelegateForwarder] webViewDidReceiveMobileDocType:webView];
+}
+
+void WebChromeClientIOS::setNeedsScrollNotifications(WebCore::LocalFrame& frame, bool flag)
+{
+    RetainPtr webView = this->webView();
+    [[webView _UIKitDelegateForwarder] webView:webView needsScrollNotifications:[NSNumber numberWithBool:flag] forFrame:protect(kit(&frame))];
+}
+
+static inline NSString *nameForViewportFitValue(ViewportFit value)
+{
+    switch (value) {
+    case ViewportFit::Auto:
+        return WebViewportFitAutoValue;
+    case ViewportFit::Contain:
+        return WebViewportFitContainValue;
+    case ViewportFit::Cover:
+        return WebViewportFitCoverValue;
+    }
+    return WebViewportFitAutoValue;
+}
+
+static inline NSDictionary *dictionaryForViewportArguments(const WebCore::ViewportArguments& arguments)
+{
+    return @{ WebViewportInitialScaleKey: @(arguments.zoom),
+              WebViewportMinimumScaleKey: @(arguments.minZoom),
+              WebViewportMaximumScaleKey: @(arguments.maxZoom),
+              WebViewportUserScalableKey: @(arguments.userZoom),
+              WebViewportShrinkToFitKey: @(0),
+              WebViewportFitKey: nameForViewportFitValue(arguments.viewportFit),
+              WebViewportWidthKey: @(arguments.width),
+              WebViewportHeightKey: @(arguments.height) };
+}
+
+FloatSize WebChromeClientIOS::screenSize() const
+{
+    return FloatSize(WebCore::screenSize());
+}
+
+FloatSize WebChromeClientIOS::availableScreenSize() const
+{
+    // WebKit1 code should query the WAKWindow for the available screen size.
+    ASSERT_NOT_REACHED();
+    return FloatSize();
+}
+
+FloatSize WebChromeClientIOS::overrideScreenSize() const
+{
+    return screenSize();
+}
+
+FloatSize WebChromeClientIOS::overrideAvailableScreenSize() const
+{
+    return availableScreenSize();
+}
+
+void WebChromeClientIOS::dispatchViewportPropertiesDidChange(const WebCore::ViewportArguments& arguments) const
+{
+    RetainPtr webView = this->webView();
+    [[webView _UIKitDelegateForwarder] webView:webView didReceiveViewportArguments:protect(dictionaryForViewportArguments(arguments))];
+}
+
+void WebChromeClientIOS::dispatchDisabledAdaptationsDidChange(const OptionSet<WebCore::DisabledAdaptations>&) const
+{
+}
+
+void WebChromeClientIOS::notifyRevealedSelectionByScrollingFrame(WebCore::LocalFrame& frame)
+{
+    [[protect(webView()) _UIKitDelegateForwarder] revealedSelectionByScrollingWebFrame:protect(kit(&frame))];
+}
+
+bool WebChromeClientIOS::isStopping()
+{
+    return [protect(webView()) _isStopping];
+}
+
+void WebChromeClientIOS::didLayout(LayoutType changeType)
+{
+    RetainPtr webView = this->webView();
+    [[webView _UIKitDelegate] webThreadWebViewDidLayout:webView byScrolling:(changeType == ChromeClient::Scroll)];
+}
+
+void WebChromeClientIOS::didStartOverflowScroll()
+{
+    RetainPtr webView = this->webView();
+    [[[webView _UIKitDelegateForwarder] asyncForwarder] webViewDidStartOverflowScroll:webView];
+}
+
+void WebChromeClientIOS::didEndOverflowScroll()
+{
+    RetainPtr webView = this->webView();
+    [[[webView _UIKitDelegateForwarder] asyncForwarder] webViewDidEndOverflowScroll:webView];
+}
+
+void WebChromeClientIOS::suppressFormNotifications() 
+{
+    m_formNotificationSuppressions++;
+}
+
+void WebChromeClientIOS::restoreFormNotifications() 
+{
+    m_formNotificationSuppressions--;
+    ASSERT(m_formNotificationSuppressions >= 0);
+    if (m_formNotificationSuppressions < 0)
+        m_formNotificationSuppressions = 0;
+}
+
+void WebChromeClientIOS::elementDidFocus(WebCore::Element& element, const WebCore::FocusOptions&)
+{
+    if (m_formNotificationSuppressions <= 0) {
+        RetainPtr webView = this->webView();
+        [[webView _UIKitDelegateForwarder] webView:webView elementDidFocusNode:protect(kit(&element))];
+    }
+}
+
+void WebChromeClientIOS::elementDidBlur(WebCore::Element& element)
+{
+    if (m_formNotificationSuppressions <= 0) {
+        RetainPtr webView = this->webView();
+        [[webView _UIKitDelegateForwarder] webView:webView elementDidBlurNode:protect(kit(&element))];
+    }
+}
+
+RefPtr<WebCore::PopupMenu> WebChromeClientIOS::createPopupMenu(WebCore::PopupMenuClient& client) const
+{
+    return adoptRef(new PopupMenuIOS(&client));
+}
+
+RefPtr<WebCore::SearchPopupMenu> WebChromeClientIOS::createSearchPopupMenu(WebCore::PopupMenuClient& client) const
+{
+    return adoptRef(new SearchPopupMenuIOS(&client));
+}
+
+void WebChromeClientIOS::attachRootGraphicsLayer(LocalFrame&, GraphicsLayer* graphicsLayer)
+{
+    // FIXME: for non-root frames we rely on RenderView positioning the root layer,
+    // which is a hack. <rdar://problem/5906146>
+    // Send the delegate message on the web thread to avoid <rdar://problem/8567677>
+    RetainPtr webView = this->webView();
+    [[webView _UIKitDelegate] _webthread_webView:webView attachRootLayer:protect(graphicsLayer ? graphicsLayer->platformLayer() : nil)];
+}
+
+void WebChromeClientIOS::didFlushCompositingLayers()
+{
+    RetainPtr webView = this->webView();
+    [[[webView _UIKitDelegateForwarder] asyncForwarder] webViewDidCommitCompositingLayerChanges:webView];
+}
+
+bool WebChromeClientIOS::fetchCustomFixedPositionLayoutRect(IntRect& rect)
+{
+    NSRect updatedRect;
+    if ([protect(webView()) _fetchCustomFixedPositionLayoutRect:&updatedRect]) {
+        rect = enclosingIntRect(updatedRect);
+        return true;
+    }
+
+    return false;
+}
+
+void WebChromeClientIOS::updateViewportConstrainedLayers(HashMap<PlatformLayer*, std::unique_ptr<ViewportConstraints>>& layerMap, const HashMap<PlatformLayer*, PlatformLayer*>& stickyContainers)
+{
+    [[protect(webView()) _fixedPositionContent] setViewportConstrainedLayers:layerMap stickyContainerMap:stickyContainers];
+}
+
+void WebChromeClientIOS::addOrUpdateScrollingLayer(Node* node, PlatformLayer* scrollingLayer, PlatformLayer* contentsLayer, const IntSize& scrollSize, bool allowHorizontalScrollbar, bool allowVerticalScrollbar)
+{
+    RetainPtr domNode = kit(node);
+
+    RetainPtr webView = this->webView();
+    [[[webView _UIKitDelegateForwarder] asyncForwarder] webView:webView didCreateOrUpdateScrollingLayer:scrollingLayer withContentsLayer:contentsLayer scrollSize:[NSValue valueWithSize:scrollSize] forNode:domNode
+        allowHorizontalScrollbar:allowHorizontalScrollbar allowVerticalScrollbar:allowVerticalScrollbar];
+}
+
+void WebChromeClientIOS::removeScrollingLayer(Node* node, PlatformLayer* scrollingLayer, PlatformLayer* contentsLayer)
+{
+    RetainPtr domNode = kit(node);
+    RetainPtr webView = this->webView();
+    [[[webView _UIKitDelegateForwarder] asyncForwarder] webView:webView willRemoveScrollingLayer:scrollingLayer withContentsLayer:contentsLayer forNode:domNode];
+}
+
+void WebChromeClientIOS::webAppOrientationsUpdated()
+{
+    RetainPtr webView = this->webView();
+    [[webView _UIDelegateForwarder] webViewSupportedOrientationsUpdated:webView];
+}
+
+void WebChromeClientIOS::focusedElementChanged(Element* element, LocalFrame*, FocusOptions)
+{
+    if (!is<HTMLInputElement>(element))
+        return;
+
+    HTMLInputElement& inputElement = downcast<HTMLInputElement>(*element);
+    if (!inputElement.isText())
+        return;
+
+    CallFormDelegate(protect(webView()), @selector(didFocusTextField:inFrame:), protect(kit(&inputElement)), protect(kit(protect(inputElement.document().frame()))));
+}
+
+void WebChromeClientIOS::showPlaybackTargetPicker(bool hasVideo, WebCore::RouteSharingPolicy, const String&)
+{
+    RetainPtr webView = this->webView();
+    CGPoint point = [[webView _UIKitDelegateForwarder] interactionLocation];
+    CGRect elementRect = [[webView mainFrame] elementRectAtPoint:point];
+    [[webView _UIKitDelegateForwarder] showPlaybackTargetPicker:hasVideo fromRect:elementRect];
+}
+
+RefPtr<Icon> WebChromeClientIOS::createIconForFiles(const Vector<String>& filenames)
+{
+    return Icon::createIconForFiles(filenames);
+}
+
+#if ENABLE(ORIENTATION_EVENTS)
+IntDegrees WebChromeClientIOS::deviceOrientation() const
+{
+    return [protect(webView()) _deviceOrientation];
+}
+#endif
+
+#endif // PLATFORM(IOS_FAMILY)

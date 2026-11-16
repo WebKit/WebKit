@@ -1,0 +1,26 @@
+<!doctype html><!-- webkit-test-runner [ ShouldUseServiceWorkerShortTimeout=true ] -->
+<html>
+<head>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="resources/routines.js"></script>
+</head>
+<body>
+<script>
+promise_test(async (test) => {
+    return promise_rejects_js(test, TypeError, navigator.serviceWorker.register("service-worker-spinning-worker.js", { scope : "spin-run" }));
+}, "Spin at running ");
+
+promise_test(async (test) => {
+    const registration = await navigator.serviceWorker.register("service-worker-spinning-worker.js", { scope : "spin-install" });
+    const worker = registration.installing;
+    await waitForState(registration.installing, "redundant");
+}, "Spin in install");
+
+promise_test(async (test) => {
+    const registration = await navigator.serviceWorker.register("service-worker-spinning-worker.js", { scope : "spin-after-install" });
+    return waitForServiceWorkerNoLongerRunning(registration.installing);
+}, "Spin after install");
+</script>
+</body>
+</html>

@@ -1,0 +1,69 @@
+/*
+ * Copyright (C) 2020 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#pragma once
+
+#include "InlineFormattingContext.h"
+#include <WebCore/InlineDisplayContent.h>
+#include <wtf/Vector.h>
+
+namespace WebCore {
+
+class RenderBlockFlow;
+
+namespace LayoutIntegration {
+
+class InlineContent;
+
+class InlineContentBuilder {
+public:
+    InlineContentBuilder(const RenderBlockFlow&);
+
+    FloatRect build(std::unique_ptr<Layout::InlineLayoutResult>&&, InlineContent&, const Layout::InlineDamage*) const;
+
+    // Recomputes the style driven part of ink overflow on the display boxes from startIndex on, then
+    // recomputes line and block level overflow from them.
+    void updateOverflow(InlineContent&, size_t startIndex) const;
+
+    // Laid out content is being removed. Drops the lines the next layout rebuilds, from the damaged line on.
+    void truncateDisplayContent(InlineContent&, Layout::InlineDamage&) const;
+
+private:
+    void updateInkOverflowForBoxes(InlineContent&, size_t startIndex) const;
+    static void updateInkOverflowForText(std::span<InlineDisplay::Box>, const Layout::ElementBox& root, const IntSize& initialContainingBlockSize);
+    static void updateInkOverflowForInlineBoxes(std::span<InlineDisplay::Box>, const Layout::ElementBox& root);
+
+    void computeOverflowFromBoxes(InlineContent&, size_t startIndex) const;
+    using DecoratingBoxes = HashSet<CheckedRef<const Layout::Box>>;
+    void adjustInkOverflowForPercentageTextDecorationInsets(InlineContent&, size_t startIndex, const DecoratingBoxes&) const;
+    void computeIsFirstIsLastBoxAndBidiReorderingForInlineContent(InlineDisplay::Boxes&) const;
+    FloatRect handlePartialDisplayContentUpdate(Layout::InlineLayoutResult&&, InlineContent&, const Layout::InlineDamage*) const;
+    FloatRect appendToTruncatedDisplayContent(Layout::InlineLayoutResult&&, InlineContent&, const Layout::InlineDamage&) const;
+
+    const CheckedRef<const RenderBlockFlow> m_blockFlow;
+};
+
+}
+}

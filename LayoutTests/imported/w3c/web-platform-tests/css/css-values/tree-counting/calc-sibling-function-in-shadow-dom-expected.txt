@@ -1,0 +1,9 @@
+In host tree (1)
+In host tree (2)
+In host tree (4)
+In host tree (5)
+
+PASS Host children have sibling-index() and sibling-count() based on the DOM tree order
+PASS Shadow children have sibling-index() and sibling-count() based on the DOM tree order
+PASS Direct shadow root children have correct sibling-index() and sibling-count()
+

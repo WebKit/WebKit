@@ -1,0 +1,23 @@
+<div><span id="start" style="-webkit-user-select:none;">0123</span>45<span id="end" style="-webkit-user-select:none;">6789</span></div>
+
+<script>
+if (window.testRunner) {
+    start = document.getElementById("start");
+    x1 = start.offsetParent.offsetLeft + start.offsetLeft + start.offsetWidth / 2;
+    y1 = start.offsetParent.offsetTop + start.offsetTop + start.offsetHeight / 2;
+    eventSender.mouseMoveTo(x1, y1);
+    eventSender.mouseDown();
+    
+    eventSender.leapForward(100);
+    eventSender.mouseMoveTo(x1 + 5, y1);
+    eventSender.leapForward(100);
+    eventSender.mouseMoveTo(x1 + 10, y1);
+    
+    end = document.getElementById("end");
+    x2 = end.offsetParent.offsetLeft + end.offsetLeft + end.offsetWidth / 2;
+    y2 = end.offsetParent.offsetTop + end.offsetTop + end.offsetHeight / 2;
+    
+    eventSender.mouseMoveTo(x2, y2);
+    eventSender.mouseUp();
+}
+</script>

@@ -1,0 +1,10 @@
+
+
+
+PASS Closed dialog in width: 540px iframe
+PASS Open dialog in width: 540px iframe
+PASS Modal dialog in width: 540px iframe
+PASS Closed dialog in width: 538px iframe
+PASS Open dialog in width: 538px iframe
+PASS Modal dialog in width: 538px iframe
+

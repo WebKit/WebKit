@@ -1,0 +1,178 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[%# INTERFACE:
+  # fields: hash/record; the fields being matched, each of which has:
+  #     type: single|multi: whether or not the user can select multiple matches
+  #     flag_type: for flag requestee fields, the type of flag being requested
+  # matches: hash; Hierarchical.  The levels go like this:
+  #     field_name {
+  #         pattern_text {
+  #             'users'  = @user_list           (user objects)
+  #             'status' = success|fail|trunc   (result of search.
+  #                             'trunc' (truncated) means max was reached)
+  #         }
+  #     }
+  # script: string; The name of the calling script, used to create a
+  #     self-referential URL
+  #%]
+
+[%# This lists fields which use the user auto-completion feature and which
+  # are not listed in field_descs. %]
+[% field_labels = { # Used by editcomponents.cgi
+                    "initialcc"               => "Default CC List",
+                    "initialowner"            => "Default Assignee",
+                    "initialqacontact"        => "Default QA Contact",
+                    # Used by process_bug.cgi
+                    "masscc"                  => "CC List",
+                    # Used by request.cgi
+                    "requester"               => "Requester",
+                    "requestee"               => "Requestee",
+                    # Used by userprefs.cgi
+                    "new_watchedusers"        => "Watch List",
+
+   }
+%]
+[% IF matchsuccess == 1 %]
+  [% PROCESS global/header.html.tmpl title="Confirm Match" %]
+
+  [% USE Bugzilla %]
+
+  <form method="post" 
+  [% IF script -%]
+    action="[% script %]"
+  [%- END -%]
+  [% IF Bugzilla.cgi.param("data") %]
+    enctype="multipart/form-data"
+  [% END %]
+  >
+
+  <p>
+    [% IF matchmultiple %]
+      Bugzilla cannot make a conclusive match for one or more
+      of the names and/or email addresses you entered on the previous page.
+      <br>Please examine the lists of potential matches below and select the
+      ones you want,
+    [% ELSE %]
+      [% terms.Bugzilla %] is configured to require verification whenever
+      you enter a name or partial email address.
+      <br>Below are the names/addresses you entered and the matched accounts.
+      Please confirm that they are correct,
+    [% END %]
+    or go back to the previous page to revise the names you entered.
+  </p>
+[% ELSE %]
+  [% PROCESS global/header.html.tmpl title="Match Failed" %]
+  <p>
+    Bugzilla was unable to make any match at all for one or more of
+    the names and/or email addresses you entered on the previous page.
+    [% IF !user.id %]
+      <b>Note: You are currently logged out. Only exact matches against e-mail
+      addresses will be performed.</b>
+    [% END %]
+  </p>
+  <p>Please go back and try other names or email addresses.</p>
+[% END %]
+
+<table id="user_match_table">
+  [% FOREACH field = matches %]
+    <tr>
+      <td>
+        [% PROCESS field_names field_name=field.key %]:
+      </td>
+      <td>
+          [% FOREACH query = field.value %]
+            <div class="user_match">
+              <b>[% query.key FILTER html %]</b>
+            [% IF query.value.users.size %]
+                [% IF query.value.users.size > 1 %]
+                  [% IF query.value.status == 'fail' %]
+                    <span class="warning">
+                      matches multiple users.
+                    </span>
+                    Please go back and try again with a more specific
+                    name/address.
+                  [% ELSE %]
+                    [% IF query.value.status == 'trunc' %]
+                      matched
+                      more than the maximum
+                      of [% query.value.users.size %] users:<br>
+                    [% ELSE %]
+                      matched:<br>
+                    [% END %]
+                    <select name="[% field.key FILTER html %]"
+                     id="[% field.key FILTER html %]"
+                      [% IF fields.${field.key}.type == 'multi' %]
+                        multiple="multiple"
+                        [% IF query.value.users.size > 5 %]
+                         size="5"
+                        [% ELSE %]
+                         size="[% query.value.users.size %]"
+                        [% END %]
+                      [% END %]
+                    >
+                      [% FOREACH match = query.value.users %]
+                        <option value="[% match.login FILTER html %]">
+                         [%- match.identity FILTER html -%]
+                        </option>
+                      [% END %]
+                    </select>
+                  [% END %]
+                [% ELSE %]
+                  matched
+                  <b>[% query.value.users.0.identity FILTER html %]</b>
+                [% END %]
+            [% ELSE %]
+              <span class="warning">
+                [% IF query.key.length < 3 %]
+                  was too short for substring match (minimum 3 characters)
+                [% ELSE %]
+                  did not match anything
+                [% END %]
+              </span>
+            [% END %]
+            </div>
+        [% END %]
+      </td>
+    </tr>
+  [% END %]
+</table>
+
+[% IF matchsuccess == 1 %]
+
+  [% SET exclude_these = ['Bugzilla_login', 'Bugzilla_password'] %]
+  [% FOREACH key IN matches.keys %]
+    [% exclude_these.push(key) IF Bugzilla.cgi.param(key) == '' %]
+  [% END %]
+  [% SET exclude = '^' _ exclude_these.join('|') _ '$' %]
+  [% PROCESS "global/hidden-fields.html.tmpl" exclude = exclude %]
+
+  <p>
+    <input type="submit" id="continue" value="Continue">
+  </p>
+
+  </form>
+
+[% END %]
+
+[% PROCESS global/footer.html.tmpl %]
+
+
+[% BLOCK field_names %]
+
+  [% IF field_descs.$field_name %]
+    [% field_descs.$field_name FILTER html %]
+  [% ELSIF field_labels.$field_name %]
+    [% field_labels.$field_name FILTER html %]
+  [% ELSIF field_name.match("^requestee") %]
+    [% fields.${field_name}.flag_type.name FILTER html %] requestee
+  [% ELSE %]
+    [% field_name FILTER html %]
+  [% END %]
+
+[% END %]

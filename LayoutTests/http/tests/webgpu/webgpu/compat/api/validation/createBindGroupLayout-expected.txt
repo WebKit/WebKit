@@ -1,0 +1,5 @@
+
+PASS :unsupportedStorageTextureFormats:format="rg32float"
+PASS :unsupportedStorageTextureFormats:format="rg32sint"
+PASS :unsupportedStorageTextureFormats:format="rg32uint"
+

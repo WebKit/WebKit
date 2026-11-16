@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<script>
+
+var db;
+
+window.localStorage.setItem("local", "storage");
+window.sessionStorage.setItem("session", "storage");
+
+var request = window.indexedDB.open("NetworkProcessCrashes");
+request.onsuccess = function(event) {
+    window.webkit.messageHandlers.testHandler.postMessage("local:" + window.localStorage.getItem("local"));
+    window.webkit.messageHandlers.testHandler.postMessage("session:"+ window.sessionStorage.getItem("session"));
+    db = request.result;
+    db.onerror = () => window.webkit.messageHandlers.testHandler.postMessage("Network Process Crashed");
+}
+
+request.onupgradeneeded = function(event) {
+    var createRequest = event.target.result.createObjectStore("TestObjectStore");
+    createRequest.onerror = function(event) {
+        window.webkit.messageHandlers.testHandler.postMessage("ObjectStore Error");
+    }
+}
+
+request.onerror = function(event) {
+    window.webkit.messageHandlers.testHandler.postMessage("Error");
+}
+
+</script>

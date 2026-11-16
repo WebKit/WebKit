@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test iframe depth limit</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <style>
+        body, html {
+            height: 100%;
+        }
+        iframe {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <p>There should be no crash and no timeout.</p>
+    <p id="result"></p>
+    <iframe id="iframe" scrolling=no></iframe>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+
+        iframe.src = "resources/self-referential-iframe.html?depth=1";
+
+        let finishTest = (depth) => {
+            result.textContent = `The test stopped at depth ${depth}.`;
+            if (window.testRunner)
+                testRunner.notifyDone();
+        };
+
+        addEventListener("load", () => {
+            let delay = setTimeout(() => finishTest(0), 1000);
+            addEventListener("message", ({ data }) => {
+                clearTimeout(delay);
+                delay = setTimeout(() => finishTest(data), 1000);
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,13 @@
+<p>This test places the caret before the 'b' in 'bar' and Delete.  Afterword, 'foobar' should be in the first paragraph and 'baz' should be in the second.</p>
+<div contenteditable="true">
+<div>foo</div>
+<pre id="test">bar
+baz</pre>
+</div>
+
+<script>
+var s = window.getSelection();
+var e = document.getElementById("test");
+s.setPosition(e, 0);
+document.execCommand("Delete");
+</script>

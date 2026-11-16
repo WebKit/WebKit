@@ -1,0 +1,3 @@
+
+PASS Shared worker should be able to relaunch after calling SharedWorkerGlobalScope.close()
+

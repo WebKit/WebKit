@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    let addedStyleSheet;
+    let mainFrame = WI.networkManager.mainFrame;
+
+    let suite = InspectorTest.createAsyncSuite("CSS.createStyleSheet");
+
+    suite.addTestCase({
+        name: "CheckNoStyleSheets",
+        description: "Ensure there are no stylesheets.",
+        test(resolve, reject) {
+            InspectorTest.expectThat(WI.cssManager.styleSheets.length === 0, "Should be no stylesheets.");
+            resolve();
+        }
+    });
+
+    for (let i = 1; i <= 3; ++i) {
+        suite.addTestCase({
+            name: "CreateInspectorStyleSheetCall" + i,
+            description: "Should create a new inspector stylesheet.",
+            test(resolve, reject) {
+                WI.cssManager.awaitEvent(WI.CSSManager.Event.StyleSheetAdded)
+                .then((event) => {
+                    InspectorTest.expectThat(WI.cssManager.styleSheets.length === i, "Should increase the list of stylesheets.");
+                    InspectorTest.expectThat(event.data.styleSheet.origin === WI.CSSStyleSheet.Type.Inspector, "Added StyleSheet origin should be 'inspector'.");
+                    InspectorTest.expectThat(event.data.styleSheet.isInspectorStyleSheet(), "StyleSheet.isInspectorStyleSheet() should be true.");
+                    InspectorTest.expectThat(event.data.styleSheet.parentFrame === mainFrame, "Added StyleSheet frame should be the main frame.");
+                    if (addedStyleSheet)
+                        InspectorTest.expectThat(event.data.styleSheet !== addedStyleSheet, "Added StyleSheet should be different from the last added stylesheet.");
+                    addedStyleSheet = event.data.styleSheet;
+                })
+                .then(resolve, reject);
+
+                CSSAgent.createStyleSheet(mainFrame.id);
+            }
+        });
+    }
+
+    WI.cssManager.awaitEvent(WI.CSSManager.Event.StyleSheetRemoved)
+    .then((event) => {
+        InspectorTest.fail("Should not be removing any StyleSheets in this test.");
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Test CSS.createStyleSheet.</p>
+</body>
+</html>

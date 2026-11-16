@@ -1,0 +1,74 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<head>
+    <style>
+        body {
+            height: 2000px;
+        }
+        .scroller {
+            margin: 10px;
+            left: 10px;
+            height: 300px;
+            width: 300px;
+            border: 20px solid gray;
+            padding: 5px;
+            overflow: scroll;
+        }
+        .content {
+        }
+        
+        .tiled {
+            width: 4096px;
+            height: 300px;
+            animation: anim 10s linear;
+        }
+        
+        @keyframes anim {
+            from { transform: translateZ(0); }
+            to   { transform: translateZ(10px); }
+        }
+        
+    </style>
+    <script src="../../../resources/js-test-pre.js"></script>
+    <script src="../../../resources/ui-helper.js"></script>
+    <script>
+        var jsTestIsAsync = true;
+
+        var overflowScrollEventCount = 0;
+
+        async function hitTestScrolledContents()
+        {
+            await UIHelper.mouseWheelScrollAt(100, 100);
+        }
+
+        async function scrollTest()
+        {
+            description('This test should not assert');
+
+            scroller = document.querySelector('.scroller');
+            scroller.addEventListener('scroll', () => {
+                ++overflowScrollEventCount;
+            }, false);
+
+            await hitTestScrolledContents();
+            shouldBe('overflowScrollEventCount > 0', 'true');
+            finishJSTest();
+        }
+
+        window.addEventListener('load', () => {
+            setTimeout(scrollTest, 0);
+        }, false);
+    </script>
+</head>
+<body>
+    <div class="scroller">
+        <div class="content">
+            <div class="tiled">
+                Tiled layer
+            </div>
+        </div>
+    </div>
+    <div id="console"></div>
+    <script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

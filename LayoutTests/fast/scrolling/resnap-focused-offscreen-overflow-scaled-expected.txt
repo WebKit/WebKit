@@ -1,0 +1,8 @@
+PASS focused bottomright without scrolling to it.
+PASS scroller snapped to the shared row.
+PASS scroller followed bottomleft, not the focused offscreen bottomright.
+PASS scroller actually scrolled after the layout change.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

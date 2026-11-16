@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+
+div {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100px;
+    height: 100px;
+    background-color: black;
+    will-change: transform;
+}
+
+div.changed {
+    scale: 0.5;
+}
+
+</style>
+</head>
+<body>
+<div></div>
+<script>
+    if (window.testRunner)
+        window.testRunner.waitUntilDone();
+
+    requestAnimationFrame(() => {
+        document.querySelector("div").classList.add("changed");
+        if (window.testRunner)
+            window.testRunner.notifyDone();
+    });
+</script>
+</body>
+</html>

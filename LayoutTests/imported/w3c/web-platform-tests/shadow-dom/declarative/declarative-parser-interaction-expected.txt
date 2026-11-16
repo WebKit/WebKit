@@ -1,0 +1,8 @@
+This test should not crash, and there should be two lines of text visible below.
+Line 1
+
+Line 2
+
+
+PASS Declarative Shadow DOM: Test for crashes and improper parsing
+

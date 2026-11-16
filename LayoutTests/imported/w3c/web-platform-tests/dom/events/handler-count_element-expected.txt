@@ -1,0 +1,4 @@
+
+PASS Test addEventListener/removeEventListener on the element.
+PASS Test setting onanimationstart handler on the element.
+

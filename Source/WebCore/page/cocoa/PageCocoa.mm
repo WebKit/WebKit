@@ -1,0 +1,152 @@
+/*
+ * Copyright (C) 2008, 2024 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ *
+ * 1.  Redistributions of source code must retain the above copyright
+ *     notice, this list of conditions and the following disclaimer.
+ * 2.  Redistributions in binary form must reproduce the above copyright
+ *     notice, this list of conditions and the following disclaimer in the
+ *     documentation and/or other materials provided with the distribution.
+ * 3.  Neither the name of Apple Inc. ("Apple") nor the names of
+ *     its contributors may be used to endorse or promote products derived
+ *     from this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL APPLE OR ITS CONTRIBUTORS BE LIABLE FOR ANY
+ * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+ * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#import "config.h"
+#import "Page.h"
+
+#import "DocumentLoader.h"
+#import "FrameLoader.h"
+#import "FrameTree.h"
+#import "LocalFrame.h"
+#import "Logging.h"
+#import "PlatformMediaSessionManager.h"
+#import "RenderObject.h"
+#import "SVGDocument.h"
+#import "SVGElementTypeHelpers.h"
+#import <pal/Logging.h>
+
+#if PLATFORM(IOS_FAMILY)
+#import "WebCoreThreadInternal.h"
+#endif
+
+namespace WebCore {
+
+#if ENABLE(TREE_DEBUGGING)
+static void printScrollingStateTree()
+{
+    Page::forEachPage([](Page& page) {
+        SAFE_WTFLOGALWAYS("Scrolling state tree for page %p:\n%s", &page, page.scrollingStateTreeAsText().utf8());
+    });
+}
+#endif // ENABLE(TREE_DEBUGGING)
+
+void Page::platformInitialize()
+{
+#if PLATFORM(IOS_FAMILY)
+    addSchedulePair(SchedulePair::create(protect(WebThreadNSRunLoop()), kCFRunLoopCommonModes));
+#else
+    addSchedulePair(SchedulePair::create(protect([[NSRunLoop currentRunLoop] getCFRunLoop]), kCFRunLoopCommonModes));
+#endif
+
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [] {
+#if ENABLE(TREE_DEBUGGING)
+        PAL::registerNotifyCallback("com.apple.WebKit.dumpAccessibilityTreeToStderr"_s, printAccessibilityTreeForLiveDocuments);
+        PAL::registerNotifyCallback("com.apple.WebKit.dumpAccessibilityTreeToStderrAfterDelay"_s, printAccessibilityTreeForLiveDocumentsAfterDelay);
+        PAL::registerNotifyCallback("com.apple.WebKit.showRenderTree"_s, printRenderTreeForLiveDocuments);
+        PAL::registerNotifyCallback("com.apple.WebKit.showLayerTree"_s, printLayerTreeForLiveDocuments);
+        PAL::registerNotifyCallback("com.apple.WebKit.showGraphicsLayerTree"_s, printGraphicsLayerTreeForLiveDocuments);
+        PAL::registerNotifyCallback("com.apple.WebKit.showPaintOrderTree"_s, printPaintOrderTreeForLiveDocuments);
+        PAL::registerNotifyCallback("com.apple.WebKit.showScrollingStateTree"_s, printScrollingStateTree);
+#endif // ENABLE(TREE_DEBUGGING)
+
+        PAL::registerNotifyCallback("com.apple.WebKit.showAllDocuments"_s, [] {
+            unsigned numPages = 0;
+            Page::forEachPage([&numPages](Page&) {
+                ++numPages;
+            });
+
+            WTFLogAlways("%u live pages:", numPages);
+
+            Page::forEachPage([](Page& page) {
+                RefPtr localTopDocument = page.localTopDocument();
+                if (!localTopDocument)
+                    return;
+                SAFE_WTFLOGALWAYS("Page %p with main document %p %s", &page, localTopDocument.get(), localTopDocument ? localTopDocument->url().string().utf8() : ""_s);
+            });
+
+            WTFLogAlways("%u live documents:", Document::allDocuments().size());
+            for (auto& document : Document::allDocuments()) {
+                auto documentType = is<SVGDocument>(document.get()) ? "SVGDocument"_s : "Document"_s;
+                SAFE_WTFLOGALWAYS("%s %p %" PRIu64 "-%s (refCount %d, referencingNodeCount %d) %s", documentType, document.ptr(), document->identifier().processIdentifier().toUInt64(), document->identifier().toString().utf8(), document->refCount(), document->referencingNodeCount(), document->url().string().utf8());
+            }
+        });
+    });
+}
+
+void Page::addSchedulePair(Ref<SchedulePair>&& pair)
+{
+    if (!m_scheduledRunLoopPairs)
+        lazyInitialize(m_scheduledRunLoopPairs, makeUnique<SchedulePairHashSet>());
+    m_scheduledRunLoopPairs->add(pair.get());
+
+    for (RefPtr frame = m_mainFrame.get(); frame; frame = frame->tree().traverseNext()) {
+        RefPtr localFrame = dynamicDowncast<LocalFrame>(frame);
+        if (!localFrame)
+            continue;
+        if (RefPtr documentLoader = localFrame->loader().documentLoader())
+            documentLoader->schedule(pair);
+        if (RefPtr documentLoader = localFrame->loader().provisionalDocumentLoader())
+            documentLoader->schedule(pair);
+    }
+
+    // FIXME: make SharedTimerMac use these SchedulePairs.
+}
+
+void Page::removeSchedulePair(Ref<SchedulePair>&& pair)
+{
+    ASSERT(m_scheduledRunLoopPairs);
+    if (!m_scheduledRunLoopPairs)
+        return;
+
+    m_scheduledRunLoopPairs->remove(pair.ptr());
+
+    for (RefPtr frame = m_mainFrame.get(); frame; frame = frame->tree().traverseNext()) {
+        RefPtr localFrame = dynamicDowncast<LocalFrame>(frame);
+        if (!localFrame)
+            continue;
+        if (RefPtr documentLoader = localFrame->loader().documentLoader())
+            documentLoader->unschedule(pair);
+        if (RefPtr documentLoader = localFrame->loader().provisionalDocumentLoader())
+            documentLoader->unschedule(pair);
+    }
+}
+
+NODELETE const String& Page::presentingApplicationBundleIdentifier() const
+{
+    return m_presentingApplicationBundleIdentifier;
+}
+
+void Page::setPresentingApplicationBundleIdentifier(String&& bundleIdentifier)
+{
+    m_presentingApplicationBundleIdentifier = WTF::move(bundleIdentifier);
+    if (RefPtr manager = mediaSessionManagerIfExists())
+        manager->updateNowPlayingInfoIfNecessary();
+}
+
+} // namespace WebCore

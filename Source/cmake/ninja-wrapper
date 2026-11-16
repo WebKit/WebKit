@@ -1,0 +1,106 @@
+#!/usr/bin/perl
+use strict;
+use warnings;
+use Cwd qw(getcwd);
+use File::Path qw(make_path);
+
+my $ninja = $ENV{WK_NINJA};
+if (!$ninja) {
+    chomp($ninja = `which ninja 2>/dev/null` || `xcrun -f ninja 2>/dev/null`);
+}
+$ENV{WK_NINJA} = $ninja;
+
+# CMake runs us from wherever it was invoked, not from the build directory, so
+# a -C argument says where the build is.
+my $buildDir;
+for my $i (0 .. $#ARGV) {
+    $buildDir = $ARGV[$i + 1], last if $ARGV[$i] eq '-C';
+    $buildDir = $1, last if $ARGV[$i] =~ /^-C(.+)$/;
+}
+
+# CMake configuration
+if (grep({ /^-t/ || /^--version$/ } @ARGV)) {
+    # CMake ends every generate with "<make program> -C <build dir> -t restat ...".
+    # It used to run "-t cleandead" around there too, but no longer does, so do it
+    # ourselves. Restatting afterwards then fixes up the
+    # log entries for whatever we just removed.
+    my ($toolIndex) = grep({ $ARGV[$_] eq '-t' } 0 .. $#ARGV);
+    my $isRestat = defined($toolIndex) && ($ARGV[$toolIndex + 1] // '') eq 'restat';
+
+    # try_compile scratch builds get their own restat; skip those, they are disposable.
+    my $isScratch = getcwd() =~ m{/CMakeFiles/} || ($buildDir // '') =~ m{/CMakeFiles/};
+
+    if ($isRestat && !$isScratch && !$ENV{WK_DISABLE_CLEANDEAD} && !grep({ /^-f/ } @ARGV)) {
+        my $dirArg = defined($buildDir) ? "-C \"$buildDir\"" : "";
+        my $cleanDead = `"$ninja" $dirArg -v -t cleandead 2>&1`;
+        # Report errors to the tty and a log, and then allow restat to continue
+        # as normal.
+        if ($?) {
+            my $message = "ninja-wrapper: cleandead failed:\n$cleanDead";
+            if (open(my $fh, '>', "$buildDir/cleandead.log")) {
+                print($fh $message);
+                close($fh);
+            }
+            print(STDERR $message);
+            if (open(my $tty, '>', '/dev/tty')) {
+                print($tty $message);
+                close($tty);
+            }
+        }
+    }
+    exec($ninja, @ARGV);
+}
+
+# CMake try_compile/check_*
+if (getcwd() =~ m{/CMakeFiles/}) {
+    exec($ninja, @ARGV);
+}
+
+# Real compilation
+my $bundlePolicy = $ENV{WK_UNIFIED_SOURCES_BUNDLE_POLICY};
+if (!defined($bundlePolicy)) {
+    my $dryRun = `$ninja -n @ARGV 2>&1`;
+    my ($totalCommands) = $dryRun =~ m{/(\d+)\]};
+
+    # No-op build
+    if (!defined($totalCommands)) {
+        print($dryRun);
+        exit($? >> 8);
+    }
+
+    # Only dirty unified-source bundles matter: links, code signing, Swift and copy steps that
+    # follow any edit used to push a one-file change past the threshold (a WebKit .cpp edit is
+    # 9 commands, a JavaScriptCore one 30), so NoBundle never kicked in for the big frameworks.
+    my $dirtyBundles = () = $dryRun =~ m{^\[\d+/\d+\] Building \S+ object \S*/unified-sources/[A-Za-z]*UnifiedSource}mg;
+    my $threshold = $ENV{WK_UNIFIED_SOURCES_NOBUNDLE_THRESHOLD} // 8;
+
+    if ($dryRun =~ /\bRe-running CMake\b/) {
+        $bundlePolicy = "Bundle";
+    } elsif ($dirtyBundles > $threshold) {
+        $bundlePolicy = "Bundle";
+    } else {
+        $bundlePolicy = "NoBundle";
+        # Each NoBundle bundle runs its own inner ninja; share the machine between them
+        # instead of letting each one default to all cores.
+        $ENV{WK_UNIFIED_SOURCES_DIRTY_BUNDLES} = $dirtyBundles;
+        if ($dirtyBundles > 0 && !defined($ENV{WK_UNIFIED_SOURCES_MEMBER_JOBS})) {
+            chomp(my $cores = `nproc 2>/dev/null` || `sysctl -n hw.activecpu 2>/dev/null` || 8);
+            my $jobs = int($cores / $dirtyBundles);
+            $ENV{WK_UNIFIED_SOURCES_MEMBER_JOBS} = $jobs < 2 ? 2 : $jobs;
+        }
+    }
+
+    $ENV{WK_UNIFIED_SOURCES_BUNDLE_POLICY} = $bundlePolicy;
+}
+
+# Record the bundle policy for inspection; nothing reads this file.
+my $derivedSources = defined($buildDir) ? "$buildDir/DerivedSources" : "DerivedSources";
+make_path($derivedSources);
+if (open(my $fh, '>', "$derivedSources/unified-sources-bundle-policy")) {
+    print($fh $bundlePolicy);
+    close($fh);
+}
+
+print('ninja: Entering directory `' . getcwd() . "'\n");
+my @caffeinate = -x '/usr/bin/caffeinate' ? ('/usr/bin/caffeinate', '-i') : ();
+exec(@caffeinate, $ninja, @ARGV);

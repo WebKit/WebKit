@@ -1,0 +1,5 @@
+
+
+PASS Target is not visible as it's rotated perpendicularly to viewport
+PASS Scroll down a bit, target is still not visible
+

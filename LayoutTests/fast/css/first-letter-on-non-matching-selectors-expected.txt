@@ -1,0 +1,11 @@
+The style resolution has an optimization to detect if a selector has certain pseudo element. The optimization should only happen if the selector completely match with the exception of the pseudo element.
+
+This test pass if all the lines read "PASS".
+
+PASS
+
+PASS
+
+PASS
+
+PASS

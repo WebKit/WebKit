@@ -1,0 +1,5 @@
+
+PASS naturalWidth and naturalHeight return correct values for an image without orientation metadata
+PASS naturalWidth and naturalHeight return re-oriented values for an image with orientation metadata
+PASS naturalWidth and naturalHeight return re-oriented values for an image with orientation metadata even with image-orientation:none
+

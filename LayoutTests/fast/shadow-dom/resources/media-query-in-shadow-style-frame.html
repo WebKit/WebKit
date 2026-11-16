@@ -1,0 +1,19 @@
+<div class=test><span>First</span></div>
+<div class=test><span>Second</span></div>
+<script>
+for (test of document.querySelectorAll('.test')) {
+    const shadow = test.attachShadow({mode: 'open'});
+    shadow.innerHTML = `
+        <style>
+        @media (min-width:200px) {
+            div { color: green }
+            :host { background-color: lightgrey }
+        }
+        @media (max-width:200px) {
+            ::slotted(*) { color: red }
+        }
+        </style>
+        <div><slot></slot></div>
+    `;
+}
+</script>

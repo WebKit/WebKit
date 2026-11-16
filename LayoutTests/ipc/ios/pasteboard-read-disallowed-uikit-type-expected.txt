@@ -1,0 +1,15 @@
+ReadBufferFromPasteboard "com.apple.uikit.image" => PASS
+ReadStringFromPasteboard "com.apple.uikit.image" => PASS
+ReadBufferFromPasteboard "Com.Apple.UIKit.Image" => PASS
+ReadStringFromPasteboard "Com.Apple.UIKit.Image" => PASS
+ReadBufferFromPasteboard "COM.APPLE.UIKIT.IMAGE" => PASS
+ReadStringFromPasteboard "COM.APPLE.UIKIT.IMAGE" => PASS
+ReadBufferFromPasteboard "com.apple.uikit.attributedstring" => PASS
+ReadStringFromPasteboard "com.apple.uikit.attributedstring" => PASS
+ReadBufferFromPasteboard "Com.Apple.UIKit.AttributedString" => PASS
+ReadStringFromPasteboard "Com.Apple.UIKit.AttributedString" => PASS
+ReadBufferFromPasteboard "com.apple.uikit.color" => PASS
+ReadStringFromPasteboard "com.apple.uikit.color" => PASS
+ReadBufferFromPasteboard "Com.Apple.UIKit.Color" => PASS
+ReadStringFromPasteboard "Com.Apple.UIKit.Color" => PASS
+

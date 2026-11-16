@@ -1,0 +1,8 @@
+
+FAIL #scrollable 1 assert_equals:
+<div id="scrollable" data-expected-scroll-height="500" data-expected-scroll-width="400">
+    <div id="item"></div>
+</div>
+scrollWidth expected 400 but got 500
+Tests that padding bottom on a flexbox works in the face of overflowing content. Padding-right does not work. This matches the Blink/WebKit display:block behavior. Unfortunately, IE and Gecko both lose the padding bottom and the padding right.
+

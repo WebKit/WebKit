@@ -1,0 +1,17 @@
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/modules/rtp_rtcp/source/rtp_format.cc b/Source/ThirdParty/libwebrtc/Source/webrtc/modules/rtp_rtcp/source/rtp_format.cc
+index a07337e69fdc..8297844ccc8a 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/modules/rtp_rtcp/source/rtp_format.cc
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/modules/rtp_rtcp/source/rtp_format.cc
+@@ -77,7 +77,12 @@ std::unique_ptr<RtpPacketizer> RtpPacketizer::Create(
+ std::vector<int> RtpPacketizer::SplitAboutEqually(
+     int payload_len,
+     const PayloadSizeLimits& limits) {
++#ifdef WEBRTC_WEBKIT_BUILD
++  if (payload_len == 0)
++    return { };
++#else
+   RTC_DCHECK_GT(payload_len, 0);
++#endif
+   // First or last packet larger than normal are unsupported.
+   RTC_DCHECK_GE(limits.first_packet_reduction_len, 0);
+   RTC_DCHECK_GE(limits.last_packet_reduction_len, 0);

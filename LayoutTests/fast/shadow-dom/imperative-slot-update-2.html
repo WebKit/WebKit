@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<body>
+<div id="host"><div class="fail">FAIL</div><div class="pass">PASS</div><div class="fail">FAIL</div></div>
+<style>
+#host > div { width: 50px; height: 50px; }
+.fail { background: red; }
+.pass { color: green; background: green; }
+</style>
+<script>
+
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+const shadowRoot = host.attachShadow({mode: 'closed', slotAssignment: 'manual'});
+shadowRoot.innerHTML = '<style> slot::slotted(.pass) { display: block; border: solid 25px green; } </style>'
+const slot = document.createElement('slot');
+shadowRoot.appendChild(slot);
+slot.assign(...host.children);
+
+requestAnimationFrame(() => {
+    setTimeout(() => {
+        document.createElement('slot').assign(...host.querySelectorAll('.fail'));
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }, 0);
+});
+
+</script>
+</body>
+</html>

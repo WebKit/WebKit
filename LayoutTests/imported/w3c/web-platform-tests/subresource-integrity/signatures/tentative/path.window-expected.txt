@@ -1,0 +1,14 @@
+
+PASS `fetch()`: Valid signature (signature=:+sRkplliS3TanqASHirBTokxhOn6fRTodc7i6Q6PUMsSPP0RJ2Xdb/woWz0+JXaBXAfa55qj+N9paXP5j7DFCw==:), no integrity check: loads.
+FAIL `fetch()`: Valid signature (signature=:+sRkplliS3TanqASHirBTokxhOn6fRTodc7i6Q6PUMsSPP0RJ2Xdb/woWz0+JXaBXAfa55qj+N9paXP5j7DFCw==:), matching integrity check: loads. assert_equals: `accept-signature` was set. expected "sig0=(\"unencoded-digest\";sf);keyid=\"JrQLj5P/89iXES9+vFgrIy29clF9CC/oPPsw3c5D0bs=\";tag=\"ed25519-integrity\"" but got ""
+FAIL `fetch()`: Valid signature (signature=:+sRkplliS3TanqASHirBTokxhOn6fRTodc7i6Q6PUMsSPP0RJ2Xdb/woWz0+JXaBXAfa55qj+N9paXP5j7DFCw==:), mismatched integrity check: blocked. assert_unreached: Should have rejected: undefined Reached unreachable code
+PASS `<script>`: Valid signature (signature=:+sRkplliS3TanqASHirBTokxhOn6fRTodc7i6Q6PUMsSPP0RJ2Xdb/woWz0+JXaBXAfa55qj+N9paXP5j7DFCw==:), no integrity check: loads.
+PASS `<script>`: Valid signature (signature=:+sRkplliS3TanqASHirBTokxhOn6fRTodc7i6Q6PUMsSPP0RJ2Xdb/woWz0+JXaBXAfa55qj+N9paXP5j7DFCw==:), matching integrity check: loads.
+FAIL `<script>`: Valid signature (signature=:+sRkplliS3TanqASHirBTokxhOn6fRTodc7i6Q6PUMsSPP0RJ2Xdb/woWz0+JXaBXAfa55qj+N9paXP5j7DFCw==:), mismatched integrity check: blocked. assert_unreached: Script should not execute. Reached unreachable code
+PASS `fetch()`: Valid signature (signature=:YPH2/cRdbR+DPhb1hVG1BgwCpzPLECsAyBavmb7QaXtCF1Hx2QyYp0ki1mi7UftMOnLVpBJdfdLb99Nzf0XqDg==:), no integrity check: loads.
+FAIL `fetch()`: Valid signature (signature=:YPH2/cRdbR+DPhb1hVG1BgwCpzPLECsAyBavmb7QaXtCF1Hx2QyYp0ki1mi7UftMOnLVpBJdfdLb99Nzf0XqDg==:), matching integrity check: loads. assert_equals: `accept-signature` was set. expected "sig0=(\"unencoded-digest\";sf);keyid=\"JrQLj5P/89iXES9+vFgrIy29clF9CC/oPPsw3c5D0bs=\";tag=\"ed25519-integrity\"" but got ""
+FAIL `fetch()`: Valid signature (signature=:YPH2/cRdbR+DPhb1hVG1BgwCpzPLECsAyBavmb7QaXtCF1Hx2QyYp0ki1mi7UftMOnLVpBJdfdLb99Nzf0XqDg==:), mismatched integrity check: blocked. assert_unreached: Should have rejected: undefined Reached unreachable code
+PASS `<script>`: Valid signature (signature=:YPH2/cRdbR+DPhb1hVG1BgwCpzPLECsAyBavmb7QaXtCF1Hx2QyYp0ki1mi7UftMOnLVpBJdfdLb99Nzf0XqDg==:), no integrity check: loads.
+PASS `<script>`: Valid signature (signature=:YPH2/cRdbR+DPhb1hVG1BgwCpzPLECsAyBavmb7QaXtCF1Hx2QyYp0ki1mi7UftMOnLVpBJdfdLb99Nzf0XqDg==:), matching integrity check: loads.
+FAIL `<script>`: Valid signature (signature=:YPH2/cRdbR+DPhb1hVG1BgwCpzPLECsAyBavmb7QaXtCF1Hx2QyYp0ki1mi7UftMOnLVpBJdfdLb99Nzf0XqDg==:), mismatched integrity check: blocked. assert_unreached: Script should not execute. Reached unreachable code
+

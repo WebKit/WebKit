@@ -1,0 +1,12 @@
+Height Distribution
+
+"Computing row measures"
+
+This is testing intermediate min-content height for span 2
+
+
+FAIL Checking intermediate min-content height for span 2 (1) assert_equals: expected 17 but got 10
+FAIL Checking intermediate min-content height for span 2 (2) assert_equals: expected 51 but got 10
+FAIL Checking intermediate min-content height for span 2 (3) assert_equals: expected 17 but got 10
+FAIL Checking intermediate min-content height for span 2 (4) assert_equals: expected 17 but got 10
+

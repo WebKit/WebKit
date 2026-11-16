@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Find string with selection disabled</title>
+<meta charset="utf-8">
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<style type="text/css">
+ .selectionDisabled { -webkit-user-select: none; }
+ .selectionEnabled { -webkit-user-select: auto; }
+</style>
+</head>
+<body>
+<div id="container"></div>
+<script>
+
+async function testFindString(text, target, expected, disableSelection) {
+    const container = document.getElementById("container");
+    container.innerText = text;
+    container.className = disableSelection ? "selectionDisabled" : "selectionEnabled";
+
+    const result = await testRunner.findString(target, []);
+    assert_equals(result, expected);
+
+    container.innerText = "";
+}
+
+async function runTest(text, target, expected, disableSelection) {
+    await promise_test(() => testFindString(text, target, expected, disableSelection), `find "${target}" in "${text}" with selection ${disableSelection ? "disabled" : "enabled"}`);
+}
+
+const text1 = "Some sample text that can be searched";
+const text2 = "insurmountable mountain";
+const testData = [
+    { text: text1, target: "e" },
+    { text: text1, target: "o" },
+    { text: text1, target: "y" },
+    { text: text1, target: "t t" },
+    { text: text2, target: "mount" },
+    { text: text2, target: "Wally" },
+];
+
+for (disableSelection of [true, false]) {
+    for (data of testData) {
+        runTest(data.text, data.target, data.text.includes(data.target), disableSelection);
+    }
+}
+
+</script>
+</body>
+</html>

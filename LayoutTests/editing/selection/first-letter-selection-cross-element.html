@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<style>
+.first-letter-styled::first-letter {
+    color: red;
+}
+</style>
+</head>
+<body>
+<div id="container">
+    <div id="para1" class="first-letter-styled">First paragraph</div>
+    <div id="para2" class="first-letter-styled">Second paragraph</div>
+</div>
+
+<script>
+description("Test that selection across multiple elements with ::first-letter works correctly.");
+
+function selectAcrossElements(startNode, startOffset, endNode, endOffset) {
+    var range = document.createRange();
+    range.setStart(startNode, startOffset);
+    range.setEnd(endNode, endOffset);
+    var sel = window.getSelection();
+    sel.removeAllRanges();
+    sel.addRange(range);
+}
+
+// Test 1: Select across two first-letter paragraphs
+selectAcrossElements(para1.firstChild, 0, para2.firstChild, para2.firstChild.length);
+shouldBeEqualToString("window.getSelection().toString().replace(/\\n/g, '|')", "First paragraph|Second paragraph");
+
+// Test 2: Select from middle of first to middle of second
+selectAcrossElements(para1.firstChild, 3, para2.firstChild, 6);
+shouldBeEqualToString("window.getSelection().toString().replace(/\\n/g, '|')", "st paragraph|Second");
+
+// Test 3: Select from first-letter of first to first-letter of second
+selectAcrossElements(para1.firstChild, 0, para2.firstChild, 1);
+shouldBeEqualToString("window.getSelection().toString().replace(/\\n/g, '|')", "First paragraph|S");
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

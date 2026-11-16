@@ -1,0 +1,38 @@
+/*
+ *  Copyright (c) 2017 The WebRTC project authors. All Rights Reserved.
+ *
+ *  Use of this source code is governed by a BSD-style license
+ *  that can be found in the LICENSE file in the root of the source
+ *  tree. An additional intellectual property rights grant can be found
+ *  in the file PATENTS.  All contributing project authors may
+ *  be found in the AUTHORS file in the root of the source tree.
+ */
+
+#include "logging/rtc_event_log/events/rtc_event_alr_state.h"
+
+#include <memory>
+#include <vector>
+
+#include "absl/memory/memory.h"
+#include "absl/strings/string_view.h"
+#include "logging/rtc_event_log/events/rtc_event_definition.h"
+#include "logging/rtc_event_log/events/rtc_event_log_parse_status.h"
+
+namespace webrtc {
+
+RtcEventAlrState::RtcEventAlrState(bool in_alr) : in_alr_(in_alr) {}
+
+RtcEventAlrState::~RtcEventAlrState() = default;
+
+std::unique_ptr<RtcEventAlrState> RtcEventAlrState::Copy() const {
+  return absl::WrapUnique(new RtcEventAlrState(*this));
+}
+
+RtcEventLogParseStatus RtcEventAlrState::Parse(
+    absl::string_view s,
+    bool batched,
+    std::vector<LoggedAlrStateEvent>& output) {
+  return RtcEventAlrState::definition_.ParseBatch(s, batched, output);
+}
+
+}  // namespace webrtc

@@ -1,0 +1,7 @@
+2d.imageData.create2.basic
+
+createImageData(sw, sh) exists and returns something
+
+
+PASS createImageData(sw, sh) exists and returns something
+

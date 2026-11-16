@@ -1,0 +1,3 @@
+
+PASS requestWindow should fail without a user gesture
+

@@ -1,0 +1,36 @@
+
+Verifies that setting the label attribute of UndoItem affects the undo and redo action names in the platform undo manager.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+After typing:
+PASS undoName is "Typing"
+PASS redoName is ""
+After adding the first UndoItem:
+PASS undoName is "First 🥇"
+PASS redoName is ""
+After adding the second UndoItem:
+PASS undoName is "Second 🥈"
+PASS redoName is ""
+After undoing:
+PASS undoName is "First 🥇"
+PASS redoName is "Second 🥈"
+After undoing again:
+PASS undoName is "Typing"
+PASS redoName is "First 🥇"
+After redoing:
+PASS undoName is "First 🥇"
+PASS redoName is "Second 🥈"
+After redoing again:
+PASS undoName is "Second 🥈"
+PASS redoName is ""
+After undoing and then pasting:
+PASS undoName is "Paste"
+PASS redoName is ""
+After undoing the paste command:
+PASS undoName is "First 🥇"
+PASS redoName is "Paste"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

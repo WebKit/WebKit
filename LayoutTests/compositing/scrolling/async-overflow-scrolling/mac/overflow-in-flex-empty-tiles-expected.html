@@ -1,0 +1,42 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<head>
+    <style>
+        .scroller {
+            overflow-y: scroll;
+            width: 500px;
+            height: 500px;
+            border: 1px solid black;
+            background-color: red;
+        }
+        .contents {
+            height: 3000px;
+            width: 100%;
+            background-color: green;
+        }
+    </style>
+    <script src="../../../../resources/ui-helper.js"></script>
+    <script>
+        if (window.testRunner)
+            testRunner.waitUntilDone();
+        
+        window.addEventListener('load', async () => {
+            let scroller = document.querySelector('.scroller');
+            
+            await UIHelper.delayFor(0);
+            scroller.scrollTop = 3000;
+            await UIHelper.delayFor(0);
+            
+            await UIHelper.mouseWheelScrollAt(200, 200, 0, 1, 0, 100);
+            
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }, false);
+    </script>
+</head>
+<body>
+    <div class="scroller">
+        <div class="contents">&nbsp;</div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,5 @@
+
+PASS FileSystemDirectoryHandle must be defined for data URI iframes.
+PASS navigator.storage.getDirectory() must reject in a sandboxed iframe.
+PASS navigator.storage.getDirectory() must reject in a sandboxed opened window.
+

@@ -1,0 +1,9 @@
+Description
+
+This test validates that pointer lock accepts the unadjustedMovement option.
+
+lockTarget
+Target
+
+FAIL pointerlock_unadjustedMovement assert_unreached: unadjustedMovement must be implemented. Reached unreachable code
+

@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<style>
+::cue {
+    font-family: sans-serif;
+    color: green;
+}
+</style>
+<script>var requirePixelDump = true;</script>
+<script src="./video-test.js"></script>
+<script src="./media-file.js"></script>
+<video autoplay onplaying="this.onplaying = null; this.pause();">
+    <track src="resources/vtt-bold.vtt">
+</video>
+<script>
+document.getElementsByTagName('track')[0].track.mode = 'showing';
+window.addEventListener('load', async event => {
+    endTest();
+});
+</script>
+</html>

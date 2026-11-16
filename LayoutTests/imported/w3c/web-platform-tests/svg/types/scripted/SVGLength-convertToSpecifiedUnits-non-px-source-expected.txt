@@ -1,0 +1,9 @@
+
+PASS SVGLength, convertToSpecifiedUnits from non-px source units, cm to in
+PASS SVGLength, convertToSpecifiedUnits from non-px source units, in to pt
+PASS SVGLength, convertToSpecifiedUnits from non-px source units, em to unitless
+PASS SVGLength, convertToSpecifiedUnits from non-px source units, em to cm
+PASS SVGLength, convertToSpecifiedUnits from non-px source units, percentage to in
+PASS SVGLength, convertToSpecifiedUnits from non-px source units, pt to mm
+PASS SVGLength, convertToSpecifiedUnits from non-px source units, mm to pc
+

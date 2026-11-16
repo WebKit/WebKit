@@ -1,0 +1,18 @@
+load("@rules_go//go:def.bzl", "go_library")
+
+package(
+    default_applicable_licenses = ["//:license"],
+)
+
+licenses(["notice"])
+
+go_library(
+    name = "build",
+    srcs = ["build.pb.go"],
+    importpath = "go.skia.org/skia/bazel/exporter/build_proto/build",
+    visibility = ["//visibility:public"],
+    deps = [
+        "@org_golang_google_protobuf//reflect/protoreflect",
+        "@org_golang_google_protobuf//runtime/protoimpl",
+    ],
+)

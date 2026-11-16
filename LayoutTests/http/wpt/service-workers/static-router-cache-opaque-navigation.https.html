@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>
+  Static Router: cache source must not serve an opaque cross-origin response for a request that is not no-cors (e.g. a navigation or an ordinary fetch)
+</title>
+<script src="/common/get-host-info.sub.js"></script>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/service-workers/service-worker/resources/test-helpers.sub.js"></script>
+<body>
+<script>
+const WORKER = 'resources/static-router-cache-opaque-navigation-sw.js';
+const SCOPE = 'resources/';
+
+const CONTROLLED_PAGE = 'resources/simple.html';
+const ROUTE = 'opaque-route';
+const ROUTE_FROM_TEST_PAGE = 'resources/opaque-route';
+const REMOTE_SECRET = 'REMOTE-OPAQUE-SECRET';
+
+async function registerAndActivate(t) {
+  const reg = await service_worker_unregister_and_register(t, WORKER, SCOPE);
+  t.add_cleanup(() => reg.unregister());
+  await wait_for_state(t, reg.installing, 'activated');
+  return reg;
+}
+
+promise_test(async t => {
+  await registerAndActivate(t);
+  const iframe = await with_iframe(CONTROLLED_PAGE);
+  t.add_cleanup(() => iframe.remove());
+  return iframe.contentWindow.fetch(ROUTE).then(() => assert_unreached("fetch should fail"), () => { });
+}, 'Cache source must reject an opaque cross-origin response for a same-origin fetch');
+
+promise_test(async t => {
+  let iframe;
+  await registerAndActivate(t);
+  const iframePromise = with_iframe(ROUTE_FROM_TEST_PAGE).then(i => iframe = i);
+  await Promise.race([iframePromise, new Promise(resolve => t.step_timeout(resolve, 200))]);
+  assert_equals(iframe, undefined);
+}, 'Cache source must not serve an opaque cross-origin response as a navigation');
+</script>
+</body>

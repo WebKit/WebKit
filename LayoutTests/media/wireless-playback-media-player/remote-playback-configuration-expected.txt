@@ -1,0 +1,15 @@
+
+Test that the wireless playback media engine is configured with a video's current time, playback rate, and playing state when a MediaDeviceRoute activates.
+
+RUN(video.src = findMediaFile('video', '../content/test'))
+RUN(video.currentTime = 3)
+RUN(video.playbackRate = 0.25)
+RUN(internals.mockMediaDeviceRouteController.activateRoute(route))
+RUN(route.timeRange = { start: 0, duration: 6 })
+RUN(route.ready = true)
+EVENT(playing)
+EXPECTED (route.currentPlaybackPosition >= '3') OK
+EXPECTED (route.playbackRate == '0.25') OK
+EXPECTED (route.playing == 'true') OK
+END OF TEST
+

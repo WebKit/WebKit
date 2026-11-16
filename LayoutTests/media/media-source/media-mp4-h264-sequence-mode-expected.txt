@@ -1,0 +1,22 @@
+
+RUN(video.src = URL.createObjectURL(source))
+EVENT(sourceopen)
+Append the init segment
+RUN(sourceBuffer = source.addSourceBuffer(loader.type()))
+RUN(sourceBuffer.appendBuffer(loader.initSegment()))
+EVENT(update)
+EXPECTED (sourceBuffer.timestampOffset == '0') OK
+RUN(sourceBuffer.appendBuffer(loader.mediaSegment(1)))
+EVENT(update)
+EXPECTED (sourceBuffer.timestampOffset == '0') OK
+EXPECTED (sourceBuffer.buffered.length == '1') OK
+EXPECTED (sourceBuffer.buffered.start(0) == '1') OK
+EXPECTED (sourceBuffer.buffered.end(0) == '2') OK
+RUN(sourceBuffer.mode="sequence")
+RUN(sourceBuffer.appendBuffer(loader.mediaSegment(1)))
+EVENT(update)
+EXPECTED (sourceBuffer.timestampOffset == '1') OK
+EXPECTED (sourceBuffer.buffered.length == '1') OK
+EXPECTED (sourceBuffer.buffered.end(0) == '3') OK
+END OF TEST
+

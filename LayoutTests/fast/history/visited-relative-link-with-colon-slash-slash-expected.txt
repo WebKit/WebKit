@@ -1,0 +1,12 @@
+A relative link whose URL contains '://' in the query should still be colored as visited after the same URL is visited. See https://bugs.webkit.org/show_bug.cgi?id=13755
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS firstStyle.color became different from secondStyle.color
+PASS successfullyParsed is true
+
+TEST COMPLETE
+These two links should be different colors (green and orange):
+
+One (unvisited) Two (visited)

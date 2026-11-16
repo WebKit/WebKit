@@ -1,0 +1,28 @@
+
+PASS @counter-style 'prefix: "string"' is valid
+PASS @counter-style 'suffix: "string"' is valid
+PASS @counter-style 'prefix: "initial"' is valid
+PASS @counter-style 'suffix: "initial"' is valid
+PASS @counter-style 'prefix: "inherit"' is valid
+PASS @counter-style 'suffix: "inherit"' is valid
+PASS @counter-style 'prefix: "unset"' is valid
+PASS @counter-style 'suffix: "unset"' is valid
+PASS @counter-style 'prefix: custom-ident' is valid
+PASS @counter-style 'suffix: custom-ident' is valid
+PASS @counter-style 'prefix: initial' is invalid
+PASS @counter-style 'suffix: initial' is invalid
+PASS @counter-style 'prefix: inherit' is invalid
+PASS @counter-style 'suffix: inherit' is invalid
+PASS @counter-style 'prefix: unset' is invalid
+PASS @counter-style 'suffix: unset' is invalid
+FAIL @counter-style 'prefix: url("https://example.com/foo.png")' is valid assert_not_equals: got disallowed value -1
+FAIL @counter-style 'suffix: url("https://example.com/foo.png")' is valid assert_not_equals: got disallowed value -1
+FAIL @counter-style 'prefix: url(https://example.com/foo.png)' is valid assert_not_equals: got disallowed value -1
+FAIL @counter-style 'suffix: url(https://example.com/foo.png)' is valid assert_not_equals: got disallowed value -1
+FAIL @counter-style 'prefix: linear-gradient(yellow, blue)' is valid assert_not_equals: got disallowed value -1
+FAIL @counter-style 'suffix: linear-gradient(yellow, blue)' is valid assert_not_equals: got disallowed value -1
+PASS @counter-style 'prefix: ' is invalid
+PASS @counter-style 'suffix: ' is invalid
+PASS @counter-style 'prefix: foo bar' is invalid
+PASS @counter-style 'suffix: foo bar' is invalid
+

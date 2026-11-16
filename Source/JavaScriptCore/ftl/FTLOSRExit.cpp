@@ -1,0 +1,386 @@
+/*
+ * Copyright (C) 2013-2018 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ */
+
+#include "config.h"
+#include "FTLOSRExit.h"
+
+#if ENABLE(FTL_JIT)
+
+#include "B3StackmapGenerationParams.h"
+#include "FTLJITCode.h"
+#include "FTLSlowPathCall.h"
+#include "FTLState.h"
+#include "JSCJSValueInlines.h"
+#include <wtf/LEBDecoder.h>
+#include <wtf/LEBEncoder.h>
+
+namespace JSC { namespace FTL {
+
+using namespace B3;
+using namespace DFG;
+
+namespace {
+
+constexpr uint8_t maxDeadRunLength = 0x40;
+constexpr uint8_t inJSStackAtOwnRegisterTag = 0x40;
+constexpr uint8_t inJSStackTag = 0x44;
+constexpr uint8_t constantTag = 0x48;
+constexpr uint8_t materializationTag = 0x49;
+constexpr uint8_t argumentTag = 0x4A;
+
+static_assert(ExitValueInJSStackAsInt32 == ExitValueInJSStack + 1);
+static_assert(ExitValueInJSStackAsInt52 == ExitValueInJSStack + 2);
+static_assert(ExitValueInJSStackAsDouble == ExitValueInJSStack + 3);
+static_assert(inJSStackAtOwnRegisterTag + 4 == inJSStackTag);
+static_assert(inJSStackTag + 4 == constantTag);
+
+ExitValueKind inJSStackKind(uint8_t tag, uint8_t baseTag)
+{
+    return static_cast<ExitValueKind>(ExitValueInJSStack + (tag - baseTag));
+}
+
+Vector<ExitTimeObjectMaterialization*, 4> materializationTable(const Bag<ExitTimeObjectMaterialization>& materializations)
+{
+    Vector<ExitTimeObjectMaterialization*, 4> table;
+    for (ExitTimeObjectMaterialization* materialization : materializations)
+        table.append(materialization);
+    return table;
+}
+
+void encodeValueRep(Vector<uint8_t>& bytes, const B3::ValueRep& rep)
+{
+    bytes.append(static_cast<uint8_t>(rep.kind()));
+    switch (rep.kind()) {
+    case B3::ValueRep::Register:
+        bytes.append(static_cast<uint8_t>(rep.reg().index()));
+        break;
+    case B3::ValueRep::Stack:
+        WTF::LEBEncoder::encodeInt32(bytes, rep.offsetFromFP());
+        break;
+    case B3::ValueRep::Constant:
+        WTF::LEBEncoder::encodeInt64(bytes, rep.value());
+        break;
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+    }
+}
+
+B3::ValueRep decodeValueRep(std::span<const uint8_t> bytes, size_t& offset)
+{
+    switch (static_cast<B3::ValueRep::Kind>(bytes[offset++])) {
+    case B3::ValueRep::Register:
+        return B3::ValueRep::reg(Reg::fromIndex(bytes[offset++]));
+    case B3::ValueRep::Stack:
+        return B3::ValueRep::stack(WTF::LEBDecoder::decodeInt32OrCrash(bytes, offset));
+    case B3::ValueRep::Constant:
+        return B3::ValueRep::constant(WTF::LEBDecoder::decodeInt64OrCrash(bytes, offset));
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+    }
+}
+
+} // anonymous namespace
+
+void OSRExitValues::encode(const Operands<ExitValue>& values, const Bag<ExitTimeObjectMaterialization>& materializationBag, JITCode& jitCode)
+{
+    m_numberOfArguments = values.numberOfArguments();
+    m_numberOfLocals = values.numberOfLocals();
+    m_numberOfTmps = values.numberOfTmps();
+
+    Vector<ExitTimeObjectMaterialization*, 4> materializations = materializationTable(materializationBag);
+    Vector<EncodedJSValue>& constants = jitCode.osrExitConstants;
+    Vector<uint8_t, 128> bytes;
+    for (unsigned index = 0; index < values.size(); ++index) {
+        const ExitValue& value = values[index];
+        switch (value.kind()) {
+        case ExitValueDead: {
+            unsigned runLength = 1;
+            while (runLength < maxDeadRunLength && index + runLength < values.size() && values[index + runLength].isDead())
+                ++runLength;
+            bytes.append(static_cast<uint8_t>(runLength - 1));
+            index += runLength - 1;
+            break;
+        }
+        case ExitValueInJSStack:
+        case ExitValueInJSStackAsInt32:
+        case ExitValueInJSStackAsInt52:
+        case ExitValueInJSStackAsDouble: {
+            Operand operand = values.operandForIndex(index);
+            VirtualRegister reg = value.virtualRegister();
+            if (!operand.isTmp() && operand.virtualRegister() == reg) {
+                bytes.append(inJSStackAtOwnRegisterTag + (value.kind() - ExitValueInJSStack));
+                break;
+            }
+            bytes.append(inJSStackTag + (value.kind() - ExitValueInJSStack));
+            WTF::LEBEncoder::encodeInt32(bytes, reg.offset());
+            break;
+        }
+        case ExitValueConstant: {
+            bytes.append(constantTag);
+            EncodedJSValue constant = JSValue::encode(value.constant());
+            size_t constantIndex = constants.find(constant);
+            if (constantIndex == notFound) {
+                constantIndex = constants.size();
+                constants.append(constant);
+            }
+            WTF::LEBEncoder::encodeUInt32(bytes, constantIndex);
+            break;
+        }
+        case ExitValueMaterializeNewObject: {
+            bytes.append(materializationTag);
+            size_t materializationIndex = materializations.find(value.objectMaterialization());
+            ASSERT(materializationIndex != notFound);
+            WTF::LEBEncoder::encodeUInt32(bytes, materializationIndex);
+            break;
+        }
+        case ExitValueArgument:
+            bytes.append(argumentTag);
+            bytes.append(static_cast<uint8_t>(value.exitArgument().format()));
+            WTF::LEBEncoder::encodeUInt32(bytes, value.exitArgument().argument());
+            break;
+        case InvalidExitValue:
+            RELEASE_ASSERT_NOT_REACHED();
+            break;
+        }
+    }
+    m_bytes = FixedVector<uint8_t>(bytes);
+}
+
+FixedOperands<ExitValue> OSRExitValues::decode(const JITCode& jitCode, const Bag<ExitTimeObjectMaterialization>& materializationBag) const
+{
+    FixedOperands<ExitValue> values(m_numberOfArguments, m_numberOfLocals, m_numberOfTmps, ExitValue::dead());
+    int localsOffset = jitCode.osrExitLocalsOffset();
+    Vector<ExitTimeObjectMaterialization*, 4> materializations = materializationTable(materializationBag);
+
+    std::span<const uint8_t> bytes = m_bytes.span();
+    size_t offset = 0;
+    for (unsigned index = 0; index < values.size(); ++index) {
+        uint8_t tag = bytes[offset++];
+        if (tag < maxDeadRunLength) {
+            index += tag;
+            continue;
+        }
+        if (tag < constantTag) {
+            bool atOwnRegister = tag < inJSStackTag;
+            VirtualRegister reg;
+            if (atOwnRegister)
+                reg = values.operandForIndex(index).virtualRegister();
+            else
+                reg = VirtualRegister(WTF::LEBDecoder::decodeInt32OrCrash(bytes, offset));
+            values[index] = ExitValue::inJSStack(inJSStackKind(tag, atOwnRegister ? inJSStackAtOwnRegisterTag : inJSStackTag), reg).withLocalsOffset(localsOffset);
+            continue;
+        }
+        switch (tag) {
+        case constantTag:
+            values[index] = ExitValue::constant(JSValue::decode(jitCode.osrExitConstants[WTF::LEBDecoder::decodeUInt32OrCrash(bytes, offset)]));
+            break;
+        case materializationTag:
+            values[index] = ExitValue::materializeNewObject(materializations[WTF::LEBDecoder::decodeUInt32OrCrash(bytes, offset)]);
+            break;
+        case argumentTag: {
+            DataFormat format = static_cast<DataFormat>(bytes[offset++]);
+            values[index] = ExitValue::exitArgument(ExitArgument(format, WTF::LEBDecoder::decodeUInt32OrCrash(bytes, offset)));
+            break;
+        }
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+        }
+    }
+    RELEASE_ASSERT(offset == bytes.size());
+    return values;
+}
+
+OSRExitDescriptor::OSRExitDescriptor(unsigned index, DataFormat profileDataFormat, MethodOfGettingAValueProfile valueProfile)
+    : m_profileDataFormat(profileDataFormat)
+    , m_index(index)
+    , m_valueProfile(valueProfile)
+{
+}
+
+void OSRExitDescriptor::validateReferences(const TrackedReferences& trackedReferences)
+{
+    for (ExitTimeObjectMaterialization* materialization : m_materializations)
+        materialization->validateReferences(trackedReferences);
+}
+
+Ref<OSRExitHandle> OSRExitDescriptor::emitOSRExit(
+    State& state, ExitKind exitKind, const NodeOrigin& nodeOrigin, CCallHelpers& jit,
+    const StackmapGenerationParams& params, uint32_t dfgNodeIndex, unsigned offset)
+{
+    Ref<OSRExitHandle> handle =
+        prepareOSRExitHandle(state, exitKind, nodeOrigin, params, dfgNodeIndex, offset);
+    handle->emitExitThunk(state, jit);
+    return handle;
+}
+
+Ref<OSRExitHandle> OSRExitDescriptor::emitOSRExitLater(
+    State& state, ExitKind exitKind, const NodeOrigin& nodeOrigin,
+    const StackmapGenerationParams& params, uint32_t dfgNodeIndex, unsigned offset)
+{
+    RefPtr<OSRExitHandle> handle =
+        prepareOSRExitHandle(state, exitKind, nodeOrigin, params, dfgNodeIndex, offset);
+    params.addLatePath(
+        [handle, &state] (CCallHelpers& jit) {
+            handle->emitExitThunk(state, jit);
+        });
+    return handle.releaseNonNull();
+}
+
+Ref<OSRExitHandle> OSRExitDescriptor::prepareOSRExitHandle(
+    State& state, ExitKind exitKind, const NodeOrigin& nodeOrigin,
+    const StackmapGenerationParams& params, uint32_t dfgNodeIndex, unsigned offset)
+{
+    unsigned valueRepsOffset = state.osrExitValueReps.size();
+    std::span<const B3::ValueRep> reps = params.reps().subspan(offset);
+    WTF::LEBEncoder::encodeUInt32(state.osrExitValueReps, reps.size());
+    for (const B3::ValueRep& rep : reps)
+        encodeValueRep(state.osrExitValueReps, rep);
+    OSRExit exit(this, exitKind, nodeOrigin.forExit, nodeOrigin.semantic, nodeOrigin.wasHoisted, dfgNodeIndex, valueRepsOffset);
+    if (exitKind == WillThrowOutOfMemoryError)
+        exit.m_exitCallSiteIndex = callSiteIndexForCodeOrigin(state, nodeOrigin.semantic);
+
+    unsigned index = state.osrExits.size();
+    state.osrExits.append(WTF::move(exit));
+    return adoptRef(*new OSRExitHandle(index));
+}
+
+OSRExit::OSRExit(const OSRExitDescriptor* descriptor, ExitKind exitKind, CodeOrigin codeOrigin, CodeOrigin codeOriginForExitProfile, bool wasHoisted, uint32_t dfgNodeIndex, unsigned valueRepsOffset)
+    : OSRExitBase(exitKind, WTF::move(codeOrigin), WTF::move(codeOriginForExitProfile), wasHoisted, dfgNodeIndex)
+    , m_valueRepsOffset(valueRepsOffset)
+    , m_descriptor(descriptor)
+{
+}
+
+FixedVector<B3::ValueRep> OSRExit::valueReps(const JITCode& jitCode) const
+{
+    return jitCode.m_osrExits.valueReps(m_valueRepsOffset);
+}
+
+static constexpr unsigned codeOriginTagShift = 0;
+static constexpr unsigned profileOriginTagShift = 2;
+static constexpr unsigned wasHoistedBit = 1 << 4;
+
+OSRExitStream::OSRExitStream(const Vector<OSRExit>& exits, std::span<const uint8_t> valueReps)
+    : m_chunkOffsets(divideRoundedUp(exits.size(), static_cast<size_t>(exitsPerChunk)))
+    , m_size(exits.size())
+{
+    Vector<uint8_t> bytes;
+    Vector<ExceptionHandlerExit> exceptionHandlerExits;
+    PreviousExit previous;
+    for (unsigned index = 0; index < exits.size(); ++index) {
+        if (!(index % exitsPerChunk)) {
+            m_chunkOffsets[index / exitsPerChunk] = bytes.size();
+            previous = { };
+        }
+
+        const OSRExit& exit = exits[index];
+        CodeOriginTag originTag = codeOriginTag(exit.m_codeOrigin, previous.codeOrigin);
+        CodeOriginTag profileOriginTag = codeOriginTag(exit.m_codeOriginForExitProfile, exit.m_codeOrigin);
+        unsigned flags = (static_cast<unsigned>(originTag) << codeOriginTagShift) | (static_cast<unsigned>(profileOriginTag) << profileOriginTagShift);
+        if (exit.m_wasHoisted)
+            flags |= wasHoistedBit;
+
+        // FIXME: Pack the ExitKind and the flags into one byte.
+        bytes.append(static_cast<uint8_t>(exit.m_kind));
+        bytes.append(static_cast<uint8_t>(flags));
+        encodeCodeOrigin(bytes, originTag, exit.m_codeOrigin, previous.codeOrigin);
+        previous.codeOrigin = exit.m_codeOrigin;
+        encodeCodeOrigin(bytes, profileOriginTag, exit.m_codeOriginForExitProfile, exit.m_codeOrigin);
+        WTF::LEBEncoder::encodeInt32(bytes, static_cast<int32_t>(exit.m_dfgNodeIndex - previous.dfgNodeIndex));
+        previous.dfgNodeIndex = exit.m_dfgNodeIndex;
+        WTF::LEBEncoder::encodeInt32(bytes, static_cast<int32_t>(exit.m_descriptor->m_index - previous.descriptorIndex));
+        previous.descriptorIndex = exit.m_descriptor->m_index;
+        WTF::LEBEncoder::encodeInt32(bytes, static_cast<int32_t>(exit.m_entranceOffset - previous.entranceOffset));
+        previous.entranceOffset = exit.m_entranceOffset;
+        if (exit.m_kind == WillThrowOutOfMemoryError)
+            WTF::LEBEncoder::encodeUInt32(bytes, exit.m_exitCallSiteIndex.bits());
+        if (exit.isGenericUnwindHandler())
+            exceptionHandlerExits.append({ exit.m_exceptionHandlerCallSiteIndex, static_cast<uint32_t>(bytes.size()) });
+        size_t valueRepsEnd = index + 1 < exits.size() ? exits[index + 1].m_valueRepsOffset : valueReps.size();
+        RELEASE_ASSERT(exit.m_valueRepsOffset < valueRepsEnd);
+        bytes.append(valueReps.subspan(exit.m_valueRepsOffset, valueRepsEnd - exit.m_valueRepsOffset));
+    }
+    m_bytes = WTF::move(bytes);
+    m_exceptionHandlerExits = WTF::move(exceptionHandlerExits);
+}
+
+OSRExit OSRExitStream::decode(size_t& offset, PreviousExit& previous, const JITCode& jitCode) const
+{
+    std::span<const uint8_t> bytes = m_bytes.span();
+    ExitKind kind = static_cast<ExitKind>(bytes[offset++]);
+    unsigned flags = bytes[offset++];
+    previous.codeOrigin = decodeCodeOrigin(bytes, offset, codeOriginTagFromFlags(flags, codeOriginTagShift), previous.codeOrigin);
+    CodeOrigin codeOriginForExitProfile = decodeCodeOrigin(bytes, offset, codeOriginTagFromFlags(flags, profileOriginTagShift), previous.codeOrigin);
+    previous.dfgNodeIndex += WTF::LEBDecoder::decodeInt32OrCrash(bytes, offset);
+    previous.descriptorIndex += WTF::LEBDecoder::decodeInt32OrCrash(bytes, offset);
+    previous.entranceOffset += WTF::LEBDecoder::decodeInt32OrCrash(bytes, offset);
+    CallSiteIndex exitCallSiteIndex;
+    if (kind == WillThrowOutOfMemoryError)
+        exitCallSiteIndex = CallSiteIndex(WTF::LEBDecoder::decodeUInt32OrCrash(bytes, offset));
+
+    OSRExit exit(&jitCode.osrExitDescriptors[previous.descriptorIndex], kind, previous.codeOrigin, WTF::move(codeOriginForExitProfile), !!(flags & wasHoistedBit), previous.dfgNodeIndex, static_cast<unsigned>(offset));
+    exit.m_entranceOffset = previous.entranceOffset;
+    exit.m_exitCallSiteIndex = exitCallSiteIndex;
+    for (unsigned count = WTF::LEBDecoder::decodeUInt32OrCrash(bytes, offset); count--;)
+        decodeValueRep(bytes, offset);
+    return exit;
+}
+
+FixedVector<B3::ValueRep> OSRExitStream::valueReps(unsigned offset) const
+{
+    std::span<const uint8_t> bytes = m_bytes.span();
+    size_t position = offset;
+    unsigned count = WTF::LEBDecoder::decodeUInt32OrCrash(bytes, position);
+    return FixedVector<B3::ValueRep>::createWithSizeFromGenerator(count, [&](size_t) {
+        return decodeValueRep(bytes, position);
+    });
+}
+
+OSRExit OSRExitStream::at(unsigned index, const JITCode& jitCode) const
+{
+    RELEASE_ASSERT(index < m_size);
+    size_t offset = m_chunkOffsets[index / exitsPerChunk];
+    PreviousExit previous;
+    for (unsigned i = index % exitsPerChunk; i--;)
+        decode(offset, previous, jitCode);
+    return decode(offset, previous, jitCode);
+}
+
+unsigned OSRExitStream::indexForEntranceOffset(uintptr_t entranceOffset, const JITCode& jitCode) const
+{
+    size_t offset = 0;
+    PreviousExit previous;
+    for (unsigned index = 0; index < m_size; ++index) {
+        if (!(index % exitsPerChunk))
+            previous = { };
+        if (decode(offset, previous, jitCode).m_entranceOffset == entranceOffset)
+            return index;
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
+} } // namespace JSC::FTL
+
+#endif // ENABLE(FTL_JIT)

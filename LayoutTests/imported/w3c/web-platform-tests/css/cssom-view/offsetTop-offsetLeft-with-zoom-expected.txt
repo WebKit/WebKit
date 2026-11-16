@@ -1,0 +1,5 @@
+"
+
+FAIL Verifies that offsetTop and offsetLeft find the right OffsetParent and return values excluding the target zoom assert_equals: unzoomed_three.offsetTop expected 11 but got 12
+PASS check that offset is equal between elements when one of them has css zoom
+

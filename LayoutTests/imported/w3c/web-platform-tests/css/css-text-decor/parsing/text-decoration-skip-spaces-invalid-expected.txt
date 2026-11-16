@@ -1,0 +1,21 @@
+
+PASS e.style['text-decoration-skip-spaces'] = "none start" should not set the property value
+PASS e.style['text-decoration-skip-spaces'] = "none end" should not set the property value
+PASS e.style['text-decoration-skip-spaces'] = "none all" should not set the property value
+PASS e.style['text-decoration-skip-spaces'] = "start none" should not set the property value
+PASS e.style['text-decoration-skip-spaces'] = "all start" should not set the property value
+PASS e.style['text-decoration-skip-spaces'] = "all end" should not set the property value
+PASS e.style['text-decoration-skip-spaces'] = "start all" should not set the property value
+PASS e.style['text-decoration-skip-spaces'] = "end all" should not set the property value
+PASS e.style['text-decoration-skip-spaces'] = "start end all" should not set the property value
+PASS e.style['text-decoration-skip-spaces'] = "auto" should not set the property value
+PASS e.style['text-decoration-skip-spaces'] = "underline" should not set the property value
+PASS e.style['text-decoration-skip-spaces'] = "edges" should not set the property value
+PASS e.style['text-decoration-skip-spaces'] = "box-decoration" should not set the property value
+PASS e.style['text-decoration-skip-spaces'] = "10px" should not set the property value
+PASS e.style['text-decoration-skip-spaces'] = "20%" should not set the property value
+PASS e.style['text-decoration-skip-spaces'] = "0" should not set the property value
+PASS e.style['text-decoration-skip-spaces'] = "star" should not set the property value
+PASS e.style['text-decoration-skip-spaces'] = "ends" should not set the property value
+PASS e.style['text-decoration-skip-spaces'] = "invalid" should not set the property value
+

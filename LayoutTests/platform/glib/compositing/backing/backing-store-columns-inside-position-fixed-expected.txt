@@ -1,0 +1,27 @@
+(GraphicsLayer
+  (anchor 0.00 0.00)
+  (bounds 800.00 600.00)
+  (backingStoreAttached 1)
+  (children 1
+    (GraphicsLayer
+      (bounds 800.00 600.00)
+      (contentsOpaque 1)
+      (backingStoreAttached 1)
+      (children 1
+        (GraphicsLayer
+          (position 8.00 0.00)
+          (preserves3D 1)
+          (backingStoreAttached 1)
+          (children 1
+            (GraphicsLayer
+              (bounds 600.00 600.00)
+              (drawsContent 1)
+              (backingStoreAttached 1)
+            )
+          )
+        )
+      )
+    )
+  )
+)
+

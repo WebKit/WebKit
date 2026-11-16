@@ -1,0 +1,45 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body id="body" onload="runTest()">
+
+<div id="content1">
+<iframe src="data:text/html,<body><div>hello</div>"></iframe>
+</div>
+
+<div role="group" id="console"></div>
+
+<script>
+
+    description("This tests that comparing text markers that have no common tree scope won't crash");
+
+    jsTestIsAsync = true;
+
+    function runTest() {
+
+        // Get a text marker inside the frame we will remove.
+        var text1 = accessibilityController.accessibleElementById("content1").childAtIndex(0).childAtIndex(0).childAtIndex(0).childAtIndex(0);
+        var range1 = text1.textMarkerRangeForElement(text1);
+        marker1 = text1.startTextMarkerForTextMarkerRange(range1);
+
+        // Get a marker for the main frame.
+        var text2 = accessibilityController.rootElement.childAtIndex(0).childAtIndex(0);
+        var range2 = text2.textMarkerRangeForElement(text2);
+        marker2 = text2.startTextMarkerForTextMarkerRange(range2);
+
+        // Remove the child frame that we have a reference to the text marker from.
+        var content1 = document.getElementById("content1").childNodes[0];
+        content1.parentNode.removeChild(content1);
+
+        // Ask for the text marker range with the markers in a different tree.
+        // This should NOT crash!
+        var range = accessibilityController.rootElement.childAtIndex(0).textMarkerRangeForMarkers(marker1, marker2);
+
+        finishJSTest();
+    }
+
+</script>
+</body>
+</html>

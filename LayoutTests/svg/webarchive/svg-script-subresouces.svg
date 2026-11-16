@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <script>
+    if (window.testRunner)
+        testRunner.dumpDOMAsWebArchive();
+  </script>
+  <rect id="rect" width="100" height="100" fill="red" />
+  <script xlink:href="resources/svg-script-subresources.js" type="text/ecmascript" />
+</svg>

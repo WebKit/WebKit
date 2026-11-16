@@ -1,0 +1,7 @@
+
+PASS Element: setHTMLUnsafe with no shadowdom.
+PASS Element: setHTMLUnsafe with shadowdom.
+PASS ShadowRoot: setHTMLUnsafe with no shadowdom.
+PASS ShadowRoot: setHTMLUnsafe with shadowdom.
+PASS template.setHTMLUnsafe() should modify template content fragment rather than actual children.
+

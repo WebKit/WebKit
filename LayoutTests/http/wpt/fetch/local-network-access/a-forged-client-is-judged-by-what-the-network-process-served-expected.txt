@@ -1,0 +1,7 @@
+
+PASS a public document that claims loopback still needs permission to reach loopback
+PASS a public document that claims loopback reaches loopback once granted
+PASS a public document that claims the loopback target's origin still needs permission to reach it
+PASS a loopback document reaches loopback without permission
+PASS a loopback document that claims public is held to its claim
+

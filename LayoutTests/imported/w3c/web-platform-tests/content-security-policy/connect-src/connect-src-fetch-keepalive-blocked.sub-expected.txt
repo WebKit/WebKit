@@ -1,0 +1,4 @@
+
+PASS Expecting logs: ["Pass", "violated-directive=connect-src"]
+PASS fetch with keepalive should be blocked by CSP
+

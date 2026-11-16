@@ -1,0 +1,157 @@
+/*
+ * Copyright (C) 2025 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are
+ * met:
+ *
+ *     * Redistributions of source code must retain the above copyright
+ * notice, this list of conditions and the following disclaimer.
+ *     * Redistributions in binary form must reproduce the above
+ * copyright notice, this list of conditions and the following disclaimer
+ * in the documentation and/or other materials provided with the
+ * distribution.
+ *     * Neither the name of Google Inc. nor the names of its
+ * contributors may be used to endorse or promote products derived from
+ * this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+ * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+ * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+ * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#pragma once
+
+#include <JavaScriptCore/InspectorAgentRegistry.h>
+#include <JavaScriptCore/InspectorEnvironment.h>
+#include <WebCore/InspectorOverlay.h>
+#include <wtf/CheckedRef.h>
+#include <wtf/Forward.h>
+#include <wtf/Noncopyable.h>
+#include <wtf/TZoneMalloc.h>
+#include <wtf/WeakRef.h>
+#include <wtf/text/WTFString.h>
+
+namespace JSC {
+class Debugger;
+}
+
+namespace Inspector {
+class BackendDispatcher;
+class FrontendChannel;
+class FrontendRouter;
+}
+
+namespace WebCore {
+
+class FrameDebugger;
+class FrameDOMAgent;
+class GraphicsContext;
+class InspectorBackendClient;
+class InspectorController;
+class InspectorFrontendClient;
+class InspectorInstrumentation;
+class InstrumentingAgents;
+class LocalFrame;
+class Node;
+class PageInspectorController;
+class RenderObject;
+class WebInjectedScriptManager;
+struct FrameAgentContext;
+
+class FrameInspectorController final : public Inspector::InspectorEnvironment, public InspectorOverlayOwner, public CanMakeCheckedPtr<FrameInspectorController> {
+    WTF_MAKE_NONCOPYABLE(FrameInspectorController);
+    WTF_MAKE_TZONE_ALLOCATED(FrameInspectorController);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(FrameInspectorController);
+public:
+    FrameInspectorController(LocalFrame&, PageInspectorController&);
+    ~FrameInspectorController() override;
+
+    OVERRIDE_ABSTRACT_CAN_MAKE_CHECKEDPTR(CanMakeCheckedPtr);
+
+    NODELETE WEBCORE_EXPORT void ref() const;
+    WEBCORE_EXPORT void deref() const;
+
+    // InspectorOverlayOwner. Anchors on the frame, which owns this controller and so the overlay.
+    NODELETE void overlayOwnerRef() const final { ref(); }
+    void overlayOwnerDeref() const final { deref(); }
+    NODELETE Page* overlayOwnerPage() const final;
+    NODELETE LocalFrame* overlayOwnerFrame() const final;
+    NODELETE InspectorBackendClient* overlayOwnerBackendClient() const final;
+    Vector<size_t> overlayOwnerFlexLineStarts(const RenderObject&) const final;
+
+    WEBCORE_EXPORT void drawHighlight(GraphicsContext&) const;
+
+    // True when this frame's own overlay holds the highlight state, not the page overlay.
+    NODELETE WEBCORE_EXPORT bool hasOverlayContentToDraw() const;
+
+    WEBCORE_EXPORT void connectFrontend(Inspector::FrontendChannel&, bool isAutomaticInspection = false, bool immediatelyPause = false);
+    WEBCORE_EXPORT void disconnectFrontend(Inspector::FrontendChannel&);
+    WEBCORE_EXPORT void dispatchMessageFromFrontend(const String& message);
+
+    WEBCORE_EXPORT void siteIsolationFirstEnabled();
+    void inspectedFrameDestroyed(LocalFrame&);
+
+    // Selects the node in the frontend. A node chosen while no frontend is connected is selected once the
+    // first one connects.
+    WEBCORE_EXPORT void inspect(Node&);
+
+    InstrumentingAgents& instrumentingAgents() const { return m_instrumentingAgents.get(); }
+    WebInjectedScriptManager& injectedScriptManager() const { return m_injectedScriptManager.get(); }
+
+    // Unlike debugger(), this is null while the frame's debugger exists but nothing is debugging
+    // the frame yet. Callers that hand the debugger to a global object need this narrower answer.
+    NODELETE JSC::Debugger* attachedDebugger() const;
+
+    // InspectorEnvironment
+    bool developerExtrasEnabled() const override;
+    bool canAccessInspectedScriptState(JSC::JSGlobalObject*) const override;
+    Inspector::InspectorFunctionCallHandler functionCallHandler() const override;
+    Inspector::InspectorEvaluateHandler evaluateHandler() const override;
+    void frontendInitialized() override;
+    WTF::Stopwatch& executionStopwatch() const final;
+    bool executionStopwatchIsSharedAcrossProcesses() const final { return m_executionStopwatchIsShared; }
+    JSC::Debugger* debugger() override;
+    JSC::VM& vm() override;
+
+private:
+    friend class InspectorInstrumentation;
+
+    FrameAgentContext frameAgentContext();
+    void createConsoleAgent();
+    void createLazyAgents();
+
+    WeakRef<LocalFrame> m_frame;
+    const Ref<InstrumentingAgents> m_instrumentingAgents;
+    const Ref<WebInjectedScriptManager> m_injectedScriptManager;
+    const Ref<Inspector::FrontendRouter> m_frontendRouter;
+    const Ref<Inspector::BackendDispatcher> m_backendDispatcher;
+
+    // This frame's own overlay, distinct from the page overlay owned by PageInspectorController.
+    const UniqueRef<InspectorOverlay> m_overlay;
+
+    const Ref<WTF::Stopwatch> m_executionStopwatch;
+    const std::unique_ptr<FrameDebugger> m_debugger;
+    Inspector::AgentRegistry m_agents;
+
+    bool m_didCreateConsoleAgent { false };
+    bool m_didCreateLazyAgents { false };
+    bool m_executionStopwatchIsShared { false };
+    WeakPtr<InspectorFrontendClient> m_inspectorFrontendClient;
+
+    // Non-owning; the agent is owned by m_agents. Kept so the overlay can reach the flex line-start cache.
+    CheckedPtr<FrameDOMAgent> m_domAgent;
+
+    // Weak so a node never keeps its document alive; see inspect().
+    WeakPtr<Node, WeakPtrImplWithEventTargetData> m_pendingNodeToInspect;
+};
+
+} // namespace WebCore

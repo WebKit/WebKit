@@ -1,0 +1,18 @@
+
+PASS Inserting and removing a meta in head
+PASS Inserting and removing a meta in body
+PASS Inserting and removing an ancestor of a meta
+PASS Changing a disconnected meta has no effect until it is inserted
+PASS Changing the content attribute
+PASS Changing the name attribute
+PASS Changing the name and content attributes of a meta that starts with no content
+PASS Inserting a meta before the first one replaces it
+PASS Only the first meta decides
+PASS Removing a first meta with no content attribute lets the second meta apply
+PASS Changing the name of the first meta lets the second meta apply
+PASS Changing the name of a first meta with no content attribute lets the second meta apply
+PASS Replacing the first meta
+PASS Moving a meta between head and body
+PASS Meta in a shadow tree is ignored
+PASS Moving a meta from a frameless document into this document and back
+

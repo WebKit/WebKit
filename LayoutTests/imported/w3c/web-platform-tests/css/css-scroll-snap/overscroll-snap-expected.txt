@@ -1,0 +1,3 @@
+
+PASS snapport covered by snap area doesn't jump
+

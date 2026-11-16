@@ -1,0 +1,3 @@
+
+PASS Legacy factory function property enumeration order of "length", "name", and "prototype"
+

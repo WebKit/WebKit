@@ -1,0 +1,12 @@
+
+PASS Throw DOMException-TypeError in toplevel: module: listener
+PASS Throw DOMException-TypeError in toplevel: module: handler
+PASS Throw DOMException-TypeError in setTimeout-function: module: listener
+PASS Throw DOMException-TypeError in setTimeout-function: module: handler
+PASS Throw DOMException-TypeError in setTimeout-string: module: listener
+PASS Throw DOMException-TypeError in setTimeout-string: module: handler
+PASS Throw DOMException-TypeError in onmessage: module: listener
+PASS Throw DOMException-TypeError in onmessage: module: handler
+PASS Throw DOMException-TypeError in onerror: module: listener
+PASS Throw DOMException-TypeError in onerror: module: handler
+

@@ -1,0 +1,8 @@
+
+
+PASS Navigating an iframe via location.href to a javascript: URL must queue a task
+PASS Navigating an iframe via src="" to a javascript: URL before insertion must queue a task
+PASS Navigating an iframe via src="" to a javascript: URL after insertion must queue a task
+PASS Navigating an opened window via location.href to a javascript: URL must queue a task
+FAIL Navigating an opened window as part of creation to a javascript: URL must queue a task assert_equals: Must not run sync expected (undefined) undefined but got (boolean) true
+

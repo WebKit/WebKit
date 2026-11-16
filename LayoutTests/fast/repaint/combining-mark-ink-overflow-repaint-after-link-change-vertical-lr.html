@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+    html {
+        writing-mode: vertical-lr;
+    }
+    body {
+        margin: 0;
+        padding: 20px;
+    }
+    .tagline {
+        margin: 0;
+        font: bold 28px/32px verdana, sans-serif;
+    }
+    #author {
+        color: blue;
+        text-decoration: none;
+    }
+    #author.changed {
+        color: green;
+    }
+    /* Each no-break space carries twelve stacked U+0304 COMBINING MACRON marks, whose ink overflows the
+       line-over side (physical right in vertical-lr) of this 20px line box, across the 4px gap and
+       into the #author box. In vertical-lr the marks come first so that their line-over side faces the #author box. */
+    #marks {
+        margin: 0;
+        margin-block-end: 4px;
+        font: 14px/20px 'Times New Roman', serif;
+        white-space: nowrap;
+        color: black;
+    }
+</style>
+<script src="../../resources/ui-helper.js"></script>
+<script>
+    if (window.testRunner) {
+        testRunner.waitUntilDone();
+        if (testRunner.dontForceRepaint)
+            testRunner.dontForceRepaint();
+    }
+
+    window.addEventListener('load', async () => {
+        await UIHelper.renderingUpdate();
+        document.getElementById('author').classList.add('changed');
+        await UIHelper.renderingUpdate();
+        await UIHelper.renderingUpdate();
+        window.testRunner?.notifyDone();
+    }, false);
+</script>
+</head>
+<body>
+<p id="marks">&nbsp;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&nbsp;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&nbsp;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&nbsp;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&nbsp;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&nbsp;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&nbsp;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&nbsp;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&nbsp;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&nbsp;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&nbsp;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&nbsp;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&nbsp;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&nbsp;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&nbsp;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&nbsp;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&nbsp;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&nbsp;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&nbsp;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&nbsp;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&nbsp;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&nbsp;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&nbsp;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&nbsp;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&nbsp;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&nbsp;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&nbsp;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&nbsp;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&nbsp;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&nbsp;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&nbsp;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&nbsp;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&nbsp;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&nbsp;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&nbsp;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&nbsp;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&nbsp;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&nbsp;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&nbsp;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&nbsp;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;&#x304;</p>
+<p class="tagline"><a id="author" href="#">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</a></p>
+</body>
+</html>

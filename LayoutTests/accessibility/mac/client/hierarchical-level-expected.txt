@@ -1,0 +1,10 @@
+Test hierarchicalLevel via the client accessibility APIs.
+
+Tree role: AXRole: AXOutline
+Item 1 hierarchicalLevel: 0
+Item 2 hierarchicalLevel: 1
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

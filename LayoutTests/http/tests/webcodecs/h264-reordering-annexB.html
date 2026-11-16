@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../../resources/testharness.js"></script>
+    <script src="../../resources/testharnessreport.js"></script>
+</head>
+<body>
+    <script>
+promise_test(async () => {
+     const response = await fetch("/media-resources/media-source/content/test-fragmented.mp4.annexb");
+     const buffer = new Uint8Array(await response.arrayBuffer());
+     const frames = [
+         [41, 41, 25145],
+         [125, 25170, 27313],
+         [83, 27338, 28656],
+         [208, 28681, 29700],
+         [166, 29725, 30560],
+         [291, 30585, 31486],
+    ];
+
+    let frameTimestamps = [];
+    const decoder =  new VideoDecoder({
+        output(frame) {
+            frameTimestamps.push(frame.timestamp);
+            frame.close();
+        },
+        error(e) {
+            console.log(e);
+        }
+    });
+    decoder.configure({
+        codec: 'avc1.4d401e',
+        codedWidth: 640,
+        codedHeight: 480,
+        visibleRect: {x: 0, y: 0, width: 640, height: 480},
+        displayWidth: 640,
+        displayHeight: 480,
+    });
+
+    chunks = frames.map((frame, i) => new EncodedVideoChunk({type: i == 0 ? 'key' : 'delta', timestamp: frame[0], duration: 1, data: buffer.slice(frame[1], frame[2])}));
+
+    chunks.forEach(chunk => decoder.decode(chunk));
+    await decoder.flush();
+
+    assert_array_equals(frameTimestamps, frames.map(frame => frame[0]).sort((a,b) => a - b), "timestamps are ordered");
+}, "Test H264 reordering for annexb");
+    </script>
+</body>
+</html>

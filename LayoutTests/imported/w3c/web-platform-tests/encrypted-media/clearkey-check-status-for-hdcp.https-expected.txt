@@ -1,0 +1,4 @@
+
+PASS org.w3.clearkey support for empty HDCP version.
+PASS org.w3.clearkey support for HDCP 1.0.
+

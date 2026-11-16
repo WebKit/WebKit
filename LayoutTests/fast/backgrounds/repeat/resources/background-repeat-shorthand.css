@@ -1,0 +1,15 @@
+#icon1 {
+    background-image: url(gradient.gif);
+    background-repeat: no-repeat;
+    background-position: 10px 20px;
+    -webkit-mask-repeat: repeat;
+    -webkit-mask-position: 0% 0%;
+}
+
+#icon2 {
+    background-image: url(gradient.gif);
+    background-repeat-x: no-repeat;
+    background-position-x: 10px;
+    -webkit-mask-repeat-x: repeat;
+    -webkit-mask-position-x: 0% 0%;
+}

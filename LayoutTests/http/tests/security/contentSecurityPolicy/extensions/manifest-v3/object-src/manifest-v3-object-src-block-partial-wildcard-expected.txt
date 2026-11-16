@@ -1,0 +1,5 @@
+CONSOLE MESSAGE: Refused to load http://127.0.0.1:8000/plugins/resources/mock-plugin.pl because it does not appear in the object-src directive of the Content Security Policy.
+
+Test that CSP for manifest V3 extensions does not allow partial wildcards for the object-src directive.
+
+This test passes if there is a console message saying the plugin was blocked.

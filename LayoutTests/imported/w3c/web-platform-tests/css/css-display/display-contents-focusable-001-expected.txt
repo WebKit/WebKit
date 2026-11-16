@@ -1,0 +1,4 @@
+Hello
+
+FAIL element with display:contents is focusable assert_equals: e is now focused expected Element node <div id="test" style="display: contents" tabindex="1">Hel... but got Element node <body><div id="test" style="display: contents" tabindex="...
+

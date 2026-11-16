@@ -1,0 +1,22 @@
+<!-- webkit-test-runner [ MediaSessionCallToActionEnabled=false ] -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>call-to-action-handler-disabled</title>
+    <script src="../../../../media/video-test.js"></script>
+    <script>
+    function runTest() {
+        consoleWrite('Test that the call-to-action handler is rejected when MediaSessionCallToActionEnabled is off.');
+        try {
+            navigator.mediaSession.setActionHandler("call-to-action", () => { });
+            consoleWrite('OK');
+        } catch (e) {
+            consoleWrite(`threw ${e.name}`);
+        }
+        endTest();
+    }
+    </script>
+</head>
+<body onload="runTest()">
+</body>
+</html>

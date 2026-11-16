@@ -1,0 +1,6 @@
+
+PASS mandatory scroll-snap-type should snap as long as the element is visible.
+PASS proximity scroll-snap-type shouldn't snap if the snap position is too far away.
+PASS proximity scroll-snap-type should snap if the snap position is close.
+PASS none scroll-snap-type shouldn't snap.
+

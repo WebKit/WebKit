@@ -1,0 +1,91 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true AsyncOverflowScrollingEnabled=true SelectionHonorsOverflowScrolling=true ] -->
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="utf-8">
+<script src="../../../resources/ui-helper.js"></script>
+<script src="../../../resources/js-test.js"></script>
+<style>
+body, html {
+    font-family: system-ui;
+    font-size: 16px;
+    line-height: 1.5;
+}
+
+.scroller {
+    width: 200px;
+    height: 250px;
+    margin: 0 auto;
+    overflow: scroll;
+    border: 1px solid lightgray;
+    padding: 1em;
+}
+
+.tall {
+    width: 1px;
+    height: 500px;
+}
+
+img {
+    width: 100%;
+}
+</style>
+<script>
+jsTestIsAsync = true;
+
+addEventListener("load", async () => {
+    description("Verifies that the highlight and handles show up in the correct place when selecting Live Text inside a subscrollable container");
+
+    const image = document.querySelector("img");
+    // Rect centered in the image, rotated by 5 degrees clockwise.
+    const liveTextQuad = {
+        topLeft : new DOMPointReadOnly(0.1837, 0.3269),
+        topRight : new DOMPointReadOnly(0.7814, 0.2746),
+        bottomRight : new DOMPointReadOnly(0.8163, 0.6731),
+        bottomLeft : new DOMPointReadOnly(0.2186, 0.7254),
+    };
+
+    window.internals?.installImageOverlay(image, [
+        {
+            topLeft : liveTextQuad.topLeft,
+            topRight : liveTextQuad.topRight,
+            bottomRight : liveTextQuad.bottomRight,
+            bottomLeft : liveTextQuad.bottomLeft,
+            children: [
+                {
+                    text : "Dice",
+                    topLeft : liveTextQuad.topLeft,
+                    topRight : liveTextQuad.topRight,
+                    bottomRight : liveTextQuad.bottomRight,
+                    bottomLeft : liveTextQuad.bottomLeft
+                }
+            ]
+        }
+    ]);
+
+    await UIHelper.longPressElement(image);
+    await UIHelper.waitForSelectionToAppear();
+
+    imageRect = image.getBoundingClientRect();
+    selectionRects = await UIHelper.getUISelectionViewRects();
+    startHandleRect = await UIHelper.getSelectionStartGrabberViewRect()
+    endHandleRect = await UIHelper.getSelectionEndGrabberViewRect();
+
+    shouldBe("selectionRects.length", "1");
+    shouldBeTrue("UIHelper.rectContainsOtherRect(imageRect, selectionRects[0])");
+    shouldBeTrue("UIHelper.rectContainsOtherRect(imageRect, startHandleRect)");
+    shouldBeTrue("UIHelper.rectContainsOtherRect(imageRect, endHandleRect)");
+    finishJSTest();
+});
+</script>
+</head>
+<body>
+    <div id="description"></div>
+    <div class="scroller">
+        <img src="../../../fast/images/resources/dice.png">
+        <p>Select text in the image above. This test requires WebKitTestRunner.</p>
+        <div class="tall"></div>
+    </div>
+    <div id="console"></div>
+</body>
+</html>

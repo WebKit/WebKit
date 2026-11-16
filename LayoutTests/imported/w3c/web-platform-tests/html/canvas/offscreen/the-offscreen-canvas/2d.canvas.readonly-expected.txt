@@ -1,0 +1,7 @@
+2d.canvas.readonly
+
+canvas is readonly
+
+
+PASS canvas is readonly
+

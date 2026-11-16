@@ -1,0 +1,4 @@
+This tests text selection drag including a <p> tag, where its parent <p> tag is not editable.
+| "and drag it here<#selection-anchor>Select"
+| <p>
+|   "me<#selection-focus>"

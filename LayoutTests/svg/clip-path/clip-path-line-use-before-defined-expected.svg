@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <defs>
+    <style>
+      line, path {
+        stroke: black;
+        stroke-width: 3;
+      }
+    </style>
+    <clipPath id="clip-circle">
+      <circle cx="75" cy="75" r="50"/>
+    </clipPath>
+    <g id="circle-in-rect">
+      <rect x="0" y="0" width="150" height="150" fill="lime"/>
+      <rect x="0" y="0" width="150" height="150" fill="white" clip-path="url(#clip-circle)"/>
+    </g>
+  </defs>
+
+  <use xlink:href="#circle-in-rect" transform="translate(10, 10)">
+    <g clip-path="url(#clip-circle)">
+      <!-- center lines -->
+      <path d="M0 75 L150 75"/>
+      <line x1="75" y1="0" x2="75" y2="150"/>
+    </g>
+  </use>
+  
+  <use xlink:href="#circle-in-rect" transform="translate(170, 10)">
+    <g clip-path="url(#clip-circle)">
+      <!-- diagonal lines -->
+      <path d="M0 0 L150 150"/>
+      <line x1="0" y1="150" x2="150" y2="0"/>
+    </g>
+  </use>
+
+  <use xlink:href="#circle-in-rect" transform="translate(330, 10)">
+    <g clip-path="url(#clip-circle)">
+      <!-- top and left lines -->
+      <path d="M0 50 L150 50"/>
+      <line x1="50" y1="0" x2="50" y2="150"/>
+      <!-- bottom and right lines -->
+      <path d="M0 100 L150 100"/>
+      <line x1="100" y1="0" x2="100" y2="150"/>
+    </g>
+  </use>
+</svg>

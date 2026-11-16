@@ -1,0 +1,7 @@
+X
+
+FAIL top assert_equals: expected "50px" but got "50%"
+FAIL bottom assert_equals: expected "-50px" but got "auto"
+FAIL left assert_equals: expected "75px" but got "75%"
+FAIL right assert_equals: expected "-75px" but got "auto"
+

@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>innerHTML Prefix Cache Boundary Test</title>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+}
+
+function log(msg) {
+    document.getElementById('console').appendChild(document.createTextNode(msg + '\n'));
+}
+
+function testSafeBoundaries() {
+    log('---------- Safe Boundary Tests ----------\n');
+
+    log('=== Element boundary (safe to cache) ===');
+    const elementContainer = document.createElement('div');
+    document.body.appendChild(elementContainer);
+    elementContainer.innerHTML = '<div>first</div>';
+    elementContainer.innerHTML = '<div>first</div><span>second</span>';
+    log('Extended after closing tag ">"');
+    log('children.length: ' + elementContainer.children.length + ' (expected: 2)');
+    log('Result: ' + (elementContainer.children.length === 2 ? 'PASS' : 'FAIL') + '\n');
+    elementContainer.innerHTML = '';
+
+    log('=== Whitespace boundary (safe to cache) ===');
+    const whitespaceContainer = document.createElement('div');
+    document.body.appendChild(whitespaceContainer);
+    whitespaceContainer.innerHTML = '<div>content</div> ';
+    whitespaceContainer.innerHTML = '<div>content</div>        <span>more</span>';
+    log('Extended after whitespace');
+    log('children.length: ' + whitespaceContainer.children.length + ' (expected: 2)');
+    log('Result: ' + (whitespaceContainer.children.length === 2 ? 'PASS' : 'FAIL') + '\n');
+    whitespaceContainer.innerHTML = '';
+}
+
+function testUnsafeBoundaries() {
+    log('---------- Unsafe Boundary Tests ----------\n');
+
+    log('=== Text node splitting prevention ===');
+    const textContainer = document.createElement('div');
+    document.body.appendChild(textContainer);
+    textContainer.innerHTML = 'hello';
+    textContainer.innerHTML = 'helloworld';
+    log('Extended text from "hello" to "helloworld"');
+    log('Should NOT split text into multiple nodes');
+    log('childNodes.length: ' + textContainer.childNodes.length + ' (expected: 1)');
+    log('textContent: "' + textContainer.textContent + '" (expected: "helloworld")');
+    log('Result: ' + (textContainer.childNodes.length === 1 && textContainer.textContent === 'helloworld' ? 'PASS' : 'FAIL') + '\n');
+    textContainer.innerHTML = '';
+
+    log('=== Entity splitting prevention ===');
+    const entityContainer = document.createElement('div');
+    document.body.appendChild(entityContainer);
+    entityContainer.innerHTML = '<br>&apos';
+    entityContainer.innerHTML = '<br>&apos;';
+    log('Extended incomplete entity "&apos" to "&apos;"');
+    log('Should NOT split entity - should render as apostrophe');
+    // The entity should render as apostrophe
+    const hasApostrophe = entityContainer.textContent.includes("'");
+    log('Contains apostrophe: ' + hasApostrophe + ' (expected: true)');
+    log('Result: ' + (hasApostrophe ? 'PASS' : 'FAIL') + '\n');
+    entityContainer.innerHTML = '';
+}
+
+function runTest() {
+    testSafeBoundaries();
+    testUnsafeBoundaries();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests safe and unsafe boundaries for innerHTML prefix cache to ensure proper HTML parsing.</p>
+<pre id="console"></pre>
+</body>
+</html>

@@ -1,0 +1,19 @@
+<script>
+  if (window.testRunner)
+    window.testRunner.dumpAsText();
+  onload = () => {
+    let div0 = document.createElement('div');
+    let progress0 = document.createElement('progress');
+    div0.appendChild(progress0);
+    let document2 = new Document();
+    document2.appendChild(div0);
+    progress0.cloneNode();
+    let fontFace = new FontFace('a', 'url()');
+    let fontFaceSet = document2.fonts;
+    queueMicrotask(() => {
+      window.GCController?.collect();
+      fontFaceSet.add(fontFace);
+      document.write("Test passes if it does not crash.");
+    });
+  };
+</script>

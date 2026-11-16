@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>A delegated zoom out keeps the pinched content under the cursor on a page that fits the view</title>
+    <style>
+        /* No overflow in either direction, like a page with a modal up. The document can't scroll at page scale 1,
+           so once the page has shrunk enough there is no scroll position on the document that keeps the pinched
+           content under the cursor: the anchor has to be allowed off the document until the gesture is released. */
+        html, body {
+            margin: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        body {
+            background: linear-gradient(135deg, silver, gray);
+        }
+    </style>
+    <script src="../resources/ui-helper.js"></script>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+
+        // Anchoring a delegated zoom is done by scrolling, and shrinking the page past the scale where it fits walks
+        // the anchor off the document's top left. Clamping it there pulled the content out from under the cursor as
+        // the page shrank, and once below the minimum magnification the clamped position was what the rubber band
+        // anchored on, so the error froze instead of unwinding.
+        //
+        // Everything mid-gesture comes from the UI process: it owns the scale and the anchoring scroll position, and
+        // the web process is still laid out at page scale 1, so nothing in the render tree can answer this.
+        async function anchorState()
+        {
+            const scale = await UIHelper.zoomScale();
+            const override = await UIHelper.delegatedZoomOverrideAsText();
+            const anchoringScrollPosition = override.match(/anchoring scroll position \((-?\d+), (-?\d+)\)/);
+            if (!anchoringScrollPosition)
+                return { scale, x: NaN, y: NaN };
+
+            return { scale, x: parseInt(anchoringScrollPosition[1]), y: parseInt(anchoringScrollPosition[2]) };
+        }
+
+        // The content point the cursor is over, in unscaled content coordinates.
+        function contentPointUnderOrigin(state, origin)
+        {
+            return { x: state.x + origin.x / state.scale, y: state.y + origin.y / state.scale };
+        }
+
+        // What the document can reach at this scale. window.inner* is the viewport in content coordinates, so it
+        // already covers more content as the scale falls, and both of these shrink when zooming in brings scrollbars
+        // in and takes the width away from the body.
+        function isOnDocument(state)
+        {
+            const maxScrollX = document.scrollingElement.scrollWidth - window.innerWidth;
+            const maxScrollY = document.scrollingElement.scrollHeight - window.innerHeight;
+            return state.x >= -1 && state.y >= -1 && state.x <= maxScrollX + 1 && state.y <= maxScrollY + 1;
+        }
+
+        function anchorResult(state, origin, pinchedContentPoint, description)
+        {
+            const contentPoint = contentPointUnderOrigin(state, origin);
+
+            // The scroll position is reported as an integer, so allow a pixel of slack.
+            const isAnchored = Math.abs(contentPoint.x - pinchedContentPoint.x) <= 1 && Math.abs(contentPoint.y - pinchedContentPoint.y) <= 1;
+            const found = `(${contentPoint.x.toFixed(0)}, ${contentPoint.y.toFixed(0)})`;
+            const expected = `(${pinchedContentPoint.x.toFixed(0)}, ${pinchedContentPoint.y.toFixed(0)})`;
+
+            return `  at scale ${state.scale.toFixed(2)}: ` + (isAnchored ? `PASS (${description})` : `FAIL (content point ${found} under the cursor, expected ${expected})`);
+        }
+
+        async function heldAnchorResult(origin, pinchedContentPoint)
+        {
+            const state = await anchorState();
+
+            // Held off the document is the whole point of the test: if the anchor still fits inside it, the gesture
+            // isn't reaching the case that used to fail.
+            const description = isOnDocument(state) ? 'anchor is still on the document' : 'anchor held off the document';
+            return anchorResult(state, origin, pinchedContentPoint, description);
+        }
+
+        async function doTest()
+        {
+            const output = [];
+            const zoomOutOrigin = { x: 600, y: 400 };
+
+            // Starting from page scale 1 with the page at the top left, so the content under the cursor is the
+            // gesture origin itself, and the settled state the release has to reach is the one it started in.
+            const pinchedContentPoint = { x: zoomOutOrigin.x, y: zoomOutOrigin.y };
+
+            // Held, so the override is still on the layer when we read it, and continued rather than restarted, so
+            // one gesture crosses the scale where the anchor leaves the document.
+            output.push('Held zoom out at (600, 400):');
+            await UIHelper.beginMagnifyGestureAt(zoomOutOrigin.x, zoomOutOrigin.y, -0.9);
+            output.push(await heldAnchorResult(zoomOutOrigin, pinchedContentPoint));
+            await UIHelper.continueMagnifyGesture(-0.9);
+            output.push(await heldAnchorResult(zoomOutOrigin, pinchedContentPoint));
+            await UIHelper.continueMagnifyGesture(-0.9);
+            output.push(await heldAnchorResult(zoomOutOrigin, pinchedContentPoint));
+            await UIHelper.endMagnifyGesture();
+
+            // The gesture is over, so the page has to be back on the document: holding the anchor there was for the
+            // duration of the pinch, like the overhang a scroll rubber bands into. The page the web process settled
+            // on is what the cursor ends up over, so read the released state from the document rather than from the
+            // UI process's bookkeeping.
+            const released = { scale: await UIHelper.zoomScale(), x: window.scrollX, y: window.scrollY };
+            output.push('After release:');
+            output.push(anchorResult(released, zoomOutOrigin, pinchedContentPoint, isOnDocument(released) ? 'back on the document' : `anchoring scroll position (${released.x}, ${released.y}) is off the document`));
+
+            document.getElementById('output').textContent = output.join('\n');
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }
+
+        window.addEventListener('load', doTest, false);
+    </script>
+</head>
+<body>
+    <pre id="output"></pre>
+</body>
+</html>

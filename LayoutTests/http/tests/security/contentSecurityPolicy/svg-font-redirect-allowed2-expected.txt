@@ -1,0 +1,3 @@
+Tests that a SVG font-face element is allowed to load a cross-origin external SVG font via a redirect by the Content Security Policy even though the policy does not contain a source expression that is an exact match of the redirected URL. This test PASSED if there are no console warning messages. This test PASSED if there are no console warning messages.
+
+

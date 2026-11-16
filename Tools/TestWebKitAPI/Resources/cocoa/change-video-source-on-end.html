@@ -1,0 +1,35 @@
+<head>
+    <style>
+        video {
+            width: 800px;
+            height: 600px;
+        }
+    </style>
+    <script type="text/javascript">
+        var hasBegunPlayingBefore = false;
+
+        function changeSource() {
+            var video = document.querySelector("video");
+            video.src = "large-video-with-audio.mp4";
+            video.play();
+            setTimeout(function() {
+                try {
+                    window.webkit.messageHandlers.testHandler.postMessage("changed");
+                } catch(e) {
+                }
+            });
+        }
+
+        function handlePlaying() {
+            if (hasBegunPlayingBefore)
+                return;
+
+            hasBegunPlayingBefore = true;
+            var video = document.querySelector("video");
+            video.currentTime = video.duration - 0.5;
+        }
+    </script>
+</head>
+<body>
+    <video autoplay onplaying=handlePlaying() src="large-video-with-audio.mp4" onended=changeSource()></video>
+</body>

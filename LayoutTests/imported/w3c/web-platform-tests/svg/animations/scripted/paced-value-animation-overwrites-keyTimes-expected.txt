@@ -1,0 +1,3 @@
+
+PASS Paced value animation doesn't overwrite keyTimes
+

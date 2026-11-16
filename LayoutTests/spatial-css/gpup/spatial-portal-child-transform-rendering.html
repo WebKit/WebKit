@@ -1,0 +1,15 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ SpatialPortalEnabled=true ModelElementEnabled=true ] -->
+<html>
+<style>
+    .portal { spatial: portal; width: 300px; height: 300px; }
+    model { scale: 0.5 0.5 0.5; }
+</style>
+<body>
+<div class="portal">
+    <model><source src="../../model-element/resources/2x2x2-center.usdz"></model>
+</div>
+<script src="../../resources/ui-helper.js"></script>
+<script src="../resources/spatial-portal-utils.js"></script>
+<script>snapshotOnceModelsRender();</script>
+</body>
+</html>

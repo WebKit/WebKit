@@ -1,0 +1,11 @@
+
+Verifies that we zoom and scroll to reveal the focused element; requires WebKitTestRunner.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+PASS pageYOffset > 0 became true
+PASS visualViewport.scale > 1 became true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

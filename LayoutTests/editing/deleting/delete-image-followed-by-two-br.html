@@ -1,0 +1,17 @@
+<script src="../../resources/dump-as-markup.js"></script>
+<script src=../editing.js language="JavaScript" type="text/JavaScript" ></script>
+<script>
+    function editingTest() {
+        moveSelectionForwardByLineCommand();
+        deleteCommand();
+        deleteCommand();
+    }
+</script>
+<div contenteditable="true" id="test">
+    <img width="140" height="140"><br><br>This is a line of text.
+</div>
+<script>
+    runDumpAsTextEditingTest(false);
+    Markup.description("We should be able to delete the br and then the image.");
+    Markup.dump(document.getElementById("test"));
+</script>

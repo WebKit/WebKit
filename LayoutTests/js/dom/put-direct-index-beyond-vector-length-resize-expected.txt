@@ -1,0 +1,10 @@
+Make sure we don't crash when doing a put-direct-index beyond the vector length of a normal JSObject.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS o[0] is "foo"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

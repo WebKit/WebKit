@@ -1,0 +1,3 @@
+
+PASS Verifies that position:static and position:relative computed to position:absolute in the top layer.
+

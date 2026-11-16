@@ -1,0 +1,33 @@
+<p>An avif image gets stuck in loading. The test passes unless a crash happens.</p>
+<img style="background-color: blue">
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+function loadAndStall()
+{
+    return "http://127.0.0.1:8000/resources/load-and-stall.py";
+}
+
+function avifImage()
+{
+    return "?name=../../../fast/images/resources/avifs00-ref.avif&mimeType=image%2Favif";
+}
+
+function testDone()
+{
+    if (window.testRunner) testRunner.notifyDone();
+}
+
+function runTest()
+{
+    var image = document.getElementsByTagName('img')[0];
+    image.src = loadAndStall() + avifImage() + "&stallAt=600&stallFor=60";
+
+    setTimeout(testDone, 550);
+}
+
+setTimeout(runTest, 0);
+</script>

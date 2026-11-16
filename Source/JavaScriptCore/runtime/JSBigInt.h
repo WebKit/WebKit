@@ -1,0 +1,575 @@
+/*
+ * Copyright (C) 2017 Caio Lima <ticaiolima@gmail.com>
+ * Copyright (C) 2019-2022 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#pragma once
+
+#include <JavaScriptCore/Error.h>
+#include <JavaScriptCore/JSCJSValueCell.h>
+#include <JavaScriptCore/JSObject.h>
+#include <JavaScriptCore/MathCommon.h>
+#include <wtf/Int128.h>
+#include <wtf/text/StringView.h>
+#include <wtf/text/WTFString.h>
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
+namespace JSC {
+
+class Int32BigIntImpl;
+class HeapBigIntImpl;
+
+enum class JSBigIntComparisonMode : uint8_t {
+    LessThan,
+    LessThanOrEqual
+};
+
+enum class JSBigIntComparisonResult : uint8_t {
+    Equal,
+    Undefined,
+    GreaterThan,
+    LessThan
+};
+
+class JSBigInt final : public JSCell {
+public:
+    using Base = JSCell;
+    using Digit = UCPURegister;
+
+    static constexpr unsigned StructureFlags = Base::StructureFlags | StructureIsImmortal | OverridesPut;
+    friend class CachedBigInt;
+
+    template<typename CellType, SubspaceAccess mode>
+    static CompleteSubspace* subspaceFor(VM& vm)
+    {
+        return &vm.heap.cellSpace;
+    }
+
+    static constexpr size_t allocationSize(unsigned length)
+    {
+        return offsetOfData() + length * sizeof(Digit);
+    }
+
+    enum class InitializationType { None, WithZero };
+    void initialize(InitializationType);
+
+    static Structure* createStructure(VM&, JSGlobalObject*, JSValue prototype);
+    JS_EXPORT_PRIVATE static JSBigInt* tryCreateZero(VM&);
+    JS_EXPORT_PRIVATE static JSBigInt* tryCreateWithLength(VM&, unsigned length);
+    JS_EXPORT_PRIVATE static JSBigInt* createWithLength(JSGlobalObject*, unsigned length);
+
+    JS_EXPORT_PRIVATE static JSBigInt* createFrom(JSGlobalObject*, int32_t value);
+    static JSBigInt* tryCreateFrom(VM&, int32_t value);
+    static JSBigInt* createFrom(JSGlobalObject*, uint32_t value);
+    JS_EXPORT_PRIVATE static JSBigInt* createFrom(JSGlobalObject*, int64_t value);
+    JS_EXPORT_PRIVATE static JSBigInt* createFrom(JSGlobalObject*, uint64_t value);
+    JS_EXPORT_PRIVATE static JSBigInt* createFrom(JSGlobalObject*, Int128 value);
+    static JSBigInt* createFrom(JSGlobalObject*, bool value);
+    static JSBigInt* createFrom(JSGlobalObject*, double value);
+
+    JS_EXPORT_PRIVATE static JSBigInt* tryCreateFrom(JSGlobalObject*, VM&, bool sign, std::span<const Digit>);
+
+    static JSBigInt* createFrom(JSGlobalObject*, VM&, int32_t value);
+
+    static constexpr size_t offsetOfLength()
+    {
+        return OBJECT_OFFSETOF(JSBigInt, m_length);
+    }
+
+    static constexpr size_t offsetOfData()
+    {
+        return WTF::roundUpToMultipleOf<alignof(Digit)>(sizeof(JSBigInt));
+    }
+
+    DECLARE_EXPORT_INFO;
+
+    NODELETE JSValue toPrimitive(JSGlobalObject*, PreferredPrimitiveType) const;
+
+    void setSign(bool sign) { setPerCellBit(sign); }
+    bool sign() const { return perCellBit(); }
+
+    unsigned length() const { return m_length; }
+    unsigned bitLength() const;
+
+    enum class ErrorParseMode {
+        ThrowExceptions,
+        IgnoreExceptions
+    };
+
+    enum class ParseIntMode { DisallowEmptyString, AllowEmptyString };
+    enum class ParseIntSign { Unsigned, Signed };
+
+    static JSValue parseInt(JSGlobalObject*, VM&, StringView, uint8_t radix, ErrorParseMode = ErrorParseMode::ThrowExceptions, ParseIntSign = ParseIntSign::Unsigned);
+    static JSValue parseInt(JSGlobalObject*, StringView, ErrorParseMode = ErrorParseMode::ThrowExceptions);
+    static JSValue stringToBigInt(JSGlobalObject*, StringView);
+
+    static String tryGetString(VM&, JSBigInt*, unsigned radix);
+
+    String toString(JSGlobalObject*, unsigned radix);
+    
+    using ComparisonMode = JSBigIntComparisonMode;
+
+    using ComparisonResult = JSBigIntComparisonResult;
+
+    NODELETE JS_EXPORT_PRIVATE static bool equals(JSBigInt*, JSBigInt*);
+    NODELETE bool equalsToNumber(JSValue);
+    NODELETE JS_EXPORT_PRIVATE bool equalsToInt32(int32_t);
+    NODELETE static ComparisonResult compare(JSBigInt* x, JSBigInt* y);
+    static ComparisonResult compare(int32_t x, JSBigInt* y);
+    static ComparisonResult compare(JSBigInt* x, int32_t y);
+    static ComparisonResult compare(JSBigInt* x, int64_t y);
+    static ComparisonResult compare(JSValue x, int64_t y);
+    static ComparisonResult compare(JSBigInt* x, uint64_t y);
+    static ComparisonResult compare(JSValue x, uint64_t y);
+    static ComparisonResult compare(JSValue x, JSValue y);
+
+    double toNumber(JSGlobalObject*) const;
+    JSObject* toObject(JSGlobalObject*) const;
+    inline bool toBoolean() const { return !isZero(); }
+
+    NODELETE static ComparisonResult compareToDouble(JSBigInt* x, double y);
+    static ComparisonResult compareToDouble(double x, JSBigInt* y);
+    template<typename BigIntImpl>
+    static ComparisonResult compareToDouble(BigIntImpl x, double y);
+    template <typename BigIntImpl>
+    static ComparisonResult compareToDouble(double x, BigIntImpl y) { return flip(compareToDouble(y, x)); }
+    static ComparisonResult compareToDouble(int32_t x, double y);
+    static ComparisonResult compareToDouble(double x, int32_t y);
+    static ComparisonResult compareToDouble(int64_t x, double y);
+    static ComparisonResult compareToDouble(double x, int64_t y);
+    static ComparisonResult compareToDouble(uint64_t x, double y);
+    static ComparisonResult compareToDouble(double x, uint64_t y);
+    static ComparisonResult compareToDouble(JSValue x, double y);
+    static ComparisonResult compareToDouble(double x, JSValue y);
+
+private:
+    static JSBigInt* tryCreateFromImpl(JSGlobalObject*, VM&, bool sign, std::span<const Digit>);
+    static JSBigInt* createZero(VM&);
+
+    ALWAYS_INLINE static ComparisonResult flip(ComparisonResult result)
+    {
+        switch (result) {
+        case JSBigInt::ComparisonResult::LessThan:
+            return JSBigInt::ComparisonResult::GreaterThan;
+        case JSBigInt::ComparisonResult::GreaterThan:
+            return JSBigInt::ComparisonResult::LessThan;
+        case JSBigInt::ComparisonResult::Equal:
+        case JSBigInt::ComparisonResult::Undefined:
+            return result;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+            return JSBigInt::ComparisonResult::Undefined;
+        }
+    }
+
+private:
+    friend class HeapBigIntImpl;
+public:
+    struct ImplResult {
+        ImplResult(HeapBigIntImpl&);
+        ImplResult(JSBigInt*);
+        ImplResult(JSValue);
+        JSValue payload;
+    };
+private:
+    static JSBigInt* createWithLength(JSGlobalObject*, VM&, unsigned length);
+
+    template <typename BigIntImpl1, typename BigIntImpl2>
+    static ImplResult exponentiateImpl(JSGlobalObject*, BigIntImpl1 base, BigIntImpl2 exponent);
+
+    template <typename BigIntImpl1, typename BigIntImpl2>
+    static ImplResult multiplyImpl(JSGlobalObject*, BigIntImpl1 x, BigIntImpl2 y);
+
+    template <typename BigIntImpl>
+    static ImplResult incImpl(JSGlobalObject*, BigIntImpl x);
+
+    template <typename BigIntImpl>
+    static ImplResult decImpl(JSGlobalObject*, BigIntImpl x);
+
+    template <typename BigIntImpl1, typename BigIntImpl2>
+    static ImplResult addImpl(JSGlobalObject*, BigIntImpl1 x, BigIntImpl2 y);
+
+    template <typename BigIntImpl1, typename BigIntImpl2>
+    static ImplResult subImpl(JSGlobalObject*, BigIntImpl1 x, BigIntImpl2 y);
+
+    template <typename BigIntImpl1, typename BigIntImpl2>
+    static ImplResult divideImpl(JSGlobalObject*, BigIntImpl1 x, BigIntImpl2 y);
+
+    template <typename BigIntImpl1, typename BigIntImpl2>
+    static ImplResult remainderImpl(JSGlobalObject*, BigIntImpl1 x, BigIntImpl2 y);
+
+    template <typename BigIntImpl>
+    static ImplResult unaryMinusImpl(JSGlobalObject*, BigIntImpl x);
+
+    template <typename BigIntImpl1, typename BigIntImpl2>
+    static ImplResult bitwiseAndImpl(JSGlobalObject*, BigIntImpl1 x, BigIntImpl2 y);
+
+    template <typename BigIntImpl1, typename BigIntImpl2>
+    static ImplResult bitwiseOrImpl(JSGlobalObject*, BigIntImpl1 x, BigIntImpl2 y);
+
+    template <typename BigIntImpl1, typename BigIntImpl2>
+    static ImplResult bitwiseXorImpl(JSGlobalObject*, BigIntImpl1 x, BigIntImpl2 y);
+
+    template <typename BigIntImpl>
+    static ImplResult bitwiseNotImpl(JSGlobalObject*, BigIntImpl x);
+
+    template <typename BigIntImpl1, typename BigIntImpl2>
+    static ImplResult leftShiftImpl(JSGlobalObject*, BigIntImpl1 x, BigIntImpl2 y);
+
+    template <typename BigIntImpl1, typename BigIntImpl2>
+    static ImplResult signedRightShiftImpl(JSGlobalObject*, BigIntImpl1 x, BigIntImpl2 y);
+
+    template <typename BigIntImpl1, typename BigIntImpl2>
+    NODELETE static ComparisonResult compareImpl(BigIntImpl1 x, BigIntImpl2 y);
+
+public:
+    static JSValue exponentiate(JSGlobalObject*, JSBigInt* base, JSBigInt* exponent);
+
+    // https://tc39.es/proposal-bigint-math/
+    static JSValue sqrt(JSGlobalObject*, JSBigInt*);
+    static JSValue cbrt(JSGlobalObject*, JSBigInt*);
+
+    static JSValue multiply(JSGlobalObject*, JSBigInt* x, JSBigInt* y);
+    
+    static JSValue inc(JSGlobalObject*, JSBigInt* x);
+
+    static JSValue dec(JSGlobalObject*, JSBigInt* x);
+
+    static JSValue add(JSGlobalObject*, JSBigInt* x, JSBigInt* y);
+
+    static JSValue sub(JSGlobalObject*, JSBigInt* x, JSBigInt* y);
+
+    static JSValue divide(JSGlobalObject*, JSBigInt* x, JSBigInt* y);
+
+    static JSValue remainder(JSGlobalObject*, JSBigInt* x, JSBigInt* y);
+
+    static JSValue unaryMinus(JSGlobalObject*, JSBigInt* x);
+
+    static JSValue bitwiseAnd(JSGlobalObject*, JSBigInt* x, JSBigInt* y);
+
+    static JSValue bitwiseOr(JSGlobalObject*, JSBigInt* x, JSBigInt* y);
+
+    static JSValue bitwiseXor(JSGlobalObject*, JSBigInt* x, JSBigInt* y);
+
+    static JSValue bitwiseNot(JSGlobalObject*, JSBigInt* x);
+
+    static JSValue leftShift(JSGlobalObject*, JSBigInt* x, JSBigInt* y);
+
+    static JSValue signedRightShift(JSGlobalObject*, JSBigInt* x, JSBigInt* y);
+
+    static JSValue toNumberHeap(JSBigInt*);
+    inline static JSValue toNumber(JSValue); // Defined in JSBigIntInlines.h
+
+    static JSValue asIntN(JSGlobalObject*, uint64_t numberOfBits, JSBigInt*);
+    static JSValue asUintN(JSGlobalObject*, uint64_t numberOfBits, JSBigInt*);
+
+    inline static uint64_t toBigUInt64(JSValue); // Defined in JSBigIntInlines.h
+    inline static int64_t toBigInt64(JSValue); // Defined in JSBigIntInlines.h
+    static std::optional<uint64_t> tryToBigUInt64(JSValue);
+    static std::optional<int64_t> tryToBigInt64(JSValue);
+
+    Digit digit(unsigned) const;
+    void setDigit(unsigned, Digit); // Use only when initializing.
+    std::span<const Digit> digits() const
+    {
+        return { dataStorage(), length() };
+    }
+
+    NODELETE JS_EXPORT_PRIVATE std::optional<unsigned> concurrentHash();
+    unsigned hash()
+    {
+        if (m_hash)
+            return m_hash;
+        return hashSlow();
+    }
+
+    inline static std::optional<double> tryExtractDouble(JSValue); // Defined in JSBigIntInlines.h
+
+    inline bool isZero() const
+    {
+        ASSERT(length() || !sign());
+        return !length();
+    }
+
+    static constexpr unsigned bitsPerByte = 8;
+    static constexpr unsigned digitBits = sizeof(Digit) * bitsPerByte;
+    static constexpr unsigned halfDigitBits = digitBits / 2;
+    static constexpr Digit halfDigitMask = (1ull << halfDigitBits) - 1;
+
+    // Digit arithmetic helpers.
+    NODELETE static Digit digitAdd(Digit a, Digit b, Digit& carry);
+    NODELETE static Digit digitAdd3(Digit a, Digit b, Digit c, Digit& carry);
+    NODELETE static Digit digitSub(Digit a, Digit b, Digit& borrow);
+    NODELETE static Digit digitSub2(Digit a, Digit b, Digit borrowIn, Digit& borrowOut);
+    static std::tuple<Digit, Digit> digitMul(Digit a, Digit b);
+    NODELETE static Digit digitDiv(Digit high, Digit low, Digit divisor, Digit& remainder);
+    NODELETE static Digit digitPow(Digit base, Digit exponent);
+    NODELETE static Digit subtractAndReturnBorrow(std::span<Digit> z, std::span<const Digit> x, std::span<const Digit> y);
+    NODELETE static Digit addAndReturnCarry(std::span<Digit> z, std::span<const Digit> x, std::span<const Digit> y);
+    static bool productGreaterThan(Digit factor1, Digit factor2, Digit high, Digit low);
+
+
+private:
+    JSBigInt(VM&, Structure*, unsigned length);
+
+    std::span<Digit> digits()
+    {
+        return { dataStorage(), length() };
+    }
+
+    NODELETE JS_EXPORT_PRIVATE unsigned hashSlow();
+
+    static JSBigInt* tryCreateFromImpl(JSGlobalObject*, uint64_t value, bool sign);
+
+    static constexpr int maxInt = 0x7FFFFFFF;
+
+    static constexpr unsigned doubleMantissaSize = 53;
+    static constexpr unsigned doublePhysicalMantissaSize = 52; // Excluding hidden-bit.
+    static constexpr uint64_t doublePhysicalMantissaMask = (1ULL << doublePhysicalMantissaSize) - 1;
+    static constexpr uint64_t doubleMantissaHiddenBit = 1ULL << doublePhysicalMantissaSize;
+    
+    // The maximum length that the current implementation supports would be
+    // maxInt / digitBits. However, we use a lower limit for now, because
+    // raising it later is easier than lowering it.
+    // Support up to 1 million bits.
+    static constexpr unsigned maxLengthBits = 1024 * 1024;
+    static constexpr unsigned maxLength = maxLengthBits / digitBits;
+    static_assert(maxLengthBits % digitBits == 0);
+    
+    NODELETE static uint64_t calculateMaximumCharactersRequired(unsigned length, unsigned radix, Digit lastDigit, bool sign);
+    
+    template <typename BigIntImpl1, typename BigIntImpl2>
+    NODELETE static ComparisonResult absoluteCompare(BigIntImpl1 x, BigIntImpl2 y);
+    static void multiplyAdd(std::span<const Digit> source, Digit factor, Digit summand, std::span<Digit> result);
+    static std::span<Digit> multiplySingle(std::span<const Digit> multiplicand, Digit multiplier, std::span<Digit> result);
+    static std::span<Digit> multiplySchoolbook(std::span<const Digit> x, std::span<const Digit> y, std::span<Digit> result);
+    static std::span<Digit> multiplyComba(std::span<const Digit> x, std::span<const Digit> y, std::span<Digit> result);
+    // Fully unrolling a size costs O(N^2) code, so only the small sizes and the one wide size that
+    // already existed are instantiated.
+    static constexpr size_t maxCombaFixedSize = 16;
+    static void multiplySpecialLow(std::span<const Digit> x, std::span<const Digit> y, std::span<Digit> result);
+    static void multiplySpecialHigh(std::span<const Digit> x, std::span<const Digit> y, std::span<Digit> result, size_t startPosition);
+    template<size_t XSize, size_t YSize, size_t StartPosition>
+    static void multiplySpecialHighFixed(std::span<const Digit, XSize>, std::span<const Digit, YSize>, std::span<Digit, XSize + YSize> result);
+    template<size_t XSize, size_t YSize, size_t RSize>
+    static void multiplySpecialLowFixed(std::span<const Digit, XSize>, std::span<const Digit, YSize>, std::span<Digit, RSize> result);
+    template<size_t N>
+    static std::span<Digit, N * 2> multiplyCombaFixed(std::span<const Digit, N> x, std::span<const Digit, N> y, std::span<Digit, N * 2> result);
+    template<size_t N>
+    static std::span<Digit, N * 2> squareCombaFixed(std::span<const Digit, N> x, std::span<Digit, N * 2> result);
+    static std::span<Digit> multiplyDigitsInto(std::span<const Digit> x, std::span<const Digit> y, std::span<Digit> result);
+    static void multiplyZeroPadded(std::span<const Digit> x, std::span<const Digit> y, std::span<Digit> result);
+    static std::span<Digit> multiplyKaratsuba(std::span<const Digit> x, std::span<const Digit> y, std::span<Digit> result);
+    static void karatsubaStart(std::span<Digit> z, std::span<const Digit> x, std::span<const Digit> y, std::span<Digit> scratch, size_t k);
+    static void karatsubaChunk(std::span<Digit> z, std::span<const Digit> x, std::span<const Digit> y, std::span<Digit> scratch);
+    static void karatsubaMain(std::span<Digit> z, std::span<const Digit> x, std::span<const Digit> y, std::span<Digit> scratch, size_t n);
+    static void karatsubaAbsoluteDifference(std::span<Digit> result, std::span<const Digit> x, std::span<const Digit> y, bool& negative);
+    static std::span<Digit> multiplyToom3(std::span<const Digit> x, std::span<const Digit> y, std::span<Digit> result);
+    static void toom3Main(std::span<Digit> z, std::span<const Digit> x, std::span<const Digit> y, std::span<Digit> scratch);
+    class FFTContainer;
+    static std::span<Digit> multiplyFFT(std::span<const Digit> x, std::span<const Digit> y, std::span<Digit> result);
+
+    NODELETE static std::span<Digit> divideSingle(std::span<Digit> q, Digit& remainder, std::span<const Digit>, Digit);
+    static std::tuple<std::span<Digit>, std::span<Digit>> divideSchoolbook(std::span<Digit> q, std::span<Digit> r, std::span<const Digit>, std::span<const Digit>);
+    static void burnikelZieglerBasecase(std::span<Digit> q, std::span<Digit> r, std::span<const Digit>, std::span<const Digit>);
+    static void burnikelZieglerD3n2n(std::span<Digit> q, std::span<Digit> r, std::span<const Digit> a1a2, std::span<const Digit> a3, std::span<const Digit>, std::span<Digit> scratch);
+    static void burnikelZieglerD2n1n(std::span<Digit> q, std::span<Digit> r, std::span<const Digit>, std::span<const Digit>, std::span<Digit> scratch);
+    static std::tuple<std::span<Digit>, std::span<Digit>> divideBurnikelZiegler(std::span<Digit> q, std::span<Digit> r, std::span<const Digit>, std::span<const Digit>);
+    static std::tuple<std::span<Digit>, std::span<Digit>> divideDigitsInto(std::span<Digit> q, std::span<Digit> r, std::span<const Digit>, std::span<const Digit>);
+    static Digit divideSameSize(std::span<const Digit>, std::span<const Digit>);
+    static std::span<Digit> remainderSameSize(std::span<Digit> r, std::span<const Digit>, std::span<const Digit>);
+
+    NODELETE static std::span<Digit> addSchoolbook(std::span<const Digit> x, std::span<const Digit> y, std::span<Digit> result);
+    NODELETE static std::span<Digit> subSchoolbook(std::span<const Digit> x, std::span<const Digit> y, std::span<Digit> result);
+    template<size_t N>
+    static std::span<Digit, N + 1> addSchoolbookFixed(std::span<const Digit, N> x, std::span<const Digit, N> y, std::span<Digit, N + 1> result);
+    template<size_t N>
+    static std::span<Digit, N> subSchoolbookFixed(std::span<const Digit, N> x, std::span<const Digit, N> y, std::span<Digit, N> result);
+    static std::span<Digit> addDigitsInto(std::span<const Digit> x, std::span<const Digit> y, std::span<Digit> result);
+    static std::span<Digit> subDigitsInto(std::span<const Digit> x, std::span<const Digit> y, std::span<Digit> result);
+
+    NODELETE static ComparisonResult compareDigits(std::span<const Digit> x, std::span<const Digit> y);
+    NODELETE static std::span<Digit> addDigits(std::span<const Digit> x, std::span<const Digit> y, std::span<Digit> result);
+    static std::span<Digit> multiplyDigits(std::span<const Digit> x, std::span<const Digit> y, std::span<Digit> result);
+    static std::span<Digit> divideDigits(std::span<Digit> quotient, std::span<const Digit> x, std::span<const Digit> y);
+    static std::span<Digit> oneShiftedLeft(std::span<Digit> result, unsigned bitIndex);
+
+    enum class RoundingResult {
+        RoundDown,
+        Tie,
+        RoundUp
+    };
+
+    NODELETE static RoundingResult decideRounding(JSBigInt*, int32_t mantissaBitsUnset, int32_t digitIndex, uint64_t currentDigit);
+
+    enum class ExtraDigitsHandling {
+        Copy,
+        Skip
+    };
+
+    template<typename BitwiseOp>
+    static std::span<Digit> absoluteBitwiseOp(std::span<const Digit> x, std::span<const Digit> y, ExtraDigitsHandling, NOESCAPE const BitwiseOp&, std::span<Digit> result);
+
+    static size_t andLength(std::span<const Digit> x, std::span<const Digit> y) { return std::min(x.size(), y.size()); }
+    static size_t orLength(std::span<const Digit> x, std::span<const Digit> y) { return std::max(x.size(), y.size()); }
+    static size_t andNotLength(std::span<const Digit> x, std::span<const Digit>) { return x.size(); }
+    static size_t xorLength(std::span<const Digit> x, std::span<const Digit> y) { return std::max(x.size(), y.size()); }
+    static std::span<Digit> absoluteAnd(std::span<const Digit> x, std::span<const Digit> y, std::span<Digit> result);
+    static std::span<Digit> absoluteOr(std::span<const Digit> x, std::span<const Digit> y, std::span<Digit> result);
+    static std::span<Digit> absoluteAndNot(std::span<const Digit> x, std::span<const Digit> y, std::span<Digit> result);
+    static std::span<Digit> absoluteXor(std::span<const Digit> x, std::span<const Digit> y, std::span<Digit> result);
+
+    static size_t addOneLength(std::span<const Digit> x) { return x.size() + 1; }
+    static size_t subOneLength(std::span<const Digit> x) { return x.size(); }
+    NODELETE static std::span<Digit> absoluteAddOne(std::span<const Digit> x, std::span<Digit> result);
+    NODELETE static std::span<Digit> absoluteSubOne(std::span<const Digit> x, std::span<Digit> result);
+    static ImplResult absoluteAddOne(JSGlobalObject*, std::span<const Digit> x, bool resultSign);
+    static ImplResult absoluteSubOne(JSGlobalObject*, std::span<const Digit> x, bool resultSign);
+
+    NODELETE static Digit inplaceAdd(std::span<Digit> z, std::span<const Digit> x);
+    NODELETE static Digit inplaceSub(std::span<Digit> z, std::span<const Digit> x);
+    NODELETE static Digit inplaceAddAndPropagate(std::span<Digit> z, std::span<const Digit> x);
+    NODELETE static Digit inplaceSubAndPropagate(std::span<Digit> z, std::span<const Digit> x);
+
+    static constexpr unsigned maxCachedModDivisorSize = 32; // 2048-bit divisors on 64-bit
+    static constexpr unsigned maxFixedCachedModDivisorSize = 4;
+    static constexpr unsigned maxInPlaceSubSize = 16;
+    static constexpr unsigned maxInPlaceCachedModSize = 8;
+    static_assert(maxInPlaceCachedModSize <= maxCachedModDivisorSize);
+    // Only divisors that remainderImpl arms have a cached inverse, and cachedModFixed takes that
+    // inverse as a span whose extent is fixed at compile time.
+    static_assert(maxFixedCachedModDivisorSize <= maxCachedModDivisorSize);
+    static void cachedModMakeInverse(VM&, std::span<const Digit> b);
+    static Digit cachedModFoldFactor(std::span<const Digit> b);
+    static std::span<const Digit> cachedMod(VM&, std::span<Digit> r, std::span<const Digit>, std::span<const Digit>);
+    template<size_t N, size_t ASize>
+    static void cachedModFixed(std::span<Digit, N> r, std::span<const Digit, ASize>, std::span<const Digit, N> b, std::span<const Digit, N + 1> inverse);
+    template<typename RSpan, typename ASpan, typename BSpan>
+    static void cachedModFoldImpl(RSpan r, ASpan, BSpan b, Digit c);
+    template<size_t N, size_t ASize>
+    static void cachedModFoldFixed(std::span<Digit, N> r, std::span<const Digit, ASize>, std::span<const Digit, N> b, Digit c);
+    static void cachedModFold(std::span<Digit> r, std::span<const Digit>, std::span<const Digit> b, Digit c);
+    template<typename RSpan, typename BSpan>
+    static Digit reduceOnce(RSpan r, BSpan b, Digit high);
+    NODELETE static bool greaterThanOrEqual(std::span<const Digit>, std::span<const Digit>);
+
+    static std::span<Digit> rightShift(std::span<Digit> z, std::span<const Digit> x, unsigned);
+    static std::span<Digit> leftShift(std::span<Digit> z, std::span<const Digit> x, unsigned);
+
+    static String toStringBasePowerOfTwo(VM&, JSGlobalObject*, JSBigInt*, unsigned radix);
+    class ToStringFormatter;
+    static String toStringGeneric(VM&, JSGlobalObject*, JSBigInt*, unsigned radix);
+
+    template <typename CharType>
+    static JSValue parseInt(JSGlobalObject*, std::span<const CharType> data, ErrorParseMode);
+
+    template <typename CharType>
+    static JSValue parseInt(JSGlobalObject*, VM&, std::span<const CharType> data, unsigned startIndex, unsigned radix, ErrorParseMode, ParseIntSign = ParseIntSign::Signed, ParseIntMode = ParseIntMode::AllowEmptyString);
+
+    template <typename BigIntImpl>
+    static JSBigInt* copy(JSGlobalObject*, BigIntImpl x);
+
+    void inplaceMultiplyAdd(Digit multiplier, Digit part);
+    template <typename BigIntImpl1, typename BigIntImpl2>
+    static ImplResult absoluteAdd(JSGlobalObject*, BigIntImpl1 x, BigIntImpl2 y, bool resultSign);
+
+    template <typename BigIntImpl1, typename BigIntImpl2>
+    static ImplResult absoluteSub(JSGlobalObject*, BigIntImpl1 x, BigIntImpl2 y, bool resultSign);
+
+    template <typename BigIntImpl1, typename BigIntImpl2>
+    static ImplResult leftShiftByAbsolute(JSGlobalObject*, BigIntImpl1 x, BigIntImpl2 y);
+    template <typename BigIntImpl1, typename BigIntImpl2>
+    static ImplResult rightShiftByAbsolute(JSGlobalObject*, BigIntImpl1 x, BigIntImpl2 y);
+
+    static ImplResult rightShiftByMaximum(JSGlobalObject*, bool sign);
+
+    template <typename BigIntImpl>
+    NODELETE static std::optional<Digit> toShiftAmount(BigIntImpl x);
+
+    template <typename BigIntImpl>
+    static ImplResult asIntNImpl(JSGlobalObject*, uint64_t, BigIntImpl);
+    template <typename BigIntImpl>
+    static ImplResult asUintNImpl(JSGlobalObject*, uint64_t, BigIntImpl);
+    template <typename BigIntImpl>
+    static ImplResult truncateToNBits(JSGlobalObject*, unsigned, BigIntImpl);
+    template <typename BigIntImpl>
+    static ImplResult truncateAndSubFromPowerOfTwo(JSGlobalObject*, unsigned, BigIntImpl, bool resultSign);
+
+    NODELETE JS_EXPORT_PRIVATE static uint64_t toBigUInt64Heap(JSBigInt*);
+    inline std::optional<uint64_t> tryAbsoluteValueAsUInt64() const;
+
+    inline Digit* dataStorage() { return std::bit_cast<Digit*>(std::bit_cast<uint8_t*>(this) + offsetOfData()); }
+    inline const Digit* dataStorage() const { return std::bit_cast<const Digit*>(std::bit_cast<const uint8_t*>(this) + offsetOfData()); }
+    inline Digit* dataStorageUnsafe() { return dataStorage(); }
+
+    void setLength(unsigned length) { m_length = length; }
+
+    unsigned m_length;
+    unsigned m_hash { 0 };
+};
+
+inline JSBigInt* asHeapBigInt(JSValue value)
+{
+    ASSERT(value.asCell()->isHeapBigInt());
+    return uncheckedDowncast<JSBigInt>(value.asCell());
+}
+
+inline JSBigInt::Digit JSBigInt::digit(unsigned n) const
+{
+    ASSERT(n < length());
+    return dataStorage()[n];
+}
+
+inline void JSBigInt::setDigit(unsigned n, Digit value)
+{
+    ASSERT(n < length());
+    dataStorage()[n] = value;
+}
+
+inline std::optional<uint64_t> JSBigInt::tryAbsoluteValueAsUInt64() const
+{
+    if (length() > 64 / digitBits)
+        return std::nullopt;
+    uint64_t value = 0;
+    for (unsigned index = 0; index < length(); ++index)
+        value |= static_cast<uint64_t>(digit(index)) << (index * digitBits);
+    return value;
+}
+
+ALWAYS_INLINE JSBigInt::ComparisonResult invertBigIntCompareResult(JSBigInt::ComparisonResult comparisonResult)
+{
+    switch (comparisonResult) {
+    case JSBigInt::ComparisonResult::GreaterThan:
+        return JSBigInt::ComparisonResult::LessThan;
+    case JSBigInt::ComparisonResult::LessThan:
+        return JSBigInt::ComparisonResult::GreaterThan;
+    default:
+        return comparisonResult;
+    }
+}
+
+} // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

@@ -1,0 +1,9 @@
+
+PASS lang("en"): <root><match xml:lang="en"/></root>
+PASS lang("en"): <root><match xml:lang="EN"/></root>
+PASS lang("en"): <root><match xml:lang="en-us"/></root>
+PASS lang("en"): <root><unmatch/></root>
+PASS lang("ja"): <root xml:lang="ja"><match/></root>
+PASS lang("ja"): <root xml:lang="ja-jp"><unmatch xml:lang="ja_JP"/></root>
+PASS lang("ko"): <root><unmatch xml:lang="Ko"/></root>
+

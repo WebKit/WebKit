@@ -1,0 +1,7 @@
+ab
+AB
+PASS: d1 text content is 'ab'
+PASS: d2 text content is 'AB'
+PASS: d1 has both characters (width=40)
+PASS: d2 has both characters (width=40)
+

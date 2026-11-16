@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src=video-test.js></script>
+    <script>
+        var finished = false;
+
+        function bufferedRanges()
+        {
+            let ranges = [];
+            for (let i = 0; i < video.buffered.length; ++i)
+                ranges.push("[" + video.buffered.start(i) + ", " + video.buffered.end(i) + "]");
+            return ranges.join(" ");
+        }
+
+        function start()
+        {
+            findMediaElement();
+            video.muted = true;
+            video.addEventListener("ended", function() {
+                consoleWrite("++ ended.");
+                finished = true;
+                endTest();
+            });
+            video.addEventListener("canplaythrough", function() {
+                consoleWrite("<em>++ seek near the end, seek back to the start, then play through the whole clip.</em>");
+                video.addEventListener("seeked", function() {
+                    consoleWrite("++ seek to the end completed.");
+                    video.addEventListener("seeked", function() {
+                        consoleWrite("++ seek to the start completed.");
+                        run("video.play()");
+                    }, { once: true });
+                    video.currentTime = 0;
+                }, { once: true });
+                video.currentTime = video.duration - 0.5;
+            }, { once: true });
+            video.src = "content/test-vp8.webm";
+
+            setTimeout(function() {
+                if (finished)
+                    return;
+                failTest("Video did not play to the end; currentTime = " + video.currentTime + ", duration = " + video.duration + ", paused = " + video.paused + ", ended = " + video.ended + ", readyState = " + video.readyState + ", seeking = " + video.seeking + ", buffered = " + bufferedRanges());
+            }, 20000);
+        }
+    </script>
+</head>
+<body onload="start()">
+    <video></video>
+    <p>Test that a WebM video plays through to its end after seeking near the end and back to the start.</p>
+</body>
+</html>

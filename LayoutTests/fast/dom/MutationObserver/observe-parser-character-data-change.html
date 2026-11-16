@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>This tests observing the character data change by the HTML parser.</p>
+<pre id="log"></pre>
+<div id="parent"><script>
+
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+const log = document.getElementById('log');
+
+document.write('a');
+let observer = new MutationObserver((mutations) => {
+    let result = 'PASS';
+    if (mutations.length != 1)
+        result = `FAIL - expected 1 mutation record but got ${mutations.length}`;
+    else if (mutations[0].type != 'characterData')
+        result = `FAIL - expected characterData mutation record but got ${mutations[0].type}`;
+    else if (mutations[0].oldValue != 'a')
+        result = `FAIL - expected oldValue to be "a" but got "${mutations[0].oldValue}"`;
+    log.textContent = result;
+});
+observer.observe(document.getElementById('parent'), {childList: true, subtree: true, characterData: true, characterDataOldValue: true});
+document.write('b');
+
+function fail() {
+    if (!log.textContent)
+        log.textContent = 'FAIL - did not receive a mutation record in time';
+}
+
+Promise.resolve().then(fail);
+window.onload = () => fail;
+
+</script></div>
+</body>
+</html>

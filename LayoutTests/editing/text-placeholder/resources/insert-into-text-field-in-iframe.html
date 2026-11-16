@@ -1,0 +1,37 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<head>
+<meta name="viewport" content="initial-scale=1.0">
+<script src="../../../resources/ui-helper.js"></script>
+<link rel="stylesheet" href="test.css">
+</head>
+<body>
+<input id="input" class="test" type="text" value="Hello from Cupertino!">
+<pre id="console"></pre>
+<script>
+async function runTest()
+{
+    let input = document.getElementById("input");
+
+    // FIXME: Use UIHelper.activateElementAndWaitForInputSession(input). See <https://bugs.webkit.org/show_bug.cgi?id=208749>.
+    await UIHelper.callFunctionAndWaitForEvent(() => input.focus(), input, "focus");
+
+    let positionOfFrom = input.value.indexOf("from");
+    input.setSelectionRange(positionOfFrom, positionOfFrom);
+
+    if (window.internals) {
+        // Because we are using the Ahem font almost all glyphs have the same width.
+        let glyphWidth = parseInt(window.getComputedStyle(input, null).fontSize, 10);
+        internals.insertTextPlaceholder(5 * glyphWidth, 0 /* height */);
+    }
+
+    // Defocus field to hide the cursor.
+    await UIHelper.callFunctionAndWaitForEvent(() => input.blur(), input, "blur");
+
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+runTest();
+</script>
+</body>
+</html>

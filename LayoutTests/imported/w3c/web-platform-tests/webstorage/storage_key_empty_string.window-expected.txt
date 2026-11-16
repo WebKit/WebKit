@@ -1,0 +1,4 @@
+
+PASS localStorage.key with empty string
+PASS sessionStorage.key with empty string
+

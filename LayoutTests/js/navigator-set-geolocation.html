@@ -1,0 +1,29 @@
+<script src="../resources/js-test-pre.js"></script>
+<script>
+description("Tests that navigator.geolocation cannot be shadowed.");
+
+function testInStrictMode()
+{
+    "use strict";
+    try {
+        navigator.geolocation = 1;
+        testFailed("navigator.geolocation = 1 did not throw exception.");
+    } catch (e) {
+        testPassed("navigator.geolocation = 1 threw exception " + e + ".");
+    }
+    shouldNotBe("navigator.geolocation", "1");
+}
+
+function testInNonStrictMode()
+{
+    shouldNotThrow("navigator.geolocation = 1");
+    shouldNotBe("navigator.geolocation", "1");
+}
+
+debug("* Strict mode");
+testInStrictMode();
+
+debug ("* Non-Strict mode");
+testInNonStrictMode();
+</script>
+<script src="../resources/js-test-post.js"></script>

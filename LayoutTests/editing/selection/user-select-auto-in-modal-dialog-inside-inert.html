@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>user-select: auto resolves against the ancestor's used value without considering inertness</title>
+<link rel="help" href="https://drafts.csswg.org/css-ui-4/#content-selection">
+<link rel="help" href="https://html.spec.whatwg.org/multipage/interaction.html#inert">
+<meta name="assert" content="User-select: auto should not inherit None from an inert ancestor.">
+<div id="log"></div>
+<div id="wrapper">
+  wrapper
+  <span id="explicitText" style="user-select: text">explicitText</span>
+  <dialog id="dialog">
+    dialog
+    <span id="autoChild" style="user-select: auto">autoChild</span>
+  </dialog>
+</div>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script>
+setup(() => {
+  dialog.showModal();
+  add_completion_callback(() => {
+    dialog.close();
+    getSelection().removeAllRanges();
+  });
+});
+
+function selectedText() {
+  const selection = getSelection();
+  selection.selectAllChildren(document.documentElement);
+  return selection.toString();
+}
+
+test(function() {
+  assert_true(selectedText().includes("autoChild"));
+}, "'user-select: auto' inside a modal dialog is selectable");
+
+test(function() {
+  assert_false(selectedText().includes("wrapper"));
+}, "A modal dialog marks outside nodes as inert, making them unselectable");
+
+test(function() {
+  wrapper.inert = true;
+  this.add_cleanup(() => { wrapper.inert = false; });
+  assert_true(selectedText().includes("autoChild"));
+}, "'user-select: auto' inside a modal dialog stays selectable when an ancestor of the dialog is inert");
+
+test(function() {
+  wrapper.inert = true;
+  this.add_cleanup(() => { wrapper.inert = false; });
+  assert_false(selectedText().includes("explicitText"));
+}, "'user-select: text' in an inert subtree is not selectable");
+
+test(function() {
+  dialog.inert = true;
+  this.add_cleanup(() => { dialog.inert = false; });
+  assert_false(selectedText().includes("autoChild"));
+}, "'user-select: auto' inside an inert modal dialog is not selectable");
+</script>

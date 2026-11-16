@@ -1,0 +1,121 @@
+Checking whether injected (internal) scripts can be stepped into or not, depending on the value of WI.settings.pauseForInternalScripts.
+
+
+== Running test suite: Debugger.setPauseForInternalScripts
+-- Running test setup.
+-- Running test case: Debugger.setPauseForInternalScripts.Disabled
+EXPRESSION: setTimeout(entryInternalObject)
+STEPS: over, in, in, in, resume
+PAUSED (debugger-statement)
+PAUSE AT entryInternalObject:26:5
+     22    }
+     23
+     24    function entryInternalObject() {
+ ->  25        |debugger;
+     26        internalObject.test(1);
+     27        internalObject.test(2);
+     28        internalObject.test(3);
+
+ACTION: step-over
+PAUSE AT entryInternalObject:27:5
+     23
+     24    function entryInternalObject() {
+     25        debugger;
+ ->  26        |internalObject.test(1);
+     27        internalObject.test(2);
+     28        internalObject.test(3);
+     29    }
+
+ACTION: step-in
+PAUSE AT entryInternalObject:28:5
+     24    function entryInternalObject() {
+     25        debugger;
+     26        internalObject.test(1);
+ ->  27        |internalObject.test(2);
+     28        internalObject.test(3);
+     29    }
+     30
+
+ACTION: step-in
+PAUSE AT entryInternalObject:29:5
+     25        debugger;
+     26        internalObject.test(1);
+     27        internalObject.test(2);
+ ->  28        |internalObject.test(3);
+     29    }
+     30
+     31    // ---------
+
+ACTION: step-in
+PAUSE AT entryInternalObject:30:2
+     26        internalObject.test(1);
+     27        internalObject.test(2);
+     28        internalObject.test(3);
+ ->  29    }|
+     30
+     31    // ---------
+     32
+
+ACTION: resume
+RESUMED
+PASS: Should have used all steps.
+
+-- Running test setup.
+-- Running test case: Debugger.setPauseForInternalScripts.Enabled
+EXPRESSION: setTimeout(entryInternalObject)
+STEPS: over, in, in, in, resume
+PAUSED (debugger-statement)
+PAUSE AT entryInternalObject:26:5
+     22    }
+     23
+     24    function entryInternalObject() {
+ ->  25        |debugger;
+     26        internalObject.test(1);
+     27        internalObject.test(2);
+     28        internalObject.test(3);
+
+ACTION: step-over
+PAUSE AT entryInternalObject:27:5
+     23
+     24    function entryInternalObject() {
+     25        debugger;
+ ->  26        |internalObject.test(1);
+     27        internalObject.test(2);
+     28        internalObject.test(3);
+     29    }
+
+ACTION: step-in
+PAUSE AT entryInternalObject:27:24
+     23
+     24    function entryInternalObject() {
+     25        debugger;
+ ->  26        internalObject.test|(1);
+     27        internalObject.test(2);
+     28        internalObject.test(3);
+     29    }
+
+ACTION: step-in
+PAUSE AT entryInternalObject:27:24
+     23
+     24    function entryInternalObject() {
+     25        debugger;
+ ->  26        internalObject.test|(1);
+     27        internalObject.test(2);
+     28        internalObject.test(3);
+     29    }
+
+ACTION: step-in
+PAUSE AT entryInternalObject:27:24
+     23
+     24    function entryInternalObject() {
+     25        debugger;
+ ->  26        internalObject.test|(1);
+     27        internalObject.test(2);
+     28        internalObject.test(3);
+     29    }
+
+ACTION: resume
+RESUMED
+PASS: Should have used all steps.
+-- Running test teardown.
+

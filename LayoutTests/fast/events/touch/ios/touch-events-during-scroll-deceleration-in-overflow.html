@@ -1,0 +1,82 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ AsyncOverflowScrollingEnabled=true ] -->
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="../../../../resources/js-test-pre.js"></script>
+    <script src="../../../../resources/ui-helper.js"></script>
+    <style>
+        body {
+            width: 100%;
+            height: 500vh;
+            font-family: -apple-system;
+            margin: 0;
+            box-sizing: border-box;
+        }
+
+        #container {
+            width: 100%;
+            height: 300px;
+            overflow-y: scroll;
+            -webkit-overflow-scrolling: touch;
+            margin: 0 auto;
+            background-color: red;
+            top: 0;
+            position: absolute;
+        }
+
+        #container > div {
+            height: 10000px;
+            width: 100%;
+            float: left;
+        }
+
+        #description {
+            top: 300px;
+            position: absolute;
+        }
+    </style>
+</head>
+<body>
+<div id="container">
+    <div class="area"></div>
+</div>
+<div id="description">
+    <p>To manually test, swipe down to scroll in the container. Both touch counts should update to 1. Then tap elsewhere in the document. The document touch count should increment to 2, but the container touch count should remain at 1.</p>
+    <p>The touch count in the scroll container is: <span id="containerTouches">0</span></p>
+    <p>The touch count in the document is: <span id="documentTouches">0</span></p>
+</div>
+<script>
+containerTouchstartEventCount = 0;
+documentTouchstartEventCount = 0;
+container.scrollTop = 0;
+document.scrollingElement.scrollTop = 0;
+container.addEventListener("touchstart", () => {
+    container.style.backgroundColor = (++containerTouchstartEventCount == 1) ? "green" : "red";
+    containerTouches.textContent = `${containerTouchstartEventCount}`;
+});
+document.body.addEventListener("touchstart", () => {
+    document.body.style.backgroundColor = (++documentTouchstartEventCount == 2) ? "green" : "red";
+    documentTouches.textContent = `${documentTouchstartEventCount}`;
+});
+
+function expectTouchCountsToBe(containerCount, documentCount)
+{
+    shouldBeEqualToString("document.getElementById('containerTouches').textContent", `${containerCount}`);
+    shouldBeEqualToString("document.getElementById('documentTouches').textContent", `${documentCount}`);
+}
+
+jsTestIsAsync = true;
+
+if (window.testRunner && testRunner.runUIScript) {
+    testRunner.dumpAsText();
+    (async () => {
+        await UIHelper.dragFromPointToPoint(100, 250, 100, 50, 0.1);
+        await new Promise(resolve => shouldBecomeDifferent("document.getElementById('container').scrollTop", "0", resolve));
+        expectTouchCountsToBe(1, 1);
+        await UIHelper.activateAt(100, 350);
+        expectTouchCountsToBe(1, 2);
+        finishJSTest();
+    })();
+}
+</script>
+<script src="../../../../resources/js-test-post.js"></script>
+</body>

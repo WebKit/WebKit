@@ -1,0 +1,27 @@
+
+PASS @supports at-rule
+PASS @supports at-rule 1
+PASS @supports at-rule 2
+PASS @supports at-rule 3
+PASS @supports at-rule 4
+PASS @supports at-rule 5
+PASS @supports at-rule 6
+PASS @supports at-rule 7
+PASS @supports at-rule 8
+PASS @supports at-rule 9
+PASS @supports at-rule 10
+PASS @supports at-rule 11
+PASS @supports at-rule 12
+PASS @supports at-rule 13
+PASS @supports at-rule 14
+PASS @supports at-rule 15
+PASS @supports at-rule 16
+PASS @supports at-rule 17
+PASS @supports at-rule 18
+PASS @supports at-rule 19
+PASS @supports at-rule 20
+PASS @supports at-rule 21
+PASS @supports at-rule 22
+PASS @supports at-rule 23
+PASS @supports at-rule 24
+

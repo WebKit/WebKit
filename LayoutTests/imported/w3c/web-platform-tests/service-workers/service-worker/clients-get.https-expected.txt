@@ -1,0 +1,5 @@
+
+PASS Test Clients.get()
+PASS Test successful Clients.get(FetchEvent.resultingClientId)
+PASS Test unsuccessful Clients.get(FetchEvent.resultingClientId)
+

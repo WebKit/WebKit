@@ -1,0 +1,5 @@
+
+PASS SVGPathElement.getTotalLength: 'display:none', path with d attribute specified on element
+PASS SVGPathElement.getTotalLength: 'display:none', path with d attribute specified as styles
+PASS SVGPathElement.getTotalLength: 'display:none', path with d attribute specified on element and as styles
+

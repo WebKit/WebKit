@@ -1,0 +1,19 @@
+
+PASS maxPacketLifeTime with value 0 should succeed
+PASS maxPacketLifeTime with value 1 should succeed
+PASS maxPacketLifeTime with value 1000 should succeed
+PASS maxPacketLifeTime with maximum value 65535 should succeed
+PASS maxPacketLifeTime with value 65534 (max-1) should succeed
+PASS maxPacketLifeTime with value 3 should succeed
+PASS maxPacketLifeTime with value 10 should succeed
+PASS maxPacketLifeTime with value -1 should throw TypeError
+PASS maxPacketLifeTime with value -100 should throw TypeError
+PASS maxPacketLifeTime with value 65536 should throw TypeError
+PASS maxPacketLifeTime with value 100000 should throw TypeError
+PASS maxPacketLifeTime with Infinity should throw TypeError
+PASS maxPacketLifeTime with -Infinity should throw TypeError
+PASS maxPacketLifeTime with NaN should throw TypeError
+PASS maxPacketLifeTime with string "65536" should throw TypeError
+PASS maxPacketLifeTime with numeric string "100" should be converted to 100
+PASS maxPacketLifeTime when omitted should be null
+

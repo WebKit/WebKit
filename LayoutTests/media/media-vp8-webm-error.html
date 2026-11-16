@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>media-vp8-webm-error</title>
+    <script src=video-test.js></script>
+    <script>
+        window.addEventListener('load', event => {
+        
+            run('video = document.createElement("video")');
+            run('document.body.appendChild(video)');
+            video.controls = 1;
+            video.muted = 1;
+
+            video.onerror = (event) => {
+                consoleWrite("received error event");
+                endTest();
+            };
+
+            video.oncanplay = () => {
+                video.play();
+            };
+
+            video.onloadedmetadata = (event) => {
+                consoleWrite(`metadataloaded: ${video.videoWidth}x${video.videoHeight}`);
+            }
+
+            run('video.src = "content/garbage.webm"');
+        });
+
+    </script>
+</head>
+<body>
+</body>
+</html>

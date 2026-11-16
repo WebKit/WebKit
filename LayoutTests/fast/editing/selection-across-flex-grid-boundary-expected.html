@@ -1,0 +1,11 @@
+before selection
+<div id>start</div>
+<div id=selection>end</div>
+after selection
+<script>
+const selection = window.getSelection();
+const range = document.createRange();
+range.setStart(document.getElementById("selection"), 0);
+range.setEnd(document.getElementById("selection"), 1);
+selection.addRange(range);
+</script>

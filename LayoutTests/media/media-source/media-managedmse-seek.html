@@ -1,0 +1,47 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ ManagedMediaSourceEnabled=true ] -->
+<html>
+<head>
+    <meta name="fuzzy" content="maxDifference=0-112; totalPixels=0-68347" />
+    <title>MSE seek</title>
+    <script>var requirePixelDump = true;</script>
+    <script src="../../media/media-source/media-source-loader.js"></script>
+    <script src="../../media/video-test.js"></script>
+    <script src="../utilities.js"></script>
+    <script>
+
+    function loaderPromise(loader) {
+        return new Promise((resolve, reject) => {
+            loader.onload = resolve;
+            loader.onerror = reject;
+        });
+    }
+
+    async function init() {
+        findMediaElement();
+
+        loader = new MediaSourceLoader('content/test-fragmented-video-manifest.json');
+        await loaderPromise(loader);
+        video.disableRemotePlayback = true;
+        source = new ManagedMediaSource();
+        video.src = URL.createObjectURL(source);
+        await once(source, 'sourceopen');
+        sourceBuffer = source.addSourceBuffer(loader.type());
+        sourceBuffer.appendBuffer(loader.initSegment());
+        await once(sourceBuffer, 'update');
+        sourceBuffer.appendBuffer(loader.mediaSegment(0));
+        await once(sourceBuffer, 'update');
+        sourceBuffer.appendBuffer(loader.mediaSegment(1));
+        await once(sourceBuffer, 'update');
+        video.currentTime = 1;
+        await once(video, 'seeked');
+        if (window.testRunner) {
+            testRunner.notifyDone();
+        }
+    };
+    </script>
+</head>
+<body onload="init()">
+    <video playsinline></video>
+    <div style="z-index: 2; position: absolute; top: 290px; left: 0px; background-color:green; width:650px; height:200px"></div>
+</body>
+</html>

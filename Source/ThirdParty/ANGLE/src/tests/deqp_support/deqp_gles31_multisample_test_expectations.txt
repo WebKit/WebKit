@@ -1,0 +1,41 @@
+// Copyright 2023 The ANGLE Project Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+// See README.md for format.
+
+303117970 SWIFTSHADER : dEQP-GLES31.functional.primitive_bounding_box.clear.full_clear_with* = SKIP
+303117970 SWIFTSHADER : dEQP-GLES31.functional.primitive_bounding_box.clear.scissored_clear_with* = SKIP
+303117970 SWIFTSHADER : dEQP-GLES31.functional.primitive_bounding_box.clear.scissored_full_clear_with* = SKIP
+303117970 SWIFTSHADER : dEQP-GLES31.functional.primitive_bounding_box.depth.builtin_depth.per_primitive_bbox* = SKIP
+303117970 SWIFTSHADER : dEQP-GLES31.functional.primitive_bounding_box.depth.user_defined_depth.per_primitive_bbox* = SKIP
+303117970 SWIFTSHADER : dEQP-GLES31.functional.primitive_bounding_box.lines.global_state.vertex_geometry* = FAIL
+303117970 SWIFTSHADER : dEQP-GLES31.functional.primitive_bounding_box.lines.global_state.vertex_tessellation* = SKIP
+303117970 SWIFTSHADER : dEQP-GLES31.functional.primitive_bounding_box.lines.tessellation_set_per_draw.vertex_tessellation* = SKIP
+303117970 SWIFTSHADER : dEQP-GLES31.functional.primitive_bounding_box.points.global_state.vertex_geometry_fragment.default_framebuffer* = FAIL
+303117970 SWIFTSHADER : dEQP-GLES31.functional.primitive_bounding_box.points.global_state.vertex_tessellation_fragment* = SKIP
+303117970 SWIFTSHADER : dEQP-GLES31.functional.primitive_bounding_box.points.global_state.vertex_tessellation_geometry_fragment* = SKIP
+303117970 SWIFTSHADER : dEQP-GLES31.functional.primitive_bounding_box.points.tessellation_set_per_draw.vertex_tessellation_fragment.default_framebuffer* = SKIP
+303117970 SWIFTSHADER : dEQP-GLES31.functional.primitive_bounding_box.points.tessellation_set_per_draw.vertex_tessellation_geometry_fragment.default_framebuffer* = SKIP
+303117970 SWIFTSHADER : dEQP-GLES31.functional.primitive_bounding_box.triangles.global_state.vertex_geometry_fragment.default_framebuffer* = FAIL
+303117970 SWIFTSHADER : dEQP-GLES31.functional.primitive_bounding_box.triangles.global_state.vertex_tessellation_fragment.default_framebuffer* = SKIP
+303117970 SWIFTSHADER : dEQP-GLES31.functional.primitive_bounding_box.triangles.global_state.vertex_tessellation_geometry_fragment.default_framebuffer* = SKIP
+303117970 SWIFTSHADER : dEQP-GLES31.functional.primitive_bounding_box.triangles.tessellation_set_per_draw.vertex_tessellation_fragment.default_framebuffer* = SKIP
+303117970 SWIFTSHADER : dEQP-GLES31.functional.primitive_bounding_box.triangles.tessellation_set_per_draw.vertex_tessellation_geometry_fragment.default_framebuffer* = SKIP
+303117970 SWIFTSHADER : dEQP-GLES31.functional.tessellation_geometry_interaction.point_size.vertex_set_eval_default = SKIP
+
+// Samsung Galaxy S22 (Xclipse)
+267953710 GALAXYS22 VULKAN : dEQP-GLES31.functional.sample_shading.min_sample_shading.default_framebuffer_color = SKIP
+267953710 GALAXYS22 VULKAN : dEQP-GLES31.functional.sample_shading.min_sample_shading.default_framebuffer_discard = SKIP
+267953710 GALAXYS22 VULKAN : dEQP-GLES31.functional.shaders.multisample_interpolation.sample_qualifier.default_framebuffer = SKIP
+267953710 GALAXYS22 VULKAN : dEQP-GLES31.functional.shaders.sample_variables.sample_id.default_framebuffer = SKIP
+267953710 GALAXYS22 VULKAN : dEQP-GLES31.functional.shaders.sample_variables.sample_mask_in.bit_count_per_sample.default_framebuffer = SKIP
+267953710 GALAXYS22 VULKAN : dEQP-GLES31.functional.shaders.sample_variables.sample_mask_in.bit_count_per_two_samples.default_framebuffer = SKIP
+
+// Samsung Galaxy S24 (Xclipse)
+410630704 GALAXYS24EXYNOS VULKAN : dEQP-GLES31.functional.sample_shading.min_sample_shading.default_framebuffer_color = SKIP
+410630704 GALAXYS24EXYNOS VULKAN : dEQP-GLES31.functional.sample_shading.min_sample_shading.default_framebuffer_discard = SKIP
+410630704 GALAXYS24EXYNOS VULKAN : dEQP-GLES31.functional.shaders.multisample_interpolation.sample_qualifier.default_framebuffer = SKIP
+410630704 GALAXYS24EXYNOS VULKAN : dEQP-GLES31.functional.shaders.sample_variables.sample_id.default_framebuffer = SKIP
+410630704 GALAXYS24EXYNOS VULKAN : dEQP-GLES31.functional.shaders.sample_variables.sample_mask_in.bit_count_per_sample.default_framebuffer = SKIP
+410630704 GALAXYS24EXYNOS VULKAN : dEQP-GLES31.functional.shaders.sample_variables.sample_mask_in.bit_count_per_two_samples.default_framebuffer = SKIP

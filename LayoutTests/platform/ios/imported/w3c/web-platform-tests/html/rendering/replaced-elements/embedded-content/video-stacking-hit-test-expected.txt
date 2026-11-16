@@ -1,0 +1,4 @@
+Button over video
+
+FAIL video-stacking-hit-test assert_equals: Hit test in the button area should hit the button expected Element node <button>Button over video</button> but got Element node <video></video>
+

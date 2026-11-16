@@ -1,0 +1,36 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/declarative/WEB_FEATURES.yml
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/declarative/declarative-after-attachshadow.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/declarative/declarative-parser-interaction.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/declarative/declarative-shadow-dom-attachment.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/declarative/declarative-shadow-dom-available-to-element-internals.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/declarative/declarative-shadow-dom-basic.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/declarative/declarative-shadow-dom-opt-in.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/declarative/declarative-shadow-dom-repeats-2.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/declarative/declarative-shadow-dom-repeats-slot-assignment.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/declarative/declarative-shadow-dom-repeats.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/declarative/declarative-shadow-dom-slot-assignment-serialization.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/declarative/declarative-shadow-dom-slot-assignment.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/declarative/declarative-shadow-dom-write-to-iframe.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/declarative/declarative-with-disabled-shadow.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/declarative/gethtml-ordering.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/declarative/gethtml.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/declarative/innerhtml-before-closing-tag.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/declarative/innerhtml-on-ordinary-template.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/declarative/move-template-before-closing-tag.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/declarative/script-access.html

@@ -1,0 +1,4 @@
+
+PASS Property border-collapse value 'separate'
+PASS Property border-collapse value 'collapse'
+

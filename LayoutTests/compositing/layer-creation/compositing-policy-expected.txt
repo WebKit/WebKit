@@ -1,0 +1,28 @@
+transform: translate3d(10px, 1px, 1px)
+Has backing under low memory.
+transform: translateZ(0)
+translateZ(0): No backing under low memory.
+transform: translate3d(10px, 1px, 0)
+No backing under low memory.
+will-change: transform
+No backing under low memory.
+ (GraphicsLayer
+  (anchor 0.00 0.00)
+  (bounds 800.00 1018.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 800.00 1018.00)
+      (contentsOpaque 1)
+      (children 1
+        (GraphicsLayer
+          (position 18.00 10.00)
+          (bounds 308.00 108.00)
+          (contentsOpaque 1)
+          (drawsContent 1)
+          (transform [1.00 0.00 0.00 0.00] [0.00 1.00 0.00 0.00] [0.00 0.00 1.00 0.00] [10.00 1.00 1.00 1.00])
+        )
+      )
+    )
+  )
+)
+

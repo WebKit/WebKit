@@ -1,0 +1,5 @@
+link
+
+
+PASS querySelector with nested :nth-child() without tag names
+

@@ -1,0 +1,6 @@
+
+PASS ResizeObserver implemented
+PASS guard
+PASS test0: observe `foreignObject` SVG in HTML document
+PASS test1: observe inline SVG in HTML
+

@@ -1,0 +1,3 @@
+
+PASS A worker keeps finishing frames of an rgba16float WebGPU canvas while the main thread is busy
+

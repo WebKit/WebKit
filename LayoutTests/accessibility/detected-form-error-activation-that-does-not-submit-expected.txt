@@ -1,0 +1,41 @@
+This tests that only activating a control that looks like it submits the fields around it starts a watch for errors, and that after anything short of a real submission only text colored as an error counts. A script calling click(), a control that expands something, and a button made into a tab submit nothing. Text a button writes under a field the user filled in, whether in a neutral color or in the amber of a warning, is status rather than an error. A search box in the page header is not part of the checkout below it, however the page wraps the two. The control that does submit still finds its errors afterwards.
+
+PASS: invalidStatus('name') === 'false'
+axElement('send-code').press();
+axElement('verify-email').press();
+PASS: isWatching() === false
+document.getElementById('save').click();
+PASS: isWatching() === false
+axElement('more').press();
+PASS: isWatching() === false
+axElement('paypal').press();
+PASS: isWatching() === false
+axElement('go').press();
+PASS: isWatching() === false
+PASS: notifications === 0
+PASS: invalidStatus('name') === 'false'
+PASS: invalidStatus('email') === 'false'
+PASS: invalidStatus('query') === 'false'
+axElement('place-order').press();
+PASS: notifications === 1
+PASS: payload === 'AXFormValidationUnannouncedText: Enter your name. | Enter a valid email address.\nAXFormValidationErrorFieldCount: 2\n'
+PASS: invalidStatus('name') === 'true'
+PASS: invalidStatus('email') === 'true'
+PASS: invalidStatus('query') === 'false'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Search
+Enter a search term.
+Go
+Name
+Enter your name.
+Email
+Enter a valid email address.
+This address looks unusual.
+Phone
+We sent a code to your phone.
+Save for later
+More options
+PayPal  Send code  Verify email  Place order

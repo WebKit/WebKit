@@ -1,0 +1,10 @@
+
+PASS match selector without prefix
+PASS match namespace selector with universal prefix
+PASS throws on specified namespace selector
+PASS does not throw on specified namespace selector if forgiven
+PASS does not match attriubte selector without prefix
+PASS match namespace attriubte selector with universal prefix
+PASS throws on specified namespace attriubte selector
+PASS does not throw on specified namespace attriubte selector if forgiven
+

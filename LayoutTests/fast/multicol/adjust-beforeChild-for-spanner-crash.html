@@ -1,0 +1,16 @@
+<style>
+.container { column-count: 2; }
+.inserted { column-span: all; }
+</style>
+
+<div class=container><table id=table></table></div>
+Pass if no crash.
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+let d = document.createElement("div");
+d.className = "inserted";
+table.appendChild(d);
+document.body.offsetHeight;
+table.createCaption();
+</script>

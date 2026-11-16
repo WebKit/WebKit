@@ -1,0 +1,14 @@
+WEBVTT
+
+1
+00:00:01.000 --> 00:00:02.000
+1 - The first cue
+
+2
+00:00:03.000 --> 00:00:15.000
+2 - The second cue, from time 3 to 15
+
+3
+00:00:30.000 --> 00:00:40.000
+2 - The second cue, from time 30 to 40
+

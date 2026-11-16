@@ -1,0 +1,17 @@
+
+PASS addTransceiver() with sendEncoding.maxFramerate field set to less than 0 should reject with RangeError
+PASS addTransceiver('audio') with sendEncoding.maxFramerate should succeed, but remove the maxFramerate, even if it is invalid
+PASS setParameters with maxFramerate on an audio sender should succeed, but remove the maxFramerate
+PASS setParameters with an invalid maxFramerate on an audio sender should succeed, but remove the maxFramerate
+PASS setParameters() with encoding.maxFramerate field set to less than 0 should reject with RangeError
+PASS setParameters() with maxFramerate 24->16 should succeed with RTCRtpTransceiverInit
+PASS setParameters() with maxFramerate 24->16 should succeed without RTCRtpTransceiverInit
+PASS setParameters() with maxFramerate undefined->16 should succeed with RTCRtpTransceiverInit
+PASS setParameters() with maxFramerate undefined->16 should succeed without RTCRtpTransceiverInit
+PASS setParameters() with maxFramerate 24->undefined should succeed with RTCRtpTransceiverInit
+PASS setParameters() with maxFramerate 24->undefined should succeed without RTCRtpTransceiverInit
+PASS setParameters() with maxFramerate 0->16 should succeed with RTCRtpTransceiverInit
+PASS setParameters() with maxFramerate 0->16 should succeed without RTCRtpTransceiverInit
+PASS setParameters() with maxFramerate 24->0 should succeed with RTCRtpTransceiverInit
+PASS setParameters() with maxFramerate 24->0 should succeed without RTCRtpTransceiverInit
+

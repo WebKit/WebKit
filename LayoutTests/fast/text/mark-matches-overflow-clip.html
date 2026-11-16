@@ -1,0 +1,25 @@
+<style>
+p {
+    display: inline-block;
+    overflow: scroll;
+    width: 60px;
+    margin: 50px;
+}
+</style>
+<p>
+<span style="position: relative; left: -25pt;">Quo usque tandem abutere, Catilina, patientia nostra?</span>
+</p>
+<script>
+window.onload = function () {
+    if (!window.internals) {
+        document.write("This test requires internals + testRunner to run.");
+        return;
+    }
+
+    testRunner.dumpAsText();
+    internals.countMatchesForText("tandem", [], "mark");
+    
+    var markedNode = document.getElementsByTagName("span")[0].firstChild;
+    document.write(internals.dumpMarkerRects("TextMatch"));
+}
+</script>

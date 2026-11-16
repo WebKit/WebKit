@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<style>
+.container { 
+  height: 100px;
+  display: flex;
+}
+
+.middle { 
+  flex-grow: 1;
+  flex-direction: column;
+}
+
+.inner { 
+  background-color: green;
+  height: -webkit-fill-available;
+  width: 100px;
+}
+</style>
+<!-- PASS if the box does not expand all the way to the bottom of viewport -->
+<div class=container><div class=middle><div class=inner>

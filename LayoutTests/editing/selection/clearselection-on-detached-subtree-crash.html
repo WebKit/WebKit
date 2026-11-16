@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>This test that calling clearSelection() on an already detached subtree does not crash.</title>
+<style>
+  .outer {
+    position: absolute;
+  }
+  .inner {
+    position: relative;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+   }
+</style>
+</head>
+<body>
+<div>PASS if no crash.</div>
+<div id="container"> 
+  <div class="outer">
+    <div class="inner">
+      <input id="input" value="foo">
+    </div>
+  </div>
+</div>
+
+<script> 
+  if (window.testRunner)
+    testRunner.dumpAsText();
+  
+  var input = document.getElementById('input');
+  input.setSelectionRange(0, 1);
+  var container = document.getElementById('container');
+  var div1 = document.createElement('div');
+  div1.style.display = 'inline-block';
+  container.appendChild(div1);
+  var div2 = document.createElement('div');
+  container.appendChild(div2);
+  div2.offsetHeight;
+  container.removeChild(div2);
+</script> 
+</body>
+</html>

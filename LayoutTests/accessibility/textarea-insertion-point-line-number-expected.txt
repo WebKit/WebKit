@@ -1,0 +1,18 @@
+This tests that lineNumberForPosition is reported correctly for textarea and contenteditable elements.
+
+PASS: area1AXUIElement.insertionPointLineNumber === currentLine
+PASS: area1AXUIElement.insertionPointLineNumber === currentLine
+PASS: area1AXUIElement.insertionPointLineNumber === currentLine
+PASS: area2AXUIElement.insertionPointLineNumber === 0
+PASS: contenteditableAXUIElement.insertionPointLineNumber === 0
+PASS: contenteditableAXUIElement.insertionPointLineNumber === 1
+PASS: contenteditableAXUIElement.insertionPointLineNumber === 2
+PASS: textareaAXUIElement.insertionPointLineNumber === 0
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+Line1
+
+Line3

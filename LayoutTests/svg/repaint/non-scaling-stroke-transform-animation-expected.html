@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Non-scaling-stroke at scale(0.3)</title>
+  <style>
+    body { margin: 0; background: white; }
+  </style>
+</head>
+<body>
+  <svg width="400" height="300">
+    <g transform="scale(0.3)">
+      <rect x="100" y="80" width="200" height="120"
+            fill="none"
+            stroke="blue"
+            stroke-width="2"
+            vector-effect="non-scaling-stroke"/>
+    </g>
+  </svg>
+</body>
+</html>

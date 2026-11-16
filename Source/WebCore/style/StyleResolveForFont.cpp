@@ -1,0 +1,453 @@
+/*
+ * Copyright (C) 2013 Google Inc. All rights reserved.
+ * Copyright (C) 2014-2026 Apple Inc. All rights reserved.
+ * Copyright (C) 2020 Metrological Group B.V.
+ * Copyright (C) 2020 Igalia S.L.
+ * Copyright (C) 2024 Samuel Weinig <sam@webkit.org>
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ *
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above
+ *    copyright notice, this list of conditions and the following
+ *    disclaimer in the documentation and/or other materials provided
+ *    with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+ * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+ * HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+ * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#include "config.h"
+#include "StyleResolveForFont.h"
+
+#include "CSSCalcSymbolTable.h"
+#include "CSSFontFeatureValue.h"
+#include "CSSFontSelector.h"
+#include "CSSFontStyleWithAngleValue.h"
+#include "CSSFontVariationValue.h"
+#include "CSSKeywordValueInlines.h"
+#include "CSSPropertyParserConsumer+Font.h"
+#include "CSSValueList.h"
+#include "CSSValuePair.h"
+#include "Document.h"
+#include "Element.h"
+#include "FontCascade.h"
+#include "FontCascadeDescription.h"
+#include "FontSelectionValueInlines.h"
+#include "ScriptExecutionContext.h"
+#include "Settings.h"
+#include "StyleBuilderChecking.h"
+#include "StyleComputedStyle+GettersInlines.h"
+#include "StyleComputedStyle.h"
+#include "StyleFontFamily.h"
+#include "StyleFontSizeFunctions.h"
+#include "StyleFontWeight.h"
+#include "StyleKeyword+Mappings.h"
+#include "StyleLengthResolution.h"
+#include "StylePrimitiveNumericTypes+Conversions.h"
+#include "StylePrimitiveNumericTypes+DeprecatedCSSValueConversion.h"
+#include "StylePrimitiveNumericTypes+Evaluation.h"
+#include "WebKitFontFamilyNames.h"
+
+namespace WebCore {
+namespace Style {
+
+using namespace WebKitFontFamilyNames;
+
+// MARK: - 'font-weight'
+
+FontSelectionValue fontWeightFromCSSValueDeprecated(const CSSValue& value)
+{
+    if (RefPtr primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value)) {
+        ASSERT(primitiveValue->isNumber());
+        return FontSelectionValue(static_cast<float>(deprecatedToStyleFromCSSValue<FontWeight::Number>(*primitiveValue)->value));
+    }
+
+    switch (valueID(value)) {
+    case CSSValueID::Normal:
+        return normalWeightValue();
+    case CSSValueID::Bold:
+    case CSSValueID::Bolder:
+        return boldWeightValue();
+    case CSSValueID::Lighter:
+        return lightWeightValue();
+    default:
+        ASSERT_NOT_REACHED();
+        return normalWeightValue();
+    }
+}
+
+static FontSelectionValue fontWeightFromUnresolvedFontWeight(const CSSPropertyParserHelpers::UnresolvedFontWeight& unresolvedWeight, const FontCascadeDescription& fontDescription)
+{
+    return WTF::switchOn(unresolvedWeight,
+        [&](CSSValueID ident) {
+            switch (ident) {
+            case CSSValueID::Normal:
+                return normalWeightValue();
+            case CSSValueID::Bold:
+                return boldWeightValue();
+            case CSSValueID::Bolder:
+                return FontCascadeDescription::bolderWeight(fontDescription.weight());
+            case CSSValueID::Lighter:
+                return FontCascadeDescription::lighterWeight(fontDescription.weight());
+            default:
+                ASSERT_NOT_REACHED();
+                return normalWeightValue();
+            }
+        },
+        [&](const CSSPropertyParserHelpers::UnresolvedFontWeightNumber& weight) {
+            // FIXME: Figure out correct behavior when conversion data is required.
+            if (requiresConversionData(weight))
+                return normalWeightValue();
+            return FontSelectionValue::clampFloat(Style::toStyleNoConversionDataRequired(weight).value);
+        }
+    );
+}
+
+// MARK: - 'font-width'
+
+FontSelectionValue fontWidthFromCSSValueDeprecated(const CSSValue& value)
+{
+    if (RefPtr primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value)) {
+        ASSERT(primitiveValue->isPercentage());
+        return FontSelectionValue::clampFloat(deprecatedToStyleFromCSSValue<Percentage<CSS::Nonnegative, float>>(*primitiveValue)->value);
+    }
+
+    const auto& keywordValue = downcast<CSSKeywordValue>(value);
+    if (auto value = fontWidthValue(keywordValue.valueID()))
+        return value.value();
+
+    ASSERT(CSSPropertyParserHelpers::isSystemFontShorthand(keywordValue.valueID()));
+    return normalWidthValue();
+}
+
+static FontSelectionValue fontWidthFromUnresolvedFontWidth(const CSSPropertyParserHelpers::UnresolvedFontWidth& unresolvedWidth)
+{
+    return WTF::switchOn(unresolvedWidth,
+        [&](CSSValueID ident) {
+            return fontWidthValue(ident).value_or(normalWidthValue());
+        },
+        [&](const CSSPropertyParserHelpers::UnresolvedFontWidthPercentage& percentage) {
+            if (requiresConversionData(percentage))
+                return normalWidthValue();
+            return FontSelectionValue::clampFloat(Style::toStyleNoConversionDataRequired(percentage).value);
+        }
+    );
+}
+
+// MARK: - 'font-style'
+
+std::optional<FontSelectionValue> fontStyleAngleFromCSSFontStyleWithAngleValueDeprecated(const CSSFontStyleWithAngleValue& value)
+{
+    if (requiresConversionData(value.obliqueAngle()))
+        return { };
+    return FontSelectionValue { narrowPrecisionToFloat(Style::toStyle(value.obliqueAngle(), NoConversionDataRequiredToken { }).value) };
+}
+
+std::optional<FontSelectionValue> fontStyleFromCSSValueDeprecated(const CSSValue& value)
+{
+    if (RefPtr fontStyleValue = dynamicDowncast<CSSFontStyleWithAngleValue>(value))
+        return fontStyleAngleFromCSSFontStyleWithAngleValueDeprecated(*fontStyleValue);
+
+    auto valueID = downcast<CSSKeywordValue>(value).valueID();
+    if (valueID == CSSValueID::Normal)
+        return std::nullopt;
+
+    ASSERT(valueID == CSSValueID::Italic || valueID == CSSValueID::Oblique);
+    return italicValue();
+}
+
+struct ResolvedFontStyle {
+    std::optional<FontSelectionValue> slope;
+    FontStyleAxis axis;
+};
+
+static ResolvedFontStyle fontStyleFromUnresolvedFontStyle(const CSSPropertyParserHelpers::UnresolvedFontStyle& unresolvedStyle)
+{
+    // Font style applied in the same way as BuilderConverter::convertFontStyleFromValue
+    return WTF::switchOn(unresolvedStyle,
+        [](CSSValueID ident) -> ResolvedFontStyle {
+            switch (ident) {
+            case CSSValueID::Normal:
+                return {
+                    .slope = std::nullopt,
+                    .axis = FontStyleAxis::normal
+                };
+
+            case CSSValueID::Italic:
+                return {
+                    .slope = italicValue(),
+                    .axis = FontStyleAxis::ital
+                };
+
+            case CSSValueID::Oblique:
+                return {
+                    .slope = FontSelectionValue(0.0f),
+                    .axis = FontStyleAxis::slnt
+                };
+
+            default:
+                break;
+            }
+
+            ASSERT_NOT_REACHED();
+            return { .slope = std::nullopt, .axis = FontStyleAxis::normal };
+        },
+        [](const CSSPropertyParserHelpers::UnresolvedFontStyleObliqueAngle& angle) -> ResolvedFontStyle {
+            // FIXME: Figure out correct behavior when conversion data is required.
+            if (requiresConversionData(angle))
+                return { .slope = std::nullopt, .axis = FontStyleAxis::normal };
+
+            return {
+                .slope = FontSelectionValue::clampFloat(Style::toStyleNoConversionDataRequired(angle).value),
+                .axis = FontStyleAxis::slnt
+            };
+        }
+    );
+}
+
+// MARK: - 'font-size'
+
+struct ResolvedFontSize {
+    float size;
+    CSSValueID keyword;
+};
+
+static ResolvedFontSize fontSizeFromUnresolvedFontSize(const CSSPropertyParserHelpers::UnresolvedFontSize& unresolvedSize, float parentSize, const FontCascadeDescription& fontDescription, Ref<ScriptExecutionContext> context)
+{
+    return WTF::switchOn(unresolvedSize,
+        [&](CSSValueID ident) -> ResolvedFontSize {
+            switch (ident) {
+            case CSSValueID::XxSmall:
+            case CSSValueID::XSmall:
+            case CSSValueID::Small:
+            case CSSValueID::Medium:
+            case CSSValueID::Large:
+            case CSSValueID::XLarge:
+            case CSSValueID::XxLarge:
+            case CSSValueID::XxxLarge:
+                return {
+                    .size = Style::fontSizeForKeyword(ident, fontDescription.useFixedDefaultSize(), context->settingsValues()),
+                    .keyword = ident
+                };
+
+            case CSSValueID::Larger:
+                return {
+                    .size = parentSize * 1.2f,
+                    .keyword = CSSValueID::Invalid
+                };
+
+            case CSSValueID::Smaller:
+                return {
+                    .size = parentSize / 1.2f,
+                    .keyword = CSSValueID::Invalid
+                };
+
+            case CSSValueID::Math:
+                return {
+                    .size = 0.0f,
+                    .keyword = CSSValueID::Invalid
+                };
+
+            default:
+                break;
+            }
+
+            ASSERT_NOT_REACHED();
+            return { .size = 0.0f, .keyword = CSSValueID::Invalid };
+        },
+        [&](const CSS::LengthPercentage<CSS::Nonnegative>& lengthPercentage) -> ResolvedFontSize {
+            return WTF::switchOn(lengthPercentage,
+                [&](const CSS::LengthPercentage<CSS::Nonnegative>::Raw& lengthPercentage) -> ResolvedFontSize {
+                    return CSS::switchOnUnitType(lengthPercentage.unit,
+                        [&](CSS::PercentageUnit) -> ResolvedFontSize {
+                            return {
+                                .size = Style::evaluate<float>(Style::Percentage<> { narrowPrecisionToFloat(lengthPercentage.value) }, parentSize),
+                                .keyword = CSSValueID::Invalid
+                            };
+                        },
+                        [&](CSS::LengthUnit lengthUnit) -> ResolvedFontSize {
+                            auto fontCascade = FontCascade(FontCascadeDescription(fontDescription));
+                            fontCascade.update(context->cssFontSelector());
+
+                            // FIXME: Passing null for the RenderView parameter means that vw and vh units will evaluate to
+                            //        zero and vmin and vmax units will evaluate as if they were px units.
+                            //        It's unclear in the specification if they're expected to work on OffscreenCanvas, given
+                            //        that it's off-screen and therefore doesn't strictly have an associated viewport.
+                            //        This needs clarification and possibly fixing.
+                            // Root font units resolve against the root element's font whenever the context is a document,
+                            // including for an OffscreenCanvas created in a window. They fall back to the element's own
+                            // font only in a worker, where there is no root element.
+                            // See https://github.com/whatwg/html/issues/10893 for the open question of how non-absolute
+                            // <length> values should behave here.
+
+                            RefPtr document = dynamicDowncast<Document>(context);
+                            CheckedPtr rootFontCascade = rootFontCascadeForRootFontUnits(context);
+                            return {
+                                .size = static_cast<float>(Style::resolveLength(lengthPercentage.value, lengthUnit, CSSPropertyID::FontSize, fontCascade, rootFontCascade ? *rootFontCascade : fontCascade, document ? document->renderView() : nullptr)),
+                                .keyword = CSSValueID::Invalid
+                            };
+                        }
+                    );
+                },
+                [&](const CSS::LengthPercentage<CSS::Nonnegative>::Calc& calc) -> ResolvedFontSize {
+                    // FIXME: Figure out correct behavior when conversion data is required.
+                    if (requiresConversionData(calc))
+                        return { .size = 0.0f, .keyword = CSSValueID::Invalid };
+
+                    return {
+                        .size = Style::evaluate<float>(Style::toStyleNoConversionDataRequired(calc), parentSize, Style::ZoomFactor::none()),
+                        .keyword = CSSValueID::Invalid
+                    };
+                }
+            );
+        }
+    );
+}
+
+// MARK: - 'font-variant-caps'
+
+NODELETE static FontVariantCaps fontVariantCapsFromUnresolvedFontVariantCaps(const CSSPropertyParserHelpers::UnresolvedFontVariantCaps& unresolvedVariantCaps)
+{
+    return fromCSSValueID<FontVariantCaps>(unresolvedVariantCaps);
+}
+
+// MARK: - 'font-family'
+
+struct ResolvedFontFamily {
+    Vector<WebCore::FontFamily> families;
+    bool hasAuthorSpecifiedNonGenericPrimaryFont;
+};
+
+static ResolvedFontFamily fontFamilyFromUnresolvedFontFamily(const CSSPropertyParserHelpers::UnresolvedFontFamily& unresolvedFamily, Ref<ScriptExecutionContext> context)
+{
+    bool isFirstFont = true;
+    bool hasAuthorSpecifiedNonGenericPrimaryFont = false;
+
+    auto families = WTF::compactMap(unresolvedFamily, [&](auto& item) -> std::optional<WebCore::FontFamily> {
+        auto [familyName, isGenericFamily] = switchOn(item,
+            [&](CSSValueID ident) -> std::pair<AtomString, bool> {
+                if (ident != CSSValueID::WebkitBody) {
+                    // FIXME: Treat system-ui like other generic font families
+                    if (ident == CSSValueID::SystemUi)
+                        return { nameString(CSSValueID::SystemUi), true };
+                    return { *familyNamesData->at(CSSPropertyParserHelpers::genericFontFamilyIndex(ident)), true };
+                }
+                return { AtomString(context->settingsValues().fontGenericFamilies.standardFontFamily()), false };
+            },
+            [&](const AtomString& familyString) -> std::pair<AtomString, bool> {
+                return { familyString, false };
+            }
+        );
+
+        if (familyName.isEmpty())
+            return std::nullopt;
+
+        if (isFirstFont) {
+            hasAuthorSpecifiedNonGenericPrimaryFont = !isGenericFamily;
+            isFirstFont = false;
+        }
+        return WebCore::FontFamily { WTF::move(familyName), isGenericFamily ? FontFamilyKind::Generic : FontFamilyKind::Specified };
+    });
+
+    return {
+        .families = WTF::move(families),
+        .hasAuthorSpecifiedNonGenericPrimaryFont = hasAuthorSpecifiedNonGenericPrimaryFont
+    };
+}
+
+// MARK: - Root Font Units
+
+const FontCascade* rootFontCascadeForRootFontUnits(ScriptExecutionContext& context)
+{
+    RefPtr document = dynamicDowncast<Document>(context);
+    if (!document)
+        return nullptr;
+    RefPtr documentElement = document->documentElement();
+    if (!documentElement)
+        return nullptr;
+
+    // Deliberately does not resolve style. Callers run with script disallowed and update style
+    // before getting here, so a missing style means there is nothing to resolve against.
+    CheckedPtr rootStyle = documentElement->existingComputedStyle();
+    if (!rootStyle)
+        return nullptr;
+    return &rootStyle->fontCascade();
+}
+
+// MARK: - Unresolved Font Shorthand Resolution
+
+std::optional<FontCascade> resolveForUnresolvedFont(const CSSPropertyParserHelpers::UnresolvedFont& unresolvedFont, FontCascadeDescription&& fontDescription, ScriptExecutionContext& context)
+{
+    Ref protectedContext = context;
+
+    ASSERT(protectedContext->cssFontSelector());
+
+    // Map the font property longhands into the style.
+    float parentSize = fontDescription.computedSize();
+
+    auto useFixedDefaultSize = [](const FontCascadeDescription& fontDescription) {
+        return fontDescription.familyCount() == 1
+            && fontDescription.firstFamily().name == *familyNamesData->at(FamilyNamesIndex::MonospaceFamily);
+    };
+
+    // Font family applied in the same way as StyleBuilderCustom::applyValueFontFamily
+    // Before mapping in a new font-family property, we should reset the generic family.
+    bool oldFamilyUsedFixedDefaultSize = useFixedDefaultSize(fontDescription);
+
+    auto resolvedFamily = fontFamilyFromUnresolvedFontFamily(unresolvedFont.family, protectedContext);
+    if (resolvedFamily.families.isEmpty())
+        return std::nullopt;
+    fontDescription.setFamilies(resolvedFamily.families);
+    fontDescription.setHasAuthorSpecifiedNonGenericPrimaryFont(resolvedFamily.hasAuthorSpecifiedNonGenericPrimaryFont);
+
+    if (useFixedDefaultSize(fontDescription) != oldFamilyUsedFixedDefaultSize) {
+        if (auto sizeIdentifier = fontDescription.keywordSizeAsIdentifier(); sizeIdentifier != CSSValueID::Invalid) {
+            auto size = Style::fontSizeForKeyword(sizeIdentifier, !oldFamilyUsedFixedDefaultSize, protectedContext->settingsValues());
+            fontDescription.setComputedSize(size);
+            fontDescription.setUsedSize(usedFontSizeFromComputedSize(size, fontDescription.isAbsoluteSize(), 1.0, MinimumFontSizeRule::None, protectedContext->settingsValues()));
+        }
+    }
+
+    auto resolvedFontStyle = fontStyleFromUnresolvedFontStyle(unresolvedFont.style);
+    fontDescription.setFontStyleSlope(resolvedFontStyle.slope);
+    fontDescription.setFontStyleAxis(resolvedFontStyle.axis);
+
+    auto resolvedFontVariantCaps = fontVariantCapsFromUnresolvedFontVariantCaps(unresolvedFont.variantCaps);
+    fontDescription.setVariantCaps(resolvedFontVariantCaps);
+
+    auto resolvedWeight = fontWeightFromUnresolvedFontWeight(unresolvedFont.weight, fontDescription);
+    fontDescription.setWeight(resolvedWeight);
+
+    auto resolvedWidth = fontWidthFromUnresolvedFontWidth(unresolvedFont.width);
+    fontDescription.setWidth(resolvedWidth);
+
+    auto resolvedSize = fontSizeFromUnresolvedFontSize(unresolvedFont.size, parentSize, fontDescription, protectedContext);
+    fontDescription.setKeywordSizeFromIdentifier(resolvedSize.keyword);
+    if (resolvedSize.size > 0) {
+        fontDescription.setComputedSize(resolvedSize.size);
+        fontDescription.setUsedSize(resolvedSize.size);
+    }
+
+    // As there is no line-height on FontCascade, there's no need to resolve it, even
+    // though there is line-height information on CSSPropertyParserHelpers::UnresolvedFont.
+
+    auto fontCascade = FontCascade(WTF::move(fontDescription));
+    fontCascade.update(protectedContext->cssFontSelector());
+    return fontCascade;
+}
+
+}
+}

@@ -1,0 +1,26 @@
+This test verifies the exposure of aria-actions.
+
+Verifying action elements are exposed in DOM order:
+PASS: action1.domIdentifier === 'action1'
+PASS: action2.domIdentifier === 'action2'
+PASS: source.ariaActionsElementAtIndex(2) === null
+
+Invoking custom actions:
+PASS: source.invokeCustomActionAtIndex(0) === true
+PASS: clickedActions.length === 1
+PASS: clickedActions[0] === 'action1'
+PASS: source.invokeCustomActionAtIndex(1) === true
+PASS: clickedActions.length === 2
+PASS: clickedActions[1] === 'action2'
+
+Invoking out-of-bounds action returns false:
+PASS: source.invokeCustomActionAtIndex(99) === false
+
+Testing dynamic update - removing an action:
+PASS: source.ariaActionsElementAtIndex(0)?.domIdentifier === 'action2'
+PASS: source.ariaActionsElementAtIndex(1) === null
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Source Delete Edit

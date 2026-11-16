@@ -1,0 +1,51 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="../worker/resources/resource-utilities.js"></script>
+<script src="resources/url-breakpoint-utilities.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("URLBreakpoint.TextAndRegexWithSamePattern");
+
+    suite.addTestCase({
+        name: "URLBreakpoint.TextAndRegexWithSamePattern.DOM",
+        description: "A text breakpoint and a regex breakpoint that share the same pattern string should be stored and matched independently.",
+        async test() {
+            let textBreakpoint = await InspectorTest.URLBreakpoint.createBreakpoint(WI.URLBreakpoint.Type.Text, "data");
+            let regexBreakpoint = await InspectorTest.URLBreakpoint.createBreakpoint(WI.URLBreakpoint.Type.RegularExpression, "data");
+            InspectorTest.expectEqual(WI.domDebuggerManager.urlBreakpoints.length, 2, "Both breakpoints should coexist.");
+
+            InspectorTest.log("Triggering with both breakpoints set...");
+            InspectorTest.URLBreakpoint.request("DOM");
+            await WI.debuggerManager.awaitEvent(WI.DebuggerManager.Event.Paused);
+            InspectorTest.expectEqual(WI.debuggerManager.dataForTarget(WI.debuggerManager.activeCallFrame.target).pauseReason, WI.DebuggerManager.PauseReason.URL, "Pause reason should be URL.");
+            await WI.debuggerManager.resume();
+
+            InspectorTest.log("Removing the text breakpoint (the regex breakpoint should survive)...");
+            textBreakpoint.remove();
+            InspectorTest.expectEqual(WI.domDebuggerManager.urlBreakpoints.length, 1, "Only the regex breakpoint should remain.");
+
+            InspectorTest.log("Triggering with only the regex breakpoint set...");
+            InspectorTest.URLBreakpoint.request("DOM");
+            await WI.debuggerManager.awaitEvent(WI.DebuggerManager.Event.Paused);
+
+            let targetData = WI.debuggerManager.dataForTarget(WI.debuggerManager.activeCallFrame.target);
+            InspectorTest.log("PAUSED:");
+            InspectorTest.expectEqual(targetData.pauseReason, WI.DebuggerManager.PauseReason.URL, "Pause reason should be URL.");
+            InspectorTest.expectEqual(targetData.pauseData.breakpointURL, regexBreakpoint.url, "Pause data URL should match the regex breakpoint.");
+
+            await WI.debuggerManager.resume();
+        },
+        teardown: InspectorTest.URLBreakpoint.teardown,
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests that a text URL breakpoint and a regex URL breakpoint sharing the same pattern string are independent.</p>
+</body>
+</html>

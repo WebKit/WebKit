@@ -1,0 +1,4 @@
+
+PASS ":autofill" should be a valid selector
+PASS ":-webkit-autofill" should be a valid selector
+

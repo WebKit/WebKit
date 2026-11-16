@@ -1,0 +1,3 @@
+
+PASS Specified and computed values of border-color
+

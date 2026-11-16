@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<style>
+    #test {
+        background-color: green;
+        width: 100px;
+        height: 100px;
+    }
+</style>
+<div id="test"></div>
+<script>
+if (window.testRunner) { testRunner.waitUntilDone() }
+
+document.addEventListener("webkitfullscreenchange", () => {
+    test.style.backgroundColor = "red";
+});
+document.addEventListener("fullscreenchange", async () => {
+    if (document.fullscreenElement)
+        document.exitFullscreen();
+    else if (window.testRunner) {
+        await testRunner.updatePresentation();
+        testRunner.notifyDone();
+    }
+});
+if (window.internals) {
+    internals.withUserGesture(() => {
+        test.requestFullscreen();
+    });
+}
+</script>
+</html>

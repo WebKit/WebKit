@@ -1,0 +1,7 @@
+
+PASS DOMException and QuotaExceededError are exposed in AudioWorkletGlobalScope
+PASS A DOMException created in AudioWorkletGlobalScope can be posted to the window
+PASS A QuotaExceededError created in AudioWorkletGlobalScope can be posted to the window
+PASS A DOMException can be posted to AudioWorkletGlobalScope
+PASS A QuotaExceededError can be posted to AudioWorkletGlobalScope
+

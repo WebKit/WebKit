@@ -1,0 +1,8 @@
+
+Harness Error (FAIL), message = Test named 'addEventListener() for `devicemotion` does not crash but the handler never fires.' specified 1 'cleanup' function, and 1 failed.
+
+PASS Event interfaces and event handlers are not exposed on `window`.
+FAIL addEventListener() for `devicemotion` does not crash but the handler never fires. promise_test: Unhandled rejection with value: object "Error: create_virtual_sensor() is not implemented by testdriver-vendor.js"
+NOTRUN addEventListener() for `deviceorientation` does not crash but the handler never fires.
+NOTRUN addEventListener() for `deviceorientationabsolute` does not crash but the handler never fires.
+

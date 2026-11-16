@@ -1,0 +1,66 @@
+[
+   {
+      "decoders" : [
+         {
+            "codec_params" : [
+               {
+                  "level-asymmetry-allowed" : "1"
+               },
+               {
+                  "packetization-mode" : "1"
+               },
+               {
+                  "profile-level-id" : "42001f"
+               }
+            ],
+            "payload_name" : "H264",
+            "payload_type" : 100
+         },
+         {
+            "codec_params" : [
+               {
+                  "level-asymmetry-allowed" : "1"
+               },
+               {
+                  "packetization-mode" : "1"
+               },
+               {
+                  "profile-level-id" : "42e01f"
+               }
+            ],
+            "payload_name" : "H264",
+            "payload_type" : 102
+         }
+      ],
+      "render_delay_ms" : 10,
+      "rtp" : {
+         "extensions" : [],
+         "local_ssrc" : 1,
+         "lntf" : {
+            "enabled": false,
+         },
+         "nack" : {
+            "rtp_history_ms" : 1000
+         },
+         "red_payload_type" : 125,
+         "remb" : true,
+         "remote_ssrc" : 1989790381,
+         "rtcp_mode" : "RtcpMode::kReducedSize",
+         "rtx_payload_types" : [
+            {
+               "101" : 100
+            },
+            {
+               "122" : 125
+            },
+            {
+               "123" : 127
+            }
+         ],
+         "rtx_ssrc" : 1406083315,
+         "transport_cc" : true,
+         "ulpfec_payload_type" : -1
+      },
+      "target_delay_ms" : 0
+   }
+]

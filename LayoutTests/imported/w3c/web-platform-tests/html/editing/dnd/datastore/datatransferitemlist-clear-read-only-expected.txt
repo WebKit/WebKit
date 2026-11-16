@@ -1,0 +1,5 @@
+Drag me
+Drop here
+
+PASS DataTransferItemList.clear() is a no-op in the protected and read-only modes
+

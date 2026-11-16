@@ -1,0 +1,5 @@
+
+PASS gap serializes as the empty string when one longhand is a CSS-wide keyword and the other is not
+PASS gap serializes to "initial" when both longhands are initial
+PASS gap serializes normal/length longhands as a valid shorthand
+

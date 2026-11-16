@@ -1,0 +1,23 @@
+Name: Expat XML Parser
+Short Name: expat
+URL: https://github.com/libexpat/libexpat
+Version: N/A
+CPEPrefix: cpe:/a:libexpat_project:libexpat:2.6.3
+Date: 2024-09-05
+Revision: DEPS
+Security Critical: no
+Shipped: no
+License: MIT
+License File: src/expat/COPYING
+
+Description:
+  This is Expat XML parser - very lightweight C library for parsing XML.
+  Expat is distributed under an MIT license detailed in src/expat/COPYING.
+
+  We include it here because libjingle depends on it.
+
+Roll process:
+  Rolled automatically from Chromium via scripts/roll_chromium_deps.py.
+
+Added files:
+  include/expat_config/expat_config.h (a generated config file)

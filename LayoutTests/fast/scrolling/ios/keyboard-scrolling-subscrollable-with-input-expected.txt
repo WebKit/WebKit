@@ -1,0 +1,12 @@
+
+2. Tap me and press ⬇️
+Verifies that keyboard scrolling in a child scroller works after pressing arrow keys in a text field
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS scroller.scrollTop is > 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

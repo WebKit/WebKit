@@ -1,0 +1,4 @@
+
+PASS Should fire a security policy violation for the inline block
+PASS The inline style should not be applied and the attribute style should be applied
+

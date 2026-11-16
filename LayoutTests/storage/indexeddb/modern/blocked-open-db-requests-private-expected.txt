@@ -1,0 +1,32 @@
+Makes sure that an OpenDBRequest that would result in a version change is blocked because there are still open connections, it gets the blocked event. Also makes sure that request gets unblocked when the open connections close.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
+
+indexedDB.deleteDatabase(dbname)
+indexedDB.open(dbname)
+connection = event.target.result;
+connection.onversionchange = firstVersionChange;
+objectStore = connection.createObjectStore('testObjectStore');
+First version change transaction complete
+firstTransaction = connection.transaction('testObjectStore', 'readwrite');
+objectStore = firstTransaction.objectStore('testObjectStore');
+objectStorePutLoop();
+secondRequest = indexedDB.open(dbname, 2);
+secondRequest.onblocked = secondBlocked;
+secondRequest.onupgradeneeded = secondUpgradeNeeded;
+receivedVersionChange = true;
+++blockedCount
+PASS blockedEvent.oldVersion is 1
+PASS blockedEvent.newVersion is 2
+PASS blockedEvent.target.readyState is 'pending'
+2nd upgradeNeeded
+PASS blockedCount is 1
+PASS event.target.result.version is 2
+event.target.result.close();
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+}
+
+let elementIdentifier = null;
+let parentIdentifier = null;
+let iterationCount = 20;
+let watchdogTimer = null;
+function runTest() {
+    if (!iterationCount)
+        return endTest('PASS');
+
+    internals.queueTask('DOMManipulation', () => {
+        GCController.collect();
+    });
+
+    (() => {
+        const element = document.createElement('video');
+        elementIdentifier = internals.elementIdentifier(element);
+
+        const parentNode = document.createElement('div');
+        parentIdentifier = internals.elementIdentifier(parentNode);
+        parentNode.appendChild(element);
+
+        element.remote.watchAvailability(checkElement);
+        watchdogTimer = setTimeout(() => endTest('FAIL - the callback was never called'), 3000);
+    })();
+
+    GCController.collect();
+}
+
+function checkElement()
+{
+    clearTimeout(watchdogTimer);
+
+    if (!internals.isElementAlive(elementIdentifier))
+        return endTest('FAIL - element is no longer alive');
+
+    if (!internals.isElementAlive(parentIdentifier))
+        return endTest('FAIL - parent is no longer alive');
+
+    --iterationCount;
+    setTimeout(() => runTest(), 0);
+}
+
+function endTest(status)
+{
+    result.textContent = status;
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+</script>
+</head>
+<body onload='runTest()'>
+<p>This tests that calling watchAvailability will keep the media element alive until the callback is called. You should see PASS below:</p>
+<p id="result">Running</p>
+</body>
+</html>

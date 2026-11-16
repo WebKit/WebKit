@@ -1,0 +1,7 @@
+2d.text.drawing.style.nonfinite.spacing
+
+Testing letter spacing and word spacing with nonfinite inputs
+
+
+PASS Testing letter spacing and word spacing with nonfinite inputs
+

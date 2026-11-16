@@ -1,0 +1,20 @@
+<html><!-- webkit-test-runner [ AlwaysAllowLocalWebarchive=true ] -->
+<script>
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.dumpFrameLoadCallbacks();
+        testRunner.waitUntilDone();
+    }
+    if (window.internals)
+        internals.setAlwaysAllowLocalWebarchive(true);
+    onload = function() {
+        frame = document.createElement("iframe");
+        frame.src = "resources/mainresource-null-mimetype.webarchive";
+        frame.onload = function() {
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }
+        document.body.appendChild(frame);
+    }
+</script>
+</html>

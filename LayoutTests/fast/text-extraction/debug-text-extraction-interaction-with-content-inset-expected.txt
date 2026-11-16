@@ -1,0 +1,10 @@
+Verifies that text extraction click interactions with a location automatically account for content insets, so that (0, 0) hits the top-left corner of the web content.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+PASS clickError is ""
+PASS clickCount is 1
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

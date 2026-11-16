@@ -1,0 +1,12 @@
+<style>
+#abs_pos {
+  position: absolute;
+}
+</style>
+<ruby id=abs_pos><ruby id=inner_ruby></ruby><span><div>This test passes if it doesn't crash.</div></span></ruby>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+document.body.offsetHeight;
+inner_ruby.remove();
+</script>

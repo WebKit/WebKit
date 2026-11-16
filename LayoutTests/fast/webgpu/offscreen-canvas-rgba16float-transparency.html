@@ -1,0 +1,88 @@
+<!-- webkit-test-runner [ WebGPUHDREnabled=true ] -->
+<!DOCTYPE html>
+<html class="reftest-wait">
+<head>
+<meta charset="utf-8">
+<title>OffscreenCanvas WebGPU rgba16float premultiplied alpha composites transparently</title>
+<style>
+  body { margin: 0; }
+  /* Solid backdrop that must remain visible through the transparent canvas. */
+  #backdrop {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 200px;
+    height: 200px;
+    background: rgb(0, 128, 0);
+  }
+  #canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
+</style>
+</head>
+<body>
+  <div id="backdrop"></div>
+  <canvas id="canvas" width="200" height="200"></canvas>
+  <script>
+    // Regression test for an rgba16float OffscreenCanvas losing its alpha when
+    // committed to its placeholder canvas: the readback forced the image opaque,
+    // so a transparent WebGPU canvas showed up as opaque black instead of letting
+    // the green backdrop show through.
+    function done() {
+      document.documentElement.classList.remove('reftest-wait');
+    }
+
+    async function run() {
+      const adapter = navigator.gpu && await navigator.gpu.requestAdapter();
+      if (!adapter) {
+        // Without WebGPU there is nothing to composite; the backdrop matches the
+        // reference on its own.
+        done();
+        return;
+      }
+      const device = await adapter.requestDevice();
+
+      const offscreen = document.getElementById("canvas").transferControlToOffscreen();
+      const context = offscreen.getContext("webgpu");
+      context.configure({
+        device,
+        format: "rgba16float",
+        alphaMode: "premultiplied",
+        toneMapping: { mode: "extended" },
+      });
+
+      // Clear to fully transparent every frame. With premultiplied alpha this must
+      // let the green backdrop show through unchanged.
+      function renderFrame() {
+        const encoder = device.createCommandEncoder();
+        const pass = encoder.beginRenderPass({
+          colorAttachments: [{
+            view: context.getCurrentTexture().createView(),
+            clearValue: { r: 0, g: 0, b: 0, a: 0 },
+            loadOp: "clear",
+            storeOp: "store",
+          }],
+        });
+        pass.end();
+        device.queue.submit([encoder.finish()]);
+      }
+
+      // Render several frames so the asynchronous offscreen->placeholder commit
+      // (a GPU process round-trip) has time to publish a real frame before we snapshot.
+      let framesRemaining = 10;
+      function tick() {
+        renderFrame();
+        if (--framesRemaining > 0)
+          requestAnimationFrame(tick);
+        else
+          requestAnimationFrame(done);
+      }
+      requestAnimationFrame(tick);
+    }
+
+    run();
+  </script>
+</body>
+</html>

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<script>
+  window.addEventListener("load", () => {
+    window.testRunner?.dumpAsText();
+
+    const audioData = new AudioData({
+      format: "f32",
+      sampleRate: 48000,
+      numberOfFrames: 1,
+      numberOfChannels: 2,
+      timestamp: 0,
+      data: new Float32Array([0.125, -0.125])
+    });
+    const copyDestination = new Int16Array(16);
+
+    let threw = false;
+    try {
+      audioData.copyTo(copyDestination, { format: "s16-planar", planeIndex: 0, frameOffset: 1 });
+    } catch (e) {
+      threw = e instanceof RangeError;
+    }
+
+    audioData.copyTo(copyDestination, { format: "s16-planar", planeIndex: 0, frameCount: 0 });
+    audioData.copyTo(copyDestination, { format: "s16-planar", planeIndex: 1, frameCount: 0 });
+
+    document.body.innerHTML = threw ? "PASS if no crash." : "FAIL: frameOffset == numberOfFrames did not throw RangeError.";
+  });
+</script>
+<body></body>

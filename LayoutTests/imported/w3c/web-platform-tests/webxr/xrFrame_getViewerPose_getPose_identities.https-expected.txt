@@ -1,0 +1,4 @@
+
+FAIL XRFrame getViewerPose(viewerSpace) & getPose(space, space) return identity even during tracking loss - webgl promise_test: Unhandled rejection with value: object "TypeError: Member FakeXRRigidTransformInit.orientation is required and must be an instance of sequence"
+FAIL XRFrame getViewerPose(viewerSpace) & getPose(space, space) return identity even during tracking loss - webgl2 promise_test: Unhandled rejection with value: object "TypeError: Member FakeXRRigidTransformInit.orientation is required and must be an instance of sequence"
+

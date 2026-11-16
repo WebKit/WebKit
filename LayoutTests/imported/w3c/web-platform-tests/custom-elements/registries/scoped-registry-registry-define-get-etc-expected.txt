@@ -1,0 +1,9 @@
+
+PASS Custom element registries with a registered custom element return the class in their get method, and the name in their getName method
+PASS Scoped Custom element registries do not inherit names or classes from the global registry
+PASS Scoped Custom element registries return the same constructor when it is defined in both
+PASS Scoped Custom element registries allow registering name that exists in global registry
+PASS Custom element registries with a registered custom element resolve the class in their whenDefined method
+PASS Scoped Custom element registries resolve the same constructor from whenDefined when it is defined in both
+PASS Scoped Custom element registry getters do not resolve globally registered classes from whenDefined
+

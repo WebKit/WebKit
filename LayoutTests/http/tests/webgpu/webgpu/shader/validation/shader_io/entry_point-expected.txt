@@ -1,0 +1,17 @@
+
+PASS :missing_attribute_on_param:target_stage=""
+PASS :missing_attribute_on_param:target_stage="vertex"
+PASS :missing_attribute_on_param:target_stage="fragment"
+PASS :missing_attribute_on_param:target_stage="compute"
+PASS :missing_attribute_on_param_struct:target_stage=""
+PASS :missing_attribute_on_param_struct:target_stage="vertex"
+PASS :missing_attribute_on_param_struct:target_stage="fragment"
+PASS :missing_attribute_on_param_struct:target_stage="compute"
+PASS :missing_attribute_on_return_type:target_stage=""
+PASS :missing_attribute_on_return_type:target_stage="vertex"
+PASS :missing_attribute_on_return_type:target_stage="fragment"
+PASS :missing_attribute_on_return_type_struct:target_stage=""
+PASS :missing_attribute_on_return_type_struct:target_stage="vertex"
+PASS :missing_attribute_on_return_type_struct:target_stage="fragment"
+PASS :no_entry_point_provided:
+

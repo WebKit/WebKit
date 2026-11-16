@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>configurationchange event.</title>
+    <script src="../../resources/testharness.js"></script>
+    <script src="../../resources/testharnessreport.js"></script>
+</head>
+<body>
+    <video id=video playsInline autoplay></video>
+    <script>
+    promise_test(async (t) => {
+        if (!window.testRunner)
+            return;
+
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        t.add_cleanup(() => stream.getTracks().forEach(track => track.stop()));
+        const track = stream.getAudioTracks()[0];
+
+        video.srcObject = stream;
+        await video.play();
+
+        assert_equals(track.label, "Mock audio device 1");
+
+        testRunner.triggerMockCaptureConfigurationChange(false, true, false);
+
+        await new Promise((resolve, reject) => {
+            track.onconfigurationchange = resolve;
+            setTimeout(()=> reject("waited too long for configurationchange"), 5000);
+        });
+
+        assert_equals(track.label, "Mock audio device 2");
+
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        assert_equals(track.readyState, "live");
+    }, "Trigger configurationchange event in case OS changes microphone on its own");
+
+    promise_test(async (t) => {
+        if (!window.testRunner)
+            return;
+
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+        t.add_cleanup(() => stream.getTracks().forEach(track => track.stop()));
+        const track = stream.getVideoTracks()[0];
+
+        video.srcObject = stream;
+        await video.play();
+
+        assert_false(track.getSettings().backgroundBlur);
+        assert_array_equals(track.getCapabilities().backgroundBlur, [false]);
+
+        testRunner.triggerMockCaptureConfigurationChange(true, false, false);
+
+        await new Promise((resolve, reject) => {
+            track.onconfigurationchange = resolve;
+            setTimeout(()=> reject("waited too long for configurationchange"), 5000);
+        });
+
+        assert_true(track.getSettings().backgroundBlur);
+        assert_array_equals(track.getCapabilities().backgroundBlur, [true]);
+    }, "Trigger configurationchange event in case background blur changes");
+    </script>
+</body>
+</html>

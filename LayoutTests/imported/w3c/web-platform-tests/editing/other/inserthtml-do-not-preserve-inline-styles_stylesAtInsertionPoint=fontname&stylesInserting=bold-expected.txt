@@ -1,0 +1,6 @@
+abc
+
+PASS insertHTML with "<b>abc</b>" into <font face="monospace">[]def</font>
+PASS insertHTML with "<b>def</b>" into <font face="monospace">abc[]</font>
+PASS insertHTML with "<b>b</b>" into <font face="monospace">a[]c</font>
+

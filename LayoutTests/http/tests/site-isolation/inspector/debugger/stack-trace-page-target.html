@@ -1,0 +1,94 @@
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="resources/site-isolation-debugger-test-utilities.js"></script>
+
+<script>
+    // An eval'd function has no URL, so only its script identifier can resolve it. It is compiled in
+    // the main frame's global object, so the main frame target owns it. Keeping it on `window` keeps
+    // its script alive, so the debugger still reports the script after the inspector attaches.
+    window.functionFromEval = eval(`(function functionFromEval() {
+        return 42;
+    })`);
+
+    function test() {
+        let suite = InspectorTest.createAsyncSuite("SiteIsolation.Debugger.StackTracePageTarget");
+
+        // Found by document URL rather than by the frontend's own main frame target lookup, so the
+        // test doesn't check that lookup against itself.
+        async function mainFrameTargetByURL() {
+            let frameTargets = WI.targets.filter((target) => target.type === WI.TargetType.Frame);
+            let urlTargetMap = await fetchDocumentURLsForTargets(frameTargets);
+            return urlTargetMap.get(WI.networkManager.mainFrame.url);
+        }
+
+        suite.addTestCase({
+            name: "SiteIsolation.Debugger.StackTracePageTarget.ResolvesMainFrameScript",
+            description: "A stack trace delivered on the page target resolves a URL-less script owned by the main frame target.",
+            async test() {
+                let mainFrameTarget = await mainFrameTargetByURL();
+                InspectorTest.expectNotNull(mainFrameTarget, "Should find the main frame's target.");
+                if (!mainFrameTarget)
+                    return;
+
+                let {result} = await mainFrameTarget.RuntimeAgent.evaluate.invoke({expression: "functionFromEval", objectGroup: "test"});
+                let {details} = await mainFrameTarget.DebuggerAgent.getFunctionDetails.invoke({functionId: result.objectId});
+                let {scriptId, lineNumber, columnNumber} = details.location;
+
+                // Stack trace line numbers are 1-based, while a Debugger.Location's are 0-based.
+                let stackTrace = WI.StackTrace.fromPayload(WI.pageTarget, {
+                    callFrames: [{functionName: "functionFromEval", url: "", scriptId, lineNumber: lineNumber + 1, columnNumber}],
+                }, {deliveredOnTarget: true});
+
+                let callFrame = stackTrace.callFrames.find((callFrame) => callFrame.functionName === "functionFromEval");
+                InspectorTest.expectNotNull(callFrame, "Stack trace should contain the eval'd function.");
+                if (!callFrame)
+                    return;
+
+                InspectorTest.expectEqual(callFrame.target, WI.pageTarget, "Stack trace should be resolved against the page target.");
+                InspectorTest.expectFalse(callFrame.nativeCode, "The eval'd function's frame should not be treated as native code.");
+                InspectorTest.expectNotNull(callFrame.sourceCodeLocation, "The eval'd function's frame should have a source location.");
+                if (!callFrame.sourceCodeLocation)
+                    return;
+
+                let script = callFrame.sourceCodeLocation.sourceCode;
+                InspectorTest.expectEmpty(script.url, "The eval'd function's script should have no URL, so only its identifier can resolve it.");
+                InspectorTest.expectNull(WI.debuggerManager.scriptForIdentifier(script.id, WI.pageTarget), "The page target should not own the script.");
+                InspectorTest.expectEqual(WI.debuggerManager.scriptForIdentifier(script.id, mainFrameTarget), script, "The main frame target should own the script.");
+                InspectorTest.expectNull(WI.debuggerManager.scriptForStackTraceIdentifier(script.id, WI.pageTarget), "Without `deliveredOnTarget`, the page target should not fall back to the main frame target.");
+            }
+        });
+
+        suite.addTestCase({
+            name: "SiteIsolation.Debugger.StackTracePageTarget.OnlyConsultsMainFrameTarget",
+            description: "Script identifiers collide across processes, so the page target's fallback must consult only the main frame target, never a cross-origin iframe's target.",
+            async test() {
+                let mainFrameTarget = await mainFrameTargetByURL();
+                InspectorTest.assert(mainFrameTarget, "Should find the main frame's target.");
+                if (!mainFrameTarget)
+                    return;
+
+                let crossOriginTarget = await frameTargetForURLContaining("debugger-frame.html");
+                InspectorTest.expectNotNull(crossOriginTarget, "Should find the cross-origin iframe's target.");
+                if (!crossOriginTarget)
+                    return;
+
+                let crossOriginScripts = WI.debuggerManager.dataForTarget(crossOriginTarget).scripts;
+                InspectorTest.expectThat(crossOriginScripts.some((script) => script.url?.includes("debugger-frame-script.js")), "Cross-origin frame target should have the debugger-frame-script.js script.");
+
+                // An identifier from the iframe's process may also name an unrelated script in the main
+                // frame's process, so compare with what the main frame target owns rather than with null.
+                let mismatches = crossOriginScripts.filter((script) => {
+                    let resolved = WI.debuggerManager.scriptForStackTraceIdentifier(script.id, WI.pageTarget, {deliveredOnTarget: true});
+                    return resolved !== WI.debuggerManager.scriptForIdentifier(script.id, mainFrameTarget);
+                });
+                InspectorTest.expectEmpty(mismatches, "Each cross-origin script identifier should resolve from the page target only to the main frame target's script with that identifier, if any.");
+            }
+        });
+
+        suite.runTestCasesAndFinish();
+    }
+</script>
+
+<body onload="runTest()">
+<p>Test that a stack trace delivered on the page target resolves scripts owned by the main frame target, and scripts owned by no other target.</p>
+<iframe src="http://localhost:8000/site-isolation/inspector/debugger/resources/debugger-frame.html"></iframe>
+</body>

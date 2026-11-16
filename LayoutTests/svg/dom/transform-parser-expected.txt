@@ -1,0 +1,18 @@
+This test fuzzes the transform parser with semi-random attribute values and dumps the results of any values that parse successfully.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Parsed as 1 transform(s): matrix(0,0,0,0,0,0)
+Parsed as 1 transform(s): rotate(0)
+Parsed as 1 transform(s): rotate(0,0,0)
+Parsed as 1 transform(s): scale(0)
+Parsed as 1 transform(s): scale(0,0)
+Parsed as 1 transform(s): skewX(0)
+Parsed as 1 transform(s): skewY(0)
+Parsed as 1 transform(s): translate(0)
+Parsed as 1 transform(s): translate(0,0)
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

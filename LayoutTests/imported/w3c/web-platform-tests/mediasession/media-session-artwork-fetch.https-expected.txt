@@ -1,0 +1,7 @@
+
+
+PASS Setup service worker
+PASS Play some audio
+PASS Set same origin media metadata
+PASS Set cross origin media metadata
+

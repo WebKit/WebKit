@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        #container {
+            position: absolute;
+            width: 400px;
+            height: 400px;
+            top: 0;
+            left: 0;
+            scroll-snap-type: y mandatory;
+            overflow-x: hidden;
+            overflow-y: scroll;
+            border: 1px black dashed;
+            opacity: 0.75;
+            background-color: #EEE;
+        }
+
+        .child {
+            width: 400px;
+            height: 400px;
+            scroll-snap-align: end;
+            position: absolute;
+            left: 0;
+        }
+    </style>
+    <script>
+    let write = s => output.innerHTML += s + "<br>";
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+
+    function zeroDelayTimeout(action) {
+        return new Promise((resolve) => {
+            setTimeout(() => {
+                action();
+                resolve();
+            });
+        });
+    }
+
+    function setScrollSnapAlign(align) {
+        for (let child of document.querySelectorAll(".child"))
+            child.style.scrollSnapAlign = align;
+    }
+
+    function run()
+    {
+        if (!window.testRunner || !window.internals) {
+            write(`To manually test, verify that scrolling in the container snaps such that the bottom tip of each
+                colored box aligns with the bottom of the scrolling container.`);
+            return;
+        }
+
+        zeroDelayTimeout(() => {
+            write("Scroll-snap offsets are: " + internals.scrollSnapOffsets(container));
+            container.scrollTop += 100;
+            container.style.width = "500px";
+        })
+        .then(() => {
+            zeroDelayTimeout(() => {
+                write("After resizing, the offsets should not have changed: " + internals.scrollSnapOffsets(container));
+                container.scrollTop += 100;
+                setScrollSnapAlign("start");
+            });
+        })
+        .then(() => {
+            zeroDelayTimeout(() => {
+                write("After changing alignment to `start`, the offsets are: " + internals.scrollSnapOffsets(container));
+                container.scrollTop += 100;
+                container.style.width = "400px";
+            });
+        })
+        .then(() => {
+            zeroDelayTimeout(() => {
+                write("After resizing, the offsets should not have changed: " + internals.scrollSnapOffsets(container));
+                testRunner.notifyDone();
+            });
+        });
+    }
+    </script>
+</head>
+<body onload=run()>
+    <div id="container">
+        <div class="child" style="background-color: red;     top: 0px;    transform: rotate(45deg);"></div>
+        <div class="child" style="background-color: green;   top: 720px;  transform: rotate(-10deg);"></div>
+        <div class="child" style="background-color: blue;    top: 1440px; transform: rotate(5deg);"></div>
+        <div class="child" style="background-color: aqua;    top: 2160px; transform: rotate(60deg);"></div>
+        <div class="child" style="background-color: yellow;  top: 2880px; transform: rotate(-90deg);"></div>
+        <div class="child" style="background-color: fuchsia; top: 3600px; transform: rotate(-30deg);"></div>
+    </div>
+    <div id="output"></div>
+</body>
+</html>

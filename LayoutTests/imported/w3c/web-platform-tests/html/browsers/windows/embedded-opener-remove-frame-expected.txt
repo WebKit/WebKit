@@ -1,0 +1,4 @@
+
+PASS opener of discarded nested browsing context
+PASS opener of discarded auxiliary browsing context
+

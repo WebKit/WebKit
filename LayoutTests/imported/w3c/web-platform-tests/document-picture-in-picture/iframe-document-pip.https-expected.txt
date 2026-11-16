@@ -1,0 +1,4 @@
+
+
+PASS Test that document pip is not allowed in iframes.
+

@@ -1,0 +1,3 @@
+
+PASS update() with invalid response (longer than 64Kb characters) should fail.
+

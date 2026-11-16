@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<title>DOMException has a stack property, like other errors</title>
+<body>
+<p>DOMException has the [[ErrorData]] internal slot, and its JS wrapper is a JSC ErrorInstance, so
+it exposes the same non-standard stack/line/column/sourceURL properties that a plain Error does.
+This matches Firefox (which also reports a stack for DOMException) and is what the WebIDL
+web-platform-test "If the implementation has a stack property on normal errors, it also does on
+DOMExceptions" requires. This test can be run directly in any browser to compare behavior.</p>
+<pre id="log"></pre>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+var log = [];
+function check(description, actual, expected) {
+    var pass = actual === expected;
+    log.push((pass ? "PASS" : "FAIL") + ": " + description + " is " + JSON.stringify(actual)
+        + (pass ? "" : ", expected " + JSON.stringify(expected)));
+}
+
+// WebTransportError is a DOMException subclass, but is only present when WebTransport is enabled.
+// The checks involving it are guarded with "!window.WebTransportError || ..." so that this test
+// produces identical output whether or not WebTransport is enabled.
+
+check("typeof new DOMException().stack", typeof new DOMException().stack, "string");
+check("typeof new WebTransportError().stack", !window.WebTransportError || typeof new WebTransportError().stack === "string", true);
+
+// The stack is an own property with the same attributes a plain Error's stack has.
+var domExceptionDesc = Object.getOwnPropertyDescriptor(new DOMException(), "stack");
+var errorDesc = Object.getOwnPropertyDescriptor(new Error(), "stack");
+check("DOMException stack is an own property", !!domExceptionDesc, true);
+check("DOMException stack writable matches Error", domExceptionDesc.writable, errorDesc.writable);
+check("DOMException stack enumerable matches Error", domExceptionDesc.enumerable, errorDesc.enumerable);
+check("DOMException stack configurable matches Error", domExceptionDesc.configurable, errorDesc.configurable);
+
+// The stack materializes the other WebKit-specific error properties too.
+var e = new DOMException("message", "name");
+check("typeof e.line", typeof e.line, "number");
+check("typeof e.column", typeof e.column, "number");
+check("typeof e.sourceURL", typeof e.sourceURL, "string");
+
+// Materializing the stack must not give the exception own name/message properties; those still
+// come from the WebIDL getters on DOMException.prototype.
+check("e.stack forced", typeof e.stack, "string");
+check("e.hasOwnProperty('message')", e.hasOwnProperty("message"), false);
+check("e.hasOwnProperty('name')", e.hasOwnProperty("name"), false);
+check("e.message", e.message, "message");
+check("e.name", e.name, "name");
+
+// Exceptions thrown by DOM APIs get a stack pointing at the code that called them.
+function throwFromDOM() {
+    document.createElement("<invalid>");
+}
+var thrown;
+try {
+    throwFromDOM();
+} catch (exception) {
+    thrown = exception;
+}
+check("DOM API threw a DOMException", thrown instanceof DOMException, true);
+check("thrown.name", thrown.name, "InvalidCharacterError");
+check("thrown.stack names the calling function", thrown.stack.indexOf("throwFromDOM") !== -1, true);
+
+// Error.stackTraceLimit is honored, just as it is for a plain Error.
+Error.stackTraceLimit = 0;
+check("typeof new DOMException().stack with stackTraceLimit 0", typeof new DOMException().stack, typeof new Error().stack);
+Error.stackTraceLimit = 100;
+
+// Structured clone preserves the stack, so a clone reports the same one as the original. Without
+// this, structuredClone() would report the stack of the frame that did the deserializing.
+var clone = structuredClone(thrown);
+check("structuredClone(thrown).stack matches the original", clone.stack === thrown.stack, true);
+check("structuredClone(thrown).name", clone.name, thrown.name);
+check("structuredClone(thrown).message", clone.message, thrown.message);
+check("structuredClone(thrown) is a DOMException", clone instanceof DOMException, true);
+
+document.getElementById("log").textContent = log.join("\n");
+</script>
+</body>

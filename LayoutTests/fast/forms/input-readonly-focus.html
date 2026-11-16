@@ -1,0 +1,28 @@
+<html>
+<head>
+<script>
+async function runTest() {
+  window.testRunner.dumpAsText();
+
+  var input = document.getElementById('i');
+  await eventSender.asyncMouseMoveTo(input.offsetLeft + input.offsetWidth / 2, input.offsetTop + input.offsetHeight / 2);
+  await eventSender.asyncMouseDown();
+  await eventSender.asyncMouseUp();
+}
+window.onload = async function() {
+  var input = document.getElementById('i');
+  input.onfocus = function(e) {
+    document.body.innerHTML = 'PASS';
+  }
+  if (window.testRunner) {
+    testRunner.waitUntilDone();
+    await runTest();
+    testRunner.notifyDone();
+  }
+}
+</script>
+</head>
+<body>
+<input id="i" readonly>
+</body>
+</html>

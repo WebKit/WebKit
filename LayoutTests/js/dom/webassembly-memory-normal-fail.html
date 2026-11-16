@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+
+description("Test sending WebAssembly.Memory via postMessage to a worker and fail.");
+
+if (typeof WebAssembly !== 'undefined') {
+    window.memory = new WebAssembly.Memory({ initial: 1, maximum: 2 });
+    window.worker = new Worker("./resources/webassembly-memory-normal-fail-worker.js");
+    shouldThrow(`worker.postMessage(memory)`);
+}
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

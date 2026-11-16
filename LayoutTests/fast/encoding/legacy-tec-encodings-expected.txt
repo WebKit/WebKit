@@ -1,0 +1,64 @@
+This test verifies that encodings that used to be supported by TEC on macOS are not supported.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+The following encodings should not be supported
+PASS new TextDecoder("cp950").encoding threw exception RangeError: Bad value.
+PASS new TextDecoder("cp737").encoding threw exception RangeError: Bad value.
+PASS new TextDecoder("ibm737").encoding threw exception RangeError: Bad value.
+PASS new TextDecoder("ISO-2022-JP-3").encoding threw exception RangeError: Bad value.
+PASS new TextDecoder("JIS_C6226-1978").encoding threw exception RangeError: Bad value.
+PASS new TextDecoder("Shift_JIS_X0213-2000").encoding threw exception RangeError: Bad value.
+PASS new TextDecoder("ibm-942_P12A-1999").encoding threw exception RangeError: Bad value.
+PASS new TextDecoder("ibm-1399_P110-2003").encoding threw exception RangeError: Bad value.
+PASS new TextDecoder("JIS_X0212-1990").encoding threw exception RangeError: Bad value.
+PASS new TextDecoder("x-mac-arabic").encoding threw exception RangeError: Bad value.
+PASS new TextDecoder("x-mac-croatian").encoding threw exception RangeError: Bad value.
+PASS new TextDecoder("x-mac-hebrew").encoding threw exception RangeError: Bad value.
+PASS new TextDecoder("x-mac-icelandic").encoding threw exception RangeError: Bad value.
+PASS new TextDecoder("x-mac-romanian").encoding threw exception RangeError: Bad value.
+PASS new TextDecoder("x-mac-thai").encoding threw exception RangeError: Bad value.
+PASS new TextDecoder("johab").encoding threw exception RangeError: Bad value.
+PASS new TextDecoder("x-mac-dingbats").encoding threw exception RangeError: Bad value.
+PASS new TextDecoder("x-mac-symbol").encoding threw exception RangeError: Bad value.
+PASS new TextDecoder("JIS_X0208-1990").encoding threw exception RangeError: Bad value.
+PASS new TextDecoder("JIS_X0208-1983").encoding threw exception RangeError: Bad value.
+PASS new TextDecoder("csiso159jisx02121990").encoding threw exception RangeError: Bad value.
+PASS new TextDecoder("isoir159").encoding threw exception RangeError: Bad value.
+PASS new TextDecoder("x0212").encoding threw exception RangeError: Bad value.
+PASS new TextDecoder("jis_x0208-1983").encoding threw exception RangeError: Bad value.
+PASS new TextDecoder("csiso87jisx0208").encoding threw exception RangeError: Bad value.
+PASS new TextDecoder("isoir87").encoding threw exception RangeError: Bad value.
+PASS new TextDecoder("ibm-953_P100-2000").encoding threw exception RangeError: Bad value.
+PASS new TextDecoder("macos-518-10.2").encoding threw exception RangeError: Bad value.
+PASS new TextDecoder("macos-36_2-10.2").encoding threw exception RangeError: Bad value.
+PASS new TextDecoder("macos-1285-10.2").encoding threw exception RangeError: Bad value.
+PASS new TextDecoder("macos-37_5-10.2").encoding threw exception RangeError: Bad value.
+PASS new TextDecoder("macos-38_2-10.2").encoding threw exception RangeError: Bad value.
+PASS new TextDecoder("macos-21-10.5").encoding threw exception RangeError: Bad value.
+PASS new TextDecoder("windows-1361-2000").encoding threw exception RangeError: Bad value.
+PASS new TextDecoder("macos-34-10.2").encoding threw exception RangeError: Bad value.
+PASS new TextDecoder("macos-33-10.5").encoding threw exception RangeError: Bad value.
+PASS new TextDecoder("ibm-952_P110-1997").encoding threw exception RangeError: Bad value.
+PASS new TextDecoder("ibm-955_P110-1997").encoding threw exception RangeError: Bad value.
+PASS new TextDecoder("x-mac-chinesesimp").encoding threw exception RangeError: Bad value.
+PASS new TextDecoder("xmacsimpchinese").encoding threw exception RangeError: Bad value.
+PASS new TextDecoder("x-mac-chinesetrad").encoding threw exception RangeError: Bad value.
+PASS new TextDecoder("xmactradchinese").encoding threw exception RangeError: Bad value.
+PASS new TextDecoder("x-mac-japanese").encoding threw exception RangeError: Bad value.
+PASS new TextDecoder("x-mac-korean").encoding threw exception RangeError: Bad value.
+PASS new TextDecoder("x-mac-vt100").encoding threw exception RangeError: Bad value.
+PASS new TextDecoder("x-nextstep").encoding threw exception RangeError: Bad value.
+PASS new TextDecoder("x-mac-farsi").encoding threw exception RangeError: Bad value.
+PASS new TextDecoder("x-mac-roman-latin1").encoding threw exception RangeError: Bad value.
+PASS new TextDecoder("x-mac-devanagari").encoding threw exception RangeError: Bad value.
+PASS new TextDecoder("x-mac-gujarati").encoding threw exception RangeError: Bad value.
+PASS new TextDecoder("x-mac-gurmukhi").encoding threw exception RangeError: Bad value.
+PASS new TextDecoder("x-mac-tibetan").encoding threw exception RangeError: Bad value.
+The following encoding names are supported by WebKit cross-platform, but some may be removed at a later time.
+PASS new TextDecoder("EUC-TW").encoding is "euc-tw"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

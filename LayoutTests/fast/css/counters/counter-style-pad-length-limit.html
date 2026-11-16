@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/testharness.js"></script>
+<script src="../../../resources/testharnessreport.js"></script>
+<style>
+@counter-style pad {
+    system: extends decimal;
+    pad: 150 "0";
+}
+
+@counter-style pad-over-limit {
+    system: extends decimal;
+    pad: 300 "0";
+}
+
+@counter-style symbol {
+    system: extends decimal;
+    pad: 10 "0123456789abcde";
+}
+
+@counter-style symbol-over-limit {
+    system: extends decimal;
+    pad: 20 "0123456789abcde";
+}
+</style>
+</head>
+<body>
+<ol><li id="pad" style="list-style-type: pad"></li></ol>
+<ol><li id="pad-over-limit" style="list-style-type: pad-over-limit"></li></ol>
+<ol><li id="symbol" style="list-style-type: symbol"></li></ol>
+<ol><li id="symbol-over-limit" style="list-style-type: symbol-over-limit"></li></ol>
+<script>
+test(function() {
+    const text = internals.markerTextForListItem(document.getElementById('pad'));
+    assert_equals(text, '0'.repeat(149) + '1');
+}, 'Pad under limit generates padded text');
+
+test(function() {
+    const text = internals.markerTextForListItem(document.getElementById('pad-over-limit'));
+    assert_equals(text, '1');
+}, 'Pad over limit falls back to decimal');
+
+test(function() {
+    const text = internals.markerTextForListItem(document.getElementById('symbol'));
+    assert_equals(text, '0123456789abcde'.repeat(9) + '1');
+}, 'Pad with long symbol under limit generates padded text');
+
+test(function() {
+    const text = internals.markerTextForListItem(document.getElementById('symbol-over-limit'));
+    assert_equals(text, '1');
+}, 'Pad with long symbol over limit falls back to decimal');
+</script>
+</body>
+</html>

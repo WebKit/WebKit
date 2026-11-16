@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/js-test.js"></script>
+</head>
+<body>
+<iframe></iframe>
+<script>
+description("A WebAudio context in a subframe destroyed without close() must have its media session removed by AudioContext::stop(), deactivating the audio session promptly rather than leaking it until the context is garbage-collected.");
+jsTestIsAsync = true;
+
+async function waitForCondition(predicate)
+{
+    for (let i = 0; i < 200; ++i) {
+        if (predicate())
+            return true;
+        await new Promise(resolve => setTimeout(resolve, 10));
+    }
+    return false;
+}
+
+onload = async () => {
+    if (!window.internals) {
+        testFailed("This test requires the Internals API");
+        finishJSTest();
+        return;
+    }
+
+    internals.settings.setShouldDeactivateAudioSession(true);
+
+    const frame = document.querySelector("iframe");
+    await new Promise(resolve => {
+        window.onmessage = event => {
+            if (event.data === "active")
+                resolve();
+        };
+        frame.srcdoc = `<script>
+            internals.settings.setShouldDeactivateAudioSession(true);
+            internals.withUserGesture(() => {
+                window.context = new AudioContext();
+                const oscillator = context.createOscillator();
+                const gain = context.createGain();
+                gain.gain.value = 0.001;
+                oscillator.connect(gain);
+                gain.connect(context.destination);
+                oscillator.start();
+                context.resume();
+            });
+            (async () => {
+                for (let i = 0; i < 200; ++i) {
+                    if (internals.audioSessionActive()) {
+                        parent.postMessage("active", "*");
+                        return;
+                    }
+                    await new Promise(resolve => setTimeout(resolve, 10));
+                }
+                parent.postMessage("inactive", "*");
+            })();
+        <\/script>`;
+    });
+
+    audioSessionActive = internals.audioSessionActive();
+    shouldBeTrue("audioSessionActive");
+
+    // Destroy the subframe without closing its AudioContext.
+    frame.remove();
+
+    audioSessionDeactivated = await waitForCondition(() => !internals.audioSessionActive());
+    shouldBeTrue("audioSessionDeactivated");
+
+    finishJSTest();
+};
+</script>
+</body>
+</html>

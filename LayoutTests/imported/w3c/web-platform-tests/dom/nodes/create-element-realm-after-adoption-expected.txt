@@ -1,0 +1,8 @@
+
+
+PASS Precondition: the host's node document and relevant realm differ after adoption
+PASS Built-in element: innerHTML creates it in the node document's realm
+PASS Built-in element: the created element's realm is independent of the setter's realm
+PASS Custom element: innerHTML upgrades it using the node document's registry
+PASS Custom element: the registry used is independent of the setter's realm
+

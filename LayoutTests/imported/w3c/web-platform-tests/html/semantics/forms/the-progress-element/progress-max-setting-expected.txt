@@ -1,0 +1,3 @@
+
+PASS Setting max to non-positive value should be ignored
+

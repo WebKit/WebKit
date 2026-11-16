@@ -1,0 +1,16 @@
+<script>
+function runTest() {
+    window.location.hash = "#test";
+    startFetch();
+    history.back();
+}
+
+function startFetch() {
+    fetch("../resources/slow-resource.pl?delay=1000")
+        .then(() => window.top.postMessage("fetch completed", "*"))
+        .catch((err) => window.top.postMessage(`fetch failed: ${err}`, "*"));
+}
+
+window.onload = () => setTimeout(runTest);
+</script>
+<p>This checks that history.back() in an iframe does not stop outstanding network requests.</p>

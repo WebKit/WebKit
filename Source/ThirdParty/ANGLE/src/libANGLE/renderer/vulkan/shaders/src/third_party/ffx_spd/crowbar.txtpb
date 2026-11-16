@@ -1,0 +1,15 @@
+upstream {
+  commit: "7c796c6d9fa6a9439e3610478148cfd742d97daf"
+  artifacts {
+    git {
+      repository: "https://github.com/GPUOpen-Effects/FidelityFX-SPD"
+      commit: "7c796c6d9fa6a9439e3610478148cfd742d97daf"
+    }
+  }
+}
+stages {
+  input {
+    patch { copybara {} }
+  }
+  publish { git {} }
+}

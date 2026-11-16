@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML Basic 1.1//EN" "http://www.w3.org/TR/xhtml-basic/xhtml-basic11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <title>WICD Core 1.0 #20-3 - SVG grid with percentage width</title>
+  <style type="text/css">
+    div,object
+      {float:left;}
+    .full
+      {width:100%;}
+    .half
+      {width:50%;}
+    .half2
+      {width:50%;}
+    .third
+      {width:33.33%;}
+    .quarter
+      {width:25%;}
+    .threequarters
+      {width:75%;}
+  </style>
+</head>
+
+<body>
+<div>
+  <h1>SVG grid with percentage width</h1>
+  <h4>WICD Core 1.0 #20-3</h4>
+  <p>
+    <object class="half" type="image/svg+xml" data="resources/a.svg"/><object class="half" type="image/svg+xml" data="resources/l.svg"/>
+
+    <object class="third" type="image/svg+xml" data="resources/bcde.svg"/><div class="third"><object width="100%" type="image/svg+xml" data="resources/k.svg"/><br/><object width="100%" type="image/svg+xml" data="resources/j.svg"/></div><div class="third"><object class="full" type="image/svg+xml" data="resources/mnop.svg"/><object class="full" type="image/svg+xml" data="resources/q.svg"/></div>
+
+    <object class="half" type="image/svg+xml" data="resources/f.svg"/><object class="half" type="image/svg+xml" data="resources/i.svg"/>
+
+    <div class="half"><object class="quarter" type="image/svg+xml" data="resources/empty1.svg"/><object class="threequarters" type="image/svg+xml" data="resources/g.svg"/></div>
+
+    <div class="half2"><object class="half" type="image/svg+xml" data="resources/h.svg"/><object class="half" type="image/svg+xml" data="resources/r.svg"/></div>
+
+    <object class="quarter" type="image/svg+xml" data="resources/empty2.svg"/><object class="quarter" type="image/svg+xml" data="resources/empty3.svg"/>
+
+    <div class="half2"><object class="threequarters" type="image/svg+xml" data="resources/s.svg"/><object class="quarter" type="image/svg+xml" data="resources/t.svg"/></div>
+  </p>
+
+  <p style="color:white"><br/>..</p>  <!-- simple br didn't do it for me :) -->
+
+  <p>
+    Above, you should see a grid of 17 SVG child elements sticked together to build one rectangle grid. 
+    You should be able to resize your browser window and the grid rendering should adjust to it. The outcome should look like in these sample screenshots:
+    <a href="rightsizing1.png">small</a>, <a href="rightsizing2.png">bigger</a> and <a href="rightsizing3.png">big</a>.
+  </p>
+  <p>
+    The test is successful, if all SVG elements resize exacly dependend on the width of the browser window, but keep their aspect ratio and relative position. The complete grid should always show a perfect rectangle object.
+  </p>
+  <p><br/><a href="javascript:history.back()">Back</a></p>
+ </div>
+</body>
+</html>

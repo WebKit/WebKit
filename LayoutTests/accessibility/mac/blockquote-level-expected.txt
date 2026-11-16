@@ -1,0 +1,8 @@
+This test ensures we represent AXBlockQuoteLevel in attributed strings.
+
+PASS: fooText.attributedStringForTextMarkerRangeContainsAttribute('AXBlockQuoteLevel', markerRange) === true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Foo

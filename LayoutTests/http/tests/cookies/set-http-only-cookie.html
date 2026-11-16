@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<script src="/js-test-resources/js-test.js"></script>
+<script src="resources/cookie-utilities.js"></script>
+<script src="resources/resetCookies.js"></script>
+<script>
+description('Get DOM cookies while setting a cookie asynchronously with Cookie Store API');
+jsTestIsAsync = true;
+
+function setHTTPOnlyCookie(name) {
+    let promise = new Promise((resolved, rejected) => {
+        let xhr = new XMLHttpRequest;
+        xhr.open("GET", `resources/set-http-only-cookie.py?cookieName=${name}`);
+        xhr.onload = () => resolved(xhr.responseText);
+        xhr.onerror = rejected;
+        xhr.send(null);
+    });
+    return promise;
+}
+  
+onload = async () => {
+    await setHTTPOnlyCookie('foo');
+    // Get DOM cookies to make WebCookieCache cache the cookies
+    shouldNotHaveDOMCookie('foo');
+    // Start setting a cookie by using Cookie Store API in order to make WebCookieCache out of sync.
+    let promise = cookieStore.set('cookieName', 'cookieValue');
+    // Get DOM cookies again while WebCookieCache has a stale cache.
+    shouldNotHaveDOMCookie('foo');
+    finishJSTest();
+}
+</script>

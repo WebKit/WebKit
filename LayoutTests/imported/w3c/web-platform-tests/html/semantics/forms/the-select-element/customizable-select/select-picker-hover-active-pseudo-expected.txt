@@ -1,0 +1,7 @@
+  button
+
+PASS defaultbutton: select should match :hover and :active when interacting with button.
+PASS defaultbutton: select should not match :hover or :active when interacting with elements in the picker.
+PASS custombutton: select should match :hover and :active when interacting with button.
+PASS custombutton: select should not match :hover or :active when interacting with elements in the picker.
+

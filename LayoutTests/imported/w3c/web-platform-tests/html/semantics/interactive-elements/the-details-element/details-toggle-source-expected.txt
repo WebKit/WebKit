@@ -1,0 +1,8 @@
+command source
+summary
+
+PASS ToggleEvent.source on <details> elements: details.open.
+PASS ToggleEvent.source on <details> elements: click summary.
+PASS ToggleEvent.source on <details> elements: click details.
+FAIL ToggleEvent.source on <details> elements: command invokers. assert_true: An opening toggle event should have been fired. expected true got false
+

@@ -1,0 +1,14 @@
+Tests that a translation arriving after its announcement already timed out is discarded rather than announced a second time.
+
+Received announcement request:
+AnnouncementKey: San Francisco
+AXARIAAnnouncementInterruptBehavior: None
+AXARIAAnnouncementPriority: Normal
+AXAnnouncementLanguageKey: en
+
+Total announcements: 1
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

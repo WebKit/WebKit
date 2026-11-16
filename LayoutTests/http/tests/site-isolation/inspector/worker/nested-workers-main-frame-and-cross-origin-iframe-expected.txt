@@ -1,0 +1,28 @@
+Test that nested workers in the main frame and in a cross-origin iframe each get their own worker target, under the right parent.
+
+
+
+== Running test suite: SiteIsolation.Worker.NestedWorkers
+-- Running test case: SiteIsolation.Worker.NestedWorkers.StartInCrossOriginIFrame
+PASS: Started nested workers in the cross-origin iframe.
+
+-- Running test case: SiteIsolation.Worker.NestedWorkers.StartInMainFrame
+PASS: Started nested workers in the main frame.
+
+-- Running test case: SiteIsolation.Worker.NestedWorkers.WorkerTargets
+PASS: Every worker target should have a distinct identifier.
+PASS: Should list 6 worker targets.
+iframe worker level 1: parent is frame target for the iframe
+iframe worker level 2: parent is iframe worker level 1
+iframe worker level 3: parent is iframe worker level 2
+main frame worker level 1: parent is frame target for the main frame
+main frame worker level 2: parent is main frame worker level 1
+main frame worker level 3: parent is main frame worker level 2
+PASS: Should list iframe worker level 1 once.
+PASS: Should list iframe worker level 2 once.
+PASS: Should list iframe worker level 3 once.
+PASS: Should list main frame worker level 1 once.
+PASS: Should list main frame worker level 2 once.
+PASS: Should list main frame worker level 3 once.
+PASS: No worker should list another worker's main script as its own resource.
+

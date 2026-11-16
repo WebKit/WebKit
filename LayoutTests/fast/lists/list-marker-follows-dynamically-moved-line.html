@@ -1,0 +1,13 @@
+<!-- webkit-test-runner [ ListMarkerPositionedPostLayoutEnabled=true ] -->
+<!DOCTYPE html>
+<style>
+  ul { margin: 0; padding: 0 0 0 40px; }
+  li { font: 20px/20px Ahem; }
+</style>
+<p>PASS if the bullet is aligned with the "x" (both on the same, lower line).</p>
+<ul><li><div id="spacer"></div><div>x</div></li></ul>
+<script>
+  document.body.offsetHeight;
+  document.getElementById("spacer").style.height = "40px";
+  document.body.offsetHeight;
+</script>

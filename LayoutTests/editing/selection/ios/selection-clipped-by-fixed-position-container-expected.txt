@@ -1,0 +1,12 @@
+Fixed position
+Select me
+
+Verifies that the selection highlight is clipped by fixed-position containers after pinch-zooming
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+PASS viewBeforeShowingFixedContainer is not viewAfterShowingFixedContainer
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

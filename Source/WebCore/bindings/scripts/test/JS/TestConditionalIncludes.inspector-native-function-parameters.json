@@ -1,0 +1,7 @@
+{
+    "TestConditionalIncludes": {
+        "prototype": {
+            "mixinComplexOperation": "strArg, objArg"
+        }
+    }
+}

@@ -1,0 +1,1256 @@
+CONSOLE MESSAGE: WebGL: INVALID_OPERATION: readPixels: read buffer is NONE
+CONSOLE MESSAGE: WebGL: INVALID_OPERATION: readPixels: read buffer is NONE
+CONSOLE MESSAGE: WebGL: INVALID_OPERATION: readPixels: read buffer is NONE
+CONSOLE MESSAGE: WebGL: INVALID_OPERATION: readPixels: read buffer is NONE
+CONSOLE MESSAGE: WebGL: INVALID_OPERATION: readPixels: read buffer is NONE
+CONSOLE MESSAGE: WebGL: INVALID_OPERATION: readPixels: read buffer is NONE
+CONSOLE MESSAGE: WebGL: INVALID_OPERATION: readPixels: read buffer is NONE
+CONSOLE MESSAGE: WebGL: INVALID_OPERATION: readPixels: read buffer is NONE
+CONSOLE MESSAGE: WebGL: INVALID_OPERATION: readPixels: read buffer is NONE
+CONSOLE MESSAGE: WebGL: INVALID_OPERATION: readPixels: read buffer is NONE
+CONSOLE MESSAGE: WebGL: INVALID_OPERATION: readPixels: read buffer is NONE
+CONSOLE MESSAGE: WebGL: INVALID_OPERATION: readPixels: read buffer is NONE
+CONSOLE MESSAGE: WebGL: INVALID_OPERATION: readPixels: read buffer is NONE
+CONSOLE MESSAGE: WebGL: INVALID_OPERATION: readPixels: read buffer is NONE
+CONSOLE MESSAGE: WebGL: INVALID_OPERATION: readPixels: read buffer is NONE
+CONSOLE MESSAGE: WebGL: INVALID_OPERATION: readPixels: read buffer is NONE
+CONSOLE MESSAGE: WebGL: INVALID_OPERATION: readPixels: read buffer is NONE
+CONSOLE MESSAGE: WebGL: INVALID_OPERATION: readPixels: read buffer is NONE
+CONSOLE MESSAGE: WebGL: INVALID_OPERATION: readPixels: read buffer is NONE
+CONSOLE MESSAGE: WebGL: INVALID_OPERATION: readPixels: read buffer is NONE
+CONSOLE MESSAGE: WebGL: INVALID_OPERATION: readPixels: read buffer is NONE
+CONSOLE MESSAGE: WebGL: INVALID_OPERATION: readPixels: read buffer is NONE
+CONSOLE MESSAGE: WebGL: INVALID_OPERATION: readPixels: read buffer is NONE
+CONSOLE MESSAGE: WebGL: INVALID_OPERATION: readPixels: read buffer is NONE
+CONSOLE MESSAGE: WebGL: INVALID_OPERATION: readPixels: read buffer is NONE
+CONSOLE MESSAGE: WebGL: INVALID_OPERATION: readPixels: read buffer is NONE
+CONSOLE MESSAGE: WebGL: INVALID_OPERATION: readPixels: read buffer is NONE
+CONSOLE MESSAGE: WebGL: INVALID_OPERATION: readPixels: read buffer is NONE
+CONSOLE MESSAGE: WebGL: INVALID_OPERATION: readPixels: read buffer is NONE
+CONSOLE MESSAGE: WebGL: INVALID_OPERATION: readPixels: read buffer is NONE
+CONSOLE MESSAGE: WebGL: INVALID_OPERATION: readPixels: read buffer is NONE
+CONSOLE MESSAGE: WebGL: INVALID_OPERATION: readPixels: read buffer is NONE
+CONSOLE MESSAGE: WebGL: INVALID_OPERATION: readPixels: read buffer is NONE
+CONSOLE MESSAGE: WebGL: INVALID_OPERATION: readPixels: read buffer is NONE
+CONSOLE MESSAGE: WebGL: INVALID_OPERATION: readPixels: read buffer is NONE
+CONSOLE MESSAGE: WebGL: INVALID_OPERATION: readPixels: read buffer is NONE
+CONSOLE MESSAGE: WebGL: INVALID_OPERATION: readPixels: read buffer is NONE
+CONSOLE MESSAGE: WebGL: INVALID_OPERATION: readPixels: read buffer is NONE
+CONSOLE MESSAGE: WebGL: INVALID_OPERATION: readPixels: read buffer is NONE
+CONSOLE MESSAGE: WebGL: INVALID_OPERATION: readPixels: read buffer is NONE
+CONSOLE MESSAGE: WebGL: INVALID_OPERATION: readPixels: read buffer is NONE
+CONSOLE MESSAGE: WebGL: INVALID_OPERATION: readPixels: read buffer is NONE
+CONSOLE MESSAGE: WebGL: INVALID_OPERATION: readPixels: read buffer is NONE
+CONSOLE MESSAGE: WebGL: INVALID_OPERATION: readPixels: read buffer is NONE
+CONSOLE MESSAGE: WebGL: INVALID_OPERATION: readPixels: read buffer is NONE
+CONSOLE MESSAGE: WebGL: INVALID_OPERATION: readPixels: read buffer is NONE
+CONSOLE MESSAGE: WebGL: INVALID_OPERATION: readPixels: read buffer is NONE
+CONSOLE MESSAGE: WebGL: INVALID_OPERATION: readPixels: read buffer is NONE
+CONSOLE MESSAGE: WebGL: INVALID_OPERATION: readPixels: read buffer is NONE
+CONSOLE MESSAGE: WebGL: INVALID_OPERATION: readPixels: read buffer is NONE
+CONSOLE MESSAGE: WebGL: INVALID_OPERATION: readPixels: read buffer is NONE
+CONSOLE MESSAGE: WebGL: INVALID_OPERATION: readPixels: read buffer is NONE
+CONSOLE MESSAGE: WebGL: INVALID_OPERATION: readPixels: read buffer is NONE
+CONSOLE MESSAGE: WebGL: INVALID_OPERATION: readPixels: read buffer is NONE
+CONSOLE MESSAGE: WebGL: INVALID_OPERATION: readPixels: read buffer is NONE
+CONSOLE MESSAGE: WebGL: INVALID_OPERATION: readPixels: read buffer is NONE
+CONSOLE MESSAGE: WebGL: INVALID_OPERATION: readPixels: read buffer is NONE
+CONSOLE MESSAGE: WebGL: INVALID_OPERATION: readPixels: read buffer is NONE
+CONSOLE MESSAGE: WebGL: INVALID_OPERATION: readPixels: read buffer is NONE
+CONSOLE MESSAGE: WebGL: INVALID_OPERATION: readPixels: read buffer is NONE
+CONSOLE MESSAGE: WebGL: INVALID_OPERATION: readPixels: read buffer is NONE
+CONSOLE MESSAGE: WebGL: INVALID_OPERATION: readPixels: read buffer is NONE
+CONSOLE MESSAGE: WebGL: INVALID_OPERATION: readPixels: read buffer is NONE
+CONSOLE MESSAGE: WebGL: INVALID_OPERATION: readPixels: read buffer is NONE
+CONSOLE MESSAGE: WebGL: INVALID_OPERATION: readPixels: read buffer is NONE
+CONSOLE MESSAGE: WebGL: INVALID_OPERATION: readPixels: read buffer is NONE
+CONSOLE MESSAGE: WebGL: INVALID_OPERATION: readPixels: read buffer is NONE
+CONSOLE MESSAGE: WebGL: INVALID_OPERATION: readPixels: read buffer is NONE
+CONSOLE MESSAGE: WebGL: INVALID_OPERATION: readPixels: read buffer is NONE
+CONSOLE MESSAGE: WebGL: INVALID_OPERATION: readPixels: read buffer is NONE
+CONSOLE MESSAGE: WebGL: INVALID_OPERATION: readPixels: read buffer is NONE
+CONSOLE MESSAGE: WebGL: INVALID_OPERATION: readPixels: read buffer is NONE
+CONSOLE MESSAGE: WebGL: INVALID_OPERATION: readPixels: read buffer is NONE
+CONSOLE MESSAGE: WebGL: INVALID_OPERATION: readPixels: read buffer is NONE
+CONSOLE MESSAGE: WebGL: INVALID_OPERATION: readPixels: read buffer is NONE
+CONSOLE MESSAGE: WebGL: INVALID_OPERATION: readPixels: read buffer is NONE
+CONSOLE MESSAGE: WebGL: INVALID_OPERATION: readPixels: read buffer is NONE
+CONSOLE MESSAGE: WebGL: INVALID_OPERATION: readPixels: read buffer is NONE
+CONSOLE MESSAGE: WebGL: INVALID_OPERATION: readPixels: read buffer is NONE
+CONSOLE MESSAGE: WebGL: INVALID_OPERATION: readPixels: read buffer is NONE
+CONSOLE MESSAGE: WebGL: INVALID_OPERATION: readPixels: read buffer is NONE
+CONSOLE MESSAGE: WebGL: INVALID_OPERATION: readPixels: read buffer is NONE
+CONSOLE MESSAGE: WebGL: INVALID_OPERATION: readPixels: read buffer is NONE
+CONSOLE MESSAGE: WebGL: INVALID_OPERATION: readPixels: read buffer is NONE
+CONSOLE MESSAGE: WebGL: INVALID_OPERATION: readPixels: read buffer is NONE
+CONSOLE MESSAGE: WebGL: INVALID_OPERATION: readPixels: read buffer is NONE
+CONSOLE MESSAGE: WebGL: INVALID_OPERATION: readPixels: read buffer is NONE
+CONSOLE MESSAGE: WebGL: INVALID_OPERATION: readPixels: read buffer is NONE
+CONSOLE MESSAGE: WebGL: INVALID_OPERATION: readPixels: read buffer is NONE
+CONSOLE MESSAGE: WebGL: INVALID_OPERATION: readPixels: read buffer is NONE
+CONSOLE MESSAGE: WebGL: INVALID_OPERATION: readPixels: read buffer is NONE
+CONSOLE MESSAGE: WebGL: INVALID_OPERATION: readPixels: read buffer is NONE
+CONSOLE MESSAGE: WebGL: INVALID_OPERATION: readPixels: read buffer is NONE
+CONSOLE MESSAGE: WebGL: INVALID_OPERATION: readPixels: read buffer is NONE
+CONSOLE MESSAGE: WebGL: INVALID_OPERATION: readPixels: read buffer is NONE
+CONSOLE MESSAGE: WebGL: INVALID_OPERATION: readPixels: read buffer is NONE
+Tests that WebGL2 readBuffer(NONE) on the default framebuffer is tracked as READ_BUFFER state and makes reads of the default framebuffer fail, but does not affect the contents any of the ways of reading the canvas produce.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Parameters: {"antialias":true,"preserveDrawingBuffer":true,"premultipliedAlpha":true,"readType":"drawImage"}
+PASS gl.getParameter(gl.READ_BUFFER) is gl.BACK
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getParameter(gl.READ_BUFFER) is gl.NONE
+Reading the default framebuffer is invalid while its READ_BUFFER is NONE.
+PASS readPixel(gl) is "0,0,0,0"
+PASS gl.getError() is gl.INVALID_OPERATION
+READ_BUFFER of the default framebuffer is unaffected by readBuffer() on a bound read framebuffer.
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getParameter(gl.READ_BUFFER) is gl.NONE
+Reading the canvas contents is internal to the implementation, which READ_BUFFER must not affect.
+PASS pixel is "0,255,0,255"
+PASS gl.getError() is gl.NO_ERROR
+Reading the canvas contents restores READ_BUFFER, so reading the default framebuffer is still invalid.
+PASS readPixel(gl) is "0,0,0,0"
+PASS gl.getError() is gl.INVALID_OPERATION
+Restoring READ_BUFFER to BACK makes the default framebuffer readable again.
+PASS gl.getParameter(gl.READ_BUFFER) is gl.BACK
+PASS readPixel(gl) is "0,0,255,255"
+PASS gl.getError() is gl.NO_ERROR
+PASS pixel is "0,0,255,255"
+PASS gl.getError() is gl.NO_ERROR
+
+Parameters: {"antialias":true,"preserveDrawingBuffer":true,"premultipliedAlpha":true,"readType":"toDataURL"}
+PASS gl.getParameter(gl.READ_BUFFER) is gl.BACK
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getParameter(gl.READ_BUFFER) is gl.NONE
+Reading the default framebuffer is invalid while its READ_BUFFER is NONE.
+PASS readPixel(gl) is "0,0,0,0"
+PASS gl.getError() is gl.INVALID_OPERATION
+READ_BUFFER of the default framebuffer is unaffected by readBuffer() on a bound read framebuffer.
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getParameter(gl.READ_BUFFER) is gl.NONE
+Reading the canvas contents is internal to the implementation, which READ_BUFFER must not affect.
+PASS pixel is "0,255,0,255"
+PASS gl.getError() is gl.NO_ERROR
+Reading the canvas contents restores READ_BUFFER, so reading the default framebuffer is still invalid.
+PASS readPixel(gl) is "0,0,0,0"
+PASS gl.getError() is gl.INVALID_OPERATION
+Restoring READ_BUFFER to BACK makes the default framebuffer readable again.
+PASS gl.getParameter(gl.READ_BUFFER) is gl.BACK
+PASS readPixel(gl) is "0,0,255,255"
+PASS gl.getError() is gl.NO_ERROR
+PASS pixel is "0,0,255,255"
+PASS gl.getError() is gl.NO_ERROR
+
+Parameters: {"antialias":true,"preserveDrawingBuffer":true,"premultipliedAlpha":true,"readType":"toBlob"}
+PASS gl.getParameter(gl.READ_BUFFER) is gl.BACK
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getParameter(gl.READ_BUFFER) is gl.NONE
+Reading the default framebuffer is invalid while its READ_BUFFER is NONE.
+PASS readPixel(gl) is "0,0,0,0"
+PASS gl.getError() is gl.INVALID_OPERATION
+READ_BUFFER of the default framebuffer is unaffected by readBuffer() on a bound read framebuffer.
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getParameter(gl.READ_BUFFER) is gl.NONE
+Reading the canvas contents is internal to the implementation, which READ_BUFFER must not affect.
+PASS pixel is "0,255,0,255"
+PASS gl.getError() is gl.NO_ERROR
+Reading the canvas contents restores READ_BUFFER, so reading the default framebuffer is still invalid.
+PASS readPixel(gl) is "0,0,0,0"
+PASS gl.getError() is gl.INVALID_OPERATION
+Restoring READ_BUFFER to BACK makes the default framebuffer readable again.
+PASS gl.getParameter(gl.READ_BUFFER) is gl.BACK
+PASS readPixel(gl) is "0,0,255,255"
+PASS gl.getError() is gl.NO_ERROR
+PASS pixel is "0,0,255,255"
+PASS gl.getError() is gl.NO_ERROR
+
+Parameters: {"antialias":true,"preserveDrawingBuffer":true,"premultipliedAlpha":true,"readType":"createImageBitmap"}
+PASS gl.getParameter(gl.READ_BUFFER) is gl.BACK
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getParameter(gl.READ_BUFFER) is gl.NONE
+Reading the default framebuffer is invalid while its READ_BUFFER is NONE.
+PASS readPixel(gl) is "0,0,0,0"
+PASS gl.getError() is gl.INVALID_OPERATION
+READ_BUFFER of the default framebuffer is unaffected by readBuffer() on a bound read framebuffer.
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getParameter(gl.READ_BUFFER) is gl.NONE
+Reading the canvas contents is internal to the implementation, which READ_BUFFER must not affect.
+PASS pixel is "0,255,0,255"
+PASS gl.getError() is gl.NO_ERROR
+Reading the canvas contents restores READ_BUFFER, so reading the default framebuffer is still invalid.
+PASS readPixel(gl) is "0,0,0,0"
+PASS gl.getError() is gl.INVALID_OPERATION
+Restoring READ_BUFFER to BACK makes the default framebuffer readable again.
+PASS gl.getParameter(gl.READ_BUFFER) is gl.BACK
+PASS readPixel(gl) is "0,0,255,255"
+PASS gl.getError() is gl.NO_ERROR
+PASS pixel is "0,0,255,255"
+PASS gl.getError() is gl.NO_ERROR
+
+Parameters: {"antialias":true,"preserveDrawingBuffer":true,"premultipliedAlpha":true,"readType":"createPattern"}
+PASS gl.getParameter(gl.READ_BUFFER) is gl.BACK
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getParameter(gl.READ_BUFFER) is gl.NONE
+Reading the default framebuffer is invalid while its READ_BUFFER is NONE.
+PASS readPixel(gl) is "0,0,0,0"
+PASS gl.getError() is gl.INVALID_OPERATION
+READ_BUFFER of the default framebuffer is unaffected by readBuffer() on a bound read framebuffer.
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getParameter(gl.READ_BUFFER) is gl.NONE
+Reading the canvas contents is internal to the implementation, which READ_BUFFER must not affect.
+PASS pixel is "0,255,0,255"
+PASS gl.getError() is gl.NO_ERROR
+Reading the canvas contents restores READ_BUFFER, so reading the default framebuffer is still invalid.
+PASS readPixel(gl) is "0,0,0,0"
+PASS gl.getError() is gl.INVALID_OPERATION
+Restoring READ_BUFFER to BACK makes the default framebuffer readable again.
+PASS gl.getParameter(gl.READ_BUFFER) is gl.BACK
+PASS readPixel(gl) is "0,0,255,255"
+PASS gl.getError() is gl.NO_ERROR
+PASS pixel is "0,0,255,255"
+PASS gl.getError() is gl.NO_ERROR
+
+Parameters: {"antialias":true,"preserveDrawingBuffer":true,"premultipliedAlpha":true,"readType":"texImage2D"}
+PASS gl.getParameter(gl.READ_BUFFER) is gl.BACK
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getParameter(gl.READ_BUFFER) is gl.NONE
+Reading the default framebuffer is invalid while its READ_BUFFER is NONE.
+PASS readPixel(gl) is "0,0,0,0"
+PASS gl.getError() is gl.INVALID_OPERATION
+READ_BUFFER of the default framebuffer is unaffected by readBuffer() on a bound read framebuffer.
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getParameter(gl.READ_BUFFER) is gl.NONE
+Reading the canvas contents is internal to the implementation, which READ_BUFFER must not affect.
+PASS pixel is "0,255,0,255"
+PASS gl.getError() is gl.NO_ERROR
+Reading the canvas contents restores READ_BUFFER, so reading the default framebuffer is still invalid.
+PASS readPixel(gl) is "0,0,0,0"
+PASS gl.getError() is gl.INVALID_OPERATION
+Restoring READ_BUFFER to BACK makes the default framebuffer readable again.
+PASS gl.getParameter(gl.READ_BUFFER) is gl.BACK
+PASS readPixel(gl) is "0,0,255,255"
+PASS gl.getError() is gl.NO_ERROR
+PASS pixel is "0,0,255,255"
+PASS gl.getError() is gl.NO_ERROR
+
+Parameters: {"antialias":true,"preserveDrawingBuffer":true,"premultipliedAlpha":true,"readType":"videoFrame"}
+Skipped: VideoFrame is not available.
+
+Parameters: {"antialias":true,"preserveDrawingBuffer":true,"premultipliedAlpha":true,"readType":"captureStream"}
+Skipped: HTMLCanvasElement.captureStream() is not available.
+
+Parameters: {"antialias":true,"preserveDrawingBuffer":true,"premultipliedAlpha":false,"readType":"drawImage"}
+PASS gl.getParameter(gl.READ_BUFFER) is gl.BACK
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getParameter(gl.READ_BUFFER) is gl.NONE
+Reading the default framebuffer is invalid while its READ_BUFFER is NONE.
+PASS readPixel(gl) is "0,0,0,0"
+PASS gl.getError() is gl.INVALID_OPERATION
+READ_BUFFER of the default framebuffer is unaffected by readBuffer() on a bound read framebuffer.
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getParameter(gl.READ_BUFFER) is gl.NONE
+Reading the canvas contents is internal to the implementation, which READ_BUFFER must not affect.
+PASS pixel is "0,255,0,255"
+PASS gl.getError() is gl.NO_ERROR
+Reading the canvas contents restores READ_BUFFER, so reading the default framebuffer is still invalid.
+PASS readPixel(gl) is "0,0,0,0"
+PASS gl.getError() is gl.INVALID_OPERATION
+Restoring READ_BUFFER to BACK makes the default framebuffer readable again.
+PASS gl.getParameter(gl.READ_BUFFER) is gl.BACK
+PASS readPixel(gl) is "0,0,255,255"
+PASS gl.getError() is gl.NO_ERROR
+PASS pixel is "0,0,255,255"
+PASS gl.getError() is gl.NO_ERROR
+
+Parameters: {"antialias":true,"preserveDrawingBuffer":true,"premultipliedAlpha":false,"readType":"toDataURL"}
+PASS gl.getParameter(gl.READ_BUFFER) is gl.BACK
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getParameter(gl.READ_BUFFER) is gl.NONE
+Reading the default framebuffer is invalid while its READ_BUFFER is NONE.
+PASS readPixel(gl) is "0,0,0,0"
+PASS gl.getError() is gl.INVALID_OPERATION
+READ_BUFFER of the default framebuffer is unaffected by readBuffer() on a bound read framebuffer.
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getParameter(gl.READ_BUFFER) is gl.NONE
+Reading the canvas contents is internal to the implementation, which READ_BUFFER must not affect.
+PASS pixel is "0,255,0,255"
+PASS gl.getError() is gl.NO_ERROR
+Reading the canvas contents restores READ_BUFFER, so reading the default framebuffer is still invalid.
+PASS readPixel(gl) is "0,0,0,0"
+PASS gl.getError() is gl.INVALID_OPERATION
+Restoring READ_BUFFER to BACK makes the default framebuffer readable again.
+PASS gl.getParameter(gl.READ_BUFFER) is gl.BACK
+PASS readPixel(gl) is "0,0,255,255"
+PASS gl.getError() is gl.NO_ERROR
+PASS pixel is "0,0,255,255"
+PASS gl.getError() is gl.NO_ERROR
+
+Parameters: {"antialias":true,"preserveDrawingBuffer":true,"premultipliedAlpha":false,"readType":"toBlob"}
+PASS gl.getParameter(gl.READ_BUFFER) is gl.BACK
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getParameter(gl.READ_BUFFER) is gl.NONE
+Reading the default framebuffer is invalid while its READ_BUFFER is NONE.
+PASS readPixel(gl) is "0,0,0,0"
+PASS gl.getError() is gl.INVALID_OPERATION
+READ_BUFFER of the default framebuffer is unaffected by readBuffer() on a bound read framebuffer.
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getParameter(gl.READ_BUFFER) is gl.NONE
+Reading the canvas contents is internal to the implementation, which READ_BUFFER must not affect.
+PASS pixel is "0,255,0,255"
+PASS gl.getError() is gl.NO_ERROR
+Reading the canvas contents restores READ_BUFFER, so reading the default framebuffer is still invalid.
+PASS readPixel(gl) is "0,0,0,0"
+PASS gl.getError() is gl.INVALID_OPERATION
+Restoring READ_BUFFER to BACK makes the default framebuffer readable again.
+PASS gl.getParameter(gl.READ_BUFFER) is gl.BACK
+PASS readPixel(gl) is "0,0,255,255"
+PASS gl.getError() is gl.NO_ERROR
+PASS pixel is "0,0,255,255"
+PASS gl.getError() is gl.NO_ERROR
+
+Parameters: {"antialias":true,"preserveDrawingBuffer":true,"premultipliedAlpha":false,"readType":"createImageBitmap"}
+PASS gl.getParameter(gl.READ_BUFFER) is gl.BACK
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getParameter(gl.READ_BUFFER) is gl.NONE
+Reading the default framebuffer is invalid while its READ_BUFFER is NONE.
+PASS readPixel(gl) is "0,0,0,0"
+PASS gl.getError() is gl.INVALID_OPERATION
+READ_BUFFER of the default framebuffer is unaffected by readBuffer() on a bound read framebuffer.
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getParameter(gl.READ_BUFFER) is gl.NONE
+Reading the canvas contents is internal to the implementation, which READ_BUFFER must not affect.
+PASS pixel is "0,255,0,255"
+PASS gl.getError() is gl.NO_ERROR
+Reading the canvas contents restores READ_BUFFER, so reading the default framebuffer is still invalid.
+PASS readPixel(gl) is "0,0,0,0"
+PASS gl.getError() is gl.INVALID_OPERATION
+Restoring READ_BUFFER to BACK makes the default framebuffer readable again.
+PASS gl.getParameter(gl.READ_BUFFER) is gl.BACK
+PASS readPixel(gl) is "0,0,255,255"
+PASS gl.getError() is gl.NO_ERROR
+PASS pixel is "0,0,255,255"
+PASS gl.getError() is gl.NO_ERROR
+
+Parameters: {"antialias":true,"preserveDrawingBuffer":true,"premultipliedAlpha":false,"readType":"createPattern"}
+PASS gl.getParameter(gl.READ_BUFFER) is gl.BACK
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getParameter(gl.READ_BUFFER) is gl.NONE
+Reading the default framebuffer is invalid while its READ_BUFFER is NONE.
+PASS readPixel(gl) is "0,0,0,0"
+PASS gl.getError() is gl.INVALID_OPERATION
+READ_BUFFER of the default framebuffer is unaffected by readBuffer() on a bound read framebuffer.
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getParameter(gl.READ_BUFFER) is gl.NONE
+Reading the canvas contents is internal to the implementation, which READ_BUFFER must not affect.
+PASS pixel is "0,255,0,255"
+PASS gl.getError() is gl.NO_ERROR
+Reading the canvas contents restores READ_BUFFER, so reading the default framebuffer is still invalid.
+PASS readPixel(gl) is "0,0,0,0"
+PASS gl.getError() is gl.INVALID_OPERATION
+Restoring READ_BUFFER to BACK makes the default framebuffer readable again.
+PASS gl.getParameter(gl.READ_BUFFER) is gl.BACK
+PASS readPixel(gl) is "0,0,255,255"
+PASS gl.getError() is gl.NO_ERROR
+PASS pixel is "0,0,255,255"
+PASS gl.getError() is gl.NO_ERROR
+
+Parameters: {"antialias":true,"preserveDrawingBuffer":true,"premultipliedAlpha":false,"readType":"texImage2D"}
+PASS gl.getParameter(gl.READ_BUFFER) is gl.BACK
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getParameter(gl.READ_BUFFER) is gl.NONE
+Reading the default framebuffer is invalid while its READ_BUFFER is NONE.
+PASS readPixel(gl) is "0,0,0,0"
+PASS gl.getError() is gl.INVALID_OPERATION
+READ_BUFFER of the default framebuffer is unaffected by readBuffer() on a bound read framebuffer.
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getParameter(gl.READ_BUFFER) is gl.NONE
+Reading the canvas contents is internal to the implementation, which READ_BUFFER must not affect.
+PASS pixel is "0,255,0,255"
+PASS gl.getError() is gl.NO_ERROR
+Reading the canvas contents restores READ_BUFFER, so reading the default framebuffer is still invalid.
+PASS readPixel(gl) is "0,0,0,0"
+PASS gl.getError() is gl.INVALID_OPERATION
+Restoring READ_BUFFER to BACK makes the default framebuffer readable again.
+PASS gl.getParameter(gl.READ_BUFFER) is gl.BACK
+PASS readPixel(gl) is "0,0,255,255"
+PASS gl.getError() is gl.NO_ERROR
+PASS pixel is "0,0,255,255"
+PASS gl.getError() is gl.NO_ERROR
+
+Parameters: {"antialias":true,"preserveDrawingBuffer":true,"premultipliedAlpha":false,"readType":"videoFrame"}
+Skipped: VideoFrame is not available.
+
+Parameters: {"antialias":true,"preserveDrawingBuffer":true,"premultipliedAlpha":false,"readType":"captureStream"}
+Skipped: HTMLCanvasElement.captureStream() is not available.
+
+Parameters: {"antialias":true,"preserveDrawingBuffer":false,"premultipliedAlpha":true,"readType":"drawImage"}
+PASS gl.getParameter(gl.READ_BUFFER) is gl.BACK
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getParameter(gl.READ_BUFFER) is gl.NONE
+Reading the default framebuffer is invalid while its READ_BUFFER is NONE.
+PASS readPixel(gl) is "0,0,0,0"
+PASS gl.getError() is gl.INVALID_OPERATION
+READ_BUFFER of the default framebuffer is unaffected by readBuffer() on a bound read framebuffer.
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getParameter(gl.READ_BUFFER) is gl.NONE
+Reading the canvas contents is internal to the implementation, which READ_BUFFER must not affect.
+PASS pixel is "0,255,0,255"
+PASS gl.getError() is gl.NO_ERROR
+Reading the canvas contents restores READ_BUFFER, so reading the default framebuffer is still invalid.
+PASS readPixel(gl) is "0,0,0,0"
+PASS gl.getError() is gl.INVALID_OPERATION
+Restoring READ_BUFFER to BACK makes the default framebuffer readable again.
+PASS gl.getParameter(gl.READ_BUFFER) is gl.BACK
+PASS readPixel(gl) is "0,0,255,255"
+PASS gl.getError() is gl.NO_ERROR
+PASS pixel is "0,0,255,255"
+PASS gl.getError() is gl.NO_ERROR
+
+Parameters: {"antialias":true,"preserveDrawingBuffer":false,"premultipliedAlpha":true,"readType":"toDataURL"}
+PASS gl.getParameter(gl.READ_BUFFER) is gl.BACK
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getParameter(gl.READ_BUFFER) is gl.NONE
+Reading the default framebuffer is invalid while its READ_BUFFER is NONE.
+PASS readPixel(gl) is "0,0,0,0"
+PASS gl.getError() is gl.INVALID_OPERATION
+READ_BUFFER of the default framebuffer is unaffected by readBuffer() on a bound read framebuffer.
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getParameter(gl.READ_BUFFER) is gl.NONE
+Reading the canvas contents is internal to the implementation, which READ_BUFFER must not affect.
+PASS pixel is "0,255,0,255"
+PASS gl.getError() is gl.NO_ERROR
+Reading the canvas contents restores READ_BUFFER, so reading the default framebuffer is still invalid.
+PASS readPixel(gl) is "0,0,0,0"
+PASS gl.getError() is gl.INVALID_OPERATION
+Restoring READ_BUFFER to BACK makes the default framebuffer readable again.
+PASS gl.getParameter(gl.READ_BUFFER) is gl.BACK
+PASS readPixel(gl) is "0,0,255,255"
+PASS gl.getError() is gl.NO_ERROR
+PASS pixel is "0,0,255,255"
+PASS gl.getError() is gl.NO_ERROR
+
+Parameters: {"antialias":true,"preserveDrawingBuffer":false,"premultipliedAlpha":true,"readType":"toBlob"}
+PASS gl.getParameter(gl.READ_BUFFER) is gl.BACK
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getParameter(gl.READ_BUFFER) is gl.NONE
+Reading the default framebuffer is invalid while its READ_BUFFER is NONE.
+PASS readPixel(gl) is "0,0,0,0"
+PASS gl.getError() is gl.INVALID_OPERATION
+READ_BUFFER of the default framebuffer is unaffected by readBuffer() on a bound read framebuffer.
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getParameter(gl.READ_BUFFER) is gl.NONE
+Reading the canvas contents is internal to the implementation, which READ_BUFFER must not affect.
+PASS pixel is "0,255,0,255"
+PASS gl.getError() is gl.NO_ERROR
+Reading the canvas contents restores READ_BUFFER, so reading the default framebuffer is still invalid.
+PASS readPixel(gl) is "0,0,0,0"
+PASS gl.getError() is gl.INVALID_OPERATION
+Restoring READ_BUFFER to BACK makes the default framebuffer readable again.
+PASS gl.getParameter(gl.READ_BUFFER) is gl.BACK
+PASS readPixel(gl) is "0,0,255,255"
+PASS gl.getError() is gl.NO_ERROR
+PASS pixel is "0,0,255,255"
+PASS gl.getError() is gl.NO_ERROR
+
+Parameters: {"antialias":true,"preserveDrawingBuffer":false,"premultipliedAlpha":true,"readType":"createImageBitmap"}
+PASS gl.getParameter(gl.READ_BUFFER) is gl.BACK
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getParameter(gl.READ_BUFFER) is gl.NONE
+Reading the default framebuffer is invalid while its READ_BUFFER is NONE.
+PASS readPixel(gl) is "0,0,0,0"
+PASS gl.getError() is gl.INVALID_OPERATION
+READ_BUFFER of the default framebuffer is unaffected by readBuffer() on a bound read framebuffer.
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getParameter(gl.READ_BUFFER) is gl.NONE
+Reading the canvas contents is internal to the implementation, which READ_BUFFER must not affect.
+PASS pixel is "0,255,0,255"
+PASS gl.getError() is gl.NO_ERROR
+Reading the canvas contents restores READ_BUFFER, so reading the default framebuffer is still invalid.
+PASS readPixel(gl) is "0,0,0,0"
+PASS gl.getError() is gl.INVALID_OPERATION
+Restoring READ_BUFFER to BACK makes the default framebuffer readable again.
+PASS gl.getParameter(gl.READ_BUFFER) is gl.BACK
+PASS readPixel(gl) is "0,0,255,255"
+PASS gl.getError() is gl.NO_ERROR
+PASS pixel is "0,0,255,255"
+PASS gl.getError() is gl.NO_ERROR
+
+Parameters: {"antialias":true,"preserveDrawingBuffer":false,"premultipliedAlpha":true,"readType":"createPattern"}
+PASS gl.getParameter(gl.READ_BUFFER) is gl.BACK
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getParameter(gl.READ_BUFFER) is gl.NONE
+Reading the default framebuffer is invalid while its READ_BUFFER is NONE.
+PASS readPixel(gl) is "0,0,0,0"
+PASS gl.getError() is gl.INVALID_OPERATION
+READ_BUFFER of the default framebuffer is unaffected by readBuffer() on a bound read framebuffer.
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getParameter(gl.READ_BUFFER) is gl.NONE
+Reading the canvas contents is internal to the implementation, which READ_BUFFER must not affect.
+PASS pixel is "0,255,0,255"
+PASS gl.getError() is gl.NO_ERROR
+Reading the canvas contents restores READ_BUFFER, so reading the default framebuffer is still invalid.
+PASS readPixel(gl) is "0,0,0,0"
+PASS gl.getError() is gl.INVALID_OPERATION
+Restoring READ_BUFFER to BACK makes the default framebuffer readable again.
+PASS gl.getParameter(gl.READ_BUFFER) is gl.BACK
+PASS readPixel(gl) is "0,0,255,255"
+PASS gl.getError() is gl.NO_ERROR
+PASS pixel is "0,0,255,255"
+PASS gl.getError() is gl.NO_ERROR
+
+Parameters: {"antialias":true,"preserveDrawingBuffer":false,"premultipliedAlpha":true,"readType":"texImage2D"}
+PASS gl.getParameter(gl.READ_BUFFER) is gl.BACK
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getParameter(gl.READ_BUFFER) is gl.NONE
+Reading the default framebuffer is invalid while its READ_BUFFER is NONE.
+PASS readPixel(gl) is "0,0,0,0"
+PASS gl.getError() is gl.INVALID_OPERATION
+READ_BUFFER of the default framebuffer is unaffected by readBuffer() on a bound read framebuffer.
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getParameter(gl.READ_BUFFER) is gl.NONE
+Reading the canvas contents is internal to the implementation, which READ_BUFFER must not affect.
+PASS pixel is "0,255,0,255"
+PASS gl.getError() is gl.NO_ERROR
+Reading the canvas contents restores READ_BUFFER, so reading the default framebuffer is still invalid.
+PASS readPixel(gl) is "0,0,0,0"
+PASS gl.getError() is gl.INVALID_OPERATION
+Restoring READ_BUFFER to BACK makes the default framebuffer readable again.
+PASS gl.getParameter(gl.READ_BUFFER) is gl.BACK
+PASS readPixel(gl) is "0,0,255,255"
+PASS gl.getError() is gl.NO_ERROR
+PASS pixel is "0,0,255,255"
+PASS gl.getError() is gl.NO_ERROR
+
+Parameters: {"antialias":true,"preserveDrawingBuffer":false,"premultipliedAlpha":true,"readType":"videoFrame"}
+Skipped: VideoFrame is not available.
+
+Parameters: {"antialias":true,"preserveDrawingBuffer":false,"premultipliedAlpha":true,"readType":"captureStream"}
+Skipped: HTMLCanvasElement.captureStream() is not available.
+
+Parameters: {"antialias":true,"preserveDrawingBuffer":false,"premultipliedAlpha":false,"readType":"drawImage"}
+PASS gl.getParameter(gl.READ_BUFFER) is gl.BACK
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getParameter(gl.READ_BUFFER) is gl.NONE
+Reading the default framebuffer is invalid while its READ_BUFFER is NONE.
+PASS readPixel(gl) is "0,0,0,0"
+PASS gl.getError() is gl.INVALID_OPERATION
+READ_BUFFER of the default framebuffer is unaffected by readBuffer() on a bound read framebuffer.
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getParameter(gl.READ_BUFFER) is gl.NONE
+Reading the canvas contents is internal to the implementation, which READ_BUFFER must not affect.
+PASS pixel is "0,255,0,255"
+PASS gl.getError() is gl.NO_ERROR
+Reading the canvas contents restores READ_BUFFER, so reading the default framebuffer is still invalid.
+PASS readPixel(gl) is "0,0,0,0"
+PASS gl.getError() is gl.INVALID_OPERATION
+Restoring READ_BUFFER to BACK makes the default framebuffer readable again.
+PASS gl.getParameter(gl.READ_BUFFER) is gl.BACK
+PASS readPixel(gl) is "0,0,255,255"
+PASS gl.getError() is gl.NO_ERROR
+PASS pixel is "0,0,255,255"
+PASS gl.getError() is gl.NO_ERROR
+
+Parameters: {"antialias":true,"preserveDrawingBuffer":false,"premultipliedAlpha":false,"readType":"toDataURL"}
+PASS gl.getParameter(gl.READ_BUFFER) is gl.BACK
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getParameter(gl.READ_BUFFER) is gl.NONE
+Reading the default framebuffer is invalid while its READ_BUFFER is NONE.
+PASS readPixel(gl) is "0,0,0,0"
+PASS gl.getError() is gl.INVALID_OPERATION
+READ_BUFFER of the default framebuffer is unaffected by readBuffer() on a bound read framebuffer.
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getParameter(gl.READ_BUFFER) is gl.NONE
+Reading the canvas contents is internal to the implementation, which READ_BUFFER must not affect.
+PASS pixel is "0,255,0,255"
+PASS gl.getError() is gl.NO_ERROR
+Reading the canvas contents restores READ_BUFFER, so reading the default framebuffer is still invalid.
+PASS readPixel(gl) is "0,0,0,0"
+PASS gl.getError() is gl.INVALID_OPERATION
+Restoring READ_BUFFER to BACK makes the default framebuffer readable again.
+PASS gl.getParameter(gl.READ_BUFFER) is gl.BACK
+PASS readPixel(gl) is "0,0,255,255"
+PASS gl.getError() is gl.NO_ERROR
+PASS pixel is "0,0,255,255"
+PASS gl.getError() is gl.NO_ERROR
+
+Parameters: {"antialias":true,"preserveDrawingBuffer":false,"premultipliedAlpha":false,"readType":"toBlob"}
+PASS gl.getParameter(gl.READ_BUFFER) is gl.BACK
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getParameter(gl.READ_BUFFER) is gl.NONE
+Reading the default framebuffer is invalid while its READ_BUFFER is NONE.
+PASS readPixel(gl) is "0,0,0,0"
+PASS gl.getError() is gl.INVALID_OPERATION
+READ_BUFFER of the default framebuffer is unaffected by readBuffer() on a bound read framebuffer.
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getParameter(gl.READ_BUFFER) is gl.NONE
+Reading the canvas contents is internal to the implementation, which READ_BUFFER must not affect.
+PASS pixel is "0,255,0,255"
+PASS gl.getError() is gl.NO_ERROR
+Reading the canvas contents restores READ_BUFFER, so reading the default framebuffer is still invalid.
+PASS readPixel(gl) is "0,0,0,0"
+PASS gl.getError() is gl.INVALID_OPERATION
+Restoring READ_BUFFER to BACK makes the default framebuffer readable again.
+PASS gl.getParameter(gl.READ_BUFFER) is gl.BACK
+PASS readPixel(gl) is "0,0,255,255"
+PASS gl.getError() is gl.NO_ERROR
+PASS pixel is "0,0,255,255"
+PASS gl.getError() is gl.NO_ERROR
+
+Parameters: {"antialias":true,"preserveDrawingBuffer":false,"premultipliedAlpha":false,"readType":"createImageBitmap"}
+PASS gl.getParameter(gl.READ_BUFFER) is gl.BACK
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getParameter(gl.READ_BUFFER) is gl.NONE
+Reading the default framebuffer is invalid while its READ_BUFFER is NONE.
+PASS readPixel(gl) is "0,0,0,0"
+PASS gl.getError() is gl.INVALID_OPERATION
+READ_BUFFER of the default framebuffer is unaffected by readBuffer() on a bound read framebuffer.
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getParameter(gl.READ_BUFFER) is gl.NONE
+Reading the canvas contents is internal to the implementation, which READ_BUFFER must not affect.
+PASS pixel is "0,255,0,255"
+PASS gl.getError() is gl.NO_ERROR
+Reading the canvas contents restores READ_BUFFER, so reading the default framebuffer is still invalid.
+PASS readPixel(gl) is "0,0,0,0"
+PASS gl.getError() is gl.INVALID_OPERATION
+Restoring READ_BUFFER to BACK makes the default framebuffer readable again.
+PASS gl.getParameter(gl.READ_BUFFER) is gl.BACK
+PASS readPixel(gl) is "0,0,255,255"
+PASS gl.getError() is gl.NO_ERROR
+PASS pixel is "0,0,255,255"
+PASS gl.getError() is gl.NO_ERROR
+
+Parameters: {"antialias":true,"preserveDrawingBuffer":false,"premultipliedAlpha":false,"readType":"createPattern"}
+PASS gl.getParameter(gl.READ_BUFFER) is gl.BACK
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getParameter(gl.READ_BUFFER) is gl.NONE
+Reading the default framebuffer is invalid while its READ_BUFFER is NONE.
+PASS readPixel(gl) is "0,0,0,0"
+PASS gl.getError() is gl.INVALID_OPERATION
+READ_BUFFER of the default framebuffer is unaffected by readBuffer() on a bound read framebuffer.
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getParameter(gl.READ_BUFFER) is gl.NONE
+Reading the canvas contents is internal to the implementation, which READ_BUFFER must not affect.
+PASS pixel is "0,255,0,255"
+PASS gl.getError() is gl.NO_ERROR
+Reading the canvas contents restores READ_BUFFER, so reading the default framebuffer is still invalid.
+PASS readPixel(gl) is "0,0,0,0"
+PASS gl.getError() is gl.INVALID_OPERATION
+Restoring READ_BUFFER to BACK makes the default framebuffer readable again.
+PASS gl.getParameter(gl.READ_BUFFER) is gl.BACK
+PASS readPixel(gl) is "0,0,255,255"
+PASS gl.getError() is gl.NO_ERROR
+PASS pixel is "0,0,255,255"
+PASS gl.getError() is gl.NO_ERROR
+
+Parameters: {"antialias":true,"preserveDrawingBuffer":false,"premultipliedAlpha":false,"readType":"texImage2D"}
+PASS gl.getParameter(gl.READ_BUFFER) is gl.BACK
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getParameter(gl.READ_BUFFER) is gl.NONE
+Reading the default framebuffer is invalid while its READ_BUFFER is NONE.
+PASS readPixel(gl) is "0,0,0,0"
+PASS gl.getError() is gl.INVALID_OPERATION
+READ_BUFFER of the default framebuffer is unaffected by readBuffer() on a bound read framebuffer.
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getParameter(gl.READ_BUFFER) is gl.NONE
+Reading the canvas contents is internal to the implementation, which READ_BUFFER must not affect.
+PASS pixel is "0,255,0,255"
+PASS gl.getError() is gl.NO_ERROR
+Reading the canvas contents restores READ_BUFFER, so reading the default framebuffer is still invalid.
+PASS readPixel(gl) is "0,0,0,0"
+PASS gl.getError() is gl.INVALID_OPERATION
+Restoring READ_BUFFER to BACK makes the default framebuffer readable again.
+PASS gl.getParameter(gl.READ_BUFFER) is gl.BACK
+PASS readPixel(gl) is "0,0,255,255"
+PASS gl.getError() is gl.NO_ERROR
+PASS pixel is "0,0,255,255"
+PASS gl.getError() is gl.NO_ERROR
+
+Parameters: {"antialias":true,"preserveDrawingBuffer":false,"premultipliedAlpha":false,"readType":"videoFrame"}
+Skipped: VideoFrame is not available.
+
+Parameters: {"antialias":true,"preserveDrawingBuffer":false,"premultipliedAlpha":false,"readType":"captureStream"}
+Skipped: HTMLCanvasElement.captureStream() is not available.
+
+Parameters: {"antialias":false,"preserveDrawingBuffer":true,"premultipliedAlpha":true,"readType":"drawImage"}
+PASS gl.getParameter(gl.READ_BUFFER) is gl.BACK
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getParameter(gl.READ_BUFFER) is gl.NONE
+Reading the default framebuffer is invalid while its READ_BUFFER is NONE.
+PASS readPixel(gl) is "0,0,0,0"
+PASS gl.getError() is gl.INVALID_OPERATION
+READ_BUFFER of the default framebuffer is unaffected by readBuffer() on a bound read framebuffer.
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getParameter(gl.READ_BUFFER) is gl.NONE
+Reading the canvas contents is internal to the implementation, which READ_BUFFER must not affect.
+PASS pixel is "0,255,0,255"
+PASS gl.getError() is gl.NO_ERROR
+Reading the canvas contents restores READ_BUFFER, so reading the default framebuffer is still invalid.
+PASS readPixel(gl) is "0,0,0,0"
+PASS gl.getError() is gl.INVALID_OPERATION
+Restoring READ_BUFFER to BACK makes the default framebuffer readable again.
+PASS gl.getParameter(gl.READ_BUFFER) is gl.BACK
+PASS readPixel(gl) is "0,0,255,255"
+PASS gl.getError() is gl.NO_ERROR
+PASS pixel is "0,0,255,255"
+PASS gl.getError() is gl.NO_ERROR
+
+Parameters: {"antialias":false,"preserveDrawingBuffer":true,"premultipliedAlpha":true,"readType":"toDataURL"}
+PASS gl.getParameter(gl.READ_BUFFER) is gl.BACK
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getParameter(gl.READ_BUFFER) is gl.NONE
+Reading the default framebuffer is invalid while its READ_BUFFER is NONE.
+PASS readPixel(gl) is "0,0,0,0"
+PASS gl.getError() is gl.INVALID_OPERATION
+READ_BUFFER of the default framebuffer is unaffected by readBuffer() on a bound read framebuffer.
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getParameter(gl.READ_BUFFER) is gl.NONE
+Reading the canvas contents is internal to the implementation, which READ_BUFFER must not affect.
+PASS pixel is "0,255,0,255"
+PASS gl.getError() is gl.NO_ERROR
+Reading the canvas contents restores READ_BUFFER, so reading the default framebuffer is still invalid.
+PASS readPixel(gl) is "0,0,0,0"
+PASS gl.getError() is gl.INVALID_OPERATION
+Restoring READ_BUFFER to BACK makes the default framebuffer readable again.
+PASS gl.getParameter(gl.READ_BUFFER) is gl.BACK
+PASS readPixel(gl) is "0,0,255,255"
+PASS gl.getError() is gl.NO_ERROR
+PASS pixel is "0,0,255,255"
+PASS gl.getError() is gl.NO_ERROR
+
+Parameters: {"antialias":false,"preserveDrawingBuffer":true,"premultipliedAlpha":true,"readType":"toBlob"}
+PASS gl.getParameter(gl.READ_BUFFER) is gl.BACK
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getParameter(gl.READ_BUFFER) is gl.NONE
+Reading the default framebuffer is invalid while its READ_BUFFER is NONE.
+PASS readPixel(gl) is "0,0,0,0"
+PASS gl.getError() is gl.INVALID_OPERATION
+READ_BUFFER of the default framebuffer is unaffected by readBuffer() on a bound read framebuffer.
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getParameter(gl.READ_BUFFER) is gl.NONE
+Reading the canvas contents is internal to the implementation, which READ_BUFFER must not affect.
+PASS pixel is "0,255,0,255"
+PASS gl.getError() is gl.NO_ERROR
+Reading the canvas contents restores READ_BUFFER, so reading the default framebuffer is still invalid.
+PASS readPixel(gl) is "0,0,0,0"
+PASS gl.getError() is gl.INVALID_OPERATION
+Restoring READ_BUFFER to BACK makes the default framebuffer readable again.
+PASS gl.getParameter(gl.READ_BUFFER) is gl.BACK
+PASS readPixel(gl) is "0,0,255,255"
+PASS gl.getError() is gl.NO_ERROR
+PASS pixel is "0,0,255,255"
+PASS gl.getError() is gl.NO_ERROR
+
+Parameters: {"antialias":false,"preserveDrawingBuffer":true,"premultipliedAlpha":true,"readType":"createImageBitmap"}
+PASS gl.getParameter(gl.READ_BUFFER) is gl.BACK
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getParameter(gl.READ_BUFFER) is gl.NONE
+Reading the default framebuffer is invalid while its READ_BUFFER is NONE.
+PASS readPixel(gl) is "0,0,0,0"
+PASS gl.getError() is gl.INVALID_OPERATION
+READ_BUFFER of the default framebuffer is unaffected by readBuffer() on a bound read framebuffer.
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getParameter(gl.READ_BUFFER) is gl.NONE
+Reading the canvas contents is internal to the implementation, which READ_BUFFER must not affect.
+PASS pixel is "0,255,0,255"
+PASS gl.getError() is gl.NO_ERROR
+Reading the canvas contents restores READ_BUFFER, so reading the default framebuffer is still invalid.
+PASS readPixel(gl) is "0,0,0,0"
+PASS gl.getError() is gl.INVALID_OPERATION
+Restoring READ_BUFFER to BACK makes the default framebuffer readable again.
+PASS gl.getParameter(gl.READ_BUFFER) is gl.BACK
+PASS readPixel(gl) is "0,0,255,255"
+PASS gl.getError() is gl.NO_ERROR
+PASS pixel is "0,0,255,255"
+PASS gl.getError() is gl.NO_ERROR
+
+Parameters: {"antialias":false,"preserveDrawingBuffer":true,"premultipliedAlpha":true,"readType":"createPattern"}
+PASS gl.getParameter(gl.READ_BUFFER) is gl.BACK
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getParameter(gl.READ_BUFFER) is gl.NONE
+Reading the default framebuffer is invalid while its READ_BUFFER is NONE.
+PASS readPixel(gl) is "0,0,0,0"
+PASS gl.getError() is gl.INVALID_OPERATION
+READ_BUFFER of the default framebuffer is unaffected by readBuffer() on a bound read framebuffer.
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getParameter(gl.READ_BUFFER) is gl.NONE
+Reading the canvas contents is internal to the implementation, which READ_BUFFER must not affect.
+PASS pixel is "0,255,0,255"
+PASS gl.getError() is gl.NO_ERROR
+Reading the canvas contents restores READ_BUFFER, so reading the default framebuffer is still invalid.
+PASS readPixel(gl) is "0,0,0,0"
+PASS gl.getError() is gl.INVALID_OPERATION
+Restoring READ_BUFFER to BACK makes the default framebuffer readable again.
+PASS gl.getParameter(gl.READ_BUFFER) is gl.BACK
+PASS readPixel(gl) is "0,0,255,255"
+PASS gl.getError() is gl.NO_ERROR
+PASS pixel is "0,0,255,255"
+PASS gl.getError() is gl.NO_ERROR
+
+Parameters: {"antialias":false,"preserveDrawingBuffer":true,"premultipliedAlpha":true,"readType":"texImage2D"}
+PASS gl.getParameter(gl.READ_BUFFER) is gl.BACK
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getParameter(gl.READ_BUFFER) is gl.NONE
+Reading the default framebuffer is invalid while its READ_BUFFER is NONE.
+PASS readPixel(gl) is "0,0,0,0"
+PASS gl.getError() is gl.INVALID_OPERATION
+READ_BUFFER of the default framebuffer is unaffected by readBuffer() on a bound read framebuffer.
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getParameter(gl.READ_BUFFER) is gl.NONE
+Reading the canvas contents is internal to the implementation, which READ_BUFFER must not affect.
+PASS pixel is "0,255,0,255"
+PASS gl.getError() is gl.NO_ERROR
+Reading the canvas contents restores READ_BUFFER, so reading the default framebuffer is still invalid.
+PASS readPixel(gl) is "0,0,0,0"
+PASS gl.getError() is gl.INVALID_OPERATION
+Restoring READ_BUFFER to BACK makes the default framebuffer readable again.
+PASS gl.getParameter(gl.READ_BUFFER) is gl.BACK
+PASS readPixel(gl) is "0,0,255,255"
+PASS gl.getError() is gl.NO_ERROR
+PASS pixel is "0,0,255,255"
+PASS gl.getError() is gl.NO_ERROR
+
+Parameters: {"antialias":false,"preserveDrawingBuffer":true,"premultipliedAlpha":true,"readType":"videoFrame"}
+Skipped: VideoFrame is not available.
+
+Parameters: {"antialias":false,"preserveDrawingBuffer":true,"premultipliedAlpha":true,"readType":"captureStream"}
+Skipped: HTMLCanvasElement.captureStream() is not available.
+
+Parameters: {"antialias":false,"preserveDrawingBuffer":true,"premultipliedAlpha":false,"readType":"drawImage"}
+PASS gl.getParameter(gl.READ_BUFFER) is gl.BACK
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getParameter(gl.READ_BUFFER) is gl.NONE
+Reading the default framebuffer is invalid while its READ_BUFFER is NONE.
+PASS readPixel(gl) is "0,0,0,0"
+PASS gl.getError() is gl.INVALID_OPERATION
+READ_BUFFER of the default framebuffer is unaffected by readBuffer() on a bound read framebuffer.
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getParameter(gl.READ_BUFFER) is gl.NONE
+Reading the canvas contents is internal to the implementation, which READ_BUFFER must not affect.
+PASS pixel is "0,255,0,255"
+PASS gl.getError() is gl.NO_ERROR
+Reading the canvas contents restores READ_BUFFER, so reading the default framebuffer is still invalid.
+PASS readPixel(gl) is "0,0,0,0"
+PASS gl.getError() is gl.INVALID_OPERATION
+Restoring READ_BUFFER to BACK makes the default framebuffer readable again.
+PASS gl.getParameter(gl.READ_BUFFER) is gl.BACK
+PASS readPixel(gl) is "0,0,255,255"
+PASS gl.getError() is gl.NO_ERROR
+PASS pixel is "0,0,255,255"
+PASS gl.getError() is gl.NO_ERROR
+
+Parameters: {"antialias":false,"preserveDrawingBuffer":true,"premultipliedAlpha":false,"readType":"toDataURL"}
+PASS gl.getParameter(gl.READ_BUFFER) is gl.BACK
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getParameter(gl.READ_BUFFER) is gl.NONE
+Reading the default framebuffer is invalid while its READ_BUFFER is NONE.
+PASS readPixel(gl) is "0,0,0,0"
+PASS gl.getError() is gl.INVALID_OPERATION
+READ_BUFFER of the default framebuffer is unaffected by readBuffer() on a bound read framebuffer.
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getParameter(gl.READ_BUFFER) is gl.NONE
+Reading the canvas contents is internal to the implementation, which READ_BUFFER must not affect.
+PASS pixel is "0,255,0,255"
+PASS gl.getError() is gl.NO_ERROR
+Reading the canvas contents restores READ_BUFFER, so reading the default framebuffer is still invalid.
+PASS readPixel(gl) is "0,0,0,0"
+PASS gl.getError() is gl.INVALID_OPERATION
+Restoring READ_BUFFER to BACK makes the default framebuffer readable again.
+PASS gl.getParameter(gl.READ_BUFFER) is gl.BACK
+PASS readPixel(gl) is "0,0,255,255"
+PASS gl.getError() is gl.NO_ERROR
+PASS pixel is "0,0,255,255"
+PASS gl.getError() is gl.NO_ERROR
+
+Parameters: {"antialias":false,"preserveDrawingBuffer":true,"premultipliedAlpha":false,"readType":"toBlob"}
+PASS gl.getParameter(gl.READ_BUFFER) is gl.BACK
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getParameter(gl.READ_BUFFER) is gl.NONE
+Reading the default framebuffer is invalid while its READ_BUFFER is NONE.
+PASS readPixel(gl) is "0,0,0,0"
+PASS gl.getError() is gl.INVALID_OPERATION
+READ_BUFFER of the default framebuffer is unaffected by readBuffer() on a bound read framebuffer.
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getParameter(gl.READ_BUFFER) is gl.NONE
+Reading the canvas contents is internal to the implementation, which READ_BUFFER must not affect.
+PASS pixel is "0,255,0,255"
+PASS gl.getError() is gl.NO_ERROR
+Reading the canvas contents restores READ_BUFFER, so reading the default framebuffer is still invalid.
+PASS readPixel(gl) is "0,0,0,0"
+PASS gl.getError() is gl.INVALID_OPERATION
+Restoring READ_BUFFER to BACK makes the default framebuffer readable again.
+PASS gl.getParameter(gl.READ_BUFFER) is gl.BACK
+PASS readPixel(gl) is "0,0,255,255"
+PASS gl.getError() is gl.NO_ERROR
+PASS pixel is "0,0,255,255"
+PASS gl.getError() is gl.NO_ERROR
+
+Parameters: {"antialias":false,"preserveDrawingBuffer":true,"premultipliedAlpha":false,"readType":"createImageBitmap"}
+PASS gl.getParameter(gl.READ_BUFFER) is gl.BACK
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getParameter(gl.READ_BUFFER) is gl.NONE
+Reading the default framebuffer is invalid while its READ_BUFFER is NONE.
+PASS readPixel(gl) is "0,0,0,0"
+PASS gl.getError() is gl.INVALID_OPERATION
+READ_BUFFER of the default framebuffer is unaffected by readBuffer() on a bound read framebuffer.
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getParameter(gl.READ_BUFFER) is gl.NONE
+Reading the canvas contents is internal to the implementation, which READ_BUFFER must not affect.
+PASS pixel is "0,255,0,255"
+PASS gl.getError() is gl.NO_ERROR
+Reading the canvas contents restores READ_BUFFER, so reading the default framebuffer is still invalid.
+PASS readPixel(gl) is "0,0,0,0"
+PASS gl.getError() is gl.INVALID_OPERATION
+Restoring READ_BUFFER to BACK makes the default framebuffer readable again.
+PASS gl.getParameter(gl.READ_BUFFER) is gl.BACK
+PASS readPixel(gl) is "0,0,255,255"
+PASS gl.getError() is gl.NO_ERROR
+PASS pixel is "0,0,255,255"
+PASS gl.getError() is gl.NO_ERROR
+
+Parameters: {"antialias":false,"preserveDrawingBuffer":true,"premultipliedAlpha":false,"readType":"createPattern"}
+PASS gl.getParameter(gl.READ_BUFFER) is gl.BACK
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getParameter(gl.READ_BUFFER) is gl.NONE
+Reading the default framebuffer is invalid while its READ_BUFFER is NONE.
+PASS readPixel(gl) is "0,0,0,0"
+PASS gl.getError() is gl.INVALID_OPERATION
+READ_BUFFER of the default framebuffer is unaffected by readBuffer() on a bound read framebuffer.
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getParameter(gl.READ_BUFFER) is gl.NONE
+Reading the canvas contents is internal to the implementation, which READ_BUFFER must not affect.
+PASS pixel is "0,255,0,255"
+PASS gl.getError() is gl.NO_ERROR
+Reading the canvas contents restores READ_BUFFER, so reading the default framebuffer is still invalid.
+PASS readPixel(gl) is "0,0,0,0"
+PASS gl.getError() is gl.INVALID_OPERATION
+Restoring READ_BUFFER to BACK makes the default framebuffer readable again.
+PASS gl.getParameter(gl.READ_BUFFER) is gl.BACK
+PASS readPixel(gl) is "0,0,255,255"
+PASS gl.getError() is gl.NO_ERROR
+PASS pixel is "0,0,255,255"
+PASS gl.getError() is gl.NO_ERROR
+
+Parameters: {"antialias":false,"preserveDrawingBuffer":true,"premultipliedAlpha":false,"readType":"texImage2D"}
+PASS gl.getParameter(gl.READ_BUFFER) is gl.BACK
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getParameter(gl.READ_BUFFER) is gl.NONE
+Reading the default framebuffer is invalid while its READ_BUFFER is NONE.
+PASS readPixel(gl) is "0,0,0,0"
+PASS gl.getError() is gl.INVALID_OPERATION
+READ_BUFFER of the default framebuffer is unaffected by readBuffer() on a bound read framebuffer.
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getParameter(gl.READ_BUFFER) is gl.NONE
+Reading the canvas contents is internal to the implementation, which READ_BUFFER must not affect.
+PASS pixel is "0,255,0,255"
+PASS gl.getError() is gl.NO_ERROR
+Reading the canvas contents restores READ_BUFFER, so reading the default framebuffer is still invalid.
+PASS readPixel(gl) is "0,0,0,0"
+PASS gl.getError() is gl.INVALID_OPERATION
+Restoring READ_BUFFER to BACK makes the default framebuffer readable again.
+PASS gl.getParameter(gl.READ_BUFFER) is gl.BACK
+PASS readPixel(gl) is "0,0,255,255"
+PASS gl.getError() is gl.NO_ERROR
+PASS pixel is "0,0,255,255"
+PASS gl.getError() is gl.NO_ERROR
+
+Parameters: {"antialias":false,"preserveDrawingBuffer":true,"premultipliedAlpha":false,"readType":"videoFrame"}
+Skipped: VideoFrame is not available.
+
+Parameters: {"antialias":false,"preserveDrawingBuffer":true,"premultipliedAlpha":false,"readType":"captureStream"}
+Skipped: HTMLCanvasElement.captureStream() is not available.
+
+Parameters: {"antialias":false,"preserveDrawingBuffer":false,"premultipliedAlpha":true,"readType":"drawImage"}
+PASS gl.getParameter(gl.READ_BUFFER) is gl.BACK
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getParameter(gl.READ_BUFFER) is gl.NONE
+Reading the default framebuffer is invalid while its READ_BUFFER is NONE.
+PASS readPixel(gl) is "0,0,0,0"
+PASS gl.getError() is gl.INVALID_OPERATION
+READ_BUFFER of the default framebuffer is unaffected by readBuffer() on a bound read framebuffer.
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getParameter(gl.READ_BUFFER) is gl.NONE
+Reading the canvas contents is internal to the implementation, which READ_BUFFER must not affect.
+PASS pixel is "0,255,0,255"
+PASS gl.getError() is gl.NO_ERROR
+Reading the canvas contents restores READ_BUFFER, so reading the default framebuffer is still invalid.
+PASS readPixel(gl) is "0,0,0,0"
+PASS gl.getError() is gl.INVALID_OPERATION
+Restoring READ_BUFFER to BACK makes the default framebuffer readable again.
+PASS gl.getParameter(gl.READ_BUFFER) is gl.BACK
+PASS readPixel(gl) is "0,0,255,255"
+PASS gl.getError() is gl.NO_ERROR
+PASS pixel is "0,0,255,255"
+PASS gl.getError() is gl.NO_ERROR
+
+Parameters: {"antialias":false,"preserveDrawingBuffer":false,"premultipliedAlpha":true,"readType":"toDataURL"}
+PASS gl.getParameter(gl.READ_BUFFER) is gl.BACK
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getParameter(gl.READ_BUFFER) is gl.NONE
+Reading the default framebuffer is invalid while its READ_BUFFER is NONE.
+PASS readPixel(gl) is "0,0,0,0"
+PASS gl.getError() is gl.INVALID_OPERATION
+READ_BUFFER of the default framebuffer is unaffected by readBuffer() on a bound read framebuffer.
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getParameter(gl.READ_BUFFER) is gl.NONE
+Reading the canvas contents is internal to the implementation, which READ_BUFFER must not affect.
+PASS pixel is "0,255,0,255"
+PASS gl.getError() is gl.NO_ERROR
+Reading the canvas contents restores READ_BUFFER, so reading the default framebuffer is still invalid.
+PASS readPixel(gl) is "0,0,0,0"
+PASS gl.getError() is gl.INVALID_OPERATION
+Restoring READ_BUFFER to BACK makes the default framebuffer readable again.
+PASS gl.getParameter(gl.READ_BUFFER) is gl.BACK
+PASS readPixel(gl) is "0,0,255,255"
+PASS gl.getError() is gl.NO_ERROR
+PASS pixel is "0,0,255,255"
+PASS gl.getError() is gl.NO_ERROR
+
+Parameters: {"antialias":false,"preserveDrawingBuffer":false,"premultipliedAlpha":true,"readType":"toBlob"}
+PASS gl.getParameter(gl.READ_BUFFER) is gl.BACK
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getParameter(gl.READ_BUFFER) is gl.NONE
+Reading the default framebuffer is invalid while its READ_BUFFER is NONE.
+PASS readPixel(gl) is "0,0,0,0"
+PASS gl.getError() is gl.INVALID_OPERATION
+READ_BUFFER of the default framebuffer is unaffected by readBuffer() on a bound read framebuffer.
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getParameter(gl.READ_BUFFER) is gl.NONE
+Reading the canvas contents is internal to the implementation, which READ_BUFFER must not affect.
+PASS pixel is "0,255,0,255"
+PASS gl.getError() is gl.NO_ERROR
+Reading the canvas contents restores READ_BUFFER, so reading the default framebuffer is still invalid.
+PASS readPixel(gl) is "0,0,0,0"
+PASS gl.getError() is gl.INVALID_OPERATION
+Restoring READ_BUFFER to BACK makes the default framebuffer readable again.
+PASS gl.getParameter(gl.READ_BUFFER) is gl.BACK
+PASS readPixel(gl) is "0,0,255,255"
+PASS gl.getError() is gl.NO_ERROR
+PASS pixel is "0,0,255,255"
+PASS gl.getError() is gl.NO_ERROR
+
+Parameters: {"antialias":false,"preserveDrawingBuffer":false,"premultipliedAlpha":true,"readType":"createImageBitmap"}
+PASS gl.getParameter(gl.READ_BUFFER) is gl.BACK
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getParameter(gl.READ_BUFFER) is gl.NONE
+Reading the default framebuffer is invalid while its READ_BUFFER is NONE.
+PASS readPixel(gl) is "0,0,0,0"
+PASS gl.getError() is gl.INVALID_OPERATION
+READ_BUFFER of the default framebuffer is unaffected by readBuffer() on a bound read framebuffer.
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getParameter(gl.READ_BUFFER) is gl.NONE
+Reading the canvas contents is internal to the implementation, which READ_BUFFER must not affect.
+PASS pixel is "0,255,0,255"
+PASS gl.getError() is gl.NO_ERROR
+Reading the canvas contents restores READ_BUFFER, so reading the default framebuffer is still invalid.
+PASS readPixel(gl) is "0,0,0,0"
+PASS gl.getError() is gl.INVALID_OPERATION
+Restoring READ_BUFFER to BACK makes the default framebuffer readable again.
+PASS gl.getParameter(gl.READ_BUFFER) is gl.BACK
+PASS readPixel(gl) is "0,0,255,255"
+PASS gl.getError() is gl.NO_ERROR
+PASS pixel is "0,0,255,255"
+PASS gl.getError() is gl.NO_ERROR
+
+Parameters: {"antialias":false,"preserveDrawingBuffer":false,"premultipliedAlpha":true,"readType":"createPattern"}
+PASS gl.getParameter(gl.READ_BUFFER) is gl.BACK
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getParameter(gl.READ_BUFFER) is gl.NONE
+Reading the default framebuffer is invalid while its READ_BUFFER is NONE.
+PASS readPixel(gl) is "0,0,0,0"
+PASS gl.getError() is gl.INVALID_OPERATION
+READ_BUFFER of the default framebuffer is unaffected by readBuffer() on a bound read framebuffer.
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getParameter(gl.READ_BUFFER) is gl.NONE
+Reading the canvas contents is internal to the implementation, which READ_BUFFER must not affect.
+PASS pixel is "0,255,0,255"
+PASS gl.getError() is gl.NO_ERROR
+Reading the canvas contents restores READ_BUFFER, so reading the default framebuffer is still invalid.
+PASS readPixel(gl) is "0,0,0,0"
+PASS gl.getError() is gl.INVALID_OPERATION
+Restoring READ_BUFFER to BACK makes the default framebuffer readable again.
+PASS gl.getParameter(gl.READ_BUFFER) is gl.BACK
+PASS readPixel(gl) is "0,0,255,255"
+PASS gl.getError() is gl.NO_ERROR
+PASS pixel is "0,0,255,255"
+PASS gl.getError() is gl.NO_ERROR
+
+Parameters: {"antialias":false,"preserveDrawingBuffer":false,"premultipliedAlpha":true,"readType":"texImage2D"}
+PASS gl.getParameter(gl.READ_BUFFER) is gl.BACK
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getParameter(gl.READ_BUFFER) is gl.NONE
+Reading the default framebuffer is invalid while its READ_BUFFER is NONE.
+PASS readPixel(gl) is "0,0,0,0"
+PASS gl.getError() is gl.INVALID_OPERATION
+READ_BUFFER of the default framebuffer is unaffected by readBuffer() on a bound read framebuffer.
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getParameter(gl.READ_BUFFER) is gl.NONE
+Reading the canvas contents is internal to the implementation, which READ_BUFFER must not affect.
+PASS pixel is "0,255,0,255"
+PASS gl.getError() is gl.NO_ERROR
+Reading the canvas contents restores READ_BUFFER, so reading the default framebuffer is still invalid.
+PASS readPixel(gl) is "0,0,0,0"
+PASS gl.getError() is gl.INVALID_OPERATION
+Restoring READ_BUFFER to BACK makes the default framebuffer readable again.
+PASS gl.getParameter(gl.READ_BUFFER) is gl.BACK
+PASS readPixel(gl) is "0,0,255,255"
+PASS gl.getError() is gl.NO_ERROR
+PASS pixel is "0,0,255,255"
+PASS gl.getError() is gl.NO_ERROR
+
+Parameters: {"antialias":false,"preserveDrawingBuffer":false,"premultipliedAlpha":true,"readType":"videoFrame"}
+Skipped: VideoFrame is not available.
+
+Parameters: {"antialias":false,"preserveDrawingBuffer":false,"premultipliedAlpha":true,"readType":"captureStream"}
+Skipped: HTMLCanvasElement.captureStream() is not available.
+
+Parameters: {"antialias":false,"preserveDrawingBuffer":false,"premultipliedAlpha":false,"readType":"drawImage"}
+PASS gl.getParameter(gl.READ_BUFFER) is gl.BACK
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getParameter(gl.READ_BUFFER) is gl.NONE
+Reading the default framebuffer is invalid while its READ_BUFFER is NONE.
+PASS readPixel(gl) is "0,0,0,0"
+PASS gl.getError() is gl.INVALID_OPERATION
+READ_BUFFER of the default framebuffer is unaffected by readBuffer() on a bound read framebuffer.
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getParameter(gl.READ_BUFFER) is gl.NONE
+Reading the canvas contents is internal to the implementation, which READ_BUFFER must not affect.
+PASS pixel is "0,255,0,255"
+PASS gl.getError() is gl.NO_ERROR
+Reading the canvas contents restores READ_BUFFER, so reading the default framebuffer is still invalid.
+PASS readPixel(gl) is "0,0,0,0"
+PASS gl.getError() is gl.INVALID_OPERATION
+Restoring READ_BUFFER to BACK makes the default framebuffer readable again.
+PASS gl.getParameter(gl.READ_BUFFER) is gl.BACK
+PASS readPixel(gl) is "0,0,255,255"
+PASS gl.getError() is gl.NO_ERROR
+PASS pixel is "0,0,255,255"
+PASS gl.getError() is gl.NO_ERROR
+
+Parameters: {"antialias":false,"preserveDrawingBuffer":false,"premultipliedAlpha":false,"readType":"toDataURL"}
+PASS gl.getParameter(gl.READ_BUFFER) is gl.BACK
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getParameter(gl.READ_BUFFER) is gl.NONE
+Reading the default framebuffer is invalid while its READ_BUFFER is NONE.
+PASS readPixel(gl) is "0,0,0,0"
+PASS gl.getError() is gl.INVALID_OPERATION
+READ_BUFFER of the default framebuffer is unaffected by readBuffer() on a bound read framebuffer.
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getParameter(gl.READ_BUFFER) is gl.NONE
+Reading the canvas contents is internal to the implementation, which READ_BUFFER must not affect.
+PASS pixel is "0,255,0,255"
+PASS gl.getError() is gl.NO_ERROR
+Reading the canvas contents restores READ_BUFFER, so reading the default framebuffer is still invalid.
+PASS readPixel(gl) is "0,0,0,0"
+PASS gl.getError() is gl.INVALID_OPERATION
+Restoring READ_BUFFER to BACK makes the default framebuffer readable again.
+PASS gl.getParameter(gl.READ_BUFFER) is gl.BACK
+PASS readPixel(gl) is "0,0,255,255"
+PASS gl.getError() is gl.NO_ERROR
+PASS pixel is "0,0,255,255"
+PASS gl.getError() is gl.NO_ERROR
+
+Parameters: {"antialias":false,"preserveDrawingBuffer":false,"premultipliedAlpha":false,"readType":"toBlob"}
+PASS gl.getParameter(gl.READ_BUFFER) is gl.BACK
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getParameter(gl.READ_BUFFER) is gl.NONE
+Reading the default framebuffer is invalid while its READ_BUFFER is NONE.
+PASS readPixel(gl) is "0,0,0,0"
+PASS gl.getError() is gl.INVALID_OPERATION
+READ_BUFFER of the default framebuffer is unaffected by readBuffer() on a bound read framebuffer.
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getParameter(gl.READ_BUFFER) is gl.NONE
+Reading the canvas contents is internal to the implementation, which READ_BUFFER must not affect.
+PASS pixel is "0,255,0,255"
+PASS gl.getError() is gl.NO_ERROR
+Reading the canvas contents restores READ_BUFFER, so reading the default framebuffer is still invalid.
+PASS readPixel(gl) is "0,0,0,0"
+PASS gl.getError() is gl.INVALID_OPERATION
+Restoring READ_BUFFER to BACK makes the default framebuffer readable again.
+PASS gl.getParameter(gl.READ_BUFFER) is gl.BACK
+PASS readPixel(gl) is "0,0,255,255"
+PASS gl.getError() is gl.NO_ERROR
+PASS pixel is "0,0,255,255"
+PASS gl.getError() is gl.NO_ERROR
+
+Parameters: {"antialias":false,"preserveDrawingBuffer":false,"premultipliedAlpha":false,"readType":"createImageBitmap"}
+PASS gl.getParameter(gl.READ_BUFFER) is gl.BACK
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getParameter(gl.READ_BUFFER) is gl.NONE
+Reading the default framebuffer is invalid while its READ_BUFFER is NONE.
+PASS readPixel(gl) is "0,0,0,0"
+PASS gl.getError() is gl.INVALID_OPERATION
+READ_BUFFER of the default framebuffer is unaffected by readBuffer() on a bound read framebuffer.
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getParameter(gl.READ_BUFFER) is gl.NONE
+Reading the canvas contents is internal to the implementation, which READ_BUFFER must not affect.
+PASS pixel is "0,255,0,255"
+PASS gl.getError() is gl.NO_ERROR
+Reading the canvas contents restores READ_BUFFER, so reading the default framebuffer is still invalid.
+PASS readPixel(gl) is "0,0,0,0"
+PASS gl.getError() is gl.INVALID_OPERATION
+Restoring READ_BUFFER to BACK makes the default framebuffer readable again.
+PASS gl.getParameter(gl.READ_BUFFER) is gl.BACK
+PASS readPixel(gl) is "0,0,255,255"
+PASS gl.getError() is gl.NO_ERROR
+PASS pixel is "0,0,255,255"
+PASS gl.getError() is gl.NO_ERROR
+
+Parameters: {"antialias":false,"preserveDrawingBuffer":false,"premultipliedAlpha":false,"readType":"createPattern"}
+PASS gl.getParameter(gl.READ_BUFFER) is gl.BACK
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getParameter(gl.READ_BUFFER) is gl.NONE
+Reading the default framebuffer is invalid while its READ_BUFFER is NONE.
+PASS readPixel(gl) is "0,0,0,0"
+PASS gl.getError() is gl.INVALID_OPERATION
+READ_BUFFER of the default framebuffer is unaffected by readBuffer() on a bound read framebuffer.
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getParameter(gl.READ_BUFFER) is gl.NONE
+Reading the canvas contents is internal to the implementation, which READ_BUFFER must not affect.
+PASS pixel is "0,255,0,255"
+PASS gl.getError() is gl.NO_ERROR
+Reading the canvas contents restores READ_BUFFER, so reading the default framebuffer is still invalid.
+PASS readPixel(gl) is "0,0,0,0"
+PASS gl.getError() is gl.INVALID_OPERATION
+Restoring READ_BUFFER to BACK makes the default framebuffer readable again.
+PASS gl.getParameter(gl.READ_BUFFER) is gl.BACK
+PASS readPixel(gl) is "0,0,255,255"
+PASS gl.getError() is gl.NO_ERROR
+PASS pixel is "0,0,255,255"
+PASS gl.getError() is gl.NO_ERROR
+
+Parameters: {"antialias":false,"preserveDrawingBuffer":false,"premultipliedAlpha":false,"readType":"texImage2D"}
+PASS gl.getParameter(gl.READ_BUFFER) is gl.BACK
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getParameter(gl.READ_BUFFER) is gl.NONE
+Reading the default framebuffer is invalid while its READ_BUFFER is NONE.
+PASS readPixel(gl) is "0,0,0,0"
+PASS gl.getError() is gl.INVALID_OPERATION
+READ_BUFFER of the default framebuffer is unaffected by readBuffer() on a bound read framebuffer.
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getParameter(gl.READ_BUFFER) is gl.NONE
+Reading the canvas contents is internal to the implementation, which READ_BUFFER must not affect.
+PASS pixel is "0,255,0,255"
+PASS gl.getError() is gl.NO_ERROR
+Reading the canvas contents restores READ_BUFFER, so reading the default framebuffer is still invalid.
+PASS readPixel(gl) is "0,0,0,0"
+PASS gl.getError() is gl.INVALID_OPERATION
+Restoring READ_BUFFER to BACK makes the default framebuffer readable again.
+PASS gl.getParameter(gl.READ_BUFFER) is gl.BACK
+PASS readPixel(gl) is "0,0,255,255"
+PASS gl.getError() is gl.NO_ERROR
+PASS pixel is "0,0,255,255"
+PASS gl.getError() is gl.NO_ERROR
+
+Parameters: {"antialias":false,"preserveDrawingBuffer":false,"premultipliedAlpha":false,"readType":"videoFrame"}
+Skipped: VideoFrame is not available.
+
+Parameters: {"antialias":false,"preserveDrawingBuffer":false,"premultipliedAlpha":false,"readType":"captureStream"}
+Skipped: HTMLCanvasElement.captureStream() is not available.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,4 @@
+Body needed for test_driver.click()
+
+FAIL Verify write and read clipboard (multiple types) with promise to Blobs assert_equals: expected 2 but got 1
+

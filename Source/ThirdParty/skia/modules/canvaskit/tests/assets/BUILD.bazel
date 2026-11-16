@@ -1,0 +1,40 @@
+load("//bazel:skia_rules.bzl", "skia_filegroup")
+
+package(
+    default_applicable_licenses = ["//:license"],
+)
+
+licenses(["notice"])
+
+skia_filegroup(
+    name = "test_assets",
+    srcs = [
+        "Bungee-Regular.ttf",
+        "NotoColorEmoji.ttf",
+        "NotoSerif-BoldItalic.ttf",
+        "NotoSerif-Regular.ttf",
+        "Roboto-Regular.otf",
+        "Roboto-Regular.woff",
+        "Roboto-Regular.woff2",
+        "RobotoSlab-VariableFont_wght.ttf",
+        "animated_gif.json",
+        "audio_external.json",
+        "brickwork-texture.jpg",
+        "color_wheel.gif",
+        "color_wheel.webp",
+        "exif_rotated_heart.jpg",
+        "flightAnim.gif",
+        "flutter_106433.png",
+        "mandrill_16.png",
+        "mandrill_512.png",
+        "mandrill_h1v1.jpg",
+        "map-shield.json",
+        "red_line.skp",
+        "skottie_basic_slots.json",
+        "skottie_inline_font.json",
+        "test.ttc",
+        "test_glyphs-glyf_colr_1.ttf",
+        "text_edit.json",
+    ],
+    visibility = ["//:__subpackages__"],
+)

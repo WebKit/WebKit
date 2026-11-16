@@ -1,0 +1,7 @@
+
+Test rubberband of overflow:scroll inside the non-fast scrollable region
+PASS sawOverflowScrollWithNegativeOffset became true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

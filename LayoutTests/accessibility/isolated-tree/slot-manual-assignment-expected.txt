@@ -1,0 +1,19 @@
+This tests that imperative slot assignment reparents a node in the accessibility tree, even though it mutates no DOM.
+
+A manual-assignment slot holds nothing until it is assigned, so the button is unslotted and unrendered.
+PASS: parentIdOf('alpha') === 'not in the accessibility tree'
+PASS: childCountOf('firstGroup') === 0
+
+Assigning the button to the first slot.
+PASS: parentIdOf('alpha') === 'firstGroup'
+PASS: childCountOf('firstGroup') === 1
+
+Assigning the same button to the second slot, which mutates no DOM.
+PASS: parentIdOf('alpha') === 'secondGroup'
+PASS: childCountOf('firstGroup') === 0
+PASS: childCountOf('secondGroup') === 1
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

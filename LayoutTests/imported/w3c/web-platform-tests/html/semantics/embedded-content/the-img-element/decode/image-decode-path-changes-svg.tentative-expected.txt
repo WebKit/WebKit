@@ -1,0 +1,8 @@
+
+PASS SVGImageElement.prototype.decode(), href mutation tests. xlink:href changes fail decode.
+PASS SVGImageElement.prototype.decode(), href mutation tests. href changes fail decode.
+PASS SVGImageElement.prototype.decode(), href mutation tests. xlink:href changes fail decode; following good decode succeeds.
+PASS SVGImageElement.prototype.decode(), href mutation tests. href changes fail decode; following good decode succeeds.
+PASS SVGImageElement.prototype.decode(), href mutation tests. xlink:href changes fail decode; following bad decode fails.
+PASS SVGImageElement.prototype.decode(), href mutation tests. href changes fail decode; following bad decode fails.
+

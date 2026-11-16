@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("CSS.getMatchedStyleForNode.AtRulesDoNotCrash");
+
+    function addTestCase({name, description, selector})
+    {
+        suite.addTestCase({
+            name,
+            description,
+            async test() {
+                let documentNode = await WI.domManager.requestDocument();
+                let nodeId = await documentNode.querySelector(selector);
+                let domNode = WI.domManager.nodeForId(nodeId);
+                InspectorTest.assert(domNode, `Should find DOM Node for selector '${selector}'.`);
+
+                let domNodeStyles = WI.cssManager.stylesForNode(domNode);
+                InspectorTest.assert(domNodeStyles, "Should find CSS Styles for DOM Node.");
+
+                // Requesting the matched styles reparses every stylesheet that matched the node (via
+                // parseStyleSheetForInspector). Each target's stylesheet also contains one of the at-rules
+                // that emits startRuleBody()/endRuleBody() before consuming its contents, so reparsing must
+                // not crash the way a top-level @scope with a bare declaration used to.
+                await domNodeStyles.refreshIfNeeded();
+
+                let authoredRules = domNodeStyles.matchedRules.filter((rule) => rule.type === WI.CSSStyleSheet.Type.Author);
+                InspectorTest.expectEqual(authoredRules.length, 1, "Should have 1 authored rule.");
+                InspectorTest.expectEqual(authoredRules[0]?.selectorText, selector, `Selector text should be "${selector}".`);
+
+                InspectorTest.pass("Did not crash while building matched styles for the stylesheet.");
+            },
+        });
+    }
+
+    addTestCase({
+        name: "CSS.getMatchedStyleForNode.AtRulesDoNotCrash.Import",
+        description: "Reparsing a stylesheet containing an @import rule should not crash the web process.",
+        selector: "#target-import",
+    });
+
+    addTestCase({
+        name: "CSS.getMatchedStyleForNode.AtRulesDoNotCrash.FontFace",
+        description: "Reparsing a stylesheet containing a @font-face rule should not crash the web process.",
+        selector: "#target-font-face",
+    });
+
+    addTestCase({
+        name: "CSS.getMatchedStyleForNode.AtRulesDoNotCrash.FontFeatureValues",
+        description: "Reparsing a stylesheet containing a @font-feature-values rule (and its nested feature-value block) should not crash the web process.",
+        selector: "#target-font-feature-values",
+    });
+
+    addTestCase({
+        name: "CSS.getMatchedStyleForNode.AtRulesDoNotCrash.FontPaletteValues",
+        description: "Reparsing a stylesheet containing a @font-palette-values rule should not crash the web process.",
+        selector: "#target-font-palette-values",
+    });
+
+    addTestCase({
+        name: "CSS.getMatchedStyleForNode.AtRulesDoNotCrash.Keyframes",
+        description: "Reparsing a stylesheet containing a @keyframes rule should not crash the web process.",
+        selector: "#target-keyframes",
+    });
+
+    addTestCase({
+        name: "CSS.getMatchedStyleForNode.AtRulesDoNotCrash.CounterStyle",
+        description: "Reparsing a stylesheet containing a @counter-style rule should not crash the web process.",
+        selector: "#target-counter-style",
+    });
+
+    addTestCase({
+        name: "CSS.getMatchedStyleForNode.AtRulesDoNotCrash.ViewTransition",
+        description: "Reparsing a stylesheet containing a @view-transition rule should not crash the web process.",
+        selector: "#target-view-transition",
+    });
+
+    addTestCase({
+        name: "CSS.getMatchedStyleForNode.AtRulesDoNotCrash.PositionTry",
+        description: "Reparsing a stylesheet containing a @position-try rule should not crash the web process.",
+        selector: "#target-position-try",
+    });
+
+    addTestCase({
+        name: "CSS.getMatchedStyleForNode.AtRulesDoNotCrash.Layer",
+        description: "Reparsing a stylesheet containing a @layer rule should not crash the web process.",
+        selector: "#target-layer",
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Tests that CSS.getMatchedStyleForNode does not crash when reparsing stylesheets that contain at-rules which report their rule body to the inspector before consuming their contents.</p>
+
+    <style>
+        @import url("data:text/css,");
+
+        #target-import {
+            color: green;
+        }
+    </style>
+    <div id="target-import"></div>
+
+    <style>
+        @font-face {
+            font-family: "TestFace";
+            src: url("data:font/woff2;base64,");
+        }
+
+        #target-font-face {
+            color: green;
+        }
+    </style>
+    <div id="target-font-face"></div>
+
+    <style>
+        @font-feature-values TestFace {
+            @styleset {
+                nice-style: 12;
+            }
+        }
+
+        #target-font-feature-values {
+            color: green;
+        }
+    </style>
+    <div id="target-font-feature-values"></div>
+
+    <style>
+        @font-palette-values --TestPalette {
+            font-family: "TestFace";
+            base-palette: 0;
+        }
+
+        #target-font-palette-values {
+            color: green;
+        }
+    </style>
+    <div id="target-font-palette-values"></div>
+
+    <style>
+        @keyframes testAnimation {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        #target-keyframes {
+            color: green;
+        }
+    </style>
+    <div id="target-keyframes"></div>
+
+    <style>
+        @counter-style testCounter {
+            system: cyclic;
+            symbols: "*";
+            suffix: " ";
+        }
+
+        #target-counter-style {
+            color: green;
+        }
+    </style>
+    <div id="target-counter-style"></div>
+
+    <style>
+        @view-transition {
+            navigation: auto;
+        }
+
+        #target-view-transition {
+            color: green;
+        }
+    </style>
+    <div id="target-view-transition"></div>
+
+    <style>
+        @position-try --testPositionTry {
+            top: 0;
+        }
+
+        #target-position-try {
+            color: green;
+        }
+    </style>
+    <div id="target-position-try"></div>
+
+    <style>
+        @layer testLayer {
+            .unmatched-layer {
+                color: red;
+            }
+        }
+
+        #target-layer {
+            color: green;
+        }
+    </style>
+    <div id="target-layer"></div>
+</body>
+</html>

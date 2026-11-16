@@ -1,0 +1,49 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<details open>
+    <!-- Only the first <summary> in a <details> element is valid. -->
+    <summary id="first-summary">First summary</summary>
+    <summary id="second-summary">Second summary</summary>
+</details>
+
+<!-- <summary>s that have no <details> ancestor are invalid. -->
+<summary id="orphan-summary">Orphan summary</summary>
+
+<details id="initially-empty-details" open>
+</details>
+
+<script>
+var output = "This test ensures that summary elements are only given the summary role when the proper conditions are met.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    output += expect("accessibilityController.accessibleElementById('first-summary').subrole", "'AXSubrole: AXSummary'")
+    output += expect("!accessibilityController.accessibleElementById('second-summary')", "true")
+    output += expect("!accessibilityController.accessibleElementById('orphan-summary')", "true")
+
+    output += "\nMoving #orphan-summary into #initially-empty-details.\n";
+    setTimeout(async function() {
+        document.getElementById("initially-empty-details").appendChild(document.getElementById("orphan-summary"));
+        await waitForElementById("orphan-summary");
+        output += expect("accessibilityController.accessibleElementById('orphan-summary').subrole", "'AXSubrole: AXSummary'")
+
+        output += "\nDeleting #first-summary. #second-summary should become a valid summary AX object.\n";
+        document.getElementById("first-summary").remove();
+        await waitForElementById("second-summary");
+        output += expect("accessibilityController.accessibleElementById('second-summary').subrole", "'AXSubrole: AXSummary'")
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>
+

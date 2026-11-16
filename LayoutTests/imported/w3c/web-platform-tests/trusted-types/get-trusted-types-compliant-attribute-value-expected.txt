@@ -1,0 +1,8 @@
+
+
+PASS Test sink for div.setAttributeNS(null, onclick)
+PASS Test sink for iframe.setAttributeNS(null, srcdoc)
+PASS Test sink for script.setAttributeNS(null, src)
+PASS Test sink for script.setAttributeNS(null, href)
+PASS Test sink for script.setAttributeNS(http://www.w3.org/1999/xlink, href)
+

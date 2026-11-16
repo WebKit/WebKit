@@ -1,0 +1,6 @@
+
+PASS expression from realm with XML associated document, context node in XML document, no namespace resolver
+PASS expression from realm with XML associated document, context node in HTML document, no namespace resolver
+PASS expression from realm with HTML associated document, context node in XML document, no namespace resolver
+PASS expression from realm with HTML associated document, context node in HTML document, no namespace resolver
+

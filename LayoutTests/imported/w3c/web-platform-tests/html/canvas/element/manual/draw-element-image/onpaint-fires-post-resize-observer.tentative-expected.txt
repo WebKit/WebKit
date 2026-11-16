@@ -1,0 +1,3 @@
+
+PASS onpaint should fire after resize observer
+

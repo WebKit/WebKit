@@ -1,0 +1,11 @@
+
+
+
+PASS "or" operator depending on the context node
+PASS "=" operator depending on the context node
+PASS "!=" operator depending on the context node
+PASS "<" operator depending on the context node
+PASS ">" operator depending on the context node
+PASS ">=" operator depending on the context node
+PASS "<=" operator depending on the context node
+

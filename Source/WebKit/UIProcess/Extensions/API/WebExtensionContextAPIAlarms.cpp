@@ -1,0 +1,111 @@
+/*
+ * Copyright (C) 2023-2024 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#include "config.h"
+#include "WebExtensionContext.h"
+
+#if ENABLE(WK_WEB_EXTENSIONS)
+
+#include "WebExtensionAlarm.h"
+#include "WebExtensionConstants.h"
+#include "WebExtensionContextProxyMessages.h"
+#include "WebExtensionPermission.h"
+#include "WebExtensionUtilities.h"
+#include <wtf/text/MakeString.h>
+
+namespace WebKit {
+
+bool WebExtensionContext::isAlarmsMessageAllowed(IPC::Decoder& message)
+{
+    return isLoadedAndPrivilegedMessage(message) && hasPermission(WebExtensionPermission::alarms());
+}
+
+void WebExtensionContext::alarmsCreate(const String& name, Seconds initialInterval, Seconds repeatInterval, CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&& completionHandler)
+{
+    static constexpr auto apiName = "alarms.create()"_s;
+
+    if (name.utf8().length() > webExtensionMaximumAlarmNameLength) {
+        completionHandler(toWebExtensionError(apiName, nullString(), makeString("the alarm name exceeds the limit of "_s, webExtensionMaximumAlarmNameLength, " bytes"_s)));
+        return;
+    }
+
+    // Replacing an existing alarm does not add to the count.
+    if (!m_alarmMap.contains(name) && m_alarmMap.size() >= webExtensionMaximumNumberOfAlarms) {
+        completionHandler(toWebExtensionError(apiName, nullString(), makeString("an extension cannot have more than "_s, webExtensionMaximumNumberOfAlarms, " active alarms"_s)));
+        return;
+    }
+
+    m_alarmMap.set(name, WebExtensionAlarm::create(name, initialInterval, repeatInterval, [this, protectedThis = Ref { *this }](const WebExtensionAlarm& alarm) {
+        fireAlarmsEventIfNeeded(alarm);
+
+        if (!alarm.repeatInterval())
+            m_alarmMap.remove(alarm.name());
+    }));
+
+    completionHandler({ });
+}
+
+void WebExtensionContext::alarmsGet(const String& name, CompletionHandler<void(std::optional<WebExtensionAlarmParameters>&&)>&& completionHandler)
+{
+    if (RefPtr alarm = m_alarmMap.get(name))
+        completionHandler(alarm->parameters());
+    else
+        completionHandler(std::nullopt);
+}
+
+void WebExtensionContext::alarmsClear(const String& name, CompletionHandler<void(bool)>&& completionHandler)
+{
+    bool success = m_alarmMap.remove(name);
+
+    completionHandler(success);
+}
+
+void WebExtensionContext::alarmsGetAll(CompletionHandler<void(Vector<WebExtensionAlarmParameters>&&)>&& completionHandler)
+{
+    auto alarms = WTF::map(m_alarmMap.values(), [](auto&& alarm) {
+        return alarm->parameters();
+    });
+
+    completionHandler(WTF::move(alarms));
+}
+
+void WebExtensionContext::alarmsClearAll(CompletionHandler<void()>&& completionHandler)
+{
+    m_alarmMap.clear();
+
+    completionHandler();
+}
+
+void WebExtensionContext::fireAlarmsEventIfNeeded(const WebExtensionAlarm& alarm)
+{
+    constexpr auto type = WebExtensionEventListenerType::AlarmsOnAlarm;
+    wakeUpBackgroundContentIfNecessaryToFireEvents({ type }, [=, this, protectedThis = Ref { *this }, parameters = alarm.parameters()] {
+        sendToProcessesForEvent(type, Messages::WebExtensionContextProxy::DispatchAlarmsEvent(parameters));
+    });
+}
+
+} // namespace WebKit
+
+#endif // ENABLE(WK_WEB_EXTENSIONS)

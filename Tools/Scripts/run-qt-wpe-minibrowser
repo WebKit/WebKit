@@ -1,0 +1,63 @@
+#!/usr/bin/env perl
+# Copyright (C) 2018, 2019 Igalia S.L.
+#
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Lesser General Public
+# License as published by the Free Software Foundation; either
+# version 2.1 of the License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Lesser General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public
+# License along with this program; if not, write to the
+# Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
+# Boston, MA 02110-1301, USA.
+
+# Simplified "run" script for launching the QtWPE MiniBrowser.
+
+use strict;
+use warnings;
+use File::Spec::Functions qw/catdir/;
+use FindBin;
+use lib $FindBin::Bin;
+use webkitdirs;
+
+maybeEnterWebKitContainerSDK();
+
+setConfiguration();
+
+push @ARGV, "--wpe";
+
+maybeUseContainerSDKRootDir();
+
+my $launcherName;
+my $libPathQt5;
+my $libPathQt6;
+my $launcherPath;
+my @jhbuildWrapper;
+my $configuration = passedConfiguration();
+my $productDir = productDir();
+
+if ($configuration) {
+    $libPathQt6 = File::Spec->catfile(sourceDir(), "WebKitBuild", "$configuration", "lib", "qt6", "qml");
+    $ENV{"QML_IMPORT_PATH"} = "$libPathQt6" if (-d "$libPathQt6");
+}
+
+# Check to see that all the frameworks are built.
+checkBuild();
+
+if ($productDir) {
+    my $qt6qmlsubdir = "lib/qt6/qml";
+    $libPathQt6 = "$productDir/$qt6qmlsubdir" if (-d "$productDir/$qt6qmlsubdir");
+}
+$ENV{"QML_IMPORT_PATH"} = "$libPathQt6" if $libPathQt6;
+
+$launcherPath = catdir($productDir, "bin", "qt-wpe-mini-browser");
+die "Can't find $launcherPath" unless -x $launcherPath;
+@jhbuildWrapper = wrapperPrefixIfNeeded();
+
+print "Starting MiniBrowser.\n";
+exec @jhbuildWrapper, $launcherPath, @ARGV or die;

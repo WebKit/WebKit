@@ -1,0 +1,16 @@
+
+PASS A plain object can be posted to a shared worker
+PASS EncodedVideoChunk cannot be cloned to a shared worker
+PASS VideoFrame cannot be cloned to a shared worker
+PASS VideoFrame cannot be transferred to a shared worker
+PASS EncodedAudioChunk cannot be cloned to a shared worker
+PASS AudioData cannot be cloned to a shared worker
+PASS AudioData cannot be transferred to a shared worker
+PASS A plain object can be posted to a service worker
+PASS EncodedVideoChunk cannot be cloned to a service worker
+PASS VideoFrame cannot be cloned to a service worker
+PASS VideoFrame cannot be transferred to a service worker
+PASS EncodedAudioChunk cannot be cloned to a service worker
+PASS AudioData cannot be cloned to a service worker
+PASS AudioData cannot be transferred to a service worker
+

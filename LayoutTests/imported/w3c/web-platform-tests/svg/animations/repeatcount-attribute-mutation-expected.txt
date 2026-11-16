@@ -1,0 +1,3 @@
+
+PASS Mutating the 'repeatCount' attribute after the element has been inserted
+

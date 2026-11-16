@@ -1,0 +1,51 @@
+
+edixtableParagraph
+
+edixtableParagraphUserSelectAll
+
+Verifies the used user-select value for the inner text element of a text control, and contrasts it with ordinary editable content.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+By default, a control's value is selectable.
+PASS selectTextIn("mutable") is "mutable"
+PASS selectTextIn("readOnly") is "readOnly"
+PASS selectTextIn("textarea") is "textarea"
+PASS selectTextIn("textareaReadOnly") is "textareaReadOnly"
+
+'user-select: none' has no effect at all, so every value stays selectable.
+PASS selectTextIn("userSelectNone") is "userSelectNone"
+PASS selectTextIn("textareaUserSelectNone") is "textareaUserSelectNone"
+PASS selectTextIn("readOnlyUserSelectNone") is "readOnlyUserSelectNone"
+PASS selectTextIn("textareaReadOnlyUserSelectNone") is "textareaReadOnlyUserSelectNone"
+
+By default, a control's value is not atomically selectable (all).
+PASS extendOneCharacterIn("mutable") is "m"
+PASS extendOneCharacterIn("readOnly") is "r"
+PASS extendOneCharacterIn("textarea") is "t"
+PASS extendOneCharacterIn("textareaReadOnly") is "t"
+
+'user-select: all' has no effect either, so nothing becomes atomically selectable.
+PASS extendOneCharacterIn("userSelectAll") is "u"
+PASS extendOneCharacterIn("textareaUserSelectAll") is "t"
+PASS extendOneCharacterIn("readOnlyUserSelectAll") is "r"
+PASS extendOneCharacterIn("textareaReadOnlyUserSelectAll") is "t"
+
+Editability is untouched, in ordinary editable content and in text controls alike.
+PASS typedTextLandsAt("editableParagraph") is true
+PASS typedTextLandsAt("editableParagraphUserSelectAll") is true
+
+Only a control's read-only state decides whether typing reaches its value.
+PASS typedTextLandsAt("mutable") is true
+PASS typedTextLandsAt("textarea") is true
+PASS typedTextLandsAt("readOnly") is false
+PASS typedTextLandsAt("textareaReadOnly") is false
+PASS typedTextLandsAt("userSelectAll") is true
+PASS typedTextLandsAt("textareaUserSelectAll") is true
+PASS typedTextLandsAt("readOnlyUserSelectAll") is false
+PASS typedTextLandsAt("textareaReadOnlyUserSelectAll") is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

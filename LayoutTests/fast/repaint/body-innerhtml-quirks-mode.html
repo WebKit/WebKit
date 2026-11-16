@@ -1,0 +1,16 @@
+<script src="../../resources/ui-helper.js"></script>
+<span>This text is inside an inline box.</span> This text should also disappear after clearing body innerHTML in quirks mode.
+<script>
+window.testRunner?.waitUntilDone();
+window.testRunner?.dontForceRepaint();
+
+async function runTest() {
+    await UIHelper.renderingUpdate();
+    document.body.innerHTML = "";
+    await UIHelper.renderingUpdate();
+    await UIHelper.renderingUpdate();
+    window.testRunner?.notifyDone();
+}
+
+window.addEventListener('load', runTest);
+</script>

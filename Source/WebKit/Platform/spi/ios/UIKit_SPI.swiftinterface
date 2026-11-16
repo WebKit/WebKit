@@ -1,0 +1,101 @@
+// swift-interface-format-version: 1.0
+// swift-module-flags: -enable-objc-interop -autolink-force-load -enable-library-evolution -module-link-name swiftUIKit -swift-version 5 -enforce-exclusivity=checked -O -library-level spi -module-abi-name UIKit  -enable-bare-slash-regex -user-module-version 8506 -module-name UIKit_SPI
+import _Concurrency
+import Foundation
+import Swift
+@_exported import UIKit
+@_inheritsConvenienceInitializers
+@objc open class UITextEffectTextChunk : ObjectiveC.NSObject, Swift.Identifiable {
+  @objc override dynamic public init()
+  public typealias ID = Swift.ObjectIdentifier
+  @objc deinit
+}
+@objc public protocol UITextEffectViewSource {
+  @objc func targetedPreview(for chunk: UIKit_SPI.UITextEffectTextChunk) async -> UIKit.UITargetedPreview
+  @objc optional func canGenerateTargetedPreviews() async -> Swift.Bool
+  @objc optional func canGenerateTargetedPreviewForChunk(_: UIKit_SPI.UITextEffectTextChunk) async -> Swift.Bool
+  @objc func updateTextChunkVisibilityForAnimation(_ chunk: UIKit_SPI.UITextEffectTextChunk, visible: Swift.Bool) async
+  @objc optional func updatedTargetedPreviewGeometry(for chunk: UIKit_SPI.UITextEffectTextChunk, previous: CoreFoundation.CGRect) async -> CoreFoundation.CGRect
+}
+@objc @_hasMissingDesignatedInitializers
+@_Concurrency.MainActor public class UITextEffectView : UIKit.UIView {
+  @_Concurrency.MainActor weak public var source: (any UIKit_SPI.UITextEffectViewSource)?
+  @_Concurrency.MainActor public var hasActiveEffects: Swift.Bool {
+    get
+  }
+  @_Concurrency.MainActor public init(source: any UIKit_SPI.UITextEffectViewSource)
+  @_Concurrency.MainActor @objc override dynamic public func didMoveToSuperview()
+  @discardableResult
+  @_Concurrency.MainActor public func addEffect(_ effect: any UIKit_SPI.UITextEffectView.TextEffect) -> UIKit_SPI.UITextEffectView.EffectID
+  @_Concurrency.MainActor public func removeEffect(_ effectID: UIKit_SPI.UITextEffectView.EffectID)
+  @_Concurrency.MainActor public func removeAllEffects()
+  @_Concurrency.MainActor public func isEffectValid(_ effectID: UIKit_SPI.UITextEffectView.EffectID) -> Swift.Bool
+  @_Concurrency.MainActor @objc override dynamic public func didMoveToWindow()
+  @_Concurrency.MainActor @objc override dynamic public func layoutSubviews()
+  public struct EffectID : Swift.Hashable {
+    public static func == (a: UIKit_SPI.UITextEffectView.EffectID, b: UIKit_SPI.UITextEffectView.EffectID) -> Swift.Bool
+    public func hash(into hasher: inout Swift.Hasher)
+    public var hashValue: Swift.Int {
+      get
+    }
+  }
+  @objc deinit
+}
+extension UIKit_SPI.UITextEffectView {
+  @_Concurrency.MainActor public protocol TextEffect {
+    @_Concurrency.MainActor var id: UIKit_SPI.UITextEffectView.EffectID { get }
+    @_Concurrency.MainActor var chunk: UIKit_SPI.UITextEffectTextChunk { get }
+    @_Concurrency.MainActor var view: UIKit_SPI.UITextEffectView? { get }
+  }
+}
+extension UIKit_SPI.UITextEffectView {
+  @_Concurrency.MainActor public class ReplacementTextEffect : UIKit_SPI.UITextEffectView.TextEffect {
+    @_Concurrency.MainActor public var view: UIKit_SPI.UITextEffectView?
+    @_Concurrency.MainActor public var chunk: UIKit_SPI.UITextEffectTextChunk
+    @_Concurrency.MainActor final public let delegate: any UIKit_SPI.UITextEffectView.ReplacementTextEffect.Delegate
+    @_Concurrency.MainActor public var id: UIKit_SPI.UITextEffectView.EffectID
+    @_disfavoredOverload @_Concurrency.MainActor public init(chunk: UIKit_SPI.UITextEffectTextChunk, view: UIKit_SPI.UITextEffectView, delegate: any UIKit_SPI.UITextEffectView.ReplacementTextEffect.Delegate)
+    @_Concurrency.MainActor public init(chunk: UIKit_SPI.UITextEffectTextChunk, view: UIKit_SPI.UITextEffectView, delegate: any UIKit_SPI.UITextEffectView.ReplacementTextEffect.Delegate, fromColor: UIKit.UIColor = UIDirectionalLightEffectView.Configuration.pondering.fillColor)
+    public protocol Delegate {
+      func performReplacementAndGeneratePreview(for chunk: UIKit_SPI.UITextEffectTextChunk, effect: UIKit_SPI.UITextEffectView.ReplacementTextEffect, animation: UIKit_SPI.UITextEffectView.ReplacementTextEffect.AnimationParameters) async -> UIKit.UITargetedPreview?
+      func performAnimatedReplacement(for chunk: UIKit_SPI.UITextEffectTextChunk, effect: UIKit_SPI.UITextEffectView.ReplacementTextEffect, animation: UIKit_SPI.UITextEffectView.ReplacementTextEffect.AnimationParameters) async
+      @_Concurrency.MainActor func replacementEffectDidComplete(_ effect: UIKit_SPI.UITextEffectView.ReplacementTextEffect)
+      func performReplacement(for chunk: UIKit_SPI.UITextEffectTextChunk, effect: UIKit_SPI.UITextEffectView.ReplacementTextEffect, animation: UIKit_SPI.UITextEffectView.ReplacementTextEffect.AnimationParameters) async
+    }
+    public struct AnimationParameters {
+      public let duration: Foundation.TimeInterval
+      public let delay: Foundation.TimeInterval
+    }
+    @objc deinit
+  }
+}
+extension UIKit_SPI.UITextEffectView.ReplacementTextEffect.Delegate {
+  public func performReplacementAndGeneratePreview(for chunk: UIKit_SPI.UITextEffectTextChunk, effect: UIKit_SPI.UITextEffectView.ReplacementTextEffect, animation: UIKit_SPI.UITextEffectView.ReplacementTextEffect.AnimationParameters) async -> UIKit.UITargetedPreview?
+  public func performReplacement(for chunk: UIKit_SPI.UITextEffectTextChunk, effect: UIKit_SPI.UITextEffectView.ReplacementTextEffect, animation: UIKit_SPI.UITextEffectView.ReplacementTextEffect.AnimationParameters) async
+  public func performAnimatedReplacement(for chunk: UIKit_SPI.UITextEffectTextChunk, effect: UIKit_SPI.UITextEffectView.ReplacementTextEffect, animation: UIKit_SPI.UITextEffectView.ReplacementTextEffect.AnimationParameters) async
+}
+extension UIKit_SPI.UITextEffectView {
+  @_Concurrency.MainActor public class PonderingEffect : UIKit_SPI.UITextEffectView.TextEffect {
+    @_Concurrency.MainActor final public let chunk: UIKit_SPI.UITextEffectTextChunk
+    @_Concurrency.MainActor weak public var view: UIKit_SPI.UITextEffectView?
+    @_Concurrency.MainActor public var id: UIKit_SPI.UITextEffectView.EffectID
+    @_disfavoredOverload @_Concurrency.MainActor required public init(chunk: UIKit_SPI.UITextEffectTextChunk, view: UIKit_SPI.UITextEffectView)
+    @_Concurrency.MainActor required public init(chunk: UIKit_SPI.UITextEffectTextChunk, view: UIKit_SPI.UITextEffectView, lightConfiguration: UIKit_SPI.UIDirectionalLightEffectView.Configuration = .pondering)
+    @objc deinit
+  }
+}
+@objc @_hasMissingDesignatedInitializers
+@_Concurrency.MainActor public class UIDirectionalLightEffectView : UIKit.UIView {
+  @objc deinit
+}
+extension UIKit_SPI.UIDirectionalLightEffectView {
+  public struct Configuration {
+    public let fillColor: UIKit.UIColor
+    public static let pondering: UIKit_SPI.UIDirectionalLightEffectView.Configuration
+  }
+}
+extension UIKit.UIColor {
+  public static var ponderingFill: UIKit.UIColor {
+    get
+  }
+}

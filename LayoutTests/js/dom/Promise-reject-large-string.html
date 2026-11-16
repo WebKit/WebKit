@@ -1,0 +1,14 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script>window.jsTestIsAsync = true;</script>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+    Promise.reject("a".repeat(2**31-1));
+    setTimeout(finishJSTest, 1);
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

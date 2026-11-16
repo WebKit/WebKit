@@ -1,0 +1,37 @@
+Tests that nodes in a cross-origin iframe carry layout flags, and that changes are reported, through the frame target.
+
+
+
+== Running test suite: SiteIsolation.CSS.LayoutFlags.FrameTarget
+-- Running test case: SiteIsolation.CSS.LayoutFlags.FrameTarget.Setup
+PASS: Should find the cross-origin frame target.
+PASS: #hidden should belong to the frame target.
+
+-- Running test case: SiteIsolation.CSS.LayoutFlags.FrameTarget.InitialLayoutFlags
+PASS: <body> should be rendered.
+PASS: #shown should be rendered.
+PASS: #hidden (`display: none;`) should not be rendered.
+PASS: #grid should be a grid.
+
+-- Running test case: SiteIsolation.CSS.LayoutFlags.FrameTarget.LayoutOverlay
+Showing the layout overlay for #grid...
+PASS: #grid should show its layout overlay.
+Hiding the layout overlay for #grid...
+PASS: #grid should not show its layout overlay.
+
+-- Running test case: SiteIsolation.CSS.LayoutFlags.FrameTarget.LayoutFlagsChanged
+Changing #hidden to `display: block;`...
+PASS: #hidden should be rendered.
+Changing #shown to `display: none;`...
+PASS: #shown should not be rendered.
+Changing #grid to `display: block;`...
+PASS: #grid should not be a grid.
+PASS: #grid should still be rendered.
+
+-- Running test case: SiteIsolation.CSS.LayoutFlags.FrameTarget.LayoutContextTypeChangedModeAll
+PASS: #deep-grid should not have been sent yet.
+Changing `layoutContextTypeChangedMode` to `All`...
+PASS: #deep-grid should have been sent.
+PASS: #deep-grid should be a grid.
+-- Running test teardown.
+

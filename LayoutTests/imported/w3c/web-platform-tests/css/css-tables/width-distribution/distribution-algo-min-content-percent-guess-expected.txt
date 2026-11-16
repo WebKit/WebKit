@@ -1,0 +1,12 @@
+Width Distribution
+
+"Distribution Algorithm - min-content-percent guess"
+
+Tests that the size of the column is given the max(%width, min-content width) Spec Text
+
+Cell 1	Cell 2
+
+PASS The box should be 400px since that is the size of the content
+PASS The first cell is 200px due to its 50% specified width is greater than
+PASS The second cell is 200px due to the 50% set on the first cell and the second gets distributed the remaining space since its auto
+

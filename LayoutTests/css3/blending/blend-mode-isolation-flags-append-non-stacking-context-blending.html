@@ -1,0 +1,39 @@
+<!DOCTYPE HTML>
+<head>
+    <!-- This test will check if the isolation flag is properly computed when we append a subtree having blending elements. -->
+    <link rel="stylesheet" href="resources/blending-style.css">
+    <style>
+        div {
+            /* This forces render layers, avoiding normal flow only issues */
+            position: relative;
+        }
+    </style>
+</head>
+<body>
+    <div class="isolating lime box">
+        <div id="target" class="yellow box" style="left: 50px;"></div>
+    </div>
+    <script type="text/javascript">
+        if (window.testRunner)
+            window.testRunner.waitUntilDone();
+
+        function change() {
+            var blendingElement = document.createElement("div");
+            blendingElement.className = "fuchsia difference box";
+            blendingElement.style.left = "-25px";
+
+            var toAppend = document.createElement("div");
+            toAppend.className = "box";
+            toAppend.style.backgroundColor = "#ffff44"
+            toAppend.appendChild(blendingElement);
+
+            var target = document.getElementById("target");
+            target.appendChild(toAppend);
+
+            if (window.testRunner)
+                window.testRunner.notifyDone();
+        }
+
+        window.setTimeout("change()", 10);
+    </script>
+</body>

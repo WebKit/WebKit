@@ -1,0 +1,6 @@
+In-scope Target
+SOURCE
+Out-of-scope Target
+
+FAIL target within named trigger-scope finds trigger within scope; out-of-scope target does not. assert_equals: animation on in_scope_target has playState paused. expected "paused" but got "running"
+

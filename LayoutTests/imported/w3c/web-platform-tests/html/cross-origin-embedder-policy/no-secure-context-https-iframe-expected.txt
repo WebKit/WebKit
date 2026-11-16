@@ -1,0 +1,4 @@
+
+PASS An HTTPS iframe in an HTTP page ignores Cross-Origin-Embedder-Policy
+PASS A dedicated worker of an HTTPS iframe in an HTTP page ignores Cross-Origin-Embedder-Policy
+

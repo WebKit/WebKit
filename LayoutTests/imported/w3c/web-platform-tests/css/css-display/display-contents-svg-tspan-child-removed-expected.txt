@@ -1,0 +1,3 @@
+
+PASS Removing a display:contents tspan from SVG text should not crash
+

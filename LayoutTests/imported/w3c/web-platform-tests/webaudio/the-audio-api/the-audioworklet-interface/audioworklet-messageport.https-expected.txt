@@ -1,0 +1,6 @@
+
+PASS AudioWorklet: shared port exists before addModule()
+PASS AudioWorkletGlobalScope: shared port is available at module evaluation time and supports message passing
+PASS AudioWorkletProcessor: initialization message
+PASS AudioWorkletProcessor: message via instance port
+

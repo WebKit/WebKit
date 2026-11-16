@@ -1,0 +1,11 @@
+main frame - didFinishDocumentLoadForFrame
+frame "<!--frame1-->" - didStartProvisionalLoadForFrame
+main frame - didHandleOnloadEventsForFrame
+frame "<!--frame1-->" - didFailProvisionalLoadWithError
+main frame - didFinishLoadForFrame
+
+
+--------
+Frame: '<!--frame1-->'
+--------
+

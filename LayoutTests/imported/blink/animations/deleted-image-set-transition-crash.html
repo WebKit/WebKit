@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<style>
+div { background: url(#); }
+div { background: -webkit-image-set(url(#) 1x); }
+</style>
+<div style="transition: 1s">This test passes if it does not crash.</div>
+<script>
+if (window.testRunner) {
+  testRunner.dumpAsText();
+  testRunner.waitUntilDone();
+}
+window.addEventListener('load', function() {
+  document.styleSheets[0].deleteRule(1);
+  if (window.testRunner) {
+    testRunner.notifyDone();
+  }
+});
+</script>

@@ -1,0 +1,4 @@
+(repaint rects
+  (rect 122 122 156 156)
+)
+

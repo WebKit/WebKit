@@ -1,0 +1,6 @@
+The test passes if both squares are green and sit at the left edge of the grey cell.
+
+
+PASS A transformed table section is the containing block for an absolutely positioned descendant
+PASS A table section that gains a transform becomes the containing block for an absolutely positioned descendant
+

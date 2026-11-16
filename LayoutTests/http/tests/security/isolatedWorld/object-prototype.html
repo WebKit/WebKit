@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<body>
+<div id="console"></div>
+<script>
+Object.prototype.foo = "FAIL: Visible in isolated world.";
+if (window.testRunner) {
+  testRunner.dumpAsText();
+  testRunner.evaluateScriptInIsolatedWorld(
+    0,
+    "document.getElementById('console').innerHTML = {}.foo");
+}
+</script>
+</body>
+</html>

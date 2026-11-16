@@ -1,0 +1,4 @@
+
+
+FAIL CSS Test: ::scroll-marker doesn't stay :target-current upon removing scroll-marker-group property assert_equals: ::scroll-marker becomes :target-current upon activation expected "rgb(0, 0, 255)" but got ""
+

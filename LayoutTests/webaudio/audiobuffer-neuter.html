@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<head>
+    <script src="../resources/js-test.js"></script>
+    <script src="resources/audio-testing.js"></script>
+    <script src="resources/audiobuffersource-testing.js"></script>
+    <script>
+        var sampleRate = 44100.0;
+        var lengthInSeconds = 0.1;
+        var context;
+        var source;
+        var sourceBuffer;
+
+        function runTest()
+        {
+            jsTestIsAsync = true;
+
+            numberOfFrames = sampleRate * lengthInSeconds;
+            context = new OfflineAudioContext(2, numberOfFrames, sampleRate);
+            sourceBuffer = createConstantBuffer(context, numberOfFrames, [0.5, 0.25]);
+            originalFirstChannel = sourceBuffer.getChannelData(0);
+            originalSecondChannel = sourceBuffer.getChannelData(1);
+            var data = sourceBuffer.getChannelData(0).buffer;
+
+            var string = [
+                "onmessage = function(e) {",
+                "   var view = new Float32Array(e.data)",
+                "   for (var i=0; i < view.length; i++)",
+                "       view[i] = 100;",
+                "    postMessage('done');",
+                "};"
+            ].join('\n');
+            var blobURL = URL.createObjectURL(new Blob([string]));
+
+            var worker = new Worker(blobURL);
+            worker.onmessage = workerReply;
+            worker.postMessage(data, [data]);
+
+            // The length of the AudioBuffer should be unchanged, even if some of its audio channels buffers
+            // have been detached.
+            shouldBe("sourceBuffer.length", "numberOfFrames");
+
+            // getChannelData() should return a 0-length array if the channel buffer has been detached.
+            shouldBe("sourceBuffer.getChannelData(0).length", "0");
+            shouldBeTrue("sourceBuffer.getChannelData(0) === sourceBuffer.getChannelData(0)");
+            shouldBeTrue("sourceBuffer.getChannelData(0) === originalFirstChannel");
+
+            // getChannelData() should return accurate channel data for non detached channels.
+            shouldBe("sourceBuffer.getChannelData(1).length", "numberOfFrames");
+            shouldBeTrue("sourceBuffer.getChannelData(1) === sourceBuffer.getChannelData(1)");
+            shouldBeTrue("sourceBuffer.getChannelData(1) === originalSecondChannel");
+            secondChannel = sourceBuffer.getChannelData(1);
+            for (var i = 0; i < numberOfFrames; ++i) {
+                if (secondChannel[i] != 0.25) {
+                    testFailed("Second channel contained unexpected value: " + secondChannel[i]);
+                    break;
+                }
+            }
+        }
+
+        function workerReply(event) {
+            source = context.createBufferSource();
+            source.buffer = sourceBuffer;
+            source.connect(context.destination);
+            source.start(0);
+            context.oncomplete = finishTest;
+            context.startRendering();
+        }
+
+        function finishTest(event) {
+            var renderedBuffer = event.renderedBuffer;
+            var numberOfFrames = sampleRate * lengthInSeconds;
+            // We expect silence on both channels.
+            var expectedBuffer = createConstantBuffer(context, numberOfFrames, [0, 0]);
+
+            for (let channelIndex = 0; channelIndex < 2; channelIndex++) {
+                var renderedData = renderedBuffer.getChannelData(channelIndex);
+                var expectedData = expectedBuffer.getChannelData(channelIndex);
+
+                for (var i = 0; i < numberOfFrames; ++i) {
+                    if (expectedData[i] != renderedData[i]) {
+                        testFailed('Channel ' + channelIndex + ' - expected: ' + expectedData[i] + ' actual: ' + renderedData[i]);
+                        finishJSTest();
+                    }
+                }
+            }
+
+            testPassed('Output matches expectations.');
+            finishJSTest();
+        }
+
+    </script>
+</head>
+<body onload="runTest()">
+    <div>Tests that neutered AudioBuffers produce silence</div>
+    <div id="console"></div>
+</body>
+
+

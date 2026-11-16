@@ -1,0 +1,4 @@
+
+
+PASS navigate() with an unserializable state inside onpagehide throws "DataCloneError", not "InvalidStateError"
+

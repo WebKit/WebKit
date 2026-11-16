@@ -1,0 +1,21 @@
+This test ensures that the 'cell for column and row' API works correctly after dynamic rowspan changes.
+
+PASS: table.cellForColumnAndRow(0, 0).domIdentifier === 'r0c0'
+PASS: table.cellForColumnAndRow(2, 2) === null === true
+PASS: accessibilityController.accessibleElementById('r1c2').rowIndexRange() === '{1, 1}'
+document.getElementById('r1c2').setAttribute('rowspan', '2')
+PASS: table.cellForColumnAndRow(2, 2).domIdentifier === 'r1c2'
+PASS: accessibilityController.accessibleElementById('r1c2').rowIndexRange() === '{1, 2}'
+document.getElementById('r1c2').removeAttribute('rowspan')
+PASS: table.cellForColumnAndRow(2, 2) === null === true
+PASS: accessibilityController.accessibleElementById('r1c2').rowIndexRange() === '{1, 1}'
+document.getElementById('r1c2').setAttribute('aria-rowspan', '2')
+PASS: table.cellForColumnAndRow(2, 2).domIdentifier === 'r1c2'
+PASS: accessibilityController.accessibleElementById('r1c2').rowIndexRange() === '{1, 2}'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Header 0	Header 1	Header 2
+R1C0	R1C1	R1C2
+R2C0	R2C1

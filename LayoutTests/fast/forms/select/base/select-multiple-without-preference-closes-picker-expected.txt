@@ -1,0 +1,13 @@
+CONSOLE MESSAGE: The select element stopped being a dropdown box while its picker was open. The picker has been closed.
+Without the preference, a select with multiple has no base appearance picker even when its size is one, so setting multiple closes the picker. This needs its own file because the preference is on for other tests.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS becomesMultiple.matches(':open') is true
+PASS becomesMultiple.matches(':open') is false
+PASS becomesMultiple.matches(':open') is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,5 @@
+Box 1Box 2Box 3Box 4Box 5Box 6Box 7Box 8Box 9
+
+PASS scroller prefers target aligned in both axes.
+PASS scroller follows selected snap target after layout shift, regardless of common snap area.
+

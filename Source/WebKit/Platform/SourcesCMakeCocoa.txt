@@ -1,0 +1,73 @@
+// Copyright (C) 2026 Apple Inc. All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted provided that the following conditions
+// are met:
+// 1. Redistributions of source code must retain the above copyright
+//    notice, this list of conditions and the following disclaimer.
+// 2. Redistributions in binary form must reproduce the above copyright
+//    notice, this list of conditions and the following disclaimer in the
+//    documentation and/or other materials provided with the distribution.
+//
+// THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+// THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+// PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+// BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+// CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+// SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+// INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+// CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+// ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+// THE POSSIBILITY OF SUCH DAMAGE.
+
+// CMake-only unified source list for the WebKitPlatform subtarget, used by
+// TestIPC.
+
+Shared/Cocoa/ArgumentCodersCocoa.mm @nonARC
+Shared/Cocoa/CoreIPCAVOutputContext.mm @nonARC
+Shared/Cocoa/CoreIPCArray.mm @nonARC
+Shared/Cocoa/CoreIPCCFType.mm @nonARC
+Shared/Cocoa/CoreIPCCFURL.mm @nonARC
+Shared/Cocoa/CoreIPCCVPixelBufferRef.mm @nonARC
+Shared/Cocoa/CoreIPCContacts.mm @nonARC
+Shared/Cocoa/CoreIPCDDScannerResult.mm @nonARC
+Shared/Cocoa/CoreIPCDateComponents.mm @nonARC
+Shared/Cocoa/CoreIPCDictionary.mm @nonARC
+Shared/Cocoa/CoreIPCError.mm @nonARC
+Shared/Cocoa/CoreIPCLocale.mm @nonARC
+Shared/Cocoa/CoreIPCNSCFObject.mm @nonARC
+Shared/Cocoa/CoreIPCNSShadow.mm @nonARC
+Shared/Cocoa/CoreIPCNSURLCredential.mm @nonARC
+Shared/Cocoa/CoreIPCNSURLProtectionSpace.mm @nonARC
+Shared/Cocoa/CoreIPCNSURLRequest.mm @nonARC
+Shared/Cocoa/CoreIPCNSValue.mm @nonARC
+Shared/Cocoa/CoreIPCNull.mm @nonARC
+Shared/Cocoa/CoreIPCPKDateComponentsRange.mm @nonARC
+Shared/Cocoa/CoreIPCPKPayment.mm @nonARC
+Shared/Cocoa/CoreIPCPKPaymentMerchantSession.mm @nonARC
+Shared/Cocoa/CoreIPCPKPaymentMethod.mm @nonARC
+Shared/Cocoa/CoreIPCPKPaymentSetupFeature.mm @nonARC
+Shared/Cocoa/CoreIPCPKPaymentToken.mm @nonARC
+Shared/Cocoa/CoreIPCPKSecureElementPass.mm @nonARC
+Shared/Cocoa/CoreIPCPKShippingMethod.mm @nonARC
+Shared/Cocoa/CoreIPCPassKit.mm @nonARC
+Shared/Cocoa/CoreIPCPersonNameComponents.mm @nonARC
+Shared/Cocoa/CoreIPCPlistArray.mm @nonARC
+Shared/Cocoa/CoreIPCPlistDictionary.mm @nonARC
+Shared/Cocoa/CoreIPCPlistObject.mm @nonARC
+Shared/Cocoa/CoreIPCPresentationIntent.mm @nonARC
+Shared/Cocoa/CoreIPCSecureCoding.mm @nonARC
+Shared/Cocoa/CoreIPCStringSet.mm @nonARC
+Shared/Cocoa/CoreTextHelpers.mm @nonARC
+Shared/Cocoa/DataDetectionResult.mm @nonARC
+Shared/Cocoa/WKKeyedCoder.mm @nonARC
+Shared/Cocoa/WebPushMessageCocoa.mm @nonARC
+
+Shared/cf/CoreIPCCFArray.mm @nonARC
+Shared/cf/CoreIPCCFDictionary.mm @nonARC
+Shared/cf/CoreIPCCGColorSpace.mm @nonARC
+Shared/cf/CoreIPCNumber.mm @nonARC
+Shared/cf/CoreIPCSecTrust.mm @nonARC
+
+Shared/mac/CoreIPCDDSecureActionContext.mm

@@ -1,0 +1,72 @@
+<html>
+<head>
+<script>
+var headReadDocumentDir = document.dir;
+document.dir = "rtl";
+var headWriteDocumentDir = document.dir;
+</script>
+</head>
+<body>
+<script src="../../resources/js-test.js"></script>
+<script>
+description("document.dir should reflect the 'dir' content attribute of the &lt;html&gt; element and should be settable in &lt;head&gt;.");
+
+debug("Read document.dir in head");
+shouldBeEqualToString("headReadDocumentDir", "");
+debug("");
+
+debug("Write document.dir in head");
+shouldBeEqualToString("headWriteDocumentDir", "rtl");
+debug("");
+
+debug("Read document.dir in body");
+shouldBeEqualToString("document.dir", "rtl");
+debug("");
+
+debug("Read document.documentElement.dir in body");
+shouldBeEqualToString("document.documentElement.dir", "rtl");
+debug("");
+
+debug("Read document.body.dir in body");
+shouldBeEqualToString("document.body.dir", "");
+debug("");
+
+debug("Write document.dir in body");
+document.dir = "ltr";
+shouldBeEqualToString("document.dir", "ltr");
+debug("");
+
+debug("Read document.documentElement.dir in body");
+shouldBeEqualToString("document.documentElement.dir", "ltr");
+debug("");
+
+debug("Read document.body.dir in body");
+shouldBeEqualToString("document.body.dir", "");
+debug("");
+
+debug("Write non-canonical case document.dir in body");
+shouldNotThrow("document.dir = 'RTL'");
+shouldBeEqualToString("document.documentElement.getAttribute('dir')", "RTL");
+shouldBeEqualToString("document.dir", "rtl");
+debug("");
+
+debug("Write invalid document.dir in body");
+shouldNotThrow("document.dir = 'WRONG'");
+shouldBeEqualToString("document.documentElement.getAttribute('dir')", "WRONG");
+shouldBeEqualToString("document.dir", "");
+debug("");
+
+debug("Write non-canonical case document.body.dir in body");
+shouldNotThrow("document.body.dir = 'RTL'");
+shouldBeEqualToString("document.body.getAttribute('dir')", "RTL");
+shouldBeEqualToString("document.body.dir", "rtl");
+debug("");
+
+debug("Write invalid document.body.dir in body");
+shouldNotThrow("document.body.dir = 'WRONG'");
+shouldBeEqualToString("document.body.getAttribute('dir')", "WRONG");
+shouldBeEqualToString("document.body.dir", "");
+debug("");
+</script>
+</body>
+</html>

@@ -1,0 +1,4 @@
+
+PASS The document's base URL differs from the document URL
+PASS Static imports from inline modules in a document with a base URL override
+

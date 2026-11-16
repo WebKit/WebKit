@@ -1,0 +1,50 @@
+<style>
+body {
+  width: 400px;
+}
+span {
+  font-family: Ahem;
+  font-size: 50px;
+}
+</style>
+<!-- PASS if no repaint issue after shrinking the text content -->
+<span id=content>text content</span>
+<script>
+document.designMode = "on";
+let counter = 0;
+document.body.addEventListener("beforeinput", e => {
+  if (++counter == 2) {
+    content.style.fontSize = "10px";
+    document.body.offsetHeight;
+  }
+});
+
+document.body.offsetHeight;
+
+if (window.testRunner) {
+  testRunner.dumpAsText();
+  testRunner.waitUntilDone();
+}
+
+setTimeout(function() {
+  document.body.focus();
+  document.execCommand("insertText", false, "1");
+
+  setTimeout(function() {
+    if (window.internals)
+        internals.startTrackingRepaints();
+    document.execCommand("insertText", false, "2");
+    document.body.offsetTop;
+
+    if (window.internals) {
+      var repaintRects = internals.repaintRectsAsText();
+      internals.stopTrackingRepaints();
+      var pre = document.createElement('pre');
+      document.body.appendChild(pre);
+      pre.innerHTML = repaintRects;
+    }
+    if (window.testRunner)
+      testRunner.notifyDone();
+  }, 10);
+}, 10);
+</script>

@@ -1,0 +1,14 @@
+Tests button and related roles.
+
+
+PASS button aria-haspopup false
+PASS button aria-haspopup true
+PASS button aria-haspopup menu
+PASS button aria-haspopup dialog
+PASS button aria-haspopup listbox
+PASS button aria-haspopup tree
+PASS button aria-haspopup grid
+PASS button aria-pressed true
+PASS button aria-pressed false
+PASS button aria-pressed undefined
+

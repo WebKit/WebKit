@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<body>
+    <p>This test passes if it shows an input field with a datalist dropdown button (on platforms that show a dropdown button by default).</p>
+    <script>
+        const input = document.createElement("input");
+        input.setAttribute("list", "datalist");
+        const datalist = document.createElement("datalist");
+        datalist.setAttribute("id", "datalist");
+        document.body.appendChild(datalist);
+        document.body.appendChild(input);
+    </script>
+</body>

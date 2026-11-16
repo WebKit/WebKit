@@ -1,0 +1,4 @@
+
+
+PASS Adding a new track with a cue during playback should fire events
+

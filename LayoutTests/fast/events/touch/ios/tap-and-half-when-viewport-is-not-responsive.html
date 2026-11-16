@@ -1,0 +1,54 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<head>
+<meta name="viewport" content="initial-scale=0.6">
+<script src="../../../../resources/js-test.js"></script>
+<script src="../../../../resources/ui-helper.js"></script>
+<script>
+jsTestIsAsync = true;
+lastEventType = null;
+touchendCount = 0;
+
+function logEvent(event) {
+    if (event.type === lastEventType)
+        return;
+
+    lastEventType = event.type;
+    testPassed(`Observed ${event.type}`);
+    if (event.type === "touchend")
+        touchendCount++;
+}
+
+addEventListener("load", async () => {
+    const target = document.getElementById("target");
+    target.addEventListener("touchstart", logEvent, { passive : false });
+    target.addEventListener("touchmove", logEvent, { passive : false });
+    target.addEventListener("touchend", logEvent, { passive : false });
+
+    description("This test verifies that a tap-and-half gesture dispatches touch events when the page is zoomed in. To manually run the test, tap the red square and then immediately perform a pan gesture starting in the same location as the tap. The resulting events should consist of 'touchstart', 'touchend', 'touchstart', one or more 'touchmove', and finally a 'touchend'.");
+
+    await UIHelper.activateAt(100, 100);
+    await UIHelper.sendEventStream(new UIHelper.EventStreamBuilder()
+        .begin(100, 100)
+        .move(100, 200, 0.5)
+        .end()
+        .takeResult());
+
+    await new Promise(resolve => shouldBecomeEqual("touchendCount", "2", resolve));
+    finishJSTest();
+});
+</script>
+<style>
+#target {
+    width: 400px;
+    height: 400px;
+    background-color: red;
+}
+</style>
+</head>
+<body>
+<div id="target"></div>
+<p id="description"></p>
+<p id="console"></p>
+</body>
+</html>

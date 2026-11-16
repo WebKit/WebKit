@@ -1,0 +1,4 @@
+
+
+PASS Ensure Progressive JPEG LCP load and render events occur after resource loading
+

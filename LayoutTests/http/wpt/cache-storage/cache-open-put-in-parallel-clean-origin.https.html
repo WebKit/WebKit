@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Cache Storage: put into caches opened in parallel on an origin without existing cache storage</title>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+</head>
+<body>
+<script>
+promise_test(async (test) => {
+    if (!window.testRunner)
+        return Promise.reject("Test requires testRunner");
+
+    for (let iteration = 0; iteration < 5; ++iteration) {
+        testRunner.clearDOMCaches();
+
+        const names = [];
+        for (let i = 0; i < 10; ++i)
+            names.push("cache" + i);
+
+        await Promise.all(names.map(async (name) => {
+            const cache = await self.caches.open(name);
+            await cache.put(new Request("https://example.com/"), new Response("payload"));
+        }));
+
+        for (const name of names) {
+            const cache = await self.caches.open(name);
+            const response = await cache.match("https://example.com/");
+            assert_not_equals(response, undefined, "record should be stored in " + name);
+            assert_equals(await response.text(), "payload");
+        }
+    }
+}, "Putting records into caches opened in parallel on a clean origin should succeed");
+</script>
+</body>
+</html>

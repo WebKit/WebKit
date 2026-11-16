@@ -1,0 +1,49 @@
+<html onfocusin="writePass('result5')" onfocusout="writePass('result6')">
+<head>
+<script>
+if (window.testRunner)
+    window.testRunner.dumpAsText();
+
+function writePass(id)
+{
+    document.getElementById(id).innerHTML = "PASS";
+}
+
+function writeFailed(id, reason)
+{
+    document.getElementById(id).innerHTML = "FAIL: " + reason;
+}
+
+function focusHandler(event)
+{
+    if (event.type == "focusin")
+        writePass('result1');
+    else
+        writeFailed('result1', "Wrong event type");
+}
+
+function blurHandler(event)
+{
+    if (event.type == "focusout")
+        writePass('result2');
+    else
+        writeFailed('result2', "Wrong event type");
+}
+</script>
+</head>
+<body onload="document.getElementById('field').focus();document.getElementById('field').blur()">
+
+<form>
+<input type=text id="field">
+</form>
+
+<div id="result1">FAIL</div>
+<div id="result2">FAIL</div>
+<div id="result5">FAIL</div>
+<div id="result6">FAIL</div>
+
+<script>
+document.documentElement.addEventListener("focusin", focusHandler, false);
+document.documentElement.addEventListener("focusout", blurHandler, false);
+</script>
+

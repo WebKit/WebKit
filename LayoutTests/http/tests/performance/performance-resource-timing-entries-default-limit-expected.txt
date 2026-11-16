@@ -1,0 +1,10 @@
+This tests the default resource timing buffer size. It should be 250.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS performance.getEntriesByType("resource").length is 250
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

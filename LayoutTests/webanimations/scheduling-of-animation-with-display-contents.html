@@ -1,0 +1,14 @@
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<div style="display: contents"></div>
+<script>
+
+promise_test(async () => {
+    const animation = document.querySelector("div").animate({ color: "blue" }, 1000);
+    await animation.ready;
+
+    animation.currentTime = 100;
+    assert_equals(internals.timeToNextAnimationTick(animation), 0);
+}, "Computing the time until the next tick for an effect targeting an element with 'display: contents'.");
+
+</script>

@@ -1,0 +1,281 @@
+This test checks that DataView methods work at different alignments and with both endians.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS byteString(view, 0, 5) is '16 1b ad fa ce'
+PASS byteString(view, 0, 4) is '12 34 56 78'
+PASS view.getInt16(0).toString(16) is '1234'
+PASS view.getInt16(i, true).toString(16) is '3412'
+PASS view.getInt32(0).toString(16) is '12345678'
+PASS view.getInt32(i, true).toString(16) is '78563412'
+PASS byteString(view, 0, 4) is 'ff ff ff ff'
+PASS view.getInt8(0) is -1
+PASS view.getUint8(0) is 255
+PASS view.getInt16(0) is -1
+PASS view.getUint16(0) is 65535
+PASS view.getInt32(0) is -1
+PASS view.getUint32(0) is 4294967295
+PASS view.getInt8(0) < 0 is true
+PASS view.getInt8(0,true) < 0 is true
+PASS view.getInt16(0) < 0 is true
+PASS view.getInt16(0,true) < 0 is false
+PASS view.getInt32(0) < 0 is true
+PASS view.getInt32(0,true) < 0 is false
+PASS view.getFloat32(0) is 2
+PASS view.getFloat32(0,true) != 2.0 is true
+PASS view.getFloat32(0) is -2
+PASS view.getFloat32(0,true) != -2.0 is true
+PASS Math.abs(view.getFloat32(0) - Math.SQRT2) < 0.0000001 is true
+PASS Math.abs(view.getFloat32(0,true) - Math.SQRT2) > 0.0000001 is true
+PASS view.getFloat32(0) is NaN
+PASS isNaN(view.getFloat32(0,true)) is false
+PASS view.getFloat32(0) is NaN
+PASS isNaN(view.getFloat32(0,true)) is false
+PASS view.getFloat64(0) is 1
+PASS view.getFloat64(0,true) != 1 is true
+PASS view.getFloat64(0) is -1
+PASS view.getFloat64(0,true) != -1 is true
+PASS Math.abs(view.getFloat64(0) - Math.PI) < 0.000000001 is true
+PASS byteString(view, 1, 5) is '16 1b ad fa ce'
+PASS byteString(view, 1, 4) is '12 34 56 78'
+PASS view.getInt16(1).toString(16) is '1234'
+PASS view.getInt16(i, true).toString(16) is '3412'
+PASS view.getInt32(1).toString(16) is '12345678'
+PASS view.getInt32(i, true).toString(16) is '78563412'
+PASS byteString(view, 1, 4) is 'ff ff ff ff'
+PASS view.getInt8(1) is -1
+PASS view.getUint8(1) is 255
+PASS view.getInt16(1) is -1
+PASS view.getUint16(1) is 65535
+PASS view.getInt32(1) is -1
+PASS view.getUint32(1) is 4294967295
+PASS view.getInt8(1) < 0 is true
+PASS view.getInt8(1,true) < 0 is true
+PASS view.getInt16(1) < 0 is true
+PASS view.getInt16(1,true) < 0 is false
+PASS view.getInt32(1) < 0 is true
+PASS view.getInt32(1,true) < 0 is false
+PASS view.getFloat32(1) is 2
+PASS view.getFloat32(1,true) != 2.0 is true
+PASS view.getFloat32(1) is -2
+PASS view.getFloat32(1,true) != -2.0 is true
+PASS Math.abs(view.getFloat32(1) - Math.SQRT2) < 0.0000001 is true
+PASS Math.abs(view.getFloat32(1,true) - Math.SQRT2) > 0.0000001 is true
+PASS view.getFloat32(1) is NaN
+PASS isNaN(view.getFloat32(1,true)) is false
+PASS view.getFloat32(1) is NaN
+PASS isNaN(view.getFloat32(1,true)) is false
+PASS view.getFloat64(1) is 1
+PASS view.getFloat64(1,true) != 1 is true
+PASS view.getFloat64(1) is -1
+PASS view.getFloat64(1,true) != -1 is true
+PASS Math.abs(view.getFloat64(1) - Math.PI) < 0.000000001 is true
+PASS byteString(view, 2, 5) is '16 1b ad fa ce'
+PASS byteString(view, 2, 4) is '12 34 56 78'
+PASS view.getInt16(2).toString(16) is '1234'
+PASS view.getInt16(i, true).toString(16) is '3412'
+PASS view.getInt32(2).toString(16) is '12345678'
+PASS view.getInt32(i, true).toString(16) is '78563412'
+PASS byteString(view, 2, 4) is 'ff ff ff ff'
+PASS view.getInt8(2) is -1
+PASS view.getUint8(2) is 255
+PASS view.getInt16(2) is -1
+PASS view.getUint16(2) is 65535
+PASS view.getInt32(2) is -1
+PASS view.getUint32(2) is 4294967295
+PASS view.getInt8(2) < 0 is true
+PASS view.getInt8(2,true) < 0 is true
+PASS view.getInt16(2) < 0 is true
+PASS view.getInt16(2,true) < 0 is false
+PASS view.getInt32(2) < 0 is true
+PASS view.getInt32(2,true) < 0 is false
+PASS view.getFloat32(2) is 2
+PASS view.getFloat32(2,true) != 2.0 is true
+PASS view.getFloat32(2) is -2
+PASS view.getFloat32(2,true) != -2.0 is true
+PASS Math.abs(view.getFloat32(2) - Math.SQRT2) < 0.0000001 is true
+PASS Math.abs(view.getFloat32(2,true) - Math.SQRT2) > 0.0000001 is true
+PASS view.getFloat32(2) is NaN
+PASS isNaN(view.getFloat32(2,true)) is false
+PASS view.getFloat32(2) is NaN
+PASS isNaN(view.getFloat32(2,true)) is false
+PASS view.getFloat64(2) is 1
+PASS view.getFloat64(2,true) != 1 is true
+PASS view.getFloat64(2) is -1
+PASS view.getFloat64(2,true) != -1 is true
+PASS Math.abs(view.getFloat64(2) - Math.PI) < 0.000000001 is true
+PASS byteString(view, 3, 5) is '16 1b ad fa ce'
+PASS byteString(view, 3, 4) is '12 34 56 78'
+PASS view.getInt16(3).toString(16) is '1234'
+PASS view.getInt16(i, true).toString(16) is '3412'
+PASS view.getInt32(3).toString(16) is '12345678'
+PASS view.getInt32(i, true).toString(16) is '78563412'
+PASS byteString(view, 3, 4) is 'ff ff ff ff'
+PASS view.getInt8(3) is -1
+PASS view.getUint8(3) is 255
+PASS view.getInt16(3) is -1
+PASS view.getUint16(3) is 65535
+PASS view.getInt32(3) is -1
+PASS view.getUint32(3) is 4294967295
+PASS view.getInt8(3) < 0 is true
+PASS view.getInt8(3,true) < 0 is true
+PASS view.getInt16(3) < 0 is true
+PASS view.getInt16(3,true) < 0 is false
+PASS view.getInt32(3) < 0 is true
+PASS view.getInt32(3,true) < 0 is false
+PASS view.getFloat32(3) is 2
+PASS view.getFloat32(3,true) != 2.0 is true
+PASS view.getFloat32(3) is -2
+PASS view.getFloat32(3,true) != -2.0 is true
+PASS Math.abs(view.getFloat32(3) - Math.SQRT2) < 0.0000001 is true
+PASS Math.abs(view.getFloat32(3,true) - Math.SQRT2) > 0.0000001 is true
+PASS view.getFloat32(3) is NaN
+PASS isNaN(view.getFloat32(3,true)) is false
+PASS view.getFloat32(3) is NaN
+PASS isNaN(view.getFloat32(3,true)) is false
+PASS view.getFloat64(3) is 1
+PASS view.getFloat64(3,true) != 1 is true
+PASS view.getFloat64(3) is -1
+PASS view.getFloat64(3,true) != -1 is true
+PASS Math.abs(view.getFloat64(3) - Math.PI) < 0.000000001 is true
+PASS byteString(view, 4, 5) is '16 1b ad fa ce'
+PASS byteString(view, 4, 4) is '12 34 56 78'
+PASS view.getInt16(4).toString(16) is '1234'
+PASS view.getInt16(i, true).toString(16) is '3412'
+PASS view.getInt32(4).toString(16) is '12345678'
+PASS view.getInt32(i, true).toString(16) is '78563412'
+PASS byteString(view, 4, 4) is 'ff ff ff ff'
+PASS view.getInt8(4) is -1
+PASS view.getUint8(4) is 255
+PASS view.getInt16(4) is -1
+PASS view.getUint16(4) is 65535
+PASS view.getInt32(4) is -1
+PASS view.getUint32(4) is 4294967295
+PASS view.getInt8(4) < 0 is true
+PASS view.getInt8(4,true) < 0 is true
+PASS view.getInt16(4) < 0 is true
+PASS view.getInt16(4,true) < 0 is false
+PASS view.getInt32(4) < 0 is true
+PASS view.getInt32(4,true) < 0 is false
+PASS view.getFloat32(4) is 2
+PASS view.getFloat32(4,true) != 2.0 is true
+PASS view.getFloat32(4) is -2
+PASS view.getFloat32(4,true) != -2.0 is true
+PASS Math.abs(view.getFloat32(4) - Math.SQRT2) < 0.0000001 is true
+PASS Math.abs(view.getFloat32(4,true) - Math.SQRT2) > 0.0000001 is true
+PASS view.getFloat32(4) is NaN
+PASS isNaN(view.getFloat32(4,true)) is false
+PASS view.getFloat32(4) is NaN
+PASS isNaN(view.getFloat32(4,true)) is false
+PASS view.getFloat64(4) is 1
+PASS view.getFloat64(4,true) != 1 is true
+PASS view.getFloat64(4) is -1
+PASS view.getFloat64(4,true) != -1 is true
+PASS Math.abs(view.getFloat64(4) - Math.PI) < 0.000000001 is true
+PASS byteString(view, 5, 5) is '16 1b ad fa ce'
+PASS byteString(view, 5, 4) is '12 34 56 78'
+PASS view.getInt16(5).toString(16) is '1234'
+PASS view.getInt16(i, true).toString(16) is '3412'
+PASS view.getInt32(5).toString(16) is '12345678'
+PASS view.getInt32(i, true).toString(16) is '78563412'
+PASS byteString(view, 5, 4) is 'ff ff ff ff'
+PASS view.getInt8(5) is -1
+PASS view.getUint8(5) is 255
+PASS view.getInt16(5) is -1
+PASS view.getUint16(5) is 65535
+PASS view.getInt32(5) is -1
+PASS view.getUint32(5) is 4294967295
+PASS view.getInt8(5) < 0 is true
+PASS view.getInt8(5,true) < 0 is true
+PASS view.getInt16(5) < 0 is true
+PASS view.getInt16(5,true) < 0 is false
+PASS view.getInt32(5) < 0 is true
+PASS view.getInt32(5,true) < 0 is false
+PASS view.getFloat32(5) is 2
+PASS view.getFloat32(5,true) != 2.0 is true
+PASS view.getFloat32(5) is -2
+PASS view.getFloat32(5,true) != -2.0 is true
+PASS Math.abs(view.getFloat32(5) - Math.SQRT2) < 0.0000001 is true
+PASS Math.abs(view.getFloat32(5,true) - Math.SQRT2) > 0.0000001 is true
+PASS view.getFloat32(5) is NaN
+PASS isNaN(view.getFloat32(5,true)) is false
+PASS view.getFloat32(5) is NaN
+PASS isNaN(view.getFloat32(5,true)) is false
+PASS view.getFloat64(5) is 1
+PASS view.getFloat64(5,true) != 1 is true
+PASS view.getFloat64(5) is -1
+PASS view.getFloat64(5,true) != -1 is true
+PASS Math.abs(view.getFloat64(5) - Math.PI) < 0.000000001 is true
+PASS byteString(view, 6, 5) is '16 1b ad fa ce'
+PASS byteString(view, 6, 4) is '12 34 56 78'
+PASS view.getInt16(6).toString(16) is '1234'
+PASS view.getInt16(i, true).toString(16) is '3412'
+PASS view.getInt32(6).toString(16) is '12345678'
+PASS view.getInt32(i, true).toString(16) is '78563412'
+PASS byteString(view, 6, 4) is 'ff ff ff ff'
+PASS view.getInt8(6) is -1
+PASS view.getUint8(6) is 255
+PASS view.getInt16(6) is -1
+PASS view.getUint16(6) is 65535
+PASS view.getInt32(6) is -1
+PASS view.getUint32(6) is 4294967295
+PASS view.getInt8(6) < 0 is true
+PASS view.getInt8(6,true) < 0 is true
+PASS view.getInt16(6) < 0 is true
+PASS view.getInt16(6,true) < 0 is false
+PASS view.getInt32(6) < 0 is true
+PASS view.getInt32(6,true) < 0 is false
+PASS view.getFloat32(6) is 2
+PASS view.getFloat32(6,true) != 2.0 is true
+PASS view.getFloat32(6) is -2
+PASS view.getFloat32(6,true) != -2.0 is true
+PASS Math.abs(view.getFloat32(6) - Math.SQRT2) < 0.0000001 is true
+PASS Math.abs(view.getFloat32(6,true) - Math.SQRT2) > 0.0000001 is true
+PASS view.getFloat32(6) is NaN
+PASS isNaN(view.getFloat32(6,true)) is false
+PASS view.getFloat32(6) is NaN
+PASS isNaN(view.getFloat32(6,true)) is false
+PASS view.getFloat64(6) is 1
+PASS view.getFloat64(6,true) != 1 is true
+PASS view.getFloat64(6) is -1
+PASS view.getFloat64(6,true) != -1 is true
+PASS Math.abs(view.getFloat64(6) - Math.PI) < 0.000000001 is true
+PASS byteString(view, 7, 5) is '16 1b ad fa ce'
+PASS byteString(view, 7, 4) is '12 34 56 78'
+PASS view.getInt16(7).toString(16) is '1234'
+PASS view.getInt16(i, true).toString(16) is '3412'
+PASS view.getInt32(7).toString(16) is '12345678'
+PASS view.getInt32(i, true).toString(16) is '78563412'
+PASS byteString(view, 7, 4) is 'ff ff ff ff'
+PASS view.getInt8(7) is -1
+PASS view.getUint8(7) is 255
+PASS view.getInt16(7) is -1
+PASS view.getUint16(7) is 65535
+PASS view.getInt32(7) is -1
+PASS view.getUint32(7) is 4294967295
+PASS view.getInt8(7) < 0 is true
+PASS view.getInt8(7,true) < 0 is true
+PASS view.getInt16(7) < 0 is true
+PASS view.getInt16(7,true) < 0 is false
+PASS view.getInt32(7) < 0 is true
+PASS view.getInt32(7,true) < 0 is false
+PASS view.getFloat32(7) is 2
+PASS view.getFloat32(7,true) != 2.0 is true
+PASS view.getFloat32(7) is -2
+PASS view.getFloat32(7,true) != -2.0 is true
+PASS Math.abs(view.getFloat32(7) - Math.SQRT2) < 0.0000001 is true
+PASS Math.abs(view.getFloat32(7,true) - Math.SQRT2) > 0.0000001 is true
+PASS view.getFloat32(7) is NaN
+PASS isNaN(view.getFloat32(7,true)) is false
+PASS view.getFloat32(7) is NaN
+PASS isNaN(view.getFloat32(7,true)) is false
+PASS view.getFloat64(7) is 1
+PASS view.getFloat64(7,true) != 1 is true
+PASS view.getFloat64(7) is -1
+PASS view.getFloat64(7,true) != -1 is true
+PASS Math.abs(view.getFloat64(7) - Math.PI) < 0.000000001 is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

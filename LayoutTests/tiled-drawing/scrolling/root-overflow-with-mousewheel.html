@@ -1,0 +1,83 @@
+<html>
+<head>
+<style>
+html {
+    height: 2000px;
+    overflow: scroll;
+}
+</style>
+<script src="../../resources/ui-helper.js"></script>
+<script src="../../resources/ui-helper.js"></script>
+<script>
+function checkForScroll()
+{
+    var pageScrollPositionAfter = document.scrollingElement.scrollTop;
+    var finishLog = document.getElementById("finishLog");
+    if (pageScrollPositionAfter > 50)
+        finishLog.innerHTML = "Success!";
+    else
+        finishLog.innerHTML = "Failure. Try running the test manually. If this proves to be flakey, and we might have to skip it.";
+    testRunner.notifyDone();
+}
+
+async function scrollTest()
+{
+    const events = [
+        {
+            type : "wheel",
+            viewX : 50,
+            viewY : 50,
+            deltaY : -10,
+            phase : "began"
+        },
+        {
+            type : "wheel",
+            deltaY : -10,
+            phase : "changed"
+        },
+        {
+            type : "wheel",
+            deltaY : -10,
+            phase : "changed"
+        },
+        {
+            type : "wheel",
+            phase : "ended"
+        },
+        {
+            type : "wheel",
+            deltaY : -10,
+            momentumPhase : "began"
+        },
+        {
+            type : "wheel",
+            deltaY : -100,
+            momentumPhase : "changed"
+        },
+        {
+            type : "wheel",
+            momentumPhase : "ended"
+        }
+    ];
+
+    await UIHelper.mouseWheelSequence({ events: events });
+    checkForScroll();
+}
+
+function onLoad()
+{
+    window.addEventListener('mousewheel', function() { }, false);
+
+    if (window.eventSender) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+        setTimeout(scrollTest, 0);
+    }
+}
+</script>
+</head>
+
+<body onload="onLoad();">
+    <pre id="finishLog">This test passes if you can scroll the page.</pre>
+</body>
+</html>

@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="/js-test-resources/js-test.js"></script>
+<script>
+description("Tests that third-party iframes will be denied webxr session support without xr-spatial-tracking feature policy.");
+jsTestIsAsync = true;
+
+onmessage = (_e) => {
+    e = _e;
+    if (e.data.isSessionSupported != undefined) {
+        shouldBeEqualToString("e.data.isSessionSupported", "SecurityError");
+        finishJSTest();
+    }
+};
+</script>
+<iframe src="http://localhost:8000/webxr/resources/webxr-issessionsupported-test.html"></iframe>
+</body>
+</html>

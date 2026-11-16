@@ -1,0 +1,4 @@
+
+PASS Scroll anchoring is suppressed during editing in a textarea
+PASS Scroll anchoring is suppressed during editing in a contenteditable element
+

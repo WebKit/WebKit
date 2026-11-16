@@ -1,0 +1,12 @@
+
+RUN(video.src = URL.createObjectURL(source))
+EVENT(sourceopen)
+RUN(source.duration = 0)
+RUN(sourceBuffer = source.addSourceBuffer('video/webm; codecs="vp8"'))
+EVENT(updateend)
+EXPECTED (source.duration == '0') OK
+EVENT(durationchange)
+EVENT(updateend)
+EXPECTED (source.duration == '16') OK
+END OF TEST
+

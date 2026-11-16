@@ -1,0 +1,26 @@
+<style>
+details div { -webkit-flow-into: bar; }
+</style>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+function gc() {
+    if (window.GCController)
+        return GCController.collect();
+    var a;
+    for (var i=0; i<100; i++)
+        a = new Uint8Array(1024*1024);
+}
+
+function go() {
+    details.offsetLeft;
+    details.open = false;
+    div.innerHTML = "This test passes if it doesn't assert";
+    gc();
+}
+</script>
+<body onload=go()>
+<div id="div">
+<details open id="details">
+<div>foo</div>

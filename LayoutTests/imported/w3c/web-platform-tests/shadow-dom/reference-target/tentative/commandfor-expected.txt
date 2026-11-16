@@ -1,0 +1,6 @@
+Toggle the popover  Toggle the popover  Toggle the popover
+
+FAIL Shadow root reference target works with commandfor attribute. assert_equals: host should be toggled if reference target is null expected 1 but got 0
+FAIL Shadow root reference target works with commandfor attribute via options. assert_equals: host should be toggled if reference target is null expected 1 but got 0
+FAIL Shadow root reference target works with .commandForElement property. assert_equals: host should be toggled if reference target is null expected 1 but got 0
+

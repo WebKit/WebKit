@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>video-scrolling</title>
+    <script src=../../../media/video-test.js></script>
+    <script src=../../../media/media-file.js></script>
+    <script src=../../../resources/basic-gestures.js></script>
+    <script>
+    async function runTest() {
+        findMediaElement();
+        run('video.src = findMediaFile("video", "../../../media/content/test")');
+        await shouldResolve(run('video.play()'));
+
+        consoleWrite('Simulate drag on video element');
+
+        let middleX = video.offsetLeft + video.offsetWidth / 2;
+        let middleY = video.offsetTop + video.offsetHeight / 2;
+        let scrollPromise = waitFor(scroller, 'scroll');
+
+        // It may require multiple attempts to scroll the video to succeed
+        while (scroller.scrollTop === 0) {
+            await tapAtPoint(middleX, middleY);
+            await touchAndDragFromPointToPoint(middleX, middleY, middleX, 0);
+            await Promise.race([scrollPromise, sleepFor(100)]);
+        }
+    }
+
+    window.addEventListener('load', event => {
+        runTest().then(endTest).catch(failTest);
+    })
+    </script>
+    <style>
+        body {
+            overflow: hidden;
+        }
+        #container {
+            display: inline-block;
+            position: relative;
+        }
+        video {
+            pointer-events: none;
+            position: relative;
+            z-index: 2;
+        }
+        #scroller {
+            position:absolute;
+            top: 0;
+            height: 100%;
+            width: 100%;
+            overflow-x: hidden;
+            overflow-y: scroll;
+            z-index: 1;
+        }
+        .spacer {
+            width: 100%;
+            min-height: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <video muted playsinline></video>
+        <div id="scroller">
+            <div class=spacer></div>
+            <div class=spacer></div>
+        </div>
+    </div>
+    <div>This tests the ability of a video element with <code>pointer-events: none</code> to be placed atop a div with <code>overflow: none</code>, and that scrolling div retaining the ability to scroll.</div>
+</body>
+</html>

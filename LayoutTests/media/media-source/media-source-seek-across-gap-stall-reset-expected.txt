@@ -1,0 +1,30 @@
+
+RUN(video.src = URL.createObjectURL(source))
+RUN(video.muted = true)
+RUN(video.playsInline = true)
+RUN(video.disableRemotePlayback = true)
+EVENT(sourceopen)
+RUN(sourceBuffer = source.addSourceBuffer(loader.type()))
+RUN(sourceBuffer.appendBuffer(loader.initSegment()))
+EVENT(update)
+Append every fragment so buffered = [0, 10].
+RUN(source.endOfStream())
+EVENT(sourceended)
+EXPECTED (sourceBuffer.buffered.length == '1') OK
+Punch two gaps so buffered = [0, 1] [3, 5] [8, 10].
+RUN(sourceBuffer.remove(1, 3))
+EVENT(update)
+RUN(sourceBuffer.remove(5, 8))
+EVENT(update)
+EXPECTED (sourceBuffer.buffered.length == '3') OK
+Seek into the middle buffered range, past the first gap.
+RUN(video.currentTime = 4)
+EVENT(seeked)
+EXPECTED (video.currentTime >= 3 && video.currentTime <= 5 == 'true') OK
+RUN(video.play())
+EVENT(playing)
+EVENT(waiting)
+EXPECTED (video.currentTime <= 5.1 == 'true') OK
+EXPECTED (video.currentTime < 8 == 'true') OK
+END OF TEST
+

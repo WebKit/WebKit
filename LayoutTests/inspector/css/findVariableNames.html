@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+
+function test()
+{
+    let suite = InspectorTest.createSyncSuite("CSSProperty.findVariableNames");
+
+    function addTestCase({name, expression, expected, checkUsedCSSVariableNames})
+    {
+        suite.addTestCase({
+            name,
+            test() {
+                let variables = WI.CSSProperty.findVariableNames(expression);
+                InspectorTest.expectShallowEqual(variables, expected, `"${expression}" should contain these CSS variable names: ${JSON.stringify(expected)}.`);
+            },
+        });
+    }
+
+    addTestCase({
+        name: "CSSProperty.findVariableNames.Empty",
+        expression: "",
+        expected: [],
+    });
+
+    addTestCase({
+        name: "CSSProperty.findVariableNames.EmptyFunction",
+        expression: "var()",
+        expected: [],
+    });
+
+    addTestCase({
+        name: "CSSProperty.findVariableNames.EmptyNoFunction",
+        expression: "--one",
+        expected: [],
+    });
+
+    addTestCase({
+        name: "CSSProperty.findVariableNames.Basic",
+        expression: "var(--one)",
+        expected: ["--one"],
+    });
+
+    addTestCase({
+        name: "CSSProperty.findVariableNames.BasicWithFallback",
+        expression: "var(--one, red)",
+        expected: ["--one"],
+    });
+
+    addTestCase({
+        name: "CSSProperty.findVariableNames.BasicWithVariableFallback",
+        expression: "var(--one, var(--two, red))",
+        expected: ["--one", "--two"],
+    });
+
+    addTestCase({
+        name: "CSSProperty.findVariableNames.Whitespace",
+        expression: "var(    --one    )",
+        expected: ["--one"],
+    });
+
+    addTestCase({
+        name: "CSSProperty.findVariableNames.Newline",
+        expression: "var(\n--one\n)",
+        expected: ["--one"],
+    });
+
+    addTestCase({
+        name: "CSSProperty.findVariableNames.Tab",
+        expression: "var(\t--one\t)",
+        expected: ["--one"],
+    });
+
+    addTestCase({
+        name: "CSSProperty.findVariableNames.Nested",
+        expression: "var(--one, var(--two, var(--three)))",
+        expected: ["--one", "--two", "--three"],
+    });
+
+    addTestCase({
+        name: "CSSProperty.findVariableNames.Content",
+        expression: "content: \"var(--one)\"",
+        expected: ["--one"],
+    });
+
+    addTestCase({
+        name: "CSSProperty.findVariableNames.Dashed",
+        expression: "var(----o--n--e)",
+        expected: ["----o--n--e"],
+    });
+
+    addTestCase({
+        name: "CSSProperty.findVariableNames.NaiveWhitespace",
+        expression: "var(--one --two --three)",
+        expected: ["--one"],
+    });
+
+    addTestCase({
+        name: "CSSProperty.findVariableNames.NaiveDataURI",
+        expression: "data:text/plain;base64,xxxvar(--one)xxx",
+        expected: ["--one"],
+    });
+
+    addTestCase({
+        name: "CSSProperty.findVariableNames.NaiveMalformed",
+        expression: "var(--var(one))",
+        expected: ["--var(one"],
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest();">
+<p>Test naive parsing of CSS variable names with CSSProperty.findVariableNames</p>
+</body>
+</html>

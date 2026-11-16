@@ -1,0 +1,2 @@
+ALERT: document() This test passes if this message was loaded.
+

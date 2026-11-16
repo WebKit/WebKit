@@ -1,0 +1,37 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/js-test.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
+</head>
+<body>
+
+<input type="text" value="hello" id="textfield">
+
+<script>
+    description("This tests that when an auto fill element is removed we won't crash accessing an old value.");
+
+    if (window.accessibilityController) {
+        window.jsTestIsAsync = true;
+
+        var platformName = accessibilityController.platformName;
+        var axTextField = accessibilityController.accessibleElementById("textfield");
+        var domTextField = document.getElementById("textfield");
+
+        window.internals.setAutofillButtonType(domTextField, "Contacts");
+        setTimeout(async function() {
+            await expectAsyncExpression("axTextField.childrenCount", "1");
+            // Verify the autofill button is represented in the accessibility tree.
+            await expectAsyncExpression("axTextField.childAtIndex(0).description", "'AXDescription: contact info AutoFill'");
+
+            // Don't crash!
+            window.internals.setAutofillButtonType(domTextField, "None");
+            await expectAsyncExpression("axTextField.childrenCount", "0");
+
+            finishJSTest();
+        }, 0);
+    }
+</script>
+</body>
+</html>
+

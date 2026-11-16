@@ -1,0 +1,19 @@
+<!-- webkit-test-runner [ UseGPUProcessForDOMRenderingEnabled=true ] -->
+<style>
+body
+{
+    margin: 0;
+}
+
+div
+{
+    position: absolute;
+    width: 200px;
+    height: 100px;
+}
+</style>
+The test passes if there is a green square with no red.
+<div style="background-color: red; top: 0px; left: 0px; transform: translate(50px, 50px);"></div>
+<div style="background-color: green; top: 50px; left: 50px;"></div>
+<div style="background-color: red; top: 0px; left: 0px; transform: translate(50px, 150px);"></div>
+<div style="background-color: green; top: 150px; left: 50px;"></div>

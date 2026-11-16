@@ -1,0 +1,5 @@
+
+FAIL WebAssembly module as an IndexedDB value promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: WebAssembly"
+FAIL WebAssembly module in a JavaScript object IndexedDB value promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: WebAssembly"
+FAIL WebAssembly module in an IndexedDB value with an inline key promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: WebAssembly"
+

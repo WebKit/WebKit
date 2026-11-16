@@ -1,0 +1,53 @@
+RUN(internals.initializeMockMediaSource())
+RUN(mock = internals.registerMockCDM())
+RUN(mock.supportedDataTypes = ["keyids"])
+RUN(capabilities.initDataTypes = ["keyids"])
+RUN(capabilities.videoCapabilities = [{ contentType: 'video/mock; codecs="mock"' }] )
+RUN(promise = navigator.requestMediaKeySystemAccess("org.webkit.mock", [capabilities]))
+Promise resolved OK
+RUN(promise = mediaKeySystemAccess.createMediaKeys())
+Promise resolved OK
+
+Two sessions from the same MediaKeys have distinct non-empty sessionIds.
+RUN(kids = JSON.stringify({ kids: [ "MTIzNDU=" ] }))
+RUN(window.session1 = mediaKeys.createSession("temporary"))
+RUN(promise = window.session1.generateRequest("keyids", stringToUInt8Array(kids)))
+Promise resolved OK
+RUN(window.session2 = mediaKeys.createSession("temporary"))
+RUN(promise = window.session2.generateRequest("keyids", stringToUInt8Array(kids)))
+Promise resolved OK
+EXPECTED (window.session1.sessionId.length > 0 == 'true') OK
+EXPECTED (window.session2.sessionId.length > 0 == 'true') OK
+EXPECTED (window.session1.sessionId !== window.session2.sessionId == 'true') OK
+
+Session with no license processed: expiration is NaN.
+RUN(window.session3 = mediaKeys.createSession("temporary"))
+RUN(promise = window.session3.generateRequest("keyids", stringToUInt8Array(kids)))
+Promise resolved OK
+EXPECTED (isNaN(window.session3.expiration) == 'true') OK
+
+After update() with a finite expiration, session.expiration is a finite Number.
+RUN(mock.expirationOnUpdate = 1735689600000)
+RUN(window.session4 = mediaKeys.createSession("temporary"))
+RUN(promise = window.session4.generateRequest("keyids", stringToUInt8Array(kids)))
+Promise resolved OK
+RUN(promise = window.session4.update(stringToUInt8Array("valid-response keys-changed")))
+Promise resolved OK
+EXPECTED (typeof window.session4.expiration == 'number') OK
+EXPECTED (isFinite(window.session4.expiration) == 'true') OK
+EXPECTED (window.session4.expiration == '1735689600000') OK
+RUN(mock.expirationOnUpdate = NaN)
+
+Two sessions with different initData: each records its own key IDs.
+RUN(window.kidsA = JSON.stringify({ kids: [ "MTIzNDU=" ] }))
+RUN(window.kidsB = JSON.stringify({ kids: [ "Njc4OTA=", "MTIzNDU=" ] }))
+RUN(window.sessionA = mediaKeys.createSession("temporary"))
+RUN(promise = window.sessionA.generateRequest("keyids", stringToUInt8Array(window.kidsA)))
+Promise resolved OK
+RUN(window.sessionB = mediaKeys.createSession("temporary"))
+RUN(promise = window.sessionB.generateRequest("keyids", stringToUInt8Array(window.kidsB)))
+Promise resolved OK
+EXPECTED (mock.keyCountForSession(window.sessionA.sessionId) == '1') OK
+EXPECTED (mock.keyCountForSession(window.sessionB.sessionId) == '2') OK
+END OF TEST
+

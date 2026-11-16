@@ -1,0 +1,62 @@
+<html>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+window.onload = function()
+{
+    if (location.hash == "#2") {
+        document.body.innerHTML = "PASSED: Duplicate webkit-canvas styles removed without crash.";
+        if (window.testRunner)
+            testRunner.notifyDone();
+    } else {
+        if (location.hash)
+            location.hash = "#" + (parseInt(location.hash.slice(1)) + 1).toString();
+        else
+            location.hash = "#1";
+
+        iframe = document.body.appendChild(document.createElement('iframe'));
+        element1 = document.createElement('a');
+        iframe.contentDocument.body.appendChild(element1);
+        element1.style.setProperty('background', '-webkit-canvas(canvas)');
+
+        element2 = document.createElement('a');
+        iframe.contentDocument.body.appendChild(element2);  
+        element2.style.setProperty('background', '-webkit-canvas(canvas)');  
+
+        element1.textContent = element2.textContent = 1;
+        setTimeout(removeElements, 0);
+    }
+}
+
+function removeElements()
+{ 
+    iframe.contentDocument.body.removeChild(element1);
+    document.adoptNode(element1);
+
+    iframe.contentDocument.body.removeChild(element2);
+    document.adoptNode(element2);  
+
+    document.body.removeChild(iframe);
+    delete iframe;
+
+    var timeout = 50;
+    if (window.GCController)
+        window.GCController.collect();
+    else if (window.gc)
+        gc();
+    else
+        timeout = 400;
+    setTimeout(finishTest, timeout);
+}
+
+function finishTest()
+{
+    document.body.appendChild(element1);
+    setTimeout(function () { location.reload() }, 0);
+}
+
+</script>
+</html>

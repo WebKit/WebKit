@@ -1,0 +1,82 @@
+Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+
+Top stickyBottom stickyTop % stickyBottom % stickyTop and BottomTop and Bottom %
+Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+
+
+(Frame scrolling node
+  (scroll position 0 580)
+  (scrollable area size 785 600)
+  (contents size 785 2908)
+  (requested scroll position 0 580)
+  (requested scroll position represents programmatic scroll 1)
+  (scrollable area parameters
+    (horizontal scroll elasticity 2)
+    (vertical scroll elasticity 2)
+    (horizontal scrollbar mode 0)
+    (vertical scrollbar mode 0)
+    (allows vertical scrolling 1))
+  (layout viewport at (0,580) size 785x600)
+  (min layout viewport origin (0,0))
+  (max layout viewport origin (0,2308))
+  (behavior for fixed 1)
+  (children 6
+    (Sticky node
+      (anchor edges: AnchorEdgeTop )
+      (top offset 20.00)
+      (containing block rect at (72.50,406) size 640x604)
+      (sticky box rect at (72.50,558) size 80x300)
+      (constraining rect at (0,580) size 785x600)
+      (sticky offset at last layout width=0 height=42)
+      (layer position at last layout (0,580))
+    )
+    (Sticky node
+      (anchor edges: AnchorEdgeBottom)
+      (bottom offset 20.00)
+      (containing block rect at (72.50,406) size 640x604)
+      (sticky box rect at (162.50,558) size 80x300)
+      (constraining rect at (0,580) size 785x600)
+      (sticky offset at last layout width=0 height=0)
+      (layer position at last layout (0,580))
+    )
+    (Sticky node
+      (anchor edges: AnchorEdgeTop )
+      (top offset 120.00)
+      (containing block rect at (72.50,406) size 640x604)
+      (sticky box rect at (252.50,558) size 80x300)
+      (constraining rect at (0,580) size 785x600)
+      (sticky offset at last layout width=0 height=142)
+      (layer position at last layout (0,580))
+    )
+    (Sticky node
+      (anchor edges: AnchorEdgeBottom)
+      (bottom offset 120.00)
+      (containing block rect at (72.50,406) size 640x604)
+      (sticky box rect at (342.50,558) size 80x300)
+      (constraining rect at (0,580) size 785x600)
+      (sticky offset at last layout width=0 height=0)
+      (layer position at last layout (0,580))
+    )
+    (Sticky node
+      (anchor edges: AnchorEdgeTop AnchorEdgeBottom)
+      (top offset 20.00)
+      (bottom offset 20.00)
+      (containing block rect at (72.50,406) size 640x604)
+      (sticky box rect at (432.50,558) size 80x300)
+      (constraining rect at (0,580) size 785x600)
+      (sticky offset at last layout width=0 height=42)
+      (layer position at last layout (0,580))
+    )
+    (Sticky node
+      (anchor edges: AnchorEdgeTop AnchorEdgeBottom)
+      (top offset 120.00)
+      (bottom offset 120.00)
+      (containing block rect at (72.50,406) size 640x604)
+      (sticky box rect at (522.50,558) size 80x300)
+      (constraining rect at (0,580) size 785x600)
+      (sticky offset at last layout width=0 height=142)
+      (layer position at last layout (0,580))
+    )
+  )
+)
+

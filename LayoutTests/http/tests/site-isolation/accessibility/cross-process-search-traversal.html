@@ -1,0 +1,114 @@
+<html><!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<head>
+<script src="/js-test-resources/js-test.js"></script>
+<script src="/js-test-resources/accessibility-helper.js"></script>
+</head>
+<body>
+
+<button id="btn-before">Button Before</button>
+<p id="text-before">Text before iframe</p>
+
+<iframe id="iframe" src="http://localhost:8000/site-isolation/accessibility/resources/iframe-with-headings.html"></iframe>
+
+<p id="text-after">Text after iframe</p>
+<button id="btn-after">Button After</button>
+
+<script>
+var output = "Tests forward and backward AnyType search traversal across process boundaries.\n";
+
+window.jsTestIsAsync = true;
+
+async function performSearch(webArea, isForward, resultsLimit) {
+    var results;
+    await waitFor(() => {
+        results = webArea.uiElementsForSearchPredicate(
+            null,           // startElement
+            isForward,      // isDirectionNext
+            "AXAnyTypeSearchKey",
+            "",             // searchText
+            false,          // visibleOnly
+            false,          // immediateDescendantsOnly
+            resultsLimit
+        );
+        // Check that we have results and at least one is a remote platform element,
+        // indicating the iframe has loaded its accessibility tree.
+        if (!results || results.length === 0)
+            return false;
+        for (var i = 0; i < results.length; i++) {
+            if (results[i].isRemotePlatformElement)
+                return true;
+        }
+        return false;
+    });
+    return results;
+}
+
+function filterSearchResults(results) {
+    // Filter out AXScrollArea elements - these are implementation details
+    // that differ between ENABLE_ACCESSIBILITY_LOCAL_FRAME configurations.
+    return results.filter(function(element) {
+        if (element.isRemotePlatformElement)
+            return true;
+        return !element.role || !element.role.includes("AXScrollArea");
+    });
+}
+
+function formatResults(results, direction) {
+    var formatted = `${direction} search found ${results.length} elements:\n`;
+    for (var i = 0; i < results.length; i++) {
+        var element = results[i];
+        if (element.isRemotePlatformElement)
+            formatted += `  ${i + 1}: (remote platform element)\n`;
+        else
+            formatted += `  ${i + 1}: domIdentifier=${element.domIdentifier || "(no id)"}, role=${element.role}\n`;
+    }
+    return formatted;
+}
+
+var forwardResults, backwardResults;
+async function performSearchAndFormatResults(isForward) {
+    searchResults = await performSearch(webArea, isForward, 20);
+
+    const directionString = isForward ? "Forward" : "Backward";
+    output += `\n=== ${directionString} Traversal ===\n`;
+    if (!searchResults) {
+        output += `FAIL: ${directionString} search returned null\n`;
+        debug(output);
+        finishJSTest();
+        return 0;
+    }
+    searchResults = filterSearchResults(searchResults);
+    output += formatResults(searchResults, directionString);
+    return searchResults;
+}
+
+var root, webArea;
+async function runTest() {
+    if (!window.accessibilityController)
+        return;
+
+    root = accessibilityController.rootElement;
+    touchAccessibilityTree(root);
+    webArea = root.childAtIndex(0);
+
+    forwardResults = await performSearchAndFormatResults(/* isForward */ true);
+    backwardResults = await performSearchAndFormatResults(/* isForward */ false);
+
+    // Verify that forward and backward traversals are inverses
+    output += "\n=== Verification ===\n";
+    output += expect("forwardResults.length", "backwardResults.length");
+
+    // First element of forward should be last element of backward (approximately, accounting for search behavior)
+    if (forwardResults.length > 0 && backwardResults.length > 0) {
+        output += `First forward element: ${forwardResults[0].domIdentifier}\n`;
+        output += `Last backward element: ${backwardResults[backwardResults.length - 1].domIdentifier}\n`;
+    }
+
+    debug(output);
+    finishJSTest();
+}
+
+document.getElementById("iframe").onload = runTest;
+</script>
+</body>
+</html>

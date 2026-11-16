@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>audio-load-loadeddata</title>
+    <script src=../../media-resources/video-test.js></script>
+
+    <script>
+    function runTest()
+    {
+        video = document.getElementsByTagName('audio')[0];
+        waitFor(video, 'loadeddata').then(() => endTest());
+        run("video.muted = true");
+        run(`video.src = '/media/resources/load-video.py?type=audio/mpeg&name=sound_5.mp3'`);
+        run("video.load()");
+    }    
+    </script>
+</head>
+
+<body onload="runTest()">
+    <audio controls muted></audio>
+</body>
+</html>
+

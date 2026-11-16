@@ -1,0 +1,122 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ignoreWebProcessTermination=true ] -->
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script>
+let iframe;
+
+function addIFrame() {
+    // Same proven setup as cross-origin-iframe-get-response-body.html: a cross-origin
+    // (localhost) iframe loads in its own WebContent process under Site Isolation, and its
+    // subresource is triggered post-load via postMessage.
+    iframe = document.createElement("iframe");
+    iframe.src = "http://localhost:8000/site-isolation/inspector/network/resources/get-response-body-iframe.html";
+    iframe.addEventListener("load", () => iframe.contentWindow.postMessage({type: "TriggerLoads"}, "*"));
+    document.body.appendChild(iframe);
+}
+
+function terminateIFrameProcess() {
+    // Ask the cross-origin iframe to terminate its own WebContent process. Under Site
+    // Isolation this kills only the iframe's process, leaving the main frame (and the
+    // inspector frontend) running. Requires the ignoreWebProcessTermination runner flag.
+    iframe.contentWindow.postMessage({type: "TerminateProcess"}, "*");
+}
+
+function test() {
+    // Regression test for the WebProcess-crash robustness of getResponseBody. When the WebContent
+    // process that served a resource is gone, IPC synthesizes ProxyingNetworkAgent's getResponseBody
+    // reply from default-constructed arguments (AsyncReplyError). Before the fix, that produced
+    // content="" and an empty errorString, which the reply handler misread as an empty-body *success*.
+    // After the fix, ProxyingNetworkAgent detects the empty-error unexpected (or the process is
+    // already gone from the routing table) and reports an explicit failure. Either way, a
+    // getResponseBody issued after the serving process terminates must REJECT -- never resolve
+    // with an empty body, and never hang.
+
+    function waitForResource(urlSubstring) {
+        return new Promise((resolve) => {
+            function onResourceAdded(event) {
+                let resource = event.data.resource;
+                if (!resource || !resource.url || !resource.url.includes(urlSubstring))
+                    return;
+                WI.Frame.removeEventListener(WI.Frame.Event.ResourceWasAdded, onResourceAdded);
+                resolve(resource);
+            }
+            WI.Frame.addEventListener(WI.Frame.Event.ResourceWasAdded, onResourceAdded);
+        });
+    }
+
+    async function waitForFinished(resource) {
+        if (!resource.finished && !resource.failed)
+            await resource.awaitEvent(WI.Resource.Event.LoadingDidFinish);
+    }
+
+    let textResource;
+
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Network.CrossOriginIFrame.GetResponseBody.AfterProcessCrash");
+
+    suite.addTestCase({
+        name: "SiteIsolation.Network.CrossOriginIFrame.GetResponseBody.AfterProcessCrash.WorksBeforeCrash",
+        description: "Load a text resource in a cross-origin iframe and confirm getResponseBody works before the process is terminated.",
+        async test() {
+            let textPromise = waitForResource("echo.py");
+            InspectorTest.evaluateInPage("addIFrame()");
+            textResource = await textPromise;
+            await waitForFinished(textResource);
+
+            InspectorTest.expectThat(textResource.finished, "Resource should finish loading.");
+            InspectorTest.expectThat(!!textResource.requestIdentifier, "Resource should have a request identifier.");
+
+            let {body} = await WI.backendTarget.NetworkAgent.getResponseBody(textResource.requestIdentifier);
+            InspectorTest.expectEqual(body, "si-cross-origin-response-body", "getResponseBody should return the served content before the crash.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Network.CrossOriginIFrame.GetResponseBody.AfterProcessCrash.RejectsAfterCrash",
+        description: "After the iframe's WebContent process is terminated, getResponseBody for its resource must reject with a failure -- never return an empty body as success, and never hang.",
+        async test() {
+            // Terminating a cross-origin child frame's WebContent process under Site Isolation does
+            // NOT produce a frontend target-removal event: the WebFrameProxy persists across the
+            // crash (WebPageInspectorController::willDestroyFrame fires only on genuine frame
+            // removal, never a process swap), so there is no TargetRemoved to await. Instead we poll
+            // getResponseBody until it stops returning the live body. Once the serving process is
+            // gone its BackendResourceDataStore is gone too, so the call must reject -- either
+            // "WebProcess not found" (already removed from the routing table) or, if we catch the
+            // async-reply window, the fix's explicit "no longer available" failure. If instead it
+            // ever resolves with a non-live (empty) body, that is the pre-fix bug and we fail. The
+            // loop is bounded so it can never hang.
+            InspectorTest.evaluateInPage("terminateIFrameProcess()");
+
+            let outcome = null; // "rejected" | "empty-success"
+            let detail;
+            for (let attempt = 0; attempt < 60 && !outcome; ++attempt) {
+                try {
+                    let {body, base64Encoded} = await WI.backendTarget.NetworkAgent.getResponseBody(textResource.requestIdentifier);
+                    if (body === "si-cross-origin-response-body" && !base64Encoded) {
+                        // Process still alive; yield and retry.
+                        await new Promise((resolve) => setTimeout(resolve, 50));
+                        continue;
+                    }
+                    // Resolved, but not with the live body: the pre-fix empty-body-as-success bug.
+                    outcome = "empty-success";
+                    detail = `body.length=${body ? body.length : 0}, base64Encoded=${base64Encoded}`;
+                } catch (e) {
+                    outcome = "rejected";
+                    detail = e.message || String(e);
+                }
+            }
+
+            InspectorTest.expectEqual(outcome, "rejected", "getResponseBody should reject once the serving WebContent process is gone (not return an empty body as success, not hang).");
+            // Only log the detail on failure: the rejection message legitimately varies with
+            // timing ("WebProcess not found" vs the fix's "no longer available"), so baking it
+            // into the passing baseline would make the test flaky.
+            if (outcome !== "rejected")
+                InspectorTest.log(`  Unexpected outcome detail: ${detail}`);
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+
+<body onload="runTest()">
+<p>Tests that Network.getResponseBody rejects (rather than returning an empty body as success, or hanging) when the WebContent process that served the resource has been terminated, under Site Isolation.</p>
+</body>

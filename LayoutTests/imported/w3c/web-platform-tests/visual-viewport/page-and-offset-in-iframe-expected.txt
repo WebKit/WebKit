@@ -1,0 +1,8 @@
+Viewport: Page and offset values in iframe
+
+Test Description: This test checks for correct visualViewport values in an iframe.
+
+
+
+FAIL VisualViewport page and offset values in iframe assert_greater_than: Pinch zoom must have increased scale expected a number greater than 1.2 but got 1
+

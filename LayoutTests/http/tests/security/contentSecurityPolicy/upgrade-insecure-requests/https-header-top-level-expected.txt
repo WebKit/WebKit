@@ -1,0 +1,3 @@
+Verify that this request was delivered with an 'Upgrade-Insecure-Requests' header.
+
+Upgrade-Insecure-Requests: 1

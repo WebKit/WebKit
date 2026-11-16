@@ -1,0 +1,86 @@
+<!DOCTYPE html><!-- webkit-test-runner [ AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<head>
+<style>
+.scroller {
+    width: 400px;
+    height: 400px;
+    overflow: hidden;
+    border: 1px solid black;
+}
+
+.scroller.scrollable {
+    overflow-y: scroll;
+}
+
+.changing {
+    height: 300px;
+    background-color: orange;
+}
+
+.scroller.changed .changing {
+    height: 400px;
+}
+
+.anchor {
+    height: 300px;
+    background-color: limegreen;
+}
+
+.content {
+    height: 8000px;
+    background: repeating-linear-gradient(white, silver 200px);
+    padding: 8px;
+}
+</style>
+<script src="../../../resources/ui-helper.js"></script>
+<script src="../../../resources/js-test.js"></script>
+<script>
+jsTestIsAsync = true;
+
+description("Test that when the first scrolling tree commit for an overflow scroller contains a delta, the UI process ends up with the correct scroll position");
+
+let scroller;
+let uiScrollY;
+
+function uiSideScrollY(treeText)
+{
+    // Non-root scrolling node's current position is dumped as
+    //   (scroll position (X,Y))   (omitted when zero).
+    let m = treeText.match(/\(scroll position \((-?[\d.]+),(-?[\d.]+)\)\)/);
+    if (!m)
+        return 0;
+    return parseFloat(m[2]);
+}
+
+async function runTest()
+{
+    scroller = document.querySelector('.scroller');
+
+    scroller.scrollTo(0, 4500);
+    scroller.classList.add('scrollable');
+    scroller.scrollTo(0, 4500);
+    scroller.classList.add('changed');
+
+    await UIHelper.renderingUpdate();
+
+    shouldBe('scroller.scrollTop', '4600');
+
+    uiScrollY = uiSideScrollY(await UIHelper.getScrollingTree());
+    shouldBe('uiScrollY', '4600');
+
+    finishJSTest();
+}
+
+window.addEventListener('load', runTest);
+</script>
+</head>
+<body>
+<div class="scroller">
+    <div class="changing"></div>
+    <div class="anchor"></div>
+    <div class="content"></div>
+</div>
+<div id="console"></div>
+</body>
+</html>

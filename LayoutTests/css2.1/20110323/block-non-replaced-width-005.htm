@@ -1,0 +1,36 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+    <head>
+        <title>CSS Test: Solving width for block-level non-replaced elements in normal flow with single 'auto' value</title>
+        <link rel="author" title="Microsoft" href="http://www.microsoft.com/">
+        <link rel="help" href="http://www.w3.org/TR/CSS21/visudet.html#blockwidth">
+        <meta name="flags" content="">
+        <meta name="assert" content="If 'width' is set to 'auto', no other 'auto' values are set the 'width' is computed based the width of the containing block.">
+        <style type="text/css">
+            body
+            {
+                margin: 0;
+            }
+            #div1
+            {
+                background: red;
+                width: 100%;
+            }
+            div div
+            {
+                background-color: green;
+                border: none;
+                margin: 0;
+                padding: 0;
+                height: 40px;
+                width: auto;
+            }
+        </style>
+    </head>
+    <body>
+        <p>Test passes if the box below spans the entire width of the page and there is no red visible on the page.</p>
+        <div id="div1">
+            <div></div>
+        </div>
+    </body>
+</html>

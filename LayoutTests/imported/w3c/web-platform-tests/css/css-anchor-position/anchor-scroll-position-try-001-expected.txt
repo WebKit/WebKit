@@ -1,0 +1,8 @@
+
+PASS Should be above the anchor when at initial scroll position
+PASS Scroll down until the top edge of #anchor touches container but not overflowing
+PASS Scroll further down, making the first fallback position overflow by 1px
+PASS Scroll back up so that both the first and second options fit.
+PASS Scroll further up, where the second option no longer fits
+PASS Scroll bottom-right to make the first two options overflow
+

@@ -1,0 +1,5 @@
+
+PASS CSS generated text is observable as a LargestContentfulPaint candidate
+PASS Text generated with CSS using content:attr() is observable as a LargestContentfulPaint candidate
+PASS CSS generated text on a inline element is observable as a LargestContentfulPaint candidate
+

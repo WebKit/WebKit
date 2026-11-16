@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<!-- Legacy touch event rects equivalent: fast/events/touch/ios/block-without-overflow-scroll-and-passive-observer-on-document-scrolling-state.html -->
+<!-- Legacy touch event rects equivalent: http/tests/fast/events/touch/ios/block-without-overflow-scroll-and-passive-observer-on-document-scrolling-state.html -->
+<html>
+<head>
+    <meta name="viewport" content="initial-scale=1">
+    <style>
+        body {
+            margin: 0;
+        }
+        .scroller {
+            overflow: scroll;
+            width: 300px;
+            height: 200px;
+            margin: 10px;
+        }
+        .contents {
+            height: 3000px;
+        }
+    </style>
+    <script src="../resources/touch-regions-helper.js"></script>
+    <script>
+        prepareForTest();
+
+        function touchEventHandler(event) { throw "This is not supposed to happen!"; }
+        document.addEventListener('touchstart', touchEventHandler, { 'passive': true });
+        document.addEventListener('touchmove', touchEventHandler, { 'passive': true });
+        document.addEventListener('touchend', touchEventHandler, { 'passive': true });
+        document.addEventListener('touchcancel', touchEventHandler, { 'passive': true });
+
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                let scroller = document.querySelector(".scroller");
+                scroller.scrollTop = 5;
+                scroller.scrollTop = 0;
+                dumpRegions();
+            }, 15);
+        }, false);
+    </script>
+</head>
+<body>
+    <div class="scroller">
+        <div class="contents"></div>
+    </div>
+</body>
+</html>

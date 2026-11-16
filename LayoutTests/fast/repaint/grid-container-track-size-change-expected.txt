@@ -1,0 +1,6 @@
+Tests invalidation of the grid container on a track size change.
+(repaint rects
+  (rect 0 50 150 50)
+  (rect 0 50 200 100)
+)
+

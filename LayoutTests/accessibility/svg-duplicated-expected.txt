@@ -1,0 +1,6 @@
+This test verifies that we don't enter an infinite loop when we have two references to the same remote SVG file.
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Hello   world

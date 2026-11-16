@@ -1,0 +1,30 @@
+<style>
+  @property --v {
+    syntax: '<number>';
+    inherits: false;
+    initial-value: 0;
+  }
+  :root {
+    grid-auto-rows: 0;
+  }
+  div {
+    shape-outside: cross-fade(url(.), url(), 0%);
+  }
+  #d:empty {
+    -webkit-column-axis: vertical;
+  }
+</style>
+<script>
+  if (window.testRunner)
+    testRunner.dumpAsText();
+  onload = () => {
+    document.styleSheets[0].insertRule(`:first-child { all: unset; }`);
+    document.head.append(document.createElement('div'));
+    document.body.offsetTop;
+    d.append('a');
+    document.body.offsetTop;
+    document.styleSheets[0].deleteRule(0);
+  };
+</script>
+<div></div><div id=d></div>
+This test passes if it doesn't crash.

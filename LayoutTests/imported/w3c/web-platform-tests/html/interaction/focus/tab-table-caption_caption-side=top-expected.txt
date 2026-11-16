@@ -1,0 +1,12 @@
+First tabbable span
+Tabbable in cell
+Tabbable in caption
+Last tabbable span
+
+PASS Tab on <span tabindex="0">First tabbable span</span> should move focus to <span tabindex="0">Tabbable in cell<span></span></span>
+PASS Shift+Tab on <span tabindex="0">Tabbable in caption</span> should move focus to <span tabindex="0">Tabbable in cell<span></span></span>
+PASS Tab on <span tabindex="0">Tabbable in caption</span> should move focus to <span tabindex="0">Last tabbable span</span>
+PASS Shift+Tab on <span tabindex="0">Tabbable in cell<span></span></span> should move focus to <span tabindex="0">First tabbable span</span>
+PASS Tab on <span tabindex="0">Tabbable in cell<span></span></span> should move focus to <span tabindex="0">Tabbable in caption</span>
+PASS Shift+Tab on <span tabindex="0">Last tabbable span</span> should move focus to <span tabindex="0">Tabbable in caption</span>
+

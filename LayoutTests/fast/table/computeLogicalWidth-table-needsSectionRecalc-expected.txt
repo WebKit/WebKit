@@ -1,0 +1,2 @@
+Bug 74026: Crash in RenderTable::outerBorderAfter
+This test has PASSED!

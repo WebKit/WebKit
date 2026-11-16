@@ -1,0 +1,45 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>A text indicator for visible text in a scrolled cross-site frame isn't clipped away</title>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/js-test-resources/ui-helper.js"></script>
+<style>
+body { margin: 0 }
+#child {
+    position: absolute;
+    left: 200px;
+    top: 100px;
+    width: 300px;
+    height: 250px;
+    border: 0;
+}
+</style>
+<body>
+<iframe id="child" src="http://localhost:8000/site-isolation/resources/text-indicator-scrolled-frame.html"></iframe>
+<script>
+
+function measure(frame)
+{
+    return new Promise(resolve => {
+        addEventListener("message", event => resolve(event.data), { once: true });
+        frame.contentWindow.postMessage("measure-text-indicator", "*");
+    });
+}
+
+promise_test(async t => {
+    const frame = document.getElementById("child");
+    if (document.readyState !== "complete")
+        await new Promise(resolve => addEventListener("load", resolve, { once: true }));
+    await UIHelper.renderingUpdate();
+
+    const result = await measure(frame);
+    assert_equals(result.scrollY, 250, "child frame should be scrolled");
+    assert_equals(result.indicatorTextRectCount, 1, "text indicator should have one text rect");
+    assert_greater_than_equal(result.indicatorWidth, result.targetWidth, "text indicator should cover the width of the text");
+    assert_greater_than_equal(result.indicatorHeight, result.targetHeight, "text indicator should cover the height of the text");
+}, "A text indicator for visible text in a scrolled cross-site frame isn't clipped to the unscrolled part of the frame");
+
+</script>
+</body>

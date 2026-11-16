@@ -1,0 +1,16 @@
+<html>
+<head>
+<script src="resources/sw-test-pre.js"></script>
+</head>
+<body>
+<script>
+navigator.serviceWorker.register("resources/worker-fails-to-start-worker.js", { }).then(function(registration) {
+    log("FAIL: Should have rejected the promise");
+    finishSWTest();
+}, function(e) {
+    log("PASS: Rejected the promise as expected with message: " + e);
+    finishSWTest();
+});
+</script>
+</body>
+</html>

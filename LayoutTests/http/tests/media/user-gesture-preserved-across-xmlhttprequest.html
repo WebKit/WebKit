@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8'>
+    <title>user-gesture-preserved-across-xmlhttprequest</title>
+    <script src='/media-resources/media-file.js'></script>
+    <script src='/media-resources/video-test.js'></script>
+
+    <script>
+        let autoRun = true;
+
+        if (window.testRunner) {
+           testRunner.dumpAsText();
+           testRunner.waitUntilDone();
+        }
+
+        function doXHR(delay, timeout, completionHandler)
+        {
+            var xhr = new XMLHttpRequest();
+            if (window.internals)
+                window.internals.setMaximumIntervalForUserGestureForwardingForFetch(timeout);
+
+            xhr.open('GET', `/xmlhttprequest/resources/download-with-delay.py?iteration=1&delay=${delay}`, true);
+
+            xhr.onload = (evt) => {
+                consoleWrite(`EVENT(load): readyState = ${xhr.readyState}`);
+                if (xhr.readyState === 4) {
+                    if (xhr.status === 200) {
+                        completionHandler();
+                    } else {
+                        logResult(Failed, `xhr.onload, status = ${xhr.statusText}`);
+                    }
+                }
+            };
+
+            xhr.onerror = (err) => {
+                logResult(Failed, `xhr.onerror, status = ${xhr.statusText}`);
+            };
+
+            xhr.send(null);
+        }
+
+        function doFetch(delay, timeout, completionHandler)
+        {
+            if (window.internals)
+                window.internals.setMaximumIntervalForUserGestureForwardingForFetch(timeout);
+
+            fetch(`/xmlhttprequest/resources/download-header-with-delay.py?delay=${delay}`, { method: 'GET', cache: "no-cache" }).then(response => {
+                consoleWrite(`FETCH(resolved): status = ${response.status}`);
+                completionHandler();
+            }, error => {
+                consoleWrite(`FETCH(rejected): exception code = ${error.code}`);
+            });
+        }
+
+        function doFetchBlob(delay, timeout, completionHandler)
+        {
+            fetch(`/xmlhttprequest/resources/download-with-delay.py?iteration=1&delay=${delay}`, { method: 'GET', cache: "no-cache" }).then(response => {
+                consoleWrite(`FETCH(resolved): status = ${response.status}`);
+                if (window.internals)
+                    window.internals.setMaximumIntervalForUserGestureForwardingForFetch(timeout);
+                return response.blob();
+            }, error => {
+                consoleWrite(`FETCH(rejected): exception code = ${error.code}`);
+            }).then(response => {
+                consoleWrite(`FETCH(response resolved)`);
+                completionHandler();
+            }, error => {
+                consoleWrite(`FETCH(response rejected): exception code = ${error.code}`);
+            });
+        }
+
+        function doPromise(completionHandler)
+        {
+            const promise = new Promise( (resolutionFunc) => {
+                resolutionFunc();
+            });
+
+            promise.then(() => {
+                consoleWrite(`PROMISE(resolved)`);
+                completionHandler()
+            });
+        }
+
+        function doFetchThenPromise(completionHandler)
+        {
+            fetch(`/xmlhttprequest/resources/download-with-delay.py?iteration=1`, { method: 'GET', cache: "no-cache" }).then(response => {
+                consoleWrite(`FETCH(resolved): status = ${response.status}`);
+                return new Promise( (resolutionFunc) => resolutionFunc() );
+            }).then(() => {
+                consoleWrite(`PROMISE(resolved)`);
+                completionHandler()
+            });
+        }
+
+        function doFetchThenCrypto(completionHandler)
+        {
+            fetch(`/xmlhttprequest/resources/download-with-delay.py?iteration=1`, { method: 'GET', cache: "no-cache" }).then(response => {
+                consoleWrite(`FETCH(resolved): status = ${response.status}`);
+                return crypto.subtle.generateKey({name: "RSA-OAEP", modulusLength: 2048, publicExponent: new Uint8Array([0x01, 0x00, 0x01]), hash: "sha-1"}, false, ["decrypt", "encrypt", "wrapKey", "unwrapKey"]);
+            }).then(key => {
+                consoleWrite(`CRYPTO(key generated)`);
+                completionHandler()
+            });
+        }
+
+        function testComplete()
+        {
+            if (autoRun)
+                nextTest();
+        }
+
+        function runTest(test)
+        {
+            if (!test.sequence.length) {
+                switch (test.action) {
+                case 'play':
+                    if (test.success)
+                        run("shouldResolve(mediaElement.play()).then(testComplete, testComplete)");
+                    else
+                        run("shouldReject(mediaElement.play()).then(testComplete, testComplete)");
+                    break;
+
+                case 'popup':
+                    if (window.internals)
+                        internals.settings.setJavaScriptCanOpenWindowsAutomatically(false);
+                    testExpected('window.open("about:blank")', null, test.success ? '!=' : '==');
+                    testComplete();
+                    break;
+                }
+                return;
+            }
+
+            let command = test.sequence.shift().trim().split(' ');
+            let delay = command[0];
+            let method = command[1].toLowerCase();
+
+            switch (method) {
+            case 'xhr':
+                consoleWrite(`sending XHR, delay = ${delay}`);
+                doXHR(delay, test.timeout || 1.0, () => runTest(test));
+                break;
+            case 'timeout':
+                consoleWrite(`setting timeout, delay = ${delay}`);
+                setTimeout(() => { runTest(test); }, delay);
+                break;
+            case 'fetch':
+                consoleWrite(`fetching, delay = ${delay}`);
+                doFetch(delay, test.timeout || 1.0, () => runTest(test));
+                break;
+            case 'fetchblob':
+                consoleWrite(`fetching blob, delay = ${delay}`);
+                doFetchBlob(delay, test.timeout || 1.0, () => runTest(test));
+                break;
+            case 'promise':
+                consoleWrite(`promise`);
+                doPromise(() => runTest(test));
+                break;
+            case 'fetchthenpromise':
+                consoleWrite(`fetch then promise`);
+                doFetchThenPromise(() => runTest(test));
+                break;
+            case 'fetchthencrypto':
+                consoleWrite(`fetch then crypto`);
+                doFetchThenCrypto(() => runTest(test));
+                break;
+            }
+        }
+
+        let tests = [
+            { title : 'gesture -> XHR -> timeout -> XHR -> window.open: should fail because XHR only propagates user gesture for media',
+                action : 'popup', withkey : true,  success : false,  sequence : ['100 XHR', '100 timeout', '100 xhr'] },
+
+            { title : 'gesture -> timeout -> XHR -> timeout -> window.open: should succeed',
+                action : 'popup', withkey : true,  success : true,  sequence : ['100 timeout', '100 xhr', '100 timeout'] },
+
+            { title : 'gesture -> timeout -> XHR -> timeout -> video playback: should succeed',
+                action : 'play',  withkey : true,  success : true,  sequence : ['100 timeout', '100 XHR', '100 timeout'] },
+
+            { title : 'gesture -> XHR -> timeout -> XHR -> video playback: should succeed',
+                action : 'play',  withkey : true,  success : true,  sequence : ['100 XHR', '100 timeout', '100 xhr'] },
+
+            { title : 'NO gesture -> XHR -> timeout -> video playback: should fail',
+                action : 'play',  withkey : false,  success : false,  sequence : ['100 XHR', '100 timeout'] },
+
+            { title : 'gesture -> "long" XHR -> video playback: should fail',
+                action : 'play',  withkey : true,  success : false,  timeout : 0.2, sequence : ['300 XHR'] },
+
+            { title : 'gesture -> fetch -> window.open: should fail because Fetch only propagates user gesture for media',
+                action : 'popup', withkey : true,  success : false,  sequence : ['100 Fetch'] },
+
+            { title : 'gesture -> fetch -> video playback: should succeed',
+                action : 'play',  withkey : true,  success : true,  sequence : ['100 Fetch'] },
+
+            { title : 'gesture -> "long" Fetch -> video playback: should fail',
+                action : 'play',  withkey : true,  success : false,  timeout : 0.2, sequence : ['300 Fetch'] },
+
+            { title : 'no gesture -> fetch -> video playback: should fail',
+                action : 'play',  withkey : false,  success : false,  sequence : ['100 Fetch'] },
+
+            { title : 'gesture -> fetch -> blob -> window.open: should fail because Fetch only propagates user gesture for media',
+                action : 'popup', withkey : true,  success : false,  sequence : ['100 FetchBlob'] },
+
+            { title : 'gesture -> fetch -> blob -> video playback: should succeed',
+                action : 'play',  withkey : true,  success : true,  sequence : ['100 FetchBlob'] },
+
+            { title : 'gesture -> fetch -> "long" blob -> video playback: should fail',
+                action : 'play',  withkey : true,  success : false,  timeout : 0.2, sequence : ['300 FetchBlob'] },
+
+            { title : 'no gesture -> fetch -> blob -> video playback: should fail',
+                action : 'play',  withkey : false,  success : false,  sequence : ['100 FetchBlob'] },
+
+            { title : 'no gesture -> promise -> video playback: should fail',
+                action : 'play',  withkey : false,  success : false,  sequence : ['0 promise'] },
+
+            { title : 'gesture -> promise -> video playback: should fail because promise only propagates user gesture propagated through Fetch',
+                action : 'play',  withkey : true,  success : false,  sequence : ['0 promise'] },
+
+            { title : 'gesture -> fetch -> promise -> video playback: should succeed',
+                action : 'play',  withkey : true,  success : true,  sequence : ['0 FetchThenPromise'] },
+
+            { title : 'gesture -> fetch -> crypto -> video playback: should fail since the user gesture will not be propagated through other API even though it returns promises',
+                action : 'play',  withkey : true,  success : false,  sequence : ['0 FetchThenCrypto'] },
+
+        ];
+
+        function nextTest()
+        {
+            if (!tests.length) {
+                consoleWrite('');
+                endTest();
+                return;
+            }
+
+            let test = tests.shift();
+            let action = () => { runTest(test) };
+            consoleWrite(`<br>** ${test.title}`);
+            switch (test.action) {
+            case 'play':
+                let container = document.getElementById('parent');
+                if (container.firstChild)
+                    container.removeChild(container.firstChild);
+
+                mediaElement = document.createElement('video');
+                if (window.internals)
+                    internals.setMediaElementRestrictions(mediaElement, 'RequireUserGestureForAudioRateChange');
+
+                mediaElement.src = "/media-resources/content/" + findMediaFile("video", "test");
+                mediaElement.controls = 1;
+                container.appendChild(mediaElement);
+                waitForEvent('canplaythrough', event => {
+                    if (test.withkey)
+                        runWithKeyDown(action);
+                    else
+                        action();
+                });
+
+                break;
+
+            case 'popup':
+                if (test.withkey)
+                    runWithKeyDown(action);
+                else
+                    action();
+                break;
+            }
+        }
+
+        function start()
+        {
+            if (autoRun)
+                nextTest();
+        }
+
+    </script>
+</head>
+
+<body onload="start()">
+    <p>Test that a user gesture is preserved across XHR and setTimeout.</p>
+    <div id='parent'></div>
+    <button onclick="nextTest()">Run!</button><br>
+    <pre id='consoleLog'></pre>
+</body>
+</html>
+

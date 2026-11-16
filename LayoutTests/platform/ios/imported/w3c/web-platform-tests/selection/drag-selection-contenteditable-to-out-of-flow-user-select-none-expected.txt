@@ -1,0 +1,4 @@
+Editable content hereUnselectable OOF
+
+FAIL Drag from contenteditable into out-of-flow user-select:none extends selection to editable boundary. assert_true: Anchor node should be inside the contenteditable expected true got false
+

@@ -1,0 +1,48 @@
+<!DOCTYPE html><!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script>
+testRunner.dumpAsText();
+testRunner.waitUntilDone();
+
+function log(message) { document.getElementById("console").textContent += message + "\n"; }
+
+function waitForGamepadEvent(type, index) {
+    return new Promise(resolve => {
+        addEventListener(type, function handler(event) {
+            if (event.gamepad.index !== index)
+                return;
+            removeEventListener(type, handler);
+            resolve();
+        });
+    });
+}
+
+onmessage = (event) => {
+    if (event.data.type === "ready") {
+        log("Iframe in a separate process: " + (event.data.pid !== internals.processIdentifier));
+        testRunner.setMockGamepadDetails(3, "3", "", 0, 0, false);
+        testRunner.connectMockGamepad(3);
+    } else if (event.data.type === "result") {
+        log("Gamepad indices visible to the iframe: " + event.data.indices.join(", "));
+        testRunner.notifyDone();
+    }
+};
+
+async function runTest() {
+    for (const index of [0, 1, 2]) {
+        const connected = waitForGamepadEvent("gamepadconnected", index);
+        testRunner.setMockGamepadDetails(index, "" + index, "", 0, 0, false);
+        testRunner.connectMockGamepad(index);
+        await connected;
+    }
+
+    const disconnected = waitForGamepadEvent("gamepaddisconnected", 1);
+    testRunner.disconnectMockGamepad(1);
+    await disconnected;
+
+    const iframe = document.createElement("iframe");
+    iframe.allow = "gamepad";
+    iframe.src = "http://localhost:8000/gamepad/resources/initial-gamepads-iframe.html";
+    document.body.appendChild(iframe);
+}
+</script>
+<body onload="runTest()"><pre id="console"></pre></body>

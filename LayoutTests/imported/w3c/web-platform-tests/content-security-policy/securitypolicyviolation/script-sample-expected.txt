@@ -1,0 +1,9 @@
+
+
+PASS Inline script should have a sample.
+PASS Inline event handlers should have a sample.
+PASS JavaScript URLs in iframes should have a sample.
+PASS eval() should have a sample.
+PASS setInterval() should have a sample.
+PASS setTimeout() should have a sample.
+

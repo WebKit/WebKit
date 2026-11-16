@@ -1,0 +1,22 @@
+<style>
+html, body {
+    content-visibility: auto;
+}
+</style>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+onload = async () => {
+    let s0 = document.createElement('script');
+    s0.src = 'data:';
+    document.head.appendChild(s0);
+    if ('caches' in window) await caches.has('a');
+    document.styleSheets[0].disabled = true;
+    if ('caches' in window) await caches.has('b');
+    document.styleSheets[0].disabled = false;
+    document.body.offsetTop;
+    setTimeout(function() { document.write('This test should not crash.'); testRunner.notifyDone(); });
+};
+</script>

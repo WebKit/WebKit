@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html class="reftest-wait">
+<style>
+    :root {
+        color: blue;
+    }
+    @media (overflow-block: paged) {
+        :root {
+            color: red;
+        }
+    }
+    @media (overflow-block: scroll) {
+        :root {
+            color: green;
+        }
+    }
+    @media (overflow-block: none) {
+        :root {
+            color: red;
+        }
+    }
+</style>
+<p>This text should be green.</p>
+<script>
+addEventListener("load", () => {
+    if (!window.internals)
+        return;
+
+    internals.setPagination("LeftToRightPaginated", 0);
+
+    // Give it a chance to actually render as overflow-block: paged before switching back.
+    requestAnimationFrame(() => {
+        setTimeout(() => {
+            internals.setPagination("Unpaginated", 0);
+            document.documentElement.classList.remove("reftest-wait");
+        }, 0);
+    });
+});
+</script>
+</html>

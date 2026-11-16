@@ -1,0 +1,10 @@
+This test ensures that when the caret moves (via the accessibility selection API) into a stitched-away text run, the AXSelectedTextChanged notification reports the stitch-group representative, which is present in the tree, rather than the removed member. Otherwise an assistive technology client can be handed an element that is absent from its parent's children, which may cause navigation problems.
+
+PASS: webArea.addNotificationListener(notificationCallback) === true
+PASS: changeElement.role.includes('AXStaticText') === true
+PASS: changeElement.stringValue.includes('and then some more text') === true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Hello World and then some more text.

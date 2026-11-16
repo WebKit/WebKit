@@ -1,0 +1,96 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="../debugger/resources/site-isolation-debugger-test-utilities.js"></script>
+<script>
+function addCrossOriginIFrame() {
+    let crossOriginHost = location.hostname === "localhost" ? "127.0.0.1" : "localhost";
+    let iframe = document.createElement("iframe");
+    iframe.src = `http://${crossOriginHost}:8000/site-isolation/inspector/runtime/resources/frame-with-passphrase.html`;
+    document.body.appendChild(iframe);
+}
+
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Runtime.ExecutionContextCreated");
+
+    let crossOriginTarget;
+
+    suite.addTestCase({
+        name: "SiteIsolation.Runtime.ExecutionContextCreated.StaticIframe",
+        description: "The static cross-origin iframe's frame target should have an execution context with correct structure.",
+        async test() {
+            let frameTargets = WI.targets.filter((t) => t.type === WI.TargetType.Frame);
+            let urlTargetMap = await fetchDocumentURLsForTargets(frameTargets);
+            let mainFrameTarget = urlTargetMap.get(WI.networkManager.mainFrame.url);
+            crossOriginTarget = frameTargets.find((t) => t !== mainFrameTarget);
+
+            let context = crossOriginTarget.executionContext;
+            InspectorTest.expectNotNull(context, "Should have an ExecutionContext.");
+            InspectorTest.expectThat(typeof context.id === "number" && context.id > 0, "ExecutionContext should have a positive numeric id.");
+            InspectorTest.expectThat(typeof context.name === "string", "ExecutionContext should have a name string.");
+            InspectorTest.log(`ExecutionContext type: ${String(context.type)}`);
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Runtime.ExecutionContextCreated.ContextIsUsable",
+        description: "The execution context should be usable for evaluation.",
+        async test() {
+            InspectorTest.expectNotNull(crossOriginTarget.executionContext, "Frame target should have a page execution context.");
+
+            let response = await crossOriginTarget.RuntimeAgent.evaluate.invoke({
+                expression: "document.location.hostname",
+                objectGroup: "test",
+                returnByValue: true,
+            });
+
+            InspectorTest.expectThat(!response.wasThrown, "Evaluation using context should not throw.");
+            InspectorTest.expectThat(response.result.value && response.result.value.length > 0, "Should get a non-empty hostname from the cross-origin frame.");
+            InspectorTest.log(`Frame hostname: ${response.result.value}`);
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Runtime.ExecutionContextCreated.PerTargetContexts",
+        description: "Each frame target should own its own execution context. Context ids are per-target namespaces under site isolation (each frame's InjectedScriptManager counts from 1), so two frame targets in different processes may legitimately share a numeric id; the invariant is that each target has a distinct context object scoped to itself.",
+        async test() {
+            let frameTargets = WI.targets.filter((t) => t instanceof WI.FrameTarget);
+            InspectorTest.expectThat(frameTargets.length >= 2, "Should have at least 2 frame targets (main frame + cross-origin iframe).");
+
+            let contexts = new Set;
+            for (let target of frameTargets) {
+                let context = target.executionContext;
+                if (!context)
+                    continue;
+                InspectorTest.expectThat(!contexts.has(context), "Each frame target should own a distinct execution context object.");
+                InspectorTest.expectEqual(context.target, target, "An execution context should be scoped to its own frame target.");
+                contexts.add(context);
+            }
+
+            InspectorTest.expectThat(contexts.size >= 2, "Should have at least 2 distinct execution contexts (one per frame target).");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Runtime.ExecutionContextCreated.DynamicIframeReceivesContext",
+        description: "A dynamically added cross-origin iframe should also receive an execution context.",
+        async test() {
+            let committedPromise = WI.targetManager.awaitEvent(WI.TargetManager.Event.DidCommitProvisionalTarget);
+            InspectorTest.evaluateInPage("addCrossOriginIFrame()");
+            let event = await committedPromise;
+            let dynamicTarget = event.data.target;
+
+            InspectorTest.assert(dynamicTarget instanceof WI.FrameTarget);
+            if (!dynamicTarget.executionContext)
+                await dynamicTarget.awaitEvent(WI.FrameTarget.Event.ExecutionContextAdded);
+            InspectorTest.expectNotNull(dynamicTarget.executionContext, "Dynamically added cross-origin iframe should have an ExecutionContext.");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+
+<body onload="runTest()">
+<p>Test that Runtime.executionContextCreated events are correctly dispatched for frame targets under site isolation.</p>
+<iframe src="http://localhost:8000/site-isolation/inspector/runtime/resources/frame-with-passphrase.html"></iframe>
+</body>

@@ -1,0 +1,11 @@
+rules:
+- background-shorthand-serialization.html: [background]
+- background-clip-*: [background-clip]
+- background-attachment-*: [background-attachment]
+- background-color-*: [background-color]
+- background-image-*: [background-image]
+- background-origin-*: [background-origin]
+- background-position-*: [background-position]
+- background-repeat-*: [background-repeat]
+- background-size-*: [background-size]
+- box-shadow-*: [box-shadow]

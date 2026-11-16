@@ -1,0 +1,60 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<button id="control" aria-labelledby="control-label">fallback name</button>
+<p id="control-label">the resolved label</p>
+
+<script>
+var output = "This test ensures a large disconnected subtree whose elements carry ARIA relation attributes does not trigger a quadratic getElementByIdIncludingDisconnected() scan when accessibility relations are rebuilt.\n\n";
+var control, controlLabel;
+
+if (window.accessibilityController && window.internals) {
+    window.jsTestIsAsync = true;
+
+    // Force the initial relations build so subsequent rebuilds take the incremental
+    // (m_elementsWithRelationAttributes) path rather than the full-tree walk.
+    accessibilityController.accessibleElementById("control").titleUIElement();
+
+    setTimeout(function() {
+        control = document.getElementById("control");
+
+        // Build one large detached subtree, then give every element ARIA relation attributes.
+        // Having large detached subtrees is a realistic scenario for heavy, web-app-style pages.
+        const count = 5000;
+        const detached = document.createElement("div");
+        for (let i = 0; i < count; i++) {
+            const element = document.createElement("div");
+            element.id = `d${i}`;
+            detached.appendChild(element);
+        }
+        for (let i = 0; i < count; i++) {
+            const element = detached.children[i];
+            element.setAttribute("aria-labelledby", "missing-a missing-b missing-c missing-d missing-e");
+            element.setAttribute("aria-owns", "missing-f missing-g missing-h missing-i missing-j");
+        }
+
+        // Repeatedly dirty relations and force a synchronous rebuild.
+        for (let i = 0; i < 20; i++) {
+            control.setAttribute("aria-labelledby", i % 2 ? "control-label" : "control-label ");
+            internals.forceAXObjectCacheUpdate();
+            accessibilityController.accessibleElementById("control").titleUIElement();
+        }
+
+        // The connected control's aria-labelledby must still resolve to #control-label.
+        control = accessibilityController.accessibleElementById("control");
+        controlLabel = accessibilityController.accessibleElementById("control-label");
+        output += expect("controlLabel.isEqual(control.titleUIElement())", "true");
+        output += "PASS: Did not timeout.\n";
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

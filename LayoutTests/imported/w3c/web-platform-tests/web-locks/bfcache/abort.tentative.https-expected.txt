@@ -1,0 +1,6 @@
+
+PASS An immediately aborted lock on main thread should not prevent bfcache
+PASS An immediately aborted lock on a worker should not prevent bfcache
+PASS An immediately aborted lock on a nested worker should not prevent bfcache
+PASS An immediately aborted lock on a shared worker should not prevent bfcache
+

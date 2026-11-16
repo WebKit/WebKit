@@ -1,0 +1,57 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" 
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<title>Soft hyphen displayed when first character</title>
+</head>
+<body>
+<p>
+In all of the following, there should not be a hyphen before &ldquo;lorem&rdquo;.
+</p>
+
+<p>Do<span style="float:right; display:inline-block; border:1px solid red;">X</span>lorem ipsum</p>
+
+<p><span style="float:right; display:inline-block; border:1px solid red;">X</span>lorem ipsum</p>
+
+
+<p>Do<span style="position:relative; display:inline-block; border:1px solid red;">X</span>lorem ipsum</p>
+
+<p>Do<span style="position:absolute; right:0; display:inline-block; border:1px solid red;">X</span>lorem ipsum</p>
+
+Do<p>lorem ipsum</p>
+
+<p>Do<br/>lorem ipsum</p>
+
+<p>Do<span>lorem</span> ipsum</p>
+
+<p>D<span>o</span>lorem ipsum</p>
+
+<p>Do <span>lorem</span> ipsum</p>
+
+<p>D<span>o </span>lorem ipsum</p>
+
+<p>Do  <span>lorem</span> ipsum</p>
+
+<p>D<span>o  </span>lorem ipsum</p>
+
+<p>Do&nbsp;&nbsp;lorem</p><!-- WinIE displays as two spaces -->
+<p>Do lorem</p>
+<p>Do lorem</p>
+<p>Do lorem</p>
+<p>Do&nbsp;&nbsp;lorem</p><!-- WinIE displays as two spaces -->
+<p>Do&nbsp;&nbsp;lorem</p>
+
+<p>Do<span></span>lorem ipsum</p>
+
+<p>Dolorem ipsum</p>
+
+<p><span>Do</span>lorem ipsum</p>
+<p>Do<span>lorem ipsum</span></p>
+<p><span>Do</span>lorem ipsum</p>
+
+<p>The following pair should be the same:</p><!-- RenderText fix -->
+
+<p>W<span style="display:inline-block; border:1px solid red;">X</span>Y</p>
+<p>W<span style="display:inline-block; border:1px solid red;">X</span>Y</p>
+
+</body>

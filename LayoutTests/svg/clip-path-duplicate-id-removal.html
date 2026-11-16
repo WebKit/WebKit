@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>clip-path with duplicate IDs should work after removing non-registered element</title>
+<link rel="match" href="clip-path-duplicate-id-removal-expected.html">
+<style>
+    .target {
+        clip-path: url(#clipper);
+        width: 100px;
+        height: 100px;
+        background: green;
+    }
+</style>
+</head>
+<body>
+<div class="target"></div>
+
+<svg height="0" width="0">
+    <clipPath id="clipper" clipPathUnits="objectBoundingBox">
+        <rect width="0.5" height="0.5"/>
+    </clipPath>
+</svg>
+<svg height="0" width="0">
+    <clipPath id="clipper" clipPathUnits="objectBoundingBox">
+        <rect width="0.5" height="0.5"/>
+    </clipPath>
+</svg>
+<svg height="0" width="0">
+    <clipPath id="clipper" clipPathUnits="objectBoundingBox">
+        <rect width="0.5" height="0.5"/>
+    </clipPath>
+</svg>
+
+<script>
+    if (window.testRunner)
+        testRunner.waitUntilDone();
+
+    // Wait for initial paint so the clip-path is applied and cached,
+    // then remove the first SVG (which is NOT the registered resource
+    // since the last duplicate wins) and force a repaint.
+    requestAnimationFrame(() => {
+        setTimeout(() => {
+            document.querySelector('svg').remove();
+
+            // Force repaint to re-resolve the clip-path reference.
+            document.body.style.background = 'white';
+
+            requestAnimationFrame(() => {
+                if (window.testRunner)
+                    testRunner.notifyDone();
+            });
+        }, 0);
+    });
+</script>
+</body>
+</html>

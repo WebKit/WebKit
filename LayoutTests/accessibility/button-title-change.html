@@ -1,0 +1,32 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/js-test.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
+</head>
+<body>
+
+<button id="button">
+    <span id="counter">0<span>
+</button>
+
+<script>
+    if (window.accessibilityController) {
+        window.jsTestIsAsync = true;
+        let output = "Tests that the title of the button is properly updated when the text of its descendant changes.\n";
+
+        var button = accessibilityController.accessibleElementById("button");
+        output += expect("button.title", "'AXTitle: 0'");
+
+        document.getElementById("counter").innerText = "3";
+        setTimeout(async () => {
+            await waitFor(() => { return button.title == "AXTitle: 3"; });
+            output += expect("button.title", "'AXTitle: 3'");
+
+            debug(output);
+            finishJSTest();
+        }, 0);
+    }
+</script>
+</body>
+</html>

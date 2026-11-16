@@ -1,0 +1,16 @@
+Tests that a dedicated worker has the internals object with the WebGL functions when its script starts.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+PASS state.internals is "object"
+PASS state.settings is "undefined"
+PASS state.simulateEventForWebGLContext is "function"
+PASS state.webglMaxDrawingBufferSize is "function"
+PASS state.requestedGPU is "function"
+FAIL state.webglMaxDrawingBufferSizeResult should be valid. Was .
+FAIL state.requestedGPUResult should be default. Was .
+PASS successfullyParsed is true
+Some tests failed.
+
+TEST COMPLETE
+

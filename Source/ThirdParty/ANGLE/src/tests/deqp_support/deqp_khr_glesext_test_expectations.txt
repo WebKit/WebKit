@@ -1,0 +1,8 @@
+// Copyright 2025 The ANGLE Project Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+// See README.md for format.
+
+// Pixel 10
+486844704 PIXEL10 VULKAN : KHR-GLESEXT.fragment_shading_rate.complex.primitive_replace_keep_msaa_256x256 = FAIL

@@ -1,0 +1,6 @@
+
+FAIL margin rule without any preceding @page properties undefined is not an object (evaluating 'pagerule.cssRules.length')
+FAIL margin rule followed by @page properties undefined is not an object (evaluating 'pagerule.cssRules.length')
+FAIL margin rule preceded by @page properties undefined is not an object (evaluating 'pagerule.cssRules.length')
+FAIL margin rules with @page properties between undefined is not an object (evaluating 'pagerule.cssRules.length')
+

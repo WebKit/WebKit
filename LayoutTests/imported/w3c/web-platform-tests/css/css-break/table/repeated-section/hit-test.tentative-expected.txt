@@ -1,0 +1,7 @@
+
+PASS first
+PASS after first
+PASS before second
+FAIL second assert_equals: expected Element node <div id="hitme" style="width:20px; height:20px;"></div> but got Element node <div style="height:60px; background:blue;"></div>
+FAIL after second assert_equals: expected Element node <div id="header" style="display:table-header-group; break... but got Element node <div style="height:60px; background:blue;"></div>
+

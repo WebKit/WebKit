@@ -1,0 +1,11 @@
+
+
+FAIL vertical-lr: Right/Left keys navigate as primary axis assert_true: The select should be open. expected true got false
+FAIL vertical-lr: Down/Up keys navigate as secondary axis assert_true: The select should be open. expected true got false
+FAIL vertical-rl: Left/Right keys navigate as primary axis (block-flipped) assert_true: The select should be open. expected true got false
+FAIL vertical-rl: Down/Up keys navigate as secondary axis assert_true: The select should be open. expected true got false
+FAIL sideways-lr: Right/Left keys navigate as primary axis assert_true: The select should be open. expected true got false
+FAIL sideways-lr: Down/Up keys navigate as secondary axis assert_true: The select should be open. expected true got false
+FAIL sideways-rl: Left/Right keys navigate as primary axis (block-flipped) assert_true: The select should be open. expected true got false
+FAIL sideways-rl: Down/Up keys navigate as secondary axis assert_true: The select should be open. expected true got false
+

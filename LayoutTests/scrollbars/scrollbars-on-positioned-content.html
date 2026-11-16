@@ -1,0 +1,54 @@
+<html>
+	<head>
+		<style type="text/css">
+		.tables
+		{
+			border: 1px solid red;
+			overflow-y: auto;
+			top: 50px;
+			bottom: 0px;
+			position: absolute;
+		}
+		
+		.wrapper
+		{
+			border: 1px solid blue;
+			overflow-x: auto;
+			width: 300px;
+		}
+
+		.wrapper::-webkit-scrollbar
+		{
+			height: 9px;
+		}
+
+		.wrapper::-webkit-scrollbar-track
+		{
+			background-color: #E3E3E3;
+		}
+
+		.wrapper::-webkit-scrollbar-thumb
+		{
+			background: #CCCCCC;
+			border: 1px solid #ADADAD;
+		}
+		</style>
+	</head>
+	
+	<body>
+		
+		<p>This test passes if the custom scrollbar paints in the corrext spot, which is at the bottom of the purple div.</p>
+
+		<div class="tables">
+		<div class="wrapper">
+	
+			<div style="background-color:purple; width:500px; height:400px;"></div>
+
+		</div>
+		
+        <div style="background-color:green; width:15px; height:900px;"></div>
+        
+        </div>
+        
+	</body>
+</html>

@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+var i = 0;
+setTimeout(function() { i++; }, 0);
+setTimeout(function() { i++; }, 10);
+setTimeout(function() {
+    i++;
+    window.location.href = "?fired-" + i;
+}, 20);
+</script>
+</head>
+<body>
+</body>
+</html>

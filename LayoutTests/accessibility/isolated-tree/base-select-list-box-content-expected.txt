@@ -1,0 +1,19 @@
+This test verifies that a base appearance list box exposes all of its content where it is in the composed tree.
+
+PASS: axSelect.role === 'AXRole: AXList'
+PASS: parentMismatches(axSelect).join() === ''
+PASS: accessibilityController.accessibleElementById('apple').parentElement().isEqual(axSelect) === true
+PASS: accessibilityController.accessibleElementById('separator').role === 'AXRole: AXSplitter'
+PASS: axSelect.childAtIndex(2)?.stringValue === 'AXValue: More'
+PASS: accessibilityController.accessibleElementById('banana').parentElement().isEqual(axSelect) === true
+PASS: accessibilityController.accessibleElementById('cherry').parentElement().isEqual(axSelect) === true
+PASS: accessibilityController.accessibleElementById('date').parentElement().isEqual(axSelect) === true
+PASS: axSelect.selectedChildrenCount === 1
+PASS: axSelect.selectedChildAtIndex(0).isEqual(accessibilityController.accessibleElementById('banana')) === true
+PASS: accessibilityController.focusedElement.isEqual(accessibilityController.accessibleElementById('button')) === true
+PASS: accessibilityController.focusedElement.parentElement().isEqual(axSelect) === true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

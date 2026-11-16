@@ -1,0 +1,3 @@
+
+PASS ::backdrop is tree-abiding and should be allowed after ::slotted()
+

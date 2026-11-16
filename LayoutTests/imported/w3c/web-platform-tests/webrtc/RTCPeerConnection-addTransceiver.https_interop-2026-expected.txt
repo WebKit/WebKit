@@ -1,0 +1,6 @@
+
+PASS addTransceiver("video") with rid containing invalid non-alphanumeric characters should throw TypeError
+PASS addTransceiver("video") with rid longer than 16 characters should throw TypeError
+PASS addTransceiver("audio") with rid containing invalid non-alphanumeric characters should throw TypeError
+PASS addTransceiver("audio") with rid longer than 16 characters should throw TypeError
+

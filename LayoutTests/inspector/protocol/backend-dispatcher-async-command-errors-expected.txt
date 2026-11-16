@@ -1,0 +1,9 @@
+Testing that the error of an async command is sent with the id of that command.
+
+
+== Running test suite: Protocol.AsyncCommandErrors
+-- Running test case: ErrorWhileDispatchingAnotherCommand
+PASS: Runtime.evaluate should get its own response.
+PASS: Runtime.awaitPromise should get its error.
+Error message: Object has too long reference chain (must not be longer than 1000)
+

@@ -1,0 +1,4 @@
+CONSOLE MESSAGE: Blocked setting javascript:// This is JavaScript as the base URL because it is not a valid URL.
+
+PASS 'javascript:' is an invalid base URL.
+

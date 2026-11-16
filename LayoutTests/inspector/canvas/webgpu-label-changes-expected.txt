@@ -1,0 +1,11 @@
+
+== Running test suite: Canvas.WebGPU
+-- Running test case: Canvas.WebGPU.LabelChanges
+PASS: Renamed device should update the existing model.
+PASS: Renamed compute should update the existing model.
+PASS: Renamed render should update the existing model.
+PASS: Renaming should not recreate or duplicate pipelines.
+PASS: Clearing the device label should restore its original generated name.
+PASS: Clearing a compute label should restore a generated name.
+PASS: Clearing a render label should restore a generated name.
+

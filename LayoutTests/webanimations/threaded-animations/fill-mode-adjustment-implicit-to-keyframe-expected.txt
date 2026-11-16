@@ -1,0 +1,3 @@
+
+PASS Fill mode is not adjusted for effects that participate in composition due to an implicit "to" keyframe.
+

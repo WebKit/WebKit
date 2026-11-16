@@ -1,0 +1,3 @@
+This tests that in an isolated world the Content Security Policy of the parent origin (this page) is bypassed and a Web Worker is allowed to make an XHR request.
+
+PASS

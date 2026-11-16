@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<style>
+  div {
+      position: absolute;
+      top: 30px;
+      left: 30px;
+      width: 300px;
+      height: 300px;
+      border: 1px solid;
+  }
+  #a {
+      backdrop-filter: blur(30px);
+  }
+  #b {
+      will-change: transform;
+      font-size: 100px;
+  }
+</style>
+
+You should see no blur.
+
+<div id="a"></div>
+<div id="b">CLEAR</div>

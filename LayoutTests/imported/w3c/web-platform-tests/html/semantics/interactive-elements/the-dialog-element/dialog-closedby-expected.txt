@@ -1,0 +1,30 @@
+Outside
+
+PASS closedby=any, modeless
+PASS closedby=any, modal
+PASS closedby=any, open
+PASS closedby=closerequest, modeless
+PASS closedby=closerequest, modal
+PASS closedby=closerequest, open
+PASS closedby=none, modeless
+PASS closedby=none, modal
+PASS closedby=none, open
+PASS closedby=AnY, modeless
+PASS closedby=AnY, modal
+PASS closedby=AnY, open
+PASS closedby=ClOsErEqUeSt, modeless
+PASS closedby=ClOsErEqUeSt, modal
+PASS closedby=ClOsErEqUeSt, open
+PASS closedby=NoNe, modeless
+PASS closedby=NoNe, modal
+PASS closedby=NoNe, open
+PASS closedby=invalid, modeless
+PASS closedby=invalid, modal
+PASS closedby=invalid, open
+PASS closedby=, modeless
+PASS closedby=, modal
+PASS closedby=, open
+PASS closedby=null, modeless
+PASS closedby=null, modal
+PASS closedby=null, open
+

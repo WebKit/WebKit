@@ -1,0 +1,8 @@
+Outside
+
+PASS Open popover from closing beforetoggle event
+PASS Open double-nested popovers from closing beforetoggle event
+PASS Open double-nested popovers from closing beforetoggle event, dialog open
+PASS Open double-nested popovers from closing beforetoggle event, light dismiss
+PASS Showing a hint during a showPopover that hides an auto should throw InvalidStateError
+

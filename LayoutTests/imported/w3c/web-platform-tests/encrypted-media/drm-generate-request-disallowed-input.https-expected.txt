@@ -1,0 +1,5 @@
+
+PASS drm, temporary, cenc, initData longer than 64Kb characters
+PASS drm, temporary, cenc, invalid initdata (invalid pssh)
+PASS drm, temporary, cenc, invalid initdata (not pssh)
+

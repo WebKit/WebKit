@@ -1,0 +1,20 @@
+
+PASS :matrix_scalar:inputSource="const";cols=2;rows=2
+PASS :matrix_scalar:inputSource="const";cols=2;rows=3
+PASS :matrix_scalar:inputSource="const";cols=2;rows=4
+PASS :matrix_scalar:inputSource="const";cols=3;rows=2
+PASS :matrix_scalar:inputSource="const";cols=3;rows=3
+PASS :matrix_scalar:inputSource="const";cols=3;rows=4
+PASS :matrix_scalar:inputSource="const";cols=4;rows=2
+PASS :matrix_scalar:inputSource="const";cols=4;rows=3
+PASS :matrix_scalar:inputSource="const";cols=4;rows=4
+PASS :scalar_matrix:inputSource="const";cols=2;rows=2
+PASS :scalar_matrix:inputSource="const";cols=2;rows=3
+PASS :scalar_matrix:inputSource="const";cols=2;rows=4
+PASS :scalar_matrix:inputSource="const";cols=3;rows=2
+PASS :scalar_matrix:inputSource="const";cols=3;rows=3
+PASS :scalar_matrix:inputSource="const";cols=3;rows=4
+PASS :scalar_matrix:inputSource="const";cols=4;rows=2
+PASS :scalar_matrix:inputSource="const";cols=4;rows=3
+PASS :scalar_matrix:inputSource="const";cols=4;rows=4
+

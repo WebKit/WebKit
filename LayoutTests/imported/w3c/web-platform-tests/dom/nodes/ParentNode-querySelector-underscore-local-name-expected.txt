@@ -1,0 +1,4 @@
+hey
+
+PASS Element local name with an underscore in querySelector
+

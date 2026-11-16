@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <script src="/js-test-resources/testharness.js"></script>
+    <script src="/js-test-resources/testharnessreport.js"></script>
+    <script src="resources/sri-utilities.js"></script>
+</head>
+<body>
+    <div id="log"></div>
+    <div id="container"></div>
+<script>
+
+var main_host = '127.0.0.1';
+var remote_host = 'localhost';
+var port_string = "8000";
+var main_host_and_port = main_host + ':' + port_string;
+var remote_host_and_port = remote_host + ':' + port_string;
+
+var crossorigin_anon_script = location.protocol + '//' + remote_host_and_port + '/subresource-integrity/resources/crossorigin-anon-script-module.js';
+var crossorigin_creds_script = location.protocol + '//' + remote_host_and_port + '/subresource-integrity/resources/crossorigin-creds-script-module.js';
+var crossorigin_ineligible_script = location.protocol + '//' + remote_host_and_port + '/subresource-integrity/resources/crossorigin-ineligible-script-module.js';
+
+// Script tests from web-platform-tests/subresource-integrity
+
+new SRIModuleTest(
+    true,
+    "Same-origin with correct sha256 hash.",
+    "resources/matching-digest-module.js",
+    "sha256-cWh9nPfm7/mRbKhzarnRYlsJWz5XTNcsqPFzKEx+zSU="
+);
+
+new SRIModuleTest(
+    true,
+    "Same-origin with correct sha384 hash.",
+    "resources/matching-digest-module.js",
+    "sha384-g8fn+xx4btmBZDJlonZNN+dDSYjP5NsMqlJw0CSN6oGG+6MSH71sRhEPeAcRUMqJ"
+);
+
+new SRIModuleTest(
+    true,
+    "Same-origin with correct sha512 hash.",
+    "resources/matching-digest-module.js",
+    "sha512-v+XJeYrctfE2nOuR5oCz/JzMyhSzUtbmG4YEy2YbeAUzr+QaW3WmSdWAL9/JrSPFJW8BkLo5jQTO8GaWcNtRRg=="
+);
+
+new SRIModuleTest(
+    true,
+    "Same-origin with empty integrity.",
+    "resources/matching-digest-module.js",
+    ""
+);
+
+new SRIModuleTest(
+    false,
+    "Same-origin with incorrect hash.",
+    "resources/non-matching-digest-module.js",
+    "sha256-cWh9nPfm7/mRbKhzarnRYlsJWz5XTNcsqPFzKEx+zSU="
+);
+
+new SRIModuleTest(
+    true,
+    "Same-origin with multiple sha256 hashes, including correct.",
+    "resources/matching-digest-module.js",
+    "sha256-cWh9nPfm7/mRbKhzarnRYlsJWz5XTNcsqPFzKEx+zSU= sha256-deadbeefdeadbeefdeadbeefdeadbeefdeadbeefdead"
+);
+
+new SRIModuleTest(
+    true,
+    "Same-origin with multiple sha256 hashes, including unknown algorithm.",
+    "resources/matching-digest-module.js",
+    "sha256-cWh9nPfm7/mRbKhzarnRYlsJWz5XTNcsqPFzKEx+zSU= foo666-deadbeefdeadbeefdeadbeefdeadbeefdeadbeefdead"
+);
+
+new SRIModuleTest(
+    true,
+    "Same-origin with sha256 mismatch, sha512 match",
+    "resources/matching-digest-module.js",
+    "sha512-v+XJeYrctfE2nOuR5oCz/JzMyhSzUtbmG4YEy2YbeAUzr+QaW3WmSdWAL9/JrSPFJW8BkLo5jQTO8GaWcNtRRg== sha256-deadbeefdeadbeefdeadbeefdeadbeefdeadbeefdead"
+);
+
+new SRIModuleTest(
+    false,
+    "Same-origin with sha256 match, sha512 mismatch",
+    "resources/matching-digest-module.js",
+    "sha512-deadbeefspbnUnwooKGNNCb39nvg+EW0O9hDScTXeo/9pVZztLSUYU3LNV6H0lZapo8bCJUpyPPLAzE9fDzpxg== sha256-cWh9nPfm7/mRbKhzarnRYlsJWz5XTNcsqPFzKEx+zSU="
+);
+
+new SRIModuleTest(
+    true,
+    "<crossorigin='anonymous'> with correct hash, ACAO: *",
+    crossorigin_anon_script,
+    "sha256-viLyCYB6YddJKjUAJ4dZ1eHe+242Dd7wTICmvNj2IAA=",
+    "anonymous"
+);
+
+new SRIModuleTest(
+    false,
+    "<crossorigin='anonymous'> with incorrect hash, ACAO: *",
+    crossorigin_anon_script,
+    "sha256-deadbeefcSLlbFZCj1OACLxTxVck2TOrBTEdUbwz1yU=",
+    "anonymous"
+);
+
+new SRIModuleTest(
+    true,
+    "<crossorigin='use-credentials'> with correct hash, CORS-eligible",
+    crossorigin_creds_script,
+    "sha256-NngWiHG2N6KWjHhOcgGuF0iJXKR+MPMxl3Ip6wDAEGg=",
+    "use-credentials"
+);
+
+new SRIModuleTest(
+    false,
+    "<crossorigin='use-credentials'> with incorrect hash CORS-eligible",
+    crossorigin_creds_script,
+    "sha256-deadbeef2S+pTRZgiw3DWrhC6JLDlt2zRyGpwH7unU8=",
+    "use-credentials"
+);
+
+new SRIModuleTest(
+    false,
+    "<crossorigin='anonymous'> with CORS-ineligible resource",
+    crossorigin_ineligible_script,
+    "sha256-IhB+PkTnIf881zBDWNEOJ6pKtju9Kiw+L1fK5Zn/pl0=",
+    "anonymous"
+);
+
+new SRIModuleTest(
+    true,
+    "Cross-origin, empty integrity",
+    crossorigin_anon_script,
+    ""
+);
+
+new SRIModuleTest(
+    true,
+    "Same-origin with correct hash, options.",
+    "resources/matching-digest-module.js",
+    "sha256-cWh9nPfm7/mRbKhzarnRYlsJWz5XTNcsqPFzKEx+zSU=?foo=bar?spam=eggs"
+);
+
+new SRIModuleTest(
+    true,
+    "Same-origin with unknown algorithm only.",
+    "resources/matching-digest-module.js",
+    "foo666-U9WYDtBWkcHx13+9UKk/3Q5eoqDc4YGxYb07EPWzb9E="
+);
+
+// WebKit additions to the web-platform-tests test cases.
+// FIXME: Upstream these additional tests to the official web-platform-tests repository.
+
+new SRIModuleTest(
+    true,
+    "Same-origin with correct sha256 hash, using base64URL encoding.",
+    "resources/matching-digest-module.js",
+    "sha256-cWh9nPfm7_mRbKhzarnRYlsJWz5XTNcsqPFzKEx-zSU="
+);
+
+new SRIModuleTest(
+    false,
+    "Same-origin with correct sha256 hash, using intermixed base64 and base64URL encoding, should fail.",
+    "resources/matching-digest-module.js",
+    "sha256-cWh9nPfm7_mRbKhzarnRYlsJWz5XTNcsqPFzKEx+zSU="
+);
+
+new SRIModuleTest(
+    true,
+    "Same-origin with invalid syntax only.",
+    "resources/matching-digest-module.js",
+    "?foo=bar?spam=eggs"
+);
+
+new SRIModuleTest(
+    true,
+    "Same-origin with multiple valid sha256 hashes, including correct.",
+    "resources/matching-digest-module.js",
+    "sha256-cWh9nPfm7/mRbKhzarnRYlsJWz5XTNcsqPFzKEx+zSU= sha256-cWh9nPfm7/mRbKhzarnRYlsJWz5XTNcsqPFzKEx+zSU="
+);
+
+new SRIModuleTest(
+    false,
+    "Same-origin with incorrect hash, options.",
+    "resources/matching-digest-module.js",
+    "sha256-U9WYDtBWkcHx13+9UKk/3Q5eoqDc4YGxYb07EPWzb9e=?foo=bar?spam=eggs"
+);
+
+SRITests.execute();
+
+</script>
+</body>
+</html>

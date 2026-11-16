@@ -1,0 +1,17 @@
+This test ensures that live region searches work correctly after dynamic page changes.
+
+PASS: webArea.uiElementCountForSearchPredicate(null, true, 'AXLiveRegionSearchKey', '', false, false) === 0
+PASS: webArea.uiElementCountForSearchPredicate(null, true, 'AXLiveRegionSearchKey', '', false, false) === 1
+PASS: webArea.uiElementCountForSearchPredicate(null, true, 'AXLiveRegionSearchKey', '', false, false) === 0
+PASS: webArea.uiElementCountForSearchPredicate(null, true, 'AXLiveRegionSearchKey', '', false, false) === 1
+PASS: webArea.uiElementCountForSearchPredicate(null, true, 'AXLiveRegionSearchKey', '', false, false) === 0
+PASS: webArea.uiElementCountForSearchPredicate(null, true, 'AXLiveRegionSearchKey', '', false, false) === 1
+PASS: webArea.uiElementCountForSearchPredicate(null, true, 'AXLiveRegionSearchKey', '', false, false) === 2
+PASS: webArea.uiElementCountForSearchPredicate(null, true, 'AXLiveRegionSearchKey', '', false, false) === 3
+PASS: webArea.uiElementCountForSearchPredicate(null, true, 'AXLiveRegionSearchKey', '', false, false) === 2
+PASS: webArea.uiElementCountForSearchPredicate(null, true, 'AXLiveRegionSearchKey', '', false, false) === 1
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Hello

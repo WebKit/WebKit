@@ -1,0 +1,50 @@
+
+PASS CSS Values and Units Test: CSS if() function cycles
+PASS CSS Values and Units Test: CSS if() function cycles 1
+PASS CSS Values and Units Test: CSS if() function cycles 2
+PASS CSS Values and Units Test: CSS if() function cycles 3
+PASS CSS Values and Units Test: CSS if() function cycles 4
+PASS CSS Values and Units Test: CSS if() function cycles 5
+PASS CSS Values and Units Test: CSS if() function cycles 6
+PASS CSS Values and Units Test: CSS if() function cycles 7
+PASS CSS Values and Units Test: CSS if() function cycles 8
+PASS CSS Values and Units Test: CSS if() function cycles 9
+PASS CSS Values and Units Test: CSS if() function cycles 10
+PASS CSS Values and Units Test: CSS if() function cycles 11
+PASS CSS Values and Units Test: CSS if() function cycles 12
+PASS CSS Values and Units Test: CSS if() function cycles 13
+PASS CSS Values and Units Test: CSS if() function cycles 14
+PASS CSS Values and Units Test: CSS if() function cycles 15
+PASS CSS Values and Units Test: CSS if() function cycles 16
+PASS CSS Values and Units Test: CSS if() function cycles 17
+FAIL CSS Values and Units Test: CSS if() function cycles 18 assert_equals: "if(style(not (--x: var(--y))): true_value;
+          else: false_value)" should be substituted to "true_value". expected "true_value" but got "false_value"
+FAIL CSS Values and Units Test: CSS if() function cycles 19 assert_equals: "if(style(not (--x: var(--y))): true_value;
+          else: false_value)" should be substituted to "true_value". expected "true_value" but got "false_value"
+PASS CSS Values and Units Test: CSS if() function cycles 20
+PASS CSS Values and Units Test: CSS if() function cycles 21
+PASS CSS Values and Units Test: CSS if() function cycles 22
+PASS CSS Values and Units Test: CSS if() function cycles 23
+PASS CSS Values and Units Test: CSS if() function cycles 24
+PASS CSS Values and Units Test: CSS if() function cycles 25
+PASS CSS Values and Units Test: CSS if() function cycles 26
+PASS CSS Values and Units Test: CSS if() function cycles 27
+PASS CSS Values and Units Test: CSS if() function cycles 28
+PASS CSS Values and Units Test: CSS if() function cycles 29
+PASS CSS Values and Units Test: CSS if() function cycles 30
+PASS CSS Values and Units Test: CSS if() function cycles 31
+PASS CSS Values and Units Test: CSS if() function cycles 32
+PASS CSS Values and Units Test: CSS if() function cycles 33
+PASS CSS Values and Units Test: CSS if() function cycles 34
+PASS CSS Values and Units Test: CSS if() function cycles 35
+PASS CSS Values and Units Test: CSS if() function cycles 36
+PASS CSS Values and Units Test: CSS if() function cycles 37
+PASS CSS Values and Units Test: CSS if() function cycles 38
+PASS CSS Values and Units Test: CSS if() function cycles 39
+PASS CSS Values and Units Test: CSS if() function cycles 40
+PASS CSS Values and Units Test: CSS if() function cycles 41
+PASS CSS Values and Units Test: CSS if() function cycles 42
+PASS CSS Values and Units Test: CSS if() function cycles 43
+PASS CSS Values and Units Test: CSS if() function cycles 44
+PASS CSS Values and Units Test: CSS if() function cycles 45
+

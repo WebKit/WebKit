@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src=media-file.js></script>
+        <script src=video-test.js></script>
+
+        <script>
+            var canplaythroughCount = 0;
+            var video;
+
+            function start()
+            {
+                video = document.querySelector("video");
+                waitForEvent("ended", ended);
+                video.src = "content/test-inaccurate-duration.mp4"
+            }
+
+            function ended()
+            {
+               testExpected("video.ended", true);
+               endTest();
+            }
+        </script>
+    </head>
+    <body onload="start()">
+        <video controls autoplay></video>
+        <p><b>Test ended by:</b>
+        <ol>
+            <li>Play the inaccurate duration video to the end.</li>
+            <li>Verify that 'ended' event fires.</li>
+        </ol>
+        </p>
+    </body>
+</html>

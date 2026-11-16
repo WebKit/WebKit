@@ -1,0 +1,5 @@
+Test content
+
+Harness Error (FAIL), message = TypeError: Module name, 'foo' does not resolve to a valid URL.
+
+

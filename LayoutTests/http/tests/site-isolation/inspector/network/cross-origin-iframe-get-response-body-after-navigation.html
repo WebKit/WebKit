@@ -1,0 +1,106 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script>
+let iframe;
+
+function loadIFrame(content) {
+    let src = "http://localhost:8000/site-isolation/inspector/network/resources/fetch-content-iframe.html?content=" + content;
+    if (!iframe) {
+        // Mirror the proven addIFrame() ordering (see cross-origin-iframe-get-response-body):
+        // attach the load listener and set src BEFORE appending, so the load event is reliably
+        // observed and the subresource fetch is triggered only after the frame target exists and
+        // Network instrumentation is enabled. (Appending first would load about:blank and race.)
+        iframe = document.createElement("iframe");
+        iframe.addEventListener("load", () => iframe.contentWindow.postMessage({type: "Fetch"}, "*"));
+        iframe.src = src;
+        document.body.appendChild(iframe);
+    } else {
+        // Navigate the existing iframe (same origin, so it stays in the same WebContent
+        // process); the single load listener re-fires and re-fetches based on the new query.
+        iframe.src = src;
+    }
+}
+
+function test() {
+    // Loads a subresource in a cross-origin iframe, then navigates the iframe (same origin,
+    // so it stays in the same WebContent process) and loads another subresource. This checks
+    // that getResponseBody keeps working across a navigation (the post-navigation resource is
+    // retrievable), and observes -- without asserting -- whether the pre-navigation resource's
+    // content is still retrievable afterward (store retention across navigation is not
+    // contractually defined). Subresources are triggered post-load (via postMessage) so their
+    // capture does not depend on process-spawn instrumentation timing.
+
+    // Require ALL substrings to match. Under Site Isolation the child frame's own document
+    // (fetch-content-iframe.html?content=<content>) also surfaces as a resource whose URL
+    // contains the content string, so matching on the content alone is ambiguous; also
+    // requiring "echo.py" pins the match to the subresource fetch we actually want to read.
+    function waitForResource(...urlSubstrings) {
+        return new Promise((resolve) => {
+            function onResourceAdded(event) {
+                let resource = event.data.resource;
+                if (!resource || !resource.url || !urlSubstrings.every((s) => resource.url.includes(s)))
+                    return;
+                WI.Frame.removeEventListener(WI.Frame.Event.ResourceWasAdded, onResourceAdded);
+                resolve(resource);
+            }
+            WI.Frame.addEventListener(WI.Frame.Event.ResourceWasAdded, onResourceAdded);
+        });
+    }
+
+    async function finish(resource) {
+        if (!resource.finished && !resource.failed)
+            await resource.awaitEvent(WI.Resource.Event.LoadingDidFinish);
+    }
+
+    let beforeRequestId;
+
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Network.CrossOriginIFrame.GetResponseBody.AfterNavigation");
+
+    suite.addTestCase({
+        name: "SiteIsolation.Network.CrossOriginIFrame.GetResponseBody.AfterNavigation.Before",
+        description: "getResponseBody should return the pre-navigation resource's content.",
+        async test() {
+            let resourcePromise = waitForResource("echo.py", "before-navigation");
+            InspectorTest.evaluateInPage("loadIFrame('before-navigation')");
+            let resource = await resourcePromise;
+            await finish(resource);
+
+            beforeRequestId = resource.requestIdentifier;
+            InspectorTest.expectThat(!!beforeRequestId, "Pre-navigation resource should have a request identifier.");
+
+            let {body} = await WI.backendTarget.NetworkAgent.getResponseBody(beforeRequestId);
+            InspectorTest.expectEqual(body, "before-navigation", "Pre-navigation body should match.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Network.CrossOriginIFrame.GetResponseBody.AfterNavigation.After",
+        description: "After the iframe navigates, getResponseBody should return the new resource's content; the old resource's availability is observed.",
+        async test() {
+            let resourcePromise = waitForResource("echo.py", "after-navigation");
+            InspectorTest.evaluateInPage("loadIFrame('after-navigation')");
+            let resource = await resourcePromise;
+            await finish(resource);
+
+            let {body} = await WI.backendTarget.NetworkAgent.getResponseBody(resource.requestIdentifier);
+            InspectorTest.expectEqual(body, "after-navigation", "Post-navigation body should match (getResponseBody still works after navigation).");
+
+            // Observe (do not assert) whether the pre-navigation resource is still retrievable.
+            let oldAvailable;
+            try {
+                await WI.backendTarget.NetworkAgent.getResponseBody(beforeRequestId);
+                oldAvailable = true;
+            } catch (e) {
+                oldAvailable = false;
+            }
+            InspectorTest.log("Pre-navigation resource still retrievable after navigation: " + oldAvailable);
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+
+<body onload="runTest()">
+<p>Tests Network.getResponseBody behavior across a cross-origin iframe navigation under Site Isolation.</p>
+</body>

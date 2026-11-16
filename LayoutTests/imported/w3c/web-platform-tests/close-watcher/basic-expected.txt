@@ -1,0 +1,9 @@
+
+PASS requestClose() with no user activation
+PASS destroy() then requestClose()
+PASS close() then requestClose()
+PASS requestClose() then destroy()
+PASS close() then destroy()
+PASS destroy() then close request
+PASS Close request then destroy()
+

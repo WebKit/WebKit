@@ -1,0 +1,38 @@
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="threaded-animations-utils.js"></script>
+
+<style>
+
+@keyframes hue-rotate {
+    to { filter: hue-rotate(180deg) }
+}
+
+@keyframes contrast {
+    to { filter: contrast(0%) }
+}
+
+#target {
+    animation-name: contrast, hue-rotate;
+    animation-duration: 1000s;
+}
+
+</style>
+
+<div id="target"></div>
+
+<script>
+
+promise_test(async test => {
+    // Wait until the animations are commited to the remote layer tree.
+    await Promise.all(target.getAnimations().map(animation => animation.ready));
+    await threadedAnimationsCommit();
+
+    assert_equals(window.internals?.acceleratedAnimationsForElement(target).length, 0);
+
+    // Wait one more frame for remote effects to be applied to ensure that
+    // the remote layer tree is in a consistent state and does not crash.
+    await new Promise(requestAnimationFrame);
+}, "Composing incompatible filter values throughout multiple effects does not allow acceleration.");
+
+</script>

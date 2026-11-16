@@ -1,0 +1,30 @@
+Texture upload should not change texture wrap parameters
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+TEST COMPLETE: 19 PASS, 0 FAIL
+
+PASS gl = wtu.create3DContext(canvas, undefined, 2) is non-null.
+
+
+PASS getError was expected value: NO_ERROR :
+PASS bottom left should be 16,32,48
+PASS bottom right pixels should be 64,80,96
+PASS top left pixels should be 112,128,144
+PASS top right pixels should be 160,176,192
+PASS bottom left should be 16,32,48
+PASS bottom right pixels should be 64,80,96
+PASS top left pixels should be 112,128,144
+PASS top right pixels should be 160,176,192
+PASS bottom left should be 16,32,48
+PASS bottom right pixels should be 64,80,96
+PASS top left pixels should be 112,128,144
+PASS top right pixels should be 160,176,192
+PASS bottom left should be 16,32,48
+PASS bottom right pixels should be 64,80,96
+PASS top left pixels should be 112,128,144
+PASS top right pixels should be 160,176,192
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,17 @@
+<body>
+    <video id="video1" width="1"></video>
+    <video id="video2" width="1"></video>
+    <script src="full-screen-test.js"></script>
+    <script src=../media/media-file.js></script>
+    <script>
+        var video2 = document.getElementById('video2');
+        // Bail out early if the full screen API is not enabled or is missing:
+        if (Element.prototype.webkitRequestFullScreen == undefined) {
+            logResult(false, "Element.prototype.webkitRequestFullScreen == undefined");
+            endTest();
+        } else {
+            waitForEventTestAndEnd(document, 'webkitfullscreenchange', "video2.clientWidth==document.body.clientWidth");
+            runWithKeyDown(function(){video2.webkitRequestFullScreen()});
+        }
+    </script>
+</body>

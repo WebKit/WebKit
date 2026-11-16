@@ -1,0 +1,125 @@
+<!DOCTYPE html><!-- webkit-test-runner [ HTMLEnhancedSelectMultipleDropdownBoxEnabled=true IsAccessibilityIsolatedTreeEnabled=true ] -->
+<html>
+<head>
+<script src="../../../resources/accessibility-helper.js"></script>
+<script src="../../../resources/js-test.js"></script>
+<style>
+.base, .base::picker(select) {
+    appearance: base-select;
+}
+</style>
+</head>
+<body>
+
+<select id="nativeMultiple" multiple size="1">
+    <option id="nativeMultipleCheese" selected>Cheese</option>
+    <option id="nativeMultipleHam">Ham</option>
+    <option selected>Olives</option>
+</select>
+
+<select id="baseMultiple" class="base" multiple size="1">
+    <option id="baseMultipleCheese" selected>Cheese</option>
+    <option id="baseMultipleHam">Ham</option>
+    <option selected>Olives</option>
+</select>
+
+<select id="nativeButton">
+    <button>Fruit: <selectedcontent></selectedcontent></button>
+    <option>Apple</option>
+    <option id="nativeButtonBanana">Banana</option>
+</select>
+
+<select id="baseButton" class="base">
+    <button>Fruit: <selectedcontent></selectedcontent></button>
+    <option>Apple</option>
+    <option id="baseButtonBanana">Banana</option>
+</select>
+
+<select id="nativeNestedButton">
+    <button><span>Fruit: </span><selectedcontent></selectedcontent></button>
+    <option>Apple</option>
+    <option>Banana</option>
+</select>
+
+<select id="baseNestedButton" class="base">
+    <button><span>Fruit: </span><selectedcontent></selectedcontent></button>
+    <option>Apple</option>
+    <option>Banana</option>
+</select>
+
+<select id="nativeMultipleButton" multiple size="1">
+    <button>Toppings: <selectedcontent></selectedcontent></button>
+    <option id="nativeMultipleButtonCheese" selected>Cheese</option>
+    <option id="nativeMultipleButtonHam">Ham</option>
+    <option selected>Olives</option>
+</select>
+
+<select id="baseMultipleButton" class="base" multiple size="1">
+    <button>Toppings: <selectedcontent></selectedcontent></button>
+    <option id="baseMultipleButtonCheese" selected>Cheese</option>
+    <option id="baseMultipleButtonHam">Ham</option>
+    <option selected>Olives</option>
+</select>
+
+<script>
+var output = "This test ensures that the value of a dropdown box is the text its button shows.\n\n";
+
+function selectOnly(id, optionIds)
+{
+    for (const option of document.getElementById(id).options)
+        option.selected = optionIds.includes(option.id);
+}
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    setTimeout(async function() {
+        for (const id of ["nativeMultiple", "baseMultiple"]) {
+            window.axSelect = await waitForElementById(id);
+            output += `${id}:\n`;
+            output += await expectAsync("axSelect.stringValue", "'AXValue: 2 Items'");
+            selectOnly(id, [`${id}Cheese`]);
+            output += await expectAsync("axSelect.stringValue", "'AXValue: Cheese'");
+            selectOnly(id, [`${id}Ham`]);
+            output += await expectAsync("axSelect.stringValue", "'AXValue: Ham'");
+            selectOnly(id, []);
+            output += await expectAsync("axSelect.stringValue", "'AXValue: 0 Items'");
+        }
+
+        for (const id of ["nativeButton", "baseButton"]) {
+            window.axSelect = await waitForElementById(id);
+            output += `${id}:\n`;
+            output += await expectAsync("axSelect.stringValue", "'AXValue: Fruit: Apple'");
+            document.getElementById(`${id}Banana`).selected = true;
+            output += await expectAsync("axSelect.stringValue", "'AXValue: Fruit: Banana'");
+            document.querySelector(`#${id} > button`).firstChild.data = "Pick: ";
+            output += await expectAsync("axSelect.stringValue", "'AXValue: Pick: Banana'");
+        }
+
+        for (const id of ["nativeNestedButton", "baseNestedButton"]) {
+            window.axSelect = await waitForElementById(id);
+            output += `${id}:\n`;
+            output += await expectAsync("axSelect.stringValue", "'AXValue: Fruit: Apple'");
+            document.querySelector(`#${id} span`).firstChild.data = "Pick: ";
+            output += await expectAsync("axSelect.stringValue", "'AXValue: Pick: Apple'");
+        }
+
+        for (const id of ["nativeMultipleButton", "baseMultipleButton"]) {
+            window.axSelect = await waitForElementById(id);
+            output += `${id}:\n`;
+            output += await expectAsync("axSelect.stringValue", "'AXValue: Toppings: 2 Items'");
+            selectOnly(id, [`${id}Ham`]);
+            output += await expectAsync("axSelect.stringValue", "'AXValue: Toppings: Ham'");
+            selectOnly(id, []);
+            output += await expectAsync("axSelect.stringValue", "'AXValue: Toppings: 0 Items'");
+        }
+
+        for (const select of document.querySelectorAll("select"))
+            select.style.display = "none";
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

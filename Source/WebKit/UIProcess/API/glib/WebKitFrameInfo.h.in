@@ -1,0 +1,47 @@
+/*
+ * Copyright (C) 2026 Tau Gärtli
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public License
+ * along with this library; see the file COPYING.LIB.  If not, write to
+ * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ * Boston, MA 02110-1301, USA.
+ */
+
+@API_SINGLE_HEADER_CHECK@
+
+#pragma once
+
+#include <glib-object.h>
+#include <@API_INCLUDE_PREFIX@/WebKitDefines.h>
+
+G_BEGIN_DECLS
+
+#define WEBKIT_TYPE_FRAME_INFO (webkit_frame_info_get_type())
+
+typedef struct _WebKitFrameInfo WebKitFrameInfo;
+
+WEBKIT_API GType
+webkit_frame_info_get_type            (void);
+
+WEBKIT_API WebKitFrameInfo *
+webkit_frame_info_ref                 (WebKitFrameInfo *info);
+
+WEBKIT_API void
+webkit_frame_info_unref               (WebKitFrameInfo *info);
+
+WEBKIT_API gboolean
+webkit_frame_info_is_main_frame       (WebKitFrameInfo *info);
+
+G_DEFINE_AUTOPTR_CLEANUP_FUNC (WebKitFrameInfo, webkit_frame_info_unref)
+
+G_END_DECLS

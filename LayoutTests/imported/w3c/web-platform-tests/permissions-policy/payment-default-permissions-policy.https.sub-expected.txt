@@ -1,0 +1,5 @@
+
+PASS Payment Request API is enabled by default the top-level document.
+PASS Payment Request API is enabled by default in same-origin iframes.
+PASS Payment Request API is disabled by default in cross-origin iframes.
+

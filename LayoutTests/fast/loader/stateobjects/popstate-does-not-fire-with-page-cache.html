@@ -1,0 +1,81 @@
+<!-- webkit-test-runner [ UsesBackForwardCache=true ] -->
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../../resources/js-test-pre.js"></script>
+<div id="description"></div>
+<pre id="console"></pre>
+<script>
+description('Tests that popstate events do not fire when navigating between pages that are in the page cache, since those are not same-document navigations.');
+
+var testWindow;
+
+onload = function()
+{
+    testWindow = window.open('resources/popstate-does-not-fire-with-page-cache-1.html');
+    if (!testWindow)
+        testFailed('Could not open test window');
+}
+
+var testWindowLoadFireCount = 0;
+var testWindowPopstateFireCount = 0;
+
+function onTestWindowLoad(event)
+{
+    debug('load fired');
+    testWindowLoadFireCount++;
+
+    switch (testWindowLoadFireCount) {
+    case 1:
+        debug('pushState with new state object for page 1');
+        testWindow.history.pushState('newState', '');
+        debug('going to page 2');
+        // Set the location in a timeout to generate a history entry
+        setTimeout(function() {testWindow.location.href = 'resources/popstate-does-not-fire-with-page-cache-2.html';}, 0);            
+        break;            
+    case 2:
+        debug('going back to page 1 with new state object');
+        timeoutHandle = setTimeout(function() {
+            testWindow.history.back();
+            setTimeout(() => {
+                shouldBe("testWindowPopstateFireCount", "1");
+                testWindow.close();
+                finishJSTest();
+            }, 20000);
+        }, 0);
+        break;
+    default:
+        testFailed('unexpected load event state');
+        break;            
+    }
+}
+
+function onTestWindowPageShow(event)
+{
+    debug("pageshow fired - persisted=" + event.persisted);
+    if (!event.persisted)
+        return;
+
+    setTimeout(() => {
+        // Should not have fired a popstate event since the navigation wasn't within the same document.
+        shouldBe("testWindowPopstateFireCount", "0");
+        debug('going back to page 1 in initial state');
+        setTimeout(function() {testWindow.history.back();}, 0);
+    }, 10);
+}
+
+function onTestWindowPopState(event)
+{
+    debug('popstate fired with state ' + event.state);
+    testWindowPopstateFireCount++;
+    shouldBe("testWindowPopstateFireCount", "1");
+    clearTimeout(timeoutHandle);
+    setTimeout(function() {
+        testWindow.close();
+        finishJSTest();
+    }, 0);
+}
+var jsTestIsAsync = true;
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</html>

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test.js"></script>
+<script>
+
+description('This tests repeated queueing of event loop tasks. Event loop should eventually yield to the run loop.');
+
+if (!window.internals)
+    testFailed('This test relies on window.internals');
+else {
+    jsTestIsAsync = true;
+    logs = [];
+}
+
+function slowFunction(duration)
+{
+    const startTime = performance.now();
+    while (performance.now() < startTime + duration);
+}
+
+let executedTaskCount = 0;
+function scheduleSlowTask()
+{
+    internals.queueTask("DOMManipulation", () => {
+        slowFunction(10);
+        ++executedTaskCount;
+    });
+}
+
+function runTest()
+{
+    setTimeout(() => {
+        shouldBeTrue('executedTaskCount < 100');
+        finishJSTest();
+    }, 100);
+    for (let i = 0; i < 100; ++i)
+        scheduleSlowTask();
+}
+
+onload = runTest;
+
+</script>
+</body>
+</html>

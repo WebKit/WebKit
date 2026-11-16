@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../resources/js-test.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
+</head>
+<body>
+
+<table id="table">
+    <thead id="table-head">
+        <tr id="row-in-head">
+            <th id="a" scope="row">A</th>
+            <td id="b">B</td>
+            <td>C</td>
+        </tr>
+    </thead>
+    <tbody id="table-body">
+        <tr id="row-in-body">
+            <th>D</th>
+            <td>E</td>
+            <td>F</td>
+        </tr>
+        <tr>
+            <td id="g">G</td>
+            <td>H</td>
+            <td>I</td>
+        </tr>
+    </tbody>
+</table>
+
+<script>
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+    var output = "";
+
+    var table = accessibilityController.accessibleElementById("table");
+    var cellB = table.cellForColumnAndRow(1, 0);
+    var cellE = table.cellForColumnAndRow(1, 1);
+
+    output += `Cell B should have 1 rowHeaders (has ${cellB.rowHeaders().length}) and 0 columnHeaders (has ${cellB.columnHeaders().length})\n`;
+    output += `Cell E should have 1 rowHeader (has ${cellE.rowHeaders().length}) and 1 columnHeader (has ${cellE.columnHeaders().length})\n`;
+
+    output += "Move row in <thead> to <tbody>:\n";
+    var headRow = document.getElementById("row-in-head");
+    var bodyRow = document.getElementById("row-in-body");
+    var thead = document.getElementById("table-head");
+
+    bodyRow.before(headRow);
+    thead.remove();
+
+    setTimeout(async () => {
+        await waitFor(() => table.cellForColumnAndRow(1, 0));
+        cellB = table.cellForColumnAndRow(1, 0);
+        output += `Cell B should have 1 rowHeader (has ${cellB.rowHeaders().length}) and 0 columnHeaders (has ${cellB.columnHeaders().length})\n`;
+        output += `Cell E should have 1 rowHeader (has ${cellE.rowHeaders().length}) and 0 columnHeaders (has ${cellE.columnHeaders().length})\n`;
+
+        output += "Add header above E:\n";
+
+        let th = document.createElement("th");
+        th.textContent = "J";
+        document.getElementById("a").after(th);
+
+        await waitFor(() => table.cellForColumnAndRow(1, 1).columnHeaders().length);
+        cellE = table.cellForColumnAndRow(1, 1);
+        output += `Cell E should have 1 rowHeaders (has ${cellE.rowHeaders().length}) and 1 columnHeader (has ${cellE.columnHeaders().length})\n`;
+
+        axDebug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

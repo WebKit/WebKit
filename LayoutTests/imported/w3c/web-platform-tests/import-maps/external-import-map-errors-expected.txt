@@ -1,0 +1,5 @@
+
+PASS Test that an external import map fires an error event
+PASS Test that an external import map fires an error event, regardless of attribute order
+PASS Test that an external import map in markup fires an error event
+

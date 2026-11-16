@@ -1,0 +1,14 @@
+
+PASS Same-host fetches are strictly same-site
+PASS Subdomain fetches are strictly same-site
+PASS Cross-site fetches are cross-site
+PASS Same-host redirecting to same-host fetches are strictly same-site
+PASS Subdomain redirecting to same-host fetches are strictly same-site
+PASS Cross-site redirecting to same-host fetches are cross-site
+PASS Same-host redirecting to subdomain fetches are strictly same-site
+PASS Subdomain redirecting to subdomain fetches are strictly same-site
+PASS Cross-site redirecting to subdomain fetches are cross-site
+PASS Same-host redirecting to cross-site fetches are cross-site
+PASS Subdomain redirecting to cross-site fetches are cross-site
+PASS Cross-site redirecting to cross-site fetches are cross-site
+

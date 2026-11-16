@@ -1,0 +1,27 @@
+Box
+Box
+(GraphicsLayer
+  (anchor 0.00 0.00)
+  (bounds 5018.00 2018.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 5018.00 2018.00)
+      (contentsOpaque 1)
+      (children 2
+        (GraphicsLayer
+          (position 18.00 10.00)
+          (bounds 100.00 100.00)
+          (contentsOpaque 1)
+          (drawsContent 1)
+        )
+        (GraphicsLayer
+          (position 18.00 120.00)
+          (bounds 5000.00 100.00)
+          (contentsOpaque 1)
+          (drawsContent 1)
+        )
+      )
+    )
+  )
+)
+

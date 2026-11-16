@@ -1,0 +1,15 @@
+<style>
+  body {
+    transition-duration: 1ms;
+    width: revert;
+  }
+</style>
+<script>
+  if (window.testRunner)
+        testRunner.dumpAsText();
+  onload = () => {
+    document.styleSheets[0].insertRule(`body { width: 0em; }`);
+    document.styleSheets[0].insertRule(`html { font-size: 0; }`);
+  };
+</script>
+This test passes if it doesn't crash.

@@ -1,0 +1,16 @@
+
+FAIL Collapsed caret geometry (input) element.createValueRange is not a function. (In 'element.createValueRange(startOffset, endOffset)', 'element.createValueRange' is undefined)
+FAIL Simple selection geometry (input) element.createValueRange is not a function. (In 'element.createValueRange(startOffset, endOffset)', 'element.createValueRange' is undefined)
+FAIL Geometry empty after control removal (input) element.createValueRange is not a function. (In 'element.createValueRange(startOffset, endOffset)', 'element.createValueRange' is undefined)
+FAIL Collapsed caret at start/middle/end (input) element.createValueRange is not a function. (In 'element.createValueRange(startOffset, endOffset)', 'element.createValueRange' is undefined)
+FAIL Full selection bounding box inside element (input) element.createValueRange is not a function. (In 'element.createValueRange(startOffset, endOffset)', 'element.createValueRange' is undefined)
+FAIL Backwards offsets collapse (input) element.createValueRange is not a function. (In 'element.createValueRange(3, 1)', 'element.createValueRange' is undefined)
+FAIL display:none empty geometry (input) element.createValueRange is not a function. (In 'element.createValueRange(startOffset, endOffset)', 'element.createValueRange' is undefined)
+FAIL Collapsed caret geometry (textarea) element.createValueRange is not a function. (In 'element.createValueRange(startOffset, endOffset)', 'element.createValueRange' is undefined)
+FAIL Simple selection geometry (textarea) element.createValueRange is not a function. (In 'element.createValueRange(startOffset, endOffset)', 'element.createValueRange' is undefined)
+FAIL Geometry empty after control removal (textarea) element.createValueRange is not a function. (In 'element.createValueRange(startOffset, endOffset)', 'element.createValueRange' is undefined)
+FAIL Collapsed caret at start/middle/end (textarea) element.createValueRange is not a function. (In 'element.createValueRange(startOffset, endOffset)', 'element.createValueRange' is undefined)
+FAIL Full selection bounding box inside element (textarea) element.createValueRange is not a function. (In 'element.createValueRange(startOffset, endOffset)', 'element.createValueRange' is undefined)
+FAIL Backwards offsets collapse (textarea) element.createValueRange is not a function. (In 'element.createValueRange(3, 1)', 'element.createValueRange' is undefined)
+FAIL display:none empty geometry (textarea) element.createValueRange is not a function. (In 'element.createValueRange(startOffset, endOffset)', 'element.createValueRange' is undefined)
+

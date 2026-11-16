@@ -1,0 +1,13 @@
+Check that resources from external stylesheets are loaded with the referrer and referrer policy from the external stylesheet.
+
+
+FAIL Test styling SVG from external style fill promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
+FAIL Test styling SVG from external style stroke promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
+FAIL Test styling SVG from external style filter promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
+FAIL Test styling SVG from external style clip-path promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
+FAIL Test styling SVG from external style marker-start promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
+FAIL Test styling SVG from external style marker-mid promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
+FAIL Test styling SVG from external style marker-end promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
+FAIL Test styling SVG from external style mask promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
+FAIL Test styling SVG from external style mask-image promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
+

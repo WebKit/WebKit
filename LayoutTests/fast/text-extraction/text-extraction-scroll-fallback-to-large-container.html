@@ -1,0 +1,71 @@
+<!-- webkit-test-runner [ useFlexibleViewport=true textExtractionEnabled=true AsyncOverflowScrollingEnabled=true ] -->
+<!DOCTYPE html>
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="utf-8">
+<head>
+    <script src="../../resources/js-test.js"></script>
+    <script src="../../resources/ui-helper.js"></script>
+    <style>
+        html, body {
+            margin: 0;
+        }
+
+        .large-scroller {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            overflow: scroll;
+            scrollbar-width: none;
+        }
+
+        .large-content {
+            height: 4000px;
+        }
+    </style>
+</head>
+<body>
+    <div class="large-scroller" aria-label="Main content">
+        <div class="large-content">Top of large scroller</div>
+    </div>
+    <script>
+    jsTestIsAsync = true;
+    description("Tests that scroll interactions on a page with an unscrollable root fall back to a large scrollable container.");
+
+    addEventListener("load", async () => {
+        largeScroller = document.querySelector(".large-scroller");
+
+        if (!window.testRunner)
+            return;
+
+        document.scrollingElement.scrollTop = 1000;
+        await UIHelper.ensurePresentationUpdate();
+        rootScrollTop = document.scrollingElement.scrollTop;
+        shouldBe("rootScrollTop", "0");
+
+        noArgScrollError = await UIHelper.performTextExtractionInteraction("scroll", {});
+        await UIHelper.ensureVisibleContentRectUpdate();
+        await UIHelper.ensurePresentationUpdate();
+
+        largeScrollerScrollTopAfterFallback = largeScroller.scrollTop;
+        shouldBeEqualToString("noArgScrollError", "");
+        shouldBeGreaterThan("largeScrollerScrollTopAfterFallback", "0");
+
+        largeScroller.scrollTop = 0;
+        await UIHelper.ensurePresentationUpdate();
+
+        scrollByError = await UIHelper.performTextExtractionInteraction("scroll", { scrollDelta: { x: 0, y: 150 } });
+        await UIHelper.ensureVisibleContentRectUpdate();
+        await UIHelper.ensurePresentationUpdate();
+
+        largeScrollerScrollTopAfterScrollBy = largeScroller.scrollTop;
+        shouldBeEqualToString("scrollByError", "");
+        shouldBe("largeScrollerScrollTopAfterScrollBy", "150");
+
+        finishJSTest();
+    });
+    </script>
+</body>
+</html>

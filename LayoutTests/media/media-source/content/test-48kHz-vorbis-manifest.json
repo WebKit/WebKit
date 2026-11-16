@@ -1,0 +1,11 @@
+{
+	"url": "content/test-48kHz-vorbis.webm",
+	"type": "audio/webm; codecs=\"vorbis\"",
+	"init": { "offset": 0, "size": 4377 },
+	"duration": 10.094,
+	"media": [ 
+		{ "offset": 4377, "size": 5376, "timestamp": 0, "duration": 4.999},
+		{ "offset": 9753, "size": 5074, "timestamp": 0, "duration": 4.997},
+		{ "offset": 14827, "size": 763, "timestamp": 0, "duration": 0.098}
+	]
+}

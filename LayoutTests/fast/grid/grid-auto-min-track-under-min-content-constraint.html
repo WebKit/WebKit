@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>Grid: auto-min track base size under a min-content constraint</title>
+<link rel="help" href="https://www.w3.org/TR/css-grid-2/#algo-single-span-items">
+<script src="../../resources/check-layout.js"></script>
+<style>
+.grid {
+    display: grid;
+    width: min-content;
+    justify-items: normal;
+    grid-template-columns: auto;
+    grid-template-rows: auto auto;
+}
+.wideContent {
+    width: 100px;
+    height: 20px;
+}
+.narrowContent {
+    width: 60px;
+    height: 20px;
+}
+</style>
+<body onload="checkLayout('.grid')">
+<p>An auto track sized under a min-content constraint takes the maximum of its items' min-content contributions.</p>
+<div class="grid" data-expected-width="100">
+    <div class="item"><div class="wideContent"></div></div>
+    <div class="item"><div class="narrowContent"></div></div>
+</div>
+</body>

@@ -1,0 +1,11 @@
+
+PASS :invalid_swizzle:
+PASS :only_identity_swizzle:
+PASS :no_render_no_resolve_no_storage:useCase="texture-binding"
+PASS :no_render_no_resolve_no_storage:useCase="color-attachment"
+PASS :no_render_no_resolve_no_storage:useCase="depth-attachment"
+PASS :no_render_no_resolve_no_storage:useCase="stencil-attachment"
+PASS :no_render_no_resolve_no_storage:useCase="resolve-target"
+PASS :no_render_no_resolve_no_storage:useCase="storage-binding"
+PASS :compatibility_mode:
+

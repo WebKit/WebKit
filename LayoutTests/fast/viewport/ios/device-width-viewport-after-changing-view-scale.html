@@ -1,0 +1,75 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        #square {
+            position: absolute;
+            width: 10vw;
+            height: 10vh;
+            border: 2px solid black;
+        }
+
+        #output {
+            width: 100%;
+            height: 100%;
+            overflow: scroll;
+        }
+
+        body {
+            margin: 0;
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+    <script src="../../../resources/ui-helper.js"></script>
+    <script>
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+
+    async function runTest() {
+        const appendOutput = message => {
+            output.appendChild(document.createTextNode(message));
+            output.appendChild(document.createElement("br"));
+        };
+
+        // Sizes are rounded to integers, so allow for off-by-one differences.
+        const isClose = (actual, expected) => Math.abs(actual - expected) <= 1;
+        const check = (description, passed, details) => appendOutput(passed ? `PASS ${description}` : `FAIL ${description}: ${details}`);
+
+        // Measure the window at the default view scale so the test does not depend on the device's screen size.
+        const baseWidth = innerWidth;
+        const baseHeight = innerHeight;
+
+        for (let targetScale of [0.5, 0.75, 1, 1.25, 1.5, 1.25, 1, 0.75, 0.5]) {
+            appendOutput(`setViewScale(${targetScale.toFixed(2)})`);
+
+            const expectedWidth = baseWidth / targetScale;
+            const expectedHeight = baseHeight / targetScale;
+
+            await UIHelper.setViewScale(targetScale);
+            await UIHelper.ensurePresentationUpdate();
+            // The unobscured content rect used by innerWidth arrives in a separate visible content rect update.
+            await UIHelper.waitForCondition(() => isClose(innerWidth, expectedWidth) && isClose(innerHeight, expectedHeight), 100);
+
+            check("window size is scaled by the inverse of the view scale", isClose(innerWidth, expectedWidth) && isClose(innerHeight, expectedHeight),
+                `[${innerWidth}, ${innerHeight}], expected [${expectedWidth.toFixed(2)}, ${expectedHeight.toFixed(2)}]`);
+            check("square size is 10% of window size", isClose(square.clientWidth, innerWidth / 10) && isClose(square.clientHeight, innerHeight / 10),
+                `[${square.clientWidth}, ${square.clientHeight}] for window size [${innerWidth}, ${innerHeight}]`);
+            const zoomScale = (await UIHelper.zoomScale()).toFixed(2);
+            check(`zoom scale is ${targetScale.toFixed(2)}`, zoomScale == targetScale.toFixed(2), zoomScale);
+            appendOutput("");
+        }
+
+        testRunner.notifyDone();
+    }
+    </script>
+</head>
+
+<body onload="runTest()">
+    <div id="square"></div>
+    <pre id="output"></pre>
+</body>
+</html>

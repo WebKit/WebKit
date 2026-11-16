@@ -1,0 +1,2 @@
+PASS - index buffer restored without mapping heap memory for the GPU
+

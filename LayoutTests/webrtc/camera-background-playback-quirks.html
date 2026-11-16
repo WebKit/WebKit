@@ -1,0 +1,46 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Camera track keeps playing in the background on Google Meet</title>
+        <script src="../resources/testharness.js"></script>
+        <script src="../resources/testharnessreport.js"></script>
+    </head>
+    <body>
+        <video id="video" autoplay playsinline></video>
+        <script>
+async function waitForVideoPaused(paused)
+{
+    for (let i = 0; i < 100; i++) {
+        if (video.paused == paused)
+            return video.paused;
+        await new Promise(resolve => setTimeout(resolve, 10));
+    }
+    return video.paused;
+}
+
+promise_test(async (test) => {
+    if (!window.internals)
+        return;
+
+    const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+    video.srcObject = stream;
+    await video.play();
+
+    internals.setTopDocumentURLForQuirks("https://webkit.org/");
+    internals.beginMediaSessionInterruption("EnteringBackground");
+    assert_true(await waitForVideoPaused(true), "video paused when entering background");
+    internals.endMediaSessionInterruption("MayResumePlaying");
+    assert_false(await waitForVideoPaused(false), "video no longer paused when exiting background");
+
+    internals.setTopDocumentURLForQuirks("https://meet.google.com/abc-defg-hij");
+    internals.beginMediaSessionInterruption("EnteringBackground");
+    await new Promise(resolve => setTimeout(resolve, 100));
+    assert_false(video.paused, "video not paused when entering background");
+    internals.endMediaSessionInterruption("MayResumePlaying");
+
+    stream.getTracks().forEach(track => track.stop());
+}, "Camera MediaStreamTrack is not suspended in the background on meet.google.com");
+        </script>
+    </body>
+</html>

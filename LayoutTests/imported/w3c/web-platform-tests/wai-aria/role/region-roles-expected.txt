@@ -1,0 +1,8 @@
+Tests region and related roles, as well as the "name from author" rule in 9.1 Roles - handling author errors.
+
+x
+x
+
+PASS region without label
+PASS region with label
+

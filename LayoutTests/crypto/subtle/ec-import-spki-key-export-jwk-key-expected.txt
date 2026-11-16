@@ -1,0 +1,16 @@
+Test importing a SPKI ECDH key and exporting it in JWK format
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Importing a key...
+PASS publicKey.kty is expectedJwkKey.kty
+PASS publicKey.crv is expectedJwkKey.crv
+PASS publicKey.x is expectedJwkKey.x
+PASS publicKey.y is expectedJwkKey.y
+PASS publicKey.key_ops is [ ]
+PASS publicKey.ext is expectedJwkKey.ext
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

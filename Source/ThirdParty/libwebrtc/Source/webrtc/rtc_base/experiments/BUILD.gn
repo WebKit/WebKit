@@ -1,0 +1,355 @@
+# Copyright (c) 2018 The WebRTC project authors. All Rights Reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS.  All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+import("../../webrtc.gni")
+
+rtc_library("alr_experiment") {
+  sources = [
+    "alr_experiment.cc",
+    "alr_experiment.h",
+  ]
+  deps = [
+    "..:logging",
+    "../../api:field_trials_view",
+    "//third_party/abseil-cpp/absl/strings:string_view",
+  ]
+}
+
+rtc_library("field_trial_parser") {
+  sources = [
+    "field_trial_list.cc",
+    "field_trial_list.h",
+    "field_trial_parser.cc",
+    "field_trial_parser.h",
+    "field_trial_units.cc",
+    "field_trial_units.h",
+    "struct_parameters_parser.cc",
+    "struct_parameters_parser.h",
+  ]
+  deps = [
+    "..:checks",
+    "..:logging",
+    "..:safe_conversions",
+    "..:stringutils",
+    "../../api/units:data_rate",
+    "../../api/units:data_size",
+    "../../api/units:time_delta",
+    "//third_party/abseil-cpp/absl/memory",
+    "//third_party/abseil-cpp/absl/strings",
+    "//third_party/abseil-cpp/absl/strings:string_view",
+  ]
+}
+
+rtc_library("quality_scaler_settings") {
+  sources = [
+    "quality_scaler_settings.cc",
+    "quality_scaler_settings.h",
+  ]
+  deps = [
+    ":field_trial_parser",
+    "..:logging",
+    "../../api:field_trials_view",
+  ]
+}
+
+rtc_library("quality_scaling_experiment") {
+  sources = [
+    "quality_scaling_experiment.cc",
+    "quality_scaling_experiment.h",
+  ]
+  deps = [
+    ":field_trial_parser",
+    "..:checks",
+    "..:logging",
+    "../../api:field_trials_view",
+    "../../api/video:video_frame",
+    "../../api/video_codecs:video_codecs_api",
+    "//third_party/abseil-cpp/absl/strings",
+  ]
+}
+
+rtc_library("normalize_simulcast_size_experiment") {
+  sources = [
+    "normalize_simulcast_size_experiment.cc",
+    "normalize_simulcast_size_experiment.h",
+  ]
+  deps = [
+    "..:logging",
+    "../../api:field_trials_view",
+  ]
+}
+
+rtc_library("balanced_degradation_settings") {
+  sources = [
+    "balanced_degradation_settings.cc",
+    "balanced_degradation_settings.h",
+  ]
+  deps = [
+    ":field_trial_parser",
+    "..:checks",
+    "..:logging",
+    "../../api:field_trials_view",
+    "../../api/video:video_frame",
+    "../../api/video_codecs:video_codecs_api",
+  ]
+}
+
+rtc_library("encoder_info_settings") {
+  sources = [
+    "encoder_info_settings.cc",
+    "encoder_info_settings.h",
+  ]
+  deps = [
+    ":field_trial_parser",
+    "..:logging",
+    "../../api:field_trials_view",
+    "../../api/video:video_frame",
+    "../../api/video_codecs:video_codecs_api",
+    "//third_party/abseil-cpp/absl/strings:string_view",
+  ]
+}
+
+rtc_library("rate_control_settings") {
+  sources = [
+    "rate_control_settings.cc",
+    "rate_control_settings.h",
+  ]
+  deps = [
+    ":field_trial_parser",
+    "..:logging",
+    "../../api:field_trials_view",
+    "../../api/units:data_size",
+    "//third_party/abseil-cpp/absl/strings",
+  ]
+}
+
+rtc_library("keyframe_interval_settings_experiment") {
+  sources = [
+    "keyframe_interval_settings.cc",
+    "keyframe_interval_settings.h",
+  ]
+  deps = [
+    ":field_trial_parser",
+    "../../api:field_trials_view",
+  ]
+}
+
+rtc_library("min_video_bitrate_experiment") {
+  sources = [
+    "min_video_bitrate_experiment.cc",
+    "min_video_bitrate_experiment.h",
+  ]
+  deps = [
+    ":field_trial_parser",
+    "..:checks",
+    "..:logging",
+    "../../api:field_trials_view",
+    "../../api/units:data_rate",
+    "../../api/video:video_frame",
+  ]
+}
+
+rtc_library("encoder_speed_experiment") {
+  sources = [
+    "encoder_speed_experiment.cc",
+    "encoder_speed_experiment.h",
+  ]
+  deps = [
+    ":field_trial_parser",
+    "../../api:field_trials_view",
+    "../../api/video:video_frame",
+    "../../api/video_codecs:video_codecs_api",
+    "//third_party/abseil-cpp/absl/strings",
+  ]
+}
+
+rtc_library("corruption_detection_frame_selector_settings") {
+  sources = [
+    "corruption_detection_frame_selector_settings.cc",
+    "corruption_detection_frame_selector_settings.h",
+  ]
+  deps = [
+    ":field_trial_parser",
+    "..:logging",
+    "../../api:field_trials_view",
+    "../../api/units:time_delta",
+  ]
+}
+
+rtc_library("retransmit_flushed_packets_settings") {
+  sources = [
+    "retransmit_flushed_packets_settings.cc",
+    "retransmit_flushed_packets_settings.h",
+  ]
+  deps = [
+    ":field_trial_parser",
+    "../../api:field_trials_view",
+  ]
+}
+
+if (rtc_include_tests) {
+  rtc_cc_test("balanced_degradation_settings_unittest") {
+    sources = [ "balanced_degradation_settings_unittest.cc" ]
+    deps = [
+      ":balanced_degradation_settings",
+      "../../api:field_trials",
+      "../../api/video:video_frame",
+      "../../test:create_test_field_trials",
+      "../../test:test_support",
+    ]
+  }
+
+  rtc_cc_test("corruption_detection_frame_selector_settings_unittest") {
+    sources = [ "corruption_detection_frame_selector_settings_unittest.cc" ]
+    deps = [
+      ":corruption_detection_frame_selector_settings",
+      "../../api:field_trials",
+      "../../api/units:time_delta",
+      "../../test:create_test_field_trials",
+      "../../test:test_support",
+    ]
+  }
+
+  rtc_cc_test("encoder_info_settings_unittest") {
+    sources = [ "encoder_info_settings_unittest.cc" ]
+    deps = [
+      ":encoder_info_settings",
+      "../../api:field_trials",
+      "../../api/video_codecs:video_codecs_api",
+      "../../test:create_test_field_trials",
+      "../../test:test_support",
+    ]
+  }
+
+  rtc_cc_test("encoder_speed_experiment_unittest") {
+    sources = [ "encoder_speed_experiment_unittest.cc" ]
+    deps = [
+      ":encoder_speed_experiment",
+      "../../api:field_trials",
+      "../../api/video:video_frame",
+      "../../api/video_codecs:video_codecs_api",
+      "../../test:create_test_field_trials",
+      "../../test:test_support",
+    ]
+  }
+
+  rtc_cc_test("field_trial_list_unittest") {
+    sources = [ "field_trial_list_unittest.cc" ]
+    deps = [
+      ":field_trial_parser",
+      "../../test:test_support",
+      "//third_party/abseil-cpp/absl/strings:string_view",
+    ]
+  }
+
+  rtc_cc_test("field_trial_parser_unittest") {
+    sources = [ "field_trial_parser_unittest.cc" ]
+    deps = [
+      ":field_trial_parser",
+      "../../api:field_trials",
+      "../../api:field_trials_view",
+      "../../test:create_test_field_trials",
+      "../../test:test_support",
+      "//third_party/abseil-cpp/absl/strings:string_view",
+    ]
+  }
+
+  rtc_cc_test("field_trial_units_unittest") {
+    sources = [ "field_trial_units_unittest.cc" ]
+    deps = [
+      ":field_trial_parser",
+      "../../api/units:data_rate",
+      "../../api/units:data_size",
+      "../../api/units:time_delta",
+      "../../test:test_support",
+      "//third_party/abseil-cpp/absl/strings:string_view",
+    ]
+  }
+
+  rtc_cc_test("keyframe_interval_settings_unittest") {
+    sources = [ "keyframe_interval_settings_unittest.cc" ]
+    deps = [
+      ":keyframe_interval_settings_experiment",
+      "../../api:field_trials",
+      "../../test:create_test_field_trials",
+      "../../test:test_support",
+    ]
+  }
+
+  rtc_cc_test("min_video_bitrate_experiment_unittest") {
+    sources = [ "min_video_bitrate_experiment_unittest.cc" ]
+    deps = [
+      ":min_video_bitrate_experiment",
+      "../../api:field_trials",
+      "../../api/units:data_rate",
+      "../../api/video:video_frame",
+      "../../test:create_test_field_trials",
+      "../../test:test_support",
+    ]
+  }
+
+  rtc_cc_test("normalize_simulcast_size_experiment_unittest") {
+    sources = [ "normalize_simulcast_size_experiment_unittest.cc" ]
+    deps = [
+      ":normalize_simulcast_size_experiment",
+      "../../api:field_trials",
+      "../../test:create_test_field_trials",
+      "../../test:test_support",
+    ]
+  }
+
+  rtc_cc_test("quality_scaler_settings_unittest") {
+    sources = [ "quality_scaler_settings_unittest.cc" ]
+    deps = [
+      ":quality_scaler_settings",
+      "../../api:field_trials",
+      "../../test:create_test_field_trials",
+      "../../test:test_support",
+    ]
+  }
+
+  rtc_cc_test("quality_scaling_experiment_unittest") {
+    sources = [ "quality_scaling_experiment_unittest.cc" ]
+    deps = [
+      ":quality_scaling_experiment",
+      "../../api:field_trials",
+      "../../api/video:video_frame",
+      "../../test:create_test_field_trials",
+      "../../test:test_support",
+    ]
+  }
+
+  rtc_cc_test("rate_control_settings_unittest") {
+    sources = [ "rate_control_settings_unittest.cc" ]
+    deps = [
+      ":rate_control_settings",
+      "../../test:create_test_field_trials",
+      "../../test:test_support",
+      "//third_party/abseil-cpp/absl/strings:string_view",
+    ]
+  }
+
+  rtc_cc_test("retransmit_flushed_packets_settings_unittest") {
+    sources = [ "retransmit_flushed_packets_settings_unittest.cc" ]
+    deps = [
+      ":retransmit_flushed_packets_settings",
+      "../../api:field_trials",
+      "../../test:create_test_field_trials",
+      "../../test:test_support",
+    ]
+  }
+
+  rtc_cc_test("struct_parameters_parser_unittest") {
+    sources = [ "struct_parameters_parser_unittest.cc" ]
+    deps = [
+      ":field_trial_parser",
+      "../../api/units:time_delta",
+      "../../test:test_support",
+    ]
+  }
+}

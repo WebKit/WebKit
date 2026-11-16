@@ -1,0 +1,45 @@
+<!DOCTYPE HTML><!-- webkit-test-runner [ IsARIANotifyEnabled=true ] -->
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/accessibility-helper.js"></script>
+<meta http-equiv="content-language" content="en">
+</head>
+<body>
+
+<button id="button">Press Me</button>
+
+<script>
+var output = "Tests that ariaNotify properly sends notifications.\n\n";    
+var notificationCount = 0;
+var testFinished = false;
+
+function notificationCallback(object, notification, userInfo) {
+    if (notification == "AXAnnouncementRequested") {
+        output += `Received announcement request:\n`;
+        output += formatAriaNotifyUserInfo(userInfo);
+
+        notificationCount++;
+        if (notificationCount == 1)
+            document.getElementById("button").ariaNotify("World");
+        else if (notificationCount == 2)
+            testFinished = true;
+    }
+	
+}
+
+if (accessibilityController) {
+    window.jsTestIsAsync = true;
+    accessibilityController.addNotificationListener(notificationCallback);
+    document.ariaNotify("Hello");
+    
+    setTimeout(async function() {
+        await waitFor(() => testFinished);
+        accessibilityController.removeNotificationListener();
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

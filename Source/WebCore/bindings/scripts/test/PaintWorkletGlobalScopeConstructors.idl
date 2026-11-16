@@ -1,0 +1,4 @@
+partial interface PaintWorkletGlobalScope {
+    attribute ExposedStarConstructor ExposedStar;
+    attribute PaintWorkletGlobalScopeConstructor PaintWorkletGlobalScope;
+};

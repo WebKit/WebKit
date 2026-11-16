@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+if (window.internals) {
+    internals.settings.setTextAutosizingEnabled(true);
+    internals.settings.setTextAutosizingUsesIdempotentMode(false);
+}
+</script>
+<script src="../../resources/js-test.js"></script>
+<style>
+:root { -webkit-text-size-adjust: 130%; font-size: 20px; }
+#remFontSize { font-size: 1rem; }
+#remWidth { width: 10rem; -webkit-text-size-adjust: none; }
+#remFontSizeNoAdjust { font-size: 1rem; -webkit-text-size-adjust: none; }
+</style>
+</head>
+<body>
+<div id="remFontSize">x</div>
+<div id="remWidth"></div>
+<div id="remFontSizeNoAdjust">x</div>
+<script>
+description("Tests that rem lengths in non-font properties include the root's percentage -webkit-text-size-adjust, and that font-size in rem does not apply it twice.");
+
+function fontSize(id) { return getComputedStyle(document.getElementById(id)).fontSize; }
+function width(id) { return document.getElementById(id).getBoundingClientRect().width; }
+
+shouldBeEqualToString("fontSize('remFontSize')", "26px");
+shouldBeEqualToString("fontSize('remFontSizeNoAdjust')", "20px");
+shouldBe("width('remWidth')", "260");
+</script>
+</body>
+</html>

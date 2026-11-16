@@ -1,0 +1,5 @@
+
+PASS Calling setSinkId() on a suspended AudioContext should fire only sink change events.
+PASS Calling setSinkId() on a running AudioContext should fire both state and sink change events.
+PASS setSinkId() promise should resolve before the sinkchange event is fired.
+

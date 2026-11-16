@@ -1,0 +1,14 @@
+This test ensures XSLT processing does not occur when loading an XML resource in LDM.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS xmlDocument.children.length is 1
+PASS xmlDocument.children[0].tagName is "doc"
+PASS xmlDocument.children[0].children.length is 1
+PASS xmlDocument.children[0].children[0].tagName is "example"
+PASS xmlDocument.children[0].children[0].innerHTML is "text"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

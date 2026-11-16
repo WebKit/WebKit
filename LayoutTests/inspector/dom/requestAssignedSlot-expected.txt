@@ -1,0 +1,26 @@
+
+== Running test suite: DOM.requestAssignedSlot
+-- Running test case: DOM.requestAssignedSlot.Named.Empty
+PASS: Should not be slotted.
+Adding slot...
+PASS: Should be slotted.
+
+-- Running test case: DOM.requestAssignedSlot.Named.Filled
+PASS: Should be slotted.
+Removing slot...
+PASS: Should not be slotted.
+
+-- Running test case: DOM.requestAssignedSlot.Manual.Empty
+PASS: Should not be slotted.
+Adding assigned node...
+PASS: Should be slotted.
+
+-- Running test case: DOM.requestAssignedSlot.Manual.Filled
+PASS: Should be slotted.
+Removing assigned node...
+PASS: Should not be slotted.
+
+-- Running test case: DOM.requestAssignedSlot.MissingNode
+PASS: Should produce an exception.
+Error: Missing node for given nodeId
+

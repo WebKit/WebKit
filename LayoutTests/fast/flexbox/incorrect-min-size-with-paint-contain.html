@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<style>
+div {
+  height: 100px;
+  width: 100px;
+}
+.container {
+  display: flex;
+}
+.paintcontain {
+  contain: paint;
+}
+</style>
+<!-- PASS if the green box is visible -->
+<div class=container>
+  <div class=paintcontain><div style="background-color: green;"></div></div>
+  <div><div></div></div>
+</div>

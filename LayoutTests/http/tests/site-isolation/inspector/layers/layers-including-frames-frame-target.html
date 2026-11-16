@@ -1,0 +1,95 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="../debugger/resources/site-isolation-debugger-test-utilities.js"></script>
+<script>
+    function test() {
+        let suite = InspectorTest.createAsyncSuite("SiteIsolation.LayerTree.LayersIncludingFrames");
+
+        let childFrameTarget;
+        let mainDocument;
+        let mergedLayers;
+        let iframeLayer;
+        let childCompositedLayer;
+
+        function nodeForLayer(layer) {
+            return WI.domManager.nodeForId(layer.nodeId);
+        }
+
+        suite.addTestCase({
+            name: "SiteIsolation.LayerTree.LayersIncludingFrames.Setup",
+            description: "Find the cross-origin child frame target and match its document to the iframe element.",
+            async test() {
+                let frameTargets = WI.targets.filter((t) => t.type === WI.TargetType.Frame);
+                InspectorTest.assert(frameTargets.length === 2, "Should have exactly main and child frame targets.");
+
+                let urlTargetMap = await fetchDocumentURLsForTargets(frameTargets);
+                let mainFrameTarget = urlTargetMap.get(WI.networkManager.mainFrame.url);
+                childFrameTarget = frameTargets.find((t) => t !== mainFrameTarget);
+                InspectorTest.expectNotNull(childFrameTarget, "Should find a child frame target.");
+
+                while (!WI.domManager.frameTargetDocumentForTarget(childFrameTarget))
+                    await WI.domManager.awaitEvent(WI.DOMManager.Event.FrameDocumentAvailable);
+
+                // Querying the page target's layers sends the iframe element to the frontend, which lets
+                // DOMManager splice the child frame target's document into it.
+                mainDocument = await WI.domManager.requestDocument();
+                let pageLayers = await new Promise((resolve) => WI.layerTreeManager.layersForNode(mainDocument, resolve));
+                iframeLayer = pageLayers.find((layer) => nodeForLayer(layer)?.nodeName() === "IFRAME");
+                InspectorTest.expectNotNull(iframeLayer, "Page target should report the layer hosting the iframe.");
+                InspectorTest.expectNotNull(iframeLayer.contentFrameRect, "Layer hosting the iframe should report the frame's content box.");
+                InspectorTest.expectEqual(WI.layerTreeManager.targetForFrameOwner(nodeForLayer(iframeLayer)), childFrameTarget, "The iframe element should resolve to the child frame target.");
+            }
+        });
+
+        suite.addTestCase({
+            name: "SiteIsolation.LayerTree.LayersIncludingFrames.MergedLayers",
+            description: "layersForNodeIncludingFrames should include the cross-origin frame's layers right after the layer hosting it.",
+            async test() {
+                mergedLayers = await new Promise((resolve) => WI.layerTreeManager.layersForNodeIncludingFrames(mainDocument, resolve));
+
+                let childLayers = mergedLayers.filter((layer) => layer.target === childFrameTarget);
+                InspectorTest.expectGreaterThanOrEqual(childLayers.length, 3, "Should include the child frame's layers.");
+
+                let iframeLayerIndex = mergedLayers.findIndex((layer) => layer.layerId === iframeLayer.layerId);
+                InspectorTest.expectEqual(mergedLayers.indexOf(childLayers[0]), iframeLayerIndex + 1, "Child frame's layers should directly follow the layer hosting the frame.");
+
+                let layerIds = new Set(mergedLayers.map((layer) => layer.layerId));
+                InspectorTest.expectEqual(layerIds.size, mergedLayers.length, "Layer ids should be unique across targets.");
+            }
+        });
+
+        suite.addTestCase({
+            name: "SiteIsolation.LayerTree.LayersIncludingFrames.ChildLayerPlacement",
+            description: "The child frame's layers should be placed inside the frame owner's content box and map to the child frame's nodes.",
+            async test() {
+                childCompositedLayer = mergedLayers.find((layer) => layer.target === childFrameTarget && !layer.isGeneratedContent && nodeForLayer(layer)?.getAttribute("id") === "composited");
+                InspectorTest.expectNotNull(childCompositedLayer, "Should include the child frame's composited element.");
+                InspectorTest.expectThat(nodeForLayer(childCompositedLayer).owningTarget === childFrameTarget, "Child layer's node should belong to the child frame target.");
+
+                let frameRect = iframeLayer.contentFrameRect;
+                InspectorTest.expectEqual(childCompositedLayer.bounds.x, frameRect.x, "Child layer should be offset horizontally by the frame's content box.");
+                InspectorTest.expectEqual(childCompositedLayer.bounds.y, frameRect.y, "Child layer should be offset vertically by the frame's content box.");
+                InspectorTest.expectEqual(childCompositedLayer.bounds.width, 100, "Child layer should keep its width.");
+            }
+        });
+
+        suite.addTestCase({
+            name: "SiteIsolation.LayerTree.LayersIncludingFrames.RoutesToChildTarget",
+            description: "Compositing reasons and snapshots for a child layer should be requested from the child frame target.",
+            async test() {
+                let compositingReasons = await new Promise((resolve) => WI.layerTreeManager.reasonsForCompositingLayer(childCompositedLayer, resolve));
+                InspectorTest.expectThat(compositingReasons?.willChange, "Child layer should be composited because of will-change.");
+
+                let content = await new Promise((resolve) => WI.layerTreeManager.snapshotForLayer(childCompositedLayer, resolve));
+                InspectorTest.expectThat(content?.startsWith("data:image/png"), "Child layer snapshot should be a PNG data URL.");
+            }
+        });
+
+        suite.runTestCasesAndFinish();
+    }
+</script>
+
+<body onload="runTest()">
+    <p>Test that the Layers tab includes a cross-origin frame's layers under site isolation.</p>
+    <iframe src="http://localhost:8000/site-isolation/inspector/layers/resources/frame-with-composited-layers.html"></iframe>
+</body>

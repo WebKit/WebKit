@@ -1,0 +1,3 @@
+
+PASS SharedArrayBuffer and a same-origin popup with an opener
+

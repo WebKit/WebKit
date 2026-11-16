@@ -1,0 +1,71 @@
+
+Test 1
+
+Test 2
+  #text
+
+Test 3
+  div
+
+Test 4
+  div
+    #text
+    div
+      #text
+
+Test 5
+  div (shadow root)
+  #text
+
+Test 6
+  div (shadow root)
+  #text
+
+Test 7
+  div (shadow root)
+    #text
+    div
+      div
+    #text
+  div
+    #text
+
+Test 8
+  div (shadow root)
+    #text
+    div
+      div
+    #text
+  div
+    #text
+
+Test 9
+  div (shadow root)
+    div
+      #text
+      div (shadow root)
+        #text
+        div
+          div
+        #text
+    div (shadow root)
+      #text
+      div
+        div
+      #text
+
+Test 10
+  div (shadow root)
+    div
+      #text
+      div (shadow root)
+        #text
+        div
+          div
+        #text
+    div (shadow root)
+      #text
+      div
+        div
+      #text
+

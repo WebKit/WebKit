@@ -1,0 +1,8 @@
+This test ensures we don't crash when prepending a frame in response to an XHR event.
+
+Test completed without crashing.
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

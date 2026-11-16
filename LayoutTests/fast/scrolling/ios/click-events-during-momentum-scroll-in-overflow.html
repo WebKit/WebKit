@@ -1,0 +1,64 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true AsyncOverflowScrollingEnabled=true AsyncFrameScrollingEnabled=true ] -->
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+<style>
+html, body {
+    width: 100%;
+    height: 100%;
+    margin: 0px;
+    padding: 0px;
+}
+
+#scroller {
+    width: 100%;
+    height: 400px;
+    overflow: scroll;
+    border: 4px solid black;
+    box-sizing: border-box;
+}
+
+#content {
+    width: 100px;
+    height: 5000px;
+    box-sizing: border-box;
+    padding: 20px;
+    background: linear-gradient(to bottom, red 0%, green 50%, blue 100%);
+}
+</style>
+<body>
+    <div id="scroller">
+        <div id="content"></div>
+    </div>
+    <p id="description"></p>
+    <p id="console"></p>
+</body>
+<script>
+jsTestIsAsync = true;
+
+const minimumExpectedScrollTop = 600;
+const scroller = document.getElementById("scroller");
+
+scroller.addEventListener("click", () => testFailed("Observed unexpected click event."), { once: true });
+
+addEventListener("load", async () => {
+    description("Verifies that tapping a subscrollable region during momentum scrolling does not dispatch click events. To run the test manually, swipe up on the black box to scroll it; while scrolling, tap the scrollable area to interrupt scrolling. The scrollable area should not observe any click events.");
+
+    if (!window.testRunner)
+        return;
+
+    await UIHelper.dragFromPointToPoint(160, 350, 160, 0, 0.1);
+    await shouldBecomeEqual("scroller.scrollTop > minimumExpectedScrollTop", "true");
+    await UIHelper.sendEventStream(new UIHelper.EventStreamBuilder()
+        .begin(160, 350)
+        .wait(0.1)
+        .end()
+        .takeResult());
+
+    await UIHelper.ensureStablePresentationUpdate();
+    finishJSTest();
+});
+</script>
+</html>

@@ -1,0 +1,18 @@
+<p>Test passes if it does not crash.</p>
+<script>
+  if (window.testRunner)
+    testRunner.dumpAsText();
+
+  let audioContext = new AudioContext();
+  let mediaStreamAudioDestinationNode = new MediaStreamAudioDestinationNode(audioContext);
+  new MediaStreamAudioSourceNode(audioContext, {mediaStream: mediaStreamAudioDestinationNode.stream});
+  
+  let track0 = mediaStreamAudioDestinationNode.stream.getAudioTracks()[0];
+  track0.stop();
+  mediaStreamAudioDestinationNode.stream.removeTrack(track0);
+  track0 = undefined;
+  
+  GCController.collect();
+  
+  document.write("PASS");
+</script>

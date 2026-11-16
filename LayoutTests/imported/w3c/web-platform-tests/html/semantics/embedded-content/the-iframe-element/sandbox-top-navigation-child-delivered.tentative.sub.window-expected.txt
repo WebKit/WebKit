@@ -1,0 +1,3 @@
+
+PASS A same-origin frame with delivered sandbox flags can navigate top
+

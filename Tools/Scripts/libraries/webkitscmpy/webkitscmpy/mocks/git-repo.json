@@ -1,0 +1,228 @@
+{
+    "main": [
+        {
+            "hash": "9b8311f25a77ba14923d9d5a6532103f54abefcb", 
+            "author": {
+                "name": "Jonathan Bedard", 
+                "emails": [
+                    "jbedard@apple.com"
+                ]
+            }, 
+            "timestamp": 1601660000, 
+            "branch": "main", 
+            "message": "1st commit\n", 
+            "identifier": "1@main", 
+            "revision": 1
+        }, 
+        {
+            "hash": "fff83bb2d9171b4d9196e977eb0508fd57e7a08d", 
+            "author": {
+                "name": "Jonathan Bedard", 
+                "emails": [
+                    "jbedard@apple.com"
+                ]
+            }, 
+            "timestamp": 1601661000, 
+            "branch": "main", 
+            "message": "2nd commit\n", 
+            "identifier": "2@main", 
+            "revision": 2
+        }, 
+        {
+            "hash": "1abe25b443e985f93b90d830e4a7e3731336af4d", 
+            "author": {
+                "name": "Jonathan Bedard", 
+                "emails": [
+                    "jbedard@apple.com"
+                ]
+            }, 
+            "timestamp": 1601663000, 
+            "branch": "main", 
+            "message": "4th commit\n", 
+            "identifier": "3@main", 
+            "revision": 4
+        }, 
+        {
+            "hash": "bae5d1e90999d4f916a8a15810ccfa43f37a2fd6", 
+            "author": {
+                "name": "Jonathan Bedard", 
+                "emails": [
+                    "jbedard@apple.com"
+                ]
+            }, 
+            "timestamp": 1601668000, 
+            "branch": "main", 
+            "message": "8th commit\n", 
+            "identifier": "4@main", 
+            "revision": 8
+        },
+        {
+            "hash": "d8bce26fa65c6fc8f39c17927abb77f69fab82fc", 
+            "author": {
+                "name": "Jonathan Bedard", 
+                "emails": [
+                    "jbedard@apple.com"
+                ]
+            }, 
+            "timestamp": 1601668000, 
+            "branch": "main", 
+            "message": "Patch Series\n", 
+            "identifier": "5@main", 
+            "revision": 9,
+            "order": 1
+        }
+    ], 
+    "branch-b": [
+        {
+            "hash": "a30ce8494bf1ac2807a69844f726be4a9843ca55", 
+            "author": {
+                "name": "Jonathan Bedard", 
+                "emails": [
+                    "jbedard@apple.com"
+                ]
+            }, 
+            "timestamp": 1601662000, 
+            "branch": "branch-a", 
+            "message": "3rd commit\n", 
+            "identifier": "2.1@branch-a", 
+            "revision": 3
+        }, 
+        {
+            "hash": "3cd32e352410565bb543821fbf856a6d3caad1c4", 
+            "author": {
+                "name": "Jonathan Bedard", 
+                "emails": [
+                    "jbedard@apple.com"
+                ]
+            }, 
+            "timestamp": 1601664000, 
+            "branch": "branch-b", 
+            "message": "5th commit\n    Cherry pick\n    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@6 268f45cc-cd09-0410-ab3c-d52691b4dbfc",
+            "identifier": "2.2@branch-b", 
+            "revision": 5
+        }, 
+        {
+            "hash": "790725a6d79e28db2ecdde29548d2262c0bd059d", 
+            "author": {
+                "name": "Jonathan Bedard", 
+                "emails": [
+                    "jbedard@apple.com"
+                ]
+            }, 
+            "timestamp": 1601667000, 
+            "branch": "branch-b", 
+            "message": "7th commit\n", 
+            "identifier": "2.3@branch-b", 
+            "revision": 7
+        }
+    ], 
+    "branch-a": [
+        {
+            "hash": "fff83bb2d9171b4d9196e977eb0508fd57e7a08d", 
+            "author": {
+                "name": "Jonathan Bedard", 
+                "emails": [
+                    "jbedard@apple.com"
+                ]
+            }, 
+            "timestamp": 1601661000, 
+            "branch": "main", 
+            "message": "2nd commit\n", 
+            "identifier": "2@main", 
+            "revision": 2
+        }, 
+        {
+            "hash": "a30ce8494bf1ac2807a69844f726be4a9843ca55", 
+            "author": {
+                "name": "Jonathan Bedard", 
+                "emails": [
+                    "jbedard@apple.com"
+                ]
+            }, 
+            "timestamp": 1601662000, 
+            "branch": "branch-a", 
+            "message": "3rd commit\n", 
+            "identifier": "2.1@branch-a", 
+            "revision": 3
+        }, 
+        {
+            "hash": "621652add7fc416099bd2063366cc38ff61afe36", 
+            "author": {
+                "name": "Jonathan Bedard", 
+                "emails": [
+                    "jbedard@apple.com"
+                ]
+            }, 
+            "timestamp": 1601666000, 
+            "branch": "branch-a", 
+            "message": "7th commit\n", 
+            "identifier": "2.2@branch-a", 
+            "revision": 6
+        }
+    ],
+    "eng/squash-branch": [
+        {
+            "hash": "d8bce26fa65c6fc8f39c17927abb77f69fab82fc", 
+            "author": {
+                "name": "Jonathan Bedard", 
+                "emails": [
+                    "jbedard@apple.com"
+                ]
+            }, 
+            "timestamp": 1601668000, 
+            "branch": "main", 
+            "message": "Patch Series\n", 
+            "identifier": "5@main", 
+            "revision": 9
+        },
+        {
+            "hash": "d631ca664d338ef8aa153a6e4088ab5f633fd43b", 
+            "author": {
+                "name": "Zhifei Fang", 
+                "emails": [
+                    "zhifei_fang@apple.com"
+                ]
+            }, 
+            "timestamp": 1601672000, 
+            "branch": "eng/squash-branch", 
+            "message": "Changed something 1",
+            "identifier": "5.1@eng/squash-branch",
+            "changeFiles": {
+                "a.cpp": "diff --git a/a.cpp b/a.cpp"
+            }
+        }, 
+        {
+            "hash": "651a4775399150c14d420ae29160a7111ff49306", 
+            "author": {
+                "name": "Zhifei Fang", 
+                "emails": [
+                    "zhifei_fang@apple.com"
+                ]
+            },
+            "timestamp": 1601674000, 
+            "branch": "eng/squash-branch", 
+            "message": "Changed something 2",
+            "identifier": "5.2@eng/squash-branch",
+            "changeFiles": {
+                "c.cpp": "diff --git a/c.cpp b/c.cpp"
+            }
+        }, 
+        {
+            "hash": "f8a78d2db925929b75b17396ec1d7296078d49b6", 
+            "author": {
+                "name": "Zhifei Fang", 
+                "emails": [
+                    "zhifei_fang@apple.com"
+                ]
+            },
+            "timestamp": 1601677000, 
+            "branch": "eng/squash-branch", 
+            "message": "Changed something 3",
+            "identifier": "5.3@eng/squash-branch",
+            "changeFiles": {
+                "a.cpp": "diff --git a/a.cpp b/a.cpp",
+                "b.cpp": "diff --git a/b.cpp b/b.cpp"
+            }
+        }
+    ]
+}

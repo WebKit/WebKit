@@ -1,0 +1,25 @@
+<head>
+<style>
+div {
+    display: inline-block;
+    clip-path: inset(0px 1px 0px 0px); /* workaround for mac. See webkit.org/b/237816. */
+    font-family: monospace;
+    font-size: 18px;
+    text-decoration: underline;
+    text-decoration-color: lightgreen;
+    text-decoration-thickness: 1ex;
+    text-underline-offset: -1.25ex;
+    text-decoration-skip-ink: none;
+    text-decoration-skip: none;
+}
+div::selection {
+    color: red;
+    background: transparent;
+}
+</style>
+</head>
+<div id="target">Hello I have a cool underline</div>
+<script>
+var target = document.getElementById("target").firstChild;
+getSelection().setBaseAndExtent(target, 0, target, 5);
+</script>

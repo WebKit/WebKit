@@ -1,0 +1,15 @@
+This test ensures that we update the page-wide active modal when an aria-modal element is dynamically added and removed.
+
+PASS: Modal content is not initially accessible.
+
+Un-hiding aria-modal element.
+PASS: Background is inaccessible, modal content is accessible.
+
+Re-hiding aria-modal element.
+PASS: Background is accessible, modal content is inaccessible.
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+

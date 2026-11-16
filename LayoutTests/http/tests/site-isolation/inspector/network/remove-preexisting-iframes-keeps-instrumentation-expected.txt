@@ -1,0 +1,19 @@
+Tests that removing two of three iframes that existed before the inspector attached keeps Network events flowing from their process under Site Isolation.
+
+
+
+== Running test suite: SiteIsolation.Network.RemovePreexistingIFramesKeepsInstrumentation
+-- Running test case: SiteIsolation.Network.RemovePreexistingIFramesKeepsInstrumentation.MainProcess
+PASS: Removed frames should be reported as removed.
+PASS: Remaining frame's navigation should be committed in the frame model.
+PASS: Same-origin script should be added to the child frame.
+PASS: Same-origin script should be listed once.
+PASS: Same-origin script should finish loading.
+
+-- Running test case: SiteIsolation.Network.RemovePreexistingIFramesKeepsInstrumentation.CrossOriginProcess
+PASS: Removed frames should be reported as removed.
+PASS: Remaining frame's navigation should be committed in the frame model.
+PASS: Cross-origin script should be added to the child frame.
+PASS: Cross-origin script should be listed once.
+PASS: Cross-origin script should finish loading.
+

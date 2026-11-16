@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script>
+
+// Runs inside a frame the address-space overrides make public, so its fetch to a loopback address is a
+// local network request. Reports the recorded decision either side of that fetch, because the fetch
+// outcome alone cannot tell "the prompt refused" from "nothing ever asked" -- both are a blocked fetch.
+
+async function recordedState()
+{
+    try {
+        const status = await navigator.permissions.query({ name: 'loopback-network' });
+        return status.state;
+    } catch (error) {
+        return `query threw ${error.name}`;
+    }
+}
+
+(async () => {
+    const before = await recordedState();
+    const outcome = await fetch('http://127.0.0.1:8800/resources/testharness.js', { mode: 'no-cors' })
+        .then(() => 'loaded', () => 'blocked');
+    const after = await recordedState();
+    parent.postMessage({ before, outcome, after }, '*');
+})();
+
+</script>
+</body>
+</html>

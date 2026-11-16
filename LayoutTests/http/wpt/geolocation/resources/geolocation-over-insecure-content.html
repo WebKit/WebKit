@@ -1,0 +1,7 @@
+<!DOCTYPE html>
+<script>
+let consoleMessage = null;
+internals.setConsoleMessageListener(message => consoleMessage = message);
+navigator.geolocation.getCurrentPosition(() => { }, () => { });
+internals.postTask(() => opener.postMessage(consoleMessage, "*"));
+</script>

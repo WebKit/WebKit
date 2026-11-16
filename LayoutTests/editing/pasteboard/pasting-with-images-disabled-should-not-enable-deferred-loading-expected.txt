@@ -1,0 +1,17 @@
+This tests makes sure that pasting content while images are disabled does not enable deferred loading.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+internals.settings.setImagesEnabled(false)
+document.execCommand("copy")
+PASS editor.querySelector("img").width is 76
+setTimeout(waitForImagesToBeDisabled, 0)
+PASS internals.pageDefersLoading() is false
+document.execCommand("paste")
+PASS internals.pageDefersLoading() is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+hello
+

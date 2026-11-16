@@ -1,0 +1,66 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ AsyncOverflowScrollingEnabled=true ] -->
+<html lang="en">
+<head>
+<script src="../../resources/ui-helper.js"></script>
+<style>
+    .header {
+        padding: .1rem .1rem;
+        position: relative;
+        width: 100%;
+    }
+
+    li {
+        position: relative;
+        line-height: 100rem;
+    }
+
+    .overlap {
+        height: 70vh;
+        margin-top: -.01rem;
+        max-height: 200px;
+        overflow-x: hidden;
+        overflow-y: auto;
+        width: 100%;
+    }
+
+    .aaaa {
+        max-width: 300px;
+        max-height: 200px;
+    }
+</style>
+</head>
+<body>
+
+<p>This test should not crash.</p>
+
+<div id="wrapper">
+    <div class="aaaa">
+        <div class="header">
+        </div>
+        <div class="overlap">
+            <ul>
+                <li></li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<script>
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+}
+
+window.onload = async () => {
+    await UIHelper.renderingUpdate();
+    document.getElementById("wrapper").style.visibility = "hidden";
+
+    await UIHelper.renderingUpdate();
+
+    if (window.testRunner)
+        testRunner.notifyDone();
+};
+
+</script>
+</body>
+</html>

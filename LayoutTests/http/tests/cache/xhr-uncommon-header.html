@@ -1,0 +1,26 @@
+<script src="/js-test-resources/js-test-pre.js"></script>
+<body>
+<script type="text/javascript">
+description("Test that we don't crash on xhr loads from cache with only uncommon HTTP headers");
+jsTestIsAsync = true;
+
+function repeat() {
+    var request2 = new XMLHttpRequest();
+    request2.addEventListener("load", function() { debug("load"); finishJSTest(); }, false);
+    request2.addEventListener("error", function() { debug("error"); finishJSTest(); }, false);
+    request2.addEventListener("abort", function() { debug("abort"); finishJSTest(); }, false);
+    request2.open("GET", "resources/empty.txt", true);
+    request2.setRequestHeader("X-Custom1", "test1");
+    request2.send();
+}
+
+var request = new XMLHttpRequest();
+request.addEventListener("load", function() { debug("load"); repeat(); }, false);
+request.addEventListener("error", function() { debug("error"); repeat(); }, false);
+request.addEventListener("abort", function() { debug("abort"); repeat(); }, false);
+request.open("GET", "resources/empty.txt", true);
+request.setRequestHeader("X-Custom1", "test1");
+request.send();
+</script>
+<script src="/js-test-resources/js-test-post.js"></script>
+</body>

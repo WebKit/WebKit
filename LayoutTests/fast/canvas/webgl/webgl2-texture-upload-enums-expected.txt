@@ -1,0 +1,2072 @@
+Test that glTexImage2D and glTexSubImage2D accept new WebGL 2 enum values
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.checkFramebufferStatus(gl.FRAMEBUFFER) is gl.FRAMEBUFFER_COMPLETE
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getError() is gl.NO_ERROR
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getError() is gl.NO_ERROR
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getError() is gl.NO_ERROR
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getError() is gl.NO_ERROR
+FAIL gl.getError() should be 0. Was 1286.
+FAIL receiver[index] should be 50. Was 0.
+FAIL receiver[index] should be 51. Was 0.
+FAIL receiver[index] should be 52. Was 0.
+FAIL receiver[index] should be 53. Was 0.
+FAIL receiver[index] should be 54. Was 0.
+FAIL receiver[index] should be 55. Was 0.
+FAIL receiver[index] should be 56. Was 0.
+FAIL receiver[index] should be 57. Was 0.
+FAIL receiver[index] should be 58. Was 0.
+FAIL receiver[index] should be 59. Was 0.
+FAIL receiver[index] should be 60. Was 0.
+FAIL receiver[index] should be 61. Was 0.
+FAIL receiver[index] should be 62. Was 0.
+FAIL receiver[index] should be 63. Was 0.
+FAIL receiver[index] should be 64. Was 0.
+FAIL receiver[index] should be 65. Was 0.
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getError() is gl.NO_ERROR
+FAIL gl.getError() should be 0. Was 1286.
+PASS receiver[index] is expected
+FAIL receiver[index] should be 1. Was 0.
+FAIL receiver[index] should be 2. Was 0.
+FAIL receiver[index] should be 3. Was 0.
+FAIL receiver[index] should be 4. Was 0.
+FAIL receiver[index] should be 5. Was 0.
+FAIL receiver[index] should be 6. Was 0.
+FAIL receiver[index] should be 7. Was 0.
+FAIL receiver[index] should be 8. Was 0.
+FAIL receiver[index] should be 9. Was 0.
+FAIL receiver[index] should be 10. Was 0.
+FAIL receiver[index] should be 11. Was 0.
+FAIL receiver[index] should be 12. Was 0.
+FAIL receiver[index] should be 13. Was 0.
+FAIL receiver[index] should be 14. Was 0.
+FAIL receiver[index] should be 15. Was 0.
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getError() is gl.NO_ERROR
+FAIL gl.getError() should be 0. Was 1286.
+FAIL receiver[index] should be 50. Was 0.
+FAIL receiver[index] should be 51. Was 0.
+FAIL receiver[index] should be 52. Was 0.
+FAIL receiver[index] should be 53. Was 0.
+FAIL receiver[index] should be 54. Was 0.
+FAIL receiver[index] should be 55. Was 0.
+FAIL receiver[index] should be 56. Was 0.
+FAIL receiver[index] should be 57. Was 0.
+FAIL receiver[index] should be 58. Was 0.
+FAIL receiver[index] should be 59. Was 0.
+FAIL receiver[index] should be 60. Was 0.
+FAIL receiver[index] should be 61. Was 0.
+FAIL receiver[index] should be 62. Was 0.
+FAIL receiver[index] should be 63. Was 0.
+FAIL receiver[index] should be 64. Was 0.
+FAIL receiver[index] should be 65. Was 0.
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getError() is gl.NO_ERROR
+FAIL gl.getError() should be 0. Was 1282.
+PASS receiver[index] is expected
+FAIL receiver[index] should be 1. Was 0.
+FAIL receiver[index] should be 2. Was 0.
+FAIL receiver[index] should be 3. Was 0.
+FAIL receiver[index] should be 4. Was 0.
+FAIL receiver[index] should be 5. Was 0.
+FAIL receiver[index] should be 6. Was 0.
+FAIL receiver[index] should be 7. Was 0.
+FAIL receiver[index] should be 8. Was 0.
+FAIL receiver[index] should be 9. Was 0.
+FAIL receiver[index] should be 10. Was 0.
+FAIL receiver[index] should be 11. Was 0.
+FAIL receiver[index] should be 12. Was 0.
+FAIL receiver[index] should be 13. Was 0.
+FAIL receiver[index] should be 14. Was 0.
+FAIL receiver[index] should be 15. Was 0.
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getError() is gl.NO_ERROR
+FAIL gl.getError() should be 0. Was 1282.
+FAIL receiver[index] should be 50. Was 0.
+FAIL receiver[index] should be 51. Was 0.
+FAIL receiver[index] should be 52. Was 0.
+FAIL receiver[index] should be 53. Was 0.
+FAIL receiver[index] should be 54. Was 0.
+FAIL receiver[index] should be 55. Was 0.
+FAIL receiver[index] should be 56. Was 0.
+FAIL receiver[index] should be 57. Was 0.
+FAIL receiver[index] should be 58. Was 0.
+FAIL receiver[index] should be 59. Was 0.
+FAIL receiver[index] should be 60. Was 0.
+FAIL receiver[index] should be 61. Was 0.
+FAIL receiver[index] should be 62. Was 0.
+FAIL receiver[index] should be 63. Was 0.
+FAIL receiver[index] should be 64. Was 0.
+FAIL receiver[index] should be 65. Was 0.
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getError() is gl.NO_ERROR
+FAIL gl.getError() should be 0. Was 1282.
+PASS receiver[index] is expected
+FAIL receiver[index] should be 1. Was 0.
+FAIL receiver[index] should be 2. Was 0.
+FAIL receiver[index] should be 3. Was 0.
+FAIL receiver[index] should be 4. Was 0.
+FAIL receiver[index] should be 5. Was 0.
+FAIL receiver[index] should be 6. Was 0.
+FAIL receiver[index] should be 7. Was 0.
+FAIL receiver[index] should be 8. Was 0.
+FAIL receiver[index] should be 9. Was 0.
+FAIL receiver[index] should be 10. Was 0.
+FAIL receiver[index] should be 11. Was 0.
+FAIL receiver[index] should be 12. Was 0.
+FAIL receiver[index] should be 13. Was 0.
+FAIL receiver[index] should be 14. Was 0.
+FAIL receiver[index] should be 15. Was 0.
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getError() is gl.NO_ERROR
+FAIL gl.getError() should be 0. Was 1282.
+FAIL receiver[index] should be 50. Was 0.
+FAIL receiver[index] should be 51. Was 0.
+FAIL receiver[index] should be 52. Was 0.
+FAIL receiver[index] should be 53. Was 0.
+FAIL receiver[index] should be 54. Was 0.
+FAIL receiver[index] should be 55. Was 0.
+FAIL receiver[index] should be 56. Was 0.
+FAIL receiver[index] should be 57. Was 0.
+FAIL receiver[index] should be 58. Was 0.
+FAIL receiver[index] should be 59. Was 0.
+FAIL receiver[index] should be 60. Was 0.
+FAIL receiver[index] should be 61. Was 0.
+FAIL receiver[index] should be 62. Was 0.
+FAIL receiver[index] should be 63. Was 0.
+FAIL receiver[index] should be 64. Was 0.
+FAIL receiver[index] should be 65. Was 0.
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getError() is gl.NO_ERROR
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getError() is gl.NO_ERROR
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getError() is gl.NO_ERROR
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getError() is gl.NO_ERROR
+FAIL gl.getError() should be 0. Was 1286.
+FAIL receiver[index] should be 50. Was 0.
+FAIL receiver[index] should be 51. Was 0.
+FAIL receiver[index] should be 52. Was 0.
+FAIL receiver[index] should be 53. Was 0.
+FAIL receiver[index] should be 54. Was 0.
+FAIL receiver[index] should be 55. Was 0.
+FAIL receiver[index] should be 56. Was 0.
+FAIL receiver[index] should be 57. Was 0.
+FAIL receiver[index] should be 58. Was 0.
+FAIL receiver[index] should be 59. Was 0.
+FAIL receiver[index] should be 60. Was 0.
+FAIL receiver[index] should be 61. Was 0.
+FAIL receiver[index] should be 62. Was 0.
+FAIL receiver[index] should be 63. Was 0.
+FAIL receiver[index] should be 64. Was 0.
+FAIL receiver[index] should be 65. Was 0.
+FAIL receiver[index] should be 66. Was 0.
+FAIL receiver[index] should be 67. Was 0.
+FAIL receiver[index] should be 68. Was 0.
+FAIL receiver[index] should be 69. Was 0.
+FAIL receiver[index] should be 70. Was 0.
+FAIL receiver[index] should be 71. Was 0.
+FAIL receiver[index] should be 72. Was 0.
+FAIL receiver[index] should be 73. Was 0.
+FAIL receiver[index] should be 74. Was 0.
+FAIL receiver[index] should be 75. Was 0.
+FAIL receiver[index] should be 76. Was 0.
+FAIL receiver[index] should be 77. Was 0.
+FAIL receiver[index] should be 78. Was 0.
+FAIL receiver[index] should be 79. Was 0.
+FAIL receiver[index] should be 80. Was 0.
+FAIL receiver[index] should be 81. Was 0.
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getError() is gl.NO_ERROR
+FAIL gl.getError() should be 0. Was 1286.
+PASS receiver[index] is expected
+FAIL receiver[index] should be 1. Was 0.
+FAIL receiver[index] should be 2. Was 0.
+FAIL receiver[index] should be 3. Was 0.
+FAIL receiver[index] should be 4. Was 0.
+FAIL receiver[index] should be 5. Was 0.
+FAIL receiver[index] should be 6. Was 0.
+FAIL receiver[index] should be 7. Was 0.
+FAIL receiver[index] should be 8. Was 0.
+FAIL receiver[index] should be 9. Was 0.
+FAIL receiver[index] should be 10. Was 0.
+FAIL receiver[index] should be 11. Was 0.
+FAIL receiver[index] should be 12. Was 0.
+FAIL receiver[index] should be 13. Was 0.
+FAIL receiver[index] should be 14. Was 0.
+FAIL receiver[index] should be 15. Was 0.
+FAIL receiver[index] should be 16. Was 0.
+FAIL receiver[index] should be 17. Was 0.
+FAIL receiver[index] should be 18. Was 0.
+FAIL receiver[index] should be 19. Was 0.
+FAIL receiver[index] should be 20. Was 0.
+FAIL receiver[index] should be 21. Was 0.
+FAIL receiver[index] should be 22. Was 0.
+FAIL receiver[index] should be 23. Was 0.
+FAIL receiver[index] should be 24. Was 0.
+FAIL receiver[index] should be 25. Was 0.
+FAIL receiver[index] should be 26. Was 0.
+FAIL receiver[index] should be 27. Was 0.
+FAIL receiver[index] should be 28. Was 0.
+FAIL receiver[index] should be 29. Was 0.
+FAIL receiver[index] should be 30. Was 0.
+FAIL receiver[index] should be 31. Was 0.
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getError() is gl.NO_ERROR
+FAIL gl.getError() should be 0. Was 1286.
+FAIL receiver[index] should be 50. Was 0.
+FAIL receiver[index] should be 51. Was 0.
+FAIL receiver[index] should be 52. Was 0.
+FAIL receiver[index] should be 53. Was 0.
+FAIL receiver[index] should be 54. Was 0.
+FAIL receiver[index] should be 55. Was 0.
+FAIL receiver[index] should be 56. Was 0.
+FAIL receiver[index] should be 57. Was 0.
+FAIL receiver[index] should be 58. Was 0.
+FAIL receiver[index] should be 59. Was 0.
+FAIL receiver[index] should be 60. Was 0.
+FAIL receiver[index] should be 61. Was 0.
+FAIL receiver[index] should be 62. Was 0.
+FAIL receiver[index] should be 63. Was 0.
+FAIL receiver[index] should be 64. Was 0.
+FAIL receiver[index] should be 65. Was 0.
+FAIL receiver[index] should be 66. Was 0.
+FAIL receiver[index] should be 67. Was 0.
+FAIL receiver[index] should be 68. Was 0.
+FAIL receiver[index] should be 69. Was 0.
+FAIL receiver[index] should be 70. Was 0.
+FAIL receiver[index] should be 71. Was 0.
+FAIL receiver[index] should be 72. Was 0.
+FAIL receiver[index] should be 73. Was 0.
+FAIL receiver[index] should be 74. Was 0.
+FAIL receiver[index] should be 75. Was 0.
+FAIL receiver[index] should be 76. Was 0.
+FAIL receiver[index] should be 77. Was 0.
+FAIL receiver[index] should be 78. Was 0.
+FAIL receiver[index] should be 79. Was 0.
+FAIL receiver[index] should be 80. Was 0.
+FAIL receiver[index] should be 81. Was 0.
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getError() is gl.NO_ERROR
+FAIL gl.getError() should be 0. Was 1282.
+PASS receiver[index] is expected
+FAIL receiver[index] should be 1. Was 0.
+FAIL receiver[index] should be 2. Was 0.
+FAIL receiver[index] should be 3. Was 0.
+FAIL receiver[index] should be 4. Was 0.
+FAIL receiver[index] should be 5. Was 0.
+FAIL receiver[index] should be 6. Was 0.
+FAIL receiver[index] should be 7. Was 0.
+FAIL receiver[index] should be 8. Was 0.
+FAIL receiver[index] should be 9. Was 0.
+FAIL receiver[index] should be 10. Was 0.
+FAIL receiver[index] should be 11. Was 0.
+FAIL receiver[index] should be 12. Was 0.
+FAIL receiver[index] should be 13. Was 0.
+FAIL receiver[index] should be 14. Was 0.
+FAIL receiver[index] should be 15. Was 0.
+FAIL receiver[index] should be 16. Was 0.
+FAIL receiver[index] should be 17. Was 0.
+FAIL receiver[index] should be 18. Was 0.
+FAIL receiver[index] should be 19. Was 0.
+FAIL receiver[index] should be 20. Was 0.
+FAIL receiver[index] should be 21. Was 0.
+FAIL receiver[index] should be 22. Was 0.
+FAIL receiver[index] should be 23. Was 0.
+FAIL receiver[index] should be 24. Was 0.
+FAIL receiver[index] should be 25. Was 0.
+FAIL receiver[index] should be 26. Was 0.
+FAIL receiver[index] should be 27. Was 0.
+FAIL receiver[index] should be 28. Was 0.
+FAIL receiver[index] should be 29. Was 0.
+FAIL receiver[index] should be 30. Was 0.
+FAIL receiver[index] should be 31. Was 0.
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getError() is gl.NO_ERROR
+FAIL gl.getError() should be 0. Was 1282.
+FAIL receiver[index] should be 50. Was 0.
+FAIL receiver[index] should be 51. Was 0.
+FAIL receiver[index] should be 52. Was 0.
+FAIL receiver[index] should be 53. Was 0.
+FAIL receiver[index] should be 54. Was 0.
+FAIL receiver[index] should be 55. Was 0.
+FAIL receiver[index] should be 56. Was 0.
+FAIL receiver[index] should be 57. Was 0.
+FAIL receiver[index] should be 58. Was 0.
+FAIL receiver[index] should be 59. Was 0.
+FAIL receiver[index] should be 60. Was 0.
+FAIL receiver[index] should be 61. Was 0.
+FAIL receiver[index] should be 62. Was 0.
+FAIL receiver[index] should be 63. Was 0.
+FAIL receiver[index] should be 64. Was 0.
+FAIL receiver[index] should be 65. Was 0.
+FAIL receiver[index] should be 66. Was 0.
+FAIL receiver[index] should be 67. Was 0.
+FAIL receiver[index] should be 68. Was 0.
+FAIL receiver[index] should be 69. Was 0.
+FAIL receiver[index] should be 70. Was 0.
+FAIL receiver[index] should be 71. Was 0.
+FAIL receiver[index] should be 72. Was 0.
+FAIL receiver[index] should be 73. Was 0.
+FAIL receiver[index] should be 74. Was 0.
+FAIL receiver[index] should be 75. Was 0.
+FAIL receiver[index] should be 76. Was 0.
+FAIL receiver[index] should be 77. Was 0.
+FAIL receiver[index] should be 78. Was 0.
+FAIL receiver[index] should be 79. Was 0.
+FAIL receiver[index] should be 80. Was 0.
+FAIL receiver[index] should be 81. Was 0.
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getError() is gl.NO_ERROR
+FAIL gl.getError() should be 0. Was 1282.
+PASS receiver[index] is expected
+FAIL receiver[index] should be 1. Was 0.
+FAIL receiver[index] should be 2. Was 0.
+FAIL receiver[index] should be 3. Was 0.
+FAIL receiver[index] should be 4. Was 0.
+FAIL receiver[index] should be 5. Was 0.
+FAIL receiver[index] should be 6. Was 0.
+FAIL receiver[index] should be 7. Was 0.
+FAIL receiver[index] should be 8. Was 0.
+FAIL receiver[index] should be 9. Was 0.
+FAIL receiver[index] should be 10. Was 0.
+FAIL receiver[index] should be 11. Was 0.
+FAIL receiver[index] should be 12. Was 0.
+FAIL receiver[index] should be 13. Was 0.
+FAIL receiver[index] should be 14. Was 0.
+FAIL receiver[index] should be 15. Was 0.
+FAIL receiver[index] should be 16. Was 0.
+FAIL receiver[index] should be 17. Was 0.
+FAIL receiver[index] should be 18. Was 0.
+FAIL receiver[index] should be 19. Was 0.
+FAIL receiver[index] should be 20. Was 0.
+FAIL receiver[index] should be 21. Was 0.
+FAIL receiver[index] should be 22. Was 0.
+FAIL receiver[index] should be 23. Was 0.
+FAIL receiver[index] should be 24. Was 0.
+FAIL receiver[index] should be 25. Was 0.
+FAIL receiver[index] should be 26. Was 0.
+FAIL receiver[index] should be 27. Was 0.
+FAIL receiver[index] should be 28. Was 0.
+FAIL receiver[index] should be 29. Was 0.
+FAIL receiver[index] should be 30. Was 0.
+FAIL receiver[index] should be 31. Was 0.
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getError() is gl.NO_ERROR
+FAIL gl.getError() should be 0. Was 1282.
+FAIL receiver[index] should be 50. Was 0.
+FAIL receiver[index] should be 51. Was 0.
+FAIL receiver[index] should be 52. Was 0.
+FAIL receiver[index] should be 53. Was 0.
+FAIL receiver[index] should be 54. Was 0.
+FAIL receiver[index] should be 55. Was 0.
+FAIL receiver[index] should be 56. Was 0.
+FAIL receiver[index] should be 57. Was 0.
+FAIL receiver[index] should be 58. Was 0.
+FAIL receiver[index] should be 59. Was 0.
+FAIL receiver[index] should be 60. Was 0.
+FAIL receiver[index] should be 61. Was 0.
+FAIL receiver[index] should be 62. Was 0.
+FAIL receiver[index] should be 63. Was 0.
+FAIL receiver[index] should be 64. Was 0.
+FAIL receiver[index] should be 65. Was 0.
+FAIL receiver[index] should be 66. Was 0.
+FAIL receiver[index] should be 67. Was 0.
+FAIL receiver[index] should be 68. Was 0.
+FAIL receiver[index] should be 69. Was 0.
+FAIL receiver[index] should be 70. Was 0.
+FAIL receiver[index] should be 71. Was 0.
+FAIL receiver[index] should be 72. Was 0.
+FAIL receiver[index] should be 73. Was 0.
+FAIL receiver[index] should be 74. Was 0.
+FAIL receiver[index] should be 75. Was 0.
+FAIL receiver[index] should be 76. Was 0.
+FAIL receiver[index] should be 77. Was 0.
+FAIL receiver[index] should be 78. Was 0.
+FAIL receiver[index] should be 79. Was 0.
+FAIL receiver[index] should be 80. Was 0.
+FAIL receiver[index] should be 81. Was 0.
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getError() is gl.NO_ERROR
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getError() is gl.NO_ERROR
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getError() is gl.NO_ERROR
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getError() is gl.NO_ERROR
+FAIL gl.getError() should be 0. Was 1286.
+FAIL receiver[index] should be 50. Was 0.
+FAIL receiver[index] should be 51. Was 0.
+FAIL receiver[index] should be 52. Was 0.
+FAIL receiver[index] should be 53. Was 0.
+FAIL receiver[index] should be 54. Was 0.
+FAIL receiver[index] should be 55. Was 0.
+FAIL receiver[index] should be 56. Was 0.
+FAIL receiver[index] should be 57. Was 0.
+FAIL receiver[index] should be 58. Was 0.
+FAIL receiver[index] should be 59. Was 0.
+FAIL receiver[index] should be 60. Was 0.
+FAIL receiver[index] should be 61. Was 0.
+FAIL receiver[index] should be 62. Was 0.
+FAIL receiver[index] should be 63. Was 0.
+FAIL receiver[index] should be 64. Was 0.
+FAIL receiver[index] should be 65. Was 0.
+FAIL receiver[index] should be 66. Was 0.
+FAIL receiver[index] should be 67. Was 0.
+FAIL receiver[index] should be 68. Was 0.
+FAIL receiver[index] should be 69. Was 0.
+FAIL receiver[index] should be 70. Was 0.
+FAIL receiver[index] should be 71. Was 0.
+FAIL receiver[index] should be 72. Was 0.
+FAIL receiver[index] should be 73. Was 0.
+FAIL receiver[index] should be 74. Was 0.
+FAIL receiver[index] should be 75. Was 0.
+FAIL receiver[index] should be 76. Was 0.
+FAIL receiver[index] should be 77. Was 0.
+FAIL receiver[index] should be 78. Was 0.
+FAIL receiver[index] should be 79. Was 0.
+FAIL receiver[index] should be 80. Was 0.
+FAIL receiver[index] should be 81. Was 0.
+FAIL receiver[index] should be 82. Was 0.
+FAIL receiver[index] should be 83. Was 0.
+FAIL receiver[index] should be 84. Was 0.
+FAIL receiver[index] should be 85. Was 0.
+FAIL receiver[index] should be 86. Was 0.
+FAIL receiver[index] should be 87. Was 0.
+FAIL receiver[index] should be 88. Was 0.
+FAIL receiver[index] should be 89. Was 0.
+FAIL receiver[index] should be 90. Was 0.
+FAIL receiver[index] should be 91. Was 0.
+FAIL receiver[index] should be 92. Was 0.
+FAIL receiver[index] should be 93. Was 0.
+FAIL receiver[index] should be 94. Was 0.
+FAIL receiver[index] should be 95. Was 0.
+FAIL receiver[index] should be 96. Was 0.
+FAIL receiver[index] should be 97. Was 0.
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getError() is gl.NO_ERROR
+FAIL gl.getError() should be 0. Was 1286.
+PASS receiver[index] is expected
+FAIL receiver[index] should be 1. Was 0.
+FAIL receiver[index] should be 2. Was 0.
+FAIL receiver[index] should be 3. Was 0.
+FAIL receiver[index] should be 4. Was 0.
+FAIL receiver[index] should be 5. Was 0.
+FAIL receiver[index] should be 6. Was 0.
+FAIL receiver[index] should be 7. Was 0.
+FAIL receiver[index] should be 8. Was 0.
+FAIL receiver[index] should be 9. Was 0.
+FAIL receiver[index] should be 10. Was 0.
+FAIL receiver[index] should be 11. Was 0.
+FAIL receiver[index] should be 12. Was 0.
+FAIL receiver[index] should be 13. Was 0.
+FAIL receiver[index] should be 14. Was 0.
+FAIL receiver[index] should be 15. Was 0.
+FAIL receiver[index] should be 16. Was 0.
+FAIL receiver[index] should be 17. Was 0.
+FAIL receiver[index] should be 18. Was 0.
+FAIL receiver[index] should be 19. Was 0.
+FAIL receiver[index] should be 20. Was 0.
+FAIL receiver[index] should be 21. Was 0.
+FAIL receiver[index] should be 22. Was 0.
+FAIL receiver[index] should be 23. Was 0.
+FAIL receiver[index] should be 24. Was 0.
+FAIL receiver[index] should be 25. Was 0.
+FAIL receiver[index] should be 26. Was 0.
+FAIL receiver[index] should be 27. Was 0.
+FAIL receiver[index] should be 28. Was 0.
+FAIL receiver[index] should be 29. Was 0.
+FAIL receiver[index] should be 30. Was 0.
+FAIL receiver[index] should be 31. Was 0.
+FAIL receiver[index] should be 32. Was 0.
+FAIL receiver[index] should be 33. Was 0.
+FAIL receiver[index] should be 34. Was 0.
+FAIL receiver[index] should be 35. Was 0.
+FAIL receiver[index] should be 36. Was 0.
+FAIL receiver[index] should be 37. Was 0.
+FAIL receiver[index] should be 38. Was 0.
+FAIL receiver[index] should be 39. Was 0.
+FAIL receiver[index] should be 40. Was 0.
+FAIL receiver[index] should be 41. Was 0.
+FAIL receiver[index] should be 42. Was 0.
+FAIL receiver[index] should be 43. Was 0.
+FAIL receiver[index] should be 44. Was 0.
+FAIL receiver[index] should be 45. Was 0.
+FAIL receiver[index] should be 46. Was 0.
+FAIL receiver[index] should be 47. Was 0.
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getError() is gl.NO_ERROR
+FAIL gl.getError() should be 0. Was 1286.
+FAIL receiver[index] should be 50. Was 0.
+FAIL receiver[index] should be 51. Was 0.
+FAIL receiver[index] should be 52. Was 0.
+FAIL receiver[index] should be 53. Was 0.
+FAIL receiver[index] should be 54. Was 0.
+FAIL receiver[index] should be 55. Was 0.
+FAIL receiver[index] should be 56. Was 0.
+FAIL receiver[index] should be 57. Was 0.
+FAIL receiver[index] should be 58. Was 0.
+FAIL receiver[index] should be 59. Was 0.
+FAIL receiver[index] should be 60. Was 0.
+FAIL receiver[index] should be 61. Was 0.
+FAIL receiver[index] should be 62. Was 0.
+FAIL receiver[index] should be 63. Was 0.
+FAIL receiver[index] should be 64. Was 0.
+FAIL receiver[index] should be 65. Was 0.
+FAIL receiver[index] should be 66. Was 0.
+FAIL receiver[index] should be 67. Was 0.
+FAIL receiver[index] should be 68. Was 0.
+FAIL receiver[index] should be 69. Was 0.
+FAIL receiver[index] should be 70. Was 0.
+FAIL receiver[index] should be 71. Was 0.
+FAIL receiver[index] should be 72. Was 0.
+FAIL receiver[index] should be 73. Was 0.
+FAIL receiver[index] should be 74. Was 0.
+FAIL receiver[index] should be 75. Was 0.
+FAIL receiver[index] should be 76. Was 0.
+FAIL receiver[index] should be 77. Was 0.
+FAIL receiver[index] should be 78. Was 0.
+FAIL receiver[index] should be 79. Was 0.
+FAIL receiver[index] should be 80. Was 0.
+FAIL receiver[index] should be 81. Was 0.
+FAIL receiver[index] should be 82. Was 0.
+FAIL receiver[index] should be 83. Was 0.
+FAIL receiver[index] should be 84. Was 0.
+FAIL receiver[index] should be 85. Was 0.
+FAIL receiver[index] should be 86. Was 0.
+FAIL receiver[index] should be 87. Was 0.
+FAIL receiver[index] should be 88. Was 0.
+FAIL receiver[index] should be 89. Was 0.
+FAIL receiver[index] should be 90. Was 0.
+FAIL receiver[index] should be 91. Was 0.
+FAIL receiver[index] should be 92. Was 0.
+FAIL receiver[index] should be 93. Was 0.
+FAIL receiver[index] should be 94. Was 0.
+FAIL receiver[index] should be 95. Was 0.
+FAIL receiver[index] should be 96. Was 0.
+FAIL receiver[index] should be 97. Was 0.
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getError() is gl.NO_ERROR
+FAIL gl.getError() should be 0. Was 1286.
+PASS receiver[index] is expected
+FAIL receiver[index] should be 1. Was 0.
+FAIL receiver[index] should be 2. Was 0.
+FAIL receiver[index] should be 3. Was 0.
+FAIL receiver[index] should be 4. Was 0.
+FAIL receiver[index] should be 5. Was 0.
+FAIL receiver[index] should be 6. Was 0.
+FAIL receiver[index] should be 7. Was 0.
+FAIL receiver[index] should be 8. Was 0.
+FAIL receiver[index] should be 9. Was 0.
+FAIL receiver[index] should be 10. Was 0.
+FAIL receiver[index] should be 11. Was 0.
+FAIL receiver[index] should be 12. Was 0.
+FAIL receiver[index] should be 13. Was 0.
+FAIL receiver[index] should be 14. Was 0.
+FAIL receiver[index] should be 15. Was 0.
+FAIL receiver[index] should be 16. Was 0.
+FAIL receiver[index] should be 17. Was 0.
+FAIL receiver[index] should be 18. Was 0.
+FAIL receiver[index] should be 19. Was 0.
+FAIL receiver[index] should be 20. Was 0.
+FAIL receiver[index] should be 21. Was 0.
+FAIL receiver[index] should be 22. Was 0.
+FAIL receiver[index] should be 23. Was 0.
+FAIL receiver[index] should be 24. Was 0.
+FAIL receiver[index] should be 25. Was 0.
+FAIL receiver[index] should be 26. Was 0.
+FAIL receiver[index] should be 27. Was 0.
+FAIL receiver[index] should be 28. Was 0.
+FAIL receiver[index] should be 29. Was 0.
+FAIL receiver[index] should be 30. Was 0.
+FAIL receiver[index] should be 31. Was 0.
+FAIL receiver[index] should be 32. Was 0.
+FAIL receiver[index] should be 33. Was 0.
+FAIL receiver[index] should be 34. Was 0.
+FAIL receiver[index] should be 35. Was 0.
+FAIL receiver[index] should be 36. Was 0.
+FAIL receiver[index] should be 37. Was 0.
+FAIL receiver[index] should be 38. Was 0.
+FAIL receiver[index] should be 39. Was 0.
+FAIL receiver[index] should be 40. Was 0.
+FAIL receiver[index] should be 41. Was 0.
+FAIL receiver[index] should be 42. Was 0.
+FAIL receiver[index] should be 43. Was 0.
+FAIL receiver[index] should be 44. Was 0.
+FAIL receiver[index] should be 45. Was 0.
+FAIL receiver[index] should be 46. Was 0.
+FAIL receiver[index] should be 47. Was 0.
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getError() is gl.NO_ERROR
+FAIL gl.getError() should be 0. Was 1286.
+FAIL receiver[index] should be 50. Was 0.
+FAIL receiver[index] should be 51. Was 0.
+FAIL receiver[index] should be 52. Was 0.
+FAIL receiver[index] should be 53. Was 0.
+FAIL receiver[index] should be 54. Was 0.
+FAIL receiver[index] should be 55. Was 0.
+FAIL receiver[index] should be 56. Was 0.
+FAIL receiver[index] should be 57. Was 0.
+FAIL receiver[index] should be 58. Was 0.
+FAIL receiver[index] should be 59. Was 0.
+FAIL receiver[index] should be 60. Was 0.
+FAIL receiver[index] should be 61. Was 0.
+FAIL receiver[index] should be 62. Was 0.
+FAIL receiver[index] should be 63. Was 0.
+FAIL receiver[index] should be 64. Was 0.
+FAIL receiver[index] should be 65. Was 0.
+FAIL receiver[index] should be 66. Was 0.
+FAIL receiver[index] should be 67. Was 0.
+FAIL receiver[index] should be 68. Was 0.
+FAIL receiver[index] should be 69. Was 0.
+FAIL receiver[index] should be 70. Was 0.
+FAIL receiver[index] should be 71. Was 0.
+FAIL receiver[index] should be 72. Was 0.
+FAIL receiver[index] should be 73. Was 0.
+FAIL receiver[index] should be 74. Was 0.
+FAIL receiver[index] should be 75. Was 0.
+FAIL receiver[index] should be 76. Was 0.
+FAIL receiver[index] should be 77. Was 0.
+FAIL receiver[index] should be 78. Was 0.
+FAIL receiver[index] should be 79. Was 0.
+FAIL receiver[index] should be 80. Was 0.
+FAIL receiver[index] should be 81. Was 0.
+FAIL receiver[index] should be 82. Was 0.
+FAIL receiver[index] should be 83. Was 0.
+FAIL receiver[index] should be 84. Was 0.
+FAIL receiver[index] should be 85. Was 0.
+FAIL receiver[index] should be 86. Was 0.
+FAIL receiver[index] should be 87. Was 0.
+FAIL receiver[index] should be 88. Was 0.
+FAIL receiver[index] should be 89. Was 0.
+FAIL receiver[index] should be 90. Was 0.
+FAIL receiver[index] should be 91. Was 0.
+FAIL receiver[index] should be 92. Was 0.
+FAIL receiver[index] should be 93. Was 0.
+FAIL receiver[index] should be 94. Was 0.
+FAIL receiver[index] should be 95. Was 0.
+FAIL receiver[index] should be 96. Was 0.
+FAIL receiver[index] should be 97. Was 0.
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getError() is gl.NO_ERROR
+FAIL gl.getError() should be 0. Was 1286.
+PASS receiver[index] is expected
+FAIL receiver[index] should be 1. Was 0.
+FAIL receiver[index] should be 2. Was 0.
+FAIL receiver[index] should be 3. Was 0.
+FAIL receiver[index] should be 4. Was 0.
+FAIL receiver[index] should be 5. Was 0.
+FAIL receiver[index] should be 6. Was 0.
+FAIL receiver[index] should be 7. Was 0.
+FAIL receiver[index] should be 8. Was 0.
+FAIL receiver[index] should be 9. Was 0.
+FAIL receiver[index] should be 10. Was 0.
+FAIL receiver[index] should be 11. Was 0.
+FAIL receiver[index] should be 12. Was 0.
+FAIL receiver[index] should be 13. Was 0.
+FAIL receiver[index] should be 14. Was 0.
+FAIL receiver[index] should be 15. Was 0.
+FAIL receiver[index] should be 16. Was 0.
+FAIL receiver[index] should be 17. Was 0.
+FAIL receiver[index] should be 18. Was 0.
+FAIL receiver[index] should be 19. Was 0.
+FAIL receiver[index] should be 20. Was 0.
+FAIL receiver[index] should be 21. Was 0.
+FAIL receiver[index] should be 22. Was 0.
+FAIL receiver[index] should be 23. Was 0.
+FAIL receiver[index] should be 24. Was 0.
+FAIL receiver[index] should be 25. Was 0.
+FAIL receiver[index] should be 26. Was 0.
+FAIL receiver[index] should be 27. Was 0.
+FAIL receiver[index] should be 28. Was 0.
+FAIL receiver[index] should be 29. Was 0.
+FAIL receiver[index] should be 30. Was 0.
+FAIL receiver[index] should be 31. Was 0.
+FAIL receiver[index] should be 32. Was 0.
+FAIL receiver[index] should be 33. Was 0.
+FAIL receiver[index] should be 34. Was 0.
+FAIL receiver[index] should be 35. Was 0.
+FAIL receiver[index] should be 36. Was 0.
+FAIL receiver[index] should be 37. Was 0.
+FAIL receiver[index] should be 38. Was 0.
+FAIL receiver[index] should be 39. Was 0.
+FAIL receiver[index] should be 40. Was 0.
+FAIL receiver[index] should be 41. Was 0.
+FAIL receiver[index] should be 42. Was 0.
+FAIL receiver[index] should be 43. Was 0.
+FAIL receiver[index] should be 44. Was 0.
+FAIL receiver[index] should be 45. Was 0.
+FAIL receiver[index] should be 46. Was 0.
+FAIL receiver[index] should be 47. Was 0.
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getError() is gl.NO_ERROR
+FAIL gl.getError() should be 0. Was 1286.
+FAIL receiver[index] should be 50. Was 0.
+FAIL receiver[index] should be 51. Was 0.
+FAIL receiver[index] should be 52. Was 0.
+FAIL receiver[index] should be 53. Was 0.
+FAIL receiver[index] should be 54. Was 0.
+FAIL receiver[index] should be 55. Was 0.
+FAIL receiver[index] should be 56. Was 0.
+FAIL receiver[index] should be 57. Was 0.
+FAIL receiver[index] should be 58. Was 0.
+FAIL receiver[index] should be 59. Was 0.
+FAIL receiver[index] should be 60. Was 0.
+FAIL receiver[index] should be 61. Was 0.
+FAIL receiver[index] should be 62. Was 0.
+FAIL receiver[index] should be 63. Was 0.
+FAIL receiver[index] should be 64. Was 0.
+FAIL receiver[index] should be 65. Was 0.
+FAIL receiver[index] should be 66. Was 0.
+FAIL receiver[index] should be 67. Was 0.
+FAIL receiver[index] should be 68. Was 0.
+FAIL receiver[index] should be 69. Was 0.
+FAIL receiver[index] should be 70. Was 0.
+FAIL receiver[index] should be 71. Was 0.
+FAIL receiver[index] should be 72. Was 0.
+FAIL receiver[index] should be 73. Was 0.
+FAIL receiver[index] should be 74. Was 0.
+FAIL receiver[index] should be 75. Was 0.
+FAIL receiver[index] should be 76. Was 0.
+FAIL receiver[index] should be 77. Was 0.
+FAIL receiver[index] should be 78. Was 0.
+FAIL receiver[index] should be 79. Was 0.
+FAIL receiver[index] should be 80. Was 0.
+FAIL receiver[index] should be 81. Was 0.
+FAIL receiver[index] should be 82. Was 0.
+FAIL receiver[index] should be 83. Was 0.
+FAIL receiver[index] should be 84. Was 0.
+FAIL receiver[index] should be 85. Was 0.
+FAIL receiver[index] should be 86. Was 0.
+FAIL receiver[index] should be 87. Was 0.
+FAIL receiver[index] should be 88. Was 0.
+FAIL receiver[index] should be 89. Was 0.
+FAIL receiver[index] should be 90. Was 0.
+FAIL receiver[index] should be 91. Was 0.
+FAIL receiver[index] should be 92. Was 0.
+FAIL receiver[index] should be 93. Was 0.
+FAIL receiver[index] should be 94. Was 0.
+FAIL receiver[index] should be 95. Was 0.
+FAIL receiver[index] should be 96. Was 0.
+FAIL receiver[index] should be 97. Was 0.
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getError() is gl.NO_ERROR
+FAIL gl.getError() should be 0. Was 1286.
+PASS receiver[index] is expected
+FAIL receiver[index] should be 1. Was 0.
+FAIL receiver[index] should be 2. Was 0.
+FAIL receiver[index] should be 3. Was 0.
+FAIL receiver[index] should be 4. Was 0.
+FAIL receiver[index] should be 5. Was 0.
+FAIL receiver[index] should be 6. Was 0.
+FAIL receiver[index] should be 7. Was 0.
+FAIL receiver[index] should be 8. Was 0.
+FAIL receiver[index] should be 9. Was 0.
+FAIL receiver[index] should be 10. Was 0.
+FAIL receiver[index] should be 11. Was 0.
+FAIL receiver[index] should be 12. Was 0.
+FAIL receiver[index] should be 13. Was 0.
+FAIL receiver[index] should be 14. Was 0.
+FAIL receiver[index] should be 15. Was 0.
+FAIL receiver[index] should be 16. Was 0.
+FAIL receiver[index] should be 17. Was 0.
+FAIL receiver[index] should be 18. Was 0.
+FAIL receiver[index] should be 19. Was 0.
+FAIL receiver[index] should be 20. Was 0.
+FAIL receiver[index] should be 21. Was 0.
+FAIL receiver[index] should be 22. Was 0.
+FAIL receiver[index] should be 23. Was 0.
+FAIL receiver[index] should be 24. Was 0.
+FAIL receiver[index] should be 25. Was 0.
+FAIL receiver[index] should be 26. Was 0.
+FAIL receiver[index] should be 27. Was 0.
+FAIL receiver[index] should be 28. Was 0.
+FAIL receiver[index] should be 29. Was 0.
+FAIL receiver[index] should be 30. Was 0.
+FAIL receiver[index] should be 31. Was 0.
+FAIL receiver[index] should be 32. Was 0.
+FAIL receiver[index] should be 33. Was 0.
+FAIL receiver[index] should be 34. Was 0.
+FAIL receiver[index] should be 35. Was 0.
+FAIL receiver[index] should be 36. Was 0.
+FAIL receiver[index] should be 37. Was 0.
+FAIL receiver[index] should be 38. Was 0.
+FAIL receiver[index] should be 39. Was 0.
+FAIL receiver[index] should be 40. Was 0.
+FAIL receiver[index] should be 41. Was 0.
+FAIL receiver[index] should be 42. Was 0.
+FAIL receiver[index] should be 43. Was 0.
+FAIL receiver[index] should be 44. Was 0.
+FAIL receiver[index] should be 45. Was 0.
+FAIL receiver[index] should be 46. Was 0.
+FAIL receiver[index] should be 47. Was 0.
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getError() is gl.NO_ERROR
+FAIL gl.getError() should be 0. Was 1286.
+FAIL receiver[index] should be 50. Was 0.
+FAIL receiver[index] should be 51. Was 0.
+FAIL receiver[index] should be 52. Was 0.
+FAIL receiver[index] should be 53. Was 0.
+FAIL receiver[index] should be 54. Was 0.
+FAIL receiver[index] should be 55. Was 0.
+FAIL receiver[index] should be 56. Was 0.
+FAIL receiver[index] should be 57. Was 0.
+FAIL receiver[index] should be 58. Was 0.
+FAIL receiver[index] should be 59. Was 0.
+FAIL receiver[index] should be 60. Was 0.
+FAIL receiver[index] should be 61. Was 0.
+FAIL receiver[index] should be 62. Was 0.
+FAIL receiver[index] should be 63. Was 0.
+FAIL receiver[index] should be 64. Was 0.
+FAIL receiver[index] should be 65. Was 0.
+FAIL receiver[index] should be 66. Was 0.
+FAIL receiver[index] should be 67. Was 0.
+FAIL receiver[index] should be 68. Was 0.
+FAIL receiver[index] should be 69. Was 0.
+FAIL receiver[index] should be 70. Was 0.
+FAIL receiver[index] should be 71. Was 0.
+FAIL receiver[index] should be 72. Was 0.
+FAIL receiver[index] should be 73. Was 0.
+FAIL receiver[index] should be 74. Was 0.
+FAIL receiver[index] should be 75. Was 0.
+FAIL receiver[index] should be 76. Was 0.
+FAIL receiver[index] should be 77. Was 0.
+FAIL receiver[index] should be 78. Was 0.
+FAIL receiver[index] should be 79. Was 0.
+FAIL receiver[index] should be 80. Was 0.
+FAIL receiver[index] should be 81. Was 0.
+FAIL receiver[index] should be 82. Was 0.
+FAIL receiver[index] should be 83. Was 0.
+FAIL receiver[index] should be 84. Was 0.
+FAIL receiver[index] should be 85. Was 0.
+FAIL receiver[index] should be 86. Was 0.
+FAIL receiver[index] should be 87. Was 0.
+FAIL receiver[index] should be 88. Was 0.
+FAIL receiver[index] should be 89. Was 0.
+FAIL receiver[index] should be 90. Was 0.
+FAIL receiver[index] should be 91. Was 0.
+FAIL receiver[index] should be 92. Was 0.
+FAIL receiver[index] should be 93. Was 0.
+FAIL receiver[index] should be 94. Was 0.
+FAIL receiver[index] should be 95. Was 0.
+FAIL receiver[index] should be 96. Was 0.
+FAIL receiver[index] should be 97. Was 0.
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getError() is gl.NO_ERROR
+FAIL gl.getError() should be 0. Was 1286.
+PASS receiver[index] is expected
+FAIL receiver[index] should be 1. Was 0.
+FAIL receiver[index] should be 2. Was 0.
+FAIL receiver[index] should be 3. Was 0.
+FAIL receiver[index] should be 4. Was 0.
+FAIL receiver[index] should be 5. Was 0.
+FAIL receiver[index] should be 6. Was 0.
+FAIL receiver[index] should be 7. Was 0.
+FAIL receiver[index] should be 8. Was 0.
+FAIL receiver[index] should be 9. Was 0.
+FAIL receiver[index] should be 10. Was 0.
+FAIL receiver[index] should be 11. Was 0.
+FAIL receiver[index] should be 12. Was 0.
+FAIL receiver[index] should be 13. Was 0.
+FAIL receiver[index] should be 14. Was 0.
+FAIL receiver[index] should be 15. Was 0.
+FAIL receiver[index] should be 16. Was 0.
+FAIL receiver[index] should be 17. Was 0.
+FAIL receiver[index] should be 18. Was 0.
+FAIL receiver[index] should be 19. Was 0.
+FAIL receiver[index] should be 20. Was 0.
+FAIL receiver[index] should be 21. Was 0.
+FAIL receiver[index] should be 22. Was 0.
+FAIL receiver[index] should be 23. Was 0.
+FAIL receiver[index] should be 24. Was 0.
+FAIL receiver[index] should be 25. Was 0.
+FAIL receiver[index] should be 26. Was 0.
+FAIL receiver[index] should be 27. Was 0.
+FAIL receiver[index] should be 28. Was 0.
+FAIL receiver[index] should be 29. Was 0.
+FAIL receiver[index] should be 30. Was 0.
+FAIL receiver[index] should be 31. Was 0.
+FAIL receiver[index] should be 32. Was 0.
+FAIL receiver[index] should be 33. Was 0.
+FAIL receiver[index] should be 34. Was 0.
+FAIL receiver[index] should be 35. Was 0.
+FAIL receiver[index] should be 36. Was 0.
+FAIL receiver[index] should be 37. Was 0.
+FAIL receiver[index] should be 38. Was 0.
+FAIL receiver[index] should be 39. Was 0.
+FAIL receiver[index] should be 40. Was 0.
+FAIL receiver[index] should be 41. Was 0.
+FAIL receiver[index] should be 42. Was 0.
+FAIL receiver[index] should be 43. Was 0.
+FAIL receiver[index] should be 44. Was 0.
+FAIL receiver[index] should be 45. Was 0.
+FAIL receiver[index] should be 46. Was 0.
+FAIL receiver[index] should be 47. Was 0.
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getError() is gl.NO_ERROR
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getError() is gl.NO_ERROR
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getError() is gl.NO_ERROR
+FAIL gl.getError() should be 0. Was 1286.
+FAIL receiver[index] should be 50. Was 0.
+FAIL receiver[index] should be 51. Was 0.
+FAIL receiver[index] should be 52. Was 0.
+FAIL receiver[index] should be 53. Was 0.
+FAIL receiver[index] should be 54. Was 0.
+FAIL receiver[index] should be 55. Was 0.
+FAIL receiver[index] should be 56. Was 0.
+FAIL receiver[index] should be 57. Was 0.
+FAIL receiver[index] should be 58. Was 0.
+FAIL receiver[index] should be 59. Was 0.
+FAIL receiver[index] should be 60. Was 0.
+FAIL receiver[index] should be 61. Was 0.
+FAIL receiver[index] should be 62. Was 0.
+FAIL receiver[index] should be 63. Was 0.
+FAIL receiver[index] should be 64. Was 0.
+FAIL receiver[index] should be 65. Was 0.
+FAIL receiver[index] should be 66. Was 0.
+FAIL receiver[index] should be 67. Was 0.
+FAIL receiver[index] should be 68. Was 0.
+FAIL receiver[index] should be 69. Was 0.
+FAIL receiver[index] should be 70. Was 0.
+FAIL receiver[index] should be 71. Was 0.
+FAIL receiver[index] should be 72. Was 0.
+FAIL receiver[index] should be 73. Was 0.
+FAIL receiver[index] should be 74. Was 0.
+FAIL receiver[index] should be 75. Was 0.
+FAIL receiver[index] should be 76. Was 0.
+FAIL receiver[index] should be 77. Was 0.
+FAIL receiver[index] should be 78. Was 0.
+FAIL receiver[index] should be 79. Was 0.
+FAIL receiver[index] should be 80. Was 0.
+FAIL receiver[index] should be 81. Was 0.
+FAIL receiver[index] should be 82. Was 0.
+FAIL receiver[index] should be 83. Was 0.
+FAIL receiver[index] should be 84. Was 0.
+FAIL receiver[index] should be 85. Was 0.
+FAIL receiver[index] should be 86. Was 0.
+FAIL receiver[index] should be 87. Was 0.
+FAIL receiver[index] should be 88. Was 0.
+FAIL receiver[index] should be 89. Was 0.
+FAIL receiver[index] should be 90. Was 0.
+FAIL receiver[index] should be 91. Was 0.
+FAIL receiver[index] should be 92. Was 0.
+FAIL receiver[index] should be 93. Was 0.
+FAIL receiver[index] should be 94. Was 0.
+FAIL receiver[index] should be 95. Was 0.
+FAIL receiver[index] should be 96. Was 0.
+FAIL receiver[index] should be 97. Was 0.
+FAIL receiver[index] should be 98. Was 0.
+FAIL receiver[index] should be 99. Was 0.
+FAIL receiver[index] should be 100. Was 0.
+FAIL receiver[index] should be 101. Was 0.
+FAIL receiver[index] should be 102. Was 0.
+FAIL receiver[index] should be 103. Was 0.
+FAIL receiver[index] should be 104. Was 0.
+FAIL receiver[index] should be 105. Was 0.
+FAIL receiver[index] should be 106. Was 0.
+FAIL receiver[index] should be 107. Was 0.
+FAIL receiver[index] should be 108. Was 0.
+FAIL receiver[index] should be 109. Was 0.
+FAIL receiver[index] should be 110. Was 0.
+FAIL receiver[index] should be 111. Was 0.
+FAIL receiver[index] should be 112. Was 0.
+FAIL receiver[index] should be 113. Was 0.
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getError() is gl.NO_ERROR
+FAIL gl.getError() should be 0. Was 1286.
+PASS receiver[index] is expected
+FAIL receiver[index] should be 1. Was 0.
+FAIL receiver[index] should be 2. Was 0.
+FAIL receiver[index] should be 3. Was 0.
+FAIL receiver[index] should be 4. Was 0.
+FAIL receiver[index] should be 5. Was 0.
+FAIL receiver[index] should be 6. Was 0.
+FAIL receiver[index] should be 7. Was 0.
+FAIL receiver[index] should be 8. Was 0.
+FAIL receiver[index] should be 9. Was 0.
+FAIL receiver[index] should be 10. Was 0.
+FAIL receiver[index] should be 11. Was 0.
+FAIL receiver[index] should be 12. Was 0.
+FAIL receiver[index] should be 13. Was 0.
+FAIL receiver[index] should be 14. Was 0.
+FAIL receiver[index] should be 15. Was 0.
+FAIL receiver[index] should be 16. Was 0.
+FAIL receiver[index] should be 17. Was 0.
+FAIL receiver[index] should be 18. Was 0.
+FAIL receiver[index] should be 19. Was 0.
+FAIL receiver[index] should be 20. Was 0.
+FAIL receiver[index] should be 21. Was 0.
+FAIL receiver[index] should be 22. Was 0.
+FAIL receiver[index] should be 23. Was 0.
+FAIL receiver[index] should be 24. Was 0.
+FAIL receiver[index] should be 25. Was 0.
+FAIL receiver[index] should be 26. Was 0.
+FAIL receiver[index] should be 27. Was 0.
+FAIL receiver[index] should be 28. Was 0.
+FAIL receiver[index] should be 29. Was 0.
+FAIL receiver[index] should be 30. Was 0.
+FAIL receiver[index] should be 31. Was 0.
+FAIL receiver[index] should be 32. Was 0.
+FAIL receiver[index] should be 33. Was 0.
+FAIL receiver[index] should be 34. Was 0.
+FAIL receiver[index] should be 35. Was 0.
+FAIL receiver[index] should be 36. Was 0.
+FAIL receiver[index] should be 37. Was 0.
+FAIL receiver[index] should be 38. Was 0.
+FAIL receiver[index] should be 39. Was 0.
+FAIL receiver[index] should be 40. Was 0.
+FAIL receiver[index] should be 41. Was 0.
+FAIL receiver[index] should be 42. Was 0.
+FAIL receiver[index] should be 43. Was 0.
+FAIL receiver[index] should be 44. Was 0.
+FAIL receiver[index] should be 45. Was 0.
+FAIL receiver[index] should be 46. Was 0.
+FAIL receiver[index] should be 47. Was 0.
+FAIL receiver[index] should be 48. Was 0.
+FAIL receiver[index] should be 49. Was 0.
+FAIL receiver[index] should be 50. Was 0.
+FAIL receiver[index] should be 51. Was 0.
+FAIL receiver[index] should be 52. Was 0.
+FAIL receiver[index] should be 53. Was 0.
+FAIL receiver[index] should be 54. Was 0.
+FAIL receiver[index] should be 55. Was 0.
+FAIL receiver[index] should be 56. Was 0.
+FAIL receiver[index] should be 57. Was 0.
+FAIL receiver[index] should be 58. Was 0.
+FAIL receiver[index] should be 59. Was 0.
+FAIL receiver[index] should be 60. Was 0.
+FAIL receiver[index] should be 61. Was 0.
+FAIL receiver[index] should be 62. Was 0.
+FAIL receiver[index] should be 63. Was 0.
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getError() is gl.NO_ERROR
+FAIL gl.getError() should be 0. Was 1286.
+FAIL receiver[index] should be 50. Was 0.
+FAIL receiver[index] should be 51. Was 0.
+FAIL receiver[index] should be 52. Was 0.
+FAIL receiver[index] should be 53. Was 0.
+FAIL receiver[index] should be 54. Was 0.
+FAIL receiver[index] should be 55. Was 0.
+FAIL receiver[index] should be 56. Was 0.
+FAIL receiver[index] should be 57. Was 0.
+FAIL receiver[index] should be 58. Was 0.
+FAIL receiver[index] should be 59. Was 0.
+FAIL receiver[index] should be 60. Was 0.
+FAIL receiver[index] should be 61. Was 0.
+FAIL receiver[index] should be 62. Was 0.
+FAIL receiver[index] should be 63. Was 0.
+FAIL receiver[index] should be 64. Was 0.
+FAIL receiver[index] should be 65. Was 0.
+FAIL receiver[index] should be 66. Was 0.
+FAIL receiver[index] should be 67. Was 0.
+FAIL receiver[index] should be 68. Was 0.
+FAIL receiver[index] should be 69. Was 0.
+FAIL receiver[index] should be 70. Was 0.
+FAIL receiver[index] should be 71. Was 0.
+FAIL receiver[index] should be 72. Was 0.
+FAIL receiver[index] should be 73. Was 0.
+FAIL receiver[index] should be 74. Was 0.
+FAIL receiver[index] should be 75. Was 0.
+FAIL receiver[index] should be 76. Was 0.
+FAIL receiver[index] should be 77. Was 0.
+FAIL receiver[index] should be 78. Was 0.
+FAIL receiver[index] should be 79. Was 0.
+FAIL receiver[index] should be 80. Was 0.
+FAIL receiver[index] should be 81. Was 0.
+FAIL receiver[index] should be 82. Was 0.
+FAIL receiver[index] should be 83. Was 0.
+FAIL receiver[index] should be 84. Was 0.
+FAIL receiver[index] should be 85. Was 0.
+FAIL receiver[index] should be 86. Was 0.
+FAIL receiver[index] should be 87. Was 0.
+FAIL receiver[index] should be 88. Was 0.
+FAIL receiver[index] should be 89. Was 0.
+FAIL receiver[index] should be 90. Was 0.
+FAIL receiver[index] should be 91. Was 0.
+FAIL receiver[index] should be 92. Was 0.
+FAIL receiver[index] should be 93. Was 0.
+FAIL receiver[index] should be 94. Was 0.
+FAIL receiver[index] should be 95. Was 0.
+FAIL receiver[index] should be 96. Was 0.
+FAIL receiver[index] should be 97. Was 0.
+FAIL receiver[index] should be 98. Was 0.
+FAIL receiver[index] should be 99. Was 0.
+FAIL receiver[index] should be 100. Was 0.
+FAIL receiver[index] should be 101. Was 0.
+FAIL receiver[index] should be 102. Was 0.
+FAIL receiver[index] should be 103. Was 0.
+FAIL receiver[index] should be 104. Was 0.
+FAIL receiver[index] should be 105. Was 0.
+FAIL receiver[index] should be 106. Was 0.
+FAIL receiver[index] should be 107. Was 0.
+FAIL receiver[index] should be 108. Was 0.
+FAIL receiver[index] should be 109. Was 0.
+FAIL receiver[index] should be 110. Was 0.
+FAIL receiver[index] should be 111. Was 0.
+FAIL receiver[index] should be 112. Was 0.
+FAIL receiver[index] should be 113. Was 0.
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getError() is gl.NO_ERROR
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getError() is gl.NO_ERROR
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getError() is gl.NO_ERROR
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getError() is gl.NO_ERROR
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getError() is gl.NO_ERROR
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getError() is gl.NO_ERROR
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS receiver[index] is expected
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getError() is gl.NO_ERROR
+PASS arrayBuffer[i] is receiver[i]
+PASS arrayBuffer[i] is receiver[i]
+PASS arrayBuffer[i] is receiver[i]
+PASS arrayBuffer[i] is receiver[i]
+PASS arrayBuffer[i] is receiver[i]
+PASS arrayBuffer[i] is receiver[i]
+PASS arrayBuffer[i] is receiver[i]
+PASS arrayBuffer[i] is receiver[i]
+PASS arrayBuffer[i] is receiver[i]
+PASS arrayBuffer[i] is receiver[i]
+PASS arrayBuffer[i] is receiver[i]
+PASS arrayBuffer[i] is receiver[i]
+PASS arrayBuffer[i] is receiver[i]
+PASS arrayBuffer[i] is receiver[i]
+PASS arrayBuffer[i] is receiver[i]
+PASS arrayBuffer[i] is receiver[i]
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getError() is gl.NO_ERROR
+PASS arrayBuffer[i] is receiver[i]
+PASS arrayBuffer[i] is receiver[i]
+PASS arrayBuffer[i] is receiver[i]
+PASS arrayBuffer[i] is receiver[i]
+PASS arrayBuffer[i] is receiver[i]
+PASS arrayBuffer[i] is receiver[i]
+PASS arrayBuffer[i] is receiver[i]
+PASS arrayBuffer[i] is receiver[i]
+PASS arrayBuffer[i] is receiver[i]
+PASS arrayBuffer[i] is receiver[i]
+PASS arrayBuffer[i] is receiver[i]
+PASS arrayBuffer[i] is receiver[i]
+PASS arrayBuffer[i] is receiver[i]
+PASS arrayBuffer[i] is receiver[i]
+PASS arrayBuffer[i] is receiver[i]
+PASS arrayBuffer[i] is receiver[i]
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getError() is gl.NO_ERROR
+PASS arrayBuffer[i] is receiver[i]
+PASS arrayBuffer[i] is receiver[i]
+PASS arrayBuffer[i] is receiver[i]
+PASS arrayBuffer[i] is receiver[i]
+PASS arrayBuffer[i] is receiver[i]
+PASS arrayBuffer[i] is receiver[i]
+PASS arrayBuffer[i] is receiver[i]
+PASS arrayBuffer[i] is receiver[i]
+PASS arrayBuffer[i] is receiver[i]
+PASS arrayBuffer[i] is receiver[i]
+PASS arrayBuffer[i] is receiver[i]
+PASS arrayBuffer[i] is receiver[i]
+PASS arrayBuffer[i] is receiver[i]
+PASS arrayBuffer[i] is receiver[i]
+PASS arrayBuffer[i] is receiver[i]
+PASS arrayBuffer[i] is receiver[i]
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getError() is gl.NO_ERROR
+PASS arrayBuffer[i] is receiver[i]
+PASS arrayBuffer[i] is receiver[i]
+PASS arrayBuffer[i] is receiver[i]
+PASS arrayBuffer[i] is receiver[i]
+PASS arrayBuffer[i] is receiver[i]
+PASS arrayBuffer[i] is receiver[i]
+PASS arrayBuffer[i] is receiver[i]
+PASS arrayBuffer[i] is receiver[i]
+PASS arrayBuffer[i] is receiver[i]
+PASS arrayBuffer[i] is receiver[i]
+PASS arrayBuffer[i] is receiver[i]
+PASS arrayBuffer[i] is receiver[i]
+PASS arrayBuffer[i] is receiver[i]
+PASS arrayBuffer[i] is receiver[i]
+PASS arrayBuffer[i] is receiver[i]
+PASS arrayBuffer[i] is receiver[i]
+PASS gl.getError() is gl.NO_ERROR
+FAIL gl.getError() should be 0. Was 1286.
+PASS arrayBuffer[i] is receiver[i]
+PASS arrayBuffer[i] is receiver[i]
+PASS arrayBuffer[i] is receiver[i]
+PASS arrayBuffer[i] is receiver[i]
+PASS arrayBuffer[i] is receiver[i]
+PASS arrayBuffer[i] is receiver[i]
+PASS arrayBuffer[i] is receiver[i]
+PASS arrayBuffer[i] is receiver[i]
+PASS arrayBuffer[i] is receiver[i]
+PASS arrayBuffer[i] is receiver[i]
+PASS arrayBuffer[i] is receiver[i]
+PASS arrayBuffer[i] is receiver[i]
+PASS arrayBuffer[i] is receiver[i]
+PASS arrayBuffer[i] is receiver[i]
+PASS arrayBuffer[i] is receiver[i]
+PASS arrayBuffer[i] is receiver[i]
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getError() is gl.NO_ERROR
+PASS arrayBuffer[i] is receiver[i]
+PASS arrayBuffer[i] is receiver[i]
+PASS arrayBuffer[i] is receiver[i]
+PASS arrayBuffer[i] is receiver[i]
+PASS arrayBuffer[i] is receiver[i]
+PASS arrayBuffer[i] is receiver[i]
+PASS arrayBuffer[i] is receiver[i]
+PASS arrayBuffer[i] is receiver[i]
+PASS arrayBuffer[i] is receiver[i]
+PASS arrayBuffer[i] is receiver[i]
+PASS arrayBuffer[i] is receiver[i]
+PASS arrayBuffer[i] is receiver[i]
+PASS arrayBuffer[i] is receiver[i]
+PASS arrayBuffer[i] is receiver[i]
+PASS arrayBuffer[i] is receiver[i]
+PASS arrayBuffer[i] is receiver[i]
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getError() is gl.NO_ERROR
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

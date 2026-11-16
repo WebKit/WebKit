@@ -1,0 +1,19 @@
+<!DOCTYPE HTML>
+<html>
+<body>
+    <p id="a">This test passes if it does not crash.</p>
+    <svg>
+        <feImage id="feImage"></feImage>
+    </svg>
+    <script>
+        onload = function() {
+            if (window.testRunner)
+                testRunner.dumpAsText();
+            var feImage = document.getElementById("feImage");
+            feImage.setAttributeNS("http://www.w3.org/1999/xlink", "xlink:href", "#doesnotexist");
+            document.replaceChild(feImage, document.documentElement);
+            feImage.setAttribute("xlink:href", "doesnotexist.svg");
+        }
+    </script>
+</body>
+</html>

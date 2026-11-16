@@ -1,0 +1,1 @@
+PASS if the web process was not terminated. location.search is ?replaced

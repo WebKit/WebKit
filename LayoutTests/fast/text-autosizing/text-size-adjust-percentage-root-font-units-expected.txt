@@ -1,0 +1,13 @@
+Tests that rem lengths in non-font properties include the root's percentage -webkit-text-size-adjust, and that font-size in rem does not apply it twice.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS fontSize('remFontSize') is "26px"
+PASS fontSize('remFontSizeNoAdjust') is "20px"
+PASS width('remWidth') is 260
+PASS successfullyParsed is true
+
+TEST COMPLETE
+x
+x

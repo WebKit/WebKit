@@ -1,0 +1,60 @@
+Testing CSS.forcePseudoState.
+
+
+== Running test suite: CSS.forcePseudoState
+-- Running test case: CSS.forcePseudoState.active
+Forcing pseudo class...
+PASS: Should have one enabled pseudo class.
+PASS: Should change styles.
+Removing forced pseudo class...
+PASS: Should not have any enabled pseudo classes.
+PASS: Should change back to initial style.
+
+-- Running test case: CSS.forcePseudoState.focus
+Forcing pseudo class...
+PASS: Should have one enabled pseudo class.
+PASS: Should change styles.
+Removing forced pseudo class...
+PASS: Should not have any enabled pseudo classes.
+PASS: Should change back to initial style.
+
+-- Running test case: CSS.forcePseudoState.focus-visible
+Forcing pseudo class...
+PASS: Should have one enabled pseudo class.
+PASS: Should change styles.
+Removing forced pseudo class...
+PASS: Should not have any enabled pseudo classes.
+PASS: Should change back to initial style.
+
+-- Running test case: CSS.forcePseudoState.focus-within
+Forcing pseudo class...
+PASS: Should have one enabled pseudo class.
+PASS: Should change styles.
+Removing forced pseudo class...
+PASS: Should not have any enabled pseudo classes.
+PASS: Should change back to initial style.
+
+-- Running test case: CSS.forcePseudoState.hover
+Forcing pseudo class...
+PASS: Should have one enabled pseudo class.
+PASS: Should change styles.
+Removing forced pseudo class...
+PASS: Should not have any enabled pseudo classes.
+PASS: Should change back to initial style.
+
+-- Running test case: CSS.forcePseudoState.target
+Forcing pseudo class...
+PASS: Should have one enabled pseudo class.
+PASS: Should change styles.
+Removing forced pseudo class...
+PASS: Should not have any enabled pseudo classes.
+PASS: Should change back to initial style.
+
+-- Running test case: CSS.forcePseudoState.visited
+Forcing pseudo class...
+PASS: Should have one enabled pseudo class.
+PASS: Should change styles.
+Removing forced pseudo class...
+PASS: Should not have any enabled pseudo classes.
+PASS: Should change back to initial style.
+

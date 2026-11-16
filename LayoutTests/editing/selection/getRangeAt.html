@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/dump-as-markup.js"></script>
+<script>
+if (window.testRunner)
+     testRunner.dumpEditingCallbacks();
+
+Markup.description('This tests that Selection::getRangeAt(int) returns a valid Range object.');
+Markup.noAutoDump();
+
+function runTest() {
+    var elem = document.getElementById("test");
+    var sel = window.getSelection();
+    
+    if (window.testRunner)
+        window.testRunner.dumpAsText();
+
+    sel.setBaseAndExtent(elem, 0, elem, 1);
+    Markup.addRange(sel.getRangeAt(0));
+    Markup.dump(document.body);
+    Markup.notifyDone();
+}
+</script>
+</head>
+<body onload="runTest();">
+<div id="test" style="border:1px solid black; padding:1em;">hello</div>
+</body>
+</html>

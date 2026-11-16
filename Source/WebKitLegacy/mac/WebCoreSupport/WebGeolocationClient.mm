@@ -1,0 +1,243 @@
+/*
+ * Copyright (C) 2009, 2012, 2014 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#import "WebGeolocationClient.h"
+
+#if ENABLE(GEOLOCATION)
+
+#import "WebDelegateImplementationCaching.h"
+#import "WebFrameInternal.h"
+#import "WebGeolocationPositionInternal.h"
+#import "WebSecurityOriginInternal.h"
+#import "WebUIDelegatePrivate.h"
+#import "WebViewInternal.h"
+#import <WebCore/Document.h>
+#import <WebCore/Geolocation.h>
+#import <WebCore/LocalFrameInlines.h>
+#import <wtf/BlockObjCExceptions.h>
+#import <wtf/NakedPtr.h>
+#import <wtf/TZoneMallocInlines.h>
+
+#if PLATFORM(IOS_FAMILY)
+#import <WebCore/WAKResponder.h>
+#import <WebKitLegacy/WebCoreThreadRun.h>
+#endif
+
+
+#if !PLATFORM(IOS_FAMILY)
+@interface WebGeolocationPolicyListener : NSObject <WebAllowDenyPolicyListener>
+{
+    RefPtr<WebCore::Geolocation> _geolocation;
+}
+- (id)initWithGeolocation:(std::reference_wrapper<WebCore::Geolocation>)geolocation;
+@end
+#else
+@interface WebGeolocationPolicyListener : NSObject <WebAllowDenyPolicyListener>
+{
+    RefPtr<WebCore::Geolocation> _geolocation;
+    RetainPtr<WebView> _webView;
+}
+- (id)initWithGeolocation:(NakedPtr<WebCore::Geolocation>)geolocation forWebView:(WebView*)webView;
+@end
+#endif
+
+#if PLATFORM(IOS_FAMILY)
+@interface WebGeolocationProviderInitializationListener : NSObject <WebGeolocationProviderInitializationListener> {
+@private
+    RefPtr<WebCore::Geolocation> m_geolocation;
+}
+- (id)initWithGeolocation:(std::reference_wrapper<WebCore::Geolocation>)geolocation;
+@end
+#endif
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebGeolocationClient);
+
+WebGeolocationClient::WebGeolocationClient(WebView *webView)
+    : m_webView(webView)
+{
+}
+
+void WebGeolocationClient::startUpdating(const String& authorizationToken, bool enableHighAccuracy)
+{
+    UNUSED_PARAM(authorizationToken);
+#if PLATFORM(IOS_FAMILY)
+    if (enableHighAccuracy)
+        setEnableHighAccuracy(true);
+#else
+    UNUSED_PARAM(enableHighAccuracy);
+#endif
+
+    [protect(m_webView) _registerWithGeolocationProvider];
+}
+
+void WebGeolocationClient::stopUpdating()
+{
+    [protect(m_webView) _unregisterFromGeolocationProvider];
+}
+
+#if PLATFORM(IOS_FAMILY)
+void WebGeolocationClient::setEnableHighAccuracy(bool wantsHighAccuracy)
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
+    [[protect(m_webView) _geolocationProvider] setEnableHighAccuracy:wantsHighAccuracy];
+    END_BLOCK_OBJC_EXCEPTIONS
+}
+#endif
+
+void WebGeolocationClient::requestPermission(WebCore::Geolocation& geolocation)
+{
+    RetainPtr webView = m_webView;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
+
+    SEL selector = @selector(webView:decidePolicyForGeolocationRequestFromOrigin:frame:listener:);
+    if (![[webView UIDelegate] respondsToSelector:selector]) {
+        geolocation.setIsAllowed(false, { });
+        return;
+    }
+
+#if !PLATFORM(IOS_FAMILY)
+    RefPtr frame = geolocation.frame();
+
+    if (!frame) {
+        geolocation.setIsAllowed(false, { });
+        return;
+    }
+
+    RetainPtr webOrigin = adoptNS([[WebSecurityOrigin alloc] _initWithWebCoreSecurityOrigin:protect(protect(frame->document())->securityOrigin()).ptr()]);
+    auto listener = adoptNS([[WebGeolocationPolicyListener alloc] initWithGeolocation:geolocation]);
+
+    CallUIDelegate(webView, selector, webOrigin.get(), protect(kit(frame.get())), listener.get());
+#else
+    RetainPtr<WebGeolocationProviderInitializationListener> listener = adoptNS([[WebGeolocationProviderInitializationListener alloc] initWithGeolocation:geolocation]);
+    [[webView _geolocationProvider] initializeGeolocationForWebView:webView listener:listener.get()];
+#endif
+    END_BLOCK_OBJC_EXCEPTIONS
+}
+
+std::optional<WebCore::GeolocationPositionData> WebGeolocationClient::lastPosition()
+{
+    return core([[protect(m_webView) _geolocationProvider] lastPosition]);
+}
+
+#if !PLATFORM(IOS_FAMILY)
+@implementation WebGeolocationPolicyListener
+
+- (id)initWithGeolocation:(std::reference_wrapper<WebCore::Geolocation>)geolocation
+{
+    if (!(self = [super init]))
+        return nil;
+    _geolocation = geolocation.get();
+    return self;
+}
+
+- (void)allow
+{
+    protect(_geolocation)->setIsAllowed(true, { });
+}
+
+- (void)deny
+{
+    protect(_geolocation)->setIsAllowed(false, { });
+}
+
+@end
+
+#else
+@implementation WebGeolocationPolicyListener
+- (id)initWithGeolocation:(NakedPtr<WebCore::Geolocation>)geolocation forWebView:(WebView*)webView
+{
+    self = [super init];
+    if (!self)
+        return nil;
+    _geolocation = geolocation.get();
+    _webView = webView;
+    return self;
+}
+
+- (void)allow
+{
+    WebThreadRun(^{
+        protect(_geolocation)->setIsAllowed(true, { });
+    });
+}
+
+- (void)deny
+{
+    WebThreadRun(^{
+        protect(_geolocation)->setIsAllowed(false, { });
+    });
+}
+
+- (void)denyOnlyThisRequest
+{
+    WebThreadRun(^{
+        // A soft deny does not prevent subsequent request from the Geolocation object.
+        [self deny];
+        protect(_geolocation)->resetIsAllowed();
+    });
+}
+
+- (BOOL)shouldClearCache
+{
+    // Theoretically, WebView could changes the WebPreferences after we get the pointer.
+    // We lock to be on the safe side.
+    WebThreadLock();
+
+    return [[_webView.get() preferences] _alwaysRequestGeolocationPermission];
+}
+@end
+
+@implementation WebGeolocationProviderInitializationListener
+- (id)initWithGeolocation:(std::reference_wrapper<WebCore::Geolocation>)geolocation
+{
+    self = [super init];
+    if (self)
+        m_geolocation = geolocation.get();
+    return self;
+}
+
+- (void)initializationAllowedWebView:(WebView *)webView
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
+
+    RefPtr frame = m_geolocation->frame();
+    if (!frame)
+        return;
+    RetainPtr webOrigin = adoptNS([[WebSecurityOrigin alloc] _initWithWebCoreSecurityOrigin:protect(protect(frame->document())->securityOrigin()).ptr()]);
+    auto listener = adoptNS([[WebGeolocationPolicyListener alloc] initWithGeolocation:m_geolocation.get() forWebView:webView]);
+    SEL selector = @selector(webView:decidePolicyForGeolocationRequestFromOrigin:frame:listener:);
+    CallUIDelegate(webView, selector, webOrigin.get(), protect(kit(frame)), listener.get());
+
+    END_BLOCK_OBJC_EXCEPTIONS
+}
+
+- (void)initializationDeniedWebView:(WebView *)webView
+{
+    protect(m_geolocation)->setIsAllowed(false, { });
+}
+@end
+#endif // PLATFORM(IOS_FAMILY)
+
+#endif // ENABLE(GEOLOCATION)

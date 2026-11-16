@@ -1,0 +1,6 @@
+
+PASS contain: none
+PASS contain: paint
+PASS switching contain from none to paint
+PASS switching contain from paint to none
+

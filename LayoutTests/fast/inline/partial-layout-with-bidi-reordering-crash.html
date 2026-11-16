@@ -1,0 +1,7 @@
+<div style="width: 100px;" id=container>PASS<span style="unicode-bidi: bidi-override;"> if this text </span></div>
+<script>
+if (window.testRunner)
+  testRunner.dumpAsText();
+document.body.offsetHeight;
+container.append(document.createTextNode("shows up."));
+</script>

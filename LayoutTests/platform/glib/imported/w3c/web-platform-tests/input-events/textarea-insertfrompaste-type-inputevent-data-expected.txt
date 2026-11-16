@@ -1,0 +1,4 @@
+
+
+PASS Input event data for inputType insertFromPaste should be set
+

@@ -1,0 +1,195 @@
+ Test -webkit-user-select all selection movements and extensions (left right forward backward)
+
+After extend forward character:
+| <span>
+|   "Test -webkit-user-select all <#selection-anchor>"
+| <span>
+|   class="userSelectAll"
+|   id="allArea"
+|   <span>
+|     id="descendant"
+|     style="border: solid red 1px"
+|     "u<#selection-focus>ser "
+|     <b>
+|       "select all"
+|     " area"
+| <span>
+|   " Test -webkit-user-select all"
+
+After extend backward character:
+| <span>
+|   "Test -webkit-user-select all <#selection-focus>"
+| <span>
+|   class="userSelectAll"
+|   id="allArea"
+|   <span>
+|     id="descendant"
+|     style="border: solid red 1px"
+|     "<#selection-anchor>user "
+|     <b>
+|       "select all"
+|     " area"
+| <span>
+|   " Test -webkit-user-select all"
+
+After extend right character:
+| <span>
+|   "Test -webkit-user-select all <#selection-anchor>"
+| <span>
+|   class="userSelectAll"
+|   id="allArea"
+|   <span>
+|     id="descendant"
+|     style="border: solid red 1px"
+|     "u<#selection-focus>ser "
+|     <b>
+|       "select all"
+|     " area"
+| <span>
+|   " Test -webkit-user-select all"
+
+After extend left character:
+| <span>
+|   "Test -webkit-user-select all <#selection-focus>"
+| <span>
+|   class="userSelectAll"
+|   id="allArea"
+|   <span>
+|     id="descendant"
+|     style="border: solid red 1px"
+|     "<#selection-anchor>user "
+|     <b>
+|       "select all"
+|     " area"
+| <span>
+|   " Test -webkit-user-select all"
+
+After move forward character:
+| <span>
+|   "Test -webkit-user-select all "
+| <span>
+|   class="userSelectAll"
+|   id="allArea"
+|   <span>
+|     id="descendant"
+|     style="border: solid red 1px"
+|     "u<#selection-caret>ser "
+|     <b>
+|       "select all"
+|     " area"
+| <span>
+|   " Test -webkit-user-select all"
+
+After move backward character:
+| <span>
+|   "Test -webkit-user-select all <#selection-caret>"
+| <span>
+|   class="userSelectAll"
+|   id="allArea"
+|   <span>
+|     id="descendant"
+|     style="border: solid red 1px"
+|     "user "
+|     <b>
+|       "select all"
+|     " area"
+| <span>
+|   " Test -webkit-user-select all"
+
+After move right character:
+| <span>
+|   "Test -webkit-user-select all "
+| <span>
+|   class="userSelectAll"
+|   id="allArea"
+|   <span>
+|     id="descendant"
+|     style="border: solid red 1px"
+|     "u<#selection-caret>ser "
+|     <b>
+|       "select all"
+|     " area"
+| <span>
+|   " Test -webkit-user-select all"
+
+After move left character:
+| <span>
+|   "Test -webkit-user-select all <#selection-caret>"
+| <span>
+|   class="userSelectAll"
+|   id="allArea"
+|   <span>
+|     id="descendant"
+|     style="border: solid red 1px"
+|     "user "
+|     <b>
+|       "select all"
+|     " area"
+| <span>
+|   " Test -webkit-user-select all"
+
+After click:
+| <span>
+|   "Test -webkit-user-select all "
+| <span>
+|   class="userSelectAll"
+|   id="allArea"
+|   <span>
+|     id="descendant"
+|     style="border: solid red 1px"
+|     "u<#selection-caret>ser "
+|     <b>
+|       "select all"
+|     " area"
+| <span>
+|   " Test -webkit-user-select all"
+
+After extending selection from left by mouse:
+| <span>
+|   "<#selection-anchor>Test -webkit-user-select all "
+| <span>
+|   class="userSelectAll"
+|   id="allArea"
+|   <span>
+|     id="descendant"
+|     style="border: solid red 1px"
+|     "use<#selection-focus>r "
+|     <b>
+|       "select all"
+|     " area"
+| <span>
+|   " Test -webkit-user-select all"
+
+After extending selection from right by mouse:
+| <span>
+|   "Test -webkit-user-select all "
+| <span>
+|   class="userSelectAll"
+|   id="allArea"
+|   <span>
+|     id="descendant"
+|     style="border: solid red 1px"
+|     "u<#selection-focus>ser "
+|     <b>
+|       "select all"
+|     " area"
+| <span>
+|   " Test -webkit-user-select all<#selection-anchor>"
+
+After programmatic selection:
+| <span>
+|   "Test -webkit-user-select all "
+| <span>
+|   class="userSelectAll"
+|   id="allArea"
+|   <span>
+|     id="descendant"
+|     style="border: solid red 1px"
+|     "user "
+|     <b>
+|       <#selection-anchor>
+|       "select all"
+|       <#selection-focus>
+|     " area"
+| <span>
+|   " Test -webkit-user-select all"

@@ -1,0 +1,9 @@
+slotted
+
+PASS ::part() attr() resolves on shadow host
+PASS ::part() attr() with percentage type resolves on shadow host
+PASS ::part() attr() invalidation on host attribute change
+PASS ::part() attr() resolves on the originating host across exportparts
+PASS ::part() attr() invalidation across exportparts
+PASS ::slotted() attr() invalidation on the slotted element
+

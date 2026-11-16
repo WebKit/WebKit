@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<div id="removed">text <span>inline box</span> <img style="width: 10px; height: 10px"> <br> <span style="display: inline-block">inline block</span> <iframe style="width: 10px; height: 10px"></iframe> text</div>
+<div id="hidden">text <span>inline box</span> <img style="width: 10px; height: 10px"> <br> <span style="display: inline-block">inline block</span> <iframe style="width: 10px; height: 10px"></iframe> text</div>
+<ul id="list"><li>list item</li><li>list item</li></ul>
+<div id="host"><span slot="first">slotted <b>inline box</b> <img style="width: 10px; height: 10px"></span><span slot="second">slotted</span></div>
+<p>PASS if no crash or assert.</p>
+<script>
+window.testRunner?.dumpAsText();
+const host = document.getElementById("host");
+host.attachShadow({ mode: "open" }).innerHTML = 'text <slot name="first"></slot> text <slot name="second"></slot> text';
+document.body.offsetHeight;
+
+window.internals?.setImmediateRendererDestructionEnabled(true);
+document.getElementById("removed").remove();
+document.getElementById("hidden").style.display = "none";
+document.getElementById("list").remove();
+host.firstChild.slot = "none";
+document.body.offsetHeight;
+host.lastChild.slot = "first";
+document.body.offsetHeight;
+host.remove();
+document.body.offsetHeight;
+window.internals?.setImmediateRendererDestructionEnabled(false);
+</script>

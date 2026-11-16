@@ -1,0 +1,3 @@
+
+PASS Animating an inherited CSS variable on a parent is reflected on a standard property using that variable as a value on a child
+

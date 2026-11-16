@@ -1,0 +1,3 @@
+
+FAIL Multiple async-fetched CSS modules maintain attribute order in adoptedStyleSheets. assert_equals: Before fetch: expected 3 placeholder(s). expected 3 but got 0
+

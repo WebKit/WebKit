@@ -1,0 +1,6 @@
+frame "<!--frame1-->" - has 1 onunload handler(s)
+frame "<!--frame1-->" - has 1 onunload handler(s)
+
+
+PASS postMessage() to a target whose document is no longer fully active (after a reload) is not delivered
+

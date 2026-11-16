@@ -1,0 +1,9 @@
+Test that describing a RemoteDOMWindow in Web Inspector does not crash under site isolation.
+
+
+
+== Running test suite: SiteIsolation.Runtime.RemoteDOMWindow
+-- Running test case: SiteIsolation.Runtime.RemoteDOMWindow.EvaluateWithPreview
+PASS: Evaluating contentWindow should not throw.
+PASS: Result should be an object.
+

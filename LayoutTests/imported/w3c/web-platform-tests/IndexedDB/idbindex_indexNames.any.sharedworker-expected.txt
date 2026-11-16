@@ -1,0 +1,3 @@
+
+PASS Verify IDBObjectStore.indexNames property
+

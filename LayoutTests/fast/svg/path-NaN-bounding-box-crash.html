@@ -1,0 +1,25 @@
+<style>
+    *:only-of-type { 
+        transform: skewX(90deg);
+    }
+    .class4,* {
+        padding: 1em 8% 10em 26%;
+        rotate: z 90deg;
+    }
+</style>
+<script>
+    if (window.testRunner)
+        testRunner.dumpAsText();
+</script>
+</head>
+<body>
+    <svg>
+        <text x="10" y="10">This test passes if it does not crash</text>
+        <clipPath id="x29">
+            <ellipse cy="0em" clip-path="url(#x29)" cx="14%">
+            </ellipse>
+            <ellipse ry="10em" vector-effect="non-scaling-stroke" stroke="rgb(41,106,102)">
+            </ellipse>
+        </clipPath>
+    </svg>
+</body>

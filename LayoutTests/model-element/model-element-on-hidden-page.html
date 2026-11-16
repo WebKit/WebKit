@@ -1,0 +1,43 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ ModelElementEnabled=true allowTestOnlyIPC=true ] -->
+<meta charset="utf-8">
+<title>&lt;model> state while page is hidden playback</title>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<script src="resources/model-element-test-utils.js"></script>
+<script src="resources/model-utils.js"></script>
+<body>
+<script>
+internals.disableModelLoadDelaysForTesting();
+
+promise_test(async t => {
+    const [model, source] = createModelAndSource(t, "resources/stopwatch-60s.usdz");
+    const initialModelReadyPromise = model.ready;
+    await model.ready;
+    model.loop = true;
+    await model.play();
+
+    assert_false(document.hidden, "Page should be initially visible");
+
+    window.testRunner.setPageVisibility("hidden");
+    await sleepForSeconds(0.5);
+
+    assert_true(document.hidden, "Page should be hidden");
+    assert_false(model.paused, "Model animation is still playing after hiding page");
+    assert_true(model.currentTime >= 0.5, "Model animation is still progressing after page becomes hidden");
+
+    model.currentTime = model.duration - 1.0;
+    model.playbackRate = 4;
+    await sleepForSeconds(0.5);
+    assert_true(model.currentTime >= 1.0, "Model animation should continue to run with the last set playback rate and loop when page is hidden");
+    
+    window.testRunner.setPageVisibility("visible");
+    await sleepForSeconds(0.5);
+    assert_false(document.hidden, "Page should be visible");
+    assert_equals(model.ready, initialModelReadyPromise, "model.ready promise should not have been reset after hiding and re-showing");
+
+    assert_false(model.paused, "Model animation is still playing after re-showing page");
+    assert_true(model.currentTime >= 3.0, "Model animation is still progressing after page is shown again");
+}, `<model> on hidden page should keep animation running`);
+
+</script>
+</body>

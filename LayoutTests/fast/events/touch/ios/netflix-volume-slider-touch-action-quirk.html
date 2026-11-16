@@ -1,0 +1,70 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<head>
+    <meta name="viewport" content="width=device-width">
+    <script src="../../../../resources/js-test.js"></script>
+    <script src="../../../../resources/ui-helper.js"></script>
+    <style>
+        body { margin: 0; height: 4000px; }
+        #vertical-scrubber, #horizontal-scrubber {
+            width: 300px;
+            height: 200px;
+            background: #ccc;
+            margin-top: 50px;
+        }
+        #horizontal-scrubber { background: #eee; }
+    </style>
+    <script>
+        jsTestIsAsync = true;
+
+        let initialScrollY = 0;
+        let scrollYAfterVerticalScrubberDrag = 0;
+        let scrollYAfterHorizontalScrubberDrag = 0;
+
+        window.internals?.setTopDocumentURLForQuirks("https://www.netflix.com");
+
+        addEventListener("load", async () => {
+            description("Tests that the Netflix volume-slider quirk prevents page scrolling when dragging the vertical scrubber, but allows scrolling when dragging a horizontal sibling. (rdar://178545839)");
+
+            if (!window.testRunner || !testRunner.runUIScript) {
+                debug("This test requires WebKitTestRunner.");
+                finishJSTest();
+                return;
+            }
+
+            window.scrollTo(0, 0);
+            initialScrollY = window.scrollY;
+
+            const verticalScrubber = document.getElementById("vertical-scrubber");
+            const verticalScrubberRect = verticalScrubber.getBoundingClientRect();
+            const verticalCenterX = verticalScrubberRect.left + verticalScrubberRect.width / 2;
+            const verticalStartY = verticalScrubberRect.top + verticalScrubberRect.height * 0.25;
+            const verticalEndY = verticalScrubberRect.top + verticalScrubberRect.height * 0.75;
+
+            await UIHelper.dragFromPointToPoint(verticalCenterX, verticalStartY, verticalCenterX, verticalEndY, 0.5);
+
+            scrollYAfterVerticalScrubberDrag = window.scrollY;
+            shouldBe("scrollYAfterVerticalScrubberDrag", "initialScrollY");
+
+            const horizontalScrubber = document.getElementById("horizontal-scrubber");
+            const horizontalScrubberRect = horizontalScrubber.getBoundingClientRect();
+            const horizontalCenterX = horizontalScrubberRect.left + horizontalScrubberRect.width / 2;
+            const horizontalStartY = horizontalScrubberRect.top + horizontalScrubberRect.height / 2;
+            const horizontalEndY = 50;
+
+            await UIHelper.dragFromPointToPoint(horizontalCenterX, horizontalStartY, horizontalCenterX, horizontalEndY, 1.0);
+
+            scrollYAfterHorizontalScrubberDrag = window.scrollY;
+            shouldBeTrue("scrollYAfterHorizontalScrubberDrag > initialScrollY");
+
+            finishJSTest();
+        });
+    </script>
+</head>
+<body>
+<div id="vertical-scrubber" data-uia="scrubber" aria-orientation="vertical"></div>
+<div id="horizontal-scrubber" data-uia="scrubber" aria-orientation="horizontal"></div>
+<div id="description"></div>
+<div id="console"></div>
+</body>
+</html>

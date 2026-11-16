@@ -1,0 +1,18 @@
+Tests that text operations are performed as expected across multiple editable fields.
+
+PASS: operationResult.length === 6
+PASS: operationResult[0] === 'foo'
+PASS: operationResult[1] === 'foo'
+PASS: operationResult[2] === 'foo'
+PASS: operationResult[3] === 'foo'
+PASS: operationResult[4] === 'foo'
+PASS: operationResult[5] === 'foo'
+PASS: text.stringValue.replace(/\s/g, ' ') === 'AXValue: The quick foo jumps over foo zy dog.'
+PASS: text2.stringValue.replace(/\s/g, ' ') === 'AXValue: TEXT2: The quick foo x jumps ov foo zy dog.'
+PASS: text3.stringValue.replace(/\s/g, ' ') === 'AXValue: TEXT3: The quick brown fox jumps over the foo dog.'
+PASS: text4.stringValue.replace(/\s/g, ' ') === 'AXValue: TEXT4: The quick brown fox jumps over foo lazy dog.'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

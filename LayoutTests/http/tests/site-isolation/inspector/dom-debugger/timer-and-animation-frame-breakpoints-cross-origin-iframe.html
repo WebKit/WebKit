@@ -1,0 +1,100 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="../debugger/resources/site-isolation-debugger-test-utilities.js"></script>
+<script src="resources/dom-debugger-test-utilities.js"></script>
+<script>
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.DOMDebugger.Timer");
+
+    let crossOriginTarget;
+
+    function addTestCase({name, description, test}) {
+        suite.addTestCase({
+            name,
+            description,
+            test,
+            async teardown() {
+                await removeAllDOMDebuggerBreakpoints();
+            },
+        });
+    }
+
+    addTestCase({
+        name: "SiteIsolation.DOMDebugger.Timer.Setup",
+        description: "Find the cross-origin frame target.",
+        async test() {
+            crossOriginTarget = await frameTargetForURLContaining("dom-debugger-frame.html");
+            InspectorTest.expectNotNull(crossOriginTarget, "Should find the cross-origin frame target.");
+        }
+    });
+
+    addTestCase({
+        name: "SiteIsolation.DOMDebugger.Timer.Timeout",
+        description: "The All Timeouts breakpoint should pause before a timeout callback runs in a cross-origin iframe.",
+        async test() {
+            await addEventBreakpoint(WI.EventBreakpoint.Type.Timeout);
+
+            await expectPauseInFrameTarget(crossOriginTarget, "triggerTimeout()", {
+                pauseReason: WI.DebuggerManager.PauseReason.Timeout,
+                functionName: "handleTimeout",
+            });
+
+            InspectorTest.expectThat(await waitForExpressionInTarget(crossOriginTarget, "window.timeoutFired"), "Timeout callback should run after resuming.");
+        }
+    });
+
+    addTestCase({
+        name: "SiteIsolation.DOMDebugger.Timer.Interval",
+        description: "The All Intervals breakpoint should pause before an interval callback runs in a cross-origin iframe.",
+        async test() {
+            await addEventBreakpoint(WI.EventBreakpoint.Type.Interval);
+
+            await expectPauseInFrameTarget(crossOriginTarget, "triggerInterval()", {
+                pauseReason: WI.DebuggerManager.PauseReason.Interval,
+                functionName: "handleInterval",
+            });
+
+            InspectorTest.expectThat(await waitForExpressionInTarget(crossOriginTarget, "window.intervalFired"), "Interval callback should run after resuming.");
+        }
+    });
+
+    addTestCase({
+        name: "SiteIsolation.DOMDebugger.Timer.AnimationFrame",
+        description: "The All Animation Frames breakpoint should pause before an animation frame callback runs in a cross-origin iframe.",
+        async test() {
+            await addEventBreakpoint(WI.EventBreakpoint.Type.AnimationFrame);
+
+            await expectPauseInFrameTarget(crossOriginTarget, "triggerAnimationFrame()", {
+                pauseReason: WI.DebuggerManager.PauseReason.AnimationFrame,
+                functionName: "handleAnimationFrame",
+            });
+
+            InspectorTest.expectThat(await waitForExpressionInTarget(crossOriginTarget, "window.animationFrameFired"), "Animation frame callback should run after resuming.");
+        }
+    });
+
+    addTestCase({
+        name: "SiteIsolation.DOMDebugger.Timer.Timeout.Disabled",
+        description: "A disabled All Timeouts breakpoint should not pause in a cross-origin iframe.",
+        async test() {
+            let breakpoint = await addEventBreakpoint(WI.EventBreakpoint.Type.Timeout);
+
+            InspectorTest.log(`Disabling "timeout" Event Breakpoint...`);
+            breakpoint.disabled = true;
+
+            let pausedTargets = await collectPausesDuring(async () => {
+                await evaluateInFrameTarget(crossOriginTarget, "triggerTimeout()");
+                InspectorTest.expectThat(await waitForExpressionInTarget(crossOriginTarget, "window.timeoutFired"), "Timeout callback should run.");
+            });
+            InspectorTest.expectEqual(pausedTargets.length, 0, "Should not pause for disabled breakpoint.");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+
+<body onload="runTest()">
+<p>Test that timeout, interval and animation frame breakpoints pause in cross-origin iframes.</p>
+<iframe src="http://localhost:8000/site-isolation/inspector/dom-debugger/resources/dom-debugger-frame.html"></iframe>
+</body>

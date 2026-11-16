@@ -1,0 +1,5 @@
+This should be green
+
+PASS Initially the color is red
+PASS After display and --foo changes, style() query causes the color to be green
+

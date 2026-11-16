@@ -1,0 +1,3 @@
+getPropertyValue('border') should return empty string if some side has different width, style or color than the others, even if the values that differ are implicitly set by a shorthand.
+
+PASS

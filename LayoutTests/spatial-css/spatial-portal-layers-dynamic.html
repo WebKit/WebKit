@@ -1,0 +1,58 @@
+<!DOCTYPE html><!-- webkit-test-runner [ SpatialPortalEnabled=true ModelElementEnabled=true ModelProcessEnabled=true allowTestOnlyIPC=true ] -->
+<html>
+<head>
+<script src="../resources/ui-helper.js"></script>
+<style>
+    .portal {
+        spatial: portal;
+        width: 300px;
+        height: 150px;
+    }
+</style>
+</head>
+<body>
+<div id="portal" class="portal">
+    <model id="model" src="../model-element/resources/cube.usdz"></model>
+</div>
+<div id="neverHosted" class="portal"></div>
+<pre id="results"></pre>
+<script>
+window.onload = async function () {
+    window.internals?.disableModelLoadDelaysForTesting();
+    window.testRunner?.waitUntilDone();
+    window.testRunner?.dumpAsText();
+
+    const portal = document.getElementById("portal");
+    const model = document.getElementById("model");
+    const lines = [];
+
+    // Only layer counts are comparable across portals, since their positions differ.
+    const layerCount = tree => (tree.match(/\(layer bounds/g) ?? []).length;
+
+    await model.ready;
+    await UIHelper.ensureStablePresentationUpdate();
+    const withModel = await UIHelper.getCALayerTreeForCompositedElement(portal);
+
+    model.remove();
+    await UIHelper.ensureStablePresentationUpdate();
+    const afterRemoval = await UIHelper.getCALayerTreeForCompositedElement(portal);
+    const neverHosted = await UIHelper.getCALayerTreeForCompositedElement(document.getElementById("neverHosted"));
+
+    lines.push(`hosted models after removal: ${window.internals?.numberOfHostedModelsInSpatialPortal(portal)}`);
+    lines.push(`layer count with model: ${layerCount(withModel)}`);
+    lines.push(`layer count after removal: ${layerCount(afterRemoval)}`);
+    lines.push(`layer count never hosted: ${layerCount(neverHosted)}`);
+    lines.push("");
+    lines.push("With one hosted model:", withModel);
+    lines.push("After removing it:", afterRemoval);
+    lines.push("Portal that never hosted a model:", neverHosted);
+
+    results.textContent = lines.join("\n");
+
+    portal.remove();
+
+    window.testRunner?.notifyDone();
+};
+</script>
+</body>
+</html>

@@ -1,0 +1,3 @@
+
+PASS Example with file_is_test
+

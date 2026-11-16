@@ -1,0 +1,3 @@
+
+PASS Canceling a transition with transition-duration set to infinite value
+

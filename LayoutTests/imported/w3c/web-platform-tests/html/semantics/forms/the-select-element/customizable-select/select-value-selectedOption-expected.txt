@@ -1,0 +1,18 @@
+
+two
+
+two
+
+
+PASS Test that HTMLselect with no options has empty string for value and null for selectedOption
+PASS Test value and selectedOption with HTMLOptionElement element option parts
+PASS Test value and selectedOption when value is null
+PASS Test value and selectedOption when value is undefined
+PASS Test value with non-HTMLOptionElement elements labeled as parts
+PASS Test that value and selectedOption are updated when options are removed
+PASS Test that slotted-in selected-value part is updated to value of select
+PASS Test that option parts in a slotted-in listbox are reflected in the value property
+PASS Test that value and selectedOption are correctly updated
+PASS Test that HTMLOption.selected updates select.value and select.selectedOptions
+PASS Test that HTMLOption.value updates select.value
+

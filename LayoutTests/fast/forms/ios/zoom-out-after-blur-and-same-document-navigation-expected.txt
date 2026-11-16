@@ -1,0 +1,35 @@
+
+Verifies that the zoom from revealing a focused element is undone once the page has performed a same-document navigation and the keyboard is dismissed; requires WebKitTestRunner.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+Blurring without navigating
+PASS zoomedScale > 1 is true
+PASS scale is zoomedScale
+
+Navigating after the keyboard was dismissed
+PASS scale is 1
+
+Navigating while the keyboard is shown, then blurring
+PASS scale is zoomedScale
+PASS scale is zoomedScale
+PASS scale is 1
+
+Navigating while the keyboard is shown, then moving focus to another field
+PASS scale is zoomedScale
+PASS scale is zoomedScale
+PASS document.activeElement.id became 'second'
+PASS scale is zoomedScale
+PASS scale is 1
+
+Navigating after the user changed the zoom
+PASS scale is zoomedScale
+PASS scale is 1.5
+
+Removing the focused element and navigating at the same time
+PASS scale is zoomedScale
+PASS scale is 1
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

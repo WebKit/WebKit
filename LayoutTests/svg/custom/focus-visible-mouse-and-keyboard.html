@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>SVG: UA stylesheet uses :focus-visible for outline</title>
+  <script src="../../resources/testharness.js"></script>
+  <script src="../../resources/testharnessreport.js"></script>
+  <script src="../../resources/ui-helper.js"></script>
+</head>
+<body>
+  <p>This test checks that the SVG UA stylesheet applies outline via :focus-visible, not :focus.</p>
+  <svg width="200" height="200">
+    <rect id="mouse-target" tabindex="0" x="10" y="10" width="50" height="50" fill="orange" />
+    <rect id="keyboard-target" tabindex="0" x="80" y="10" width="50" height="50" fill="orange" />
+  </svg>
+  <script>
+    promise_test(async t => {
+      const target = document.getElementById("mouse-target");
+      const rect = target.getBoundingClientRect();
+      await UIHelper.activateAt(rect.x + rect.width / 2, rect.y + rect.height / 2);
+      assert_equals(document.activeElement, target);
+      assert_equals(getComputedStyle(target).outlineStyle, "none", "outlineStyle should be none after mouse click");
+    }, "Mouse click on SVG element should not trigger UA focus outline");
+
+    promise_test(async t => {
+      const target = document.getElementById("keyboard-target");
+      document.getElementById("mouse-target").focus();
+      await UIHelper.keyDown("\t");
+      assert_equals(document.activeElement, target);
+      assert_equals(getComputedStyle(target).outlineStyle, "auto", "outlineStyle should be auto after keyboard focus");
+    }, "Keyboard focus on SVG element should trigger UA focus outline");
+  </script>
+</body>
+</html>

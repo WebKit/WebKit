@@ -1,0 +1,7 @@
+2d.text.drawing.style.measure.direction
+
+Measurement should follow text direction
+
+
+PASS Measurement should follow text direction
+

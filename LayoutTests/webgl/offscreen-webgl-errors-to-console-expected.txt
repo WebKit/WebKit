@@ -1,0 +1,7 @@
+CONSOLE MESSAGE: WebGL: INVALID_ENUM: activeTexture: texture unit out of range
+PASS Case: true
+PASS Case: false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

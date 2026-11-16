@@ -1,0 +1,14 @@
+
+PASS Defining data property for key 9 on localStorage
+PASS Defining data property for key 9 on localStorage twice
+PASS Defining data property with toString for key 9 on localStorage
+PASS Defining data property for key x on localStorage
+PASS Defining data property for key x on localStorage twice
+PASS Defining data property with toString for key x on localStorage
+PASS Defining data property for key 9 on sessionStorage
+PASS Defining data property for key 9 on sessionStorage twice
+PASS Defining data property with toString for key 9 on sessionStorage
+PASS Defining data property for key x on sessionStorage
+PASS Defining data property for key x on sessionStorage twice
+PASS Defining data property with toString for key x on sessionStorage
+

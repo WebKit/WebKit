@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../../resources/js-test-pre.js"></script>
+    <script src="../resources/common.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+    description("Test unwrapping an EC raw key with AES-GCM using an imported key");
+
+    jsTestIsAsync = true;
+
+    var extractable = true;
+    var expectedRawKey = "04d454955a2793be2905906d4d3b286450268c6dd421c701fa682bb8133fac46d0f6398d4cba8ce1c8c185d0271dc348f58415dcef0b166a3e11d65693c9ed01a2";
+    var rawKey = asciiToUint8Array("jnOw99oOZFLIEPMr");
+    var aesGcmParams = {
+        name: "aes-gcm",
+        iv: asciiToUint8Array("jnOw99oOZFLIEPMr"),
+    };
+    var wrappedKey = hexStringToUint8Array("b50b299894672c25341db938ad7dc3f87f05e29a36e062b08f7022f9bb7ee41a6d503bfa460e63333c2d1b6fe5b62169276f511ed928cdf0ad9af40807b8a5674af07016e5af5476f6aec5266321e300eb");
+
+
+    crypto.subtle.importKey("raw", rawKey, "aes-gcm", extractable, ["unwrapKey"]).then(function(unwrappingKey) {
+        return crypto.subtle.unwrapKey("raw", wrappedKey, unwrappingKey, aesGcmParams, { name: "ECDH", namedCurve: "P-256" }, extractable, []);
+    }).then(function(cryptoKey) {
+        return crypto.subtle.exportKey("raw", cryptoKey);
+    }).then(function(result) {
+        unwrappedKey = result;
+
+        shouldBe("bytesToHexString(unwrappedKey)", "expectedRawKey");
+
+        finishJSTest();
+    });
+
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1,0 +1,9 @@
+This tests that unobscured content rect is exposed to accessibility.
+
+button visible rect: { x: 0, y: 0, w: 800, h: 600 }
+iframe visible rect: { x: 58, y: 10, w: 200, h: 200 }
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+test

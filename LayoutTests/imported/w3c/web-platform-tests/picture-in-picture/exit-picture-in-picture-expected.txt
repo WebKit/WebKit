@@ -1,0 +1,4 @@
+
+PASS Exit Picture-in-Picture resolves when there is a Picture-in-Picture video
+PASS Exit Picture-in-Picture rejects when there is no Picture-in-Picture video
+

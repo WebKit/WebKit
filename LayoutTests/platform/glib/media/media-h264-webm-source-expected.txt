@@ -1,0 +1,14 @@
+RUN(video = document.createElement("video"))
+RUN(videoSource1 = document.createElement("source"))
+RUN(videoSource1.type = "video/webm")
+RUN(videoSource1.src = "content/test-h264.mkv")
+RUN(video.appendChild(videoSource1))
+RUN(videoSource2 = document.createElement("source"))
+RUN(videoSource2.type = "video/mp4")
+RUN(videoSource2.src = "content/test-h264-709-fullrange.mp4")
+RUN(video.appendChild(videoSource2))
+RUN(document.body.appendChild(video))
+dataloaded: 1280x720
+selected source: test-h264.mkv
+END OF TEST
+

@@ -1,0 +1,36 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/accessibility-helper.js"></script>
+</head>
+<body>
+
+<div id="container" tabindex=0 role="group">
+   <span role="button" id="button1">button 1</span>
+   <span id="button2" title="button 2"></span>
+</div>
+
+<script>
+    description("This tests that when an ARIA role changes, the AX hierarchy is updated accordingly.");
+
+    var container;
+    if (window.accessibilityController) {
+        window.jsTestIsAsync = true;
+
+        container = accessibilityController.accessibleElementById("container");
+        shouldBe("container.childAtIndex(0).role", "'AXRole: AXButton'");
+        shouldBeTrue("container.childAtIndex(1) == null || container.childAtIndex(1).isValid == false");
+  
+        document.getElementById("button1").removeAttribute("role");
+        document.getElementById("button2").setAttribute("role", "button");
+        setTimeout(async function() {
+            await expectAsyncExpression("container.childAtIndex(0).role", "'AXRole: AXStaticText'");
+            await expectAsyncExpression("container.childAtIndex(1).role", "'AXRole: AXButton'");
+            finishJSTest();
+        }, 0);
+    }
+</script>
+</body>
+</html>
+

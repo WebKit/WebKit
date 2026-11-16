@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<title>continue: collapse does not apply to a grid container, so a subgrid with it is still a subgrid</title>
+<link rel="help" href="https://drafts.csswg.org/css-overflow-4/#continue">
+<style>
+.grid {
+    display: grid;
+    grid-template-columns: 50px 100px;
+    width: 150px;
+}
+.subgrid {
+    display: grid;
+    grid-column: 1 / span 2;
+    grid-template-columns: subgrid;
+    continue: collapse;
+}
+.item {
+    grid-column: 2;
+    height: 100px;
+    background-color: green;
+}
+</style>
+<p>Test passes if there is a green square below, 50px from the left.</p>
+<div class="grid">
+    <div class="subgrid">
+        <div class="item"></div>
+    </div>
+</div>

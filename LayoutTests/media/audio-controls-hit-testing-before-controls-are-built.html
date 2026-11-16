@@ -1,0 +1,48 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Hit-testing an audio element gives the same results before and after its controls are built</title>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<script src="resources/media-controls-deferral.js"></script>
+<body>
+<script>buildFirstMediaControls();</script>
+<div>text before<audio controls></audio>text after</div>
+<script>
+const audio = document.querySelector("audio");
+
+function hasBuiltControls() {
+    // Unlike internals.shadowRoot(), this does not build deferred controls.
+    return !!internals.ensureUserAgentShadowRoot(audio).querySelector(".media-controls");
+}
+
+function describe(node, offset) {
+    return node ? `${node.nodeName}@${offset}` : "null";
+}
+
+function hitTest() {
+    const rect = audio.getBoundingClientRect();
+    const points = [[2, 2], [rect.width / 2, rect.height / 2], [rect.width - 3, rect.height / 2], [rect.width - 3, rect.height - 3]];
+    return points.map(([dx, dy]) => {
+        const x = rect.left + dx;
+        const y = rect.top + dy;
+        const range = document.caretRangeFromPoint(x, y);
+        const position = document.caretPositionFromPoint(x, y);
+        return [
+            `element ${document.elementFromPoint(x, y)?.nodeName}`,
+            `caretRangeFromPoint ${range ? describe(range.startContainer, range.startOffset) : "null"}`,
+            `caretPositionFromPoint ${position ? describe(position.offsetNode, position.offset) : "null"}`,
+        ].join(", ");
+    });
+}
+
+promise_test(async () => {
+    assert_false(hasBuiltControls(), "the controls are not built before the first rendering update");
+    const beforeBuild = hitTest();
+
+    while (!hasBuiltControls())
+        await new Promise(requestAnimationFrame);
+
+    assert_array_equals(beforeBuild, hitTest());
+}, "An audio element whose controls are not built yet hit-tests like one whose controls are built");
+</script>
+</body>

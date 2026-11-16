@@ -1,0 +1,26 @@
+Tests 'TimerRemove' Timeline event records.
+
+
+== Running test suite: TimelineEvent.TimerRemove
+-- Running test case: TimelineEvent.TimerRemove.setTimeout
+Starting Capture...
+Evaluating...
+Stopping Capture...
+PASS: Should be 1 TimerRemoved record.
+DETAILS: number
+PASS: ScriptTimelineRecord details should be the setTimeout identifier.
+
+-- Running test case: TimelineEvent.TimerRemove.setInterval
+Starting Capture...
+Evaluating...
+PASS: setInterval fired: 1
+PASS: setInterval fired: 2
+PASS: setInterval fired: 3
+Stopping Capture...
+PASS: Should be 1 TimerRemoved record.
+DETAILS: number
+PASS: ScriptTimelineRecord details should be the setInterval identifier.
+
+-- Running test case: SanityCheck
+PASS: The setTimeout identifier and setInterval identifiers should be different.
+

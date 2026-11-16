@@ -1,0 +1,26 @@
+
+PASS CSS Animation using cqw unit
+PASS CSS Animation using cqw unit responds to changing container size
+PASS CSS Animation using cqh unit
+PASS CSS Animation using cqh unit responds to changing container size
+PASS CSS Animation using cqi unit
+PASS CSS Animation using cqi unit responds to changing container size
+PASS CSS Animation using cqb unit
+PASS CSS Animation using cqb unit responds to changing container size
+PASS CSS Animation using cqmin unit
+PASS CSS Animation using cqmin unit responds to changing container size
+PASS CSS Animation using cqmax unit
+PASS CSS Animation using cqmax unit responds to changing container size
+PASS Web Animation using cqw unit
+PASS Web Animation using cqw unit responds to changing container size
+PASS Web Animation using cqh unit
+PASS Web Animation using cqh unit responds to changing container size
+PASS Web Animation using cqi unit
+PASS Web Animation using cqi unit responds to changing container size
+PASS Web Animation using cqb unit
+PASS Web Animation using cqb unit responds to changing container size
+PASS Web Animation using cqmin unit
+PASS Web Animation using cqmin unit responds to changing container size
+PASS Web Animation using cqmax unit
+PASS Web Animation using cqmax unit responds to changing container size
+

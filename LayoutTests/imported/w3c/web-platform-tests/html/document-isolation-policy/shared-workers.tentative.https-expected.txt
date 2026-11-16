@@ -1,0 +1,13 @@
+Verify that Document-Isolation-Policy does not apply to Shared Workers by performing a cross-origin "fetch" request for a resource that does not specify CORP. A Shared Worker is in its own agent cluster and can use Cross-Origin-Embedder-Policy instead, so the request succeeds whether the policy is set on the worker script, its owner, or the creator of its URL.
+
+
+PASS default policy
+PASS "isolate-and-require-corp" on the worker script is ignored
+PASS "isolate-and-require-corp" is not inherited from the owner
+PASS default policy - blob URL
+PASS "isolate-and-require-corp" is not inherited from the blob URL creator
+PASS "isolate-and-require-corp" is not inherited from the owner - blob URL
+PASS default policy - data URL
+PASS "isolate-and-require-corp" is not inherited from the data URL creator
+PASS "isolate-and-require-corp" is not inherited from the owner - data URL
+

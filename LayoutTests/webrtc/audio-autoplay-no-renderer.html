@@ -1,0 +1,115 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Remote audio autoplays in an element without renderer when invisible autoplay is not permitted and document is capturing</title>
+        <script src="../resources/testharness.js"></script>
+        <script src="../resources/testharnessreport.js"></script>
+        <script src="routines.js"></script>
+    </head>
+    <body>
+        <script>
+if (window.internals)
+    internals.settings.setInvisibleAutoplayNotPermitted(true);
+
+async function createRemoteAudioStream(test)
+{
+    const context = new AudioContext();
+    const oscillator = context.createOscillator();
+    const destination = context.createMediaStreamDestination();
+    oscillator.connect(destination);
+    oscillator.start();
+    test.add_cleanup(() => {
+        oscillator.stop();
+        context.close();
+    });
+
+    return new Promise((resolve, reject) => {
+        createConnections((firstConnection) => {
+            firstConnection.addTrack(destination.stream.getAudioTracks()[0], destination.stream);
+        }, (secondConnection) => {
+            secondConnection.ontrack = (trackEvent) => resolve(trackEvent.streams[0]);
+        });
+        setTimeout(() => reject("Test timed out"), 5000);
+    });
+}
+
+async function waitForAutoplay(test, element, stream)
+{
+    const playing = new Promise(resolve => element.addEventListener("playing", resolve, { once : true }));
+    element.autoplay = true;
+    element.srcObject = stream;
+    // No explicit play() call, we rely on autoplay only.
+    const result = await Promise.race([playing.then(() => "playing"), new Promise(resolve => setTimeout(() => resolve("timeout"), 2000))]);
+    assert_equals(result, "playing", "autoplay should start");
+    assert_false(element.paused, "element is not paused");
+}
+
+async function waitForNoAutoplay(test, element, stream)
+{
+    const playing = new Promise(resolve => element.addEventListener("playing", resolve, { once : true }));
+    element.autoplay = true;
+    element.srcObject = stream;
+    const result = await Promise.race([playing.then(() => "playing"), new Promise(resolve => setTimeout(() => resolve("timeout"), 1000))]);
+    assert_equals(result, "timeout", "autoplay should not start");
+    assert_true(element.paused, "element is paused");
+}
+
+// Without capture, the invisible autoplay restriction still applies.
+promise_test(async (test) => {
+    const stream = await createRemoteAudioStream(test);
+    const audio = new Audio();
+    test.add_cleanup(() => { audio.srcObject = null; });
+    test.add_cleanup(() => { closeConnections(); });
+    await waitForNoAutoplay(test, audio, stream);
+}, "Detached audio element does not autoplay a remote audio track when not capturing");
+
+let microphoneStream;
+promise_test(async (test) => {
+    microphoneStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+}, "Start capturing microphone");
+
+promise_test(async (test) => {
+    const stream = await createRemoteAudioStream(test);
+    const audio = new Audio();
+    test.add_cleanup(() => { audio.srcObject = null; });
+    test.add_cleanup(() => { closeConnections(); });
+    await waitForAutoplay(test, audio, stream);
+}, "Detached audio element autoplays a remote audio track");
+
+promise_test(async (test) => {
+    const stream = await createRemoteAudioStream(test);
+    const video = document.createElement("video");
+    video.style.display = "none";
+    document.body.appendChild(video);
+    test.add_cleanup(() => { video.srcObject = null; video.remove(); });
+    test.add_cleanup(() => { closeConnections(); });
+    await waitForAutoplay(test, video, stream);
+}, "display:none video element autoplays a remote audio track");
+
+promise_test(async (test) => {
+    const remoteStream = await createRemoteAudioStream(test);
+    const audio = new Audio();
+    test.add_cleanup(() => { audio.srcObject = null; });
+    test.add_cleanup(() => { closeConnections(); });
+
+    // Start with a MediaStream without any track, and add the remote audio track afterwards.
+    const stream = new MediaStream();
+    const playing = new Promise(resolve => audio.addEventListener("playing", resolve, { once : true }));
+    audio.autoplay = true;
+    audio.srcObject = stream;
+    await new Promise(resolve => setTimeout(resolve, 100));
+    assert_true(audio.paused, "element is paused without track");
+
+    stream.addTrack(remoteStream.getAudioTracks()[0]);
+    const result = await Promise.race([playing.then(() => "playing"), new Promise(resolve => setTimeout(() => resolve("timeout"), 2000))]);
+    assert_equals(result, "playing", "autoplay should start once the audio track is added");
+    assert_false(audio.paused, "element is not paused");
+}, "Detached audio element autoplays when the remote audio track is added after srcObject is set");
+
+promise_test(async (test) => {
+    microphoneStream.getAudioTracks()[0].stop();
+}, "Stop capturing microphone");
+        </script>
+    </body>
+</html>

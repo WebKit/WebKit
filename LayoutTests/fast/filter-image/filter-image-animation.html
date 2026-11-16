@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>background-image with filter() images has a discrete animation type</title>
+<link rel="help" href="https://drafts.csswg.org/css-backgrounds/#background-image">
+<link rel="help" href="https://bugs.webkit.org/show_bug.cgi?id=322797">
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+</head>
+<body>
+<div id="target"></div>
+<div id="reference"></div>
+<script>
+'use strict';
+
+// background-image is a discrete property. Even when both endpoints are filter()
+// images sharing the same input image, the animation must hold the "from" value
+// below the 0.5 midpoint and flip to the "to" value at 0.5, rather than
+// interpolating the filter functions.
+
+const target = document.getElementById('target');
+const reference = document.getElementById('reference');
+
+function computedValueFor(value) {
+    reference.style.backgroundImage = value;
+    return getComputedStyle(reference).backgroundImage;
+}
+
+function animatedValueAt(from, to, currentTime) {
+    const animation = target.animate(
+        [{ backgroundImage: from }, { backgroundImage: to }],
+        { duration: 1000, fill: 'both' });
+    animation.pause();
+    animation.currentTime = currentTime;
+    const value = getComputedStyle(target).backgroundImage;
+    animation.cancel();
+    return value;
+}
+
+function discreteTest(description, from, to) {
+    test(() => {
+        assert_equals(animatedValueAt(from, to, 250), computedValueFor(from),
+            'holds the from value at 25%');
+        assert_equals(animatedValueAt(from, to, 499), computedValueFor(from),
+            'holds the from value at 49.9%');
+        assert_equals(animatedValueAt(from, to, 500), computedValueFor(to),
+            'flips to the to value at 50%');
+        assert_equals(animatedValueAt(from, to, 750), computedValueFor(to),
+            'holds the to value at 75%');
+    }, description);
+}
+
+discreteTest('filter() with a single filter function animates discretely',
+    'filter(url(resources/image.svg), brightness(1))',
+    'filter(url(resources/image.svg), brightness(0))');
+
+discreteTest('filter() with multiple filter functions animates discretely',
+    'filter(url(resources/image.svg), sepia(0.25) blur(3px) hue-rotate(45deg))',
+    'filter(url(resources/image.svg), sepia(0.75))');
+
+discreteTest('animation from url() to filter() is discrete',
+    'url(resources/image.svg)',
+    'filter(url(resources/image.svg), sepia(0.5))');
+
+discreteTest('animation from filter() to url() is discrete',
+    'filter(url(resources/image.svg), sepia(0.5))',
+    'url(resources/image.svg)');
+
+discreteTest('filter() images with different input images animate discretely',
+    'filter(url(resources/image.svg), sepia(1))',
+    'filter(url(resources/blue.svg), sepia(0))');
+</script>
+</body>
+</html>

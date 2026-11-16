@@ -1,0 +1,25 @@
+<!DOCTYPE HTML PUBLIC>
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/accessibility-helper.js"></script>
+</head>
+<body>
+
+<div>This is some <div id="highlight1" role="mark">highlighted</div> text.</div>
+
+<script>
+
+    if (window.accessibilityController) {
+        let output = "This test makes sure that the mark role exposes the right attributes.\n";
+
+        var highlight1 = accessibilityController.accessibleElementById("highlight1").childAtIndex(0);
+        output += expect("highlight1.isMarkAnnotation", "true");
+
+        debug(output);
+    }
+
+</script>
+
+</body>
+</html>

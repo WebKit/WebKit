@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<script src="../resources/common.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+
+<script type="text/javascript">
+description("Test ECDSA verifying operation with a P-521 public key");
+
+jsTestIsAsync = true;
+
+var extractable = true;
+var jwkPublicKey = {
+    kty: "EC",
+    crv: "P-521",
+    x: "ATyYJNg6KbLelgL09FGKksW7qfIEPf4OPCHB7PuoUq4AyiJQaMqWD7TagGc4gwY5lJ7rDRLKGdxGmf19inAT_X1a",
+    y: "AAF1xys7jFj4QkHBC3uF_Kodak7rOkbmpAPKrqzR_akXaCwNfdsjX12_uVkDhyUqF-C5oUYsKLqET8RMm8kg8cX9",
+};
+var ecdsaParams = {
+    name: "ECDSA",
+    hash: "SHA-256",
+}
+var data = asciiToUint8Array("Hello, World!");
+var signature = hexStringToUint8Array("013f4994b96ea2d6ce58e70bde70717f00891194c91acb9ad6e6897b7769d837d3ed2695dd3de6f5e06413310a4e8b0aad83873ca7359584958a2d1ec1dad86a841c008961578f7cc2fb15703f614854921b7b5fff7ee38cacd37744419213582328903cb7c44d9c08378c5e1e70edabac439d3490680e9e1225f7c377bd44311717bdaa");
+
+crypto.subtle.importKey("jwk", jwkPublicKey, { name: "ECDSA", namedCurve: "P-521" }, extractable, ["verify"]).then(function(key) {
+    return crypto.subtle.verify(ecdsaParams, key, signature, data);
+}).then(function(result) {
+    verified = result;
+
+    shouldBeTrue("verified");
+
+    finishJSTest();
+}, failAndFinishJSTest);
+
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

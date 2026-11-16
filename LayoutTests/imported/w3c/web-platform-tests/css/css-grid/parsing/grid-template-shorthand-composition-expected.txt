@@ -1,0 +1,13 @@
+
+PASS grid-template-rows: none, grid-template-columns: none, and "grid-template-areas: none;" should be valid.
+PASS grid-template-rows: auto, grid-template-columns: auto, and "grid-template-areas: none;" should be valid.
+PASS grid-template-rows: [header-top] auto [header-bottom main-top] 1fr [main-bottom], grid-template-columns: auto 1fr auto, and "grid-template-areas: "a a a" "b b b";" should be valid.
+FAIL grid-template-rows: auto, grid-template-columns: auto, and "grid-template-areas: "a a a" "b b b";" should be valid. assert_equals: expected "" but got "\"a a a\" / auto"
+FAIL grid-template-rows: auto, grid-template-columns: auto auto, and "grid-template-areas: "a a a" "b b b";" should be valid. assert_equals: expected "" but got "\"a a a\" / auto auto"
+PASS grid-template-rows: auto auto, grid-template-columns: auto, and "grid-template-areas: "a a a" "b b b";" should be valid.
+PASS grid-template-rows: auto auto, grid-template-columns: auto auto, and "grid-template-areas: "a a a" "b b b";" should be valid.
+FAIL grid-template-rows: min-content, grid-template-columns: min-content, and "grid-template-areas: "a a a" "b b b" "c c c" "d d d";" should be valid. assert_equals: expected "" but got "\"a a a\" min-content / min-content"
+FAIL grid-template-rows: min-content, grid-template-columns: min-content auto auto auto, and "grid-template-areas: "a a a" "b b b" "c c c" "d d d";" should be valid. assert_equals: expected "" but got "\"a a a\" min-content / min-content auto auto auto"
+PASS grid-template-rows: min-content auto auto auto, grid-template-columns: min-content, and "grid-template-areas: "a a a" "b b b" "c c c" "d d d";" should be valid.
+PASS grid-template-rows: min-content auto auto auto, grid-template-columns: min-content auto auto auto, and "grid-template-areas: "a a a" "b b b" "c c c" "d d d";" should be valid.
+

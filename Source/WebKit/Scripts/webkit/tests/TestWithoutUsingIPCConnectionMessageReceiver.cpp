@@ -1,0 +1,136 @@
+/*
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1.  Redistributions of source code must retain the above copyright
+ *     notice, this list of conditions and the following disclaimer.
+ * 2.  Redistributions in binary form must reproduce the above copyright
+ *     notice, this list of conditions and the following disclaimer in the
+ *     documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS'' AND
+ * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS BE LIABLE FOR
+ * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#include "config.h"
+#include "TestWithoutUsingIPCConnection.h"
+
+#include "ArgumentCoders.h" // NOLINT
+#include "Decoder.h" // NOLINT
+#include "HandleMessage.h" // NOLINT
+#include "TestWithoutUsingIPCConnectionMessages.h" // NOLINT
+#include <wtf/text/WTFString.h> // NOLINT
+
+#if ENABLE(IPC_TESTING_API)
+#include "JSIPCBinding.h"
+#endif
+
+namespace WebKit {
+
+void TestWithoutUsingIPCConnection::didReceiveMessageWithReplyHandler(IPC::Decoder& decoder, Function<void(UniqueRef<IPC::Encoder>&&)>&& replyHandler)
+{
+    if (decoder.messageName() == Messages::TestWithoutUsingIPCConnection::MessageWithoutArgument::name()) {
+        IPC::handleMessageWithoutUsingIPCConnection<Messages::TestWithoutUsingIPCConnection::MessageWithoutArgument>(decoder, this, &TestWithoutUsingIPCConnection::messageWithoutArgument);
+        return;
+    }
+    if (decoder.messageName() == Messages::TestWithoutUsingIPCConnection::MessageWithoutArgumentAndEmptyReply::name()) {
+        IPC::handleMessageAsyncWithoutUsingIPCConnection<Messages::TestWithoutUsingIPCConnection::MessageWithoutArgumentAndEmptyReply>(decoder, WTF::move(replyHandler), this, &TestWithoutUsingIPCConnection::messageWithoutArgumentAndEmptyReply);
+        return;
+    }
+    if (decoder.messageName() == Messages::TestWithoutUsingIPCConnection::MessageWithoutArgumentAndReplyWithArgument::name()) {
+        IPC::handleMessageAsyncWithoutUsingIPCConnection<Messages::TestWithoutUsingIPCConnection::MessageWithoutArgumentAndReplyWithArgument>(decoder, WTF::move(replyHandler), this, &TestWithoutUsingIPCConnection::messageWithoutArgumentAndReplyWithArgument);
+        return;
+    }
+    if (decoder.messageName() == Messages::TestWithoutUsingIPCConnection::MessageWithArgument::name()) {
+        IPC::handleMessageWithoutUsingIPCConnection<Messages::TestWithoutUsingIPCConnection::MessageWithArgument>(decoder, this, &TestWithoutUsingIPCConnection::messageWithArgument);
+        return;
+    }
+    if (decoder.messageName() == Messages::TestWithoutUsingIPCConnection::MessageWithArgumentAndEmptyReply::name()) {
+        IPC::handleMessageAsyncWithoutUsingIPCConnection<Messages::TestWithoutUsingIPCConnection::MessageWithArgumentAndEmptyReply>(decoder, WTF::move(replyHandler), this, &TestWithoutUsingIPCConnection::messageWithArgumentAndEmptyReply);
+        return;
+    }
+    if (decoder.messageName() == Messages::TestWithoutUsingIPCConnection::MessageWithArgumentAndReplyWithArgument::name()) {
+        IPC::handleMessageAsyncWithoutUsingIPCConnection<Messages::TestWithoutUsingIPCConnection::MessageWithArgumentAndReplyWithArgument>(decoder, WTF::move(replyHandler), this, &TestWithoutUsingIPCConnection::messageWithArgumentAndReplyWithArgument);
+        return;
+    }
+    RELEASE_LOG_ERROR(IPC, "Unhandled message %s to %" PRIu64, IPC::description(decoder.messageName()).characters(), decoder.destinationID());
+    decoder.markInvalid();
+}
+
+} // namespace WebKit
+
+#if ENABLE(IPC_TESTING_API)
+
+namespace IPC {
+
+template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithoutUsingIPCConnection_MessageWithoutArgument>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
+{
+    return jsValueForDecodedArguments<Messages::TestWithoutUsingIPCConnection::MessageWithoutArgument::Arguments>(globalObject, decoder);
+}
+template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithoutUsingIPCConnection_MessageWithoutArgumentAndEmptyReply>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
+{
+    return jsValueForDecodedArguments<Messages::TestWithoutUsingIPCConnection::MessageWithoutArgumentAndEmptyReply::Arguments>(globalObject, decoder);
+}
+template<> std::optional<JSC::JSValue> jsValueForDecodedMessageReply<MessageName::TestWithoutUsingIPCConnection_MessageWithoutArgumentAndEmptyReply>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
+{
+    return jsValueForDecodedArguments<Messages::TestWithoutUsingIPCConnection::MessageWithoutArgumentAndEmptyReply::ReplyArguments>(globalObject, decoder);
+}
+template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithoutUsingIPCConnection_MessageWithoutArgumentAndReplyWithArgument>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
+{
+    return jsValueForDecodedArguments<Messages::TestWithoutUsingIPCConnection::MessageWithoutArgumentAndReplyWithArgument::Arguments>(globalObject, decoder);
+}
+template<> std::optional<JSC::JSValue> jsValueForDecodedMessageReply<MessageName::TestWithoutUsingIPCConnection_MessageWithoutArgumentAndReplyWithArgument>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
+{
+    return jsValueForDecodedArguments<Messages::TestWithoutUsingIPCConnection::MessageWithoutArgumentAndReplyWithArgument::ReplyArguments>(globalObject, decoder);
+}
+template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithoutUsingIPCConnection_MessageWithArgument>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
+{
+    return jsValueForDecodedArguments<Messages::TestWithoutUsingIPCConnection::MessageWithArgument::Arguments>(globalObject, decoder);
+}
+template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithoutUsingIPCConnection_MessageWithArgumentAndEmptyReply>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
+{
+    return jsValueForDecodedArguments<Messages::TestWithoutUsingIPCConnection::MessageWithArgumentAndEmptyReply::Arguments>(globalObject, decoder);
+}
+template<> std::optional<JSC::JSValue> jsValueForDecodedMessageReply<MessageName::TestWithoutUsingIPCConnection_MessageWithArgumentAndEmptyReply>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
+{
+    return jsValueForDecodedArguments<Messages::TestWithoutUsingIPCConnection::MessageWithArgumentAndEmptyReply::ReplyArguments>(globalObject, decoder);
+}
+template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithoutUsingIPCConnection_MessageWithArgumentAndReplyWithArgument>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
+{
+    return jsValueForDecodedArguments<Messages::TestWithoutUsingIPCConnection::MessageWithArgumentAndReplyWithArgument::Arguments>(globalObject, decoder);
+}
+template<> std::optional<JSC::JSValue> jsValueForDecodedMessageReply<MessageName::TestWithoutUsingIPCConnection_MessageWithArgumentAndReplyWithArgument>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
+{
+    return jsValueForDecodedArguments<Messages::TestWithoutUsingIPCConnection::MessageWithArgumentAndReplyWithArgument::ReplyArguments>(globalObject, decoder);
+}
+template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithoutUsingIPCConnection_MessageWithoutArgumentAndEmptyReplyReply>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
+{
+    return jsValueForDecodedArguments<Messages::TestWithoutUsingIPCConnection::MessageWithoutArgumentAndEmptyReplyReply::Arguments>(globalObject, decoder);
+}
+template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithoutUsingIPCConnection_MessageWithoutArgumentAndReplyWithArgumentReply>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
+{
+    return jsValueForDecodedArguments<Messages::TestWithoutUsingIPCConnection::MessageWithoutArgumentAndReplyWithArgumentReply::Arguments>(globalObject, decoder);
+}
+template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithoutUsingIPCConnection_MessageWithArgumentAndEmptyReplyReply>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
+{
+    return jsValueForDecodedArguments<Messages::TestWithoutUsingIPCConnection::MessageWithArgumentAndEmptyReplyReply::Arguments>(globalObject, decoder);
+}
+template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithoutUsingIPCConnection_MessageWithArgumentAndReplyWithArgumentReply>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
+{
+    return jsValueForDecodedArguments<Messages::TestWithoutUsingIPCConnection::MessageWithArgumentAndReplyWithArgumentReply::Arguments>(globalObject, decoder);
+}
+
+}
+
+#endif
+

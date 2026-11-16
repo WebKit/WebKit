@@ -1,0 +1,38 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/ui-helper.js"></script>
+</head>
+<body>
+
+<input id="datefield" type="date">
+
+<script>
+var output = "This tests that when a date field shows a popover, no focused event is fired.\n\n";
+
+function focusCallback(notification) {
+    if (notification === "AXFocusChanged")
+    	output += "Received AXFocusChanged event\n";
+}
+
+if (window.accessibilityController) {
+	window.jsTestIsAsync = true;
+	var datefield = accessibilityController.accessibleElementById("datefield");
+	datefield.addNotificationListener(focusCallback);
+	
+	setTimeout(async function() {
+		await UIHelper.activateElement(document.getElementById("datefield"));
+
+		// We shouldn't receive any focused notifications for this date picker, so wait a bit to catch this bug in the future.
+		await sleep(60);
+		debug(output);
+		finishJSTest();
+	}, 0);
+}
+</script>
+
+</body>
+</html>
+

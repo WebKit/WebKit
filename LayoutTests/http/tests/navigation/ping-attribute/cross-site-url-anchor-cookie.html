@@ -1,0 +1,45 @@
+<!DOCTYPE html><!-- webkit-test-runner [ OptInPartitionedCookiesEnabled=true ] -->
+<html><head>
+<title>Ping</title>
+<script src="/js-test-resources/js-test.js"></script>
+<script src="resources/utilities.js"></script>
+<script>
+if (window.testRunner && window.internals) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+function test()
+{
+    testRunner.setStatisticsShouldBlockThirdPartyCookies(true, () => {
+        let anchor = document.getElementById("a");
+        location.hash = "finish";
+        a.href = location.href.replace("127.0.0.1", "localhost");
+        clickElement(anchor);
+    }, false, true);
+}
+
+window.onload = function ()
+{
+    if (location.hash == "") {
+        clearLastPingResultAndRunTest(test);
+    } else if (location.hash == "#finish") {
+        setTimeout(() => {
+            fetch("http://localhost:8000/cookies/resources/echo-cookies.py").then((r) => r.text()).then((text) => {
+                let expected = "Cookies are:\n";
+                if (text == expected)
+                    testPassed(`step3: echo-cookies returned the expected value`);
+                else
+                    testFailed(`step3: echo-cookies returned ${text}, expected ${expected}`);
+                testRunner.notifyDone();
+            });
+        }, 500);
+    }
+
+}
+</script>
+</head>
+<body>
+<img src="non-existent-image.jpg">
+<a id="a" ping="http://localhost:8000/navigation/resources/save-ping-and-set-cookies-and-redirect-to-save-ping.py">Navigate and send ping</a>
+</body></html>

@@ -1,0 +1,22 @@
+xy
+world
+beforeafter
+xy
+x
+y
+hidden
+
+PASS Range.expand('word') before shadow host with preceding text does not enter shadow tree
+PASS Range.expand('word') from empty flex box before shadow host does not enter shadow tree
+PASS Range.expand('word') after shadow host does not enter shadow tree
+PASS Range.expand('sentence') before shadow host with preceding text does not enter shadow tree
+PASS Range.expand('sentence') from empty flex box before shadow host does not enter shadow tree
+FAIL Range.expand('sentence') after shadow host does not enter shadow tree assert_equals: expected "world" but got "world\n\n\n\n  "
+PASS Range.expand('word') starting inside shadow root does not escape to document
+PASS Range.expand('sentence') starting inside shadow root does not escape to document
+PASS Range.expand('block') starting inside shadow root does not escape to document
+FAIL Range.expand('document') starting inside shadow root does not escape to document assert_equals: startContainer must remain in shadowRoot expected DocumentFragment node with 1 child but got Document node with 2 children
+PASS Range.expand("word") before <video controls> does not leak user-agent shadow tree nodes
+PASS Range.expand("word") inside a shadow root does not enter a nested closed shadow root
+FAIL Range.expand("word") when document has display:none does not crash assert_equals: expected Element node <div id="hidden">hidden</div> but got Document node with 2 children
+

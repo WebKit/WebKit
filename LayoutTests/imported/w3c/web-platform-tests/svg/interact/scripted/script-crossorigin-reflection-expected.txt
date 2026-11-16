@@ -1,0 +1,10 @@
+
+PASS missing crossorigin reflects as null
+PASS crossorigin="" reflects as "anonymous"
+PASS crossorigin="anonymous" reflects as "anonymous"
+PASS crossorigin="use-credentials" reflects as "use-credentials"
+PASS crossorigin="USE-CREDENTIALS" reflects as "use-credentials"
+PASS crossorigin="invalid" reflects as "anonymous"
+PASS setting crossOrigin sets the content attribute
+PASS setting crossOrigin to null removes the content attribute
+

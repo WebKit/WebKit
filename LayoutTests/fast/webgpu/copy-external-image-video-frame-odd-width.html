@@ -1,0 +1,109 @@
+<script>
+if (window.testRunner) { testRunner.waitUntilDone(); testRunner.dumpAsText(); }
+
+// An odd coded width is what a canvas backed frame never produces: it makes the chroma planes
+// ceil(width / 2) samples wide, and it gives the BGRA surface the frame is conformed to end of row
+// padding, so the rows are wider than width * 4 bytes.
+const codedWidth = 65;
+const codedHeight = 64;
+// Even, so that the sub-rectangle starts on a chroma sample in both directions and the two copies
+// below see the same chroma however the planes are upsampled.
+const origin = 8;
+
+function log(message)
+{
+    document.getElementById('result').textContent += message + '\n';
+}
+
+function oddWidthI420Frame()
+{
+    const chromaWidth = Math.ceil(codedWidth / 2);
+    const chromaHeight = Math.ceil(codedHeight / 2);
+    const planes = new Uint8Array(codedWidth * codedHeight + 2 * chromaWidth * chromaHeight);
+
+    // A pattern which differs from one sample to the next, so that a copy reading a row or a column
+    // off is distinguishable from a correct one. Every value stays inside the 16..235 studio range,
+    // so nothing is clipped on the way back to RGB.
+    let offset = 0;
+    const fill = (width, height, step) => {
+        for (let y = 0; y < height; ++y) {
+            for (let x = 0; x < width; ++x)
+                planes[offset++] = 16 + (x * step + y * (step + 4)) % 220;
+        }
+    };
+    fill(codedWidth, codedHeight, 3);
+    fill(chromaWidth, chromaHeight, 5);
+    fill(chromaWidth, chromaHeight, 13);
+
+    return new VideoFrame(planes, { format: 'I420', codedWidth, codedHeight, timestamp: 0 });
+}
+
+async function copiedTexels(device, frame, width, height, originX, originY)
+{
+    const texture = device.createTexture({
+        size: [width, height],
+        format: 'rgba8unorm',
+        usage: GPUTextureUsage.COPY_DST | GPUTextureUsage.COPY_SRC | GPUTextureUsage.RENDER_ATTACHMENT | GPUTextureUsage.TEXTURE_BINDING,
+    });
+    device.queue.copyExternalImageToTexture({ source: frame, origin: { x: originX, y: originY } }, { texture }, [width, height]);
+
+    const bytesPerRow = Math.ceil(width * 4 / 256) * 256;
+    const buffer = device.createBuffer({ size: bytesPerRow * height, usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.MAP_READ });
+    const encoder = device.createCommandEncoder();
+    encoder.copyTextureToBuffer({ texture }, { buffer, bytesPerRow }, [width, height]);
+    device.queue.submit([encoder.finish()]);
+
+    await buffer.mapAsync(GPUMapMode.READ);
+    const texels = new Uint8Array(buffer.getMappedRange()).slice();
+    buffer.unmap();
+    return { texels, bytesPerRow };
+}
+
+function texelAt(copy, x, y)
+{
+    const offset = y * copy.bytesPerRow + x * 4;
+    return [copy.texels[offset], copy.texels[offset + 1], copy.texels[offset + 2], copy.texels[offset + 3]];
+}
+
+onload = async () => {
+    try {
+        const adapter = await navigator.gpu.requestAdapter();
+        const device = await adapter.requestDevice();
+        const frame = oddWidthI420Frame();
+
+        // The whole frame, and then the same frame from (origin, origin) on. Checking the two
+        // against each other rather than against expected colours keeps the test independent of
+        // which matrix the YCbCr planes are converted back to RGB with.
+        const whole = await copiedTexels(device, frame, codedWidth, codedHeight, 0, 0);
+        const offsetWidth = codedWidth - origin;
+        const offsetHeight = codedHeight - origin;
+        const offsetCopy = await copiedTexels(device, frame, offsetWidth, offsetHeight, origin, origin);
+
+        let mismatches = 0;
+        const colors = new Set();
+        for (let y = 0; y < offsetHeight; ++y) {
+            for (let x = 0; x < offsetWidth; ++x) {
+                const actual = texelAt(offsetCopy, x, y);
+                const expected = texelAt(whole, x + origin, y + origin);
+                colors.add(expected.join(','));
+                // A couple of ULPs, because the planes are converted out of YCbCr for each copy.
+                if (!expected.every((value, i) => Math.abs(actual[i] - value) <= 2) && mismatches++ < 4)
+                    log(`FAIL texel ${x},${y}: got ${actual.join(',')}, expected ${expected.join(',')}`);
+            }
+        }
+
+        // Guard against the comparison above being satisfied by a copy which wrote one colour over
+        // the whole texture, or nothing at all.
+        log(colors.size > 1 ? 'PASS the copied frame has more than one colour' : `FAIL the copied frame is a single colour: ${[...colors][0]}`);
+        log(mismatches ? `FAIL ${mismatches} texels differ from the whole frame offset by ${origin},${origin}` : 'PASS copying with an origin matches the whole frame offset by it');
+
+        frame.close();
+    } catch (error) {
+        log(`FAIL threw ${error}`);
+    }
+    if (window.testRunner)
+        testRunner.notifyDone();
+};
+</script>
+<p>Tests that GPUQueue.copyExternalImageToTexture copies from an odd width I420 VideoFrame, whose rows are padded once it is conformed to BGRA, with an origin.</p>
+<pre id="result"></pre>

@@ -1,0 +1,11 @@
+<script>
+window.frameTicks = 0;
+setInterval(() => { window.frameTicks++; }, 50);
+
+function triggerDebugger()
+{
+    debugger;
+    return "after-debugger";
+}
+</script>
+<p>Cross-origin frame for per-target resume tests.</p>

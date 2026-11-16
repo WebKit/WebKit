@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+<script>
+description('A &lt;font face&gt; whose family name contains a numeric token (e.g. "Bodoni 72") is applied as the ' +
+    'font-family instead of reverting to the inherited default. The relaxed parsing is scoped to the legacy face ' +
+    'attribute: the same unquoted name remains invalid for the CSS font-family property.');
+
+// Computed font-family produced by a <font face="..."> element.
+function familyFromFace(face) {
+    var el = document.createElement('font');
+    el.setAttribute('face', face);
+    el.textContent = 'x';
+    document.body.appendChild(el);
+    var family = getComputedStyle(el).fontFamily;
+    document.body.removeChild(el);
+    return family;
+}
+
+// Computed font-family produced by an equivalent CSS font-family declaration (the reference).
+function familyFromCSS(css) {
+    var el = document.createElement('span');
+    el.style.fontFamily = css;
+    el.textContent = 'x';
+    document.body.appendChild(el);
+    var family = getComputedStyle(el).fontFamily;
+    document.body.removeChild(el);
+    return family;
+}
+
+// Value the CSS parser accepts for the font-family property (empty string if it rejects the value).
+function cssFontFamilySpecifiedValue(css) {
+    var el = document.createElement('span');
+    el.style.fontFamily = css;
+    return el.style.fontFamily;
+}
+
+// Control: an ordinary unquoted-identifier family already works via the strict parse.
+shouldBe('familyFromFace("Georgia")', 'familyFromCSS("Georgia")');
+
+// The radar case: a single numeric-token family name via <font face>.
+shouldBe('familyFromFace("Bodoni 72")', 'familyFromCSS("\'Bodoni 72\'")');
+
+// A comma-separated list mixing a numeric-token family with an ordinary one.
+shouldBe('familyFromFace("Bodoni 72, Georgia")', 'familyFromCSS("\'Bodoni 72\', Georgia")');
+
+// Scoping: the relaxation applies to <font face> only. The same unquoted numeric-token name is
+// still invalid for the CSS font-family property, so the CSS parser rejects it.
+shouldBeEqualToString('cssFontFamilySpecifiedValue("Bodoni 72")', '');
+</script>
+</body>
+</html>

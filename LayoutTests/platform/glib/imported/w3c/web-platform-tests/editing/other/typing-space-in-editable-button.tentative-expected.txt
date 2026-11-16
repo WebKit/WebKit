@@ -1,0 +1,10 @@
+HelloWorld
+HelloWorld
+
+Hello World
+
+PASS Type space key in <button contenteditable> should be handled by the <button>
+PASS Type space key in editable <button> shouldn't be handled by the <button> when it's not focused
+PASS Type space key in editable <button> should be handled by the <button> when it's focused
+PASS Type space key in editable element in <button> shouldn't be handled by the <button>
+

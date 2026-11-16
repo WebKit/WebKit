@@ -1,0 +1,35 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[%# INTERFACE:
+  # classification: Bugzilla::Classifiation object.
+  #%]
+
+<tr>
+  <th>Classification:</th>
+  <td><input size=64 maxlength=64 name="classification" 
+             value="[% classification.name FILTER html %]" required></td>
+</tr>
+<tr>
+  <th>Description:</th>
+  <td>
+    [% INCLUDE global/textarea.html.tmpl
+      name           = 'description'
+      minrows        = 4
+      cols           = 64
+      defaultcontent = classification.description
+    %]
+  </td>
+</tr>
+<tr>
+  <th><label for="sortkey">Sortkey:</label></th>
+  <td><input id="sortkey" size="20" maxlength="20" name="sortkey"
+             value="[%- classification.sortkey FILTER html %]"></td>
+</tr>
+
+[% Hook.process('rows') %]

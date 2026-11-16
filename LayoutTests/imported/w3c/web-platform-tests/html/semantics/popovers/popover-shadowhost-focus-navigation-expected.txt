@@ -1,0 +1,5 @@
+Open popover      Last focusable element
+
+FAIL Focus behavior of popover that is shadow host assert_equals: Focus should move forward from invoker to popover/button1 expected Element node <button id="button1">button1</button> but got Element node <body><div id="root">
+  <button id="invoker" popovertarge...
+

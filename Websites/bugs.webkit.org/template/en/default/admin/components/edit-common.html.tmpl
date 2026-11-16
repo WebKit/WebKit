@@ -1,0 +1,79 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[%# INTERFACE:
+  # comp: object; Bugzilla::Component object.
+  #%]
+
+[%# When called from the "New Product" page, the component description field
+  # must have a name different from the product description field. %]
+[% DEFAULT desc_name = "description" %]
+
+<tr>
+  <th><label for="component">Component:</label></th>
+  <td><input size="64" maxlength="64" name="component" id="component"
+             value="[%- comp.name FILTER html %]" required></td>
+</tr>
+<tr>
+  <th><label for="[% desc_name FILTER html %]">Component Description:</label></th>
+  <td>
+    [% INCLUDE global/textarea.html.tmpl
+      name           = desc_name
+      id             = desc_name
+      minrows        = 4
+      cols           = 64
+      wrap           = 'virtual'
+      defaultcontent = comp.description
+      mandatory      = 1
+    %]
+  </td>
+</tr>
+<tr>
+  <th><label for="initialowner">Default Assignee:</label></th>
+  <td>
+    [% INCLUDE global/userselect.html.tmpl
+       name => "initialowner"
+       id => "initialowner"
+       value => comp.default_assignee.login
+       size => 64
+       mandatory => 1
+     %]
+  </td>
+</tr>
+[% IF Param('useqacontact') %]
+  <tr>
+    <th><label for="initialqacontact">Default QA contact:</label></th>
+    <td>
+      [% INCLUDE global/userselect.html.tmpl
+         name => "initialqacontact"
+         id => "initialqacontact"
+         value => comp.default_qa_contact.login
+         size => 64
+         emptyok => 1
+       %]
+    </td>
+  </tr>
+[% END %]
+<tr>
+  <th><label for="initialcc">Default CC List:</label></th>
+  <td>
+    [% INCLUDE global/userselect.html.tmpl
+       name     => "initialcc"
+       id       => "initialcc"
+       value    => initial_cc_names
+       size     => 64
+       multiple => 5
+    %]
+    <br>
+    [% IF !Param("usemenuforusers") %]
+      <span class="bz_info">Enter user names for the CC list as a comma-separated list.</span>
+    [% END %]
+  </td>
+</tr>
+
+[% Hook.process('rows') %]

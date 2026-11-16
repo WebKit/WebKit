@@ -1,0 +1,222 @@
+/*
+ * Copyright (C) 2010, 2014 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#include "config.h"
+#include <wtf/OSAllocator.h>
+
+#include <windows.h>
+#include <wtf/Assertions.h>
+#include <wtf/DataLog.h>
+#include <wtf/MathExtras.h>
+#include <wtf/PageBlock.h>
+#include <wtf/SoftLinking.h>
+
+SOFT_LINK_LIBRARY(kernelbase)
+SOFT_LINK_OPTIONAL(kernelbase, VirtualAlloc2, void*, WINAPI, (HANDLE, PVOID, SIZE_T, ULONG, ULONG, MEM_EXTENDED_PARAMETER *, ULONG))
+
+namespace WTF {
+
+static inline DWORD protection(bool writable, bool executable)
+{
+    return executable ?
+        (writable ? PAGE_EXECUTE_READWRITE : PAGE_EXECUTE_READ) :
+        (writable ? PAGE_READWRITE : PAGE_READONLY);
+}
+
+void* OSAllocator::tryReserveUncommitted(size_t bytes, Usage, void* address, bool writable, bool executable, bool, unsigned)
+{
+    return VirtualAlloc(address, bytes, MEM_RESERVE, protection(writable, executable));
+}
+
+void* OSAllocator::reserveUncommitted(size_t bytes, Usage usage, void* address, bool writable, bool executable, bool jitCageEnabled, unsigned numGuardPagesToAddOnEachEnd)
+{
+    void* result = tryReserveUncommitted(bytes, usage, address, writable, executable, jitCageEnabled, numGuardPagesToAddOnEachEnd);
+    RELEASE_ASSERT(result);
+    return result;
+}
+
+void* OSAllocator::tryReserveUncommittedAligned(size_t bytes, size_t alignment, Usage usage, void* address, bool writable, bool executable, bool, unsigned)
+{
+    ASSERT(hasOneBitSet(alignment) && alignment >= pageSize());
+
+    if (VirtualAlloc2Ptr()) {
+        MEM_ADDRESS_REQUIREMENTS addressReqs = { };
+        MEM_EXTENDED_PARAMETER param = { };
+        addressReqs.Alignment = alignment;
+        param.Type = MemExtendedParameterAddressRequirements;
+        param.Pointer = &addressReqs;
+        void* result = VirtualAlloc2Ptr()(nullptr, address, bytes, MEM_RESERVE, protection(writable, executable), &param, 1);
+        return result;
+    }
+
+    void* result = tryReserveUncommitted(bytes + alignment, usage, address);
+    // There's no way to release the reserved memory on Windows, from what I can tell as the whole segment has to be released at once.
+    char* aligned = reinterpret_cast<char*>(roundUpToMultipleOf(alignment, reinterpret_cast<uintptr_t>(result)));
+    return aligned;
+}
+
+void* OSAllocator::tryReserveAndCommit(size_t bytes, Usage, void* address, bool writable, bool executable, bool, unsigned)
+{
+    return VirtualAlloc(address, bytes, MEM_RESERVE | MEM_COMMIT, protection(writable, executable));
+}
+
+void* OSAllocator::reserveAndCommit(size_t bytes, Usage usage, void* address, bool writable, bool executable, bool jitCageEnabled, unsigned numGuardPagesToAddOnEachEnd)
+{
+    void* result = tryReserveAndCommit(bytes, usage, address, writable, executable, jitCageEnabled, numGuardPagesToAddOnEachEnd);
+    RELEASE_ASSERT(result);
+    return result;
+}
+
+void OSAllocator::commit(void* address, size_t bytes, bool writable, bool executable)
+{
+    void* result = VirtualAlloc(address, bytes, MEM_COMMIT, protection(writable, executable));
+    if (!result)
+        CRASH();
+}
+
+void OSAllocator::decommit(void* address, size_t bytes)
+{
+    // Symmetric decommit on Windows. MEM_DECOMMIT releases both physical pages
+    // and Windows commit charge. The matching OSAllocator::commit() call must
+    // happen before any re-access; touching a decommitted page faults.
+    //
+    // Unlike POSIX, Windows has yet another metrics (commit charge), and even though
+    // there is no physical backing pages, commit charge has low hard limit.
+    //
+    // To workaround this limit, Windows is explicitly decommiting and explicitly committing.
+    if (!bytes)
+        return;
+
+    bool result = VirtualFree(address, bytes, MEM_DECOMMIT);
+    if (!result)
+        CRASH();
+}
+
+void OSAllocator::releaseDecommitted(void* address, size_t bytes, unsigned)
+{
+    // See comment in OSAllocator::decommit(). Similarly, when bytes is 0, we
+    // don't want to release anything. So, don't call VirtualFree() below.
+    if (!bytes)
+        return;
+    // According to http://msdn.microsoft.com/en-us/library/aa366892(VS.85).aspx,
+    // dwSize must be 0 if dwFreeType is MEM_RELEASE.
+    bool result = VirtualFree(address, 0, MEM_RELEASE);
+    if (!result)
+        CRASH();
+}
+
+void OSAllocator::hintMemoryNotNeededSoon(void*, size_t)
+{
+}
+
+static bool tryCommitWithRetry(void* address, size_t bytes, DWORD protection)
+{
+    // A commit that hits the commit limit is retried the way libpas does it, with the same numbers
+    // (virtual_alloc_with_retry in pas_page_malloc.c).
+    constexpr unsigned maxRetries = 10;
+    constexpr DWORD retryDelayMS = 50;
+    for (unsigned retry = 0; ; ++retry) {
+        if (VirtualAlloc(address, bytes, MEM_COMMIT, protection))
+            return true;
+        DWORD error = GetLastError();
+        if (error != ERROR_COMMITMENT_LIMIT && error != ERROR_NOT_ENOUGH_MEMORY)
+            return false;
+        if (retry == maxRetries)
+            return false;
+        Sleep(retryDelayMS);
+    }
+}
+
+bool OSAllocator::tryProtect(void* address, size_t bytes, bool readable, bool writable)
+{
+    if (!bytes)
+        return true;
+    if (!readable && !writable) {
+        MEMORY_BASIC_INFORMATION pageInfo;
+        SIZE_T queried = VirtualQuery(address, &pageInfo, sizeof(pageInfo));
+        if (!queried)
+            return false;
+        // Assert that the region size is at least the size we're trying to protect.
+        ASSERT(pageInfo.RegionSize >= bytes);
+        if (pageInfo.RegionSize < bytes) {
+            // if the region size is less than the size we're trying to protect, return false.
+            return false;
+        }
+        if (pageInfo.State == MEM_FREE) {
+            // Memory is not reserved, so its reserved as noaccess.
+            return VirtualAlloc(address, bytes, MEM_RESERVE, PAGE_NOACCESS);
+        }
+        if (pageInfo.State == MEM_RESERVE) {
+            // Memory is reserved, so its already noaccess.
+            return true;
+        }
+        if (pageInfo.State == MEM_COMMIT) {
+            // Memory is committed, so its protection is flipped to noaccess.
+            DWORD oldProtection;
+            return VirtualProtect(address, bytes, PAGE_NOACCESS, &oldProtection);
+        }
+        return false;
+    }
+    DWORD protection = 0;
+    if (readable) {
+        if (writable)
+            protection = PAGE_READWRITE;
+        else
+            protection = PAGE_READONLY;
+    }
+
+    // VirtualAlloc(MEM_COMMIT) cannot span multiple MEM_RESERVE regions, so walk
+    // the range with VirtualQuery and commit one region at a time. See 306171@main.
+    size_t totalSeen = 0;
+    char* currentPtr = static_cast<char*>(address);
+    while (totalSeen < bytes) {
+        MEMORY_BASIC_INFORMATION memInfo;
+        if (!VirtualQuery(currentPtr, &memInfo, sizeof(memInfo)))
+            return false;
+        ASSERT(memInfo.RegionSize > 0);
+        ASSERT(static_cast<char*>(memInfo.BaseAddress) == currentPtr);
+        size_t chunkSize = std::min(static_cast<size_t>(memInfo.RegionSize), bytes - totalSeen);
+        if (!tryCommitWithRetry(currentPtr, chunkSize, protection))
+            return false;
+        currentPtr += chunkSize;
+        totalSeen += chunkSize;
+    }
+    return true;
+}
+
+void OSAllocator::protect(void* address, size_t bytes, bool readable, bool writable)
+{
+    if (bool result = tryProtect(address, bytes, readable, writable); !result) [[unlikely]] {
+        dataLogLn("mprotect failed: ", static_cast<int>(GetLastError()));
+        RELEASE_ASSERT_NOT_REACHED();
+    }
+}
+
+void OSAllocator::zeroFill(void* base, size_t size)
+{
+    memset(base, 0, size);
+}
+
+} // namespace WTF

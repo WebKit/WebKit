@@ -1,0 +1,89 @@
+<!-- webkit-test-runner [ useFlexibleViewport=true textExtractionEnabled=true ] -->
+<!DOCTYPE html>
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="utf-8">
+<head>
+    <script src="../../resources/js-test.js"></script>
+    <script src="../../resources/ui-helper.js"></script>
+    <style>
+    body, html {
+        font-size: 18px;
+        font-family: system-ui;
+        line-height: 1.5;
+    }
+
+    .tall {
+        height: 300vh;
+    }
+    </style>
+</head>
+<body>
+    <p aria-label="Document title" onclick="console.log(this)">The quick brown fox jumped over the lazy dog.</p>
+    <div contenteditable="plaintext-only">
+        <h3 onclick="console.log(this)" aria-label="Heading">Quote of the day</h3>
+        <div class="tall"></div>
+        <p>Here’s to the crazy ones. The misfits. The rebels. The troublemakers. The round pegs in the square holes. The ones who see things differently. They’re not fond of rules. And they have no respect for the status quo.</p>
+    </div>
+    <script>
+    jsTestIsAsync = true;
+
+    addEventListener("load", async () => {
+        if (!window.testRunner)
+            return;
+
+        const debugText = await UIHelper.requestDebugText({
+            nodeIdentifierInclusion: "interactive",
+            eventListenerCategories: ["all"],
+            includeAccessibilityAttributes: true,
+            includeTextInAutoFilledControls: true,
+        });
+
+        error1 = await UIHelper.performTextExtractionInteraction("highlightText", {
+            nodeIdentifier: UIHelper.nodeIdentifierFromDebugText(debugText, "Document title"),
+            text: "jumped over",
+            scrollToVisible: true
+        });
+
+        error2 = await UIHelper.performTextExtractionInteraction("highlightText", {
+            nodeIdentifier: UIHelper.nodeIdentifierFromDebugText(debugText, "Heading"),
+            scrollToVisible: true
+        });
+
+        scrolledAfterHighlighting = false;
+        addEventListener("scroll", () => scrolledAfterHighlighting = true, { once: true });
+
+        error3 = await UIHelper.performTextExtractionInteraction("highlightText", {
+            text: "troublemakers",
+            scrollToVisible: true
+        });
+
+        error4 = await UIHelper.performTextExtractionInteraction("highlightText", {
+            text: "This text is nowhere in the page",
+            scrollToVisible: true
+        });
+
+        await UIHelper.ensurePresentationUpdate();
+
+        highlightedTexts = internals.textExtractionHighlightRanges.map(highlightRange => {
+            const domRange = document.createRange();
+            domRange.setStart(highlightRange.startContainer, highlightRange.startOffset);
+            domRange.setEnd(highlightRange.endContainer, highlightRange.endOffset);
+            return domRange.toString();
+        });
+        highlightedTexts.sort();
+
+        shouldBe("highlightedTexts.length", "3");
+        shouldBeEqualToString("highlightedTexts[0]", "Quote of the day");
+        shouldBeEqualToString("highlightedTexts[1]", "jumped over");
+        shouldBeEqualToString("highlightedTexts[2]", "troublemakers");
+        shouldBeEqualToString("error1", "");
+        shouldBeEqualToString("error2", "");
+        shouldBeEqualToString("error3", "");
+        shouldBeEqualToString("error4", "'This text is nowhere in the page' not found inside the target node");
+        shouldBeTrue("scrolledAfterHighlighting");
+        finishJSTest();
+    });
+    </script>
+</body>
+</html>

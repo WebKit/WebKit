@@ -1,0 +1,38 @@
+Grandchild content
+(GraphicsLayer
+  (anchor 0.00 0.00)
+  (bounds 785.00 1091.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 785.00 1091.00)
+      (contentsOpaque 1)
+      (children 5
+        (GraphicsLayer
+          (position 18.00 10.00)
+          (bounds 200.00 200.00)
+        )
+        (GraphicsLayer
+          (position 18.00 220.00)
+          (bounds 200.00 200.00)
+        )
+        (GraphicsLayer
+          (position 18.00 430.00)
+          (bounds 200.00 200.00)
+        )
+        (GraphicsLayer
+          (position 18.00 640.00)
+          (anchor 0.50 0.46)
+          (bounds 200.00 218.00)
+          (drawsContent 1)
+        )
+        (GraphicsLayer
+          (position 18.00 850.00)
+          (anchor 0.50 0.50)
+          (bounds 202.00 202.00)
+          (drawsContent 1)
+        )
+      )
+    )
+  )
+)
+

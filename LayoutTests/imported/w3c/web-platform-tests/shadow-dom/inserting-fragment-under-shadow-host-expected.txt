@@ -1,0 +1,3 @@
+
+PASS This tests inserting a document fragment with a mixture of elements and text nodes, which should dispatch a `slotchange` event.
+

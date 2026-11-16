@@ -1,0 +1,11 @@
+Tests that active descendant changes result in focus changes.
+
+PASS: accessibilityController.focusedElement.domIdentifier === 'listbox'
+PASS: accessibilityController.focusedElement.domIdentifier === 'item1'
+PASS: accessibilityController.focusedElement.domIdentifier === 'item2'
+PASS: accessibilityController.focusedElement.domIdentifier === 'listbox'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

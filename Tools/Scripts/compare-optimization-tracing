@@ -1,0 +1,198 @@
+#!/usr/bin/env python3 -u
+
+# Copyright (C) 2025 Apple Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+#
+# 1.  Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer. 
+# 2.  Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in the
+#     documentation and/or other materials provided with the distribution. 
+# 3.  Neither the name of Apple Inc. ("Apple") nor the names of
+#     its contributors may be used to endorse or promote products derived
+#     from this software without specific prior written permission. 
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
+# EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL APPLE OR ITS CONTRIBUTORS BE LIABLE FOR ANY
+# DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+# (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+# LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+# ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+# THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+import subprocess
+import argparse
+import os
+import shlex
+from collections import defaultdict
+
+# Tool to compare optimization decisions (e.g., inlining, loop unrolling) between two JSC builds.
+# Supports comparing by test or test list, with optional filtering by JIT type (e.g., FTL, DFG).
+#
+# Usage Examples:
+# compare-optimization-tracing -v -a <BUILD_A_PATH> -b <BUILD_B_PATH> --test <SINGLE_TEST_PATH> --filter FTL
+# compare-optimization-tracing -v -a <BUILD_A_PATH> --a-option "--usePartialLoopUnrolling=0 --maxLoopUnrollingCount=5" -b <BUILD_B_PATH> --b-option "--usePartialLoopUnrolling=1 --maxLoopUnrollingCount=10" --test <SINGLE_TEST_PATH> --filter FTL
+# compare-optimization-tracing -v -a <BUILD_A_PATH> -b <BUILD_B_PATH> --test "-e \"testList='crypto'\" cli.js" --cwd <BENCHMARK_WORKING_DIR> --filter FTL
+# compare-optimization-tracing -v -a <BUILD_A_PATH> -b <BUILD_B_PATH> --test-list <TEST_LIST_FILE_PATH> --cwd <BENCHMARK_WORKING_DIR> --filter FTL
+
+def run_jsc_and_capture(verbose, build_path, jsc_args, cwd, extra_options=""):
+    jsc_binary = os.path.join(build_path, "jsc")
+    env = os.environ.copy()
+    env["DYLD_FRAMEWORK_PATH"] = build_path
+
+    required_options = [
+        "--useConcurrentJIT=0",
+        "--dumpOptimizationTracing=1",
+    ]
+
+    command = [jsc_binary] + jsc_args + required_options + shlex.split(extra_options)
+
+    if verbose:
+        def human_friendly_quote(arg):
+            if " " in arg or "'" in arg or '"' in arg:
+                return f'"{arg}"'
+            return arg
+
+        print("\nRunning command:")
+        print("  cwd:", cwd)
+        print("  cmd:", " ".join(human_friendly_quote(arg) for arg in command))
+        print("  env:")
+        for key, value in sorted(env.items()):
+            if key in ["DYLD_FRAMEWORK_PATH"] or key.startswith("JSC") or key.startswith("WEBKIT"):
+                print(f"    {key}={value}")
+
+    try:
+        result = subprocess.run(
+            command,
+            env=env,
+            cwd=cwd,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+            text=True,
+            check=True
+        )
+
+        if verbose:
+            print("Command completed successfully.")
+        return result.stdout.splitlines()
+
+    except subprocess.CalledProcessError as e:
+        print("Command failed with return code:", e.returncode)
+        print("Output:")
+        print(e.stdout)
+        return []
+
+def parse_prefixes(line):
+    """Extracts (category, jit_type) from line like: [InlineCall][FTL] Callee:..."""
+    if not (line.startswith("[") and "]" in line):
+        return None, None
+    try:
+        first_end = line.index("]")
+        second_start = line.index("[", first_end)
+        second_end = line.index("]", second_start)
+        category = line[0:first_end+1]
+        jit_type = line[second_start:second_end+1]
+        return category, jit_type
+    except ValueError:
+        return None, None
+
+def extract_lines_by_category(lines, filter_jit_type=None):
+    categorized = defaultdict(set)
+    for line in lines:
+        line = line.strip()
+        category, jit_type = parse_prefixes(line)
+        if category is None or jit_type is None:
+            continue
+        if filter_jit_type:
+            if jit_type.strip("[]") != filter_jit_type:
+                continue
+        categorized[category].add(line)
+    return categorized
+
+def compare_sets(set_a, set_b):
+    removed = sorted(set_a - set_b)
+    added = sorted(set_b - set_a)
+    return removed, added
+
+def run_comparison_for_test(args, jsc_args, test_name):
+    print(f"\n=== Running for test: {test_name} ===")
+
+    if args.verbose:
+        print("Running build A...")
+    output_a = run_jsc_and_capture(args.verbose, args.build_a, jsc_args, args.cwd, extra_options=args.a_option)
+    categories_a = extract_lines_by_category(output_a, args.filter)
+
+    if args.verbose:
+        print("Running build B...")
+    output_b = run_jsc_and_capture(args.verbose, args.build_b, jsc_args, args.cwd, extra_options=args.b_option)
+    categories_b = extract_lines_by_category(output_b, args.filter)
+
+    all_categories = set(categories_a.keys()).union(categories_b.keys())
+
+    for category in sorted(all_categories):
+        set_a = categories_a.get(category, set())
+        set_b = categories_b.get(category, set())
+
+        removed, added = compare_sets(set_a, set_b)
+
+        print(f"\n--- Category: {category} ---")
+
+        if args.verbose:
+            print("\nLogs from Build A:")
+            for line in sorted(set_a):
+                print("  A:", line)
+            print("\nLogs from Build B:")
+            for line in sorted(set_b):
+                print("  B:", line)
+
+        print("\nRemoved:")
+        if removed:
+            for line in removed:
+                print("  -", line)
+        else:
+            print("  None")
+
+        print("\nAdded:")
+        if added:
+            for line in added:
+                print("  +", line)
+        else:
+            print("  None")
+
+def main():
+    parser = argparse.ArgumentParser(description="Compare JIT output categorized by optimization between two JSC builds.")
+    parser.add_argument('-a', '--build-a', required=True, help="Path to build A")
+    parser.add_argument('--a-option', default="", help="Extra JSC options for build A (quoted string of space-delimited options)")
+    parser.add_argument('-b', '--build-b', required=True, help="Path to build B")
+    parser.add_argument('--b-option', default="", help="Extra JSC options for build B (quoted string of space-delimited options)")
+    parser.add_argument('--test', help="Test file or CLI args (quoted)")
+    parser.add_argument('--test-list', help="Path to a file with one test name per line (replaces 'crypto' in --test)")
+    parser.add_argument('--cwd', default='.', help="Working directory (default: current directory)")
+    parser.add_argument('-v', '--verbose', action='store_true', help="Enable verbose output")
+    parser.add_argument('--filter', help="Only compare optimization entries for this JIT type (DFG, FTL, Baseline, LLInt, Host)")
+
+    args = parser.parse_args()
+
+    if args.test_list:
+        if not args.cwd:
+            parser.error("--cwd must be specified when using --test-list")
+        jsc_args = ['-e', "", 'cli.js']
+        with open(args.test_list) as f:
+            test_names = [line.strip() for line in f if line.strip()]
+        for test_name in test_names:
+            jsc_args[1] = f"testList='{test_name}'"
+            run_comparison_for_test(args, jsc_args, test_name)
+    elif args.test:
+        jsc_args = shlex.split(args.test)
+        run_comparison_for_test(args, jsc_args, args.test)
+    else:
+        parser.error("either --test or --test-list is needed")
+
+if __name__ == "__main__":
+    main()

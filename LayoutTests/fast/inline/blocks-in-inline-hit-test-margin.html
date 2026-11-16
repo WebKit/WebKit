@@ -1,0 +1,26 @@
+<!-- webkit-test-runner [ BlocksInInlineLayoutEnabled=true ] -->
+<style>
+body {
+  margin: 0px;
+}
+.container { 
+  border: 5px solid green;
+}
+
+.block {
+  background: blue;
+  width: 50px;
+  height: 80px;
+  margin: 100px;
+}
+</style>
+<div class=container>
+  <span>
+    <div class=block></div>
+  </span>
+</div>
+<pre id=log></pre>
+<script>
+// hittest margin area.
+log.textContent = document.elementsFromPoint(50, 150);
+</script>

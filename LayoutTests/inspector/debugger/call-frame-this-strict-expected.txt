@@ -1,0 +1,11 @@
+Debugger.setBreakpoint on line:column in <script>
+
+Found <script>
+Running testFunction
+PASS: step 0: type "number" value "2"
+PASS: step 1: type "string" value "Hello"
+PASS: step 2: type "number" value "2"
+PASS: step 3: type "string" value "Hello"
+PASS: step 4: type "undefined" value "undefined"
+PASS: step 5: type "undefined" value "undefined"
+

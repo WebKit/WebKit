@@ -1,0 +1,8 @@
+*.binlog
+.dotnet
+.nuget
+bin
+obj
+blazor.boot.json
+web.config
+*.staticwebassets.endpoints.json

@@ -1,0 +1,222 @@
+
+** There mediaSession.coordinator.state should be closed initially.
+EXPECTED (navigator.mediaSession.coordinator.state == 'closed') OK
+
+** Test that mediaSession.coordinator.coordinatorstatechange event is fired when it changes.
+RUN(internals.registerMockMediaSessionCoordinator(changeHandler))
+EVENT(coordinatorstatechange STATE(waiting)
+
+** navigator.mediaSession.coordinator.state should be "waiting" initially
+EXPECTED (navigator.mediaSession.coordinator.state == 'waiting') OK
+
+** Test that when coordinator methods fail and promises reject before mediaSession.join() is called.
+RUN(promise = navigator.mediaSession.coordinator.play())
+Promise rejected correctly OK
+
+RUN(promise = navigator.mediaSession.coordinator.pause())
+Promise rejected correctly OK
+
+RUN(promise = navigator.mediaSession.coordinator.seekTo(10))
+Promise rejected correctly OK
+
+** Test that mediaSession does not notify coordinator when states change before mediaSession.join() is called.
+* PositionState
+RUN(navigator.mediaSession.setPositionState({ duration: 1, playbackRate: 1, position: 0 }))
+EXPECTED (latestChange == '') OK
+
+* ReadyState
+EXPECTED (navigator.mediaSession.readyState == 'havenothing') OK
+RUN(navigator.mediaSession.readyState = 'havemetadata')
+EXPECTED (latestChange == '') OK
+EXPECTED (navigator.mediaSession.readyState == 'havemetadata') OK
+
+EXPECTED (navigator.mediaSession.readyState == 'havemetadata') OK
+RUN(navigator.mediaSession.readyState = 'havecurrentdata')
+EXPECTED (latestChange == '') OK
+EXPECTED (navigator.mediaSession.readyState == 'havecurrentdata') OK
+
+EXPECTED (navigator.mediaSession.readyState == 'havecurrentdata') OK
+RUN(navigator.mediaSession.readyState = 'havefuturedata')
+EXPECTED (latestChange == '') OK
+EXPECTED (navigator.mediaSession.readyState == 'havefuturedata') OK
+
+EXPECTED (navigator.mediaSession.readyState == 'havefuturedata') OK
+RUN(navigator.mediaSession.readyState = 'haveenoughdata')
+EXPECTED (latestChange == '') OK
+EXPECTED (navigator.mediaSession.readyState == 'haveenoughdata') OK
+
+EXPECTED (navigator.mediaSession.readyState == 'haveenoughdata') OK
+RUN(navigator.mediaSession.readyState = 'havenothing')
+EXPECTED (latestChange == '') OK
+EXPECTED (navigator.mediaSession.readyState == 'havenothing') OK
+
+* PlaybackState
+EXPECTED (navigator.mediaSession.playbackState == 'none') OK
+RUN(navigator.mediaSession.playbackState = 'paused')
+EXPECTED (latestChange == '') OK
+EXPECTED (navigator.mediaSession.playbackState == 'paused') OK
+
+EXPECTED (navigator.mediaSession.playbackState == 'paused') OK
+RUN(navigator.mediaSession.playbackState = 'playing')
+EXPECTED (latestChange == '') OK
+EXPECTED (navigator.mediaSession.playbackState == 'playing') OK
+
+EXPECTED (navigator.mediaSession.playbackState == 'playing') OK
+RUN(navigator.mediaSession.playbackState = 'none')
+EXPECTED (latestChange == '') OK
+EXPECTED (navigator.mediaSession.playbackState == 'none') OK
+
+
+
+** session.join() should reject on failure
+RUN(internals.setMockMediaSessionCoordinatorCommandsShouldFail(true))
+RUN(promise = navigator.mediaSession.coordinator.join())
+Promise rejected correctly OK
+EXPECTED (navigator.mediaSession.coordinator.state == 'waiting') OK
+EXPECTED (latestChange == '') OK
+
+RUN(internals.setMockMediaSessionCoordinatorCommandsShouldFail(false))
+RUN(promise = navigator.mediaSession.coordinator.join())
+EVENT(coordinatorstatechange STATE(joined)
+Promise resolved OK
+EXPECTED (navigator.mediaSession.coordinator.state == 'joined') OK
+
+** Test that when coordinator methods succeed, promises resolve and mediaSession action handlers are called.
+RUN(promise = navigator.mediaSession.coordinator.play())
+Promise resolved OK
+
+RUN(promise = navigator.mediaSession.coordinator.pause())
+Promise resolved OK
+
+RUN(promise = navigator.mediaSession.coordinator.seekTo(10))
+Promise resolved OK
+
+** Test that when coordinator methods fail, promises reject and mediaSession action handlers are not called.
+RUN(promise = navigator.mediaSession.coordinator.play())
+Promise rejected correctly OK
+
+RUN(promise = navigator.mediaSession.coordinator.pause())
+Promise rejected correctly OK
+
+RUN(promise = navigator.mediaSession.coordinator.seekTo(10))
+Promise rejected correctly OK
+
+** Test that mediaSession notifies coordinator when positionState changes.
+RUN(navigator.mediaSession.setPositionState({ duration: 1, playbackRate: 1, position: 0 }))
+EXPECTED (latestChange == 'positionStateChanged') OK
+
+** Test that mediaSession notifies coordinator when readyState changes.
+EXPECTED (navigator.mediaSession.readyState == 'havenothing') OK
+RUN(navigator.mediaSession.readyState = 'havemetadata')
+EXPECTED (latestChange == 'readyStateChanged') OK
+EXPECTED (navigator.mediaSession.readyState == 'havemetadata') OK
+
+EXPECTED (navigator.mediaSession.readyState == 'havemetadata') OK
+RUN(navigator.mediaSession.readyState = 'havecurrentdata')
+EXPECTED (latestChange == 'readyStateChanged') OK
+EXPECTED (navigator.mediaSession.readyState == 'havecurrentdata') OK
+
+EXPECTED (navigator.mediaSession.readyState == 'havecurrentdata') OK
+RUN(navigator.mediaSession.readyState = 'havefuturedata')
+EXPECTED (latestChange == 'readyStateChanged') OK
+EXPECTED (navigator.mediaSession.readyState == 'havefuturedata') OK
+
+EXPECTED (navigator.mediaSession.readyState == 'havefuturedata') OK
+RUN(navigator.mediaSession.readyState = 'haveenoughdata')
+EXPECTED (latestChange == 'readyStateChanged') OK
+EXPECTED (navigator.mediaSession.readyState == 'haveenoughdata') OK
+
+EXPECTED (navigator.mediaSession.readyState == 'haveenoughdata') OK
+RUN(navigator.mediaSession.readyState = 'havenothing')
+EXPECTED (latestChange == 'readyStateChanged') OK
+EXPECTED (navigator.mediaSession.readyState == 'havenothing') OK
+
+** Test that mediaSession notifies coordinator when playbackState changes.
+EXPECTED (navigator.mediaSession.playbackState == 'none') OK
+RUN(navigator.mediaSession.playbackState = 'paused')
+EXPECTED (navigator.mediaSession.playbackState == 'paused') OK
+
+EXPECTED (navigator.mediaSession.playbackState == 'paused') OK
+RUN(navigator.mediaSession.playbackState = 'playing')
+EXPECTED (navigator.mediaSession.playbackState == 'playing') OK
+
+EXPECTED (navigator.mediaSession.playbackState == 'playing') OK
+RUN(navigator.mediaSession.playbackState = 'none')
+EXPECTED (navigator.mediaSession.playbackState == 'none') OK
+
+
+
+** Leave the session
+RUN(navigator.mediaSession.coordinator.leave())
+EXPECTED (latestChange == 'playbackStateChanged') OK
+EXPECTED (latestChange == 'playbackStateChanged') OK
+EXPECTED (latestChange == 'playbackStateChanged') OK
+EVENT(coordinatorstatechange STATE(closed)
+EXPECTED (navigator.mediaSession.coordinator.state == 'closed') OK
+
+** Test that when coordinator methods fail and promises reject after mediaSession.leave() has been called.
+RUN(promise = navigator.mediaSession.coordinator.play())
+Promise rejected correctly OK
+
+RUN(promise = navigator.mediaSession.coordinator.pause())
+Promise rejected correctly OK
+
+RUN(promise = navigator.mediaSession.coordinator.seekTo(10))
+Promise rejected correctly OK
+
+** Test that mediaSession does not notify coordinator when states change after mediaSession.leave() has been called.
+* PositionState
+RUN(navigator.mediaSession.setPositionState({ duration: 1, playbackRate: 1, position: 0 }))
+EXPECTED (latestChange == '') OK
+
+* ReadyState
+EXPECTED (navigator.mediaSession.readyState == 'havenothing') OK
+RUN(navigator.mediaSession.readyState = 'havemetadata')
+EXPECTED (latestChange == '') OK
+EXPECTED (navigator.mediaSession.readyState == 'havemetadata') OK
+
+EXPECTED (navigator.mediaSession.readyState == 'havemetadata') OK
+RUN(navigator.mediaSession.readyState = 'havecurrentdata')
+EXPECTED (latestChange == '') OK
+EXPECTED (navigator.mediaSession.readyState == 'havecurrentdata') OK
+
+EXPECTED (navigator.mediaSession.readyState == 'havecurrentdata') OK
+RUN(navigator.mediaSession.readyState = 'havefuturedata')
+EXPECTED (latestChange == '') OK
+EXPECTED (navigator.mediaSession.readyState == 'havefuturedata') OK
+
+EXPECTED (navigator.mediaSession.readyState == 'havefuturedata') OK
+RUN(navigator.mediaSession.readyState = 'haveenoughdata')
+EXPECTED (latestChange == '') OK
+EXPECTED (navigator.mediaSession.readyState == 'haveenoughdata') OK
+
+EXPECTED (navigator.mediaSession.readyState == 'haveenoughdata') OK
+RUN(navigator.mediaSession.readyState = 'havenothing')
+EXPECTED (latestChange == '') OK
+EXPECTED (navigator.mediaSession.readyState == 'havenothing') OK
+
+* PlaybackState
+EXPECTED (navigator.mediaSession.playbackState == 'none') OK
+RUN(navigator.mediaSession.playbackState = 'paused')
+EXPECTED (latestChange == '') OK
+EXPECTED (navigator.mediaSession.playbackState == 'paused') OK
+
+EXPECTED (navigator.mediaSession.playbackState == 'paused') OK
+RUN(navigator.mediaSession.playbackState = 'playing')
+EXPECTED (latestChange == '') OK
+EXPECTED (navigator.mediaSession.playbackState == 'playing') OK
+
+EXPECTED (navigator.mediaSession.playbackState == 'playing') OK
+RUN(navigator.mediaSession.playbackState = 'none')
+EXPECTED (latestChange == '') OK
+EXPECTED (navigator.mediaSession.playbackState == 'none') OK
+
+
+
+** It should not be possible to join or leave a closed session
+RUN(promise = navigator.mediaSession.coordinator.join())
+Promise rejected correctly OK
+TEST(navigator.mediaSession.coordinator.leave()) THROWS(InvalidStateError: Unable to leave when state is closed) OK
+
+END OF TEST
+

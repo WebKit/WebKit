@@ -1,0 +1,105 @@
+When the source rectangle of drawImage() is partly outside the source image, the source rectangle must be clipped to the image and the destination rectangle clipped in the same proportion, for both canvas and ImageBitmap sources.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+HTMLCanvasElement: Source extends past the right edge:
+PASS pixel is [0,0,255,255]
+PASS pixel is [0,0,0,0]
+
+HTMLCanvasElement: Source extends past the left edge:
+PASS pixel is [0,0,0,0]
+PASS pixel is [0,255,0,255]
+
+HTMLCanvasElement: Source extends past the top and bottom edges:
+PASS pixel is [0,0,255,255]
+PASS pixel is [0,0,0,0]
+PASS pixel is [0,0,0,0]
+PASS pixel is [0,0,0,0]
+
+HTMLCanvasElement: Source extends past the right edge, downscaled destination:
+PASS pixel is [0,0,255,255]
+PASS pixel is [0,0,0,0]
+
+HTMLCanvasElement: Source extends past all edges, downscaled destination:
+PASS pixel is [0,255,0,255]
+PASS pixel is [0,0,255,255]
+PASS pixel is [0,0,0,0]
+PASS pixel is [0,0,0,0]
+PASS pixel is [0,0,0,0]
+PASS pixel is [0,0,0,0]
+
+HTMLCanvasElement: Source extends past the left edge, downscaled and offset destination:
+PASS pixel is [0,255,0,255]
+PASS pixel is [0,0,0,0]
+PASS pixel is [0,0,0,0]
+PASS pixel is [0,0,0,0]
+
+HTMLCanvasElement: Source extends past the right edge, upscaled destination:
+PASS pixel is [0,0,255,255]
+PASS pixel is [0,0,0,0]
+
+HTMLCanvasElement: Source extends past the left and top edges, upscaled destination:
+PASS pixel is [0,255,0,255]
+PASS pixel is [0,0,0,0]
+PASS pixel is [0,0,0,0]
+
+HTMLCanvasElement: Source extends past the right edge, non-uniformly scaled destination:
+PASS pixel is [0,0,255,255]
+PASS pixel is [0,0,0,0]
+
+HTMLCanvasElement: Source entirely outside the image:
+PASS pixel is [0,0,0,0]
+
+ImageBitmap: Source extends past the right edge:
+PASS pixel is [0,0,255,255]
+PASS pixel is [0,0,0,0]
+
+ImageBitmap: Source extends past the left edge:
+PASS pixel is [0,0,0,0]
+PASS pixel is [0,255,0,255]
+
+ImageBitmap: Source extends past the top and bottom edges:
+PASS pixel is [0,0,255,255]
+PASS pixel is [0,0,0,0]
+PASS pixel is [0,0,0,0]
+PASS pixel is [0,0,0,0]
+
+ImageBitmap: Source extends past the right edge, downscaled destination:
+PASS pixel is [0,0,255,255]
+PASS pixel is [0,0,0,0]
+
+ImageBitmap: Source extends past all edges, downscaled destination:
+PASS pixel is [0,255,0,255]
+PASS pixel is [0,0,255,255]
+PASS pixel is [0,0,0,0]
+PASS pixel is [0,0,0,0]
+PASS pixel is [0,0,0,0]
+PASS pixel is [0,0,0,0]
+
+ImageBitmap: Source extends past the left edge, downscaled and offset destination:
+PASS pixel is [0,255,0,255]
+PASS pixel is [0,0,0,0]
+PASS pixel is [0,0,0,0]
+PASS pixel is [0,0,0,0]
+
+ImageBitmap: Source extends past the right edge, upscaled destination:
+PASS pixel is [0,0,255,255]
+PASS pixel is [0,0,0,0]
+
+ImageBitmap: Source extends past the left and top edges, upscaled destination:
+PASS pixel is [0,255,0,255]
+PASS pixel is [0,0,0,0]
+PASS pixel is [0,0,0,0]
+
+ImageBitmap: Source extends past the right edge, non-uniformly scaled destination:
+PASS pixel is [0,0,255,255]
+PASS pixel is [0,0,0,0]
+
+ImageBitmap: Source entirely outside the image:
+PASS pixel is [0,0,0,0]
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

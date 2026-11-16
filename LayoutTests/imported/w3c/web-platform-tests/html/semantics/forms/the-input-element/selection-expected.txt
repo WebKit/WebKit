@@ -1,0 +1,48 @@
+
+PASS Input element programmatic selection support
+PASS input type text should support the select() method
+PASS input type search should support the select() method
+PASS input type url should support the select() method
+PASS input type tel should support the select() method
+PASS input type email should support the select() method
+PASS input type password should support the select() method
+PASS input type date should support the select() method
+PASS input type month should support the select() method
+PASS input type week should support the select() method
+PASS input type time should support the select() method
+PASS input type datetime-local should support the select() method
+PASS input type number should support the select() method
+PASS input type color should support the select() method
+PASS input type file should support the select() method
+PASS input type hidden should do nothing when the select() method is called (but, not throw)
+PASS input type range should do nothing when the select() method is called (but, not throw)
+PASS input type checkbox should do nothing when the select() method is called (but, not throw)
+PASS input type radio should do nothing when the select() method is called (but, not throw)
+PASS input type submit should do nothing when the select() method is called (but, not throw)
+PASS input type image should do nothing when the select() method is called (but, not throw)
+PASS input type reset should do nothing when the select() method is called (but, not throw)
+PASS input type button should do nothing when the select() method is called (but, not throw)
+PASS Input element programmatic selection support 1
+PASS input type text should support all selection attributes and methods
+PASS input type search should support all selection attributes and methods
+PASS input type url should support all selection attributes and methods
+PASS input type tel should support all selection attributes and methods
+PASS input type password should support all selection attributes and methods
+PASS input type hidden should not support variable-length selections
+PASS input type email should not support variable-length selections
+PASS input type date should not support variable-length selections
+PASS input type month should not support variable-length selections
+PASS input type week should not support variable-length selections
+PASS input type time should not support variable-length selections
+PASS input type datetime-local should not support variable-length selections
+PASS input type number should not support variable-length selections
+PASS input type range should not support variable-length selections
+PASS input type color should not support variable-length selections
+PASS input type checkbox should not support variable-length selections
+PASS input type radio should not support variable-length selections
+PASS input type file should not support variable-length selections
+PASS input type submit should not support variable-length selections
+PASS input type image should not support variable-length selections
+PASS input type reset should not support variable-length selections
+PASS input type button should not support variable-length selections
+

@@ -1,0 +1,7 @@
+
+PASS public to loopback: permission denied.
+PASS public to loopback: success.
+PASS public to local: permission denied.
+PASS public to local: success.
+PASS public to public: no permission required.
+

@@ -1,0 +1,17 @@
+<body>
+    <p>Test CanvasRenderingContext2D.createPattern() can create a CanvasPattern from an SVGImageElement.</p>
+    <canvas id="canvas"></canvas>
+    <svg style="position: absolute; top: -999999px">
+        <image id="source" href="resources/background.png" height="32" width="32" />
+    </svg>
+    <script>
+        const image = document.getElementById("source");
+        image.addEventListener("load", (e) => {
+            const canvas = document.getElementById("canvas");
+            const ctx = canvas.getContext("2d");
+            const pattern = ctx.createPattern(image, "repeat");
+            ctx.fillStyle = pattern;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+        });
+    </script>
+</body>

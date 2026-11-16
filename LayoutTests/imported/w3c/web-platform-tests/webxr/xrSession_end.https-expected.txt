@@ -1,0 +1,6 @@
+
+PASS end event fires when immersive session ends - webgl
+PASS end event fires when immersive session ends - webgl2
+PASS end event fires when non-immersive session ends - webgl
+PASS end event fires when non-immersive session ends - webgl2
+

@@ -1,0 +1,81 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<div id="text-div" role="group">
+<p>
+    <span>1: Line one line one</span><span contenteditable="false"> <br role="presentation"/></span>
+    <span>2: Line two line two</span><span contenteditable="false"></span>
+</p>
+<p>
+    <span>3: Line three line three</span><span contenteditable="false"> <br role="presentation"/></span>
+    <span>4: Line four line four </span><span contenteditable="false"></span>
+</p>
+<p>
+    <span>5: Line five line five</span><span contenteditable="false"> <br role="presentation"/></span>
+    <span>6: Line six line six</span><span contenteditable="false"></span>
+</p>
+<p>
+    <span>7: Line seven line seven</span><span contenteditable="false"> <br role="presentation"/></span>
+    <span>8: Line eight line eight </span><span contenteditable="false"></span>
+</p>
+<p>
+    <span>9: Line nine line nine</span><span contenteditable="false"> <br role="presentation"/></span>
+    <span>10: Line ten line ten</span><span contenteditable="false"></span>
+</p>
+<p>
+    <span>11: Line eleven line eleven</span><span contenteditable="false"> <br role="presentation"/></span>
+    <span>12: Line twelve line twelve</span><span contenteditable="false"></span>
+</p>
+<p>
+    <span>13: Line thirteen line thirteen</span><span contenteditable="false"> <br role="presentation"/></span>
+    <span>14: Line fourteen line fourteen</span><span contenteditable="false"></span>
+</p>
+<p>
+    <span>15: Line fifteen line fifteen</span><span contenteditable="false"> <br role="presentation"/></span>
+    <span>16: Line sixteen line sixteen</span><span contenteditable="false"></span>
+</p>
+<p>
+    <span>17: Line seventeen line seventeen</span><span contenteditable="false"> <br role="presentation"/></span>
+    <span>18: Line eighteen line eighteen</span><span contenteditable="false"></span>
+</p>
+<p>
+    <span>19: Line nineteen line nineteen</span><span contenteditable="false"> <br role="presentation"/></span>
+    <span>20: Line twenty line twenty </span><span contenteditable="false"></span>
+</p>
+<p>
+    <span>21: Line twentyone line twentyone</span><span contenteditable="false"> <br role="presentation"/></span>
+    <span>22: Line twentytwo line twentytwo</span><span contenteditable="false"></span>
+</p>
+<p>
+    <span>23: Line twentythree line twentythree</span><span contenteditable="false"> <br role="presentation"/></span>
+    <span>24: Line twentyfour line twentyfour</span><span contenteditable="false"></span>
+</p>
+</div>
+
+<script>
+var output = "This tests that visibleCharacterRange returns expected visible ranges with various view width values.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    const text = accessibilityController.accessibleElementById("text-div");
+    setTimeout(async function() {
+        output += await verifyVisibleRange(text, {width: 100, height: 500, scrollTop: 198}, ["{75, 186}", "{68, 203}"]);
+        output += await verifyVisibleRange(text, {width: 150, height: 500, scrollTop: 198}, ["{109, 577}", "{92, 323}"]);
+        output += await verifyVisibleRange(text, {width: 200, height: 500, scrollTop: 198}, ["{186, 500}", "{162, 381}"]);
+        output += await verifyVisibleRange(text, {width: 270, height: 500, scrollTop: 198}, ["{135, 551}", "{137, 550}"]);
+        output += await verifyVisibleRange(text, {width: 320, height: 500, scrollTop: 198}, ["{135, 551}", "{115, 572}"]);
+
+        document.getElementById("text-div").style.display = "none";
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

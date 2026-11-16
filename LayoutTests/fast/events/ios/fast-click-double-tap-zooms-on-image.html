@@ -1,0 +1,67 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+
+<html>
+<meta name="viewport" content="width=600">
+<head>
+    <script id="ui-script" type="text/plain">
+        (function() {
+            uiController.didEndZoomingCallback = function() {
+                uiController.uiScriptComplete();
+            };
+            uiController.singleTapAtPoint(80, 80, function() {});
+            uiController.singleTapAtPoint(80, 80, function() {});
+        })();
+    </script>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+
+        var target, output;
+
+        function getUIScript()
+        {
+            return document.getElementById("ui-script").text;
+        }
+
+        function runTest()
+        {
+            output = document.getElementById("output");
+            target = document.getElementById("target");
+            target.addEventListener("click", handleClick, false);
+
+            if (!window.eventSender || !testRunner.runUIScript)
+                return;
+
+            testRunner.runUIScript(getUIScript(), function() {
+                output.textContent = "PASS: Double tap caused zoom.";
+                testRunner.notifyDone();
+            });
+        }
+
+        function handleClick(event)
+        {
+            output.textContent = "PASS: Click fired on element with handler.";
+            testRunner.notifyDone();
+        }
+    </script>
+    <style>
+        body {
+            margin: 0;
+            width: 300px;
+        }
+        #target {
+            height: 200px;
+            width: 200px;
+        }
+    </style>
+</head>
+<body onload="runTest()">
+<img id="target" src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1 1'><rect width='1' height='1' fill='green'/><circle cx='0.5' cy='0.5' r='0.5' fill='blue'/></svg>"><br>
+<div id="output"></div>
+<div id="description">This document is set up to enable fast clicks. However, since
+the green image doesn't have any handlers, double tapping on it
+should trigger a zoom, not a fast click.</div>
+</body>
+</html>

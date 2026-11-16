@@ -1,0 +1,5 @@
+
+PASS A blob URL created in a window agent can be imported from a worker
+PASS A blob URL revoked in a window agent will not resolve in a worker
+PASS A revoked blob URL will not resolve in a worker even if it's in the window's module graph
+

@@ -1,0 +1,23 @@
+This test ensures we represent alt text provided by the CSS `content` property correctly.
+
+	AXTitle:
+	AXDescription: alt-text-1
+	AXHelp:
+
+	AXTitle:
+	AXDescription: alt-text-1
+	AXHelp:
+
+	AXTitle:
+	AXDescription: alt-text-2
+	AXHelp:
+
+	AXTitle:
+	AXDescription: alt-text-2
+	AXHelp:
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+ Press

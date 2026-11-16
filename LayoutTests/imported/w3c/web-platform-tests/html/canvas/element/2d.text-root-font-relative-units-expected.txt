@@ -1,0 +1,13 @@
+
+PASS font: rem resolves against the root element, not the canvas element
+PASS font: em still resolves against the canvas element
+PASS font: rem tracks a change to the root font-size
+PASS font: re-setting the same rem font string picks up the new root font-size
+PASS font: rem picks up a pending root font-size change
+PASS font: rem is unaffected by the canvas element font-size
+PASS font: save and restore keep the root-resolved font of each saved state
+PASS font: rex resolves against the root element
+PASS font: rch resolves against the root element
+PASS font: rcap resolves against the root element
+PASS font: ric resolves against the root element
+

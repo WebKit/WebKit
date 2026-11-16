@@ -1,0 +1,15 @@
+a div
+
+another div
+Tests that netscape plugins get appropriate calls to NPP_SetWindow when scrolled out of view or back in to view.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS NPP_SetWindow called with expected parameters
+PASS NPP_SetWindow called with expected parameters
+PASS NPP_SetWindow called with expected parameters
+PASS NPP_SetWindow called with expected parameters
+PASS NPP_SetWindow called with expected parameters
+PASS NPP_SetWindow called with expected parameters
+

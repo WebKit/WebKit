@@ -1,0 +1,48 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<p id="target">Hello <b>brave</b> world</p>
+
+<script>
+var output = "This test ensures AXRelativeIndexForTextMarker returns the same receiver-local offset whether it is asked of the static text run a marker is anchored to or of the group containing that run, which reach the answer through different code paths.\n\n";
+
+function indexOnGroup(marker)
+{
+    return group.relativeIndexForTextMarker(marker);
+}
+
+function indexOnStaticText(marker)
+{
+    return staticText.relativeIndexForTextMarker(marker);
+}
+
+if (window.accessibilityController) {
+    var group = accessibilityController.accessibleElementById("target");
+    var staticText = group.childAtIndex(0);
+
+    var groupRange = group.textMarkerRangeForElement(group);
+    var groupStart = group.startTextMarkerForTextMarkerRange(groupRange);
+    var groupEnd = group.endTextMarkerForTextMarkerRange(groupRange);
+
+    var markerAtSix = groupStart;
+    for (var i = 0; i < 6; i++)
+        markerAtSix = group.nextTextMarker(markerAtSix);
+
+    output += expect("indexOnGroup(groupEnd)", "17");
+    output += expect("indexOnGroup(groupEnd) - indexOnGroup(groupStart)", "17");
+    output += expect("indexOnGroup(markerAtSix)", "6");
+    output += expect("indexOnStaticText(markerAtSix)", "6");
+    output += expect("indexOnGroup(markerAtSix) === indexOnStaticText(markerAtSix)", "true");
+
+    document.getElementById("target").style.display = "none";
+
+    debug(output);
+}
+</script>
+</body>
+</html>

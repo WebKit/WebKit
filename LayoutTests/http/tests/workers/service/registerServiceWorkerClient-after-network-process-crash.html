@@ -1,0 +1,70 @@
+<head>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+</head>
+<body>
+<script>
+if (window.testRunner) {
+    testRunner.setUseSeparateServiceWorkerProcess(true);
+    testRunner.grantWebNotificationPermission("http://127.0.0.1:8000");
+}
+
+async function waitForActive(registration)
+{
+    if (registration.active)
+        return registration.active;
+
+    let resolveCallback;
+    const promise = new Promise((resolve, reject) => {
+        resolveCallback = resolve;
+        setTimeout(() => reject("waitForActive timed out"), 5000);
+    });
+
+    const worker = registration.installing;
+    worker.addEventListener("statechange", () => {
+        if (worker.state  === "activated")
+            resolveCallback(worker);
+    });
+    return promise;
+}
+
+async function registerServiceWorker() {
+    const registration = await navigator.serviceWorker.register('resources/registerServiceWorkerClient-after-network-process-crash-worker.js');
+
+    if (!registration)
+        return Promise.reject("No registration");
+
+    if (registration.active) {
+        registration.active.postMessage("start");
+        return;
+    }
+
+    const worker = await waitForActive(registration);
+    worker.postMessage("start");
+
+    const data = await new Promise((resolve, reject) => {
+        navigator.serviceWorker.onmessage = e => resolve(e.data);
+        setTimeout(() => reject("worker started timed out"), 5000);
+    });
+    assert_equals(data, "started");
+}
+
+promise_test(async t => {
+    await registerServiceWorker();
+
+    if (window.internals)
+        await internals.storeRegistrationsOnDisk();
+    if (window.testRunner)
+        testRunner.terminateNetworkProcess();
+
+    if (testRunner)
+        testRunner.simulateWebNotificationClickForServiceWorkerNotifications();
+
+    const promise = new Promise((resolve, reject) => {
+        navigator.serviceWorker.onmessage = e => resolve(e.data);
+        setTimeout(() => reject("onmessage timed out"), 5000);
+    });
+    assert_equals(await promise, "click");
+}, "Verify service worker clients reregister in case service worker is relaunched after a network process crash");
+</script>
+</body>

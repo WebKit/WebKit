@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+    .box {
+        position: absolute;
+        z-index: 1;
+        top: 20px;
+        left: 30px;
+        height: 400px;
+        width: 400px;
+        border: 20px solid green;
+        transform: translate(0);
+        transform-origin: top left;
+        background-color: blue;
+    }
+    
+    body.changed .box {
+        transform: translate3d(0, 0, 0) scale(0.5, 0.5);
+    }
+    </style>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                if (window.internals)
+                    window.internals.startTrackingRepaints();
+
+                document.body.classList.add('changed');
+
+                if (window.internals)
+                    document.getElementById('layers').textContent = window.internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_REPAINT_RECTS);
+
+                if (window.testRunner)
+                    testRunner.notifyDone();
+            }, 0);
+        }, false);
+    </script>
+</head>
+<body>
+    <div class="box"></div>
+<pre id="layers"></pre>
+</body>
+</html>

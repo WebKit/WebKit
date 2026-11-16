@@ -1,0 +1,7 @@
+
+PASS Setting sinkId to the empty string at construction should succeed.
+PASS Setting sinkId with a valid device identifier at construction should succeed.
+PASS Setting sinkId with an AudioSinkOptions at construction should succeed.
+PASS Invalid sinkId argument with a wrong type should throw an appropriate exception.
+PASS Invalid sinkId argument with a wrong ID should dispatch an onerror event.
+

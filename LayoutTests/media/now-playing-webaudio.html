@@ -1,0 +1,108 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Testing basic video exchange from offerer to receiver</title>
+        <script src="../resources/testharness.js"></script>
+        <script src="../resources/testharnessreport.js"></script>
+    </head>
+    <body>
+        <script>
+function waitFor(delay)
+{
+    return new Promise(resolve => setTimeout(resolve, delay));
+}
+
+async function waitForCriteria(test, criteria)
+{
+    let counter = 0;
+    while (!criteria() && ++counter < 100)
+        await waitFor(50);
+}
+
+let context;
+let oscillator;
+let gainNode;
+
+promise_test(async test => {
+    if (!window.internals)
+        return;
+
+    navigator.audioSession.type = "playback";
+
+    context = new AudioContext();
+
+    await waitFor(100);
+    assert_false(!!internals.nowPlayingState.uniqueIdentifier);
+
+    oscillator = null;
+    gainNode = context.createGain();
+    oscillator = context.createOscillator();
+    oscillator.type = 'square';
+    oscillator.frequency.setValueAtTime(440, context.currentTime);
+
+    oscillator.connect(gainNode);
+    gainNode.gain.value = 0.1
+
+    internals.withUserGesture(() => {
+        context.resume();
+    });
+
+    await waitFor(100);
+    assert_false(!!internals.nowPlayingState.uniqueIdentifier);
+
+    gainNode.connect(context.destination);
+
+    await waitForCriteria(test, () => {
+        return !!internals.nowPlayingState.uniqueIdentifier;
+    });
+    assert_true(!!internals.nowPlayingState.uniqueIdentifier, "active now playing");
+
+    context.suspend();
+
+    await waitForCriteria(test, () => {
+        return !internals.nowPlayingState.uniqueIdentifier;
+    });
+    assert_false(!!internals.nowPlayingState.uniqueIdentifier, "inactive now playing");
+
+    context.resume();
+
+    await waitForCriteria(test, () => {
+        return !!internals.nowPlayingState.uniqueIdentifier;
+    });
+    assert_true(!!internals.nowPlayingState.uniqueIdentifier, "active now playing again");
+}, "AudioContext as the now playing info source");
+
+promise_test(async test => {
+    if (!window.internals)
+        return;
+
+    const identifier = internals.nowPlayingState.uniqueIdentifier;
+    let mediaElement = document.createElement("audio");
+    document.body.appendChild(mediaElement);
+
+    await waitFor(100);
+    assert_equals(internals.nowPlayingState.uniqueIdentifier, identifier, "AudioContext identifier");
+
+    await waitFor(100);
+    assert_equals(internals.nowPlayingState.uniqueIdentifier, identifier, "AudioContext identifier 2");
+
+    mediaElement.src = "content/test.wav";
+
+    await waitForCriteria(test, () => {
+        return internals.nowPlayingState.uniqueIdentifier !== identifier;
+    });
+    assert_not_equals(internals.nowPlayingState.uniqueIdentifier, identifier, "HTMLMediaElement identifier");
+    const mediaElementIdentifier = internals.nowPlayingState.uniqueIdentifier
+
+    document.body.removeChild(mediaElement);
+
+    await waitForCriteria(test, () => {
+        return internals.nowPlayingState.uniqueIdentifier !== mediaElementIdentifier;
+    });
+    assert_equals(internals.nowPlayingState.uniqueIdentifier, identifier, "AudioContext identifier 3");
+}, "HTMLMediaElement will become the now playing info source over playing AudioContext");
+
+        </script>
+    </body>
+</html>

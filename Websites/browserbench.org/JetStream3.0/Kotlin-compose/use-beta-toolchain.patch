@@ -1,0 +1,35 @@
+diff --git a/benchmarks/multiplatform/build.gradle.kts b/benchmarks/multiplatform/build.gradle.kts
+index 96ae9a60c7..25de0aead1 100644
+--- a/benchmarks/multiplatform/build.gradle.kts
++++ b/benchmarks/multiplatform/build.gradle.kts
+@@ -9,6 +9,7 @@ plugins {
+ 
+ allprojects {
+     repositories {
++        maven("https://packages.jetbrains.team/maven/p/kt/dev/org/jetbrains/kotlin/kotlin-gradle-plugin/")
+         google()
+         mavenCentral()
+         maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
+diff --git a/benchmarks/multiplatform/gradle/libs.versions.toml b/benchmarks/multiplatform/gradle/libs.versions.toml
+index 8713cf0de7..da803c319b 100644
+--- a/benchmarks/multiplatform/gradle/libs.versions.toml
++++ b/benchmarks/multiplatform/gradle/libs.versions.toml
+@@ -1,6 +1,6 @@
+ [versions]
+ compose-multiplatform = "1.8.2"
+-kotlin = "2.2.0"
++kotlin = "2.2.20-Beta2"
+ kotlinx-coroutines = "1.8.0"
+ kotlinx-serialization = "1.8.0"
+ kotlinx-io = "0.7.0"
+diff --git a/benchmarks/multiplatform/settings.gradle.kts b/benchmarks/multiplatform/settings.gradle.kts
+index b1d1367534..84a894ed78 100644
+--- a/benchmarks/multiplatform/settings.gradle.kts
++++ b/benchmarks/multiplatform/settings.gradle.kts
+@@ -1,5 +1,6 @@
+ pluginManagement {
+     repositories {
++        maven("https://packages.jetbrains.team/maven/p/kt/dev/org/jetbrains/kotlin/kotlin-gradle-plugin/")
+         mavenLocal()
+         mavenCentral()
+         gradlePluginPortal()

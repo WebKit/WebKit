@@ -1,0 +1,33 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<head>
+    <style>
+        .scroller {
+            width: 400px;
+            height: 450px;
+            border: 2px solid black;
+            overflow: scroll;
+        }
+        
+        .contents {
+            height: 300%;
+        }
+    </style>
+    <script>
+        if (window.internals)
+            internals.setUsesOverlayScrollbars(true);
+    
+        window.addEventListener('load', () => {
+            // Trigger scrollbar display.
+            let scroller = document.querySelector('.scroller');
+            scroller.scrollTop = 10;
+        }, false);
+    </script>
+</head>
+<body>
+    <div class="scroller">
+        <div class="contents">
+        </div>
+    </div>
+</body>
+</html>

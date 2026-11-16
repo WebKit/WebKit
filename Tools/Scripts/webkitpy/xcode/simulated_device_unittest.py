@@ -1,0 +1,916 @@
+# Copyright (C) 2017-2020 Apple Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1.  Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer.
+# 2.  Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in the
+#     documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS'' AND
+# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS BE LIABLE FOR
+# ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+import json
+import plistlib
+import unittest
+from unittest import mock
+
+from webkitcorepy import Version
+
+from webkitpy.common.system.executive_mock import MockExecutive2
+from webkitpy.common.system.filesystem_mock import MockFileSystem
+from webkitpy.common.system.systemhost_mock import MockSystemHost
+from webkitpy.xcode.device_type import DeviceType
+from webkitpy.xcode import simulated_device
+from webkitpy.xcode.simulated_device import DeviceRequest, SimulatedDeviceManager, SimulatedDevice
+from webkitpy.xcode.simulator_daemons import disabled_launchd_jobs, quiet_logging_preferences
+
+simctl_json_output = """{
+ "devicetypes" : [
+   {
+     "name" : "iPhone 4s",
+     "identifier" : "com.apple.CoreSimulator.SimDeviceType.iPhone-4s"
+   },
+   {
+     "name" : "iPhone 5",
+     "identifier" : "com.apple.CoreSimulator.SimDeviceType.iPhone-5"
+   },
+   {
+     "name" : "iPhone 5s",
+     "identifier" : "com.apple.CoreSimulator.SimDeviceType.iPhone-5s"
+   },
+   {
+     "name" : "iPhone 6",
+     "identifier" : "com.apple.CoreSimulator.SimDeviceType.iPhone-6"
+   },
+   {
+     "name" : "iPhone 6 Plus",
+     "identifier" : "com.apple.CoreSimulator.SimDeviceType.iPhone-6-Plus"
+   },
+   {
+     "name" : "iPhone 6s",
+     "identifier" : "com.apple.CoreSimulator.SimDeviceType.iPhone-6s"
+   },
+   {
+     "name" : "iPhone 6s Plus",
+     "identifier" : "com.apple.CoreSimulator.SimDeviceType.iPhone-6s-Plus"
+   },
+   {
+     "name" : "iPhone 7",
+     "identifier" : "com.apple.CoreSimulator.SimDeviceType.iPhone-7"
+   },
+   {
+     "name" : "iPhone 7 Plus",
+     "identifier" : "com.apple.CoreSimulator.SimDeviceType.iPhone-7-Plus"
+   },
+   {
+     "name" : "iPhone 8",
+     "identifier" : "com.apple.CoreSimulator.SimDeviceType.iPhone-8"
+   },
+   {
+     "name" : "iPhone 8 Plus",
+     "identifier" : "com.apple.CoreSimulator.SimDeviceType.iPhone-8-Plus"
+   },
+   {
+     "name" : "iPhone SE (1st generation)",
+     "identifier" : "com.apple.CoreSimulator.SimDeviceType.iPhone-SE"
+   },
+   {
+     "name" : "iPhone X",
+     "identifier" : "com.apple.CoreSimulator.SimDeviceType.iPhone-X"
+   },
+   {
+     "name" : "iPhone Xs",
+     "identifier" : "com.apple.CoreSimulator.SimDeviceType.iPhone-Xs"
+   },
+   {
+     "name" : "iPad 2",
+     "identifier" : "com.apple.CoreSimulator.SimDeviceType.iPad-2"
+   },
+   {
+     "name" : "iPad Retina",
+     "identifier" : "com.apple.CoreSimulator.SimDeviceType.iPad-Retina"
+   },
+   {
+     "name" : "iPad Air",
+     "identifier" : "com.apple.CoreSimulator.SimDeviceType.iPad-Air"
+   },
+   {
+     "name" : "iPad Air 2",
+     "identifier" : "com.apple.CoreSimulator.SimDeviceType.iPad-Air-2"
+   },
+   {
+     "name" : "iPad (9th generation)",
+     "identifier" : "com.apple.CoreSimulator.SimDeviceType.iPad--9th-generation-"
+   },
+   {
+     "name" : "iPad Pro (9.7-inch)",
+     "identifier" : "com.apple.CoreSimulator.SimDeviceType.iPad-Pro--9-7-inch-"
+   },
+   {
+     "name" : "iPad Pro (12.9-inch)",
+     "identifier" : "com.apple.CoreSimulator.SimDeviceType.iPad-Pro"
+   },
+   {
+     "name" : "iPad Pro (12.9-inch) (2nd generation)",
+     "identifier" : "com.apple.CoreSimulator.SimDeviceType.iPad-Pro--12-9-inch---2nd-generation-"
+   },
+   {
+     "name" : "iPad Pro (10.5-inch)",
+     "identifier" : "com.apple.CoreSimulator.SimDeviceType.iPad-Pro--10-5-inch-"
+   },
+   {
+     "name" : "Apple TV",
+     "identifier" : "com.apple.CoreSimulator.SimDeviceType.Apple-TV-1080p"
+   },
+   {
+     "name" : "Apple TV 4K",
+     "identifier" : "com.apple.CoreSimulator.SimDeviceType.Apple-TV-4K-4K"
+   },
+   {
+     "name" : "Apple TV 4K (at 1080p)",
+     "identifier" : "com.apple.CoreSimulator.SimDeviceType.Apple-TV-4K-1080p"
+   },
+   {
+     "name" : "Apple Watch - 38mm",
+     "identifier" : "com.apple.CoreSimulator.SimDeviceType.Apple-Watch-38mm"
+   },
+   {
+     "name" : "Apple Watch - 42mm",
+     "identifier" : "com.apple.CoreSimulator.SimDeviceType.Apple-Watch-42mm"
+   },
+   {
+     "name" : "Apple Watch Series 2 - 38mm",
+     "identifier" : "com.apple.CoreSimulator.SimDeviceType.Apple-Watch-Series-2-38mm"
+   },
+   {
+     "name" : "Apple Watch Series 2 - 42mm",
+     "identifier" : "com.apple.CoreSimulator.SimDeviceType.Apple-Watch-Series-2-42mm"
+   },
+   {
+     "name" : "Watch2017 - 38mm",
+     "identifier" : "com.apple.CoreSimulator.SimDeviceType.Apple-Watch-Series-3-38mm"
+   },
+   {
+     "name" : "Watch2017 - 42mm",
+     "identifier" : "com.apple.CoreSimulator.SimDeviceType.Apple-Watch-Series-3-42mm"
+   }
+ ],
+ "runtimes" : [
+   {
+     "runtimeRoot" : "/path/to/RuntimeRoot",
+     "buildversion" : "13E233",
+     "availability" : "(available)",
+     "name" : "iOS 9.3",
+     "identifier" : "com.apple.CoreSimulator.SimRuntime.iOS-9-3",
+     "version" : "9.3"
+   },
+   {
+     "runtimeRoot" : "/path/to/RuntimeRoot",
+     "buildversion" : "15A8401",
+     "availability" : "(available)",
+     "name" : "iOS 11.0",
+     "identifier" : "com.apple.CoreSimulator.SimRuntime.iOS-11-0",
+     "version" : "11.0.1"
+   },
+   {
+     "runtimeRoot" : "/path/to/RuntimeRoot",
+     "buildversion" : "15J380",
+     "availability" : "(available)",
+     "name" : "tvOS 11.0",
+     "identifier" : "com.apple.CoreSimulator.SimRuntime.tvOS-11-0",
+     "version" : "11.0"
+   },
+   {
+     "runtimeRoot" : "/path/to/RuntimeRoot",
+     "buildversion" : "15R372",
+     "availability" : "(available)",
+     "name" : "watchOS 4.0",
+     "identifier" : "com.apple.CoreSimulator.SimRuntime.watchOS-4-0",
+     "version" : "4.0"
+   },
+   {
+     "runtimeRoot" : "/path/to/RuntimeRoot",
+     "buildversion" : "16A367",
+     "isAvailable" : "YES",
+     "name" : "iOS 12.0",
+     "identifier" : "com.apple.CoreSimulator.SimRuntime.iOS-12-0",
+     "version" : "12.0"
+   }
+ ],
+ "devices" : {
+   "watchOS 4.0" : [
+     {
+       "state" : "Shutdown",
+       "availability" : "(available)",
+       "name" : "Apple Watch - 38mm",
+       "udid" : "ACCA529B-DAED-4684-ACE5-0BB3A6245064"
+     },
+     {
+       "state" : "Shutdown",
+       "availability" : "(available)",
+       "name" : "Apple Watch - 42mm",
+       "udid" : "46948CF4-B5E3-485B-87CA-DD303FFA7F9B"
+     },
+     {
+       "state" : "Shutdown",
+       "availability" : "(available)",
+       "name" : "Apple Watch Series 2 - 38mm",
+       "udid" : "A0A989D0-C5B8-432D-869F-54640FD6739D"
+     },
+     {
+       "state" : "Shutdown",
+       "availability" : "(available)",
+       "name" : "Apple Watch Series 2 - 42mm",
+       "udid" : "AB05A1C2-1049-4087-BEDB-326B42D58CDD"
+     },
+     {
+       "state" : "Shutdown",
+       "availability" : "(available)",
+       "name" : "Watch2017 - 38mm",
+       "udid" : "8EFAD24B-2EB3-48AF-9484-F97AA418C5D6"
+     },
+     {
+       "state" : "Shutdown",
+       "availability" : "(available)",
+       "name" : "Watch2017 - 42mm",
+       "udid" : "3B477D07-65AD-481A-9506-3776817A6293"
+     }
+   ],
+   "iOS 9.3" : [
+     {
+       "state" : "Shutdown",
+       "availability" : "(available)",
+       "name" : "iPhone 4s",
+       "udid" : "837FF579-72A0-4D30-B95B-956E89CE6CDC"
+     },
+     {
+       "state" : "Shutdown",
+       "availability" : "(available)",
+       "name" : "iPhone 5",
+       "udid" : "46C5F828-1394-4F98-83CA-3CE18020DA5B"
+     },
+     {
+       "state" : "Shutdown",
+       "availability" : "(available)",
+       "name" : "iPhone 5s",
+       "udid" : "7760B62D-26D9-4E1E-B429-18CED8CC71E4"
+     },
+     {
+       "state" : "Shutdown",
+       "availability" : "(available)",
+       "name" : "iPhone 6",
+       "udid" : "19135EEB-2792-4ED6-82AD-374C3F1F5DAC"
+     },
+     {
+       "state" : "Shutdown",
+       "availability" : "(available)",
+       "name" : "iPhone 6 Plus",
+       "udid" : "60691334-2C32-4366-B489-F13FA3579066"
+     },
+     {
+       "state" : "Shutdown",
+       "availability" : "(available)",
+       "name" : "iPhone 6s",
+       "udid" : "696BE729-5C61-42FE-9502-E183DB7222C5"
+     },
+     {
+       "state" : "Shutdown",
+       "availability" : "(available)",
+       "name" : "iPhone 6s Plus",
+       "udid" : "32CBF7F4-36E4-417B-929C-9C3863E6C7FD"
+     },
+     {
+       "state" : "Shutdown",
+       "availability" : "(available)",
+       "name" : "iPad 2",
+       "udid" : "4043B3B9-8FDE-4ABA-A942-7C7C7126E9AC"
+     },
+     {
+       "state" : "Shutdown",
+       "availability" : "(available)",
+       "name" : "iPad Retina",
+       "udid" : "35FCFEEC-577F-46C1-8389-5195D17D9D76"
+     },
+     {
+       "state" : "Shutdown",
+       "availability" : "(available)",
+       "name" : "iPad Air",
+       "udid" : "867884CE-1B74-4912-B216-8E750BF15699"
+     },
+     {
+       "state" : "Shutdown",
+       "availability" : "(available)",
+       "name" : "iPad Air 2",
+       "udid" : "AB7731B7-9BC5-4EA4-B9C1-3DA6E826D7CC"
+     }
+   ],
+   "tvOS 11.0" : [
+     {
+       "state" : "Shutdown",
+       "availability" : "(available)",
+       "name" : "Apple TV",
+       "udid" : "7BC43B9B-EF0E-4A0A-A3CD-6040688C1D64"
+     },
+     {
+       "state" : "Shutdown",
+       "availability" : "(available)",
+       "name" : "Apple TV 4K",
+       "udid" : "7C6B05C9-2E4E-4C4A-A1B0-FF842DFD686F"
+     },
+     {
+       "state" : "Shutdown",
+       "availability" : "(available)",
+       "name" : "Apple TV 4K (at 1080p)",
+       "udid" : "DB10825C-04DD-4A50-8C37-E96C7148076A"
+     }
+   ],
+   "iOS 11.0" : [
+     {
+       "state" : "Booted",
+       "availability" : "(available)",
+       "name" : "iPhone 5s",
+       "udid" : "34FB476C-6FA0-43C8-8945-1BD7A4EBF0DE"
+     },
+     {
+       "state" : "Shutdown",
+       "availability" : "(available)",
+       "name" : "iPhone 6",
+       "udid" : "0045E516-F2E1-484E-B95D-73E8AA7663A4"
+     },
+     {
+       "state" : "Shutdown",
+       "availability" : "(available)",
+       "name" : "iPhone 6 Plus",
+       "udid" : "4A518A18-508B-4160-8BF8-EB96F3769834"
+     },
+     {
+       "state" : "Shutdown",
+       "availability" : "(available)",
+       "name" : "iPhone 6s",
+       "udid" : "9E4697DC-1166-4C49-A4EB-36DEAA14BA55"
+     },
+     {
+       "state" : "Shutdown",
+       "availability" : "(available)",
+       "name" : "iPhone 6s Plus",
+       "udid" : "BE8E0A96-F456-4504-BCD2-D8AD9D9267BA"
+     },
+     {
+       "state" : "Shutdown",
+       "availability" : "(available)",
+       "name" : "iPhone 7",
+       "udid" : "B5E3E0D2-FFED-44CD-AF8D-AFCB3EBA59DA"
+     },
+     {
+       "state" : "Shutdown",
+       "availability" : "(available)",
+       "name" : "iPhone 7 Plus",
+       "udid" : "CD9A6D80-9013-4782-8CC7-F111309DB0E6"
+     },
+     {
+       "state" : "Shutdown",
+       "availability" : "(available)",
+       "name" : "iPhone 8",
+       "udid" : "17104B4F-E77D-4019-98E6-621FE3CC3653"
+     },
+     {
+       "state" : "Shutdown",
+       "availability" : "(available)",
+       "name" : "iPhone 8 Plus",
+       "udid" : "51B74402-D1D9-496E-93F5-161D31C83CCD"
+     },
+     {
+       "state" : "Shutdown",
+       "availability" : "(available)",
+       "name" : "iPhone SE (1st generation)",
+       "udid" : "DB46D0DB-510E-4928-BDB4-1A0192ED4A38"
+     },
+     {
+       "state" : "Shutdown",
+       "availability" : "(available)",
+       "name" : "iPhone X",
+       "udid" : "4E6E7393-C4E3-4323-AA8B-4A42A45AE7B8"
+     },
+     {
+       "state" : "Shutdown",
+       "availability" : "(available)",
+       "name" : "iPad Air",
+       "udid" : "CC6E7B6D-1A88-4F24-9009-DB8A7B28D234"
+     },
+     {
+       "state" : "Shutdown",
+       "availability" : "(available)",
+       "name" : "iPad Air 2",
+       "udid" : "116F49B6-4ED4-4F8E-B736-226E6915A580"
+     },
+     {
+       "state" : "Shutdown",
+       "availability" : "(available)",
+       "name" : "iPad (9th generation)",
+       "udid" : "1805162F-861B-40CA-8468-8B7DC0922D62"
+     },
+     {
+       "state" : "Shutdown",
+       "availability" : "(available)",
+       "name" : "iPad Pro (9.7-inch)",
+       "udid" : "5B77D232-EF20-48FE-BC73-2D500F3DF162"
+     },
+     {
+       "state" : "Shutdown",
+       "availability" : "(available)",
+       "name" : "iPad Pro (12.9-inch)",
+       "udid" : "5C46CD8C-07AD-4F41-8314-226CB5D62C30"
+     },
+     {
+       "state" : "Shutdown",
+       "availability" : "(available)",
+       "name" : "iPad Pro (12.9-inch) (2nd generation)",
+       "udid" : "56DFB13A-D2FC-48CD-8D97-B90441999208"
+     },
+     {
+       "state" : "Shutdown",
+       "availability" : "(available)",
+       "name" : "iPad Pro (10.5-inch)",
+       "udid" : "C92DDBB6-14AE-4B19-B9E5-4365FADE66E0"
+     }
+   ],
+   "iOS 12.0" : [
+     {
+       "state" : "Shutdown",
+       "isAvailable" : "YES",
+       "name" : "iPhone Xs",
+       "udid" : "450C587D-70B1-54D9-9A56-2BD7B5FC01EF"
+     }
+   ]
+ },
+ "pairs" : {
+   "6C37B862-BBB1-4A2F-9D64-174CC38C7A9D" : {
+     "watch" : {
+       "name" : "Apple Watch Series 3 - 38mm",
+       "udid" : "8EFAD24B-2EB3-48AF-9484-F97AA418C5D6",
+       "state" : "Shutdown"
+     },
+     "phone" : {
+       "name" : "iPhone 8",
+       "udid" : "17104B4F-E77D-4019-98E6-621FE3CC3653",
+       "state" : "Shutdown"
+     },
+     "state" : "(active, disconnected)"
+   },
+   "018AB114-B3E5-45FE-8598-6524870D8D5E" : {
+     "watch" : {
+       "name" : "Apple Watch Series 2 - 38mm",
+       "udid" : "A0A989D0-C5B8-432D-869F-54640FD6739D",
+       "state" : "Shutdown"
+     },
+     "phone" : {
+       "name" : "iPhone 7",
+       "udid" : "B5E3E0D2-FFED-44CD-AF8D-AFCB3EBA59DA",
+       "state" : "Shutdown"
+     },
+     "state" : "(active, disconnected)"
+   },
+   "540DD594-89E9-4DFA-87AC-7AD7DDCB9DE8" : {
+     "watch" : {
+       "name" : "Apple Watch Series 2 - 42mm",
+       "udid" : "AB05A1C2-1049-4087-BEDB-326B42D58CDD",
+       "state" : "Shutdown"
+     },
+     "phone" : {
+       "name" : "iPhone 7 Plus",
+       "udid" : "CD9A6D80-9013-4782-8CC7-F111309DB0E6",
+       "state" : "Shutdown"
+     },
+     "state" : "(active, disconnected)"
+   },
+   "2DFF3E54-84B0-4D2F-BF4A-40F3273E44F1" : {
+     "watch" : {
+       "name" : "Apple Watch Series 3 - 42mm",
+       "udid" : "3B477D07-65AD-481A-9506-3776817A6293",
+       "state" : "Shutdown"
+     },
+     "phone" : {
+       "name" : "iPhone 8 Plus",
+       "udid" : "51B74402-D1D9-496E-93F5-161D31C83CCD",
+       "state" : "Shutdown"
+     },
+     "state" : "(active, disconnected)"
+   }
+ },
+ "services" : [
+   "This triggers the bail-out logic in SimulatedDevice.is_usable()",
+   "com.apple.springboard.services",
+   "com.apple.carousel.sessionservice"
+ ]
+}"""
+
+class SimulatedDeviceTest(unittest.TestCase):
+
+    @staticmethod
+    def reset_simulated_device_manager():
+        SimulatedDeviceManager.AVAILABLE_RUNTIMES = []
+        SimulatedDeviceManager.AVAILABLE_DEVICES = []
+        SimulatedDeviceManager.INITIALIZED_DEVICES = None
+        SimulatedDeviceManager._device_identifier_to_name = {}
+        SimulatedDeviceManager._managed_simulator_ui_process = None
+
+    def tearDown(self):
+        SimulatedDeviceTest.reset_simulated_device_manager()
+
+    @staticmethod
+    def mock_host_for_simctl():
+        simctl_json = json.loads(simctl_json_output)  # Construct enough of a filesystem for all our simctl code to work.
+        filesystem_map = {}
+        runtime_name_to_id = {}
+
+        # Runtime mapping
+        for runtime_group in simctl_json['runtimes']:
+            runtime_name_to_id[runtime_group['name']] = runtime_group['identifier']
+
+        # Device type mapping
+        device_type_name_to_id = {}
+        for device_type in simctl_json['devicetypes']:
+            device_type_name_to_id[device_type['name']] = device_type['identifier']
+
+        for runtime, device_groups in simctl_json['devices'].items():
+            for device in device_groups:
+                file_path = '/Users/mock' + SimulatedDeviceManager.simulator_device_path[1:] + '/' + device['udid'] + '/device.plist'
+                # We're taking advantage the fact that the names of the devices match the names of their runtimes in the
+                # provided JSON ouput. This is not generally true, which is why we're only using this fact to build up
+                # a mock filesystem that is used by the actual simctl parsing code.
+                filesystem_map[file_path] = """<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist SYSTEM "{}">
+<plist version="1.0">
+<dict>
+    <key>UDID</key>
+    <string>{}</string>
+    <key>deviceType</key>
+    <string>{}</string>
+    <key>name</key>
+    <string>{}</string>
+    <key>runtime</key>
+    <string>{}</string>
+    <key>state</key>
+    <integer>{}</integer>
+</dict>
+</plist>""".format(file_path, device['udid'], device_type_name_to_id[device['name']], device['name'], runtime_name_to_id[runtime], SimulatedDevice.NAME_FOR_STATE.index(device['state'].upper()))
+
+        return MockSystemHost(
+            executive=MockExecutive2(output=simctl_json_output),
+            filesystem=MockFileSystem(files=filesystem_map),
+        )
+
+    def test_available_devices(self):
+        SimulatedDeviceTest.reset_simulated_device_manager()
+        host = SimulatedDeviceTest.mock_host_for_simctl()
+        SimulatedDeviceManager.available_devices(host)
+
+        # There should only be 1 iPhone X, iPhone 8 and iPhone SE
+        self.assertEqual(1, len(SimulatedDeviceManager.device_by_filter(lambda device: device.device_type == DeviceType.from_string('iPhone X'), host)))
+        self.assertEqual(1, len(SimulatedDeviceManager.device_by_filter(lambda device: device.device_type == DeviceType.from_string('iPhone 8'), host)))
+
+        # There should be 2 5s and 6s
+        self.assertEqual(2, len(SimulatedDeviceManager.device_by_filter(lambda device: device.device_type == DeviceType.from_string('iPhone 5s'), host)))
+        self.assertEqual(2, len(SimulatedDeviceManager.device_by_filter(lambda device: device.device_type == DeviceType.from_string('iPhone 6s'), host)))
+
+        # 19 iPhones
+        self.assertEqual(19, len(SimulatedDeviceManager.device_by_filter(lambda device: device.device_type == DeviceType.from_string('iPhone'), host)))
+
+        # 11 iPads
+        self.assertEqual(11, len(SimulatedDeviceManager.device_by_filter(lambda device: device.device_type == DeviceType.from_string('iPad'), host)))
+
+        # 18 Apple watches
+        self.assertEqual(6, len(SimulatedDeviceManager.device_by_filter(lambda device: device.device_type == DeviceType.from_string('Apple Watch'), host)))
+
+        # 3 Apple TVs
+        self.assertEqual(3, len(SimulatedDeviceManager.device_by_filter(lambda device: device.device_type == DeviceType.from_string('Apple TV'), host)))
+
+        # 18 devices running iOS 11.0
+        self.assertEqual(18, len(SimulatedDeviceManager.device_by_filter(lambda device: device.device_type == DeviceType(software_variant='iOS', software_version=Version(11, 0, 1)), host)))
+
+        # 11 iPhones running iOS 11.0
+        self.assertEqual(11, len(SimulatedDeviceManager.device_by_filter(lambda device: device.device_type == DeviceType(hardware_family='iPhone', software_version=Version(11, 0, 1)), host)))
+
+        # 1 device running iOS 12
+        self.assertEqual(1, len(SimulatedDeviceManager.device_by_filter(lambda device: device.device_type == DeviceType(software_variant='iOS', software_version=Version(12, 0, 0)), host)))
+
+    def test_existing_simulator(self):
+        SimulatedDeviceTest.reset_simulated_device_manager()
+        host = SimulatedDeviceTest.mock_host_for_simctl()
+        SimulatedDeviceManager.available_devices(host)
+
+        SimulatedDeviceManager.initialize_devices(DeviceRequest(DeviceType.from_string('iPhone', Version(11))), host=host, simulator_ui=False)
+
+        self.assertEqual(1, len(SimulatedDeviceManager.INITIALIZED_DEVICES))
+        self.assertEqual('34FB476C-6FA0-43C8-8945-1BD7A4EBF0DE', SimulatedDeviceManager.INITIALIZED_DEVICES[0].udid)
+        self.assertEqual('15A8401', SimulatedDeviceManager.INITIALIZED_DEVICES[0].build_version)
+        self.assertEqual(SimulatedDevice.DeviceState.BOOTED, SimulatedDeviceManager.INITIALIZED_DEVICES[0].platform_device.state())
+
+        SimulatedDeviceManager.tear_down(host)
+        self.assertIsNone(SimulatedDeviceManager.INITIALIZED_DEVICES)
+
+    def test_simulator_ui_is_launched_with_every_device_in_use(self):
+        SimulatedDeviceTest.reset_simulated_device_manager()
+        host = SimulatedDeviceTest.mock_host_for_simctl()
+        SimulatedDeviceManager.available_devices(host)
+
+        with mock.patch.object(SimulatedDeviceManager, '_launch_simulator_ui') as launch_simulator_ui:
+            SimulatedDeviceManager.initialize_devices(DeviceRequest(DeviceType.from_string('iPhone', Version(11))), host=host)
+
+        launch_simulator_ui.assert_called_once_with(host, ['34FB476C-6FA0-43C8-8945-1BD7A4EBF0DE'])
+        SimulatedDeviceManager.tear_down(host)
+
+    def test_lower_case_device_type(self):
+        SimulatedDeviceTest.reset_simulated_device_manager()
+        host = SimulatedDeviceTest.mock_host_for_simctl()
+        SimulatedDeviceManager.available_devices(host)
+
+        SimulatedDeviceManager.initialize_devices(DeviceRequest(DeviceType.from_string('iphone 5s', Version(11))), host=host, simulator_ui=False)
+
+        self.assertEqual(1, len(SimulatedDeviceManager.INITIALIZED_DEVICES))
+        self.assertEqual('34FB476C-6FA0-43C8-8945-1BD7A4EBF0DE', SimulatedDeviceManager.INITIALIZED_DEVICES[0].udid)
+        self.assertEqual(SimulatedDevice.DeviceState.BOOTED, SimulatedDeviceManager.INITIALIZED_DEVICES[0].platform_device.state())
+
+        SimulatedDeviceManager.tear_down(host)
+        self.assertIsNone(SimulatedDeviceManager.INITIALIZED_DEVICES)
+
+    def test_matching_up_success(self):
+        SimulatedDeviceTest.reset_simulated_device_manager()
+        host = SimulatedDeviceTest.mock_host_for_simctl()
+        SimulatedDeviceManager.available_devices(host)
+
+        runtime = SimulatedDeviceManager.get_runtime_for_device_type(DeviceType.from_string('iphone 5s', Version(9, 2)))
+        self.assertEqual(runtime.os_variant, 'iOS')
+        self.assertEqual(runtime.version, Version(9, 3))
+
+    def test_matching_up_failure(self):
+        SimulatedDeviceTest.reset_simulated_device_manager()
+        host = SimulatedDeviceTest.mock_host_for_simctl()
+        SimulatedDeviceManager.available_devices(host)
+
+        runtime = SimulatedDeviceManager.get_runtime_for_device_type(DeviceType.from_string('iphone 5s', Version(9, 4)))
+        self.assertEqual(runtime, None)
+
+    def test_no_state_files(self):
+        SimulatedDeviceTest.reset_simulated_device_manager()
+        host = SimulatedDeviceTest.mock_host_for_simctl()
+        host.filesystem = MockFileSystem()
+        devices = SimulatedDeviceManager.available_devices(host)
+
+        for device in devices:
+            self.assertEqual(SimulatedDevice.DeviceState.SHUT_DOWN, device.state(force_update=True))
+
+
+class LaunchAppTest(unittest.TestCase):
+
+    class RecordingExecutive(MockExecutive2):
+        def run_command(self, args, env=None, **kwargs):
+            self.env = env
+            return '{}: {}\n'.format(args[4], 1234)
+
+        def check_running_pid(self, pid):
+            return True
+
+    def test_simctl_child_variable_wins(self):
+        executive = self.RecordingExecutive()
+        device = SimulatedDevice('iPhone 12', 'UDID-1', MockSystemHost(executive=executive), DeviceType.from_string('iPhone 12', Version(15)), '19A1', '/runtime')
+        self.assertEqual(1234, device.launch_app('com.apple.test', [], env={'SIMCTL_CHILD_TSAN_OPTIONS': 'halt_on_error=1', 'TSAN_OPTIONS': 'suppressions=/a.txt', 'FOO': 'bar'}))
+        self.assertEqual({'SIMCTL_CHILD_TSAN_OPTIONS': 'halt_on_error=1', 'SIMCTL_CHILD_FOO': 'bar'}, executive.env)
+
+
+class LaunchdConfigurationBeforeBootTest(unittest.TestCase):
+    """Configuration a device needs launchd to have is written before it boots, so it applies to the boot itself.
+    webkitpy defines the configuration; ports add to it through apple_additions."""
+
+    class FakeDevice(object):
+        udid = 'UDID-1'
+
+        def __init__(self, configuration):
+            self.platform_device = self
+            self.launchd_configuration = configuration
+
+    def _write(self, configuration, files=None):
+        host = MockSystemHost(filesystem=MockFileSystem(files=files or {}))
+        SimulatedDeviceManager._configure_launchd_before_booting(self.FakeDevice(configuration), host)
+        return host
+
+    def _path(self, name='example.plist'):
+        return '/private/var/tmp/com.apple.CoreSimulator.SimDevice.UDID-1/' + name
+
+    def test_configuration_is_written_before_boot(self):
+        host = self._write({'example.plist': {'first': True, 'second': False}})
+        self.assertEqual(
+            plistlib.loads(host.filesystem.read_binary_file(self._path())),
+            {'first': True, 'second': False})
+
+    def test_every_named_file_is_written(self):
+        host = self._write({'one.plist': {'a': True}, 'two.plist': {'b': True}})
+        self.assertEqual(plistlib.loads(host.filesystem.read_binary_file(self._path('one.plist'))), {'a': True})
+        self.assertEqual(plistlib.loads(host.filesystem.read_binary_file(self._path('two.plist'))), {'b': True})
+
+    def test_nothing_written_without_configuration(self):
+        host = self._write({})
+        self.assertFalse(host.filesystem.exists(self._path()))
+
+    def test_existing_keys_are_kept(self):
+        existing = plistlib.dumps({'keep': False})
+        host = self._write({'example.plist': {'first': True}}, files={self._path(): existing})
+        self.assertEqual(
+            plistlib.loads(host.filesystem.read_binary_file(self._path())),
+            {'keep': False, 'first': True})
+
+    def test_unreadable_file_is_replaced_rather_than_raising(self):
+        host = self._write({'example.plist': {'first': True}}, files={self._path(): b'not a plist'})
+        self.assertEqual(plistlib.loads(host.filesystem.read_binary_file(self._path())), {'first': True})
+
+    def test_failure_to_write_is_not_fatal(self):
+        host = MockSystemHost(filesystem=MockFileSystem())
+
+        def refuse(path, contents):
+            raise IOError('read-only')
+
+        host.filesystem.write_binary_file = refuse
+        # A device that boots unconfigured is better than a run that cannot start.
+        SimulatedDeviceManager._configure_launchd_before_booting(
+            self.FakeDevice({'example.plist': {'first': True}}), host)
+
+
+class LaunchdStateCleanupTest(unittest.TestCase):
+    """The configuration we write lives in the device's temp directory, so it goes away when the device does."""
+
+    def test_state_directory_is_removed_on_tear_down(self):
+        SimulatedDeviceTest.reset_simulated_device_manager()
+        host = SimulatedDeviceTest.mock_host_for_simctl()
+        devices = SimulatedDeviceManager.available_devices(host)
+        self.assertTrue(devices)
+
+        device = devices[0]
+        SimulatedDeviceManager.INITIALIZED_DEVICES = [device]
+        path = host.filesystem.join(
+            SimulatedDeviceManager.launchd_state_path.format(device.udid), 'disabled.plist')
+        host.filesystem.maybe_make_directory(host.filesystem.dirname(path))
+        host.filesystem.write_binary_file(path, b'contents')
+        self.assertTrue(host.filesystem.exists(path))
+
+        SimulatedDeviceManager.tear_down(host)
+        self.assertFalse(host.filesystem.exists(path), 'the plist we wrote should not outlive the device')
+
+
+class LaunchdConfigurationDefaultTest(unittest.TestCase):
+    """webkitpy defines the configuration a simulator boots with; apple_additions only adds to it."""
+
+    def test_unneeded_daemons_are_disabled_by_default(self):
+        host = SimulatedDeviceTest.mock_host_for_simctl()
+        SimulatedDeviceTest.reset_simulated_device_manager()
+        devices = SimulatedDeviceManager.available_devices(host)
+        self.assertTrue(devices)
+        self.assertEqual(
+            devices[0].platform_device.launchd_configuration.get('disabled.plist'),
+            disabled_launchd_jobs())
+
+    def test_daemons_testing_needs_are_not_disabled(self):
+        for label in ('com.apple.sharingd', 'com.apple.eligibilityd', 'com.apple.sleepd'):
+            self.assertNotIn(label, disabled_launchd_jobs())
+
+
+class LoggingConfigurationTest(unittest.TestCase):
+
+    def tearDown(self):
+        SimulatedDeviceTest.reset_simulated_device_manager()
+
+    def _device(self):
+        SimulatedDeviceTest.reset_simulated_device_manager()
+        host = SimulatedDeviceTest.mock_host_for_simctl()
+        return host, SimulatedDeviceManager.available_devices(host)[0].platform_device
+
+    def test_logging_configuration_is_written_where_log_config_writes_it(self):
+        host, device = self._device()
+        device.write_quiet_logging_preferences()
+        path = '/Users/mock/Library/Developer/CoreSimulator/Devices/{}/data/Library/Preferences/Logging/Subsystems/com.apple.WebKit.plist'.format(device.udid)
+        self.assertEqual(plistlib.loads(host.filesystem.read_binary_file(path)), {'DEFAULT-OPTIONS': {'Level': {'Enable': 'off', 'Persist': 'off'}}})
+
+    def test_every_quiet_subsystem_is_written(self):
+        host, device = self._device()
+        device.write_quiet_logging_preferences()
+        directory = '/Users/mock/Library/Developer/CoreSimulator/Devices/{}/data/Library/Preferences/Logging/Subsystems'.format(device.udid)
+        self.assertEqual(sorted(host.filesystem.listdir(directory)), sorted(quiet_logging_preferences()))
+
+    def test_failure_to_write_is_not_fatal(self):
+        host, device = self._device()
+
+        def refuse(path, contents):
+            raise IOError('read-only')
+
+        host.filesystem.write_binary_file = refuse
+        device.write_quiet_logging_preferences()
+
+
+class SimulatorUIAppTest(unittest.TestCase):
+    """Xcode 27 replaced Simulator.app with DeviceHub.app, so the active Xcode decides which app we launch.
+    The lookup is by path because `open -b` resolves through LaunchServices, which ignores xcode-select."""
+
+    XCODE_26_DIRS = [
+        '/Xcode26.app/Contents/Developer/Applications/Simulator.app',
+        '/Xcode26.app/Contents/Applications/Devices.app',
+    ]
+    XCODE_27_DIRS = ['/Xcode27.app/Contents/Applications/DeviceHub.app']
+
+    @staticmethod
+    def _host(developer_dir, dirs, running_processes=(), open_exit_code=0):
+        def run_command(args):
+            if args[0] == 'xcode-select':
+                return developer_dir + '\n'
+            if args[0] == 'killall':
+                return 0 if args[-1] in running_processes else 1
+            if args[0] == 'open':
+                return open_exit_code
+            return ''
+
+        return MockSystemHost(
+            executive=MockExecutive2(run_command_fn=run_command),
+            filesystem=MockFileSystem(dirs=dirs),
+        )
+
+    def setUp(self):
+        SimulatedDeviceManager.INITIALIZED_DEVICES = None
+        SimulatedDeviceManager._managed_simulator_ui_process = None
+
+    def tearDown(self):
+        SimulatedDeviceManager._managed_simulator_ui_process = None
+
+    def test_xcode_27_resolves_to_device_hub(self):
+        host = self._host('/Xcode27.app/Contents/Developer', self.XCODE_27_DIRS)
+        self.assertEqual(
+            ('/Xcode27.app/Contents/Applications/DeviceHub.app', [], {'pasteboardSyncEnabled': False}, 'DeviceHub'),
+            SimulatedDeviceManager._find_simulator_ui_app(host))
+
+    def test_xcode_26_resolves_to_simulator(self):
+        host = self._host('/Xcode26.app/Contents/Developer', self.XCODE_26_DIRS)
+        self.assertEqual(
+            ('/Xcode26.app/Contents/Developer/Applications/Simulator.app', ['-PasteboardAutomaticSync', '0'], {}, 'Simulator'),
+            SimulatedDeviceManager._find_simulator_ui_app(host))
+
+    def test_xcode_without_a_ui_app_resolves_to_nothing(self):
+        host = self._host('/Xcode.app/Contents/Developer', ['/Xcode.app/Contents/Developer'])
+        self.assertIsNone(SimulatedDeviceManager._find_simulator_ui_app(host))
+
+    def test_device_hub_is_launched_with_pasteboard_sync_disabled_for_each_device(self):
+        host = self._host('/Xcode27.app/Contents/Developer', self.XCODE_27_DIRS)
+        SimulatedDeviceManager._launch_simulator_ui(host, ['UDID-1', 'UDID-2'])
+        [launch] = [call for call in host.executive.calls if call[0] == 'open']
+        self.assertEqual(['open', '-g', '-a', '/Xcode27.app/Contents/Applications/DeviceHub.app', '--args'], launch[:5])
+        self.assertEqual(['-UDID-1', '-UDID-2'], launch[5::2])
+        for settings in launch[6::2]:
+            self.assertIs(False, plistlib.loads(settings.encode('utf-8'))['pasteboardSyncEnabled'])
+        self.assertEqual('DeviceHub', SimulatedDeviceManager._managed_simulator_ui_process)
+
+    def test_device_hub_is_launched_without_arguments_when_there_are_no_devices(self):
+        host = self._host('/Xcode27.app/Contents/Developer', self.XCODE_27_DIRS)
+        SimulatedDeviceManager._launch_simulator_ui(host, [])
+        self.assertIn(['open', '-g', '-a', '/Xcode27.app/Contents/Applications/DeviceHub.app'], host.executive.calls)
+
+    def test_simulator_is_launched_with_pasteboard_sync_disabled(self):
+        host = self._host('/Xcode26.app/Contents/Developer', self.XCODE_26_DIRS)
+        SimulatedDeviceManager._launch_simulator_ui(host, ['UDID-1'])
+        self.assertIn(
+            ['open', '-g', '-a', '/Xcode26.app/Contents/Developer/Applications/Simulator.app', '--args', '-PasteboardAutomaticSync', '0'],
+            host.executive.calls)
+        self.assertEqual('Simulator', SimulatedDeviceManager._managed_simulator_ui_process)
+
+    def test_the_app_is_never_launched_by_bundle_identifier(self):
+        host = self._host('/Xcode26.app/Contents/Developer', self.XCODE_26_DIRS)
+        SimulatedDeviceManager._launch_simulator_ui(host, [])
+        for call in host.executive.calls:
+            self.assertNotIn('-b', call, 'LaunchServices would ignore xcode-select and may pick another Xcode')
+
+    def test_an_already_running_app_is_not_launched_again(self):
+        host = self._host('/Xcode27.app/Contents/Developer', self.XCODE_27_DIRS, running_processes=('DeviceHub',))
+        SimulatedDeviceManager._launch_simulator_ui(host, [])
+        self.assertFalse([call for call in host.executive.calls if call[0] == 'open'])
+        self.assertIsNone(
+            SimulatedDeviceManager._managed_simulator_ui_process,
+            'we did not launch it, so we must not kill it')
+
+    def test_a_failed_launch_is_not_torn_down(self):
+        host = self._host('/Xcode27.app/Contents/Developer', self.XCODE_27_DIRS, open_exit_code=1)
+        SimulatedDeviceManager._launch_simulator_ui(host, [])
+        self.assertIsNone(SimulatedDeviceManager._managed_simulator_ui_process)
+
+    def test_tear_down_kills_the_app_which_was_launched(self):
+        host = self._host('/Xcode26.app/Contents/Developer', self.XCODE_26_DIRS)
+        SimulatedDeviceManager._launch_simulator_ui(host, [])
+        SimulatedDeviceManager.tear_down(host)
+        # 'Simulator.app' would match no process at all; killall matches process names.
+        self.assertIn(['killall', '-9', 'Simulator'], host.executive.calls)
+        self.assertIsNone(SimulatedDeviceManager._managed_simulator_ui_process)

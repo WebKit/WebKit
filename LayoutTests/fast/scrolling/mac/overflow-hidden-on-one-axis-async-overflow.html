@@ -1,0 +1,126 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<head>
+<style>
+    body {
+        height: 2500px;
+    }
+    
+    .scroller {
+        border: 1px solid black;
+    }
+
+    .outer.scroller {
+        width: 500px;
+        height: 300px;
+        overflow: auto;
+    }
+
+    .inner.scroller {
+        width: 400px;
+        height: 250px;
+        overflow-x: hidden;
+        overflow-y: auto;
+        margin: 10px;
+    }
+
+    .contents {
+        height: 300%;
+        width: 300%;
+    }
+    
+    .wide {
+        width: 300%;
+        height: 10px;
+        background-color: gray;
+    }
+    
+    </style>
+<script src="../../../resources/js-test-pre.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+<script>
+    jsTestIsAsync = true;
+
+    let innerScroller;
+    let outerScroller;
+
+    function checkForScroll()
+    {
+        innerScroller = document.querySelector('.inner.scroller');
+        outerScroller = document.querySelector('.outer.scroller');
+
+        shouldBe('innerScroller.scrollLeft', '0');
+        shouldBe('innerScroller.scrollTop', '0');
+
+        shouldBeTrue('outerScroller.scrollLeft > 0');
+        shouldBe('outerScroller.scrollTop', '0');
+
+        finishJSTest();
+    }
+
+    async function scrollTest()
+    {
+        const events = [
+            {
+                type : "wheel",
+                viewX : 100,
+                viewY : 100,
+                deltaX : -10,
+                phase : "began"
+            },
+            {
+                type : "wheel",
+                deltaX : -100,
+                phase : "changed"
+            },
+            {
+                type : "wheel",
+                phase : "ended"
+            },
+            {
+                type : "wheel",
+                deltaX : -100,
+                momentumPhase : "began"
+            },
+            {
+                type : "wheel",
+                deltaX : -100,
+                momentumPhase : "changed"
+            },
+            {
+                type : "wheel",
+                momentumPhase : "ended"
+            }
+        ];
+
+        await UIHelper.mouseWheelSequence({ events });
+        checkForScroll();
+    }
+
+    function setupTopLevel()
+    {
+        description("Tests that sieways scrolling in an overflow-x:hidden scroller scrolls the enclosing scroller");
+        if (window.eventSender) {
+            setTimeout(scrollTest, 0);
+            return;
+        }
+
+        finishJSTest();
+    }
+
+    window.addEventListener('load', () => {
+        setupTopLevel();
+    }, false);
+</script>
+</head>
+<body>
+    <div class="outer scroller">
+        <div class="inner scroller">
+            <div class="contents"></div>
+        </div>
+        <div class="wide"></div>
+    </div>
+<div id="console"></div>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

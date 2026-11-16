@@ -1,0 +1,8 @@
+green cell	green cell	1.3
+green cell	green cell	2.3
+green cell	green cell	3.3
+This paragraph should be unstyled.
+
+
+PASS NEGATED :last-child pseudo-class
+

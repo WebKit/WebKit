@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+if (window.internals) {
+    internals.settings.setTextAutosizingEnabled(true);
+    internals.settings.setTextAutosizingUsesIdempotentMode(false);
+}
+</script>
+<script src="../../resources/js-test.js"></script>
+<style>
+.adjust { -webkit-text-size-adjust: 130%; font-size: 20px; }
+.control { -webkit-text-size-adjust: none; font-size: 20px; }
+</style>
+</head>
+<body>
+<div class="adjust"><canvas id="adjusted" width="10" height="10"></canvas></div>
+<div class="control"><canvas id="control" width="10" height="10"></canvas></div>
+<script>
+description("Tests that a percentage -webkit-text-size-adjust on canvas ancestors does not affect canvas text metrics.");
+
+function measure(id, font, letterSpacing, wordSpacing) {
+    const context = document.getElementById(id).getContext("2d");
+    context.font = font;
+    context.letterSpacing = letterSpacing;
+    context.wordSpacing = wordSpacing;
+    return context.measureText("X X").width;
+}
+
+shouldBe("measure('adjusted', '20px Ahem', '1em', '0px')", "measure('control', '20px Ahem', '1em', '0px')");
+shouldBe("measure('adjusted', '20px Ahem', '0px', '1em')", "measure('control', '20px Ahem', '0px', '1em')");
+shouldBe("measure('adjusted', '1em Ahem', '0px', '0px')", "measure('control', '1em Ahem', '0px', '0px')");
+shouldBe("measure('control', '20px Ahem', '0px', '0px')", "60");
+</script>
+</body>
+</html>

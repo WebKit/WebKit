@@ -1,0 +1,3 @@
+
+PASS supplied expected mimetype should not log any warning
+

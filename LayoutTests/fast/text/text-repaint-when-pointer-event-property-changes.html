@@ -1,0 +1,11 @@
+<style>
+.red {
+  color: red;
+  pointer-events: none;
+}
+</style>
+<div id=repaintThis>PASS if red</div>
+<script>
+document.body.offsetHeight;
+repaintThis.className = "red";
+</script>

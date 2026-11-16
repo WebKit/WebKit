@@ -1,0 +1,9 @@
+Test that we do not crash when trying to fire an 'ended' event at a audiobuffersource node in a detached frame.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

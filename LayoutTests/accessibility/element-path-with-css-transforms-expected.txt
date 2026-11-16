@@ -1,0 +1,20 @@
+This test verifies that accessibility paths for border-radius elements with CSS transforms are correctly positioned. The three items share the same static position and are placed in a circle purely via CSS transforms. Their path bounds must reflect the transformed positions, not the shared untransformed origin.
+
+--- All items should have curve paths (border-radius: 50%) ---
+PASS: pathSegmentCountOfID('item1', 'Curve to') > 0 === true
+PASS: pathSegmentCountOfID('item2', 'Curve to') > 0 === true
+PASS: pathSegmentCountOfID('item3', 'Curve to') > 0 === true
+
+--- Path bounds should have similar sizes (all are 80x80 circles) ---
+PASS: Math.abs(bounds1.width - bounds2.width) < 2 === true
+PASS: Math.abs(bounds1.height - bounds2.height) < 2 === true
+
+--- Path bounds must have different positions (CSS transforms applied) ---
+PASS: Math.abs(bounds1.x - bounds2.x) > tolerance || Math.abs(bounds1.y - bounds2.y) > tolerance === true
+PASS: Math.abs(bounds1.x - bounds3.x) > tolerance || Math.abs(bounds1.y - bounds3.y) > tolerance === true
+PASS: Math.abs(bounds2.x - bounds3.x) > tolerance || Math.abs(bounds2.y - bounds3.y) > tolerance === true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

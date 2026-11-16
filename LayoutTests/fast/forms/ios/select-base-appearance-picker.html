@@ -1,0 +1,74 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+        <script src="../../../resources/js-test.js"></script>
+        <script src="../../../resources/ui-helper.js"></script>
+        <style>
+            /* Base appearance select */
+            #selectBase, #selectBase::picker(select) {
+                appearance: base-select;
+            }
+
+            /* Auto appearance select */
+            #selectAuto {
+                appearance: auto;
+            }
+        </style>
+    </head>
+<body>
+    <select id="selectBase">
+        <option>A</option>
+        <option>B</option>
+        <option>C</option>
+    </select>
+
+    <select id="selectAuto">
+        <option>A</option>
+        <option>B</option>
+        <option>C</option>
+    </select>
+</body>
+<script>
+jsTestIsAsync = true;
+
+addEventListener("load", async () => {
+    description("This test verifies that base appearance selects use the in-page popover instead of the native iOS picker.");
+
+    // Test 1: Base appearance select should use in-page popover
+    debug("=== Test 1: Base appearance select should use in-page popover ===");
+
+    shouldBeFalse("selectBase.options[0].checkVisibility()");
+
+    await UIHelper.activateElement(selectBase);
+
+    shouldBeTrue("selectBase.options[0].checkVisibility()");
+
+    await UIHelper.delayFor(400);
+    showingNativeMenu = await UIHelper.isShowingContextMenu();
+    shouldBeFalse("showingNativeMenu");
+
+    await UIHelper.activateElement(selectBase.options[0]);
+
+    shouldBeFalse("selectBase.options[0].checkVisibility()");
+
+    // Test 2: Auto appearance select should use native picker (not in-page popover)
+    debug("");
+    debug("=== Test 2: Auto appearance select should use native picker ===");
+
+    shouldBeFalse("selectAuto.options[0].checkVisibility()");
+
+    await UIHelper.activateElement(selectAuto);
+    await UIHelper.waitForContextMenuToShow();
+
+    shouldBeFalse("selectAuto.options[0].checkVisibility()");
+
+    await UIHelper.dismissMenu();
+    await UIHelper.waitForContextMenuToHide();
+
+    shouldBeFalse("selectAuto.options[0].checkVisibility()");
+
+    finishJSTest();
+});
+</script>
+</html>

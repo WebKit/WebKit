@@ -1,0 +1,15 @@
+<p>Cross-origin iframe that starts loads and cancels them right away, on demand.</p>
+
+<script>
+function triggerAbortedFetch(token) {
+    let controller = new AbortController;
+    fetch(`data.json?aborted-fetch-${token}`, {signal: controller.signal}).catch(() => {});
+    controller.abort();
+}
+
+function triggerStoppedImage(token) {
+    let image = new Image;
+    image.src = `data.json?stopped-image-${token}`;
+    window.stop();
+}
+</script>

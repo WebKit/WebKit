@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+const textarea = document.createElement("textarea");
+textarea.setAttribute("autofocus", "");
+textarea.addEventListener("focusin", function () { document.documentElement.innerHTML = ""; }, false);
+document.documentElement.appendChild(textarea);
+requestAnimationFrame(() => {
+    document.body.innerHTML = "PASS unless crash.";
+    if (window.testRunner)
+        testRunner.notifyDone();
+});
+</script>
+</body>
+</html>

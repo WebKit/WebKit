@@ -1,0 +1,13 @@
+This test ensures disabled on a fieldset reaches every descendant control's accessibility enabled state, except a control in the fieldset's first legend, which HTML exempts.
+
+PASS: isEnabled('in-fieldset') === false
+PASS: isEnabled('in-legend') === true
+PASS: isEnabled('outside') === true
+
+Removing disabled from the fieldset re-enables the descendant.
+PASS: isEnabled('in-fieldset') === true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

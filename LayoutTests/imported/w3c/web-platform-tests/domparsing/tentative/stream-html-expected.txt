@@ -1,0 +1,26 @@
+before;
+
+
+FAIL piping a response into streamHTML() promise_test: Unhandled rejection with value: object "TypeError: placeholder.streamHTML is not a function. (In 'placeholder.streamHTML()', 'placeholder.streamHTML' is undefined)"
+FAIL writing a string to streamHTML() promise_test: Unhandled rejection with value: object "TypeError: placeholder.streamHTML is not a function. (In 'placeholder.streamHTML()', 'placeholder.streamHTML' is undefined)"
+FAIL streamHTML() should remove existing content immediately promise_test: Unhandled rejection with value: object "TypeError: placeholder.streamHTML is not a function. (In 'placeholder.streamHTML()', 'placeholder.streamHTML' is undefined)"
+FAIL streamHTML() does not buffer until close() promise_test: Unhandled rejection with value: object "TypeError: placeholder.streamHTML is not a function. (In 'placeholder.streamHTML()', 'placeholder.streamHTML' is undefined)"
+FAIL writing a Symbol to streamHTML() promise_test: Unhandled rejection with value: object "TypeError: placeholder.streamHTML is not a function. (In 'placeholder.streamHTML()', 'placeholder.streamHTML' is undefined)"
+FAIL writing numbers to streamHTML() promise_test: Unhandled rejection with value: object "TypeError: placeholder.streamHTML is not a function. (In 'placeholder.streamHTML()', 'placeholder.streamHTML' is undefined)"
+FAIL writing null or undefined to streamHTML() promise_test: Unhandled rejection with value: object "TypeError: placeholder.streamHTML is not a function. (In 'placeholder.streamHTML()', 'placeholder.streamHTML' is undefined)"
+FAIL streamHTML() can stream into <style> promise_test: Unhandled rejection with value: object "TypeError: style.streamHTML is not a function. (In 'style.streamHTML()', 'style.streamHTML' is undefined)"
+FAIL Aborting streamHTML() promise_test: Unhandled rejection with value: object "TypeError: placeholder.streamHTML is not a function. (In 'placeholder.streamHTML()', 'placeholder.streamHTML' is undefined)"
+FAIL Interleaved streamHTML() writes promise_test: Unhandled rejection with value: object "TypeError: placeholder.streamHTML is not a function. (In 'placeholder.streamHTML()', 'placeholder.streamHTML' is undefined)"
+FAIL streamHTML should not execute scripts when connected promise_test: Unhandled rejection with value: object "TypeError: element.streamHTML is not a function. (In 'element.streamHTML({ runScripts: true })', 'element.streamHTML' is undefined)"
+FAIL streamHTML should pass sanitizer options promise_test: Unhandled rejection with value: object "TypeError: element
+      .streamHTML is not a function. (In 'element
+      .streamHTML({ sanitizer: { removeElements: ["p"] } })', 'element
+      .streamHTML' is undefined)"
+FAIL streamHTML uses safe sanitizer promise_test: Unhandled rejection with value: object "TypeError: element.streamHTML is not a function. (In 'element.streamHTML()', 'element.streamHTML' is undefined)"
+FAIL streamHTML on ShadowRoot promise_test: Unhandled rejection with value: object "TypeError: shadow
+      .streamHTML is not a function. (In 'shadow
+      .streamHTML({ sanitizer: { removeElements: ["p"] } })', 'shadow
+      .streamHTML' is undefined)"
+FAIL streamHTML on ShadowRoot uses safe sanitizer promise_test: Unhandled rejection with value: object "TypeError: shadow.streamHTML is not a function. (In 'shadow.streamHTML()', 'shadow.streamHTML' is undefined)"
+FAIL Aborting streamHTML with an open <style> element pops open elements and applies styles promise_test: Unhandled rejection with value: object "TypeError: element.streamHTML is not a function. (In 'element.streamHTML({ sanitizer: { elements: ["div", "style"], attributes: ["id"] } })', 'element.streamHTML' is undefined)"
+

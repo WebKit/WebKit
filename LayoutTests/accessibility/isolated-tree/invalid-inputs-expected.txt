@@ -1,0 +1,13 @@
+This test ensures we consider inputs to be invalid when they are rendered as such.
+
+PASS: accessibilityController.accessibleElementById("pattern-input").stringAttributeValue("AXInvalid") === "false"
+PASS: accessibilityController.accessibleElementById("number-input").stringAttributeValue("AXInvalid") === "false"
+
+Making inputs invalid.
+PASS: accessibilityController.accessibleElementById("pattern-input").stringAttributeValue("AXInvalid") === "true"
+PASS: accessibilityController.accessibleElementById("number-input").stringAttributeValue("AXInvalid") === "true"
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Only use lowercase here  Age: (50+ only)

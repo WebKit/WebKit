@@ -1,0 +1,4 @@
+
+PASS Expecting logs: ["PASS: eval() blocked"]
+FAIL Violation report status OK. assert_equals: Expected report field could not be found in report. expected "" but got "eval-hash"
+

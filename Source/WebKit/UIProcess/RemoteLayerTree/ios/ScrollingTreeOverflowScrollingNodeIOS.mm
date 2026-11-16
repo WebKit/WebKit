@@ -1,0 +1,118 @@
+/*
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#import "config.h"
+#import "ScrollingTreeOverflowScrollingNodeIOS.h"
+
+#if PLATFORM(IOS_FAMILY)
+
+#import "ScrollingTreeScrollingNodeDelegateIOS.h"
+#import "UIKitSPI.h"
+#import "WKBaseScrollView.h"
+#import "WKScrollView.h"
+
+#import <UIKit/UIScrollView.h>
+#import <WebCore/ColorCocoa.h>
+#import <WebCore/ScrollingStateOverflowScrollingNode.h>
+
+namespace WebKit {
+using namespace WebCore;
+
+Ref<ScrollingTreeOverflowScrollingNodeIOS> ScrollingTreeOverflowScrollingNodeIOS::create(WebCore::ScrollingTree& scrollingTree, WebCore::ScrollingNodeID nodeID)
+{
+    return adoptRef(*new ScrollingTreeOverflowScrollingNodeIOS(scrollingTree, nodeID));
+}
+
+ScrollingTreeOverflowScrollingNodeIOS::ScrollingTreeOverflowScrollingNodeIOS(WebCore::ScrollingTree& scrollingTree, WebCore::ScrollingNodeID nodeID)
+    : ScrollingTreeOverflowScrollingNode(scrollingTree, nodeID)
+{
+    m_delegate = makeUnique<ScrollingTreeScrollingNodeDelegateIOS>(*this);
+}
+
+ScrollingTreeOverflowScrollingNodeIOS::~ScrollingTreeOverflowScrollingNodeIOS() = default;
+
+ScrollingTreeScrollingNodeDelegateIOS& ScrollingTreeOverflowScrollingNodeIOS::delegate() const
+{
+    return *static_cast<ScrollingTreeScrollingNodeDelegateIOS*>(m_delegate.get());
+}
+
+WKBaseScrollView *ScrollingTreeOverflowScrollingNodeIOS::scrollView() const
+{
+    return protect(delegate())->scrollView();
+}
+
+bool ScrollingTreeOverflowScrollingNodeIOS::commitStateBeforeChildren(const WebCore::ScrollingStateNode& stateNode)
+{
+    if (!is<ScrollingStateScrollingNode>(stateNode))
+        return false;
+
+    CheckedRef delegate = this->delegate();
+    if (stateNode.hasChangedProperty(ScrollingStateNode::Property::ScrollContainerLayer))
+        delegate->resetScrollViewDelegate();
+
+    if (!ScrollingTreeOverflowScrollingNode::commitStateBeforeChildren(stateNode))
+        return false;
+
+    delegate->commitStateBeforeChildren(downcast<ScrollingStateScrollingNode>(stateNode));
+    return true;
+}
+
+bool ScrollingTreeOverflowScrollingNodeIOS::commitStateAfterChildren(const ScrollingStateNode& stateNode)
+{
+    auto* scrollingStateNode = dynamicDowncast<ScrollingStateScrollingNode>(stateNode);
+    if (!scrollingStateNode)
+        return false;
+
+    protect(delegate())->commitStateAfterChildren(*scrollingStateNode);
+
+    return ScrollingTreeOverflowScrollingNode::commitStateAfterChildren(*scrollingStateNode);
+}
+
+void ScrollingTreeOverflowScrollingNodeIOS::repositionScrollingLayers()
+{
+    protect(delegate())->repositionScrollingLayers();
+}
+
+String ScrollingTreeOverflowScrollingNodeIOS::scrollbarStateForOrientation(ScrollbarOrientation orientation) const
+{
+    if (RetainPtr scrollView = this->scrollView()) {
+        TextStream ts(TextStream::LineMode::MultipleLine);
+
+        auto showsScrollbar = orientation == ScrollbarOrientation::Horizontal ?  [scrollView showsHorizontalScrollIndicator] :  [scrollView showsVerticalScrollIndicator];
+        ts << (showsScrollbar ? ""_s : "none"_s);
+#if HAVE(UIKIT_SCROLLBAR_COLOR_SPI)
+        if (orientation == ScrollbarOrientation::Horizontal)
+            ts << ([scrollView _horizontalScrollIndicatorColor] ? colorFromCocoaColor([scrollView _horizontalScrollIndicatorColor]).debugDescription() :  ""_s);
+        else
+            ts << ([scrollView _verticalScrollIndicatorColor] ? colorFromCocoaColor([scrollView _verticalScrollIndicatorColor]).debugDescription() :  ""_s);
+#endif
+        return ts.release();
+    }
+    return ""_s;
+}
+
+} // namespace WebKit
+
+#endif // PLATFORM(IOS_FAMILY)

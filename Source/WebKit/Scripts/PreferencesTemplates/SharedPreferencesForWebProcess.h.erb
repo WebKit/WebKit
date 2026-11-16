@@ -1,0 +1,77 @@
+/*
+ * <%= @warning %>
+ *
+ * Copyright (C) 2024 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#pragma once
+
+namespace WebKit {
+
+struct WebPreferencesStore;
+
+struct SharedPreferencesForWebProcess {
+    uint64_t version { 0 };
+<% for @pref in @sharedPreferencesForWebProcess do -%>
+<%- if @pref.condition -%>
+#if <%= @pref.condition %>
+<%- end -%>
+<%- if @pref.type == "bool" -%>
+    bool <%= @pref.nameLower %> : 1 { false };
+<%- elsif @pref.type == "uint32_t" -%>
+    uint32_t <%= @pref.nameLower %> { 0 };
+<%- end -%>
+<%- if @pref.condition -%>
+#endif
+<%- end -%>
+<%- end -%>
+
+    bool operator==(const SharedPreferencesForWebProcess&) const = default;
+};
+
+SharedPreferencesForWebProcess sharedPreferencesForWebProcess(const WebPreferencesStore&, bool isLockdownModeEnabled);
+bool updateSharedPreferencesForWebProcess(SharedPreferencesForWebProcess&, const WebPreferencesStore&, bool isLockdownModeEnabled);
+
+// The subset of SharedPreferencesForWebProcess that backs JSC::Options feature flags.
+// It is delivered in WebProcessCreationParameters and applied to the process-global
+// JSC::Options before the first VM freezes them.
+struct JSCOptionsForWebProcess {
+<% @jscOptions.each do |pref| -%>
+    bool <%= pref.nameLower %> { <%= pref.defaultValues["default"] %> };
+<% end -%>
+
+    bool operator==(const JSCOptionsForWebProcess&) const = default;
+};
+
+JSCOptionsForWebProcess jscOptionsForWebProcess(const WebPreferencesStore&, bool isLockdownModeEnabled);
+
+} // namespace WebKit
+
+// Pairs each JSC::Options feature-flag option with the SharedPreferencesForWebProcess
+// field that carries its value: v(jscOption, sharedPreferenceField).
+#define FOR_EACH_JSC_OPTION_SHARED_PREFERENCE(v) \
+<% @jscOptions.each do |pref| -%>
+    v(<%= pref.jscOptionName %>, <%= pref.nameLower %>) \
+<% end -%>
+

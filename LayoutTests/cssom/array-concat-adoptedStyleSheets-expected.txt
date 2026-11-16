@@ -1,0 +1,15 @@
+Tests that Array.concat() behaves correctly with an observable array returned by adoptedStyleSheets.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS document.adoptedStyleSheets.length is 2
+PASS newArray.length is 3
+PASS document.adoptedStyleSheets.length is 2
+PASS newArray[0] is a
+PASS newArray[1] is b
+PASS newArray[2] is c
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

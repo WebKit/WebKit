@@ -1,0 +1,18 @@
+Basic test coverage for fileSystemEntry.getParent()
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS dataTransfer.items.length is 2
+PASS firstEntryParent.name is ""
+PASS firstEntryParent.fullPath is "/"
+PASS firstEntryParent.isDirectory is true
+PASS firstEntryParent.isFile is false
+PASS secondEntryParent.name is ""
+PASS secondEntryParent.fullPath is "/"
+PASS secondEntryParent.isDirectory is true
+PASS secondEntryParent.isFile is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

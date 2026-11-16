@@ -1,0 +1,9 @@
+Test that a cross-origin child's window.name change propagates to the frontend frame model under Site Isolation.
+
+
+== Running test suite: SiteIsolation.NetworkManager.CrossOriginFrameRename
+-- Running test case: SiteIsolation.NetworkManager.CrossOriginFrameRename.NamePropagates
+PASS: Cross-origin child frame should appear in WI.networkManager.frames after navigating.
+PASS: Cross-origin child's parent should be the main frame.
+PASS: Cross-origin child's updated window.name should propagate to the frame model on the subsequent navigation.
+

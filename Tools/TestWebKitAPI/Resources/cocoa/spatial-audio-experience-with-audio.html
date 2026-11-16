@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script>
+    var audioInternalEventHandler;
+
+    function go() {
+        let video = document.querySelector('audio');
+        audio.src = 'video-with-audio.mp4';
+        audio.play();
+    }
+
+    function postEventToMessageHandler(event) {
+        window.webkit.messageHandlers[event.type].postMessage(event.detail);
+    }
+
+    window.addEventListener('load', event => {
+        let audio = document.querySelector('audio');
+        if (!window.internals)
+            return;
+        audioInternalEventHandler = internals.addInternalEventTarget(audio);
+        audioInternalEventHandler.addEventListener('media-player-spatial-experience-change', postEventToMessageHandler);
+    });
+    </script>
+</head>
+<body onload="go()">
+    <audio></audio>
+</body>
+</html>

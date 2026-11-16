@@ -1,0 +1,64 @@
+diagnostic(off, derivative_uniformity);
+diagnostic(off, chromium.unreachable_code);
+enable f16;
+struct FSOut {
+  @location(0) sk_FragColor: vec4<f16>,
+};
+struct _GlobalUniforms {
+  colorGreen: vec4<f16>,
+  colorRed: vec4<f16>,
+  testMatrix3x3: mat3x3<f32>,
+  testMatrix4x4: mat4x4<f32>,
+};
+@group(0) @binding(0) var<uniform> _globalUniforms : _GlobalUniforms;
+fn test4x4_b() -> bool {
+  {
+    var matrix: mat4x4<f32>;
+    var values: vec4<f32> = vec4<f32>(4.0, 3.0, 2.0, 1.0);
+    {
+      var index: i32 = 0;
+      for (; index < 4; index = index + i32(1)) {
+        {
+          matrix[index] = vec4<f32>((values.xw), matrix[index].yz).yzwx;
+          matrix[index] = vec4<f32>(matrix[index].xw, (values.yz)).xwzy;
+          values = values + 4.0;
+        }
+      }
+    }
+    return (all(matrix[0] == _globalUniforms.testMatrix4x4[0]) && all(matrix[1] == _globalUniforms.testMatrix4x4[1]) && all(matrix[2] == _globalUniforms.testMatrix4x4[2]) && all(matrix[3] == _globalUniforms.testMatrix4x4[3]));
+  }
+}
+fn _skslMain(coords: vec2<f32>) -> vec4<f16> {
+  {
+    var _0_matrix: mat3x3<f32>;
+    var _1_values: vec3<f32> = vec3<f32>(3.0, 2.0, 1.0);
+    {
+      var _2_index: i32 = 0;
+      for (; _2_index < 3; _2_index = _2_index + i32(1)) {
+        {
+          _0_matrix[_2_index] = vec3<f32>((_1_values.xz), _0_matrix[_2_index].y).yzx;
+          _0_matrix[_2_index].y = _1_values.y;
+          _1_values = _1_values + 3.0;
+        }
+      }
+    }
+    var _skTemp0: vec4<f16>;
+    var _skTemp1: bool;
+    if (all(_0_matrix[0] == _globalUniforms.testMatrix3x3[0]) && all(_0_matrix[1] == _globalUniforms.testMatrix3x3[1]) && all(_0_matrix[2] == _globalUniforms.testMatrix3x3[2])) {
+      _skTemp1 = test4x4_b();
+    } else {
+      _skTemp1 = false;
+    }
+    if _skTemp1 {
+      _skTemp0 = _globalUniforms.colorGreen;
+    } else {
+      _skTemp0 = _globalUniforms.colorRed;
+    }
+    return _skTemp0;
+  }
+}
+@fragment fn main() -> FSOut {
+  var _stageOut: FSOut;
+  _stageOut.sk_FragColor = _skslMain(/*fragcoord*/ vec2<f32>());
+  return _stageOut;
+}

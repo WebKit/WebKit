@@ -1,0 +1,9 @@
+
+PASS delete() removes record (inline keys)
+PASS delete() key doesn't match any records
+PASS Object store's key path is an object attribute
+PASS delete() removes record (out-of-line keys)
+PASS delete() removes all of the records in the range
+PASS If the transaction this IDBObjectStore belongs to has its mode set to readonly, throw ReadOnlyError
+PASS If the object store has been deleted, the implementation must throw a DOMException of type InvalidStateError
+

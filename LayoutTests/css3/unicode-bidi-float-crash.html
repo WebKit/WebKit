@@ -1,0 +1,14 @@
+<style>
+div {
+  float: left;
+}
+</style>
+<span style="unicode-bidi: isolate"><span style="unicode-bidi: isolate"><span id=inline_box><div></div></span></span></span>
+<pre id="renderTree"></pre>
+<script>
+  if (window.testRunner)
+      window.testRunner.dumpAsText();
+
+  var text = document.getElementById("renderTree");
+  text.innerHTML = window.internals.elementRenderTreeAsText(document.documentElement);
+</script>

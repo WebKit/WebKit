@@ -1,0 +1,14 @@
+{
+    "TestGlobalObject": {
+        "constructor": {
+            "enabledAtRuntimeOperationStatic": "testParam"
+        },
+        "prototype": {
+            "enabledAtRuntimeOperation": "testParam",
+            "enabledInSpecificWorld": "testParam",
+            "enabledInSpecificWorldWhenRuntimeFeatureEnabled": "testParam",
+            "enabledInSpecificWorldWhenRuntimeFeaturesEnabled": "testParam",
+            "regularOperation": "testParam"
+        }
+    }
+}

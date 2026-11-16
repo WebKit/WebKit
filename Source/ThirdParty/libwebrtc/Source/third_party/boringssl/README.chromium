@@ -1,0 +1,15 @@
+Name: BoringSSL
+URL: https://boringssl.googlesource.com/boringssl
+Version: N/A
+Revision: ea9f3a34c3977144c45d272be81842fd891a0bdb
+Update Mechanism: Autoroll
+License: Apache-2.0, BSD-3-Clause
+License File: src/LICENSE
+License Android Compatible: yes
+CPEPrefix: cpe:/a:google:boringssl:0.20260413.0
+Security Critical: yes
+Shipped: yes
+
+Description:
+This is BoringSSL, a fork of OpenSSL. See
+https://www.imperialviolet.org/2014/06/20/boringssl.html

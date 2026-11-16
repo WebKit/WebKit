@@ -1,0 +1,10 @@
+<!DOCTYPE html>
+<script>
+function createCanvas() {
+    let context = document.createElement("canvas").getContext("2d");
+    context.fillRect(0, 0, 10, 10);
+    (window.contexts ??= []).push(context);
+}
+
+createCanvas();
+</script>

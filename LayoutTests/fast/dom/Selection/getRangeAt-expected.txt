@@ -1,0 +1,10 @@
+Test to make sure that getRangeAt does not modify the range when returning it.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS range is correctly (text, 0)
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

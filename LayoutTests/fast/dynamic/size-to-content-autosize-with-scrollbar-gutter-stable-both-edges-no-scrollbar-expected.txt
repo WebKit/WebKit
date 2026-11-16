@@ -1,0 +1,4 @@
+gutter width is non-zero
+PASS: view width fits content plus both gutters
+PASS: layout viewport is not narrower than the content
+

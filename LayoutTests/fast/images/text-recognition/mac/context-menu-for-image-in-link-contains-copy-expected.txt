@@ -1,0 +1,8 @@
+PASS getCopyContextMenuItem() is null
+PASS Selected text in image
+PASS getCopyContextMenuItem() is non-null.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+

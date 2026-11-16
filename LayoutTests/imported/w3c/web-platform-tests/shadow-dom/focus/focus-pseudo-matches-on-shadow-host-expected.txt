@@ -1,0 +1,26 @@
+
+
+PASS :focus must not match a shadow host with {mode:open, delegatesFocus:false} shadow root that does not contain the focused element
+PASS :focus must match a shadow host with {mode:open, delegatesFocus:false} shadow root that contains the focused element
+PASS :focus must not match a shadow host with {mode:open, delegatesFocus:false} shadow root contains the focused element assigned to a slot
+PASS :focus must match all shadow hosts which are ancestors of a foccused element; {mode:open, delegatesFocus:false}
+PASS :focus behavior on tree structure changes; {mode:open, delegatesFocus:false}
+PASS :focus must not match a shadow host with {mode:open, delegatesFocus:true} shadow root that does not contain the focused element
+PASS :focus must match a shadow host with {mode:open, delegatesFocus:true} shadow root that contains the focused element
+PASS :focus must not match a shadow host with {mode:open, delegatesFocus:true} shadow root contains the focused element assigned to a slot
+PASS :focus must match all shadow hosts which are ancestors of a foccused element; {mode:open, delegatesFocus:true}
+PASS :focus behavior on tree structure changes; {mode:open, delegatesFocus:true}
+PASS :focus must not match a shadow host with {mode:closed, delegatesFocus:false} shadow root that does not contain the focused element
+PASS :focus must match a shadow host with {mode:closed, delegatesFocus:false} shadow root that contains the focused element
+PASS :focus must not match a shadow host with {mode:closed, delegatesFocus:false} shadow root contains the focused element assigned to a slot
+PASS :focus must match all shadow hosts which are ancestors of a foccused element; {mode:closed, delegatesFocus:false}
+PASS :focus behavior on tree structure changes; {mode:closed, delegatesFocus:false}
+PASS :focus must not match a shadow host with {mode:closed, delegatesFocus:true} shadow root that does not contain the focused element
+PASS :focus must match a shadow host with {mode:closed, delegatesFocus:true} shadow root that contains the focused element
+PASS :focus must not match a shadow host with {mode:closed, delegatesFocus:true} shadow root contains the focused element assigned to a slot
+PASS :focus must match all shadow hosts which are ancestors of a foccused element; {mode:closed, delegatesFocus:true}
+PASS :focus behavior on tree structure changes; {mode:closed, delegatesFocus:true}
+
+
+
+

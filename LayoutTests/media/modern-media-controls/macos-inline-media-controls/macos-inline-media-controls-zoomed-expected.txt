@@ -1,0 +1,11 @@
+PASS videoBoundingBox.width is 600
+PASS videoBoundingBox.height is 600
+PASS mediaControlsContainerBoundingBox.width is 600
+PASS mediaControlsContainerBoundingBox.height is 600
+PASS successfullyParsed is true
+
+TEST COMPLETE
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

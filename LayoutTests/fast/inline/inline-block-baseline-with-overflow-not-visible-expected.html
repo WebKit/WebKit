@@ -1,0 +1,19 @@
+<style>
+.alignwiththis {
+  display:inline-block;
+  height: 200px;
+  width: 200px;
+  background-color: blue;
+}
+.overflowvisible {
+  display: inline-block;
+  height: 200px;
+  width: 200px;
+  background-color: green;
+}
+</style>
+PASS if the boxes below are aligned ("overflow: hidden" -> baseline is the bottom of the margin box).
+<div>
+  <div class=alignwiththis></div>
+  <div class=overflowvisible></div>
+</div>

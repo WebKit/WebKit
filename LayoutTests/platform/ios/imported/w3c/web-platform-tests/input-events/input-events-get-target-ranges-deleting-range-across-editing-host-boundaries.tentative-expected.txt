@@ -1,0 +1,9 @@
+abcnon-editabledef
+
+
+PASS Backspace at "<p>ab[c<span contenteditable="false">no]n-editable</span>def</p>"
+PASS Backspace at "<p>abc<span contenteditable="false">non-[editable</span>de]f</p>"
+PASS Backspace at "<p contenteditable="false"><span contenteditable>a[bc</span>non-editable<span contenteditable>de]f</span></p>"
+PASS Backspace at "<p>a[bc<span contenteditable="false">non-editable<span contenteditable>de]f</span></span></p>"
+PASS Backspace at "<p><span contenteditable="false"><span contenteditable>a[bc</span>non-editable</span>de]f</p>"
+

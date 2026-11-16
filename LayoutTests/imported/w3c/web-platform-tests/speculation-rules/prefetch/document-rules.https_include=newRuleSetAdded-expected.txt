@@ -1,0 +1,3 @@
+
+PASS test that adding a second rule set triggers prefetch
+

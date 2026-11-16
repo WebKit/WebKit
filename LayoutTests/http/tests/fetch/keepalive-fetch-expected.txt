@@ -1,0 +1,1 @@
+Send a keepalive fetch request in an ephemeral session. This test should not cause a crash.

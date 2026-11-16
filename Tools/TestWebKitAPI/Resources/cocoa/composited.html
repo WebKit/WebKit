@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width">
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        
+        .container {
+            width: 200px;
+            height: 200px;
+            border: 1px solid black;
+        }
+
+        .box {
+            width: 100px;
+            height: 100px;
+            background-color: blue;
+        }
+        
+        body.changed .box.disappear {
+            display: none;
+        }
+        
+        .composited {
+            transform: translateZ(0);
+        }
+    </style>
+    <script>
+        function applyChange()
+        {
+            document.body.classList.add('changed');
+        }
+    </script>
+</head>
+<body>
+    <div class="container composited">
+        <div class="composited disappear box">box</div>
+    </div>
+</body>
+</html>

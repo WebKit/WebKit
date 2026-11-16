@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+.box {
+    position: absolute;
+    top: 0px;
+    left:0px;
+    font: 20px/1 Ahem, sans-serif;
+    color: red;
+    width: 200px;
+    height: 100px;
+}
+.shape-outside1 {
+    float: left;
+    width: 100px;
+    height: 100px;
+    background-color: lightgreen;
+    -webkit-shape-outside: polygon(0 0, 100% 0, 0 50%, 100%  100%, 0 100%);
+    -webkit-clip-path: polygon(0 0, 100% 0, 0 50%, 100%  100%, 0 100%);
+}
+.shape-outside2 {
+    float: right;
+    width: 100px;
+    height: 100px;
+    background-color: lightblue;
+    -webkit-shape-outside: polygon(100% 0, 0 0, 100% 50%, 0 100%, 100% 100%);
+    -webkit-clip-path: polygon(100% 0, 0 0, 100% 50%, 0 100%, 100% 100%);
+}
+.overlay {
+   background-color: green;
+}
+</style>
+</head>
+<body>
+
+<div class="box">
+    <div class="shape-outside1"></div>
+    <div class="shape-outside2"></div> X X X X X X X X X X
+</div>
+<div class="box overlay"></div>
+
+<p style="margin-top: 120px;">The content should wrap between the two polygon shapes, it should fit in the content box, so you should see only a green rectangle.
+You shouldn't see any red.</p>
+<p><a href='http://webkit.org/b/128696'>Bug 128696</a>: [CSS Shapes] Add test for adjusted lineTop position between left and right shape-outside floats</p>
+
+</body>
+</html>
+

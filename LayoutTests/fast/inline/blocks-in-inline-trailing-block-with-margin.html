@@ -1,0 +1,17 @@
+<!-- webkit-test-runner [ BlocksInInlineLayoutEnabled=true ] -->
+<style>
+.container { 
+  border: 1px solid green;
+  background-color: green; 
+  color: transparent;
+}
+.middle-block { 
+  margin: 50px;
+}
+</style>
+<div class=container>
+  <span>
+    span start
+    <div class=middle-block>content</div>
+  </span>
+</div>

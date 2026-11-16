@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+<section id="pageContent" class="pageContentClass"></section>
+<iframe id="quirksFrame" src="about:blank" style="display:none"></iframe>
+<script>
+
+description("Test that cloning elements between quirks and no-quirks document handles case folding properly");
+
+var quirksFrame = document.getElementById("quirksFrame");
+
+var noQuirksFrame = document.createElement("iframe");
+noQuirksFrame.srcdoc = "<!DOCTYPE html><html><head></head><body></body></html>";
+noQuirksFrame.style = "display:none";
+document.body.appendChild(noQuirksFrame);
+
+onload = function() {
+
+    // Sanity check.
+    shouldBe("document.compatMode", "'CSS1Compat'");
+    shouldBe("quirksFrame.contentDocument.compatMode", "'BackCompat'");
+    shouldBe("noQuirksFrame.contentDocument.compatMode", "'CSS1Compat'");
+
+    // Test that cloning from standards mode to quirks mode doesn't mutate the original.
+    sectionElement = document.getElementById("pageContent");
+    sectionElementImportedToQuirksDocument = quirksFrame.contentDocument.importNode(sectionElement);
+    quirksFrame.contentDocument.body.appendChild(sectionElementImportedToQuirksDocument);
+    shouldBe("quirksFrame.contentDocument.querySelector('.pageContentClass')", "sectionElementImportedToQuirksDocument");
+    shouldBe("quirksFrame.contentDocument.querySelector('.pagecontentclass')", "sectionElementImportedToQuirksDocument");
+    shouldBe("document.querySelector('.pageContentClass')", "sectionElement");
+
+    // Same for cloning from quirks to no-quirks.
+    sectionElementImportedToNoQuirksDocument = noQuirksFrame.contentDocument.importNode(sectionElementImportedToQuirksDocument);
+    noQuirksFrame.contentDocument.body.appendChild(sectionElementImportedToNoQuirksDocument);
+    shouldBe("noQuirksFrame.contentDocument.querySelector('.pageContentClass')", "sectionElementImportedToNoQuirksDocument");
+    shouldBe("quirksFrame.contentDocument.querySelector('.pageContentClass')", "sectionElementImportedToQuirksDocument");
+    shouldBe("quirksFrame.contentDocument.querySelector('.pagecontentclass')", "sectionElementImportedToQuirksDocument");
+}
+
+</script>
+</body>
+</html>

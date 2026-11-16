@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?> 
+<AutoVisualizer xmlns="http://schemas.microsoft.com/vstudio/debugger/natvis/2010">
+  <!--
+    Place this file to %USERPROFILE%\Documents\Visual Studio 2019\Visualizers
+    For more info:
+      https://docs.microsoft.com/en-us/visualstudio/debugger/create-custom-views-of-native-objects?view=vs-2019
+  -->
+  <Type Name="WTF::RefPtr&lt;*&gt;">
+    <DisplayString Condition="m_ptr == 0">empty</DisplayString>
+    <DisplayString>{*m_ptr}</DisplayString>
+  </Type>
+  <Type Name="WTF::UniqueRef&lt;*&gt;">
+    <DisplayString>{m_ref}</DisplayString>
+  </Type>
+  
+  <Type Name="WTF::StringImplShape">
+    <!-- AtomString -->
+    <DisplayString Condition="(m_hashAndFlags &amp; 0x10) &amp;&amp; (m_hashAndFlags &amp; 4)">
+      Atom:{m_data8,[m_length]s}
+    </DisplayString>
+    <DisplayString Condition="(m_hashAndFlags &amp; 0x10)">
+      Atom:{m_data16,[m_length]su}
+    </DisplayString>
+
+    <!-- Symbol -->
+    <DisplayString Condition="(m_hashAndFlags &amp; 0x20) &amp;&amp; (m_hashAndFlags &amp; 4)">
+      &lt;{m_data8,[m_length]s}&gt;
+    </DisplayString>
+    <DisplayString Condition="(m_hashAndFlags &amp; 0x20)">
+      &lt;{m_data16,[m_length]su}&gt;
+    </DisplayString>
+
+    <DisplayString Condition="(m_hashAndFlags &amp; 4)">
+      {m_data8,[m_length]s}
+    </DisplayString>
+    <DisplayString Condition="!(m_hashAndFlags &amp; 4)">
+      {m_data16,[m_length]su}
+    </DisplayString>
+
+    <DisplayString>not supported ({m_hashAndFlags})</DisplayString>
+  </Type>
+  
+  <Type Name="WTF::StringView">
+    <DisplayString Condition="m_is8Bit">
+      {m_characters,[m_length]s}
+    </DisplayString>
+    <DisplayString Condition="!m_is8Bit">
+      {m_characters,[m_length]su}
+    </DisplayString>
+  </Type>
+
+  <Type Name="WTF::String">
+    <DisplayString>{m_impl}</DisplayString>
+  </Type>
+
+  <Type Name="IPC::Decoder">
+    <DisplayString>{m_messageReceiverName}::{m_messageName}(ID={m_destination})</DisplayString>
+  </Type>
+  
+  <Type Name="WTF::URL">
+    <DisplayString>{m_string}</DisplayString>
+  </Type>
+  <Type Name="WTF::AtomString">
+    <DisplayString>{m_string} (Atom)</DisplayString>
+  </Type>
+ 
+  <Type Name="WTF::NeverDestroyed&lt;*,*&gt;">
+    <DisplayString>{*($T1 *)this}</DisplayString>
+    <Expand>
+      <ExpandedItem>*($T1 *)this</ExpandedItem>
+    </Expand>
+  </Type>
+
+  <Type Name="WTF::LazyNeverDestroyed&lt;*,*&gt;">
+    <DisplayString>{*($T1 *)this}</DisplayString>
+    <Expand>
+      <ExpandedItem>*($T1 *)this</ExpandedItem>
+    </Expand>
+  </Type>
+
+  <Type Name="PAL::SessionID">
+    <DisplayString>{m_identifier}</DisplayString>
+  </Type>
+  
+  <Type Name="WTF::ObjectIdentifier&lt;*&gt;">
+    <DisplayString>{m_identifier}</DisplayString>
+  </Type>
+
+  <Type Name="WTF::Optional&lt;*&gt;">
+    <Intrinsic Name="has_value" Expression="init_"/>
+    <Intrinsic Name="value" Expression="storage_.value_"/>
+    <DisplayString Condition="!has_value()">nullopt</DisplayString>
+    <DisplayString Condition="has_value()">{value()}</DisplayString>
+    <Expand>
+      <Item Condition="has_value()" Name="value">value()</Item>
+    </Expand>
+  </Type>
+
+  <Type Name="WTF::OptionSet&lt;*&gt;">
+    <DisplayString>{m_storage,x}</DisplayString>
+  </Type>
+
+  <Type Name="WTF::VectorBufferBase&lt;*,*&gt;">
+    <DisplayString>{{ size={m_size} }}</DisplayString>
+    <Expand>
+      <Item Name="[capacity]" ExcludeView="simple">m_capacity</Item>
+      <ArrayItems>
+        <Size>m_size</Size>
+        <ValuePointer>m_buffer</ValuePointer>
+      </ArrayItems>
+    </Expand>
+  </Type>
+
+  <Type Name="WebCore::IntSize">
+    <DisplayString>({m_width} x {m_height})</DisplayString>
+  </Type>
+
+  <!-- Networking -->
+
+  <Type Name="WebCore::ResourceRequest">
+    <DisplayString>{m_httpMethod} {m_url} {m_httpBody}</DisplayString>
+  </Type>  
+</AutoVisualizer>

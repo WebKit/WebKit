@@ -1,0 +1,23 @@
+CONSOLE MESSAGE: Viewport argument value "resize-content" for key "interactive-widget" is invalid, and has been ignored.
+interactive-widget=resizes-content:
+PASS internals.layoutViewportRect().height < window.initialLayoutViewport.height is true
+PASS internals.visualViewportRect().height == internals.layoutViewportRect().height is true
+PASS internals.layoutViewportRect().height == window.keyboardTopInView is true
+
+interactive-widget=overlays-content:
+PASS internals.layoutViewportRect().height became window.initialLayoutViewport.height
+PASS internals.visualViewportRect().height == internals.layoutViewportRect().height is true
+
+Invalid value falls back to resizes-visual:
+PASS internals.layoutViewportRect().height became window.initialLayoutViewport.height
+PASS internals.visualViewportRect().height < internals.layoutViewportRect().height is true
+PASS internals.visualViewportRect().height == window.keyboardTopInView is true
+
+interactive-widget=resizes-content:
+PASS internals.visualViewportRect().height became internals.layoutViewportRect().height
+PASS internals.layoutViewportRect().height < window.initialLayoutViewport.height is true
+PASS internals.layoutViewportRect().height == window.keyboardTopInView is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

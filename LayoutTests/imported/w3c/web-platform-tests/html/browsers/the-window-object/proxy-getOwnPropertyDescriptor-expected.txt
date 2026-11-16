@@ -1,0 +1,9 @@
+
+PASS Window target, no trap, "name" attribute
+PASS Window target, forwarding trap, [LegacyUnforgeable] "document" attribute
+PASS Window proxy target, custom trap, "onclick" event handler attribute
+PASS Document target, forwarding trap, [LegacyUnforgeable] "location" attribute
+PASS Document proxy target, custom trap, non-existent value attribute
+PASS Location target, no trap, [LegacyUnforgeable] "hash" attribute
+PASS Location proxy target, forwarding trap, [LegacyUnforgeable] "reload" method
+

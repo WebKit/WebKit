@@ -1,0 +1,21 @@
+
+PASS Serialization of conditionText
+PASS Serialization of inner @container rule
+PASS Serialization of nested @container rule
+PASS @container conditionText serialization: (  wiDTh  )
+PASS @container conditionText serialization: (width:100px)
+PASS @container conditionText serialization: (min-width:  100px)
+PASS @container conditionText serialization: (   MAX-WIDTH:100px  )
+PASS @container conditionText serialization: (width > 100px)
+PASS @container conditionText serialization: (width < 100px)
+PASS @container conditionText serialization: (widTH >= 100px)
+PASS @container conditionText serialization: (width <= 100px)
+PASS @container conditionText serialization: (10px < width < 100px)
+PASS @container conditionText serialization: (10px <=  width  <=  100px)
+PASS @container conditionText serialization: (100px>WIDTH>10px)
+PASS @container conditionText serialization: (  100px >= width >= 10px  )
+PASS @container conditionText serialization: (calc(1em + 1px) >= width >= max(10em, 10px))
+PASS @container conditionText serialization: (width),(height) ,--foo ,--bar
+PASS @container conditionText serialization:   --NAMe
+PASS @container conditionText serialization: NAMe   (inline-sizE  < 1300px )
+

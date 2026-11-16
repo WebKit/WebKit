@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+    body {
+        margin: 0;
+    }
+
+    .blurred {
+        position: absolute;
+        left: 100px;
+        top: 100px;
+        width: 200px;
+        height: 200px;
+        filter: blur(10px);
+    }
+
+    .hue-rotated {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 200px;
+        height: 200px;
+        filter: hue-rotate(90deg);
+    }
+
+    .inner {
+        position: absolute;
+        left: 50px;
+        top: 50px;
+        width: 100px;
+        height: 100px;
+        background-color: green;
+    }
+</style>
+</head>
+<body>
+    <div class="blurred">
+        <div class="hue-rotated">
+            <div class="inner"></div>
+        </div>
+    </div>
+</body>
+</html>

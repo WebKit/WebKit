@@ -1,0 +1,19 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<!DOCTYPE HTML>
+<head>
+<script>
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.setPrinting();
+}
+
+onmessage = async (event) => {
+    if (window.testRunner && event.data == "onload") {
+        testRunner.notifyDone();
+    }
+}
+</script>
+</head>
+<body bgcolor=blue>
+<iframe src="http://localhost:8000/site-isolation/resources/green-square-if-printed.html" frameborder=0></iframe>
+</body>

@@ -1,0 +1,4 @@
+
+
+PASS Verify that using HTMLOptionElement.text setter does not update the existing text child node.
+

@@ -1,0 +1,6 @@
+
+
+PASS flood-color currentColor animation resolves to unvisited link color
+PASS lighting-color currentColor animation resolves to unvisited link color
+PASS stop-color currentColor animation resolves to unvisited link color
+

@@ -1,0 +1,77 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<main id="main">
+    <div>
+        <span>
+            <div tabindex="0" id="div-1"><div role="presentation" id="div-2">Foo</div></div>
+        </span>
+    </div>
+</main>
+
+<script>
+var output = "This test ensures that we properly update the accessibility tree when an object becomes dynamically ignored in the middle of handling children updates for it.\n\n";
+
+// Setting role="presentation" throughout this test isn't strictly necessary, but reduces the amount of elements
+// in the test output by eliminating uninteresting div-groups.
+function createDiv(text) {
+    const div = document.createElement("div");
+    div.id = text.toLowerCase();
+    div.innerText = text;
+    div.setAttribute("role", "presentation");
+    return div;
+}
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    var webArea = accessibilityController.rootElement.childAtIndex(0);
+    output += dumpAXSearchTraversal(webArea);
+
+    var searchOutput;
+    const red = createDiv("Red");
+    const blue = createDiv("Blue");
+    const green = createDiv("Green")
+    setTimeout(async function() {
+        document.getElementById("div-1").appendChild(red);
+        // Remove the tabindex of #div-1, which causes it to be dynamically ignored at the same time these children
+        // changes will be processed. This is critical for triggering the bug. Removing tabindex also triggers this sequence:
+        //   1. AXIsolatedTree::updateNode for #div-1, which adds #div-1 to AXIsolatedTree::m_unresolvedPendingAppends
+        //   2. #div-1 being in m_unresolvedPendingAppends protects it from being deleted from AXIsolatedTree::m_nodeMap in this update cycle
+        document.getElementById("div-1").removeAttribute("tabindex");
+        // Append to #main at the same time we append to the dynamically ignored subtree of #div-1. This is critical
+        // for triggering the bug, because we need #main to detect it no longer has #div-1 as a child (because it is
+        // ignored [1]) in the same update cycle as #div-1 becoming ignored and processing its own children changed event.
+        // This means we try to delete it from m_nodeMap, but never do, because it was protected above. This breaks
+        // every subsequent tree update rooted from #div-1, because we use the nodemap to iterate to the nearest "in-tree"
+        // object, and we always stop at ignored-object #div-1 which we failed to ever remove.
+        //
+        // Footnote [1]: At the time of this writing, ignored objects are not in the "core", platform-agnostic accessibility tree.
+        document.getElementById("main").appendChild(blue);
+        await waitFor(() => {
+            searchOutput = dumpAXSearchTraversal(webArea);
+            return searchOutput && searchOutput.includes("Red") && searchOutput.includes("Blue");
+        });
+
+        // If our implementation is wrong, we will never find our green div in the accessibility tree.
+        document.getElementById("div-1").appendChild(green);
+        await waitFor(() => {
+            searchOutput = dumpAXSearchTraversal(webArea);
+            return searchOutput && searchOutput.includes("Green");
+        });
+        output += searchOutput;
+
+        debug(output);
+        document.getElementById("main").style.visibility = "hidden";
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>
+

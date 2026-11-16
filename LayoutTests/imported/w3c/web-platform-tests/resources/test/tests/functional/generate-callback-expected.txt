@@ -1,0 +1,15 @@
+
+PASS first test
+PASS second test
+PASS third test
+PASS sentinel check 1
+PASS sentinel check 2
+PASS sentinel check 1 unique properties
+PASS sentinel check 2 unique properties
+PASS Test to map a to 0
+PASS Test to map b to 1
+PASS Test to map c to 2
+PASS Test to map d to 3
+PASS Test to map e to 4
+PASS Test to map f to 5
+

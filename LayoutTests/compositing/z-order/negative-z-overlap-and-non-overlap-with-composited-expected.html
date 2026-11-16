@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        .parent {
+            position: relative;
+            z-index: 1;
+        }
+
+        .neg-overlapping {
+            position: absolute;
+            top: 20px;
+            left: 200px;
+            width: 300px;
+            height: 100px;
+            background-color: limegreen;
+        }
+
+        .neg-non-overlapping {
+            position: absolute;
+            top: 250px;
+            left: 0;
+            width: 200px;
+            height: 50px;
+            background-color: blue;
+        }
+
+        .behind {
+            position: absolute;
+            top: 20px;
+            left: 200px;
+            height: 200px;
+            width: 200px;
+            background-color: cyan;
+        }
+    </style>
+</head>
+<body>
+    <p>The green box should paint in front of the cyan box. The blue box overlaps nothing.</p>
+    <div class="parent">
+        <div class="neg-overlapping"></div>
+        <div class="neg-non-overlapping"></div>
+    </div>
+    <div class="behind"></div>
+</body>
+</html>

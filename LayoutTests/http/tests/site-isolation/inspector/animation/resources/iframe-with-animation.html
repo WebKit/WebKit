@@ -1,0 +1,10 @@
+<!DOCTYPE html>
+<div id="box"></div>
+<script>
+function createAnimation() {
+    let animation = document.getElementById("box").animate([{opacity: 0}, {opacity: 1}], {duration: 10000});
+    (window.animations ??= []).push(animation);
+}
+
+createAnimation();
+</script>

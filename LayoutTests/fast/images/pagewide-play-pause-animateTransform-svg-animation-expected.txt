@@ -1,0 +1,15 @@
+This test ensures that animateTransform SVG animations are paused and resumed when the page-wide image animation setting is toggled.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Disabling animations.
+PASS svgMatricesAreEqual(getAnimateTransformMatrix(svgElement), initialAnimateTransformMatrix) is true
+
+Enabling animations.
+PASS svgMatricesAreEqual(getAnimateTransformMatrix(svgElement), initialAnimateTransformMatrix) is false
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

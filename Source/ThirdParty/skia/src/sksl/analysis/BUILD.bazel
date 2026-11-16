@@ -1,0 +1,37 @@
+load("//bazel:skia_rules.bzl", "split_srcs_and_hdrs")
+
+package(
+    default_applicable_licenses = ["//:license"],
+)
+
+licenses(["notice"])
+
+ANALYSIS_FILES = [
+    "SkSLCanExitWithoutReturningValue.cpp",
+    "SkSLCheckProgramStructure.cpp",
+    "SkSLCheckSymbolTableCorrectness.cpp",
+    "SkSLFinalizationChecks.cpp",
+    "SkSLGetLoopControlFlowInfo.cpp",
+    "SkSLGetLoopUnrollInfo.cpp",
+    "SkSLGetReturnComplexity.cpp",
+    "SkSLHasSideEffects.cpp",
+    "SkSLIsConstantExpression.cpp",
+    "SkSLIsDynamicallyUniformExpression.cpp",
+    "SkSLIsSameExpressionTree.cpp",
+    "SkSLIsTrivialExpression.cpp",
+    "SkSLNoOpErrorReporter.h",
+    "SkSLProgramUsage.cpp",
+    "SkSLProgramUsage.h",
+    "SkSLProgramVisitor.h",
+    "SkSLReturnsInputAlpha.cpp",
+    "SkSLSpecialization.cpp",
+    "SkSLSpecialization.h",
+    "SkSLSwitchCaseContainsExit.cpp",
+    "SkSLSymbolTableStackBuilder.cpp",
+]
+
+split_srcs_and_hdrs(
+    name = "analysis",
+    files = ANALYSIS_FILES,
+    visibility = ["//src/sksl:__pkg__"],
+)

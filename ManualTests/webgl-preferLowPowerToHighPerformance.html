@@ -1,0 +1,38 @@
+<script>
+function createAndDescribeContext(msg, parameters)
+{
+    var canvas = document.createElement("canvas");
+    var gl = canvas.getContext("webgl", parameters);
+    var ext = gl.getExtension("WEBGL_debug_renderer_info");
+
+    var header = document.createElement("p");
+    header.textContent = msg;
+    document.body.appendChild(header);
+
+    var result = document.createElement("pre");
+    result.textContent = "UNMASKED_VENDOR_WEBGL is " + gl.getParameter(ext.UNMASKED_VENDOR_WEBGL) + "\n";
+    result.textContent += "UNMASKED_RENDERER_WEBGL is " + gl.getParameter(ext.UNMASKED_RENDERER_WEBGL);
+    document.body.appendChild(result);
+}
+
+function run()
+{
+    createAndDescribeContext("With preferLowPowerToHighPerformance", {preferLowPowerToHighPerformance: true});
+    createAndDescribeContext("Without preferLowPowerToHighPerformance", {});
+}
+
+window.addEventListener("load", run, false);
+</script>
+<p>
+    This is a manual test, since it relies on hardware configurations. It creates two
+    WebGL contexts. It first asks for a context with preferLowPowerToHighPerformance
+    set to true, and then for a context with the default value (false).
+</p>
+<p>
+    Unfortunately there isn't a completely reliable way to know if this test passed.
+    On a system with both an integrated and discrete GPU, assuming that the system
+    is configured to prefer the integrated GPU, and no other apps are running
+    that might cause the discrete GPU to be active, the two renderers should be different.
+    Also, if they are different, then the first one should be the lower power model
+    (i.e. the integrated card).
+</p>

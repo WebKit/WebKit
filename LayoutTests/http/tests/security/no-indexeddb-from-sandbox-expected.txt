@@ -1,0 +1,2 @@
+CONSOLE MESSAGE: PASS: db.open() threw a SECURITY_ERR!
+

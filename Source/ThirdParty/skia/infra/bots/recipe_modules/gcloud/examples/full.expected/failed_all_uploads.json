@@ -1,0 +1,154 @@
+[
+  {
+    "cmd": [
+      "luci-auth",
+      "token",
+      "-scopes",
+      "https://www.googleapis.com/auth/devstorage.read_write",
+      "-lifetime",
+      "3m"
+    ],
+    "infra_step": true,
+    "name": "get access token for default account"
+  },
+  {
+    "cmd": [
+      "gcloud",
+      "storage",
+      "cp",
+      "-Z",
+      "/foo/file",
+      "gs://bar-bucket/file"
+    ],
+    "env": {
+      "CLOUDSDK_AUTH_ACCESS_TOKEN": "extra.secret.token.should.not.be.logged"
+    },
+    "name": "upload test file",
+    "~followup_annotations": [
+      "@@@STEP_FAILURE@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "luci-auth",
+      "token",
+      "-scopes",
+      "https://www.googleapis.com/auth/devstorage.read_write",
+      "-lifetime",
+      "3m"
+    ],
+    "infra_step": true,
+    "name": "get access token for default account (2)"
+  },
+  {
+    "cmd": [
+      "gcloud",
+      "storage",
+      "cp",
+      "-Z",
+      "/foo/file",
+      "gs://bar-bucket/file"
+    ],
+    "env": {
+      "CLOUDSDK_AUTH_ACCESS_TOKEN": "extra.secret.token.should.not.be.logged"
+    },
+    "name": "upload test file (attempt 2)",
+    "~followup_annotations": [
+      "@@@STEP_FAILURE@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "luci-auth",
+      "token",
+      "-scopes",
+      "https://www.googleapis.com/auth/devstorage.read_write",
+      "-lifetime",
+      "3m"
+    ],
+    "infra_step": true,
+    "name": "get access token for default account (3)"
+  },
+  {
+    "cmd": [
+      "gcloud",
+      "storage",
+      "cp",
+      "-Z",
+      "/foo/file",
+      "gs://bar-bucket/file"
+    ],
+    "env": {
+      "CLOUDSDK_AUTH_ACCESS_TOKEN": "extra.secret.token.should.not.be.logged"
+    },
+    "name": "upload test file (attempt 3)",
+    "~followup_annotations": [
+      "@@@STEP_FAILURE@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "luci-auth",
+      "token",
+      "-scopes",
+      "https://www.googleapis.com/auth/devstorage.read_write",
+      "-lifetime",
+      "3m"
+    ],
+    "infra_step": true,
+    "name": "get access token for default account (4)"
+  },
+  {
+    "cmd": [
+      "gcloud",
+      "storage",
+      "cp",
+      "-Z",
+      "/foo/file",
+      "gs://bar-bucket/file"
+    ],
+    "env": {
+      "CLOUDSDK_AUTH_ACCESS_TOKEN": "extra.secret.token.should.not.be.logged"
+    },
+    "name": "upload test file (attempt 4)",
+    "~followup_annotations": [
+      "@@@STEP_FAILURE@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "luci-auth",
+      "token",
+      "-scopes",
+      "https://www.googleapis.com/auth/devstorage.read_write",
+      "-lifetime",
+      "3m"
+    ],
+    "infra_step": true,
+    "name": "get access token for default account (5)"
+  },
+  {
+    "cmd": [
+      "gcloud",
+      "storage",
+      "cp",
+      "-Z",
+      "/foo/file",
+      "gs://bar-bucket/file"
+    ],
+    "env": {
+      "CLOUDSDK_AUTH_ACCESS_TOKEN": "extra.secret.token.should.not.be.logged"
+    },
+    "name": "upload test file (attempt 5)",
+    "~followup_annotations": [
+      "@@@STEP_FAILURE@@@"
+    ]
+  },
+  {
+    "failure": {
+      "failure": {},
+      "humanReason": "Step('upload test file (attempt 5)') (retcode: 1)"
+    },
+    "name": "$result"
+  }
+]

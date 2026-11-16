@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="video-test.js"></script>
+    <script>
+    function HEVCParameterSetToString(set) {
+        return `{ ${set.codec}, ${set.generalProfileSpace }, ${set.generalProfileIDC }, ${set.generalProfileCompatibilityFlags }, ${set.generalTierFlag}, [${set.generalConstraintIndicatorFlags}], ${set.generalLevelIDC } }`;
+    }
+    function isEqualHEVCParameterSet(setA, setB) {
+        return setA.codec === setB.codec
+            && setA.generalProfileSpace === setB.generalProfileSpace
+            && setA.generalProfileIDC === setB.generalProfileIDC
+            && setA.generalProfileCompatibilityFlags === setB.generalProfileCompatibilityFlags
+            && setA.generalTierFlag === setB.generalTierFlag
+            && setA.generalLevelIDC === setB.generalLevelIDC
+            && setA.generalConstraintIndicatorFlags[0] == setB.generalConstraintIndicatorFlags[0]
+            && setA.generalConstraintIndicatorFlags[1] == setB.generalConstraintIndicatorFlags[1]
+            && setA.generalConstraintIndicatorFlags[2] == setB.generalConstraintIndicatorFlags[2]
+            && setA.generalConstraintIndicatorFlags[3] == setB.generalConstraintIndicatorFlags[3]
+            && setA.generalConstraintIndicatorFlags[4] == setB.generalConstraintIndicatorFlags[4]
+            && setA.generalConstraintIndicatorFlags[5] == setB.generalConstraintIndicatorFlags[5]
+    }
+    function makeHEVCParameterSet(codec, generalProfileSpace, generalProfileIDC, generalProfileCompatibilityFlags, generalTierFlag, generalConstraintIndicatorFlags, generalLevelIDC)
+    {
+        return {
+            codec: codec,
+            generalProfileSpace: generalProfileSpace,
+            generalProfileIDC: generalProfileIDC,
+            generalProfileCompatibilityFlags: generalProfileCompatibilityFlags,
+            generalTierFlag: generalTierFlag,
+            generalConstraintIndicatorFlags: generalConstraintIndicatorFlags,
+            generalLevelIDC: generalLevelIDC,
+        };
+    }
+    function testExpectedHEVCParameterSet(testFuncString, expected)
+    {
+        let observed = eval(testFuncString);
+        let success = isEqualHEVCParameterSet(observed, expected);
+        reportExpected(success, testFuncString, '===', HEVCParameterSetToString(expected), HEVCParameterSetToString(observed));
+    }
+    window.addEventListener('load', event => {
+        testExpected('internals.parseHEVCCodecParameters("bad-parameter")', null);
+        testExpected('internals.parseHEVCCodecParameters("hvc1")', null);
+        testExpectedHEVCParameterSet('internals.parseHEVCCodecParameters("hev1.1.6.L93")', makeHEVCParameterSet('hev1', 0, 1, 0x60000000, 0, [0, 0, 0, 0, 0, 0], 93));
+        testExpectedHEVCParameterSet('internals.parseHEVCCodecParameters("hvc1.A4.41.H120")', makeHEVCParameterSet('hvc1', 1, 4, 0x82000000, 1, [0, 0, 0, 0, 0, 0], 120));
+        testExpectedHEVCParameterSet('internals.parseHEVCCodecParameters("hev1.A4.41.H120.B0")', makeHEVCParameterSet('hev1', 1, 4, 0x82000000, 1, [176, 0, 0, 0, 0, 0], 120));
+        testExpectedHEVCParameterSet('internals.parseHEVCCodecParameters("hvc1.B1.4.L63")', makeHEVCParameterSet('hvc1', 2, 1, 0x20000000, 0, [0, 0, 0, 0, 0, 0], 63));
+        testExpected('internals.parseHEVCCodecParameters("hev1.D1.4.L63")', null);
+        testExpected('internals.parseHEVCCodecParameters("hev1.B1.4.L68000")', null);
+        endTest();
+    }, { once: true });
+    </script>
+</head>
+<body>
+</body>
+</html>

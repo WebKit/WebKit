@@ -1,0 +1,11 @@
+Test parsing various invalid rgb colors
+Parsing rgb(128, 123, 255, 0.2%)
+PASS expectedStyle is actualStyle
+Parsing rgb(128, 123, 255, 2.%)
+PASS expectedStyle is actualStyle
+Parsing rgb(128, 123, 255, 20.)
+PASS expectedStyle is actualStyle
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

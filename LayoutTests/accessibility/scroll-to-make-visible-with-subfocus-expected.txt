@@ -1,0 +1,11 @@
+Tests that scrolling to make a certain region within an element visible successfully scrolls the main window.
+
+PASS: window.pageYOffset === 0
+PASS: window.pageYOffset >= minYOffset === true
+PASS: window.pageYOffset <= maxYOffset === true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+5000-pixel box
+Target

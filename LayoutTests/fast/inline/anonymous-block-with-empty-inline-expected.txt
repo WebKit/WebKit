@@ -1,0 +1,3 @@
+webkit.org/b/115818: The empty inline should get a linebox
+PASS
+ 

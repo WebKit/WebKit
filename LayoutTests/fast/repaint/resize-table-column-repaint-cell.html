@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+table {
+    width: 200px;
+    border-spacing: 0px;
+}
+td {
+    height: 100px;
+}
+</style>
+<script src="resources/repaint.js" type="text/javascript"></script>
+<script type="text/javascript">
+if (window.testRunner)
+    testRunner.dumpAsText(true);
+
+function repaintTest() {
+    document.getElementById("resizeMe").style.width = "50px";
+}
+</script>
+</head>
+<body onload="runRepaintTest();">
+<!--
+    This test checks that changing a cell's logical width through a <col> properly repaints the cells.
+    There should be 3 cells below: a 50px wide blue cell, a 100px wide green cell and 50px wide purple cell.
+-->
+<table>
+    <col style="width: 20px;" id="resizeMe"></col>
+    <col style="width: 100px;"></col>
+    <col></col>
+    <tbody>
+        <tr>
+            <td style="background-color: blue"></td>
+            <td style="background-color: green"></td>
+            <td style="background-color: purple"></td>
+        </tr>
+    </tbody>
+</table>
+</body>
+</html>

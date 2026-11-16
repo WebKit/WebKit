@@ -1,0 +1,21 @@
+// Copyright 2019 Google LLC
+// Use of this source code is governed by a BSD-style license that can be found in the LICENSE file.
+#include "tools/fiddle/examples.h"
+REG_FIDDLE(Canvas_clipPath_2, 256, 256, false, 0) {
+void draw(SkCanvas* canvas) {
+    SkPaint paint;
+    paint.setAntiAlias(true);
+    SkPath path = SkPathBuilder(SkPathFillType::kWinding)
+                  .addRect({20, 15, 100, 95})
+                  .addRect({50, 65, 130, 135})
+                  .detach();
+    canvas->save();
+    canvas->clipPath(path, SkClipOp::kIntersect);
+    canvas->drawCircle(70, 85, 60, paint);
+    canvas->restore();
+    canvas->translate(100, 100);
+    path.setFillType(SkPathFillType::kEvenOdd);
+    canvas->clipPath(path, SkClipOp::kIntersect);
+    canvas->drawCircle(70, 85, 60, paint);
+}
+}  // END FIDDLE

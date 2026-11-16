@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="resources/webgl_test_files/resources/js-test-style.css"/>
+<script src="resources/webgl_test_files/js/js-test-pre.js"></script>
+<script src="resources/webgl_test_files/js/webgl-test-utils.js"></script>
+</head>
+<body>
+<div id="description"></div>
+<div id="console"></div>
+<script>
+"use strict";
+
+description("Test that readPixels with invalid PBO offsets are properly validated and don't cause crashes.");
+
+var wtu = WebGLTestUtils;
+var gl;
+var expected = [51, 102, 204, 204];
+var expectedNoAlpha = [51, 102, 204, 255];
+var pixels;
+
+function runTest(contextOptions) {
+    var canvas = document.createElement("canvas");
+    var gl = wtu.create3DContext(canvas, contextOptions, 2);
+
+    gl.clearColor(0.2, 0.4, 0.8, 0.8);
+    gl.clear(gl.COLOR_BUFFER_BIT);
+
+    var pbo = gl.createBuffer();
+    gl.bindBuffer(gl.PIXEL_PACK_BUFFER, pbo);
+    var bufferSize = 64 * 64 * 4;
+    gl.bufferData(gl.PIXEL_PACK_BUFFER, bufferSize, gl.DYNAMIC_READ);
+    gl.bindBuffer(gl.COPY_READ_BUFFER, pbo); // For verification getBufferSubData() calls below.
+
+    gl.bindFramebuffer(gl.READ_FRAMEBUFFER, null);
+
+    gl.readPixels(0, 0, 64, 64, gl.RGBA, gl.UNSIGNED_BYTE, 0);
+    wtu.glErrorShouldBe(gl, gl.NO_ERROR, "offset==0");
+    pixels = new Uint8Array(4);
+    gl.getBufferSubData(gl.COPY_READ_BUFFER, 0, pixels);
+    if (contextOptions.alpha)
+        shouldBe("pixels", "expected");
+    else
+        shouldBe("pixels", "expectedNoAlpha");
+
+
+    gl.bufferData(gl.COPY_READ_BUFFER, bufferSize, gl.DYNAMIC_READ);
+    gl.readPixels(0, 0, 32, 32, gl.RGBA, gl.UNSIGNED_BYTE, 256);
+    wtu.glErrorShouldBe(gl, gl.NO_ERROR, "32x32, offset=256");
+    pixels = new Uint8Array(4);
+    gl.getBufferSubData(gl.COPY_READ_BUFFER, 256, pixels);
+    if (contextOptions.alpha)
+        shouldBe("pixels", "expected");
+    else
+        shouldBe("pixels", "expectedNoAlpha");
+    pixels = new Uint8Array(4);
+    gl.getBufferSubData(gl.COPY_READ_BUFFER, 0, pixels);
+    shouldBe("pixels", "[0, 0, 0, 0]");
+
+    gl.readPixels(0, 0, 64, 64, gl.RGBA, gl.UNSIGNED_BYTE, -1);
+    wtu.glErrorShouldBe(gl, gl.INVALID_VALUE, "offset=-1");
+
+    gl.readPixels(0, 0, 64, 64, gl.RGBA, gl.UNSIGNED_BYTE, 4);
+    wtu.glErrorShouldBe(gl, gl.INVALID_OPERATION, "offset==4");
+
+    gl.readPixels(0, 0, 64, 64, gl.RGBA, gl.UNSIGNED_BYTE, bufferSize);
+    wtu.glErrorShouldBe(gl, gl.INVALID_OPERATION, "offset==bufferSize");
+
+    gl.readPixels(0, 0, 64, 64, gl.RGBA, gl.UNSIGNED_BYTE, bufferSize - 1);
+    wtu.glErrorShouldBe(gl, gl.INVALID_OPERATION, "offset==bufferSize - 1");
+
+    gl.readPixels(0, 0, 64, 64, gl.RGBA, gl.UNSIGNED_BYTE, 0x7FFFFFFF);
+    wtu.glErrorShouldBe(gl, gl.INVALID_OPERATION, "offset==0x7FFFFFFF");
+
+    gl.readPixels(0, 0, 64, 64, gl.RGBA, gl.UNSIGNED_BYTE, 0x7FFFFFFD);
+    wtu.glErrorShouldBe(gl, gl.INVALID_OPERATION, "offset==0x7FFFFFFD");
+}
+
+for (let alpha of [true, false]) {
+    for (let antialias of [true, false])
+        runTest({alpha, antialias});
+}
+finishTest();
+</script>
+</body>
+</html>

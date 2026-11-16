@@ -1,0 +1,5 @@
+
+PASS <model autoplay> added to a rendering spatial portal plays its animation
+PASS playbackRate set before a <model> joins a rendering spatial portal is applied
+PASS loop set before a <model> joins a rendering spatial portal is applied
+

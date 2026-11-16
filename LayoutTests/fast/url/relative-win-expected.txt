@@ -1,0 +1,25 @@
+Test resolution of relative Windows-like URLs.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS canonicalize('http://host/') is 'http://host/'
+PASS canonicalize('bar') is 'file:///C:/bar'
+PASS canonicalize('../../../bar.html') is 'file:///C:/bar.html'
+PASS canonicalize('/../bar.html') is 'file:///C:/bar.html'
+FAIL canonicalize('\\\\another\\path') should be . Was http://another/path.
+FAIL canonicalize('//c:/foo') should be file:///C:/foo. Was file:///c:/foo.
+FAIL canonicalize('//localhost/c:/foo') should be file:///C:/foo. Was file:///c:/foo.
+FAIL canonicalize('c:') should be . Was c:.
+FAIL canonicalize('c:/foo') should be . Was c:/foo.
+FAIL canonicalize('c:\\foo') should be . Was c:\foo.
+FAIL canonicalize('/z:/bar') should be file:///Z:/bar. Was file:///z:/bar.
+PASS canonicalize('/bar') is 'file:///C:/bar'
+FAIL canonicalize('/bar') should be file://localhost/C:/bar. Was file:///C:/bar.
+PASS canonicalize('/bar') is 'file:///C:/bar'
+PASS canonicalize('//somehost/path') is 'file://somehost/path'
+FAIL canonicalize('/\\//somehost/path') should be file://somehost/path. Was file:////somehost/path.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

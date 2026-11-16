@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<style>
+.form-element {
+    position: relative;
+}
+
+.form-textbox::-webkit-contacts-auto-fill-button {
+    position: absolute;
+    left: 110px;
+    visibility: hidden;
+}
+
+.form-textbox {
+	height: 200px;
+}
+</style>
+<div class=form-element>
+  <input id=auto_fill_this class=form-textbox type="text" value="Text">
+</div>
+<script>
+if (window.testRunner) {
+	window.internals.setAutofillButtonType(document.getElementById("auto_fill_this"), "Contacts");
+	testRunner.waitUntilDone();
+	eventSender.mouseMoveTo(10, 10);
+	eventSender.mouseDown();
+	eventSender.mouseUp();
+	testRunner.notifyDone();
+}
+</script>

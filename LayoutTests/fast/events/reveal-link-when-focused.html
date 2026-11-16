@@ -1,0 +1,23 @@
+<html>
+<head>
+<script>
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+function focusOutOfSightLink()
+{
+	document.getElementsByTagName("a")[0].focus();
+    setTimeout(() => {
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }, 0);
+}
+</script>
+</head>
+<body onLoad="focusOutOfSightLink()">
+<div style="height:2000px;">
+padding to make link be initially scrolled out of sight
+</div>
+<a href="">this link should be focused and revealed after page loads</a>
+</body>
+</html>

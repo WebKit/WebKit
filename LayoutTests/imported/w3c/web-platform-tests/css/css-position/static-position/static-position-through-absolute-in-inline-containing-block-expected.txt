@@ -1,0 +1,8 @@
+
+PASS writing-mode: horizontal-tb; fixed positioned box in an absolutely positioned box without insets in an inline box containing block
+PASS writing-mode: horizontal-tb; fixed positioned box in an absolutely positioned box with insets in an inline box containing block
+PASS writing-mode: vertical-rl; fixed positioned box in an absolutely positioned box without insets in an inline box containing block
+PASS writing-mode: vertical-rl; fixed positioned box in an absolutely positioned box with insets in an inline box containing block
+PASS writing-mode: vertical-lr; fixed positioned box in an absolutely positioned box without insets in an inline box containing block
+PASS writing-mode: vertical-lr; fixed positioned box in an absolutely positioned box with insets in an inline box containing block
+

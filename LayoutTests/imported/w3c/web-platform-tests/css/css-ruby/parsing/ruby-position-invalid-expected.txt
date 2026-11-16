@@ -1,0 +1,7 @@
+
+PASS e.style['ruby-position'] = "auto" should not set the property value
+PASS e.style['ruby-position'] = "center" should not set the property value
+PASS e.style['ruby-position'] = "above" should not set the property value
+PASS e.style['ruby-position'] = "10px 20px" should not set the property value
+PASS e.style['ruby-position'] = "over under" should not set the property value
+

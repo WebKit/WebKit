@@ -1,0 +1,11 @@
+Test that offscreen canvas does not allow leaking cross-site image.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Calling toDataURL() on an untainted canvas was allowed.
+PASS Calling toDataURL() on remote image was not allowed - Threw error: (SecurityError: The operation is insecure.).
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

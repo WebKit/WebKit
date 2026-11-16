@@ -1,0 +1,261 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script>
+    let iframe;
+
+    function createAnimation() {
+        (window.animations ??= []).push(document.documentElement.animate([{opacity: 0}, {opacity: 1}], {duration: 10000}));
+    }
+
+    // Created before the inspector enables the Animation domain, so only the domain's own scan can report it.
+    createAnimation();
+
+    function addCrossOriginIFrame() {
+        let crossOriginHost = location.hostname === "localhost" ? "127.0.0.1" : "localhost";
+        iframe = document.createElement("iframe");
+        iframe.src = `http://${crossOriginHost}:8000/site-isolation/inspector/animation/resources/iframe-with-animation.html`;
+        document.body.appendChild(iframe);
+    }
+
+    function removeIFrame() {
+        iframe.remove();
+    }
+
+    function addSameOriginIFrame() {
+        iframe = document.createElement("iframe");
+        iframe.src = "resources/iframe-with-animation.html";
+        document.body.appendChild(iframe);
+    }
+
+    function navigateIFrame() {
+        iframe.src = "about:blank";
+    }
+
+    function test() {
+        let suite = InspectorTest.createAsyncSuite("SiteIsolation.Animation.IFrame");
+
+        let animationCollection = WI.animationManager.animationCollection;
+        let frameTarget;
+        let frameAnimation;
+
+        function animationsOfTarget(target) {
+            return Array.from(animationCollection).filter((animation) => animation.target === target);
+        }
+
+        function awaitAnimationAdded(predicate) {
+            return new Promise((resolve) => {
+                let listener = animationCollection.addEventListener(WI.Collection.Event.ItemAdded, (event) => {
+                    let animation = event.data.item;
+                    if (!predicate(animation))
+                        return;
+                    animationCollection.removeEventListener(WI.Collection.Event.ItemAdded, listener);
+                    resolve(animation);
+                });
+            });
+        }
+
+        function awaitAnimationAddedForFrameTarget() {
+            return awaitAnimationAdded((animation) => animation.target.type === WI.TargetType.Frame && animation.target !== InspectorTest.mainFrameTarget);
+        }
+
+        async function awaitAnimationCollectionSize(size) {
+            while (animationCollection.size < size)
+                await animationCollection.awaitEvent(WI.Collection.Event.ItemAdded);
+        }
+
+        async function awaitNoAnimationsOfTarget(target) {
+            while (animationsOfTarget(target).length)
+                await animationCollection.awaitEvent(WI.Collection.Event.ItemRemoved);
+        }
+
+        function logStackTrace(animation) {
+            for (let [i, callFrame] of (animation.stackTrace?.callFrames ?? []).entries()) {
+                let text = `  ${i}: ` + (callFrame.functionName || "(anonymous function)");
+                if (callFrame.nativeCode)
+                    text += " - [native code]";
+                else if (callFrame.programCode)
+                    text += " - [program code]";
+                else if (callFrame.sourceCodeLocation)
+                    text += " - " + callFrame.sourceCodeLocation.sourceCode.url.substring(callFrame.sourceCodeLocation.sourceCode.url.lastIndexOf("/") + 1);
+                InspectorTest.log(text);
+            }
+        }
+
+        suite.addTestCase({
+            name: "SiteIsolation.Animation.MainFrame.ReportedOnce",
+            description: "An animation in the main frame should be reported once, by the main frame's frame target, and not by the page target.",
+            async test() {
+                let mainFrameTarget = InspectorTest.mainFrameTarget;
+                InspectorTest.expectEqual(mainFrameTarget.type, WI.TargetType.Frame, "Main frame's target should have Frame type.");
+                InspectorTest.expectEqual(animationsOfTarget(mainFrameTarget).length, 1, "The animation that existed before the domain was enabled should be reported once.");
+
+                let animationAddedPromise = awaitAnimationAdded((animation) => animation.target === mainFrameTarget);
+                await InspectorTest.evaluateInPage("createAnimation()");
+                let animation = await animationAddedPromise;
+
+                // Let a duplicate report, if there were one, arrive.
+                await InspectorTest.evaluateInPage("0");
+                await new Promise((resolve) => setTimeout(resolve, 0));
+
+                InspectorTest.expectEqual(animationsOfTarget(mainFrameTarget).length, 2, "Both main frame animations should be reported once.");
+                InspectorTest.expectEqual(animationsOfTarget(WI.pageTarget).length, 0, "The page target should not report any animation.");
+                InspectorTest.expectEqual(animationCollection.size, 2, "There should be no other animation.");
+
+                await InspectorTest.expectException(async () => {
+                    await WI.pageTarget.AnimationAgent.requestEffect(animation.animationId);
+                });
+            }
+        });
+
+        suite.addTestCase({
+            name: "SiteIsolation.Animation.CrossOrigin.AnimationCreated",
+            description: "An animation created by a cross-origin iframe should be reported by that iframe's frame target.",
+            async test() {
+                let animationAddedPromise = awaitAnimationAddedForFrameTarget();
+
+                InspectorTest.evaluateInPage("addCrossOriginIFrame()");
+
+                let animation = await animationAddedPromise;
+                frameTarget = animation.target;
+
+                InspectorTest.expectEqual(frameTarget.type, WI.TargetType.Frame, "Animation target should have Frame type.");
+                InspectorTest.expectThat(frameTarget.hasDomain("Animation"), "Frame target should have the Animation domain.");
+                InspectorTest.expectEqual(animation.animationType, WI.Animation.Type.WebAnimation, "Animation should be a web animation.");
+            }
+        });
+
+        suite.addTestCase({
+            name: "SiteIsolation.Animation.CrossOrigin.StackTrace",
+            description: "The stack trace of an animation created in a cross-origin iframe should resolve against that iframe's scripts.",
+            async test() {
+                let animationAddedPromise = awaitAnimationAdded((animation) => animation.target === frameTarget);
+
+                await frameTarget.RuntimeAgent.evaluate.invoke({expression: "createAnimation()", objectGroup: "test"});
+
+                frameAnimation = await animationAddedPromise;
+                InspectorTest.expectEqual(frameAnimation.target, frameTarget, "Animation should be reported by the same frame target.");
+                logStackTrace(frameAnimation);
+            }
+        });
+
+        suite.addTestCase({
+            name: "SiteIsolation.Animation.CrossOrigin.RequestEffect",
+            description: "The effect of an animation in a cross-origin iframe should be requested from that iframe's frame target.",
+            async test() {
+                await frameAnimation.ensureEffect();
+
+                InspectorTest.expectEqual(frameAnimation.keyframes.length, 2, "Animation should have two keyframes.");
+                InspectorTest.expectEqual(frameAnimation.iterationDuration, 10000, "Animation should have the iteration duration of its effect.");
+            }
+        });
+
+        suite.addTestCase({
+            name: "SiteIsolation.Animation.CrossOrigin.RequestEffectTarget",
+            description: "The target element of an animation in a cross-origin iframe should be a node of that iframe's frame target.",
+            async test() {
+                let styleable = await new Promise((resolve) => frameAnimation.requestEffectTarget(resolve));
+                InspectorTest.expectNotNull(styleable, "Animation should have an effect target.");
+                if (!styleable)
+                    return;
+
+                InspectorTest.expectEqual(styleable.node.owningTarget, frameTarget, "Effect target node should be owned by the frame target.");
+                InspectorTest.expectEqual(styleable.node.getAttribute("id"), "box", "Effect target node should be the animated element.");
+            }
+        });
+
+        suite.addTestCase({
+            name: "SiteIsolation.Animation.CrossOrigin.ResolveAnimation",
+            description: "Resolving an animation in a cross-origin iframe should produce an object of that iframe's frame target.",
+            async test() {
+                let remoteObject = await new Promise((resolve) => WI.RemoteObject.resolveAnimation(frameAnimation, "test", resolve));
+                InspectorTest.expectNotNull(remoteObject, "Should resolve the animation.");
+                if (!remoteObject)
+                    return;
+
+                InspectorTest.expectEqual(remoteObject.target, frameTarget, "Remote object should belong to the frame target.");
+                InspectorTest.expectEqual(remoteObject.description, "Animation", "Remote object should be an Animation.");
+            }
+        });
+
+        suite.addTestCase({
+            name: "SiteIsolation.Animation.CrossOrigin.IdUniqueness",
+            description: "Animations in the main frame and in a cross-origin iframe should have distinct identifiers, although each web process numbers its own animations.",
+            async test() {
+                const animationsPerFrame = 5;
+
+                let expression = `for (let i = 0; i < ${animationsPerFrame}; ++i) createAnimation();`;
+                await Promise.all([
+                    InspectorTest.evaluateInPage(expression),
+                    frameTarget.RuntimeAgent.evaluate.invoke({expression, objectGroup: "test"}),
+                    awaitAnimationCollectionSize(animationCollection.size + 2 * animationsPerFrame),
+                ]);
+
+                let animations = Array.from(animationCollection);
+                let identifiers = animations.map((animation) => animation.animationId);
+                InspectorTest.expectEqual(new Set(identifiers).size, identifiers.length, "Animation identifiers should be unique across the main frame and the cross-origin iframe.");
+
+                // Unlike uniqueness, this also fails without process qualification when the two processes' counters happen not to overlap.
+                let processPart = (animation) => /^animation:(\d+)\.\d+$/.exec(animation.animationId)?.[1];
+                let mainFrameProcessParts = new Set(animations.filter((animation) => animation.target !== frameTarget).map(processPart));
+                let iframeProcessParts = new Set(animations.filter((animation) => animation.target === frameTarget).map(processPart));
+                InspectorTest.expectThat(animations.every(processPart), "Animation identifiers should have the form animation:<process>.<object>.");
+                InspectorTest.expectEqual(mainFrameProcessParts.size, 1, "Main frame animations should share one process part.");
+                InspectorTest.expectEqual(iframeProcessParts.size, 1, "Iframe animations should share one process part.");
+                InspectorTest.expectEqual(new Set(animations.map(processPart)).size, 2, "Main frame and iframe animations should have different process parts.");
+            }
+        });
+
+        suite.addTestCase({
+            name: "SiteIsolation.Animation.CrossOrigin.RemoveIFrame",
+            description: "Removing the cross-origin iframe should remove its animations.",
+            async test() {
+                let targetRemovedPromise = WI.targetManager.awaitEvent(WI.TargetManager.Event.TargetRemoved);
+
+                InspectorTest.evaluateInPage("removeIFrame()");
+
+                await targetRemovedPromise;
+
+                InspectorTest.expectEqual(animationsOfTarget(frameTarget).length, 0, "Frame target should have no animations.");
+            }
+        });
+
+        suite.addTestCase({
+            name: "SiteIsolation.Animation.SameOrigin.AnimationCreated",
+            description: "An animation created by a same-origin iframe should be reported by that iframe's own frame target.",
+            async test() {
+                let animationAddedPromise = awaitAnimationAddedForFrameTarget();
+
+                InspectorTest.evaluateInPage("addSameOriginIFrame()");
+
+                let animation = await animationAddedPromise;
+                InspectorTest.expectEqual(animation.target.type, WI.TargetType.Frame, "Animation target should have Frame type.");
+                InspectorTest.expectNotEqual(animation.target, InspectorTest.mainFrameTarget, "Animation target should not be the main frame's target.");
+                InspectorTest.expectNotEqual(animation.target, frameTarget, "Animation target should not be the removed cross-origin frame target.");
+
+                frameTarget = animation.target;
+            }
+        });
+
+        suite.addTestCase({
+            name: "SiteIsolation.Animation.SameOrigin.Navigate",
+            description: "Navigating a same-origin iframe should remove the animations of the document it leaves.",
+            async test() {
+                InspectorTest.expectEqual(animationsOfTarget(frameTarget).length, 1, "Iframe should have its animation.");
+
+                let animationsRemovedPromise = awaitNoAnimationsOfTarget(frameTarget);
+
+                InspectorTest.evaluateInPage("navigateIFrame()");
+
+                await animationsRemovedPromise;
+
+                InspectorTest.expectEqual(animationsOfTarget(frameTarget).length, 0, "Iframe should have no animations after navigating.");
+            }
+        });
+
+        suite.runTestCasesAndFinish();
+    }
+</script>
+
+<body onload="runTest()">
+    <p>Test that animations created in iframes are reported through the frame target's Animation domain under site isolation.</p>
+</body>

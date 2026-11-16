@@ -1,0 +1,14 @@
+Start selecting here
+
+Hello
+End selection here
+
+Verifies that the highlight appears over selected content in composited layers
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+PASS viewBeforeSelecting is not viewAfterSelecting
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,17 @@
+<style>
+    html {
+        position: absolute;
+    }
+    dialog {
+        position: absolute;
+        display: block;
+    }
+</style>
+<dialog id=dialog></dialog>
+Test passes if it does not crash.
+<script>
+    if (window.testRunner)
+        testRunner.dumpAsText();
+    document.body.offsetHeight;
+    dialog.showModal();
+</script>

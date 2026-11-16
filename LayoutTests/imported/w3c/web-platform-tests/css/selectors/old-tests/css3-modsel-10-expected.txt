@@ -1,0 +1,5 @@
+This paragraph should have a green background because its title attribute ends with "bar"
+
+
+PASS Substring matching attribute selector (end)
+

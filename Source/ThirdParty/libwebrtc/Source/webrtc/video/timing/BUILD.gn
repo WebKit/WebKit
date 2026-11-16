@@ -1,0 +1,218 @@
+# Copyright (c) 2025 The WebRTC project authors. All Rights Reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS.  All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+import("../../webrtc.gni")
+
+rtc_library("default_video_jitter_timing") {
+  visibility = [
+    ":*",
+    "../../modules/video_coding/timing:timing_module",
+  ]
+  sources = [
+    "default_video_jitter_timing.cc",
+    "default_video_jitter_timing.h",
+  ]
+  deps = [
+    ":inter_frame_delay_variation_calculator",
+    ":jitter_estimator",
+    ":timestamp_extrapolator",
+    "../../api:field_trials_view",
+    "../../api/environment",
+    "../../api/units:time_delta",
+    "../../api/units:timestamp",
+    "../../api/video/timing:video_jitter_timing_interface",
+    "../../system_wrappers",
+  ]
+}
+
+rtc_library("frame_delay_variation_kalman_filter") {
+  visibility = [ ":*" ]
+  sources = [
+    "frame_delay_variation_kalman_filter.cc",
+    "frame_delay_variation_kalman_filter.h",
+  ]
+  deps = [ "../../rtc_base:checks" ]
+}
+
+rtc_library("inter_frame_delay_variation_calculator") {
+  visibility = [ ":*" ]
+  sources = [
+    "inter_frame_delay_variation_calculator.cc",
+    "inter_frame_delay_variation_calculator.h",
+  ]
+  deps = [
+    "../../api/units:frequency",
+    "../../api/units:time_delta",
+    "../../api/units:timestamp",
+    "../../modules:module_api_public",
+    "../../rtc_base:rtc_numerics",
+  ]
+}
+
+rtc_library("jitter_estimator") {
+  visibility = [ ":*" ]
+  sources = [
+    "jitter_estimator.cc",
+    "jitter_estimator.h",
+  ]
+  deps = [
+    ":frame_delay_variation_kalman_filter",
+    ":rtt_filter",
+    "../../api:field_trials_view",
+    "../../api/units:data_size",
+    "../../api/units:frequency",
+    "../../api/units:time_delta",
+    "../../api/units:timestamp",
+    "../../rtc_base:checks",
+    "../../rtc_base:logging",
+    "../../rtc_base:rolling_accumulator",
+    "../../rtc_base:rtc_numerics",
+    "../../rtc_base/experiments:field_trial_parser",
+    "../../system_wrappers",
+    "//third_party/abseil-cpp/absl/strings:string_view",
+  ]
+}
+
+rtc_library("rtt_filter") {
+  visibility = [ ":*" ]
+  sources = [
+    "rtt_filter.cc",
+    "rtt_filter.h",
+  ]
+  deps = [
+    "../../api/units:time_delta",
+    "../../rtc_base:checks",
+    "//third_party/abseil-cpp/absl/algorithm:container",
+    "//third_party/abseil-cpp/absl/container:inlined_vector",
+  ]
+}
+
+rtc_library("timestamp_extrapolator") {
+  visibility = [ ":*" ]
+  sources = [
+    "timestamp_extrapolator.cc",
+    "timestamp_extrapolator.h",
+  ]
+  deps = [
+    "../../api:field_trials_view",
+    "../../api/units:time_delta",
+    "../../api/units:timestamp",
+    "../../rtc_base:logging",
+    "../../rtc_base:rtc_numerics",
+    "../../rtc_base/experiments:field_trial_parser",
+    "../../system_wrappers:metrics",
+    "//third_party/abseil-cpp/absl/strings:string_view",
+  ]
+}
+
+if (rtc_include_tests) {
+  rtc_cc_test("default_video_jitter_timing_unittest") {
+    sources = [ "default_video_jitter_timing_unittest.cc" ]
+    deps = [
+      ":default_video_jitter_timing",
+      "../../api:field_trials",
+      "../../api/environment",
+      "../../api/units:data_size",
+      "../../api/units:time_delta",
+      "../../api/units:timestamp",
+      "../../system_wrappers",
+      "../../test:create_test_environment",
+      "../../test:create_test_field_trials",
+      "../../test:test_support",
+    ]
+  }
+
+  rtc_cc_test("frame_delay_variation_kalman_filter_unittest") {
+    sources = [ "frame_delay_variation_kalman_filter_unittest.cc" ]
+    deps = [
+      ":frame_delay_variation_kalman_filter",
+      "../../test:test_support",
+    ]
+  }
+
+  rtc_cc_test("inter_frame_delay_variation_calculator_unittest") {
+    sources = [ "inter_frame_delay_variation_calculator_unittest.cc" ]
+    deps = [
+      ":inter_frame_delay_variation_calculator",
+      "../../api/units:frequency",
+      "../../api/units:time_delta",
+      "../../api/units:timestamp",
+      "../../system_wrappers",
+      "../../test:test_support",
+    ]
+  }
+
+  rtc_cc_test("jitter_estimator_unittest") {
+    sources = [ "jitter_estimator_unittest.cc" ]
+    deps = [
+      ":jitter_estimator",
+      "../../api:field_trials",
+      "../../api/units:data_size",
+      "../../api/units:frequency",
+      "../../api/units:time_delta",
+      "../../system_wrappers",
+      "../../test:create_test_field_trials",
+      "../../test:test_support",
+    ]
+  }
+
+  rtc_cc_test("rtt_filter_unittest") {
+    sources = [ "rtt_filter_unittest.cc" ]
+    deps = [
+      ":rtt_filter",
+      "../../api/units:time_delta",
+      "../../test:test_support",
+    ]
+  }
+
+  rtc_cc_test("timestamp_extrapolator_unittest") {
+    sources = [ "timestamp_extrapolator_unittest.cc" ]
+    deps = [
+      ":timestamp_extrapolator",
+      "../../api/units:frequency",
+      "../../api/units:time_delta",
+      "../../api/units:timestamp",
+      "../../system_wrappers",
+      "../../system_wrappers:metrics",
+      "../../test:create_test_field_trials",
+      "../../test:test_support",
+    ]
+  }
+
+  rtc_test_suite("video_timing_tests") {
+    tests = [
+      ":default_video_jitter_timing_unittest",
+      ":frame_delay_variation_kalman_filter_unittest",
+      ":inter_frame_delay_variation_calculator_unittest",
+      ":jitter_estimator_unittest",
+      ":rtt_filter_unittest",
+      ":timestamp_extrapolator_unittest",
+    ]
+
+    if (rtc_enable_protobuf) {
+      tests += [
+        "simulator:assembler_unittest",
+        "simulator:decodability_simulator_unittest",
+        "simulator:decodability_tracker_unittest",
+        "simulator:frame_base_unittest",
+        "simulator:log_classifiers_unittest",
+        "simulator:receiver_unittest",
+        "simulator:rendering_simulator_unittest",
+        "simulator:rendering_tracker_unittest",
+        "simulator:results_base_unittest",
+        "simulator:rtc_event_log_driver_unittest",
+        "simulator:rtcp_rtt_calculator_unittest",
+        "simulator:rtp_packet_simulator_unittest",
+        "simulator:rtt_simulator_unittest",
+        "simulator:stream_base_unittest",
+        "simulator/test:encoded_frame_generators_unittest",
+        "simulator/test:test_resources_unittest",
+      ]
+    }
+  }
+}

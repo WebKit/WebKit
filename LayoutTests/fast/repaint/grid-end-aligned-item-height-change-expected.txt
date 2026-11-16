@@ -1,0 +1,7 @@
+Tests invalidation of an end aligned grid item which moves when its height changes.
+(repaint rects
+  (rect 0 100 100 70)
+  (rect 0 100 100 50)
+  (rect 0 80 100 70)
+)
+

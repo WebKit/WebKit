@@ -1,0 +1,38 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+<script>
+
+window.jsTestIsAsync = true;
+description("PerformanceNavigationTiming entries should only be queued once per observer.");
+let navigation_callback_already_invoked = false
+window.q = []
+
+new Promise( (resolve) => {
+    new PerformanceObserver(function (entryList) {
+        entryList.getEntries().forEach(function(entry) {
+            shouldBeFalse("navigation_callback_already_invoked")
+            navigation_callback_already_invoked = true
+            resolve()
+        })
+    }).observe({ type: "navigation", buffered: true })
+})
+.then( () => new Promise( (resolve) => {
+    // Produce another entry, completely unrelated to navigation:
+    new PerformanceObserver( (entryList, observer) => {
+        resolve()
+    }).observe({ type: "mark" })
+    performance.mark("New mark")
+}))
+.then( () => {
+    // Spin the event loop to make sure pending spurious callbacks can run
+    // before the test is over:
+    setTimeout(() => finishJSTest(), 5)
+})
+
+</script>
+</body>
+</html>

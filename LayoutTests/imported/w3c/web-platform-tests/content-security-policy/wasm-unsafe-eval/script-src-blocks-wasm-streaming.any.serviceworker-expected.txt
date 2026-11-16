@@ -1,0 +1,4 @@
+
+PASS WebAssembly.compileStreaming() is blocked
+PASS WebAssembly.instantiateStreaming() is blocked
+

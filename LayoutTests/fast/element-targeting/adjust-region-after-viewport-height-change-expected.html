@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/ui-helper.js"></script>
+<style>
+html, body {
+    margin: 0;
+    overflow: hidden;
+}
+
+.content {
+    width: 320px;
+    height: 200px;
+}
+</style>
+</head>
+<body>
+<p class="content">This test requires WebKitTestRunner.</p>
+<script>
+testRunner.waitUntilDone();
+
+addEventListener("load", async () => {
+    await UIHelper.resizeWindowTo(800, 700);
+    await UIHelper.waitForCondition(() => document.documentElement.clientHeight === 700);
+    await UIHelper.renderingUpdate();
+    testRunner.notifyDone();
+});
+</script>
+</body>
+</html>

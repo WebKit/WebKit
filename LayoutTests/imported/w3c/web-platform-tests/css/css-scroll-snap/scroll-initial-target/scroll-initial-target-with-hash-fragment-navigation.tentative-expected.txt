@@ -1,0 +1,4 @@
+
+
+PASS scroll-initial-target does not override hash fragment navigation
+

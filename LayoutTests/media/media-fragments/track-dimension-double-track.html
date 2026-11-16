@@ -1,0 +1,39 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <script src="../video-test.js"></script>
+        <script>
+            var firstAudioId;
+            var secondAudioId;
+
+            function canplaythrough2()
+            {
+                testExpected('video.audioTracks[0].enabled', false);
+                testExpected('video.audioTracks[1].enabled', true);
+                endTest();
+            }
+
+            function canplaythrough1()
+            {
+                testExpected('video.audioTracks.length', 2);
+                firstAudioId = video.audioTracks[0].id;
+                secondAudioId = video.audioTracks[1].id;
+
+                video.src = '../content/vp9-opus-good-3tracks.webm#track=' + encodeURIComponent(firstAudioId) + '&track=' + encodeURIComponent(secondAudioId);
+                waitForEventOnce('canplaythrough', canplaythrough2);
+            }
+
+            function setup()
+            {
+                findMediaElement();
+                video.src = '../content/vp9-opus-good-3tracks.webm';
+                waitForEventOnce('canplaythrough', canplaythrough1);
+            }
+        </script>
+    </head>
+
+    <body onload="setup()">
+        <p>When a "track=" fragment is repeated, every occurrence is considered (unlike "t="), and the last id that matches an audio track is the one that gets selected.</p>
+        <video controls></video>
+    </body>
+</html>

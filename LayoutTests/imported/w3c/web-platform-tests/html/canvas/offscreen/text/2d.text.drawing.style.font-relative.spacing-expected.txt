@@ -1,0 +1,7 @@
+2d.text.drawing.style.font-relative.spacing
+
+Testing letter spacing and word spacing with font-relative length
+
+
+PASS Testing letter spacing and word spacing with font-relative length
+

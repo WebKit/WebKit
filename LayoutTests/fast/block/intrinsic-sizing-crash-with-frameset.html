@@ -1,0 +1,14 @@
+<style>
+#container {
+  width: min-content;
+}
+
+frameset {
+  max-width: min-content;
+  width: 0px;
+}
+</style><div id=container></div>PASS if no crash or assert.<script>
+if (window.testRunner)
+  testRunner.dumpAsText();
+container.appendChild(document.createElement("frameset"));
+</script>

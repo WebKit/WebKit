@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/ui-helper.js"></script>
+<script src="resources/hit-test-utilities.js"></script>
+<style>
+#test-container {
+    position: absolute;
+    top: 100px;
+    left: 100px;
+    border: 1px solid black;
+    width: 200px;
+    height: 200px;
+}
+</style>
+</head>
+<body>
+<div id="test-container">
+    <input>
+</div>
+<script>
+window.jsTestIsAsync = true;
+
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+if (window.internals)
+    internals.settings.setEditableRegionEnabled(true);
+
+async function runTest()
+{
+    if (!window.testRunner) {
+        testFailed("Must be run in WebKitTestRunner.");
+        return;
+    }
+
+    let testContainer = document.getElementById("test-container");
+    await shouldHaveEditableElementsInRectForElement(testContainer);
+    await shouldNotHaveEditableElementsInRect(0, 0, 50, 50);
+
+    document.body.removeChild(testContainer);
+    finishJSTest();
+}
+
+description("Hit tests for editable elements inside the black outlined rectangle.");
+runTest();
+</script>
+</body>
+</html>

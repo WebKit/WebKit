@@ -1,0 +1,65 @@
+This test ensures WebKit does not skip paragraphs when determining the insertion position for paste.
+You should see "hello world<caret> WebKit" below.
+
+Initial markup:
+| "\n"
+| <font>
+|   class="Apple-style-span"
+|   face="'courier new', monospace"
+|   <div>
+|     style="font-family: arial;"
+|     "\n"
+|     <span>
+|       class="Apple-style-span"
+|       style="font-family: 'courier new', monospace;"
+|       "hello"
+|   "\n"
+|   <div>
+|     style="font-family: arial; "
+|     <span>
+|       class="Apple-style-span"
+|       style="font-family: 'courier new', monospace;"
+|       " WebKit"
+| "\n"
+
+After inserting " world":
+| "\n"
+| <font>
+|   class="Apple-style-span"
+|   face="'courier new', monospace"
+|   <div>
+|     style="font-family: arial;"
+|     "\n"
+|     <span>
+|       class="Apple-style-span"
+|       style="font-family: 'courier new', monospace;"
+|       "hello"
+|   "\n"
+|   <div>
+|     style="font-family: arial; "
+|     <span>
+|       class="Apple-style-span"
+|       style="font-family: 'courier new', monospace;"
+|       " WebKit"
+| "\n"
+
+After deleting line break before " WebKit":
+| "\n"
+| <font>
+|   class="Apple-style-span"
+|   face="'courier new', monospace"
+|   <div>
+|     style="font-family: arial;"
+|     "\n"
+|     <span>
+|       class="Apple-style-span"
+|       style="font-family: 'courier new', monospace;"
+|       "hello"
+|   "\n"
+|   <div>
+|     style="font-family: arial; "
+|     <span>
+|       class="Apple-style-span"
+|       style="font-family: 'courier new', monospace;"
+|       " WebKit"
+| "\n"

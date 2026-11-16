@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>WebGL2 readBuffer(NONE) on the default framebuffer</title>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+<div id="description"></div>
+<div id="console"></div>
+<script>
+description("Tests that WebGL2 readBuffer(NONE) on the default framebuffer is tracked as READ_BUFFER state and makes reads of the default framebuffer fail, but does not affect the contents any of the ways of reading the canvas produce.");
+
+jsTestIsAsync = true;
+
+var gl;
+var canvas;
+var pixel;
+
+// The canvas contents are sampled through a 2D canvas for the read types that produce an image.
+var readbackCanvas = document.createElement("canvas");
+readbackCanvas.width = 2;
+readbackCanvas.height = 2;
+var readbackContext = readbackCanvas.getContext("2d", { willReadFrequently: true });
+
+function sampleReadbackCanvas()
+{
+    return readbackContext.getImageData(0, 0, 1, 1).data.toString();
+}
+
+function drawAndSample(source)
+{
+    readbackContext.clearRect(0, 0, readbackCanvas.width, readbackCanvas.height);
+    readbackContext.drawImage(source, 0, 0);
+    return sampleReadbackCanvas();
+}
+
+function readPixel(gl)
+{
+    var pixel = new Uint8Array(4);
+    gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel);
+    return pixel.toString();
+}
+
+function loadImage(url)
+{
+    return new Promise(function(resolve, reject) {
+        var image = new Image();
+        image.onload = function() { resolve(image); };
+        image.onerror = function() { reject(new Error("failed to decode the image")); };
+        image.src = url;
+    });
+}
+
+// Uploads the canvas to a texture of another WebGL context and reads the texture back.
+function readViaTexImage2D(canvas)
+{
+    var uploadCanvas = document.createElement("canvas");
+    uploadCanvas.width = canvas.width;
+    uploadCanvas.height = canvas.height;
+    var uploadGL = uploadCanvas.getContext("webgl2");
+    if (!uploadGL)
+        return "unable to fetch the upload WebGL 2 context";
+    var texture = uploadGL.createTexture();
+    uploadGL.bindTexture(uploadGL.TEXTURE_2D, texture);
+    uploadGL.texImage2D(uploadGL.TEXTURE_2D, 0, uploadGL.RGBA, uploadGL.RGBA, uploadGL.UNSIGNED_BYTE, canvas);
+    uploadGL.bindFramebuffer(uploadGL.FRAMEBUFFER, uploadGL.createFramebuffer());
+    uploadGL.framebufferTexture2D(uploadGL.FRAMEBUFFER, uploadGL.COLOR_ATTACHMENT0, uploadGL.TEXTURE_2D, texture, 0);
+    var result = readPixel(uploadGL);
+    var error = uploadGL.getError();
+    // Drop the references to the upload context, so that the caller can collect it.
+    texture = null;
+    uploadGL = null;
+    uploadCanvas = null;
+    if (error)
+        return "the upload WebGL 2 context failed with error " + error;
+    return result;
+}
+
+// Captures the canvas into a MediaStream and samples the first frame the stream produces. The
+// capture is triggered by re-drawing the canvas, so that the capture happens with the READ_BUFFER
+// the caller has set.
+async function readViaCaptureStream(canvas, gl, redraw)
+{
+    var video = document.createElement("video");
+    video.width = canvas.width;
+    video.height = canvas.height;
+    video.autoplay = true;
+    video.muted = true;
+    video.playsInline = true;
+    document.body.appendChild(video);
+    var stream = canvas.captureStream();
+    video.srcObject = stream;
+    await new Promise(function(resolve) { requestAnimationFrame(function() { setTimeout(resolve, 0); }); });
+    var frame = new Promise(function(resolve, reject) {
+        var identifier = video.requestVideoFrameCallback(function() { resolve(); });
+        setTimeout(function() {
+            video.cancelVideoFrameCallback(identifier);
+            reject(new Error("timed out waiting for a captured video frame"));
+        }, 10000);
+    });
+    redraw();
+    await frame;
+    var result = drawAndSample(video);
+    // Release the stream and the video element, so that the caller can collect the context.
+    stream.getTracks().forEach(function(track) { track.stop(); });
+    video.srcObject = null;
+    video.remove();
+    video = null;
+    stream = null;
+    return result;
+}
+
+// Reads the canvas contents through readType and returns the top left pixel as "r,g,b,a".
+async function readCanvas(readType, canvas, gl, redraw)
+{
+    if (readType == "drawImage")
+        return drawAndSample(canvas);
+    if (readType == "toDataURL")
+        return drawAndSample(await loadImage(canvas.toDataURL()));
+    if (readType == "toBlob") {
+        var blob = await new Promise(function(resolve) { canvas.toBlob(resolve); });
+        if (!blob)
+            return "toBlob() produced no blob";
+        var blobBitmap = await createImageBitmap(blob);
+        var blobResult = drawAndSample(blobBitmap);
+        blobBitmap.close();
+        return blobResult;
+    }
+    if (readType == "createImageBitmap") {
+        var bitmap = await createImageBitmap(canvas);
+        var bitmapResult = drawAndSample(bitmap);
+        bitmap.close();
+        return bitmapResult;
+    }
+    if (readType == "createPattern") {
+        readbackContext.clearRect(0, 0, readbackCanvas.width, readbackCanvas.height);
+        readbackContext.fillStyle = readbackContext.createPattern(canvas, "no-repeat");
+        readbackContext.fillRect(0, 0, readbackCanvas.width, readbackCanvas.height);
+        return sampleReadbackCanvas();
+    }
+    if (readType == "texImage2D")
+        return readViaTexImage2D(canvas);
+    if (readType == "videoFrame") {
+        var videoFrame = new VideoFrame(canvas, { timestamp: 0 });
+        var videoFrameResult = drawAndSample(videoFrame);
+        videoFrame.close();
+        return videoFrameResult;
+    }
+    if (readType == "captureStream")
+        return await readViaCaptureStream(canvas, gl, redraw);
+    return "unknown read type " + readType;
+}
+
+// Read types that are not available on all the ports are skipped with a visible reason.
+function readTypeUnavailableReason(readType)
+{
+    if (readType == "videoFrame" && !window.VideoFrame)
+        return "VideoFrame is not available";
+    if (readType == "captureStream") {
+        if (!HTMLCanvasElement.prototype.captureStream)
+            return "HTMLCanvasElement.captureStream() is not available";
+        if (!HTMLVideoElement.prototype.requestVideoFrameCallback)
+            return "HTMLVideoElement.requestVideoFrameCallback() is not available";
+    }
+    return null;
+}
+
+async function runTest(parameters)
+{
+    debug("");
+    debug("Parameters: " + JSON.stringify(parameters));
+
+    var unavailableReason = readTypeUnavailableReason(parameters.readType);
+    if (unavailableReason) {
+        debug("Skipped: " + unavailableReason + ".");
+        return;
+    }
+
+    // Drop the canvas, the context and the assertion globals of the previous case and collect them.
+    // The context of a collected canvas is destroyed, which keeps the number of the live contexts
+    // from growing to the limit after which the implementation recycles the oldest contexts.
+    canvas = null;
+    gl = null;
+    pixel = null;
+    gc();
+
+    canvas = document.createElement("canvas");
+    canvas.width = 2;
+    canvas.height = 2;
+    gl = canvas.getContext("webgl2", {
+        antialias: parameters.antialias,
+        preserveDrawingBuffer: parameters.preserveDrawingBuffer,
+        premultipliedAlpha: parameters.premultipliedAlpha,
+    });
+    if (!gl) {
+        testFailed("Unable to fetch WebGL 2 rendering context for canvas.");
+        return;
+    }
+    shouldBe("gl.getParameter(gl.READ_BUFFER)", "gl.BACK");
+
+    // The clear color is opaque, so that the expected value is the same for both
+    // premultipliedAlpha values.
+    var clearGreen = function() {
+        gl.clearColor(0, 1, 0, 1);
+        gl.clear(gl.COLOR_BUFFER_BIT);
+    };
+    clearGreen();
+
+    gl.readBuffer(gl.NONE);
+    shouldBe("gl.getError()", "gl.NO_ERROR");
+    shouldBe("gl.getParameter(gl.READ_BUFFER)", "gl.NONE");
+
+    debug("Reading the default framebuffer is invalid while its READ_BUFFER is NONE.");
+    shouldBeEqualToString("readPixel(gl)", "0,0,0,0");
+    shouldBe("gl.getError()", "gl.INVALID_OPERATION");
+
+    debug("READ_BUFFER of the default framebuffer is unaffected by readBuffer() on a bound read framebuffer.");
+    gl.bindFramebuffer(gl.READ_FRAMEBUFFER, gl.createFramebuffer());
+    gl.readBuffer(gl.COLOR_ATTACHMENT0);
+    gl.bindFramebuffer(gl.READ_FRAMEBUFFER, null);
+    shouldBe("gl.getError()", "gl.NO_ERROR");
+    shouldBe("gl.getParameter(gl.READ_BUFFER)", "gl.NONE");
+
+    debug("Reading the canvas contents is internal to the implementation, which READ_BUFFER must not affect.");
+    pixel = await readCanvas(parameters.readType, canvas, gl, clearGreen);
+    shouldBeEqualToString("pixel", "0,255,0,255");
+    shouldBe("gl.getError()", "gl.NO_ERROR");
+
+    debug("Reading the canvas contents restores READ_BUFFER, so reading the default framebuffer is still invalid.");
+    shouldBeEqualToString("readPixel(gl)", "0,0,0,0");
+    shouldBe("gl.getError()", "gl.INVALID_OPERATION");
+
+    debug("Restoring READ_BUFFER to BACK makes the default framebuffer readable again.");
+    var clearBlue = function() {
+        gl.clearColor(0, 0, 1, 1);
+        gl.clear(gl.COLOR_BUFFER_BIT);
+    };
+    clearBlue();
+    gl.readBuffer(gl.BACK);
+    shouldBe("gl.getParameter(gl.READ_BUFFER)", "gl.BACK");
+    shouldBeEqualToString("readPixel(gl)", "0,0,255,255");
+    shouldBe("gl.getError()", "gl.NO_ERROR");
+    pixel = await readCanvas(parameters.readType, canvas, gl, clearBlue);
+    shouldBeEqualToString("pixel", "0,0,255,255");
+    shouldBe("gl.getError()", "gl.NO_ERROR");
+
+    // The errors of the failing reads above are logged to the console asynchronously, as the
+    // messages come from the process that runs the GL commands. Return only after they have been
+    // delivered, as the messages of a destroyed context are dropped with the context, and the next
+    // case destroys the context of this one.
+    await new Promise(function(resolve) { requestAnimationFrame(function() { setTimeout(resolve, 0); }); });
+}
+
+// The ways a script can read the canvas contents. They cover the different internal reads of the
+// drawing buffer: drawImage, createImageBitmap, createPattern and toDataURL and toBlob of a
+// premultiplied context read it as an image, toDataURL, toBlob and texImage2D of an unpremultiplied
+// context read it as a pixel buffer, and videoFrame and captureStream read it as a video frame.
+var readTypes = [
+    "drawImage",
+    "toDataURL",
+    "toBlob",
+    "createImageBitmap",
+    "createPattern",
+    "texImage2D",
+    "videoFrame",
+    "captureStream",
+];
+
+var testCases = [];
+for (const antialias of [true, false]) {
+    for (const preserveDrawingBuffer of [true, false]) {
+        for (const premultipliedAlpha of [true, false]) {
+            for (const readType of readTypes)
+                testCases.push({ antialias, preserveDrawingBuffer, premultipliedAlpha, readType });
+        }
+    }
+}
+
+(async function() {
+    for (const testCase of testCases) {
+        try {
+            await runTest(testCase);
+        } catch (exception) {
+            testFailed("Threw: " + exception);
+        }
+    }
+    finishJSTest();
+})();
+</script>
+</body>
+</html>

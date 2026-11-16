@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+<style>
+select, select::picker(select) {
+    appearance: base-select;
+}
+</style>
+</head>
+<body>
+
+<div id="content">
+<select id="select">
+    <option>Apple</option>
+    <option>Banana</option>
+</select>
+</div>
+
+<script>
+var output = "This test ensures that the container of a base appearance select only counts the picker of the select as an accessibility element while the picker is open, as a closed picker has no accessibility object.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    setTimeout(async function() {
+        window.select = await waitForElementById("select");
+        window.container = select.parentElement();
+        output += expect("container.numberAttributeValue('AXElementCount')", "container.childrenCount");
+
+        select.press();
+        output += await expectAsync("select.isExpanded", "true");
+        output += await expectAsync("findBaseSelectMenu(select) != null", "true");
+        output += expect("container.numberAttributeValue('AXElementCount')", "container.childrenCount");
+
+        select.press();
+        output += await expectAsync("select.isExpanded", "false");
+        output += await expectAsync("findBaseSelectMenu(select)", "null");
+        output += expect("container.numberAttributeValue('AXElementCount')", "container.childrenCount");
+
+        document.getElementById("content").style.visibility = "hidden";
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

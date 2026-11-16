@@ -1,0 +1,103 @@
+<!DOCTYPE HTML><!-- webkit-test-runner [ AccessibilityFormErrorDetectionEnabled=true ] -->
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+<style>
+.field-error { color: #c62828; }
+</style>
+</head>
+<body>
+
+<div id="checkout">
+  <label for="name">Name</label><input id="name" type="text">
+  <div id="name-error" class="field-error"></div>
+  <label for="email">Email</label><input id="email" type="text">
+  <div id="email-error" class="field-error"></div>
+  <label for="search">Search the store</label><input id="search" type="search">
+  <label for="site-search">Search the site</label><input id="site-search" type="text" role="searchbox">
+  <label for="country">Country</label><input id="country" type="text" role="combobox">
+  <label for="city">City</label><input id="city" type="text" aria-autocomplete="list">
+  <label for="state">State</label><input id="state" type="text" list="states">
+  <datalist id="states"><option value="California"></option></datalist>
+  <div role="combobox" aria-expanded="false"><input id="day-search" type="text" aria-label="Day"><span>Select a day</span></div>
+  <div id="continue" role="button" tabindex="0">Continue</div>
+</div>
+
+<script>
+var output = "This tests that pressing Enter in a field only starts a watch for errors when the field is one a page submits from. Enter in a search field runs a search, and Enter in a field that offers suggestions, or in the search box of a dropdown a page built itself, picks one, so none of them starts a watch, while Enter in a plain text field beside them still does.\n\n";
+
+if (window.accessibilityController && window.eventSender) {
+    window.jsTestIsAsync = true;
+    internals.setAccessibilityFormErrorSettleDelay(0.1);
+
+    var notifications = 0;
+    var payload = "";
+    accessibilityController.addNotificationListener((element, notification, userInfo) => {
+        if (notification != "AXPossibleFormValidationError")
+            return;
+        ++notifications;
+        payload = formatFormValidationUserInfo(userInfo);
+    });
+
+    var handledEnters = 0;
+    function writeMessagesOnEnter(fieldId) {
+        document.getElementById(fieldId).addEventListener("keydown", (event) => {
+            if (event.key != "Enter")
+                return;
+            ++handledEnters;
+            document.getElementById("name-error").textContent = "Enter your name.";
+            document.getElementById("email-error").textContent = "Enter a valid email address.";
+        });
+    }
+
+    for (var fieldId of ["search", "site-search", "country", "city", "state", "day-search", "email"])
+        writeMessagesOnEnter(fieldId);
+
+    function axElement(id) {
+        return accessibilityController.accessibleElementById(id);
+    }
+
+    function invalidStatus(id) {
+        return axElement(id).stringAttributeValue("AXInvalid");
+    }
+
+    function isWatching() {
+        return internals.isWatchingForAccessibilityFormErrors();
+    }
+
+    // Detection decides whether to watch before the page's own listener runs, so once that listener has, it has decided.
+    async function pressEnterIn(id) {
+        var handled = handledEnters;
+        document.getElementById(id).focus();
+        eventSender.keyDown("\r");
+        await waitFor(() => handledEnters > handled);
+        return `pressEnterIn('${id}');\n`;
+    }
+
+    setTimeout(async function() {
+        // Read the field first, since nothing arms detection on a page no assistive technology has looked at.
+        output += expect("invalidStatus('name')", "'false'");
+
+        for (var fieldId of ["search", "site-search", "country", "city", "state", "day-search"]) {
+            output += await pressEnterIn(fieldId);
+            output += expect("isWatching()", "false");
+        }
+
+        output += expect("notifications", "0");
+        output += expect("invalidStatus('name')", "'false'");
+        output += expect("invalidStatus('email')", "'false'");
+
+        output += await pressEnterIn("email");
+        output += await expectAsync("notifications", "1");
+        output += expect("payload", "'AXFormValidationUnannouncedText: Enter your name. | Enter a valid email address.\\nAXFormValidationErrorFieldCount: 2\\n'");
+        output += await expectAsync("invalidStatus('name')", "'true'");
+        output += await expectAsync("invalidStatus('email')", "'true'");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

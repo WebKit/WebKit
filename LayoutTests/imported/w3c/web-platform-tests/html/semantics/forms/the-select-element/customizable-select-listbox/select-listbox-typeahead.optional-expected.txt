@@ -1,0 +1,16 @@
+
+one
+gap 1
+two
+gap 2
+three
+
+one
+gap 1
+two
+gap 2
+three
+
+PASS <select>: Typeahead should focus options without checking them.
+PASS <select multiple>: Typeahead should focus options without checking them.
+

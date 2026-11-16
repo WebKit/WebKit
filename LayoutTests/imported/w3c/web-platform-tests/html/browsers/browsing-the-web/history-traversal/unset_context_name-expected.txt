@@ -1,0 +1,3 @@
+
+PASS Window.name is reset after navigating to a different origin
+

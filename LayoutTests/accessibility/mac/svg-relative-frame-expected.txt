@@ -1,0 +1,17 @@
+This test ensures we compute the relative frame of SVGs correctly.
+
+
+#svg has AXRelativeFrame: NSRect: {{2008, 2008}, {384, 384}}
+
+Scrolling to the bottom-right corner of the page.
+
+#svg has AXRelativeFrame: NSRect: {{401, 193}, {384, 384}}
+
+Removing #svg margins.
+
+#svg has AXRelativeFrame: NSRect: {{8, 8}, {384, 384}}
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

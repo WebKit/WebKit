@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Cross-Origin Shadow DOM Frame</title>
+</head>
+<body>
+    <div id="container" class="main-content" data-role="frame-root">
+        <div id="host"></div>
+    </div>
+    <script>
+    // Attach an open shadow root to #host and return true. Called after the frontend has
+    // expanded #host so that DOM.shadowRootPushed can be matched to a known host node.
+    function attachShadowToHost() {
+        let host = document.getElementById("host");
+        let root = host.attachShadow({mode: "open"});
+        root.innerHTML = "<span id='shadow-child'>shadow content</span>";
+        return true;
+    }
+    </script>
+</body>
+</html>

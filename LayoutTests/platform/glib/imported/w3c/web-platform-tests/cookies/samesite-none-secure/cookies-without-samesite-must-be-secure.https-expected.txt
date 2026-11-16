@@ -1,0 +1,3 @@
+
+PASS SameSite=None cookies are rejected unless the Secure attribute is set.
+

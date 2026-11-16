@@ -1,0 +1,6 @@
+item1
+item2 item3
+item4
+
+FAIL This test validates that we don't get stuck in an infinite loop searching for a focusable element in the extending focusgroup that wraps that doesn't contain one. Wrapping should only be allowed in the focusgroup that contains the focusable element we started on or in one of its ancestors. assert_equals: expected Element node <span id="item4" tabindex="-1">item4</span> but got Element node <span id="item1" tabindex="0">item1</span>
+

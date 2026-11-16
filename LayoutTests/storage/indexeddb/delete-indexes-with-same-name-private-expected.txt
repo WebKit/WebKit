@@ -1,0 +1,16 @@
+Deleting different indexes with same name.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
+
+indexedDB.deleteDatabase(dbname)
+indexedDB.open(dbname)
+objectStore1.deleteIndex('index')
+objectStore2.clear()
+objectStore2.deleteIndex('index')
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

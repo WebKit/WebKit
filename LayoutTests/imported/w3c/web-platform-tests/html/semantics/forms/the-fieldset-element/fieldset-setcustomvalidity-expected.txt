@@ -1,0 +1,4 @@
+
+
+PASS fieldset setCustomValidity is correct
+

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="/js-test-resources/js-test.js"></script>
+    <script src="/js-test-resources/ui-helper.js"></script>
+    <script src="/resourceLoadStatistics/resources/util.js"></script>
+    <script>
+        description("Tests that requestStorageAccess throws exception on cross-site iframe until iframe is reloaded");
+        jsTestIsAsync = true;
+        testEnded = false;
+        testStarted = false;
+
+        function endTest() {
+            if (testEnded)
+                return;
+
+            testEnded = true;
+            testRunner.setRequestStorageAccessThrowsExceptionUntilReload(false);
+            setEnableFeature(false, finishJSTest);
+        }
+
+        function messageReceived(event) {
+            if (event.origin !== "http://localhost:8000") {
+                testFailed("Unexpected origin: " + event.origin);
+                endTest();
+                return;
+            }
+
+            if (event.data == "NoModificationAllowedError") {
+                testPassed("requestStorageAccess result: " + event.data);
+                return;
+            }
+
+            if (event.data == "Done") {
+                testPassed("requestStorageAccess result: Granted");
+                endTest();
+                return;
+            }
+
+            if (event.data == "None") {
+                testFailed("requestStorageAccess result: Denied");
+                endTest();
+                return;
+            }
+
+            testFailed("Unexpected message: " + event.data);
+            endTest();
+        }
+
+        function activateElement(elementId) {
+            var element = document.getElementById(elementId);
+            var centerX = element.offsetLeft + element.offsetWidth / 2;
+            var centerY = element.offsetTop + element.offsetHeight / 2;
+            UIHelper.activateAt(centerX, centerY).then(() => {
+                if (window.eventSender)
+                    eventSender.keyDown("escape");
+                else {
+                    testFailed("eventSender is missing");
+                    endTest();
+                }
+            }).catch(() => {
+                testFailed("activateAt failed");
+                endTest();
+            });
+        }
+
+        function frameLoaded() {
+            if (testStarted)
+                return;
+
+            testStarted = true;
+            setEnableFeature(true, function() {
+                activateElement("TheIframeThatRequestsStorageAccess");
+            });
+        }
+
+        window.addEventListener("message", messageReceived, false);
+        if (window.testRunner)
+            testRunner.setRequestStorageAccessThrowsExceptionUntilReload(true);
+    </script>
+</head>
+<body>
+    <iframe sandbox="allow-storage-access-by-user-activation allow-scripts allow-same-origin allow-modals" onload="frameLoaded()" id="TheIframeThatRequestsStorageAccess" src="http://localhost:8000/storageAccess/resources/request-throw-exception-on-grant-until-reload-iframe.html"></iframe>
+</body>
+</html>

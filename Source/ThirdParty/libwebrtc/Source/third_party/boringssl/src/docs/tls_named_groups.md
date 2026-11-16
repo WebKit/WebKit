@@ -1,0 +1,21 @@
+# Curves, groups, and KEMs, oh my!
+
+TLS calls [X25519MLKEM768](https://www.ietf.org/archive/id/draft-ietf-tls-ecdhe-mlkem-04.html) a “named group” or “group”. It was once called a “named curve” or just “curve”. Neither term fits. “Curve” and “group”, in the context of TLS, are now terms of art that mean “key agreement”, with no remaining connection to either their English or mathematical meaning.
+
+This situation can only be understood following the protocol's history:
+
+[RFC 4492](https://www.rfc-editor.org/rfc/rfc4492.html) defined elliptic curve cryptography (ECC) mechanisms for TLS. The primary parameter in ECC is a “curve”. Example curves include P-256, aka secp256r1, and P-384, aka secp384r1. TLS uses ECC in two ways: ECDH (Elliptic Curve Diffie-Hellman) and ECDSA (Elliptic Curve Digital Signature Algorithm).
+
+To negotiate them, TLS had a NamedCurve registry, which contained code points for each of these. It’s a *named* curve in contrast to “explicit curves”, which spell out the curve coefficients. This has been [widely regarded as a bad move](https://www.imperialviolet.org/2022/03/15/pickingparameters.html).
+
+NamedCurves were used, among other things, in “ECDHE” cipher suites which used ECDH. ECDHE is a TLS-only terminology. The trailing E stands for “ephemeral”, which describes how ECDH was used. This contrasts with TLS 1.2’s “ECDH” cipher suites. Both “ECDH” and “ECDHE” use ECDH, but “ECDH” authenticated the server with a long-lived ECDH key, while “ECDHE” had both sides generate ephemeral keys, authenticating the server with a long-lived signing key. The “ECDH” ciphers are gone and only the “ECDHE” pattern lives on.
+
+TLS 1.2 also had “DHE” cipher suites which used plain Diffie-Hellman (DH), also with ephemeral keys. DH is parameterized by a prime, and you work with multiplication modulo that prime. DHE was not negotiated with named parameter sets and instead only used the analog of “explicit curves”. [RFC 7919](https://www.rfc-editor.org/rfc/rfc7919) tried to fix this, but [unsuccessfully](https://mailarchive.ietf.org/arch/msg/tls/DzazUXCUZDUpVgBPVHOwatb65dA/). As part of this, it generalized the ECC NamedCurve enum and renamed it to NamedGroup. A [group](https://en.wikipedia.org/wiki/Group_(mathematics)) is the mathematical abstraction in common between ECDH and plain Diffie-Hellman (aka Finite Field Diffie-Hellman or FFDH), so this can be read as a shorthand for “Diffie-Hellman group”.
+
+The NamedGroup terminology carried over to TLS 1.3, which uses them in the [`key_share` extension](https://www.rfc-editor.org/rfc/rfc8446#section-4.2.8) that carries both ECDH and FFDH keys. TLS 1.3 also detaches ECDSA from NamedGroup and moves it to the SignatureScheme enum. Now NamedGroup is specifically about establishing the ephemeral shared secret, while SignatureScheme is about authenticating the long-lived TLS key. (I.e. the one in the certificate.)
+
+ML-KEM is not a Diffie-Hellman primitive. ML-KEM is a [key encapsulation mechanism](https://en.wikipedia.org/wiki/Key_encapsulation_mechanism) (KEM). Rather than both sides exchanging public keys, KEMs have distinct sender and recipient sides: The recipient has a public/private keypair and sends the public key to the sender. The sender uses the public key to “encapsulate” a shared secret and sends the ciphertext. The recipient can use its private key to “decapsulate” the ciphertext to get the same shared secret out.
+
+KEMs can still [fit in TLS 1.3’s KeyShareEntry structure](https://www.ietf.org/archive/id/draft-ietf-tls-mlkem-07.html#section-4.2). The client KeyShareEntry contains a public key, and server KeyShareEntry has a ciphertext in response. (There are other ways to use Diffie-Hellman, where one cannot as easily substitute a KEM, but TLS is straightforward.) Thus TLS 1.3 can integrate KEMs by simply allocating NamedGroups for them, without changing the core protocol.
+
+As a result, the protocol has strayed far from the original contexts for either “group” or “curve”. In hindsight, NamedCurve/NamedGroup would have been better named something like KeyAgreement, but renaming it again would be expensive. OpenSSL and BoringSSL both have duplicate “curve” and “group” APIs as fallout from the previous rename.

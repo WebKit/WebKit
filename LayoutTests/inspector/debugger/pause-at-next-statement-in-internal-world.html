@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+window.internals?.evaluateInWorldIgnoringException("testInternalWorld", "0");
+
+window.addEventListener("message", function pageMessage(event) {
+    TestPage.dispatchEventToFrontend(event.data);
+});
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("Debugger.InternalWorld");
+
+    async function setPauseForInternalScripts(shouldPause) {
+        for (let target of WI.targets) {
+            if (target.hasDomain("Debugger"))
+                await target.DebuggerAgent.setPauseForInternalScripts(shouldPause);
+        }
+    }
+
+    function addTestCase({name, description, sourceURL, code = "", pauseForInternalScripts, expectedFunctionName}) {
+        suite.addTestCase({
+            name,
+            description,
+            async setup() {
+                await setPauseForInternalScripts(pauseForInternalScripts);
+            },
+            async test() {
+                let context = WI.networkManager.mainFrame.executionContextList.contexts.find((context) => {
+                    return context.type === WI.ExecutionContext.Type.Internal && context.name === "testInternalWorld";
+                });
+
+                let postMessagePromise = InspectorTest.awaitEvent("internal-program-complete");
+                let pausePromise = WI.debuggerManager.pause();
+                let evaluatePromise = context.target.RuntimeAgent.evaluate.invoke({
+                    contextId: context.id,
+                    expression: `${sourceURL}
+                        ${code}
+                        setTimeout("window.postMessage('internal-program-complete', '*');\\n${sourceURL}");
+                    `,
+                });
+
+                await pausePromise;
+                InspectorTest.expectEqual(WI.debuggerManager.activeCallFrame.functionName, expectedFunctionName, `Should pause in ${expectedFunctionName}.`);
+
+                await WI.debuggerManager.resume();
+                await evaluatePromise;
+                await postMessagePromise;
+            },
+            async teardown() {
+                await setPauseForInternalScripts(false);
+            },
+        });
+    }
+
+    addTestCase({
+        name: "Debugger.InternalWorld.PauseAtNextStatement",
+        description: "Pausing at the next statement should skip a script in an internal world.",
+        sourceURL: "//# sourceURL=InternalWorldScript.js",
+        pauseForInternalScripts: false,
+        expectedFunctionName: "pageMessage",
+    });
+
+    addTestCase({
+        name: "Debugger.InternalWorld.PauseAtNextStatement.PauseForInternalScripts",
+        description: "Pausing at the next statement should stop in a script in an internal world while pausing for internal scripts.",
+        sourceURL: "//# sourceURL=InternalWorldScript.js",
+        pauseForInternalScripts: true,
+        expectedFunctionName: "Global Code",
+    });
+
+    addTestCase({
+        name: "Debugger.InternalWorld.PauseAtNextStatement.ScriptWithoutURL",
+        description: "Pausing at the next statement should skip a script without a URL in an internal world.",
+        sourceURL: "",
+        pauseForInternalScripts: false,
+        expectedFunctionName: "pageMessage",
+    });
+
+    addTestCase({
+        name: "Debugger.InternalWorld.PauseAtNextStatement.ClassWithoutConstructor",
+        description: "Pausing at the next statement should skip the default constructor of a class in an internal world.",
+        sourceURL: "//# sourceURL=InternalWorldScript.js",
+        code: `class WithoutConstructor { } globalThis.withoutConstructor = new WithoutConstructor();`,
+        pauseForInternalScripts: false,
+        expectedFunctionName: "pageMessage",
+    });
+
+    addTestCase({
+        name: "Debugger.InternalWorld.PauseAtNextStatement.ClassWithPrivateFields",
+        description: "Pausing at the next statement should skip the default constructor of a class with private fields in an internal world.",
+        sourceURL: "//# sourceURL=InternalWorldScript.js",
+        code: `class WithPrivateFields { #field = []; } globalThis.withPrivateFields = new WithPrivateFields();`,
+        pauseForInternalScripts: false,
+        expectedFunctionName: "pageMessage",
+    });
+
+    addTestCase({
+        name: "Debugger.InternalWorld.PauseAtNextStatement.DerivedClassWithoutConstructor",
+        description: "Pausing at the next statement should skip the default constructor of a derived class in an internal world.",
+        sourceURL: "//# sourceURL=InternalWorldScript.js",
+        code: `class Base { constructor() { this.base = 1; } } class Derived extends Base { } globalThis.derived = new Derived();`,
+        pauseForInternalScripts: false,
+        expectedFunctionName: "pageMessage",
+    });
+
+    addTestCase({
+        name: "Debugger.InternalWorld.PauseAtNextStatement.FunctionConstructor",
+        description: "Pausing at the next statement should skip a function that a script in an internal world creates with the Function constructor.",
+        sourceURL: "//# sourceURL=InternalWorldScript.js",
+        code: `new Function("return 2")();`,
+        pauseForInternalScripts: false,
+        expectedFunctionName: "pageMessage",
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests that pausing at the next statement skips scripts in an internal world, such as a content world that is not inspectable.</p>
+</body>
+</html>

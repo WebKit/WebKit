@@ -1,0 +1,4 @@
+
+PASS Programatically injected stylesheet should not load
+PASS Should fire a securitypolicyviolation event
+Lorem ipsum

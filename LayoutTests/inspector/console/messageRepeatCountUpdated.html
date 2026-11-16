@@ -1,0 +1,196 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    const testMessage = "console.log('test message')";
+    const differentMessage = "console.log('different message')";
+
+    let suite = InspectorTest.createAsyncSuite("Console.messageRepeatCountUpdated");
+
+    suite.addTestCase({
+        name: "AddTestMessage",
+        description: "Add a new message, it should have a single repeat count.",
+        test(resolve, reject) {
+            let listener = WI.consoleManager.singleFireEventListener(WI.ConsoleManager.Event.PreviousMessageRepeatCountUpdated, (event) => {
+                InspectorTest.assert(false, "Should not fire PreviousMessageRepeatCountUpdated yet.");
+                reject();
+            });
+
+            WI.consoleManager.awaitEvent(WI.ConsoleManager.Event.MessageAdded)
+            .then((event) => {
+                InspectorTest.expectThat(event.data.message instanceof WI.ConsoleMessage, "MessageAdded event should fire.");
+                InspectorTest.expectThat(event.data.message.repeatCount === 1, "ConsoleMessage repeatCount is 1.");
+                WI.consoleManager.removeEventListener(WI.ConsoleManager.Event.PreviousMessageRepeatCountUpdated, listener, null);
+            })
+            .then(resolve, reject);
+
+            InspectorTest.evaluateInPage(testMessage);
+        }
+    });
+
+    for (let i = 1; i <= 5; ++i) {
+        suite.addTestCase({
+            name: `RepeatTestMessage${i}`,
+            description: "Repeat the last message, it should trigger messageRepeatCountUpdated.",
+            test(resolve, reject) {
+                let listener = WI.consoleManager.singleFireEventListener(WI.ConsoleManager.Event.MessageAdded, (event) => {
+                    InspectorTest.assert(false, "Should not fire MessageAdded, this should be a repeat.");
+                    reject();
+                });
+
+                WI.consoleManager.awaitEvent(WI.ConsoleManager.Event.PreviousMessageRepeatCountUpdated)
+                .then((event) => {
+                    InspectorTest.expectThat(event, "PreviousMessageRepeatCountUpdated should fire.");
+                    InspectorTest.expectThat(event.data.count === (i + 1), `Count should be ${i + 1}.`);
+                    WI.consoleManager.removeEventListener(WI.ConsoleManager.Event.MessageAdded, listener, null);
+                })
+                .then(resolve, reject);
+
+                InspectorTest.evaluateInPage(testMessage);
+            }
+        });
+    }
+
+    suite.addTestCase({
+        name: "AddDifferentMessage",
+        description: "Add a different message, it should reset the repeat count.",
+        test(resolve, reject) {
+            let listener = WI.consoleManager.singleFireEventListener(WI.ConsoleManager.Event.PreviousMessageRepeatCountUpdated, (event) => {
+                InspectorTest.assert(false, "Should not fire PreviousMessageRepeatCountUpdated, this message is different.");
+                reject();
+            });
+
+            WI.consoleManager.awaitEvent(WI.ConsoleManager.Event.MessageAdded)
+            .then((event) => {
+                InspectorTest.expectThat(event.data.message instanceof WI.ConsoleMessage, "MessageAdded event should fire.");
+                InspectorTest.expectThat(event.data.message.repeatCount === 1, "ConsoleMessage repeatCount is 1.");
+                WI.consoleManager.removeEventListener(WI.ConsoleManager.Event.PreviousMessageRepeatCountUpdated, listener, null);
+            })
+            .then(resolve, reject);
+
+            InspectorTest.evaluateInPage(differentMessage);
+        }
+    });
+
+    suite.addTestCase({
+        name: "RepeatDifferentMessage",
+        description: "Repeat this different message, it should increment the repeat count.",
+        test(resolve, reject) {
+            let listener = WI.consoleManager.singleFireEventListener(WI.ConsoleManager.Event.MessageAdded, (event) => {
+                InspectorTest.assert(false, "Should not fire MessageAdded, this should be a repeat.");
+                reject();
+            });
+
+            WI.consoleManager.awaitEvent(WI.ConsoleManager.Event.PreviousMessageRepeatCountUpdated)
+            .then((event) => {
+                InspectorTest.expectThat(event, "PreviousMessageRepeatCountUpdated should fire.");
+                InspectorTest.expectThat(event.data.count === 2, "Count should be 2.");
+                WI.consoleManager.removeEventListener(WI.ConsoleManager.Event.MessageAdded, listener, null);
+            })
+            .then(resolve, reject);
+
+            InspectorTest.evaluateInPage(differentMessage);
+        }
+    });
+
+    suite.addTestCase({
+        name: "AddTestMessageAgain",
+        description: "Add the original message again, it should have a single repeat count.",
+        test(resolve, reject) {
+            let listener = WI.consoleManager.singleFireEventListener(WI.ConsoleManager.Event.PreviousMessageRepeatCountUpdated, (event) => {
+                InspectorTest.assert(false, "Should not fire PreviousMessageRepeatCountUpdated yet.");
+                reject();
+            });
+
+            WI.consoleManager.awaitEvent(WI.ConsoleManager.Event.MessageAdded)
+            .then((event) => {
+                InspectorTest.expectThat(event.data.message instanceof WI.ConsoleMessage, "MessageAdded event should fire.");
+                InspectorTest.expectThat(event.data.message.repeatCount === 1, "ConsoleMessage repeatCount is 1.");
+                WI.consoleManager.removeEventListener(WI.ConsoleManager.Event.PreviousMessageRepeatCountUpdated, listener, null);
+            })
+            .then(resolve, reject);
+
+            InspectorTest.evaluateInPage(testMessage);
+        }
+    });
+
+    // --------
+
+    suite.addTestCase({
+        name: "MessagesWithEqualValuesRepeats",
+        description: "Repeat messages with equal values should trigger messageRepeatCountUpdated.",
+        test(resolve, reject) {
+            WI.consoleManager.awaitEvent(WI.ConsoleManager.Event.PreviousMessageRepeatCountUpdated)
+            .then((event) => {
+                InspectorTest.expectThat(event, "PreviousMessageRepeatCountUpdated should fire for repeat messages with equal values.");
+            })
+            .then(resolve, reject);
+
+            const messageWithValues = "console.log('equal parameter values', 1, 2)";
+            InspectorTest.evaluateInPage(messageWithValues);
+            InspectorTest.evaluateInPage(messageWithValues);
+        }
+    });
+
+    suite.addTestCase({
+        name: "MessagesWithObjectsDoNotRepeat",
+        description: "Repeat messages with objects should not trigger messageRepeatCountUpdated.",
+        test(resolve, reject) {
+            let repeatListener = WI.consoleManager.singleFireEventListener(WI.ConsoleManager.Event.PreviousMessageRepeatCountUpdated, (event) => {
+                InspectorTest.assert(false, "PreviousMessageRepeatCountUpdated should not fire for repeat messages with object arguments.");
+                reject();
+            });
+
+            let remaining = 2;
+            WI.consoleManager.addEventListener(WI.ConsoleManager.Event.MessageAdded, function addListener(event) {
+                InspectorTest.expectThat(event.data.message instanceof WI.ConsoleMessage, "MessageAdded event should fire.");
+                remaining--;
+                if (!remaining) {
+                    WI.consoleManager.removeEventListener(WI.ConsoleManager.Event.PreviousMessageRepeatCountUpdated, repeatListener, null);
+                    WI.consoleManager.removeEventListener(WI.ConsoleManager.Event.MessageAdded, addListener, null);
+                    resolve();
+                }
+            });
+
+            const messageWithObject = "console.log('object', window)";
+            InspectorTest.evaluateInPage(messageWithObject);
+            InspectorTest.evaluateInPage(messageWithObject);
+        }
+    });
+
+    suite.addTestCase({
+        name: "MessagesWithDifferentLevelsDoNotRepeat",
+        description: "Repeat messages with different levels should not trigger messageRepeatCountUpdated.",
+        test(resolve, reject) {
+            let repeatListener = WI.consoleManager.singleFireEventListener(WI.ConsoleManager.Event.PreviousMessageRepeatCountUpdated, (event) => {
+                InspectorTest.assert(false, "PreviousMessageRepeatCountUpdated should not fire for repeat messages with different levels.");
+                reject();
+            });
+
+            let remaining = 2;
+            WI.consoleManager.addEventListener(WI.ConsoleManager.Event.MessageAdded, function addListener(event) {
+                InspectorTest.expectThat(event.data.message instanceof WI.ConsoleMessage, "MessageAdded event should fire.");
+                remaining--;
+                if (!remaining) {
+                    WI.consoleManager.removeEventListener(WI.ConsoleManager.Event.PreviousMessageRepeatCountUpdated, repeatListener, null);
+                    WI.consoleManager.removeEventListener(WI.ConsoleManager.Event.MessageAdded, addListener, null);
+                    resolve();
+                }
+            });
+
+            InspectorTest.evaluateInPage("console.warn('level')");
+            InspectorTest.evaluateInPage("console.error('level')");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Test for the Console.messageRepeatCountUpdated event.</p>
+</body>
+</html>

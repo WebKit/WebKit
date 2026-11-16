@@ -1,0 +1,308 @@
+/*
+ * Copyright (C) 2016-2024 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#pragma once
+
+#include <wtf/Platform.h>
+
+#if ENABLE(WEBASSEMBLY)
+
+#include <JavaScriptCore/AllowMacroScratchRegisterUsage.h>
+#include <JavaScriptCore/CallFrame.h>
+#include <JavaScriptCore/LinkBuffer.h>
+#include <JavaScriptCore/RegisterAtOffsetList.h>
+#include <JavaScriptCore/RegisterSet.h>
+#include <JavaScriptCore/StackAlignment.h>
+#include <JavaScriptCore/WasmFormat.h>
+#include <JavaScriptCore/WasmTypeDefinition.h>
+#include <JavaScriptCore/WasmTypeDefinitionInlines.h>
+#include <JavaScriptCore/WasmValueLocation.h>
+
+namespace JSC { namespace Wasm {
+
+constexpr unsigned numberOfIPIntCalleeSaveRegisters = 2;
+constexpr unsigned numberOfIPIntInternalRegisters = 1; // UnboxedWasmCalleeStackSlot
+constexpr ptrdiff_t WasmToJSScratchSpaceSize = 0x8 * 4; // Needs to be aligned to 0x10. 3 slots: callable function + IPInt return PC + IPInt MC.
+constexpr ptrdiff_t WasmToJSCallableFunctionSlot = -0x8;
+// IPInt PC and MC, spilled by both WasmToJS stubs for collectCallStack.
+constexpr ptrdiff_t WasmToJSIPIntReturnPCSlot = -0x10;
+constexpr ptrdiff_t WasmToJSIPIntMCSlot = -0x18;
+
+struct ArgumentLocation {
+    ArgumentLocation(ValueLocation loc, Width width)
+        : location(loc)
+        , width(width)
+    {
+    }
+
+    ArgumentLocation() {}
+
+    ValueLocation location;
+    Width width;
+};
+
+enum class CallRole : uint8_t {
+    Caller,
+    Callee,
+};
+
+struct CallInformation {
+    CallInformation() = default;
+    CallInformation(ArgumentLocation passedThisArgument, Vector<ArgumentLocation, 8>&& parameters, Vector<ArgumentLocation, 1>&& returnValues, size_t totalSize, size_t headerSize)
+        : thisArgument(passedThisArgument)
+        , params(WTF::move(parameters))
+        , results(WTF::move(returnValues))
+        , headerAndArgumentStackSizeInBytes(totalSize)
+        , headerIncludingThisSizeInBytes(headerSize)
+    { }
+
+    RegisterAtOffsetList computeResultsOffsetList()
+    {
+        RegisterSet usedResultRegisters;
+        for (auto loc : results) {
+            if (loc.location.isGPR()) {
+                usedResultRegisters.add(loc.location.gpr(), IgnoreVectors);
+            } else if (loc.location.isFPR())
+                usedResultRegisters.add(loc.location.fpr(), loc.width);
+        }
+
+        RegisterAtOffsetList savedRegs(usedResultRegisters, RegisterAtOffsetList::ZeroBased);
+        return savedRegs;
+    }
+
+    ArgumentLocation thisArgument { };
+    Vector<ArgumentLocation, 8> params { };
+    Vector<ArgumentLocation, 1> results { };
+    // As a callee these include CallerFrameAndPC; as a caller it does not.
+    size_t headerAndArgumentStackSizeInBytes { 0 };
+    size_t headerIncludingThisSizeInBytes { 0 };
+};
+
+class WasmCallingConvention {
+public:
+    static constexpr unsigned headerSizeInBytes = CallFrame::headerSizeInRegisters * sizeof(Register);
+
+    WasmCallingConvention(Vector<GPRReg>&& gprs, Vector<FPRReg>&& fprs, Vector<GPRReg>&& scratches, RegisterSet&& calleeSaves)
+        : gprArgs(WTF::move(gprs))
+        , fprArgs(WTF::move(fprs))
+        , prologueScratchGPRs(WTF::move(scratches))
+        , calleeSaveRegisters(calleeSaves)
+    { }
+
+    WTF_MAKE_NONCOPYABLE(WasmCallingConvention);
+
+private:
+    template<typename RegType>
+    ArgumentLocation marshallLocationImpl(CallRole role, const Vector<RegType>& regArgs, size_t& count, size_t& stackOffset, size_t valueSize) const
+    {
+        size_t alignedSize = WTF::roundUpToMultipleOf(valueSize, sizeof(Register));
+        Width width = widthForBytes(alignedSize);
+
+        if (count < regArgs.size())
+            return ArgumentLocation { ValueLocation { regArgs[count++] }, width };
+
+        count++;
+        ArgumentLocation result = { role == CallRole::Caller ? ValueLocation::stackArgument(stackOffset) : ValueLocation::stack(stackOffset), width };
+        stackOffset += alignedSize;
+        return result;
+    }
+
+    ArgumentLocation marshallLocation(CallRole role, Type valueType, size_t& gpArgumentCount, size_t& fpArgumentCount, size_t& stackOffset) const
+    {
+        ASSERT(isValueType(valueType));
+        unsigned valueSize = bytesForWidth(valueType.width());
+        switch (valueType.kind()) {
+        case TypeKind::I32:
+        case TypeKind::I64:
+        case TypeKind::Funcref:
+        case TypeKind::Exnref:
+        case TypeKind::Externref:
+        case TypeKind::Ref:
+        case TypeKind::RefNull:
+            return marshallLocationImpl(role, gprArgs, gpArgumentCount, stackOffset, valueSize);
+        case TypeKind::F32:
+        case TypeKind::F64:
+        case TypeKind::V128:
+            return marshallLocationImpl(role, fprArgs, fpArgumentCount, stackOffset, valueSize);
+        default:
+            break;
+        }
+        RELEASE_ASSERT_NOT_REACHED();
+    }
+
+public:
+    CallInformation callInformationFor(const RTT& signature, CallRole role = CallRole::Caller) const
+    {
+        size_t gpArgumentCount = 0;
+        size_t fpArgumentCount = 0;
+        size_t headerSize = headerIncludingThisSizeInBytes(role);
+        size_t thisOffset = headerSize - sizeof(Register);
+        ArgumentLocation thisArgument = { role == CallRole::Caller ? ValueLocation::stackArgument(thisOffset) : ValueLocation::stack(thisOffset), widthForBytes(sizeof(void*)) };
+
+        size_t argStackOffset = headerSize;
+        Vector<ArgumentLocation, 8> params(signature.argumentCount(),
+            [&](unsigned index) {
+                return marshallLocation(role, signature.argumentType(index), gpArgumentCount, fpArgumentCount, argStackOffset);
+            });
+
+        gpArgumentCount = 0;
+        fpArgumentCount = 0;
+        size_t resultStackOffset = headerSize;
+        Vector<ArgumentLocation, 1> results(signature.returnCount(),
+            [&](unsigned index) {
+                return marshallLocation(role, signature.returnType(index), gpArgumentCount, fpArgumentCount, resultStackOffset);
+            });
+
+        ASSERT(!(headerSize % stackAlignmentBytes()));
+        size_t totalFrameSize = WTF::roundUpToMultipleOf<stackAlignmentBytes()>(std::max(argStackOffset, resultStackOffset));
+
+        return { thisArgument, WTF::move(params), WTF::move(results), totalFrameSize, headerSize };
+    }
+
+    // Equal to callInformationFor(signature, role).headerIncludingThisSizeInBytes.
+    static constexpr size_t headerIncludingThisSizeInBytes(CallRole role)
+    {
+        size_t headerSize = headerSizeInBytes;
+        if (role == CallRole::Caller)
+            headerSize -= sizeof(CallerFrameAndPC);
+        return headerSize + sizeof(Register); // thisArgument
+    }
+
+    // Equal to callInformationFor(signature, role).headerAndArgumentStackSizeInBytes.
+    size_t headerAndArgumentStackSizeInBytes(const RTT& signature, CallRole role) const
+    {
+        size_t headerSize = headerIncludingThisSizeInBytes(role);
+
+        size_t gpArgumentCount = 0;
+        size_t fpArgumentCount = 0;
+        size_t argStackOffset = headerSize;
+        for (unsigned index = 0; index < signature.argumentCount(); ++index)
+            marshallLocation(role, signature.argumentType(index), gpArgumentCount, fpArgumentCount, argStackOffset);
+
+        gpArgumentCount = 0;
+        fpArgumentCount = 0;
+        size_t resultStackOffset = headerSize;
+        for (unsigned index = 0; index < signature.returnCount(); ++index)
+            marshallLocation(role, signature.returnType(index), gpArgumentCount, fpArgumentCount, resultStackOffset);
+
+        return WTF::roundUpToMultipleOf<stackAlignmentBytes()>(std::max(argStackOffset, resultStackOffset));
+    }
+
+    RegisterSet argumentGPRs() const { return RegisterSet::argumentGPRs(); }
+
+    const Vector<GPRReg> gprArgs;
+    const Vector<FPRReg> fprArgs;
+    const Vector<GPRReg> prologueScratchGPRs;
+    const RegisterSet calleeSaveRegisters;
+};
+
+class JSCallingConvention {
+public:
+    static constexpr unsigned headerSizeInBytes = CallFrame::headerSizeInRegisters * sizeof(Register);
+
+    JSCallingConvention(Vector<GPRReg>&& gprs, Vector<FPRReg>&& fprs, RegisterSet&& calleeSaves)
+        : gprArgs(WTF::move(gprs))
+        , fprArgs(WTF::move(fprs))
+        , calleeSaveRegisters(calleeSaves)
+    { }
+
+    WTF_MAKE_NONCOPYABLE(JSCallingConvention);
+private:
+    template <typename RegType>
+    ArgumentLocation marshallLocationImpl(CallRole role, const Vector<RegType>& regArgs, size_t& count, size_t& stackOffset) const
+    {
+        if (count < regArgs.size())
+            return ArgumentLocation { ValueLocation { regArgs[count++] }, Width64 };
+
+        count++;
+        ArgumentLocation result = { role == CallRole::Caller ? ValueLocation::stackArgument(stackOffset) : ValueLocation::stack(stackOffset), Width64 };
+        stackOffset += sizeof(Register);
+        return result;
+    }
+
+    ArgumentLocation marshallLocation(CallRole role, Type valueType, size_t& gpArgumentCount, size_t& fpArgumentCount, size_t& stackOffset) const
+    {
+        ASSERT(isValueType(valueType));
+        switch (valueType.kind()) {
+        case TypeKind::I32:
+        case TypeKind::I64:
+        case TypeKind::Funcref:
+        case TypeKind::Exnref:
+        case TypeKind::Externref:
+        case TypeKind::Ref:
+        case TypeKind::RefNull:
+            return marshallLocationImpl(role, gprArgs, gpArgumentCount, stackOffset);
+        case TypeKind::F32:
+        case TypeKind::F64:
+            return marshallLocationImpl(role, fprArgs, fpArgumentCount, stackOffset);
+        default:
+            break;
+        }
+        RELEASE_ASSERT_NOT_REACHED();
+    }
+
+public:
+    CallInformation callInformationFor(const RTT& signature, CallRole role = CallRole::Callee) const
+    {
+        size_t gpArgumentCount = 0;
+        size_t fpArgumentCount = 0;
+        size_t stackOffset = headerSizeInBytes;
+        if (role == CallRole::Caller)
+            stackOffset -= sizeof(CallerFrameAndPC);
+
+        ArgumentLocation thisArgument = { role == CallRole::Caller ? ValueLocation::stackArgument(stackOffset) : ValueLocation::stack(stackOffset), widthForBytes(sizeof(void*)) };
+        stackOffset += sizeof(Register);
+        size_t headerSize = stackOffset;
+
+        Vector<ArgumentLocation, 8> params(signature.argumentCount(),
+            [&](unsigned index) {
+                return marshallLocation(role, signature.argumentType(index), gpArgumentCount, fpArgumentCount, stackOffset);
+            });
+        Vector<ArgumentLocation, 1> results { ArgumentLocation { ValueLocation { GPRInfo::returnValueGPR }, Width64 } };
+        return { thisArgument, WTF::move(params), WTF::move(results), stackOffset, headerSize };
+    }
+
+    const Vector<GPRReg> gprArgs;
+    const Vector<FPRReg> fprArgs;
+    const RegisterSet calleeSaveRegisters;
+};
+
+const JSCallingConvention& jsCallingConvention();
+const WasmCallingConvention& wasmCallingConvention();
+
+} } // namespace JSC::Wasm
+
+namespace WTF {
+
+template<>
+struct VectorTraits<JSC::Wasm::ArgumentLocation> : VectorTraitsBase<false, JSC::Wasm::ValueLocation> {
+    static constexpr bool canInitializeWithMemset = true;
+    static constexpr bool canMoveWithMemcpy = true;
+    static constexpr bool canCopyWithMemcpy = true;
+};
+
+} // namespace WTF
+
+#endif // ENABLE(WEBASSEMBLY)

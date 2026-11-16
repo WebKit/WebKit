@@ -1,0 +1,51 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/ax-text-marker-helper.js"></script>
+</head>
+<body>
+
+<div id="container" role="group">
+<p>Para One</p>
+<p>One<br>Two<br>Three</p>
+<p>Para Two</p>
+<p>Four<br>Five<br>Six</p>
+</div>
+
+<script>
+var output = "Verifies that AXIndexForTextMarker and AXTextMarkerForIndex round-trip without accumulating error across paragraphs and hard line breaks.\n\n";
+window.jsTestIsAsync = true;
+
+async function runTest() {
+    if (window.accessibilityController) {
+        await waitForFrameGeometryReady();
+        var container = await waitForElementById("container");
+
+        // The critical property (VoiceOver relies on it) is that converting a marker to an index and
+        // back does not ACCUMULATE error. Bounded, non-accumulating quirks are acceptable (snapping
+        // at newlines, or a +/-1 at a table cell boundary), so the pattern is repeated many times and
+        // we assert only that the worst round-trip drift -- and the worst index-vs-string-length
+        // difference -- stays within a small tolerance that does not grow with the number of
+        // repetitions. A regression that reintroduces per-element drift accumulates past the tolerance.
+        var result = checkRoundTripAllTextMarkerIndicesWithinContainer(container);
+        worstRoundTripDrift = result.worstRoundTripDrift;
+        worstLengthDifference = result.worstLengthDifference;
+        // Guard against a collapsed/degenerate index space passing vacuously: every character of the
+        // container's text must have been covered by the index walk, so none go unchecked.
+        uncheckedCharacters = result.containerTextLength - result.indicesChecked;
+        output += expectNumber("worstRoundTripDrift", 0, 2);
+        output += expectNumber("worstLengthDifference", 0, 2);
+        output += expectNumber("uncheckedCharacters", 0, 2);
+
+        // Hide the fixture so the dumped result is just the assertions, not the test markup.
+        document.getElementById("container").hidden = true;
+        debug(output);
+    }
+    finishJSTest();
+}
+runTest();
+</script>
+</body>
+</html>

@@ -1,0 +1,4 @@
+Visited color outside of canvas
+
+FAIL drawElementImage does not reveal visited link colors in first-letter assert_false: The canvas should not reflect the visited state. expected false got true
+

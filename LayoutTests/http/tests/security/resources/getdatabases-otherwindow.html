@@ -1,0 +1,9 @@
+<head>
+<script>
+indexedDB.deleteDatabase('getdatabase-otherwindow').onsuccess = () => {
+    indexedDB.open('getdatabase-otherwindow').onsuccess = () => {
+        window.opener.postMessage("Hi there!", "*");
+    }        
+}
+</script>
+</head>

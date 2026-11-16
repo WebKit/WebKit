@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+
+<script src="../../resources/js-test.js"></script>
+
+<style>
+    /* Force classic non-overlay scrollbars with known dimensions so eventSender
+       can hit-test them reliably on all platforms (including macOS, where
+       overlay scrollbars are normally invisible until hovered). */
+    .scroller::-webkit-scrollbar { width: 15px; height: 15px; }
+    .scroller::-webkit-scrollbar-track { background: #ccc; }
+    .scroller::-webkit-scrollbar-thumb { background: #888; }
+    .scroller {
+        width: 150px;
+        height: 100px;
+        overflow: scroll;
+        border: 1px solid black;
+        float: left;
+        margin: 5px;
+    }
+    .scroller > div { height: 500px; width: 100%; }
+    input { float: left; margin: 5px; }
+</style>
+
+<input id="input" type="text" value="Focus me">
+<div id="scroller" class="scroller"><div></div></div>
+<div style="clear: both;"></div>
+
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+var scrollbarWidth = 15;
+
+function clickVerticalScrollbar(id)
+{
+    var el = document.getElementById(id);
+    var x = el.offsetLeft + el.offsetWidth - scrollbarWidth / 2;
+    var y = el.offsetTop + el.offsetHeight / 2;
+    if (window.eventSender) {
+        eventSender.mouseMoveTo(x, y);
+        eventSender.mouseDown();
+        eventSender.mouseUp();
+    }
+}
+
+description("This tests that clicking an overflow element's scrollbar does not blur the currently focused input when no focusable ancestor exists.");
+
+document.getElementById("input").focus();
+clickVerticalScrollbar("scroller");
+shouldBeEqualToString("document.activeElement.tagName", "INPUT");
+</script>

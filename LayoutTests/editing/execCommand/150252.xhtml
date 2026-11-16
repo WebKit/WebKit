@@ -1,0 +1,26 @@
+<div id="150252" xmlns="http://www.w3.org/1999/xhtml">
+
+<script type="text/javascript">
+
+function boom()
+{
+  if (window.testRunner)
+    testRunner.dumpAsText();
+
+  var r = document.documentElement;
+  r.style.position = "absolute";
+  r.contentEditable = "true";
+  r.focus();
+  r.contentEditable = "false";
+  r.focus();
+  r.contentEditable = "true";
+  document.execCommand("subscript", false, null);
+  r.contentEditable = "false";
+  document.getElementById("150252").innerHTML = "This test passes if it doesn't crash. https://bugs.webkit.org/show_bug.cgi?id=150252";
+}
+
+window.addEventListener("load", boom, false);
+
+</script>
+
+</div>

@@ -1,0 +1,25 @@
+<!DOCTYPE HTML>
+<style>
+#container {
+  background-color: blue;
+  font-size: 0px;
+}
+.zero_height {
+  display: inline-block;
+  overflow: auto;
+  border: 100px solid green;
+  height: 0px;
+  width: 100px;
+}
+.content {
+  width: 100px;
+  height: 100px;
+}
+</style>
+<div id=container><div class=zero_height><div class=content></div></div></div>
+<pre id=result></pre>
+<script>
+if (window.testRunner)
+  testRunner.dumpAsText();
+result.innerText = container.offsetHeight;
+</script>

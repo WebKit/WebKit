@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<link rel="author" title="Tim Nguyen" href="https://github.com/nt1m">
+<link rel="author" title="Andrew Martinez" href="https://github.com/AndrewJMart">
+<link rel="help" href="https://drafts.csswg.org/css-page-3/#descdef-page-size">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script>
+// size is a property and a descriptor. Property-only values
+// used as the @page descriptor should be invalid.
+function test_invalid_descriptor(value) {
+  test(() => {
+    const style = document.createElement("style");
+    document.head.append(style);
+    try {
+      const sheet = style.sheet;
+      sheet.insertRule(`@page { size: ${value}; }`);
+      assert_equals(sheet.cssRules[0].style.getPropertyValue("size"), "",
+        `size: ${value} should be invalid as an @page descriptor`);
+    } finally {
+      style.remove();
+    }
+  }, `@page { size: ${value} } is invalid`);
+}
+
+test_invalid_descriptor("50%");
+test_invalid_descriptor("10px 50%");
+test_invalid_descriptor("min-content");
+test_invalid_descriptor("max-content");
+test_invalid_descriptor("fit-content(100px)");
+test_invalid_descriptor("min-content max-content");
+</script>

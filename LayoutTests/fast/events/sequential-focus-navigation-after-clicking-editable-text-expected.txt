@@ -1,0 +1,6 @@
+To test manually, click between two l's in hello below and press shift+tab.
+Focus should move to the text field.
+
+
+hello
+PASS

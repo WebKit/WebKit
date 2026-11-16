@@ -1,0 +1,19 @@
+<style>
+body {
+  min-width: min-content;
+  -webkit-user-modify: read-write-plaintext-only;
+}
+.block {
+  width: 0px;
+}
+</style>
+<span></span><div></div><span><span>text</span><div class=block>block content</div>
+<script>
+window.testRunner?.dumpAsText();
+
+document.body.offsetHeight;
+document.execCommand("selectAll", false);
+document.execCommand("insertHTML", false, "test");
+
+document.body.innerText = "PASS";
+</script>

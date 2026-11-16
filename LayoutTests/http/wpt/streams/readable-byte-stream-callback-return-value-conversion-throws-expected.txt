@@ -1,0 +1,4 @@
+
+PASS cancel() rejects with the exception thrown by the promise returned from the underlying source's cancel()
+PASS read() rejects with the exception thrown by the promise returned from the underlying source's pull()
+

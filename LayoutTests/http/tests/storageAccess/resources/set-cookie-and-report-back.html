@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="/js-test-resources/ui-helper.js"></script>
+    <script>
+        function setCookieAndPostMessage() {
+            document.cookie = "firstPartyCookie=value";
+            window.opener.postMessage("PASS Cookie created.", "http://127.0.0.1:8000");
+        }
+    </script>
+</head>
+<body onload="setCookieAndPostMessage()">
+</body>
+</html>

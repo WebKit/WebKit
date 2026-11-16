@@ -1,0 +1,53 @@
+This tests that contents in malformed tables are accessible.
+
+PASS: table1.role === 'AXRole: AXTable'
+PASS: table2.role === 'AXRole: AXTable'
+PASS: table1ColumnCount === 2
+PASS: table1RowCount === 2
+PASS: table2ColumnCount === 2
+PASS: table2RowCount === 2
+PASS: table1.childAtIndex(0).domIdentifier === 'caption1'
+PASS: table2.childAtIndex(0).domIdentifier === 'caption2'
+
+Checking rows for table 1
+PASS: rowA.isEqual(rowB) === true
+PASS: rowA.role === 'AXRole: AXRow'
+PASS: rowA.isEqual(rowB) === true
+PASS: rowA.role === 'AXRole: AXRow'
+
+Checking rows for table 2
+PASS: rowA.isEqual(rowB) === true
+PASS: rowA.role === 'AXRole: AXRow'
+PASS: rowA.isEqual(rowB) === true
+PASS: rowA.role === 'AXRole: AXRow'
+
+Checking cells for table 1
+PASS: cellA.isEqual(cellB) === true
+PASS: cellA.role === 'AXRole: AXCell'
+PASS: cellA.isEqual(cellB) === true
+PASS: cellA.role === 'AXRole: AXCell'
+PASS: cellA.isEqual(cellB) === true
+PASS: cellA.role === 'AXRole: AXCell'
+PASS: cellA.isEqual(cellB) === true
+PASS: cellA.role === 'AXRole: AXCell'
+
+Checking cells for table 2
+PASS: cellA.isEqual(cellB) === true
+PASS: cellA.role === 'AXRole: AXCell'
+PASS: cellA.isEqual(cellB) === true
+PASS: cellA.role === 'AXRole: AXCell'
+PASS: cellA.isEqual(cellB) === true
+PASS: cellA.role === 'AXRole: AXCell'
+PASS: cellA.isEqual(cellB) === true
+PASS: cellA.role === 'AXRole: AXCell'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Table with CSS and ARIA
+Heading one	Heading two
+a	b
+Table with CSS and no ARIA
+Heading one	Heading two
+a	b
+

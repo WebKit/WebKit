@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<head>
+<meta charset="utf-8" />
+<title>Scroll to text fragment generation - a short selection is inlined in the fragment directive</title>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+window.addEventListener('load', () => {
+    const range = document.createRange();
+    range.selectNodeContents(document.getElementById("test"));
+    document.body.innerText = internals.textFragmentDirectiveForRange(range).split('#')[1];
+});
+</script>
+</head>
+<body>Prefix words here. <span id="test">The quick brown fox jumped over the lazy sleeping dog near the river.</span> And suffix words here.</body>
+</html>

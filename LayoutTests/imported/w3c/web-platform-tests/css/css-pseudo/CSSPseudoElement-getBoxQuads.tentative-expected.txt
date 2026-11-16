@@ -1,0 +1,10 @@
+
+FAIL CSSPseudoElement should have getBoxQuads method target.pseudo is not a function. (In 'target.pseudo("::before")', 'target.pseudo' is undefined)
+FAIL getBoxQuads should return an array target.pseudo is not a function. (In 'target.pseudo("::before")', 'target.pseudo' is undefined)
+FAIL getBoxQuads returns DOMQuad for ::before target.pseudo is not a function. (In 'target.pseudo("::before")', 'target.pseudo' is undefined)
+FAIL getBoxQuads with box="border" returns border box dimensions target.pseudo is not a function. (In 'target.pseudo("::before")', 'target.pseudo' is undefined)
+FAIL getBoxQuads with box="content" returns content box dimensions target.pseudo is not a function. (In 'target.pseudo("::before")', 'target.pseudo' is undefined)
+FAIL getBoxQuads with box="padding" returns padding box dimensions target.pseudo is not a function. (In 'target.pseudo("::before")', 'target.pseudo' is undefined)
+FAIL getBoxQuads with box="margin" returns margin box dimensions target.pseudo is not a function. (In 'target.pseudo("::before")', 'target.pseudo' is undefined)
+FAIL getBoxQuads works for ::after pseudo-element target.pseudo is not a function. (In 'target.pseudo("::after")', 'target.pseudo' is undefined)
+

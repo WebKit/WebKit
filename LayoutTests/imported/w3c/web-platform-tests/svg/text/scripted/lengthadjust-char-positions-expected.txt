@@ -1,0 +1,12 @@
+ABCD
+ABCD
+ABCD
+
+PASS control: without textLength the advances are one em each
+PASS lengthAdjust="spacing" moves the characters apart and leaves each advance alone
+PASS lengthAdjust="spacingAndGlyphs" scales the advances, the positions and the extents
+PASS lengthAdjust="spacingAndGlyphs" does not rotate or change the height of a character
+PASS getSubStringLength sums the scaled advances under lengthAdjust="spacingAndGlyphs"
+PASS getCharNumAtPosition finds the characters where lengthAdjust="spacing" put them
+PASS getCharNumAtPosition finds the stretched characters under lengthAdjust="spacingAndGlyphs"
+

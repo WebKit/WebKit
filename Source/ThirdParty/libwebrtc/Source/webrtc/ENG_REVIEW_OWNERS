@@ -1,0 +1,9 @@
+# Current list of eng reviewers mostly for the purpose of reviewing
+# dependencies on third-party directories (because //ENG_REVIEW_OWNERS is
+# included by //third_party/OWNERS).
+
+# People listed in this file will only have to coordinate with chromium's eng
+# review owners to ensure that the added dependency was OK.
+
+danilchap@webrtc.org
+mbonadei@webrtc.org

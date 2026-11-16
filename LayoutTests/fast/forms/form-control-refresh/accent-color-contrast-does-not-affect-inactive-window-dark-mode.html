@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta name="fuzzy" content="maxDifference=0-1;totalPixels=0-2" />
+        <meta name="color-scheme" content="dark">
+        <style>
+            input, button {
+                accent-color: black;
+                display: block;
+            }
+        </style>
+    </head>
+    <body>
+        <input type="progress">
+        <input type="checkbox" checked>
+        <input type="checkbox" switch checked>
+        <input type="radio" checked>
+        <input type="range" min="0" max="4" step="1" list="datalist">
+        <input type="text" list="datalist">
+        <input type="submit" value="Submit">
+        <button type="submit">Submit</button>
+        <datalist id="datalist">
+            <option>0</option>
+            <option>1</option>
+            <option>2</option>
+            <option>3</option>
+            <option>4</option>
+        </datalist>
+        <script>
+            if (window.testRunner)
+                window.testRunner.setWindowIsKey(false);
+        </script>
+    </body>
+</html>

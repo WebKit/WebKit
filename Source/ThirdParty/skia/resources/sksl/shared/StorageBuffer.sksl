@@ -1,0 +1,22 @@
+struct SomeData {
+    float4 a;
+    float2 b;
+};
+
+layout(set=0, binding=0) readonly buffer storageBuffer
+{
+    uint offset;
+    SomeData[] inputData;
+};
+
+layout(set=0, binding=1) buffer outputBuffer
+{
+    SomeData[] outputData;
+};
+
+layout(location=2) in flat int bufferIndex;
+
+half4 main(float2 coords) {
+    outputData[offset] = inputData[offset];
+    return half4(inputData[bufferIndex].a * inputData[bufferIndex].b.x);
+}

@@ -1,0 +1,9 @@
+The inline style should be applied when merging div element.
+The test passes if "bar" has the blue color and 20px font-size.
+| "\n"
+| <div>
+|   "foo<#selection-caret>"
+|   <span>
+|     style="color: blue; font-size: 20px;"
+|     "bar"
+| "\n"

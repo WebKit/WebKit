@@ -1,0 +1,10 @@
+P
+A
+F
+F
+A
+P
+Lorem
+
+PASS Table with mixed percent, fixed, and auto columns should respect width attribute
+

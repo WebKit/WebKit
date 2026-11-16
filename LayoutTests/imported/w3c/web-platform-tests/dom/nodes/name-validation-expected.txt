@@ -1,0 +1,7 @@
+
+PASS Valid and invalid characters in createElement.
+PASS Valid and invalid characters in createElementNS and createDocument.
+PASS Valid and invalid characters in setAttribute, toggleAttribute, and createAttribute.
+PASS Valid and invalid characters in setAttributeNS and createAttributeNS.
+PASS Valid and invalid characters in createDocumentType.
+

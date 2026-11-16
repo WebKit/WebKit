@@ -1,0 +1,7 @@
+Notifications From Tests Running In An IFRAME
+
+A test is run inside an iframe with a same origin document. The containing document should receive messages via postMessage/ onmessage as the tests progress inside the iframe. A single passing test is expected in the summary below.
+
+
+PASS Containing document receives messages
+

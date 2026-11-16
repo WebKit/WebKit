@@ -1,0 +1,46 @@
+<!DOCTYPE html><!-- webkit-test-runner [ AttachmentElementEnabled=true ] -->
+<html>
+<head>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+if (window.internals) {
+   internals.settings.setImageControlsEnabled(true);
+}
+</script>
+</head>
+<body>
+<img id="target" src="../resources/green-256x256.jpg">
+<div id="log">
+<script>
+   function hasImageControls(elem)
+   {
+       if (window.internals)
+           return internals.hasImageControls(elem);
+       return false;
+   }
+
+   function checkForShadowDom(elem)
+   {
+        var output = '';
+        if (internals.shadowRoot(elem) && internals.shadowRoot(elem).getElementById('image-controls') && internals.shadowRoot(elem).getElementById('image-controls-button')) 
+            output += 'PASS: image controls exist in shadowDom';
+        else
+            output += 'FAIL: no image controls found in shadowDom';
+        document.getElementById('log').innerHTML = output;
+   }
+
+   var elem = document.getElementById("target");
+   var ID = HTMLAttachmentElement.getAttachmentIdentifier(elem);
+
+   setInterval(() => {
+    if (hasImageControls(elem)) {
+        checkForShadowDom(elem);
+        testRunner.notifyDone();
+    }
+   }, 200);
+</script>
+</body>
+</html>

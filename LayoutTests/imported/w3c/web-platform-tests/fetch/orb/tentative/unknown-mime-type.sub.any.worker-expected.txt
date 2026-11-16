@@ -1,0 +1,7 @@
+
+PASS ORB shouldn't block opaque failed missing MIME type (font/ttf): fetch(..., {mode: "no-cors"})
+PASS ORB shouldn't block opaque failed missing MIME type (text/plain): fetch(..., {mode: "no-cors"})
+PASS ORB shouldn't block opaque failed missing MIME type (application/json): fetch(..., {mode: "no-cors"})
+PASS ORB shouldn't block opaque failed missing MIME type (image/png): fetch(..., {mode: "no-cors"})
+PASS ORB shouldn't block opaque failed missing MIME type (text/javascript): fetch(..., {mode: "no-cors"})
+

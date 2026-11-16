@@ -1,0 +1,20 @@
+
+PASS Assign string to SVGScriptElement.href.baseVal.
+PASS Assign TrustedScriptURL to SVGScriptElement.href.baseVal.
+PASS Assign string to non-attached SVGScriptElement.href via setAttribute.
+PASS Assign TrustedScriptURL to non-attached SVGScriptElement.href via setAttribute.
+PASS Assign string to attached SVGScriptElement.href via setAttribute.
+PASS Assign TrustedScriptURL to attached SVGScriptElement.href via setAttribute.
+PASS Assign string to SVGScriptElement.className.baseVal.
+PASS Assign TrustedScriptURL to SVGScriptElement.className.baseVal.
+PASS Assign string to SVGUseElement.href.baseVal.
+PASS Assign TrustedScriptURL to SVGUseElement.href.baseVal.
+PASS Setup default policy
+PASS Assign string to SVGScriptElement.href.baseVal  w/ default policy.
+PASS Assign string to non-attached SVGScriptElement.href via setAttribute w/ default policy.
+PASS Assign string to attached SVGScriptElement.href via setAttribute w/ default policy.
+PASS Assign string to SVGScriptElement.className.baseVal w/ default policy.
+PASS Assign TrustedScriptURL to SVGScriptElement.className.baseVal w/ default policy.
+PASS Assign string to SVGUseElement.href.baseVal w/ default policy.
+PASS Assign TrustedScriptURL to SVGUseElement.href.baseVal w/ default policy.
+

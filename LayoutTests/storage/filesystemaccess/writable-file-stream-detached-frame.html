@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+</head>
+<body>
+<script>
+async_test(t => {
+    const iframe = document.createElement("iframe");
+    document.body.appendChild(iframe);
+
+    // Create the stream in the subframe's realm so that its context resolves to the subframe's document.
+    const createStream = iframe.contentWindow.eval(`(async function() {
+        const root = await navigator.storage.getDirectory();
+        await root.removeEntry("writable-file-stream-detached-frame.txt").then(() => { }, () => { });
+        const handle = await root.getFileHandle("writable-file-stream-detached-frame.txt", { create: true });
+        return await handle.createWritable();
+    })`);
+
+    createStream().then(t.step_func(stream => {
+        iframe.remove();
+
+        // The returned promise never settles, because promises of a stopped document are inert.
+        stream.write("chunk");
+
+        t.step_timeout(() => t.done(), 0);
+    }), t.unreached_func("Could not create stream in subframe"));
+}, "Writing to a FileSystemWritableFileStream whose realm was detached from its frame does not crash");
+</script>
+</body>
+</html>

@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<title>flex-basis: -webkit-fill-available on a column flex item resolves through indefinite containing block</title>
+<link rel="match" href="flex-basis-fill-available-column-flex-expected.html">
+<style>
+body {
+  margin: 0;
+}
+.flex {
+  display: flex;
+  flex-direction: column;
+  width: 100px;
+}
+.item {
+  flex-basis: -webkit-fill-available;
+  background: green;
+}
+</style>
+<div class="flex">
+  <div class="item"></div>
+</div>

@@ -1,0 +1,21 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="/js-test-resources/js-test.js"></script>
+<script src="/media-resources/utilities.js"></script>
+<script>
+description("Under site isolation, audio played in the main frame activates the audio session, and the web process observes it via AudioSession::isActive().");
+jsTestIsAsync = true;
+
+let context;
+
+onload = async () => {
+    try {
+        context = await startNearSilentAudioContext();
+        await waitForAudioSessionActiveState(true);
+        testPassed("the audio session is active");
+        await context.close();
+    } catch (e) {
+        testFailed(e.message);
+    }
+    finishJSTest();
+};
+</script>

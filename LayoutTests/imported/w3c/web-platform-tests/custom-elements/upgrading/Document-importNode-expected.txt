@@ -1,0 +1,4 @@
+
+PASS autonomous: document.importNode() should import custom elements successfully
+PASS autonomous: document.importNode() should import "undefined" custom elements successfully
+

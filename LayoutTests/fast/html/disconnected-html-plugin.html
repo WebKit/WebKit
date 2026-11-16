@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<body onload="main()">
+<script>
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+}
+
+function main() {
+    embed.type = "video/mp4";
+    let object = document.getElementById("object");
+    iframe.contentDocument.body.appendChild(object);
+    embed.height = "50%";
+    embed.type = "image/png";
+    container.prepend("A");
+    object.validity;
+    document.body.remove();
+    setTimeout(() => {
+        document.write("This test passes if WebKit does not hit any debug assertions or crash.<br><br>PASS");
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }, 100);
+}
+</script>
+<object id="object"></object>
+<iframe id="iframe"></iframe>
+<div id="container"><embed id="embed"></div>
+</body>

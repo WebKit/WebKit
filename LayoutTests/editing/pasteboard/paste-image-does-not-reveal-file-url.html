@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test-pre.js"></script>
+<div id="destination" contenteditable="true" onpaste="check(event)" style="width: 500px; height: 100px; border: solid red 1px"></div>
+<iframe id="iframe" src="../resources/abe.png" onload="runTest()"></iframe>
+</body>
+<script>
+
+if (window.internals) {
+    internals.settings.setCustomPasteboardDataEnabled(true);
+    internals.settings.setPreferMIMETypeForImages(true);
+}
+
+description("Tests that pasting images do not reveal its file URL. To manually test, copy the image below in the context menu and paste into the red box.");
+jsTestIsAsync = true;
+
+function runTest()
+{
+    if (!window.testRunner)
+        return;
+
+    const iframeDocument = document.getElementById("iframe").contentDocument;
+    iframeDocument.body.focus();
+    iframeDocument.execCommand("SelectAll");
+    iframeDocument.execCommand("Copy");
+
+    document.getElementById("destination").focus();
+    document.execCommand("Paste");
+}
+
+function check(event)
+{
+    shouldBeTrue('event.clipboardData.types.includes("Files")');
+    shouldBeEqualToString('event.clipboardData.getData("url")', '');
+    shouldBeEqualToString('event.clipboardData.getData("text/plain")', '');
+    shouldBeEqualToString('event.clipboardData.getData("text/uri-list")', '');
+    finishJSTest();
+}
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</html>

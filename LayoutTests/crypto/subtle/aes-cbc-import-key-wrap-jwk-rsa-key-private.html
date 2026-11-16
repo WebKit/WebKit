@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<script src="../resources/common.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+description("Test wrapping a JWK RSA private key with AES-CBC using an imported key");
+
+jsTestIsAsync = true;
+var jwkKeyPhiFormat = {
+    kty: "RSA",
+    alg: "RSA-OAEP",
+    use: "enc",
+    key_ops: ["decrypt", "unwrapKey"],
+    ext: true,
+    n: "lxHN0N9VRZ0_pl0xv3-NXx70WnjkODSkQ5LjHXTFy3DOQsvkagFzD9HqYQezCmcewLjdK5PLwSesDoMdfL6tusBHcvyit1kvydYFQ3NLbENNkYsiBG5_nW4IQGL6JKbZ5iGdUop98QHKm6YZR1u4zrAtxM6bVEo05VvhjRS0M8yWoZVi-7Vdsc0LqI0Qdq_NoctX5Fu-AqiBN7Uo1HkYGcP2oC82J_J5cjw98BQiP5kDWThq9RK-X6S-EUALx_m4iG6iOYKTA3SQyf1xBqFaXXoEJjcckbOqkegecz5b-YWUh8iZPvhwnt-RZwpIbLJgKwz19ndkn9KvoEEw7YbEow",
+    e: "AQAB",
+    d: "cj5DkDakjM2bKduGWJREO-_zyEtuA1dD9doqKMd7IRuA0CDS7puEAS20-oXRDwfmyMXEdEUDrGGtCxh6fzDPvs_T-JA3GUK4EgHo3xZcrlXDXlKCeil6Fnr0gISZOIh5dkBrcdVL4quBJe4ZZc5mVuAC7Ld13et0TxMJ4iALGrPuqPVUOGSYIcZ9idx5zKKBWhY3tPggEdKpnHBmPfTRO4yZaf0Nw1QXrgSMZY9ejeuaurAh4Q8o4-6-r8O2LUe7ufMh_ccKkXISEh4KdOnT17EM9BQTn9UNS9GoK2ZZU0U3io5DSu_kpasr4uOVWcGlE2wczOv2nkGwG39F3sFF0Q",
+    p: "x5vnco5j-TD6hTOzyN4DhkZ44m05NycxT6SUE2qTurT3-uze_L7TYutLRIRkovRMhTHZAr2pziRlasEs13PEz9Zvx1I_T68srsonrdbak-SFMecM7EjHc5C-J13gXhw9HIW28_Sx9rQ-JkGwEwE9PEdIUfuvdqpgh3SmXwPJrEs",
+    q: "wb9vllg_2n-kNge0bThg_7xu1UwTzipM8vxSUkkV2IipJKIAekkU3aAB8LoPhUI0-17pSGw3ETOO27t163TI9qIPpzLbhTH9aUi7qLGbKlzPlgnqP43Z0LHxc3xKDgit-Ar29QLaX2uoJBX6VVWvhmh7BIPDHNVM5GZjwWORYgk",
+    dp: "C2c8sa6wx2uk5Dcv7inAycr83PKgciYrCwG78-AC0IfGIu-lTYsZSG1ov2FQ3n5WYMWYQC_Vo5EwugiPJz_V3onBmQF53HOFefbSjXvYwNotQcyRUG5X9qIuOtGCH949H4QED6vK_u0NH-JgzLUlamwoFYbrXzwch6CCYKs2ukE",
+    dq: "hbtRloDLclHwUqr2yvzDV0IFbozYjtF706x-VfXEcnXB6ls34TBYirFLJZIH7H9KeseEVkz7pY_k5555QlCV9kbebxYXl9RtiiJ-BW6yH4d4caPeYIfU9MweUQxVQWKUUkWfOHcDrCFvKZlR9Vzzjt7HKtKX9mr0bCKQcIf9baE",
+    qi: "a-7hUTTnclUPKOfSgH8zEKGJ-AvdFEzxvZ5sq46Qf2MbORxVjN4dJamVvM-FoqcwN-9cuUlyr9bSFTwUBW4vXa8Xj9a8JfViuMCqzR-mL1rGIUQ5ARGhNcSsRlyKTqz5BlWlVKmXIx_p-DeVwPWiJJy4k_FqyBxrnxkzomHfrxk",
+};
+
+var extractable = true;
+var jwkKey = {
+    kty: "RSA",
+    alg: "RSA-OAEP",
+    use: "enc",
+    key_ops: ["decrypt", "unwrapKey"],
+    ext: true,
+    n: "lxHN0N9VRZ0_pl0xv3-NXx70WnjkODSkQ5LjHXTFy3DOQsvkagFzD9HqYQezCmcewLjdK5PLwSesDoMdfL6tusBHcvyit1kvydYFQ3NLbENNkYsiBG5_nW4IQGL6JKbZ5iGdUop98QHKm6YZR1u4zrAtxM6bVEo05VvhjRS0M8yWoZVi-7Vdsc0LqI0Qdq_NoctX5Fu-AqiBN7Uo1HkYGcP2oC82J_J5cjw98BQiP5kDWThq9RK-X6S-EUALx_m4iG6iOYKTA3SQyf1xBqFaXXoEJjcckbOqkegecz5b-YWUh8iZPvhwnt-RZwpIbLJgKwz19ndkn9KvoEEw7YbEow",
+    e: "AQAB",
+    d: "JrVcp8b56f77VqzteNR9jGB5mw775zzx1BC4mg0YO2MZrrrguZrKeUS_ygH3idRXaGlV3nsdy83XA9brwNF44W-wPxHlvZYgLRbmPVy2-DQclYzxd_I6R8PwYFMcJjUMgy-cyJAM6iqb2BsMwiCJ74fsClAoM8ZZ3GUZG5WxAM5oBdYnLdvTIS9VU0oMnHzdiqRnn3DDuT2KUQkErY0OzXst4VUuM077Oo0IDL9hiV_ZVnUR-3Y5YBaC5XURvZHCsfuII5MrgEzVtpD9NdQFyZ5u2XQbQkvaJDVmXtxhaPf3jwDrJznXZi6IWzOlTt7WVcdNEWmODi8OOOO9m6tqqQ", 
+    p: "x5vnco5j-TD6hTOzyN4DhkZ44m05NycxT6SUE2qTurT3-uze_L7TYutLRIRkovRMhTHZAr2pziRlasEs13PEz9Zvx1I_T68srsonrdbak-SFMecM7EjHc5C-J13gXhw9HIW28_Sx9rQ-JkGwEwE9PEdIUfuvdqpgh3SmXwPJrEs",
+    q: "wb9vllg_2n-kNge0bThg_7xu1UwTzipM8vxSUkkV2IipJKIAekkU3aAB8LoPhUI0-17pSGw3ETOO27t163TI9qIPpzLbhTH9aUi7qLGbKlzPlgnqP43Z0LHxc3xKDgit-Ar29QLaX2uoJBX6VVWvhmh7BIPDHNVM5GZjwWORYgk",
+    dp: "C2c8sa6wx2uk5Dcv7inAycr83PKgciYrCwG78-AC0IfGIu-lTYsZSG1ov2FQ3n5WYMWYQC_Vo5EwugiPJz_V3onBmQF53HOFefbSjXvYwNotQcyRUG5X9qIuOtGCH949H4QED6vK_u0NH-JgzLUlamwoFYbrXzwch6CCYKs2ukE",
+    dq: "hbtRloDLclHwUqr2yvzDV0IFbozYjtF706x-VfXEcnXB6ls34TBYirFLJZIH7H9KeseEVkz7pY_k5555QlCV9kbebxYXl9RtiiJ-BW6yH4d4caPeYIfU9MweUQxVQWKUUkWfOHcDrCFvKZlR9Vzzjt7HKtKX9mr0bCKQcIf9baE",
+    qi: "a-7hUTTnclUPKOfSgH8zEKGJ-AvdFEzxvZ5sq46Qf2MbORxVjN4dJamVvM-FoqcwN-9cuUlyr9bSFTwUBW4vXa8Xj9a8JfViuMCqzR-mL1rGIUQ5ARGhNcSsRlyKTqz5BlWlVKmXIx_p-DeVwPWiJJy4k_FqyBxrnxkzomHfrxk",
+};
+var rawKey = asciiToUint8Array("jnOw99oOZFLIEPMr");
+var aesCbcParams = {
+    name: "aes-cbc",
+    iv: asciiToUint8Array("jnOw99oOZFLIEPMr"),
+}
+var expectWrappedKey = "995a93379575a0c677a7d48dbe7d496fb78b6dce1ac825efae125fd6ee28b9d0c59bfa1cb034a9282e08dd9e5050b948f9fe537df18157325eb59db5aeec4fc13551102eb6c1891e4e6744feb413fcaac94cfe7a3454472d6c58105ceeb8aba0cbda3212e114c27cf909e4e1d9d7bda242f8f7a23940c46c7bc99c3240497ece80878c5f9a64aad6d5d099a5875f6f03f139d84ec0cff278ab788619c30cff25a951681067b09d3fa9b8ab768b3317db3b2b9ab673c681b1526c8a8c465d3c5124a257fcda30915fb60890afa23467b2ceda96b6daadc36dcd1732470c37364fd8678ab2a2b4f009bf715cacf86a7d0c5447925bcb4f5130e6e9903272f4b60a49322be31db9c92a4d42113b5da0a1bdf8a3e5b34940cf1b284269a7acdc0794778cf3f820c141c8263f5269cebd35178c313a4e69c33ca1ce4317184d4be2899ed5ae589ffd088799d2ee0a134219738a6734b6d2d727d3ed3b863df723e51e359592af0f4d592d5fbaead814fefe0621dd4541e5fc1af3586f2ac6357bbfc6e51a410c19b290d96e4d7ce2718409fbccb179a67d9a558defc040109857f364f370590c7f60dcf461bb671fa7b651ab0791d7dc8e7534932b442eb50dbdd58f5b49d0d26cce13c39133589f819a8ee33dab1b42cc9f221327c77601cbfb821ab06e428d0afc95409076e3eb5afaad84c14af46c0c82eaaa7a5851bf9aa363b9f86703a5a9db38e4a97142edbd3c23958bad4082c1d6675b4bf2a5d3cfb0c8a6e9988dcc4c7b07fe6b56327636063134febf85a1229dc93f9a49a0397474dce77feef64559064865a86a1b45fbc2bca8c518c988f0e190fe05c0a6a9dc1dd40e2633f0cc9c1633a78d25b75ab842078095ff23eed015270c0ce0938e207855c05a69b681cc7dfd5b9048cf727c011e6fdbe8653a4bf5da045cd6f23228e3fbfc881bc4cc696e4e13b0a733be62dd7c41c9869f75b0dd931ca51bb998e2a1145085b4b3f74fcc7f05b7c9d3fc592885c3919bdea36748a2d9e517754d45cf6c991aee3f66b794b03d574818c7fff0466cc3076e843409fdfe87ccf3927c549bf82f3b6fb329ce5133db0289522fa25ea959aeb3a90510133050f17092aa4611a5ff58453e4a271613b730a7342bc107cd25ccfd79ff2533b2c38d5b03a100b786d9113eb3b26b0c0d398d42ebb9b241b81356a68218bf4f823cdcbd889ce6118ea437bc837423037823893eb22a0d3e7223813cd0dab01b6a8cca8883a912ebea3ab1b49b53c98fa234e3a8f45a60538f0ba821f10e7e2ca3e7ce99441fb06e4f253e1f2c44b93183fc148ebb510ab62b7b25e5e58c3d7615df7e4f564390a63fdb2dcf1e23301b4cf6d6fbc6506e267dd01f68813e81e8c0a7df19e2bb61fe0d3ca0832d7b217893b77165cd577222fb1e6b5cd589f2007340ec5d9a534b409e8664a6ac79663a4edb9a8ac3ee150154d0701c9b449c74daccb2d86c0f2968dde6a384cf8ba7743f0f6a66d23fc5a94dc398bf96d1e2e0c05cb3e8753218602eaed85a6b9fe6a06459edd8fa6e8e8b9308ffb629871712343d20f6a7596c4304b2899f26282443649834f34140993cfc9fe171df05f028ddbef89405377f627c555f3a6d12506b8316d84b0a417c70ec757bb161db00451a5982e117fdcfec152962373bd69191ff73d3ebd052d87923bdda85fc36084ed733a2c2a0cce946e08e1fa0fc4ae79bb935b8c018d823f93c89a95596e92672c388da2de58d41f3ad54ed94225bee5e138e644c4e83259837d0368871bfa589c08edbc65b2d4c69c77fcff436d55061ba81bc01d6ca56bf98e18cf38c01c2281e254ca0dad9f4d7597a13c1f15cfdc7b77a4158a40ba5350bde3c077dcf25fb3f268b2c1b3893953079d7d7492f174a1fe58400d34ecc2100be0ab4021a2fa83de0f65e280a4ef18c14c47bac22527ff9ece9f9a56f888b4dad370996e284499f0e2776a8f029f50bc553db447715859ad04c9276a09e466820e47f5c01641b5a221d08edededb3a20126d7bfdaa61f0e1dac07051140f1cda1b6be89d5e30ea84208db1a071de847ace9cd2f5fed94f98d2249dbbe29933d845e64379f420f648ab1d097110fec663e1d577312c94d1bfd2fa68c86a176aa1df0930b6bc8370b1abda2d86f8a8c5ff3db847dd70627e3789b484a9f28449d1cf2653dcb617c25a6dd73728fb5da063402cc1c1cf144fa818fe9bc1bf3f0e5ad08f4b5993fd993951433ad68b9db2650d8ad2f5669980ae0e9a29438befdd4728ad8b6ced271327692eeb1ee3f702f8ec0b70b7add2e2dbc9b81d6cc6eed065044c57a8ed63ef3f87f5288dcb5f1fa06ee49f9dc51c4439460036c74695442" ;
+
+crypto.subtle.importKey("raw", rawKey, "aes-cbc", extractable, ["wrapKey"]).then(function(result) {
+    wrappingKey = result;
+    return crypto.subtle.importKey("jwk", jwkKey, { name: "rsa-oaep", hash: "sha-1" }, extractable, ["decrypt"]);
+}).then(function(result) {
+    importedKey = result;
+    return crypto.subtle.importKey("jwk", jwkKeyPhiFormat, { name: "rsa-oaep", hash: "sha-1" }, extractable, ["decrypt"]);
+}).then(function(result) {
+    importedKeyPhiFormat = result;
+    return crypto.subtle.exportKey("jwk", importedKey);
+}).then(function(result) {
+    exportedKey = result;
+    shouldBe("exportedKey.d", "jwkKey.d")
+    return crypto.subtle.exportKey("jwk", importedKeyPhiFormat);
+}).then(function(result) {
+    exportedKeyPhiFormat = result;
+    shouldBe("exportedKeyPhiFormat.p", "jwkKeyPhiFormat.p");
+    shouldBe("exportedKeyPhiFormat.q", "jwkKeyPhiFormat.q");
+    return crypto.subtle.wrapKey("jwk", importedKey, wrappingKey, aesCbcParams);
+}).then(function(result) {
+    wrappedKey = result;
+
+    shouldBe("bytesToHexString(wrappedKey)", "expectWrappedKey");
+
+    finishJSTest();
+});
+
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

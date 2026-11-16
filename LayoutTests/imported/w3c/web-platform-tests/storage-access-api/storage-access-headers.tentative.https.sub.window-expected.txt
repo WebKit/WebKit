@@ -1,0 +1,19 @@
+
+PASS Sec-Fetch-Storage-Access is omitted when credentials are omitted
+FAIL Sec-Fetch-Storage-Access is `none` when unpartitioned cookies are unavailable. assert_array_equals: value is undefined, expected array
+FAIL Sec-Fetch-Storage-Access is `inactive` when unpartitioned cookies are available but not in use. assert_array_equals: value is undefined, expected array
+FAIL Sec-Fetch-Storage-Access is `active` after a valid retry with matching explicit allowed-origin. assert_array_equals: value is undefined, expected array
+FAIL Sec-Fetch-Storage-Access is active after retry with wildcard `allowed-origin` value. assert_array_equals: value is undefined, expected array
+FAIL 'Activate-Storage-Access: retry' is a no-op on a request without an `allowed-origin` value. assert_array_equals: value is undefined, expected array
+FAIL 'Activate-Storage-Access: retry' is a no-op on a request from an origin that does not match its `allowed-origin` value. assert_array_equals: value is undefined, expected array
+FAIL Activate-Storage-Access `retry` is a no-op on a request with a `none` Storage Access status. assert_array_equals: value is undefined, expected array
+FAIL Activate-Storage-Access `load` header grants storage access to frame. assert_true: frame should have storage access because of the `load` header expected true got false
+FAIL Activate-Storage-Access `load` is honored for `active` cases. assert_true: expected true got false
+PASS Activate-Storage-Access `load` header is a no-op for requests without storage access.
+FAIL Sec-Fetch-Storage-Access is `inactive` for ABA case. assert_array_equals: value is undefined, expected array
+FAIL Storage Access can be activated for ABA cases by retrying. assert_array_equals: value is undefined, expected array
+FAIL Sec-Fetch-Storage-Access maintains value on same-origin redirect. assert_array_equals: value is undefined, expected array
+FAIL Sec-Fetch-Storage-Access is not 'active' after cross-origin same-site redirection. assert_array_equals: value is undefined, expected array
+FAIL Sec-Fetch-Storage-Access loses value on a cross-site redirection. assert_array_equals: value is undefined, expected array
+FAIL Activate-Storage-Access retry is handled before any redirects are followed. assert_equals: expected (undefined) undefined but got (object) object "[object Object]"
+

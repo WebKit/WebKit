@@ -1,0 +1,59 @@
+/*
+ *  Copyright (c) 2019 The WebRTC project authors. All Rights Reserved.
+ *
+ *  Use of this source code is governed by a BSD-style license
+ *  that can be found in the LICENSE file in the root of the source
+ *  tree. An additional intellectual property rights grant can be found
+ *  in the file PATENTS.  All contributing project authors may
+ *  be found in the AUTHORS file in the root of the source tree.
+ */
+
+#include "modules/audio_coding/codecs/opus/audio_coder_opus_common.h"
+
+#include <cstddef>
+#include <optional>
+#include <string>
+#include <vector>
+
+#include "absl/strings/string_view.h"
+#include "api/audio_codecs/audio_format.h"
+#include "rtc_base/string_to_number.h"
+
+namespace webrtc {
+
+std::optional<std::string> GetFormatParameter(const SdpAudioFormat& format,
+                                              absl::string_view param) {
+  auto it = format.parameters.find(std::string(param));
+  if (it == format.parameters.end())
+    return std::nullopt;
+
+  return it->second;
+}
+
+// Parses a comma-separated string "1,2,0,6" into a std::vector<unsigned char>.
+template <>
+std::optional<std::vector<unsigned char>> GetFormatParameter(
+    const SdpAudioFormat& format,
+    absl::string_view param) {
+  std::vector<unsigned char> result;
+  const std::string comma_separated_list =
+      GetFormatParameter(format, param).value_or("");
+  size_t pos = 0;
+  while (pos < comma_separated_list.size()) {
+    const size_t next_comma = comma_separated_list.find(',', pos);
+    const size_t distance_to_next_comma = next_comma == std::string::npos
+                                              ? std::string::npos
+                                              : (next_comma - pos);
+    auto substring_with_number =
+        comma_separated_list.substr(pos, distance_to_next_comma);
+    auto conv = StringToNumber<int>(substring_with_number);
+    if (!conv.has_value()) {
+      return std::nullopt;
+    }
+    result.push_back(*conv);
+    pos += substring_with_number.size() + 1;
+  }
+  return result;
+}
+
+}  // namespace webrtc

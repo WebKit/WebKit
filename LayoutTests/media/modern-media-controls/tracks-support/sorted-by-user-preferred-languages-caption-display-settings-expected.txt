@@ -1,0 +1,28 @@
+This test checks that tracks are sorted based on the user's preferred languages when caption display settings are enabled.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS shadowRoot.querySelector('button.tracks') became different from null
+PASS shadowRoot.querySelector('button.tracks').getBoundingClientRect().width became different from 0
+Tapping tracks button...
+Subtitles: [
+  "label-en",
+  "label-en Captions",
+  "Descriptions",
+  "Spanish",
+  "Spanish Captions",
+  "Spanish Descriptions",
+  "no-srclang",
+  "Chinese (China mainland)",
+  "French (label-fr)",
+  "French Captions (label-fr)",
+  "French Descriptions",
+  "German",
+  "German Captions",
+  "German Descriptions"
+]
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

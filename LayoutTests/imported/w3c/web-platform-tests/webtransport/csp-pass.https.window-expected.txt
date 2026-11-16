@@ -1,0 +1,3 @@
+
+PASS WebTransport connection should succeed when CSP connect-src destination is set to the page
+

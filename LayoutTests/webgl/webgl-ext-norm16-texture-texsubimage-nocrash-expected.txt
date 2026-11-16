@@ -1,0 +1,138 @@
+Test that texSubImage does not crash on with EXT_norm16_texture.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+TEST COMPLETE: 97 PASS, 0 FAIL
+
+Test: 2d R16_EXT RED UNSIGNED_SHORT
+PASS getError was expected value: NO_ERROR :
+PASS getError was expected value: NO_ERROR :
+PASS Test: R16_EXT RED UNSIGNED_SHORT did not crash.
+Test: 2d R16_SNORM_EXT RED SHORT
+PASS getError was expected value: NO_ERROR :
+PASS getError was expected value: NO_ERROR :
+PASS Test: R16_SNORM_EXT RED SHORT did not crash.
+Test: 2d R16_EXT RED SHORT
+PASS getError was expected value: INVALID_OPERATION :
+PASS getError was expected value: INVALID_OPERATION :
+PASS Test: R16_EXT RED SHORT did not crash.
+Test: 2d R16_SNORM_EXT RED UNSIGNED_SHORT
+PASS getError was expected value: INVALID_OPERATION :
+PASS getError was expected value: INVALID_OPERATION :
+PASS Test: R16_SNORM_EXT RED UNSIGNED_SHORT did not crash.
+Test: 2d RG16_EXT RG UNSIGNED_SHORT
+PASS getError was expected value: NO_ERROR :
+PASS getError was expected value: NO_ERROR :
+PASS Test: RG16_EXT RG UNSIGNED_SHORT did not crash.
+Test: 2d RG16_SNORM_EXT RG SHORT
+PASS getError was expected value: NO_ERROR :
+PASS getError was expected value: NO_ERROR :
+PASS Test: RG16_SNORM_EXT RG SHORT did not crash.
+Test: 2d RG16_EXT RG SHORT
+PASS getError was expected value: INVALID_OPERATION :
+PASS getError was expected value: INVALID_OPERATION :
+PASS Test: RG16_EXT RG SHORT did not crash.
+Test: 2d RG16_SNORM_EXT RG UNSIGNED_SHORT
+PASS getError was expected value: INVALID_OPERATION :
+PASS getError was expected value: INVALID_OPERATION :
+PASS Test: RG16_SNORM_EXT RG UNSIGNED_SHORT did not crash.
+Test: 2d RGB16_EXT RGB UNSIGNED_SHORT
+PASS getError was expected value: NO_ERROR :
+PASS getError was expected value: NO_ERROR :
+PASS Test: RGB16_EXT RGB UNSIGNED_SHORT did not crash.
+Test: 2d RGB16_SNORM_EXT RGB SHORT
+PASS getError was expected value: NO_ERROR :
+PASS getError was expected value: NO_ERROR :
+PASS Test: RGB16_SNORM_EXT RGB SHORT did not crash.
+Test: 2d RGB16_EXT RGB SHORT
+PASS getError was expected value: INVALID_OPERATION :
+PASS getError was expected value: INVALID_OPERATION :
+PASS Test: RGB16_EXT RGB SHORT did not crash.
+Test: 2d RGB16_SNORM_EXT RGB UNSIGNED_SHORT
+PASS getError was expected value: INVALID_OPERATION :
+PASS getError was expected value: INVALID_OPERATION :
+PASS Test: RGB16_SNORM_EXT RGB UNSIGNED_SHORT did not crash.
+Test: 2d RGBA16_EXT RGBA UNSIGNED_SHORT
+PASS getError was expected value: NO_ERROR :
+PASS getError was expected value: NO_ERROR :
+PASS Test: RGBA16_EXT RGBA UNSIGNED_SHORT did not crash.
+Test: 2d RGBA16_SNORM_EXT RGBA SHORT
+PASS getError was expected value: NO_ERROR :
+PASS getError was expected value: NO_ERROR :
+PASS Test: RGBA16_SNORM_EXT RGBA SHORT did not crash.
+Test: 2d RGBA16_EXT RGBA SHORT
+PASS getError was expected value: INVALID_OPERATION :
+PASS getError was expected value: INVALID_OPERATION :
+PASS Test: RGBA16_EXT RGBA SHORT did not crash.
+Test: 2d RGBA16_SNORM_EXT RGBA UNSIGNED_SHORT
+PASS getError was expected value: INVALID_OPERATION :
+PASS getError was expected value: INVALID_OPERATION :
+PASS Test: RGBA16_SNORM_EXT RGBA UNSIGNED_SHORT did not crash.
+Test: 3d R16_EXT RED UNSIGNED_SHORT
+PASS getError was expected value: NO_ERROR :
+PASS getError was expected value: NO_ERROR :
+PASS Test: R16_EXT RED UNSIGNED_SHORT did not crash.
+Test: 3d R16_SNORM_EXT RED SHORT
+PASS getError was expected value: NO_ERROR :
+PASS getError was expected value: NO_ERROR :
+PASS Test: R16_SNORM_EXT RED SHORT did not crash.
+Test: 3d R16_EXT RED SHORT
+PASS getError was expected value: INVALID_OPERATION :
+PASS getError was expected value: INVALID_OPERATION :
+PASS Test: R16_EXT RED SHORT did not crash.
+Test: 3d R16_SNORM_EXT RED UNSIGNED_SHORT
+PASS getError was expected value: INVALID_OPERATION :
+PASS getError was expected value: INVALID_OPERATION :
+PASS Test: R16_SNORM_EXT RED UNSIGNED_SHORT did not crash.
+Test: 3d RG16_EXT RG UNSIGNED_SHORT
+PASS getError was expected value: NO_ERROR :
+PASS getError was expected value: NO_ERROR :
+PASS Test: RG16_EXT RG UNSIGNED_SHORT did not crash.
+Test: 3d RG16_SNORM_EXT RG SHORT
+PASS getError was expected value: NO_ERROR :
+PASS getError was expected value: NO_ERROR :
+PASS Test: RG16_SNORM_EXT RG SHORT did not crash.
+Test: 3d RG16_EXT RG SHORT
+PASS getError was expected value: INVALID_OPERATION :
+PASS getError was expected value: INVALID_OPERATION :
+PASS Test: RG16_EXT RG SHORT did not crash.
+Test: 3d RG16_SNORM_EXT RG UNSIGNED_SHORT
+PASS getError was expected value: INVALID_OPERATION :
+PASS getError was expected value: INVALID_OPERATION :
+PASS Test: RG16_SNORM_EXT RG UNSIGNED_SHORT did not crash.
+Test: 3d RGB16_EXT RGB UNSIGNED_SHORT
+PASS getError was expected value: NO_ERROR :
+PASS getError was expected value: NO_ERROR :
+PASS Test: RGB16_EXT RGB UNSIGNED_SHORT did not crash.
+Test: 3d RGB16_SNORM_EXT RGB SHORT
+PASS getError was expected value: NO_ERROR :
+PASS getError was expected value: NO_ERROR :
+PASS Test: RGB16_SNORM_EXT RGB SHORT did not crash.
+Test: 3d RGB16_EXT RGB SHORT
+PASS getError was expected value: INVALID_OPERATION :
+PASS getError was expected value: INVALID_OPERATION :
+PASS Test: RGB16_EXT RGB SHORT did not crash.
+Test: 3d RGB16_SNORM_EXT RGB UNSIGNED_SHORT
+PASS getError was expected value: INVALID_OPERATION :
+PASS getError was expected value: INVALID_OPERATION :
+PASS Test: RGB16_SNORM_EXT RGB UNSIGNED_SHORT did not crash.
+Test: 3d RGBA16_EXT RGBA UNSIGNED_SHORT
+PASS getError was expected value: NO_ERROR :
+PASS getError was expected value: NO_ERROR :
+PASS Test: RGBA16_EXT RGBA UNSIGNED_SHORT did not crash.
+Test: 3d RGBA16_SNORM_EXT RGBA SHORT
+PASS getError was expected value: NO_ERROR :
+PASS getError was expected value: NO_ERROR :
+PASS Test: RGBA16_SNORM_EXT RGBA SHORT did not crash.
+Test: 3d RGBA16_EXT RGBA SHORT
+PASS getError was expected value: INVALID_OPERATION :
+PASS getError was expected value: INVALID_OPERATION :
+PASS Test: RGBA16_EXT RGBA SHORT did not crash.
+Test: 3d RGBA16_SNORM_EXT RGBA UNSIGNED_SHORT
+PASS getError was expected value: INVALID_OPERATION :
+PASS getError was expected value: INVALID_OPERATION :
+PASS Test: RGBA16_SNORM_EXT RGBA UNSIGNED_SHORT did not crash.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

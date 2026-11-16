@@ -1,0 +1,16 @@
+
+PASS .container 1
+PASS .container 2
+Flexboxes do not generate a first formatted line. As a result, the container does not have a first formatted line.
+
+The first item.
+
+The second item.
+
+Out of flex.
+
+The first item.
+
+The second item.
+
+Out of flex.

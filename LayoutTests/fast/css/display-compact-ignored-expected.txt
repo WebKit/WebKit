@@ -1,0 +1,5 @@
+PASS getComputedStyle(test).display is "inline"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

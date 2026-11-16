@@ -1,0 +1,22 @@
+<!doctype html>
+<head>
+<title>line-box-contain: glyphs</title>
+<style>
+.test { -webkit-line-box-contain: glyphs; line-box-contain: glyphs; font: 64px/1em Ahem; background-color:red; width:6em; overflow:hidden }
+.goodline { color: green; line-height:12 }
+.contains-drop-cap::first-letter { font-size:36px; float:left; margin-right:2px; -webkit-line-box-contain:glyphs; line-box-contain:glyphs }
+</style>
+</head>
+<body>
+You should see a green rectangle below.  If you see any red, the test has failed.
+
+<div class="test">
+<span class="goodline">xxxxx</span><span style="background-color:green; font-size:128px; padding-left:0.5em;"></span><br>
+<div style="display:inline-block; width:1em;height:2em;vertical-align:bottom;background-color:green"></div><span class="goodline">xxxxx</span>
+</div>
+
+<p style="-webkit-line-box-contain:glyphs;line-box-contain: glyphs; border:1px solid black">this block should hug the lowercase glyphs.</p>
+
+<p class="contains-drop-cap">The first letter here should look nicer because it uses glyph bounds<br>This should make the top of the T
+line up with the line and not look shifted down.<br> Maybe we should do this by default for all first letters like Firefox does.
+

@@ -1,0 +1,11 @@
+Verifies that media-control button icons load from the WebCore framework bundle. This test catches regressions where modern-media-controls/images/ is missing from WebCore.framework on a given platform.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS buttonsChecked > 0 is true
+PASS buttonsWithEmptyIcon is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

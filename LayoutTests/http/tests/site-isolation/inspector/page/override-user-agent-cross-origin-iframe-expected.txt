@@ -1,0 +1,25 @@
+Test that Page.overrideUserAgent propagates to cross-origin iframes under site isolation.
+
+
+== Running test suite: SiteIsolation.Page.OverrideUserAgentCrossOriginIFrame
+-- Running test case: SiteIsolation.Page.OverrideUserAgent.DefaultUserAgent
+PASS: Added target should have Frame type.
+PASS: Main page should have a default UserAgent.
+PASS: Cross-origin iframe should have a default UserAgent.
+PASS: Main page and cross-origin iframe should have the same default UserAgent.
+
+-- Running test case: SiteIsolation.Page.OverrideUserAgent.OverrideAndReload
+Overriding UserAgent...
+Reloading...
+PASS: Main page should have the overridden UserAgent.
+Re-adding cross-origin iframe...
+PASS: Cross-origin iframe should have the overridden UserAgent.
+
+-- Running test case: SiteIsolation.Page.OverrideUserAgent.RemoveOverrideAndReload
+Removing UserAgent override...
+Reloading...
+PASS: Main page should have a default UserAgent.
+PASS: Main page UserAgent should no longer be the overridden value.
+Re-adding cross-origin iframe...
+PASS: Cross-origin iframe should have the same restored default UserAgent as the main page.
+

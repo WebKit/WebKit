@@ -1,0 +1,25 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/visudet/reference/content-height-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/visudet/reference/content-height-002-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/visudet/reference/content-height-003-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/visudet/reference/content-height-004-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/visudet/reference/content-height-005-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/visudet/reference/line-height-201-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/visudet/reference/line-height-202-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/visudet/reference/line-height-203-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/visudet/reference/line-height-206-ref.html

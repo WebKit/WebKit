@@ -1,0 +1,25 @@
+Verifies that find and replace does not change matches in noneditable content. This test requires WebKitTestRunner.
+
+After replacing 'eta' with '_eta_':
+| "\n        "
+| <p>
+|   contenteditable="false"
+|   "alpha beta."
+| "\n        "
+| <p>
+|   "gamma b<#selection-anchor>_eta_<#selection-focus> phi."
+| "\n        "
+| <div>
+|   contenteditable="false"
+|   "\n            "
+|   <p>
+|     "alpha kappa eta."
+|   "\n            "
+|   <p>
+|     contenteditable="true"
+|     "_eta_ kappa nu."
+|   "\n        "
+| "\n        "
+| <p>
+|   "b_eta_ phi delta."
+| "\n    "

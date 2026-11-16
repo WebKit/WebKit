@@ -1,0 +1,224 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="../debugger/resources/site-isolation-debugger-test-utilities.js"></script>
+<script>
+// The frontend lists an origin's databases when it first sees the frame, so the inspector must not open before both frames have built their databases.
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+const mainDatabaseName = "SiteIsolationMainDatabase";
+
+let frameDatabaseReady = new Promise((resolve) => {
+    window.addEventListener("message", (event) => {
+        if (event.data === "indexeddb-frame-ready")
+            resolve();
+    });
+});
+
+function requestToPromise(request) {
+    return new Promise((resolve, reject) => {
+        request.onsuccess = () => resolve(request.result);
+        request.onerror = () => reject(request.error);
+    });
+}
+
+// Rebuilt on every load because the data store outlives a single test.
+async function recreateMainDatabase() {
+    await requestToPromise(indexedDB.deleteDatabase(mainDatabaseName));
+
+    let request = indexedDB.open(mainDatabaseName, 1);
+    request.onupgradeneeded = () => {
+        let hosts = request.result.createObjectStore("Hosts", {autoIncrement: true});
+        hosts.add({name: "Lucky Lemur"});
+        hosts.add({name: "Sleepy Sloth"});
+    };
+
+    let database = await requestToPromise(request);
+    database.close();
+}
+
+let databasesReady = Promise.all([frameDatabaseReady, recreateMainDatabase()]);
+
+function test()
+{
+    const databaseName = "SiteIsolationFrameDatabase";
+    const mainDatabaseName = "SiteIsolationMainDatabase";
+
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.IndexedDB.FrameTarget");
+
+    let frameTarget = null;
+    let frameOrigin = null;
+    let mainOrigin = null;
+
+    async function evaluateInFrame(expression) {
+        let {result} = await frameTarget.RuntimeAgent.evaluate.invoke({expression, objectGroup: "test", returnByValue: true});
+        return result.value;
+    }
+
+    async function evaluatePromiseInFrame(expression) {
+        let {result} = await frameTarget.RuntimeAgent.evaluate.invoke({expression, objectGroup: "test"});
+        let {result: settled} = await frameTarget.RuntimeAgent.awaitPromise.invoke({promiseObjectId: result.objectId, returnByValue: true});
+        return settled.value;
+    }
+
+    async function listedDatabase(securityOrigin, name) {
+        let matches = (indexedDatabase) => indexedDatabase.securityOrigin === securityOrigin && indexedDatabase.name === name;
+
+        let indexedDatabase = WI.indexedDBManager.indexedDatabases.find(matches);
+        while (!indexedDatabase) {
+            let event = await WI.indexedDBManager.awaitEvent(WI.IndexedDBManager.Event.IndexedDatabaseWasAdded);
+            if (matches(event.data.indexedDatabase))
+                indexedDatabase = event.data.indexedDatabase;
+        }
+        return indexedDatabase;
+    }
+
+    function requestData(objectStore, objectStoreIndex) {
+        return new Promise((resolve) => {
+            WI.indexedDBManager.requestIndexedDatabaseData(objectStore, objectStoreIndex, 0, 10, (entries, moreAvailable) => {
+                resolve({entries, moreAvailable});
+            });
+        });
+    }
+
+    function namePreview(remoteObject) {
+        return remoteObject.preview.propertyPreviews.find((propertyPreview) => propertyPreview.name === "name")?.value;
+    }
+
+    suite.addTestCase({
+        name: "SiteIsolation.IndexedDB.FrameTarget.Setup",
+        description: "Find the cross-origin frame target and check that it exposes the IndexedDB domain.",
+        async test() {
+            frameTarget = await frameTargetForURLContaining("indexeddb-frame.html");
+            InspectorTest.expectNotNull(frameTarget, "Should find the cross-origin frame target.");
+
+            frameOrigin = await evaluateInFrame("origin");
+            mainOrigin = WI.networkManager.mainFrame.securityOrigin;
+            InspectorTest.expectNotEqual(frameOrigin, mainOrigin, "The iframe should be cross-origin to the main frame.");
+
+            InspectorTest.expectThat(frameTarget.hasDomain("IndexedDB"), "The frame target should expose the IndexedDB domain.");
+            for (let command of ["requestDatabaseNames", "requestDatabase", "requestData", "clearObjectStore"])
+                InspectorTest.expectThat(frameTarget.hasCommand(`IndexedDB.${command}`), `${command} should be available on a frame target.`);
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.IndexedDB.FrameTarget.ManagerListsFrameDatabase",
+        description: "IndexedDBManager should list the cross-origin frame's database.",
+        async test() {
+            let indexedDatabase = await listedDatabase(frameOrigin, databaseName);
+            InspectorTest.expectEqual(indexedDatabase.version, 1, "The database version should be 1.");
+
+            for (let objectStore of indexedDatabase.objectStores.slice().sort((a, b) => a.name.localeCompare(b.name))) {
+                let indexNames = objectStore.indexes.map((index) => index.name).sort();
+                InspectorTest.log(`Object store '${objectStore.name}' (autoIncrement: ${objectStore.autoIncrement}), indexes: [${indexNames.join(", ")}]`);
+            }
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.IndexedDB.FrameTarget.RequestDatabaseNames",
+        description: "requestDatabaseNames on the frame target should list the cross-origin frame's database.",
+        async test() {
+            let {databaseNames} = await frameTarget.IndexedDBAgent.requestDatabaseNames(frameOrigin);
+            InspectorTest.expectThat(databaseNames.includes(databaseName), "The frame target should list the iframe's database.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.IndexedDB.FrameTarget.RequestDatabase",
+        description: "requestDatabase on the frame target should describe the cross-origin frame's database.",
+        async test() {
+            let {databaseWithObjectStores} = await frameTarget.IndexedDBAgent.requestDatabase(frameOrigin, databaseName);
+            InspectorTest.expectEqual(databaseWithObjectStores.name, databaseName, "The database name should match.");
+            InspectorTest.expectEqual(databaseWithObjectStores.objectStores.length, 2, "The database should have 2 object stores.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.IndexedDB.FrameTarget.ManagerRequestsData",
+        description: "IndexedDBManager should read the cross-origin frame's records and bind their values to the frame target.",
+        async test() {
+            let indexedDatabase = await listedDatabase(frameOrigin, databaseName);
+            let objectStore = indexedDatabase.objectStores.find((objectStore) => objectStore.name === "Reviewers");
+
+            for (let objectStoreIndex of [null, objectStore.indexes.find((index) => index.name === "Name Index")]) {
+                InspectorTest.newline();
+                InspectorTest.log(objectStoreIndex ? `-- ${objectStoreIndex.name}` : "-- No Index");
+
+                let {entries, moreAvailable} = await requestData(objectStore, objectStoreIndex);
+
+                InspectorTest.expectEqual(entries.length, 4, "Should have 4 entries.");
+                InspectorTest.expectFalse(moreAvailable, "Should not have more entries.");
+                InspectorTest.expectThat(entries.every((entry) => entry.value.target === frameTarget), "Values should be remote objects of the frame target.");
+                for (let entry of entries)
+                    InspectorTest.log(`${entry.primaryKey.value}: ${namePreview(entry.value)}`);
+            }
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.IndexedDB.FrameTarget.ManagerListsMainFrameDatabase",
+        description: "IndexedDBManager should list the main frame's database under the main frame's origin.",
+        async test() {
+            let indexedDatabase = await listedDatabase(mainOrigin, mainDatabaseName);
+            InspectorTest.expectEqual(indexedDatabase.objectStores.map((objectStore) => objectStore.name).join(), "Hosts", "The main frame's database should have the 'Hosts' object store.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.IndexedDB.FrameTarget.ManagerRequestsMainFrameData",
+        description: "IndexedDBManager should read the main frame's records from a target other than the cross-origin frame's.",
+        async test() {
+            let indexedDatabase = await listedDatabase(mainOrigin, mainDatabaseName);
+            let {entries, moreAvailable} = await requestData(indexedDatabase.objectStores[0], null);
+
+            InspectorTest.expectEqual(entries.length, 2, "Should have 2 entries.");
+            InspectorTest.expectFalse(moreAvailable, "Should not have more entries.");
+            InspectorTest.expectThat(entries.every((entry) => entry.value.target !== frameTarget), "Values should not be remote objects of the cross-origin frame's target.");
+            for (let entry of entries)
+                InspectorTest.log(`${entry.primaryKey.value}: ${namePreview(entry.value)}`);
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.IndexedDB.FrameTarget.ManagerClearsObjectStore",
+        description: "IndexedDBManager.clearObjectStore should empty the object store in the cross-origin frame's own process.",
+        async test() {
+            let indexedDatabase = await listedDatabase(frameOrigin, databaseName);
+            await WI.indexedDBManager.clearObjectStore(indexedDatabase.objectStores.find((objectStore) => objectStore.name === "Reviewers"));
+
+            let count = await evaluatePromiseInFrame(`countRecords("Reviewers")`);
+            InspectorTest.expectEqual(count, 0, "The object store should be empty inside the cross-origin frame itself.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.IndexedDB.FrameTarget.OriginsStayWithTheirTarget",
+        description: "Each target should serve only the origins of the frames in its own process.",
+        async test() {
+            InspectorTest.log("Requesting the main frame's origin from the frame target...");
+            await InspectorTest.expectException(() => frameTarget.IndexedDBAgent.requestDatabaseNames(mainOrigin));
+
+            InspectorTest.log("Requesting the iframe's origin from the page target...");
+            await InspectorTest.expectException(() => WI.assumingMainTarget().IndexedDBAgent.requestDatabaseNames(frameOrigin));
+
+            let {databaseNames} = await WI.assumingMainTarget().IndexedDBAgent.requestDatabaseNames(mainOrigin);
+            InspectorTest.expectThat(databaseNames.includes(mainDatabaseName), "The main frame should see its own database.");
+            InspectorTest.expectFalse(databaseNames.includes(databaseName), "The main frame should not see the iframe's database.");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="databasesReady.then(runTest)">
+<p>Tests the IndexedDB domain against a cross-origin iframe's database under Site Isolation.</p>
+<iframe src="http://localhost:8000/site-isolation/inspector/storage/resources/indexeddb-frame.html"></iframe>
+</body>
+</html>

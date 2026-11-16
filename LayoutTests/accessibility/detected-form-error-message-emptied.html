@@ -1,0 +1,51 @@
+<!DOCTYPE HTML><!-- webkit-test-runner [ AccessibilityFormErrorDetectionEnabled=true ] -->
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<form id="form">
+  <label for="email">Email</label><input id="email" type="text">
+  <div id="email-error"></div>
+  <button id="submit" type="submit">Sign in</button>
+</form>
+
+<script>
+var output = "This tests that blanking an error message's wording stops the field reporting invalid, without the element having to be taken off the page. Sites reuse the same container and just clear its text, and a field still reporting a problem while pointing at a message that says nothing leaves the user nothing to read.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+    internals.setAccessibilityFormErrorSettleDelay(0.1);
+
+    document.getElementById("form").addEventListener("submit", (event) => {
+        event.preventDefault();
+        document.getElementById("email-error").textContent = "Enter a valid email address.";
+    });
+
+    function axElement(id) {
+        return accessibilityController.accessibleElementById(id);
+    }
+
+    setTimeout(async function() {
+        // Read the field first, since nothing arms detection on a page no assistive technology has looked at.
+        output += expect("axElement('email').stringAttributeValue('AXInvalid')", "'false'");
+
+        document.getElementById("submit").click();
+
+        output += await expectAsync("axElement('email').stringAttributeValue('AXInvalid')", "'true'");
+        output += await expectAsync("errorMessageText(axElement('email'))", "'Enter a valid email address.'");
+
+        // The wording goes and the element stays. That is the same thing to a user, nothing left to read.
+        output += evalAndReturn("document.getElementById('email-error').textContent = '';");
+        output += await expectAsync("axElement('email').stringAttributeValue('AXInvalid')", "'false'");
+        output += await expectAsync("errorMessageText(axElement('email'))", "'no error messages'");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

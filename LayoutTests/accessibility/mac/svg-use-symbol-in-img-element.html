@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<div id="content" role="group">
+    <p>Text before image</p>
+    <img id="img" src="../resources/svg-with-use-symbol.svg" alt="SVG with symbols">
+</div>
+
+<script>
+var output = "This tests that SVG symbols/use elements inside an img element are not listed in the VoiceOver images rotor.\n\n";
+
+var searchContainer;
+function getGraphicsResults() {
+    let results = [];
+    let currentGraphic = searchContainer.uiElementForSearchPredicate(searchContainer.childAtIndex(0), /* isDirectionNext */ true, "AXGraphicSearchKey", "", /* isVisibleOnly */ false);
+    while (currentGraphic) {
+        results.push(currentGraphic);
+        currentGraphic = searchContainer.uiElementForSearchPredicate(currentGraphic, /* isDirectionNext */ true, "AXGraphicSearchKey", "", /* isVisibleOnly */ false);
+    }
+    return results;
+}
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    searchContainer = accessibilityController.accessibleElementById("content");
+    output += expect("accessibilityController.accessibleElementById('img').role", "'AXRole: AXImage'");
+
+    var graphicsResults = getGraphicsResults();
+    // There should only be one graphic: the main img element.
+    // This critically excludes the SVG <use> elements that belong to said img element.
+    output += expect("graphicsResults.length", "1");
+    output += expect("graphicsResults[0].role", "'AXRole: AXImage'");
+    output += expect("graphicsResults[0].domIdentifier", "'img'");
+
+    // Test dynamic page update scenario: add a new img element with SVG containing use/symbol.
+    var newImg = document.createElement("img");
+    newImg.id = "dynamic-img";
+    newImg.src = "../resources/svg-with-use-symbol.svg";
+    newImg.alt = "Dynamic SVG with symbols";
+    document.getElementById("content").appendChild(newImg);
+    setTimeout(async function() {
+        await waitFor(() => accessibilityController.accessibleElementById("dynamic-img"));
+
+        graphicsResults = getGraphicsResults();
+        // There should now be exactly two graphics: the original and the new img element.
+        output += expect("graphicsResults.length", "2");
+        output += expect("graphicsResults[0].domIdentifier", "'img'");
+        output += expect("graphicsResults[1].domIdentifier", "'dynamic-img'");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

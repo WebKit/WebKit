@@ -1,0 +1,12 @@
+Test that caret positioning works correctly when the entire text is a ::first-letter with an empty remaining fragment.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS window.getSelection().anchorOffset is 1
+PASS test.textContent is 'A'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+A
+

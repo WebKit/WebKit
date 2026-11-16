@@ -1,0 +1,11 @@
+
+PASS window.open() with 'noopener' should reuse existing target
+PASS noopener=1 means the same as noopener
+PASS noopener=true means the same as noopener
+PASS noopener=0 means lack of noopener
+PASS noopener separated only by spaces should work
+PASS Trailing noopener should work
+PASS Leading noopener should work
+PASS Interior noopener should work
+PASS noreferrer should also suppress opener when reusing existing target
+

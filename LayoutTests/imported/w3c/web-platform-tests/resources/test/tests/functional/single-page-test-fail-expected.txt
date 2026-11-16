@@ -1,0 +1,3 @@
+
+FAIL Example with file_is_test (should fail) Error: assert_true: expected true got false
+

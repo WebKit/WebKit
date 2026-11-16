@@ -1,0 +1,3 @@
+
+PASS A remote progress-based timeline is updated when a view timeline's subject changes metrics.
+

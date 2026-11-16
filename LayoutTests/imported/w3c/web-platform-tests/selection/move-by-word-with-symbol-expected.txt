@@ -1,0 +1,10 @@
+~>>>>>p+++
+
+
+FAIL Symbols should be included while moving backward by word assert_equals: Caret should move to the beginning expected 0 but got 5
+FAIL Symbols should be included while moving forward by word assert_equals: Caret should move to the end expected 10 but got 8
+PASS Symbols should be included while moving backward by word in textarea element
+PASS Symbols should be included while moving forward by word in textarea element
+PASS Symbols should be included while moving backward by word in input element
+PASS Symbols should be included while moving forward by word in input element
+

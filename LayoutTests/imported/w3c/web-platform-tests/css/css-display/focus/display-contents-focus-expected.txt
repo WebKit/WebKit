@@ -1,0 +1,20 @@
+Testing focusability of display: contents
+
+x x
+
+FAIL button with display: contents is focusable assert_equals: Element is focusable with element.focus() expected Element node <button style="display: contents;" class="ex-focusable" d... but got Element node <body>
+
+  <!-- Dec 2023 notes for "display: contents" tes...
+FAIL div with role button, tabindex=0 and display: contents is focusable assert_equals: Element is focusable with element.focus() expected Element node <div role="button" tabindex="0" style="display: contents;... but got Element node <body>
+
+  <!-- Dec 2023 notes for "display: contents" tes...
+FAIL div with role button, tabindex=-1 and display: contents is focusable assert_equals: Element is focusable with element.focus() expected Element node <div role="button" tabindex="-1" style="display: contents... but got Element node <body>
+
+  <!-- Dec 2023 notes for "display: contents" tes...
+FAIL link with display: contents is focusable assert_equals: Element is focusable with element.focus() expected Element node <a href="#" style="display: contents;" class="ex-focusabl... but got Element node <body>
+
+  <!-- Dec 2023 notes for "display: contents" tes...
+FAIL span with role link, tabindex=0 and display: contents is focusable assert_equals: Element is focusable with element.focus() expected Element node <span role="link" tabindex="0" style="display: contents;"... but got Element node <body>
+
+  <!-- Dec 2023 notes for "display: contents" tes...
+

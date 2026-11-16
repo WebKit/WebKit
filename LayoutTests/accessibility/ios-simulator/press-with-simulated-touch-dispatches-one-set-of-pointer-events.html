@@ -1,0 +1,54 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<div id="content">
+<button id="button">Button</button>
+</div>
+
+<script>
+var output = "This test ensures that when an accessibility press on iOS dispatches a simulated touch, and so touch pointer events, the simulated click that follows dispatches the compatibility mouse events and a click like a tap does, but not a second set of pointer events. Pages that act on pointerdown would otherwise act twice on one press.\n\n";
+
+var events = [];
+// A pointerdown listener makes the press dispatch a simulated touch.
+for (const type of ["pointerdown", "pointerup", "touchstart", "touchend", "mousedown", "mouseup", "click"])
+    document.getElementById("button").addEventListener(type, (event) => events.push({ type: event.type, pointerType: event.pointerType, detail: event.detail }));
+
+function eventCount(type) {
+    return events.filter((event) => event.type == type).length;
+}
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    setTimeout(async function() {
+        accessibilityController.accessibleElementById("button").press();
+        // The click comes last.
+        await waitFor(() => eventCount("click"));
+
+        window.pointerDown = events.find((event) => event.type == "pointerdown");
+        window.pointerUp = events.find((event) => event.type == "pointerup");
+        window.click = events.find((event) => event.type == "click");
+        output += expect("eventCount('touchstart')", "1");
+        output += expect("eventCount('touchend')", "1");
+        output += expect("eventCount('pointerdown')", "1");
+        output += expect("pointerDown.pointerType", "'touch'");
+        output += expect("eventCount('pointerup')", "1");
+        output += expect("pointerUp.pointerType", "'touch'");
+        output += expect("eventCount('mousedown')", "1");
+        output += expect("eventCount('mouseup')", "1");
+        output += expect("eventCount('click')", "1");
+        output += expect("click.detail", "1");
+
+        document.getElementById("content").style.visibility = "hidden";
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

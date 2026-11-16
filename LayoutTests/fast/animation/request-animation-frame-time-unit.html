@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+<script>
+description("Tests time unit of requestAnimationFrame callback");
+
+window.jsTestIsAsync = true;
+
+var isTimeUnitInMs = false;
+
+window.requestAnimationFrame(function(time) {
+    var callbackTimeRef = time;
+    var timeRefInMs = Date.now();
+
+    setTimeout(async function() {
+        window.requestAnimationFrame(function(time) {
+            var delta = time - callbackTimeRef;
+            var deltaTimeInMs = Date.now() - timeRefInMs;
+            var toleranceInMs = 10;
+            isTimeUnitInMs = Math.abs(delta - deltaTimeInMs) <= toleranceInMs;
+            shouldBeTrue("isTimeUnitInMs");
+
+            finishJSTest();
+        });
+
+        await testRunner?.displayAndTrackRepaints();
+    }, 1);
+});
+
+onload = async () => {
+    await testRunner?.displayAndTrackRepaints();
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<head>
+<meta charset="utf-8" />
+<title>Scroll to text fragment generation - a selection inside a display:contents subtree is still found</title>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+window.addEventListener('load', () => {
+    const range = document.createRange();
+    range.selectNodeContents(document.getElementById("test"));
+    document.body.innerText = internals.textFragmentDirectiveForRange(range).split('#')[1];
+});
+</script>
+</head>
+<body><div style="display: contents"><span id="test">A quick unique sentence inside display contents.</span></div></body>
+</html>

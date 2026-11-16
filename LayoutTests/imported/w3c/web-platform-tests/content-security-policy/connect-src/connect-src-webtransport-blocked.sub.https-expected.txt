@@ -1,0 +1,4 @@
+
+PASS CSP connect-src self vs WebTransport. Expecting connect-src
+PASS CSP connect-src self vs serverCertificateHashes. Expecting connect-src
+

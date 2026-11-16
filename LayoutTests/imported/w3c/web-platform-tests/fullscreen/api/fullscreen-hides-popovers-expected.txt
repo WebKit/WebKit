@@ -1,0 +1,4 @@
+
+PASS fullscreen-an-element: hides open auto popover when fullscreening a non-popover element
+PASS fullscreen-an-element: hides auto popovers but leaves manual popovers open
+

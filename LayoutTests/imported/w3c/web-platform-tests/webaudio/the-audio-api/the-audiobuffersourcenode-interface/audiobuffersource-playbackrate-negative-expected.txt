@@ -1,0 +1,17 @@
+
+PASS AudioBufferSourceNode supports negative playbackRate (-1.0)
+PASS AudioBufferSourceNode supports high negative playbackRate (-2.0)
+PASS AudioBufferSourceNode supports high negative playbackRate (-5.0)
+PASS AudioBufferSourceNode supports fractional negative playbackRate
+PASS AudioBufferSourceNode supports very low negative playbackRate (-0.02)
+PASS AudioBufferSourceNode enters loop backwards from offset > loopEnd
+PASS AudioBufferSourceNode clamps offset to loopStart for playbackRate < 0
+PASS AudioBufferSourceNode loops backwards with negative rate (offset in loop)
+PASS AudioBufferSourceNode handles offset exactly at duration with negative rate
+PASS AudioBufferSourceNode handles out-of-bounds start offset correctly
+PASS AudioBufferSourceNode performs sub-sample interpolation backwards
+PASS AudioBufferSourceNode ran successfully with zero delta and playbackRate 0
+PASS AudioBufferSourceNode loops backwards using entire buffer when loopStart > loopEnd
+PASS AudioBufferSourceNode loops backwards using clamped loopStart when loopStart < 0
+PASS AudioBufferSourceNode loops backwards using entire buffer when loopEnd < 0
+

@@ -1,0 +1,5 @@
+
+PASS AudioDecoder outputs 5.1 AAC with AudioSpecificConfig (MP4) in Web Audio channel order
+PASS AudioDecoder outputs 5.1 AAC in ADTS in Web Audio channel order
+PASS AudioDecoder outputs 5.1 Opus (channel mapping family 1) in Web Audio channel order
+

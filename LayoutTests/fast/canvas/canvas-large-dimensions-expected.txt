@@ -1,0 +1,33 @@
+Tests that using reasonably large values for canvas.height and canvas.height don't cause a crash"
+
+PASS height == 1000
+PASS Actual: 255 Expected: 255
+PASS Actual: 255 Expected: 255
+PASS Actual: 255 Expected: 255
+PASS Actual: 255 Expected: 255
+PASS height == 10000
+PASS Actual: 255 Expected: 255
+PASS Actual: 255 Expected: 255
+PASS Actual: 255 Expected: 255
+PASS Actual: 255 Expected: 255
+PASS height == 32000
+PASS Actual: 255 Expected: 255
+PASS Actual: 255 Expected: 255
+PASS Actual: 255 Expected: 255
+PASS Actual: 255 Expected: 255
+PASS width == 1000
+PASS Actual: 255 Expected: 255
+PASS Actual: 255 Expected: 255
+PASS Actual: 255 Expected: 255
+PASS Actual: 255 Expected: 255
+PASS width == 10000
+PASS Actual: 255 Expected: 255
+PASS Actual: 255 Expected: 255
+PASS Actual: 255 Expected: 255
+PASS Actual: 255 Expected: 255
+PASS width == 32000
+PASS Actual: 255 Expected: 255
+PASS Actual: 255 Expected: 255
+PASS Actual: 255 Expected: 255
+PASS Actual: 255 Expected: 255
+

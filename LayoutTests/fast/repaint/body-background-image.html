@@ -1,0 +1,26 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html>
+<head>
+    <script>
+        if (window.testRunner)
+            testRunner.waitUntilDone();
+        function runTest()
+        {
+            document.body.style.backgroundImage='url(resources/apple.jpg)';
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }
+    </script>
+    <style>
+        HTML { background: white; }
+        BODY { background: white no-repeat top center; }
+        HTML, BODY { padding-top: 232px; }
+    </style>
+</head>
+<body onload="runTest()">
+    <p>
+        Repaint test for <i><a href="http://bugs.webkit.org/show_bug.cgi?id=15157">http://bugs.webkit.org/show_bug.cgi?id=15157</a>
+        Image defined in background-position: top center gets unexpectedly truncated</i>.
+    </p>
+</body>
+</html>

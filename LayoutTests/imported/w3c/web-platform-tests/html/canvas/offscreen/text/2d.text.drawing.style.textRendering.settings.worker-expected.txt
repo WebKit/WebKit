@@ -1,0 +1,3 @@
+
+PASS Testing basic functionalities of textRendering in Canvas
+

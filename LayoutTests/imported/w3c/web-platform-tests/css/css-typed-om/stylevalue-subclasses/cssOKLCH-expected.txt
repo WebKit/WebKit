@@ -1,0 +1,20 @@
+
+PASS Constructing a CSSOKLCH with percent for the lightness works as intended.
+PASS CSSOKLCH.l can be updated with a percent.
+PASS Constructing a CSSOKLCH with number for the lightness works as intended.
+PASS CSSOKLCH.l can be updated with a number.
+PASS Constructing a CSSOKLCH with css pixels for lightness throws a SyntaxError.
+PASS Constructing a CSSOKLCH with degrees for lightness throws a SyntaxError.
+PASS CSSOKLCH can be constructed from three numbers and will get an alpha of 100%.
+PASS CSSOKLCH can be constructed from four numbers.
+PASS Constructing a CSSOKLCH with CSS.number for l, c, h or alpha throws a SyntaxError
+PASS Updating a CSSOKLCH with CSS.number for l throws a SyntaxError
+PASS CSSOKLCH.l can be updated to a number.
+PASS CSSOKLCH.l can be updated with a CSS percent.
+PASS Updating a CSSOKLCH with CSS.number for c throws a SyntaxError
+PASS CSSOKLCH.c can be updated to a number.
+PASS CSSOKLCH.c can be updated with a CSS percent.
+PASS Updating a CSSOKLCH with CSS.number for alpha throws a SyntaxError
+PASS CSSOKLCH.alpha can be updated to a number.
+PASS CSSOKLCH.alpha can be updated with a CSS percent.
+

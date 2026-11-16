@@ -1,0 +1,3 @@
+
+PASS script-utf16-without-bom-hint-charset
+

@@ -1,0 +1,61 @@
+<html>
+<head>
+<style>
+.editing { 
+    border: 2px solid red; 
+    padding: 12px; 
+    font-size: 24px; 
+}
+</style>
+<script src=../editing.js language="JavaScript" type="text/JavaScript" ></script>
+<script>
+
+function print(message) {
+    var paragraph = document.createElement('p');
+    paragraph.appendChild(document.createTextNode(message));
+    document.getElementById('console').appendChild(paragraph);
+}
+
+function editingTest() {
+    if (!window.objCPlugin)
+        return print('FAIL - no objCPlugin');
+
+    objCPlugin.removeBridgeRestrictions_(window);
+    if (!window.objc)
+        return print('FAIL - no window.objc');
+
+    // get the data for the pasteboard
+    var myURL = document.URL;
+    var resourceURL = myURL.replace('pasteboard/paste-RTFD.html','resources/RTFD-pasteboard-data.dat');
+    var data = objc('NSData').dataWithContentsOfURL_(objc('NSURL').URLWithString_(resourceURL));
+    
+    // This actually returns DumpRenderTree's local pasteboard
+    var pasteboard = objc('NSPasteboard').generalPasteboard();
+    var pasteboardType = 'NeXT RTFD pasteboard type';
+
+    pasteboard.declareType_owner_(pasteboardType, 0);
+    pasteboard.setData_forType_(data, pasteboardType);
+    
+    pasteCommand();
+    
+    
+}
+</script>
+
+<title>RTFD paste test</title>
+</head>
+<body>
+<p>
+    On Tiger, this test demonstrates a bug in AppKit's -[NSString _documentFromRange:] method where it produces fragments with extra trailing and leading newlines.  This bug is fixed in Leopard.
+</p>
+<div contentEditable="true" id="root" class="editing">
+<div id="test"> </div>
+</div>
+<div id='console'/>
+
+<script>
+runEditingTest();
+</script>
+
+</body>
+</html>

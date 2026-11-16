@@ -1,0 +1,7 @@
+Test Link
+Multiple Ping Link
+
+FAIL MathML anchor with ping attribute should send ping on click assert_equals: expected "ping" but got "other"
+FAIL MathML anchor with multiple ping URLs should send multiple pings assert_equals: expected "ping" but got "other"
+PASS MathML anchor ping attribute should be settable via ping IDL attribute
+

@@ -1,0 +1,19 @@
+Test that CanvasManager is able to record actions made to WebGPU devices.
+
+
+== Running test suite: Canvas.recordingWebGPU
+-- Running test case: Canvas.recordingWebGPU.memoryLimit
+initialState:
+  attributes:
+  parameters:
+  content: <filtered>
+frames:
+  0: (duration) (incomplete)
+    0: label = "device"
+      swizzleTypes: [String]
+      trace:
+        0: (anonymous function)
+        1: executeFrameFunction
+        2: performActions
+        3: Global Code
+

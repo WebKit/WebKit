@@ -1,0 +1,9 @@
+
+PASS the disconnected/connected callbacks should be called when no other callback is defined
+PASS the element should stay connected during the callbacks
+PASS When connectedMoveCallback is defined, it is called instead of disconnectedCallback/connectedCallback
+PASS Reactions to atomic move are called in order of element, not in order of operation
+PASS When connectedCallback is not defined, no crash
+PASS When disconnectedCallback is not defined, no crash
+PASS connectedMove runs when custom element is nested within a shadow root
+

@@ -1,0 +1,11 @@
+This tests disabling mutation events.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS mutationEvents is ["DOMNodeInserted", "DOMNodeInsertedIntoDocument", "DOMSubtreeModified", "DOMNodeRemoved", "DOMNodeRemovedFromDocument", "DOMSubtreeModified"]
+PASS mutationEvents is ["DOMCharacterDataModified", "DOMSubtreeModified"]
+PASS successfullyParsed is true
+
+TEST COMPLETE
+world

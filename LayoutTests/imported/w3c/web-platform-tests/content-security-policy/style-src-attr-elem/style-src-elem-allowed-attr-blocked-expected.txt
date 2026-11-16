@@ -1,0 +1,4 @@
+
+PASS Should fire a security policy violation for the attribute
+PASS The attribute style should not be applied and the inline style should be applied
+

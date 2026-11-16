@@ -1,0 +1,3 @@
+
+PASS Composite accumulate of script based animations across view transitions
+

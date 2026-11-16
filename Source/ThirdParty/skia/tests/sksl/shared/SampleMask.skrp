@@ -1,0 +1,24 @@
+### Compilation failed:
+
+error: 2: unknown identifier 'sk_SampleMaskIn'
+    return half4(sk_SampleMaskIn);
+                 ^^^^^^^^^^^^^^^
+error: 6: unknown identifier 'sk_SampleMask'
+    sk_SampleMask = 0;
+    ^^^^^^^^^^^^^
+error: 10: unknown identifier 'sk_SampleMask'
+    sk_SampleMask = sk_SampleMaskIn;
+    ^^^^^^^^^^^^^
+error: 10: unknown identifier 'sk_SampleMaskIn'
+    sk_SampleMask = sk_SampleMaskIn;
+                    ^^^^^^^^^^^^^^^
+error: 13: 'main' must return: 'vec4', 'float4', or 'half4'
+void main() {
+^^^^^^^^^^^
+error: 16: unknown identifier 'sk_SampleMask'
+    sk_SampleMask = 0xFFFFFFFF;
+    ^^^^^^^^^^^^^
+error: 17: unknown identifier 'sk_FragColor'
+    sk_FragColor = samplemaskin_as_color() / 256.0;
+    ^^^^^^^^^^^^
+7 errors

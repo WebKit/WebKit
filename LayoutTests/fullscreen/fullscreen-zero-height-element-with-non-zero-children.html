@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>fullscreen-zero-height-element-with-non-zero-children</title>
+    <style>
+        #target { 
+            width: 100px;
+            height: 0;
+        }
+        #child { 
+            width: 100px;
+            height: 100px;
+            position: absolute;
+        }
+    </style>
+    <script src="full-screen-test.js"></script>
+    <script>
+
+    window.addEventListener('load', async event => {
+        run("testRunner.dumpFullScreenCallbacks()");
+
+        internals.withUserGesture(() => { run('target.webkitRequestFullScreen()'); });
+        await waitFor(target, 'webkitfullscreenchange');
+        await sleepFor(10);
+        if (window.testRunner) { await testRunner.updatePresentation() }
+
+        run('document.webkitExitFullscreen()');
+
+        await waitFor(target, 'webkitfullscreenchange');
+
+        await sleepFor(10);
+
+        endTest();
+    });
+</script>
+</head>
+<body>
+<div id="target">
+    <div id="child"></div>
+</div>
+</body>
+</html>

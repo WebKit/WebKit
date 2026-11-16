@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="../../../resources/ui-helper.js"></script>
+    <script src="../../../resources/js-test-pre.js"></script>
+    <script>
+        jsTestIsAsync = true;
+
+      if (window.internals)
+          internals.settings.setAsyncFrameScrollingEnabled(true);
+
+      async function runTest()
+      {
+         let iframe = document.getElementsByTagName('iframe')[0];
+         contentWindow = iframe.contentWindow;
+         let target = iframe.contentDocument.getElementById('target');
+         
+         shouldBe('contentWindow.pageYOffset', '0');
+         target.scrollIntoView({ behavior: "smooth" });
+
+         await UIHelper.waitForScrollCompletion();
+
+         shouldBe('contentWindow.pageYOffset', '1120');
+         finishJSTest();
+       }
+    </script>
+    <style>
+        iframe {
+            border: 1px solid black;
+            height: 400px;
+            width: 320px;
+        }
+    </style>
+  </head>
+  <body>
+    <iframe srcdoc="
+        <style>
+            body { margin: 0; }
+            #target { margin-top: 1500px; height: 20px; }
+        </style>
+        <body>
+            <div id=target>target</div>
+        </body>" onload="runTest()">
+    </iframe>
+    <div id=console></div>
+    <script src="../../../resources/js-test-post.js"></script>
+  </body>
+</html>

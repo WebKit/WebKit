@@ -1,0 +1,37 @@
+
+PASS --right | --right
+PASS --left | --left
+PASS --top | --top
+PASS --bottom | --bottom
+PASS --right, --left, --bottom, --top | --right
+PASS normal --right, --left, --bottom, --top | --right
+PASS normal --top, --left, --bottom, --right | --top
+PASS most-block-size --right, --left | --right
+PASS most-height --right, --left | --right
+PASS most-inline-size --right, --left | --left
+PASS most-width --right, --left | --left
+PASS most-inline-size --bottom, --top | --bottom
+PASS most-width --bottom, --top | --bottom
+PASS most-block-size --bottom, --top | --top
+PASS most-height --bottom, --top | --top
+PASS most-inline-size --right, --left, --bottom, --top | --bottom
+PASS most-inline-size --right, --left, --top, --bottom | --top
+PASS most-block-size --bottom, --top, --right, --left | --right
+PASS most-block-size --bottom, --top, --left, --right | --left
+PASS most-inline-size --left-sweep, --bottom-sweep | --left-sweep
+PASS most-inline-size --bottom-sweep, --left-sweep | --bottom-sweep
+PASS most-block-size --left-sweep, --bottom-sweep | --left-sweep
+PASS most-block-size --bottom-sweep, --left-sweep | --left-sweep
+PASS most-inline-size --right-sweep, --left-sweep, --bottom-sweep, --top-sweep | --left-sweep
+PASS most-block-size --right-sweep, --left-sweep, --bottom-sweep, --top-sweep | --top-sweep
+PASS most-inline-size
+  --right-sweep, --left-sweep, --bottom-sweep, --top-sweep,
+  /* --right, --left, --bottom, --top */
+  --bottom
+   | --bottom
+PASS most-block-size
+  --right-sweep, --left-sweep, --bottom-sweep, --top-sweep,
+  /* --right, --left, --bottom, --top */
+  --right
+   | --right
+

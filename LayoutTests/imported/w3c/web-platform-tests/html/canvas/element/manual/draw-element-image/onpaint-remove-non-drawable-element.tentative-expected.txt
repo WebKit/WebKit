@@ -1,0 +1,6 @@
+
+FAIL onpaint should fire when a non-drawable child of a drawable element is removed assert_equals: onpaint should fire after a non-drawable child is removed. expected 1 but got 0
+FAIL onpaint should fire when a non-drawable inline child of a drawable element is removed assert_equals: onpaint should fire after a non-drawable inline child is removed. expected 1 but got 0
+FAIL onpaint should fire when a non-drawable child is removed from a drawable element with mixed children assert_equals: onpaint should fire after a non-drawable child is removed from a mixed container. expected 1 but got 0
+FAIL onpaint should fire when a deep non-drawable descendant of a drawable element is removed assert_equals: onpaint should fire after a deep non-drawable descendant is removed. expected 1 but got 0
+

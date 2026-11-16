@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<style>
+.before::before {
+    content: "hello";
+}
+.after::after {
+    content: "world";
+}
+.transform::before {
+    text-transform: uppercase;
+}
+.transform::after {
+    text-transform: uppercase;
+}
+#target {
+    position: relative;
+}
+</style>
+<div id="target" class="before after"><span style="position: absolute">PASS if no crash or assert.</span></div>
+<script>
+window.testRunner?.dumpAsText();
+
+target.offsetHeight;
+target.classList.add("transform");
+target.offsetHeight;
+</script>

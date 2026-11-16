@@ -1,0 +1,166 @@
+/*
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#pragma once
+
+#include "MessageReceiver.h"
+#include "MessageSender.h"
+#include "WebPageProxyIdentifier.h"
+#include <WebCore/AdvancedPrivacyProtections.h>
+#include <WebCore/ClientOrigin.h>
+#include <WebCore/FrameIdentifier.h>
+#include <WebCore/NetworkSendQueue.h>
+#include <WebCore/PageIdentifier.h>
+#include <WebCore/ResourceRequest.h>
+#include <WebCore/ResourceResponse.h>
+#include <WebCore/ScriptExecutionContext.h>
+#include <WebCore/ScriptExecutionContextIdentifier.h>
+#include <WebCore/StoredCredentialsPolicy.h>
+#include <WebCore/ThreadableWebSocketChannel.h>
+#include <WebCore/WebSocketChannelInspector.h>
+#include <WebCore/WebSocketFrame.h>
+#include <wtf/ThreadSafeWeakPtr.h>
+#include <wtf/WeakPtr.h>
+
+namespace IPC {
+class Connection;
+class Decoder;
+}
+
+namespace WebCore {
+class WorkerGlobalScope;
+}
+
+namespace WebKit {
+
+class WebSocketChannel : public IPC::MessageSender, public IPC::ThreadSafeMessageReceiver, public WebCore::ThreadableWebSocketChannel, public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<WebSocketChannel> {
+public:
+    static Ref<WebSocketChannel> create(WebPageProxyIdentifier, WebCore::Document&, WebCore::WebSocketChannelClient&, WebCore::IsInitiatedByWorker = WebCore::IsInitiatedByWorker::No);
+    static Ref<WebSocketChannel> create(WebPageProxyIdentifier, WebCore::WorkerGlobalScope&, WebCore::WebSocketChannelClient&, WebCore::IsInitiatedByWorker, Ref<IPC::Connection>&&);
+    ~WebSocketChannel();
+
+    // IPC::ThreadSafeMessageReceiver, WebCore::ThreadableWebSocketChannel.
+    WTF_ABSTRACT_THREAD_SAFE_REF_COUNTED_AND_CAN_MAKE_WEAK_PTR_IMPL;
+
+    void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
+
+    void networkProcessCrashed();
+
+private:
+    WebSocketChannel(WebPageProxyIdentifier, WebCore::ScriptExecutionContext&, WebCore::WebSocketChannelClient&, WebCore::IsInitiatedByWorker, RefPtr<IPC::Connection>&&);
+
+    static Ref<WebCore::NetworkSendQueue> createMessageQueue(WebCore::ScriptExecutionContext&, WebSocketChannel&);
+
+    // ThreadableWebSocketChannel
+    ConnectStatus connect(const URL&, const String& protocol) final;
+    String subprotocol() final;
+    String extensions() final;
+    void send(UTF8CString&&) final;
+    void send(const JSC::ArrayBuffer&, size_t byteOffset, size_t byteLength) final;
+    void send(WebCore::Blob&) final;
+    void close(int code, const String& reason) final;
+    void fail(String&& reason) final;
+    void disconnect() final;
+    void suspend() final;
+    void resume() final;
+
+    void notifySendFrame(WebCore::WebSocketFrame::OpCode, std::span<const uint8_t> data);
+    void logErrorMessage(WebCore::ScriptExecutionContext&, const String&);
+
+    struct ConnectParameters {
+        ConnectParameters isolatedCopy() && {
+            return {
+                request.isolatedCopy(),
+                WTF::move(clientOrigin).isolatedCopy(),
+                frameIdentifier,
+                pageIdentifier,
+                storedCredentialsPolicy,
+                advancedPrivacyProtections,
+                hadMainFrameMainResourcePrivateRelayed,
+                allowPrivacyProxy,
+                didUpgradeURL
+            };
+        }
+
+        WebCore::ResourceRequest request;
+        WebCore::ClientOrigin clientOrigin;
+        std::optional<WebCore::FrameIdentifier> frameIdentifier;
+        std::optional<WebCore::PageIdentifier> pageIdentifier;
+        WebCore::StoredCredentialsPolicy storedCredentialsPolicy { WebCore::StoredCredentialsPolicy::Use };
+        OptionSet<WebCore::AdvancedPrivacyProtections> advancedPrivacyProtections;
+        bool hadMainFrameMainResourcePrivateRelayed { false };
+        bool allowPrivacyProxy { true };
+        bool didUpgradeURL { false };
+    };
+    static std::optional<ConnectParameters> createConnectParameters(WebCore::Document&, const URL&, WebCore::WebSocketChannelIdentifier);
+    void connectWithParameters(ConnectParameters&&, const String& protocol);
+
+    // Message receivers
+    void didConnect(String&& subprotocol, String&& extensions);
+    void didReceiveText(String&&);
+    void didReceiveBinaryData(std::span<const uint8_t>);
+    void didClose(unsigned short code, String&&);
+    void didReceiveMessageError(String&&);
+    void didSendHandshakeRequest(WebCore::ResourceRequest&&);
+    void didReceiveHandshakeResponse(WebCore::ResourceResponse&&);
+
+    // MessageSender
+    IPC::Connection* messageSenderConnection() const final;
+    uint64_t messageSenderDestinationID() const final;
+
+    bool increaseBufferedAmount(size_t);
+    void decreaseBufferedAmount(size_t);
+    template<typename T> void sendMessageInternal(T&&, size_t byteLength);
+
+    const WebCore::WebSocketChannelInspector* channelInspector() const LIFETIME_BOUND final { return &m_inspector; }
+    WebCore::WebSocketChannelIdentifier progressIdentifier() const final { return m_inspector.progressIdentifier(); }
+    bool hasCreatedHandshake() const final { return !m_url.isNull(); }
+    bool isConnected() const final { return !m_handshakeResponse.isNull(); }
+    WebCore::ResourceRequest clientHandshakeRequest(const CookieGetter&) const final { return m_handshakeRequest; }
+    const WebCore::ResourceResponse& serverHandshakeResponse() const LIFETIME_BOUND final { return m_handshakeResponse; }
+
+    void addMessageReceiverIfNeeded(WebCore::ScriptExecutionContextIdentifier);
+    void removeMessageReceiverIfNeeded();
+
+    WeakPtr<WebCore::ScriptExecutionContext> m_context;
+    const RefPtr<IPC::Connection> m_connection;
+    std::optional<WebCore::ScriptExecutionContextIdentifier> m_workerContextIdentifier;
+    std::atomic<bool> m_messageReceiverAdded { false };
+    ThreadSafeWeakPtr<WebCore::WebSocketChannelClient> m_client;
+    URL m_url;
+    String m_subprotocol;
+    String m_extensions;
+    size_t m_bufferedAmount { 0 };
+    bool m_isClosing { false };
+    bool m_needsToCallClose { false };
+    RefPtr<WebCore::NetworkSendQueue> m_messageQueue;
+    WebCore::WebSocketChannelInspector m_inspector;
+    WebCore::ResourceRequest m_handshakeRequest;
+    WebCore::ResourceResponse m_handshakeResponse;
+    WebPageProxyIdentifier m_webPageProxyID;
+    WebCore::IsInitiatedByWorker m_isInitiatedByWorker { WebCore::IsInitiatedByWorker::No };
+};
+
+} // namespace WebKit

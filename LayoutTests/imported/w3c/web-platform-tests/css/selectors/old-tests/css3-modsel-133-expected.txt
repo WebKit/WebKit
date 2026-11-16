@@ -1,0 +1,11 @@
+This paragraph should be unstyled.
+
+This paragraph should have a green background.
+
+This paragraph should have a green background.
+This paragraph should have a green background.
+This paragraph should be unstyled.
+This paragraph should have a green background.
+
+PASS NEGATED Attribute dash-separated value selector with universal namespace
+

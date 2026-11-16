@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="/js-test-resources/js-test.js"></script>
+<script>
+description("Test case for bug 36156: XHR 'progress' event code assumes wrongly that expectedLength >= 0");
+debug("Verify that the progress event total property is 0 when the expected overall length can't be computed.");
+jsTestIsAsync = true;
+
+gotRelevantProgressEvent = false;
+
+function test()
+{
+    var xhr = new XMLHttpRequest();
+    xhr.open("GET", "resources/chunked-transfer.py", true);
+
+    xhr.onprogress = function(e) {
+        if (e.loaded >= 4 && e.total == 0 && !e.lengthComputable) {
+            testPassed("Length is not computable");
+            gotRelevantProgressEvent = true;
+        } else if (e.total != 0 && !e.lengthComputable) {
+            testFailed("XMLHttpRequestProgressEvent lengthComputable=false but total is non-zero: " + e.total);
+            gotRelevantProgressEvent = true;
+        }
+    }
+
+    xhr.onreadystatechange = function(e) {
+        if (xhr.readyState == xhr.DONE) {
+            shouldBeTrue("gotRelevantProgressEvent");
+            finishJSTest();
+        }
+    }
+
+    xhr.send();
+}
+
+onload = () => {
+    setTimeout(test, 0);
+};
+</script>
+</body>

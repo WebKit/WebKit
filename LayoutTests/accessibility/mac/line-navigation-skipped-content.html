@@ -1,0 +1,61 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<!-- Note that this bug reproduces in real pages without contenteditable too, it's just easier to write the test with contenteditable. -->
+<div style="display: flex; font-family: sans-serif;" tabindex=0 id="container" contenteditable="true">
+    <div style="flex: 1 1 55%; float: left; max-width: 127px">
+        <a href="#foo">
+            <img alt="foo image" src="../resources/cake.png" decoding=async width=127 height=154>
+        </a>
+        <div>Game Boy, platform of <i>Donkey Kong Land</i></div>
+    </div>
+    <div style="flex: 1 1 45%;"></div>
+</div>
+<script>
+var output = "This test ensures we don't skip any content when using the text marker APIs to navigate by line (like VoiceOver).\n\n";
+
+document.getElementById("container").focus();
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    var expectStringAtIndex = 0;
+    var expectedStrings = [
+        "Game Boy,",
+        "platform of",
+        "Donkey Kong",
+        "Land",
+    ];
+
+    var markerRange, resultString;
+    var webarea = accessibilityController.rootElement.childAtIndex(0);
+    setTimeout(async function() {
+        while (expectStringAtIndex < expectedStrings.length) {
+            eventSender.keyDown("downArrow");
+
+            await waitFor(() => {
+                endMarker = webarea.endTextMarkerForTextMarkerRange(webarea.selectedTextMarkerRange());
+                markerRange = webarea.lineTextMarkerRangeForTextMarker(endMarker);
+
+                resultString = webarea.stringForTextMarkerRange(markerRange)?.trim();
+                if (resultString !== expectedStrings[expectStringAtIndex])
+                    return false;
+
+                ++expectStringAtIndex;
+                return true;
+            });
+        }
+        output += "PASS: Was able to navigate through all lines of text.\n";
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>
+

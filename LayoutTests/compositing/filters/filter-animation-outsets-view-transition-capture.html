@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<style>
+@keyframes blur { from, to { filter: blur(0px); } 50% { filter: blur(30px); } }
+div { width: 100px; height: 100px; background: green; view-transition-name: target; animation: blur 1000s step-end; }
+::view-transition-group(*), ::view-transition-old(*), ::view-transition-new(*) { animation-play-state: paused; }
+</style>
+<div></div>
+<pre id="log"></pre>
+<script>
+testRunner.dumpAsText();
+testRunner.waitUntilDone();
+
+requestAnimationFrame(() => requestAnimationFrame(async () => {
+    await document.startViewTransition().ready;
+    requestAnimationFrame(() => {
+        // The 100px box grows by the 84px outsets of blur(30px) on each side.
+        log.textContent = `Captures include the filter animation outsets: ${internals.layerTreeAsText(document).includes("(bounds 268.00 268.00)")}`;
+        testRunner.notifyDone();
+    });
+}));
+</script>

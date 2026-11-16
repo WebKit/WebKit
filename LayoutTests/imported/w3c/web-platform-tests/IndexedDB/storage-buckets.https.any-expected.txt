@@ -1,0 +1,4 @@
+
+FAIL Basic test that buckets create independent databases. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: prepareForBucketTest"
+FAIL Tests trying to use indexedDB in a deleted bucket. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: prepareForBucketTest"
+

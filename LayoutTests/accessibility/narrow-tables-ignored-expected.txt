@@ -1,0 +1,13 @@
+This tests that very narrow or very wide tables are ignored.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+table1: AXRole: AXGroup
+table2: AXRole: AXGroup
+table3: AXRole: AXTable
+table4: AXRole: AXTable
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

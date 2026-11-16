@@ -1,0 +1,54 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<head>
+    <script src="../../../resources/basic-gestures.js"></script>
+    <script src="../../../resources/ui-helper.js"></script>
+    <style>
+    body {
+        margin: 0;
+    }
+
+    button, input {
+        width: 100%;
+        height: 100px;
+        font-size: 60px;
+        display: block;
+    }
+
+    #select {
+        font-size: 100px;
+    }
+    </style>
+    <script>
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+
+    async function run()
+    {
+        document.addEventListener("selectionchange", () => result.textContent = getSelection().toString());
+        if (!window.testRunner)
+            return;
+
+        await UIHelper.activateAndWaitForInputSessionAt(50, 50);
+        await UIHelper.tapAt(50, 150);
+        await UIHelper.waitForKeyboardToHide();
+        await longPressAtPoint(50, 250);
+        await liftUpAtPoint(50, 250);
+
+        testRunner.notifyDone();
+    }
+    </script>
+</head>
+<body onload="run()">
+    <input></input>
+    <button></button>
+    <div id="select">WebKit</div>
+    <pre>The selected text is: "<span id="result"></span>"</pre>
+    <p>This test verifies that it's possible to select text by long pressing after the keyboard is dismissed due to the
+    focused element changing. To manually test, tap the input to show the keyboard then click the button to dismiss the
+    keyboard, and finally try to select the word 'WebKit'.</p>
+</body>
+</html>

@@ -1,0 +1,17 @@
+This tests that the title attribute is used as the last resort for description when there is no other option available, but otherwise used as help text.
+
+PASS: accessibilityController.focusedElement.title === 'AXTitle: text'
+PASS: accessibilityController.focusedElement.helpText === 'AXHelp: TITLE'
+PASS: accessibilityController.focusedElement.title === 'AXTitle: text'
+PASS: accessibilityController.focusedElement.helpText === 'AXHelp: HELP'
+PASS: accessibilityController.focusedElement.description === 'AXDescription: TITLE'
+PASS: accessibilityController.focusedElement.helpText === 'AXHelp: '
+PASS: accessibilityController.focusedElement.description === 'AXDescription: TITLE'
+PASS: accessibilityController.focusedElement.helpText === 'AXHelp: HELP'
+PASS: accessibilityController.focusedElement.description === 'AXDescription: LABEL'
+PASS: accessibilityController.focusedElement.helpText === 'AXHelp: HELP'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+text text

@@ -1,0 +1,8 @@
+
+Harness Error (TIMEOUT), message = null
+
+FAIL encodedBodySize should be equal to the actual byte size of the content assert_equals: expected 3 but got 0
+FAIL encodedBodySize should be equal to the actual byte size of the content when no header present assert_equals: expected 13 but got 0
+PASS encodedBodySize should be equal to the actual byte size of the content when header value is lower than actual content
+TIMEOUT encodedBodySize should be equal to the actual byte size of the content when header value is higher than actual content Test timed out
+

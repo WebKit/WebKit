@@ -1,0 +1,11 @@
+Under site isolation, capturing microphone audio activates the audio session, and stopping capture deactivates it. The UI process drives capture activation from each web process's capture-source count.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS the audio session is active once microphone capture starts
+PASS the audio session is inactive once microphone capture stops
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

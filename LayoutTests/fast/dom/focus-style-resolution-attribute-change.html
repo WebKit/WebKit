@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<head>
+<style>
+.container[data-mode="browsing"] .wrapper {
+    display:none;
+}
+
+.container[data-mode="searching"] .wrapper {
+    display:block;
+}
+</style>
+<script>
+window.onload = async function() {
+    var wrapper = document.getElementsByClassName('wrapper')[0];
+    window.getComputedStyle(wrapper).display;
+
+    await new Promise(requestAnimationFrame);
+
+    var inputEl = document.getElementById('searchbox');
+    var container = document.getElementsByClassName('container')[0];
+    container.setAttribute('data-mode', 'searching');
+    inputEl.focus();
+}
+</script>
+</head>
+<body>
+<div class="container" data-mode="browsing">
+    <div class="wrapper">
+        <input id="searchbox" placeholder="Should be focused">
+    </div>
+</div>
+</body>

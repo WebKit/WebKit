@@ -1,0 +1,9 @@
+<body>
+<script>
+// This tests that an <input type="week"> created in a template document (e.g. one without a frame)
+// is identical to one created in the main document.
+let template = document.createElement('template');
+template.innerHTML = '<input type="week" value="1982-W25">';
+document.body.appendChild(template.content.cloneNode(true));
+</script>
+</body>

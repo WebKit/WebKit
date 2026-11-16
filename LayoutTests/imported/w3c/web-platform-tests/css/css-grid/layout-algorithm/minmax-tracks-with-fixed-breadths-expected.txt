@@ -1,0 +1,24 @@
+
+PASS A track with an automatic minimum grows to its fixed maximum
+PASS A track with a min-content minimum grows to its fixed maximum
+PASS A track with a max-content minimum grows to its fixed maximum
+PASS A track with an automatic minimum grows to its percentage maximum
+PASS A track with a min-content minimum grows to its percentage maximum
+PASS A track with a max-content minimum grows to its percentage maximum
+PASS A track with an automatic minimum grows to its calculated maximum
+PASS A track with a min-content minimum grows to its calculated maximum
+PASS A track with a max-content minimum grows to its calculated maximum
+PASS A track with a min-content maximum keeps its fixed minimum
+PASS A track with a max-content maximum keeps its fixed minimum
+PASS A track with an automatic maximum keeps its fixed minimum
+PASS A track with a min-content maximum keeps its percentage minimum
+PASS A track with a max-content maximum keeps its percentage minimum
+PASS A track with an automatic maximum keeps its percentage minimum
+PASS A track with a min-content maximum keeps its calculated minimum
+PASS A track with a max-content maximum keeps its calculated minimum
+PASS A track with an automatic maximum keeps its calculated minimum
+PASS Every track with an automatic minimum grows to its fixed maximum
+PASS A track with an automatic minimum grows to its fixed maximum when the grid container height is indefinite
+PASS A track with an automatic maximum keeps its fixed minimum when the grid container height is indefinite
+PASS A track whose minimum and maximum are both fixed grows to its maximum
+

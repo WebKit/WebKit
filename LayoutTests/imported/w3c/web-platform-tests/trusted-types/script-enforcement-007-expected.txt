@@ -1,0 +1,5 @@
+
+PASS Untrusted SVGScriptElement with classic type uses the source text returned by the default policy.
+PASS Untrusted SVGScriptElement of importmap type uses the source text returned by the default policy.
+PASS Untrusted SVGScriptElement of module type uses the source text returned by the default policy.
+

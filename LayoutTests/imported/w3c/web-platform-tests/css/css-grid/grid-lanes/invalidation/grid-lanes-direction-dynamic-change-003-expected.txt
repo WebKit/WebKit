@@ -1,0 +1,21 @@
+
+PASS #gridLanes 1
+FAIL #gridLanes 2 assert_equals:
+<div id="gridLanes" class="grid-lanes" style="grid-template-rows: repeat(3, 50px);">
+  <div id="a" style="width: 40px; background: blue;" data-expected-height="50" data-offset-x="0" data-offset-y="100"></div>
+  <div id="b" style="width: 20px; background: orange;" data-expected-height="50" data-offset-x="0" data-offset-y="50"></div>
+  <div id="c" style="width: 30px; background: green;" data-expected-height="50" data-offset-x="0" data-offset-y="0"></div>
+  <div id="d" style="width: 60px; background: red;" data-expected-height="50" data-offset-x="20" data-offset-y="50"></div>
+  <div id="e" style="width: 30px; background: purple;" data-expected-height="50" data-offset-x="30" data-offset-y="0"></div>
+</div>
+offsetTop expected 100 but got 0
+FAIL #gridLanes 3 assert_equals:
+<div id="gridLanes" class="grid-lanes" style="grid-template-rows: repeat(3, 50px); width: 80px;">
+  <div id="a" style="width: 40px; background: blue;" data-expected-height="50" data-offset-x="40" data-offset-y="0"></div>
+  <div id="b" style="width: 20px; background: orange;" data-expected-height="50" data-offset-x="60" data-offset-y="50"></div>
+  <div id="c" style="width: 30px; background: green;" data-expected-height="50" data-offset-x="50" data-offset-y="100"></div>
+  <div id="d" style="width: 60px; background: red;" data-expected-height="50" data-offset-x="0" data-offset-y="50"></div>
+  <div id="e" style="width: 30px; background: purple;" data-expected-height="50" data-offset-x="20" data-offset-y="100"></div>
+</div>
+offsetLeft expected 40 but got 0
+

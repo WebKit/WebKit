@@ -1,0 +1,77 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+<style>
+html {
+    scroll-snap-type: y mandatory;
+}
+
+body {
+  margin: 0;
+}
+
+.block {
+    height: 800px;
+    box-sizing: border-box;
+    border: 1px solid black;
+    scroll-snap-align: start;
+}
+</style>
+
+<body onload="runTest()">
+    <div class="block" id="top">top</div>
+    <div class="block" id="bottom">bottom</div>
+    <div id="console"></div>
+</body>
+
+<script>
+jsTestIsAsync = true;
+
+async function runTest()
+{
+    description("After a programmatic scrollIntoView to a snap point, the user should be able to drag back to the original snap point without a stale cached snap index forcing a re-snap.");
+
+    if (!window.testRunner) {
+        finishJSTest();
+        return;
+    }
+
+    await UIHelper.delayFor(0);
+    shouldBe("document.scrollingElement.scrollTop", "0");
+
+    document.getElementById("bottom").scrollIntoView({ block: "start" });
+    await UIHelper.waitForTargetScrollAnimationToSettle(document.scrollingElement);
+    shouldBe("document.scrollingElement.scrollTop", "800");
+
+    const xOffset = 150;
+    const yOffset = 800;
+    // The event coordinates here ensure that -scrollViewWillEndDragging:withVelocity:... is called with zero velocity.
+    // This is a small scroll that keeps us at the second snap point.
+    await UIHelper.sendEventStream(new UIHelper.EventStreamBuilder()
+        .begin(xOffset, yOffset + 50)
+        .move(xOffset, yOffset + 55, 0.01)
+        .move(xOffset, yOffset + 60, 0.01)
+        .move(xOffset + 1, yOffset + 60, 0.01)
+        .move(xOffset - 1, yOffset + 60, 0.01)
+        .move(xOffset, yOffset + 60, 0.01)
+        .end()
+        .takeResult());
+
+    await UIHelper.waitForTargetScrollAnimationToSettle(document.scrollingElement);
+    shouldBe("document.scrollingElement.scrollTop", "800");
+
+    document.getElementById("top").scrollIntoView({ behavior: "smooth", block: "start" });
+    await UIHelper.waitForTargetScrollAnimationToSettle(document.scrollingElement);
+    shouldBe("document.scrollingElement.scrollTop", "0");
+
+    await UIHelper.ensurePresentationUpdate();
+
+    shouldBe("document.scrollingElement.scrollTop", "0");
+
+    finishJSTest();
+}
+</script>
+</html>

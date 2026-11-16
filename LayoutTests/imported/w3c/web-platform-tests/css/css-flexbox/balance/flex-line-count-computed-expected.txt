@@ -1,0 +1,6 @@
+
+PASS Property flex-line-count value '1'
+PASS Property flex-line-count value '2'
+PASS Property flex-line-count value 'round(up, calc(7/2))'
+PASS Property flex-line-count value 'calc(NaN)'
+

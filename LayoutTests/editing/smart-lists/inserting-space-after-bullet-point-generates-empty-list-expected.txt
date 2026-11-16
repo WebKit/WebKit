@@ -1,0 +1,10 @@
+Typing "* A" + Enter + "* " with no text after the second marker should still produce an unordered list where the second list item is empty (contains a placeholder br).
+| <ul>
+|   class="Apple-disc-list"
+|   style="list-style-type: disc;"
+|   <li>
+|     "A"
+|     <br>
+|   <li>
+|     <#selection-caret>
+|     <br>

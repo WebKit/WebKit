@@ -1,0 +1,3 @@
+aaaa bbbb cccc dddd eeee
+PASS the accessibility bold system font measures differently from the normal system font.
+PASS the width measured after the font cache invalidation does not come from a stale cache.

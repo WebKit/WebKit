@@ -1,0 +1,13 @@
+This tests that if an iframe that has already been accessed loads new content, that said new content is reflected in the accessibility tree.
+
+PASS: platformStaticTextValue(webArea.childAtIndex(0)).includes('Foo text') === true
+PASS: newWebArea.childrenCount > 0 === true
+PASS: newWebArea.childAtIndex(0).role.toLowerCase().includes('button') === true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Before
+
+
+After

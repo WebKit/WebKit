@@ -1,0 +1,3 @@
+
+PASS Data URL SharedWorker should survive across navigations with extendedLifetime
+

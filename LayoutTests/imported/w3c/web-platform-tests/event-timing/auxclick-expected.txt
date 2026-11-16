@@ -1,0 +1,4 @@
+Click me
+
+PASS Event Timing auxclick.
+

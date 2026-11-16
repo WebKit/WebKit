@@ -1,0 +1,24 @@
+This test checks ellipse API in canvas v5
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS data[0] is 0
+PASS data[0] is 0
+PASS data[0] is 0
+PASS data[0] is 255
+PASS data[0] is 255
+PASS data[0] is 0
+PASS data[0] is 0
+PASS data[0] is 0
+PASS data[0] is 0
+PASS data[0] is 0
+PASS data[0] is 255
+PASS data[0] is 0
+PASS data[0] is 0
+PASS data[0] is 0
+PASS data[0] is 255
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,10 @@
+
+
+PASS Setup
+PASS getUserMedia() streaming to PeerConnection should favor frame rate
+PASS getDisplayMedia() streaming to PeerConnection should favor frame resolution
+PASS getUserMedia() streaming to PeerConnection can favor frame resolution with content hint
+PASS getDisplayMedia() streaming to PeerConnection can favor frame rate with content hint
+PASS getDisplayMedia() streaming to PeerConnection (while sender was created for video) should favor frame resolution
+PASS Cleanup
+

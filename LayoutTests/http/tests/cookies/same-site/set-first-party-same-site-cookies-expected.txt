@@ -1,0 +1,15 @@
+HTTP sent cookies:
+
+implicit-strict = 14
+lax = 14
+normal = 14
+strict = 14
+strict-because-invalid-SameSite-value = 14
+DOM cookies:
+
+implicit-strict = 14
+lax = 14
+normal = 14
+strict = 14
+strict-because-invalid-SameSite-value = 14
+

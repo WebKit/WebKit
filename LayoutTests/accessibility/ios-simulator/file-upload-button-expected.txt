@@ -1,0 +1,12 @@
+
+This tests that the label and value are correct for input file types.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS button1.description is 'AXLabel: Choose File'
+PASS button1.stringValue is 'AXValue: no file selected'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

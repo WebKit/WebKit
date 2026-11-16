@@ -1,0 +1,5 @@
+
+PASS Test that screen.orientation.lock returns a promise which will be fulfilled with a void value.
+FAIL Test that screen.orientation.lock returns a pending promise. promise_test: Unhandled rejection with value: object "NotSupportedError: Lock type should be one of { "any", "natural", "portrait", "landscape" }"
+PASS Test that screen.orientation.lock() is actually async
+

@@ -1,0 +1,14 @@
+
+PASS Encoding a 10-bit frame to vp8 preserves pixel values color:255,0,0,255 preferSoftware:true
+PASS Encoding a 10-bit frame to vp8 preserves pixel values color:0,255,0,255 preferSoftware:true
+PASS Encoding a 10-bit frame to vp8 preserves pixel values color:30,30,230,255 preferSoftware:true
+PASS Encoding a 10-bit frame to vp8 preserves pixel values color:255,0,0,255 preferSoftware:false
+PASS Encoding a 10-bit frame to vp8 preserves pixel values color:0,255,0,255 preferSoftware:false
+PASS Encoding a 10-bit frame to vp8 preserves pixel values color:30,30,230,255 preferSoftware:false
+PASS Encoding a 10-bit frame to vp09.00.10.08 preserves pixel values color:255,0,0,255 preferSoftware:true
+PASS Encoding a 10-bit frame to vp09.00.10.08 preserves pixel values color:0,255,0,255 preferSoftware:true
+PASS Encoding a 10-bit frame to vp09.00.10.08 preserves pixel values color:30,30,230,255 preferSoftware:true
+PASS Encoding a 10-bit frame to vp09.00.10.08 preserves pixel values color:255,0,0,255 preferSoftware:false
+PASS Encoding a 10-bit frame to vp09.00.10.08 preserves pixel values color:0,255,0,255 preferSoftware:false
+PASS Encoding a 10-bit frame to vp09.00.10.08 preserves pixel values color:30,30,230,255 preferSoftware:false
+

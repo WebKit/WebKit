@@ -1,0 +1,9 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ CSSTextDecorationInsetEnabled=true ] -->
+<meta charset="utf-8">
+<title>CSS Text Decoration: text-decoration-inset honors box-decoration-break: slice (mismatch reference uses clone)</title>
+<style>
+    body { margin: 20px; font: 40px/1.5 monospace; }
+    div { width: 200px; }
+    span { text-decoration-line: underline; text-decoration-inset: 8px; -webkit-box-decoration-break: clone; }
+</style>
+<div><span>aaaaa bbbbb</span></div>

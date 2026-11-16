@@ -1,0 +1,9 @@
+cpp:c,cc,cpp,h,hpp,icl,ipp
+css:css
+iphp:php,php3,php4,php5,inc
+php:php,php3,php4,php5,inc
+vb:vb
+xml:xml,xsl,xslt,xsd,manifest
+apache:htaccess,conf
+javascript:js,json
+blocklist:json-bl

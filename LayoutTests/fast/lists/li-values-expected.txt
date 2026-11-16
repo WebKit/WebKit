@@ -1,0 +1,24 @@
+1 The list marker should show 1 because this item had a value of 4 but it was removed.
+-1 The list marker should show -1 (negative values are allowed).
+0 The list marker should show 0.
+1 The list marker should show 1 (invalid values are ignored).
+-5 The list marker should show -5 (updated programmatically).
+-1 The list marker should fall back to decimal -1 (hebrew: 1-infinite).
+0 The list marker should fall back to decimal 0 (simple-upper-roman: 1-4999).
+0 The list marker should fall back to decimal 0 (simple-lower-roman: 1-4999).
+0 The list marker should fall back to decimal 0 (upper-roman: 1-4999).
+0 The list marker should fall back to decimal 0 (lower-roman: 1-4999).
+0 The list marker should fall back to decimal 0 (lower-armenian: 1-9999).
+0 The list marker should fall back to decimal 0 (upper-armenian: 1-9999).
+0 The list marker should fall back to decimal 0 (armenian: 1-9999).
+0 The list marker should fall back to decimal 0 (georgian: 1-19999).
+0 The list marker should fall back to decimal 0 (ancient-tamil: 1-9999).
+一万 The list marker should show 10000 in the style (japanese-informal covers the extended range).
+マイナス一万 The list marker should show -10000 in the style (japanese-informal covers the extended range).
+壱萬 The list marker should show 10000 in the style (japanese-formal covers the extended range).
+マイナス壱萬 The list marker should show -10000 in the style (japanese-formal covers the extended range).
+마이너스 일만 The list marker should show -10000 in the style (korean-hangul-formal covers the extended range).
+마이너스 萬 The list marker should show -10000 in the style (korean-hanja-informal covers the extended range).
+마이너스 壹萬 The list marker should show -10000 in the style (korean-hanja-formal covers the extended range).
+0 The list marker should fall back to decimal 0 (greek: 1-999).
+

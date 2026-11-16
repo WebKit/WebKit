@@ -1,0 +1,3 @@
+
+PASS Unknown media types are rejected with the port set to 0
+

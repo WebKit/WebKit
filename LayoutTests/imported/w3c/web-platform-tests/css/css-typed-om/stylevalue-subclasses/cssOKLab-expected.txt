@@ -1,0 +1,17 @@
+
+PASS Constructing a CSSOKLab with percent for the lightness works as intended.
+PASS CSSOKLab.l can be updated with a percent.
+PASS Constructing a CSSOKLab with number for the lightness works as intended.
+PASS CSSOKLab.l can be updated with a number.
+PASS Constructing a CSSOKLab with css pixels for lightness throws a SyntaxError.
+PASS Constructing a CSSOKLab with degrees for lightness throws a SyntaxError.
+PASS CSSOKLab can be constructed from three numbers and will get an alpha of 100%.
+PASS CSSOKLab can be constructed from four numbers.
+PASS Constructing a CSSOKLab with CSS.number for l or alpha throws a SyntaxError
+PASS Updating a CSSOKLab with CSS.number for l throws a SyntaxError
+PASS CSSOKLab.l can be updated to a number.
+PASS CSSOKLab.l can be updated with a CSS percent.
+PASS Updating a CSSOKLab with CSS.number for alpha throws a SyntaxError
+PASS CSSOKLab.alpha can be updated to a number.
+PASS CSSOKLab.alpha can be updated with a CSS percent.
+

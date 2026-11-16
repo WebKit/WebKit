@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<script>
+
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+}
+
+function test()
+{
+    form.submit();
+    setTimeout(() => {
+        document.open();
+        document.write('<body><p>This test passes if WebKit does not crash.</p>PASS</body>');
+        document.close();
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }, 0);
+}
+
+</script>
+<body onload="test()">
+<form id="form" action="#" target="_blank" method="dialog">

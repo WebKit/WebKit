@@ -1,0 +1,4 @@
+
+
+PASS traverseTo() promise never settle when preventDefault()ing the navigate event (cross-document)
+

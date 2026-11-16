@@ -1,0 +1,14 @@
+
+PASS addTrack when pc is closed should throw InvalidStateError
+PASS addTrack with single track argument and no stream should succeed
+PASS addTrack with single track argument and single stream should succeed
+PASS addTrack with single track argument and multiple streams should succeed
+PASS Adding the same track multiple times should throw InvalidAccessError
+PASS addTrack with existing sender with null track, same kind, and recvonly direction should reuse sender
+PASS addTrack with existing sender that has not been used to send should reuse the sender
+PASS addTrack with existing sender that has been used to send should create new sender
+PASS addTrack with existing sender with null track, different kind, and recvonly direction should create new sender
+PASS Adding more tracks does not generate more candidates if bundled
+PASS Calling addTrack while sRD(offer) is pending should allow the new remote transceiver to be the same one that addTrack creates
+PASS When addTrack is called while sRD is in progress, and both addTrack and sRD add a transceiver of different media types, the addTrack transceiver should come first, and then the sRD transceiver.
+

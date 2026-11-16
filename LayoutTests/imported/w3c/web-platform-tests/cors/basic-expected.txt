@@ -1,0 +1,8 @@
+
+PASS Same domain basic usage
+FAIL Cross domain basic usage assert_true: Got CORS-allowed response expected true got false
+PASS Same domain different port
+FAIL Cross domain different port assert_true: Got CORS-allowed response expected true got false
+FAIL Cross domain different protocol assert_true: Got CORS-allowed response expected true got false
+PASS Same domain different protocol different port
+

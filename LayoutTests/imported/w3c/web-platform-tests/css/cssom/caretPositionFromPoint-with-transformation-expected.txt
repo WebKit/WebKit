@@ -1,0 +1,5 @@
+
+
+
+PASS iframe's with equal content should report the same caret offset
+

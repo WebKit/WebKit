@@ -1,0 +1,41 @@
+0:_abort_js
+1:emscripten_date_now
+2:__wasi_fd_close
+3:__wasi_fd_write
+4:__wasi_fd_seek
+5:emscripten_resize_heap
+6:__wasm_call_ctors
+7:WTF::HashTable<JSC::DFG::Node*, JSC::DFG::Node*, WTF::IdentityExtractor, WTF::PtrHash<JSC::DFG::Node*>, WTF::HashTraits<JSC::DFG::Node*>, WTF::HashTraits<JSC::DFG::Node*>>::add(JSC::DFG::Node*&&)
+8:WTF::HashTable<unsigned int, unsigned int, WTF::IdentityExtractor, WTF::IntHash<unsigned int>, WTF::UnsignedWithZeroKeyHashTraits<unsigned int>, WTF::UnsignedWithZeroKeyHashTraits<unsigned int>>::add(unsigned int&&)
+9:main
+10:WTF::HashTable<JSC::DFG::Node*, JSC::DFG::Node*, WTF::IdentityExtractor, WTF::PtrHash<JSC::DFG::Node*>, WTF::HashTraits<JSC::DFG::Node*>, WTF::HashTraits<JSC::DFG::Node*>>::rehash(unsigned int, JSC::DFG::Node**)
+11:WTF::HashTable<unsigned int, unsigned int, WTF::IdentityExtractor, WTF::IntHash<unsigned int>, WTF::UnsignedWithZeroKeyHashTraits<unsigned int>, WTF::UnsignedWithZeroKeyHashTraits<unsigned int>>::rehash(unsigned int, unsigned int*)
+12:abort
+13:__gettimeofday
+14:fiprintf
+15:__stdio_close
+16:__stdio_write
+17:__stdio_seek
+18:__emscripten_stdout_close
+19:__emscripten_stdout_seek
+20:__towrite
+21:frexp
+22:__memset
+23:__vfprintf_internal
+24:printf_core
+25:out
+26:getint
+27:pop_arg
+28:fmt_u
+29:pad
+30:fmt_fp
+31:__wasi_syscall_ret
+32:wctomb
+33:emscripten_builtin_malloc
+34:emscripten_builtin_free
+35:emscripten_builtin_calloc
+36:sbrk
+37:operator new(unsigned long)
+38:_emscripten_stack_restore
+39:_emscripten_stack_alloc
+40:emscripten_stack_get_current

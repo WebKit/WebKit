@@ -1,0 +1,2 @@
+Exception: SyntaxError: Cannot destructure to a parameter name 'eval' in strict mode.
+at stricteval-deferred.js:8

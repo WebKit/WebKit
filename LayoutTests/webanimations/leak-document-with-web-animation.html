@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<body onload="runTest()">
+<script src="../resources/js-test.js"></script>
+<script src="../resources/gc.js"></script>
+<script>
+description("This test asserts that Document doesn't leak when a Web Animation is created.");
+
+if (window.internals) {
+    jsTestIsAsync = true;
+
+    window.onload = function () {
+        testDocumentIsNotLeaked(
+            async function initAndRemove(frameCount)
+            {
+                let frames = await new Promise((resolve, reject) => {
+                    let frames = [];
+                    let counter = 0;
+                    function onLoad() {
+                        counter++;
+                        if (counter == frameCount)
+                            resolve(frames);
+                    }
+                    for (let i = 0; i < frameCount; ++i) {
+                        let frame = document.createElement('iframe');
+                        frame.src = "resources/web-animation-leak-iframe.html";
+                        frame.onload = onLoad;
+                        document.body.appendChild(frame);
+                        frames.push(frame);
+                    }
+                });
+                debug("The iframe has finished loading.");
+                let frameIdentifiers = [];
+                for (let i = 0; i < frameCount; ++i) {
+                    let frame = frames[i];
+                    frameIdentifiers.push(internals.documentIdentifier(frame.contentDocument));
+                    frame.remove();
+                }
+                nukeArray(frames);
+                frames = null;
+                return frameIdentifiers;
+            }
+        ).then(
+            () => testPassed("The document was destroyed"),
+            (error) => testFailed(error.message)
+        ).finally(finishJSTest);
+    };
+}
+
+</script>
+</body>
+</html>

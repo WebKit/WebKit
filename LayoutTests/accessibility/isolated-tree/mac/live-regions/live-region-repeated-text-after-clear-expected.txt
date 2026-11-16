@@ -1,0 +1,20 @@
+This tests that a live region which is cleared and then given the same text again announces it again, the way status feedback like "Moved Up" repeated on a second arrow key press has to. Text identical to what the region held before is otherwise treated as unchanged, because a streamed response re-chunks into different objects holding the same text when it finishes. The two are told apart by how long the region stays empty -- a page rebuilding a region refills it within a task or two, while anything driven by a user action does not -- and by whether the text comes back in the same shape, since re-chunking can outlast that.
+
+PASS: announcement.includes('Moved Up') === true
+PASS: announcements.length === 1
+PASS: announcement.includes('Moved Up') === true
+PASS: announcements.length === 2
+PASS: announcement.includes('Alpha Beta') === true
+PASS: announcements.length === 3
+PASS: announcement.includes('three') === true
+PASS: announcement.includes('One two') === false
+PASS: announcements.length === 6
+PASS: announcement.includes('Epsilon') === true
+PASS: announcement.includes('Delta') === false
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Delta
+
+Epsilon

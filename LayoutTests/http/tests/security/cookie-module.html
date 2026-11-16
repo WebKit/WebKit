@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="/js-test-resources/js-test.js"></script>
+<script>
+
+document.cookie = "ModuleSecret=42";
+window.jsTestIsAsync = true;
+
+function pass(script, messagePrefix)
+{
+    testPassed(`${messagePrefix} with origin ${(new URL(script.src)).origin}.`);
+    debug("");
+    runNextScriptTest();
+}
+
+function fail(script, messagePrefix)
+{
+    testFailed(`${messagePrefix} with origin ${(new URL(script.src)).origin}.`);
+    debug("");
+    runNextScriptTest();
+}
+
+function done()
+{
+    finishJSTest();
+}
+
+let counter = 0;
+function runNextScriptTest()
+{
+    var test = scriptTests.shift();
+    if (!test) {
+        done();
+        return;
+    }
+    var script = document.createElement("script");
+    script.type = "module";
+    if (test.crossOrigin != null)
+        script.crossOrigin = test.crossOrigin;
+    script.onload = () => test.onload(script);
+    script.onerror = () => test.onerror(script);
+    script.src = test.src + "?testId=" + (counter++);
+    document.getElementById("test-container").appendChild(script);
+}
+
+window.onload = runNextScriptTest;
+
+// Tests
+
+const DidLoadScript = "did load script";
+const DidNotLoadScript = "did not load script";
+
+var scriptTests = [
+{
+    src: "resources/cookie-protected-script.py",
+    onload: (script) => pass(script, DidLoadScript),
+    onerror: (script) => fail(script, DidNotLoadScript),
+},
+{
+    src: "http://127.0.0.1:8000/security/resources/cookie-protected-script.py",
+    onload: (script) => pass(script, DidLoadScript),
+    onerror: (script) => fail(script, DidNotLoadScript),
+},
+{
+    src: "https://127.0.0.1:8443/security/resources/cookie-protected-script.py",
+    onload: (script) => fail(script, DidLoadScript),
+    onerror: (script) => pass(script, DidNotLoadScript),
+},
+{
+    src: "http://localhost:8000/security/resources/cookie-protected-script.py",
+    onload: (script) => fail(script, DidLoadScript),
+    onerror: (script) => pass(script, DidNotLoadScript),
+},
+{
+    src: "resources/cookie-protected-script.py",
+    onload: (script) => pass(script, DidLoadScript),
+    onerror: (script) => fail(script, DidNotLoadScript),
+    crossOrigin: "",
+},
+{
+    src: "http://127.0.0.1:8000/security/resources/cookie-protected-script.py",
+    onload: (script) => pass(script, DidLoadScript),
+    onerror: (script) => fail(script, DidNotLoadScript),
+    crossOrigin: "",
+},
+{
+    src: "https://127.0.0.1:8443/security/resources/cookie-protected-script.py",
+    onload: (script) => fail(script, DidLoadScript),
+    onerror: (script) => pass(script, DidNotLoadScript),
+    crossOrigin: "",
+},
+{
+    src: "http://localhost:8000/security/resources/cookie-protected-script.py",
+    onload: (script) => fail(script, DidLoadScript),
+    onerror: (script) => pass(script, DidNotLoadScript),
+    crossOrigin: "",
+},
+{
+    src: "resources/cookie-protected-script.py",
+    onload: (script) => pass(script, DidLoadScript),
+    onerror: (script) => fail(script, DidNotLoadScript),
+    crossOrigin: "anonymous",
+},
+{
+    src: "http://127.0.0.1:8000/security/resources/cookie-protected-script.py",
+    onload: (script) => pass(script, DidLoadScript),
+    onerror: (script) => fail(script, DidNotLoadScript),
+    crossOrigin: "anonymous",
+},
+{
+    src: "https://127.0.0.1:8443/security/resources/cookie-protected-script.py",
+    onload: (script) => fail(script, DidLoadScript),
+    onerror: (script) => pass(script, DidNotLoadScript),
+    crossOrigin: "anonymous",
+},
+{
+    src: "http://localhost:8000/security/resources/cookie-protected-script.py",
+    onload: (script) => fail(script, DidLoadScript),
+    onerror: (script) => pass(script, DidNotLoadScript),
+    crossOrigin: "anonymous",
+},
+{
+    src: "resources/cookie-protected-script.py",
+    onload: (script) => fail(script, DidLoadScript),
+    onerror: (script) => pass(script, DidNotLoadScript),
+    crossOrigin: "omit",
+},
+{
+    src: "http://127.0.0.1:8000/security/resources/cookie-protected-script.py",
+    onload: (script) => fail(script, DidLoadScript),
+    onerror: (script) => pass(script, DidNotLoadScript),
+    crossOrigin: "omit",
+},
+{
+    src: "https://127.0.0.1:8443/security/resources/cookie-protected-script.py",
+    onload: (script) => fail(script, DidLoadScript),
+    onerror: (script) => pass(script, DidNotLoadScript),
+    crossOrigin: "omit",
+},
+{
+    src: "http://localhost:8000/security/resources/cookie-protected-script.py",
+    onload: (script) => fail(script, DidLoadScript),
+    onerror: (script) => pass(script, DidNotLoadScript),
+    crossOrigin: "omit",
+},
+{
+    src: "resources/cookie-protected-script.py",
+    onload: (script) => pass(script, DidLoadScript),
+    onerror: (script) => fail(script, DidNotLoadScript),
+    crossOrigin: "use-credentials",
+},
+{
+    src: "http://127.0.0.1:8000/security/resources/cookie-protected-script.py",
+    onload: (script) => pass(script, DidLoadScript),
+    onerror: (script) => fail(script, DidNotLoadScript),
+    crossOrigin: "use-credentials",
+},
+{
+    src: "https://127.0.0.1:8443/security/resources/cookie-protected-script.py",
+    onload: (script) => pass(script, DidLoadScript),
+    onerror: (script) => fail(script, DidNotLoadScript),
+    crossOrigin: "use-credentials",
+},
+{
+    src: "http://localhost:8000/security/resources/cookie-protected-script.py",
+    onload: (script) => fail(script, DidLoadScript),
+    onerror: (script) => pass(script, DidNotLoadScript),
+    crossOrigin: "use-credentials",
+},
+];
+</script>
+</head>
+<body>
+<div id="test-container"></div>
+</body>
+</html>

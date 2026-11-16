@@ -1,0 +1,4 @@
+
+PASS check animVal equals baseVal by default
+PASS check clone does not copy the animated value
+

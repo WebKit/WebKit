@@ -1,0 +1,4 @@
+
+PASS display:block img should be 200px high
+PASS display:inline-block img should be 200px high
+

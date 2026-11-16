@@ -1,0 +1,4 @@
+This is some Text
+
+PASS Slot reconciliation: assignedNodes should be empty when slot is removed from shadow tree
+

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta name="fuzzy" content="maxDifference=0-1; totalPixels=0-40000">
+        <style>
+            .reflection1 {
+                width: 200px;
+                -webkit-box-reflect: right 30px;
+            }
+            .reflection2 {
+                width: 100px;
+                opacity: 0.5;
+                -webkit-box-reflect: right 10px;
+                position: relative;
+            }
+            .reflection2 div {
+                height: 80px;
+                width: 100px;
+                background-color: blue;
+                will-change: transform;
+            }
+            .reflection2 .child2 {
+                margin-top: -60px;
+            }
+        </style>
+    </head>
+    <body>
+        There are four light blue squares.
+        <div class="reflection1">
+            <div class="reflection2">
+                <div>
+                </div>
+                <div class="child2">
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

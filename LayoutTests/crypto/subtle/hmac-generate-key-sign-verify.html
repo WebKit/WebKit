@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<script src="../resources/common.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+description("Test sign/verify with HMAC SHA-1 using a generated key");
+
+jsTestIsAsync = true;
+
+var extractable = false;
+var text = asciiToUint8Array("Hello, World!");
+var hmacParams = {
+    name: "hmac",
+    hash: "sha-1",
+}
+
+debug("Generating key...");
+crypto.subtle.generateKey(hmacParams, extractable, ["sign", "verify"]).then(function(result) {
+    key = result;
+    debug("Signing...");
+    return crypto.subtle.sign("hmac", key, text);
+}).then(function(result) {
+    signature = result;
+    shouldBe("signature.byteLength", "20");
+    debug("Verifying...");
+    return crypto.subtle.verify("hmac", key, signature, text);
+}).then(function(result) {
+    verified = result;
+    shouldBeTrue("verified");
+    finishJSTest();
+});
+
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

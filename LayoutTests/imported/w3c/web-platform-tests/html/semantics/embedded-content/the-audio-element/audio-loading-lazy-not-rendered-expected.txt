@@ -1,0 +1,3 @@
+
+PASS In-viewport audio with loading=lazy and no controls attribute, or display:none or hidden attribute should never load
+

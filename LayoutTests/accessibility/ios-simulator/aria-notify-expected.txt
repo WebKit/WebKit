@@ -1,0 +1,17 @@
+This test verifies that aria-notify notifications are properly formatted on iOS devices.
+
+Announcement received, notification: AXAnnouncementRequested, attributed string: Hello{
+    UIAccessibilityARIAInterruptBehavior = None;
+    UIAccessibilityARIAPriority = Normal;
+    UIAccessibilitySpeechAttributeLanguage = en;
+}
+Announcement received, notification: AXAnnouncementRequested, attributed string: World{
+    UIAccessibilityARIAInterruptBehavior = Pending;
+    UIAccessibilityARIAPriority = High;
+    UIAccessibilitySpeechAttributeLanguage = en;
+}
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

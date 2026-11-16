@@ -1,0 +1,12 @@
+This is a link that would normally appear as multiple elements.
+This test makes sure that only one element is returned for the link object, instead of many elements that are all links.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS obj.description is 'AXLabel: This is a link that would normally appear as multiple elements'
+PASS obj.isIgnored is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

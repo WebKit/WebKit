@@ -1,0 +1,4 @@
+
+
+FAIL Non-redirected cross-origin URLs are not stripped. assert_true: Location should be reasonable, got [2, 2] expected true got false
+

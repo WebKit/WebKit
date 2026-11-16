@@ -1,0 +1,4 @@
+
+PASS scrollIntoView scrolls the viewport when overflow-x: clip is applied to the root element
+PASS scrollIntoView scrolls the viewport when overflow-y: clip is applied to the root element
+

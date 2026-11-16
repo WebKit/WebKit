@@ -1,0 +1,9 @@
+
+Test that a non-momentum scroll over a horizontal scroller with a non-passive wheel event listener scrolls the document.
+Received wheel event
+PASS overflowScrollEventCount is 0
+PASS windowScrollEventCount > 0 is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

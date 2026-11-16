@@ -1,0 +1,2 @@
+Capturing load event listeners on the window should fire. This test checks if they do.
+PASS!

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<title>Text widths cached with font-kerning: normal are not used for font-kerning: none</title>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<style>
+span { font: 40px serif; white-space: pre; }
+</style>
+<div id="container"></div>
+<script>
+function measure(kerning)
+{
+    const span = document.createElement('span');
+    span.style.fontKerning = kerning;
+    span.textContent = 'TAWATAVA';
+    container.append(span, document.createElement('br'));
+    return span.getBoundingClientRect().width;
+}
+
+test(t => {
+    t.add_cleanup(() => container.remove());
+    const unkerned = measure('none');
+    const kerned = measure('normal');
+    assert_not_equals(kerned, unkerned, 'kerning changes the width');
+    // The width cache only starts storing entries after 20 accesses. Use 50 here to be extra sure.
+    for (let i = 0; i < 50; ++i) {
+        assert_equals(measure('normal'), kerned);
+        assert_equals(measure('none'), unkerned);
+    }
+}, 'font-kerning: none and normal measure independently once widths are cached');
+</script>

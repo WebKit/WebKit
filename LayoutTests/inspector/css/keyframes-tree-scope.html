@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/protocol-test.js"></script>
+<script>
+function test()
+{
+    let suite = ProtocolTest.createAsyncSuite("CSS.Keyframes.TreeScope");
+
+    async function keyframesFor(expression)
+    {
+        let {result} = await InspectorProtocol.awaitCommand({
+            method: "Runtime.evaluate",
+            params: {expression, objectGroup: "test"},
+        });
+        let {nodeId} = await InspectorProtocol.awaitCommand({
+            method: "DOM.requestNode",
+            params: {objectId: result.objectId},
+        });
+        return InspectorProtocol.awaitCommand({
+            method: "CSS.getMatchedStylesForNode",
+            params: {nodeId, includePseudo: true, includeKeyframes: true},
+        });
+    }
+
+    function expectOpacity(rules, expected, message)
+    {
+        ProtocolTest.expectEqual(rules.length, 1, "Only the resolved keyframe rule should be returned.");
+        let opacity = rules[0]?.style.cssProperties.find((property) => property.name === "opacity")?.value;
+        ProtocolTest.expectEqual(opacity, expected, message);
+    }
+
+    suite.addTestCase({
+        name: "CSS.Keyframes.TreeScope",
+        async test() {
+            await InspectorProtocol.awaitCommand({method: "DOM.getDocument", params: {}});
+            expectOpacity((await keyframesFor("document.getElementById('document-target')")).keyframes, "0.2", "The document target should use document keyframes.");
+            expectOpacity((await keyframesFor("document.getElementById('first-host').shadowRoot.getElementById('target')")).keyframes, "0.8", "The shadow target should use its last matching scoped rule.");
+            expectOpacity((await keyframesFor("document.getElementById('second-host').shadowRoot.getElementById('target')")).keyframes, "0.9", "A second shadow tree should use its own keyframes.");
+            expectOpacity((await keyframesFor("document.getElementById('slotted-target')")).keyframes, "0.8", "A slotted animation name should resolve in the declaring shadow scope.");
+            expectOpacity((await keyframesFor("document.getElementById('first-host').shadowRoot.getElementById('part-target')")).keyframes, "0.2", "A part animation name should resolve in the declaring document scope.");
+            let styles = await keyframesFor("document.getElementById('first-host').shadowRoot.getElementById('pseudo-target')");
+            expectOpacity(styles.pseudoElements.find((pseudo) => pseudo.pseudoId === "before").keyframes, "0.8", "A shadow pseudo element should use its scoped keyframes.");
+        },
+    });
+    suite.runTestCasesAndFinish();
+}
+</script>
+<style>
+@keyframes shared { from { opacity: 0.2; } }
+#document-target { animation: shared 1s; }
+#first-host::part(target) { animation: shared 1s; }
+</style>
+</head>
+<body onload="runTest()">
+<div id="document-target"></div>
+<div id="first-host"><span id="slotted-target" slot="target"></span></div>
+<div id="second-host"></div>
+<script>
+let firstRoot = document.getElementById("first-host").attachShadow({mode: "open"});
+firstRoot.innerHTML = `<style>
+    @keyframes shared { from { opacity: 0.7; } }
+    @keyframes shared { from { opacity: 0.8; } }
+    #target, ::slotted(span), #pseudo-target::before { animation: shared 1s; }
+    #pseudo-target::before { content: ""; }
+    </style>
+    <div id="target"></div><div id="pseudo-target"></div>
+    <div id="part-target" part="target"></div><slot name="target"></slot>`;
+let secondRoot = document.getElementById("second-host").attachShadow({mode: "open"});
+secondRoot.innerHTML = `<style>
+    @keyframes shared { from { opacity: 0.9; } }
+    #target { animation: shared 1s; }
+    </style><div id="target"></div>`;
+</script>
+</body>
+</html>

@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/dump-as-markup.js"></script>
+<div id="editor" contenteditable><picture><source srcset="../resources/abe.png"/><img src=""></picture></div>
+<script>
+
+Markup.description('Test changing font size inside <picture>.');
+
+var picture = document.querySelector('picture');
+Markup.dump(editor, 'Initial state');
+
+window.getSelection().setBaseAndExtent(picture, 1, picture, 2);
+document.execCommand('styleWithCSS', false, 'false');
+document.execCommand("FontSize", false, 7);
+Markup.dump(editor, 'After font size change');
+
+</script>
+</body>
+</html>

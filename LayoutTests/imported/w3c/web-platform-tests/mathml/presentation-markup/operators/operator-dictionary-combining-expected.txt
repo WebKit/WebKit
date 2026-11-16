@@ -1,0 +1,57 @@
+
+PASS Spacing around ≠
+PASS Spacing around =⃒
+PASS Spacing around |̸
+PASS Spacing around |⃒
+PASS Spacing around ⋉̸
+PASS Spacing around ⋉⃒
+PASS Spacing around ∄
+PASS Spacing around ∃⃒
+ 
+=
+ 
+
+ 
+≠
+ 
+
+ 
+=⃒
+ 
+
+ 
+|
+ 
+
+ 
+|̸
+ 
+
+ 
+|⃒
+ 
+
+ 
+⋉
+ 
+
+ 
+⋉̸
+ 
+
+ 
+⋉⃒
+ 
+
+ 
+∃
+ 
+
+ 
+∄
+ 
+
+ 
+∃⃒
+ 
+

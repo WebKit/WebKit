@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+description("Test the TouchEvent constructor");
+
+// No dictionary.
+shouldNotThrow("ev = new TouchEvent('touchstart')");
+shouldBe("ev.__proto__", "TouchEvent.prototype");
+shouldBeEqualToString("ev.type", "touchstart");
+shouldBe("ev.touches.length", "0");
+shouldBe("ev.targetTouches.length", "0");
+shouldBe("ev.changedTouches.length", "0");
+shouldBeFalse("ev.bubbles");
+
+// With dictionary.
+var touch = document.createTouch(window, document.body, 12341, 60, 65, 100, 105);
+var listA = document.createTouchList(touch);
+var listB = document.createTouchList(touch, touch);
+var listC = document.createTouchList(touch, touch, touch);
+shouldNotThrow("ev = new TouchEvent('touchmove', { touches: listA, bubbles: true })");
+shouldBe("ev.__proto__", "TouchEvent.prototype");
+shouldBeEqualToString("ev.type", "touchmove");
+shouldBe("ev.touches.length", "1");
+shouldBe("ev.targetTouches.length", "0");
+shouldBe("ev.changedTouches.length", "0");
+shouldBeTrue("ev.bubbles");
+
+shouldNotThrow("ev = new TouchEvent('touchmove', { targetTouches: listB, bubbles: true })");
+shouldBe("ev.__proto__", "TouchEvent.prototype");
+shouldBeEqualToString("ev.type", "touchmove");
+shouldBe("ev.touches.length", "0");
+shouldBe("ev.targetTouches.length", "2");
+shouldBe("ev.changedTouches.length", "0");
+shouldBeTrue("ev.bubbles");
+
+shouldNotThrow("ev = new TouchEvent('touchmove', { changedTouches: listC, bubbles: true })");
+shouldBe("ev.__proto__", "TouchEvent.prototype");
+shouldBeEqualToString("ev.type", "touchmove");
+shouldBe("ev.touches.length", "0");
+shouldBe("ev.targetTouches.length", "0");
+shouldBe("ev.changedTouches.length", "3");
+shouldBeTrue("ev.bubbles");
+
+shouldNotThrow("ev = new TouchEvent('touchmove', { touches: listA, targetTouches: listB, changedTouches: listC, bubbles: true })");
+shouldBe("ev.__proto__", "TouchEvent.prototype");
+shouldBeEqualToString("ev.type", "touchmove");
+shouldBe("ev.touches.length", "1");
+shouldBe("ev.targetTouches.length", "2");
+shouldBe("ev.changedTouches.length", "3");
+shouldBeTrue("ev.bubbles");
+
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

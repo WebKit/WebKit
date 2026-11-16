@@ -1,0 +1,5 @@
+
+PASS popup opened as 'about:blank' from an iframe, then post navigation to 127.0.0.1, so samesite cookies are sent.
+PASS popup opened as '127.0.0.1' from an iframe, then post navigation to 127.0.0.1, so samesite cookies are sent.
+PASS popup loaded as '127.0.0.1' from an iframe, then post navigation to 127.0.0.1, so samesite cookies are sent.
+

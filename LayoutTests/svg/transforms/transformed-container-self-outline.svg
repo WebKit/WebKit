@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="300" height="300">
+<g transform="translate(40, 40)" style="outline: 5px solid blue">
+  <rect x="60" y="60" width="60" height="60" fill="green"/>
+</g>
+</svg>

@@ -1,0 +1,8 @@
+X XXXX XXX XXX
+X XXXX XXX XXX
+X XXXX XXX XXX
+
+PASS .test 1: breaks between the inline boxes
+PASS .test 2: breaks after each overflowing inline box
+PASS .test 3: the boundaries are not soft wrap opportunities for min-content
+

@@ -1,0 +1,8 @@
+
+PASS em = rem
+PASS lh = rlh
+PASS ex = rex
+PASS cap = rcap
+PASS ch = rch
+PASS ic = ric
+

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<script src="../resources/js-test.js"></script>
+<body>
+<a id="plainAnchor" href="#plain">plain anchor</a>
+<a id="spanAnchor" href="#span"><span id="spanChild">text inside a span</span></a>
+<a id="deepAnchor" href="#deep"><b><i id="deepChild">text nested two levels deep</i></b></a>
+<script>
+description("Tests that NavigateEvent.sourceElement is the anchor responsible for the navigation, not the deepest clicked node.");
+
+jsTestIsAsync = true;
+
+var plainAnchor = document.getElementById("plainAnchor");
+var spanAnchor = document.getElementById("spanAnchor");
+var deepAnchor = document.getElementById("deepAnchor");
+
+var sourceElement = null;
+var notifyNavigateEvent = () => { };
+
+navigation.addEventListener("navigate", event => {
+    // Cancel so the document stays put and each case can be tested in turn.
+    event.preventDefault();
+    sourceElement = event.sourceElement;
+    notifyNavigateEvent();
+});
+
+// Dispatch on the element being "clicked" so that event.target is that element;
+// calling anchor.click() would instead make the anchor its own target.
+function clickAndAwaitNavigateEvent(element)
+{
+    sourceElement = null;
+    return new Promise(resolve => {
+        notifyNavigateEvent = resolve;
+        setTimeout(resolve, 500); // Do not hang the test if no navigate event fires.
+        element.dispatchEvent(new MouseEvent("click", { bubbles: true, cancelable: true, view: window }));
+    });
+}
+
+window.onload = async () => {
+    debug("Clicking the anchor itself");
+    await clickAndAwaitNavigateEvent(plainAnchor);
+    shouldBe("sourceElement", "plainAnchor");
+
+    debug("Clicking a SPAN inside the anchor");
+    await clickAndAwaitNavigateEvent(document.getElementById("spanChild"));
+    shouldBe("sourceElement", "spanAnchor");
+
+    debug("Clicking an I nested two levels inside the anchor");
+    await clickAndAwaitNavigateEvent(document.getElementById("deepChild"));
+    shouldBe("sourceElement", "deepAnchor");
+
+    finishJSTest();
+};
+</script>

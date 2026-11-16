@@ -1,0 +1,6 @@
+Some text
+
+
+PASS element.closest('#null') should return null
+PASS element.closest('.null') should return null
+

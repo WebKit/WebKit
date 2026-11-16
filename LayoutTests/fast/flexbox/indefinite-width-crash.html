@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<script>
+  onload = () => {
+    if (window.testRunner) {
+      testRunner.dumpAsText();
+      testRunner.waitUntilDone();
+    }
+    setTimeout(function() { document.write('This test should not crash.'); testRunner.notifyDone(); }, 0);
+  };
+</script>
+<style>
+* {
+    display: flex;
+    flex-direction: column;
+    width: min-intrinsic;
+    writing-mode: vertical-lr;
+}
+</style>
+<body>
+<p>This shouldn't crash.</p>
+</body>

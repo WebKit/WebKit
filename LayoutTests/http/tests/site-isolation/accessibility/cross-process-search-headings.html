@@ -1,0 +1,77 @@
+<html><!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<head>
+<script src="/js-test-resources/js-test.js"></script>
+<script src="/js-test-resources/accessibility-helper.js"></script>
+</head>
+<body>
+
+<h1 id="main-h1">Main Heading 1</h1>
+<h2 id="main-h2">Main Heading 2</h2>
+
+<iframe id="iframe" src="http://localhost:8000/site-isolation/accessibility/resources/iframe-with-headings.html"></iframe>
+
+<h3 id="main-h3">Main Heading 3 (after iframe)</h3>
+
+<script>
+var output = "Tests that uiElementsForSearchPredicate returns headings across process boundaries.\n";
+
+window.jsTestIsAsync = true;
+
+var results;
+async function runTest() {
+    if (!window.accessibilityController)
+        return;
+
+    var root = accessibilityController.rootElement;
+    touchAccessibilityTree(root);
+
+    var webArea = root.childAtIndex(0);
+
+    // Wait for cross-process search to return 5 headings (2 from main + 3 from iframe)
+    await waitFor(() => {
+        results = webArea.uiElementsForSearchPredicate(
+            null,           // startElement (null = from beginning)
+            true,           // isDirectionNext (forward)
+            "AXHeadingSearchKey",
+            "",             // searchText
+            false,          // visibleOnly
+            false,          // immediateDescendantsOnly
+            5               // resultsLimit
+        );
+        return results && results.length === 5;
+    });
+
+    if (!results) {
+        output += "FAIL: uiElementsForSearchPredicate returned null\n";
+        debug(output);
+        finishJSTest();
+        return;
+    }
+
+    for (var i = 0; i < results.length; i++) {
+        if (results[i].isRemotePlatformElement)
+            output += `  ${i + 1}: (remote platform element)\n`;
+        else
+            output += `  ${i + 1}: domIdentifier=${results[i].domIdentifier}, role=${results[i].role}\n`;
+    }
+
+    output += expect("results.length", "5");
+    // First 2 headings are local (from main frame before iframe)
+    output += expect("results[0].domIdentifier", "'main-h1'");
+    output += expect("results[0].isRemotePlatformElement", "false");
+    output += expect("results[1].domIdentifier", "'main-h2'");
+    output += expect("results[1].isRemotePlatformElement", "false");
+
+    // Next 3 headings are remote (from iframe in different process)
+    output += expect("results[2].isRemotePlatformElement", "true");
+    output += expect("results[3].isRemotePlatformElement", "true");
+    output += expect("results[4].isRemotePlatformElement", "true");
+
+    debug(output);
+    finishJSTest();
+}
+
+document.getElementById("iframe").onload = runTest;
+</script>
+</body>
+</html>

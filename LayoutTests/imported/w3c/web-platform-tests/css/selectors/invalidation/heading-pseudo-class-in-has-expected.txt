@@ -1,0 +1,74 @@
+
+PASS Initial colors: #has_heading_1
+PASS Initial colors: #has_heading_2
+PASS Initial colors: #has_heading_3
+PASS Initial colors: #has_heading_1_2
+PASS Initial colors: #has_adjacent_heading_1
+PASS Initial colors: #adjacent_heading_1
+PASS Append h1 to #ancestor: #has_heading_1
+PASS Append h1 to #ancestor: #has_heading_2
+PASS Append h1 to #ancestor: #has_heading_3
+PASS Append h1 to #ancestor: #has_heading_1_2
+PASS Append h1 to #ancestor: #has_adjacent_heading_1
+PASS Append h1 to #ancestor: #adjacent_heading_1
+PASS Append h2 to #ancestor: #has_heading_1
+PASS Append h2 to #ancestor: #has_heading_2
+PASS Append h2 to #ancestor: #has_heading_3
+PASS Append h2 to #ancestor: #has_heading_1_2
+PASS Append h2 to #ancestor: #has_adjacent_heading_1
+PASS Append h2 to #ancestor: #adjacent_heading_1
+PASS Append h3 to #ancestor: #has_heading_1
+PASS Append h3 to #ancestor: #has_heading_2
+PASS Append h3 to #ancestor: #has_heading_3
+PASS Append h3 to #ancestor: #has_heading_1_2
+PASS Append h3 to #ancestor: #has_adjacent_heading_1
+PASS Append h3 to #ancestor: #adjacent_heading_1
+PASS Remove h1 from #ancestor: #has_heading_1
+PASS Remove h1 from #ancestor: #has_heading_2
+PASS Remove h1 from #ancestor: #has_heading_3
+PASS Remove h1 from #ancestor: #has_heading_1_2
+PASS Remove h1 from #ancestor: #has_adjacent_heading_1
+PASS Remove h1 from #ancestor: #adjacent_heading_1
+PASS Remove h2 from #ancestor: #has_heading_1
+PASS Remove h2 from #ancestor: #has_heading_2
+PASS Remove h2 from #ancestor: #has_heading_3
+PASS Remove h2 from #ancestor: #has_heading_1_2
+PASS Remove h2 from #ancestor: #has_adjacent_heading_1
+PASS Remove h2 from #ancestor: #adjacent_heading_1
+PASS Remove h3 from #ancestor: #has_heading_1
+PASS Remove h3 from #ancestor: #has_heading_2
+PASS Remove h3 from #ancestor: #has_heading_3
+PASS Remove h3 from #ancestor: #has_heading_1_2
+PASS Remove h3 from #ancestor: #has_adjacent_heading_1
+PASS Remove h3 from #ancestor: #adjacent_heading_1
+PASS Insert h1 adjacent to #sibling: #has_heading_1
+PASS Insert h1 adjacent to #sibling: #has_heading_2
+PASS Insert h1 adjacent to #sibling: #has_heading_3
+PASS Insert h1 adjacent to #sibling: #has_heading_1_2
+PASS Insert h1 adjacent to #sibling: #has_adjacent_heading_1
+PASS Insert h1 adjacent to #sibling: #adjacent_heading_1
+PASS Remove h1 adjacent to #sibling: #has_heading_1
+PASS Remove h1 adjacent to #sibling: #has_heading_2
+PASS Remove h1 adjacent to #sibling: #has_heading_3
+PASS Remove h1 adjacent to #sibling: #has_heading_1_2
+PASS Remove h1 adjacent to #sibling: #has_adjacent_heading_1
+PASS Remove h1 adjacent to #sibling: #adjacent_heading_1
+PASS Append div to #ancestor: #has_heading_1
+PASS Append div to #ancestor: #has_heading_2
+PASS Append div to #ancestor: #has_heading_3
+PASS Append div to #ancestor: #has_heading_1_2
+PASS Append div to #ancestor: #has_adjacent_heading_1
+PASS Append div to #ancestor: #adjacent_heading_1
+PASS Replace div with h1 in #ancestor: #has_heading_1
+PASS Replace div with h1 in #ancestor: #has_heading_2
+PASS Replace div with h1 in #ancestor: #has_heading_3
+PASS Replace div with h1 in #ancestor: #has_heading_1_2
+PASS Replace div with h1 in #ancestor: #has_adjacent_heading_1
+PASS Replace div with h1 in #ancestor: #adjacent_heading_1
+PASS Remove h1_replacement from #ancestor: #has_heading_1
+PASS Remove h1_replacement from #ancestor: #has_heading_2
+PASS Remove h1_replacement from #ancestor: #has_heading_3
+PASS Remove h1_replacement from #ancestor: #has_heading_1_2
+PASS Remove h1_replacement from #ancestor: #has_adjacent_heading_1
+PASS Remove h1_replacement from #ancestor: #adjacent_heading_1
+

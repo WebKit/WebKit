@@ -1,0 +1,109 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="resources/site-isolation-debugger-test-utilities.js"></script>
+<script>
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Debugger.FrameTargetResumeDoesNotRepause");
+
+    function sleep(ms) {
+        return new Promise((resolve) => setTimeout(resolve, ms));
+    }
+
+    async function waitForResumed(targetData) {
+        for (let i = 0; i < 50 && targetData.paused; ++i)
+            await sleep(100);
+        return !targetData.paused;
+    }
+
+    async function waitForPaused(targetData) {
+        for (let i = 0; i < 50 && !targetData.paused; ++i)
+            await sleep(100);
+        return targetData.paused;
+    }
+
+    // Pause the target at the debugger statement inside its triggerDebugger() and return the
+    // pending evaluation, which completes once the target resumes. Wrap it in an object:
+    // a promise returned from an async function is adopted, so the helper would not settle
+    // until the evaluation does, but the evaluation only completes after the caller resumes.
+    async function pauseAtDebuggerStatement(target, targetData) {
+        let paused = new Promise((resolve) => {
+            let listener = WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.CallFramesDidChange, (event) => {
+                if (event.data.target !== target || !targetData.paused)
+                    return;
+                WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.CallFramesDidChange, listener);
+                resolve();
+            });
+        });
+        let evaluation = target.RuntimeAgent.evaluate.invoke({expression: "triggerDebugger()", objectGroup: "test", returnByValue: true});
+        await paused;
+        return {evaluation};
+    }
+
+    suite.addTestCase({
+        name: "SiteIsolation.Debugger.FrameTargetResumeDoesNotRepause.ResumeThread.FrameTarget",
+        description: "WI.debuggerManager.resumeThread on a paused frame target resumes it fully: it must not pause again at the next opportunity (the per-row resume button's semantics).",
+        timeout: 30000,
+        async test() {
+            let frameTarget = await waitForFrameTargetForURLContaining("resume-frame.html");
+            InspectorTest.expectNotNull(frameTarget, "Should find the cross-site frame's target.");
+            if (!frameTarget)
+                return;
+
+            let targetData = WI.debuggerManager.dataForTarget(frameTarget);
+
+            let {evaluation} = await pauseAtDebuggerStatement(frameTarget, targetData);
+            InspectorTest.expectThat(targetData.paused, "The frame target should pause at the debugger statement.");
+
+            await WI.debuggerManager.resumeThread(frameTarget);
+            let {result} = await evaluation;
+            InspectorTest.expectEqual(result.value, "after-debugger", "The paused evaluation should complete after the per-target resume.");
+            InspectorTest.expectThat(await waitForResumed(targetData), "The frame target should be resumed.");
+
+            let ticksBefore = (await frameTarget.RuntimeAgent.evaluate.invoke({expression: "window.frameTicks", objectGroup: "test", returnByValue: true})).result.value;
+            await sleep(500);
+            InspectorTest.expectFalse(targetData.paused, "The frame target must not pause again at the next opportunity.");
+            InspectorTest.expectThat(await waitForExpressionInTarget(frameTarget, `window.frameTicks > ${ticksBefore}`), "The frame should keep running after the resume.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Debugger.FrameTargetResumeDoesNotRepause.ResumeThread.WorkerTarget",
+        description: "WI.debuggerManager.resumeThread on a paused worker target keeps the bounded advance (bug 164305): it pauses again at the next opportunity.",
+        timeout: 30000,
+        async test() {
+            let workerTarget = await new Promise((resolve) => {
+                let listener = WI.targetManager.addEventListener(WI.TargetManager.Event.TargetAdded, (event) => {
+                    if (event.data.target.type !== WI.TargetType.Worker)
+                        return;
+                    WI.targetManager.removeEventListener(WI.TargetManager.Event.TargetAdded, listener);
+                    resolve(event.data.target);
+                });
+                InspectorTest.evaluateInPage(`window.testWorker = new Worker("resources/resume-worker.js")`);
+            });
+            InspectorTest.expectThat(await waitForExpressionInTarget(workerTarget, `typeof triggerDebugger === "function"`), "The worker script should be loaded.");
+
+            let targetData = WI.debuggerManager.dataForTarget(workerTarget);
+
+            let {evaluation} = await pauseAtDebuggerStatement(workerTarget, targetData);
+            InspectorTest.expectThat(targetData.paused, "The worker target should pause at the debugger statement.");
+
+            await WI.debuggerManager.resumeThread(workerTarget);
+            let {result} = await evaluation;
+            InspectorTest.expectEqual(result.value, "after-debugger", "The paused evaluation should complete after the bounded resume.");
+            InspectorTest.expectThat(await waitForPaused(targetData), "The worker target should pause again at the next opportunity.");
+
+            // The worker's pause pauses every target in the page's process, so fully resume
+            // everything before terminating the worker to leave the test page unpaused.
+            await WI.debuggerManager.resume();
+            InspectorTest.evaluateInPage(`testWorker.terminate()`);
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+
+<body onload="runTest()">
+<p>Tests that a per-target resume of a paused frame target does not re-pause at the next opportunity, while resuming a worker target does.</p>
+<iframe src="http://localhost:8000/site-isolation/inspector/debugger/resources/resume-frame.html"></iframe>
+</body>

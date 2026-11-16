@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>This tests that selecting text on a wrapped line with the mouse repaints its whole line box.</title>
+<style>
+  body { margin: 0; }
+  div { font: 20px/60px Ahem; width: 100px; }
+</style>
+<script src="../../resources/ui-helper.js"></script>
+</head>
+<body>
+<div>xxxx xxxx</div>
+<pre id="result"></pre>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+async function test() {
+    await UIHelper.renderingUpdate();
+    if (window.internals)
+        internals.startTrackingRepaints();
+
+    // The second line box spans 60px to 120px, its text 80px to 100px.
+    if (window.eventSender) {
+        eventSender.mouseMoveTo(1, 90);
+        eventSender.mouseDown();
+        eventSender.mouseMoveTo(79, 90);
+        eventSender.mouseUp();
+    }
+    await UIHelper.renderingUpdate();
+
+    if (window.internals) {
+        result.textContent = internals.repaintRectsAsText();
+        internals.stopTrackingRepaints();
+    }
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+test();
+</script>
+</body>
+</html>

@@ -1,0 +1,21 @@
+<div id="target">PASS if this does not crash</div>
+
+<script>
+
+window.testRunner?.dumpAsText();
+
+// This test needs to make sure there is an existing document timeline
+// for the main document.
+document.timeline;
+
+// We then create an external document and use its timeline to create
+// an animation that will support acceleration.
+const externalDocument = document.implementation.createHTMLDocument("");
+const keyframeEffect = new KeyframeEffect(target, { "transform": "scale(2)" }, 1000);
+const animation = new Animation(keyframeEffect, externalDocument.timeline);
+
+// Set its current time such that the animation is picked up by the
+// accelerated animation scheduler.
+animation.currentTime = 0;
+
+</script>

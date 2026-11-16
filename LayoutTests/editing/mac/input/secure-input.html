@@ -1,0 +1,45 @@
+<body>
+<input value="text">
+<input type=password value="pass">
+<p>Test for <a href="https://bugs.webkit.org/show_bug.cgi?id=19347">bug 19347</a>:
+Input methods do not work after switching to a password field and back.</p>
+<p>Also verifies that password fields cannot be accessed via text input APIs.</p>
+<script>
+    function textResult(str) {
+        if (!str)
+            return str;
+        return str.string();
+    }
+
+    var console_messages = document.createElement("ol");
+    document.body.appendChild(console_messages);
+    
+    function log(message)
+    {
+        var item = document.createElement("li");
+        item.appendChild(document.createTextNode(message));
+        console_messages.appendChild(item);
+    }
+
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+
+        var textInput = document.getElementsByTagName("input")[0];
+        var passwordInput = document.getElementsByTagName("input")[1];
+
+        textInput.focus();
+        log(textResult(textInputController.attributedSubstringFromRange(0, 4)));
+
+        passwordInput.focus();
+        log(textResult(textInputController.attributedSubstringFromRange(0, 4)));
+
+        textInput.focus();
+        log(textResult(textInputController.attributedSubstringFromRange(0, 4)));
+
+        passwordInput.focus();
+        log(textResult(textInputController.attributedSubstringFromRange(0, 4)));
+    } else {
+        document.write("This test only works as an automated one.");
+    }
+</script>
+</body>

@@ -1,0 +1,11 @@
+
+
+PASS Initial match by id attribute
+PASS Changing id away breaks the match
+PASS Setting name to match usemap restores the match
+PASS Removing name and restoring id matches by id
+PASS Both name and id matching usemap works
+PASS Changing id away while name still matches keeps the match
+PASS Changing name away too breaks the match
+PASS Restoring id matches again
+

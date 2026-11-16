@@ -1,0 +1,7 @@
+2d.filter.canvasFilterObject.dropShadow.exceptions.tentative
+
+Test exceptions on CanvasFilter() dropShadow object
+
+
+FAIL Test exceptions on CanvasFilter() dropShadow object Can't find variable: CanvasFilter
+

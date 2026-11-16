@@ -1,0 +1,7 @@
+
+PASS setCodecPreferences() with only H264 should succeed
+PASS setCodecPreferences() should allow setting H264 as first codec
+PASS setCodecPreferences() modifies the order of video codecs in createOffer
+PASS setCodecPreferences() can remove rtx
+PASS setCodecPreferences() filters on receiver and prefers receiver order
+

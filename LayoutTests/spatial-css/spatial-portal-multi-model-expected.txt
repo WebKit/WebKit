@@ -1,0 +1,4 @@
+
+PASS Two <model>s nested in a spatial portal both load
+PASS Two <model>s with the same source both load in a spatial portal
+

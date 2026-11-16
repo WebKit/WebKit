@@ -1,0 +1,4 @@
+
+
+PASS The initiator type for <iframe> must be 'iframe'
+

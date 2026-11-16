@@ -1,0 +1,6 @@
+
+FAIL Ensure that the framebuffer given by the WebGL layer is opaque for immersive - webgl assert_equals: expected 0 but got 1280
+FAIL Ensure that the framebuffer given by the WebGL layer is opaque for immersive - webgl2 assert_equals: expected 1282 but got 0
+PASS Ensure that the framebuffer given by the WebGL layer is opaque for non-immersive - webgl
+PASS Ensure that the framebuffer given by the WebGL layer is opaque for non-immersive - webgl2
+

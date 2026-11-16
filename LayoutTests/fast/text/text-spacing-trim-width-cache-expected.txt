@@ -1,0 +1,3 @@
+
+PASS text-spacing-trim: space-all and trim-all measure independently once widths are cached
+

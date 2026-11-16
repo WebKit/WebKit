@@ -1,0 +1,4 @@
+
+PASS A custom property of type <length> can yield a CSS Transition
+PASS The to value of a custom property to a random floating-point number can yield a CSS Transition
+

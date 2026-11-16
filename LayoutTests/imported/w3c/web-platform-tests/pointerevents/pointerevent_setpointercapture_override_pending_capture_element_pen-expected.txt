@@ -1,0 +1,12 @@
+Pointer Event: Test overriding the pending pointer capture element
+
+Test Description: After an element setPointerCapture, if another element also setPointerCapture and override it, the old pending pointer capture element shouldn't receive any gotpointercapture or lostpointercapture event
+Press and hold left mouse button over black box
+Move mouse and release mouse button
+
+
+The following pointer types were detected: mouse.
+
+
+PASS setPointerCapture: override the pending pointer capture element
+

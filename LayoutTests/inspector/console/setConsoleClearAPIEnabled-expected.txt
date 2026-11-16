@@ -1,0 +1,22 @@
+CONSOLE MESSAGE: Clear disabled.
+CONSOLE MESSAGE: Clear enabled.
+Tests for Console.setConsoleClearAPIEnabled.
+
+
+== Running test suite: Console.setConsoleClearAPIEnabled
+-- Running test case: Console.setConsoleClearAPIEnabled.API.Disabled
+PASS: Should not clear console.
+PASS: Should not send a message.
+
+-- Running test case: Console.setConsoleClearAPIEnabled.API.Enabled
+PASS: Should clear console.
+PASS: Should not send a message.
+
+-- Running test case: Console.setConsoleClearAPIEnabled.Frontend.Disabled
+PASS: Should clear console.
+PASS: Should not send a message.
+
+-- Running test case: Console.setConsoleClearAPIEnabled.Frontend.Enabled
+PASS: Should clear console.
+PASS: Should not send a message.
+

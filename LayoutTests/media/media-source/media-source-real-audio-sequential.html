@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>media-source-real-audio-sequential</title>
+    <script src="mp4-generator.js"></script>
+    <script src="../video-test.js"></script>
+    <script>
+    // Tests sequential audio segment appends and endOfStream through the
+    // real parser. This exercises the audio sample enqueue path that had
+    // bugs during the re-architecture (missing flush notifications, rate
+    // change issues).
+
+    var source;
+    var sourceBuffer;
+
+    async function runTest() {
+        findMediaElement();
+
+        if (!MediaSource.isTypeSupported(MP4.AUDIO_TYPE)) {
+            consoleWrite('SKIPPED: ' + MP4.AUDIO_TYPE + ' is not supported');
+            return;
+        }
+
+        source = new MediaSource();
+        video.src = URL.createObjectURL(source);
+        await waitFor(source, 'sourceopen');
+
+        sourceBuffer = source.addSourceBuffer(MP4.AUDIO_TYPE);
+
+        sourceBuffer.appendBuffer(MP4.initSegment({
+            timescale: 44100,
+            tracks: [{ id: 1, type: 'audio', timescale: 44100 }]
+        }));
+        await waitFor(sourceBuffer, 'updateend');
+
+        // Append 3 contiguous 2-second segments
+        for (var seg = 0; seg < 3; seg++) {
+            var samples = [];
+            for (var i = 0; i < 2; i++)
+                samples.push({ duration: 44100, isSync: true });
+            sourceBuffer.appendBuffer(MP4.mediaSegment({
+                sequenceNumber: seg + 1,
+                tracks: [{ id: 1, type: 'audio', baseDecodeTime: seg * 2 * 44100, samples }]
+            }));
+            await waitFor(sourceBuffer, 'updateend');
+        }
+
+        // Should have one contiguous range [0, 6)
+        testExpected('sourceBuffer.buffered.length', 1);
+        testExpectedEqualWithTolerance('sourceBuffer.buffered.start(0)', 0, 0.05);
+        testExpectedEqualWithTolerance('sourceBuffer.buffered.end(0)', 6, 0.05);
+
+        source.endOfStream();
+        testExpected('source.readyState', 'ended');
+        testExpectedEqualWithTolerance('source.duration', 6, 0.05);
+    }
+
+    window.addEventListener('load', event => {
+        runTest().then(endTest).catch(failTest);
+    });
+    </script>
+</head>
+<body>
+    <video></video>
+</body>
+</html>

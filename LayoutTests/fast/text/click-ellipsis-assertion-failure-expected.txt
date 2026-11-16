@@ -1,0 +1,4 @@
+Tests that computing the caret rectangle with respect to a fully truncated inline text box does not cause an assertion failure in a debug build. To run by hand, click the '...' (below). The test PASSED if we do not crash.
+
+abc
+PASS did not crash.

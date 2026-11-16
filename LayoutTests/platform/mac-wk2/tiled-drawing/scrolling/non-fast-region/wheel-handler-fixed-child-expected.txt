@@ -1,0 +1,43 @@
+
+(GraphicsLayer
+  (anchor 0.00 0.00)
+  (bounds 785.00 628.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 785.00 628.00)
+      (contentsOpaque 1)
+      (drawsContent 1)
+      (backgroundColor #FFFFFF)
+      (event region
+        (rect (0,0) width=785 height=628)
+      )
+      (children 1
+        (GraphicsLayer
+          (bounds 785.00 600.00)
+          (children 1
+            (GraphicsLayer
+              (position 50.00 50.00)
+              (preserves3D 1)
+              (children 1
+                (GraphicsLayer
+                  (bounds 100.00 100.00)
+                  (contentsOpaque 1)
+                  (event region
+                    (rect (0,0) width=100 height=100)
+                  (wheel event listener region
+                    (rect (0,0) width=100 height=100)
+                    (non-passive
+                      (rect (0,0) width=100 height=100)
+                    )
+                  )
+                  )
+                )
+              )
+            )
+          )
+        )
+      )
+    )
+  )
+)
+

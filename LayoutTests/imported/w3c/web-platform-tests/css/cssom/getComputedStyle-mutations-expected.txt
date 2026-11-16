@@ -1,0 +1,11 @@
+
+PASS Initial style value
+PASS Assigning to attribute updates the computed style
+PASS Setting an attribute updates the computed style
+PASS Replacing an attribute updates the computed style
+PASS Removing an attribute updates the computed style
+PASS Inserting an element updates the computed style
+PASS Replacing an element updates the computed style
+PASS Removing an element updates the computed style
+PASS Emptying an element updates the computed style
+

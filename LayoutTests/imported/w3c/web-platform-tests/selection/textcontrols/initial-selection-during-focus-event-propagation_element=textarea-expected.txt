@@ -1,0 +1,7 @@
+Placeholder for click
+
+
+PASS Selection should've already been initialized in the text control when `focus` event is dispatched
+FAIL at the window assert_equals: Selection when `focus` event listener of window runs should be the same as Selection after the propagation expected "{ selectionStart: 3, selectionEnd: 3 }" but got "{ selectionStart: 0, selectionEnd: 0 }"
+FAIL at the editing host assert_equals: Selection when `focus` event listener of editing host runs should be the same as Selection after the propagation expected "{ selectionStart: 3, selectionEnd: 3 }" but got "{ selectionStart: 0, selectionEnd: 0 }"
+

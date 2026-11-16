@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<head>
+   <meta charset="utf-8">
+   <title>text-wrap-style single line</title>
+</head>
+<style>
+   .pretty {
+   text-wrap: pretty;
+   display: flex;
+   }
+   .balance {
+   text-wrap: balance;
+   display: flex;
+   }
+   body {
+   font-family: "Ahem";
+   font-size: 12px;
+   }
+</style>
+<body>
+   <div class="pretty">
+      <div>This test passes if this line is one line</div>
+   </div>
+   <div class="balance">
+      <div>This test passes if this line is one line</div>
+   </div>
+</body>
+</html>

@@ -1,0 +1,36 @@
+<!DOCTYPE html><!-- webkit-test-runner [ AcceleratedCompositingEnabled=false ] -->
+<html>
+<body style="margin: 0">
+<canvas style="width: 100px; height: 100px"></canvas>
+<script>
+// A non-composited WebGL canvas should still be painted after its drawing buffer is resized.
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+const canvas = document.querySelector("canvas");
+const gl = canvas.getContext("webgl");
+
+function draw(size, red, green) {
+    canvas.width = size;
+    canvas.height = size;
+    gl.viewport(0, 0, size, size);
+    gl.clearColor(red, green, 0, 1);
+    gl.clear(gl.COLOR_BUFFER_BIT);
+}
+
+// Draw red first and green after the resize, so that showing the frame
+// from before the resize also fails the test.
+draw(100, 1, 0);
+// Let the first frame be displayed before resizing the drawing buffer.
+requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+        draw(50, 0, 1);
+        requestAnimationFrame(() => {
+            if (window.testRunner)
+                testRunner.notifyDone();
+        });
+    });
+});
+</script>
+</body>
+</html>

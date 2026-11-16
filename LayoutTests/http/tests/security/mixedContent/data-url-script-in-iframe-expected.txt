@@ -1,0 +1,3 @@
+This test loads a secure iframe that loads a data URL script. We should *not* trigger a mixed content callback because the data URL cannot be corrupted by an active network attacker.
+
+

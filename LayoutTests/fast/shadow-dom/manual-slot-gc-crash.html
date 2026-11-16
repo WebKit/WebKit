@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<script src="../../resources/js-test.js"></script>
+<script>
+const slot = document.createElement('slot');
+slot.assign(document.createElement('div'));
+
+if (window.GCController)
+    GCController.collect();
+
+document.createElement('div').attachShadow({
+    mode: 'open',
+    slotAssignment: 'manual',
+}).append(slot);
+
+shouldBe('slot.assignedNodes().length', '0');
+</script>

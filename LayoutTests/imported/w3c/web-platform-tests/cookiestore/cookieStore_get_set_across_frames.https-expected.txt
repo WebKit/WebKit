@@ -1,0 +1,4 @@
+
+PASS cookieStore.get() sees cookieStore.set() in frame
+PASS cookieStore.get() in frame sees cookieStore.set()
+

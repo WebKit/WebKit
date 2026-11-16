@@ -1,0 +1,44 @@
+<html>
+<body>
+<p>This test passes if it doesn't crash.</p>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+function main() {
+    const f = document.body.appendChild(document.createElement('iframe'));
+    const a = document.createElement('div');
+    const b = a.appendChild(document.createElement('div'));
+
+    a.addEventListener('a', eval(`(function () {
+        document.adoptNode(a);
+        f.remove();
+
+        throw {
+            line: 1,
+            column: 1,
+            sourceURL: 'a'.repeat(1024 * 1024 * 32) + 'a'.repeat(1024 * 1024 * 32)
+        };
+    })`));
+
+    a.addEventListener('a', () => {});
+
+    b.addEventListener('a', () => {
+        f.contentDocument.adoptNode(a);
+    });
+
+
+    b.dispatchEvent(new Event('a', {bubbles: true}));
+    setTimeout(() => {
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }, 100);
+}
+
+main();
+
+</script>
+</body>
+</html>

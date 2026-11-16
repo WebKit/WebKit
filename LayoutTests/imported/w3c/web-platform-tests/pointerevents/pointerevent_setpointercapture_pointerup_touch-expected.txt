@@ -1,0 +1,20 @@
+Pointer Events Capture Test - setPointerCapture on pointerup
+
+Test Description: This test checks if releaseCapture works properly on pointer up. Complete the following actions:
+Touch black rectangle
+Release your touch
+
+Test passes if the proper behavior of the events is observed.
+Pointer Events Capture Test
+
+Test complete: Scroll to Summary to view Pass/Fail Results.
+
+The following pointer types were detected: (none).
+
+The following events were logged: (none).
+
+
+Harness Error (TIMEOUT), message = null
+
+NOTRUN setPointerCapture on pointerup
+

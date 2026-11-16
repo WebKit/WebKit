@@ -1,0 +1,11 @@
+This tests that passing in the wrong type of data won't crash speech synthesis code
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS speechSynthesis.speak('Hello World') threw exception TypeError: Argument 1 ('utterance') to SpeechSynthesis.speak must be an instance of SpeechSynthesisUtterance.
+PASS x.voice = "asdf" threw exception TypeError: The SpeechSynthesisUtterance.voice attribute must be an instance of SpeechSynthesisVoice.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

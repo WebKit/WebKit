@@ -1,0 +1,28 @@
+<script>
+function go() {
+  document.open();
+  var a = document.createElement("a");
+  document.appendChild(a);
+  document.write("<b id='b'></b>");
+
+  // Ideally we would use the dump-as-markup test framework for this test, but
+  // the contortions we go through here are too tricky for dump-as-markup.
+
+  var nodeNames = [];
+  for (var node = document.firstChild; node; node = node.nextSibling)
+    nodeNames.push(node.nodeName);
+
+  alert("document child nodes: " + nodeNames.join(", ") + "\n" +
+        "document.documentElement === a: " + (document.documentElement === a) + "\n" +
+        "document.getElementById('b'): " + document.getElementById('b'));
+}
+
+window.addEventListener("load", go, false);
+
+if (window.testRunner)
+    testRunner.dumpAsText();
+</script>
+This test covers some tricky ground where we call appendChild between
+document.open an document.write.  This sequence of calls results in an unusual
+situation where the parser is in the Initial state but the document is not
+empty.

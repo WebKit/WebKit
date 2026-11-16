@@ -1,0 +1,50 @@
+<html>
+<head>
+<script src="../../../resources/accessibility-helper.js"></script>
+<script src="../../../resources/js-test.js"></script>
+</head>
+<body>
+
+<input id="first" type="text" aria-label="First">
+<input id="second" type="text" aria-label="Second">
+
+<script>
+var output = "Tests that a client-side accessibility notification listener receives AXFocusedUIElementChanged as focus moves.\n\n";
+
+var focusedElements = [];
+function notificationCallback(element, notificationName) {
+    if (notificationName === "AXFocusedUIElementChanged")
+        focusedElements.push(element);
+}
+
+async function expectFocusNotificationFor(id) {
+    if (await waitFor(() => focusedElements.some((element) => element.domIdentifier === id)))
+        output += `PASS: Received AXFocusedUIElementChanged for #${id}\n`;
+    else
+        output += `FAIL: No AXFocusedUIElementChanged for #${id}, got [${focusedElements.map((element) => String(element.domIdentifier)).join(", ")}]\n`;
+    focusedElements = [];
+}
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+    accessibilityController.setClientAccessibilityMode(true);
+
+    setTimeout(async function() {
+        await waitForElements([(element) => element.domIdentifier === "second"]);
+
+        output += expect("accessibilityController.addNotificationListener(notificationCallback)", "true");
+
+        document.getElementById("first").focus();
+        await expectFocusNotificationFor("first");
+
+        eventSender.keyDown("\t");
+        await expectFocusNotificationFor("second");
+
+        accessibilityController.removeNotificationListener();
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,4 @@
+
+PASS A security policy violation is reported for the adopted style attribute
+PASS The style attribute is not applied once the element is adopted into the document
+

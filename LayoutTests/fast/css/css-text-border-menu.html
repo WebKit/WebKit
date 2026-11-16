@@ -1,0 +1,12 @@
+<script>
+function test() {
+    if (window.testRunner)
+        testRunner.dumpAsText();
+    const div = document.createElement("div");
+    const elementStyle = div.style;
+    elementStyle.border = "menu";
+    cssText = elementStyle.cssText;
+}
+</script>
+<body onload="test()">
+<p>PASS if no crash</p>

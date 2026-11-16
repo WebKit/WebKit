@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+
+<title>prefers-color-scheme ignores meta color-scheme and only considers user's preferences</title>
+<meta name="color-scheme" content="dark">
+
+<style>
+  .box {
+    width: 100px;
+    height: 100px;
+  }
+
+  @media (prefers-color-scheme: light) {
+    .box {
+      background-color: green;
+    }
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .box {
+      background-color: red;
+    }
+  }
+</style>
+
+<p>Test passes if the box is green.</p>
+<div class="box"></div>
+
+<script>
+  if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.setUseDarkAppearanceForTesting(false);
+    testRunner.notifyDone();
+  }
+</script>

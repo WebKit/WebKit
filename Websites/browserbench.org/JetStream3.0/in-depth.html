@@ -1,0 +1,1028 @@
+<!--
+ Copyright (C) 2019-2022 Apple Inc. All rights reserved.
+
+ Redistribution and use in source and binary forms, with or without
+ modification, are permitted provided that the following conditions
+ are met:
+ 1. Redistributions of source code must retain the above copyright
+    notice, this list of conditions and the following disclaimer.
+ 2. Redistributions in binary form must reproduce the above copyright
+    notice, this list of conditions and the following disclaimer in the
+    documentation and/or other materials provided with the distribution.
+
+ THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ THE POSSIBILITY OF SUCH DAMAGE.
+-->
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <title>JetStream 3.0 In-Depth Analysis</title>
+    <link rel="stylesheet" href="resources/JetStream.css">
+</head>
+
+<body class="in-depth overflow-scroll">
+    <h1 class="logo">
+        <div id="jetstreams">
+            <a href="index.html" class="logo-image">JetStream 3.0</a>
+        </div>
+    </h1>
+    <main class="overflow-visible">
+        <article>
+            <h2>In-Depth Analysis</h2>
+
+            <p>
+                JetStream 3 combines together a variety of JavaScript and WebAssembly benchmarks, covering a variety of
+                advanced workloads and programming techniques, and reports a single score that balances them using the
+                geometric mean.
+            </p>
+
+            <p>
+                Each benchmark measures a distinct workload, and no single optimization technique is sufficient to speed
+                up all benchmarks.
+                Some benchmarks demonstrate tradeoffs, and aggressive or specialized optimizations for one benchmark
+                might make another benchmark slower.
+                JetStream 3 rewards browsers that start up quickly, execute code quickly, and continue running smoothly.
+            </p>
+
+            <p>
+                Each benchmark in JetStream 3 computes its own individual score.
+                Scores in JetStream are dimensionless floating point numbers, where a higher score is better.
+                JetStream weighs each benchmark equally, taking the <a
+                    href="https://en.wikipedia.org/wiki/Geometric_mean">geometric mean</a> over each individual
+                benchmark's score to compute the overall JetStream 3 score.
+                The geometric mean ensures that a multiplicative improvement of any individual score has the same effect
+                on the aggregated score, regardless of the absolute value of the individual score.
+                For example, an improvement by 5% of the sub score of benchmark A has the same effect on the total score
+                as an improvement by 5% of the sub score of benchmark B, even if A ran for a shorter time than B.
+            </p>
+
+            <p>
+                It's not enough to just measure the total running time of a workload.
+                Browsers may perform differently for the same workload depending on how many times it has run.
+                For example, garbage collection runs periodically, making some iterations take longer than others.
+                Code that runs repeatedly gets optimized by the browser, so the first iteration of any workload is
+                usually more expensive than the rest.
+            </p>
+
+            <p>
+                For most of the JavaScript and WebAssembly benchmarks in JetStream 3, individual scores equally weigh
+                startup performance, worst case performance, and average case performance.
+                These three metrics are crucial to running performant JavaScript and WebAssembly in the browser.
+                Fast startup times lead browsers to loading pages more quickly.
+                Good worst case performance ensures web applications can run without hiccups.
+                Fast average case performance makes it so that the most advanced web applications can run at all.
+            </p>
+
+            <p>
+                All but two of JetStream 3's benchmarks run for N iterations, where N is often 120.
+                JetStream 3 calculates the startup score from the time it takes to run the first iteration.
+                The worst case score is the average of the worst M iterations, excluding the first iteration.
+                M is always less than N, and is usually 4.
+                The average case score is the average of all but the first iteration.
+                These three scores are weighed equally using the geometric mean.
+            </p>
+
+            <p>
+                JetStream 3 also includes a JavaScript benchmark named WSL.
+                WSL is an implementation of a GPU shading language written in JavaScript.
+                WSL does not use the above mechanism for scoring because it has a long running time.
+                Instead, the WSL benchmark computes its score as the geometric mean over two metrics: the time it takes
+                to compile the WSL standard library, and the time it takes to run through the WSL specification test
+                suite.
+            </p>
+
+            <p>
+                JetStream 3 includes parts of these benchmark suites that came before it:
+                <a href="https://webkit.org/perf/sunspider/sunspider.html">SunSpider</a>,
+                <a href="https://developers.google.com/octane/">Octane 2</a>,
+                <a href="https://browserbench.org/JetStream2.1/">JetStream 2</a>,
+                <a href="https://browserbench.org/ARES-6/">ARES-6</a>,
+                <a href="https://v8.github.io/web-tooling-benchmark/">Web Tooling Benchmark</a>,
+                and benchmarks inspired by <a href="https://krakenbenchmark.mozilla.org">Kraken</a>.
+                JetStream 3 also includes a new set of benchmarks that measure the performance of WebAssembly, Web
+                Workers, Promises, async iteration, unicode regular expressions, and JavaScript parsing.
+            </p>
+
+            <p>
+                Earlier versions of JetStream also contained asm.js workloads.
+                With the release of WebAssembly, developers should switch to that technology instead.
+                JetStream 3 thus contains no asm.js workloads any longer and has converted some of the prior ones into
+                WebAssembly.
+            </p>
+
+            <p>
+                Besides the aforementioned averaging over multiple iterations, the JetStream 3 benchmark driver also
+                tries to improve score stability by other means.
+                For example, it pre-fetches network resources prior to running the benchmarks.
+                This can reduce perturbations on the measurement of JavaScript execution time due to second order
+                effects of pause times induced by network latency.
+            </p>
+
+            <p>
+                Note that scores from JetStream 3 are not comparable to scores to other versions
+                of any JetStream benchmark.
+            </p>
+
+            <h3>
+                JetStream 3 has 77 default workloads
+            </h3>
+
+            <p>
+                The <span style="color: var(--text-color-very-subtle);">greyed-out workloads</span> are not run by default but can be manually enabled on the command-line or via
+                the <code>?test=</code> URL parameter.
+                You can also click on the workload name to run that one individually, or on tags to run all workloads with a certain tag.
+            </p>
+
+            <dl id="workload-details">
+                <dt id="8bitbench-wasm">8bitbench-wasm</dt>
+                <dd>
+                    A simple 8-bit emulator targeting WebAssembly written in Rust. It aims to represent what an emulator
+                    or small game might act like in the real world.
+                    Attribution: See <a href="8bitbench/README.md">8bitbench/README.md</a>.
+                    Source code: In the <a href="8bitbench/">8bitbench/</a> directory, based off <a
+                        href="https://github.com/justinmichaud/8bitbench">https://github.com/justinmichaud/8bitbench</a>.
+                </dd>
+                <dt id="acorn-wtb">acorn-wtb</dt>
+                <dd>
+                    <a href="https://github.com/ternjs/acorn">Acorn</a> is a JavaScript parser written in JavaScript.
+                    This benchmark runs Acorn on test JavaScript programs.
+                    This benchmark stresses string manipulation and regular expression performance.
+                    A similar version of this benchmark was previously published in the <a
+                        href="https://v8.github.io/web-tooling-benchmark/">Web Tooling Benchmark</a>,.
+                    Source code: <a href="web-tooling-benchmark/src/acorn.mjs">acorn.mjs</a>
+                </dd>
+                <dt id="ai-astar">ai-astar</dt>
+                <dd>
+                    This benchmark runs a JavaScript implementation of the <a
+                        href="https://en.wikipedia.org/wiki/A*_search_algorithm">A*</a> search algorithm
+                    written by <a href="https://briangrinstead.com/blog/">Brian Grinstead</a>.
+                    This benchmark was inspired by a similar benchmark in the Kraken benchmark suite.
+                    Source code: <a href="SeaMonster/ai-astar.js">ai-astar.js</a>
+                </dd>
+                <dt id="Air">Air</dt>
+                <dd>
+                    Air is an ES2015 port of the <a
+                        href="https://webkit.org/blog/5852/introducing-the-b3-jit-compiler/">WebKit B3 JIT</a>'s <a
+                        href="https://trac.webkit.org/changeset/201783">Air::allocateStack phase</a>.
+                    This code is a heavy user of Map, Set, classes, spread, and for-of. The benchmark runs allocateStack
+                    on hot function
+                    bodies from other popular JavaScript benchmarks. This benchmark was previously published in <a
+                        href="https://browserbench.org/ARES-6/">ARES-6</a>.
+                    Source code: <a href="ARES-6/Air">Air</a>
+                </dd>
+                <dt id="argon2-wasm">argon2-wasm</dt>
+                <dd>
+                    Tests <a href="https://github.com/P-H-C/phc-winner-argon2">Argon2</a>, a password-hashing function
+                    (the winner of Password Hashing Competition), in WebAssembly. It makes use of the WebAssembly SIMD
+                    feature.
+                    This is test is based on <a href="https://github.com/antelle/argon2-browser">argon2-browser</a>
+                    library. Source code: In the <a href="wasm/argon2/">wasm/argon2/</a> directory.
+                </dd>
+                <dt id="async-fs">async-fs</dt>
+                <dd>
+                    This is an implementation of a mock file system that stresses the performance of DataView, Promises,
+                    and async
+                    iteration. The benchmark simulates adding and removing files, and swapping the byte order of
+                    existing files.
+                    Source code: <a href="generators/async-file-system.js">async-file-system.js</a>
+                </dd>
+                <dt id="babel-minify-wtb">babel-minify-wtb</dt>
+                <dd>
+                    <a href="https://github.com/babel/minify">Babel Minify</a> is an ES2015+ aware minifier based on the
+                    Babel toolchain. This benchmark stresses the Babel minifier on a large JavaScript source.
+                    A similar version of this benchmark was previously published in the <a
+                        href="https://github.com/v8/web-tooling-benchmark">Web Tooling Benchmark</a>.
+                    Source code: <a href="web-tooling-benchmark/src/babel.mjs">babel.mjs</a>, <a
+                        href="web-tooling-benchmark/src/babel-minify.mjs">babel-minify.mjs</a>
+                </dd>
+                <dt id="babel-wtb">babel-wtb</dt>
+                <dd>
+                    <a href="https://babeljs.io/">Babel</a> is a transpiler that compiles modern JavaScript (i.e. ES2015
+                    and later) to an older JavaScript dialect (i.e. ES3 or ES5) that is understood by a broad set of
+                    browsers.
+                    This benchmark runs the Babel transformation using the <code>es2015</code> preset.
+                    A similar version of this benchmark was previously published in the <a
+                        href="https://github.com/v8/web-tooling-benchmark">Web Tooling Benchmark</a>.
+                    Source code: <a href="web-tooling-benchmark/src/babel.mjs">babel.mjs</a>, <a
+                        href="web-tooling-benchmark/src/babel.mjs">babel-minify.mjs</a>
+                </dd>
+                <dt id="Babylon">Babylon</dt>
+                <dd>
+                    <a href="https://github.com/babel/babylon">Babylon</a> is an implementation of a parser for the
+                    JavaScript language.
+                    Babylon is the parser used in the <a href="https://babeljs.io/">Babel</a> JavaScript transpiler.
+                    The benchmark runs the Babylon parser on four different JavaScript sources.
+                    Babylon makes heavy use of classes, does non trivial string processing, and creates non-trivial
+                    object graphs.
+                    This benchmark was previously published in <a href="https://browserbench.org/ARES-6/">ARES-6</a>.
+                    Source code: <a href="ARES-6/Babylon">Babylon</a>
+                </dd>
+                <dt id="babylon-wtb">babylon-wtb</dt>
+                <dd>
+                    <a href="https://github.com/babel/babel/tree/master/packages/babel-parser">Babylon</a> is the
+                    frontend for the Babel transpiler.
+                    It is a JavaScript parser written in JavaScript. It computes the Abstract Syntax Tree of the input
+                    JavaScript program.
+                    This benchmark runs Babylon on test JavaScript programs.
+                    This benchmark stresses string manipulation and regular expression performance.
+                    A similar version of this benchmark was previously published in the <a
+                        href="https://v8.github.io/web-tooling-benchmark/">Web Tooling Benchmark</a>,.
+                    Source code: <a href="web-tooling-benchmark/src/babylon.mjs">babylon.mjs</a>
+                </dd>
+                <dt id="babylonjs-scene-es5">babylonjs-scene-es5</dt>
+                <dt id="babylonjs-scene-es6">babylonjs-scene-es6</dt>
+                <dt id="babylonjs-startup-es5">babylonjs-startup-es5</dt>
+                <dt id="babylonjs-startup-es6">babylonjs-startup-es6</dt>
+                <dd>
+                    These benchmarks test the <a href="https://www.babylonjs.com/">Babylon.js</a> 3D engine.
+                    The <i>startup</i> variant additionally measures the time it takes for the JS script to be parsed up to the game engine to initialize, parse and run a few frames of a simple scene.
+                    The <i>scene</i> variant measures the performance of a complex 3D scene with models,
+                    animations, and particles over the period of many frames.
+                    The <i>es5</i> and <i>es6</i> variants use code transpiled to ES5 or native ES6, respectively.
+                    Source code: in the <a href="babylonjs/">babylonjs/</a> directory.
+                </dd>
+                <dt id="Basic">Basic</dt>
+                <dd>
+                    Basic is an ES2015 implementation of the <a
+                        href="http://www.ecma-international.org/publications/files/ECMA-ST-WITHDRAWN/ECMA-55,%201st%20Edition,%20January%201978.pdf">ECMA-55
+                        BASIC standard</a>.
+                    Basic stresses performance of generator functions, classes, Map, and WeakMap.
+                    The benchmark runs a handful of simple programs, the most complex of which finds prime numbers.
+                    This benchmark was previously published in <a href="https://browserbench.org/ARES-6/">ARES-6</a>.
+                    Source code: <a href="ARES-6/Basic">Basic</a>
+                </dd>
+                <dt id="bigint-bigdenary">bigint-bigdenary</dt>
+                <dd>
+                    <a href="https://github.com/uzyn/bigdenary">BigDenary</a>, an arbitrary-precision
+                    decimal arithmetic, implemented in JavaScript by U-Zyn Chua.
+                    Tests arithmetic operations on BigInt.
+                    Source code: <a href="bigint/bigdenary-bundle.js">bigdenary-bundle.js</a>
+                </dd>
+                <dt id="bigint-noble-bls12-381">bigint-noble-bls12-381</dt>
+                <dd>
+                    <a href="https://hackmd.io/@benjaminion/bls12-381">BLS12-381</a>, pairing-friendly
+                    Barreto-Lynn-Scott elliptic curve construction,
+                    <a href="https://github.com/paulmillr/noble-bls12-381">implemented in JavaScript</a>
+                    by Paul Miller. Tests typed arrays and arithmetic operations on BigInt.
+                    Source code: <a href="bigint/noble-bls12-381-bundle.js">noble-bls12-381-bundle.js</a>
+                </dd>
+                <dt id="bigint-noble-ed25519">bigint-noble-ed25519</dt>
+                <dd>
+                    <a href="https://en.wikipedia.org/wiki/EdDSA">ed25519</a>, an elliptic curve that could
+                    be used for EDDSA signature scheme and X25519 ECDH key agreement,
+                    <a href="https://github.com/paulmillr/noble-ed25519">implemented in JavaScript</a>
+                    by Paul Miller. Tests typed arrays and arithmetic operations on BigInt.
+                    Source code: <a href="bigint/noble-ed25519-bundle.js">noble-ed25519-bundle.js</a>
+                </dd>
+                <dt id="bigint-noble-secp256k1">bigint-noble-secp256k1</dt>
+                <dd>
+                    <a href="https://www.secg.org/sec2-v2.pdf">secp256k1</a>, an elliptic curve that could
+                    be used for asymmetric encryption, ECDH key agreement protocol and signature schemes,
+                    <a href="https://github.com/paulmillr/noble-secp256k1">implemented in JavaScript</a>
+                    by Paul Miller. Tests typed arrays and arithmetic operations on BigInt.
+                    Source code: <a href="bigint/noble-secp256k1-bundle.js">noble-secp256k1-bundle.js</a>
+                </dd>
+                <dt id="bigint-paillier">bigint-paillier</dt>
+                <dd>
+                    <a href="https://en.wikipedia.org/wiki/Paillier_cryptosystem">Paillier cryptosystem</a>,
+                    a probabilistic asymmetric algorithm for public key cryptography,
+                    <a href="https://github.com/juanelas/paillier-bigint">implemented in JavaScript</a>
+                    by Juan Hernández Serrano. Tests arithmetic operations on BigInt.
+                    Source code: <a href="bigint/paillier-bundle.js">paillier-bundle.js</a>
+                </dd>
+                <dt id="bomb-workers">bomb-workers</dt>
+                <dd>
+                    Tests running various subtests of the SunSpider benchmark in parallel using Web Workers.
+                    Stresses the browser's ability to run JavaScript code in parallel.
+                    Source code: <a href="worker/bomb.js">bomb.js</a>
+                </dd>
+                <dt id="Box2D">Box2D</dt>
+                <dd>
+                    The Box2D physics engine <a href="https://code.google.com/p/box2dweb/">ported to JavaScript</a>.
+                    Tests floating
+                    point math and data structures.
+                    A similar version of this benchmark was previously published in Octane version 2.
+                    Source code: <a href="Octane/box2d.js">box2d.js</a>
+                </dd>
+                <dt id="cdjs">cdjs</dt>
+                <dd>
+                    JavaScript implementation of the <a href="https://www.cs.purdue.edu/sss/projects/cdx/">CDx collision
+                        detection
+                        benchmark</a>. Measures the performance of over 200 collision detection runs.
+                    Source code: <a href="cdjs">cdjs</a>
+                </dd>
+                <dt id="chai-wtb">chai-wtb</dt>
+                <dd>
+                    <a href="http://chaijs.com/">Chai</a> is a <a
+                        href="https://codeutopia.net/blog/2015/03/01/unit-testing-tdd-and-bdd/">BDD / TDD</a> assertion
+                    library for
+                    node.js and the browser. It is commonly used to write unit and integration tests.
+                    A similar version of this benchmark was previously published in the <a
+                        href="https://v8.github.io/web-tooling-benchmark/">Web Tooling Benchmark</a>,.
+                    Source code: <a href="web-tooling-benchmark/src/chai.mjs">chai.mjs</a>
+                </dd>
+                <dt id="crypto">crypto</dt>
+                <dd>
+                    RSA cypher implemented in JavaScript by Tom Wu. Tests integer math and arrays.
+                    A similar version of this benchmark was previously published in Octane version 2.
+                    Source code: <a href="Octane/crypto.js">crypto.js</a>
+                </dd>
+                <dt id="Dart-flute-complex-wasm">Dart-flute-complex-wasm</dt>
+                <dt id="Dart-flute-todomvc-wasm">Dart-flute-todomvc-wasm</dt>
+                <dd>
+                    Two Dart benchmark programs compiled to WasmGC that are using a simplified version of the Flutter UI
+                    framework to layout and animate UI elements.
+                    The <i>complex</i> variant contains a large number of widgets and is thus more of a stress test,
+                    disabled by default in JetStream 3.
+                    The <i>todomvc</i> variant is a more realistic TODO list application and enabled by default.
+                    See <a href="Dart/README.md">Dart/README.md</a> for more information.
+                    <br>
+                    Source code: in the <a href="Dart/">Dart/</a> directory, based off <a
+                        href="https://github.com/dart-lang/flute">https://github.com/dart-lang/flute</a>.
+                </dd>
+                <dt id="delta-blue">delta-blue</dt>
+                <dd>
+                    The classic DeltaBlue benchmark derived from a Smalltalk implementation by Maloney and
+                    Wolczko. Tests devirtualization of JavaScript code that uses an idiomatic class hierarchy
+                    construction.
+                    A similar version of this benchmark was previously published in Octane version 2.
+                    Source code: <a href="Octane/deltablue.js">deltablue.js</a>
+                </dd>
+                <dt id="dotnet-aot-wasm">dotnet-aot-wasm</dt>
+                <dt id="dotnet-interp-wasm">dotnet-interp-wasm</dt>
+                <dd>
+                    These two workloads test <a href="https://github.com/dotnet/runtime">.NET on WebAssembly</a>.
+                    They contain a variety of operations on .NET strings, JSON serialization, specifics of .NET
+                    exceptions, and ray tracing of a 3D scene.
+                    The <i>aot</i> variant uses Mono AOT (ahead of time) compilation.
+                    The <i>interp</i> variant uses the Mono interpreter.
+                    Source code: In the <a href="wasm/dotnet/">wasm/dotnet/</a> directory.
+                </dd>
+                <dt id="doxbee-async">doxbee-async</dt>
+                <dd>
+                    A typical CRUD method extracted from DoxBee that is called when uploading files. The benchmark
+                    emulates a situation where
+                    10k requests are being made concurrently to execute some mixed async / sync action with fast I/O
+                    response times.
+                    Uses async / await instead of plain Promise.
+                    Authored by <a
+                        href="https://blog.spion.dev/posts/analysis-generators-and-other-async-patterns-node.html">Gorki
+                        Kosev</a>,
+                    <a href="https://github.com/v8/promise-performance-tests">packed by Benedikt Meurer</a>.
+                    Source code: <a href="simple/doxbee-async.js">doxbee-async.js</a>
+                </dd>
+                <dt id="doxbee-promise">doxbee-promise</dt>
+                <dd>
+                    A typical CRUD method extracted from DoxBee that is called when uploading files. The benchmark
+                    emulates a situation where
+                    10k requests are being made concurrently to execute some mixed async / sync action with fast I/O
+                    response times.
+                    Authored by <a
+                        href="https://blog.spion.dev/posts/analysis-generators-and-other-async-patterns-node.html">Gorki
+                        Kosev</a>,
+                    <a href="https://github.com/v8/promise-performance-tests">packed by Benedikt Meurer</a>.
+                    Source code: <a href="simple/doxbee-promise.js">doxbee-promise.js</a>
+                </dd>
+                <dt id="earley-boyer">earley-boyer</dt>
+                <dd>
+                    Tests two classic Scheme benchmarks translated to JavaScript using scheme2js. The first
+                    benchmark is Earley, is a chart parser algorithm created by Jay Earley. The second is
+                    Boyer, a logic programming benchmark by Bob Boyer. Measures variadic functions and object
+                    construction.
+                    A similar version of this benchmark was previously published in Octane version 2.
+                    Source code: <a href="Octane/earley-boyer.js">earley-boyer.js</a>
+                </dd>
+                <dt id="espree-wtb">espree-wtb</dt>
+                <dd>
+                    <a href="https://github.com/eslint/espree">Espree</a> is a JavaScript parser written in JavaScript.
+                    This benchmark runs Espree on test JavaScript programs.
+                    This benchmark stresses string manipulation and regular expression performance.
+                    A similar version of this benchmark was previously published in the <a
+                        href="https://v8.github.io/web-tooling-benchmark/">Web Tooling Benchmark</a>,.
+                    Source code: <a href="web-tooling-benchmark/src/espree.mjs">espree.mjs</a>
+                </dd>
+                <dt id="esprima-next-wtb">esprima-next-wtb</dt>
+                <dd>
+                    <a href="https://github.com/jquery/esprima">Esprima</a> is a high performance, standard-compliant
+                    ECMAScript parser. <a href="https://github.com/node-projects/esprima-next">esprima-next</a> is a
+                    fork that supports newer ECMAScript features. This
+                    benchmark runs both the tokenizer and the parser on a variety of common scripts.
+                    A similar version of this benchmark was previously published in the <a
+                        href="https://v8.github.io/web-tooling-benchmark/">Web Tooling Benchmark</a>,.
+                    Source code: <a href="web-tooling-benchmark/src/esprima-next.mjs">esprima-next.mjs</a>
+                </dd>
+                <dt id="first-inspector-code-load">first-inspector-code-load</dt>
+                <dd>
+                    Measures the first-time parsing of a modern JavaScript code base: WebKit's Web Inspector.
+                    This models the parsing time of visiting a web site for the first time.
+                    Source code: <a href="code-load/code-first-load.js">code-first-load.js</a>
+                </dd>
+                <dt id="FlightPlanner">FlightPlanner</dt>
+                <dd>
+                    Flight Planner is a benchmark taken from a flight management web application.
+                    Flight Planner parses aircraft flight plans and computes distance, courses, and elapsed times for
+                    legs of flight plans.
+                    It uses FAA data for airports, navigation aids, and airways. The flight management app was
+                    originally written to help
+                    compete in a flying proficiency event. It stresses regular expression performance.
+                    Source code: <a href="RexBench/FlightPlanner/flight_planner.js">flight_planner.js</a>
+                </dd>
+                <dt id="gaussian-blur">gaussian-blur</dt>
+                <dd>
+                    Tests the performance of a JavaScript implementation of <a
+                        href="https://en.wikipedia.org/wiki/Gaussian_blur">gaussian
+                        blur</a> on a test image. Tests numeric analysis speed and uses typed arrays.
+                    This benchmark was inspired by a similar benchmark in the Kraken benchmark suite.
+                    Source code: <a href="SeaMonster/gaussian-blur.js">gaussian-blur.js</a>
+                </dd>
+                <dt id="gbemu">gbemu</dt>
+                <dd>
+                    Gameboy emulator written in JavaScript. Tests typed array and
+                    property access performance.
+                    A similar version of this benchmark was previously published in Octane version 2.
+                    Source code: <a href="Octane/gbemu-part1.js">gbemu-part1.js</a>, <a
+                        href="Octane/gbemu-part2.js">gbemu-part2.js</a>
+                </dd>
+                <dt id="gcc-loops-wasm">gcc-loops-wasm</dt>
+                <dd>
+                    Example loops used to tune the GCC and LLVM vectorizers, compiled to WebAssembly with
+                    <a href="https://emscripten.org">Emscripten</a>. The original C++ version of this benchmark was
+                    previously published in the LLVM test suite.
+                    Source code: <a href="wasm/gcc-loops/gcc-loops.cpp">gcc-loops.cpp</a>, <a
+                        href="wasm/gcc-loops/benchmark.js">gcc-loops.js</a>
+                </dd>
+                <dt id="hash-map">hash-map</dt>
+                <dd>
+                    Apache Harmony java.util.HashMap implementation ported to JavaScript and benchmarked by
+                    doing hash table insertions, queries, and then iterating the associated entrySet. Tests
+                    object-oriented JavaScript idioms and object construction. A similar JavaScript version
+                    of this benchmark was originally published as part of the WebKit test suite.
+                    Source code: <a href="simple/hash-map.js">hash-map.js</a>
+                </dd>
+                <dt id="HashSet-wasm">HashSet-wasm</dt>
+                <dd>
+                    A WebAssembly benchmark replaying a set of hash table operations performed in WebKit when loading
+                    a web page. This benchmark was compiled from C++ to WebAssembly using <a
+                        href="https://emscripten.org">Emscripten</a>.
+                    Source code: <a href="wasm/HashSet/HashSet.cpp">HashSet.cpp</a>, <a
+                        href="wasm/HashSet/benchmark.js">HashSet.js</a>
+                </dd>
+                <dt id="intl">intl</dt>
+                <dd>
+                    This benchmark tests the performance of the <a
+                        href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl">Intl
+                        API</a>.
+                    Since the Intl spec is not precisely defining all output formats, this workload cannot be used to
+                    compare different platforms.
+                    Source code: in the <a href="intl/">intl/</a> directory.
+                </dd>
+                <dt id="j2cl-box2d-wasm">j2cl-box2d-wasm</dt>
+                <dd>
+                    A Java Box2D benchmark that is compiled to WasmGC with the <a
+                        href="https://github.com/google/j2cl">J2CL</a> toolchain.
+                    Source code: In the <a href="wasm/j2cl-box2d/">wasm/j2cl-box2d/</a> directory.
+                </dd>
+                <dt id="js-tokens">js-tokens</dt>
+                <dd>
+                    This benchmarks runs <a href="https://github.com/lydell/js-tokens">js-tokens</a>, a lenient and
+                    almost spec-compliant JavaScript
+                    tokenizer by Simon Lydell, over its own source code and a JSX snippet. Stresses the performance of
+                    generators and regular
+                    expressions, especially sticky and unicode RegExp patterns with property escapes <code>\p{}</code>.
+                    Source code: <a href="generators/js-tokens.js">js-tokens.js</a>
+                </dd>
+                <dt id="jsdom-d3-startup">jsdom-d3-startup</dt>
+                <dd>
+                    This benchmark measures the startup and execution time of a workload that uses <a
+                        href="https://github.com/jsdom/jsdom">jsdom</a> to simulate a browser environment and <a
+                        href="https://d3js.org/">D3</a> to render a Voronoi diagram of airports overlaid on a map of the
+                    US.
+                    Source code: in the <a href="jsdom-d3-startup/">jsdom-d3-startup/</a> directory.
+                </dd>
+                <dt id="json-parse-inspector">json-parse-inspector</dt>
+                <dd>
+                    Measures JSON.parse performance on a set of objects that WebKit's Web Inspector
+                    parses when communicating between the UI and web pages.
+                    This benchmark was inspired by a similar benchmark in the Kraken benchmark suite.
+                    Source code: <a href="SeaMonster/json-parse-inspector.js">json-parse-inspector.js</a>
+                </dd>
+                <dt id="json-stringify-inspector">json-stringify-inspector</dt>
+                <dd>
+                    Measures JSON.stringify performance on a set of objects that WebKit's Web Inspector
+                    stringifies when communicating between the UI and web pages.
+                    This benchmark was inspired by a similar benchmark in the Kraken benchmark suite.
+                    Source code: <a href="SeaMonster/json-stringify-inspector.js">json-stringify-inspector.js</a>
+                </dd>
+                <dt id="Kotlin-compose-wasm">Kotlin-compose-wasm</dt>
+                <dd>
+                    This benchmark is a Kotlin application using the <a href="https://jb.gg/cmp">Compose
+                        Multiplatform</a> UI framework.
+                    Compose allows to share UI code across multiple platforms and is compiled with <a
+                        href="https://kotl.in/wasm">Kotlin/Wasm</a> to WasmGC.
+                    Source code: In the <a href="Kotlin-compose/">Kotlin-compose/</a> directory, based off the benchark
+                    in <a
+                        href="https://github.com/JetBrains/compose-multiplatform/tree/master/benchmarks/multiplatform">https://github.com/JetBrains/compose-multiplatform/</a>.
+                </dd>
+                <dt id="lazy-collections">lazy-collections</dt>
+                <dd>
+                    This benchmark iterates over common integer sequences (fibonacci, prime numbers, etc) as lazy
+                    collections using eponymous
+                    library by <a href="https://robinmalfait.com">Robin Malfait</a> that stresses the performance of
+                    generators.
+                    Source code: <a href="generators/lazy-collections.js">lazy-collections.js</a>
+                </dd>
+                <dt id="lebab-wtb">lebab-wtb</dt>
+                <dd>
+                    <a href="https://github.com/lebab/lebab">Lebab</a> transpiles ES5 code into ES6/ES7.
+                    This benchmark runs Lebab on test JavaScript programs.
+                    This benchmark stresses string manipulation and regular expression performance.
+                    A similar version of this benchmark was previously published in the <a
+                        href="https://v8.github.io/web-tooling-benchmark/">Web Tooling Benchmark</a>,.
+                    Source code: <a href="web-tooling-benchmark/src/lebab.mjs">lebab.mjs</a>
+                </dd>
+                <dt id="mandreel">mandreel</dt>
+                <dd>
+                    Tests the <a href="http://bulletphysics.org/">Bullet</a> physics engine.
+                    The physics engine is compiled to JavaScript with <a href="http://www.mandreel.com">Mandreel</a>.
+                    A similar version of this benchmark was previously published in Octane version 2.
+                    Source code: <a href="Octane/mandreel.js">mandreel.js</a>
+                </dd>
+                <dt id="ML">ML</dt>
+                <dd>
+                    ML is an implementation of a <a href="https://en.wikipedia.org/wiki/Feedforward_neural_network">
+                        feedforward neural network.</a>
+                    The benchmark trains several networks using different <a
+                        href="https://en.wikipedia.org/wiki/Activation_function">activation functions</a>
+                    and several sample data sets. ML makes heavy use of classes. It relies on the ml-matrix library and
+                    does non-trivial matrix math.
+                    This benchmark was previously published in <a href="https://browserbench.org/ARES-6/">ARES-6</a>.
+                    Source code: <a href="ARES-6/ml">ML</a>
+                </dd>
+                <dt id="mobx-startup">mobx-startup</dt>
+                <dd>
+                    This benchmark measures the startup and execution time of a workload using <a
+                        href="https://mobx.js.org/">MobX</a> for state management. It simulates a chat application model
+                    with messages, notifications, and rooms, stressing the performance of reactive data structures and
+                    observers.
+                    Source code: in the <a href="mobx/">mobx/</a> directory.
+                </dd>
+                <dt id="multi-inspector-code-load">multi-inspector-code-load</dt>
+                <dd>
+                    Measures the repeated parsing of a modern JavaScript code base: WebKit's Web Inspector.
+                    Because this test allows caching, this is representative of revisiting the same website.
+                    Source code: <a href="code-load/code-multi-load.js">code-multi-load.js</a>
+                </dd>
+                <dt id="navier-stokes">navier-stokes</dt>
+                <dd>
+                    Fluid simulation written by <a href="https://nerget.com">Oliver Hunt</a>. Emphasizes floating point
+                    array performance.
+                    A similar version of this benchmark was previously published in Octane version 2.
+                    Source code: <a href="Octane/navier-stokes.js">navier-stokes.js</a>
+                </dd>
+                <dt id="octane-code-load">octane-code-load</dt>
+                <dd>
+                    Test of code load speed of the jQuery and Closure libraries. Because this test allows
+                    caching, this is representative of revisiting the same website.
+                    A similar version of this benchmark was previously published in Octane version 2.
+                    Source code: <a href="Octane/code-first-load.js">code-load.js</a>
+                </dd>
+                <dt id="OfflineAssembler">OfflineAssembler</dt>
+                <dd>
+                    Offline Assembler is the lexer, parser, and AST layer of the offline assembler for <a
+                        href="https://trac.webkit.org/wiki/JavaScriptCore">JavaScriptCore</a>.
+                    It has been ported to JavaScript from the original Ruby implementation. This test stresses regular
+                    expression
+                    performance.
+                    Source code: <a href="RexBench/OfflineAssembler/parser.js">OfflineAssembler.js</a>
+                </dd>
+                <dt id="pdfjs">pdfjs</dt>
+                <dd>
+                    Mozilla's <a href="http://mozilla.github.io/pdf.js/">PDF reader written in JavaScript</a>.
+                    This benchmark emphasizes array manipulation and bit operations.
+                    A similar version of this benchmark was previously published in Octane version 2.
+                    Source code: <a href="Octane/pdfjs.js">pdfjs.js</a>
+                </dd>
+                <dt id="postcss-wtb">postcss-wtb</dt>
+                <dd>
+                    <a href="https://postcss.org/">PostCSS</a> is a tool for transforming styles with JS plugins.
+                    This benchmark runs the PostCSS processor with several common plugins on CSS sources.
+                    A similar version of this benchmark was previously published in the <a
+                        href="https://v8.github.io/web-tooling-benchmark/">Web Tooling Benchmark</a>,.
+                    Source code: <a href="web-tooling-benchmark/src/postcss.mjs">postcss.mjs</a>
+                </dd>
+                <dt id="prettier-wtb">prettier-wtb</dt>
+                <dd>
+                    This benchmark runs the <a href="https://prettier.io/">Prettier</a> code formatter on various
+                    JavaScript
+                    and JSX files to measure its formatting throughput.
+                    A similar version of this benchmark was previously published in the <a
+                        href="https://v8.github.io/web-tooling-benchmark/">Web Tooling Benchmark</a>,.
+                    Source code: <a href="web-tooling-benchmark/src/prettier.mjs">prettier.mjs</a>
+                </dd>
+                <dt id="prismjs-startup-es5" class="non-default">prismjs-startup-es5</dt>
+                <dt id="prismjs-startup-es6">prismjs-startup-es6</dt>
+                <dd>
+                    These benchmarks measure the performance of the <a href="https://prismjs.com/">PrismJS</a> syntax
+                    highlighting library by parsing and formatting sample files in various programming languages.
+                    The <i>es5</i> and <i>es6</i> variants use code transpiled to ES5 or native ES6, respectively.
+                    Source code: in the <a href="prismjs/">prismjs/</a> directory.
+                </dd>
+                <dt id="proxy-mobx">proxy-mobx</dt>
+                <dd>
+                    A super minimal, store-only implementation of Reminders.app, written in MobX.
+                    Heavily relies on computed getters and utilizes Map / Set collections.
+                    Synchronously re-renders into text on every data manipulation.
+                    Tests get / set Proxy traps, as well as various Array methods.
+                    Source code: <a href="proxy/mobx-benchmark.js">mobx-benchmark.js</a>
+                </dd>
+                <dt id="proxy-vue">proxy-vue</dt>
+                <dd>
+                    A super minimal, store-only implementation of Reminders.app, written using reactivity
+                    API of Vue.js 3.0. Heavily relies on computed getters and utilizes Map / Set collections.
+                    Synchronously re-renders into text on every data manipulation.
+                    Tests get / set Proxy traps, as well as various Array methods.
+                    Source code: <a href="proxy/vue-benchmark.js">vue-benchmark.js</a>
+                </dd>
+                <dt id="quicksort-wasm">quicksort-wasm</dt>
+                <dd>
+                    Quicksort benchmark, compiled to WebAssembly with <a href="https://emscripten.org">Emscripten</a>.
+                    The original C version of this benchmark was previously published in the LLVM test suite.
+                    Source code: <a href="wasm/quicksort/quicksort.c">quicksort.c</a>, <a
+                        href="wasm/quicksort/benchmark.js">quicksort.js</a>
+                </dd>
+                <dt id="raytrace">raytrace</dt>
+                <dd>
+                    <a href="https://en.wikipedia.org/wiki/Ray_tracing_(graphics)">Ray tracer</a> written in JavaScript
+                    using ES6 classes.
+                    Tests object construction performance and floating point math.
+                    A similar version of this benchmark was previously published in Octane version 2.
+                    Source code: <a href="Octane/raytrace.js">raytrace.js</a>
+                </dd>
+                <dt id="raytrace-private-class-fields">raytrace-private-class-fields</dt>
+                <dd>
+                    <a href="https://en.wikipedia.org/wiki/Ray_tracing_(graphics)">Ray tracer</a> written in JavaScript
+                    using ES6 classes and private fields.
+                    Tests object construction performance, along with setting default values of private fields, their
+                    access speed, and floating point math.
+                    A similar version of this benchmark was previously published in Octane version 2.
+                    Source code: <a
+                        href="class-fields/raytrace-private-class-fields.js">raytrace-private-class-fields.js</a>
+                </dd>
+                <dt id="raytrace-public-class-fields">raytrace-public-class-fields</dt>
+                <dd>
+                    <a href="https://en.wikipedia.org/wiki/Ray_tracing_(graphics)">Ray tracer</a> written in JavaScript
+                    using ES6 classes and public fields.
+                    Tests object construction performance, along with setting default values of public fields, and
+                    floating point math.
+                    A similar version of this benchmark was previously published in Octane version 2.
+                    Source code: <a
+                        href="class-fields/raytrace-public-class-fields.js">raytrace-public-class-fields.js</a>
+                </dd>
+                <dt id="regexp-octane">regexp-octane</dt>
+                <dd>
+                    Collection of regular expressions found by the V8 team in 2010, curated into a benchmark.
+                    A similar version of this benchmark was previously published in Octane version 2.
+                    Source code: <a href="Octane/regexp.js">regexp.js</a>
+                </dd>
+                <dt id="richards">richards</dt>
+                <dd>
+                    Martin Richard's <a href="http://www.cl.cam.ac.uk/~mr10/Bench.html">system language
+                        benchmark</a> ported to JavaScript. Tests object property access performance.
+                    A similar version of this benchmark was previously published in Octane version 2.
+                    Source code: <a href="Octane/richards.js">richards.js</a>
+                </dd>
+                <dt id="richards-wasm">richards-wasm</dt>
+                <dd>
+                    Martin Richard's <a href="http://www.cl.cam.ac.uk/~mr10/Bench.html">system language benchmark</a>
+                    compiled to a hybrid of WebAssembly and JavaScript.
+                    It stresses how quickly JavaScript can call into WebAssembly code.
+                    Source code: in the <a href="wasm/richards/">wasm/richards/</a> directory.
+                </dd>
+                <dt id="segmentation">segmentation</dt>
+                <dd>
+                    Uses Web Workers to parallelize the computation of a <a
+                        href="https://en.wikipedia.org/wiki/Time-series_segmentation">
+                        time series segmentation</a> algorithm over a sample data set. This code is adapted from an
+                    algorithm used in the <a href="https://perf.webkit.org/v3/">
+                        WebKit performance dashboard.</a>
+                    Source code: <a href="worker/segmentation.js">segmentation.js</a>
+                </dd>
+                <dt id="source-map-wtb">source-map-wtb</dt>
+                <dd>
+                    This benchmark evaluates the <a href="https://github.com/mozilla/source-map">source-map</a> library
+                    on both parsing and serializing a variety of different source maps.
+                    A similar version of this benchmark was previously published in the <a
+                        href="https://v8.github.io/web-tooling-benchmark/">Web Tooling Benchmark</a>,.
+                    Source code: <a href="web-tooling-benchmark/src/source-map.mjs">source-map.mjs</a>
+                </dd>
+                <dt id="splay">splay</dt>
+                <dd>
+                    Tests the manipulation of <a href="http://en.wikipedia.org/wiki/Splay_tree">splay trees</a>
+                    represented using plain JavaScript objects. This benchmark stresses the performance of the garbage
+                    collector.
+                    A similar version of this benchmark was previously published in Octane version 2.
+                    Source code: <a href="Octane/splay.js">splay.js</a>
+                </dd>
+                <dt id="sqlite3-wasm">sqlite3-wasm</dt>
+                <dd>
+                    A WebAssembly build of <a href="https://sqlite.org/index.html">SQLite</a>'s <i>speedtest1.c</i>
+                    benchmark program.
+                    Quoting from <a href="https://sqlite.org/cpu.html">its description</a>:
+                    "This program strives to exercise the SQLite library in a way that is typical of real-world
+                    applications."
+                    Since SQLite is a very widely used database and provides an official and popular upstream
+                    WebAssembly port, this is a realistic, larger WebAssembly program.
+                    See <a href="sqlite3/README.md">README.md</a> for more information.
+                    Source code: in the <a href="sqlite3/">sqlite3/</a> directory.
+                </dd>
+                <dt id="stanford-crypto-aes">stanford-crypto-aes</dt>
+                <dd>
+                    Measures the performance of the <a
+                        href="https://en.wikipedia.org/wiki/Advanced_Encryption_Standard">AES</a> hashing algorithm as
+                    implemented by the <a href="https://crypto.stanford.edu/sjcl/">Stanford JavaScript Crypto
+                        Library</a>. This benchmark stresses numeric analysis and array access.
+                    This benchmark was inspired by a similar benchmark in the Kraken benchmark suite.
+                    Source code: <a href="SeaMonster/stanford-crypto-aes.js">stanford-crypto-aes.js</a>
+                </dd>
+                <dt id="stanford-crypto-pbkdf2">stanford-crypto-pbkdf2</dt>
+                <dd>
+                    Measures the performance of the <a href="https://en.wikipedia.org/wiki/PBKDF2">PBKDF2</a> hashing
+                    algorithm as implemented by the <a href="https://crypto.stanford.edu/sjcl/">Stanford JavaScript
+                        Crypto Library</a>. This benchmark stresses numeric analysis and array access.
+                    This benchmark was inspired by a similar benchmark in the Kraken benchmark suite.
+                    Source code: <a href="SeaMonster/stanford-crypto-pbkdf2.js">stanford-crypto-pbkdf2.js</a>
+                </dd>
+                <dt id="stanford-crypto-sha256">stanford-crypto-sha256</dt>
+                <dd>
+                    Measures the performance of the <a href="https://en.wikipedia.org/wiki/SHA-2">SHA256</a> hashing
+                    algorithm as implemented by the <a href="https://crypto.stanford.edu/sjcl/">Stanford JavaScript
+                        Crypto Library</a>. This benchmark stresses numeric analysis and array access.
+                    This benchmark was inspired by a similar benchmark in the Kraken benchmark suite.
+                    Source code: <a href="SeaMonster/stanford-crypto-sha256.js">stanford-crypto-sha256.js</a>
+                </dd>
+                <dt id="Sunspider">Sunspider</dt>
+                <dd>
+                    <dl>
+                        <dt>3d-cube-SP</dt>
+                        <dd>
+                            3D cube rotation benchmark by Simon Speich. The original can be found
+                            on <a href="http://www.speich.net/computer/moztesting/3d.htm">Simon's
+                                web page</a>. Tests arrays and floating-point math in relatively
+                            short-running code.
+                            A similar version of this benchmark was previously published in SunSpider.
+                            Source code: <a href="SunSpider/3d-cube.js">3d-cube.js</a>
+                        </dd>
+                        <dt>3d-raytrace-SP</dt>
+                        <dd>
+                            Simple raytracer written by <a href="https://nerget.com">Oliver Hunt</a>.
+                            Tests arrays and floating-point math in relatively short-running code.
+                            A similar version of this benchmark was previously published in SunSpider.
+                            Source code: <a href="SunSpider/3d-raytrace.js">3d-raytrace.js</a>
+                        </dd>
+                        <dt>base64-SP</dt>
+                        <dd>
+                            Base64 encoder/decoder written in JavaScript, originally from the Mozilla XML-RPC client
+                            component.
+                            Tests string manipulation.
+                            A similar version of this benchmark was previously published in SunSpider.
+                            Source code: <a href="SunSpider/base64.js">base64.js</a>
+                        </dd>
+                        <dt>crypto-aes-SP</dt>
+                        <dd>
+                            <a href="http://en.wikipedia.org/wiki/Advanced_Encryption_Standard"> AES</a> implementation
+                            in JavaScript by Chris Veness. A newer version can be
+                            found <a href="http://www.movable-type.co.uk/scripts/aes.html">here</a>. Tests integer math.
+                            A similar version of this benchmark was previously published in SunSpider.
+                            Source code: <a href="SunSpider/crypto-aes.js">crypto-aes.js</a>
+                        </dd>
+                        <dt>crypto-md5-SP</dt>
+                        <dd>
+                            <a href="http://en.wikipedia.org/wiki/Md5">MD5</a> implementation in JavaScript by
+                            Paul Johnston and others. Tests interesting integer math idioms.
+                            A similar version of this benchmark was previously published in SunSpider.
+                            Source code: <a href="SunSpider/crypto-md5.js">crypto-md5.js</a>
+                        </dd>
+                        <dt>crypto-sha1-SP</dt>
+                        <dd>
+                            <a href="http://en.wikipedia.org/wiki/Sha1">SHA-1</a> implementation in JavaScript by
+                            Paul Johnston and others. Tests interesting integer math idioms.
+                            A similar version of this benchmark was previously published in SunSpider.
+                            Source code: <a href="SunSpider/crypto-sha1.js">crypto-sha1.js</a>
+                        </dd>
+                        <dt>date-format-tofte-SP</dt>
+                        <dd>
+                            Date and time formatting test, based on code by Svend Tofte. Involves an interesting use
+                            of <code>eval</code> and also covers string manipulation and JavaScript library functions.
+                            A similar version of this benchmark was previously published in SunSpider.
+                            Source code: <a href="SunSpider/date-format-tofte.js">date-format-tofte.js</a>
+                        </dd>
+                        <dt>date-format-xparb-SP</dt>
+                        <dd>
+                            Sophisticated date formatting and parsing library test, based on code by Barin Schwartz.
+                            A similar version of this benchmark was previously published in SunSpider.
+                            Source code: <a href="SunSpider/date-format-xparb.js">date-format-xparb.js</a>
+                        </dd>
+                        <dt>n-body-SP</dt>
+                        <dd>
+                            Classic solar system simulation benchmark from
+                            <a href="https://en.wikipedia.org/wiki/The_Computer_Language_Benchmarks_Game">The Great
+                                Computer
+                                Language Shootout</a>,
+                            contributed by Isaac Guy. Tests math and object access performance.
+                            A similar version of this benchmark was previously published in SunSpider.
+                            Source code: <a href="SunSpider/n-body.js">n-body.js</a>
+                        </dd>
+                        <dt>regex-dna-SP</dt>
+                        <dd>
+                            Regular-expression-based solution to DNA manipulation from
+                            <a href="https://en.wikipedia.org/wiki/The_Computer_Language_Benchmarks_Game">The Great
+                                Computer
+                                Language Shootout</a>,
+                            contributed by Jesse Millikan.
+                            A similar version of this benchmark was previously published in SunSpider.
+                            Source code: <a href="SunSpider/regex-dna.js">regex-dna.js</a>
+                        </dd>
+                        <dt>string-unpack-code-SP</dt>
+                        <dd>
+                            This benchmark unpacks various minified JavaScript libraries. It stresses the speed of
+                            various
+                            string manipulation
+                            operations.
+                            A similar version of this benchmark was previously published in SunSpider.
+                            Source code: <a href="SunSpider/string-unpack-code.js">string-unpack-code.js</a>
+                        </dd>
+                        <dt>tagcloud-SP</dt>
+                        <dd>
+                            Parses JSON and generates markup for a <a href="http://en.wikipedia.org/wiki/Tag_cloud">tag
+                                cloud</a> view of the data. Written by Maciej Stachowiak of the WebKit team. Exercises
+                            string
+                            parsing and manipulation. A similar version of this benchmark was originally published in
+                            SunSpider.
+                            Source code: <a href="SunSpider/tagcloud.js">tagcloud.js</a>
+                        </dd>
+                    </dl>
+                </dd>
+                <dt id="sync-fs">sync-fs</dt>
+                <dd>
+                    This is an implementation of a mock file system that stresses the performance of DataView, Promises,
+                    and synchronous
+                    generators / iterators. The benchmark simulates adding and removing files, and swapping the byte
+                    order of existing files.
+                    Source code: <a href="generators/sync-file-system.js">sync-file-system.js</a>
+                </dd>
+                <dt id="tfjs-wasm">tfjs-wasm</dt>
+                <dt id="tfjs-wasm-simd">tfjs-wasm-simd</dt>
+                <dd>
+                    Tests <a href="https://github.com/tensorflow/tfjs">Tensorflow.js</a> pre-trained machine learning
+                    models supported by <a
+                        href="https://github.com/tensorflow/tfjs/tree/master/tfjs-backend-wasm">WebAssembly backend</a>.
+                    The current benchmark includes models: <a
+                        href="https://tfhub.dev/google/tfjs-model/imagenet/mobilenet_v2_100_224/classification/3/default/1">mobilenet</a>,
+                    <a href="https://www.npmjs.com/package/@tensorflow-models/knn-classifier">knn-classifier</a>, <a
+                        href="https://www.npmjs.com/package/@tensorflow-models/coco-ssd">coco-ssd</a>, <a
+                        href="https://www.npmjs.com/package/@tensorflow-models/universal-sentence-encoder">universal-sentence-encoder</a>.
+                    The <i>SIMD</i> variant uses vector instructions from the Wasm SIMD feature.
+                    Source code: tfjs-* files in the <a href="wasm/">wasm/</a> directory.
+                </dd>
+                <dt id="threejs">threejs</dt>
+                <dd>
+                    This benchmark measures the performance of a 3D particle system implemented with <a
+                        href="https://threejs.org/">Three.js</a>. It animates particles with custom geometries and
+                    basic materials, stressing object creation, scene graph updates, and the browser's 3D rendering
+                    capabilities.
+                    Source code: in the <a href="threejs/">threejs/</a> directory.
+                </dd>
+                <dt id="transformersjs-bert-wasm">transformersjs-bert-wasm</dt>
+                <dt id="transformersjs-whisper-wasm">transformersjs-whisper-wasm</dt>
+                <dd>
+                    Two machine learning tasks using the <a
+                        href="https://huggingface.co/docs/transformers.js/en/index">Transformers.js</a> library, which
+                    uses <a href="https://onnxruntime.ai/docs/tutorials/web/">ONNX Runtime Web</a> under the hood to
+                    perform inference with WebAssembly. They make use of WebAssembly SIMD instructions.
+                    The <i>bert</i> variant uses the <a
+                        href="https://huggingface.co/Xenova/distilbert-base-uncased-finetuned-sst-2-english">distilbert-base-uncased-finetuned-sst-2-english</a>
+                    model to perform sentiment analysis of text.
+                    The <i>whisper</i> variant uses <a
+                        href="https://huggingface.co/Xenova/whisper-tiny.en">whisper-tiny.en</a> to transcribe audio to
+                    text.
+                    Source code: in the <a href="transformersjs/">transformersjs/</a> directory.
+                </dd>
+
+                <dt id="tsf-wasm">tsf-wasm</dt>
+                <dd>
+                    Runs Filip Pizlo's &mdash; of the WebKit team &mdash; implementation of a <a
+                        href="http://www.filpizlo.com/tsf/">Typed Stream Format</a> in WebAssembly.
+                    The original code is compiled from C to WebAssembly using <a
+                        href="https://emscripten.org">Emscripten</a>.
+                    Source code: in the <a href="wasm/TSF/">wasm/TSF/</a> directory.
+                </dd>
+                <dt id="typescript-lib">typescript-lib</dt>
+                <dd>
+                    Tests how quickly Microsoft's <a href="http://www.typescriptlang.org">TypeScript</a> compiler can
+                    compile itself. More than anything else, this tests how quickly a JavaScript runtime can optimize
+                    a large pile of code.
+                    A similar version of this benchmark was previously published in Octane version 2.
+                    Source code: <a href="Octane/typescript.js">typescript.js</a>
+                </dd>
+                <dt id="typescript-octane" class="non-default">typescript-octane</dt>
+                <dd>
+                    The original <a href="https://developers.google.com/octane/">Octane</a> version of the TypeScript
+                    benchmark. It measures the time it takes the TypeScript compiler to compile a large input file,
+                    stressing the performance of a large-scale JavaScript application with complex data structures.
+                    Source code: <a href="Octane/typescript.js">typescript.js</a>
+                </dd>
+                <dt id="UniPoker">UniPoker</dt>
+                <dd>
+                    UniPoker is a 5 card stud poker simulation using the Unicode playing card code points,
+                    U+1F0A1..U+1F0DE,
+                    as the card representation in code. Scoring of hands is done with three regular expressions, one to
+                    check
+                    for a flush, one to check for straights, and one to check for pairs, three of a kind, and four of a
+                    kind.
+                    Source code: <a href="RexBench/UniPoker/poker.js">poker.js</a>
+                </dd>
+                <dt id="validatorjs">validatorjs</dt>
+                <dd>
+                    Measures the performance of the <a
+                        href="https://github.com/validatorjs/validator.js">validator.js</a> library by running a
+                    comprehensive test suite of string validation and sanitization.
+                    Source code: in the <a href="validatorjs/">validatorjs/</a> directory.
+                </dd>
+                <dt id="web-ssr">web-ssr</dt>
+                <dd>
+                    This benchmark measures the performance of server-side rendering (SSR) using <a
+                        href="https://reactjs.org/">React</a>. It renders a complex component tree to a string,
+                    simulating the workload of a web server generating HTML for a web page.
+                    Source code: in the <a href="web-ssr/">web-ssr/</a> directory.
+                </dd>
+                <dt id="WSL">WSL</dt>
+                <dd>
+                    WSL is an implementation of a GPU shading language written in JavaScript.
+                    WSL measures the time it takes to compile the WSL standard library and the time
+                    it takes to run through the WSL specification test suite.
+                    Source code: <a href="WSL">WSL</a>
+                </dd>
+                <dt id="zlib-wasm">zlib-wasm</dt>
+                <dd>
+                    This workload compresses and decompresses a WebAssembly binary file using the <a
+                        href="https://www.zlib.net/">zlib</a>
+                    library, compiled to WebAssembly via <a href="https://emscripten.org">Emscripten</a>.
+                    Source code: In the <a href="wasm/zlib/">wasm/zlib/</a> directory.
+                </dd>
+            </dl>
+
+            <p><a href="index.html" class="button">&larr; Return to Tests</a></p>
+        </article>
+    </main>
+
+    <script>
+        const isInBrowser = true;
+    </script>
+    <script src="utils/params.js"></script>
+    <script src="JetStreamDriver.js"></script>
+    <script>
+        (function () {
+            for (const benchmark of BENCHMARKS) {
+                let dt = document.getElementById(benchmark.name);
+                if (!dt) {
+                    continue;
+                }
+
+                if (benchmark.tags.has("disabled")) {
+                    dt.classList.add("non-default");
+                }
+
+                const nameLink = document.createElement("a");
+                nameLink.href = `index.html?test=${benchmark.name}`;
+                nameLink.className = "workload-link";
+                nameLink.textContent = dt.textContent;
+                dt.textContent = "";
+                dt.appendChild(nameLink);
+                                          
+                const tags = Array.from(benchmark.tags).sort();
+                for (const tag of tags) {
+                    if (tag === "all" || tag === "default") {
+                        continue;
+                    }
+                    const link = document.createElement("a");
+                    link.href = `index.html?tags=${tag}`;
+                    link.textContent = tag;
+                    link.className = "tag-link";
+                    dt.appendChild(link);
+                }
+            }
+        })();
+    </script>
+</body>
+</html>

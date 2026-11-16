@@ -1,0 +1,27 @@
+This tests removing multiple elements by RemoveFormat command.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS RemoveFormat on all of "hello" yields "hello"
+PASS RemoveFormat on all of "<i>hello</i> <u>world</u>" yields "hello world"
+PASS RemoveFormat on all of "<b><u>hello</u> world</b> <a href="http://webkit.org/"><em>WebKit</em></a>" yields "hello world <a href="http://webkit.org/">WebKit</a>"
+PASS RemoveFormat on second word of "<b><u>hello</u> world</b> <a href="http://webkit.org/"><em>WebKit</em></a>" yields "<b><u>hello</u> </b>world <a href="http://webkit.org/"><em>WebKit</em></a>"
+PASS RemoveFormat on second word of "<sub><tt>hello world WebKit</tt></sub>" yields "<sub><tt>hello </tt></sub>world <sub><tt>WebKit</tt></sub>"
+PASS RemoveFormat on second word of "<q><ins><var>hello wor</var>ld</ins> WebKit</q>" yields "<q><ins><var>hello </var></ins></q>world <q>WebKit</q>"
+PASS RemoveFormat on last word of "<b>hello <dfn>world <kbd>WebKit</kbd></dfn></b>" yields "<b>hello <dfn>world </dfn></b>WebKit"
+PASS RemoveFormat on second word of "<b>hello <dfn>world <kbd>WebKit</kbd></dfn></b>" yields "<b>hello </b>world <b><dfn><kbd>WebKit</kbd></dfn></b>"
+PASS RemoveFormat on first two words of "<code>hello <strong>world WebKit</storng></code>" yields "hello world <code><strong>WebKit</strong></code>"
+PASS RemoveFormat on first two words of "<acronym><tt><mark><samp>hello</samp></mark> world <sub>WebKit</sub></tt></acronym>" yields "<mark>hello</mark> world <acronym><tt><sub>WebKit</sub></tt></acronym>"
+PASS RemoveFormat on last two words of "<b><div>hello world</div></b><div>WebKit</div>" yields "<div><b>hello </b>world</div><div>WebKit</div>"
+PASS RemoveFormat on last two words of "<q><b><div>hello world</div></b>WebKit</q>" yields "<div><q><b>hello </b></q>world</div>WebKit"
+PASS RemoveFormat on second word of "<q><b><div>hello world</div></b>WebKit</q>" yields "<div><q><b>hello </b></q>world</div><q>WebKit</q>"
+PASS RemoveFormat on first line of "<b><div>hello</div>webkit</b>" yields "<div>hello</div><b>webkit</b>"
+PASS RemoveFormat on all of "<i style="font-weight:bold;">hello</i> <u>world</u>" yields "hello world"
+PASS RemoveFormat on second word of "<font color="red"><b style="font-size: large;"><u>hello</u> world</b> WebKit</font>" yields "<font color="red"><b style="font-size: large;"><u>hello</u> </b></font>world <font color="red">WebKit</font>"
+PASS RemoveFormat on second word of "<font size="5"><i><u style="font-size: small;">hello</u> world</i><font size="3"> WebKit</font></font>" yields "<font size="5"><i><u style="font-size: small;">hello</u> </i></font>world <font size="5"><font size="3">WebKit</font></font>"
+PASS RemoveFormat on second word of "<sup><div style="text-decoration: underline; font-size: large;">hello <dfn style="font-size: normal;">world</dfn></div> WebKit</sup>" yields "<div><sup><font size="4"><u>hello </u></font></sup>world</div><sup> WebKit</sup>"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

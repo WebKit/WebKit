@@ -1,0 +1,4 @@
+Dropping decoded frames and then decoding again must not leave a frame reading a cleared frame's backing store. The test passes if the web process survives.
+
+PASS
+

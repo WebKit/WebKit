@@ -1,0 +1,14 @@
+<script>
+window.internals.settings.setScreenCaptureEnabled(true);
+var streamPromise = null;
+window.internals.withUserGesture(() => {
+    streamPromise = navigator.mediaDevices.getDisplayMedia({ video: true });
+});
+streamPromise
+    .then(stream => {
+        stream.getTracks().forEach(track => track.stop());
+        window.parent.postMessage("granted", "*");
+    }).catch(error => {
+        window.parent.postMessage(error.name === "NotAllowedError" ? "denied" : `fail (${error.name})`, "*");
+    });
+</script>

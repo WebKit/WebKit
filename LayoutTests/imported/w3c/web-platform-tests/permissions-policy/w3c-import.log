@@ -1,0 +1,90 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/META.yml
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/README.md
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/bluetooth-allowed-by-permissions-policy-attribute-redirect-on-load.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/bluetooth-allowed-by-permissions-policy-attribute.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/bluetooth-allowed-by-permissions-policy.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/bluetooth-allowed-by-permissions-policy.https.sub.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/bluetooth-default-permissions-policy.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/bluetooth-disabled-by-permissions-policy.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/bluetooth-disabled-by-permissions-policy.https.sub.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/historical-feature-policy-header.html
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/historical-feature-policy-header.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/historical.html
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/historical.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/idlharness.window.js
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/navigate-to-blob.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/payment-allowed-by-permissions-policy-attribute-redirect-on-load.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/payment-allowed-by-permissions-policy-attribute.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/payment-allowed-by-permissions-policy.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/payment-allowed-by-permissions-policy.https.sub.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/payment-default-permissions-policy.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/payment-disabled-by-permissions-policy.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/payment-disabled-by-permissions-policy.https.sub.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/payment-extension-allowed-by-permissions-policy-attribute.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/payment-supported-by-permissions-policy.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/permissions-policy-frame-policy-allowed-for-all.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/permissions-policy-frame-policy-allowed-for-all.https.sub.html.sub.headers
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/permissions-policy-frame-policy-allowed-for-self.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/permissions-policy-frame-policy-allowed-for-self.https.sub.html.sub.headers
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/permissions-policy-frame-policy-allowed-for-some-override.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/permissions-policy-frame-policy-allowed-for-some-override.https.sub.html.sub.headers
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/permissions-policy-frame-policy-allowed-for-some.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/permissions-policy-frame-policy-allowed-for-some.https.sub.html.sub.headers
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/permissions-policy-frame-policy-disallowed-for-all.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/permissions-policy-frame-policy-disallowed-for-all.https.sub.html.sub.headers
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/permissions-policy-frame-policy-timing-iframe-camera.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/permissions-policy-frame-policy-timing.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/permissions-policy-header-policy-allowed-for-all.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/permissions-policy-header-policy-allowed-for-all.https.sub.html.sub.headers
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/permissions-policy-header-policy-allowed-for-malformed-wildcard.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/permissions-policy-header-policy-allowed-for-malformed-wildcard.https.sub.html.sub.headers
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/permissions-policy-header-policy-allowed-for-self.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/permissions-policy-header-policy-allowed-for-self.https.sub.html.sub.headers
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/permissions-policy-header-policy-allowed-for-some.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/permissions-policy-header-policy-allowed-for-some.https.sub.html.sub.headers
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/permissions-policy-header-policy-allowed-for-wildcard.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/permissions-policy-header-policy-allowed-for-wildcard.https.sub.html.sub.headers
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/permissions-policy-header-policy-declined.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/permissions-policy-header-policy-declined.https.sub.html.sub.headers
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/permissions-policy-header-policy-disallowed-for-all.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/permissions-policy-header-policy-disallowed-for-all.https.sub.html.sub.headers
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/permissions-policy-javascript-url-frame-policy.https.html
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/permissions-policy-nested-header-policy-allowed-for-all.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/permissions-policy-nested-header-policy-allowed-for-all.https.sub.html.sub.headers
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/permissions-policy-nested-header-policy-allowed-for-self.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/permissions-policy-nested-header-policy-allowed-for-self.https.sub.html.sub.headers
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/permissions-policy-nested-header-policy-disallowed-for-all.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/permissions-policy-nested-header-policy-disallowed-for-all.https.sub.html.sub.headers
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/permissions-policy-opaque-origin-history.https.html
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/permissions-policy-opaque-origin.https.html
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/picture-in-picture-allowed-by-permissions-policy-attribute-redirect-on-load.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/picture-in-picture-allowed-by-permissions-policy-attribute.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/picture-in-picture-allowed-by-permissions-policy.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/picture-in-picture-allowed-by-permissions-policy.https.sub.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/picture-in-picture-default-permissions-policy.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/picture-in-picture-disabled-by-permissions-policy.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/picture-in-picture-disabled-by-permissions-policy.https.sub.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/picture-in-picture-supported-by-permissions-policy.html
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/policy-extends-to-sandbox.html
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/private-state-token-issue-allowed-by-permissions-policy-attribute.tentative.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/private-state-token-issue-disabled-by-permissions-policy.tentative.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/private-state-token-issue-disabled-by-permissions-policy.tentative.https.sub.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/private-state-token-issue-enabled-by-permissions-policy.tentative.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/private-state-token-issue-enabled-by-permissions-policy.tentative.https.sub.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/private-state-token-issue-supported-by-permissions-policy.tentative.html

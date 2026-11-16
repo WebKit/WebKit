@@ -1,0 +1,49 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <script src="/resources/testharness.js"></script>
+    <script src="/resources/testharnessreport.js"></script>
+    <style>
+        body {
+            background: red;
+        }
+    </style>
+</head>
+<body>
+    <link rel="preload" as="style" href="resources/style.css">
+
+    <script>
+    window.addEventListener('load', function () {
+        var css = document.querySelectorAll('link[href*=".css"]');
+        for (var i = 0; i < css.length; ++i) {
+            css[i].setAttribute('rel', 'stylesheet');
+        }
+    });
+
+    function waitFor(duration)
+    {
+        return new Promise((resolve) => setTimeout(resolve, duration));
+    }
+
+    var counter = 10;
+    async function checkBackgroundColor()
+    {
+        if (--counter < 0) {
+            assert_unreached("test timed out");
+            return;
+        }
+        if (getComputedStyle(document.body).backgroundColor === "rgb(0, 128, 0)")
+            return;
+
+        await waitFor(10);
+        return checkBackgroundColor();
+    }
+
+    promise_test(async (test) => {
+        await checkBackgroundColor();
+        document.body.style.backgroundColor = "white";
+    }, "Check changing preload link to stylesheet link works");
+    </script>
+</body>
+</html>

@@ -1,0 +1,4 @@
+
+PASS Test that isConfigSupported() with orientation
+PASS Decode frames with orientation metadata
+

@@ -1,0 +1,68 @@
+PASS gpu process restart check canvas should be red
+PASS getError was expected value: NO_ERROR : Should be no errors from setup.
+PASS getError was expected value: NO_ERROR : Should be no errors from setup
+PASS should be green
+PASS getError was expected value: NO_ERROR : Should be no errors from setup
+PASS should be green
+PASS getError was expected value: NO_ERROR : Should be no errors from setup
+PASS should be green
+PASS getError was expected value: NO_ERROR : Should be no errors from setup
+PASS should be green
+PASS getError was expected value: NO_ERROR : Should be no errors from setup
+PASS should be green
+PASS getError was expected value: NO_ERROR : Should be no errors from setup
+PASS should be green
+PASS getError was expected value: NO_ERROR : Should be no errors from setup
+PASS should be green
+PASS getError was expected value: NO_ERROR : Should be no errors from setup
+PASS should be green
+PASS getError was expected value: NO_ERROR : Should be no errors from setup
+PASS should be green
+PASS getError was expected value: NO_ERROR : Should be no errors from setup
+PASS should be green
+PASS getError was expected value: NO_ERROR : Should be no errors from setup
+PASS should be green
+PASS getError was expected value: NO_ERROR : Should be no errors from setup
+PASS should be green
+PASS getError was expected value: NO_ERROR : Should be no errors from setup
+PASS should be green
+PASS getError was expected value: NO_ERROR : Should be no errors from setup
+PASS should be green
+PASS getError was expected value: NO_ERROR : Should be no errors from setup
+PASS should be green
+PASS getError was expected value: NO_ERROR : Should be no errors from setup
+PASS should be green
+PASS getError was expected value: NO_ERROR : Should be no errors from setup
+PASS should be green
+PASS getError was expected value: NO_ERROR : Should be no errors from setup
+PASS should be green
+PASS getError was expected value: NO_ERROR : Should be no errors from setup
+PASS should be green
+PASS getError was expected value: NO_ERROR : Should be no errors from setup
+PASS should be green
+PASS getError was expected value: NO_ERROR : Should be no errors from setup
+PASS should be green
+PASS getError was expected value: NO_ERROR : Should be no errors from setup
+PASS should be green
+PASS getError was expected value: NO_ERROR : Should be no errors from setup
+PASS should be green
+PASS getError was expected value: NO_ERROR : Should be no errors from setup
+PASS should be green
+PASS getError was expected value: NO_ERROR : Should be no errors from setup
+PASS should be green
+PASS getError was expected value: NO_ERROR : Should be no errors from setup
+PASS should be green
+PASS getError was expected value: NO_ERROR : Should be no errors from setup
+PASS should be green
+PASS getError was expected value: NO_ERROR : Should be no errors from setup
+PASS should be green
+PASS getError was expected value: NO_ERROR : Should be no errors from setup
+PASS should be green
+PASS getError was expected value: NO_ERROR : Should be no errors from setup
+PASS should be green
+PASS gpu process restart check canvas should be red
+PASS gpu process restart check canvas should be green
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

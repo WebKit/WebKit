@@ -1,0 +1,25 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ ModelElementEnabled=true ] -->
+<html>
+<head>
+<title>&lt;model> allowed from same origin</title>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script>
+    if (window.testRunner)
+        testRunner.waitUntilDone();
+
+    window.addEventListener('load', async () => {
+        const model = document.getElementById("allowed-model");
+        assert_true(!!model, "Model element should exist");
+        await model.ready;
+        testRunner.notifyDone();
+    }, false);
+</script>
+</head>
+<body>
+    <div>Verify that the model is allowed because the src's URL and this document have the same origin</div>
+    <model id='allowed-model'>
+        <source src='http://127.0.0.1:8000/security/resources/model-access-control.py?file=cube.usdz'/>
+    </model>
+</body>
+</html>

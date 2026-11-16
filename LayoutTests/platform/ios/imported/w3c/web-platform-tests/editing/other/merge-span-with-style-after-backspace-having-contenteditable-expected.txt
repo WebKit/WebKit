@@ -1,0 +1,7 @@
+Back
+
+space
+
+
+FAIL waiting for command to execute assert_equals: Style is not preserved for the span after pressing backspace in contenteditable expected "<h1><span style=\"background-color:red;\">Back</span><span style=\"background-color: red;\">space</span></h1>" but got "<h1><span style=\"background-color:red;\">Back</span></h1>\n<h1><span style=\"background-color: red;\" id=\"space\">space</span></h1>"
+

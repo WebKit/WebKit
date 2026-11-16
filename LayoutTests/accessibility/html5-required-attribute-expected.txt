@@ -1,0 +1,10 @@
+This tests that the required attribute is returned correctly through accessibility.
+
+PASS: textInput.isRequired === true
+PASS: textInput.isRequired === false
+PASS: fileInput.isRequired === true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

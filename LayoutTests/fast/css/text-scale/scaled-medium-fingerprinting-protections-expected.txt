@@ -1,0 +1,4 @@
+
+PASS Category L: content=scale does not scale font sizes with fingerprinting protections
+PASS Category XXXL: content=scale does not scale font sizes with fingerprinting protections
+

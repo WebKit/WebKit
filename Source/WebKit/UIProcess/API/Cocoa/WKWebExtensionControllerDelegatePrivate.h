@@ -1,0 +1,227 @@
+/*
+ * Copyright (C) 2022-2024 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#import <WebKit/WKWebExtensionControllerDelegate.h>
+
+@class _WKWebExtensionNotification;
+@class _WKWebExtensionSidebar;
+@protocol _WKWebExtensionBookmark;
+
+#if 0 // API_WEBKIT_ADDITIONS_REPLACEMENT
+#import <WebKitAdditions/WKWebExtensionControllerDelegatePrivateForwardDeclarations.h>
+#endif
+
+/*! @abstract Indicates the side of the browser window on which the extension sidebar is displayed. */
+typedef NS_ENUM(NSInteger, _WKWebExtensionSidebarSide) {
+    _WKWebExtensionSidebarSideLeft,
+    _WKWebExtensionSidebarSideRight,
+} WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
+
+
+WK_HEADER_AUDIT_BEGIN(nullability, sendability)
+
+WK_API_AVAILABLE(macos(15.4), ios(18.4), visionos(2.4))
+@protocol WKWebExtensionControllerDelegatePrivate <WKWebExtensionControllerDelegate>
+@optional
+
+/*!
+ @abstract Delegate for the `browser.test.assertTrue()`, `browser.test.assertFalse()`, `browser.test.assertThrows()`, and `browser.test.assertRejects()`  JavaScript testing APIs.
+ @discussion Default implementation logs a message to the system console when `result` is `NO`.
+ */
+- (void)_webExtensionController:(WKWebExtensionController *)controller recordTestAssertionResult:(BOOL)result withMessage:(NSString *)message andSourceURL:(NSString *)sourceURL lineNumber:(unsigned)lineNumber;
+
+/*!
+ @abstract Delegate for the `browser.test.assertEq()` and `browser.test.assertDeepEq()` JavaScript testing APIs.
+ @discussion Default implementation logs a message to the system console when `result` is `NO`.
+ */
+- (void)_webExtensionController:(WKWebExtensionController *)controller recordTestEqualityResult:(BOOL)result expectedValue:(NSString *)expectedValue actualValue:(NSString *)actualValue withMessage:(NSString *)message andSourceURL:(NSString *)sourceURL lineNumber:(unsigned)lineNumber;
+
+/*!
+ @abstract Delegate for the `browser.test.log()` JavaScript testing API.
+ @discussion Default implementation always logs the message to the system console.
+ */
+- (void)_webExtensionController:(WKWebExtensionController *)controller logTestMessage:(NSString *)message andSourceURL:(NSString *)sourceURL lineNumber:(unsigned)lineNumber;
+
+/*!
+ @abstract Delegate for the `browser.test.sendMessage()` JavaScript testing API.
+ @discussion Default implementation always logs the message and argument to the system console. Test harnesses should use this to process the received message and perform actions based on its contents.
+ */
+- (void)_webExtensionController:(WKWebExtensionController *)controller receivedTestMessage:(NSString *)message withArgument:(id)argument andSourceURL:(NSString *)sourceURL lineNumber:(unsigned)lineNumber;
+
+/*!
+ @abstract Delegate for the `browser.test.addTest()` JavaScript testing API.
+ @discussion Default implementation logs a message to the system console that a test was added with `testName`. Test harnesses should use this to perform actions when a new test has been added to the queue.
+ */
+- (void)_webExtensionController:(WKWebExtensionController *)controller recordTestAddedWithName:(NSString *)testName andSourceURL:(NSString *)sourceURL lineNumber:(unsigned)lineNumber;
+
+/*!
+ @abstract Delegate for the `browser.test.addTest()` JavaScript testing API.
+ @discussion Default implementation logs a message to the system console that a test was started with `testName`. Test harnesses should use this to perform actions at the start of a test.
+ */
+- (void)_webExtensionController:(WKWebExtensionController *)controller recordTestStartedWithName:(NSString *)testName andSourceURL:(NSString *)sourceURL lineNumber:(unsigned)lineNumber;
+
+/*!
+ @abstract Delegate for the `browser.test.notifyPass()` and `browser.test.notifyFail()` JavaScript testing APIs.
+ @discussion Default implementation logs a message to the system console when `result` is `NO`. Test harnesses should use this to exit the run loop and record a test pass or failure.
+ @note This is also called with the test results of a test that was added with `browser.test.addTest()`.
+ */
+- (void)_webExtensionController:(WKWebExtensionController *)controller recordTestFinishedWithName:(NSString *)testName result:(BOOL)result message:(NSString *)message andSourceURL:(NSString *)sourceURL lineNumber:(unsigned)lineNumber;
+
+/*!
+ @abstract Delegate notification about the creation of the background web view in the web extension context.
+ @discussion The app can use this to setup additional properties on the web view before it is loaded. Default implementation does nothing.
+ */
+- (void)_webExtensionController:(WKWebExtensionController *)controller didCreateBackgroundWebView:(WKWebView *)webView forExtensionContext:(WKWebExtensionContext *)context;
+
+/*!
+ @abstract Called when an extension context requests one or more tabs be moved to a new position.
+ @param controller The web extension controller that is managing the extension.
+ @param tabs The tabs to move, in the order they should appear at the destination.
+ @param index The zero-based index position to move the tabs to within the destination window. The first tab is
+ moved to this index and the remaining tabs follow it in order. If \c index is greater than or equal to the number
+ of tabs in the destination window, the tabs should be moved to the last position.
+ @param window The destination window. All of the provided tabs are currently in this window, or are being moved into it.
+ @param extensionContext The context in which the web extension is running.
+ @param completionHandler A block that must be called upon completion. It takes a single error argument,
+ which should be provided if any errors occurred.
+ @discussion This method should be implemented by the app to handle requests to move tabs, e.g. via `browser.tabs.move()`. The app is
+ responsible for the final placement, including honoring any constraints such as keeping pinned tabs ahead of unpinned tabs.
+ The provided tabs are always in a single destination window, so an app may move them together as one selection.
+ */
+- (void)_webExtensionController:(WKWebExtensionController *)controller moveTabs:(NSArray<id <WKWebExtensionTab>> *)tabs toIndex:(NSUInteger)index inWindow:(id <WKWebExtensionWindow>)window forExtensionContext:(WKWebExtensionContext *)extensionContext completionHandler:(void (^)(NSError * _Nullable error))completionHandler NS_SWIFT_NAME(webExtensionController(_:move:toIndex:in:for:completionHandler:));
+
+/*!
+ @abstract Called when a sidebar is requested to be opened.
+ @param controller The web extension controller initiating the request.
+ @param sidebar The sidebar which should be displayed.
+ @param context The context within which the web extension is running.
+ @param completionHandler A block to be called once the sidebar has been opened.
+ @discussion This method is called in response to the extension's scripts programmatically requesting the sidebar to open. Implementing this method
+ is needed if the app intends to support programmatically showing the sidebar from the extension. The sidebar pane is shown or hidden per window, so
+ it should stay open as the user switches tabs; the app is responsible for displaying whichever sidebar applies to the tab which becomes active, which it
+ can obtain with ``-[WKWebExtensionContext sidebarForTab:]``.
+ */
+- (void)_webExtensionController:(WKWebExtensionController * _Nonnull)controller presentSidebar:(_WKWebExtensionSidebar * _Nonnull)sidebar forExtensionContext:(WKWebExtensionContext * _Nonnull)context completionHandler:(void (^)(NSError * _Nullable error))completionHandler;
+
+/*!
+ @abstract Called when a sidebar is requested to be closed.
+ @param controller The web extension controller initiating the request.
+ @param sidebar The sidebar which should be closed.
+ @param context The context within which the web extension is running.
+ @param completionHandler A block to be called once the sidebar has been closed.
+ @discussion This method is called in response to the extension's scripts programmatically requesting the sidebar to close. Implementing this method is
+ needed if the app intends to support programmatically closing the sidebar from the extension. This should close the sidebar's pane in the sidebar's
+ browser window, if the given sidebar object is currently being displayed.
+ */
+- (void)_webExtensionController:(WKWebExtensionController * _Nonnull)controller closeSidebar:(_WKWebExtensionSidebar * _Nonnull)sidebar forExtensionContext:(WKWebExtensionContext * _Nonnull)context completionHandler:(void (^)(NSError * _Nullable error))completionHandler;
+
+/*!
+ @abstract Called when a sidebar's properties have changed and it should be re-read.
+ @param controller The web extension controller initiating the request.
+ @param sidebar The sidebar whose properties changed.
+ @param context The context within which the web extension is running.
+ @discussion Use ``associatedTab`` and ``associatedWindow`` to tell which tabs are affected: a sidebar specific to a tab
+ affects only that tab, while one which is not affects every tab in ``associatedWindow`` which the extension has not
+ singled out. This method is not called when a tab ceases to have a tab-specific override; instead, see:
+ ``-_webExtensionController:didInvalidateSidebar:forExtensionContext:``.
+ */
+- (void)_webExtensionController:(WKWebExtensionController * _Nonnull)controller didUpdateSidebar:(_WKWebExtensionSidebar * _Nonnull)sidebar forExtensionContext:(WKWebExtensionContext * _Nonnull)context;
+
+/*!
+ @abstract Called when a sidebar is no longer valid and should stop being displayed.
+ @param controller The web extension controller initiating the request.
+ @param sidebar The sidebar which is no longer valid.
+ @param context The context within which the web extension is running.
+ @discussion This is sent when a tab stops having a sidebar of its own. The given ``sidebar`` is the one
+ being discarded; stop displaying it, and obtain the sidebar which now applies to its ``associatedTab``
+ with ``-[WKWebExtensionContext sidebarForTab:]``.
+ */
+- (void)_webExtensionController:(WKWebExtensionController * _Nonnull)controller didInvalidateSidebar:(_WKWebExtensionSidebar * _Nonnull)sidebar forExtensionContext:(WKWebExtensionContext * _Nonnull)context;
+
+/*!
+ @abstract Called to determine which side of the browser window the extension sidebar is displayed on.
+ @param controller The web extension controller initiating the request.
+ @param context The context within which the web extension is running.
+ @return The side of the window on which the sidebar pane is shown.
+ */
+- (_WKWebExtensionSidebarSide)_webExtensionController:(WKWebExtensionController * _Nonnull)controller sidebarSideForExtensionContext:(WKWebExtensionContext * _Nonnull)context;
+
+/*!
+ @abstract Called when the top-level bookmarks and folders are needed.
+ @param controller The web extension controller initiating the request.
+ @param context The context within which the web extension is running.
+ @param completionHandler A block that must be called upon completion. It takes an array of objects conforming to
+ ``_WKWebExtensionBookmark`` and an error argument, which should be provided if any errors occurred.
+ @discussion This method should be implemented by the app to provide the top-level bookmarks and folders. Calls to
+ `browser.bookmarks` read and change bookmarks through the returned objects and their children. Default implementation
+ provides no bookmarks.
+ */
+- (void)_webExtensionController:(WKWebExtensionController *)controller bookmarksForExtensionContext:(WKWebExtensionContext *)context completionHandler:(void (^)(NSArray<id<_WKWebExtensionBookmark>> * _Nullable, NSError * _Nullable))completionHandler;
+
+/*!
+ @abstract Called when an extension requests that a notification be presented to the user.
+ @param controller The web extension controller initiating the request.
+ @param notification The notification that should be presented.
+ @param context The context within which the web extension is running.
+ @param completionHandler A block that must be called upon completion. It takes a single error argument, which should be provided if the notification could not be presented.
+ @discussion This method is called in response to `browser.notifications.create()`. The app is responsible for displaying the notification using its native notification facilities and for reporting the user's interaction back to WebKit. Default implementation does nothing.
+ */
+- (void)_webExtensionController:(WKWebExtensionController *)controller presentNotification:(_WKWebExtensionNotification *)notification forExtensionContext:(WKWebExtensionContext *)context completionHandler:(void (^)(NSError * _Nullable error))completionHandler;
+
+/*!
+ @abstract Called when an extension updates the properties of an already-presented notification.
+ @param controller The web extension controller initiating the request.
+ @param notification The notification whose properties have changed and should be re-presented.
+ @param context The context within which the web extension is running.
+ @param completionHandler A block that must be called upon completion. It takes a single error argument, which should be provided if the notification could not be updated.
+ @discussion This method is called in response to `browser.notifications.update()`. WebKit merges the changed properties before calling this method, so the provided notification always reflects the notification's current state. Default implementation does nothing.
+ */
+- (void)_webExtensionController:(WKWebExtensionController *)controller updateNotification:(_WKWebExtensionNotification *)notification forExtensionContext:(WKWebExtensionContext *)context completionHandler:(void (^)(NSError * _Nullable error))completionHandler;
+
+/*!
+ @abstract Called when an extension clears a previously-presented notification.
+ @param controller The web extension controller initiating the request.
+ @param notification The notification that should be dismissed.
+ @param context The context within which the web extension is running.
+ @param completionHandler A block that must be called upon completion. It takes a single error argument, which should be provided if the notification could not be cleared.
+ @discussion This method is called in response to `browser.notifications.clear()`, or when a notification is otherwise no longer needed. The app should dismiss the corresponding notification if it is still visible. Default implementation does nothing.
+ */
+- (void)_webExtensionController:(WKWebExtensionController *)controller clearNotification:(_WKWebExtensionNotification *)notification forExtensionContext:(WKWebExtensionContext *)context completionHandler:(void (^)(NSError * _Nullable error))completionHandler;
+
+/*!
+ @abstract Called to determine whether an extension is currently permitted to present notifications.
+ @param controller The web extension controller initiating the request.
+ @param context The context within which the web extension is running.
+ @param completionHandler A block that must be called upon completion. It takes a boolean indicating whether the extension may present notifications, and an optional error argument.
+ @discussion This method is called in response to `browser.notifications.getPermissionLevel()`. Default implementation returns `NO`.
+ */
+- (void)_webExtensionController:(WKWebExtensionController *)controller mayPresentNotificationsForExtensionContext:(WKWebExtensionContext *)context completionHandler:(void (^)(BOOL mayPresent, NSError * _Nullable error))completionHandler;
+@end
+
+WK_HEADER_AUDIT_END(nullability, sendability)
+
+#if 0 // API_WEBKIT_ADDITIONS_REPLACEMENT
+#import <WebKitAdditions/WKWebExtensionControllerDelegatePrivateAdditions.h>
+#endif

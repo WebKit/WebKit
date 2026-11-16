@@ -1,0 +1,24 @@
+This test ensures aria-keyshortcuts is exposed to accessibility correctly.
+
+PASS: axItem1.isAttributeSupported('AXKeyShortcutsValue') === false
+PASS: axItem2.isAttributeSupported('AXKeyShortcutsValue') === true
+PASS: axItem3.isAttributeSupported('AXKeyShortcutsValue') === true
+PASS: axItem1.stringAttributeValue('AXKeyShortcutsValue') === ''
+PASS: axItem2.stringAttributeValue('AXKeyShortcutsValue') === 'Shift+2'
+PASS: axItem3.stringAttributeValue('AXKeyShortcutsValue') === 'Shift+3 Option+4'
+Update aria-keyshortcuts to Command+5 for #test1
+PASS: axItem1.isAttributeSupported('AXKeyShortcutsValue') === true
+PASS: axItem1.stringAttributeValue('AXKeyShortcutsValue') === 'Command+5'
+Remove aria-keyshortcuts for #test2
+PASS: axItem2.isAttributeSupported('AXKeyShortcutsValue') === false
+PASS: axItem2.stringAttributeValue('AXKeyShortcutsValue') === ''
+Update aria-keyshortcuts to Shift+Command+1 for #test3
+PASS: axItem3.isAttributeSupported('AXKeyShortcutsValue') === true
+PASS: axItem3.stringAttributeValue('AXKeyShortcutsValue') === 'Shift+Command+1'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+X
+X
+X

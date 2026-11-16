@@ -1,0 +1,7 @@
+
+PASS prefer-targeted-element-positioned
+PASS prefer-targeted-element-positioned 1
+PASS prefer-targeted-element-positioned 2
+PASS prefer-targeted-element-positioned 3
+PASS prefer-targeted-element-positioned 4
+

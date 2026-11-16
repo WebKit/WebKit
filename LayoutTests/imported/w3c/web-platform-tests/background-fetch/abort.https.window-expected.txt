@@ -1,0 +1,5 @@
+
+PASS Aborting the same registration twice fails
+PASS Calling BackgroundFetchRegistration.abort sets the correct fields and responses are still available
+PASS An aborted fetch throws a DOM exception when accessing an incomplete record
+

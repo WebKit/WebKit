@@ -1,0 +1,10 @@
+// Copyright 2019 Google LLC
+// Use of this source code is governed by a BSD-style license that can be found in the LICENSE file.
+#include "tools/fiddle/examples.h"
+REG_FIDDLE(RGBA4f_notequal1_operator, 256, 256, true, 0) {
+void draw(SkCanvas* canvas) {
+    SkColor4f colorGray = { .5, .5, .5, 1 };
+    SkColor4f colorNamedGray = SkColor4f::FromColor(SK_ColorGRAY);
+    SkDebugf("colorGray %c= colorNamedGray ", colorGray != colorNamedGray ? '!' : '=');
+}
+}  // END FIDDLE

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p id="description">
+This tests that the WebContent process does not crash when window deactivation
+fires a change event on a focused form control whose onchange handler removes
+focus from that control.
+</p>
+<input id="input" autofocus onchange="this.blur()">
+<div id="result"></div>
+<script>
+if (!window.testRunner || !window.eventSender)
+    document.getElementById("result").textContent = "This test requires testRunner and eventSender.";
+else {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+
+    const input = document.getElementById("input");
+    input.focus();
+
+    // Simulated keystroke marks the input as dirty.
+    eventSender.keyDown("a");
+
+    // Triggers FocusController::setActiveInternal(false) which
+    // leads to dispatchEventsOnWindowAndFocusedElement().
+    testRunner.setWindowIsKey(false);
+
+    setTimeout(() => {
+        document.getElementById("result").textContent = "PASS - did not crash";
+        testRunner.notifyDone();
+    }, 0);
+}
+</script>
+</body>
+</html>

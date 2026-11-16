@@ -1,0 +1,21 @@
+Test that a stack trace delivered on the page target resolves scripts owned by the main frame target, and scripts owned by no other target.
+
+
+
+== Running test suite: SiteIsolation.Debugger.StackTracePageTarget
+-- Running test case: SiteIsolation.Debugger.StackTracePageTarget.ResolvesMainFrameScript
+PASS: Should find the main frame's target.
+PASS: Stack trace should contain the eval'd function.
+PASS: Stack trace should be resolved against the page target.
+PASS: The eval'd function's frame should not be treated as native code.
+PASS: The eval'd function's frame should have a source location.
+PASS: The eval'd function's script should have no URL, so only its identifier can resolve it.
+PASS: The page target should not own the script.
+PASS: The main frame target should own the script.
+PASS: Without `deliveredOnTarget`, the page target should not fall back to the main frame target.
+
+-- Running test case: SiteIsolation.Debugger.StackTracePageTarget.OnlyConsultsMainFrameTarget
+PASS: Should find the cross-origin iframe's target.
+PASS: Cross-origin frame target should have the debugger-frame-script.js script.
+PASS: Each cross-origin script identifier should resolve from the page target only to the main frame target's script with that identifier, if any.
+

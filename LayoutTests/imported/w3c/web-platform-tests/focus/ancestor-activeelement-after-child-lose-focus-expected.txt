@@ -1,0 +1,4 @@
+
+
+PASS Ancestor's activeElement should be cleared when child loses focus
+

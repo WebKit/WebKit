@@ -1,0 +1,3 @@
+
+PASS Integer interpolation should be rounded towards positive infinity
+

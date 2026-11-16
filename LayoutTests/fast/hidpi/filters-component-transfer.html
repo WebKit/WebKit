@@ -1,0 +1,18 @@
+<script src="resources/ensure-hidpi.js"></script>
+<style>
+    #box {
+        width: 100px;
+        height: 100px;
+        background-color: green;
+        filter: url("#a");
+    }
+</style>
+<body>
+    <div id="box"></div>
+    <svg>
+        <filter id="a">
+            <feComponentTransfer/>
+            <feGaussianBlur stdDeviation="0"/>
+        </filter>
+    </svg>
+</body>

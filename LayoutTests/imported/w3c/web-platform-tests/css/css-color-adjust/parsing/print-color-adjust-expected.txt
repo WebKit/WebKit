@@ -1,0 +1,6 @@
+
+PASS e.style['print-color-adjust'] = "exact" should set the property value
+PASS e.style['print-color-adjust'] = "economy" should set the property value
+PASS e.style['color-adjust'] = "exact" should set the property value
+PASS e.style['color-adjust'] = "economy" should set the property value
+

@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+/* Viewport units make Style::Extractor::computeStyle() take the
+   ForcedLayout::ParentDocument path, which synchronously lays out the owner
+   document while this document is inside Document::implicitClose(). */
+body { width: 10vw; }
+</style>
+</head>
+<body>
+<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20">
+    <rect id="target" width="10" height="10" fill="green" fill-opacity="0.5">
+        <!-- fill-opacity is a presentation attribute mapped to a CSS property, so
+             starting this animation reads the base value through
+             Style::Extractor, which is what forces the owner document's layout. -->
+        <animate attributeName="fill-opacity" from="0" to="1" dur="4s" begin="0s" fill="freeze"/>
+    </rect>
+</svg>
+</body>
+</html>

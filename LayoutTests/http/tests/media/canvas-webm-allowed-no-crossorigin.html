@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../../../resources/js-test-pre.js"></script>
+    <script src="../security/resources/canvas-video-crossorigin.js"></script>
+</head>
+<body>
+<pre id="console"></pre>
+<script>
+    description("Ensure that a canvas is not tainted by a same-origin WebM video when the crossorigin attribute is not set.");
+
+    function test()
+    {
+        testDataRetrievalAllowed();
+        finishJSTest();
+    }
+
+    var video = document.createElement("video");
+    video.addEventListener("loadeddata", test);
+
+    video.src = "/media/resources/serve_video.py.webm?type=video/webm&name=../media-source/webm/test.webm";
+
+    window.jsTestIsAsync = true;
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1,0 +1,12 @@
+DOM:
+    Tree:
+        Node:
+            - Node_firstChild
+            - Node_lastChild
+            - Node_parentNode
+            - Node_nextSibling
+            - Node_previousSibling
+            - Node_ownerDocument
+        Document:
+            - Document_documentElement
+            - Document_body

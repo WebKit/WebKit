@@ -1,0 +1,25 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ SpatialPortalEnabled=false ] -->
+<html>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<body>
+<script>
+'use strict';
+
+test(t => {
+    const element = document.body.appendChild(document.createElement("div"));
+    t.add_cleanup(() => element.remove());
+
+    for (const value of ["auto", "none", '"studio"']) {
+        element.style.setProperty("environment-map", value);
+        assert_false(CSS.supports("environment-map", value), `CSS.supports("${value}")`);
+        assert_equals(element.style.getPropertyValue("environment-map"), "", `"${value}" is not accepted`);
+    }
+
+    assert_equals(getComputedStyle(element).getPropertyValue("environment-map"), "", "not exposed by getComputedStyle");
+    assert_equals(getComputedStyle(element).environmentMap, undefined, "no CSSOM attribute");
+}, "environment-map is unavailable when the spatial portal feature is off");
+
+</script>
+</body>
+</html>

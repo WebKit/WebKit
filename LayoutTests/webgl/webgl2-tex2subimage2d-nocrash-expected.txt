@@ -1,0 +1,11 @@
+Test that calls to texSubImage2D with bad arguments don't crash.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+TEST COMPLETE: 2 PASS, 0 FAIL
+
+PASS Did not crash.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,8 @@
+
+PASS Ed25519 preserves a leading-zero private key
+PASS Ed25519 preserves an all-zero private key
+PASS Ed25519 preserves a leading-zero public key
+PASS X25519 preserves a leading-zero private key
+PASS X25519 preserves an all-zero private key
+PASS X25519 preserves a leading-zero public key
+

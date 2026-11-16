@@ -1,0 +1,5 @@
+This paragraph should have a green background because its title attribute contains "bar"
+
+
+PASS p[title*='bar'] matches
+

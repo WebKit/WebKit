@@ -1,0 +1,18 @@
+
+PASS :getCompilationInfo_returns:valid=true;name="ascii"
+PASS :getCompilationInfo_returns:valid=true;name="unicode"
+PASS :getCompilationInfo_returns:valid=false;name="ascii"
+PASS :getCompilationInfo_returns:valid=false;name="unicode"
+PASS :getCompilationInfo_returns:valid=false;name="carriage-return"
+PASS :getCompilationInfo_returns:valid=false;name="unicode-multi-byte-characters"
+PASS :line_number_and_position:valid=false;name="ascii"
+PASS :line_number_and_position:valid=false;name="unicode"
+PASS :line_number_and_position:valid=false;name="carriage-return"
+PASS :line_number_and_position:valid=false;name="unicode-multi-byte-characters"
+PASS :offset_and_length:valid=true;name="ascii"
+PASS :offset_and_length:valid=true;name="unicode"
+PASS :offset_and_length:valid=false;name="ascii"
+PASS :offset_and_length:valid=false;name="unicode"
+PASS :offset_and_length:valid=false;name="carriage-return"
+PASS :offset_and_length:valid=false;name="unicode-multi-byte-characters"
+

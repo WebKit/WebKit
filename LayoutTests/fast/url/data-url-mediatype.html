@@ -1,0 +1,28 @@
+<script>
+  if (window.testRunner) {
+      testRunner.dumpAsText();
+      testRunner.waitUntilDone();
+  }
+
+  async function runTest() {
+      const mimeTypes = [
+          "audio/mpegURL",
+          "video/mpegURL",
+          "application/x-mpegurl",
+          "vnd.apple.mpegurl",
+          "text/plain",
+          "te#xt/plain"
+      ];
+      for (const mimeType of mimeTypes) {
+	  try {
+              let response = await fetch("data:" + mimeType + ",text#fragment");
+              let text = await response.text();
+              alert(mimeType + " " + text);
+	  } catch (e) {
+	      alert("caught error with mime type " + mimeType);
+	  }
+      }
+      if (window.testRunner) { testRunner.notifyDone(); }
+  }
+  runTest();
+</script>

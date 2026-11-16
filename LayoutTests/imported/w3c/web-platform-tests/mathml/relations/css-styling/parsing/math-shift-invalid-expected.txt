@@ -1,0 +1,5 @@
+
+PASS e.style['math-shift'] = "auto" should not set the property value
+PASS e.style['math-shift'] = "invalid" should not set the property value
+PASS e.style['math-shift'] = "normal compact" should not set the property value
+

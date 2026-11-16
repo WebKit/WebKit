@@ -1,0 +1,19 @@
+<script src="push-api-test-pre.js"></script>
+<script src="subscribe-tests.js"></script>
+<script>
+navigator.serviceWorker.register("subscribe-worker.js", { }).then(async (registration) => {
+    try {
+        await waitForState(registration.installing, "activated");
+        await testServiceWorkerPermissionState(registration, 'prompt');
+        await testDocumentPermissionState(registration, 'prompt');
+        await testServiceWorkerSubscribe(registration, 'NotAllowedError');
+        await testDocumentSubscribeWithoutUserGesture(registration, 'NotAllowedError');
+        await testDocumentSubscribeWithUserGesture(registration, 'NotAllowedError');
+    } catch (e) {
+        log(`FAIL: unexpected exception ${e}`);
+    } finally {
+        await registration.unregister();
+        finishPushAPITest();
+    }
+});
+</script>

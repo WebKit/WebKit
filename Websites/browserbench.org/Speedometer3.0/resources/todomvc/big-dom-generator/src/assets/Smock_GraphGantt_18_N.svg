@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" height="18" viewBox="0 0 18 18" width="18">
+  <defs>
+    <style>
+      .fill {
+        fill: #464646;
+      }
+    </style>
+  </defs>
+  <title>S GraphGantt 18 N</title>
+  <rect id="Canvas" fill="#ff13dc" opacity="0" width="18" height="18" /><rect class="fill" height="2" rx="0.5" width="4" />
+  <rect class="fill" height="2" rx="0.5" width="9" x="3" y="3" />
+  <rect class="fill" height="2" rx="0.5" width="4" x="5" y="6" />
+  <rect class="fill" height="2" rx="0.5" width="3" x="7" y="9" />
+  <rect class="fill" height="2" rx="0.5" width="8" x="7" y="12" />
+  <rect class="fill" height="2" rx="0.5" width="9" x="9" y="15" />
+</svg>

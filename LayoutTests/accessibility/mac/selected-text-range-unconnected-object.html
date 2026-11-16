@@ -1,0 +1,61 @@
+<html>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+<body>
+    
+<input type="text" id="input" value="Hello" style="font-family: sans-serif">
+
+<script>
+var output = "This tests that the selected text marker range is valid when it references an unconnected node that changes.\n\n"
+
+function textMarkerRangeString(textMarkerRange, root) {
+    const startMarker = root.startTextMarkerForTextMarkerRange(textMarkerRange);
+    const endMarker = root.endTextMarkerForTextMarkerRange(textMarkerRange);
+
+    const startElement = root.accessibilityElementForTextMarker(startMarker);
+    const endElement = root.accessibilityElementForTextMarker(endMarker);
+
+    return `Text Marker: [Length: ${root.textMarkerRangeLength(textMarkerRange)}]\n\tSTART: ${startElement ? startElement.role : "NULL"}\n\tEND: ${endElement ? endElement.role : "NULL"}\n\n`;
+}
+
+if (window.accessibilityController && window.textInputController) {
+    window.jsTestIsAsync = true;
+    let input = document.getElementById("input");
+    input.focus();
+
+    let root = accessibilityController.rootElement.childAtIndex(0);
+
+    var selectedTextMarkerRange;
+    let textInput = accessibilityController.focusedElement;
+    setTimeout(async function() {
+        input.select();
+        await waitFor(() => {
+            selectedTextMarkerRange = textInput.selectedTextMarkerRange();
+            return root.textMarkerRangeLength(selectedTextMarkerRange) == 5;
+
+        });
+        output += textMarkerRangeString(selectedTextMarkerRange, root);
+        output += `Text Marker Range Attributed Text: ${textInput.attributedStringForTextMarkerRange(selectedTextMarkerRange)}\n\n`;
+        
+        input.focus();
+        output += "Inserting 'world'\n";
+        
+        // Move insertion point to end of input to append text without creating a new static text object.
+        input.setSelectionRange(5, 5);
+        textInput.insertText(' world');
+    
+        input.select();
+        await waitFor(() => {
+            selectedTextMarkerRange = textInput.selectedTextMarkerRange();
+            return root.textMarkerRangeLength(selectedTextMarkerRange) == 11;
+        });
+        output += textMarkerRangeString(selectedTextMarkerRange, root);
+        output += `Text Marker Range Attributed Text: ${textInput.attributedStringForTextMarkerRange(selectedTextMarkerRange)}\n\n`;
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

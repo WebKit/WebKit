@@ -1,0 +1,12 @@
+Tests that clicking a non-focusable area of a cross-origin iframe blurs the focused element in the main frame.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS outerInputBlurred is true
+PASS outerInputFocusedOut is true
+PASS document.activeElement.tagName is "IFRAME"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

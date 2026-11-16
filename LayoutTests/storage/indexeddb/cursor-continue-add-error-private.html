@@ -1,0 +1,46 @@
+<!-- webkit-test-runner [ useEphemeralSession=true ] -->
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+<script src="resources/shared.js"></script>
+</head>
+<body>
+<script>
+description("Adding record fails due to index uniqueness during cursor iteration.");
+
+function prepareDatabase()
+{
+    database = event.target.result;
+    transaction = event.target.transaction;
+    // Transaction will be aborted due to failed request.
+    transaction.onabort = finishJSTest;
+
+    objectStore = database.createObjectStore('records', {autoIncrement: true});
+    objectStore.add({userid:10, score:100}).onerror = unexpectedErrorCallback;
+
+    // Different users can have same score.
+    scoreIndex = objectStore.createIndex('index1', 'score', {unique: false});
+    // One user can only have one record.
+    userIndex = objectStore.createIndex('index2', 'userid', {unique: true});
+
+    evalAndLog("cursorRequest = scoreIndex.openCursor()");
+    cursorRequest.onsuccess = (event) => {
+        evalAndLog("cursor = event.target.result");
+        if (!cursor)
+            return;
+
+        shouldBe("cursor.key", "100");
+
+        // This insertion should fail because user cannot have two records.
+        addRequest = objectStore.add({userid:10, score:100});
+        addRequest.onsuccess = unexpectedSuccessCallback;
+        addRequest.onerror = (event) => {
+            evalAndLog("cursor.continue()");
+        }
+    }
+}
+
+indexedDBTest(prepareDatabase);
+</script>
+</body>
+</html>

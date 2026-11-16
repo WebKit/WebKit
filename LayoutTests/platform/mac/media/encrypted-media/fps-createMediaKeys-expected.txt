@@ -1,0 +1,6 @@
+RUN(promise = navigator.requestMediaKeySystemAccess("com.apple.fps", capabilities))
+Promise resolved OK
+RUN(promise = access.createMediaKeys())
+Promise resolved OK
+END OF TEST
+

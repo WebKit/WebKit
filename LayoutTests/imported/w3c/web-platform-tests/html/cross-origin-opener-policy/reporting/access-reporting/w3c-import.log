@@ -1,0 +1,49 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/reporting/access-reporting/access-from-coop-page-to-openee_coop-ro.https.html
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/reporting/access-reporting/access-from-coop-page-to-openee_coop-ro_cross-origin.https.html
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/reporting/access-reporting/access-from-coop-page-to-opener_coop-ro.https.html
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/reporting/access-reporting/access-from-coop-page-to-opener_coop-ro_cross-origin.https.html
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/reporting/access-reporting/access-from-coop-page-to-other_coop-ro.https.html
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/reporting/access-reporting/access-from-coop-page-to-other_coop-ro_cross-origin.https.html
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/reporting/access-reporting/access-to-coop-page-from-openee_coop-ro.https.html
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/reporting/access-reporting/access-to-coop-page-from-openee_coop-ro_cross-origin.https.html
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/reporting/access-reporting/access-to-coop-page-from-opener_coop-ro.https.html
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/reporting/access-reporting/access-to-coop-page-from-opener_coop-ro_cross-origin.https.html
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/reporting/access-reporting/access-to-coop-page-from-other_coop-ro.https.html
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/reporting/access-reporting/access-to-coop-page-from-other_coop-ro_cross-origin.https.html
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/reporting/access-reporting/property-blur.https.html
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/reporting/access-reporting/property-close.https.html
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/reporting/access-reporting/property-closed.https.html
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/reporting/access-reporting/property-focus.https.html
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/reporting/access-reporting/property-frames.https.html
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/reporting/access-reporting/property-indexed-getter.https.html
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/reporting/access-reporting/property-indexed-getter.https.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/reporting/access-reporting/property-length.https.html
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/reporting/access-reporting/property-location-get.https.html
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/reporting/access-reporting/property-location-set.https.html
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/reporting/access-reporting/property-named-getter.https.html
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/reporting/access-reporting/property-named-getter.https.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/reporting/access-reporting/property-opener-get.https.html
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/reporting/access-reporting/property-opener-set.https.html
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/reporting/access-reporting/property-postmessage-1.https.html
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/reporting/access-reporting/property-postmessage-2.https.html
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/reporting/access-reporting/property-self.https.html
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/reporting/access-reporting/property-top.https.html
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/reporting/access-reporting/property-window.https.html
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/reporting/access-reporting/report-to-both_coop-ro.https.html
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/reporting/access-reporting/reporting-observer.html

@@ -1,0 +1,9 @@
+
+PASS VideoEncoder.isConfigSupported av01.0.04M.08
+PASS VideoEncoder.isConfigSupported av01.0.04M.08.0.110.01.01.01.0
+PASS VideoEncoder.isConfigSupported av01.0.04M.10
+PASS VideoEncoder.isConfigSupported av01.0.04M.12
+PASS VideoEncoder.isConfigSupported av01.0.04M.08.1
+PASS VideoEncoder.isConfigSupported av01.0.04M.08.0.000
+PASS VideoEncoder.isConfigSupported av01.0.04M.08.0.100
+

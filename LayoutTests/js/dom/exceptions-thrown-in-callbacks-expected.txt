@@ -1,0 +1,5 @@
+CONSOLE MESSAGE: PASS: toString called on exception value thrown from event handler
+CONSOLE MESSAGE: PASS: toString called on exception value thrown from request animation callback
+CONSOLE MESSAGE: PASS: toString called on exception value thrown from position callback
+CONSOLE MESSAGE: PASS: toString called on exception value thrown from timer
+This test ensures that exceptions are handled correctly by the various callback mechanisms present in WebCore.

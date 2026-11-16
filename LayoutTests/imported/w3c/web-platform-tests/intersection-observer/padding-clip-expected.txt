@@ -1,0 +1,3 @@
+
+PASS Scrollport is used rather than content rect to compute intersection ratio
+

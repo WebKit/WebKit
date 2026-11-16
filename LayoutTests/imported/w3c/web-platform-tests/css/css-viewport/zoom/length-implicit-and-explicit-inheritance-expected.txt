@@ -1,0 +1,7 @@
+
+PASS width: inherit from 100px
+PASS height: inherit from 100px
+PASS word-spacing: inherit from 100px
+PASS word-spacing: unset from 100px
+PASS word-spacing:  from 100px
+

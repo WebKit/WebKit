@@ -1,0 +1,24 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/interaction/focus/focusgroup/tentative/forward-navigation/vertical/descends-in-vertical-inner-focusgroup.html
+/LayoutTests/imported/w3c/web-platform-tests/html/interaction/focus/focusgroup/tentative/forward-navigation/vertical/does-not-move-when-axis-not-supported.html
+/LayoutTests/imported/w3c/web-platform-tests/html/interaction/focus/focusgroup/tentative/forward-navigation/vertical/does-not-wrap-even-when-other-axis-supported.html
+/LayoutTests/imported/w3c/web-platform-tests/html/interaction/focus/focusgroup/tentative/forward-navigation/vertical/moves-when-only-current-axis-supported.html
+/LayoutTests/imported/w3c/web-platform-tests/html/interaction/focus/focusgroup/tentative/forward-navigation/vertical/skips-focusgroup-that-extends-in-orthogonal-axis.html
+/LayoutTests/imported/w3c/web-platform-tests/html/interaction/focus/focusgroup/tentative/forward-navigation/vertical/wraps-and-skips-orthogonal-inner-focusgroup.html
+/LayoutTests/imported/w3c/web-platform-tests/html/interaction/focus/focusgroup/tentative/forward-navigation/vertical/wraps-in-appropriate-focusgroup.html
+/LayoutTests/imported/w3c/web-platform-tests/html/interaction/focus/focusgroup/tentative/forward-navigation/vertical/wraps-in-inner-focusgroup.html

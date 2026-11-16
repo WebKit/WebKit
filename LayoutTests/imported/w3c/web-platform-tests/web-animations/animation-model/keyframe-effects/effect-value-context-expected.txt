@@ -1,0 +1,7 @@
+
+PASS Effect values reflect changes to font-size on element
+PASS Effect values reflect changes to font-size on parent element
+PASS Effect values reflect changes to font-size when computed style is not immediately flushed
+PASS Effect values reflect changes to font-size from reparenting
+PASS Effect values reflect changes to target element
+

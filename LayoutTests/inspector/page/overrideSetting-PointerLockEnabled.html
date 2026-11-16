@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+
+function probeRequestPointerLock() {
+    let frame = document.createElement("iframe");
+    document.body.appendChild(frame);
+    let result = "requestPointerLock" in frame.contentWindow.Element.prototype;
+    frame.remove();
+    return result;
+}
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("Page.overrideSetting.PointerLockEnabled");
+
+    async function observe() {
+        return await InspectorTest.evaluateInPage(`probeRequestPointerLock()`);
+    }
+
+    suite.addTestCase({
+        name: "Page.overrideSetting.PointerLockEnabled",
+        description: "Test that overriding PointerLockEnabled controls the availability of Element.prototype.requestPointerLock.",
+        async test() {
+            let defaultValue = await observe();
+
+            await PageAgent.overrideSetting(InspectorBackend.Enum.Page.Setting.PointerLockEnabled, false);
+            InspectorTest.expectFalse(await observe(), "Element.prototype.requestPointerLock should be unavailable when PointerLockEnabled is overridden to false.");
+
+            await PageAgent.overrideSetting(InspectorBackend.Enum.Page.Setting.PointerLockEnabled, true);
+            InspectorTest.expectTrue(await observe(), "Element.prototype.requestPointerLock should be available when PointerLockEnabled is overridden to true.");
+
+            await PageAgent.overrideSetting(InspectorBackend.Enum.Page.Setting.PointerLockEnabled);
+            InspectorTest.expectEqual(await observe(), defaultValue, "Element.prototype.requestPointerLock should return to its default when the PointerLockEnabled override is removed.");
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+
+</script>
+</head>
+<body onload="runTest()">
+    <p>Tests for the Page.overrideSetting command and the PointerLockEnabled setting.</p>
+</body>
+</html>

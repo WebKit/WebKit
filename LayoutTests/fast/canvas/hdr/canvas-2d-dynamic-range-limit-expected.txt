@@ -1,0 +1,37 @@
+Tests that a 2D canvas context picks up the dynamic-range-limit of its element, and that the limit leaves the canvas's own contents alone.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS CSS.supports("dynamic-range-limit", "standard") is true
+PASS CSS.supports("dynamic-range-limit", "no-limit") is true
+PASS CSS.supports("dynamic-range-limit", "constrained") is true
+
+- The effective limit each context reports
+PASS getComputedStyle(canvasDefault)["dynamic-range-limit"] is "no-limit"
+PASS internals.getContextEffectiveDynamicRangeLimitValue(canvasDefault) is 1.0
+PASS getComputedStyle(canvasNoLimit)["dynamic-range-limit"] is "no-limit"
+PASS internals.getContextEffectiveDynamicRangeLimitValue(canvasNoLimit) is 1.0
+PASS getComputedStyle(canvasConstrained)["dynamic-range-limit"] is "constrained"
+PASS internals.getContextEffectiveDynamicRangeLimitValue(canvasConstrained) is 0.5
+PASS getComputedStyle(canvasStandard)["dynamic-range-limit"] is "standard"
+PASS internals.getContextEffectiveDynamicRangeLimitValue(canvasStandard) is 0.0
+
+- dynamic-range-limit is inherited
+PASS getComputedStyle(canvasInherited)["dynamic-range-limit"] is "constrained"
+PASS internals.getContextEffectiveDynamicRangeLimitValue(canvasInherited) is 0.5
+
+- A limit changed after the context exists
+PASS getComputedStyle(canvasLater)["dynamic-range-limit"] is "standard"
+PASS internals.getContextEffectiveDynamicRangeLimitValue(canvasLater) is 0.0
+PASS getComputedStyle(canvasLater)["dynamic-range-limit"] is "no-limit"
+PASS internals.getContextEffectiveDynamicRangeLimitValue(canvasLater) is 1.0
+
+- The limit leaves the canvas's contents alone
+PASS standardContents.data[1] is noLimitContents.data[1]
+PASS standardContents.data[1] is within 0.01 of 2.5
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+

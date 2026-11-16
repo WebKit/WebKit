@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+     <style>
+          img {
+              width: 100px;
+              height: 100px;
+         }
+    </style>
+</head>
+<body>
+    <div id="group-1">
+        <p>&lt;img> with #fragment referencing &lt;view></p>
+        <img src="resources/rgb-icons-1.svg#green-icon-view">
+        <img src="http://localhost:8000/svg/resources/rgb-icons-1.svg#green-icon-view">
+    </div>
+    <div id="group-2">
+        <p>&lt;img> with #svgView(viewBox())</p>
+        <img src="resources/rgb-icons-2.svg#svgView(viewBox(0,32,32,32))">
+        <img src="http://localhost:8000/svg/resources/rgb-icons-2.svg#svgView(viewBox(0,32,32,32))">
+    </div>
+    <div id="group-3">
+        <p>&lt;img> with hide/show embedded :target CSS</p>
+        <img src="resources/rgb-icons-3.svg#green-icon">
+        <img src="http://localhost:8000/svg/resources/rgb-icons-3.svg#green-icon">
+    </div>
+    <script>
+        function createAndLoadImage(parent, src, srcset) {
+            return new Promise((resolve) => {
+                var image = new Image;
+                parent.appendChild(image);
+                image.onload = (() => {
+                    resolve(image);
+                });
+                image.src = src;
+                image.srcset = srcset;
+            });
+        }
+
+        (function() {
+            if (window.testRunner)
+                testRunner.waitUntilDone();
+
+            var imageData = [
+                { 
+                    "parent": document.getElementById("group-1"), 
+                    "src": "http://127.0.0.1:8000/svg/resources/rgb-icons-1.svg#red-icon-view",
+                    "srcset": "http://127.0.0.1:8000/svg/resources/rgb-icons-1.svg#green-icon-view",
+                },
+                { 
+                    "parent": document.getElementById("group-2"),
+                    "src": "http://127.0.0.1:8000/svg/resources/rgb-icons-2.svg#svgView(viewBox(0,0,32,32))",
+                    "srcset": "http://127.0.0.1:8000/svg/resources/rgb-icons-2.svg#svgView(viewBox(0,32,32,32))"
+                },
+                { 
+                    "parent": document.getElementById("group-3"),
+                    "src" : "http://127.0.0.1:8000/svg/resources/rgb-icons-3.svg#red-icon",
+                    "srcset" : "http://127.0.0.1:8000/svg/resources/rgb-icons-3.svg#green-icon"
+                },
+            ];
+
+            var promises = [];
+            for (let datum of imageData)
+                promises.push(createAndLoadImage(datum.parent, datum.src, datum.srcset));
+            
+            Promise.all(promises).then(() => {
+                if (window.testRunner)
+                    testRunner.notifyDone();
+            });
+        })();
+    </script>
+</body>
+</html>

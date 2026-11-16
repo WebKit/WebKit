@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<body>
+This test requires WebKitTestRunner/DumpRenderTree.
+<video width="1px" height="1px" src="http://127.0.0.1:8000/resources/load-and-stall.py?name=../../../compositing/resources/video.mp4&mimeType=video%2Fmp4&stallAt=0&stallFor=999"></video>
+<script>
+testRunner.dumpAsText();
+testRunner.waitUntilDone();
+
+document.querySelector("video").play().catch(() => { });
+
+if (testRunner.stopLoading)
+    testRunner.stopLoading();
+
+requestAnimationFrame(() => testRunner.forceImmediateCompletion());
+</script>
+</body>

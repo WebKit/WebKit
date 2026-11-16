@@ -1,0 +1,5 @@
+
+PASS Conservative document rule with selector_matches lazily matches on pointerdown
+PASS Conservative document rule with href_matches pattern lazily matches on pointerdown
+PASS Dynamically added link with conservative document rule lazily matches on pointerdown
+

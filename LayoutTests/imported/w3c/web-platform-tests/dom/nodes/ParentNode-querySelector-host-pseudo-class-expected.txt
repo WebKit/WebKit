@@ -1,0 +1,3 @@
+
+PASS Using :host pseudo-class selector in shadow DOM
+

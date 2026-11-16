@@ -1,0 +1,17 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/basic-gestures.js"></script>
+<meta name="viewport" content="width=device-width">
+<body style="margin: 0;">
+    <div style="background-color: red; width: 150px; height: 150px;"></div>
+    <h1 style="font-size: 2em;">
+        Even though this text is large enough to be legible at initial scale, we should
+        still allow double tapping to zoom for consistent behavior.
+    </h1>
+</body>
+<script>
+    jsTestIsAsync = true;
+    doubleTapToZoomAtPoint(75, 75).then(finishJSTest);
+</script>
+</html>

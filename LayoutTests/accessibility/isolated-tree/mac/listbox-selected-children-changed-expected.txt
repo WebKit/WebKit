@@ -1,0 +1,25 @@
+This test ensures that a list box posts AXSelectedChildrenChanged when its selection changes, with and without base appearance.
+
+native:
+PASS: notifications.includes('nativeSingle') === true
+PASS: [...new Set(notifications)].join() === 'nativeSingle'
+PASS: notifications.includes('nativeSingle') === true
+PASS: [...new Set(notifications)].join() === 'nativeSingle'
+PASS: document.getElementById('nativeSingle').value === 'Cherry'
+PASS: document.getElementById('nativeSingle').value === 'Cherry'
+PASS: notifications.includes('nativeMultiple') === true
+PASS: [...new Set(notifications)].join() === 'nativeMultiple'
+base:
+PASS: notifications.includes('baseSingle') === true
+PASS: [...new Set(notifications)].join() === 'baseSingle'
+PASS: notifications.includes('baseSingle') === true
+PASS: [...new Set(notifications)].join() === 'baseSingle'
+PASS: document.getElementById('baseSingle').value === 'Cherry'
+PASS: document.getElementById('baseSingle').value === 'Cherry'
+PASS: notifications.includes('baseMultiple') === true
+PASS: [...new Set(notifications)].join() === 'baseMultiple'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

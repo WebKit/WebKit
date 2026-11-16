@@ -1,0 +1,190 @@
+Test the code attribute on KeyboardEvent.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+* keydown
+PASS keyboardEvent.code is "Space"
+* keyup
+PASS keyboardEvent.code is "Space"
+
+* keydown
+PASS keyboardEvent.code is "KeyA"
+* keyup
+PASS keyboardEvent.code is "KeyA"
+
+* keydown
+PASS keyboardEvent.code is "Backspace"
+* keyup
+PASS keyboardEvent.code is "Backspace"
+
+* keydown
+FAIL keyboardEvent.code should be Minus. Was Escape.
+* keyup
+FAIL keyboardEvent.code should be Minus. Was Escape.
+
+* keydown
+PASS keyboardEvent.code is "ArrowLeft"
+* keyup
+PASS keyboardEvent.code is "ArrowLeft"
+
+* keydown
+PASS keyboardEvent.code is "ArrowRight"
+* keyup
+PASS keyboardEvent.code is "ArrowRight"
+
+* keydown
+PASS keyboardEvent.code is "ArrowUp"
+* keyup
+PASS keyboardEvent.code is "ArrowUp"
+
+* keydown
+PASS keyboardEvent.code is "ArrowDown"
+* keyup
+PASS keyboardEvent.code is "ArrowDown"
+
+* keydown
+PASS keyboardEvent.code is "PageUp"
+* keyup
+PASS keyboardEvent.code is "PageUp"
+
+* keydown
+PASS keyboardEvent.code is "PageDown"
+* keyup
+PASS keyboardEvent.code is "PageDown"
+
+* keydown
+PASS keyboardEvent.code is "Home"
+* keyup
+PASS keyboardEvent.code is "Home"
+
+* keydown
+PASS keyboardEvent.code is "End"
+* keyup
+PASS keyboardEvent.code is "End"
+
+* keydown
+PASS keyboardEvent.code is "Delete"
+* keyup
+PASS keyboardEvent.code is "Delete"
+
+* keydown
+PASS keyboardEvent.code is "ControlLeft"
+* keyup
+PASS keyboardEvent.code is "ControlLeft"
+
+* keydown
+PASS keyboardEvent.code is "ShiftLeft"
+* keyup
+PASS keyboardEvent.code is "ShiftLeft"
+
+* keydown
+PASS keyboardEvent.code is "AltLeft"
+* keyup
+PASS keyboardEvent.code is "AltLeft"
+
+* keydown
+PASS keyboardEvent.code is "ControlRight"
+* keyup
+PASS keyboardEvent.code is "ControlRight"
+
+* keydown
+PASS keyboardEvent.code is "ShiftRight"
+* keyup
+PASS keyboardEvent.code is "ShiftRight"
+
+* keydown
+PASS keyboardEvent.code is "AltRight"
+* keyup
+PASS keyboardEvent.code is "AltRight"
+
+* keydown
+PASS keyboardEvent.code is "F1"
+* keyup
+PASS keyboardEvent.code is "F1"
+
+* keydown
+PASS keyboardEvent.code is "F2"
+* keyup
+PASS keyboardEvent.code is "F2"
+
+* keydown
+PASS keyboardEvent.code is "F3"
+* keyup
+PASS keyboardEvent.code is "F3"
+
+* keydown
+PASS keyboardEvent.code is "F4"
+* keyup
+PASS keyboardEvent.code is "F4"
+
+* keydown
+PASS keyboardEvent.code is "F5"
+* keyup
+PASS keyboardEvent.code is "F5"
+
+* keydown
+PASS keyboardEvent.code is "F6"
+* keyup
+PASS keyboardEvent.code is "F6"
+
+* keydown
+PASS keyboardEvent.code is "F7"
+* keyup
+PASS keyboardEvent.code is "F7"
+
+* keydown
+PASS keyboardEvent.code is "F8"
+* keyup
+PASS keyboardEvent.code is "F8"
+
+* keydown
+PASS keyboardEvent.code is "F9"
+* keyup
+PASS keyboardEvent.code is "F9"
+
+* keydown
+PASS keyboardEvent.code is "F10"
+* keyup
+PASS keyboardEvent.code is "F10"
+
+* keydown
+PASS keyboardEvent.code is "F11"
+* keyup
+PASS keyboardEvent.code is "F11"
+
+* keydown
+PASS keyboardEvent.code is "F12"
+* keyup
+PASS keyboardEvent.code is "F12"
+
+* keydown
+FAIL keyboardEvent.code should be NumpadEnter. Was Enter.
+* keyup
+FAIL keyboardEvent.code should be NumpadEnter. Was Enter.
+
+* keydown
+PASS keyboardEvent.code is "KeyA"
+* keyup
+PASS keyboardEvent.code is "KeyA"
+
+* keydown
+PASS keyboardEvent.code is "KeyA"
+* keyup
+PASS keyboardEvent.code is "KeyA"
+
+* keydown
+PASS keyboardEvent.code is "KeyA"
+* keyup
+PASS keyboardEvent.code is "KeyA"
+
+* keydown
+PASS keyboardEvent.code is "Digit1"
+* keyup
+PASS keyboardEvent.code is "Digit1"
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src='/resources/testharness.js'></script>
+<script src='/resources/testharnessreport.js'></script>
+<script src='/webcodecs/videoFrame-utils.js'></script>
+</head>
+<body>
+<canvas id=canvas width=100px hwight=100px></canvas>
+<script>
+function createVideoFrame(stride)
+{
+    const width = 16;
+    const height = 16;
+    const size = stride * height;
+    const buf = new ArrayBuffer(size * 1.5);
+    const bytesY = new Uint8Array(buf, 0, size * 1.0);
+    const bytesU = new Uint8Array(buf, size * 1.0, size * 0.25);
+    const bytesV = new Uint8Array(buf, size * 1.25, size * 0.25);
+    for (let y = 0; y < height; y++) {
+        for (let x = 0; x < width; x++)
+            bytesY[y * stride + x] = (y << 4) | x;
+    }
+    bytesU.fill(128);
+    bytesV.fill(128);
+
+    return new VideoFrame(buf, {
+      format: "I420",
+      codedWidth: stride,
+      codedHeight: height,
+      timestamp: 0,
+      visibleRect: {
+        x: 0,
+        y: 0,
+        width: width,
+        height: height
+      },
+      colorSpace: {
+        primaries: 'bt709',
+        transfer: 'bt709',
+        matrix: 'bt709',
+        fullRange: true,
+      }
+    });
+}
+
+test(t => {
+     const frame1 = createVideoFrame(16);
+     t.add_cleanup(() => frame1.close());
+     const frame2 = createVideoFrame(32);
+     t.add_cleanup(() => frame2.close());
+
+     canvas.getContext('2d').drawImage(frame1, 0, 0);
+     const data1 = canvas.getContext('2d').getImageData(0, 0, 4, 2).data;
+
+     canvas.getContext('2d').drawImage(frame2, 0, 0);
+     const data2 = canvas.getContext('2d').getImageData(0, 0, 4, 2).data;
+
+     assert_array_equals(data1, data2);
+}, 'Creating video frames Creating video frames Creating video frames with codedWidth differing from visibleWidthh');
+</script>
+</body>
+</html>

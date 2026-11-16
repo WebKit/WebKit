@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<head>
+    <script src="../../../../resources/js-test.js"></script>
+    <script src="../../../../resources/ui-helper.js"></script>
+    <style>
+        #parent {
+            background-color: orange;
+            width: 200px;
+            padding: 30px;
+            margin: 1em;
+        }
+        #button {
+            font-size: 18px;
+            padding: 10px 20px;
+        }
+    </style>
+</head>
+<body>
+    <div id="parent">
+        <button id="button">Tap me</button>
+    </div>
+    <pre id="description"></pre>
+    <pre id="console"></pre>
+<script>
+jsTestIsAsync = true;
+
+let pointerdownFiredOnParent = false;
+let clickFiredOnParent = false;
+
+description("Verifies that calling preventDefault() on a pointerdown event dispatched to an ancestor does not suppress the synthetic click event when tapping a descendant. To manually test, tap the button inside the orange box; both pointerdown and click should fire on the parent div.");
+
+addEventListener("load", async () => {
+    const parent = document.getElementById("parent");
+    const button = document.getElementById("button");
+
+    parent.addEventListener("pointerdown", event => {
+        event.preventDefault();
+        pointerdownFiredOnParent = true;
+    });
+
+    parent.addEventListener("click", () => {
+        clickFiredOnParent = true;
+    });
+
+    if (!window.testRunner)
+        return;
+
+    await UIHelper.activateElement(button);
+    await UIHelper.ensurePresentationUpdate();
+
+    shouldBeTrue("pointerdownFiredOnParent");
+    shouldBeTrue("clickFiredOnParent");
+    finishJSTest();
+});
+</script>
+</body>
+</html>

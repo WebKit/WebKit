@@ -1,0 +1,8 @@
+
+PASS Allow @-rule with block inside style rule
+PASS Allow @-rule with semi-colon inside style rule
+PASS Allow @-rule with block inside page rule
+PASS Allow @-rule with semi-colon inside page rule
+PASS Allow @-rule with block inside font-face rule
+PASS Allow @-rule with semi-colon inside font-face rule
+

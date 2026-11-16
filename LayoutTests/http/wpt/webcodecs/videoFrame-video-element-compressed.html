@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<header>
+<script src='/resources/testharness.js'></script>
+<script src='/resources/testharnessreport.js'></script>
+</header>
+<body>
+<video id=video autoplay muted controls loop playsinline></video>
+<script>
+promise_test(async t => {
+  video.src = '/webcodecs/h264.mp4';
+  video.play();
+
+  await new Promise((resolve, reject) => {
+    video.onloadeddata = resolve;
+    setTimeout(() => reject("video.onloadeddata timed out"), 1000);
+  });
+
+  await new Promise((resolve, reject) => {
+    video.requestVideoFrameCallback(resolve);
+    setTimeout(() => reject("video.requestVideoFrameCallback timed out"), 1000);
+  });
+
+  const frame = new VideoFrame(video, {timestamp: 10});
+  t.add_cleanup(() => frame.close());
+
+  assert_true(frame.format === "NV12" || frame.format === "I420", "pixel format check");
+
+  const buffer = new Uint8Array(frame.codedWidth * frame.codedHeight * 4);
+  const data = await frame.copyTo(buffer);
+
+  let isValidCount = 0;
+  for (let i = 0; i < frame.codedWidth * frame.codedHeight; ++i) {
+     if (buffer[i] != 0 && buffer[i] != 128)
+       ++isValidCount;
+  }
+  assert_greater_than(isValidCount, 160 * 128);
+}, 'Test we can copyTo a video frame backed by a compressed pixel buffer');
+</script>
+</body>
+</html>

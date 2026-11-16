@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>A byte stream rejects with the exception thrown while resolving the promise returned by pull() or cancel()</title>
+<link rel="help" href="https://webidl.spec.whatwg.org/#invoke-a-callback-function">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script>
+function promiseWithThrowingConstructorGetter(error)
+{
+    const promise = Promise.resolve();
+    Object.defineProperty(promise, "constructor", { get() { throw error; } });
+    return promise;
+}
+
+promise_test(t => {
+    const error = new Error("boom");
+    const stream = new ReadableStream({ type: "bytes", cancel: () => promiseWithThrowingConstructorGetter(error) });
+    return promise_rejects_exactly(t, error, stream.cancel());
+}, "cancel() rejects with the exception thrown by the promise returned from the underlying source's cancel()");
+
+promise_test(t => {
+    const error = new Error("boom");
+    const stream = new ReadableStream({ type: "bytes", pull: () => promiseWithThrowingConstructorGetter(error) });
+    return promise_rejects_exactly(t, error, stream.getReader().read());
+}, "read() rejects with the exception thrown by the promise returned from the underlying source's pull()");
+</script>

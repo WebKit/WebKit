@@ -1,0 +1,27 @@
+<html>
+<head><title>ThrowOnDealloc</title>
+<script>
+function print(message)
+{
+    var paragraph = document.createElement('p');
+    paragraph.appendChild(document.createTextNode(message));
+    document.getElementById('console').appendChild(paragraph);
+}
+
+function test() 
+{
+    if (window.testRunner)
+        testRunner.dumpAsText();
+    if (!window.objCPlugin)
+        return print('FAIL - no objCPlugin');
+    
+    // Set a flag to indicate that the object should throw
+    // an exception on dealloc of the plugin
+    objCPlugin.throwOnDealloc = true;
+}
+</script>
+</head>
+<body onload="test();">
+<div id='console'/>
+</body>
+</html>

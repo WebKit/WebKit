@@ -1,0 +1,4 @@
+
+PASS Test script error unhandled.
+PASS Test script error handled.
+

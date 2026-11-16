@@ -1,0 +1,26 @@
+<style>
+.container {
+  writing-mode: vertical-rl; 
+  font-family: Ahem;
+  font-size: 20px;
+  line-height: 3;
+}
+
+#first_child {
+  text-decoration: underline;
+  text-underline-offset: 20px;
+}
+</style>
+<!-- PASS if underline disappears -->
+<div class=container>
+  <div id=first_child>XXX</div>
+  <div>XXX</div>
+  <div>XXX</div>
+</div>
+<script src="resources/text-based-repaint.js" type="text/javascript"></script>
+<script>
+  repaintTest = function() {
+    first_child.style.textDecoration = "none";
+  };
+runRepaintTest();
+</script>

@@ -1,0 +1,35 @@
+<html>
+<body>
+<script src="/js-test-resources/js-test.js"></script>
+<script>
+    description("Makes sure that upload events are still fired after GC.");
+    jsTestIsAsync = true;
+
+    function progressHandler(evt)
+    {
+        testPassed("onprogress event fired on XMLHttpRequestUpload: " + evt + " [Loaded: " + evt.loaded + " Total: " + evt.total + "]");
+    }
+
+    function loadstartHandler(evt)
+    {
+        testPassed("loadstart event fired on XMLHttpRequestUpload: " + evt);
+    }
+
+    function loadHandler(evt)
+    {
+        testPassed("load event fired on XMLHttpRequestUpload: " + evt);
+        finishJSTest();
+    }
+
+    let xhr = new XMLHttpRequest;
+    xhr.upload.onprogress = progressHandler;
+    xhr.upload.onloadstart = loadstartHandler;
+    xhr.upload.onload = loadHandler;
+    xhr.open("POST", "resources/post-echo.cgi", true);
+    xhr.send("data");
+    xhr = null;
+    gc();
+    setInterval(() => { gc(); }, 1);
+</script>
+</body>
+</html>

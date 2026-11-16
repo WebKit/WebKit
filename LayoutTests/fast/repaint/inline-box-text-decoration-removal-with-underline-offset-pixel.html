@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<!-- webkit.org/b/322481: the shrink direction. Removing the underline has to erase it, so a repaint that
+     only covers the new (smaller) ink overflow would leave the old underline behind. -->
+<script src="resources/repaint.js"></script>
+<script>
+function repaintTest() {
+    document.getElementById('target').style.textDecorationLine = 'none';
+}
+onload = runRepaintTest;
+</script>
+<style>
+  body {
+      font-size: 0.8em;
+  }
+  #container {
+      display: inline-block;
+      width: 300px;
+      height: 300px;
+  }
+  .a {
+      text-underline-offset: 0.3em;
+      text-decoration: underline;
+      color: black;
+  }
+</style>
+
+<div id=container>
+  <a class=a id=target href=.>
+    text text text
+  </a>
+</div>

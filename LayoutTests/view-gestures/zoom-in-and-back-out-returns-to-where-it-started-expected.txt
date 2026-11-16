@@ -1,0 +1,14 @@
+At page scale 1.00, scrolled to (100, 500) of (299, 2413), the cursor at (600, 400) is over content (700, 900):
+Zoomed in at the cursor to scale 2.00, scrolled to (400, 700):
+  at scale 2.00: PASS (the content under the cursor didn't move)
+Held a zoom out at the same point:
+  at scale 1.80: PASS (the content under the cursor didn't move)
+  at scale 1.62: PASS (the content under the cursor didn't move)
+  at scale 1.46: PASS (the content under the cursor didn't move)
+  at scale 1.31: PASS (the content under the cursor didn't move)
+  at scale 1.18: PASS (the content under the cursor didn't move)
+  at scale 1.06: PASS (the content under the cursor didn't move)
+  at scale 0.96: PASS (the content under the cursor didn't move)
+After release at scale 1.00:
+  at scale 1.00: PASS (the content under the cursor didn't move)
+  PASS (the page is back at the scale and scroll position it started at)

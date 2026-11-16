@@ -1,0 +1,3 @@
+Hello world
+The selected text after clicking is: "Hello world"
+This test verifies that clicking a button which hides itself on mousedown does not clear the selection. To test manually, select "Hello world" above and click the button. The pre element above should indicate that "Hello world" was selected after clicking.

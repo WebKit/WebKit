@@ -1,0 +1,3 @@
+
+FAIL drawElementImage handles non-finite dest rect parameters promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
+

@@ -1,0 +1,3 @@
+
+PASS Animating 'backdrop-filter' yields a remote effect stack.
+

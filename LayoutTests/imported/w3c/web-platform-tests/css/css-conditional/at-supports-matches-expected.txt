@@ -1,0 +1,4 @@
+
+PASS Matching @supports rule
+PASS Non matching @supports rule
+

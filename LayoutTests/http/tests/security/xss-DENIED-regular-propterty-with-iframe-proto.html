@@ -1,0 +1,28 @@
+<html>
+<head>
+<script src="/js-test-resources/js-test-pre.js"></script>
+<script src="resources/cross-frame-access.js"></script>
+</head>
+<body>
+<iframe src="http://localhost:8000/" style=""></iframe>
+<pre id="console"></pre>
+<script>
+description("Tests that making other frame window a prototype doesn't expose that window properties");
+jsTestIsAsync = true;
+
+targetWindow = frames[0];
+
+window.onload = function() {
+  originalInnerHeight = innerHeight;
+
+  shouldThrowErrorName("this.__proto__ = targetWindow", "TypeError");
+  shouldThrowErrorName("__proto__ = targetWindow", "TypeError");
+
+  shouldBeTrue('innerHeight === originalInnerHeight');
+  shouldBeTrue('this.innerHeight === originalInnerHeight');
+  finishJSTest();
+}
+</script>
+<script src="/js-test-resources/js-test-post.js"></script>
+</body>
+</html>

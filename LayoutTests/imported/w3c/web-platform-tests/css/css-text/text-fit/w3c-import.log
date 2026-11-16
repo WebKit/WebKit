@@ -1,0 +1,84 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-fit/background-image-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-fit/background-image-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-fit/background-image.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-fit/columns-consistent-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-fit/columns-consistent-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-fit/columns-consistent.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-fit/columns-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-fit/consistent-blank-line-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-fit/consistent-blank-line-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-fit/consistent-blank-line.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-fit/grow-consistent-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-fit/grow-consistent-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-fit/grow-consistent.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-fit/grow-dynamic-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-fit/grow-dynamic-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-fit/grow-dynamic.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-fit/grow-per-line-all-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-fit/grow-per-line-all-line-height-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-fit/grow-per-line-all-line-height-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-fit/grow-per-line-all-line-height.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-fit/grow-per-line-all-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-fit/grow-per-line-all.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-fit/grow-per-line-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-fit/grow-per-line-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-fit/grow-per-line.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-fit/hittest.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-fit/line-height.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-fit/selection-highlight-painting-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-fit/selection-highlight-painting-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-fit/selection-highlight-painting.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-fit/shrink-consistent-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-fit/shrink-consistent-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-fit/shrink-consistent.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-fit/shrink-dynamic-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-fit/shrink-dynamic-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-fit/shrink-dynamic.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-fit/shrink-per-line-all-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-fit/shrink-per-line-all-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-fit/shrink-per-line-all.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-fit/spacing-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-fit/spacing-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-fit/spacing.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-fit/text-align-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-fit/text-align-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-fit/text-align.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-fit/text-autospace.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-fit/text-box-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-fit/text-box-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-fit/text-box.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-fit/text-decoration-skip-ink-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-fit/text-decoration-skip-ink-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-fit/text-decoration-skip-ink.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-fit/text-decoration-thickness-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-fit/text-decoration-thickness-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-fit/text-decoration-thickness.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-fit/text-emphasis-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-fit/text-emphasis-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-fit/text-emphasis.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-fit/text-spacing-trim-fit-width.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-fit/text-underline-offset-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-fit/text-underline-offset-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-fit/text-underline-offset.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-fit/vertical-align-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-fit/vertical-align-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-fit/vertical-align.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-fit/writing-mode-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-fit/writing-mode-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-fit/writing-mode.html

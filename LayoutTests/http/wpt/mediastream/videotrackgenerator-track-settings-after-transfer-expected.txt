@@ -1,0 +1,3 @@
+
+PASS Transfer VideoTrackGenerator right before writing the first frame
+

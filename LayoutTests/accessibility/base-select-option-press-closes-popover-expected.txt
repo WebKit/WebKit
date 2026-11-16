@@ -1,0 +1,14 @@
+This test verifies that pressing an option via accessibility (e.g. VoiceOver) in a base-appearance select closes the popover and updates the selection.
+
+PASS: select.stringValue.includes('Banana') === true
+PASS: select.isExpanded === false
+PASS: select.isExpanded === true
+PASS: menu.role.toLowerCase().includes('menu') === true
+PASS: option.role.toLowerCase().includes('menuitem') === true
+PASS: select.isExpanded === false
+PASS: select.stringValue.includes('Apple') === true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

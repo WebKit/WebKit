@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="../../resources/assert-selection.js"></script>
+<script>
+test(() => {
+    assert_not_equals(window.internals, undefined,
+        'This test requires window.internals to access clipboard');
+    assert_selection(
+        [
+            '<div contenteditable>',
+                'one',
+                '<div>two^</div>',
+                't|hree',
+           '</div>',
+        ].join(''),
+        selection => {
+            selection.document.execCommand('copy');
+            selection.document.execCommand('paste');
+            selection.document.execCommand('paste');
+        },
+        [
+            '<div contenteditable>',
+                'one',
+                '<div>two</div>',
+                't<div>t|hree</div>',
+           '</div>',
+        ].join(''),
+        '9 Paste with text crossing start of DIV');
+}, 'Paste text');
+</script>

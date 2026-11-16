@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<style>
+input {
+    font: 11px system-ui;
+}
+</style>
+<p>PASS if no crash or assert.</p>
+<input id="textField" placeholder="Placeholder">
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+textField.focus();
+document.execCommand("InsertText", false, "Text");
+</script>

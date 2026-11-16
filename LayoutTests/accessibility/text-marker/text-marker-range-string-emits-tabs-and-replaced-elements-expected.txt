@@ -1,0 +1,14 @@
+This test ensures the string for an element's text marker range emits a tab
+between table cells, and a replacement character for a replaced element.
+
+PASS: rangeStringFor('row') === 'a\tb'
+PASS: rangeLengthFor('row') === 3
+PASS: rangeStringFor('textfield') === 'x\ufffcy'
+PASS: rangeLengthFor('textfield') === 3
+PASS: rangeStringFor('checkbox') === 'x\ufffcy'
+PASS: rangeLengthFor('checkbox') === 3
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

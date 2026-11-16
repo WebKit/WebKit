@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg">
+    <rect>
+        <animate attributeName="x"/>
+        <set attributeName="x" max="50ms" onend="onEnd()"/>
+        <set attributeName="x"/>
+    </rect>
+    <text x="10" y="20">Passes if it does not crash.</text>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+
+         function onEnd() {
+            if (window.testRunner) {
+                setTimeout(() => {
+                    testRunner.notifyDone();
+                });
+            }
+        }
+    </script>
+</svg>

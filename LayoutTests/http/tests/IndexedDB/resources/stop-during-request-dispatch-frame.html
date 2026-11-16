@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<script>
+var dbName = "stop-during-request-dispatch-db-" + Math.random();
+var openReq = indexedDB.open(dbName, 1);
+
+openReq.onupgradeneeded = function(e) {
+    var db = e.target.result;
+    var store = db.createObjectStore("store");
+    for (var i = 0; i < 10; i++)
+        store.put("value" + i, i);
+};
+
+openReq.onsuccess = function(e) {
+    var db = e.target.result;
+    var txn = db.transaction("store", "readonly");
+    var store = txn.objectStore("store");
+
+    var firstGet = store.get(0);
+    for (var i = 1; i < 10; i++)
+        store.get(i);
+
+    txn.commit();
+
+    firstGet.onsuccess = function() {
+        parent.postMessage("committed", "*");
+    };
+};
+
+openReq.onerror = function(e) {
+    parent.postMessage("error: " + e.target.error, "*");
+};
+</script>

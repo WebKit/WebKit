@@ -1,0 +1,3 @@
+
+FAIL Scroll anchoring properly works after scrollable range shrinkage assert_equals: expected 3008 but got 3626
+

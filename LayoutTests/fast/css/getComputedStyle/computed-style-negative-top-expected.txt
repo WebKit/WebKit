@@ -1,0 +1,27 @@
+Test computed offsets on elements with negative top and left.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+With no height
+PASS style.top is '-1px'
+PASS style.left is '-2px'
+PASS style.bottom is '1px'
+PASS style.right is '2px'
+
+With height:100%;
+PASS style.top is '-1px'
+PASS style.left is '-2px'
+PASS style.bottom is '1px'
+PASS style.right is '2px'
+
+With height:auto;
+PASS style.top is '-1px'
+PASS style.left is '-2px'
+PASS style.bottom is '1px'
+PASS style.right is '2px'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

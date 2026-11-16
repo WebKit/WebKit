@@ -1,0 +1,7 @@
+2d.filter.layers.blur.exceptions
+Test exceptions on gaussianBlur filter
+Actual output:
+
+FAIL Test exceptions on gaussianBlur filter assert_throws_js: function "function() { ctx.beginLayer({filter:
+    {name: 'gaussianBlur'}}); }" did not throw
+

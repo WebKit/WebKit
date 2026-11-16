@@ -1,0 +1,26 @@
+
+1. link.href = "https://www.webkit.org/"
+URL: "https://www.webkit.org/"
+url: "https://www.webkit.org/"
+text/uri-list: "https://www.webkit.org/"
+Found file of type image/png
+2. link.href = "file:///foo/bar/baz"
+URL: ""
+url: ""
+text/uri-list: ""
+Found file of type image/png
+3. link.href = "data:text/plain;base64,SGVsbG8sIFdvcmxkIQ%3D%3D"
+URL: "data:text/plain;base64,SGVsbG8sIFdvcmxkIQ%3D%3D"
+url: "data:text/plain;base64,SGVsbG8sIFdvcmxkIQ%3D%3D"
+text/uri-list: "data:text/plain;base64,SGVsbG8sIFdvcmxkIQ%3D%3D"
+Found file of type image/png
+4. link.href = "blob:https://www.webkit.org/1ef10222-3882-48c0-875e-1b55e845a931"
+URL: "blob:https://www.webkit.org/1ef10222-3882-48c0-875e-1b55e845a931"
+url: "blob:https://www.webkit.org/1ef10222-3882-48c0-875e-1b55e845a931"
+text/uri-list: "blob:https://www.webkit.org/1ef10222-3882-48c0-875e-1b55e845a931"
+Found file of type image/png
+5. link.href = "ftp://some/server/somewhere"
+URL: ""
+url: ""
+text/uri-list: ""
+Found file of type image/png

@@ -1,0 +1,4 @@
+
+PASS A document with isolate-and-require-corp can embed a cross-origin frame without Cross-Origin-Resource-Policy
+PASS A document with isolate-and-require-corp can embed a cross-origin frame with Cross-Origin-Resource-Policy: same-origin
+

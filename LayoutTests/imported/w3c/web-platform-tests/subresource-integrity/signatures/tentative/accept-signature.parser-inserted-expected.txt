@@ -1,0 +1,6 @@
+
+FAIL Single, valid integrity assertion. assert_equals: expected "true" but got "false"
+FAIL One matching + malformed integrity assertion. assert_equals: expected "true" but got "false"
+FAIL One matching + one mismatching integrity assertion. assert_equals: expected "true" but got "false"
+FAIL One matching + one mismatching + malformed integrity assertion. assert_equals: expected "true" but got "false"
+

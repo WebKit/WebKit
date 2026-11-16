@@ -1,0 +1,146 @@
+<html>
+<body>
+    <div>
+        <div id=complex-multi-rules1>
+            <p>Complex descent.</p>
+            <div class=some-class>
+                <ul>
+                    <li data-foo="bar">one</li>
+                    <li>two</li>
+                    <li data-bar="baz" class=some-class>three</li>
+                </ul>
+            </div>
+        </div>
+
+        <div id=complex-multi-rules2>
+            <p>id + tag.</p>
+            <acronym title="WebKit Tempalte Framework">WTF</acronym>
+            <a href="http://www.apple.com">Link</a>
+        </div>
+
+        <div id=complex-multi-rules3>
+            <p>Multiple id + tag, sharing the same id.</p>
+            <audio>
+                <source class=some-class>
+                <source class=some-class>
+                <source class=some-class>
+            </audio>
+            <ol>
+                <li class=other-class>one</li>
+                <li class=other-class>two</li>
+                <li class=other-class>three</li>
+                <li class=other-class>four</li>
+            </ol>
+            <table>
+                <tr><td>cell</td><td>cell</td></tr>
+                <tr><td>cell</td><td>cell</td></tr>
+            </table>
+        </div>
+
+        <div id=complex-multi-rules4>
+            <p>Several Ids.</p>
+            Foo?
+            <div>
+                Bar?
+                <div id=complex-multi-rules4-sub1>
+                    Foo?
+                    <div>
+                        Bar?
+                        <div id=complex-multi-rules4-sub2>
+                            Foo?
+                            <div>
+                                <div id=complex-multi-rules4-sub3>
+                                    Foo Bar!
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id=complex-multi-rules5>
+            <p>Id sandwich: Multiple ids with selectors in between.</p>
+            <div>
+                Padding.
+            </div>
+            <div>
+                <div id=complex-multi-rules5-left>
+                    <ul>
+                        <li class=other-class>one</li>
+                        <li class=other-class>two</li>
+                        <li class=other-class>
+                            three
+                            <div id=complex-multi-rules5-right>
+                                <p>complex-multi-rules5-right</p>
+                                <table>
+                                    <tr><td>cell</td><td>cell</td></tr>
+                                </table>
+                            </div>
+                        </li>
+                        <li class=other-class>
+                            four
+                            <p>Some text. <img id=complex-multi-rules5-image></p>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div id=complex-multi-rules6>
+            <p>Named form attribute under hierarchy.</p>
+            <form name='complex-multi-rules6-form'>
+                <div>
+                    <div>
+                        <input type=file name=complex-multi-rules6-file-input>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <div id=complex-multi-rules7>
+            <p>Hierarchy of tag and class.</p>
+            <div class=some-class>
+                <a href="http://www.webkit.org/" class=other-class>
+                    <div class=another-class>
+                        <div>
+                            <p class=result-class>FooBar!!!</p>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        <div id=complex-multi-rules8>
+            <p>Commonly used restrictionselector.</p>
+            <div class=some-class>
+                <div class=some-class>
+                    <ul>
+                        <li>one</li>
+                        <li>two</li>
+                        <li>three</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div id=tag-and-class>
+            <p>tag.class</p>
+            <details open class=details-class>
+                <summary class=summary-class>Summary</summary>
+                <p>Foo Bar!</p>
+            </details>
+            <article class=article-class>
+                <p>Lorem Ipsum</p>
+            </article>
+        </div>
+
+        <div id=duplicate-id>
+        </div>
+        <div id=duplicate-id>
+        </div>
+        <div id=duplicate-id>
+        </div>
+    </div>
+</body>
+</html>

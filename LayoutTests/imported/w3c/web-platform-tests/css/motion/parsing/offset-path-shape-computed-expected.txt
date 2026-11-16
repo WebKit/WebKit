@@ -1,0 +1,14 @@
+
+PASS Property offset-path value 'shape(from 0px 0px, line to 10px 10px)'
+PASS Property offset-path value 'shape(from 1em 50px, line to 10rem 10%)'
+PASS Property offset-path value 'shape(from 10px 10px, move by 10px 5px, line by 20px 40%, close)'
+PASS Property offset-path value 'shape(from 10px 10px, hline by 10px, vline to 5rem)'
+PASS Property offset-path value 'shape(from 10px 10px, vline by 5%, hline to 1px)'
+PASS Property offset-path value 'shape(from 10px 10px, curve to 50px 20px with 10rem 1%)'
+PASS Property offset-path value 'shape(from 10px 10px, curve to 50px 20px with 10rem 1px / 20% 1em)'
+PASS Property offset-path value 'shape(from 10px 10px, smooth to 50px 20px with 10rem 1%)'
+PASS Property offset-path value 'shape(from 10px 10px, smooth to 50px 3pt)'
+FAIL Property offset-path value 'shape(from 10px 10px, arc to 50px 3pt of 10px 10px)' assert_equals: expected "shape(from 10px 10px, arc to 50px 4px of 10px 10px)" but got "shape(from 10px 10px, arc to 50px 4px of 10px)"
+PASS Property offset-path value 'shape(from 10px 10px, arc to 50px 3pt of 10px small rotate 0deg)'
+PASS Property offset-path value 'shape(from 10% 1rem, arc to 50px 3pt of 20% cw large rotate 25deg)'
+

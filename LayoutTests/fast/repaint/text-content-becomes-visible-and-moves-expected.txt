@@ -1,0 +1,6 @@
+Pass if text animates.
+(repaint rects
+  (rect 8 8 440 20)
+  (rect 8 8 440 20)
+)
+

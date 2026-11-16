@@ -1,0 +1,10 @@
+Description
+
+This test checks for the presence of the navigator.mediaDevices.enumerateDevices() method.
+
+
+PASS mediaDevices.enumerateDevices() is present and working - before capture
+PASS mediaDevices.enumerateDevices() is working - after video capture
+PASS mediaDevices.enumerateDevices() is working - after video then audio capture
+PASS InputDeviceInfo is supported
+

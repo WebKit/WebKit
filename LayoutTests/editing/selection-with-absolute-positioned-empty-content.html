@@ -1,0 +1,37 @@
+<style>
+div {
+  font-family: Ahem;
+  font-size: 20px;
+  width: 220px;
+}
+
+span {
+  position: absolute;
+}
+</style>
+<div><a id=foobar style="color: black" href="">select this text<span></span></a> but not this</div>
+<pre id=result></pre>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+function timerAfterRAF(callback) {
+    return requestAnimationFrame(() => setTimeout(callback, 0));
+}
+
+timerAfterRAF(() => {
+    if (window.internals)
+        internals.startTrackingRepaints();
+    window.getSelection().selectAllChildren(foobar);
+    timerAfterRAF(() => {
+        if (window.internals) {
+            result.innerText = internals.repaintRectsAsText();
+            internals.stopTrackingRepaints();
+        }
+        if (window.testRunner)
+            testRunner.notifyDone();
+    });
+});
+</script>

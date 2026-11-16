@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Double tapping an image to zoom in, and again to zoom back out, returns to where the zoom in started</title>
+    <style>
+        body {
+            margin: 0;
+        }
+        /* Narrower than the view, like an image grid, so the page can only scroll sideways while zoomed in. */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(3, 236px);
+            gap: 16px;
+            padding: 16px;
+        }
+        .grid img {
+            display: block;
+            width: 236px;
+            height: 350px;
+        }
+    </style>
+    <script src="../../resources/ui-helper.js"></script>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+
+        function state()
+        {
+            return { scale: window.visualViewport.scale, x: window.scrollX, y: window.scrollY };
+        }
+
+        function describe(state)
+        {
+            return `scale ${state.scale.toFixed(2)} scrolled to (${state.x}, ${state.y})`;
+        }
+
+        async function doTest()
+        {
+            const output = [];
+
+            await UIHelper.setWebViewAllowsMagnification(true);
+
+            // The image under the cursor starts a little above the top of the view, so both double taps center the
+            // cursor rather than the image, and the zoom out comes back to exactly where the zoom in started.
+            window.scrollTo(0, 1500);
+            await UIHelper.renderingUpdate();
+            const before = state();
+            const cursor = { x: 400, y: 300 };
+
+            await UIHelper.smartMagnifyAt(cursor.x, cursor.y);
+            await UIHelper.waitForZoomScaleToSettle();
+            const zoomedIn = state();
+
+            // Zoomed in, the page is scrolled sideways, which it can't be at scale 1. The web process has to give that
+            // position up for the zoom out's, rather than clamp it and send it back.
+            const zoomedInScrolledSideways = zoomedIn.scale > 1 && zoomedIn.x > 0;
+            output.push('Zoomed in with the page scrolled sideways: ' + (zoomedInScrolledSideways ? 'PASS' : `FAIL (${describe(zoomedIn)})`));
+
+            await UIHelper.smartMagnifyAt(cursor.x, cursor.y);
+            await UIHelper.waitForZoomScaleToSettle();
+            for (let i = 0; i < 5; ++i)
+                await UIHelper.ensurePresentationUpdate();
+            const zoomedOut = state();
+
+            output.push('Double tapping the same spot zoomed back out: ' + (zoomedOut.scale == 1 ? 'PASS' : `FAIL (${describe(zoomedOut)})`));
+
+            const cameBack = Math.abs(zoomedOut.x - before.x) <= 1 && Math.abs(zoomedOut.y - before.y) <= 1;
+            output.push('The zoom out returned to where the zoom in started: ' + (cameBack ? 'PASS' : `FAIL (started at ${describe(before)}, zoomed in to ${describe(zoomedIn)}, zoomed out to ${describe(zoomedOut)})`));
+
+            document.getElementById('output').textContent = output.join('\n');
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }
+
+        window.addEventListener('load', doTest, false);
+    </script>
+</head>
+<body>
+    <div class="grid"></div>
+    <pre id="output"></pre>
+    <script>
+        const grid = document.querySelector('.grid');
+        const image = 'data:image/svg+xml,' + encodeURIComponent("<svg xmlns='http://www.w3.org/2000/svg' width='236' height='350'><rect width='100%' height='100%' fill='teal'/></svg>");
+        for (let i = 0; i < 24; ++i) {
+            const img = document.createElement('img');
+            img.src = image;
+            grid.appendChild(img);
+        }
+    </script>
+</body>
+</html>

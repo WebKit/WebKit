@@ -1,0 +1,17 @@
+This tests which answer wins on iOS when the page has said something about a field's validity itself. A message shown beside a field outranks the page calling that field valid, because a page doing both is contradicting itself. It does not outrank the page saying what kind of error it is.
+
+PASS: axElement('origin').stringAttributeValue('AXInvalid') === 'false'
+PASS: axElement('origin').stringAttributeValue('AXInvalid') === 'true'
+PASS: errorTextFor('origin') === 'AXLabel: Please enter a valid origin.'
+PASS: axElement('nickname').stringAttributeValue('AXInvalid') === 'spelling'
+PASS: errorTextFor('nickname') === 'AXLabel: That is not a word.'
+document.getElementById('origin').value = 'SFO'; document.getElementById('origin-error').remove();
+PASS: axElement('origin').stringAttributeValue('AXInvalid') === 'false'
+PASS: errorTextFor('origin') === 'no error messages'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+From Nickname
+That is not a word.
+Search

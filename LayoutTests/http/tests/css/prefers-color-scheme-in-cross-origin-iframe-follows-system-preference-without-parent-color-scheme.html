@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+
+<title>prefers-color-scheme in a cross-origin iframe follows the system preference when the parent page has no explicit color-scheme</title>
+
+<style>
+  #ifr {
+    width: 500px;
+    height: 500px;
+    margin: 0;
+    border: 0;
+    padding: 0;
+    display: block;
+  }
+</style>
+
+<p>Test passes if the box is red.</p>
+<iframe id="ifr"></iframe>
+
+<script>
+  if (window.testRunner) {
+    testRunner.waitUntilDone();
+
+    ifr.addEventListener("load", () => {
+      // testRunner.setUseDarkAppearanceForTesting() only affects loaded frames,
+      // hence we set it after the frame is loaded.
+      testRunner.setUseDarkAppearanceForTesting(true);
+      testRunner.notifyDone();
+    })
+  }
+
+  ifr.src = "http://localhost:8000/css/resources/prefers-color-scheme-iframe.html";
+</script>

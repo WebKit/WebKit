@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>This frame does NOT have 'upgrade-insecure-requests' but inherits it from its parent.
+Both HTTP script loads below should be upgraded to HTTPS.</p>
+<script>
+var scriptsLoaded = 0;
+function scriptLoaded() {
+    scriptsLoaded++;
+}
+</script>
+<script onload="scriptLoaded()" src="http://127.0.0.1:8443/security/contentSecurityPolicy/resources/alert-pass.js"></script>
+<script onload="scriptLoaded()" src="http://localhost:8443/security/contentSecurityPolicy/resources/alert-pass.js"></script>
+<script>
+onload = function() {
+    if (window.parent !== window)
+        window.parent.postMessage({ scriptsLoaded: scriptsLoaded }, '*');
+};
+</script>
+</body>
+</html>

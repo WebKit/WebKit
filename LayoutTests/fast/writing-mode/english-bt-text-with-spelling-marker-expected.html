@@ -1,0 +1,50 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ spellCheckingDots=true ] -->
+<html>
+<head>
+<script src="../../editing/editing.js"></script>
+<script src="../../resources/ui-helper.js"></script>
+<style>
+@font-face {
+    font-family: Ahem;
+    src: url("../../resources/Ahem.ttf");
+}
+
+#expected {
+    display: inline-block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 200px;
+    font: 20px/1 Ahem;
+    line-height: 1.2;
+}
+</style>
+</head>
+<body>
+<div id="expected" contenteditable="true"></div>
+<script>
+if (window.internals)
+    internals.setContinuousSpellCheckingEnabled(true);
+
+var expected = document.getElementById("expected");
+
+testRunner.waitUntilDone();
+typeText("mispelled a", expected).then(() => {
+    queueCommand(() => window.internals && internals.updateEditorUINowIfScheduled()); // Trigger spell checking
+});
+
+async function typeText(text, element)
+{
+    await UIHelper.setSpellCheckerResults({
+        "mispelled a": [
+            { "type": "spelling", "from": 0, "to": 9 }
+        ]
+    });
+    element.focus();
+    for (const c of text)
+        typeCharacterCommand(c);
+    element.blur();
+}
+</script>
+</body>
+</html>

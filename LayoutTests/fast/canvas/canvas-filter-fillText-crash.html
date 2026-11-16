@@ -1,0 +1,20 @@
+<!-- webkit-test-runner [ CanvasFiltersEnabled=true ] -->
+
+<!DOCTYPE html>
+
+<p>This test passes if it does not crash.</p>
+<canvas id="c" width="200" height="100"></canvas>
+
+<script>
+  if (window.testRunner)
+    testRunner.dumpAsText();
+
+  const ctx = document.getElementById('c').getContext('2d');
+  ctx.font = '20px serif';
+
+  for (let i = 0; i < 15; ++i)
+    ctx.save();
+
+  ctx.filter = 'blur(5px)';
+  ctx.fillText('hello', 10, 50);
+</script>

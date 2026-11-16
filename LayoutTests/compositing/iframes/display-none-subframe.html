@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <style>
+        #box {
+            width: 100px;
+            height: 100px;
+            margin: 10px;
+            background-color: blue;
+        }
+
+        .composited {
+            -webkit-transform: translateZ(0);
+        }
+
+        iframe {
+            display: none;
+        }
+    </style>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+
+        function nextFrame()
+        {
+            return new Promise(requestAnimationFrame);
+        }
+
+        async function doTest()
+        {
+            document.body.offsetWidth;
+
+            if (!window.internals) {
+                document.getElementById('result').textContent = 'This test must be run in the test harness.';
+                return;
+            }
+
+            internals.startTrackingLayerFlushes();
+            internals.startTrackingRenderingUpdates();
+
+            document.getElementById('box').classList.add('composited');
+            internals.updateLayoutIgnorePendingStylesheetsAndRunPostLayoutTasks();
+
+            // The compositing change reaches the compositor in a rendering update, so step
+            // frames until it has been flushed. However many frames that takes, a rendering
+            // update flushes the compositor at most once, so the flushes must not outnumber
+            // them: a display:none subframe used to make the compositor flush again every
+            // time around the run loop.
+            while (!internals.layerFlushCount())
+                await nextFrame();
+
+            const flushCount = internals.layerFlushCount();
+            const renderingUpdateCount = internals.renderingUpdateCount();
+
+            document.getElementById('result').textContent = flushCount > renderingUpdateCount
+                ? 'FAIL: saw ' + flushCount + ' layer flushes for ' + renderingUpdateCount + ' rendering updates.'
+                : 'PASS: saw no more layer flushes than rendering updates';
+
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }
+
+        window.addEventListener('load', doTest, false);
+    </script>
+</head>
+<body>
+    <p id="result"></p>
+    <div id="box"></div>
+    <iframe src="resources/subframe.html"></iframe>
+</body>
+</html>

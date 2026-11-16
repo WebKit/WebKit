@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+<style>
+body { margin: 0; }
+#outer { position: absolute; left: 0; top: 0; width: 200px; height: 100px; overflow: hidden; }
+#inner { position: relative; width: 400px; height: 400px; overflow: hidden; }
+.card { position: relative; width: 100px; height: 40px; will-change: transform; }
+.card > div { position: relative; width: 50px; height: 20px; will-change: transform; }
+#abs { position: absolute; left: 120px; top: 10px; width: 50px; height: 20px; will-change: transform; }
+#outer2 { position: absolute; left: 0; top: 200px; width: 200px; height: 100px; overflow: hidden; }
+#inner2 { position: relative; height: 60px; overflow: hidden; }
+#spacer { height: 300px; }
+</style>
+</head>
+<body>
+<div id="outer">
+    <div id="inner">
+        <div id="c0" class="card"><div id="g0"></div></div>
+        <div id="c1" class="card"><div id="g1"></div></div>
+        <div id="c2" class="card"><div id="g2"></div></div>
+        <div id="c3" class="card"><div id="g3"></div></div>
+        <div id="abs"></div>
+    </div>
+</div>
+<div id="outer2">
+    <div id="inner2">
+        <div id="d0" class="card"></div>
+        <div id="d1" class="card"></div>
+    </div>
+    <div id="spacer"></div>
+</div>
+<script>
+function elementAt(x, y)
+{
+    let element = document.elementFromPoint(x, y);
+    return element.id || element.localName;
+}
+
+shouldBe("elementAt(10, 10)", "'g0'");
+shouldBe("elementAt(80, 10)", "'c0'");
+shouldBe("elementAt(10, 50)", "'g1'");
+shouldBe("elementAt(80, 90)", "'c2'");
+shouldBe("elementAt(130, 15)", "'abs'");
+shouldBe("elementAt(80, 110)", "'html'");
+shouldBe("elementAt(10, 130)", "'html'");
+
+document.getElementById("outer").style.height = "150px";
+shouldBe("elementAt(80, 110)", "'c2'");
+shouldBe("elementAt(10, 130)", "'g3'");
+
+document.getElementById("outer").scrollTop = 40;
+shouldBe("elementAt(10, 10)", "'g1'");
+shouldBe("elementAt(80, 10)", "'c1'");
+shouldBe("elementAt(130, 15)", "'inner'");
+
+shouldBe("elementAt(80, 230)", "'d0'");
+shouldBe("elementAt(80, 250)", "'d1'");
+document.getElementById("outer2").scrollTop = 40;
+shouldBe("elementAt(80, 205)", "'d1'");
+shouldBe("elementAt(80, 230)", "'spacer'");
+</script>
+</body>
+</html>

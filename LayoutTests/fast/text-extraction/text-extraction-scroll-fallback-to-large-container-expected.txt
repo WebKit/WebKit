@@ -1,0 +1,14 @@
+Tests that scroll interactions on a page with an unscrollable root fall back to a large scrollable container.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS rootScrollTop is 0
+PASS noArgScrollError is ""
+PASS largeScrollerScrollTopAfterFallback is > 0
+PASS scrollByError is ""
+PASS largeScrollerScrollTopAfterScrollBy is 150
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Top of large scroller

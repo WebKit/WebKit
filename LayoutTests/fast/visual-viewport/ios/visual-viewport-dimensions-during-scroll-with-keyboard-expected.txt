@@ -1,0 +1,8 @@
+PASS numEqualOfEqualVisualViewportRects is not numIterations
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Tests that the visual viewport rect is updated during a scroll with the keyboard up.
+
+
+

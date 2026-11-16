@@ -1,0 +1,11 @@
+
+
+PASS Verify chunks can be passed within the same agent clusters
+PASS Verify chunks cannot be passed accross the different agent clusters
+PASS Verify chunks can be passed back and forth between main and worker
+PASS Verify chunks can be passed back and forth between main and data-url worker
+PASS Verify chunks cannot be passed to sharedworker
+PASS Verify chunks cannot be passed to serviceworker
+PASS Verify chunks is unavailable in sharedworker
+PASS Verify chunks is unavailable in serviceworker
+

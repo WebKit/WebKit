@@ -1,0 +1,7 @@
+2d.pattern.paint.orientation.image
+
+Image patterns do not get flipped when painted
+
+
+PASS Image patterns do not get flipped when painted
+

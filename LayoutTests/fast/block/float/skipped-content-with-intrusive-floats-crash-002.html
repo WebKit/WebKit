@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<style>
+  html {
+    text-indent: 50000vmin hanging;
+    padding-left: 1vh;
+    margin-right: 100%;
+  }
+  #span1, #span2, #span3 {
+      margin-right: 100%;
+      padding: 100%;
+  }
+  .floatLeft {
+    float: left;
+  }
+  #div1, #div2 {
+    padding: 1em;
+  }
+</style>
+<p>PASS if no crash.</p>
+<div id="container">
+  &nbsp;
+  <table>
+    <li></li>
+    <marquee id="marquee">
+      <div></div>
+      <span id="span1"></span>
+      <span id="span2"><span id="span3" class="floatLeft"></span>&nbsp;</span>
+    </marquee>
+    <output id="output">
+      <div id="div1" class="floatLeft class1">
+        <template class="floatLeft"></template>
+      </div>&nbsp;
+    </output>
+    <details id="details" open>
+      <embed id="embed">
+        <div id="div2">
+          <data id="data" contenteditable="true"><span></span></data>
+        </div>
+      </embed>
+    </details>
+  </table>
+</div>
+<script>
+  window.addEventListener("load", _ => {
+    window.testRunner?.dumpAsText();
+    window.testRunner?.waitUntilDone();
+
+    marquee.appendChild(span2);
+    document.body.scrollTop;
+
+    span1.remove();
+    document.body.scrollTop;
+
+    let range = document.createRange();
+    range.selectNodeContents(span2);
+    range.surroundContents(data);
+    document.body.scrollTop;
+
+    details.open = false;
+    document.execCommand("selectAll",false,null);
+    data.remove();
+    embed.type = "video/mp4";
+    output.value = "";
+    document.body.scrollTop;
+
+    window.testRunner?.notifyDone();
+  });
+</script>

@@ -1,0 +1,4 @@
+Tests that attempting to ping an invalid file URI doesn't crash WebKit.
+
+Click Me
+The test passes if it does not crash.

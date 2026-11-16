@@ -1,0 +1,13 @@
+
+PASS Converting a CSSNumericValue to a sum with invalid units throws SyntaxError
+PASS Converting a CSSNumericValue with an invalid sum value to a sum throws TypeError
+PASS Converting a CSSNumericValue with compound units to a sum throws TypeError
+PASS Converting a CSSNumericValue to a sum with an incompatible unit throws TypeError
+PASS Converting a CSSNumericValue to a sum with units that are not addable throws TypeError
+PASS Converting a CSSNumericValue with leftover units to a sum throws TypeError
+PASS Converting CSSNumericValue to a sum with its own unit returns itself
+PASS Converting CSSNumericValue to a sum with no arguments returns all the units in sorted order
+PASS Converting CSSNumericValue to a sum with a relative unit converts correctly
+PASS Converting CSSNumericValue to a sum containing extra units returns zero for those units
+PASS CSSNumericValue.toSum converts greedily
+

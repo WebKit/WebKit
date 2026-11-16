@@ -1,0 +1,10 @@
+
+EME API is supported OK
+EXPECTED (_mediaKeysSystemAccess.keySystem == 'org.w3.clearkey') OK
+EXPECTED (_mediaKeys != 'null') OK
+EXPECTED (typeof _mediaKeys.createSession == 'function') OK
+EXPECTED (_mediaKeySession.constructor.name == 'MediaKeySession') OK
+EXPECTED (internals.mediaKeysInternalInstanceObjectRefCount(_mediaKeys) == '1') OK
+EXPECTED (internals.mediaKeySessionInternalInstanceSessionObjectRefCount(_mediaKeySession) == '1') OK
+END OF TEST
+

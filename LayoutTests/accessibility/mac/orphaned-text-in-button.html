@@ -1,0 +1,40 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<button id="button"><p>Foo</p></button>
+    
+<script>
+var output = "This test ensures that static text within a button can still return a valid parent.\n\n";
+// This matters because although anything descending from a button is accessibility-is-ignored, VoiceOver and other
+// ATs can still access ignored objects through text markers, e.g. via NSAccessibilityUIElementForTextMarkerAttribute.
+// Then, if the AT tries to do something with the object but finds it to be detached, it often behaves incorrectly.
+
+if (window.accessibilityController) {
+    var button = accessibilityController.accessibleElementById("button");
+
+    // This sequence of actions roughly simulates the real bug that inspired this. Navigating by character through the
+    // button text, VoiceOver wasn't able to draw anything for the cursor because the StaticText associated with the
+    // marker had no parent, thus it couldn't create a VoiceOver internal element for the static text.
+    var markerRange = button.textMarkerRangeForElement(button);
+    var startMarker = button.startTextMarkerForTextMarkerRange(markerRange);
+    startMarker = button.nextTextMarker(startMarker);
+    var endMarker = button.nextTextMarker(startMarker);
+    markerRange = button.textMarkerRangeForMarkers(startMarker, endMarker);
+    output += expect("button.stringForTextMarkerRange(markerRange).length === 1", "true");
+    output += expectRectWithVariance("button.boundsForRange(1, 2)", -1, -1, 13, 13, 2);
+
+    var textMarkerElement = button.accessibilityElementForTextMarker(endMarker);
+    output += expect("textMarkerElement.role.toLowerCase().includes('statictext')", "true");
+    output += expect("textMarkerElement.parentElement().role.toLowerCase().includes('button')", "true");
+
+    debug(output);
+}
+</script>
+</body>
+</html>
+

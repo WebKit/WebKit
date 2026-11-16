@@ -1,0 +1,13 @@
+
+RUN(internals.setMediaElementRestrictions(audio, "RequireUserGestureForAudioRateChange"))
+RUN(audio.src = findMediaFile("audio", "content/test"))
+RUN(audio.volume = 1)
+RUN(audio.play().then(failTest).catch(didPreventPlayback))
+Setting volume to 0 to allow playback
+RUN(audio.volume = 0)
+RUN(audio.play().then(didPlaySilentAudio).catch(failTest))
+Ensure setting volume to non-zero value pauses media in the presence of audio rate change restrictions
+RUN(audio.volume = 0.2)
+EXPECTED (audio.paused == 'true') OK
+END OF TEST
+

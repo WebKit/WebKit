@@ -1,0 +1,8 @@
+When inserting dictated text, range of text that has alternative text is attached as DictationAlternatives marker.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+this is a text
+PASS markedText is "text"
+
+TEST COMPLETE

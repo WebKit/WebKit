@@ -1,0 +1,47 @@
+This test ensures proper AX tree output for image map links with alt tags.
+
+AXRole: AXLink
+AXParent: AXWebArea
+AXChildren: 0
+AXPosition:  { 18.0000, 18.0000 }
+AXSize: { 123.000, 62.0000 }
+AXTitle: Link1
+AXDescription:
+AXValue:
+AXFocusable: 1
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXURL: http://www.apple.com/
+AXPlatformAttributes: computed-role:link, tag:area
+------------
+AXRole: AXLink
+AXParent: AXWebArea
+AXChildren: 0
+AXPosition:  { 20.0000, 82.0000 }
+AXSize: { 122.000, 14.0000 }
+AXTitle: Link2
+AXDescription:
+AXValue:
+AXFocusable: 1
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXURL: http://www.apple.com/
+AXPlatformAttributes: computed-role:link, tag:area
+------------
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

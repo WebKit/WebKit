@@ -1,0 +1,56 @@
+<!DOCTYPE html><!-- webkit-test-runner [ WirelessPlaybackMediaPlayerEnabled=true ] -->
+<html>
+    <head>
+        <script src='../media-file.js'></script>
+        <script src='../video-test.js'></script>
+        <script>
+            var route;
+            var video;
+
+            async function start()
+            {
+                if (window.internals)
+                    internals.mockMediaDeviceRouteController.enabled = true;
+
+                route = internals.mockMediaDeviceRouteController.createMockMediaDeviceRoute();
+                run(`internals.mockMediaDeviceRouteController.activateRoute(route)`);
+
+                const urlPromise = new Promise((resolve) => {
+                    route.setURLCallback(async (url) => {
+                        resolve(url);
+                    });
+                });
+
+                video = document.getElementsByTagName('video')[0];
+                run(`video.src = findMediaFile('video', '../content/test')`);
+                run(`route.playbackRate = 1`);
+                run(`route.timeRange = { start: 0, duration: 0 }`);
+                run(`video.play()`);
+                await urlPromise;
+
+                consoleWrite('A route that is ready but has published no seekable range should not make the element playable.');
+                run(`route.ready = true`);
+                await sleepFor(100);
+                testExpected('video.readyState < HTMLMediaElement.HAVE_ENOUGH_DATA', true);
+                testExpected('video.seekable.length', 0);
+
+                consoleWrite('Publishing a time range should make the element playable and seekable.');
+                run(`route.timeRange = { start: 0, duration: 60 }`);
+                await testExpectedEventually('video.readyState', HTMLMediaElement.HAVE_ENOUGH_DATA, '==', 2000);
+                testExpected('video.seekable.length', 1);
+                testExpected('video.seekable.end(0)', 60);
+
+                consoleWrite('A seek issued once the element is playable should be honored, not silently dropped.');
+                run(`video.currentTime = 30`);
+                await waitFor(video, 'seeked');
+                await waitForConditionOrTimeout('video.currentTime > 29', false, 2000);
+
+                endTest();
+            }
+        </script>
+    </head>
+    <body onload='start()'>
+        <video controls></video>
+        <p>Test that the element does not report HAVE_ENOUGH_DATA until the MediaDeviceRoute publishes a seekable time range, so a seek issued as soon as the element becomes playable is honored rather than silently dropped.</p>
+    </body>
+</html>

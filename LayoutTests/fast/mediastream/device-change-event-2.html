@@ -1,0 +1,148 @@
+<!DOCTYPE HTML><!-- webkit-test-runner [ dumpJSConsoleLogInStdErr=true ] -->
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Testing 'devicechange' event is fired correctly.</title>
+    <script src="../../resources/testharness.js"></script>
+    <script src="../../resources/testharnessreport.js"></script>
+    <script>
+    let stream = null;
+    
+    let setup = async (test) => {
+        if (!window.testRunner)
+            return Promise.reject("test requires internal API");
+
+        test.add_cleanup(() => { testRunner.resetMockMediaDevices(); });
+
+        testRunner.setUserMediaPermission(true);
+
+        if (stream)
+            stream.getTracks().forEach(track => track.stop());
+        stream = null;
+    }
+
+    promise_test(async (test) => {
+        // Trigger monitoring of device changes.
+        navigator.mediaDevices.ondevicechange = () => { };
+    
+        await setup(test);
+
+        await navigator.mediaDevices.getUserMedia({ audio:true, video:true })
+            .then(s => stream = s)
+
+        let devices = await navigator.mediaDevices.enumerateDevices();
+        let devices2 = await navigator.mediaDevices.enumerateDevices();
+
+        assert_true(!!devices.length, "check there are some devices");
+        assert_equals(devices.length, devices2.length, "devices length");
+        assert_not_equals(devices[0], devices2[0], "devices are different");
+        assert_equals(devices[0].deviceId, devices2[0].deviceId, "same deviceIds");
+
+        testRunner.clearMockMediaDevices();
+        await new Promise((resolve, reject) => {
+            navigator.mediaDevices.ondevicechange = resolve;
+            setTimeout(() => {
+                reject("event 1 took too long");
+            }, 5000);
+        });
+        devices = await navigator.mediaDevices.enumerateDevices();
+        assert_false(!!devices.length, "check there are no more devices");
+
+        testRunner.addMockCameraDevice("id1", "my camera");
+        await new Promise((resolve, reject) => {
+            navigator.mediaDevices.ondevicechange = resolve;
+            setTimeout(() => {
+                reject("event 2 took too long");
+            }, 5000);
+        });
+
+        devices = await navigator.mediaDevices.enumerateDevices();
+        assert_equals(devices[0].kind, "videoinput");
+        assert_equals(devices[0].label, "my camera");
+
+        testRunner.addMockMicrophoneDevice("id2", "my mic");
+        await new Promise((resolve, reject) => {
+            navigator.mediaDevices.ondevicechange = resolve;
+            setTimeout(() => {
+                reject("event 3 took too long");
+            }, 5000);
+        });
+        devices = await navigator.mediaDevices.enumerateDevices();
+        assert_equals(devices[0].kind, "audioinput");
+        assert_equals(devices[0].label, "my mic");
+
+        const micStream = await navigator.mediaDevices.getUserMedia({ audio : { deviceId : "id2" } });
+        test.add_cleanup(() => micStream.getTracks().forEach(track => track.stop()));
+        assert_equals(micStream.getAudioTracks()[0].label, "my mic");
+    }, "'devicechange' event fired when device list changes");
+
+    promise_test(async (test) => {
+
+        await setup(test);
+
+        async function doEventCoalescingTest() {
+            let eventCount = 0;
+            await new Promise((resolve, reject) => {
+                navigator.mediaDevices.ondevicechange = (evt) => {
+                    ++eventCount;
+                    setTimeout(() => {
+                        resolve();
+                    }, 500);
+                }
+
+                setTimeout(() => {
+                    console.log("navigator.mediaDevices.ondevicechange took too long");
+                    resolve();
+                }, 4000);
+
+                testRunner.addMockMicrophoneDevice("id4", "microphone 3");
+                testRunner.addMockMicrophoneDevice("id5", "microphone 4");
+            });
+            return eventCount;
+        }
+
+        // Coalescing may not always happen on slow bots, let's retry until we are successful.
+        let count = 0;
+        while (count++ < 100) {
+            const eventCount = await doEventCoalescingTest();
+            if (eventCount == 1)
+                break;
+            testRunner.removeMockMediaDevice("id4");
+            testRunner.removeMockMediaDevice("id5");
+        }
+        assert_less_than(count, 100);
+    }, "'devicechange' events fired quickly are coalesced");
+
+
+    promise_test(async (test) => {
+        await setup(test);
+        assert_equals(document.visibilityState, "visible", "visible1");
+
+        let promise = new Promise(resolve => document.onvisibilitychange = resolve);
+        testRunner.setPageVisibility("hidden");
+        await promise;
+        assert_equals(document.visibilityState, "hidden", "hidden");
+
+        testRunner.addMockMicrophoneDevice("id3", "microphone 2");
+
+        let testPromise = new Promise(resolve => navigator.mediaDevices.ondevicechange = resolve);
+        testPromise = testPromise.then(test.step_func(() => {
+            assert_equals(document.visibilityState, "visible", "devicechange should only fire when the document is focused and active");
+        }));
+
+        promise = new Promise(resolve => document.onvisibilitychange = resolve);
+        // Let's delay to give enough time for navigator.mediaDevices.ondevicechange to fire
+        setTimeout(() => {
+            testRunner.setPageVisibility("visible");
+        }, 500);
+
+        await promise;
+        assert_equals(document.visibilityState, "visible", "visible2");
+
+        await testPromise;
+    }, "'devicechange' event is not fired when the document is not visible");
+    </script>
+</head>
+<body>
+</body>
+</html>

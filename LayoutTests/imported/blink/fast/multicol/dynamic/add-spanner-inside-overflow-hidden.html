@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<p>Add a spanner inside a fixed-size clipped block inside a multicol container. It should not be
+    affected by the clipping, since the containing block of a spanner is the multicol
+    container. This also tests that we don't perform any optimized subtree layout operations
+    incompatible with multicol (which would typically cause assertion failures).</p>
+<p>You should see the word "PASS" below, and nothing else (no red, no "FAIL").</p>
+<div style="-webkit-columns:2; width:20em; height:10em; line-height:2em; overflow:hidden;">
+    <div style="width:5em; height:2em; overflow:hidden;">
+        &nbsp;
+        <div id="spanner" style="-webkit-column-span:all; display:none;">PASS</div>
+        <span style="background:red;">FAIL</span>
+    </div>
+</div>
+<script>
+    document.body.offsetTop;
+    document.getElementById("spanner").style.display = "block";
+</script>

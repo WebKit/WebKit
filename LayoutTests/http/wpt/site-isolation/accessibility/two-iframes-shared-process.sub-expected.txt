@@ -1,0 +1,21 @@
+Tests the accessibility tree for two cross-site iframes that share one Web process.
+
+PASS: typeof framePIDs.One === "number"
+PASS: framePIDs.One === framePIDs.Two === true
+PASS: framePIDs.One !== mainFramePID === true
+
+PASS: webAreaCount === 3
+
+Accessibility tree:
+AXRole: AXWebArea
+    AXRole: AXButton Before
+    AXRole: AXWebArea
+        AXRole: AXHeading Frame One Heading
+    AXRole: AXWebArea
+        AXRole: AXHeading Frame Two Heading
+    AXRole: AXButton After
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Before     After

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        .fixed {
+            position: fixed;
+            top: -410px;
+            width: 500px;
+            height: 400px;
+            border: 1px solid black;
+        }
+
+        .container {
+            position: relative;
+        }
+
+        .composited {
+            transform: translateZ(0);
+        }
+    </style>
+    <script>
+        if (window.testRunner)
+            testRunner.dumpAsText();
+
+        window.addEventListener('load', () => {
+            if (window.internals)
+                document.getElementById('tree').innerText = internals.scrollingStateTreeAsText();
+        }, false);
+    </script>
+</head>
+<body>
+    <div class="fixed">
+        <div class="container">
+            <div class="composited">
+                composited
+            </div>
+        </div>
+    </div>
+<pre id="tree"></pre>
+</body>
+</html>

@@ -1,0 +1,5 @@
+
+FAIL single target promise_test: Unhandled rejection with value: "no hit"
+FAIL multiple targets, should only hit first promise_test: Unhandled rejection with value: "no hit"
+PASS single target miss
+

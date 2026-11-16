@@ -1,0 +1,132 @@
+This test ensures that display:contents elements are inserted in the correct place in the AX tree.
+
+
+Performing search traversal of #button-container.
+
+#block-0 AXRole: AXButton
+
+#inline-block-1 AXRole: AXButton
+
+#contents-2 AXRole: AXButton
+
+#block-3 AXRole: AXButton
+
+#inline-block-4 AXRole: AXButton
+
+#contents-5 AXRole: AXButton
+
+#block-6 AXRole: AXButton
+
+Performing search traversal of #heading-container.
+
+#flex-7 AXRole: AXHeading
+
+AXRole: AXStaticText
+AXValue: Flex-7
+
+#grid-8 AXRole: AXHeading
+
+AXRole: AXStaticText
+AXValue: Grid-8
+
+#block-9 AXRole: AXHeading
+
+AXRole: AXStaticText
+AXValue: Block-9
+
+#inline-block-10 AXRole: AXHeading
+
+AXRole: AXStaticText
+AXValue: Inline-Block-10
+
+#inline-block-11 AXRole: AXHeading
+
+AXRole: AXStaticText
+AXValue: Inline-Block-11
+
+#contents-12 AXRole: AXHeading
+
+AXRole: AXStaticText
+AXValue: Contents-12
+
+#inline-block-13 AXRole: AXHeading
+
+AXRole: AXStaticText
+AXValue: Inline-Block-13
+
+#inline-block-14 AXRole: AXHeading
+
+AXRole: AXStaticText
+AXValue: Inline-Block-14
+
+#contents-15 AXRole: AXHeading
+
+AXRole: AXStaticText
+AXValue: Contents-15
+
+#contents-16 AXRole: AXHeading
+
+AXRole: AXStaticText
+AXValue: Contents-16
+
+#flex-17 AXRole: AXHeading
+
+AXRole: AXStaticText
+AXValue: Flex-17
+
+#grid-18 AXRole: AXHeading
+
+AXRole: AXStaticText
+AXValue: Grid-18
+
+#contents-19 AXRole: AXHeading
+
+AXRole: AXStaticText
+AXValue: Contents-19
+
+Performing search traversal of #mixed-element-container.
+
+#flex-20 AXRole: AXHeading
+
+AXRole: AXStaticText
+AXValue: Flex-20
+
+#grid-21 AXRole: AXHeading
+
+AXRole: AXStaticText
+AXValue: Grid-21
+
+#contents-22 AXRole: AXButton
+
+#contents-23 AXRole: AXHeading
+
+AXRole: AXStaticText
+AXValue: Contents-23
+
+#block-24 AXRole: AXButton
+
+#inline-block-25 AXRole: AXHeading
+
+AXRole: AXStaticText
+AXValue: Inline-Block-25
+
+#contents-26 AXRole: AXHeading
+
+AXRole: AXStaticText
+AXValue: Contents-26
+
+#contents-27 AXRole: AXButton
+
+#block-28 AXRole: AXButton
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+
+
+
+
+
+
+

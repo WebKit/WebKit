@@ -1,0 +1,19 @@
+Tests for Resource.Type.Ping.
+
+Ping 204 Ping 404
+
+== Running test suite: Resource.Type.Ping
+-- Running test case: Resource.Type.Ping.204
+PASS: Resource should be Ping type.
+PASS: Resource should be a POST request.
+PASS: Resource data should be 'PING'.
+Ping-To: http://127.0.0.1:8000/inspector/network/ping-type.html#a204
+PASS: Resource should have a 204 response.
+
+-- Running test case: Resource.Type.Ping.404
+PASS: Resource should be Ping type.
+PASS: Resource should be a POST request.
+PASS: Resource data should be 'PING'.
+Ping-To: http://127.0.0.1:8000/inspector/network/ping-type.html#a404
+PASS: Resource should have a 404 response.
+

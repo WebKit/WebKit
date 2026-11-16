@@ -1,0 +1,10 @@
+Tests that we do not crash when calling replaceTrack on a sender that outlives its RTCPeerConnection.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Because there was no crash
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

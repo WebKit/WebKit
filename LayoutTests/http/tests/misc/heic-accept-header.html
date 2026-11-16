@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+    if (window.testRunner) {
+        testRunner.dumpAsText()
+        testRunner.waitUntilDone();
+    }
+
+    function test() {
+        var image = document.getElementById("testImage");
+        var result = document.getElementById("result");
+
+        if (image.width == 400 && image.height == 400)
+            result.innerHTML = "PASS";
+        else
+            result.innerHTML = "FAIL";
+
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }
+</script>
+</head>
+<body>
+Tests that HEIC is sent in the accept header if it's enabled.<br>
+<img id="testImage" src="resources/image-heic-accept.py"  onload="test()" onerror="test()"/>
+<div id="result"/>
+</body>
+</html>

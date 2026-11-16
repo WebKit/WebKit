@@ -1,0 +1,3 @@
+
+FAIL drawElementImage does not draw nested tainted canvases assert_array_equals: Cross origin nested canvas should not draw expected property 0 to be 0 but got 255 (expected array [0, 0, 255, 255] got object "255,0,0,255")
+

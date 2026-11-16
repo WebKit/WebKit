@@ -1,0 +1,81 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<!DOCTYPE html>
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script>
+function addCrossOriginIFrame() {
+    let crossOriginHost = location.hostname === "localhost" ? "127.0.0.1" : "localhost";
+    let iframe = document.createElement("iframe");
+    iframe.name = "child-frame";
+    iframe.src = `http://${crossOriginHost}:8000/site-isolation/inspector/page/resources/resource-tree-frame-with-grandchild.html`;
+    document.body.appendChild(iframe);
+}
+
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Page.FrameIdCollisionFreeNestedCrossOrigin");
+
+    function flattenFrames(node, out = []) {
+        out.push(node);
+        for (let child of node.childFrames || [])
+            flattenFrames(child, out);
+        return out;
+    }
+
+    suite.addTestCase({
+        name: "SiteIsolation.Page.FrameIdCollisionFreeNestedCrossOrigin.DistinctIds",
+        description: "main(A) -> child(B) -> grandchild(A): every frame protocol id must be distinct, even when co-hosted frames share a per-process counter.",
+        async test() {
+            // Add the nested iframes from within the test. The child commits in a
+            // separate WebContent process (CommitTiming::WaitForLoad), then adds the
+            // grandchild which flips back to host A and commits in yet another
+            // process, so the tree fills in incrementally -- poll until all three
+            // levels are present. Use getResourceTree on the multiplexing
+            // backendTarget: its PageAgent is the UIProcess proxy that sees every
+            // WebContent process; window.PageAgent would only see the local frame.
+            InspectorTest.evaluateInPage("addCrossOriginIFrame()");
+
+            let frameTree;
+            let nodes;
+            for (let attempt = 0; attempt < 50; ++attempt) {
+                ({ frameTree } = await WI.backendTarget.PageAgent.getResourceTree());
+                nodes = flattenFrames(frameTree);
+                if (nodes.length >= 3)
+                    break;
+                await new Promise((resolve) => setTimeout(resolve, 100));
+            }
+
+            InspectorTest.expectEqual(nodes.length, 3, "Tree should contain main + child + grandchild.");
+
+            let main = frameTree;
+            let child = main.childFrames?.[0];
+            let grandchild = child?.childFrames?.[0];
+
+            InspectorTest.expectNotNull(child, "Main frame should have a child frame.");
+            InspectorTest.expectNotNull(grandchild, "Child frame should have a grandchild frame.");
+            if (!child || !grandchild)
+                return;
+
+            InspectorTest.expectEqual(child.frame.name, "child-frame", "Child frame name should be reported.");
+            InspectorTest.expectEqual(grandchild.frame.name, "grandchild-frame", "Grandchild frame name should be reported.");
+            InspectorTest.expectEqual(child.frame.parentId, main.frame.id, "Child's parentId should match the main frame id.");
+            InspectorTest.expectEqual(grandchild.frame.parentId, child.frame.id, "Grandchild's parentId should match the child frame id.");
+
+            // The crux of webkit.org/b/316663: encode the full FrameIdentifier (not
+            // only its lower-32-bit per-process counter) in the protocol id. In this
+            // topology two frames minted in different processes share a per-process
+            // counter and become co-hosted in a single process, so a counter-only
+            // object part would collapse them onto the same id -- a parent/child
+            // cycle in the frontend frame tree. The uniqueness check below is the
+            // regression guard; it fails without the full-FrameIdentifier encoding.
+            let ids = nodes.map((node) => node.frame.id);
+            InspectorTest.expectThat(ids.every((id) => !!id), "Every frame should have a non-empty id.");
+            InspectorTest.expectEqual(new Set(ids).size, ids.length, "All frame protocol ids should be unique.");
+            InspectorTest.expectThat(grandchild.frame.id !== main.frame.id, "Grandchild id should differ from main frame id.");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+<body onload="runTest()">
+<p>Test that nested cross-origin frame protocol ids are collision-free under site isolation (webkit.org/b/316663).</p>
+</body>

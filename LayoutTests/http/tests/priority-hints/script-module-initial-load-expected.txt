@@ -1,0 +1,8 @@
+
+PASS all scripts were fetched by the preload scanner
+PASS script-module-initial-load
+PASS script-module-initial-load 1
+PASS script-module-initial-load 2
+PASS script-module-initial-load 3
+PASS script-module-initial-load 4
+

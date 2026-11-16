@@ -1,0 +1,98 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<head>
+    <style>
+        .list {
+            width: 400px;
+            height: 400px;
+            display: flex;
+            flex-flow: row nowrap;
+            overflow-x: scroll;
+            overflow-y: hidden;
+            border: 1px solid black;
+            padding: 0;
+            margin: 0;
+        }
+
+        .list li {
+            flex: none;
+            width: 100%;
+            height: 100%;
+            padding: 0;
+            margin: 0;
+            list-style-type: none;
+        }
+    </style>
+    <script src="../../../resources/ui-helper.js"></script>
+    <script>
+        async function scrollTest()
+        {
+            const scroller = document.getElementById("scroller");
+
+            await UIHelper.startMonitoringWheelEvents();
+            eventSender.mouseMoveTo(100, 100);
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(-2, 0, "began", "none");
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(-15, 0, "changed", "none");
+            await UIHelper.renderingUpdate();
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, "ended", "none");
+
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, "none", "begin");
+            await UIHelper.renderingUpdate();
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(-20, 0, "none", "continue");
+            await UIHelper.renderingUpdate();
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(-20, 0, "none", "continue");
+            await UIHelper.renderingUpdate();
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(-20, 0, "none", "continue");
+            await UIHelper.renderingUpdate();
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(-10, 0, "none", "continue");
+            await UIHelper.renderingUpdate();
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(-20, 0, "none", "continue");
+            await UIHelper.renderingUpdate();
+
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(-20, 0, "none", "continue");
+            await UIHelper.renderingUpdate();
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(-10, 0, "none", "continue");
+
+            scroller.scrollTo(0, 0);
+
+            await UIHelper.renderingUpdate();
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, "none", "end");
+
+            await UIHelper.waitForScrollCompletion();
+
+            await UIHelper.renderingUpdate();
+            testRunner.notifyDone();
+        }
+
+        window.addEventListener('load', () => {
+            const scroller = document.getElementById("scroller");
+
+            if (!window.eventSender) {
+                setTimeout(scrollTest, 0);
+                return;
+            }
+
+            testRunner.waitUntilDone();
+
+            setTimeout(scrollTest, 0);
+        }, false);
+    </script>
+</head>
+<body>
+    <ul id="scroller" class="list">
+      <li style="background: #ff0;">test</li>
+      <li style="background: #0f0;">test</li>
+      <li style="background: #0ff;">test</li>
+      <li style="background: #00f;">test</li>
+      <li style="background: #f0f;">test</li>
+      <li style="background: #f00;">test</li>
+      <li style="background: #ff0;">test</li>
+      <li style="background: #0f0;">test</li>
+      <li style="background: #0ff;">test</li>
+      <li style="background: #00f;">test</li>
+      <li style="background: #f0f;">test</li>
+      <li style="background: #f00;">test</li>
+    </ul>
+    <div id="result"></div>
+</body>
+</html>

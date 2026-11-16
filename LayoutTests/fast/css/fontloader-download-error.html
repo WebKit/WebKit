@@ -1,0 +1,80 @@
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<style>
+/* Test 1: Invalid font data */
+@font-face {
+    font-family: myfont1;
+    src: url('resources/invalidfont.png') format(opentype);
+}
+
+/* Test 2: Download error */
+@font-face {
+    font-family: myfont2;
+    src: url('resources/DownLoadErrorAhem.otf');
+}
+
+/* Test 3: Empty data url */
+@font-face {
+    font-family: myfont3;
+    src: url(data:application/x-truetype-font,) format(truetype);
+}
+
+/* Test 4: Download error followed by existing local font */
+@font-face {
+    font-family: myfont4;
+    src: url('resources/DownLoadErrorAhem.otf'), local('Courier New');
+}
+
+/* Test 5: Multiple errors */
+@font-face {
+    font-family: myfont5;
+    src: url('resources/DownLoadErrorAhem.otf'), url(data:application/x-truetype-font,) format(truetype);
+}
+</style>
+<script>
+description('Test download error cases. "load" or "error" events should be fired exactly once for each @font-face rule.');
+
+window.jsTestIsAsync = true;
+
+var events = {};
+
+function logEvent(e) {
+    var family = e.fontface.style.getPropertyValue('font-family');
+    if (!events[family])
+        events[family] = [];
+    events[family].push(e.type);
+}
+
+function runTests() {
+    document.fonts.addEventListener('loadstart', logEvent);
+    document.fonts.addEventListener('load', logEvent);
+    document.fonts.addEventListener('error', logEvent);
+
+    document.fonts.notifyWhenFontsReady(function() {
+        shouldBe("events['myfont1']", "['loadstart', 'error']");
+        shouldBe("events['myfont2']", "['loadstart', 'error']");
+        shouldBe("events['myfont3']", "['loadstart', 'error']");
+        shouldBe("events['myfont4']", "['loadstart', 'load']");
+        shouldBe("events['myfont5']", "['loadstart', 'error']");
+        finishJSTest();
+    });
+}
+
+if (document.fonts)
+    runTests();
+else {
+    testFailed('document.fonts does not exist');
+    finishJSTest();
+}
+</script>
+</head>
+<body>
+  <div style="font-family: myfont1">font1</div>
+  <div style="font-family: myfont2">font2</div>
+  <div style="font-family: myfont3">font3</div>
+  <div style="font-family: myfont4">font4</div>
+  <div style="font-family: myfont5">font5</div>
+  <script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

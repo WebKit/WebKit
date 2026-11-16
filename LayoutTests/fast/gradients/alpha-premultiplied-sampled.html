@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="fuzzy" content="maxDifference=0-1; totalPixels=0-19000" />
+<style>
+    div {
+        width: 200px;
+        height: 200px;
+    }
+
+    /* Using 'none' in the color() function triggers the sampled gradient code
+       path even for sRGB. The 'none' R channel is resolved to the neighbor
+       stop's R value (0) per CSS missing-component rules, producing the same
+       gradient as the reference. We force 'in srgb' because the color()
+       notation promotes the default interpolation space to OKLab; without it,
+       the test and reference would interpolate in different color spaces.
+       Without passing the premultiplied alpha interpolation option to CG in
+       the sampled path, the transparent stop's black RGB channels bleed
+       through, darkening the gradient. */
+
+    #linear {
+        background-image: linear-gradient(in srgb, color(srgb none 0 0 / 0), rgb(0, 128, 0));
+    }
+</style>
+</head>
+<body>
+<div id="linear"></div>
+</body>
+</html>

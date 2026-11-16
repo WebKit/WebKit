@@ -1,0 +1,156 @@
+<script src="../../resources/js-test.js"></script>
+<script>
+
+jsTestIsAsync = true;
+
+description("Tests copyBufferToTexture with layout.rowsPerImage omitted. The Swift implementation kept an omitted " +
+           "rowsPerImage as WGPU_COPY_STRIDE_UNDEFINED instead of the copy height, so bytesPerImage became 0xFFFFFFFF " +
+           "times bytesPerRow. rowsPerImage may only be omitted when a single image is copied, so that stride never " +
+           "addressed anything, but a copy into a 3D texture whose bytesPerRow is more than 2048 texel blocks is split " +
+           "into one copy per row of blocks, and that path gave up when bytesPerImage did not fit in 32 bits, dropping " +
+           "the copy without a validation error. Every copy below has to land, and every texel outside a copy has to " +
+           "keep its previous contents.");
+
+const format = 'rgba8unorm';
+const blockSize = 4;
+const width = 16;
+const height = 16;
+// More than 2048 texel blocks, so a copy into a 3D texture is split into one copy per row.
+const wideBytesPerRow = 8448;
+const narrowBytesPerRow = 256;
+const paddingByte = 0xee;
+const staleByte = 0xcc;
+
+function texel(x, y, tag) {
+    return [x * 8 + 1, y * 8 + 2, 0x33, tag];
+}
+
+async function main() {
+    let adapter = await navigator.gpu.requestAdapter({});
+    let device = await adapter.requestDevice({});
+    device.pushErrorScope('validation');
+
+    // One image of `rows` rows, bytesPerRow apart, with paddingByte between them.
+    function sourceBuffer(bytesPerRow, rows, tag) {
+        let size = bytesPerRow * (rows - 1) + width * blockSize;
+        let data = new Uint8Array(size).fill(paddingByte);
+        for (let y = 0; y < rows; ++y) {
+            for (let x = 0; x < width; ++x)
+                data.set(texel(x, y, tag), y * bytesPerRow + x * blockSize);
+        }
+        let buffer = device.createBuffer({ size, usage: GPUBufferUsage.COPY_SRC | GPUBufferUsage.COPY_DST });
+        device.queue.writeBuffer(buffer, 0, data);
+        return buffer;
+    }
+
+    function newTexture(dimension, size) {
+        return device.createTexture({ dimension, size, format, usage: GPUTextureUsage.COPY_SRC | GPUTextureUsage.COPY_DST });
+    }
+
+    // Copies one image of `rows` rows to `origin`, passing only the strides `layout` specifies.
+    function copy(texture, layout, rows, origin, tag) {
+        let commandEncoder = device.createCommandEncoder();
+        commandEncoder.copyBufferToTexture(
+            { buffer: sourceBuffer(layout.bytesPerRow ?? width * blockSize, rows, tag), ...layout },
+            { texture, origin },
+            [width, rows, 1]);
+        device.queue.submit([commandEncoder.finish()]);
+    }
+
+    // Reads back every texel and compares it with expected(x, y, z), returning "copied" when they all match.
+    async function compare(texture, size, expected) {
+        let [w, h, d] = size;
+        let bytesPerRow = 256;
+        let readback = device.createBuffer({ size: bytesPerRow * h * d, usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.MAP_READ });
+        let commandEncoder = device.createCommandEncoder();
+        commandEncoder.copyTextureToBuffer({ texture }, { buffer: readback, bytesPerRow, rowsPerImage: h }, size);
+        device.queue.submit([commandEncoder.finish()]);
+        await readback.mapAsync(GPUMapMode.READ);
+        let bytes = new Uint8Array(readback.getMappedRange());
+        let mismatches = 0;
+        let firstMismatch;
+        for (let z = 0; z < d; ++z) {
+            for (let y = 0; y < h; ++y) {
+                for (let x = 0; x < w; ++x) {
+                    let offset = (z * h + y) * bytesPerRow + x * blockSize;
+                    let actual = Array.from(bytes.subarray(offset, offset + blockSize));
+                    let wanted = expected(x, y, z);
+                    if (actual.join() == wanted.join())
+                        continue;
+                    ++mismatches;
+                    firstMismatch ??= `(${x}, ${y}, ${z}) is [${actual}] instead of [${wanted}]`;
+                }
+            }
+        }
+        readback.unmap();
+        if (!mismatches)
+            return "copied";
+        return `${mismatches} of ${w * h * d} texels differ, first ${firstMismatch}`;
+    }
+
+    const zero = [0, 0, 0, 0];
+    const size = [width, height, 1];
+
+    // A 3D texture with stale contents, which the copy completely covers.
+    let overStaleContents = newTexture('3d', size);
+    device.queue.writeTexture({ texture: overStaleContents }, new Uint8Array(256 * height).fill(staleByte),
+        { bytesPerRow: 256, rowsPerImage: height }, size);
+    copy(overStaleContents, { bytesPerRow: wideBytesPerRow }, height, [0, 0, 0], 0xa1);
+    window.rowsPerImageOmittedOverStaleContents = await compare(overStaleContents, size, (x, y) => texel(x, y, 0xa1));
+
+    // A fresh 3D texture which the copy completely covers, so it is never lazily cleared.
+    let fresh = newTexture('3d', size);
+    copy(fresh, { bytesPerRow: wideBytesPerRow }, height, [0, 0, 0], 0xa2);
+    window.rowsPerImageOmittedIntoFreshTexture = await compare(fresh, size, (x, y) => texel(x, y, 0xa2));
+
+    // One slice in the middle of a deeper 3D texture.
+    let deepSize = [width, height, 4];
+    let deep = newTexture('3d', deepSize);
+    copy(deep, { bytesPerRow: wideBytesPerRow }, height, [0, 0, 2], 0xa3);
+    window.rowsPerImageOmittedIntoOneSlice = await compare(deep, deepSize, (x, y, z) => z == 2 ? texel(x, y, 0xa3) : zero);
+
+    // The same split copy with rowsPerImage specified.
+    let specified = newTexture('3d', size);
+    copy(specified, { bytesPerRow: wideBytesPerRow, rowsPerImage: height }, height, [0, 0, 0], 0xa4);
+    window.rowsPerImageSpecified = await compare(specified, size, (x, y) => texel(x, y, 0xa4));
+
+    // Copies with rowsPerImage omitted which are not split.
+    let narrow = newTexture('3d', size);
+    copy(narrow, { bytesPerRow: narrowBytesPerRow }, height, [0, 0, 0], 0xa5);
+    window.narrowRowsInto3DTexture = await compare(narrow, size, (x, y) => texel(x, y, 0xa5));
+
+    let twoD = newTexture('2d', size);
+    copy(twoD, { bytesPerRow: wideBytesPerRow }, height, [0, 0, 0], 0xa6);
+    window.wideRowsInto2DTexture = await compare(twoD, size, (x, y) => texel(x, y, 0xa6));
+
+    let layersSize = [width, height, 3];
+    let layers = newTexture('2d', layersSize);
+    copy(layers, { bytesPerRow: wideBytesPerRow }, height, [0, 0, 1], 0xa7);
+    window.wideRowsInto2DArrayLayer = await compare(layers, layersSize, (x, y, z) => z == 1 ? texel(x, y, 0xa7) : zero);
+
+    let oneDSize = [width, 1, 1];
+    let oneD = newTexture('1d', oneDSize);
+    copy(oneD, { }, 1, [0, 0, 0], 0xa8);
+    window.rowInto1DTexture = await compare(oneD, oneDSize, x => texel(x, 0, 0xa8));
+
+    shouldBeEqualToString('rowsPerImageOmittedOverStaleContents', 'copied');
+    shouldBeEqualToString('rowsPerImageOmittedIntoFreshTexture', 'copied');
+    shouldBeEqualToString('rowsPerImageOmittedIntoOneSlice', 'copied');
+    shouldBeEqualToString('rowsPerImageSpecified', 'copied');
+    shouldBeEqualToString('narrowRowsInto3DTexture', 'copied');
+    shouldBeEqualToString('wideRowsInto2DTexture', 'copied');
+    shouldBeEqualToString('wideRowsInto2DArrayLayer', 'copied');
+    shouldBeEqualToString('rowInto1DTexture', 'copied');
+
+    let error = await device.popErrorScope();
+    if (error)
+        testFailed(error.message);
+}
+
+main().catch(e => {
+    testFailed("Exception: " + e);
+}).finally(() => {
+    finishJSTest();
+});
+
+</script>

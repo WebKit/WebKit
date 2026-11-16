@@ -1,0 +1,6 @@
+
+PASS :pack:inputSource="const"
+PASS :pack:inputSource="uniform"
+PASS :pack:inputSource="storage_r"
+PASS :pack:inputSource="storage_rw"
+

@@ -1,0 +1,48 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/hpack/test/test_fixtures/go-hpack/story_00.json
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/hpack/test/test_fixtures/go-hpack/story_01.json
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/hpack/test/test_fixtures/go-hpack/story_02.json
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/hpack/test/test_fixtures/go-hpack/story_03.json
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/hpack/test/test_fixtures/go-hpack/story_04.json
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/hpack/test/test_fixtures/go-hpack/story_05.json
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/hpack/test/test_fixtures/go-hpack/story_06.json
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/hpack/test/test_fixtures/go-hpack/story_07.json
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/hpack/test/test_fixtures/go-hpack/story_08.json
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/hpack/test/test_fixtures/go-hpack/story_09.json
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/hpack/test/test_fixtures/go-hpack/story_10.json
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/hpack/test/test_fixtures/go-hpack/story_11.json
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/hpack/test/test_fixtures/go-hpack/story_12.json
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/hpack/test/test_fixtures/go-hpack/story_13.json
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/hpack/test/test_fixtures/go-hpack/story_14.json
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/hpack/test/test_fixtures/go-hpack/story_15.json
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/hpack/test/test_fixtures/go-hpack/story_16.json
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/hpack/test/test_fixtures/go-hpack/story_17.json
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/hpack/test/test_fixtures/go-hpack/story_18.json
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/hpack/test/test_fixtures/go-hpack/story_19.json
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/hpack/test/test_fixtures/go-hpack/story_20.json
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/hpack/test/test_fixtures/go-hpack/story_21.json
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/hpack/test/test_fixtures/go-hpack/story_22.json
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/hpack/test/test_fixtures/go-hpack/story_23.json
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/hpack/test/test_fixtures/go-hpack/story_24.json
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/hpack/test/test_fixtures/go-hpack/story_25.json
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/hpack/test/test_fixtures/go-hpack/story_26.json
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/hpack/test/test_fixtures/go-hpack/story_27.json
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/hpack/test/test_fixtures/go-hpack/story_28.json
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/hpack/test/test_fixtures/go-hpack/story_29.json
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/hpack/test/test_fixtures/go-hpack/story_30.json
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/hpack/test/test_fixtures/go-hpack/story_31.json

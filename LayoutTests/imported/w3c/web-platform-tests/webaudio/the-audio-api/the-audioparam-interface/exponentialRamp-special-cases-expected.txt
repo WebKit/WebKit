@@ -1,0 +1,4 @@
+
+PASS v0 and v1 have opposite signs
+PASS v0 is zero
+

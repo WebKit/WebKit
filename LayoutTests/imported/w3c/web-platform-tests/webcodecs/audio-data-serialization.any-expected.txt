@@ -1,0 +1,5 @@
+
+PASS Verify closing AudioData does not propagate accross contexts.
+PASS Verify posting closed AudioData throws.
+PASS Verify transferring audio data closes them.
+

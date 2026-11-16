@@ -1,0 +1,10 @@
+This test ensures the root scroll view's accessibility frame size is NOT scaled by the page scale factor.
+The root scroll view represents the on-screen viewport, whose size does not change when the page is zoomed (only the content within it scales).
+PASS: accessibilityController.accessibleElementById('target').x !== initialTargetX === true
+PASS: root.width / initialRootWidth was equal or approximately equal to 1.
+PASS: root.height / initialRootHeight was equal or approximately equal to 1.
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Click me

@@ -1,0 +1,6 @@
+
+PASS IntersectionObserver observing an SVG <rect> element
+FAIL First rAF. assert_approx_equals: entries[0].boundingClientRect.left expected 108 +/- 0 but got 8
+FAIL document.scrollingElement.scrollTop = 300 assert_approx_equals: entries[1].boundingClientRect.left expected 108 +/- 0 but got 8
+FAIL document.scrollingElement.scrollTop = 100 assert_equals: entries.length expected 3 but got 2
+

@@ -1,0 +1,3 @@
+
+PASS print() in a detached iframe
+

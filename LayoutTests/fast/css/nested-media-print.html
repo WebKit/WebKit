@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+if (window.testRunner)
+  testRunner.setPrinting();
+</script>
+<style>
+  .square {
+    width: 100px;
+    height: 100px;
+    background-color: red;
+  }
+  
+  @media print {
+    .square {
+      background-color: red;
+    }
+  }
+  
+  .square {
+    @media print {
+      background-color: green;
+    }
+  }
+</style>
+</head>
+<body>
+<div class="square"></div>
+</body>
+</html>
+

@@ -1,0 +1,3 @@
+
+PASS adding a src attribute after inserting the script into the document causes the script to load and execute
+

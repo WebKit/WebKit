@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/gc.js"></script>
+<script>
+
+description("A DOMException captures a stack trace whose frames point at the functions that were on "
+    + "the stack, and the GC does not trace those pointers. When one of those functions dies the trace "
+    + "must be turned into strings, or reading .stack afterwards reads cells that have been freed and "
+    + "handed out again. That requires the GC to reconcile weak references in the DOMException subspace.");
+
+// Each exception is thrown from a function object created fresh by this call, so once it returns the
+// captured stack trace is the only thing pointing at that function.
+function makeException() {
+    function inner() {
+        document.appendChild(document);
+    }
+
+    try {
+        inner();
+    } catch (e) {
+        return e;
+    }
+}
+
+var exceptions = [];
+for (var i = 0; i < 1000; ++i)
+    exceptions.push(makeException());
+
+shouldBe("exceptions.length", "1000");
+shouldBeTrue("exceptions[0] instanceof DOMException");
+
+// No stack is read before this point: an unmaterialized trace is what the GC has to rescue.
+gc();
+
+// Churn through enough new functions to hand the collected cells back out, so a trace that still
+// points into them no longer reads what it captured.
+var churn = [];
+for (var i = 0; i < 20000; ++i)
+    churn.push(function churnedFunction() { return i; });
+churn = null;
+gc();
+
+var brokenTraces = 0;
+for (var i = 0; i < exceptions.length; ++i) {
+    if (exceptions[i].stack.indexOf("inner") === -1)
+        ++brokenTraces;
+}
+
+shouldBe("brokenTraces", "0");
+
+</script>

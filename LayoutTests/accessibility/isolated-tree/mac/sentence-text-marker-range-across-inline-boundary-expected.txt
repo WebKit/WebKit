@@ -1,0 +1,12 @@
+This test ensures AXSentenceTextMarkerRangeForTextMarker returns the whole sentence when the marker sits inside an inline element that splits that sentence, and that the sentence is contained within the paragraph range at the same marker.
+
+PASS: characterAt(markerInEm) === 'n'
+PASS: sentenceAt(markerInEm) === 'Second sentence here.'
+PASS: sentenceAt(paragraphStart) !== sentenceAt(markerInEm) === true
+PASS: paragraphAt(markerInEm) === 'First sentence. Second sentence here.'
+PASS: paragraphAt(markerInEm).includes(sentenceAt(markerInEm)) === true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,18 @@
+Target 1
+Target 2
+Target 3
+This test verifies that tap highlights are shown when tapping on clickable elements. To run the test manually, tap on the three target buttons; a tap highlight should *not* appear over the first target, but should appear over targets 2 and 3.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS initialTapHighlightRect.left is lastKnownHighlightRect.left
+PASS initialTapHighlightRect.top is lastKnownHighlightRect.top
+PASS initialTapHighlightRect.width is lastKnownHighlightRect.width
+PASS initialTapHighlightRect.height is lastKnownHighlightRect.height
+PASS Tap highlight shown after tapping on target 2.
+PASS Tap highlight shown after tapping on target 3.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

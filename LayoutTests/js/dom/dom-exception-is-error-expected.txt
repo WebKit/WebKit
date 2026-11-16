@@ -1,0 +1,16 @@
+Tests that Error.isError() returns true for DOMException and its subclasses, including on the DFG/FTL JIT path. The intrinsic that inlines Error.isError() cannot be reached from JSC-shell tests since those cannot construct a DOMException, so this test warms up the JIT from a DOM context.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS allStable is true
+PASS testRunner.numberOfDFGCompiles(test) > 0 is true
+PASS Error.isError(new DOMException()) is true
+PASS !window.WebTransportError || Error.isError(new WebTransportError()) is true
+PASS Error.isError(new TypeError()) is true
+PASS Error.isError(new (class extends Object {})()) is false
+PASS Error.isError({}) is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

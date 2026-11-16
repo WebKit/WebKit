@@ -1,0 +1,9 @@
+Tests that a pause requested for the next statement is cancelled when the Debugger domain is disabled.
+
+
+== Running test suite: Debugger.PauseCancelledWhenDebuggerIsDisabled
+-- Running test case: Debugger.PauseCancelledWhenDebuggerIsDisabled.Disable
+PASS: The page should not pause.
+PASS: The timer callback should run.
+PASS: The page should pause when asked to again.
+

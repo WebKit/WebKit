@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="/resources/js-test-pre.js"></script>
+<script src="/resources/notifications-test-pre.js"></script>
+</head>
+<body>
+<script>
+
+description("This test tests the fingerprinting countermeasures implemented for querying the Notifications API with Permissions::query() and Notification::permission().");
+
+jsTestIsAsync = true;
+
+function preRequestTest() 
+{  
+    testRunner.denyWebNotificationPermission(testURL);
+    notificationPermissionResult = window.Notification.permission;
+    shouldBeEqualToString("notificationPermissionResult", "default");
+    navigator.permissions.query({ name: "notifications" }).then((status)=>{
+        permissionsQueryResult = status.state;
+        shouldBeEqualToString("permissionsQueryResult", "prompt");
+
+        postRequestTest();
+    });       
+}
+
+function postRequestTest() 
+{
+    internals.withUserGesture(() => {
+        window.Notification.requestPermission().then((result)=> {
+            requestPermissionResult = result;
+            shouldBeEqualToString("requestPermissionResult", "denied");
+            notificationPermissionResult = window.Notification.permission;
+            shouldBeEqualToString("notificationPermissionResult", "denied");
+            navigator.permissions.query({ name: "notifications" }).then((status)=>{
+                permissionsQueryResult = status.state;
+                shouldBeEqualToString("permissionsQueryResult", "denied");
+
+                finishJSTest();
+            });
+        });      
+    });
+}
+
+preRequestTest();
+
+</script>
+<script src="/resources/js-test-post.js"></script>
+</body>
+</html>

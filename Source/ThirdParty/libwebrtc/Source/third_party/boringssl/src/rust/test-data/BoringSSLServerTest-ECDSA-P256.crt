@@ -1,0 +1,93 @@
+This is generated from
+    openssl x509 -req -in server.csr -CA BoringSSLCATest.crt \
+      -CAkey BoringSSLCATest.key -CAcreateserial \
+      -out BoringSSLServerTest-ECDSA-P256.crt -extfile svcconfig -days 730500
+Certificate:
+    Data:
+        Version: 3 (0x2)
+        Serial Number:
+            50:2d:32:51:7b:b9:51:f0:df:6e:4e:c3:05:1f:2c:4b:af:cd:52:74
+        Signature Algorithm: sha256WithRSAEncryption
+        Issuer: C=DE, ST=Freistaat Bayern, L=Muenchen, O=Google Germany GmbH, OU=ISE Crypto, CN=BoringSSL Authors, emailAddress=boringssl@google.com
+        Validity
+            Not Before: Jan 23 13:40:52 2026 GMT
+            Not After : Feb  7 13:40:52 4026 GMT
+        Subject: CN=www.google.com
+        Subject Public Key Info:
+            Public Key Algorithm: id-ecPublicKey
+                Public-Key: (256 bit)
+                pub:
+                    04:eb:d1:ff:95:75:4a:0b:08:fd:00:ef:91:98:d4:
+                    6f:1e:f7:3e:38:03:ab:72:3b:a2:f3:04:71:9f:eb:
+                    a5:8d:18:16:4f:72:cb:39:1c:29:98:0e:71:72:23:
+                    3e:3c:69:ad:e8:84:8f:70:e3:80:e7:b6:4d:f2:23:
+                    b0:ec:5d:9f:7f
+                ASN1 OID: prime256v1
+                NIST CURVE: P-256
+        X509v3 extensions:
+            X509v3 Authority Key Identifier:
+                EA:1B:59:1E:5D:E3:33:29:41:7F:D7:58:88:63:D4:2A:28:06:78:10
+            X509v3 Basic Constraints:
+                CA:FALSE
+            X509v3 Key Usage:
+                Digital Signature, Non Repudiation, Key Encipherment, Data Encipherment
+            X509v3 Subject Alternative Name:
+                DNS:www.google.com, DNS:localhost
+            X509v3 Subject Key Identifier:
+                F1:D8:5F:E8:36:6E:04:A3:E0:54:5D:8F:2C:44:EC:9E:B9:67:21:8C
+    Signature Algorithm: sha256WithRSAEncryption
+    Signature Value:
+        ab:66:a7:3c:5d:8c:b8:70:09:38:ff:7a:6c:61:80:84:31:4c:
+        06:8a:b6:51:10:f9:19:8e:86:94:6c:e2:28:9b:5b:5b:b1:9b:
+        ae:63:6b:03:ab:63:5f:32:ec:ff:6b:82:68:e9:f1:bb:43:02:
+        de:c5:af:02:67:84:a2:78:68:68:03:46:05:4e:a6:35:09:23:
+        9b:34:b2:c6:2c:17:5a:d7:71:69:8f:df:41:84:17:3a:41:a6:
+        34:fa:2e:9b:2a:27:ac:49:6a:8b:ae:dd:77:2e:ec:87:6a:d1:
+        b1:69:1f:b3:85:96:91:68:44:2d:e8:fc:5c:68:29:4e:c6:f2:
+        f8:fb:6f:c9:04:d1:b6:3b:da:4e:71:0e:a6:98:24:c9:22:cd:
+        db:46:fd:e9:7d:2c:98:4e:84:35:47:ca:aa:ed:64:e5:fe:96:
+        42:62:1f:0b:74:cf:87:c7:56:94:06:e0:a5:a9:3b:74:6e:40:
+        29:81:b1:19:00:32:2b:ee:d1:5a:80:5f:d5:ec:7b:22:4c:a7:
+        b8:f2:c8:0e:af:57:c4:c1:c1:16:2a:bc:b5:cc:74:7e:7f:46:
+        19:72:72:0d:cc:54:80:06:2e:ef:98:92:39:4e:f5:7f:d8:19:
+        81:8d:65:91:88:4b:62:f8:ee:49:11:28:17:ac:a1:6d:5c:bd:
+        0c:f7:f3:5b:2d:f7:c6:a2:28:9e:a0:0e:57:6c:12:0d:51:69:
+        00:d1:12:e5:8f:68:8c:a1:76:78:d0:0d:e4:c5:4e:69:b0:be:
+        30:21:e8:bd:c4:a1:0f:7f:e5:ee:47:e8:0b:62:87:cc:98:d7:
+        b5:a1:20:a9:05:12:84:46:d1:b8:9f:e8:a0:fb:c1:4d:7d:df:
+        a6:3e:90:44:23:8b:d7:62:f2:90:89:4c:64:b9:56:d1:af:06:
+        55:05:77:3f:98:ac:e6:31:78:e1:38:02:c3:e9:93:22:cf:00:
+        ec:1e:f0:6f:b2:b6:ee:76:34:5f:33:db:83:bc:ed:28:cf:eb:
+        98:fa:25:32:e8:75:83:b3:9e:90:a0:63:7b:a9:e9:55:8d:66:
+        67:a9:70:54:a5:92:a4:ec:0a:a7:79:4c:7b:62:84:c0:01:27:
+        cb:e6:5d:97:da:00:bc:52:c5:ef:6f:2a:56:4d:2e:34:3f:e1:
+        dc:b0:04:46:76:f6:cc:a1:1e:a1:b7:68:31:82:6e:ac:12:cc:
+        58:da:ef:9f:2b:ef:0a:22:be:32:e0:40:9c:ca:30:65:2f:f0:
+        9c:2d:13:e3:c7:94:24:5f:9e:eb:47:5d:07:70:35:48:5d:47:
+        3f:56:d8:fd:50:1f:55:53:04:c1:65:c9:29:46:83:d0:77:86:
+        70:8a:bc:04:8a:19:d7:ad
+
+-----BEGIN CERTIFICATE-----
+MIIEDzCCAfegAwIBAgIUUC0yUXu5UfDfbk7DBR8sS6/NUnQwDQYJKoZIhvcNAQEL
+BQAwga8xCzAJBgNVBAYTAkRFMRkwFwYDVQQIDBBGcmVpc3RhYXQgQmF5ZXJuMREw
+DwYDVQQHDAhNdWVuY2hlbjEcMBoGA1UECgwTR29vZ2xlIEdlcm1hbnkgR21iSDET
+MBEGA1UECwwKSVNFIENyeXB0bzEaMBgGA1UEAwwRQm9yaW5nU1NMIEF1dGhvcnMx
+IzAhBgkqhkiG9w0BCQEWFGJvcmluZ3NzbEBnb29nbGUuY29tMCAXDTI2MDEyMzEz
+NDA1MloYDzQwMjYwMjA3MTM0MDUyWjAZMRcwFQYDVQQDDA53d3cuZ29vZ2xlLmNv
+bTBZMBMGByqGSM49AgEGCCqGSM49AwEHA0IABOvR/5V1SgsI/QDvkZjUbx73PjgD
+q3I7ovMEcZ/rpY0YFk9yyzkcKZgOcXIjPjxpreiEj3DjgOe2TfIjsOxdn3+jgYAw
+fjAfBgNVHSMEGDAWgBTqG1keXeMzKUF/11iIY9QqKAZ4EDAJBgNVHRMEAjAAMAsG
+A1UdDwQEAwIE8DAkBgNVHREEHTAbgg53d3cuZ29vZ2xlLmNvbYIJbG9jYWxob3N0
+MB0GA1UdDgQWBBTx2F/oNm4Eo+BUXY8sROyeuWchjDANBgkqhkiG9w0BAQsFAAOC
+AgEAq2anPF2MuHAJOP96bGGAhDFMBoq2URD5GY6GlGziKJtbW7GbrmNrA6tjXzLs
+/2uCaOnxu0MC3sWvAmeEonhoaANGBU6mNQkjmzSyxiwXWtdxaY/fQYQXOkGmNPou
+myonrElqi67ddy7sh2rRsWkfs4WWkWhELej8XGgpTsby+PtvyQTRtjvaTnEOppgk
+ySLN20b96X0smE6ENUfKqu1k5f6WQmIfC3TPh8dWlAbgpak7dG5AKYGxGQAyK+7R
+WoBf1ex7IkynuPLIDq9XxMHBFiq8tcx0fn9GGXJyDcxUgAYu75iSOU71f9gZgY1l
+kYhLYvjuSREoF6yhbVy9DPfzWy33xqIonqAOV2wSDVFpANES5Y9ojKF2eNAN5MVO
+abC+MCHovcShD3/l7kfoC2KHzJjXtaEgqQUShEbRuJ/ooPvBTX3fpj6QRCOL12Ly
+kIlMZLlW0a8GVQV3P5is5jF44TgCw+mTIs8A7B7wb7K27nY0XzPbg7ztKM/rmPol
+Muh1g7OekKBje6npVY1mZ6lwVKWSpOwKp3lMe2KEwAEny+Zdl9oAvFLF728qVk0u
+ND/h3LAERnb2zKEeobdoMYJurBLMWNrvnyvvCiK+MuBAnMowZS/wnC0T48eUJF+e
+60ddB3A1SF1HP1bY/VAfVVMEwWXJKUaD0HeGcIq8BIoZ160=
+-----END CERTIFICATE-----

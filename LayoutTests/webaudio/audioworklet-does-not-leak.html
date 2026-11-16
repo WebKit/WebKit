@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../resources/js-test.js"></script>
+<script src="../resources/document-leak-test.js"></script>
+<script>
+description("Tests that AudioWorklet functionality does not leak the document object");
+onload = () => runDocumentLeakTest({ frameURL: "resources/audioworklet-leak-test-frame.html", framesToCreate: 20 });
+</script>
+</body>
+</html>

@@ -1,0 +1,55 @@
+<style>
+    input[type="checkbox"] {
+        appearance: base;
+        width: 50px;
+        height: 50px;
+        font: 11px system-ui;
+        border: 0.3em solid currentColor;
+        border-radius: 0.5em;
+        vertical-align: text-top;
+    }
+
+    input[type="checkbox"]:checked::checkmark {
+        font: 40px system-ui;
+        text-align: center;
+        display: content;
+        height: 100%;
+        width: 100%;
+        line-height: 100%; 
+    }
+
+    input[type=checkbox]:not([switch]):checked::checkmark {
+        content: "\2713" / "";
+    }
+
+    input[type="checkbox"]:disabled {
+        border-color: color-mix(in srgb, currentColor 30%, transparent);
+        background-color: color-mix(in srgb, currentColor 10%, transparent);
+    }
+
+    input[type="checkbox"]:checked:disabled::checkmark {
+        color: color-mix(in srgb, currentColor 30%, transparent);
+    }
+
+    .enabled input[type="checkbox"] {
+        color: darkblue;
+    }
+
+    .disabled input[type="checkbox"] {
+        color: darkgreen;
+    }
+
+    .container {
+        display: inline-block;
+    }
+</style>
+<body>
+    <div class="enabled container">
+        <input type="checkbox">
+        <input type="checkbox" checked>
+    </div>
+    <div class="disabled container">
+        <input type="checkbox" disabled>
+        <input type="checkbox" checked disabled>
+    </div>
+</body>

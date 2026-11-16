@@ -1,0 +1,14 @@
+
+PASS ":-internal-animating-full-screen-transition" should be an invalid selector
+PASS ":-internal-fullscreen-document" should be an invalid selector
+PASS ":-internal-html-document" should be an invalid selector
+PASS ":-internal-media-document" should be an invalid selector
+PASS ":-khtml-drag" should be an invalid selector
+PASS ":-webkit-animating-full-screen-transition" should be an invalid selector
+PASS ":-webkit-full-page-media" should be an invalid selector
+PASS ":-webkit-full-screen-ancestor" should be an invalid selector
+PASS ":-webkit-full-screen-controls-hidden" should be an invalid selector
+PASS ":-webkit-full-screen-document" should be an invalid selector
+PASS "::-apple-attachment-controls-container" should be an invalid selector
+PASS "::-internal-loading-auto-fill-button" should be an invalid selector
+

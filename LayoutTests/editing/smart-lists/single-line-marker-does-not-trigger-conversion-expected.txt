@@ -1,0 +1,2 @@
+A marker on a single line (with no second line bearing a matching marker) should not trigger smart-list conversion. Typing "* Hello" should leave plain text.
+| "* Hello<#selection-caret>"

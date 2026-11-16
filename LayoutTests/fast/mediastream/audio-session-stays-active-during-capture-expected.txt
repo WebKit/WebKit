@@ -1,0 +1,3 @@
+
+PASS Process suspension while microphone capture is active must not deactivate AudioSession
+

@@ -1,0 +1,32 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/interaction/focus/focusgroup/tentative/backward-navigation/descends-into-extending-focusgroup.html
+/LayoutTests/imported/w3c/web-platform-tests/html/interaction/focus/focusgroup/tentative/backward-navigation/does-not-move-when-on-focusgroup-root.html
+/LayoutTests/imported/w3c/web-platform-tests/html/interaction/focus/focusgroup/tentative/backward-navigation/does-not-move-when-on-non-focusgroup-item.html
+/LayoutTests/imported/w3c/web-platform-tests/html/interaction/focus/focusgroup/tentative/backward-navigation/does-not-move-when-only-one-item-and-wraps.html
+/LayoutTests/imported/w3c/web-platform-tests/html/interaction/focus/focusgroup/tentative/backward-navigation/does-not-move-when-only-one-item.html
+/LayoutTests/imported/w3c/web-platform-tests/html/interaction/focus/focusgroup/tentative/backward-navigation/does-not-move-when-outside-focusgroup.html
+/LayoutTests/imported/w3c/web-platform-tests/html/interaction/focus/focusgroup/tentative/backward-navigation/does-not-wrap-when-not-supported.html
+/LayoutTests/imported/w3c/web-platform-tests/html/interaction/focus/focusgroup/tentative/backward-navigation/moves-to-previous-item-and-skips-focusable-item.html
+/LayoutTests/imported/w3c/web-platform-tests/html/interaction/focus/focusgroup/tentative/backward-navigation/moves-to-previous-item.html
+/LayoutTests/imported/w3c/web-platform-tests/html/interaction/focus/focusgroup/tentative/backward-navigation/skips-empty-wrapping-focusgroup.html
+/LayoutTests/imported/w3c/web-platform-tests/html/interaction/focus/focusgroup/tentative/backward-navigation/skips-non-focusgroup-subtree.html
+/LayoutTests/imported/w3c/web-platform-tests/html/interaction/focus/focusgroup/tentative/backward-navigation/skips-root-focusgroup-complex-case.html
+/LayoutTests/imported/w3c/web-platform-tests/html/interaction/focus/focusgroup/tentative/backward-navigation/skips-root-focusgroup.html
+/LayoutTests/imported/w3c/web-platform-tests/html/interaction/focus/focusgroup/tentative/backward-navigation/wraps-in-extending-focusgroup.html
+/LayoutTests/imported/w3c/web-platform-tests/html/interaction/focus/focusgroup/tentative/backward-navigation/wraps-successfully-complex-case.html
+/LayoutTests/imported/w3c/web-platform-tests/html/interaction/focus/focusgroup/tentative/backward-navigation/wraps-successfully.html

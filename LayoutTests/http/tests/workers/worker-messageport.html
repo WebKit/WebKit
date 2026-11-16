@@ -1,0 +1,32 @@
+<html>
+<body>
+<p>Test postMessage and garbage collection.</p>
+<div id=result></div>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+var worker = new Worker('resources/messageport-echo-worker.js');
+
+worker.onmessage = (event) => {
+    if (event.data === "ready") {
+        worker.terminate();
+        setTimeout(() => {
+            document.body.innerHTML = "PASS";
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }, 0);
+    }
+}
+
+var channel = new MessageChannel();
+channel.port1.onmessage = function(event) {
+}
+
+worker.postMessage("Here is your port", [channel.port2]);
+
+</script>
+</body>
+</html>

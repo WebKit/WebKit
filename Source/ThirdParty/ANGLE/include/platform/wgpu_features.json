@@ -1,0 +1,18 @@
+{
+    "description": [
+        "Copyright 2025 The ANGLE Project Authors. All rights reserved.",
+        "Use of this source code is governed by a BSD-style license that can be",
+        "found in the LICENSE file.",
+        "",
+        "wgpu_features.json: angle::Features and workarounds for the WebGPU backend."
+    ],
+    "features": [
+        {
+            "name": "avoid_wait_any",
+            "category": "Workarounds",
+            "description": [
+                "Avoid unnecessary calls to wpguInstanceWaitAny."
+            ]
+        }
+    ]
+}

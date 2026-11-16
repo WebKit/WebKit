@@ -1,0 +1,5 @@
+
+PASS TextTrackCueList getter
+PASS TextTrackCueList getter, no indexed set/create
+PASS TextTrackCueList getter, no indexed set/create (strict)
+

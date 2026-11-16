@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" onload="loaded()">
+    <path id="path" d="M10,0 L200,0" fill="none"/>
+    <rect id="rect-remove" x="10" y="10" width="100" height="100" fill="green">
+        <animateMotion begin="0.5s" dur="2s" fill="remove">
+            <mpath href="#path"/>
+        </animateMotion>
+    </rect>
+    <rect id="rect-freeze" x="10" y="120" width="100" height="100" fill="green">
+        <animateMotion begin="0.5s" dur="2s" fill="freeze">
+            <mpath href="#path"/>
+        </animateMotion>
+    </rect>
+    <use href="#rect-remove" y="220"/>
+    <use href="#rect-freeze" y="220"/>
+<script>
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+function loaded() {
+    document.documentElement.setCurrentTime(5);
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+</script>
+</svg>

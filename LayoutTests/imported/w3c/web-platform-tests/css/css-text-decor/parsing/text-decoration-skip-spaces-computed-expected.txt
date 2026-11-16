@@ -1,0 +1,7 @@
+
+FAIL Property text-decoration-skip-spaces value 'none' assert_true: text-decoration-skip-spaces doesn't seem to be supported in the computed style expected true got false
+FAIL Property text-decoration-skip-spaces value 'all' assert_true: text-decoration-skip-spaces doesn't seem to be supported in the computed style expected true got false
+FAIL Property text-decoration-skip-spaces value 'start' assert_true: text-decoration-skip-spaces doesn't seem to be supported in the computed style expected true got false
+FAIL Property text-decoration-skip-spaces value 'end' assert_true: text-decoration-skip-spaces doesn't seem to be supported in the computed style expected true got false
+FAIL Property text-decoration-skip-spaces value 'start end' assert_true: text-decoration-skip-spaces doesn't seem to be supported in the computed style expected true got false
+

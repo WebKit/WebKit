@@ -1,0 +1,4 @@
+
+PASS e.style['isolation'] = "auto" should set the property value
+PASS e.style['isolation'] = "isolate" should set the property value
+

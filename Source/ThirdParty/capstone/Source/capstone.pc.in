@@ -1,0 +1,12 @@
+prefix=@CMAKE_INSTALL_PREFIX@
+exec_prefix=${prefix}
+libdir=@CAPSTONE_PKGCONFIG_INSTALL_LIBDIR@
+includedir=@CAPSTONE_PKGCONFIG_INSTALL_INCLUDEDIR@
+
+Name: capstone
+Description: Capstone disassembly engine
+Version: @PROJECT_VERSION_MAJOR@.@PROJECT_VERSION_MINOR@.@PROJECT_VERSION_PATCH@
+URL: https://www.capstone-engine.org/
+archive=${libdir}/libcapstone.a
+Libs: -L${libdir} -lcapstone
+Cflags: -I${includedir}/capstone

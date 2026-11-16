@@ -1,0 +1,18 @@
+<style>
+.inline-block {
+  display: inline-block;
+  width: 100px;
+  height: 100px;
+  background-color: green;
+}
+
+.float-box {
+  width: 100px;
+  height: 100px;
+  float: left;
+  background-color: green;
+}
+</style>
+<!-- PASS if text-indent puts a 100px gap between the float and the inline content -->
+<div><div class="float-box"></div><div style="text-indent: 100px"><div class=inline-block></div></div></div>
+<div><div class="float-box"></div><div style="text-indent: -100px"><div class=inline-block></div></div></div>

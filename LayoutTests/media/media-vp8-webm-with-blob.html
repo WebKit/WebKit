@@ -1,0 +1,33 @@
+<html>
+<head>
+<title>webm file with vp8 preload=metadata and blob</title>
+<script src="../resources/testharness.js"></script>
+<script src="video-test.js"></script>
+<script>
+    var video;
+    var blob;
+
+    async function init()
+    {
+        if (window.testRunner)
+            testRunner.waitUntilDone();
+
+        run('video = document.createElement("video")');
+        run('video.controls = true');
+        run('video.preload = "metadata"');
+        video.onerror = () => failTest('error was fired');
+        video.onloadedmetadata = () => runWithKeyDown(() => run('video.play()'));
+        video.onloadeddata = () => testRunner.notifyDone();
+
+        (async () => {
+            const resp = await fetch('content/test-vp8.webm');
+            blob = await resp.blob();
+            run('video.src = URL.createObjectURL(blob)');
+            run('document.body.append(video)');
+        })();
+    }
+</script>
+</head>
+<body onload="init();">
+</body>
+</html>

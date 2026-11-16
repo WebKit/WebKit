@@ -1,0 +1,4 @@
+
+
+FAIL Tests that error conditions cause exceptions assert_throws_dom: Can't get element image default size if content=drawable is not specified. function "() => canvas.getElementImageDefaultSize(child)" threw object "TypeError: canvas.getElementImageDefaultSize is not a function. (In 'canvas.getElementImageDefaultSize(child)', 'canvas.getElementImageDefaultSize' is undefined)" that is not a DOMException InvalidStateError: property "code" is equal to undefined, expected 11
+

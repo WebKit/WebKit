@@ -1,0 +1,44 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<!DOCTYPE html>
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="resources/frame-load-rows-test-utilities.js"></script>
+<script>
+function addCrossOriginIFrame(token) {
+    let crossOriginHost = location.hostname === "localhost" ? "127.0.0.1" : "localhost";
+    let iframe = document.createElement("iframe");
+    iframe.src = `http://${crossOriginHost}:8000/site-isolation/inspector/network/resources/iframe-with-script.html?dynamic-${token}`;
+    document.body.appendChild(iframe);
+}
+
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Network.DynamicCrossOriginIFrameRows");
+
+    suite.addTestCase({
+        name: "SiteIsolation.Network.DynamicCrossOriginIFrameRows.SameSiteAsExistingFrame",
+        description: "A cross-origin iframe added next to a same-site iframe should list its document and script once each, finished.",
+        async test() {
+            // Unique per run, so repeated runs in one process don't hit the memory cache.
+            let token = String(Math.random()).slice(2);
+            let recorder = new FrameLoadRowRecorder;
+
+            InspectorTest.evaluateInPage(`addCrossOriginIFrame("${token}")`);
+
+            let frame = await awaitChildFrame((frame) => frame.mainResource.url.includes(`?dynamic-${token}`));
+            InspectorTest.expectThat(!!frame, "Child frame should be attached to the main frame.");
+            if (frame) {
+                await expectSingleFinishedDocument(recorder, frame, "Document");
+                await expectSingleFinishedSubresource(recorder, frame, `iframe-script.js?dynamic-${token}`, "Script");
+            }
+            expectNoAboutBlankRow(recorder);
+
+            recorder.stop();
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+<body onload="runTest()">
+<p>Tests that a dynamically added cross-origin iframe lists its document and subresources once each, finished, under Site Isolation.</p>
+<iframe src="http://localhost:8000/site-isolation/inspector/network/resources/iframe-with-script.html?static"></iframe>
+</body>

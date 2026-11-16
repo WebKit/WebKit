@@ -1,0 +1,27 @@
+<!doctype html>
+<body onload="test()">
+<script>
+function resize() {
+  const target = document.createElementNS("test", "test");
+  document.body.prepend(target);
+
+  const x = 150; // cannot use offsetWidth and such for non-HTML elements unfortunately
+  const y = 100;
+  eventSender.mouseMoveTo(x, y);
+  eventSender.mouseDown();
+  eventSender.mouseMoveTo(x + 13, y + 14);
+  eventSender.mouseUp();
+}
+function test() {
+  if (!window.testRunner)
+      return;
+
+  window.testRunner.dumpAsText();
+  resize();
+}
+</script>
+<style>
+body { padding: 0; margin: 0; }
+test { display: block; overflow: auto; resize: both; width: 150px; height: 100px; border: blue 2px solid; }
+</style>
+<pre id="result">There should be no crash.</pre>

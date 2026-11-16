@@ -1,0 +1,10 @@
+
+PASS selector() function accepts ::details-content
+PASS selector() function accepts ::details-content followed by ::before
+PASS selector() function accepts ::details-content followed by ::first-line
+PASS selector() function accepts ::details-content followed by a state pseudo-class
+FAIL selector() function accepts ::details-content followed by :lang() assert_equals: expected true but got false
+PASS selector() function doesn't accept ::details-content followed by a tree-structural pseudo-class
+FAIL selector() function doesn't accept ::details-content followed by :has() assert_equals: expected false but got true
+FAIL selector() function doesn't accept ::details-content followed by a part assert_equals: expected false but got true
+

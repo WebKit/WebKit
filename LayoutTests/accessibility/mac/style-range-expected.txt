@@ -1,0 +1,29 @@
+This test ensures we compute the right range when serving AXStyleTextMarkerRangeForTextMarker.
+
+PASS: The style range for the start marker of #p2 was "One
+
+Two
+
+Three".
+PASS: The style range for the start marker of #p2 was "One
+
+Two
+
+Three".
+PASS: The style range for the start marker of #p1 was "One".
+PASS: The style range for the start marker of #p2 was "Two".
+PASS: The style range for the start marker of #p3 was "Three".
+PASS: The style range for the start marker of #p3 was "Three
+
+Four".
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+One
+
+Two
+
+Three
+
+Four

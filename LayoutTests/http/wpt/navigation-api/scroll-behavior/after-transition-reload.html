@@ -1,0 +1,47 @@
+<!doctype html>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<body>
+<div id="buffer" style="height: 1000px; width: 1000px;"></div>
+<div id="frag"></div>
+<div style="height: 1000px; width: 1000px;"></div>
+<script>
+promise_test(async t => {
+  // Wait for after the load event so that the navigation doesn't get converted
+  // into a replace navigation.
+  await new Promise(resolve => window.onload = () => t.step_timeout(resolve, 0));
+  assert_equals(window.scrollY, 0);
+  await navigation.navigate("#frag").finished;
+  // Scroll down 10px from #frag
+  window.scrollBy(0, 10);
+  let scrollY_frag_plus_10 = window.scrollY;
+
+  let intercept_resolve;
+  let navigate_event;
+  navigation.onnavigate = e => {
+    navigate_event = e;
+    e.intercept({ handler: () => new Promise(r => intercept_resolve = r),
+                  scroll: "after-transition" });
+  };
+  let reload_promises = navigation.reload();
+  await reload_promises.committed;
+
+  // Removing the <div id="buffer"> should scroll up 1000px if scroll anchoring is enabled.
+  assert_equals(window.scrollY, scrollY_frag_plus_10);
+  buffer.remove();
+  let scrollY_after_buffer_remove = window.scrollY;
+  // Don't assert the exact value after buffer removal since it depends on scroll anchoring.
+
+  // Finishing should restore scroll to #frag's position
+  intercept_resolve();
+  await reload_promises.finished;
+  assert_not_equals(window.scrollY, scrollY_after_buffer_remove);
+
+  // After restoration, we should be at #frag's position
+  // The scroll should be restored to make #frag visible at the same viewport position
+  let frag_element = document.getElementById("frag");
+  let frag_top = frag_element.offsetTop;
+  assert_equals(window.scrollY, frag_top);
+}, "scroll: after-transition should work on a reload navigation");
+</script>
+</body>

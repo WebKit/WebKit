@@ -1,0 +1,26 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ LayoutFormattingContextEnabled=true InlineFormattingContextIntegrationEnabled=false ] -->
+<style>
+body {
+  font-size: 16px;
+  overflow: hidden;
+}
+
+div {
+  height: 20px;
+  background-color: green;
+  width: 200px;
+}
+
+.inner {
+  background-color: blue;
+  position: relative;
+}
+</style>
+
+<div><div class=inner style="left: 60px; width: 80px"></div></div>
+<div><div class=inner style="left: 53px; width: 67px"></div></div>
+<div><div class=inner style="left: 45px; width: 55px"></div></div>
+<div><div class=inner style="left: 43.5px; width: 36.5px"></div></div>
+<div><div class=inner style="left: 38px; width: 22px"></div></div>
+<div><div class=inner style="left: 29px; width: 11px"></div></div>
+<div><div class=inner style="left: 16px; width: 4px"></div></div>

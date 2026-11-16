@@ -1,0 +1,30 @@
+<script>
+  globalThis.testRunner?.waitUntilDone();
+  const log = console.debug;
+
+  onload = async () => {
+    let adapter = await navigator.gpu.requestAdapter({});
+    let device = await adapter.requestDevice({});
+    device.pushErrorScope('validation');
+    let code = `
+@group(0) @binding(0) var<storage, read_write> buf: array<vec3u>;
+
+@compute @workgroup_size(1)
+fn c() {
+  _ = buf[0].r;
+}
+`;
+    let module = device.createShaderModule({code});
+    let computePipeline = device.createComputePipeline({layout: 'auto', compute: {module}});
+    await device.queue.onSubmittedWorkDone();
+    let error = await device.popErrorScope();
+    if (error) {
+      log(error.message);
+    } else {
+      log('no validation error');
+    }
+    log('Pass')
+    globalThis.testRunner?.dumpAsText();
+    globalThis.testRunner?.notifyDone();
+  };
+</script>

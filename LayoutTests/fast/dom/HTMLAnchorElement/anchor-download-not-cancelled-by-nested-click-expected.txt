@@ -1,0 +1,8 @@
+Download started.
+Downloading URL with suggested filename "test.csv"
+Download completed.
+Test that a link with a download attribute clicked from another link's click handler starts a download. The outer link's default action performs a fragment navigation once the handler returns, which must not cancel the download. This is the form the bug was originally reported in.
+
+This test passes if you see a 'Download started' message above.
+
+Download CSV

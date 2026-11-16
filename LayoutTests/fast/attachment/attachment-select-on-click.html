@@ -1,0 +1,25 @@
+<!DOCTYPE html><!-- webkit-test-runner [ AttachmentElementEnabled=true allowTestOnlyIPC=true ] -->
+<html>
+<body onload="runTest()">
+<div id="container">text before <attachment id="attachment"></attachment> text after</div>
+<div id="result"></div>
+<script src="../../resources/dump-as-markup.js"></script>
+<script>
+var file;
+if (window.internals)
+    file = window.internals.createFile("resources/test-file.txt");
+
+var attachment = document.getElementById('attachment');
+attachment.file = file;
+
+window.onload = function () {
+    if (!window.eventSender)
+        return;
+    eventSender.mouseMoveTo(attachment.offsetLeft + 10, attachment.offsetTop + 10);
+    eventSender.mouseDown(0);
+    eventSender.mouseUp(0);
+    Markup.dump(container);
+}
+</script>
+</body>
+</html>

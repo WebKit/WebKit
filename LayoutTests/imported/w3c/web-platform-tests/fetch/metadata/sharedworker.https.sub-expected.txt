@@ -1,0 +1,7 @@
+
+PASS Same-Origin sharedworker
+PASS undefined: sec-fetch-dest
+PASS undefined: sec-fetch-mode
+PASS undefined: sec-fetch-site
+PASS undefined: sec-fetch-user
+

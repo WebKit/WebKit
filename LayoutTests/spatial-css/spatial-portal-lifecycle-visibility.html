@@ -1,0 +1,63 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ SpatialPortalEnabled=true ModelElementEnabled=true ModelProcessEnabled=true allowTestOnlyIPC=true ] -->
+<html>
+<meta charset="utf-8">
+<title>A spatial portal releases its models while the page is hidden</title>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<script src="resources/spatial-portal-utils.js"></script>
+<script src="../model-element/resources/model-utils.js"></script>
+<script src="../model-element/resources/model-element-test-utils.js"></script>
+<style>
+    .portal { spatial: portal; width: 300px; height: 150px; }
+</style>
+<body>
+<script>
+'use strict';
+
+window.internals?.disableModelLoadDelaysForTesting();
+
+promise_test(async t => {
+    const portal = createPortal(t);
+    const model = appendModel(portal, "cube.usdz");
+    await model.ready;
+
+    t.add_cleanup(() => testRunner.setPageVisibility("visible"));
+
+    assert_equals(internals.modelElementState(model), "Loaded", "the child is loaded while visible");
+
+    testRunner.setPageVisibility("hidden");
+    await sleepForSeconds(0.1);
+    assert_true(document.hidden, "the page is hidden");
+
+    await waitForModelState(model, "Unloaded");
+    assert_equals(internals.numberOfHostedModelsInSpatialPortal(portal), 1, "the child stays registered with the portal");
+
+    testRunner.setPageVisibility("visible");
+    await sleepForSeconds(0.1);
+    assert_false(document.hidden, "the page is visible again");
+
+    await waitForModelState(model, "Loaded");
+}, "Hiding the page unloads a <model> nested in a spatial portal, and showing it reloads it");
+
+promise_test(async t => {
+    const portal = createPortal(t);
+    const first = appendModel(portal, "cube.usdz");
+    const second = appendModel(portal, "2x2x2-center.usdz");
+    await Promise.all([first.ready, second.ready]);
+
+    t.add_cleanup(() => testRunner.setPageVisibility("visible"));
+
+    testRunner.setPageVisibility("hidden");
+    await sleepForSeconds(0.1);
+    await Promise.all([waitForModelState(first, "Unloaded"), waitForModelState(second, "Unloaded")]);
+
+    testRunner.setPageVisibility("visible");
+    await sleepForSeconds(0.1);
+    await Promise.all([waitForModelState(first, "Loaded"), waitForModelState(second, "Loaded")]);
+
+    assert_equals(internals.numberOfHostedModelsInSpatialPortal(portal), 2, "both children stay registered");
+}, "Both <model>s in a spatial portal are unloaded and reloaded together");
+
+</script>
+</body>
+</html>

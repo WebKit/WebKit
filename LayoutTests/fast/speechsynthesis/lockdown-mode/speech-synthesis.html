@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/js-test.js"></script>
+</head>
+<body>
+<script>
+description("This test ensures SpeechSynthesis is not available in LDM.");
+
+shouldBeUndefined("window.speechSynthesis");
+finishJSTest();
+</script>
+</body>
+</html>

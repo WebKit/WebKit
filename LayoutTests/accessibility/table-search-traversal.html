@@ -1,0 +1,57 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/js-test.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
+</head>
+<body>
+
+<div id="container" role="group">
+    <table>
+        <tr>
+            <td></td>
+            <th scope="col">Duck</th>
+            <th scope="col">Cat</th>
+        </tr>
+        <tr>
+            <th scope="row">Sound</th>
+            <td>Quack</td>
+            <td>Meow</td>
+        </tr>
+        <tr>
+            <th scope="row">Biological family</th>
+            <td>Anatidae</td>
+            <td>Felidae</td>
+        </tr>
+    </table>
+</div>
+
+<script>
+    var testOutput = "This test ensures we can traverse through entire tables via search.\n";
+
+    if (window.accessibilityController) {
+        const containerElement = accessibilityController.accessibleElementById("container");
+
+        let elementCount = 0;
+        let searchResult = null;
+        while (true) {
+            searchResult = containerElement.uiElementForSearchPredicate(searchResult, true, "AXAnyTypeSearchKey", "", false);
+            if (!searchResult)
+                break;
+            const role = searchResult.role;
+            testOutput += `\n${role}`;
+            if (role.includes("StaticText")) {
+                let textContent = accessibilityController.platformName === "ios" ? searchResult.description : searchResult.stringValue;
+                testOutput += `\n${textContent}`;
+            }
+
+            testOutput += "\n";
+            elementCount += 1;
+        }
+        testOutput += `\nTraversed ${elementCount} elements.`;
+        debug(testOutput);
+    }
+</script>
+</body>
+</html>
+

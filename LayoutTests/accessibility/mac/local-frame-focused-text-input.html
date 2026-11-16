@@ -1,0 +1,54 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+<style>
+iframe {
+    width: 200px;
+    height: 100px;
+    border: none;
+}
+</style>
+</head>
+<body>
+
+<div id="container">
+    <iframe id="iframe" title="CVV Input" onload="runTest()" src="../resources/local-frame-text-input.html"></iframe>
+</div>
+
+<script>
+window.jsTestIsAsync = true;
+
+var output = "This test ensures VoiceOver's focused-element query resolves cross-frame to a text input focused inside an in-process (local) iframe. It is a regression test for accessibilityFocusedUIElement returning nothing when focus is inside a local frame.\n\n";
+
+var focus;
+function runTest() {
+    if (!window.accessibilityController)
+        return;
+
+    setTimeout(async function() {
+        // Ensure the iframe's accessibility tree is built and the input inside it is exposed.
+        await waitForIframeAccessibilityReady("container", "cvv");
+
+        // Move DOM focus to the text input inside the local frame.
+        document.getElementById("iframe").contentDocument.getElementById("cvv").focus();
+
+        // VoiceOver queries the focused element starting from the top-level web area. The isolated
+        // tree must descend cross-frame to return the text input inside the iframe. Before the fix,
+        // this returned nothing because focus never crossed the local-frame boundary.
+        await waitFor(() => {
+            focus = accessibilityController.focusedElement;
+            return focus && focus.domIdentifier == "cvv";
+        });
+
+        output += expect("focus.domIdentifier", "'cvv'");
+        output += expect("focus.role", "'AXRole: AXTextField'");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

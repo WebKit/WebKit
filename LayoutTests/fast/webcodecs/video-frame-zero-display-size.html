@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test.js"></script>
+<script>
+description("Tests that VideoFrame construction rejects a zero displayWidth or displayHeight with a TypeError.");
+
+const data = new Uint8Array(6);
+function makeInit(extra)
+{
+    return Object.assign({ format: "I420", codedWidth: 2, codedHeight: 2, timestamp: 0 }, extra);
+}
+
+shouldThrowErrorName("new VideoFrame(data, makeInit({ displayWidth: 0, displayHeight: 2 }))", "TypeError");
+shouldThrowErrorName("new VideoFrame(data, makeInit({ displayWidth: 2, displayHeight: 0 }))", "TypeError");
+
+shouldNotThrow("new VideoFrame(data, makeInit({ displayWidth: 2, displayHeight: 2 })).close()");
+</script>
+</body>
+</html>

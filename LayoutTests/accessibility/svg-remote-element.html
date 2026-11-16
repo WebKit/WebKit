@@ -1,0 +1,69 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../resources/js-test.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
+</head>
+<body>
+
+<img id="svg-image" alt="interactive SVG" onload="runTest()">
+
+<script>
+    let output = "This test ensures that accessibility elements can be created out of what a remote SVG image defines.\n\n";
+    window.jsTestIsAsync = true;
+
+    // Return the page's relative coordinates. If we rely on the x() or y() of the accessibility object, then
+    // accessibility transforms are applied that fail because there is no window available.
+    function pageX(element) {
+        return element.clickPointX - element.width / 2;
+    }
+
+    function pageY(element) {
+        return element.clickPointY - element.height / 2;
+    }
+
+    function runTest() {
+        var container = accessibilityController.accessibleElementById("svg-image");
+        var x = pageX(container) - 1;
+        var y = pageY(container) - 1;
+        output += `container location: (${x}, ${y})\n`;
+
+        var face = null;
+        setTimeout(async () => {
+            await waitFor(() => {
+                face = container.childAtIndex(0);
+                return face;
+            });
+            output += `Face ${face.role}\n`;
+            output += `Face ${platformValueForW3CName(face, true)}\n`;
+            output += `FaceX: ${pageX(face) - x}\n`;
+            output += `FaceY: ${Math.abs(pageY(face) - y)}\n`;
+
+            var eye = container.childAtIndex(1);
+            output += `Eye ${eye.role}\n`;
+            output += `Eye ${platformValueForW3CName(eye, true)}\n`;
+            output += `EyeX: ${pageX(eye) - x}\n`;
+            output += `EyeY: ${Math.abs(pageY(eye) - y)}\n`;
+
+            var nose = container.childAtIndex(3);
+            output += `Nose ${nose.role}\n`;
+            output += `Nose ${platformValueForW3CName(nose, true)}\n`;
+            output += `NoseX: ${pageX(nose) - x}\n`;
+            output += `NoseY: ${Math.abs(pageY(nose) - y)}\n`;
+
+            var mouth = container.childAtIndex(4);
+            output += `Mouth ${mouth.role}\n`;
+            output += `Mouth ${platformValueForW3CName(mouth, true)}\n`;
+            output += `MouthX: ${pageX(mouth) - x}\n`;
+            output += `MouthY: ${Math.floor(Math.abs(pageY(mouth) - y))}\n`;
+
+            debug(output);
+            finishJSTest();
+        }, 0);
+    }
+
+    if (window.accessibilityController)
+        document.getElementById("svg-image").src = "resources/svg-face.svg";
+</script>
+</body>
+</html>

@@ -1,0 +1,115 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<!-- AXReplaceRangeWithText clamped the location it was given against getLengthForTextRange(), which is
+     text().length(). text() is empty for any object whose role is not a text-control role, and a call
+     on a web area is redirected to the body object, which only earns the text-area role from a
+     contenteditable attribute. So for a document made editable by design mode -- an editable WebView,
+     which is what a Mail compose body is -- the length measured 0 and min(location, 0) put every
+     insertion at the start of the document. A caller inserting one character per keystroke got its
+     text back reversed.
+
+     Both frames hold the same text and differ only in how they were made editable, so a fix that
+     restores one without the other is visible. -->
+<iframe id="designMode" srcdoc="<body>abcdefghij</body>"></iframe>
+<iframe id="contentEditable" srcdoc="<body contenteditable='true'>abcdefghij</body>"></iframe>
+
+<script>
+var output = "Asserts that AXReplaceRangeWithText writes at the character index it is given when the\n"
+    + "call arrives on the web area of a document made editable by design mode, the same as it\n"
+    + "does for a body carrying a contenteditable attribute.\n\n";
+
+// `at`/`length` are the requested range, `want` the body's innerText afterwards.
+var cases = [
+    { label: "start of the document", at: 0, want: "XXabcdefghij" },
+    { label: "interior index", at: 3, want: "abcXXdefghij" },
+    { label: "later interior index", at: 7, want: "abcdefgXXhij" },
+    { label: "replacing a run of characters", at: 3, length: 2, want: "abcXXfghij" },
+    // A range naming characters the value does not have still lands at the end of the value. The
+    // measured length no longer bounds the location, so this is what holds that end in place.
+    { label: "location past the end of the value", at: 99, want: "abcdefghijXX" },
+    { label: "length running past the end of the value", at: 3, length: 99, want: "abcXX" },
+];
+
+var frames = [
+    { id: "designMode", label: "design mode" },
+    { id: "contentEditable", label: "contenteditable attribute" },
+];
+
+var body, webArea;
+
+// The editor applies an accessibility edit asynchronously, so give it a turn to land before reading
+// the DOM back. A refused request changes nothing, so there is nothing to wait for; wait a turn
+// either way and assert on the resulting text.
+function editSettled() {
+    return new Promise(resolve => setTimeout(resolve, 0));
+}
+
+function webAreaOf(frameId) {
+    // Walked rather than looked up by id: an iframe's web area is not addressable by the element's
+    // id, it is the child of the group the iframe element becomes. Document order, so the main
+    // frame's web area is first and the two iframes' follow in markup order.
+    var found = [];
+    (function visit(element, depth) {
+        if (!element || depth > 12)
+            return;
+        if (element.role == "AXRole: AXWebArea")
+            found.push(element);
+        for (var i = 0; i < element.childrenCount; i++)
+            visit(element.childAtIndex(i), depth + 1);
+    })(accessibilityController.rootElement, 0);
+
+    var order = ["main", "designMode", "contentEditable"];
+    var index = order.indexOf(frameId);
+    return index >= 0 && index < found.length ? found[index] : null;
+}
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    window.addEventListener("load", function() {
+        setTimeout(async function() {
+            document.getElementById("designMode").contentDocument.designMode = "on";
+
+            for (var frame of frames) {
+                output += `--- ${frame.label} ---\n`;
+
+                for (var testCase of cases) {
+                    var document_ = document.getElementById(frame.id).contentDocument;
+                    body = document_.body;
+
+                    // Fresh content per case, so no measurement runs against a value an earlier edit
+                    // already changed.
+                    body.textContent = "abcdefghij";
+                    await editSettled();
+
+                    webArea = webAreaOf(frame.id);
+                    if (!webArea) {
+                        output += `FAIL: ${testCase.label}: no web area for #${frame.id}\n\n`;
+                        continue;
+                    }
+
+                    var length = testCase.length || 0;
+                    output += `${testCase.label}: replacing {${testCase.at}, ${length}}\n`;
+                    output += expect(`webArea.replaceTextInRange("XX", ${testCase.at}, ${length})`, "true");
+                    await editSettled();
+                    output += expect("body.innerText", JSON.stringify(testCase.want));
+                    output += "\n";
+                }
+            }
+
+            document.getElementById("designMode").contentDocument.designMode = "off";
+
+            debugEscaped(output);
+            finishJSTest();
+        }, 0);
+    });
+}
+</script>
+</body>
+</html>

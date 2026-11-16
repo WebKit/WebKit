@@ -1,0 +1,7 @@
+
+PASS SVGLengthList clears items when attribute value is invalid
+PASS SVGNumberList clears items when attribute value is invalid
+PASS SVGPointList clears items when attribute value is invalid
+PASS SVGPointList truncates items when y attribute value is missing
+PASS SVGTransformList clears items when attribute value is invalid
+

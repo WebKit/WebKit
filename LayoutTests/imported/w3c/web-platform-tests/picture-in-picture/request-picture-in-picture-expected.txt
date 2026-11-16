@@ -1,0 +1,6 @@
+
+PASS request Picture-in-Picture requires a user gesture
+PASS request Picture-in-Picture requires loaded metadata for the video element
+PASS request Picture-in-Picture requires video track for the video element
+PASS request Picture-in-Picture resolves on user click
+

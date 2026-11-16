@@ -1,0 +1,4 @@
+
+
+PASS base appearance should not propagate to nested elements which support appearance.
+

@@ -1,0 +1,6 @@
+
+PASS Anchor: changing rel from noopener to opener clears noopener
+PASS Anchor: changing rel from noreferrer to opener clears noreferrer
+PASS Anchor: changing rel from 'noopener noreferrer' to opener clears both
+PASS Area: changing rel from noopener to opener clears noopener
+

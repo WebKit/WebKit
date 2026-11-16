@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>This tests signaling a slot change on lots of slot elements in a single microtask.<br>
+WebKit should retain the JS wrappers of those elements and fire the slotchange event.</p>
+<pre id="log"></pre>
+<script>
+
+function triggerSlotChange(host, shadowRoot, slotchangeListener) {
+    shadowRoot.innerHTML = '<div><slot></slot></div>';
+    shadowRoot.querySelector('slot').addEventListener('slotchange', slotchangeListener);
+    host.innerHTML = 'hello';
+    shadowRoot.innerHTML = '';
+    host.innerHTML = '';
+}
+
+function runTest() {
+    let slotchangeCount = 0;
+    const iteration = window.GCController ? 5 : 500;
+    const host = document.createElement('div');
+    const shadowRoot = host.attachShadow({mode: 'closed'});
+    for (let i = 0; i < iteration; i++) {
+        triggerSlotChange(host, shadowRoot, () => slotchangeCount++);
+        if (window.GCController)
+            GCController.collect();
+        else {
+            const x = new Array(100);
+            for (let j = 0; j < 100; j++)
+                x[j] = new Array;
+        }
+    }
+    return new Promise((resolve) => {
+        setTimeout(() => {
+            log.textContent += slotchangeCount === iteration ? 'PASS' : `FAIL - expected ${iteration} slotchange events but got ${slotchangeCount}`;
+            log.textContent += '\n';
+            resolve();
+        }, 0);
+    });
+}
+
+const promises = [];
+const outerRuns = window.GCController ? 5 : 20;
+for (let i = 0; i < outerRuns; i++)
+    promises[i] = runTest();
+
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+    Promise.all(promises).then(() => testRunner.notifyDone());
+}
+
+</script>
+</body>
+</html>

@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../resources/js-test.js"></script>
+<style>
+    @font-face { font-family: mark-origin-y-test; src: url("../../imported/w3c/web-platform-tests/fonts/mark-origin-y-test.ttf"); }
+    div { font: 100px mark-origin-y-test; line-height: normal; -webkit-line-box-contain: glyphs; width: 500px; }
+</style>
+</head>
+<body>
+<div id="base">A</div>
+<div id="raised">A&#x301;</div>
+<div id="lowered">A&#x316;</div>
+<script>
+description("With -webkit-line-box-contain: glyphs the line box includes the vertical offset shaping gives a combining mark.");
+jsTestIsAsync = true;
+
+// imported/w3c/web-platform-tests/html/canvas/tools/generate-mark-origin-y-font.py: at 100px the base 'A' inks y [0,20] above the baseline, U+0301 is
+// positioned to ink [70,90] and U+0316 to ink [-30,-10].
+function height(id)
+{
+    return document.getElementById(id).getBoundingClientRect().height;
+}
+
+document.fonts.load("100px mark-origin-y-test", "A\u0301").then(() => {
+    shouldBe("height('base')", "20");
+    shouldBe("height('raised')", "90");
+    shouldBe("height('lowered')", "50");
+    finishJSTest();
+});
+</script>
+</body>
+</html>

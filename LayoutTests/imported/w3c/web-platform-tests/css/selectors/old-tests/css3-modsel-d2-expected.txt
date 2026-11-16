@@ -1,0 +1,5 @@
+The following bar should be green.
+
+
+PASS Dynamic handling of combinators
+

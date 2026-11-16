@@ -1,0 +1,12 @@
+
+PASS cross-origin(anonymous) in @import
+PASS referrer-policy(no-referrer) in @import
+PASS integrity() in @import
+PASS multiple modifiers in @import
+PASS all three modifiers in @import
+PASS cross-origin(anonymous) serialized in @import cssText
+PASS multiple modifiers serialized in canonical order in @import cssText
+PASS duplicate cross-origin in @import
+PASS duplicate cross-origin in @import between referrer-policy
+PASS unquoted url() with cross-origin in @import
+

@@ -1,0 +1,3 @@
+
+PASS querySelector matches nodes inserted by innerHTML
+

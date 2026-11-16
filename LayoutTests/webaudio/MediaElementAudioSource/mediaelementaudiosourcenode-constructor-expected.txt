@@ -1,0 +1,6 @@
+
+PASS MediaElementAudioSourceNode constructor associates the node with the given context and mediaElement
+PASS MediaElementAudioSourceNode constructor sets default AudioNode parameters via 'initialize the AudioNode'
+PASS MediaElementAudioSourceNode constructor throws TypeError when MediaElementAudioSourceOptions.mediaElement is missing
+PASS createMediaElementSource() and the MediaElementAudioSourceNode constructor produce equivalent nodes
+

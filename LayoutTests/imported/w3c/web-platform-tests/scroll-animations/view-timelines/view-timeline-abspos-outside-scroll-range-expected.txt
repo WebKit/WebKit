@@ -1,0 +1,4 @@
+
+PASS View timeline range boundaries are not clamped to the scroll range.
+PASS View timeline ranges that start before the scroll range, sampled past 100%.
+

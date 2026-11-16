@@ -1,0 +1,17 @@
+
+FAIL ScriptProcessor handles block size with renderSizeHint 1 & bufferSize 256 assert_throws_dom: function "() => {
+            audioContext.createScriptProcessor(bufferSize, 1, 1);
+          }" did not throw
+FAIL ScriptProcessor handles block size with renderSizeHint 256 & bufferSize 256 assert_throws_dom: function "() => {
+            audioContext.createScriptProcessor(bufferSize, 1, 1);
+          }" did not throw
+FAIL ScriptProcessor handles block size with renderSizeHint 100 & bufferSize 256 assert_throws_dom: function "() => {
+            audioContext.createScriptProcessor(bufferSize, 1, 1);
+          }" did not throw
+FAIL ScriptProcessor handles block size with renderSizeHint 4096 & bufferSize 4096 assert_throws_dom: function "() => {
+            audioContext.createScriptProcessor(bufferSize, 1, 1);
+          }" did not throw
+FAIL ScriptProcessor handles block size with renderSizeHint 66000 & bufferSize 16384 assert_throws_dom: function "() => {
+            audioContext.createScriptProcessor(bufferSize, 1, 1);
+          }" did not throw
+

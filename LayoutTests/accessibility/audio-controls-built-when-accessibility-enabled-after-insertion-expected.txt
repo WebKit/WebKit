@@ -1,0 +1,10 @@
+This tests that an off-screen audio element exposes its controls when accessibility is enabled after the element was inserted.
+
+PASS: hasBuiltControls() === false
+PASS: axAudio.childrenCount > 0 === true
+PASS: hasBuiltControls() === true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

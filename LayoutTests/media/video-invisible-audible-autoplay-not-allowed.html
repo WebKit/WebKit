@@ -1,0 +1,49 @@
+<html>
+    <head>
+        <script src="media-file.js"></script>
+        <script src="video-test.js"></script>
+        <script>
+            if (window.internals)
+                internals.settings.setInvisibleAutoplayNotPermitted(true);
+
+            function start()
+            {
+                findMediaElement();
+                video.volume = 0.1;
+
+                waitForEventAndFail('playing');
+
+                consoleWrite('** loading an audible video with no renderer');
+                video.src = findMediaFile('video', 'content/test');
+                waitForEventOnce('canplaythrough', onCanPlayThrough);
+                consoleWrite('');
+            }
+
+            function onCanPlayThrough()
+            {
+                consoleWrite('** making the video renderer attach far below the viewport');
+                run('document.querySelector(".container").style.display = "block"');
+                setTimeout(verifyStillPaused, 500);
+            }
+
+            function verifyStillPaused()
+            {
+                testExpected('video.paused', true);
+                endTest();
+            }
+        </script>
+        <style>
+        body { margin: 0; }
+        .spacer { height: 400vh; }
+        .container { display: none; }
+        </style>
+    </head>
+
+    <body onload="start()">
+        <div class="spacer"></div>
+        <div class="container">
+            <video controls autoplay></video>
+        </div>
+        <p>Test that an audible &lt;video autoplay&gt; element whose renderer attaches outside the viewport does not begin playing.</p>
+    </body>
+</html>

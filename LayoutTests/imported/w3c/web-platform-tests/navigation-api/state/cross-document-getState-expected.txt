@@ -1,0 +1,4 @@
+
+
+PASS entry.getState() still works for a non-current cross-document entry
+

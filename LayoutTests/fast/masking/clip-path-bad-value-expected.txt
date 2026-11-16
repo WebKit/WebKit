@@ -1,0 +1,25 @@
+Makes sure we don't crash in the StyleBuilder if bad values are used for -webkit-clip-path property.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS document.defaultView.getComputedStyle(testElement)['-webkit-clip-path'] is "none"
+PASS No crash for auto value
+PASS document.defaultView.getComputedStyle(testElement)['-webkit-clip-path'] is "none"
+PASS No crash for 1px 2px value
+PASS document.defaultView.getComputedStyle(testElement)['-webkit-clip-path'] is "none"
+PASS No crash for content-box border-box value
+PASS document.defaultView.getComputedStyle(testElement)['-webkit-clip-path'] is "none"
+PASS No crash for circle(50% at 50% 50%) circle(20% at 20% 20%) value
+PASS document.defaultView.getComputedStyle(testElement)['-webkit-clip-path'] is "none"
+PASS No crash for circle(50% at 50% 50%) border-box content-box value
+PASS document.defaultView.getComputedStyle(testElement)['-webkit-clip-path'] is "none"
+PASS No crash for copy value
+PASS document.defaultView.getComputedStyle(testElement)['-webkit-clip-path'] is "none"
+PASS No crash for   value
+PASS document.defaultView.getComputedStyle(testElement)['-webkit-clip-path'] is "none"
+PASS No crash for  value
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

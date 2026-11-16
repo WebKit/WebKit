@@ -1,0 +1,20 @@
+<!DOCTYPE html><!-- webkit-test-runner [ language=zh-Hans,en-US ] -->
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+This test makes sure that the correct glyphs are drawn for text-style fonts when app-specific languages are specified.
+The test passes if this text you're reading right now is the only text on this page.
+<div style="position: relative;">
+<div style="font: -apple-system-tall-body; font-size: 48px;"><span id="target">[][][]</target></div>
+<div id="overlay" style="position: absolute; top: 0px; left: 0px; width: 100px; height: 100px; background: white;"></div>
+</div>
+<script>
+let target = document.getElementById("target");
+let overlay = document.getElementById("overlay");
+overlay.style.width = target.offsetWidth + "px";
+overlay.style.height = (target.offsetHeight * 2) + "px";
+</script>
+</body>
+</html>

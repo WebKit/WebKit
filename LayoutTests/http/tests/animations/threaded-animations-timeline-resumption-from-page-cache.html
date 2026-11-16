@@ -1,0 +1,44 @@
+<!-- webkit-test-runner [ UsesBackForwardCache=true ] -->
+<style>
+
+@keyframes slide {
+    to { translate: 100px }
+}
+
+#target {
+    width: 100px;
+    height: 100px;
+    background-color: black;
+    animation: slide 1000s;
+}
+</style>
+
+<div id="target"></div>
+<div id="results">FAIL</div>
+
+<script src="/js-test-resources/ui-helper.js"></script>
+<script>
+
+window.testRunner?.dumpAsText();
+window.testRunner?.waitUntilDone();
+
+document.addEventListener("visibilitychange", async () => {
+    // As the document is resumed from the back-forward cache,
+    // wait for the threaded animation to be committed for success.
+    await UIHelper.renderingUpdate();
+    document.getElementById("results").textContent = "PASS";
+    window.testRunner?.notifyDone();
+});
+
+const path = 'animations/resources/threaded-animations-timeline-resumption-from-page-cache-helper.html';
+const url = `${window.location.protocol}//localhost:${window.location.port}/${path}`;
+
+(async function() {
+    // As the document initially loads, wait for the threaded animation to be committed
+    // and then navigate to a document on a separate domain such that the Web Process is
+    // swapped. That document will immediately navigate back to this document.
+    await UIHelper.renderingUpdate();
+    window.location.href = url;
+})();
+
+</script>

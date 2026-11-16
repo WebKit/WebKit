@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<head>
+<style>
+body, html {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+}
+
+.container {
+    width: 640px;
+    height: 480px;
+    position: relative;
+    border: 1px solid red;
+}
+
+video {
+    width: 100%;
+    height: 100%;
+}
+</style>
+</head>
+<body>
+    <div class="container">
+        <video muted loop playsinline></video>
+    </div>
+</body>
+<script>
+var container = document.querySelector(".container");
+var video = document.querySelector("video");
+
+async function loadSource(source)
+{
+    return new Promise((resolve, reject) => {
+        video.addEventListener("loadeddata", () => resolve(), { once: true });
+        video.addEventListener("error", () => reject(new Error("video error code=" + (video.error ? video.error.code : "null"))), { once: true });
+        video.src = source;
+    });
+}
+
+async function waitForVideoFrame()
+{
+    return new Promise(resolve => {
+        video.requestVideoFrameCallback((timestamp, metadata) => {
+            resolve(timestamp);
+        });
+    });
+}
+
+function performWithUserGestureIfPossible(callback)
+{
+    if (window.internals)
+        internals.withUserGesture(callback);
+    else
+        callback();
+}
+
+function enterFullscreen()
+{
+    if (document.webkitIsFullScreen)
+        return false;
+
+    performWithUserGestureIfPossible(() => {
+        container.webkitRequestFullscreen({ navigationUI: "hide" });
+        video.play();
+    });
+    return true;
+}
+
+function exitFullscreen()
+{
+    if (!document.webkitIsFullScreen)
+        return false;
+
+    performWithUserGestureIfPossible(() => {
+        document.webkitExitFullscreen();
+        video.pause();
+    });
+    return true;
+}
+
+function enterVideoFullscreen()
+{
+    if (document.webkitIsFullScreen)
+        return false;
+
+    performWithUserGestureIfPossible(() => {
+        video.webkitEnterFullscreen();
+        video.play();
+    });
+    return true;
+}
+
+function enterNativeVideoFullscreen()
+{
+    video.addEventListener("webkitbeginfullscreen", () => {
+        window.webkit.messageHandlers.testHandler.postMessage("enteredFullscreen");
+    }, { once: true });
+    video.webkitEnterFullscreen();
+    video.play();
+}
+
+function exitNativeVideoFullscreen()
+{
+    video.addEventListener("webkitendfullscreen", () => {
+        window.webkit.messageHandlers.testHandler.postMessage("exitedFullscreen");
+    }, { once: true });
+    video.webkitExitFullscreen();
+}
+</script>
+</html>

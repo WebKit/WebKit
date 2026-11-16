@@ -1,0 +1,4 @@
+
+FAIL noop scrollTo doesn't interrupt ongoing smooth scroll. assert_equals: scroller reached the target offset expected 400 but got 53
+FAIL noop scrollIntoView doesn't interrupt ongoing smooth scroll. assert_equals: scroller reached the target offset expected 400 but got 51
+

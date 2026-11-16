@@ -1,0 +1,51 @@
+
+Harness Error (TIMEOUT), message = null
+
+PASS Test JPEG image decoding.
+PASS Test JPEG w/ EXIF orientation top-left.
+PASS Test JPEG w/ EXIF orientation top-right.
+PASS Test JPEG w/ EXIF orientation bottom-right.
+PASS Test JPEG w/ EXIF orientation bottom-left.
+PASS Test JPEG w/ EXIF orientation left-top.
+PASS Test JPEG w/ EXIF orientation right-top.
+PASS Test JPEG w/ EXIF orientation right-bottom.
+PASS Test JPEG w/ EXIF orientation left-bottom.
+PASS Test 4:2:0 JPEG w/ EXIF orientation top-left.
+PASS Test 4:2:0 JPEG w/ EXIF orientation top-right.
+PASS Test 4:2:0 JPEG w/ EXIF orientation bottom-right.
+PASS Test 4:2:0 JPEG w/ EXIF orientation bottom-left.
+PASS Test 4:2:0 JPEG w/ EXIF orientation left-top.
+PASS Test 4:2:0 JPEG w/ EXIF orientation right-top.
+PASS Test 4:2:0 JPEG w/ EXIF orientation right-bottom.
+PASS Test 4:2:0 JPEG w/ EXIF orientation left-bottom.
+PASS Test PNG image decoding.
+PASS Test AVIF image decoding.
+PASS Test high bit depth HDR AVIF image decoding.
+FAIL Test multi-track AVIF image decoding w/ preferAnimation=false. assert_greater_than: expected a number greater than 1 but got 1
+FAIL Test multi-track AVIF image decoding w/ preferAnimation=true. assert_greater_than: expected a number greater than 1 but got 1
+PASS Test WEBP image decoding.
+PASS Test GIF image decoding.
+FAIL Test JPEG image YUV 4:2:0 decoding. assert_equals: expected "I420" but got "BGRA"
+FAIL Test AVIF image YUV 4:2:0 decoding. assert_equals: expected "I420" but got "BGRA"
+FAIL Test AVIF image YUV 4:2:2 decoding. assert_equals: expected "I422" but got "BGRA"
+FAIL Test AVIF image YUV 4:4:4 decoding. assert_equals: expected "I444" but got "BGRA"
+FAIL Test WEBP image YUV 4:2:0 decoding. assert_equals: expected "I420" but got "BGRA"
+FAIL Test AVIF image HDR YUV 10-bit 4:2:0 decoding. assert_equals: expected "I420P10" but got "BGRA"
+FAIL Test AVIF image HDR YUV 10-bit 4:2:2 decoding. assert_equals: expected "I422P10" but got "BGRA"
+FAIL Test AVIF image HDR YUV 10-bit 4:4:4 decoding. assert_equals: expected "I444P10" but got "BGRA"
+FAIL Test AVIF image HDR YUV 12-bit 4:2:0 decoding. assert_equals: expected "I420P12" but got "BGRA"
+FAIL Test AVIF image HDR YUV 12-bit 4:2:2 decoding. assert_equals: expected "I422P12" but got "BGRA"
+FAIL Test AVIF image HDR YUV 12-bit 4:4:4 decoding. assert_equals: expected "I444P12" but got "BGRA"
+PASS Test invalid mime type rejects decode() requests
+PASS Test invalid mime type rejects decodeMetadata() requests
+FAIL Test out of range index returns RangeError assert_unreached: Should have rejected: undefined Reached unreachable code
+FAIL Test decoding a partial ArrayBuffer results in EncodingError promise_rejects_dom: function "function() { throw e; }" threw object "DataError: Decoding error" that is not a DOMException EncodingError: property "name" is equal to "DataError", expected "EncodingError"
+PASS Test completed property on fully buffered decode
+FAIL Test decode, decodeMetadata after no track selected. assert_equals: expected -1 but got 0
+FAIL Test track selection in multi track image. assert_equals: expected 2 but got 1
+TIMEOUT Test ReadableStream of gif Test timed out
+NOTRUN Test that decode requests are serialized.
+NOTRUN Test ReadableStream aborts promises on track change
+NOTRUN Test ReadableStream aborts completed on close
+NOTRUN Test ReadableStream resolves completed
+

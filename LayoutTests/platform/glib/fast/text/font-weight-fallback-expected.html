@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+@font-face {
+    font-family: "WebFont";
+    font-weight: 300;
+    src: url("../../../../resources/Ahem.otf") format("opentype");
+}
+div {
+    font: normal 100px 'WebFont', sans-serif;
+}
+</style>
+</head>
+<body>
+<p>Test that when a character is missing from the best-matching web font face, it falls back to the system font, not to a @font-face at a different weight.</p>
+<div>&#x6A2A;</div>
+</body>
+</html>

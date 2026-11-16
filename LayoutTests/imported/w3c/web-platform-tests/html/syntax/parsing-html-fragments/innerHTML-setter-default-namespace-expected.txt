@@ -1,0 +1,4 @@
+
+PASS Setting innerHTML on a HTML element with a non-HTML namespace as the default namespace
+PASS Setting outerHTML on a HTML element with a non-HTML namespace as the default namespace
+

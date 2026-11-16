@@ -1,0 +1,8 @@
+This test ensures we can access content inside a deep DOM without crashing.
+
+PASS: webArea.childAtIndex(0)?.role.toLowerCase().includes('button') === true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Press

@@ -1,0 +1,3 @@
+
+FAIL intersection observations should be calculated before onpaint, but should be delivered after onpaint assert_array_equals: onpaint should fire before intersection observations are delivered. expected property 0 to be "onpaint" but got "intersection" (expected array ["onpaint", "intersection"] got ["intersection", "onpaint"])
+

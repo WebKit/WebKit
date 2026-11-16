@@ -1,0 +1,10 @@
+
+Check that a webm with garbage content at the end generate an error.
+
+EXPECTED (audio.canPlayType('audio/webm; codecs=opus') == 'probably') OK
+RUN(audio.src = "content/opus_variable_witherror.webm")
+EVENT(loadedmetadata)
+EXPECTED (audio.duration >= '0.98') OK
+EVENT(error)
+END OF TEST
+

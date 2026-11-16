@@ -1,0 +1,12 @@
+
+This test requires WebKitTestRunner. To manually test, load the page in a configuration where drag and drop is enabled by default; start a drag on the image above by long-pressing it, and then drag the image off to the side of the screen and let go. 'dragstart' and 'dragend' events should be dispatched.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Started drag
+PASS endedDrag became true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

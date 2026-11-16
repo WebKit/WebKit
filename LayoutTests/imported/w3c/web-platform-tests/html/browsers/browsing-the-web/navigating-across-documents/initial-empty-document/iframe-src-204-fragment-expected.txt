@@ -1,0 +1,7 @@
+
+PASS src
+PASS location.href
+PASS location.assign
+PASS window.open
+FAIL link click assert_equals: history.length must not change after fragment navigation on initial empty document expected 2 but got 3
+

@@ -1,0 +1,5 @@
+
+NOTRUN Offer to receive a recvonly H264 codec on a recvonly transceiver There are no recvonly H264 codecs available in getCapabilities.
+NOTRUN Offering a recvonly codec on a sendrecv transceiver There are no recvonly H264 codecs available in getCapabilities.
+NOTRUN Offer to send a sendonly H264 codec on a sendonly transceiver There are no sendonly H264 codecs available in getCapabilities.
+

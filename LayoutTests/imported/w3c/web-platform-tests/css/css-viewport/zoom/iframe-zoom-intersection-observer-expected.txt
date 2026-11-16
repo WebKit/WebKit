@@ -1,0 +1,5 @@
+
+PASS IntersectionObserver entries in an unzoomed iframe
+PASS IntersectionObserver entries in an iframe at zoom 2
+PASS IntersectionObserver entries in an iframe at zoom 0.5
+

@@ -1,0 +1,4 @@
+
+
+PASS Fully-visible target in an offset iframe is intersecting
+

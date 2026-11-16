@@ -1,0 +1,7 @@
+CONSOLE MESSAGE: Started reading...
+
+Test that using FileReader from a document with unique origin doesn't cause a crash.
+
+If testing manually, please drop a file on an input above.
+
+PASS if not crash.

@@ -1,0 +1,37 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ allowTestOnlyIPC=true ] -->
+<html>
+<head>
+    <script src="media-file.js"></script>
+    <script src="video-test.js"></script>
+    <script>
+    async function runTest() {
+        if (!window.internals)
+            return;
+
+        findMediaElement();
+        run('video.src = findMediaFile("audio", "content/silence")');
+
+        runWithKeyDown('video.play()');
+        await waitFor(video, 'playing');
+
+        run('internals.beginAudioSessionInterruption()');
+        await waitFor(video, 'pause');
+
+        // Play the video again to test an implicit end to the interruption.
+        runWithKeyDown('video.play()');
+        await waitFor(video, 'playing');
+
+        run('internals.beginAudioSessionInterruption()');
+        await waitFor(video, 'pause');
+
+        internals.endAudioSessionInterruption();
+        endTest();
+    }
+    </script>
+</head>
+
+<body onload="runTest()">
+    <p>Test that a video element with an audio source always gets paused when audio is interrupted.</p>
+    <video controls></video>
+</body>
+</html>

@@ -1,0 +1,36 @@
+CONSOLE MESSAGE: Blocked script execution in 'http://127.0.0.1:8000/site-isolation/inspector/debugger/resources/same-process-frame.html?sandboxed' because the document's frame is sandboxed and the 'allow-scripts' permission is not set.
+Test that while a frame is paused, a same-process document that appears during the pause (a newly inserted iframe, a sibling's navigation, or a cross-site iframe that navigates into the process) is held until the pause ends, and that a frame that navigates to a document that cannot run scripts does not stay paused afterward.
+
+
+
+== Running test suite: SiteIsolation.Debugger.DocumentsCreatedDuringPause
+-- Running test case: SiteIsolation.Debugger.DocumentsCreatedDuringPause.Setup
+PASS: Should find the frame target for frame A.
+PASS: Should find the frame target for frame B.
+PASS: Frame B's interval should be running.
+
+-- Running test case: SiteIsolation.Debugger.DocumentsCreatedDuringPause.NewFrame
+PASS: Should find the frame target for the inserted frame C.
+PASS: Frame C's script should have run.
+PASS: Frame C's interval should not advance while frame A is paused.
+PASS: Frame C's interval should advance after resuming.
+
+-- Running test case: SiteIsolation.Debugger.DocumentsCreatedDuringPause.SiblingNavigation
+PASS: Frame B should have navigated, and its new script should have run.
+PASS: Frame B's new document's interval should not advance while frame A is paused.
+PASS: Frame B's new document's interval should advance after resuming.
+
+-- Running test case: SiteIsolation.Debugger.DocumentsCreatedDuringPause.CrossSiteFrameNavigatesIntoProcess
+PASS: Should find the frame target for the cross-site frame D.
+PASS: Frame D should start in a different process than frame A.
+PASS: Should find the frame target for frame D's new document.
+PASS: Frame D's new document should be in frame A's process.
+PASS: Frame D's new script should have run.
+PASS: Frame D's new document's interval should not advance while frame A is paused.
+PASS: Frame D's new document's interval should advance after resuming.
+
+-- Running test case: SiteIsolation.Debugger.DocumentsCreatedDuringPause.SiblingNavigationWithoutScripts
+PASS: Frame B should have navigated to a document that cannot run scripts.
+PASS: Frame B should have navigated to a document that runs scripts.
+PASS: Frame B's event listener should run.
+

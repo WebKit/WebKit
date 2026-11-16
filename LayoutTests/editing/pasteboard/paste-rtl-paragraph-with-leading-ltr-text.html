@@ -1,0 +1,46 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true BidiContentAwarePasteEnabled=true ] -->
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body, html {
+            font-family: system-ui;
+            font-size: 16px;
+        }
+
+        div[contenteditable] {
+            padding: 1em;
+            margin: 1em;
+            border: 2px solid darkgray;
+            outline: none;
+        }
+    </style>
+    <script src="../../resources/ui-helper.js"></script>
+    <script>
+        window.testRunner?.waitUntilDone();
+
+        addEventListener("load", async () => {
+            const source = document.querySelector(".source");
+            const destination = document.querySelector(".destination");
+
+            source.focus();
+            document.execCommand("SelectAll");
+            document.execCommand("Copy");
+            await UIHelper.ensurePresentationUpdate();
+
+            destination.focus();
+            document.execCommand("Paste");
+
+            destination.blur();
+            await UIHelper.ensurePresentationUpdate();
+
+            window.testRunner?.notifyDone();
+        });
+    </script>
+</head>
+<body>
+    <div dir="rtl" class="source" contenteditable>Apple Pay هي الطريقة الآمنة للدفع وإجراء عمليات الشراء في المتاجر وداخل التطبيقات وعلى الإنترنت.</div>
+    <div class="destination" contenteditable></div>
+</body>
+</html>

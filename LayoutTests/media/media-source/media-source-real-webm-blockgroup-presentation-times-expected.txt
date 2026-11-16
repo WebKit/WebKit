@@ -1,0 +1,15 @@
+
+EVENT(sourceopen)
+EVENT(updateend)
+EVENT(updateend)
+EXPECTED (simpleBlockBuffered.length == '1') OK
+EXPECTED (simpleBlockBuffered.start(0) == '0') OK
+EXPECTED (simpleBlockBuffered.end(0) == '1') OK
+EVENT(sourceopen)
+EVENT(updateend)
+EVENT(updateend)
+EXPECTED (blockGroupBuffered.length == '1') OK
+EXPECTED (blockGroupBuffered.start(0) == '0') OK
+EXPECTED (blockGroupBuffered.end(0) == '1') OK
+END OF TEST
+

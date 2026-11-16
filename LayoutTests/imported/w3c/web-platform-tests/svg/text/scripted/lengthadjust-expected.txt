@@ -1,0 +1,6 @@
+Stretched text
+Stretched text
+
+PASS Tests dynamic updates of the "lengthAdjust" content attribute
+PASS Tests dynamic updates of the "lengthAdjust" IDL attribute
+

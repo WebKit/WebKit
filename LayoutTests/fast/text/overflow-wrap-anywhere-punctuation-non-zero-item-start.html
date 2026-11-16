@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>overflow-wrap: anywhere keeps only the line-start prohibited punctuation with the first character when the text item does not start at offset 0</title>
+<link rel="stylesheet" type="text/css" href="/fonts/ahem.css">
+<link rel="help" href="https://drafts.csswg.org/css-text-3/#overflow-wrap-property">
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<style>
+div {
+    font: 20px/1 Ahem;
+    width: 0;
+    overflow-wrap: anywhere;
+}
+</style>
+<!-- The emoji puts a surrogate pair at offsets 1-2 of the text node, while the overflowing "a,bcd" item starts at offset 4. -->
+<div id="nonZeroStart">x&#x1F600; a,bcd</div>
+<div id="zeroStart">a,bcd&#x1F600;</div>
+<script>
+function lineTop(textNode, offset) {
+    const range = document.createRange();
+    range.setStart(textNode, offset);
+    range.setEnd(textNode, offset + 1);
+    return range.getBoundingClientRect().top;
+}
+
+function checkPunctuationStaysOnlyWithFirstCharacter(id, firstCharacterOffset) {
+    const text = document.getElementById(id).firstChild;
+    const firstCharacterTop = lineTop(text, firstCharacterOffset);
+    assert_equals(lineTop(text, firstCharacterOffset + 1), firstCharacterTop, "',' stays on the same line as 'a'");
+    assert_greater_than(lineTop(text, firstCharacterOffset + 2), firstCharacterTop, "'b' wraps to the next line");
+}
+
+test(() => {
+    checkPunctuationStaysOnlyWithFirstCharacter("zeroStart", 0);
+}, "Text item starting at offset 0");
+
+test(() => {
+    checkPunctuationStaysOnlyWithFirstCharacter("nonZeroStart", 4);
+}, "Text item starting at non-zero offset with a surrogate pair earlier in the text");
+</script>

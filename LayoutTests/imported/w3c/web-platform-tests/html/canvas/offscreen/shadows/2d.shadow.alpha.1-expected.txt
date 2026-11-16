@@ -1,0 +1,7 @@
+2d.shadow.alpha.1
+
+Shadow color alpha components are used
+
+
+PASS Shadow color alpha components are used
+

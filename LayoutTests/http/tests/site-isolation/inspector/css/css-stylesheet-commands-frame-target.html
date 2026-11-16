@@ -1,0 +1,174 @@
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="../debugger/resources/site-isolation-debugger-test-utilities.js"></script>
+<script>
+    function test() {
+        let suite = InspectorTest.createAsyncSuite("SiteIsolation.CSS.StyleSheetCommands.FrameTarget");
+
+        let childFrameTarget;
+        let stylesheetId;
+
+        suite.addTestCase({
+            name: "SiteIsolation.CSS.StyleSheetCommands.FrameTarget.Setup",
+            description: "Find the child frame target.",
+            async test() {
+                let frameTargets = WI.targets.filter((t) => t.type === WI.TargetType.Frame);
+                let urlTargetMap = await fetchDocumentURLsForTargets(frameTargets);
+                let mainFrameTarget = urlTargetMap.get(WI.networkManager.mainFrame.url);
+                childFrameTarget = frameTargets.find((t) => t !== mainFrameTarget);
+                InspectorTest.expectNotNull(childFrameTarget, "Should find a child frame target.");
+                InspectorTest.expectNotNull(childFrameTarget.CSSAgent, "Child frame target should have a CSSAgent.");
+            }
+        });
+
+        suite.addTestCase({
+            name: "SiteIsolation.CSS.StyleSheetCommands.FrameTarget.GetAllStyleSheets",
+            description: "getAllStyleSheets should return the child frame's stylesheets.",
+            async test() {
+                let { headers } = await childFrameTarget.CSSAgent.getAllStyleSheets();
+                InspectorTest.expectGreaterThanOrEqual(headers.length, 1, "Should have at least one stylesheet.");
+                stylesheetId = headers[0].styleSheetId;
+                InspectorTest.expectNotNull(stylesheetId, "Stylesheet should have an id.");
+            }
+        });
+
+        suite.addTestCase({
+            name: "SiteIsolation.CSS.StyleSheetCommands.FrameTarget.GetStyleSheet",
+            description: "getStyleSheet should return stylesheet details.",
+            async test() {
+                let { styleSheet } = await childFrameTarget.CSSAgent.getStyleSheet(stylesheetId);
+                InspectorTest.expectNotNull(styleSheet, "Should get stylesheet body.");
+                InspectorTest.expectEqual(styleSheet.styleSheetId, stylesheetId, "Returned stylesheet id should match.");
+            }
+        });
+
+        suite.addTestCase({
+            name: "SiteIsolation.CSS.StyleSheetCommands.FrameTarget.GetStyleSheetText",
+            description: "getStyleSheetText should return the stylesheet source text.",
+            async test() {
+                let { text } = await childFrameTarget.CSSAgent.getStyleSheetText(stylesheetId);
+                InspectorTest.expectThat(text.includes(".test-class"), "Stylesheet text should contain the .test-class rule.");
+                InspectorTest.expectThat(text.includes("color: red"), "Stylesheet text should contain 'color: red'.");
+            }
+        });
+
+        suite.addTestCase({
+            name: "SiteIsolation.CSS.StyleSheetCommands.FrameTarget.SetStyleSheetText",
+            description: "setStyleSheetText should update the stylesheet source text.",
+            async test() {
+                let newText = ".test-class { color: blue; }";
+                await childFrameTarget.CSSAgent.setStyleSheetText(stylesheetId, newText);
+
+                let { text } = await childFrameTarget.CSSAgent.getStyleSheetText(stylesheetId);
+                InspectorTest.expectEqual(text, newText, "Stylesheet text should be updated.");
+            }
+        });
+
+        suite.addTestCase({
+            name: "SiteIsolation.CSS.StyleSheetCommands.FrameTarget.CreateStyleSheet",
+            description: "createStyleSheet should create an inspector stylesheet for the frame.",
+            async test() {
+                let { styleSheetId: newId } = await childFrameTarget.CSSAgent.createStyleSheet("");
+                InspectorTest.expectNotNull(newId, "Should get a new stylesheet id.");
+                InspectorTest.expectNotEqual(newId, stylesheetId, "New stylesheet id should differ from the existing one.");
+            }
+        });
+
+        suite.addTestCase({
+            name: "SiteIsolation.CSS.StyleSheetCommands.FrameTarget.GetSupportedCSSProperties",
+            description: "getSupportedCSSProperties should return CSS property metadata.",
+            async test() {
+                let { cssProperties } = await childFrameTarget.CSSAgent.getSupportedCSSProperties();
+                InspectorTest.expectGreaterThan(cssProperties.length, 0, "Should return at least one CSS property.");
+
+                let displayProperty = cssProperties.find((p) => p.name === "display");
+                InspectorTest.expectNotNull(displayProperty, "Should include the 'display' property.");
+
+                let colorProperty = cssProperties.find((p) => p.name === "color");
+                InspectorTest.expectNotNull(colorProperty, "Should include the 'color' property.");
+                InspectorTest.expectThat(colorProperty.inherited, "'color' should be marked as inherited.");
+            }
+        });
+
+        suite.addTestCase({
+            name: "SiteIsolation.CSS.StyleSheetCommands.FrameTarget.StyleSheetChangedEvent",
+            description: "styleSheetChanged event should fire after setStyleSheetText.",
+            async test() {
+                let eventPromise = new Promise((resolve) => {
+                    let original = WI.CSSObserver.prototype.styleSheetChanged;
+                    WI.CSSObserver.prototype.styleSheetChanged = function(id) {
+                        if (this._target === childFrameTarget) {
+                            WI.CSSObserver.prototype.styleSheetChanged = original;
+                            resolve(id);
+                            return;
+                        }
+                        original.call(this, id);
+                    };
+                });
+
+                await childFrameTarget.CSSAgent.setStyleSheetText(stylesheetId, ".test-class { color: green; }");
+                let changedId = await eventPromise;
+                InspectorTest.expectEqual(changedId, stylesheetId, "styleSheetChanged event should fire with the correct stylesheet id.");
+            }
+        });
+
+        suite.addTestCase({
+            name: "SiteIsolation.CSS.StyleSheetCommands.FrameTarget.StyleSheetAddedEvent",
+            description: "styleSheetAdded event should fire when a new stylesheet is added to the frame.",
+            async test() {
+                let eventPromise = new Promise((resolve) => {
+                    let original = WI.CSSObserver.prototype.styleSheetAdded;
+                    WI.CSSObserver.prototype.styleSheetAdded = function(info) {
+                        if (this._target === childFrameTarget) {
+                            WI.CSSObserver.prototype.styleSheetAdded = original;
+                            resolve(info);
+                            return;
+                        }
+                        original.call(this, info);
+                    };
+                });
+
+                await childFrameTarget.RuntimeAgent.evaluate.invoke({
+                    expression: `let s = document.createElement("style"); s.id = "dynamic-style"; s.textContent = ".dynamic { font-size: 20px; }"; document.head.appendChild(s);`,
+                    objectGroup: "test",
+                });
+
+                let addedInfo = await eventPromise;
+                InspectorTest.expectNotNull(addedInfo, "styleSheetAdded event should fire.");
+                InspectorTest.expectNotNull(addedInfo.styleSheetId, "Added stylesheet should have an id.");
+            }
+        });
+
+        suite.addTestCase({
+            name: "SiteIsolation.CSS.StyleSheetCommands.FrameTarget.StyleSheetRemovedEvent",
+            description: "styleSheetRemoved event should fire when a stylesheet is removed from the frame.",
+            async test() {
+                let eventPromise = new Promise((resolve) => {
+                    let original = WI.CSSObserver.prototype.styleSheetRemoved;
+                    WI.CSSObserver.prototype.styleSheetRemoved = function(id) {
+                        if (this._target === childFrameTarget) {
+                            WI.CSSObserver.prototype.styleSheetRemoved = original;
+                            resolve(id);
+                            return;
+                        }
+                        original.call(this, id);
+                    };
+                });
+
+                await childFrameTarget.RuntimeAgent.evaluate.invoke({
+                    expression: `document.getElementById("dynamic-style").remove();`,
+                    objectGroup: "test",
+                });
+
+                let removedId = await eventPromise;
+                InspectorTest.expectNotNull(removedId, "styleSheetRemoved event should fire with the removed stylesheet id.");
+            }
+        });
+
+        suite.runTestCasesAndFinish();
+    }
+</script>
+
+<body onload="runTest()">
+    <p>Test that CSS stylesheet commands work correctly on frame targets under site isolation.</p>
+    <iframe src="http://localhost:8000/site-isolation/inspector/css/resources/frame-with-stylesheet.html"></iframe>
+</body>

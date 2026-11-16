@@ -1,0 +1,17 @@
+<style>
+ ::-webkit-scrollbar {
+     background: fixed url();
+     visibility: collapse;
+ }
+</style>
+<script>
+ window.testRunner?.dumpAsText();
+ function main()
+ {
+     document.documentElement.appendChild(document.createElement('ul'));
+     window.scrollBy(10, 2)
+ }
+</script>
+<body onload="main()">
+    This test passes if it doesn't crash.
+</body>

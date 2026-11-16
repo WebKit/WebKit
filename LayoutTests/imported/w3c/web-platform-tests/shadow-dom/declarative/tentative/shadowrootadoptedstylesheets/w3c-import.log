@@ -1,0 +1,41 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/declarative/tentative/shadowrootadoptedstylesheets/shadowrootadoptedstylesheets-async-fetch-disconnect-iframe.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/declarative/tentative/shadowrootadoptedstylesheets/shadowrootadoptedstylesheets-async-fetch-disconnect.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/declarative/tentative/shadowrootadoptedstylesheets/shadowrootadoptedstylesheets-async-fetch-duplicate-bare-specifier.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/declarative/tentative/shadowrootadoptedstylesheets/shadowrootadoptedstylesheets-async-fetch-duplicate-importmap.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/declarative/tentative/shadowrootadoptedstylesheets/shadowrootadoptedstylesheets-async-fetch-duplicate.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/declarative/tentative/shadowrootadoptedstylesheets/shadowrootadoptedstylesheets-async-fetch-failure.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/declarative/tentative/shadowrootadoptedstylesheets/shadowrootadoptedstylesheets-async-fetch-mutation-clear.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/declarative/tentative/shadowrootadoptedstylesheets/shadowrootadoptedstylesheets-async-fetch-mutation-insertrule.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/declarative/tentative/shadowrootadoptedstylesheets/shadowrootadoptedstylesheets-async-fetch-mutation-reinsert-same.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/declarative/tentative/shadowrootadoptedstylesheets/shadowrootadoptedstylesheets-async-fetch-mutation-reinsert-swap.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/declarative/tentative/shadowrootadoptedstylesheets/shadowrootadoptedstylesheets-async-fetch-mutation-remove-middle.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/declarative/tentative/shadowrootadoptedstylesheets/shadowrootadoptedstylesheets-async-fetch-mutation-replacesync.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/declarative/tentative/shadowrootadoptedstylesheets/shadowrootadoptedstylesheets-async-fetch-ordering.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/declarative/tentative/shadowrootadoptedstylesheets/shadowrootadoptedstylesheets-async-fetch-shared.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/declarative/tentative/shadowrootadoptedstylesheets/shadowrootadoptedstylesheets-async-fetch.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/declarative/tentative/shadowrootadoptedstylesheets/shadowrootadoptedstylesheets-basic.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/declarative/tentative/shadowrootadoptedstylesheets/shadowrootadoptedstylesheets-document-parse-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/declarative/tentative/shadowrootadoptedstylesheets/shadowrootadoptedstylesheets-fetched-module.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/declarative/tentative/shadowrootadoptedstylesheets/shadowrootadoptedstylesheets-invalid-specifier.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/declarative/tentative/shadowrootadoptedstylesheets/shadowrootadoptedstylesheets-multiple.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/declarative/tentative/shadowrootadoptedstylesheets/shadowrootadoptedstylesheets-nested-async.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/declarative/tentative/shadowrootadoptedstylesheets/shadowrootadoptedstylesheets-nested-sync.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/declarative/tentative/shadowrootadoptedstylesheets/shadowrootadoptedstylesheets-placeholder-identity.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/declarative/tentative/shadowrootadoptedstylesheets/shadowrootadoptedstylesheets-same-document.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/declarative/tentative/shadowrootadoptedstylesheets/shadowrootadoptedstylesheets-with-declarative-module.html

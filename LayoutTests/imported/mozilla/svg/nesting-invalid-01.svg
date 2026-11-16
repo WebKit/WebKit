@@ -1,0 +1,20 @@
+<!--
+     Any copyright is dedicated to the Public Domain.
+     http://creativecommons.org/publicdomain/zero/1.0/
+-->
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink='http://www.w3.org/1999/xlink' font-size='16px'>
+  <!--
+    This tests that elements that are not container elements do not render their
+    children.
+  -->
+  <rect id='r' width='100%' height='100%' fill='red'/>
+  <script xlink:href='nesting-invalid-01.js'/>
+  <script><![CDATA[
+    for (var i = 0; i < es.length; i++) {
+      document.documentElement.appendChild(makeGroup(i, false, es[i]));
+      document.documentElement.appendChild(makeElement(es[i], { }, [makeGroup(i, true, es[i])]));
+    }
+
+    document.documentElement.removeChild(document.getElementById('r'));
+  ]]></script>
+</svg>

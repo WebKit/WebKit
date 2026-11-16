@@ -1,0 +1,12 @@
+Test that a bootstrap script removing its own frame in a cross-origin process does not crash.
+
+
+== Running test suite: SiteIsolation.Page.SetBootstrapScriptRemovesOwnFrame
+-- Running test case: SiteIsolation.Page.SetBootstrapScript.SameOriginNestedFrameRemovesItself
+Adding same-origin iframe with a self-removing child...
+PASS: Nested frame should have removed itself.
+
+-- Running test case: SiteIsolation.Page.SetBootstrapScript.CrossOriginNestedFrameRemovesItself
+Adding cross-origin iframe with a self-removing same-site child...
+PASS: Nested frame should have removed itself, and its process should still be alive.
+

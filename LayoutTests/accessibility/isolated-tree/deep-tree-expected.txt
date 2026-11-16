@@ -1,0 +1,11 @@
+This tests that trying to retrieve AX objects deeper than the 512 level allowed in the DOM tree fails gracefully.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS axChild.childAtIndex(0).stringValue is 'AXValue: deepest child'
+PASS axChild is null
+PASS successfullyParsed is true
+
+TEST COMPLETE
+deepest child

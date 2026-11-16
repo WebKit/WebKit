@@ -1,0 +1,8 @@
+This paragraph should have a green background.
+
+This paragraph should have a green background.
+This paragraph should have a green background.
+This paragraph should have a green background.
+
+PASS NEGATED type element selector with declared namespace
+

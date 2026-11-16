@@ -1,0 +1,26 @@
+<!-- webkit-test-runner [ enableMetalDebugDevice=true ] -->
+<script src="../../../resources/js-test-pre.js"></script>
+<script>
+async function run() {
+    let adapter = await navigator.gpu.requestAdapter();
+    let device = await adapter.requestDevice();
+    let texture = device.createTexture({ size: [ 384, ], mipLevelCount: 6, format: 'depth24plus-stencil8', usage: GPUTextureUsage.RENDER_ATTACHMENT });
+    let texture2 = device.createTexture({ size: [ 384, ], mipLevelCount: 4, dimension: '3d', format: 'rgba32uint', usage: GPUTextureUsage.RENDER_ATTACHMENT });
+    let textureView = texture.createView({ label: '2d-array', aspect: 'depth-only', baseMipLevel: 2, mipLevelCount: 1 });
+    let textureView2 = texture2.createView({ baseMipLevel: 2, mipLevelCount: 1 });
+    let commandEncoder = device.createCommandEncoder();
+    let renderPassEncoder = commandEncoder.beginRenderPass({
+        colorAttachments: [ { view: textureView2, depthSlice: 0, loadOp: 'clear', storeOp: 'store'} ],
+        depthStencilAttachment: { view: textureView, depthClearValue: 0.6744484791866846, depthLoadOp: 'clear', depthStoreOp: 'store', stencilClearValue: 40696, stencilReadOnly: true },
+    });
+    renderPassEncoder.end()
+    await device.queue.onSubmittedWorkDone();
+    debug('Pass')
+    globalThis.testRunner?.notifyDone();
+}
+globalThis.testRunner?.dumpAsText();
+globalThis.testRunner?.waitUntilDone();
+
+run();
+</script>
+

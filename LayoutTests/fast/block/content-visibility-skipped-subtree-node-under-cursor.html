@@ -1,0 +1,22 @@
+<style>
+div {
+  background-color: green;
+  height: 100px;
+  width: 100px;
+  content-visibility: hidden;
+}
+</style>
+<!-- PASS if we don't find text at 50, 50 -->
+<div id=hiddenText>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</div>
+<pre id=result></pre>
+<script>
+document.body.offsetHeight;
+window.testRunner?.dumpAsText();
+var nodes = window.internals?.nodesFromRect(document, 50, 50, 0, 0, 0, 0, true, false, false);
+if (nodes.length == 1 && nodes[0].nodeType == Node.ELEMENT_NODE)
+  result.innerText = "PASS";
+else {
+  for (var i = 0; i < nodes.length; i++)
+    result.innerText = result.innerText + " node type: " + nodes[i].nodeType;
+}
+</script>

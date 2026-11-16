@@ -1,0 +1,12 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ CSSTextDecorationInsetEnabled=true ] -->
+<meta charset="utf-8">
+<title>CSS Text Decoration: text-decoration-inset honors box-decoration-break: slice</title>
+<link rel="help" href="https://drafts.csswg.org/css-text-decor-4/#text-decoration-inset-property">
+<link rel="mismatch" href="text-decoration-inset-box-decoration-break-expected-mismatch.html">
+<meta name="assert" content="With box-decoration-break: slice, the start inset applies only to the first line fragment's start and the end inset only to the last fragment's end; this differs from box-decoration-break: clone, which insets every fragment on both sides.">
+<style>
+    body { margin: 20px; font: 40px/1.5 monospace; }
+    div { width: 200px; }
+    span { text-decoration-line: underline; text-decoration-inset: 8px; -webkit-box-decoration-break: slice; }
+</style>
+<div><span>aaaaa bbbbb</span></div>

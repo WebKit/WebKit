@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>SourceMaps Tool</title>
+
+    <style>:root { color-scheme: light dark; }</style>
+    <link rel="stylesheet" href="../../UserInterface/External/CodeMirror/codemirror.css">
+    <link rel="stylesheet" href="../../UserInterface/Views/Variables.css">
+    <link rel="stylesheet" href="../../UserInterface/Views/CodeMirrorOverrides.css">
+    <link rel="stylesheet" href="../../UserInterface/Views/SyntaxHighlightingDefaultTheme.css">
+    <link rel="stylesheet" href="styles.css">
+
+    <script src="../../UserInterface/External/CodeMirror/codemirror.js"></script>
+    <script src="../../UserInterface/External/CodeMirror/css.js"></script>
+    <script src="../../UserInterface/External/CodeMirror/htmlmixed.js"></script>
+    <script src="../../UserInterface/External/CodeMirror/javascript.js"></script>
+    <script src="../../UserInterface/External/CodeMirror/xml.js"></script>
+
+    <script src="../../UserInterface/Base/WebInspector.js"></script>
+    <script src="../../UserInterface/Base/Multimap.js"></script>
+    <script src="../../UserInterface/Base/Object.js"></script>
+    <script src="../../UserInterface/Base/Utilities.js"></script>
+    <script src="../../UserInterface/Controllers/FormatterSourceMap.js"></script>
+    <script src="../../UserInterface/Proxies/FormatterWorkerProxy.js"></script>
+</head>
+<body>
+    <h1>Debug SourceMaps</h1>
+
+    <!-- Controls -->
+    <select id="mode">
+        <option>html</option>
+        <option>javascript</option>
+        <option>css</option>
+        <option>xml</option>
+    </select>
+    <button id="format">Format</button>
+    <button id="save-as-url">Save URL</button>
+    <br><br>
+
+    <!-- Editor -->
+    <div class="editors-container">
+        <textarea id="input" name="code"></textarea>
+        <textarea id="output" name="code"></textarea>
+    </div>
+
+    <!-- Output -->
+    <h3>Debug</h3>
+    <pre id="debug"></pre>
+    <h3>Source Mapping</h3>
+    <pre id="debug-mapping"></pre>
+
+    <script>
+    // Elements.
+    const modePicker = document.getElementById("mode");
+    const debugPre = document.getElementById("debug");
+    const debugMappingPre = document.getElementById("debug-mapping");
+
+    // Input Editor.
+    let inputCM = CodeMirror.fromTextArea(document.getElementById("input"), {lineNumbers: true});
+    inputCM.setOption("mode", "text/html");
+
+    // Output Editor
+    let outputCM = CodeMirror.fromTextArea(document.getElementById("output"), {lineNumbers: true, readOnly: true});
+    outputCM.setOption("mode", "text/html");
+
+    // Global.
+    let formatterSourceMap = null;
+
+    // Markers.
+    let inputMarker = null;
+    let outputMarker = null;
+    function clearMarkers() {
+        if (inputMarker)
+            inputMarker.clear();
+        if (outputMarker)
+            outputMarker.clear();
+    }
+
+    // Refresh after changes after a short delay.
+    let timer = null;
+    inputCM.on("change", function(codeMirror, change) {
+        if (timer)
+            clearTimeout(timer)
+        timer = setTimeout(function() {
+            clearTimeout(timer);
+            timer = null;
+            refresh();
+        }, 100);
+    });
+
+    // Input has changed, update Output.
+
+    let originalLocation = {lineNumber: 0, columnNumber: 0};
+    let formattedLocation = {lineNumber: 0, columnNumber: 0};
+
+    inputCM.on("cursorActivity", () => {
+        updateFromInput();
+    });
+
+    function updateFromInput() {
+        updateFormattedLocationFromInput();
+        updateDebugTextFromInput();
+        updateOutputCursorFromInput();
+    }
+
+    function updateFormattedLocationFromInput() {
+        if (!formatterSourceMap)
+            return;
+
+        let codeMirrorPosition = inputCM.getCursor();
+        let codeMirrorIndex = inputCM.getDoc().indexFromPos(codeMirrorPosition);
+        originalLocation = {lineNumber: codeMirrorPosition.line || 0, columnNumber: codeMirrorPosition.ch || 0, position: codeMirrorIndex};
+        formattedLocation = formatterSourceMap.originalToFormatted(originalLocation.lineNumber, originalLocation.columnNumber);
+        formattedLocation.position = formatterSourceMap.originalPositionToFormattedPosition(codeMirrorIndex);
+    }
+
+    function updateDebugTextFromInput() {
+        let originalDisplay = `${originalLocation.position} (${originalLocation.lineNumber}, ${originalLocation.columnNumber})`;
+        let formattedDisplay = `${formattedLocation.position} (${formattedLocation.lineNumber}, ${formattedLocation.columnNumber})`;
+        let debugText = "";
+        debugText = "";
+        debugText += "Original Location:\n";
+        debugText += originalDisplay + "\n";
+        debugText += "\n";
+        debugText += "Formatted Location:\n";
+        debugText += formattedDisplay + "\n";
+        debugPre.textContent = debugText;
+    }
+
+    let outputCursorElem = document.createElement("div");
+    outputCursorElem.style.display = "inline-block";
+    outputCursorElem.style.backgroundColor = "red";
+    outputCursorElem.style.width = "2px";
+    outputCursorElem.textContent = " ";
+
+    function updateOutputCursorFromInput() {
+        clearMarkers();
+        let codeMirrorPosition = {line: formattedLocation.lineNumber, ch: formattedLocation.columnNumber};
+        outputMarker = outputCM.setBookmark(codeMirrorPosition, outputCursorElem);
+    }
+
+    // Output has changed, update Input.
+
+    let reverseOriginalLocation = {lineNumber: 0, columnNumber: 0};
+    let reverseFormattedLocation = {lineNumber: 0, columnNumber: 0};
+
+    outputCM.on("cursorActivity", () => {
+        updateFromOutput();
+    });
+
+    function updateFromOutput() {
+        updateFormattedLocationFromOutput();
+        updateInputCursorFromOutput();
+    }
+
+    function updateFormattedLocationFromOutput() {
+        if (!formatterSourceMap)
+            return;
+
+        let codeMirrorPosition = outputCM.getCursor();
+        let codeMirrorIndex = outputCM.getDoc().indexFromPos(codeMirrorPosition);
+        reverseFormattedLocation = {lineNumber: codeMirrorPosition.line || 0, columnNumber: codeMirrorPosition.ch || 0, position: codeMirrorIndex};
+        reverseOriginalLocation = formatterSourceMap.formattedToOriginal(reverseFormattedLocation.lineNumber, reverseFormattedLocation.columnNumber);
+        reverseOriginalLocation.position = formatterSourceMap.formattedPositionToOriginalPosition(codeMirrorIndex);
+    }
+
+    let inputCursorElem = document.createElement("div");
+    inputCursorElem.style.display = "inline-block";
+    inputCursorElem.style.backgroundColor = "blue";
+    inputCursorElem.style.width = "2px";
+    inputCursorElem.textContent = " ";
+
+    function updateInputCursorFromOutput() {
+        clearMarkers();
+        let codeMirrorPosition = {line: reverseOriginalLocation.lineNumber, ch: reverseOriginalLocation.columnNumber};
+        inputMarker = inputCM.setBookmark(codeMirrorPosition, inputCursorElem);
+    }
+
+    // --------
+
+    function refresh() {
+        if (timer)
+            clearTimeout(timer);
+
+        const indentString = "    ";
+        const includeSourceMapData = true;
+        let workerProxy = WI.FormatterWorkerProxy.singleton();
+
+        switch (modePicker.value) {
+        case "html":
+            workerProxy.formatHTML(inputCM.getValue(), indentString, includeSourceMapData, formatResult);
+            break;
+        case "javascript":
+            workerProxy.formatJavaScript(inputCM.getValue(), false, indentString, includeSourceMapData, formatResult);
+            break;
+        case "css":
+            workerProxy.formatCSS(inputCM.getValue(), indentString, includeSourceMapData, formatResult);
+            break;
+        case "xml":
+            workerProxy.formatXML(inputCM.getValue(), indentString, includeSourceMapData, formatResult);
+            break;
+        }
+
+        function formatResult({formattedText, sourceMapData}) {
+            outputCM.setValue(formattedText || "");
+            formatterSourceMap = WI.FormatterSourceMap.fromSourceMapData(sourceMapData);
+            updateFromInput();
+
+            debugMappingPre.textContent = JSON.stringify(sourceMapData, (key, value) => {
+                if (Array.isArray(value))
+                    return `[${value.join()}]`;
+                return value;
+            }, 2);
+        }
+    }
+
+    setTimeout(refresh);
+
+    // Format button.
+    document.getElementById("format").addEventListener("click", (event) => {
+        refresh();
+    });
+
+    // Save as URL button.
+    document.getElementById("save-as-url").addEventListener("click", (event) => {
+        let content = inputCM.getValue();
+        let mode = modePicker.value;
+        window.location.search = `?content=${encodeURIComponent(content)}&mode=${encodeURIComponent(mode)}`;
+    });
+
+    const simpleHTML = `<!DOCTYPE html>
+<html><head><title>Test</title>
+<script src="js/script.js"></`+`script></head>
+<body><!-- Comment --><div class="foo">
+<style>body,div,.foo{color:red}p{color:blue}</style>
+<script>(function(a,b,c){let sum=a;sum+=b;sum+=c;return sum;})()</`+`script>
+<input type=text><br><p>Test</p></div><p><![CDATA[ Test ]]></p></body></html>`;
+    const simpleJS = `(function(){let a=1;return a+1;})();`;
+    const simpleCSS = `body{color:red;background:blue}*{color:green}`;
+    const simpleXML = `<?xml version="1.0" encoding="iso8859-5"?><outer><inner attr="value">1</inner></outer>`;
+
+    // Populate picker
+    function updateContentFromPicker() {
+        let mode, content;
+        switch (modePicker.value) {
+        case "html":
+            mode = "text/html";
+            content = simpleHTML;
+            break;
+        case "javascript":
+            mode = "text/javascript";
+            content = simpleJS;
+            break;
+        case "css":
+            mode = "text/css";
+            content = simpleCSS;
+            break;
+        case "xml":
+            mode = "text/xml";
+            content = simpleXML;
+            break;
+        default:
+            console.assert();
+            break;
+        }
+        inputCM.setOption("mode", mode);
+        outputCM.setOption("mode", mode);
+        inputCM.setValue(content);
+        refresh();
+    }
+
+    modePicker.addEventListener("change", (event) => {
+        updateContentFromPicker();
+    });
+
+    // Restore better initial value from query string.
+    (function() {
+        let queryParams = {};
+        if (window.location.search.length > 0) {
+            let searchString = window.location.search.substring(1);
+            let groups = searchString.split("&");
+            for (let i = 0; i < groups.length; ++i) {
+                let pair = groups[i].split("=");
+                queryParams[decodeURIComponent(pair[0])] = decodeURIComponent(pair[1]);
+            }
+        }
+        if (queryParams.mode) {
+            modePicker.value = queryParams.mode;
+            updateContentFromPicker();
+        }
+        if (queryParams.content)
+            inputCM.setValue(queryParams.content);
+    })();
+
+    if (!inputCM.getValue())
+        inputCM.setValue(simpleHTML);
+    </script>
+</body>
+</html>

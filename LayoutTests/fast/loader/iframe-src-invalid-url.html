@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.dumpPolicyDelegateCallbacks();
+    }
+</script>
+</head>
+<body>
+    <p>Test passes if the second iframe navigates to about:blank.</p>
+    <iframe src="data:text/html,
+    <iframe id='iframe' src='<p>FAILURE</p>'></iframe>"></iframe>
+</body>
+</html>

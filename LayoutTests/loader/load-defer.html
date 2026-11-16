@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+var testFrame;
+
+function loadedTooEarly()
+{
+    alert("FAIL: The frame loaded while loads were deferred.");
+    testRunner.notifyDone();
+}
+
+function passAndFinish()
+{
+    alert("PASS: The frame loaded after loads were resumed.");
+    testRunner.notifyDone();
+}
+
+function resumeLoads()
+{
+    testFrame.onload = passAndFinish;
+    if (window.testRunner)
+        testRunner.setDefersLoading(false);
+}
+
+function runTest()
+{
+    alert("Test that load deferring works as intended.");
+    if (window.testRunner)
+        testRunner.setDefersLoading(true);
+
+    testFrame = document.createElement("iframe");
+    testFrame.onload = loadedTooEarly;
+    testFrame.src = "resources/images.html";
+    document.body.appendChild(testFrame);
+    setTimeout(resumeLoads, 100);
+}
+
+</script>
+<body onload='runTest()'>
+</body>
+</html>

@@ -1,0 +1,9 @@
+
+
+PASS A misssing attribute is equivalent to cols=20 rows=2
+PASS An invalid attribute value is equivalent to cols=20 rows=2
+PASS The width depends on a cols attribute
+PASS The height depends on a rows attribute
+PASS Cols/rows attribute values affect layout-dependent computed style
+PASS Cols/rows attribute values are not presentational hints
+

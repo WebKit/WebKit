@@ -1,0 +1,7 @@
+
+PASS Navigate a window via area with javascript:-urls w/ a default policy throwing an exception in enforcing mode.
+PASS Navigate a window via area with javascript:-urls w/ a default policy throwing an exception in report-only mode.
+PASS Navigate a window via area with javascript:-urls w/ a default policy making the URL invalid in enforcing mode.
+PASS Navigate a window via area with javascript:-urls w/ a default policy making the URL invalid in report-only mode.
+PASS Navigate a window via form-submission with javascript:-urls in enforcing mode.
+

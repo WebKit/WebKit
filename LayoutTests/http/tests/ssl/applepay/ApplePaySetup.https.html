@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="/js-test-resources/ui-helper.js"></script>
+<script src="/resources/js-test-pre.js"></script>
+<script src="/resources/payment-request.js"></script>
+</head>
+<body>
+<script>
+
+description("Test ApplePaySetup.");
+
+window.jsTestIsAsync = true;
+
+expectedMerchantIdentifier = 'merchant';
+expectedReferrerIdentifier = 'referrer';
+expectedSignature = 'signature';
+expectedSignedFields = ['field1'];
+expectedSetupFeatureState = 'supported';
+expectedSetupFeatureType = 'appleCard';
+expectedSetupFeatureSupportsInstallments = ApplePaySession.supportsVersion(8) ? true : undefined;
+
+testSetupConfiguration = () => {
+    shouldBe('internals.mockPaymentCoordinator.setupConfiguration.merchantIdentifier', 'expectedMerchantIdentifier');
+    shouldBe('internals.mockPaymentCoordinator.setupConfiguration.referrerIdentifier', 'expectedReferrerIdentifier');
+    shouldBe('internals.mockPaymentCoordinator.setupConfiguration.signature', 'expectedSignature');
+    shouldBe('typeof internals.mockPaymentCoordinator.setupConfiguration.signedFields', '"object"');
+    shouldBe('internals.mockPaymentCoordinator.setupConfiguration.signedFields.length', 'expectedSignedFields.length');
+    shouldBe('internals.mockPaymentCoordinator.setupConfiguration.signedFields[0]', 'expectedSignedFields[0]');
+}
+
+(async () => {
+
+    let setup = new ApplePaySetup({
+        merchantIdentifier: expectedMerchantIdentifier,
+        referrerIdentifier: expectedReferrerIdentifier,
+        signature: expectedSignature,
+        signedFields: expectedSignedFields,
+    });
+
+    internals.mockPaymentCoordinator.addSetupFeature(expectedSetupFeatureState, expectedSetupFeatureType, expectedSetupFeatureSupportsInstallments);
+
+    features = await setup.getSetupFeatures();
+    testSetupConfiguration();
+    shouldBe('typeof features', '"object"');
+    shouldBe('features.length', '1');
+    shouldBe('features[0].state', 'expectedSetupFeatureState');
+    shouldBe('features[0].type', 'expectedSetupFeatureType');
+    shouldBe('features[0].supportsInstallments', 'expectedSetupFeatureSupportsInstallments');
+
+    activateThen(async () => {
+        let success = await setup.begin(features);
+        testSetupConfiguration();
+        finishJSTest();
+    });
+
+})();
+</script>
+<script src="/resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1,0 +1,9 @@
+This test ensures we don't crash when a focusout handler moves elements from light DOM into shadow DOM while changing IDs and removing elements involved in aria relationships.
+
+PASS: input1 is focused.
+PASS: No crash after focus change with shadow DOM element moves and id mutations.
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

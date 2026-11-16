@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<title>keepalive fetches</title>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script>
+    promise_test(async () => {
+        // Clear
+        let id = Math.random().toString();
+        let suffixes = Array.from(Array(10).keys());
+        await Promise.all(suffixes.map((i) => {
+            let filename = `keepalive-fetch-2.${id}.${i}.txt`;
+            return fetch('resources/get-set-temp-file.py?cmd=clear&filename=' + filename);
+        }));
+        // Set
+        let w1 = open('resources/keepalive-fetch-2-window.html#' + id);
+        await new Promise(resolve => w1.onload = resolve);
+        w1.location = '/';
+        await new Promise(resolve => setTimeout(resolve, 3000));
+        // Get
+        let texts = await Promise.all(suffixes.map(async (i) => {
+            let filename = `keepalive-fetch-2.${id}.${i}.txt`;
+            let response = await fetch('resources/get-set-temp-file.py?cmd=get&filename=' + filename);
+            return await response.text();
+        }));
+        // Clear
+        await Promise.all(suffixes.map((i) => {
+            let filename = `keepalive-fetch-2.${id}.${i}.txt`;
+            return fetch('resources/get-set-temp-file.py?cmd=clear&filename=' + filename);
+        }));
+        // Test
+        texts.map((text) => assert_equals(text, id));
+    }, "keepalive fetches for delayed resources");
+</script>

@@ -1,0 +1,85 @@
+/*
+ * Copyright (C) 2026 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#pragma once
+
+#include "ReadableStreamSource.h"
+#include <wtf/Deque.h>
+
+namespace JSC {
+class ArrayBuffer;
+}
+
+namespace WebCore {
+
+class DeferredPromise;
+class Exception;
+class ReadableByteStreamController;
+class ReadableStream;
+class WebTransport;
+class WebTransportReceiveStream;
+
+struct WebTransportStreamIdentifierType;
+
+using WebTransportStreamIdentifier = ObjectIdentifier<WebTransportStreamIdentifierType>;
+
+class WebTransportReceiveStreamByteSource final : public RefCounted<WebTransportReceiveStreamByteSource> {
+public:
+    static Ref<WebTransportReceiveStreamByteSource> create(WebTransport& transport, WebTransportStreamIdentifier identifier) { return adoptRef(*new WebTransportReceiveStreamByteSource(transport, identifier)); }
+
+    void pull(JSDOMGlobalObject&, ReadableByteStreamController&, Ref<DeferredPromise>&&);
+    void receiveBytes(std::span<const uint8_t>, bool, std::optional<Exception>&&);
+    void receiveError(JSDOMGlobalObject&, JSC::JSValue error);
+    void cancel(JSC::JSValue reason, Ref<DeferredPromise>&&);
+
+    void setStream(ReadableStream& stream)
+    {
+        ASSERT(!m_stream);
+        m_stream = stream;
+    }
+    ReadableStream* stream() const { return m_stream.get(); }
+
+private:
+    WebTransportReceiveStreamByteSource(WebTransport&, WebTransportStreamIdentifier);
+
+    void deliverBytes(JSDOMGlobalObject&, ReadableByteStreamController&, Ref<DeferredPromise>&&);
+    void closeStream(JSDOMGlobalObject&, ReadableByteStreamController&);
+    void errorStream(JSDOMGlobalObject&, ReadableByteStreamController&, const Exception&);
+
+    bool m_isCancelled { false };
+    bool m_isClosed { false };
+    bool m_finReceived { false };
+
+    Deque<Ref<JSC::ArrayBuffer>> m_queue;
+    size_t m_currentOffset { 0 };
+    RefPtr<DeferredPromise> m_pendingPull;
+
+    ThreadSafeWeakPtr<WebTransport> m_transport;
+    WeakPtr<ReadableStream> m_stream;
+    const WebTransportStreamIdentifier m_identifier;
+};
+
+}
+

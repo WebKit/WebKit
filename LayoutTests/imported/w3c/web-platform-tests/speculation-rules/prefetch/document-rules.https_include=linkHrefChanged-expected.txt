@@ -1,0 +1,3 @@
+
+PASS test that changing the href of an invalid link to a matching value triggers a prefetch
+

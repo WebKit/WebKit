@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>This tests when the composited bounds lands on device pixel.</title>
+<style>
+.container {
+  position: absolute;
+  background-color: green; 
+  transform: translateZ(0); 
+  width: 50px; 
+  height: 50px;
+  left: 10.1px;
+  top: 10.1px;
+}
+
+.offset { 
+  background-color: blue;
+  width: 10px;
+  height: 10px;
+  left: -0.6px;
+  top: -0.7px;
+  position: relative;
+  } 
+
+.jiggle {
+  height: 30px;
+  width: 30px; 
+  background-color: red;
+  transform: translateZ(0);
+}
+</style>
+</head>
+<body>
+<div class=container>
+  <div class=offset></div>
+  <div class=jiggle></div>
+</div>
+</body>
+</html>

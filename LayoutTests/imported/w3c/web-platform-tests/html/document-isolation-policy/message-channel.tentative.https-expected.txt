@@ -1,0 +1,5 @@
+
+PASS A message without shared memory posted over a MessageChannel by a document with a policy reaches its same-origin frame without one
+PASS A SharedArrayBuffer posted over a MessageChannel by a document with a policy fires messageerror at its same-origin frame without one
+PASS A SharedArrayBuffer posted over a MessageChannel by a document with a policy arrives at its same-origin frame with one and shares memory with it
+

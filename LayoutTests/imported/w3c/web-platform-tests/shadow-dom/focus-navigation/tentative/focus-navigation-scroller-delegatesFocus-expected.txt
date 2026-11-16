@@ -1,0 +1,5 @@
+START
+ END
+
+PASS Should focus on scroller across shadow boundaries depending on delegatesFocus value.
+

@@ -1,0 +1,25 @@
+This tests that the quantity boxes in a shopping cart do not make it read as a form, so clicking the button that adds one more of an item starts no watch for errors, even though the click redraws the item's sale price in red. The shipping fields beside the cart still find their error afterwards.
+
+PASS: invalidStatus('shoes-quantity') === 'false'
+axElement('add-shoes').press();
+PASS: isWatching() === false
+axElement('add-socks').press();
+PASS: isWatching() === false
+axElement('continue').press();
+PASS: notifications === 1
+PASS: payload === 'AXFormValidationUnannouncedText: Enter a postcode.\nAXFormValidationErrorFieldCount: 1\n'
+PASS: invalidStatus('postcode') === 'true'
+PASS: invalidStatus('shoes-quantity') === 'false'
+PASS: invalidStatus('socks-quantity') === 'false'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Running shoes  +
+$160.00
+Wool socks  +
+$24.00
+Name
+Postcode
+Enter a postcode.
+Continue

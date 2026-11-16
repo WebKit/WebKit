@@ -1,0 +1,4 @@
+
+PASS Calling observe in callback should not lead to more calls
+PASS Disconnect and re-observe in callback should not lead to more calls
+

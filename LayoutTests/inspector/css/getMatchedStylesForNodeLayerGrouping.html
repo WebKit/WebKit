@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("CSS.getMatchedStyleForNode.LayerGrouping");
+
+    function expectRuleAtIndex(rules, index, {selectorText, colorPropertyValue, file, lineNumber, groupings})
+    {
+        InspectorTest.log(`- Testing rule #${index}`);
+
+        let rule = rules[index];
+        InspectorTest.expectEqual(rule.selectorText, selectorText, `Selector text should be "${selectorText}".`);
+        InspectorTest.expectEqual(rule.style.propertyForName("color").value, colorPropertyValue, `"color" property value should be "${colorPropertyValue}".`);
+        InspectorTest.expectEqual(rule.sourceCodeLocation?.sourceCode.urlComponents.lastPathComponent, file, `Source code for rule should be in file named "${file}".`);
+
+        if (!groupings) {
+            InspectorTest.expectEmpty(rule.groupings, "Rule should have no groupings.");
+            return;
+        }
+
+        InspectorTest.expectEqual(rule.groupings.length, groupings.length, `Rule should have ${groupings.length} grouping(s).`);
+
+        for (let i = 0; i < groupings.length; ++i) {
+            InspectorTest.expectEqual(rule.groupings[i].type, groupings[i].type, `Grouping ${i} should have a type of "${groupings[i].type}".`);
+
+            if (groupings[i].text)
+                InspectorTest.expectEqual(rule.groupings[i].text, groupings[i].text, `Grouping ${i} should have a text of "${groupings[i].text}".`);
+            else
+                InspectorTest.expectNull(rule.groupings[i].text, `Grouping ${i} should not have any text.`);
+        }
+    }
+
+    function addTestCase({name, description, selector, expectedAuthoredRuleCount, authoredRulesHandler})
+    {
+        suite.addTestCase({
+            name,
+            description,
+            async test() {
+                let documentNode = await WI.domManager.requestDocument();
+                let nodeId = await documentNode.querySelector(selector);
+                let domNode = WI.domManager.nodeForId(nodeId);
+                InspectorTest.assert(domNode, `Should find DOM Node for selector '${selector}'.`);
+
+                let domNodeStyles = WI.cssManager.stylesForNode(domNode);
+                InspectorTest.assert(domNodeStyles, `Should find CSS Styles for DOM Node.`);
+                await domNodeStyles.refreshIfNeeded();
+
+                let authoredRules = domNodeStyles.matchedRules.filter((rule) => rule.type === WI.CSSStyleSheet.Type.Author);
+                InspectorTest.expectEqual(authoredRules.length, expectedAuthoredRuleCount, `Should have ${expectedAuthoredRuleCount} authored rules.`);
+                authoredRulesHandler(authoredRules);
+            },
+        });
+    }
+
+    addTestCase({
+        name: "CSS.getMatchedStyleForNode.LayerGrouping.Normal",
+        description: "Layers should be presented in the expected order, with layers applied in the order they are declared.",
+        selector: "#normal",
+        expectedAuthoredRuleCount: 3,
+        authoredRulesHandler(rules) {
+            expectRuleAtIndex(rules, 0, {
+                selectorText: ".item",
+                colorPropertyValue: "red",
+                file: "getMatchedStylesForNodeLayerGrouping.html",
+            });
+            expectRuleAtIndex(rules, 1, {
+                selectorText: ".item",
+                colorPropertyValue: "lawngreen",
+                file: "getMatchedStylesForNodeLayerGrouping.html",
+                groupings: [
+                    {type: WI.CSSGrouping.Type.LayerRule, text: "special"},
+                    {type: WI.CSSGrouping.Type.SupportsRule, text: "(color: red)"},
+                ],
+            });
+            expectRuleAtIndex(rules, 2, {
+                selectorText: ".item",
+                colorPropertyValue: "peachpuff",
+                file: "getMatchedStylesForNodeLayerGrouping.html",
+                groupings: [
+                    {type: WI.CSSGrouping.Type.LayerRule, text: "base"},
+                ],
+            });
+        }
+    });
+
+    addTestCase({
+        name: "CSS.getMatchedStyleForNode.LayerGrouping.Imported",
+        description: "Stylesheets imported with @import with a layer parameter should have nested layer groupings.",
+        selector: "#imported",
+        expectedAuthoredRuleCount: 5,
+        authoredRulesHandler(rules) {
+            expectRuleAtIndex(rules, 0, {
+                selectorText: ".item",
+                colorPropertyValue: "red",
+                file: "getMatchedStylesForNodeLayerGrouping.html",
+            });
+            expectRuleAtIndex(rules, 1, {
+                selectorText: ".item",
+                colorPropertyValue: "lawngreen",
+                file: "getMatchedStylesForNodeLayerGrouping.html",
+                groupings: [
+                    {type: WI.CSSGrouping.Type.LayerRule, text: "special"},
+                    {type: WI.CSSGrouping.Type.SupportsRule, text: "(color: red)"},
+                ],
+            });
+            expectRuleAtIndex(rules, 2, {
+                selectorText: ".item",
+                colorPropertyValue: "peachpuff",
+                file: "getMatchedStylesForNodeLayerGrouping.html",
+                groupings: [
+                    {type: WI.CSSGrouping.Type.LayerRule, text: "base"},
+                ],
+            });
+            expectRuleAtIndex(rules, 3, {
+                selectorText: ".imported",
+                colorPropertyValue: "darkslategray",
+                file: "external-layers.css",
+                groupings: [
+                    {type: WI.CSSGrouping.Type.LayerRule, text: "special"},
+                    {type: WI.CSSGrouping.Type.SupportsRule, text: "(color: red)"},
+                    {type: WI.CSSGrouping.Type.LayerImportRule, text: "imported"},
+                ],
+            });
+            expectRuleAtIndex(rules, 4, {
+                selectorText: ".imported",
+                colorPropertyValue: "mintcream",
+                file: "external-layers.css",
+                groupings: [
+                    {type: WI.CSSGrouping.Type.LayerRule, text: "base"},
+                    {type: WI.CSSGrouping.Type.LayerImportRule, text: "imported"},
+                ],
+            });
+        }
+    });
+
+    addTestCase({
+        name: "CSS.getMatchedStyleForNode.LayerGrouping.Anonymous",
+        description: "Anonymous layers (layers without a name) should be separate and be applied in the order they are declared relative to other anonymous and named layers.",
+        selector: "#anonymous",
+        expectedAuthoredRuleCount: 4,
+        authoredRulesHandler(rules) {
+            expectRuleAtIndex(rules, 0, {
+                selectorText: ".item",
+                colorPropertyValue: "red",
+                file: "getMatchedStylesForNodeLayerGrouping.html",
+            });
+            expectRuleAtIndex(rules, 1, {
+                selectorText: ".anonymous",
+                colorPropertyValue: "darkviolet",
+                file: "getMatchedStylesForNodeLayerGrouping.html",
+                groupings: [
+                    {type: WI.CSSGrouping.Type.LayerRule},
+                ],
+            });
+            expectRuleAtIndex(rules, 2, {
+                selectorText: ".item",
+                colorPropertyValue: "lawngreen",
+                file: "getMatchedStylesForNodeLayerGrouping.html",
+                groupings: [
+                    {type: WI.CSSGrouping.Type.LayerRule, text: "special"},
+                    {type: WI.CSSGrouping.Type.SupportsRule, text: "(color: red)"},
+                ],
+            });
+            expectRuleAtIndex(rules, 3, {
+                selectorText: ".item",
+                colorPropertyValue: "peachpuff",
+                file: "getMatchedStylesForNodeLayerGrouping.html",
+                groupings: [
+                    {type: WI.CSSGrouping.Type.LayerRule, text: "base"},
+                ],
+            });
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+<style>
+    @layer imported, base, special;
+
+    @import url("./resources/external-layers.css") layer(imported);
+
+    @supports(color: red) {
+        @layer special {
+            .item {
+                color: lawngreen;
+            }
+        }
+    }
+
+    @layer base {
+        .item {
+            color: peachpuff;
+        }
+    }
+
+    @layer {
+        .anonymous {
+            color: darkviolet;
+        }
+    }
+
+    .item {
+        color: red;
+    }
+</style>
+</head>
+<body onload="runTest()">
+    <p>Tests for the CSS.getMatchedStyleForNode command and style rule groupings.</p>
+    <div id="normal" class="item"></div>
+    <div id="imported" class="item imported"></div>
+    <div id="anonymous" class="item anonymous"></div>
+</body>
+</html>

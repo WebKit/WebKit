@@ -1,0 +1,53 @@
+This test verifies that the Transformations context menu shows appropriate items based on the selected text.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Test 1: Latin characters should show case transformations but not Chinese conversions
+PASS hasMenuItem(transformItems, 'Make Upper Case') is true
+PASS hasMenuItem(transformItems, 'Make Lower Case') is true
+PASS hasMenuItem(transformItems, 'Capitalize') is true
+PASS hasMenuItem(transformItems, 'Convert to Traditional Chinese') is false
+PASS hasMenuItem(transformItems, 'Convert to Simplified Chinese') is false
+
+Test 2: Simplified Chinese text should show conversion to Traditional Chinese
+PASS hasMenuItem(transformItems, 'Make Upper Case') is false
+PASS hasMenuItem(transformItems, 'Make Lower Case') is false
+PASS hasMenuItem(transformItems, 'Capitalize') is false
+PASS hasMenuItem(transformItems, 'Convert to Traditional Chinese') is true
+PASS hasMenuItem(transformItems, 'Convert to Simplified Chinese') is false
+
+Test 3: Traditional Chinese text should show conversion to Simplified Chinese
+PASS hasMenuItem(transformItems, 'Make Upper Case') is false
+PASS hasMenuItem(transformItems, 'Make Lower Case') is false
+PASS hasMenuItem(transformItems, 'Capitalize') is false
+PASS hasMenuItem(transformItems, 'Convert to Traditional Chinese') is false
+PASS hasMenuItem(transformItems, 'Convert to Simplified Chinese') is true
+
+Test 4: Traditional Chinese text and Simplified Chinese text should should show both conversion options
+PASS hasMenuItem(transformItems, 'Make Upper Case') is false
+PASS hasMenuItem(transformItems, 'Make Lower Case') is false
+PASS hasMenuItem(transformItems, 'Capitalize') is false
+PASS hasMenuItem(transformItems, 'Convert to Traditional Chinese') is true
+PASS hasMenuItem(transformItems, 'Convert to Simplified Chinese') is true
+
+Test 5: Traditional Chinese characters, Simplified Chinese character, and latin characters should should show all transformation options.
+PASS hasMenuItem(transformItems, 'Make Upper Case') is true
+PASS hasMenuItem(transformItems, 'Make Lower Case') is true
+PASS hasMenuItem(transformItems, 'Capitalize') is true
+PASS hasMenuItem(transformItems, 'Convert to Traditional Chinese') is true
+PASS hasMenuItem(transformItems, 'Convert to Simplified Chinese') is true
+
+Test 6: Case transformations are shown as fallback when selection exceeds 200 characters.
+PASS hasMenuItem(transformItems, 'Make Upper Case') is true
+PASS hasMenuItem(transformItems, 'Make Lower Case') is true
+PASS hasMenuItem(transformItems, 'Capitalize') is true
+PASS hasMenuItem(transformItems, 'Convert to Traditional Chinese') is true
+PASS hasMenuItem(transformItems, 'Convert to Simplified Chinese') is true
+
+Test 7: Numbers only should not show Transformations submenu at all
+PASS transformationsMenu is null
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

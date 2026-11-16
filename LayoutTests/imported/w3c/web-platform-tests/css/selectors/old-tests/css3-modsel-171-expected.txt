@@ -1,0 +1,5 @@
+This should be green.
+
+
+PASS Classes: XHTML global class attribute
+

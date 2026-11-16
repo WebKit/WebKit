@@ -1,0 +1,8 @@
+
+PASS e.style['color'] = "hwba(120 30% 50%)" should not set the property value
+PASS e.style['color'] = "hwba(120 30% 50% / 0.5)" should not set the property value
+PASS e.style['color'] = "hwb(90deg, 50%, 50%)" should not set the property value
+PASS e.style['color'] = "hwb(90deg, 50%, 50%, 0.2)" should not set the property value
+PASS e.style['color'] = "hwb(90, 50%, 50%)" should not set the property value
+PASS e.style['color'] = "hwb(90, 50%, 50%, 0.2)" should not set the property value
+

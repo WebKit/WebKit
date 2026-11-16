@@ -1,0 +1,5 @@
+
+PASS Host wildcard doesn't affect scheme matching.
+PASS Host wildcard allows arbitrary hosts (www1).
+PASS Host wildcard allows arbitrary hosts (www2).
+

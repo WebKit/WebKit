@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../../../resources/js-test.js"></script>
+    <script src="../../../resources/ui-helper.js"></script>
+
+<style>
+#container {
+    position: absolute;
+    left: 0px;
+    top: 0px;
+}
+
+#target {
+    width: 200px;
+    height: 100px;
+}
+</style>
+
+</head>
+<body>
+
+<div id="container"><button id="target"></button></div>
+<div id="console"></div>
+
+<script>
+description("Tests that a tap does not dispatch click to the pressed element if it was removed and reinserted during pointerdown.");
+window.jsTestIsAsync = true;
+
+const container = document.getElementById("container");
+const target = document.getElementById("target");
+let reinsertedOnTouch = false;
+let clickCount = 0;
+
+window.addEventListener("load", async () => {
+    container.addEventListener("pointerdown", event => {
+        reinsertedOnTouch = event.pointerType == "touch";
+        container.remove();
+        document.body.prepend(container);
+    });
+
+    target.addEventListener("click", () => clickCount++);
+
+    // The synthetic mouseup for the tap is dispatched right before the click would be.
+    target.addEventListener("mouseup", () => {
+        setTimeout(() => {
+            shouldBeTrue("reinsertedOnTouch");
+            shouldBe("clickCount", "0");
+            finishJSTest();
+        }, 0);
+    });
+
+    // Touches are only dispatched to the page within the touch event regions, which are updated on rendering updates.
+    await UIHelper.renderingUpdate();
+
+    eventSender.clearTouchPoints();
+    eventSender.addTouchPoint(100, 50);
+    await eventSender.asyncTouchStart();
+    eventSender.releaseTouchPoint(0);
+    await eventSender.asyncTouchEnd();
+});
+</script>
+</body>
+
+</html>

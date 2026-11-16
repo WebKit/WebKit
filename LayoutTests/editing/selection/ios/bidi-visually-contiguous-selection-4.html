@@ -1,0 +1,60 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true VisuallyContiguousBidiTextSelectionEnabled=true ] -->
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="utf-8">
+<script src="../../../resources/ui-helper.js"></script>
+<script src="../../../resources/js-test.js"></script>
+<style>
+body, html {
+    font-size: 18px;
+    font-family: system-ui;
+}
+
+.start {
+    color: tomato;
+}
+
+.paragraph {
+    direction: rtl;
+}
+</style>
+<script>
+jsTestIsAsync = true;
+
+addEventListener("load", async () => {
+    description("Verifies that LTR text is not unselected when dragging a selection handle across a bidi boundary.");
+
+    const paragraph = document.querySelector(".paragraph");
+    textRange = document.createRange();
+    textRange.selectNodeContents(paragraph);
+    textWidth = textRange.getBoundingClientRect().width;
+
+    await UIHelper.longPressElement(document.querySelector(".start"));
+    await UIHelper.waitForSelectionToAppear();
+
+    const start = UIHelper.midPointOfRect(await UIHelper.getSelectionStartGrabberViewRect());
+    await UIHelper.sendEventStream(new UIHelper.EventStreamBuilder()
+        .begin(start.x, start.y)
+        .move(start.x - textWidth, start.y, 0.8)
+        .end()
+        .takeResult());
+
+    selectionRects = await UIHelper.getUISelectionViewRects();
+    isVisuallyContiguous = await UIHelper.isSelectionVisuallyContiguous();
+
+    shouldBeTrue("isVisuallyContiguous");
+    shouldBe("textRange.toString()", "getSelection().toString()");
+    shouldBe("selectionRects.length", "1");
+    shouldBeLessThanOrEqual("Math.abs(textWidth - selectionRects[0].width)", "1");
+
+    finishJSTest();
+});
+</script>
+</head>
+<body>
+    <p class="paragraph"><span class="start">WebKit</span> النص العربي يُكتب من اليمين إلى.</p>
+    <div id="description"></div>
+    <div id="console"></div>
+</body>
+</html>

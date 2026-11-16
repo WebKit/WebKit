@@ -1,0 +1,23 @@
+Tests that frame targets are named by the URL of the frame's current document.
+
+
+
+== Running test suite: SiteIsolation.Target.FrameTargetDisplayName
+-- Running test case: SiteIsolation.Target.FrameTargetDisplayName.Initial
+PASS: The main frame's target should be named by the page's URL.
+PASS: Should find the cross-site frame's target.
+PASS: The frame target should be named by the frame's URL.
+PASS: The name should be the frame's full URL.
+
+-- Running test case: SiteIsolation.Target.FrameTargetDisplayName.SameProcessNavigation
+PASS: Should find the cross-site frame's target.
+PASS: The name should resolve before the navigation.
+PASS: The name should follow the navigation.
+PASS: The name should be the new URL.
+
+-- Running test case: SiteIsolation.Target.FrameTargetDisplayName.PlaceholderURLCorrection
+PASS: Should find the cross-site frame's target.
+PASS: The target's execution context should have a frame.
+PASS: The name should follow the corrected URL.
+PASS: The name should follow the restored URL.
+

@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="/js-test-resources/js-test.js"></script>
+<script>
+description("Tests that third-party iframes will be allowed to request webxr session with xr-spatial-tracking feature policy.");
+jsTestIsAsync = true;
+
+onmessage = (_e) => {
+    e = _e;
+    if (e.data.requestSession != undefined) {
+        shouldBeTrue("e.data.requestSession");
+        finishJSTest();
+    }
+};
+</script>
+<iframe src="http://localhost:8000/webxr/resources/webxr-requestsession-test.html" allow="xr-spatial-tracking"></iframe>
+</body>
+</html>

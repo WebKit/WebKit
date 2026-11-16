@@ -1,0 +1,11 @@
+
+== Running test suite: CSS.Keyframes.EditProperties
+-- Running test case: ModifyExistingProperty
+PASS: Modify opacity -> 0.6 changes animation.
+
+-- Running test case: AddProperty
+PASS: Added color is applied to `from`.
+
+-- Running test case: RemoveProperty
+PASS: Removed color no longer in keyframe text.
+

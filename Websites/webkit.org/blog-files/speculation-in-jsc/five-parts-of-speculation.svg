@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xl="http://www.w3.org/1999/xlink" xmlns:dc="http://purl.org/dc/elements/1.1/" version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="175.5 179 220 166.5" width="220" height="166.5">
+  <defs>
+    <font-face font-family="Helvetica Neue" font-size="13" panose-1="2 11 6 4 2 2 2 2 2 4" units-per-em="1000" underline-position="-75" underline-thickness="50" slope="0" x-height="517" cap-height="714" ascent="975.0061" descent="-216.99524" font-weight="500">
+      <font-face-src>
+        <font-face-name name="HelveticaNeue-Medium"/>
+      </font-face-src>
+    </font-face>
+  </defs>
+  <metadata> Produced by OmniGraffle 7.14.1 
+    <dc:date>2020-03-26 01:25:20 +0000</dc:date>
+  </metadata>
+  <g id="Canvas_1" stroke-opacity="1" stroke="none" fill-opacity="1" stroke-dasharray="none" fill="none">
+    <title>Canvas 1</title>
+    <rect fill="white" x="175.5" y="179" width="220" height="166.5"/>
+    <g id="Canvas_1: Layer 1">
+      <title>Layer 1</title>
+      <g id="Graphic_3">
+        <rect x="176" y="179.5" width="219" height="36" fill="white"/>
+        <rect x="176" y="179.5" width="219" height="36" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(181 189.31145)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="13" font-weight="500" fill="black" x="75.718" y="13">Bytecode</tspan>
+        </text>
+      </g>
+      <g id="Graphic_20">
+        <rect x="176" y="231.5" width="95.5" height="113.5" fill="white"/>
+        <rect x="176" y="231.5" width="95.5" height="113.5" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(181 271.8729)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="13" font-weight="500" fill="black" x="18.0565" y="13">Profiling</tspan>
+          <tspan font-family="Helvetica Neue" font-size="13" font-weight="500" fill="black" x="31.427" y="29.37709">Tier</tspan>
+        </text>
+      </g>
+      <g id="Graphic_21">
+        <rect x="299.5" y="231.5" width="95.5" height="113.5" fill="white"/>
+        <rect x="299.5" y="231.5" width="95.5" height="113.5" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(304.5 271.8729)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="13" font-weight="500" fill="black" x="10.484" y="13">Optimizing</tspan>
+          <tspan font-family="Helvetica Neue" font-size="13" font-weight="500" fill="black" x="31.427" y="29.37709">Tier</tspan>
+        </text>
+      </g>
+      <g id="Graphic_22">
+        <path d="M 232 264.12705 L 232 244.87295 L 278.5664 244.87295 L 278.5664 236.5 L 297 254.5 L 278.5664 272.5 L 278.5664 264.12705 Z" fill="white"/>
+        <path d="M 232 264.12705 L 232 244.87295 L 278.5664 244.87295 L 278.5664 236.5 L 297 254.5 L 278.5664 272.5 L 278.5664 264.12705 Z" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(237 246.31145)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="13" font-weight="500" fill="black" x="5.465" y="13">Control</tspan>
+        </text>
+      </g>
+      <g id="Graphic_23">
+        <path d="M 330 312.87295 L 330 332.12705 L 291.9336 332.12705 L 291.9336 340.5 L 273.5 322.5 L 291.9336 304.5 L 291.9336 312.87295 Z" fill="white"/>
+        <path d="M 330 312.87295 L 330 332.12705 L 291.9336 332.12705 L 291.9336 340.5 L 273.5 322.5 L 291.9336 304.5 L 291.9336 312.87295 Z" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(278.5 314.31145)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="13" font-weight="500" fill="black" x="9.522" y="13">OSR</tspan>
+        </text>
+      </g>
+      <g id="Graphic_24">
+        <path d="M 210.6836 218 L 236.8164 218 L 236.8164 221.82422 L 241.75 221.82422 L 223.75 229 L 205.75 221.82422 L 210.6836 221.82422 Z" fill="white"/>
+        <path d="M 210.6836 218 L 236.8164 218 L 236.8164 221.82422 L 241.75 221.82422 L 223.75 229 L 205.75 221.82422 L 210.6836 221.82422 Z" stroke="#666" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Graphic_25">
+        <path d="M 334.1836 218 L 360.3164 218 L 360.3164 221.82422 L 365.25 221.82422 L 347.25 229 L 329.25 221.82422 L 334.1836 221.82422 Z" fill="white"/>
+        <path d="M 334.1836 218 L 360.3164 218 L 360.3164 221.82422 L 365.25 221.82422 L 347.25 229 L 329.25 221.82422 L 334.1836 221.82422 Z" stroke="#666" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+    </g>
+  </g>
+</svg>

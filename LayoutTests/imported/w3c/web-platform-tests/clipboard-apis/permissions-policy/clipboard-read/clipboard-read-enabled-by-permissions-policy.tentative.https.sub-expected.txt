@@ -1,0 +1,5 @@
+Body needed for test_driver.click()
+
+PASS Permissions-Policy header clipboard-read=* allows the top-level document.
+PASS Permissions-Policy header clipboard-read=* allows same-origin iframes.
+

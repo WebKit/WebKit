@@ -1,0 +1,18 @@
+Before host
+After host
+
+== Running test suite: DOM.PseudoElement.RequestNode
+-- Running test case: DOM.PseudoElement.RequestNode.before
+PASS: The requested node should be the rendered pseudo element.
+PASS: Requesting a pseudo element should also expose its host.
+PASS: The host should reference the same pseudo element.
+PASS: Removing the pseudo element should clear its frontend parent.
+PASS: Removing the pseudo element should discard its binding.
+
+-- Running test case: DOM.PseudoElement.RequestNode.after
+PASS: The requested node should be the rendered pseudo element.
+PASS: Requesting a pseudo element should also expose its host.
+PASS: The host should reference the same pseudo element.
+PASS: Removing the pseudo element should clear its frontend parent.
+PASS: Removing the pseudo element should discard its binding.
+

@@ -1,0 +1,16 @@
+Test importing a JWK ECDSA private key
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Importing a key...
+PASS privateKey.toString() is '[object CryptoKey]'
+PASS privateKey.type is 'private'
+PASS privateKey.extractable is false
+PASS privateKey.algorithm.name is 'ECDSA'
+PASS privateKey.algorithm.namedCurve is 'P-256'
+PASS privateKey.usages is ['sign']
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

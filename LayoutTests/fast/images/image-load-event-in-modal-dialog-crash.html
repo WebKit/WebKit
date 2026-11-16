@@ -1,0 +1,37 @@
+<!-- webkit-test-runner [ ShowModalDialogEnabled=true ] --><!DOCTYPE html>
+<html>
+<body>
+<div id="host" style="display:none"></div>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+if (window.internals)
+    internals.setCanShowModalDialogOverride(true);
+
+var host = document.getElementById('host');
+var sr = host.attachShadow({mode: 'open'});
+sr.innerHTML = '<picture id="pic"><source srcset="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"><img></picture>';
+var pic = sr.getElementById('pic');
+
+pic.addEventListener('load', function listener() {
+    pic.removeEventListener('load', listener, true);
+    // Removing the <img> from its <picture> re-enters ImageLoader::updatedHasPendingEvent()
+    // and arms m_derefElementTimer.
+    pic.textContent = '';
+    // showModalDialog spins a nested run loop which fires m_derefElementTimer, dropping
+    // m_protectedElement while ImageLoader::dispatchPendingLoadEvent() is still on the stack.
+    showModalDialog('resources/self-closing-modal-dialog.html');
+
+    // The trailing updatedHasPendingEvent() (the crash point) runs after this handler
+    // returns, so finish on the next task rather than waiting a fixed delay.
+    setTimeout(function() {
+        document.write('PASS if no crash.');
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }, 0);
+}, /*capture*/ true);
+</script>
+</body>
+</html>

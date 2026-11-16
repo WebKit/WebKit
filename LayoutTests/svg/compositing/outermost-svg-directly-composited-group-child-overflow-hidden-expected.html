@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+    html, body {
+        margin: 0;
+        padding: 0;
+    }
+
+    div.container {
+        position: absolute;
+        top: 0px;
+        left: 0px;
+        width: 200px;
+        height: 200px;
+        overflow: hidden;
+        background-color: lightgray;
+    }
+
+    div.content {
+        position: absolute;
+        left: 100px;
+        top: 50px;
+        width: 100px;
+        height: 100px;
+        background-color: green;
+        transform-origin: -100px -50px;
+        transform: perspective(200px) rotateX(15deg) rotateZ(15deg);
+    }
+</style>
+</head>
+<body>
+    <div class="container">
+        <div class="content"></div>
+    </div>
+</body>
+</html>

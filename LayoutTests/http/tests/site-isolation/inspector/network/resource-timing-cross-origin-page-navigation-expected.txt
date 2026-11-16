@@ -1,0 +1,10 @@
+Tests resource timing for a cross-origin page navigation under site isolation.
+
+
+== Running test suite: SiteIsolation.ResourceTiming.CrossOriginPageNavigation
+-- Running test case: SiteIsolation.ResourceTiming.CrossOriginPageNavigation.MissingRequestTiming
+PASS: A resource should finish with a response end time when request timing data is unavailable.
+PASS: Start time should be unavailable.
+PASS: Request start time should be unavailable.
+PASS: Response end time should remain available.
+

@@ -1,0 +1,5 @@
+
+PASS a.setAttribute('onclick') sets a trusted script.
+PASS a.setAttribute('onclick') sets an unsuitable trusted type.
+PASS a.setAttribute('click') sets a test string.
+

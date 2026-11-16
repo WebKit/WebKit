@@ -1,0 +1,18 @@
+
+PASS .grid 1
+PASS .grid 2
+PASS .grid 3
+max-height: 50px;
+
+X
+X
+X
+X
+min-height: 100px; grid-template-rows: 20px;
+
+box-sizing: border-box; max-height: 70px; padding: 10px;
+
+X
+X
+X
+X

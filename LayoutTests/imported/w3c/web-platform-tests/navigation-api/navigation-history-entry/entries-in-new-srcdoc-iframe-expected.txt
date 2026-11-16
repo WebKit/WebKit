@@ -1,0 +1,4 @@
+
+
+PASS entries() and currentEntry should be set in a new srcdoc iframe
+

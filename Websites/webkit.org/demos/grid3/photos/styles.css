@@ -1,0 +1,269 @@
+/* --------------------------------------------
+   Basic styles for Photo layout
+----------------------------------------------- */
+
+figure {
+    margin: 0;
+}
+img { 
+    width: 100%; 
+    height: auto;
+    display: block;
+    border-radius: 1ch;
+}
+:root {
+    view-transition-name: none;
+}
+
+/* --------------------------------------------
+   Variations on the layout
+----------------------------------------------- */
+
+/* ---- Multicolumn layout ---- */
+body:has(option[value="one"]:checked) main {
+    columns: 12rem;
+    column-gap: 1rem;
+    /* bug revealed: https://bugs.webkit.org/show_bug.cgi?id=14137 */
+    figure { margin-block-end: 1rem; }
+}
+
+/* ---- CSS Grid level 1 (without Masonry) ---- */
+body:has(option[value="two"]:checked) main { /* before applying masonry */
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr));
+    grid-template-rows: auto;
+    gap: 1rem;
+}
+@media (max-width: 500px) {
+    body:has(option[value="two"]:checked) main {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* ---- Classic Masonry layout ---- */
+body:has(option[value="three"]:checked) main {
+    display: grid-lanes;
+    grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr));
+    gap: 1rem;
+}
+@media (max-width: 500px) {
+    body:has(option[value="three"]:checked) main {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* ---- First & last columns fixed size ---- */
+body:has(option[value="four"]:checked) main {
+    display: grid-lanes;
+    grid-template-columns: 14ch repeat(auto-fill, minmax(28ch, 1fr)) 14ch;
+    gap: 1rem;
+}
+@media (max-width: 500px) {
+    body:has(option[value="four"]:checked) main {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* ---- Alternating narrow & wide column ---- */
+body:has(option[value="five"]:checked) main {
+    display: grid-lanes;
+    grid-template-columns: repeat(auto-fill, minmax(8rem, 1fr) minmax(14rem, 2fr)) minmax(8rem, 1fr);
+    gap: 1rem;
+}
+@media (max-width: 500px) {
+    body:has(option[value="five"]:checked) main {
+        grid-template-columns: 1fr 2fr;
+    }
+}
+
+/* ---- Fibonacci sequence ---- */
+body:has(option[value="ten"]:checked) main {
+    display: grid-lanes;
+    grid-template-columns: 1fr 1fr 2fr 3fr 5fr 8fr;
+    gap: 1rem;
+}
+@media (max-width: 500px) {
+    body:has(option[value="ten"]:checked) main {
+        grid-template-columns: 1fr 1fr 2fr;
+    }
+}
+
+/* ---- Every 5th item is wider ---- */
+body:has(option[value="six"]:checked) main {
+    display: grid-lanes;
+    grid-template-columns: repeat(auto-fill, minmax(16ch, 1fr));
+    gap: 1rem;
+    .card:nth-child(5n) {
+        grid-column: span 2;
+    }
+}
+@media (max-width: 500px) {
+    body:has(option[value="six"]:checked) main {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* ---- Wide images are wider ---- */
+body:has(option[value="seven"]:checked) main {
+    background: color(display-p3 0.12 0.185 0.025);
+    padding: 0;
+    margin-block: calc(2vw + 1rem);
+    margin-inline: calc(2vw + 1rem);
+    display: grid-lanes;
+    grid-template-columns: repeat(auto-fill, minmax(18ch, 1fr));
+    figure:has(.wide) {
+        grid-column: span 2;
+    }
+    img {
+        border-radius: 0;
+    }
+}
+@media (max-width: 500px) {
+    body:has(option[value="seven"]:checked) main {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* ---- Combined with View Transitions ---- */
+body:has(option[value="eight"]:checked) {
+    main {
+        padding: 0;
+        margin-block: calc(2vw + 1rem);
+        margin-inline: calc(2vw + 1rem);
+        display: grid-lanes;
+        grid-template-columns: repeat(auto-fill, minmax(11rem, 1fr));
+        /* Clicking makes item enlarge + View Transition animations */
+        /* idea borrowed from https://codepen.io/bramus/pen/zYmjaJq */
+        .expanded {
+            grid-column: 1/4;
+            grid-row: 1;
+        }
+        .card {
+            cursor: pointer;
+            transition: transform 1s;
+            view-transition-name: match-element;
+        }
+        ::view-transition-group(*) {
+            animation-duration: 0.5s; /* This is having no effect */
+            overflow: hidden;
+        }
+        @media (prefers-reduced-motion) {
+            /* There should be mitigation here.
+            Make the animation 0 seconds
+            Once we figure out where to define the animation */
+        }
+        ::view-transition-new(img-shrink) {
+            display: none;
+        }
+        img {
+            border-radius: 0;
+        }
+    }
+}
+@media (max-width: 500px) {
+    body:has(option[value="eight"]:checked) main {
+        grid-template-columns: repeat(2, 1fr);
+        .expanded {
+            grid-column: 1 / -1;
+        }
+    }
+}
+
+/* ---- Horizontal Masonry ---- */
+body:has(option[value="nine"]:checked) {
+    main {
+        display: grid-lanes;
+        gap: 1rem;
+        grid-template-rows: repeat(5, 150px);
+        overflow: scroll;
+    }
+    img {
+        width: auto;
+        height: 150px;
+    }
+}
+@media (max-width: 500px) {
+    body:has(option[value="nine"]:checked) {
+        main {
+            grid-template-rows: repeat(5, 100px);
+        }
+        img {
+            height: 100px;
+        }
+    }
+}
+
+
+/* ---- Horizontal Flexbox ---- */
+body:has(option[value="eleven"]:checked) {
+    main {
+        display: flex;
+        flex-flow: row wrap;
+        gap: 1rem;
+    }
+    figure {        
+        flex: auto;
+    }
+    img {
+        height: 200px;
+        width: auto;
+        min-width: 100%;
+        object-fit: cover;
+    }
+}
+
+
+/* --------------------------------------------
+   Counters marking items (when enabled)
+----------------------------------------------- */
+
+body {
+    counter-reset: item-counter 0;
+}
+figure {
+    position: relative;
+    counter-increment: item-counter;
+}
+body:has(input[type="checkbox"]:checked) {
+    figure::before,
+    figure::after {
+        position: absolute;
+        top: 0;
+        right: 0;
+        padding: 0.05em 0.5em;
+        border-radius: 0 1rch 0 0;
+        min-width: 2ch;
+        text-align: right;
+    }
+    figure::after {
+        counter-increment: counter(item-counter);
+        content: counter(item-counter); 
+        background: light-dark(black, white); 
+        color: light-dark(white, black);
+        opacity: 0.6;
+        font-size: 2rem;
+    }
+    figure::before {
+        content: counter(item-counter); 
+        color: white;
+        opacity: 0.6;
+        font-size: 2rem;
+    } 
+}
+
+body:has(option[value="seven"]:checked):has(input[type="checkbox"]:checked),
+body:has(option[value="eight"]:checked):has(input[type="checkbox"]:checked) {
+    figure::before,
+    figure::after {
+        border-radius: 0;
+    }
+}
+
+body:has(option[value="ten"]:checked):has(input[type="checkbox"]:checked) {
+    figure::after {
+        font-size: 1.5rem;
+    }
+    figure::before {
+        font-size: 1.5rem;
+    } 
+}

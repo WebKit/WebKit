@@ -1,0 +1,16 @@
+top
+bottom
+After a programmatic scrollIntoView to a snap point, the user should be able to drag back to the original snap point without a stale cached snap index forcing a re-snap.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS document.scrollingElement.scrollTop is 0
+PASS document.scrollingElement.scrollTop is 800
+PASS document.scrollingElement.scrollTop is 800
+PASS document.scrollingElement.scrollTop is 0
+PASS document.scrollingElement.scrollTop is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

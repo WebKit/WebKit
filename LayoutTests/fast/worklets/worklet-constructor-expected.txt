@@ -1,0 +1,10 @@
+Tests that Worklet.prototype.constructor is correct.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Worklet.prototype.constructor.name is "Worklet"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

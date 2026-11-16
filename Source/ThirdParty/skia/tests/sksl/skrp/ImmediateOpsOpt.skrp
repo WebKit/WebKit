@@ -1,0 +1,25 @@
+17 instructions
+
+[immutable slots]
+i0 = 0x00000001 (1.401298e-45)
+i1 = 0x00000002 (2.802597e-45)
+i2 = 0x00000003 (4.203895e-45)
+i3 = 0x00000004 (5.605194e-45)
+
+store_src_rg                   coords = src.rg
+init_lane_masks                CondMask = LoopMask = RetMask = true
+copy_4_immutables_unmasked     v = i0..3 [0x00000001 (1.401298e-45), 0x00000002 (2.802597e-45), 0x00000003 (4.203895e-45), 0x00000004 (5.605194e-45)]
+bitwise_and_imm_4_ints         v &= 0x7FFFFFFF
+copy_4_slots_unmasked          $0..3 = v
+bitwise_and_imm_4_ints         $0..3 &= 0x7FFFFFFF
+copy_4_slots_unmasked          v = $0..3
+copy_2_slots_unmasked          result = $0..1
+copy_slot_unmasked             $0 = result(0)
+cast_to_float_from_int         $0 = IntToFloat($0)
+copy_slot_unmasked             $1 = result(1)
+cast_to_float_from_int         $1 = IntToFloat($1)
+copy_slot_unmasked             $2 = result(0)
+cast_to_float_from_int         $2 = IntToFloat($2)
+copy_slot_unmasked             $3 = result(1)
+cast_to_float_from_int         $3 = IntToFloat($3)
+load_src                       src.rgba = $0..3

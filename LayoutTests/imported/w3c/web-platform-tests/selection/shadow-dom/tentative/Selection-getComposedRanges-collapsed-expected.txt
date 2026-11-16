@@ -1,0 +1,6 @@
+
+FAIL Setting the range to nodes in different shadow trees collapses ordinary ranges, but does not collapse composed ranges. assert_equals: expected DocumentFragment node with 1 child but got Element node <div id="container">
+  <div id="host1">
+
+    A - not ...
+

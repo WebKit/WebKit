@@ -1,0 +1,66 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/document-isolation-policy/README.md
+/LayoutTests/imported/w3c/web-platform-tests/html/document-isolation-policy/agent-cluster.tentative.https.html
+/LayoutTests/imported/w3c/web-platform-tests/html/document-isolation-policy/back-forward-cache-frames.tentative.https.html
+/LayoutTests/imported/w3c/web-platform-tests/html/document-isolation-policy/back-forward-cache-same-origin-frames.tentative.https.html
+/LayoutTests/imported/w3c/web-platform-tests/html/document-isolation-policy/back-forward-cache.tentative.https.html
+/LayoutTests/imported/w3c/web-platform-tests/html/document-isolation-policy/blob-document-inherits-policy.tentative.https.html
+/LayoutTests/imported/w3c/web-platform-tests/html/document-isolation-policy/broadcast-channel.tentative.https.html
+/LayoutTests/imported/w3c/web-platform-tests/html/document-isolation-policy/credentialless-cache-storage-from-credentialless.https.tentative.window.js
+/LayoutTests/imported/w3c/web-platform-tests/html/document-isolation-policy/credentialless-cache-storage-from-none.https.tentative.window.js
+/LayoutTests/imported/w3c/web-platform-tests/html/document-isolation-policy/credentialless-cache-storage-from-require-corp.https.tentative.window.js
+/LayoutTests/imported/w3c/web-platform-tests/html/document-isolation-policy/credentialless-cache.tentative.window.js
+/LayoutTests/imported/w3c/web-platform-tests/html/document-isolation-policy/credentialless-cross-origin-isolated.tentative.window.js
+/LayoutTests/imported/w3c/web-platform-tests/html/document-isolation-policy/credentialless-dedicated-worker.https.tentative.window.js
+/LayoutTests/imported/w3c/web-platform-tests/html/document-isolation-policy/credentialless-fetch.https.tentative.window.js
+/LayoutTests/imported/w3c/web-platform-tests/html/document-isolation-policy/credentialless-link.https.tentative.window.js
+/LayoutTests/imported/w3c/web-platform-tests/html/document-isolation-policy/credentialless-redirect.tentative.window.js
+/LayoutTests/imported/w3c/web-platform-tests/html/document-isolation-policy/credentialless-script.https.tentative.window.js
+/LayoutTests/imported/w3c/web-platform-tests/html/document-isolation-policy/credentialless-service-worker.https.tentative.window.js
+/LayoutTests/imported/w3c/web-platform-tests/html/document-isolation-policy/credentialless-shared-worker.https.tentative.window.js
+/LayoutTests/imported/w3c/web-platform-tests/html/document-isolation-policy/credentialless-video.https.tentative.window.js
+/LayoutTests/imported/w3c/web-platform-tests/html/document-isolation-policy/credentialless-video.https.tentative.window.js.headers
+/LayoutTests/imported/w3c/web-platform-tests/html/document-isolation-policy/credentialless-websocket.https.tentative.window.js
+/LayoutTests/imported/w3c/web-platform-tests/html/document-isolation-policy/cross-origin-frame.tentative.https.html
+/LayoutTests/imported/w3c/web-platform-tests/html/document-isolation-policy/cross-origin-isolated-permissions-policy-nested.tentative.https.html
+/LayoutTests/imported/w3c/web-platform-tests/html/document-isolation-policy/cross-origin-isolated-permissions-policy-nested.tentative.https.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/html/document-isolation-policy/cross-origin-isolated-permissions-policy.tentative.https.html
+/LayoutTests/imported/w3c/web-platform-tests/html/document-isolation-policy/cross-origin-isolated.tentative.https.html
+/LayoutTests/imported/w3c/web-platform-tests/html/document-isolation-policy/dedicated-worker.tentative.https.html
+/LayoutTests/imported/w3c/web-platform-tests/html/document-isolation-policy/header-parsing.tentative.https.html
+/LayoutTests/imported/w3c/web-platform-tests/html/document-isolation-policy/history-traversal-frames.tentative.https.html
+/LayoutTests/imported/w3c/web-platform-tests/html/document-isolation-policy/isolate-and-require-corp-load-from-cache-storage.tentative.https.html
+/LayoutTests/imported/w3c/web-platform-tests/html/document-isolation-policy/isolate-and-require-corp-load-from-cache-storage.tentative.https.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/html/document-isolation-policy/isolate-and-require-corp.tentative.https.html
+/LayoutTests/imported/w3c/web-platform-tests/html/document-isolation-policy/isolate-and-require-corp.tentative.https.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/html/document-isolation-policy/location-replace-keeps-entry.tentative.https.html
+/LayoutTests/imported/w3c/web-platform-tests/html/document-isolation-policy/message-channel.tentative.https.html
+/LayoutTests/imported/w3c/web-platform-tests/html/document-isolation-policy/navigate-across-policies.tentative.https.html
+/LayoutTests/imported/w3c/web-platform-tests/html/document-isolation-policy/no-secure-context-https-iframe.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/document-isolation-policy/no-secure-context.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/document-isolation-policy/no-secure-context.tentative.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/html/document-isolation-policy/origin-agent-cluster.tentative.https.html
+/LayoutTests/imported/w3c/web-platform-tests/html/document-isolation-policy/partial-deployment.tentative.https.html
+/LayoutTests/imported/w3c/web-platform-tests/html/document-isolation-policy/reporting-cache-storage-corp.tentative.https.html
+/LayoutTests/imported/w3c/web-platform-tests/html/document-isolation-policy/reporting-cached-and-service-worker-responses.tentative.https.html
+/LayoutTests/imported/w3c/web-platform-tests/html/document-isolation-policy/reporting-dedicated-worker.tentative.https.html
+/LayoutTests/imported/w3c/web-platform-tests/html/document-isolation-policy/reporting-subresource-corp.tentative.https.html
+/LayoutTests/imported/w3c/web-platform-tests/html/document-isolation-policy/reporting.tentative.https.html
+/LayoutTests/imported/w3c/web-platform-tests/html/document-isolation-policy/service-worker-coep-credentialless-proxy.https.tentative.window.js
+/LayoutTests/imported/w3c/web-platform-tests/html/document-isolation-policy/service-worker-coep-none-proxy.https.tentative.window.js
+/LayoutTests/imported/w3c/web-platform-tests/html/document-isolation-policy/shared-array-buffer.tentative.https.html
+/LayoutTests/imported/w3c/web-platform-tests/html/document-isolation-policy/shared-workers.tentative.https.html
+/LayoutTests/imported/w3c/web-platform-tests/html/document-isolation-policy/window-reuse.tentative.https.html

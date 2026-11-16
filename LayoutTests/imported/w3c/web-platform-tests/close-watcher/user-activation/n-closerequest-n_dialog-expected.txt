@@ -1,0 +1,3 @@
+
+PASS Create a close watcher without user activation; send a close request; create a close watcher without user activation
+

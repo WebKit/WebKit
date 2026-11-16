@@ -1,0 +1,3 @@
+This test verifies that moving an element to a different document during blur doesn't crash (see bug #224957).
+
+initial

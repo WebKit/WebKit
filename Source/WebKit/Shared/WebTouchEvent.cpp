@@ -1,0 +1,130 @@
+/*
+ * Copyright (C) 2010 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#include "config.h"
+#include "WebTouchEvent.h"
+
+#if ENABLE(TOUCH_EVENTS)
+
+#include "ArgumentCoders.h"
+#include <WebCore/RemoteFrameGeometryTransformer.h>
+#include <wtf/TZoneMallocInlines.h>
+
+namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebTouchEvent);
+
+Ref<WebTouchEvent> WebTouchEvent::create(WebEventData&& eventData, WebTouchEventData&& touchData)
+{
+    return adoptRef(*new WebTouchEvent(WTF::move(eventData), WTF::move(touchData)));
+}
+
+Ref<WebTouchEvent> WebTouchEvent::create(WebTouchEventInit&& init)
+{
+    return create(WTF::move(init.event), WTF::move(init.touch));
+}
+
+WebTouchEvent::WebTouchEvent(WebEventData&& eventData, WebTouchEventData&& touchData)
+    : WebEvent(WTF::move(eventData))
+    , m_data(WTF::move(touchData))
+{
+    ASSERT_WITH_SECURITY_IMPLICATION(isTouchEventType(type()));
+}
+
+Ref<WebTouchEvent> WebTouchEvent::copy() const
+{
+    auto data = m_data;
+    data.coalescedEvents = WTF::map(m_data.coalescedEvents, [](auto& event) { return event->copy(); });
+    data.predictedEvents = WTF::map(m_data.predictedEvents, [](auto& event) { return event->copy(); });
+    return create(WebEventData { eventData() }, WTF::move(data));
+}
+
+bool WebTouchEvent::isTouchEventType(WebEventType type)
+{
+    return type == WebEventType::TouchStart || type == WebEventType::TouchMove || type == WebEventType::TouchEnd || type == WebEventType::TouchCancel;
+}
+
+
+#if ENABLE(IOS_TOUCH_EVENTS)
+void WebTouchEvent::transformToRemoteFrameCoordinates(const WebCore::RemoteFrameGeometryTransformer& transformer)
+{
+    ASSERT(!std::exchange(m_hasTransformedToRemoteFrameCoordinates, true));
+
+    m_data.position = transformer.transformToRemoteFrameCoordinates(m_data.position);
+    for (auto& touchPoint : m_data.touchPoints)
+        touchPoint.transformToRemoteFrameCoordinates(transformer);
+    for (Ref event : m_data.coalescedEvents)
+        event->transformToRemoteFrameCoordinates(transformer);
+    for (Ref event : m_data.predictedEvents)
+        event->transformToRemoteFrameCoordinates(transformer);
+}
+
+void WebPlatformTouchPoint::transformToRemoteFrameCoordinates(const WebCore::RemoteFrameGeometryTransformer& transformer)
+{
+    m_locationInRootView = transformer.transformToRemoteFrameCoordinates(m_locationInRootView);
+    m_previousLocationInRootView = transformer.transformToRemoteFrameCoordinates(m_previousLocationInRootView);
+
+    // When translating to the coordinate space of a site isolated iframe,
+    // viewport coordinates become the same as root view coordinates because
+    // iframes don't interact with viewports.
+    // Otherwise, if for example the root view of the main frame is partially
+    // obscured, we get bogus values here. Iframe processes don't handle
+    // any difference between root view coordinates and viewport coordinates.
+    m_locationInViewport = m_locationInRootView;
+}
+#endif
+
+#if ENABLE(COORDINATED_TOUCH_EVENTS)
+void WebTouchEvent::mergeMovedTouchPointsFrom(const WebTouchEvent& supersededEvent)
+{
+    ASSERT(type() == WebEventType::TouchMove);
+    ASSERT(supersededEvent.type() == WebEventType::TouchMove);
+
+    for (auto& touchPoint : m_data.touchPoints) {
+        if (touchPoint.state() != WebPlatformTouchPoint::State::Stationary)
+            continue;
+
+        auto index = supersededEvent.touchPoints().findIf([&](const auto& supersededTouchPoint) {
+            return supersededTouchPoint.id() == touchPoint.id();
+        });
+        if (index != notFound && supersededEvent.touchPoints()[index].state() == WebPlatformTouchPoint::State::Moved)
+            touchPoint.setState(WebPlatformTouchPoint::State::Moved);
+    }
+}
+#endif
+
+bool WebTouchEvent::allTouchPointsAreReleased() const
+{
+    for (const auto& touchPoint : touchPoints()) {
+        if (touchPoint.state() != WebPlatformTouchPoint::State::Released && touchPoint.state() != WebPlatformTouchPoint::State::Cancelled)
+            return false;
+    }
+
+    return true;
+}
+
+} // namespace WebKit
+
+#endif // ENABLE(TOUCH_EVENTS)

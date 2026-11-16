@@ -1,0 +1,10 @@
+Tests that a third-party script does not count as a prevalent domain script when ITP doesn't classify the site that it came from as prevalent.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS resultFromScript is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

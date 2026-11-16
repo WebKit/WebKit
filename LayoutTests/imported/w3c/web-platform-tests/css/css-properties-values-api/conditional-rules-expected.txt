@@ -1,0 +1,5 @@
+
+PASS @supports should ignore registered syntax
+PASS CSS.supports(conditionText) should ignore registered syntax
+PASS CSS.supports(property, value) should ignore registered syntax
+

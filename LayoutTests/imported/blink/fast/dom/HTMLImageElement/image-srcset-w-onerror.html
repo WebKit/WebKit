@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<script>
+    if (testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+    window.onload = function() {
+        setTimeout(function() {
+            if (testRunner)
+                testRunner.notifyDone();
+        }, 500);
+    };
+</script>
+<img srcset="1x.gif 96w" onerror="console.log('Error triggerred');">

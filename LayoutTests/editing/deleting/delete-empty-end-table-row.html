@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>Tests that deleting a selection running from inside a table row through a
+trailing empty row removes the now-fully-selected empty row. This is a
+regression test for a typo (introduced in 295798@main) that made
+DeleteSelectionCommand compare the end row against itself (using m_startTableRow
+in place of m_endTableRow), leaving the empty trailing row behind. The test
+passes if the table ends up with a single row containing "A".</p>
+<div id="edit" contenteditable="true">
+<table id="table" border="1"><tbody>
+<tr><td id="start">AAA</td></tr>
+<tr><td id="end"><br></td></tr>
+</tbody></table>
+</div>
+<pre id="result"></pre>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+var table = document.getElementById("table");
+var start = document.getElementById("start").firstChild;
+var end = document.getElementById("end");
+
+// Select from the middle of the first row through the empty trailing row.
+window.getSelection().setBaseAndExtent(start, 1, end, 0);
+document.execCommand("Delete");
+
+var rowCount = table.rows.length;
+var firstCellText = table.rows.length ? table.rows[0].textContent : "";
+
+var lines = [];
+function check(description, condition) {
+    lines.push((condition ? "PASS" : "FAIL") + ": " + description);
+}
+
+check("empty trailing table row is removed (row count is 1, was 2)", rowCount === 1);
+check("the surviving row keeps its remaining text \"A\"", firstCellText === "A");
+
+document.getElementById("result").textContent = lines.join("\n");
+</script>
+</body>
+</html>

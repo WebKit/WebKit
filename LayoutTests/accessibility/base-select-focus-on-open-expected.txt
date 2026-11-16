@@ -1,0 +1,20 @@
+This test verifies that when a base-appearance select opens, VoiceOver's focused element is the selected option.
+
+PASS: select.isExpanded === true
+PASS: window.focusedRoleAtNotificationTime != null === true
+
+--- Focused element at notification time should be the selected menu item ---
+PASS: window.focusedRoleAtNotificationTime.toLowerCase().includes('menuitem') === true
+	AXTitle: Bravo
+	AXDescription:
+	AXHelp:
+PASS: window.focusedTextAtNotificationTime.includes('Bravo') === true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+Alpha
+Bravo
+Charlie
+

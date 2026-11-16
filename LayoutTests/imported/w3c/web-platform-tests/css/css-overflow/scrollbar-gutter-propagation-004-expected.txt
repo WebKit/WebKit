@@ -1,0 +1,3 @@
+
+PASS root, body and content have the same width
+

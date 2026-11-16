@@ -1,0 +1,30 @@
+To manually test this, type in both the rich contenteditable and plain textarea and/or insert candidates/autocorrections. Both elements should have data when typing normally, but only the plain textarea should have data when inserting a replacement.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Plain textarea received 'beforeinput' with inputType: 'insertText' and data: 'h' and isComposing: false
+Plain textarea received 'input' with inputType: 'insertText' and data: 'h' and isComposing: false
+Plain textarea received 'beforeinput' with inputType: 'insertText' and data: 'e' and isComposing: false
+Plain textarea received 'input' with inputType: 'insertText' and data: 'e' and isComposing: false
+Plain textarea received 'beforeinput' with inputType: 'insertText' and data: 'l' and isComposing: false
+Plain textarea received 'input' with inputType: 'insertText' and data: 'l' and isComposing: false
+Plain textarea received 'beforeinput' with inputType: 'insertText' and data: 'o' and isComposing: false
+Plain textarea received 'input' with inputType: 'insertText' and data: 'o' and isComposing: false
+Plain textarea received 'beforeinput' with inputType: 'insertReplacementText' and data: 'hello' and isComposing: false
+Plain textarea received 'input' with inputType: 'insertReplacementText' and data: 'hello' and isComposing: false
+Rich contenteditable received 'beforeinput' with inputType: 'insertText' and data: 'h' and isComposing: false
+Rich contenteditable received 'input' with inputType: 'insertText' and data: 'h' and isComposing: false
+Rich contenteditable received 'beforeinput' with inputType: 'insertText' and data: 'e' and isComposing: false
+Rich contenteditable received 'input' with inputType: 'insertText' and data: 'e' and isComposing: false
+Rich contenteditable received 'beforeinput' with inputType: 'insertText' and data: 'l' and isComposing: false
+Rich contenteditable received 'input' with inputType: 'insertText' and data: 'l' and isComposing: false
+Rich contenteditable received 'beforeinput' with inputType: 'insertText' and data: 'o' and isComposing: false
+Rich contenteditable received 'input' with inputType: 'insertText' and data: 'o' and isComposing: false
+Rich contenteditable received 'beforeinput' with inputType: 'insertReplacementText' and data: 'null' and isComposing: false
+Rich contenteditable received 'input' with inputType: 'insertReplacementText' and data: 'null' and isComposing: false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+hello

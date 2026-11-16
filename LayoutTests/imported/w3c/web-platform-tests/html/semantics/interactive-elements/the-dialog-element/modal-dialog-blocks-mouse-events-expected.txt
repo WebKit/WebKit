@@ -1,0 +1,5 @@
+To test manually, move the mouse to the blue box, click, and then move the mouse outside. Then repeat for the red box. The test succeeds if both boxes turn green
+
+
+PASS Ensure that mouse events are not dispatched to an inert node.
+

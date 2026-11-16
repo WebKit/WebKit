@@ -1,0 +1,3 @@
+
+PASS getClientRects-inline-with-block-child
+

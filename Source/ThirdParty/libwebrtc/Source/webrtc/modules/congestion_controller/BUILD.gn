@@ -1,0 +1,103 @@
+# Copyright (c) 2014 The WebRTC project authors. All Rights Reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS.  All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+import("../../webrtc.gni")
+
+rtc_library("congestion_controller") {
+  visibility = [ "*" ]
+  sources = [
+    "include/receive_side_congestion_controller.h",
+    "receive_side_congestion_controller.cc",
+    "remb_throttler.cc",
+    "remb_throttler.h",
+  ]
+
+  deps = [
+    "..:module_api",
+    "../../api:rtp_parameters",
+    "../../api:sequence_checker",
+    "../../api/environment",
+    "../../api/units:data_rate",
+    "../../api/units:data_size",
+    "../../api/units:time_delta",
+    "../../api/units:timestamp",
+    "../../rtc_base:logging",
+    "../../rtc_base:macromagic",
+    "../../rtc_base/containers:flat_map",
+    "../../rtc_base/experiments:field_trial_parser",
+    "../../rtc_base/synchronization:mutex",
+    "../../system_wrappers",
+    "../remote_bitrate_estimator",
+    "../remote_bitrate_estimator:congestion_control_feedback_generator",
+    "../remote_bitrate_estimator:transport_sequence_number_feedback_generator",
+    "../rtp_rtcp:rtp_rtcp_format",
+    "rtp:congestion_controller_feedback_stats",
+    "//third_party/abseil-cpp/absl/base:nullability",
+  ]
+}
+
+rtc_library("ect1_policy") {
+  visibility = [ "*" ]
+  sources = [
+    "ect1_policy.cc",
+    "ect1_policy.h",
+  ]
+
+  deps = [
+    "../../api/units:time_delta",
+    "../../api/units:timestamp",
+    "../../rtc_base:logging",
+  ]
+}
+
+if (rtc_include_tests) {
+  rtc_cc_test("receive_side_congestion_controller_unittest") {
+    sources = [ "receive_side_congestion_controller_unittest.cc" ]
+    deps = [
+      ":congestion_controller",
+      "../../api:field_trials",
+      "../../api:rtp_header_extension_id",
+      "../../api:rtp_parameters",
+      "../../api/test/network_emulation",
+      "../../api/test/network_emulation:create_cross_traffic",
+      "../../api/units:data_rate",
+      "../../api/units:data_size",
+      "../../api/units:time_delta",
+      "../../api/units:timestamp",
+      "../../rtc_base:buffer",
+      "../../system_wrappers",
+      "../../test:create_test_environment",
+      "../../test:create_test_field_trials",
+      "../../test:test_support",
+      "../../test/scenario",
+      "../rtp_rtcp:rtp_rtcp_format",
+    ]
+  }
+
+  rtc_cc_test("remb_throttler_unittest") {
+    sources = [ "remb_throttler_unittest.cc" ]
+    deps = [
+      ":congestion_controller",
+      "../../api/units:data_rate",
+      "../../api/units:time_delta",
+      "../../api/units:timestamp",
+      "../../system_wrappers",
+      "../../test:test_support",
+    ]
+  }
+
+  rtc_cc_test("ect1_policy_unittest") {
+    sources = [ "ect1_policy_unittest.cc" ]
+    deps = [
+      ":ect1_policy",
+      "../../api/units:time_delta",
+      "../../api/units:timestamp",
+      "../../test:test_support",
+    ]
+  }
+}

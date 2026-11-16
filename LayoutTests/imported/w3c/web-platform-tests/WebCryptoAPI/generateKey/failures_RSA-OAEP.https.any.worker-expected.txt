@@ -1,0 +1,342 @@
+
+PASS Bad usages: generateKey({hash: SHA-1, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [sign])
+PASS Bad usages: generateKey({hash: SHA-1, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [decrypt, encrypt, sign])
+PASS Bad usages: generateKey({hash: SHA-1, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [wrapKey, decrypt, encrypt, sign])
+PASS Bad usages: generateKey({hash: SHA-1, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [unwrapKey, wrapKey, decrypt, encrypt, sign])
+PASS Bad usages: generateKey({hash: SHA-1, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [unwrapKey, decrypt, encrypt, sign])
+PASS Bad usages: generateKey({hash: SHA-1, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [unwrapKey, wrapKey, encrypt, sign])
+PASS Bad usages: generateKey({hash: SHA-1, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [unwrapKey, encrypt, sign])
+PASS Bad usages: generateKey({hash: SHA-1, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [decrypt, sign])
+PASS Bad usages: generateKey({hash: SHA-1, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [wrapKey, decrypt, sign])
+PASS Bad usages: generateKey({hash: SHA-1, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [unwrapKey, wrapKey, decrypt, sign])
+PASS Bad usages: generateKey({hash: SHA-1, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [unwrapKey, decrypt, sign])
+PASS Bad usages: generateKey({hash: SHA-1, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [unwrapKey, wrapKey, sign])
+PASS Bad usages: generateKey({hash: SHA-1, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [unwrapKey, sign])
+PASS Bad usages: generateKey({hash: SHA-1, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [encrypt, decrypt, wrapKey, unwrapKey, decrypt, unwrapKey, encrypt, decrypt, wrapKey, unwrapKey, sign])
+PASS Bad usages: generateKey({hash: SHA-1, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [verify])
+PASS Bad usages: generateKey({hash: SHA-1, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [decrypt, encrypt, verify])
+PASS Bad usages: generateKey({hash: SHA-1, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [wrapKey, decrypt, encrypt, verify])
+PASS Bad usages: generateKey({hash: SHA-1, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [unwrapKey, wrapKey, decrypt, encrypt, verify])
+PASS Bad usages: generateKey({hash: SHA-1, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [unwrapKey, decrypt, encrypt, verify])
+PASS Bad usages: generateKey({hash: SHA-1, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [unwrapKey, wrapKey, encrypt, verify])
+PASS Bad usages: generateKey({hash: SHA-1, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [unwrapKey, encrypt, verify])
+PASS Bad usages: generateKey({hash: SHA-1, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [decrypt, verify])
+PASS Bad usages: generateKey({hash: SHA-1, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [wrapKey, decrypt, verify])
+PASS Bad usages: generateKey({hash: SHA-1, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [unwrapKey, wrapKey, decrypt, verify])
+PASS Bad usages: generateKey({hash: SHA-1, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [unwrapKey, decrypt, verify])
+PASS Bad usages: generateKey({hash: SHA-1, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [unwrapKey, wrapKey, verify])
+PASS Bad usages: generateKey({hash: SHA-1, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [unwrapKey, verify])
+PASS Bad usages: generateKey({hash: SHA-1, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [encrypt, decrypt, wrapKey, unwrapKey, decrypt, unwrapKey, encrypt, decrypt, wrapKey, unwrapKey, verify])
+PASS Bad usages: generateKey({hash: SHA-1, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [deriveKey])
+PASS Bad usages: generateKey({hash: SHA-1, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [decrypt, encrypt, deriveKey])
+PASS Bad usages: generateKey({hash: SHA-1, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [wrapKey, decrypt, encrypt, deriveKey])
+PASS Bad usages: generateKey({hash: SHA-1, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [unwrapKey, wrapKey, decrypt, encrypt, deriveKey])
+PASS Bad usages: generateKey({hash: SHA-1, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [unwrapKey, decrypt, encrypt, deriveKey])
+PASS Bad usages: generateKey({hash: SHA-1, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [unwrapKey, wrapKey, encrypt, deriveKey])
+PASS Bad usages: generateKey({hash: SHA-1, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [unwrapKey, encrypt, deriveKey])
+PASS Bad usages: generateKey({hash: SHA-1, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [decrypt, deriveKey])
+PASS Bad usages: generateKey({hash: SHA-1, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [wrapKey, decrypt, deriveKey])
+PASS Bad usages: generateKey({hash: SHA-1, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [unwrapKey, wrapKey, decrypt, deriveKey])
+PASS Bad usages: generateKey({hash: SHA-1, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [unwrapKey, decrypt, deriveKey])
+PASS Bad usages: generateKey({hash: SHA-1, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [unwrapKey, wrapKey, deriveKey])
+PASS Bad usages: generateKey({hash: SHA-1, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [unwrapKey, deriveKey])
+PASS Bad usages: generateKey({hash: SHA-1, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [encrypt, decrypt, wrapKey, unwrapKey, decrypt, unwrapKey, encrypt, decrypt, wrapKey, unwrapKey, deriveKey])
+PASS Bad usages: generateKey({hash: SHA-1, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [deriveBits])
+PASS Bad usages: generateKey({hash: SHA-1, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [decrypt, encrypt, deriveBits])
+PASS Bad usages: generateKey({hash: SHA-1, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [wrapKey, decrypt, encrypt, deriveBits])
+PASS Bad usages: generateKey({hash: SHA-1, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [unwrapKey, wrapKey, decrypt, encrypt, deriveBits])
+PASS Bad usages: generateKey({hash: SHA-1, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [unwrapKey, decrypt, encrypt, deriveBits])
+PASS Bad usages: generateKey({hash: SHA-1, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [unwrapKey, wrapKey, encrypt, deriveBits])
+PASS Bad usages: generateKey({hash: SHA-1, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [unwrapKey, encrypt, deriveBits])
+PASS Bad usages: generateKey({hash: SHA-1, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [decrypt, deriveBits])
+PASS Bad usages: generateKey({hash: SHA-1, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [wrapKey, decrypt, deriveBits])
+PASS Bad usages: generateKey({hash: SHA-1, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [unwrapKey, wrapKey, decrypt, deriveBits])
+PASS Bad usages: generateKey({hash: SHA-1, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [unwrapKey, decrypt, deriveBits])
+PASS Bad usages: generateKey({hash: SHA-1, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [unwrapKey, wrapKey, deriveBits])
+PASS Bad usages: generateKey({hash: SHA-1, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [unwrapKey, deriveBits])
+PASS Bad usages: generateKey({hash: SHA-1, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [encrypt, decrypt, wrapKey, unwrapKey, decrypt, unwrapKey, encrypt, decrypt, wrapKey, unwrapKey, deriveBits])
+FAIL Bad usages: generateKey({hash: SHA-1, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({hash: SHA-1, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [decrypt, encrypt, encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({hash: SHA-1, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [wrapKey, decrypt, encrypt, encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({hash: SHA-1, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [unwrapKey, wrapKey, decrypt, encrypt, encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({hash: SHA-1, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [unwrapKey, decrypt, encrypt, encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({hash: SHA-1, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [unwrapKey, wrapKey, encrypt, encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({hash: SHA-1, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [unwrapKey, encrypt, encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({hash: SHA-1, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [decrypt, encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({hash: SHA-1, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [wrapKey, decrypt, encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({hash: SHA-1, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [unwrapKey, wrapKey, decrypt, encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({hash: SHA-1, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [unwrapKey, decrypt, encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({hash: SHA-1, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [unwrapKey, wrapKey, encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({hash: SHA-1, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [unwrapKey, encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({hash: SHA-1, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [encrypt, decrypt, wrapKey, unwrapKey, decrypt, unwrapKey, encrypt, decrypt, wrapKey, unwrapKey, encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({hash: SHA-1, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({hash: SHA-1, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [decrypt, encrypt, encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({hash: SHA-1, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [wrapKey, decrypt, encrypt, encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({hash: SHA-1, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [unwrapKey, wrapKey, decrypt, encrypt, encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({hash: SHA-1, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [unwrapKey, decrypt, encrypt, encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({hash: SHA-1, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [unwrapKey, wrapKey, encrypt, encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({hash: SHA-1, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [unwrapKey, encrypt, encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({hash: SHA-1, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [decrypt, encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({hash: SHA-1, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [wrapKey, decrypt, encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({hash: SHA-1, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [unwrapKey, wrapKey, decrypt, encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({hash: SHA-1, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [unwrapKey, decrypt, encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({hash: SHA-1, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [unwrapKey, wrapKey, encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({hash: SHA-1, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [unwrapKey, encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({hash: SHA-1, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [encrypt, decrypt, wrapKey, unwrapKey, decrypt, unwrapKey, encrypt, decrypt, wrapKey, unwrapKey, encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({hash: SHA-1, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({hash: SHA-1, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [decrypt, encrypt, decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({hash: SHA-1, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [wrapKey, decrypt, encrypt, decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({hash: SHA-1, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [unwrapKey, wrapKey, decrypt, encrypt, decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({hash: SHA-1, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [unwrapKey, decrypt, encrypt, decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({hash: SHA-1, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [unwrapKey, wrapKey, encrypt, decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({hash: SHA-1, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [unwrapKey, encrypt, decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({hash: SHA-1, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [decrypt, decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({hash: SHA-1, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [wrapKey, decrypt, decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({hash: SHA-1, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [unwrapKey, wrapKey, decrypt, decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({hash: SHA-1, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [unwrapKey, decrypt, decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({hash: SHA-1, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [unwrapKey, wrapKey, decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({hash: SHA-1, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [unwrapKey, decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({hash: SHA-1, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [encrypt, decrypt, wrapKey, unwrapKey, decrypt, unwrapKey, encrypt, decrypt, wrapKey, unwrapKey, decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({hash: SHA-1, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({hash: SHA-1, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [decrypt, encrypt, decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({hash: SHA-1, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [wrapKey, decrypt, encrypt, decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({hash: SHA-1, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [unwrapKey, wrapKey, decrypt, encrypt, decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({hash: SHA-1, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [unwrapKey, decrypt, encrypt, decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({hash: SHA-1, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [unwrapKey, wrapKey, encrypt, decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({hash: SHA-1, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [unwrapKey, encrypt, decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({hash: SHA-1, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [decrypt, decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({hash: SHA-1, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [wrapKey, decrypt, decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({hash: SHA-1, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [unwrapKey, wrapKey, decrypt, decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({hash: SHA-1, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [unwrapKey, decrypt, decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({hash: SHA-1, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [unwrapKey, wrapKey, decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({hash: SHA-1, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [unwrapKey, decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({hash: SHA-1, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [encrypt, decrypt, wrapKey, unwrapKey, decrypt, unwrapKey, encrypt, decrypt, wrapKey, unwrapKey, decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+PASS Bad usages: generateKey({hash: SHA-256, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [sign])
+PASS Bad usages: generateKey({hash: SHA-256, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [decrypt, encrypt, sign])
+PASS Bad usages: generateKey({hash: SHA-256, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [wrapKey, decrypt, encrypt, sign])
+PASS Bad usages: generateKey({hash: SHA-256, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [unwrapKey, wrapKey, decrypt, encrypt, sign])
+PASS Bad usages: generateKey({hash: SHA-256, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [unwrapKey, decrypt, encrypt, sign])
+PASS Bad usages: generateKey({hash: SHA-256, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [unwrapKey, wrapKey, encrypt, sign])
+PASS Bad usages: generateKey({hash: SHA-256, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [unwrapKey, encrypt, sign])
+PASS Bad usages: generateKey({hash: SHA-256, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [decrypt, sign])
+PASS Bad usages: generateKey({hash: SHA-256, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [wrapKey, decrypt, sign])
+PASS Bad usages: generateKey({hash: SHA-256, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [unwrapKey, wrapKey, decrypt, sign])
+PASS Bad usages: generateKey({hash: SHA-256, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [unwrapKey, decrypt, sign])
+PASS Bad usages: generateKey({hash: SHA-256, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [unwrapKey, wrapKey, sign])
+PASS Bad usages: generateKey({hash: SHA-256, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [unwrapKey, sign])
+PASS Bad usages: generateKey({hash: SHA-256, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [encrypt, decrypt, wrapKey, unwrapKey, decrypt, unwrapKey, encrypt, decrypt, wrapKey, unwrapKey, sign])
+PASS Bad usages: generateKey({hash: SHA-256, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [verify])
+PASS Bad usages: generateKey({hash: SHA-256, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [decrypt, encrypt, verify])
+PASS Bad usages: generateKey({hash: SHA-256, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [wrapKey, decrypt, encrypt, verify])
+PASS Bad usages: generateKey({hash: SHA-256, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [unwrapKey, wrapKey, decrypt, encrypt, verify])
+PASS Bad usages: generateKey({hash: SHA-256, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [unwrapKey, decrypt, encrypt, verify])
+PASS Bad usages: generateKey({hash: SHA-256, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [unwrapKey, wrapKey, encrypt, verify])
+PASS Bad usages: generateKey({hash: SHA-256, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [unwrapKey, encrypt, verify])
+PASS Bad usages: generateKey({hash: SHA-256, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [decrypt, verify])
+PASS Bad usages: generateKey({hash: SHA-256, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [wrapKey, decrypt, verify])
+PASS Bad usages: generateKey({hash: SHA-256, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [unwrapKey, wrapKey, decrypt, verify])
+PASS Bad usages: generateKey({hash: SHA-256, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [unwrapKey, decrypt, verify])
+PASS Bad usages: generateKey({hash: SHA-256, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [unwrapKey, wrapKey, verify])
+PASS Bad usages: generateKey({hash: SHA-256, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [unwrapKey, verify])
+PASS Bad usages: generateKey({hash: SHA-256, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [encrypt, decrypt, wrapKey, unwrapKey, decrypt, unwrapKey, encrypt, decrypt, wrapKey, unwrapKey, verify])
+PASS Bad usages: generateKey({hash: SHA-256, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [deriveKey])
+PASS Bad usages: generateKey({hash: SHA-256, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [decrypt, encrypt, deriveKey])
+PASS Bad usages: generateKey({hash: SHA-256, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [wrapKey, decrypt, encrypt, deriveKey])
+PASS Bad usages: generateKey({hash: SHA-256, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [unwrapKey, wrapKey, decrypt, encrypt, deriveKey])
+PASS Bad usages: generateKey({hash: SHA-256, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [unwrapKey, decrypt, encrypt, deriveKey])
+PASS Bad usages: generateKey({hash: SHA-256, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [unwrapKey, wrapKey, encrypt, deriveKey])
+PASS Bad usages: generateKey({hash: SHA-256, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [unwrapKey, encrypt, deriveKey])
+PASS Bad usages: generateKey({hash: SHA-256, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [decrypt, deriveKey])
+PASS Bad usages: generateKey({hash: SHA-256, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [wrapKey, decrypt, deriveKey])
+PASS Bad usages: generateKey({hash: SHA-256, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [unwrapKey, wrapKey, decrypt, deriveKey])
+PASS Bad usages: generateKey({hash: SHA-256, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [unwrapKey, decrypt, deriveKey])
+PASS Bad usages: generateKey({hash: SHA-256, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [unwrapKey, wrapKey, deriveKey])
+PASS Bad usages: generateKey({hash: SHA-256, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [unwrapKey, deriveKey])
+PASS Bad usages: generateKey({hash: SHA-256, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [encrypt, decrypt, wrapKey, unwrapKey, decrypt, unwrapKey, encrypt, decrypt, wrapKey, unwrapKey, deriveKey])
+PASS Bad usages: generateKey({hash: SHA-256, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [deriveBits])
+PASS Bad usages: generateKey({hash: SHA-256, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [decrypt, encrypt, deriveBits])
+PASS Bad usages: generateKey({hash: SHA-256, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [wrapKey, decrypt, encrypt, deriveBits])
+PASS Bad usages: generateKey({hash: SHA-256, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [unwrapKey, wrapKey, decrypt, encrypt, deriveBits])
+PASS Bad usages: generateKey({hash: SHA-256, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [unwrapKey, decrypt, encrypt, deriveBits])
+PASS Bad usages: generateKey({hash: SHA-256, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [unwrapKey, wrapKey, encrypt, deriveBits])
+PASS Bad usages: generateKey({hash: SHA-256, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [unwrapKey, encrypt, deriveBits])
+PASS Bad usages: generateKey({hash: SHA-256, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [decrypt, deriveBits])
+PASS Bad usages: generateKey({hash: SHA-256, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [wrapKey, decrypt, deriveBits])
+PASS Bad usages: generateKey({hash: SHA-256, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [unwrapKey, wrapKey, decrypt, deriveBits])
+PASS Bad usages: generateKey({hash: SHA-256, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [unwrapKey, decrypt, deriveBits])
+PASS Bad usages: generateKey({hash: SHA-256, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [unwrapKey, wrapKey, deriveBits])
+PASS Bad usages: generateKey({hash: SHA-256, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [unwrapKey, deriveBits])
+PASS Bad usages: generateKey({hash: SHA-256, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [encrypt, decrypt, wrapKey, unwrapKey, decrypt, unwrapKey, encrypt, decrypt, wrapKey, unwrapKey, deriveBits])
+FAIL Bad usages: generateKey({hash: SHA-256, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({hash: SHA-256, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [decrypt, encrypt, encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({hash: SHA-256, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [wrapKey, decrypt, encrypt, encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({hash: SHA-256, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [unwrapKey, wrapKey, decrypt, encrypt, encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({hash: SHA-256, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [unwrapKey, decrypt, encrypt, encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({hash: SHA-256, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [unwrapKey, wrapKey, encrypt, encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({hash: SHA-256, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [unwrapKey, encrypt, encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({hash: SHA-256, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [decrypt, encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({hash: SHA-256, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [wrapKey, decrypt, encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({hash: SHA-256, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [unwrapKey, wrapKey, decrypt, encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({hash: SHA-256, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [unwrapKey, decrypt, encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({hash: SHA-256, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [unwrapKey, wrapKey, encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({hash: SHA-256, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [unwrapKey, encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({hash: SHA-256, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [encrypt, decrypt, wrapKey, unwrapKey, decrypt, unwrapKey, encrypt, decrypt, wrapKey, unwrapKey, encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({hash: SHA-256, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({hash: SHA-256, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [decrypt, encrypt, encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({hash: SHA-256, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [wrapKey, decrypt, encrypt, encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({hash: SHA-256, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [unwrapKey, wrapKey, decrypt, encrypt, encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({hash: SHA-256, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [unwrapKey, decrypt, encrypt, encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({hash: SHA-256, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [unwrapKey, wrapKey, encrypt, encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({hash: SHA-256, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [unwrapKey, encrypt, encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({hash: SHA-256, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [decrypt, encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({hash: SHA-256, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [wrapKey, decrypt, encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({hash: SHA-256, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [unwrapKey, wrapKey, decrypt, encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({hash: SHA-256, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [unwrapKey, decrypt, encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({hash: SHA-256, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [unwrapKey, wrapKey, encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({hash: SHA-256, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [unwrapKey, encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({hash: SHA-256, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [encrypt, decrypt, wrapKey, unwrapKey, decrypt, unwrapKey, encrypt, decrypt, wrapKey, unwrapKey, encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({hash: SHA-256, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({hash: SHA-256, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [decrypt, encrypt, decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({hash: SHA-256, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [wrapKey, decrypt, encrypt, decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({hash: SHA-256, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [unwrapKey, wrapKey, decrypt, encrypt, decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({hash: SHA-256, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [unwrapKey, decrypt, encrypt, decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({hash: SHA-256, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [unwrapKey, wrapKey, encrypt, decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({hash: SHA-256, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [unwrapKey, encrypt, decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({hash: SHA-256, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [decrypt, decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({hash: SHA-256, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [wrapKey, decrypt, decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({hash: SHA-256, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [unwrapKey, wrapKey, decrypt, decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({hash: SHA-256, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [unwrapKey, decrypt, decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({hash: SHA-256, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [unwrapKey, wrapKey, decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({hash: SHA-256, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [unwrapKey, decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({hash: SHA-256, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [encrypt, decrypt, wrapKey, unwrapKey, decrypt, unwrapKey, encrypt, decrypt, wrapKey, unwrapKey, decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({hash: SHA-256, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({hash: SHA-256, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [decrypt, encrypt, decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({hash: SHA-256, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [wrapKey, decrypt, encrypt, decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({hash: SHA-256, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [unwrapKey, wrapKey, decrypt, encrypt, decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({hash: SHA-256, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [unwrapKey, decrypt, encrypt, decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({hash: SHA-256, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [unwrapKey, wrapKey, encrypt, decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({hash: SHA-256, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [unwrapKey, encrypt, decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({hash: SHA-256, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [decrypt, decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({hash: SHA-256, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [wrapKey, decrypt, decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({hash: SHA-256, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [unwrapKey, wrapKey, decrypt, decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({hash: SHA-256, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [unwrapKey, decrypt, decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({hash: SHA-256, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [unwrapKey, wrapKey, decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({hash: SHA-256, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [unwrapKey, decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: generateKey({hash: SHA-256, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [encrypt, decrypt, wrapKey, unwrapKey, decrypt, unwrapKey, encrypt, decrypt, wrapKey, unwrapKey, decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+PASS Bad algorithm property: generateKey({hash: SHA-256, modulusLength: 1024, name: RSA-OAEP, publicExponent: {0: 1}}, false, [decrypt, encrypt])
+PASS Bad algorithm property: generateKey({hash: SHA-256, modulusLength: 1024, name: RSA-OAEP, publicExponent: {0: 1}}, true, [decrypt, encrypt])
+PASS Bad algorithm property: generateKey({hash: SHA-256, modulusLength: 1024, name: RSA-OAEP, publicExponent: {0: 1}}, false, [wrapKey, decrypt, encrypt])
+PASS Bad algorithm property: generateKey({hash: SHA-256, modulusLength: 1024, name: RSA-OAEP, publicExponent: {0: 1}}, true, [wrapKey, decrypt, encrypt])
+PASS Bad algorithm property: generateKey({hash: SHA-256, modulusLength: 1024, name: RSA-OAEP, publicExponent: {0: 1}}, false, [unwrapKey, wrapKey, decrypt, encrypt])
+PASS Bad algorithm property: generateKey({hash: SHA-256, modulusLength: 1024, name: RSA-OAEP, publicExponent: {0: 1}}, true, [unwrapKey, wrapKey, decrypt, encrypt])
+PASS Bad algorithm property: generateKey({hash: SHA-256, modulusLength: 1024, name: RSA-OAEP, publicExponent: {0: 1}}, false, [unwrapKey, decrypt, encrypt])
+PASS Bad algorithm property: generateKey({hash: SHA-256, modulusLength: 1024, name: RSA-OAEP, publicExponent: {0: 1}}, true, [unwrapKey, decrypt, encrypt])
+PASS Bad algorithm property: generateKey({hash: SHA-256, modulusLength: 1024, name: RSA-OAEP, publicExponent: {0: 1}}, false, [unwrapKey, wrapKey, encrypt])
+PASS Bad algorithm property: generateKey({hash: SHA-256, modulusLength: 1024, name: RSA-OAEP, publicExponent: {0: 1}}, true, [unwrapKey, wrapKey, encrypt])
+PASS Bad algorithm property: generateKey({hash: SHA-256, modulusLength: 1024, name: RSA-OAEP, publicExponent: {0: 1}}, false, [unwrapKey, encrypt])
+PASS Bad algorithm property: generateKey({hash: SHA-256, modulusLength: 1024, name: RSA-OAEP, publicExponent: {0: 1}}, true, [unwrapKey, encrypt])
+PASS Bad algorithm property: generateKey({hash: SHA-256, modulusLength: 1024, name: RSA-OAEP, publicExponent: {0: 1}}, false, [decrypt])
+PASS Bad algorithm property: generateKey({hash: SHA-256, modulusLength: 1024, name: RSA-OAEP, publicExponent: {0: 1}}, true, [decrypt])
+PASS Bad algorithm property: generateKey({hash: SHA-256, modulusLength: 1024, name: RSA-OAEP, publicExponent: {0: 1}}, false, [wrapKey, decrypt])
+PASS Bad algorithm property: generateKey({hash: SHA-256, modulusLength: 1024, name: RSA-OAEP, publicExponent: {0: 1}}, true, [wrapKey, decrypt])
+PASS Bad algorithm property: generateKey({hash: SHA-256, modulusLength: 1024, name: RSA-OAEP, publicExponent: {0: 1}}, false, [unwrapKey, wrapKey, decrypt])
+PASS Bad algorithm property: generateKey({hash: SHA-256, modulusLength: 1024, name: RSA-OAEP, publicExponent: {0: 1}}, true, [unwrapKey, wrapKey, decrypt])
+PASS Bad algorithm property: generateKey({hash: SHA-256, modulusLength: 1024, name: RSA-OAEP, publicExponent: {0: 1}}, false, [unwrapKey, decrypt])
+PASS Bad algorithm property: generateKey({hash: SHA-256, modulusLength: 1024, name: RSA-OAEP, publicExponent: {0: 1}}, true, [unwrapKey, decrypt])
+PASS Bad algorithm property: generateKey({hash: SHA-256, modulusLength: 1024, name: RSA-OAEP, publicExponent: {0: 1}}, false, [unwrapKey, wrapKey])
+PASS Bad algorithm property: generateKey({hash: SHA-256, modulusLength: 1024, name: RSA-OAEP, publicExponent: {0: 1}}, true, [unwrapKey, wrapKey])
+PASS Bad algorithm property: generateKey({hash: SHA-256, modulusLength: 1024, name: RSA-OAEP, publicExponent: {0: 1}}, false, [unwrapKey])
+PASS Bad algorithm property: generateKey({hash: SHA-256, modulusLength: 1024, name: RSA-OAEP, publicExponent: {0: 1}}, true, [unwrapKey])
+PASS Bad algorithm property: generateKey({hash: SHA-256, modulusLength: 1024, name: RSA-OAEP, publicExponent: {0: 1}}, false, [])
+PASS Bad algorithm property: generateKey({hash: SHA-256, modulusLength: 1024, name: RSA-OAEP, publicExponent: {0: 1}}, true, [])
+PASS Bad algorithm property: generateKey({hash: SHA-256, modulusLength: 1024, name: RSA-OAEP, publicExponent: {0: 1}}, false, [encrypt, decrypt, wrapKey, unwrapKey, decrypt, unwrapKey, encrypt, decrypt, wrapKey, unwrapKey])
+PASS Bad algorithm property: generateKey({hash: SHA-256, modulusLength: 1024, name: RSA-OAEP, publicExponent: {0: 1}}, true, [encrypt, decrypt, wrapKey, unwrapKey, decrypt, unwrapKey, encrypt, decrypt, wrapKey, unwrapKey])
+PASS Bad algorithm property: generateKey({hash: SHA-256, modulusLength: 1024, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 0}}, false, [decrypt, encrypt])
+PASS Bad algorithm property: generateKey({hash: SHA-256, modulusLength: 1024, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 0}}, true, [decrypt, encrypt])
+PASS Bad algorithm property: generateKey({hash: SHA-256, modulusLength: 1024, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 0}}, false, [wrapKey, decrypt, encrypt])
+PASS Bad algorithm property: generateKey({hash: SHA-256, modulusLength: 1024, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 0}}, true, [wrapKey, decrypt, encrypt])
+PASS Bad algorithm property: generateKey({hash: SHA-256, modulusLength: 1024, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 0}}, false, [unwrapKey, wrapKey, decrypt, encrypt])
+PASS Bad algorithm property: generateKey({hash: SHA-256, modulusLength: 1024, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 0}}, true, [unwrapKey, wrapKey, decrypt, encrypt])
+PASS Bad algorithm property: generateKey({hash: SHA-256, modulusLength: 1024, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 0}}, false, [unwrapKey, decrypt, encrypt])
+PASS Bad algorithm property: generateKey({hash: SHA-256, modulusLength: 1024, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 0}}, true, [unwrapKey, decrypt, encrypt])
+PASS Bad algorithm property: generateKey({hash: SHA-256, modulusLength: 1024, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 0}}, false, [unwrapKey, wrapKey, encrypt])
+PASS Bad algorithm property: generateKey({hash: SHA-256, modulusLength: 1024, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 0}}, true, [unwrapKey, wrapKey, encrypt])
+PASS Bad algorithm property: generateKey({hash: SHA-256, modulusLength: 1024, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 0}}, false, [unwrapKey, encrypt])
+PASS Bad algorithm property: generateKey({hash: SHA-256, modulusLength: 1024, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 0}}, true, [unwrapKey, encrypt])
+PASS Bad algorithm property: generateKey({hash: SHA-256, modulusLength: 1024, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 0}}, false, [decrypt])
+PASS Bad algorithm property: generateKey({hash: SHA-256, modulusLength: 1024, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 0}}, true, [decrypt])
+PASS Bad algorithm property: generateKey({hash: SHA-256, modulusLength: 1024, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 0}}, false, [wrapKey, decrypt])
+PASS Bad algorithm property: generateKey({hash: SHA-256, modulusLength: 1024, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 0}}, true, [wrapKey, decrypt])
+PASS Bad algorithm property: generateKey({hash: SHA-256, modulusLength: 1024, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 0}}, false, [unwrapKey, wrapKey, decrypt])
+PASS Bad algorithm property: generateKey({hash: SHA-256, modulusLength: 1024, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 0}}, true, [unwrapKey, wrapKey, decrypt])
+PASS Bad algorithm property: generateKey({hash: SHA-256, modulusLength: 1024, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 0}}, false, [unwrapKey, decrypt])
+PASS Bad algorithm property: generateKey({hash: SHA-256, modulusLength: 1024, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 0}}, true, [unwrapKey, decrypt])
+PASS Bad algorithm property: generateKey({hash: SHA-256, modulusLength: 1024, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 0}}, false, [unwrapKey, wrapKey])
+PASS Bad algorithm property: generateKey({hash: SHA-256, modulusLength: 1024, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 0}}, true, [unwrapKey, wrapKey])
+PASS Bad algorithm property: generateKey({hash: SHA-256, modulusLength: 1024, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 0}}, false, [unwrapKey])
+PASS Bad algorithm property: generateKey({hash: SHA-256, modulusLength: 1024, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 0}}, true, [unwrapKey])
+PASS Bad algorithm property: generateKey({hash: SHA-256, modulusLength: 1024, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 0}}, false, [])
+PASS Bad algorithm property: generateKey({hash: SHA-256, modulusLength: 1024, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 0}}, true, [])
+PASS Bad algorithm property: generateKey({hash: SHA-256, modulusLength: 1024, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 0}}, false, [encrypt, decrypt, wrapKey, unwrapKey, decrypt, unwrapKey, encrypt, decrypt, wrapKey, unwrapKey])
+PASS Bad algorithm property: generateKey({hash: SHA-256, modulusLength: 1024, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 0}}, true, [encrypt, decrypt, wrapKey, unwrapKey, decrypt, unwrapKey, encrypt, decrypt, wrapKey, unwrapKey])
+PASS Bad algorithm property: generateKey({hash: SHA-256, modulusLength: 4294968320, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, false, [decrypt, encrypt])
+PASS Bad algorithm property: generateKey({hash: SHA-256, modulusLength: 4294968320, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [decrypt, encrypt])
+PASS Bad algorithm property: generateKey({hash: SHA-256, modulusLength: 4294968320, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, false, [wrapKey, decrypt, encrypt])
+PASS Bad algorithm property: generateKey({hash: SHA-256, modulusLength: 4294968320, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [wrapKey, decrypt, encrypt])
+PASS Bad algorithm property: generateKey({hash: SHA-256, modulusLength: 4294968320, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, false, [unwrapKey, wrapKey, decrypt, encrypt])
+PASS Bad algorithm property: generateKey({hash: SHA-256, modulusLength: 4294968320, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [unwrapKey, wrapKey, decrypt, encrypt])
+PASS Bad algorithm property: generateKey({hash: SHA-256, modulusLength: 4294968320, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, false, [unwrapKey, decrypt, encrypt])
+PASS Bad algorithm property: generateKey({hash: SHA-256, modulusLength: 4294968320, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [unwrapKey, decrypt, encrypt])
+PASS Bad algorithm property: generateKey({hash: SHA-256, modulusLength: 4294968320, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, false, [unwrapKey, wrapKey, encrypt])
+PASS Bad algorithm property: generateKey({hash: SHA-256, modulusLength: 4294968320, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [unwrapKey, wrapKey, encrypt])
+PASS Bad algorithm property: generateKey({hash: SHA-256, modulusLength: 4294968320, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, false, [unwrapKey, encrypt])
+PASS Bad algorithm property: generateKey({hash: SHA-256, modulusLength: 4294968320, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [unwrapKey, encrypt])
+PASS Bad algorithm property: generateKey({hash: SHA-256, modulusLength: 4294968320, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, false, [decrypt])
+PASS Bad algorithm property: generateKey({hash: SHA-256, modulusLength: 4294968320, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [decrypt])
+PASS Bad algorithm property: generateKey({hash: SHA-256, modulusLength: 4294968320, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, false, [wrapKey, decrypt])
+PASS Bad algorithm property: generateKey({hash: SHA-256, modulusLength: 4294968320, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [wrapKey, decrypt])
+PASS Bad algorithm property: generateKey({hash: SHA-256, modulusLength: 4294968320, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, false, [unwrapKey, wrapKey, decrypt])
+PASS Bad algorithm property: generateKey({hash: SHA-256, modulusLength: 4294968320, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [unwrapKey, wrapKey, decrypt])
+PASS Bad algorithm property: generateKey({hash: SHA-256, modulusLength: 4294968320, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, false, [unwrapKey, decrypt])
+PASS Bad algorithm property: generateKey({hash: SHA-256, modulusLength: 4294968320, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [unwrapKey, decrypt])
+PASS Bad algorithm property: generateKey({hash: SHA-256, modulusLength: 4294968320, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, false, [unwrapKey, wrapKey])
+PASS Bad algorithm property: generateKey({hash: SHA-256, modulusLength: 4294968320, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [unwrapKey, wrapKey])
+PASS Bad algorithm property: generateKey({hash: SHA-256, modulusLength: 4294968320, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, false, [unwrapKey])
+PASS Bad algorithm property: generateKey({hash: SHA-256, modulusLength: 4294968320, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [unwrapKey])
+PASS Bad algorithm property: generateKey({hash: SHA-256, modulusLength: 4294968320, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, false, [])
+PASS Bad algorithm property: generateKey({hash: SHA-256, modulusLength: 4294968320, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [])
+PASS Bad algorithm property: generateKey({hash: SHA-256, modulusLength: 4294968320, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, false, [encrypt, decrypt, wrapKey, unwrapKey, decrypt, unwrapKey, encrypt, decrypt, wrapKey, unwrapKey])
+PASS Bad algorithm property: generateKey({hash: SHA-256, modulusLength: 4294968320, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [encrypt, decrypt, wrapKey, unwrapKey, decrypt, unwrapKey, encrypt, decrypt, wrapKey, unwrapKey])
+PASS Bad algorithm property: generateKey({hash: SHA-256, modulusLength: -4294966272, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, false, [decrypt, encrypt])
+PASS Bad algorithm property: generateKey({hash: SHA-256, modulusLength: -4294966272, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [decrypt, encrypt])
+PASS Bad algorithm property: generateKey({hash: SHA-256, modulusLength: -4294966272, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, false, [wrapKey, decrypt, encrypt])
+PASS Bad algorithm property: generateKey({hash: SHA-256, modulusLength: -4294966272, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [wrapKey, decrypt, encrypt])
+PASS Bad algorithm property: generateKey({hash: SHA-256, modulusLength: -4294966272, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, false, [unwrapKey, wrapKey, decrypt, encrypt])
+PASS Bad algorithm property: generateKey({hash: SHA-256, modulusLength: -4294966272, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [unwrapKey, wrapKey, decrypt, encrypt])
+PASS Bad algorithm property: generateKey({hash: SHA-256, modulusLength: -4294966272, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, false, [unwrapKey, decrypt, encrypt])
+PASS Bad algorithm property: generateKey({hash: SHA-256, modulusLength: -4294966272, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [unwrapKey, decrypt, encrypt])
+PASS Bad algorithm property: generateKey({hash: SHA-256, modulusLength: -4294966272, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, false, [unwrapKey, wrapKey, encrypt])
+PASS Bad algorithm property: generateKey({hash: SHA-256, modulusLength: -4294966272, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [unwrapKey, wrapKey, encrypt])
+PASS Bad algorithm property: generateKey({hash: SHA-256, modulusLength: -4294966272, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, false, [unwrapKey, encrypt])
+PASS Bad algorithm property: generateKey({hash: SHA-256, modulusLength: -4294966272, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [unwrapKey, encrypt])
+PASS Bad algorithm property: generateKey({hash: SHA-256, modulusLength: -4294966272, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, false, [decrypt])
+PASS Bad algorithm property: generateKey({hash: SHA-256, modulusLength: -4294966272, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [decrypt])
+PASS Bad algorithm property: generateKey({hash: SHA-256, modulusLength: -4294966272, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, false, [wrapKey, decrypt])
+PASS Bad algorithm property: generateKey({hash: SHA-256, modulusLength: -4294966272, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [wrapKey, decrypt])
+PASS Bad algorithm property: generateKey({hash: SHA-256, modulusLength: -4294966272, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, false, [unwrapKey, wrapKey, decrypt])
+PASS Bad algorithm property: generateKey({hash: SHA-256, modulusLength: -4294966272, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [unwrapKey, wrapKey, decrypt])
+PASS Bad algorithm property: generateKey({hash: SHA-256, modulusLength: -4294966272, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, false, [unwrapKey, decrypt])
+PASS Bad algorithm property: generateKey({hash: SHA-256, modulusLength: -4294966272, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [unwrapKey, decrypt])
+PASS Bad algorithm property: generateKey({hash: SHA-256, modulusLength: -4294966272, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, false, [unwrapKey, wrapKey])
+PASS Bad algorithm property: generateKey({hash: SHA-256, modulusLength: -4294966272, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [unwrapKey, wrapKey])
+PASS Bad algorithm property: generateKey({hash: SHA-256, modulusLength: -4294966272, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, false, [unwrapKey])
+PASS Bad algorithm property: generateKey({hash: SHA-256, modulusLength: -4294966272, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [unwrapKey])
+PASS Bad algorithm property: generateKey({hash: SHA-256, modulusLength: -4294966272, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, false, [])
+PASS Bad algorithm property: generateKey({hash: SHA-256, modulusLength: -4294966272, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [])
+PASS Bad algorithm property: generateKey({hash: SHA-256, modulusLength: -4294966272, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, false, [encrypt, decrypt, wrapKey, unwrapKey, decrypt, unwrapKey, encrypt, decrypt, wrapKey, unwrapKey])
+PASS Bad algorithm property: generateKey({hash: SHA-256, modulusLength: -4294966272, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [encrypt, decrypt, wrapKey, unwrapKey, decrypt, unwrapKey, encrypt, decrypt, wrapKey, unwrapKey])
+PASS Empty usages: generateKey({hash: SHA-1, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, false, [])
+PASS Empty usages: generateKey({hash: SHA-1, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [])
+PASS Empty usages: generateKey({hash: SHA-256, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, false, [])
+PASS Empty usages: generateKey({hash: SHA-256, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [])
+

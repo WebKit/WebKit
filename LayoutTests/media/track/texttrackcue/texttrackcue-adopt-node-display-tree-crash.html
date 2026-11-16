@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>This tests adopting video element. The test passes if WebKit does not hit any ASAN failures.</p>
+<div id="result"></div>
+<script>
+
+async function runTests() {
+  if (!window.testRunner || !window.internals) {
+      result.textContent = 'FAIL: This test requires internal.';
+      return;
+  }
+  testRunner.waitUntilDone();
+  testRunner.dumpAsText();
+  let frameCount = 5;
+  let done = new Promise((resolve) => {
+      window.onmessage = () => {
+          frameCount--;
+          if (!frameCount)
+              resolve();
+      }
+  });
+  for (let i = 0; i < frameCount; i++) {
+      const iframe = document.createElement('iframe');
+      iframe.src = 'resources/texttrackcue-adopt-node-display-tree-crash-child.html';
+      document.body.appendChild(iframe);
+  }
+  await done;
+  result.textContent = 'PASS';
+  testRunner.notifyDone();
+}
+
+runTests();
+
+</script>
+</body>
+</html>

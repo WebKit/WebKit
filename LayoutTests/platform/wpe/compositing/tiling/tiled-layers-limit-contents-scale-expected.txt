@@ -1,0 +1,21 @@
+Layer with backing store
+(GraphicsLayer
+  (anchor 0.00 0.00)
+  (bounds 785.00 10243.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 785.00 10243.00)
+      (contentsOpaque 1)
+      (children 1
+        (GraphicsLayer
+          (position 18.00 10.00)
+          (anchor 0.00 0.00)
+          (bounds 10220.00 10220.00)
+          (drawsContent 1)
+          (transform [0.05 0.00 0.00 0.00] [0.00 0.05 0.00 0.00] [0.00 0.00 1.00 0.00] [0.00 0.00 0.00 1.00])
+        )
+      )
+    )
+  )
+)
+

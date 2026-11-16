@@ -1,0 +1,114 @@
+# Copyright (c) 2014 The WebRTC project authors. All Rights Reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS.  All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+if (is_android) {
+  import("//build/config/android/config.gni")
+  import("//build/config/android/rules.gni")
+}
+import("../webrtc.gni")
+
+rtc_library("system_wrappers") {
+  visibility = [ "*" ]
+  sources = [
+    "include/clock.h",
+    "include/ntp_time.h",
+    "source/clock.cc",
+  ]
+
+  defines = []
+  libs = []
+  deps = [
+    "../api/units:time_delta",
+    "../api/units:timestamp",
+    "../rtc_base:checks",
+    "../rtc_base:divide_round",
+    "../rtc_base:logging",
+    "../rtc_base:rtc_numerics",
+    "../rtc_base:safe_conversions",
+    "../rtc_base:timeutils",
+    "../rtc_base/synchronization:mutex",
+    "../rtc_base/system:rtc_export",
+    "//third_party/abseil-cpp/absl/base:nullability",
+  ]
+  if (is_win) {
+    libs += [ "winmm.lib" ]
+
+    # Windows needs ../rtc_base due to include of
+    # webrtc/rtc_base/win32.h in source/clock.cc.
+    deps += [ "../rtc_base:win32" ]
+  }
+}
+
+rtc_library("metrics") {
+  visibility = [ "*" ]
+  sources = [
+    "include/metrics.h",
+    "source/metrics.cc",
+  ]
+  if (rtc_exclude_metrics_default) {
+    defines = [ "WEBRTC_EXCLUDE_METRICS_DEFAULT" ]
+  }
+  deps = [
+    "../api/units:time_delta",
+    "../rtc_base:checks",
+    "../rtc_base:macromagic",
+    "../rtc_base:stringutils",
+    "../rtc_base/synchronization:mutex",
+    "//third_party/abseil-cpp/absl/strings:string_view",
+  ]
+}
+
+if (rtc_include_tests && !build_with_chromium) {
+  rtc_cc_test("clock_unittest") {
+    sources = [ "source/clock_unittest.cc" ]
+    deps = [
+      ":system_wrappers",
+      "../api/units:time_delta",
+      "../api/units:timestamp",
+      "../test:test_support",
+    ]
+  }
+
+  rtc_cc_test("metrics_default_unittest") {
+    sources = [ "source/metrics_default_unittest.cc" ]
+    deps = [
+      ":metrics",
+      "../rtc_base:stringutils",
+      "../test:test_support",
+      "//third_party/abseil-cpp/absl/strings:string_view",
+    ]
+  }
+
+  rtc_cc_test("metrics_unittest") {
+    sources = [ "source/metrics_unittest.cc" ]
+    deps = [
+      ":metrics",
+      "../rtc_base:checks",
+      "../test:rtc_expect_death",
+      "../test:test_support",
+      "//third_party/abseil-cpp/absl/strings:string_view",
+    ]
+  }
+
+  rtc_cc_test("ntp_time_unittest") {
+    sources = [ "source/ntp_time_unittest.cc" ]
+    deps = [
+      ":system_wrappers",
+      "../test:test_support",
+    ]
+  }
+
+  rtc_test_suite("system_wrappers_unittests") {
+    tests = [
+      ":clock_unittest",
+      ":metrics_default_unittest",
+      ":metrics_unittest",
+      ":ntp_time_unittest",
+    ]
+  }
+}

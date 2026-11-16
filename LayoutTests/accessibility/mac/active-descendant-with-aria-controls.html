@@ -1,0 +1,48 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+
+<body>
+
+<div role="textbox" contenteditable tabindex="0" aria-controls="listbox" id="controller" aria-expanded="true">
+   controller
+</div>
+
+<div role="listbox" id="listbox">
+    <div role="option" id="option1">1</div>
+    <div role="option" id="option2">2</div>
+</div>
+
+<script>
+var output = "This test ensures objects that control objects with active descendants generate the correct notifications.\n\n";
+
+function notifyCallback(element, notification) {
+    if (notification == "AXSelectedChildrenChanged") {
+        output += `Received selected children notification ${element.role}`;
+        accessibilityController.removeNotificationListener();
+        debug(output);
+        finishJSTest();
+    }
+}
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    var addedNotification = accessibilityController.addNotificationListener(notifyCallback);
+    output += `addedNotification: ${addedNotification}\n`;
+    var controller = document.getElementById("controller");
+    var axController = accessibilityController.accessibleElementById("controller");
+    output += `Controller role: ${axController.role}\n`;
+    
+    controller.focus();
+    controller.setAttribute("aria-activedescendant", "option1");
+    document.getElementById("option1").setAttribute("aria-selected", "true");
+}
+
+</script>
+
+</body>
+</html>

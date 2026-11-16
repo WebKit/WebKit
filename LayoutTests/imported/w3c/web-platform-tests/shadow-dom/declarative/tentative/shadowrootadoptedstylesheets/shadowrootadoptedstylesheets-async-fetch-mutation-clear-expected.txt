@@ -1,0 +1,3 @@
+
+FAIL Clearing adoptedStyleSheets before fetch prevents styles from being applied. assert_equals: Before clearing: expected 1 placeholder(s). expected 1 but got 0
+

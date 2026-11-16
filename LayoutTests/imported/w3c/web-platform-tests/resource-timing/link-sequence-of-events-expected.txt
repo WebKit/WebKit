@@ -1,0 +1,3 @@
+
+PASS test that @imports don't affect link resource timings
+

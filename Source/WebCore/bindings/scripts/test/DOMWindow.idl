@@ -1,0 +1,2 @@
+[Exposed=Window, StandaloneConstructorAttributes] interface DOMWindow : EventTarget {
+};

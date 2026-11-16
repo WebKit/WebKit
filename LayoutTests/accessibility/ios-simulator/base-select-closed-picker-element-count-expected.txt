@@ -1,0 +1,14 @@
+This test ensures that the container of a base appearance select only counts the picker of the select as an accessibility element while the picker is open, as a closed picker has no accessibility object.
+
+PASS: container.numberAttributeValue('AXElementCount') === container.childrenCount
+PASS: select.isExpanded === true
+PASS: findBaseSelectMenu(select) != null === true
+PASS: container.numberAttributeValue('AXElementCount') === container.childrenCount
+PASS: select.isExpanded === false
+PASS: findBaseSelectMenu(select) === null
+PASS: container.numberAttributeValue('AXElementCount') === container.childrenCount
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

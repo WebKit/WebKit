@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src=media-file.js></script>
+        <script src=video-test.js></script>
+        <script>
+        window.addEventListener('load', async event => {
+            if (!window.internals) {
+                failTest('This test requires window.internals.');
+                return;
+            }
+
+            findMediaElement();
+
+            testExpected('internals.isMonitoringWirelessRoutes', false);
+
+            video.addEventListener('webkitplaybacktargetavailabilitychanged', event => {});
+            run('video.src = findMediaFile("video", "content/test")');
+            await waitFor(video, 'canplaythrough');
+
+            testExpected('internals.isMonitoringWirelessRoutes', true);
+
+            run('internals.setPageVisibility(false)');
+            run('internals.suspendAllMediaBuffering()');
+
+            testExpected('internals.isMonitoringWirelessRoutes', false);
+
+            endTest();
+        });
+        </script>
+    </head>
+
+    <body>
+        <video></video>
+    </body>
+</html>

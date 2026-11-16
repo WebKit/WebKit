@@ -1,0 +1,7 @@
+
+PASS window.event is set when dispatching on EventTarget
+PASS window.event is set when dispatching on AbortSignal
+PASS window.event is set when dispatching on FileReader
+PASS window.event is set when dispatching on Performance
+PASS An event target's _document property does not affect window.event
+

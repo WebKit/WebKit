@@ -1,0 +1,15 @@
+<!DOCTYPE html><!-- webkit-test-runner [ contentSecurityPolicyExtensionMode=v3 ] -->
+<html>
+<head>
+    <meta http-equiv="Content-Security-Policy" content="script-src 'self' *">
+    <script src="../../../resources/dump-as-text.js"></script>
+    <p><br>Test that CSP for manifest V3 extensions does not allow wildcards for the script-src directive.</p>
+</head>
+<body>
+<div id="result" text="FAIL">
+  PASS
+</div>
+<script src='http://localhost:8000/security/contentSecurityPolicy/resources/script.js'></script>
+</body>
+</html>
+

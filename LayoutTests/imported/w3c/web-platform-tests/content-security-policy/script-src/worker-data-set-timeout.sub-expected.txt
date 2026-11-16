@@ -1,0 +1,3 @@
+
+PASS Shared worker with data: url inherits CSP
+

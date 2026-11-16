@@ -1,0 +1,8 @@
+
+
+
+PASS :in-range in :has() invalidation when setting readonly
+PASS :in-range in :has() invalidation when removing readonly
+PASS :out-of-range in :has() invalidation when setting readonly
+PASS :out-of-range in :has() invalidation when removing readonly
+

@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+description('Test WebKit-specific parsing and serialization of the mask shorthand.');
+
+function computedStyle(property, value) {
+    var div = document.createElement("div");
+    document.body.appendChild(div);
+    div.style.setProperty(property, value);
+    var computedValue = getComputedStyle(div).getPropertyValue(property);
+    document.body.removeChild(div);
+    return computedValue;
+}
+
+function innerStyle(property, value) {
+    var div = document.createElement("div");
+    div.style.setProperty(property, value);
+    return div.style.getPropertyValue(property);
+}
+
+function testComputed(property, value, expected) {
+    shouldBeEqualToString('computedStyle("' + property + '", "' + value + '")', expected);
+}
+
+function testInner(property, value, expected) {
+    if (expected === null)
+        expected = "";
+    shouldBeEqualToString('innerStyle("' + property + '", "' + value + '")', expected);
+}
+
+function negativeTest(property, value) {
+    testInner(property, value, null);
+    // testComputed(property, value, 'none');
+}
+
+// The mask shorthand accepts 3-value positions, which are not valid <position> values
+testInner("mask", "right top 15px", "right top 15px");
+testInner("mask", "left 10px center", "left 10px center");
+testInner("mask", "center top 20px", "center top 20px");
+testInner("mask", "center left 30px", "left 30px center");
+testInner("mask", "left 20% top", "left 20% top");
+
+// WebKit does not omit an initial mask-repeat
+testInner("mask", "repeat", "repeat");
+testInner("mask", "repeat none", "repeat");
+testInner("mask", "none repeat", "repeat");
+
+// WebKit does not serialize the auto height of a single mask-size value
+testInner("mask", "none left top / 100%", "left top / 100%");
+testInner("mask", "none left top / 0%", "left top / 0%");
+testInner("mask", "none left 20px top / contain", "left 20px top / contain");
+
+// 3-value positions in combination with other values
+testInner("mask", "none center right 20px", "right 20px center");
+testInner("mask", "none border-box left top 20px", "left top 20px");
+testInner("mask", "none border-box content-box right 0px center / auto repeat-x", "right 0px center repeat-x border-box content-box");
+
+// WebKit serializes the computed mask shorthand as none
+// test mask-position
+testComputed("mask", "top left", "none");
+testComputed("mask", "bottom right", "none");
+testComputed("mask", "left bottom", "none");
+testComputed("mask", "right top", "none");
+testComputed("mask", "center", "none");
+testComputed("mask", "none top", "none");
+testComputed("mask", "none bottom", "none");
+testComputed("mask", "none right", "none");
+testComputed("mask", "none top right", "none");
+testComputed("mask", "none bottom left", "none");
+testComputed("mask", "none right", "none");
+testComputed("mask", "none left", "none");
+testComputed("mask", "center 50%", "none");
+testComputed("mask", "50px 50%", "none");
+testComputed("mask", "center left", "none");
+testComputed("mask", "top center", "none");
+testComputed("mask", "left 10px top 15px", "none");
+testComputed("mask", "left 10% top 30%", "none");
+testComputed("mask", "right top 15px", "none");
+testComputed("mask", "left 10px center", "none");
+testComputed("mask", "center top 20px", "none");
+testComputed("mask", "center left 30px", "none");
+testComputed("mask", "left 20% top", "none");
+testComputed("mask", "center center", "none");
+
+// test mask-repeat
+testComputed("mask", "repeat-x", "none");
+testComputed("mask", "repeat-y", "none");
+testComputed("mask", "repeat", "none");
+testComputed("mask", "space", "none");
+testComputed("mask", "no-repeat", "none");
+testComputed("mask", "repeat space", "none");
+testComputed("mask", "repeat round", "none");
+testComputed("mask", "repeat no-repeat", "none");
+testComputed("mask", "repeat none", "none");
+testComputed("mask", "none repeat", "none");
+
+// test mask-origin / mask-clip
+testComputed("mask", "padding-box", "none");
+testComputed("mask", "border-box", "none");
+testComputed("mask", "content-box", "none");
+testComputed("mask", "padding-box none", "none");
+testComputed("mask", "none padding-box", "none");
+testComputed("mask", "padding-box content-box", "none");
+testComputed("mask", "content-box content-box", "none");
+testComputed("mask", "padding-box border-box", "none");
+testComputed("mask", "padding-box border-box none", "none");
+testComputed("mask", "none padding-box border-box", "none");
+
+// test mask-size
+testComputed("mask", "none left top / auto", "none");
+testComputed("mask", "none left top / auto auto", "none");
+testComputed("mask", "none left top / 100%", "none");
+testComputed("mask", "none left top / 0%", "none");
+testComputed("mask", "none left top / auto 0%", "none");
+testComputed("mask", "none left top / cover", "none");
+testComputed("mask", "none left top / contain", "none");
+testComputed("mask", "none left 20px top 10px / contain", "none");
+testComputed("mask", "none left 20px top / contain", "none");
+
+// combinations
+testComputed("mask", "none padding-box content-box", "none");
+testComputed("mask", "none padding-box", "none");
+testComputed("mask", "none top", "none");
+testComputed("mask", "none center right 20px", "none");
+testComputed("mask", "none border-box left top", "none");
+testComputed("mask", "none border-box left top 20px", "none");
+testComputed("mask", "none border-box content-box left top repeat-x", "none");
+testComputed("mask", "none border-box content-box left top / auto repeat-x", "none");
+testComputed("mask", "none border-box content-box right 0px center / auto repeat-x", "none");
+
+// FIXME: mask-position-x and mask-position-y should not be exposed unprefixed.
+negativeTest("mask-position-x", "left");
+negativeTest("mask-position-y", "top");
+
+negativeTest("mask-repeat-x", "repeat");
+negativeTest("mask-repeat-y", "repeat");
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

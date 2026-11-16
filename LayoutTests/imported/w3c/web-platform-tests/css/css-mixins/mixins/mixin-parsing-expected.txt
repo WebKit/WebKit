@@ -1,0 +1,26 @@
+
+FAIL @layer (statement) is invalid in @mixin assert_equals: mixin is present expected 1 but got 0
+FAIL @layer (block) is invalid in @mixin assert_equals: mixin is present expected 1 but got 0
+FAIL @layer (anonymous) is invalid in @mixin assert_equals: mixin is present expected 1 but got 0
+FAIL @layer (statement) within @result is valid in @mixin assert_equals: mixin is present expected 1 but got 0
+FAIL @layer (block) within @result is valid in @mixin assert_equals: mixin is present expected 1 but got 0
+FAIL @layer (anonymous) within @result is valid in @mixin assert_equals: mixin is present expected 1 but got 0
+FAIL style rule is valid in @mixin assert_equals: mixin is present expected 1 but got 0
+FAIL style rule (relative) is valid in @mixin assert_equals: mixin is present expected 1 but got 0
+FAIL @media is valid in @mixin assert_equals: mixin is present expected 1 but got 0
+FAIL @supports is valid in @mixin assert_equals: mixin is present expected 1 but got 0
+FAIL @container is valid in @mixin assert_equals: mixin is present expected 1 but got 0
+FAIL @starting-style is valid in @mixin assert_equals: mixin is present expected 1 but got 0
+FAIL @scope is valid in @mixin assert_equals: mixin is present expected 1 but got 0
+FAIL @scope (implicit) is valid in @mixin assert_equals: mixin is present expected 1 but got 0
+FAIL @layer is dropped within @result (statement) assert_equals: mixin is present expected 1 but got 0
+FAIL @layer is dropped within @result (block) assert_equals: mixin is present expected 1 but got 0
+FAIL @layer is dropped within a nested style rule assert_equals: mixin is present expected 1 but got 0
+FAIL @layer is dropped within @media assert_equals: mixin is present expected 1 but got 0
+FAIL @layer is dropped within @supports assert_equals: mixin is present expected 1 but got 0
+FAIL @layer is dropped within @container assert_equals: mixin is present expected 1 but got 0
+FAIL @layer is dropped within @scope assert_equals: mixin is present expected 1 but got 0
+FAIL @layer is dropped within a body-level @media assert_equals: mixin is present expected 1 but got 0
+FAIL @layer is dropped within a body-level @supports assert_equals: mixin is present expected 1 but got 0
+FAIL @layer is dropped within a body-level @container assert_equals: mixin is present expected 1 but got 0
+

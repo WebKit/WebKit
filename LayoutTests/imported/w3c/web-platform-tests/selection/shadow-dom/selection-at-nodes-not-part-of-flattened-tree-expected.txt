@@ -1,0 +1,27 @@
+text in assigned span
+
+PASS Test Selection API working with nodes in not part of flattened tree
+PASS Collapse selection after the <span> which is not part of the flattened tree
+PASS Extend selection from end of the host to start of the host
+PASS Extend selection from start of the host to end of the host
+PASS Select all children of the host
+PASS Select set base to start of the host and extent to end of the host
+PASS Select set base to end of the host and extent to start of the host
+FAIL containsNode of non-assigned node should return false (when all children of the host is selected) assert_false: expected false got true
+FAIL containsNode of non-assigned node should return false (when the host is selected) assert_false: expected false got true
+FAIL containsNode of non-assigned node child should return false (when all children of the host is selected) assert_false: expected false got true
+FAIL containsNode of non-assigned node child should return false (when the host is selected) assert_false: expected false got true
+PASS getRangeAt(0).comparePoint of start of non-assigned node should return 0 (when all children of the host is selected)
+PASS getRangeAt(0).comparePoint of start of non-assigned node should return 0 (when the host is selected)
+PASS getRangeAt(0).comparePoint of start of non-assigned node child should return 0 (when all children of the host is selected)
+PASS getRangeAt(0).comparePoint of start of non-assigned node child should return 0 (when the host is selected)
+PASS Test Selection API working with nodes in not part of flattened tree 1
+FAIL Collapse selection to end of the default text assert_equals: expected "[{(<span id=\"default\">, 1)}]" but got "[]"
+FAIL Extend selection from end of the default span to start of the default span extend() requires a Range to be added to the Selection
+FAIL Extend selection from start of the default span to end of the default span extend() requires a Range to be added to the Selection
+FAIL Select all children of the default span assert_equals: expected "[{(<span id=\"default\">, 0) - (<span id=\"default\">, 1)}]" but got "[]"
+FAIL Select set base to start of the default span and extent to end of the default span assert_equals: expected "[{(<span id=\"default\">, 0) - (<span id=\"default\">, 1)}]" but got "[]"
+FAIL Select set base to end of the default span and extent to start of the default span assert_equals: expected "[{(<span id=\"default\">, 0) - (<span id=\"default\">, 1)}]" but got "[]"
+PASS containsNode of the default span child should return false (when all children of the default span is selected)
+FAIL getRangeAt(0).comparePoint of the start of the default span child should return 0 (when all children of the default span is selected) The index is not in the allowed range.
+

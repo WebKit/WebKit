@@ -1,0 +1,23 @@
+<script>
+  if (window.testRunner)
+    testRunner.dumpAsText();
+  console.log("This test passes if it does not crash.")
+  onload = () => {
+    let h1 = document.createElement('h1');
+    document.body.appendChild(h1);
+    h1.appendChild(document.createElement('input'));
+    h1.appendChild(document.createElement('div'));
+    let h2 = document.createElement('h2');
+    document.body.appendChild(h2);
+    let h3 = document.createElement('h3');
+    h2.appendChild(h3);
+    document.execCommand('SelectAll');
+    h3.appendChild(document.createElement('iframe'));
+    queueMicrotask(() => {
+      document.execCommand('Indent');
+    });
+    document.designMode = 'on';
+    document.execCommand('Copy');
+    document.execCommand('Paste');
+  };
+</script>

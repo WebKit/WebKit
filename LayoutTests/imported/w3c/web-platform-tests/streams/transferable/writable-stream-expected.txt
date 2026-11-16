@@ -1,0 +1,10 @@
+
+PASS window.postMessage should be able to transfer a WritableStream
+PASS a locked WritableStream should not be transferable
+PASS window.postMessage should be able to transfer a {readable, writable} pair
+PASS desiredSize for a newly-transferred stream should be 1
+PASS effective queue size of a transferred writable should be 2
+PASS second write should wait for first underlying write to complete
+PASS abort() should work
+PASS writing a unclonable object should error the stream
+

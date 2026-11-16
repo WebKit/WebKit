@@ -1,0 +1,13 @@
+
+RUN(internals.setMediaElementRestrictions(video, 'RequireUserGestureForAudioRateChange'))
+EXPECTED (source.readyState == 'closed') OK
+EVENT(sourceopen)
+RUN(sourceBuffer = source.addSourceBuffer("video/mock; codecs=mock"))
+RUN(sourceBuffer.appendBuffer(initSegment))
+EVENT(updateend)
+RUN(sourceBuffer.appendBuffer(samples))
+EVENT(updateend)
+EXPECTED (errorName == 'NotAllowedError') OK
+EXPECTED (true == 'true') OK
+END OF TEST
+

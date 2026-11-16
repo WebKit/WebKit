@@ -1,0 +1,15 @@
+Tests that scrolling to make an element visible works when the inner scroll container doesn't need to be scrolled, but the other one does.
+
+PASS: window.pageYOffset === 0
+PASS: container.scrollTop === 0
+PASS: target1.getBoundingClientRect().top >= 5000 === true
+PASS: window.innerHeight >= target2.getBoundingClientRect().bottom === true
+PASS: target2top === target2.getBoundingClientRect().top
+PASS: target2top === target2.getBoundingClientRect().top
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+5000-pixel box
+Target Target Target
+5000-pixel box

@@ -1,0 +1,20 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x68
+  RenderBlock {HTML} at (0,0) size 800x68
+    RenderBody {BODY} at (8,16) size 784x36
+      RenderBlock {P} at (0,0) size 784x36
+        RenderText {#text} at (0,0) size 7x18
+          text run at (0,0) width 7: "a"
+        RenderTable {SPAN} at (7,0) size 23x36
+          RenderTableSection (anonymous) at (0,0) size 23x36
+            RenderTableRow (anonymous) at (0,0) size 23x36
+              RenderTableCell (anonymous) at (0,0) size 23x36 [r=0 c=0 rs=1 cs=1]
+                RenderBlock (anonymous) at (0,0) size 23x18
+                  RenderText {#text} at (0,0) size 23x18
+                    text run at (0,0) width 23: "bcd"
+                RenderBlock {SPAN} at (0,18) size 23x18
+                  RenderText {#text} at (0,0) size 8x18
+                    text run at (0,0) width 8: "x"
+        RenderText {#text} at (30,0) size 7x18
+          text run at (30,0) width 7: "e"

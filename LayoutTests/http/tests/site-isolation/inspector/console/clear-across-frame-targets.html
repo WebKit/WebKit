@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<script src="/inspector/resources/inspector-test.js"></script>
+<script>
+    // Utilities for page code.
+    function addIFrame(url) {
+        const iframe = document.createElement("iframe");
+        iframe.src = url;
+        document.body.appendChild(iframe);
+    }
+
+    function test() {
+        // A frontend-initiated console clear (the Clear button, or its shortcut) goes
+        // through `WI.consoleManager.requestClearMessages()`, which fans `Console.clearMessages`
+        // out to every Console-capable target and only finishes once a `Console.messagesCleared`
+        // event comes back and `WI.ConsoleManager.Event.Cleared` is dispatched. There is no
+        // local fallback, so if that fan-out ever stops covering a target whose console agent
+        // produced messages, the clear would silently get "stuck" and the log would never empty.
+        //
+        // Under site isolation, messages can come from multiple frame targets (same- and
+        // cross-origin), each with its own console agent. This guards that a frontend clear
+        // still completes across all of them.
+
+        const suite = InspectorTest.createAsyncSuite("SiteIsolation.ClearConsoleAcrossFrameTargets");
+
+        function addFrameAndAwaitMessages(expression, count) {
+            let received = new Promise((resolve) => {
+                let seen = 0;
+                let listener = WI.consoleManager.addEventListener(WI.ConsoleManager.Event.MessageAdded, () => {
+                    if (++seen === count) {
+                        WI.consoleManager.removeEventListener(WI.ConsoleManager.Event.MessageAdded, listener);
+                        resolve();
+                    }
+                });
+            });
+
+            InspectorTest.evaluateInPage(expression);
+
+            return received;
+        }
+
+        suite.addTestCase({
+            name: "ClearConsoleAcrossFrameTargets.FrontendClear",
+            description: "WI.consoleManager.requestClearMessages() should fire Cleared even when messages span multiple frame targets.",
+            async test() {
+                // `console-messages.html` logs three messages (log, warn, and an uncaught error).
+                InspectorTest.log("Adding a same-origin iframe that logs to the console...");
+                await addFrameAndAwaitMessages(`addIFrame("resources/console-messages.html")`, 3);
+
+                InspectorTest.log("Adding a cross-origin iframe that logs to the console...");
+                await addFrameAndAwaitMessages(`addIFrame("http://localhost:8000/site-isolation/inspector/console/resources/console-messages.html")`, 3);
+
+                let frameTargets = WI.targets.filter((target) => target.type === WI.TargetType.Frame);
+                InspectorTest.expectEqual(frameTargets.length, 3, "Main frame, same-origin iframe, and cross-origin iframe should each have a frame target.");
+                InspectorTest.expectThat(frameTargets.every((target) => target.hasDomain("Console")), "The frame targets should all support the Console domain.");
+
+                let clearedEvent = WI.consoleManager.awaitEvent(WI.ConsoleManager.Event.Cleared);
+
+                InspectorTest.log("Requesting a frontend console clear...");
+                WI.consoleManager.requestClearMessages();
+
+                let event = await clearedEvent;
+                InspectorTest.expectThat(event, "Cleared event should fire after a frontend clear across frame targets.");
+
+                // Prove each frame target's backend store is genuinely empty. Re-enabling Console replays any messages
+                // the backend still holds, so a frame target that failed to clear would re-send them here.
+                let replayed = 0;
+                let listener = WI.consoleManager.addEventListener(WI.ConsoleManager.Event.MessageAdded, (event) => {
+                    if (frameTargets.includes(event.data.message.target))
+                        ++replayed;
+                });
+
+                for (let target of frameTargets) {
+                    await target.ConsoleAgent.disable();
+                    await target.ConsoleAgent.enable(); // any leftover messages are replayed before this resolves
+                }
+
+                WI.consoleManager.removeEventListener(WI.ConsoleManager.Event.MessageAdded, listener);
+                InspectorTest.expectEqual(replayed, 0, "No cleared frame target should replay messages when Console is re-enabled.");
+            }
+        });
+
+        suite.runTestCasesAndFinish();
+    }
+</script>
+
+<body onload="runTest()"></body>

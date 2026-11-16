@@ -1,0 +1,114 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<!-- A text control whose value ends in a line break renders an empty final line, which
+     HTMLTextFormControlElement::setInnerTextValue gives a line box by appending a placeholder <br>.
+     That <br>'s newline is not a character of the value — innerTextValueFrom() strips one trailing
+     newline that's collapsed out by rendering — so the control's character count must not count it.
+     The isolated tree builds its answer from text runs, which model rendered text and so do include
+     that newline; these values would then be one character too long. -->
+<div id="content">
+<textarea id="ta0" style="width: 200px; height: 60px"></textarea>
+<textarea id="ta1" style="width: 200px; height: 60px"></textarea>
+<textarea id="ta2" style="width: 200px; height: 60px"></textarea>
+<textarea id="ta3" style="width: 200px; height: 60px"></textarea>
+<textarea id="ta4" style="width: 200px; height: 60px"></textarea>
+<textarea id="ta5" style="width: 200px; height: 60px"></textarea>
+<!-- These two are typed into after the accessibility tree exists. Editing represents the newline that
+     rendering adds for the empty final line as a text node holding just that newline, where
+     setInnerTextValue appends a placeholder <br> — the value's character count must come out the same
+     either way. -->
+<textarea id="ta6" style="width: 200px; height: 60px"></textarea>
+<textarea id="ta7" style="width: 200px; height: 60px"></textarea>
+<!-- An ARIA textbox is not a native text control: its text has no collapsed trailing line break, so
+     a trailing newline in it *is* a character and must still be counted. -->
+<div id="ce0" contenteditable role="textbox" style="width: 200px; white-space: pre-wrap"></div>
+</div>
+
+<script>
+var output = "Asserts the character count of text control values that end in a line break.\n\n";
+
+// Every value is set before the accessibility tree is first built, so no case depends on the
+// isolated tree observing a mutation.
+var cases = [
+    { id: "ta0", label: "no trailing newline", value: "one two " },
+    { id: "ta1", label: "trailing newline", value: "one two \n" },
+    { id: "ta2", label: "two lines, no trailing newline", value: "one two \nthree" },
+    { id: "ta3", label: "only a newline", value: "\n" },
+    { id: "ta4", label: "two trailing newlines", value: "a\n\n" },
+    { id: "ta5", label: "whitespace either side of a newline", value: "  \n  " },
+    { id: "ta6", label: "trailing newline, typed", value: "one two \n", typed: true },
+    { id: "ta7", label: "two trailing newlines, typed", value: "a\n\n", typed: true },
+    { id: "ce0", label: "ARIA textbox, trailing newline", value: "one two \n" },
+];
+
+for (var testCase of cases) {
+    var field = document.getElementById(testCase.id);
+    if (testCase.typed)
+        continue;
+    if (field.isContentEditable)
+        field.textContent = testCase.value;
+    else
+        field.value = testCase.value;
+    // Force layout so the value is laid out before the accessibility tree is built.
+    field.offsetHeight;
+}
+
+// expect() evaluates its expressions in its own scope, so the values it reads are globals.
+var axField, webArea;
+
+// Types |value| one character at a time, the way a user would, then waits for the accessibility tree
+// to catch up. The selection notification is a safe gate for the value: the two are updated together.
+async function typeValue(field, value) {
+    field.focus();
+    for (var character of value) {
+        if (character === "\n")
+            document.execCommand("insertLineBreak");
+        else
+            document.execCommand("insertText", false, character);
+    }
+    // Typing leaves the caret at the end, so moving it to the start is always a real change.
+    await waitForNotification(webArea, "AXSelectedTextChanged", () => {
+        field.setSelectionRange(0, 0);
+    });
+}
+
+async function checkCase(testCase) {
+    axField = await waitForElementById(testCase.id);
+    if (!axField) {
+        output += `FAIL: ${testCase.label}: no accessibility element for #${testCase.id}\n`;
+        return;
+    }
+
+    if (testCase.typed)
+        await typeValue(document.getElementById(testCase.id), testCase.value);
+
+    output += `${testCase.label}: value ${JSON.stringify(testCase.value)}\n`;
+    output += expect("axField.numberOfCharacters", `${testCase.value.length}`);
+    output += "\n";
+}
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    setTimeout(async function() {
+        webArea = accessibilityController.rootElement.childAtIndex(0);
+
+        for (var testCase of cases)
+            await checkCase(testCase);
+
+        // Hide the test content so the output is just the assertions above, with no page text dump.
+        document.getElementById("content").hidden = true;
+
+        debugEscaped(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

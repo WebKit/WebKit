@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<body>
+<style>
+.base, .base::picker(select) { appearance: base-select; }
+</style>
+<script src="../resources/magnitude-perf.js"></script>
+<script>
+var hosts = [];
+
+function childTagName(host)
+{
+    return host instanceof HTMLSelectElement ? "option" : "div";
+}
+
+function setup(magnitude)
+{
+    for (var host of hosts)
+        host.remove();
+
+    var author = document.createElement("div");
+    author.attachShadow({ mode: "open" }).innerHTML = "<slot></slot>";
+    var base = document.createElement("select");
+    base.className = "base";
+    var details = document.createElement("details");
+    details.open = true;
+    details.appendChild(document.createElement("summary"));
+    hosts = [document.createElement("select"), base, author, details];
+    for (var host of hosts) {
+        for (var i = 0; i < magnitude; ++i)
+            host.appendChild(document.createElement(childTagName(host)));
+        document.body.appendChild(host);
+    }
+    document.body.offsetHeight;
+}
+
+function test(magnitude)
+{
+    for (var host of hosts) {
+        var text = host.appendChild(document.createTextNode(" "));
+        text.data = "  ";
+        var child = host.appendChild(document.createElement(childTagName(host)));
+        child.remove();
+        text.remove();
+    }
+}
+
+Magnitude.description("Tests that adding and removing a child of a rendered shadow host takes constant time regardless of the number of children.");
+Magnitude.run(setup, test, Magnitude.CONSTANT);
+</script>
+</body>
+</html>

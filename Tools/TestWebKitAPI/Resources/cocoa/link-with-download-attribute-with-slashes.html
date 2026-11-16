@@ -1,0 +1,10 @@
+<html>
+    <body>
+        <a id="testAnchor" style="display: block; height: 100%; width: 100%" download="test1/test2/downloadAttributeValue.txt"></a>
+        <script>
+            var blob = new Blob(["Hello world!"], {type: "application/octet-stream"});
+            var link = document.getElementById("testAnchor");
+            link.href = window.URL.createObjectURL(blob);
+        </script>
+    </body>
+</html>

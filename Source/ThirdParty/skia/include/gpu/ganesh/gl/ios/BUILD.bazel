@@ -1,0 +1,15 @@
+load("//bazel:skia_rules.bzl", "skia_filegroup")
+
+package(
+    default_applicable_licenses = ["//:license"],
+)
+
+licenses(["notice"])
+
+skia_filegroup(
+    name = "public_hdrs",
+    srcs = ["GrGLMakeIOSInterface.h"],
+    visibility = [
+        "//src/gpu/ganesh/gl/iOS:__pkg__",
+    ],
+)

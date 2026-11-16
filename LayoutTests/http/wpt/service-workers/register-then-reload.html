@@ -1,0 +1,46 @@
+<html>
+<head>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+</head>
+<body>
+<script>
+function with_iframe(url) {
+    return new Promise(function(resolve) {
+        var frame = document.createElement('iframe');
+        frame.src = url;
+        frame.onload = function() { resolve(frame); };
+        document.body.appendChild(frame);
+    });
+}
+
+async function getOneRegistration(counter)
+{
+    if (!counter)
+        counter = 0;
+    else if (counter > 50)
+         return Promise.reject("no registration found");
+
+    const registrations = await navigator.serviceWorker.getRegistrations();
+    if (registrations.length && registrations[0].active)
+        return registrations[0];
+
+    await new Promise(resolve => setTimeout(resolve, 100));
+    return getOneRegistration(++counter);
+}
+
+promise_test(async (t) => {
+    const frame = await with_iframe("resources/register-then-reload-iframe.html");
+    frame.contentWindow.startTest();
+
+    await new Promise(resolve => setTimeout(resolve, 100));
+
+    const registration = await getOneRegistration();
+    t.add_cleanup(() => registration.unregister());
+
+    const scriptURL = new URL(registration.active.scriptURL);
+    assert_equals(scriptURL.pathname, "/WebKit/service-workers/resources/lengthy-worker.py");
+}, "Register a service worker while reloading");
+</script>
+</body>
+</html>

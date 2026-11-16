@@ -1,0 +1,7 @@
+
+PASS should return an array that includes itself.
+PASS should throw for dictionaries which inherit from another dictionary which wasn't added to the IdlArray
+PASS should return an array of dictionaries in order of inheritance, starting with the base dictionary
+PASS A : B with B undeclared should throw IdlHarnessError
+PASS dictionary A : B with B interface should throw IdlHarnessError
+

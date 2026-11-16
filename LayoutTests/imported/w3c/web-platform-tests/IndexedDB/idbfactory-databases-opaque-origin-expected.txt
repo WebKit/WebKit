@@ -1,0 +1,6 @@
+
+PASS IDBFactory.databases() in non-sandboxed iframe should not reject
+PASS IDBFactory.databases() in sandboxed iframe should reject
+PASS IDBFactory.databases() in data URL dedicated worker should throw SecurityError
+PASS IDBFactory.databases() in data URL shared worker should throw SecurityError
+

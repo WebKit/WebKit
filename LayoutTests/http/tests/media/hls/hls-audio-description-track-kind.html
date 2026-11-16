@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <script src=../../media-resources/video-test.js></script>
+    <script>
+    var tracksAdded = 0;
+    var adTrack;
+    var mainTrack;
+
+    function addTrack(event)
+    {
+        consoleWrite("EVENT(addtrack) - " + ++tracksAdded + " tracks");
+
+        if (tracksAdded >= 2)
+            validateTracks();
+    }
+
+    function validateTracks()
+    {
+        testExpected("video.audioTracks.length", 2);
+
+        // Find tracks by label
+        for (var i = 0; i < video.audioTracks.length; i++) {
+            var track = video.audioTracks[i];
+            consoleWrite("Track " + i + ": label='" + track.label + "', kind='" + track.kind + "'");
+
+            if (track.label.includes("Audio Description"))
+                adTrack = track;
+            else if (track.label.includes("Main"))
+                mainTrack = track;
+        }
+
+        testExpected("adTrack != null", true);
+        testExpected("mainTrack != null", true);
+        testExpected("adTrack.kind", "description");
+        testExpected("adTrack.label", "Audio Description Stereo");
+        testExpected("mainTrack.kind", "main");
+        testExpected("mainTrack.label", "Main Stereo");
+
+        endTest();
+    }
+
+    function start()
+    {
+        findMediaElement();
+
+        if (window.internals) {
+            internals.settings.setShouldDisplayTrackKind('TextDescriptions', true);
+            internals.setPreferredAudioCharacteristicsForTesting(['public.accessibility.describes-video']);
+        }
+
+        waitForEvent('addtrack', addTrack, false, false, video.audioTracks);
+        video.src = '../resources/hls/audio-description/main.m3u8';
+    }
+    </script>
+</head>
+<body onload="start()">
+    <video controls></video>
+    <p>Test that audio description tracks correctly report kind='description' when Audio Descriptions is enabled.</p>
+</body>
+</html>

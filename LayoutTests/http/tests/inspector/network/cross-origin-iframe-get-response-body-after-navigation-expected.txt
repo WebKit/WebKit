@@ -1,0 +1,13 @@
+Tests getResponseBody behavior for a cross-origin iframe resource after the iframe navigates to a new URL.
+
+
+== Running test suite: Network.getResponseBody.CrossOriginIframe.AfterNavigation
+-- Running test case: Network.getResponseBody.CrossOriginIframe.AfterNavigation
+First load: http://localhost:8000/inspector/network/resources/echo.py?mimetype=text/plain&content=before-navigation
+PASS: First load: Should retrieve content successfully.
+PASS: First load: Content should match.
+Navigating iframe...
+Iframe navigated. Requesting content of first resource again...
+After navigation requestContent returned.
+Content available: true
+

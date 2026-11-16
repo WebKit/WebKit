@@ -1,0 +1,96 @@
+<!DOCTYPE HTML><!-- webkit-test-runner [ AccessibilityFormErrorDetectionEnabled=true ] -->
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+<style>
+.field { margin-bottom: 16px; }
+.field input { height: 30px; box-sizing: border-box; }
+.dropdown { height: 40px; box-sizing: border-box; border: 1px solid #e8e8e8; }
+.dropdown input { position: absolute; width: 0; padding: 0; border: 0; }
+.error { color: #cb3837; margin-top: 10px; line-height: 20px; }
+</style>
+</head>
+<body>
+
+<div id="appointment">
+  <div class="field"><input id="name" type="text"></div>
+  <div class="field"><input id="phone" type="tel"></div>
+  <div class="field">
+    <div id="day" class="dropdown" role="combobox" tabindex="-1" aria-expanded="false"><input type="text"><span>Select a Day</span></div>
+  </div>
+  <div class="field">
+    <div id="time" class="dropdown" role="combobox" tabindex="-1" aria-expanded="false"><input type="text"><span>Select a Time</span></div>
+  </div>
+  <button id="request" type="submit">Request an appointment</button>
+</div>
+
+<form id="booking">
+  <div class="field">
+    <div id="dentist" class="dropdown" role="combobox" tabindex="-1" aria-expanded="false"><input type="text"><span>Select a Dentist</span></div>
+  </div>
+  <div class="field"><input id="patient" type="text"></div>
+  <button id="book" type="submit">Book</button>
+</form>
+
+<script>
+var output = "This tests that a dropdown the page built itself, a combobox element around a hidden text input, is given the error message shown under it, both without a form element and inside one.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+    internals.setAccessibilityFormErrorSettleDelay(0.1);
+
+    var payload = "";
+    accessibilityController.addNotificationListener((element, notification, userInfo) => {
+        if (notification == "AXPossibleFormValidationError")
+            payload = formatFormValidationUserInfo(userInfo);
+    });
+
+    function showError(fieldId, text) {
+        const error = document.createElement("div");
+        error.className = "error";
+        error.textContent = text;
+        document.getElementById(fieldId).closest(".field").append(error);
+    }
+
+    document.getElementById("request").addEventListener("click", () => {
+        showError("name", "Full Name is required");
+        showError("phone", "Phone is required");
+        showError("day", "Select a Day is required");
+        showError("time", "Select a Time is required");
+    });
+
+    document.getElementById("booking").addEventListener("submit", (event) => {
+        event.preventDefault();
+        showError("patient", "Patient name is required");
+        showError("dentist", "Select a Dentist is required");
+    });
+
+    function axElement(id) {
+        return accessibilityController.accessibleElementById(id);
+    }
+
+    setTimeout(async function() {
+        output += expect("axElement('day').stringAttributeValue('AXInvalid')", "'false'");
+
+        axElement("request").press();
+        output += await expectAsync("payload", "'AXFormValidationUnannouncedText: Full Name is required | Phone is required | Select a Day is required | Select a Time is required\\nAXFormValidationErrorFieldCount: 4\\n'");
+        output += expect("axElement('day').stringAttributeValue('AXInvalid')", "'true'");
+        output += expect("errorMessageText(axElement('day'))", "'Select a Day is required'");
+        output += expect("axElement('time').stringAttributeValue('AXInvalid')", "'true'");
+        output += expect("errorMessageText(axElement('time'))", "'Select a Time is required'");
+
+        output += expect("axElement('dentist').stringAttributeValue('AXInvalid')", "'false'");
+        payload = "";
+        axElement("book").press();
+        output += await expectAsync("payload", "'AXFormValidationUnannouncedText: Select a Dentist is required | Patient name is required\\nAXFormValidationErrorFieldCount: 2\\n'");
+        output += expect("axElement('dentist').stringAttributeValue('AXInvalid')", "'true'");
+        output += expect("errorMessageText(axElement('dentist'))", "'Select a Dentist is required'");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

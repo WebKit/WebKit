@@ -1,0 +1,16 @@
+Tests that a selection change in a text field inside a cross-site iframe is posted on the main frame's
+web area, the only place VoiceOver handles it, without site isolation. selected-text-changed-in-iframe.html
+tests the same thing with site isolation, and must get the same results.
+
+PASS: accessibilityController.addNotificationListener(notificationCallback) === true
+Tab into the field: type: SelectionMove direction: Discontiguous focusChange selection: "hello world" element: #inner-field
+Left arrow: type: SelectionMove direction: Previous granularity: Character selection: "" element: #inner-field
+Right arrow: type: SelectionMove direction: Next granularity: Character selection: "" element: #inner-field
+Shift-option-right arrow: type: SelectionExtend direction: Next granularity: Word selection: "ello" element: #inner-field
+Control-E: type: SelectionMove direction: End granularity: Paragraph selection: "" element: #inner-field
+Control-A: type: SelectionMove direction: Beginning granularity: Paragraph selection: "" element: #inner-field
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

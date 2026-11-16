@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/testharness.js"></script>
+<script src="../../../resources/testharnessreport.js"></script>
+</head>
+<body>
+<script>
+function waitForLoad(iframe) {
+    return new Promise(resolve => iframe.addEventListener("load", resolve, { once: true }));
+}
+
+async function loadFrame() {
+    const iframe = document.createElement("iframe");
+    iframe.srcdoc = `<!DOCTYPE html><html><head><title>t</title></head><body><div id="before">before</div><div id="root"><div id="a"></div><p id="b">def</p></div><div id="after">after</div></body></html>`;
+    const loaded = waitForLoad(iframe);
+    document.body.appendChild(iframe);
+    await loaded;
+
+    const doc = iframe.contentDocument;
+    const inner = doc.createElement("iframe");
+    inner.srcdoc = "inner";
+    const innerLoaded = waitForLoad(inner);
+    doc.getElementById("a").appendChild(inner);
+    await innerLoaded;
+
+    return { iframe, inner };
+}
+
+function runTest(method) {
+    promise_test(async t => {
+        const { iframe, inner } = await loadFrame();
+        t.add_cleanup(() => iframe.remove());
+        const doc = iframe.contentDocument;
+        const root = doc.getElementById("root");
+        const a = doc.getElementById("a");
+        const b = doc.getElementById("b");
+
+        const range = doc.createRange();
+        range.setStart(a, 0);
+        range.setEnd(root, 2);
+
+        let fired = false;
+        inner.contentWindow.addEventListener("unload", () => {
+            fired = true;
+            range.setEnd(b.firstChild, 1);
+        });
+
+        range[method]();
+
+        assert_true(fired, "unload fired");
+        assert_not_equals(doc.doctype, null, "doctype");
+        assert_not_equals(doc.head, null, "head");
+        assert_equals(doc.getElementById("before")?.parentNode, doc.body, "#before");
+        assert_equals(doc.getElementById("after")?.parentNode, doc.body, "#after");
+        assert_equals(root.parentNode, doc.body, "#root");
+        assert_equals(a.parentNode, root, "#a");
+        assert_equals(a.firstChild, null, "#a emptied");
+        assert_not_equals(b.parentNode, root, "#b removed");
+    }, `${method}() should not remove nodes outside the common ancestor when an iframe unload handler moves the range end`);
+}
+
+runTest("deleteContents");
+runTest("extractContents");
+</script>
+</body>
+</html>

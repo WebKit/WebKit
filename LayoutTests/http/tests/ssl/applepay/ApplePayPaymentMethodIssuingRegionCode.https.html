@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="/js-test-resources/js-test.js"></script>
+<script src="/js-test-resources/ui-helper.js"></script>
+<script src="/resources/payment-request.js"></script>
+</head>
+<body>
+<script>
+
+description("Test that ApplePayPaymentMethod carries issuingRegionCode when a payment method is selected.");
+
+window.jsTestIsAsync = true;
+
+function validApplePayRequest() {
+    return {
+        countryCode: 'US',
+        currencyCode: 'USD',
+        supportedNetworks: ['visa', 'masterCard'],
+        merchantCapabilities: ['supports3DS'],
+        total: { label: 'Total', amount: '10.00' },
+    };
+}
+
+function validPaymentMethod() {
+    return {
+        supportedMethods: 'https://apple.com/apple-pay',
+        data: {
+            version: 2,
+            merchantIdentifier: '',
+            countryCode: 'US',
+            supportedNetworks: ['visa', 'masterCard'],
+            merchantCapabilities: ['supports3DS'],
+        },
+    };
+}
+
+function validPaymentDetails() {
+    return {
+        total: {
+            label: 'Total',
+            amount: {
+                currency: 'USD',
+                value: '10.00',
+            },
+        },
+    };
+}
+
+function selectWithApplePaySession(selectedPaymentMethod) {
+    return new Promise((resolve) => {
+        activateThen(() => {
+            const session = new ApplePaySession(2, validApplePayRequest());
+            session.onpaymentmethodselected = (event) => {
+                const paymentMethod = event.paymentMethod;
+                session.abort();
+                resolve(paymentMethod);
+            };
+            session.begin();
+            internals.mockPaymentCoordinator.changePaymentMethod(selectedPaymentMethod);
+        });
+    });
+}
+
+function selectWithPaymentRequest(selectedPaymentMethod) {
+    return new Promise((resolve) => {
+        activateThen(() => {
+            const paymentRequest = new PaymentRequest([validPaymentMethod()], validPaymentDetails());
+            paymentRequest.onpaymentmethodchange = (event) => {
+                const methodDetails = event.methodDetails;
+                event.updateWith({});
+                paymentRequest.abort();
+                resolve(methodDetails);
+            };
+            paymentRequest.show().catch(() => { });
+            internals.mockPaymentCoordinator.changePaymentMethod(selectedPaymentMethod);
+        });
+    });
+}
+
+async function runTests() {
+    debug("Testing ApplePaySession's paymentmethodselected event.");
+    paymentMethod = await selectWithApplePaySession({ type: 'credit', network: 'visa', issuingRegionCode: 'GB' });
+    shouldBeEqualToString("paymentMethod.issuingRegionCode", "GB");
+    paymentMethod = await selectWithApplePaySession({ type: 'credit', network: 'visa' });
+    shouldBeFalse("'issuingRegionCode' in paymentMethod");
+    debug("");
+
+    debug("Testing PaymentRequest's paymentmethodchange event.");
+    methodDetails = await selectWithPaymentRequest({ type: 'credit', network: 'visa', issuingRegionCode: 'GB' });
+    shouldBeEqualToString("methodDetails.issuingRegionCode", "GB");
+    methodDetails = await selectWithPaymentRequest({ type: 'credit', network: 'visa' });
+    shouldBeFalse("'issuingRegionCode' in methodDetails");
+    debug("");
+
+    finishJSTest();
+}
+
+runTests();
+</script>
+</body>
+</html>

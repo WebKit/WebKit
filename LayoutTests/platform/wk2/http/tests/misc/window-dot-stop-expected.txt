@@ -1,0 +1,6 @@
+This tests for the successful use of window.stop()
+
+
+http://127.0.0.1:8000/misc/window-dot-stop.html - willSendRequest <NSURLRequest URL http://127.0.0.1:8000/misc/window-dot-stop.html, main document URL http://127.0.0.1:8000/misc/window-dot-stop.html, http method GET> redirectResponse (null)
+http://127.0.0.1:8000/misc/window-dot-stop.html - didReceiveResponse <NSURLResponse http://127.0.0.1:8000/misc/window-dot-stop.html, http status code 200>
+http://127.0.0.1:8000/misc/window-dot-stop.html - didFinishLoading

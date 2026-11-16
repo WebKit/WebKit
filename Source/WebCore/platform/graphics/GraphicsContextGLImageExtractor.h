@@ -1,0 +1,104 @@
+/*
+ * Copyright (C) 2020-2025 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#pragma once
+
+#if ENABLE(WEBGL)
+
+#include "AlphaPremultiplication.h"
+#include "GraphicsContextGL.h"
+#include "PlatformImage.h"
+#include <wtf/MallocSpan.h>
+
+namespace WebCore {
+
+class GraphicsContextGLImageExtractor {
+public:
+    using DataFormat = GraphicsContextGL::DataFormat;
+    using AlphaOp = GraphicsContextGL::AlphaOp;
+
+    // sourceAlphaPremultiplication states the premultiplication of the native image contents:
+    //  - A value means the caller knows the premultiplication, e.g. because the contents were drawn
+    //    to an image buffer. The value is used even if the platform image records a different one,
+    //    as some platform images record it incorrectly.
+    //  - std::nullopt means the contents were decoded from encoded image data with the
+    //    premultiplication the upload requested. Platform images that record the premultiplication
+    //    of their contents are used as the source of truth, as the decoder may not honor the
+    //    request. Platform images that do not record it hold the requested premultiplication.
+    // premultiplyAlpha is the premultiplication the upload needs, and the extracted image alpha op
+    // converts between the two.
+    // destinationFormat is the format of the upload. When it has no alpha component, the alpha of the
+    // image is not uploaded and does not need to be made meaningful.
+    GraphicsContextGLImageExtractor(NativeImage&, std::optional<AlphaPremultiplication> sourceAlphaPremultiplication, bool premultiplyAlpha, GCGLenum destinationFormat);
+
+    // Each platform must provide an implementation of this method to deallocate or release resources
+    // associated with the image if needed.
+    ~GraphicsContextGLImageExtractor();
+
+    bool extractSucceeded() { return m_extractSucceeded; }
+    std::span<const uint8_t> imagePixelData() { return m_imagePixelData; }
+    unsigned imageWidth() { return m_imageWidth; }
+    unsigned imageHeight() { return m_imageHeight; }
+    DataFormat imageSourceFormat() { return m_imageSourceFormat; }
+    AlphaOp imageAlphaOp() { return m_alphaOp; }
+    unsigned imageSourceUnpackAlignment() { return m_imageSourceUnpackAlignment; }
+private:
+    // Each platform must provide an implementation of this method.
+    // Extracts the image and keeps track of its status, such as width, height, Source Alignment, format and AlphaOp etc,
+    // needs to lock the resources or relevant data if needed and returns true upon success
+    bool extractImage(std::optional<AlphaPremultiplication> sourceAlphaPremultiplication, bool premultiplyAlpha);
+
+    // The alpha op that converts contents of sourceAlphaPremultiplication to the premultiplication
+    // the upload needs. Contents without a meaningful alpha channel must use AlphaOp::DoNothing
+    // instead, as the alpha values would not be usable for either conversion.
+    NODELETE static AlphaOp alphaOpForPremultiplication(std::optional<AlphaPremultiplication> sourceAlphaPremultiplication, bool premultiplyAlpha);
+
+#if USE(CG)
+    bool makeAlphaChannelOpaque(size_t sourceBytesPerRow, bool pixelsAreConvertedRGBA8);
+#endif
+
+#if USE(CAIRO)
+    RefPtr<cairo_surface_t> m_imageSurface;
+#elif USE(CG)
+    RetainPtr<CFDataRef> m_pixelData;
+    MallocSpan<uint8_t> m_formalizedRGBA8Data;
+#elif USE(SKIA)
+    sk_sp<SkData> m_pixelData;
+    sk_sp<SkImage> m_skImage;
+#endif
+    const Ref<NativeImage> m_image;
+    const bool m_destinationUsesAlpha;
+    bool m_extractSucceeded;
+    std::span<const uint8_t> m_imagePixelData;
+    unsigned m_imageWidth;
+    unsigned m_imageHeight;
+    DataFormat m_imageSourceFormat;
+    AlphaOp m_alphaOp;
+    unsigned m_imageSourceUnpackAlignment;
+};
+
+}
+
+#endif

@@ -1,0 +1,14 @@
+This tests that the aria-label attribute works on  element.
+
+PASS: titleUIElement1.isEqual(accessibilityController.accessibleElementById('label1')) === true
+PASS: input1.title === 'AXTitle: aria label'
+PASS: titleUIElement2.isEqual(accessibilityController.accessibleElementById('label2')) === true
+PASS: input3.title === 'AXTitle: hidden aria label'
+PASS: input4.title === 'AXTitle: aria labelledby'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+
+

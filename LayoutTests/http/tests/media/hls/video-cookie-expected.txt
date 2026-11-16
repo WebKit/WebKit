@@ -1,0 +1,4 @@
+
+EVENT(play)
+END OF TEST
+

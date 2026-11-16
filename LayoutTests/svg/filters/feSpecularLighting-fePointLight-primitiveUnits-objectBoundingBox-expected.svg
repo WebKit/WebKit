@@ -1,0 +1,4 @@
+<svg width="500px" height="580px" xmlns="http://www.w3.org/2000/svg">
+<circle cx="250" cy="310" r="112" fill="rgb(0, 255, 0)"/>
+<circle cx="250" cy="310" r="112" fill="none" stroke="gray" stroke-width="20"/>
+</svg>

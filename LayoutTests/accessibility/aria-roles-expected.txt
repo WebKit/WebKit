@@ -1,0 +1,43 @@
+Basic test of some aria roles to ensure they match their corresponding html-based roles.
+
+checkbox:
+PASS: ariaRole === realRole
+button:
+PASS: ariaRole === realRole
+heading:
+PASS: ariaRole === realRole
+link:
+PASS: ariaRole === realRole
+radio:
+PASS: ariaRole === realRole
+textbox:
+PASS: ariaRole === realRole
+image:
+PASS: ariaRole === realRole
+list:
+PASS: ariaRole === realRole
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

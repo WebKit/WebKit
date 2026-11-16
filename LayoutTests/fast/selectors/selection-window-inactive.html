@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<style>
+::selection {
+    background-color: blue;
+    color: yellow;
+}
+::selection:window-inactive {
+    background-color: rgba(63, 128, 33, 0.95); /* green; alpha < 1 so that we don't blend the background color with white. */ 
+    color: black;
+}
+</style>
+<span>Any textual selection in this sentence should have a green background when the window is inactive.</span>
+<script>
+var span = document.querySelector("span");
+window.getSelection().setBaseAndExtent(span, 0, span, 1);
+if (window.testRunner)
+    testRunner.setWindowIsKey(false);
+</script>

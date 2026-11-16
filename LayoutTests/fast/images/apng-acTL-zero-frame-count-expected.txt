@@ -1,0 +1,3 @@
+An APNG whose acTL declares zero frames is not an animation, so the default image must still decode as a static PNG rather than being reported as a zero-frame image and dropped.
+
+PASS

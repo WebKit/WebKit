@@ -1,0 +1,6 @@
+
+hover here
+
+PASS :focus-within should be adjusted on ancestors when popover enters/exits top layer.
+PASS :hover should be adjusted on ancestors when popover enters/exits top layer.
+

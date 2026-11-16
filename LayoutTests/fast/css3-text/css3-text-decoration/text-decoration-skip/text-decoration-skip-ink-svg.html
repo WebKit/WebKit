@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+@font-face {
+    font-family: 'Litherum';
+    src: url("./resources/Litherum.svg") format(svg)
+}
+#p {
+    font: 1000px 'Litherum';
+    text-decoration: underline;
+}
+</style>
+</head>
+<body>
+This test draws a giant character with an SVG font and positions the viewport
+in the gap where the underline should be skipping over the character. It should appear
+white.
+<div style="position: absolute; width: 62px; height: 100px; overflow: hidden;">
+<div style="position: absolute; left: -295px; top: -1100px;">
+<div id="p">|</div>
+</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,43 @@
+<html>
+<head>
+<script src="../../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<p>Test for <a href="https://bugs.webkit.org/show_bug.cgi?id=19479">bug 19479</a>:
+Special characters can be inserted in text field having reached maxlength.</p>
+<p id="description"></p>
+<input id="test" maxlength=8>
+<div id="console"></div>
+<script>
+
+    var testInput = document.getElementById("test");
+    testInput.focus();
+
+    if (window.testRunner) {
+        
+        try {
+            var testElement = document.getElementById("test");
+
+            textInputController.setMarkedText("1234567890", 10, 0);
+            textInputController.unmarkText();
+            shouldBe('testElement.value', '"12345678"');
+
+            textInputController.setMarkedText("FAIL", 14, 0);
+            textInputController.unmarkText();
+            shouldBe('testElement.value', '"12345678"');
+
+        } catch (ex) {
+            testFailed("Exception: " + ex.description);
+        }
+    } else {
+        document.write("<p>To test this manually:<ol>");
+        document.write("<li>Type something long using inline input (e.g. Kotoeri Hiragana IM)");
+        document.write("<li>The text should be truncated to 8 characters when confirmed");
+        document.write("<li>Type some more text");
+        document.write("<li>The text should disappear when confirmed");
+    }
+
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

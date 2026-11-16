@@ -1,0 +1,12 @@
+Deleting an unrelated node in a nested document must not drop that document's touch handlers from its parent document.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS internals.touchEventHandlerCount() is 1
+PASS internals.touchEventHandlerCount() is 1
+PASS internals.touchEventHandlerCount() is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

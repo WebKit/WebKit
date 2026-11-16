@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<!--
+This is a regression test for https://bugs.webkit.org/show_bug.cgi?id=133414
+-->
+<head>
+<style>
+#image-shape {
+    float: left;
+    -webkit-shape-outside: linear-gradient(magenta, currentColor); // currentColor prevents gradient from being cached
+    width: 100px;
+    height: 100px;
+}
+</style>
+<div>This test should not crash when run with a tool like ASAN.</div>
+<div>
+  <div id="image-shape"></div>
+  Hello World
+</div>
+<script>
+  if (window.testRunner)
+      testRunner.dumpAsText();
+</script>
+</body>
+</html>

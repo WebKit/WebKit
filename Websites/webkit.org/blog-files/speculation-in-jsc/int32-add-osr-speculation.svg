@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xl="http://www.w3.org/1999/xlink" xmlns:dc="http://purl.org/dc/elements/1.1/" version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="175.5 115.5 347.5 377" width="347.5" height="377">
+  <defs>
+    <font-face font-family="Monaco" font-size="12" units-per-em="1000" underline-position="-37.597656" underline-thickness="75.68359" slope="0" x-height="545.41016" cap-height="757.8125" ascent="1e3" descent="-250" font-weight="400">
+      <font-face-src>
+        <font-face-name name="Monaco"/>
+      </font-face-src>
+    </font-face>
+    <font-face font-family="Helvetica Neue" font-size="13" panose-1="2 0 5 3 0 0 0 9 0 4" units-per-em="1000" underline-position="-100" underline-thickness="50" slope="-923.0769" x-height="517" cap-height="714" ascent="957.0007" descent="-212.99744" font-style="italic" font-weight="400">
+      <font-face-src>
+        <font-face-name name="HelveticaNeue-Italic"/>
+      </font-face-src>
+    </font-face>
+    <marker orient="auto" overflow="visible" markerUnits="strokeWidth" id="FilledArrow_Marker" stroke-linejoin="miter" stroke-miterlimit="10" viewBox="-1 -4 10 8" markerWidth="10" markerHeight="8" color="black">
+      <g>
+        <path d="M 8 0 L 0 -3 L 0 3 Z" fill="currentColor" stroke="currentColor" stroke-width="1"/>
+      </g>
+    </marker>
+    <marker orient="auto" overflow="visible" markerUnits="strokeWidth" id="FilledArrow_Marker_2" stroke-linejoin="miter" stroke-miterlimit="10" viewBox="-1 -4 10 8" markerWidth="10" markerHeight="8" color="#a5a5a5">
+      <g>
+        <path d="M 8 0 L 0 -3 L 0 3 Z" fill="currentColor" stroke="currentColor" stroke-width="1"/>
+      </g>
+    </marker>
+  </defs>
+  <metadata> Produced by OmniGraffle 7.14.1 
+    <dc:date>2020-03-31 04:47:15 +0000</dc:date>
+  </metadata>
+  <g id="Canvas_1" stroke-opacity="1" stroke="none" fill-opacity="1" stroke-dasharray="none" fill="none">
+    <title>Canvas 1</title>
+    <rect fill="white" x="175.5" y="115.5" width="347.5" height="377"/>
+    <g id="Canvas_1: Layer 1">
+      <title>Layer 1</title>
+      <g id="Graphic_2">
+        <rect x="176" y="116" width="146.5" height="36" fill="white"/>
+        <rect x="176" y="116" width="146.5" height="36" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(181 125.99902)" fill="black">
+          <tspan font-family="Monaco" font-size="12" font-weight="400" fill="black" x="3.439453" y="12">Branch(isInt32(x))</tspan>
+        </text>
+      </g>
+      <g id="Graphic_3">
+        <rect x="176" y="184" width="146.5" height="36" fill="white"/>
+        <rect x="176" y="184" width="146.5" height="36" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(181 194.318)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="13" font-style="italic" font-weight="400" fill="black" x="12.1355" y="12">… fast int32 add …</tspan>
+        </text>
+      </g>
+      <g id="Graphic_4">
+        <rect x="376" y="116" width="146.5" height="36" fill="white"/>
+        <rect x="376" y="116" width="146.5" height="36" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(381 125.99902)" fill="black">
+          <tspan font-family="Monaco" font-size="12" font-weight="400" fill="black" x="39.445312" y="12">OSR exit</tspan>
+        </text>
+      </g>
+      <g id="Graphic_5">
+        <rect x="176" y="252" width="146.5" height="36" fill="white"/>
+        <rect x="176" y="252" width="146.5" height="36" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(181 262.318)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="13" font-style="italic" font-weight="400" fill="black" x="34.06" y="12">… things …</tspan>
+        </text>
+      </g>
+      <g id="Graphic_10">
+        <rect x="176" y="320" width="146.5" height="36" fill="white"/>
+        <rect x="176" y="320" width="146.5" height="36" stroke="#a5a5a5" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(181 329.99902)" fill="#666">
+          <tspan font-family="Monaco" font-size="12" font-weight="400" fill="#666" x="3.439453" y="12">Branch(isInt32(x))</tspan>
+        </text>
+      </g>
+      <g id="Graphic_9">
+        <rect x="176" y="388" width="146.5" height="36" fill="white"/>
+        <rect x="176" y="388" width="146.5" height="36" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(181 398.318)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="13" font-style="italic" font-weight="400" fill="black" x="12.1355" y="12">… fast int32 add …</tspan>
+        </text>
+      </g>
+      <g id="Graphic_8">
+        <rect x="376" y="320" width="146.5" height="36" fill="white"/>
+        <rect x="376" y="320" width="146.5" height="36" stroke="#a5a5a5" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(381 329.99902)" fill="#666">
+          <tspan font-family="Monaco" font-size="12" font-weight="400" fill="#666" x="39.445312" y="12">OSR exit</tspan>
+        </text>
+      </g>
+      <g id="Graphic_7">
+        <rect x="176" y="456" width="146.5" height="36" fill="white"/>
+        <rect x="176" y="456" width="146.5" height="36" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(181 466.318)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="13" font-style="italic" font-weight="400" fill="black" x="17.446" y="12">… more things …</tspan>
+        </text>
+      </g>
+      <g id="Line_12">
+        <line x1="249.25" y1="152" x2="249.25" y2="174.1" marker-end="url(#FilledArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Line_13">
+        <line x1="322.5" y1="134" x2="366.1" y2="134" marker-end="url(#FilledArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Line_14">
+        <line x1="249.25" y1="220" x2="249.25" y2="242.1" marker-end="url(#FilledArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Line_16">
+        <line x1="249.25" y1="288" x2="249.25" y2="310.1" marker-end="url(#FilledArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Line_17">
+        <line x1="249.25" y1="356" x2="249.25" y2="378.1" marker-end="url(#FilledArrow_Marker_2)" stroke="#a5a5a5" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Line_18">
+        <line x1="322.5" y1="338" x2="366.1" y2="338" marker-end="url(#FilledArrow_Marker_2)" stroke="#a5a5a5" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Line_19">
+        <line x1="249.25" y1="424" x2="249.25" y2="446.1" marker-end="url(#FilledArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+    </g>
+  </g>
+</svg>

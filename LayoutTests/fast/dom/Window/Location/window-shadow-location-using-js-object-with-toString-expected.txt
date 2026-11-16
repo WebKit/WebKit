@@ -1,0 +1,5 @@
+PASS result is 'pass.html'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>This tests that we clean up the inline content properly after introducing floating.</title> 
+<script>
+  if (window.testRunner)
+    testRunner.dumpAsText();
+</script>
+</head>
+<body>
+<table><td></table>
+Pass if no crash or assert in debug build.
+<script>
+var head = document.getElementsByTagName("head")[0];
+style = document.createElement("style");
+style.innerHTML="* { \n\
+-webkit-animation-name: name9; \n\
+-webkit-animation-duration: 10s; \n\
+} \n\
+@-webkit-keyframes name9 { \n\
+  from { \n\
+  } \n\
+  to { \n\
+    -webkit-column-width: auto; \n\
+";
+head.appendChild(style);
+document.execCommand("SelectAll");
+style.innerHTML="* {float:left;}";
+</script>
+</body>
+</html>

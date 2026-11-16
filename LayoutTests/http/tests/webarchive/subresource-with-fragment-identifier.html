@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>The web archive for this page should include the image as a subresource, even
+though its URL has a fragment identifier.</p>
+<img src="/resources/square128.png#fragment">
+<script>
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    onload = () => {
+        setTimeout(() => {
+            testRunner.dumpDOMAsWebArchive();
+            testRunner.notifyDone();
+        }, 0);
+    };
+}
+</script>
+</body>
+</html>

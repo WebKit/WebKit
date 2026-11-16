@@ -1,0 +1,4 @@
+
+
+FAIL IntersectionObserver observes visibility changes from z-index assert_equals: Initial observation should be visible expected (boolean) true but got (undefined) undefined
+

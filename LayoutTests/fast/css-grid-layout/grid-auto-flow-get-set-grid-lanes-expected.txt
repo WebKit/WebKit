@@ -1,0 +1,53 @@
+Test that setting and getting grid-auto-flow works as expected on grid-lanes containers
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Test getting grid-auto-flow set through CSS when grid-templates-* is none.
+PASS window.getComputedStyle(noneGridAutoFlowInitial, '').getPropertyValue('grid-auto-flow') is 'row'
+PASS window.getComputedStyle(noneGridAutoFlowColumnSparse, '').getPropertyValue('grid-auto-flow') is 'column'
+PASS window.getComputedStyle(noneGridAutoFlowRowSparse, '').getPropertyValue('grid-auto-flow') is 'row'
+PASS window.getComputedStyle(noneGridAutoFlowDense, '').getPropertyValue('grid-auto-flow') is 'dense'
+PASS window.getComputedStyle(noneGridAutoFlowColumnDense, '').getPropertyValue('grid-auto-flow') is 'column dense'
+PASS window.getComputedStyle(noneGridAutoFlowRowDense, '').getPropertyValue('grid-auto-flow') is 'dense'
+PASS window.getComputedStyle(noneGridAutoFlowDenseColumn, '').getPropertyValue('grid-auto-flow') is 'column dense'
+PASS window.getComputedStyle(noneGridAutoFlowDenseRow, '').getPropertyValue('grid-auto-flow') is 'dense'
+PASS window.getComputedStyle(noneGridAutoFlowInherit, '').getPropertyValue('grid-auto-flow') is 'column'
+PASS window.getComputedStyle(noneGridAutoFlowNoInherit, '').getPropertyValue('grid-auto-flow') is 'row'
+Test getting grid-auto-flow set through CSS when only grid-template-columns is set.
+PASS window.getComputedStyle(columnsOnlyGridAutoFlowInitial, '').getPropertyValue('grid-auto-flow') is 'row'
+PASS window.getComputedStyle(columnsOnlyGridAutoFlowColumnSparse, '').getPropertyValue('grid-auto-flow') is 'column'
+PASS window.getComputedStyle(columnsOnlyGridAutoFlowRowSparse, '').getPropertyValue('grid-auto-flow') is 'row'
+PASS window.getComputedStyle(columnsOnlyGridAutoFlowDense, '').getPropertyValue('grid-auto-flow') is 'dense'
+PASS window.getComputedStyle(columnsOnlyGridAutoFlowColumnDense, '').getPropertyValue('grid-auto-flow') is 'column dense'
+PASS window.getComputedStyle(columnsOnlyGridAutoFlowRowDense, '').getPropertyValue('grid-auto-flow') is 'dense'
+PASS window.getComputedStyle(columnsOnlyGridAutoFlowDenseColumn, '').getPropertyValue('grid-auto-flow') is 'column dense'
+PASS window.getComputedStyle(columnsOnlyGridAutoFlowDenseRow, '').getPropertyValue('grid-auto-flow') is 'dense'
+PASS window.getComputedStyle(columnsOnlyGridAutoFlowInherit, '').getPropertyValue('grid-auto-flow') is 'column'
+PASS window.getComputedStyle(columnsOnlyGridAutoFlowNoInherit, '').getPropertyValue('grid-auto-flow') is 'row'
+Test getting grid-auto-flow set through CSS when only grid-template-rows is set.
+PASS window.getComputedStyle(rowsOnlyGridAutoFlowInitial, '').getPropertyValue('grid-auto-flow') is 'column'
+PASS window.getComputedStyle(rowsOnlyGridAutoFlowColumnSparse, '').getPropertyValue('grid-auto-flow') is 'column'
+PASS window.getComputedStyle(rowsOnlyGridAutoFlowRowSparse, '').getPropertyValue('grid-auto-flow') is 'row'
+PASS window.getComputedStyle(rowsOnlyGridAutoFlowDense, '').getPropertyValue('grid-auto-flow') is 'column dense'
+PASS window.getComputedStyle(rowsOnlyGridAutoFlowColumnDense, '').getPropertyValue('grid-auto-flow') is 'column dense'
+PASS window.getComputedStyle(rowsOnlyGridAutoFlowRowDense, '').getPropertyValue('grid-auto-flow') is 'row dense'
+PASS window.getComputedStyle(rowsOnlyGridAutoFlowDenseColumn, '').getPropertyValue('grid-auto-flow') is 'column dense'
+PASS window.getComputedStyle(rowsOnlyGridAutoFlowDenseRow, '').getPropertyValue('grid-auto-flow') is 'row dense'
+PASS window.getComputedStyle(rowsOnlyGridAutoFlowInherit, '').getPropertyValue('grid-auto-flow') is 'column'
+PASS window.getComputedStyle(rowsOnlyGridAutoFlowNoInherit, '').getPropertyValue('grid-auto-flow') is 'column'
+Test getting grid-auto-flow set through CSS when both grid-template-rows and grid-template-columns are set.
+PASS window.getComputedStyle(bothGridAutoFlowInitial, '').getPropertyValue('grid-auto-flow') is 'row'
+PASS window.getComputedStyle(bothGridAutoFlowColumnSparse, '').getPropertyValue('grid-auto-flow') is 'column'
+PASS window.getComputedStyle(bothGridAutoFlowRowSparse, '').getPropertyValue('grid-auto-flow') is 'row'
+PASS window.getComputedStyle(bothGridAutoFlowDense, '').getPropertyValue('grid-auto-flow') is 'dense'
+PASS window.getComputedStyle(bothGridAutoFlowColumnDense, '').getPropertyValue('grid-auto-flow') is 'column dense'
+PASS window.getComputedStyle(bothGridAutoFlowRowDense, '').getPropertyValue('grid-auto-flow') is 'dense'
+PASS window.getComputedStyle(bothGridAutoFlowDenseColumn, '').getPropertyValue('grid-auto-flow') is 'column dense'
+PASS window.getComputedStyle(bothGridAutoFlowDenseRow, '').getPropertyValue('grid-auto-flow') is 'dense'
+PASS window.getComputedStyle(bothGridAutoFlowInherit, '').getPropertyValue('grid-auto-flow') is 'column'
+PASS window.getComputedStyle(bothGridAutoFlowNoInherit, '').getPropertyValue('grid-auto-flow') is 'row'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

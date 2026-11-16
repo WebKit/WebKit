@@ -1,0 +1,57 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+<script src="resources/common.js"></script>
+<script>
+description('Tests that changing input type in a cancel button handler works properly.');
+
+window.jsTestIsAsync = true;
+
+var inputElement;
+var workProduct = [];
+
+function finish() {
+    testPassed("Search event was not triggered.");
+    finishJSTest();
+}
+
+function handleSearch(e) {
+    testFailed("A search event was triggered.");
+    finishJSTest();
+}
+
+function changeType(e) {
+    inputElement["type"] = "image"
+    setTimeout(function() {
+        finish();
+    }, 0);
+}
+
+async function clickCancel() {
+    var cancelButtonPosition = searchCancelButtonPosition(inputElement);
+
+    await eventSender.asyncMouseMoveTo(cancelButtonPosition.x, cancelButtonPosition.y);
+    await eventSender.asyncMouseDown();
+    await eventSender.asyncMouseUp();
+}
+
+function runTest() {
+    if (!window.testRunner) {
+        testRunner.dumpAsText(true);
+    }
+
+    inputElement = document.getElementById("target");
+
+    inputElement.addEventListener("input", changeType);
+
+    setTimeout(async function() {
+        await clickCancel();
+    }, 0);
+}
+</script>
+</head>
+<body onload="runTest()">
+    <input id="target" type="search" onSearch="handleSearch();" value="Click the cancel button."></input>
+</body>
+</html>

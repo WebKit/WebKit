@@ -1,0 +1,2 @@
+PASS: Reparenting nodes outside of table body does not trigger crash.
+

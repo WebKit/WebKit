@@ -1,0 +1,3 @@
+
+PASS HAVE_FUTURE_DATA gated by 'text tracks are ready'
+

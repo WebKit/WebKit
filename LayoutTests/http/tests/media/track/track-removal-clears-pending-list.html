@@ -1,0 +1,105 @@
+<!doctype html>
+<html>
+<head>
+    <title>Removing a loading track from its media element clears the pending-list entry</title>
+    <script src="/resources/testharness.js"></script>
+    <script src="/resources/testharnessreport.js"></script>
+</head>
+<body>
+<div id="log"></div>
+<script>
+// HTML Living Standard §4.8.13.7 "Text tracks", text-track-model:
+//   https://html.spec.whatwg.org/multipage/media.html#text-track-model
+//
+// "Whenever a track element's parent node changes, the user agent must
+//  remove its corresponding text track from any list of pending text tracks
+//  that the text track is in."
+//
+// Combined with §4.8.13.9 "media resource with text tracks" -- a media
+// element cannot reach HAVE_FUTURE_DATA while it has any pending text
+// tracks. So the observable signal: if a video element's readyState is
+// gated at HAVE_CURRENT_DATA because of a still-loading <track>, removing
+// that <track> from the video should release the gate and let the video
+// advance to HAVE_FUTURE_DATA.
+
+const stallEndpoint = "http://127.0.0.1:8000/resources/load-and-stall.py";
+const vttPath = "../../../media/track/captions-webvtt/captions-multiline-lf.vtt";
+// Stall for 3 seconds after byte 49. Long enough that the small mp4
+// will buffer (reaching HAVE_CURRENT_DATA) and the test can remove the
+// <track> well before the stall completes.
+const slowVttSrc = `${stallEndpoint}?name=${encodeURIComponent(vttPath)}&mimeType=text%2Fvtt&stallAt=49&stallFor=3`;
+const mediaSrc = "/media/resources/test-25fps.mp4";
+
+promise_test(async t => {
+    const video = document.createElement("video");
+    video.muted = true;
+    video.preload = "auto";
+    document.body.appendChild(video);
+    t.add_cleanup(() => video.remove());
+
+    const track = document.createElement("track");
+    track.kind = "subtitles";
+    track.srclang = "en";
+    track.src = slowVttSrc;
+    video.appendChild(track);
+    track.track.mode = "hidden";
+
+    // Kick off media load.
+    video.src = mediaSrc;
+
+    // Wait for the video to have media data buffered; it should stall
+    // at HAVE_CURRENT_DATA because the track is still loading.
+    await new Promise((resolve, reject) => {
+        video.addEventListener("loadeddata", resolve, { once: true });
+        video.addEventListener("error",
+            () => reject(new Error("video failed to load")), { once: true });
+        t.step_timeout(
+            () => reject(new Error("video did not reach HAVE_CURRENT_DATA in 2s")),
+            2000);
+    });
+
+    // Confirm the track is still loading -- if not, the test isn't
+    // actually exercising the parent-change pending-list clearing.
+    assert_equals(track.readyState, track.LOADING,
+        "track is still LOADING (the gating window is being exercised)");
+    assert_less_than_equal(video.readyState, video.HAVE_CURRENT_DATA,
+        "video.readyState is gated at HAVE_CURRENT_DATA while track is LOADING");
+
+    // Now remove the <track> from the video. Per behavior 48, this must
+    // clear the corresponding text track from the media element's list
+    // of pending text tracks. The video should be free to advance.
+    video.removeChild(track);
+
+    // Wait for HAVE_FUTURE_DATA. If the parent-change didn't clear the
+    // pending-list entry, the video would stay gated until the track's
+    // 3-second stall expires; we time out at 2s to fail loudly in that
+    // case rather than silently waiting for the stall.
+    //
+    // Poll readyState directly (in addition to listening for canplay /
+    // progress) so that a future regression where readyState advances
+    // but the corresponding event isn't dispatched still resolves this
+    // promise — we want the failure mode to be unambiguous.
+    await new Promise((resolve, reject) => {
+        const check = () => {
+            if (video.readyState >= video.HAVE_FUTURE_DATA)
+                resolve();
+        };
+        video.addEventListener("canplay", check);
+        video.addEventListener("progress", check);
+        const pollId = setInterval(check, 100);
+        t.add_cleanup(() => clearInterval(pollId));
+        check();
+        t.step_timeout(
+            () => reject(new Error(
+                "video did not advance past HAVE_CURRENT_DATA within 2s of " +
+                "track removal -- pending-list entry was not cleared")),
+            2000);
+    });
+
+    assert_greater_than_equal(video.readyState, video.HAVE_FUTURE_DATA,
+        "video advanced to HAVE_FUTURE_DATA after track removal " +
+        "(parent-change cleared the pending-list entry)");
+}, "removing a loading <track> from its media element clears the pending-list entry");
+</script>
+</body>
+</html>

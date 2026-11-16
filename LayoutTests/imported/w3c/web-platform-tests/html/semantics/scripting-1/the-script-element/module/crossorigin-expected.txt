@@ -1,0 +1,13 @@
+html-script-module-crossOrigin
+
+
+
+PASS Root module, Error in CORS-same-origin script
+PASS Root module, Blocked script download, missing CORS ACAO header
+PASS Root module, Blocked script download, crossorigin attribute with missing CORS ACAO header
+PASS Root module, Blocked script download, mismatched CORS ACAO header
+PASS Imported module, Error in CORS-same-origin script
+PASS Imported module, Blocked script download, missing CORS ACAO header
+PASS Imported module, Blocked script download, crossorigin attribute with missing CORS ACAO header
+PASS Imported module, Blocked script download, mismatched CORS ACAO header
+

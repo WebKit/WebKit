@@ -1,0 +1,12 @@
+Test exporting a P-384 ECDH private key with PKCS8 format.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Generating a key pair...
+Exporting the public key...
+PASS privateKey.byteLength is 185
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

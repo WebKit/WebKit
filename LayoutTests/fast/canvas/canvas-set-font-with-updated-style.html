@@ -1,0 +1,54 @@
+<!DOCTYPE HTML>
+<html>
+<style>
+canvas {
+    border: 1px solid black;
+}
+.pass {
+    color: green;
+    font-weight: bold;
+}
+
+.fail {
+    color: red;
+    font-weight: bold;
+}
+</style>
+<body onload="runTest();">
+<div>
+<span>Tests that setting font of Canvas 2d context always uses up-to-date style: <span id="result"></span></span><br>
+<canvas id="expected"></canvas>
+<canvas id="actual"></canvas>
+</div>
+<script type="text/javascript">
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+function drawCanvasText(id, text, forceStyleUpdate)
+{
+    var canvasElement = document.getElementById(id);
+    var context = canvasElement.getContext('2d');
+    context.font = '20px Arial';
+    context.fillText(id, 0, 20);
+    canvasElement.offsetTop;
+    canvasElement.style.fontSize = '64px';
+
+    if (forceStyleUpdate)
+        canvasElement.offsetTop;
+    context.font = '1em Calibri';
+    context.fillText(text, 0, 100);
+    return context.font;
+}
+
+function runTest()
+{
+    var expectedFontSize = drawCanvasText('expected', 'Some Text', true);
+    var actualFontSize = drawCanvasText('actual', 'Some Text');
+    var resultElement = document.getElementById('result');
+    var result = expectedFontSize === actualFontSize ? 'PASS' : 'FAIL';
+    resultElement.textContent = result;
+    resultElement.className = (result === 'PASS') ? 'pass' : 'fail';
+}
+</script>
+</body>
+</html>

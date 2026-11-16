@@ -1,0 +1,80 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/ui-helper.js"></script>
+<style>
+body, html {
+    font-family: system-ui;
+    font-size: 16px;
+}
+
+.container {
+    width: 640px;
+    height: 358px;
+    background-color: grey;
+    overflow: scroll;
+}
+
+.content {
+    width: 640px;
+    height: 374px;
+    background-color: blue;
+}
+
+.content2 {
+    width: 251px;
+    height: 376px;
+    background-color: yellow;
+}
+.focusElement {
+    width: 261px;
+    height: 40px;
+    background-color: red;
+}
+.settingsContainer {
+    width: 261px;
+    height: 234px;
+    background-color: green;
+    overflow: hidden;
+    top: 104px;
+    left: 379px;
+}
+
+.settings {
+    width: 261px;
+    height: 254px;
+    overflow: scroll;
+}
+
+</style>
+<script>
+jsTestIsAsync = true;
+
+addEventListener("load", async () => {
+    description("Verifies that focusing element should not scroll the top level container");
+    const settings = document.querySelector(".settings");
+    settings.addEventListener("scroll", (event) => {
+        container = document.querySelector(".container");
+        shouldBeZero('container.scrollTop');
+        finishJSTest();
+    });
+
+    const focusElement = document.querySelector(".focusElement");
+    focusElement.focus();
+});
+</script>
+</head>
+<body>
+    <div class="container">
+        <div class="settingsContainer">
+            <div class="settings">
+                <div class="content2"></div>
+                <div class="focusElement" tabindex="0"></div>
+            </div>
+        </div>
+        <div class="content"></div>    
+    </div>
+</body>
+</html>

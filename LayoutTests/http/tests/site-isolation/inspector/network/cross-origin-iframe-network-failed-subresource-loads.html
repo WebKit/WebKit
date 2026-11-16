@@ -1,0 +1,59 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="../debugger/resources/site-isolation-debugger-test-utilities.js"></script>
+<script src="resources/frame-load-rows-test-utilities.js"></script>
+<script>
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Network.CrossOriginIFrameFailedSubresourceLoads");
+
+    async function expectFailedLoad({trigger, extension, type, label}) {
+        let frameTarget = await waitForFrameTargetForURLContaining("iframe-with-failed-subresources.html", awaitLaunchTimeout);
+        InspectorTest.assert(frameTarget instanceof WI.FrameTarget, "Cross-origin iframe frame target should exist.");
+        await waitForExpressionInTarget(frameTarget, `typeof ${trigger} === "function"`);
+
+        // Unique per run, so repeated runs in one process never share a request.
+        let token = String(Math.random()).slice(2);
+        let url = `http://localhost:54321/failed-${label.toLowerCase()}-${token}.${extension}`;
+        let recorder = new FrameLoadRowRecorder;
+
+        await frameTarget.RuntimeAgent.evaluate.invoke({expression: `${trigger}("${token}")`, objectGroup: "test"});
+
+        let resource = await pollUntil(() => recorder.rowsForURL(url)[0]);
+        InspectorTest.expectThat(!!resource, `Failed ${label} should be added.`);
+        if (resource) {
+            InspectorTest.expectEqual(resource.type, type, `Failed ${label} should have the ${type} type.`);
+            InspectorTest.expectEqual(resource.parentFrame?.parentFrame, WI.networkManager.mainFrame, `Failed ${label} should belong to the iframe's frame.`);
+            InspectorTest.expectEqual(await awaitResourceSettled(resource), "failed", `Failed ${label} should fail instead of staying pending.`);
+            InspectorTest.expectFalse(resource.canceled, `Failed ${label} should not be canceled.`);
+            InspectorTest.expectThat(!!resource.failureReasonText, `Failed ${label} should have a failure reason.`);
+            InspectorTest.expectEqual(recorder.rowsForURL(url).length, 1, `Failed ${label} should be listed once.`);
+        }
+
+        recorder.stop();
+    }
+
+    suite.addTestCase({
+        name: "SiteIsolation.Network.CrossOriginIFrame.FailedImageLoad",
+        description: "An image that fails to load in a cross-origin iframe should fire LoadingDidFail.",
+        timeout: 30000,
+        async test() {
+            await expectFailedLoad({trigger: "triggerFailedImage", extension: "png", type: WI.Resource.Type.Image, label: "Image"});
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Network.CrossOriginIFrame.FailedScriptLoad",
+        description: "A script that fails to load in a cross-origin iframe should fire LoadingDidFail.",
+        timeout: 30000,
+        async test() {
+            await expectFailedLoad({trigger: "triggerFailedScript", extension: "js", type: WI.Resource.Type.Script, label: "Script"});
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+<body onload="runTest()">
+<p>Tests that failed image and script loads in a cross-origin iframe fail in the Network model instead of staying pending, under Site Isolation.</p>
+<iframe src="http://localhost:8000/site-isolation/inspector/network/resources/iframe-with-failed-subresources.html"></iframe>
+</body>

@@ -1,0 +1,13 @@
+# DEPS file for unit tests.
+
+vars = {
+  'chromium_git': 'https://chromium.googlesource.com',
+
+  # This is updated compared to the DEPS.chromium.old file.
+  'buildtools_revision': '55ad626b08ef971fd82a62b7abb325359542952b',
+}
+
+deps = {
+  'src/buildtools':
+    Var('chromium_git') + '/chromium/buildtools.git' + '@' +  Var('buildtools_revision'),
+}

@@ -1,0 +1,4 @@
+
+Harness Error (FAIL), message = Error: assert_implements: requestStorageAccessFor is not supported. undefined
+
+

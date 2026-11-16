@@ -1,0 +1,3 @@
+
+PASS isSessionSupported resolves to true when immersive options supported
+

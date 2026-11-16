@@ -1,0 +1,51 @@
+<!DOCTYPE html><!-- webkit-test-runner [ LayerBasedSVGEngineEnabled=true ] -->
+<html>
+  <head>
+    <style>
+    .rect1 {
+      fill: blue;
+    }
+
+    .rect2 {
+      fill: green;
+    }
+
+    svg {
+      display: block;
+      overflow: hidden;
+    }
+
+    .show-overflow {
+      overflow: visible;
+    }
+
+    .scaled {
+      transform: scale(2);
+      transform-origin: 0 0;
+    }
+    </style>
+  </head>
+  <body>
+    <h1>Enforce non-integer SVG location</h1>
+    <svg width="50" height="50" class="show-overflow">
+      <rect x="0" y="0" width="50" height="50" class="rect1"/>
+    </svg>
+    <svg width="50" height="50" class="show-overflow">
+      <rect x="0" y="0" width="50" height="50" class="rect2"/>
+    </svg>
+    <h1>Effect of overflow: hidden</h1>
+    <svg width="50" height="50">
+      <rect x="0" y="0" width="50" height="50" class="rect1"/>
+    </svg>
+    <svg width="50" height="50">
+      <rect x="0" y="0" width="50" height="50" class="rect2"/>
+    </svg>
+    <h1>With transformation</h1>
+    <svg width="50" height="50" class="show-overflow">
+      <rect x="0" y="0" width="50" height="50" class="rect1"/>
+    </svg>
+    <svg width="50" height="50" class="show-overflow">
+      <rect x="0" y="0" width="50" height="50" class="rect2"/>
+    </svg>
+  </body>
+</html>

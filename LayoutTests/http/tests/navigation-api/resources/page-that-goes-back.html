@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="/js-test-resources/js-test.js"></script>
+    </head>
+<body>
+    <script>
+        window.addEventListener('load', function() {
+            debug('page-that-goes-back loaded, going back using history.back()');
+            setTimeout(() => {
+                history.back();
+            }, 0);
+        });
+    </script>
+</body>
+</html>

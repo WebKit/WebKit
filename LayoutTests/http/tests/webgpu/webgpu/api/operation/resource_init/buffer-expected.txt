@@ -1,0 +1,25 @@
+
+PASS :partial_write_buffer:
+PASS :map_whole_buffer:mapMode=1
+PASS :map_whole_buffer:mapMode=2
+PASS :map_partial_buffer:mapMode=1
+PASS :map_partial_buffer:mapMode=2
+PASS :mapped_at_creation_whole_buffer:bufferUsage=9
+PASS :mapped_at_creation_whole_buffer:bufferUsage=6
+PASS :mapped_at_creation_whole_buffer:bufferUsage=4
+PASS :mapped_at_creation_partial_buffer:bufferUsage=9
+PASS :mapped_at_creation_partial_buffer:bufferUsage=6
+PASS :mapped_at_creation_partial_buffer:bufferUsage=4
+PASS :copy_buffer_to_buffer_copy_source:
+PASS :copy_buffer_to_texture:
+PASS :resolve_query_set_to_partial_buffer:
+PASS :copy_texture_to_partial_buffer:
+PASS :uniform_buffer:
+PASS :readonly_storage_buffer:
+PASS :storage_buffer:
+PASS :vertex_buffer:
+PASS :index_buffer:
+PASS :indirect_buffer_for_draw_indirect:test_indexed_draw=true
+PASS :indirect_buffer_for_draw_indirect:test_indexed_draw=false
+PASS :indirect_buffer_for_dispatch_indirect:
+

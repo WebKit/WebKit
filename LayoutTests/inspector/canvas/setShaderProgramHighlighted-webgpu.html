@@ -1,0 +1,77 @@
+<!-- webkit-test-runner [ WebGPUEnabled=true ] -->
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="resources/shaderProgram-utilities-webgpu.js"></script>
+<script>
+async function load() {
+    await initializeWebGPU();
+    runTest();
+}
+
+function test() {
+    let suite = InspectorTest.createAsyncSuite("Canvas.setShaderProgramHighlighted.WebGPU");
+    let canvas = InspectorTest.WebGPU.canvas();
+    InspectorTest.assert(canvas, "There should be a WebGPU Canvas.");
+    let renderProgram = InspectorTest.WebGPU.shaderProgramForType(canvas, WI.ShaderProgram.ProgramType.Render);
+    InspectorTest.assert(renderProgram, "There should be a render ShaderProgram.");
+
+    async function renderContent() {
+        const eventName = "WebGPUCanvasSnapshot";
+        let snapshotPromise = InspectorTest.awaitEvent(eventName);
+        InspectorTest.evaluateInPage(`void renderWithPipeline("${eventName}")`);
+        let event = await snapshotPromise;
+        return event.data.content;
+    }
+
+    suite.addTestCase({
+        name: "Canvas.setShaderProgramHighlighted.WebGPU.RenderPipeline",
+        description: "Check that highlighting a render pipeline changes direct render-pass output and unhighlighting it restores rendering.",
+        async test() {
+            InspectorTest.expectTrue(renderProgram.supportsHighlighting, "WebGPU render ShaderProgram should support highlighting.");
+
+            let originalContent = await renderContent();
+            await renderProgram.target.CanvasAgent.setShaderProgramHighlighted(renderProgram.identifier, true);
+            let highlightedContent = await renderContent();
+            InspectorTest.expectNotEqual(highlightedContent, originalContent, "Highlighting the render pipeline should change page rendering.");
+
+            await renderProgram.target.CanvasAgent.setShaderProgramHighlighted(renderProgram.identifier, false);
+            let restoredContent = await renderContent();
+            InspectorTest.expectEqual(restoredContent, originalContent, "Unhighlighting the render pipeline should restore page rendering.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "Canvas.setShaderProgramHighlighted.WebGPU.ComputePipeline",
+        description: "Check that compute pipelines do not support highlighting.",
+        async test() {
+            let computeProgram = InspectorTest.WebGPU.shaderProgramForType(canvas, WI.ShaderProgram.ProgramType.Compute);
+            InspectorTest.expectThat(computeProgram instanceof WI.ShaderProgram, "There should be a compute ShaderProgram.");
+            InspectorTest.expectFalse(computeProgram.supportsHighlighting, "Compute ShaderProgram should not support highlighting.");
+
+            let error = await computeProgram.target.CanvasAgent.setShaderProgramHighlighted(computeProgram.identifier, true)
+                .then(() => null, (error) => error);
+            InspectorTest.expectTrue(!!error, "Highlighting a compute pipeline should return an error.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "Canvas.setShaderProgramHighlighted.WebGPU.InvalidProgramIdentifier",
+        description: "Check that an invalid program identifier returns an error.",
+        async test() {
+            let error = await renderProgram.target.CanvasAgent.setShaderProgramHighlighted("INVALID_PROGRAM_ID", true)
+                .then(() => null, (error) => error);
+            InspectorTest.expectTrue(!!error, "Highlighting an invalid program identifier should return an error.");
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="load()">
+    <p>Tests Canvas.setShaderProgramHighlighted for a WebGPU render pipeline.</p>
+    <canvas id="webgpu-canvas" width="4" height="4"></canvas>
+</body>
+</html>

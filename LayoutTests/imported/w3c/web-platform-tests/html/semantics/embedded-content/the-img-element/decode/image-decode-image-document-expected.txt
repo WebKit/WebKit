@@ -1,0 +1,4 @@
+
+
+PASS HTMLImageElement.prototype.decode(), image document tests. Decode from iframe with image document, succeeds (img not loaded)
+

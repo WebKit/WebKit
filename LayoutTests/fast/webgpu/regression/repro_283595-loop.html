@@ -1,0 +1,100 @@
+<!-- webkit-test-runner [ enableMetalShaderValidation=true ] -->
+<script>
+      globalThis.testRunner?.waitUntilDone();
+      const log = console.debug;
+
+      onload = async () => {
+        let adapter = await navigator.gpu.requestAdapter({});
+        let device = await adapter.requestDevice({});
+        device.pushErrorScope('validation');
+        let code = `
+    @group(0) @binding(0) var<storage, read_write> buf: array<u32>;
+    const moreThanArrayLength = 65;
+
+    @vertex
+    fn v() -> @builtin(position) vec4f {
+        
+      return vec4();
+    }
+
+    @fragment
+    fn f() -> @location(0) vec4f {
+            let maximumValidIndex = arrayLength(&buf) - 1;
+            let sameAsBoundedIndex = select(moreThanArrayLength, maximumValidIndex, moreThanArrayLength == maximumValidIndex);
+            loop {
+              if sameAsBoundedIndex == arrayLength(&buf) {
+                buf[5] = buf[moreThanArrayLength];
+                buf[moreThanArrayLength] = 123456789;
+                buf[2] = 100 + u32(sameAsBoundedIndex > arrayLength(&buf));
+                buf[3] = 200 + u32(sameAsBoundedIndex == arrayLength(&buf));
+                buf[4] = 300 + u32(sameAsBoundedIndex < arrayLength(&buf));
+                buf[0] = sameAsBoundedIndex;
+                buf[1] = arrayLength(&buf);
+                break;
+              }
+            }
+
+      return vec4();
+    }
+    `;
+        let module = device.createShaderModule({code});
+        let bindGroupLayout0 = device.createBindGroupLayout({
+          entries: [
+            {binding: 0, buffer: {type: 'storage'}, visibility: GPUShaderStage.FRAGMENT},
+          ],
+        });
+
+        let pipeline = device.createRenderPipeline({
+          layout: device.createPipelineLayout({bindGroupLayouts: [bindGroupLayout0]}),
+          vertex: {
+            module,
+            buffers: [],
+          },
+          fragment: {module, targets: [{format: 'bgra8unorm'}]},
+          primitive: {topology: 'point-list'},
+        });
+
+        globalThis.keep = pipeline;
+
+        let buffer0 = device.createBuffer({
+          size: 256, usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_SRC,
+        });
+        let laterBuffer0 = device.createBuffer({
+          size: 4, usage: GPUBufferUsage.QUERY_RESOLVE | GPUBufferUsage.COPY_SRC | GPUBufferUsage.COPY_DST,
+        });
+        device.queue.writeBuffer(laterBuffer0, 0, new Uint32Array(1), 0, 1);
+        await device.queue.onSubmittedWorkDone();
+
+        let bindGroup0 = device.createBindGroup({
+          layout: bindGroupLayout0, entries: [
+            {binding: 0, resource: {buffer: buffer0}},
+          ],
+        });
+
+        let texture = device.createTexture({format: 'bgra8unorm', size: [1], usage: GPUTextureUsage.RENDER_ATTACHMENT});
+        let commandEncoder = device.createCommandEncoder();
+        let renderPassEncoder = commandEncoder.beginRenderPass({
+          colorAttachments: [{
+            view: texture.createView(),
+            clearValue: [0, 0, 0, 0],
+            loadOp: 'clear', storeOp: 'store',
+          }],
+        });
+        renderPassEncoder.setPipeline(pipeline);
+        renderPassEncoder.setBindGroup(0, bindGroup0);
+        renderPassEncoder.draw(1);
+        renderPassEncoder.end();
+        device.queue.submit([commandEncoder.finish()]);
+        await device.queue.onSubmittedWorkDone();
+
+        let lostPromiseResult = await device.lost;
+        log(lostPromiseResult);
+        let error = await device.popErrorScope();
+        if (error) {
+          log(error.message);
+        } else {
+          log('no validation error');
+        }
+        globalThis.testRunner?.notifyDone();
+      };
+    </script>

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+<div id="target"></div>
+<script>
+description("ident() rejects an identifier past the length WebKit allows. There is no specified limit, so this is a WebKit implementation detail: ident() collapses its argument into a single token, which means the substitution token limit no longer bounds the length and nesting would multiply it at every level.");
+
+var target = document.getElementById("target");
+
+function identLength(declaration)
+{
+    target.setAttribute("style", declaration);
+    var value = getComputedStyle(target).getPropertyValue("--result").trim();
+    target.removeAttribute("style");
+    return value.length;
+}
+
+function repeated(count) { return "x".repeat(count); }
+
+shouldBe('identLength(`--result: ident("${repeated(1024)}")`)', '1024');
+shouldBe('identLength(`--result: ident("${repeated(1025)}")`)', '0');
+
+// Without the bound each level of nesting multiplies the length: 100 bytes, then 10KB, then 1MB.
+shouldBe('identLength(`--a: ident("${repeated(100)}"); --result: var(--a)`)', '100');
+shouldBe('identLength(`--a: ident("${repeated(100)}"); --result: ident(${"var(--a) ".repeat(100)})`)', '0');
+</script>
+</body>
+</html>

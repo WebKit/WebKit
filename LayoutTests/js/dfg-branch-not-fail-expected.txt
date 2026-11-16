@@ -1,0 +1,9 @@
+Check that short-circuiting Branch(LogicalNot(@a)) and then failing speculation does not result in the branch being taken the wrong way.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Passed some tests silently.
+
+TEST COMPLETE
+

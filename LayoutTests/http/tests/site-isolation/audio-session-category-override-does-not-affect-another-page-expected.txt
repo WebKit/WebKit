@@ -1,0 +1,14 @@
+Under site isolation, a navigator.audioSession.type override applies to the page that set it and not to another page in a different process. This page sets "ambient" and plays nothing, the opened page plays audible media: the opened page still computes MediaPlayback, and the real audio session takes the higher priority of the two.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS navigator.audioSession.type is "ambient"
+PASS thisPageCategory is "AmbientSound"
+PASS the real audio session's category is MediaPlayback
+PASS openedPageCategory is "MediaPlayback"
+PASS thisPageCategoryWhileOtherPagePlays is "AmbientSound"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

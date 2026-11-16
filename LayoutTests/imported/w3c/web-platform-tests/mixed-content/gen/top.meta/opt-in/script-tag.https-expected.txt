@@ -1,0 +1,5 @@
+
+PASS Mixed-Content: Expects allowed for script-tag to same-https origin and no-redirect redirection from https context.
+PASS Mixed-Content: Expects blocked for script-tag to cross-http origin and no-redirect redirection from https context.
+PASS Mixed-Content: Expects blocked for script-tag to same-http origin and no-redirect redirection from https context.
+

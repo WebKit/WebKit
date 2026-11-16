@@ -1,0 +1,4 @@
+
+
+PASS CSS Test (Selectors): :focus-visible after click and input type change
+

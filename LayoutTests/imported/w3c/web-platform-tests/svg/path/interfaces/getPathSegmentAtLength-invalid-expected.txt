@@ -1,0 +1,7 @@
+
+PASS a NaN distance must throw an exception
+PASS an infinite distance must throw an exception
+PASS a negative infinite distance must throw an exception
+FAIL a path with no d returns null createPath().getPathSegmentAtLength is not a function. (In 'createPath().getPathSegmentAtLength(10)', 'createPath().getPathSegmentAtLength' is undefined)
+FAIL a path with an empty d returns null createPath("").getPathSegmentAtLength is not a function. (In 'createPath("").getPathSegmentAtLength(10)', 'createPath("").getPathSegmentAtLength' is undefined)
+

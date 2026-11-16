@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<style>
+    body { margin: 0; zoom: 2; }
+    img { width: 100px; height: 100px; }
+</style>
+<img id="image">
+<script>
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dontForceRepaint();
+}
+
+// A new URL each time, so that a cached image doesn't bring an animation that has already run.
+image.src = `../resources/square-translate-bottom-right.svg?${Math.random()}`;
+
+// The square moves 500ms into the image's animation.
+image.addEventListener("load", () => setTimeout(() => window.testRunner?.notifyDone(), 750));
+</script>

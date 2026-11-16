@@ -1,0 +1,12 @@
+This test verifies that the selection is restored to a position before the placeholder, after removing the placeholder.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS getSelection().type is "Caret"
+PASS getSelection().rangeCount is 1
+PASS editor.textContent is "Hello from Cupertino!"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Hello from Cupertino!

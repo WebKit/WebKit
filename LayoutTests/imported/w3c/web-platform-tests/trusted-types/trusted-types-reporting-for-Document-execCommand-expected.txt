@@ -1,0 +1,5 @@
+
+PASS No violation reported for TrustedHTML.
+PASS No violation reported (paste command).
+PASS Violation report for plain string (insertHTML command).
+

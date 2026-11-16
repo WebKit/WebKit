@@ -1,0 +1,93 @@
+<script>
+if (window.testRunner) { testRunner.waitUntilDone(); testRunner.dumpAsText() }
+onload = async () => {
+    const output = document.getElementById('output');
+    function log(msg) { output.textContent += msg + '\n'; }
+
+    try {
+        const adapter = await navigator.gpu.requestAdapter();
+        if (!adapter) { log('No adapter'); if (window.testRunner) testRunner.notifyDone(); return; }
+        const device = await adapter.requestDevice();
+
+        // Create a vertex buffer with 256 float32x4 vertices (4096 bytes).
+        const vertexBuffer = device.createBuffer({ size: 4096, usage: GPUBufferUsage.VERTEX });
+
+        // Create a uint32 index buffer with 2 indices.
+        const indexBuffer = device.createBuffer({ size: 8, usage: GPUBufferUsage.INDEX | GPUBufferUsage.COPY_DST });
+
+        // Create a 4x4 render target.
+        const renderTarget = device.createTexture({
+            size: [4, 4], format: 'rgba8unorm',
+            usage: GPUTextureUsage.RENDER_ATTACHMENT,
+        });
+
+        const shaderModule = device.createShaderModule({ code: `
+            @vertex fn vs(@location(0) pos: vec4f) -> @builtin(position) vec4f { return pos; }
+            @fragment fn fs() -> @location(0) vec4f { return vec4f(1.0); }
+        `});
+        const pipeline = device.createRenderPipeline({
+            layout: 'auto',
+            vertex: {
+                module: shaderModule,
+                buffers: [{
+                    arrayStride: 16,
+                    attributes: [{ shaderLocation: 0, offset: 0, format: 'float32x4' }],
+                }],
+            },
+            fragment: { module: shaderModule, targets: [{ format: 'rgba8unorm' }] },
+        });
+
+        // Step 1: Prime with a large index to set the high-water mark.
+        device.queue.writeBuffer(indexBuffer, 0, new Uint32Array([0xFFFFFFFE, 0]));
+
+        // Step 2: Overwrite with safe indices.
+        device.queue.writeBuffer(indexBuffer, 0, new Uint32Array([5, 0]));
+
+        // Step 3: Draw to populate the validation cache.
+        {
+            const encoder = device.createCommandEncoder();
+            const pass = encoder.beginRenderPass({
+                colorAttachments: [{
+                    view: renderTarget.createView(),
+                    loadOp: 'clear', storeOp: 'store',
+                }],
+            });
+            pass.setPipeline(pipeline);
+            pass.setVertexBuffer(0, vertexBuffer);
+            pass.setIndexBuffer(indexBuffer, 'uint32');
+            pass.drawIndexed(2, 1, 0, 0, 0);
+            pass.end();
+            device.queue.submit([encoder.finish()]);
+        }
+
+        // Step 4: Write the large index again. Cache MUST be invalidated.
+        device.queue.writeBuffer(indexBuffer, 0, new Uint32Array([0xFFFFFFFE, 0]));
+
+        // Step 5: Draw again. If the cache was not invalidated, this produces
+        // an OOB GPU vertex fetch. With the fix, the clamp shader re-validates
+        // and zeroes the draw.
+        {
+            const encoder = device.createCommandEncoder();
+            const pass = encoder.beginRenderPass({
+                colorAttachments: [{
+                    view: renderTarget.createView(),
+                    loadOp: 'clear', storeOp: 'store',
+                }],
+            });
+            pass.setPipeline(pipeline);
+            pass.setVertexBuffer(0, vertexBuffer);
+            pass.setIndexBuffer(indexBuffer, 'uint32');
+            pass.drawIndexed(2, 1, 0, 0, 0);
+            pass.end();
+            device.queue.submit([encoder.finish()]);
+        }
+
+        await device.queue.onSubmittedWorkDone();
+        log('PASS - no GPU OOB read');
+    } catch (e) {
+        log('FAIL - ' + e);
+    }
+    if (window.testRunner) testRunner.notifyDone();
+};
+</script>
+<pre id="output"></pre>

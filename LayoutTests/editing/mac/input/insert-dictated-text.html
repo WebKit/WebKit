@@ -1,0 +1,58 @@
+<html>
+<head>
+<script src="../../../resources/js-test-pre.js"></script>
+<style>
+body { margin: 0; padding: 0 }
+</style>
+</head>
+<body>
+<pre id="description"></pre>
+<div id="test" contenteditable></div>
+<p id="console"></p>
+<script type="text/javascript">
+    description("When inserting dictated text, range of text that has alternative text is attached as DictationAlternatives marker.");
+
+    var console_messages = document.createElement("ol");
+    
+    function log(message)
+    {
+        var item = document.createElement("li");
+        item.appendChild(document.createTextNode(message));
+        console_messages.appendChild(item);
+    }
+    
+    if (window.testRunner) {
+        
+        try {
+
+            testRunner.dumpAsText();
+            var testArea = document.getElementById("test");
+            testArea.focus();
+
+            var dictatedString = textInputController.makeDictatedString("this is a text", "test", 10, 4);
+            document.execCommand("SelectAll");
+            textInputController.insertText(dictatedString);
+
+            var markedText = "";
+            if (window.internals) {
+                var testText = testArea.firstChild;
+                var marked = internals.markerRangeForNode(testText, "DictationAlternatives", 0);
+                if (marked)
+                    markedText = marked.toString();
+            }
+
+            shouldBeEqualToString("markedText", "text");
+            document.write("TEST COMPLETE");
+
+        } catch (ex) {
+            document.write("Exception: " + ex.description);
+        }
+        
+        document.getElementById("console").appendChild(console_messages);
+        
+    } else {
+        document.write("(cannot run interactively)");
+    }
+</script>
+</body>
+</html>

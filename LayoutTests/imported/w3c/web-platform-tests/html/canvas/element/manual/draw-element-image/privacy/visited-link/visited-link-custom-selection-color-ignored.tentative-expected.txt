@@ -1,0 +1,4 @@
+link
+
+PASS drawElementImage uses unvisited link colors in custom selection
+

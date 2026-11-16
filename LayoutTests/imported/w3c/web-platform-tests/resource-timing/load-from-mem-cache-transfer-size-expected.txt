@@ -1,0 +1,4 @@
+
+
+PASS The transferSize of resource timing entries should be 0 when resource     is loaded from memory cache.
+

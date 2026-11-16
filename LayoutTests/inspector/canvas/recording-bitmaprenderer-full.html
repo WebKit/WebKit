@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="resources/recording-utilities.js"></script>
+<script src="resources/recording-bitmaprenderer.js"></script>
+<script>
+function test() {
+    let suite = InspectorTest.createAsyncSuite("Canvas.recordingBitmapRenderer");
+
+    suite.addTestCase({
+        name: "Canvas.recordingBitmapRenderer.multipleFrames",
+        description: "Check that recording data is serialized correctly for multiple frames.",
+        test(resolve, reject) {
+            startRecording(WI.Canvas.ContextType.BitmapRenderer, resolve, reject);
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="load()">
+    <p>Test that CanvasManager is able to record actions made to BitmapRenderer canvas contexts.</p>
+</body>
+</html>

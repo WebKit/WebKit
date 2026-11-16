@@ -1,0 +1,18 @@
+Toggle popover
+This button is where focus should land after traversing this popover
+Toggle popover
+This button is where focus should land after traversing this popover
+Toggle popover  This button is where focus should land after traversing this popover
+Toggle popover
+This button is where focus should land after traversing popover
+Toggle popover
+This button is where focus should land after traversing popover
+Toggle popover  This button is where focus should land after traversing popover
+
+PASS Focusing elements inside a popover with form controls inside, using commandforelement
+PASS Focusing elements inside a popover with a details element inside, using commandforelement
+PASS Focusing elements inside a popover with a details element inside, and the after button adjacent to invoker, using commandforelement
+PASS Focusing elements inside a popover with a custom-element with delegatesfocus inside, using commandforelement
+PASS Focusing elements inside a popover with a custom-element with a slotted button inside, using commandforelement
+PASS Focusing elements inside a popover with custom-element with a slotted button, followed by a details element, where the after button is adjacent to the invoker, using commandforelement
+

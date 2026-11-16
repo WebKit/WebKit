@@ -1,0 +1,13 @@
+
+Test that a stalled event is sent when media loading stalls.
+
+EVENT(durationchange)
+EVENT(loadedmetadata)
+EVENT(loadeddata)
+EVENT(stalled)
+TEST(video.currentTime <= bufferedend) OK
+TEST(gotCanplay ? video.paused == false : video.paused == true) OK
+EXPECTED (video.playbackRate === '1') OK
+TEST(video.duration > bufferedend) OK
+END OF TEST
+

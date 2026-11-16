@@ -1,0 +1,15 @@
+Pointer events from a touch inside a cross-origin iframe must report screenX/screenY in top-level page coordinates rather than relative to the iframe.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+pointerdown
+PASS eventScreenX - eventClientX is iframeOffsetX
+PASS eventScreenY - eventClientY is iframeOffsetY
+pointerup
+PASS eventScreenX - eventClientX is iframeOffsetX
+PASS eventScreenY - eventClientY is iframeOffsetY
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

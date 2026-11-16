@@ -1,0 +1,8 @@
+item
+
+PASS "content" property does not support the glyph keywords.
+PASS "content" property does not support the glyph keywords with alt text or in a list.
+PASS "content" property cannot be set to a glyph keyword by the author stylesheet.
+PASS "content" property cannot be set to a glyph keyword with alt text by the author stylesheet.
+PASS "list-style-type" treats a glyph keyword as an unregistered counter style name.
+

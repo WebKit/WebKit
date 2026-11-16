@@ -1,0 +1,141 @@
+<!doctype html>
+<html>
+<head>
+    <title>track element load conditions and processing model guards</title>
+    <script src="../../resources/testharness.js"></script>
+    <script src="../../resources/testharnessreport.js"></script>
+</head>
+<body>
+<div id="log"></div>
+<script>
+// HTML Living Standard §4.8.13.7 "Text tracks",
+// "Sourcing out-of-band text tracks" — track processing model:
+//   https://html.spec.whatwg.org/multipage/media.html#sourcing-out-of-band-text-tracks
+//
+// The processing model returns early when:
+//   - another instance is already running for this element
+//   - the text track's mode is not hidden or showing
+//   - the track element's parent is not a media element
+//
+// If the resource is of an unsupported type or processing fails, the
+// readiness state is set to "failed to load" and an 'error' event fires.
+// While loading, if the track URL changes (while mode is hidden/showing),
+// the in-flight fetch is aborted and the algorithm is re-run.
+//
+// Re-entrancy and URL-change re-entry are internal invariants observable
+// only as "no extra load events for the same src" and "exactly one load
+// event after a settled URL". We assert what we can see.
+
+const validVtt = "data:text/vtt;charset=utf-8,"
+    + encodeURIComponent("WEBVTT\n\n00:00:00.000 --> 00:00:01.000\nhello\n");
+const otherVtt = "data:text/vtt;charset=utf-8,"
+    + encodeURIComponent("WEBVTT\n\n00:00:00.000 --> 00:00:01.000\nworld\n");
+
+async_test(t => {
+    // A track element with no media-element parent must not load. Set
+    // mode=showing on a detached track and verify no fetch happens.
+    const track = document.createElement("track");
+    track.kind = "subtitles";
+    track.src = validVtt;
+    track.track.mode = "showing";
+
+    track.onload = t.unreached_func("detached track must not fire load");
+    track.onerror = t.unreached_func("detached track must not fire error");
+
+    t.step_timeout(() => {
+        assert_equals(track.readyState, track.NONE,
+            "detached track readyState stays NONE");
+        t.done();
+    }, 100);
+}, "processing model: returns early when track has no media element parent");
+
+async_test(t => {
+    // With mode=disabled and a media-element parent, no load.
+    const video = document.createElement("video");
+    document.body.appendChild(video);
+    t.add_cleanup(() => video.remove());
+
+    const track = document.createElement("track");
+    track.kind = "subtitles";
+    track.src = validVtt;
+    video.appendChild(track);
+    // Default mode is "disabled" — do not flip it.
+    assert_equals(track.track.mode, "disabled", "default mode is disabled");
+
+    track.onload = t.unreached_func("disabled track must not fire load");
+    track.onerror = t.unreached_func("disabled track must not fire error");
+
+    t.step_timeout(() => {
+        assert_equals(track.readyState, track.NONE,
+            "disabled track readyState stays NONE");
+        t.done();
+    }, 100);
+}, "processing model: returns early when mode is disabled");
+
+async_test(t => {
+    // Unsupported / processing-failed -> readiness=ERROR + 'error'.
+    // text/plain (not text/vtt) is the simplest "unsupported type" trigger.
+    const video = document.createElement("video");
+    document.body.appendChild(video);
+    t.add_cleanup(() => video.remove());
+
+    const track = document.createElement("track");
+    track.kind = "subtitles";
+    track.src = "data:text/plain;charset=utf-8,not%20vtt";
+
+    track.onload = t.unreached_func("unsupported MIME must not fire load");
+    track.onerror = t.step_func_done(() => {
+        assert_equals(track.readyState, track.ERROR,
+            "unsupported MIME -> readyState ERROR");
+    });
+
+    video.appendChild(track);
+    track.track.mode = "showing";
+}, "processing model: unsupported resource fails to load and fires error");
+
+async_test(t => {
+    // Re-entrancy guard: load is triggered exactly once per settled src.
+    // Combined with: loader waits for readiness to leave LOADING, and a
+    // URL change while loading re-runs the algorithm.
+    //
+    // We can't directly observe re-entry, but we can observe:
+    //   (a) flipping mode twice in the same tick produces exactly one load
+    //   (b) changing src after a successful load produces a second load
+    const video = document.createElement("video");
+    document.body.appendChild(video);
+    t.add_cleanup(() => video.remove());
+
+    const track = document.createElement("track");
+    track.kind = "subtitles";
+    track.src = validVtt;
+
+    let loadCount = 0;
+    track.onload = t.step_func(() => {
+        loadCount++;
+        if (loadCount === 1) {
+            // First settle. Re-flipping mode (without changing src) must not
+            // cause another load.
+            track.track.mode = "disabled";
+            track.track.mode = "showing";
+            t.step_timeout(() => {
+                assert_equals(loadCount, 1,
+                    "mode toggle on a loaded track must not re-trigger load");
+                // Now change src; that *should* trigger another load.
+                track.src = otherVtt;
+            }, 50);
+        } else if (loadCount === 2) {
+            assert_equals(track.readyState, track.LOADED);
+            t.done();
+        }
+    });
+    track.onerror = t.unreached_func("unexpected error");
+
+    video.appendChild(track);
+    // Flip mode twice in the same task; only one load should result.
+    track.track.mode = "showing";
+    track.track.mode = "hidden";
+    track.track.mode = "showing";
+}, "processing model: load fires once per src settle; src change re-triggers load");
+</script>
+</body>
+</html>

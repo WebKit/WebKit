@@ -1,0 +1,7 @@
+Hello
+Firefox
+Firefox again
+World
+
+PASS getClientRects should return non-empty rectangles for nested text nodes
+

@@ -1,0 +1,63 @@
+<!-- webkit-test-runner [ enableMetalShaderValidation=true ] -->
+<script src="../../../resources/js-test.js"></script>
+<script>
+window.jsTestIsAsync = true;
+
+async function run() {
+    const adapter = await navigator.gpu.requestAdapter();
+    const device = await adapter.requestDevice();
+    const queue = device.queue;
+
+    const LARGE = 256, SMALL = 4, STRIDE = 16;
+    const indirect = device.createBuffer({ size: 16, usage: GPUBufferUsage.INDIRECT | GPUBufferUsage.COPY_DST });
+    queue.writeBuffer(indirect, 0, new Uint32Array([LARGE, 1, 0, 0]));
+    const vbLarge = device.createBuffer({ size: STRIDE * LARGE, usage: GPUBufferUsage.VERTEX });
+    const vbSmall = device.createBuffer({ size: STRIDE * SMALL, usage: GPUBufferUsage.VERTEX });
+    const tex = device.createTexture({ size: [4, 4], format: 'bgra8unorm', usage: GPUTextureUsage.RENDER_ATTACHMENT });
+
+    const module = device.createShaderModule({
+        code: `
+            @vertex fn vs(@location(0) p : vec4f) -> @builtin(position) vec4f { return p; }
+            @fragment fn fs() -> @location(0) vec4f { return vec4f(1.0); }
+        `
+    });
+    const pipe = device.createRenderPipeline({
+        layout: 'auto',
+        vertex: { module, entryPoint: 'vs', buffers: [{ arrayStride: STRIDE, stepMode: 'vertex', attributes: [{ shaderLocation: 0, offset: 0, format: 'float32x4' }] }] },
+        fragment: { module, entryPoint: 'fs', targets: [{ format: 'bgra8unorm' }] },
+        primitive: { topology: 'point-list' }
+    });
+    const rpDesc = () => ({ colorAttachments: [{ view: tex.createView(), loadOp: 'clear', storeOp: 'store', clearValue: [0, 0, 0, 0] }] });
+
+    const eA = device.createCommandEncoder();
+    const pA = eA.beginRenderPass(rpDesc());
+    pA.setPipeline(pipe);
+    pA.setVertexBuffer(0, vbLarge);
+    pA.drawIndirect(indirect, 0);
+    pA.end();
+    queue.submit([eA.finish()]);
+    await queue.onSubmittedWorkDone();
+
+    const e1 = device.createCommandEncoder();
+    const p1 = e1.beginRenderPass(rpDesc());
+    p1.setPipeline(pipe);
+    p1.setVertexBuffer(0, vbSmall);
+    p1.drawIndirect(indirect, 0);
+    p1.end();
+    const cb1 = e1.finish();
+
+    const e2 = device.createCommandEncoder();
+    const p2 = e2.beginRenderPass(rpDesc());
+    p2.setPipeline(pipe);
+    p2.setVertexBuffer(0, vbSmall);
+    p2.drawIndirect(indirect, 0);
+    p2.end();
+    queue.submit([e2.finish()]);
+    await queue.onSubmittedWorkDone();
+    void cb1;
+
+    debug('Pass');
+}
+
+run().catch(e => debug('Error: ' + e)).finally(finishJSTest);
+</script>

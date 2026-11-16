@@ -1,0 +1,3 @@
+
+PASS getConfiguration returns default empty certificates
+

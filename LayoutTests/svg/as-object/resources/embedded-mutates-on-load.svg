@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg xmlns="http://www.w3.org/2000/svg" onload="runTest()" viewBox="0 0 66 220" width="100%" height="100%">
+<script type="text/ecmascript"><![CDATA[
+
+    function runTest() {
+        document.getElementById("a").setAttribute("height", "0");
+        document.getElementById("b").addEventListener("mousewheel",function() {});
+    }
+
+]]></script>
+
+    <rect id="a" width="6" x="0"/>
+    <rect id="b" width="54" height="206" x="6" y="20"/>
+
+</svg>

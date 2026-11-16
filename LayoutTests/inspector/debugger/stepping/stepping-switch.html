@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="../resources/log-pause-location.js"></script>
+<script>
+function a() {
+    return 1;
+}
+
+function switcher(value) {
+    switch (value) {
+    case 1:
+        a();
+        break;
+    case 2:
+        a();
+        // fallthrough
+    case 3:
+        a();
+        break;
+    default:
+        a();
+        break;
+    }
+}
+
+function entrySwitchHitCase() {
+    debugger;
+    switcher(1);
+}
+
+function entrySwitchFallthrough() {
+    debugger;
+    switcher(2);
+}
+
+function entrySwitchDefault() {
+    debugger;
+    switcher(4);
+}
+
+function entrySwitchNoCase() {
+    debugger;
+    switch (a()) {
+    case 2:
+        a();
+        break;
+    }   
+}
+
+// ---------
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("Debugger.stepping.switch");
+
+    window.initializeSteppingTestSuite(suite);
+
+    addSteppingTestCase({
+        name: "Debugger.stepping.SwitchHitCase",
+        description: "Should be able to step through a switch case.",
+        expression: "setTimeout(entrySwitchHitCase)",
+        steps: [
+            "over",
+                "in",   // into switcher - before switch
+                "in",   // into case 1 - before a()
+                "over", // complete: a();
+                "over", // complete: break;
+                "over", // leaving switcher
+            "resume",
+        ]
+    });
+
+    addSteppingTestCase({
+        name: "Debugger.stepping.SwitchFallthrough",
+        description: "Should be able to step through a switch case that falls through to another case.",
+        expression: "setTimeout(entrySwitchFallthrough)",
+        steps: [
+            "over",
+                "in",   // into switcher - before switch
+                "in",   // into case 2 - before a()
+                "over", // complete: a(); - before a() in case 3
+                "over", // complete: a();
+                "over", // complete: break;
+                "over", // leaving switcher
+            "resume",
+        ]
+    });
+
+    addSteppingTestCase({
+        name: "Debugger.stepping.SwitchDefault",
+        description: "Should be able to step through a switch default case.",
+        expression: "setTimeout(entrySwitchDefault)",
+        steps: [
+            "over",
+                "in",   // into switcher - before switch
+                "over", // into default - before a()
+                "over", // complete: a();
+                "over", // complete: break;
+                "over", // leaving switcher
+            "resume",
+        ]
+    });
+
+    addSteppingTestCase({
+        name: "Debugger.stepping.SwitchStepOut",
+        description: "Should be able to step out while inside a switch case.",
+        expression: "setTimeout(entrySwitchHitCase)",
+        steps: [
+            "over",
+                "in",   // into switcher - before switch
+                "in",   // into case 1 - before a()
+                "out",  // out of switcher
+            "resume",
+        ]
+    });
+
+    addSteppingTestCase({
+        name: "Debugger.stepping.SwitchNoCaseStepIn",
+        description: "Should be able to step through a switch without a default case.",
+        expression: "setTimeout(entrySwitchNoCase)",
+        steps: [
+            "over",
+                "in", // into a() - before return
+                "in", // leaving a
+                "in", // leaving entry
+            "resume",
+        ]
+    });
+
+    addSteppingTestCase({
+        name: "Debugger.stepping.SwitchNoCaseStepOver",
+        description: "Should be able to step over a switch without a default case.",
+        expression: "setTimeout(entrySwitchNoCase)",
+        steps: [
+            "over",
+                "over", // complete switch statement - leaving entry
+            "resume",
+        ]
+    });
+
+    loadMainPageContent().then(() => {
+        suite.runTestCasesAndFinish();
+    });
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Checking pause locations when stepping in, out, and over switch statements.</p>
+</body>
+</html>

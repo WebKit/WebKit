@@ -1,0 +1,5 @@
+slotted
+outer
+
+PASS test to select a light DOM element and it becomes a slotted content after the selection
+

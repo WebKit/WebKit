@@ -1,0 +1,8 @@
+Title
+Item
+Title
+Item
+
+PASS Legend padding of a grid fieldset hits the legend
+PASS Legend padding of a scrolled grid fieldset hits the legend
+

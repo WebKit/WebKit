@@ -1,0 +1,7 @@
+
+PASS Property hyphenate-limit-lines value 'no-limit'
+PASS Property hyphenate-limit-lines value '0'
+PASS Property hyphenate-limit-lines value '4'
+PASS Property hyphenate-limit-lines value 'calc(2 + 2)'
+PASS Property hyphenate-limit-lines value 'calc(4.1)'
+

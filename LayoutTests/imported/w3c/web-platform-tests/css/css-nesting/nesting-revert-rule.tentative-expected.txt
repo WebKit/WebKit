@@ -1,0 +1,6 @@
+
+PASS The revert-rule keyword can revert to a nested rule
+PASS The revert-rule keyword can revert to a CSSNestedDeclarationsRule
+PASS The revert-rule keyword can revert from a CSSNestedDeclarationsRule
+PASS The revert-rule keyword can revert to scoped declarations
+

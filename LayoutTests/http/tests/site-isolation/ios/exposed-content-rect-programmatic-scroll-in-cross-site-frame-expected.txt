@@ -1,0 +1,4 @@
+
+
+PASS exposedContentRect follows a programmatic scroll in a cross-site frame
+

@@ -1,0 +1,10 @@
+r1c1
+r2c1
+r3c1
+r4c1
+r5c1
+r6c1
+
+FAIL A down arrow press should move the focus to the next row even when that row is in another section. assert_equals: expected Element node <td id="r2c1" tabindex="-1">r2c1</td> but got Element node <td id="r1c1" tabindex="0">r1c1</td>
+FAIL An up arrow press should move the focus to the previous row even when that row is in another section. assert_equals: expected Element node <td id="r5c1" tabindex="-1">r5c1</td> but got Element node <td id="r6c1" tabindex="-1">r6c1</td>
+

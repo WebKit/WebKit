@@ -1,0 +1,15 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x128
+  RenderSVGRoot {svg} at (0,0) size 800x128
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+      RenderSVGResourceFilter {filter} [id="testFilter"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
+        [feConvolveMatrix order="width=3 height=8" kernelMatrix="[0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 1.00, 0.00]" divisor="1.00" bias="0.00" target="(1,7)" edgeMode="DUPLICATE" kernelUnitLength="(1,1)" preserveAlpha="1"]
+          [SourceGraphic]
+    RenderSVGRect {rect} at (0,0) size 800x48 [fill={[type=SOLID] [color=#0000FF]}] [x=0.00] [y=0.00] [width=800.00] [height=48.00]
+    RenderSVGContainer {g} at (0,16) size 800x16
+      RenderSVGRect {rect} at (0,16) size 800x16 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=16.00] [width=800.00] [height=16.00]
+    RenderSVGRect {rect} at (0,80) size 800x48 [fill={[type=SOLID] [color=#0000FF]}] [x=0.00] [y=80.00] [width=800.00] [height=48.00]
+    RenderSVGContainer {g} at (0,96) size 800x16
+      [filter="testFilter"] RenderSVGResourceFilter {filter} at (0,96) size 800x16
+      RenderSVGRect {rect} at (0,96) size 800x16 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=96.00] [width=800.00] [height=16.00]

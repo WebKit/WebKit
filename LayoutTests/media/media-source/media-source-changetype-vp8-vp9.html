@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>media-source can change from vp8 to vp9</title>
+    <script src="media-source-loader.js"></script>
+    <script src="../video-test.js"></script>
+    <script>
+        function loaderPromise(loader) {
+            return new Promise((resolve, reject) => {
+                loader.onload = resolve;
+                loader.onerror = reject;
+            });
+        }
+
+        async function runTest() {
+            findMediaElement();
+
+            waitForAndFail(video, 'error');
+            const canplayPromise = waitFor(video, 'canplay', true);
+
+            const loader1 = new MediaSourceLoader('content/test-vp8-24fps-manifest.json');
+            const loader1Promise = loaderPromise(loader1);
+            const loader2 = new MediaSourceLoader('content/test-vp9-24fps-manifest.json');
+            const loader2Promise = loaderPromise(loader2);
+            video.disableRemotePlayback = true;
+
+            const source = new MediaSource();
+            video.src = URL.createObjectURL(source);
+            await waitFor(source, 'sourceopen', true);
+
+            await loader1Promise;
+            const sourceBuffer = source.addSourceBuffer(loader1.type());
+            sourceBuffer.appendWindowEnd = 1.0;
+
+            sourceBuffer.appendBuffer(loader1.initSegment());
+            await waitFor(sourceBuffer, 'update');
+            sourceBuffer.appendBuffer(loader1.mediaSegment(0));
+            await waitFor(sourceBuffer, 'update');
+
+            sourceBuffer.timestampOffset = 0.5;
+
+            await loader2Promise;
+
+            sourceBuffer.changeType(loader2.type());
+            sourceBuffer.appendBuffer(loader2.initSegment());
+            await waitFor(sourceBuffer, 'update');
+            sourceBuffer.appendBuffer(loader2.mediaSegment(0));
+            await waitFor(sourceBuffer, 'update');
+
+            source.endOfStream();
+
+            await canplayPromise;
+            video.play();
+
+            await testExpectedEventually("video.currentTime", .6, ">=")
+
+            endTest()
+        }
+
+    </script>
+</head>
+<body onload="runTest().catch(failTest)">
+    <video muted></video>
+</body>
+</html>

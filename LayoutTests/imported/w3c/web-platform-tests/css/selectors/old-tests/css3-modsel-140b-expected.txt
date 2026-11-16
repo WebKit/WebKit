@@ -1,0 +1,9 @@
+This paragraph should be unstyled.
+
+This address should have a green background.
+This address should have a green background.
+This paragraph should be unstyled.
+This paragraph should have a green background.
+
+PASS NEGATED Attribute dash-separated value selector without declared namespace
+

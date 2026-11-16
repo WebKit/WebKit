@@ -1,0 +1,34 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/websockets/docs/topics/authentication.rst
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/websockets/docs/topics/authentication.svg
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/websockets/docs/topics/broadcast.rst
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/websockets/docs/topics/compression.rst
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/websockets/docs/topics/data-flow.svg
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/websockets/docs/topics/deployment.rst
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/websockets/docs/topics/deployment.svg
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/websockets/docs/topics/design.rst
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/websockets/docs/topics/index.rst
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/websockets/docs/topics/lifecycle.graffle
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/websockets/docs/topics/lifecycle.svg
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/websockets/docs/topics/logging.rst
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/websockets/docs/topics/memory.rst
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/websockets/docs/topics/performance.rst
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/websockets/docs/topics/protocol.graffle
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/websockets/docs/topics/protocol.svg
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/websockets/docs/topics/security.rst
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/websockets/docs/topics/timeouts.rst

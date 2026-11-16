@@ -1,0 +1,82 @@
+
+PASS Legacy mstyle attributes do not apply to mspace
+PASS Legacy mstyle attributes do not apply to mfrac
+PASS Legacy mstyle attributes do not apply to mo
+PASS Legacy mstyle attributes do not apply to menclose
+PASS Legacy mstyle attributes do not apply to ms
+PASS Legacy mstyle attributes do not apply to mpadded
+PASS Legacy mstyle attributes do not apply to mover
+PASS Legacy mstyle attributes do not apply to munder
+PASS Legacy mstyle attributes do not apply to munderover
+
+
+1
+2
+
+1
+2
+
+1
+A
+2
+∑
+3
+4
+⇀
+|
+|
+4
+1
+−
+2
+
+1
+A
+2
+∑
+3
+4
+⇀
+|
+|
+4
+1
+−
+2
+
+1
+
+1
+
+1
+
+1
+
+
+
+1
+2
+
+1
+2
+
+1
+2
+
+1
+2
+
+1
+2
+3
+1
+2
+3
+
+1
+2
+3
+1
+2
+3
+

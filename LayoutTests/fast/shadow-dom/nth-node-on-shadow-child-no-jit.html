@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>Test passes if you see a single 100px by 100px green box below.</p>
+<script>
+const host = document.createElement('div');
+
+const shadowRoot = host.attachShadow({mode: 'closed'});
+shadowRoot.innerHTML = `
+<some-element class="item">
+    some-element:first-child
+    <style>
+    .item { display: block; width: 100px; height: 10px; background: red; color: green; font-size: 9px; overflow: hidden; }
+    :matches(noop, some-element:first-child) { background: green; }
+    :matches(noop, section:nth-of-type(1)) { background: green; }
+    :matches(noop, section:nth-child(3)) { background: green; }
+    :matches(noop, .item:nth-last-child(6)) { background: green; }
+    :matches(noop, a-element:first-of-type) { background: green; }
+    :matches(noop, b-element:only-of-type) { background: green; }
+    :matches(noop, a-element:last-of-type) { background: green; }
+    :matches(noop, c-element:nth-last-of-type(1)) { background: green; }
+    :matches(noop, other-element:last-child) { background: green; }
+    </style>
+</some-element>
+<section class="item">section:nth-of-type(1)</section>
+<section class="item">section:nth-child(3)</section>
+<section class="item">.item:nth-last-child(6)</section>
+<a-element class="item">a-element:first-of-type</a-element>
+<b-element class="item">b-element:only-of-type</b-element>
+<a-element class="item">a-element:last-of-type</a-element>
+<c-element class="item">c-element:nth-last-of-type(1)</c-element>
+<other-element class="item">other-element:last-child</other-element>`;
+document.body.appendChild(host);
+
+const loneHost = document.createElement('div');
+const loneShadowRoot = loneHost.attachShadow({mode: 'closed'});
+loneShadowRoot.innerHTML = `<div class="item">.item:only-child
+<style>
+.item { display: block; width: 100px; height: 10px; background: red; color: green; font-size: 9px; overflow: hidden; }
+:matches(noop, .item:only-child) { background: green; }
+</style>
+</div>`;
+document.body.appendChild(loneHost);
+
+for (const element of [...shadowRoot.querySelectorAll('.item'), loneShadowRoot.firstChild]) {
+    const selector = element.innerText;
+    if (!element.matches(`:matches(noop, ${selector}`))
+        logError(`${selector} did not match an element via element.matches`);
+    else {
+        const queryResult = element.getRootNode().querySelectorAll(`:matches(noop, ${selector}`);
+        if (queryResult.length != 1) {
+            console.log(queryResult);
+            logError(`${selector} matches ${queryResult.length} elements`);            
+        }
+    }
+}
+
+function logError(error) {
+    const container = document.createElement('p');
+    container.textContent = error;
+    document.body.append(container);
+}
+
+</script>
+</body>
+</html>

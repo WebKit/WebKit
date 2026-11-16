@@ -1,0 +1,141 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<head>
+<script src="../../../../resources/js-test.js"></script>
+<script src="../../../../resources/ui-helper.js"></script>
+<style>
+html, body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+}
+
+#box {
+    top: 100px;
+    left: 10px;
+    width: 300px;
+    height: 300px;
+    background-color: tomato;
+    position: absolute;
+}
+</style>
+</head>
+<body>
+<div id="box"></div>
+<pre id="description"></pre>
+<pre id="console"></pre>
+</body>
+<script>
+jsTestIsAsync = true;
+description("Verifies that the pinch zoom gesture is recognized in passive touch event regions. To manually run the test, pinch over the red square to zoom in.");
+document.getElementById("box").addEventListener("touchstart", () => { }, { passive: true });
+
+async function pinchZoom() {
+    await UIHelper.sendEventStream({
+        events: [
+            {
+                interpolate : "linear",
+                timestep : 0.01,
+                coordinateSpace : "content",
+                startEvent : {
+                    inputType : "hand",
+                    timeOffset : 0,
+                    touches : [{ inputType : "finger", phase : "began", id : 1, x : 140, y : 200, pressure : 0 }]
+                },
+                endEvent : {
+                    inputType : "hand",
+                    timeOffset : 0.01,
+                    touches : [{ inputType : "finger", phase : "began", id : 1, x : 140, y : 200, pressure : 0 }]
+                }
+            },
+            {
+                interpolate : "linear",
+                timestep : 0.01,
+                coordinateSpace : "content",
+                startEvent : {
+                    inputType : "hand",
+                    timeOffset : 0.01,
+                    touches : [{ inputType : "finger", phase : "moved", id : 1, x : 140, y : 200, pressure : 0 }]
+                },
+                endEvent : {
+                    inputType : "hand",
+                    timeOffset : 0.49,
+                    touches : [{ inputType : "finger", phase : "moved", id : 1, x : 140, y : 100, pressure : 0 }]
+                }
+            },
+            {
+                interpolate : "linear",
+                timestep : 0.01,
+                coordinateSpace : "content",
+                startEvent : {
+                    inputType : "hand",
+                    timeOffset : 0.49,
+                    touches : [
+                        { inputType : "finger", phase : "stationary", id : 1, x : 140, y : 100, pressure : 0 },
+                        { inputType : "finger", phase : "began", id : 2, x : 140, y : 200, pressure : 0 }
+                    ]
+                },
+                endEvent : {
+                    inputType : "hand",
+                    timeOffset : 0.5,
+                    touches : [
+                        { inputType : "finger", phase : "stationary", id : 1, x : 140, y : 100, pressure : 0 },
+                        { inputType : "finger", phase : "began", id : 2, x : 140, y : 200, pressure : 0 }
+                    ]
+                }
+            },
+            {
+                interpolate : "linear",
+                timestep : 0.01,
+                coordinateSpace : "content",
+                startEvent : {
+                    inputType : "hand",
+                    timeOffset : 0.5,
+                    touches : [
+                        { inputType : "finger", phase : "moved", id : 1, x : 140, y : 100, pressure : 0 },
+                        { inputType : "finger", phase : "moved", id : 2, x : 140, y : 200, pressure : 0 }
+                    ]
+                },
+                endEvent : {
+                    inputType : "hand",
+                    timeOffset : 0.99,
+                    touches : [
+                        { inputType : "finger", phase : "moved", id : 1, x : 140, y : 20, pressure : 0 },
+                        { inputType : "finger", phase : "moved", id : 2, x : 140, y : 300, pressure : 0 }
+                    ]
+                }
+            },
+            {
+                interpolate : "linear",
+                timestep : 0.01,
+                coordinateSpace : "content",
+                startEvent : {
+                    inputType : "hand",
+                    timeOffset : 0.99,
+                    touches : [
+                        { inputType : "finger", phase : "ended", id : 1, x : 140, y : 20, pressure : 0 },
+                        { inputType : "finger", phase : "ended", id : 2, x : 140, y : 300, pressure : 0 }
+                    ]
+                },
+                endEvent : {
+                    inputType : "hand",
+                    timeOffset : 1,
+                    touches : [
+                        { inputType : "finger", phase : "ended", id : 1, x : 140, y : 20, pressure : 0 },
+                        { inputType : "finger", phase : "ended", id : 2, x : 140, y : 300, pressure : 0 }
+                    ]
+                }
+            }
+        ]
+    });
+}
+
+addEventListener("load", async () => {
+    while (visualViewport.scale <= 1)
+        await pinchZoom();
+    testPassed("Successfully zoomed in by pinching");
+    finishJSTest();
+});
+</script>
+</html>

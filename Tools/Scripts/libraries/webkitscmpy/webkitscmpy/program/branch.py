@@ -1,0 +1,310 @@
+# Copyright (C) 2021-2023 Apple Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1.  Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer.
+# 2.  Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in the
+#     documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS "AS IS" AND
+# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS BE LIABLE FOR
+# ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+import re
+import sys
+
+from .command import Command
+from .commit import Commit
+
+from webkitbugspy import Tracker, bugzilla, radar
+from webkitcorepy import arguments, run, string_utils, Terminal
+from webkitscmpy import local, log, remote
+
+
+class Branch(Command):
+    name = 'branch'
+    help = 'Create a local development branch from the current checkout state'
+
+    PR_PREFIX = 'eng'
+    MAX_BRANCH_NAME_LENGTH = 200
+    MINIMUM_TITLE_MATCH = 8
+
+    @classmethod
+    def parser(cls, parser, loggers=None):
+        parser.add_argument(
+            '-i', '--issue', '-b', '--bug', '-r',
+            dest='issue', type=str,
+            help='Number (or name) of the issue or bug to create branch for',
+        )
+        parser.add_argument(
+            '-d', '--delete-existing', '--no-delete-existing',
+            dest='delete_existing', default=None,
+            help='Delete (or do not delete) an existing local branch which collides with the proposed name. '
+                 'If pushing to a remote, note that the remote branch of the same name may be overwritten even '
+                 'if a local one does not exist.',
+            action=arguments.NoAction,
+        )
+
+        has_radar = bool(radar.Tracker.radarclient())
+        if has_radar:
+            parser.add_argument(
+                '--cc-radar', '--no-cc-radar',
+                dest='cc_radar', default=None,
+                action=arguments.NoAction,
+                help='Explicitly CC (or do not CC) radar.',
+            )
+
+    @classmethod
+    def normalize_branch_name(cls, name, repository=None):
+        if not name or (repository or local.Scm).DEV_BRANCHES.match(name):
+            return name
+        return '{}/{}'.format(cls.PR_PREFIX, name)
+
+    @classmethod
+    def editable(cls, branch, repository=None):
+        if (repository or local.Scm).DEV_BRANCHES.match(branch):
+            return True
+        if branch in (repository or local.Scm).DEFAULT_BRANCHES:
+            return False
+        if (repository or local.Scm).PROD_BRANCHES.match(branch):
+            return False
+        if not repository or not isinstance(repository, local.Git):
+            return False
+
+        remote_repo = repository.remote(name=repository.default_remote)
+        if remote_repo and isinstance(remote_repo, remote.GitHub):
+            for name in repository.source_remotes():
+                if branch in repository.branches_for(remote=name, cached=True):
+                    return False
+        return True
+
+    @classmethod
+    def to_branch_name(cls, value):
+        return string_utils.encode(re.sub(r'\W+', '-', string_utils.decode(value)).strip('-'), target_type=str)
+
+    @classmethod
+    def truncate_branch_name(cls, name, limit=None):
+        limit = limit or cls.MAX_BRANCH_NAME_LENGTH
+        if not name or len(name) <= limit:
+            return name
+        truncated = name[:limit]
+        if '-' in truncated:
+            truncated = truncated[:truncated.rindex('-')]
+        return truncated.rstrip('-')
+
+    @classmethod
+    def branch_matches_issue(cls, repository, branch, issue):
+        """Check if a development branch was created to track a specific issue.
+
+        Branch names may prefix the issue's title with additional context (such as the commits a
+        revert reverts) and may be truncated, so an exact match on the title is not required.
+        """
+        if not branch or not issue:
+            return False
+
+        associated = repository.config().get('branch.{}.bug'.format(branch))
+        if associated:
+            for url in Commit.bug_urls(issue):
+                if url and url in associated:
+                    return True
+
+        candidate = branch.split('/')[-1]
+        if candidate == str(issue.id) or candidate.endswith('-{}'.format(issue.id)):
+            return True
+
+        if not issue.title:
+            return False
+        title = cls.to_branch_name(issue.title)
+        if candidate == title or candidate.endswith('-{}'.format(title)):
+            return True
+
+        components = candidate.split('-')
+        for index in range(len(components)):
+            suffix = '-'.join(components[index:])
+            if len(suffix) < cls.MINIMUM_TITLE_MATCH:
+                break
+            if title.startswith(suffix):
+                return True
+        return False
+
+    @classmethod
+    def cc_radar(cls, args, repository, issue, rdar=None):
+        needs_radar = issue and not isinstance(issue.tracker, radar.Tracker) and getattr(args, 'update_issue', True)
+        needs_radar = needs_radar and any([
+            isinstance(tracker, radar.Tracker) and tracker.radarclient()
+            for tracker in Tracker._trackers
+        ])
+        needs_radar = needs_radar and not any([
+            isinstance(reference.tracker, radar.Tracker)
+            for reference in issue.references
+        ])
+
+        radar_cc_default = repository.config().get('webkitscmpy.cc-radar', 'true') == 'true'
+        if needs_radar and (args.cc_radar or (radar_cc_default and args.cc_radar is not False)):
+            if rdar is None:
+                if not getattr(args, 'defaults', None):
+                    sys.stdout.write('Existing radar to CC (leave empty to create new radar)')
+                    sys.stdout.flush()
+                    input = Terminal.input(': ')
+                    if re.match(r'\d+', input):
+                        input = '<rdar://problem/{}>'.format(input)
+                    rdar = Tracker.from_string(input)
+            cced = issue.cc_radar(block=True, radar=rdar)
+            if cced and rdar and cced.id != rdar.id:
+                print('Duping {} to {}'.format(cced.link, rdar.link))
+                cced.close(original=rdar)
+            return rdar if rdar else cced
+        return None
+
+    @classmethod
+    def ensure_issue(cls, args, repository, why=None, redact=False):
+        if not args.issue:
+            args.issue = repository.config().get('branch.{}.bug'.format(repository.branch))
+
+        if not args.issue:
+            prefix = f'{why}, e' if why else 'E'
+            target = 'title of new issue' if getattr(args, 'update_issue', True) else 'name of new branch'
+            if Tracker.instance() and not redact and not Tracker.instance().hide_title:
+                prompt = f'{prefix}nter issue URL, {Tracker.instance().NAME} ID, or {target}: '
+            elif Tracker.instance():
+                prompt = f'{prefix}nter issue URL or {target}: '
+            else:
+                prompt = f'{prefix}nter name of new branch: '
+            args.issue = Terminal.input(prompt, alert_after=2 * Terminal.RING_INTERVAL)
+
+        if string_utils.decode(args.issue).isnumeric() and Tracker.instance() and not redact and not Tracker.instance().hide_title:
+            issue = Tracker.instance().issue(int(args.issue))
+            if issue and issue.title and not issue.redacted:
+                args.issue = cls.to_branch_name(issue.title)
+        else:
+            issue = Tracker.from_string(args.issue)
+            if issue and issue.title and not redact and not issue.redacted and not issue.tracker.hide_title:
+                args.issue = cls.to_branch_name(issue.title)
+            elif issue:
+                args.issue = str(issue.id)
+
+        rdar_to_cc = None
+        if not issue and Tracker.instance() and getattr(args, 'update_issue', True):
+            if ' ' in args.issue:
+                if getattr(Tracker.instance(), 'credentials', None):
+                    Tracker.instance().credentials(required=True, validate=True)
+
+                description = Terminal.input('Issue description: ')
+                while not description.strip():
+                    description = Terminal.input('Invalid description. Please enter a valid issue description: ')
+                description = description.strip()
+
+                needs_radar = any([isinstance(tracker, radar.Tracker) and tracker.radarclient() for tracker in Tracker._trackers])
+                radar_cc_default = repository.config().get('webkitscmpy.cc-radar', 'true') == 'true'
+                if not getattr(args, 'defaults', None) and needs_radar and not isinstance(Tracker.instance(), radar.Tracker):
+                    if args.cc_radar or (radar_cc_default and args.cc_radar is not False):
+                        sys.stdout.write('Existing radar to CC (leave empty to create new radar)')
+                        sys.stdout.flush()
+                        input = Terminal.input(': ')
+                        if re.match(r'\d+', input):
+                            input = '<rdar://problem/{}>'.format(input)
+                        rdar_to_cc = Tracker.from_string(input) or False
+
+                default_proj = None
+                if rdar_to_cc:
+                    default_proj, _, _ = bugzilla.Tracker.classify_from_radar(
+                        rdar_to_cc, None, None,
+                    )
+
+                issue = Tracker.instance().create(
+                    title=args.issue,
+                    description=description,
+                    project=default_proj,
+                    keywords=['InRadar'] if rdar_to_cc else None
+                )
+                if not issue:
+                    sys.stderr.write('Failed to create new issue\n')
+                    return None, 1
+                print("Created '{}'".format(issue))
+                if issue and issue.title and not redact and not issue.redacted and not issue.tracker.hide_title:
+                    args.issue = cls.to_branch_name(issue.title)
+                elif issue:
+                    args.issue = str(issue.id)
+            else:
+                log.warning("'{}' has no spaces, assuming user intends it to be a branch name".format(args.issue))
+
+        cls.cc_radar(args, repository, issue, rdar_to_cc)
+
+        if issue and not issue.tracker.hide_title:
+            args._title = issue.title
+        if issue:
+            args._bug_urls = Commit.bug_urls(issue)
+        elif not getattr(args, 'update_issue', True) and ' ' in args.issue.strip():
+            args._title = args.issue.strip()
+
+        return issue, 0
+
+    @classmethod
+    def main(cls, args, repository, why=None, redact=False, target_remote='fork', name_prefix=None, **kwargs):
+        if not isinstance(repository, local.Git):
+            sys.stderr.write("Can only 'branch' on a native Git repository\n")
+            return 1
+
+        issue, result = cls.ensure_issue(args, repository, why=why, redact=redact)
+        if result:
+            return result
+
+        if not issue and not (repository or local.Scm).DEV_BRANCHES.match(args.issue):
+            # Support creating a branch from PR or revert when update_issue is False
+            args.issue = cls.to_branch_name(args.issue)
+
+        if name_prefix and not (repository or local.Scm).DEV_BRANCHES.match(args.issue):
+            prefixed = '{}-{}'.format(name_prefix, args.issue).strip('-')
+            args.issue = cls.truncate_branch_name(cls.normalize_branch_name(prefixed))
+        else:
+            args.issue = cls.normalize_branch_name(args.issue)
+
+        if run([repository.executable(), 'check-ref-format', args.issue], capture_output=True).returncode:
+            sys.stderr.write("'{}' is an invalid branch name, cannot create it\n".format(args.issue))
+            return 1
+
+        cls.write_branch_variables(
+            repository, args.issue,
+            title=getattr(args, '_title', None) or '',
+            bug=getattr(args, '_bug_urls', None) or [],
+        )
+
+        if args.issue in repository.branches_for(remote=target_remote):
+            if not args.delete_existing:
+                sys.stderr.write("'{}' exists on the remote '{}' and will be overwritten by a push\n".format(args.issue, target_remote))
+                if args.delete_existing is False:
+                    return 1
+
+        if args.issue in repository.branches_for(remote=False):
+            if args.delete_existing:
+                log.info("Locally deleting existing branch '{}'".format(args.issue))
+                if run([repository.executable(), 'branch', '-D', args.issue], cwd=repository.root_path).returncode:
+                    sys.stderr.write("Failed to locally delete '{}'\n".format(args.issue))
+            elif args.delete_existing is None:
+                log.warning("Rebasing existing branch '{}' instead of creating a new one".format(args.issue))
+                if run([repository.executable(), 'rebase', 'HEAD', args.issue, '--autostash'], cwd=repository.root_path).returncode:
+                    return 1
+                repository._branch = args.issue  # Assign the cache because of repository.branch's caching
+                print("Rebased the local development branch '{}'".format(args.issue))
+                return 0
+            else:
+                sys.stderr.write("'{}' already exists in this checkout\n".format(args.issue))
+                return 1
+
+        log.info("Creating the local development branch '{}'...".format(args.issue))
+        if run([repository.executable(), 'checkout', '-b', args.issue], cwd=repository.root_path).returncode:
+            sys.stderr.write("Failed to create '{}'\n".format(args.issue))
+            return 1
+        repository._branch = args.issue  # Assign the cache because of repository.branch's caching
+        print("Created the local development branch '{}'".format(args.issue))
+        return 0

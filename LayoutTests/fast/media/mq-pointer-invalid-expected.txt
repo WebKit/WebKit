@@ -1,0 +1,25 @@
+Test invalid input with the pointer media feature.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS window.matchMedia("(pointer:)").matches is false
+PASS document.styleSheets[1].cssRules[0].media.length is 1
+PASS window.matchMedia("(pointer: )").matches is false
+PASS document.styleSheets[1].cssRules[0].media.length is 1
+PASS window.matchMedia("(pointer: WebKit)").matches is false
+PASS document.styleSheets[1].cssRules[0].media.length is 1
+PASS window.matchMedia("(pointer: pointer)").matches is false
+PASS document.styleSheets[1].cssRules[0].media.length is 1
+PASS window.matchMedia("(pointer: hover)").matches is false
+PASS document.styleSheets[1].cssRules[0].media.length is 1
+PASS window.matchMedia("(pointer: portrait)").matches is false
+PASS document.styleSheets[1].cssRules[0].media.length is 1
+PASS window.matchMedia("(pointer: \"None\")").matches is false
+PASS document.styleSheets[1].cssRules[0].media.length is 1
+PASS window.matchMedia("(pointer: 'None')").matches is false
+PASS document.styleSheets[1].cssRules[0].media.length is 1
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

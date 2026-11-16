@@ -1,0 +1,98 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true WebInspectorGlobalDebuggerPauseEnabled=true ] -->
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="resources/site-isolation-debugger-test-utilities.js"></script>
+<script src="resources/global-pause-test-utilities.js"></script>
+<script>
+window.frameLoadEvents = [];
+
+function addFrame(name, token)
+{
+    let iframe = document.createElement("iframe");
+    iframe.addEventListener("load", () => frameLoadEvents.push(name));
+    iframe.src = `http://localhost:8000/inspector/debugger/resources/lifecycle-events-frame.html?${name}&token=${token}`;
+    document.body.appendChild(iframe);
+}
+
+function pauseHere()
+{
+    debugger;
+    return "resumed";
+}
+
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Debugger.PauseHoldsLoadingFrameDefersLifecycleEvents");
+
+    let mainTarget;
+    let expectedEvents;
+
+    // The image is held server-side until the test releases it, so "parsed but still loading" is a fact about the events array, not about when the poll happens to run.
+    async function addFrameAndWaitUntilParsed(name) {
+        let token = Math.random().toString(36).slice(2);
+        await GlobalPause.evaluate(mainTarget, `addFrame("${name}", "${token}")`);
+        let frameTarget = await GlobalPause.waitForFrameTarget(`lifecycle-events-frame.html?${name}`);
+        InspectorTest.expectNotNull(frameTarget, "Should find the cross-site frame target.");
+        InspectorTest.expectThat(await waitForExpressionInTarget(frameTarget, `events.includes("readystatechange:interactive") && !events.some((event) => event.startsWith("img:load"))`, 50), "The frame should be parsed while its image is still loading.");
+        return [frameTarget, token];
+    }
+
+    // Released from the frontend, fire and forget: the request itself releases the image, and keeping it out of the frame's document leaves the held image as the document's only pending load.
+    async function releaseImage(token) {
+        await fetch(`http://localhost:8000/resources/release-load.py?token=${token}`, {mode: "no-cors"}).catch(() => { });
+    }
+
+    suite.addTestCase({
+        name: "SiteIsolation.Debugger.PauseHoldsLoadingFrameDefersLifecycleEvents.WithoutPause",
+        description: "Record the lifecycle events of a cross-site frame that loads without a pause.",
+        timeout: 30000,
+        async test() {
+            mainTarget = InspectorTest.mainFrameTarget;
+            let [frameTarget, token] = await addFrameAndWaitUntilParsed("unpaused");
+            await releaseImage(token);
+            InspectorTest.expectThat(await waitForExpressionInTarget(frameTarget, `events.some((event) => event.startsWith("pageshow"))`, 50), "The frame should finish loading.");
+            InspectorTest.expectThat(await waitForExpressionInTarget(mainTarget, `frameLoadEvents.includes("unpaused")`, 50), "The iframe element should get its load event.");
+            expectedEvents = await GlobalPause.evaluate(frameTarget, "events.join(', ')");
+            InspectorTest.log(`Events: ${expectedEvents}`);
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Debugger.PauseHoldsLoadingFrameDefersLifecycleEvents.LoadFinishesWhileHeld",
+        description: "A cross-site frame that finishes loading while it is held should get its lifecycle events after resuming, once each and in order.",
+        timeout: 30000,
+        async test() {
+            let [frameTarget, token] = await addFrameAndWaitUntilParsed("held");
+
+            await GlobalPause.evaluate(frameTarget, `window.ticks = 0; setInterval(() => window.ticks++, 50)`);
+            let sessionOpened = GlobalPause.awaitSessionEvent((data) => data.state === "paused");
+            await GlobalPause.pause(mainTarget);
+            await sessionOpened;
+            await GlobalPause.expectHeld(frameTarget, "window.ticks", "The held frame's interval");
+
+            await releaseImage(token);
+            InspectorTest.expectThat(await waitForExpressionInTarget(frameTarget, `document.readyState === "complete"`, 50), "The held frame should finish loading.");
+            InspectorTest.expectEqual(await GlobalPause.evaluate(frameTarget, "events.join(', ')"), "readystatechange:interactive, DOMContentLoaded", "The events after the frame was parsed should not be dispatched while it is held.");
+
+            let untrustedEventWasDispatched = await GlobalPause.evaluate(frameTarget, `(() => {
+                let image = document.getElementById("image");
+                let event = new Event("load");
+                image.dispatchEvent(event);
+                return event.target === image;
+            })()`);
+            InspectorTest.expectThat(untrustedEventWasDispatched, "A load event dispatched by script should be dispatched at once while the frame is held.");
+
+            await GlobalPause.resumeAll();
+            InspectorTest.expectThat(await waitForExpressionInTarget(frameTarget, `events.some((event) => event.startsWith("pageshow"))`, 50), "The frame's pageshow event should be dispatched after resuming.");
+            InspectorTest.expectThat(await waitForExpressionInTarget(mainTarget, `frameLoadEvents.includes("held")`, 50), "The iframe element should get its load event after resuming.");
+            InspectorTest.expectEqual(await GlobalPause.evaluate(frameTarget, "events.join(', ')"), expectedEvents, "The frame should get each lifecycle event once, in the same order as without a pause.");
+            InspectorTest.expectEqual(await GlobalPause.evaluate(frameTarget, "untrustedLoadEvents"), 0, "The load event dispatched by script while held should not be dispatched again.");
+            InspectorTest.expectEqual(await GlobalPause.evaluate(mainTarget, "frameLoadEvents.join(', ')"), "unpaused, held", "Each iframe element should get one load event.");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+
+<body onload="runTest()">
+<p>Test that a cross-site frame that finishes loading while a debugger pause holds it gets its load, readystatechange, pageshow and image load events after resuming.</p>
+</body>

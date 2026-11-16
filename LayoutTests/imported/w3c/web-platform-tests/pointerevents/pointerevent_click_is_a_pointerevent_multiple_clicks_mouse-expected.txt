@@ -1,0 +1,4 @@
+
+
+PASS click using mouse is a PointerEvent
+

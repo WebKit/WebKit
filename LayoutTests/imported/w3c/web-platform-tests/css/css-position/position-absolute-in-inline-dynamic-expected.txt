@@ -1,0 +1,11 @@
+
+PASS text appended to the inline box; absolutely positioned box 'left: 0; top: 0'
+PASS text removed from the inline box; absolutely positioned box 'left: 0; top: 0'
+PASS content inserted before the inline box; absolutely positioned box 'left: 0; top: 0'
+PASS content inserted before the inline box; absolutely positioned box 'right: 0; bottom: 0'
+PASS content inserted before the inline box; absolutely positioned box 'left: 0; width: 100%; top: 0; height: 100%'
+PASS inline box padding change; absolutely positioned box 'left: 0; top: 0'
+PASS inline box stops being the containing block
+PASS inline box becomes the containing block
+PASS relatively positioned inline box moves
+

@@ -1,0 +1,8 @@
+Description
+
+This test validates that PerformanceResourceTiming.encodedBodySize correctly reports the original dictionary-compressed body size even when the resource is served from the disk cache (where dictionary-compressed responses are stored uncompressed), and that transferSize is 0 for cached responses.
+
+
+FAIL encodedBodySize and transferSize for dictionary-compressed (dcb) resource served from cache assert_unreached: Dictionary was not registered in time Reached unreachable code
+FAIL encodedBodySize and transferSize for dictionary-compressed (dcz) resource served from cache assert_unreached: Dictionary was not registered in time Reached unreachable code
+

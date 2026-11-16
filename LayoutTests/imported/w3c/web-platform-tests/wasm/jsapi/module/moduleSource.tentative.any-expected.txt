@@ -1,0 +1,6 @@
+
+PASS AbstractModuleSource is not a global
+FAIL AbstractModuleSource intrinsic assert_equals: expected "AbstractModuleSource" but got ""
+FAIL AbstractModuleSourceProto intrinsic assert_not_equals: got disallowed value object "[object Object]"
+FAIL AbstractModuleSourceProto toStringTag brand check undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(AbstractModuleSource.prototype, Symbol.toStringTag)')
+

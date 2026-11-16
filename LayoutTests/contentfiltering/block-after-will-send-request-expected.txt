@@ -1,0 +1,28 @@
+main frame - didFinishDocumentLoadForFrame
+frame "<!--frame1-->" - didStartProvisionalLoadForFrame
+frame "<!--frame1-->" - didCommitLoadForFrame
+frame "<!--frame1-->" - didFinishDocumentLoadForFrame
+frame "<!--frame1-->" - didHandleOnloadEventsForFrame
+frame "<!--frame1-->" - didFinishLoadForFrame
+frame "<!--frame1-->" - willPerformClientRedirectToURL: resources/fail.html
+main frame - didHandleOnloadEventsForFrame
+main frame - didFinishLoadForFrame
+frame "<!--frame1-->" - didStartProvisionalLoadForFrame
+frame "<!--frame1-->" - didCancelClientRedirectForFrame
+frame "<!--frame1-->" - didFailProvisionalLoadWithError
+frame "<!--frame1-->" - didStartProvisionalLoadForFrame
+frame "<!--frame1-->" - didCommitLoadForFrame
+frame "<!--frame1-->" - didFinishDocumentLoadForFrame
+frame "<!--frame1-->" - didHandleOnloadEventsForFrame
+frame "<!--frame1-->" - didFinishLoadForFrame
+
+
+--------
+Frame: '<!--frame1-->'
+--------
+PASS
+
+============== Back Forward List ==============
+curr->  (file test):contentfiltering/block-after-will-send-request.html
+            about:blank (in frame "<!--frame1-->")
+===============================================

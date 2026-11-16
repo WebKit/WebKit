@@ -1,0 +1,10 @@
+ 	 
+ 	 
+ 	 
+ 	 
+
+PASS Cell with min-width larger than width is expanded
+PASS Cell with min-width smaller than width is not affected
+PASS Cell with min-width equal to width is not affected
+PASS Cell with min-width larger than max-width uses min-width
+

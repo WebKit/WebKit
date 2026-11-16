@@ -1,0 +1,6 @@
+
+
+PASS Only elements with specific local names may be returned if their name attribute matches
+PASS Only elements with specific local names may be returned if their name attribute matches (negative test)
+PASS Removing an element for which the name attribute is not tracked, must not cause errors upon removing it
+

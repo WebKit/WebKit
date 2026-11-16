@@ -1,0 +1,12 @@
+When selecting content from different flows, i.e absolute or static, the highlight rects should not be combined if they are not adjacent.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS selectionRects.length is 2
+PASS absoluteLineTop is > staticLineBottom
+PASS successfullyParsed is true
+
+TEST COMPLETE
+static
+absolute

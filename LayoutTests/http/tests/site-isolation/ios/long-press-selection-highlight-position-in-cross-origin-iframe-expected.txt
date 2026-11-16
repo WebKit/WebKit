@@ -1,0 +1,10 @@
+Long-pressing text inside a cross-origin iframe should draw the selection highlight at the correct position in the top-level page (offset by the iframe's location), not at the cross-origin subframe's local coordinates.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS selectionTop is >= iframeTop - 20
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,4 @@
+
+
+PASS navigation.entries() for main frame excludes iframe history entries
+

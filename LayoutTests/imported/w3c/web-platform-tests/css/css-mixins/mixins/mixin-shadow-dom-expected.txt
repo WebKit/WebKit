@@ -1,0 +1,15 @@
+This text should be green.
+
+FAIL Style in shadow DOM should have access to outside non-adopted mixins assert_equals: expected "rgb(0, 128, 0)" but got "rgb(255, 0, 0)"
+FAIL Style in shadow DOM should have access to inside mixins assert_equals: expected "rgb(0, 128, 0)" but got "rgb(255, 0, 0)"
+FAIL Style in shadow DOM should have access to mixins from adopted stylesheets assert_equals: expected "rgb(0, 128, 0)" but got "rgb(255, 0, 0)"
+PASS Style outside shadow DOM should _not_ have access to inside mixins
+FAIL Shared inline @apply contents use the correct mixin in each scope assert_equals: expected "rgb(0, 128, 0)" but got "rgb(255, 0, 0)"
+FAIL Shared inline @apply contents do not depend on scope creation order assert_equals: expected "rgb(0, 128, 0)" but got "rgb(255, 0, 0)"
+FAIL Shared constructed @apply sheet uses the correct mixin in each scope assert_equals: expected "rgb(0, 128, 0)" but got "rgb(255, 0, 0)"
+FAIL Shared constructed @apply sheet does not depend on scope creation order assert_equals: expected "rgb(0, 128, 0)" but got "rgb(255, 0, 0)"
+FAIL An @apply of an undefined mixin does not affect a scope that defines it assert_equals: expected "rgb(0, 0, 255)" but got "rgb(255, 0, 0)"
+FAIL An @apply of a defined mixin does not leak into a scope without it assert_equals: expected "rgb(0, 0, 255)" but got "rgb(255, 0, 0)"
+FAIL A local mixin overrides a document mixin with the same name assert_equals: expected "rgb(0, 0, 255)" but got "rgb(255, 0, 0)"
+FAIL Nested shadows use the nearest mixin along each tree branch assert_equals: expected "rgb(255, 255, 0)" but got "rgb(255, 0, 0)"
+

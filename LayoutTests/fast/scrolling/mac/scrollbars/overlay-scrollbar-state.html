@@ -1,0 +1,72 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ MockScrollbarsEnabled=false AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<head>
+    <style>
+        body {
+            height: 1000px;
+        }
+        .scroller {
+            margin: 10px;
+            width: 100px;
+            height: 100px;
+        }
+        .contents {
+            width: 100%;
+            height: 200%;
+        }
+        .auto {
+            overflow: auto;
+        }
+        .scroll {
+            overflow: scroll;
+        }
+    </style>
+    <script src="../../../../resources/js-test-pre.js"></script>
+    <script src="../../../../resources/ui-helper.js"></script>
+    <script>
+        jsTestIsAsync = true;
+        
+        let autoScroller;
+        let scrollScroller;
+        
+        window.internals.setUsesOverlayScrollbars(true);
+
+        window.addEventListener('load', async () => {
+            description('Test scrollbar state internals');
+            if (!window.internals)
+                return;
+            
+            debug('Document');
+            verticalScrollbarStateForRoot = await UIHelper.verticalScrollbarState();
+            horizontalScrollbarStateForRoot = await UIHelper.horizontalScrollbarState();
+            debug(verticalScrollbarStateForRoot);
+            debug(horizontalScrollbarStateForRoot);
+
+            autoScroller = document.querySelector('.auto.scroller')
+            scrollScroller = document.querySelector('.scroll.scroller')
+            debug('overflow:auto');
+            verticalScrollbarStateForAuto = await UIHelper.verticalScrollbarState(autoScroller);
+            horizontalScrollbarStateForAuto = await UIHelper.horizontalScrollbarState(autoScroller);
+            shouldBeEqualToString('verticalScrollbarStateForAuto', 'enabled');
+            shouldBeEqualToString('horizontalScrollbarStateForAuto', 'none');
+
+            debug('overflow:scroll');
+            verticalScrollbarStateForScroll = await UIHelper.verticalScrollbarState(scrollScroller);
+            horizontalScrollbarStateForScroll = await UIHelper.horizontalScrollbarState(scrollScroller);
+            shouldBeEqualToString('verticalScrollbarStateForScroll', 'enabled');
+            shouldBeEqualToString('horizontalScrollbarStateForScroll', 'none');
+
+            finishJSTest();
+        }, false);
+    </script>
+</head>
+<body>
+    <div class="auto scroller">
+        <div class="contents"></div>
+    </div>
+    <div class="scroll scroller">
+        <div class="contents"></div>
+    </div>
+    <script src="../../../../resources/js-test-post.js"></script>
+</body>
+</html>

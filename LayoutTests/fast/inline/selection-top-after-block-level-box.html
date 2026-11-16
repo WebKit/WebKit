@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>This tests that a selection on the line after a block level box does not cover the box's margin.</title>
+<style>
+  ::selection { background-color: green; }
+  body { margin: 0; font: 16px/16px Ahem; color: transparent; }
+  .container { width: 100px; }
+  .box { height: 32px; margin-bottom: 32px; background-color: silver; }
+</style>
+</head>
+<body>
+<div class="container">xx<span><div class="box"></div></span><span id="target">xx</span></div>
+<script>
+  var range = document.createRange();
+  range.selectNodeContents(document.getElementById("target"));
+  window.getSelection().addRange(range);
+</script>
+</body>
+</html>

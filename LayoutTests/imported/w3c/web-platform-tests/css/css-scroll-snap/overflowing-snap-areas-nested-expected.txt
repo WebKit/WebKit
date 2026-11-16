@@ -1,0 +1,4 @@
+
+FAIL Snap within a snap area which covers snapport on x selects a valid snap position that avoids the overlapping areas at 800-1000 and 1400-1600. assert_equals: expected 1000 but got 950
+FAIL Snap within a snap area which covers snapport on y selects a valid snap position that avoids the overlapping areas at 800-1000 and 1400-1600. assert_equals: expected 1000 but got 950
+

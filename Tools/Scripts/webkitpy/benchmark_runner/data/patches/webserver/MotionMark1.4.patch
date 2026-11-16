@@ -1,0 +1,152 @@
+diff --git a/MotionMark/resources/debug-runner/debug-runner.js b/MotionMark/resources/debug-runner/debug-runner.js
+index 085f4d3eb3f0fd6d8fec0bee914f2f3c3789ff15..fd63cabff133a821ab797df00eee62038556484b 100644
+--- a/MotionMark/resources/debug-runner/debug-runner.js
++++ b/MotionMark/resources/debug-runner/debug-runner.js
+@@ -510,6 +510,37 @@ window.suitesManager = new class SuitesManager {
+         return suites;
+     }
+ 
++    constructSuitesFromURLParameters: function(urlParameterString) {
++        var urlParams = new URLSearchParams(urlParameterString);
++        var suiteNames = urlParams.getAll("suite-name");
++        var testNames = urlParams.getAll("test-name");
++        var suites = [];
++        for (var i = 0; i < suiteNames.length; i++) {
++            var suiteName = decodeURIComponent(suiteNames[i]);
++            var testName = decodeURIComponent(testNames[i]);
++            var suiteRegExp = new RegExp(suiteName.toLowerCase(), "i");
++            var testRegExp = new RegExp(testName.toLowerCase(), "i");
++            var test = [];
++            for (var j = 0; j < Suites.length; ++j) {
++                var suite = Suites[j];
++                if (!Utilities.stripUnwantedCharactersForURL(suite.name.toLowerCase()).match(suiteRegExp))
++                    continue;
++                var test;
++                for (var k = 0; k < suite.tests.length; ++k) {
++                    suiteTest = suite.tests[k];
++                    if (Utilities.stripUnwantedCharactersForURL(suiteTest.name.toLowerCase()).match(testRegExp)) {
++                        test = suiteTest;
++                        break;
++                    }
++                }
++                if (!test)
++                    continue;
++                suites.push(new Suite(suiteName, [test]));
++            };
++        }
++        return suites;
++    },
++
+     updateLocalStorageFromJSON(results)
+     {
+         for (var suiteName in results[Strings.json.results.tests]) {
+@@ -665,16 +696,13 @@ class DebugBenchmarkController extends BenchmarkController {
+     startBenchmarkImmediatelyIfEncoded()
+     {
+         benchmarkController.determineCanvasSize();
+-        benchmarkController.options = Utilities.convertQueryStringToObject(location.search);
+-        if (!benchmarkController.options)
+-            return false;
+ 
+-        benchmarkController.suites = suitesManager.suitesFromQueryString(benchmarkController.options["suite-name"], benchmarkController.options["test-name"]);
++        benchmarkController.suites = suitesManager.constructSuitesFromURLParameters(location.search)
+         if (!benchmarkController.suites.length)
+             return false;
+ 
+         setTimeout(function() {
+-            this._startBenchmark(benchmarkController.suites, benchmarkController.options, "running-test");
++            this._startBenchmark(benchmarkController.suites, this.benchmarkDefaultParameters, "running-test");
+         }.bind(this), 0);
+         return true;
+     }
+diff --git a/MotionMark/resources/runner/motionmark.js b/MotionMark/resources/runner/motionmark.js
+index 193e212edcecc7a66d2e50eb46db0a4ddbe7ee0b..4bb8ea799e9a92fbe9b47bb9ea17e8b17908bd6f 100644
+--- a/MotionMark/resources/runner/motionmark.js
++++ b/MotionMark/resources/runner/motionmark.js
+@@ -58,9 +58,60 @@ class BenchmarkRunnerClient {
+         this._scoreCalculator.calculateScore(testData);
+     }
+ 
++    _computeTestReport(testName, testResults)
++    {
++        return [testResults[Strings.json.score]];
++    }
++ 
++    _computeSuiteReports(suiteName, suiteResults)
++    {
++        const testsReports = {};
++        for (let testName in suiteResults) {
++            const testReports = this._computeTestReport(testName, suiteResults[testName]);
++            testsReports[testName] = { "metrics": { "Score": { "current": testReports } } };
++        }
++        return testsReports;
++    }
++ 
++    _computeIterationReports(iterationResults)
++    {
++        const suitesReports = {};
++        const suffix = Strings.version ? '-' + Strings.version : '';
++        for (let suiteName in iterationResults[Strings.json.results.tests]) {
++            const testsReports = this._computeSuiteReports(suiteName, iterationResults[Strings.json.results.tests][suiteName]);
++            suitesReports[suiteName + suffix] = { "metrics": { "Score": ["Geometric"] }, "tests": testsReports };
++        }
++        return suitesReports;
++    }
++ 
++    _computeResultsReports()
++    {
++        const results = this._scoreCalculator.results[0];
++        const iterationReports = this._computeIterationReports(results);
++        iterationReports['debugOutput'] = {
++            options: this._scoreCalculator.options,
++            data: this._scoreCalculator.data,
++        }
++        return iterationReports;
++    }
++
+     didFinishLastIteration()
+     {
+-        benchmarkController.showResults();
++       // Submit result to server
++       const results = JSON.stringify(this._computeResultsReports());
++       const xhr = new XMLHttpRequest();
++       xhr.open("POST", "/report");
++       xhr.setRequestHeader("Content-type", "application/json");
++       xhr.setRequestHeader("Content-length", results.length);
++       xhr.setRequestHeader("Connection", "close");
++       xhr.onreadystatechange = function() {
++           if (xhr.readyState == XMLHttpRequest.DONE && xhr.status == 200) {
++               closeRequest = new XMLHttpRequest();
++               closeRequest.open("GET", "/shutdown");
++               closeRequest.send()
++           }
++       }
++       xhr.send(results);
+     }
+ }
+ 
+@@ -417,10 +468,17 @@ window.benchmarkControllerClass = BenchmarkController;
+ window.benchmarkRunnerClientClass = BenchmarkRunnerClient;
+ window.sectionsManagerClass = SectionsManager;
+ 
+-window.addEventListener("load", () => {
+-
+-    window.sectionsManager = new sectionsManagerClass();
+-    window.benchmarkController = new benchmarkControllerClass();
+-
+-    benchmarkController.initialize();
+-});
++if (window.location.href.includes("developer.html")) {
++    window.addEventListener("load", () => {
++        window.sectionsManager = new sectionsManagerClass();
++        window.benchmarkController = new benchmarkControllerClass();
++        benchmarkController.initialize();
++    });
++} else {
++    window.addEventListener("load", async function() {
++        window.sectionsManager = new sectionsManagerClass();
++        window.benchmarkController = new benchmarkControllerClass();
++        await benchmarkController.initialize();
++        setTimeout(async () => { benchmarkController.startBenchmark() }, 3000);
++    });
++}

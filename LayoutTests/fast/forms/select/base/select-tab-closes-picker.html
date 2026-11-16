@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../../resources/js-test.js"></script>
+<script src="../../../../resources/ui-helper.js"></script>
+<style>
+select, ::picker(select) {
+  appearance: base-select;
+}
+</style>
+</head>
+<body>
+<input id="before" type="text">
+<select id="select">
+    <option id="opt1">one</option>
+    <option id="opt2">two</option>
+    <option id="opt3">three</option>
+</select>
+<input id="after" type="text">
+<script>
+description("Tests that Tab and Shift+Tab close a base-select picker and advance focus.");
+
+const select = document.getElementById("select");
+const before = document.getElementById("before");
+const after = document.getElementById("after");
+
+async function openPicker() {
+    await UIHelper.activateElement(select);
+    await UIHelper.animationFrame();
+}
+
+jsTestIsAsync = true;
+
+(async () => {
+
+    // Test: Tab closes the picker and moves focus to the next focusable element.
+    select.value = "one";
+    await openPicker();
+    shouldBeTrue('select.matches(":open")');
+    shouldBe('document.activeElement.id', '"opt1"');
+
+    await UIHelper.keyDown("\t");
+    await UIHelper.animationFrame();
+    shouldBeFalse('select.matches(":open")');
+    shouldBe('document.activeElement.id', '"after"');
+    shouldBe('select.value', '"one"');
+
+    // Test: Tab from a non-first option also closes and advances focus.
+    select.value = "two";
+    await openPicker();
+    shouldBeTrue('select.matches(":open")');
+    shouldBe('document.activeElement.id', '"opt2"');
+
+    await UIHelper.keyDown("\t");
+    await UIHelper.animationFrame();
+    shouldBeFalse('select.matches(":open")');
+    shouldBe('document.activeElement.id', '"after"');
+    shouldBe('select.value', '"two"');
+
+    // Test: Shift+Tab closes the picker and moves focus to the previous focusable element.
+    select.value = "one";
+    await openPicker();
+    shouldBeTrue('select.matches(":open")');
+    shouldBe('document.activeElement.id', '"opt1"');
+
+    await UIHelper.keyDown("\t", ["shiftKey"]);
+    await UIHelper.animationFrame();
+    shouldBeFalse('select.matches(":open")');
+    shouldBe('document.activeElement.id', '"before"');
+    shouldBe('select.value', '"one"');
+
+    // Test: Arrow down then Tab closes picker without committing the focused option.
+    select.value = "one";
+    await openPicker();
+    shouldBe('document.activeElement.id', '"opt1"');
+
+    await UIHelper.keyDown("downArrow");
+    shouldBe('document.activeElement.id', '"opt2"');
+
+    await UIHelper.keyDown("\t");
+    await UIHelper.animationFrame();
+    shouldBeFalse('select.matches(":open")');
+    shouldBe('document.activeElement.id', '"after"');
+    shouldBe('select.value', '"one"');
+
+    finishJSTest();
+})();
+</script>
+</body>
+</html>

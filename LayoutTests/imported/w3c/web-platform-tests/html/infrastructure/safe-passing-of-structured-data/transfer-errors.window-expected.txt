@@ -1,0 +1,19 @@
+
+PASS Cannot transfer all objects
+PASS Cannot transfer the same ArrayBuffer twice
+PASS Serialize should make the ArrayBuffer detached, so it cannot be transferred again
+PASS Serialize should throw before a detached ArrayBuffer is found
+PASS Cannot transfer ArrayBuffer detached while the message was serialized
+PASS Cannot transfer the same MessagePort twice
+PASS Serialize should make the MessagePort detached, so it cannot be transferred again
+PASS Serialize should throw before a detached MessagePort is found
+PASS Cannot transfer MessagePort detached while the message was serialized
+PASS Cannot transfer the same ImageBitmap twice
+PASS Serialize should make the ImageBitmap detached, so it cannot be transferred again
+PASS Serialize should throw before a detached ImageBitmap is found
+PASS Cannot transfer ImageBitmap detached while the message was serialized
+PASS Cannot transfer the same OffscreenCanvas twice
+PASS Serialize should make the OffscreenCanvas detached, so it cannot be transferred again
+PASS Serialize should throw before a detached OffscreenCanvas is found
+PASS Cannot transfer OffscreenCanvas detached while the message was serialized
+

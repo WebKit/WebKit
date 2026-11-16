@@ -1,0 +1,9 @@
+This test ensures that hit testing a button works.
+
+PASS: hitTestResult.role.toLowerCase().includes('button') === true
+PASS: hitTestResult.role.toLowerCase().includes('button') === true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Press

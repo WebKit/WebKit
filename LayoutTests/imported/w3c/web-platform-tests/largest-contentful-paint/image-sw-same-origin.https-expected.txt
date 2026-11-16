@@ -1,0 +1,3 @@
+
+PASS Same-origin images served from a service-worker should have a correct renderTime
+

@@ -1,0 +1,42 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<!DOCTYPE html>
+<html>
+<head>
+<script src="/js-test-resources/js-test.js"></script>
+<script src="/media-resources/utilities.js"></script>
+</head>
+<body>
+<video></video>
+<script>
+description("Under site isolation, a video element playing audio in the main frame activates the audio session, and the web process observes it via AudioSession::isActive().");
+jsTestIsAsync = true;
+
+let video;
+
+onload = async () => {
+    if (!window.internals) {
+        testFailed("This test requires the Internals API");
+        finishJSTest();
+        return;
+    }
+
+    video = document.querySelector("video");
+    // test.mp4 has an audio track; keep it near-silent so the test is quiet at a desk, but not
+    // muted (a muted element can't produce audio and wouldn't activate the session).
+    video.src = "/media/resources/test.mp4";
+    video.volume = 0.001;
+    playIgnoringAbort(video);
+
+    try {
+        await waitForAudioSessionActiveState(true);
+        testPassed("the audio session is active");
+    } catch (e) {
+        testFailed(e.message);
+    }
+
+    video.pause();
+    finishJSTest();
+};
+</script>
+</body>
+</html>

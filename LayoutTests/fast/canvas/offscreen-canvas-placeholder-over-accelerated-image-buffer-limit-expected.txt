@@ -1,0 +1,11 @@
+Check that an OffscreenCanvas placeholder can be updated when the GPU process gives accelerated image buffers unaccelerated backing stores.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS renderingMode is "Unaccelerated"
+PASS Placeholder was updated without crashing.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

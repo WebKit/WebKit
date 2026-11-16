@@ -1,0 +1,14 @@
+SVG-AAM: Label Tests
+
+Tests SVG-specific aria-label rules in SVG-AAM Â§8.1 Name and Description, but note the open issues in SVG-AAM #31.
+
+SVG a[aria-label]
+
+
+
+
+PASS [aria-labelledby] > circle
+PASS [aria-labelledby] > rect
+PASS [aria-labelledby] > polygon
+PASS [aria-labelledby] > g
+

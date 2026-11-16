@@ -1,0 +1,10 @@
+An observed node must stay alive for as long as MutationObserver::deliver() keeps its registration alive.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS did not crash
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

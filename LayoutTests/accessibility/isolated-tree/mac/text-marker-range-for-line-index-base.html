@@ -1,0 +1,36 @@
+<!DOCTYPE HTML><!-- webkit-test-runner [ IsAccessibilityIsolatedTreeEnabled=true ] -->
+<html>
+<head>
+<script src="../../../resources/accessibility-helper.js"></script>
+<script src="../../../resources/js-test.js"></script>
+</head>
+<body>
+
+<div id="content"><div>Alpha</div><div>Beta</div><div>Gamma</div></div>
+
+<script>
+var output = "This test ensures AXTextMarkerRangeForLine numbers lines from one while AXLineForTextMarker numbers them from zero, and that a marker taken out of one line's range reports the index that maps back to that same range.\n\n";
+
+function lineText(oneBasedLine)
+{
+    return container.stringForTextMarkerRange(container.textMarkerRangeForLine(oneBasedLine));
+}
+
+if (window.accessibilityController) {
+    var container = accessibilityController.rootElement.childAtIndex(0);
+
+    output += expect("lineText(1)", "'Alpha'");
+    output += expect("lineText(2)", "'Beta'");
+
+    var markerInLine2 = container.nextTextMarker(container.startTextMarkerForTextMarkerRange(container.textMarkerRangeForLine(2)));
+
+    output += expect("container.lineIndexForTextMarker(markerInLine2)", "1");
+    output += expect("lineText(container.lineIndexForTextMarker(markerInLine2) + 1)", "'Beta'");
+
+    document.getElementById("content").style.display = "none";
+
+    debug(output);
+}
+</script>
+</body>
+</html>

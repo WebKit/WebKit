@@ -1,0 +1,6 @@
+This paragraph, and all textual contents in the document, should be green.
+
+This item should be green.
+
+PASS Universal selector matches elements
+

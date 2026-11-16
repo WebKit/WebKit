@@ -1,0 +1,5 @@
+DOM access in sandbox="allow-same-origin" iframe
+
+
+PASS DOM access in sandbox='allow-same-origin' iframe is allowed
+

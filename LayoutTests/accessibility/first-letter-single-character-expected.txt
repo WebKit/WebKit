@@ -1,0 +1,17 @@
+This test verifies that first-letter pseudo-element text is exposed in the accessibility tree.
+
+Test case 1: Single character (entire text is first-letter)
+PASS: singleCharContainer.childrenCount === 1
+PASS: singleCharText.role.toLowerCase().includes('text') === true
+PASS: Static text value was "H"
+
+Test case 2: Multiple characters (first-letter plus remaining text)
+PASS: multiCharContainer.childrenCount === 1
+PASS: multiCharText.role.toLowerCase().includes('text') === true
+PASS: Static text value was "Hi"
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+H
+Hi

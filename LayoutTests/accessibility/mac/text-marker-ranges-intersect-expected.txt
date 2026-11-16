@@ -1,0 +1,49 @@
+Tests the intersectTextMarkerRanges method.
+
+text, AXRole: AXGroup
+elementRange: 'abcdefghij'
+range1: 'abc'
+range2: 'hij'
+elementRange range1 intersection: 'abc'
+elementRange range2 intersection: 'hij'
+range1 range2 intersection: 'null'
+
+text, AXRole: AXGroup
+elementRange: 'abcdefghij'
+range1: 'def'
+range2: 'efghij'
+elementRange range1 intersection: 'def'
+elementRange range2 intersection: 'efghij'
+range1 range2 intersection: 'ef'
+
+textarea, AXRole: AXTextArea
+elementRange: 'Write something here.'
+range1: 'Write some'
+range2: 'thing here.'
+elementRange range1 intersection: 'Write some'
+elementRange range2 intersection: 'thing here.'
+range1 range2 intersection: ''
+
+textarea, AXRole: AXTextArea
+elementRange: 'Write something here.'
+range1: 'Write some'
+range2: 'something here.'
+elementRange range1 intersection: 'Write some'
+elementRange range2 intersection: 'something here.'
+range1 range2 intersection: 'some'
+
+textarea, AXRole: AXTextArea
+elementRange: 'Write something here.'
+range1: 'te something h'
+range2: 'something here.'
+elementRange range1 intersection: 'te something h'
+elementRange range2 intersection: 'something here.'
+range1 range2 intersection: 'something h'
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+abcdefghij
+
+

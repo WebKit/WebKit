@@ -1,0 +1,3 @@
+
+PASS SVGTextContentElement equality methods' parameters are correctly validated
+

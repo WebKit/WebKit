@@ -1,0 +1,76 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+<style>
+svg { height: 1em; }
+a { display: inline-flex; }
+</style>
+</head>
+<body>
+<div id="editable" tabindex="0" contenteditable="true">
+<fieldset>
+    <input type=checkbox style="display:none !important">
+    <label>
+        <svg id="svg-0" role=img xmlns=http://www.w3.org/2000/svg viewBox="0 0 512 512">
+            <path d="M256,8 A248,248 0 1,1 255.9,8 Z"></path>
+        </svg>
+    </label>
+</fieldset>
+<a href="#">
+    <svg id="svg-1" role=img xmlns=http://www.w3.org/2000/svg viewBox="0 0 320 512">
+        <path d="M256,8 A248,248 0 1,1 255.9,8 Z"></path>
+    </svg>
+</a>
+<a href="#">
+    <svg id="svg-2" role=img xmlns=http://www.w3.org/2000/svg viewBox="0 0 448 512">
+        <path d="M256,8 A248,248 0 1,1 255.9,8 Z"></path>
+    </svg>
+</a>
+<a href="#">
+    <svg id="svg-3" role=img xmlns=http://www.w3.org/2000/svg viewBox="0 0 576 512">
+        <path d="M256,8 A248,248 0 1,1 255.9,8 Z"></path>
+    </svg>
+</a>
+</div>
+
+<button id="button" aria-expanded="true">Foo</button>
+
+<script>
+var output = "This test ensures we do not enter an infinite loop when moving the cursor through this markup.\n\n";
+// The point of this test is to use the cursor movement to pass all possible VisiblePositions in this markup to
+// textMarkerDataForVisiblePosition, which is where the hang occurred. Using contenteditable + arrow key movement is
+// a convenient way to achieve this (since we'll post text-state changed notifications for the movements, which
+// currently exercise this function). But keep in mind that you can hit this hang without any contenteditable.
+// In the real webpage, simply clicking a checkbox with the right SVG content triggered the hang, though I had
+// trouble extracting that into a layout test — hence the approach taken in this test.
+  document.getElementById("editable").focus();
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    var webArea = accessibilityController.rootElement.childAtIndex(0);
+    output += expect("accessibilityController.accessibleElementById('button').isExpanded", "true");
+
+    setTimeout(async function() {
+        for (let i = 0; i < 8; i++) {
+            eventSender.keyDown("rightArrow");
+            await sleep(5);
+        }
+        for (let i = 0; i < 8; i++) {
+            eventSender.keyDown("leftArrow");
+            await sleep(5);
+        }
+        // Verify the main-thread isn't hung by performing an update and waiting for it to take effect in the accessibility tree. 
+        document.getElementById("button").setAttribute("aria-expanded", "false");
+        output += await expectAsync("accessibilityController.accessibleElementById('button').isExpanded", "false");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>
+

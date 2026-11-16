@@ -1,0 +1,7 @@
+# Longstanding SPI used by WebGPU before we started auditing SPI use.
+# NEVER add to this list, only remove!
+
+[[legacy]]
+selectors = [
+    { name = "setSampleMask:", class = "?" },
+]

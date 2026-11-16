@@ -1,0 +1,17 @@
+Tests that drawImage() honors an image's EXIF orientation for full-canvas composite modes, which draw through an intermediate buffer, the same way it does for source-over.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS exif-orientation-1-ul.jpg: "source-in" matches "source-over"
+PASS exif-orientation-2-ur.jpg: "source-in" matches "source-over"
+PASS exif-orientation-3-lr.jpg: "source-in" matches "source-over"
+PASS exif-orientation-4-lol.jpg: "source-in" matches "source-over"
+PASS exif-orientation-5-lu.jpg: "source-in" matches "source-over"
+PASS exif-orientation-6-ru.jpg: "source-in" matches "source-over"
+PASS exif-orientation-7-rl.jpg: "source-in" matches "source-over"
+PASS exif-orientation-8-llo.jpg: "source-in" matches "source-over"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

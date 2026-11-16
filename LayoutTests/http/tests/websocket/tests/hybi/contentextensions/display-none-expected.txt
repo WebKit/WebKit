@@ -1,0 +1,4 @@
+CONSOLE MESSAGE: onopen
+CONSOLE MESSAGE: onmessage reply sent
+CONSOLE MESSAGE: onclose
+This should not be hidden.

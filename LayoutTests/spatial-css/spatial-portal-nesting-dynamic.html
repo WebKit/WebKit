@@ -1,0 +1,49 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ SpatialPortalEnabled=true ModelElementEnabled=true ModelProcessEnabled=true allowTestOnlyIPC=true ] -->
+<html>
+<head>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<script src="../resources/ui-helper.js"></script>
+<style>
+    .portal { spatial: portal; width: 400px; height: 200px; }
+</style>
+<body>
+<div id="outer">
+    <div id="inner" class="portal">
+        <model id="model"><source src="../model-element/resources/cube.usdz"></model>
+    </div>
+</div>
+<script>
+'use strict';
+
+window.internals?.disableModelLoadDelaysForTesting();
+
+promise_test(async t => {
+    const outer = document.getElementById("outer");
+    const inner = document.getElementById("inner");
+    const model = document.getElementById("model");
+
+    await model.ready;
+    await UIHelper.ensureStablePresentationUpdate();
+
+    assert_true(internals.establishesSpatialPortal(inner), "the inner portal is live while it has no portal ancestor");
+    assert_equals(internals.numberOfHostedModelsInSpatialPortal(inner), 1, "the inner portal hosts the model");
+
+    // Turning the ancestor into a portal must suppress the descendant portal.
+    outer.classList.add("portal");
+    await UIHelper.ensureStablePresentationUpdate();
+
+    assert_true(internals.establishesSpatialPortal(outer), "the outer element establishes a portal once it gains spatial: portal");
+    assert_false(internals.establishesSpatialPortal(inner), "the inner portal is suppressed by the new ancestor portal");
+    assert_equals(internals.numberOfHostedModelsInSpatialPortal(inner), 0, "the suppressed inner portal hosts nothing");
+
+    // Removing it again must hand the model back to the inner portal.
+    outer.classList.remove("portal");
+    await UIHelper.ensureStablePresentationUpdate();
+
+    assert_false(internals.establishesSpatialPortal(outer), "the outer element stops establishing a portal");
+    assert_true(internals.establishesSpatialPortal(inner), "the inner portal is restored");
+}, "Toggling spatial: portal on an ancestor suppresses and restores a descendant portal");
+</script>
+</body>
+</html>

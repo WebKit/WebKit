@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<div>Tests for a crash due to adopting a DOM node when unfocusing. Test passes if it doesn't crash.</div>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+</script>
+<div id="div1"></div>
+<div id="div2">
+  <applet>
+    <iframe srcdoc="<iframe srcdoc=''>">
+    </iframe>
+  </applet>
+  <header id="header1">
+    <keygen id="keygen" autofocus>
+  </header>
+</div>
+<div id="logs"></div>
+<script>
+function assert_true(assert, text) {
+    const div = document.createElement("div");
+    if (assert)
+        div.textContent = "PASS: " + text;
+    else
+        div.textContent = "FAIL: " + text;
+    logs.append(div);
+}
+
+function doit() {
+    assert_true(document.activeElement != keygen, "Focused node should not be keygen");
+    div1.outerHTML = header1.outerHTML;
+    assert_true(document.activeElement != keygen, "Focused node should not be keygen");
+    document.implementation.createDocument("", "", null).adoptNode(div2);
+    if (window.internals)
+        internals.updateLayoutIgnorePendingStylesheetsAndRunPostLayoutTasks();
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+window.onload = function() {
+    requestAnimationFrame(doit);
+};
+</script>
+</html>

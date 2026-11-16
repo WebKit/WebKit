@@ -1,0 +1,5 @@
+This should be green.
+This should be green.
+
+PASS NEGATED Attribute selectors with multiple attributes
+

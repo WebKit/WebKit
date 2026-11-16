@@ -1,0 +1,8 @@
+Tests to make sure that default audits are not minified.
+
+
+== Running test suite: Audit.NonMinifiedDefaultAudits
+-- Running test case: Audit.NonMinifiedDefaultAudits.IndentationPreserved
+PASS: Expect that default audits source is present.
+PASS: Expect that the testPass test case has correct number of spaces and indentation.
+

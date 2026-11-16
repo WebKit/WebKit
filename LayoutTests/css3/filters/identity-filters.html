@@ -1,0 +1,146 @@
+<style>
+    td {
+        padding: 5px;
+        text-align: center;
+    }
+    svg {
+        width: 100px;
+        height: 100px;
+    }
+    .box {
+        width: 100px;
+        height: 100px;
+        background-color: green;
+        display: inline-block;
+    }
+    .noop-blur {
+        filter: blur(0);
+    }
+    .noop-brightness {
+        filter: brightness(1);
+    }
+    .noop-contrast {
+        filter: contrast(1);
+    }
+    .noop-drop-shadow {
+        filter: drop-shadow(0px 0px 0px 0px);
+    }
+    .noop-grayscale {
+        filter: grayscale(0);
+    }
+    .noop-hue-rotate {
+        filter: hue-rotate(0);
+    }
+    .noop-invert {
+        filter: invert(0);
+    }
+    .noop-opacity {
+        filter: opacity(1);
+    }
+    .noop-saturate {
+        filter: saturate(1);
+    }
+    .noop-sepia {
+        filter: sepia(0);
+    }
+    .noop-ref-blur {
+        filter: url(#noop-svg-blur);
+    }
+    .noop-ref-morphology {
+        filter: url(#noop-svg-morphology);  
+    }
+</style>
+<body>
+    <table>
+        <tr>
+            <td>
+                <div class="box noop-blur"></div>
+            </td>
+            <td>
+                <div class="box noop-brightness"></div>
+            </td>
+            <td>
+                <div class="box noop-contrast"></div>
+            </td>
+            <td>
+                <div class="box noop-drop-shadow"></div>
+            </td>
+        </tr>
+        <tr>
+            <td>blur</td>
+            <td>brightness</td>
+            <td>contrast</td>
+            <td>drop-shadow</td>
+        </tr>
+        <tr>
+            <td>
+                <div class="box noop-grayscale"></div>
+            </td>
+            <td>
+                <div class="box noop-hue-rotate"></div>
+            </td>
+            <td>
+                <div class="box noop-invert"></div>
+            </td>
+            <td>
+                <div class="box noop-opacity"></div>
+            </td>
+        </tr>
+        <tr>
+            <td>grayscale</td>
+            <td>hue-rotate</td>
+            <td>invert</td>
+            <td>opacity</td>
+        </tr>
+        <tr>
+            <td>
+                <div class="box noop-saturate"></div>
+            </td>
+            <td>
+                <div class="box noop-sepia"></div>
+            </td>
+            <td>
+                <div class="box noop-ref-blur"></div>
+            </td>
+            <td>
+                <div class="box noop-ref-morphology"></div>
+            </td>
+        </tr>
+        <tr>
+            <td>saturate</td>
+            <td>sepia</td>
+            <td>ref-blur</td>
+            <td>ref-morphology</td>
+        </tr>
+        <tr>
+            <td>
+                <svg>
+                    <filter id="noop-svg-blur" x="-5%" y="-5%" width="110%" height="110%">
+                        <feGaussianBlur in="SourceGraphic" stdDeviation="0"/>
+                    </filter>
+                    <rect width="100%" height="100%" fill="green" filter="url(#noop-svg-blur)"/>
+                </svg>
+            </td>
+            <td>
+                <svg>
+                     <filter id="noop-svg-morphology" x="-5%" y="-5%" width="110%" height="110%">
+                        <feMorphology operator="erode" radius="0"/>
+                    </filter>
+                    <rect width="100%" height="100%" fill="green" filter="url(#noop-svg-morphology)"/>
+                </svg>
+            </td>
+            <td>
+                <div class="box noop-grayscale noop-ref-blur"></div>
+            </td>
+            <td>
+                <div class="box noop-ref-morphology"></div>
+            </td>
+        </tr>
+        <tr>
+            <td>svg-blur</td>
+            <td>svg-morphology</td>
+            <td>grayscale <br/> ref-blur</td>
+            <td>ref-morphology <br/> contrast</td>
+        </tr>
+    </table>
+</body>

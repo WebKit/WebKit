@@ -1,0 +1,188 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ ModelElementImmersiveEnabled=true ImageElementImmersiveEnabled=true shouldAcceptImmersiveEnvironmentRequests=true ] -->
+<meta charset="utf-8">
+<title>&lt;img> immersive</title>
+<script src="../../../imported/w3c/web-platform-tests/resources/testdriver.js"></script>
+<script src="../../../resources/testdriver-vendor.js"></script>
+<script src="../../../resources/testharness.js"></script>
+<script src="../../../resources/testharnessreport.js"></script>
+<body>
+<script>
+
+async function createImage(t, source)
+{
+    const image = document.createElement('img');
+    image.src = source;
+    document.body.appendChild(image);
+    t.add_cleanup(() => image.remove());
+    await image.decode();
+    return image;
+}
+
+promise_test(async t => {
+    const image = await createImage(t, "resources/panorama.png");
+
+    assert_true('requestImmersive' in image, 'requestImmersive should exist');
+    assert_equals(typeof image.requestImmersive, 'function', 'requestImmersive should be a function');
+    assert_true('onimmersivechange' in image, 'onimmersivechange should exist');
+    assert_true('onimmersiveerror' in image, 'onimmersiveerror should exist');
+}, 'Immersive API exists on img');
+
+promise_test(async t => {
+    const image = await createImage(t, "../resources/green-400x400.png");
+
+    await promise_rejects_dom(t, "InvalidStateError",
+        image.requestImmersive(),
+        'Should reject an image that is not a panorama'
+    );
+
+    assert_equals(document.immersiveElement, null, 'No immersive element for an image that is not a panorama');
+}, 'Image immersive request fails for an image that is not a panorama');
+
+promise_test(async t => {
+    const image = await createImage(t, "resources/panorama.png");
+
+    await promise_rejects_dom(t, "NotAllowedError",
+        image.requestImmersive(),
+        'Should reject without user activation'
+    );
+
+    assert_equals(document.immersiveElement, null, 'No immersive element without user gesture');
+}, 'Image immersive request fails without user activation');
+
+promise_test(async t => {
+    const image = await createImage(t, "resources/panorama.png");
+
+    let errorFired = false;
+    let handlerFired = false;
+    const errorHandler = () => { errorFired = true; };
+    image.addEventListener('immersiveerror', errorHandler);
+    image.onimmersiveerror = () => { handlerFired = true; };
+
+    await promise_rejects_dom(t, "NotAllowedError",
+        image.requestImmersive(),
+        'Should reject without user activation'
+    );
+
+    await new Promise(resolve => setTimeout(resolve, 100));
+    image.removeEventListener('immersiveerror', errorHandler);
+    image.onimmersiveerror = null;
+
+    assert_true(errorFired, 'immersiveerror event should fire on failed request');
+    assert_true(handlerFired, 'onimmersiveerror should be called on failed request');
+}, 'Immersiveerror event fires when an image request fails');
+
+promise_test(async t => {
+    const image = await createImage(t, "resources/panorama.png");
+
+    await test_driver.bless("immersive");
+    await image.requestImmersive();
+
+    assert_equals(document.immersiveElement, image, 'Document should reference immersive image');
+
+    await document.exitImmersive();
+}, 'Image enters immersive mode with user activation');
+
+promise_test(async t => {
+    const image = await createImage(t, "resources/panorama.png");
+
+    await test_driver.bless("immersive");
+    await image.requestImmersive();
+
+    assert_equals(document.immersiveElement, image, 'Image should be immersive');
+
+    await document.exitImmersive();
+
+    assert_equals(document.immersiveElement, null, 'No immersive element after exit');
+}, 'Document.exitImmersive() exits immersive image');
+
+promise_test(async t => {
+    const image = await createImage(t, "resources/panorama.png");
+
+    await test_driver.bless("immersive");
+    await image.requestImmersive();
+    assert_equals(document.immersiveElement, image, 'Image is immersive after request');
+
+    if (window.testRunner)
+        testRunner.exitImmersive();
+
+    await t.step_wait(() => document.immersiveElement === null, 'Waiting for immersive element to be null');
+    assert_equals(document.immersiveElement, null, 'No immersive element after exit');
+}, 'Client dismissal exits immersive image');
+
+promise_test(async t => {
+    const image = await createImage(t, "resources/panorama.png");
+
+    let imageChangeEvents = [];
+    let documentChangeEvents = [];
+    const imageHandler = () => { imageChangeEvents.push(document.immersiveElement); };
+    const documentHandler = () => { documentChangeEvents.push(document.immersiveElement); };
+
+    await test_driver.bless("immersive");
+
+    image.addEventListener('immersivechange', imageHandler);
+    document.addEventListener('immersivechange', documentHandler);
+
+    await image.requestImmersive();
+    await new Promise(resolve => setTimeout(resolve, 100));
+
+    image.removeEventListener('immersivechange', imageHandler);
+    document.removeEventListener('immersivechange', documentHandler);
+
+    assert_equals(imageChangeEvents.length, 1, 'Image should fire one immersivechange event');
+    assert_equals(imageChangeEvents[0], image, 'Image event should occur when image is immersive');
+
+    assert_equals(documentChangeEvents.length, 1, 'Document should fire one immersivechange event');
+    assert_equals(documentChangeEvents[0], image, 'Document event should reference image');
+
+    await document.exitImmersive();
+}, 'Immersivechange events fire when an image enters immersive');
+
+promise_test(async t => {
+    const image1 = await createImage(t, "resources/panorama.png");
+    const image2 = await createImage(t, "resources/panorama.png");
+
+    await test_driver.bless("immersive");
+    await image1.requestImmersive();
+
+    assert_equals(document.immersiveElement, image1, 'Document should reference first image');
+
+    await test_driver.bless("immersive");
+    await image2.requestImmersive();
+
+    assert_equals(document.immersiveElement, image2, 'Document should reference second image');
+
+    await document.exitImmersive();
+
+    assert_equals(document.immersiveElement, null, 'No immersive element after exit');
+}, 'Only one image can be immersive at a time');
+
+promise_test(async t => {
+    const image = await createImage(t, "resources/panorama.png");
+
+    await test_driver.bless("immersive");
+    await image.requestImmersive();
+
+    assert_equals(document.immersiveElement, image, 'Image should be immersive');
+
+    image.remove();
+
+    await t.step_wait(() => document.immersiveElement === null, 'Waiting for immersive element to be cleared after removal');
+}, 'Removing immersive image from DOM exits immersive mode');
+
+promise_test(async t => {
+    const image = await createImage(t, "resources/panorama.png");
+
+    assert_false(image.matches(':immersive'), 'Should not match :immersive initially');
+
+    await test_driver.bless("immersive");
+    await image.requestImmersive();
+
+    assert_true(image.matches(':immersive'), 'Should match :immersive when immersive');
+
+    await document.exitImmersive();
+
+    assert_false(image.matches(':immersive'), 'Should not match :immersive after exit');
+}, 'CSS :immersive pseudo-class matches an immersive image');
+
+</script>
+</body>

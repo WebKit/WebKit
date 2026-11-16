@@ -1,0 +1,55 @@
+<script>
+  globalThis.testRunner?.waitUntilDone();
+  const log = console.debug;
+
+  onload = async () => {
+    try {
+      let adapter = await navigator.gpu.requestAdapter({});
+      let device = await adapter.requestDevice({});
+      device.pushErrorScope('validation');
+      let buffer = device.createBuffer({size: 4096, usage: GPUBufferUsage.STORAGE});
+      let outputBuffer = device.createBuffer({size: 4, usage: GPUBufferUsage.MAP_READ});
+      let bindGroupLayout = device.createBindGroupLayout({
+        entries: [{binding: 0, visibility: GPUShaderStage.COMPUTE, buffer: {type: 'storage'}}],
+      });
+      let bindGroup = device.createBindGroup({
+        layout: bindGroupLayout,
+        entries: [{binding: 0, resource: {buffer, offset: buffer.size - 256}}],
+      });
+      let module = device.createShaderModule({
+        code: `
+@group(0) @binding(0) var<storage, read_write> arr: array<u32>;
+
+@compute @workgroup_size(1)
+fn foo() {
+  arr[0x40]=1234567890;
+}
+`,
+      });
+      let pipelineLayout = device.createPipelineLayout({bindGroupLayouts: [bindGroupLayout]});
+      let pipeline = device.createComputePipeline({compute: {module}, layout: pipelineLayout});
+      let commandEncoder = device.createCommandEncoder({});
+      let computePassEncoder = commandEncoder.beginComputePass({});
+      computePassEncoder.setPipeline(pipeline);
+      computePassEncoder.setBindGroup(0, bindGroup, []);
+      computePassEncoder.dispatchWorkgroups(1);
+      computePassEncoder.end();
+      let commandBuffer = commandEncoder.finish();
+      device.queue.submit([commandBuffer]);
+      await device.queue.onSubmittedWorkDone();
+      await outputBuffer.mapAsync(GPUMapMode.READ);
+      log(new Uint32Array(outputBuffer.getMappedRange()));
+      let error = await device.popErrorScope();
+      if (error) {
+        log(error.message);
+      } else {
+        log('no validation error');
+      }
+      log('the end');
+    } catch (e) {
+      log('error');
+      log(e);
+    }
+    globalThis.testRunner?.notifyDone();
+  };
+</script>

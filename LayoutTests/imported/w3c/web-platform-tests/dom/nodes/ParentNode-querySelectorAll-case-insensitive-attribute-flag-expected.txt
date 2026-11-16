@@ -1,0 +1,5 @@
+Test div with CasE class
+
+PASS Case-insensitive attribute selector with lowercase flag 'i' should work
+PASS Case-insensitive attribute selector with uppercase flag 'I' should work
+

@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<body>
+  <script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+window.addEventListener("message", (event) => {
+    if (event.data === "getUserMedia done") {
+        check.innerHTML = "<iframe src='http://localhost:8000/webrtc/resources/check-ice-candidate-filtering.html'></iframe>";
+        return;
+    }
+    result.innerHTML = event.data === "filtering enabled" ? "PASS" : "FAIL";
+    if (window.testRunner)
+        testRunner.notifyDone();
+}, false);
+
+  </script>
+  <div id="result"></div>
+  <iframe id="frame" src="resources/do-get-user-media.html"></iframe>
+  <div id="check"></div>
+</body>
+</html>

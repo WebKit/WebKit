@@ -1,0 +1,85 @@
+/*
+ * Copyright 2023 The Chromium Authors. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ *
+ * 1.  Redistributions of source code must retain the above copyright
+ *     notice, this list of conditions and the following disclaimer.
+ * 2.  Redistributions in binary form must reproduce the above copyright
+ *     notice, this list of conditions and the following disclaimer in the
+ *     documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL APPLE OR ITS CONTRIBUTORS BE LIABLE FOR ANY
+ * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+ * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#include "config.h"
+
+#if ENABLE(WEBGL)
+#include "EXTDisjointTimerQueryWebGL2.h"
+
+#include "ContextDestructionObserverInlines.h"
+#include "EventLoop.h"
+#include "ScriptExecutionContext.h"
+#include "ScriptExecutionContextInlines.h"
+#include <wtf/TZoneMallocInlines.h>
+
+namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(EXTDisjointTimerQueryWebGL2);
+
+EXTDisjointTimerQueryWebGL2::EXTDisjointTimerQueryWebGL2(WebGLRenderingContextBase& context)
+    : WebGLExtension(context, WebGLExtensionName::EXTDisjointTimerQueryWebGL2)
+{
+    protect(context.graphicsContextGL())->enableExtension(GCGLExtension::EXT_disjoint_timer_query);
+}
+
+EXTDisjointTimerQueryWebGL2::~EXTDisjointTimerQueryWebGL2() = default;
+
+bool EXTDisjointTimerQueryWebGL2::supported(GraphicsContextGL& context)
+{
+    return context.supportsExtension(GCGLExtension::EXT_disjoint_timer_query);
+}
+
+void EXTDisjointTimerQueryWebGL2::queryCounterEXT(ScriptExecutionContext& scriptExecutionContext, WebGLQuery& query, GCGLenum target)
+{
+    if (isContextLost())
+        return;
+    Ref context = this->context();
+
+    if (!context->validateWebGLObject("queryCounterEXT"_s, query))
+        return;
+
+    if (target != GraphicsContextGL::TIMESTAMP_EXT) {
+        context->synthesizeGLError(GraphicsContextGL::INVALID_ENUM, "queryCounterEXT"_s, "invalid target"_s);
+        return;
+    }
+
+    if (query.target() && query.target() != target) {
+        context->synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, "queryCounterEXT"_s, "query type does not match target"_s);
+        return;
+    }
+
+    query.setTarget(target);
+
+    protect(context->graphicsContextGL())->queryCounterEXT(query.object(), target);
+
+    // A query's result must not be made available until control has returned to the user agent's main loop.
+    protect(scriptExecutionContext.eventLoop())->queueMicrotask(scriptExecutionContext.vm(), [query = protect(query)] {
+        query->makeResultAvailable();
+    });
+}
+
+} // namespace WebCore
+
+#endif // ENABLE(WEBGL)

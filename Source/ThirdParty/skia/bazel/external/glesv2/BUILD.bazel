@@ -1,0 +1,9 @@
+load("@rules_cc//cc:cc_library.bzl", "cc_library")
+
+cc_library(
+    name = "glesv2",
+    linkopts = [
+        "-lGLESv2",
+    ],
+    visibility = ["//:__subpackages__"],
+)

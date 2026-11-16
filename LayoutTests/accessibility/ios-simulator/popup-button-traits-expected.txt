@@ -1,0 +1,22 @@
+This test ensures only controls that present a picker of their own have the pop-up button trait on iOS. Assistive technologies use the trait to describe the control.
+
+PASS: hasPopupButtonTrait("select") === true
+PASS: hasPopupButtonTrait("date") === true
+PASS: hasPopupButtonTrait("time") === true
+PASS: hasPopupButtonTrait("month") === true
+PASS: hasPopupButtonTrait("week") === true
+PASS: hasPopupButtonTrait("datetime-local") === true
+PASS: hasPopupButtonTrait("color") === true
+PASS: hasPopupButtonTrait("aria-haspopup") === true
+PASS: hasPopupButtonTrait("popover-invoker") === false
+PASS: accessibilityController.accessibleElementById("popover-invoker").hasButtonTrait === true
+PASS: hasPopupButtonTrait("command-invoker") === false
+PASS: accessibilityController.accessibleElementById("command-invoker").hasButtonTrait === true
+PASS: textField.hasPopupButtonTrait === false
+PASS: textField.hasTextEntryTrait === true
+PASS: hasPopupButtonTrait("becomes-date") === true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+        Menu Disclose Disclose

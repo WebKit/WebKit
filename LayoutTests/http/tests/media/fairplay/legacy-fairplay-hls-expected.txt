@@ -1,0 +1,8 @@
+
+EVENT(webkitneedkey)
+FETCH: resources/cert.der OK
+EVENT(webkitkeymessage)
+PROMISE: licenseResponse resolved
+EVENT(canplaythrough)
+END OF TEST
+

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Security-Policy" content="media-src *">
+<script src="../../media/media-file.js"></script>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+function testPassed()
+{
+    document.getElementById("result").textContent = "PASS: Video with data URL loaded successfully under media-src *.";
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+function testFailed()
+{
+    document.getElementById("result").textContent = "FAIL: Video with data URL was blocked by CSP.";
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+</script>
+</head>
+<body>
+<p>This tests that loading a video with a data URL is allowed when the page has Content Security Policy "media-src *".</p>
+<div id="result"></div>
+<video src="" oncanplay="testPassed()" onerror="testFailed()" style="width: 0; height: 0;"></video>
+<script>
+document.querySelector("video").src = findDataURL("video");
+</script>
+</body>
+</html>

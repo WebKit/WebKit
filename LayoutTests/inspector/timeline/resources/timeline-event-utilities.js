@@ -1,0 +1,109 @@
+function savePageData(data) {
+    TestPage.dispatchEventToFrontend("SavePageData", data);
+}
+
+TestPage.registerInitializer(() => {
+    InspectorTest.TimelineEvent = {};
+
+    InspectorTest.TimelineEvent.captureTimelineWithScript = function({expression, eventType, timelineType, silent = false}) {
+        let savePageDataPromise = InspectorTest.awaitEvent("SavePageData").then((event) => event.data);
+
+        let promise = new Promise((resolve, reject) => {
+            let listener = WI.timelineManager.addEventListener(WI.TimelineManager.Event.CapturingStateChanged, (event) => {
+                if (WI.timelineManager.capturingState === WI.TimelineManager.CapturingState.Active) {
+                    let recording = WI.timelineManager.activeRecording;
+                    let timeline = recording.timelines.get(timelineType ?? WI.TimelineRecord.Type.Script);
+
+                    // A record that the expression does not cause, such as a screenshot, can arrive before every
+                    // instrument has reported that it started. A start that arrives while capturing stops makes
+                    // capturing active again. The reply to the evaluation comes after all those starts, so wait for it too.
+                    let recordAdded = false;
+                    let evaluated = false;
+                    function stopCapturingIfDone() {
+                        if (!recordAdded || !evaluated)
+                            return;
+
+                        if (!silent)
+                            InspectorTest.log("Stopping Capture...");
+                        WI.timelineManager.stopCapturing();
+                    }
+
+                    let recordAddedListener = timeline.addEventListener(WI.Timeline.Event.RecordAdded, (recordAddedEvent) => {
+                        let {record} = recordAddedEvent.data;
+                        if (eventType && record.eventType !== eventType)
+                            return;
+
+                        timeline.removeEventListener(WI.Timeline.Event.RecordAdded, recordAddedListener);
+                        recordAdded = true;
+                        stopCapturingIfDone();
+                    });
+
+                    if (!silent)
+                        InspectorTest.log("Evaluating...");
+                    InspectorTest.evaluateInPage(expression).then(() => {
+                        evaluated = true;
+                        stopCapturingIfDone();
+                    }, reject);
+                    return;
+                }
+
+                if (WI.timelineManager.capturingState === WI.TimelineManager.CapturingState.Inactive) {
+                    WI.timelineManager.removeEventListener(WI.TimelineManager.Event.CapturingStateChanged, listener);
+                    InspectorTest.assert(savePageDataPromise, "savePageData should have been called in the page before capturing was stopped.");
+                    savePageDataPromise.then(resolve);
+                    return;
+                }
+            });
+        });
+
+        if (!silent)
+            InspectorTest.log("Starting Capture...");
+        const newRecording = true;
+        WI.timelineManager.startCapturing(newRecording);
+
+        return promise;
+    }
+
+    InspectorTest.TimelineEvent.captureTimelineWithMarker = function({expression, markerType, timelineType, silent = false}) {
+        let savePageDataPromise = InspectorTest.awaitEvent("SavePageData").then((event) => event.data);
+
+        let promise = new Promise((resolve, reject) => {
+            let listener = WI.timelineManager.addEventListener(WI.TimelineManager.Event.CapturingStateChanged, (event) => {
+                if (WI.timelineManager.capturingState === WI.TimelineManager.CapturingState.Active) {
+                    let recording = WI.timelineManager.activeRecording;
+
+                    let markerAddedListener = recording.addEventListener(WI.TimelineRecording.Event.MarkerAdded, (markerAddedEvent) => {
+                        let {marker} = markerAddedEvent.data;
+                        if (markerType && marker.type !== markerType)
+                            return;
+
+                        recording.removeEventListener(WI.TimelineRecording.Event.MarkerAdded, markerAddedListener);
+
+                        if (!silent)
+                            InspectorTest.log("Stopping Capture...");
+                        WI.timelineManager.stopCapturing();
+                    });
+
+                    if (!silent)
+                        InspectorTest.log("Evaluating...");
+                    InspectorTest.evaluateInPage(expression).catch(reject);
+                    return;
+                }
+
+                if (WI.timelineManager.capturingState === WI.TimelineManager.CapturingState.Inactive) {
+                    WI.timelineManager.removeEventListener(WI.TimelineManager.Event.CapturingStateChanged, listener);
+                    InspectorTest.assert(savePageDataPromise, "savePageData should have been called in the page before capturing was stopped.");
+                    savePageDataPromise.then(resolve);
+                    return;
+                }
+            });
+        });
+
+        if (!silent)
+            InspectorTest.log("Starting Capture...");
+        const newRecording = true;
+        WI.timelineManager.startCapturing(newRecording);
+
+        return promise;
+    }
+});

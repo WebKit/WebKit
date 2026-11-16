@@ -1,0 +1,117 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body onload="run()">
+<svg id="svg" xmlns="http://www.w3.org/2000/svg" width="200" height="200">
+    <path id="p1" d="M-100 -100L100 -100 L100 100 L-100 100 z"/>
+    <path id="p2" d="M-100 -100L100 -100 L100 100 L-100 100 z" transform="translate(-1000, -1000)"/>
+    <path id="p3" d="M100 100L300 100 L300 300 L100 300 z"/>
+    <path id="p4" d="M-100 -100L100 -100 L100 100 L-100 100 z" style="display: none"/>
+    <path id="p5" d="M-100 -100L100 -100 L100 100 L-100 100 z" style="visibility: hidden"/>
+    <path id="p6" d="M-100 -100L100 -100 L100 100 L-100 100 z" style="opacity: 0"/>
+    <g style="opacity: 0">
+        <path id="p7" d="M-100 -100L100 -100 L100 100 L-100 100 z"/>
+    </g>
+    <path id="p8" d="M-100 -100L100 -100 L100 100 L-100 100 z M-50 -50L50 -50 L50 50 L-50 50 z" fill-rule="nonzero"/>
+    <path id="p9" d="M-100 -100L100 -100 L100 100 L-100 100 z M-50 -50L50 -50 L50 50 L-50 50 z" fill-rule="evenodd"/>
+    <clipPath>
+        <path id="p10" d="M-100 -100L100 -100 L100 100 L-100 100 z M-50 -50L50 -50 L50 50 L-50 50 z" fill-rule="nonzero" clip-rule="evenodd"/>
+        <path id="p11" d="M-100 -100L100 -100 L100 100 L-100 100 z M-50 -50L50 -50 L50 50 L-50 50 z" fill-rule="evenodd" clip-rule="nonzero"/>
+    </clipPath>
+</svg>
+<p id="description"></p>
+<div id="console"></div>
+<script type="text/javascript">
+<![CDATA[
+window.enablePixelTesting = false;
+window.jsTestIsAsync = true;
+var svg = document.getElementById("svg");
+var p1 = document.getElementById("p1"),
+    p2 = document.getElementById("p2"),
+    p3 = document.getElementById("p3"),
+    p4 = document.getElementById("p4"),
+    p5 = document.getElementById("p5"),
+    p6 = document.getElementById("p6"),
+    p7 = document.getElementById("p7"),
+    p8 = document.getElementById("p8"),
+    p9 = document.getElementById("p9"),
+    p10 = document.getElementById("p10"),
+    p11 = document.getElementById("p11");
+var svgPoint = svg.createSVGPoint();
+
+function run() {
+    description("Test isPointInFill() on path.");
+
+    debug("");
+    debug("Test simple different coordinates");
+
+    shouldBe("p1.isPointInFill()", "true");
+    var point = {};
+    shouldBe("p1.isPointInFill({})", "true");
+    shouldBe("p1.isPointInFill({x: 0, y: 0})", "true");
+    shouldBe("p1.isPointInFill({x: 200, y: 200})", "false");
+    shouldBe("p1.isPointInFill({x: -200, y: -200})", "false");
+    shouldBe("p1.isPointInFill({x: -100, y: -100})", "true");
+    shouldBe("p1.isPointInFill(new DOMPoint())", "true");
+    shouldBe("p1.isPointInFill(new DOMPoint(100, 100))", "true");
+    shouldBe("p1.isPointInFill(new DOMPoint(-200, -200))", "false");
+    shouldBe("p1.isPointInFill(new DOMPointReadOnly())", "true");
+    shouldBe("p1.isPointInFill(new DOMPointReadOnly(-200, -200))", "false");
+    shouldBe("p1.isPointInFill(svgPoint)", "true");
+    svgPoint.x = -200;
+    svgPoint.y = -200;
+    shouldBe("p1.isPointInFill(svgPoint)", "false");
+    shouldBe("p1.isPointInFill(new DOMPoint(NaN))", "false");
+    shouldBe("p1.isPointInFill(new DOMPoint(Infinity))", "false");
+    shouldBe("p1.isPointInFill({x: 'string', y: 'string'})", "false");
+    shouldThrow("p1.isPointInFill('string')");
+
+    debug("");
+    debug("Test that transform doesn't affect result");
+    shouldBe("p2.isPointInFill()", "true");
+
+    debug("");
+    debug("Verify that no argument or empty dictionary is the same as 0,0 and may return false");
+    shouldBe("p3.isPointInFill()", "false");
+    shouldBe("p3.isPointInFill({})", "false");
+
+    debug("");
+    debug("display: none; should not affect isPointInFill");
+    shouldBe("p4.isPointInFill()", "true");
+
+    debug("");
+    debug("visibility: hidden; should not affect isPointInFill");
+    shouldBe("p5.isPointInFill()", "true");
+
+    debug("");
+    debug("opacity: 0; should not affect isPointInFill");
+    shouldBe("p6.isPointInFill()", "true");
+
+    debug("");
+    debug("opacity: 0; on group should not affect isPointInFill");
+    shouldBe("p7.isPointInFill()", "true");
+
+    debug("");
+    debug("isPointInFill should respect fill-rule: nonzero");
+    shouldBe("p8.isPointInFill()", "true");
+
+    debug("");
+    debug("isPointInFill should respect fill-rule: evenodd");
+    shouldBe("p9.isPointInFill()", "false");
+
+    debug("");
+    debug("isPointInFill should not respect clip-rule 1");
+    shouldBe("p10.isPointInFill()", "true");
+
+    debug("");
+    debug("isPointInFill should not respect clip-rule 2");
+    shouldBe("p11.isPointInFill()", "false");
+
+    finishJSTest();
+}
+]]>
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

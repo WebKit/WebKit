@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+function runTest() {
+  document.defaultView.find("foo");
+  setTimeout(() => { document.write("Test passes if there is no crash."); testRunner.notifyDone(); }, 0);
+}
+</script>
+<body onload=runTest()>
+<div contenteditable="plaintext-only">
+  <fieldset style="column-width: 0px">
+    <legend>foo</legend>
+  </fieldset>
+</div>

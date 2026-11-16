@@ -1,0 +1,5 @@
+CONSOLE MESSAGE: Content blocker prevented frame displaying https://localhost:9000/WebKit/loading/early-hints/contentextensions/resources/preconnect.h2.py?preconnect_origin=https%3A%2F%2Fnot-web-platform.test%3A9000 from preconnecting to https://not-web-platform.test:9000/ due to early hint
+
+
+PASS Early hints preconnect content rule list check
+

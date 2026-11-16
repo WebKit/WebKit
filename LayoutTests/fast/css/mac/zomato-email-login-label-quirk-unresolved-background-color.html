@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/js-test.js"></script>
+<script>
+window.internals?.setTopDocumentURLForQuirks("https://www.zomato.com");
+</script>
+<style>
+label {
+    color: white;
+}
+#white {
+    background-color: white;
+}
+#currentColor {
+    background-color: currentcolor;
+}
+#nonWhiteCurrentColor {
+    color: green;
+    background-color: currentcolor;
+}
+</style>
+</head>
+<body>
+<label id="white" class="eNjKGZ">Email</label>
+<label id="currentColor" class="eNjKGZ">Email</label>
+<label id="nonWhiteCurrentColor" class="eNjKGZ">Email</label>
+<script>
+description("Tests zomato quirk resolves currentcolor before checking for a white background-color.");
+shouldBeEqualToString("getComputedStyle(white).backgroundColor", "rgba(0, 0, 0, 0)");
+shouldBeEqualToString("getComputedStyle(currentColor).backgroundColor", "rgba(0, 0, 0, 0)");
+shouldBeEqualToString("getComputedStyle(nonWhiteCurrentColor).backgroundColor", "rgb(0, 128, 0)");
+</script>
+</body>
+</html>

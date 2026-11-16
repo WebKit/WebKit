@@ -1,0 +1,22 @@
+This paragraph is here only to fill space in the DOM
+
+And this address too..
+So does this paragraph !
+
+But this one should have green background
+
+First definition term that should have green background
+First definition that should have green background
+Second definition term
+Second definition
+Third definition term
+Third definition
+Fourth definition term that should have green background
+Fourth definition that should have green background
+Fifth definition term
+Fifth definition
+Sixth definition term
+Sixth definition
+
+PASS nth-of-type selector tests
+

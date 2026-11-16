@@ -1,0 +1,5 @@
+
+PASS form element pointer outside a template
+PASS form element pointer inside template contents
+PASS form element pointer outside a template is not used inside its contents
+

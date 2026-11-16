@@ -1,0 +1,1 @@
+ PASS the block level box on the earlier line is reported before its container

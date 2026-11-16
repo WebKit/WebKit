@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Performance test for :has(> :is(x > y)) with child combinators</title>
+    <style>
+        ol.group1:has(> :is(.highlight > li:nth-child(odd))) { border-color: red; }
+        ol.group2:has(> :is(.highlight > li:nth-child(even))) { border-color: blue; }
+        ol.group3:has(> :is(.special > li:first-child)) { border-color: green; }
+        ol.group4:has(> :is(.marker > li:last-child)) { border-color: yellow; }
+        ol.group5:has(> :is(.tagged > li)) { border-color: purple; }
+
+        ol:has(> :is(.active > li)) { background-color: rgba(255, 0, 0, 0.1); }
+        ol:has(> :is(.selected > li)) { background-color: rgba(0, 255, 0, 0.1); }
+        ol:has(> :is(.focused > li)) { background-color: rgba(0, 0, 255, 0.1); }
+        ol:has(> :is(.hover > li)) { box-shadow: 0 0 5px rgba(0,0,0,0.2); }
+        ol:has(> :is(.disabled > li)) { opacity: 0.5; }
+
+        ol:has(> :is(.state1 > li:nth-of-type(1))) { margin-left: 1px; }
+        ol:has(> :is(.state2 > li:nth-of-type(2))) { margin-left: 2px; }
+        ol:has(> :is(.state3 > li:nth-of-type(3))) { margin-left: 3px; }
+        ol:has(> :is(.state4 > li:nth-of-type(4))) { margin-left: 4px; }
+        ol:has(> :is(.state5 > li:nth-of-type(5))) { margin-left: 5px; }
+
+        ol:has(> :is(.parent1 > li)) { --color1: red; }
+        ol:has(> :is(.parent2 > li)) { --color2: blue; }
+        ol:has(> :is(.parent3 > li)) { --color3: green; }
+        ol:has(> :is(.parent4 > li)) { --color4: yellow; }
+        ol:has(> :is(.parent5 > li)) { --color5: purple; }
+    </style>
+</head>
+<body>
+<div id="test-container"></div>
+<script src="../resources/runner.js"></script>
+<script>
+
+const container = document.getElementById('test-container');
+
+for (let i = 0; i < 100; i++) {
+    const ol = document.createElement('ol');
+    ol.className = `group${(i % 5) + 1} highlight special marker tagged`;
+
+    for (let j = 0; j < 30; j++) {
+        const li = document.createElement('li');
+        ol.appendChild(li);
+    }
+
+    container.appendChild(ol);
+}
+
+const allListItems = container.querySelectorAll('li');
+const allLists = container.querySelectorAll('ol');
+
+PerfTestRunner.measureRunsPerSecond({
+    description: "Tests DOM manipulation performance with complex :has(> :is()) selectors containing child combinators.",
+    run: function() {
+        for (let i = 0; i < allListItems.length; i += 3) {
+            allListItems[i].classList.add('temp');
+        }
+        getComputedStyle(container).opacity;
+
+        for (let i = 0; i < allLists.length; i += 2) {
+            allLists[i].classList.add('active', 'selected', 'focused');
+        }
+        getComputedStyle(container).opacity;
+
+        for (let i = 0; i < allListItems.length; i += 3) {
+            allListItems[i].classList.remove('temp');
+        }
+        getComputedStyle(container).opacity;
+
+        for (let i = 0; i < allLists.length; i += 2) {
+            allLists[i].classList.remove('active', 'selected', 'focused');
+        }
+        getComputedStyle(container).opacity;
+    }
+});
+</script>
+</body>
+</html>

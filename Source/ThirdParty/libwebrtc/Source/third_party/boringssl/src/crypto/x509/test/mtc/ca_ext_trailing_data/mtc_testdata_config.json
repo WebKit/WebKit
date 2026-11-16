@@ -1,0 +1,43 @@
+{
+  "Version": "plants-07",
+  "ID": "32473.1",
+  "LogNumber": 1,
+  "Cosigners": [
+    {
+      "CosignerID": "32473.1",
+      "SignatureAlgorithm": "mldsa44",
+      "PrivateKey": "MDQCAQAwCwYJYIZIAWUDBAMRBCKAIAABAgMEBQYHCAkKCwwNDg8QERITFBUWFxgZGhscHR4f"
+    }
+  ],
+  "CACert": {
+    "NotBefore": "2020-01-01T00:00:00Z",
+    "NotAfter": "2030-12-31T23:59:59Z",
+    "IsCA": true,
+    "KeyUsage": ["CertSign"],
+    "MinSerial": {"Log": 1, "Index": 0},
+    "MaxSerial": {"Log": 1, "Index": 4096},
+    "//0": "The extension has trailing data after the encoded mtcCertificationAuthority extension.",
+    "OverrideMTCCAExtensionValue": "MB8wCwYJYIZIAWUDBAMRAgcBAAAAAAAAAgcBAAAAABAABQ=="
+  },
+  "Entries": [
+    {
+      "PublicKey": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEyxiC16lts+SOL87OwHhGDzK9/dyUd7sM80jAf53VL+AV38HoHKpmA7LJoYLf4yVhcVleNcxufsAfcPueTLX0Vg==",
+      "NotBefore": "2020-01-01T00:00:00Z",
+      "NotAfter": "2030-12-31T23:59:59Z",
+      "DNSNames": ["a.example"],
+      "KeyUsage": ["DigitalSignature"],
+      "ExtKeyUsage": ["ServerAuth"]
+    },
+    {
+      "PublicKey": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEyxiC16lts+SOL87OwHhGDzK9/dyUd7sM80jAf53VL+AV38HoHKpmA7LJoYLf4yVhcVleNcxufsAfcPueTLX0Vg==",
+      "NotBefore": "2020-01-01T00:00:00Z",
+      "NotAfter": "2030-12-31T23:59:59Z",
+      "DNSNames": ["z.example"],
+      "KeyUsage": ["DigitalSignature"],
+      "ExtKeyUsage": ["ServerAuth"],
+      "Certificates": [
+        {"SubtreeStart": 0, "SubtreeEnd": 2, "Cosigners": ["32473.1"]}
+      ]
+    }
+  ]
+}

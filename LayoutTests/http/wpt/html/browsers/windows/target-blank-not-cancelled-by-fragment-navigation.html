@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<meta charset=utf-8>
+<title>Navigating the source frame does not cancel a target=_blank window</title>
+<link rel="help" href="https://html.spec.whatwg.org/multipage/document-sequences.html#the-rules-for-choosing-a-navigable">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<body>
+<script>
+// PolicyChecker::stopCheck() used to answer every outstanding check with Ignore, losing the window.
+promise_test(async t => {
+    const channel = new BroadcastChannel("target-blank-multiple-windows");
+    t.add_cleanup(() => channel.close());
+    const opened = new Promise(resolve => {
+        channel.addEventListener("message", e => resolve(e.data), { once: true });
+    });
+
+    const a = document.createElement("a");
+    a.target = "_blank";
+    a.href = "resources/post-search-to-broadcast-channel.html?popup";
+    document.body.appendChild(a);
+    t.add_cleanup(() => a.remove());
+    a.click();
+    location.hash = "frag";
+
+    assert_equals(await opened, "popup");
+}, "A same-task fragment navigation does not cancel a target=_blank window");
+</script>
+</body>

@@ -1,0 +1,3 @@
+A test/built-ins/Promise/try/avoids-wrap-for-subclass.js
+A test/built-ins/Promise/try/avoids-wrap.js
+A test/built-ins/Promise/try/ctx-ctor-for-error.js

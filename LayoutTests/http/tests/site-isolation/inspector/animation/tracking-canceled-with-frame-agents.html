@@ -1,0 +1,97 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<style>
+@keyframes test {
+    to { opacity: 0; }
+}
+.test {
+    animation: test 10s linear;
+}
+</style>
+<script>
+function startCSSAnimation() {
+    let element = document.body.appendChild(document.createElement("div"));
+    element.className = "test";
+}
+
+function removeEffectOfCSSAnimation() {
+    document.getAnimations()[0].effect = null;
+}
+
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Animation.TrackingCanceled");
+
+    suite.addTestCase({
+        name: "SiteIsolation.Animation.TrackingCanceled.EffectRemoved",
+        description: "Replacing the effect of a tracked CSS animation should report it as canceled although a frame target's agent, not the page target's, is the one that has the Animation domain enabled.",
+        async test() {
+            // WI.timelineManager drops these events unless a timeline recording is active, so take them at that seam as tracking.html does.
+            let updates = [];
+            let updateWaiters = [];
+
+            let didTrackingStart = new Promise((resolve) => {
+                WI.timelineManager.animationTrackingStarted = resolve;
+            });
+            WI.timelineManager.animationTrackingUpdated = (timestamp, event) => {
+                updates.push(event);
+                for (let waiter of updateWaiters)
+                    waiter();
+            };
+            WI.timelineManager.animationTrackingCompleted = () => { };
+
+            async function awaitUpdateWithState(animationState) {
+                while (!updates.some((event) => event.animationState === animationState))
+                    await new Promise((resolve) => updateWaiters.push(resolve));
+                return updates.find((event) => event.animationState === animationState);
+            }
+
+            try {
+                InspectorTest.expectThat(InspectorTest.mainFrameTarget.hasDomain("Animation"), "The main frame's target should have the Animation domain.");
+                InspectorTest.expectEqual(InspectorTest.mainFrameTarget.type, WI.TargetType.Frame, "The main frame's target should have Frame type.");
+
+                WI.pageTarget.AnimationAgent.startTracking();
+                await didTrackingStart;
+
+                await InspectorTest.evaluateInPage("startCSSAnimation()");
+                let activeEvent = await awaitUpdateWithState("active");
+                InspectorTest.expectEqual(activeEvent.animationName, "test", "The first update should name the CSS animation.");
+
+                await InspectorTest.evaluateInPage("removeEffectOfCSSAnimation()");
+                let canceledEvent = await awaitUpdateWithState("canceled");
+                InspectorTest.expectEqual(canceledEvent.trackingAnimationId, activeEvent.trackingAnimationId, "The canceled update should be for the animation that was active.");
+
+                WI.pageTarget.AnimationAgent.stopTracking();
+            } finally {
+                delete WI.timelineManager.animationTrackingStarted;
+                delete WI.timelineManager.animationTrackingUpdated;
+                delete WI.timelineManager.animationTrackingCompleted;
+            }
+        },
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Animation.TrackingCanceled.FrameTargetRejectsTracking",
+        description: "startTracking/stopTracking sent to a frame target should fail so a frame agent can never shadow the page's tracking agent.",
+        async test() {
+            InspectorTest.expectThat(InspectorTest.mainFrameTarget.hasDomain("Animation"), "The main frame's target should have the Animation domain.");
+
+            // The frontend hides page-only commands from frame targets, so send the raw command over the frame target's connection.
+            let startTracking = WI.pageTarget.AnimationAgent.startTracking._instance._command;
+            let stopTracking = WI.pageTarget.AnimationAgent.stopTracking._instance._command;
+
+            await InspectorTest.expectException(async () => {
+                await startTracking._makeCallable(InspectorTest.mainFrameTarget.connection).invoke({});
+            });
+            await InspectorTest.expectException(async () => {
+                await stopTracking._makeCallable(InspectorTest.mainFrameTarget.connection).invoke({});
+            });
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+
+<body onload="runTest()">
+    <p>Test that the page target's tracking agent still learns that a CSS animation's effect was replaced when the Animation domain is enabled on frame targets.</p>
+</body>

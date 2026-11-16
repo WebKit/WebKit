@@ -1,0 +1,472 @@
+/*
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#import "config.h"
+#import "ApplicationStateTracker.h"
+
+#if PLATFORM(IOS_FAMILY)
+
+#import "EndowmentStateTracker.h"
+#import "Logging.h"
+#import "ProcessAssertion.h"
+#import "SandboxUtilities.h"
+#import "UIKitSPI.h"
+#import <WebCore/UIViewControllerUtilities.h>
+#import <algorithm>
+#import <wtf/BlockObjCExceptions.h>
+#import <wtf/ObjCRuntimeExtras.h>
+#import <wtf/TZoneMallocInlines.h>
+#import <wtf/cocoa/Entitlements.h>
+#import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
+#import <wtf/spi/cocoa/SecuritySPI.h>
+#import <wtf/text/TextStream.h>
+
+
+@interface UIWindow (WKDetails)
+- (BOOL)_isHostedInAnotherProcess;
+@end
+
+#if HAVE(UISCENE_BASED_VIEW_SERVICE_STATE_NOTIFICATIONS)
+static NSNotificationName const viewServiceBackgroundNotificationName = @"_UIViewServiceHostSceneDidEnterBackgroundNotification";
+static NSNotificationName const viewServiceForegroundNotificationName = @"_UIViewServiceHostSceneWillEnterForegroundNotification";
+#else
+static NSNotificationName const viewServiceBackgroundNotificationName = @"_UIViewServiceHostDidEnterBackgroundNotification";
+static NSNotificationName const viewServiceForegroundNotificationName = @"_UIViewServiceHostWillEnterForegroundNotification";
+#endif
+
+namespace WebKit {
+void* WKUIWindowSceneObserverContext = &WKUIWindowSceneObserverContext;
+}
+
+@interface WKUIWindowSceneObserver : NSObject {
+    WeakPtr<WebKit::ApplicationStateTracker> _parent;
+    WeakObjCPtr<UIWindow> _window;
+}
+- (id)initWithParent:(WebKit::ApplicationStateTracker&)parent;
+- (void)setObservedWindow:(UIWindow *)window;
+@end
+
+@implementation WKUIWindowSceneObserver
+
+- (id)initWithParent:(WebKit::ApplicationStateTracker&)parent
+{
+    self = [super init];
+    if (!self)
+        return nil;
+
+    _parent = parent;
+    return self;
+}
+
+- (void)setObservedWindow:(UIWindow *)window
+{
+    if (!linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::ApplicationStateTrackerDoesNotObserveWindow))
+        return;
+
+    RetainPtr newWindow = window;
+    RetainPtr oldWindow = _window.get();
+    if (oldWindow == newWindow)
+        return;
+
+    if (oldWindow) {
+        BEGIN_BLOCK_OBJC_EXCEPTIONS
+        // -removeObserver:forKeyPath: will throw an exception if this
+        // object wasn't registered as an observer of _window at
+        // this keyPath.
+        [oldWindow removeObserver:self forKeyPath:@"windowScene"];
+        END_BLOCK_OBJC_EXCEPTIONS
+    }
+
+    _window = newWindow.get();
+
+    if (newWindow)
+        [newWindow addObserver:self forKeyPath:@"windowScene" options:NSKeyValueObservingOptionNew context:WebKit::WKUIWindowSceneObserverContext];
+}
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSKeyValueChangeKey, id> *)change context:(void *)context
+{
+    if (context != WebKit::WKUIWindowSceneObserverContext)
+        return;
+
+    ensureOnMainThread([self, protectedSelf = RetainPtr { self }, change = RetainPtr { change }] {
+        if (!_parent)
+            return;
+
+        id scene = [change valueForKey:NSKeyValueChangeNewKey];
+        if ([scene isKindOfClass:UIWindowScene.class])
+            protect(_parent)->setScene((UIWindowScene *)scene);
+        else
+            protect(_parent)->setScene(nil);
+    });
+}
+@end
+
+namespace WebKit {
+
+static WeakHashSet<ApplicationStateTracker>& allApplicationStateTrackers()
+{
+    static NeverDestroyed<WeakHashSet<ApplicationStateTracker>> trackers;
+    return trackers;
+}
+
+static void updateApplicationBackgroundState()
+{
+    static bool s_isApplicationInBackground = false;
+    auto isAnyStateTrackerInForeground = []() -> bool {
+        return std::ranges::any_of(allApplicationStateTrackers(), [](auto& tracker) {
+            return !tracker.isInBackground();
+        });
+    };
+    bool isApplicationInBackground = !isAnyStateTrackerInForeground();
+    if (s_isApplicationInBackground == isApplicationInBackground)
+        return;
+
+    s_isApplicationInBackground = isApplicationInBackground;
+    ProcessAndUIAssertion::setProcessStateMonitorEnabled(isApplicationInBackground);
+}
+
+ApplicationType applicationType(UIWindow *window)
+{
+    if (_UIApplicationIsExtension())
+        return ApplicationType::Extension;
+
+    if (WTF::processHasEntitlement("com.apple.UIKit.vends-view-services"_s) && window._isHostedInAnotherProcess)
+        return ApplicationType::ViewService;
+
+    return ApplicationType::Application;
+}
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ApplicationStateTracker);
+
+ApplicationStateTracker::ApplicationStateTracker(UIView *view, SEL didEnterBackgroundSelector, SEL willEnterForegroundSelector, SEL willBeginSnapshotSequenceSelector, SEL didCompleteSnapshotSequenceSelector)
+    : m_view(view)
+    , m_observer { adoptNS([[WKUIWindowSceneObserver alloc] initWithParent:*this]) }
+    , m_didEnterBackgroundSelector(didEnterBackgroundSelector)
+    , m_willEnterForegroundSelector(willEnterForegroundSelector)
+    , m_willBeginSnapshotSequenceSelector(willBeginSnapshotSequenceSelector)
+    , m_didCompleteSnapshotSequenceSelector(didCompleteSnapshotSequenceSelector)
+    , m_isInBackground(true)
+{
+    ASSERT([protect(m_view) respondsToSelector:m_didEnterBackgroundSelector]);
+    ASSERT([protect(m_view) respondsToSelector:m_willEnterForegroundSelector]);
+
+#if ENABLE(ENDOWMENT_BASED_APPLICATION_STATE_TRACKING)
+    EndowmentStateTracker::singleton().addClient(*this);
+#endif
+    allApplicationStateTrackers().add(*this);
+}
+
+ApplicationStateTracker::~ApplicationStateTracker()
+{
+    RELEASE_LOG(ViewState, "%p - ~ApplicationStateTracker", this);
+
+    setWindow(nil);
+    setScene(nil);
+    setViewController(nil);
+
+    removeAllObservers();
+
+#if ENABLE(ENDOWMENT_BASED_APPLICATION_STATE_TRACKING)
+    EndowmentStateTracker::singleton().removeClient(*this);
+#endif
+    allApplicationStateTrackers().remove(*this);
+    updateApplicationBackgroundState();
+}
+
+void ApplicationStateTracker::removeAllObservers()
+{
+    NSNotificationCenter *notificationCenter = [NSNotificationCenter defaultCenter];
+    if (m_didEnterBackgroundObserver) {
+        [notificationCenter removeObserver:m_didEnterBackgroundObserver.get().get()];
+        m_didEnterBackgroundObserver = nil;
+    }
+    if (m_willEnterForegroundObserver) {
+        [notificationCenter removeObserver:m_willEnterForegroundObserver.get().get()];
+        m_willEnterForegroundObserver = nil;
+    }
+    if (m_willBeginSnapshotSequenceObserver) {
+        [notificationCenter removeObserver:m_willBeginSnapshotSequenceObserver.get().get()];
+        m_willBeginSnapshotSequenceObserver = nil;
+    }
+    if (m_didCompleteSnapshotSequenceObserver) {
+        [notificationCenter removeObserver:m_didCompleteSnapshotSequenceObserver.get().get()];
+        m_didCompleteSnapshotSequenceObserver = nil;
+    }
+}
+
+void ApplicationStateTracker::setWindow(UIWindow *window)
+{
+    if (window == m_window.get())
+        return;
+
+    if (m_window) {
+        switch (m_applicationType) {
+        case ApplicationType::Application:
+            // Do not clear the scene when the window changes; the client should still
+            // receive notifications about the view's previous window scene when that
+            // scene is backgrounded.
+            break;
+        case ApplicationType::Extension:
+        case ApplicationType::ViewService:
+            setViewController(nil);
+            break;
+        }
+    }
+
+    m_window = window;
+    [m_observer setObservedWindow:window];
+
+    if (!m_window)
+        return;
+
+    m_applicationType = applicationType(window);
+
+    switch (m_applicationType) {
+    case ApplicationType::Application:
+        setViewController(nil);
+        setScene(window.windowScene);
+        break;
+
+    case ApplicationType::Extension:
+    case ApplicationType::ViewService: {
+        RetainPtr<UIViewController> serviceViewController;
+
+        for (RetainPtr view = m_view.get(); view; view = view.get().superview) {
+            RetainPtr viewController = WebCore::viewController(view.get());
+
+            if (viewController.get()._hostProcessIdentifier) {
+                serviceViewController = WTF::move(viewController);
+                break;
+            }
+        }
+
+        ASSERT(serviceViewController);
+        setScene(nil);
+        setViewController(serviceViewController.get());
+        break;
+    }
+    }
+
+    updateApplicationBackgroundState();
+}
+
+void ApplicationStateTracker::setScene(UIScene *scene)
+{
+    if (m_scene.get() == scene) {
+        setIsInBackground(shouldBeInBackground());
+        return;
+    }
+
+    removeAllObservers();
+
+    if (!scene && m_scene && m_isInBackground) {
+        m_scene = nil;
+        return;
+    }
+
+    m_scene = scene;
+    setIsInBackground(shouldBeInBackground());
+
+    if (!m_scene)
+        return;
+
+    RELEASE_LOG(ViewState, "%p - ApplicationStateTracker: add observers for scene", this);
+
+    NSNotificationCenter *notificationCenter = [NSNotificationCenter defaultCenter];
+    m_didEnterBackgroundObserver = [notificationCenter addObserverForName:UISceneDidEnterBackgroundNotification object:scene queue:nil usingBlock:[weakThis = WeakPtr { *this }](NSNotification *notification) {
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis)
+            return;
+        RELEASE_LOG(ViewState, "%p - ApplicationStateTracker: UISceneDidEnterBackground", protectedThis.get());
+        protectedThis->updateIsInBackground(SceneState::Background);
+    }];
+
+    m_willEnterForegroundObserver = [notificationCenter addObserverForName:UISceneWillEnterForegroundNotification object:scene queue:nil usingBlock:[weakThis = WeakPtr { *this }](NSNotification *notification) {
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis)
+            return;
+        RELEASE_LOG(ViewState, "%p - ApplicationStateTracker: UISceneWillEnterForeground", protectedThis.get());
+        protectedThis->updateIsInBackground(SceneState::Foreground);
+    }];
+
+    m_willBeginSnapshotSequenceObserver = [notificationCenter addObserverForName:_UISceneWillBeginSystemSnapshotSequence object:scene queue:nil usingBlock:[weakThis = WeakPtr { *this }](NSNotification *notification) {
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis)
+            return;
+        protectedThis->willBeginSnapshotSequence();
+    }];
+
+    m_didCompleteSnapshotSequenceObserver = [notificationCenter addObserverForName:_UISceneDidCompleteSystemSnapshotSequence object:scene queue:nil usingBlock:[weakThis = WeakPtr { *this }](NSNotification *notification) {
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis)
+            return;
+        protectedThis->didCompleteSnapshotSequence();
+    }];
+}
+
+void ApplicationStateTracker::setViewController(UIViewController *serviceViewController)
+{
+    if (m_viewController.get() == serviceViewController)
+        return;
+
+    removeAllObservers();
+
+    m_viewController = serviceViewController;
+    if (!m_viewController) {
+        setIsInBackground(true);
+        return;
+    }
+
+    pid_t applicationPID = serviceViewController._hostProcessIdentifier;
+    ASSERT(applicationPID);
+
+    bool isInBackground = !EndowmentStateTracker::isApplicationForeground(applicationPID);
+
+    // Workaround for <rdar://problem/34028921>. If the host application is StoreKitUIService then it is also a ViewService
+    // and is always in the background. We need to treat StoreKitUIService as foreground for the purpose of process suspension
+    // or its ViewServices will get suspended.
+    if ([serviceViewController._hostApplicationBundleIdentifier isEqualToString:@"com.apple.ios.StoreKitUIService"])
+        isInBackground = false;
+
+    setIsInBackground(isInBackground);
+
+    RELEASE_LOG(ProcessSuspension, "%{public}s has PID %d, host application PID=%d, isInBackground=%d", _UIApplicationIsExtension() ? "Extension" : "ViewService", getpid(), applicationPID, m_isInBackground);
+
+    NSNotificationCenter *notificationCenter = [NSNotificationCenter defaultCenter];
+    m_didEnterBackgroundObserver = [notificationCenter addObserverForName:viewServiceBackgroundNotificationName object:serviceViewController queue:nil usingBlock:[weakThis = WeakPtr { *this }, applicationPID](NSNotification *) {
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis)
+            return;
+        RELEASE_LOG(ProcessSuspension, "%{public}s has PID %d, host application PID=%d, didEnterBackground", _UIApplicationIsExtension() ? "Extension" : "ViewService", getpid(), applicationPID);
+        protectedThis->applicationDidEnterBackground();
+    }];
+    m_willEnterForegroundObserver = [notificationCenter addObserverForName:viewServiceForegroundNotificationName object:serviceViewController queue:nil usingBlock:[weakThis = WeakPtr { *this }, applicationPID](NSNotification *) {
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis)
+            return;
+        RELEASE_LOG(ProcessSuspension, "%{public}s has PID %d, host application PID=%d, willEnterForeground", _UIApplicationIsExtension() ? "Extension" : "ViewService", getpid(), applicationPID);
+        protectedThis->applicationWillEnterForeground();
+    }];
+}
+
+void ApplicationStateTracker::setIsInBackground(bool isInBackground)
+{
+    if (m_isInBackground == isInBackground)
+        return;
+
+    RELEASE_LOG(ViewState, "%p - ApplicationStateTracker::setIsInBackground: %d", this, isInBackground);
+
+    m_isInBackground = isInBackground;
+}
+
+bool ApplicationStateTracker::isWindowAndSceneInBackground() const
+{
+    if (RetainPtr scene = m_scene.get()) {
+        auto state = [scene activationState];
+        return state == UISceneActivationStateBackground || state == UISceneActivationStateUnattached;
+    }
+
+    // TestWebKitAPI will create a WKWebView and place it into a UIWindow that
+    // has no UIWindowScene. For the purposes of keeping tests passing, treat
+    // the combination of a window without a windowScene as not in the background:
+    return !m_window;
+}
+
+void ApplicationStateTracker::updateIsInBackground(SceneState sceneState)
+{
+    if (shouldBeInBackground(sceneState))
+        applicationDidEnterBackground();
+    else
+        applicationWillEnterForeground();
+}
+
+bool ApplicationStateTracker::shouldBeInBackground(SceneState sceneState) const
+{
+    bool windowAndSceneInBackground = [&] {
+        switch (sceneState) {
+        case SceneState::Foreground:
+            return false;
+        case SceneState::Background:
+            return true;
+        case SceneState::Unknown:
+            return isWindowAndSceneInBackground();
+        }
+    }();
+
+    if (!windowAndSceneInBackground)
+        return false;
+
+#if ENABLE(ENDOWMENT_BASED_APPLICATION_STATE_TRACKING)
+    if (EndowmentStateTracker::singleton().isVisible())
+        return false;
+#endif
+
+    return true;
+}
+
+void ApplicationStateTracker::applicationDidEnterBackground()
+{
+    RELEASE_LOG(ViewState, "%p - ApplicationStateTracker::applicationDidEnterBackground()", this);
+    setIsInBackground(true);
+    updateApplicationBackgroundState();
+
+    if (auto view = m_view.get())
+        wtfObjCMsgSend<void>(view.get(), m_didEnterBackgroundSelector);
+}
+
+void ApplicationStateTracker::applicationWillEnterForeground()
+{
+    RELEASE_LOG(ViewState, "%p - ApplicationStateTracker::applicationWillEnterForeground()", this);
+    setIsInBackground(false);
+    updateApplicationBackgroundState();
+
+    if (auto view = m_view.get())
+        wtfObjCMsgSend<void>(view.get(), m_willEnterForegroundSelector);
+}
+
+void ApplicationStateTracker::willBeginSnapshotSequence()
+{
+    RELEASE_LOG(ViewState, "%p - ApplicationStateTracker:willBeginSnapshotSequence()", this);
+    if (auto view = m_view.get())
+        wtfObjCMsgSend<void>(view.get(), m_willBeginSnapshotSequenceSelector);
+}
+
+void ApplicationStateTracker::didCompleteSnapshotSequence()
+{
+    RELEASE_LOG(ViewState, "%p - ApplicationStateTracker:didCompleteSnapshotSequence()", this);
+    if (auto view = m_view.get())
+        wtfObjCMsgSend<void>(view.get(), m_didCompleteSnapshotSequenceSelector);
+}
+
+#if ENABLE(ENDOWMENT_BASED_APPLICATION_STATE_TRACKING)
+void ApplicationStateTracker::isVisibleChanged(bool)
+{
+    updateIsInBackground();
+}
+#endif
+
+} // namespace WebKit
+
+#endif

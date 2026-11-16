@@ -1,0 +1,11 @@
+Body needed for test_driver.click()
+
+PASS navigator.clipboard exists
+PASS navigator.clipboard.write(DOMString) succeeds
+PASS navigator.clipboard.write(Promise<DOMString>) succeeds
+PASS navigator.clipboard.write(Promise<DOMString>) with utf-16 string succeeds
+PASS navigator.clipboard.write(web_custom_format) succeeds
+PASS validate GetType(type) on a constructed ClipboardItem returns Blob
+PASS write non-Latin characters with DOMString and verify getType returns a Blob with the same string
+PASS write non-Latin characters with DOMString and verify readText returns the same string
+

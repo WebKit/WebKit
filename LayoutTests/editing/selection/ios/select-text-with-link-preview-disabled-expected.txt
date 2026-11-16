@@ -1,0 +1,10 @@
+This test verifies that it is possible to select text when link previews are disabled using WebKit API. This test requires WebKitTestRunner, since it exercises web view API to disable link previews.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS getSelection().toString() is "Testing"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Testing

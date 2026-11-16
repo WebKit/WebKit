@@ -1,0 +1,78 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+description("Test the behavior of CanvasRenderingContext2D.setShadow() when called with different numbers of arguments.");
+
+var ctx = document.createElement('canvas').getContext('2d');
+
+var TypeError = "TypeError: Type error";
+var TypeErrorNotEnoughArguments = "TypeError: Not enough arguments";
+
+shouldThrow("ctx.setShadow()", "TypeErrorNotEnoughArguments");
+shouldThrow("ctx.setShadow(0)", "TypeErrorNotEnoughArguments");
+shouldThrow("ctx.setShadow(0, 0)", "TypeErrorNotEnoughArguments");
+shouldThrow("ctx.setShadow(0, 0, 0, 0, 0, 0)", "TypeError");
+shouldThrow("ctx.setShadow(0, 0, 0, 0, 'red', 0)", "TypeError");
+shouldThrow("ctx.setShadow(0, 0, 0, 0, 0, 0)", "TypeError");
+
+debug("\n\nundefined setShadow(unrestricted float width, unrestricted float height, unrestricted float blur, optional DOMString color, optional unrestricted float alpha)\n")
+shouldBe("ctx.setShadow(0, 0, 0, 'red')", "undefined");
+shouldBe("ctx.shadowColor", "'#ff0000'");
+
+shouldBe("ctx.setShadow(0, 0, 0, 'red', .5)", "undefined");
+shouldBe("ctx.shadowColor", "'rgba(255, 0, 0, 0.5)'");
+
+shouldBe("ctx.setShadow(0, 0, 0, 'red', NaN)", "undefined");
+shouldBe("ctx.shadowColor", "'rgba(255, 0, 0, 0.5)'");
+
+debug("\n\nundefined setShadow(unrestricted float width, unrestricted float height, unrestricted float blur, unrestricted float grayLevel, optional unrestricted float alpha = 1)\n")
+
+shouldBe("ctx.setShadow(0, 0, 0, .25)", "undefined");
+shouldBe("ctx.shadowColor", "'#404040'");
+
+shouldBe("ctx.setShadow(0, 0, 0, .25, .5)", "undefined");
+shouldBe("ctx.shadowColor", "'rgba(64, 64, 64, 0.5)'");
+
+shouldBe("ctx.setShadow(0, 0, 0, NaN, .5)", "undefined");
+shouldBe("ctx.shadowColor", "'rgba(64, 64, 64, 0.5)'");
+
+shouldBe("ctx.setShadow(0, 0, 0, .25, NaN)", "undefined");
+shouldBe("ctx.shadowColor", "'rgba(64, 64, 64, 0.5)'");
+
+
+debug("\n\nundefined setShadow(unrestricted float width, unrestricted float height, unrestricted float blur, unrestricted float r, unrestricted float g, unrestricted float b, unrestricted float a)\n")
+
+shouldThrow("ctx.setShadow(0, 0, 0, .1, .2, .3)", "TypeError");
+
+shouldBe("ctx.setShadow(0, 0, 0, .1, .2, .3, .4)", "undefined");
+shouldBe("ctx.shadowColor", "'rgba(26, 51, 77, 0.4)'");
+
+shouldBe("ctx.setShadow(0, 0, 0, NaN, .2, .3, .4)", "undefined");
+shouldBe("ctx.shadowColor", "'rgba(26, 51, 77, 0.4)'");
+
+shouldBe("ctx.setShadow(0, 0, 0, .1, NaN, .3, .4)", "undefined");
+shouldBe("ctx.shadowColor", "'rgba(26, 51, 77, 0.4)'");
+
+shouldBe("ctx.setShadow(0, 0, 0, .1, .2, NaN, .4)", "undefined");
+shouldBe("ctx.shadowColor", "'rgba(26, 51, 77, 0.4)'");
+
+shouldBe("ctx.setShadow(0, 0, 0, .1, .2, .3, NaN)", "undefined");
+shouldBe("ctx.shadowColor", "'rgba(26, 51, 77, 0.4)'");
+
+shouldBe("ctx.setShadow(0, 0, 0, .5, .4, .3, .2, .1)", "undefined");
+shouldBe("ctx.shadowColor", "'rgba(128, 102, 77, 0.2)'");
+
+shouldBe("ctx.setShadow(0, 0, 0, 1, .4, .3, .2, .1, 0)", "undefined");
+shouldBe("ctx.shadowColor", "'rgba(255, 102, 77, 0.2)'");
+
+shouldBe("ctx.setShadow(0, 0, 0, 1.5, 10, -0.1, -100)", "undefined");
+shouldBe("ctx.shadowColor", "'rgba(255, 255, 0, 0)'");
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

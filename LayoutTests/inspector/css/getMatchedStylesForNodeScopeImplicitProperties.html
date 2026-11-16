@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("CSS.getMatchedStyleForNode.ScopeImplicitProperties");
+
+    suite.addTestCase({
+        name: "CSS.getMatchedStyleForNode.ScopeImplicitProperties.BareDeclaration",
+        description: "Selecting an element matched by a rule inside a top-level @scope that contains a bare (implicitly nested) declaration should not crash the web process.",
+        async test() {
+            let documentNode = await WI.domManager.requestDocument();
+            let nodeId = await documentNode.querySelector("#target");
+            let domNode = WI.domManager.nodeForId(nodeId);
+            InspectorTest.assert(domNode, "Should find DOM Node for selector '#target'.");
+
+            let domNodeStyles = WI.cssManager.stylesForNode(domNode);
+            InspectorTest.assert(domNodeStyles, "Should find CSS Styles for DOM Node.");
+            await domNodeStyles.refreshIfNeeded();
+
+            let authoredRules = domNodeStyles.matchedRules.filter((rule) => rule.type === WI.CSSStyleSheet.Type.Author);
+            InspectorTest.expectEqual(authoredRules.length, 1, "Should have 1 authored rule.");
+
+            let rule = authoredRules[0];
+            InspectorTest.expectEqual(rule.selectorText, "#target", `Selector text should be "#target".`);
+            InspectorTest.expectEqual(rule.groupings.length, 1, "Rule should have 1 grouping.");
+            InspectorTest.expectEqual(rule.groupings[0].type, WI.CSSGrouping.Type.ScopeRule, `Grouping should have a type of "scope-rule".`);
+
+            InspectorTest.pass("Did not crash while building matched styles for the @scope rule.");
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Tests that CSS.getMatchedStyleForNode does not crash for an element matched by a rule inside a top-level @scope containing a bare declaration.</p>
+    <div id="scope-root">
+        <style>
+            @scope {
+                min-height: 160vh;
+
+                #target {
+                    color: green;
+                }
+            }
+        </style>
+        <div id="target"></div>
+    </div>
+</body>
+</html>

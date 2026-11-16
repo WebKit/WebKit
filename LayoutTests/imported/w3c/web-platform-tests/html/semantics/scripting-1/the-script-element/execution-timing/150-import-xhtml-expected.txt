@@ -1,0 +1,4 @@
+FAILED (This TC requires JavaScript enabled)
+
+PASS Stylesheet in XHTML BODY with @import blocking scripts
+Test

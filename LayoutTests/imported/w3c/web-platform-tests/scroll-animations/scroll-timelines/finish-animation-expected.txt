@@ -1,0 +1,23 @@
+
+PASS Finishing an animation with a zero playback rate throws
+PASS Finishing an animation seeks to the end time
+PASS Finishing an animation with a current time past the effect end jumps back to the end
+PASS Finishing a reversed animation jumps to zero time
+PASS Finishing a reversed animation with a current time less than zero makes it jump back to zero
+PASS Finishing an animation while play-pending resolves the pending task immediately
+PASS Finishing an animation attached to inactive timeline while play-pending doesn't resolves the pending task
+PASS Finishing an animation resolves the finished promise synchronously
+PASS A pending ready promise is resolved and not replaced when the animation is finished
+PASS Finishing an animation fires finish event on orphaned element
+PASS Finishing a canceled animation sets the current and start times
+PASS Finishing idle animation produces correct state and fires finish event.
+PASS Finishing idle animation attached to inactive timeline pauses the animation.
+PASS Finishing running animation produces correct state and fires finish event.
+PASS Finishing running animation attached to inactive timeline pauses the animation.
+PASS Finishing a paused animation resolves the start time
+PASS Finishing a pause-pending animation resolves the pending task immediately and update the start time
+PASS Finishing a pause-pending animation with negative playback rate resolves the pending task immediately
+PASS Finishing an animation during an aborted pause makes it finished immediately
+PASS A pending playback rate should be applied immediately when an animation is finished
+PASS An exception should be thrown if the effective playback rate is zero
+

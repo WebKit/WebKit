@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+    if (window.testRunner) {
+        testRunner.dumpAsText()
+        testRunner.waitUntilDone();
+    }
+</script>
+
+<script src="../../../resources/js-test-pre.js"></script>
+<script>
+    var styleEntry = null;
+    var paintEntry = null;
+    const observer = new PerformanceObserver(list => {
+        const paintEntries = performance.getEntriesByType('paint');
+        if (paintEntries.length)
+            paintEntry = paintEntries[0];
+
+        const resourceEntries = performance.getEntriesByType('resource').filter(r => r.name.includes('slowstyle.py'));
+        if (resourceEntries.length)
+            styleEntry = resourceEntries[0];
+
+        if (!styleEntry || !paintEntry)
+            return;
+
+        shouldBeTrue("paintEntry.startTime >= styleEntry.startTime + styleEntry.duration");
+                
+        if (window.testRunner)
+            testRunner.notifyDone();
+    });
+    observer.observe({entryTypes: ["paint", "resource"]});
+</script>
+<link rel="stylesheet" href="./resources/slowstyle.py?delay=0.5" />
+</head>
+<body>
+TEXT
+</body>
+</html>

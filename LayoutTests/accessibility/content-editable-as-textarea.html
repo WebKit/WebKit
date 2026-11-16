@@ -1,0 +1,73 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<div id="content" contenteditable tabindex="0">
+hello<br>
+<b>world</b>
+</div>
+
+<script>
+    var testOutput = "This tests that a contenteditable region behaves as a proper AXTextArea.\n\n";
+
+    var textArea;
+    var notificationType = "AXValueChanged";
+    const targetCharacter = "q";
+    async function callback(notification) {
+        if (notification !== notificationType)
+            return;
+
+        textArea.removeNotificationListener();
+        await waitFor(() => textArea.stringValue.includes(targetCharacter));
+        testOutput += `Updated value: ${textArea.stringValue}`;
+        document.getElementById("content").style.visibility = "hidden";
+        debug(testOutput);
+        finishJSTest();
+    }
+
+    if (window.accessibilityController) {
+        window.jsTestIsAsync = true;
+
+        // In ATSPI, value-changed notifications are made for widgets which implement
+        // the Value interface (sliders, progress bars, etc.).
+        if (accessibilityController.platformName == "atspi")
+            notificationType = "AXTextChanged";
+
+        textArea = accessibilityController.accessibleElementById("content");
+        textArea.addNotificationListener(callback);
+
+        testOutput += `Role: ${textArea.role}\n`;
+        testOutput += `Value: ${textArea.stringValue}\n`;
+        testOutput += `Value (writable): ${textArea.isAttributeSettable("AXValue")}\n`;
+        testOutput += `String with range: ${textArea.stringForRange(1, 9)}\n`;
+        testOutput += `Attributed string with range: ${textArea.attributedStringForRange(1, 9)}\n`;
+        testOutput += `Line for index(0): ${textArea.lineForIndex(0)}\n`;
+        testOutput += `Line for index(7): ${textArea.lineForIndex(7)}\n`;
+        testOutput += `Range for line(0): ${textArea.rangeForLine(0)}\n`;
+        testOutput += `Range for line(1): ${textArea.rangeForLine(1)}\n`;
+        testOutput += `Bounds for range: ${textArea.boundsForRange(3, 5)}\n`;
+
+        var range = document.createRange();
+        range.setStart(document.getElementById("content").firstChild, 0);
+        range.setEnd(document.getElementById("content").firstChild, 4);
+        var sel = window.getSelection();
+        sel.addRange(range);
+
+        setTimeout(async () => {
+            await waitFor(() => textArea.selectedTextRange == "{0, 3}");
+            testOutput += `Selected text range: ${textArea.selectedTextRange}\n`;
+            testOutput += `Selected text: ${textArea.stringAttributeValue("AXSelectedText")}\n`;
+
+            // Send a value change.
+            document.getElementById("content").focus();
+            eventSender.keyDown(targetCharacter, []);
+        }, 0);
+    }
+</script>
+</body>
+</html>
+

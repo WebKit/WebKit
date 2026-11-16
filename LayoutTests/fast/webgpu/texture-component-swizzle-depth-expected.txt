@@ -1,0 +1,7 @@
+PASS identity is "0.5,0,0,1"
+PASS swapped is "0,0.5,0,1"
+PASS alphaBroadcast is "1,1,1,1"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,8 @@
+
+PASS 1lh in outside
+PASS 1lh in zoomed
+PASS 1lh in inside
+PASS 1rlh in outside
+PASS 1rlh in zoomed
+PASS 1rlh in inside
+

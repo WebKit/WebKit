@@ -1,0 +1,10 @@
+
+PASS .grid 1: columns, parent space-between, subgrid sets nothing
+PASS .grid 2: columns, parent space-around
+PASS .grid 3: columns, parent space-evenly
+PASS .grid 4: columns, parent center, shift must not be applied twice
+PASS .grid 5: columns, parent space-between, subgrid spans 2 / -1
+PASS .grid 6: rows, parent align-content space-between
+PASS .grid 7: columns, nested subgrid inside a subgrid
+PASS .grid 8: columns, subgrid's own justify-content is ignored
+

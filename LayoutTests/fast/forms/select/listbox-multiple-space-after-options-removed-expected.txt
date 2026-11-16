@@ -1,0 +1,12 @@
+With spatial navigation, the space key should not toggle an option of a multiple-selection listbox after its active option was removed.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS selectedOptionsText() is ""
+PASS selectedOptionsText() is ""
+PASS selectedOptionsText() is "1"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

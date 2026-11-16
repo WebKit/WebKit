@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<!-- webkit.org/b/322481: the outline add/remove pair from focus-ring-repaint.html, as pixels. Removing an
+     outline has to erase it and adding one has to draw it, both without a layout. Paints before mutating. -->
+<style>
+.outline-container {
+  width: 100px;
+  height: 60px;
+  outline: auto;
+  margin: 20px;
+  background-color: silver;
+}
+</style>
+<div class=outline-container id=removeOutline></div>
+<div class=outline-container id=addOutline style="outline: none"></div>
+<script src="resources/repaint.js"></script>
+<script>
+function repaintTest() {
+  document.getElementById("removeOutline").style.outline = "none";
+  document.getElementById("addOutline").style.outline = "auto";
+}
+onload = runRepaintTest;
+</script>

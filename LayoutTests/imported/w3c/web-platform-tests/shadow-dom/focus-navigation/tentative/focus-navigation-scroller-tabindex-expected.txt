@@ -1,0 +1,20 @@
+START
+Scroller has tabindex=0.
+
+BUTTON A
+Scroller has tabindex=0.
+
+Scroller has no tabindex.
+
+BUTTON B
+Scroller has no tabindex.
+
+Scroller has tabindex=-1.
+
+BUTTON C
+Scroller has tabindex=-1.
+
+END
+
+PASS Should focus on scroller depending on tabindex value.
+

@@ -1,0 +1,516 @@
+/*
+ * Copyright (C) 2019-2022 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#import "config.h"
+#import "Helpers/cocoa/HTTPServer.h"
+
+#import "Helpers/Utilities.h"
+#import "Helpers/cocoa/HTTPServer/HTTPServerBridging.h"
+#import "Helpers/cocoa/NetworkSPI.h"
+#import <WebKit/WKWebsiteDataStorePrivate.h>
+#import <WebKit/_WKWebsiteDataStoreConfiguration.h>
+#import <wtf/BlockPtr.h>
+#import <wtf/CallbackAggregator.h>
+#import <wtf/CompletionHandler.h>
+#import <wtf/RetainPtr.h>
+#import <wtf/StdLibExtras.h>
+#import <wtf/WeakPtr.h>
+#import <wtf/darwin/DispatchExtras.h>
+#import <wtf/text/Base64.h>
+#import <wtf/text/MakeString.h>
+#import <wtf/text/ParsingUtilities.h>
+#import <wtf/text/StringBuilder.h>
+#import <wtf/text/WTFString.h>
+
+namespace TestWebKitAPI {
+
+static HashMap<String, HTTPResponse> makeRequestMap(std::initializer_list<std::pair<String, HTTPResponse>> responses)
+{
+    HashMap<String, HTTPResponse> map;
+    for (auto& pair : responses)
+        map.add(pair.first, pair.second);
+    return map;
+}
+
+static RetainPtr<NSDictionary<NSString *, NSString *>> toNSDictionary(const HashMap<String, String>& map)
+{
+    RetainPtr result = adoptNS([[NSMutableDictionary alloc] initWithCapacity:map.size()]);
+    for (auto& pair : map)
+        [result setObject:pair.value.createNSString() forKey:pair.key.createNSString()];
+    return result;
+}
+
+static RetainPtr<NSArray<NSArray<NSString *> *>> toNSHeaderFields(const Vector<WTF::KeyValuePair<String, String>>& headerFields)
+{
+    RetainPtr result = adoptNS([[NSMutableArray alloc] initWithCapacity:headerFields.size()]);
+    for (auto& field : headerFields)
+        [result addObject:@[field.key.createNSString().get(), field.value.createNSString().get()]];
+    return result;
+}
+
+static RetainPtr<HTTPResponseDataBridge> toHTTPResponseDataBridge(const HTTPResponse& response)
+{
+    return adoptNS([[HTTPResponseDataBridge alloc] initWithStatusCode:response.statusCode headerFields:toNSHeaderFields(response.headerFields) body:toNSData(response.body.span()) behavior:static_cast<HTTPResponseBehaviorBridge>(response.behavior) shouldRespondWith304:response.shouldRespondWith304ToConditionalRequests headerFieldsFor304:toNSDictionary(response.headerFieldsFor304)]);
+}
+
+void HTTPServer::startListening(CompletionHandler<void()>&& completionHandler)
+{
+    [m_serverBridge startListeningWithCompletionHandler:makeBlockPtr([completionHandler = WTF::move(completionHandler)](NSError *error) mutable {
+        RELEASE_ASSERT(!error);
+        completionHandler();
+    }).get()];
+}
+
+void HTTPServer::cancel(CompletionHandler<void()>&& completionHandler)
+{
+    // The Swift implementation terminates its own connections as part of cancelling.
+    [m_serverBridge cancelWithCompletionHandler:makeBlockPtr([completionHandler = WTF::move(completionHandler)] mutable {
+        completionHandler();
+    }).get()];
+}
+
+void HTTPServer::cancel() {
+    bool done = false;
+    cancel([&] {
+        done = true;
+    });
+    Util::run(&done);
+}
+
+void HTTPServer::terminateAllConnections(CompletionHandler<void()>&& completionHandler)
+{
+    [m_serverBridge terminateAllConnectionsWithCompletionHandler:makeBlockPtr([completionHandler = WTF::move(completionHandler)] mutable {
+        completionHandler();
+    }).get()];
+}
+
+HTTPServer::HTTPServer(
+    std::initializer_list<std::pair<String, HTTPResponse>> responses,
+    Protocol protocol,
+    CertificateVerifier&& verifier,
+    SecIdentityRef identity,
+    std::optional<uint16_t> port,
+    DeferListening deferListening
+)
+    : HTTPServer(makeRequestMap(responses), protocol, WTF::move(verifier), identity, port, deferListening)
+{
+}
+
+HTTPServer::HTTPServer(
+    ResponseMap&& responses,
+    Protocol protocol,
+    CertificateVerifier&& verifier,
+    SecIdentityRef identity,
+    std::optional<uint16_t> port,
+    DeferListening deferListening
+)
+    : m_protocol(protocol)
+{
+    RetainPtr<NSMutableDictionary<NSString *, HTTPResponseDataBridge *>> routes = adoptNS([[NSMutableDictionary alloc] initWithCapacity:responses.size()]);
+    for (auto& pair : responses)
+        [routes setObject:toHTTPResponseDataBridge(pair.value) forKey:pair.key.createNSString()];
+
+    auto verifierBlock = verifier ? makeBlockPtr([verifier = WTF::move(verifier)](sec_protocol_metadata_t metadata, sec_trust_t trust, sec_protocol_verify_complete_t complete) mutable {
+        verifier(metadata, trust, complete);
+    }) : nil;
+    m_serverBridge = adoptNS([[HTTPServerBridge alloc] initWithRoutes:routes protocol:static_cast<HTTPServerProtocolBridge>(protocol) port:port.value_or(0) identity:identity certificateVerifier:verifierBlock.get()]);
+
+    if (deferListening == DeferListening::No) {
+        bool done = false;
+        startListening([&] {
+            done = true;
+        });
+        Util::run(&done);
+    }
+}
+
+HTTPServer::HTTPServer(Function<void(Connection)>&& connectionHandler, Protocol protocol)
+    : m_protocol(protocol)
+{
+    m_serverBridge = adoptNS([[HTTPServerBridge alloc] initWithProtocol:static_cast<HTTPServerProtocolBridge>(protocol) connectionHandler:makeBlockPtr([connectionHandler = WTF::move(connectionHandler)](nw_connection_t connection) mutable {
+        connectionHandler(Connection(connection));
+    }).get()]);
+
+    bool done = false;
+    startListening([&] {
+        done = true;
+    });
+    Util::run(&done);
+}
+
+HTTPServer::HTTPServer(UseCoroutines, Function<ConnectionTask(Connection)>&& connectionHandler, Protocol protocol)
+    : m_protocol(protocol)
+{
+    m_serverBridge = adoptNS([[HTTPServerBridge alloc] initWithProtocol:static_cast<HTTPServerProtocolBridge>(protocol) connectionHandler:makeBlockPtr([coroutineHandles = Vector<CoroutineHandle<ConnectionTask::promise_type>> { }, connectionHandler = WTF::move(connectionHandler)](nw_connection_t connection) mutable {
+        // The coroutine handle has to outlive this call, so it stays on the C++ side.
+        coroutineHandles.append(connectionHandler(Connection(connection)).handle);
+    }).get()]);
+
+    bool done = false;
+    startListening([&] {
+        done = true;
+    });
+    Util::run(&done);
+}
+
+void HTTPServer::addResponse(String&& path, HTTPResponse&& response)
+{
+    [m_serverBridge addResponse:toHTTPResponseDataBridge(response).get() forPath:path.createNSString()];
+}
+
+void HTTPServer::setResponse(String&& path, HTTPResponse&& response)
+{
+    [m_serverBridge setResponse:toHTTPResponseDataBridge(response).get() forPath:path.createNSString()];
+}
+
+void HTTPServer::respondWithChallengeThenOK(Connection connection)
+{
+    connection.receiveHTTPRequest([connection] (Vector<char>&&) {
+        constexpr auto challengeHeader =
+        "HTTP/1.1 401 Unauthorized\r\n"
+        "Date: Sat, 23 Mar 2019 06:29:01 GMT\r\n"
+        "Content-Length: 0\r\n"
+        "WWW-Authenticate: Basic realm=\"testrealm\"\r\n\r\n"_s;
+        connection.send(challengeHeader, [connection] {
+            connection.receiveHTTPRequest([connection] (Vector<char>&&) {
+                connection.send(
+                    "HTTP/1.1 200 OK\r\n"
+                    "Content-Length: 34\r\n\r\n"
+                    "<script>alert('success!')</script>"_s, [connection] {
+                        respondWithChallengeThenOK(connection);
+                    }
+                );
+            });
+        });
+    });
+}
+
+void HTTPServer::respondWithOK(Connection connection)
+{
+    connection.receiveHTTPRequest([connection] (Vector<char>&&) {
+        connection.send(
+            "HTTP/1.1 200 OK\r\n"
+            "Content-Length: 34\r\n\r\n"
+            "<script>alert('success!')</script>"_s
+        );
+    });
+}
+
+size_t HTTPServer::totalConnections() const
+{
+    return [m_serverBridge totalConnections];
+}
+
+size_t HTTPServer::totalRequests() const
+{
+    return [m_serverBridge totalRequests];
+}
+
+String HTTPServer::lastRequestCookies() const
+{
+    return [m_serverBridge lastRequestCookies];
+}
+
+bool HTTPServer::sawAuthorizationHeader() const
+{
+    return [m_serverBridge sawAuthorizationHeader];
+}
+
+static ASCIILiteral statusText(unsigned statusCode)
+{
+    switch (statusCode) {
+    case 101:
+        return "Switching Protocols"_s;
+    case 200:
+        return "OK"_s;
+    case 204:
+        return "No Content"_s;
+    case 205:
+        return "Reset Content"_s;
+    case 301:
+        return "Moved Permanently"_s;
+    case 302:
+        return "Found"_s;
+    case 303:
+        return "See Other"_s;
+    case 304:
+        return "Not Modified"_s;
+    case 401:
+        return "Unauthorized"_s;
+    case 403:
+        return "Forbidden"_s;
+    case 404:
+        return "Not Found"_s;
+    case 503:
+        return "Service Unavailable"_s;
+    }
+    ASSERT_NOT_REACHED();
+    return "Unknown Status Code"_s;
+}
+
+static Vector<uint8_t> toUTF8Vector(const String& string)
+{
+    Vector<uint8_t> result;
+    std::ignore = string.tryGetUTF8([&](std::span<const char8_t> utf8) {
+        result.append(byteCast<uint8_t>(utf8));
+        return true;
+    });
+    return result;
+}
+
+String HTTPServer::parsePath(const Vector<char>& request)
+{
+    if (!request.size())
+        return { };
+    auto getPathPrefix = "GET "_s;
+    auto postPathPrefix = "POST "_s;
+    size_t pathEnd = find(request.span(), " HTTP/1.1\r\n"_span);
+    ASSERT_WITH_MESSAGE(pathEnd != notFound, "HTTPServer assumes request is HTTP 1.1");
+    size_t pathPrefixLength = 0;
+    if (spanHasPrefix(request.span(), getPathPrefix.span()))
+        pathPrefixLength = getPathPrefix.length();
+    else if (spanHasPrefix(request.span(), postPathPrefix.span()))
+        pathPrefixLength = postPathPrefix.length();
+    ASSERT_WITH_MESSAGE(pathPrefixLength, "HTTPServer assumes request is GET or POST");
+    size_t pathLength = pathEnd - pathPrefixLength;
+    return String::fromUTF8(request.subspan(pathPrefixLength, pathLength));
+}
+
+static String parseHeaderValue(const Vector<char>& characters, ASCIILiteral headerPrefix)
+{
+    if (!characters.size())
+        return { };
+
+    String request = String::fromLatin1(characters.span());
+    size_t valueStart = request.find(headerPrefix);
+    if (valueStart == notFound)
+        return { };
+    valueStart += headerPrefix.length();
+
+    size_t valueEnd = request.find("\r\n"_s, valueStart);
+    if (valueEnd == notFound)
+        return { };
+
+    return request.substring(valueStart, valueEnd - valueStart);
+}
+
+String HTTPServer::parseCookies(const Vector<char>& characters)
+{
+    return parseHeaderValue(characters, "Cookie: "_s);
+}
+
+String HTTPServer::parseAuthorization(const Vector<char>& characters)
+{
+    return parseHeaderValue(characters, "Authorization: "_s);
+}
+
+String HTTPServer::parseBody(const Vector<char>& request)
+{
+    auto headerEndBytes = "\r\n\r\n"_s;
+    size_t headerEnd = find(request.span(), headerEndBytes.span()) + strlen(headerEndBytes);
+    return String::fromUTF8(request.subspan(headerEnd));
+}
+
+uint16_t HTTPServer::port() const
+{
+    return [m_serverBridge port];
+}
+
+const char* HTTPServer::scheme() const
+{
+    const char* scheme = nullptr;
+    switch (m_protocol) {
+    case Protocol::Http:
+        scheme = "http";
+        break;
+    case Protocol::Https:
+    case Protocol::HttpsWithLegacyTLS:
+    case Protocol::Http2Raw:
+    case Protocol::Http2:
+    case Protocol::Http3:
+        scheme = "https";
+        break;
+    case Protocol::HttpsProxy:
+    case Protocol::HttpsProxyWithAuthentication:
+    case Protocol::Http2Proxy:
+        RELEASE_ASSERT_NOT_REACHED();
+    }
+    return scheme;
+}
+
+String HTTPServer::origin() const
+{
+    return [NSString stringWithFormat:@"%s://127.0.0.1:%d", scheme(), port()];
+}
+
+NSURLRequest *HTTPServer::request(StringView path) const
+{
+    return [NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%s://127.0.0.1:%d%@", scheme(), port(), path.createNSString().get()]]];
+}
+
+NSURLRequest *HTTPServer::requestWithLocalhost(StringView path) const
+{
+    return [NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%s://localhost:%d%@", scheme(), port(), path.createNSString().get()]]];
+}
+
+WKWebViewConfiguration *HTTPServer::httpsProxyConfiguration() const
+{
+    RetainPtr storeConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] initNonPersistentConfiguration]);
+    [storeConfiguration setHTTPSProxy:[NSURL URLWithString:[NSString stringWithFormat:@"https://127.0.0.1:%d/", port()]]];
+    RetainPtr viewConfiguration = adoptNS([WKWebViewConfiguration new]);
+    [viewConfiguration setWebsiteDataStore:adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:storeConfiguration.get()]).get()];
+    return viewConfiguration.autorelease();
+}
+
+Vector<uint8_t> HTTPResponse::bodyFromString(const String& string)
+{
+    return toUTF8Vector(string);
+}
+
+Vector<uint8_t> HTTPResponse::serialize(IncludeContentLength includeContentLength) const
+{
+    StringBuilder responseBuilder;
+    responseBuilder.append("HTTP/1.1 "_s, statusCode, ' ', statusText(statusCode), "\r\n"_s);
+    if (includeContentLength == IncludeContentLength::Yes)
+        responseBuilder.append("Content-Length: "_s, body.size(), "\r\n"_s);
+    for (auto& pair : headerFields)
+        responseBuilder.append(pair.key, ": "_s, pair.value, "\r\n"_s);
+    responseBuilder.append("\r\n"_s);
+
+    auto bytesToSend = toUTF8Vector(responseBuilder.toString());
+    bytesToSend.appendVector(body);
+    return bytesToSend;
+}
+
+Vector<uint8_t> HTTPServer::testCertificate()
+{
+    // Certificate and private key were generated by running this command:
+    // openssl req -x509 -newkey rsa:4096 -keyout key.pem -out cert.pem -days 365 -nodes
+    // and entering this information:
+    /*
+     Country Name (2 letter code) []:US
+     State or Province Name (full name) []:New Mexico
+     Locality Name (eg, city) []:Santa Fe
+     Organization Name (eg, company) []:Self
+     Organizational Unit Name (eg, section) []:Myself
+     Common Name (eg, fully qualified host name) []:Me
+     Email Address []:me@example.com
+     */
+    
+    String pemEncodedCertificate(""
+    "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"
+    "3vjZD3y9kZk7mre9XHwkI8MdK5s="_s);
+    
+    auto decodedCertificate = base64Decode(pemEncodedCertificate);
+    return WTF::move(*decodedCertificate);
+}
+
+Vector<uint8_t> HTTPServer::testPrivateKey()
+{
+    String pemEncodedPrivateKey(""
+    "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"
+    "qJfU8bbdbu2pi47Y4FdJK0HLffl5Rw=="_s);
+
+    auto decodedPrivateKey = base64Decode(pemEncodedPrivateKey);
+    return WTF::move(*decodedPrivateKey);
+}
+
+} // namespace TestWebKitAPI

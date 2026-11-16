@@ -1,0 +1,10 @@
+PASS a same-device external texture is still accepted by createBindGroup
+PASS the dispatch sampled the same-device external texture
+PASS a cross-device external texture was rejected by createBindGroup
+PASS no dispatch happened with the cross-device external texture
+PASS createBindGroup did not rewrite a bind group that an open compute pass had already bound
+PASS the recorded dispatch sampled the external texture that was bound when it was recorded
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

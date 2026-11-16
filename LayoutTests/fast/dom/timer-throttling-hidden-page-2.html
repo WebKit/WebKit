@@ -1,0 +1,64 @@
+<html><!-- webkit-test-runner [ HiddenPageDOMTimerThrottlingEnabled=true ] -->
+<body>
+    <script src="../../resources/js-test.js"></script>
+    <script>
+        description('Tests that DOM timers gets throttled on hidden pages once they reach the max nesting level');
+        jsTestIsAsync = true;
+
+        let timerCount = 0;
+        const timeoutInterval = 10;
+        const maxNestingLevel = 10;
+        let timerHandle = 0;
+        let timerStartTime = 0;
+        let timerEndTime = 0;
+        const timerFiredTimes = [];
+
+        function testTimer()
+        {
+            ++timerCount;
+
+            timerEndTime = performance.now();
+
+            timerHandle = setTimeout(testTimer, timeoutInterval);
+            timerFiredTimes.push(timerEndTime - timerStartTime);
+            if (timerCount > 2 * maxNestingLevel) {
+                unthrottledCount = 0;
+                throttledCount = 0;
+                for (let i = 0; i < timerCount; ++i) {
+                    if (timerFiredTimes[i] < 300)
+                        unthrottledCount++;
+                    else
+                        throttledCount++;
+                }
+                shouldBeTrue('throttledCount > maxNestingLevel / 2');
+                shouldBeTrue('unthrottledCount > maxNestingLevel / 2');
+                testRunner.resetPageVisibility();
+                clearTimeout(timerHandle);
+                finishJSTest();
+                return;
+            }
+            timerStartTime = timerEndTime;
+        }
+
+        function runTest()
+        {
+            if (!window.testRunner) {
+                debug('This test requires testRunner');
+                return;
+            }
+
+            timerStartTime = performance.now();
+            timerHandle = setTimeout(testTimer, timeoutInterval);
+        }
+        onload = function() {
+            document.onvisibilitychange = () => {
+                if (!document.hidden)
+                    return;
+                document.onvisibilitychange = null;
+                runTest();
+            };
+            testRunner.setPageVisibility("hidden");
+        };
+    </script>
+</body>
+</html>

@@ -1,0 +1,84 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-properties-values-api/animation/custom-property-animation-angle-comma-list.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-properties-values-api/animation/custom-property-animation-angle-space-list.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-properties-values-api/animation/custom-property-animation-angle.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-properties-values-api/animation/custom-property-animation-color-comma-list.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-properties-values-api/animation/custom-property-animation-color-space-list.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-properties-values-api/animation/custom-property-animation-color.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-properties-values-api/animation/custom-property-animation-custom-ident.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-properties-values-api/animation/custom-property-animation-image.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-properties-values-api/animation/custom-property-animation-inherited-used-by-standard-property.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-properties-values-api/animation/custom-property-animation-integer-comma-list.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-properties-values-api/animation/custom-property-animation-integer-space-list.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-properties-values-api/animation/custom-property-animation-integer.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-properties-values-api/animation/custom-property-animation-length-comma-list.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-properties-values-api/animation/custom-property-animation-length-percentage-comma-list.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-properties-values-api/animation/custom-property-animation-length-percentage-space-list.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-properties-values-api/animation/custom-property-animation-length-percentage.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-properties-values-api/animation/custom-property-animation-length-space-list.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-properties-values-api/animation/custom-property-animation-length.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-properties-values-api/animation/custom-property-animation-list-type-mismatch.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-properties-values-api/animation/custom-property-animation-non-inherited-used-by-standard-property.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-properties-values-api/animation/custom-property-animation-number-comma-list.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-properties-values-api/animation/custom-property-animation-number-space-list.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-properties-values-api/animation/custom-property-animation-number.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-properties-values-api/animation/custom-property-animation-percentage-comma-list.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-properties-values-api/animation/custom-property-animation-percentage-space-list.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-properties-values-api/animation/custom-property-animation-percentage.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-properties-values-api/animation/custom-property-animation-resolution-comma-list.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-properties-values-api/animation/custom-property-animation-resolution-space-list.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-properties-values-api/animation/custom-property-animation-resolution.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-properties-values-api/animation/custom-property-animation-time-comma-list.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-properties-values-api/animation/custom-property-animation-time-space-list.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-properties-values-api/animation/custom-property-animation-time.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-properties-values-api/animation/custom-property-animation-transform-function.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-properties-values-api/animation/custom-property-animation-transform-list-multiple-values.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-properties-values-api/animation/custom-property-animation-transform-list-single-values.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-properties-values-api/animation/custom-property-animation-transform-none.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-properties-values-api/animation/custom-property-animation-url.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-properties-values-api/animation/custom-property-animation-used-in-shorthand.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-properties-values-api/animation/custom-property-transition-angle.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-properties-values-api/animation/custom-property-transition-color.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-properties-values-api/animation/custom-property-transition-custom-ident.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-properties-values-api/animation/custom-property-transition-image.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-properties-values-api/animation/custom-property-transition-inherited-used-by-standard-property.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-properties-values-api/animation/custom-property-transition-integer.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-properties-values-api/animation/custom-property-transition-length-percentage.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-properties-values-api/animation/custom-property-transition-length.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-properties-values-api/animation/custom-property-transition-mismatched-inherited-property-numbers.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-properties-values-api/animation/custom-property-transition-mismatched-list.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-properties-values-api/animation/custom-property-transition-mismatched-property-numbers.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-properties-values-api/animation/custom-property-transition-non-inherited-used-by-standard-property.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-properties-values-api/animation/custom-property-transition-number-percentage.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-properties-values-api/animation/custom-property-transition-number.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-properties-values-api/animation/custom-property-transition-percentage.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-properties-values-api/animation/custom-property-transition-property-all.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-properties-values-api/animation/custom-property-transition-resolution.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-properties-values-api/animation/custom-property-transition-time.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-properties-values-api/animation/custom-property-transition-transform-function-box-size.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-properties-values-api/animation/custom-property-transition-transform-function-matrix.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-properties-values-api/animation/custom-property-transition-transform-function-none.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-properties-values-api/animation/custom-property-transition-transform-function-to-list.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-properties-values-api/animation/custom-property-transition-transform-function.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-properties-values-api/animation/custom-property-transition-transform-list-box-size.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-properties-values-api/animation/custom-property-transition-transform-list-matrix.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-properties-values-api/animation/custom-property-transition-transform-list-none.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-properties-values-api/animation/custom-property-transition-transform-list.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-properties-values-api/animation/custom-property-transition-url.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-properties-values-api/animation/registered-neutral-keyframe.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-properties-values-api/animation/registered-var-to-registered-animating.html

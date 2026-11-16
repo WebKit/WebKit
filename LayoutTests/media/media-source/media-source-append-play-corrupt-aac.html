@@ -1,0 +1,45 @@
+<html>
+<head>
+<title>Media source append and play corrupt aac file</title>
+<script src="../video-test.js"></script>
+<script src="../utilities.js"></script>
+<script>
+    // AAC corrupt file was generated using these commands:
+    // gst-launch-1.0 audiotestsrc num-buffers=50 ! audio/x-raw,rate=48000,channels=2 ! fdkaacenc ! audio/mpeg,mpegversion=4,stream-format=raw ! breakmydata probability=1 ! mp4mux ! filesink location=test.m4a
+    // MP4Box -dash 5000 test.m4a
+    async function init()
+    {
+        if (window.testRunner)
+            testRunner.waitUntilDone();
+
+        let v = document.getElementsByTagName('video')[0];
+        v.addEventListener('error', function(event) {
+            console.log("Error on video element");
+        });
+
+        for (var i = 0; i < 2; i++) {
+            let ms = new MediaSource();
+            v.src = URL.createObjectURL(ms);
+            await once(ms, 'sourceopen');
+            let videosb = ms.addSourceBuffer('audio/mp4; codecs="mp4a.40.2"');
+
+            // Shouldn't happen. Appends must be processed properly.
+            videosb.addEventListener('error', function(event) {
+                console.log("Error appending");
+            });
+
+            await Promise.all([fetchAndLoad(videosb, '../content/garbage-aac', [''], '.mp4')]);
+            await once(v, 'error');
+        }
+
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }
+</script>
+</head>
+<body onload="init();">
+<video/>
+
+The AAC file must be properly demuxed by MSE, generating an error only at playback time.
+</body>
+</html>

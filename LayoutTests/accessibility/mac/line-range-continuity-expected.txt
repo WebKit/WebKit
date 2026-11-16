@@ -1,0 +1,10 @@
+Tests continuity of line ranges in soft line breaks, i.e., the end of the current line range is the start of the next line range.
+
+First Line: 'Lorem ipsum vivamus nibh '
+Second Line: 'urna mollis at aliquam taciti, '
+PASS: firstEnd.isEqual(secondStart) === true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Lorem ipsum vivamus nibh urna mollis at aliquam taciti, etiam arcu mi semper nostra taciti nulla dolor

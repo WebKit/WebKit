@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<script>
+// This frame opens an IDB database, issues requests, calls commit()
+// while requests are still pending, and immediately signals the parent.
+// The parent removes this frame before events dispatch, exercising the
+// code path where IDBTransaction::stop() is called on a transaction in
+// the Committing state with non-empty m_openRequests.
+
+var dbName = "commit-then-stop-db-" + Math.random();
+var openReq = indexedDB.open(dbName, 1);
+
+openReq.onupgradeneeded = function(e) {
+    var db = e.target.result;
+    var store = db.createObjectStore("store");
+    // Seed some data so get() requests have work to do.
+    for (var i = 0; i < 10; i++)
+        store.put("value" + i, i);
+};
+
+openReq.onsuccess = function(e) {
+    var db = e.target.result;
+    var txn = db.transaction("store", "readonly");
+    var store = txn.objectStore("store");
+
+    // Issue several get requests -- these add to m_openRequests.
+    for (var i = 0; i < 10; i++)
+        store.get(i);
+
+    // Explicitly commit while requests are still pending.
+    // This transitions the transaction to Committing state before
+    // the request success events dispatch and remove themselves
+    // from m_openRequests.
+    txn.commit();
+
+    // Signal the parent immediately -- before any success events fire.
+    parent.postMessage("committed", "*");
+};
+
+openReq.onerror = function(e) {
+    parent.postMessage("error: " + e.target.error, "*");
+};
+</script>

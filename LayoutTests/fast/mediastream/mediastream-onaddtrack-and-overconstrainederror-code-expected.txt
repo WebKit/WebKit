@@ -1,0 +1,6 @@
+
+PASS MediaStream.onaddtrack and onremovetrack IDL attributes (existence + default)
+PASS MediaStream.onaddtrack: addtrack event payload (when fired by UA or by script addTrack)
+PASS OverconstrainedError.code is 0 (no legacy DOMException code mapping)
+PASS OverconstrainedError raised by applyConstraints also has code 0
+

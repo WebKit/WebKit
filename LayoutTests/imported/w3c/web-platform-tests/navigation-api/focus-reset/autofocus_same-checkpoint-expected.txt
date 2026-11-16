@@ -1,0 +1,9 @@
+
+PASS An element with autofocus, present before navigation, gets focused
+PASS Two elements with autofocus, present before navigation; the first gets focused
+PASS An element with autofocus, present before navigation but disabled before finished, does not get focused
+PASS An element with autofocus, present before navigation but with its autofocus attribute removed before finished, does not get focused
+PASS Two elements with autofocus, present before navigation, but the first gets disabled; the second gets focused
+PASS An element with autofocus, introduced between committed and finished, gets focused
+PASS An element with autofocus, introduced after finished, does not get focused
+

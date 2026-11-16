@@ -1,0 +1,18 @@
+<style>
+</style>
+<script>
+  if (window.testRunner) {
+      testRunner.dumpAsText();
+      testRunner.waitUntilDone();
+  }
+  onload = () => {
+    document.styleSheets[0].insertRule(`body { font: caption; }`);
+    document.styleSheets[0].insertRule(`body { transition-duration: 200ms; }`);
+    document.body.append(`\ue000`);
+    setTimeout(() => {
+      if (window.testRunner)
+          testRunner.notifyDone();
+    }, 100);
+  };
+</script>
+This test passes if it doesn't crash.

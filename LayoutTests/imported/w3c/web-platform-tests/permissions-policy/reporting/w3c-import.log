@@ -1,0 +1,87 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/reporting/bluetooth-report-only.https.html
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/reporting/bluetooth-report-only.https.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/reporting/bluetooth-reporting.https.html
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/reporting/bluetooth-reporting.https.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/reporting/camera-potential-report-only.https.html
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/reporting/camera-potential-report-only.https.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/reporting/camera-potential-reporting.https.html
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/reporting/camera-potential-reporting.https.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/reporting/camera-report-only.https.html
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/reporting/camera-report-only.https.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/reporting/camera-reporting.https.html
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/reporting/camera-reporting.https.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/reporting/encrypted-media-report-only.https.html
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/reporting/encrypted-media-report-only.https.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/reporting/encrypted-media-reporting.https.html
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/reporting/encrypted-media-reporting.https.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/reporting/fullscreen-report-only.html
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/reporting/fullscreen-report-only.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/reporting/fullscreen-reporting.html
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/reporting/fullscreen-reporting.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/reporting/generic-sensor-report-only.https.html
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/reporting/generic-sensor-report-only.https.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/reporting/generic-sensor-reporting.https.html
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/reporting/generic-sensor-reporting.https.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/reporting/geolocation-report-only.https.html
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/reporting/geolocation-report-only.https.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/reporting/geolocation-reporting.https.html
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/reporting/geolocation-reporting.https.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/reporting/image.bmp
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/reporting/microphone-report-only.https.html
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/reporting/microphone-report-only.https.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/reporting/microphone-reporting.https.html
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/reporting/microphone-reporting.https.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/reporting/midi-report-only.https.html
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/reporting/midi-report-only.https.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/reporting/midi-reporting.https.html
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/reporting/midi-reporting.https.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/reporting/payment-report-only.https.html
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/reporting/payment-report-only.https.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/reporting/payment-reporting.https.html
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/reporting/payment-reporting.https.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/reporting/picture-in-picture-report-only.html
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/reporting/picture-in-picture-report-only.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/reporting/picture-in-picture-reporting.html
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/reporting/picture-in-picture-reporting.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/reporting/report-only-and-enforce.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/reporting/report-only-and-enforce.https.sub.html.sub.headers
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/reporting/report-only-single-endpoint.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/reporting/report-only-single-endpoint.https.sub.html.sub.headers
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/reporting/report-to-multiple-endpoints.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/reporting/report-to-multiple-endpoints.https.sub.html.sub.headers
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/reporting/report-to-single-endpoint.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/reporting/report-to-single-endpoint.https.sub.html.sub.headers
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/reporting/screen-wake-lock-reporting.https.html
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/reporting/screen-wake-lock-reporting.https.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/reporting/serial-report-only.https.html
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/reporting/serial-report-only.https.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/reporting/serial-reporting.https.html
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/reporting/serial-reporting.https.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/reporting/sync-xhr-report-only.html
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/reporting/sync-xhr-report-only.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/reporting/sync-xhr-reporting.html
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/reporting/sync-xhr-reporting.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/reporting/usb-report-only.https.html
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/reporting/usb-report-only.https.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/reporting/usb-reporting.https.html
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/reporting/usb-reporting.https.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/reporting/xr-report-only.https.html
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/reporting/xr-report-only.https.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/reporting/xr-reporting.https.html
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/reporting/xr-reporting.https.html.headers

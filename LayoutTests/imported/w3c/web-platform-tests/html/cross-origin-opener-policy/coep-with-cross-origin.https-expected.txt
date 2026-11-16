@@ -1,0 +1,7 @@
+
+PASS Cross-origin popup with coop/coep
+PASS Cross-origin popup with coop unsafe-none/coep
+PASS Cross-origin popup with coop unsafe-none without coep
+PASS Cross-origin popup without coep
+PASS Bonus: window.crossOriginIsolated
+

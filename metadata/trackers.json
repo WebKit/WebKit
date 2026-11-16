@@ -1,0 +1,33 @@
+[
+    {
+        "type" : "bugzilla",
+        "url" : "https://bugs.webkit.org",
+        "res" : [
+            "\\Awebkit.org/b/(?P<id>\\d+)\\Z",
+            "\\Ahttps?://webkit.org/b/(?P<id>\\d+)\\Z",
+            "\\A<webkit.org/b/(?P<id>\\d+)>\\Z",
+            "\\A<https?://webkit.org/b/(?P<id>\\d+)>\\Z"
+        ],
+        "redact" : {
+            "project:Security": true,
+            "component:Security": true
+        }, "radar_importer": {
+            "name": "Radar WebKit Bug Importer",
+            "emails": ["webkit-bug-importer@group.apple.com"],
+            "username": "webkit-bug-importer@group.apple.com"
+        }
+    },
+    {
+        "type" : "radar",
+        "projects" : ["JavaScriptCore", "WebKit"],
+        "redact" : {
+            "classification:Security": true,
+            "tentpole:.*Security.*": true
+        },
+        "redact_exemption" : {
+            "keywords:.*WebKit Security Does Not Apply to Shipping" : true,
+            "keywords:.*WebKit Security Merge-Back Approved" : true,
+            "keywords:.*WebKit Security Approved To Land in Open Source" : true
+        }
+    }
+]

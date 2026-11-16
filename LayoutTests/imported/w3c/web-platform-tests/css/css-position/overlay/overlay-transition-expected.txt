@@ -1,0 +1,4 @@
+
+FAIL Open the popover to be closed and verify computed overlay for both popovers assert_equals: expected (string) "none" but got (undefined) undefined
+FAIL Transition overlays assert_equals: Transition in should be delayed expected (string) "none" but got (undefined) undefined
+

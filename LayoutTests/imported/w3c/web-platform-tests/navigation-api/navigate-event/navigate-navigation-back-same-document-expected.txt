@@ -1,0 +1,3 @@
+
+PASS navigate event for navigation.back() - same-document
+

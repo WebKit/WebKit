@@ -1,0 +1,23 @@
+Tests for the CSS.getMatchedStyleForNode command and the view transition pseudo-elements.
+
+
+== Running test suite: CSS.getMatchedStyleForNode.ViewTransitionPseudoElements
+-- Running test case: CSS.getMatchedStyleForNode.ViewTransitionPseudoElements.Root
+PASS: Expected no rules entry for selector `*::view-transition` before starting the view transition.
+PASS: Expected no rules entry for selector `*::view-transition-group()` before starting the view transition.
+PASS: Expected no rules entry for selector `*::view-transition-image-pair()` before starting the view transition.
+PASS: Expected no rules entry for selector `*::view-transition-old()` before starting the view transition.
+PASS: Expected no rules entry for selector `*::view-transition-new()` before starting the view transition.
+PASS: Expected entry for selector `*::view-transition` after starting the view transition.
+PASS: No crash
+PASS: No crash
+PASS: No crash
+PASS: No crash
+
+-- Running test case: CSS.getMatchedStyleForNode.ViewTransitionPseudoElements.Div
+PASS: Expected no rules entry for selector `*::view-transition` on non-root element.
+PASS: Expected no rules entry for selector `*::view-transition-group()` on non-root element.
+PASS: Expected no rules entry for selector `*::view-transition-image-pair()` on non-root element.
+PASS: Expected no rules entry for selector `*::view-transition-old()` on non-root element.
+PASS: Expected no rules entry for selector `*::view-transition-new()` on non-root element.
+

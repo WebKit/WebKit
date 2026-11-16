@@ -1,0 +1,212 @@
+# Copyright (c) 2018 The WebRTC project authors. All Rights Reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS.  All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+import("../../webrtc.gni")
+
+rtc_library("data_rate") {
+  visibility = [ "*" ]
+  sources = [
+    "data_rate.cc",
+    "data_rate.h",
+  ]
+
+  deps = [
+    ":data_size",
+    ":frequency",
+    ":time_delta",
+    "../../rtc_base:checks",
+    "../../rtc_base:stringutils",
+    "../../rtc_base/system:rtc_export",
+    "../../rtc_base/units:unit_base",
+  ]
+}
+
+rtc_library("data_size") {
+  visibility = [ "*" ]
+  sources = [
+    "data_size.cc",
+    "data_size.h",
+  ]
+
+  deps = [
+    "../../rtc_base:stringutils",
+    "../../rtc_base/system:rtc_export",
+    "../../rtc_base/units:unit_base",
+  ]
+}
+
+rtc_library("time_delta") {
+  visibility = [ "*" ]
+  sources = [
+    "time_delta.cc",
+    "time_delta.h",
+  ]
+
+  deps = [
+    "../../rtc_base:stringutils",
+    "../../rtc_base/system:rtc_export",
+    "../../rtc_base/units:unit_base",
+  ]
+}
+
+rtc_library("frequency") {
+  visibility = [ "*" ]
+  sources = [
+    "frequency.cc",
+    "frequency.h",
+  ]
+
+  deps = [
+    ":time_delta",
+    "../../rtc_base:checks",
+    "../../rtc_base:stringutils",
+    "../../rtc_base/system:rtc_export",
+    "../../rtc_base/units:unit_base",
+  ]
+}
+
+rtc_library("timestamp") {
+  visibility = [ "*" ]
+  sources = [
+    "timestamp.cc",
+    "timestamp.h",
+  ]
+
+  deps = [
+    ":time_delta",
+    "../../rtc_base:checks",
+    "../../rtc_base:stringutils",
+    "../../rtc_base/system:rtc_export",
+    "../../rtc_base/units:unit_base",
+  ]
+}
+
+if (rtc_include_tests) {
+  rtc_cc_test("data_rate_unittest") {
+    sources = [ "data_rate_unittest.cc" ]
+    deps = [
+      ":data_rate",
+      ":data_size",
+      ":frequency",
+      ":time_delta",
+      "../../rtc_base:checks",
+      "../../rtc_base:logging",
+      "../../test:test_support",
+    ]
+  }
+
+  rtc_cc_test("data_size_unittest") {
+    sources = [ "data_size_unittest.cc" ]
+    deps = [
+      ":data_size",
+      "../../test:test_support",
+    ]
+  }
+
+  rtc_cc_test("frequency_unittest") {
+    sources = [ "frequency_unittest.cc" ]
+    deps = [
+      ":frequency",
+      ":time_delta",
+      "../../test:test_support",
+    ]
+  }
+
+  rtc_cc_test("time_delta_unittest") {
+    sources = [ "time_delta_unittest.cc" ]
+    deps = [
+      ":time_delta",
+      "../../test:test_support",
+    ]
+  }
+
+  rtc_cc_test("timestamp_unittest") {
+    sources = [ "timestamp_unittest.cc" ]
+    deps = [
+      ":time_delta",
+      ":timestamp",
+      "../../test:test_support",
+      "//third_party/abseil-cpp/absl/strings",
+    ]
+  }
+}
+
+if (rtc_rust) {
+  rtc_rust_cxx_bridge("time_delta_ffi") {
+    source = "time_delta_ffi.rs"
+    deps = [
+      ":time_delta",
+      ":time_delta_rs",
+      "//build/rust:cxx_rustdeps",
+    ]
+  }
+
+  rtc_rust_library("time_delta_rs") {
+    allow_unsafe = true
+    crate_root = "time_delta.rs"
+    sources = [ "time_delta.rs" ]
+    deps = [
+      ":time_delta",
+      "//build/rust:cxx_cppdeps",
+      "//build/rust:cxx_rustdeps",
+    ]
+  }
+
+  rtc_rust_cxx_bridge("timestamp_ffi") {
+    source = "timestamp_ffi.rs"
+    deps = [
+      ":timestamp",
+      ":timestamp_rs",
+      "//build/rust:cxx_rustdeps",
+    ]
+  }
+
+  rtc_rust_library("timestamp_rs") {
+    allow_unsafe = true
+    crate_root = "timestamp.rs"
+    sources = [ "timestamp.rs" ]
+    deps = [
+      ":time_delta_rs",
+      ":timestamp",
+      "//build/rust:cxx_cppdeps",
+      "//build/rust:cxx_rustdeps",
+    ]
+  }
+
+  if (rtc_include_tests) {
+    rtc_rust_unittest("time_delta_rs_unittests") {
+      allow_unsafe = true
+      crate_root = "time_delta.rs"
+      sources = [ "time_delta.rs" ]
+      deps = [
+        ":time_delta",
+        "//build/rust:cxx_cppdeps",
+        "//build/rust:cxx_rustdeps",
+      ]
+    }
+
+    rtc_rust_unittest("timestamp_rs_unittests") {
+      allow_unsafe = true
+      crate_root = "timestamp.rs"
+      sources = [ "timestamp.rs" ]
+      deps = [
+        ":time_delta_rs",
+        ":timestamp",
+        "//build/rust:cxx_cppdeps",
+        "//build/rust:cxx_rustdeps",
+      ]
+    }
+
+    rtc_rust_test_suite("units_rust_unit_tests") {
+      deps = [
+        ":time_delta_rs_unittests",
+        ":timestamp_rs_unittests",
+      ]
+    }
+  }
+}

@@ -1,0 +1,31 @@
+
+PASS .grid 1
+PASS .grid 2
+PASS .grid 3
+PASS .grid 4
+This test checks that grid items positioning works as expected with orthogonal flows.
+
+HORIZONTAL-TB container with VERTICAL-LR items.
+
+X X X X X X
+X X X X X X
+X X X X X X
+X X X X X X
+HORIZONTAL-TB container with VERTICAL-RL items.
+
+X X X X X X
+X X X X X X
+X X X X X X
+X X X X X X
+VERTICAL-LR container with HORIZONTAL-TB items.
+
+X X X X X X
+X X X X X X
+X X X X X X
+X X X X X X
+VERTICAL-RL container with HORIZONTAL-TB items.
+
+X X X X X X
+X X X X X X
+X X X X X X
+X X X X X X

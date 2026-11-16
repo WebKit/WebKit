@@ -1,0 +1,64 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <script src="../../../resources/ui-helper.js"></script>
+    <style>
+    div#tap-here {
+        border-radius: 50px;
+        width: 100px;
+        height: 100px;
+        position: absolute;
+        left: 100px;
+        top: 400px;
+        background-color: tomato;
+        color: white;
+        padding-top: 42px;
+        box-sizing: border-box;
+        text-align: center;
+        pointer-events: none;
+        opacity: 0.75;
+    }
+
+    pre#editor {
+        line-height: 1.5em;
+        border: silver dashed 2px;
+        height: 100vh;
+        margin-top: 0;
+    }
+    </style>
+</head>
+<body style="margin: 0">
+    <pre id="editor" contenteditable></pre>
+    <p id="description">
+    This test verifies that the selection is visible after tapping near the bottom of a large editable area.
+    To test manually, tap near the bottom of the screen and check that the page did not scroll, and that the selection
+    is visible at the top of the editable area.
+    </p>
+    <div id="tap-here">Tap here</div>
+    <div>
+        <pre>The initial scroll offset is: <span id="initial"></span></pre>
+        <pre>The final scroll offset is: <span id="final"></span></pre>
+    </div>
+</body>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+addEventListener("load", async () => {
+    if (!window.testRunner)
+        return;
+
+    initial.textContent = [pageXOffset, pageYOffset].toString();
+
+    await UIHelper.activateAndWaitForInputSessionAt(150, 450);
+    editor.blur();
+    await UIHelper.waitForKeyboardToHide();
+
+    final.textContent = [pageXOffset, pageYOffset].toString();
+    testRunner.notifyDone();
+});
+</script>
+</html>

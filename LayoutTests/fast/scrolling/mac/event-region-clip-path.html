@@ -1,0 +1,45 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<head>
+    <style>
+        .box {
+            float: left;
+            margin: 20px;
+            width: 200px;
+            height: 400px;
+            overflow: scroll;
+            border: 1px solid black;
+            background-color: silver;
+        }
+        
+        .content {
+            height: 200%;
+        }
+        
+        .composited {
+            transform: translateZ(0);
+        }
+        
+    </style>
+<script>
+    window.onload = function () {
+        if (!window.internals)
+            return;
+
+        if (window.testRunner)
+            testRunner.dumpAsText();
+
+        const results = document.getElementById('results');
+        results.innerText = internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_EVENT_REGION);
+    }
+</script>
+</head>
+<body>
+    <div class="composited box" style="clip-path: inset(0 0 200px 0);"><div class="content"></div></div>
+    <div class="composited box" style="clip-path: circle(80px at 120px 90px);"><div class="content"></div></div>
+    <div class="composited box" style="clip-path: ellipse(120px 80px at 120px 90px);"><div class="content"></div></div>
+    <div class="composited box" style="clip-path: polygon(nonzero, 10% 5%, 80% 15%, 90% 50%, 0% 50%);"><div class="content"></div></div>
+    <div class="composited box" style="clip-path: path(evenodd, 'M100,40l20,0 0,60 20,0 0,-20 -60,0 0,-20 80,0 0,60 -60,0 0,-80z')"><div class="content"></div></div>
+<pre id="results"></pre>
+</body>
+</html>

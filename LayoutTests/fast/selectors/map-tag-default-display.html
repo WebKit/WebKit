@@ -1,0 +1,16 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<style id="style-target"></style>
+</head>
+<body>
+<map id="target"></map>
+<script>
+description('Verify default display of &lt;map&gt;.');
+
+shouldBeEqualToString("getComputedStyle(document.getElementById('target')).display", "inline");
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

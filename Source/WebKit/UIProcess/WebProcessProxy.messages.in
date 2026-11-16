@@ -1,0 +1,150 @@
+# Copyright (C) 2010-2024 Apple Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1.  Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer.
+# 2.  Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in the
+#     documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS'' AND
+# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS BE LIABLE FOR
+# ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+[
+    ExceptionForEnabledBy,
+    DispatchedFrom=WebContent,
+    DispatchedTo=UI
+]
+messages -> WebProcessProxy WantsDispatchMessage {
+    DidDestroyUserGestureToken(WebCore::PageIdentifier pageID, WebCore::UserGestureTokenIdentifier userGestureTokenID)
+
+    ShouldTerminate() -> (bool shouldTerminate) Synchronous
+
+    EnableSuddenTermination()
+    DisableSuddenTermination()
+
+    GetNetworkProcessConnection() -> (struct WebKit::NetworkProcessConnectionInfo connectionInfo) Synchronous
+
+    WaitForSharedPreferencesForWebProcessToSync(uint64_t sharedPreferencesVersion) -> (bool success) Synchronous
+
+#if ENABLE(GPU_PROCESS)
+    CreateGPUProcessConnection(WebKit::GPUProcessConnectionIdentifier identifier, IPC::ConnectionHandle connectionHandle) AllowedWhenWaitingForSyncReply
+    GPUProcessConnectionDidBecomeUnresponsive(WebKit::GPUProcessConnectionIdentifier identifier)
+    [EnabledBy=SiteIsolationEnabled] DrawFrameToSnapshot(WebCore::FrameIdentifier frameID, WebCore::IntRect rectRelativeToVisibleContent, WebKit::RemoteSnapshotIdentifier snapshotIdentifier, WebCore::RenderingMode renderingMode, WebCore::FloatSize scale) AllowedWhenWaitingForSyncReply
+#endif
+
+#if ENABLE(MODEL_PROCESS)
+    [EnabledBy=ModelElementEnabled && ModelProcessEnabled] CreateModelProcessConnection(IPC::ConnectionHandle connectionIdentifier) AllowedWhenWaitingForSyncReply
+#endif
+
+    DidExceedActiveMemoryLimit()
+    DidExceedInactiveMemoryLimit()
+    DidExceedMemoryFootprintThreshold(uint64_t footprint)
+    DidExceedCPULimit()
+
+    StopResponsivenessTimer()
+    DidReceiveBackgroundResponsivenessPing()
+
+    MemoryPressureStatusChanged(WTF::SystemMemoryPressureStatus status)
+
+    DidCollectPrewarmInformation(IPC::Untrusted<WebCore::RegistrableDomain> domain, struct WebCore::PrewarmInformation prewarmInformation)
+
+    DidCompleteAutofill(IPC::Untrusted<WebCore::Site> site)
+
+    DidObserveFirstPartyUserGesture(IPC::Untrusted<WebCore::Site> site)
+
+#if PLATFORM(COCOA)
+    CacheMediaMIMETypes(Vector<String> types)
+    CacheMediaSourceTypeSupported(String type, bool isSupported)
+    SetTaskNamePort(MachSendRight taskNamePort)
+#endif
+
+#if PLATFORM(IOS_FAMILY) && ENABLE(UIPROCESS_PERIODIC_MEMORY_MONITOR)
+    DidComputeAvailableMemory(uint64_t availableMemory)
+#endif
+
+#if HAVE(DISPLAY_LINK)
+    StartDisplayLink(WebKit::DisplayLinkObserverID observerID, uint32_t displayID, unsigned preferredFramesPerSecond)
+    StopDisplayLink(WebKit::DisplayLinkObserverID observerID, uint32_t displayID)
+    SetDisplayLinkPreferredFramesPerSecond(WebKit::DisplayLinkObserverID observerID, uint32_t displayID, unsigned preferredFramesPerSecond);
+#endif
+
+#if PLATFORM(GTK) || PLATFORM(WPE)
+    SendMessageToWebContext(struct WebKit::UserMessage userMessage)
+    SendMessageToWebContextWithReply(struct WebKit::UserMessage userMessage) -> (struct WebKit::UserMessage replyMessage)
+#endif
+
+    [EnabledBy=SpeechRecognitionEnabled] CreateSpeechRecognitionServer(WebCore::PageIdentifier identifier)
+    [EnabledBy=SpeechRecognitionEnabled] DestroySpeechRecognitionServer(WebCore::PageIdentifier identifier)
+
+    SystemBeep()
+
+#if PLATFORM(MAC) || PLATFORM(MACCATALYST)
+    # The decision is opaque to WebKit; WebKitAdditions defines its values.
+    RequestAXAuthenticationDecision(struct WebKit::CoreIPCAuditToken requester) -> (uint32_t decision) Synchronous
+#endif
+
+    AccessibilityModeDidChange(enum:uint8_t WebCore::AccessibilityMode mode)
+
+#if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
+    SetCaptionDisplayMode(enum:uint8_t WebCore::CaptionUserPreferencesDisplayMode mode)
+    SetCaptionLanguage(String language)
+#endif
+
+#if ENABLE(NOTIFICATION_EVENT)
+    [EnabledBy=NotificationEventEnabled] GetNotifications(URL registrationURL, String tag) -> (Vector<WebCore::NotificationData> result)
+#endif
+    [EnabledBy=AppBadgeEnabled] SetAppBadgeFromWorker(IPC::Untrusted<WebCore::SecurityOriginData> origin, std::optional<uint64_t> badge)
+
+    SerializeAndWrapCryptoKey(struct WebCore::CryptoKeyData key) -> (std::optional<Vector<uint8_t>> wrappedKey) Synchronous
+    UnwrapCryptoKey(struct WebCore::WrappedCryptoKey wrappedKey) -> (std::optional<Vector<uint8_t>> key) Synchronous
+
+#if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
+#if ENABLE(STREAMING_IPC_IN_LOG_FORWARDING)
+    CreateLogStream(IPC::StreamServerConnectionHandle connectionHandle, WebKit::LogStreamIdentifier identifier) -> ()
+#endif
+#if !ENABLE(STREAMING_IPC_IN_LOG_FORWARDING)
+    CreateLogStream(WebKit::LogStreamIdentifier identifier) -> ()
+#endif
+#endif
+
+#if ENABLE(REMOTE_INSPECTOR) && PLATFORM(COCOA)
+    [EnabledBy=ServiceWorkersEnabled] CreateServiceWorkerDebuggable(WebCore::ServiceWorkerIdentifier identifier, URL url, enum:bool WebCore::ServiceWorkerIsInspectable isInspectable) -> (bool shouldWaitForAutoInspection) Async
+    [EnabledBy=ServiceWorkersEnabled] DeleteServiceWorkerDebuggable(WebCore::ServiceWorkerIdentifier identifier)
+    [EnabledBy=ServiceWorkersEnabled] SendMessageToInspector(WebCore::ServiceWorkerIdentifier identifier, String message)
+#endif
+
+#if ENABLE(WEBASSEMBLY_DEBUGGER) && ENABLE(REMOTE_INSPECTOR)
+    SendWasmDebuggerResponse(String response)
+    WasmDebugServerReady()
+#endif
+
+    DidPostMessage(WebKit::WebPageProxyIdentifier pageID, WebKit::UserContentControllerIdentifier identifier, struct WebKit::FrameInfoData frameInfoData, WebKit::ScriptMessageHandlerIdentifier messageHandlerID, WebKit::JavaScriptEvaluationResult message) -> (std::expected<WebKit::JavaScriptEvaluationResult, String> reply)
+    DidPostLegacySynchronousMessage(WebKit::WebPageProxyIdentifier pageID, WebKit::UserContentControllerIdentifier identifier, struct WebKit::FrameInfoData frameInfoData, WebKit::ScriptMessageHandlerIdentifier messageHandlerID, WebKit::JavaScriptEvaluationResult message) -> (std::expected<WebKit::JavaScriptEvaluationResult, String> reply) Synchronous
+
+#if ENABLE(IPC_TESTING_API)
+    TakeInvalidMessageStringForTesting() -> (String error) Synchronous
+#endif
+
+#if ENABLE(OFFSCREEN_CANVAS) && ENABLE(GPU_PROCESS)
+    OffscreenCanvasPlaceholderCreated(WebCore::PlaceholderRenderingContextIdentifier identifier)
+    OffscreenCanvasPlaceholderDestroyed(WebCore::PlaceholderRenderingContextIdentifier identifier)
+    CommitOffscreenCanvasPlaceholderFrame(WebCore::RemotePlaceholderRenderingContextIdentifier identifier, struct WebCore::ImageBufferTransferHandle transferHandle, std::optional<WebKit::ImageBufferBackendHandle> layerContentsHandle, bool originClean, bool opaque) -> (bool placeholderMayExist)
+#endif
+
+#if HAVE(IOSURFACE)
+    [EnabledBy=RemoteSnapshottingEnabled] CompleteDisplayOnlyImage(WebCore::PageIdentifier pageID, WebKit::RemoteSnapshotIdentifier imageIdentifier, WebCore::FrameIdentifier rootFrameIdentifier, float scale, WebCore::ColorSpace colorSpace) -> (bool success)
+    [EnabledBy=RemoteSnapshottingEnabled] ReleaseDisplayOnlyImage(WebCore::PageIdentifier pageID, WebKit::RemoteSnapshotIdentifier imageIdentifier)
+#endif
+    EnsureMediaKeysStorageDirectory(WebCore::FrameIdentifier frameID)
+}

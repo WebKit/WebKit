@@ -1,0 +1,4 @@
+This tests removing a video element inside an iframe while another video in the main frame is playing does not hit a release assertion.
+
+PASS
+

@@ -1,0 +1,46 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>An audio element with controls has the same size before and after its controls are built</title>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<body>
+<script>
+function createAudio() {
+    const audio = document.createElement("audio");
+    audio.controls = true;
+    return audio;
+}
+
+function size(element) {
+    const rect = element.getBoundingClientRect();
+    return `${rect.width}x${rect.height}`;
+}
+
+function animationFrames() {
+    return new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+}
+
+promise_test(async () => {
+    const reference = document.body.appendChild(createAudio());
+    if (window.internals)
+        internals.shadowRoot(reference);
+
+    const onScreen = document.body.appendChild(createAudio());
+    const spacer = document.body.appendChild(document.createElement("div"));
+    spacer.style.height = "20000px";
+    const offScreen = document.body.appendChild(createAudio());
+
+    const expectedSize = size(reference);
+    assert_equals(size(onScreen), expectedSize, "on-screen size right after insertion");
+    assert_equals(size(offScreen), expectedSize, "off-screen size right after insertion");
+
+    await animationFrames();
+    assert_equals(size(onScreen), expectedSize, "on-screen size after its controls are built");
+    assert_equals(size(offScreen), expectedSize, "off-screen size while its controls are not built");
+
+    offScreen.scrollIntoView();
+    await animationFrames();
+    assert_equals(size(offScreen), expectedSize, "size after scrolling the off-screen element into view");
+}, "An off-screen audio element with controls reports the same size as an on-screen one");
+</script>
+</body>

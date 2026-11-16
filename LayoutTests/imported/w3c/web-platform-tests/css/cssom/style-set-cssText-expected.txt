@@ -1,0 +1,5 @@
+
+PASS initial value of cssRule.style.cssText
+PASS sets empty string for invalid cssText
+PASS sets only the valid properties for partially valid cssText
+

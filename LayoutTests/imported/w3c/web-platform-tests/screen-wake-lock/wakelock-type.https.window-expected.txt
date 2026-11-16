@@ -1,0 +1,4 @@
+
+PASS 'type' parameter in WakeLock.request() defaults to 'screen'
+PASS 'TypeError' is thrown when set an invalid wake lock type
+

@@ -1,0 +1,11 @@
+PASS touchEventCount became 4
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Select me
+Then double tap here
+Handled touchstart
+Handled touchend
+Handled touchstart
+Handled touchend
+

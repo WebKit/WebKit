@@ -1,0 +1,3 @@
+
+PASS User denies access, check that error callback is called with correct code
+

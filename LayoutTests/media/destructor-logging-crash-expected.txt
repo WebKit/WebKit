@@ -1,0 +1,4 @@
+PASS successfullyParsed is true
+
+TEST COMPLETE
+This tests that logging from the video element destructor does not crash.

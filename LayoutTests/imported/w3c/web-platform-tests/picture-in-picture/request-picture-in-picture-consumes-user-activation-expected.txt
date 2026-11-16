@@ -1,0 +1,3 @@
+
+PASS request Picture-in-Picture consumes the user activation, denying a fullscreen request from the same activation
+

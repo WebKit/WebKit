@@ -1,0 +1,49 @@
+Tests that pressing the Escape key or Command + . dismisses a picker without causing a value change.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+Dismiss by pressing escape:
+
+For color:
+PASS elementToTest.value is "#000000"
+
+For date:
+PASS elementToTest.value is "2019-03-26"
+
+For datetime-local:
+PASS elementToTest.value is "2019-03-26T14:28:05.455"
+
+For month:
+PASS elementToTest.value is "2019-03"
+
+For select:
+PASS elementToTest.value is "First"
+
+For time:
+PASS elementToTest.value is "14:28"
+
+Dismiss by pressing Command + .:
+
+For color:
+PASS elementToTest.value is "#000000"
+
+For date:
+PASS elementToTest.value is "2019-03-26"
+
+For datetime-local:
+PASS elementToTest.value is "2019-03-26T14:28:05.455"
+
+For month:
+PASS elementToTest.value is "2019-03"
+
+For select:
+PASS elementToTest.value is "First"
+
+For time:
+PASS elementToTest.value is "14:28"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

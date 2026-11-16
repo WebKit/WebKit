@@ -1,0 +1,14 @@
+WebKit النص العربي يُكتب من اليمين إلى.
+
+Verifies that LTR text is not unselected when dragging a selection handle across a bidi boundary.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+PASS isVisuallyContiguous is true
+PASS textRange.toString() is getSelection().toString()
+PASS selectionRects.length is 1
+PASS Math.abs(textWidth - selectionRects[0].width) is <= 1
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

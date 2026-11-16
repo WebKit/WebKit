@@ -1,0 +1,77 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<style>
+* {
+    background-color: white;
+    color: black;
+}
+#webkit+padding+padding+padding+bar {
+    background-color: rgb(1, 2, 3);
+}
+#webkit+padding+padding+padding+bar baz {
+    color: rgb(4, 5, 6);
+}
+</style>
+</head>
+<body>
+    <div>
+        <foo></foo>
+        <padding></padding>
+        <padding></padding>
+        <padding></padding>
+        <bar id="bar-with-renderer">
+            <baz id="baz-with-renderer"></baz>
+        </bar>
+    </div>
+    <div style="display:none;">
+        <foo></foo>
+        <padding></padding>
+        <padding></padding>
+        <padding></padding>
+        <bar id="bar-without-renderer">
+            <baz id="baz-without-renderer"></baz>
+        </bar>
+    </div>
+</body>
+<script>
+description('Test style update caused by id changes on a direct adjacent. This test does not use any sibling "~" combinator to avoid its more generic marking.');
+
+function testColor(expectMatch) {
+    shouldBeEqualToString('getComputedStyle(document.getElementById("bar-with-renderer")).backgroundColor', expectMatch ? 'rgb(1, 2, 3)' : 'rgb(255, 255, 255)');
+    shouldBeEqualToString('getComputedStyle(document.getElementById("baz-with-renderer")).backgroundColor', 'rgb(255, 255, 255)');
+    shouldBeEqualToString('getComputedStyle(document.getElementById("bar-without-renderer")).backgroundColor', expectMatch ? 'rgb(1, 2, 3)' : 'rgb(255, 255, 255)');
+    shouldBeEqualToString('getComputedStyle(document.getElementById("baz-without-renderer")).backgroundColor', 'rgb(255, 255, 255)');
+
+    shouldBeEqualToString('getComputedStyle(document.getElementById("bar-with-renderer")).color', 'rgb(0, 0, 0)');
+    shouldBeEqualToString('getComputedStyle(document.getElementById("baz-with-renderer")).color', expectMatch ? 'rgb(4, 5, 6)' : 'rgb(0, 0, 0)');
+    shouldBeEqualToString('getComputedStyle(document.getElementById("bar-without-renderer")).color', 'rgb(0, 0, 0)');
+    shouldBeEqualToString('getComputedStyle(document.getElementById("baz-without-renderer")).color', expectMatch ? 'rgb(4, 5, 6)' : 'rgb(0, 0, 0)');
+}
+
+// Attributes are covered in a separate test, here we only use the id property.
+function setId(value) {
+    var allFoos = document.querySelectorAll("foo");
+    for (var i = 0; i < allFoos.length; ++i)
+        allFoos[i].id =value;
+}
+
+debug("Initial state does not match, there is no id defined.");
+testColor(false);
+
+debug("Adding the id, we should have a match.");
+setId("webkit");
+testColor(true);
+
+debug("Removing the id, we should not longer match.");
+setId("");
+testColor(false);
+
+debug("Setting the id to a different value, we should not match.");
+setId("notwebkit");
+testColor(false);
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</html>

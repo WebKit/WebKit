@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+    <body>
+        <p>You should see a line of black pixels at the botton of the gray square.</p>
+        <svg width="800px" height="800px" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <clipPath id="clip-out-middle">
+                  <rect x="10" y="240" width="200" height="4" />
+                </clipPath>
+            </defs>
+            <rect x="10" y="40" width="201" height="201" fill="black" clip-path="url(#clip-out-middle)"/>
+            <rect x="10" y="40" width="200" height="202" fill="none" stroke="gray" />
+        </svg>
+        </div>
+    </body>
+</html>

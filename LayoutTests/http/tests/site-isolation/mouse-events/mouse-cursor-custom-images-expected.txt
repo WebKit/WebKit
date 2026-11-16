@@ -1,0 +1,40 @@
+
+Verifies that custom CSS cursor images work correctly in cross-origin iframes with site isolation.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+TEST CASE: Main frame element overlapping remote iframe
+Cursor Info: type=Custom hotSpot=0,0 image=5x5
+
+TEST CASE: Remote iframe body cursor
+Cursor Info: type=Custom hotSpot=0,0 image=7x7
+
+TEST CASE: Styled element in remote iframe
+Cursor Info: type=Custom hotSpot=0,0 image=9x9
+
+TEST CASE: Cursor near iframe edge where image would spill outside
+Cursor Info: type=Predefined hotSpot=0,0
+
+TEST CASE: Element in overflow area of remote iframe after scrolling
+Cursor Info: type=Custom hotSpot=0,0 image=11x11
+
+TEST CASE: Cross-origin element overlapping nested same-origin iframe
+Cursor Info: type=Custom hotSpot=0,0 image=8x8
+
+TEST CASE: Nested same-origin iframe body cursor
+Cursor Info: type=Custom hotSpot=0,0 image=12x12
+
+TEST CASE: Styled element in nested same-origin iframe
+Cursor Info: type=Custom hotSpot=0,0 image=13x13
+
+TEST CASE: Cursor near nested iframe edge where image would spill outside
+Cursor Info: type=Predefined hotSpot=0,0
+
+TEST CASE: Element in overflow area of nested same-origin iframe after scrolling
+Cursor Info: type=Custom hotSpot=0,0 image=14x14
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

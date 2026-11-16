@@ -1,0 +1,8 @@
+
+PASS AudioSession.type round-trips for "auto"
+PASS AudioSession.type round-trips for "playback"
+PASS AudioSession.type round-trips for "transient"
+PASS AudioSession.type round-trips for "transient-solo"
+PASS AudioSession.type round-trips for "ambient"
+PASS AudioSession.type round-trips for "play-and-record"
+

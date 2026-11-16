@@ -1,0 +1,9 @@
+This test ensures that a forward, non-immediate-descendants search whose start element has become ignored resumes from the correct position and descends as usual, instead of jumping back to the container's first match.
+
+PASS: nextDOMId === 'deepButton'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Top Button
+Deep Button

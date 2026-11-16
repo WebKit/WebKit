@@ -1,0 +1,5 @@
+
+PASS Custom element inside 'shadowrootcustomelementregistry' declarative shadow root should use document's registry as attachShadow default registry
+PASS Built-in element inside 'shadowrootcustomelementregistry' declarative shadow root should use document's registry as attachShadow default registry
+PASS Built-in element inside 'shadowrootcustomelementregistry' shadow root parsed via setHTMLUnsafe should use null registry
+

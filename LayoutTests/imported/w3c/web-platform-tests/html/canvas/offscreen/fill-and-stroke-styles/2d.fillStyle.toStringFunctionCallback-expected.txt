@@ -1,0 +1,7 @@
+2d.fillStyle.toStringFunctionCallback
+
+Passing a function in to ctx.fillStyle or ctx.strokeStyle with a toString callback works as specified
+
+
+PASS Passing a function in to ctx.fillStyle or ctx.strokeStyle with a toString callback works as specified
+

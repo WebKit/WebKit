@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="500" height="500">
+
+<filter id="f1" filterUnits="userSpaceOnUse" primitiveUnits="userSpaceOnUse">
+  <feFlood x="0" y="0" width="50%" height="100%" flood-color="#00ff00" result="left"/>
+  <feFlood x="40%" y="0" width="60%" height="100%" flood-color="#0000ff" result="right"/>
+  <feMerge>
+    <feMergeNode in="left"/>
+    <feMergeNode in="right"/>
+  </feMerge>
+</filter>
+<g filter="url(#f1)">
+</g>
+
+</svg>

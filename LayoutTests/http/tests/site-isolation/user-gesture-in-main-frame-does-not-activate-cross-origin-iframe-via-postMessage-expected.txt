@@ -1,0 +1,19 @@
+Tests that posting a message to a cross-origin iframe in another process while the main frame is processing a user gesture does not give the iframe user activation.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+The main frame handled a user gesture:
+PASS navigator.userActivation.isActive is true
+
+The iframe before the main frame posted a message during its user gesture:
+PASS iframeBeforeGesture.isActive is false
+PASS iframeBeforeGesture.hasBeenActive is false
+
+The iframe after the main frame posted a message during its user gesture:
+PASS iframeAfterGesture.isActive is false
+PASS iframeAfterGesture.hasBeenActive is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

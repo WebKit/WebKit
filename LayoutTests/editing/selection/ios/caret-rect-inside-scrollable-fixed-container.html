@@ -1,0 +1,85 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true useHardwareKeyboardMode=false AsyncOverflowScrollingEnabled=true focusStartsInputSessionPolicy=allow ] -->
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<head>
+    <script src="../../../resources/ui-helper.js"></script>
+    <script src="../../../resources/js-test.js"></script>
+    <style>
+        body, html {
+            margin: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .tall, .very-tall {
+            width: 1px;
+        }
+
+        .tall {
+            height: 500px;
+        }
+
+        .very-tall {
+            height: 21000px;
+        }
+
+        .fixed {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: lightgray;
+            z-index: 100;
+            overflow-y: scroll;
+        }
+
+        .centered {
+            text-align: center;
+        }
+
+        input {
+            width: 200px;
+            height: 44px;
+            font-size: 18px;
+            outline: none;
+            padding: 6px;
+            text-align: center;
+        }
+    </style>
+    <script>
+        jsTestIsAsync = true;
+
+        addEventListener("load", async () => {
+            description("Verifies that when the scroll offset is extremely large, the caret rect for a focused text field inside a fixed container is positioned inside the text field");
+            await UIHelper.setHardwareKeyboardAttached(false);
+            await UIHelper.renderingUpdate();
+            scrollTo(0, 20000);
+
+            textField = document.querySelector("input");
+            textField.focus();
+            await UIHelper.waitForKeyboardToShow();
+            await UIHelper.ensurePresentationUpdate();
+
+            caretRect = await UIHelper.getUICaretViewRect();
+            caretRect.top -= pageYOffset;
+            textFieldRect = textField.getBoundingClientRect();
+
+            shouldBeTrue("UIHelper.rectContainsOtherRect(textFieldRect, caretRect)");
+
+            textField.blur();
+            await UIHelper.waitForKeyboardToHide();
+
+            finishJSTest();
+        });
+    </script>
+</head>
+<body>
+    <div class="very-tall"></div>
+    <div class="fixed">
+        <div class="tall"></div>
+        <div class="centered"><input /></div>
+        <div class="tall"></div>
+    </div>
+</body>
+</html>

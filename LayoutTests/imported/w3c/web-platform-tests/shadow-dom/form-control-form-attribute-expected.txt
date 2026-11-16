@@ -1,0 +1,7 @@
+form
+
+
+PASS Form control's form attribute should point to the form element.
+PASS Shadow form control's form attribute should work also in shadow DOM.
+PASS Form element as form control's ancestor should work also in shadow DOM.
+

@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<style>
+div {
+    font: 20px/1 monospace;
+    width: 10ch;
+}
+</style>
+<!-- Removing laid out text and a line break runs partial layout from the line before the removed content. -->
+<div id="textContainer">line<br>line<br>removed<br>line<br>line</div>
+<div id="lineBreakContainer">line<br>aaaaaaaaaa <br>bbbbbbbbbb cccccccccc<br>line</div>
+<svg width="200" height="30"><text id="svgText" x="0" y="20" font-size="20">kept<!----> removed</text></svg>
+<script>
+document.body.offsetHeight;
+textContainer.childNodes[4].remove();
+// The lines after the merged line keep their content and position.
+lineBreakContainer.querySelectorAll("br")[1].remove();
+svgText.lastChild.remove();
+</script>

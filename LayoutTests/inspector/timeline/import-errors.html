@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("TimelineManager.processJSON.errors");
+
+    // The synthesizeImportError variants differ only by their message prefix, so stub both and
+    // record which manager handled each error path. This lets us assert that every import error --
+    // including the unsupported-version path (webkit.org/b/319407) -- is synthesized by
+    // WI.TimelineManager and not another manager such as WI.NetworkManager.
+    let lastError = null;
+    let originalTimelineSynthesize = WI.TimelineManager.synthesizeImportError;
+    let originalNetworkSynthesize = WI.NetworkManager.synthesizeImportError;
+    WI.TimelineManager.synthesizeImportError = (message) => { lastError = {manager: "TimelineManager", message}; };
+    WI.NetworkManager.synthesizeImportError = (message) => { lastError = {manager: "NetworkManager", message}; };
+
+    function addErrorTestCase({name, description, data}) {
+        suite.addTestCase({
+            name,
+            description,
+            async test() {
+                lastError = null;
+                await WI.timelineManager.processJSON(data);
+                InspectorTest.expectThat(lastError, "Should have synthesized an import error.");
+                InspectorTest.expectEqual(lastError.manager, "TimelineManager", "Import error should be synthesized by WI.TimelineManager.");
+                InspectorTest.log(`Error Message: ${lastError.message}`);
+            }
+        });
+    }
+
+    addErrorTestCase({
+        name: "ExplicitError",
+        description: "An error surfaced while loading the file should be reported.",
+        data: {filename: "test.json", json: null, error: "could not read file"},
+    });
+
+    addErrorTestCase({
+        name: "NotAnObject",
+        description: "JSON that is not an object should be rejected.",
+        data: {filename: "test.json", json: 42},
+    });
+
+    addErrorTestCase({
+        name: "MissingRequiredKeys",
+        description: "JSON missing the recording/overview/version keys should be rejected.",
+        data: {filename: "test.json", json: {}},
+    });
+
+    addErrorTestCase({
+        name: "UnsupportedVersion",
+        description: "A recording with an unsupported serialization version should be rejected by the Timeline importer.",
+        data: {filename: "test.json", json: {recording: {}, overview: {}, version: WI.TimelineRecording.SerializationVersion + 1000}},
+    });
+
+    suite.addTestCase({
+        name: "Cleanup",
+        description: "Restore the stubbed synthesizeImportError methods.",
+        async test() {
+            WI.TimelineManager.synthesizeImportError = originalTimelineSynthesize;
+            WI.NetworkManager.synthesizeImportError = originalNetworkSynthesize;
+            InspectorTest.log("Restored.");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests that WI.TimelineManager.processJSON reports import errors through the Timeline importer.</p>
+</body>
+</html>

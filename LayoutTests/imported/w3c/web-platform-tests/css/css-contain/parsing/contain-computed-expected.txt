@@ -1,0 +1,17 @@
+
+PASS Property contain value 'none'
+PASS Property contain value 'strict'
+PASS Property contain value 'content'
+PASS Property contain value 'size'
+PASS Property contain value 'layout'
+PASS Property contain value 'style'
+PASS Property contain value 'paint'
+PASS Property contain value 'size layout'
+PASS Property contain value 'style paint'
+PASS Property contain value 'style layout paint'
+PASS Property contain value 'size style layout paint'
+PASS Property contain value 'size layout paint'
+PASS Property contain value 'layout paint'
+PASS Property contain value 'inline-size'
+PASS Property contain value 'inline-size layout style paint'
+

@@ -1,0 +1,15 @@
+Verify the series of sub-tests that are executed for "partial" interface objects.
+
+
+FAIL Partial interface A: original interface defined assert_true: Original interface should be defined expected true got false
+PASS Partial interface B: original interface defined
+PASS Partial interface B: valid exposure set
+PASS Partial interface C: original interface defined
+PASS Partial interface C: valid exposure set
+PASS Partial interface D: original interface defined
+FAIL Partial interface D: valid exposure set Partial D interface is exposed to 'DedicatedWorker', the original interface is not.
+FAIL Partial interface E: original interface defined assert_true: Original E definition should have type interface expected true got false
+PASS partial mixin dep implications
+PASS Partial interface M: original interface defined
+FAIL Partial interface M: member names are unique assert_true: member A is unique expected true got false
+

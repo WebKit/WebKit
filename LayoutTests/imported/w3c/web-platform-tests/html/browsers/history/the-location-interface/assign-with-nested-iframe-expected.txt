@@ -1,0 +1,3 @@
+
+PASS Browser sends Referer header when location.assign is called in iframe document on another nested iframe element
+

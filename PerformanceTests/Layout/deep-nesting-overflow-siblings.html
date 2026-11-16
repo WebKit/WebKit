@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../resources/runner.js"></script>
+<script>
+// Deep markup that exceeds the parser's max DOM tree depth (default 512), so the
+// parser produces a long flat run of overflow siblings at the depth boundary.
+// 100000 spans ~= 999500 overflow siblings, matching the regression magnitude observed
+// in the original Mail thread (~15s render time pre-fix).
+const depth = 100000;
+let markup = "<!DOCTYPE html><body>";
+for (let i = 0; i < depth; ++i)
+    markup += "<span>";
+
+let iframe;
+
+function setup() {
+    if (iframe)
+        document.body.removeChild(iframe);
+    iframe = document.createElement("iframe");
+    iframe.sandbox = "allow-same-origin";
+    document.body.appendChild(iframe);
+    iframe.contentDocument.open();
+    iframe.contentDocument.write(markup);
+    iframe.contentDocument.close();
+}
+
+PerfTestRunner.measureTime({
+    description: "Render time for deeply-nested HTML that exceeds the parser's max DOM tree depth and produces a long run of overflow siblings.",
+    setup: setup,
+    run: function () {
+        iframe.contentDocument.body.offsetHeight;
+    }
+});
+</script>
+</body>
+</html>

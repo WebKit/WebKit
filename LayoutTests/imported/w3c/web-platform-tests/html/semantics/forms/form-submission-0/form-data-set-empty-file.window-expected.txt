@@ -1,0 +1,6 @@
+
+PASS Empty <input type=file> is still added to the form's entry list
+PASS Empty <input type=file> shows up in the urlencoded serialization
+PASS Empty <input type=file> shows up in the multipart/form-data serialization
+PASS Empty <input type=file> shows up in the text/plain serialization
+

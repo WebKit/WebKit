@@ -1,0 +1,20 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+
+<!DOCTYPE html>
+<title>Tests that unload is fired when site isolation is enabled</title>
+
+<script src="/js-test-resources/js-test.js"></script>
+<script>
+description("Tests that unload is fired when site isolation is enabled.");
+jsTestIsAsync = true;
+
+const chan = new BroadcastChannel("channel");
+chan.addEventListener("message", (e) => {
+  caughtEvent = e.data;
+  shouldBeEqualToString("caughtEvent.name", "unload");
+  popup.close();
+  finishJSTest();
+});
+
+popup = window.open("/site-isolation/page-lifecycle/resources/navigating-away-subpage.html?event=unload");
+</script>

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function pseudoElementForType(type)
+{
+    document.body.offsetHeight;
+    return internals.pseudoElement(document.getElementById(`${type}-target`), type);
+}
+
+function hidePseudoElement(type)
+{
+    document.getElementById(`${type}-target`).classList.add("hide-pseudo");
+    document.body.offsetHeight;
+}
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("DOM.PseudoElement.RequestNode");
+
+    for (let type of ["before", "after"]) {
+        suite.addTestCase({
+            name: `DOM.PseudoElement.RequestNode.${type}`,
+            async test() {
+                await WI.domManager.requestDocument();
+
+                let remoteObject = await InspectorTest.evaluateInPage(`pseudoElementForType("${type}")`);
+                let {nodeId} = await WI.assumingMainTarget().DOMAgent.requestNode(remoteObject.objectId);
+                let pseudoElement = WI.domManager.nodeForId(nodeId);
+
+                InspectorTest.expectEqual(pseudoElement.pseudoType(), type, "The requested node should be the rendered pseudo element.");
+                InspectorTest.expectEqual(pseudoElement.parentNode.getAttribute("id"), `${type}-target`, "Requesting a pseudo element should also expose its host.");
+                InspectorTest.expectEqual(pseudoElement.parentNode.pseudoElements().get(type), pseudoElement, "The host should reference the same pseudo element.");
+
+                await Promise.all([
+                    pseudoElement.awaitEvent(WI.DOMNode.Event.Removed),
+                    InspectorTest.evaluateInPage(`hidePseudoElement("${type}")`),
+                ]);
+                InspectorTest.expectEqual(pseudoElement.parentNode, null, "Removing the pseudo element should clear its frontend parent.");
+                InspectorTest.expectFalse(WI.domManager.nodeForId(nodeId), "Removing the pseudo element should discard its binding.");
+
+                remoteObject.release();
+            },
+        });
+    }
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+<style>
+#before-target::before { content: "before"; }
+#after-target::after { content: "after"; }
+.hide-pseudo::before, .hide-pseudo::after { content: none !important; }
+</style>
+</head>
+<body onload="runTest()">
+<section><div><span id="before-target">Before host</span></div></section>
+<section><div><span id="after-target">After host</span></div></section>
+</body>
+</html>

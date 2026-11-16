@@ -1,0 +1,13 @@
+This test ensures that the ShowMenu accessibility action fires a contextmenu DOM event on elements in the main frame and inside iframes.
+
+PASS: contextMenuEvent !== null === true
+PASS: contextMenuEvent.type === 'contextmenu'
+PASS: contextMenuEvent.target.id === 'target'
+PASS: iframeContextMenuEvent !== null === true
+PASS: iframeContextMenuEvent.type === 'contextmenu'
+PASS: iframeContextMenuEvent.target.id === 'iframe-target'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Show my context menu

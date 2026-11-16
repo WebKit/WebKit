@@ -1,0 +1,23 @@
+
+PASS :binding:attr="const_expr"
+PASS :binding:attr="override_expr"
+PASS :binding:attr="zero"
+PASS :binding:attr="one"
+PASS :binding:attr="comment"
+PASS :binding:attr="split_line"
+PASS :binding:attr="trailing_comma"
+PASS :binding:attr="int_literal"
+PASS :binding:attr="uint_literal"
+PASS :binding:attr="hex_literal"
+PASS :binding:attr="negative"
+PASS :binding:attr="missing_value"
+PASS :binding:attr="missing_left_paren"
+PASS :binding:attr="missing_right_paren"
+PASS :binding:attr="multiple_values"
+PASS :binding:attr="f32_val_literal"
+PASS :binding:attr="f32_val"
+PASS :binding:attr="no_params"
+PASS :binding:attr="misspelling"
+PASS :binding:attr="multi_binding"
+PASS :binding_f16:
+

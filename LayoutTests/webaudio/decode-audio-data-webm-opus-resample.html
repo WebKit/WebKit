@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../resources/js-test.js"></script>
+<script type="text/javascript" src="resources/audio-testing.js"></script>
+</head>
+<body>
+<script>
+description("Test that decoding an opus webm file with resampling succeeds");
+
+window.jsTestIsAsync = true;
+
+var context = new window.AudioContext({ sampleRate: 44100 });
+var request = new XMLHttpRequest();
+request.open("GET", 'resources/media/opus.webm', true);
+request.responseType = "arraybuffer";
+
+request.onload = function() {
+    context.decodeAudioData(request.response, (buffer) => {
+        testPassed("Successfully decoded content");
+        // File is exactly 1-0.0065s long @ 48000Hz, so 47688 frames, after resampling it should be 47688/48000*44100 = 43813.
+        if (buffer.length === 43813)
+          testPassed("Decoding returned the right number of frames.");
+        else
+          testFailed("Decoding returned the wrong number of frames: " + buffer.length);
+        finishJSTest();
+      }, () => {
+        testFailed("Failed to decode file");
+        finishJSTest();
+      });
+}
+request.send();
+
+</script>
+</body>
+</html>

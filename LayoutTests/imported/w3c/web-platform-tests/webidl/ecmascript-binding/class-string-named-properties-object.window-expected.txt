@@ -1,0 +1,4 @@
+
+PASS @@toStringTag exists with the appropriate descriptor
+PASS Object.prototype.toString
+

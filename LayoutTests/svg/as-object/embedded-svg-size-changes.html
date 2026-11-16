@@ -1,0 +1,71 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<script>window.enablePixelTesting = true;</script>
+<script src="../../resources/js-test-pre.js"></script>
+<script src="../../fast/repaint/resources/repaint.js"></script>
+</head>
+<body style="margin: 0px" onload="runRepaintTest()">
+
+<script type="text/javascript">
+    function test1() {
+        object1 = document.getElementsByTagName("object")[0];
+        debug("Check initial &lt;object&gt; size, before external resource loaded");
+
+        shouldBeEqualToString("document.defaultView.getComputedStyle(object1).width", "300px");
+        shouldBeEqualToString("document.defaultView.getComputedStyle(object1).height", "150px");
+    }
+
+    function repaintTest() {
+        object1 = document.getElementsByTagName("object")[0];
+
+        debug("");
+        debug("Check initial &lt;object&gt; size, after external resource loaded");
+        shouldBeEqualToString("document.defaultView.getComputedStyle(object1).width", "200px");
+        shouldBeEqualToString("document.defaultView.getComputedStyle(object1).height", "200px");
+
+        setTimeout(function() {
+            var svgDoc = object1.getSVGDocument();
+            var svgWindow = svgDoc.defaultView;
+            svgWindow.changeSize();
+            test3();
+        }, 0);
+    }
+
+    function test3() {
+        object1 = document.getElementsByTagName("object")[0];
+
+        debug("");
+        debug("Check final &lt;object&gt; size, after resizing finished");
+        shouldBeEqualToString("document.defaultView.getComputedStyle(object1).width", "400px");
+        shouldBeEqualToString("document.defaultView.getComputedStyle(object1).height", "200px");
+
+        debug("");
+        debug("Test passed if you see two green rectangles");
+
+        completeTest();
+    }
+
+    function completeTest() {
+        var script = document.createElement("script");
+        script.onload = function() {
+            if (window.testRunner)
+                testRunner.notifyDone();
+        };
+
+        script.src = "../../resources/js-test-post.js";
+        document.body.appendChild(script);
+    }
+</script>
+
+<object style="border: 1px red solid" data="resources/embedded-svg-size-changes.svg"></object>
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+    if (window.testRunner)
+        testRunner.waitUntilDone();
+    description("This test checks that intrinsic size changes of an embedded SVG cause immediate updates of the object that embeds it.");
+    test1();
+</script>
+</body>
+</html>

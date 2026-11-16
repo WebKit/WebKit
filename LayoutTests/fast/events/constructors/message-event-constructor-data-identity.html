@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../../resources/js-test-pre.js"></script>
+<script>
+description("Tests that MessageEvent.data returns the value it was initialized to.");
+
+function testData(data)
+{
+    expectedData = data;
+
+    debug("Using constructor");
+    messageEvent = new MessageEvent("foo", { data: expectedData });
+    shouldBeTrue("messageEvent.data === expectedData");
+    shouldBeTrue("messageEvent.data === messageEvent.data");
+
+    debug("Using deprecated initMessageEvent()");
+    messageEvent = document.createEvent("messageevent");
+    messageEvent.initMessageEvent("foo", false, false, expectedData);
+    shouldBeTrue("messageEvent.data === expectedData");
+    shouldBeTrue("messageEvent.data === messageEvent.data");
+}
+
+debug("* JS Object");
+testData({ value: 1 });
+
+debug("");
+debug("* String");
+testData("testString");
+
+debug("");
+debug("* Blob");
+const blob = new Blob([JSON.stringify({ hello: "world" }, null, 2)], {type : 'application/json'});
+testData(blob);
+
+debug("");
+debug("* ArrayBuffer");
+var buffer = new ArrayBuffer(8);
+testData(buffer);
+
+debug("");
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

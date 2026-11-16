@@ -1,0 +1,63 @@
+<!doctype html>
+<html class="reftest-wait">
+  <head>
+    <title>mathvariant dynamic</title>
+    <meta charset="utf-8"/>
+    <script type="text/javascript">
+      function doTest() {
+        document.getElementById("m1").setAttribute("mathvariant", "script");
+        document.getElementById("m2").removeAttribute("mathvariant");
+        document.getElementById("m3").setAttribute("mathvariant", "bold");
+        document.getElementById("m4").setAttribute("mathvariant", "script");
+        document.getElementById("m5").removeAttribute("mathvariant");
+        document.getElementById("m6").setAttribute("mathvariant", "bold");
+        document.getElementById("m7").setAttribute("mathvariant", "script");
+        document.getElementById("m8").removeAttribute("mathvariant");
+        document.getElementById("m9").setAttribute("mathvariant", "bold");
+        document.documentElement.removeAttribute("class");
+      }
+      window.addEventListener("load", doTest, false);
+    </script>
+  </head>
+  <body>
+
+    <!-- Modifying mathvariant on the <math> element -->
+    <math id="m1">
+      <mtext>A</mtext>
+    </math><br/>
+    <math id="m2" mathvariant="fraktur">
+      <mtext>A</mtext>
+    </math><br/>
+    <math id="m3" mathvariant="double-struck">
+      <mtext>A</mtext>
+    </math><br/>
+
+    <!-- Modifying mathvariant on the <mstyle> element -->
+    <math>
+      <mstyle id="m4">
+        <mtext>A</mtext>
+      </mstyle>
+    </math><br/>
+    <math>
+      <mstyle id="m5" mathvariant="fraktur">
+        <mtext>A</mtext>
+      </mstyle>
+    </math><br/>
+    <math>
+      <mstyle id="m6" mathvariant="double-struck">
+        <mtext>A</mtext>
+      </mstyle>
+    </math><br/>
+
+    <!-- Modifying mathvariant on a token element -->
+    <math>
+      <mtext id="m7">A</mtext>
+    </math><br/>
+    <math>
+      <mtext id="m8" mathvariant="fraktur">A</mtext>
+    </math><br/>
+    <math>
+      <mtext id="m9" mathvariant="double-struck">A</mtext>
+    </math>
+  </body>
+</html>

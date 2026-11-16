@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+<div id="target" style="font: bold 16px 'Osaka'; position: absolute; left: 0px; top: 200px; width: 100%;" contenteditable>2020202020202020202020202020</div>
+<span id="comparison" style="font: bold 16px 'Osaka';">2020202020202020202020202020</div>
+<script>
+description("This test makes sure that Osaka's synthetic bold doesn't cause bogus character widths.");
+let target = document.getElementById("target");
+let comparison = document.getElementById("comparison");
+target.focus();
+for (var i = 0; i < 28; ++i) {
+    window.getSelection().modify('move', 'forward', 'character');
+    if (window.internals)
+        shouldBeLessThanOrEqual("internals.absoluteCaretBounds().left", "comparison.getBoundingClientRect().width + 2");
+}
+</script>
+</body>
+</html>

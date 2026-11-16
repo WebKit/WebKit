@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<body>
+    <p>This test passes if WebKit does not crash.</p>
+    <div id="editorcontainer" contenteditable="true">
+        <iframe id="inlineFrame"></iframe>
+    </div>
+    <script>
+        editorcontainer.style.setProperty("display", "-webkit-flex");
+        window.getSelection().collapse(editorcontainer);
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+        }
+    </script>
+</body>

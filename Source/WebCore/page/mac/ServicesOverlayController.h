@@ -1,0 +1,143 @@
+/*
+ * Copyright (C) 2014-2017 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#pragma once
+
+#if (ENABLE(SERVICE_CONTROLS) || ENABLE(TELEPHONE_NUMBER_DETECTION)) && PLATFORM(MAC)
+
+#include "DataDetectorHighlight.h"
+#include "GraphicsLayerClient.h"
+#include "PageOverlay.h"
+#include "Timer.h"
+#include <wtf/MonotonicTime.h>
+#include <wtf/OptionSet.h>
+#include <wtf/TZoneMalloc.h>
+#include <wtf/WeakHashSet.h>
+
+namespace WebCore {
+
+class GraphicsLayer;
+class LayoutRect;
+class LocalFrame;
+class Page;
+
+enum class RenderingUpdateStep : uint32_t;
+
+struct GapRects;
+
+class ServicesOverlayController : public DataDetectorHighlightClient, private PageOverlayClient {
+    WTF_MAKE_TZONE_ALLOCATED(ServicesOverlayController);
+public:
+    explicit ServicesOverlayController(Page&);
+    ~ServicesOverlayController();
+
+    // DataDetectorHighlightClient.
+    NODELETE void ref() const final;
+    void deref() const final;
+
+    void selectedTelephoneNumberRangesChanged();
+    void selectionRectsDidChange(const Vector<LayoutRect>&, const Vector<GapRects>&, bool isTextOnly);
+    void mouseDidLeaveLocalRoot(LocalFrame&);
+    void focusMovedToOrFromRemoteFrame();
+
+    unsigned telephoneNumberRangesChangedCountForTesting() const { return m_telephoneNumberRangesChangedCountForTesting; }
+    WEBCORE_EXPORT void setHasRelevantSelectionServicesForTesting(std::optional<bool>);
+
+private:
+    // PageOverlayClient
+    void willMoveToPage(PageOverlay&, Page*) override { }
+    NODELETE void didMoveToPage(PageOverlay&, Page*) override;
+    NODELETE void drawRect(PageOverlay&, GraphicsContext&, const IntRect& dirtyRect) override;
+    bool mouseEvent(PageOverlay&, const PlatformMouseEvent&) override;
+    void didScrollFrame(PageOverlay&, LocalFrame&) override;
+
+    void handleClick(const IntPoint& clickPointInMainFrameView, DataDetectorHighlight&);
+
+    void drawHighlight(DataDetectorHighlight&, GraphicsContext&);
+
+    void invalidateHighlightsOfType(DataDetectorHighlight::Type);
+    void buildHighlightsTimerFired();
+    void buildPotentialHighlightsIfNeeded();
+
+    void replaceHighlightsOfTypePreservingEquivalentHighlights(HashSet<Ref<DataDetectorHighlight>>&&, DataDetectorHighlight::Type);
+    void removeAllPotentialHighlightsOfType(DataDetectorHighlight::Type);
+    void buildPhoneNumberHighlights();
+    void buildSelectionHighlight();
+
+    void determineActiveHighlight(bool& mouseIsOverButton);
+    void clearActiveHighlight();
+
+    void updateServicesOverlays();
+    RefPtr<PageOverlay> servicesOverlayForRootFrame(const LocalFrame*) const;
+
+#if ENABLE(DATA_DETECTION)
+    // DataDetectorHighlightClient
+    DataDetectorHighlight* activeHighlight() const final { return m_activeHighlight.get(); }
+    void scheduleRenderingUpdate(OptionSet<RenderingUpdateStep>) final;
+    float deviceScaleFactor() const final;
+    RefPtr<GraphicsLayer> createGraphicsLayer(GraphicsLayerClient&) final;
+#endif
+
+    DataDetectorHighlight* findTelephoneNumberHighlightContainingSelectionHighlight(DataDetectorHighlight&);
+
+    bool hasRelevantSelectionServices();
+
+    bool mouseIsOverHighlight(DataDetectorHighlight&, const IntPoint& mousePosition, bool& mouseIsOverButton) const;
+    bool shouldHandleMouseEventInRootFrame(const LocalFrame&, const IntPoint& mousePosition);
+    Seconds remainingTimeUntilHighlightShouldBeShown(DataDetectorHighlight*) const;
+    void determineActiveHighlightTimerFired();
+
+    Page& page() const { return m_page; }
+
+    WeakRef<Page> m_page;
+
+    RefPtr<DataDetectorHighlight> m_activeHighlight;
+    RefPtr<DataDetectorHighlight> m_nextActiveHighlight;
+    HashSet<Ref<DataDetectorHighlight>> m_potentialHighlights;
+    WeakHashSet<DataDetectorHighlight> m_highlights;
+
+    Vector<LayoutRect> m_currentSelectionRects;
+    bool m_isTextOnly { false };
+
+    OptionSet<DataDetectorHighlight::Type> m_dirtyHighlightTypes;
+
+    MonotonicTime m_lastSelectionChangeTime;
+    MonotonicTime m_nextActiveHighlightChangeTime;
+    MonotonicTime m_lastMouseUpTime;
+
+    RefPtr<DataDetectorHighlight> m_currentMouseDownOnButtonHighlight;
+    IntPoint m_mousePosition;
+    WeakPtr<LocalFrame> m_mouseRootFrame;
+
+    Timer m_determineActiveHighlightTimer;
+    Timer m_buildHighlightsTimer;
+
+    unsigned m_telephoneNumberRangesChangedCountForTesting { 0 };
+    std::optional<bool> m_hasRelevantSelectionServicesForTesting;
+};
+
+} // namespace WebCore
+
+#endif // (ENABLE(SERVICE_CONTROLS) || ENABLE(TELEPHONE_NUMBER_DETECTION)) && PLATFORM(MAC)

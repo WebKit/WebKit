@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+<style>
+input { font: -webkit-small-control; }
+</style>
+</head>
+<body>
+<input id="control">
+<script>
+description("Worker threads invalidating their font caches must not corrupt the system font shorthand cache used by the main thread.");
+jsTestIsAsync = true;
+
+const workerSource = "self.fonts.ready.then(() => postMessage('ready'));";
+const workerURL = URL.createObjectURL(new Blob([workerSource], { type: "text/javascript" }));
+const control = document.getElementById("control");
+const workersPerRound = 8;
+const totalRounds = 25;
+let round = 0;
+
+function churnMainThread()
+{
+    for (let n = 0; n < 100; ++n) {
+        control.style.fontWeight = n % 2 ? "bold" : "";
+        getComputedStyle(control).fontFamily;
+        if (window.internals)
+            internals.invalidateFontCache();
+    }
+}
+
+function runRound()
+{
+    const workers = [];
+    let ready = 0;
+    let finished = false;
+    const finishRound = () => {
+        if (finished)
+            return;
+        finished = true;
+        clearTimeout(deadline);
+        for (const worker of workers)
+            worker.terminate();
+        churnMainThread();
+        if (++round < totalRounds)
+            runRound();
+        else {
+            testPassed("Did not crash.");
+            finishJSTest();
+        }
+    };
+    const deadline = setTimeout(finishRound, 500);
+    for (let k = 0; k < workersPerRound; ++k) {
+        const worker = new Worker(workerURL);
+        worker.onmessage = () => {
+            if (++ready == workersPerRound)
+                finishRound();
+        };
+        workers.push(worker);
+    }
+}
+
+runRound();
+</script>
+</body>
+</html>

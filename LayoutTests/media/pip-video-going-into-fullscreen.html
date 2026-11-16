@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test pip video going into fullscreen should exit pip</title>
+    <script src="media-file.js"></script>
+    <script src="video-test.js"></script>
+    <script>
+        if (window.internals) {
+            internals.settings.setAllowsPictureInPictureMediaPlayback(true);
+            internals.setMockVideoPresentationModeEnabled(true);
+        }
+
+        var enteredFullscreen = false;
+        var exitedPIP = false;
+
+        function init()
+        {
+            findMediaElement();
+            video.addEventListener('canplaythrough', oncanplaythrough);
+            video.src = findMediaFile('video', 'content/test');
+        }
+
+        function oncanplaythrough()
+        {
+            if (!('webkitSupportsPresentationMode' in video && 'webkitPresentationMode' in video)) {
+                failTest("Presentation mode is not supported in this video element.")
+                return;
+            }
+
+            consoleWrite("Going into Picture-in-Picture");
+            video.addEventListener('webkitpresentationmodechanged', onfirstpresentationmodechanged);
+            runWithKeyDown(function() { video.webkitSetPresentationMode('picture-in-picture'); });
+        }
+
+        async function onfirstpresentationmodechanged()
+        {
+            if (window.internals)
+                await testExpectedEventually("internals.isChangingPresentationMode(video)", false, "==", 2000);
+
+            testExpected("video.webkitPresentationMode", "picture-in-picture");
+            video.removeEventListener('webkitpresentationmodechanged', onfirstpresentationmodechanged);
+
+            consoleWrite("Going into Full Screen from Picture-in-Picture");
+            video.addEventListener('webkitfullscreenchange', onbeginfullscreen, { once: true });
+            video.addEventListener('webkitpresentationmodechanged', onsecondpresentationmodechanged);
+            runWithKeyDown(function() { video.webkitRequestFullscreen(); });
+        }
+
+        async function onbeginfullscreen()
+        {
+            if (window.internals)
+                await testExpectedEventually("internals.isChangingPresentationMode(video)", false, "==", 2000);
+
+            enteredFullscreen = true;
+            if (exitedPIP)
+                checkFinalState();
+        }
+
+        async function onsecondpresentationmodechanged()
+        {
+            if (window.internals)
+                await testExpectedEventually("internals.isChangingPresentationMode(video)", false, "==", 2000);
+
+            // We only expect one presentation mode change - from picture-in-picture to fullscreen.
+            if (exitedPIP)
+                failTest("Presentation mode changes more than once going into fullscreen from picture-in-picture.");
+
+            exitedPIP = true;
+            if (enteredFullscreen)
+                checkFinalState();
+        }
+
+        function checkFinalState()
+        {
+            testExpected("document.webkitCurrentFullScreenElement", video);
+            testExpected("video.webkitPresentationMode", "fullscreen");
+            video.addEventListener('webkitfullscreenchange', onendfullscreen);
+            runWithKeyDown(function() { document.webkitExitFullscreen(); });
+        }
+
+        async function onendfullscreen()
+        {
+            if (window.internals)
+                await testExpectedEventually("internals.isChangingPresentationMode(video)", false, "==", 2000);
+
+            consoleWrite("Exited Full Screen");
+            endTest();
+        }
+    </script>
+</head>
+<body onload="init()">
+    Tests pip video going into fullscreen should exit pip<br>
+    <video controls></video>
+</body>
+</html>
+

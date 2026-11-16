@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="/js-test-resources/js-test.js"></script>
+    <script src="/js-test-resources/ui-helper.js"></script>
+    <script src="/resourceLoadStatistics/resources/util.js"></script>
+</head>
+<body>
+    <script>
+        description("Tests that a cross-site-initiated navigation of an iframe does not revoke the iframe's storage access while the navigation is still in flight. Storage access should only be revoked when the navigation commits.");
+        // never-respond.py never commits and can represent a slow
+        // Before the load commits, the document and its storage access look the same whether the navigation is slow or never completes.
+        const navigationTarget = "/navigation/resources/never-respond.py";
+        const navigationDescription = "Started a cross-site-initiated navigation of the iframe that stays in flight. The in-flight document should still have storage access because revocation only happens at commit.";
+    </script>
+    <script src="resources/deferred-storage-access-revocation-test.js"></script>
+</body>
+</html>

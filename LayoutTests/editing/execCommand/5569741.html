@@ -1,0 +1,11 @@
+<p>This tests for a bug where hitting return inside an empty paragraph in a non-empty list item would remove it.</p>
+<div id="div" contenteditable="true">
+<ul><li id="li">foo<br><br></li></ul>
+</div>
+
+<script>
+li = document.getElementById("li");
+sel = window.getSelection();
+sel.setPosition(li, li.childNodes.length);
+document.execCommand("InsertParagraph");
+</script>

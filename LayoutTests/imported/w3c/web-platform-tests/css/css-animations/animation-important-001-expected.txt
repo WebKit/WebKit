@@ -1,0 +1,9 @@
+
+PASS Interpolated value is observable
+PASS Important rules override animations
+PASS Non-overriden interpolations are observable
+PASS Important rules override animations (::before)
+PASS Important rules do not override animations on :visited as seen from JS
+PASS Standard property animations appearing via setKeyframes do not override important declarations
+PASS Custom property animations appearing via setKeyframes do not override important declarations
+

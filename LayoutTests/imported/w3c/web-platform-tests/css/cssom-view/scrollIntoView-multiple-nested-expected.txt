@@ -1,0 +1,6 @@
+
+PASS Simultaneous smooth scrollIntoViews run to completion
+PASS Simultaneous smooth,instant scrollIntoViews run to completion
+PASS Simultaneous instant,smooth scrollIntoViews run to completion
+PASS Simultaneous instant scrollIntoViews run to completion
+

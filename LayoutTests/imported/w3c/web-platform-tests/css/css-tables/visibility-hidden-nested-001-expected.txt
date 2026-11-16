@@ -1,0 +1,21 @@
+Visibility hidden
+
+Spec
+Setting a table to visibility:hidden, but rows and cells to different visibility values.
+
+row 1	
+row 2	
+row 3	
+Bottom table is identical to top, except entire table is hidden, the second row is visible with a nested hidden cell, and the third row is visible with a nested hidden span.
+row 2	
+row 3	
+
+PASS table visibility:hidden doesn't change table height
+PASS table visibility:hidden doesn't change table width
+PASS row visibility:hidden doesn't change row width
+PASS row visibility:hidden doesn't change row height
+PASS cell visibility:hidden doesn't change cell width
+PASS cell visibility:hidden doesn't change cell height
+PASS span visibility:hidden doesn't change span width
+PASS span visibility:hidden doesn't change span height
+

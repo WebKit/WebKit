@@ -1,0 +1,15 @@
+<script>
+const media = new URLSearchParams(location.search).get("media");
+const constraints = media === "microphone" ? { audio: true } : { video: true };
+var streamPromise = null;
+window.internals.withUserGesture(() => {
+    streamPromise = navigator.mediaDevices.getUserMedia(constraints);
+});
+streamPromise
+    .then(stream => {
+        stream.getTracks().forEach(track => track.stop());
+        window.parent.postMessage("granted", "*");
+    }).catch(error => {
+        window.parent.postMessage(error.name === "NotAllowedError" ? "denied" : `fail (${error.name})`, "*");
+    });
+</script>

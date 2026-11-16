@@ -1,0 +1,22 @@
+
+== Running test suite: CSS.nodeLayoutFlagsChanged.SlotAssigned
+-- Running test case: CSS.nodeLayoutFlagsChanged.SlotAssigned.Named.Empty
+PASS: Should not be slotted.
+Adding slot...
+PASS: Should be slotted.
+
+-- Running test case: CSS.nodeLayoutFlagsChanged.SlotAssigned.Named.Filled
+PASS: Should be slotted.
+Removing slot...
+PASS: Should not be slotted.
+
+-- Running test case: CSS.nodeLayoutFlagsChanged.SlotAssigned.Manual.Empty
+PASS: Should not be slotted.
+Adding assigned node...
+PASS: Should be slotted.
+
+-- Running test case: CSS.nodeLayoutFlagsChanged.SlotAssigned.Manual.Filled
+PASS: Should be slotted.
+Removing assigned node...
+PASS: Should not be slotted.
+

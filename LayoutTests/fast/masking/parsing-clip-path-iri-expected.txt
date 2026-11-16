@@ -1,0 +1,6 @@
+
+PASS e.style['-webkit-clip-path'] = "url(#clip1)" should set the property value
+PASS e.style['-webkit-clip-path'] = "url(clip.svg#clip1)" should set the property value
+PASS Property -webkit-clip-path value 'url(#clip1)'
+PASS Property -webkit-clip-path value 'url(clip.svg#clip1)'
+

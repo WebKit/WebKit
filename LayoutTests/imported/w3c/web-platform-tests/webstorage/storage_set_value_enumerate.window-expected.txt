@@ -1,0 +1,4 @@
+
+PASS enumerate a localStorage object with the key and get the values
+PASS enumerate a sessionStorage object with the key and get the values
+

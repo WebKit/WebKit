@@ -1,0 +1,15 @@
+<!DOCTYPE html><!-- webkit-test-runner [ TabsToLinks=true SpatialNavigationEnabled=true ] -->
+<div style="display: contents"><a href="#"></a></div>
+Shouldn't crash.
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+}
+function runTest() {
+    if (window.eventSender) {
+        eventSender.keyDown("rightArrow");
+    }
+}
+
+window.onload = runTest;
+</script>

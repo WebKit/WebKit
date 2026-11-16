@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body>
+<div id="a"></div>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+var d = document.getElementById("a");
+var s = window.getComputedStyle(d);
+var p = s.getPropertyValue("-webkit-text-decoration-skip");
+d.innerHTML = p;
+</script>
+</body>
+</html>

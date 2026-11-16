@@ -1,0 +1,3 @@
+
+PASS cookieStore on DOMWindow of detached iframe
+

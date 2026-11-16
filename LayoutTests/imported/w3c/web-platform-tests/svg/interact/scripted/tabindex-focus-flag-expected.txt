@@ -1,0 +1,41 @@
+
+FAIL The document root element should be focusable. assert_equals: expected Element node <svg xmlns="http://www.w3.org/2000/svg" xmlns:h="http://w... but got null
+PASS rect should not be focusable.
+PASS svg should not be focusable.
+PASS a should not be focusable.
+PASS a[href] should be focusable.
+PASS iframe should be focusable.
+PASS audio[controls] should be focusable.
+PASS video[controls] should be focusable.
+PASS canvas[tabindex] should be focusable.
+PASS circle[tabindex] should be focusable.
+PASS ellipse[tabindex] should be focusable.
+PASS foreignObject[tabindex] should be focusable.
+PASS g[tabindex] should be focusable.
+PASS image[tabindex] should be focusable.
+PASS line[tabindex] should be focusable.
+PASS mesh[tabindex] should be focusable.
+PASS path[tabindex] should be focusable.
+PASS polygon[tabindex] should be focusable.
+PASS rect[tabindex] should be focusable.
+PASS svg[tabindex] should be focusable.
+PASS switch[tabindex] should be focusable.
+PASS text[tabindex] should be focusable.
+PASS textPath[tabindex] should be focusable.
+PASS tspan[tabindex] should be focusable.
+PASS unknown[tabindex] should be focusable.
+PASS use[tabindex] should be focusable.
+PASS clipPath[tabindex] should not be focusable.
+PASS defs[tabindex] should not be focusable.
+PASS desc[tabindex] should not be focusable.
+PASS linearGradient[tabindex] should not be focusable.
+PASS marker[tabindex] should not be focusable.
+PASS mask[tabindex] should not be focusable.
+PASS metadata[tabindex] should not be focusable.
+PASS pattern[tabindex] should not be focusable.
+PASS radialGradient[tabindex] should not be focusable.
+PASS script[tabindex] should not be focusable.
+PASS style[tabindex] should not be focusable.
+PASS title[tabindex] should not be focusable.
+PASS symbol[tabindex] should not be focusable.
+

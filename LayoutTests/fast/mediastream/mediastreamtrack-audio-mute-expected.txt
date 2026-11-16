@@ -1,0 +1,3 @@
+
+PASS Unmuting the audio track should properly restart capture
+

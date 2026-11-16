@@ -1,0 +1,30 @@
+Tests that a draw whose vertex shader runs for too long to complete causes the GPU to reset the work, and that the context reports this as a real context loss. The context is restored, and a context created after the reset works. Every context that shares the GPU state with the reset context is lost, too.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+PASS context renders
+PASS getError was expected value: NO_ERROR : context has no errors
+PASS other context renders
+PASS getError was expected value: NO_ERROR : other context has no errors
+Drawing with the long running shader.
+PASS The context was lost.
+PASS gl.isContextLost() is true
+PASS gl.getError() is gl.CONTEXT_LOST_WEBGL
+PASS The other context was lost.
+PASS otherGL.isContextLost() is true
+PASS The context was restored.
+PASS gl.isContextLost() is false
+PASS restored context renders
+PASS getError was expected value: NO_ERROR : restored context has no errors
+PASS The other context was restored.
+PASS otherGL.isContextLost() is false
+PASS restored other context renders
+PASS getError was expected value: NO_ERROR : restored other context has no errors
+PASS newGL is non-null.
+PASS newGL.isContextLost() is false
+PASS context created after the reset renders
+PASS getError was expected value: NO_ERROR : context created after the reset has no errors
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

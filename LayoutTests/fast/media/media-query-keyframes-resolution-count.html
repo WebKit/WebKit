@@ -1,0 +1,36 @@
+<style>
+body { background-color: green }
+
+@media (min-width:10000px) {
+    body { background-color: red }
+
+    @keyframes fade {
+        0% { opacity: 0; }
+        100% { opacity: 1; }
+    }
+}
+
+@media (min-width:10000px) {
+    body { background-color: blue }
+}
+</style>
+Resolving media queries should not require more than 1 style resolution.
+<pre id=log></pre>
+<script>
+
+async function test() {
+    if (!window.internals)
+        return;
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+
+    internals.startTrackingStyleRecalcs();
+
+    await new Promise(requestAnimationFrame);
+
+    log.textContent = `Style resolution count: ${ internals.styleRecalcCount() }`;
+
+    testRunner.notifyDone();
+}
+test();
+</script>

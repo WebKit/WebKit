@@ -1,0 +1,39 @@
+// Copyright 2026 The ANGLE Project Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+//
+// Limit the value that is written to gl_PointSize.
+//
+use crate::ir::*;
+use crate::*;
+
+pub fn run(ir: &mut IR, min_point_size: f32, max_point_size: f32) {
+    if let Some(point_size_var_id) = ir.meta.get_built_in_variable(BuiltIn::PointSize) {
+        let point_size = TypedId::from_variable_id(&ir.meta, point_size_var_id);
+
+        // Generate:
+        //
+        //     size    = Load point_size
+        //     clamped = Clamp size min max
+        //               Store point_size clamped
+        let mut clamp_block = Block::new();
+        let mut builder = instruction::Builder::<&mut Block>::new(&mut clamp_block);
+        let size = builder.load(&mut ir.meta, point_size);
+        // For OpCode::Clamp, result precision should propagate to operands,
+        // See ir::instruction::propagate().
+        // Since result precision is the highest precision of all operands,
+        // we only need to ensure that min_size_constant and max_size_constant
+        // have an assigned precision less than or equal to size.precision.
+        // Use size.precision for simplicity.
+        let min_size_constant = ir.meta.get_constant_float_typed(min_point_size, size.precision);
+        let max_size_constant = ir.meta.get_constant_float_typed(max_point_size, size.precision);
+        let clamped = builder.built_in(
+            &mut ir.meta,
+            BuiltInOpCode::Clamp,
+            vec![size, min_size_constant, max_size_constant],
+        );
+        builder.store(&mut ir.meta, point_size, clamped);
+
+        ir.append_to_main(clamp_block);
+    }
+}

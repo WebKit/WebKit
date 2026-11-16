@@ -1,0 +1,3 @@
+
+PASS Trim simulcast encodings when using receive encodings for send encodings
+

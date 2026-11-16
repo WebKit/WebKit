@@ -1,0 +1,4 @@
+
+PASS Test animated GIF with zero first-frame delay decodes all frames
+FAIL Test animated GIF with zero first-frame delay reports correct metadata assert_equals: Should report infinite repetitions (loop=0) expected Infinity but got -1
+

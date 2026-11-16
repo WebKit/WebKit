@@ -1,0 +1,28 @@
+<html> 
+<head>
+
+<script src="../editing.js"></script>
+<script src="../../resources/dump-as-markup.js"></script>
+<script>
+
+function editingTest() {
+    typeCharacterCommand(); 
+    deleteCommand(); 
+    Markup.dump(document.body);
+}
+
+</script>
+
+<title>Editing Test</title> 
+</head> 
+<body contenteditable='true'>
+<div id="root">
+<span id="test"></span>
+</div>
+
+<script>
+runEditingTest();
+</script>
+
+</body>
+</html>

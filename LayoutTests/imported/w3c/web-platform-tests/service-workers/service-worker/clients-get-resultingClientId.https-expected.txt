@@ -1,0 +1,8 @@
+
+PASS global setup
+PASS get(resultingClientId) for same-origin document
+PASS get(resultingClientId) on cross-origin redirect
+PASS get(resultingClientId) for document sandboxed by CSP header
+PASS get(resultingClientId) for document sandboxed by CSP header with allow-same-origin
+PASS global cleanup
+

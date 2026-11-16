@@ -1,0 +1,15 @@
+
+
+
+
+
+PASS SVG, no intrinsic dims: baseline
+PASS SVG, no intrinsic dims + 2x density: defaults not scaled
+PASS SVG, no intrinsic dims + 2x zoom: rendered size scaled, naturalWidth/Height not
+PASS SVG, intrinsic width only: baseline
+PASS SVG, intrinsic width only + 2x density: width scaled, default height not
+PASS SVG, intrinsic width only + 2x zoom: everything scaled
+PASS SVG, both intrinsic dims: baseline
+PASS SVG, both intrinsic dims + 2x density: both scaled
+PASS SVG, both intrinsic dims + 2x zoom: rendered size scaled, naturalWidth/Height not
+

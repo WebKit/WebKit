@@ -1,0 +1,8 @@
+
+PASS DOMParser-created document should have accessible styleSheets collection with one style element
+PASS DOMParser-created document styleSheets should contain CSSStyleSheet objects
+PASS DOMParser-created document styleSheets should have accessible cssRules
+PASS DOMParser-created document should expose multiple style elements in styleSheets
+PASS DOMParser-created document with full HTML structure should have accessible styleSheets
+PASS DOMParser-created document without style elements should have empty styleSheets collection
+

@@ -1,0 +1,96 @@
+/*
+ * Copyright (C) 2020 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#pragma once
+
+DECLARE_SYSTEM_HEADER
+
+#if USE(APPLE_INTERNAL_SDK)
+
+#import <BaseBoard/BSAction.h>
+#import <BaseBoard/BSInvalidatable.h>
+#import <BoardServices/BSServiceConnectionEndpointInjector.h>
+
+#else
+
+@protocol BSInvalidatable <NSObject>
+- (void)invalidate;
+@end
+
+@interface BSSettings : NSObject
+- (id)objectForSetting:(NSUInteger)setting;
+@end
+
+@interface BSMutableSettings : BSSettings
+- (void)setObject:(id)object forSetting:(NSUInteger)setting;
+@end
+
+@interface BSActionResponse : NSObject
++ (instancetype)response;
++ (instancetype)responseForError:(NSError *)error;
+@property (nonatomic, retain, readonly) NSError *error;
+@end
+
+typedef void(^BSActionResponseHandler)(BSActionResponse *response);
+
+@interface BSActionResponder : NSObject
++ (BSActionResponder *)responderWithHandler:(BSActionResponseHandler)handler;
+@end
+
+@interface BSAction : NSObject
+- (instancetype)initWithInfo:(BSSettings *)info responder:(BSActionResponder *)responder;
+- (BOOL)canSendResponse;
+- (void)sendResponse:(BSActionResponse *)response;
+@property (nonatomic, copy, readonly) BSSettings *info;
+@end
+
+@class RBSAttribute;
+@class RBSTarget;
+
+@protocol BSServiceConnectionEndpointInjectorConfiguring
+- (void)setTarget:(RBSTarget *)target;
+- (void)setInheritingEnvironment:(NSString *)inheritingEnvironment;
+- (void)setAdditionalAttributes:(NSArray<RBSAttribute *> *)attributes;
+@end
+
+typedef void(^BSServiceConnectionEndpointInjectorConfigurator)(id<BSServiceConnectionEndpointInjectorConfiguring> config);
+
+@interface BSServiceConnectionEndpointInjector : NSObject <BSInvalidatable>
++ (nullable BSServiceConnectionEndpointInjector *)injectorWithConfigurator:(NS_NOESCAPE BSServiceConnectionEndpointInjectorConfigurator)block;
+- (void)invalidate;
+@end
+
+#endif // USE(APPLE_INTERNAL_SDK)
+
+typedef NS_ENUM(NSInteger, UIActionType) {
+    UIActionTypeNotificationResponse = 26,
+};
+
+@class UNNotificationResponse;
+
+@interface BSAction ()
+@property (nonatomic, readonly) UIActionType UIActionType;
+- (UNNotificationResponse *)response;
+@end

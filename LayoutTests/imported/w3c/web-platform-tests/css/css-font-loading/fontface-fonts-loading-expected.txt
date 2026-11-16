@@ -1,0 +1,4 @@
+Font loading test
+
+PASS document.fonts.ready is replaced as new fonts are loaded
+

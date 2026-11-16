@@ -1,0 +1,7 @@
+Unrelated
+Button
+Target
+
+FAIL The :has-interest pseudo class matches when an element has interest promise_test: Unhandled rejection with value: object "SyntaxError: ':has-interest' is not a valid selector."
+FAIL The :has-interest pseudo class only matches after delays, once interest is shown promise_test: Unhandled rejection with value: object "SyntaxError: ':has-interest' is not a valid selector."
+

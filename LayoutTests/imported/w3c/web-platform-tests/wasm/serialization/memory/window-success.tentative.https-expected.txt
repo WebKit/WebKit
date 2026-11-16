@@ -1,0 +1,5 @@
+
+PASS postMessaging a shared WebAssembly.Memory to a dedicated worker
+PASS postMessaging a shared WebAssembly.Memory to a same-origin iframe
+PASS Cloning a shared WebAssembly.Memory through a MessageChannel
+

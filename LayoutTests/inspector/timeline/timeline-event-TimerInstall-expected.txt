@@ -1,0 +1,27 @@
+Tests 'TimerInstall' Timeline event records.
+
+
+== Running test suite: TimelineEvent.TimerInstall
+-- Running test case: TimelineEvent.TimerInstall.setTimeout
+Starting Capture...
+Evaluating...
+PASS: setTimeout fired
+Stopping Capture...
+PASS: Should be 1 TimerInstalled record.
+DETAILS: {"timerId":"<filtered>","timeout":10,"repeating":false}
+PASS: ScriptTimelineRecord details should be the setTimeout identifier.
+
+-- Running test case: TimelineEvent.TimerInstall.setInterval
+Starting Capture...
+Evaluating...
+PASS: setInterval fired: 1
+PASS: setInterval fired: 2
+PASS: setInterval fired: 3
+Stopping Capture...
+PASS: Should be 1 TimerInstalled record.
+DETAILS: {"timerId":"<filtered>","timeout":5,"repeating":true}
+PASS: ScriptTimelineRecord details should be the setInterval identifier.
+
+-- Running test case: SanityCheck
+PASS: The setTimeout identifier and setInterval identifiers should be different.
+

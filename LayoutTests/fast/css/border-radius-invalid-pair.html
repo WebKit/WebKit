@@ -1,0 +1,20 @@
+<html>
+<style>
+  object {
+    border-top-left-radius: 0;
+  }
+</style>
+<script>
+  onload = () => {
+    if (window.testRunner)
+        testRunner.dumpAsText()
+
+    document.styleSheets[0].insertRule(`object { border-radius: inherit; }`);
+    document.execCommand('SelectAll');
+    document.execCommand('Copy');
+  };
+</script>
+<object></object>
+
+<p>Test passes if it does not crash</p>
+</html>

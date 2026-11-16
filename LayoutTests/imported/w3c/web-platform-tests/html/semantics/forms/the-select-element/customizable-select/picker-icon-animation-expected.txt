@@ -1,0 +1,3 @@
+
+PASS ::picker-icon pseudo-element animates
+

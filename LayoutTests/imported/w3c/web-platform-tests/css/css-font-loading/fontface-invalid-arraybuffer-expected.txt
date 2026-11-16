@@ -1,0 +1,3 @@
+
+PASS Constructing a FontFace from an ArrayBuffer should reject with a SyntaxError
+

@@ -1,0 +1,51 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ UnifyDamagedRegions=false ] -->
+<html lang="en">
+  <head>
+    <link rel="stylesheet" href="./common.css">
+    <style>
+      .layer {
+          position: relative;
+          will-change: transform;
+          width: 50px;
+          height: 50px;
+          background-color: green;
+      }
+      .parent {
+          opacity: 0.5;
+      }
+      .child {
+          top: 20px;
+          left: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="layer parent">
+      <div class="layer child"></div>
+    </div>
+    <script src="./common.js"></script>
+    <script>
+      setupTestCase({disableConsoleLog: true});
+
+      processAnimationFrameSequence({skipFirstFrameToEnsureInitialPaintingDone: true}, [
+          () => {
+              for (layer of document.getElementsByClassName("layer")) {
+                  layer.style.backgroundColor = "red";
+              }
+          },
+          () => {
+              var damage = latestFrameDamage();
+              assertRectsEq(damage.rects, [[0, 0, 50, 20], [0, 20, 70, 30], [20, 50, 50, 20]]);
+          },
+          () => {
+              let parent = document.getElementsByClassName("parent")[0];
+              parent.style.left = "60px";
+          },
+          () => {
+              var damage = latestFrameDamage();
+              assertRectsEq(damage.rects, [[0,0,50,20],[0,20,130,30],[20,50,50,20],[60,0,50,20],[80,50,50,20]]);
+          },
+      ], 0);
+    </script>
+  </body>
+</html>

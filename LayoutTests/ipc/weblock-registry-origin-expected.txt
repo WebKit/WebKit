@@ -1,0 +1,2 @@
+This test passes if the WebLock isn't granted.
+PASS

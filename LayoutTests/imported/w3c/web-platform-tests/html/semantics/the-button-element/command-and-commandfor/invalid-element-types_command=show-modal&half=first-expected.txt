@@ -1,0 +1,59 @@
+
+
+
+
+PASS command/commandfor on <a> with command=show-modal should not function
+PASS command/commandfor on <abbr> with command=show-modal should not function
+PASS command/commandfor on <address> with command=show-modal should not function
+PASS command/commandfor on <area> with command=show-modal should not function
+PASS command/commandfor on <article> with command=show-modal should not function
+PASS command/commandfor on <aside> with command=show-modal should not function
+PASS command/commandfor on <audio> with command=show-modal should not function
+PASS command/commandfor on <b> with command=show-modal should not function
+PASS command/commandfor on <base> with command=show-modal should not function
+PASS command/commandfor on <bdi> with command=show-modal should not function
+PASS command/commandfor on <bdo> with command=show-modal should not function
+PASS command/commandfor on <blockquote> with command=show-modal should not function
+PASS command/commandfor on <body> with command=show-modal should not function
+PASS command/commandfor on <br> with command=show-modal should not function
+PASS command/commandfor on <canvas> with command=show-modal should not function
+PASS command/commandfor on <caption> with command=show-modal should not function
+PASS command/commandfor on <cite> with command=show-modal should not function
+PASS command/commandfor on <code> with command=show-modal should not function
+PASS command/commandfor on <col> with command=show-modal should not function
+PASS command/commandfor on <colgroup> with command=show-modal should not function
+PASS command/commandfor on <data> with command=show-modal should not function
+PASS command/commandfor on <datalist> with command=show-modal should not function
+PASS command/commandfor on <dd> with command=show-modal should not function
+PASS command/commandfor on <del> with command=show-modal should not function
+PASS command/commandfor on <details> with command=show-modal should not function
+PASS command/commandfor on <dfn> with command=show-modal should not function
+PASS command/commandfor on <dialog> with command=show-modal should not function
+PASS command/commandfor on <div> with command=show-modal should not function
+PASS command/commandfor on <dl> with command=show-modal should not function
+PASS command/commandfor on <dt> with command=show-modal should not function
+PASS command/commandfor on <em> with command=show-modal should not function
+PASS command/commandfor on <embed> with command=show-modal should not function
+PASS command/commandfor on <fieldset> with command=show-modal should not function
+PASS command/commandfor on <figcaption> with command=show-modal should not function
+PASS command/commandfor on <figure> with command=show-modal should not function
+PASS command/commandfor on <footer> with command=show-modal should not function
+PASS command/commandfor on <form> with command=show-modal should not function
+PASS command/commandfor on <h1> with command=show-modal should not function
+PASS command/commandfor on <h2> with command=show-modal should not function
+PASS command/commandfor on <h3> with command=show-modal should not function
+PASS command/commandfor on <h4> with command=show-modal should not function
+PASS command/commandfor on <h5> with command=show-modal should not function
+PASS command/commandfor on <h6> with command=show-modal should not function
+PASS command/commandfor on <head> with command=show-modal should not function
+PASS command/commandfor on <header> with command=show-modal should not function
+PASS command/commandfor on <hr> with command=show-modal should not function
+PASS command/commandfor on <html> with command=show-modal should not function
+PASS command/commandfor on <i> with command=show-modal should not function
+PASS command/commandfor on <iframe> with command=show-modal should not function
+PASS command/commandfor on <img> with command=show-modal should not function
+PASS command/commandfor on <input> with command=show-modal should not function
+PASS command/commandfor on <ins> with command=show-modal should not function
+PASS command/commandfor on <kbd> with command=show-modal should not function
+PASS command/commandfor on <label> with command=show-modal should not function
+

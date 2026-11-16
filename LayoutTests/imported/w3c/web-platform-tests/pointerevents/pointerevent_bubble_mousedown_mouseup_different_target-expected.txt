@@ -1,0 +1,4 @@
+click me
+
+PASS PointerEvent: Events still bubble to ancestors with mousedown causes mouseup to be a different target
+

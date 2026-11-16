@@ -1,0 +1,435 @@
+
+FAIL element.streamHTML (sanitization===remove-shadow-root) promise_test: Unhandled rejection with value: object "TypeError: ref_node[method] is not a function. (In 'ref_node[method](
+            sanitize === "none"
+              ? {}
+              : {
+                  sanitizer: {
+                    removeAttributes:
+                      sanitize === "remove-shadow-root"
+                        ? ["shadowrootmode"]
+                        : ["forbidden"],
+                  },
+                },
+          )', 'ref_node[method]' is undefined)"
+FAIL element.streamHTML (sanitization===remove-internal) promise_test: Unhandled rejection with value: object "TypeError: ref_node[method] is not a function. (In 'ref_node[method](
+            sanitize === "none"
+              ? {}
+              : {
+                  sanitizer: {
+                    removeAttributes:
+                      sanitize === "remove-shadow-root"
+                        ? ["shadowrootmode"]
+                        : ["forbidden"],
+                  },
+                },
+          )', 'ref_node[method]' is undefined)"
+FAIL element.streamHTML (sanitization===none) promise_test: Unhandled rejection with value: object "TypeError: ref_node[method] is not a function. (In 'ref_node[method](
+            sanitize === "none"
+              ? {}
+              : {
+                  sanitizer: {
+                    removeAttributes:
+                      sanitize === "remove-shadow-root"
+                        ? ["shadowrootmode"]
+                        : ["forbidden"],
+                  },
+                },
+          )', 'ref_node[method]' is undefined)"
+FAIL element.streamHTMLUnsafe (sanitization===remove-shadow-root) promise_test: Unhandled rejection with value: object "TypeError: ref_node[method] is not a function. (In 'ref_node[method](
+            sanitize === "none"
+              ? {}
+              : {
+                  sanitizer: {
+                    removeAttributes:
+                      sanitize === "remove-shadow-root"
+                        ? ["shadowrootmode"]
+                        : ["forbidden"],
+                  },
+                },
+          )', 'ref_node[method]' is undefined)"
+FAIL element.streamHTMLUnsafe (sanitization===remove-internal) promise_test: Unhandled rejection with value: object "TypeError: ref_node[method] is not a function. (In 'ref_node[method](
+            sanitize === "none"
+              ? {}
+              : {
+                  sanitizer: {
+                    removeAttributes:
+                      sanitize === "remove-shadow-root"
+                        ? ["shadowrootmode"]
+                        : ["forbidden"],
+                  },
+                },
+          )', 'ref_node[method]' is undefined)"
+FAIL element.streamHTMLUnsafe (sanitization===none) promise_test: Unhandled rejection with value: object "TypeError: ref_node[method] is not a function. (In 'ref_node[method](
+            sanitize === "none"
+              ? {}
+              : {
+                  sanitizer: {
+                    removeAttributes:
+                      sanitize === "remove-shadow-root"
+                        ? ["shadowrootmode"]
+                        : ["forbidden"],
+                  },
+                },
+          )', 'ref_node[method]' is undefined)"
+FAIL element.streamAppendHTML (sanitization===remove-shadow-root) promise_test: Unhandled rejection with value: object "TypeError: ref_node[method] is not a function. (In 'ref_node[method](
+            sanitize === "none"
+              ? {}
+              : {
+                  sanitizer: {
+                    removeAttributes:
+                      sanitize === "remove-shadow-root"
+                        ? ["shadowrootmode"]
+                        : ["forbidden"],
+                  },
+                },
+          )', 'ref_node[method]' is undefined)"
+FAIL element.streamAppendHTML (sanitization===remove-internal) promise_test: Unhandled rejection with value: object "TypeError: ref_node[method] is not a function. (In 'ref_node[method](
+            sanitize === "none"
+              ? {}
+              : {
+                  sanitizer: {
+                    removeAttributes:
+                      sanitize === "remove-shadow-root"
+                        ? ["shadowrootmode"]
+                        : ["forbidden"],
+                  },
+                },
+          )', 'ref_node[method]' is undefined)"
+FAIL element.streamAppendHTML (sanitization===none) promise_test: Unhandled rejection with value: object "TypeError: ref_node[method] is not a function. (In 'ref_node[method](
+            sanitize === "none"
+              ? {}
+              : {
+                  sanitizer: {
+                    removeAttributes:
+                      sanitize === "remove-shadow-root"
+                        ? ["shadowrootmode"]
+                        : ["forbidden"],
+                  },
+                },
+          )', 'ref_node[method]' is undefined)"
+FAIL element.streamAppendHTMLUnsafe (sanitization===remove-shadow-root) promise_test: Unhandled rejection with value: object "TypeError: ref_node[method] is not a function. (In 'ref_node[method](
+            sanitize === "none"
+              ? {}
+              : {
+                  sanitizer: {
+                    removeAttributes:
+                      sanitize === "remove-shadow-root"
+                        ? ["shadowrootmode"]
+                        : ["forbidden"],
+                  },
+                },
+          )', 'ref_node[method]' is undefined)"
+FAIL element.streamAppendHTMLUnsafe (sanitization===remove-internal) promise_test: Unhandled rejection with value: object "TypeError: ref_node[method] is not a function. (In 'ref_node[method](
+            sanitize === "none"
+              ? {}
+              : {
+                  sanitizer: {
+                    removeAttributes:
+                      sanitize === "remove-shadow-root"
+                        ? ["shadowrootmode"]
+                        : ["forbidden"],
+                  },
+                },
+          )', 'ref_node[method]' is undefined)"
+FAIL element.streamAppendHTMLUnsafe (sanitization===none) promise_test: Unhandled rejection with value: object "TypeError: ref_node[method] is not a function. (In 'ref_node[method](
+            sanitize === "none"
+              ? {}
+              : {
+                  sanitizer: {
+                    removeAttributes:
+                      sanitize === "remove-shadow-root"
+                        ? ["shadowrootmode"]
+                        : ["forbidden"],
+                  },
+                },
+          )', 'ref_node[method]' is undefined)"
+FAIL element.streamPrependHTML (sanitization===remove-shadow-root) promise_test: Unhandled rejection with value: object "TypeError: ref_node[method] is not a function. (In 'ref_node[method](
+            sanitize === "none"
+              ? {}
+              : {
+                  sanitizer: {
+                    removeAttributes:
+                      sanitize === "remove-shadow-root"
+                        ? ["shadowrootmode"]
+                        : ["forbidden"],
+                  },
+                },
+          )', 'ref_node[method]' is undefined)"
+FAIL element.streamPrependHTML (sanitization===remove-internal) promise_test: Unhandled rejection with value: object "TypeError: ref_node[method] is not a function. (In 'ref_node[method](
+            sanitize === "none"
+              ? {}
+              : {
+                  sanitizer: {
+                    removeAttributes:
+                      sanitize === "remove-shadow-root"
+                        ? ["shadowrootmode"]
+                        : ["forbidden"],
+                  },
+                },
+          )', 'ref_node[method]' is undefined)"
+FAIL element.streamPrependHTML (sanitization===none) promise_test: Unhandled rejection with value: object "TypeError: ref_node[method] is not a function. (In 'ref_node[method](
+            sanitize === "none"
+              ? {}
+              : {
+                  sanitizer: {
+                    removeAttributes:
+                      sanitize === "remove-shadow-root"
+                        ? ["shadowrootmode"]
+                        : ["forbidden"],
+                  },
+                },
+          )', 'ref_node[method]' is undefined)"
+FAIL element.streamPrependHTMLUnsafe (sanitization===remove-shadow-root) promise_test: Unhandled rejection with value: object "TypeError: ref_node[method] is not a function. (In 'ref_node[method](
+            sanitize === "none"
+              ? {}
+              : {
+                  sanitizer: {
+                    removeAttributes:
+                      sanitize === "remove-shadow-root"
+                        ? ["shadowrootmode"]
+                        : ["forbidden"],
+                  },
+                },
+          )', 'ref_node[method]' is undefined)"
+FAIL element.streamPrependHTMLUnsafe (sanitization===remove-internal) promise_test: Unhandled rejection with value: object "TypeError: ref_node[method] is not a function. (In 'ref_node[method](
+            sanitize === "none"
+              ? {}
+              : {
+                  sanitizer: {
+                    removeAttributes:
+                      sanitize === "remove-shadow-root"
+                        ? ["shadowrootmode"]
+                        : ["forbidden"],
+                  },
+                },
+          )', 'ref_node[method]' is undefined)"
+FAIL element.streamPrependHTMLUnsafe (sanitization===none) promise_test: Unhandled rejection with value: object "TypeError: ref_node[method] is not a function. (In 'ref_node[method](
+            sanitize === "none"
+              ? {}
+              : {
+                  sanitizer: {
+                    removeAttributes:
+                      sanitize === "remove-shadow-root"
+                        ? ["shadowrootmode"]
+                        : ["forbidden"],
+                  },
+                },
+          )', 'ref_node[method]' is undefined)"
+FAIL element.streamBeforeHTML (sanitization===remove-shadow-root) promise_test: Unhandled rejection with value: object "TypeError: ref_node[method] is not a function. (In 'ref_node[method](
+            sanitize === "none"
+              ? {}
+              : {
+                  sanitizer: {
+                    removeAttributes:
+                      sanitize === "remove-shadow-root"
+                        ? ["shadowrootmode"]
+                        : ["forbidden"],
+                  },
+                },
+          )', 'ref_node[method]' is undefined)"
+FAIL element.streamBeforeHTML (sanitization===remove-internal) promise_test: Unhandled rejection with value: object "TypeError: ref_node[method] is not a function. (In 'ref_node[method](
+            sanitize === "none"
+              ? {}
+              : {
+                  sanitizer: {
+                    removeAttributes:
+                      sanitize === "remove-shadow-root"
+                        ? ["shadowrootmode"]
+                        : ["forbidden"],
+                  },
+                },
+          )', 'ref_node[method]' is undefined)"
+FAIL element.streamBeforeHTML (sanitization===none) promise_test: Unhandled rejection with value: object "TypeError: ref_node[method] is not a function. (In 'ref_node[method](
+            sanitize === "none"
+              ? {}
+              : {
+                  sanitizer: {
+                    removeAttributes:
+                      sanitize === "remove-shadow-root"
+                        ? ["shadowrootmode"]
+                        : ["forbidden"],
+                  },
+                },
+          )', 'ref_node[method]' is undefined)"
+FAIL element.streamBeforeHTMLUnsafe (sanitization===remove-shadow-root) promise_test: Unhandled rejection with value: object "TypeError: ref_node[method] is not a function. (In 'ref_node[method](
+            sanitize === "none"
+              ? {}
+              : {
+                  sanitizer: {
+                    removeAttributes:
+                      sanitize === "remove-shadow-root"
+                        ? ["shadowrootmode"]
+                        : ["forbidden"],
+                  },
+                },
+          )', 'ref_node[method]' is undefined)"
+FAIL element.streamBeforeHTMLUnsafe (sanitization===remove-internal) promise_test: Unhandled rejection with value: object "TypeError: ref_node[method] is not a function. (In 'ref_node[method](
+            sanitize === "none"
+              ? {}
+              : {
+                  sanitizer: {
+                    removeAttributes:
+                      sanitize === "remove-shadow-root"
+                        ? ["shadowrootmode"]
+                        : ["forbidden"],
+                  },
+                },
+          )', 'ref_node[method]' is undefined)"
+FAIL element.streamBeforeHTMLUnsafe (sanitization===none) promise_test: Unhandled rejection with value: object "TypeError: ref_node[method] is not a function. (In 'ref_node[method](
+            sanitize === "none"
+              ? {}
+              : {
+                  sanitizer: {
+                    removeAttributes:
+                      sanitize === "remove-shadow-root"
+                        ? ["shadowrootmode"]
+                        : ["forbidden"],
+                  },
+                },
+          )', 'ref_node[method]' is undefined)"
+FAIL element.streamAfterHTML (sanitization===remove-shadow-root) promise_test: Unhandled rejection with value: object "TypeError: ref_node[method] is not a function. (In 'ref_node[method](
+            sanitize === "none"
+              ? {}
+              : {
+                  sanitizer: {
+                    removeAttributes:
+                      sanitize === "remove-shadow-root"
+                        ? ["shadowrootmode"]
+                        : ["forbidden"],
+                  },
+                },
+          )', 'ref_node[method]' is undefined)"
+FAIL element.streamAfterHTML (sanitization===remove-internal) promise_test: Unhandled rejection with value: object "TypeError: ref_node[method] is not a function. (In 'ref_node[method](
+            sanitize === "none"
+              ? {}
+              : {
+                  sanitizer: {
+                    removeAttributes:
+                      sanitize === "remove-shadow-root"
+                        ? ["shadowrootmode"]
+                        : ["forbidden"],
+                  },
+                },
+          )', 'ref_node[method]' is undefined)"
+FAIL element.streamAfterHTML (sanitization===none) promise_test: Unhandled rejection with value: object "TypeError: ref_node[method] is not a function. (In 'ref_node[method](
+            sanitize === "none"
+              ? {}
+              : {
+                  sanitizer: {
+                    removeAttributes:
+                      sanitize === "remove-shadow-root"
+                        ? ["shadowrootmode"]
+                        : ["forbidden"],
+                  },
+                },
+          )', 'ref_node[method]' is undefined)"
+FAIL element.streamAfterHTMLUnsafe (sanitization===remove-shadow-root) promise_test: Unhandled rejection with value: object "TypeError: ref_node[method] is not a function. (In 'ref_node[method](
+            sanitize === "none"
+              ? {}
+              : {
+                  sanitizer: {
+                    removeAttributes:
+                      sanitize === "remove-shadow-root"
+                        ? ["shadowrootmode"]
+                        : ["forbidden"],
+                  },
+                },
+          )', 'ref_node[method]' is undefined)"
+FAIL element.streamAfterHTMLUnsafe (sanitization===remove-internal) promise_test: Unhandled rejection with value: object "TypeError: ref_node[method] is not a function. (In 'ref_node[method](
+            sanitize === "none"
+              ? {}
+              : {
+                  sanitizer: {
+                    removeAttributes:
+                      sanitize === "remove-shadow-root"
+                        ? ["shadowrootmode"]
+                        : ["forbidden"],
+                  },
+                },
+          )', 'ref_node[method]' is undefined)"
+FAIL element.streamAfterHTMLUnsafe (sanitization===none) promise_test: Unhandled rejection with value: object "TypeError: ref_node[method] is not a function. (In 'ref_node[method](
+            sanitize === "none"
+              ? {}
+              : {
+                  sanitizer: {
+                    removeAttributes:
+                      sanitize === "remove-shadow-root"
+                        ? ["shadowrootmode"]
+                        : ["forbidden"],
+                  },
+                },
+          )', 'ref_node[method]' is undefined)"
+FAIL element.streamReplaceWithHTML (sanitization===remove-shadow-root) promise_test: Unhandled rejection with value: object "TypeError: ref_node[method] is not a function. (In 'ref_node[method](
+            sanitize === "none"
+              ? {}
+              : {
+                  sanitizer: {
+                    removeAttributes:
+                      sanitize === "remove-shadow-root"
+                        ? ["shadowrootmode"]
+                        : ["forbidden"],
+                  },
+                },
+          )', 'ref_node[method]' is undefined)"
+FAIL element.streamReplaceWithHTML (sanitization===remove-internal) promise_test: Unhandled rejection with value: object "TypeError: ref_node[method] is not a function. (In 'ref_node[method](
+            sanitize === "none"
+              ? {}
+              : {
+                  sanitizer: {
+                    removeAttributes:
+                      sanitize === "remove-shadow-root"
+                        ? ["shadowrootmode"]
+                        : ["forbidden"],
+                  },
+                },
+          )', 'ref_node[method]' is undefined)"
+FAIL element.streamReplaceWithHTML (sanitization===none) promise_test: Unhandled rejection with value: object "TypeError: ref_node[method] is not a function. (In 'ref_node[method](
+            sanitize === "none"
+              ? {}
+              : {
+                  sanitizer: {
+                    removeAttributes:
+                      sanitize === "remove-shadow-root"
+                        ? ["shadowrootmode"]
+                        : ["forbidden"],
+                  },
+                },
+          )', 'ref_node[method]' is undefined)"
+FAIL element.streamReplaceWithHTMLUnsafe (sanitization===remove-shadow-root) promise_test: Unhandled rejection with value: object "TypeError: ref_node[method] is not a function. (In 'ref_node[method](
+            sanitize === "none"
+              ? {}
+              : {
+                  sanitizer: {
+                    removeAttributes:
+                      sanitize === "remove-shadow-root"
+                        ? ["shadowrootmode"]
+                        : ["forbidden"],
+                  },
+                },
+          )', 'ref_node[method]' is undefined)"
+FAIL element.streamReplaceWithHTMLUnsafe (sanitization===remove-internal) promise_test: Unhandled rejection with value: object "TypeError: ref_node[method] is not a function. (In 'ref_node[method](
+            sanitize === "none"
+              ? {}
+              : {
+                  sanitizer: {
+                    removeAttributes:
+                      sanitize === "remove-shadow-root"
+                        ? ["shadowrootmode"]
+                        : ["forbidden"],
+                  },
+                },
+          )', 'ref_node[method]' is undefined)"
+FAIL element.streamReplaceWithHTMLUnsafe (sanitization===none) promise_test: Unhandled rejection with value: object "TypeError: ref_node[method] is not a function. (In 'ref_node[method](
+            sanitize === "none"
+              ? {}
+              : {
+                  sanitizer: {
+                    removeAttributes:
+                      sanitize === "remove-shadow-root"
+                        ? ["shadowrootmode"]
+                        : ["forbidden"],
+                  },
+                },
+          )', 'ref_node[method]' is undefined)"
+FAIL streamHTMLUnsafe does not enable declarative shadow roots for subsequent innerHTML or document.write() promise_test: Unhandled rejection with value: object "TypeError: streamTarget.streamHTMLUnsafe is not a function. (In 'streamTarget.streamHTMLUnsafe()', 'streamTarget.streamHTMLUnsafe' is undefined)"
+

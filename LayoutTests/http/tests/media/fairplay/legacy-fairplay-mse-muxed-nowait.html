@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>legacy-fairplay-mse-muxed-nowait</title>
+    <script src="../../../media-resources/video-test.js"></script>
+    <script src="support.js"></script>
+    <script src="legacy-eme.js"></script>
+    <script src="eme2016.js"></script>
+    <script>
+    window.addEventListener('load', async event => {
+        startTest().then(endTest).catch(failTest);
+    });
+
+    var event;
+
+    async function startTest() {
+        let video = document.querySelector('video');
+        waitFor(video, 'error').then(failTest);
+
+        let keys = await startLegacyEME({
+            video: video,
+            protocolVersion: 2,
+            mimeType: 'video/mp4'
+        });
+
+        let mediaSource = new MediaSource;
+        video.srcObject = mediaSource;
+        consoleWrite('Created mediaSource');
+        await waitFor(mediaSource, 'sourceopen');
+
+        consoleWrite('-');
+        consoleWrite('Appending Encrypted Video Header');
+
+        let sourceBuffer = mediaSource.addSourceBuffer('video/mp4');
+        let needkeyPromise = waitFor(video, 'webkitneedkey');
+        let canPlayPromise = waitFor(video, 'canplay');
+
+        await fetchAndAppend(sourceBuffer, 'content/elementary-stream-video-header-keyid-1.m4v');
+        await fetchAndAppend(sourceBuffer, 'content/elementary-stream-video-payload.m4v');
+
+        event = await needkeyPromise;
+
+        let initDataArray = stringToUInt8Array('skd://twelve');
+        let keySession = keys.createSession('video/mp4', initDataArray);
+        waitFor(keySession, 'webkitkeyerror').then(event => {
+            consoleWrite(`FAIL: update() failed with code: ${ event.code }, systemCode: ${ event.systemCode }`);
+            endTest();
+        });
+        event = await waitFor(keySession, 'webkitkeymessage');
+        testExpected('uInt8ArrayToString(event.message)', 'certificate')
+
+        let buffer = await fetchBuffer('resources/cert.der');
+        let certificate = new Uint8Array(buffer);
+        keySession.update(certificate);
+
+        event = await waitFor(keySession, 'webkitkeymessage');
+        let response = await getResponse(event);
+        keySession.update(response);
+
+        await canPlayPromise;
+    }
+    </script>
+</head>
+<body>
+    <video controls width="480"></video>
+</body>
+</html>

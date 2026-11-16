@@ -1,0 +1,11 @@
+Test that Page.archive includes a cross-origin iframe's document under site isolation.
+
+
+== Running test suite: SiteIsolation.Page.ArchiveCrossOriginIFrame
+-- Running test case: SiteIsolation.Page.ArchiveCrossOriginIFrame.ChildDocumentIncluded
+PASS: Page.archive should return data.
+PASS: Archive should contain the main frame's document.
+PASS: Archive should contain the cross-origin child frame's document.
+PASS: Page target archive should contain the main frame's document.
+PASS: Page target archive should not contain the child frame's document.
+

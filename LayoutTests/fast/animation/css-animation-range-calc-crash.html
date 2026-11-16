@@ -1,0 +1,26 @@
+<!DOCTYPE html> 
+<html> 
+<head>
+<style> 
+@keyframes slide { 
+    from { transform: translateX(0); } 
+    to { transform: translateX(300px); } 
+}
+#test {
+  animation: slide 2s ease-in-out infinite alternate;
+  animation-range-start: calc(10% + 10px);
+}
+</style> 
+</head> 
+<body> 
+<div>This test passes if it doesn't crash.</div>
+<div id="test"></div> 
+<script> 
+  if (window.testRunner)
+      window.testRunner.dumpAsText(); 
+
+  const animation = document.getElementById("test").getAnimations()[0];
+  animation.rangeStart;
+</script>
+</body>
+</html>

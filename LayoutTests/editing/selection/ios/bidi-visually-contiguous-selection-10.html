@@ -1,0 +1,83 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true VisuallyContiguousBidiTextSelectionEnabled=true ] -->
+<html>
+<head>
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="utf-8">
+<style>
+body, html {
+    width: 100%;
+    height: 100%;
+    font-family: system-ui;
+    font-size: 16px;
+}
+
+div[dir='rtl'] {
+    width: 300px;
+    padding: 1em;
+    border: 1px solid tomato;
+    line-height: 2;
+}
+
+.red {
+    color: rgba(255, 10, 0);
+    display: inline-block;
+}
+</style>
+<script>
+jsTestIsAsync = true;
+
+addEventListener("load", async () => {
+    description("Verifies that the selection remains visually stable when extending a selection handle into an inline-block container after a soft line break.");
+
+    paragraph = document.querySelector("div[dir='rtl']");
+
+    const bounds = paragraph.getBoundingClientRect();
+    await UIHelper.longPressAtPoint(bounds.left + bounds.width - 25, bounds.top + 25);
+    await UIHelper.waitForSelectionToAppear();
+
+    const endHandlePoint = UIHelper.midPointOfRect(await UIHelper.getSelectionEndGrabberViewRect());
+    await UIHelper.sendEventStream(new UIHelper.EventStreamBuilder()
+        .begin(endHandlePoint.x, endHandlePoint.y)
+        .move(bounds.left + (bounds.width / 2), bounds.top + bounds.height - 10, 1)
+        .wait(0.2)
+        .takeResult());
+    await UIHelper.ensurePresentationUpdate();
+
+    visuallyContiguousBeforeEndingSelection = await UIHelper.isSelectionVisuallyContiguous();
+    rectsBeforeEndingSelection = await UIHelper.getUISelectionViewRects();
+    boundsBeforeEndingSelection = await UIHelper.selectionBounds();
+
+    await UIHelper.sendEventStream(new UIHelper.EventStreamBuilder().end().takeResult());
+    await UIHelper.ensurePresentationUpdate();
+
+    visuallyContiguousAfterEndingSelection = await UIHelper.isSelectionVisuallyContiguous();
+    rectsAfterEndingSelection = await UIHelper.getUISelectionViewRects();
+    boundsAfterEndingSelection = await UIHelper.selectionBounds();
+
+    shouldBeTrue("visuallyContiguousBeforeEndingSelection");
+    shouldBeTrue("visuallyContiguousAfterEndingSelection");
+    shouldBe("boundsBeforeEndingSelection.top", "boundsAfterEndingSelection.top");
+    shouldBe("boundsBeforeEndingSelection.left", "boundsAfterEndingSelection.left");
+    shouldBe("boundsBeforeEndingSelection.width", "boundsAfterEndingSelection.width");
+    shouldBe("boundsBeforeEndingSelection.height", "boundsAfterEndingSelection.height");
+    shouldBe("rectsBeforeEndingSelection.length", "3");
+    shouldBe("rectsAfterEndingSelection.length", "3");
+
+    selectionHighlightMaxXExtents = rectsBeforeEndingSelection.map(rect => Math.round(rect.width + rect.left));
+    shouldBe("selectionHighlightMaxXExtents[0]", "selectionHighlightMaxXExtents[1]");
+    shouldBe("selectionHighlightMaxXExtents[1]", "selectionHighlightMaxXExtents[2]");
+
+    paragraph.remove();
+    finishJSTest();
+});
+</script>
+</head>
+<body>
+<div dir="rtl">
+    يمكنك أن تقتبس منهم، أو تختلف معهم، أو تمجدهم، أو تشوه سمعتهم. ولكن الشيء الوحيد الذي لا يمكنك فعله هو تجاهلهم
+    <span class="red">012345678901234567890123456789</span>
+</div>
+</body>
+</html>

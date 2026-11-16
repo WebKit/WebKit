@@ -1,0 +1,34 @@
+<!DOCTYPE html><!-- webkit-test-runner [ IPCTestingAPIEnabled=true ] -->
+<title>RequestNotificationPermission carrying a null origin must not crash the UI process</title>
+<p>This test passes if WebKit does not crash.</p>
+<script src="../resources/ipc.js"></script>
+<script>
+testRunner?.dumpAsText();
+testRunner?.waitUntilDone();
+</script>
+<script type="module">
+if (!window.IPC) {
+    testRunner?.notifyDone();
+} else {
+
+const { CoreIPC } = await import('./coreipc.js');
+const page = CoreIPC.UI.WebPageProxy;
+const pageProxyID = IPC.webPageProxyID;
+
+// API::SecurityOrigin::createFromString() turns a null string into a null SecurityOriginData, which
+// is the empty value of WebPageProxy's notificationPermissionRequesters hash set, so adding it is a
+// hash table key violation. A null origin is not only a malformed message either:
+// SecurityOriginData::toString() returns a null string for every opaque origin.
+page.RequestNotificationPermission(pageProxyID, { originIdentifier: null }, () => { });
+
+// An empty origin string is a separate case: it becomes an opaque origin rather than a null one, so
+// it has to keep being accepted.
+page.RequestNotificationPermission(pageProxyID, { originIdentifier: '' }, () => { });
+
+// Messages are dispatched in order, so this round trip means the UI process is done with both.
+await asyncFlush('UI');
+
+testRunner?.notifyDone();
+
+}
+</script>

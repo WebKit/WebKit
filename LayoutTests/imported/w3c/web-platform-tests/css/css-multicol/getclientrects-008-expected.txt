@@ -1,0 +1,6 @@
+
+FAIL #monolith1 assert_equals: expected 1 but got 3
+FAIL #monolith2 assert_equals: expected 118 but got 228
+FAIL #monolith3 assert_equals: expected 1 but got 3
+FAIL #container assert_equals: expected 3 but got 6
+

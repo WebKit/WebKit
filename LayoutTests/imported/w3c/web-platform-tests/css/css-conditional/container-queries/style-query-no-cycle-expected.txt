@@ -1,0 +1,4 @@
+Should be green
+
+PASS style(--foo: var(--foo)) should match
+

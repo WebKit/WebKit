@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style>
+body { margin: 0; height: 1000px; font: 20px/1 monospace }
+#target { position: absolute; left: 10px; top: 400px }
+</style>
+<body>
+<span id="target">visible text</span>
+<script>
+addEventListener("load", () => scrollTo(0, 250));
+
+addEventListener("message", event => {
+    if (event.data !== "measure-text-indicator")
+        return;
+
+    const target = document.getElementById("target");
+    const range = document.createRange();
+    range.selectNodeContents(target);
+    const indicator = internals.textIndicatorForRange(range, { });
+    const targetRect = target.getBoundingClientRect();
+
+    event.source.postMessage({
+        scrollY,
+        indicatorWidth: indicator.textBoundingRectInRootViewCoordinates.width,
+        indicatorHeight: indicator.textBoundingRectInRootViewCoordinates.height,
+        indicatorTextRectCount: indicator.textRectsInBoundingRectCoordinates.length,
+        targetWidth: targetRect.width,
+        targetHeight: targetRect.height,
+    }, "*");
+});
+</script>
+</body>

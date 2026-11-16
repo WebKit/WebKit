@@ -1,0 +1,31 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="../../resources/ui-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+<style>
+div.bg-image {
+    background-image: url(../images/resources/dice.png);
+    width: 320px;
+    height: 240px;
+    border: 1px solid tomato;
+    text-align: center;
+    line-height: 240px;
+    font-size: 18px;
+}
+</style>
+</head>
+<body>
+    <div class="bg-image">This is an image of dice.</div>
+    <p>This test requires WebKitTestRunner</p>
+</body>
+<script>
+jsTestIsAsync = true;
+addEventListener("load", async event => {
+    text = await UIHelper.requestRenderedTextForFrontmostTarget(100, 100);
+    shouldBeEqualToString("text", "{320,240} This is an image of dice");
+    finishJSTest();
+});
+</script>
+</html>

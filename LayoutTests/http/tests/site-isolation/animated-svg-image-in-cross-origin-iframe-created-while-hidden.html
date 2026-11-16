@@ -1,0 +1,68 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+
+<!DOCTYPE html>
+<html>
+<body>
+<script src="/js-test-resources/js-test.js"></script>
+<script>
+description("Tests that an animated SVG image in an out-of-process subframe animates once the page becomes visible, for a frame whose view was created while the page was hidden");
+
+var jsTestIsAsync = true;
+var imageIsAnimating = "";
+var testFrame;
+
+// The subframe is cross-origin, so its internals object cannot be reached directly.
+window.addEventListener("message", function(event) {
+    imageIsAnimating = event.data;
+}, false);
+
+function runTest()
+{
+    // This test starts working before DOMContentLoaded, which is when js-test.js would call this. Arm
+    // the watchdog of the harness first, so that a failing run reports its output instead of hanging.
+    testRunner.waitUntilDone();
+
+    // Wait for the main frame to observe the change, so that the subframe is created after the page is
+    // already hidden.
+    document.addEventListener("visibilitychange", pageDidHide);
+    testRunner.setPageVisibility("hidden");
+}
+
+function pageDidHide()
+{
+    document.removeEventListener("visibilitychange", pageDidHide);
+
+    debug("The page is hidden, so create the subframe now.");
+    testFrame = document.createElement("iframe");
+    testFrame.src = "http://localhost:8000/site-isolation/resources/animated-image-frame.html";
+    testFrame.onload = frameDidLoad;
+    document.body.appendChild(testFrame);
+}
+
+function frameDidLoad()
+{
+    // The view of this local root was never visible, so only show() can start the image. Do not assert
+    // anything while the page is hidden: leaving it hidden costs the harness the result of the test if
+    // this assertion is the one that fails.
+    debug("Showing the page.");
+    testRunner.resetPageVisibility();
+
+    // Ask repeatedly: the visibility of the page reaches the process of the subframe asynchronously.
+    // Stop asking once the answer arrives, or after a while if it never does, so that a failing run
+    // leaves the processes quiet for the timeout of the harness.
+    var remainingReports = 200;
+    var reportInterval = setInterval(function() {
+        if (imageIsAnimating === "true" || !remainingReports--) {
+            clearInterval(reportInterval);
+            return;
+        }
+        testFrame.contentWindow.postMessage("report-image-animating", "*");
+    }, 50);
+
+    shouldBecomeEqualToString("imageIsAnimating", "true", finishJSTest);
+}
+
+runTest();
+</script>
+</body>
+</html>

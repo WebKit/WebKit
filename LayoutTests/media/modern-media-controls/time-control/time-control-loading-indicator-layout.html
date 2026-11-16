@@ -1,0 +1,19 @@
+<script src="../../../resources/js-test.js"></script>
+<script src="../resources/media-controls-loader.js"></script>
+<body>
+<script>
+description("TimeControl activity indicator must occupy a flex slot when loading rather than overlapping the scrubber.");
+
+const timeControl = new TimeControl({ layoutTraits: new MacOSLayoutTraits(LayoutTraits.Mode.Inline) });
+document.body.appendChild(timeControl.element);
+timeControl.width = 500;
+timeControl.loading = true;
+scheduler.flushScheduledLayoutCallbacks();
+scheduler.flushScheduledLayoutCallbacks();
+
+shouldBeEqualToString("getComputedStyle(timeControl.activityIndicator.element).position", "relative");
+shouldBeTrue("timeControl.activityIndicator.element.getBoundingClientRect().right <= timeControl.scrubber.element.getBoundingClientRect().left");
+
+timeControl.element.remove();
+</script>
+</body>

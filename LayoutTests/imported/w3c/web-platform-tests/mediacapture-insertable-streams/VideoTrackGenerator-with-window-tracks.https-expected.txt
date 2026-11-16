@@ -1,0 +1,9 @@
+Description
+
+This test checks that generating video MediaStreamTracks from VideoTrackGenerator works as expected.
+
+
+PASS Tests that frames are actually rendered correctly in a stream used for a video element.
+PASS Tests that frames are actually rendered correctly in a stream sent over a peer connection.
+PASS Tests that frames are sent correctly with RTCRtpEncodingParameters.scaleResolutionDownBy.
+

@@ -1,0 +1,8 @@
+2d.text.draw.space.collapse.start
+Space characters at the start of a line are NOT collapsed
+Actual output:
+Expected output:
+
+
+PASS Space characters at the start of a line are NOT collapsed
+

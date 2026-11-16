@@ -1,0 +1,10 @@
+
+RUN(video.src = URL.createObjectURL(source))
+EVENT(sourceopen)
+RUN(sourceBuffer = source.addSourceBuffer('video/webm; codecs="vp8"'))
+EVENT(updateend)
+EXPECTED (sourceBuffer.videoTracks.length == '1') OK
+EXPECTED (sourceBuffer.videoTracks[0].selected == 'true') OK
+EXPECTED (source.activeSourceBuffers.length == '1') OK
+END OF TEST
+

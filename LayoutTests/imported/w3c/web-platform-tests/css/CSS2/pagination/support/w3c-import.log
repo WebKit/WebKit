@@ -1,0 +1,46 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/pagination/support/1x1-green.png
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/pagination/support/1x1-lime.png
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/pagination/support/1x1-maroon.png
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/pagination/support/1x1-navy.png
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/pagination/support/1x1-red.png
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/pagination/support/1x1-white.png
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/pagination/support/60x60-gg-rr.png
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/pagination/support/60x60-green.png
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/pagination/support/a-green.css
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/pagination/support/b-green.css
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/pagination/support/blue15x15.png
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/pagination/support/c-red.css
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/pagination/support/cat.png
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/pagination/support/diamond.png
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/pagination/support/green15x15.png
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/pagination/support/pattern-grg-rrg-rgg.png
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/pagination/support/pattern-tr.png
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/pagination/support/ring.png
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/pagination/support/square-purple.png
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/pagination/support/square-teal.png
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/pagination/support/square-white.png
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/pagination/support/swatch-green.png
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/pagination/support/swatch-lime.png
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/pagination/support/swatch-orange.png
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/pagination/support/swatch-red.png
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/pagination/support/swatch-white.png
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/pagination/support/swatch-yellow.png
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/pagination/support/test-bl.png
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/pagination/support/test-br.png
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/pagination/support/test-outer.png
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/pagination/support/test-tl.png
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/pagination/support/test-tr.png

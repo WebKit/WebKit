@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<body>
+<!-- This tests that a datalist button for an input which is disabled does not appear differently when pressed. -->
+<input list="list" id="input" name="input" disabled>
+<datalist id="list">
+</datalist>
+<script>
+if (window.eventSender) {
+    var x = input.offsetLeft + input.offsetWidth - 2;
+    var y = input.offsetTop + 2;
+    eventSender.mouseMoveTo(x, y);
+    eventSender.mouseDown();
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,11 @@
+A text child should not be part of the style update when its parent is already rebuilding its renderer (Change::Renderer), even when the parent's change set also contains other bits such as Change::NonInherited.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS sizes[0] is 1
+PASS sizes[1] is 1
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

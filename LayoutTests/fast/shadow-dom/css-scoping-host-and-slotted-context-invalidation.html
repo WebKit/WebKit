@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<body>
+<p>Test passes if you see a single 100px by 100px green box below.</p>
+<div id="t1">
+    <span>FAIL</span>
+</div>
+<div id="t2">
+    <span slot="second">FAIL</span>
+</div>
+<div id="t3">
+    <span>FAIL</span>
+</div>
+<div id="t4">
+    <span>FAIL</span>
+</div>
+<div id="t5">
+    <span>FAIL</span>
+</div>
+<script>
+
+function attachShadow(host)
+{
+    const shadow = host.attachShadow({mode: 'closed'});
+    shadow.innerHTML = `
+    <style>
+    :host {
+        width: 100px;
+        height: 20px;
+        background: green;
+        color: red;
+    }
+    </style>
+    <div><slot></slot></div>
+    <div id="second-parent"><slot name="second"></slot></div>
+    `;
+    return shadow;
+}
+
+{
+    const host = document.querySelector('#t1');
+    const shadow = attachShadow(host);
+    const style = shadow.querySelector('style');
+    style.sheet.insertRule(".selected ::slotted(*) { color: green }");
+    getComputedStyle(host.querySelector('span')).backgroundColor;
+    const div = shadow.querySelector('div');
+    div.className = 'selected';
+}
+
+{
+    const host = document.querySelector('#t2');
+    const shadow = attachShadow(host);
+    getComputedStyle(host.querySelector('span')).backgroundColor;
+    const style = shadow.querySelector('style');
+    style.sheet.insertRule("#second-parent ::slotted(*) { color: green }");
+}
+
+{
+    const host = document.querySelector('#t3');
+    const shadow = attachShadow(host);
+    getComputedStyle(host.querySelector('span')).backgroundColor;
+    const style = document.createElement("style");
+    style.textContent = "div ::slotted(*) { color: green }";
+    shadow.appendChild(style);
+}
+
+{
+    const host = document.querySelector('#t4');
+    const shadow = attachShadow(host);
+    getComputedStyle(host.querySelector('span')).backgroundColor;
+    const style = shadow.querySelector('style');
+    style.sheet.insertRule(":host { color: green }", 1);
+}
+
+{
+    const host = document.querySelector('#t5');
+    const shadow = attachShadow(host);
+    getComputedStyle(host.querySelector('span')).backgroundColor;
+    const style = document.createElement("style");
+    style.textContent = ":host(div) { color: green }";
+    shadow.appendChild(style)
+}
+
+</script>

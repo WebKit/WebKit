@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/gc.js"></script>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script>
+
+promise_test(async function () {
+    const host = document.createElement('div');
+    const shadowRoot = host.attachShadow({mode: 'closed'});
+    const slot = document.createElement('slot');
+    slot.name = 'foo';
+    shadowRoot.appendChild(slot);
+    const child = document.createElement('div');
+    host.appendChild(child);
+    slot.assign(child);
+    assert_array_equals(slot.assignedNodes(), []);
+}, 'Manually assign a node to a named slot');
+
+promise_test(async function () {
+    const host = document.createElement('div');
+    const shadowRoot = host.attachShadow({mode: 'closed', slotAssignment: 'manual'});
+    const slot = document.createElement('slot');
+    slot.name = 'foo';
+    shadowRoot.appendChild(slot);
+    const child = document.createElement('div');
+    child.slot = 'foo';
+    host.appendChild(child);
+    assert_array_equals(slot.assignedNodes(), []);
+}, 'Assign a node to a manual slot by slot name');
+
+promise_test(async function () {
+    let logs = [];
+    function logger(event) { logs.push(this); }
+    const host = document.createElement('div');
+    const shadowRoot = host.attachShadow({mode: 'closed'});
+    const slot = document.createElement('slot');
+    slot.addEventListener('slotchange', logger);
+    shadowRoot.appendChild(slot);
+
+    const child = document.createElement('div');
+    host.appendChild(child);
+    await new Promise(setTimeout);
+    assert_array_equals(slot.assignedNodes(), [child]);
+    assert_array_equals(logs, [slot]);
+    logs = [];
+
+    slot.assign(child);
+    await new Promise(setTimeout);
+    assert_array_equals(slot.assignedNodes(), [child]);
+    assert_array_equals(logs, []);
+}, 'Manually assigning a node to a named slot');
+
+promise_test(async function () {
+    let logs = [];
+    function logger(event) { logs.push(this); }
+    const host = document.createElement('div');
+    const shadowRoot = host.attachShadow({mode: 'closed', slotAssignment: 'manual'});
+    const slot = document.createElement('slot');
+    slot.addEventListener('slotchange', logger);
+    shadowRoot.appendChild(slot);
+
+    const child = document.createElement('div');
+    host.appendChild(child);
+    slot.assign(child);
+
+    await new Promise(setTimeout);
+    assert_array_equals(slot.assignedNodes(), [child]);
+    assert_array_equals(logs, [slot]);
+    logs = [];
+
+    const namedHost = document.createElement('div');
+    const namedShadowRoot = namedHost.attachShadow({mode: 'closed', slotAssignment: 'named'});
+    const namedSlot = document.createElement('slot');
+    namedSlot.addEventListener('slotchange', logger);
+    namedShadowRoot.appendChild(namedSlot);
+    namedSlot.assign(child);
+
+    await new Promise(setTimeout);
+    assert_array_equals(namedSlot.assignedNodes(), []);
+    assert_array_equals(slot.assignedNodes(), []);
+    assert_array_equals(logs, [slot]);
+}, 'Manually assigning a node, which was previously assgined to a manual slot, to a default slot');
+
+promise_test(async function () {
+    let logs = [];
+    function logger(event) { logs.push(this); }
+    const host = document.createElement('div');
+    const shadowRoot = host.attachShadow({mode: 'closed', slotAssignment: 'manual'});
+    const slot = document.createElement('slot');
+    slot.addEventListener('slotchange', logger);
+    shadowRoot.appendChild(slot);
+
+    const child1 = document.createElement('div');
+    host.appendChild(child1);
+    const child2 = document.createElement('div');
+    host.appendChild(child2);
+    slot.assign(child1, child2);
+
+    await new Promise(setTimeout);
+    assert_array_equals(slot.assignedNodes(), [child1, child2]);
+    assert_array_equals(logs, [slot]);
+    logs = [];
+
+    const namedHost = document.createElement('div');
+    const namedShadowRoot = namedHost.attachShadow({mode: 'closed', slotAssignment: 'named'});
+    const namedSlot = document.createElement('slot');
+    namedSlot.addEventListener('slotchange', logger);
+    namedShadowRoot.appendChild(namedSlot);
+
+    const child3 = document.createElement('div');
+    namedHost.appendChild(child3);
+
+    namedSlot.assign(child1, child3);
+
+    await new Promise(setTimeout);
+    assert_array_equals(namedSlot.assignedNodes(), [child3]);
+    assert_array_equals(slot.assignedNodes(), [child2]);
+    assert_array_equals(logs, [namedSlot, slot]);
+}, 'Manually assigning a node, which was previously assgined to a manual slot, and another node to a default slot');
+
+</script>
+</body>
+</html>

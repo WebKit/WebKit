@@ -1,0 +1,5 @@
+This line should be green (there should be no red on this page).
+
+
+PASS Impossible rules (* html, * :root) should not match
+

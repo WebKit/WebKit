@@ -1,0 +1,8 @@
+There should be a green square, and a yellow rectangle below.
+
+
+
+
+PASS position:absolute should be sized by the right ancestor
+PASS position:fixed should be sized by the right ancestor
+

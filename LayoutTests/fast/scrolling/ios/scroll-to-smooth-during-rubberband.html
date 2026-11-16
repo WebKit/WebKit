@@ -1,0 +1,57 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+<style>
+body {
+    width: 100%;
+    height: 5000px;
+    background: repeating-linear-gradient(transparent, silver 250px);
+}
+</style>
+<script>
+jsTestIsAsync = true;
+
+async function runTest()
+{
+    description("Tests that a smooth scroll to 0,0 during a rubberband does not leave the view with a negative scroll position.");
+
+    if (!window.testRunner) {
+        finishJSTest();
+        return;
+    }
+
+    window.scrollTo(0, 1000);
+    shouldBeTrue("window.pageYOffset > 0");
+    
+    await UIHelper.renderingUpdate();
+    await UIHelper.renderingUpdate();
+
+    let triggeredScrollToZero = false;
+    window.addEventListener("scroll", () => {
+        if (triggeredScrollToZero)
+            return;
+
+        if (window.pageYOffset < 0) {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            triggeredScrollToZero = true;
+        }
+    });
+
+    const xOffset = 100;
+    await UIHelper.dragFromPointToPoint(xOffset, 1120, xOffset, 1600, 0.05);
+    await UIHelper.waitForTargetScrollAnimationToSettle(document.scrollingElement);
+
+    shouldBe("window.pageYOffset", "0");
+
+    finishJSTest();
+}
+
+window.addEventListener("load", runTest);
+</script>
+</head>
+<body>
+</body>
+</html>

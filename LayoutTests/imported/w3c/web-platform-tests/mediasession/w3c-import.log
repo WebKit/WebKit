@@ -1,0 +1,29 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/mediasession/META.yml
+/LayoutTests/imported/w3c/web-platform-tests/mediasession/README.md
+/LayoutTests/imported/w3c/web-platform-tests/mediasession/WEB_FEATURES.yml
+/LayoutTests/imported/w3c/web-platform-tests/mediasession/artwork-url-encoding-euc-kr.html
+/LayoutTests/imported/w3c/web-platform-tests/mediasession/idlharness.window.js
+/LayoutTests/imported/w3c/web-platform-tests/mediasession/media-session-artwork-fetch-service-worker.js
+/LayoutTests/imported/w3c/web-platform-tests/mediasession/media-session-artwork-fetch.https.html
+/LayoutTests/imported/w3c/web-platform-tests/mediasession/mediametadata.html
+/LayoutTests/imported/w3c/web-platform-tests/mediasession/playbackstate.html
+/LayoutTests/imported/w3c/web-platform-tests/mediasession/positionstate.html
+/LayoutTests/imported/w3c/web-platform-tests/mediasession/setactionhandler.html
+/LayoutTests/imported/w3c/web-platform-tests/mediasession/setcameraactive.html
+/LayoutTests/imported/w3c/web-platform-tests/mediasession/setmicrophoneactive.html

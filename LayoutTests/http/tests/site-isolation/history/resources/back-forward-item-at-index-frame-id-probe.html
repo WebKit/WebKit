@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<body>
+<script>
+function send(messageName, args)
+{
+    return IPC.sendSyncMessage("UI", IPC.pageID, IPC.messages[messageName].name, 1000, args)?.arguments?.[0];
+}
+
+function itemAtIndex(delta, frameID)
+{
+    return send("WebBackForwardList_BackForwardItemAtIndexForWebContent",
+        [{ type: "int32_t", value: delta }, { type: "FrameID", value: frameID }]);
+}
+
+function takeInvalidMessageString()
+{
+    const reply = IPC.sendSyncMessage("UI", 0, IPC.messages.WebProcessProxy_TakeInvalidMessageStringForTesting.name, 1000, []);
+    return reply?.arguments?.[0]?.value ?? "";
+}
+
+window.onmessage = event => {
+    if (!window.IPC) {
+        event.source.postMessage({ error: "No IPC testing API in the subframe" }, "*");
+        return;
+    }
+
+    try {
+        takeInvalidMessageString();
+        const mainFrameID = [BigInt(event.data)];
+        const result = {
+            itemAtIndexForMainFrame: itemAtIndex(0, mainFrameID),
+            allItemsForMainFrame: send("WebBackForwardList_BackForwardAllItems", [{ type: "FrameID", value: mainFrameID }]),
+            itemAtIndexForOwnFrame: itemAtIndex(0, IPC.frameID),
+            itemAtIndexForOwnFrameInPreviousEntry: itemAtIndex(-1, IPC.frameID),
+        };
+        result.invalidMessage = takeInvalidMessageString();
+        event.source.postMessage(result, "*");
+    } catch (e) {
+        event.source.postMessage({ error: String(e) }, "*");
+    }
+};
+</script>

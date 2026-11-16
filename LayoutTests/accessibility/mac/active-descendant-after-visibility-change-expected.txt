@@ -1,0 +1,8 @@
+This test ensures objects that aria-activedescendant is correct after a visibility change.
+
+The listbox option should be focused: AXRole: AXStaticText AXTitle: Red
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

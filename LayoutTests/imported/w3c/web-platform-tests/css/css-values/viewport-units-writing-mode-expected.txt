@@ -1,0 +1,11 @@
+
+
+PASS 100vi computes to 100px with vertical writing-mode
+PASS 100svi computes to 100px with vertical writing-mode
+PASS 100lvi computes to 100px with vertical writing-mode
+PASS 100dvi computes to 100px with vertical writing-mode
+PASS 100vb computes to 200px with vertical writing-mode
+PASS 100svb computes to 200px with vertical writing-mode
+PASS 100lvb computes to 200px with vertical writing-mode
+PASS 100dvb computes to 200px with vertical writing-mode
+

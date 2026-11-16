@@ -1,0 +1,15 @@
+This test verifies several AX properties of the dialog element.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Modal dialog:
+AXRole: AXGroup AXSubrole: AXApplicationDialog AXRoleDescription: web dialog
+Modeless dialog:
+AXRole: AXGroup AXSubrole: AXApplicationDialog AXRoleDescription: web dialog
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Just a dialog.
+
+OK  Cancel

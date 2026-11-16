@@ -1,0 +1,55 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<!DOCTYPE html>
+<html>
+<body>
+<script>
+// main frame <- this file (hosted at 127.0.0.1)
+//    |
+//    |
+// child frame <- cross origin relative to child frame. opened to:
+//    http://localhost:8000/site-isolation/resources/green-background.html
+
+// Have the main frame navigate a cross-origin child iframe
+// to about:blank. Since the main frame initiated navigation to
+// about:blank, the child iframe inherits its parent's origin.
+// If the child successfully inherited the main frame's origin, the 
+// main frame should be able to modify the child's DOM.
+
+// From HTML Spec: browsing the Web, section 7.4.2.2, Item 23, sub-item 5:
+// https://html.spec.whatwg.org/multipage/browsing-the-web.html#beginning-navigation
+// 
+// If url matches about:blank or is about:srcdoc, then:
+//     Set documentState's origin to initiatorOriginSnapshot.
+//     Set documentState's about base URL to initiatorBaseURLSnapshot.
+
+if (window.testRunner) {
+    testRunner.dumpChildFramesAsText();
+    testRunner.waitUntilDone();
+}
+
+// Once we get back to about:blank, check that we can modify DOM
+loadedAboutBlank = function() {
+  let child = document.getElementById("child");
+  child.onload = null;
+
+  child.contentWindow.document.body.appendChild(
+      child.contentWindow.document.createTextNode('Hello from the main page')
+  );
+
+  if (window.testRunner)
+      testRunner.notifyDone();
+}
+
+loadedCrossOrigin = function() {
+    let child = document.getElementById("child");
+    child.onload = loadedAboutBlank;
+    child.src = 'about:blank';
+};
+
+</script>
+
+<p>This test passes if the main page can modify it's child iframe's DOM (once the child iframe has navigated away from a cross-origin site to about:blank).</p>
+<!-- Navigate to a cross origin url where localhost is cross-origin from 127.0.0.1 (which is where the current document is hosted at) -->
+<iframe id="child" onload="loadedCrossOrigin()" src="http://localhost:8000/site-isolation/resources/green-background.html"></iframe> 
+</body>
+</html>

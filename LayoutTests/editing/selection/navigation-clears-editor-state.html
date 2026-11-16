@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/gc.js"></script>
+<script>
+description('This tests navigating away from a document after setting a selection deletes the document.');
+jsTestIsAsync = true;
+
+function appendIframe()
+{
+    const iframe = document.createElement('iframe');
+    document.body.appendChild(iframe);
+    iframe.contentDocument.body.innerHTML = '<p>hello</p>';
+    return iframe;
+}
+
+function setEditorStates(iframe)
+{
+    iframe.contentDocument.designMode = 'on';
+    iframe.contentWindow.getSelection().setPosition(iframe.contentDocument.body, 1);
+    iframe.contentDocument.execCommand('bold', false, null);
+}
+
+async function runTest()
+{
+    try {
+        let message = await testDocumentIsNotLeaked(async documentCount => {
+            let frameIdentifiers = [];
+            for (var i = 0; i < documentCount; i++) {
+                let frame = appendIframe();
+                setEditorStates(frame);
+                frame.src = "resources/select-iframe-focusin-document-crash-frame.html";
+                await new Promise(resolve => { frame.onload = resolve; });
+                frameIdentifiers.push(internals.documentIdentifier(frame.contentDocument));
+                frame.remove();
+            }
+            return frameIdentifiers;
+        });
+        testPassed(message);
+    } catch (error) {
+        testFailed(error.message);
+    }
+    finishJSTest();
+}
+
+if (!window.GCController || !window.internals) {
+    debug('This test requires GCController and internals');
+} else
+    runTest();
+</script>
+</body>
+</html>

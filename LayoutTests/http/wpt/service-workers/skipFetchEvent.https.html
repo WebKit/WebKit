@@ -1,0 +1,57 @@
+<html>
+<head>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/service-workers/service-worker/resources/test-helpers.sub.js"></script>
+</head>
+<body>
+<script>
+var scope = "test";
+var activeWorker;
+
+promise_test(async (test) => {
+    var registration = await navigator.serviceWorker.register("skipFetchEvent-worker.js", { scope : scope });
+    activeWorker = registration.active;
+    if (activeWorker)
+        return;
+    activeWorker = registration.installing;
+    return new Promise(resolve => {
+        activeWorker.addEventListener('statechange', () => {
+            if (activeWorker.state === "activated")
+                resolve();
+        });
+    });
+}, "Setup worker");
+
+promise_test(async (test) => {
+    var promise = new Promise((resolve, reject) => {
+        navigator.serviceWorker.addEventListener("message", (event) => {
+            resolve(event.data);
+        });
+    });
+
+    activeWorker.postMessage("SET-FETCH");
+    var result = await promise;
+
+    assert_equals(result, "OK");
+}, "Setup fetch event after script is run");
+
+promise_test(async (test) => {
+    var promise = new Promise((resolve, reject) => {
+        navigator.serviceWorker.addEventListener("message", (event) => {
+            resolve(event.data);
+        });
+    });
+
+    const iframe = await with_iframe(scope);
+
+    assert_true(!!iframe.contentWindow.navigator.serviceWorker.controller);
+
+    activeWorker.postMessage("GET-FETCH");
+    var result = await promise;
+
+    assert_equals(result, 0);
+}, "Fetch event should be skipped");
+</script>
+</body>
+</html>

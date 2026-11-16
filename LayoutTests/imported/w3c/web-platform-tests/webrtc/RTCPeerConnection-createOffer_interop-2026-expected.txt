@@ -1,0 +1,6 @@
+
+PASS createOffer() returns RTCSessionDescriptionInit
+PASS createOffer() and then setLocalDescription() should succeed
+PASS createOffer() after connection is closed should reject with InvalidStateError
+PASS createOffer() should fail when signaling state is not stable or have-local-offer
+

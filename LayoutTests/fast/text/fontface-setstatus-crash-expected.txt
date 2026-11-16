@@ -1,0 +1,2 @@
+This tests that FontFaceSet.load does not crash when resolving the loaded promise triggers a thenable check whose getter removes a font-face rule.
+WebKit should not crash or hit any assertions under ASAN.

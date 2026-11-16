@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<script src="../../../resources/js-test.js"></script>
+<script src="../resources/media-controls-loader.js" type="text/javascript"></script>
+<script src="../resources/spatial-video-render-utils.js" type="text/javascript"></script>
+<body>
+<script type="text/javascript">
+
+description("Testing that the equi-angular cubemap samples the direction the camera is aimed at, across all six faces. The texture encodes the longitude and latitude of each texel's direction, so the colour at the centre of the view should decode back to the camera's own yaw and pitch.");
+
+const TOLERANCE_DEGREES = 4;
+
+// The layout the renderer is expected to use, stated here rather than read from the renderer so
+// that changing it on either side is a test failure.
+const EXPECTED_FACES = [
+    { axis: "left", column: 0, row: 0, rotation: 0 },
+    { axis: "front", column: 1, row: 0, rotation: 0 },
+    { axis: "right", column: 2, row: 0, rotation: 0 },
+    { axis: "down", column: 0, row: 1, rotation: 1 },
+    { axis: "back", column: 1, row: 1, rotation: 3 },
+    { axis: "up", column: 2, row: 1, rotation: 1 },
+];
+
+function rotateUnitSquare(u, v, rotation)
+{
+    switch (rotation & 3) {
+    case 1:
+        return [v, 1 - u];
+    case 2:
+        return [1 - u, 1 - v];
+    case 3:
+        return [1 - v, u];
+    }
+    return [u, v];
+}
+
+function faceDirection(axis, u, v)
+{
+    switch (axis) {
+    case "front":
+        return [u, v, -1];
+    case "back":
+        return [-u, v, 1];
+    case "left":
+        return [-1, v, -u];
+    case "right":
+        return [1, v, u];
+    case "up":
+        return [u, 1, v];
+    case "down":
+        return [u, -1, -v];
+    }
+    return null;
+}
+
+// Six faces in a 3x2 grid. Within a face the samples are spaced by angle rather than along the
+// flat face, so the face coordinate is the tangent of the stored one.
+function cubemapGrid()
+{
+    return SpatialRenderTest.paintGrid(768, 512, (u, v) => {
+        const column = Math.min(2, Math.floor(u * 3));
+        const row = Math.min(1, Math.floor(v * 2));
+        const face = EXPECTED_FACES.find(candidate => candidate.column === column && candidate.row === row);
+        const [baseU, baseV] = rotateUnitSquare(u * 3 - column, v * 2 - row, (4 - face.rotation) % 4);
+        const s = baseU * 2 - 1;
+        const t = 1 - baseV * 2;
+        return faceDirection(face.axis, Math.tan(s * Math.PI / 4), Math.tan(t * Math.PI / 4));
+    });
+}
+
+window.errors = {};
+
+const support = SpatialRenderTest.createRenderer("equiAngularCubemap");
+if (!support)
+    errors.worstByFace = null;
+else {
+    SpatialRenderTest.uploadGrid(support, cubemapGrid());
+
+    // Aims kept at least fifteen degrees clear of the face boundaries at plus and minus forty-five
+    // and plus and minus one hundred and thirty-five degrees, and clear of where longitude wraps,
+    // since the texture is filtered and blends across both. Each face is sampled off its centre,
+    // which is where a face turned the wrong way shows up: the centre is the one point a rotation
+    // leaves alone.
+    const aims = {
+        front: [[0, 0], [25, 0], [0, 25], [25, 25], [-25, -25]],
+        right: [[70, 0], [90, 25], [110, -20]],
+        left: [[-70, 0], [-90, 25], [-110, -20]],
+        back: [[150, 0], [-150, 0], [160, 20]],
+        up: [[0, -65], [40, -65], [-40, -65]],
+        down: [[0, 65], [40, 65], [-40, 65]],
+    };
+
+    errors.worstByFace = {};
+    for (const [face, orientations] of Object.entries(aims)) {
+        let worst = 0;
+        for (const [yaw, pitch] of orientations)
+            worst = Math.max(worst, SpatialRenderTest.aimErrorDegrees(support, yaw, pitch));
+        errors.worstByFace[face] = worst;
+    }
+    SpatialRenderTest.destroy(support);
+}
+
+shouldBeTrue("errors.worstByFace !== null");
+for (const face of ["front", "right", "left", "back", "up", "down"])
+    shouldBeTrue(`errors.worstByFace.${face} < ${TOLERANCE_DEGREES}`);
+
+</script>
+</body>

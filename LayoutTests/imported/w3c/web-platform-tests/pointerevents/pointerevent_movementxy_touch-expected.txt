@@ -1,0 +1,16 @@
+Pointer Events movementX/Y attribute test
+
+Follow the test instructions with touch. If you don't have the device skip it.
+
+Test Description: This test checks the movementX/Y properties of pointer events.
+Press down on the black square.
+Move your pointer slowly along a straight line to the red square.
+Release the pointer when you are over the red square.
+Test passes if the proper behavior of the events is observed.
+
+
+
+Harness Error (TIMEOUT), message = null
+
+NOTRUN touch pointerevent attributes
+

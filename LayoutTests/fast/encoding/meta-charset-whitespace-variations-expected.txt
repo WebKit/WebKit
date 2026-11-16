@@ -1,0 +1,3 @@
+Meta charset parser should handle various whitespace edge cases after "charset".
+
+PASS

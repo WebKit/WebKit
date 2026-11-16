@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+
+const messageHeaderSize = 16;
+const syncMessageTimeoutInSeconds = 5;
+
+function report(message)
+{
+    message.type = "back-forward-item";
+    opener.postMessage(message, "*");
+}
+
+function readUint64(bytes, offset)
+{
+    let value = 0n;
+    for (let i = 7; i >= 0; --i)
+        value = (value << 8n) | BigInt(bytes[offset + i]);
+    return value;
+}
+
+function ownListResolvesItem(identifier)
+{
+    const reply = IPC.sendSyncMessage("UI", IPC.pageID,
+        IPC.messages.WebBackForwardList_BackForwardListContainsItem.name, syncMessageTimeoutInSeconds,
+        [{ type: "uint64_t", value: identifier.object }, { type: "uint64_t", value: identifier.process }]);
+    return reply && reply.arguments && reply.arguments.length ? reply.arguments[0].value : undefined;
+}
+
+function main()
+{
+    if (!window.IPC)
+        return report({ error: "the IPC testing API is not available in this page" });
+
+    let reported = false;
+    IPC.addOutgoingMessageListener("UI", message => {
+        if (reported || message.name !== IPC.messages.WebBackForwardList_BackForwardGoToItem.name)
+            return;
+        if (BigInt(message.destinationID) !== BigInt(IPC.pageID))
+            return;
+        const body = new Uint8Array(message.buffer).slice(messageHeaderSize);
+        if (body.length < 16)
+            return;
+        const identifier = { object: readUint64(body, 0), process: readUint64(body, 8) };
+        if (!identifier.object || !identifier.process)
+            return;
+        reported = true;
+
+        setTimeout(() => {
+            try {
+                report({
+                    object: String(identifier.object),
+                    process: String(identifier.process),
+                    resolvedByItsOwnList: ownListResolvesItem(identifier),
+                });
+            } catch (error) {
+                report({ error: String(error) });
+            }
+        }, 0);
+    });
+
+    history.pushState({ }, "", "#second");
+    history.back();
+}
+
+window.onload = () => {
+    try {
+        main();
+    } catch (error) {
+        report({ error: String(error) });
+    }
+};
+</script>
+</head>
+<body>other page</body>
+</html>

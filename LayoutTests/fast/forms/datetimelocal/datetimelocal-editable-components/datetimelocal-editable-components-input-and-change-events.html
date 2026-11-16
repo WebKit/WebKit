@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../../resources/js-test.js"></script>
+<script src="../../../../resources/ui-helper.js"></script>
+</head>
+<body>
+
+<input id="input" type="datetime-local">
+
+<script>
+
+jsTestIsAsync = true;
+
+changeEventsFired = 0;
+function onChangeEvent() {
+    changeEventsFired++;
+}
+
+inputEventsFired = 0;
+function onInputEvent() {
+    inputEventsFired++;
+}
+
+input.addEventListener("change", onChangeEvent);
+input.addEventListener("input", onInputEvent);
+
+addEventListener("load", async () => {
+    description("Test for keyboard operations for &lt;input type=datetime-local&gt;");
+
+    input.focus();                                              // [mm]/dd/yyyy hh:mm tt
+    UIHelper.keyDown("9");                                      // -> [09]/dd/yyyy hh:mm tt
+    shouldBe("inputEventsFired", "0");
+    shouldBe("changeEventsFired", "0");
+
+    UIHelper.keyDown("rightArrow");                             // -> 09/[dd]/yyyy hh:mm tt
+    UIHelper.keyDown("2");                                      // -> 09/[02]/yyyy hh:mm tt
+    shouldBe("inputEventsFired", "0");
+    shouldBe("changeEventsFired", "0");
+
+    UIHelper.keyDown("rightArrow");                             // -> 09/02/[yyyy] hh:mm tt
+    UIHelper.keyDown("2");                                      // -> 09/02/[0002] hh:mm tt
+    UIHelper.keyDown("0");                                      // -> 09/02/[0020] hh:mm tt
+    UIHelper.keyDown("1");                                      // -> 09/02/[0201] hh:mm tt
+    UIHelper.keyDown("2");                                      // -> 09/02/[2012] hh:mm tt
+    shouldBe("inputEventsFired", "0");
+    shouldBe("changeEventsFired", "0");
+
+    UIHelper.keyDown("rightArrow");                             // -> 09/02/2012 [hh]:mm tt
+    UIHelper.keyDown("1");                                      // -> 09/02/2012 [01]:mm tt
+    UIHelper.keyDown("2");                                      // -> 09/02/2012 [12]:mm tt
+    shouldBe("inputEventsFired", "0");
+    shouldBe("changeEventsFired", "0");
+
+    UIHelper.keyDown("rightArrow");                             // -> 09/02/2012 12:[mm] tt
+    UIHelper.keyDown("2");                                      // -> 09/02/2012 12:[02] tt
+    shouldBe("inputEventsFired", "0");
+    shouldBe("changeEventsFired", "0");
+
+    UIHelper.keyDown("rightArrow");                             // -> 09/02/2012 12:02 [tt]
+    UIHelper.keyDown("A");                                      // -> 09/02/2012 12:02 [AM]
+    shouldBe("inputEventsFired", "1");
+    shouldBe("changeEventsFired", "0");
+
+    shouldBeEqualToString("input.value", "2012-09-02T00:02");
+
+    input.blur();
+    shouldBe("inputEventsFired", "1");
+    shouldBe("changeEventsFired", "1");
+
+    finishJSTest();
+});
+
+</script>
+</body>
+</html>

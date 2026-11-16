@@ -1,0 +1,34 @@
+uniform half4 colorRed, colorGreen;
+
+bool test() {
+    bool ok = true;
+    int x = 12 | 6;
+    ok = ok && (x == 14);
+    x = 254 & 7;
+    ok = ok && (x == 6);
+    x = 2 ^ 7;
+    ok = ok && (x == 5);
+    x = 1 << 4;
+    ok = ok && (x == 16);
+    x = ~~~x;
+    ok = ok && (x == ~16);
+    x = ~~~~x;
+    ok = ok && (x == ~16);
+
+    int3 v = ~int3(12, 34, 56);
+    ok = ok && (v == int3(~12, ~34, ~56));
+
+    // Left-shifting a negative integer is undefined in C++, but allowed in GPU shading languages.
+    // https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=29093
+    x = -2 << 2;
+    ok = ok && (x == -8);
+    x = 128 >> 2;
+    ok = ok && (x == 32);
+    x = 123 % 45;
+    ok = ok && (x == 33);
+    return ok;
+}
+
+half4 main(float2 coords) {
+    return test() ? colorGreen : colorRed;
+}

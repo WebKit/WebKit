@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+window.addEventListener("message", function pageMessage(event) {
+    return 1;
+});
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("Debugger.PauseAtNextStatement.BlackboxedScript");
+
+    const url = "BlackboxedScript.js";
+    const source = `//# sourceURL=${url}
+setTimeout(function blackboxedTimer() {
+    window.postMessage("blackboxed-program-complete", "*");
+});
+`;
+
+    let lines = source.split("\n");
+    let endOfSource = [lines.length - 1, lines.at(-1).length];
+
+    function addTestCase({name, description, sourceRanges}) {
+        suite.addTestCase({
+            name,
+            description,
+            async setup() {
+                await InspectorTest.mainFrameTarget.DebuggerAgent.setShouldBlackboxURL.invoke({url, shouldBlackbox: true, sourceRanges});
+            },
+            async test() {
+                let pausePromise = WI.debuggerManager.pause();
+                let evaluatePromise = InspectorTest.evaluateInPage(source);
+
+                await pausePromise;
+                InspectorTest.expectEqual(WI.debuggerManager.activeCallFrame.functionName, "pageMessage", "Should pause in pageMessage.");
+
+                await WI.debuggerManager.resume();
+                await evaluatePromise;
+            },
+            async teardown() {
+                await InspectorTest.mainFrameTarget.DebuggerAgent.setShouldBlackboxURL.invoke({url, shouldBlackbox: false});
+            },
+        });
+    }
+
+    addTestCase({
+        name: "Debugger.PauseAtNextStatement.BlackboxedScript.WholeScript",
+        description: "Pausing at the next statement should skip a script blackboxed by URL, including its end.",
+    });
+
+    addTestCase({
+        name: "Debugger.PauseAtNextStatement.BlackboxedScript.SourceRangeToEndOfSource",
+        description: "Pausing at the next statement should skip a script blackboxed by a source range that reaches the end of the source.",
+        sourceRanges: [0, 0, ...endOfSource],
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests that pausing at the next statement skips a script blackboxed by URL, including the end of the script.</p>
+</body>
+</html>

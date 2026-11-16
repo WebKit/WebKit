@@ -1,0 +1,13 @@
+Verifies same-origin window properties can be accessed after window.open with a frame name
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+state before window.open:
+PASS openedWindow[0].customProperty is 42
+state after window.open with a frame name:
+PASS openedWindow[0].customProperty is 43
+PASS successfullyParsed is true
+
+TEST COMPLETE
+click to run test manually in a browser

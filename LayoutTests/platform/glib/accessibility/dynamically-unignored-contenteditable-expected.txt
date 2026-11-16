@@ -1,0 +1,23 @@
+This test ensures that we properly change an object's ignored status after dynamically changing its contenteditable attribute.
+
+#div is initially ignored: true
+#wrapper children:
+
+Adding contenteditable='true' to #div.
+#div is ignored: false
+#wrapper children:
+AXRole: AXTextField
+
+Removing contenteditable='true' from #div.
+#div is ignored: true
+#wrapper children:
+
+Adding role='button' to #div.
+#div is ignored: false
+#wrapper children:
+AXRole: AXButton
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

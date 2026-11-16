@@ -1,0 +1,4 @@
+
+FAIL Re-locking the screen orientation after a change event fires must not abort promise_test: Unhandled rejection with value: object "NotSupportedError: Screen orientation locking is not supported"
+FAIL Unlocking the screen orientation after a change event must not abort promise_test: Unhandled rejection with value: object "NotSupportedError: Screen orientation locking is not supported"
+

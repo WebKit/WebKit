@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<!-- For input and textarea, some elements in the shadow tree have their style built
+     directly, skipping the style cascade. This skips the style adjuster. This test
+     verifies that the used value of user-select is correct for the text in these
+     elements, using the unprefixed spelling. -->
+
+<input id="mutable" value="mutable">
+<input id="readOnly" readonly value="readOnly">
+<textarea id="textarea">textarea</textarea>
+<textarea id="textareaReadOnly" readonly>textareaReadOnly</textarea>
+
+<input id="userSelectNone" value="userSelectNone" style="user-select: none">
+<textarea id="textareaUserSelectNone" style="user-select: none">textareaUserSelectNone</textarea>
+
+<input id="readOnlyUserSelectNone" readonly value="readOnlyUserSelectNone" style="user-select: none">
+<textarea id="textareaReadOnlyUserSelectNone" readonly style="user-select: none">textareaReadOnlyUserSelectNone</textarea>
+
+<input id="userSelectAll" value="userSelectAll" style="user-select: all">
+<textarea id="textareaUserSelectAll" style="user-select: all">textareaUserSelectAll</textarea>
+
+<input id="readOnlyUserSelectAll" readonly value="readOnlyUserSelectAll" style="user-select: all">
+<textarea id="textareaReadOnlyUserSelectAll" readonly style="user-select: all">textareaReadOnlyUserSelectAll</textarea>
+
+<p id="editableParagraph" contenteditable>editableParagraph</p>
+<p id="editableParagraphUserSelectAll" contenteditable style="user-select: all">editableParagraphUserSelectAll</p>
+
+<div id="description"></div>
+<div id="console"></div>
+<script>
+description("Verifies the used user-select value for the inner text element of a text control, and contrasts it with ordinary editable content.");
+
+function selectTextIn(id)
+{
+    const innerText = internals.shadowRoot(document.getElementById(id)).querySelector("div[contenteditable]").firstChild;
+    const selection = getSelection();
+    selection.removeAllRanges();
+    selection.setBaseAndExtent(innerText, 0, innerText, innerText.length);
+    return selection.toString();
+}
+
+function extendOneCharacterIn(id)
+{
+    const innerText = internals.shadowRoot(document.getElementById(id)).querySelector("div[contenteditable]").firstChild;
+    const selection = getSelection();
+    selection.removeAllRanges();
+    selection.setPosition(innerText, 0);
+    selection.modify("extend", "forward", "character");
+    return selection.toString();
+}
+
+// Attempts to place the caret inside the element's text and type a character
+// there. This is more reliable than probing the computed value provided by
+// contenteditable/isContentEditable
+function typedTextLandsAt(id)
+{
+    const offset = 3;
+    const element = document.getElementById(id);
+    const isTextControl = element.value !== undefined;
+    const editableText = isTextControl
+        ? internals.shadowRoot(element).querySelector("div[contenteditable]").firstChild
+        : element.firstChild;
+    const textOf = () => isTextControl ? element.value : element.textContent;
+
+    const textBeforeTyping = textOf();
+    element.focus();
+    const selection = getSelection();
+    selection.removeAllRanges();
+    selection.setPosition(editableText, offset);
+    document.execCommand("insertText", false, "x");
+
+    return textOf() === textBeforeTyping.slice(0, offset) + "x" + textBeforeTyping.slice(offset);
+}
+
+debug("");
+debug("By default, a control's value is selectable.");
+shouldBeEqualToString('selectTextIn("mutable")', "mutable");
+shouldBeEqualToString('selectTextIn("readOnly")', "readOnly");
+shouldBeEqualToString('selectTextIn("textarea")', "textarea");
+shouldBeEqualToString('selectTextIn("textareaReadOnly")', "textareaReadOnly");
+
+debug("");
+debug("'none' makes it unselectable, but it is overridden if the text is editable.");
+shouldBeEqualToString('selectTextIn("userSelectNone")', "userSelectNone");
+shouldBeEqualToString('selectTextIn("textareaUserSelectNone")', "textareaUserSelectNone");
+shouldBeEqualToString('selectTextIn("readOnlyUserSelectNone")', "");
+shouldBeEqualToString('selectTextIn("textareaReadOnlyUserSelectNone")', "");
+
+debug("");
+debug("By default, a control's value is not atomically selectable (all).");
+shouldBeEqualToString('extendOneCharacterIn("mutable")', 'm');
+shouldBeEqualToString('extendOneCharacterIn("readOnly")', 'r');
+shouldBeEqualToString('extendOneCharacterIn("textarea")', 't');
+shouldBeEqualToString('extendOneCharacterIn("textareaReadOnly")', 't');
+
+debug("");
+debug("'all' makes the value atomically selectable, but it doesn't apply if editable.");
+shouldBeEqualToString('extendOneCharacterIn("userSelectAll")', "u");
+shouldBeEqualToString('extendOneCharacterIn("textareaUserSelectAll")', "t");
+shouldBeEqualToString('extendOneCharacterIn("readOnlyUserSelectAll")', "readOnlyUserSelectAll");
+shouldBeEqualToString('extendOneCharacterIn("textareaReadOnlyUserSelectAll")', "textareaReadOnlyUserSelectAll");
+
+debug("");
+debug("'all' no longer removes editability from ordinary editable content.");
+shouldBeTrue('typedTextLandsAt("editableParagraph")');
+shouldBeTrue('typedTextLandsAt("editableParagraphUserSelectAll")');
+
+debug("");
+debug("'all' does not remove editability from editable text controls either.");
+shouldBeTrue('typedTextLandsAt("mutable")');
+shouldBeTrue('typedTextLandsAt("textarea")');
+shouldBeFalse('typedTextLandsAt("readOnly")');
+shouldBeFalse('typedTextLandsAt("textareaReadOnly")');
+
+shouldBeTrue('typedTextLandsAt("userSelectAll")');
+shouldBeTrue('typedTextLandsAt("textareaUserSelectAll")');
+shouldBeFalse('typedTextLandsAt("readOnlyUserSelectAll")');
+shouldBeFalse('typedTextLandsAt("textareaReadOnlyUserSelectAll")');
+
+</script>
+</body>
+</html>

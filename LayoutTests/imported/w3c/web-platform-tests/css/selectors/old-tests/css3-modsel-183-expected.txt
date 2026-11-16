@@ -1,0 +1,15 @@
+This text should be green.
+
+This text should be green.
+
+This text should be green.
+
+This text should be green.
+
+This text should be green.
+
+This text should be green.
+
+
+PASS Syntax and parsing of class selectors
+

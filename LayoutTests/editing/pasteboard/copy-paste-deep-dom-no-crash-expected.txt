@@ -1,0 +1,10 @@
+This test copies and pastes a deeply nested DOM structure inside a contenteditable container and verifies that the web process does not crash.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Did not crash
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

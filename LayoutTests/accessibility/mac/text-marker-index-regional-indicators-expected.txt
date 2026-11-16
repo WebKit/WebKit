@@ -1,0 +1,17 @@
+This test ensures a regional indicator pair, which is one flag to a reader but four code units and two code points, keeps a text marker index per code unit that still round-trips.
+
+Both regional indicators survive into the accessibility text.
+PASS: text().length === 13
+PASS: text().codePointAt(5) === 0x1F1EF
+PASS: text().codePointAt(7) === 0x1F1F5
+
+Every code unit has its own index, and it round-trips.
+PASS: walk.containerTextLength === 13
+PASS: walk.indicesChecked === 13
+PASS: walk.worstRoundTripDrift === 0
+PASS: walk.worstLengthDifference === 0
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

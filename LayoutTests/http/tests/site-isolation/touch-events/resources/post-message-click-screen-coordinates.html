@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<body style="margin: 0; width: 100vw; height: 100vh;">
+<a href="#" style="display: block; width: 100vw; height: 100vh;" onclick="reportClick(event); return false;">tap target</a>
+<script>
+function reportClick(event)
+{
+    window.parent.postMessage({
+        screenX: event.screenX,
+        screenY: event.screenY,
+        clientX: event.clientX,
+        clientY: event.clientY,
+    }, "*");
+}
+</script>
+</body>

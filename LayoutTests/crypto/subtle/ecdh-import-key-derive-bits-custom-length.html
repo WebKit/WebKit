@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<script src="../resources/common.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+description("Test ECDH deriveBits operation with imported base key and custom length");
+
+jsTestIsAsync = true;
+
+var extractable = true;
+var jwkPrivateKey = {
+    kty: "EC",
+    crv: "P-256",
+    x: "1FSVWieTvikFkG1NOyhkUCaMbdQhxwH6aCu4Ez-sRtA",
+    y: "9jmNTLqM4cjBhdAnHcNI9YQV3O8LFmo-EdZWk8ntAaI",
+    d: "ppxBSov3N8_AUcisAuvmLV4yE8e_L_BLE8bZb9Z1Xjg",
+};
+var jwkPublicKey = {
+    kty: "EC",
+    crv: "P-256",
+    x: "1FSVWieTvikFkG1NOyhkUCaMbdQhxwH6aCu4Ez-sRtA",
+    y: "9jmNTLqM4cjBhdAnHcNI9YQV3O8LFmo-EdZWk8ntAaI",
+};
+var expectedDerivedKey = "40bf0c0a56f75ca587ea4f6729d7bf9a";
+
+crypto.subtle.importKey("jwk", jwkPrivateKey, { name: "ECDH", namedCurve: "P-256" }, extractable, ["deriveBits"]).then(function(result) {
+    privateKey = result;
+    return crypto.subtle.importKey("jwk", jwkPublicKey, { name: "ECDH", namedCurve: "P-256" }, extractable, [ ]);
+}).then(function(result) {
+    publicKey = result;
+    return crypto.subtle.deriveBits({ name:"ECDH", public:publicKey }, privateKey, 128);
+}).then(function(result) {
+    derivedKey = result;
+
+    shouldBe("bytesToHexString(derivedKey)", "expectedDerivedKey");
+
+    finishJSTest();
+}, failAndFinishJSTest);
+
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

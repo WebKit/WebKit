@@ -1,0 +1,442 @@
+/*
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#pragma once
+
+#if ENABLE(WEBGL)
+#include "WebGL2RenderingContext.h"
+
+namespace WebCore {
+
+class WebGLDefaultFramebuffer;
+class WebGLFramebuffer;
+
+class ScopedInspectorShaderProgramHighlight {
+    WTF_MAKE_NONCOPYABLE(ScopedInspectorShaderProgramHighlight);
+public:
+    ScopedInspectorShaderProgramHighlight(WebGLRenderingContextBase& context)
+       : m_context(shouldApply(context) ? &context : nullptr) // NOLINT
+    {
+        if (!m_context) [[likely]]
+            return;
+        showHighlight();
+    }
+
+    ~ScopedInspectorShaderProgramHighlight()
+    {
+        if (!m_context) [[likely]]
+            return;
+        hideHighlight();
+    }
+private:
+    static bool shouldApply(WebGLRenderingContextBase&);
+    void showHighlight();
+    void hideHighlight();
+
+    struct {
+        std::array<GCGLfloat, 4> color = { };
+        GCGLenum equationRGB { GraphicsContextGL::NONE };
+        GCGLenum equationAlpha { GraphicsContextGL::NONE };
+        GCGLenum srcRGB { GraphicsContextGL::ONE };
+        GCGLenum dstRGB { GraphicsContextGL::ZERO };
+        GCGLenum srcAlpha { GraphicsContextGL::ONE };
+        GCGLenum dstAlpha { GraphicsContextGL::ZERO };
+        GCGLboolean enabled { false };
+    } m_savedBlend;
+
+    WeakPtr<WebGLRenderingContextBase> m_context;
+};
+
+// Set UNPACK_ALIGNMENT to 1, all other parameters to 0.
+class ScopedTightUnpackParameters {
+    WTF_MAKE_NONCOPYABLE(ScopedTightUnpackParameters);
+public:
+    explicit ScopedTightUnpackParameters(WebGLRenderingContextBase& context, bool enabled = true)
+        : m_context(enabled ? &context : nullptr)
+    {
+        if (!m_context)
+            return;
+        set(context.unpackPixelStoreParameters(), tightUnpack);
+    }
+
+    ~ScopedTightUnpackParameters()
+    {
+        if (!m_context)
+            return;
+        set(tightUnpack, m_context->unpackPixelStoreParameters());
+    }
+private:
+    using PixelStoreParameters =  WebGLRenderingContextBase::PixelStoreParameters;
+    static constexpr PixelStoreParameters tightUnpack { 1, 0, 0, 0, 0 };
+    void set(const PixelStoreParameters& oldValues, const PixelStoreParameters& newValues)
+    {
+        RefPtr context = m_context->graphicsContextGL();
+        if (oldValues.alignment != newValues.alignment)
+            context->pixelStorei(GraphicsContextGL::UNPACK_ALIGNMENT, newValues.alignment);
+        if (oldValues.rowLength != newValues.rowLength)
+            context->pixelStorei(GraphicsContextGL::UNPACK_ROW_LENGTH, newValues.rowLength);
+        if (oldValues.imageHeight != newValues.imageHeight)
+            context->pixelStorei(GraphicsContextGL::UNPACK_IMAGE_HEIGHT, newValues.imageHeight);
+        if (oldValues.skipPixels != newValues.skipPixels)
+            context->pixelStorei(GraphicsContextGL::UNPACK_SKIP_PIXELS, newValues.skipPixels);
+        if (oldValues.skipRows != newValues.skipRows)
+            context->pixelStorei(GraphicsContextGL::UNPACK_SKIP_ROWS, newValues.skipRows);
+        if (oldValues.skipImages != newValues.skipImages)
+            context->pixelStorei(GraphicsContextGL::UNPACK_SKIP_IMAGES, newValues.skipImages);
+    }
+    WeakPtr<WebGLRenderingContextBase> m_context;
+};
+
+class ScopedDisableRasterizerDiscard {
+    WTF_MAKE_NONCOPYABLE(ScopedDisableRasterizerDiscard);
+public:
+    explicit ScopedDisableRasterizerDiscard(WebGLRenderingContextBase& context)
+        : m_context(context.m_rasterizerDiscardEnabled ? &context : nullptr)
+    {
+        if (!m_context)
+            return;
+        protect(context.graphicsContextGL())->disable(GraphicsContextGL::RASTERIZER_DISCARD);
+    }
+
+    ~ScopedDisableRasterizerDiscard()
+    {
+        if (!m_context)
+            return;
+        protect(m_context->graphicsContextGL())->enable(GraphicsContextGL::RASTERIZER_DISCARD);
+    }
+
+private:
+    WeakPtr<WebGLRenderingContextBase> m_context;
+};
+
+// Enables draw buffer 0 of a framebuffer for operations that draw into the framebuffer internally,
+// such as clearing it. DRAW_BUFFERi is per framebuffer object state, so this must be constructed
+// after the framebuffer has been bound as the draw framebuffer and destroyed before it is unbound.
+// Restores the draw buffers the framebuffer had. Nothing is done if draw buffer 0 already is the
+// wanted COLOR_ATTACHMENT0.
+class ScopedEnableDrawBuffer0 {
+    WTF_MAKE_NONCOPYABLE(ScopedEnableDrawBuffer0);
+public:
+    ScopedEnableDrawBuffer0(WebGLRenderingContextBase&, WebGLDefaultFramebuffer&);
+    ScopedEnableDrawBuffer0(WebGLRenderingContextBase&, WebGLFramebuffer&);
+    ~ScopedEnableDrawBuffer0();
+
+private:
+    WeakPtr<WebGLRenderingContextBase> m_context;
+    Vector<GCGLenum> m_restoreDrawBuffers;
+};
+
+// Sets the READ_BUFFER of a framebuffer to COLOR_ATTACHMENT0 for operations that read the
+// framebuffer internally, such as resolving the default framebuffer into the result framebuffer.
+// READ_BUFFER is per framebuffer object state, so this must be constructed after the framebuffer
+// has been bound as READ_FRAMEBUFFER and destroyed before it is unbound. Restores the READ_BUFFER
+// the framebuffer had. Nothing is done if it already is the wanted COLOR_ATTACHMENT0.
+class ScopedEnableReadBuffer0 {
+    WTF_MAKE_NONCOPYABLE(ScopedEnableReadBuffer0);
+public:
+    ScopedEnableReadBuffer0(WebGLRenderingContextBase&, WebGLDefaultFramebuffer&);
+    ScopedEnableReadBuffer0(WebGLRenderingContextBase&, WebGLFramebuffer&);
+    ~ScopedEnableReadBuffer0();
+
+private:
+    WeakPtr<WebGLRenderingContextBase> m_context;
+    GCGLenum m_restoreReadBuffer { GraphicsContextGL::NONE };
+};
+
+class ScopedDisableScissorTest {
+    WTF_MAKE_NONCOPYABLE(ScopedDisableScissorTest);
+public:
+    explicit ScopedDisableScissorTest(WebGLRenderingContextBase& context)
+        : m_context(context.m_scissorEnabled ? &context : nullptr)
+    {
+        if (!m_context)
+            return;
+        protect(context.graphicsContextGL())->disable(GraphicsContextGL::SCISSOR_TEST);
+    }
+
+    ~ScopedDisableScissorTest()
+    {
+        if (!m_context)
+            return;
+        protect(m_context->graphicsContextGL())->enable(GraphicsContextGL::SCISSOR_TEST);
+    }
+
+private:
+    WeakPtr<WebGLRenderingContextBase> m_context;
+};
+
+class ScopedDisableDither {
+    WTF_MAKE_NONCOPYABLE(ScopedDisableDither);
+public:
+    explicit ScopedDisableDither(WebGLRenderingContextBase& context)
+        : m_context(context.m_ditherEnabled ? &context : nullptr)
+    {
+        if (!m_context)
+            return;
+        protect(context.graphicsContextGL())->disable(GraphicsContextGL::DITHER);
+    }
+
+    ~ScopedDisableDither()
+    {
+        if (!m_context)
+            return;
+        protect(m_context->graphicsContextGL())->enable(GraphicsContextGL::DITHER);
+    }
+
+private:
+    WeakPtr<WebGLRenderingContextBase> m_context;
+};
+
+class ScopedScissorTestForRegion {
+    WTF_MAKE_NONCOPYABLE(ScopedScissorTestForRegion);
+public:
+    ScopedScissorTestForRegion(WebGLRenderingContextBase& context, const IntRect& region)
+        : m_context(context)
+        , m_wasEnabled(context.m_scissorEnabled)
+    {
+        if (!m_context)
+            return;
+        RefPtr gl = context.graphicsContextGL();
+        gl->getIntegerv(GraphicsContextGL::SCISSOR_BOX, m_scissorBox);
+        gl->enable(GraphicsContextGL::SCISSOR_TEST);
+        gl->scissor(region.x(), region.y(), region.width(), region.height());
+    }
+
+    ~ScopedScissorTestForRegion()
+    {
+        if (!m_context)
+            return;
+        RefPtr gl = m_context->graphicsContextGL();
+        gl->scissor(m_scissorBox[0], m_scissorBox[1], m_scissorBox[2], m_scissorBox[3]);
+        if (!m_wasEnabled)
+            gl->disable(GraphicsContextGL::SCISSOR_TEST);
+    }
+
+private:
+    WeakPtr<WebGLRenderingContextBase> m_context;
+    std::array<GCGLint, 4> m_scissorBox { };
+    bool m_wasEnabled { false };
+};
+
+class ScopedWebGLRestoreFramebuffer {
+    WTF_MAKE_NONCOPYABLE(ScopedWebGLRestoreFramebuffer);
+public:
+    explicit ScopedWebGLRestoreFramebuffer(WebGLRenderingContextBase& context)
+        : m_context(context)
+    {
+    }
+
+    ScopedWebGLRestoreFramebuffer(ScopedWebGLRestoreFramebuffer&& other)
+        : m_context(std::exchange(other.m_context, nullptr))
+    {
+    }
+
+    ~ScopedWebGLRestoreFramebuffer()
+    {
+        if (RefPtr context = m_context.get())
+            context->rebindFramebuffers();
+    }
+
+private:
+    WeakPtr<WebGLRenderingContextBase> m_context;
+};
+
+class ScopedWebGLRestoreRenderbuffer {
+    WTF_MAKE_NONCOPYABLE(ScopedWebGLRestoreRenderbuffer);
+public:
+    explicit ScopedWebGLRestoreRenderbuffer(WebGLRenderingContextBase& context)
+        : m_context(context)
+    {
+    }
+
+    ~ScopedWebGLRestoreRenderbuffer()
+    {
+        RefPtr gl = m_context->graphicsContextGL();
+        gl->bindRenderbuffer(GraphicsContextGL::RENDERBUFFER, objectOrZero(m_context->m_renderbufferBinding));
+    }
+    WeakRef<WebGLRenderingContextBase> m_context;
+};
+
+class ScopedWebGLRestoreTexture {
+    WTF_MAKE_NONCOPYABLE(ScopedWebGLRestoreTexture);
+public:
+    explicit ScopedWebGLRestoreTexture(WebGLRenderingContextBase& context, GCGLenum textureTarget)
+        : m_context(context)
+        , m_target(textureTarget)
+    {
+    }
+
+    ~ScopedWebGLRestoreTexture()
+    {
+        if (!m_context->graphicsContextGL() || m_context->m_textureUnits.size() <= m_context->m_activeTextureUnit)
+            return;
+
+        auto& textureUnit = m_context->m_textureUnits[m_context->m_activeTextureUnit];
+        PlatformGLObject texture = 0;
+        switch (m_target) {
+        case GraphicsContextGL::TEXTURE_2D:
+            texture = objectOrZero(textureUnit.texture2DBinding);
+            break;
+        case GraphicsContextGL::TEXTURE_CUBE_MAP:
+            texture = objectOrZero(textureUnit.textureCubeMapBinding);
+            break;
+        case GraphicsContextGL::TEXTURE_3D:
+            texture = objectOrZero(textureUnit.texture3DBinding);
+            break;
+        case GraphicsContextGL::TEXTURE_2D_ARRAY:
+            texture = objectOrZero(textureUnit.texture2DArrayBinding);
+            break;
+        default:
+            // Not part of WebGL, does not need to be restored.
+            return;
+        }
+        RefPtr gl = m_context->graphicsContextGL();
+        gl->bindTexture(m_target, texture);
+    }
+
+private:
+    WeakRef<WebGLRenderingContextBase> m_context;
+    const GCGLenum m_target;
+};
+
+class ScopedClearColorAndMask {
+    WTF_MAKE_NONCOPYABLE(ScopedClearColorAndMask);
+public:
+    explicit ScopedClearColorAndMask(WebGLRenderingContextBase& context, GCGLclampf clearRed, GCGLclampf clearGreen, GCGLclampf clearBlue, GCGLclampf clearAlpha, GCGLboolean maskRed, GCGLboolean maskGreen, GCGLboolean maskBlue, GCGLboolean maskAlpha)
+        : m_context(context)
+    {
+        RefPtr gl = context.graphicsContextGL();
+        // Only touch GL state (and pay the IPC) when the requested value differs from the
+        // value the WebGL layer already has; the destructor restores to that same value, so
+        // an unchanged value needs neither a set nor a restore.
+        m_restoreColor = clearRed != context.m_clearColor[0] || clearGreen != context.m_clearColor[1]
+            || clearBlue != context.m_clearColor[2] || clearAlpha != context.m_clearColor[3];
+        if (m_restoreColor)
+            gl->clearColor(clearRed, clearGreen, clearBlue, clearAlpha);
+
+        m_restoreMask = maskRed != context.m_colorMask[0] || maskGreen != context.m_colorMask[1]
+            || maskBlue != context.m_colorMask[2] || maskAlpha != context.m_colorMask[3];
+        if (m_restoreMask) {
+            if (context.m_oesDrawBuffersIndexed)
+                gl->colorMaskiOES(0, maskRed, maskGreen, maskBlue, maskAlpha);
+            else
+                gl->colorMask(maskRed, maskGreen, maskBlue, maskAlpha);
+        }
+    }
+
+    ~ScopedClearColorAndMask()
+    {
+        RefPtr gl = m_context->graphicsContextGL();
+        if (m_restoreColor)
+            gl->clearColor(m_context->m_clearColor[0], m_context->m_clearColor[1], m_context->m_clearColor[2], m_context->m_clearColor[3]);
+        if (m_restoreMask) {
+            if (m_context->m_oesDrawBuffersIndexed)
+                gl->colorMaskiOES(0, m_context->m_colorMask[0], m_context->m_colorMask[1], m_context->m_colorMask[2], m_context->m_colorMask[3]);
+            else
+                gl->colorMask(m_context->m_colorMask[0], m_context->m_colorMask[1], m_context->m_colorMask[2], m_context->m_colorMask[3]);
+        }
+    }
+
+private:
+    WeakRef<WebGLRenderingContextBase> m_context;
+    bool m_restoreColor { false };
+    bool m_restoreMask { false };
+};
+
+class ScopedClearDepthAndMask {
+    WTF_MAKE_NONCOPYABLE(ScopedClearDepthAndMask);
+public:
+    explicit ScopedClearDepthAndMask(WebGLRenderingContextBase& context, GCGLclampf clear, bool mask, bool enabled)
+        : m_context(enabled ? &context : nullptr) // NOLINT
+    {
+        if (!m_context)
+            return;
+
+        RefPtr gl = context.graphicsContextGL();
+        m_restoreClear = clear != context.m_clearDepth;
+        if (m_restoreClear)
+            gl->clearDepth(clear);
+        m_restoreMask = mask != context.m_depthMask;
+        if (m_restoreMask)
+            gl->depthMask(mask);
+    }
+
+    ~ScopedClearDepthAndMask()
+    {
+        if (!m_context)
+            return;
+
+        RefPtr gl = m_context->graphicsContextGL();
+        if (m_restoreClear)
+            gl->clearDepth(m_context->m_clearDepth);
+        if (m_restoreMask)
+            gl->depthMask(m_context->m_depthMask);
+    }
+
+private:
+    WeakPtr<WebGLRenderingContextBase> m_context;
+    bool m_restoreClear { false };
+    bool m_restoreMask { false };
+};
+
+class ScopedClearStencilAndMask {
+    WTF_MAKE_NONCOPYABLE(ScopedClearStencilAndMask);
+public:
+    explicit ScopedClearStencilAndMask(WebGLRenderingContextBase& context, GCGLint clear, GCGLuint mask, bool enabled)
+        : m_context(enabled ? &context : nullptr) // NOLINT
+    {
+        if (!m_context)
+            return;
+
+        RefPtr gl = context.graphicsContextGL();
+        m_restoreClear = clear != context.m_clearStencil;
+        if (m_restoreClear)
+            gl->clearStencil(clear);
+        m_restoreMask = mask != context.m_stencilMask;
+        if (m_restoreMask)
+            gl->stencilMaskSeparate(GraphicsContextGL::FRONT, mask);
+    }
+
+    ~ScopedClearStencilAndMask()
+    {
+        if (!m_context)
+            return;
+
+        RefPtr gl = m_context->graphicsContextGL();
+        if (m_restoreClear)
+            gl->clearStencil(m_context->m_clearStencil);
+        if (m_restoreMask)
+            gl->stencilMaskSeparate(GraphicsContextGL::FRONT, m_context->m_stencilMask);
+    }
+
+private:
+    WeakPtr<WebGLRenderingContextBase> m_context;
+    bool m_restoreClear { false };
+    bool m_restoreMask { false };
+};
+
+}
+
+#endif

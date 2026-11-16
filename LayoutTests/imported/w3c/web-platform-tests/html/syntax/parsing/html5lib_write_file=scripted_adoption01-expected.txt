@@ -1,0 +1,5 @@
+html5lib parser tests
+
+
+PASS <p><b id="A"><script>document.getElementById("A").id = "B"</script></p>TEXT</b>
+

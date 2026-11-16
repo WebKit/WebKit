@@ -1,0 +1,9 @@
+
+
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT Test touchpointer capture in same-origin frame: Pointer down at inner frame and set pointer capture. Test timed out
+NOTRUN Test touchpointer capture in same-origin frame: Pointer down at outer frame body and set pointer capture.
+NOTRUN Test touchpointer capture in same-origin frame: Pointerdown with set capture at inner frame, then release on next pointermove.
+NOTRUN Test touchpointer capture in same-origin frame: Pointerdown with set capture at outer frame, then release on next pointermove.
+

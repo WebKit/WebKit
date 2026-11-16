@@ -1,0 +1,16 @@
+
+PASS Implicit
+PASS Implicit, outer failing
+PASS Implicit, inner failing
+PASS Outer named, inner named
+PASS Outer named, inner named (reverse)
+PASS Failing outer name
+PASS Failing inner name
+PASS Outer named, inner implicit
+PASS Inner named, outer implicit
+PASS Inner named, outer implicit (reverse)
+PASS Three levels
+PASS Three levels, middle fail
+PASS Named inner invalidation
+PASS Implicit outer invalidation
+

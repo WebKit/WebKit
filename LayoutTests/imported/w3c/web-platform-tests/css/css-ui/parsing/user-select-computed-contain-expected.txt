@@ -1,0 +1,3 @@
+
+FAIL Property user-select value 'contain' assert_true: 'contain' is a supported value for user-select. expected true got false
+

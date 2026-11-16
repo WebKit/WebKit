@@ -1,0 +1,3 @@
+
+PASS Zoom does not affect the computed transform matrix of an animated element
+

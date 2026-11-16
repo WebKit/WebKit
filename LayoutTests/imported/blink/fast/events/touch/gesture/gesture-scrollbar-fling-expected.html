@@ -1,0 +1,47 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+
+<!-- This tests that the scrollbar thumb is deselected on a fling start -->
+
+<head>
+<style type="text/css">
+::-webkit-scrollbar {
+  background-color: #ccc;
+  height: 15px;
+  width: 15px;
+}
+
+::-webkit-scrollbar-button {
+  display: none;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #777;
+  height: 15px;
+  width: 15px;
+}
+
+::-webkit-scrollbar-thumb:active {
+  background-color: #333;
+}
+
+#scrollable {
+    height: 300px;
+    width: 300px;
+    overflow: scroll;
+}
+
+.large {
+    height: 600px;
+    width: 600px;
+}
+</style>
+</head>
+<body>
+<div id="scrollable">
+  <div class="large">
+  </div>
+</div>
+
+</body>
+</html>

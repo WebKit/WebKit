@@ -1,0 +1,424 @@
+/*
+ * Copyright (C) 2022 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#import "config.h"
+#import "WKPrinting.h"
+
+#import "Helpers/PlatformUtilities.h"
+#import "Helpers/Test.h"
+#import "Helpers/cocoa/TestNavigationDelegate.h"
+#import "Helpers/cocoa/TestPDFDocument.h"
+#import "Helpers/cocoa/TestWKWebView.h"
+#import "Helpers/Utilities.h"
+#import <WebKit/WKFrameInfoPrivate.h>
+#import <WebKit/WKUIDelegate.h>
+#import <WebKit/WKWebViewPrivateForTesting.h>
+#import <WebKit/WKWebpagePreferences.h>
+#import <WebKit/_WKFrameHandle.h>
+#import <WebKit/_WKFrameTreeNode.h>
+#import <wtf/BlockPtr.h>
+#import <wtf/RetainPtr.h>
+#import <wtf/darwin/DispatchExtras.h>
+
+typedef void (^CallCompletionBlock)();
+
+@interface PrintWithSimulatedPageComputationUIDelegate : NSObject <WKUIDelegate>
+
+- (void)waitForPagination;
+
+@end
+
+@implementation PrintWithSimulatedPageComputationUIDelegate {
+    bool _isDone;
+}
+
+- (void)callBlockAsync:(CallCompletionBlock)callCompletionBlock
+{
+    dispatch_async(mainDispatchQueueSingleton(), ^{
+        callCompletionBlock();
+    });
+}
+
+- (void)_webView:(WKWebView *)webView printFrame:(_WKFrameHandle *)frame pdfFirstPageSize:(CGSize)size completionHandler:(void (^)(void))completionHandler
+{
+    _isDone = false;
+    CallCompletionBlock callCompletionBlock = ^{
+        [webView _computePagesForPrinting:frame completionHandler:^{
+            _isDone = true;
+            completionHandler();
+        }];
+    };
+
+    // Dispatch the completion handler asynchronously to ensure we don't block IPC in the web process in the unbounded sync IPC case.
+    [self callBlockAsync:callCompletionBlock];
+}
+
+- (void)waitForPagination
+{
+    TestWebKitAPI::Util::run(&_isDone);
+}
+
+@end
+
+@implementation DeferredPrintUIDelegate {
+    RetainPtr<_WKFrameHandle> _frame;
+    BlockPtr<void()> _completionHandler;
+}
+
+- (void)_webView:(WKWebView *)webView printFrame:(_WKFrameHandle *)frame pdfFirstPageSize:(CGSize)size completionHandler:(void (^)(void))completionHandler
+{
+    _frame = frame;
+    _completionHandler = makeBlockPtr(completionHandler);
+}
+
+- (_WKFrameHandle *)waitForPrintFrame
+{
+    while (!_frame)
+        TestWebKitAPI::Util::spinRunLoop();
+    return _frame.get();
+}
+
+- (void)finishPrinting
+{
+    std::exchange(_completionHandler, nullptr)();
+    _frame = nil;
+}
+
+@end
+
+TEST(Printing, PrintWithDelayedCompletion)
+{
+    RetainPtr configuration = adoptNS([WKWebViewConfiguration new]);
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    RetainPtr delegate = adoptNS([PrintWithSimulatedPageComputationUIDelegate new]);
+    [webView setUIDelegate:delegate.get()];
+
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"simple" withExtension:@"html"]];
+    [webView loadRequest:request];
+    [webView _test_waitForDidFinishNavigation];
+
+    [webView evaluateJavaScript:@"window.print()" completionHandler:nil];
+    [delegate waitForPagination];
+}
+
+TEST(Printing, DrawPagesToPDFSynchronously)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+    [webView synchronouslyLoadHTMLString:@"<body>Hello</body>"];
+
+    RetainPtr<_WKFrameHandle> mainFrame = [webView mainFrame].info._handle;
+    __block bool computedPages = false;
+    [webView _computePagesForPrinting:mainFrame.get() completionHandler:^{
+        computedPages = true;
+    }];
+    TestWebKitAPI::Util::run(&computedPages);
+
+    RetainPtr data = [webView _drawPagesToPDFSynchronouslyForTesting:mainFrame.get() pageCount:1];
+    ASSERT_NOT_NULL(data.get());
+    EXPECT_TRUE([data length]);
+}
+
+TEST(Printing, DrawPagesToPDFSynchronouslyDuringDOMPrint)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+    RetainPtr delegate = adoptNS([DeferredPrintUIDelegate new]);
+    [webView setUIDelegate:delegate.get()];
+    [webView synchronouslyLoadHTMLString:@"<body>Hello</body>"];
+
+    [webView evaluateJavaScript:@"window.print()" completionHandler:nil];
+    RetainPtr<_WKFrameHandle> frame = [delegate waitForPrintFrame];
+
+    __block bool computedPages = false;
+    [webView _computePagesForPrinting:frame.get() completionHandler:^{
+        computedPages = true;
+    }];
+    TestWebKitAPI::Util::run(&computedPages);
+
+    RetainPtr data = [webView _drawPagesToPDFSynchronouslyForTesting:frame.get() pageCount:1];
+    [delegate finishPrinting];
+    ASSERT_NOT_NULL(data.get());
+    EXPECT_TRUE([data length]);
+}
+
+#if PLATFORM(MAC)
+@interface WKPrintPageBordersWebView : TestWKWebView
+@end
+
+@implementation WKPrintPageBordersWebView {
+    bool _didDrawPageBorder;
+}
+
+- (void)drawPageBorderWithSize:(NSSize)borderSize
+{
+    _didDrawPageBorder = true;
+}
+
+- (void)_waitUntilPageBorderDrawn
+{
+    TestWebKitAPI::Util::run(&_didDrawPageBorder);
+}
+
+@end
+
+@interface PrintShowingPrintPanelUIDelegate : NSObject <WKUIDelegate>
+
+@end
+
+@implementation PrintShowingPrintPanelUIDelegate
+
+- (void)_webView:(WKWebView *)webView printFrame:(_WKFrameHandle *)frame pdfFirstPageSize:(CGSize)size completionHandler:(void (^)(void))completionHandler
+{
+    RetainPtr printInfo = adoptNS([[NSPrintInfo alloc] init]);
+
+    NSPrintOperation *operation = [webView _printOperationWithPrintInfo:printInfo.get() forFrame:frame];
+
+    operation.showsPrintPanel = YES;
+    NSPrintPanel *printPanel = operation.printPanel;
+    printPanel.options = printPanel.options | NSPrintPanelShowsPaperSize | NSPrintPanelShowsOrientation | NSPrintPanelShowsScaling | NSPrintPanelShowsPreview;
+
+    [operation runOperationModalForWindow:webView.window delegate:nil didRunSelector:nil contextInfo:nil];
+
+    if (completionHandler)
+        completionHandler();
+}
+
+@end
+
+TEST(Printing, PrintPageBorders)
+{
+    RetainPtr configuration = adoptNS([WKWebViewConfiguration new]);
+    RetainPtr webView = adoptNS([[WKPrintPageBordersWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    RetainPtr delegate = adoptNS([PrintShowingPrintPanelUIDelegate new]);
+    [webView setUIDelegate:delegate.get()];
+
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"simple" withExtension:@"html"]];
+    [webView loadRequest:request];
+    [webView _test_waitForDidFinishNavigation];
+
+    [webView evaluateJavaScript:@"window.print()" completionHandler:nil];
+    [webView _waitUntilPageBorderDrawn];
+}
+
+#if HAVE(PDFKIT)
+@interface PrintOperationObserver : NSObject
+- (void)waitForPrintOperation;
+@end
+
+@implementation PrintOperationObserver {
+    bool _didRun;
+}
+
+- (void)printOperationDidRun:(NSPrintOperation *)printOperation success:(BOOL)success contextInfo:(void *)contextInfo
+{
+    EXPECT_TRUE(success);
+    _didRun = true;
+}
+
+- (void)waitForPrintOperation
+{
+    TestWebKitAPI::Util::run(&_didRun);
+}
+
+@end
+
+static RetainPtr<TestPDFDocument> printToPDF(NSString *styleSheet)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+    [webView synchronouslyLoadHTMLString:[NSString stringWithFormat:@"<style>%@ body { margin: 0 }</style><div>Hello</div>", styleSheet]];
+
+    RetainPtr printInfo = adoptNS([[NSPrintInfo alloc] init]);
+    [printInfo setPaperSize:NSMakeSize(612, 792)];
+
+    RetainPtr pdfURL = [NSURL fileURLWithPath:[NSTemporaryDirectory() stringByAppendingPathComponent:[NSString stringWithFormat:@"%@.pdf", NSUUID.UUID.UUIDString]] isDirectory:NO];
+    [printInfo setJobDisposition:NSPrintSaveJob];
+    [printInfo dictionary][NSPrintJobSavingURL] = pdfURL.get();
+
+    RetainPtr operation = [webView printOperationWithPrintInfo:printInfo.get()];
+    [operation setShowsPrintPanel:NO];
+    [operation setShowsProgressPanel:NO];
+
+    RetainPtr observer = adoptNS([PrintOperationObserver new]);
+    [operation runOperationModalForWindow:[webView hostWindow] delegate:observer.get() didRunSelector:@selector(printOperationDidRun:success:contextInfo:) contextInfo:nullptr];
+    [observer waitForPrintOperation];
+
+    RetainPtr data = adoptNS([[NSData alloc] initWithContentsOfURL:pdfURL.get()]);
+    [NSFileManager.defaultManager removeItemAtURL:pdfURL.get() error:nil];
+    EXPECT_NOT_NULL(data.get());
+    if (!data)
+        return nil;
+    return adoptNS([[TestPDFDocument alloc] initFromData:data.get()]);
+}
+
+// Measured from the top left of the paper.
+static CGPoint firstCharacterPosition(NSString *styleSheet)
+{
+    RetainPtr document = printToPDF(styleSheet);
+    EXPECT_EQ([document pageCount], 1);
+    RetainPtr page = [document pageAtIndex:0];
+    CGRect characterRect = [page rectForCharacterAtIndex:0];
+    return CGPointMake(CGRectGetMinX(characterRect), CGRectGetMaxY([page bounds]) - CGRectGetMaxY(characterRect));
+}
+
+static void expectFirstCharacterOffset(NSString *styleSheet, NSString *referenceStyleSheet, CGFloat left, CGFloat top)
+{
+    auto position = firstCharacterPosition(styleSheet);
+    auto referencePosition = firstCharacterPosition(referenceStyleSheet);
+    EXPECT_NEAR(position.x - referencePosition.x, left, 0.05);
+    EXPECT_NEAR(position.y - referencePosition.y, top, 0.05);
+}
+
+TEST(Printing, PrintedContentUsesCSSUnits)
+{
+    // 1in = 96px = 72pt.
+    expectFirstCharacterOffset(@"@page { margin: 0 } div { margin-left: 1in; padding-top: 1in }", @"@page { margin: 0 }", 72, 72);
+}
+
+static CGSize drawnPDFPageSize(NSString *html)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+    [webView synchronouslyLoadHTMLString:html];
+
+    RetainPtr<_WKFrameHandle> mainFrame = [webView mainFrame].info._handle;
+    __block bool computedPages = false;
+    [webView _computePagesForPrinting:mainFrame.get() completionHandler:^{
+        computedPages = true;
+    }];
+    TestWebKitAPI::Util::run(&computedPages);
+
+    RetainPtr data = [webView _drawPagesToPDFSynchronouslyForTesting:mainFrame.get() pageCount:1];
+    EXPECT_NOT_NULL(data.get());
+    if (!data)
+        return CGSizeZero;
+    RetainPtr document = adoptNS([[TestPDFDocument alloc] initFromData:data.get()]);
+    EXPECT_EQ([document pageCount], 1);
+    return [[document pageAtIndex:0] bounds].size;
+}
+
+TEST(Printing, DrawnPDFPagesArePaperSized)
+{
+    // The testing SPI prints on US Letter paper. The wide page is shrunk to fit.
+    for (NSString *html in @[ @"<body>Hello</body>", @"<body style='margin: 0'><div style='width: 1000px'>Hello</div></body>" ]) {
+        auto size = drawnPDFPageSize(html);
+        EXPECT_NEAR(size.width, 612, 1);
+        EXPECT_NEAR(size.height, 792, 1);
+    }
+}
+#endif // HAVE(PDFKIT)
+
+@implementation TestPDFPrintDelegate {
+    NSUInteger _printFrameCallCount;
+}
+
+- (void)_webView:(WKWebView *)webView printFrame:(_WKFrameHandle *)frame pdfFirstPageSize:(CGSize)size completionHandler:(void (^)(void))completionHandler
+{
+    completionHandler();
+    ++_printFrameCallCount;
+}
+
+- (void)waitForPrintFrameCall
+{
+    while (!_printFrameCallCount)
+        TestWebKitAPI::Util::spinRunLoop();
+}
+
+- (NSUInteger)printFrameCallCount
+{
+    return _printFrameCallCount;
+}
+
+@end
+
+using namespace TestWebKitAPI;
+
+NSURLRequest *PrintWithJSExecutionOptionTests::namedPDFRequest(NSString *resourceName)
+{
+    return [NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:resourceName withExtension:@"pdf"]];
+}
+
+NSURLRequest *PrintWithJSExecutionOptionTests::pdfRequest()
+{
+    return namedPDFRequest(@"test_print");
+}
+
+NSURLRequest *PrintWithJSExecutionOptionTests::openActionPDFRequest()
+{
+    return namedPDFRequest(@"test_print_openaction");
+}
+
+std::string PrintWithJSExecutionOptionTests::testNameGenerator(testing::TestParamInfo<bool> info)
+{
+    return std::string { "allowsContentJavascript_is_" } + (info.param ? "true" : "false");
+}
+
+void PrintWithJSExecutionOptionTests::runTest(WKWebView *webView, NSURLRequest *request)
+{
+    RetainPtr delegate = adoptNS([TestPDFPrintDelegate new]);
+    [webView setUIDelegate:delegate];
+
+    RetainPtr preferences = adoptNS([[WKWebpagePreferences alloc] init]);
+    [preferences setAllowsContentJavaScript:allowsContentJavascript()];
+
+    [webView synchronouslyLoadRequest:request preferences:preferences];
+
+    [delegate waitForPrintFrameCall];
+}
+
+void PrintWithJSExecutionOptionTests::runNonPrintingOpenActionTest(WKWebView *webView)
+{
+    RetainPtr delegate = adoptNS([TestPDFPrintDelegate new]);
+    [webView setUIDelegate:delegate];
+
+    RetainPtr preferences = adoptNS([[WKWebpagePreferences alloc] init]);
+    [preferences setAllowsContentJavaScript:allowsContentJavascript()];
+
+    for (NSString *resourceName in @[ @"test_openaction_destination", @"test_openaction_goto", @"test_openaction_nonprint" ])
+        [webView synchronouslyLoadRequest:namedPDFRequest(resourceName) preferences:preferences];
+
+    [webView synchronouslyLoadRequest:openActionPDFRequest() preferences:preferences];
+    [delegate waitForPrintFrameCall];
+
+    EXPECT_EQ([delegate printFrameCallCount], 1u);
+}
+
+TEST_P(PrintWithJSExecutionOptionTests, PDFWithWindowPrintEmbeddedJS)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400)]);
+    runTest(webView, pdfRequest());
+}
+
+TEST_P(PrintWithJSExecutionOptionTests, PDFWithOpenActionPrintEmbeddedJS)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400)]);
+    runTest(webView, openActionPDFRequest());
+}
+
+TEST_P(PrintWithJSExecutionOptionTests, PDFWithNonPrintingOpenActionDoesNotPrint)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400)]);
+    runNonPrintingOpenActionTest(webView);
+}
+
+INSTANTIATE_TEST_SUITE_P(Printing, PrintWithJSExecutionOptionTests, testing::Bool(), &TestWebKitAPI::PrintWithJSExecutionOptionTests::testNameGenerator);
+#endif // PLATFORM(MAC)

@@ -1,0 +1,11 @@
+Verifies that long pressing an image inside a JavaScript link presents a context menu. To manually test, long press on the image.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Presented context menu
+PASS Dismissed context menu
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

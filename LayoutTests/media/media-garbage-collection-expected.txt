@@ -1,0 +1,44 @@
+Test 1:
+Test that a never loaded media element can be collected
+EXPECTED (weakVideo.wasCollected == 'true') OK
+
+Test 2:
+Test that the media element is not collected between load() and "loadstart"
+EVENT(loadstart)
+EXPECTED (weakVideo.wasCollected == 'false') OK
+
+Test 3:
+Test that the media element is not collected during playback
+EVENT(playing)
+EVENT(timeupdate)
+EXPECTED (weakVideo.wasCollected == 'false') OK
+
+Test 4:
+Test that a paused media element will be collected, even if it has an event listener
+EVENT(suspend)
+EXPECTED (weakVideo.wasCollected == 'true') OK
+
+Test 5:
+Test that an ended media element will be collected, even if it has an event listener
+EVENT(canplay)
+EVENT(seeked)
+EVENT(ended)
+EXPECTED (weakVideo.wasCollected == 'true') OK
+
+Test 6:
+Test that an interrupted media element will not be collected
+EVENT(canplay)
+EVENT(timeupdate)
+RUN(internals.beginMediaSessionInterruption("System"))
+EVENT(pause)
+EXPECTED (weakVideo.wasCollected == 'false') OK
+RUN(internals.endMediaSessionInterruption("System"))
+
+Test 7:
+Test that a media element will be collected after it is unloaded
+EVENT(canplay)
+EVENT(emptied)
+EXPECTED (weakVideo.wasCollected == 'true') OK
+
+END OF TEST
+

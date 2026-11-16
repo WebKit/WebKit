@@ -1,0 +1,20 @@
+
+PASS Check that src: local(A) dummy() is invalid
+PASS Check that src: dummy() local(A) is invalid
+PASS Check that src: local(  A  ) is valid
+PASS Check that src: local(A B) is valid
+PASS Check that src: local(A    B) is valid
+PASS Check that src: local(   A  B   ) is valid
+PASS Check that src: local(default) is invalid
+PASS Check that src: local(inherit) is invalid
+PASS Check that src: local(revert) is invalid
+PASS Check that src: local(unset) is invalid
+PASS Check that src: local(default A) is valid
+PASS Check that src: local(inherit A) is valid
+PASS Check that src: local(revert A) is valid
+PASS Check that src: local(unset A) is valid
+PASS Check that src: local("default") is valid
+PASS Check that src: local("inherit") is valid
+PASS Check that src: local("revert") is valid
+PASS Check that src: local("unset") is valid
+

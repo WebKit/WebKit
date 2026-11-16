@@ -1,0 +1,15 @@
+<!doctype html>
+<html>
+<script src=../resources/js-test.js></script>
+<body>
+<script>
+description("Test that the promise return by startRendering() is from the right global");
+frame = document.createElement('iframe');
+document.body.appendChild(frame);
+context = new frame.contentWindow.OfflineAudioContext({ length: 1, sampleRate: 48000 });
+promise = context.startRendering();
+shouldNotBe("promise.constructor", "window.Promise");
+shouldBe("promise.constructor", "frame.contentWindow.Promise");
+</script>
+</body>
+</html>

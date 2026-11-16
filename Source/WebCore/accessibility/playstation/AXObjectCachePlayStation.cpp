@@ -1,0 +1,163 @@
+/*
+ * Copyright (C) 2023 Sony Interactive Entertainment Inc.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE COMPUTER, INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE COMPUTER, INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#include "config.h"
+#include "AXObjectCache.h"
+
+#include "AXNotifications.h"
+#include "AccessibilityObject.h"
+#include "Chrome.h"
+#include "ChromeClient.h"
+#include "DocumentPage.h"
+#include "DocumentView.h"
+#include "FrameDestructionObserverInlines.h"
+#include "HTMLSelectElement.h"
+#include "LocalFrame.h"
+#include "NodeDocument.h"
+#include "Page.h"
+#include "RenderView.h"
+
+namespace WebCore {
+
+void AXObjectCache::attachWrapper(AccessibilityObject& object)
+{
+    auto wrapper = adoptRef(*new AccessibilityObjectWrapper());
+    object.setWrapper(wrapper.ptr());
+}
+
+void AXObjectCache::detachWrapper(AXCoreObject*, AccessibilityDetachmentType)
+{
+}
+
+static AXCoreObject* notifyChildrenSelectionChange(AXCoreObject* object)
+{
+    // Only list boxes supported so far.
+    if (!object || !object->isListBox())
+        return object;
+
+    // Only support HTML select elements so far (ARIA selectors not supported).
+    Node* node = object->node();
+    if (!is<HTMLSelectElement>(node))
+        return object;
+
+    // Find the item where the selection change was triggered from.
+    HTMLSelectElement& select = downcast<HTMLSelectElement>(*node);
+    int changedItemIndex = select.activeSelectionStartListIndex();
+
+    const AccessibilityObject::AccessibilityChildrenVector& items = object->children();
+    if (changedItemIndex < 0 || changedItemIndex >= static_cast<int>(items.size()))
+        return object;
+    return items.at(changedItemIndex).ptr();
+}
+
+static AXNotification checkInteractableObjects(AXCoreObject* object)
+{
+    if (!object->isEnabled())
+        return AXNotification::PressDidFail;
+
+    if (object->isTextControl() && !object->canSetValueAttribute()) // Also determine whether it is readonly
+        return AXNotification::PressDidFail;
+
+    return AXNotification::PressDidSucceed;
+}
+
+void AXObjectCache::postPlatformNotification(AccessibilityObject& object, AXNotification notification)
+{
+    if (!document()
+        || !!object.document()
+        || !object.document()->view()
+        || object.document()->view()->layoutContext().layoutState()
+        || object.document()->childNeedsStyleRecalc())
+        return;
+
+    RefPtr protectedObject = object;
+    switch (notification) {
+    case AXNotification::SelectedChildrenChanged:
+        protectedObject = downcast<AccessibilityObject>(notifyChildrenSelectionChange(protectedObject.get()));
+        break;
+    case AXNotification::PressDidSucceed:
+        notification = checkInteractableObjects(protectedObject.get());
+        break;
+    default:
+        break;
+    }
+
+    ChromeClient& client = document()->frame()->page()->chrome().client();
+    client.postAccessibilityNotification(*protectedObject, notification);
+}
+
+void AXObjectCache::nodeTextChangePlatformNotification(AccessibilityObject* object, AXTextChange textChange, unsigned offset, const String& text)
+{
+    if (!document()
+        || !object
+        || !object->document()
+        || !object->document()->view()
+        || object->document()->view()->layoutContext().layoutState()
+        || object->document()->childNeedsStyleRecalc())
+        return;
+    ChromeClient& client = document()->frame()->page()->chrome().client();
+    client.postAccessibilityNodeTextChangeNotification(object, textChange, offset, text);
+}
+
+void AXObjectCache::frameLoadingEventPlatformNotification(RenderView* renderView, AXLoadingEvent loadingEvent)
+{
+    if (!renderView || !document())
+        return;
+
+    RefPtr object = getOrCreate(*renderView);
+    if (!object
+        || !object->document()
+        || !object->document()->view()
+        || object->document()->view()->layoutContext().layoutState()
+        || object->document()->childNeedsStyleRecalc())
+        return;
+    ChromeClient& client = document()->frame()->page()->chrome().client();
+    client.postAccessibilityFrameLoadingEventNotification(object.get(), loadingEvent);
+}
+
+void AXObjectCache::handleScrolledToAnchor(const Node& scrolledToNode)
+{
+    if (RefPtr object = AccessibilityObject::firstAccessibleObjectFromNode(&scrolledToNode))
+        postPlatformNotification(*object, AXNotification::ScrolledToAnchor);
+}
+
+void AXObjectCache::platformHandleFocusedUIElementChanged(AccessibilityObject*, AccessibilityObject* newFocus)
+{
+    if (!newFocus)
+        return;
+
+    Page* page = newFocus->page();
+    if (!page || !page->chrome().platformPageClient())
+        return;
+
+    if (RefPtr focusedObject = focusedObjectForPage(page))
+        postPlatformNotification(*focusedObject, AXNotification::FocusedUIElementChanged);
+}
+
+void AXObjectCache::platformPerformDeferredCacheUpdate()
+{
+}
+
+} // namespace WebCore

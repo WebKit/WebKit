@@ -1,0 +1,7 @@
+X
+
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT rect offsetX/Y is relative to the root svg Test timed out
+PASS tspan offsetX/Y is relative to the root svg
+

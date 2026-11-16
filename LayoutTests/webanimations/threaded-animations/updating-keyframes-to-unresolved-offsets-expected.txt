@@ -1,0 +1,3 @@
+
+PASS Updating an accelerated animation to use unresolved offset disables the accelerated animation.
+

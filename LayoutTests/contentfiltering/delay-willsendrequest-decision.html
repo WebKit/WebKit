@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<script>
+if (window.internals) {
+    var settings = window.internals.mockContentFilterSettings;
+    settings.enabled = true;
+    settings.willSendRequestDecisionDelay = 10;
+    settings.decisionPoint = "afterWillSendRequest";
+    settings.decision = "allow";
+}
+</script>
+<iframe src="resources/pass.html"></iframe>

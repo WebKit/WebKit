@@ -1,0 +1,3 @@
+Test loadURL requests are succesfully attributed as app initiated.
+PASS successfully loaded only app initiated requests
+

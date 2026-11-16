@@ -1,0 +1,11 @@
+A compromised WebContent process must not be able to put a file type on the drag pasteboard via WebPageProxy::StartDrag.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS "public.file-url" was rejected
+PASS "public.utf8-plain-text" was accepted
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

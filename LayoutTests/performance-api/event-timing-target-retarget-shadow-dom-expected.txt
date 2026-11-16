@@ -1,0 +1,11 @@
+Tests that PerformanceEventTiming.target is retargeted out of user-agent shadow DOM even without event listeners.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS 'mouseup' entry has correctly retargeted target: INPUT#test-input
+PASS 'click' entry has correctly retargeted target: INPUT#test-input
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

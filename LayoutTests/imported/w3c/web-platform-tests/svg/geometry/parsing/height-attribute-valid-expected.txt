@@ -1,0 +1,6 @@
+
+PASS height="0" should be a valid attribute value
+PASS height="5" should be a valid attribute value
+PASS height="5px" should be a valid attribute value
+PASS height="5%" should be a valid attribute value
+

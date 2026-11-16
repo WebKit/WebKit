@@ -1,0 +1,19 @@
+<style>
+rt, embed {
+  height: 4px;
+  line-height: 100vh;
+}
+</style>
+
+<script>
+if (window.testRunner)
+  testRunner.dumpAsText();
+
+window.addEventListener("load", function () {
+  document.body.offsetHeight;
+  document.all[6].appendChild(rt);
+  document.body.offsetHeight;
+  appendToThis.appendChild(rt);
+});
+</script><rt id=rt>PASS if no crash or assert</rt><ruby id=foo><span id=appendToThis></span><embed type="unspecified"></embed>
+</ruby>

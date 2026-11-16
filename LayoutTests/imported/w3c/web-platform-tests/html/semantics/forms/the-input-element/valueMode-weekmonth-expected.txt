@@ -1,0 +1,6 @@
+
+PASS value IDL attribute of input type month without value attribute
+PASS value IDL attribute of input type month with value attribute
+PASS value IDL attribute of input type week without value attribute
+PASS value IDL attribute of input type week with value attribute
+

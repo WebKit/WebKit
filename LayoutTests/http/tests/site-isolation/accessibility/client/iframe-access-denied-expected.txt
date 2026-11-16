@@ -1,0 +1,9 @@
+This test ensures that an accessibility client can't reach the content of a site-isolated iframe when the UI process denies it access.
+
+Main frame button reachable: true
+Iframe heading reachable: false
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Before  After

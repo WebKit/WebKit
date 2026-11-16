@@ -1,0 +1,3 @@
+The node which receives a 'contextmenu' event should be the node hit-tested when determining which items to show.
+
+PASS: The node hit-tested for the context menu matches the node the contextmenu event was fired on.

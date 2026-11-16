@@ -1,0 +1,7 @@
+This is an ordinary HTML link
+
+THIS IS A LINK CREATED IN SVG
+
+PASS cssRules
+PASS Each cssRule
+

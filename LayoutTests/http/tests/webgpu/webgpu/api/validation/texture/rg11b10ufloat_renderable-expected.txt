@@ -1,0 +1,8 @@
+
+PASS :create_texture:sampleCount=1
+PASS :create_texture:sampleCount=4
+PASS :begin_render_pass_single_sampled:
+PASS :begin_render_pass_msaa_and_resolve:
+PASS :begin_render_bundle_encoder:
+PASS :create_render_pipeline:
+

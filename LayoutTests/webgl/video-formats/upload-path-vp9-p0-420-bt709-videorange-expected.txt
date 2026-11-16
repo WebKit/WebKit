@@ -1,0 +1,19 @@
+The upload path of a plain texImage2D (RGBA/UNSIGNED_BYTE, level 0) in WebGL 2 of vp9-p0-420-bt709-videorange.webm, from the video element and from VideoFrame(video): the default path with its reason and the pixel format (FourCC) given to the hardware path, the default, forced software and forced hardware uploads checked against the frame's own R'G'B' values (no colour management, no tone mapping), and forced hardware against forced software. A compressed pixel format is shown as the format it compresses. The pixel formats depend on the GPU and OS.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+vp9-p0-420-bt709-videorange.webm: vp9 yuv420p bt709/videorange/bt709/bt709
+PASS vp9-p0-420-bt709-videorange.webm <video> default path: hardware (direct), pixel format 420v
+PASS vp9-p0-420-bt709-videorange.webm <video> software path: software (forced)
+PASS vp9-p0-420-bt709-videorange.webm <video> hardware path: hardware (direct)
+PASS vp9-p0-420-bt709-videorange.webm <video> hardware vs software: match
+PASS vp9-p0-420-bt709-videorange.webm VideoFrame(video) (format NV12) default path: hardware (direct), pixel format 420v
+PASS vp9-p0-420-bt709-videorange.webm VideoFrame(video) (format NV12) software path: software (forced)
+PASS vp9-p0-420-bt709-videorange.webm VideoFrame(video) (format NV12) hardware path: hardware (direct)
+PASS vp9-p0-420-bt709-videorange.webm VideoFrame(video) (format NV12) hardware vs software: match
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

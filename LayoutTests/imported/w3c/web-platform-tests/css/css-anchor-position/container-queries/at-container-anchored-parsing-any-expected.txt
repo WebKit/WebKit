@@ -1,0 +1,9 @@
+
+FAIL Query condition should be valid: anchored(fallback: any) assert_equals: expected "true" but got ""
+FAIL Query condition should be valid: anchored(fallback: any any) assert_equals: expected "true" but got ""
+FAIL Query condition should be valid: anchored(fallback: any top) assert_equals: expected "true" but got ""
+FAIL Query condition should be valid: anchored(fallback: center any) assert_equals: expected "true" but got ""
+FAIL Query condition should be valid: anchored(fallback: any self-start) assert_equals: expected "true" but got ""
+FAIL Query condition should be valid: anchored(fallback: inline-end any) assert_equals: expected "true" but got ""
+PASS Query condition should be valid but unknown: anchored(fallback: any none)
+

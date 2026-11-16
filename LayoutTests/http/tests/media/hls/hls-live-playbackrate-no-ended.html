@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>hls-live-playbackrate-no-ended</title>
+    <script src=../../media-resources/video-test.js></script>
+    <script>
+    // A live (infinite-duration) HLS stream must not fire 'ended' when playback
+    // reaches the live edge after the playbackRate has been changed. Reaching the
+    // live edge should stall the element (fire 'waiting'); it must never end the
+    // stream or demote the infinite duration to a finite value. Both invariants
+    // are enforced across every phase below.
+    window.addEventListener('load', async event => {
+        findMediaElement();
+
+        failTestIn(30000);
+
+        waitForEventAndFail('ended');
+        video.addEventListener('durationchange', () => {
+            if (video.duration !== Infinity)
+                failTest(`duration demoted to finite value ${video.duration}`);
+        });
+
+        run('video.src = "../resources/hls/bip-bop-live.m3u8"');
+        await waitFor(video, 'canplay');
+
+        // A live stream reports an infinite duration.
+        testExpected('video.duration', Infinity, '==');
+
+        // Phase 1: pause, change the rate, then resume and run into the live edge.
+        consoleWrite('');
+        consoleWrite('Phase 1: pause, change playbackRate, resume into the live edge.');
+        run('video.play()');
+        await waitFor(video, 'playing');
+        run('video.pause()');
+        await waitFor(video, 'pause');
+        run('video.playbackRate = 2');
+        run('video.currentTime = video.seekable.end(0) - 0.5');
+        await waitFor(video, 'seeked');
+        run('video.play()');
+        await waitFor(video, 'waiting');
+        testExpected('video.ended', false, '==');
+        testExpected('video.duration', Infinity, '==');
+
+        // Phase 2: without pausing, play forward through the final samples into the
+        // live edge. Unlike phase 1's seek-and-stall, this drives AVFoundation to
+        // report end-of-media, which is the trigger for the spurious 'ended'. Once the
+        // stream correctly stays live there is no distinct event to await, so dwell
+        // briefly and confirm no 'ended' fired and the duration was not demoted.
+        consoleWrite('');
+        consoleWrite('Phase 2: play forward into the live edge.');
+        run('video.currentTime = video.seekable.end(0) - 1');
+        await waitFor(video, 'seeked');
+        run('video.play()');
+        await sleepFor(3000);
+        testExpected('video.ended', false, '==');
+        testExpected('video.duration', Infinity, '==');
+
+        endTest();
+    });
+    </script>
+</head>
+<body>
+    <video id="video" controls muted></video>
+</body>
+</html>

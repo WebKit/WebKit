@@ -1,0 +1,43 @@
+Page Up Page Down Page Left Page Right
+Page Left Page Right
+Page Up Page Down
+Block Start Block End Inline Start Inline End
+Inline Start (RTL) Inline End (RTL)
+Block Start (VW) Block End (VW)
+
+FAIL page-up command scrolls up assert_less_than: Scroll position should decrease expected a number less than 400 but got 400
+FAIL page-down command scrolls down assert_greater_than: Scroll position should increase expected a number greater than 0 but got 0
+FAIL page-left command scrolls left assert_less_than: Scroll position should decrease expected a number less than 400 but got 400
+FAIL page-right command scrolls right assert_greater_than: Scroll position should increase expected a number greater than 0 but got 0
+PASS page-up command doesn't affect horizontal scroll
+PASS page-left command doesn't affect vertical scroll
+FAIL page-right works on horizontal-only container assert_greater_than: Horizontal scroll should increase expected a number greater than 0 but got 0
+FAIL page-down works on vertical-only container assert_greater_than: Vertical scroll should increase expected a number greater than 0 but got 0
+FAIL page-block-end scrolls down in horizontal writing mode assert_greater_than: Scroll position should increase expected a number greater than 0 but got 0
+FAIL page-block-start scrolls up in horizontal writing mode assert_less_than: Scroll position should decrease expected a number less than 400 but got 400
+FAIL page-inline-end scrolls right in LTR assert_greater_than: Scroll position should increase expected a number greater than 0 but got 0
+FAIL page-inline-start scrolls left in LTR assert_less_than: Scroll position should decrease expected a number less than 400 but got 400
+FAIL page-inline-end works in RTL container assert_not_equals: Scroll position should change got disallowed value 0
+FAIL scroll command is case-insensitive: page-up assert_less_than: Scroll should work with page-up expected a number less than 400 but got 400
+FAIL scroll command is case-insensitive: PAGE-UP assert_less_than: Scroll should work with PAGE-UP expected a number less than 400 but got 400
+FAIL scroll command is case-insensitive: PaGe-Up assert_less_than: Scroll should work with PaGe-Up expected a number less than 400 but got 400
+PASS preventDefault stops scroll command
+PASS scroll command requires valid commandfor target
+PASS scroll command on non-scrollable element does nothing
+FAIL scroll amount is approximately one page assert_greater_than: Scroll distance should be approximately one page expected a number greater than 148 but got 0
+PASS scroll command with non-existent commandfor target doesn't throw
+PASS scroll command with empty commandfor doesn't throw
+PASS scroll command with whitespace commandfor doesn't throw
+PASS scroll command with disconnected target element doesn't throw
+PASS scroll command targeting self doesn't throw
+PASS scroll command on display:none element does nothing
+PASS scroll command handles elements with unusual document state
+PASS disabled button doesn't trigger scroll command
+FAIL multiple buttons can target same scroll container assert_greater_than: First button should scroll expected a number greater than 0 but got 0
+PASS scroll command at top boundary doesn't throw
+PASS scroll command at bottom boundary doesn't throw
+PASS invalid scroll command value doesn't trigger scroll
+PASS empty command attribute doesn't trigger scroll
+PASS scroll command on overflow:visible element does nothing
+PASS scroll command on overflow:clip element does nothing
+

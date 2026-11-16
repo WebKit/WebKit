@@ -1,0 +1,4 @@
+CONSOLE MESSAGE: promises created
+CONSOLE MESSAGE: the end
+CONSOLE MESSAGE: fuzz-149183515-reduced.html
+

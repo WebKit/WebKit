@@ -1,0 +1,11 @@
+
+PASS font-format() function accepts a known format
+PASS font-format() function doesn't accept an unknown format
+PASS font-format() function doesn't accept a format list
+PASS font-format() function doesn't accept a string.
+PASS font-tech() function accepts a known technology
+PASS font-tech() function doesn't accept singular feature-* form for technology
+PASS font-tech() function doesn't accept an unknown technology
+PASS font-tech() function doesn't accept a technology list
+PASS font-tech() function doesn't accept a string.
+

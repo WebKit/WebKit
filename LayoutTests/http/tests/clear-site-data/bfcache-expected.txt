@@ -1,0 +1,11 @@
+Tests that the Clear-Site-Data can be used to clear the back/forward cache.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+pageshow - not from cache
+PASS wasRestoredFromPageCache is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

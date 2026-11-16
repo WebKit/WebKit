@@ -1,0 +1,13 @@
+Pan scrolling
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Start pan scrolling
+Scroll down
+Scroll right
+Scroll up left
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

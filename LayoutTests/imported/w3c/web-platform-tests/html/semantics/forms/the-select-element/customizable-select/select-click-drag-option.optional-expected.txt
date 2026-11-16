@@ -1,0 +1,6 @@
+
+
+PASS Clicking the invoker button and dragging to an option should choose that option and close the picker.
+PASS mouse: Releasing the pointer on an option positioned on top of the invoker button should not close the picker.
+FAIL touch: Releasing the pointer on an option positioned on top of the invoker button should not close the picker. assert_true: select should still be open after pointerUp() without moving the pointer. expected true got false
+

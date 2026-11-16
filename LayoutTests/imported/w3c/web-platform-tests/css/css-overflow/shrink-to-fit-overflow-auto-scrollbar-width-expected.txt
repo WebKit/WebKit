@@ -1,0 +1,6 @@
+
+
+PASS Float with overflow-y:auto includes scrollbar in shrink-to-fit width
+PASS Inline-block with overflow-y:auto includes scrollbar in shrink-to-fit width
+PASS Abspos with overflow-y:auto includes scrollbar in shrink-to-fit width
+

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>media-source-real-webm-track-enabled</title>
+    <script src="webm-generator.js"></script>
+    <script src="../video-test.js"></script>
+    <script>
+    // Real-WebM equivalent of media-source-track-enabled.html
+    // Tests that video tracks are correctly created and activeSourceBuffers populated.
+
+    var source;
+    var sourceBuffer;
+
+    async function runTest() {
+        findMediaElement();
+
+        if (!MediaSource.isTypeSupported(WebM.VIDEO_TYPE)) {
+            consoleWrite('SKIPPED: ' + WebM.VIDEO_TYPE + ' is not supported');
+            return;
+        }
+
+        source = new MediaSource();
+        run('video.src = URL.createObjectURL(source)');
+        await waitFor(source, 'sourceopen');
+
+        run(`sourceBuffer = source.addSourceBuffer('${WebM.VIDEO_TYPE}')`);
+
+        var initData = WebM.initSegment({
+            tracks: [{ id: 1, type: 'video' }]
+        });
+        sourceBuffer.appendBuffer(initData);
+        await waitFor(sourceBuffer, 'updateend');
+
+        testExpected('sourceBuffer.videoTracks.length', 1);
+        testExpected('sourceBuffer.videoTracks[0].selected', true);
+        testExpected('source.activeSourceBuffers.length', 1);
+    }
+
+    window.addEventListener('load', event => {
+        runTest().then(endTest).catch(failTest);
+    });
+    </script>
+</head>
+<body>
+    <video></video>
+</body>
+</html>

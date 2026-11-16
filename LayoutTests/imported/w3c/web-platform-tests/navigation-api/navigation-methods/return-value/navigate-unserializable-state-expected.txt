@@ -1,0 +1,4 @@
+
+PASS navigate() with an unserializable state (WritableStream)
+PASS navigate() with an unserializable state (SharedArrayBuffer)
+

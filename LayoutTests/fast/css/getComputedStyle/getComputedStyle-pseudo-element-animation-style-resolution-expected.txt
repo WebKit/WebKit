@@ -1,0 +1,5 @@
+Text
+
+PASS No style resolution for a pseudo-element without animations when a sibling is invalid.
+PASS Animation on a pseudo-element forces style resolution in getComputedStyle().
+

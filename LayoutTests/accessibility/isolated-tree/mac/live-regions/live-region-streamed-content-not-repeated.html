@@ -1,0 +1,120 @@
+<!DOCTYPE HTML><!-- webkit-test-runner [ IsAriaLiveRegionManagementEnabled=true IsAccessibilityIsolatedTreeEnabled=true ] -->
+<html>
+<head>
+<meta http-equiv="content-language" content="en">
+<script src="../../../../resources/accessibility-helper.js"></script>
+<script src="../../../../resources/js-test.js"></script>
+</head>
+<body>
+
+<div id="region" aria-live="polite"></div>
+<div id="sentinel" aria-live="polite"></div>
+
+<script>
+var output = "This tests that a live region streaming content in, the way an AI chat response is rendered, announces each piece of text only once. Re-rendering the region backs already-announced text with new accessibility objects, spreads it across a different number of objects as markup resolves, coalesces it into fewer objects once the response is complete, and momentarily leaves the region empty. Each of those used to make the text look new and replay the whole response from the top.\n\n";
+
+var announcements = [];
+var region = document.getElementById("region");
+var chunk;
+
+function notificationCallback(object, notification, userInfo) {
+    if (notification == "AXAnnouncementRequested")
+        announcements.push(userInfo["AXAnnouncementKey"]);
+}
+
+// Re-renders the whole region, so every piece of text is backed by brand new accessibility objects,
+// then resolves once the announcement for that chunk has been delivered.
+async function streamChunk(html) {
+    var announcementCount = announcements.length;
+    region.innerHTML = html;
+    await waitFor(() => announcements.length > announcementCount);
+    chunk = announcements[announcements.length - 1];
+}
+
+// Empties the region and waits for the accessibility tree to actually observe the empty state, which
+// is what happens on a real page that re-renders by clearing the container and refilling it later.
+async function emptyRegion() {
+    var buildCount = internals.liveRegionSnapshotBuildCount();
+    region.innerHTML = "";
+    await waitFor(() => internals.liveRegionSnapshotBuildCount() > buildCount);
+}
+
+// Re-renders the region without adding any text, then changes a second live region. Once the second
+// region's announcement arrives, anything the re-render would have announced has already been
+// delivered, which makes "announced nothing" a deterministic thing to check.
+async function expectSilentRerender(html, sentinelText) {
+    var announcementCount = announcements.length;
+    region.innerHTML = html;
+    document.getElementById("sentinel").textContent = sentinelText;
+    await waitFor(() => announcements.length > announcementCount);
+    output += expect(`announcements[announcements.length - 1].includes("${sentinelText}")`, "true");
+    output += expect("announcements.length", `${announcementCount + 1}`);
+}
+
+async function runTest() {
+    accessibilityController.addNotificationListener(notificationCallback);
+    accessibilityController.accessibleElementById("region");
+    // The live region manager is initialized at the end of a cache update, so let one run before
+    // mutating anything. Without this the region can be registered with the first chunk already in
+    // place, leaving nothing for that chunk to announce.
+    await new Promise(resolve => setTimeout(resolve, 0));
+
+    await streamChunk("<p>You must fork</p>");
+    output += expect("chunk.includes('You must fork')", "true");
+
+    // Text grows within the same paragraph. Only the new words should be announced.
+    await streamChunk("<p>You must fork the repo</p>");
+    output += expect("chunk.includes('the repo')", "true");
+    output += expect("chunk.includes('You must')", "false");
+
+    // This chunk completes a word that the previous one had cut in half. The whole word should be
+    // announced, rather than a fragment of it or a repeat of the text before it.
+    await streamChunk("<p>You must fork the repository</p>");
+    output += expect("chunk.includes('repository')", "true");
+    output += expect("chunk.includes('You must fork')", "false");
+
+    // Bold resolves, splitting one text node into three. Only the words added at the end are new.
+    await streamChunk("<p><span>You must fork the repository </span><b>quickly</b><span> and clone it.</span></p>");
+    output += expect("chunk.includes('quickly and clone it.')", "true");
+    output += expect("chunk.includes('repository')", "false");
+
+    // The region goes empty before the next chunk arrives. The text that comes back must not be
+    // treated as new just because the region was briefly empty.
+    await emptyRegion();
+    await streamChunk("<p><span>You must fork the repository </span><b>quickly</b><span> and clone it.</span></p><p>Then enable submodules.</p>");
+    output += expect("chunk.includes('Then enable submodules.')", "true");
+    output += expect("chunk.includes('quickly')", "false");
+
+    // Streaming finishes, so the many small nodes are coalesced into one node holding exactly the same
+    // text. Nothing was added, so nothing should be announced.
+    await emptyRegion();
+    await expectSilentRerender("<p>You must fork the repository quickly and clone it. Then enable submodules.</p>", "Sentinel changed.");
+
+    // Re-rendering again without changing any text should also stay silent.
+    await expectSilentRerender("<p>You must fork the repository quickly and clone it. Then enable submodules.</p>", "Sentinel changed again.");
+
+    // Text edited in the middle rather than added at the end. The region is re-rendered, so the
+    // untouched paragraphs are backed by new objects too, but only the edited one should be announced.
+    await streamChunk("<p>Alpha paragraph.</p><p>Beta paragraph.</p><p>Gamma paragraph.</p>");
+    await streamChunk("<p>Alpha paragraph.</p><p>Beta paragraph edited.</p><p>Gamma paragraph.</p>");
+    output += expect("chunk.includes('Beta paragraph edited.')", "true");
+    output += expect("chunk.includes('Alpha')", "false");
+    output += expect("chunk.includes('Gamma')", "false");
+
+    debug(output);
+    accessibilityController.removeNotificationListener();
+    finishJSTest();
+}
+
+if (window.accessibilityController && window.internals) {
+    window.jsTestIsAsync = true;
+
+    runTest().catch(error => {
+        debug(output);
+        testFailed(`runTest() threw: ${error}`);
+        finishJSTest();
+    });
+}
+</script>
+</body>
+</html>

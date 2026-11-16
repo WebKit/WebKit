@@ -1,0 +1,55 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/widgets/button-layout/WEB_FEATURES.yml
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/widgets/button-layout/anonymous-button-content-box-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/widgets/button-layout/anonymous-button-content-box-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/widgets/button-layout/anonymous-button-content-box.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/widgets/button-layout/block-in-inline-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/widgets/button-layout/block-in-inline-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/widgets/button-layout/block-in-inline.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/widgets/button-layout/button-dynamic-content-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/widgets/button-layout/button-dynamic-content-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/widgets/button-layout/button-dynamic-content.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/widgets/button-layout/computed-style.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/widgets/button-layout/display-none-or-contents-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/widgets/button-layout/display-none-or-contents-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/widgets/button-layout/display-none-or-contents.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/widgets/button-layout/display-other.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/widgets/button-layout/flex.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/widgets/button-layout/grid.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/widgets/button-layout/inline-level-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/widgets/button-layout/inline-level-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/widgets/button-layout/inline-level.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/widgets/button-layout/input-fragmentation-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/widgets/button-layout/input-type-button-clip-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/widgets/button-layout/input-type-button-clip-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/widgets/button-layout/input-type-button-clip.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/widgets/button-layout/input-type-button-newline-2-expected-mismatch.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/widgets/button-layout/input-type-button-newline-2-mismatch.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/widgets/button-layout/input-type-button-newline-2.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/widgets/button-layout/input-type-button-newline-expected-mismatch.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/widgets/button-layout/input-type-button-newline-mismatch.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/widgets/button-layout/input-type-button-newline.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/widgets/button-layout/propagate-text-decoration-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/widgets/button-layout/propagate-text-decoration-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/widgets/button-layout/propagate-text-decoration.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/widgets/button-layout/scrollable-button-centering-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/widgets/button-layout/scrollable-button-centering-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/widgets/button-layout/scrollable-button-centering.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/widgets/button-layout/scrollbars-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/widgets/button-layout/scrollbars.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/widgets/button-layout/shrink-wrap.html

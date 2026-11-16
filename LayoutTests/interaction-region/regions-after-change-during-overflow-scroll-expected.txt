@@ -1,0 +1,4 @@
+PASS: before dragging, each of the 4 links has a region layer (found 4).
+PASS: the links were removed while the box was being dragged.
+PASS: after the box stops scrolling, only the remaining link has a region layer (found 1).
+

@@ -1,0 +1,5 @@
+Tests that an ImageBitmap in Offscreen without content does not crash.
+
+
+PASS offscreencanvas
+

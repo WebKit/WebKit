@@ -1,0 +1,75 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[% PROCESS "global/reason-descs.none.tmpl" %]
+
+[% isnew = bug.lastdiffed ? 0 : 1 %]
+
+[% Hook.process('start') %]
+
+[%+ PROCESS generate_diffs -%]
+
+[% FOREACH comment = new_comments %]
+
+[%- IF comment.count %]
+--- Comment #[% comment.count %] from [% comment.author.identity %] ---
+[% END %]
+[%+ comment.body_full({ is_bugmail => 1, wrap => 1 }) FILTER strip_control_chars %]
+[% END %]
+
+[% IF referenced_bugs.size %]
+
+Referenced [% terms.Bugs %]:
+
+[% FOREACH ref_bug = referenced_bugs %]
+[%+ urlbase %]show_bug.cgi?id=[% ref_bug.id %]
+[%+ "[" _ terms.Bug _ " " _ ref_bug.id _ "] " _ ref_bug.short_desc FILTER wrap_comment %]
+[% END %]
+[% END %]
+-- [%# Protect the trailing space of the signature marker %]
+You are receiving this mail because:
+[% SET reason_lines = [] %]
+[% FOREACH reason = reasons %]
+  [% reason_lines.push(reason_descs.$reason) IF reason_descs.$reason %]
+[% END %]
+[% FOREACH reason = reasons_watch %]
+  [% reason_lines.push(watch_reason_descs.$reason)
+       IF watch_reason_descs.$reason %]
+[% END %]
+[%+ reason_lines.join("\n") %]
+
+[% BLOCK generate_diffs %]
+  [% urlbase %]show_bug.cgi?id=[% bug.id %]
+[%+ last_changer = 0 %]
+[% IF isnew %]
+[%+ +%]
+[% END %]
+  [% FOREACH change = diffs %]
+    [% IF !isnew && change.who.id != last_changer %]
+      [% last_changer = change.who.id %]
+      [% IF change.blocker %]
+        [% terms.Bug %] [%+ bug.id %] depends on [% terms.bug %] [%+ change.blocker.id %], which changed state.
+
+[%+ terms.Bug %] [%+ change.blocker.id %] Summary: [% change.blocker.short_desc %]
+[%+ urlbase %]show_bug.cgi?id=[% change.blocker.id %]
+      [% ELSE %]
+
+[% change.who.identity %] changed:
+      [% END %]
+
+           What    |Removed                     |Added
+----------------------------------------------------------------------------
+[%+ END %][%# End of IF. This indentation is intentional! ~%]
+    [% PROCESS "email/bugmail-common.txt.tmpl"%]
+    [%~ IF isnew %]
+      [% format_columns(2, field_label _ ":", new_value) -%]
+    [% ELSE %]
+      [% format_columns(3, field_label, old_value, new_value) -%]
+    [% END %]
+  [% END -%]
+[% END %]

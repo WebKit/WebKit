@@ -1,0 +1,3 @@
+
+PASS precommitHandler traversal is not aborted by window.stop() before commit
+

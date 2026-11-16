@@ -1,0 +1,123 @@
+#!/usr/bin/env python3
+
+# Copyright (C) 2020-2022 Apple Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1.  Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer.
+# 2.  Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in the
+#     documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS "AS IS" AND
+# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS BE LIABLE FOR
+# ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+from __future__ import annotations
+
+import os
+import sys
+from typing import IO
+
+from webkitscmpy.local import Git
+from webkitscmpy import Commit
+from webkitscmpy.program.canonicalize import IdentifierTrailer
+
+
+def main(inputfile: IO[str], identifier_trailer: IdentifierTrailer) -> int:
+    REPOSITORY_PATH = os.environ.get('OLDPWD')
+    GIT_COMMIT = os.environ.get('GIT_COMMIT')
+
+    if not REPOSITORY_PATH:
+        sys.stderr.write('Failed to retrieve repository path\n')
+        return -1
+    if not GIT_COMMIT:
+        sys.stderr.write('Failed to retrieve git hash\n')
+        return -1
+
+    repository = Git(REPOSITORY_PATH)
+    commit = repository.commit(hash=GIT_COMMIT)
+    if not commit:
+        sys.stderr.write("Failed to find '{}' in the repository".format(GIT_COMMIT))
+        return -1
+    if not commit.identifier or not commit.branch:
+        sys.stderr.write("Failed to compute the identifier for '{}'".format(GIT_COMMIT))
+        return -1
+
+    rewrite_message(inputfile, sys.stdout, commit, identifier_trailer)
+    return 0
+
+
+def rewrite_message(inputfile: IO[str], outputfile: IO[str], commit: Commit, identifier_trailer: IdentifierTrailer) -> None:
+    lines = []
+    for line in inputfile.readlines():
+        lines.append(line.rstrip())
+
+    identifier_keys = {identifier_trailer.name, *identifier_trailer.aliases}
+    new_trailer = '{}: {}'.format(identifier_trailer.name, identifier_trailer.value_template.format(commit))
+
+    def is_identifier_trailer(line: str) -> bool:
+        key, sep, _ = line.partition(':')
+        return bool(sep) and key in identifier_keys
+
+    identifier_index = len(lines)
+    if identifier_index and Git.GIT_SVN_REVISION.match(lines[-1]):
+        identifier_index -= 1
+
+    # We're trying to cover cases where there is a space between the identifier
+    # trailer (Canonical link, Canonical-link, Identifier, etc.) and git-svn-id:
+    #     <commit message content>
+    #
+    #     Canonical link: ...
+    #     git-svn-id: ...
+    # OR
+    #     <commit message content>
+    #     Canonical link: ...
+    #
+    #     git-svn-id: ...
+    if identifier_index and is_identifier_trailer(lines[identifier_index - 1]):
+        lines[identifier_index - 1] = new_trailer
+        identifier_index = identifier_index - 2
+    else:
+        for index in [2, 3]:
+            if identifier_index - index > 0 and is_identifier_trailer(lines[identifier_index - index]):
+                del lines[identifier_index - index]
+                lines.insert(identifier_index - 1, new_trailer)
+                identifier_index = identifier_index - 2
+                break
+        else:
+            lines.insert(identifier_index, new_trailer)
+            identifier_index = identifier_index - 1
+
+    while identifier_index >= 0 and lines[identifier_index]:
+        if Commit.TRAILER_RE.match(lines[identifier_index]):
+            identifier_index -= 1
+        else:
+            lines.insert(identifier_index + 1, '')
+            break
+
+    # Turn multiple empty lines at the end of a commit into a single one
+    index = len(lines) - 1
+    while index and lines[index]:
+        index -= 1
+    index -= 1
+    while index and not lines[index]:
+        del lines[index]
+        index -= 1
+
+    for line in lines:
+        print(line, file=outputfile)
+
+
+if __name__ == '__main__':
+    trailer = IdentifierTrailer.from_json(os.environ['WEBKITSCMPY_CANONICALIZE_IDENTIFIER_TRAILER'])
+    sys.exit(main(sys.stdin, trailer))

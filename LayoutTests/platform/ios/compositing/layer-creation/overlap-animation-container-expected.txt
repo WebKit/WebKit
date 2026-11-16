@@ -1,0 +1,98 @@
+Before:
+(GraphicsLayer
+  (anchor 0.00 0.00)
+  (bounds 800.00 802.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 800.00 802.00)
+      (contentsOpaque 1)
+      (children 3
+        (GraphicsLayer
+          (position 18.00 120.00)
+          (bounds 100.00 100.00)
+          (contentsOpaque 1)
+          (transform [1.00 0.00 0.00 0.00] [0.00 1.00 0.00 0.00] [0.00 0.00 1.00 0.00] [0.00 -110.00 0.00 1.00])
+        )
+        (GraphicsLayer
+          (offsetFromRenderer width=-11.50 height=0)
+          (position 46.50 230.00)
+          (bounds 145.00 452.00)
+          (drawsContent 1)
+          (children 1
+            (GraphicsLayer
+              (position 22.50 11.00)
+              (bounds 100.00 100.00)
+              (contentsOpaque 1)
+              (transform [1.00 0.00 0.00 0.00] [0.00 1.00 0.00 0.00] [0.00 0.00 1.00 0.00] [0.00 0.00 -1.00 1.00])
+            )
+          )
+        )
+        (GraphicsLayer
+          (position 18.00 692.00)
+          (bounds 100.00 100.00)
+          (contentsOpaque 1)
+        )
+      )
+    )
+  )
+)
+
+After:
+(GraphicsLayer
+  (anchor 0.00 0.00)
+  (bounds 800.00 802.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 800.00 802.00)
+      (contentsOpaque 1)
+      (children 3
+        (GraphicsLayer
+          (position 18.00 120.00)
+          (bounds 100.00 100.00)
+          (contentsOpaque 1)
+          (transform [1.00 0.00 0.00 0.00] [0.00 1.00 0.00 0.00] [0.00 0.00 1.00 0.00] [0.00 -110.00 0.00 1.00])
+        )
+        (GraphicsLayer
+          (position 58.00 230.00)
+          (bounds 122.00 452.00)
+          (contentsOpaque 1)
+          (drawsContent 1)
+          (children 4
+            (GraphicsLayer
+              (position 11.00 11.00)
+              (bounds 100.00 100.00)
+              (contentsOpaque 1)
+              (transform [1.00 0.00 0.00 0.00] [0.00 1.00 0.00 0.00] [0.00 0.00 1.00 0.00] [0.00 0.00 -1.00 1.00])
+            )
+            (GraphicsLayer
+              (offsetFromRenderer width=-1 height=-1)
+              (position 10.00 120.00)
+              (bounds 102.00 102.00)
+              (drawsContent 1)
+              (transform [0.71 0.71 0.00 0.00] [-0.71 0.71 0.00 0.00] [0.00 0.00 1.00 0.00] [0.00 0.00 0.00 1.00])
+            )
+            (GraphicsLayer
+              (offsetFromRenderer width=-1 height=-1)
+              (position 10.00 230.00)
+              (bounds 102.00 102.00)
+              (drawsContent 1)
+              (transform [0.71 0.71 0.00 0.00] [-0.71 0.71 0.00 0.00] [0.00 0.00 1.00 0.00] [0.00 0.00 0.00 1.00])
+            )
+            (GraphicsLayer
+              (offsetFromRenderer width=-1 height=-1)
+              (position 10.00 340.00)
+              (bounds 102.00 102.00)
+              (drawsContent 1)
+            )
+          )
+        )
+        (GraphicsLayer
+          (position 18.00 692.00)
+          (bounds 100.00 100.00)
+          (contentsOpaque 1)
+        )
+      )
+    )
+  )
+)
+

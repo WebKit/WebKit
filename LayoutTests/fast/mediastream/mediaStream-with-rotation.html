@@ -1,0 +1,63 @@
+<!doctype html>
+<html>
+<head>
+    <title>MediaRecorder recording video with rotation</title>
+    <script src="../../resources/testharness.js"></script>
+    <script src="../../resources/testharnessreport.js"></script>
+</head>
+<body>
+<script>
+    async function record(stream, mimeType)
+    {
+        const recorder = new MediaRecorder(stream, { mimeType : mimeType });
+        const promise = new Promise((resolve, reject) => {
+            recorder.ondataavailable = (e) => {
+                recorder.stop();
+                resolve(e.data);
+            };
+            setTimeout(reject, 5000);
+        });
+        recorder.start(50);
+        return promise;
+    }
+
+    async function setVideo(t, obj)
+    {
+        const video = document.createElement('video');
+        video.muted = true;
+        video.srcObject = obj;
+        const watcher = new EventWatcher(t, video, [ 'loadedmetadata' ]);
+        await watcher.wait_for([ 'loadedmetadata' ]);
+        return video.videoHeight / video.videoWidth;
+    }
+
+    promise_test(async (t) => {
+        if (window.testRunner)
+            testRunner.setMockCameraOrientation(90);
+        const stream = await navigator.mediaDevices.getUserMedia({ video : true });
+        t.add_cleanup(() => stream.getTracks().forEach(track => track.stop()));
+        let result1 = await setVideo(t, stream);
+
+        let blob = await record(stream, 'video/webm');
+        assert_not_equals(blob.size, 0);
+        let result2 = await setVideo(t, blob);
+
+        assert_equals(result1, result2, "Height:Width ratio identical to source");
+    }, "WebM recorder with oriented stream");
+
+    promise_test(async (t) => {
+        if (window.testRunner)
+            testRunner.setMockCameraOrientation(90);
+        const stream = await navigator.mediaDevices.getUserMedia({ video : true });
+        t.add_cleanup(() => stream.getTracks().forEach(track => track.stop()));
+        let result1 = await setVideo(t, stream);
+
+        let blob = await record(stream, 'video/mp4');
+        assert_not_equals(blob.size, 0);
+        let result2 = await setVideo(t, blob);
+
+        assert_equals(result1, result2, "Height:Width ratio identical to source");
+    }, "MP4 recorder with oriented stream");
+</script>
+</body>
+</html>

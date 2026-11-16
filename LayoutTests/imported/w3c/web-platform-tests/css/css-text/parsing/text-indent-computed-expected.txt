@@ -1,0 +1,12 @@
+
+PASS Property text-indent value '10px'
+PASS Property text-indent value '20%'
+PASS Property text-indent value 'calc(50% + 60px)'
+PASS Property text-indent value '-30px'
+PASS Property text-indent value '-40%'
+PASS Property text-indent value 'calc(10px - 0.5em)'
+PASS Property text-indent value '10px hanging'
+PASS Property text-indent value '20% each-line'
+PASS Property text-indent value 'calc(50% + 60px) hanging each-line'
+PASS Property text-indent value 'each-line hanging calc(10px + 0.5em)'
+

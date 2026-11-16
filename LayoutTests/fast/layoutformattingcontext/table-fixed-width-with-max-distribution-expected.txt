@@ -1,0 +1,30 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x263
+  RenderBlock {HTML} at (0,0) size 800x263
+    RenderBody {BODY} at (8,8) size 784x247
+      RenderTable {TABLE} at (0,0) size 153x130 [border: (10px solid #008000)]
+        RenderTableSection {TBODY} at (40,40) size 73x50
+          RenderTableRow {TR} at (0,0) size 73x28
+            RenderTableCell {TD} at (0,13) size 33x2 [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (32,0) size 41x28 [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 23x26
+                text run at (1,1) width 23: "iiiiiiii"
+                text run at (1,14) width 23: "iiiiiiii"
+          RenderTableRow {TR} at (0,28) size 73x22
+            RenderTableCell {TD} at (0,38) size 33x2 [r=1 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (32,31) size 41x16 [r=1 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,0) size 23x15
+                text run at (1,1) width 23: "iiiiiiii"
+      RenderTable {TABLE} at (0,130) size 153x117 [border: (10px solid #008000)]
+        RenderTableSection {TBODY} at (40,40) size 73x37
+          RenderTableRow {TR} at (0,0) size 73x15
+            RenderTableCell {TD} at (0,6) size 24x3 [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (24,0) size 49x15 [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 47x13
+                text run at (1,1) width 47: "iiiiiiii iiiiiiii"
+          RenderTableRow {TR} at (0,15) size 73x22
+            RenderTableCell {TD} at (0,25) size 24x2 [r=1 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (24,18) size 49x16 [r=1 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,0) size 23x15
+                text run at (1,1) width 23: "iiiiiiii"

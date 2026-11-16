@@ -1,0 +1,4 @@
+
+PASS Preload in markup with href and imagesrcset (w descriptors) does not fetch href
+PASS Preload in markup with href and imagesrcset (x descriptors) does not fetch href
+

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("Page.overrideUserAgent");
+
+    suite.addTestCase({
+        name: "Page.overrideUserAgent.Custom",
+        description: "Test that author/user styles aren't applied when that setting is overridden.",
+        async test() {
+            const testUserAgent = "TEST USER AGENT";
+
+            let defaultUserAgent = await InspectorTest.evaluateInPage(`navigator.userAgent`);
+            InspectorTest.expectGreaterThan(defaultUserAgent.length, 0, "There should be a default UserAgent.");
+
+            InspectorTest.log("Overriding UserAgent...");
+            await PageAgent.overrideUserAgent(testUserAgent);
+
+            InspectorTest.log("Reloading...");
+            await InspectorTest.reloadPage();
+            await InspectorTest.awaitEvent(FrontendTestHarness.Event.TestPageDidLoad);
+
+            let overriddenUserAgent = await InspectorTest.evaluateInPage(`navigator.userAgent`);
+            InspectorTest.expectEqual(overriddenUserAgent, testUserAgent, "The UserAgent should have changed.");
+
+            InspectorTest.log("Removing UserAgent override...");
+            await PageAgent.overrideUserAgent();
+
+            InspectorTest.log("Reloading...");
+            await InspectorTest.reloadPage();
+            await InspectorTest.awaitEvent(FrontendTestHarness.Event.TestPageDidLoad);
+
+            let originalUserAgent = await InspectorTest.evaluateInPage(`navigator.userAgent`);
+            InspectorTest.expectEqual(originalUserAgent, defaultUserAgent, "The UserAgent should be back to its default value.");
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+
+</script>
+</head>
+<body onload="runTest()">
+    <p>Tests for the Page.overrideUserAgent command.</p>
+</body>
+</html>

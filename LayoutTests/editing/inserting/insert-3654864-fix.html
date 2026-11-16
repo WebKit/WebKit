@@ -1,0 +1,35 @@
+<html> 
+<head>
+
+<style>
+.editing { 
+    border: 2px solid red; 
+    padding: 12px; 
+    font-size: 24px; 
+}
+</style>
+<script src=../editing.js language="JavaScript" type="text/JavaScript" ></script>
+
+<script>
+
+function editingTest() {
+    selectAllCommand();
+    insertLineBreakCommand();
+    for (i = 0; i < 3; i++) {
+        typeCharacterCommand();
+    }
+}
+
+</script>
+
+<title>Editing Test</title> 
+</head> 
+<body contenteditable id="root" class="editing">
+<span id="test">Foo    <i>  bar</i></span>
+
+<script>
+runEditingTest();
+</script>
+
+</body>
+</html>

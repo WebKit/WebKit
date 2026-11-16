@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<select id="multiselect" multiple="multiple">
+    <option id="optiona">a</option>
+    <option>b</option>
+</select>
+<input id="selectable">
+
+<script>
+onload = async () => {
+    if (!window.testRunner)
+        return;
+
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+    var selectable = document.getElementById('selectable');
+    var multiselect = document.getElementById('multiselect');
+    selectable.focus();
+    selectable.onblur = function() {
+        multiselect.style.display='none';
+        document.write('PASS');
+    };
+
+    if (window.eventSender) {
+        await eventSender.asyncMouseMoveTo(multiselect.offsetLeft + 5, multiselect.offsetTop + 5);
+        await eventSender.asyncMouseDown();
+        await eventSender.asyncMouseUp();
+    } else {
+        document.write("To manually test, click on the 'a' option");
+    }
+    testRunner.notifyDone();
+}
+</script>
+
+</body>
+</html>

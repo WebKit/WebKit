@@ -1,0 +1,18 @@
+
+PASS outer <svg> element (in document)
+PASS non-<svg> child of outer <svg> element (in document)
+PASS non-<svg> descendant of outer <svg> element (in document)
+PASS inner <svg> descendant of outer <svg> element (in document)
+PASS non-<svg> descendant of inner <svg> element (in document)
+PASS outer <svg> in foreignObject (in document)
+PASS inner <svg> child of outer <svg> in foreignObject (in document)
+PASS outer <svg> element (not in document)
+PASS non-<svg> child of outer <svg> element (not in document)
+PASS non-<svg> descendant of outer <svg> element (not in document)
+PASS inner <svg> descendant of outer <svg> element (not in document)
+PASS non-<svg> descendant of inner <svg> element (not in document)
+PASS outer <svg> in foreignObject (not in document)
+PASS inner <svg> child of outer <svg> in foreignObject (not in document)
+PASS non-svg element with no parent
+PASS svg element with no parent
+

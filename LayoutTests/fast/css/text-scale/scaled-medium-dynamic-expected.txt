@@ -1,0 +1,7 @@
+
+PASS Inserting and removing a scale meta updates font sizes and media queries
+PASS Inserting a meta in body and removing its parent
+PASS Changing the content and name attributes updates font sizes
+PASS Only the first meta applies after dynamic changes
+PASS Changing the content size category after load updates font sizes and media queries
+

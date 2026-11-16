@@ -1,0 +1,13 @@
+
+
+PASS generateKeyFrame() throws for audio
+PASS generateKeyFrame(null) resolves for video sender, and throws for video receiver
+PASS generateKeyFrame throws NotAllowedError for invalid rid
+PASS generateKeyFrame throws NotFoundError for unknown rid
+PASS generateKeyFrame does not throw for unset transforms
+PASS generateKeyFrame timestamp should advance
+PASS await generateKeyFrame, await generateKeyFrame should see an increase in count of keyframes
+PASS generateKeyFrame does not reject when the sender is negotiated inactive, and resumes succeeding when negotiated back to active
+PASS generateKeyFrame does not reject when the sender is stopped, even without negotiation
+PASS generateKeyFrame does not reject with a null track
+

@@ -1,0 +1,4 @@
+
+PASS Poses from XRInputSource.gripSpace have emulatedPosition set properly - webgl
+PASS Poses from XRInputSource.gripSpace have emulatedPosition set properly - webgl2
+

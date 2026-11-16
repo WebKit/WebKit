@@ -1,0 +1,5 @@
+
+PASS Initial colors
+PASS Matches after #blocks_match removed
+PASS Does not match after #blocks_match added
+

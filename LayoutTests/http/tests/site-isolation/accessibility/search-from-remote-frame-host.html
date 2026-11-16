@@ -1,0 +1,70 @@
+<!DOCTYPE html><!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<html>
+<head>
+<script src="/js-test-resources/accessibility-helper.js"></script>
+<script src="/js-test-resources/js-test.js"></script>
+</head>
+<body>
+
+<button>Before</button>
+<iframe id="iframe" src="http://localhost:8000/site-isolation/accessibility/resources/iframe-with-headings.html"></iframe>
+<button>After</button>
+
+<script>
+var output = "Tests that a search whose start element is the element hosting an out-of-process frame,\n";
+output += "sent to that same host, returns nothing rather than the frame.\n\n";
+
+window.jsTestIsAsync = true;
+
+function describe(elements) {
+    if (!elements)
+        return "null";
+    return "[" + elements.map((element) => {
+        if (element.isRemotePlatformElement)
+            return "remote element";
+        var title = element.title.replace(/^AXTitle: ?/, "");
+        return element.role.replace(/^AXRole: /, "") + (title ? ` "${title}"` : "");
+    }).join(", ") + "]";
+}
+
+function search(receiver, start, isNext, limit) {
+    return describe(receiver.uiElementsForSearchPredicate(start, isNext, "AXAnyTypeSearchKey", "", false, true, limit));
+}
+
+var webArea, frameHost;
+async function runTest() {
+    if (!window.accessibilityController)
+        return;
+
+    webArea = accessibilityController.rootElement.childAtIndex(0);
+    // The host is the only group among the web area's children.
+    for (var i = 0; i < webArea.childrenCount; i++) {
+        if (webArea.childAtIndex(i).role.includes("AXGroup"))
+            frameHost = webArea.childAtIndex(i);
+    }
+    output += expect("!!frameHost", "true");
+    if (!frameHost) {
+        debug(output);
+        finishJSTest();
+        return;
+    }
+
+    // Wait until the frame's content is reachable, so the searches below would find it.
+    await waitFor(() => search(frameHost, null, true, 1) === "[remote element]");
+    output += expect("search(frameHost, null, true, 1)", "'[remote element]'");
+
+    output += expect("search(frameHost, frameHost, true, 1)", "'[]'");
+    output += expect("search(frameHost, frameHost, true, 20)", "'[]'");
+    output += expect("search(frameHost, frameHost, false, 1)", "'[]'");
+
+    output += expect("search(webArea, frameHost, true, 1)", "'[AXButton \"After\"]'");
+    output += expect("search(webArea, frameHost, false, 1)", "'[AXButton \"Before\"]'");
+
+    debug(output);
+    finishJSTest();
+}
+
+document.getElementById("iframe").onload = runTest;
+</script>
+</body>
+</html>

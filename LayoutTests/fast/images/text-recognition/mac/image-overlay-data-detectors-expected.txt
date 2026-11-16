@@ -1,0 +1,12 @@
+PASS internals.hasActiveDataDetectorHighlight became true
+PASS observed active data detector highlight
+PASS internals.hasActiveDataDetectorHighlight became false
+PASS cleared active data detector highlight
+PASS internals.hasActiveDataDetectorHighlight became true
+PASS observed active data detector highlight (again)
+PASS internals.hasActiveDataDetectorHighlight became false
+PASS cleared active data detector highlight (again)
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+    </head>
+    <body>
+        <p inputmode="none" contenteditable>Hello العربية world</p>
+        <script>
+            let editor = document.querySelector("p[contenteditable]");
+            editor.focus();
+            getSelection().setPosition(editor, 1);
+            document.execCommand("InsertText", true, " test");
+            editor.blur();
+        </script>
+    </body>
+</html>

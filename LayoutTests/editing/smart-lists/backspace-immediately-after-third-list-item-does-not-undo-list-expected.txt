@@ -1,0 +1,9 @@
+Reaching a third list item necessarily closes the immediate-undo window (typing the second item's content and then pressing Enter both invalidate it). Pressing Backspace from the empty third list item should therefore fall through to the normal break-out-of-empty-list behavior, leaving the original list intact with its two non-empty items.
+| <ul>
+|   class="Apple-disc-list"
+|   style="list-style-type: disc;"
+|   <li>
+|     "A"
+|     <br>
+|   <li>
+|     "B<#selection-caret>"

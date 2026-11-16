@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>media-source-coded-frame-group-reset-overlapping-sample-orphan</title>
+    <script src="mp4-generator.js"></script>
+    <script src="../video-test.js"></script>
+    <script>
+    // Regression coverage for the step-1.14 B-frame cascade rescuing a sample
+    // left in place by steps 1.6 + 1.13 + 1.14 of MSE "Coded Frame Processing".
+    //
+    // Mechanism (SourceBufferPrivate::processMediaSample):
+    //   - Step 1.6 resets highestPresentationTimestamp and lastDecodeTimestamp
+    //     when the incoming DTS is below the current lastDecodeTimestamp.
+    //   - Post-reset, step 1.13's 1-microsecond guard
+    //       `presentationTimestamp < overlapped.pts + 1µs`
+    //     misses a buffered sample whose interval contains the incoming pts
+    //     but whose own pts starts well below it.
+    //   - Step 1.14 first branch erases only [P, F); a buffered sample with
+    //     pts < P is below the range and is missed.
+    //   - Step 1.14 cascade (incoming is sync): findSampleAfterDecodeKey
+    //     returns the buffered sample, the isSync-and-pts-greater early-break
+    //     does not apply (buffered.pts < incoming.pts), the DTS re-key branch
+    //     declines (no safe DTS inside the incoming frame's duration), and
+    //     the fallthrough addRange erases it. This is the step that rescues
+    //     the scenario.
+    //
+    // Shape (timescale=1000):
+    //   Seg 1: one sync sample at baseDecodeTime=1100 dur=100 CTO=0
+    //     -> DTS=1100 PTS=1100 (interval [1100, 1200)).
+    //   Seg 2: baseDecodeTime=1000 (< 1100 -> step 1.6 fires), one sync
+    //     sample dur=50 CTO=150 -> DTS=1000 PTS=1150.
+    //     - Step 1.13 guard `1150 < 1100 + 1µs` fails -> no erase.
+    //     - Step 1.14 first branch range [1150, 1200): gen1@(1100, 1100)
+    //       is below range -> no erase.
+    //     - Cascade reaches gen1@(1100, 1100); DTS-rekey declines (its
+    //       safeDecodeTime 1100.0001 is past the incoming frame's duration
+    //       window); fallthrough addRange erases it.
+    //
+    // Timestamps are shifted past t=1s so seg 2's first sample has DTS != 0,
+    // avoiding Source/WebCore/platform/graphics/gstreamer/mse/AppendPipeline.cpp's
+    // extendToTheBeginning hack (which fires on DTS==0 && PTS>0 && sync).
+    //
+    // If the cascade ever regresses on this shape, buffered.start(0) would
+    // remain 1.1 instead of collapsing to 1.15.
+
+    var source, sourceBuffer, init, segment1, segment2;
+
+    async function runTest() {
+        findMediaElement();
+        if (!MediaSource.isTypeSupported(MP4.VIDEO_TYPE)) {
+            failTest(`${MP4.VIDEO_TYPE} is not supported`);
+            return;
+        }
+        source = new MediaSource();
+        run('video.src = URL.createObjectURL(source)');
+        await waitFor(source, 'sourceopen');
+        run(`sourceBuffer = source.addSourceBuffer('${MP4.VIDEO_TYPE}')`);
+
+        init = MP4.initSegment({
+            timescale: 1000,
+            tracks: [{ id: 1, type: 'video', timescale: 1000 }],
+        });
+        segment1 = MP4.mediaSegment({
+            sequenceNumber: 1,
+            tracks: [{
+                id: 1, type: 'video', baseDecodeTime: 1100,
+                samples: [{ duration: 100, compositionTimeOffset: 0, isSync: true }],
+            }],
+        });
+        run('sourceBuffer.appendBuffer(MP4.concat(init, segment1))');
+        await waitFor(sourceBuffer, 'updateend');
+        testExpected('sourceBuffer.buffered.length', 1);
+        testExpectedEqualWithTolerance('sourceBuffer.buffered.start(0)', 1.1, 0.01);
+        testExpectedEqualWithTolerance('sourceBuffer.buffered.end(0)', 1.2, 0.01);
+
+        segment2 = MP4.mediaSegment({
+            sequenceNumber: 2,
+            tracks: [{
+                id: 1, type: 'video', baseDecodeTime: 1000,
+                samples: [{ duration: 50, compositionTimeOffset: 150, isSync: true }],
+            }],
+        });
+        run('sourceBuffer.appendBuffer(segment2)');
+        await waitFor(sourceBuffer, 'updateend');
+
+        // Cascade eviction: seg-1 is erased, only seg-2 remains at [1.15, 1.2].
+        testExpected('sourceBuffer.buffered.length', 1);
+        testExpectedEqualWithTolerance('sourceBuffer.buffered.start(0)', 1.15, 0.01);
+        testExpectedEqualWithTolerance('sourceBuffer.buffered.end(0)', 1.2, 0.01);
+
+        endTest();
+    }
+
+    </script>
+</head>
+<body onload="runTest()">
+    <video></video>
+</body>
+</html>

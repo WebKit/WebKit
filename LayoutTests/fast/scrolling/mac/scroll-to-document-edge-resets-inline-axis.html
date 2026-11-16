@@ -1,0 +1,57 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ AsyncOverflowScrollingEnabled=false EventHandlerDrivenSmoothKeyboardScrollingEnabled=true ScrollAnimatorEnabled=true ] -->
+<html>
+<head>
+<script src="../../../resources/ui-helper.js"></script>
+<script src="../../../resources/js-test.js"></script>
+<style>
+#scroller {
+    width: 300px;
+    height: 300px;
+    overflow: scroll;
+}
+
+#scroller > div {
+    width: 3000px;
+    height: 10000px;
+}
+</style>
+</head>
+<body>
+<div id="scroller" tabindex="0"><div></div></div>
+<script>
+description("Tests that Home and End scroll a scroller that animates on the main thread to the start of the inline axis, as well as to the start or end of the block axis.");
+jsTestIsAsync = true;
+
+var maxScrollTop;
+
+async function scrollToEdge(key)
+{
+    scroller.scrollTo(1000, 5000);
+    await UIHelper.renderingUpdate();
+
+    await UIHelper.keyDown(key);
+    await UIHelper.waitForTargetScrollAnimationToSettle(scroller);
+}
+
+async function runTest()
+{
+    maxScrollTop = scroller.scrollHeight - scroller.clientHeight;
+    scroller.focus();
+
+    debug("Home");
+    await scrollToEdge("home");
+    shouldBe("scroller.scrollLeft", "0");
+    shouldBe("scroller.scrollTop", "0");
+
+    debug("End");
+    await scrollToEdge("end");
+    shouldBe("scroller.scrollLeft", "0");
+    shouldBe("scroller.scrollTop", "maxScrollTop");
+
+    finishJSTest();
+}
+
+window.addEventListener("load", runTest);
+</script>
+</body>
+</html>

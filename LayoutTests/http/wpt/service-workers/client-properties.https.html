@@ -1,0 +1,47 @@
+<html>
+<head>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+</head>
+<body>
+<script>
+var scope = "";
+var activeWorker;
+
+promise_test(async (test) => {
+    var registration = await navigator.serviceWorker.register("client-properties-worker.js", { scope : scope });
+    activeWorker = registration.active;
+    if (activeWorker)
+        return;
+    activeWorker = registration.installing;
+    return new Promise(resolve => {
+        activeWorker.addEventListener('statechange', () => {
+            if (activeWorker.state === "activated")
+                resolve();
+        });
+    });
+}, "Setup worker");
+
+promise_test(async (test) => {
+    if (document.hidden)
+        await new Promise(resolve => document.visibilityChange = resolve);
+    activeWorker.postMessage("test");
+    const data = await new Promise(resolve => navigator.serviceWorker.onmessage = (event) => resolve(event.data));
+    assert_equals(data.length, 1);
+    assert_equals(data[0].frameType, "top-level");
+    assert_equals(data[0].visibilityState, "visible");
+    assert_true(data[0].focused, "focused");
+}, "Test self as client");
+
+promise_test(async (test) => {
+    if (!window.internals)
+        return;
+
+    internals.setPageVisibility(false);
+    activeWorker.postMessage("test");
+    const data = await new Promise(resolve => navigator.serviceWorker.onmessage = (event) => resolve(event.data));
+    assert_equals(data[0].visibilityState, "hidden");
+}, "Test hidden self as client");
+</script>
+</body>
+</html>

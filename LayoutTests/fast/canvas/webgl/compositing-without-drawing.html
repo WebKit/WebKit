@@ -1,0 +1,112 @@
+<style>
+body {
+    font-family: monospace;
+}
+canvas {
+    width: 10px;
+    height: 10px;
+}
+</style>
+<script>
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+}
+
+const WIDTH = 10;
+const HEIGHT = 10;
+
+const COLORS = [
+    [0, 0, 1, 1],
+    [0, 1, 1, 1],
+    [0, 0.5, 0, 1],
+    [1, 0, 1, 1],
+    [1, 1, 0.5, 1],
+    [0.5, 0, 1, 1],
+    [0.5, 0.5, 0.5, 1],
+    [0.5, 0.5, 1, 1],
+    [0.25, 1, 1, 1],
+    [0, 1, 0, 1]
+];
+
+let gl;
+let currentFrame = 0;
+
+function output(msg) {
+    const div = document.getElementById("output");
+    div.innerHTML += `${msg}<br>`;
+}
+
+function step1() {
+
+    output("Step 1. Create a WebGL canvas and render into it.");
+    output("We do this for 10 frames, each time a different color ending in pure green (0, 1, 0, 1).");
+    output("-----");
+
+    const canvas = document.querySelector("canvas");
+    canvas.width = WIDTH;
+    canvas.height = HEIGHT;
+
+    output("Create WebGL context");
+
+    gl = canvas.getContext("webgl");
+
+    function clearToColor() {
+        if (currentFrame >= COLORS.length) {
+            requestAnimationFrame(step2);
+            return;
+        }
+
+        output(`Clear to ${COLORS[currentFrame]}`);
+
+        gl.clearColor(...COLORS[currentFrame]);
+        gl.clear(gl.COLOR_BUFFER_BIT);
+
+        currentFrame++;
+        requestAnimationFrame(clearToColor);
+    }
+
+    clearToColor();
+}
+
+function step2() {
+
+    output("");
+    output("Step 2. Create a framebuffer and render into it, but don't draw into the canvas.");
+    output("-----");
+
+    output("Create a texture");
+
+    const texture = gl.createTexture();
+    gl.bindTexture(gl.TEXTURE_2D, texture);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, WIDTH, HEIGHT, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+
+    output("Create and bind framebuffer");
+
+    const framebuffer = gl.createFramebuffer();
+    gl.bindFramebuffer(gl.FRAMEBUFFER, framebuffer);
+    gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, texture, 0);
+
+    output("Clear framebuffer to red (1, 0, 0, 1). This was not used above.");
+
+    gl.clearColor(1, 0, 0, 1);
+    gl.clear(gl.COLOR_BUFFER_BIT);
+
+    gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+
+    output("The canvas above should be green.");
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+function runTest() {
+    requestAnimationFrame(step1);
+}
+
+window.addEventListener("load", runTest, false);
+</script>
+<canvas></canvas>
+<div id="output"></div>

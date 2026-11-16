@@ -1,0 +1,11 @@
+alert
+This test verifies that the dismiss action generates an escape key event.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Keycode received: code: 27 key name: Escape
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

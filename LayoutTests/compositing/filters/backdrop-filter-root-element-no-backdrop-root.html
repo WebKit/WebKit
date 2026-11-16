@@ -1,0 +1,25 @@
+<!doctype HTML>
+<html style="background-color:green">
+<head>
+  <script type="text/javascript" charset="utf-8">
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+
+    function doTest()
+    {
+        if (window.testRunner) {
+            document.getElementById('layers').innerText = window.internals.layerTreeAsText(document);
+            testRunner.notifyDone();
+        }
+    }
+
+    window.addEventListener('load', doTest, false);
+  </script>
+</head>
+<body>
+<div style="backdrop-filter: blur(20px)"></div>
+<pre id="layers">Layer tree appears here in DRT.</pre>
+</body>
+</html>

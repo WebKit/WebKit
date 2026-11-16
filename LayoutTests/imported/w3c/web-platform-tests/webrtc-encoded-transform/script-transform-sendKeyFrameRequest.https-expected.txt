@@ -1,0 +1,9 @@
+
+
+PASS sendKeyFrameRequest resolves for video receiver, and throws for video sender
+PASS sendKeyFrameRequest throws for audio sender/receiver
+PASS sendKeyFrameRequest throws for unused transforms
+PASS sendKeyFrameRequest does not throw for unset transforms
+PASS sendKeyFrameRequest does not reject when the receiver is negotiated inactive, and resumes succeeding when negotiated back to active
+PASS sendKeyFrameRequest does not reject when the receiver is stopped
+

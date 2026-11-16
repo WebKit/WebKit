@@ -1,0 +1,195 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[% types = [
+  "noop",
+  "equals",
+  "notequals",
+  "anyexact",
+  "substring",
+  "casesubstring",
+  "notsubstring",
+  "anywordssubstr",
+  "allwordssubstr",
+  "nowordssubstr",
+  "regexp",
+  "notregexp",
+  "lessthan",
+  "lessthaneq",
+  "greaterthan",
+  "greaterthaneq",
+  "anywords",
+  "allwords",
+  "nowords",
+  "changedbefore",
+  "changedafter",
+  "changedfrom",
+  "changedto",
+  "changedby",
+  "matches",
+  "notmatches",
+  "isempty",
+  "isnotempty",
+] %]
+
+<div class="bz_section_title" id="custom_search_filter">
+  <div id="custom_search_query_controller" class="arrow">&#9660;</div>
+  <a id="chart" href="javascript:TUI_toggle_class('custom_search_query')" >
+    Custom Search</a> <span class="section_help">Didn't find what 
+      you're looking for above? This area allows for ANDs, ORs, 
+      and other more complex searches.</span>
+</div>
+<div id="custom_search_filter_section" 
+     class="bz_search_section custom_search_query">
+  [% SET indent_level = 0 %]
+  [% SET cond_num = 0 %]
+  [% FOREACH condition = default.custom_search %]
+    [% SET cond_num = loop.count - 1 %]
+    [% PROCESS one_condition with_buttons = 0 %]
+  [% END %]
+  [% PROCESS one_condition
+    with_buttons = 1
+    condition = { f => 'noop' }
+    cond_num = cond_num + 1 %]
+  <script type="text/javascript">
+    TUI_alternates['custom_search_query'] = '&#9658;';
+    TUI_hide_default('custom_search_query');
+    TUI_alternates['custom_search_advanced'] = "Show Advanced Features";
+    TUI_hide_default('custom_search_advanced');
+  </script>
+  <script type="text/javascript" src="[% 'js/custom-search.js' FILTER mtime %]"></script>
+  <script type="text/javascript">
+    redirect_html4_browsers();
+    [%# These are alternative labels for the AND and OR options in and_all_select %]
+    var cs_and_label = 'Match ALL of the following:';
+    var cs_or_label  = 'Match ANY of the following:';
+    cs_reconfigure('custom_search_last_row');
+  </script>
+  <script type="text/javascript" src="[% 'js/history.js/native.history.js' FILTER mtime %]"></script>
+</div>
+
+
+[% BLOCK one_condition %]
+  [%# Skip any conditions that don't have a field defined. %]
+  [% RETURN IF !condition.f %]
+  
+  [% IF !top_level_any_shown %]
+    [% INCLUDE any_all_select
+      name = "j_top" selected = default.j_top.0
+      with_advanced_link = 1 %]
+    [% top_level_any_shown = 1 %]
+  [% END %]
+
+  [% IF condition.f == "CP" %]
+    [% indent_level = indent_level - 1 %]
+  [% END %]
+
+  <div class="custom_search_condition"
+       [% ' style="margin-left: ' _ (indent_level * 2) _ 'em"' IF indent_level %]
+       [% ' id="custom_search_last_row"' IF with_buttons %]>
+    
+    [% IF previous_condition.f == "OP" %]
+      [% INCLUDE any_all_select
+        name = "j" _ (cond_num - 1) 
+        selected = previous_condition.j %]
+    [% END %]
+
+    [% IF with_buttons %]
+      <button id="op_button" type="button" class="custom_search_advanced"
+              title="Start a new group of criteria, including this row"
+              onclick="custom_search_open_paren()">(</button>
+    [% END %]
+
+    [% UNLESS condition.f == "CP" %]
+      [%# This only gets hidden via custom_search_advanced if it isn't set. %]
+      <span id="custom_search_not_container_[% cond_num FILTER html %]"
+            class="custom_search_not_container
+                   [%- ' custom_search_advanced' UNLESS condition.n %]"
+            title="Search for the opposite of the criteria here">
+        <input type="checkbox" id="n[% cond_num FILTER html %]"
+               class="custom_search_form_field"
+               name="n[% cond_num FILTER html %]" value="1"
+               onclick="custom_search_not_changed([% cond_num FILTER js %])"
+               [% ' checked="checked"' IF condition.n %]>
+        <label for="n[% cond_num FILTER html %]">Not</label>
+      </span>
+    [% END %]
+
+    [% IF condition.f == "OP" %]
+      <input type="hidden" name="f[% cond_num FILTER html %]"
+             id="f[% cond_num FILTER html %]" value="OP">
+      (
+      [% indent_level = indent_level + 1 %]
+    [% ELSIF condition.f == "CP" %]
+      <input type="hidden" name="f[% cond_num FILTER html %]"
+             id="f[% cond_num FILTER html %]" value="CP">
+      )
+    [% ELSE %]
+      <select name="f[% cond_num FILTER html %]" title="Field"
+              id="f[% cond_num FILTER html %]"
+              onchange="fix_query_string(this)"
+              class="custom_search_form_field">
+        [%# Turn the array in to a hash with the name as the key %]
+        [%
+          field_hash = {};
+          FOREACH field IN fields;
+            field_hash.${field.name} = field;
+          END;
+        %]
+        [% FOREACH field_name = field_hash.keys.sort_by_field_name(field_descs) %]
+          [% field = field_hash.$field_name %]
+          <option value="[% field.name FILTER html %]"
+                  [%~ ' selected="selected"' IF field.name == condition.f %]>
+            [% field_descs.${field.name} || field.description FILTER html %]
+          </option>
+        [% END %]
+      </select>
+    
+      [% INCLUDE "search/type-select.html.tmpl"
+         name = "o${cond_num}", class = "custom_search_form_field"
+         types = types, selected = condition.o %]
+    
+      <input name="v[% cond_num FILTER html %]" title="Value"
+             class="custom_search_form_field"
+             onchange="fix_query_string(this)"
+             value="[% condition.v FILTER html %]">
+    [% END %]
+    
+    [% IF with_buttons %]
+      <button class="custom_search_add_button" type="button"
+              id="add_button" title="Add a new row"
+              onclick="custom_search_new_row()">+</button>
+      <span id="cp_container" [% ' class="bz_default_hidden"' IF !indent_level %]>
+        <button id="cp_button" type="button"
+                title="End this group of criteria"
+                onclick="custom_search_close_paren()">)</button>
+      </span>
+    [% END %]
+  </div>
+  
+  [% previous_condition = condition %]
+[% END %]
+
+[% BLOCK any_all_select %]
+  <div class="any_all_select">
+    <select name="[% name FILTER html %]" id="[% name FILTER html %]"
+            onchange="fix_query_string(this)">
+      <option value="AND">Match ALL of the following separately:</option>
+      <option value="OR" [% ' selected="selected"' IF selected == "OR" %]>
+        Match ANY of the following separately:</option>
+      <option value="AND_G" [% ' selected' IF selected == "AND_G" %]>
+        Match ALL of the following against the same field:</option>
+    </select>
+    [% IF with_advanced_link %]
+      <a id="custom_search_advanced_controller"
+         href="javascript:TUI_toggle_class('custom_search_advanced')">
+        Hide Advanced Features
+      </a>
+    [% END %]
+  </div>
+[% END %]

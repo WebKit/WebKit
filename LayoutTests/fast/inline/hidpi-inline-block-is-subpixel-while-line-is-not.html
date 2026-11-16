@@ -1,0 +1,20 @@
+<html>
+<head>
+<title>This tests inline-block with subpixel height does not trigger scrolling.</title>
+<style>
+.container {
+  overflow-y: auto;
+  outline: 1px solid green;
+}
+
+.inner {
+  display: inline-block;
+  height: 109.9px;
+  width: 10px;
+}
+</style>
+</head>
+<body>
+<div class=container><div class=inner></div></div>
+</body>
+</html>

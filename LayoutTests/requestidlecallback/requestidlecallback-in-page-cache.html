@@ -1,0 +1,54 @@
+<!DOCTYPE html><!-- webkit-test-runner [ RequestIdleCallbackEnabled=true UsesBackForwardCache=true ] -->
+<html>
+<body>
+<script src="../resources/js-test.js"></script>
+<script>
+
+description('This tests that when requestIdleCallback is not enabled, requestIdleCallback and IdleDeadline are not defined.');
+jsTestIsAsync = true;
+
+const iframe = document.createElement('iframe');
+document.body.appendChild(iframe);
+
+const logsA = [];
+const logsB = [];
+
+window.addEventListener("pageshow", function(event) {
+    if (!event.persisted)
+        return;
+
+    shouldBeTrue('event.persisted');
+    shouldBe('logsA.length', '0');
+    shouldBe('logsB.length', '0');
+    iframe.contentWindow.requestIdleCallback(() => logsB.push('B3'));
+    requestIdleCallback(() => logsA.push('A4'));
+    setTimeout(() => {
+        requestIdleCallback(() => {
+            iframe.contentWindow.requestIdleCallback(() => {
+                shouldBe('logsA.length', '4');
+                shouldBeEqualToString('logsA.join(", ")', 'A1, A2, A3, A4');
+                shouldBe('logsB.length', '3');
+                shouldBeEqualToString('logsB.join(", ")', 'B1, B2, B3');
+                finishJSTest();
+            });
+        });
+    }, 100);
+});
+
+window.addEventListener("pagehide", function(event) {
+    requestIdleCallback(() => logsA.push('A1'));
+    iframe.contentWindow.requestIdleCallback(() => logsB.push('B1'));
+    requestIdleCallback(() => logsA.push('A2'));
+    iframe.contentWindow.requestIdleCallback(() => logsB.push('B2'));
+    requestIdleCallback(() => logsA.push('A3'));
+});
+
+onload = () => {
+    setTimeout(() => {
+        window.location = 'resources/page-cache-helper.html';
+    }, 0);
+}
+
+</script>
+</body>
+</html>

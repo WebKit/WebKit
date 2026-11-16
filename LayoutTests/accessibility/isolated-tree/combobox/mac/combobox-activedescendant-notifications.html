@@ -1,0 +1,57 @@
+<!DOCTYPE HTML PUBLIC><!-- webkit-test-runner [ IsAccessibilityIsolatedTreeEnabled=true ] -->
+<html>
+<head>
+<script src="../../../../resources/accessibility-helper.js"></script>
+<script src="../../../../resources/js-test.js"></script>
+</head>
+<body>
+
+<div id="content">
+<input type="text" role="combobox" id="combo" aria-owns="list">
+<ul id="list" role="listbox">
+    <li tabindex="0" role="option" id="item1">item1</li>
+</ul>
+</div>
+
+<script>
+var output = "This test ensures that changing aria-activedescendant on a combobox posts AXFocusedUIElementChanged for the active descendant, and that the focused element becomes the active descendant.\n\n";
+
+var receivedFocusChanged = false;
+var receivedActiveElementChanged = false;
+var axCombo, focusedElement;
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    combo.focus();
+    axCombo = accessibilityController.accessibleElementById("combo");
+
+    setTimeout(async () => {
+        output += "The ComboBox should start out as the focused element.\n";
+        output += await expectAsync("axCombo.isEqual(accessibilityController.focusedElement)", "true");
+
+        accessibilityController.addNotificationListener((target, notification) => {
+            if (notification === "AXFocusedUIElementChanged")
+                receivedFocusChanged = true;
+            if (notification === "AXActiveElementChanged")
+                receivedActiveElementChanged = true;
+        });
+
+        combo.setAttribute("aria-activedescendant", "item1");
+        await waitFor(() => receivedFocusChanged && receivedActiveElementChanged);
+
+        output += "After setting aria-activedescendant, the focused element should be the active descendant, not the combobox.\n";
+        output += expect("axCombo.isEqual(accessibilityController.focusedElement)", "false");
+        focusedElement = accessibilityController.focusedElement;
+        output += expect("focusedElement.role.toLowerCase().includes('statictext')", "true");
+        output += expect("platformStaticTextValue(focusedElement).includes('item1')", "true");
+
+        accessibilityController.removeNotificationListener();
+        content.style.visibility = "hidden";
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

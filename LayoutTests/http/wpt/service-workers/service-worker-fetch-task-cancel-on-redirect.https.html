@@ -1,0 +1,46 @@
+<!doctype html>
+<html>
+<head>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="resources/routines.js"></script>
+</head>
+<body>
+<script>
+const scope = "resources/";
+const destURL = new URL("/fetch-task-cancel-on-redirect/dest.html", location.href).href;
+const redirectURL = "resources/redirect.py?status=302&location=" + encodeURIComponent(destURL);
+
+if (window.testRunner)
+     testRunner.setUseSeparateServiceWorkerProcess(true);
+
+promise_test(async (test) => {
+    await setupActivatedButNotRunningServiceWorker("resources/empty-worker.js", scope);
+    await window.internals?.storeRegistrationsOnDisk();
+    window.testRunner?.terminateNetworkProcess();
+    await new Promise(resolve => setTimeout(resolve, 1000));
+}, "Setup activated-but-cold service worker at the redirect target scope");
+
+promise_test(async (test) => {
+    // Create iframes that navigate to a URL *outside* any service worker scope.
+    // We then remove the iframe while navigating and check network processing state.
+
+    const frames = [];
+    for (let i = 0; i < 20; ++i) {
+        const frame = document.createElement('iframe');
+        frame.src = redirectURL + "&cachebust=" + i;
+        document.body.appendChild(frame);
+        frames.push(frame);
+    }
+
+    const remainingFrame = frames.shift();
+
+    await new Promise(resolve => setTimeout(resolve, 0));
+    for (const frame of frames)
+        frame.remove();
+
+    await new Promise(resolve => remainingFrame.onload = resolve);
+}, "Handle the case of forgetting about a not yet started service worker fetch task");
+</script>
+</body>
+</html>

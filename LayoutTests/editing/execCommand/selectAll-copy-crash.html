@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+head, script {
+    all: inherit;
+}
+</style>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+onload = () => {
+    document.body.attachShadow({mode: 'open'});
+    document.execCommand('SelectAll');
+    document.execCommand('Copy');
+    document.write('This test passes if WebKit does not crash. PASS');
+};
+</script>
+</head>
+<body>
+</body>
+</html>

@@ -1,0 +1,5 @@
+
+PASS Simulcast setParameters active=false on first encoding stops sending frames for that encoding
+PASS Simulcast setParameters active=false on second encoding stops sending frames for that encoding
+PASS Simulcast setParameters active=false stops sending frames
+

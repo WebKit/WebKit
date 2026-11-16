@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+
+#target {
+    width: 100px;
+    height: 100px;
+    background-color: black;
+    transition: transform 10ms;
+}
+
+</style>
+</head>
+<body>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<script src="resources/rendering-frames.js"></script>
+<div id="target"></div>
+
+<script>
+
+promise_test(async () => {
+    await renderingFrames(1);
+
+    const target = document.getElementById("target");
+    target.style.transform = "translate3d(100px, 0, 0)";
+
+    await target.getAnimations()[0].finished;
+    await renderingFrames(2);
+
+    assert_equals(internals.acceleratedAnimationsForElement(target).length, 0, "There should be no accelerated animation after the animation completed.");
+}, "An accelerated CSS transition should remove its animation upon completion.");
+
+</script>
+</body>
+</html>

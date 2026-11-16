@@ -1,0 +1,16 @@
+struct S {
+    half4 ah4[1];
+    half ah[1000];
+    half4 h4;
+    half h;
+};
+
+int small;
+S medium[30];
+S large[50];
+S extra_large[70];
+S xxl[90];
+
+/*%%*
+global variable 'extra_large' exceeds the size limit
+*%%*/

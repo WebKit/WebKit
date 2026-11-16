@@ -1,0 +1,12 @@
+<!DOCTYPE html><!-- webkit-test-runner [ CSSFitContentFunctionEnabled=false ] -->
+<title>fit-content(&lt;length-percentage&gt;) in the sizing properties is behind a setting</title>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script>
+test(() => {
+    for (const property of ["width", "height", "min-width", "max-height", "inline-size", "max-block-size"])
+        assert_false(CSS.supports(property, "fit-content(10px)"), property);
+    assert_true(CSS.supports("width", "fit-content"));
+    assert_true(CSS.supports("grid-template-columns", "fit-content(10px)"));
+}, "fit-content() is not a sizing value when CSSFitContentFunctionEnabled is off");
+</script>

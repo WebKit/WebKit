@@ -1,0 +1,26 @@
+<!DOCTYPE html><!-- webkit-test-runner [ JavaScriptCanOpenWindowsAutomatically=true ] -->
+<body>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+let popup = window.open("about:blank", "popup", "width=200,height=200");
+if (popup.eventSender?.asyncMouseMoveTo) {
+    popup.eventSender.asyncMouseMoveTo(10, 10);
+    // Keep the web process busy so the popup closes while its mouse event is still pending.
+    let start = Date.now();
+    while (Date.now() - start < 200) { }
+}
+popup.close();
+
+setTimeout(() => {
+    if (window.eventSender)
+        eventSender.mouseMoveTo(20, 20);
+    document.body.textContent = "PASS if no crash.";
+    if (window.testRunner)
+        testRunner.notifyDone();
+}, 100);
+</script>
+</body>

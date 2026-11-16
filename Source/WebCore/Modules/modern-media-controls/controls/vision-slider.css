@@ -1,0 +1,118 @@
+/*
+ * Copyright (C) 2022-2023 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+.slider.vision,
+.slider.vision * {
+    --slider-fill-recessed-margin: 0px;
+    --slider-fill-height: calc(var(--slider-height) - 2 * var(--slider-fill-recessed-margin));
+}
+
+.slider.vision {
+    height: var(--slider-height);
+}
+
+.slider.vision > .appearance {
+    height: 100%;
+}
+
+.slider.vision > .appearance > .gutter,
+.slider.vision > .appearance > .gutter > div,
+.slider.vision > .appearance > .fill {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+}
+
+.slider.vision > .appearance > .gutter > div,
+.slider.vision > .appearance > .fill {
+    border-radius: calc(var(--slider-height) / 2);
+}
+
+.slider.vision > .appearance > .gutter > .background {
+    background-color: black;
+    opacity: 0.1;
+    mix-blend-mode: plus-darker;
+}
+
+.slider.vision > .appearance > .gutter > .highlight {
+    box-shadow: inset 0px -0.5px 1px 0px rgba(255, 255, 255, 0.3);
+    mix-blend-mode: plus-lighter;
+    display: none;
+}
+
+.slider.vision > .appearance > .gutter > .inner-shadow {
+    box-shadow: inset 0px -0.5px 1px 0px rgba(255, 255, 255, 0.3);
+    mix-blend-mode: plus-darker;
+}
+
+.slider.vision > .appearance > .gutter > .outer-shadow {
+    box-shadow: inset 1px 1.5px 5px 0px rgba(0, 0, 0, 0.15);
+    mix-blend-mode: plus-darker;
+}
+
+.slider.vision > .appearance > .fill {
+    left: var(--slider-fill-recessed-margin);
+    top: var(--slider-fill-recessed-margin);
+    min-width: var(--slider-fill-height);
+    height: var(--slider-fill-height);
+    background-color: rgba(212, 212, 212, 1.0);
+}
+
+/* Recessed slider */
+
+.slider.vision.recessed,
+.slider.vision.recessed * {
+    --slider-fill-recessed-margin: 1px;
+}
+
+.slider.vision.recessed > .appearance > .gutter > .background {
+    opacity: 0.05;
+}
+
+.slider.vision.recessed > .appearance > .gutter > .highlight {
+    display: block;
+}
+
+.slider.vision.recessed > .appearance > .fill {
+    background-color: rgba(255, 255, 255, 0.7);
+}
+
+.slider.vision > input {
+    width: 100%;
+    height: calc(100% + 10px);
+    transform: translateY(var(--slider-fill-recessed-margin));
+}
+
+.slider.vision > input::-webkit-slider-runnable-track {
+    /* We need to force the height to be 100% as on some pages the height would
+       be 0 otherwise, see <rdar://problem/31769830>. */
+    height: 100%;
+}
+
+.slider.vision > input::-webkit-slider-thumb {
+    width: var(--slider-fill-height);
+    height: var(--slider-fill-height);
+    border-radius: 50%;
+}

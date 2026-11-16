@@ -1,0 +1,74 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, interactive-widget=resizes-content"/>
+    <style>
+        body {
+            margin: 0;
+        }
+        #grid {
+            display: grid;
+            grid-template-rows: auto 50px;
+            align-content: start;
+            height: 100dvh;
+        }
+        #item {
+            min-height: 0;
+        }
+        input {
+            width: 300px;
+            height: 50px;
+            box-sizing: border-box;
+        }
+    </style>
+    <script src="../../../../resources/js-test.js"></script>
+    <script src="../../../../resources/ui-helper.js"></script>
+</head>
+<body>
+    <div id="grid">
+        <div id="item"><div id="content"></div></div>
+        <input id="input" type="text">
+    </div>
+    <div id="console"></div>
+    <script>
+        jsTestIsAsync = true;
+
+        addEventListener("load", async () => {
+            window.grid = document.getElementById("grid");
+            window.content = document.getElementById("content");
+            window.textField = document.getElementById("input");
+
+            await UIHelper.ensureVisibleContentRectAndStablePresentationUpdate();
+
+            content.style.height = `${grid.offsetHeight - 100}px`;
+            await UIHelper.ensureVisibleContentRectAndStablePresentationUpdate();
+
+            window.innerHeightWithoutKeyboard = window.innerHeight;
+            window.initialGridHeight = grid.offsetHeight;
+            window.initialInputTop = textField.offsetTop;
+
+            debug("Keyboard not shown:");
+            shouldBe("textField.offsetTop", "content.offsetHeight");
+
+            await UIHelper.activateElement(textField);
+            await UIHelper.waitForKeyboardToShow();
+            await UIHelper.ensureVisibleContentRectAndStablePresentationUpdate();
+
+            debug("\nKeyboard shown:");
+            shouldBeTrue("grid.offsetHeight < window.initialGridHeight");
+            shouldBeTrue("textField.offsetTop < window.initialInputTop");
+
+            textField.blur();
+            await UIHelper.waitForKeyboardToHide();
+            await UIHelper.ensureVisibleContentRectAndStablePresentationUpdate();
+
+            debug("\nKeyboard hidden:");
+            await new Promise(resolve => shouldBecomeEqual("window.innerHeight", "window.innerHeightWithoutKeyboard", resolve));
+            shouldBe("grid.offsetHeight", "window.initialGridHeight");
+            shouldBe("textField.offsetTop", "window.initialInputTop");
+
+            finishJSTest();
+        });
+    </script>
+</body>
+</html>

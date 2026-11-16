@@ -1,0 +1,23 @@
+<style>
+#inline_block {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+}
+
+#change_this {
+  position: absolute;
+  transform: translate(10px);
+}
+</style>
+<div id=container>
+  <div id=inline_block>
+    <div style="position: relative"><span id=change_this></span></div>
+  </div>PASS<br>if no
+<script>
+  if (window.testRunner)
+    testRunner.dumpAsText();
+  document.body.offsetHeight;
+  change_this.style.transform = "translateX(30px)";
+  container.appendChild(document.createTextNode(" assert"));
+</script>

@@ -1,0 +1,5 @@
+
+PASS Form associated custom elements should work with document.forms.elements.namedItem()
+PASS Form associated custom elements should work with document.forms.elements.namedItem() after upgrading
+PASS Form associated custom elements should work with document.forms.elements.namedItem() after updating the name attribute
+

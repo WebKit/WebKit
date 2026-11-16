@@ -1,0 +1,3 @@
+
+PASS Test document picture-in-picture copies Document mode when it's quirks mode
+

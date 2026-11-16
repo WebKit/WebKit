@@ -1,0 +1,3 @@
+
+FAIL WebSockets: when to process set-cookie fields in ws response assert_unreached: cookie was set during script execution Reached unreachable code
+

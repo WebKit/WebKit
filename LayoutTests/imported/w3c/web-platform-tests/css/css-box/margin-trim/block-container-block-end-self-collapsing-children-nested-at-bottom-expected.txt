@@ -1,0 +1,9 @@
+
+PASS .collapsed 1
+PASS .collapsed 2
+PASS .collapsed 3
+PASS .collapsed 4
+PASS .collapsed 5
+PASS .collapsed 6
+PASS .collapsed 7
+

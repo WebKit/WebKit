@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>currentTime must not advance past the next buffered-range gap after seeking into a later buffered range</title>
+    <script src="media-source-loader.js"></script>
+    <script src="../video-test.js"></script>
+    <script>
+    // Regression test for https://bugs.webkit.org/show_bug.cgi?id=315551.
+    var loader;
+    var source;
+    var sourceBuffer;
+
+    function loaderPromise(loader) {
+        return new Promise((resolve, reject) => {
+            loader.onload = resolve;
+            loader.onerror = reject;
+        });
+    }
+
+    window.addEventListener('load', async event => {
+        try {
+            findMediaElement();
+
+            loader = new MediaSourceLoader('content/test-fragmented-manifest.json');
+            await loaderPromise(loader);
+
+            source = new MediaSource();
+            run('video.src = URL.createObjectURL(source)');
+            run('video.muted = true');
+            run('video.playsInline = true');
+            run('video.disableRemotePlayback = true');
+            await waitFor(source, 'sourceopen');
+            waitFor(video, 'error').then(failTest);
+
+            run('sourceBuffer = source.addSourceBuffer(loader.type())');
+            run('sourceBuffer.appendBuffer(loader.initSegment())');
+            await waitFor(sourceBuffer, 'update');
+
+            consoleWrite('Append every fragment so buffered = [0, 10].');
+            for (let i = 0; i < loader.mediaSegmentsLength(); i++) {
+                sourceBuffer.appendBuffer(loader.mediaSegment(i));
+                await waitFor(sourceBuffer, 'update', true);
+            }
+            run('source.endOfStream()');
+            await waitFor(source, 'sourceended');
+            testExpected('sourceBuffer.buffered.length', 1);
+
+            consoleWrite('Punch two gaps so buffered = [0, 1] [3, 5] [8, 10].');
+            run('sourceBuffer.remove(1, 3)');
+            await waitFor(sourceBuffer, 'update');
+            run('sourceBuffer.remove(5, 8)');
+            await waitFor(sourceBuffer, 'update');
+            testExpected('sourceBuffer.buffered.length', 3);
+
+            consoleWrite('Seek into the middle buffered range, past the first gap.');
+            run('video.currentTime = 4');
+            await waitFor(video, 'seeked');
+            testExpected('video.currentTime >= 3 && video.currentTime <= 5', true);
+
+            run('video.play()');
+            await waitFor(video, 'playing');
+
+            // Wait for the renderer to stall at the end of the middle range. With
+            // the fix the boundary observer fires at 5 and the renderer stalls
+            // there. 'waiting' may fire from either the cap or from
+            // MediaSource::monitorSourceBuffers's periodic readyState recheck just
+            // before reaching 5 — both paths fire it in roughly the same wallclock
+            // window, so the event itself does not distinguish the fixed and
+            // unfixed cases. The differentiator is the currentTime check below.
+            //
+            // Bound the wait so the test fails fast if 'waiting' never fires.
+            await waitForEventWithTimeout(video, 'waiting', 3000, "'waiting' did not fire after seeking into a buffered range followed by a gap");
+
+            // Give enough wallclock time for the unfixed case to advance past 5.
+            // With the fix this is a no-op: the cap has already pinned playback
+            // at 5.
+            await sleepFor(500);
+
+            // The defining assertion: currentTime must be at or just past the
+            // start of the [5, 8] gap. The tolerance accounts for
+            // MediaSource::monitorSourceBuffers running on a 250ms timer:
+            // without the fix, playback advances past 5 until the next
+            // monitorSourceBuffers tick fires 'waiting' and pauses, landing
+            // somewhere up to ~5.25.
+            testExpected('video.currentTime <= 5.1', true);
+            testExpected('video.currentTime < 8', true);
+
+            endTest();
+        } catch (e) {
+            failTest(`Caught exception: "${e}"`);
+        }
+    });
+    </script>
+</head>
+<body>
+    <video></video>
+</body>
+</html>

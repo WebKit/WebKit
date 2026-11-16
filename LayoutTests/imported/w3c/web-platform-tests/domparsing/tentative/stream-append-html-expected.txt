@@ -1,0 +1,28 @@
+before;
+
+before;
+
+FAIL piping a response into streamAppendHTML() promise_test: Unhandled rejection with value: object "TypeError: placeholder.streamAppendHTML is not a function. (In 'placeholder.streamAppendHTML()', 'placeholder.streamAppendHTML' is undefined)"
+FAIL writing a string to streamAppendHTML() promise_test: Unhandled rejection with value: object "TypeError: placeholder.streamAppendHTML is not a function. (In 'placeholder.streamAppendHTML()', 'placeholder.streamAppendHTML' is undefined)"
+FAIL streamAppendHTML() should append to existing content promise_test: Unhandled rejection with value: object "TypeError: placeholder.streamAppendHTML is not a function. (In 'placeholder.streamAppendHTML()', 'placeholder.streamAppendHTML' is undefined)"
+FAIL streamAppendHTML() does not buffer until close() promise_test: Unhandled rejection with value: object "TypeError: placeholder.streamAppendHTML is not a function. (In 'placeholder.streamAppendHTML()', 'placeholder.streamAppendHTML' is undefined)"
+FAIL writing a Symbol to streamAppendHTML() promise_test: Unhandled rejection with value: object "TypeError: placeholder.streamAppendHTML is not a function. (In 'placeholder.streamAppendHTML()', 'placeholder.streamAppendHTML' is undefined)"
+FAIL writing numbers to streamAppendHTML() promise_test: Unhandled rejection with value: object "TypeError: placeholder.streamAppendHTML is not a function. (In 'placeholder.streamAppendHTML()', 'placeholder.streamAppendHTML' is undefined)"
+FAIL writing null or undefined to streamAppendHTML() promise_test: Unhandled rejection with value: object "TypeError: placeholder.streamAppendHTML is not a function. (In 'placeholder.streamAppendHTML()', 'placeholder.streamAppendHTML' is undefined)"
+FAIL streamAppendHTML() can stream into <style> promise_test: Unhandled rejection with value: object "TypeError: style.streamAppendHTML is not a function. (In 'style.streamAppendHTML()', 'style.streamAppendHTML' is undefined)"
+FAIL streamAppendHTML() can stream into a non-empty <style> promise_test: Unhandled rejection with value: object "TypeError: style.streamAppendHTML is not a function. (In 'style.streamAppendHTML()', 'style.streamAppendHTML' is undefined)"
+FAIL Aborting streamAppendHTML() promise_test: Unhandled rejection with value: object "TypeError: placeholder.streamAppendHTML is not a function. (In 'placeholder.streamAppendHTML()', 'placeholder.streamAppendHTML' is undefined)"
+FAIL Interleaved streamAppendHTML() writes promise_test: Unhandled rejection with value: object "TypeError: placeholder.streamAppendHTML is not a function. (In 'placeholder.streamAppendHTML()', 'placeholder.streamAppendHTML' is undefined)"
+FAIL streamAppendHTML should not execute scripts when connected promise_test: Unhandled rejection with value: object "TypeError: element.streamAppendHTML is not a function. (In 'element.streamAppendHTML({ runScripts: true })', 'element.streamAppendHTML' is undefined)"
+FAIL streamAppendHTML should pass sanitizer options promise_test: Unhandled rejection with value: object "TypeError: element
+      .streamAppendHTML is not a function. (In 'element
+      .streamAppendHTML({ sanitizer: { removeElements: ["p"] } })', 'element
+      .streamAppendHTML' is undefined)"
+FAIL streamAppendHTML on ShadowRoot promise_test: Unhandled rejection with value: object "TypeError: shadow
+      .streamAppendHTML is not a function. (In 'shadow
+      .streamAppendHTML({ sanitizer: { removeElements: ["p"] } })', 'shadow
+      .streamAppendHTML' is undefined)"
+FAIL streamAppendHTML uses safe sanitizer promise_test: Unhandled rejection with value: object "TypeError: element.streamAppendHTML is not a function. (In 'element.streamAppendHTML()', 'element.streamAppendHTML' is undefined)"
+FAIL streamAppendHTML on ShadowRoot uses safe sanitizer promise_test: Unhandled rejection with value: object "TypeError: shadow.streamAppendHTML is not a function. (In 'shadow.streamAppendHTML()', 'shadow.streamAppendHTML' is undefined)"
+FAIL streamAppendHTML with a chunk whose toString throws should reject promise_test: Unhandled rejection with value: object "TypeError: element.streamAppendHTML is not a function. (In 'element.streamAppendHTML()', 'element.streamAppendHTML' is undefined)"
+

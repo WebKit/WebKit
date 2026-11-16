@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="300" viewBox="0 0 600 300">
+  <g style="font: 16px Ahem">
+    <text x="100 200" y="50" text-anchor="end">hello</text>
+    <text x="100 200" y="100" text-anchor="middle">hello</text>
+    <text x="100 150 250" y="150" text-anchor="end">abcde</text>
+    <text x="100" y="200" text-anchor="end">ab<tspan x="200">cd</tspan></text>
+  </g>
+</svg>

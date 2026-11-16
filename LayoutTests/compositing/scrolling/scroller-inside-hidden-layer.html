@@ -1,0 +1,30 @@
+<!DOCTYPE HTML>
+<html>
+<style>
+  ::-webkit-scrollbar {
+    width: 0px;
+  }
+  .outer {
+    position: relative;
+    visibility: hidden;
+  }
+  .middle {
+    overflow-y: auto;
+    visibility: visible;
+    height: 100px;
+  }
+  .inner {
+    position: relative;
+    height: 200px;
+    background: blue;
+  }
+
+</style>
+<body>
+<div class="outer">
+  <div class="middle">
+    <div class="inner"></div>
+  </div>
+</div>
+</body>
+</html>

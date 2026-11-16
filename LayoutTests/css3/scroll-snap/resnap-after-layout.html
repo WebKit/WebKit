@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        :root {
+            scroll-snap-type: block mandatory;
+            font-size: 24pt;
+        }
+        
+        * {
+            box-sizing: border-box;
+        }
+        
+        html, body {
+            width: 100%;
+            height: 100%;
+        }
+
+        body {
+            margin: 0;
+            background-image: repeating-linear-gradient(transparent, silver 400px);
+        }
+        
+        .target {
+            scroll-snap-align: start;
+            border: 1px solid black;
+        }
+        
+        body > div {
+            padding: 100px;
+            text-align: center;
+            color: white;
+            width: 80%;
+            height: 100%;
+        }
+        
+        .multiple > div {
+            height: 100%;
+            width: 50%;
+            float: left;
+        }
+        
+        body.changed .layout-trigger {
+            height: 20px;
+        }
+    </style>
+    <script src="../../resources/js-test-pre.js"></script>
+    <script src="../../resources/ui-helper.js"></script>
+    <script>
+        jsTestIsAsync = true;
+
+        async function startTest()
+        {
+            // Scroll to first "multiple" snap point at 700.
+            await UIHelper.mouseWheelScrollAt(100, 100, 0, -10, 0, -40);
+            forceLayout();
+
+            // Scroll to second "single" snap point at 1200.
+            await UIHelper.mouseWheelScrollAt(100, 100, 0, -10, 0, -40);
+            forceLayout();
+
+            await UIHelper.renderingUpdate();
+            shouldBe('window.scrollY', '1200');
+            
+            finishJSTest();
+        }
+        
+        function forceLayout()
+        {
+            document.body.classList.toggle('changed');
+            document.body.offsetHeight;
+        }
+        
+        window.addEventListener('load', () => {
+            setTimeout(startTest, 0);
+        }, false);
+    </script>
+</head>
+<body>
+    <div class="target" style='background-color: red'></div>
+    <div class="multiple" style='background-color: orange'>
+        <div class="target" style='background-color: yellow'></div>
+        <div class="target" style='background-color: fuchsia'></div>
+    </div>
+    <div class="target" style='background-color: green'></div>
+    <div class="layout-trigger">layout trigger</div>
+    <div id="console"></div>
+    <script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

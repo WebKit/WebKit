@@ -1,0 +1,3 @@
+
+PASS Early Hints CSP: Early Hints policy = disallowed, final response policy = disallowed.
+

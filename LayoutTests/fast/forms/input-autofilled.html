@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+    input {
+      color: #FFFFFF;
+      background-color: #FFFFFF;
+    }
+    form:has(input:autofill) {
+        background-color: green;
+        color: white;
+    }
+    </style>
+</head>
+<body>
+    This tests that foreground and background colors properly change for autofilled inputs.<br>
+    <form name="form" id="form">
+        <input type="text" id="input" value="Field value" />
+    </form>
+    <script src="../../resources/testharness.js"></script>
+    <script src="../../resources/testharnessreport.js"></script>
+    <script>
+    test(() => {
+        testElement(input);
+    }, "Testing input style changing with UA stylesheet");
+    test(() => {
+        testElement(form);
+    }, "Testing form style changing with :has() selector");
+
+    function testElement(element) {
+        let computedStyle = getComputedStyle(element);
+        let originalForeground = computedStyle.color;
+        let originalBackground = computedStyle.backgroundColor;
+
+        if (window.internals)
+            window.internals.setAutofilled(input, true);
+
+        // Both the foreground and background colors should change when autofilled.
+        computedStyle = getComputedStyle(element);
+        assert_not_equals(computedStyle.color, originalForeground, "Text color should change when autofilled.");
+        assert_not_equals(computedStyle.backgroundColor, originalBackground, "Background color should change when autofilled.")
+
+        if (window.internals)
+            window.internals.setAutofilled(input, false);
+
+        // Colors should be restored.
+        computedStyle = getComputedStyle(element);
+        assert_equals(computedStyle.color, originalForeground, "Text color should be restored");
+        assert_equals(computedStyle.backgroundColor, originalBackground, "Background color should be restored")
+    }
+    </script>
+</body>
+</html>

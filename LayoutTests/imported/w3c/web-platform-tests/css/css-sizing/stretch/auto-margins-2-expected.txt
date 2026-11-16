@@ -1,0 +1,8 @@
+
+PASS .outer>div 1
+PASS .outer>div 2
+PASS .outer>div 3
+PASS .outer>div 4
+PASS .outer>div 5
+PASS .outer>div 6
+

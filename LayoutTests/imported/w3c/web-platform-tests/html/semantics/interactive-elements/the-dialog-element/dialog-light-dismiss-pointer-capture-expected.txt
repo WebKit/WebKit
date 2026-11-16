@@ -1,0 +1,4 @@
+
+FAIL Light dismiss on dialog with touch input with pointer capture. assert_false: dialog should light dismiss when pointer capture is not being used. expected false got true
+PASS Light dismiss on dialog with mouse input with pointer capture.
+

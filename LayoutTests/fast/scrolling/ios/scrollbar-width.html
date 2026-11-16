@@ -1,0 +1,74 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<head>
+    <style>
+        html {
+            scrollbar-width: none;
+        }
+        body {
+            height: 1000px;
+        }
+        .scroller {
+            margin: 10px;
+            width: 200px;
+            height: 200px;
+            border: 1px solid black;
+            overflow: auto;
+            scrollbar-width: none;
+        }
+        .contents {
+            width: 100%;
+            height: 200%;
+        }
+    </style>
+    <script src="../../../resources/js-test-pre.js"></script>
+    <script src="../../../resources/ui-helper.js"></script>
+    
+    <script>
+        jsTestIsAsync = true;
+
+        async function doTest()
+        {
+            description('Test scrollbar-width on overflow and main document');
+            if (!window.internals) {
+                finishJSTest();
+                return;
+            }
+            
+            const scroller = document.querySelector('.scroller');
+
+            debug('Overflow should have scrollbar-width:none');
+            await UIHelper.waitForConditionAsync(async () => {
+                let state = await UIHelper.verticalScrollbarState(scroller);
+                debug(state);
+                let scrollbarWidth = state.indexOf('none') != -1;
+                if (scrollbarWidth)
+                    testPassed('Scrollbar state: ' + state);
+                return scrollbarWidth;
+            });
+
+            debug('Document should have scrollbar-width:none');
+            await UIHelper.waitForConditionAsync(async () => {
+                let state = await UIHelper.verticalScrollbarState();
+                let scrollbarWidth = state.indexOf('none') != -1;
+                if (scrollbarWidth)
+                    testPassed('Scrollbar state: ' + state);
+                return scrollbarWidth;
+            });
+
+            finishJSTest();
+        }
+
+        window.addEventListener('load', () => {
+            doTest();
+        }, false);
+    </script>
+</head>
+<body>
+    <div class="scroller">
+        <div class="contents"></div>
+    </div>
+    <div id="console"></div>
+    <script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

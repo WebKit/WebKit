@@ -1,0 +1,10 @@
+
+PASS used outline-offset of 1px at zoom 1 is snapped as a line width
+PASS used outline-offset of -1px at zoom 1 is snapped as a line width
+PASS used outline-offset of 1px at zoom 1.5 is snapped as a line width
+PASS used outline-offset of 3px at zoom 1.5 is snapped as a line width
+PASS used outline-offset of -3px at zoom 1.5 is snapped as a line width
+PASS used outline-offset of 1px at zoom 0.5 is snapped as a line width
+PASS used outline-offset of -1px at zoom 0.5 is snapped as a line width
+PASS used outline-offset of 0px at zoom 0.5 is snapped as a line width
+

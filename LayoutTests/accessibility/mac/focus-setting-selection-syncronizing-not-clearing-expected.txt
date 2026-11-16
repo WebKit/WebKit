@@ -1,0 +1,11 @@
+This tests that calling focus on a render object when it doesn't result in a selection change won't leave isSynchronizingSelection set to true.
+
+PASS: accessibilityController.focusedElement.isEqual(accessibilityController.accessibleElementById('1')) === true
+PASS: accessibilityController.accessibleElementById('1').isFocusable === true
+PASS: AXTextStateSync after tabbing is undefined, expected undefined
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+ 1
+ 2

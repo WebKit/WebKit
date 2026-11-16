@@ -1,0 +1,10 @@
+This tests that you can't get cross-origin object during [[Put]] operation.
+
+PASS data is not "null"
+PASS data is not "Cocoa"
+PASS data is not "null"
+PASS data is not "Cocoa"
+PASS: successfullyParsed should be 'true' and is.
+
+TEST COMPLETE
+

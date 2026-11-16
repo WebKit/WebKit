@@ -1,0 +1,5 @@
+
+PASS :dedicated_worker:
+PASS :shared_worker:
+PASS :service_worker:
+

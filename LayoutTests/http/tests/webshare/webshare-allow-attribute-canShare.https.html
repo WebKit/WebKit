@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>
+      Test allow attribute with "web-share" and canShare() method
+    </title>
+    <meta name="viewport" content="initial-scale=5, width=device-width" />
+    <script src="../resources/js-test-pre.js"></script>
+    <script>
+      testRunner?.dumpAsText();
+      testRunner?.waitUntilDone();
+
+      function waitFor(target, eventName) {
+        return new Promise((resolve) => {
+          target.addEventListener(eventName, resolve, { once: true });
+        });
+      }
+
+      window.addEventListener("load", async () => {
+        for (const iframe of document.querySelectorAll("iframe")) {
+          const { enabled, src } = iframe.dataset;
+          const isAllowed = enabled === "true";
+          const action = "call canShare()";
+          iframe.contentWindow.postMessage({ action }, "*");
+          const { data } = await waitFor(window, "message");
+          const { exceptionMessage, exceptionName, result } = data;
+
+          const msg = `iframe src: "${iframe.src}" with allow="${
+            iframe.allow
+          }" ${
+            isAllowed ? "is allowed to" : "MUST NOT be allowed to"
+          } ${action}. ${exceptionName ?? ""} ${exceptionMessage ?? ""}`;
+
+          switch (result) {
+            case true:
+              isAllowed ? testPassed(msg) : testFailed(msg);
+              break;
+            case false:
+              !isAllowed ? testPassed(msg) : testFailed(msg);
+              break;
+            default:
+              testFailed(msg + ` - result was: ${result}`);
+          }
+        }
+        testRunner.notifyDone();
+      });
+    </script>
+  </head>
+  <body>
+    <iframe
+      data-enabled="false"
+      src="https://localhost:8443/webshare/resources/webshare-postmessage.html"
+    ></iframe>
+    <iframe
+      data-enabled="true"
+      src="./resources/webshare-postmessage.html"
+    ></iframe>
+    <iframe
+      allow="web-share"
+      data-enabled="true"
+      src="https://localhost:8443/webshare/resources/webshare-postmessage.html"
+    ></iframe>
+    <iframe
+      allow="web-share"
+      data-enabled="true"
+      src="./resources/webshare-postmessage.html"
+    ></iframe>
+    <iframe
+      allow="web-share *"
+      data-enabled="true"
+      src="https://localhost:8443/webshare/resources/webshare-postmessage.html"
+    ></iframe>
+    <iframe
+      allow="web-share *"
+      data-enabled="true"
+      src="./resources/webshare-postmessage.html"
+    ></iframe>
+    <iframe
+      allow="web-share 'none'"
+      data-enabled="false"
+      src="https://localhost:8443/webshare/resources/webshare-postmessage.html"
+    ></iframe>
+    <iframe
+      allow="web-share 'none'"
+      data-enabled="false"
+      src="./resources/webshare-postmessage.html"
+    ></iframe>
+    <iframe
+      allow="web-share 'self'"
+      data-enabled="false"
+      src="https://localhost:8443/webshare/resources/webshare-postmessage.html"
+    ></iframe>
+    <iframe
+      allow="web-share 'self'"
+      data-enabled="true"
+      src="./resources/webshare-postmessage.html"
+    ></iframe>
+    <iframe
+      allow="web-share https://localhost:8443"
+      data-enabled="true"
+      src="https://localhost:8443/webshare/resources/webshare-postmessage.html"
+    ></iframe>
+    <iframe
+      allow="web-share https://localhost:8443"
+      data-enabled="false"
+      src="./resources/webshare-postmessage.html"
+    ></iframe>
+  </body>
+</html>

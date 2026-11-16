@@ -1,0 +1,35 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="/js-test-resources/js-test.js"></script>
+<script>
+description("Verifies that mouseenter and mouseleave events work correctly on remote frames.");
+jsTestIsAsync = true;
+
+var mouseEvents = [];
+
+async function doTest() {
+    document.body.offsetLeft;
+    // Repeat multiple times as this test is meant to verify flaky behavior is fixed
+    for (let i = 0; i < 5; i++) {
+        await eventSender.asyncMouseMoveTo(1, 1);
+        await eventSender.asyncMouseMoveTo(110,140);
+        await eventSender.asyncMouseMoveTo(10, 10);
+        await eventSender.asyncMouseMoveTo(150, 150);
+    }
+    await eventSender.asyncMouseMoveTo(1, 1);
+
+    debug("Mouse events captured: " + mouseEvents.join(", "));
+    finishJSTest();
+}
+
+document.addEventListener("DOMContentLoaded", function(event) {
+    var iframe = document.getElementById('remoteframe');
+    iframe.addEventListener('mouseenter', function(ev) {
+        mouseEvents.push(ev.type + " on " + ev.target.id);
+    });
+    iframe.addEventListener('mouseleave', function(ev) {
+        mouseEvents.push(ev.type + " on " + ev.target.id);
+    });
+    doTest();
+});
+</script>
+<iframe id="remoteframe" src="http://localhost:8000/site-isolation/resources/green-background.html" style="width:100px; height:100px; background-color:blue; top:100px; left:100px; position:absolute"></iframe>

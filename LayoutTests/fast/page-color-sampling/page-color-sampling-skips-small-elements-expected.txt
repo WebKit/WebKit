@@ -1,0 +1,6 @@
+PASS edgeColors.top is null
+PASS edgeColors.left is null
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,12 @@
+
+PASS :colorState:caseName="default"
+PASS :colorState:caseName="noBlendTarget0"
+PASS :colorState:caseName="noBlendTarget1"
+PASS :colorState:caseName="colorOperation"
+PASS :colorState:caseName="colorSrcFactor"
+PASS :colorState:caseName="colorDstFactor"
+PASS :colorState:caseName="alphaOperation"
+PASS :colorState:caseName="alphaSrcFactor"
+PASS :colorState:caseName="alphaDstFactor"
+PASS :colorState:caseName="writeMask"
+

@@ -1,0 +1,4 @@
+
+FAIL path.getPathData() with missing d attribute returns [] pathMissingD.getPathData is not a function. (In 'pathMissingD.getPathData()', 'pathMissingD.getPathData' is undefined)
+FAIL path.getPathData() with empty d attribute returns [] pathEmptyD.getPathData is not a function. (In 'pathEmptyD.getPathData()', 'pathEmptyD.getPathData' is undefined)
+

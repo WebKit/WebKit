@@ -1,0 +1,11 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ CSSTextDecorationInsetEnabled=true ] -->
+<meta charset="utf-8">
+<title>CSS Text Decoration: text-decoration-inset: auto separates adjacent underlined CJK runs (reference)</title>
+<style>
+    body { margin: 20px; background: white; }
+    div { font: 60px/1.5 sans-serif; color: black; }
+    /* WebKit's 'auto' amount is font-size/8 = 0.125em, applied to both endpoints. */
+    u { text-decoration-line: underline; text-decoration-color: blue; text-underline-position: under; text-decoration-inset: 0.125em; }
+</style>
+<p>The underlines for the two elements should be visibly separated by a gap:</p>
+<div lang="zh"><u>石井</u><u>艾俐俐</u></div>

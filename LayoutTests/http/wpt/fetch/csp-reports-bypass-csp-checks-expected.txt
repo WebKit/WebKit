@@ -1,0 +1,3 @@
+
+PASS CSP violation reports should not be CSP checked
+

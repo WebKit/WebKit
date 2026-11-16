@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>An SVG image without a color scheme uses light system colors when the page is in dark mode</title>
+<script>
+  if (window.internals)
+    internals.settings.setUseDarkAppearance(true);
+</script>
+</head>
+<body>
+<img src="resources/canvas-color-rect.svg" style="border: 1px solid black">
+</body>
+</html>

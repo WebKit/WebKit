@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText()
+    testRunner.waitUntilDone();
+    window.addEventListener("load", function() {
+        testRunner.notifyDone();
+    });
+}
+</script>
+<link rel=preload href="../resources/dummy.js" as=fetch>
+<link rel=preload href="../resources/dummy.js" as=script>
+<body>
+Test mismatching preload types. The test passes if it doesn't crash or assert.
+<script src="../resources/dummy.js"></script>
+</body>

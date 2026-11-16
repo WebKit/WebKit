@@ -1,0 +1,3 @@
+
+PASS Test lazy loading iframe remains lazy loading originally createdin a script-disabled document, then got adopted to a regular document
+

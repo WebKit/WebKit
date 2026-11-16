@@ -1,0 +1,11 @@
+Policy delegate: attempt to load http://127.0.0.1:8000/security/resources/empty.html?test with navigation type 'link clicked'
+Tests that the navigate event doesn't get fired if the client blocks the navigation via policy decision.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS The navigate event was not fired
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

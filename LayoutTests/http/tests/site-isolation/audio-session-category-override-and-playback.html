@@ -1,0 +1,54 @@
+<!-- webkit-test-runner [ allowTestOnlyIPC=true ] -->
+<!DOCTYPE html>
+<html>
+<head>
+<script src="/js-test-resources/js-test.js"></script>
+<script src="/media-resources/utilities.js"></script>
+</head>
+<body>
+<script>
+description("A navigator.audioSession.type override set by one frame applies to audible media played by another frame of the same page, and lowers the audio session's category. This test deliberately does not enable site isolation, so that the site-isolated run is compared against the same expectations: with site isolation the two frames are in separate processes and the type reaches the playing one through DocumentSyncData, without it they share a process and its audio session, and both must reach AmbientSound.");
+jsTestIsAsync = true;
+
+onload = async () => {
+    try {
+        // "ambient" maps to the AmbientSound category, which is lower priority than the MediaPlayback
+        // the playing frame would compute on its own.
+        navigator.audioSession.type = "ambient";
+        shouldBeEqualToString("navigator.audioSession.type", "ambient");
+
+        // localhost and 127.0.0.1 are different sites, so with site isolation the iframe plays in its
+        // own process.
+        playingFrameCategory = await new Promise((resolve, reject) => {
+            window.onmessage = event => {
+                if (event.origin !== "http://localhost:8000") {
+                    reject(new Error(`unexpected origin ${event.origin}`));
+                    return;
+                }
+                resolve(event.data);
+            };
+            const iframe = document.createElement("iframe");
+            iframe.src = "http://localhost:8000/site-isolation/resources/audio-session-playback-frame.html";
+            document.body.appendChild(iframe);
+        });
+
+        // The playing frame's process has the override even though it did not set it.
+        shouldBeEqualToString("playingFrameCategory", "AmbientSound");
+
+        overridingFrameCategory = internals.audioSessionCategory();
+        shouldBeEqualToString("overridingFrameCategory", "AmbientSound");
+
+        // The override replaces the category each process computes, so every process of the page reports
+        // AmbientSound. The process owning the real session picks the highest priority category its
+        // clients reported, so it only reaches AmbientSound because none of them reported higher.
+        await waitForSystemAudioSessionCategory("AmbientSound");
+        testPassed("the real audio session's category is AmbientSound");
+    } catch (e) {
+        testFailed(e.message);
+    }
+
+    finishJSTest();
+};
+</script>
+</body>
+</html>

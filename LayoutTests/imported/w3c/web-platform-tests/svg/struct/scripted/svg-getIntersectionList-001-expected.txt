@@ -1,0 +1,6 @@
+Text0
+Text2
+Text3
+
+PASS SVGSVGElement.getIntersectionList()
+

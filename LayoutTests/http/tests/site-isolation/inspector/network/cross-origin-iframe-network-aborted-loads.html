@@ -1,0 +1,58 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="../debugger/resources/site-isolation-debugger-test-utilities.js"></script>
+<script src="resources/frame-load-rows-test-utilities.js"></script>
+<script>
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Network.CrossOriginIFrameAbortedLoads");
+
+    async function expectAbortedLoad({trigger, parameter, type, label}) {
+        let frameTarget = await waitForFrameTargetForURLContaining("iframe-with-abortable-loads.html", awaitLaunchTimeout);
+        InspectorTest.assert(frameTarget instanceof WI.FrameTarget, "Cross-origin iframe frame target should exist.");
+        await waitForExpressionInTarget(frameTarget, `typeof ${trigger} === "function"`);
+
+        // Unique per run, so repeated runs in one process never share a request.
+        let token = String(Math.random()).slice(2);
+        let url = `http://localhost:8000/site-isolation/inspector/network/resources/data.json?${parameter}-${token}`;
+        let recorder = new FrameLoadRowRecorder;
+
+        await frameTarget.RuntimeAgent.evaluate.invoke({expression: `${trigger}("${token}")`, objectGroup: "test"});
+
+        let resource = await pollUntil(() => recorder.rowsForURL(url)[0]);
+        InspectorTest.expectThat(!!resource, `${label} should be added.`);
+        if (resource) {
+            InspectorTest.expectEqual(resource.type, type, `${label} should have the ${type} type.`);
+            InspectorTest.expectEqual(resource.parentFrame?.parentFrame, WI.networkManager.mainFrame, `${label} should belong to the iframe's frame.`);
+            InspectorTest.expectEqual(await awaitResourceSettled(resource), "failed", `${label} should fail instead of staying pending.`);
+            InspectorTest.expectThat(resource.canceled, `${label} should be marked as canceled.`);
+            InspectorTest.expectEqual(recorder.rowsForURL(url).length, 1, `${label} should be listed once.`);
+        }
+
+        recorder.stop();
+    }
+
+    suite.addTestCase({
+        name: "SiteIsolation.Network.CrossOriginIFrame.AbortedFetch",
+        description: "A fetch aborted with an AbortController in a cross-origin iframe should fire LoadingDidFail as canceled.",
+        timeout: 30000,
+        async test() {
+            await expectAbortedLoad({trigger: "triggerAbortedFetch", parameter: "aborted-fetch", type: WI.Resource.Type.Fetch, label: "Aborted fetch"});
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Network.CrossOriginIFrame.StoppedImage",
+        description: "An image load cancelled by window.stop() in a cross-origin iframe should fire LoadingDidFail as canceled.",
+        timeout: 30000,
+        async test() {
+            await expectAbortedLoad({trigger: "triggerStoppedImage", parameter: "stopped-image", type: WI.Resource.Type.Image, label: "Stopped image"});
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+<body onload="runTest()">
+<p>Tests that loads cancelled in a cross-origin iframe fail as canceled in the Network model instead of staying pending, under Site Isolation.</p>
+<iframe src="http://localhost:8000/site-isolation/inspector/network/resources/iframe-with-abortable-loads.html"></iframe>
+</body>

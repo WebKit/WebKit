@@ -1,0 +1,3 @@
+Select me, select me, select meSelect me, select me, select me
+
+The original text was "Select me, select me, select me", after selecting and pasting the result should be "Select me, select me, select meSelect me, select me, select me"

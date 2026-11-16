@@ -1,0 +1,30 @@
+Tests safe and unsafe boundaries for innerHTML prefix cache to ensure proper HTML parsing.
+
+---------- Safe Boundary Tests ----------
+
+=== Element boundary (safe to cache) ===
+Extended after closing tag ">"
+children.length: 2 (expected: 2)
+Result: PASS
+
+=== Whitespace boundary (safe to cache) ===
+Extended after whitespace
+children.length: 2 (expected: 2)
+Result: PASS
+
+---------- Unsafe Boundary Tests ----------
+
+=== Text node splitting prevention ===
+Extended text from "hello" to "helloworld"
+Should NOT split text into multiple nodes
+childNodes.length: 1 (expected: 1)
+textContent: "helloworld" (expected: "helloworld")
+Result: PASS
+
+=== Entity splitting prevention ===
+Extended incomplete entity "&apos" to "&apos;"
+Should NOT split entity - should render as apostrophe
+Contains apostrophe: true (expected: true)
+Result: PASS
+
+

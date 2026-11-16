@@ -1,0 +1,34 @@
+<head>
+<script src="../resources/js-test.js"></script>
+<body>
+<script>
+description("Tests that the [playingEffectPromise] gets resolved with 'preempted' when the document becomes hidden");
+jsTestIsAsync = true;
+
+function runTest() {
+    addEventListener("gamepadconnected", async e => {
+        gamepad = e.gamepad;
+        debug("* Starting dual-rumble effect");
+        let promise = gamepad.vibrationActuator.playEffect('dual-rumble', { duration: 3000 });
+        debug("* Changing page visibility to hidden");
+        if (window.internals)
+            internals.setPageVisibility(false);
+	try {
+            result = await promise;
+            shouldBeEqualToString("result", "preempted");
+        } catch (error) {
+            testFailed("Promise got unexpectedly rejected: " + error);
+        }
+        finishJSTest();
+    });
+    const supportsDualRumble = true;
+    testRunner.setMockGamepadDetails(0, "Test Gamepad", "", 2, 2, supportsDualRumble);
+    testRunner.setMockGamepadAxisValue(0, 0, 0.7);
+    testRunner.setMockGamepadAxisValue(0, 1, -1.0);
+    testRunner.setMockGamepadButtonValue(0, 0, 1.0);
+    testRunner.setMockGamepadButtonValue(0, 1, 1.0);
+    testRunner.connectMockGamepad(0);
+}
+onload = runTest;
+</script>
+</body>

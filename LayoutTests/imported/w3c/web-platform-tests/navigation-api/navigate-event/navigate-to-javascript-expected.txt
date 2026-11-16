@@ -1,0 +1,4 @@
+
+
+PASS navigate event does not fire for javascript: URL navigations
+

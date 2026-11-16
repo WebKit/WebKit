@@ -1,0 +1,57 @@
+<html>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+</script>
+
+<template id=shadow1><div><slot></slot></div></template>
+<template id=shadow2><div>text</div><div><slot></slot></div></template>
+<template id=shadow3><div>text<div shadow=shadow1><slot></slot></div></div></template>
+
+
+<template test=1.1><div shadow=shadow1>text</div></template>
+<template test=1.2><div shadow=shadow1><div>text</div></div></template>
+
+<template test=2.1><div shadow=shadow2>text</div></template>
+<template test=2.2><div shadow=shadow2><div>text</div></div></template>
+
+<template test=3.1><div shadow=shadow3>text</div></template>
+<template test=3.2><div shadow=shadow3><div>text</div></div></template>
+
+<body>
+<pre id=console></pre>
+<script>
+function installShadows(tree)
+{
+    var shadowHosts = tree.querySelectorAll("[shadow]");
+    for (var i = 0; i < shadowHosts.length; ++i) {
+        var shadowId = shadowHosts[i].getAttribute("shadow");
+        var shadowContents = document.querySelector("#"+shadowId).content.cloneNode(true);
+
+        installShadows(shadowContents);
+
+        var shadowRoot = shadowHosts[i].attachShadow({ mode: "open" });
+        shadowRoot.appendChild(shadowContents);
+    }
+}
+
+var console = document.querySelector("#console");
+
+var tests = document.querySelectorAll("[test]");
+for (var i = 0; i < tests.length; ++i) {
+    var test = tests[i].content.cloneNode(true);
+    installShadows(test);
+    console.innerText += "\nTest " + tests[i].getAttribute("test") + "\n";
+    console.innerText += internals.composedTreeAsText(test);
+
+    var shadowSubtree = test.querySelector("[shadow]");
+
+    var children = shadowSubtree.shadowRoot.children;
+    for (var j = 0; j < children.length; ++j) {
+        console.innerText += "\nShadow child " + j + " subtree\n"
+        console.innerText += internals.composedTreeAsText(children[j]);
+    }
+}
+
+</script>
+</body>

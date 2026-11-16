@@ -1,0 +1,64 @@
+<html><!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<head>
+<script src="/js-test-resources/js-test.js"></script>
+<script src="/js-test-resources/accessibility-helper.js"></script>
+<style>
+body { margin: 0; padding: 0; }
+#frame {
+    position: absolute;
+    left: 100px;
+    top: 50px;
+    width: 400px;
+    height: 300px;
+    border: none;
+}
+</style>
+</head>
+<body>
+
+<iframe id="frame" src="http://localhost:8000/site-isolation/resources/frame-with-text.html"></iframe>
+
+<script>
+var output = "Validates the absolute (screen) position of text inside an iframe with site isolation.\n\n";
+
+var webArea, container, textX, textY;
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+    accessibilityController.setForceInitialFrameCaching(true);
+    accessibilityController.setClientAccessibilityMode(true);
+
+    setTimeout(async function() {
+        await waitFor(() => {
+            webArea = accessibilityController.rootElement.childAtIndex(0);
+            return webArea;
+        })
+
+        // Wait for the text element to exist AND have the correct position.
+        // The async frame screen position update may not have arrived yet,
+        // so we poll until the values are correct.
+        await waitFor(() => {
+            var pageOrigin = { x: webArea.x, y: webArea.y };
+            container = accessibilityController.accessibleElementById("container");
+            if (!container || !container.childAtIndex(0))
+                return false;
+
+            var textNode = container.childAtIndex(0);
+            textX = textNode.x - pageOrigin.x;
+            textY = textNode.y - pageOrigin.y;
+
+            // The text is at (20, 30) inside the iframe, and iframe is at (100, 50).
+            // So text should be at (120, 80) relative to the page origin.
+            return textX === 120 && textY === 80;
+        });
+
+        output += expect("textX", "120");
+        output += expect("textY", "80");
+
+        debug(output);
+        document.getElementById("frame").hidden = true;
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

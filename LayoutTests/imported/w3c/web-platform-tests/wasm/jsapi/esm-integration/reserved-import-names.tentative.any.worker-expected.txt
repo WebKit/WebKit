@@ -1,0 +1,7 @@
+
+PASS wasm: reserved import names should cause WebAssembly.LinkError
+PASS wasm-js: reserved import names should cause WebAssembly.LinkError
+PASS wasm: reserved export names should cause WebAssembly.LinkError
+PASS wasm-js: reserved export names should cause WebAssembly.LinkError
+PASS wasm-js: reserved module names should cause WebAssembly.LinkError
+

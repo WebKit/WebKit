@@ -1,0 +1,3 @@
+
+PASS currententrychange does not fire when onnavigate preventDefault() is called
+

@@ -1,0 +1,47 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<!DOCTYPE html>
+<html>
+<head>
+<script src="/js-test-resources/js-test.js"></script>
+</head>
+<body>
+<script>
+description("A popup that its opener navigates from a cross-site document to about:blank is not showing its initial about:blank, so the about:blank has a Navigation API entry and pushState adds a history entry.");
+jsTestIsAsync = true;
+
+let popup;
+let historyLengthBeforePushState;
+
+function popupShowsLoadedAboutBlank()
+{
+    try {
+        return popup.location.href === "about:blank" && popup.document.readyState === "complete";
+    } catch (e) {
+        return false;
+    }
+}
+
+(async () => {
+    let ready = new Promise(resolve => window.addEventListener("message", function handler(event) {
+        if (event.data === "initial ping") {
+            window.removeEventListener("message", handler);
+            resolve();
+        }
+    }));
+    popup = window.open("http://localhost:8000/site-isolation/resources/post-message-to-opener.html");
+    await ready;
+
+    popup.location = "about:blank";
+    await shouldBecomeEqual("popupShowsLoadedAboutBlank()", "true");
+    shouldBe("popup.navigation.entries().length", "1");
+
+    historyLengthBeforePushState = popup.history.length;
+    popup.history.pushState(null, "");
+    shouldBe("popup.history.length", "historyLengthBeforePushState + 1");
+
+    popup.close();
+    finishJSTest();
+})();
+</script>
+</body>
+</html>

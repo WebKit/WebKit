@@ -1,0 +1,6 @@
+
+PASS WorkerNavigator exposed in dedicated worker
+PASS register() with TrustedScriptURL works in dedicated worker
+PASS register() fails with plain string in dedicated worker
+PASS register() fails with plain string in dedicated worker with a default policy
+

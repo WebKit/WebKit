@@ -1,0 +1,197 @@
+<!-- webkit-test-runner [ IPCTestingAPIEnabled=true ] -->
+<script>
+    class Helper {
+        constructor() {
+            this.connections = [{
+                connection: IPC.connectionForProcessTarget('GPU')
+            }]
+        }
+        extractCallResult(b, path) {
+            let currentIdx = path;
+            let a = b.replyArguments[currentIdx].name
+            let c = b.parsedReply[a];
+            return c
+        }
+        sendMessage(connectionID, messageDesc, destinationID, args) {
+            let connection = this.connections[connectionID].connection
+            if (messageDesc.replyArguments == null) {
+
+                const serializedArguments = ArgumentSerializer.serializeArguments(messageDesc.arguments, args);
+                connection.sendMessage(destinationID, messageDesc.name, serializedArguments)
+            } else {
+                if (messageDesc.d);
+                else {
+                    const serializedArguments = ArgumentSerializer.serializeArguments(messageDesc.arguments, args)
+                    return new Promise((resolve) => {
+                        try {
+                            connection.sendWithAsyncReply(destinationID, messageDesc.name, serializedArguments, () => {});
+                        } catch {
+                            resolve0;
+                        }
+                    });
+                }
+            }
+        }
+    }
+async function main() {
+        const res_0 = {
+            replyArguments: [{
+                name: 'identifier'
+            }],
+            parsedReply: {
+                identifier: 0n
+            }
+        };
+        const helper = new Helper(true);
+        let ref_105827994978832 = res_0 ? helper.extractCallResult(res_0, 0) : null;
+        if (ref_105827994978832 !== null) {
+            helper.sendMessage(0, IPC.messages.RemoteMediaPlayerManagerProxy_CreateMediaPlayer, ref_105827994978832, {
+                identifier: 18446744073709551614n,
+                clientIdentifier: 18446744073709551614n,
+                remoteEngineIdentifier: 0,
+                proxyConfiguration: {
+                    referrer: 'x79',
+                    userAgent: '',
+                    sourceApplicationIdentifier: '',
+                    networkInterfaceName: '\e',
+                    audioOutputDeviceId: '',
+                    mediaContentTypesRequiringHardwareSupport: [],
+                    allowedMediaContainerTypes: {},
+                    allowedMediaCodecTypes: {
+                        optionalValue: ['', ]
+                    },
+                    allowedMediaVideoCodecIDs: {},
+                    allowedMediaAudioCodecIDs: {},
+                    allowedMediaCaptionFormatTypes: {},
+                    playerContentBoxRect: {
+                        m_location: {
+                            x: {
+                                rawValue: 936288880,
+                            },
+                            y: {
+                                rawValue: 278,
+                            }
+                        },
+                        m_size: {
+                            width: {
+                                rawValue: 4252677577,
+                            },
+                            height: {
+                                rawValue: 9,
+                            },
+                        }
+                    },
+                    preferredAudioCharacteristics: [],
+                    outOfBandTrackData: [],
+                    documentSecurityOrigin: {
+                        data: {
+                            variantIndex: 0,
+                            variant: {
+                                protocol: '',
+                                host: '\x2Ex31',
+                                port: {},
+                            }
+                        },
+                    },
+                    presentationSize: {
+                        width: 3480689791,
+                        height: 1,
+                    },
+                    logIdentifier: 2n,
+                    shouldUsePersistentCache: true,
+                    isVideo: true,
+                    renderingCanBeAccelerated: true,
+                    shouldDisableHDR: false,
+                },
+            });
+        }
+        let ref_105827994982928 = res_0 ? helper.extractCallResult : null;
+        if (ref_105827994982928 !== null);
+        if (true) {
+            helper.sendMessage(0, IPC.messages.RemoteMediaPlayerProxy_Load, 18446744073709551614n, {
+                url: {
+                    string: '\x77\x3Ax31x90x8Ax50x4ExA6xD6x77x4E',
+                },
+                sandboxExtension: {},
+                options: {
+                    contentType: {
+                        raw: '\f',
+                        typeWasInferredFromExtension: true,
+                    },
+                    requiresRemotePlayback: true,
+                    supportsLimitedMatroska: false,
+                    videoRendererPreferences: 9,
+                },
+            });
+        }
+        let ref_105827994983568 = res_0 ? helper.extractCallResult(res_0, 0) : null;
+        let ref_105827994983696 = 2n;
+        let ref_105827994983824 = 18446744073709551614n;
+        let ref_105827994983952 = 2n;
+        if (ref_105827994983568 !== null && ref_105827994983696 !== null && ref_105827994983824 !== null && ref_105827994983952 !== null) {
+            helper.sendMessage(0, IPC.messages.RemoteMediaResourceLoader_LoadFailed, ref_105827994983568, {
+                identifier: ref_105827994983696,
+                error: {
+                    ipcData: {
+                        optionalValue: {
+                            type: 3,
+                            nsError: {
+                                optionalValue: {
+                                    wrapper: {
+                                        domain: '',
+                                        code: ref_105827994983824,
+                                        userInfo: {
+                                            vector: {},
+                                        },
+                                        underlyingError: {
+                                            optionalValue: {
+                                                domain: 'x74',
+                                                code: ref_105827994983952,
+                                                userInfo: {
+                                                    vector: {},
+                                                },
+                                                underlyingError: {},
+                                            }
+                                        },
+                                    },
+                                }
+                            },
+                            isSanitized: true,
+                        }
+                    },
+                },
+            });
+        }
+        if (true)
+            if (ref_105827994984144 !== null)
+                if (ref_105827994984400 !== null);
+    }
+
+globalThis.testRunner?.waitUntilDone();
+
+</script>
+<script type="module">
+
+import { CoreIPC, ArgumentSerializer, ArgumentParser } from './coreipc.js';
+if (window.IPC) {
+
+    window.CoreIPC = CoreIPC;
+    window.ArgumentSerializer = ArgumentSerializer;
+    window.ArgumentParser = ArgumentParser;
+
+    setTimeout(() => {
+        main().catch(e => {
+        }).finally(() => {
+            globalThis.testRunner?.notifyDone();
+        });
+    }, 100);
+} else {
+    window.testRunner?.notifyDone();
+}
+
+</script>
+</head>
+<body>
+    <p>This test passes if WebKit did not crash.</p>
+</body>
+</html>

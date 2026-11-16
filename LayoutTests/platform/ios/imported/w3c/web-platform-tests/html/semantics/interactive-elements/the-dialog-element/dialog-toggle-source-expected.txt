@@ -1,0 +1,9 @@
+show modal light dismiss dialog  close  request close
+
+PASS ToggleEvent.source on <dialog> elements: dialog.showModal().
+PASS ToggleEvent.source on <dialog> elements: command button.
+PASS ToggleEvent.source on <dialog> elements: open with showModal, close with button.
+PASS ToggleEvent.soruce on <dialog> elements: open with button, close with dialog.close().
+PASS ToggleEvent.source on <dialog> elements: open with showModal, close with request-close button.
+FAIL ToggleEvent.source on <dialog> elements: open with button, close with light dismiss. assert_true: A closing beforetoggle event should have been fired. expected true got false
+

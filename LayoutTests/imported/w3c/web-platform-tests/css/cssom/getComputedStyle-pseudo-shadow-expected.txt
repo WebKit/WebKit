@@ -1,0 +1,4 @@
+
+PASS getComputedStyle() returns an empty declaration for ::part(foo)
+PASS getComputedStyle() returns an empty declaration for ::slotted(foo)
+

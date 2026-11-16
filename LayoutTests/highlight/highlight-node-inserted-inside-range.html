@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>CSS Custom Highlight API: a node inserted inside a highlight range after it has been painted is highlighted</title>
+<style>
+#target {
+    font: 16px/20px monospace;
+    white-space: pre;
+    width: max-content;
+    color: black;
+}
+#target::highlight(test),
+#inner::highlight(test) {
+    background-color: lime;
+}
+</style>
+<script src="../resources/ui-helper.js"></script>
+</head>
+<body>
+<p>PASS if the bar below is one solid lime rectangle with no gap in the middle.</p>
+<div id="target">AAAA<span id="inner"></span>AAAA</div>
+<script>
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+(async () => {
+    // Unlike a live Range, a StaticRange is not told about the insertion below, so nothing about the range
+    // itself changes when the node is inserted.
+    const target = document.getElementById("target");
+    CSS.highlights.set("test", new Highlight(new StaticRange({
+        startContainer: target.firstChild,
+        startOffset: 0,
+        endContainer: target.lastChild,
+        endOffset: 4,
+    })));
+
+    await UIHelper.renderingUpdate();
+
+    document.getElementById("inner").textContent = "AAAA";
+
+    if (window.testRunner)
+        testRunner.notifyDone();
+})();
+</script>
+</body>
+</html>

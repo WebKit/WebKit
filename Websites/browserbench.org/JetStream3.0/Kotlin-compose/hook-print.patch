@@ -1,0 +1,15 @@
+diff --git a/Kotlin-compose/build/compose-benchmarks-benchmarks.uninstantiated.mjs b/Kotlin-compose/build/compose-benchmarks-benchmarks.uninstantiated.mjs
+index f92d6ec..54cc4cf 100644
+--- a/Kotlin-compose/build/compose-benchmarks-benchmarks.uninstantiated.mjs
++++ b/Kotlin-compose/build/compose-benchmarks-benchmarks.uninstantiated.mjs
+@@ -111,8 +111,8 @@ export async function instantiate(imports={}, runInitializer=true) {
+              },
+         'kotlin.js.__convertKotlinClosureToJsClosure_(()->Unit)' : (f) => getCachedJsObject(f, () => wasmExports['__callFunction_(()->Unit)'](f, )),
+         'kotlin.js.jsThrow' : (e) => { throw e; },
+-        'kotlin.io.printlnImpl' : (message) => console.log(message),
+-        'kotlin.io.printError' : (error) => console.error(error),
++        'kotlin.io.printlnImpl' : (message) => print(message),
++        'kotlin.io.printError' : (error) => printErr(error),
+         'kotlin.js.jsArrayGet' : (array, index) => array[index],
+         'kotlin.js.jsArraySet' : (array, index, value) => { array[index] = value },
+         'kotlin.js.JsArray_$external_fun' : () => new Array(),

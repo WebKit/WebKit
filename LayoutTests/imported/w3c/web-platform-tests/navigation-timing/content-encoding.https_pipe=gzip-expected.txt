@@ -1,0 +1,7 @@
+Description
+
+This test validates that when a html is compressed with gzip, navigation timing reports contentEncoding as gzip
+
+
+FAIL contentEncoding should be gzip. assert_equals: Expected contentEncoding to be gzip. expected (string) "gzip" but got (undefined) undefined
+

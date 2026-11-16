@@ -1,0 +1,35 @@
+This file explains how to run the network tester and how to analyze the results.
+
+create config files
+===================
+use create_network_tester_config.py  to create config files.
+you can add or change the AddConfig call in the main function to create a
+the desired network config.
+
+run network_tester_server
+=========================
+place the network config file next to the server binary and name it
+"server_config.dat".
+
+the network_tester_server should run on a server with a public IP address.
+
+the log file of network_tester_server will be created next to the binary with
+the name "server_packet_log.dat"
+
+
+run NetworkTesterMobile (apk)
+=============================
+change the IP and the port in the jni.cpp file and set it to the port and IP
+you run the network_tester_server on.
+
+place the network config file as "/mnt/sdcard/network_tester_client_config.dat"
+on the tester android phone.
+
+The log file of network_tester_server will be created at
+"/mnt/sdcard/network_tester_client_packet_log.dat"
+
+
+analyze the results
+====================
+run "python parse_packet_log.py -f <log_file_to_parse>" to analyze the
+log results.

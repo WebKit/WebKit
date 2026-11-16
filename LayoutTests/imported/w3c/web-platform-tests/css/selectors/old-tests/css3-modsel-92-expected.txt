@@ -1,0 +1,4 @@
+This paragraph should have a green background
+
+PASS Type element selector with universal namespace
+

@@ -1,0 +1,18 @@
+CONSOLE MESSAGE: setup() finished: true
+CONSOLE MESSAGE: Service Worker registered with scope:
+CONSOLE MESSAGE: Service Worker is ready and controlling the page.
+CONSOLE MESSAGE: iframe is ready
+CONSOLE MESSAGE: Send message to iframe1 to start fetching via service worker.
+CONSOLE MESSAGE: Get message from parent window: 20480
+CONSOLE MESSAGE: Send fetch request to Service Worker
+CONSOLE MESSAGE: Frame was unloaded because its network usage exceeded the limit: 10240 bytes, url=http://localhost:8080/iframe-monitor/resources/--eligible--/service-worker.html
+Test iframe is unloaded if it uses service worker to download content.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS document.querySelector('iframe[name=frame1]').srcdoc is not ""
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

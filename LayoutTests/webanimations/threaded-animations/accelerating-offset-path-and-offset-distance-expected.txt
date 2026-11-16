@@ -1,0 +1,8 @@
+
+PASS Animating 'offset-path' with a fixed 'offset-distance' on the underlying style allows acceleration.
+PASS Animating 'offset-path' with a percentage 'offset-distance' on the underlying style does not allow acceleration.
+PASS Animating 'offset-path' with a calculated 'offset-distance' on the underlying style does not allow acceleration.
+PASS Animating 'offset-path' with an 'offset-distance' animated to a fixed value allows acceleration.
+PASS Animating 'offset-path' with an 'offset-distance' animated to a percentage value does not allow acceleration.
+PASS Animating 'offset-path' with an 'offset-distance' animated to a calculated value does not allow acceleration.
+

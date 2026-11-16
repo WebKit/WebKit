@@ -1,0 +1,7 @@
+
+PASS Siblings sharing a shorthand var() substitution
+PASS Fallbacks and logical longhands
+PASS Registered custom properties
+PASS Changing a referenced custom property
+PASS Switching between a value and its fallback
+

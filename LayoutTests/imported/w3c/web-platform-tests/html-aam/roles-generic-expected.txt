@@ -1,0 +1,23 @@
+Tests ONLY the generic mappings defined in HTML-AAM. Most test names correspond to a unique ID defined in the spec.
+
+These should remain in alphabetical order by tagname.
+
+x x x x
+x
+x
+x
+x x x x x
+
+PASS el-b
+PASS el-bdi
+PASS el-bdo
+PASS el-data
+PASS el-div
+PASS el-i
+PASS el-pre
+PASS el-q
+PASS el-samp
+PASS el-small
+PASS el-span
+PASS el-u
+

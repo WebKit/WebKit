@@ -1,0 +1,11 @@
+
+PASS precondition: microtask creation logic functions as expected
+PASS synchronous test without cleanup
+PASS sub-test with 0 cleanup functions executes in the same microtask as a passing sub-test
+FAIL failing synchronous test without cleanup This error is expected
+PASS sub-test with 0 cleanup functions executes in the same microtask as a failing sub-test
+PASS synchronous test with cleanup
+PASS sub-test with some cleanup functions executes in the same microtask as a passing sub-test
+FAIL failing synchronous test with cleanup This error is expected
+PASS sub-test with some cleanup functions executes in the same microtask as a failing sub-test
+

@@ -1,0 +1,10 @@
+
+PASS Check scrollWidth with overflow: auto
+PASS Check scrollWidth with overflow: scroll
+PASS Check scrollWidth with overflow: hidden
+PASS Check scrollWidth with overflow: clip
+PASS Check scrollWidth with overflow: visible
+PASS Check scrollWidth with overflowX: visible, overflowY: clip
+PASS Check scrollWidth with overflowX: visible, overflowY: hidden
+PASS Check scrollWidth with overflowX: visible, overflowY: auto
+

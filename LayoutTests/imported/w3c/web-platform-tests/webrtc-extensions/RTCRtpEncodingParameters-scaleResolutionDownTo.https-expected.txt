@@ -1,0 +1,32 @@
+
+Harness Error (TIMEOUT), message = null
+
+FAIL addTransceiver: Invalid scaling throws assert_throws_dom: function "() => {
+    pc.addTransceiver(track, {
+          sendEncodings:[{
+              scaleResolutionDownTo: { maxWidth: 0, maxHeight: 0 }
+          }]
+        });
+  }" did not throw
+FAIL setParameters: Invalid scaling throws assert_unreached: Should have rejected: undefined Reached unreachable code
+FAIL addTransceiver: Specifying scaling on a subset of active encodings throws assert_throws_dom: function "() => {
+    pc.addTransceiver(track, {
+          sendEncodings:[{
+              scaleResolutionDownTo: undefined,
+          }, {
+              scaleResolutionDownTo: { maxWidth: 120, maxHeight: 60 }
+          }]
+        });
+  }" did not throw
+PASS addTransceiver: Specifying scaling on inactive encodings is optional
+FAIL setParameters: Specifying scaling on a subset of active encodings throws assert_unreached: Should have rejected: undefined Reached unreachable code
+PASS setParameters: Specifying scaling on inactive encodings is optional
+FAIL getParameters reflect the current scaleResolutionDownTo assert_equals: expected (number) 120 but got (undefined) undefined
+TIMEOUT addTransceiver: scaleResolutionDownBy is ignored when scaleResolutionDownTo is specified Test timed out
+NOTRUN setParameters: scaleResolutionDownBy is ignored when scaleResolutionDownTo is specified
+NOTRUN addTransceiver: scaleResolutionDownTo with half resolution
+NOTRUN setParameters: Modify scaleResolutionDownTo while sending
+NOTRUN scaleResolutionDownTo is orientation agnostic
+NOTRUN scaleResolutionDownTo does not change aspect ratio
+NOTRUN scaleResolutionDownTo with simulcast
+

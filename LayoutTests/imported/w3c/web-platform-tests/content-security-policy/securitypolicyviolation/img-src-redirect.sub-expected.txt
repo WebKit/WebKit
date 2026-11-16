@@ -1,0 +1,4 @@
+
+
+PASS The blocked URI in the security policy violation event should be the original URI before redirects.
+

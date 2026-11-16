@@ -1,0 +1,4 @@
+X
+
+FAIL integrity() with wrong hash blocks font loading assert_false: Font with non-matching integrity should not load expected false got true
+

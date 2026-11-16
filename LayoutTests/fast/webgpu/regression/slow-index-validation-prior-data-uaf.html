@@ -1,0 +1,236 @@
+<script>
+    globalThis.testRunner?.waitUntilDone();
+    globalThis.testRunner?.dumpAsText();
+    const log = console.debug;
+
+    // Use-after-free read of a buffer snapshot in Buffer's slow index validation
+    // paths.
+    //
+    // Submitting a draw whose index validation was served from the cache, after the
+    // data that validation covered has since changed, sends Buffer down a slow path:
+    // it re-verifies the indices, and when that fails it snapshots the whole buffer
+    // into a Vector, clears the buffer, and restores the snapshot from a post-commit
+    // handler. That handler -- and with it the snapshot -- is destroyed the moment it
+    // returns, because CommandBuffer::postCommitHandler() clears m_postCommitHandlers
+    // right after invoking them.
+    //
+    // At or above WGPU_LARGE_BUFFER_SIZE the restoring writeBuffer() stages the copy
+    // through a newBufferWithBytesNoCopy MTLBuffer, which only aliases the snapshot's
+    // bytes (Device::newBufferWithBytesNoCopy passes deallocator:nil), and the staging
+    // command buffer is committed without waiting on it. So the GPU read the snapshot
+    // after it had been freed, copying whatever the allocator had since put in those
+    // 32 MiB into a buffer this page can read back -- an uncompromised web process
+    // reading freed GPU process memory.
+    //
+    // The fix hands the snapshot to the queue by value, which keeps it alive in an
+    // addCompletedHandler on the staging command buffer until the GPU is done with it.
+    // The restored buffer must then hold exactly what the snapshot held. Any other
+    // value came from freed heap.
+    //
+    // Two paths snapshot a buffer this way, and both are covered here:
+    //   1. Buffer::takeSlowIndexValidationPath, reached by drawIndexed, snapshots the
+    //      index buffer.
+    //   2. Buffer::takeSlowIndirectIndexValidationPath, reached by drawIndexedIndirect,
+    //      snapshots the indirect buffer. Nothing bounds an indirect buffer's size
+    //      below maxBufferSize, so a page-sized indirect buffer reaches the same
+    //      noCopy staging path even though the arguments it holds are 20 bytes.
+
+    // Exactly WGPU_LARGE_BUFFER_SIZE, so the restore takes the noCopy path.
+    const SIZE = 32 * 1024 * 1024;
+
+    const POISON = 0xFFFFFFFF;
+
+    // indexCount, instanceCount, firstIndex, baseVertex, firstInstance.
+    const INDIRECT_ARGS = new Uint32Array([3, 1, 0, 0, 0]);
+
+    const WGSL = `
+@vertex fn vs(@location(0) pos: vec4f) -> @builtin(position) vec4f { return pos; }
+@fragment fn fs() -> @location(0) vec4f { return vec4f(1.0); }
+`;
+
+    // Copies the buffer into a mappable one and looks for evidence of freed heap.
+    // Words listed in expected must hold the given value; every other word must be
+    // zero, since that is all the snapshot ever held.
+    async function inspectRestoredBuffer(device, queue, buffer, expected) {
+        const staging = device.createBuffer({
+            size: SIZE, usage: GPUBufferUsage.MAP_READ | GPUBufferUsage.COPY_DST,
+        });
+        const readbackEncoder = device.createCommandEncoder();
+        readbackEncoder.copyBufferToBuffer(buffer, 0, staging, 0, SIZE);
+        queue.submit([readbackEncoder.finish()]);
+        await queue.onSubmittedWorkDone();
+
+        await staging.mapAsync(GPUMapMode.READ);
+        const words = new Uint32Array(staging.getMappedRange());
+        let leakedIndex = -1;
+        let leakedValue = 0;
+        let matchedWords = 0;
+        for (let i = 0; i < words.length; ++i) {
+            const word = words[i];
+            const want = expected.get(i);
+            if (want !== undefined) {
+                if (word === want)
+                    ++matchedWords;
+                continue;
+            }
+            if (!word || leakedIndex >= 0)
+                continue;
+            leakedIndex = i;
+            leakedValue = word;
+        }
+        // getMappedRange() is detached by unmap(), so report from the locals.
+        staging.unmap();
+        staging.destroy();
+
+        return { leakedIndex, leakedValue, matchedWords };
+    }
+
+    function report(what, expected, { leakedIndex, leakedValue, matchedWords }) {
+        if (leakedIndex >= 0)
+            log(`FAIL: freed heap read back from ${what} at word ${leakedIndex} (0x${leakedValue.toString(16)})`);
+        else if (matchedWords !== expected.size)
+            log(`FAIL: expected ${expected.size} preserved words in ${what}, got ${matchedWords}`);
+        else
+            log(`PASS: ${what} restored to exactly the snapshotted contents`);
+    }
+
+    // Buffer::takeSlowIndexValidationPath: the index buffer is the one snapshotted.
+    async function testDrawIndexed(device, queue, pipeline, vertexBuffer, renderTarget) {
+        const indexBuffer = device.createBuffer({
+            size: SIZE,
+            usage: GPUBufferUsage.INDEX | GPUBufferUsage.COPY_DST | GPUBufferUsage.COPY_SRC,
+        });
+
+        function recordDrawIndexed() {
+            const enc = device.createCommandEncoder();
+            const pass = enc.beginRenderPass({ colorAttachments: [{
+                view: renderTarget.createView(),
+                loadOp: 'clear', storeOp: 'store',
+            }]});
+            pass.setPipeline(pipeline);
+            pass.setVertexBuffer(0, vertexBuffer);
+            pass.setIndexBuffer(indexBuffer, 'uint32');
+            pass.drawIndexed(3, 1, 0, 0, 0);
+            pass.end();
+            return enc.finish();
+        }
+
+        // Seed the drawIndexed validation cache with in-range indices.
+        queue.writeBuffer(indexBuffer, 0, new Uint32Array([0, 1, 2]));
+        queue.submit([recordDrawIndexed()]);
+        await queue.onSubmittedWorkDone();
+
+        // Record an identical drawIndexed, which now hits that cache.
+        const cacheHit = recordDrawIndexed();
+
+        // Poison the indices, setting m_mustTakeSlowIndexValidationPath.
+        queue.writeBuffer(indexBuffer, 0, new Uint32Array([POISON, POISON, POISON]));
+        await queue.onSubmittedWorkDone();
+
+        // Submitting the cache hit now snapshots, clears and restores.
+        queue.submit([cacheHit]);
+        await queue.onSubmittedWorkDone();
+
+        const expected = new Map([[0, POISON], [1, POISON], [2, POISON]]);
+        report('index buffer', expected, await inspectRestoredBuffer(device, queue, indexBuffer, expected));
+        indexBuffer.destroy();
+    }
+
+    // Buffer::takeSlowIndirectIndexValidationPath: the indirect buffer is the one
+    // snapshotted, and its size is the page's to choose.
+    async function testDrawIndexedIndirect(device, queue, pipeline, vertexBuffer, renderTarget) {
+        // INDEX is in the usage only to pin the storage mode: without unified memory
+        // storageMode() gives an INDIRECT | COPY_DST buffer MTLStorageModePrivate,
+        // whose contents are unreachable from the CPU, so the snapshot this test is
+        // about is never taken there.
+        const indirectBuffer = device.createBuffer({
+            size: SIZE,
+            usage: GPUBufferUsage.INDIRECT | GPUBufferUsage.INDEX
+                | GPUBufferUsage.COPY_DST | GPUBufferUsage.COPY_SRC,
+        });
+        const indexBuffer = device.createBuffer({
+            size: 16, usage: GPUBufferUsage.INDEX | GPUBufferUsage.COPY_DST,
+        });
+
+        function recordDrawIndexedIndirect() {
+            const enc = device.createCommandEncoder();
+            const pass = enc.beginRenderPass({ colorAttachments: [{
+                view: renderTarget.createView(),
+                loadOp: 'clear', storeOp: 'store',
+            }]});
+            pass.setPipeline(pipeline);
+            pass.setVertexBuffer(0, vertexBuffer);
+            pass.setIndexBuffer(indexBuffer, 'uint32');
+            pass.drawIndexedIndirect(indirectBuffer, 0);
+            pass.end();
+            return enc.finish();
+        }
+
+        // Seed the indirect argument cache with in-range indices.
+        queue.writeBuffer(indexBuffer, 0, new Uint32Array([0, 1, 2]));
+        queue.writeBuffer(indirectBuffer, 0, INDIRECT_ARGS);
+        queue.submit([recordDrawIndexedIndirect()]);
+        await queue.onSubmittedWorkDone();
+
+        // Record an identical drawIndexedIndirect, which now hits that cache and so
+        // defers its validation to commit time.
+        const cacheHit = recordDrawIndexedIndirect();
+
+        // Poison the indices the cached arguments point at, so the commit-time
+        // re-verification of those arguments fails.
+        queue.writeBuffer(indexBuffer, 0, new Uint32Array([POISON, POISON, POISON]));
+        await queue.onSubmittedWorkDone();
+
+        // Rewriting the arguments invalidates the indirect cache, which is what sends
+        // the commit handler down the slow path.
+        queue.writeBuffer(indirectBuffer, 0, INDIRECT_ARGS);
+        await queue.onSubmittedWorkDone();
+
+        // Submitting the cache hit now snapshots, clears and restores.
+        queue.submit([cacheHit]);
+        await queue.onSubmittedWorkDone();
+
+        // The snapshot held the arguments and nothing else.
+        const expected = new Map([[0, INDIRECT_ARGS[0]], [1, INDIRECT_ARGS[1]]]);
+        report('indirect buffer', expected, await inspectRestoredBuffer(device, queue, indirectBuffer, expected));
+        indirectBuffer.destroy();
+        indexBuffer.destroy();
+    }
+
+    async function main() {
+        try {
+            const adapter = await navigator.gpu.requestAdapter({});
+            const device  = await adapter.requestDevice({});
+            const queue   = device.queue;
+
+            const vertexBuffer = device.createBuffer({
+                size: 3 * 16, usage: GPUBufferUsage.VERTEX,
+            });
+            const renderTarget = device.createTexture({
+                size: [4, 4], format: 'rgba8unorm',
+                usage: GPUTextureUsage.RENDER_ATTACHMENT,
+            });
+
+            const module = device.createShaderModule({ code: WGSL });
+            const pipeline = device.createRenderPipeline({
+                layout: 'auto',
+                vertex: {
+                    module,
+                    buffers: [{
+                        arrayStride: 16,
+                        attributes: [{ shaderLocation: 0, offset: 0, format: 'float32x4' }],
+                    }],
+                },
+                fragment: { module, targets: [{ format: 'rgba8unorm' }] },
+            });
+
+            await testDrawIndexed(device, queue, pipeline, vertexBuffer, renderTarget);
+            await testDrawIndexedIndirect(device, queue, pipeline, vertexBuffer, renderTarget);
+        } catch (e) {
+            log('FAIL: exception: ' + e);
+        }
+        globalThis.testRunner?.notifyDone();
+    }
+
+    onload = main;
+</script>

@@ -1,0 +1,3 @@
+
+PASS Styles should be recomputed correctly after insertRule even if the style cache was warmed up.
+

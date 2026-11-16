@@ -1,0 +1,213 @@
+<!DOCTYPE html><!-- webkit-test-runner [ SpeculationRulesPrefetchEnabled=true ] -->
+<meta charset="utf-8">
+<meta name="timeout" content="long">
+<title>Conservative document rules lazy matching on interaction</title>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/common/utils.js"></script>
+<body>
+<script>
+
+setup(() => {
+  assert_implements(
+      'supports' in HTMLScriptElement,
+      'HTMLScriptElement.supports must be supported');
+  assert_implements(
+      HTMLScriptElement.supports('speculationrules'),
+      '<script type="speculationrules"> must be supported');
+});
+
+const PREFETCH_RESOURCE_URL = new URL('/speculation-rules/prefetch/resources/prefetch.py', location.href);
+
+function getPrefetchUrl(extra_params = {}) {
+  let params = new URLSearchParams({ uuid: token(), ...extra_params });
+  return new URL(`${PREFETCH_RESOURCE_URL}?${params}`);
+}
+
+async function isUrlPrefetched(url) {
+  let response = await fetch(url, { redirect: 'follow' });
+  return response.json();
+}
+
+// Poll until prefetch arrives or timeout. Use for positive assertions instead
+// of fixed delays.
+async function waitForPrefetch(url, timeout = 5000) {
+  const start = performance.now();
+  while (performance.now() - start < timeout) {
+    if (await isUrlPrefetched(url) > 0)
+      return true;
+    await new Promise(r => setTimeout(r, 50));
+  }
+  return false;
+}
+
+// Yield to the event loop so that any synchronously-initiated prefetch
+// network requests have a chance to reach the server. Two round-trips:
+// one to flush the event loop, one to let the server process the request.
+async function flushNetworking() {
+  await fetch('/resources/blank.html');
+  await fetch('/resources/blank.html');
+}
+
+function insertSpeculationRules(body) {
+  let script = document.createElement('script');
+  script.type = 'speculationrules';
+  script.textContent = JSON.stringify(body);
+  document.head.appendChild(script);
+  return script;
+}
+
+function addLink(href, className, parent = document.body) {
+  const a = document.createElement('a');
+  a.href = href;
+  a.textContent = 'link';
+  if (className)
+    a.className = className;
+  parent.appendChild(a);
+  return a;
+}
+
+function triggerPointerDown(element) {
+  const rect = element.getBoundingClientRect();
+  const x = rect.left + rect.width / 2;
+  const y = rect.top + rect.height / 2;
+
+  element.dispatchEvent(new PointerEvent('pointerdown', {
+    bubbles: true, cancelable: true, view: window,
+    clientX: x, clientY: y, button: 0, pointerType: 'mouse'
+  }));
+  element.dispatchEvent(new MouseEvent('mousedown', {
+    bubbles: true, cancelable: true, view: window,
+    clientX: x, clientY: y, button: 0
+  }));
+}
+
+function triggerHover(element) {
+  const rect = element.getBoundingClientRect();
+  const x = rect.left + rect.width / 2;
+  const y = rect.top + rect.height / 2;
+
+  element.dispatchEvent(new PointerEvent('pointerover', {
+    bubbles: true, cancelable: true, view: window,
+    clientX: x, clientY: y, pointerType: 'mouse'
+  }));
+  element.dispatchEvent(new MouseEvent('mouseover', {
+    bubbles: true, cancelable: true, view: window,
+    clientX: x, clientY: y
+  }));
+  element.dispatchEvent(new PointerEvent('pointermove', {
+    bubbles: true, cancelable: true, view: window,
+    clientX: x, clientY: y, pointerType: 'mouse'
+  }));
+  element.dispatchEvent(new MouseEvent('mousemove', {
+    bubbles: true, cancelable: true, view: window,
+    clientX: x, clientY: y
+  }));
+}
+
+// Test: Conservative document rule with selector_matches is lazily matched
+// on pointerdown (not during style recalc / anchor scan).
+promise_test(async t => {
+  const matchUrl = getPrefetchUrl({ test: 'selector-match' });
+  const noMatchUrl = getPrefetchUrl({ test: 'selector-no-match' });
+
+  const matchLink = addLink(matchUrl, 'prefetch-me');
+  const noMatchLink = addLink(noMatchUrl, 'do-not-prefetch');
+  matchLink.addEventListener('click', e => e.preventDefault());
+  noMatchLink.addEventListener('click', e => e.preventDefault());
+  t.add_cleanup(() => { matchLink.remove(); noMatchLink.remove(); });
+
+  const rules = insertSpeculationRules({
+    prefetch: [{
+      source: 'document',
+      eagerness: 'conservative',
+      where: { selector_matches: '.prefetch-me' }
+    }]
+  });
+  t.add_cleanup(() => rules.remove());
+
+  // With the optimization, the anchor scan is skipped for conservative-only
+  // rules, so m_prefetchEagerness stays "none" instead of being set to
+  // "conservative" by the scan.
+  if (window.internals)
+    assert_equals(internals.anchorPrefetchEagerness(matchLink), 'none', 'eagerness should be none (scan skipped for conservative-only rules)');
+
+  // Hover should not trigger conservative prefetch.
+  triggerHover(matchLink);
+  await flushNetworking();
+  assert_equals(await isUrlPrefetched(matchUrl), 0, 'matching link should not be prefetched on hover');
+  assert_equals(await isUrlPrefetched(noMatchUrl), 0, 'non-matching link should not be prefetched on hover');
+
+  // Pointerdown on matching link should trigger lazy match and prefetch.
+  triggerPointerDown(matchLink);
+  assert_true(await waitForPrefetch(matchUrl), 'matching link should be prefetched after pointerdown');
+
+  // Pointerdown on non-matching link should NOT trigger prefetch.
+  triggerPointerDown(noMatchLink);
+  await flushNetworking();
+  assert_equals(await isUrlPrefetched(noMatchUrl), 0, 'non-matching link should not be prefetched after pointerdown');
+}, 'Conservative document rule with selector_matches lazily matches on pointerdown');
+
+// Test: Conservative document rule with href_matches pattern lazily matches.
+promise_test(async t => {
+  const url = getPrefetchUrl({ test: 'href-pattern' });
+
+  const link = addLink(url);
+  link.addEventListener('click', e => e.preventDefault());
+  t.add_cleanup(() => link.remove());
+
+  const rules = insertSpeculationRules({
+    prefetch: [{
+      source: 'document',
+      eagerness: 'conservative',
+      where: { href_matches: '/speculation-rules/prefetch/resources/prefetch.py*' }
+    }]
+  });
+  t.add_cleanup(() => rules.remove());
+
+  if (window.internals)
+    assert_equals(internals.anchorPrefetchEagerness(link), 'none', 'eagerness should be none (scan skipped)');
+
+  // Hover should not trigger conservative prefetch.
+  triggerHover(link);
+  await flushNetworking();
+  assert_equals(await isUrlPrefetched(url), 0, 'should not be prefetched on hover');
+
+  triggerPointerDown(link);
+  assert_true(await waitForPrefetch(url), 'should be prefetched after pointerdown');
+}, 'Conservative document rule with href_matches pattern lazily matches on pointerdown');
+
+// Test: Dynamically added link is lazily matched on pointerdown without
+// needing a style recalc anchor scan.
+promise_test(async t => {
+  const url = getPrefetchUrl({ test: 'dynamic-link' });
+
+  // Insert rules first, before the link exists.
+  const rules = insertSpeculationRules({
+    prefetch: [{
+      source: 'document',
+      eagerness: 'conservative',
+      where: { selector_matches: '.late-addition' }
+    }]
+  });
+  t.add_cleanup(() => rules.remove());
+
+  // Add link after rules are already in place.
+  const link = addLink(url, 'late-addition');
+  link.addEventListener('click', e => e.preventDefault());
+  t.add_cleanup(() => link.remove());
+
+  if (window.internals)
+    assert_equals(internals.anchorPrefetchEagerness(link), 'none', 'dynamically added link eagerness should be none');
+
+  // Hover should not trigger conservative prefetch.
+  triggerHover(link);
+  await flushNetworking();
+  assert_equals(await isUrlPrefetched(url), 0, 'dynamically added link should not be prefetched on hover');
+
+  triggerPointerDown(link);
+  assert_true(await waitForPrefetch(url), 'dynamically added link should be prefetched after pointerdown');
+}, 'Dynamically added link with conservative document rule lazily matches on pointerdown');
+
+</script>
+</body>

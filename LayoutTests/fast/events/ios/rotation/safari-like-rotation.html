@@ -1,0 +1,58 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+
+<html>
+<head>
+    <meta name="viewport" content="initial-scale=1.0">
+    <script src="../../../../resources/js-test-pre.js"></script>
+    <script>
+        jsTestIsAsync = true;
+        function getRotationUIScript()
+        {
+            return `
+            (function() {
+                uiController.simulateRotationLikeSafari('landscape-right', function() {
+                    uiController.doAfterVisibleContentRectUpdate(function () {
+                        uiController.uiScriptComplete();
+                    })
+                });
+            })();`
+        }
+
+        function doTest()
+        {
+            debug('Before rotation');
+            shouldBe("window.innerWidth", "320");
+            shouldBe("window.innerHeight", "548");
+            if (!window.testRunner)
+                return;
+
+            testRunner.runUIScript(getRotationUIScript(), function(result) {
+                debug('After rotation');
+                shouldBe("window.innerWidth", "568");
+                shouldBe("window.innerHeight", "320");
+
+                if (window.testRunner)
+                    testRunner.notifyDone();
+            });
+        }
+        window.addEventListener('resize', function() {
+            debug('In resize event handler:');
+            shouldBe("window.innerWidth", "568");
+            shouldBe("window.innerHeight", "320");
+            debug('');
+        }, false);
+        window.addEventListener('orientationchange', function() {
+            debug('In orientationchange event handler:');
+            shouldBe("window.innerWidth", "568");
+            shouldBe("window.innerHeight", "320");
+            debug('');
+        }, false);
+
+        window.addEventListener('load', doTest, false);
+    </script>
+</head>
+<body>
+    Rotation test.
+<script src="../../../../resources/js-test-post.js"></script>
+</body>
+</html>

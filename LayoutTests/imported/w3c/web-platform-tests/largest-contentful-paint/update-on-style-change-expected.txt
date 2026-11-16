@@ -1,0 +1,4 @@
+text
+
+PASS LargestContentfulPaint entries should NOT be emitted for updates to previous LargestContentfulPaint elements.
+

@@ -1,0 +1,3 @@
+
+PASS PerformanceNavigationTiming.deliveryType test, same origin prefetch.
+

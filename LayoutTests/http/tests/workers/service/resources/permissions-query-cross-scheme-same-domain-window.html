@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="sw-test-pre.js"></script>
+<script>
+(async () => {
+    const registration = await registerAndWaitForActive("permissions-query-cross-scheme-same-domain-worker.js", "./");
+    navigator.serviceWorker.onmessage = (event) => window.opener.postMessage(event.data, "*");
+    registration.active.postMessage("query");
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="utf-8">
+    <title>Invalid interactive-widget values are reported and ignored, and don't affect the other viewport arguments. "RESize-CONTENT" is invalid because it is missing the "s" in "resizes", and "RESİZES-VİSUAL" is invalid because keyword matching is ASCII case-insensitive only.</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, interactive-widget, interactive-widget=, interactive-widget=foo, interactive-widget=resizes, interactive-widget=resizes-contentt, interactive-widget=overlays_content, interactive-widget=RESize-CONTENT, interactive-widget=RESİZES-VİSUAL, interactive-widget=resizes-visual;">
+    <script>
+        function test() {
+            if (window.testRunner) {
+                testRunner.dumpAsText();
+                alert(internals.configurationForViewport(1, 320, 480, 320, 352));
+            }
+        }
+    </script>
+</head>
+<body onload="test();">

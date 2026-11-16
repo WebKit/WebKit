@@ -1,0 +1,27 @@
+
+PASS 'pow(1,1)' as a specified value should serialize as 'calc(1)'.
+PASS 'scale(pow(1,1))' as a specified value should serialize as 'scale(calc(1))'.
+PASS 'pow(1,1)' as a computed value should serialize as '1'.
+PASS 'scale(pow(1,1))' as a computed value should serialize as 'matrix(1, 0, 0, 1, 0, 0)'.
+PASS 'hypot(1)' as a specified value should serialize as 'calc(1)'.
+PASS 'scale(hypot(1))' as a specified value should serialize as 'scale(calc(1))'.
+PASS 'hypot(1)' as a computed value should serialize as '1'.
+PASS 'scale(hypot(1))' as a computed value should serialize as 'matrix(1, 0, 0, 1, 0, 0)'.
+PASS 'sqrt(1)' as a specified value should serialize as 'calc(1)'.
+PASS 'scale(sqrt(1))' as a specified value should serialize as 'scale(calc(1))'.
+PASS 'sqrt(1)' as a computed value should serialize as '1'.
+PASS 'scale(sqrt(1))' as a computed value should serialize as 'matrix(1, 0, 0, 1, 0, 0)'.
+PASS 'calc(pow(1,1) - 0.5)' as a specified value should serialize as 'calc(0.5)'.
+PASS 'scale(calc(pow(1,1) - 0.5))' as a specified value should serialize as 'scale(calc(0.5))'.
+PASS 'calc(pow(1,1) - 0.5)' as a computed value should serialize as '0.5'.
+PASS 'scale(calc(pow(1,1) - 0.5))' as a computed value should serialize as 'matrix(0.5, 0, 0, 0.5, 0, 0)'.
+PASS 'calc(hypot(1) * 0.5)' as a specified value should serialize as 'calc(0.5)'.
+PASS 'scale(calc(hypot(1) * 0.5))' as a specified value should serialize as 'scale(calc(0.5))'.
+PASS 'calc(hypot(1) * 0.5)' as a computed value should serialize as '0.5'.
+PASS 'scale(calc(hypot(1) * 0.5))' as a computed value should serialize as 'matrix(0.5, 0, 0, 0.5, 0, 0)'.
+PASS 'calc(sqrt(1) - 1)' as a specified value should serialize as 'calc(0)'.
+PASS 'scale(calc(sqrt(1) - 1))' as a specified value should serialize as 'scale(calc(0))'.
+PASS 'calc(sqrt(1) - 1)' as a computed value should serialize as '0'.
+PASS 'scale(calc(sqrt(1) - 1))' as a computed value should serialize as 'matrix(0, 0, 0, 0, 0, 0)'.
+PASS 'hypot(2px, 40%)' as a specified value should serialize as 'hypot(2px, 40%)'.
+

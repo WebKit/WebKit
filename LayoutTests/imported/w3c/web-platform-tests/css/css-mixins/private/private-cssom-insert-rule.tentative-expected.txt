@@ -1,0 +1,6 @@
+
+FAIL @private can be inserted into a style rule The string did not match the expected pattern.
+PASS @private cannot be inserted at the stylesheet top level
+PASS @private cannot be inserted into a top-level @media rule
+PASS @private cannot be inserted into a top-level @supports rule
+

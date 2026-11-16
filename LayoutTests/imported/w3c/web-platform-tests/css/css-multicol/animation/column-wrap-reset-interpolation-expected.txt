@@ -1,0 +1,3 @@
+
+FAIL Animate and reset column-wrap assert_equals: expected (string) "nowrap" but got (undefined) undefined
+

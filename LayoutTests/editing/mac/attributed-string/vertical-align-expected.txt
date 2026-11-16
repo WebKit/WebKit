@@ -1,0 +1,74 @@
+Input:
+<sup>sup element</sup>
+<sub>sub element</sub>
+<span style="vertical-align: super">vertical align super</span>
+<span style="vertical-align: sub">vertical align sub</span>
+<span style="vertical-align: 50%">vertical align 50%</span>
+
+Output:
+NSParagraphStyle:
+Alignment 4
+    LineSpacing: 0
+    ParagraphSpacing: 0
+    ParagraphSpacingBefore: 0
+    HeadIndent: 0
+    TailIndent: 0
+    FirstLineHeadIndent: 0
+    LineHeight: 0/0
+    LineHeightMultiple: 0
+    LineBreakMode: 0
+    Tabs: ()
+    DefaultTabInterval: 36
+    Blocks: (
+)
+    Lists: (
+)
+    BaseWritingDirection: 0
+    HyphenationFactor: 0
+    TighteningForTruncation: YES
+    HeaderLevel: 0
+[sup element]
+    NSFont: Times-Roman 13.33 pt.
+    NSKern: 0pt
+    NSStrokeColor: #000000 (sRGB)
+    NSStrokeWidth: 0
+    NSSuperScript: 1
+[ ]
+    NSFont: Times-Roman 16.00 pt.
+    NSKern: 0pt
+    NSStrokeColor: #000000 (sRGB)
+    NSStrokeWidth: 0
+[sub element]
+    NSFont: Times-Roman 13.33 pt.
+    NSKern: 0pt
+    NSStrokeColor: #000000 (sRGB)
+    NSStrokeWidth: 0
+    NSSuperScript: -1
+[ ]
+    NSFont: Times-Roman 16.00 pt.
+    NSKern: 0pt
+    NSStrokeColor: #000000 (sRGB)
+    NSStrokeWidth: 0
+[vertical align super]
+    NSFont: Times-Roman 16.00 pt.
+    NSKern: 0pt
+    NSStrokeColor: #000000 (sRGB)
+    NSStrokeWidth: 0
+    NSSuperScript: 1
+[ ]
+    NSFont: Times-Roman 16.00 pt.
+    NSKern: 0pt
+    NSStrokeColor: #000000 (sRGB)
+    NSStrokeWidth: 0
+[vertical align sub]
+    NSFont: Times-Roman 16.00 pt.
+    NSKern: 0pt
+    NSStrokeColor: #000000 (sRGB)
+    NSStrokeWidth: 0
+    NSSuperScript: -1
+[ vertical align 50% ]
+    NSFont: Times-Roman 16.00 pt.
+    NSKern: 0pt
+    NSStrokeColor: #000000 (sRGB)
+    NSStrokeWidth: 0
+

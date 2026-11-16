@@ -1,0 +1,68 @@
+<!DOCTYPE html><!-- webkit-test-runner [ spellCheckingDots=true ExtendedProofreadingEnabled=true ] -->
+<html lang="en">
+<meta charset="UTF-8">
+<style>
+div {
+    font-size: 300%;
+}
+</style>
+<script src="../../../resources/ui-helper.js"></script>
+<script src="../../../resources/js-test.js"></script>
+
+<script>
+jsTestIsAsync = true;
+
+if (window.internals) {
+    internals.setContinuousSpellCheckingEnabled(true);
+}
+
+async function runTest()
+{
+    const target = document.getElementById("target");
+    const misspelledText = "This is a test of system.";
+    
+    await UIHelper.activateElementAndWaitForInputSession(target);
+
+    document.execCommand("insertText", false, misspelledText);
+    document.execCommand("insertText", false, "\n");
+
+    // Move selection start to beginning of content editable or the search for markers will fail.
+
+    const selectionRange = document.createRange();
+    const currentSelection = window.getSelection();
+
+    selectionRange.setStart(target.firstChild, 0);
+    selectionRange.collapse(true);
+
+    currentSelection.removeAllRanges();
+    currentSelection.addRange(selectionRange);
+
+    if (window.testRunner) {
+        await shouldBecomeEqual('internals.hasGrammarMarker(15, 2)', 'true');
+        finishJSTest();
+    }
+}
+</script>
+<body>
+<div contenteditable="true" id="target"></div>
+<script>
+UIHelper.setSpellCheckerResults({
+  "This is a test of system." : [
+    {
+      type: "grammar",
+      from: 15,
+      to : 17,
+      details : [{ from : 0, to : 2 }]
+    }
+  ],
+    "This is a test of system.\n" : [
+    {
+      type: "grammar",
+      from: 15,
+      to : 17,
+      details : [{ from : 0, to : 2 }]
+    }
+  ]
+}).then(runTest);
+</script>
+</body>

@@ -1,0 +1,23 @@
+
+
+PASS outside image ::marker's content
+PASS outside image ::marker
+PASS outside string ::marker's content
+PASS outside string ::marker
+PASS outside marker ::marker's content
+PASS outside marker ::marker
+PASS outside nested image ::marker's content
+FAIL outside nested image ::marker assert_equals: event.target expected Element node <li class="nested image"></li> but got Element node <li class="marker"></li>
+PASS outside nested string ::marker's content
+PASS outside nested string ::marker
+PASS inside image ::marker's content
+PASS inside image ::marker
+PASS inside string ::marker's content
+PASS inside string ::marker
+PASS inside marker ::marker's content
+PASS inside marker ::marker
+PASS inside nested image ::marker's content
+PASS inside nested image ::marker
+PASS inside nested string ::marker's content
+PASS inside nested string ::marker
+

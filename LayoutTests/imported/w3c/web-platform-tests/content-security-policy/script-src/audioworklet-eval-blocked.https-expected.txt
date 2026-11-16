@@ -1,0 +1,5 @@
+This test loads an AudioWorklet that tries to call eval(). The eval() call should be blocked by CSP because 'unsafe-eval' is not in the script-src directive.
+
+
+PASS eval() in an AudioWorklet should be blocked by CSP
+

@@ -1,0 +1,4 @@
+Dragging across the green square should not select it.
+
+PASS Dragging on a text-selectable canvas should not select it
+

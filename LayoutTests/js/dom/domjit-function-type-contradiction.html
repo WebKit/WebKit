@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<div id="description"></div>
+<div id="console"></div>
+
+<div id="parentNode">
+<div id="previousSibling"></div><div id="target"><div id="firstChild"></div><div id="lastChild"></div></div><div id="nextSibling"></div>
+</div>
+
+<script>
+description('Test DOMJIT function will cause type contradiction giving up.');
+
+var div = document.createElement('div');
+div.setAttribute("cocoa", "Cocoa");
+function test(div) {
+    var ret = "invalid";
+    for (var i = 0; i < 1e4; ++i)
+        ret = div.getAttribute(200);
+    return ret;
+}
+var result;
+(function () {
+    for (var i = 0; i < 100; ++i) {
+        result = test(div);
+        shouldBe(`result`, `null`, true);
+    }
+}());
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

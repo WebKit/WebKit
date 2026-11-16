@@ -1,0 +1,11 @@
+Tests that repeatedly showing and dismissing a date picker on iOS using the Done button works as expected.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Presented and dismissed date picker (1/2)
+PASS Presented and dismissed date picker (2/2)
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

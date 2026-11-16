@@ -1,0 +1,52 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ LayerBasedSVGEngineEnabled=true ] -->
+<p>PASS if no crash.</p>
+<svg width="100" height="100"></svg>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+const svgNs = "http://www.w3.org/2000/svg";
+const svg = document.querySelector("svg");
+
+function addRects(count, beforeElement) {
+    for (let i = 0; i < count; ++i) {
+        const rect = document.createElementNS(svgNs, "rect");
+        rect.setAttribute("width", 100);
+        rect.setAttribute("height", 100);
+        rect.setAttribute("fill", "url(#pattern)");
+        svg.insertBefore(rect, beforeElement);
+    }
+}
+
+function waitForPaint() {
+    return new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+}
+
+window.onload = async () => {
+    // These rects get their renderers while the pattern does not exist yet, but are first painted after it was added.
+    addRects(16, null);
+    document.body.offsetWidth;
+
+    const pattern = document.createElementNS(svgNs, "pattern");
+    pattern.id = "pattern";
+    pattern.setAttribute("width", 1);
+    pattern.setAttribute("height", 1);
+    const patternContent = pattern.appendChild(document.createElementNS(svgNs, "rect"));
+    patternContent.setAttribute("width", 100);
+    patternContent.setAttribute("height", 100);
+    patternContent.setAttribute("fill", "green");
+    svg.appendChild(pattern);
+
+    // These rects get their renderers after the pattern. They come before it in the tree, so they are destroyed before it.
+    addRects(16, pattern);
+    await waitForPaint();
+
+    svg.remove();
+    document.body.offsetWidth;
+
+    if (window.testRunner)
+        testRunner.notifyDone();
+};
+</script>

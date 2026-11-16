@@ -1,0 +1,110 @@
+/*
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#pragma once
+
+#if ENABLE(WEBGL) && (USE(GRAPHICS_LAYER_WC) || USE(COORDINATED_GRAPHICS))
+
+#include "GLContextWrapper.h"
+#include "GraphicsContextGLANGLE.h"
+
+#if ENABLE(WEBXR) && USE(OPENXR)
+#include <wtf/unix/UnixFileDescriptor.h>
+#endif
+
+namespace WebCore {
+
+class TextureMapperGCGLPlatformLayer;
+
+class GraphicsContextGLEGL : public GLContextWrapper, public GraphicsContextGLANGLE {
+    WTF_MAKE_TZONE_ALLOCATED(GraphicsContextGLEGL);
+public:
+#if !USE(COORDINATED_GRAPHICS)
+    WEBCORE_EXPORT static RefPtr<GraphicsContextGLEGL> create(WebCore::GraphicsContextGLAttributes&&);
+#endif
+    virtual ~GraphicsContextGLEGL();
+
+    // GraphicsContextGLANGLE overrides.
+    WEBCORE_EXPORT RefPtr<GraphicsLayerContentsDisplayDelegate> layerContentsDisplayDelegate() final;
+#if ENABLE(VIDEO)
+    bool copyTextureFromVideoFrame(VideoFrame&, PlatformGLObject texture, GCGLenum target, GCGLint level, GCGLenum internalFormat, GCGLenum type, bool unpackFlipY, bool unpackPremultiplyAlpha) final;
+#endif
+#if ENABLE(MEDIA_STREAM) || ENABLE(WEB_CODECS)
+    RefPtr<VideoFrame> surfaceBufferToVideoFrame(SurfaceBuffer) final;
+#endif
+
+#if !USE(COORDINATED_GRAPHICS)
+    RefPtr<PixelBuffer> readCompositedResults() override;
+    bool reshapeDrawingBuffer() override;
+    void prepareForDisplay() override;
+#endif
+
+#if ENABLE(WEBXR)
+    GCGLExternalSync createExternalSync(ExternalSyncSource&&) final;
+#if USE(OPENXR)
+    WTF::UnixFileDescriptor exportExternalSync(GCGLExternalSync) final;
+#endif
+
+    bool addFoveation(IntSize, IntSize, IntSize, std::span<const GCGLfloat>, std::span<const GCGLfloat>, std::span<const GCGLfloat>) final;
+    void enableFoveation(GCGLuint) final;
+    void disableFoveation() final;
+
+    bool enableRequiredWebXRExtensions() override;
+#endif
+
+protected:
+    explicit GraphicsContextGLEGL(WebCore::GraphicsContextGLAttributes&&);
+
+    void attachDrawingBufferTexture();
+
+    RefPtr<GraphicsLayerContentsDisplayDelegate> m_layerContentsDisplayDelegate;
+
+private:
+    bool platformInitializeContext() final;
+#if !USE(COORDINATED_GRAPHICS)
+    bool platformInitialize() override;
+#endif
+
+    // GLContextWrapper
+    GLContextWrapper::Type type() const override;
+    bool makeCurrentImpl() override;
+    bool unmakeCurrentImpl() override;
+    unsigned glVersion() const override;
+
+    mutable unsigned m_version { 0 };
+
+#if !USE(COORDINATED_GRAPHICS)
+    GCGLuint m_compositorTexture { 0 };
+    bool m_isCompositorTextureInitialized { false };
+
+    const std::unique_ptr<TextureMapperGCGLPlatformLayer> m_texmapLayer;
+
+    friend class TextureMapperGCGLPlatformLayer;
+#endif
+};
+
+} // namespace WebCore
+
+#endif // ENABLE(WEBGL) && (USE(GRAPHICS_LAYER_WC) || USE(COORDINATED_GRAPHICS))

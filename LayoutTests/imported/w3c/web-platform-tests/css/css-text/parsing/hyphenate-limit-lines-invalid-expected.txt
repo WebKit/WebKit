@@ -1,0 +1,10 @@
+
+PASS e.style['hyphenate-limit-lines'] = "auto" should not set the property value
+PASS e.style['hyphenate-limit-lines'] = "none" should not set the property value
+PASS e.style['hyphenate-limit-lines'] = "-1" should not set the property value
+PASS e.style['hyphenate-limit-lines'] = "1.2" should not set the property value
+PASS e.style['hyphenate-limit-lines'] = "1px" should not set the property value
+PASS e.style['hyphenate-limit-lines'] = "\"1\"" should not set the property value
+PASS e.style['hyphenate-limit-lines'] = "no-limit 2" should not set the property value
+PASS e.style['hyphenate-limit-lines'] = "1 2" should not set the property value
+

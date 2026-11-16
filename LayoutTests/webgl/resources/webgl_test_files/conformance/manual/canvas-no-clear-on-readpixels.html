@@ -1,0 +1,50 @@
+<!--
+Copyright (c) 2019 The Khronos Group Inc.
+Use of this source code is governed by an MIT-style license that can be
+found in the LICENSE.txt file.
+-->
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Check that the canvas is NOT recomposited after calling readPixels</title>
+<link rel="stylesheet" href="../../resources/js-test-style.css"/>
+<script src="../../js/js-test-pre.js"></script>
+<script src="../../js/webgl-test-utils.js"></script>
+<style>
+canvas {
+    border: 1px solid black;
+}
+.correct {
+    border: 1px solid black;
+    background-color: #00ff00;
+}
+</style>
+</head>
+<body>
+<pre>
+This test must be run manually.
+
+This test tests that a canvas is NOT cleared
+and recomposited after calling readPixels.
+
+You should see a <span class="correct">green rectangle</span>
+with black a outline on success.
+</pre>
+<canvas id='c'></canvas>
+<div id="console"></div>
+<script>
+"use strict";
+var wtu = WebGLTestUtils;
+var c = document.getElementById("c");
+var gl = wtu.create3DContext(c);
+gl.clearColor(0,1,0,1);
+gl.clear(gl.COLOR_BUFFER_BIT);
+wtu.waitForComposite(function() {
+  gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array(4));
+  wtu.glErrorShouldBe(gl, gl.NO_ERROR, "no errors");
+});
+</script>
+</body>
+</html>

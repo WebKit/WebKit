@@ -1,0 +1,13 @@
+Verifies that text can be selected using text interaction gestures, even when it is fully covered by a hidden subframe. To manually run the test, tap to focus and double tap again to select 'Banana'; then long press to select 'Apple'.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS getSelection().toString() became 'Banana'
+PASS getSelection().toString() became 'Apple'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Apple
+Banana
+

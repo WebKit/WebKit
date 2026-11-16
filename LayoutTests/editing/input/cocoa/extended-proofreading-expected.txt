@@ -1,0 +1,7 @@
+PASS internals.hasGrammarMarker(15, 2) became true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+This is a test of system.
+
+

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+<span id="e"></span>
+<span id="f"></span>
+<script>
+description("Tests adding one callback within another");
+
+window.jsTestIsAsync = true;
+
+var e = document.getElementById("e");
+var sameFrame;
+window.requestAnimationFrame(function() {
+    sameFrame = true;
+}, e);
+window.requestAnimationFrame(function() {
+    window.requestAnimationFrame(function() {
+        shouldBeFalse("sameFrame");
+    }, e);
+}, e);
+window.requestAnimationFrame(function() {
+    sameFrame = false;
+}, e);
+
+onload = async () => {
+    // This should fire the three already registered callbacks, but not the one dynamically registered.
+    await testRunner?.displayAndTrackRepaints();
+    // This should fire the dynamically registered callback.
+    await testRunner?.displayAndTrackRepaints();
+
+    setTimeout(function() {
+        finishJSTest();
+    }, 200);
+}
+</script>
+</body>
+</html>

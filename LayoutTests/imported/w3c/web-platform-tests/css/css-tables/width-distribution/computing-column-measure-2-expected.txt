@@ -1,0 +1,12 @@
+Width Distribution
+
+"Computing column measures"
+
+This is testing that the table's auto columns are correctly recalculated after removing and adding a col element. Spec Text
+
+100	200	300
+100	200	300
+100	200	300
+
+FAIL Table recalculations should match the reference assert_equals: expected 334 but got 610
+

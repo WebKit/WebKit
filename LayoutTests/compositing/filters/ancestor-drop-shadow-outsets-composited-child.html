@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>The composited box layer must keep the content the ancestor drop-shadow samples from left of the clip</title>
+<style>
+.clip {
+    position: relative;
+    overflow: hidden;
+    width: 100px;
+    height: 100px;
+}
+.filtered {
+    position: absolute;
+    top: 0;
+    left: -100px;
+    width: 200px;
+    height: 100px;
+    filter: drop-shadow(100px 0 0 green);
+}
+.box {
+    width: 100px;
+    height: 100px;
+    background: green;
+    will-change: transform;
+}
+</style>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+window.onload = () => {
+    requestAnimationFrame(() => {
+        document.getElementById("layers").textContent = internals.layerTreeAsText(document);
+        if (window.testRunner)
+            testRunner.notifyDone();
+    });
+};
+</script>
+</head>
+<body>
+<div class="clip">
+    <div class="filtered">
+        <div class="box"></div>
+    </div>
+</div>
+<pre id="layers"></pre>
+</body>
+</html>

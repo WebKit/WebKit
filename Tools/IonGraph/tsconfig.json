@@ -1,0 +1,20 @@
+{
+  "compilerOptions": {
+    "target": "ES6", // Output modern JS
+    "module": "node16", // Require extensions on relative imports. Should still be bundler-compatible.
+    "jsx": "react-jsx", // Use React JSX transform (React 17+)
+    "rootDir": "src",
+    "strict": true,
+    "esModuleInterop": true,
+    "lib": [
+      "DOM",
+      "ES2020"
+    ],
+    "outDir": "dist",
+    "declaration": true,
+    "sourceMap": true,
+  },
+  "include": [
+    "src/**/*"
+  ]
+}

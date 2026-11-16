@@ -1,0 +1,28 @@
+Unused uniform locations should return null, uniform block variables should not have location
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+TEST COMPLETE: 19 PASS, 0 FAIL
+
+PASS gl.getUniformLocation(program, "c") is non-null.
+PASS gl.getUniformLocation(program, "u0") is null
+PASS gl.getUniformLocation(program, "u1") is null
+PASS gl.getUniformLocation(program, "u1[0]") is null
+PASS gl.getUniformLocation(program, "u2") is null
+PASS gl.getUniformLocation(program, "u3[0]") is null
+PASS gl.getUniformLocation(program, "u3[1]") is null
+PASS gl.getUniformLocation(program, "u4[0]") is null
+PASS gl.getUniformLocation(program, "u4[1]") is null
+PASS gl.getUniformLocation(program, "u4[2]") is null
+PASS gl.getUniformLocation(program, "u5[0]") is non-null.
+PASS gl.getUniformLocation(program, "u5[1]") is non-null.
+PASS gl.getProgramParameter(program, gl.ACTIVE_UNIFORMS) is 5
+PASS gl.getActiveUniform(program, 0).name is "u5[0]"
+PASS gl.getActiveUniform(program, 1).name is "c"
+PASS gl.getActiveUniform(program, 2).name is "u2"
+PASS gl.getActiveUniform(program, 3).name is "u3[0]"
+PASS gl.getActiveUniform(program, 4).name is "u4[0]"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

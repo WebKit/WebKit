@@ -1,0 +1,15 @@
+<DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test.js"></script>
+<script>
+description("Tests that it is possible to access frame.contentWindow synchronously on an about:blank iframe, even if marked as lazily loading.");
+
+let iframe = document.createElement("iframe");
+iframe.loading = "lazy";
+document.body.append(iframe);
+
+shouldBeEqualToString("iframe.contentWindow.location.href", "about:blank");
+</script>
+</body>
+</html>

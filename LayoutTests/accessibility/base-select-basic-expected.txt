@@ -1,0 +1,40 @@
+This test verifies basic accessibility properties of base-appearance selects (appearance: base-select).
+
+--- Select role and value ---
+PASS: select.role.toLowerCase().includes('popup') === true
+PASS: select.stringValue.includes('Banana') === true
+PASS: select.isExpanded === false
+PASS: select.isExpanded === true
+PASS: menu != null === true
+PASS: menu.role.toLowerCase().includes('menu') === true
+PASS: menu.childrenCount === 3
+PASS: (menu.childAtIndex(0)).role.toLowerCase().includes('menuitem') === true
+	AXTitle: Apple
+	AXDescription:
+	AXHelp:
+PASS: _menuItemText.includes('Apple') === true
+PASS: (menu.childAtIndex(1)).role.toLowerCase().includes('menuitem') === true
+	AXTitle: Banana
+	AXDescription:
+	AXHelp:
+PASS: _menuItemText.includes('Banana') === true
+PASS: (menu.childAtIndex(2)).role.toLowerCase().includes('menuitem') === true
+	AXTitle: Cherry
+	AXDescription:
+	AXHelp:
+PASS: _menuItemText.includes('Cherry') === true
+PASS: menu.childAtIndex(0).isSelected === false
+PASS: menu.childAtIndex(1).isSelected === true
+PASS: menu.childAtIndex(2).isSelected === false
+PASS: menu.selectedChildrenCount === 1
+PASS: (menu.selectedChildAtIndex(0)).role.toLowerCase().includes('menuitem') === true
+	AXTitle: Banana
+	AXDescription:
+	AXHelp:
+PASS: _menuItemText.includes('Banana') === true
+PASS: select.isExpanded === false
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

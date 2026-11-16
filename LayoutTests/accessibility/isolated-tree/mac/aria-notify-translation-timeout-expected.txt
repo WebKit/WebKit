@@ -1,0 +1,19 @@
+Tests that a translation client which never replies cannot swallow an announcement. Instead, the original text is announced in its original language once the deadline passes, and a later announcement is not left stuck behind the stalled one.
+
+Received announcement request:
+AnnouncementKey: First
+AXARIAAnnouncementInterruptBehavior: None
+AXARIAAnnouncementPriority: Normal
+AXAnnouncementLanguageKey: en
+
+Received announcement request:
+AnnouncementKey: Second
+AXARIAAnnouncementInterruptBehavior: None
+AXARIAAnnouncementPriority: Normal
+AXAnnouncementLanguageKey: en
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

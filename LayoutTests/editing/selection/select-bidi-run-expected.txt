@@ -1,0 +1,142 @@
+This test ensures WebKit lets user select bidirectional text intuitively. To manually test, select text in blue box in each test case below by a mouse drag from left to right. The changes in the selected text should match the expectations before |. Do the same by a mouse drag from right to left and expectations are after |.
+
+Test "abcABC" in "abcABC":
+Selecting from left to right
+PASS selected "a"
+PASS selected "ab"
+PASS selected "abc"
+PASS selected "abcAB"
+PASS selected "abcA"
+PASS selected "abcABC"
+Selecting from right to left
+PASS selected "A"
+PASS selected "AB"
+PASS selected "ABC"
+PASS selected "cABC"
+PASS selected "bcABC"
+PASS selected "abcABC"
+
+Test "ABCdef" in "ABCdef":
+Selecting from left to right
+PASS selected "C"
+PASS selected "BC"
+PASS selected "ABC"
+PASS selected "ABCd"
+FAIL selected "ABCde" but expected "ABCef"
+PASS selected "ABCdef"
+Selecting from right to left
+PASS selected "f"
+PASS selected "ef"
+PASS selected "def"
+PASS selected "BCdef"
+PASS selected "Cdef"
+PASS selected "ABCdef"
+
+Test "ABC" in "abcABCdef":
+Selecting from left to right
+PASS selected "C"
+PASS selected "BC"
+PASS selected "ABC"
+Selecting from right to left
+PASS selected "A"
+PASS selected "AB"
+PASS selected "ABC"
+
+Test "ABC" in "ABCdef":
+Selecting from left to right
+PASS selected "C"
+PASS selected "BC"
+PASS selected "ABC"
+Selecting from right to left
+PASS selected "A"
+PASS selected "AB"
+PASS selected "ABC"
+
+Test "ef" in "ABCdef":
+Selecting from left to right
+PASS selected "e"
+PASS selected "ef"
+Selecting from right to left
+PASS selected "f"
+PASS selected "ef"
+
+Test "AB" in "abcABC":
+Selecting from left to right
+PASS selected "B"
+PASS selected "AB"
+Selecting from right to left
+PASS selected "A"
+PASS selected "AB"
+
+Test "12" in "aXM12JNd":
+Selecting from left to right
+PASS selected "1"
+PASS selected "12"
+Selecting from right to left
+PASS selected "2"
+PASS selected "12"
+
+Test "ABC 123" in "ABC 123":
+Selecting from left to right
+PASS selected "1"
+PASS selected "12"
+PASS selected "123"
+PASS selected " 123"
+PASS selected "C 123"
+PASS selected "BC 123"
+PASS selected "ABC 123"
+Selecting from right to left
+PASS selected "A"
+PASS selected "AB"
+PASS selected "ABC"
+PASS selected "ABC "
+PASS selected "ABC 12"
+PASS selected "ABC 1"
+PASS selected "ABC 123"
+
+Test "ABC 123" in "ABC 123":
+Selecting from left to right
+PASS selected "1"
+PASS selected "12"
+FAIL selected "123" but expected " 123"
+FAIL selected " " but expected "C 123"
+FAIL selected "C " but expected "BC 123"
+FAIL selected "BC " but expected "ABC 123"
+FAIL selected "123" but expected "undefined"
+Selecting from right to left
+PASS selected "A"
+PASS selected "AB"
+PASS selected "ABC"
+FAIL selected "" but expected "ABC "
+PASS selected "ABC 12"
+PASS selected "ABC 1"
+FAIL selected "123" but expected "ABC 123"
+
+Test "ABC" in "aABCb":
+Selecting from left to right
+PASS selected "C"
+PASS selected "BC"
+PASS selected "ABC"
+Selecting from right to left
+PASS selected "A"
+PASS selected "AB"
+PASS selected "ABC"
+
+Test "ABC" in "ABC":
+Selecting from left to right
+PASS selected "C"
+PASS selected "BC"
+PASS selected "ABC"
+Selecting from right to left
+PASS selected "A"
+PASS selected "AB"
+PASS selected "ABC"
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+
+
+
+

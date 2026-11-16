@@ -1,0 +1,7 @@
+
+PASS symbol: the non-rendered container reports zero
+PASS symbol: the rect child reports the geometry it would have if rendered
+PASS display:none <g>: the non-rendered container reports zero
+PASS display:none <g>: the rect child reports the geometry it would have if rendered
+PASS display:none <rect> returns zero bbox
+

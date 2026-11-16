@@ -1,0 +1,18 @@
+<style>
+html {
+  height: 0px;
+  align-content: unsafe end;
+}
+
+body {
+  float: left;
+}
+</style>PASS if no crash or assert.<script>
+if (window.testRunner)
+  testRunner.dumpAsText();
+
+document.body.offsetHeight;
+document.designMode = "on";
+document.execCommand("backColor",false,"rgb(85,116,0)");
+document.body.style.position = "fixed";
+</script>

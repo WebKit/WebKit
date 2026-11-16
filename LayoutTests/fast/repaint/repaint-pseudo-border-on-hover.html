@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<style>
+#hitregion {
+  width: 100px;
+  height: 100px;
+  background-color: green;
+}
+#hitregion:after {
+  content: "";
+  border: 50px solid;
+  position: absolute;
+  width: 0;
+  height: 0;
+  margin-left: 140px;
+}
+
+#hitregion:hover:after {
+  color: green;
+}
+</style>
+<div id="hitregion"></div>
+<script>
+if (window.eventSender) {
+  testRunner.dumpAsText();
+
+  window.internals.startTrackingRepaints();
+
+  eventSender.mouseMoveTo(50, 50);
+  eventSender.mouseDown();
+  eventSender.mouseUp();
+
+  document.body.offsetHeight;
+
+  let repaintRects = window.internals.repaintRectsAsText();
+  window.internals.stopTrackingRepaints();
+
+  hitregion.innerText = repaintRects;
+}
+</script>

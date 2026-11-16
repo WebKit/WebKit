@@ -1,0 +1,4 @@
+
+PASS e.style['math-shift'] = "normal" should set the property value
+PASS e.style['math-shift'] = "compact" should set the property value
+

@@ -1,0 +1,6 @@
+
+PASS cookieStore.set with maxAge set to a positive value
+PASS cookieStore.set with maxAge set to a negative value
+PASS cookieStore.set with maxAge set to zero, cookie change event not dispatched
+PASS cookieStore.set fails with both maxAge and expires
+

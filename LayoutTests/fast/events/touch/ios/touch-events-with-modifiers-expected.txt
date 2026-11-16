@@ -1,0 +1,123 @@
+This logs DOM touchdown and touchup events that are dispatched when single tapping an element while holding modifier keys with and without a stylus. Must be run in WebKitTestRunner.
+
+
+Test Command + Single Tap:
+type: touchstart, pageX: 72, pageX: 72, scale: 1, rotation: 0, altKey: false, ctrlKey: false, metaKey: true, shiftKey: false
+type: touchend, pageX: 72, pageX: 72, scale: 1, rotation: 0, altKey: false, ctrlKey: false, metaKey: true, shiftKey: false
+
+Test Option + Single Tap:
+type: touchstart, pageX: 72, pageX: 72, scale: 1, rotation: 0, altKey: true, ctrlKey: false, metaKey: false, shiftKey: false
+type: touchend, pageX: 72, pageX: 72, scale: 1, rotation: 0, altKey: true, ctrlKey: false, metaKey: false, shiftKey: false
+
+Test Control + Single Tap:
+type: touchstart, pageX: 72, pageX: 72, scale: 1, rotation: 0, altKey: false, ctrlKey: true, metaKey: false, shiftKey: false
+type: touchend, pageX: 72, pageX: 72, scale: 1, rotation: 0, altKey: false, ctrlKey: true, metaKey: false, shiftKey: false
+
+Test Shift + Single Tap:
+type: touchstart, pageX: 72, pageX: 72, scale: 1, rotation: 0, altKey: false, ctrlKey: false, metaKey: false, shiftKey: true
+type: touchend, pageX: 72, pageX: 72, scale: 1, rotation: 0, altKey: false, ctrlKey: false, metaKey: false, shiftKey: true
+
+Test Command + Option + Single Tap:
+type: touchstart, pageX: 72, pageX: 72, scale: 1, rotation: 0, altKey: true, ctrlKey: false, metaKey: true, shiftKey: false
+type: touchend, pageX: 72, pageX: 72, scale: 1, rotation: 0, altKey: true, ctrlKey: false, metaKey: true, shiftKey: false
+
+Test Command + Control + Single Tap:
+type: touchstart, pageX: 72, pageX: 72, scale: 1, rotation: 0, altKey: false, ctrlKey: true, metaKey: true, shiftKey: false
+type: touchend, pageX: 72, pageX: 72, scale: 1, rotation: 0, altKey: false, ctrlKey: true, metaKey: true, shiftKey: false
+
+Test Command + Shift + Single Tap:
+type: touchstart, pageX: 72, pageX: 72, scale: 1, rotation: 0, altKey: false, ctrlKey: false, metaKey: true, shiftKey: true
+type: touchend, pageX: 72, pageX: 72, scale: 1, rotation: 0, altKey: false, ctrlKey: false, metaKey: true, shiftKey: true
+
+Test Option + Control + Single Tap:
+type: touchstart, pageX: 72, pageX: 72, scale: 1, rotation: 0, altKey: true, ctrlKey: true, metaKey: false, shiftKey: false
+type: touchend, pageX: 72, pageX: 72, scale: 1, rotation: 0, altKey: true, ctrlKey: true, metaKey: false, shiftKey: false
+
+Test Option + Shift + Single Tap:
+type: touchstart, pageX: 72, pageX: 72, scale: 1, rotation: 0, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true
+type: touchend, pageX: 72, pageX: 72, scale: 1, rotation: 0, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true
+
+Test Control + Shift + Single Tap:
+type: touchstart, pageX: 72, pageX: 72, scale: 1, rotation: 0, altKey: false, ctrlKey: true, metaKey: false, shiftKey: true
+type: touchend, pageX: 72, pageX: 72, scale: 1, rotation: 0, altKey: false, ctrlKey: true, metaKey: false, shiftKey: true
+
+Test Command + Option + Control + Single Tap:
+type: touchstart, pageX: 72, pageX: 72, scale: 1, rotation: 0, altKey: true, ctrlKey: true, metaKey: true, shiftKey: false
+type: touchend, pageX: 72, pageX: 72, scale: 1, rotation: 0, altKey: true, ctrlKey: true, metaKey: true, shiftKey: false
+
+Test Command + Option + Shift + Single Tap:
+type: touchstart, pageX: 72, pageX: 72, scale: 1, rotation: 0, altKey: true, ctrlKey: false, metaKey: true, shiftKey: true
+type: touchend, pageX: 72, pageX: 72, scale: 1, rotation: 0, altKey: true, ctrlKey: false, metaKey: true, shiftKey: true
+
+Test Command + Control + Shift + Single Tap:
+type: touchstart, pageX: 72, pageX: 72, scale: 1, rotation: 0, altKey: false, ctrlKey: true, metaKey: true, shiftKey: true
+type: touchend, pageX: 72, pageX: 72, scale: 1, rotation: 0, altKey: false, ctrlKey: true, metaKey: true, shiftKey: true
+
+Test Option + Control + Shift + Single Tap:
+type: touchstart, pageX: 72, pageX: 72, scale: 1, rotation: 0, altKey: true, ctrlKey: true, metaKey: false, shiftKey: true
+type: touchend, pageX: 72, pageX: 72, scale: 1, rotation: 0, altKey: true, ctrlKey: true, metaKey: false, shiftKey: true
+
+Test Command + Option + Control + Shift + Single Tap:
+type: touchstart, pageX: 72, pageX: 72, scale: 1, rotation: 0, altKey: true, ctrlKey: true, metaKey: true, shiftKey: true
+type: touchend, pageX: 72, pageX: 72, scale: 1, rotation: 0, altKey: true, ctrlKey: true, metaKey: true, shiftKey: true
+
+Test Command + Stylus Single Tap:
+type: touchstart, pageX: 72, pageX: 72, scale: 1, rotation: 0, altKey: false, ctrlKey: false, metaKey: true, shiftKey: false
+type: touchend, pageX: 72, pageX: 72, scale: 1, rotation: 0, altKey: false, ctrlKey: false, metaKey: true, shiftKey: false
+
+Test Option + Stylus Single Tap:
+type: touchstart, pageX: 72, pageX: 72, scale: 1, rotation: 0, altKey: true, ctrlKey: false, metaKey: false, shiftKey: false
+type: touchend, pageX: 72, pageX: 72, scale: 1, rotation: 0, altKey: true, ctrlKey: false, metaKey: false, shiftKey: false
+
+Test Control + Stylus Single Tap:
+type: touchstart, pageX: 72, pageX: 72, scale: 1, rotation: 0, altKey: false, ctrlKey: true, metaKey: false, shiftKey: false
+type: touchend, pageX: 72, pageX: 72, scale: 1, rotation: 0, altKey: false, ctrlKey: true, metaKey: false, shiftKey: false
+
+Test Shift + Stylus Single Tap:
+type: touchstart, pageX: 72, pageX: 72, scale: 1, rotation: 0, altKey: false, ctrlKey: false, metaKey: false, shiftKey: true
+type: touchend, pageX: 72, pageX: 72, scale: 1, rotation: 0, altKey: false, ctrlKey: false, metaKey: false, shiftKey: true
+
+Test Command + Option + Stylus Single Tap:
+type: touchstart, pageX: 72, pageX: 72, scale: 1, rotation: 0, altKey: true, ctrlKey: false, metaKey: true, shiftKey: false
+type: touchend, pageX: 72, pageX: 72, scale: 1, rotation: 0, altKey: true, ctrlKey: false, metaKey: true, shiftKey: false
+
+Test Command + Control + Stylus Single Tap:
+type: touchstart, pageX: 72, pageX: 72, scale: 1, rotation: 0, altKey: false, ctrlKey: true, metaKey: true, shiftKey: false
+type: touchend, pageX: 72, pageX: 72, scale: 1, rotation: 0, altKey: false, ctrlKey: true, metaKey: true, shiftKey: false
+
+Test Command + Shift + Stylus Single Tap:
+type: touchstart, pageX: 72, pageX: 72, scale: 1, rotation: 0, altKey: false, ctrlKey: false, metaKey: true, shiftKey: true
+type: touchend, pageX: 72, pageX: 72, scale: 1, rotation: 0, altKey: false, ctrlKey: false, metaKey: true, shiftKey: true
+
+Test Option + Control + Stylus Single Tap:
+type: touchstart, pageX: 72, pageX: 72, scale: 1, rotation: 0, altKey: true, ctrlKey: true, metaKey: false, shiftKey: false
+type: touchend, pageX: 72, pageX: 72, scale: 1, rotation: 0, altKey: true, ctrlKey: true, metaKey: false, shiftKey: false
+
+Test Option + Shift + Stylus Single Tap:
+type: touchstart, pageX: 72, pageX: 72, scale: 1, rotation: 0, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true
+type: touchend, pageX: 72, pageX: 72, scale: 1, rotation: 0, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true
+
+Test Control + Shift + Stylus Single Tap:
+type: touchstart, pageX: 72, pageX: 72, scale: 1, rotation: 0, altKey: false, ctrlKey: true, metaKey: false, shiftKey: true
+type: touchend, pageX: 72, pageX: 72, scale: 1, rotation: 0, altKey: false, ctrlKey: true, metaKey: false, shiftKey: true
+
+Test Command + Option + Control + Stylus Single Tap:
+type: touchstart, pageX: 72, pageX: 72, scale: 1, rotation: 0, altKey: true, ctrlKey: true, metaKey: true, shiftKey: false
+type: touchend, pageX: 72, pageX: 72, scale: 1, rotation: 0, altKey: true, ctrlKey: true, metaKey: true, shiftKey: false
+
+Test Command + Option + Shift + Stylus Single Tap:
+type: touchstart, pageX: 72, pageX: 72, scale: 1, rotation: 0, altKey: true, ctrlKey: false, metaKey: true, shiftKey: true
+type: touchend, pageX: 72, pageX: 72, scale: 1, rotation: 0, altKey: true, ctrlKey: false, metaKey: true, shiftKey: true
+
+Test Command + Control + Shift + Stylus Single Tap:
+type: touchstart, pageX: 72, pageX: 72, scale: 1, rotation: 0, altKey: false, ctrlKey: true, metaKey: true, shiftKey: true
+type: touchend, pageX: 72, pageX: 72, scale: 1, rotation: 0, altKey: false, ctrlKey: true, metaKey: true, shiftKey: true
+
+Test Option + Control + Shift + Stylus Single Tap:
+type: touchstart, pageX: 72, pageX: 72, scale: 1, rotation: 0, altKey: true, ctrlKey: true, metaKey: false, shiftKey: true
+type: touchend, pageX: 72, pageX: 72, scale: 1, rotation: 0, altKey: true, ctrlKey: true, metaKey: false, shiftKey: true
+
+Test Command + Option + Control + Shift + Stylus Single Tap:
+type: touchstart, pageX: 72, pageX: 72, scale: 1, rotation: 0, altKey: true, ctrlKey: true, metaKey: true, shiftKey: true
+type: touchend, pageX: 72, pageX: 72, scale: 1, rotation: 0, altKey: true, ctrlKey: true, metaKey: true, shiftKey: true
+

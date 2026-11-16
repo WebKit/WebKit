@@ -1,0 +1,11 @@
+This test verifies that a dropdown menu is displayed, and can be interacted with, after tapping on a select element that focuses itself inside a touchend listener.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS select.value is "January"
+PASS select.value is "April"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

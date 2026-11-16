@@ -1,0 +1,36 @@
+Tests for DOMStorage.getDOMStorageItems.
+
+
+== Running test suite: DOMStorage.getDOMStorageItems
+-- Running test case: DOMStorage.getDOMStorageItems.Session
+PASS: Should have a DOMStorageObject for sessionStorage.
+
+Getting DOM storage entries...
+[
+  [
+    "foo",
+    "bar"
+  ]
+]
+
+PASS: An empty-valued key should be cached for duplicate checks.
+PASS: An empty value should be preserved.
+PASS: An empty key should be cached.
+PASS: The value for an empty key should be preserved.
+
+-- Running test case: DOMStorage.getDOMStorageItems.Local
+PASS: Should have a DOMStorageObject for localStorage.
+
+Getting DOM storage entries...
+[
+  [
+    "foo",
+    "bar"
+  ]
+]
+
+PASS: An empty-valued key should be cached for duplicate checks.
+PASS: An empty value should be preserved.
+PASS: An empty key should be cached.
+PASS: The value for an empty key should be preserved.
+

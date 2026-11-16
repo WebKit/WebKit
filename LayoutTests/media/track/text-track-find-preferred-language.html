@@ -1,0 +1,108 @@
+<!-- webkit-test-runner [ FindInVideoEnabled=true ] -->
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<script src=../video-test.js></script>
+<script>
+function addOffTrack(language, label, matchCount, kind = 'subtitles')
+{
+    let track = video.addTextTrack(kind, label, language);
+    for (let i = 1; i <= matchCount; ++i)
+        track.addCue(new VTTCue(i, i + 1, 'banana ' + i));
+    track.mode = 'disabled';
+    return track;
+}
+
+async function runTest()
+{
+    if (!window.internals) {
+        failTest('This test requires window.internals.');
+        return;
+    }
+
+    findMediaElement();
+    if (video.readyState < HTMLMediaElement.HAVE_METADATA)
+        await new Promise(resolve => video.addEventListener('loadedmetadata', resolve, { once: true }));
+
+    // Three subtitle tracks, different languages, each with a distinct number of matches, all off.
+    englishTrack = addOffTrack('en', 'English', 2);
+    spanishTrack = addOffTrack('es', 'Spanish', 4);
+    frenchTrack = addOffTrack('fr', 'French', 6);
+
+    consoleWrite('** English preferred: Find searches the English track, shows it, and restores it when cleared.');
+    internals.setUserPreferredLanguages(['en']);
+    run("englishMatches = internals.findCueMatches('banana', []).length");
+    testExpected('englishMatches', 2);
+    testExpected("englishTrack.mode", 'showing');
+    internals.clearFindCaptionTracks();
+    testExpected("englishTrack.mode", 'disabled');
+
+    consoleWrite('<br>** Spanish preferred: Find searches the Spanish track, shows it, and restores it when cleared.');
+    internals.setUserPreferredLanguages(['es']);
+    run("spanishMatches = internals.findCueMatches('banana', []).length");
+    testExpected('spanishMatches', 4);
+    testExpected("spanishTrack.mode", 'showing');
+    internals.clearFindCaptionTracks();
+    testExpected("spanishTrack.mode", 'disabled');
+
+    consoleWrite('<br>** French most preferred of the three: Find searches the highest-priority track, shows it, and restores it when cleared.');
+    internals.setUserPreferredLanguages(['fr', 'en', 'es']);
+    run("frenchMatches = internals.findCueMatches('banana', []).length");
+    testExpected('frenchMatches', 6);
+    testExpected("frenchTrack.mode", 'showing');
+    internals.clearFindCaptionTracks();
+    testExpected("frenchTrack.mode", 'disabled');
+
+    consoleWrite('<br>** Upgrading the preferred language between searches swaps to the better track and restores the previous one.');
+    internals.setUserPreferredLanguages(['en']);
+    run("upgradeEnglishMatches = internals.findCueMatches('banana', []).length");
+    testExpected('upgradeEnglishMatches', 2);
+    testExpected("englishTrack.mode", 'showing');
+    internals.setUserPreferredLanguages(['fr']);
+    run("upgradeFrenchMatches = internals.findCueMatches('banana', []).length");
+    testExpected('upgradeFrenchMatches', 6);
+    testExpected("frenchTrack.mode", 'showing');
+    testExpected("englishTrack.mode", 'disabled');
+    internals.clearFindCaptionTracks();
+    testExpected("frenchTrack.mode", 'disabled');
+
+    consoleWrite('<br>** With no preferred language present and no default track, Find promotes nothing and reports no matches.');
+    internals.setUserPreferredLanguages(['ja']);
+    run("noPreferredMatches = internals.findCueMatches('banana', []).length");
+    testExpected('noPreferredMatches', 0);
+    testExpected("englishTrack.mode", 'disabled');
+    testExpected("spanishTrack.mode", 'disabled');
+    testExpected("frenchTrack.mode", 'disabled');
+
+    consoleWrite('<br>** A captions-kind track is searchable, not just subtitles.');
+    germanCaptionsTrack = addOffTrack('de', 'German', 3, 'captions');
+    internals.setUserPreferredLanguages(['de']);
+    run("germanCaptionsMatches = internals.findCueMatches('banana', []).length");
+    testExpected('germanCaptionsMatches', 3);
+    testExpected("germanCaptionsTrack.mode", 'showing');
+    internals.clearFindCaptionTracks();
+    testExpected("germanCaptionsTrack.mode", 'disabled');
+
+    consoleWrite('<br>** A track the user turned on is searched as-is, even when another language is preferred.');
+    internals.setUserPreferredLanguages(['en']);
+    spanishTrack.mode = 'showing';
+    run("userShownMatches = internals.findCueMatches('banana', []).length");
+    testExpected('userShownMatches', 4);
+    testExpected("englishTrack.mode", 'disabled');
+    internals.clearFindCaptionTracks();
+    testExpected("spanishTrack.mode", 'showing');
+
+    endTest();
+}
+
+setCaptionDisplayMode('ForcedOnly');
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests that with captions off, Find searches the caption track for the highest-priority preferred language, shows it while searching, and restores it to off when Find is cleared.</p>
+<video controls>
+    <source src="../content/long-test.mp4" type="video/mp4">
+</video>
+</body>
+</html>

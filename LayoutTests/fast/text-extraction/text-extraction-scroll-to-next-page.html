@@ -1,0 +1,134 @@
+<!-- webkit-test-runner [ useFlexibleViewport=true textExtractionEnabled=true AsyncOverflowScrollingEnabled=true CSSScrollAnchoringEnabled=false ] -->
+<!DOCTYPE html>
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="utf-8">
+<head>
+    <script src="../../resources/js-test.js"></script>
+    <script src="../../resources/ui-helper.js"></script>
+    <style>
+        .vertical-scroller {
+            overflow: scroll;
+            scrollbar-width: none;
+            width: 200px;
+            height: 200px;
+            border: 1px solid tomato;
+        }
+
+        .horizontal-scroller {
+            overflow: scroll;
+            scrollbar-width: none;
+            width: 200px;
+            height: 200px;
+            white-space: nowrap;
+            border: 1px solid blue;
+        }
+
+        .tall {
+            height: 4000px;
+        }
+
+        .wide {
+            width: 4000px;
+            height: 50px;
+        }
+    </style>
+</head>
+<body>
+    <div class="vertical-scroller" aria-label="Vertical scroller">
+        <div class="tall">Top of vertical scroller</div>
+    </div>
+    <div class="horizontal-scroller" aria-label="Horizontal scroller">
+        <div class="wide">Start of horizontal scroller</div>
+    </div>
+    <script>
+    jsTestIsAsync = true;
+    description("Tests that scroll interactions with no delta scroll by one page and wrap around.");
+
+    addEventListener("load", async () => {
+        verticalScroller = document.querySelector(".vertical-scroller");
+        horizontalScroller = document.querySelector(".horizontal-scroller");
+
+        if (!window.testRunner)
+            return;
+
+        const debugText = await UIHelper.requestDebugText({
+            nodeIdentifierInclusion: "interactive",
+            includeAccessibilityAttributes: true,
+        });
+
+        scrollVerticalResult = await UIHelper.performTextExtractionInteractionResult("scroll", {
+            nodeIdentifier: UIHelper.nodeIdentifierFromDebugText(debugText, "Vertical scroller"),
+        });
+
+        await UIHelper.ensureVisibleContentRectUpdate();
+        await UIHelper.ensurePresentationUpdate();
+
+        verticalScrollTopAfterFirstScroll = verticalScroller.scrollTop;
+
+        shouldBeEqualToString("scrollVerticalResult.error", "");
+        shouldBeEqualToString("scrollVerticalResult.summary", "Scrolled 200px down");
+        shouldBe("verticalScrollTopAfterFirstScroll", "200");
+
+        verticalScroller.scrollTop = verticalScroller.scrollHeight;
+
+        scrollVerticalWrapResult = await UIHelper.performTextExtractionInteractionResult("scroll", {
+            nodeIdentifier: UIHelper.nodeIdentifierFromDebugText(debugText, "Vertical scroller"),
+        });
+
+        await UIHelper.ensureVisibleContentRectUpdate();
+        await UIHelper.ensurePresentationUpdate();
+
+        verticalScrollTopAfterWrap = verticalScroller.scrollTop;
+
+        shouldBeEqualToString("scrollVerticalWrapResult.error", "");
+        shouldBeEqualToString("scrollVerticalWrapResult.summary", "Scrolled 3800px up (wrapped to start)");
+        shouldBe("verticalScrollTopAfterWrap", "0");
+
+        scrollHorizontalResult = await UIHelper.performTextExtractionInteractionResult("scroll", {
+            nodeIdentifier: UIHelper.nodeIdentifierFromDebugText(debugText, "Horizontal scroller"),
+        });
+
+        await UIHelper.ensureVisibleContentRectUpdate();
+        await UIHelper.ensurePresentationUpdate();
+
+        horizontalScrollLeftAfterFirstScroll = horizontalScroller.scrollLeft;
+
+        shouldBeEqualToString("scrollHorizontalResult.error", "");
+        shouldBeEqualToString("scrollHorizontalResult.summary", "Scrolled 200px right");
+        shouldBe("horizontalScrollLeftAfterFirstScroll", "200");
+
+        horizontalScroller.scrollLeft = horizontalScroller.scrollWidth;
+
+        scrollHorizontalWrapResult = await UIHelper.performTextExtractionInteractionResult("scroll", {
+            nodeIdentifier: UIHelper.nodeIdentifierFromDebugText(debugText, "Horizontal scroller"),
+        });
+
+        await UIHelper.ensureVisibleContentRectUpdate();
+        await UIHelper.ensurePresentationUpdate();
+
+        horizontalScrollLeftAfterWrap = horizontalScroller.scrollLeft;
+
+        shouldBeEqualToString("scrollHorizontalWrapResult.error", "");
+        shouldBeEqualToString("scrollHorizontalWrapResult.summary", "Scrolled 3800px left (wrapped to start)");
+        shouldBe("horizontalScrollLeftAfterWrap", "0");
+
+        document.body.style.height = "4000px";
+        await UIHelper.ensurePresentationUpdate();
+
+        scrollPageResult = await UIHelper.performTextExtractionInteractionResult("scroll", {});
+
+        await UIHelper.ensureVisibleContentRectUpdate();
+        await UIHelper.ensurePresentationUpdate();
+
+        pageScrollTopAfterScroll = document.scrollingElement.scrollTop;
+
+        shouldBeEqualToString("scrollPageResult.error", "");
+        shouldBeTrue("/^Scrolled [1-9]\\d*px down$/.test(scrollPageResult.summary)");
+        shouldBeGreaterThan("pageScrollTopAfterScroll", "0");
+
+        finishJSTest();
+    });
+    </script>
+</body>
+</html>

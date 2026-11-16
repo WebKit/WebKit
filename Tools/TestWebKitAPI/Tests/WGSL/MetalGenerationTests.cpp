@@ -1,0 +1,210 @@
+/*
+ * Copyright (c) 2023 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#include "config.h"
+#include "AST.h"
+#include "Lexer.h"
+#include "Parser.h"
+#include "TestWGSLAPI.h"
+#include "WGSLShaderModule.h"
+
+#include <wtf/Assertions.h>
+
+namespace TestWGSLAPI {
+
+inline std::expected<String, WGSL::FailedCheck> translate(const String& wgsl, const String& entryPointName, unsigned appleGPUFamily = 4)
+{
+    auto result = WGSL::staticCheck(wgsl, std::nullopt, { 8 });
+    if (auto* maybeError = std::get_if<WGSL::FailedCheck>(&result))
+        return makeUnexpected(*maybeError);
+
+    auto& ast = std::get<WGSL::SuccessfulCheck>(result).ast;
+    auto prepareResult = WGSL::prepare(ast, entryPointName, { });
+    if (auto* maybeError = std::get_if<WGSL::Error>(&prepareResult))
+        return makeUnexpected(WGSL::FailedCheck { { *maybeError }, { } });
+    HashMap<String, WGSL::ConstantValue> constantValues;
+    auto generationResult = WGSL::generate(ast, std::get<WGSL::PrepareResult>(prepareResult), constantValues, WGSL::DeviceState {
+        .appleGPUFamily = appleGPUFamily,
+        .shaderValidationEnabled = false
+    });
+    if (auto* maybeError = std::get_if<WGSL::Error>(&generationResult))
+        return makeUnexpected(WGSL::FailedCheck { { *maybeError }, { } });
+    return { WTF::move(std::get<String>(generationResult)) };
+}
+
+TEST(WGSLMetalGenerationTests, RedFrag)
+{
+    auto mslSource = translate(R"(@fragment
+fn main() -> @location(0) vec4<f32> {
+    return vec4<f32>(1.0, 0.0, 0.0, 1.0);
+})"_s, "main"_s);
+
+    EXPECT_TRUE(mslSource.has_value());
+    EXPECT_EQ(*mslSource, R"(#include <metal_stdlib>
+#include <metal_types>
+
+using namespace metal;
+
+template<typename T>
+struct __UnpackedTypeImpl;
+
+template<typename T>
+struct __PackedTypeImpl;
+
+template<typename T>
+using __UnpackedType = typename __UnpackedTypeImpl<T>::Type;
+
+template<typename T>
+using __PackedType = typename __PackedTypeImpl<T>::Type;
+
+struct __function0_FragmentOutput {
+    vec<float, 4> __value [[color(0)]];
+
+    template<typename T>
+    __function0_FragmentOutput(T value)
+        : __value(value)
+    { }
+};
+
+[[fragment]] __function0_FragmentOutput function0()
+{
+    return vec<float, 4>(1., 0., 0., 1.);
+}
+
+)"_s);
+}
+
+TEST(WGSLMetalGenerationTests, BuiltinSampleMask)
+{
+    auto mslSource = translate(R"(@fragment
+fn main(@builtin(position) position : vec4<f32>,
+        @builtin(sample_index) sample_index : u32,
+        @builtin(sample_mask) sample_mask : u32) {
+    let foo : vec4<f32> = position;
+    let bar : u32 = (sample_index + sample_mask);
+})"_s, "main"_s);
+
+    EXPECT_TRUE(mslSource.has_value());
+    EXPECT_EQ(*mslSource, R"(#include <metal_stdlib>
+#include <metal_types>
+
+using namespace metal;
+
+template<typename T>
+struct __UnpackedTypeImpl;
+
+template<typename T>
+struct __PackedTypeImpl;
+
+template<typename T>
+using __UnpackedType = typename __UnpackedTypeImpl<T>::Type;
+
+template<typename T>
+using __PackedType = typename __PackedTypeImpl<T>::Type;
+
+[[fragment]] void function0(vec<float, 4> parameter0 [[position]], unsigned parameter1 [[sample_id]], unsigned parameter2 [[sample_mask]], const constant unsigned* __DynamicOffsets [[buffer(8)]])
+{
+    vec<float, 4> local0 = parameter0;
+    unsigned local1 = (parameter1 + parameter2);
+}
+
+)"_s);
+}
+
+static constexpr auto mixedArgumentShader = R"(
+fn mixed(x : f32, y : f32) -> f32 { return sin(x) * y; }
+fn unrelated(x : f32) -> f32 { return x + 1.0; }
+
+@group(0) @binding(0) var<storage, read_write> out : array<f32>;
+@group(0) @binding(1) var<uniform> inp : vec4f;
+
+@compute @workgroup_size(1)
+fn main() {
+    out[0] = mixed(2.0, inp.x) + mixed(inp.y, inp.x) + unrelated(inp.z) + unrelated(inp.w);
+})"_s;
+
+TEST(WGSLMetalGenerationTests, ForcesInliningWhenParameterMixesConstantAndRuntimeArguments)
+{
+    auto family9 = translate(mixedArgumentShader, "main"_s, 9);
+    ASSERT_TRUE(family9.has_value());
+    EXPECT_TRUE(family9->contains("__attribute__((always_inline)) float function0("_s));
+    EXPECT_FALSE(family9->contains("__attribute__((always_inline)) float function1("_s));
+
+    auto family8 = translate(mixedArgumentShader, "main"_s, 8);
+    ASSERT_TRUE(family8.has_value());
+    EXPECT_FALSE(family8->contains("__attribute__((always_inline)) float function"_s));
+}
+
+TEST(WGSLMetalGenerationTests, DoesNotForceInliningWhenArgumentsAreAllConstantOrAllRuntime)
+{
+    auto mslSource = translate(R"(
+fn allConstant(x : f32) -> f32 { return x + 1.0; }
+fn allRuntime(x : f32) -> f32 { return x + 2.0; }
+
+@group(0) @binding(0) var<storage, read_write> out : array<f32>;
+@group(0) @binding(1) var<uniform> inp : vec4f;
+
+@compute @workgroup_size(1)
+fn main() {
+    out[0] = allConstant(1.0) + allConstant(2.0) + allRuntime(inp.x) + allRuntime(inp.y);
+})"_s, "main"_s, 9);
+    ASSERT_TRUE(mslSource.has_value());
+    EXPECT_FALSE(mslSource->contains("__attribute__((always_inline)) float function"_s));
+}
+
+TEST(WGSLMetalGenerationTests, RepeatedGenerationIsDeterministic)
+{
+    // Every pipeline created from a GPUShaderModule prepares and generates from the same AST,
+    // so repeated generation must produce the same code for the Metal shader cache to hit.
+    auto result = WGSL::staticCheck(R"(
+@vertex
+fn main(@builtin(vertex_index) i: u32) -> @builtin(position) vec4<f32> {
+    var positions = array<vec2<f32>, 3>(vec2<f32>(-1.0, -1.0), vec2<f32>(3.0, -1.0), vec2<f32>(-1.0, 3.0));
+    return vec4<f32>(positions[i], 0.0, 1.0);
+})"_s, std::nullopt, { 8 });
+    ASSERT_TRUE(std::holds_alternative<WGSL::SuccessfulCheck>(result));
+    auto& ast = std::get<WGSL::SuccessfulCheck>(result).ast;
+
+    auto generate = [&]() -> String {
+        auto prepareResult = WGSL::prepare(ast, "main"_s, { });
+        if (!std::holds_alternative<WGSL::PrepareResult>(prepareResult))
+            return { };
+        HashMap<String, WGSL::ConstantValue> constantValues;
+        auto generationResult = WGSL::generate(ast, std::get<WGSL::PrepareResult>(prepareResult), constantValues, WGSL::DeviceState {
+            .appleGPUFamily = 4,
+            .shaderValidationEnabled = false
+        });
+        if (!std::holds_alternative<String>(generationResult))
+            return { };
+        return std::get<String>(generationResult);
+    };
+
+    auto first = generate();
+    EXPECT_FALSE(first.isEmpty());
+    EXPECT_EQ(first, generate());
+    EXPECT_EQ(first, generate());
+}
+
+}

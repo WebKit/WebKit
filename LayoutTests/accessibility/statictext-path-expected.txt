@@ -1,0 +1,9 @@
+This test verifies that multi-line static text has a non-empty AXPath.
+
+PASS: supportsPath === true
+PASS: hasPathSegments === true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+This is a paragraph of plain static text that spans several lines in this narrow container.

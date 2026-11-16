@@ -1,0 +1,14 @@
+<p>This test passes if it does not crash.</p>
+<div id="container"></div>
+<script>
+  if (window.testRunner)
+      testRunner.dumpAsText();
+  const svgNS = 'http://www.w3.org/2000/svg';
+  var root = document.getElementById('container').attachShadow({mode: 'open'});
+  var svg1 = document.createElementNS(svgNS, 'svg');
+  root.appendChild(svg1);
+  var fo = document.createElementNS(svgNS, 'foreignObject');
+  svg1.appendChild(fo);
+  var svg2 = document.createElementNS(svgNS, 'svg');
+  fo.appendChild(svg2);
+</script>

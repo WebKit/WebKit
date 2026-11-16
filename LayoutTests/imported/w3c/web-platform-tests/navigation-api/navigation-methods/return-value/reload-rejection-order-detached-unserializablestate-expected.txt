@@ -1,0 +1,3 @@
+
+PASS reload() with unserializable state in a detached iframe throws "DataCloneError", not "InvalidStateError"
+

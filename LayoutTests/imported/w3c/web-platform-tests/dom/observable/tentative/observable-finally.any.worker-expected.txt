@@ -1,0 +1,88 @@
+
+FAIL finally(): Mirrors all values and completions from source source
+    .finally is not a function. (In 'source
+    .finally(() => {
+      results.push("finally called");
+    })', 'source
+    .finally' is undefined)
+FAIL finally(): Mirrors all values and errors from the source source
+    .finally is not a function. (In 'source
+    .finally(() => {
+      results.push("finally called");
+    })', 'source
+    .finally' is undefined)
+FAIL finally(): Callback handler fires BEFORE the source observable completes source.finally is not a function. (In 'source.finally(() => {
+    results.push("finally handler");
+  })', 'source.finally' is undefined)
+FAIL finally(): Callback handler fires BEFORE the source observable errors source.finally is not a function. (In 'source.finally(() => {
+    results.push("finally handler");
+  })', 'source.finally' is undefined)
+FAIL finally(): Handlers run in composition order source
+    .finally is not a function. (In 'source
+    .finally(() => {
+      results.push("finally handler 1");
+    })', 'source
+    .finally' is undefined)
+FAIL finally(): Errors thrown in the finally handler (during Subscriber#error()) are reported to the global immediately source
+    .finally is not a function. (In 'source
+    .finally(() => {
+      throw new Error("error from finally");
+    })', 'source
+    .finally' is undefined)
+FAIL finally(): Errors thrown in the finally handler (during Subscriber#complete()) are reported to the global immediately source
+    .finally is not a function. (In 'source
+    .finally(() => {
+      throw new Error("error from finally");
+    })', 'source
+    .finally' is undefined)
+FAIL finally(): Callback is run if consumer aborts the subscription source
+    .finally is not a function. (In 'source
+    .finally(() => results.push("downstream finally handler"))', 'source
+    .finally' is undefined)
+FAIL finally(): Callback is run before next inner subscription in flatMap() new Observable((subscriber) => {
+    subscriber.next(1);
+    subscriber.next(2);
+    subscriber.complete();
+  }).flatMap is not a function. (In 'new Observable((subscriber) => {
+    subscriber.next(1);
+    subscriber.next(2);
+    subscriber.complete();
+  }).flatMap((value) => {
+    results.push(`flatMap ${value}`);
+    return new Observable((subscriber) => {
+      subscriber.next(value);
+      subscriber.next(value);
+      subscriber.next(value);
+      subscriber.complete();
+    }).finally(() => {
+      results.push(`finally ${value}`);
+    });
+  })', 'new Observable((subscriber) => {
+    subscriber.next(1);
+    subscriber.next(2);
+    subscriber.complete();
+  }).flatMap' is undefined)
+FAIL finally(): Callback is run before next inner subscription in switchMap() new Observable((subscriber) => {
+    subscriber.next(1);
+    subscriber.next(2);
+    subscriber.complete();
+  }).switchMap is not a function. (In 'new Observable((subscriber) => {
+    subscriber.next(1);
+    subscriber.next(2);
+    subscriber.complete();
+  }).switchMap((value) => {
+    results.push(`switchMap ${value}`);
+    return new Observable((subscriber) => {
+      subscriber.next(value);
+      subscriber.next(value);
+      subscriber.next(value);
+      subscriber.complete();
+    }).finally(() => {
+      results.push(`finally ${value}`);
+    });
+  })', 'new Observable((subscriber) => {
+    subscriber.next(1);
+    subscriber.next(2);
+    subscriber.complete();
+  }).switchMap' is undefined)
+

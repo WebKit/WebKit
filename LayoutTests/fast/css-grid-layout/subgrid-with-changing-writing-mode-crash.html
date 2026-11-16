@@ -1,0 +1,18 @@
+  <style>
+   head {
+       grid-template-rows: subgrid repeat(2, [b] [a]);
+   }
+   html, head {
+       display: grid;
+   }
+  </style>
+  <script>
+   window.testRunner?.dumpAsText();
+   function main() {
+       document.body.offsetTop;
+       document.styleSheets[0].insertRule("body { writing-mode: vertical-lr; }", 0);
+   }
+  </script>
+  <body onload="main()">
+      This test passes if it doesn't crash.
+  </body>

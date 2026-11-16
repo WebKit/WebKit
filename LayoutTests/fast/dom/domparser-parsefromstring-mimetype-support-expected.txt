@@ -1,0 +1,37 @@
+This tests DOMParser supports creating Document for HTML content with mime-type "text/html".
+
+1. Should support mime-type = "text/html"
+HTML content:
+Scripts must be disabled for the document created using DOMParser.parseFromString()
+Sample text content
+PASS
+
+2. Should support mime-type = "text/xml"
+Root element: root
+PASS
+
+3. Should support mime-type = "application/xml"
+Root element: root
+PASS
+
+4. Should support mime-type = "application/xhtml+xml"
+Root element: html
+PASS
+
+5. Should support mime-type = "image/svg+xml"
+Root element: svg
+PASS
+
+6. Should NOT support mime-type = "text/xsl"
+PASS
+
+7. Should NOT support mime-type = "text/dummy+xml"
+PASS
+
+8. Should NOT support mime-type = "text/XML"
+PASS
+
+9. Should NOT support mime-type = "TEXT/html"
+PASS
+
+

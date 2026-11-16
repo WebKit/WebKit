@@ -1,0 +1,13 @@
+
+PASS signature, empty
+PASS signature, formfeed
+PASS signature, invalid whitespace
+PASS signature, invalid
+PASS signature, lowercase
+PASS signature, missing whitespace
+PASS signature, missing
+PASS signature, null
+PASS signature, partial
+PASS signature, two boms
+PASS signature, websrt
+

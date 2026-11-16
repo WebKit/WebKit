@@ -1,0 +1,11 @@
+<p>iframe embedding other same origin iframe</p>
+
+<script>
+    document.body.onload = function () {
+        console.log(`Hello from ${location.href}`);
+
+        let iframe = document.createElement("iframe");
+        iframe.src = "console-messages.html";
+        document.body.append(iframe);
+    };
+</script>

@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" onload="runTest()">
+<path id="path" marker-start="url(#marker)" vector-effect="non-scaling-stroke"></path>
+<marker id="marker"></marker>
+<script>
+if (window.testRunner) {
+  testRunner.waitUntilDone();
+  testRunner.dumpAsText();
+}
+function runTest() {
+  requestAnimationFrame(() => {
+    let path = document.getElementById("path");
+    path.removeAttribute("marker-start");
+    testRunner.notifyDone();
+  });
+}
+</script>
+<text>PASS if no crash</text>
+</svg>

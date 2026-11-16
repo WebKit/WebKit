@@ -1,0 +1,28 @@
+
+PASS empty objects
+PASS tolerates cycles in actual value
+PASS tolerates cycles in expected value
+PASS recognizes equivalence of actual object and expected array
+PASS recognizes equivalence of actual array and expected object
+PASS non-enumerable properties in actual value ignored
+PASS non-enumerable properties in expected value ignored
+PASS equivalent objects - "flat" object
+PASS equivalent objects - nested object
+PASS equivalent objects - nested array
+PASS equivalent objects - NaN value
+PASS equivalent objects - negative zero value
+PASS invalid actual value: undefined
+PASS invalid actual value: null
+PASS invalid actual value: number
+PASS unequal property value - "flat" object
+PASS non-own properties in actual value verified
+PASS non-own properties in expected value verified
+PASS unequal property value - nested object
+PASS unequal property value - nested array
+PASS equivalent objects - NaN actual value
+PASS equivalent objects - NaN expected value
+PASS equivalent objects - negative zero actual value
+PASS equivalent objects - negative zero expected value
+PASS actual contains additional property
+PASS expected contains additional property
+

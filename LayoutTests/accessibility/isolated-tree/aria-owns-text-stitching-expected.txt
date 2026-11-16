@@ -1,0 +1,18 @@
+This test ensures we handle text stitching appropriately for text within aria-owns.
+
+
+{AXRole: AXStaticText AXValue: Foo }
+
+{AXRole: AXStaticText AXValue:  Baz}
+
+{AXRole: AXStaticText AXValue: Bar}
+
+Second traversal:
+
+{AXRole: AXStaticText AXValue: Foo Bar Baz}
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Foo Bar Baz
+

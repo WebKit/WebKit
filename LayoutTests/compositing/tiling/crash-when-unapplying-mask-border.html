@@ -1,0 +1,43 @@
+<html>
+
+<script src="../../resources/ui-helper.js"></script>
+
+<style>
+  :root {
+    mask-border-source: repeating-radial-gradient(closest-side at 9px, blue 0% 68%);
+  }
+
+  *:read-write {
+    column-width: 0;
+    margin-bottom: 1000em;
+    backdrop-filter: opacity(0%);
+  }
+</style>
+
+<script>
+  if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+  }
+
+  function main() {
+    document.designMode = "on";
+
+    setTimeout(async () => {
+      document.styleSheets[0].deleteRule(0);
+
+      await UIHelper.renderingUpdate();
+
+      if (window.testRunner)
+        testRunner.notifyDone()
+    });
+  }
+</script>
+
+<body onload="main()">
+  <video hidden controls>
+  </video>
+  <pre contenteditable>This test passes if it does not crash</pre>
+</body>
+
+</html>

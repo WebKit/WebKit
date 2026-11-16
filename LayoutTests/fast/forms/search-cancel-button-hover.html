@@ -1,0 +1,39 @@
+<html>
+<head>
+<style>
+input[type="search"] {
+    color: transparent;
+}
+
+input[type="search"]::-webkit-search-cancel-button {
+    -webkit-appearance: none;
+    background-color: blue;
+    height: 1em;
+    width: 1em;
+}
+
+input[type="search"]::-webkit-search-cancel-button:hover {
+    background-color: red;
+}
+</style>
+<script src="resources/common.js"></script>
+</head>
+<body>
+<input type="search" id="search" value="foo"/>
+<script>
+onload = async () => {
+    if (!window.testRunner)
+        return;
+
+    testRunner.waitUntilDone();
+    var input = document.getElementById("search");
+    var position = searchCancelButtonPosition(input);
+    await eventSender.asyncMouseMoveTo(position.x, position.y);
+    await eventSender.asyncMouseDown();
+    await eventSender.asyncMouseUp();
+    await eventSender.asyncMouseMoveTo(position.x + 1, position.y);
+    testRunner.notifyDone();
+}
+</script>
+</body>
+</html>

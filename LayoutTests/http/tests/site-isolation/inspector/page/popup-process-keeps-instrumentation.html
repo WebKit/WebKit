@@ -1,0 +1,52 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<!DOCTYPE html>
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="../network/resources/popup-process-test-utilities.js"></script>
+<script src="../network/resources/frame-load-rows-test-utilities.js"></script>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+function test() {
+    const token = Math.random().toString(36).slice(2);
+    const url = `http://localhost:8000/site-isolation/inspector/network/resources/iframe-with-script-reporting-process-id.html?popup-${token}`;
+
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Page.PopupProcessKeepsInstrumentation");
+
+    suite.addTestCase({
+        name: "SiteIsolation.Page.PopupProcessKeepsInstrumentation.IFrameInPopupProcess",
+        description: "An iframe added to the process of a popup that existed before the inspector attached should be reported by Page events.",
+        async test() {
+            let popupProcessID = await InspectorTest.evaluateInPage(`popupProcessID`);
+            InspectorTest.expectEqual(typeof popupProcessID, "number", "The popup should report its process identifier.");
+            if (typeof popupProcessID !== "number")
+                return;
+
+            try {
+                let iframeProcessIDEvent = InspectorTest.awaitEvent("IFrameProcessID");
+                InspectorTest.evaluateInPage(`addFrame("${url}")`);
+
+                let event = await Promise.race([iframeProcessIDEvent, new Promise((resolve) => setTimeout(resolve, 5000))]);
+                InspectorTest.expectEqual(event?.data, popupProcessID, "The iframe should be in the process of the popup.");
+
+                let frame = await awaitChildFrame((frame) => frame.name === "popup-process-frame");
+                InspectorTest.expectThat(!!frame, "The iframe should be in the frame model.");
+                if (!frame)
+                    return;
+
+                let committed = await pollUntil(() => frame.mainResource.url === url);
+                InspectorTest.expectThat(!!committed, "The iframe's navigation should be committed in the frame model.");
+            } finally {
+                await InspectorTest.evaluateInPage(`closePopup()`);
+            }
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+<body onload="openPopup()">
+<p>Tests that Page events reach the frontend from the process of a popup that existed before the inspector attached, when an iframe is added to that process under Site Isolation.</p>
+</body>

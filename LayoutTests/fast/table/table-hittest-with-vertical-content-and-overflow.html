@@ -1,0 +1,35 @@
+<style>
+* {
+  margin: 0px;
+  border: 0px;
+  padding: 0px;
+}
+
+table {
+  font-size: 20px;
+  font-family: Ahem;
+  writing-mode: vertical-rl;
+}
+</style>
+<table>
+  <tr>
+    <td>not ruby</td>
+  </tr>
+  <tr>
+    <td><ruby>ruby 1<rt>annotation</rt></ruby></td>
+  </tr>
+  <tr>
+    <td>not ruby</td>
+  </tr>
+  <tr>
+    <td><ruby id=pass>ruby 2<rt>annotation</rt></ruby></td>
+  </tr>
+</table>
+<pre id=result></pre>
+Hover over "ruby 2" and try selecting it.
+<script>
+if (window.testRunner)
+  testRunner.dumpAsText();
+
+result.innerText = document.elementFromPoint(15,10).id;
+</script>

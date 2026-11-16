@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<style>
+#outer { content-visibility: hidden; }
+#outer, #inner { -webkit-column-width: 0px; }
+#inner { z-index: 1; }
+</style>
+<script>
+  window.testRunner?.dumpAsText();
+  window.testRunner?.waitUntilDone();
+  document.startViewTransition();
+  onload = _ => {
+    setTimeout(function() { document.body.innerHTML = "PASS if no crash."; window.testRunner?.notifyDone(); }, 0);
+  }
+</script>
+<div id="outer">
+  <div style="-webkit-column-width: 0px">
+    <div id="inner">foo</div>
+  </div>
+</div>

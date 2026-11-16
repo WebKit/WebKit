@@ -1,0 +1,4 @@
+
+PASS plaintext-only is an accepted attribute value for contenteditable
+PASS plaintext-only can be assigned to contenteditable dynamically
+

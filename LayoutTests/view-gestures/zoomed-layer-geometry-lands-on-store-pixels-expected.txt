@@ -1,0 +1,2 @@
+Page scale: 1.21
+PASS: every layer position and size lands on a store pixel.

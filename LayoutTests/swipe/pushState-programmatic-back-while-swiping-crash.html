@@ -1,0 +1,123 @@
+<!-- webkit-test-runner [ UsesBackForwardCache=true ] -->
+<head>
+<style>
+html {
+    font-size: 32pt;
+}
+</style>
+<script src="resources/swipe-test.js"></script>
+<script src="../resources/ui-helper.js"></script>
+<script>
+async function runTest()
+{
+    await playEventStream(`[{
+        "relativeTimeMS" : 0,
+        "kCGEventScrollGestureFlagBits" : 1,
+        "kCGEventGestureHIDType" : 6,
+        "kCGSEventTypeField" : 29,
+        "kCGEventGesturePhase" : 128,
+        "windowLocation" : "{400, 300}"
+      },
+      {
+        "relativeTimeMS" : 8,
+        "kCGEventGestureHIDType" : 61,
+        "kCGSEventTypeField" : 29,
+        "kCGEventGestureStartEndSeriesType" : 6,
+        "windowLocation" : "{0, 0}"
+      },
+      {
+        "kCGEventGestureHIDType" : 6,
+        "relativeTimeMS" : 8,
+        "windowLocation" : "{400, 300}",
+        "kCGEventGesturePhase" : 1,
+        "kCGEventScrollGestureFlagBits" : 1,
+        "kCGSEventTypeField" : 29,
+        "kCGEventGestureScrollX" : 2
+      },
+      {
+        "relativeTimeMS" : 8,
+        "windowLocation" : "{400, 300}",
+        "kCGScrollWheelEventScrollPhase" : 1,
+        "kCGScrollWheelEventIsContinuous" : 1,
+        "kCGScrollWheelEventPointDeltaAxis2" : 1,
+        "kCGSEventTypeField" : 22
+      }]`);
+      
+      await goBack();
+}
+
+async function goBack()
+{
+    window.history.back();
+
+    await UIHelper.delayFor(0);
+    await continueTest();
+}
+
+async function continueTest()
+{
+    await playEventStream(`[
+      {
+        "relativeTimeMS" : 0,
+        "windowLocation" : "{400, 300}",
+        "kCGScrollWheelEventScrollPhase" : 1,
+        "kCGScrollWheelEventIsContinuous" : 1,
+        "kCGScrollWheelEventPointDeltaAxis2" : 20,
+        "kCGSEventTypeField" : 22
+      }]`);
+    
+    await completeTest();
+}
+
+async function completeTest()
+{
+    await completeSwipeGesture();
+    testComplete();
+}
+
+function didBeginSwipeCallback()
+{
+    log("Failed. Should not begin swipe; we've already navigated away from the item where the swipe started, and there is no other back item.");
+}
+
+function isFirstPage()
+{
+    return window.location.href.indexOf("second") == -1;
+}
+
+function updateContent()
+{
+    document.body.innerHTML = isFirstPage() ? "first" : "second";
+}
+
+window.onload = async function () {
+    if (!window.eventSender || !window.testRunner) {
+        document.body.innerHTML = "This test must be run in WebKitTestRunner.";
+        return;
+    }
+
+    updateContent();
+
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+
+    await initializeSwipeTest();
+
+    testRunner.installDidBeginSwipeCallback(didBeginSwipeCallback);
+
+    window.addEventListener("popstate", function(e) {
+        updateContent();
+    });
+
+    await UIHelper.delayFor(0);
+
+    history.pushState(null, null, "#second");
+    updateContent();
+
+    await UIHelper.delayFor(0);
+    await runTest();
+};
+</script>
+</head>
+<body>
+</body>

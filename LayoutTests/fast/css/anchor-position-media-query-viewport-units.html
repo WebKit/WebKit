@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<title>Anchor positioning with media query toggle and viewport units</title>
+<style>
+    body { margin: 0; overflow: hidden; }
+    .container {
+        height: 100dvh;
+    }
+    .anchor {
+        width: 100px;
+        height: 100px;
+        background: red;
+        anchor-name: --a;
+    }
+    .target {
+        display: none;
+        position: absolute;
+        position-anchor: --a;
+        position-area: center;
+        width: 100px;
+        height: 100px;
+        background: green;
+    }
+    @media (min-width: 300px) {
+        .target {
+            display: block;
+        }
+    }
+</style>
+<body>
+<!-- Red box is always visible. Green box covers it when media query matches. -->
+<div class="anchor"></div>
+<div class="container">
+    <div class="target"></div>
+</div>
+<script>
+    window.testRunner?.waitUntilDone();
+
+    const raf = () => new Promise(resolve => requestAnimationFrame(resolve));
+
+    (async () => {
+        await raf();
+        await raf();
+        window.resizeTo(200, 600);
+        await raf();
+        await raf();
+        window.resizeTo(600, 600);
+        await raf();
+        await raf();
+        window.testRunner?.notifyDone();
+    })();
+</script>
+</body>
+</html>

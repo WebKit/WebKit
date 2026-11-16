@@ -1,0 +1,3 @@
+
+PASS e.style['column-rule-style'] = "auto" should not set the property value
+

@@ -1,0 +1,7 @@
+
+PASS cookieStore.set with domain on IDNA host
+PASS cookieStore.set with mixed casing domain
+FAIL cookieStore.set with public suffix domain assert_unreached: Should have rejected: ETLD should not be a valid domain attribute Reached unreachable code
+PASS cookieStore.set with domain on a IDNA host
+PASS cookieStore.set with domain set to the current hostname but differently cased
+

@@ -1,0 +1,4 @@
+
+PASS Subpixel sticky room is preserved at the end of the cover range.
+PASS Subpixel sticky room is preserved at the start of the cover range.
+

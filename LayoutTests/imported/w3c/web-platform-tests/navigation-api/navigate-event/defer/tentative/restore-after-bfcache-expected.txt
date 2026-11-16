@@ -1,0 +1,3 @@
+
+FAIL entries() must contain the forward-history page after navigating back to a bfcached page assert_array_equals: lengths differ, expected array ["handler", "restore", "pageshow", "dispose"] length 4, got ["pageshow", "dispose"] length 2
+

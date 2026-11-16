@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="referrer" content="no-referrer">
+<script src="/js-test-resources/js-test.js"></script>
+</head>
+<body>
+<script>
+description("Tests that about:blank popup inherits the opener's no-referrer referrer policy.");
+jsTestIsAsync = true;
+
+window.onmessage = function(event) {
+    referrer = event.data.referrer;
+    // about:blank should inherit no-referrer from opener, so no Referer header is sent.
+    shouldBeEqualToString("referrer", "");
+    w.close();
+    finishJSTest();
+};
+
+var w = window.open("about:blank");
+
+// Define checkReferrer in the popup.
+var s1 = w.document.createElement("script");
+s1.textContent = 'function checkReferrer(r) { opener.postMessage({ referrer: r }, "*"); }';
+w.document.body.appendChild(s1);
+
+// Load script.py to check if Referer header is present.
+var s2 = w.document.createElement("script");
+s2.src = "http://127.0.0.1:8000/referrer-policy/resources/script.py";
+w.document.body.appendChild(s2);
+</script>
+</body>
+</html>

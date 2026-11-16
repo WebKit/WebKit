@@ -1,0 +1,22 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ SpatialPortalEnabled=false ] -->
+<html>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<body>
+<script>
+'use strict';
+
+test(t => {
+    const style = document.createElement("style");
+    style.textContent = '@environment-map { name: "studio"; format: equirectangular; src: url("studio.hdr"); }';
+    document.head.appendChild(style);
+    t.add_cleanup(() => style.remove());
+
+    assert_equals(style.sheet.cssRules.length, 0, "the at-rule does not parse");
+    assert_equals(window.CSSEnvironmentMapRule, undefined, "no CSSOM interface");
+    assert_false(CSS.supports("at-rule(@environment-map)"), "the at-rule is not advertised as supported");
+}, "@environment-map is unavailable when the spatial portal feature is off");
+
+</script>
+</body>
+</html>

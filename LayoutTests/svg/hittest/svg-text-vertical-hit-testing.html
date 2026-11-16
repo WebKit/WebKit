@@ -1,0 +1,28 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ LayerBasedSVGEngineEnabled=true ] -->
+<html>
+<body>
+<svg width="300" height="400" style="position: absolute; left: 0; top: 0">
+    <text id="vertical" x="100" y="20" style="writing-mode: tb; font-size: 20px">VERTICALTEXTXYZ</text>
+    <text id="horizontal" x="150" y="40" style="font-size: 20px">HORIZONTALTEXT</text>
+</svg>
+<pre id="log"></pre>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+function check(x, y, expected)
+{
+    const id = document.elementFromPoint(x, y)?.id || "none";
+    const result = id == expected ? "PASS" : `FAIL (got ${id})`;
+    log.textContent += `elementFromPoint(${x}, ${y}) is ${expected}: ${result}\n`;
+}
+
+const log = document.getElementById("log");
+for (const y of [30, 70, 110, 150, 190])
+    check(100, y, "vertical");
+check(100, 380, "none");
+check(200, 33, "horizontal");
+document.querySelector("svg").remove();
+</script>
+</body>
+</html>

@@ -1,0 +1,9 @@
+
+PASS radialGradient fx and fy default to 50% when no attributes are set
+PASS radialGradient fx and fy remain 50% when cx and cy are set to different values
+PASS radialGradient fx and fy return to 50% when explicitly set then removed
+PASS radialGradient fx and fy do not follow cx and cy changes
+PASS radialGradient explicit fx and fy are independent of cx and cy
+PASS radialGradient fx and fy fall back to 50% with invalid values
+PASS radialGradient fx and fy are 50% when cx and cy are invalid
+

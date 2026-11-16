@@ -1,0 +1,14 @@
+
+PASS audio jitterBufferTarget is null by default
+PASS audio jitterBufferTarget accepts posititve values
+PASS audio jitterBufferTarget accepts values up to 4000 milliseconds
+PASS audio jitterBufferTarget returns last valid value on throw
+PASS audio jitterBufferTarget allows zero value
+PASS audio jitterBufferTarget allows to reset value to null
+PASS video jitterBufferTarget is null by default
+PASS video jitterBufferTarget accepts posititve values
+PASS video jitterBufferTarget accepts values up to 4000 milliseconds
+PASS video jitterBufferTarget returns last valid value
+PASS video jitterBufferTarget allows zero value
+PASS video jitterBufferTarget allows to reset value to null
+

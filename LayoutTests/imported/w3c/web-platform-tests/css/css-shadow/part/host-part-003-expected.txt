@@ -1,0 +1,3 @@
+
+PASS :host::part() should only match when the part is in the same tree as the rule
+

@@ -1,0 +1,60 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script>
+function addSecureIFrame() {
+    // https on 8443 is cross-origin to the http main frame on either host; the certificate is for localhost.
+    let iframe = document.createElement("iframe");
+    iframe.src = "https://localhost:8443/site-isolation/inspector/network/resources/get-serialized-certificate-iframe.html?" + Math.random();
+    iframe.addEventListener("load", () => iframe.contentWindow.postMessage({type: "TriggerLoads"}, "*"));
+    document.body.appendChild(iframe);
+}
+
+function test() {
+    // Resource.showCertificate has to ask the backend target's NetworkAgent (ProxyingNetworkAgent) for
+    // the certificate: the requestId belongs to the cross-origin iframe's process, which the page
+    // target cannot resolve.
+
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Network.CrossOriginIFrame.ShowCertificate");
+
+    suite.addTestCase({
+        name: "SiteIsolation.Network.CrossOriginIFrame.ShowCertificate.SecureResource",
+        description: "showCertificate on a resource loaded over https in a cross-origin iframe should pass its certificate to the host.",
+        async test() {
+            let resourceAddedPromise = new Promise((resolve) => {
+                function onResourceAdded(event) {
+                    if (!event.data.resource.url.includes("square100.png"))
+                        return;
+                    WI.Frame.removeEventListener(WI.Frame.Event.ResourceWasAdded, onResourceAdded);
+                    resolve(event.data.resource);
+                }
+                WI.Frame.addEventListener(WI.Frame.Event.ResourceWasAdded, onResourceAdded);
+            });
+            InspectorTest.evaluateInPage("addSecureIFrame()");
+            let resource = await resourceAddedPromise;
+            if (!resource.finished && !resource.failed)
+                await resource.awaitEvent(WI.Resource.Event.LoadingDidFinish);
+            InspectorTest.expectThat(resource.parentFrame !== WI.networkManager.mainFrame, "Resource should belong to the cross-origin iframe.");
+
+            let shownCertificate;
+            InspectorFrontendHost.showCertificate = (serializedCertificate) => {
+                shownCertificate = serializedCertificate;
+                return true;
+            };
+
+            let error;
+            try {
+                await resource.showCertificate();
+            } catch (e) {
+                error = e;
+            }
+            InspectorTest.expectNull(error, "showCertificate should not throw.");
+            InspectorTest.expectGreaterThan(shownCertificate?.length, 0, "showCertificate should pass a non-empty certificate to the host.");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+<body onload="runTest()">
+<p>Tests that Resource.showCertificate retrieves the certificate of a cross-origin iframe resource under Site Isolation, through the backend target's NetworkAgent.</p>
+</body>

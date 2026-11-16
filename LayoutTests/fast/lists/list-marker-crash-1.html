@@ -1,0 +1,34 @@
+<style>
+    html {
+        word-spacing: 0px;
+    }
+    body {
+        -webkit-user-modify: read-write-plaintext-only;
+    }
+    .empty {
+        visibility: hidden;
+        column-count: 2;
+    }
+    #remove_me_too {
+        column-span: all;
+    }
+</style>
+
+<li class=empty>
+    <span id=remove_me></span>
+    <ul id=remove_me_too></ul>
+</li>
+text
+<li id=invalidate_me></li>
+
+<script>
+    document.execCommand("selectAll");
+    document.execCommand("insertHTML", true, "PASS if no crash");
+    
+    remove_me.remove();
+    remove_me_too.remove();
+    
+    invalidate_me.setAttribute("onmousewheel", "");
+    
+    window.testRunner?.dumpAsText();
+</script>

@@ -1,0 +1,7 @@
+child
+done
+
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT pointerup event from touch fired after pointerdown target is removed Test timed out
+

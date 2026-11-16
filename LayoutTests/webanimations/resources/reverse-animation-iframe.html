@@ -1,0 +1,20 @@
+<body style="background-color: red">
+
+<script>
+
+const reversedAnimation = () => {
+    const animation = document.body.animate({ backgroundColor: ["green", "green"] }, 1);
+    animation.reverse();
+    return animation;
+}
+
+(async function () {
+    await reversedAnimation().finished;
+    await new Promise(setTimeout);
+    await reversedAnimation().ready;
+    window.top.postMessage("PASS", "*");
+})();
+
+</script>
+
+</body>

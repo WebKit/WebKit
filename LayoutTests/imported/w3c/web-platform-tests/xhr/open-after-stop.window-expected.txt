@@ -1,0 +1,3 @@
+
+PASS open() after window.stop()
+

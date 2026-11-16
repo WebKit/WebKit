@@ -1,0 +1,48 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true AsyncOverflowScrollingEnabled=true AsyncFrameScrollingEnabled=true CSSScrollAnchoringEnabled=false ] -->
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+<style>
+html, body {
+    width: 100%;
+    margin: 0px;
+    padding: 0px;
+}
+
+#content {
+    width: 100px;
+    height: 10000px;
+    box-sizing: border-box;
+    background: repeating-linear-gradient(to bottom, transparent, silver 200px);
+}
+</style>
+<body>
+<div id="content"></div>
+</body>
+<script>
+jsTestIsAsync = true;
+
+let scrollTopBeforeScrollTo;
+addEventListener("load", async () => {
+    description("Verifies that calling window.scrollTo() during a momentum scroll does not interrupt the momentum scroll in the main frame.");
+
+    if (!window.testRunner)
+        return;
+
+    await UIHelper.dragFromPointToPoint(160, 450, 160, 0, 0.1);
+
+    await shouldBecomeEqual("document.scrollingElement.scrollTop > 500", "true");
+
+    scrollTopBeforeScrollTo = document.scrollingElement.scrollTop;
+    window.scrollTo(0, 0);
+
+    await UIHelper.waitForTargetScrollAnimationToSettle(document.scrollingElement);
+
+    shouldBeTrue("document.scrollingElement.scrollTop > scrollTopBeforeScrollTo");
+
+    finishJSTest();
+});
+</script>
+</html>

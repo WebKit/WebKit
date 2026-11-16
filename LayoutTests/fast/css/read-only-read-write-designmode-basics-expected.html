@@ -1,0 +1,69 @@
+<!doctype html>
+<html>
+<head>
+<style>
+* {
+    background-color: white;
+    color: green;
+}
+.read-only {
+    background-color: pink;
+    color: black;
+}
+</style>
+</head>
+<body>
+    <!-- In the reference, we cannot use :read-only/:read-write for styling. The attributes must remain the same since they can be used by the theme. -->
+    <p>This test checks the styling of element with :read-only and :read-write. Every element where text can be entered/changed should have green text over a white background. Every element that cannot be edited should have black text over pink background.</p>
+    <div>
+        <!-- Default is true -->
+        <div contenteditable>
+            <div>WebKit rocks! Editable</div>
+            <div contenteditable=false>
+                <div class="read-only">Not editable</div>
+            </div>
+        </div>
+        <!-- True is true :) -->
+        <div contenteditable=true>
+            <div>Editable</div>
+            <div contenteditable=false>
+                <div class="read-only">Not editable</div>
+            </div>
+        </div>
+        <!-- The case of the attribute's value is irrelevant. -->
+        <div contenteditable="TrUe">
+            <div>Editable</div>
+            <div contenteditable="FaLsE">
+                <div class="read-only">Not editable</div>
+            </div>
+        </div>
+        <!-- The value "plaintext-only" is a WebKit extension, it defines an editing host too. -->
+        <div contenteditable="plaintext-only">
+            <div>Editable</div>
+            <div contenteditable="false">
+                <div class="read-only">Not editable</div>
+            </div>
+        </div>
+
+        <!-- Per definition, the rules for editing host and editable elements do not apply do <input> elements. -->
+        <div contenteditable=true>
+            <div>Editable</div>
+            <input type="text" value="read-write input">
+            <input class="read-only" type="text" disabled value="read-only input">
+            <input class="read-only" type="text" readonly value="read-only input">
+        </div>
+        <input class="read-only" type="text" contenteditable=true disabled value="read-only input">
+        <input class="read-only" type="text" contenteditable=true readonly value="read-only input">
+
+        <!-- Same story for <textarea>, it has its own definition of :read-write/:read-only. The rules for editing host and editable elements do not apply must be ignored. -->
+        <div contenteditable=true>
+            <div>Editable</div>
+            <textarea>Editable text area</textarea>
+            <textarea class="read-only" disabled>Non editable text area</textarea>
+            <textarea class="read-only" readonly>Non editable text area</textarea>
+        </div>
+        <textarea class="read-only" contenteditable=true disabled>Non editable text area</textarea>
+        <textarea class="read-only" contenteditable=true readonly>Non editable text area</textarea>
+    </div>
+</body>
+</html>

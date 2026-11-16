@@ -1,0 +1,3 @@
+
+PASS Updating Text nodes children of an OPTION element should not reset selection of the owner SELECT element.
+

@@ -1,0 +1,26 @@
+<!-- webkit-test-runner [ CanvasColorTypeEnabled=false ] -->
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+<script>
+    description("Test that the toneMapping member of CanvasRenderingContext2DSettings is unsupported when CanvasColorTypeEnabled=false.");
+
+    function testToneMappingUnsupported(settings) {
+        let canvas = document.createElement("canvas");
+        let context = canvas.getContext("2d", settings);
+        window.testSettings = context.getContextAttributes();
+        shouldBeUndefined("testSettings.toneMapping");
+    }
+
+    testToneMappingUnsupported(undefined);
+    testToneMappingUnsupported({ toneMapping: { } });
+    testToneMappingUnsupported({ toneMapping: { mode: "standard" } });
+    testToneMappingUnsupported({ toneMapping: { mode: "extended" } });
+
+    // An unsupported member is not converted at all, so an invalid mode does not throw.
+    testToneMappingUnsupported({ toneMapping: { mode: "foo" } });
+</script>
+</body>
+</html>

@@ -1,0 +1,44 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/ax-text-marker-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<p id="target">&#x939;&#x93F;&#x928;&#x94D;&#x926;&#x940;</p>
+
+<script>
+var output = "This test ensures Devanagari text, where a vowel sign renders to the left of the consonant it follows and a virama joins two consonants into a conjunct, keeps a text marker index per code unit in logical order rather than in the order the glyphs appear.\n\n";
+
+if (window.accessibilityController) {
+    var target = accessibilityController.accessibleElementById("target");
+    var targetRange = target.textMarkerRangeForElement(target);
+    var walk = checkRoundTripAllTextMarkerIndicesWithinContainer(target);
+
+    function text()
+    {
+        return target.stringForTextMarkerRange(targetRange);
+    }
+
+    output += "The vowel sign keeps its logical position after the consonant, not its visual one before it.\n";
+    output += expect("text().length", "6");
+    output += expect("text().codePointAt(0)", "0x939");
+    output += expect("text().codePointAt(1)", "0x93F");
+    output += expect("text().codePointAt(3)", "0x94D");
+
+    output += "\nEvery code unit has its own index, and it round-trips.\n";
+    output += expect("walk.containerTextLength", "6");
+    output += expect("walk.indicesChecked", "6");
+    output += expect("walk.worstRoundTripDrift", "0");
+    output += expect("walk.worstLengthDifference", "0");
+
+    document.getElementById("target").style.display = "none";
+
+    debug(output);
+}
+</script>
+</body>
+</html>

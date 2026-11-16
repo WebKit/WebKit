@@ -1,0 +1,3 @@
+This test opens a window (initially about:blank) and then navigates it to a same-origin document. Under site isolation, navigating the opened window process-swaps it since the opener's process committed a meaningful load. This test checks that window.opener still works across that swap, ensuring that the connection exists across processes.
+
+PASS

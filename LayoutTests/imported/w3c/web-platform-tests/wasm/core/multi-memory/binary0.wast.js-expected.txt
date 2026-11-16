@@ -1,0 +1,23 @@
+
+PASS #1 Reinitialize the default imports
+PASS #2 Test that WebAssembly compilation succeeds (binary0.wast:2)
+PASS #3 Test that WebAssembly compilation succeeds (binary0.wast:8)
+PASS #4 Test that WebAssembly compilation succeeds (binary0.wast:16)
+PASS #5 Test that WebAssembly compilation succeeds (binary0.wast:26)
+PASS #6 Test that WebAssembly compilation succeeds (binary0.wast:36)
+PASS #7 Test that WebAssembly compilation fails (binary0.wast:47)
+PASS #8 Test that WebAssembly compilation fails (binary0.wast:58)
+PASS #9 Reinitialize the default imports
+PASS #10 Test that WebAssembly compilation succeeds (binary0.wast:2)
+PASS #11 Test that WebAssembly instantiation succeeds (binary0.wast:2)
+PASS #12 Test that WebAssembly compilation succeeds (binary0.wast:8)
+PASS #13 Test that WebAssembly instantiation succeeds (binary0.wast:8)
+PASS #14 Test that WebAssembly compilation succeeds (binary0.wast:16)
+PASS #15 Test that WebAssembly instantiation succeeds (binary0.wast:16)
+PASS #16 Test that WebAssembly compilation succeeds (binary0.wast:26)
+PASS #17 Test that WebAssembly instantiation succeeds (binary0.wast:26)
+PASS #18 Test that WebAssembly compilation succeeds (binary0.wast:36)
+PASS #19 Test that WebAssembly instantiation succeeds (binary0.wast:36)
+PASS #20 Test that WebAssembly compilation fails (binary0.wast:47)
+PASS #21 Test that WebAssembly compilation fails (binary0.wast:58)
+

@@ -1,0 +1,4 @@
+
+PASS contain-intrinsic-size is honored for skipped content that is also an inline-size query container (container-type: inline-size)
+PASS contain-intrinsic-size is honored for skipped content that also has contain: inline-size
+

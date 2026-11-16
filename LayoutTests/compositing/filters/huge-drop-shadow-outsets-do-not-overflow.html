@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Summing huge filter outsets across ancestors must not overflow and empty the composited bounds</title>
+<style>
+.clip {
+    position: relative;
+    overflow: hidden;
+    width: 100px;
+    height: 100px;
+}
+.outer {
+    width: 100px;
+    height: 100px;
+    filter: drop-shadow(1500000000px 0 0 green);
+}
+.inner {
+    width: 0;
+    height: 0;
+    border: 50px solid green;
+    filter: drop-shadow(1500000000px 0 0 green);
+    will-change: transform;
+}
+</style>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+window.onload = () => {
+    requestAnimationFrame(() => {
+        document.getElementById("layers").textContent = internals.layerTreeAsText(document);
+        if (window.testRunner)
+            testRunner.notifyDone();
+    });
+};
+</script>
+</head>
+<body>
+<div class="clip">
+    <div class="outer">
+        <div class="inner"></div>
+    </div>
+</div>
+<pre id="layers"></pre>
+</body>
+</html>

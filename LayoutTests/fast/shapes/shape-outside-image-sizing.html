@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<style>
+.container { display: flow-root; width: 400px; font-family: Ahem; font-size: 20px; line-height: 20px; }
+.shape {
+    float: left;
+    height: 100px;
+    /* 100x100, opaque left half. */
+    shape-outside: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGQAAABkCAYAAABw4pVUAAAAyklEQVR42u3RAQkAAAzDsPo3/fsYKVRBqm7kmYAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIBMgzyIknWWT8BZ8QAAAABJRU5ErkJggg==);
+    shape-image-threshold: 0;
+}
+</style>
+</head>
+<body>
+<div class="container" id="container">
+    <div class="shape" id="wide" style="width: 200px;"></div><span id="probeWide">X</span>
+</div>
+<div class="container" id="container2">
+    <div class="shape" id="natural" style="width: 100px;"></div><span id="probeNatural">X</span>
+</div>
+<img id="preload" style="display:none" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGQAAABkCAYAAABw4pVUAAAAyklEQVR42u3RAQkAAAzDsPo3/fsYKVRBqm7kmYAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIBMgzyIknWWT8BZ8QAAAABJRU5ErkJggg==">
+
+<script>
+promise_test(async () => {
+    await new Promise(resolve => {
+        const preload = document.getElementById("preload");
+        if (preload.complete)
+            resolve();
+        else
+            preload.onload = resolve;
+    });
+    await new Promise(requestAnimationFrame);
+    await new Promise(requestAnimationFrame);
+
+    const offset = (probe, container) => document.getElementById(probe).getBoundingClientRect().left - document.getElementById(container).getBoundingClientRect().left;
+    assert_equals(offset("probeNatural", "container2"), 50, "float as wide as the image");
+    assert_equals(offset("probeWide", "container"), 50, "float wider than the image");
+}, "A shape-outside image keeps its natural size in a wider float");
+</script>
+</body>
+</html>

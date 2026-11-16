@@ -1,0 +1,63 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/element-timing/META.yml
+/LayoutTests/imported/w3c/web-platform-tests/element-timing/WEB_FEATURES.yml
+/LayoutTests/imported/w3c/web-platform-tests/element-timing/background-image-data-uri.html
+/LayoutTests/imported/w3c/web-platform-tests/element-timing/background-image-multiple-elements.html
+/LayoutTests/imported/w3c/web-platform-tests/element-timing/background-image-stretched.html
+/LayoutTests/imported/w3c/web-platform-tests/element-timing/buffer-before-onload.html
+/LayoutTests/imported/w3c/web-platform-tests/element-timing/buffered-flag.html
+/LayoutTests/imported/w3c/web-platform-tests/element-timing/cross-origin-element.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/element-timing/cross-origin-iframe-element.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/element-timing/css-generated-text.html
+/LayoutTests/imported/w3c/web-platform-tests/element-timing/disconnect-image.html
+/LayoutTests/imported/w3c/web-platform-tests/element-timing/element-only-when-fully-active.html
+/LayoutTests/imported/w3c/web-platform-tests/element-timing/first-letter-background.html
+/LayoutTests/imported/w3c/web-platform-tests/element-timing/fixed-id-identifier.html
+/LayoutTests/imported/w3c/web-platform-tests/element-timing/idlharness.window.js
+/LayoutTests/imported/w3c/web-platform-tests/element-timing/image-TAO.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/element-timing/image-carousel.html
+/LayoutTests/imported/w3c/web-platform-tests/element-timing/image-clipped-svg.html
+/LayoutTests/imported/w3c/web-platform-tests/element-timing/image-data-uri.html
+/LayoutTests/imported/w3c/web-platform-tests/element-timing/image-not-added.html
+/LayoutTests/imported/w3c/web-platform-tests/element-timing/image-not-fully-visible.html
+/LayoutTests/imported/w3c/web-platform-tests/element-timing/image-rect-iframe.html
+/LayoutTests/imported/w3c/web-platform-tests/element-timing/image-src-change.html
+/LayoutTests/imported/w3c/web-platform-tests/element-timing/image-with-css-scale.html
+/LayoutTests/imported/w3c/web-platform-tests/element-timing/image-with-rotation.html
+/LayoutTests/imported/w3c/web-platform-tests/element-timing/images-repeated-resource.html
+/LayoutTests/imported/w3c/web-platform-tests/element-timing/invisible-images.html
+/LayoutTests/imported/w3c/web-platform-tests/element-timing/multiple-background-images.html
+/LayoutTests/imported/w3c/web-platform-tests/element-timing/observe-background-image.html
+/LayoutTests/imported/w3c/web-platform-tests/element-timing/observe-child-element.html
+/LayoutTests/imported/w3c/web-platform-tests/element-timing/observe-elementtiming.html
+/LayoutTests/imported/w3c/web-platform-tests/element-timing/observe-empty-attribute.html
+/LayoutTests/imported/w3c/web-platform-tests/element-timing/observe-multiple-images.html
+/LayoutTests/imported/w3c/web-platform-tests/element-timing/observe-shadow-image.html
+/LayoutTests/imported/w3c/web-platform-tests/element-timing/observe-shadow-text.html
+/LayoutTests/imported/w3c/web-platform-tests/element-timing/observe-svg-image.html
+/LayoutTests/imported/w3c/web-platform-tests/element-timing/observe-text.html
+/LayoutTests/imported/w3c/web-platform-tests/element-timing/observe-video-poster.html
+/LayoutTests/imported/w3c/web-platform-tests/element-timing/progressively-loaded-image.html
+/LayoutTests/imported/w3c/web-platform-tests/element-timing/rectangular-image.html
+/LayoutTests/imported/w3c/web-platform-tests/element-timing/retrievability.html
+/LayoutTests/imported/w3c/web-platform-tests/element-timing/same-origin-redirects.html
+/LayoutTests/imported/w3c/web-platform-tests/element-timing/scroll-to-text.html
+/LayoutTests/imported/w3c/web-platform-tests/element-timing/supported-element-type.html
+/LayoutTests/imported/w3c/web-platform-tests/element-timing/text-not-observed-when-changed.html
+/LayoutTests/imported/w3c/web-platform-tests/element-timing/text-with-display-style.html
+/LayoutTests/imported/w3c/web-platform-tests/element-timing/toJSON.html

@@ -1,0 +1,4 @@
+
+PASS Keyframes with same easing and timeline offset are merged.
+PASS Keyframes with same timeline offset but different easing function are not merged.
+

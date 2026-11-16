@@ -1,0 +1,9 @@
+
+
+PASS Not-yet-started svg-script cloned by a use element doesn't run
+PASS Not-yet-started html-script cloned by a use element doesn't run
+PASS Not-yet-started shadow-script cloned by a use element doesn't run
+PASS Not-yet-started root-html-script cloned by a use element doesn't run
+PASS Not-yet-started root-shadow-script cloned by a use element doesn't run
+PASS Scripts cloned by a use element while being parsed don't bypass 'strict-dynamic'
+

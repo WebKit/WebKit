@@ -1,0 +1,96 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/group/svg-transform-group-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/group/svg-transform-group-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/group/svg-transform-group-002-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/group/svg-transform-group-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/group/svg-transform-group-003-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/group/svg-transform-group-003.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/group/svg-transform-group-004-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/group/svg-transform-group-004.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/group/svg-transform-group-005-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/group/svg-transform-group-005.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/group/svg-transform-group-006-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/group/svg-transform-group-006.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/group/svg-transform-group-007-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/group/svg-transform-group-007.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/group/svg-transform-group-008-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/group/svg-transform-group-008.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/group/svg-transform-group-009-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/group/svg-transform-group-009.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/group/svg-transform-group-010-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/group/svg-transform-group-010.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/group/svg-transform-group-011-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/group/svg-transform-group-011.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/group/svg-transform-nested-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/group/svg-transform-nested-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/group/svg-transform-nested-002-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/group/svg-transform-nested-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/group/svg-transform-nested-003-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/group/svg-transform-nested-003.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/group/svg-transform-nested-004-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/group/svg-transform-nested-004.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/group/svg-transform-nested-005-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/group/svg-transform-nested-005.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/group/svg-transform-nested-006-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/group/svg-transform-nested-006.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/group/svg-transform-nested-007-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/group/svg-transform-nested-007.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/group/svg-transform-nested-008-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/group/svg-transform-nested-008.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/group/svg-transform-nested-009-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/group/svg-transform-nested-009.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/group/svg-transform-nested-010-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/group/svg-transform-nested-010.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/group/svg-transform-nested-011-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/group/svg-transform-nested-011.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/group/svg-transform-nested-012-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/group/svg-transform-nested-012.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/group/svg-transform-nested-013-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/group/svg-transform-nested-013.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/group/svg-transform-nested-014-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/group/svg-transform-nested-014.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/group/svg-transform-nested-015-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/group/svg-transform-nested-015.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/group/svg-transform-nested-016-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/group/svg-transform-nested-016.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/group/svg-transform-nested-017-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/group/svg-transform-nested-017.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/group/svg-transform-nested-018-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/group/svg-transform-nested-018.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/group/svg-transform-nested-019-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/group/svg-transform-nested-019.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/group/svg-transform-nested-020-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/group/svg-transform-nested-020.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/group/svg-transform-nested-021-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/group/svg-transform-nested-021.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/group/svg-transform-nested-022-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/group/svg-transform-nested-022.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/group/svg-transform-nested-023-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/group/svg-transform-nested-023.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/group/svg-transform-nested-024-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/group/svg-transform-nested-024.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/group/svg-transform-nested-025-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/group/svg-transform-nested-025.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/group/svg-transform-nested-026-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/group/svg-transform-nested-026.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/group/svg-transform-nested-027-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/group/svg-transform-nested-027.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/group/svg-transform-nested-028-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/group/svg-transform-nested-028.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/group/svg-transform-nested-029-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/group/svg-transform-nested-029.html

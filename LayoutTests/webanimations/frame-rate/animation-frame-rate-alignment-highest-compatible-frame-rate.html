@@ -1,0 +1,90 @@
+<!doctype html>
+<meta charset=utf-8>
+<title>Animation.frameRate</title>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="../../imported/w3c/web-platform-tests/web-animations/testcommon.js"></script>
+<body>
+<script>
+'use strict';
+
+promise_test(async t => {
+    // A newly-encountered frame rate must align with the highest frame rate it is
+    // compatible with. Here, 10fps and 15fps are not compatible with each other and
+    // are started one frame apart, so they update in different frames. A 30fps
+    // animation started later is compatible with both and must align with 15fps,
+    // the highest of the two, meaning it updates in the frames in which the 15fps
+    // animation updates rather than in those of the 10fps animation.
+
+    const timing = { duration: 10_000, iterations: Infinity };
+
+    // The lists of timeline times at which each frame rate was sampled.
+    const ticksAt10 = [];
+    const ticksAt15 = [];
+    const ticksAt30 = [];
+    const ticks = new Map([[10, ticksAt10], [15, ticksAt15], [30, ticksAt30]]);
+
+    // The samples of the 15fps animation that can be compared against the 30fps
+    // animation, ie. those taken once the 30fps animation had been sampled.
+    const comparableSamples = () => ticksAt30.length ? ticksAt15.filter(value => value > ticksAt30[0]) : [];
+    const numberOfSamplesToCompare = 10;
+
+    await new Promise(resolve => {
+        const addAnimation = frameRate => {
+            const animation = document.timeline.animate(() => {
+                ticks.get(frameRate).push(document.timeline.currentTime);
+                if (comparableSamples().length >= numberOfSamplesToCompare)
+                    resolve();
+            }, timing);
+            animation.frameRate = frameRate;
+            t.add_cleanup(() => animation.cancel());
+        };
+
+        // Start an animation that updates at 10fps.
+        addAnimation(10);
+
+        // Wait one frame before we start another animation running at 15fps. Since
+        // 15fps and 10fps cannot be aligned, this animation updates in frames of its
+        // own, out of phase with the 10fps animation.
+        requestAnimationFrame(() => {
+            addAnimation(15);
+
+            // Wait one more frame before we start an animation running at 30fps,
+            // which is compatible with both of the animations above.
+            requestAnimationFrame(() => addAnimation(30));
+        });
+    });
+
+    assert_greater_than(ticksAt10.length, 1, "the 10fps animation was sampled repeatedly");
+    assert_greater_than(ticksAt30.length, 2, "the 30fps animation was sampled repeatedly");
+
+    // The two frame rates the 30fps animation may align with must be out of phase for
+    // this test to tell them apart, ie. the delay between their first samples must be
+    // far enough from a multiple of the 30fps interval that aligning with either one
+    // yields a different set of frames. A dropped frame can make that delay longer than
+    // the single frame we waited for and bring the two frame rates in phase, in which
+    // case there is nothing this test can observe.
+    const intervalFor30fps = 1000 / 30;
+    const phaseDifference = (ticksAt15[0] - ticksAt10[0]) % intervalFor30fps;
+    if (Math.min(phaseDifference, intervalFor30fps - phaseDifference) < intervalFor30fps / 4)
+        return;
+
+    // Since the 30fps animation aligned with the 15fps animation, it is sampled in the
+    // frames in which the 15fps animation is sampled. This does not hold for every
+    // single frame: a frame rate may be sampled up to 1ms before its ideal sample time,
+    // and since the ideal sample times for 15fps and 30fps are each computed from the
+    // time of their own previous sample, a frame falling within that tolerance can be
+    // attributed to one frame rate and not to the other. A frame taking longer than
+    // expected can likewise shift a sample to a later frame. Both are one-off
+    // deviations, so we allow a couple of them: had the 30fps animation aligned with the
+    // 10fps animation, it would share close to none of the samples.
+    const minimumRatioOfSharedSamples = 0.75;
+    const framesAt30 = new Set(ticksAt30);
+    const samplesAt15 = comparableSamples();
+    const sharedSamples = samplesAt15.filter(value => framesAt30.has(value));
+    assert_greater_than(sharedSamples.length / samplesAt15.length, minimumRatioOfSharedSamples,
+        `the 30fps animation was sampled along with the 15fps animation in ${sharedSamples.length} of the ${samplesAt15.length} frames in which the 15fps animation was sampled`);
+}, "A frame rate encountered for the first time aligns with the highest compatible frame rate");
+
+</script>
+</body>

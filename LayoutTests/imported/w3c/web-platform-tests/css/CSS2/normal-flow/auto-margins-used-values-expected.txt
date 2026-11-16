@@ -1,0 +1,8 @@
+
+PASS .box 1
+PASS .box 2
+PASS .box 3
+PASS .box 4
+PASS .box 5
+PASS .box 6
+

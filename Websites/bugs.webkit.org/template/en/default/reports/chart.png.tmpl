@@ -1,0 +1,46 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[% IF chart.cumulate %]
+  [% USE graph = GD.Graph.area(width, height) %]
+  [% graph.set(cumulate => "true") %]
+[% ELSE %]
+  [% USE graph = GD.Graph.lines(width, height) %]
+[% END %]
+
+[% FILTER null;
+  x_label_skip = (30 * chart.data.0.size / width);
+  
+  graph.set(x_label           => "Time",
+            y_label           => terms.Bugs,
+            y_tick_number     => 8, 
+            y_max_value       => chart.y_max_value,
+            x_label_position  => 0.5,
+            x_labels_vertical => 1,
+            x_label_skip      => x_label_skip,
+            legend_placement  => "RT",
+            line_width        => 2,
+            dclrs             => ["lred", "lgreen", "lblue", "lyellow",
+                                  "lpurple", "lorange", "black", "green",
+                                  "blue", "dpink", "lbrown", "gray", 
+                                  "red", "dpurple", "gold", "marine"]);
+
+  graph.set_legend(chart.labels);
+  END;
+-%]
+
+[% IF Param("font_file") %]
+  [% graph.set_x_axis_font(Param("font_file"), 9);
+     graph.set_x_label_font(Param("font_file"), 10);
+     graph.set_y_axis_font(Param("font_file"), 9);
+     graph.set_y_label_font(Param("font_file"), 10);
+     graph.set_legend_font(Param("font_file"), 9);
+  %]
+[% END %]
+
+[% graph.plot(chart.data).png | stdout(1) %]

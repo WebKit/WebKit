@@ -1,0 +1,72 @@
+/*
+ * Copyright (C) 2025 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#pragma once
+
+#if ENABLE(THREADED_ANIMATIONS)
+
+#include <WebCore/ProcessQualified.h>
+#include <WebCore/TimelineIdentifier.h>
+#include <WebCore/WebAnimationTime.h>
+#include <wtf/JSONValues.h>
+#include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
+
+namespace WebKit {
+
+using TimelineID = WebCore::ProcessQualified<WebCore::TimelineIdentifier>;
+
+class RemoteAnimationTimeline : public ThreadSafeRefCounted<RemoteAnimationTimeline> {
+    WTF_MAKE_TZONE_ALLOCATED(RemoteAnimationTimeline);
+public:
+    virtual ~RemoteAnimationTimeline() = default;
+
+    bool isMonotonic() const { return !m_duration; }
+    bool isProgressBased() const { return !!m_duration; }
+
+    const WebCore::WebAnimationTime& currentTime() const LIFETIME_BOUND { return m_currentTime; }
+    const std::optional<WebCore::WebAnimationTime>& duration() const LIFETIME_BOUND { return m_duration; }
+    const TimelineID& identifier() const LIFETIME_BOUND { return m_identifier; }
+
+    Ref<JSON::Object> toJSONForTesting() const;
+
+protected:
+    RemoteAnimationTimeline(TimelineID, std::optional<WebCore::WebAnimationTime> duration);
+
+    WebCore::WebAnimationTime m_currentTime;
+
+private:
+    TimelineID m_identifier;
+    std::optional<WebCore::WebAnimationTime> m_duration;
+};
+
+} // namespace WebKit
+
+#define SPECIALIZE_TYPE_TRAITS_REMOTE_ANIMATION_TIMELINE(ToValueTypeName, predicate) \
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebKit::ToValueTypeName) \
+    static bool isType(const WebKit::RemoteAnimationTimeline& node) { return node.predicate; } \
+SPECIALIZE_TYPE_TRAITS_END()
+
+#endif // ENABLE(THREADED_ANIMATIONS)

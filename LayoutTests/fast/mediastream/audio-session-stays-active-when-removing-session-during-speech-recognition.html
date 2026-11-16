@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="../../media/media-file.js"></script>
+</head>
+<body>
+<video id="video"></video>
+<script>
+function wait(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+promise_test(async (test) => {
+    assert_true(!!window.internals, "Test requires window.internals");
+    internals.settings.setShouldDeactivateAudioSession(true);
+
+    const recognition = new webkitSpeechRecognition();
+    test.add_cleanup(() => recognition.stop());
+
+    await new Promise((resolve, reject) => {
+        recognition.onstart = resolve;
+        recognition.onerror = (e) => reject(`SpeechRecognition error: ${e.error}`);
+        recognition.start();
+        setTimeout(() => reject("timed out waiting for SpeechRecognition onstart"), 5000);
+    });
+
+    let counter = 0;
+    while (++counter < 50 && !internals.audioSessionActive())
+        await new Promise(resolve => setTimeout(resolve, 50));
+    assert_true(internals.audioSessionActive(), "AudioSession must be active once SpeechRecognition starts capturing");
+
+    const video = document.getElementById("video");
+    video.src = findMediaFile("video", "../../media/content/test");
+    await video.play();
+
+    assert_true(internals.audioSessionActive(), "AudioSession remains active while video and SpeechRecognition are both running");
+
+    video.src = "";
+    video.remove();
+
+    assert_true(internals.audioSessionActive(), "AudioSession must remain active after the video session is removed because SpeechRecognition is capturing");
+    await wait(0);
+    assert_true(internals.audioSessionActive(), "AudioSession must still remain active after the video session is removed because SpeechRecognition is capturing");
+    await wait(10);
+    assert_true(internals.audioSessionActive(), "AudioSession must really remain active after the video session is removed because SpeechRecognition is capturing");
+}, "Removing a media session while SpeechRecognition is capturing must not deactivate AudioSession");
+</script>
+</body>
+</html>

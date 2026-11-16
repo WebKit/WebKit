@@ -1,0 +1,45 @@
+Ensure setting and removing a breakpoint affects all Workers sharing a resource by URL.
+
+
+== Running test suite: Worker.Debugger.SharedBreakpoint
+-- Running test case: Worker.Debugger.SharedBreakpoint.CreateWorkers
+PASS: Two Workers created.
+PASS: Two Workers ready.
+
+-- Running test case: Worker.Debugger.SharedBreakpoint.BreakpointAdded
+PASS: The shared breakpoint should retain a resolved location for each worker.
+PASS: Each worker should retain its own resolved breakpoint location.
+PASS: Locations in different worker scripts should not compare equal.
+PASS: The worker pause location should retain its breakpoint marker.
+PASS: Each worker should retain its own resolved breakpoint location.
+PASS: Locations in different worker scripts should not compare equal.
+PASS: The worker pause location should retain its breakpoint marker.
+PASS: All Targets paused.
+PASS: Active CalleFrame should be in a Worker.
+PASS: Pause reason should be a breakpoint.
+PAUSE AT triggerBreakpoint:9:5
+      5
+      6    function triggerBreakpoint() {
+      7        let alpha = 1;
+ ->   8        |let beta = 2; // BREAKPOINT
+      9        let gamma = 3;
+     10    }
+     11
+
+
+
+-- Running test case: Worker.Debugger.SharedBreakpoint.NamedEvaluation
+PASS: The evaluated worker task should have no fetched resource.
+PASS: The evaluated worker task should have no fetched resource.
+PASS: Evaluated scripts in different workers should retain distinct source identities.
+PASS: Two locations in the same evaluated script should still compare equal.
+PASS: An evaluated script should not compare equal to an unresolved location.
+PASS: An inline script location should still match its document resource.
+PASS: The shared evaluated breakpoint should retain both worker locations.
+PASS: Each evaluated worker task should retain its own resolved breakpoint location.
+PASS: Each evaluated worker task should retain its own resolved breakpoint location.
+
+-- Running test case: Worker.Debugger.SharedBreakpoint.BreakpointRemoved
+PASS: Worker 1 should not have paused.
+PASS: Worker 2 should not have paused.
+

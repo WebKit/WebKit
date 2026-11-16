@@ -1,0 +1,7 @@
+
+PASS sRD(recv simulcast answer) can narrow the simulcast envelope specified by addTransceiver
+PASS sRD(recv simulcast answer) can narrow the simulcast envelope from a previous negotiation
+PASS Reordering of rids in sRD(reoffer) is ignored
+PASS sRD(recv simulcast answer) can narrow the simulcast envelope specified by addTransceiver by removing the first encoding
+PASS sRD(recv simulcast answer) can narrow the simulcast envelope from a previous negotiation by removing the first encoding
+

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>CSS -webkit-box Test: Shrinking flex items with orthogonal writing-mode in a horizontal legacy flex container</title>
+<link rel="help" href="https://compat.spec.whatwg.org/#valdef-flex--webkit-box">
+<link rel="help" href="https://drafts.csswg.org/css-flexbox-1/#min-size-auto">
+<link rel="stylesheet" href="/fonts/ahem.css">
+<meta name="assert" content="This test verifies that flex items with writing-mode: vertical-rl in a horizontal -webkit-box can be shrunk to the container width.">
+
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="../../resources/check-layout-th.js"></script>
+
+<style>
+.webkit-box {
+  display: -webkit-box;
+  width: 50px;
+  height: 50px;
+  border: 1px solid black;
+  margin-bottom: 5px;
+}
+.webkit-box > * {
+  display: block;
+  -webkit-box-flex: 1;
+
+  writing-mode: vertical-rl;
+  font: 20px/1 Ahem;
+  background: lightblue;
+
+  border: 0;
+  padding: 0;
+  margin: 0;
+}
+</style>
+
+<body onload="checkLayout('.webkit-box')">
+  <div class="webkit-box">
+    <div style="width: 200px" data-expected-width="50">XXXXXXX</div>
+  </div>
+
+  <div class="webkit-box">
+    <img src="data:image/svg+xml,<svg width='300' height='100' xmlns='http://www.w3.org/2000/svg'></svg>"
+         data-expected-width="50">
+  </div>
+
+  <div class="webkit-box">
+    <canvas width="300" height="100" data-expected-width="50"></canvas>
+  </div>
+
+  <div class="webkit-box">
+    <iframe data-expected-width="50"></iframe>
+  </div>
+
+  <div class="webkit-box">
+    <button data-expected-width="50">XXXXXXX</button>
+  </div>
+</body>

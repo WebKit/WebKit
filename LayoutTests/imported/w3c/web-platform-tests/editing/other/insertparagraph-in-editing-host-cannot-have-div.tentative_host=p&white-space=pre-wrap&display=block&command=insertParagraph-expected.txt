@@ -1,0 +1,14 @@
+a
+b
+
+
+FAIL <p contenteditable style="display:block; white-space:pre-wrap">a[]b</p> assert_equals: expected "a\nb" but got "a<div>b</div>"
+FAIL <p contenteditable style="display:block; white-space:pre-wrap"><span style="white-space:normal">a[]b</span></p> assert_equals: expected "<span style=\"white-space:normal\">a<br>b</span>" but got "<span style=\"white-space:normal\">a</span><div><span style=\"white-space:normal\">b</span></div>"
+FAIL <p contenteditable style="display:block; white-space:pre-wrap"><span style="white-space:normal"><span style="white-space:pre-wrap">a[]b</span></span></p> assert_equals: expected "<span style=\"white-space:normal\"><span style=\"white-space:pre-wrap\">a\nb</span></span>" but got "<span style=\"white-space:normal\"><span style=\"white-space:pre-wrap\">a</span></span><div><span style=\"white-space:normal\"><span style=\"white-space:pre-wrap\">b</span></span></div>"
+PASS <p contenteditable style="display:block; white-space:pre-wrap"><span style="display:block;white-space:normal">a[]b</span></p>
+PASS <p contenteditable style="display:block; white-space:pre-wrap"><div>a[]b</div></p>
+FAIL <p contenteditable style="display:block; white-space:pre-wrap"><div style="display:inline">a[]b</div></p> assert_equals: expected "<div style=\"display:inline\">a\nb</div>" but got "<div style=\"display:inline\">a</div><div><div style=\"display:inline\">b</div></div>"
+FAIL <p contenteditable style="display:block; white-space:pre-wrap"><div style="display:inline-block">a[]b</div></p> assert_equals: expected "<div style=\"display:inline-block\">a\nb</div>" but got "<div style=\"display:inline-block\">a</div><div><div style=\"display:inline-block\">b</div></div>"
+FAIL <p contenteditable style="display:block; white-space:pre-wrap"><div style="display:inline;white-space:normal">a[]b</div></p> assert_equals: expected "<div style=\"display:inline;white-space:normal\">a<br>b</div>" but got "<div style=\"display:inline;white-space:normal\">a</div><div><div style=\"display:inline;white-space:normal\">b</div></div>"
+FAIL <p contenteditable style="display:block; white-space:pre-wrap"><div style="display:inline-block;white-space:normal">a[]b</div></p> assert_equals: expected "<div style=\"display:inline-block;white-space:normal\">a<br>b</div>" but got "<div style=\"display:inline-block;white-space:normal\">a</div><div><div style=\"display:inline-block;white-space:normal\">b</div></div>"
+

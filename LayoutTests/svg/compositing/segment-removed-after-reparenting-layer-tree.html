@@ -1,0 +1,41 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ LayerBasedSVGEngineEnabled=true ] -->
+<html>
+<head>
+<style>
+    html, body { margin: 0; padding: 0; }
+    svg { width: 200px; height: 200px; }
+    .anchor { transform: translateZ(0); }
+</style>
+<script>
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+    window.addEventListener('load', () => {
+        requestAnimationFrame(() => {
+            document.body.offsetTop;
+            // source has two composited anchors with middle between them, so its backing has one overlay "(svg segment N)" layer. Moving middle into the uncomposited empty-dest makes source's anchors adjacent, so the overlay layer is destroyed. middle never gets its own layer.
+            const middle = document.getElementById('middle');
+            document.getElementById('empty-dest').appendChild(middle);
+            requestAnimationFrame(() => {
+                if (window.internals)
+                    document.getElementById('layers').textContent = internals.layerTreeAsText(document);
+                if (window.testRunner)
+                    testRunner.notifyDone();
+            });
+        });
+    });
+</script>
+</head>
+<body>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+    <g id="source">
+        <g class="anchor"><rect x="10" y="10" width="60" height="60" fill="red"/></g>
+        <rect id="middle" x="40" y="40" width="60" height="60" fill="green"/>
+        <g class="anchor"><rect x="70" y="70" width="60" height="60" fill="blue"/></g>
+    </g>
+    <g id="empty-dest" transform="translate(0 100)"></g>
+</svg>
+<pre id="layers"></pre>
+</body>
+</html>

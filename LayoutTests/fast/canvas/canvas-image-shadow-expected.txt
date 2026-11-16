@@ -1,0 +1,18 @@
+Test to verify the shadow of an image drawn on canvas
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+PASS imgdata[0] is 0
+PASS imgdata[1] is 255
+PASS imgdata[2] is 0
+PASS imgdata[0] is 255
+PASS imgdata[1] is 0
+PASS imgdata[2] is 0
+PASS imgdata[0] is 0
+PASS imgdata[1] is 0
+PASS imgdata[2] is 0
+

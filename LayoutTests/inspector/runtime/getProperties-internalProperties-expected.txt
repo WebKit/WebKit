@@ -1,0 +1,27 @@
+Tests for the Runtime.getProperties command.
+
+
+== Running test suite: Runtime.getProperties.internalProperties
+-- Running test case: Runtime.getProperties.internalProperties.EventTarget
+Evaluating expression...
+Getting internal properties...
+
+  listeners: {
+    eventBubbleActiveMulti: [
+      0: {
+        callback: "function callbackBubbleActiveMulti() {}" (function)
+        capture: false (boolean)
+        passive: false (boolean)
+        once: false (boolean)
+      }
+    ]
+    eventCapturePassiveOnce: [
+      0: {
+        callback: "function callbackCapturePassiveOnce() {}" (function)
+        capture: true (boolean)
+        passive: true (boolean)
+        once: true (boolean)
+      }
+    ]
+  }
+

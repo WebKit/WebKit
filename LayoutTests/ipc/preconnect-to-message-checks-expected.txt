@@ -1,0 +1,4 @@
+Tests that NetworkConnectionToWebProcess::PreconnectTo rejects WebContent-supplied parameters carrying an HTTP body via MESSAGE_CHECK rather than issuing a full network request.
+
+PASS: NetworkProcess rejected hostile PreconnectTo via MESSAGE_CHECK
+

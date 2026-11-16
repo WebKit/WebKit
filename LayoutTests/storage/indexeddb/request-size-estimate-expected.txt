@@ -1,0 +1,24 @@
+This test verifies that estimated size of IDB database task is not smaller than or close to actual space increase (maybe subject to our implementation of backing store.)
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
+
+indexedDB.deleteDatabase(dbname)
+indexedDB.open(dbname)
+
+prepareDatabase():
+Create 20 indexes
+
+onOpenSuccess():
+db = event.target.result
+store = db.transaction('store', 'readwrite').objectStore('store')
+request = store.add(createObject(), randomKey(keySize))
+PASS 'error' in request is true
+PASS request.error.code is DOMException.QUOTA_EXCEEDED_ERR
+PASS request.error.name is "QuotaExceededError"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

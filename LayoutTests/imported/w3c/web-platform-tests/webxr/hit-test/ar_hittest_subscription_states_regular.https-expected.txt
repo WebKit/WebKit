@@ -1,0 +1,8 @@
+
+PASS Hit test subscription succeeds if the feature was requested - webgl
+PASS Hit test subscription succeeds if the feature was requested - webgl2
+PASS Hit test subscription fails if the feature was not requested - webgl
+PASS Hit test subscription fails if the feature was not requested - webgl2
+PASS Hit test subscription fails if the feature was requested but the session already ended - webgl
+PASS Hit test subscription fails if the feature was requested but the session already ended - webgl2
+

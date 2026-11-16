@@ -1,0 +1,8 @@
+<script>
+function frameLoaded() {
+  if (window.opener)
+    window.opener.postMessage('done', '*');
+}
+</script>
+<iframe onload="frameLoaded()"
+        src="data:text/html,This is a boring HTML document."></iframe>

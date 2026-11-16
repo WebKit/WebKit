@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>This tests that bitmap background images sized and positioned properly on subpixels.</title>
+<head>
+<style>
+  div {
+    background: black;
+    width: 9px;
+    height: 9px;
+    position: fixed;
+  }
+</style>
+</head>
+<body>
+<p id="container"></p>
+<script>
+  var container = document.getElementById("container");
+  adjustment = 0.1;
+  w=0.1; h=0.1;
+  for (i = 0; i < 15; ++i) {
+    adjustment+=0.1;
+    for (j = 0; j < 15; ++j) {
+      var e = document.createElement("div");
+      e.style.top = ((w + 1) * i + j * adjustment) + "px";
+      e.style.left = ((w + 1) * j + i * adjustment) + "px";
+      e.style.width = w + "px";
+      e.style.height = h + "px";
+      container.appendChild(e);
+      w+=0.1;
+      h+=0.1;
+    }
+  }
+</script>
+</body>
+</html>

@@ -1,0 +1,159 @@
+/*
+ *  Copyright (c) 2017 The WebRTC project authors. All Rights Reserved.
+ *
+ *  Use of this source code is governed by a BSD-style license
+ *  that can be found in the LICENSE file in the root of the source
+ *  tree. An additional intellectual property rights grant can be found
+ *  in the file PATENTS.  All contributing project authors may
+ *  be found in the AUTHORS file in the root of the source tree.
+ */
+
+#ifndef LOGGING_RTC_EVENT_LOG_ENCODER_RTC_EVENT_LOG_ENCODER_NEW_FORMAT_H_
+#define LOGGING_RTC_EVENT_LOG_ENCODER_RTC_EVENT_LOG_ENCODER_NEW_FORMAT_H_
+
+#include <cstdint>
+#include <deque>
+#include <map>
+#include <memory>
+#include <span>
+#include <string>
+#include <vector>
+
+#include "api/field_trials_view.h"
+#include "api/rtc_event_log/rtc_event.h"
+#include "logging/rtc_event_log/encoder/rtc_event_log_encoder.h"
+
+namespace webrtc {
+
+namespace rtclog2 {
+class EventStream;  // Auto-generated from protobuf.
+}  // namespace rtclog2
+
+class RtcEventAlrState;
+class RtcEventRouteChange;
+class RtcEventRemoteEstimate;
+class RtcEventAudioNetworkAdaptation;
+class RtcEventAudioPlayout;
+class RtcEventAudioReceiveStreamConfig;
+class RtcEventAudioSendStreamConfig;
+class RtcEventBweUpdateDelayBased;
+class RtcEventBweUpdateLossBased;
+class RtcEventBweUpdateScream;
+class RtcEventDtlsTransportState;
+class RtcEventDtlsWritableState;
+class RtcEventLoggingStarted;
+class RtcEventLoggingStopped;
+class RtcEventNetEqSetMinimumDelay;
+class RtcEventProbeClusterCreated;
+class RtcEventProbeResultFailure;
+class RtcEventProbeResultSuccess;
+class RtcEventRtcpPacketIncoming;
+class RtcEventRtcpPacketOutgoing;
+class RtcEventRtpPacketIncoming;
+class RtcEventRtpPacketOutgoing;
+class RtcEventVideoReceiveStreamConfig;
+class RtcEventVideoSendStreamConfig;
+class RtcEventIceCandidatePairConfig;
+class RtcEventIceCandidatePair;
+class RtpPacket;
+class RtcEventFrameDecoded;
+
+class RtcEventLogEncoderNewFormat final : public RtcEventLogEncoder {
+ public:
+  explicit RtcEventLogEncoderNewFormat(const FieldTrialsView& field_trials);
+  ~RtcEventLogEncoderNewFormat() override = default;
+
+  std::string EncodeBatch(
+      std::deque<std::unique_ptr<RtcEvent>>::const_iterator begin,
+      std::deque<std::unique_ptr<RtcEvent>>::const_iterator end) override;
+
+  std::string EncodeLogStart(int64_t timestamp_us,
+                             int64_t utc_time_us) override;
+  std::string EncodeLogEnd(int64_t timestamp_us) override;
+
+ private:
+  // Encoding entry-point for the various RtcEvent subclasses.
+  void EncodeAlrState(std::span<const RtcEventAlrState*> batch,
+                      rtclog2::EventStream* event_stream);
+  void EncodeAudioNetworkAdaptation(
+      std::span<const RtcEventAudioNetworkAdaptation*> batch,
+      rtclog2::EventStream* event_stream);
+  void EncodeAudioPlayout(std::span<const RtcEventAudioPlayout*> batch,
+                          rtclog2::EventStream* event_stream);
+  void EncodeAudioRecvStreamConfig(
+      std::span<const RtcEventAudioReceiveStreamConfig*> batch,
+      rtclog2::EventStream* event_stream);
+  void EncodeAudioSendStreamConfig(
+      std::span<const RtcEventAudioSendStreamConfig*> batch,
+      rtclog2::EventStream* event_stream);
+  void EncodeBweUpdateDelayBased(
+      std::span<const RtcEventBweUpdateDelayBased*> batch,
+      rtclog2::EventStream* event_stream);
+  void EncodeBweUpdateLossBased(
+      std::span<const RtcEventBweUpdateLossBased*> batch,
+      rtclog2::EventStream* event_stream);
+  void EncodeBweUpdateScream(std::span<const RtcEventBweUpdateScream*> batch,
+                             rtclog2::EventStream* event_stream);
+  void EncodeDtlsTransportState(
+      std::span<const RtcEventDtlsTransportState*> batch,
+      rtclog2::EventStream* event_stream);
+  void EncodeDtlsWritableState(
+      std::span<const RtcEventDtlsWritableState*> batch,
+      rtclog2::EventStream* event_stream);
+  void EncodeFramesDecoded(std::span<const RtcEventFrameDecoded* const> batch,
+                           rtclog2::EventStream* event_stream);
+  void EncodeIceCandidatePairConfig(
+      std::span<const RtcEventIceCandidatePairConfig*> batch,
+      rtclog2::EventStream* event_stream);
+  void EncodeIceCandidatePairEvent(
+      std::span<const RtcEventIceCandidatePair*> batch,
+      rtclog2::EventStream* event_stream);
+  void EncodeLoggingStarted(std::span<const RtcEventLoggingStarted*> batch,
+                            rtclog2::EventStream* event_stream);
+  void EncodeLoggingStopped(std::span<const RtcEventLoggingStopped*> batch,
+                            rtclog2::EventStream* event_stream);
+  void EncodeNetEqSetMinimumDelay(
+      std::span<const RtcEventNetEqSetMinimumDelay*> batch,
+      rtclog2::EventStream* event_stream);
+  void EncodeProbeClusterCreated(
+      std::span<const RtcEventProbeClusterCreated*> batch,
+      rtclog2::EventStream* event_stream);
+  void EncodeProbeResultFailure(
+      std::span<const RtcEventProbeResultFailure*> batch,
+      rtclog2::EventStream* event_stream);
+  void EncodeProbeResultSuccess(
+      std::span<const RtcEventProbeResultSuccess*> batch,
+      rtclog2::EventStream* event_stream);
+  void EncodeRouteChange(std::span<const RtcEventRouteChange*> batch,
+                         rtclog2::EventStream* event_stream);
+  void EncodeRemoteEstimate(std::span<const RtcEventRemoteEstimate*> batch,
+                            rtclog2::EventStream* event_stream);
+  void EncodeRtcpPacketIncoming(
+      std::span<const RtcEventRtcpPacketIncoming*> batch,
+      rtclog2::EventStream* event_stream);
+  void EncodeRtcpPacketOutgoing(
+      std::span<const RtcEventRtcpPacketOutgoing*> batch,
+      rtclog2::EventStream* event_stream);
+  void EncodeRtpPacketIncoming(
+      const std::map<uint32_t, std::vector<const RtcEventRtpPacketIncoming*>>&
+          batch,
+      rtclog2::EventStream* event_stream);
+  void EncodeRtpPacketOutgoing(
+      const std::map<uint32_t, std::vector<const RtcEventRtpPacketOutgoing*>>&
+          batch,
+      rtclog2::EventStream* event_stream);
+  void EncodeVideoRecvStreamConfig(
+      std::span<const RtcEventVideoReceiveStreamConfig*> batch,
+      rtclog2::EventStream* event_stream);
+  void EncodeVideoSendStreamConfig(
+      std::span<const RtcEventVideoSendStreamConfig*> batch,
+      rtclog2::EventStream* event_stream);
+  template <typename Batch, typename ProtoType>
+  void EncodeRtpPacket(const Batch& batch, ProtoType* proto_batch);
+
+  const bool encode_neteq_set_minimum_delay_kill_switch_;
+};
+
+}  // namespace webrtc
+
+#endif  // LOGGING_RTC_EVENT_LOG_ENCODER_RTC_EVENT_LOG_ENCODER_NEW_FORMAT_H_

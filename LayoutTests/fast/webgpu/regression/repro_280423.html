@@ -1,0 +1,39 @@
+<script>
+globalThis.testRunner?.waitUntilDone();
+const log = globalThis.$vm?.print ?? console.log;
+
+onload = async () => {
+    try {
+        let adapter = await navigator.gpu.requestAdapter();
+        let device = await adapter.requestDevice();
+        let shaderModule = device.createShaderModule({
+            code: `
+            override override78 : f16;
+            @id(27126) override override83 : f16 = override78;
+            override override88 : f16 = -46067.8;
+            @compute @workgroup_size(3, 1, 1)
+            fn compute0() {
+                _ = override88;
+                _ = override83;
+            }`,
+            sourceMap: {},
+        });
+
+        let pipelineLayout = device.createPipelineLayout({bindGroupLayouts: []});
+        await device.createComputePipelineAsync({
+            layout: pipelineLayout,
+            compute: {
+                module: shaderModule,
+                constants: { /*override78: -1*/ }
+            }
+        });
+        log('the end')
+    } catch (e) {
+        log('error');
+        log(e);
+        log(e[Symbol.toStringTag]);
+        log(e.stack);
+    }
+    globalThis.testRunner?.notifyDone();
+};
+</script>

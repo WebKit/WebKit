@@ -1,0 +1,10 @@
+This tests that when we create a text marker range from a marker with removed text node, it won't crash.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+text to be removed
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

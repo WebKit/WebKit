@@ -1,0 +1,25 @@
+<!--
+     Any copyright is dedicated to the Public Domain.
+     http://creativecommons.org/publicdomain/zero/1.0/
+-->
+<svg xmlns="http://www.w3.org/2000/svg" version="1.0">
+  <desc>
+    The combination of the 'viewBox' attribute on the 'marker' and the 'transform'
+    attributes on the 'g', 'path' and 'circle' elements should not cause the mark
+    (lime 'circle') to be clipped when the 'path' is filtered.
+  </desc>
+  <defs>
+    <marker id="marker" markerWidth="200" markerHeight="200" refX="0" refY="100" 
+            markerUnits="userSpaceOnUse" viewBox="-100 0 200 200">
+      <g transform="translate(100, 0)">
+        <circle fill="lime" r="100" cx="-200" cy="100" transform="translate(100, 0)"/>
+      </g>
+    </marker>
+    <filter id="filter"><feGaussianBlur stdDeviation="0.001"/></filter>
+  </defs>
+  <rect width="100%" height="100%" fill="lime"/>
+  <circle fill="red" r="98" cx="200" cy="100"/>
+  <g transform="translate(100, 0)">
+    <path d="M-100,0 l100,100 200,200" marker-mid="url(#marker)" filter="url(#filter)" transform="translate(100, 0)"/>
+  </g>
+</svg>

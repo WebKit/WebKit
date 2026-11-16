@@ -1,0 +1,61 @@
+Test the basic behaviors of global isNaN()
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS globalObject.hasOwnProperty("isNaN") is true
+PASS typeof isNaN is "function"
+PASS isNaN.length is 1
+PASS isNaN.name is "isNaN"
+PASS Object.getOwnPropertyDescriptor(globalObject, "isNaN").configurable is true
+PASS Object.getOwnPropertyDescriptor(globalObject, "isNaN").enumerable is false
+PASS Object.getOwnPropertyDescriptor(globalObject, "isNaN").writable is true
+PASS isNaN() is true
+PASS isNaN(NaN) is true
+PASS isNaN(undefined) is true
+PASS isNaN(0) is false
+PASS isNaN(-0) is false
+PASS isNaN(1) is false
+PASS isNaN(-1) is false
+PASS isNaN(42) is false
+PASS isNaN(123.5) is false
+PASS isNaN(-123.5) is false
+PASS isNaN(Number.MAX_VALUE) is false
+PASS isNaN(Number.MIN_VALUE) is false
+PASS isNaN(Number.MAX_SAFE_INTEGER) is false
+PASS isNaN(Number.MIN_SAFE_INTEGER) is false
+PASS isNaN(Math.PI) is false
+PASS isNaN(Math.E) is false
+PASS isNaN(Infinity) is false
+PASS isNaN(-Infinity) is false
+PASS isNaN(null) is false
+PASS isNaN({}) is true
+PASS isNaN({ webkit: "awesome" }) is true
+PASS isNaN([]) is false
+PASS isNaN([123]) is false
+PASS isNaN([1,1]) is true
+PASS isNaN([NaN]) is true
+PASS isNaN("") is false
+PASS isNaN("1") is false
+PASS isNaN("x") is true
+PASS isNaN("NaN") is true
+PASS isNaN("Infinity") is false
+PASS isNaN(true) is false
+PASS isNaN(false) is false
+PASS isNaN(function(){}) is true
+PASS isNaN(isNaN) is true
+PASS isNaN(Symbol()) threw exception TypeError: Cannot convert a symbol to a number.
+PASS isNaN(objectConvertToString) is false
+PASS isNaN(objectRecordToStringCall) is false
+PASS objectRecordToStringCall.toStringCallCount is 1
+PASS isNaN(objectThrowOnToString) threw exception No!.
+PASS isNaN(objectWithValueOf) is false
+PASS isNaN(objectThrowOnValueOf) threw exception Nope!.
+PASS isNaN(objectRecordValueOfCall) is true
+PASS objectRecordValueOfCall.valueOfCallCount is 1
+PASS isNaN(objectRecordConversionCalls) is false
+PASS objectRecordConversionCalls.callList.toString() is "valueOf"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

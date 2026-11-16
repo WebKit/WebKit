@@ -1,0 +1,6 @@
+
+FAIL navigator.audioSession exposes an AudioSession instance assert_implements: navigator.audioSession is not supported undefined
+FAIL AudioSession.type defaults to 'auto' assert_implements: navigator.audioSession is not supported undefined
+FAIL AudioSession.state defaults to 'inactive' assert_implements: navigator.audioSession is not supported undefined
+FAIL navigator.audioSession is [SameObject] assert_implements: navigator.audioSession is not supported undefined
+

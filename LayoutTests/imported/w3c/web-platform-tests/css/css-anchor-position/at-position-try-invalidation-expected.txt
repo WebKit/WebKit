@@ -1,0 +1,8 @@
+anchor
+anchored
+
+PASS position-try-fallbacks initially not matching any rules
+PASS Enable @position-try rule stylesheet
+PASS Insert overriding @position-try rule
+PASS Disable the @position-try rules
+

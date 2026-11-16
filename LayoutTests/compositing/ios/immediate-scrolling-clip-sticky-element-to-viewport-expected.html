@@ -1,0 +1,48 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ContentInsetBackgroundFillEnabled=true ] -->
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="../../resources/ui-helper.js"></script>
+<style>
+html, body {
+    margin: 0;
+}
+
+body {
+    width: 100%;
+    height: 3000px;
+}
+
+::-webkit-scrollbar {
+    display: none;
+}
+
+.tall {
+    width: 100%;
+    height: 300px;
+}
+
+header {
+    position: sticky;
+    top: 0;
+    width: 100%;
+    height: 50px;
+    background: green;
+    z-index: 100;
+}
+</style>
+</head>
+<script>
+addEventListener("load", async () => {
+    window.testRunner?.waitUntilDone();
+    await UIHelper.setObscuredInsets(50, 0, 0, 0);
+    await UIHelper.ensurePresentationUpdate();
+    await UIHelper.immediateScrollElementAtContentPointToOffset(100, 100, 0, 400, true);
+    window.testRunner?.notifyDone();
+});
+</script>
+<body>
+    <div class="tall"></div>
+    <header></header>
+</body>
+</html>

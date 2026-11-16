@@ -1,0 +1,3 @@
+
+PASS Test that invalid module attribute leads to SyntaxError on window.
+

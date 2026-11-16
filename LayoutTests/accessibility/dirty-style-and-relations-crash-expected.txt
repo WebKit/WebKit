@@ -1,0 +1,7 @@
+This test passes ensures we don't crash after performing accessibility tree updates with dirty style and object relations.
+
+PASS: No crash.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

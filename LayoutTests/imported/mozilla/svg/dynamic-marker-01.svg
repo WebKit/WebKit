@@ -1,0 +1,34 @@
+<!--
+     Any copyright is dedicated to the Public Domain.
+     http://creativecommons.org/publicdomain/zero/1.0/
+-->
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <title>Testing that dynamic changes to the element for a given ID are reflected in marker</title>
+  <!-- From https://bugzilla.mozilla.org/show_bug.cgi?id=309220 -->
+  <defs>
+    <marker id="x" style="overflow: visible;" orient="auto" markerUnits="strokeWidth">
+      <rect width="100%" height="100%" fill="lime"/>
+    </marker>
+  </defs>
+	
+  <rect width="100%" height="100%" fill="red"/>
+	
+  <line id="l1" x1="0" x2="0" y1="0" y2="0" fill="none" stroke="black" stroke-width="1" marker-end="url(#m1)"/>
+
+  <script>
+  function doTest() {
+    // check that changing an id to "m1" lets l1 find it
+    var x = document.getElementById("x");
+    x.setAttribute("id", "m1");
+
+    document.documentElement.removeAttribute('class');
+    if (window.testRunner)
+      testRunner.notifyDone();
+  }
+
+  if (window.testRunner)
+     testRunner.waitUntilDone();
+
+  setTimeout(doTest, 100);
+  </script>
+</svg>

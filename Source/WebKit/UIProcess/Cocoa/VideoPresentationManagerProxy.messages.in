@@ -1,0 +1,57 @@
+# Copyright (C) 2014 Apple Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1.  Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer.
+# 2.  Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in the
+#     documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS'' AND
+# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS BE LIABLE FOR
+# ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+#if ENABLE(VIDEO_PRESENTATION_MODE)
+[
+    DispatchedFrom=WebContent,
+    DispatchedTo=UI,
+    SharedPreferencesNeedsConnection,
+    EnabledBy=VideoPresentationManagerEnabled || VideoPresentationModeAPIEnabled
+]
+messages -> VideoPresentationManagerProxy {
+    SetHasVideo(WebCore::MediaPlayerClientIdentifier identifier, bool hasVideo)
+    SetDocumentVisibility(WebCore::MediaPlayerClientIdentifier identifier, bool isDocumentVisible)
+    SetIsChildOfElementFullscreen(WebCore::MediaPlayerClientIdentifier identifier, bool isChildOfElementFullscreen)
+    AudioSessionCategoryChanged(WebCore::MediaPlayerClientIdentifier identifier, enum:uint8_t WebCore::AudioSessionCategory category, enum:uint8_t WebCore::AudioSessionMode mode, enum:uint8_t WebCore::RouteSharingPolicy policy)
+    RoutingContextUIDChanged(WebCore::MediaPlayerClientIdentifier identifier, String routingContextUID)
+    HasBeenInteractedWith(WebCore::MediaPlayerClientIdentifier identifier)
+    SetVideoDimensions(WebCore::MediaPlayerClientIdentifier identifier, WebCore::FloatSize videoDimensions)
+    SetHasObjectViewBox(WebCore::MediaPlayerClientIdentifier identifier, bool hasObjectViewBox)
+    SetupFullscreenWithID(WebCore::MediaPlayerClientIdentifier identifier, struct WebCore::HostingContext hostingContext, WebCore::FloatRect screenRect, WebCore::FloatSize initialSize, WebCore::FloatSize videoDimensions, float hostingScaleFactor, uint32_t videoFullscreenMode, bool allowsPictureInPicture, bool standby, bool blocksReturnToFullscreenFromPictureInPicture, bool hasObjectViewBox)
+    SetPlayerIdentifier(WebCore::MediaPlayerClientIdentifier identifier, std::optional<WebCore::MediaPlayerIdentifier> playerIdentifier)
+#if !PLATFORM(IOS_FAMILY)
+    EnterFullscreen(WebCore::MediaPlayerClientIdentifier identifier)
+#endif
+    ExitFullscreen(WebCore::MediaPlayerClientIdentifier identifier, WebCore::FloatRect finalRect) -> (bool success)
+    SetInlineRect(WebCore::MediaPlayerClientIdentifier identifier, WebCore::FloatRect inlineRect, bool visible)
+    SetHasVideoContentLayer(WebCore::MediaPlayerClientIdentifier identifier, bool value)
+    CleanupFullscreen(WebCore::MediaPlayerClientIdentifier identifier)
+    PreparedToReturnToInline(WebCore::MediaPlayerClientIdentifier identifier, bool visible, WebCore::FloatRect inlineRect)
+    PreparedToExitFullscreen(WebCore::MediaPlayerClientIdentifier identifier)
+    ExitFullscreenWithoutAnimationToMode(WebCore::MediaPlayerClientIdentifier identifier, uint32_t videoFullscreenMode)
+    SetVideoFullscreenMode(WebCore::MediaPlayerClientIdentifier identifier, uint32_t mode)
+    ClearVideoFullscreenMode(WebCore::MediaPlayerClientIdentifier identifier, uint32_t mode)
+    TextTrackRepresentationUpdate(WebCore::MediaPlayerClientIdentifier identifier, WebCore::ShareableBitmapHandle textTrack)
+    TextTrackRepresentationSetContentsScale(WebCore::MediaPlayerClientIdentifier identifier, float scale)
+    TextTrackRepresentationSetHidden(WebCore::MediaPlayerClientIdentifier identifier, bool hidden)
+}
+#endif

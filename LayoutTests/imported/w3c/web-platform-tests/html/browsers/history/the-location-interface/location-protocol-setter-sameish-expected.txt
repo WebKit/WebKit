@@ -1,0 +1,6 @@
+
+PASS Set location.protocol to http (percent-encoded here for clarity)
+PASS Set location.protocol to ht%0Atp (percent-encoded here for clarity)
+PASS Set location.protocol to http%0A (percent-encoded here for clarity)
+PASS Set location.protocol to %09ht%09%0AtP (percent-encoded here for clarity)
+

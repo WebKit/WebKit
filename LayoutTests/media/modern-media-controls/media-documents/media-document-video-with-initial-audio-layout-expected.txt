@@ -1,0 +1,12 @@
+Testing that a media document initially starts with an audio layout and then transitions to a video layout.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS media.classList.contains('audio') is true
+PASS media.classList.contains('video') became true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

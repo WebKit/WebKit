@@ -1,0 +1,28 @@
+<head>
+    <meta name="viewport" content="user-scalable=no, width=device-width">
+    <style type="text/css" media="screen">
+
+        video {
+            width: 300px;
+            height: 150px;
+            transform: rotate(45deg);
+            transform-origin: top left;
+        }
+
+    </style>
+</head>
+<body>
+    <video controls></video>
+    <script src="../../../resources/js-test.js"></script>
+    <script type="text/javascript">
+
+        description("Testing that media controls have correct dimensions when a CSS rotation is applied.");
+
+        const media = document.querySelector("video");
+        const shadowRoot = window.internals.shadowRoot(media);
+        const mediaControls = shadowRoot.querySelector(".media-controls");
+        shouldBeEqualToString("mediaControls.style.width", "300px");
+        shouldBeEqualToString("mediaControls.style.height", "150px");
+
+    </script>
+</body>

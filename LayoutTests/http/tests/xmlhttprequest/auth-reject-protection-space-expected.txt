@@ -1,0 +1,3 @@
+Simulating reject protection space and continue for authentication challenge
+ALERT: status: 401
+

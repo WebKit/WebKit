@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>Grid: size and inline-size containment use contain-intrinsic-width</title>
+<link rel="help" href="https://drafts.csswg.org/css-sizing-4/#intrinsic-size-override">
+<link rel="help" href="https://drafts.csswg.org/css-contain-2/#containment-size">
+<script src="../../resources/check-layout.js"></script>
+<style>
+.shrinkToFit {
+    float: left;
+    clear: both;
+}
+.grid {
+    display: grid;
+    grid-template-columns: auto;
+    contain-intrinsic-size: 300px 300px;
+}
+.sizeContainment {
+    contain: size;
+}
+.inlineSizeContainment {
+    contain: inline-size;
+}
+.inlineSizeContainer {
+    container-type: inline-size;
+}
+.hiddenContent {
+    content-visibility: hidden;
+}
+.item {
+    width: 100px;
+    height: 20px;
+}
+</style>
+<body onload="checkLayout('.grid')">
+<p>A grid with size or inline-size containment takes its intrinsic width from contain-intrinsic-width rather than from its items.</p>
+
+<!-- contain: size -->
+<div class="shrinkToFit">
+    <div class="grid sizeContainment" data-expected-width="300">
+        <div class="item"></div>
+    </div>
+</div>
+
+<!-- contain: inline-size -->
+<div class="shrinkToFit">
+    <div class="grid inlineSizeContainment" data-expected-width="300">
+        <div class="item"></div>
+    </div>
+</div>
+
+<!-- container-type: inline-size -->
+<div class="shrinkToFit">
+    <div class="grid inlineSizeContainer" data-expected-width="300">
+        <div class="item"></div>
+    </div>
+</div>
+
+<!-- content-visibility: hidden -->
+<div class="shrinkToFit">
+    <div class="grid hiddenContent" data-expected-width="300">
+        <div class="item"></div>
+    </div>
+</div>
+</body>

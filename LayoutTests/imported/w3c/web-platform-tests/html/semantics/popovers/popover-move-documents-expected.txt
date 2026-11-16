@@ -1,0 +1,6 @@
+   p3
+
+PASS Moving popovers between documents while showing should throw an exception.
+PASS Moving popovers between documents while hiding should not throw an exception.
+PASS Moving popovers between documents during light dismiss should throw an exception.
+

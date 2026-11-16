@@ -1,0 +1,5 @@
+item1
+item3 item4
+
+PASS When the focus is set on the last item of a focusgroup that doesn't support wrapping in the axis of the arrow key pressed but supports wrapping in the orthogonal axis, the focus shouldn't move.
+

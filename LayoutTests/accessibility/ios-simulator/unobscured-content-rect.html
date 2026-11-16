@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<body id="body">
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+<div id="content">
+<button id="button">test</button>
+
+<iframe id="iframe" width="200" height="200" src="data:text/html,<body><button id='frame-button'>Click me</button><a href='%23' id='frame-link'>a</a></body>"></iframe>
+
+</div>
+
+<script>
+var output = "This tests that unobscured content rect is exposed to accessibility.\n\n";
+
+function visibleContentRectValues(element) {
+    var parts = element.stringAttributeValue("AXVisibleContentRect").replace("{", "").replace("}", "").split(",");
+    return { x: parseFloat(parts[0]), y: parseFloat(parts[1]), w: parseFloat(parts[2]), h: parseFloat(parts[3]) };
+}
+
+function formatRect(rect, offsetX, offsetY) {
+    return `{ x: ${rect.x - offsetX}, y: ${rect.y - offsetY}, w: ${Math.round(rect.w)}, h: ${Math.round(rect.h)} }`;
+}
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    document.getElementById("iframe").addEventListener("load", async function() {
+        await waitForFrameGeometryReady();
+
+        var iframeScrollView = accessibilityController.accessibleElementById("iframe").childAtIndex(0);
+        await waitFor(() => iframeScrollView.isFrameGeometryInitialized);
+
+        // Compute screen offset from root to normalize coordinates.
+        var rootRect = visibleContentRectValues(accessibilityController.rootElement);
+        var offsetX = rootRect.x;
+        var offsetY = rootRect.y;
+
+        var button = accessibilityController.accessibleElementById("button");
+        output += `button visible rect: ${formatRect(visibleContentRectValues(button), offsetX, offsetY)}\n`;
+
+        var iframe = document.getElementById("iframe");
+        var frameButton = iframe.contentWindow.accessibilityController.accessibleElementById("frame-button");
+        output += `iframe visible rect: ${formatRect(visibleContentRectValues(frameButton), offsetX, offsetY)}\n`;
+
+        debug(output);
+        finishJSTest();
+    });
+}
+</script>
+
+</body>
+</html>

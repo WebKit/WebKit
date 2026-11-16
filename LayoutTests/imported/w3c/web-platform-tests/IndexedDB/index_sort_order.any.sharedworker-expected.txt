@@ -1,0 +1,3 @@
+
+PASS Verify IDBIndex key sort order is 'number < Date < DOMString'
+

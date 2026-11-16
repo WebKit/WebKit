@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-US" lang="en-US">
+<head>
+
+<style type="text/css">
+
+#red, #green, #blue { position: absolute; width: 200px; height: 200px; opacity: 0}
+
+#red { background-color: red; }
+
+#green { background-color: green; }
+
+#blue { background-color: blue; }
+
+@-webkit-keyframes red {
+	from {
+		opacity: 0;
+		-webkit-transform: scale(3);
+	}
+	22% {
+		opacity: 1;
+		-webkit-transform: scale(1.1);
+	}
+	30% {
+		opacity: 1;
+		-webkit-transform: scale(1);
+	}
+	82% {
+		opacity: 1;
+		-webkit-transform: scale(0.92);
+	}
+	to {
+		opacity: 0;
+		-webkit-transform: scale(0.2);
+	}
+}
+
+@-webkit-keyframes green {
+	from {
+		opacity: 0;
+		-webkit-transform: scale(2.6);
+	}
+	20% {
+		opacity: 1;
+		-webkit-transform: scale(1);
+	}
+	77% {
+		opacity: 1;
+		-webkit-transform: scale(0.9);
+	}
+	to {
+		opacity: 0;
+		-webkit-transform: scale(0.1);
+	}
+}
+
+/* safari keyframes */
+@-webkit-keyframes blue {
+	from {
+		-webkit-transform: scale(1.2);
+                opacity: 0;
+	}
+	20% {
+		-webkit-transform: scale(0.8);
+                opacity: 1;
+	}
+	84% {
+		-webkit-transform: scale(0.6);
+                opacity: 1;
+	}
+	to {
+		-webkit-transform: scale(0.2);
+                opacity: 0;
+	}
+}
+
+body.go #red {
+	-webkit-animation-delay: 0.1s;
+	-webkit-animation-duration: 1s;
+	-webkit-animation-name: red;
+}
+
+body.go #green {
+	-webkit-animation-delay: 0.7s;
+	-webkit-animation-duration: 1s;
+	-webkit-animation-name: green;
+}
+
+body.go #blue {
+	-webkit-animation-delay: 1.2s;
+	-webkit-animation-duration: 1s;
+	-webkit-animation-name: blue;
+}
+</style>
+
+<script type="text/javascript" charset="utf-8">
+   if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+
+    var animationStarted = false;
+    
+    setTimeout(function(event){
+        var result;
+        if (animationStarted)
+            result = "PASS start of the animation";
+        else
+            result = "FAIL start of the animation";
+        document.getElementById('result').innerHTML = result;
+
+    }, 200);
+
+    document.addEventListener("webkitAnimationStart", function(event){
+        animationStarted = true;
+    }, false);
+
+    document.addEventListener("webkitAnimationEnd", function(event) {
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }, false);
+
+    window.addEventListener("load", function () {
+        document.body.className = "go";
+    }, false);
+
+</script>
+
+</head>
+<body>
+    <div id="red"></div>
+    <div id="green"></div>
+    <div id="blue"></div>
+<div id="result">
+</div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,26 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+<div id="content">
+  <div role="table">
+    <div id="test" role="row" aria-rowindex="4">
+      <div role="cell">test cell</div>
+    </div>
+  </div>
+</div>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+    description("Verifies the exposure of a mixed value of aria-pressed.");
+    if (window.accessibilityController) {
+        var axRow = accessibilityController.accessibleElementById("test");
+        shouldBe("axRow.numberAttributeValue('AXARIARowIndex')", "4");
+        document.getElementById("content").style.visibility = "hidden";
+    }
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

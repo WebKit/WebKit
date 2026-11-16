@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html style="background:green">
+<head>
+<title>View transitions: The old page should remain visible until render blocking finishes</title>
+<script>
+  const params = new URLSearchParams(location.search);
+  const is_initial_page = !params.has('new');
+
+  // This test navigates to itself with a changed query parameter. The test
+  // checks are performed on the navigated-to document.
+  if (is_initial_page) {
+    testRunner.waitUntilDone();
+    testRunner.dontForceRepaint();
+    onload = () => {
+      requestAnimationFrame(() => requestAnimationFrame(() => {
+        location.replace(location.href + '?new');
+      }));
+    };
+  } else {
+    document.querySelector("html").style.background = "red";
+    const render_blocker = document.createElement("script");
+    render_blocker.blocking = "render";
+    render_blocker.src = "/resources/slow-script.pl?delay=10000";
+    render_blocker.async = true;
+    document.head.append(render_blocker);
+    document.addEventListener("DOMContentLoaded", () => {
+        testRunner.notifyDone();
+    }
+  }
+</script>
+<style>
+  @view-transition {
+    navigation: auto;
+  }
+</style>
+</head>

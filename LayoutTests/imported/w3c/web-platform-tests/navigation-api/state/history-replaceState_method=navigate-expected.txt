@@ -1,0 +1,3 @@
+
+PASS entry.getState() after history.replaceState()
+

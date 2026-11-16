@@ -1,0 +1,129 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<title>Background on 'table'</title>
+<link rel="next" href="backgr_simple-table-row-group.html" title="Background Area: Background on 'table-row-group'">
+<link rel="prev contents" href="./backgr_index.html" title="Table of Contents">
+<link rel="stylesheet" type="text/css" href="common.css">
+<style type="text/css">
+
+  table {background: black url(../images/rainbowh.gif) top right}
+  
+</style>
+</head>
+<body>
+<h1>CSS2 Table Backgrounds Test Suite</h1>
+
+<h2>Part A: Background Area</h2>
+
+    <h3>Background on 'table'</h3>
+
+    <p class="clip">The table background should fill the rectangle
+     defined by the outer border of the table. There should be no gaps
+     or holes in the background and the stripes should all be
+     continuous.</p>
+    <p class="position">A purple band should align with the left edge
+     of the painted area, and an aqua stripe should align a few pixels
+     below the top border.</p>
+
+    <dl>
+       <dt>next
+          <dd><a href="backgr_simple-table-row-group.html">Background Area: Background on 'table-row-group'</a>
+       <dt>previous
+          <dd>--
+       <dt>contents
+          <dd><a href="./backgr_index.html">Table of Contents</a>
+    </dl>
+
+    <table class="separate">
+    <caption>With 'border-collapse: separate'</caption>
+    <colgroup class="colgroup-A">
+      <col class="col-1">
+      <col class="col-2">
+      <col class="col-3">
+    </colgroup>
+    <colgroup class="colgroup-B">
+      <col class="col-4">
+    </colgroup>
+    <thead>
+      <tr class="th-row-1">
+        <th class="a">TH A</th>
+        <th class="b">TH B</th>
+        <th class="c">TH C</th>
+        <th class="d">TH D</th>
+      </tr>
+    </thead>
+    <tfoot>
+      <tr class="tf-row-1">
+        <td class="m" colspan=2>TD M</td>
+
+        <td class="o">TD O</td>
+        <td class="p">TD P</td>
+    </tfoot>
+    <tbody>
+      <tr class="tb-row-1">
+        <td class="e" rowspan=2>TD E</td>
+        <td class="f">TD F</td>
+        <td class="g">TD G</td>
+        <td class="h">TD H</td>
+      </tr>
+      <tr class="tb-row-2">
+
+        <td class="j">TD J</td>
+        <td class="k">TD K</td>
+        <td class="l">TD L</td>
+      </tr>
+    </tbody>
+    </table>
+
+    <table class="collapse">
+    <caption>With 'border-collapse: collapse'</caption>
+    <colgroup class="colgroup-A">
+      <col class="col-1">
+      <col class="col-2">
+      <col class="col-3">
+    </colgroup>
+    <colgroup class="colgroup-B">
+      <col class="col-4">
+    </colgroup>
+    <thead>
+      <tr class="th-row-1">
+        <th class="a">TH A</th>
+        <th class="b">TH B</th>
+        <th class="c">TH C</th>
+        <th class="d">TH D</th>
+      </tr>
+    </thead>
+    <tfoot>
+      <tr class="tf-row-1">
+        <td class="m" colspan=2>TD M</td>
+
+        <td class="o">TD O</td>
+        <td class="p">TD P</td>
+    </tfoot>
+    <tbody>
+      <tr class="tb-row-1">
+        <td class="e" rowspan=2>TD E</td>
+        <td class="f">TD F</td>
+        <td class="g">TD G</td>
+        <td class="h">TD H</td>
+      </tr>
+      <tr class="tb-row-2">
+
+        <td class="j">TD J</td>
+        <td class="k">TD K</td>
+        <td class="l">TD L</td>
+      </tr>
+    </tbody>
+    </table>
+<div class="validity">
+  <a href="http://validator.w3.org/check/referer"><img
+     src="../images/valid-html401.png" height="31" width="88"
+     alt="Valid HTML 4.01!"></a>
+</div>
+<address>
+  CSS2 Table Backgrounds Test Suite designed and written by fantasai &lt;fantasai&#64;escape.com&gt;
+</address>
+
+</body>
+</html>

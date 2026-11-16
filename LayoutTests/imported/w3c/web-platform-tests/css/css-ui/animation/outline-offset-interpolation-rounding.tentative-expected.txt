@@ -1,0 +1,9 @@
+
+PASS outline-offset from 0px to 10px at 0.25 is snapped as a line width
+PASS outline-offset from 0px to -10px at 0.25 is snapped as a line width
+PASS outline-offset from 10px to 0px at 0.75 is snapped as a line width
+PASS outline-offset from 0px to 1px at 0.5 is snapped as a line width
+PASS outline-offset from 0px to -1px at 0.5 is snapped as a line width
+PASS outline-offset from 0px to 10px at 0 is snapped as a line width
+PASS outline-offset inset does not interpolate with a length
+

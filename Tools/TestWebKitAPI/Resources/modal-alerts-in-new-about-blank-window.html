@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+
+var newWindow = window.open("about:blank");
+newWindow.alert("Testing alert");
+newWindow.confirm("Testing confirm");
+newWindow.prompt("Testing prompt", "Default text");
+newWindow.onbeforeunload = () => "Default text";
+
+</script>
+</head>
+</html>

@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<body>
+<video id="video" width="640" height="480" autoplay src="/media-resources/content/test.mp4"></video>
+<script>
+const video = document.getElementById('video');
+
+function report(eligible, detail)
+{
+    window.parent.postMessage({
+        from: 'grandchild',
+        pid: window.internals ? internals.processIdentifier : 0,
+        eligible,
+        detail
+    }, '*');
+}
+
+video.addEventListener('playing', () => {
+    if (!window.internals) {
+        report(false, 'internals unavailable');
+        return;
+    }
+    const best = internals.bestMediaElementForRemoteControls('ControlsManager');
+    report(best === video, best === video ? '' : 'bestMediaElementForRemoteControls !== video');
+}, { once: true });
+
+video.addEventListener('error', () => report(false, 'video failed to load'), { once: true });
+</script>
+</body>

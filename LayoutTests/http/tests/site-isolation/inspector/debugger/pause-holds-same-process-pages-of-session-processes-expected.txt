@@ -1,0 +1,13 @@
+Test that a session that holds a process holds every page in it, including a popup, which is a different page.
+
+
+
+== Running test suite: SiteIsolation.Debugger.PauseHoldsSameProcessPagesOfSessionProcesses
+-- Running test case: SiteIsolation.Debugger.PauseHoldsSameProcessPagesOfSessionProcesses.Setup
+PASS: Should find the frame target for frame A.
+PASS: The popup's interval should be running.
+
+-- Running test case: SiteIsolation.Debugger.PauseHoldsSameProcessPagesOfSessionProcesses.Popup
+PASS: The popup's interval should not advance while frame A is paused.
+PASS: The popup's interval after resuming should advance.
+

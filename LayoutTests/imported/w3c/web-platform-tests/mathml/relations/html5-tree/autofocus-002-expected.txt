@@ -1,0 +1,4 @@
+
+PASS MathML autofocus on <mrow tabindex='1'> element
+tabindex=1
+

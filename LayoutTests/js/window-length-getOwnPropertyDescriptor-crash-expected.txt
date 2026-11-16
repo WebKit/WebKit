@@ -1,0 +1,14 @@
+PASS descriptor.get is an instance of Function
+PASS descriptor.set is an instance of Function
+PASS descriptor.configurable is true
+PASS descriptor.enumerable is true
+PASS window.length is 0
+window.length = 1
+PASS descriptor.value is 1
+PASS descriptor.configurable is true
+PASS descriptor.enumerable is true
+PASS window.length is 1
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

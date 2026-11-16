@@ -1,0 +1,42 @@
+<style>
+    @keyframes menu-opening {
+        100% {
+            visibility: visible;
+        }
+    }
+
+    ul {
+        animation: 0s menu-opening 0s 1 forwards;
+        visibility: hidden;
+    }
+
+    li {
+        display: contents;
+    }
+
+    a {
+        transition: color 10s steps(1, start);
+    }
+
+    a.transition {
+        color: green;
+    }
+</style>
+
+<ul>
+    <li>
+        <a id=a href="/">This should be green.</a>
+    </li>
+</ul>
+<script>
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+function transition() {
+    a.classList.add("transition");
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+requestAnimationFrame(transition);
+</script>

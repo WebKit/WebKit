@@ -1,0 +1,26 @@
+Test for the Heap.snapshot command.
+
+
+== Running test suite: Heap.snapshot
+-- Running test case: TriggerSnapshot
+PASS: Snapshot size should be greater than 1kb.
+PASS: Snapshot object count should be greater than 100.
+
+PASS: Snapshot should include a class category for 'Window'.
+PASS: Snapshot should include at least one 'Window' instance.
+
+PASS: Snapshot should include a class category for 'TestClass'.
+PASS: 'TestClass' category should include one object.
+PASS: Snapshot should include one 'TestClass' instance.
+PASS: 'TestClass' instance should have object flag.
+
+PASS: Snapshot should include a class category for 'TestCustomElement1'.
+PASS: 'TestCustomElement1' category should include one element.
+PASS: Snapshot should include one 'TestCustomElement1' instance.
+PASS: 'TestCustomElement1' instance should have element flag.
+
+PASS: Snapshot should include a class category for 'TestCustomElement2'.
+PASS: 'TestCustomElement2' category should include one element.
+PASS: Snapshot should include one 'TestCustomElement2' instance.
+PASS: 'TestCustomElement2' instance should have element flag.
+

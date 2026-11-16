@@ -1,0 +1,49 @@
+<!doctype html><!-- webkit-test-runner [ DOMAudioSessionFullEnabled=false ] -->
+<html>
+    <head>
+        <meta charset="utf-8">
+        <script src="../../resources/testharness.js"></script>
+        <script src="../../resources/testharnessreport.js"></script>
+        <script src="../media-file.js"></script>
+        <script src="../video-test.js"></script>
+        <script src="../utilities.js"></script>
+    </head>
+    <body>
+        <audio id="audio"></audio>
+        <script>
+promise_test(async (test) => {
+    assert_equals(navigator.audioSession.type, "auto");
+    assert_equals(AudioSession.prototype.state, undefined);
+    assert_equals(AudioSession.prototype.onstatechange, undefined);
+
+    if (!window.internals)
+        return;
+
+    audio.src = findMediaFile("audio", "../content/test");
+    await audio.play();
+
+
+    assert_equals(navigator.audioSession.type, "auto");
+    await waitForAudioSessionCategory("MediaPlayback", "initial");
+
+    navigator.audioSession.type = "ambient";
+    assert_equals(internals.audioSessionCategory(), "AmbientSound");
+
+    navigator.audioSession.type = "playback";
+    assert_equals(internals.audioSessionCategory(), "MediaPlayback");
+
+    navigator.audioSession.type = "transient";
+    assert_equals(internals.audioSessionCategory(), "AmbientSound");
+
+    navigator.audioSession.type = "play-and-record";
+    assert_equals(internals.audioSessionCategory(), "PlayAndRecord");
+
+    navigator.audioSession.type = "transient-solo";
+    assert_equals(internals.audioSessionCategory(), "SoloAmbientSound");
+
+    navigator.audioSession.type = "auto";
+    await waitForAudioSessionCategory("MediaPlayback", "final");
+}, "AudioSession type");
+        </script>
+    </body>
+</html>

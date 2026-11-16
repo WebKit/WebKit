@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+</script>
+<p>Tests that lazily initializing a maplike's backing map while the stack is
+exhausted does not crash. This test should not crash and should print PASS.</p>
+<pre id="result"></pre>
+<script>
+// The first operation on CSS.highlights lazily creates its backing JSMap and
+// populates it by calling Map.prototype.set for each existing entry. Doing that
+// with an almost-exhausted stack makes the nested call throw a stack overflow
+// error, and the maplike forwarding layer used to keep calling into the VM with
+// that exception still pending.
+const range = document.createRange();
+const highlight = new Highlight(range);
+let didSet = false;
+
+function recurse()
+{
+    try {
+        recurse();
+    } catch (e) {
+        if (!didSet) {
+            didSet = true;
+            try {
+                CSS.highlights.set("test", highlight);
+            } catch (e) { }
+        }
+    }
+}
+
+recurse();
+document.getElementById("result").textContent = "PASS";
+</script>

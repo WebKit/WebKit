@@ -1,0 +1,53 @@
+<!DOCTYPE HTML>
+<html class="reftest-wait">
+<head>
+<style>
+div {
+  position: relative;
+  width: 200px;
+  height: 200px;
+}
+
+.composited {
+  transform: translateZ(0px);
+}
+</style>
+</head>
+<body>
+
+<div class="composited" style="position: absolute"></div>
+
+<!-- div composited due to overlap, with two backing sharing descendants -->
+<div>
+  <div id="sharing">
+    <div></div>
+  </div>
+</div>
+
+<div id="mutation"></div>
+
+<p>This test should not crash.</p>
+<script>
+if (window.testRunner)
+  testRunner.dumpAsText();
+
+async function test() {
+    await new Promise(requestAnimationFrame);
+    await new Promise(requestAnimationFrame);
+ 
+    // Make the first sharing layer composited (synchronously) 
+    document.getElementById("sharing").classList.add("composited");
+    
+    // Wait for a rendering update so that the second sharing layer gets updated to no longer share
+    await new Promise(requestAnimationFrame);
+  
+    // Trigger an unrelated style change to update layer positions and verify that it was left in
+    // a valid state after the previous rendering update.
+    document.getElementById("mutation").style.backgroundColor = "blue";
+    document.documentElement.classList.remove("reftest-wait");
+}
+window.addEventListener('load', test, false);
+</script>
+</body>
+</html>
+

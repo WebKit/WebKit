@@ -1,0 +1,6 @@
+x
+x
+
+PASS role is sectionfooter (in main)
+PASS role is sectionheader (in main)
+

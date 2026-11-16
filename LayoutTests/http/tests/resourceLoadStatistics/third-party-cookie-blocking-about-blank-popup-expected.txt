@@ -1,0 +1,10 @@
+Tests that third-party cookies are blocked for requests made from an about:blank popup.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS about:blank popup: third-party cookie was correctly blocked.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,27 @@
+
+PASS A document without a policy and a same-origin frame with one cannot access each other
+PASS A document with a policy cannot access a same-origin frame without one
+PASS Same-origin documents with the same policy can access each other
+PASS An about:blank frame created by a document with a policy inherits it and can be accessed
+PASS Navigating the initial about:blank document of a popup to a same-origin document without a policy reuses its Window
+PASS Navigating the initial about:blank document of a popup to a same-origin document with a policy does not reuse its Window
+PASS A document without a policy and a same-origin popup with one cannot access each other
+PASS A document with a policy is in an origin-keyed agent cluster
+PASS A document without a policy cannot run a javascript: URL in a same-origin frame with one
+PASS A document with a policy can run a javascript: URL in a same-origin frame with one
+PASS A navigate event in a same-origin frame without a policy does not expose a link of a document with one as its sourceElement
+PASS A navigate event in a same-origin frame without a policy exposes a link of a document without one as its sourceElement
+PASS A same-origin frame without a policy for a navigation from a document with one gets no cross-document navigate event (link)
+PASS A same-origin frame with a policy for a navigation from a document without one gets no cross-document navigate event (link)
+PASS A same-origin frame without a policy for a navigation from a document with one gets no cross-document navigate event (window.open())
+PASS A same-origin frame with a policy for a navigation from a document without one gets no cross-document navigate event (window.open())
+PASS A same-origin frame without a policy for a navigation from a document with one gets no cross-document navigate event (form submission)
+PASS A same-origin frame with a policy for a navigation from a document without one gets no cross-document navigate event (form submission)
+PASS A same-origin frame without a policy gets a cross-document navigate event for a link of a document without one
+PASS A fragment navigation during a reload of a same-origin frame with a policy does not move the reloaded document into another agent cluster
+PASS Posting a WebAssembly.Module to a same-origin frame without a policy succeeds
+PASS Posting a WebAssembly.Module to a same-origin frame with a policy fails
+PASS A frame with a policy that is same origin with a cross-origin isolated top-level document is in its agent cluster
+PASS A frame with a policy that is cross origin with a cross-origin isolated top-level document is not in the agent cluster of same-origin documents without one
+PASS A popup with a policy keeps it when its response switches browsing context groups
+

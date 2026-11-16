@@ -1,0 +1,17 @@
+PASS highlightedTexts.length is 3
+PASS highlightedTexts[0] is "Quote of the day"
+PASS highlightedTexts[1] is "jumped over"
+PASS highlightedTexts[2] is "troublemakers"
+PASS error1 is ""
+PASS error2 is ""
+PASS error3 is ""
+PASS error4 is "'This text is nowhere in the page' not found inside the target node"
+PASS scrolledAfterHighlighting is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+The quick brown fox jumped over the lazy dog.
+
+Quote of the day
+
+Here’s to the crazy ones. The misfits. The rebels. The troublemakers. The round pegs in the square holes. The ones who see things differently. They’re not fond of rules. And they have no respect for the status quo.

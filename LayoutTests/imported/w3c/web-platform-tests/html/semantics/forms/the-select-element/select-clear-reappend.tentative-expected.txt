@@ -1,0 +1,4 @@
+
+
+PASS select.value should stay the same after clearing and re-appending options.
+

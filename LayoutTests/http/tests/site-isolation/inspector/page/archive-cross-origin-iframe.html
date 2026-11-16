@@ -1,0 +1,68 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<!DOCTYPE html>
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script>
+function addCrossOriginIFrame() {
+    let crossOriginHost = location.hostname === "localhost" ? "127.0.0.1" : "localhost";
+    let iframe = document.createElement("iframe");
+    iframe.name = "child-frame";
+    iframe.src = `http://${crossOriginHost}:8000/site-isolation/inspector/page/resources/archive-subframe.html`;
+    return new Promise(resolve => {
+        iframe.addEventListener("load", () => resolve(), { once: true });
+        document.body.appendChild(iframe);
+    });
+}
+
+function test() {
+    // Built at runtime so the page's own script text never contains the subframe's marker.
+    const subframeMarker = "ARCHIVE_SUBFRAME" + "_MARKER";
+
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Page.ArchiveCrossOriginIFrame");
+
+    suite.addTestCase({
+        name: "SiteIsolation.Page.ArchiveCrossOriginIFrame.ChildDocumentIncluded",
+        description: "Page.archive on the backend target should include a cross-origin child frame's document.",
+        async test() {
+            let targetAddedPromise = WI.targetManager.awaitEvent(WI.TargetManager.Event.TargetAdded);
+            InspectorTest.evaluateInPage("addCrossOriginIFrame()");
+            let frameTarget = (await targetAddedPromise).data.target;
+
+            // Under Site Isolation, the backend target's PageAgent is the UIProcess proxy, which
+            // archives frames in every process. The page target's PageAgent only sees local frames.
+            // The child commits in its own process, so poll until its document reaches the archive.
+            let archive = "";
+            for (let attempt = 0; attempt < 50; ++attempt) {
+                if (!frameTarget.executionContext) {
+                    await Promise.race([
+                        frameTarget.awaitEvent(WI.FrameTarget.Event.ExecutionContextAdded),
+                        new Promise((resolve) => setTimeout(resolve, 100)),
+                    ]);
+                }
+                try {
+                    archive = atob((await WI.backendTarget.PageAgent.archive()).data);
+                } catch (error) {
+                    archive = "";
+                    break;
+                }
+                if (archive.includes(subframeMarker))
+                    break;
+                await new Promise((resolve) => setTimeout(resolve, 50));
+            }
+
+            InspectorTest.expectThat(archive.length > 0, "Page.archive should return data.");
+            InspectorTest.expectThat(archive.includes("SiteIsolation.Page.ArchiveCrossOriginIFrame"), "Archive should contain the main frame's document.");
+            InspectorTest.expectThat(archive.includes(subframeMarker), "Archive should contain the cross-origin child frame's document.");
+
+            // Control: the page target's agent only sees local frames, so the marker must come from the child frame.
+            let pageArchive = atob((await WI.pageTarget.PageAgent.archive()).data);
+            InspectorTest.expectThat(pageArchive.includes("SiteIsolation.Page.ArchiveCrossOriginIFrame"), "Page target archive should contain the main frame's document.");
+            InspectorTest.expectThat(!pageArchive.includes(subframeMarker), "Page target archive should not contain the child frame's document.");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+<body onload="runTest()">
+<p>Test that Page.archive includes a cross-origin iframe's document under site isolation.</p>
+</body>

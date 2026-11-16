@@ -1,0 +1,13 @@
+<div id=content>
+<!-- The trailing space is discarded, but its bidi run is still in the paragraph. -->
+<div dir=rtl><span style="white-space-trim: discard-inner">abc </span></div>
+<!-- All of the display: contents text is discarded. -->
+<div>a<span style="display: contents"> </span><span style="white-space-trim: discard-before">b</span></div>
+</div>
+<div>PASS if no crash or assert</div>
+<script>
+if (window.testRunner)
+  testRunner.dumpAsText();
+document.body.offsetHeight;
+content.remove();
+</script>

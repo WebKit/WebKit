@@ -1,0 +1,31 @@
+<!doctype html>
+<html>
+  <head>
+    <style>
+      my-element::part(one) {
+        color: blue;
+      }
+      my-element::part(two) {
+        color: red;
+      }
+    </style>
+    <script>
+      class MyElement extends HTMLElement {
+        constructor() {
+          super();
+          this.attachShadow({mode: 'open'}).innerHTML = `
+            <!-- This div is neccessary to trigger the bug -->
+            <div>
+              <span part="one">Should be Blue</span> |
+              <span part="two">Should be Red</span>
+            </div>
+          `;
+        }
+      }
+      customElements.define('my-element', MyElement);
+    </script>
+  </head>
+  <body>
+    <my-element></my-elemetnt>
+  </body>
+</html>

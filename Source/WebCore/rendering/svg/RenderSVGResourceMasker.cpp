@@ -1,0 +1,242 @@
+/*
+ * Copyright (C) Research In Motion Limited 2009-2010. All rights reserved.
+ * Copyright (C) 2021, 2022, 2023 Igalia S.L.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public License
+ * along with this library; see the file COPYING.LIB.  If not, write to
+ * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ * Boston, MA 02110-1301, USA.
+ */
+
+#include "config.h"
+#include "RenderSVGResourceMasker.h"
+
+#include "Element.h"
+#include "ElementIterator.h"
+#include "FloatPoint.h"
+#include "Image.h"
+#include "ImageBuffer.h"
+#include "IntRect.h"
+#include "NativeImage.h"
+#include "RenderLayer.h"
+#include "RenderLayerInlines.h"
+#include "RenderSVGModelObjectInlines.h"
+#include "RenderSVGResourceMaskerInlines.h"
+#include "SVGContainerLayout.h"
+#include "SVGElementTypeHelpers.h"
+#include "SVGGraphicsElement.h"
+#include "SVGLengthContext.h"
+#include "SVGVisitedRendererTracking.h"
+#include <wtf/TZoneMallocInlines.h>
+
+namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderSVGResourceMasker);
+
+RenderSVGResourceMasker::RenderSVGResourceMasker(SVGMaskElement& element, Style::ComputedStyle&& style)
+    : RenderSVGResourceContainer(Type::SVGResourceMasker, element, WTF::move(style))
+{
+}
+
+RenderSVGResourceMasker::~RenderSVGResourceMasker() = default;
+
+static constexpr size_t maximumCachedMasksPerClient = 4;
+
+static RefPtr<ImageBuffer> createImageBuffer(const FloatRect& targetRect, const AffineTransform& absoluteTransform, const ColorSpace& colorSpace, const GraphicsContext& context)
+{
+    IntRect paintRect = enclosingIntRect(absoluteTransform.mapRect(targetRect));
+    // Don't create empty ImageBuffers.
+    if (paintRect.isEmpty())
+        return nullptr;
+
+    FloatSize scale;
+    FloatSize clampedSize = ImageBuffer::clampedSize(paintRect.size(), scale);
+
+    auto imageBuffer = context.createImageBuffer(clampedSize, 1, colorSpace, RenderingMode::Unaccelerated);
+    if (!imageBuffer)
+        return nullptr;
+
+    AffineTransform transform;
+    transform.scale(scale).translate(-paintRect.location()).multiply(absoluteTransform);
+
+    auto& imageContext = imageBuffer->context();
+    imageContext.concatCTM(transform);
+
+    return imageBuffer;
+}
+
+void RenderSVGResourceMasker::applyMask(PaintInfo& paintInfo, const RenderLayerModelObject& targetRenderer, const LayoutPoint& adjustedPaintOffset)
+{
+    ASSERT(hasLayer());
+    ASSERT(layer()->isSelfPaintingLayer());
+
+    static NeverDestroyed<SVGVisitedRendererTracking::VisitedSet> s_visitedSet;
+
+    SVGVisitedRendererTracking recursionTracking(s_visitedSet);
+    if (recursionTracking.isVisiting(*this))
+        return;
+
+    SVGVisitedRendererTracking::Scope recursionScope(recursionTracking, *this);
+
+    auto& context = paintInfo.context();
+    GraphicsContextStateSaver stateSaver(context);
+
+    auto objectBoundingBox = targetRenderer.objectBoundingBox();
+    auto coordinateSystemOriginTranslation = adjustedPaintOffset - targetRenderer.nominalSVGLayoutLocation();
+    if (!coordinateSystemOriginTranslation.isZero())
+        context.translate(coordinateSystemOriginTranslation);
+
+    auto decoratedBounds = targetRenderer.decoratedBoundingBox();
+    auto absoluteTransform = context.getCTM(GraphicsContext::DefinitelyIncludeDeviceScale);
+
+    auto maskColorSpace = ColorSpace::SRGB();
+    auto drawColorSpace = ColorSpace::SRGB();
+
+    if (style().colorInterpolation() == ColorInterpolation::LinearRGB) {
+#if USE(CG) || USE(SKIA)
+        maskColorSpace = ColorSpace::LinearSRGB();
+#endif
+        drawColorSpace = ColorSpace::LinearSRGB();
+    }
+
+    decoratedBounds.intersect(maskBoundsInLocalCoordinates(objectBoundingBox, RepaintRectCalculation::Accurate));
+
+    auto absoluteTransformWithoutTranslation = absoluteTransform;
+    absoluteTransformWithoutTranslation.setE(0);
+    absoluteTransformWithoutTranslation.setF(0);
+
+    RefPtr<ImageBuffer> maskImage;
+    if (auto it = m_masker.find(targetRenderer); it != m_masker.end()) {
+        const auto& cachedMasks = it->value;
+        auto matchesTransform = [&](const auto& mask) {
+            return mask.absoluteTransformWithoutTranslation == absoluteTransformWithoutTranslation;
+        };
+        if (cachedMasks.objectBoundingBox != objectBoundingBox || cachedMasks.decoratedBounds != decoratedBounds)
+            m_masker.remove(it);
+        else if (auto index = cachedMasks.masks.findIf(matchesTransform); index != notFound)
+            maskImage = cachedMasks.masks[index].image.ptr();
+    }
+
+    bool missingMaskerData = !maskImage;
+    if (missingMaskerData && !decoratedBounds.isEmpty())
+        maskImage = createImageBuffer(decoratedBounds, absoluteTransform, maskColorSpace, context);
+
+    context.setCompositeOperation(CompositeOperator::DestinationIn);
+    context.beginTransparencyLayer(1);
+
+    if (maskImage) {
+        if (missingMaskerData) {
+            drawContentIntoContext(maskImage->context(), objectBoundingBox);
+
+#if !USE(CG) && !USE(SKIA)
+            maskImage->transformToColorSpace(drawColorSpace);
+#else
+            UNUSED_PARAM(drawColorSpace);
+#endif
+
+            if (style().maskType() == MaskType::Luminance)
+                maskImage->convertToLuminanceMask();
+            auto& cachedMasks = m_masker.ensure(targetRenderer, [&] {
+                return CachedMasks { objectBoundingBox, decoratedBounds, { } };
+            }).iterator->value;
+            if (cachedMasks.masks.size() == maximumCachedMasksPerClient)
+                cachedMasks.masks.removeAt(0);
+            cachedMasks.masks.append({ absoluteTransformWithoutTranslation, *maskImage });
+        }
+        context.setCompositeOperation(CompositeOperator::SourceOver);
+
+        // The mask image has been created in the absolute coordinate space, as the image should not be scaled.
+        // So the actual masking process has to be done in the absolute coordinate space as well.
+        FloatRect absoluteTargetRect = enclosingIntRect(absoluteTransform.mapRect(decoratedBounds));
+        context.concatCTM(absoluteTransform.inverse().value_or(AffineTransform()));
+        context.drawImageBuffer(*maskImage, absoluteTargetRect);
+    }
+
+    context.endTransparencyLayer();
+}
+
+FloatRect RenderSVGResourceMasker::maskBoundsInLocalCoordinates(const FloatRect& targetBoundingBox, RepaintRectCalculation repaintRectCalculation)
+{
+    Ref maskElement = this->maskElement();
+    auto maskRect = maskElement->calculateMaskContentRepaintRect(repaintRectCalculation);
+    if (maskElement->maskContentUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX) {
+        AffineTransform contentTransform;
+        contentTransform.translate(targetBoundingBox.location());
+        contentTransform.scale(targetBoundingBox.size());
+        maskRect = contentTransform.mapRect(maskRect);
+    }
+
+    maskRect.intersect(SVGLengthContext::resolveRectangle(maskElement.get(), maskElement->maskUnits(), targetBoundingBox));
+    if (maskRect.isEmpty())
+        return { };
+
+    // The mask image is rasterized over whole pixels, while painting clips to this area, and a
+    // rectangular clip is not antialiased. Round outwards, so the clip cannot round away the
+    // outermost row and column of the mask.
+    return enclosingIntRect(maskRect);
+}
+
+FloatRect RenderSVGResourceMasker::resourceBoundingBox(const RenderObject& object, RepaintRectCalculation repaintRectCalculation)
+{
+    auto targetBoundingBox = object.objectBoundingBox();
+    static NeverDestroyed<SVGVisitedRendererTracking::VisitedSet> s_visitedSet;
+
+    SVGVisitedRendererTracking recursionTracking(s_visitedSet);
+    if (recursionTracking.isVisiting(*this))
+        return targetBoundingBox;
+
+    SVGVisitedRendererTracking::Scope recursionScope(recursionTracking, *this);
+
+    auto maskRect = maskBoundsInLocalCoordinates(targetBoundingBox, repaintRectCalculation);
+    if (maskRect.isEmpty())
+        return targetBoundingBox;
+    return maskRect;
+}
+
+void RenderSVGResourceMasker::removeReferencingCSSClient(const RenderElement& client)
+{
+    if (auto renderer = dynamicDowncast<RenderLayerModelObject>(client))
+        m_masker.remove(renderer);
+}
+
+bool RenderSVGResourceMasker::drawContentIntoContext(GraphicsContext& context, const FloatRect& objectBoundingBox)
+{
+    // Eventually adjust the mask image context according to the target objectBoundingBox.
+    AffineTransform maskContentTransform;
+
+    if (protect(maskElement())->maskContentUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX) {
+        maskContentTransform.translate(objectBoundingBox.location());
+        maskContentTransform.scale(objectBoundingBox.size());
+    }
+
+    // Draw the content into the ImageBuffer.
+    protect(layer())->paintResourceLayerForSVG(context, maskContentTransform);
+    return true;
+}
+
+bool RenderSVGResourceMasker::drawContentIntoContext(GraphicsContext& context, const FloatRect& destinationRect, const FloatRect& sourceRect, const ImageDrawDescriptor& descriptor)
+{
+    GraphicsContextStateSaver stateSaver(context);
+    context.setCompositeOperation(descriptor.compositeOperator, descriptor.blendMode);
+    if (descriptor.rendition.interpolationQuality != InterpolationQuality::Default)
+        context.setImageInterpolationQuality(descriptor.rendition.interpolationQuality);
+    context.translate(destinationRect.location());
+
+    if (destinationRect.size() != sourceRect.size())
+        context.scale(destinationRect.size() / sourceRect.size());
+
+    context.translate(-sourceRect.location());
+    return drawContentIntoContext(context, { { }, destinationRect.size() });
+}
+
+}

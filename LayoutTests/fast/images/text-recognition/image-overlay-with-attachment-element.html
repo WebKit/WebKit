@@ -1,0 +1,51 @@
+<!DOCTYPE html><!-- webkit-test-runner [ AttachmentElementEnabled=true AttachmentWideLayoutEnabled=true ] -->
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<head>
+<script src="../../../resources/js-test.js"></script>
+<style>
+img {
+    width: 100px;
+    height: 100px;
+    box-sizing: border-box;
+    border: 1px solid black;
+    display: block;
+}
+</style>
+<script>
+addEventListener("load", () => {
+    let image = document.querySelector("img");
+    internals.ensureUserAgentShadowRoot(image);
+    const attachment = document.createElement('attachment');
+    attachment.setAttribute('type', 'public.jpeg');
+    attachment.setAttribute('title', 'green-400x400.png');
+    attachment.setAttribute('style', 'display:none !important');
+    internals.shadowRoot(image).appendChild(attachment)
+    internals.installImageOverlay(image, [
+        {
+            topLeft : new DOMPointReadOnly(0, 0.3),
+            topRight : new DOMPointReadOnly(1, 0.3),
+            bottomRight : new DOMPointReadOnly(1, 0.7),
+            bottomLeft : new DOMPointReadOnly(0, 0.7),
+            children: [{
+                text : "Hello",
+                topLeft : new DOMPointReadOnly(0, 0.3),
+                topRight : new DOMPointReadOnly(1, 0.3),
+                bottomRight : new DOMPointReadOnly(1, 0.7),
+                bottomLeft : new DOMPointReadOnly(0, 0.7),
+            }],
+        }
+    ]);
+    const rect = image.getBoundingClientRect();
+    eventSender.mouseMoveTo(rect.left + rect.width / 2, rect.top + rect.height / 2);
+    const overlay = internals.shadowRoot(image).getElementById("image-overlay");
+    transform = getComputedStyle(overlay.childNodes[0].childNodes[0]).transform;
+    shouldNotBe("transform", "'none'");
+});
+</script>
+</head>
+<body>
+<img src="../resources/green-400x400.png">
+</img>
+</body>
+</html>

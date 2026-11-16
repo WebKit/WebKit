@@ -1,0 +1,5 @@
+
+PASS single target
+FAIL multiple targets, should only hit first promise_test: Unhandled rejection with value: object "[object PointerEvent]"
+PASS single target miss
+

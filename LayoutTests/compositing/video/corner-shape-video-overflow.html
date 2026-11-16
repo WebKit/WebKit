@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>CSS Borders and Box Decorations 4: 'corner-shape' clipping a composited video with overflow</title>
+    <meta name="fuzzy" content="maxDifference=0-137; totalPixels=0-400">
+
+    <style>
+        body {
+            margin: 0;
+            background-color: white;
+        }
+
+        .clipper {
+            position: relative;
+            width: 320px;
+            height: 240px;
+            margin: 20px;
+            border-radius: 80px;
+            corner-shape: notch scoop bevel squircle;
+            overflow: hidden;
+            background-color: red;
+        }
+
+        .clipper > * {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .cover {
+            background-color: blue;
+            border-radius: 80px;
+            corner-shape: notch scoop bevel squircle;
+        }
+
+        video {
+            object-fit: fill;
+        }
+    </style>
+    <script src="../../media/media-file.js"></script>
+    <script src="../../media/utilities.js"></script>
+    <script>
+        if (window.testRunner)
+            testRunner.waitUntilDone();
+
+        async function init()
+        {
+            document.addEventListener("error", function (event) {
+                console.log("Video failed to load, error " + event.target.error.code);
+                if (window.testRunner)
+                    testRunner.notifyDone();
+            }, true);
+
+            const video = document.querySelector("video");
+            const gotFrame = waitForVideoFrame(video);
+
+            setSrcByTagName("video", findMediaFile("video", "../../media/content/pure-color-green"));
+
+            await gotFrame;
+
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }
+    </script>
+</head>
+<body onload="init();">
+    <div class="clipper">
+        <video></video>
+        <div class="cover"></div>
+    </div>
+</body>
+</html>

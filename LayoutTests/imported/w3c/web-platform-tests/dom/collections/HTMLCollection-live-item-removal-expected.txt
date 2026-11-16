@@ -1,0 +1,4 @@
+
+PASS getElementsByClassName collection should update live when removing item(0)
+PASS document.body.getElementsByClassName collection should update live when removing item(0)
+

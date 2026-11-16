@@ -1,0 +1,11 @@
+
+Verifies that focusing a text field below the visible area scrolls it into view when a hardware keyboard is attached. This test requires WebKitTestRunner.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+PASS document.activeElement is textField
+PASS pageYOffset + innerHeight is > textField.offsetTop
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

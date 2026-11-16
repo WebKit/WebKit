@@ -1,0 +1,99 @@
+<script>
+    globalThis.testRunner?.waitUntilDone();
+    globalThis.testRunner?.dumpAsText();
+    const log = console.debug;
+
+    // rdar://182729590 - ArrayLength dedup-key/store-key aliasing bypasses the
+    // rdar://179876979 checkedSum overflow fix.
+    //
+    // Device::addPipelineLayouts() used a two-step bump for _ArrayLength
+    // synthetic entries, so entry A's dedup key (X_A + 1*bump) could equal
+    // entry B's store key (X_B + 2*bump) whenever X_A - X_B == bump ==
+    // maxBindingsPerBindGroup, dropping A's entry and causing arrayLength(&A)
+    // to read as zero. That defeats the emitted min(i, arrayLength - 1u)
+    // per-access clamp, giving GPU-side OOB R/W past a bound storage buffer.
+    //
+    // The (bump - 1) unused filler declarations below make the WGSL compiler
+    // assign synthetic bindings exactly `bump` apart in declaration order
+    // without any @binding value approaching UINT32_MAX, so the checkedSum
+    // overflow guard cannot catch it. Deriving the count from the live limit
+    // keeps the collision (X_A - X_B == bump) exact if the limit ever changes.
+
+    async function runOnce(collide) {
+        const adapter = await navigator.gpu.requestAdapter({});
+        const device = await adapter.requestDevice({});
+        const bump = device.limits.maxBindingsPerBindGroup;
+
+        const numFillers = collide ? bump - 1 : 0;
+        let fillers = '';
+        for (let i = 0; i < numFillers; ++i)
+            fillers += `@group(0) @binding(2) var<storage, read> f${i}: array<u32>;\n`;
+
+        const module = device.createShaderModule({
+            code: `
+@group(0) @binding(0) var<storage, read_write> ownerB: array<u32>;
+${fillers}
+@group(0) @binding(1) var<storage, read_write> ownerA: array<u32>;
+@compute @workgroup_size(1)
+fn main() {
+    ownerB[0] = arrayLength(&ownerB);
+    ownerB[1] = arrayLength(&ownerA);
+    // Regression sentinel: if arrayLength(&ownerA) is wrong, the emitted
+    // clamp min(0x2345u, arrayLength - 1u) lets this store land OOB.
+    ownerA[0x2345u] = 0xdeadbeefu;
+}`,
+        });
+
+        device.pushErrorScope('validation');
+        const pipeline = device.createComputePipeline({ layout: 'auto', compute: { module, entryPoint: 'main' } });
+        const validationError = await device.popErrorScope();
+        const label = collide ? 'collide' : 'baseline';
+        if (validationError) {
+            log(`FAIL ${label}: createComputePipeline validation error: ${validationError.message}`);
+            return;
+        }
+
+        const sizeB = 128, sizeA = 16;
+        const bufB = device.createBuffer({ size: sizeB, usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_SRC });
+        const bufA = device.createBuffer({ size: sizeA, usage: GPUBufferUsage.STORAGE });
+        const readback = device.createBuffer({ size: 8, usage: GPUBufferUsage.MAP_READ | GPUBufferUsage.COPY_DST });
+        const bindGroup = device.createBindGroup({
+            layout: pipeline.getBindGroupLayout(0),
+            entries: [
+                { binding: 0, resource: { buffer: bufB } },
+                { binding: 1, resource: { buffer: bufA } },
+            ],
+        });
+
+        const encoder = device.createCommandEncoder();
+        const pass = encoder.beginComputePass();
+        pass.setPipeline(pipeline);
+        pass.setBindGroup(0, bindGroup);
+        pass.dispatchWorkgroups(1);
+        pass.end();
+        encoder.copyBufferToBuffer(bufB, 0, readback, 0, 8);
+        device.queue.submit([encoder.finish()]);
+        await device.queue.onSubmittedWorkDone();
+        await readback.mapAsync(GPUMapMode.READ);
+        const [lenB, lenA] = new Uint32Array(readback.getMappedRange().slice(0));
+        readback.unmap();
+
+        const expectB = sizeB / 4, expectA = sizeA / 4;
+        if (lenB === expectB && lenA === expectA)
+            log(`PASS ${label}: arrayLength(&ownerB)=${lenB}, arrayLength(&ownerA)=${lenA}`);
+        else
+            log(`FAIL ${label}: arrayLength(&ownerB)=${lenB} (expected ${expectB}), arrayLength(&ownerA)=${lenA} (expected ${expectA})`);
+    }
+
+    onload = async () => {
+        try {
+            // Baseline: no collision.
+            await runOnce(false);
+            // Collision trigger: X_A - X_B == maxBindingsPerBindGroup.
+            await runOnce(true);
+        } catch (e) {
+            log('FAIL exception: ' + e);
+        }
+        globalThis.testRunner?.notifyDone();
+    };
+</script>

@@ -1,0 +1,64 @@
+<style>
+body {
+    margin: 0;
+    padding: 0;
+}
+iframe {
+    border: none;
+    background-color: red;
+}
+div {
+    display: inline-block;
+}
+.filtered {
+    filter: url(#noop);
+}
+.wrapper {
+    width: 300px;
+    height: 150px;
+    overflow: hidden;
+}
+.scroll {
+    width: 50px;
+    height: 50px;
+    overflow: hidden;
+    transform: scale(20);
+}
+svg {
+    display: none;
+}
+</style>
+<p>Seeing green is ok. Seeing any red is bad.</p>
+
+<p>Same origin</p>
+<div>
+    <iframe src="resources/solid-green.html"></iframe>
+</div>
+
+<div class="filtered">
+    <iframe src="resources/solid-green.html"></iframe>
+</div>
+
+<br>
+
+<p>Cross origin (must have http server running)</p>
+<div>
+    <iframe src="resources/solid-green.html"></iframe>
+</div>
+
+<div class="filtered">
+    <iframe style="background-color: white" src="resources/blank.html"></iframe>
+</div>
+
+<br>
+
+<p>Same origin that then references cross origin (must have http server running)</p>
+<div>
+    <iframe src="resources/solid-green.html"></iframe>
+</div>
+
+<div class="filtered">
+    <iframe style="background-color: white" src="resources/blank.html"></iframe>
+</div>
+
+<br>

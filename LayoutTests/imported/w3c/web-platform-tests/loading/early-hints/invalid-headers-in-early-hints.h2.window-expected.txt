@@ -1,0 +1,8 @@
+
+FAIL Early Hints contains invalid header: newline byte assert_throws_dom: window.open() should not load the test page successfully. function "() => {
+        opened_window.document;
+    }" did not throw
+FAIL Early Hints contains invalid header: nul byte assert_throws_dom: window.open() should not load the test page successfully. function "() => {
+        opened_window.document;
+    }" did not throw
+

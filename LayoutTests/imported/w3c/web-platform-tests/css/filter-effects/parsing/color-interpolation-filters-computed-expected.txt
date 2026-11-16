@@ -1,0 +1,5 @@
+
+PASS Property color-interpolation-filters value 'auto'
+PASS Property color-interpolation-filters value 'srgb'
+PASS Property color-interpolation-filters value 'linearrgb'
+

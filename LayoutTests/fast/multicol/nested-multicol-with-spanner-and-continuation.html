@@ -1,0 +1,17 @@
+<style>
+.container { 
+    columns: 2;
+}
+#innerContainer { 
+    position: absolute;
+    columns: 2;
+}
+</style>
+PASS if no crash when the nested fragmented context is being destroyed with a spanner in it while forming a new continuation.
+<div class=container><span><div id=innerContainer><div style="column-span: all;"></div></div></span></div><script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+document.body.offsetHeight;
+innerContainer.style.position = "static";
+innerContainer.style.webkitColumns = "1";
+</script>

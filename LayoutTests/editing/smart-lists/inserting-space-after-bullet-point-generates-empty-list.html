@@ -1,0 +1,18 @@
+<!DOCTYPE html><!-- webkit-test-runner [ SmartListsAvailable=true ] -->
+<html>
+<head>
+<script src="../editing.js"></script>
+<script src="../../resources/dump-as-markup.js"></script>
+</head>
+<body>
+<div id="test" contenteditable></div>
+<script>
+Markup.description('Typing "* A" + Enter + "* " with no text after the second marker should still produce an unordered list where the second list item is empty (contains a placeholder br).');
+
+var test = document.getElementById('test');
+test.focus();
+[...'* A\n* '].forEach(typeCharacterCommand);
+Markup.dump('test');
+</script>
+</body>
+</html>

@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../../../../resources/basic-gestures.js"></script>
+    <script src="../../../../resources/ui-helper.js"></script>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+
+        async function runTest()
+        {
+            if (!testRunner.runUIScript)
+                return;
+
+            var output = '';
+            var targetRect = document.getElementById('target').getBoundingClientRect();
+
+            var pressPointX = targetRect.x + targetRect.width / 2;
+            var pressPointY = targetRect.y + targetRect.height * .65;
+            
+            var fontHeight = 30;
+
+            var selectionChangedCount = 0;
+            document.addEventListener("selectionchange", () => {
+                selectionChangedCount++;
+            });
+
+            await longPressAtPoint(pressPointX, pressPointY);
+
+            await UIHelper.waitForSelectionToAppear();
+
+            if (document.getSelection().toString() != "")
+                output += 'PASS: Has Selection';
+            else
+                output += 'FAIL: failed to select a word as a result of a long press.';
+            output += '<br>';
+
+            lastSelectionChangeCount = selectionChangedCount;
+            var grabberMidpoint = UIHelper.midPointOfRect(await UIHelper.getSelectionStartGrabberViewRect());
+            await touchAndDragFromPointToPoint(grabberMidpoint.x, grabberMidpoint.y , grabberMidpoint.x, grabberMidpoint.y - (fontHeight * 2));
+
+            if (selectionChangedCount > lastSelectionChangeCount)
+                output += 'PASS: Selection Changed </br>';
+            else
+                output += 'FAIL: Selection did not change <br>' + selectionChangedCount;
+
+            lastSelectionChangeCount = selectionChangedCount;
+            grabberMidpoint = UIHelper.midPointOfRect(await UIHelper.getSelectionStartGrabberViewRect());
+            await touchAndDragFromPointToPoint(grabberMidpoint.x, grabberMidpoint.y , grabberMidpoint.x, grabberMidpoint.y + (fontHeight * 3));
+            await liftUpAtPoint(grabberMidpoint.x, grabberMidpoint.y - (fontHeight * 3));
+
+            if (selectionChangedCount > lastSelectionChangeCount)
+                output += 'PASS: Selection Changed </br>';
+            else
+                output += 'FAIL: Selection did not change <br>' + selectionChangedCount;
+            
+            lastSelectionChangeCount = selectionChangedCount;
+            grabberMidpoint = UIHelper.midPointOfRect(await UIHelper.getSelectionStartGrabberViewRect());
+            await touchAndDragFromPointToPoint(grabberMidpoint.x, grabberMidpoint.y , grabberMidpoint.x, grabberMidpoint.y + (fontHeight * 2));
+
+            if (selectionChangedCount > lastSelectionChangeCount)
+                output += 'PASS: Selection Changed </br>';
+            else
+                output += 'FAIL: Selection changed <br>' + selectionChangedCount;
+
+            document.getElementById('target').innerHTML = output;
+            testRunner.notifyDone();
+        }
+
+        window.addEventListener('load', runTest, false);
+    </script>
+    <style>
+        #target {
+            height: 50px;
+            width: 300px;
+            background-color: silver;
+            font-family: monospace;
+            font-size: 18px;
+        }
+        #editable {
+            height: 300px;
+            width: 300px;
+            background-color: silver;
+            font-family: monospace;
+            font-size: 30px;
+        }
+    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+    <div id="target">
+        <p>Here's to the crazy ones. The misfits. The rebels. The trouble makers. The round pegs in the square holes.</p>
+        <p>This test requires UIScriptController to run.</p>
+    </div>
+</body>
+</html>
+

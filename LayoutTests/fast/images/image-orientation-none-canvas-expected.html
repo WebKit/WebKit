@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<style>
+    div.container {
+        display: inline-block;
+        margin-right: 20px;
+        margin-bottom: 10px;
+        width: 100px;
+        vertical-align: top;
+    }
+    div.box {
+        width: 102px;
+        height: 52px;
+    }
+    canvas {
+        border: 1px solid black;
+        width: 100px;
+        height: 50px;
+    }
+</style>
+<script>
+    if (window.internals)
+        internals.settings.setCanvasUsesAcceleratedDrawing(false);
+</script>
+<body>
+    <b>CanvasRenderingContext2D.drawImage() should ignore the image's EXIF orientation if its style image-orientation is set to "none".</b>
+    <br>
+    <br>
+    <div class ="container">
+        <div class ="box">
+            <canvas id="canvas1"></canvas>
+        </div>
+        <br>Normal
+    </div>
+    <div class ="container">
+        <div class ="box">
+            <canvas id="canvas2"></canvas>
+        </div>
+        <br>Flipped horizontally
+    </div>
+    <div class ="container">
+        <div class ="box">
+            <canvas id="canvas3"></canvas>
+        </div>
+        <br>Rotated 180&deg;
+    </div>
+    <div class ="container">
+        <div class ="box">
+            <canvas id="canvas4"></canvas>
+        </div>
+        <br>Flipped vertically
+    </div>
+    <br>
+    <div class ="container">
+        <div class ="box">
+            <canvas id="canvas5"></canvas>
+        </div>
+        <br>Rotated 90&deg; CCW and flipped vertically
+    </div>
+    <div class ="container">
+        <div class ="box">
+            <canvas id="canvas6"></canvas>
+        </div>
+        <br>Rotated 90&deg; CCW
+    </div>
+    <div class ="container">
+        <div class ="box">
+            <canvas id="canvas7"></canvas>
+        </div>
+        <br>Rotated 90&deg; CW and flipped vertically
+    </div>
+    <div class ="container">
+        <div class ="box">
+            <canvas id="canvas8"></canvas>
+        </div>
+        <br>Rotated 90&deg; CW
+    </div>
+    <br>
+    <div class ="container">
+        <div class ="box">
+            <canvas id="canvas9"></canvas>
+        </div>
+        <br>Undefined (invalid value)
+    </div>
+    <script>
+        if (window.internals)
+            internals.settings.setCanvasUsesAcceleratedDrawing(false);
+
+        if (window.testRunner)
+            window.testRunner.waitUntilDone();
+
+        window.onload = function() {
+            var image = new Image;
+            image.src = "resources/exif-orientation-1-ul.jpg";
+            image.decode().then(() => {
+                let canvases = document.querySelectorAll("canvas");
+                for (const canvas of canvases) {
+                    canvas.width = canvas.offsetWidth - 2;
+                    canvas.height = canvas.offsetHeight - 2;
+                    let context = canvas.getContext("2d");
+                    context.drawImage(image, 0, 0, canvas.width, canvas.height);
+                }
+                if (window.testRunner)
+                    window.testRunner.notifyDone();
+            });
+        }
+    </script>
+</body>

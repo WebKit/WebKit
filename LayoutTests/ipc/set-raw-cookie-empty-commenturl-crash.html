@@ -1,0 +1,42 @@
+<!-- webkit-test-runner [ IPCTestingAPIEnabled=true ] -->
+<p>This test passes if the NetworkProcess does not crash.</p>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+window.onload = async () => {
+    if (!window.IPC)
+        return window.testRunner?.notifyDone();
+
+    const { CoreIPC } = await import('./coreipc.js');
+    const ownOrigin = location.origin + '/';
+
+    CoreIPC.Networking.NetworkConnectionToWebProcess.SetRawCookie(0, {
+        firstParty: { string: ownOrigin },
+        url:        { string: ownOrigin },
+        cookie: {
+            name:         'x',
+            value:        'y',
+            domain:       '127.0.0.1',
+            path:         '/',
+            partitionKey: '',
+            created:      0,
+            expires:      {},
+            httpOnly:     false,
+            secure:       false,
+            session:      true,
+            comment:      '',
+            commentURL:   { string: '' },
+            ports:        [],
+            sameSite:     0,
+        },
+        shouldPartitionCookie: 0,
+    });
+
+    setTimeout(() => {
+        window.testRunner?.notifyDone();
+    }, 500);
+};
+</script>

@@ -1,0 +1,4 @@
+
+FAIL keyDown performs character insertion before completing assert_array_equals: keyDown should dispatch keydown, beforeinput, and input in order lengths differ, expected array ["keydown", "beforeinput", "input"] length 3, got [] length 0
+FAIL Canceling keydown suppresses its editing default action assert_array_equals: Canceling keydown should suppress the editing events lengths differ, expected array ["keydown"] length 1, got [] length 0
+

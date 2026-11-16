@@ -1,0 +1,20 @@
+
+PASS class="foo-bar-baz" matches .foo-*
+PASS class="foo-bar-baz" matches .foo-bar-*
+PASS class="foo--bar" matches .foo--*
+PASS class="foo--bar" does not match .foo-* (the separator is "--", not "-")
+PASS class="foo-bar-" (ends in a dash) matches .foo-*
+PASS class="foo-bar-" does not match .foo-bar-* (nothing left after the prefix)
+PASS class="foobar" does not match .foo-* (no "-" separator)
+PASS class="foo-" does not match .foo-* (no character beyond the prefix)
+PASS class="foo-a" matches .foo-* (exactly one character beyond the prefix)
+PASS a class matching the prefix among several space-separated classes still matches
+PASS an element with no class attribute does not match .foo-*
+PASS class prefix selector combines with a type selector in a compound
+PASS class prefix selector combines with another class selector in a compound
+PASS class prefix selector works as a :not() argument
+PASS class prefix selector works inside :is()
+PASS class="foo---baz" matches .foo---* (a three-hyphen prefix works the same way as one or two hyphens)
+PASS class="foo---baz" does not match .foo--* (the separator is "---", not "--")
+PASS class="foo----qux" does not match .foo---* but does match .foo----* (an extra hyphen right after the prefix disqualifies a shorter prefix match)
+

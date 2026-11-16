@@ -1,0 +1,11 @@
+When prompted, use the accept button to give permission to use your audio and video devices.
+
+Description
+
+This test checks that MediaStreamTrackProcessor works as expected on video MediaStreamTracks.
+
+
+FAIL Tests that the reader of a video MediaStreamTrackProcessor produces video frames and is closed on track stop promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: MediaStreamTrackProcessor"
+FAIL Tests that the reader of a video MediaStreamTrackProcessor produces VideoFrame objects and is closed on track stop while running on a worker promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: MediaStreamTrackProcessor"
+FAIL Tests that multiple read requests are eventually settled promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: MediaStreamTrackGenerator"
+

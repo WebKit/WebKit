@@ -1,0 +1,2 @@
+Text should be green to PASS, with PASS written below.
+PASS

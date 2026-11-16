@@ -1,0 +1,17 @@
+
+PASS string: javascript:"foo"
+PASS empty string: javascript:""
+PASS String object: javascript:new String("foo")
+PASS undefined: javascript:void(0)
+PASS number: javascript:1
+PASS boolean: javascript:true
+PASS null: javascript:null
+PASS global: javascript:window
+PASS host object: javascript:document
+PASS function: javascript:(() => { return function() {}; })()
+PASS regexp: javascript:/foo/
+PASS array: javascript:["foo"]
+PASS object: javascript:{"foo": "bar"}
+PASS ArrayBuffer: javascript:new ArrayBuffer(8)
+PASS TypeError: javascript:new TypeError("foo")
+

@@ -1,0 +1,8 @@
+Testing that a breakpoint on a line containing only an empty statement is triggered.
+
+line 2 -> actualLocation line 2 col 4
+line 3 -> actualLocation line 4 col 4
+line 4 -> actualLocation line 4 col 4
+Paused at line: 4
+PASS: breakpoint on the empty statement was triggered.
+

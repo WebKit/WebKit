@@ -1,0 +1,4 @@
+
+PASS Test that documentPictureInPicture.window
+  is cleared when the PiP window in closed. Test timed out
+

@@ -1,0 +1,157 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+let resultNumber = 100;
+function asyncOperation() {
+    return new Promise((resolve, reject) => {
+        setTimeout(() => {
+            resolve(resultNumber++);
+        }, 50);
+    });
+}
+
+function rejectedEventually() {
+    return new Promise((resolve, reject) => {
+        setTimeout(() => {
+            reject("Rejection");
+        }, 50);
+    });
+}
+
+function causeExceptionImmediately() {
+    throw "Thrown exception";
+}
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("RuntimeManager");
+
+    suite.addTestCase({
+        name: "RuntimeManager.prototype.evaluateInInspectedWindow.ObjectLiteralConvenience",
+        description: "Test evaluating an object literal string conveniently converts wraps it in parenthesis to avoid misinterpretation as a program with a block and labeled statement.",
+        test(resolve, reject) {
+            function testSource(expression, callback) {
+                WI.runtimeManager.evaluateInInspectedWindow(expression, {objectGroup: "test"}, (result, wasThrown) => {
+                    InspectorTest.log("Source: " + expression);
+                    callback(result, wasThrown);
+                });
+            }
+
+            function expectObject(result, wasThrown) {
+                InspectorTest.expectThat(result.type === "object", "Evaluation should produce an object.");
+            }
+
+            function expectException(result, wasThrown) {
+                InspectorTest.expectThat(wasThrown, "Evaluation should produce an exception.");
+            }
+
+            function expectValue(value) {
+                return function(result, wasThrown) {
+                    InspectorTest.expectThat(result.value === value, "Evaluation should produce the labeled statement's value.");
+                }
+            }
+
+            // The convenience will detect these and make them objects.
+            testSource("{a:1}", expectObject);
+            testSource("{a:1, b:2}", expectObject);
+            testSource("   {a:1, b:2}  ", expectObject);
+
+            // The convenience will incorrectly apply to these that would otherwise have been valid programs.
+            testSource("{ let a = 1; a += 1; a }", expectException);
+
+            // Test we can run non-convenience cases by not starting / ending with characters other than curly braces.
+            testSource(";{a:1}", expectValue(1));
+            testSource("{a:1};", expectValue(1));
+            testSource(";{a:1, b:2}", expectException);
+            testSource(";{ let a = 1; a += 1; a }", expectValue(2));
+
+            InspectorBackend.runAfterPendingDispatches(resolve);
+        }
+    });
+
+    suite.addTestCase({
+        name: "RuntimeManager.prototype.evaluateInInspectedWindow.AwaitConvenience",
+        description: "Test evaluating a simple await expression wraps it into an async function and eventually resolves the value.",
+        async test() {
+            function testSource(expression, callback) {
+                return new Promise((resolve) => {
+                    WI.runtimeManager.evaluateInInspectedWindow(expression, {objectGroup: "test"}, (result, wasThrown) => {
+                        InspectorTest.log("Source: " + expression);
+                        callback(result, wasThrown);
+                        resolve();
+                    });
+                });
+            }
+
+            function awaitConsoleMessage() {
+                return new Promise((resolve) => {
+                    function handleConsoleMessage() {
+                        WI.consoleManager.removeEventListener(WI.ConsoleManager.Event.MessageAdded, handleConsoleMessage);
+                        WI.consoleManager.removeEventListener(WI.ConsoleManager.Event.PreviousMessageRepeatCountUpdated, handleConsoleMessage);
+                        resolve();
+                    }
+                    WI.consoleManager.addEventListener(WI.ConsoleManager.Event.MessageAdded, handleConsoleMessage);
+                    WI.consoleManager.addEventListener(WI.ConsoleManager.Event.PreviousMessageRepeatCountUpdated, handleConsoleMessage);
+                });
+            }
+
+            async function testTransformedSource(expression) {
+                let consoleMessagePromise = awaitConsoleMessage();
+                await testSource(expression, expectUndefined);
+                await consoleMessagePromise;
+            }
+
+            function expectUndefined(result, wasThrown) {
+                InspectorTest.expectThat(result.isUndefined(), "Transformed. Should log the value or an exception.");
+            }
+
+            function expectException(result, wasThrown) {
+                InspectorTest.expectThat(wasThrown, "Exception. Should not get transformed and produce a SyntaxError.");
+            }
+
+            // The convenience will detect these and make an async task.
+            await testTransformedSource("await 1");
+            await testTransformedSource("   await 2   ");
+            await testTransformedSource("var x = await 3");
+            await testTransformedSource("await causeExceptionImmediately()");
+            await testTransformedSource("await Promise.resolve(4)");
+            await testTransformedSource("await Promise.reject('Promise.reject')");
+            await testTransformedSource("await rejectedEventually()");
+            await testTransformedSource("await asyncOperation()");
+            await testTransformedSource("x = await asyncOperation()");
+            await testTransformedSource("x = y = await 10");
+            await testTransformedSource("1 + await Promise.resolve(1)");
+            await testTransformedSource("Math.max(await Promise.resolve(1))");
+            await testTransformedSource("globalThis.awaitConvenienceProperty = await Promise.resolve(1)");
+            await testTransformedSource("const foo = await Promise.resolve(1)");
+            await testTransformedSource("await (async () => await Promise.resolve(1))()");
+            await testTransformedSource("awaiting = (await(Promise.resolve(1)))");
+            await testTransformedSource("const bar = (await(Promise.resolve(1)));");
+            await testTransformedSource("1 + await(Promise.resolve(1))");
+            await testTransformedSource("Math.max(await(Promise.resolve(1)))");
+            await testTransformedSource("(await(Promise.resolve(Math.max)))(1, 2)");
+            await testTransformedSource("x += await Promise.resolve(2)");
+
+            InspectorTest.log("");
+
+            // The convenience will not apply to these expressions.
+            await testSource("return 10", expectException);
+            await testSource("await 10; 1", expectException);
+            await testSource("1; await 10;", expectException);
+            await testSource("new.target + (async () => await(Promise.resolve(1)))", expectException);
+            await testSource("(() => await(Promise.resolve(1)))()", expectException);
+            await testSource("console.await(Promise.resolve(1));", expectException);
+            await testSource("await(Promise.resolve(1)); console.log(42);", expectException);
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests for RuntimeManager operations.</p>
+</body>
+</html>

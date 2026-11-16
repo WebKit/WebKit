@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html class="reftest-wait">
+<title>requestVideoFrameCallback fires in isolated world when JavaScript is disabled</title>
+<link rel="match" href="request-video-frame-callback-in-isolated-world-with-javascript-disabled-expected.html">
+<style>
+  #result {
+    width: 150px;
+    height: 150px;
+    background-color: red;
+  }
+</style>
+<p>The box below should be green.</p>
+<div id="result"></div>
+<video id="vid" src="../images/resources/animated-red-green-blue.mp4" style="display:none"></video>
+<script>
+if (window.testRunner) {
+    internals.settings.setScriptEnabled(false);
+
+    testRunner.evaluateScriptInIsolatedWorld(0,
+        "document.getElementById('vid').requestVideoFrameCallback(function() {\n" +
+        "    document.getElementById('result').style.backgroundColor = 'green';\n" +
+        "    document.documentElement.classList.remove('reftest-wait');\n" +
+        "});"
+    );
+}
+</script>
+</html>

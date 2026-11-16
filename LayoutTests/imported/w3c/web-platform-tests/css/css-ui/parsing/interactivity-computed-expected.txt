@@ -1,0 +1,48 @@
+
+FAIL Property interactivity value 'auto' assert_true: interactivity doesn't seem to be supported in the computed style expected true got false
+FAIL Property interactivity value 'inert' assert_true: interactivity doesn't seem to be supported in the computed style expected true got false
+FAIL Property interactivity has initial value auto assert_true: interactivity doesn't seem to be supported in the computed style expected true got false
+FAIL Property interactivity inherits assert_true: interactivity doesn't seem to be supported in the computed style expected true got false
+FAIL CSS Transitions with transition-behavior:allow-discrete: property <interactivity> from [auto] to [inert] at (-0.3) should be [auto] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition-behavior:allow-discrete: property <interactivity> from [auto] to [inert] at (0) should be [auto] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition-behavior:allow-discrete: property <interactivity> from [auto] to [inert] at (0.3) should be [auto] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition-behavior:allow-discrete: property <interactivity> from [auto] to [inert] at (0.5) should be [inert] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition-behavior:allow-discrete: property <interactivity> from [auto] to [inert] at (0.6) should be [inert] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition-behavior:allow-discrete: property <interactivity> from [auto] to [inert] at (1) should be [inert] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition-behavior:allow-discrete: property <interactivity> from [auto] to [inert] at (1.5) should be [inert] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <interactivity> from [auto] to [inert] at (-0.3) should be [auto] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <interactivity> from [auto] to [inert] at (0) should be [auto] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <interactivity> from [auto] to [inert] at (0.3) should be [auto] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <interactivity> from [auto] to [inert] at (0.5) should be [inert] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <interactivity> from [auto] to [inert] at (0.6) should be [inert] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <interactivity> from [auto] to [inert] at (1) should be [inert] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <interactivity> from [auto] to [inert] at (1.5) should be [inert] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <interactivity> from [auto] to [inert] at (-0.3) should be [inert] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <interactivity> from [auto] to [inert] at (0) should be [inert] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <interactivity> from [auto] to [inert] at (0.3) should be [inert] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <interactivity> from [auto] to [inert] at (0.5) should be [inert] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <interactivity> from [auto] to [inert] at (0.6) should be [inert] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <interactivity> from [auto] to [inert] at (1) should be [inert] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <interactivity> from [auto] to [inert] at (1.5) should be [inert] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <interactivity> from [auto] to [inert] at (-0.3) should be [inert] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <interactivity> from [auto] to [inert] at (0) should be [inert] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <interactivity> from [auto] to [inert] at (0.3) should be [inert] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <interactivity> from [auto] to [inert] at (0.5) should be [inert] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <interactivity> from [auto] to [inert] at (0.6) should be [inert] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <interactivity> from [auto] to [inert] at (1) should be [inert] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <interactivity> from [auto] to [inert] at (1.5) should be [inert] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <interactivity> from [auto] to [inert] at (-0.3) should be [auto] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <interactivity> from [auto] to [inert] at (0) should be [auto] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <interactivity> from [auto] to [inert] at (0.3) should be [auto] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <interactivity> from [auto] to [inert] at (0.5) should be [inert] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <interactivity> from [auto] to [inert] at (0.6) should be [inert] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <interactivity> from [auto] to [inert] at (1) should be [inert] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <interactivity> from [auto] to [inert] at (1.5) should be [inert] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <interactivity> from [auto] to [inert] at (-0.3) should be [auto] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <interactivity> from [auto] to [inert] at (0) should be [auto] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <interactivity> from [auto] to [inert] at (0.3) should be [auto] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <interactivity> from [auto] to [inert] at (0.5) should be [inert] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <interactivity> from [auto] to [inert] at (0.6) should be [inert] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <interactivity> from [auto] to [inert] at (1) should be [inert] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <interactivity> from [auto] to [inert] at (1.5) should be [inert] assert_true: 'from' value should be supported expected true got false
+

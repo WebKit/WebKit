@@ -1,0 +1,13 @@
+Test that focusing an AX object does not result in web content taking first-respondership.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Resigning web content first-respondership
+PASS webContentIsFirstResponder is false
+Performing accessibility object focus. Web content should not become the first responder.
+PASS webContentIsFirstResponder is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

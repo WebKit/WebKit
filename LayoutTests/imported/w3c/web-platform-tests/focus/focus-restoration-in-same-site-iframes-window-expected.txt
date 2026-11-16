@@ -1,0 +1,3 @@
+
+FAIL Check result assert_equals: Check log expected "outerlog:log:willfocuswindow,windowfocus,didfocuswindow,windowblur,windowfocus," but got "outerlog:log:willfocuswindow,windowfocus,didfocuswindow,"
+

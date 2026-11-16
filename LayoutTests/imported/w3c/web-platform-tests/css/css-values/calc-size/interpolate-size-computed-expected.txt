@@ -1,0 +1,4 @@
+
+PASS Property interpolate-size value 'numeric-only'
+PASS Property interpolate-size value 'allow-keywords'
+

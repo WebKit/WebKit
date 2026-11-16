@@ -1,0 +1,4 @@
+This tests scheduling requestAnimationFrame right before removing an iframe, which synchronously trigger the update rendering steps.
+WebKit should not hit any debug assertions or crash.
+
+

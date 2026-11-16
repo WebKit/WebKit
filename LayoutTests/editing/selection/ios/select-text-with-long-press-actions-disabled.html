@@ -1,0 +1,27 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true longPressActionsEnabled=false ] -->
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="../../../resources/ui-helper.js"></script>
+<script src="../../../resources/js-test.js"></script>
+<style>
+.target {
+    font-size: 32px;
+    width: 300px;
+}
+</style>
+<script>
+jsTestIsAsync = true;
+description("Verifies that text can be selected in a web view with long press actions disabled. Requires WebKitTestRunner.");
+
+addEventListener("load", async () => {
+    await UIHelper.longPressElement(document.querySelector(".target"));
+    await shouldBecomeEqual("getSelection().toString()", "'Apple'");
+    finishJSTest();
+});
+</script>
+</head>
+<body>
+    <span class="target">Apple</span>
+</body>
+</html>

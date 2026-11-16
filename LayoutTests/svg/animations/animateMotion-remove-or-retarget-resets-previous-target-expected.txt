@@ -1,0 +1,20 @@
+Tests that removing or retargeting an active animateMotion element moves its previous target and the target's use instance back to their un-animated position.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Remove the animation element.
+PASS offsetInSVG(removeTarget) is 60
+PASS offsetInSVG(removeTargetInstance) is 60
+PASS offsetInSVG(removeTarget) is 10
+PASS offsetInSVG(removeTargetInstance) is 10
+
+Retarget the animation element with href.
+PASS offsetInSVG(retargetTarget) is 60
+PASS offsetInSVG(retargetTargetInstance) is 60
+PASS offsetInSVG(retargetTarget) is 10
+PASS offsetInSVG(retargetTargetInstance) is 10
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

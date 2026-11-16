@@ -1,0 +1,13 @@
+Tests for ES6 arrow function lexical bind of arguments on top level
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS foo() threw exception ReferenceError: Can't find variable: arguments.
+PASS boo() threw exception ReferenceError: Can't find variable: arguments.
+PASS bar(true) threw exception ReferenceError: Can't find variable: arguments.
+PASS bar(false) is "no-error"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

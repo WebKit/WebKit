@@ -1,0 +1,38 @@
+[
+    {
+        "action": {
+            "type": "block"
+        },
+        "trigger": {
+            "url-filter": "www\\.example\\.com/cookie\\.js",
+            "url-filter-is-case-sensitive": true
+        }
+    },
+    {
+        "action": {
+            "type": "block"
+        },
+        "trigger": {
+            "url-filter": "\\.morecookies",
+            "url-filter-is-case-sensitive": true
+        }
+    },
+    {
+        "action": {
+            "type": "block"
+        },
+        "trigger": {
+            "url-filter": "/cookie\\.js",
+            "url-filter-is-case-sensitive": true
+        }
+    },
+    {
+        "action": {
+            "type": "block-cookies"
+        },
+        "trigger": {
+            "url-filter": ".*",
+            "url-filter-is-case-sensitive": true
+        }
+    }
+]

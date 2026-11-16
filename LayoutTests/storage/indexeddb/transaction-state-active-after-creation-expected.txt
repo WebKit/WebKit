@@ -1,0 +1,13 @@
+dbname = "transaction-state-active-after-creation"
+indexedDB.deleteDatabase(dbname)
+indexedDB.open(dbname)
+transaction = db.transaction("store", "readwrite")
+transaction.objectStore("store").put("value", "key")
+sleep 100ms
+database exists
+transaction = db.transaction("store", "readwrite")
+transaction.objectStore("store").put("value", "key")
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

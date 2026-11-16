@@ -1,0 +1,11 @@
+This test ensures that decorative images do not use title or other labeling techniques to supply an accname and remain ignored.
+
+PASS: !image1 || image1.isIgnored === true
+PASS: !image2 || image2.isIgnored === true
+PASS: !image3 || image3.isIgnored === true
+PASS: !image4 || image4.isIgnored === true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+An image

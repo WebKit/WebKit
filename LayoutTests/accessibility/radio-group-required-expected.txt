@@ -1,0 +1,30 @@
+This tests that every radio button in a group is required when any button in it has the required attribute, since that makes the whole group required.
+
+PASS: isRequired('small') === true
+PASS: isRequired('medium') === true
+PASS: isRequired('large') === true
+PASS: isRequired('red') === false
+PASS: isRequired('blue') === false
+PASS: isRequired('standard') === false
+PASS: isRequired('express') === false
+document.getElementById('blue').required = true;
+PASS: isRequired('red') === true
+PASS: isRequired('blue') === true
+document.getElementById('small').required = false;
+PASS: isRequired('medium') === false
+PASS: isRequired('small') === false
+PASS: isRequired('large') === false
+document.getElementById('shipping').insertAdjacentHTML('beforeend', ' Pickup');
+PASS: isRequired('standard') === true
+PASS: isRequired('express') === true
+PASS: isRequired('pickup') === true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Size
+ Small   Medium   Large
+Color
+ Red   Blue
+Shipping
+ Standard   Express  Pickup

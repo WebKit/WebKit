@@ -1,0 +1,64 @@
+<!DOCTYPE HTML><!-- webkit-test-runner [ IsAriaLiveRegionManagementEnabled=true ] -->
+<html>
+<head>
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/accessibility-helper.js"></script>
+<meta http-equiv="content-language" content="en">
+</head>
+<body>
+
+<ol id="state-list" aria-live="polite">
+    <li aria-atomic="true">California
+        <ol id="city-list">
+            <li>Cupertino</li>
+            <li>San Francisco</li>
+        </ol>
+    </li>
+    <li>Hawaii</li>
+    <li>Illinois</li>
+</ol>
+
+<script>
+var output = "This tests that an atomic region within a live region is announced together when changed.\n\n";    
+var notificationCount = 0;
+var testFinished = false;
+
+function notificationCallback(object, notification, userInfo) {
+    if (notification == "AXAnnouncementRequested") {
+        output += `Received announcement request:\n`;
+        output += formatAnnouncementUserInfo(userInfo);
+        output += `\n`;
+
+        notificationCount++;
+        
+        if (notificationCount == 1) {
+            // This live region change should only speak this addition, since it is not in an aria-atomic="true" region.
+            const newState = document.createElement("li");
+            newState.textContent = "Washington";
+            document.getElementById("state-list").appendChild(newState);
+        } else if (notificationCount == 2)
+            testFinished = true;
+    }
+}
+
+if (accessibilityController) {
+    window.jsTestIsAsync = true;
+    accessibilityController.addNotificationListener(notificationCallback);
+    accessibilityController.accessibleElementById("city-list");
+
+    const newCity = document.createElement("li");
+    newCity.textContent = "Los Angeles";
+
+    // The entire city-list should be spoken when this is added, since it is in an aria-atomic region.
+    document.getElementById("city-list").appendChild(newCity);
+ 
+    setTimeout(async function() {
+        await waitFor(() => testFinished);
+        accessibilityController.removeNotificationListener();
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

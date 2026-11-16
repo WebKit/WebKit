@@ -1,0 +1,20 @@
+This test ensures that the right header is returned when AX clients request the table header.
+
+The table cell at (0, 1) should have exactly 1 column header, currently it has 1 column header(s).
+The table cell at (2, 0) should have exactly 0 row headers, currently it has 0 row header(s).
+The table cell at (1, 2) should have exactly 0 row headers, currently it has 0 row header(s).
+
+Changing scope of table header at (0, 0) to 'row':
+The table cell at (0, 1) should have exactly 0 column headers, currently it has 0 column header(s).
+The table cell at (2, 0) should have exactly 1 row header, currently it has 1 row header(s).
+The table cell at (1, 2) should have exactly 0 row headers, currently it has 0 row header(s).
+
+Changing scope of cell at (0, 1) to 'rowgroup':
+The table cell at (1, 2) should have exactly 1 row header, currently it has 1 row header(s).
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Title	Col 1	Col 2	Col 3
+Data abc	Data def	Data ghi	Data jkl
+Data abc	Data def	Data ghi

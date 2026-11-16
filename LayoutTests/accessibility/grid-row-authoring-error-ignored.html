@@ -1,0 +1,125 @@
+<html>
+<head>
+    <script src="../resources/accessibility-helper.js"></script>
+    <script src="../resources/js-test.js"></script>
+</head>
+
+<body id="body">
+<!-- Regular Grid -->
+<div role="grid" id="grid1">
+    <div>
+        <div role="row">
+            <div role="columnheader">A</div>
+            <div role="columnheader">B</div>
+            <div role="columnheader">C</div>
+        </div>
+    </div>
+    <div role="row">
+        <!-- This container would be unignored because of draggable=true, but the AX tree should ignore it as cells need to have rows as their direct unignored parent. -->
+        <div draggable="true">
+            <div role="gridcell">D1</div>
+            <div role="gridcell">D2</div>
+            <div role="gridcell">D3</div>
+        </div>
+    </div>
+</div>
+
+<!-- Grid with Nested table -->
+<div role="grid" id="grid2">
+    <div>
+        <div role="row">
+            <div role="columnheader">A</div>
+            <div role="columnheader">B</div>
+            <div role="columnheader">C</div>
+        </div>
+    </div>
+    <div role="row">
+        <!-- This container would be unignored because of draggable=true, but the AX tree should ignore it as cells need to have rows as their direct unignored parent. -->
+        <div draggable="true">
+            <div role="gridcell">
+                <div role="grid">
+                    <div>
+                        <div role="row">
+                            <div role="columnheader">X</div>
+                            <div role="columnheader">Y</div>
+                            <div role="columnheader">Z</div>
+                        </div>
+                    </div>
+                    <div role="row">
+                        <div draggable="true">
+                            <div role="gridcell">A1</div>
+                            <div role="gridcell">A2</div>
+                            <div role="gridcell">A3</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div role="gridcell">D2</div>
+            <div role="gridcell">D3</div>
+        </div>
+    </div>
+</div>
+
+<!-- Grid with several layers between Row and Cell -->
+<div role="grid" id="grid3">
+    <div>
+        <div role="row">
+            <div role="columnheader">A</div>
+            <div role="columnheader">B</div>
+            <div role="columnheader">C</div>
+        </div>
+    </div>
+    <div role="row">
+        <div role="group">
+            <div>
+                <div draggable="true" id="draggable-row">
+                    <div role="gridcell">D1</div>
+                    <div role="gridcell">D2</div>
+                    <div role="gridcell">D3</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+let output = "Tests that tables with unignored objects between rows and cells behave as expected.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    var grid1 = accessibilityController.accessibleElementById("grid1");
+    var grid2 = accessibilityController.accessibleElementById("grid2");
+    var grid3 = accessibilityController.accessibleElementById("grid3");
+
+    output += "Grid 1:\n";
+    output += dumpAccessibilityTree(grid1, null, 0)[1];
+
+    output += "\n\nGrid 2:\n";
+    output += dumpAccessibilityTree(grid2, null, 0)[1];
+
+    output += "\n\nGrid 3:\n";
+    output += dumpAccessibilityTree(grid3, null, 0)[1];
+
+    output += "\n\nTesting draggable row ignored status:\n";
+    var axRow = accessibilityController.accessibleElementById('draggable-row');
+    output += expect("!axRow", "true");
+
+    output += "Moving draggable row outside table...\n";
+    var domRow = document.getElementById("draggable-row");
+    document.getElementById("body").appendChild(domRow);
+
+    setTimeout(async function() {
+        waitFor(() => {
+            axRow = accessibilityController.accessibleElementById('draggable-row');
+            return axRow != null;
+        });
+        output += "Draggable row no longer ignored.\n";
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

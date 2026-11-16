@@ -1,0 +1,6 @@
+
+PASS XHTML parser should create a custom element candidate with null registry if customelementregistry is set
+PASS XHTML parser should create a defined custom element with null registry if customelementregistry is set
+PASS XHTML fragment parser should create a custom element candidate with null registry if customelementregistry is set
+PASS XHTML fragment parser should create a defined custom element with null registry if customelementregistry is set
+

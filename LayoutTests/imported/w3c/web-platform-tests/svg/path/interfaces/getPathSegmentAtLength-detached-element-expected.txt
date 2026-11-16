@@ -1,0 +1,3 @@
+
+FAIL getPathSegmentAtLength() works on a detached path element path.getPathSegmentAtLength is not a function. (In 'path.getPathSegmentAtLength(50)', 'path.getPathSegmentAtLength' is undefined)
+

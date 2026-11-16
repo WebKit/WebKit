@@ -1,0 +1,11 @@
+Dump accessibility tree with isolated iframe
+AXRole: AXWebArea
+    AXRole: AXButton Before
+    AXRole: AXWebArea
+        AXRole: AXHeading Hello, world!
+    AXRole: AXButton After
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Before    After

@@ -1,0 +1,28 @@
+
+PASS position: absolute on <a> element itself
+PASS position: absolute on <maction> element itself
+PASS position: absolute on <menclose> element itself
+PASS position: absolute on <merror> element itself
+PASS position: absolute on <mfrac> element itself
+PASS position: absolute on <mi> element itself
+PASS position: absolute on <mmultiscripts> element itself
+PASS position: absolute on <mn> element itself
+PASS position: absolute on <mo> element itself
+PASS position: absolute on <mover> element itself
+PASS position: absolute on <mpadded> element itself
+PASS position: absolute on <mphantom> element itself
+PASS position: absolute on <mroot> element itself
+PASS position: absolute on <mrow> element itself
+PASS position: absolute on <ms> element itself
+PASS position: absolute on <mspace> element itself
+PASS position: absolute on <msqrt> element itself
+PASS position: absolute on <mstyle> element itself
+PASS position: absolute on <msub> element itself
+PASS position: absolute on <msubsup> element itself
+PASS position: absolute on <msup> element itself
+PASS position: absolute on <mtable> element itself
+PASS position: absolute on <mtext> element itself
+PASS position: absolute on <munder> element itself
+PASS position: absolute on <munderover> element itself
+PASS position: absolute on <semantics> element itself
+

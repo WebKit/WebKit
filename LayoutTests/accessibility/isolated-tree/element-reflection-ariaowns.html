@@ -1,0 +1,105 @@
+<!DOCTYPE html><!-- webkit-test-runner [ IsAccessibilityIsolatedTreeEnabled=true ] -->
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/accessibility-helper.js"></script>
+<div id="own1">First own</div>
+<div id="target1">Target 1</div>
+<div id="wrapper" tabindex="0">
+  <div class="own" role="group">Second own</div>
+</div>
+<div id="target2" role="group">Target 2</div>
+<div id="own3">Third own</div>
+<x-target></x-target>
+<div id="own4">Fourth own</div>
+<div id="target4">Target 4</div>
+<x-custom></x-custom>
+
+<script>
+class XTarget extends HTMLElement {
+        constructor() {
+        super();
+        this.attachShadow({ mode: "open" });
+        let target = document.createElement("div");
+        target.id = "innertarget";
+        target.textContent = "Target 3";
+        target.ariaOwnsElements = [own3];
+        this.shadowRoot.appendChild(target);
+    }
+}
+customElements.define("x-target", XTarget);
+
+class XCustom extends HTMLElement {
+    constructor() {
+        super();
+        this.attachShadow({ mode: "open" });
+        let own = document.createElement("div");
+        own.id = "own5";
+        own.textContent = "Fifth own";
+        let target = document.createElement("div");
+        target.id = "target5";
+        target.textContent = "Target 5";
+        this.shadowRoot.appendChild(own);
+        this.shadowRoot.appendChild(target);
+        target.ariaOwnsElements = [own];
+        document.body.appendChild(own);
+    }
+}
+customElements.define("x-custom", XCustom);
+
+var output = "Checks that element reflection is exposed to the a11y tree for 'ariaOwnsElements'\n\n";
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    var axOwn1, axTarget1, axTarget2, axOwn2, axOwn3, axInnerTarget, axOwn4, axTarget4, axOwn5, axTarget5, wrapper;
+    setTimeout(async function() {
+        target1.ariaOwnsElements = [own1];
+        axOwn1 = accessibilityController.accessibleElementById("own1");
+        axTarget1 = accessibilityController.accessibleElementById("target1");
+        await waitFor(() => axTarget1.ariaOwnsElementAtIndex(0));
+        output += expect("axTarget1.ariaOwnsElementAtIndex(0).isEqual(axOwn1)", "true");
+        output += expect("axOwn1.parentElement().isEqual(axTarget1)", "true");
+
+        target2.ariaOwnsElements = [document.getElementsByClassName("own")[0]];
+
+        axTarget2 = accessibilityController.accessibleElementById("target2");
+        output += expect("axTarget2.role", "'AXRole: AXGroup'");
+
+        wrapper = accessibilityController.accessibleElementById("wrapper");
+        
+        await waitFor(() => axTarget2.ariaOwnsElementAtIndex(0) && wrapper.childrenCount == 0);
+        output += expect("wrapper.childrenCount", "0");
+        if (accessibilityController.platformName == "mac")
+            axOwn2 = axTarget2.childAtIndex(1);
+        else
+            axOwn2 = axTarget2.childAtIndex(0);
+        output += expect("axOwn2.role", "'AXRole: AXGroup'");
+        output += expect("axTarget2.ariaOwnsElementAtIndex(0).isEqual(axOwn2)", "true");
+
+        target2.setAttribute("aria-owns", "own1");
+        await waitFor(() => axTarget2.ariaOwnsElementAtIndex(0) && axTarget2.ariaOwnsElementAtIndex(0).isEqual(axOwn1));
+        output += expect("axTarget2.ariaOwnsElementAtIndex(0).isEqual(axOwn1)", "true");
+
+        axOwn3 = accessibilityController.accessibleElementById("own3");
+        axInnerTarget = accessibilityController.accessibleElementById("innertarget");
+        output += expect("axInnerTarget.ariaOwnsElementAtIndex(0).isEqual(axOwn3)", "true");
+
+        target2.ariaOwnsElements = [own1, document.getElementsByClassName("own")[0], own3];
+        await waitFor(() => axTarget2.ariaOwnsElementAtIndex(2));
+        output += expect("axTarget2.ariaOwnsElementAtIndex(0).isEqual(axOwn1)", "true");
+        output += expect("axTarget2.ariaOwnsElementAtIndex(1).isEqual(axOwn2)", "true");
+        output += expect("axTarget2.ariaOwnsElementAtIndex(2).isEqual(axOwn3)", "true");
+
+        target4.ariaOwnsElements = [own4];
+        own4.id = "own4-new";
+        axOwn4 = await waitForElementById("own4-new");
+        axTarget4 = accessibilityController.accessibleElementById("target4");
+        await waitFor(() => axTarget4.ariaOwnsElementAtIndex(0));
+        output += expect("axTarget4.ariaOwnsElementAtIndex(0).isEqual(axOwn4)", "true");
+
+        axOwn5 = accessibilityController.accessibleElementById("own5");
+        axTarget5 = accessibilityController.accessibleElementById("target5");
+        output += expect("axTarget5.ariaOwnsElementAtIndex(0).isEqual(axOwn5)", "true");
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>

@@ -1,0 +1,7 @@
+
+PASS Combination of revert-rule and revert-layer
+PASS Combination of revert-layer and revert-rule
+PASS Combination revert-rule/revert-rule/revert-layer
+PASS Combination revert-layer/revert-rule/revert-layer
+PASS Combination revert-rule/revert-layer/revert-rule
+

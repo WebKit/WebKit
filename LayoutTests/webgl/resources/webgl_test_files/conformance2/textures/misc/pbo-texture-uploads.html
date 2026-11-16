@@ -1,0 +1,89 @@
+<!--
+Copyright (c) 2026 The Khronos Group Inc.
+Use of this source code is governed by an MIT-style license that can be
+found in the LICENSE.txt file.
+-->
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>WebGL2 PBO Uploads conformance test</title>
+<link rel="stylesheet" href="../../../resources/js-test-style.css"/>
+<script src="../../../js/js-test-pre.js"></script>
+<script src="../../../js/webgl-test-utils.js"></script>
+</head>
+<body>
+<canvas id="example" width="32" height="32"></canvas>
+<div id="description"></div>
+<div id="console"></div>
+<script>
+"use strict";
+var wtu = WebGLTestUtils;
+description("Test that WebGL2 texSubImage2D overloads with bound PBO generate INVALID_OPERATION.");
+
+var gl = wtu.create3DContext("example", undefined, 2);
+
+if (!gl) {
+  testFailed("WebGL context creation failed");
+} else {
+  runTest();
+}
+
+function runTest() {
+  // 1. Create a texture
+  var tex = gl.createTexture();
+  gl.bindTexture(gl.TEXTURE_2D, tex);
+  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 16, 16, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+
+  // 2. Create and bind a PBO
+  var pbo = gl.createBuffer();
+  gl.bindBuffer(gl.PIXEL_UNPACK_BUFFER, pbo);
+  gl.bufferData(gl.PIXEL_UNPACK_BUFFER, 16 * 16 * 4, gl.STATIC_DRAW);
+
+  // 3. Test HTMLVideoElement overload
+  var video = document.createElement('video');
+
+  debug("Testing HTMLVideoElement 7-argument overload...");
+  gl.texSubImage2D(gl.TEXTURE_2D, 0, 0, 0, gl.RGBA, gl.UNSIGNED_BYTE, video);
+  wtu.glErrorShouldBe(gl, gl.INVALID_OPERATION, "should generate INVALID_OPERATION when PBO is bound");
+
+  // 4. Test VideoFrame overload (if supported)
+  if (window.VideoFrame) {
+    debug("Testing VideoFrame 7-argument overload...");
+    var canvas = document.createElement('canvas');
+    canvas.width = 16;
+    canvas.height = 16;
+    var frame = new VideoFrame(canvas, {timestamp: 0});
+
+    // Without PBO, it should succeed (or at least no INVALID_OPERATION)
+    gl.bindBuffer(gl.PIXEL_UNPACK_BUFFER, null);
+    gl.texSubImage2D(gl.TEXTURE_2D, 0, 0, 0, gl.RGBA, gl.UNSIGNED_BYTE, frame);
+    var err = gl.getError();
+    if (err == gl.INVALID_OPERATION) {
+      testFailed("Should not generate INVALID_OPERATION without PBO");
+    } else {
+      testPassed("Passed without PBO");
+    }
+
+    // With PBO, it must fail with INVALID_OPERATION
+    gl.bindBuffer(gl.PIXEL_UNPACK_BUFFER, pbo);
+    gl.texSubImage2D(gl.TEXTURE_2D, 0, 0, 0, gl.RGBA, gl.UNSIGNED_BYTE, frame);
+    wtu.glErrorShouldBe(gl, gl.INVALID_OPERATION, "should generate INVALID_OPERATION when PBO is bound");
+
+    frame.close();
+  } else {
+    debug("VideoFrame not supported, skipping test.");
+  }
+
+  // Clean up
+  gl.bindBuffer(gl.PIXEL_UNPACK_BUFFER, null);
+  gl.deleteBuffer(pbo);
+  gl.deleteTexture(tex);
+}
+
+var successfullyParsed = true;
+</script>
+<script src="../../../js/js-test-post.js"></script>
+</body>
+</html>

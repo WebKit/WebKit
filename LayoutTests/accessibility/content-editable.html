@@ -1,0 +1,22 @@
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body id="body" contenteditable role="group">
+
+Some Text.
+
+<script>
+let output = "This test ensures that the body element has a writable AXValue because it has a contenteditable attribute.\n\n";
+if (window.accessibilityController) {
+    var body = document.getElementById("body");
+    body.focus();
+    body = accessibilityController.focusedElement;
+
+    output += expect("body.isAttributeSettable('AXValue')", "true");
+    debug(output);
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,11 @@
+
+PASS Property alignment-baseline value 'baseline'
+PASS Property alignment-baseline value 'text-bottom'
+PASS Property alignment-baseline value 'alphabetic'
+PASS Property alignment-baseline value 'ideographic'
+PASS Property alignment-baseline value 'middle'
+PASS Property alignment-baseline value 'central'
+PASS Property alignment-baseline value 'mathematical'
+PASS Property alignment-baseline value 'hanging'
+PASS Property alignment-baseline value 'text-top'
+

@@ -1,0 +1,4 @@
+
+PASS Property link-parameters has initial value none
+PASS Property link-parameters does not inherit
+

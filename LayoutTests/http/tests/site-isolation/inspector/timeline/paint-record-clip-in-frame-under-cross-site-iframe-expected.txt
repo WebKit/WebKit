@@ -1,0 +1,9 @@
+Test that the clip of a Paint timeline record is in the main frame's coordinates for a frame in the main frame's process under a cross-site iframe.
+
+== Running test suite: SiteIsolation.Timeline.PaintRecordClipInFrameUnderCrossSiteIFrame
+-- Running test case: SiteIsolation.Timeline.PaintRecordClip
+PASS: Should have a Paint record for the box in the same-site frame.
+PASS: The Paint record's clip for the box in the same-site frame should be at its position in the page.
+PASS: Should have a Paint record for the box in the cross-site frame.
+PASS: The Paint record's clip for the box in the cross-site frame should be at its position in the page.
+

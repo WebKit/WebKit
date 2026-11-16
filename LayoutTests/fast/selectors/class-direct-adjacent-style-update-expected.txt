@@ -1,0 +1,36 @@
+Test style update caused by class changes on a sibling. This test does not use any sibling "~" combinator to avoid its more generic marking.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Initial state does not match, the class is not there.
+PASS getComputedStyle(document.getElementById("bar-with-renderer")).backgroundColor is "rgb(255, 255, 255)"
+PASS getComputedStyle(document.getElementById("baz-with-renderer")).backgroundColor is "rgb(255, 255, 255)"
+PASS getComputedStyle(document.getElementById("bar-without-renderer")).backgroundColor is "rgb(255, 255, 255)"
+PASS getComputedStyle(document.getElementById("baz-without-renderer")).backgroundColor is "rgb(255, 255, 255)"
+PASS getComputedStyle(document.getElementById("bar-with-renderer")).color is "rgb(0, 0, 0)"
+PASS getComputedStyle(document.getElementById("baz-with-renderer")).color is "rgb(0, 0, 0)"
+PASS getComputedStyle(document.getElementById("bar-without-renderer")).color is "rgb(0, 0, 0)"
+PASS getComputedStyle(document.getElementById("baz-without-renderer")).color is "rgb(0, 0, 0)"
+Adding the class, the extra rules should match.
+PASS getComputedStyle(document.getElementById("bar-with-renderer")).backgroundColor is "rgb(1, 2, 3)"
+PASS getComputedStyle(document.getElementById("baz-with-renderer")).backgroundColor is "rgb(255, 255, 255)"
+PASS getComputedStyle(document.getElementById("bar-without-renderer")).backgroundColor is "rgb(1, 2, 3)"
+PASS getComputedStyle(document.getElementById("baz-without-renderer")).backgroundColor is "rgb(255, 255, 255)"
+PASS getComputedStyle(document.getElementById("bar-with-renderer")).color is "rgb(0, 0, 0)"
+PASS getComputedStyle(document.getElementById("baz-with-renderer")).color is "rgb(4, 5, 6)"
+PASS getComputedStyle(document.getElementById("bar-without-renderer")).color is "rgb(0, 0, 0)"
+PASS getComputedStyle(document.getElementById("baz-without-renderer")).color is "rgb(4, 5, 6)"
+Removing the class, we should be back to the original state.
+PASS getComputedStyle(document.getElementById("bar-with-renderer")).backgroundColor is "rgb(255, 255, 255)"
+PASS getComputedStyle(document.getElementById("baz-with-renderer")).backgroundColor is "rgb(255, 255, 255)"
+PASS getComputedStyle(document.getElementById("bar-without-renderer")).backgroundColor is "rgb(255, 255, 255)"
+PASS getComputedStyle(document.getElementById("baz-without-renderer")).backgroundColor is "rgb(255, 255, 255)"
+PASS getComputedStyle(document.getElementById("bar-with-renderer")).color is "rgb(0, 0, 0)"
+PASS getComputedStyle(document.getElementById("baz-with-renderer")).color is "rgb(0, 0, 0)"
+PASS getComputedStyle(document.getElementById("bar-without-renderer")).color is "rgb(0, 0, 0)"
+PASS getComputedStyle(document.getElementById("baz-without-renderer")).color is "rgb(0, 0, 0)"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

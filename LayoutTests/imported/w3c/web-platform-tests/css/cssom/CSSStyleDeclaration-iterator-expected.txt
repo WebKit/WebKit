@@ -1,0 +1,3 @@
+
+PASS CSSStyleDeclaration should expose Symbol.iterator
+

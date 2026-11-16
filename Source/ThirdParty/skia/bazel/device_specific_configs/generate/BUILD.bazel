@@ -1,0 +1,21 @@
+load("@rules_go//go:def.bzl", "go_binary", "go_library")
+
+package(
+    default_applicable_licenses = ["//:license"],
+)
+
+licenses(["notice"])
+
+go_library(
+    name = "generate_lib",
+    srcs = ["generate.go"],
+    importpath = "go.skia.org/skia/bazel/device_specific_configs/generate",
+    visibility = ["//visibility:private"],
+    deps = ["//bazel/device_specific_configs"],
+)
+
+go_binary(
+    name = "generate",
+    embed = [":generate_lib"],
+    visibility = ["//visibility:public"],
+)

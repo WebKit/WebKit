@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        .target {
+            margin: 10px;
+            overflow: hidden;
+            width: 200px;
+            height: 100px;
+            resize: both;
+            border: 12px solid silver;
+        }
+    </style>
+    <script src="../../resources/js-test.js"></script>
+    <script src="../../resources/ui-helper.js"></script>
+    <script>
+        window.jsTestIsAsync = true;
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+    
+        }
+
+        const borderWidth = 12;
+        function MouseDownEventHandler() {
+            debug('mouse down event fired');
+            finishJSTest();
+        }
+
+        window.addEventListener('load', async () => {
+            description("Tests if mouse down event is fired when in resizer control");
+            let target = document.getElementById('target');
+            target.addEventListener("mousedown" , MouseDownEventHandler);
+            let targetBounds = target.getBoundingClientRect();
+            await UIHelper.moveMouseAndWaitForFrame(targetBounds.right - borderWidth - 4, targetBounds.bottom - borderWidth - 4);
+            eventSender.mouseDown();
+        }, false);
+    </script>
+</head>
+<body>
+    <div id="test-container">
+        <div id="target" class="target">
+            Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+        </div>
+    </div>
+    <div id="console"></div>
+</body>
+</html>

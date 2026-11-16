@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>This tests that innerText works fine with new line characters. (replacing them with space)</title>
+</head>
+<body>
+  <div style="font: 0/0 a;">
+    foo
+    bar
+  </div>
+  <div id=result></div>
+  <script>
+    document.getElementById("result").innerHTML = document.body.innerText;
+  </script>
+</body>

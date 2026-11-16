@@ -1,0 +1,6 @@
+x
+x
+
+PASS An orthogonal block level box contributes its left and right margins to its container's inline size (nested)
+PASS An orthogonal block level box contributes its left and right margins to its container's inline size (sibling)
+

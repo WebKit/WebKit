@@ -1,0 +1,40 @@
+
+PASS Returns an empty array for an element with no animations
+PASS Returns both animations for an element with two animations
+PASS Returns only the animations specific to each sibling element
+PASS Returns only the animations specific to each parent/child element
+PASS Returns animations on descendants when subtree: true is specified
+PASS Returns animations on pseudo-elements when subtree: true is specified
+FAIL Returns animations on pseudo-element when it is specified assert_equals: Returns one animation when the pseudo-element is specified expected 1 but got 0
+PASS Returns animations on pseudo-element when it is specified with subtree: true
+FAIL Returns animations on functional pseudo-element when it is specified assert_equals: Returns one animation when the pseudo-element is specified expected 1 but got 0
+PASS Returns no animation when non-animatable pseudo-element is specified
+FAIL The legacy Selectors Level 2 single-colon selectors can be used assert_equals: Returns one animation when the pseudo-element is specified by the legacy selector expected 1 but got 0
+FAIL Throws SyntaxError for an invalid pseudo-element selector assert_throws_dom: function "() => {
+    div.getAnimations({ pseudoElement: ':invalid-pseudo' });
+  }" did not throw
+FAIL Throws SyntaxError for an empty selector assert_throws_dom: function "() => {
+    div.getAnimations({ pseudoElement: '' });
+  }" did not throw
+PASS Does NOT cross shadow-tree boundaries when subtree: true is specified
+PASS Returns animations for a foreign element
+PASS Does not return finished animations that do not fill forwards
+PASS Returns finished animations that fill forwards
+PASS Returns animations yet to reach their active phase
+PASS Does not return reversed finished animations that do not fill backwards
+PASS Returns reversed finished animations that fill backwards
+PASS Returns reversed animations yet to reach their active phase
+PASS Does not return animations with zero playback rate in before phase
+PASS Does not return animations with zero playback rate in after phase
+PASS Does not return an animation that has recently been made not current by setting the playback rate
+PASS Returns animations based on dynamic changes to individual animations' duration
+PASS Returns animations based on dynamic changes to individual animations' end delay
+PASS Returns animations based on dynamic changes to individual animations' iteration count
+PASS Returns animations based on dynamic changes to individual animations' current time
+PASS Does not return an animation that has been removed
+PASS Returns an animation that has been persisted
+PASS Triggers a style change event
+PASS Finished animation with fill: both is not lost after yielding to event loop
+PASS Finished animation with fill: none is not returned
+PASS Finished animation with fill: both on disconnected element is not lost after yielding to event loop
+

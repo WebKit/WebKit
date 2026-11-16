@@ -1,0 +1,37 @@
+Tests FrameDOMAgent's JS bridge: resolveNode (DOM node -> RemoteObject), requestNode (RemoteObject -> DOM node), and setInspectedNode (binds the frame's $0 command-line variable).
+
+
+
+== Running test suite: SiteIsolation.DOM.FrameDOMAgent.JSBridge
+-- Running test case: Setup
+PASS: Should find a cross-origin frame target.
+PASS: Frame target should have an execution context.
+PASS: Should find #container.
+PASS: Should find #heading.
+
+-- Running test case: ResolveNode.Backend
+PASS: Should return a RemoteObject payload.
+PASS: RemoteObject type should be 'object'.
+PASS: RemoteObject subtype should be 'node'.
+PASS: RemoteObject should have an objectId scoped to the frame target.
+
+-- Running test case: ResolveNode.Frontend
+PASS: Should resolve.
+PASS: Resolved RemoteObject should report as a node.
+
+-- Running test case: ResolveNode.InvalidNodeId
+PASS: Should produce an exception.
+Error: Missing node for given nodeId
+
+-- Running test case: RequestNode.Backend
+PASS: requestNode should return the same nodeId we resolved.
+
+-- Running test case: SetInspectedNode.Dollar0InFrameContext
+PASS: $0 should evaluate without error.
+PASS: $0 should resolve as a node.
+PASS: $0 in the frame's context should be the inspected heading node.
+
+-- Running test case: SetInspectedNode.InvalidNodeId
+PASS: Should produce an exception.
+Error: Missing node for given nodeId
+

@@ -1,0 +1,40 @@
+This test verifies that text nodes inside complex base-appearance select options are exposed as accessible elements (e.g. for VoiceOver navigation), but only when the option has non-text descendants.
+
+PASS: select.isExpanded === true
+PASS: menu.role.toLowerCase().includes('menu') === true
+
+--- Simple option: text is NOT exposed as a StaticText child ---
+PASS: (menu.childAtIndex(0)).role.toLowerCase().includes('menuitem') === true
+	AXTitle: Apple
+	AXDescription:
+	AXHelp:
+PASS: _menuItemText.includes('Apple') === true
+PASS: appleItem.childrenCount === 0
+
+--- Complex option text includes all descendant text ---
+PASS: bananaItem.role.toLowerCase().includes('menuitem') === true
+	AXTitle: Banana Foo Bar
+	AXDescription:
+	AXHelp:
+PASS: bananaText.includes('Banana') === true
+PASS: bananaText.includes('Foo') === true
+PASS: bananaText.includes('Bar') === true
+PASS: bananaHasStaticText === true
+
+--- Option with only a span wrapper: text is NOT exposed ---
+PASS: (menu.childAtIndex(2)).role.toLowerCase().includes('menuitem') === true
+	AXTitle: Cherry
+	AXDescription:
+	AXHelp:
+PASS: _menuItemText.includes('Cherry') === true
+PASS: cherryItem.childrenCount === 0
+PASS: cherryHasStaticTextAfterAdd === true
+
+--- Dynamic: remove the button from the option ---
+PASS: cherryHasStaticTextAfterRemove === false
+PASS: select.isExpanded === false
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

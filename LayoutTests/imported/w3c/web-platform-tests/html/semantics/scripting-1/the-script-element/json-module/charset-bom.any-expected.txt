@@ -1,0 +1,5 @@
+
+PASS UTF-8 BOM should be stripped when decoding JSON module script
+PASS UTF-16BE BOM should result in parse error in JSON module script
+PASS UTF-16LE BOM should result in parse error in JSON module script
+

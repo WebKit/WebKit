@@ -1,0 +1,14 @@
+ERROR: Parse error trying to decode JSON!
+
+error: Expecting value at JavaScriptCore/inspector/scripts/tests/fail-on-invalid-json-with-context.json:9:1
+
+{
+    "domain": "Database",
+    "types": [
+        {
+            "id": "DatabaseId",
+            "type": "integer",
+            "description": "Unique identifier of Database object."
+        },
+
+^  // line 9, col 1: Expecting value

@@ -1,0 +1,89 @@
+#!/usr/bin/env python3
+# Copyright (C) 2020 Apple Inc.  All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+#
+# 1.  Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer.
+# 2.  Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in the
+#     documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
+# EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL APPLE OR ITS CONTRIBUTORS BE LIABLE FOR ANY
+# DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+# (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+# LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+# ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+# THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+import argparse
+import subprocess
+import sys
+import time
+
+
+SUBMIT_DIAG_INFO = '/System/Library/CoreServices/SubmitDiagInfo'
+WAIT_SECONDS = 3
+
+
+def pid_for_name(process_name):
+    process = subprocess.Popen(['/bin/ps', '-eo', 'pid,comm'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+
+    stdout, _ = process.communicate()
+    for line in stdout.splitlines():
+        try:
+            pid, candidate = line.strip().split(b' ', 1)
+            if candidate == process_name:
+                return int(pid)
+        except ValueError:
+            pass
+    return None
+
+
+def cpu_percentage(pid):
+    top_output = subprocess.check_output(['/usr/bin/top', '-pid', str(pid), '-stats', 'cpu', '-l', '2'])
+    try:
+        return float(top_output.splitlines()[-1])
+    except ValueError:
+        return 0
+
+
+def main():
+    parser = argparse.ArgumentParser(description='Wait for crash log reporting to quiesce')
+    parser.add_argument(
+        '-t', '--timeout',
+        help='Seconds to wait for process to quiesce.',
+        type=int, default=0,
+    )
+    args = parser.parse_args()
+    deadline = (time.time() + args.timeout) if args.timeout else None
+
+    if sys.platform != 'darwin':
+        print("No crash reporting available for platform '{}'".format(sys.platform))
+        return 0
+
+    pid = pid_for_name(SUBMIT_DIAG_INFO)
+    if not pid:
+        print('Failed to find any running process for {}'.format(SUBMIT_DIAG_INFO))
+        return 0
+    print('Found {} running with PID {}'.format(SUBMIT_DIAG_INFO, pid))
+
+    print('Waiting for process {} to quiesce'.format(pid))
+    while not deadline or deadline > time.time():
+        if cpu_percentage(pid) <= 5:
+            print('Process {} has quiesced'.format(pid))
+            return 0
+        time.sleep(WAIT_SECONDS)
+
+    print('Timed out waiting for {} to quiesce, continue'.format(pid))
+    return 0
+
+
+if __name__ == '__main__':
+    sys.exit(main())

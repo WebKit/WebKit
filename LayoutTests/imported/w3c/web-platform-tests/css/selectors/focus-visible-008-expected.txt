@@ -1,0 +1,10 @@
+This test checks that programmatically focusing an element after a keypress causes :focus-visible to match.
+Use the tab key to move focus to the button below that says "Tab to me and press ENTER."
+Press ENTER.
+If the element that says "I will be focused programmatically." has a red background, then the test result is FAILURE. If the element has a green outline, then the test result is SUCCESS.
+
+Tab to me and press ENTER.
+I will be focused programmatically.
+
+PASS Programmatic focus after keypress should match :focus-visible
+

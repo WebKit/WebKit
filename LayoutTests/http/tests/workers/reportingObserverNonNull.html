@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>This test passes if it doesn't crash.</p>
+<script>
+ if (window.testRunner) {
+     testRunner.waitUntilDone();
+     testRunner.dumpAsText();
+ }
+ new Image().src = 'data:';
+ w = new Worker(`data:text/javascript,new ReportingObserver(() => {}).observe(); postMessage('DONE');`);
+ w.onmessage = (e) => {
+    if (window.testRunner)
+        testRunner.notifyDone();
+  };
+</script>
+</body>
+</html>

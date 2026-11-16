@@ -1,0 +1,21 @@
+Tests that objects inheriting from a WindowProxy see the new window's indexed properties after the frame navigates, and that the navigation does not make the previous window's global object have a bad time.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS windowProxy.length is 0
+PASS object[0] is undefined
+PASS array[0] is undefined
+PASS $vm.isHavingABadTime(previousArrayConstructor) is false
+PASS frame.contentWindow is windowProxy
+PASS windowProxy.Array === previousArrayConstructor is false
+PASS windowProxy.length is 1
+PASS windowProxy[0] === windowProxy.document.querySelector('iframe').contentWindow is true
+PASS object[0] is windowProxy[0]
+PASS array[0] is windowProxy[0]
+PASS array[1] is 2
+PASS $vm.isHavingABadTime(previousArrayConstructor) is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

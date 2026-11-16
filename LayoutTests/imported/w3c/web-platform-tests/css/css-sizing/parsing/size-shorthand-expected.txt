@@ -1,0 +1,14 @@
+
+PASS e.style['size'] = "100px" should set height
+PASS e.style['size'] = "100px" should set width
+PASS e.style['size'] = "100px" should not set unrelated longhands
+PASS e.style['size'] = "100px 100px" should set height
+PASS e.style['size'] = "100px 100px" should set width
+PASS e.style['size'] = "100px 100px" should not set unrelated longhands
+PASS e.style['size'] = "100px 200px" should set height
+PASS e.style['size'] = "100px 200px" should set width
+PASS e.style['size'] = "100px 200px" should not set unrelated longhands
+PASS e.style['size'] = "auto" should set height
+PASS e.style['size'] = "auto" should set width
+PASS e.style['size'] = "auto" should not set unrelated longhands
+

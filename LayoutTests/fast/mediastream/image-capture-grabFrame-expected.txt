@@ -1,0 +1,10 @@
+
+
+PASS 'grabFrame()' on an 'ended' track should reject "InvalidStateError"
+PASS "grabFrame" should reject if the track ends before the 'grabFrame()' promise resolves
+PASS The image returned by 'grabFrame()' should have the same size as track settings
+PASS Validate 0 rotated frame
+PASS Validate 90 rotated frame
+PASS Validate 180 rotated frame
+PASS Validate 270 rotated frame
+

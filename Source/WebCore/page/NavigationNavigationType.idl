@@ -1,0 +1,9 @@
+// This was renamed from NavigationType to avoid conflicts with PerformanceNavigationTiming.idl
+[
+  EnabledBySetting=NavigationAPIEnabled,
+] enum NavigationNavigationType {
+ "push",
+ "replace",
+ "reload",
+ "traverse"
+};

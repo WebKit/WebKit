@@ -1,0 +1,179 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ SpatialPortalEnabled=true ModelElementEnabled=true ModelProcessEnabled=true MockVolumetricSceneEnabled=true allowTestOnlyIPC=true ] -->
+<meta charset="utf-8">
+<title>Requesting and exiting a connected volumetric scene</title>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="../resources/model-element-test-utils.js"></script>
+<script src="resources/volumetric-utils.js"></script>
+<style>
+    .portal { spatial: portal; width: 300px; height: 150px; }
+</style>
+<body>
+<script>
+'use strict';
+
+internals.disableModelLoadDelaysForTesting();
+
+promise_test(async t => {
+    const [model] = createModelAndSource(t, "../resources/cube.usdz");
+    await model.ready;
+
+    // An earlier test's gesture can outlive it when its request never got far enough to spend it.
+    internals.consumeTransientActivation();
+    assert_false(internals.hasTransientActivation(), 'The page has no transient activation');
+
+    await promise_rejects_dom(t, "NotAllowedError", model.requestVolumetricScene(),
+        'Should reject without transient activation');
+
+    assert_equals(presentationMode(model), "inline", 'A rejected request leaves the model inline');
+}, 'Requesting a volumetric scene without transient activation is rejected');
+
+promise_test(async t => {
+    const div = document.createElement("div");
+    document.body.appendChild(div);
+    t.add_cleanup(() => div.remove());
+
+    await promise_rejects_dom(t, "InvalidStateError", requestVolumetricScene(div),
+        'Should reject for an element that cannot host a scene');
+}, 'Requesting a volumetric scene for a plain element is rejected even with activation');
+
+promise_test(async t => {
+    const [model] = createModelAndSource(t, "../resources/cube.usdz");
+    await model.ready;
+    t.add_cleanup(() => model.exitVolumetricScene());
+
+    await requestVolumetricScene(model);
+
+    assert_equals(presentationMode(model), "volumetric", 'The model is presented volumetrically');
+}, 'A loaded model enters a volumetric scene with transient activation');
+
+promise_test(async t => {
+    const [model] = createModelAndSource(t, "../resources/cube.usdz");
+    await model.ready;
+    t.add_cleanup(() => model.exitVolumetricScene());
+
+    await requestVolumetricScene(model);
+
+    await promise_rejects_dom(t, "InvalidStateError", requestVolumetricScene(model),
+        'Should reject while already presented');
+
+    assert_equals(presentationMode(model), "volumetric", 'The established scene is left alone');
+}, 'Requesting a volumetric scene while already presented is rejected');
+
+promise_test(async t => {
+    const [model] = createModelAndSource(t, "../resources/cube.usdz");
+    await model.ready;
+
+    await requestVolumetricScene(model);
+    assert_equals(presentationMode(model), "volumetric", 'The model is presented volumetrically');
+
+    model.exitVolumetricScene();
+
+    await waitForPresentationMode(t, model, "inline");
+}, 'Exiting a volumetric scene returns the model inline');
+
+promise_test(async t => {
+    const [model] = createModelAndSource(t, "../resources/cube.usdz");
+    await model.ready;
+    t.add_cleanup(() => model.exitVolumetricScene());
+
+    await requestVolumetricScene(model);
+    model.exitVolumetricScene();
+    await waitForPresentationMode(t, model, "inline");
+
+    await requestVolumetricScene(model);
+
+    assert_equals(presentationMode(model), "volumetric", 'The model is presented volumetrically again');
+}, 'A model can re-enter a volumetric scene after exiting');
+
+// The exit lands in the same task as the request, so the scene has always still been pending.
+promise_test(async t => {
+    const [model] = createModelAndSource(t, "../resources/cube.usdz");
+    await model.ready;
+
+    const request = requestVolumetricScene(model);
+    model.exitVolumetricScene();
+
+    await promise_rejects_dom(t, "InvalidStateError", request,
+        'Should reject a request that was exited before its scene opened');
+
+    assert_equals(presentationMode(model), "inline", 'The cancelled request leaves the model inline');
+}, 'Exiting before a volumetric scene opens cancels the request');
+
+promise_test(async t => {
+    const [model, source] = createModelAndSource(t, "../resources/cube.usdz");
+    await model.ready;
+    t.add_cleanup(() => model.exitVolumetricScene());
+
+    await requestVolumetricScene(model);
+    assert_equals(presentationMode(model), "volumetric", 'The model is presented volumetrically');
+
+    source.src = "../resources/heart.usdz";
+    await model.ready;
+
+    assert_equals(internals.modelElementState(model), "Loaded", 'The re-sourced model is loaded');
+    assert_equals(presentationMode(model), "volumetric", 'The scene survives the source change');
+}, 'Changing the source of a presented model keeps its volumetric scene');
+
+promise_test(async t => {
+    const [first] = await createPortalWithReadyModel(t);
+    const [second] = await createPortalWithReadyModel(t);
+    t.add_cleanup(() => first.exitVolumetricScene());
+
+    await requestVolumetricScene(first);
+
+    await promise_rejects_dom(t, "InvalidStateError", requestVolumetricScene(second),
+        'Should reject while another element is presented');
+
+    assert_equals(presentationMode(first), "volumetric", 'The established scene is left alone');
+    assert_equals(presentationMode(second), "inline", 'The rejected portal is left inline');
+}, 'Requesting a volumetric scene while another portal is presented is rejected');
+
+promise_test(async t => {
+    const [model] = createModelAndSource(t, "../resources/cube.usdz");
+    await model.ready;
+    const [portal] = await createPortalWithReadyModel(t);
+    t.add_cleanup(() => model.exitVolumetricScene());
+
+    await requestVolumetricScene(model);
+
+    await promise_rejects_dom(t, "InvalidStateError", requestVolumetricScene(portal),
+        'Should reject while a model is presented');
+
+    assert_equals(presentationMode(model), "volumetric", 'The established scene is left alone');
+    assert_equals(presentationMode(portal), "inline", 'The rejected portal is left inline');
+}, 'Requesting a volumetric scene for a portal while a model is presented is rejected');
+
+promise_test(async t => {
+    const [first] = await createPortalWithReadyModel(t);
+    const [second] = await createPortalWithReadyModel(t);
+    t.add_cleanup(() => second.exitVolumetricScene());
+
+    await requestVolumetricScene(first);
+
+    first.exitVolumetricScene();
+    await requestVolumetricScene(second);
+
+    await waitForPresentationMode(t, first, "inline");
+    assert_equals(presentationMode(second), "volumetric", 'The second portal is presented volumetrically');
+}, 'Exiting a volumetric scene lets another element enter one');
+
+// A plain <div> is enough: the frame check runs before the eligibility check, so InvalidAccessError rather than
+// the InvalidStateError an ineligible element gets is what proves the frame is the reason.
+promise_test(async t => {
+    const frame = document.createElement("iframe");
+    const loaded = new Promise(resolve => frame.addEventListener("load", resolve, { once: true }));
+    frame.srcdoc = "<div id='target'></div>";
+    document.body.appendChild(frame);
+    await loaded;
+    t.add_cleanup(() => frame.remove());
+
+    const target = frame.contentDocument.getElementById("target");
+
+    // Asserted on the name rather than through promise_rejects_dom, whose constructor check is realm-sensitive.
+    await requestVolumetricScene(target).then(
+        t.unreached_func('Should have rejected a request made from a subframe'),
+        e => assert_equals(e.name, "InvalidAccessError", 'Rejects a subframe request before anything else'));
+}, 'Requesting a volumetric scene from a subframe is rejected');
+</script>
+</body>

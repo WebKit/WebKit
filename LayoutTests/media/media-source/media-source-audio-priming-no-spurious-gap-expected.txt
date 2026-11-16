@@ -1,0 +1,11 @@
+
+RUN(video.src = URL.createObjectURL(source))
+EVENT(sourceopen)
+RUN(sourceBuffer = source.addSourceBuffer("audio/mock; codecs=mock"))
+RUN(sourceBuffer.appendBuffer(initSegment))
+EVENT(updateend)
+RUN(sourceBuffer.appendBuffer(samplesToAppend))
+EVENT(updateend)
+EXPECTED (enqueuedSamples.length == '2') OK
+END OF TEST
+

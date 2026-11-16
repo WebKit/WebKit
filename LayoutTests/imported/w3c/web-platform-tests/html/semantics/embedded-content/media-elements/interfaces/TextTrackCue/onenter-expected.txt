@@ -1,0 +1,4 @@
+
+PASS TextTrackCue.onenter
+PASS TextTrackCue.addEventListener/removeEventListener
+

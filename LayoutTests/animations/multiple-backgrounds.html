@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <style>
+
+    @keyframes play {
+        from {
+        	background-size: 5% 100%;
+        }
+        to {
+        	background-size: 50% 100%;
+        }
+    }
+
+    button {
+    	width: 200px;
+    	height: 200px;
+    	box-sizing: border-box;
+    	border: 1px solid black;
+    	background-image: linear-gradient(blue, blue), linear-gradient(blue, blue);
+    	background-position: top left, top right;
+    	background-size: 45% 100%;
+    	background-repeat: no-repeat;
+        animation: play 1000000s -10000s linear;
+    }        
+    </style>
+</head>
+<body>
+    <p>Should see symmetrical strips of color down both sides.</p>
+    <button></button>
+</body>
+</html>
+

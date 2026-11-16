@@ -1,0 +1,20 @@
+Test that pending transactions are not completed during recursive JS calls until all JS is finished.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
+
+indexedDB.deleteDatabase(dbname)
+indexedDB.open(dbname)
+pendingTransaction = db.transaction(['objectStore'], 'readwrite')
+Start re-entrant JS
+transaction = db.transaction(['objectStore'], 'readwrite')
+End re-entrant JS
+store = pendingTransaction.objectStore('objectStore')
+PASS store !== undefined is true
+PASS Pending transaction completed
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

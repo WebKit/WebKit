@@ -1,0 +1,7 @@
+2d.shadow.stroke.join.1
+
+Shadows are not drawn for areas outside stroke joins
+
+
+PASS Shadows are not drawn for areas outside stroke joins
+

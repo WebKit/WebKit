@@ -1,0 +1,8 @@
+
+FAIL Property overlay value 'none' assert_true: overlay doesn't seem to be supported in the computed style expected true got false
+FAIL Property overlay value 'auto' assert_true: overlay doesn't seem to be supported in the computed style expected true got false
+FAIL Property overlay value 'inherit' assert_true: overlay doesn't seem to be supported in the computed style expected true got false
+FAIL Property overlay value 'initial' assert_true: overlay doesn't seem to be supported in the computed style expected true got false
+FAIL Property overlay value 'revert' assert_true: overlay doesn't seem to be supported in the computed style expected true got false
+FAIL Property overlay value 'unset' assert_true: overlay doesn't seem to be supported in the computed style expected true got false
+

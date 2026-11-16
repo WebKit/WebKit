@@ -1,0 +1,4 @@
+
+PASS location search
+PASS location.search on about:blank
+

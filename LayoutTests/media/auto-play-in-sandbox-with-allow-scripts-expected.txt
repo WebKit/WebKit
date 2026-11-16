@@ -1,0 +1,4 @@
+
+
+PASS Test that play event fires when "src" set with an autoplay attribute in a sandbox with allows-scripts.
+

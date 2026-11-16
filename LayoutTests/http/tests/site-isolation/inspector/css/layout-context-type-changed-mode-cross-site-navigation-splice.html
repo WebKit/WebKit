@@ -1,0 +1,156 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="../debugger/resources/site-isolation-debugger-test-utilities.js"></script>
+<script>
+function navigateCrossSite(step, lateGrid)
+{
+    let url = new URL(location.href);
+    url.hostname = location.hostname === "127.0.0.1" ? "localhost" : "127.0.0.1";
+    url.search = `?step=${step}` + (lateGrid ? "&late=1" : "");
+    location.href = url.href;
+}
+
+function makeMainGridAGrid()
+{
+    document.getElementById("main-grid").style.display = "grid";
+    document.body.offsetHeight;
+}
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.CSS.LayoutContextTypeChangedMode.CrossSiteNavigationSplice");
+
+    const mainPageFileName = "layout-context-type-changed-mode-cross-site-navigation-splice.html";
+
+    function treeContainingNode(node) {
+        if (!node)
+            return "no node";
+
+        let root = node;
+        while (root.parentNode)
+            root = root.parentNode;
+
+        if (root === WI.domManager._document)
+            return "page tree";
+        if (!root.owningTarget)
+            return "detached page subtree";
+        if (root.documentURL?.includes(mainPageFileName))
+            return "main frame target's tree";
+        return "another frame target's tree";
+    }
+
+    async function awaitFrameDocument(predicate) {
+        while (true) {
+            for (let target of WI.targets) {
+                let frameDocument = WI.domManager.frameTargetDocumentForTarget(target);
+                if (frameDocument && predicate(frameDocument))
+                    return {target, frameDocument};
+            }
+            await WI.domManager.awaitEvent(WI.DOMManager.Event.FrameDocumentAvailable);
+        }
+    }
+
+    async function flushTarget(target) {
+        await target.DOMAgent.getSupportedEventNames();
+        await target.DOMAgent.getSupportedEventNames();
+    }
+
+    async function childElement(parent, predicate) {
+        await new Promise((resolve) => parent.getChildNodes(resolve));
+        return parent.children?.find(predicate) ?? null;
+    }
+
+    async function navigateAndCheck(step, {setAllModeAfterLoad, lateGrid}) {
+        let iframeURLSubstring = `frame-with-layout-flags.html?step=${step}`;
+
+        InspectorTest.log("Navigating the main frame cross-site...");
+        InspectorTest.deferOutputUntilTestPageIsReloaded();
+        InspectorTest.evaluateInPage(`navigateCrossSite(${step}, ${!!lateGrid})`);
+        await InspectorTest.awaitEvent(FrontendTestHarness.Event.TestPageDidLoad);
+
+        let {target: mainFrameTarget} = await awaitFrameDocument((doc) => doc.documentURL?.includes(`${mainPageFileName}?step=${step}`));
+        let {target: iframeTarget} = await awaitFrameDocument((doc) => doc.documentURL?.includes(iframeURLSubstring));
+        InspectorTest.assert(await waitForExpressionInTarget(iframeTarget, `document.readyState === "complete"`, 50), "Timed out waiting for the iframe to load.");
+        InspectorTest.assert(await waitForExpressionInTarget(mainFrameTarget, `document.readyState === "complete"`, 50), "Timed out waiting for the main frame to load.");
+        await flushTarget(mainFrameTarget);
+        await flushTarget(iframeTarget);
+
+        // Show the page tree the way the Elements tab does: <body> expanded, #container collapsed.
+        let pageDocument = await WI.domManager.requestDocument();
+        let container = await childElement(pageDocument.body, (node) => node.getAttribute("id") === "container");
+
+        if (setAllModeAfterLoad) {
+            InspectorTest.log("Changing `layoutContextTypeChangedMode` to `All` after the navigation...");
+            WI.cssManager.layoutContextTypeChangedMode = WI.CSSManager.LayoutContextTypeChangedMode.All;
+            await flushTarget(WI.assumingMainTarget());
+            await flushTarget(mainFrameTarget);
+            await flushTarget(iframeTarget);
+        }
+
+        if (lateGrid) {
+            InspectorTest.log("Making #main-grid a grid after the iframe has loaded...");
+            await InspectorTest.evaluateInPage(`makeMainGridAGrid()`);
+            await flushTarget(WI.assumingMainTarget());
+            await flushTarget(mainFrameTarget);
+            await flushTarget(iframeTarget);
+        }
+
+        let iframeDocument = WI.domManager.frameTargetDocumentForTarget(iframeTarget);
+        InspectorTest.expectThat(!iframeDocument?.parentNode || treeContainingNode(iframeDocument) === "page tree", "Before #container is expanded, the iframe's document should be pending or in the page tree.");
+
+        InspectorTest.log("Expanding #container in the page tree...");
+        let pageIframe = await childElement(container, (node) => node.nodeName() === "IFRAME");
+        await flushTarget(iframeTarget);
+
+        iframeDocument = WI.domManager.frameTargetDocumentForTarget(iframeTarget);
+        InspectorTest.expectNotNull(pageIframe, "The page tree should have the <iframe>.");
+        InspectorTest.expectEqual(treeContainingNode(iframeDocument), "page tree", "The iframe's document should be in the page tree.");
+        InspectorTest.expectEqual(iframeDocument?.parentNode, pageIframe, "The iframe's document should be spliced into the page tree's <iframe>.");
+        InspectorTest.expectEqual(pageIframe?.children?.length ?? 0, 1, "The page tree's <iframe> should have the frame document as its child.");
+
+        let listedGridIds = Array.from(WI.domManager.attachedNodes({filter: (node) => node.layoutContextType && node.owningTarget === iframeTarget})).map((node) => node.getAttribute("id"));
+        InspectorTest.expectShallowEqual(listedGridIds, ["grid", "deep-grid"], "The Layout panel should list the iframe's #grid and #deep-grid.");
+    }
+
+    function addNavigationTestCase(step, name, description, {setAllModeBeforeNavigation, setAllModeAfterLoad, lateGrid}) {
+        suite.addTestCase({
+            name: `SiteIsolation.CSS.LayoutContextTypeChangedMode.CrossSiteNavigationSplice.${name}`,
+            description,
+            async test() {
+                if (setAllModeBeforeNavigation) {
+                    InspectorTest.log("Changing `layoutContextTypeChangedMode` to `All`...");
+                    WI.cssManager.layoutContextTypeChangedMode = WI.CSSManager.LayoutContextTypeChangedMode.All;
+                }
+                await navigateAndCheck(step, {setAllModeAfterLoad, lateGrid});
+            },
+            async teardown() {
+                WI.cssManager.layoutContextTypeChangedMode = WI.CSSManager.LayoutContextTypeChangedMode.Observed;
+            },
+        });
+    }
+
+    addNavigationTestCase(1, "AllModeBeforeNavigation", "With the Layout panel open, a cross-site main-frame navigation should splice the new iframe's document into the page tree.", {setAllModeBeforeNavigation: true});
+    addNavigationTestCase(2, "AllModeAfterNavigation", "Opening the Layout panel after a cross-site main-frame navigation should splice the iframe's document into the page tree.", {setAllModeAfterLoad: true});
+    addNavigationTestCase(3, "AllModeBeforeNavigationLateGrid", "With the Layout panel open, a grid laid out after the iframe loads should not capture the iframe's document in the main frame target's tree.", {setAllModeBeforeNavigation: true, lateGrid: true});
+    addNavigationTestCase(4, "AllModeAfterNavigationLateGrid", "Opening the Layout panel after a cross-site main-frame navigation, then laying out a grid, should not capture the iframe's document in the main frame target's tree.", {setAllModeAfterLoad: true, lateGrid: true});
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+<body onload="runTest()">
+<p>Tests where a cross-origin iframe's document is spliced after a cross-site main-frame navigation while the Layout panel is open.</p>
+<div id="container">
+    <div id="main-grid"><div></div></div>
+</div>
+<script>
+(function() {
+    if (!location.search.includes("late=1"))
+        document.getElementById("main-grid").style.display = "grid";
+
+    let crossOriginHost = location.hostname === "127.0.0.1" ? "localhost" : "127.0.0.1";
+    let iframe = document.createElement("iframe");
+    iframe.src = `http://${crossOriginHost}:8000/site-isolation/inspector/css/resources/frame-with-layout-flags.html${location.search || "?step=0"}`;
+    document.getElementById("container").append(iframe);
+})();
+</script>
+</body>

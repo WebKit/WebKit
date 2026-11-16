@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<meta charset=utf-8>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<canvas id="canvas-srgb" width="200" height="200"></canvas>
+<canvas id="canvas-display-p3" width="200" height="200"></canvas>
+<style>
+html { text-align: center; }
+@media (prefers-color-scheme: dark) {
+    html { background-color: black; }
+}
+</style>
+<script>
+for (let colorSpace of ["srgb", "display-p3"]) {
+    let canvas = document.getElementById(`canvas-${colorSpace}`);
+    let context = canvas.getContext("2d", { colorSpace });
+    for (let y = 20; y < 180; y += 20) {
+        let useDisplayP3Color = (y / 20) % 2 == 0;
+        context.fillStyle =
+            useDisplayP3Color ? "color(display-p3 0 1 0)" : "#0f0";
+        context.fillRect(20, y, 160, 20);
+    }
+}
+</script>

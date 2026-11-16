@@ -1,0 +1,6 @@
+This list item should have green background because its class is "t1"
+This list item should have green background because its class is "t2"
+This list item should have green background because the inner SPAN does not match SPAN.t3
+
+PASS Class selectors
+

@@ -1,0 +1,36 @@
+This tests the basic interaction between referenceTarget and aria-activedescendant.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+aria-activedescendant targeting a custom element with shadowrootreferencetarget.
+PASS: combobox1.selectedChildrenCount === 1
+PASS: combobox1.selectedChildAtIndex(0).title === 'AXTitle: Option 2'
+
+ShadowRoot.referenceTarget property works on an imperatively defined custom element.
+PASS: combobox2.selectedChildrenCount === 1
+PASS: combobox2.selectedChildAtIndex(0).title === 'AXTitle: Option C'
+
+Modifying a ShadowRoot's referenceTarget also updates the accessibility object.
+PASS: combobox2.selectedChildrenCount === 1
+PASS: combobox2.selectedChildAtIndex(0).title === 'AXTitle: Option A'
+
+Modifying a ShadowRoot's referenceTarget's ID also updates the accessibility object.
+PASS: combobox2.selectedChildrenCount === 0
+PASS: combobox2.selectedChildrenCount === 1
+PASS: combobox2.selectedChildAtIndex(0).title === 'AXTitle: Option B'
+
+aria-activedescendant works when the linkage is created across two sibling shadow trees.
+PASS: realInput.selectedChildrenCount === 1
+PASS: realInput.selectedChildAtIndex(0).title === 'AXTitle: Option C'
+
+Modifying a ShadowRoot's referenceTarget also updates the accessibility object when the linkage is created across two sibling shadow trees.
+PASS: realInput.selectedChildrenCount === 1
+PASS: realInput.selectedChildAtIndex(0).title === 'AXTitle: Option B'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+
+

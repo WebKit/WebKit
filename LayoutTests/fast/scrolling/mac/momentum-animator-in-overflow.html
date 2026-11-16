@@ -1,0 +1,89 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<head>
+    <style>
+        body {
+            height: 2000px;
+            width: 200%;
+        }
+        
+        .scroller {
+            height: 500px;
+            width: 400px;
+            border: 1px solid black;
+            overflow: auto;
+        }
+        
+        .content {
+            width: 200%;
+            height: 500%;
+        }
+    </style>
+    <script src="../../../resources/js-test-pre.js"></script>
+    <script src="../../../resources/ui-helper.js"></script>
+    <script>
+        var jsTestIsAsync = true;
+        
+        let scroller;
+        async function testEventSequence()
+        {
+            const wheelEventSquence = {
+                "events" : [
+                    {
+                        type : "wheel",
+                        viewX : 100,
+                        viewY : 100,
+                        deltaY : -10,
+                        phase : "began"
+                    },
+                    {
+                        type : "wheel",
+                        deltaY : -100,
+                        phase : "changed"
+                    },
+                    {
+                        type : "wheel",
+                        phase : "ended"
+                    },
+                    {
+                        type : "wheel",
+                        deltaY : -100,
+                        momentumPhase : "began"
+                    },
+                    {
+                        type : "wheel",
+                        deltaY : -80,
+                        momentumPhase : "changed"
+                    },
+                    {
+                        type : "wheel",
+                        momentumPhase : "ended"
+                    }
+                ]
+            };
+
+            await UIHelper.mouseWheelSequence(wheelEventSquence);
+            shouldBe('window.scrollY', '0');
+            scroller = document.querySelector('.scroller');
+            // Make sure we scrolled some non-trivial amount.
+            shouldBeTrue('scroller.scrollTop > 200');
+        }
+
+        async function scrollTest()
+        {
+            await testEventSequence();
+            finishJSTest();
+        }
+
+        window.addEventListener('load', () => {
+            setTimeout(scrollTest, 0);
+        }, false);
+    </script>
+</head>
+<body>
+    <div class="scroller">
+        <div class="content"></div>
+    </div>
+    <script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

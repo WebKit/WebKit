@@ -1,0 +1,69 @@
+<!DOCTYPE html><!-- webkit-test-runner [ IsAccessibilityIsolatedTreeEnabled=true ] -->
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+<style>
+select, select::picker(select) {
+    appearance: base-select;
+}
+</style>
+</head>
+<body>
+
+<select id="select" size="10">
+    <option id="apple">Apple</option>
+    <hr id="separator">
+    <optgroup id="group" label="More">
+        <option id="banana" selected>Banana</option>
+    </optgroup>
+    <hr>
+    <option id="cherry">Cherry</option>
+    <div><option id="date">Date</option></div>
+    Text
+    <button id="button">Button</button>
+    <a href="#">Link</a>
+    <hr>
+</select>
+
+<script>
+var output = "This test verifies that a base appearance list box exposes all of its content where it is in the composed tree.\n\n";
+
+function parentMismatches(object, mismatches = []) {
+    for (let i = 0; i < object.childrenCount; ++i) {
+        const child = object.childAtIndex(i);
+        if (!child.parentElement().isEqual(object))
+            mismatches.push(child.role);
+        parentMismatches(child, mismatches);
+    }
+    return mismatches;
+}
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    window.axSelect = accessibilityController.accessibleElementById("select");
+    output += expect("axSelect.role", "'AXRole: AXList'");
+    output += expect("parentMismatches(axSelect).join()", "''");
+    output += expect("accessibilityController.accessibleElementById('apple').parentElement().isEqual(axSelect)", "true");
+    output += expect("accessibilityController.accessibleElementById('separator').role", "'AXRole: AXSplitter'");
+    output += expect("axSelect.childAtIndex(2)?.stringValue", "'AXValue: More'");
+    output += expect("accessibilityController.accessibleElementById('banana').parentElement().isEqual(axSelect)", "true");
+    output += expect("accessibilityController.accessibleElementById('cherry').parentElement().isEqual(axSelect)", "true");
+    output += expect("accessibilityController.accessibleElementById('date').parentElement().isEqual(axSelect)", "true");
+    output += expect("axSelect.selectedChildrenCount", "1");
+    output += expect("axSelect.selectedChildAtIndex(0).isEqual(accessibilityController.accessibleElementById('banana'))", "true");
+
+    setTimeout(async function() {
+        document.getElementById("button").focus();
+        output += await expectAsync("accessibilityController.focusedElement.isEqual(accessibilityController.accessibleElementById('button'))", "true");
+        output += expect("accessibilityController.focusedElement.parentElement().isEqual(axSelect)", "true");
+
+        document.getElementById("select").style.display = "none";
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

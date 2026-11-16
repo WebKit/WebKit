@@ -1,0 +1,7 @@
+
+RUN(internals.setCaptionDisplayMode("automatic"))
+EVENT(addtrack)
+EXPECTED (video.textTracks.length == '1') OK
+EXPECTED (video.textTracks[0].mode == 'showing') OK
+END OF TEST
+

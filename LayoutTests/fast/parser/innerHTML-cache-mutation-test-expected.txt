@@ -1,0 +1,110 @@
+CONSOLE MESSAGE: === Basic prefix extension ===
+CONSOLE MESSAGE: Set base then extend with prefix match
+CONSOLE MESSAGE: children.length: 2 (expected: 2)
+CONSOLE MESSAGE: Result: PASS
+
+CONSOLE MESSAGE: === Multiple extensions ===
+CONSOLE MESSAGE: Extend by adding complete lists
+CONSOLE MESSAGE: ul count: 3 (expected: 3)
+CONSOLE MESSAGE: Result: PASS
+
+CONSOLE MESSAGE: === Exact match (cache hit) ===
+CONSOLE MESSAGE: Set same innerHTML twice
+CONSOLE MESSAGE: children.length: 2 (expected: 2)
+CONSOLE MESSAGE: Result: PASS
+
+CONSOLE MESSAGE: ---------- DOM Mutation Tests ----------
+
+CONSOLE MESSAGE: === appendChild invalidates cache ===
+CONSOLE MESSAGE: appendChild to cached element, then extend
+CONSOLE MESSAGE: Result: PASS
+
+CONSOLE MESSAGE: === insertAdjacentHTML invalidates cache ===
+CONSOLE MESSAGE: insertAdjacentHTML then extend
+CONSOLE MESSAGE: Result: PASS
+
+CONSOLE MESSAGE: === outerHTML invalidates cache ===
+CONSOLE MESSAGE: outerHTML replacement then extend
+CONSOLE MESSAGE: outer-test.tagName: DIV (expected: DIV)
+CONSOLE MESSAGE: Result: PASS
+
+CONSOLE MESSAGE: === removeChild invalidates cache ===
+CONSOLE MESSAGE: removeChild then extend
+CONSOLE MESSAGE: remove-test has span: true (expected: true)
+CONSOLE MESSAGE: Result: PASS
+
+CONSOLE MESSAGE: === textContent change invalidates cache ===
+CONSOLE MESSAGE: textContent change then extend
+CONSOLE MESSAGE: text-test.textContent: "original" (expected: "original")
+CONSOLE MESSAGE: Result: PASS
+
+CONSOLE MESSAGE: === Descendant mutation invalidates cache ===
+CONSOLE MESSAGE: Mutated grandchild element then extend
+CONSOLE MESSAGE: inner-nested.textContent: "text" (expected: "text")
+CONSOLE MESSAGE: Result: PASS
+
+CONSOLE MESSAGE: ---------- Attribute Mutation Tests ----------
+
+CONSOLE MESSAGE: === Inline style change invalidates cache ===
+CONSOLE MESSAGE: Changed style.color to blue, then extended
+CONSOLE MESSAGE: Final color:  (expected: empty/default)
+CONSOLE MESSAGE: Result: PASS
+
+CONSOLE MESSAGE: === style.display change invalidates cache ===
+CONSOLE MESSAGE: TypeError: null is not an object (evaluating 'displayContainer.querySelector('#style-color-testb').style')
+Tests innerHTML prefix cache mutations and invalidation.
+
+=== Basic prefix extension ===
+Set base then extend with prefix match
+children.length: 2 (expected: 2)
+Result: PASS
+
+=== Multiple extensions ===
+Extend by adding complete lists
+ul count: 3 (expected: 3)
+Result: PASS
+
+=== Exact match (cache hit) ===
+Set same innerHTML twice
+children.length: 2 (expected: 2)
+Result: PASS
+
+---------- DOM Mutation Tests ----------
+
+=== appendChild invalidates cache ===
+appendChild to cached element, then extend
+Result: PASS
+
+=== insertAdjacentHTML invalidates cache ===
+insertAdjacentHTML then extend
+Result: PASS
+
+=== outerHTML invalidates cache ===
+outerHTML replacement then extend
+outer-test.tagName: DIV (expected: DIV)
+Result: PASS
+
+=== removeChild invalidates cache ===
+removeChild then extend
+remove-test has span: true (expected: true)
+Result: PASS
+
+=== textContent change invalidates cache ===
+textContent change then extend
+text-test.textContent: "original" (expected: "original")
+Result: PASS
+
+=== Descendant mutation invalidates cache ===
+Mutated grandchild element then extend
+inner-nested.textContent: "text" (expected: "text")
+Result: PASS
+
+---------- Attribute Mutation Tests ----------
+
+=== Inline style change invalidates cache ===
+Changed style.color to blue, then extended
+Final color:  (expected: empty/default)
+Result: PASS
+
+=== style.display change invalidates cache ===
+visible

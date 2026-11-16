@@ -1,0 +1,3 @@
+
+PASS computed style on pseudo-element stays in sync with the DOM element
+

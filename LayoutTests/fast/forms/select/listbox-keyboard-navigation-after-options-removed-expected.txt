@@ -1,0 +1,13 @@
+Arrow keys should move from the selected option of a listbox after an option before it was removed.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS up.value is "4"
+PASS up.value is "2"
+PASS down.value is "4"
+PASS down.value is "4"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

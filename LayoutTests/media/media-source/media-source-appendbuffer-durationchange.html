@@ -1,0 +1,64 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ MediaSourceEnabled=true ] -->
+<html>
+<head>
+    <title>managedmediasource-memoryPressure-inactive</title>
+    <script src="../../media/media-source/media-source-loader.js"></script>
+    <script src="../../media/video-test.js"></script>
+    <script>
+    var loader;
+    var source;
+    var sourceBuffer;
+    var durationChange = 0;
+
+    function loaderPromise(loader) {
+        return new Promise((resolve, reject) => {
+            loader.onload = resolve;
+            loader.onerror = reject;
+        });
+    }
+
+    window.addEventListener('load', async event => {
+        try {
+            findMediaElement();
+
+            let manifests = [ 'content/test-opus-manifest.json', 'content/test-vorbis-manifest.json', 'content/test-48khz-manifest.json', 'content/test-xhe-aac-manifest.json' ];
+            for (const manifest of manifests) {
+                loader = new MediaSourceLoader(manifest);
+                await loaderPromise(loader);
+                if (MediaSource.isTypeSupported(loader.type()))
+                    break;
+            }
+
+            source = new MediaSource();
+            run('video.src = URL.createObjectURL(source)');
+            await waitFor(source, 'sourceopen');
+            waitFor(video, 'error').then(failTest);
+
+            run('sourceBuffer = source.addSourceBuffer(loader.type())');
+
+            run('sourceBuffer.appendBuffer(loader.initSegment())');
+
+            waitForEvent('durationchange', () => { durationChange++; });
+
+            // An initial durationchange will be fired when the init segment's duration is parsed.
+            await Promise.all([ waitFor(video, 'durationchange'), waitFor(sourceBuffer, 'update')]);
+
+            run('sourceBuffer.timestampOffset = source.duration');
+            run('sourceBuffer.appendBuffer(loader.mediaSegment(0))');
+
+            await Promise.all([ waitFor(video, 'durationchange'), waitFor(sourceBuffer, 'update')]);
+
+            // There should be two durationchange events fired; one when the duration in the init segment was parsed;
+            // and the other when the media segment was parsed, as it contained frames past the duration.
+            testExpected(durationChange, 2);
+            endTest();
+        } catch (e) {
+            failTest(`Caught exception: "${e}"`);
+        }
+    });
+    </script>
+</head>
+<body>
+    <video controls></video>
+</body>
+</html>

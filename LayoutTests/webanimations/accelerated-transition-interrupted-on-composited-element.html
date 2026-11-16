@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<body>
+<style>
+div {
+    width: 100px;
+    height: 100px;
+    background-color: black;
+    will-change: transform;
+}
+</style>
+<script>
+
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+const div = document.body.appendChild(document.createElement("div"));
+
+// Wait for a transition to start and abort it.
+div.addEventListener("transitionstart", event => {
+    div.style.transition = "none";
+});
+
+// When notified the transition was aborted, finish the test once we've ensured that animations
+// have been updated (one rAF) and that accelerated animations will have been committed (two rAFs).
+div.addEventListener("transitioncancel", event => {
+    if (window.testRunner) {
+        requestAnimationFrame(() => {
+            requestAnimationFrame(() => testRunner.notifyDone());
+        });
+    }
+});
+
+
+// Initiate a transform transition.
+setTimeout(() => {
+    div.style.transition = "transform 2s";
+    div.style.transform = "translateX(100px)";
+});
+
+</script>
+</body>

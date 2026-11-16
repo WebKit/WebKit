@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="../../media/media-file.js"></script>
+</head>
+<body>
+<video id="video"></video>
+<script>
+function wait(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+promise_test(async (test) => {
+    assert_true(!!window.internals, "Test requires window.internals");
+    internals.settings.setShouldDeactivateAudioSession(true);
+
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    test.add_cleanup(() => stream.getTracks().forEach(t => t.stop()));
+
+    assert_true(internals.audioSessionActive(), "AudioSession must be active once microphone capture starts");
+
+    await navigator.mediaSession.setMicrophoneActive(false);
+    assert_false(internals.audioSessionActive(), "AudioSession must be inactive once microphone capture stops");
+
+    let promise;
+    internals.withUserGesture(() => {
+        promise = navigator.mediaSession.setMicrophoneActive(true);
+    });
+    await promise;
+
+    assert_true(internals.audioSessionActive(), "AudioSession remains active while video and capture are both running");
+}, "Removing a media session while microphone capture is active must not deactivate AudioSession");
+</script>
+</body>
+</html>

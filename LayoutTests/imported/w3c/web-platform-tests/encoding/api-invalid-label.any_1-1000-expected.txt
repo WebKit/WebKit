@@ -1,0 +1,1002 @@
+
+PASS Invalid label "invalid-invalidLabel" should be rejected by TextDecoder.
+PASS Invalid label "\0unicode-1-1-utf-8" should be rejected by TextDecoder.
+PASS Invalid label "unicode-1-1-utf-8\0" should be rejected by TextDecoder.
+PASS Invalid label "\0unicode-1-1-utf-8\0" should be rejected by TextDecoder.
+PASS Invalid label "\vunicode-1-1-utf-8" should be rejected by TextDecoder.
+PASS Invalid label "unicode-1-1-utf-8\v" should be rejected by TextDecoder.
+PASS Invalid label "\vunicode-1-1-utf-8\v" should be rejected by TextDecoder.
+PASS Invalid label " unicode-1-1-utf-8" should be rejected by TextDecoder.
+PASS Invalid label "unicode-1-1-utf-8 " should be rejected by TextDecoder.
+PASS Invalid label " unicode-1-1-utf-8 " should be rejected by TextDecoder.
+PASS Invalid label " unicode-1-1-utf-8" should be rejected by TextDecoder.
+PASS Invalid label "unicode-1-1-utf-8 " should be rejected by TextDecoder.
+PASS Invalid label " unicode-1-1-utf-8 " should be rejected by TextDecoder.
+PASS Invalid label " unicode-1-1-utf-8" should be rejected by TextDecoder.
+PASS Invalid label "unicode-1-1-utf-8 " should be rejected by TextDecoder.
+PASS Invalid label " unicode-1-1-utf-8 " should be rejected by TextDecoder.
+PASS Invalid label "\0unicode11utf8" should be rejected by TextDecoder.
+PASS Invalid label "unicode11utf8\0" should be rejected by TextDecoder.
+PASS Invalid label "\0unicode11utf8\0" should be rejected by TextDecoder.
+PASS Invalid label "\vunicode11utf8" should be rejected by TextDecoder.
+PASS Invalid label "unicode11utf8\v" should be rejected by TextDecoder.
+PASS Invalid label "\vunicode11utf8\v" should be rejected by TextDecoder.
+PASS Invalid label " unicode11utf8" should be rejected by TextDecoder.
+PASS Invalid label "unicode11utf8 " should be rejected by TextDecoder.
+PASS Invalid label " unicode11utf8 " should be rejected by TextDecoder.
+PASS Invalid label " unicode11utf8" should be rejected by TextDecoder.
+PASS Invalid label "unicode11utf8 " should be rejected by TextDecoder.
+PASS Invalid label " unicode11utf8 " should be rejected by TextDecoder.
+PASS Invalid label " unicode11utf8" should be rejected by TextDecoder.
+PASS Invalid label "unicode11utf8 " should be rejected by TextDecoder.
+PASS Invalid label " unicode11utf8 " should be rejected by TextDecoder.
+PASS Invalid label "\0unicode20utf8" should be rejected by TextDecoder.
+PASS Invalid label "unicode20utf8\0" should be rejected by TextDecoder.
+PASS Invalid label "\0unicode20utf8\0" should be rejected by TextDecoder.
+PASS Invalid label "\vunicode20utf8" should be rejected by TextDecoder.
+PASS Invalid label "unicode20utf8\v" should be rejected by TextDecoder.
+PASS Invalid label "\vunicode20utf8\v" should be rejected by TextDecoder.
+PASS Invalid label " unicode20utf8" should be rejected by TextDecoder.
+PASS Invalid label "unicode20utf8 " should be rejected by TextDecoder.
+PASS Invalid label " unicode20utf8 " should be rejected by TextDecoder.
+PASS Invalid label " unicode20utf8" should be rejected by TextDecoder.
+PASS Invalid label "unicode20utf8 " should be rejected by TextDecoder.
+PASS Invalid label " unicode20utf8 " should be rejected by TextDecoder.
+PASS Invalid label " unicode20utf8" should be rejected by TextDecoder.
+PASS Invalid label "unicode20utf8 " should be rejected by TextDecoder.
+PASS Invalid label " unicode20utf8 " should be rejected by TextDecoder.
+PASS Invalid label "\0utf-8" should be rejected by TextDecoder.
+PASS Invalid label "utf-8\0" should be rejected by TextDecoder.
+PASS Invalid label "\0utf-8\0" should be rejected by TextDecoder.
+PASS Invalid label "\vutf-8" should be rejected by TextDecoder.
+PASS Invalid label "utf-8\v" should be rejected by TextDecoder.
+PASS Invalid label "\vutf-8\v" should be rejected by TextDecoder.
+PASS Invalid label " utf-8" should be rejected by TextDecoder.
+PASS Invalid label "utf-8 " should be rejected by TextDecoder.
+PASS Invalid label " utf-8 " should be rejected by TextDecoder.
+PASS Invalid label " utf-8" should be rejected by TextDecoder.
+PASS Invalid label "utf-8 " should be rejected by TextDecoder.
+PASS Invalid label " utf-8 " should be rejected by TextDecoder.
+PASS Invalid label " utf-8" should be rejected by TextDecoder.
+PASS Invalid label "utf-8 " should be rejected by TextDecoder.
+PASS Invalid label " utf-8 " should be rejected by TextDecoder.
+PASS Invalid label "\0utf8" should be rejected by TextDecoder.
+PASS Invalid label "utf8\0" should be rejected by TextDecoder.
+PASS Invalid label "\0utf8\0" should be rejected by TextDecoder.
+PASS Invalid label "\vutf8" should be rejected by TextDecoder.
+PASS Invalid label "utf8\v" should be rejected by TextDecoder.
+PASS Invalid label "\vutf8\v" should be rejected by TextDecoder.
+PASS Invalid label " utf8" should be rejected by TextDecoder.
+PASS Invalid label "utf8 " should be rejected by TextDecoder.
+PASS Invalid label " utf8 " should be rejected by TextDecoder.
+PASS Invalid label " utf8" should be rejected by TextDecoder.
+PASS Invalid label "utf8 " should be rejected by TextDecoder.
+PASS Invalid label " utf8 " should be rejected by TextDecoder.
+PASS Invalid label " utf8" should be rejected by TextDecoder.
+PASS Invalid label "utf8 " should be rejected by TextDecoder.
+PASS Invalid label " utf8 " should be rejected by TextDecoder.
+PASS Invalid label "\0x-unicode20utf8" should be rejected by TextDecoder.
+PASS Invalid label "x-unicode20utf8\0" should be rejected by TextDecoder.
+PASS Invalid label "\0x-unicode20utf8\0" should be rejected by TextDecoder.
+PASS Invalid label "\vx-unicode20utf8" should be rejected by TextDecoder.
+PASS Invalid label "x-unicode20utf8\v" should be rejected by TextDecoder.
+PASS Invalid label "\vx-unicode20utf8\v" should be rejected by TextDecoder.
+PASS Invalid label " x-unicode20utf8" should be rejected by TextDecoder.
+PASS Invalid label "x-unicode20utf8 " should be rejected by TextDecoder.
+PASS Invalid label " x-unicode20utf8 " should be rejected by TextDecoder.
+PASS Invalid label " x-unicode20utf8" should be rejected by TextDecoder.
+PASS Invalid label "x-unicode20utf8 " should be rejected by TextDecoder.
+PASS Invalid label " x-unicode20utf8 " should be rejected by TextDecoder.
+PASS Invalid label " x-unicode20utf8" should be rejected by TextDecoder.
+PASS Invalid label "x-unicode20utf8 " should be rejected by TextDecoder.
+PASS Invalid label " x-unicode20utf8 " should be rejected by TextDecoder.
+PASS Invalid label "\0866" should be rejected by TextDecoder.
+PASS Invalid label "866\0" should be rejected by TextDecoder.
+PASS Invalid label "\0866\0" should be rejected by TextDecoder.
+PASS Invalid label "\v866" should be rejected by TextDecoder.
+PASS Invalid label "866\v" should be rejected by TextDecoder.
+PASS Invalid label "\v866\v" should be rejected by TextDecoder.
+PASS Invalid label " 866" should be rejected by TextDecoder.
+PASS Invalid label "866 " should be rejected by TextDecoder.
+PASS Invalid label " 866 " should be rejected by TextDecoder.
+PASS Invalid label " 866" should be rejected by TextDecoder.
+PASS Invalid label "866 " should be rejected by TextDecoder.
+PASS Invalid label " 866 " should be rejected by TextDecoder.
+PASS Invalid label " 866" should be rejected by TextDecoder.
+PASS Invalid label "866 " should be rejected by TextDecoder.
+PASS Invalid label " 866 " should be rejected by TextDecoder.
+PASS Invalid label "\0cp866" should be rejected by TextDecoder.
+PASS Invalid label "cp866\0" should be rejected by TextDecoder.
+PASS Invalid label "\0cp866\0" should be rejected by TextDecoder.
+PASS Invalid label "\vcp866" should be rejected by TextDecoder.
+PASS Invalid label "cp866\v" should be rejected by TextDecoder.
+PASS Invalid label "\vcp866\v" should be rejected by TextDecoder.
+PASS Invalid label " cp866" should be rejected by TextDecoder.
+PASS Invalid label "cp866 " should be rejected by TextDecoder.
+PASS Invalid label " cp866 " should be rejected by TextDecoder.
+PASS Invalid label " cp866" should be rejected by TextDecoder.
+PASS Invalid label "cp866 " should be rejected by TextDecoder.
+PASS Invalid label " cp866 " should be rejected by TextDecoder.
+PASS Invalid label " cp866" should be rejected by TextDecoder.
+PASS Invalid label "cp866 " should be rejected by TextDecoder.
+PASS Invalid label " cp866 " should be rejected by TextDecoder.
+PASS Invalid label "\0csibm866" should be rejected by TextDecoder.
+PASS Invalid label "csibm866\0" should be rejected by TextDecoder.
+PASS Invalid label "\0csibm866\0" should be rejected by TextDecoder.
+PASS Invalid label "\vcsibm866" should be rejected by TextDecoder.
+PASS Invalid label "csibm866\v" should be rejected by TextDecoder.
+PASS Invalid label "\vcsibm866\v" should be rejected by TextDecoder.
+PASS Invalid label " csibm866" should be rejected by TextDecoder.
+PASS Invalid label "csibm866 " should be rejected by TextDecoder.
+PASS Invalid label " csibm866 " should be rejected by TextDecoder.
+PASS Invalid label " csibm866" should be rejected by TextDecoder.
+PASS Invalid label "csibm866 " should be rejected by TextDecoder.
+PASS Invalid label " csibm866 " should be rejected by TextDecoder.
+PASS Invalid label " csibm866" should be rejected by TextDecoder.
+PASS Invalid label "csibm866 " should be rejected by TextDecoder.
+PASS Invalid label " csibm866 " should be rejected by TextDecoder.
+PASS Invalid label "\0ibm866" should be rejected by TextDecoder.
+PASS Invalid label "ibm866\0" should be rejected by TextDecoder.
+PASS Invalid label "\0ibm866\0" should be rejected by TextDecoder.
+PASS Invalid label "\vibm866" should be rejected by TextDecoder.
+PASS Invalid label "ibm866\v" should be rejected by TextDecoder.
+PASS Invalid label "\vibm866\v" should be rejected by TextDecoder.
+PASS Invalid label " ibm866" should be rejected by TextDecoder.
+PASS Invalid label "ibm866 " should be rejected by TextDecoder.
+PASS Invalid label " ibm866 " should be rejected by TextDecoder.
+PASS Invalid label " ibm866" should be rejected by TextDecoder.
+PASS Invalid label "ibm866 " should be rejected by TextDecoder.
+PASS Invalid label " ibm866 " should be rejected by TextDecoder.
+PASS Invalid label " ibm866" should be rejected by TextDecoder.
+PASS Invalid label "ibm866 " should be rejected by TextDecoder.
+PASS Invalid label " ibm866 " should be rejected by TextDecoder.
+PASS Invalid label "\0csisolatin2" should be rejected by TextDecoder.
+PASS Invalid label "csisolatin2\0" should be rejected by TextDecoder.
+PASS Invalid label "\0csisolatin2\0" should be rejected by TextDecoder.
+PASS Invalid label "\vcsisolatin2" should be rejected by TextDecoder.
+PASS Invalid label "csisolatin2\v" should be rejected by TextDecoder.
+PASS Invalid label "\vcsisolatin2\v" should be rejected by TextDecoder.
+PASS Invalid label " csisolatin2" should be rejected by TextDecoder.
+PASS Invalid label "csisolatin2 " should be rejected by TextDecoder.
+PASS Invalid label " csisolatin2 " should be rejected by TextDecoder.
+PASS Invalid label " csisolatin2" should be rejected by TextDecoder.
+PASS Invalid label "csisolatin2 " should be rejected by TextDecoder.
+PASS Invalid label " csisolatin2 " should be rejected by TextDecoder.
+PASS Invalid label " csisolatin2" should be rejected by TextDecoder.
+PASS Invalid label "csisolatin2 " should be rejected by TextDecoder.
+PASS Invalid label " csisolatin2 " should be rejected by TextDecoder.
+PASS Invalid label "\0iso-8859-2" should be rejected by TextDecoder.
+PASS Invalid label "iso-8859-2\0" should be rejected by TextDecoder.
+PASS Invalid label "\0iso-8859-2\0" should be rejected by TextDecoder.
+PASS Invalid label "\viso-8859-2" should be rejected by TextDecoder.
+PASS Invalid label "iso-8859-2\v" should be rejected by TextDecoder.
+PASS Invalid label "\viso-8859-2\v" should be rejected by TextDecoder.
+PASS Invalid label " iso-8859-2" should be rejected by TextDecoder.
+PASS Invalid label "iso-8859-2 " should be rejected by TextDecoder.
+PASS Invalid label " iso-8859-2 " should be rejected by TextDecoder.
+PASS Invalid label " iso-8859-2" should be rejected by TextDecoder.
+PASS Invalid label "iso-8859-2 " should be rejected by TextDecoder.
+PASS Invalid label " iso-8859-2 " should be rejected by TextDecoder.
+PASS Invalid label " iso-8859-2" should be rejected by TextDecoder.
+PASS Invalid label "iso-8859-2 " should be rejected by TextDecoder.
+PASS Invalid label " iso-8859-2 " should be rejected by TextDecoder.
+PASS Invalid label "\0iso-ir-101" should be rejected by TextDecoder.
+PASS Invalid label "iso-ir-101\0" should be rejected by TextDecoder.
+PASS Invalid label "\0iso-ir-101\0" should be rejected by TextDecoder.
+PASS Invalid label "\viso-ir-101" should be rejected by TextDecoder.
+PASS Invalid label "iso-ir-101\v" should be rejected by TextDecoder.
+PASS Invalid label "\viso-ir-101\v" should be rejected by TextDecoder.
+PASS Invalid label " iso-ir-101" should be rejected by TextDecoder.
+PASS Invalid label "iso-ir-101 " should be rejected by TextDecoder.
+PASS Invalid label " iso-ir-101 " should be rejected by TextDecoder.
+PASS Invalid label " iso-ir-101" should be rejected by TextDecoder.
+PASS Invalid label "iso-ir-101 " should be rejected by TextDecoder.
+PASS Invalid label " iso-ir-101 " should be rejected by TextDecoder.
+PASS Invalid label " iso-ir-101" should be rejected by TextDecoder.
+PASS Invalid label "iso-ir-101 " should be rejected by TextDecoder.
+PASS Invalid label " iso-ir-101 " should be rejected by TextDecoder.
+PASS Invalid label "\0iso8859-2" should be rejected by TextDecoder.
+PASS Invalid label "iso8859-2\0" should be rejected by TextDecoder.
+PASS Invalid label "\0iso8859-2\0" should be rejected by TextDecoder.
+PASS Invalid label "\viso8859-2" should be rejected by TextDecoder.
+PASS Invalid label "iso8859-2\v" should be rejected by TextDecoder.
+PASS Invalid label "\viso8859-2\v" should be rejected by TextDecoder.
+PASS Invalid label " iso8859-2" should be rejected by TextDecoder.
+PASS Invalid label "iso8859-2 " should be rejected by TextDecoder.
+PASS Invalid label " iso8859-2 " should be rejected by TextDecoder.
+PASS Invalid label " iso8859-2" should be rejected by TextDecoder.
+PASS Invalid label "iso8859-2 " should be rejected by TextDecoder.
+PASS Invalid label " iso8859-2 " should be rejected by TextDecoder.
+PASS Invalid label " iso8859-2" should be rejected by TextDecoder.
+PASS Invalid label "iso8859-2 " should be rejected by TextDecoder.
+PASS Invalid label " iso8859-2 " should be rejected by TextDecoder.
+PASS Invalid label "\0iso88592" should be rejected by TextDecoder.
+PASS Invalid label "iso88592\0" should be rejected by TextDecoder.
+PASS Invalid label "\0iso88592\0" should be rejected by TextDecoder.
+PASS Invalid label "\viso88592" should be rejected by TextDecoder.
+PASS Invalid label "iso88592\v" should be rejected by TextDecoder.
+PASS Invalid label "\viso88592\v" should be rejected by TextDecoder.
+PASS Invalid label " iso88592" should be rejected by TextDecoder.
+PASS Invalid label "iso88592 " should be rejected by TextDecoder.
+PASS Invalid label " iso88592 " should be rejected by TextDecoder.
+PASS Invalid label " iso88592" should be rejected by TextDecoder.
+PASS Invalid label "iso88592 " should be rejected by TextDecoder.
+PASS Invalid label " iso88592 " should be rejected by TextDecoder.
+PASS Invalid label " iso88592" should be rejected by TextDecoder.
+PASS Invalid label "iso88592 " should be rejected by TextDecoder.
+PASS Invalid label " iso88592 " should be rejected by TextDecoder.
+PASS Invalid label "\0iso_8859-2" should be rejected by TextDecoder.
+PASS Invalid label "iso_8859-2\0" should be rejected by TextDecoder.
+PASS Invalid label "\0iso_8859-2\0" should be rejected by TextDecoder.
+PASS Invalid label "\viso_8859-2" should be rejected by TextDecoder.
+PASS Invalid label "iso_8859-2\v" should be rejected by TextDecoder.
+PASS Invalid label "\viso_8859-2\v" should be rejected by TextDecoder.
+PASS Invalid label " iso_8859-2" should be rejected by TextDecoder.
+PASS Invalid label "iso_8859-2 " should be rejected by TextDecoder.
+PASS Invalid label " iso_8859-2 " should be rejected by TextDecoder.
+PASS Invalid label " iso_8859-2" should be rejected by TextDecoder.
+PASS Invalid label "iso_8859-2 " should be rejected by TextDecoder.
+PASS Invalid label " iso_8859-2 " should be rejected by TextDecoder.
+PASS Invalid label " iso_8859-2" should be rejected by TextDecoder.
+PASS Invalid label "iso_8859-2 " should be rejected by TextDecoder.
+PASS Invalid label " iso_8859-2 " should be rejected by TextDecoder.
+PASS Invalid label "\0iso_8859-2:1987" should be rejected by TextDecoder.
+PASS Invalid label "iso_8859-2:1987\0" should be rejected by TextDecoder.
+PASS Invalid label "\0iso_8859-2:1987\0" should be rejected by TextDecoder.
+PASS Invalid label "\viso_8859-2:1987" should be rejected by TextDecoder.
+PASS Invalid label "iso_8859-2:1987\v" should be rejected by TextDecoder.
+PASS Invalid label "\viso_8859-2:1987\v" should be rejected by TextDecoder.
+PASS Invalid label " iso_8859-2:1987" should be rejected by TextDecoder.
+PASS Invalid label "iso_8859-2:1987 " should be rejected by TextDecoder.
+PASS Invalid label " iso_8859-2:1987 " should be rejected by TextDecoder.
+PASS Invalid label " iso_8859-2:1987" should be rejected by TextDecoder.
+PASS Invalid label "iso_8859-2:1987 " should be rejected by TextDecoder.
+PASS Invalid label " iso_8859-2:1987 " should be rejected by TextDecoder.
+PASS Invalid label " iso_8859-2:1987" should be rejected by TextDecoder.
+PASS Invalid label "iso_8859-2:1987 " should be rejected by TextDecoder.
+PASS Invalid label " iso_8859-2:1987 " should be rejected by TextDecoder.
+PASS Invalid label "\0l2" should be rejected by TextDecoder.
+PASS Invalid label "l2\0" should be rejected by TextDecoder.
+PASS Invalid label "\0l2\0" should be rejected by TextDecoder.
+PASS Invalid label "\vl2" should be rejected by TextDecoder.
+PASS Invalid label "l2\v" should be rejected by TextDecoder.
+PASS Invalid label "\vl2\v" should be rejected by TextDecoder.
+PASS Invalid label " l2" should be rejected by TextDecoder.
+PASS Invalid label "l2 " should be rejected by TextDecoder.
+PASS Invalid label " l2 " should be rejected by TextDecoder.
+PASS Invalid label " l2" should be rejected by TextDecoder.
+PASS Invalid label "l2 " should be rejected by TextDecoder.
+PASS Invalid label " l2 " should be rejected by TextDecoder.
+PASS Invalid label " l2" should be rejected by TextDecoder.
+PASS Invalid label "l2 " should be rejected by TextDecoder.
+PASS Invalid label " l2 " should be rejected by TextDecoder.
+PASS Invalid label "\0latin2" should be rejected by TextDecoder.
+PASS Invalid label "latin2\0" should be rejected by TextDecoder.
+PASS Invalid label "\0latin2\0" should be rejected by TextDecoder.
+PASS Invalid label "\vlatin2" should be rejected by TextDecoder.
+PASS Invalid label "latin2\v" should be rejected by TextDecoder.
+PASS Invalid label "\vlatin2\v" should be rejected by TextDecoder.
+PASS Invalid label " latin2" should be rejected by TextDecoder.
+PASS Invalid label "latin2 " should be rejected by TextDecoder.
+PASS Invalid label " latin2 " should be rejected by TextDecoder.
+PASS Invalid label " latin2" should be rejected by TextDecoder.
+PASS Invalid label "latin2 " should be rejected by TextDecoder.
+PASS Invalid label " latin2 " should be rejected by TextDecoder.
+PASS Invalid label " latin2" should be rejected by TextDecoder.
+PASS Invalid label "latin2 " should be rejected by TextDecoder.
+PASS Invalid label " latin2 " should be rejected by TextDecoder.
+PASS Invalid label "\0csisolatin3" should be rejected by TextDecoder.
+PASS Invalid label "csisolatin3\0" should be rejected by TextDecoder.
+PASS Invalid label "\0csisolatin3\0" should be rejected by TextDecoder.
+PASS Invalid label "\vcsisolatin3" should be rejected by TextDecoder.
+PASS Invalid label "csisolatin3\v" should be rejected by TextDecoder.
+PASS Invalid label "\vcsisolatin3\v" should be rejected by TextDecoder.
+PASS Invalid label " csisolatin3" should be rejected by TextDecoder.
+PASS Invalid label "csisolatin3 " should be rejected by TextDecoder.
+PASS Invalid label " csisolatin3 " should be rejected by TextDecoder.
+PASS Invalid label " csisolatin3" should be rejected by TextDecoder.
+PASS Invalid label "csisolatin3 " should be rejected by TextDecoder.
+PASS Invalid label " csisolatin3 " should be rejected by TextDecoder.
+PASS Invalid label " csisolatin3" should be rejected by TextDecoder.
+PASS Invalid label "csisolatin3 " should be rejected by TextDecoder.
+PASS Invalid label " csisolatin3 " should be rejected by TextDecoder.
+PASS Invalid label "\0iso-8859-3" should be rejected by TextDecoder.
+PASS Invalid label "iso-8859-3\0" should be rejected by TextDecoder.
+PASS Invalid label "\0iso-8859-3\0" should be rejected by TextDecoder.
+PASS Invalid label "\viso-8859-3" should be rejected by TextDecoder.
+PASS Invalid label "iso-8859-3\v" should be rejected by TextDecoder.
+PASS Invalid label "\viso-8859-3\v" should be rejected by TextDecoder.
+PASS Invalid label " iso-8859-3" should be rejected by TextDecoder.
+PASS Invalid label "iso-8859-3 " should be rejected by TextDecoder.
+PASS Invalid label " iso-8859-3 " should be rejected by TextDecoder.
+PASS Invalid label " iso-8859-3" should be rejected by TextDecoder.
+PASS Invalid label "iso-8859-3 " should be rejected by TextDecoder.
+PASS Invalid label " iso-8859-3 " should be rejected by TextDecoder.
+PASS Invalid label " iso-8859-3" should be rejected by TextDecoder.
+PASS Invalid label "iso-8859-3 " should be rejected by TextDecoder.
+PASS Invalid label " iso-8859-3 " should be rejected by TextDecoder.
+PASS Invalid label "\0iso-ir-109" should be rejected by TextDecoder.
+PASS Invalid label "iso-ir-109\0" should be rejected by TextDecoder.
+PASS Invalid label "\0iso-ir-109\0" should be rejected by TextDecoder.
+PASS Invalid label "\viso-ir-109" should be rejected by TextDecoder.
+PASS Invalid label "iso-ir-109\v" should be rejected by TextDecoder.
+PASS Invalid label "\viso-ir-109\v" should be rejected by TextDecoder.
+PASS Invalid label " iso-ir-109" should be rejected by TextDecoder.
+PASS Invalid label "iso-ir-109 " should be rejected by TextDecoder.
+PASS Invalid label " iso-ir-109 " should be rejected by TextDecoder.
+PASS Invalid label " iso-ir-109" should be rejected by TextDecoder.
+PASS Invalid label "iso-ir-109 " should be rejected by TextDecoder.
+PASS Invalid label " iso-ir-109 " should be rejected by TextDecoder.
+PASS Invalid label " iso-ir-109" should be rejected by TextDecoder.
+PASS Invalid label "iso-ir-109 " should be rejected by TextDecoder.
+PASS Invalid label " iso-ir-109 " should be rejected by TextDecoder.
+PASS Invalid label "\0iso8859-3" should be rejected by TextDecoder.
+PASS Invalid label "iso8859-3\0" should be rejected by TextDecoder.
+PASS Invalid label "\0iso8859-3\0" should be rejected by TextDecoder.
+PASS Invalid label "\viso8859-3" should be rejected by TextDecoder.
+PASS Invalid label "iso8859-3\v" should be rejected by TextDecoder.
+PASS Invalid label "\viso8859-3\v" should be rejected by TextDecoder.
+PASS Invalid label " iso8859-3" should be rejected by TextDecoder.
+PASS Invalid label "iso8859-3 " should be rejected by TextDecoder.
+PASS Invalid label " iso8859-3 " should be rejected by TextDecoder.
+PASS Invalid label " iso8859-3" should be rejected by TextDecoder.
+PASS Invalid label "iso8859-3 " should be rejected by TextDecoder.
+PASS Invalid label " iso8859-3 " should be rejected by TextDecoder.
+PASS Invalid label " iso8859-3" should be rejected by TextDecoder.
+PASS Invalid label "iso8859-3 " should be rejected by TextDecoder.
+PASS Invalid label " iso8859-3 " should be rejected by TextDecoder.
+PASS Invalid label "\0iso88593" should be rejected by TextDecoder.
+PASS Invalid label "iso88593\0" should be rejected by TextDecoder.
+PASS Invalid label "\0iso88593\0" should be rejected by TextDecoder.
+PASS Invalid label "\viso88593" should be rejected by TextDecoder.
+PASS Invalid label "iso88593\v" should be rejected by TextDecoder.
+PASS Invalid label "\viso88593\v" should be rejected by TextDecoder.
+PASS Invalid label " iso88593" should be rejected by TextDecoder.
+PASS Invalid label "iso88593 " should be rejected by TextDecoder.
+PASS Invalid label " iso88593 " should be rejected by TextDecoder.
+PASS Invalid label " iso88593" should be rejected by TextDecoder.
+PASS Invalid label "iso88593 " should be rejected by TextDecoder.
+PASS Invalid label " iso88593 " should be rejected by TextDecoder.
+PASS Invalid label " iso88593" should be rejected by TextDecoder.
+PASS Invalid label "iso88593 " should be rejected by TextDecoder.
+PASS Invalid label " iso88593 " should be rejected by TextDecoder.
+PASS Invalid label "\0iso_8859-3" should be rejected by TextDecoder.
+PASS Invalid label "iso_8859-3\0" should be rejected by TextDecoder.
+PASS Invalid label "\0iso_8859-3\0" should be rejected by TextDecoder.
+PASS Invalid label "\viso_8859-3" should be rejected by TextDecoder.
+PASS Invalid label "iso_8859-3\v" should be rejected by TextDecoder.
+PASS Invalid label "\viso_8859-3\v" should be rejected by TextDecoder.
+PASS Invalid label " iso_8859-3" should be rejected by TextDecoder.
+PASS Invalid label "iso_8859-3 " should be rejected by TextDecoder.
+PASS Invalid label " iso_8859-3 " should be rejected by TextDecoder.
+PASS Invalid label " iso_8859-3" should be rejected by TextDecoder.
+PASS Invalid label "iso_8859-3 " should be rejected by TextDecoder.
+PASS Invalid label " iso_8859-3 " should be rejected by TextDecoder.
+PASS Invalid label " iso_8859-3" should be rejected by TextDecoder.
+PASS Invalid label "iso_8859-3 " should be rejected by TextDecoder.
+PASS Invalid label " iso_8859-3 " should be rejected by TextDecoder.
+PASS Invalid label "\0iso_8859-3:1988" should be rejected by TextDecoder.
+PASS Invalid label "iso_8859-3:1988\0" should be rejected by TextDecoder.
+PASS Invalid label "\0iso_8859-3:1988\0" should be rejected by TextDecoder.
+PASS Invalid label "\viso_8859-3:1988" should be rejected by TextDecoder.
+PASS Invalid label "iso_8859-3:1988\v" should be rejected by TextDecoder.
+PASS Invalid label "\viso_8859-3:1988\v" should be rejected by TextDecoder.
+PASS Invalid label " iso_8859-3:1988" should be rejected by TextDecoder.
+PASS Invalid label "iso_8859-3:1988 " should be rejected by TextDecoder.
+PASS Invalid label " iso_8859-3:1988 " should be rejected by TextDecoder.
+PASS Invalid label " iso_8859-3:1988" should be rejected by TextDecoder.
+PASS Invalid label "iso_8859-3:1988 " should be rejected by TextDecoder.
+PASS Invalid label " iso_8859-3:1988 " should be rejected by TextDecoder.
+PASS Invalid label " iso_8859-3:1988" should be rejected by TextDecoder.
+PASS Invalid label "iso_8859-3:1988 " should be rejected by TextDecoder.
+PASS Invalid label " iso_8859-3:1988 " should be rejected by TextDecoder.
+PASS Invalid label "\0l3" should be rejected by TextDecoder.
+PASS Invalid label "l3\0" should be rejected by TextDecoder.
+PASS Invalid label "\0l3\0" should be rejected by TextDecoder.
+PASS Invalid label "\vl3" should be rejected by TextDecoder.
+PASS Invalid label "l3\v" should be rejected by TextDecoder.
+PASS Invalid label "\vl3\v" should be rejected by TextDecoder.
+PASS Invalid label " l3" should be rejected by TextDecoder.
+PASS Invalid label "l3 " should be rejected by TextDecoder.
+PASS Invalid label " l3 " should be rejected by TextDecoder.
+PASS Invalid label " l3" should be rejected by TextDecoder.
+PASS Invalid label "l3 " should be rejected by TextDecoder.
+PASS Invalid label " l3 " should be rejected by TextDecoder.
+PASS Invalid label " l3" should be rejected by TextDecoder.
+PASS Invalid label "l3 " should be rejected by TextDecoder.
+PASS Invalid label " l3 " should be rejected by TextDecoder.
+PASS Invalid label "\0latin3" should be rejected by TextDecoder.
+PASS Invalid label "latin3\0" should be rejected by TextDecoder.
+PASS Invalid label "\0latin3\0" should be rejected by TextDecoder.
+PASS Invalid label "\vlatin3" should be rejected by TextDecoder.
+PASS Invalid label "latin3\v" should be rejected by TextDecoder.
+PASS Invalid label "\vlatin3\v" should be rejected by TextDecoder.
+PASS Invalid label " latin3" should be rejected by TextDecoder.
+PASS Invalid label "latin3 " should be rejected by TextDecoder.
+PASS Invalid label " latin3 " should be rejected by TextDecoder.
+PASS Invalid label " latin3" should be rejected by TextDecoder.
+PASS Invalid label "latin3 " should be rejected by TextDecoder.
+PASS Invalid label " latin3 " should be rejected by TextDecoder.
+PASS Invalid label " latin3" should be rejected by TextDecoder.
+PASS Invalid label "latin3 " should be rejected by TextDecoder.
+PASS Invalid label " latin3 " should be rejected by TextDecoder.
+PASS Invalid label "\0csisolatin4" should be rejected by TextDecoder.
+PASS Invalid label "csisolatin4\0" should be rejected by TextDecoder.
+PASS Invalid label "\0csisolatin4\0" should be rejected by TextDecoder.
+PASS Invalid label "\vcsisolatin4" should be rejected by TextDecoder.
+PASS Invalid label "csisolatin4\v" should be rejected by TextDecoder.
+PASS Invalid label "\vcsisolatin4\v" should be rejected by TextDecoder.
+PASS Invalid label " csisolatin4" should be rejected by TextDecoder.
+PASS Invalid label "csisolatin4 " should be rejected by TextDecoder.
+PASS Invalid label " csisolatin4 " should be rejected by TextDecoder.
+PASS Invalid label " csisolatin4" should be rejected by TextDecoder.
+PASS Invalid label "csisolatin4 " should be rejected by TextDecoder.
+PASS Invalid label " csisolatin4 " should be rejected by TextDecoder.
+PASS Invalid label " csisolatin4" should be rejected by TextDecoder.
+PASS Invalid label "csisolatin4 " should be rejected by TextDecoder.
+PASS Invalid label " csisolatin4 " should be rejected by TextDecoder.
+PASS Invalid label "\0iso-8859-4" should be rejected by TextDecoder.
+PASS Invalid label "iso-8859-4\0" should be rejected by TextDecoder.
+PASS Invalid label "\0iso-8859-4\0" should be rejected by TextDecoder.
+PASS Invalid label "\viso-8859-4" should be rejected by TextDecoder.
+PASS Invalid label "iso-8859-4\v" should be rejected by TextDecoder.
+PASS Invalid label "\viso-8859-4\v" should be rejected by TextDecoder.
+PASS Invalid label " iso-8859-4" should be rejected by TextDecoder.
+PASS Invalid label "iso-8859-4 " should be rejected by TextDecoder.
+PASS Invalid label " iso-8859-4 " should be rejected by TextDecoder.
+PASS Invalid label " iso-8859-4" should be rejected by TextDecoder.
+PASS Invalid label "iso-8859-4 " should be rejected by TextDecoder.
+PASS Invalid label " iso-8859-4 " should be rejected by TextDecoder.
+PASS Invalid label " iso-8859-4" should be rejected by TextDecoder.
+PASS Invalid label "iso-8859-4 " should be rejected by TextDecoder.
+PASS Invalid label " iso-8859-4 " should be rejected by TextDecoder.
+PASS Invalid label "\0iso-ir-110" should be rejected by TextDecoder.
+PASS Invalid label "iso-ir-110\0" should be rejected by TextDecoder.
+PASS Invalid label "\0iso-ir-110\0" should be rejected by TextDecoder.
+PASS Invalid label "\viso-ir-110" should be rejected by TextDecoder.
+PASS Invalid label "iso-ir-110\v" should be rejected by TextDecoder.
+PASS Invalid label "\viso-ir-110\v" should be rejected by TextDecoder.
+PASS Invalid label " iso-ir-110" should be rejected by TextDecoder.
+PASS Invalid label "iso-ir-110 " should be rejected by TextDecoder.
+PASS Invalid label " iso-ir-110 " should be rejected by TextDecoder.
+PASS Invalid label " iso-ir-110" should be rejected by TextDecoder.
+PASS Invalid label "iso-ir-110 " should be rejected by TextDecoder.
+PASS Invalid label " iso-ir-110 " should be rejected by TextDecoder.
+PASS Invalid label " iso-ir-110" should be rejected by TextDecoder.
+PASS Invalid label "iso-ir-110 " should be rejected by TextDecoder.
+PASS Invalid label " iso-ir-110 " should be rejected by TextDecoder.
+PASS Invalid label "\0iso8859-4" should be rejected by TextDecoder.
+PASS Invalid label "iso8859-4\0" should be rejected by TextDecoder.
+PASS Invalid label "\0iso8859-4\0" should be rejected by TextDecoder.
+PASS Invalid label "\viso8859-4" should be rejected by TextDecoder.
+PASS Invalid label "iso8859-4\v" should be rejected by TextDecoder.
+PASS Invalid label "\viso8859-4\v" should be rejected by TextDecoder.
+PASS Invalid label " iso8859-4" should be rejected by TextDecoder.
+PASS Invalid label "iso8859-4 " should be rejected by TextDecoder.
+PASS Invalid label " iso8859-4 " should be rejected by TextDecoder.
+PASS Invalid label " iso8859-4" should be rejected by TextDecoder.
+PASS Invalid label "iso8859-4 " should be rejected by TextDecoder.
+PASS Invalid label " iso8859-4 " should be rejected by TextDecoder.
+PASS Invalid label " iso8859-4" should be rejected by TextDecoder.
+PASS Invalid label "iso8859-4 " should be rejected by TextDecoder.
+PASS Invalid label " iso8859-4 " should be rejected by TextDecoder.
+PASS Invalid label "\0iso88594" should be rejected by TextDecoder.
+PASS Invalid label "iso88594\0" should be rejected by TextDecoder.
+PASS Invalid label "\0iso88594\0" should be rejected by TextDecoder.
+PASS Invalid label "\viso88594" should be rejected by TextDecoder.
+PASS Invalid label "iso88594\v" should be rejected by TextDecoder.
+PASS Invalid label "\viso88594\v" should be rejected by TextDecoder.
+PASS Invalid label " iso88594" should be rejected by TextDecoder.
+PASS Invalid label "iso88594 " should be rejected by TextDecoder.
+PASS Invalid label " iso88594 " should be rejected by TextDecoder.
+PASS Invalid label " iso88594" should be rejected by TextDecoder.
+PASS Invalid label "iso88594 " should be rejected by TextDecoder.
+PASS Invalid label " iso88594 " should be rejected by TextDecoder.
+PASS Invalid label " iso88594" should be rejected by TextDecoder.
+PASS Invalid label "iso88594 " should be rejected by TextDecoder.
+PASS Invalid label " iso88594 " should be rejected by TextDecoder.
+PASS Invalid label "\0iso_8859-4" should be rejected by TextDecoder.
+PASS Invalid label "iso_8859-4\0" should be rejected by TextDecoder.
+PASS Invalid label "\0iso_8859-4\0" should be rejected by TextDecoder.
+PASS Invalid label "\viso_8859-4" should be rejected by TextDecoder.
+PASS Invalid label "iso_8859-4\v" should be rejected by TextDecoder.
+PASS Invalid label "\viso_8859-4\v" should be rejected by TextDecoder.
+PASS Invalid label " iso_8859-4" should be rejected by TextDecoder.
+PASS Invalid label "iso_8859-4 " should be rejected by TextDecoder.
+PASS Invalid label " iso_8859-4 " should be rejected by TextDecoder.
+PASS Invalid label " iso_8859-4" should be rejected by TextDecoder.
+PASS Invalid label "iso_8859-4 " should be rejected by TextDecoder.
+PASS Invalid label " iso_8859-4 " should be rejected by TextDecoder.
+PASS Invalid label " iso_8859-4" should be rejected by TextDecoder.
+PASS Invalid label "iso_8859-4 " should be rejected by TextDecoder.
+PASS Invalid label " iso_8859-4 " should be rejected by TextDecoder.
+PASS Invalid label "\0iso_8859-4:1988" should be rejected by TextDecoder.
+PASS Invalid label "iso_8859-4:1988\0" should be rejected by TextDecoder.
+PASS Invalid label "\0iso_8859-4:1988\0" should be rejected by TextDecoder.
+PASS Invalid label "\viso_8859-4:1988" should be rejected by TextDecoder.
+PASS Invalid label "iso_8859-4:1988\v" should be rejected by TextDecoder.
+PASS Invalid label "\viso_8859-4:1988\v" should be rejected by TextDecoder.
+PASS Invalid label " iso_8859-4:1988" should be rejected by TextDecoder.
+PASS Invalid label "iso_8859-4:1988 " should be rejected by TextDecoder.
+PASS Invalid label " iso_8859-4:1988 " should be rejected by TextDecoder.
+PASS Invalid label " iso_8859-4:1988" should be rejected by TextDecoder.
+PASS Invalid label "iso_8859-4:1988 " should be rejected by TextDecoder.
+PASS Invalid label " iso_8859-4:1988 " should be rejected by TextDecoder.
+PASS Invalid label " iso_8859-4:1988" should be rejected by TextDecoder.
+PASS Invalid label "iso_8859-4:1988 " should be rejected by TextDecoder.
+PASS Invalid label " iso_8859-4:1988 " should be rejected by TextDecoder.
+PASS Invalid label "\0l4" should be rejected by TextDecoder.
+PASS Invalid label "l4\0" should be rejected by TextDecoder.
+PASS Invalid label "\0l4\0" should be rejected by TextDecoder.
+PASS Invalid label "\vl4" should be rejected by TextDecoder.
+PASS Invalid label "l4\v" should be rejected by TextDecoder.
+PASS Invalid label "\vl4\v" should be rejected by TextDecoder.
+PASS Invalid label " l4" should be rejected by TextDecoder.
+PASS Invalid label "l4 " should be rejected by TextDecoder.
+PASS Invalid label " l4 " should be rejected by TextDecoder.
+PASS Invalid label " l4" should be rejected by TextDecoder.
+PASS Invalid label "l4 " should be rejected by TextDecoder.
+PASS Invalid label " l4 " should be rejected by TextDecoder.
+PASS Invalid label " l4" should be rejected by TextDecoder.
+PASS Invalid label "l4 " should be rejected by TextDecoder.
+PASS Invalid label " l4 " should be rejected by TextDecoder.
+PASS Invalid label "\0latin4" should be rejected by TextDecoder.
+PASS Invalid label "latin4\0" should be rejected by TextDecoder.
+PASS Invalid label "\0latin4\0" should be rejected by TextDecoder.
+PASS Invalid label "\vlatin4" should be rejected by TextDecoder.
+PASS Invalid label "latin4\v" should be rejected by TextDecoder.
+PASS Invalid label "\vlatin4\v" should be rejected by TextDecoder.
+PASS Invalid label " latin4" should be rejected by TextDecoder.
+PASS Invalid label "latin4 " should be rejected by TextDecoder.
+PASS Invalid label " latin4 " should be rejected by TextDecoder.
+PASS Invalid label " latin4" should be rejected by TextDecoder.
+PASS Invalid label "latin4 " should be rejected by TextDecoder.
+PASS Invalid label " latin4 " should be rejected by TextDecoder.
+PASS Invalid label " latin4" should be rejected by TextDecoder.
+PASS Invalid label "latin4 " should be rejected by TextDecoder.
+PASS Invalid label " latin4 " should be rejected by TextDecoder.
+PASS Invalid label "\0csisolatincyrillic" should be rejected by TextDecoder.
+PASS Invalid label "csisolatincyrillic\0" should be rejected by TextDecoder.
+PASS Invalid label "\0csisolatincyrillic\0" should be rejected by TextDecoder.
+PASS Invalid label "\vcsisolatincyrillic" should be rejected by TextDecoder.
+PASS Invalid label "csisolatincyrillic\v" should be rejected by TextDecoder.
+PASS Invalid label "\vcsisolatincyrillic\v" should be rejected by TextDecoder.
+PASS Invalid label " csisolatincyrillic" should be rejected by TextDecoder.
+PASS Invalid label "csisolatincyrillic " should be rejected by TextDecoder.
+PASS Invalid label " csisolatincyrillic " should be rejected by TextDecoder.
+PASS Invalid label " csisolatincyrillic" should be rejected by TextDecoder.
+PASS Invalid label "csisolatincyrillic " should be rejected by TextDecoder.
+PASS Invalid label " csisolatincyrillic " should be rejected by TextDecoder.
+PASS Invalid label " csisolatincyrillic" should be rejected by TextDecoder.
+PASS Invalid label "csisolatincyrillic " should be rejected by TextDecoder.
+PASS Invalid label " csisolatincyrillic " should be rejected by TextDecoder.
+PASS Invalid label "\0cyrillic" should be rejected by TextDecoder.
+PASS Invalid label "cyrillic\0" should be rejected by TextDecoder.
+PASS Invalid label "\0cyrillic\0" should be rejected by TextDecoder.
+PASS Invalid label "\vcyrillic" should be rejected by TextDecoder.
+PASS Invalid label "cyrillic\v" should be rejected by TextDecoder.
+PASS Invalid label "\vcyrillic\v" should be rejected by TextDecoder.
+PASS Invalid label " cyrillic" should be rejected by TextDecoder.
+PASS Invalid label "cyrillic " should be rejected by TextDecoder.
+PASS Invalid label " cyrillic " should be rejected by TextDecoder.
+PASS Invalid label " cyrillic" should be rejected by TextDecoder.
+PASS Invalid label "cyrillic " should be rejected by TextDecoder.
+PASS Invalid label " cyrillic " should be rejected by TextDecoder.
+PASS Invalid label " cyrillic" should be rejected by TextDecoder.
+PASS Invalid label "cyrillic " should be rejected by TextDecoder.
+PASS Invalid label " cyrillic " should be rejected by TextDecoder.
+PASS Invalid label "\0iso-8859-5" should be rejected by TextDecoder.
+PASS Invalid label "iso-8859-5\0" should be rejected by TextDecoder.
+PASS Invalid label "\0iso-8859-5\0" should be rejected by TextDecoder.
+PASS Invalid label "\viso-8859-5" should be rejected by TextDecoder.
+PASS Invalid label "iso-8859-5\v" should be rejected by TextDecoder.
+PASS Invalid label "\viso-8859-5\v" should be rejected by TextDecoder.
+PASS Invalid label " iso-8859-5" should be rejected by TextDecoder.
+PASS Invalid label "iso-8859-5 " should be rejected by TextDecoder.
+PASS Invalid label " iso-8859-5 " should be rejected by TextDecoder.
+PASS Invalid label " iso-8859-5" should be rejected by TextDecoder.
+PASS Invalid label "iso-8859-5 " should be rejected by TextDecoder.
+PASS Invalid label " iso-8859-5 " should be rejected by TextDecoder.
+PASS Invalid label " iso-8859-5" should be rejected by TextDecoder.
+PASS Invalid label "iso-8859-5 " should be rejected by TextDecoder.
+PASS Invalid label " iso-8859-5 " should be rejected by TextDecoder.
+PASS Invalid label "\0iso-ir-144" should be rejected by TextDecoder.
+PASS Invalid label "iso-ir-144\0" should be rejected by TextDecoder.
+PASS Invalid label "\0iso-ir-144\0" should be rejected by TextDecoder.
+PASS Invalid label "\viso-ir-144" should be rejected by TextDecoder.
+PASS Invalid label "iso-ir-144\v" should be rejected by TextDecoder.
+PASS Invalid label "\viso-ir-144\v" should be rejected by TextDecoder.
+PASS Invalid label " iso-ir-144" should be rejected by TextDecoder.
+PASS Invalid label "iso-ir-144 " should be rejected by TextDecoder.
+PASS Invalid label " iso-ir-144 " should be rejected by TextDecoder.
+PASS Invalid label " iso-ir-144" should be rejected by TextDecoder.
+PASS Invalid label "iso-ir-144 " should be rejected by TextDecoder.
+PASS Invalid label " iso-ir-144 " should be rejected by TextDecoder.
+PASS Invalid label " iso-ir-144" should be rejected by TextDecoder.
+PASS Invalid label "iso-ir-144 " should be rejected by TextDecoder.
+PASS Invalid label " iso-ir-144 " should be rejected by TextDecoder.
+PASS Invalid label "\0iso8859-5" should be rejected by TextDecoder.
+PASS Invalid label "iso8859-5\0" should be rejected by TextDecoder.
+PASS Invalid label "\0iso8859-5\0" should be rejected by TextDecoder.
+PASS Invalid label "\viso8859-5" should be rejected by TextDecoder.
+PASS Invalid label "iso8859-5\v" should be rejected by TextDecoder.
+PASS Invalid label "\viso8859-5\v" should be rejected by TextDecoder.
+PASS Invalid label " iso8859-5" should be rejected by TextDecoder.
+PASS Invalid label "iso8859-5 " should be rejected by TextDecoder.
+PASS Invalid label " iso8859-5 " should be rejected by TextDecoder.
+PASS Invalid label " iso8859-5" should be rejected by TextDecoder.
+PASS Invalid label "iso8859-5 " should be rejected by TextDecoder.
+PASS Invalid label " iso8859-5 " should be rejected by TextDecoder.
+PASS Invalid label " iso8859-5" should be rejected by TextDecoder.
+PASS Invalid label "iso8859-5 " should be rejected by TextDecoder.
+PASS Invalid label " iso8859-5 " should be rejected by TextDecoder.
+PASS Invalid label "\0iso88595" should be rejected by TextDecoder.
+PASS Invalid label "iso88595\0" should be rejected by TextDecoder.
+PASS Invalid label "\0iso88595\0" should be rejected by TextDecoder.
+PASS Invalid label "\viso88595" should be rejected by TextDecoder.
+PASS Invalid label "iso88595\v" should be rejected by TextDecoder.
+PASS Invalid label "\viso88595\v" should be rejected by TextDecoder.
+PASS Invalid label " iso88595" should be rejected by TextDecoder.
+PASS Invalid label "iso88595 " should be rejected by TextDecoder.
+PASS Invalid label " iso88595 " should be rejected by TextDecoder.
+PASS Invalid label " iso88595" should be rejected by TextDecoder.
+PASS Invalid label "iso88595 " should be rejected by TextDecoder.
+PASS Invalid label " iso88595 " should be rejected by TextDecoder.
+PASS Invalid label " iso88595" should be rejected by TextDecoder.
+PASS Invalid label "iso88595 " should be rejected by TextDecoder.
+PASS Invalid label " iso88595 " should be rejected by TextDecoder.
+PASS Invalid label "\0iso_8859-5" should be rejected by TextDecoder.
+PASS Invalid label "iso_8859-5\0" should be rejected by TextDecoder.
+PASS Invalid label "\0iso_8859-5\0" should be rejected by TextDecoder.
+PASS Invalid label "\viso_8859-5" should be rejected by TextDecoder.
+PASS Invalid label "iso_8859-5\v" should be rejected by TextDecoder.
+PASS Invalid label "\viso_8859-5\v" should be rejected by TextDecoder.
+PASS Invalid label " iso_8859-5" should be rejected by TextDecoder.
+PASS Invalid label "iso_8859-5 " should be rejected by TextDecoder.
+PASS Invalid label " iso_8859-5 " should be rejected by TextDecoder.
+PASS Invalid label " iso_8859-5" should be rejected by TextDecoder.
+PASS Invalid label "iso_8859-5 " should be rejected by TextDecoder.
+PASS Invalid label " iso_8859-5 " should be rejected by TextDecoder.
+PASS Invalid label " iso_8859-5" should be rejected by TextDecoder.
+PASS Invalid label "iso_8859-5 " should be rejected by TextDecoder.
+PASS Invalid label " iso_8859-5 " should be rejected by TextDecoder.
+PASS Invalid label "\0iso_8859-5:1988" should be rejected by TextDecoder.
+PASS Invalid label "iso_8859-5:1988\0" should be rejected by TextDecoder.
+PASS Invalid label "\0iso_8859-5:1988\0" should be rejected by TextDecoder.
+PASS Invalid label "\viso_8859-5:1988" should be rejected by TextDecoder.
+PASS Invalid label "iso_8859-5:1988\v" should be rejected by TextDecoder.
+PASS Invalid label "\viso_8859-5:1988\v" should be rejected by TextDecoder.
+PASS Invalid label " iso_8859-5:1988" should be rejected by TextDecoder.
+PASS Invalid label "iso_8859-5:1988 " should be rejected by TextDecoder.
+PASS Invalid label " iso_8859-5:1988 " should be rejected by TextDecoder.
+PASS Invalid label " iso_8859-5:1988" should be rejected by TextDecoder.
+PASS Invalid label "iso_8859-5:1988 " should be rejected by TextDecoder.
+PASS Invalid label " iso_8859-5:1988 " should be rejected by TextDecoder.
+PASS Invalid label " iso_8859-5:1988" should be rejected by TextDecoder.
+PASS Invalid label "iso_8859-5:1988 " should be rejected by TextDecoder.
+PASS Invalid label " iso_8859-5:1988 " should be rejected by TextDecoder.
+PASS Invalid label "\0arabic" should be rejected by TextDecoder.
+PASS Invalid label "arabic\0" should be rejected by TextDecoder.
+PASS Invalid label "\0arabic\0" should be rejected by TextDecoder.
+PASS Invalid label "\varabic" should be rejected by TextDecoder.
+PASS Invalid label "arabic\v" should be rejected by TextDecoder.
+PASS Invalid label "\varabic\v" should be rejected by TextDecoder.
+PASS Invalid label " arabic" should be rejected by TextDecoder.
+PASS Invalid label "arabic " should be rejected by TextDecoder.
+PASS Invalid label " arabic " should be rejected by TextDecoder.
+PASS Invalid label " arabic" should be rejected by TextDecoder.
+PASS Invalid label "arabic " should be rejected by TextDecoder.
+PASS Invalid label " arabic " should be rejected by TextDecoder.
+PASS Invalid label " arabic" should be rejected by TextDecoder.
+PASS Invalid label "arabic " should be rejected by TextDecoder.
+PASS Invalid label " arabic " should be rejected by TextDecoder.
+PASS Invalid label "\0asmo-708" should be rejected by TextDecoder.
+PASS Invalid label "asmo-708\0" should be rejected by TextDecoder.
+PASS Invalid label "\0asmo-708\0" should be rejected by TextDecoder.
+PASS Invalid label "\vasmo-708" should be rejected by TextDecoder.
+PASS Invalid label "asmo-708\v" should be rejected by TextDecoder.
+PASS Invalid label "\vasmo-708\v" should be rejected by TextDecoder.
+PASS Invalid label " asmo-708" should be rejected by TextDecoder.
+PASS Invalid label "asmo-708 " should be rejected by TextDecoder.
+PASS Invalid label " asmo-708 " should be rejected by TextDecoder.
+PASS Invalid label " asmo-708" should be rejected by TextDecoder.
+PASS Invalid label "asmo-708 " should be rejected by TextDecoder.
+PASS Invalid label " asmo-708 " should be rejected by TextDecoder.
+PASS Invalid label " asmo-708" should be rejected by TextDecoder.
+PASS Invalid label "asmo-708 " should be rejected by TextDecoder.
+PASS Invalid label " asmo-708 " should be rejected by TextDecoder.
+PASS Invalid label "\0csiso88596e" should be rejected by TextDecoder.
+PASS Invalid label "csiso88596e\0" should be rejected by TextDecoder.
+PASS Invalid label "\0csiso88596e\0" should be rejected by TextDecoder.
+PASS Invalid label "\vcsiso88596e" should be rejected by TextDecoder.
+PASS Invalid label "csiso88596e\v" should be rejected by TextDecoder.
+PASS Invalid label "\vcsiso88596e\v" should be rejected by TextDecoder.
+PASS Invalid label " csiso88596e" should be rejected by TextDecoder.
+PASS Invalid label "csiso88596e " should be rejected by TextDecoder.
+PASS Invalid label " csiso88596e " should be rejected by TextDecoder.
+PASS Invalid label " csiso88596e" should be rejected by TextDecoder.
+PASS Invalid label "csiso88596e " should be rejected by TextDecoder.
+PASS Invalid label " csiso88596e " should be rejected by TextDecoder.
+PASS Invalid label " csiso88596e" should be rejected by TextDecoder.
+PASS Invalid label "csiso88596e " should be rejected by TextDecoder.
+PASS Invalid label " csiso88596e " should be rejected by TextDecoder.
+PASS Invalid label "\0csiso88596i" should be rejected by TextDecoder.
+PASS Invalid label "csiso88596i\0" should be rejected by TextDecoder.
+PASS Invalid label "\0csiso88596i\0" should be rejected by TextDecoder.
+PASS Invalid label "\vcsiso88596i" should be rejected by TextDecoder.
+PASS Invalid label "csiso88596i\v" should be rejected by TextDecoder.
+PASS Invalid label "\vcsiso88596i\v" should be rejected by TextDecoder.
+PASS Invalid label " csiso88596i" should be rejected by TextDecoder.
+PASS Invalid label "csiso88596i " should be rejected by TextDecoder.
+PASS Invalid label " csiso88596i " should be rejected by TextDecoder.
+PASS Invalid label " csiso88596i" should be rejected by TextDecoder.
+PASS Invalid label "csiso88596i " should be rejected by TextDecoder.
+PASS Invalid label " csiso88596i " should be rejected by TextDecoder.
+PASS Invalid label " csiso88596i" should be rejected by TextDecoder.
+PASS Invalid label "csiso88596i " should be rejected by TextDecoder.
+PASS Invalid label " csiso88596i " should be rejected by TextDecoder.
+PASS Invalid label "\0csisolatinarabic" should be rejected by TextDecoder.
+PASS Invalid label "csisolatinarabic\0" should be rejected by TextDecoder.
+PASS Invalid label "\0csisolatinarabic\0" should be rejected by TextDecoder.
+PASS Invalid label "\vcsisolatinarabic" should be rejected by TextDecoder.
+PASS Invalid label "csisolatinarabic\v" should be rejected by TextDecoder.
+PASS Invalid label "\vcsisolatinarabic\v" should be rejected by TextDecoder.
+PASS Invalid label " csisolatinarabic" should be rejected by TextDecoder.
+PASS Invalid label "csisolatinarabic " should be rejected by TextDecoder.
+PASS Invalid label " csisolatinarabic " should be rejected by TextDecoder.
+PASS Invalid label " csisolatinarabic" should be rejected by TextDecoder.
+PASS Invalid label "csisolatinarabic " should be rejected by TextDecoder.
+PASS Invalid label " csisolatinarabic " should be rejected by TextDecoder.
+PASS Invalid label " csisolatinarabic" should be rejected by TextDecoder.
+PASS Invalid label "csisolatinarabic " should be rejected by TextDecoder.
+PASS Invalid label " csisolatinarabic " should be rejected by TextDecoder.
+PASS Invalid label "\0ecma-114" should be rejected by TextDecoder.
+PASS Invalid label "ecma-114\0" should be rejected by TextDecoder.
+PASS Invalid label "\0ecma-114\0" should be rejected by TextDecoder.
+PASS Invalid label "\vecma-114" should be rejected by TextDecoder.
+PASS Invalid label "ecma-114\v" should be rejected by TextDecoder.
+PASS Invalid label "\vecma-114\v" should be rejected by TextDecoder.
+PASS Invalid label " ecma-114" should be rejected by TextDecoder.
+PASS Invalid label "ecma-114 " should be rejected by TextDecoder.
+PASS Invalid label " ecma-114 " should be rejected by TextDecoder.
+PASS Invalid label " ecma-114" should be rejected by TextDecoder.
+PASS Invalid label "ecma-114 " should be rejected by TextDecoder.
+PASS Invalid label " ecma-114 " should be rejected by TextDecoder.
+PASS Invalid label " ecma-114" should be rejected by TextDecoder.
+PASS Invalid label "ecma-114 " should be rejected by TextDecoder.
+PASS Invalid label " ecma-114 " should be rejected by TextDecoder.
+PASS Invalid label "\0iso-8859-6" should be rejected by TextDecoder.
+PASS Invalid label "iso-8859-6\0" should be rejected by TextDecoder.
+PASS Invalid label "\0iso-8859-6\0" should be rejected by TextDecoder.
+PASS Invalid label "\viso-8859-6" should be rejected by TextDecoder.
+PASS Invalid label "iso-8859-6\v" should be rejected by TextDecoder.
+PASS Invalid label "\viso-8859-6\v" should be rejected by TextDecoder.
+PASS Invalid label " iso-8859-6" should be rejected by TextDecoder.
+PASS Invalid label "iso-8859-6 " should be rejected by TextDecoder.
+PASS Invalid label " iso-8859-6 " should be rejected by TextDecoder.
+PASS Invalid label " iso-8859-6" should be rejected by TextDecoder.
+PASS Invalid label "iso-8859-6 " should be rejected by TextDecoder.
+PASS Invalid label " iso-8859-6 " should be rejected by TextDecoder.
+PASS Invalid label " iso-8859-6" should be rejected by TextDecoder.
+PASS Invalid label "iso-8859-6 " should be rejected by TextDecoder.
+PASS Invalid label " iso-8859-6 " should be rejected by TextDecoder.
+PASS Invalid label "\0iso-8859-6-e" should be rejected by TextDecoder.
+PASS Invalid label "iso-8859-6-e\0" should be rejected by TextDecoder.
+PASS Invalid label "\0iso-8859-6-e\0" should be rejected by TextDecoder.
+PASS Invalid label "\viso-8859-6-e" should be rejected by TextDecoder.
+PASS Invalid label "iso-8859-6-e\v" should be rejected by TextDecoder.
+PASS Invalid label "\viso-8859-6-e\v" should be rejected by TextDecoder.
+PASS Invalid label " iso-8859-6-e" should be rejected by TextDecoder.
+PASS Invalid label "iso-8859-6-e " should be rejected by TextDecoder.
+PASS Invalid label " iso-8859-6-e " should be rejected by TextDecoder.
+PASS Invalid label " iso-8859-6-e" should be rejected by TextDecoder.
+PASS Invalid label "iso-8859-6-e " should be rejected by TextDecoder.
+PASS Invalid label " iso-8859-6-e " should be rejected by TextDecoder.
+PASS Invalid label " iso-8859-6-e" should be rejected by TextDecoder.
+PASS Invalid label "iso-8859-6-e " should be rejected by TextDecoder.
+PASS Invalid label " iso-8859-6-e " should be rejected by TextDecoder.
+PASS Invalid label "\0iso-8859-6-i" should be rejected by TextDecoder.
+PASS Invalid label "iso-8859-6-i\0" should be rejected by TextDecoder.
+PASS Invalid label "\0iso-8859-6-i\0" should be rejected by TextDecoder.
+PASS Invalid label "\viso-8859-6-i" should be rejected by TextDecoder.
+PASS Invalid label "iso-8859-6-i\v" should be rejected by TextDecoder.
+PASS Invalid label "\viso-8859-6-i\v" should be rejected by TextDecoder.
+PASS Invalid label " iso-8859-6-i" should be rejected by TextDecoder.
+PASS Invalid label "iso-8859-6-i " should be rejected by TextDecoder.
+PASS Invalid label " iso-8859-6-i " should be rejected by TextDecoder.
+PASS Invalid label " iso-8859-6-i" should be rejected by TextDecoder.
+PASS Invalid label "iso-8859-6-i " should be rejected by TextDecoder.
+PASS Invalid label " iso-8859-6-i " should be rejected by TextDecoder.
+PASS Invalid label " iso-8859-6-i" should be rejected by TextDecoder.
+PASS Invalid label "iso-8859-6-i " should be rejected by TextDecoder.
+PASS Invalid label " iso-8859-6-i " should be rejected by TextDecoder.
+PASS Invalid label "\0iso-ir-127" should be rejected by TextDecoder.
+PASS Invalid label "iso-ir-127\0" should be rejected by TextDecoder.
+PASS Invalid label "\0iso-ir-127\0" should be rejected by TextDecoder.
+PASS Invalid label "\viso-ir-127" should be rejected by TextDecoder.
+PASS Invalid label "iso-ir-127\v" should be rejected by TextDecoder.
+PASS Invalid label "\viso-ir-127\v" should be rejected by TextDecoder.
+PASS Invalid label " iso-ir-127" should be rejected by TextDecoder.
+PASS Invalid label "iso-ir-127 " should be rejected by TextDecoder.
+PASS Invalid label " iso-ir-127 " should be rejected by TextDecoder.
+PASS Invalid label " iso-ir-127" should be rejected by TextDecoder.
+PASS Invalid label "iso-ir-127 " should be rejected by TextDecoder.
+PASS Invalid label " iso-ir-127 " should be rejected by TextDecoder.
+PASS Invalid label " iso-ir-127" should be rejected by TextDecoder.
+PASS Invalid label "iso-ir-127 " should be rejected by TextDecoder.
+PASS Invalid label " iso-ir-127 " should be rejected by TextDecoder.
+PASS Invalid label "\0iso8859-6" should be rejected by TextDecoder.
+PASS Invalid label "iso8859-6\0" should be rejected by TextDecoder.
+PASS Invalid label "\0iso8859-6\0" should be rejected by TextDecoder.
+PASS Invalid label "\viso8859-6" should be rejected by TextDecoder.
+PASS Invalid label "iso8859-6\v" should be rejected by TextDecoder.
+PASS Invalid label "\viso8859-6\v" should be rejected by TextDecoder.
+PASS Invalid label " iso8859-6" should be rejected by TextDecoder.
+PASS Invalid label "iso8859-6 " should be rejected by TextDecoder.
+PASS Invalid label " iso8859-6 " should be rejected by TextDecoder.
+PASS Invalid label " iso8859-6" should be rejected by TextDecoder.
+PASS Invalid label "iso8859-6 " should be rejected by TextDecoder.
+PASS Invalid label " iso8859-6 " should be rejected by TextDecoder.
+PASS Invalid label " iso8859-6" should be rejected by TextDecoder.
+PASS Invalid label "iso8859-6 " should be rejected by TextDecoder.
+PASS Invalid label " iso8859-6 " should be rejected by TextDecoder.
+PASS Invalid label "\0iso88596" should be rejected by TextDecoder.
+PASS Invalid label "iso88596\0" should be rejected by TextDecoder.
+PASS Invalid label "\0iso88596\0" should be rejected by TextDecoder.
+PASS Invalid label "\viso88596" should be rejected by TextDecoder.
+PASS Invalid label "iso88596\v" should be rejected by TextDecoder.
+PASS Invalid label "\viso88596\v" should be rejected by TextDecoder.
+PASS Invalid label " iso88596" should be rejected by TextDecoder.
+PASS Invalid label "iso88596 " should be rejected by TextDecoder.
+PASS Invalid label " iso88596 " should be rejected by TextDecoder.
+PASS Invalid label " iso88596" should be rejected by TextDecoder.
+PASS Invalid label "iso88596 " should be rejected by TextDecoder.
+PASS Invalid label " iso88596 " should be rejected by TextDecoder.
+PASS Invalid label " iso88596" should be rejected by TextDecoder.
+PASS Invalid label "iso88596 " should be rejected by TextDecoder.
+PASS Invalid label " iso88596 " should be rejected by TextDecoder.
+PASS Invalid label "\0iso_8859-6" should be rejected by TextDecoder.
+PASS Invalid label "iso_8859-6\0" should be rejected by TextDecoder.
+PASS Invalid label "\0iso_8859-6\0" should be rejected by TextDecoder.
+PASS Invalid label "\viso_8859-6" should be rejected by TextDecoder.
+PASS Invalid label "iso_8859-6\v" should be rejected by TextDecoder.
+PASS Invalid label "\viso_8859-6\v" should be rejected by TextDecoder.
+PASS Invalid label " iso_8859-6" should be rejected by TextDecoder.
+PASS Invalid label "iso_8859-6 " should be rejected by TextDecoder.
+PASS Invalid label " iso_8859-6 " should be rejected by TextDecoder.
+PASS Invalid label " iso_8859-6" should be rejected by TextDecoder.
+PASS Invalid label "iso_8859-6 " should be rejected by TextDecoder.
+PASS Invalid label " iso_8859-6 " should be rejected by TextDecoder.
+PASS Invalid label " iso_8859-6" should be rejected by TextDecoder.
+PASS Invalid label "iso_8859-6 " should be rejected by TextDecoder.
+PASS Invalid label " iso_8859-6 " should be rejected by TextDecoder.
+PASS Invalid label "\0iso_8859-6:1987" should be rejected by TextDecoder.
+PASS Invalid label "iso_8859-6:1987\0" should be rejected by TextDecoder.
+PASS Invalid label "\0iso_8859-6:1987\0" should be rejected by TextDecoder.
+PASS Invalid label "\viso_8859-6:1987" should be rejected by TextDecoder.
+PASS Invalid label "iso_8859-6:1987\v" should be rejected by TextDecoder.
+PASS Invalid label "\viso_8859-6:1987\v" should be rejected by TextDecoder.
+PASS Invalid label " iso_8859-6:1987" should be rejected by TextDecoder.
+PASS Invalid label "iso_8859-6:1987 " should be rejected by TextDecoder.
+PASS Invalid label " iso_8859-6:1987 " should be rejected by TextDecoder.
+PASS Invalid label " iso_8859-6:1987" should be rejected by TextDecoder.
+PASS Invalid label "iso_8859-6:1987 " should be rejected by TextDecoder.
+PASS Invalid label " iso_8859-6:1987 " should be rejected by TextDecoder.
+PASS Invalid label " iso_8859-6:1987" should be rejected by TextDecoder.
+PASS Invalid label "iso_8859-6:1987 " should be rejected by TextDecoder.
+PASS Invalid label " iso_8859-6:1987 " should be rejected by TextDecoder.
+PASS Invalid label "\0csisolatingreek" should be rejected by TextDecoder.
+PASS Invalid label "csisolatingreek\0" should be rejected by TextDecoder.
+PASS Invalid label "\0csisolatingreek\0" should be rejected by TextDecoder.
+PASS Invalid label "\vcsisolatingreek" should be rejected by TextDecoder.
+PASS Invalid label "csisolatingreek\v" should be rejected by TextDecoder.
+PASS Invalid label "\vcsisolatingreek\v" should be rejected by TextDecoder.
+PASS Invalid label " csisolatingreek" should be rejected by TextDecoder.
+PASS Invalid label "csisolatingreek " should be rejected by TextDecoder.
+PASS Invalid label " csisolatingreek " should be rejected by TextDecoder.
+PASS Invalid label " csisolatingreek" should be rejected by TextDecoder.
+PASS Invalid label "csisolatingreek " should be rejected by TextDecoder.
+PASS Invalid label " csisolatingreek " should be rejected by TextDecoder.
+PASS Invalid label " csisolatingreek" should be rejected by TextDecoder.
+PASS Invalid label "csisolatingreek " should be rejected by TextDecoder.
+PASS Invalid label " csisolatingreek " should be rejected by TextDecoder.
+PASS Invalid label "\0ecma-118" should be rejected by TextDecoder.
+PASS Invalid label "ecma-118\0" should be rejected by TextDecoder.
+PASS Invalid label "\0ecma-118\0" should be rejected by TextDecoder.
+PASS Invalid label "\vecma-118" should be rejected by TextDecoder.
+PASS Invalid label "ecma-118\v" should be rejected by TextDecoder.
+PASS Invalid label "\vecma-118\v" should be rejected by TextDecoder.
+PASS Invalid label " ecma-118" should be rejected by TextDecoder.
+PASS Invalid label "ecma-118 " should be rejected by TextDecoder.
+PASS Invalid label " ecma-118 " should be rejected by TextDecoder.
+PASS Invalid label " ecma-118" should be rejected by TextDecoder.
+PASS Invalid label "ecma-118 " should be rejected by TextDecoder.
+PASS Invalid label " ecma-118 " should be rejected by TextDecoder.
+PASS Invalid label " ecma-118" should be rejected by TextDecoder.
+PASS Invalid label "ecma-118 " should be rejected by TextDecoder.
+PASS Invalid label " ecma-118 " should be rejected by TextDecoder.
+PASS Invalid label "\0elot_928" should be rejected by TextDecoder.
+PASS Invalid label "elot_928\0" should be rejected by TextDecoder.
+PASS Invalid label "\0elot_928\0" should be rejected by TextDecoder.
+PASS Invalid label "\velot_928" should be rejected by TextDecoder.
+PASS Invalid label "elot_928\v" should be rejected by TextDecoder.
+PASS Invalid label "\velot_928\v" should be rejected by TextDecoder.
+PASS Invalid label " elot_928" should be rejected by TextDecoder.
+PASS Invalid label "elot_928 " should be rejected by TextDecoder.
+PASS Invalid label " elot_928 " should be rejected by TextDecoder.
+PASS Invalid label " elot_928" should be rejected by TextDecoder.
+PASS Invalid label "elot_928 " should be rejected by TextDecoder.
+PASS Invalid label " elot_928 " should be rejected by TextDecoder.
+PASS Invalid label " elot_928" should be rejected by TextDecoder.
+PASS Invalid label "elot_928 " should be rejected by TextDecoder.
+PASS Invalid label " elot_928 " should be rejected by TextDecoder.
+PASS Invalid label "\0greek" should be rejected by TextDecoder.
+PASS Invalid label "greek\0" should be rejected by TextDecoder.
+PASS Invalid label "\0greek\0" should be rejected by TextDecoder.
+PASS Invalid label "\vgreek" should be rejected by TextDecoder.
+PASS Invalid label "greek\v" should be rejected by TextDecoder.
+PASS Invalid label "\vgreek\v" should be rejected by TextDecoder.
+PASS Invalid label " greek" should be rejected by TextDecoder.
+PASS Invalid label "greek " should be rejected by TextDecoder.
+PASS Invalid label " greek " should be rejected by TextDecoder.
+PASS Invalid label " greek" should be rejected by TextDecoder.
+PASS Invalid label "greek " should be rejected by TextDecoder.
+PASS Invalid label " greek " should be rejected by TextDecoder.
+PASS Invalid label " greek" should be rejected by TextDecoder.
+PASS Invalid label "greek " should be rejected by TextDecoder.
+PASS Invalid label " greek " should be rejected by TextDecoder.
+PASS Invalid label "\0greek8" should be rejected by TextDecoder.
+PASS Invalid label "greek8\0" should be rejected by TextDecoder.
+PASS Invalid label "\0greek8\0" should be rejected by TextDecoder.
+PASS Invalid label "\vgreek8" should be rejected by TextDecoder.
+PASS Invalid label "greek8\v" should be rejected by TextDecoder.
+PASS Invalid label "\vgreek8\v" should be rejected by TextDecoder.
+PASS Invalid label " greek8" should be rejected by TextDecoder.
+PASS Invalid label "greek8 " should be rejected by TextDecoder.
+PASS Invalid label " greek8 " should be rejected by TextDecoder.
+PASS Invalid label " greek8" should be rejected by TextDecoder.
+PASS Invalid label "greek8 " should be rejected by TextDecoder.
+PASS Invalid label " greek8 " should be rejected by TextDecoder.
+PASS Invalid label " greek8" should be rejected by TextDecoder.
+PASS Invalid label "greek8 " should be rejected by TextDecoder.
+PASS Invalid label " greek8 " should be rejected by TextDecoder.
+PASS Invalid label "\0iso-8859-7" should be rejected by TextDecoder.
+PASS Invalid label "iso-8859-7\0" should be rejected by TextDecoder.
+PASS Invalid label "\0iso-8859-7\0" should be rejected by TextDecoder.
+PASS Invalid label "\viso-8859-7" should be rejected by TextDecoder.
+PASS Invalid label "iso-8859-7\v" should be rejected by TextDecoder.
+PASS Invalid label "\viso-8859-7\v" should be rejected by TextDecoder.
+PASS Invalid label " iso-8859-7" should be rejected by TextDecoder.
+PASS Invalid label "iso-8859-7 " should be rejected by TextDecoder.
+PASS Invalid label " iso-8859-7 " should be rejected by TextDecoder.
+PASS Invalid label " iso-8859-7" should be rejected by TextDecoder.
+PASS Invalid label "iso-8859-7 " should be rejected by TextDecoder.
+PASS Invalid label " iso-8859-7 " should be rejected by TextDecoder.
+PASS Invalid label " iso-8859-7" should be rejected by TextDecoder.
+PASS Invalid label "iso-8859-7 " should be rejected by TextDecoder.
+PASS Invalid label " iso-8859-7 " should be rejected by TextDecoder.
+PASS Invalid label "\0iso-ir-126" should be rejected by TextDecoder.
+PASS Invalid label "iso-ir-126\0" should be rejected by TextDecoder.
+PASS Invalid label "\0iso-ir-126\0" should be rejected by TextDecoder.
+PASS Invalid label "\viso-ir-126" should be rejected by TextDecoder.
+PASS Invalid label "iso-ir-126\v" should be rejected by TextDecoder.
+PASS Invalid label "\viso-ir-126\v" should be rejected by TextDecoder.
+PASS Invalid label " iso-ir-126" should be rejected by TextDecoder.
+PASS Invalid label "iso-ir-126 " should be rejected by TextDecoder.
+PASS Invalid label " iso-ir-126 " should be rejected by TextDecoder.
+PASS Invalid label " iso-ir-126" should be rejected by TextDecoder.
+PASS Invalid label "iso-ir-126 " should be rejected by TextDecoder.
+PASS Invalid label " iso-ir-126 " should be rejected by TextDecoder.
+PASS Invalid label " iso-ir-126" should be rejected by TextDecoder.
+PASS Invalid label "iso-ir-126 " should be rejected by TextDecoder.
+PASS Invalid label " iso-ir-126 " should be rejected by TextDecoder.
+PASS Invalid label "\0iso8859-7" should be rejected by TextDecoder.
+PASS Invalid label "iso8859-7\0" should be rejected by TextDecoder.
+PASS Invalid label "\0iso8859-7\0" should be rejected by TextDecoder.
+PASS Invalid label "\viso8859-7" should be rejected by TextDecoder.
+PASS Invalid label "iso8859-7\v" should be rejected by TextDecoder.
+PASS Invalid label "\viso8859-7\v" should be rejected by TextDecoder.
+PASS Invalid label " iso8859-7" should be rejected by TextDecoder.
+PASS Invalid label "iso8859-7 " should be rejected by TextDecoder.
+PASS Invalid label " iso8859-7 " should be rejected by TextDecoder.
+

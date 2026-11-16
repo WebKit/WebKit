@@ -1,0 +1,78 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ AsyncOverflowScrollingEnabled=true AsyncFrameScrollingEnabled=true ScrollAnimatorEnabled=true ] -->
+<html>
+<head>
+    <script src="../../../resources/ui-helper.js"></script>
+    <script src="../../../resources/js-test.js"></script>
+    <script>
+        jsTestIsAsync = true;
+        
+        async function runTest()
+        {
+            const wheelEventSquence = {
+                "events" : [
+                    // Normal scroll with momentum
+                    {
+                        type : "wheel",
+                        viewX : 100,
+                        viewY : 100,
+                        deltaY : -10,
+                        phase : "began"
+                    },
+                    {
+                        type : "wheel",
+                        deltaY : -100,
+                        phase : "changed"
+                    },
+                    {
+                        type : "wheel",
+                        phase : "ended"
+                    },
+                    {
+                        type : "wheel",
+                        deltaY : -100,
+                        momentumPhase : "began"
+                    },
+                    {
+                        type: "wheel",
+                        deltaY: -80,
+                        momentumPhase: "changed"
+                    },
+                    {
+                        type : "wheel",
+                        momentumPhase : "ended"
+                    },
+                    // Tapping with two fingers
+                    {
+                        type : "wheel",
+                        phase : "maybegin"
+                    },
+                    {
+                        type : "wheel",
+                        phase : "cancelled"
+                    },
+                ]
+            };
+
+            await UIHelper.mouseWheelSequence(wheelEventSquence);
+
+            startScrollY = window.scrollY;
+
+            await UIHelper.rawKeyDown('downArrow');
+            await UIHelper.renderingUpdate();
+
+            await UIHelper.delayFor(100);
+            await UIHelper.rawKeyUp('downArrow');
+            await UIHelper.renderingUpdate();
+
+            endScrollY = window.scrollY;
+
+            shouldBeTrue('endScrollY > startScrollY');
+
+            finishJSTest();
+        }
+    </script>
+</head>
+<body onload="runTest()">
+    <div style="height: 5000px;"></div>
+</body>
+</html>

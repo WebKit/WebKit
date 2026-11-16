@@ -1,0 +1,53 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true VisuallyContiguousBidiTextSelectionEnabled=true ] -->
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="utf-8">
+<script src="../../../resources/ui-helper.js"></script>
+<script src="../../../resources/js-test.js"></script>
+<style>
+body, html {
+    font-size: 16px;
+    font-family: system-ui;
+}
+</style>
+<script>
+jsTestIsAsync = true;
+
+async function extendSelectionByWordInEditableContainer(container) {
+    await UIHelper.activateElementAndWaitForInputSession(container);
+    getSelection().setPosition(container.childNodes[0], 0);
+    do {
+        await UIHelper.callFunctionAndWaitForEvent(async () => {
+            await UIHelper.keyDown("rightArrow", ["shiftKey", "altKey"]);
+        }, document, "selectionchange");
+        await UIHelper.ensurePresentationUpdate();
+        if (!(await UIHelper.isSelectionVisuallyContiguous()))
+            testFailed(`Found visually discontiguous selection '${getSelection().toString()}'`);
+    } while (getSelection().toString() != container.textContent);
+
+    container.blur();
+    await UIHelper.waitForKeyboardToHide();
+}
+
+addEventListener("load", async () => {
+    description("This test verifies that the text selection remains visually contiguous when extending the selection across bidi text.");
+
+    await extendSelectionByWordInEditableContainer(document.getElementById("ltr"));
+    testPassed("Selected all text in LTR paragraph");
+
+    await extendSelectionByWordInEditableContainer(document.getElementById("rtl"));
+    testPassed("Selected all text in RTL paragraph");
+
+    finishJSTest();
+});
+</script>
+</head>
+<body>
+    <p id="ltr" contenteditable>This text — مثل هذا النص — is right to left</p>
+    <div><br></div>
+    <p id="rtl" contenteditable dir="rtl">أرسل بريدًا إلكترونيًا إلى foo@example.com وانتظر الرد</p>
+    <div id="description"></div>
+    <div id="console"></div>
+</body>
+</html>

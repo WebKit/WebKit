@@ -1,0 +1,4 @@
+    
+
+PASS Checks hit testing on the ellipsis
+

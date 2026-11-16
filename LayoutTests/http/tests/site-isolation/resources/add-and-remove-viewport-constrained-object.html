@@ -1,0 +1,51 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body, html {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            font-family: system-ui;
+        }
+
+        .top {
+            position: fixed;
+            top: 0;
+            height: 60px;
+            left: 0;
+            right: 0;
+        }
+
+        .content {
+            width: 100%;
+            height: 100%;
+        }
+
+        .top > .content {
+            background: purple;
+        }
+
+        iframe { margin: 0px; padding: 0px; border: 0px; top: 0; left: 0; right: 0; position: fixed; width: 100% }
+    </style>
+</head>
+
+<script>
+    function addAndRemove() {
+        d.parentNode.removeChild(d);
+        setTimeout(()=>{
+            document.body.appendChild(d);
+            setTimeout(addAndRemove, 100);
+        }, 100)
+    }
+    
+    onload = ()=>{
+        d = topdiv;
+        addAndRemove();
+    }
+</script>
+
+<body bgcolor=blue>
+<div class="top" id='topdiv'><div class="content"></div></div>
+</body>

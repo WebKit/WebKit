@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<div id="content">
+  <!-- https://w3c.github.io/mathml-aam/#mathml-element-mappings -->
+  <math>
+    <munder id="munder" class="test">
+      <mtext>BASE</mtext>
+      <mtext>UNDER</mtext>
+    </munder>
+    <mover id="mover" class="test">
+      <mtext>BASE</mtext>
+      <mtext>OVER</mtext>
+    </mover>
+    <munderover id="munderover" class="test">
+      <mtext>BASE</mtext>
+      <mtext>UNDER</mtext>
+      <mtext>OVER</mtext>
+    </munderover>
+  </math>
+</div>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+    description("This tests the AT-SPI roles of MathML underover elements.");
+    if (window.accessibilityController) {
+        Array.from(document.getElementsByClassName('test')).forEach(element => {
+            let axElement = accessibilityController.accessibleElementById(element.id);
+            var result = !axElement ? "(null)" : axElement.role;
+            debug(`${element.id}: ${result}`);
+        });
+        document.getElementById("content").style.visibility = "hidden";
+    }
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

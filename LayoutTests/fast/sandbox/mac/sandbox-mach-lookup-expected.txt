@@ -1,0 +1,19 @@
+Regression tests for mach lookup sandbox changes on macOS
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS internals.hasSandboxMachLookupAccessToGlobalName("com.apple.WebKit.WebContent", "com.apple.cfprefsd.agent") is false
+PASS internals.hasSandboxMachLookupAccessToGlobalName("com.apple.WebKit.WebContent", "com.apple.cfprefsd.daemon") is false
+PASS internals.hasSandboxMachLookupAccessToGlobalName("com.apple.WebKit.WebContent", "com.apple.nehelper") is false
+PASS internals.hasSandboxMachLookupAccessToGlobalName("com.apple.WebKit.WebContent", "com.apple.nesessionmanager") is false
+PASS internals.hasSandboxMachLookupAccessToGlobalName("com.apple.WebKit.WebContent", "com.apple.nesessionmanager.content-filter") is false
+PASS internals.hasSandboxMachLookupAccessToGlobalName("com.apple.WebKit.WebContent", "com.apple.system.logger") is false
+PASS internals.hasSandboxMachLookupAccessToGlobalName("com.apple.WebKit.WebContent", "com.apple.awdd") is false
+PASS internals.hasSandboxMachLookupAccessToGlobalName("com.apple.WebKit.WebContent", "com.apple.cookied") is false
+PASS internals.hasSandboxMachLookupAccessToGlobalName("com.apple.WebKit.WebContent", "com.apple.audio.SystemSoundServer-OSX") is false
+PASS internals.hasSandboxMachLookupAccessToGlobalName("com.apple.WebKit.WebContent", "com.apple.iconservices") is false
+PASS internals.hasSandboxMachLookupAccessToGlobalName("com.apple.WebKit.WebContent", "com.apple.iconservices.store") is false
+PASS internals.hasSandboxMachLookupAccessToXPCServiceName("com.apple.WebKit.WebContent", "com.apple.PerformanceAnalysis.animationperfd") is false
+PASS internals.hasSandboxMachLookupAccessToXPCServiceName("com.apple.WebKit.WebContent", "com.apple.hiservices-xpcservice") is false
+

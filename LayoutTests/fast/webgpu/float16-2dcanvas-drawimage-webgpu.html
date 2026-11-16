@@ -1,0 +1,138 @@
+<!-- webkit-test-runner [ CanvasColorTypeEnabled=true WebGPUEnabled=true WebGPUHDREnabled=true ] -->
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+<script>
+description("Tests that drawImage() of an HDR WebGPU canvas into a float16 2D canvas preserves extended-range values.");
+
+window.jsTestIsAsync = true;
+
+const canvasSize = 4;
+const componentsPerPixel = 4;
+// The value the shader writes to the green channel. Well outside [0,1].
+const hdrGreen = 3;
+// The maximum a unorm8 destination can hold, plus an allowance for color conversion.
+const sdrMaximum = 1 + 1.5 / 255;
+
+function create2DContext(colorType)
+{
+    const element = document.createElement("canvas");
+    element.width = canvasSize;
+    element.height = canvasSize;
+    const context = element.getContext("2d", { colorSpace: "srgb", colorType });
+    if (!context)
+        testFailed(`Could not create a "${colorType}" 2D context`);
+    return context;
+}
+
+// Renders a solid `hdrGreen` into a WebGPU canvas configured for extended tone mapping.
+async function createHDRWebGPUCanvas(device)
+{
+    const element = document.createElement("canvas");
+    element.width = canvasSize;
+    element.height = canvasSize;
+
+    const gpuContext = element.getContext("webgpu");
+    if (!gpuContext) {
+        testFailed("Could not get a webgpu context");
+        return null;
+    }
+
+    gpuContext.configure({
+        device,
+        format: "rgba16float",
+        toneMapping: { mode: "extended" },
+        alphaMode: "premultiplied",
+    });
+
+    const commandEncoder = device.createCommandEncoder();
+    const renderPassEncoder = commandEncoder.beginRenderPass({
+        colorAttachments: [{
+            view: gpuContext.getCurrentTexture().createView(),
+            loadOp: "clear",
+            storeOp: "store",
+            clearValue: { r: 0, g: hdrGreen, b: 0, a: 1 },
+        }],
+    });
+    renderPassEncoder.end();
+    device.queue.submit([commandEncoder.finish()]);
+    await device.queue.onSubmittedWorkDone();
+
+    return element;
+}
+
+function maxComponent(context)
+{
+    const data = context.getImageData(0, 0, canvasSize, canvasSize, { pixelFormat: "rgba-float16" }).data;
+    let maximum = -Infinity;
+    for (let pixel = 0; pixel < canvasSize * canvasSize; ++pixel) {
+        for (let component = 0; component < componentsPerPixel - 1; ++component)
+            maximum = Math.max(maximum, data[pixel * componentsPerPixel + component]);
+    }
+    return maximum;
+}
+
+function drawAndVerify(label, sourceCanvas, destinationColorType, expectHDR)
+{
+    const destination = create2DContext(destinationColorType);
+    if (!destination)
+        return;
+
+    destination.drawImage(sourceCanvas, 0, 0);
+    const maximum = maxComponent(destination);
+
+    if (!(maximum > 0)) {
+        testFailed(`${label}: nothing appears to have been drawn (maximum is ${maximum}).`);
+        return;
+    }
+
+    if (expectHDR) {
+        if (maximum > sdrMaximum)
+            testPassed(`${label}: kept an extended-range value (max ${maximum.toFixed(4)})`);
+        else
+            testFailed(`${label}: expected a value > ${sdrMaximum.toFixed(4)}, but the maximum was ${maximum.toFixed(4)}`);
+        return;
+    }
+    if (maximum <= sdrMaximum)
+        testPassed(`${label}: clamped to the SDR range (max ${maximum.toFixed(4)})`);
+    else
+        testFailed(`${label}: expected all values <= ${sdrMaximum.toFixed(4)}, but the maximum was ${maximum.toFixed(4)}`);
+}
+
+async function runTests()
+{
+    if (!navigator.gpu) {
+        testFailed("WebGPU is not available");
+        finishJSTest();
+        return;
+    }
+
+    const adapter = await navigator.gpu.requestAdapter();
+    const device = await adapter?.requestDevice();
+    if (!device) {
+        testFailed("Could not get a GPUDevice");
+        finishJSTest();
+        return;
+    }
+
+    const hdrCanvas = await createHDRWebGPUCanvas(device);
+    if (!hdrCanvas) {
+        finishJSTest();
+        return;
+    }
+
+    // The extended-range value must survive into a float16 canvas...
+    drawAndVerify("HDR WebGPU -> float16", hdrCanvas, "float16", true);
+    // ...and must be clamped by a unorm8 one.
+    drawAndVerify("HDR WebGPU -> unorm8", hdrCanvas, "unorm8", false);
+
+    finishJSTest();
+}
+
+runTests();
+</script>
+</body>
+</html>

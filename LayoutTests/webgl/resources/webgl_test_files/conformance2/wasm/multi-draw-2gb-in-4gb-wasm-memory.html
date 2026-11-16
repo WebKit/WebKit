@@ -1,0 +1,160 @@
+<!--
+Copyright (c) 2025 The Khronos Group Inc.
+Use of this source code is governed by an MIT-style license that can be
+found in the LICENSE.txt file.
+-->
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Multi-draw test 2GB within Wasm Memory 4GB in size.</title>
+<link rel="stylesheet" href="../../resources/js-test-style.css"/>
+<script src="../../js/js-test-pre.js"></script>
+<script src="../../js/webgl-test-utils.js"> </script>
+</head>
+<body>
+<canvas id="canvas" width="16" height="16" style="width: 64px; height: 64px;"></canvas>
+<div id="description"></div>
+<div id="console"></div>
+<script>
+"use strict";
+description(document.title);
+debug("Tests that WEBGL_multi_draw can be called with ArrayBuffer views ~2GB into ~4GB of WebAssembly Memory.");
+debug("");
+let wtu = WebGLTestUtils;
+let gl = wtu.create3DContext("canvas", undefined, 2);
+
+const canvasSize = 16;
+const PAGE = 65536;
+const HEAP_SIZE = 4 * 1024 * 1024 * 1024 - PAGE;
+const VIEW_SIZE = 2 * 1024 * 1024 * 1024 - PAGE;
+
+(() => {
+  let md = gl.getExtension("WEBGL_multi_draw");
+  if (!md) {
+    testPassed("WEBGL_multi_draw extension is not supported - this is legal");
+    return;
+  }
+
+  // Red rectangle (two triangles) on the left, green on the right
+
+  let vertexData = new Float32Array([
+    // Left rectangle
+    -1.0, -1.0,
+    0.0, -1.0,
+    0.0, 1.0,
+    -1.0, 1.0,
+    -1.0, -1.0,
+    0.0, 1.0,
+
+    // Right rectangle
+    0.0, -1.0,
+    1.0, -1.0,
+    1.0, 1.0,
+    0.0, 1.0,
+    0.0, -1.0,
+    1.0, 1.0
+  ]);
+
+  let colorData = new Uint8Array([
+    255, 0, 0, 255,
+    255, 0, 0, 255,
+    255, 0, 0, 255,
+    255, 0, 0, 255,
+    255, 0, 0, 255,
+    255, 0, 0, 255,
+
+    0, 255, 0, 255,
+    0, 255, 0, 255,
+    0, 255, 0, 255,
+    0, 255, 0, 255,
+    0, 255, 0, 255,
+    0, 255, 0, 255,
+  ]);
+
+  let indexData = new Uint16Array([
+    0, 1, 2,
+    3, 4, 5,
+    6, 7, 8,
+    9, 10, 11
+  ]);
+
+  const positionLocation = 0;
+  const colorLocation = 1;
+  const tolerance = 1;
+
+  let buf = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+  gl.bufferData(gl.ARRAY_BUFFER, vertexData, gl.STATIC_DRAW);
+  gl.enableVertexAttribArray(positionLocation);
+  gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 0, 0);
+
+  buf = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+  gl.bufferData(gl.ARRAY_BUFFER, colorData, gl.STATIC_DRAW);
+  gl.enableVertexAttribArray(colorLocation);
+  gl.vertexAttribPointer(colorLocation, 4, gl.UNSIGNED_BYTE, true, 0, 0);
+
+  buf = gl.createBuffer();
+  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, buf);
+  gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, indexData, gl.STATIC_DRAW);
+
+  let program = wtu.setupSimpleVertexColorProgram(gl, positionLocation, colorLocation);
+
+  // Set up the "firsts" and "counts" data at the end of the heap
+  let view;
+  try {
+    view = new Int32Array(new WebAssembly.Memory({ initial: HEAP_SIZE / PAGE }).buffer, 0, VIEW_SIZE / Int32Array.BYTES_PER_ELEMENT);
+  } catch (e) {
+    testPassed(`Allocating ${HEAP_SIZE} threw: ${e}`);
+    return;
+  }
+
+  function setupMultiDrawInHeap(typedArray) {
+    gl.clear(gl.COLOR_BUFFER_BIT);
+    const length = typedArray.length;
+    const offset = view.length - length;
+    view.set(typedArray, offset);
+    return offset;
+  }
+
+  function checkResult() {
+    // Check center of all four quadrants of the canvas, because there was a bug in the test where it passed when only
+    // checking the center of both rectangles.
+    wtu.checkCanvasRect(gl, canvasSize / 4, canvasSize / 4, 1, 1, wtu.namedColorInColorSpace("Red", "srgb"), "lower left should be red", tolerance);
+    wtu.checkCanvasRect(gl, canvasSize / 4, 3 * canvasSize / 4, 1, 1, wtu.namedColorInColorSpace("Red", "srgb"), "upper left should be red", tolerance);
+    wtu.checkCanvasRect(gl, 3 * (canvasSize / 4), canvasSize / 4, 1, 1, wtu.namedColorInColorSpace("Green", "srgb"), "lower right should be green", tolerance);
+    wtu.checkCanvasRect(gl, 3 * (canvasSize / 4), 3 * canvasSize / 4, 1, 1, wtu.namedColorInColorSpace("Green", "srgb"), "upper right should be green", tolerance);
+  }
+
+  function testDraw(name, args) {
+    try {
+      debug('Testing ' + name);
+      md[name](...args);
+      checkResult();
+    } catch (e) {
+      testFailed(name + ' failed: ' + e);
+    }
+  }
+
+  const numDraws = 2;
+
+  let offset = setupMultiDrawInHeap(new Int32Array([0, 6, 6, 6]));
+  testDraw('multiDrawArraysWEBGL', [gl.TRIANGLES, view, offset, view, offset + numDraws, numDraws]);
+
+  offset = setupMultiDrawInHeap(new Int32Array([6, 6, 0, 6 * Uint16Array.BYTES_PER_ELEMENT]));
+  testDraw('multiDrawElementsWEBGL', [gl.TRIANGLES, view, offset, gl.UNSIGNED_SHORT, view, offset + numDraws, numDraws]);
+
+  offset = setupMultiDrawInHeap(new Int32Array([0, 6, 6, 6, 1, 1]));
+  testDraw('multiDrawArraysInstancedWEBGL', [gl.TRIANGLES, view, offset, view, offset + numDraws, view, offset + 2 * numDraws, numDraws]);
+
+  offset = setupMultiDrawInHeap(new Int32Array([6, 6, 0, 6 * Uint16Array.BYTES_PER_ELEMENT, 1, 1]));
+  testDraw('multiDrawElementsInstancedWEBGL', [gl.TRIANGLES, view, offset, gl.UNSIGNED_SHORT, view, offset + numDraws, view, offset + 2 * numDraws, numDraws]);
+
+})();
+
+var successfullyParsed = true;
+</script>
+<script src="../../js/js-test-post.js"></script>
+</body>
+</html>

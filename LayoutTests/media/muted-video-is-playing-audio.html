@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="../resources/js-test-pre.js"></script>
+        <script src="../resources/platform-helper.js"></script>
+    </head>
+    <body>
+        <video src="content/audio-tracks.mp4" controls autoplay loop></video>
+        <script src="media-file.js"></script>
+        <script src="video-test.js"></script>
+        <script>
+            description("Testing that muting a video element should result in page's audio playing state to become false");
+
+            jsTestIsAsync = true;
+
+            // Un-mute audio on the page before starting the test.
+            if (window.internals) {
+                internals.setPageMuted("");
+                // TestController::resetStateToConsistentValues() initializes mediaVolume to 0, which in practice mutes the audio and
+                // interferes with this test. Let's use some quiet non-zero value.
+                internals.setPageMediaVolume(0.01);
+            }
+
+            function testUnmutingVideo()
+            {
+                run("video.muted = false");
+                shouldBecomeEqual("window.internals.pageMediaState().includes('IsPlayingAudio')", "true", finishJSTest);
+            }
+
+            function testMutingVideo()
+            {
+                run("video.muted = true");
+                // For GStreamer ports the semantics of IsPlayingAudio slightly differ from Apple ports. The
+                // webkit_web_view_is_playing_audio() API is expected to return true if a page is producing
+                // audio even though it might be muted. See HTMLMediaElement::mediaState() implementation.
+                var isPlayingAudioExpectedAfterMute = (isGtk() || isWPE()) ? "true" : "false";
+                shouldBecomeEqual("window.internals.pageMediaState().includes('IsPlayingAudio')", isPlayingAudioExpectedAfterMute, testUnmutingVideo);
+            }
+
+            video.addEventListener('playing', function setInitialVolume() {
+                video.volume = 1;
+                video.removeEventListener('playing', setInitialVolume);
+            });
+
+            shouldBecomeEqual("window.internals.pageMediaState().includes('IsPlayingAudio')", "true", testMutingVideo);
+        </script>
+        <script src="../resources/js-test-post.js"></script>
+    </body>
+</html>

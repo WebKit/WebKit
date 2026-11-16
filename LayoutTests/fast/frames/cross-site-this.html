@@ -1,0 +1,38 @@
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+// The 'this' value provided to this method, and provided by this method to 'bar', should
+// both be the containing window object.
+function foo(childThis) {
+    bar(childThis, this);
+}
+
+function bar(childThis, parentThis) {
+    var result = "PASS";
+
+    if (childThis != frames[0])
+        result = "FAIL";
+    if (parentThis != window)
+        result = "FAIL";
+    if (this != window)
+        result = "FAIL";
+
+    dump(result);
+}
+
+function dump(str)
+{
+    document.getElementById("output").innerText = str;
+}
+
+
+</script>
+
+<div>This test checks whether cross-site calling uses the proper
+object as the global "this" value. The text below should say
+PASS:</div>
+
+<div id="output"> </div>
+
+<iframe src="resources/cross-site-this-helper.html"></iframe>

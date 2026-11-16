@@ -1,0 +1,3 @@
+
+PASS By the time the finite animation ends, the infinite one had identical elapsedTime
+

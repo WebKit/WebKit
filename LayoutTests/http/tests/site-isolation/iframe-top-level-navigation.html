@@ -1,0 +1,22 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="/js-test-resources/js-test.js"></script>
+<script>
+
+description("Verifies top-level navigation initiated by iframe can complete");
+jsTestIsAsync = true;
+
+function runTest() 
+{
+    if (window.location.hash == "#complete") {
+        testPassed("Main frame is navigated to new url: " + window.location.href);
+        finishJSTest();
+        return;
+    }
+
+    var iframe = document.createElement('iframe');
+    iframe.src = "http://localhost:8000/site-isolation/resources/iframe-top-level-navigation-iframe.html";
+    document.body.appendChild(iframe);
+}
+
+</script>
+<body onload="runTest()"></body>

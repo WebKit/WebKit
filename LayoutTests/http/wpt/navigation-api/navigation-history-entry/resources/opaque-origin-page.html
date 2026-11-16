@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<!-- 
+    Platform-specific copy of imported/w3c/web-platform-tests/navigation-api/navigation-history-entry/resources/opaque-origin-page.html
+    
+    This iframe test is modified to work around CORS issues by inlining all test framework
+    dependencies instead of loading them via cross-origin requests which fail for null origin.
+    
+    Original upstream test loads testharness.js and helpers.mjs externally, but those fail
+    with "Origin null is not allowed by Access-Control-Allow-Origin" in WebKit's test server.
+    
+    rdar://158262060
+-->
+<!-- Put this page in a sandbox to give it an opaque origin -->
+
+<script>
+// Inline helper function to avoid CORS issues
+async function ensureWindowLoadEventFired() {
+  return new Promise(resolve => {
+    const callback = () => setTimeout(resolve, 0);
+    if (document.readyState === 'complete') {
+      callback();
+    } else {
+      window.onload = callback;
+    }
+  });
+}
+
+// Inline test framework functions to avoid CORS issues  
+function assert_equals(actual, expected, description) {
+  if (actual !== expected) {
+    throw new Error(`${description || 'Assertion failed'}: expected ${expected}, got ${actual}`);
+  }
+}
+
+function assert_false(actual, description) {
+  if (actual !== false) {
+    throw new Error(`${description || 'Assertion failed'}: expected false, got ${actual}`);
+  }
+}
+
+async function runTest() {
+  try {
+    // Wait for after the load event so that the navigation doesn't get converted
+    // into a replace navigation.
+    await ensureWindowLoadEventFired();
+
+    location.hash = "#1";
+    await new Promise(resolve => window.onhashchange = resolve);
+    location.hash = "#2";
+    await new Promise(resolve => window.onhashchange = resolve);
+    history.back();
+    await new Promise(resolve => window.onhashchange = resolve);
+
+    assert_equals(location.hash, "#1", "Hash should be #1 after going back");
+
+    // Test Navigation API behavior in opaque origin
+    assert_equals(navigation.currentEntry, null, "navigation.currentEntry should be null in opaque origin");
+    assert_equals(navigation.entries().length, 0, "navigation.entries().length should be 0 in opaque origin");
+    assert_false(navigation.canGoBack, "navigation.canGoBack should be false in opaque origin");
+    assert_false(navigation.canGoForward, "navigation.canGoForward should be false in opaque origin");
+    
+    // Signal success to parent window
+    if (window.parent !== window) {
+      window.parent.postMessage({type: 'test-complete', success: true, testName: 'navigation.currentEntry/entries()/canGoBack/canGoForward in an opaque origin iframe'}, '*');
+    }
+  } catch (error) {
+    // Signal failure to parent window
+    if (window.parent !== window) {
+      window.parent.postMessage({type: 'test-complete', success: false, error: error.message, testName: 'navigation.currentEntry/entries()/canGoBack/canGoForward in an opaque origin iframe'}, '*');
+    }
+  }
+}
+
+// Run the test when the page loads
+window.addEventListener('load', runTest);
+</script>

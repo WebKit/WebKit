@@ -1,0 +1,18 @@
+Tests null handling of several HTMLButtonElement attributes
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS button.getAttribute('formMethod') is null
+PASS button.getAttribute('formEnctype') is null
+PASS button.getAttribute('type') is null
+button.formMethod = null
+PASS button.getAttribute('formMethod') is "null"
+button.formEnctype = null
+PASS button.getAttribute('formEnctype') is "null"
+button.type = null
+PASS button.getAttribute('type') is "null"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

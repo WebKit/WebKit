@@ -1,0 +1,5 @@
+
+PASS Autofocus elements in iframed documents with URL fragments should be skipped. (id matches)
+PASS Autofocus elements in iframed documents with URL fragments should be skipped.(a element)
+PASS Autofocus elements in top-level browsing context's documents with URL fragments should be skipped.
+

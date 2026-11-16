@@ -1,0 +1,6 @@
+
+PASS DOMPoint.matrixTransform by a translation matrix scales the translation by w
+PASS DOMMatrix.transformPoint by a translation matrix scales the translation by w
+PASS DOMMatrix.transformPoint by a translation matrix leaves a w=0 point untranslated
+PASS DOMMatrix.transformPoint by the identity matrix preserves the point
+

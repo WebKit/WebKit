@@ -1,0 +1,8 @@
+
+PASS should return false when the interface declares no toJSON operation.
+PASS should return false when the interface declares a static toJSON operation.
+PASS should return false when the interface declares a regular toJSON operation with no extended attribute.
+PASS should return false when the interface declares a regular toJSON operation with another extented attribute.
+PASS should return true when the interface declares a regular toJSON operation with the [Default] extented attribute.
+PASS should return true when the interface declares a regular toJSON operation with multiple extended attributes, including [Default].
+

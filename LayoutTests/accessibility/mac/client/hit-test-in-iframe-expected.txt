@@ -1,0 +1,13 @@
+Tests hit-testing the center of text fields in a same-process iframe via the client accessibility APIs, as XCUITest does before clicking.
+
+Outer field: PASS
+Inner first: PASS
+Inner second: PASS
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+Iframe
+
+

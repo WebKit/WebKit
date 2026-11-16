@@ -1,0 +1,182 @@
+<script src="../../resources/js-test.js"></script>
+<script>
+
+jsTestIsAsync = true;
+
+description("Tests the WebGPU 'dual-source-blending' feature and the WGSL dual_source_blending extension. " +
+            "Renders a full-screen triangle whose fragment shader writes @blend_src(0) and @blend_src(1) " +
+            "outputs, blended with srcFactor 'src1' and dstFactor 'one-minus-src1', and verifies the " +
+            "resulting pixel. Also checks the related validation rules.");
+
+const SHADER = `
+enable dual_source_blending;
+
+@vertex
+fn vs_main(@builtin(vertex_index) vid: u32) -> @builtin(position) vec4f {
+    var positions = array<vec2f, 3>(
+        vec2f(-1.0, -1.0),
+        vec2f( 3.0, -1.0),
+        vec2f(-1.0,  3.0),
+    );
+    return vec4f(positions[vid], 0.0, 1.0);
+}
+
+struct FragOut {
+    @location(0) @blend_src(0) color: vec4f,
+    @location(0) @blend_src(1) blend: vec4f,
+};
+
+@fragment
+fn fs_main() -> FragOut {
+    var out: FragOut;
+    out.color = vec4f(1.0, 1.0, 0.0, 1.0);
+    out.blend = vec4f(1.0, 0.0, 0.0, 0.0);
+    return out;
+}
+
+@fragment
+fn fs_single() -> @location(0) vec4f {
+    return vec4f(1.0);
+}
+`;
+
+const SINGLE_OUTPUT_SHADER = `
+@vertex
+fn vs_main(@builtin(vertex_index) vid: u32) -> @builtin(position) vec4f {
+    return vec4f(0.0, 0.0, 0.0, 1.0);
+}
+
+@fragment
+fn fs_single() -> @location(0) vec4f {
+    return vec4f(1.0);
+}
+`;
+
+const dualSourceBlend = {
+    color: { srcFactor: "src1", dstFactor: "one-minus-src1", operation: "add" },
+    alpha: { srcFactor: "one", dstFactor: "zero", operation: "add" },
+};
+
+let pixel;
+
+async function expectValidationError(device, shouldFail, message, fn)
+{
+    device.pushErrorScope("validation");
+    fn();
+    const error = await device.popErrorScope();
+    if (!!error === shouldFail)
+        testPassed(message);
+    else
+        testFailed(message + (error ? " (unexpected error: " + error.message + ")" : " (expected a validation error)"));
+}
+
+async function main() {
+    const adapter = await navigator.gpu.requestAdapter({});
+    if (!adapter) {
+        testFailed("requestAdapter returned null");
+        return;
+    }
+
+    if (!adapter.features.has("dual-source-blending")) {
+        testFailed("Adapter does not advertise the 'dual-source-blending' feature");
+        return;
+    }
+    testPassed("Adapter advertises 'dual-source-blending' feature");
+
+    // Without the feature, both the WGSL extension and the src1 blend factors are rejected.
+    const deviceWithoutFeature = await adapter.requestDevice();
+    await expectValidationError(deviceWithoutFeature, true, "enable dual_source_blending fails without the feature", () => {
+        deviceWithoutFeature.createShaderModule({ code: SHADER });
+    });
+    await expectValidationError(deviceWithoutFeature, true, "src1 blend factors fail without the feature", () => {
+        const module = deviceWithoutFeature.createShaderModule({ code: SINGLE_OUTPUT_SHADER });
+        deviceWithoutFeature.createRenderPipeline({
+            layout: "auto",
+            vertex: { module, entryPoint: "vs_main" },
+            fragment: { module, entryPoint: "fs_single", targets: [{ format: "rgba8unorm", blend: dualSourceBlend }] },
+        });
+    });
+
+    const dualSourceAdapter = await navigator.gpu.requestAdapter({});
+    const device = await dualSourceAdapter.requestDevice({
+        requiredFeatures: ["dual-source-blending"],
+    });
+
+    let module;
+    await expectValidationError(device, false, "Shader using @blend_src compiles", () => {
+        module = device.createShaderModule({ code: SHADER });
+    });
+
+    await expectValidationError(device, true, "src1 blend factors require the fragment shader to use @blend_src", () => {
+        device.createRenderPipeline({
+            layout: "auto",
+            vertex: { module, entryPoint: "vs_main" },
+            fragment: { module, entryPoint: "fs_single", targets: [{ format: "rgba8unorm", blend: dualSourceBlend }] },
+        });
+    });
+
+    await expectValidationError(device, true, "src1 blend factors require exactly one color target", () => {
+        device.createRenderPipeline({
+            layout: "auto",
+            vertex: { module, entryPoint: "vs_main" },
+            fragment: { module, entryPoint: "fs_main", targets: [{ format: "rgba8unorm", blend: dualSourceBlend }, { format: "rgba8unorm", writeMask: 0 }] },
+        });
+    });
+
+    let pipeline;
+    await expectValidationError(device, false, "Pipeline using dual source blending is valid", () => {
+        pipeline = device.createRenderPipeline({
+            layout: "auto",
+            vertex: { module, entryPoint: "vs_main" },
+            fragment: { module, entryPoint: "fs_main", targets: [{ format: "rgba8unorm", blend: dualSourceBlend }] },
+        });
+    });
+
+    const colorTexture = device.createTexture({
+        size: { width: 1, height: 1, depthOrArrayLayers: 1 },
+        format: "rgba8unorm",
+        usage: GPUTextureUsage.RENDER_ATTACHMENT | GPUTextureUsage.COPY_SRC,
+    });
+
+    const readBuffer = device.createBuffer({
+        size: 256,
+        usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.MAP_READ,
+    });
+
+    const encoder = device.createCommandEncoder();
+    const pass = encoder.beginRenderPass({
+        colorAttachments: [{
+            view: colorTexture.createView(),
+            clearValue: { r: 0, g: 0, b: 1, a: 1 },
+            loadOp: "clear",
+            storeOp: "store",
+        }],
+    });
+    pass.setPipeline(pipeline);
+    pass.draw(3);
+    pass.end();
+    encoder.copyTextureToBuffer({ texture: colorTexture }, { buffer: readBuffer, bytesPerRow: 256 }, { width: 1, height: 1 });
+    device.queue.submit([encoder.finish()]);
+
+    await readBuffer.mapAsync(GPUMapMode.READ);
+    pixel = new Uint8Array(readBuffer.getMappedRange(0, 4)).slice();
+    readBuffer.unmap();
+
+    // result.rgb = src0.rgb * src1.rgb + dst.rgb * (1 - src1.rgb)
+    //            = (1, 1, 0) * (1, 0, 0) + (0, 0, 1) * (0, 1, 1) = (1, 0, 1)
+    // result.a   = src0.a * 1 + dst.a * 0 = 1
+    shouldBe("pixel[0]", "255");
+    shouldBe("pixel[1]", "0");
+    shouldBe("pixel[2]", "255");
+    shouldBe("pixel[3]", "255");
+}
+
+globalThis.testRunner?.waitUntilDone();
+
+main().catch(e => {
+    testFailed("Exception: " + e);
+}).finally(() => {
+    finishJSTest();
+});
+
+</script>

@@ -1,0 +1,6 @@
+cssom
+class
+PASS CONTROL element's own outline
+PASS CSSOM edit, painted-only element, bare rule present
+PASS class change, painted-only element, bare rule present
+

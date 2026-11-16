@@ -1,0 +1,66 @@
+<!DOCTYPE html><!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<head>
+<title>This tests the case when visible content change goes from visible -> hidden -> visible</title>
+<script src="../../../../../resources/basic-gestures.js"></script>
+<style>
+#tapthis {
+    width: 400px;
+    height: 400px;
+    border: 1px solid green;
+}
+
+#becomesTemporarilyInvisible {
+    width: 100px;
+    height: 100px;
+    background-color: blue;
+    display: inline-block;
+}
+</style>
+<script>
+async function test() {
+    if (!window.testRunner || !testRunner.runUIScript)
+        return;
+    if (window.internals)
+        internals.settings.setContentChangeObserverEnabled(true);
+
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+
+    let rect = tapthis.getBoundingClientRect();
+    let x = rect.left + rect.width / 2;
+    let y = rect.top + rect.height / 2;
+
+    await tapAtPoint(x, y);
+}
+</script>
+</head>
+<body onload="test()">
+<div id=tapthis>PASS if 'clicked' text is shown below.</div>
+<div id=becomesTemporarilyInvisible></div>
+<pre id=result></pre>
+<script>
+tapthis.addEventListener("mousemove", function(event) {
+    // 1. Trigger "became invisible", so the element is eligible to become visible.
+    becomesTemporarilyInvisible.style.opacity = "0";
+    document.body.offsetHeight;
+
+    // 2. Install a nested timer with visibility change. This should not result
+    // in hover even though it "became visible", because it was originally visible.
+    setTimeout(function() {
+        becomesTemporarilyInvisible.style.opacity = "1";
+    }, 0);
+}, false);
+
+tapthis.addEventListener("click", function(event) {   
+    result.innerHTML = "clicked";
+    document.body.offsetHeight;
+    testRunner.notifyDone();
+}, false);
+
+becomesTemporarilyInvisible.addEventListener("click", function(event) {   
+    // The hovered element just needs to respond to click events so the change isn't ignored.
+}, false);
+</script>
+</body>
+</html>

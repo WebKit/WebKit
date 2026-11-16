@@ -1,0 +1,25 @@
+<style>
+  div {
+    display: contents;
+  }
+  b, span {
+    border-style: ridge;
+    float: right;
+  }
+  b {
+    font-weight: inherit;
+  }
+</style>
+<div>This test passes if it does not crash.</div>
+<script>
+  if (window.testRunner)
+      testRunner.dumpAsText();
+  onload = () => {
+    document.documentElement.appendChild(document.createElement('b'));
+    document.documentElement.appendChild(document.createElement('span'));
+    document.execCommand('SelectAll');
+    document.execCommand('Copy');
+    document.designMode = 'on';
+    document.execCommand('Paste');
+  };
+</script>

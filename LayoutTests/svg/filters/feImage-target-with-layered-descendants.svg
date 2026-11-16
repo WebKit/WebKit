@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="120">
+    <meta name="fuzzy" content="maxDifference=0-1; totalPixels=0-500" />
+    <defs>
+        <!-- Every rect but the first one takes a RenderLayer in the layer-based SVG engine, while
+             painting exactly like the first one. All five have to end up in the feImage image. -->
+        <g id="target">
+            <rect x="0"   y="0" width="76" height="100" fill="green"/>
+            <rect x="76"  y="0" width="76" height="100" fill="green" style="isolation: isolate"/>
+            <rect x="152" y="0" width="76" height="100" fill="green" style="z-index: 1"/>
+            <rect x="228" y="0" width="76" height="100" fill="green" style="backface-visibility: hidden"/>
+            <rect x="304" y="0" width="76" height="100" fill="green" style="perspective: 100px"/>
+        </g>
+        <filter id="filter" filterUnits="userSpaceOnUse" primitiveUnits="userSpaceOnUse" x="10" y="10" width="380" height="100" color-interpolation-filters="sRGB">
+            <feImage href="#target"/>
+        </filter>
+    </defs>
+    <rect x="10" y="10" width="380" height="100" fill="red"/>
+    <rect x="10" y="10" width="380" height="100" filter="url(#filter)"/>
+</svg>

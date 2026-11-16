@@ -1,0 +1,7 @@
+
+PASS Setting 'offset' on the underlying style prevents a 'transform' animation from being accelerated.
+PASS Toggling 'offset' dynamically on the underlying style toggles the ability for a 'transform' animation to be accelerated.
+PASS Animating both 'offset' and 'transform' on the same animation prevents acceleration.
+PASS Animating both 'offset' and 'transform' on different animations prevents acceleration.
+PASS Setting keyframes on an animation to include 'offset' on top of 'transform' prevents acceleration.
+

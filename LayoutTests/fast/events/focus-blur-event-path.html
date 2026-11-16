@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test.js"></script>
+<input id="input">
+<script>
+
+description('This tests that event.composedPath is not empty for focus/blur events on window.');
+
+const iframe = document.createElement('iframe');
+document.body.appendChild(iframe);
+
+iframe.contentWindow.addEventListener('focus', (event) => {
+    shouldBeEqualToString('event.type', 'focus');
+    shouldBe('event.target', 'iframe.contentWindow');
+    shouldBe('event.composedPath().length', '1');
+    shouldBe('event.composedPath()[0]', 'iframe.contentWindow');
+});
+
+iframe.contentWindow.addEventListener('blur', (event) => {
+    shouldBeEqualToString('event.type', 'blur');
+    shouldBe('event.target', 'iframe.contentWindow');
+    shouldBe('event.composedPath().length', '1');
+    shouldBe('event.composedPath()[0]', 'iframe.contentWindow');
+});
+
+iframe.focus();
+input.focus();
+iframe.remove();
+input.remove();
+
+</script>
+</body>
+</html>

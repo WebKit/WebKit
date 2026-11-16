@@ -1,0 +1,60 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="/js-test-resources/js-test.js"></script>
+<script src="/js-test-resources/ui-helper.js"></script>
+<script>
+description("Dragging a selection end grabber should extend the selection correctly inside a cross-origin iframe scrolled past its own height, accounting for both the iframe's offset in the main frame and the subframe's scroll offset.");
+jsTestIsAsync = true;
+
+// The iframe is offset by (50, 100) in the main frame, is 300px tall, and its document is scrolled
+// down by 400px (past its own height, i.e. more than 100%) before it signals readiness. A long-press
+// at viewport y=(100+20) lands on contents y=(20+400)=420, i.e. "token10". Dragging the end grabber
+// down by one line must extend the selection into "token11" -- if the iframe's offset or the
+// subframe's scroll were mishandled, the endpoint would land on an unrelated line.
+const iframeLeft = 50;
+const iframeTop = 100;
+
+let reportedSelection = "";
+let initialSelection = "";
+let extendedSelection = "";
+addEventListener("message", (event) => {
+    if (event.data === "ready")
+        runTest();
+    else if (typeof event.data === "string" && event.data.startsWith("selection:"))
+        reportedSelection = event.data.substring("selection:".length);
+});
+
+async function selectWord() {
+    for (let attempt = 0; attempt < 20 && !reportedSelection.length; ++attempt) {
+        await UIHelper.longPressAtPoint(iframeLeft + 30, iframeTop + 20);
+        for (let frame = 0; frame < 10 && !reportedSelection.length; ++frame)
+            await UIHelper.animationFrame();
+    }
+}
+
+async function runTest() {
+    await UIHelper.ensurePresentationUpdate();
+    await selectWord();
+    await UIHelper.waitForSelectionToAppear();
+    initialSelection = reportedSelection;
+    shouldBeEqualToString("initialSelection", "token10");
+
+    // Drag the end grabber down a few lines to extend the selection. Retry the drag until the
+    // reported selection grows past the initial word.
+    for (let attempt = 0; attempt < 20 && reportedSelection === initialSelection; ++attempt) {
+        const grabber = UIHelper.midPointOfRect(await UIHelper.getSelectionEndGrabberViewRect());
+        await UIHelper.dragFromPointToPoint(grabber.x, grabber.y, grabber.x, grabber.y + 120, 0.5);
+        for (let frame = 0; frame < 10 && reportedSelection === initialSelection; ++frame)
+            await UIHelper.animationFrame();
+    }
+
+    extendedSelection = reportedSelection;
+    shouldBeTrue("extendedSelection.includes('token10')");
+    // The drag extends the selection down a couple of lines, so it should reach "token11"...
+    shouldBeTrue("extendedSelection.includes('token11')");
+    // ...but must not run many lines too far. The bug double-applied the subframe's scroll offset,
+    // sending the endpoint ~10 lines past the finger (down to "token20"); bound the over-expansion.
+    shouldBeFalse("extendedSelection.includes('token15')");
+    finishJSTest();
+}
+</script>
+<iframe style="position: absolute; left: 50px; top: 100px; width: 400px; height: 300px; border: none;" src="http://localhost:8000/site-isolation/resources/scrollable-selectable-text-frame.html?scrollTop=400"></iframe>

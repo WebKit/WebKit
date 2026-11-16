@@ -1,0 +1,5 @@
+
+PASS e.style['word-wrap'] = "normal" should set the property value
+PASS e.style['word-wrap'] = "break-word" should set the property value
+PASS e.style['word-wrap'] = "anywhere" should set the property value
+

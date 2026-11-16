@@ -1,0 +1,4 @@
+
+
+PASS Navigating iframe loading='lazy' and then setting src: location.replace
+

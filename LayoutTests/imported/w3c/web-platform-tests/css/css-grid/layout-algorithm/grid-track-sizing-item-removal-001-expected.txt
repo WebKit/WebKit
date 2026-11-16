@@ -1,0 +1,92 @@
+This test checks that the tracks' breadth are recomputed after removing a grid item.
+
+XXX XXX XXX
+XXX XXX XXX
+XXX XXX XXX
+XXX XXX XXX
+XXX XXX XXX
+XXX XXX XXX
+XXX XXX XXX
+XX XX XX XX XX XX
+XX XX XX XX XX XX
+XX XX XX XX XX XX
+XX XX XX XX XX XX
+XX XX XX XX XX XX
+XX XX XX XX XX XX
+XX XX XX XX XX XX
+XX XX XX XX XX XX
+XX XX XX XX XX XX
+XX XX XX XX XX XX
+XX XX XX XX XX XX
+XX XX XX XX XX XX
+XX XX XX XX XX XX
+XX XX XX XX XX XX
+XX XX XX XX XX XX
+
+PASS #constrainedAutoGrid 1
+PASS #constrainedAutoGrid 2
+PASS #constrainedAutoGrid 3
+PASS #constrainedMinContentFixedGrid 4
+PASS #constrainedMinContentFixedGrid 5
+PASS #constrainedMinContentFixedGrid 6
+PASS #constrainedMinContentFixedGridUndefinedHeight 7
+PASS #constrainedMinContentFixedGridUndefinedHeight 8
+PASS #constrainedMinContentFixedGridUndefinedHeight 9
+PASS #constrainedMaxContentFixedGrid 10
+PASS #constrainedMaxContentFixedGrid 11
+PASS #constrainedMaxContentFixedGrid 12
+PASS #constrainedMaxContentFixedGridUndefinedHeight 13
+PASS #constrainedMaxContentFixedGridUndefinedHeight 14
+PASS #constrainedMaxContentFixedGridUndefinedHeight 15
+PASS #constrainedFixedMinContentGrid 16
+PASS #constrainedFixedMinContentGrid 17
+PASS #constrainedFixedMinContentGrid 18
+PASS #constrainedFixedMaxContentGrid 19
+PASS #constrainedFixedMaxContentGrid 20
+PASS #constrainedFixedMaxContentGrid 21
+PASS #unconstrainedAutoGrid 22
+PASS #unconstrainedAutoGrid 23
+PASS #unconstrainedAutoGrid 24
+PASS #unconstrainedMinContentFixedGrid 25
+PASS #unconstrainedMinContentFixedGrid 26
+PASS #unconstrainedMinContentFixedGrid 27
+PASS #unconstrainedMinContentFixedGridUndefinedHeight 28
+PASS #unconstrainedMinContentFixedGridUndefinedHeight 29
+PASS #unconstrainedMinContentFixedGridUndefinedHeight 30
+PASS #unconstrainedMaxContentFixedGrid 31
+PASS #unconstrainedMaxContentFixedGrid 32
+PASS #unconstrainedMaxContentFixedGrid 33
+PASS #unconstrainedFixedMinContentGrid 34
+PASS #unconstrainedFixedMinContentGrid 35
+PASS #unconstrainedFixedMinContentGrid 36
+PASS #unconstrainedFixedMaxContentGrid 37
+PASS #unconstrainedFixedMaxContentGrid 38
+PASS #unconstrainedFixedMaxContentGrid 39
+PASS #lessConstrainedAutoGrid 40
+PASS #lessConstrainedAutoGrid 41
+PASS #lessConstrainedAutoGrid 42
+PASS #lessConstrainedMinContentFixedGrid 43
+PASS #lessConstrainedMinContentFixedGrid 44
+PASS #lessConstrainedMinContentFixedGrid 45
+PASS #lessConstrainedMinContentFixedGridUndefinedHeight 46
+PASS #lessConstrainedMinContentFixedGridUndefinedHeight 47
+PASS #lessConstrainedMinContentFixedGridUndefinedHeight 48
+PASS #lessConstrainedMaxContentFixedGrid 49
+PASS #lessConstrainedMaxContentFixedGrid 50
+PASS #lessConstrainedMaxContentFixedGrid 51
+PASS #lessConstrainedMaxContentFixedGridUndefinedHeight 52
+PASS #lessConstrainedMaxContentFixedGridUndefinedHeight 53
+PASS #lessConstrainedMaxContentFixedGridUndefinedHeight 54
+PASS #lessConstrainedFixedMinContentGrid 55
+PASS #lessConstrainedFixedMinContentGrid 56
+PASS #lessConstrainedFixedMinContentGrid 57
+PASS #lessConstrainedFixedMinContentGridUndefinedHeight 58
+PASS #lessConstrainedFixedMinContentGridUndefinedHeight 59
+PASS #lessConstrainedFixedMinContentGridUndefinedHeight 60
+PASS #lessConstrainedFixedMaxContentGrid 61
+PASS #lessConstrainedFixedMaxContentGrid 62
+PASS #lessConstrainedFixedMaxContentGrid 63
+PASS #lessConstrainedFixedMaxContentGridUndefinedHeight 64
+PASS #lessConstrainedFixedMaxContentGridUndefinedHeight 65
+PASS #lessConstrainedFixedMaxContentGridUndefinedHeight 66
+

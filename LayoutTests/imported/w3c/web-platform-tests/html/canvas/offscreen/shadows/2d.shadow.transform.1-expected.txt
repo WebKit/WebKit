@@ -1,0 +1,7 @@
+2d.shadow.transform.1
+
+Shadows take account of transformations
+
+
+PASS Shadows take account of transformations
+

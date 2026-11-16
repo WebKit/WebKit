@@ -1,0 +1,7 @@
+
+PASS Property float value 'none'
+PASS Property float value 'left'
+PASS Property float value 'right'
+PASS Property float value 'inline-start'
+PASS Property float value 'inline-end'
+

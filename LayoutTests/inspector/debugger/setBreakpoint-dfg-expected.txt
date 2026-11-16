@@ -1,0 +1,18 @@
+Debugger.setBreakpoint in DFG compiled functions.
+
+Found breakpoint.js
+dfgWithoutInline result: 502500
+dfgWithInline result: 504500
+dfg functions warmed up
+
+Breakpoint set in notInlineable()
+Breakpoint set in inlineable()
+
+Hit Breakpoint 1!
+Removed Breakpoint 1!
+dfgWithoutInline result: 502500
+Hit Breakpoint 2!
+Removed Breakpoint 2!
+dfgWithInline result: 504500
+PASS
+

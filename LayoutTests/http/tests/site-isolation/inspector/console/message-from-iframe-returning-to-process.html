@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="../debugger/resources/site-isolation-debugger-test-utilities.js"></script>
+<script>
+function addIFrame(url)
+{
+    let iframe = document.createElement("iframe");
+    iframe.id = "mover";
+    iframe.src = url;
+    document.body.appendChild(iframe);
+}
+
+function navigateIFrame(url)
+{
+    document.getElementById("mover").src = url;
+}
+
+function test()
+{
+    const messagesPath = "/site-isolation/inspector/console/resources/console-messages.html";
+    const sameOriginURL = messagesPath;
+    const crossOriginURL = "http://localhost:8000" + messagesPath;
+
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Console.FrameReturningToProcess");
+
+    function awaitMessages(count, expression) {
+        return new Promise((resolve) => {
+            let messages = [];
+            let listener = WI.consoleManager.addEventListener(WI.ConsoleManager.Event.MessageAdded, (event) => {
+                let {target, messageText} = event.data.message;
+                messages.push(`Got message from ${target.type} target: ${messageText}`);
+                if (messages.length < count)
+                    return;
+                WI.consoleManager.removeEventListener(WI.ConsoleManager.Event.MessageAdded, listener);
+                for (let message of messages.sort())
+                    InspectorTest.log(message);
+                resolve();
+            });
+            InspectorTest.evaluateInPage(expression);
+        });
+    }
+
+    suite.addTestCase({
+        name: "SiteIsolation.Console.FrameReturningToProcess.LeaveMainFrameProcess",
+        description: "An iframe created in the main frame's process navigates cross-origin.",
+        async test() {
+            await awaitMessages(3, `addIFrame("${crossOriginURL}?step=leave")`);
+
+            // Frame target identifiers end in the identifier of the process that hosts the frame.
+            let keeperTarget = await frameTargetForURLContaining("silent.html");
+            let moverTarget = await frameTargetForURLContaining("console-messages.html");
+            let processIdentifier = (target) => target.identifier.split("-").pop();
+            InspectorTest.expectEqual(processIdentifier(moverTarget), processIdentifier(keeperTarget), "The moving iframe should share a process with the keeper iframe.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Console.FrameReturningToProcess.ReturnToMainFrameProcess",
+        description: "The iframe returns to the main frame's process, and its new frame target must be connected.",
+        async test() {
+            await awaitMessages(3, `navigateIFrame("${sameOriginURL}?step=return")`);
+        },
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Console.FrameReturningToProcess.ReturnToCrossOriginProcess",
+        description: "The iframe returns to the cross-origin process, which the keeper iframe keeps alive.",
+        async test() {
+            await awaitMessages(3, `navigateIFrame("${crossOriginURL}?step=back")`);
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+<body onload="runTest()">
+<iframe src="http://localhost:8000/site-isolation/inspector/console/resources/silent.html"></iframe>
+</body>

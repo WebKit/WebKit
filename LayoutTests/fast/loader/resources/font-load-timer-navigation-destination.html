@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style id="style"></style>
+</head>
+<body>
+<span id="target" style="font: 48px 'WebFont';">HelloWorld!</span>
+<script>
+window.setTimeout(function() {
+    document.getElementById("style").sheet.insertRule("@font-face { font-family: 'WebFont'; src: url('../../../resources/Ahem.ttf') format('truetype'); }");
+    document.fonts.entries().next().value.load().then(function() {
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }, function() {
+        if (window.testRunner)
+            testRunner.notifyDone();
+    });
+}, 100);
+</script>
+</body>
+</html>

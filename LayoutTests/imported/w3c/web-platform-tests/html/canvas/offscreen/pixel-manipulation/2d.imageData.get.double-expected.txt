@@ -1,0 +1,7 @@
+2d.imageData.get.double
+
+createImageData(w, h) double is converted to long
+
+
+PASS createImageData(w, h) double is converted to long
+

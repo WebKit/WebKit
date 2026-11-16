@@ -1,0 +1,5 @@
+CONSOLE MESSAGE: Referrer: PASS
+CONSOLE MESSAGE: window.opener: PASS
+Test that rel="noreferrer" is supported by form elements.
+
+

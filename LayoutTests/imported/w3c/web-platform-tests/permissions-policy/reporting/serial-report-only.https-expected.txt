@@ -1,0 +1,4 @@
+
+FAIL requestPort in serial report only mode assert_equals: expected (number) 8 but got (undefined) undefined
+FAIL getPorts in serial report only mode promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'navigator.serial.getPorts')"
+

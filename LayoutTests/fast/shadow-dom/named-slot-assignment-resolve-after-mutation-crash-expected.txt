@@ -1,0 +1,4 @@
+This tests inserting a bunch of nodes with slot attributes under shadow host.
+WebKit should not crash or hit assertions under ASAN, and you should see PASS below:
+
+PASS

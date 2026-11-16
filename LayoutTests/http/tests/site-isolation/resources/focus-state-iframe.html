@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<body style="margin: 0;">
+<input type="text" id="input" style="width: 200px; font-size: 16px;">
+<script>
+const input = document.getElementById("input");
+let blurred = false;
+let focusedOut = false;
+
+input.addEventListener("focus", () => window.parent.postMessage({ type: "focused" }, "*"));
+input.addEventListener("blur", () => blurred = true);
+input.addEventListener("focusout", () => focusedOut = true);
+
+window.addEventListener("message", (event) => {
+    if (event.data.type === "checkState") {
+        event.source.postMessage({
+            type: "state",
+            blurred,
+            focusedOut,
+            value: input.value,
+            activeElement: document.activeElement ? document.activeElement.tagName : "null"
+        }, event.origin);
+    }
+});
+</script>
+</body>
+</html>

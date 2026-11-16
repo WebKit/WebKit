@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<body>
+<div  style="background-color: blue; width: 400px; font-size: 12px">
+  <div style="display: -webkit-box; width: 300px; margin-left: 100px; background-color: green;">
+    <div id=container>[foobar] select -> [this] word and expand the selection to [foobar] by moving the cursor to the left over to the blue area. PASS if selection covers both [foobar] and [this].</div>
+    <div style="width: 100px; height: 100px;"></div>
+  </div>
+</div>
+
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+if (window.eventSender) {
+    eventSender.dragMode = false;
+    eventSender.mouseMoveTo(container.offsetLeft + 110, container.offsetTop + 5);
+    eventSender.mouseDown();
+    eventSender.mouseMoveTo(container.offsetLeft - 10, container.offsetTop + 5);
+    eventSender.mouseUp();
+    if (getSelection() == "[foobar] select -> [this]")
+        document.write("PASS");
+    else
+        document.write("FAIL");
+}
+</script>
+</body>
+</html>

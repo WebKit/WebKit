@@ -1,0 +1,36 @@
+<!-- webkit-test-runner [ UnloadEventEnabled=false ] -->
+<!DOCTYPE html>
+<body>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+let events = [];
+let iframe = document.createElement("iframe");
+
+addEventListener("message", (event) => {
+    if (event.data == "loaded") {
+        iframe.src = "about:blank";
+        // about:blank navigation is synchronous, so give the dismissal events a chance to arrive.
+        setTimeout(finish, 100);
+        return;
+    }
+    events.push(event.data);
+});
+
+function finish()
+{
+    document.body.appendChild(document.createElement("pre")).textContent =
+        "Events dispatched to the navigated-away iframe: " + events.sort().join(", ") + "\n" +
+        (events.includes("unload") ? "FAIL: unload event was dispatched" : "PASS: unload event was not dispatched") + "\n" +
+        (events.includes("pagehide") ? "PASS: pagehide event was dispatched" : "FAIL: pagehide event was not dispatched");
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+iframe.src = "resources/unload-event-disabled-frame.html";
+document.body.appendChild(iframe);
+</script>
+</body>

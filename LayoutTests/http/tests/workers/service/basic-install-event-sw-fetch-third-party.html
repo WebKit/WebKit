@@ -1,0 +1,66 @@
+<!DOCTYPE html><!-- webkit-test-runner [ OptInPartitionedCookiesEnabled=true ] -->
+<html>
+<head>
+<script src="resources/sw-test-pre.js"></script>
+<script src="../../resourceLoadStatistics/resources/util.js"></script>
+</head>
+<body>
+<script>
+
+function finishTest() {
+    setEnableFeature(false, function() {
+        finishSWTest();
+    });
+}
+if (location.host == "127.0.0.1:8000" && location.hash == "") {
+    setEnableFeature(true, function() {
+        testRunner.setStatisticsShouldBlockThirdPartyCookies(true, () => {
+            location.href = location.href.replace("127.0.0.1", "localhost");
+        }, false, true);
+    });
+} else if (location.host == "localhost:8000" && location.hash == "") {
+    fetch("http://localhost:8000/cookies/resources/setCookies.cgi", { credentials: "include", headers: { "X-SET-COOKIE": "firstPartyCookie=value;Path=/" } }).then((r) => r.text()).then((text) => {
+        let expected = "";
+        if (text == expected) {
+            log(`PASS: setCookies returned the expected value`);
+            location.hash = "sw";
+            location.href = location.href.replace("localhost", "127.0.0.1");
+        } else {
+            log(`FAIL: setCookies returned ${text}, expected ${expected}`);
+            finishTest();
+        }
+    });
+} else if (location.host == "127.0.0.1:8000" && location.hash == "#sw") {
+    navigator.serviceWorker.addEventListener("message", function(event) {
+        if (event.data) {
+            log(`setCookies from serviceWorker returned  ${event.data}`);
+            location.hash = "finish";
+            location.href = location.href.replace("127.0.0.1", "localhost");
+        } else {
+            log("FAIL: service worker did not receive install event or did not resolve the extend lifetime promise");
+            finishTest();
+        }
+    
+    });
+    
+    navigator.serviceWorker.register("resources/basic-install-event-waitUntil-resolve-worker-then-fetch.js", { }).then(function(registration) {
+         waitForState(registration.installing, "installed").then(function() {
+             registration.waiting.postMessage("fetch");
+         });
+    }, function() {
+        log("FAIL: Failed to register the service worker");
+        finishTest();
+    });
+} else if (location.host == "localhost:8000" && location.hash == "#finish") {
+    fetch("http://localhost:8000/cookies/resources/echo-cookies.py").then((r) => r.text()).then((text) => {
+        let expected = "Cookies are:\nfirstPartyCookie = value\n";
+        if (text == expected)
+            log(`PASS: echo-cookies returned the expected value`);
+        else
+            log(`FAIL: echo-cookies returned ${text}, expected ${expected}`);
+        finishTest();
+    });
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,21 @@
+<style>
+div {
+  font-family: Monospace;
+}
+.skipped {
+  height: 100px;
+  width: 300px;
+  outline: 1px solid green;  
+  content-visibility: hidden;
+}
+</style>
+<div id=selection_start>PASS if green box</div>
+<div class=skipped>Skipped content. Should not get revealed through selection</div>
+<div id=selection_end>is selected but the content inside is not.</div>
+<script>
+const selection = window.getSelection();
+const range = document.createRange();
+range.setStart(document.getElementById("selection_start"), 0);
+range.setEnd(document.getElementById("selection_end"), 1);
+selection.addRange(range);
+</script>

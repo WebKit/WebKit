@@ -1,0 +1,15 @@
+inline marquees don't shrink to avoid floats.
+<div style="width: 100px; background-color: green">
+    <div style="float: left; width: 50px; height: 100px"></div>
+    <div>
+        <marquee style="height: 100px; background-color: green;"></marquee>
+    </div>
+</div>
+<div style="width: 100px; background-color: green">
+    <div style="float: left; width: 50px; height: 100px"></div>
+    <marquee style="height: 100px; background-color: green;"></marquee>
+</div>
+<div style="width: 100px; background-color: green">
+    <div style="float: left; width: 50px; height: 100px"></div>
+    <marquee style="display: block; height: 100px; background-color: green;"></marquee>
+</div>

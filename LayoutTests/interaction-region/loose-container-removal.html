@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<body>
+   <div onclick="null" style="width: 35px; height: 35px; cursor: pointer;" role="button">
+      <div onclick="null" style="background-color: gray; border-radius: 9999px; cursor: pointer; height: 38px; width: 38px;">
+      </div>
+   </div>
+
+   <pre id="results"></pre>
+   <script>
+   if (window.testRunner)
+      testRunner.dumpAsText();
+
+   window.onload = function () {
+      if (window.internals)
+         results.textContent = internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_EVENT_REGION | internals.LAYER_TREE_INCLUDES_ROOT_LAYER_PROPERTIES);
+   };
+</script>
+</body>
+</html>

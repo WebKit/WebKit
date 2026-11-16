@@ -1,0 +1,40 @@
+// Copyright (C) 2010 Apple Inc. All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted provided that the following conditions
+// are met:
+// 1. Redistributions of source code must retain the above copyright
+//    notice, this list of conditions and the following disclaimer.
+// 2. Redistributions in binary form must reproduce the above copyright
+//    notice, this list of conditions and the following disclaimer in the
+//    documentation and/or other materials provided with the distribution.
+//
+// THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+// EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+// IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+// PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+// CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+// EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+// PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+// PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+// OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+// (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+// OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+
+PRODUCT_NAME = MiniBrowser
+// The internal entitlements add restricted entitlements, which Xcode refuses to sign without a provisioning profile.
+CODE_SIGN_ENTITLEMENTS = $(CODE_SIGN_ENTITLEMENTS_$(USE_INTERNAL_SDK));
+CODE_SIGN_ENTITLEMENTS_ = MiniBrowser.entitlements;
+CODE_SIGN_ENTITLEMENTS_NO = MiniBrowser.entitlements;
+CODE_SIGN_ENTITLEMENTS_YES = MiniBrowser-internal.entitlements;
+PRODUCT_BUNDLE_IDENTIFIER = org.webkit.$(PRODUCT_NAME:rfc1034identifier)
+GCC_PREFIX_HEADER = mac/MiniBrowser_Prefix.pch
+INFOPLIST_FILE = mac/Info.plist
+EXCLUDED_SOURCE_FILE_NAMES[sdk=iphone*] = *
+EXCLUDED_SOURCE_FILE_NAMES[sdk=macosx*] = $(EXCLUDED_SOURCE_FILE_NAMES_$(WK_PLATFORM_NAME))
+EXCLUDED_SOURCE_FILE_NAMES_maccatalyst = *
+OTHER_LDFLAGS[sdk=macosx*] = $(inherited) -framework Cocoa -framework PDFKit -framework UniformTypeIdentifiers -framework WebKit
+// Lets Swift sources use the same WTF_PLATFORM_* checks as the C++ and Objective-C ones.
+SWIFT_ACTIVE_COMPILATION_CONDITIONS[sdk=macosx*] = $(inherited) $(SWIFT_ACTIVE_COMPILATION_CONDITIONS_$(WK_PLATFORM_NAME));
+SWIFT_ACTIVE_COMPILATION_CONDITIONS_macosx = WTF_PLATFORM_MAC;
+STRIP_STYLE = debugging;

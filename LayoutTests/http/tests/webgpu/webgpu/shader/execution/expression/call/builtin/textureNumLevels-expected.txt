@@ -1,0 +1,16 @@
+
+PASS :sampled:texture_type="texture_1d"
+PASS :sampled:texture_type="texture_2d"
+PASS :sampled:texture_type="texture_2d_array"
+PASS :sampled:texture_type="texture_3d"
+PASS :sampled:texture_type="texture_cube"
+PASS :sampled:texture_type="texture_cube_array"
+PASS :depth:texture_type="texture_depth_2d";view_type="full"
+PASS :depth:texture_type="texture_depth_2d";view_type="partial"
+PASS :depth:texture_type="texture_depth_2d_array";view_type="full"
+PASS :depth:texture_type="texture_depth_2d_array";view_type="partial"
+PASS :depth:texture_type="texture_depth_cube";view_type="full"
+PASS :depth:texture_type="texture_depth_cube";view_type="partial"
+PASS :depth:texture_type="texture_depth_cube_array";view_type="full"
+PASS :depth:texture_type="texture_depth_cube_array";view_type="partial"
+

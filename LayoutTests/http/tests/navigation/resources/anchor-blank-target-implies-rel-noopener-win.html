@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script>
+    if (!window.opener)
+        console.log("PASS: New window should not have an opener");
+    else
+        console.log("FAIL: New window should not have an opener");
+
+    if (window.testRunner)
+        testRunner.notifyDone();
+</script>
+</body>
+</html>

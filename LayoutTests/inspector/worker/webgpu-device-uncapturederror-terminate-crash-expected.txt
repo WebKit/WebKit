@@ -1,0 +1,16 @@
+Test that terminating a worker whose GPUDevice has an uncapturederror listener does not crash when an inspector frontend is connected.
+
+
+== Running test suite: Worker.WebGPUDeviceUncapturedErrorTerminate
+-- Running test case: Worker.WebGPUDeviceUncapturedErrorTerminate.attribute
+Creating worker...
+PASS: Worker should create a GPUDevice.
+Terminating worker...
+PASS: Should not crash.
+
+-- Running test case: Worker.WebGPUDeviceUncapturedErrorTerminate.addEventListener
+Creating worker...
+PASS: Worker should create a GPUDevice.
+Terminating worker...
+PASS: Should not crash.
+

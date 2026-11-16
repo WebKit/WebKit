@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+let worker = new Worker("resources/timeline-worker.js");
+
+function pageTimerFired() {
+    return 42;
+}
+
+function fireTimerInPage() {
+    setTimeout(pageTimerFired);
+}
+
+function test()
+{
+    // Under Site Isolation, records for the page's document come from its main frame target.
+    let mainFrameTarget = InspectorTest.mainFrameTarget;
+
+    let workerTarget = WI.targetManager.workerTargets[0];
+    if (!workerTarget) {
+        InspectorTest.fail("Missing Worker target.");
+        InspectorTest.completeTest();
+        return;
+    }
+
+    function awaitCapturingState(capturingState) {
+        return new Promise((resolve) => {
+            let listener = WI.timelineManager.addEventListener(WI.TimelineManager.Event.CapturingStateChanged, (event) => {
+                if (WI.timelineManager.capturingState !== capturingState)
+                    return;
+
+                WI.timelineManager.removeEventListener(WI.TimelineManager.Event.CapturingStateChanged, listener);
+                resolve();
+            });
+        });
+    }
+
+    function awaitTimerFiredRecord(scriptTimeline, target) {
+        return new Promise((resolve) => {
+            let listener = scriptTimeline.addEventListener(WI.Timeline.Event.RecordAdded, (event) => {
+                let {record} = event.data;
+                if (record.eventType !== WI.ScriptTimelineRecord.EventType.TimerFired || record.target !== target)
+                    return;
+
+                scriptTimeline.removeEventListener(WI.Timeline.Event.RecordAdded, listener);
+                resolve(record);
+            });
+        });
+    }
+
+    let suite = InspectorTest.createAsyncSuite("Timeline.MainThreadScriptRecords");
+
+    suite.addTestCase({
+        name: "Timeline.MainThreadScriptRecords.PageAndWorker",
+        description: "Check that records from a Worker are not main thread records, and that records from the page are.",
+        async test() {
+            let activePromise = awaitCapturingState(WI.TimelineManager.CapturingState.Active);
+            const newRecording = true;
+            WI.timelineManager.startCapturing(newRecording);
+            await activePromise;
+
+            let scriptTimeline = WI.timelineManager.activeRecording.timelines.get(WI.TimelineRecord.Type.Script);
+            let pageRecordPromise = awaitTimerFiredRecord(scriptTimeline, mainFrameTarget);
+            let workerRecordPromise = awaitTimerFiredRecord(scriptTimeline, workerTarget);
+            await InspectorTest.evaluateInPage(`fireTimerInPage()`);
+            await InspectorTest.evaluateInPage(`worker.postMessage("fire-timer")`);
+            let pageRecord = await pageRecordPromise;
+            let workerRecord = await workerRecordPromise;
+
+            let inactivePromise = awaitCapturingState(WI.TimelineManager.CapturingState.Inactive);
+            WI.timelineManager.stopCapturing();
+            await inactivePromise;
+
+            let mainThreadRecords = scriptTimeline.mainThreadRecordsInTimeRange(scriptTimeline.startTime, scriptTimeline.endTime);
+            InspectorTest.expectThat(mainThreadRecords.includes(pageRecord), "The page's timer record should be a main thread record.");
+            InspectorTest.expectFalse(mainThreadRecords.includes(workerRecord), "The Worker's timer record should not be a main thread record.");
+            InspectorTest.expectThat(mainThreadRecords.every((record) => record.target.type !== WI.TargetType.Worker), "No main thread record should come from a Worker target.");
+
+            let pageTargetRecords = scriptTimeline.records.filter((record) => record.target.type !== WI.TargetType.Worker);
+            InspectorTest.expectEqual(mainThreadRecords.length, pageTargetRecords.length, "Every record that is not from a Worker should be a main thread record.");
+
+            InspectorTest.expectThat(scriptTimeline.records.includes(workerRecord), "The Script timeline should still contain the Worker's record.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "Timeline.MainThreadScriptRecords.ImportedTargets",
+        description: "Check that records of imported Worker targets are filtered too, and that the time range is respected.",
+        async test() {
+            let pageTarget = WI.ImportedTarget.import({identifier: "page", type: WI.TargetType.Page, name: "Page", url: "http://example.com/"});
+            let importedWorkerTarget = WI.ImportedTarget.import({identifier: "worker", type: WI.TargetType.Worker, name: "Worker", url: "http://example.com/worker.js"});
+
+            let scriptTimeline = WI.Timeline.create(WI.TimelineRecord.Type.Script);
+            let records = [
+                new WI.ScriptTimelineRecord(pageTarget, WI.ScriptTimelineRecord.EventType.ScriptEvaluated, 1, 3),
+                new WI.ScriptTimelineRecord(importedWorkerTarget, WI.ScriptTimelineRecord.EventType.ScriptEvaluated, 2, 4),
+                new WI.ScriptTimelineRecord(pageTarget, WI.ScriptTimelineRecord.EventType.TimerFired, 5, 6),
+                new WI.ScriptTimelineRecord(importedWorkerTarget, WI.ScriptTimelineRecord.EventType.TimerFired, 5, 7),
+            ];
+            for (let record of records)
+                scriptTimeline.addRecord(record);
+
+            let mainThreadRecords = scriptTimeline.mainThreadRecordsInTimeRange(0, 10);
+            InspectorTest.expectEqual(mainThreadRecords.length, 2, "Should keep only the two page records.");
+            InspectorTest.expectThat(mainThreadRecords.includes(records[0]) && mainThreadRecords.includes(records[2]), "Should keep the page records.");
+
+            mainThreadRecords = scriptTimeline.mainThreadRecordsInTimeRange(4.5, 10);
+            InspectorTest.expectEqual(mainThreadRecords.length, 1, "Should keep only the page record in the time range.");
+            InspectorTest.expectEqual(mainThreadRecords[0], records[2], "Should keep the page's timer record.");
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests that Script timeline records from Worker targets are not counted as main thread records, which feed the CPU timeline's main thread breakdown.</p>
+</body>
+</html>

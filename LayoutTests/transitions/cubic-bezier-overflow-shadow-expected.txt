@@ -1,0 +1,11 @@
+PASS - "box-shadow" property for "box1" element at 0.5s saw something close to: -7,25
+PASS - "box-shadow" property for "box1" element at 0.95s saw something close to: -6,22
+PASS - "box-shadow" property for "box2" element at 0.1s saw something close to: 7,-9
+PASS - "box-shadow" property for "box2" element at 0.5s saw something close to: 2,4
+PASS - "box-shadow" property for "box2" element at 0.95s saw something close to: -6,22
+PASS - "box-shadow" property for "box3" element at 0.1s saw something close to: 9,-16
+PASS - "box-shadow" property for "box3" element at 0.5s saw something close to: 16,-32
+PASS - "box-shadow" property for "box4" element at 0.15s saw something close to: -8,27
+PASS - "box-shadow" property for "box4" element at 0.5s saw something close to: 0,8
+PASS - "box-shadow" property for "box4" element at 0.8s saw something close to: 8,-11
+

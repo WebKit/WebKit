@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            font-size: 12pt;
+        }
+
+        .container {
+            border: 4px solid black;
+            margin: 10px;
+            padding: 4px;
+            text-align: center;
+            print-color-adjust: exact;
+        }
+
+        /* White darkened */
+        .white-on-black {
+            color: rgb(171, 171, 171);
+        }
+
+        /* #ccc darkened */
+        .lightgray-on-darkgray {
+            color: rgb(120, 120, 120);
+        }
+
+        /* #aaccff darkened */
+        .lightblue-on-darkblue {
+            color: rgb(114, 137, 171);
+        }
+
+        /* #999 darkened */
+        .medium-gray {
+            color: rgb(69, 69, 69);
+        }
+    </style>
+    <script>
+        if (window.internals)
+            internals.setPrinting(600, 600);
+    </script>
+</head>
+<body>
+    <p>Light text on dark backgrounds with print-color-adjust: economy. All text
+    should be darkened to be legible against a white background.</p>
+
+    <div class="container white-on-black">
+        White on black
+    </div>
+
+    <div class="container lightgray-on-darkgray">
+        Light gray on dark gray
+    </div>
+
+    <div class="container lightblue-on-darkblue">
+        Light blue on dark blue
+    </div>
+
+    <div class="container medium-gray">
+        Medium gray
+    </div>
+</body>
+</html>

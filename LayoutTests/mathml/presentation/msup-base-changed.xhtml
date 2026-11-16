@@ -1,0 +1,19 @@
+<html xmlns='http://www.w3.org/1999/xhtml'> 
+<head> 
+<title>msup javascript base change test</title> 
+</head> 
+<body> 
+<p> 
+<math xmlns='http://www.w3.org/1998/Math/MathML'> 
+<msup id="sup"><mi>x</mi><mn>1</mn></msup> 
+</math> 
+</p> 
+<script type='text/javascript'>
+var msup = document.getElementById("sup");
+msup.removeChild(msup.firstChild);
+var base = document.createElementNS("http://www.w3.org/1998/Math/MathML","mi");
+base.appendChild(document.createTextNode("y"));
+msup.insertBefore(base,msup.firstChild);
+</script>
+</body>
+</html>

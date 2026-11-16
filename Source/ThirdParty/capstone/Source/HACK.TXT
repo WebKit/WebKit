@@ -1,0 +1,108 @@
+Code structure
+--------------
+
+Capstone source is organized as followings.
+
+.                   <- core engine + README + COMPILE.TXT etc
+├── arch            <- code handling disasm engine for each arch
+│   ├── AArch64     <- ARM64 (aka ARMv8) engine
+│   ├── ARM         <- ARM engine
+│   ├── BPF         <- Berkeley Packet Filter engine
+│   ├── EVM         <- Ethereum engine
+│   ├── M680X       <- M680X engine
+│   ├── M68K        <- M68K engine
+│   ├── Mips        <- Mips engine
+│   ├── MOS65XX     <- MOS65XX engine
+│   ├── PowerPC     <- PowerPC engine
+│   ├── RISCV       <- RISCV engine
+│   ├── SH          <- SH engine
+│   ├── Sparc       <- Sparc engine
+│   ├── SystemZ     <- SystemZ engine
+│   ├── TMS320C64x  <- TMS320C64x engine
+│   ├── TriCore     <- TriCore engine
+│   └── WASM        <- WASM engine
+├── bindings        <- all bindings are under this dir
+│   ├── java        <- Java bindings + test code
+│   ├── ocaml       <- Ocaml bindings + test code
+│   └── python      <- Python bindings + test code
+├── contrib         <- Code contributed by community to help Capstone integration
+├── cstool          <- Cstool
+├── docs            <- Documentation
+├── include         <- API headers in C language (*.h)
+├── msvc            <- Microsoft Visual Studio support (for Windows compile)
+├── packages        <- Packages for Linux/OSX/BSD.
+├── windows         <- Windows support (for Windows kernel driver compile)
+├── suite           <- Development test tools - for Capstone developers only
+├── tests           <- Test code (in C language)
+└── xcode           <- Xcode support (for MacOSX compile)
+
+
+Follow instructions in COMPILE.TXT for how to compile and run test code.
+
+Note: if you find some strange bugs, it is recommended to firstly clean
+the code and try to recompile/reinstall again. This can be done with:
+
+	$ ./make.sh
+	$ sudo ./make.sh install
+
+Then test Capstone with cstool, for example:
+
+	$ cstool x32 "90 91"
+
+At the same time, for Java/Ocaml/Python bindings, be sure to always use
+the bindings coming with the core to avoid potential incompatibility issue
+with older versions.
+See bindings/<language>/README for detail instructions on how to compile &
+install the bindings.
+
+
+Coding style
+------------
+- C code follows Linux kernel coding style, using tabs for indentation.
+- Python code uses 4 spaces for indentation.
+
+
+Adding an architecture
+----------------------
+
+Obviously, you first need to write all the logic and put it in a new directory arch/newarch
+Then, you have to modify other files.
+(You can look for one architecture such as EVM in these files to get what you need to do)
+
+Integrate:
+- cs.c
+- cstool/cstool.c
+- cstool/cstool_newarch.c: print the architecture specific details
+- include/capstone/capstone.h
+- include/capstone/newarch.h: create this file to export all specifics about the new architecture
+
+Compile:
+- CMakeLists.txt
+- Makefile
+- config.mk
+
+Tests:
+- tests/Makefile
+- tests/test_basic.c
+- tests/test_detail.c
+- tests/test_iter.c
+- tests/test_newarch.c
+- suite/fuzz/platform.c: add the architecture and its modes to the list of fuzzed platforms
+- suite/capstone_get_setup.c
+- suite/MC/newarch/mode.mc: samples
+- suite/test_corpus.py: correspondence between architecture and mode as text and architecture number for fuzzing
+
+Bindings:
+- bindings/Makefile
+- bindings/const_generator.py: add the header file and the architecture
+- bindings/python/Makefile
+- bindings/python/capstone/__init__.py
+- bindings/python/capstone/newarch.py: define the python structures
+- bindings/python/capstone/newarch_const.py: generate this file
+- bindings/python/test_newarch.py: create a basic decoding test
+- bindings/python/test_all.py
+
+Docs:
+- README.md
+- HACK.txt
+- CREDITS.txt: add your name

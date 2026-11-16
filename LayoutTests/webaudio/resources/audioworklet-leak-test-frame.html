@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script>
+const context = new OfflineAudioContext(1, 1, 44100);
+context.audioWorklet.addModule('../bad-array-type-processor.js?' + Math.random()).then(() => {
+    const node = new AudioWorkletNode(context, 'bad-array-type-processor');
+    let d = document;
+    let p = d.createElement("p");
+    p.innerText = "AudioWorklet leak test completed";
+    d.body.appendChild(p);
+});
+
+onload = () => {
+    parent.postMessage("frameLoaded");
+};
+</script>
+</body>
+</html>

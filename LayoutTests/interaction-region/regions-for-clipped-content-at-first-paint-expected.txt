@@ -1,0 +1,1 @@
+PASS: after the page loads, each of the 2 clipped links has a region layer (found 2).

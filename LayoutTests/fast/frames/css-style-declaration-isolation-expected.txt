@@ -1,0 +1,2 @@
+ This tests that modifications to the prototype of CSSStyleDeclaration don't modify its prototype in another document.
+PASS

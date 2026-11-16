@@ -1,0 +1,339 @@
+/*
+ * Copyright (C) 2023-2025 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#include "config.h"
+#include "WebFrameLoaderClient.h"
+
+#include "FormDataReference.h"
+#include "FrameInfoData.h"
+#include "JSHandleInfo.h"
+#include "Logging.h"
+#include "MessageSenderInlines.h"
+#include "NavigationActionData.h"
+#include "WebFrame.h"
+#include "WebLocalFrameLoaderClient.h"
+#include "WebMouseEvent.h"
+#include "WebPage.h"
+#include "WebPageProxyMessages.h"
+#include "WebProcess.h"
+#include <WebCore/Document.h>
+#include <WebCore/DocumentLoader.h>
+#include <WebCore/FrameLoader.h>
+#include <WebCore/HitTestResult.h>
+#include <WebCore/LocalFrameInlines.h>
+#include <WebCore/PolicyChecker.h>
+#include <WebCore/WebKitJSHandle.h>
+#include <wtf/text/TextStream.h>
+
+#if PLATFORM(COCOA)
+#include <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
+#endif
+
+#define WebFrameLoaderClient_PREFIX_PARAMETERS "%p - [webFrame=%p, webFrameID=%" PRIu64 ", webPage=%p, webPageID=%" PRIu64 "] WebFrameLoaderClient::"
+#define WebFrameLoaderClient_WEBFRAME (&webFrame())
+#define WebFrameLoaderClient_WEBFRAMEID (webFrame().frameID().toUInt64())
+#define WebFrameLoaderClient_WEBPAGE (webFrame().page())
+#define WebFrameLoaderClient_WEBPAGEID (WebFrameLoaderClient_WEBPAGE ? WebFrameLoaderClient_WEBPAGE->identifier().toUInt64() : 0)
+
+#define WebFrameLoaderClient_RELEASE_LOG(fmt, ...) RELEASE_LOG_FORWARDABLE(Network, fmt, WebFrameLoaderClient_WEBFRAMEID, WebFrameLoaderClient_WEBPAGEID, ##__VA_ARGS__)
+#define WebFrameLoaderClient_RELEASE_LOG_ERROR(fmt, ...) RELEASE_LOG_ERROR_FORWARDABLE(Network, fmt, WebFrameLoaderClient_WEBFRAMEID, WebFrameLoaderClient_WEBPAGEID, ##__VA_ARGS__)
+
+namespace WebKit {
+using namespace WebCore;
+
+WebFrameLoaderClient::WebFrameLoaderClient(Ref<WebFrame>&& frame, ScopeExit<Function<void()>>&& frameInvalidator)
+    : m_frame(WTF::move(frame))
+    , m_frameInvalidator(WTF::move(frameInvalidator))
+{
+}
+
+WebFrameLoaderClient::~WebFrameLoaderClient() = default;
+
+#if PLATFORM(MAC) || HAVE(UIKIT_WITH_MOUSE_SUPPORT)
+std::optional<JSHandleInfo> WebFrameLoaderClient::jsHandleInfoForHitTestResult(const std::optional<HitTestResult>& hitTestResult)
+{
+    if (!hitTestResult)
+        return std::nullopt;
+
+    RefPtr node = hitTestResult->innerNonSharedNode();
+    if (!node)
+        return std::nullopt;
+
+    RefPtr frame = node->document().frame();
+    if (!frame)
+        return std::nullopt;
+
+    RefPtr webFrame = WebFrame::fromCoreFrame(*frame);
+    if (!webFrame)
+        return std::nullopt;
+
+    auto handleAndInfo = webFrame->createAndPrepareToSendJSHandle(*node);
+    if (!handleAndInfo)
+        return std::nullopt;
+
+    return WTF::move(handleAndInfo->second);
+}
+#endif
+
+std::optional<NavigationActionData> WebFrameLoaderClient::navigationActionData(const NavigationAction& navigationAction, const ResourceRequest& request, const ResourceResponse& redirectResponse, const String& clientRedirectSourceForHistory, std::optional<WebCore::NavigationIdentifier> navigationID, std::optional<WebCore::HitTestResult>&& hitTestResult, bool hasOpener, NavigationUpgradeToHTTPSBehavior navigationUpgradeToHTTPSBehavior, SandboxFlags sandboxFlags) const
+{
+    RefPtr webPage = m_frame->page();
+    if (!webPage) {
+        WebFrameLoaderClient_RELEASE_LOG_ERROR(WebFrameLoaderClientNavigationActionDataNoWebPage);
+        return std::nullopt;
+    }
+
+    // Always ignore requests with empty URLs.
+    if (request.isEmpty()) {
+        WebFrameLoaderClient_RELEASE_LOG_ERROR(WebFrameLoaderClientNavigationActionDataEmptyRequest);
+        return std::nullopt;
+    }
+
+    if (!navigationAction.requester()) {
+        ASSERT_NOT_REACHED();
+        return std::nullopt;
+    }
+
+    auto& requester = *navigationAction.requester();
+    if (!requester.frameID) {
+        WebFrameLoaderClient_RELEASE_LOG_ERROR(WebFrameLoaderClientNavigationActionDataNoFrame);
+        return std::nullopt;
+    }
+
+    RefPtr requestingFrame = WebProcess::singleton().webFrame(*requester.frameID);
+    auto originatingFrameID = *requester.frameID;
+    std::optional<WebCore::FrameIdentifier> parentFrameID;
+    if (auto parentFrame = requestingFrame ? requestingFrame->parentFrame() : nullptr)
+        parentFrameID = parentFrame->frameID();
+
+    RefPtr coreLocalFrame = m_frame->coreLocalFrame();
+    RefPtr document = coreLocalFrame ? coreLocalFrame->document() : nullptr;
+
+    auto originator = m_frame->isMainFrame() ? webPage->takeMainFrameNavigationInitiator() : nullptr;
+
+    std::optional<WebPageProxyIdentifier> originatingPageID;
+    if (RefPtr webPage = requester.pageID ? WebProcess::singleton().webPage(*requester.pageID) : nullptr)
+        originatingPageID = webPage->webPageProxyIdentifier();
+
+    auto originatingFrameInfoData = originator ? FrameInfoData { WTF::move(*originator) } : FrameInfoData {
+        ResourceRequest { URL { requester.url } },
+        { },
+        WTF::move(originatingFrameID),
+        document ? std::optional { document->identifier() } : std::nullopt,
+        requestingFrame ? requestingFrame->isFocused() : false
+    };
+
+    // FIXME: When we receive a redirect after the navigation policy has been decided for the initial request,
+    // the provisional load's DocumentLoader needs to receive navigation policy decisions. We need a better model for this state.
+
+    std::optional<WebCore::OwnerPermissionsPolicyData> ownerPermissionsPolicy;
+    if (RefPtr coreFrame = m_frame->coreFrame())
+        ownerPermissionsPolicy = coreFrame->ownerPermissionsPolicy();
+
+    auto& mouseEventData = navigationAction.mouseEventData();
+
+    // Avoid serializing (and re-parsing in the UIProcess) the navigation URL twice: when the
+    // original request is equal to the current request, send nullopt and let the receiver fall
+    // back to `request`. See NavigationActionData::originalRequestOrFallback().
+    std::optional<WebCore::ResourceRequest> originalRequest;
+    if (navigationAction.originalRequest() != request)
+        originalRequest = navigationAction.originalRequest();
+
+#if PLATFORM(MAC) || HAVE(UIKIT_WITH_MOUSE_SUPPORT)
+    auto hitTestJSHandleInfo = jsHandleInfoForHitTestResult(hitTestResult);
+#endif
+
+    return NavigationActionData {
+        navigationAction.type(),
+        modifiersForNavigationAction(navigationAction),
+        mouseButton(navigationAction),
+        syntheticClickType(navigationAction),
+        WebProcess::singleton().userGestureTokenIdentifier(navigationAction.requester()->pageID, navigationAction.userGestureToken()),
+        navigationAction.userGestureToken() ? navigationAction.userGestureToken()->authorizationToken() : std::nullopt,
+        webPage->canHandleRequest(request),
+        navigationAction.shouldOpenExternalURLsPolicy(),
+        navigationAction.downloadAttribute(),
+        mouseEventData ? mouseEventData->locationInRootViewCoordinates : FloatPoint(),
+        redirectResponse,
+        navigationAction.isRequestFromClientOrUserInput(),
+        navigationAction.hasOpenedFrames(),
+        navigationAction.openedByDOMWithOpener(),
+        hasOpener,
+        navigationUpgradeToHTTPSBehavior,
+        navigationAction.isInitialFrameSrcLoad(),
+        navigationAction.isContentRuleListRedirect(),
+        { },
+        { }, /* openedByScriptDomain */
+        navigationAction.targetBackForwardItemIdentifier(),
+        navigationAction.sourceBackForwardItemIdentifier(),
+        navigationAction.lockHistory(),
+        navigationAction.lockBackForwardList(),
+        navigationAction.navigationHistoryBehavior(),
+        navigationAction.replaceIfNotCompletelyLoaded(),
+        clientRedirectSourceForHistory,
+        sandboxFlags,
+        ReferrerPolicy::EmptyString,
+        WTF::move(ownerPermissionsPolicy),
+        navigationAction.privateClickMeasurement(),
+        requestingFrame ? requestingFrame->advancedPrivacyProtections() : OptionSet<AdvancedPrivacyProtections> { },
+        requestingFrame ? requestingFrame->originatorAdvancedPrivacyProtections() : OptionSet<AdvancedPrivacyProtections> { },
+#if PLATFORM(MAC) || HAVE(UIKIT_WITH_MOUSE_SUPPORT)
+        hitTestResult ? std::optional(WebKit::WebHitTestResultData(WTF::move(*hitTestResult), false)) : std::nullopt,
+        WTF::move(hitTestJSHandleInfo),
+#endif
+        WTF::move(originatingFrameInfoData),
+        originatingPageID,
+        m_frame->info(),
+        navigationID,
+        WTF::move(originalRequest),
+        request,
+        request.url().isValid() ? String() : request.url().string(),
+        requester,
+        navigationAction.pendingDispatchNavigateEventIdentifier(),
+    };
+}
+
+void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(const NavigationAction& navigationAction, const ResourceRequest& request, const ResourceResponse& redirectResponse, FormState*, const String& clientRedirectSourceForHistory, std::optional<WebCore::NavigationIdentifier> navigationID, std::optional<WebCore::HitTestResult>&& hitTestResult, bool hasOpener, NavigationUpgradeToHTTPSBehavior navigationUpgradeToHTTPSBehavior, SandboxFlags sandboxFlags, PolicyDecisionMode policyDecisionMode, FramePolicyFunction&& function)
+{
+    LOG_WITH_STREAM(Loading, stream << "WebProcess "_s << getCurrentProcessID() << " - dispatchDecidePolicyForNavigationAction to request url "_s << request.url().string());
+
+    auto navigationActionData = this->navigationActionData(navigationAction, request, redirectResponse, clientRedirectSourceForHistory, navigationID, WTF::move(hitTestResult), hasOpener, navigationUpgradeToHTTPSBehavior, sandboxFlags);
+    if (!navigationActionData)
+        return function(PolicyAction::Ignore);
+
+    RefPtr webPage = m_frame->page();
+
+    // Record the document initiating a download attribute check, and the load it is made for.
+    //
+    // Only the check for the activation itself is one: a download attribute link the client answers Use for
+    // is an ordinary navigation, and DocumentLoader::willSendRequest() reuses the same triggering action,
+    // download attribute and all, for the check it makes when the server redirects that load. Unlike the
+    // activation check, that one belongs to a load in progress - its DocumentLoader awaits the answer - so
+    // cancelling the load has to cancel it, and it must not be kept out of the cancellation.
+    //
+    // WebPageProxy::decidePolicyForNavigationAction() draws the same line for its own listener, from the
+    // redirect response in the NavigationActionData, so the two have to stay in agreement.
+    Markable<WebCore::ScriptExecutionContextIdentifier> downloadAttributeInitiatingDocument;
+    SingleThreadWeakPtr<WebCore::DocumentLoader> downloadAttributePolicyDocumentLoader;
+    if (!navigationAction.downloadAttribute().isNull() && redirectResponse.isNull()) {
+        if (RefPtr localFrame = m_frame->coreLocalFrame()) {
+            if (RefPtr document = localFrame->document())
+                downloadAttributeInitiatingDocument = document->identifier();
+            downloadAttributePolicyDocumentLoader = localFrame->loader().policyDocumentLoader();
+        }
+    }
+    auto listenerID = m_frame->setUpPolicyListener(WTF::move(function), WebFrame::ForNavigationAction::Yes, downloadAttributeInitiatingDocument ? WebFrame::PolicyCheckKind::DownloadAttribute : WebFrame::PolicyCheckKind::Navigation, downloadAttributeInitiatingDocument, WTF::move(downloadAttributePolicyDocumentLoader));
+
+    // Notify the UIProcess.
+    if (policyDecisionMode == PolicyDecisionMode::Synchronous) {
+        bool shouldUseSyncIPCForFragmentNavigations = false;
+#if PLATFORM(COCOA)
+        shouldUseSyncIPCForFragmentNavigations = !linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::AsyncFragmentNavigationPolicyDecision);
+#endif
+        if (navigationAction.processingUserGesture() || navigationAction.isFromNavigationAPI() || shouldUseSyncIPCForFragmentNavigations) {
+            auto sendResult = webPage->sendSync(Messages::WebPageProxy::DecidePolicyForNavigationActionSync(*navigationActionData));
+            if (!sendResult.succeeded()) {
+                WebFrameLoaderClient_RELEASE_LOG_ERROR(WebFrameLoaderClientDispatchDecidePolicyForNavigationActionSyncIpcFailed, (uint8_t)sendResult.error());
+                m_frame->didReceivePolicyDecision(listenerID, PolicyDecision { });
+                return;
+            }
+
+            auto [policyDecision] = sendResult.takeReply();
+            WebFrameLoaderClient_RELEASE_LOG(WebFrameLoaderClientDispatchDecidePolicyForNavigationActionGotPolicyActionFromSyncIpc, toString(policyDecision.policyAction));
+            m_frame->didReceivePolicyDecision(listenerID, PolicyDecision { policyDecision.isNavigatingToAppBoundDomain, policyDecision.policyAction, { }, policyDecision.downloadID });
+            return;
+        }
+        webPage->sendWithAsyncReply(Messages::WebPageProxy::DecidePolicyForNavigationActionAsync(*navigationActionData), [] (PolicyDecision&&) { });
+        m_frame->didReceivePolicyDecision(listenerID, PolicyDecision { std::nullopt, PolicyAction::Use });
+        return;
+    }
+
+    ASSERT(policyDecisionMode == PolicyDecisionMode::Asynchronous);
+    webPage->sendWithAsyncReply(Messages::WebPageProxy::DecidePolicyForNavigationActionAsync(*navigationActionData), [weakFrame = WeakPtr { m_frame }, listenerID, webPageID = WebFrameLoaderClient_WEBPAGEID] (PolicyDecision&& policyDecision) {
+        RefPtr frame = weakFrame.get();
+        if (!frame)
+            return;
+
+        RELEASE_LOG_FORWARDABLE(Network, WebFrameLoaderClientDispatchDecidePolicyForNavigationActionGotPolicyActionFromAsyncIpc, frame->frameID().toUInt64(), webPageID, toString(policyDecision.policyAction));
+
+        frame->didReceivePolicyDecision(listenerID, WTF::move(policyDecision));
+    });
+}
+
+void WebFrameLoaderClient::updateSandboxFlags(SandboxFlags sandboxFlags)
+{
+    if (RefPtr webPage = m_frame->page())
+        webPage->send(Messages::WebPageProxy::UpdateSandboxFlags(m_frame->frameID(), sandboxFlags));
+}
+
+void WebFrameLoaderClient::updateReferrerPolicy(ReferrerPolicy referrerPolicy)
+{
+    if (RefPtr webPage = m_frame->page())
+        webPage->send(Messages::WebPageProxy::UpdateReferrerPolicy(m_frame->frameID(), referrerPolicy));
+}
+
+void WebFrameLoaderClient::updateOpener(std::optional<WebCore::FrameIdentifier> newFrameOpenerIdentifier)
+{
+    if (RefPtr webPage = m_frame->page())
+        webPage->send(Messages::WebPageProxy::UpdateOpener(m_frame->frameID(), newFrameOpenerIdentifier));
+}
+
+void WebFrameLoaderClient::setPrinting(bool printing, FloatSize pageSize, FloatSize originalPageSize, float maximumShrinkRatio, AdjustViewSize adjustViewSize)
+{
+    if (RefPtr webPage = m_frame->page())
+        webPage->send(Messages::WebPageProxy::SetFramePrinting(m_frame->frameID(), printing, pageSize, originalPageSize, maximumShrinkRatio, adjustViewSize));
+}
+
+void WebFrameLoaderClient::broadcastFrameTreeSyncDataToOtherProcesses(FrameTreeSyncSerializationData&& data)
+{
+    if (RefPtr webPage = m_frame->page())
+        webPage->send(Messages::WebPageProxy::BroadcastFrameTreeSyncData(m_frame->frameID(), WTF::move(data)));
+}
+
+void WebFrameLoaderClient::didNotifyUserActivation(MonotonicTime activationTime, std::optional<WebCore::UserGestureTokenIdentifier> forcedActivationToken)
+{
+    if (RefPtr webPage = m_frame->page())
+        webPage->send(Messages::WebPageProxy::DidNotifyUserActivation(m_frame->frameID(), activationTime, forcedActivationToken));
+}
+
+void WebFrameLoaderClient::didConsumeUserActivation()
+{
+    if (RefPtr webPage = m_frame->page())
+        webPage->send(Messages::WebPageProxy::DidConsumeUserActivation(m_frame->frameID()));
+}
+
+void WebFrameLoaderClient::didRevokeForcedUserActivation(WebCore::UserGestureTokenIdentifier forcedActivationToken)
+{
+    if (RefPtr webPage = m_frame->page())
+        webPage->send(Messages::WebPageProxy::DidRevokeForcedUserActivation(m_frame->frameID(), forcedActivationToken));
+}
+
+void WebFrameLoaderClient::didHandleFirstUserGesture(MonotonicTime gestureTime)
+{
+    if (RefPtr webPage = m_frame->page())
+        webPage->send(Messages::WebPageProxy::DidHandleFirstUserGesture(m_frame->frameID(), gestureTime));
+}
+
+}

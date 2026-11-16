@@ -1,0 +1,4 @@
+This tests determining the PDF plugin does not crash upon a null onloadeddata variable.
+
+PASS
+

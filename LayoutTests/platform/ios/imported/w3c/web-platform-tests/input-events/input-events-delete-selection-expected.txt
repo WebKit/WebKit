@@ -1,0 +1,8 @@
+
+FAIL Ctrl+Backspace with non-collapsed selection should report deleteContentBackward assert_equals: Should have 2 events expected 2 but got 0
+FAIL Ctrl+Backspace with caret should report deleteWordBackward assert_equals: Should have 2 events expected 2 but got 0
+FAIL Ctrl+Delete with non-collapsed selection should report deleteContentForward assert_equals: Should have 2 events expected 2 but got 0
+FAIL Ctrl+Delete with caret should report deleteWordForward assert_equals: Should have 2 events expected 2 but got 0
+FAIL Regular Backspace with non-collapsed selection should report deleteContentBackward assert_equals: Should have 2 events expected 2 but got 0
+FAIL Regular Delete with non-collapsed selection should report deleteContentForward assert_equals: Should have 2 events expected 2 but got 0
+

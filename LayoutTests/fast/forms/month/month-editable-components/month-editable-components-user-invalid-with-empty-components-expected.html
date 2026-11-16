@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../../resources/ui-helper.js"></script>
+<style>
+
+input {
+    border: 1px solid black;
+}
+
+</style>
+</head>
+<body>
+
+<p>Test that typing a partially completed month does not match :user-invalid</p>
+<input id="input" type="month">
+
+<script>
+
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+addEventListener("load", async () => {
+    input.focus();
+    UIHelper.keyDown("9");
+    input.blur();
+
+    if (window.testRunner)
+        testRunner.notifyDone();
+});
+
+</script>
+</body>
+</html>

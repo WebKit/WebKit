@@ -1,0 +1,46 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/accessibility-helper.js"></script>
+</head>
+<body>
+
+<input type="text" role="combobox" id="combobox" aria-label="Combobox">
+<div role="list" id="list" aria-label="List1">
+    <div role="listitem" id="item1">item1</div>
+</div>
+
+<script>
+var output = "A combobox should still support aria-activedescendant even if it doesn't use aria-owns.\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    var activeElementChangeCount = 0;
+    accessibilityController.addNotificationListener((target, notification) => {
+        if (notification == "AXActiveElementChanged") {
+            var targetString = platformValueForW3CName(target);
+            output += `Received ${notification} for ${targetString}\n`;
+            ++activeElementChangeCount;
+        }
+    });
+
+    document.getElementById("combobox").focus();
+    var combobox = accessibilityController.accessibleElementById("combobox");
+    document.getElementById("combobox").setAttribute("aria-activedescendant", "item1");
+    var listitem1 = accessibilityController.accessibleElementById("item1");
+    setTimeout(async function() {
+        await waitFor(() => {
+            return activeElementChangeCount;
+        });
+        output += expect("combobox.activeElement.isEqual(listitem1)", "true");
+
+        accessibilityController.removeNotificationListener();
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

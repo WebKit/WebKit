@@ -1,0 +1,6 @@
+This test verifies that an Objective-C reference to a DOM object remains valid after the frame that provided the DOM object navigates to a new location.
+
+If the test passes, you'll see a 'PASS' message below.
+
+PASS: You didn't crash.
+

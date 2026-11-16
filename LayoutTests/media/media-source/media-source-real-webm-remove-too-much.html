@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>media-source-real-webm-remove-too-much</title>
+    <script src="webm-generator.js"></script>
+    <script src="../video-test.js"></script>
+    <script>
+    // Real-WebM equivalent of media-source-remove-too-much.html
+    // Tests that remove(0, 4) removes samples from 0 up to the sync frame at PTS=4.
+
+    var source;
+    var sourceBuffer;
+
+    async function runTest() {
+        findMediaElement();
+
+        if (!MediaSource.isTypeSupported(WebM.VIDEO_TYPE)) {
+            consoleWrite('SKIPPED: ' + WebM.VIDEO_TYPE + ' is not supported');
+            return;
+        }
+
+        source = new MediaSource();
+        run('video.src = URL.createObjectURL(source)');
+        await waitFor(source, 'sourceopen');
+
+        run(`sourceBuffer = source.addSourceBuffer('${WebM.VIDEO_TYPE}')`);
+
+        var initData = WebM.initSegment({
+            tracks: [{ id: 1, type: 'video' }]
+        });
+        sourceBuffer.appendBuffer(initData);
+        await waitFor(sourceBuffer, 'updateend');
+
+        // 9 samples, sync at 0, 4, 8
+        var media = WebM.mediaSegment({
+            sequenceNumber: 1,
+            tracks: [{ id: 1, type: 'video', baseDecodeTime: 0, samples: [
+                { duration: 1000, isSync: true },
+                { duration: 1000, isSync: false },
+                { duration: 1000, isSync: false },
+                { duration: 1000, isSync: false },
+                { duration: 1000, isSync: true },
+                { duration: 1000, isSync: false },
+                { duration: 1000, isSync: false },
+                { duration: 1000, isSync: false },
+                { duration: 1000, isSync: true },
+            ]}]
+        });
+        sourceBuffer.appendBuffer(media);
+        await waitFor(sourceBuffer, 'updateend');
+
+        run('sourceBuffer.remove(0, 4)');
+        await waitFor(sourceBuffer, 'updateend');
+
+        testExpected('sourceBuffer.buffered.start(0)', 4);
+    }
+
+    window.addEventListener('load', event => {
+        runTest().then(endTest).catch(failTest);
+    });
+    </script>
+</head>
+<body>
+    <div>Tests SourceBuffer.remove() with real WebM data. Removes [0, 4) and verifies
+    removal extends to the sync frame boundary at PTS=4.</div>
+    <video></video>
+</body>
+</html>

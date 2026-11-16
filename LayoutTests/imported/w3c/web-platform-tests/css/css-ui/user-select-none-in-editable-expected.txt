@@ -1,0 +1,8 @@
+Manual step:
+Move caret after "c"
+Hit right arrow key twice
+Caret should be after "Y"
+abcXYZdef
+
+PASS Test user-select: none in editable contexts
+

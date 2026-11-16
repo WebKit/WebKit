@@ -1,0 +1,3 @@
+
+PASS querySelector with :scope on element with numeric ID
+

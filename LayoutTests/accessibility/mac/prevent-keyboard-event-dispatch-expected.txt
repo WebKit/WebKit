@@ -1,0 +1,27 @@
+This tests ignoring javascript key handlers that consume key events.
+
+PASS: webArea.role === 'AXRole: AXWebArea'
+PASS: caretBrowsingEnabled(webArea) === false
+PASS: accessibilityController.enhancedAccessibilityEnabled === false
+PASS: preventKeyboardDOMEventDispatch(webArea) === false
+PASS: elementAtStartMarkerOfSelectedTextMarkerRange(webArea).stringValue === 'AXValue: 1'
+PASS: elementAtStartMarkerOfSelectedTextMarkerRange(webArea).stringValue === 'AXValue: 1'
+PASS: elementAtStartMarkerOfSelectedTextMarkerRange(webArea).stringValue === 'AXValue: 1'
+PASS: keycount() === '2'
+PASS: accessibilityController.enhancedAccessibilityEnabled === true
+PASS: preventKeyboardDOMEventDispatch(webArea) === true
+PASS: elementAtStartMarkerOfSelectedTextMarkerRange(webArea).stringValue === 'AXValue: 1'
+PASS: elementAtStartMarkerOfSelectedTextMarkerRange(webArea).stringValue === 'AXValue: 1'
+PASS: elementAtStartMarkerOfSelectedTextMarkerRange(webArea).stringValue === 'AXValue: 2'
+PASS: keycount() === '2'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+1
+
+2
+
+2
+
+

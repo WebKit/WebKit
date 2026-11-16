@@ -1,0 +1,3 @@
+
+PASS <a> cross-document (but same-origin) navigate event
+

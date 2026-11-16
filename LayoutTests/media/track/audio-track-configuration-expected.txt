@@ -1,0 +1,11 @@
+
+RUN(video.src = "../content/audio-tracks.mp4")
+EVENT(canplay)
+EXPECTED (video.audioTracks.length > '0') OK
+EXPECTED (video.audioTracks[0].configuration != 'null') OK
+EXPECTED (video.audioTracks[0].configuration.codec == 'mp4a.40.2') OK
+EXPECTED (video.audioTracks[0].configuration.sampleRate == '44100') OK
+EXPECTED (video.audioTracks[0].configuration.numberOfChannels == '2') OK
+EXPECTED (video.audioTracks[0].configuration.bitrate >= '100000') OK
+END OF TEST
+

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        video {
+            width: 300vw;
+            height: 40vh;
+        }
+    </style>
+    <script>
+        function finishTest()
+        {
+            // As of this writing, two times through the run loop is long enough for the controls to come up.
+            // There's no guarantee; whether the controls are visible is not web exposed, so it doesn't have
+            // to happen in a certain number of timeouts.
+            setTimeout(function() {
+                setTimeout(function() {
+                    webkit.messageHandlers.testHandler.postMessage("playing");
+                }, 0);
+            }, 0);
+        }
+    </script>
+</head>
+<body>
+    <video autoplay src="video-with-audio.mp4" webkit-playsinline onplaying=finishTest()></video>
+</body>
+</html>

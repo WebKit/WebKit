@@ -1,0 +1,49 @@
+Tests that a cross-origin iframe whose document loads in a fresh process lists its document request and response, also after a provisional load is discarded, under Site Isolation.
+
+
+== Running test suite: SiteIsolation.Network.FreshProcessCrossOriginIFrame
+-- Running test case: SiteIsolation.Network.FreshProcessCrossOriginIFrame.DocumentAndScriptRows
+PASS: Child frame should show the cross-origin document.
+PASS: Document and script should finish loading.
+PASS: Document should be listed once.
+PASS: Document should finish loading.
+PASS: Document should carry the request identifier of its load.
+PASS: Document should have a response.
+PASS: Script should be added to the child frame.
+PASS: Script should be listed once.
+PASS: Script should finish loading.
+PASS: No about:blank placeholder row should be listed.
+
+-- Running test case: SiteIsolation.Network.FreshProcessCrossOriginIFrame.DiscardedProvisionalLoadInSharedProcess
+PASS: Provisional frame target should be paused.
+PASS: Provisional frame target should be destroyed with its iframe.
+PASS: Child frame should show the cross-origin document.
+PASS: Document and script should finish loading.
+PASS: Document should be listed once.
+PASS: Document should finish loading.
+PASS: Document should carry the request identifier of its load.
+PASS: Document should have a response.
+PASS: Script should be added to the child frame.
+PASS: Script should be listed once.
+PASS: Script should finish loading.
+
+-- Running test case: SiteIsolation.Network.FreshProcessCrossOriginIFrame.DiscardedProvisionalLoadThenFreshProcess
+PASS: Removed frame should be reported as removed.
+PASS: Provisional frame target should be paused.
+PASS: Provisional frame target should be destroyed with its iframe.
+PASS: Child frame should show the cross-origin document.
+PASS: Document and script should finish loading.
+PASS: Document should be listed once.
+PASS: Document should finish loading.
+PASS: Document should carry the request identifier of its load.
+PASS: Document should have a response.
+PASS: Script should be added to the child frame.
+PASS: Script should be listed once.
+PASS: Script should finish loading.
+
+-- Running test case: SiteIsolation.Network.FreshProcessCrossOriginIFrame.DiscardedStartedLoadLeavesNoFrame
+PASS: Removed frame should be reported as removed.
+PASS: Provisional frame target should be destroyed without committing.
+PASS: Document request should reach the frontend.
+PASS: Discarded load should leave no frame.
+

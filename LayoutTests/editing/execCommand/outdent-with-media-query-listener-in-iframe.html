@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<body>
+<blockquote>
+    <div>
+        <span id="span">
+            <i id="i1">a</i>
+            <i id="i2">b</i>
+        </span>
+    </div>
+    <div>1</div>
+</blockquote>
+</body>
+
+<script>
+let layoutCount = 0;
+
+function forceGarbageCollection() {
+    for (let i = 0; i < 100; i++)
+        new ArrayBuffer(0x100000);
+}
+
+function listener() {
+    if (layoutCount === 53)
+        document.body.insertAdjacentHTML("beforeend", "<input autofocus>");
+
+    if (layoutCount === 54) {
+        span.remove();
+        forceGarbageCollection();
+        return;
+    }
+
+    frame.contentWindow.matchMedia(`(max-width: ${layoutCount + 1}px)`).addListener(listener);
+    frame.width = layoutCount++;
+}
+
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+document.designMode = "on";
+document.execCommand("SelectAll");
+
+let frame = document.body.appendChild(document.createElement("iframe"));
+frame.contentWindow.matchMedia("(max-width: 100px)").addListener(listener);
+
+document.execCommand("Outdent");
+document.body.innerHTML = "<code style='color: green'>PASS</code>";
+</script>
+</html>

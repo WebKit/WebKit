@@ -1,0 +1,4 @@
+anchor tag
+
+PASS anchor element should remain focused after removing href attribute.
+

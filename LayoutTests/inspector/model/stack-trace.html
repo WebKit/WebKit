@@ -1,0 +1,114 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function triggerConsoleMessage() {
+    let script = document.createElement("script");
+    script.textContent = "//# sourceURL=inline-script.js\neval('function foo() { console.trace(); }; foo();')";
+    document.body.appendChild(script);
+}
+
+function test()
+{
+    function logStackTrace(stackTrace) {
+        InspectorTest.log(`StackTrace: ${stackTrace.callFrames.length}`);
+        for (let i = 0; i < stackTrace.callFrames.length; ++i) {
+            let callFrame = stackTrace.callFrames[i];
+            let string = `  ${i + 1}: ${callFrame.functionName}`;
+            if (callFrame.sourceCodeLocation)
+                string += ` (${callFrame.sourceCodeLocation.originalLocationString()})`;
+            string += " -";
+            string += ` nativeCode (${callFrame.nativeCode})`;
+            string += ` programCode (${callFrame.programCode})`;
+            InspectorTest.log(string);
+        }
+    }
+
+    let suite = InspectorTest.createAsyncSuite("WI.StackTrace");
+
+    suite.addTestCase({
+        name: "WI.ConsoleMessage.StackTrace",
+        description: "Test we can create a StackTrace from console messages (Console.StackTrace).",
+        test(resolve, reject) {
+            WI.consoleManager.awaitEvent(WI.ConsoleManager.Event.MessageAdded)
+            .then((event) => {
+                // Trace message should always have a stack trace.
+                let consoleMessage = event.data.message;
+                let stackTrace = consoleMessage.stackTrace;
+                InspectorTest.expectThat(consoleMessage.type === WI.ConsoleMessage.MessageType.Trace, "ConsoleMessage type should be Trace.");
+                InspectorTest.expectThat(stackTrace instanceof WI.StackTrace, "ConsoleMessage should have StackTrace.");
+
+                // Console message stack trace call frame's do not have debugging information.
+                InspectorTest.expectThat(stackTrace.callFrames[0].id === null, "CallFrame in StackTrace has no identifier.");
+                InspectorTest.expectThat(stackTrace.callFrames[0].thisObject === null, "CallFrame in StackTrace has no thisObject.");
+                InspectorTest.expectThat(!stackTrace.callFrames[0].scopeChain.length, "CallFrame in StackTrace has no scopeChain.");
+
+                logStackTrace(consoleMessage.stackTrace);
+            })
+            .then(resolve, reject);
+
+            InspectorTest.evaluateInPage("triggerConsoleMessage()");
+        }
+    });
+
+    suite.addTestCase({
+        name: "WI.StackTrace.FirstNonNativeNonAnonymousNotBlackboxedCallFrame.Normal",
+        async test() {
+            let target = WI.mainTarget;
+
+            let sourceCode = new WI.SourceCode;
+            let sourceCodeLocation = new WI.SourceCodeLocation(sourceCode, 0, 0);
+
+            let native1 = new WI.CallFrame(target, {sourceCodeLocation, functionName: "native1", nativeCode: true});
+            let native2 = new WI.CallFrame(target, {sourceCodeLocation, functionName: "native2", nativeCode: true});
+            let blackboxed1 = new WI.CallFrame(target, {sourceCodeLocation, functionName: "blackboxed1", blackboxed: true});
+            let blackboxed2 = new WI.CallFrame(target, {sourceCodeLocation, functionName: "blackboxed2", blackboxed: true});
+            let normal1 = new WI.CallFrame(target, {sourceCodeLocation, functionName: "normal1"});
+            let normal2 = new WI.CallFrame(target, {sourceCodeLocation, functionName: "normal2"});
+
+            let stackTrace = new WI.StackTrace([native1, native2, blackboxed1, blackboxed2, normal1, normal2]);
+            InspectorTest.expectEqual(stackTrace.firstNonNativeNonAnonymousNotBlackboxedCallFrame, normal1, "Should be able to get the first non-native non-anonymous unblackboxed call frame.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "WI.StackTrace.FirstNonNativeNonAnonymousNotBlackboxedCallFrame.AllNative",
+        async test() {
+            let target = WI.mainTarget;
+
+            let sourceCode = new WI.SourceCode;
+            let sourceCodeLocation = new WI.SourceCodeLocation(sourceCode, 0, 0);
+
+            let native1 = new WI.CallFrame(target, {sourceCodeLocation, functionName: "native1", nativeCode: true});
+            let native2 = new WI.CallFrame(target, {sourceCodeLocation, functionName: "native2", nativeCode: true});
+
+            let stackTrace = new WI.StackTrace([native1, native2]);
+            InspectorTest.expectNull(stackTrace.firstNonNativeNonAnonymousNotBlackboxedCallFrame, "Should not be able to get the first non-native non-anonymous unblackboxed call frame if the entire stack trace is native.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "WI.StackTrace.FirstNonNativeNonAnonymousNotBlackboxedCallFrame.AllBlackboxed",
+        async test() {
+            let target = WI.mainTarget;
+
+            let sourceCode = new WI.SourceCode;
+            let sourceCodeLocation = new WI.SourceCodeLocation(sourceCode, 0, 0);
+
+            let blackboxed1 = new WI.CallFrame(target, {sourceCodeLocation, functionName: "blackboxed1", blackboxed: true});
+            let blackboxed2 = new WI.CallFrame(target, {sourceCodeLocation, functionName: "blackboxed2", blackboxed: true});
+
+            let stackTrace = new WI.StackTrace([blackboxed1, blackboxed2]);
+            InspectorTest.expectEqual(stackTrace.firstNonNativeNonAnonymousNotBlackboxedCallFrame, blackboxed1, "Should use the first blackboxed call frame if the entire stack trace is blackboxed.");
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests for the WI.StackTrace model object.</p>
+</body>
+</html>

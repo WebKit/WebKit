@@ -1,0 +1,104 @@
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script>
+    let iframe;
+
+    function appendIframe() {
+        iframe = document.createElement("iframe");
+        document.body.append(iframe);
+    }
+
+    function removeIframe() {
+        iframe.remove();
+    }
+
+    function test() {
+        let suite = InspectorTest.createAsyncSuite("SiteIsolation.Runtime.ExecutionContext");
+
+        suite.addTestCase({
+            name: "SiteIsolation.Runtime.MainFrameTarget.HasExecutionContext",
+            description: "The main frame target should have an execution context under site isolation.",
+            async test() {
+                let frameTargets = WI.targets.filter((t) => t instanceof WI.FrameTarget);
+                InspectorTest.expectThat(frameTargets.length >= 1, "Should have at least one FrameTarget (for the main frame).");
+
+                let mainFrameTarget = frameTargets[0];
+                InspectorTest.expectNotNull(mainFrameTarget.executionContext, "Main frame target should have an ExecutionContext.");
+                InspectorTest.expectNotNull(mainFrameTarget.RuntimeAgent, "Main frame target should have a RuntimeAgent.");
+                InspectorTest.expectNotEqual(mainFrameTarget.RuntimeAgent, WI.pageTarget.RuntimeAgent, "Frame target RuntimeAgent should be separate from page target RuntimeAgent.");
+            }
+        });
+
+        suite.addTestCase({
+            name: "SiteIsolation.Runtime.AppendIframe.CreatesFrameTarget",
+            description: "Appending an iframe should create a new frame target with a RuntimeAgent.",
+            async test() {
+                let targetAddedPromise = WI.targetManager.awaitEvent(WI.TargetManager.Event.TargetAdded);
+                InspectorTest.evaluateInPage("appendIframe()");
+                let event = await targetAddedPromise;
+                let target = event.data.target;
+
+                InspectorTest.assert(target instanceof WI.FrameTarget);
+                InspectorTest.expectEqual(target.type, WI.TargetType.Frame, "Added target should have Frame type.");
+                InspectorTest.expectNotNull(target.RuntimeAgent, "New frame target should have a RuntimeAgent.");
+
+                // A blank iframe (about:blank) won't have an executionContext reported because
+                // FrameRuntimeAgent skips about:blank documents. Runtime.evaluate still works
+                // because injectedScriptForEval creates one on demand.
+
+                let frameTargetCount = WI.targets.filter((t) => t instanceof WI.FrameTarget).length;
+                InspectorTest.log(`Frame targets count: ${frameTargetCount}`);
+            }
+        });
+
+        suite.addTestCase({
+            name: "SiteIsolation.Runtime.EvaluateInFrameTarget",
+            description: "Runtime.evaluate in a frame target should execute in that frame's context.",
+            async test() {
+                let frameTargets = WI.targets.filter((t) => t instanceof WI.FrameTarget);
+                let iframeTarget = frameTargets[frameTargets.length - 1];
+                InspectorTest.assert(iframeTarget, "Should have a frame target for the iframe.");
+
+                let response = await iframeTarget.RuntimeAgent.evaluate.invoke({ expression: "1 + 2", objectGroup: "test", returnByValue: true });
+                InspectorTest.expectEqual(response.result.value, 3, "Evaluating '1 + 2' in frame target should return 3.");
+                InspectorTest.expectThat(!response.wasThrown, "Evaluation should not throw.");
+            }
+        });
+
+        suite.addTestCase({
+            name: "SiteIsolation.Runtime.EvaluateInFrameTarget.DOMAccess",
+            description: "Runtime.evaluate in a frame target should have access to the frame's document.",
+            async test() {
+                let frameTargets = WI.targets.filter((t) => t instanceof WI.FrameTarget);
+                let iframeTarget = frameTargets[frameTargets.length - 1];
+
+                let response = await iframeTarget.RuntimeAgent.evaluate.invoke({ expression: "typeof document !== 'undefined'", objectGroup: "test", returnByValue: true });
+                InspectorTest.expectEqual(response.result.value, true, "Frame target should have access to document.");
+            }
+        });
+
+        suite.addTestCase({
+            name: "SiteIsolation.Runtime.RemoveIframe.RemovesTarget",
+            description: "Removing an iframe should remove the frame target.",
+            async test() {
+                let targetCountBefore = WI.targets.filter((t) => t instanceof WI.FrameTarget).length;
+
+                let targetRemovedPromise = WI.targetManager.awaitEvent(WI.TargetManager.Event.TargetRemoved);
+                InspectorTest.evaluateInPage("removeIframe()");
+                let event = await targetRemovedPromise;
+                let target = event.data.target;
+
+                InspectorTest.assert(target instanceof WI.FrameTarget);
+                InspectorTest.expectEqual(target.type, WI.TargetType.Frame, "Removed target should have Frame type.");
+
+                let targetCountAfter = WI.targets.filter((t) => t instanceof WI.FrameTarget).length;
+                InspectorTest.expectEqual(targetCountAfter, targetCountBefore - 1, "Frame target count should decrease by one.");
+            }
+        });
+
+        suite.runTestCasesAndFinish();
+    }
+</script>
+
+<body onload="runTest()">
+    <p>Test that FrameTargets have proper execution contexts and support Runtime.evaluate under site isolation.</p>
+</body>

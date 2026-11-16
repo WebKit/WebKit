@@ -1,0 +1,28 @@
+<style>
+  :nth-last-child(odd) {
+    display: contents;
+  }
+</style>
+<script>
+  if (window.testRunner)
+     testRunner.dumpAsText();
+  onload = () => {
+    let q0 = document.createElement('q');
+    document.body.append(q0);
+    let span0 = document.createElement('span');
+    q0.append(span0);
+    q0.append(document.createElement('div'));
+    span0.append(document.createElement('div'));
+    span0.append(document.createElement('div'));
+    document.body.offsetTop;
+    document.styleSheets[0].insertRule(`xx { yy: zz; }`);
+    let link0 = document.createElement('link');
+    link0.href = `data:`;
+    link0.rel = 'stylesheet';
+    document.head.append(link0);
+    document.body.append(document.createElement('div'));
+  };
+</script>
+<body>
+This test passes if it doesn't crash.
+</body>

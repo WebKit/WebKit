@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src=media-file.js></script>
+        <script src=video-test.js></script>
+        <script>
+            var videoLastTime;
+            var lastRealTime;
+            var iteration = 0;
+
+            function start()
+            {
+                findMediaElement();
+                video.src = findMediaFile("video", "content/test");
+                waitForEventOnce('canplaythrough', canPlayThrough);
+            }
+
+            function canPlayThrough()
+            {
+                video.playbackRate = 4;
+                waitForEventOnce('playing', playing);
+                video.play();
+            }
+
+            function playing()
+            {
+                videoLastTime = video.currentTime;
+                lastRealTime = new Date();
+                video.addEventListener('timeupdate', timeupdate);
+            }
+
+            function timeupdate()
+            {
+                var videoTimeDelta = video.currentTime - videoLastTime;
+                var realTimeDelta = (new Date() - lastRealTime) / 1000;
+                if (Math.abs(videoTimeDelta - realTimeDelta) < realTimeDelta / 10 ) {
+                    video.removeEventListener('timeupdate', timeupdate, true);
+                    endTest();
+                    return;
+                }
+
+                if (iteration > 3) {
+                    failTest("Playback rate was applied directly to video with media controller.");
+                    return;
+                }
+
+                videoLastTime = video.currentTime;
+                lastRealTime = new Date();
+                iteration++;
+            }
+        </script>
+    </head>
+    <body onload="start()">
+        <video mediaGroup="group"></video>
+        <p>Test that setting playbackRate on video with controller is ignored.</p>
+    </body>
+</html>

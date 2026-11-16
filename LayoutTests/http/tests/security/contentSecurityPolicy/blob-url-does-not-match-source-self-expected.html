@@ -1,0 +1,10 @@
+<!DOCTYPE html>
+<html>
+<body>
+<!-- This is an reference HTML document as opposed to a plain text file so as to avoid the need the include the text of
+the Content Security Policy console message when the blob-URL is blocked. The Content Security Policy console message
+will differ between test runs because it contains the uniquely generated blob-URL that triggered the violation. -->
+<p>This tests that a blob-URL JavaScript script fails to load because it does not match Content Security Policy <code>script-src 'self'</code>.</p>
+<pre>PASS fired error event for blob-URL script.</pre>
+</body>
+</html>

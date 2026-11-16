@@ -1,0 +1,6 @@
+2d.color.space.p3.fillText.shadow
+Test if fillText can be used with a display-p3 shadow color
+Actual output:
+
+PASS Test if fillText can be used with a display-p3 shadow color
+

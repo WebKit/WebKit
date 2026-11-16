@@ -1,0 +1,12 @@
+Ensure the image frame is drawn when it finishes decoding even if it takes more than the previous frame duration.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS internals.imageFrameIndex(image) is >= 0
+PASS internals.imageFrameIndex(image) is >= 1
+PASS internals.imageFrameIndex(image) is >= 2
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

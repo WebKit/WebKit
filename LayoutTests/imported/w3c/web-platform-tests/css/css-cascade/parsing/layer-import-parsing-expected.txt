@@ -1,0 +1,15 @@
+
+PASS @import url("nonexist.css") layer; should be a valid layered import rule
+PASS @import url("nonexist.css") layer(A); should be a valid layered import rule
+PASS @import url("nonexist.css") layer(A.B); should be a valid layered import rule
+PASS @import url(nonexist.css) layer; should be a valid layered import rule
+PASS @import url(nonexist.css) layer(A); should be a valid layered import rule
+PASS @import url(nonexist.css) layer(A.B); should be a valid layered import rule
+PASS @import "nonexist.css" layer; should be a valid layered import rule
+PASS @import "nonexist.css" layer(A); should be a valid layered import rule
+PASS @import "nonexist.css" layer(A.B); should be a valid layered import rule
+PASS @import url("nonexist.css") layer(); should still be a valid import rule with an invalid layer declaration
+PASS @import url("nonexist.css") layer(A B); should still be a valid import rule with an invalid layer declaration
+PASS @import url("nonexist.css") layer(A . B); should still be a valid import rule with an invalid layer declaration
+PASS @import url("nonexist.css") layer(A, B, C); should still be a valid import rule with an invalid layer declaration
+

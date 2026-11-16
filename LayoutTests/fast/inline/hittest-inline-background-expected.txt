@@ -1,0 +1,2 @@
+PASS if click takes you to apple.com
+link

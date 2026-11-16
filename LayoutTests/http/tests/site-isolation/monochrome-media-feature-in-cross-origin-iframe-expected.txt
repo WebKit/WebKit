@@ -1,0 +1,12 @@
+The monochrome media feature should evaluate the same in a cross-origin iframe as in the main frame under site isolation.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS matchMedia('(monochrome)').matches is true
+PASS result.monochromeMatches is true
+PASS result.monochrome is mainFrameMonochrome
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

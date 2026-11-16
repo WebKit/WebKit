@@ -1,0 +1,31 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/resource-timing/initiator-type/WEB_FEATURES.yml
+/LayoutTests/imported/w3c/web-platform-tests/resource-timing/initiator-type/audio.html
+/LayoutTests/imported/w3c/web-platform-tests/resource-timing/initiator-type/dynamic-insertion.html
+/LayoutTests/imported/w3c/web-platform-tests/resource-timing/initiator-type/embed.html
+/LayoutTests/imported/w3c/web-platform-tests/resource-timing/initiator-type/frameset.html
+/LayoutTests/imported/w3c/web-platform-tests/resource-timing/initiator-type/iframe.html
+/LayoutTests/imported/w3c/web-platform-tests/resource-timing/initiator-type/img-srcset.html
+/LayoutTests/imported/w3c/web-platform-tests/resource-timing/initiator-type/img.html
+/LayoutTests/imported/w3c/web-platform-tests/resource-timing/initiator-type/input.html
+/LayoutTests/imported/w3c/web-platform-tests/resource-timing/initiator-type/link.html
+/LayoutTests/imported/w3c/web-platform-tests/resource-timing/initiator-type/misc.html
+/LayoutTests/imported/w3c/web-platform-tests/resource-timing/initiator-type/picture.html
+/LayoutTests/imported/w3c/web-platform-tests/resource-timing/initiator-type/script.html
+/LayoutTests/imported/w3c/web-platform-tests/resource-timing/initiator-type/style.html
+/LayoutTests/imported/w3c/web-platform-tests/resource-timing/initiator-type/svg.html
+/LayoutTests/imported/w3c/web-platform-tests/resource-timing/initiator-type/video.html
+/LayoutTests/imported/w3c/web-platform-tests/resource-timing/initiator-type/workers.html

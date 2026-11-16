@@ -1,0 +1,63 @@
+<html> 
+<head>
+
+<style>
+.editing { 
+    border: 2px solid red; 
+    font-size: 24px; 
+}
+.explanation { 
+    border: 2px solid blue; 
+    padding: 12px; 
+    font-size: 24px; 
+    margin-bottom: 24px;
+}
+.scenario { margin-bottom: 16px;}
+.scenario:first-line { font-weight: bold; margin-bottom: 16px;}
+.expected-results:first-line { font-weight: bold }
+</style>
+<script src=../editing.js language="JavaScript" type="text/JavaScript" ></script>
+
+<script>
+
+function editingTest() {
+    extendSelectionForwardByLineCommand();
+    cutCommand();
+    pasteCommand();
+}
+
+</script>
+
+<title>Editing Test</title> 
+</head> 
+<body>
+
+<div class="explanation">
+<div class="scenario">
+Tests: 
+<br>
+Pasting styles we should not remove during the "smoosh styles" process. This tests the fix for
+<a href="rdar://problem/3972665">&lt;rdar://problem/3972665&gt;</a> 8A360: HTML message partially truncated on left hand side, text-indent from Script Editor
+</div>
+<div class="expected-results">
+Expected Results:
+<br>
+Should see this content in the red box below: foo. Note that there should be no visible indent.
+<br>
+This demonstrates <a href="http://bugs.webkit.org/show_bug.cgi?id=8726">a bug</a>, the caret is one pixel off.
+</div>
+</div>
+
+<div contenteditable id="root" spellcheck="false" style="word-wrap: break-word; -khtml-nbsp-mode: space; -khtml-line-break: after-white-space;">
+<div id="test" class="editing">
+<div style="margin-left: 40px; text-indent: -40px">
+foo
+</div>
+</div>
+
+<script>
+runEditingTest();
+</script>
+
+</body>
+</html>

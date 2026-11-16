@@ -1,0 +1,95 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<!-- AXLineForIndex used to refuse the index one past the last character, which is where the caret
+     sits at the end of a field. WebKit contradicted itself doing so: AXInsertionPointLineNumber
+     answers that same caret position. VoiceOver measures a field's line span with AXLineForIndex,
+     so a nil there left it unable to tell which line the caret was on. -->
+<textarea id="single" style="width: 200px; height: 60px">abc</textarea>
+<textarea id="empty" style="width: 200px; height: 60px"></textarea>
+<textarea id="trailingNewline" style="width: 200px; height: 60px">alpha
+bravo
+</textarea>
+<textarea id="noTrailingNewline" style="width: 200px; height: 60px">alpha
+bravo</textarea>
+<input id="input" type="text" value="abc">
+<div id="brs" contenteditable style="width: 200px">alpha<br>bravo<br></div>
+<div id="blankLastLine" contenteditable style="width: 200px">alpha<br>bravo<br><br></div>
+<div id="blocks" contenteditable style="width: 200px"><div>alpha</div><div>bravo</div></div>
+
+<script>
+var output = "Asserts that AXLineForIndex answers for the index one past the last character, the caret's\n"
+    + "position at the end of a field, and only reports out of range beyond that. Also asserts that it\n"
+    + "agrees with AXInsertionPointLineNumber about that same position.\n\n";
+
+// `lastLine` is the expected answer for the index equal to the value's length. Fields whose value
+// ends in a line break render a blank final line, and the caret there is on it; fields whose value
+// does not still end the last content line, and the caret there is on that line.
+var cases = [
+    { id: "single", label: "textarea, one line", lastLine: 0 },
+    { id: "empty", label: "textarea, empty value", lastLine: 0 },
+    { id: "trailingNewline", label: "textarea, value ends in a newline", lastLine: 2 },
+    { id: "noTrailingNewline", label: "textarea, value does not end in a newline", lastLine: 1 },
+    { id: "input", label: "text input", lastLine: 0 },
+    { id: "brs", label: "contenteditable, <br>-separated lines", lastLine: 1 },
+    { id: "blankLastLine", label: "contenteditable, blank final line", lastLine: 2 },
+    { id: "blocks", label: "contenteditable, block-separated lines", lastLine: 1 },
+];
+
+// expect() evaluates its expressions in its own scope, so the values it reads are globals.
+var axField, valueLength, indexPastEnd, indexBeyondEnd;
+
+async function checkCase(testCase) {
+    axField = await waitForElementById(testCase.id);
+    if (!axField) {
+        output += `FAIL: ${testCase.label}: no accessibility element for #${testCase.id}\n\n`;
+        return;
+    }
+
+    valueLength = axField.stringAttributeValue("AXValue").length;
+    indexPastEnd = valueLength;
+    indexBeyondEnd = valueLength + 1;
+
+    output += `${testCase.label}: value ${JSON.stringify(axField.stringAttributeValue("AXValue"))}\n`;
+    output += expect("axField.numberOfCharacters", `${valueLength}`);
+    output += expect("axField.lineForIndex(indexPastEnd)", `${testCase.lastLine}`);
+    output += expect("axField.lineForIndex(indexBeyondEnd)", "-1");
+
+    // AXInsertionPointLineNumber answers for the caret, so putting the caret at the end of the
+    // value must give the same line as AXLineForIndex for the index the caret occupies.
+    var field = document.getElementById(testCase.id);
+    await waitForNotification(axField, "AXSelectedTextChanged", () => {
+        field.focus();
+        if (field.isContentEditable) {
+            var selection = window.getSelection();
+            selection.removeAllRanges();
+            var range = document.createRange();
+            range.selectNodeContents(field);
+            range.collapse(false);
+            selection.addRange(range);
+        } else
+            field.setSelectionRange(valueLength, valueLength);
+    });
+    output += expect("axField.insertionPointLineNumber", `${testCase.lastLine}`);
+    output += "\n";
+}
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    setTimeout(async function() {
+        for (var testCase of cases)
+            await checkCase(testCase);
+
+        debugEscaped(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

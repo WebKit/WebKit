@@ -1,0 +1,23 @@
+Testing the Button class.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Default values
+PASS button.enabled is true
+PASS button.uiDelegate is undefined.
+PASS button.element.localName is "button"
+
+Responds to click events
+PASS clickedButton === button is true
+
+Doesn't respond to click events when disabled
+
+Has all the appropriate styles
+PASS style.position is "absolute"
+PASS style.borderWidth is "0px"
+PASS style.webkitAppearance is "none"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

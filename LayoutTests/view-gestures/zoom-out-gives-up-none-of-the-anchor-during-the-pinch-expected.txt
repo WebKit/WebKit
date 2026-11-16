@@ -1,0 +1,9 @@
+Zoomed in at (100, 100) to scale 2.00, then held a zoom out at (700, 500):
+  at scale 1.80: PASS (holding the pinched content under the cursor, from a position on the document)
+  at scale 1.62: PASS (holding the pinched content under the cursor, 32, 9 past the document's edges)
+  at scale 1.46: PASS (holding the pinched content under the cursor, 80, 43 past the document's edges)
+  at scale 1.31: PASS (holding the pinched content under the cursor, 133, 81 past the document's edges)
+  at scale 1.18: PASS (holding the pinched content under the cursor, 193, 123 past the document's edges)
+  at scale 1.06: PASS (holding the pinched content under the cursor, 259, 170 past the document's edges)
+After release at scale 1.06:
+  PASS (the content under the cursor moved by (259, 170), the part of the anchor this scale leaves off the document, and no more)

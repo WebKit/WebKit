@@ -1,0 +1,10 @@
+Verifies that pressing Shift + Up modifies an extant selection, and does not begin keyboard scrolling after the selection is completely cleared. To manually run the test, press Shift + Up until the selection disappears, and then keep pressing Shift + Up — the page should not scroll
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS document.scrollingElement.scrollTop is scrollTopBeforeKeyPresses
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Here’s to the crazy ones. The misfits. The rebels. The troublemakers. The round pegs in the square holes. The ones who see things differently. They’re not fond of rules. And they have no respect for the status quo.

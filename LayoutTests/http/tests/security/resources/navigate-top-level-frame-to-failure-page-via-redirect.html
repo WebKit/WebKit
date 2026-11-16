@@ -1,0 +1,11 @@
+<html>
+<body>
+Success! The navigation was blocked
+<script>
+window.addEventListener("load", e => {
+  // The initial navigation URL is same-site but it redirects to a different site.
+  top.location = "http://127.0.0.1:8000/resources/redirect.py?url=http://localhost:8000/security/resources/should-not-have-loaded.html";
+});
+</script>
+</body>
+</html>

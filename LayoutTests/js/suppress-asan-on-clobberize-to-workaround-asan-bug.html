@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+
+<style>
+.class1 {  border-image-source: url(#htmlvar00002);  -webkit-transition-duration: 1s; position: fixed }
+</style>
+
+<script>
+function runTest() {
+    if (window.testRunner)
+    testRunner.dumpAsText();
+
+    elementStyle = div.style;
+    elementStyle.setProperty("border-inline-start-width", "1px");
+    elementStyle.setProperty("column-span", "all");
+    animation = div.getAnimations()[0];
+    animation.effect = new KeyframeEffect(li, [ { } ], 6); 
+}
+
+</script>
+
+<body onload=runTest()>
+<p>This test passes if there is no crash.</p>
+<div id="div" class="class1" >
+<audio controls="controls">
+<li id="li">
+</body>
+</html>

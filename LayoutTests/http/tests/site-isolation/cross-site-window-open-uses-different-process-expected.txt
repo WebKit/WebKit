@@ -1,0 +1,11 @@
+Cross-site window.open uses a different process
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS messageType is "processId"
+PASS openerPID is not openedPID
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

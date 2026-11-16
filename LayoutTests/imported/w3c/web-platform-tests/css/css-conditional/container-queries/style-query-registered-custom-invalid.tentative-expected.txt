@@ -1,0 +1,3 @@
+
+PASS Querying IACVT value for registered custom property should evaluate to false
+

@@ -1,0 +1,8 @@
+text aom_codec_enc_config_default
+text aom_codec_enc_config_set
+text aom_codec_enc_init_ver
+text aom_codec_encode
+text aom_codec_get_cx_data
+text aom_codec_get_global_headers
+text aom_codec_get_preview_frame
+text aom_codec_set_cx_data_buf

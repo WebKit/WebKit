@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+function log(message)
+{
+    var item = document.createElement("div");
+    item.appendChild(document.createTextNode(message));
+    document.getElementById("console").appendChild(item);
+}
+function pressKey(key)
+{
+    if (navigator.userAgent.search(/\bMac OS X\b/) != -1)
+        modifiers = ["ctrlKey", "altKey"];
+    else
+        modifiers = ["altKey"];
+    eventSender.keyDown(key, modifiers);
+}
+function test()
+{
+    document.getElementById("host2").attachShadow({ mode: 'closed' }).innerHTML = '<button accesskey="2" onfocus="log(\'2: correct button focused, in shadow\')" onclick="log(\'2: correct button clicked, in shadow\')">2c</button>';
+    document.getElementById("host3").attachShadow({ mode: 'closed' }).innerHTML = '<button accesskey="3" onfocus="log(\'3: wrong button focused, later in document and in shadow\')" onclick="log(\'3: wrong button clicked, later in document and in shadow\')">3w</button>';
+    document.getElementById("host4").attachShadow({ mode: 'closed' }).innerHTML = '<button accesskey="4" onfocus="log(\'4: correct button focused, earlier in document and in shadow\')" onclick="log(\'4: correct button clicked, earlier in document and in shadow\')">4c</button>';
+    document.getElementById("host5").attachShadow({ mode: 'closed' }).innerHTML = '<button accesskey="5" onfocus="log(\'5: correct button focused, earlier in document and in shadow\')" onclick="log(\'5: correct button clicked, earlier in document and in shadow\')">5c</button><slot></slot>';
+    document.getElementById("host6").attachShadow({ mode: 'closed' }).innerHTML = '<slot></slot><button accesskey="6" onfocus="log(\'6: wrong button focused, later in document and in shadow\')" onclick="log(\'6: correct button clicked, later in document and in shadow\')">6w</button>';
+
+    if (!window.testRunner)
+        return;
+    testRunner.dumpAsText();
+
+    for (var i = 1; i <= 6; i++)
+        pressKey(i.toString());
+}
+</script>
+</head>
+<body onload="test()">
+<p>This test checks to see what happens when the same accesskey is set on multiple elements including cases where the elements are in the a shadow tree.</p>
+<hr>
+<button accesskey="1" onfocus="log('1: correct button focused, earlier in document')" onclick="log('1: correct button clicked, earlier in document')">1c</button>
+<button accesskey="1" onfocus="log('1: wrong button focused, later in document')" onclick="log('1: wrong button clicked, later in document')">1w</button>
+
+<span id="host2"></span>
+
+<button accesskey="3" onfocus="log('3: correct button focused, earlier in document')" onclick="log('3: correct button clicked, earlier in document')">3c</button>
+<span id="host3"></span>
+
+<span id="host4"></span>
+<button accesskey="4" onfocus="log('4: wrong button focused, later in document')" onclick="log('4: wrong button clicked, later in document')">4w</button>
+
+<span id="host5"><button accesskey="5" onfocus="log('5: wrong button focused, later in document in slot')" onclick="log('5: wrong button clicked, later in document in slot')">5w</button></span>
+
+<span id="host6"><button accesskey="6" onfocus="log('6: correct button focused, earlier in document in slot')" onclick="log('6: correct button clicked, earlier in document in slot')">6c</button></span>
+
+<hr>
+<div id="console"></div>
+</body>
+</html>

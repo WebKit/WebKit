@@ -1,0 +1,10 @@
+Reading WaveShaperNode.curve on the main thread while offline rendering accesses it on the audio thread should not crash.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Test passed because it did not crash.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,43 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+
+<html>
+<head>
+<meta name="viewport" content="initial-scale=1, width=device-width, viewport-fit=cover">
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+<script>
+
+jsTestIsAsync = true;
+
+addEventListener("load", async () => {
+    description("Tests that changing the value of viewport-fit affects the size of the viewport.");
+
+    // Body margins are 8px left and 8px right.
+    viewportWidth = screen.width - 16;
+
+    debug("Initial width, using viewport-fit: cover");
+    shouldBe("document.body.clientWidth", "viewportWidth");
+
+    debug("\nSet safe area, but still using viewport-fit: cover");
+    await UIHelper.setSafeAreaInsets(0, 20, 0, 20);
+    shouldBe("document.body.clientWidth", "viewportWidth");
+
+    debug("\nChange to viewport-fit: auto");
+    let viewportMeta = document.querySelector('meta[name="viewport"]');
+    viewportMeta.setAttribute('content', 'initial-scale=1, width=device-width, viewport-fit=auto');
+
+    await UIHelper.ensurePresentationUpdate();
+
+    leftAndRightSafeAreaInsets = 40;
+    shouldBe("document.body.clientWidth", "viewportWidth - leftAndRightSafeAreaInsets");
+
+    debug("");
+    finishJSTest();
+});
+
+</script>
+</head>
+
+<body>
+</body>
+</html>

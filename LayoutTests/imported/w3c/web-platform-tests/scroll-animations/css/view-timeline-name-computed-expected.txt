@@ -1,0 +1,15 @@
+
+PASS Property view-timeline-name value 'initial'
+PASS Property view-timeline-name value 'inherit'
+PASS Property view-timeline-name value 'unset'
+PASS Property view-timeline-name value 'revert'
+PASS Property view-timeline-name value 'none'
+PASS Property view-timeline-name value '--foo'
+PASS Property view-timeline-name value '--foo, --bar'
+PASS Property view-timeline-name value '--bar, --foo'
+PASS Property view-timeline-name value '--a, --b, --c, --D, --e'
+PASS Property view-timeline-name value 'none, none'
+PASS Property view-timeline-name value '--a, --b, --c, none, --d, --e'
+PASS The view-timeline-name property shows up in CSSStyleDeclaration enumeration
+PASS The view-timeline-name property shows up in CSSStyleDeclaration.cssText
+

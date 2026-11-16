@@ -1,0 +1,24 @@
+
+EVENT(sourceopen)
+EVENT(updateend)
+EVENT(updateend)
+Test: setLiveSeekableRange with start < 0 throws TypeError
+EXPECTED (thrownError.name == 'TypeError') OK
+Test: setLiveSeekableRange with start > end throws TypeError
+EXPECTED (thrownError.name == 'TypeError') OK
+RUN(source.duration = Infinity)
+Test: setLiveSeekableRange sets seekable range in live mode
+RUN(source.setLiveSeekableRange(1, 3))
+EXPECTED (video.seekable.length == '1') OK
+EXPECTED (video.seekable.start(0) == '1'), OBSERVED '0' FAIL
+EXPECTED (video.seekable.end(0) == '3'), OBSERVED '4' FAIL
+Test: update live seekable range
+RUN(source.setLiveSeekableRange(0, 4))
+EXPECTED (video.seekable.start(0) == '0') OK
+EXPECTED (video.seekable.end(0) == '4') OK
+Test: clearLiveSeekableRange clears the range
+RUN(source.clearLiveSeekableRange())
+Test: setLiveSeekableRange when ended throws InvalidStateError
+EXPECTED (thrownError.name == 'InvalidStateError') OK
+END OF TEST
+

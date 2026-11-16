@@ -1,0 +1,4 @@
+Bug 122668 - The test passes if it doesn't crash
+1
+A2
+

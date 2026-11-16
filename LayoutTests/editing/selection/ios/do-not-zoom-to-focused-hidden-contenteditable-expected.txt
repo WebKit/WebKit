@@ -1,0 +1,7 @@
+
+The initial page scale is: 1.000
+The page scale after focusing the div is: 1.000
+The page scale after focusing the iframe is: 1.000
+Testing
+
+Verifies that we don't zoom to the focused element, if the focused element is in a hidden contenteditable area. To manually test, click the button and check that the page scale is still 1.

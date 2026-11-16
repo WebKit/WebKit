@@ -1,0 +1,65 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<!DOCTYPE html>
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="../debugger/resources/site-isolation-debugger-test-utilities.js"></script>
+<script>
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Page.SearchInResource");
+
+    suite.addTestCase({
+        name: "SiteIsolation.Page.SearchInResource.RoutesToFramesHostingProcess",
+        description: "searchInResource(frameId, url) should route by the frameId's hosting process and return per-line matches.",
+        async test() {
+            let frameTarget = await frameTargetForURLContaining("resource-tree-frame-with-subresource.html");
+            InspectorTest.assert(frameTarget instanceof WI.FrameTarget, "Cross-origin child frame target should exist.");
+            await waitForExpressionInTarget(frameTarget, "document.styleSheets.length > 0");
+
+            // Grab the child frame's protocol id and the stylesheet's url to feed into searchInResource.
+            let { frameTree } = await WI.backendTarget.PageAgent.getResourceTree();
+            let child = frameTree.childFrames?.[0];
+            let stylesheet = (child?.resources || []).find((r) => r.url.endsWith("/resource-tree-subframe-style.css"));
+            let childFrameId = child?.frame?.id;
+            let stylesheetUrl = stylesheet?.url;
+
+            InspectorTest.expectThat(!!childFrameId, "Should resolve the cross-origin child frame's id.");
+            InspectorTest.expectThat(!!stylesheetUrl, "Should resolve the cross-origin child's stylesheet url.");
+
+            let { result } = await WI.backendTarget.PageAgent.searchInResource.invoke({
+                frameId: childFrameId,
+                url: stylesheetUrl,
+                query: "rebeccapurple",
+            });
+            InspectorTest.expectThat(Array.isArray(result), "Result should be an array.");
+            InspectorTest.expectEqual(result.length, 1, "Should report exactly one matching line.");
+            if (result.length === 1) {
+                InspectorTest.expectEqual(result[0].lineNumber, 0, "Match should be on line 0.");
+                InspectorTest.expectThat(result[0].lineContent.includes("rebeccapurple"), "Match's lineContent should include the query.");
+            }
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Page.SearchInResource.MalformedFrameIdFails",
+        description: "searchInResource with a frameId that isn't a process-qualified protocol id should fail, not silently return an empty array.",
+        async test() {
+            let failed = false;
+            try {
+                await WI.backendTarget.PageAgent.searchInResource.invoke({
+                    frameId: "not-a-frame-id",
+                    url: "http://localhost:8000/",
+                    query: "rebeccapurple",
+                });
+            } catch (e) {
+                failed = true;
+            }
+            InspectorTest.expectThat(failed, "searchInResource should fail for a malformed frameId.");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+<body onload="runTest()">
+<p>Test that Page.searchInResource routes by frameId's hosting process and returns per-line matches under site isolation.</p>
+<iframe src="http://localhost:8000/site-isolation/inspector/page/resources/resource-tree-frame-with-subresource.html"></iframe>
+</body>

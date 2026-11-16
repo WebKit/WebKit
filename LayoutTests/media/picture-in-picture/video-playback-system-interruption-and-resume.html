@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="../media-file.js"></script>
+        <script src="../video-test.js"></script>
+        <script>
+
+            window.addEventListener('load', async event => {
+                if (!window.internals) {
+                    failTest('This test must be run in DumpRenderTree or WebKitTestRunner.');
+                    return;
+                }
+    
+                findMediaElement();
+                run(`internals.setMediaElementRestrictions(video, 'NoRestrictions')`);
+                run(`window.internals.settings.setAllowsPictureInPictureMediaPlayback(true)`);
+                run(`internals.setMockVideoPresentationModeEnabled(true)`);
+                run('video.volume = 0.1');
+                run('video.src = findMediaFile("video", "../content/test")');
+
+                await waitFor(video, 'canplaythrough');
+                // Catch the play() promise so the System interruption below doesn't
+                // produce an unhandled-rejection AbortError when it pauses the video
+                // before the promise settles.
+                run('video.play().catch(() => { })');
+                await waitFor(video, 'playing');
+                testExpected('video.paused', false);
+
+                runWithKeyDown(() => {
+                    video.webkitSetPresentationMode('picture-in-picture');
+                });
+                await waitFor(video, 'webkitpresentationmodechanged');
+
+                run('internals.beginMediaSessionInterruption("EnteringBackground")');
+                testExpected('internals.mediaSessionState(video)', 'Interrupted', '!=');
+                testExpected('video.paused', false);
+                run('internals.beginMediaSessionInterruption("System")');
+                testExpected('video.paused', true);
+                testExpected('internals.mediaSessionState(video)', 'Interrupted');
+                run('internals.endMediaSessionInterruption("MayResumePlaying")');
+                run('internals.endMediaSessionInterruption("")');
+                testExpected('internals.mediaSessionState(video)', 'Interrupted', '!=');
+
+                // Wait some time before ending the test to ensure the session interruption is cancelled.
+                endTestLater();
+            });
+            
+        </script>
+    </head>
+    <body>
+        <video autoplay controls></video>
+    </body>
+</html>

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../../resources/js-test.js"></script>
+<script>
+description("Checks that setTimeout(0) & setInterval(0) ordering is maintained");
+jsTestIsAsync = true;
+
+let setInterval0Called = false;
+let setInterval1Called = false;
+let setTimeout0Called = false;
+
+function runNonZeroDelayTests()
+{
+    setInterval1Handle = setInterval(() => {
+        debug("* setInterval(1)");
+        shouldBeTrue("setInterval0Called");
+        shouldBeTrue("setTimeout0Called");
+        setInterval1Called = true;
+    }, 1);
+
+    setTimeout(() => {
+        debug("* setTimeout(1)");
+        shouldBeTrue("setInterval1Called");
+        clearInterval(setInterval1Handle);
+        finishJSTest();
+    }, 1);
+}
+
+setInterval0Handle = setInterval(() => {
+    debug("* setInterval(0)");
+    setInterval0Called = true;
+}, 0);
+
+setTimeout(() => {
+    debug("* setTimeout(0)");
+    shouldBeTrue("setInterval0Called");
+    clearInterval(setInterval0Handle);
+    setTimeout0Called = true;
+    runNonZeroDelayTests();
+}, 0);
+</script>
+</body>
+</html>

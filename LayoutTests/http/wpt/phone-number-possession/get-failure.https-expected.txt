@@ -1,0 +1,5 @@
+
+PASS A request the user cancels rejects with NotAllowedError.
+PASS A request the platform fails rejects with NotAllowedError.
+PASS A request on a device that can't provide a phone number possession rejects with NotSupportedError.
+

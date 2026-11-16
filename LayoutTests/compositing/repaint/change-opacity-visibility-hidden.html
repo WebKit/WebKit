@@ -1,0 +1,41 @@
+<!doctype HTML>
+<html>
+
+  <div id=hidden style="visibility:hidden; opacity: 0; position:absolute; transform: translateX(0px)">
+    <div style="visibility:visible; width: 100px; height: 100px; background: green; position:relative">There should be a repaint rect for the newly visible inner div</div>
+  </div>
+
+<pre id=result></pre>
+
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+function timerAfterRAF(callback) {
+    return requestAnimationFrame(() => setTimeout(callback, 0));
+}
+
+function runTest() {
+    if (window.internals)
+        internals.startTrackingRepaints();
+    hidden.style.opacity = 1;  
+
+    timerAfterRAF(() => {
+        if (window.internals) {
+            result.innerText = internals.repaintRectsAsText();
+            internals.stopTrackingRepaints();
+        }
+        if (window.testRunner)
+            testRunner.notifyDone();
+
+    });
+};
+
+window.addEventListener('load', () => {
+    timerAfterRAF(runTest);
+}, false);
+
+</script>
+</html>

@@ -1,0 +1,4 @@
+ Hello
+
+PASS Multiple globals for Worker constructor: COEP reports
+

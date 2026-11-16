@@ -1,0 +1,4 @@
+
+PASS Main reosurce load matched with the service worker having multiple rules
+PASS Resource load matched with the rule registered in the imported service worker
+

@@ -1,0 +1,5 @@
+
+PASS headers of the main script
+PASS headers of a script imported by a classic script
+PASS headers of a script imported by a module script
+

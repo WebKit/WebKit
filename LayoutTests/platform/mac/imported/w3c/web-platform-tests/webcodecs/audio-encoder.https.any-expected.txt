@@ -1,0 +1,26 @@
+
+PASS Simple audio encoding
+PASS Test reset during flush
+PASS Encode audio with negative timestamp
+PASS Channel number variation: 1
+PASS Channel number variation: 2
+PASS Sample rate variation: 3000
+PASS Sample rate variation: 13000
+PASS Sample rate variation: 23000
+PASS Sample rate variation: 33000
+PASS Sample rate variation: 43000
+PASS Sample rate variation: 53000
+PASS Sample rate variation: 63000
+PASS Sample rate variation: 73000
+PASS Sample rate variation: 83000
+PASS Sample rate variation: 93000
+FAIL Encoding and decoding assert_approx_equals: Difference between input and output is too large. index: 100 channel: 0 input: 0.9659258127212524 output: 0.4632495939731598 expected 0.4632495939731598 +/- 0.5 but got 0.9659258127212524
+PASS Emit decoder config and extra data.
+PASS encodeQueueSize test
+PASS Test encoding Opus with additional parameters: Empty Opus config
+PASS Test encoding Opus with additional parameters: Opus with frameDuration
+PASS Test encoding Opus with additional parameters: Opus with complexity
+PASS Test encoding Opus with additional parameters: Opus with useinbandfec
+PASS Test encoding Opus with additional parameters: Opus with usedtx
+PASS Test encoding Opus with additional parameters: Opus mixed parameters
+

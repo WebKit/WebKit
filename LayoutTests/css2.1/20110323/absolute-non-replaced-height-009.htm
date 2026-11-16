@@ -1,0 +1,35 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+    <head>
+        <title>CSS Test: Absolutely positioned, non-replaced elements, height is shrink-to-fit</title>
+        <link rel="author" title="Microsoft" href="http://www.microsoft.com/">
+        <link rel="help" href="http://www.w3.org/TR/CSS21/visudet.html#abs-non-replaced-height">
+        <meta name="flags" content="ahem">
+        <meta name="assert" content="The 'height' is based on the content height, 'auto' values for 'margin-top' and 'margin-bottom' are set to '0' when 'height' and 'bottom' are 'auto' and 'top' is not 'auto'.">
+        <style type="text/css">
+            #div1
+            {
+                position: relative;
+            }
+            div div
+            {
+                background: blue;
+                bottom: auto;
+                color: orange;
+                font: 1in/1em Ahem;
+                height: auto;
+                margin-bottom: auto;
+                margin-top: auto;
+                position: absolute;
+                top: 0.25in;
+                width: 2in;
+            }
+        </style>
+    </head>
+    <body>
+        <p>Test passes if the orange and blue boxes below are the same height.</p>
+        <div id="div1">
+            <div>X</div>
+        </div>
+    </body>
+</html>

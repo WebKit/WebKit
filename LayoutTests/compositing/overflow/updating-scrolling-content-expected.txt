@@ -1,0 +1,7 @@
+(repaint rects
+  (rect 8 8 200 200)
+  (rect 193 8 15 14)
+  (rect 193 8 15 29)
+  (rect 193 22 15 171)
+)
+

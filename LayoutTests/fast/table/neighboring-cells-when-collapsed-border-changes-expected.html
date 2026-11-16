@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>This tests that we relayout neighboring cells when collapsed border changes.</title>
+<style>
+#topCell { 
+    border-left-width: 150px;
+    border-left-style: solid;
+    border-left-color: blue;
+}
+</style>
+</head>
+<body>
+PASS if the blue border does not cover the padding/content box of 'foo'.
+<table style="border-collapse: collapse;">
+<tr><td>foo</td><td id="topCell">bar</td></tr></table>
+</body>
+</html>

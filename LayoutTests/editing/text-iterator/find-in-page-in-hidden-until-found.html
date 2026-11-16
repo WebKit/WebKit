@@ -1,0 +1,36 @@
+<!DOCTYPE html><html lang><meta charset="utf-8">
+<title>find-in-page with hidden=until-found elements</title>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<hr>
+<script>
+findStringInHiddenUntilFound = (id, contents) => {
+    promise_test(async () => {
+        document.body.insertAdjacentHTML("beforeend", `<div hidden="until-found" id=${id}>${contents}</div>`);
+        const div = document.getElementById(id);
+        assert_equals(div.hidden, "until-found", `div element is in hidden=until-found state: ${id}`);
+        assert_equals(getComputedStyle(div).contentVisibility, "hidden", `div element has c-v: hidden: ${id}`);
+        await new Promise((resolve) => {
+            div.addEventListener("beforematch", resolve, { once: true });
+            testRunner.findString(id, []);
+        });
+        assert_equals(div.hidden, "until-found", `div element is still in hidden=until-found state: ${id}`);
+        await new Promise((resolve) => setTimeout(resolve, 0));
+        assert_false(div.hidden, `div element is no longer hidden after a tick: ${id}`);
+
+        const detailsElements = div.querySelectorAll("details");
+        detailsElements.forEach((details) => {
+            assert_true(details.open, "details element got expanded");
+        });
+        div.remove();
+    }, `auto-expand on find-in-page match: ${id}`);
+}
+let target;
+target = "div-simple"; findStringInHiddenUntilFound(target, target);
+target = "nested-until-found"; findStringInHiddenUntilFound(target, `<div hidden=until-found>${target}</div>`);
+target = "nested-p"; findStringInHiddenUntilFound(target, `<p>${target}</p>`);
+target = "nested-table"; findStringInHiddenUntilFound(target, `<table><tr><td>${target}</table>`);
+target = "details-nested-simple"; findStringInHiddenUntilFound(target, `<details>${target}</details>`);
+target = "details-nested-target-in-p"; findStringInHiddenUntilFound(target, `<details><p>${target}</p></details>`);
+target = "details-nested-target-in-table"; findStringInHiddenUntilFound(target, `<details><table><tr><td>${target}</table></details>`);
+</script>

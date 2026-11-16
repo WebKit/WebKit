@@ -1,0 +1,122 @@
+/*#pragma settings DebugTrace*/
+
+uniform half4 colorRed, colorGreen;
+
+// Should return 5
+const float kZero = 0;
+float return_loop(float five) {
+    for (float i = kZero; i < 10; ++i) {
+        if (i == five) { return i; }
+    }
+    return 0;
+}
+
+// Should return 35
+const float kTen = kZero + 10;
+float continue_loop(float five) {
+    float sum = 0;
+    for (float i = 0; i < kTen; ++i) {
+        if (i < five) { continue; }
+        sum += i;
+    }
+    return sum;
+}
+
+// Should return 15
+float break_loop(float five) {
+    float sum = 0;
+    const float kOne = 1;
+    for (float i = 0; i < 10; i += kOne) {
+        if (i > five) { break; }
+        sum += i;
+    }
+    return sum;
+}
+
+// Should return a value close to zero
+float float_loop() {
+    float sum = 0;
+    for (float i = 0.123; i < 0.6; i += 0.111) {
+        sum += i;
+    }
+    return sum - 1.725;
+}
+
+bool loop_operator_le() {
+    // These loops are inside-out and execute zero times.
+    for (float i = 3; i <= 1; ++i) { return false; }
+    for (float i = 3; i <= 1; --i) { return false; }
+
+    float4 result = float4(9);
+    for (float i = 1; i <= 3; ++i) {
+        result = float4(result.yzw, i);
+    }
+    return result == float4(9, 1, 2, 3);
+}
+
+bool loop_operator_lt() {
+    // These loops are inside-out and execute zero times.
+    for (float i = 4; i < 1; ++i) { return false; }
+    for (float i = 4; i < 1; --i) { return false; }
+
+    float4 result = float4(9);
+    for (float i = 1; i < 4; ++i) {
+        result = float4(result.yzw, i);
+    }
+    return result == float4(9, 1, 2, 3);
+}
+
+bool loop_operator_ge() {
+    // These loops are inside-out and execute zero times.
+    for (float i = 1; i >= 3; ++i) { return false; }
+    for (float i = 1; i >= 3; --i) { return false; }
+
+    float4 result = float4(9);
+    for (float i = 3; i >= 1; --i) {
+        result = float4(result.yzw, i);
+    }
+    return result == float4(9, 3, 2, 1);
+}
+
+bool loop_operator_gt() {
+    // These loops are inside-out and execute zero times.
+    for (float i = 0; i > 3; ++i) { return false; }
+    for (float i = 0; i > 3; --i) { return false; }
+
+    float4 result = float4(9);
+    for (float i = 3; i > 0; --i) {
+        result = float4(result.yzw, i);
+    }
+    return result == float4(9, 3, 2, 1);
+}
+
+bool loop_operator_ne() {
+    // This loop executes zero times.
+    for (int i = 1; i != 1; ++i) { return false; }
+
+    float4 result = float4(9);
+    for (float i = 1; i != 4; ++i) {
+        result = float4(result.yzw, i);
+    }
+    return result == float4(9, 1, 2, 3);
+}
+
+bool loop_operator_eq() {
+    // This loops mismatches and executes zero times.
+    for (float i = 1; i == 2; ++i) { return false; }
+
+    float4 result = float4(9);
+    for (float i = 1; i == 1; ++i) {
+        result = float4(result.yzw, i);
+    }
+    return result == float4(9, 9, 9, 1);
+}
+
+half4 main(float2 pos) {
+    float five = clamp(pos.x, colorGreen.g, colorGreen.a) * 5.0;
+    return (return_loop(five) == 5 && continue_loop(five) == 35 &&
+            break_loop(five) == 15 && abs(float_loop()) < 0.025 &&
+            loop_operator_le() && loop_operator_lt() &&
+            loop_operator_ge() && loop_operator_gt() &&
+            loop_operator_eq() && loop_operator_ne()) ? colorGreen : colorRed;
+}

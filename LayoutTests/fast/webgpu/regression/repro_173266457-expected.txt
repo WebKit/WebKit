@@ -1,0 +1,4 @@
+CONSOLE MESSAGE: Index buffer contents after submission:
+
+PASS Out-of-order command buffer submission: index buffer contains OOB values after B submitted before A
+

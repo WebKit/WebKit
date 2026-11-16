@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>BrowserBench.org &mdash; Announcements</title>
+    <link rel="stylesheet" href="/resources/main.css">
+
+    <meta itemprop="name" content="Announcing Speedometer 3.1">
+    <meta itemprop="description" content="Speedometer 3.1 is a minor version bump fixing the benchmark harness to improve measurement accuracy.">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image:src" content="https://browserbench.org/announcements/speedometer3.1/preview.png">
+    <meta name="twitter:title" content="Announcing Speedometer 3.1">
+    <meta name="twitter:description" content="Speedometer 3.1 is a minor version bump fixing the benchmark harness to improve measurement accuracy.">
+
+    <meta property="og:title" content="Announcing Speedometer 3.1">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://browserbench.org/announcements/speedometer3">
+    <meta property="og:description" content="Speedometer 3.1 is a minor version bump fixing the benchmark harness to improve measurement accuracy.">
+    <meta property="og:site_name" content="BrowerBench.org">
+
+</head>
+<body>
+<main>
+
+<div id="logo">
+<a href="/"><span class="light">browser</span><span class="normal">bench</span><span class="highlight">.</span><span class="light">org</span></a>
+</div>
+
+<hr>
+
+<div class="navigation"><a href="/announcements">&lsaquo; Back to BrowserBench.org Announcements</a></p>
+
+<article>
+
+<h1>Announcing Speedometer 3.1</h1>
+<div class="byline">
+    <span class="author">by contributors from Apple, Google, Microsoft, and Mozilla</span>
+    <span class="date">March 31, 2025</span>
+</div>
+
+<p>Today, we are announcing an update to the Speedometer benchmark. This is a minor version bump fixing the benchmark harness to improve measurement accuracy.</p>
+
+<p>To recap, Speedometer 3.0 <a href="https://browserbench.org/announcements/speedometer3/">released in March 2024</a> was a breakthrough in browser benchmarking. The three major browser engines: Blink, Gecko, and WebKit collaborated under an <a href="https://github.com/WebKit/Speedometer/blob/main/Governance.md">open governance model</a> to create a benchmark designed to reflect the real-world Web. It has a wide variety of workloads ranging from to-do apps to charting, code &amp; WYSIWYG editing, and news sites. Together these workloads exercise a broad and representative cross section of browser engines, providing new opportunities to optimize different parts of browser engines. See <a href="https://browserbench.org/announcements/speedometer3/">Speedometer 3.0 announcement</a> to learn more about the Speedometer benchmark.</p>
+
+<p>In today’s minor update to the Speedometer benchmark, we’re fixing a handful of bugs:</p>
+
+<ul>
+    <li>In workloads simulating rendering of news sites using Next.js and Nuxt, we fixed a bug where a slightly different amount of work was done in different browsers. We also fixed a bug where we were constantly re-generating IDs for each item in a list by explicitly specifying IDs for each item.</li>
+    <li>In perf-dashboard workload, we fixed a bug where one of the synchronous tasks wasn’t measuring anything because the work was happening asynchronously. We now force synchronous execution of the relevant code so that its execution time is included in the final measurement.</li>
+</ul>
+
+<p>While these changes only have a small impact on the benchmark scores, we think these corrective measures are necessary in order to ensure an accurate comparison between web browsers, and to help guide future optimizations.</p>
+
+</article>
+
+<hr>
+
+<div class="navigation"><a href="/announcements">&lsaquo; Back to BrowserBench.org Announcements</a></p>
+
+</main>
+</body>
+</html>

@@ -1,0 +1,34 @@
+Test PaymentDetailsModifier with Apple Pay.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Testing PaymentDetailsModifier after selecting a 'credit' payment method type.
+PASS internals.mockPaymentCoordinator.total.label is 'Credit total override'
+PASS internals.mockPaymentCoordinator.total.amount is '15.00'
+PASS internals.mockPaymentCoordinator.lineItems.length is 2
+PASS internals.mockPaymentCoordinator.lineItems[0].label is 'Item'
+PASS internals.mockPaymentCoordinator.lineItems[0].amount is '10.00'
+PASS internals.mockPaymentCoordinator.lineItems[1].label is 'Credit surcharge'
+PASS internals.mockPaymentCoordinator.lineItems[1].amount is '5.00'
+
+Testing PaymentDetailsModifier after selecting a 'debit' payment method type.
+PASS internals.mockPaymentCoordinator.total.label is 'Debit total override'
+PASS internals.mockPaymentCoordinator.total.amount is '13.00'
+PASS internals.mockPaymentCoordinator.lineItems.length is 2
+PASS internals.mockPaymentCoordinator.lineItems[0].label is 'Item'
+PASS internals.mockPaymentCoordinator.lineItems[0].amount is '10.00'
+PASS internals.mockPaymentCoordinator.lineItems[1].label is 'Debit surcharge'
+PASS internals.mockPaymentCoordinator.lineItems[1].amount is '3.00'
+
+Testing PaymentDetailsModifier after selecting an unmodified payment method type.
+PASS internals.mockPaymentCoordinator.total.label is 'Total'
+PASS internals.mockPaymentCoordinator.total.amount is '10.00'
+PASS internals.mockPaymentCoordinator.lineItems.length is 1
+PASS internals.mockPaymentCoordinator.lineItems[0].label is 'Item'
+PASS internals.mockPaymentCoordinator.lineItems[0].amount is '10.00'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

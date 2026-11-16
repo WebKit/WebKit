@@ -1,0 +1,5 @@
+Drag me
+Zone A Zone B
+
+PASS dragenter and dragleave events should set relatedTarget to the element being entered or exited
+

@@ -1,0 +1,21 @@
+
+PASS Textarea wrapping transformation: Newlines should be normalized to LF.
+PASS Textarea wrapping transformation: Wrapping happens with LF newlines.
+PASS Textarea hard-wrapping should honor the col count unconditionally,
+PASS Textarea wrapping transformation: wrapping round-trips: Some text that is too long for the specified character width.
+PASS Textarea wrapping transformation: wrapping round-trips: Some text that is too long for the
+
+
+specified character width.
+PASS Textarea wrapping transformation: wrapping round-trips: exact  len
+PASS Textarea wrapping transformation: wrapping round-trips: exact  len
+and then
+some
+PASS Textarea wrapping transformation: wrapping round-trips: One
+two
+three
+intermingled
+
+lines
+and so
+

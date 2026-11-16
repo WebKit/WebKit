@@ -1,0 +1,12 @@
+Test that a module imported with the "text" type attribute is exposed as a string instead of being evaluated, even when it is served with a JavaScript MIME type.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS typeof namespace.default is "string"
+PASS namespace.default.includes('export default 42;') is true
+PASS window.textModuleWasEvaluated is undefined.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

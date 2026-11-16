@@ -1,0 +1,87 @@
+/*
+ * Copyright (C) 2004, 2005 Nikolas Zimmermann <zimmermann@kde.org>
+ * Copyright (C) 2004, 2005, 2006 Rob Buis <buis@kde.org>
+ * Copyright (C) 2009-2016 Google, Inc.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public License
+ * along with this library; see the file COPYING.LIB.  If not, write to
+ * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ * Boston, MA 02110-1301, USA.
+ */
+
+#include "config.h"
+#include "LegacyRenderSVGTransformableContainer.h"
+#include "LegacyRenderSVGModelObjectInlines.h"
+
+#include "RenderElementStyleInlines.h"
+#include "SVGElementTypeHelpers.h"
+#include "SVGGElement.h"
+#include "SVGGraphicsElement.h"
+#include "SVGUseElement.h"
+#include <wtf/TZoneMallocInlines.h>
+
+namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(LegacyRenderSVGTransformableContainer);
+
+LegacyRenderSVGTransformableContainer::LegacyRenderSVGTransformableContainer(SVGGraphicsElement& element, Style::ComputedStyle&& style)
+    : LegacyRenderSVGContainer(Type::LegacySVGTransformableContainer, element, WTF::move(style))
+{
+    ASSERT(isLegacyRenderSVGTransformableContainer());
+}
+
+LegacyRenderSVGTransformableContainer::~LegacyRenderSVGTransformableContainer() = default;
+
+bool LegacyRenderSVGTransformableContainer::calculateLocalTransform()
+{
+    Ref element = graphicsElement();
+
+    // If we're either the renderer for a <use> element, or for any <g> element inside the shadow
+    // tree, that was created during the use/symbol/svg expansion in SVGUseElement. These containers
+    // need to respect the translations induced by their corresponding use elements x/y attributes.
+    RefPtr useElement = dynamicDowncast<SVGUseElement>(element.get());
+    if (!useElement && element->isInShadowTree() && is<SVGGElement>(element)) {
+        if (RefPtr correspondingElement = dynamicDowncast<SVGUseElement>(element->correspondingElement()))
+            useElement = correspondingElement;
+    }
+
+    if (useElement) {
+        SVGLengthContext lengthContext(element.ptr());
+        FloatSize translation(useElement->x().value(lengthContext), useElement->y().value(lengthContext));
+        if (translation != m_additionalTranslation)
+            m_needsTransformUpdate = true;
+        m_additionalTranslation = translation;
+    }
+
+    auto referenceBoxRect = transformReferenceBoxRect();
+    if (referenceBoxRect != m_lastTransformReferenceBoxRect) {
+        m_lastTransformReferenceBoxRect = referenceBoxRect;
+        m_needsTransformUpdate = true;
+    }
+
+    m_didTransformToRootUpdate = m_needsTransformUpdate || SVGRenderSupport::transformToRootChanged(parent());
+    if (!m_needsTransformUpdate)
+        return false;
+
+    m_localTransform = element->animatedLocalTransform();
+    m_localTransform.translate(m_additionalTranslation);
+    m_needsTransformUpdate = false;
+    return true;
+}
+
+SVGGraphicsElement& LegacyRenderSVGTransformableContainer::graphicsElement()
+{
+    return downcast<SVGGraphicsElement>(LegacyRenderSVGContainer::element());
+}
+
+}

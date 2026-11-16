@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<meta name="viewport" content="width=device-width">
+<style>
+body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    position: absolute;
+}
+#container {
+    width: calc(100% - 100px);
+    height: calc(100% - 100px);
+    margin: 50px;
+}
+#editor {
+    width: 100%;
+    height: 100%;
+}
+</style>
+<div id="container"><iframe id="editor" src="data:text/html,<body%20contenteditable%20style='width:%20100%;%20height:%20100%;%20margin:%200;'>"></iframe></div>
+</html>

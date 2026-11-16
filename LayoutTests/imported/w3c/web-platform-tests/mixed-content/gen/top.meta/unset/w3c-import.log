@@ -1,0 +1,45 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/mixed-content/gen/top.meta/unset/audio-tag.https.html
+/LayoutTests/imported/w3c/web-platform-tests/mixed-content/gen/top.meta/unset/beacon.https.html
+/LayoutTests/imported/w3c/web-platform-tests/mixed-content/gen/top.meta/unset/fetch.https.html
+/LayoutTests/imported/w3c/web-platform-tests/mixed-content/gen/top.meta/unset/img-tag.https.html
+/LayoutTests/imported/w3c/web-platform-tests/mixed-content/gen/top.meta/unset/link-css-tag.https.html
+/LayoutTests/imported/w3c/web-platform-tests/mixed-content/gen/top.meta/unset/link-prefetch-tag.https.html
+/LayoutTests/imported/w3c/web-platform-tests/mixed-content/gen/top.meta/unset/object-tag.https.html
+/LayoutTests/imported/w3c/web-platform-tests/mixed-content/gen/top.meta/unset/picture-tag.https.html
+/LayoutTests/imported/w3c/web-platform-tests/mixed-content/gen/top.meta/unset/script-tag-dynamic-import.https.html
+/LayoutTests/imported/w3c/web-platform-tests/mixed-content/gen/top.meta/unset/script-tag.https.html
+/LayoutTests/imported/w3c/web-platform-tests/mixed-content/gen/top.meta/unset/sharedworker-classic.https.html
+/LayoutTests/imported/w3c/web-platform-tests/mixed-content/gen/top.meta/unset/sharedworker-import-data.https.html
+/LayoutTests/imported/w3c/web-platform-tests/mixed-content/gen/top.meta/unset/sharedworker-import.https.html
+/LayoutTests/imported/w3c/web-platform-tests/mixed-content/gen/top.meta/unset/sharedworker-module.https.html
+/LayoutTests/imported/w3c/web-platform-tests/mixed-content/gen/top.meta/unset/video-tag.https.html
+/LayoutTests/imported/w3c/web-platform-tests/mixed-content/gen/top.meta/unset/websocket.https.html
+/LayoutTests/imported/w3c/web-platform-tests/mixed-content/gen/top.meta/unset/worker-classic.https.html
+/LayoutTests/imported/w3c/web-platform-tests/mixed-content/gen/top.meta/unset/worker-import-data.https.html
+/LayoutTests/imported/w3c/web-platform-tests/mixed-content/gen/top.meta/unset/worker-import.https.html
+/LayoutTests/imported/w3c/web-platform-tests/mixed-content/gen/top.meta/unset/worker-module.https.html
+/LayoutTests/imported/w3c/web-platform-tests/mixed-content/gen/top.meta/unset/worklet-animation-import-data.https.html
+/LayoutTests/imported/w3c/web-platform-tests/mixed-content/gen/top.meta/unset/worklet-animation.https.html
+/LayoutTests/imported/w3c/web-platform-tests/mixed-content/gen/top.meta/unset/worklet-audio-import-data.https.html
+/LayoutTests/imported/w3c/web-platform-tests/mixed-content/gen/top.meta/unset/worklet-audio.https.html
+/LayoutTests/imported/w3c/web-platform-tests/mixed-content/gen/top.meta/unset/worklet-layout-import-data.https.html
+/LayoutTests/imported/w3c/web-platform-tests/mixed-content/gen/top.meta/unset/worklet-layout.https.html
+/LayoutTests/imported/w3c/web-platform-tests/mixed-content/gen/top.meta/unset/worklet-paint-import-data.https.html
+/LayoutTests/imported/w3c/web-platform-tests/mixed-content/gen/top.meta/unset/worklet-paint.https.html
+/LayoutTests/imported/w3c/web-platform-tests/mixed-content/gen/top.meta/unset/xhr.https.html

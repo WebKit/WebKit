@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../../resources/ui-helper.js"></script>
+    <script>
+        if (window.testRunner) {
+            testRunner.waitUntilDone();
+            testRunner.dumpAsText();
+        }
+
+        async function doTest()
+        {
+            await UIHelper.ensureStablePresentationUpdate();
+            let tree = await UIHelper.getUIViewTree();
+
+            document.getElementById('test').remove();
+
+            let output = document.createElement('pre');
+            document.body.append(output);
+            output.textContent = tree;
+
+            testRunner.notifyDone();
+        }
+
+        window.addEventListener('load', doTest, false);
+    </script>
+</head>
+<body>
+<div id="test">
+    <div style="will-change: transform;">Hello</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<body style="margin: 0">
+<iframe id="frame" style="position: fixed; right: 0; top: 0; width: 200px; height: 200px; border: none"
+    src="resources/composited-subframe.html"></iframe>
+<div style="position: fixed; left: 0; top: 0; width: 20px; height: 20px; background-color: blue"></div>
+<div style="height: 5000px"></div>
+<script>
+const frame = document.getElementById("frame");
+
+async function settle()
+{
+    for (let i = 0; i < 3; i++)
+        await new Promise(resolve => requestAnimationFrame(resolve));
+    await new Promise(resolve => setTimeout(resolve, 0));
+}
+
+async function compositingUpdatesWhileScrolling()
+{
+    window.scrollTo(0, 0);
+    await settle();
+
+    internals.startTrackingCompositingUpdates();
+    for (let i = 1; i <= 5; ++i) {
+        window.scrollTo(0, i * 100);
+        await settle();
+    }
+    return internals.compositingUpdateCount();
+}
+
+promise_test(async () => {
+    await new Promise(resolve => window.addEventListener("load", resolve));
+    await settle();
+
+    const withFixedFrame = await compositingUpdatesWhileScrolling();
+
+    frame.style.position = "absolute";
+    await settle();
+    const withAbsoluteFrame = await compositingUpdatesWhileScrolling();
+
+    assert_less_than_equal(withFixedFrame, withAbsoluteFrame, "a position:fixed composited iframe moving as the page scrolls shouldn't cause extra compositing updates");
+}, "Scrolling a page with a position:fixed composited iframe doesn't cause compositing updates for the iframe's movement");
+</script>
+</body>

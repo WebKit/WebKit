@@ -1,0 +1,320 @@
+list-item1list-item2
+second line of list-item2
+
+PASS Delete at "<ul><li>list[-item1</li><li>list]-item2</li></ul>"
+FAIL Delete at "<ul><li>list-[item1</li><li>]list-item2</li></ul>" assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteContentBackward") expected "(#text \"list-list-item2\", 5) - (#text \"\", 0)" but got "(#text \"list-list-item2\", 5) - (<li>, 0)"
+PASS Delete at "<ul><li>list-[item1</li><li>}list-item2</li></ul>"
+PASS Delete at "<ul><li>list-item1[</li><li>list]-item2</li></ul>"
+FAIL Delete at "<ul><li>list-item1{</li><li>list]-item2</li></ul>" assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteContentBackward") expected "(<li>, 1) - (#text \"\", 4)" but got "(#text \"list-item1-item2\", 10) - (#text \"\", 4)"
+FAIL Delete at "<ul><li>list-item1[</li><li>]list-item2</li></ul>" assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteContentBackward") expected "(#text \"list-item1list-item2\", 10) - (#text \"\", 0)" but got "(#text \"list-item1list-item2\", 10) - (<li>, 0)"
+FAIL Delete at "<ul><li>list-item1[]</li><li>list-item2</li></ul>" assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteContentForward") expected "(#text \"list-item1list-item2\", 10) - (#text \"\", 0)" but got "(#text \"list-item1list-item2\", 10) - (<li>, 0)"
+FAIL Delete at "<ul><li>list-item1[]<br></li><li>list-item2</li></ul>" assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteContentForward") expected "(#text \"list-item1list-item2\", 10) - (#text \"\", 0)" but got "(<li>, 1) - (<li>, 0)"
+FAIL Delete at "<ul><li>list-item1[]<br><br></li><li>list-item2</li></ul>" assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteContentForward") expected "(#text \"list-item1\", 10) - (#text \"list-item2\", 0)" but got "(<li>, 1) - (<li>, 2)"
+FAIL Delete at "<ul><li>list-item1[]</li><li>list-item2<br>second line of list-item2</li></ul>" assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteContentForward") expected "(#text \"list-item1list-item2\", 10) - (#text \"\", 0)" but got "(#text \"list-item1list-item2\", 10) - (<li>, 0)"
+FAIL Delete at "<ul><li><p>list-item1[]</p></li><li>list-item2</li></ul>" assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteContentForward") expected "(#text \"list-item1list-item2\", 10) - (#text \"\", 0)" but got "(#text \"list-item1list-item2\", 10) - (<li>, 0)"
+FAIL Delete at "<ul><li>list-item1[]</li><li><p>list-item2</p></li></ul>" assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteContentForward") expected "(#text \"list-item1list-item2\", 10) - (#text \"\", 0)" but got "(#text \"list-item1list-item2\", 10) - (<p>, 0)"
+PASS Delete at "<ul><li>[list-item1]</li></ul>"
+PASS Delete at "<ul><li>{list-item1}</li></ul>"
+PASS Delete at "<ul>{<li>list-item1</li>}</ul>"
+FAIL Delete at "<ul>{<li>list-item1</li>}<li>list-item2</li></ul>" assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteContentBackward") expected "(<ul>, 0) - (<ul>, 1)" but got "(#text \"list-item1\", 0) - (<li>, 0)"
+FAIL Delete at "<ul><li>{}<br></li></ul>" assert_equals: One beforeinput event should be fired if the key operation tries to delete something expected 1 but got 0
+FAIL Delete at "{<ul><li><br></li></ul>}" assert_equals: One beforeinput event should be fired if the key operation tries to delete something expected 1 but got 0
+FAIL Delete at "<div>{<ul><li><br></li></ul>}</div>" assert_equals: One beforeinput event should be fired if the key operation tries to delete something expected 1 but got 0
+FAIL Delete at "<div>{  <ul><li><br></li></ul>  }</div>" assert_equals: One beforeinput event should be fired if the key operation tries to delete something expected 1 but got 0
+FAIL Delete at "<div><ul><li>{}<br></li></ul></div>" assert_equals: One beforeinput event should be fired if the key operation tries to delete something expected 1 but got 0
+FAIL Delete at "<div>{<ul><li contenteditable="false"><br></li></ul>}</div>" assert_equals: One beforeinput event should be fired if the key operation tries to delete something expected 1 but got 0
+FAIL Delete at "<div>{<ul><li contenteditable="false">list-item1</li></ul>}</div>" assert_equals: One beforeinput event should be fired if the key operation tries to delete something expected 1 but got 0
+FAIL Delete at "<div>{<ul><li contenteditable="false">list-item1</li><li><br></li></ul>}</div>" assert_equals: One beforeinput event should be fired if the key operation tries to delete something expected 1 but got 0
+FAIL Delete at "<div>{<ul><li contenteditable="false">list-item1</li><li>list-item2</li></ul>}</div>" assert_equals: One beforeinput event should be fired if the key operation tries to delete something expected 1 but got 0
+FAIL Delete at "<div>{<ul><li><br></li><li contenteditable="false">list-item2</li></ul>}</div>" assert_equals: One beforeinput event should be fired if the key operation tries to delete something expected 1 but got 0
+FAIL Delete at "<div>{<ul><li>list-item1</li><li contenteditable="false">list-item2</li></ul>}</div>" assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteContentForward") expected "(#text \"ist-item1\", 0) - (<ul>, 2)" but got "(#text \"ist-item1\", 0) - (#text \"ist-item1\", 1)"
+FAIL Delete at "<div>{<ul><li><br></li><li contenteditable="false">list-item2</li><li><br></li></ul>}</div>" assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteContentBackward") expected "(<br>, 0) - (<li>, 1)" but got "(<li>, 0) - (<li>, 0)"
+PASS Delete at "<div>{<ul><li>list-item1</li><li contenteditable="false">list-item2</li><li>list-item3</li></ul>}</div>"
+FAIL Delete at "<ul><li>list-item1</li>{<li>list-item2</li>}<li>list-item3</li></ul>" assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteContentBackward") expected "(<ul>, 1) - (<ul>, 2)" but got "(#text \"list-item2\", 0) - (<li>, 0)"
+PASS Delete at "<ul><li>list-item1</li>{<li>list-item2</li>}</ul>"
+PASS Delete at "<ul><li>list-item1</li><li>list-item2</li>{<li>list-item3</li>}</ul>"
+FAIL Delete at "<ul><li>list-item1</li>{<li>list-item2</li>}<li><ul><li><br></li></ul></li></ul>" assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteContentBackward") expected "(<ul>, 1) - (<ul>, 2)" but got "(#text \"list-item2\", 0) - (<li>, 0)"
+FAIL Delete at "<ul><li>list-item1</li>{<li>list-item2</li>}<ul><li><br></li></ul></ul>" assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteContentBackward") expected "(<ul>, 1) - (<ul>, 2)" but got "(#text \"list-item2\", 0) - (<li>, 0)"
+FAIL Delete at "<ul><li>list-item1</li><li>list-item2</li>{<ul><li><br></li></ul>}</ul>" assert_equals: One beforeinput event should be fired if the key operation tries to delete something expected 1 but got 0
+FAIL Delete at "<ul><li>list-item1</li>{<li>list-item2</li>}<li><ol><li><br></li></ol></li></ul>" assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteContentBackward") expected "(<ul>, 1) - (<ul>, 2)" but got "(#text \"list-item2\", 0) - (<li>, 0)"
+FAIL Delete at "<ul><li>list-item1</li>{<li>list-item2</li>}<ol><li><br></li></ol></ul>" assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteContentBackward") expected "(<ul>, 1) - (<ul>, 2)" but got "(#text \"list-item2\", 0) - (<li>, 0)"
+FAIL Delete at "<ul><li>list-item1</li><li>list-item2</li>{<ol><li><br></li></ol>}</ul>" assert_equals: One beforeinput event should be fired if the key operation tries to delete something expected 1 but got 0
+PASS Delete at "<ul><li>[list-item1</li><li>list-item2]</li></ul>"
+PASS Delete at "<ul><li>[list-item1</li><li>list-item2]</li><li>list-item3</li></ul>"
+PASS Delete at "<ul><li>list-item1</li><li>[list-item2]</li><li>list-item3</li></ul>"
+PASS Delete at "<ul><li>list-item1</li><li>[list-item2</li><li>list-item3]</li></ul>"
+PASS Delete at "<ul><li>list-item[]1</li></ul><ul><li>list-item2</li></ul>"
+PASS Delete at "<ul><li>list-item1</li></ul><ul><li>[]list-item2</li></ul>"
+PASS Delete at "<ul><li>list-item1[</li><li>list-item2]</li></ul><ul><li>list-item3</li></ul>"
+PASS Delete at "<ul><li>list-item[]1</li></ul><ol><li>list-item2</li></ol>"
+PASS Delete at "<ol><li>list-item1</li></ol><ul><li>[]list-item2</li></ul>"
+PASS Delete at "<ul><li>list-item1[</li><li>list-item2]</li></ul><ol><li>list-item3</li></ol>"
+PASS Delete at "<ul><li>[list-item1</li><ul><li>}list-item2</li></ul></ul>"
+PASS Delete at "<ul><li>[list-item1</li><ul><li>list-item2]</li></ul></ul>"
+PASS Delete at "<ul><ul><li>[list-item1</li></ul><li>}list-item2</li></ul>"
+PASS Delete at "<ul><ul><li>[list-item1</li></ul><li>list-item2]</li></ul>"
+PASS Delete at "<ul><ul><li>list-item1</li><li>[list-item2</li></ul><li>}list-item3</li></ul>"
+PASS Delete at "<ul><li>[list-item1</li><ul><li>list-item2</li><li>}list-item3</li></ul></ul>"
+PASS Delete at "<ul><li>list-item1</li><li>[list-item2</li><ul><li>list-item3</li><li>}list-item4</li></ul></ul>"
+PASS Delete at "<ul><li>[list-item1</li><li><ul><li>list-item2]</li></ul></li></ul>"
+PASS Delete at "<ul><li><ul><li>[list-item1</li></ul><li>}list-item2</li></ul>"
+PASS Delete at "<ul><li><ul><li>[list-item1</li></ul><li>list-item2]</li></ul>"
+PASS Delete at "<ul><li>[list-item1</li><ol><li>}list-item2</li></ul></ul>"
+PASS Delete at "<ul><li>[list-item1</li><ol><li>list-item2]</li></ol></ul>"
+PASS Delete at "<ul><ol><li>[list-item1</li></ol><li>}list-item2</li></ul>"
+PASS Delete at "<ul><ol><li>[list-item1</li></ol><li>list-item2]</li></ul>"
+PASS Delete at "<ul><ol><li>list-item1</li><li>[list-item2</li></ol><li>}list-item3</li></ul>"
+PASS Delete at "<ul><li>[list-item1</li><ol><li>list-item2</li><li>}list-item3</li></ol></ul>"
+PASS Delete at "<ul><li>list-item1</li><li>[list-item2</li><ol><li>list-item3</li><li>}list-item4</li></ol></ul>"
+PASS Delete at "<ul><li>[list-item1</li><li><ol><li>list-item2]</li></ol></li></ul>"
+PASS Delete at "<ul><li><ol><li>[list-item1</li></ol><li>}list-item2</li></ul>"
+PASS Delete at "<ul><li><ol><li>[list-item1</li></ol><li>list-item2]</li></ul>"
+FAIL Delete at "<ul><li><ul><li>{}<br></li></ul></li></ul>" assert_equals: One beforeinput event should be fired if the key operation tries to delete something expected 1 but got 0
+PASS Delete at "<ul><li><ul><li>[list-item1]</li></ul></li></ul>"
+PASS Delete at "<ul><li>{<ul><li>list-item1</li></ul>}</li></ul>"
+FAIL Delete at "<ul><li><ul><li>{}<br></li></ul></li><li>list-item2</li></ul>" assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteContentForward") expected "(<li>, 0) - (<li>, 1)" but got "(<li>, 0) - (<li>, 0)"
+FAIL Delete at "<ul><li>list-item1</li><li><ul><li>{}<br></li></ul></li></ul>" assert_equals: One beforeinput event should be fired if the key operation tries to delete something expected 1 but got 0
+FAIL Delete at "<ul><ul><li>{}<br></li></ul></ul>" assert_equals: One beforeinput event should be fired if the key operation tries to delete something expected 1 but got 0
+PASS Delete at "<ul><ul><li>[list-item1]</li></ul></ul>"
+PASS Delete at "<ul>{<ul><li>list-item1</li></ul>}</ul>"
+FAIL Delete at "<ul><ul><li>{}<br></li></ul><li>list-item2</li></ul>" assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteContentForward") expected "(<ul>, 0) - (<ul>, 1)" but got "(<li>, 0) - (<li>, 0)"
+FAIL Delete at "<ul><li>list-item1</li><ul><li>{}<br></li></ul></ul>" assert_equals: One beforeinput event should be fired if the key operation tries to delete something expected 1 but got 0
+FAIL Delete at "<ul><li><ol><li>{}<br></li></ol></li></ul>" assert_equals: One beforeinput event should be fired if the key operation tries to delete something expected 1 but got 0
+PASS Delete at "<ul><li><ol><li>[list-item1]</li></ol></li></ul>"
+PASS Delete at "<ul><li>{<ol><li>list-item1</li></ol>}</li></ul>"
+FAIL Delete at "<ul><li><ol><li>{}<br></li></ol></li><li>list-item2</li></ul>" assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteContentForward") expected "(<li>, 0) - (<li>, 1)" but got "(<li>, 0) - (<li>, 0)"
+FAIL Delete at "<ul><li>list-item1</li><li><ol><li>{}<br></li></ol></li></ul>" assert_equals: One beforeinput event should be fired if the key operation tries to delete something expected 1 but got 0
+FAIL Delete at "<ul><ol><li>{}<br></li></ol></ul>" assert_equals: One beforeinput event should be fired if the key operation tries to delete something expected 1 but got 0
+PASS Delete at "<ul><ol><li>[list-item1]</li></ol></ul>"
+PASS Delete at "<ul>{<ol><li>list-item1</li></ol>}</ul>"
+FAIL Delete at "<ul><ol><li>{}<br></li></ol><li>list-item2</li></ul>" assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteContentForward") expected "(<ul>, 0) - (<ul>, 1)" but got "(<li>, 0) - (<li>, 0)"
+FAIL Delete at "<ul><li>list-item1</li><ol><li>{}<br></li></ol></ul>" assert_equals: One beforeinput event should be fired if the key operation tries to delete something expected 1 but got 0
+PASS Delete at "<ul><li>[list-item1</li></ul><ul><li>}list-item2</li></ul>"
+PASS Delete at "<ul><li>[list-item1</li></ul><ul><li>list-item2]</li></ul>"
+PASS Delete at "<ul><li>list-item1[</li></ul><ul><li>}list-item2</li></ul>"
+PASS Delete at "<ul><li>first line in list-item1<br>list-item1[</li></ul><ul><li>}list-item2</li></ul>"
+PASS Delete at "<ul><li>list-item1[</li></ul><ul><li>}list-item2<br>second line in list-item2</li></ul>"
+PASS Delete at "<ul><li>list-item1</li><li>list-item2[</li></ul><ul><li>}list-item3</li></ul>"
+PASS Delete at "<ul><li>list-item1[</li></ul><ul><li>}list-item2</li><li>list-item3</li></ul>"
+PASS Delete at "<ul><li>[list-item1</li></ul><ol><li>}list-item2</li></ol>"
+PASS Delete at "<ul><li>[list-item1</li></ul><ol><li>list-item2]</li></ol>"
+PASS Delete at "<ul><li>list-item1[</li></ul><ol><li>}list-item2</li></ol>"
+PASS Delete at "<ul><li>first line in list-item1<br>list-item1[</li></ul><ol><li>}list-item2</li></ol>"
+PASS Delete at "<ul><li>list-item1[</li></ul><ol><li>}list-item2<br>second line in list-item2</li></ol>"
+PASS Delete at "<ul><li>list-item1</li><li>list-item2[</li></ul><ol><li>}list-item3</li></ol>"
+PASS Delete at "<ul><li>list-item1[</li></ul><ol><li>}list-item2</li><li>list-item3</li></ol>"
+FAIL Delete at "<ul><li><ul><li>[list-item1</li></ul></li></ul><ul><li>}list-item2</li></ul>" assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteContentBackward") expected "(#text \"list-item1\", 0) - (#text \"\", 0)" but got "(#text \"list-item1\", 0) - (<li>, 0)"
+PASS Delete at "<ul><li><ul><li>[list-item1</li></ul></li></ul><ul><li>list-item2]</li></ul>"
+PASS Delete at "<ul><li><ul><li>list-item1[</li></ul></li></ul><ul><li>list-item2]</li></ul>"
+FAIL Delete at "<ul><ul><li>[list-item1</li></ul></ul><ul><li>}list-item2</li></ul>" assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteContentBackward") expected "(#text \"list-item1\", 0) - (#text \"\", 0)" but got "(#text \"list-item1\", 0) - (<li>, 0)"
+PASS Delete at "<ul><ul><li>[list-item1</li></ul></ul><ul><li>list-item2]</li></ul>"
+PASS Delete at "<ul><ul><li>list-item1[</li></ul></ul><ul><li>list-item2]</li></ul>"
+FAIL Delete at "<ul><li><ul><li>[list-item1</li></ul></li></ul><ol><li>}list-item2</li></ol>" assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteContentBackward") expected "(#text \"list-item1\", 0) - (#text \"\", 0)" but got "(#text \"list-item1\", 0) - (<li>, 0)"
+PASS Delete at "<ul><li><ul><li>[list-item1</li></ul></li></ul><ol><li>list-item2]</li></ol>"
+PASS Delete at "<ul><li><ul><li>list-item1[</li></ul></li></ul><ol><li>list-item2]</li></ol>"
+FAIL Delete at "<ul><ul><li>[list-item1</li></ul></ul><ol><li>}list-item2</li></ol>" assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteContentBackward") expected "(#text \"list-item1\", 0) - (#text \"\", 0)" but got "(#text \"list-item1\", 0) - (<li>, 0)"
+PASS Delete at "<ul><ul><li>[list-item1</li></ul></ul><ol><li>list-item2]</li></ol>"
+PASS Delete at "<ul><ul><li>list-item1[</li></ul></ul><ol><li>list-item2]</li></ol>"
+FAIL Delete at "<ul><li><ol><li>[list-item1</li></ol></li></ul><ul><li>}list-item2</li></ul>" assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteContentBackward") expected "(#text \"list-item1\", 0) - (#text \"\", 0)" but got "(#text \"list-item1\", 0) - (<li>, 0)"
+PASS Delete at "<ul><li><ol><li>[list-item1</li></ol></li></ul><ul><li>list-item2]</li></ul>"
+PASS Delete at "<ul><li><ol><li>list-item1[</li></ol></li></ul><ul><li>list-item2]</li></ul>"
+FAIL Delete at "<ul><ol><li>[list-item1</li></ol></ul><ul><li>}list-item2</li></ul>" assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteContentBackward") expected "(#text \"list-item1\", 0) - (#text \"\", 0)" but got "(#text \"list-item1\", 0) - (<li>, 0)"
+PASS Delete at "<ul><ol><li>[list-item1</li></ol></ul><ul><li>list-item2]</li></ul>"
+PASS Delete at "<ul><ol><li>list-item1[</li></ol></ul><ul><li>list-item2]</li></ul>"
+FAIL Delete at "<ul><li><ol><li>[list-item1</li></ol></li></ul><ol><li>}list-item2</li></ol>" assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteContentBackward") expected "(#text \"list-item1\", 0) - (#text \"\", 0)" but got "(#text \"list-item1\", 0) - (<li>, 0)"
+PASS Delete at "<ul><li><ol><li>[list-item1</li></ol></li></ul><ol><li>list-item2]</li></ol>"
+PASS Delete at "<ul><li><ol><li>list-item1[</li></ol></li></ul><ol><li>list-item2]</li></ol>"
+FAIL Delete at "<ul><ol><li>[list-item1</li></ol></ul><ol><li>}list-item2</li></ol>" assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteContentBackward") expected "(#text \"list-item1\", 0) - (#text \"\", 0)" but got "(#text \"list-item1\", 0) - (<li>, 0)"
+PASS Delete at "<ul><ol><li>[list-item1</li></ol></ul><ol><li>list-item2]</li></ol>"
+PASS Delete at "<ul><ol><li>list-item1[</li></ol></ul><ol><li>list-item2]</li></ol>"
+PASS Delete at "<ul><li>list-item1[</li></ul><ul><li><ul><li>}list-item2</li></ul></li></ul>"
+PASS Delete at "<ul><li>[list-item1</li></ul><ul><li><ul><li>}list-item2</li></ul></li></ul>"
+PASS Delete at "<ul><li>[list-item1</li></ul><ul><li><ul><li>list-item2]</li></ul></li></ul>"
+PASS Delete at "<ul><li>list-item1[</li></ul><ul><li><ul><li>}list-item2<br>second line of list-item2</li></ul></li></ul>"
+PASS Delete at "<ul><li>list-item1[</li></ul><ul><ul><li>}list-item2</li></ul></ul>"
+PASS Delete at "<ul><li>[list-item1</li></ul><ul><ul><li>}list-item2</li></ul></ul>"
+PASS Delete at "<ul><li>[list-item1</li></ul><ul><ul><li>list-item2]</li></ul></ul>"
+PASS Delete at "<ul><li>list-item1[</li></ul><ul><ul><li>}list-item2<br>second line of list-item2</li></ul></ul>"
+PASS Delete at "<ul><li>list-item1[</li></ul><ol><li><ul><li>}list-item2</li></ul></li></ol>"
+PASS Delete at "<ul><li>[list-item1</li></ul><ol><li><ul><li>}list-item2</li></ul></li></ol>"
+PASS Delete at "<ul><li>[list-item1</li></ul><ol><li><ul><li>list-item2]</li></ul></li></ol>"
+PASS Delete at "<ul><li>list-item1[</li></ul><ol><li><ul><li>}list-item2<br>second line of list-item2</li></ul></li></ol>"
+PASS Delete at "<ul><li>list-item1[</li></ul><ol><ul><li>}list-item2</li></ul></ol>"
+PASS Delete at "<ul><li>[list-item1</li></ul><ol><ul><li>}list-item2</li></ul></ol>"
+PASS Delete at "<ul><li>[list-item1</li></ul><ol><ul><li>list-item2]</li></ul></ol>"
+PASS Delete at "<ul><li>list-item1[</li></ul><ol><ul><li>}list-item2<br>second line of list-item2</li></ul></ol>"
+PASS Delete at "<ul><li>list-item1[</li></ul><ul><li><ol><li>}list-item2</li></ol></li></ul>"
+PASS Delete at "<ul><li>[list-item1</li></ul><ul><li><ol><li>}list-item2</li></ol></li></ul>"
+PASS Delete at "<ul><li>[list-item1</li></ul><ul><li><ol><li>list-item2]</li></ol></li></ul>"
+PASS Delete at "<ul><li>list-item1[</li></ul><ul><li><ol><li>}list-item2<br>second line of list-item2</li></ol></li></ul>"
+PASS Delete at "<ul><li>list-item1[</li></ul><ul><ol><li>}list-item2</li></ol></ul>"
+PASS Delete at "<ul><li>[list-item1</li></ul><ul><ol><li>}list-item2</li></ol></ul>"
+PASS Delete at "<ul><li>[list-item1</li></ul><ul><ol><li>list-item2]</li></ol></ul>"
+PASS Delete at "<ul><li>list-item1[</li></ul><ul><ol><li>}list-item2<br>second line of list-item2</li></ol></ul>"
+PASS Delete at "<ul><li>list-item1[</li></ul><ol><li><ol><li>}list-item2</li></ol></li></ol>"
+PASS Delete at "<ul><li>[list-item1</li></ul><ol><li><ol><li>}list-item2</li></ol></li></ol>"
+PASS Delete at "<ul><li>[list-item1</li></ul><ol><li><ol><li>list-item2]</li></ol></li></ol>"
+PASS Delete at "<ul><li>list-item1[</li></ul><ol><li><ol><li>}list-item2<br>second line of list-item2</li></ol></li></ol>"
+PASS Delete at "<ul><li>list-item1[</li></ul><ol><ol><li>}list-item2</li></ol></ol>"
+PASS Delete at "<ul><li>[list-item1</li></ul><ol><ol><li>}list-item2</li></ol></ol>"
+PASS Delete at "<ul><li>[list-item1</li></ul><ol><ol><li>list-item2]</li></ol></ol>"
+PASS Delete at "<ul><li>list-item1[</li></ul><ol><ol><li>}list-item2<br>second line of list-item2</li></ol></ol>"
+PASS Delete at "<ul><li>list[-item1</li><li>list]-item2</li></ul>" - comparing innerHTML
+PASS Delete at "<ul><li>list-[item1</li><li>]list-item2</li></ul>" - comparing innerHTML
+PASS Delete at "<ul><li>list-[item1</li><li>}list-item2</li></ul>" - comparing innerHTML
+PASS Delete at "<ul><li>list-item1[</li><li>list]-item2</li></ul>" - comparing innerHTML
+PASS Delete at "<ul><li>list-item1{</li><li>list]-item2</li></ul>" - comparing innerHTML
+PASS Delete at "<ul><li>list-item1[</li><li>]list-item2</li></ul>" - comparing innerHTML
+PASS Delete at "<ul><li>list-item1[]</li><li>list-item2</li></ul>" - comparing innerHTML
+PASS Delete at "<ul><li>list-item1[]<br></li><li>list-item2</li></ul>" - comparing innerHTML
+FAIL Delete at "<ul><li>list-item1[]<br><br></li><li>list-item2</li></ul>" - comparing innerHTML assert_in_array: value "<ul><li>list-item1<br></li><li>list-item2</li></ul>" not in array ["<ul><li>list-item1<br>list-item2</li></ul>", "<ul><li>list-item1<br>list-item2<br></li></ul>"]
+PASS Delete at "<ul><li>list-item1[]</li><li>list-item2<br>second line of list-item2</li></ul>" - comparing innerHTML
+PASS Delete at "<ul><li><p>list-item1[]</p></li><li>list-item2</li></ul>" - comparing innerHTML
+PASS Delete at "<ul><li>list-item1[]</li><li><p>list-item2</p></li></ul>" - comparing innerHTML
+PASS Delete at "<ul><li>[list-item1]</li></ul>" - comparing innerHTML
+PASS Delete at "<ul><li>{list-item1}</li></ul>" - comparing innerHTML
+PASS Delete at "<ul>{<li>list-item1</li>}</ul>" - comparing innerHTML
+FAIL Delete at "<ul>{<li>list-item1</li>}<li>list-item2</li></ul>" - comparing innerHTML assert_equals: expected "<ul><li>list-item2</li></ul>" but got "<ul><li>list-item2<br></li></ul>"
+FAIL Delete at "<ul><li>{}<br></li></ul>" - comparing innerHTML assert_in_array: value "<ul><li><br></li></ul>" not in array ["", "<br>", "<div><br></div>"]
+FAIL Delete at "{<ul><li><br></li></ul>}" - comparing innerHTML assert_in_array: value "<ul><li><br></li></ul>" not in array ["", "<br>", "<div><br></div>"]
+FAIL Delete at "<div>{<ul><li><br></li></ul>}</div>" - comparing innerHTML assert_in_array: value "<div><ul><li><br></li></ul></div>" not in array ["<div><br></div>", "<div><div><br></div></div>"]
+FAIL Delete at "<div>{  <ul><li><br></li></ul>  }</div>" - comparing innerHTML assert_in_array: value "<div>  <ul><li><br></li></ul>  </div>" not in array ["<div><br></div>", "<div><div><br></div></div>"]
+FAIL Delete at "<div><ul><li>{}<br></li></ul></div>" - comparing innerHTML assert_in_array: value "<div><ul><li><br></li></ul></div>" not in array ["<div><br></div>", "<div><div><br></div></div>"]
+FAIL Delete at "<div>{<ul><li contenteditable="false"><br></li></ul>}</div>" - comparing innerHTML assert_equals: expected "<div><ul><li><br></li></ul></div>" but got "<div><ul><li contenteditable=\"false\"><br></li></ul></div>"
+FAIL Delete at "<div>{<ul><li contenteditable="false">list-item1</li></ul>}</div>" - comparing innerHTML assert_equals: expected "<div><ul><li><br></li></ul></div>" but got "<div><ul><li contenteditable=\"false\">list-item1</li></ul></div>"
+FAIL Delete at "<div>{<ul><li contenteditable="false">list-item1</li><li><br></li></ul>}</div>" - comparing innerHTML assert_equals: expected "<div><ul><li><br></li></ul></div>" but got "<div><ul><li contenteditable=\"false\">list-item1</li><li><br></li></ul></div>"
+FAIL Delete at "<div>{<ul><li contenteditable="false">list-item1</li><li>list-item2</li></ul>}</div>" - comparing innerHTML assert_equals: expected "<div><ul><li><br></li></ul></div>" but got "<div><ul><li contenteditable=\"false\">list-item1</li><li>list-item2</li></ul></div>"
+FAIL Delete at "<div>{<ul><li><br></li><li contenteditable="false">list-item2</li></ul>}</div>" - comparing innerHTML assert_equals: expected "<div><ul><li><br></li></ul></div>" but got "<div><ul><li><br></li><li contenteditable=\"false\">list-item2</li></ul></div>"
+FAIL Delete at "<div>{<ul><li>list-item1</li><li contenteditable="false">list-item2</li></ul>}</div>" - comparing innerHTML assert_equals: expected "<div><ul><li><br></li></ul></div>" but got "<div><ul><li>ist-item1</li><li contenteditable=\"false\">list-item2</li></ul></div>"
+PASS Delete at "<div>{<ul><li><br></li><li contenteditable="false">list-item2</li><li><br></li></ul>}</div>" - comparing innerHTML
+FAIL Delete at "<div>{<ul><li>list-item1</li><li contenteditable="false">list-item2</li><li>list-item3</li></ul>}</div>" - comparing innerHTML assert_equals: expected "<div><ul><li><br></li></ul></div>" but got "<ul><li><br></li></ul>"
+FAIL Delete at "<ul><li>list-item1</li>{<li>list-item2</li>}<li>list-item3</li></ul>" - comparing innerHTML assert_equals: expected "<ul><li>list-item1</li><li>list-item3</li></ul>" but got "<ul><li>list-item1</li><li>list-item3<br></li></ul>"
+PASS Delete at "<ul><li>list-item1</li>{<li>list-item2</li>}</ul>" - comparing innerHTML
+PASS Delete at "<ul><li>list-item1</li><li>list-item2</li>{<li>list-item3</li>}</ul>" - comparing innerHTML
+PASS Delete at "<ul><li>list-item1</li>{<li>list-item2</li>}<li><ul><li><br></li></ul></li></ul>" - comparing innerHTML
+PASS Delete at "<ul><li>list-item1</li>{<li>list-item2</li>}<ul><li><br></li></ul></ul>" - comparing innerHTML
+FAIL Delete at "<ul><li>list-item1</li><li>list-item2</li>{<ul><li><br></li></ul>}</ul>" - comparing innerHTML assert_equals: expected "<ul><li>list-item1</li><li>list-item2</li><li><br></li></ul>" but got "<ul><li>list-item1</li><li>list-item2</li><ul><li><br></li></ul></ul>"
+PASS Delete at "<ul><li>list-item1</li>{<li>list-item2</li>}<li><ol><li><br></li></ol></li></ul>" - comparing innerHTML
+PASS Delete at "<ul><li>list-item1</li>{<li>list-item2</li>}<ol><li><br></li></ol></ul>" - comparing innerHTML
+FAIL Delete at "<ul><li>list-item1</li><li>list-item2</li>{<ol><li><br></li></ol>}</ul>" - comparing innerHTML assert_equals: expected "<ul><li>list-item1</li><li>list-item2</li><li><br></li></ul>" but got "<ul><li>list-item1</li><li>list-item2</li><ol><li><br></li></ol></ul>"
+PASS Delete at "<ul><li>[list-item1</li><li>list-item2]</li></ul>" - comparing innerHTML
+PASS Delete at "<ul><li>[list-item1</li><li>list-item2]</li><li>list-item3</li></ul>" - comparing innerHTML
+PASS Delete at "<ul><li>list-item1</li><li>[list-item2]</li><li>list-item3</li></ul>" - comparing innerHTML
+PASS Delete at "<ul><li>list-item1</li><li>[list-item2</li><li>list-item3]</li></ul>" - comparing innerHTML
+PASS Delete at "<ul><li>list-item[]1</li></ul><ul><li>list-item2</li></ul>" - comparing innerHTML
+PASS Delete at "<ul><li>list-item1</li></ul><ul><li>[]list-item2</li></ul>" - comparing innerHTML
+FAIL Delete at "<ul><li>list-item1[</li><li>list-item2]</li></ul><ul><li>list-item3</li></ul>" - comparing innerHTML assert_equals: expected "<ul><li>list-item1</li></ul><ul><li>ist-item3</li><li>ist-item4</li></ul>" but got "<ul><li>list-item1</li></ul><ul><li>list-item3</li></ul>"
+PASS Delete at "<ul><li>list-item[]1</li></ul><ol><li>list-item2</li></ol>" - comparing innerHTML
+PASS Delete at "<ol><li>list-item1</li></ol><ul><li>[]list-item2</li></ul>" - comparing innerHTML
+FAIL Delete at "<ul><li>list-item1[</li><li>list-item2]</li></ul><ol><li>list-item3</li></ol>" - comparing innerHTML assert_equals: expected "<ul><li>list-item1</li></ul><ol><li>ist-item3</li><li>ist-item4</li></ol>" but got "<ul><li>list-item1</li></ul><ol><li>list-item3</li></ol>"
+PASS Delete at "<ul><li>[list-item1</li><ul><li>}list-item2</li></ul></ul>" - comparing innerHTML
+PASS Delete at "<ul><li>[list-item1</li><ul><li>list-item2]</li></ul></ul>" - comparing innerHTML
+PASS Delete at "<ul><ul><li>[list-item1</li></ul><li>}list-item2</li></ul>" - comparing innerHTML
+PASS Delete at "<ul><ul><li>[list-item1</li></ul><li>list-item2]</li></ul>" - comparing innerHTML
+FAIL Delete at "<ul><ul><li>list-item1</li><li>[list-item2</li></ul><li>}list-item3</li></ul>" - comparing innerHTML assert_equals: expected "<ul><ul><li>list-item1</li><li>list-item3</li></ul></ul>" but got "<ul><ul><li>list-item1</li><li>list-item3<br></li></ul></ul>"
+PASS Delete at "<ul><li>[list-item1</li><ul><li>list-item2</li><li>}list-item3</li></ul></ul>" - comparing innerHTML
+PASS Delete at "<ul><li>list-item1</li><li>[list-item2</li><ul><li>list-item3</li><li>}list-item4</li></ul></ul>" - comparing innerHTML
+FAIL Delete at "<ul><li>[list-item1</li><li><ul><li>list-item2]</li></ul></li></ul>" - comparing innerHTML assert_equals: expected "<ul><li><ul><li><br></li></ul></li></ul>" but got "<ul><li><br></li></ul>"
+PASS Delete at "<ul><li><ul><li>[list-item1</li></ul><li>}list-item2</li></ul>" - comparing innerHTML
+PASS Delete at "<ul><li><ul><li>[list-item1</li></ul><li>list-item2]</li></ul>" - comparing innerHTML
+PASS Delete at "<ul><li>[list-item1</li><ol><li>}list-item2</li></ul></ul>" - comparing innerHTML
+PASS Delete at "<ul><li>[list-item1</li><ol><li>list-item2]</li></ol></ul>" - comparing innerHTML
+PASS Delete at "<ul><ol><li>[list-item1</li></ol><li>}list-item2</li></ul>" - comparing innerHTML
+PASS Delete at "<ul><ol><li>[list-item1</li></ol><li>list-item2]</li></ul>" - comparing innerHTML
+FAIL Delete at "<ul><ol><li>list-item1</li><li>[list-item2</li></ol><li>}list-item3</li></ul>" - comparing innerHTML assert_equals: expected "<ul><ol><li>list-item1</li><li>list-item3</li></ol></ul>" but got "<ul><ol><li>list-item1</li><li>list-item3<br></li></ol></ul>"
+PASS Delete at "<ul><li>[list-item1</li><ol><li>list-item2</li><li>}list-item3</li></ol></ul>" - comparing innerHTML
+PASS Delete at "<ul><li>list-item1</li><li>[list-item2</li><ol><li>list-item3</li><li>}list-item4</li></ol></ul>" - comparing innerHTML
+FAIL Delete at "<ul><li>[list-item1</li><li><ol><li>list-item2]</li></ol></li></ul>" - comparing innerHTML assert_equals: expected "<ul><li><ol><li><br></li></ol></li></ul>" but got "<ul><li><br></li></ul>"
+PASS Delete at "<ul><li><ol><li>[list-item1</li></ol><li>}list-item2</li></ul>" - comparing innerHTML
+PASS Delete at "<ul><li><ol><li>[list-item1</li></ol><li>list-item2]</li></ul>" - comparing innerHTML
+FAIL Delete at "<ul><li><ul><li>{}<br></li></ul></li></ul>" - comparing innerHTML assert_equals: expected "<ul><li><br></li></ul>" but got "<ul><li><ul><li><br></li></ul></li></ul>"
+PASS Delete at "<ul><li><ul><li>[list-item1]</li></ul></li></ul>" - comparing innerHTML
+PASS Delete at "<ul><li>{<ul><li>list-item1</li></ul>}</li></ul>" - comparing innerHTML
+FAIL Delete at "<ul><li><ul><li>{}<br></li></ul></li><li>list-item2</li></ul>" - comparing innerHTML assert_equals: expected "<ul><li><br></li><li>list-item2</li></ul>" but got "<ul><li><ul><li>list-item2<br></li></ul></li></ul>"
+FAIL Delete at "<ul><li>list-item1</li><li><ul><li>{}<br></li></ul></li></ul>" - comparing innerHTML assert_equals: expected "<ul><li>list-item1</li><li><br></li></ul>" but got "<ul><li>list-item1</li><li><ul><li><br></li></ul></li></ul>"
+FAIL Delete at "<ul><ul><li>{}<br></li></ul></ul>" - comparing innerHTML assert_equals: expected "<ul><li><br></li></ul>" but got "<ul><ul><li><br></li></ul></ul>"
+PASS Delete at "<ul><ul><li>[list-item1]</li></ul></ul>" - comparing innerHTML
+PASS Delete at "<ul>{<ul><li>list-item1</li></ul>}</ul>" - comparing innerHTML
+FAIL Delete at "<ul><ul><li>{}<br></li></ul><li>list-item2</li></ul>" - comparing innerHTML assert_equals: expected "<ul><li><br></li><li>list-item2</li></ul>" but got "<ul><ul><li>list-item2<br></li></ul></ul>"
+FAIL Delete at "<ul><li>list-item1</li><ul><li>{}<br></li></ul></ul>" - comparing innerHTML assert_equals: expected "<ul><li>list-item1</li><li><br></li></ul>" but got "<ul><li>list-item1</li><ul><li><br></li></ul></ul>"
+FAIL Delete at "<ul><li><ol><li>{}<br></li></ol></li></ul>" - comparing innerHTML assert_equals: expected "<ul><li><br></li></ul>" but got "<ul><li><ol><li><br></li></ol></li></ul>"
+PASS Delete at "<ul><li><ol><li>[list-item1]</li></ol></li></ul>" - comparing innerHTML
+PASS Delete at "<ul><li>{<ol><li>list-item1</li></ol>}</li></ul>" - comparing innerHTML
+FAIL Delete at "<ul><li><ol><li>{}<br></li></ol></li><li>list-item2</li></ul>" - comparing innerHTML assert_equals: expected "<ul><li><br></li><li>list-item2</li></ul>" but got "<ul><li><ol><li>list-item2<br></li></ol></li></ul>"
+FAIL Delete at "<ul><li>list-item1</li><li><ol><li>{}<br></li></ol></li></ul>" - comparing innerHTML assert_equals: expected "<ul><li>list-item1</li><li><br></li></ul>" but got "<ul><li>list-item1</li><li><ol><li><br></li></ol></li></ul>"
+FAIL Delete at "<ul><ol><li>{}<br></li></ol></ul>" - comparing innerHTML assert_equals: expected "<ul><li><br></li></ul>" but got "<ul><ol><li><br></li></ol></ul>"
+PASS Delete at "<ul><ol><li>[list-item1]</li></ol></ul>" - comparing innerHTML
+PASS Delete at "<ul>{<ol><li>list-item1</li></ol>}</ul>" - comparing innerHTML
+FAIL Delete at "<ul><ol><li>{}<br></li></ol><li>list-item2</li></ul>" - comparing innerHTML assert_equals: expected "<ul><li><br></li><li>list-item2</li></ul>" but got "<ul><ol><li>list-item2<br></li></ol></ul>"
+FAIL Delete at "<ul><li>list-item1</li><ol><li>{}<br></li></ol></ul>" - comparing innerHTML assert_equals: expected "<ul><li>list-item1</li><li><br></li></ul>" but got "<ul><li>list-item1</li><ol><li><br></li></ol></ul>"
+PASS Delete at "<ul><li>[list-item1</li></ul><ul><li>}list-item2</li></ul>" - comparing innerHTML
+PASS Delete at "<ul><li>[list-item1</li></ul><ul><li>list-item2]</li></ul>" - comparing innerHTML
+PASS Delete at "<ul><li>list-item1[</li></ul><ul><li>}list-item2</li></ul>" - comparing innerHTML
+PASS Delete at "<ul><li>first line in list-item1<br>list-item1[</li></ul><ul><li>}list-item2</li></ul>" - comparing innerHTML
+PASS Delete at "<ul><li>list-item1[</li></ul><ul><li>}list-item2<br>second line in list-item2</li></ul>" - comparing innerHTML
+PASS Delete at "<ul><li>list-item1</li><li>list-item2[</li></ul><ul><li>}list-item3</li></ul>" - comparing innerHTML
+PASS Delete at "<ul><li>list-item1[</li></ul><ul><li>}list-item2</li><li>list-item3</li></ul>" - comparing innerHTML
+PASS Delete at "<ul><li>[list-item1</li></ul><ol><li>}list-item2</li></ol>" - comparing innerHTML
+PASS Delete at "<ul><li>[list-item1</li></ul><ol><li>list-item2]</li></ol>" - comparing innerHTML
+PASS Delete at "<ul><li>list-item1[</li></ul><ol><li>}list-item2</li></ol>" - comparing innerHTML
+PASS Delete at "<ul><li>first line in list-item1<br>list-item1[</li></ul><ol><li>}list-item2</li></ol>" - comparing innerHTML
+PASS Delete at "<ul><li>list-item1[</li></ul><ol><li>}list-item2<br>second line in list-item2</li></ol>" - comparing innerHTML
+PASS Delete at "<ul><li>list-item1</li><li>list-item2[</li></ul><ol><li>}list-item3</li></ol>" - comparing innerHTML
+PASS Delete at "<ul><li>list-item1[</li></ul><ol><li>}list-item2</li><li>list-item3</li></ol>" - comparing innerHTML
+PASS Delete at "<ul><li><ul><li>[list-item1</li></ul></li></ul><ul><li>}list-item2</li></ul>" - comparing innerHTML
+PASS Delete at "<ul><li><ul><li>[list-item1</li></ul></li></ul><ul><li>list-item2]</li></ul>" - comparing innerHTML
+PASS Delete at "<ul><li><ul><li>list-item1[</li></ul></li></ul><ul><li>list-item2]</li></ul>" - comparing innerHTML
+PASS Delete at "<ul><ul><li>[list-item1</li></ul></ul><ul><li>}list-item2</li></ul>" - comparing innerHTML
+PASS Delete at "<ul><ul><li>[list-item1</li></ul></ul><ul><li>list-item2]</li></ul>" - comparing innerHTML
+PASS Delete at "<ul><ul><li>list-item1[</li></ul></ul><ul><li>list-item2]</li></ul>" - comparing innerHTML
+PASS Delete at "<ul><li><ul><li>[list-item1</li></ul></li></ul><ol><li>}list-item2</li></ol>" - comparing innerHTML
+PASS Delete at "<ul><li><ul><li>[list-item1</li></ul></li></ul><ol><li>list-item2]</li></ol>" - comparing innerHTML
+PASS Delete at "<ul><li><ul><li>list-item1[</li></ul></li></ul><ol><li>list-item2]</li></ol>" - comparing innerHTML
+PASS Delete at "<ul><ul><li>[list-item1</li></ul></ul><ol><li>}list-item2</li></ol>" - comparing innerHTML
+PASS Delete at "<ul><ul><li>[list-item1</li></ul></ul><ol><li>list-item2]</li></ol>" - comparing innerHTML
+PASS Delete at "<ul><ul><li>list-item1[</li></ul></ul><ol><li>list-item2]</li></ol>" - comparing innerHTML
+PASS Delete at "<ul><li><ol><li>[list-item1</li></ol></li></ul><ul><li>}list-item2</li></ul>" - comparing innerHTML
+PASS Delete at "<ul><li><ol><li>[list-item1</li></ol></li></ul><ul><li>list-item2]</li></ul>" - comparing innerHTML
+PASS Delete at "<ul><li><ol><li>list-item1[</li></ol></li></ul><ul><li>list-item2]</li></ul>" - comparing innerHTML
+PASS Delete at "<ul><ol><li>[list-item1</li></ol></ul><ul><li>}list-item2</li></ul>" - comparing innerHTML
+PASS Delete at "<ul><ol><li>[list-item1</li></ol></ul><ul><li>list-item2]</li></ul>" - comparing innerHTML
+PASS Delete at "<ul><ol><li>list-item1[</li></ol></ul><ul><li>list-item2]</li></ul>" - comparing innerHTML
+PASS Delete at "<ul><li><ol><li>[list-item1</li></ol></li></ul><ol><li>}list-item2</li></ol>" - comparing innerHTML
+PASS Delete at "<ul><li><ol><li>[list-item1</li></ol></li></ul><ol><li>list-item2]</li></ol>" - comparing innerHTML
+PASS Delete at "<ul><li><ol><li>list-item1[</li></ol></li></ul><ol><li>list-item2]</li></ol>" - comparing innerHTML
+PASS Delete at "<ul><ol><li>[list-item1</li></ol></ul><ol><li>}list-item2</li></ol>" - comparing innerHTML
+PASS Delete at "<ul><ol><li>[list-item1</li></ol></ul><ol><li>list-item2]</li></ol>" - comparing innerHTML
+PASS Delete at "<ul><ol><li>list-item1[</li></ol></ul><ol><li>list-item2]</li></ol>" - comparing innerHTML
+PASS Delete at "<ul><li>list-item1[</li></ul><ul><li><ul><li>}list-item2</li></ul></li></ul>" - comparing innerHTML
+PASS Delete at "<ul><li>[list-item1</li></ul><ul><li><ul><li>}list-item2</li></ul></li></ul>" - comparing innerHTML
+PASS Delete at "<ul><li>[list-item1</li></ul><ul><li><ul><li>list-item2]</li></ul></li></ul>" - comparing innerHTML
+PASS Delete at "<ul><li>list-item1[</li></ul><ul><li><ul><li>}list-item2<br>second line of list-item2</li></ul></li></ul>" - comparing innerHTML
+PASS Delete at "<ul><li>list-item1[</li></ul><ul><ul><li>}list-item2</li></ul></ul>" - comparing innerHTML
+PASS Delete at "<ul><li>[list-item1</li></ul><ul><ul><li>}list-item2</li></ul></ul>" - comparing innerHTML
+PASS Delete at "<ul><li>[list-item1</li></ul><ul><ul><li>list-item2]</li></ul></ul>" - comparing innerHTML
+PASS Delete at "<ul><li>list-item1[</li></ul><ul><ul><li>}list-item2<br>second line of list-item2</li></ul></ul>" - comparing innerHTML
+PASS Delete at "<ul><li>list-item1[</li></ul><ol><li><ul><li>}list-item2</li></ul></li></ol>" - comparing innerHTML
+PASS Delete at "<ul><li>[list-item1</li></ul><ol><li><ul><li>}list-item2</li></ul></li></ol>" - comparing innerHTML
+PASS Delete at "<ul><li>[list-item1</li></ul><ol><li><ul><li>list-item2]</li></ul></li></ol>" - comparing innerHTML
+PASS Delete at "<ul><li>list-item1[</li></ul><ol><li><ul><li>}list-item2<br>second line of list-item2</li></ul></li></ol>" - comparing innerHTML
+PASS Delete at "<ul><li>list-item1[</li></ul><ol><ul><li>}list-item2</li></ul></ol>" - comparing innerHTML
+PASS Delete at "<ul><li>[list-item1</li></ul><ol><ul><li>}list-item2</li></ul></ol>" - comparing innerHTML
+PASS Delete at "<ul><li>[list-item1</li></ul><ol><ul><li>list-item2]</li></ul></ol>" - comparing innerHTML
+PASS Delete at "<ul><li>list-item1[</li></ul><ol><ul><li>}list-item2<br>second line of list-item2</li></ul></ol>" - comparing innerHTML
+PASS Delete at "<ul><li>list-item1[</li></ul><ul><li><ol><li>}list-item2</li></ol></li></ul>" - comparing innerHTML
+PASS Delete at "<ul><li>[list-item1</li></ul><ul><li><ol><li>}list-item2</li></ol></li></ul>" - comparing innerHTML
+PASS Delete at "<ul><li>[list-item1</li></ul><ul><li><ol><li>list-item2]</li></ol></li></ul>" - comparing innerHTML
+PASS Delete at "<ul><li>list-item1[</li></ul><ul><li><ol><li>}list-item2<br>second line of list-item2</li></ol></li></ul>" - comparing innerHTML
+PASS Delete at "<ul><li>list-item1[</li></ul><ul><ol><li>}list-item2</li></ol></ul>" - comparing innerHTML
+PASS Delete at "<ul><li>[list-item1</li></ul><ul><ol><li>}list-item2</li></ol></ul>" - comparing innerHTML
+PASS Delete at "<ul><li>[list-item1</li></ul><ul><ol><li>list-item2]</li></ol></ul>" - comparing innerHTML
+PASS Delete at "<ul><li>list-item1[</li></ul><ul><ol><li>}list-item2<br>second line of list-item2</li></ol></ul>" - comparing innerHTML
+PASS Delete at "<ul><li>list-item1[</li></ul><ol><li><ol><li>}list-item2</li></ol></li></ol>" - comparing innerHTML
+PASS Delete at "<ul><li>[list-item1</li></ul><ol><li><ol><li>}list-item2</li></ol></li></ol>" - comparing innerHTML
+PASS Delete at "<ul><li>[list-item1</li></ul><ol><li><ol><li>list-item2]</li></ol></li></ol>" - comparing innerHTML
+PASS Delete at "<ul><li>list-item1[</li></ul><ol><li><ol><li>}list-item2<br>second line of list-item2</li></ol></li></ol>" - comparing innerHTML
+PASS Delete at "<ul><li>list-item1[</li></ul><ol><ol><li>}list-item2</li></ol></ol>" - comparing innerHTML
+PASS Delete at "<ul><li>[list-item1</li></ul><ol><ol><li>}list-item2</li></ol></ol>" - comparing innerHTML
+PASS Delete at "<ul><li>[list-item1</li></ul><ol><ol><li>list-item2]</li></ol></ol>" - comparing innerHTML
+PASS Delete at "<ul><li>list-item1[</li></ul><ol><ol><li>}list-item2<br>second line of list-item2</li></ol></ol>" - comparing innerHTML
+

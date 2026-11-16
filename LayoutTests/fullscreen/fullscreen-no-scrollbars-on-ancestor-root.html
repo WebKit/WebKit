@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html class="reftest-wait">
+<head>
+    <title>Test that scrollbars are removed on ancestor document root elements when iframe is fullscreened</title>
+</head>
+<body>
+    <iframe id="iframe"></iframe>
+    <p>Test passes if the fullscreen request originating from the iframe hides the scrollbar on the parent document.</p>
+    <div style="height: 200vh"></div>
+    <script>
+        async function test() {
+            await new Promise(resolve => {
+                iframe.addEventListener("load", resolve, {once: true});
+                iframe.src = "resources/inner.html";
+            });
+            await new Promise(resolve => {
+                internals.withUserGesture(() => {
+                    iframe.contentDocument.documentElement.requestFullscreen().then(resolve);
+                });
+            });
+
+            document.documentElement.classList.remove("reftest-wait");
+        }
+        test();
+    </script>
+</body>
+</html>

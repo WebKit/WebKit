@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>corner-shape: an ancestor clip needs a shape mask layer only when it is not a rounded rect</title>
+    <style>
+        body {
+            margin: 0;
+        }
+
+        .clipper {
+            position: relative;
+            height: 150px;
+            border-radius: 40px;
+            overflow: hidden;
+        }
+
+        .clipper > div {
+            position: absolute;
+            left: -20px;
+            top: -20px;
+            width: 260px;
+            height: 190px;
+            background-color: green;
+            transform: translateZ(0);
+        }
+
+        #round { width: 200px; corner-shape: round; }
+        #square { width: 201px; corner-shape: square; }
+        #scoop { width: 202px; corner-shape: scoop; }
+        #bevel { width: 203px; corner-shape: bevel; }
+        #notch { width: 204px; corner-shape: notch; }
+        #superellipse { width: 205px; corner-shape: superellipse(-2); }
+    </style>
+    <script>
+        if (window.testRunner)
+            testRunner.dumpAsText();
+
+        const EXPECT_MASK = {
+            200: ['round', false],
+            201: ['square', false],
+            202: ['scoop', true],
+            203: ['bevel', true],
+            204: ['notch', true],
+            205: ['superellipse(-2)', true],
+        };
+
+        function runTest()
+        {
+            if (!window.internals) {
+                document.getElementById('results').textContent = 'This test requires window.internals.';
+                return;
+            }
+
+            const tree = window.internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_CLIPPING);
+            const masked = new Set();
+            const lines = tree.split('\n');
+            let currentWidth = null;
+            for (let index = 0; index < lines.length; index++) {
+                const bounds = lines[index].match(/\(bounds (\d+)\.\d+ 150\.\d+\)/);
+                if (bounds)
+                    currentWidth = bounds[1];
+                if (lines[index].includes('(mask layer') && currentWidth)
+                    masked.add(currentWidth);
+            }
+
+            const results = Object.keys(EXPECT_MASK).map(width => {
+                const [shape, expected] = EXPECT_MASK[width];
+                const hasMask = masked.has(width);
+                return `${shape}: mask layer ${hasMask ? 'present' : 'absent'}, expected `
+                    + `${expected ? 'present' : 'absent'} - ${hasMask === expected ? 'PASS' : 'FAIL'}`;
+            });
+            document.getElementById('results').textContent = results.join('\n');
+        }
+    </script>
+</head>
+<body onload="runTest()">
+    <div class="clipper" id="round"><div></div></div>
+    <div class="clipper" id="square"><div></div></div>
+    <div class="clipper" id="scoop"><div></div></div>
+    <div class="clipper" id="bevel"><div></div></div>
+    <div class="clipper" id="notch"><div></div></div>
+    <div class="clipper" id="superellipse"><div></div></div>
+    <pre id="results"></pre>
+</body>
+</html>

@@ -1,0 +1,55 @@
+[Worker] This test checks iteration on FileSystemDirectoryHandle.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Starting worker: resources/directory-handle-iteration.js
+[Worker] Test keys():
+PASS [Worker] resultKeys.length is handleNames.length
+PASS [Worker] resultKeys is handleNames
+PASS [Worker] typeof iterator[Symbol.asyncIterator] === "function" is true
+PASS [Worker] descriptor.configurable is true
+PASS [Worker] descriptor.writable is true
+PASS [Worker] descriptor.enumerable is false
+PASS [Worker] nextResults is expectedResults
+PASS [Worker] nextResultsEnd.done is true
+PASS [Worker] nextResultsEnd.value is undefined.
+[Worker] Test values():
+PASS [Worker] resultValuesName.length is handleNames.length
+PASS [Worker] resultValuesName is handleNames
+PASS [Worker] resultValuesType is handleTypes
+PASS [Worker] typeof iterator[Symbol.asyncIterator] === "function" is true
+PASS [Worker] descriptor.configurable is true
+PASS [Worker] descriptor.writable is true
+PASS [Worker] descriptor.enumerable is false
+PASS [Worker] nextResults.length is expectedResults.length
+PASS [Worker] isEqual(expectedResults[index], nextResults[index]) is true
+PASS [Worker] isEqual(expectedResults[index], nextResults[index]) is true
+PASS [Worker] isEqual(expectedResults[index], nextResults[index]) is true
+PASS [Worker] isEqual(expectedResults[index], nextResults[index]) is true
+PASS [Worker] nextResultsEnd.done is true
+PASS [Worker] nextResultsEnd.value is undefined.
+[Worker] Test entries():
+PASS [Worker] typeof iterator[Symbol.asyncIterator] === "function" is true
+PASS [Worker] descriptor.configurable is true
+PASS [Worker] descriptor.writable is true
+PASS [Worker] descriptor.enumerable is false
+PASS [Worker] resultKeys.length is handleNames.length
+PASS [Worker] resultKeys is handleNames
+PASS [Worker] resultValuesName is handleNames
+PASS [Worker] resultValuesType is handleTypes
+PASS [Worker] typeof iterator[Symbol.asyncIterator] === "function" is true
+PASS [Worker] descriptor.configurable is true
+PASS [Worker] descriptor.writable is true
+PASS [Worker] descriptor.enumerable is false
+PASS [Worker] nextResults.length is expectedResults.length
+PASS [Worker] isEqual(expectedResults[index], nextResults[index]) is true
+PASS [Worker] isEqual(expectedResults[index], nextResults[index]) is true
+PASS [Worker] isEqual(expectedResults[index], nextResults[index]) is true
+PASS [Worker] isEqual(expectedResults[index], nextResults[index]) is true
+PASS [Worker] nextResultsEnd.done is true
+PASS [Worker] nextResultsEnd.value is undefined.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

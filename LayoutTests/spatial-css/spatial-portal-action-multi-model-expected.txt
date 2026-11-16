@@ -1,0 +1,5 @@
+
+PASS portal-action: none fits the merged bounds independently of model load order
+PASS portal-action: orbit fits the merged bounds independently of model load order
+PASS portal-action: orbit fits the merged bounds the same whether models load one by one or together
+

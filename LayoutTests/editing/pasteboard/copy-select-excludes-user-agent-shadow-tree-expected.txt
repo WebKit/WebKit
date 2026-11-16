@@ -1,0 +1,13 @@
+Copying a select serializes its options, not its user agent shadow tree.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS copied.querySelectorAll('select').length is 2
+PASS copied.querySelectorAll('option').length is 3
+PASS copied.querySelector('[popover], [useragentpart], [name=buttonSlot], [name=listBoxSlot]') is null
+PASS successfullyParsed is true
+
+TEST COMPLETE
+ab
+

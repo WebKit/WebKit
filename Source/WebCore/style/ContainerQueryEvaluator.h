@@ -1,0 +1,90 @@
+/*
+ * Copyright (C) 2022 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1.  Redistributions of source code must retain the above copyright
+ *     notice, this list of conditions and the following disclaimer.
+ * 2.  Redistributions in binary form must reproduce the above copyright
+ *     notice, this list of conditions and the following disclaimer in the
+ *     documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS BE LIABLE FOR ANY
+ * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+ * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#pragma once
+
+#include "ContainerQuery.h"
+#include "GenericMediaQueryEvaluator.h"
+#include "StyleScopeOrdinal.h"
+#include "StyleUpdate.h"
+#include <memory>
+#include <wtf/Ref.h>
+
+namespace WebCore {
+
+class Element;
+class LayoutSize;
+class RenderBox;
+
+namespace Style {
+
+class BuilderState;
+
+struct HostElementStyle {
+    CheckedRef<const Element> element;
+    CheckedRef<const ComputedStyle> style;
+};
+
+struct ContainerQueryEvaluationState {
+    Vector<Ref<const Element>> sizeQueryContainers;
+
+    // Style::Update of the current style resolution has the latest style,
+    // unlike render style which only gets updated after render tree update.
+    CheckedPtr<Style::Update> styleUpdate;
+
+    // In the context when a pseudo-element's style is being resolved (which could
+    // include container queries being evaluated), this is the style of its host.
+    // It's populated right after the host style is resolved, but before its
+    // pseudo-elements' styles are.
+    std::optional<HostElementStyle> hostElementStyle;
+};
+
+class ContainerQueryEvaluator : public MQ::GenericMediaQueryEvaluator<ContainerQueryEvaluator> {
+public:
+    enum class SelectionMode : uint8_t { Element, PseudoElement, PartPseudoElement };
+    ContainerQueryEvaluator(const Element&, SelectionMode, ScopeOrdinal, ContainerQueryEvaluationState*);
+    ~ContainerQueryEvaluator();
+
+    bool evaluate(const CQ::ContainerQuery&) const;
+
+    static RefPtr<const Element> selectContainer(CQ::ContainerRequirements, const WTF::String& name, const Element&, SelectionMode = SelectionMode::Element, ScopeOrdinal = ScopeOrdinal::Element, const ContainerQueryEvaluationState* = nullptr);
+    static LayoutSize queryContainerSize(const RenderBox&);
+    static LayoutSize queryContainerLogicalSize(const RenderBox&);
+
+private:
+    std::optional<MQ::FeatureEvaluationContext> featureEvaluationContextForCondition(const CQ::ContainerCondition&) const;
+
+    const Ref<const Element> m_element;
+    const SelectionMode m_selectionMode;
+    const ScopeOrdinal m_scopeOrdinal;
+    ContainerQueryEvaluationState* m_evaluationState { nullptr };
+
+    // No style is being built while a condition is evaluated, but the functions that resolve against
+    // the query container need a BuilderState to reach it. The conversion data only points at it, so
+    // it is owned here.
+    mutable std::unique_ptr<BuilderState> m_builderState;
+};
+
+}
+}

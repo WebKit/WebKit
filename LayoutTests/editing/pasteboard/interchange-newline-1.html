@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<body>
+<div id="test" contenteditable="true">xx</div>
+<script src="../../resources/dump-as-markup.js"></script>
+<script>
+if (window.testRunner)
+    testRunner.dumpEditingCallbacks();
+
+Markup.description('There is an interchange newline at the end of the incoming fragment. "bar" and "x" should be in separate paragraphs\n'
++ 'The paragraph "bar" is inside a div wrapped in a span, and the old paste code that handled interchange newlines did not handle this case.');
+
+var s = window.getSelection();
+var e = document.getElementById("test");
+
+s.setPosition(e, 0);
+s.modify("move", "forward", "character");
+document.execCommand("InsertHTML", false, "<div>foo</div><span><div>bar</div></span><br class='Apple-interchange-newline'>");
+
+Markup.dump('test');
+
+</script>
+</body>
+</html>

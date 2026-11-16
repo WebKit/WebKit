@@ -1,0 +1,9 @@
+This paragraph should have a green background because the enclosing div is in english.
+
+This paragraph should have a green background because it is in english.
+
+This paragraph should have a green background because it is in english.
+
+
+PASS NEGATED :lang() pseudo-class
+

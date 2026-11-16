@@ -1,0 +1,6 @@
+Resource Timing: Error cases
+
+
+PASS Content-Security-Policy rejections do not create entries
+PASS CORS preflight failures do not create entries
+

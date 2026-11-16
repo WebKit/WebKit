@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+<style>
+*::after { content: ""; }
+.box::after { display: block; height: 25px; }
+</style>
+</head>
+<body>
+<div id="target" class="box"></div>
+<script>
+description("A universal ::after rule that sets 'content' gives ::after a box when another rule without 'content' also matches it.");
+
+shouldBe("target.offsetHeight", "25");
+
+debug("");
+evalAndLog("dynamic = document.createElement('div')");
+evalAndLog("dynamic.className = 'box'");
+evalAndLog("document.body.appendChild(dynamic)");
+shouldBe("dynamic.offsetHeight", "25");
+</script>
+</body>
+</html>

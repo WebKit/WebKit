@@ -1,0 +1,12 @@
+abc
+
+
+PASS Wait for load...
+PASS command: "insertBrOrReturn", param: "false"
+PASS execCommand("insertBrOrReturn", false, "false")
+PASS queryCommandState("insertBrOrReturn")
+PASS queryCommandEnabled("insertBrOrReturn")
+PASS queryCommandIndeterm("insertBrOrReturn")
+PASS queryCommandValue("insertBrOrReturn")
+PASS queryCommandSupported("insertBrOrReturn")
+

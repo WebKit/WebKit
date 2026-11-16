@@ -1,0 +1,23 @@
+
+PASS :createBindGroup,at_over:limitTest="atDefault";testValueName="atLimit";bufferPart="wholeBuffer"
+PASS :createBindGroup,at_over:limitTest="atDefault";testValueName="atLimit";bufferPart="biggerBufferWithOffset"
+PASS :createBindGroup,at_over:limitTest="atDefault";testValueName="overLimit";bufferPart="wholeBuffer"
+PASS :createBindGroup,at_over:limitTest="atDefault";testValueName="overLimit";bufferPart="biggerBufferWithOffset"
+PASS :createBindGroup,at_over:limitTest="underDefault";testValueName="atLimit";bufferPart="wholeBuffer"
+PASS :createBindGroup,at_over:limitTest="underDefault";testValueName="atLimit";bufferPart="biggerBufferWithOffset"
+PASS :createBindGroup,at_over:limitTest="underDefault";testValueName="overLimit";bufferPart="wholeBuffer"
+PASS :createBindGroup,at_over:limitTest="underDefault";testValueName="overLimit";bufferPart="biggerBufferWithOffset"
+PASS :createBindGroup,at_over:limitTest="betweenDefaultAndMaximum";testValueName="atLimit";bufferPart="wholeBuffer"
+PASS :createBindGroup,at_over:limitTest="betweenDefaultAndMaximum";testValueName="atLimit";bufferPart="biggerBufferWithOffset"
+PASS :createBindGroup,at_over:limitTest="betweenDefaultAndMaximum";testValueName="overLimit";bufferPart="wholeBuffer"
+PASS :createBindGroup,at_over:limitTest="betweenDefaultAndMaximum";testValueName="overLimit";bufferPart="biggerBufferWithOffset"
+PASS :createBindGroup,at_over:limitTest="atMaximum";testValueName="atLimit";bufferPart="wholeBuffer"
+PASS :createBindGroup,at_over:limitTest="atMaximum";testValueName="atLimit";bufferPart="biggerBufferWithOffset"
+PASS :createBindGroup,at_over:limitTest="atMaximum";testValueName="overLimit";bufferPart="wholeBuffer"
+PASS :createBindGroup,at_over:limitTest="atMaximum";testValueName="overLimit";bufferPart="biggerBufferWithOffset"
+PASS :createBindGroup,at_over:limitTest="overMaximum";testValueName="atLimit";bufferPart="wholeBuffer"
+PASS :createBindGroup,at_over:limitTest="overMaximum";testValueName="atLimit";bufferPart="biggerBufferWithOffset"
+PASS :createBindGroup,at_over:limitTest="overMaximum";testValueName="overLimit";bufferPart="wholeBuffer"
+PASS :createBindGroup,at_over:limitTest="overMaximum";testValueName="overLimit";bufferPart="biggerBufferWithOffset"
+PASS :validate,maxBufferSize:
+

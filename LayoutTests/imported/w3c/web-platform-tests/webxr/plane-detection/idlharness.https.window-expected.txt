@@ -1,0 +1,28 @@
+
+PASS idl_test setup
+PASS idl_test validation
+PASS Partial interface XRFrame: original interface defined
+PASS Partial interface XRFrame: member names are unique
+PASS Partial interface XRSession: original interface defined
+PASS Partial interface XRSession: member names are unique
+PASS XRPlane interface: existence and properties of interface object
+PASS XRPlane interface object length
+PASS XRPlane interface object name
+PASS XRPlane interface: existence and properties of interface prototype object
+PASS XRPlane interface: existence and properties of interface prototype object's "constructor" property
+PASS XRPlane interface: existence and properties of interface prototype object's @@unscopables property
+PASS XRPlane interface: attribute planeSpace
+PASS XRPlane interface: attribute polygon
+PASS XRPlane interface: attribute orientation
+PASS XRPlane interface: attribute lastChangedTime
+PASS XRPlane interface: attribute semanticLabel
+PASS XRPlaneSet interface: existence and properties of interface object
+PASS XRPlaneSet interface object length
+PASS XRPlaneSet interface object name
+PASS XRPlaneSet interface: existence and properties of interface prototype object
+PASS XRPlaneSet interface: existence and properties of interface prototype object's "constructor" property
+PASS XRPlaneSet interface: existence and properties of interface prototype object's @@unscopables property
+PASS XRPlaneSet interface: setlike<XRPlane>
+PASS XRSession interface: operation initiateRoomCapture()
+PASS XRFrame interface: attribute detectedPlanes
+

@@ -1,0 +1,44 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true RemoteSnapshottingEnabled=true UseGPUProcessForDOMRenderingEnabled=true deviceScaleFactor=2 ] -->
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+:root { view-transition-name: none; }
+body { margin: 0; }
+#withframe { view-transition-name: withframe; width: 100px; height: 100px; }
+#transformed { width: 100px; height: 20px; background-color: green; transform: translateY(0); }
+/* One device pixel wide stripes. A tile painted at a lower resolution than the output cannot show them. */
+#stripes { width: 100px; height: 30px; background: linear-gradient(to right, black 50%, lime 50%) 0 0 / 1px 1px; }
+iframe { display: block; width: 100px; height: 50px; border: none; }
+
+/* Hold the transition, showing only the old capture. */
+::view-transition-group(*) { animation-duration: 300s; }
+::view-transition-old(*) { animation: unset; opacity: 1; }
+::view-transition-new(*) { animation: unset; opacity: 0; }
+</style>
+</head>
+<body>
+<div id="withframe"><div id="transformed"></div><div id="stripes"></div><iframe src="http://localhost:8000/site-isolation/resources/green-background.html"></iframe></div>
+<script>
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+onmessage = (event) => {
+    if (event.data != "onload")
+        return;
+
+    // Only the old capture can show the content once it is hidden.
+    const transition = document.startViewTransition(() => {
+        for (const child of document.getElementById("withframe").children)
+            child.style.visibility = "hidden";
+    });
+    transition.ready.then(() => {
+        requestAnimationFrame(() => requestAnimationFrame(() => testRunner.notifyDone()));
+    }, () => {
+        document.body.style.backgroundColor = "red";
+        testRunner.notifyDone();
+    });
+};
+</script>
+</body>
+</html>

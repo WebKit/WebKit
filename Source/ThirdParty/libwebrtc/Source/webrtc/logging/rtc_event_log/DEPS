@@ -1,0 +1,7 @@
+include_rules = [
+  "+call",
+  "+modules/audio_coding/audio_network_adaptor",
+  "+modules/congestion_controller",
+  "+modules/rtp_rtcp",
+  "+system_wrappers",
+]

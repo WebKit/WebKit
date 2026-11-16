@@ -1,0 +1,32 @@
+<!DOCTYPE HTML>
+<script src="resources/text-based-repaint.js"></script>
+<script>
+function repaintTest() {
+  document.getElementById('item').style.alignSelf = 'end';
+}
+onload = runRepaintTest;
+</script>
+<style>
+body {
+  margin: 0;
+}
+p {
+  margin: 0;
+  height: 50px;
+}
+#grid {
+  display: grid;
+  grid: 100px / 100px;
+  width: 100px;
+}
+#item {
+  align-self: start;
+  background-color: green;
+}
+</style>
+<p>Tests that a grid item with a fit-content block size resolves that size from its layout rather than from separate min-content and max-content measurements. The item has an automatic height and is not stretched, so it is sized to fit-content. Each layout pass over the item repaints it at its old position, so an extra repaint rect here means an extra layout of the item.</p>
+<div id="grid">
+    <div id="item">
+        <div style="height: 50px"></div>
+    </div>
+</div>

@@ -1,0 +1,8 @@
+PASS identity is "11,22,33,44"
+PASS reversed is "44,33,22,11"
+PASS broadcast is "22,22,22,22"
+PASS constants is "0,1,44,33"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

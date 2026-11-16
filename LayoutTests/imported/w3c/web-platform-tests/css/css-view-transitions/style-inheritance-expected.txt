@@ -1,0 +1,3 @@
+
+PASS style inheritance of pseudo elements
+

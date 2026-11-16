@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline' blob:;
+                                                    connect-src 'self';">
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+</script>
+</head>
+<p>This tests that a blob-URL JavaScript script loads with Content Security Policy containing invalid characters for an HTTP header value.</p>
+<pre id="console"></pre>
+<script>
+function log(message)
+{
+    document.getElementById("console").appendChild(document.createTextNode(message + "\n"));
+}
+
+function done()
+{
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+var script = document.createElement("script");
+script.onload = function () {
+    log("PASS fired load event for blob-URL script.");
+    done();
+}
+script.onerror = function () {
+    log("FAIL should not have fired error event for blob-URL script.");
+    done();
+}
+script.src = window.URL.createObjectURL(new Blob(["log('PASS executed blob-URL script.');"]));
+document.head.appendChild(script);
+</script>
+</html>

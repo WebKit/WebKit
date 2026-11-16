@@ -1,0 +1,3 @@
+
+PASS importScripts() queueing a microtask then throwing an exception
+

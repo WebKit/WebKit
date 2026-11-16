@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<head>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script>
+
+function runTest() {
+    const section = document.querySelector('section');
+    const container = document.querySelector('div');
+    const p = document.querySelector('p');
+    const iframe = document.createElement('iframe');
+    document.querySelector('b').appendChild(iframe);
+    /* div
+         + b
+           + p
+             + script
+             + iframe */
+    iframe.contentWindow.onunload = () => {
+        section.appendChild(p);
+        container.remove();
+        /* body
+           + p
+             + script
+             + iframe  */
+    }
+
+    window.onload = () => {
+        let test = async_test('An element removed by the adoption agency algorithm must not be inserted if it had been inserted elsewhere');
+        test.step(() => {
+            assert_not_equals(p.parentNode, container);
+            assert_equals(p.parentNode, section);
+        });
+        test.done();
+    }
+}
+
+</script>
+</head>
+<body>
+<section><div><b><p><script>runTest();</script></b></p></div></section>
+</body>

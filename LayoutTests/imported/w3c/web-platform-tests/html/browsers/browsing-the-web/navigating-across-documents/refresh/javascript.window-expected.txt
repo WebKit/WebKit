@@ -1,0 +1,3 @@
+
+PASS Refresh to a javascript: URL should not work
+

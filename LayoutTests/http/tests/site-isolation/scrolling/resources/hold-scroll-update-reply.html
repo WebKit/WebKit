@@ -1,0 +1,13 @@
+<body style="margin: 0; height: 20000px;">
+<script>
+onmessage = () => {
+    scrollTo({ top: 19000, behavior: "smooth" });
+    setTimeout(() => {
+        parent.postMessage("blocking", "*");
+        const end = Date.now() + 2000;
+        while (Date.now() < end) { }
+        parent.postMessage("idle", "*");
+    }, 100);
+};
+</script>
+</body>

@@ -1,0 +1,73 @@
+/* 
+The following styles are ordered as they appear in section 4.4. of the 
+Draft 7 November 2002 draft of the CSS3 Lists module <http://www.w3.org/TR/css3-lists/#alphabetic>.
+*/
+
+ol.afar { list-style-type: afar; }
+ol.ethiopic-halehame-aa-et { list-style-type: ethiopic-halehame-aa-et; }
+ol.ethiopic-halehame-aa-er { list-style-type: ethiopic-halehame-aa-er; }
+
+ol.amharic { list-style-type: amharic; }
+ol.ethiopic-halehame-am-et { list-style-type: ethiopic-halehame-am-et; }
+
+ol.amharic-abegede { list-style-type: amharic-abegede; }
+ol.ethiopic-abegede-am-et { list-style-type: ethiopic-abegede-am-et; }
+
+ol.cjk-earthly-branch { list-style-type: cjk-earthly-branch; }
+
+ol.cjk-heavenly-stem { list-style-type: cjk-heavenly-stem; }
+
+ol.ethiopic { list-style-type: ethiopic; }
+ol.ethiopic-halehame-gez { list-style-type: ethiopic-halehame-gez; }
+
+ol.ethiopic-abegede { list-style-type: ethiopic-abegede; }
+ol.ethiopic-abegede-gez { list-style-type: ethiopic-abegede-gez; }
+
+ol.hangul-consonant { list-style-type: hangul-consonant; }
+ol.hangul { list-style-type: hangul; }
+
+ol.hiragana-iroha { list-style-type: hiragana-iroha; }
+
+ol.hiragana { list-style-type: hiragana; }
+
+ol.katakana-iroha { list-style-type: katakana-iroha; }
+
+ol.katakana { list-style-type: katakana; }
+
+ol.lower-alpha { list-style-type: lower-alpha; }
+ol.lower-latin { list-style-type: lower-latin; }
+
+ol.lower-greek { list-style-type: lower-greek; }
+
+ol.lower-norwegian { list-style-type: lower-norwegian; }
+
+ol.oromo { list-style-type: oromo; }
+ol.ethiopic-halehame-om-et { list-style-type: ethiopic-halehame-om-et; }
+
+ol.sidama { list-style-type: sidama; }
+ol.ethiopic-halehame-sid-et { list-style-type: ethiopic-halehame-sid-et; }
+
+ol.somali { list-style-type: somali; }
+ol.ethiopic-halehame-so-et { list-style-type: ethiopic-halehame-so-et; }
+
+ol.tigre { list-style-type: tigre; }
+ol.ethiopic-halehame-tig { list-style-type: ethiopic-halehame-tig; }
+
+ol.tigrinya-er { list-style-type: tigrinya-er; }
+ol.ethiopic-halehame-ti-er { list-style-type: ethiopic-halehame-ti-er; }
+
+ol.tigrinya-er-abegede { list-style-type: tigrinya-er-abegede; }
+ol.ethiopic-abegede-ti-er { list-style-type: ethiopic-abegede-ti-er; }
+
+ol.tigrinya-et { list-style-type: tigrinya-et; }
+ol.ethiopic-halehame-ti-et { list-style-type: ethiopic-halehame-ti-et; }
+
+ol.tigrinya-et-abegede { list-style-type: tigrinya-et-abegede; }
+ol.ethiopic-abegede-ti-et { list-style-type: ethiopic-abegede-ti-et; }
+
+ol.upper-alpha { list-style-type: upper-alpha; }
+ol.upper-latin { list-style-type: upper-latin; }
+
+ol.upper-greek { list-style-type: upper-greek; }
+
+ol.upper-norwegian { list-style-type: upper-norwegian; }

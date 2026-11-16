@@ -1,0 +1,6 @@
+
+PASS <svg> should have the right properties
+PASS <svg>'s xmlns:xlink attribute should have the right properties
+PASS <use> should have the right properties
+PASS <use>'s xlink:href attribute should have the right properties
+

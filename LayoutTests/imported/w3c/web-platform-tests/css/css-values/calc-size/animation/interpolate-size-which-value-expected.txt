@@ -1,0 +1,10 @@
+
+PASS Use the after-change value of interpolate-size: numeric-only when starting CSS transition from 100px to min-content
+PASS Use the non-animation value of interpolate-size: numeric-only when starting CSS animation from 100px to min-content
+PASS Use the after-change value of interpolate-size: numeric-only when starting CSS transition from min-content to 100px
+PASS Use the non-animation value of interpolate-size: numeric-only when starting CSS animation from min-content to 100px
+PASS Use the after-change value of interpolate-size: allow-keywords when starting CSS transition from 100px to min-content
+PASS Use the non-animation value of interpolate-size: allow-keywords when starting CSS animation from 100px to min-content
+PASS Use the after-change value of interpolate-size: allow-keywords when starting CSS transition from min-content to 100px
+PASS Use the non-animation value of interpolate-size: allow-keywords when starting CSS animation from min-content to 100px
+

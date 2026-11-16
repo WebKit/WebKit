@@ -1,0 +1,362 @@
+/*
+ * Copyright (C) 2017-2025 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#include "config.h"
+#include "PlaceholderRenderingContext.h"
+
+#if ENABLE(OFFSCREEN_CANVAS)
+
+#include "Chrome.h"
+#include "ChromeClient.h"
+#include "ContextDestructionObserverInlines.h"
+#include "Document.h"
+#include "DocumentPage.h"
+#include "GraphicsLayer.h"
+#include "GraphicsLayerContentsDisplayDelegate.h"
+#include "HTMLCanvasElement.h"
+#include "NativeImage.h"
+#include "NodeDocument.h"
+#include "OffscreenCanvas.h"
+#include "Page.h"
+#include <wtf/HashMap.h>
+#include <wtf/NeverDestroyed.h>
+#include <wtf/TZoneMallocInlines.h>
+
+namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PlaceholderLayerContents);
+
+void PlaceholderLayerContents::copyFrame(ImageBuffer& imageBuffer, bool opaque, PlaceholderFrameIdentifier frame)
+{
+    Locker locker { m_lock };
+    if (!m_delegate || frame <= m_frame)
+        return;
+    protect(m_delegate)->tryCopyToLayer(imageBuffer, opaque, frame);
+    m_frame = frame;
+}
+
+#if PLATFORM(COCOA)
+bool PlaceholderLayerContents::displaySurface(const MachSendRight& surface, ContentsFormat contentsFormat, bool opaque, PlaceholderFrameIdentifier frame)
+{
+    Locker locker { m_lock };
+    if (!m_delegate || frame <= m_frame)
+        return false;
+    if (!protect(m_delegate)->tryDisplaySurface(surface, contentsFormat, opaque, frame))
+        return false;
+    m_frame = frame;
+    return true;
+}
+#endif
+
+bool PlaceholderLayerContents::needsFrameBuffers() const
+{
+    Locker locker { m_lock };
+    return !m_delegate || m_frameBuffersRequested;
+}
+
+void PlaceholderLayerContents::requestFrameBuffers()
+{
+    assertIsMainThread();
+    Locker locker { m_lock };
+    if (std::exchange(m_frameBuffersRequested, true))
+        return;
+    if (m_recommitHandler)
+        m_recommitHandler();
+}
+
+void PlaceholderLayerContents::setRecommitHandler(Function<void()>&& handler)
+{
+    Locker locker { m_lock };
+    m_recommitHandler = WTF::move(handler);
+}
+
+void PlaceholderLayerContents::setFrameForNextDisplay(ImageBuffer& imageBuffer, bool opaque, PlaceholderFrameIdentifier frame)
+{
+    assertIsMainThread();
+    Locker locker { m_lock };
+    if (!m_delegate || frame <= m_frame)
+        return;
+    protect(m_delegate)->setContentsForNextDisplay(imageBuffer, opaque, frame);
+    m_frame = frame;
+}
+
+std::optional<PlatformLayerIdentifier> PlaceholderLayerContents::attach(GraphicsLayer& layer, ImageBuffer* buffer, bool opaque, PlaceholderFrameIdentifier frame)
+{
+    assertIsMainThread();
+    Locker locker { m_lock };
+    if (!(m_delegate = layer.createAsyncContentsDisplayDelegate(m_delegate.get())))
+        return std::nullopt;
+    if (buffer) {
+        protect(m_delegate)->tryCopyToLayer(*buffer, opaque, frame);
+        m_frame = frame;
+    }
+    return protect(m_delegate)->destinationLayerID();
+}
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(LocalPlaceholderRenderingContextSource);
+
+Ref<LocalPlaceholderRenderingContextSource> LocalPlaceholderRenderingContextSource::create(PlaceholderRenderingContext& context)
+{
+    return adoptRef(*new LocalPlaceholderRenderingContextSource(context));
+}
+
+LocalPlaceholderRenderingContextSource::LocalPlaceholderRenderingContextSource(PlaceholderRenderingContext& placeholder)
+    : PlaceholderRenderingContextSource({ placeholder.identifier(), Process::identifier() })
+    , m_placeholder(placeholder)
+    , m_layerContents(placeholder.layerContents())
+{
+}
+
+void LocalPlaceholderRenderingContextSource::setPlaceholderBuffer(ImageBuffer& imageBuffer, bool originClean, bool opaque)
+{
+    auto frame = m_lastFrame.increment();
+    m_layerContents->copyFrame(imageBuffer, opaque, frame);
+
+    if (!m_layerContents->needsFrameBuffers()) {
+        setPlaceholderFrameWithoutBuffer(imageBuffer.truncatedLogicalSize(), frame, originClean, opaque);
+        return;
+    }
+
+    RefPtr clone = imageBuffer.clone();
+    if (!clone)
+        return;
+    std::unique_ptr serializedClone = ImageBuffer::sinkIntoSerializedImageBuffer(WTF::move(clone));
+    if (!serializedClone)
+        return;
+    callOnMainThread([weakPlaceholder = m_placeholder, buffer = WTF::move(serializedClone), frame, originClean, opaque] () mutable {
+        assertIsMainThread();
+        RefPtr placeholder = weakPlaceholder.get();
+        if (!placeholder)
+            return;
+        RefPtr imageBuffer = SerializedImageBuffer::sinkIntoImageBuffer(WTF::move(buffer), protect(protect(placeholder->canvas())->scriptExecutionContext())->graphicsClient());
+        if (!imageBuffer)
+            return;
+        // Compares the frames, so that a possibly already historical buffer in this main thread
+        // task does not override the newest buffer that the worker thread already set.
+        protect(placeholder->layerContents())->copyFrame(*imageBuffer, opaque, frame);
+        placeholder->setPlaceholderBuffer(imageBuffer.releaseNonNull(), frame, originClean, opaque);
+    });
+}
+
+#if PLATFORM(COCOA)
+bool LocalPlaceholderRenderingContextSource::setPlaceholderSurface(const MachSendRight& surface, ContentsFormat contentsFormat, const IntSize& size, bool originClean, bool opaque)
+{
+    if (m_layerContents->needsFrameBuffers())
+        return false;
+    auto frame = m_lastFrame.increment();
+    if (!m_layerContents->displaySurface(surface, contentsFormat, opaque, frame))
+        return false;
+    setPlaceholderFrameWithoutBuffer(size, frame, originClean, opaque);
+    return true;
+}
+#endif
+
+void LocalPlaceholderRenderingContextSource::setRecommitHandler(Function<void()>&& handler)
+{
+    m_layerContents->setRecommitHandler(WTF::move(handler));
+}
+
+void LocalPlaceholderRenderingContextSource::setPlaceholderFrameWithoutBuffer(const IntSize& size, PlaceholderFrameIdentifier frame, bool originClean, bool opaque)
+{
+    callOnMainThread([weakPlaceholder = m_placeholder, size, frame, originClean, opaque] {
+        assertIsMainThread();
+        if (RefPtr placeholder = weakPlaceholder.get())
+            placeholder->setPlaceholderFrameWithoutBuffer(size, frame, originClean, opaque);
+    });
+}
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PlaceholderRenderingContext);
+
+NODELETE static HashMap<PlaceholderRenderingContextIdentifier, WeakPtr<PlaceholderRenderingContext>>& placeholderRenderingContexts()
+{
+    assertIsMainThread();
+    static NeverDestroyed<HashMap<PlaceholderRenderingContextIdentifier, WeakPtr<PlaceholderRenderingContext>>> contexts;
+    return contexts;
+}
+
+static PlaceholderRenderingContextSource::PlaceholderLifetimeHandler placeholderCreatedHandler;
+static PlaceholderRenderingContextSource::PlaceholderLifetimeHandler placeholderDestroyedHandler;
+
+void PlaceholderRenderingContextSource::setPlaceholderLifetimeHandlers(PlaceholderLifetimeHandler created, PlaceholderLifetimeHandler destroyed)
+{
+    assertIsMainThread();
+    placeholderCreatedHandler = created;
+    placeholderDestroyedHandler = destroyed;
+}
+
+PlaceholderRenderingContext* PlaceholderRenderingContext::fromIdentifier(PlaceholderRenderingContextIdentifier identifier)
+{
+    return placeholderRenderingContexts().get(identifier);
+}
+
+std::unique_ptr<PlaceholderRenderingContext> PlaceholderRenderingContext::create(HTMLCanvasElement& element)
+{
+    return std::unique_ptr<PlaceholderRenderingContext> { new PlaceholderRenderingContext(element) };
+}
+
+PlaceholderRenderingContext::PlaceholderRenderingContext(HTMLCanvasElement& canvas)
+    : CanvasRenderingContext(canvas, Type::Placeholder)
+    , m_identifier(WTF::UUID::createVersion4())
+    , m_layerContents(PlaceholderLayerContents::create())
+{
+    placeholderRenderingContexts().add(m_identifier, *this);
+    if (placeholderCreatedHandler)
+        placeholderCreatedHandler(m_identifier);
+}
+
+PlaceholderRenderingContext::~PlaceholderRenderingContext()
+{
+    placeholderRenderingContexts().remove(m_identifier);
+    if (placeholderDestroyedHandler)
+        placeholderDestroyedHandler(m_identifier);
+}
+
+HTMLCanvasElement& PlaceholderRenderingContext::canvas() const
+{
+    return downcast<HTMLCanvasElement>(canvasBase());
+}
+
+IntSize PlaceholderRenderingContext::size() const
+{
+    return canvas().size();
+}
+
+void PlaceholderRenderingContext::setContentsToLayer(GraphicsLayer& layer)
+{
+    auto layerID = m_layerContents->attach(layer, m_bufferIsStale ? nullptr : m_buffer.get(), m_opaque, m_frame);
+    if (m_reportedLayerID.asOptional() == layerID)
+        return;
+    if (m_bufferIsStale)
+        m_layerContents->requestFrameBuffers();
+    m_reportedLayerID = layerID;
+    // Lets a frame committed from another process be applied to the layer on the way here.
+    if (RefPtr page = canvas().document().page())
+        page->chrome().client().offscreenCanvasPlaceholderLayerChanged(m_identifier, layerID);
+}
+
+bool PlaceholderRenderingContextSource::commitFrameFromAnotherProcess(PlaceholderRenderingContextIdentifier identifier, const ImageBufferTransferHandle& transferHandle, PlaceholderFrameIdentifier frame, bool originClean, bool opaque)
+{
+    assertIsMainThread();
+    RefPtr placeholder = PlaceholderRenderingContext::fromIdentifier(identifier);
+    if (!placeholder)
+        return false;
+    RefPtr imageBuffer = ImageBuffer::createFromTransferHandle(transferHandle, protect(placeholder->canvas().document())->graphicsClient());
+    if (!imageBuffer)
+        return false;
+    placeholder->setPlaceholderBufferFromAnotherProcess(imageBuffer.releaseNonNull(), frame, originClean, opaque);
+    return true;
+}
+
+void PlaceholderRenderingContext::setPlaceholderBufferFromAnotherProcess(Ref<ImageBuffer>&& imageBuffer, PlaceholderFrameIdentifier frame, bool originClean, bool opaque)
+{
+    m_layerContents->setFrameForNextDisplay(imageBuffer, opaque, frame);
+    setPlaceholderBuffer(WTF::move(imageBuffer), frame, originClean, opaque);
+}
+
+void PlaceholderRenderingContext::setPlaceholderBuffer(Ref<ImageBuffer>&& newBuffer, PlaceholderFrameIdentifier frame, bool originClean, bool opaque)
+{
+    if (frame <= m_frame)
+        return;
+    m_frame = frame;
+    IntSize newSize = newBuffer->truncatedLogicalSize();
+    protect(canvas())->willUpdateContents(FloatRect { { }, newSize }, ShouldApplyPostProcessingToDirtyRect::No);
+    m_opaque = opaque;
+    updateMemoryCost(newBuffer->memoryCost());
+    m_buffer = WTF::move(newBuffer);
+    m_bufferNativeImage = nullptr;
+    m_bufferIsStale = false;
+    updateCanvasForFrame(newSize, originClean);
+}
+
+void PlaceholderRenderingContext::setPlaceholderFrameWithoutBuffer(const IntSize& size, PlaceholderFrameIdentifier frame, bool originClean, bool opaque)
+{
+    if (frame <= m_frame)
+        return;
+    m_frame = frame;
+    protect(canvas())->willUpdateContents(FloatRect { { }, size }, ShouldApplyPostProcessingToDirtyRect::No);
+    m_opaque = opaque;
+    m_bufferIsStale = true;
+    updateCanvasForFrame(size, originClean);
+}
+
+void PlaceholderRenderingContext::updateCanvasForFrame(const IntSize& size, bool originClean)
+{
+    Ref canvas = this->canvas();
+    canvas->setSizeForControllingContext(size);
+    if (originClean)
+        canvas->setOriginClean();
+    else
+        canvas->setOriginTainted();
+}
+
+void PlaceholderRenderingContext::requestFrameBuffersIfStale()
+{
+    if (m_bufferIsStale)
+        m_layerContents->requestFrameBuffers();
+}
+
+PixelFormat PlaceholderRenderingContext::pixelFormat() const
+{
+    if (auto* buffer = m_buffer.get())
+        return buffer->pixelFormat();
+    return CanvasRenderingContext::pixelFormat();
+}
+
+RefPtr<ImageBuffer> PlaceholderRenderingContext::surfaceBufferToImageBuffer(SurfaceBuffer)
+{
+    requestFrameBuffersIfStale();
+    if (!m_buffer) {
+        // Transparent black bitmaps are not cached.
+        return protect(canvas())->createTransparentBlackImageBuffer();
+    }
+    return m_buffer;
+}
+
+RefPtr<NativeImage> PlaceholderRenderingContext::surfaceBufferToNativeImage(SurfaceBuffer)
+{
+    requestFrameBuffersIfStale();
+    if (m_bufferNativeImage)
+        return m_bufferNativeImage;
+    RefPtr buffer = m_buffer;
+    if (!buffer) {
+        // No frame has been committed yet, so the placeholder reads as transparent black.
+        return ImageBuffer::sinkIntoNativeImage(protect(canvas())->createTransparentBlackImageBuffer());
+    }
+    m_bufferNativeImage = buffer->copyNativeImage();
+    return m_bufferNativeImage;
+}
+
+bool PlaceholderRenderingContext::isSurfaceBufferTransparentBlack(SurfaceBuffer) const
+{
+    return !m_buffer && !m_bufferIsStale;
+}
+
+void PlaceholderRenderingContext::didUpdateCanvasSizeProperties(bool)
+{
+}
+
+}
+
+#endif

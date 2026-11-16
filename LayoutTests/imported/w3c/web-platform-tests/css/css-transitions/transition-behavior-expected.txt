@@ -1,0 +1,9 @@
+Allow discreteNo discrete
+
+PASS transition-behavior:allow-discrete should animate discrete properties.
+PASS transition-behavior:allow-discrete overlaps the previous normal value.
+PASS transition-behavior:normal overlaps the previous allow-discrete value.
+PASS transition-behavior changed to normal should stop the running discrete transitions.
+PASS transition-behavior:allow-discrete should animate for values fallback to discrete animations.
+PASS transition-behavior:normal should cancel the running transitions whose animation values are not interpolatable
+

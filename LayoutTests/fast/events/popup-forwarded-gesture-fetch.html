@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="../../imported/w3c/web-platform-tests/resources/testdriver.js"></script>
+        <script src="../../imported/w3c/web-platform-tests/resources/testdriver-actions.js"></script>
+        <script src="../../resources/testdriver-vendor.js"></script>
+    </head>
+    <body>
+        <p>
+            Test that a user gesture is forwarded through fetch() promise chains,
+            allowing popups to open when the async operation completes.
+        </p>
+        <button id="button" onclick="fetchAndPopup()">Click Here</button>
+        <div id="console"></div>
+        <script>
+            function fetchAndPopup() {
+                fetch('data:text/plain,test')
+                    .then(() => {
+                        let win = window.open("about:blank", "window");
+                        if (!win)
+                            document.getElementById("console").innerText = "FAILED: popup blocked";
+                        else {
+                            document.getElementById("console").innerText = "PASSED: popup allowed";
+                            win.close();
+                        }
+                        if (window.testRunner)
+                            testRunner.notifyDone();
+                    });
+            }
+
+            if (window.testRunner) {
+                testRunner.dumpAsText();
+                testRunner.waitUntilDone();
+            }
+
+            const button = document.getElementById("button");
+            test_driver.click(button);
+        </script>
+    </body>
+</html>

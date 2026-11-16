@@ -1,0 +1,126 @@
+/*
+ * Copyright (C) 2011 Igalia S.L.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public License
+ * along with this library; see the file COPYING.LIB.  If not, write to
+ * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ * Boston, MA 02110-1301, USA.
+ */
+
+@API_SINGLE_HEADER_CHECK@
+
+#ifndef WebKitWindowProperties_h
+#define WebKitWindowProperties_h
+
+#include <glib-object.h>
+#include <@API_INCLUDE_PREFIX@/WebKitDefines.h>
+
+#if PLATFORM(GTK)
+#include <gtk/gtk.h>
+#elif PLATFORM(WPE)
+#include <wpe/WebKitRectangle.h>
+#endif
+
+G_BEGIN_DECLS
+
+#define WEBKIT_TYPE_WINDOW_PROPERTIES            (webkit_window_properties_get_type())
+#if !ENABLE(2022_GLIB_API)
+#define WEBKIT_WINDOW_PROPERTIES(obj)            (G_TYPE_CHECK_INSTANCE_CAST((obj), WEBKIT_TYPE_WINDOW_PROPERTIES, WebKitWindowProperties))
+#define WEBKIT_IS_WINDOW_PROPERTIES(obj)         (G_TYPE_CHECK_INSTANCE_TYPE((obj), WEBKIT_TYPE_WINDOW_PROPERTIES))
+#define WEBKIT_WINDOW_PROPERTIES_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST((klass),  WEBKIT_TYPE_WINDOW_PROPERTIES, WebKitWindowPropertiesClass))
+#define WEBKIT_IS_WINDOW_PROPERTIES_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE((klass),  WEBKIT_TYPE_WINDOW_PROPERTIES))
+#define WEBKIT_WINDOW_PROPERTIES_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj),  WEBKIT_TYPE_WINDOW_PROPERTIES, WebKitWindowPropertiesClass))
+
+struct _WebKitWindowPropertiesClass {
+    GObjectClass parent_class;
+
+    /*< private >*/
+    void (*_webkit_reserved0) (void);
+    void (*_webkit_reserved1) (void);
+    void (*_webkit_reserved2) (void);
+    void (*_webkit_reserved3) (void);
+};
+#endif
+
+WEBKIT_DECLARE_FINAL_TYPE (WebKitWindowProperties, webkit_window_properties, WEBKIT, WINDOW_PROPERTIES, GObject)
+
+#if PLATFORM(GTK)
+/**
+ * WebKitWindowProperties:geometry:
+ *
+ * The size and position of the window on the screen.
+ */
+
+/**
+ * webkit_window_properties_get_geometry:
+ * @window_properties: a #WebKitWindowProperties
+ * @geometry: (out): return location for the window geometry
+ *
+ * Get the geometry the window should have on the screen when shown.
+ */
+WEBKIT_API void
+webkit_window_properties_get_geometry            (WebKitWindowProperties *window_properties,
+                                                  GdkRectangle           *geometry);
+#elif PLATFORM(WPE)
+/**
+ * WebKitWindowProperties:geometry:
+ *
+ * The size and position of the window on the screen.
+ *
+ * Since: 2.56
+ */
+
+/**
+ * webkit_window_properties_get_geometry:
+ * @window_properties: a #WebKitWindowProperties
+ * @geometry: (out): return location for the window geometry
+ *
+ * Get the geometry the window should have on the screen when shown.
+ *
+ * Since: 2.56
+ */
+WEBKIT_API void
+webkit_window_properties_get_geometry            (WebKitWindowProperties *window_properties,
+                                                  WebKitRectangle        *geometry);
+#endif
+
+WEBKIT_API gboolean
+webkit_window_properties_get_has_custom_geometry (WebKitWindowProperties *window_properties);
+
+WEBKIT_API gboolean
+webkit_window_properties_get_toolbar_visible     (WebKitWindowProperties *window_properties);
+
+WEBKIT_API gboolean
+webkit_window_properties_get_statusbar_visible   (WebKitWindowProperties *window_properties);
+
+WEBKIT_API gboolean
+webkit_window_properties_get_scrollbars_visible  (WebKitWindowProperties *window_properties);
+
+WEBKIT_API gboolean
+webkit_window_properties_get_menubar_visible     (WebKitWindowProperties *window_properties);
+
+WEBKIT_API gboolean
+webkit_window_properties_get_locationbar_visible (WebKitWindowProperties *window_properties);
+
+WEBKIT_API gboolean
+webkit_window_properties_get_resizable           (WebKitWindowProperties *window_properties);
+
+WEBKIT_API gboolean
+webkit_window_properties_get_fullscreen          (WebKitWindowProperties *window_properties);
+
+WEBKIT_API gboolean
+webkit_window_properties_get_is_popup            (WebKitWindowProperties *window_properties);
+
+G_END_DECLS
+
+#endif

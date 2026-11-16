@@ -1,0 +1,63 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html lang="en">
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<input id="date" type="date" />
+<input id="datetime" type="datetime-local" />
+
+<script>
+var output = "This test ensures that an input's accessibility value is reported correctly after a subfield changes.\n\n";
+
+function getMonth(dateString) {
+    // Example of what dateString is expected to be like: AXDateValue: 2025-03-15 00:00:00 +0000
+    const spaceSplit = dateString.split(" ");
+    // spaceSplit[1] == 2025-03-15
+    return spaceSplit[1].split("-")[1];
+}
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    var date = accessibilityController.accessibleElementById("date");
+    var dateTime = accessibilityController.accessibleElementById("datetime");
+    var currentDateTimeValue, previousDateTimeValue;
+
+    document.getElementById("date").focus();
+    for (let i = 0; i < 3; i++)
+        eventSender.keyDown("upArrow");
+
+    setTimeout(async function() {
+        output += await expectAsync("getMonth(date.dateValue)", "'03'");
+
+        document.getElementById("datetime").focus();
+        for (let i = 0; i < 3; i++)
+            eventSender.keyDown("upArrow");
+
+        await waitFor(() => {
+            previousDateTimeValue = dateTime.dateValue;
+            return getMonth(dateTime.dateValue) === "03";
+        });
+
+        // Move focus to the meridiem field, and modify it. Testing specifically this field is important because it's
+        // non-numeric ("AM" or "PM" for lang="en"), which is represented by a different C++ class internally.
+        for (let i = 0; i < 5; i++)
+            eventSender.keyDown("rightArrow");
+        eventSender.keyDown("upArrow");
+
+        await waitFor(() => {
+            currentDateTimeValue = dateTime.dateValue;    
+            return currentDateTimeValue !== previousDateTimeValue;
+        });
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>
+

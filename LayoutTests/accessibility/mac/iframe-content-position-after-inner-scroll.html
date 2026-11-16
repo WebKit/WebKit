@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+<style>
+body {
+    margin: 0;
+}
+#container {
+    position: absolute;
+    top: 50px;
+    left: 10px;
+}
+iframe {
+    width: 300px;
+    height: 200px;
+    border: none;
+}
+</style>
+</head>
+<body>
+
+<div id="container">
+    <iframe id="iframe" onload="runTest()" src="data:text/html,<body style='margin:0'><div style='height:500px'><button id='target' style='width:80px;height:30px;position:absolute;top:300px'>Click me</button></div></body>"></iframe>
+</div>
+
+<script>
+window.jsTestIsAsync = true;
+
+var output = "This test verifies that scrolling inside an iframe correctly updates the screen position of elements within it.\n\n";
+
+var target, initialY, scrolledY, delta;
+function runTest() {
+    if (!window.accessibilityController)
+        return;
+
+    setTimeout(async function() {
+        target = await waitForIframeAccessibilityReady("container", "target");
+        initialY = target.y;
+
+        // Scroll the iframe content down by 200px.
+        document.getElementById("iframe").contentWindow.scrollTo(0, 200);
+
+        // Wait for the element's screen position to reflect the scroll.
+        // On macOS (bottom-left origin), scrolling content up makes the
+        // element's y value increase (it moves closer to the top of the
+        // iframe, which is higher on screen).
+        await waitFor(() => {
+            target = accessibilityController.accessibleElementById("target");
+            return target && target.y !== initialY;
+        });
+
+        scrolledY = target.y;
+        delta = scrolledY - initialY;
+        output += expectNumber("delta", 200, /* Allowed variance */ 5);
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

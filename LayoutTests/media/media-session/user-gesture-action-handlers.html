@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>user-gesture-action-handlers</title>
+    <script src="../video-test.js"></script>
+    <script src="../media-file.js"></script>
+	<script>
+	var promise;
+
+	window.addEventListener('load', async event => {
+        if (!window.internals) {
+            failTest('This test requires Internals');
+            return;
+        }
+
+        findMediaElement();
+        run('internals.setMediaElementRestrictions(video, "requireusergestureforvideoratechange")');
+        run('video.src = findMediaFile("video", "../content/test")');
+        await waitFor(video, 'canplay');
+        run('promise = video.play()');
+        await shouldReject(promise);
+
+        navigator.mediaSession.setActionHandler("play", async actionDetails => {
+            consoleWrite(`ACTION: ${actionDetails.action}`);
+	        run('promise = video.play()');
+	        await shouldResolve(promise);
+	        endTest();
+        });
+
+        run('internals.sendMediaSessionAction(navigator.mediaSession, {action: "play"})');
+	});
+	</script>
+</head>
+<body>
+	<video></video>
+</body>
+</html>

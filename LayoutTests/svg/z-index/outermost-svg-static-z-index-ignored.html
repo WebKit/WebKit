@@ -1,0 +1,16 @@
+<!-- webkit-test-runner [ LayerBasedSVGEngineEnabled=true ] -->
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>z-index does not apply to a statically-positioned outermost svg element</title>
+<link rel="help" href="https://w3c.github.io/svgwg/svg2-draft/render.html#RenderingOrder">
+<meta name="assert" content="Per CSS 2.1, an outermost svg must be positioned for z-index to apply. A static outer svg with z-index:5 must not be lifted above a positioned sibling, so the red box paints on top.">
+<style>
+.container { position: relative; z-index: 0; width: 100px; height: 100px; }
+svg { display: block; }
+.red { position: absolute; left: 0; top: 0; width: 100px; height: 100px; background: green; }
+</style>
+<p>Test passes if there is a red square and no green below.</p>
+<div class="container">
+  <svg width="100" height="100" style="z-index: 5"><rect width="100" height="100" fill="red"/></svg>
+  <div class="red"></div>
+</div>

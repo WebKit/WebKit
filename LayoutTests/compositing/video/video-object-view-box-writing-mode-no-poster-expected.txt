@@ -1,0 +1,28 @@
+This test verifies that a <video> with no poster in a vertical writing mode is cropped for compositing according to object-view-box, using the video's own natural (intrinsic) size.
+
+
+(GraphicsLayer
+  (anchor 0.00 0.00)
+  (bounds 800.00 600.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 800.00 600.00)
+      (contentsOpaque 1)
+      (children 1
+        (GraphicsLayer
+          (position 68.00 13.00)
+          (bounds 100.00 100.00)
+          (contents clipping layer
+            (position 0.00 0.00)
+            (bounds 100.00 100.00)
+          )
+          (contents layer (media)
+            (position 0.00 -5.00)
+            (bounds 100.00 105.00)
+          )
+        )
+      )
+    )
+  )
+)
+

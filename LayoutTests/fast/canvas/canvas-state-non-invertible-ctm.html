@@ -1,0 +1,56 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+<script>
+description("Tests 2d context non-invertible ctm");
+var ctx = document.createElement("canvas").getContext('2d');
+shouldBeEqualToString("ctx.getTransform().toString()", "matrix(1, 0, 0, 1, 0, 0)");
+
+// Non-invertible transforms get disabled.
+ctx.save();
+ctx.scale(0, 0);
+shouldBeEqualToString("ctx.getTransform().toString()", "matrix(0, 0, 0, 0, 0, 0)");
+ctx.translate(1, 1);
+ctx.scale(1, 1);
+ctx.transform(1, 0, 0, 1, 0, 0);
+shouldBeEqualToString("ctx.getTransform().toString()", "matrix(0, 0, 0, 0, 0, 0)");
+ctx.restore();
+
+// .resetTransform works for non-invertible transforms.
+ctx.save();
+ctx.scale(0, 0);
+shouldBeEqualToString("ctx.getTransform().toString()", "matrix(0, 0, 0, 0, 0, 0)");
+ctx.resetTransform();
+shouldBeEqualToString("ctx.getTransform().toString()", "matrix(1, 0, 0, 1, 0, 0)");
+ctx.translate(1, 1);
+shouldBeEqualToString("ctx.getTransform().toString()", "matrix(1, 0, 0, 1, 1, 1)");
+ctx.restore();
+
+// Cumulative values might make the transform non-invertible and disable it.
+// save()/restore() still works with those.
+ctx.save();
+ctx.setTransform(2147483647, 2147483648, 4294967296, -1, 65535, 536870911);
+shouldBeEqualToString("ctx.getTransform().toString()", "matrix(2147483647, 2147483648, 4294967296, -1, 65535, 536870911)");
+ctx.scale(1073741824, 5);
+// The expected signifies that transform is still functional.
+var expectedFunctional = "matrix(2305843008139952000, 2305843009213694000, 21474836480, -5, 65535, 536870911)";
+shouldBeEqualToString("ctx.getTransform().toString()", expectedFunctional);
+ctx.save();
+ctx.transform(-1, 0, 268435456, 1, 4294967295, 4294967295);
+// The above transform makes it non-invertible. The expected2 will signify that transform is disabled.
+var expectedDisabled = "matrix(-2305843008139952000, -2305843009213694000, 6.1897001935445976e+26, 6.189700196426902e+26, 9.903520399599234e+27, 9.903520311977199e+27)"
+shouldBeEqualToString("ctx.getTransform().toString()", expectedDisabled);
+ctx.save();
+ctx.rotate(-2);
+shouldBeEqualToString("ctx.getTransform().toString()", expectedDisabled);
+ctx.restore();
+shouldBeEqualToString("ctx.getTransform().toString()", expectedDisabled);
+ctx.restore();
+shouldBeEqualToString("ctx.getTransform().toString()", expectedFunctional); // After restore, transform is functional.
+ctx.restore();
+</script>
+</body>
+ </html>

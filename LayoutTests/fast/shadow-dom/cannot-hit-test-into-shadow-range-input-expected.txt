@@ -1,0 +1,5 @@
+PASS range.commonAncestorContainer is rangeInputElement
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

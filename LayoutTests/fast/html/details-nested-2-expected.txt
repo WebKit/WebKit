@@ -1,0 +1,26 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {DETAILS} at (0,0) size 784x139 [border: (8px solid #555599)]
+        RenderListItem {SUMMARY} at (8,8) size 768x36 [border: (8px solid #9999CC)]
+          RenderInline (generated) at (8,7) size 17x20
+            RenderText at (8,7) size 17x20
+              text run at (8,7) width 17: "\x{25BC} "
+          RenderText {#text} at (24,9) size 60x19
+            text run at (24,9) width 60: "summary"
+        RenderBlock {SLOT} at (8,43) size 768x88
+          RenderBlock {DETAILS} at (0,0) size 768x70 [border: (8px solid #995555)]
+            RenderListItem {SUMMARY} at (8,8) size 752x36 [border: (8px solid #CC9999)]
+              RenderInline (generated) at (8,7) size 17x20
+                RenderText at (8,7) size 17x20
+                  text run at (8,7) width 17: "\x{25BC} "
+              RenderText {#text} at (24,9) size 269x19
+                text run at (24,9) width 269: "nested summary (details-deails-summary)"
+            RenderBlock {SLOT} at (8,43) size 752x19
+              RenderText {#text} at (0,0) size 186x18
+                text run at (0,0) width 186: "nested details (details-deails)"
+          RenderBlock (anonymous) at (0,69) size 768x19
+            RenderText {#text} at (0,0) size 42x18
+              text run at (0,0) width 42: "details"

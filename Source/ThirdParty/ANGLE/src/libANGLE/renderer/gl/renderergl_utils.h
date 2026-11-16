@@ -1,0 +1,243 @@
+//
+// Copyright 2012 The ANGLE Project Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+//
+
+// renderergl_utils.h: Conversion functions and other utility routines
+// specific to the OpenGL renderer.
+
+#ifndef LIBANGLE_RENDERER_GL_RENDERERGLUTILS_H_
+#define LIBANGLE_RENDERER_GL_RENDERERGLUTILS_H_
+
+#include "common/FixedVector.h"
+#include "common/debug.h"
+#include "libANGLE/Caps.h"
+#include "libANGLE/Error.h"
+#include "libANGLE/Version.h"
+#include "libANGLE/angletypes.h"
+#include "libANGLE/renderer/driver_utils.h"
+#include "libANGLE/renderer/gl/functionsgl_typedefs.h"
+
+#include <array>
+#include <string>
+#include <vector>
+
+namespace angle
+{
+struct FeaturesGL;
+struct FrontendFeatures;
+}  // namespace angle
+
+namespace gl
+{
+struct Caps;
+class TextureCapsMap;
+struct Extensions;
+struct Version;
+}  // namespace gl
+
+namespace rx
+{
+class BlitGL;
+class ClearMultiviewGL;
+class ContextGL;
+class FunctionsGL;
+class StateManagerGL;
+
+// State-tracking data for the swap control to allow DisplayGL to remember per
+// drawable information for swap control.
+struct SwapControlData
+{
+    SwapControlData();
+
+    // Set by the drawable
+    int targetSwapInterval;
+
+    // DisplayGL-side state-tracking
+    int maxSwapInterval;
+    int currentSwapInterval;
+};
+
+VendorID GetVendorID(const FunctionsGL *functions);
+ShShaderOutput GetShaderOutputType(const angle::FeaturesGL &features, const FunctionsGL *functions);
+
+// Helpers for extracting the GL helper objects out of a context
+const FunctionsGL *GetFunctionsGL(const gl::Context *context);
+StateManagerGL *GetStateManagerGL(const gl::Context *context);
+BlitGL *GetBlitGL(const gl::Context *context);
+ClearMultiviewGL *GetMultiviewClearer(const gl::Context *context);
+const angle::FeaturesGL &GetFeaturesGL(const gl::Context *context);
+// Returns a 16-byte fixed vector containing the binary representation of 1.0 depth
+// (and 0 stencil) formatted for the specified OpenGL component type.
+angle::FixedVector<uint8_t, 16> GetDepthOnePixel(GLenum type);
+void FillDepthOneMemory(GLenum type, angle::Span<uint8_t> span);
+
+// Clear all errors on the stored context, emits console warnings
+void ClearErrors(const gl::Context *context,
+                 const char *file,
+                 const char *function,
+                 unsigned int line);
+void ClearErrors(const FunctionsGL *functions,
+                 const char *file,
+                 const char *function,
+                 unsigned int line);
+
+// Check for a single error
+angle::Result CheckError(const gl::Context *context,
+                         const char *call,
+                         const char *file,
+                         const char *function,
+                         unsigned int line);
+// Propagates a single error, marking it as handled, and checks for more errors.
+angle::Result HandleError(const gl::Context *context,
+                          GLenum error,
+                          const char *call,
+                          const char *file,
+                          const char *function,
+                          unsigned int line);
+
+#define ANGLE_GL_TRY_ALWAYS_CHECK(context, call)                      \
+    (ClearErrors(context, __FILE__, __FUNCTION__, __LINE__), (call)); \
+    ANGLE_TRY(CheckError(context, #call, __FILE__, __FUNCTION__, __LINE__))
+
+#define ANGLE_GL_CLEAR_ERRORS(functions) ClearErrors(functions, __FILE__, __FUNCTION__, __LINE__)
+
+#if defined(ANGLE_ENABLE_ASSERTS)
+#    define ANGLE_GL_TRY(context, call) ANGLE_GL_TRY_ALWAYS_CHECK(context, call)
+#else
+#    define ANGLE_GL_TRY(context, call) call
+#endif
+
+namespace nativegl_gl
+{
+
+void GenerateCaps(const FunctionsGL *functions,
+                  const angle::FeaturesGL &features,
+                  gl::Caps *caps,
+                  gl::TextureCapsMap *textureCapsMap,
+                  gl::Extensions *extensions,
+                  gl::Limitations *limitations,
+                  gl::Version *maxSupportedESVersion,
+                  ShPixelLocalStorageOptions *);
+
+void InitializeFeatures(const FunctionsGL *functions, angle::FeaturesGL *features);
+void InitializeFrontendFeatures(const FunctionsGL *functions, angle::FrontendFeatures *features);
+void ReInitializeFeaturesAtGPUSwitch(const FunctionsGL *functions, angle::FeaturesGL *features);
+}  // namespace nativegl_gl
+
+namespace nativegl
+{
+bool SupportsVertexArrayObjects(const FunctionsGL *functions);
+bool SupportsVertexAttributeBindings(const FunctionsGL *functions);
+bool SupportsTextureBufferObjects(const FunctionsGL *functions);
+bool SupportsPixelBufferObjects(const FunctionsGL *functions);
+bool SupportsSamplerObjects(const FunctionsGL *functions);
+bool CanUseDefaultVertexArrayObject(const FunctionsGL *functions);
+bool CanUseClientSideArrays(const FunctionsGL *functions, GLuint vao);
+bool SupportsSettingCubemapSeamless(const FunctionsGL *functions);
+bool SupportsLogicOp(const FunctionsGL *functions);
+bool SupportsProvokingVertex(const FunctionsGL *functions);
+bool SupportsPrimitiveRestartFixedIndex(const FunctionsGL *functions);
+bool SupportsPrimitiveRestart(const FunctionsGL *functions);  // note: The non-fixed index (desktop)
+bool SupportsCompute(const FunctionsGL *functions);
+bool SupportsCubeMapArrayTextures(const FunctionsGL *functions);
+bool SupportsRectangleTextures(const FunctionsGL *functions);
+bool SupportsExternalTextures(const FunctionsGL *functions);
+bool Supports3DTextures(const FunctionsGL *functions);
+bool Supports2DArrayTextures(const FunctionsGL *functions);
+bool Supports2DMultisampleTextures(const FunctionsGL *functions);
+bool Supports2DMultisampleArrayTextures(const FunctionsGL *functions);
+bool SupportsOcclusionQueries(const FunctionsGL *functions);
+bool SupportsTransformFeedback(const FunctionsGL *functions);
+bool SupportsUniformBufferObjects(const FunctionsGL *functions);
+bool SupportsCopyReadWriteBufferObjects(const FunctionsGL *functions);
+bool SupportsDrawIndirect(const FunctionsGL *functions);
+bool SupportsSeparateFramebufferBindings(const FunctionsGL *functions);
+bool SupportsUnpackSubImage(const FunctionsGL *functions);
+bool SupportsPackSubImage(const FunctionsGL *functions);
+bool Supports3DUnpackParameters(const FunctionsGL *functions);
+bool SupportsClipControl(const FunctionsGL *functions);
+bool SupportsDrawBuffersIndexed(const FunctionsGL *functions);
+bool SupportsBlendEquationAdvancedCoherent(const FunctionsGL *functions);
+bool SupportsPolygonMode(const FunctionsGL *functions);
+bool SupportsPolygonOffsetClamp(const FunctionsGL *functions);
+bool SupportsDepthClamp(const FunctionsGL *functions);
+bool SupportsSRGBWriteControl(const FunctionsGL *functions);
+bool SupportsMultisampleComatibility(const FunctionsGL *functions);
+bool SupportsFramebufferMixedSamples(const FunctionsGL *functions);
+bool SupportsShaderIOBlocks(const FunctionsGL *functions);
+bool SupportsClipCullDistance(const FunctionsGL *functions);
+bool SupportsSampleMask(const FunctionsGL *functions);
+bool SupportsRasterizerDiscard(const FunctionsGL *functions);
+bool SupportsInstancing(const FunctionsGL *functions);
+bool SupportsNativeRendering(const FunctionsGL *functions,
+                             gl::TextureType type,
+                             GLenum internalFormat);
+bool SupportsTexImage(gl::TextureType type);
+bool UseTexImage2D(gl::TextureType textureType);
+bool UseTexImage3D(gl::TextureType textureType);
+bool SupportsTextureType(const FunctionsGL *functions, gl::TextureType type);
+GLenum GetTextureBindingQuery(gl::TextureType textureType);
+GLenum GetTextureBindingTarget(gl::TextureType textureType);
+GLenum GetTextureBindingTarget(gl::TextureTarget textureTarget);
+bool SupportsBufferBinding(const FunctionsGL *functions, gl::BufferBinding type);
+struct BufferBindingQuery
+{
+    GLenum bindingQuery;
+    std::optional<GLenum> startQuery;
+    std::optional<GLenum> sizeQuery;
+};
+BufferBindingQuery GetBufferBindingQuery(gl::BufferBinding bufferBinding);
+std::string GetBufferBindingString(gl::BufferBinding bufferBinding);
+}  // namespace nativegl
+
+bool CanMapBufferForRead(const FunctionsGL *functions);
+uint8_t *MapBufferRangeWithFallback(const FunctionsGL *functions,
+                                    GLenum target,
+                                    size_t offset,
+                                    size_t length,
+                                    GLbitfield access);
+
+angle::Result ShouldApplyLastRowPaddingWorkaround(ContextGL *contextGL,
+                                                  const gl::Extents &size,
+                                                  const gl::PixelStoreStateBase &state,
+                                                  const gl::Buffer *pixelBuffer,
+                                                  GLenum format,
+                                                  GLenum type,
+                                                  bool is3D,
+                                                  const void *pixels,
+                                                  bool *shouldApplyOut);
+
+struct ContextCreationTry
+{
+    enum class Type
+    {
+        DESKTOP_CORE,
+        DESKTOP_LEGACY,
+        ES,
+    };
+
+    ContextCreationTry(EGLint displayType, Type type, gl::Version version)
+        : displayType(displayType), type(type), version(version)
+    {}
+
+    EGLint displayType;
+    Type type;
+    gl::Version version;
+};
+
+std::vector<ContextCreationTry> GenerateContextCreationToTry(EGLint requestedType, bool isMesaGLX);
+
+std::string GetRendererString(const FunctionsGL *functions);
+std::string GetVendorString(const FunctionsGL *functions);
+std::string GetVersionString(const FunctionsGL *functions);
+
+bool GetPowerVRDriverVersion(const std::string &vendorString,
+                             const std::string &rendererString,
+                             const std::string &versionString,
+                             std::array<int, 2> *versionOut);
+
+}  // namespace rx
+
+#endif  // LIBANGLE_RENDERER_GL_RENDERERGLUTILS_H_

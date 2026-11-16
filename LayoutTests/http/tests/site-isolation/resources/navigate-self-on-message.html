@@ -1,0 +1,8 @@
+<script>
+onload = () => parent.postMessage("loaded", "*");
+
+addEventListener("message", (event) => {
+    if (event.data == "navigate")
+        location = "report-origin-to-parent.html";
+});
+</script>

@@ -1,0 +1,15 @@
+position: static
+Verifies that the selection remains visible when the element containing the selection becomes composited. To run manually, select the text field and tap the button; the selection should remain visible
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+PASS rectsBeforeStyleChange.length is 1
+PASS rectsBeforeStyleChange.length is rectsAfterStyleChange.length
+PASS firstRectBeforeStyleChange.top is firstRectAfterStyleChange.top
+PASS firstRectBeforeStyleChange.left is firstRectAfterStyleChange.left
+PASS firstRectBeforeStyleChange.width is firstRectAfterStyleChange.width
+PASS firstRectBeforeStyleChange.height is firstRectAfterStyleChange.height
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

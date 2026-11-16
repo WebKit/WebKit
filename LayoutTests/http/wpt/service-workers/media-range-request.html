@@ -1,0 +1,61 @@
+<html>
+<head>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/service-workers/service-worker/resources/test-helpers.sub.js"></script>
+</head>
+<body>
+<video width=100px id=video autoplay playsinline controls muted></video>
+<script>
+async function doSetup()
+{
+    const registration = await navigator.serviceWorker.register("media-range-request-worker.js", { scope : "." });
+
+    activeWorker = registration.active;
+    if (!activeWorker) {
+       activeWorker = registration.installing;
+        await new Promise(resolve => {
+            activeWorker.addEventListener('statechange', () => {
+                if (activeWorker.state === "activated")
+                    resolve();
+            });
+        });
+    }
+    return registration;
+}
+
+var registration;
+
+promise_test(async (test) => {
+     registration = await doSetup();
+
+    await fetch("./resources/clearVideoRequestCount?regularFetch");
+
+    video.src = "http://127.0.0.1:8800/WebKit/resources/test.mp4";
+    const promise = new Promise((resolve, reject) => {
+        video.onerror = resolve;
+        video.onloadedmetadata = () => reject("onloadedmetadata fired");
+        setTimeout(() => reject("video event did not fire"), 5000);
+    });
+
+    return promise;
+}, " Validate range response rewriting with regular fetch");
+
+promise_test(async (test) => {
+    test.add_cleanup(() => registration.unregister());
+
+    await fetch("./resources/clearVideoRequestCount?syntheticResponse");
+
+    video.src = "http://127.0.0.1:8800/WebKit/resources/test.mp4";
+    const promise = new Promise((resolve, reject) => {
+        video.onerror = resolve;
+        video.onloadedmetadata = () => reject("onloadedmetadata fired");
+        setTimeout(() => reject("video event did not fire"), 5000);
+    });
+
+    return promise;
+}, " Validate range response rewriting with synthetic response");
+
+</script>
+</body>
+</html>

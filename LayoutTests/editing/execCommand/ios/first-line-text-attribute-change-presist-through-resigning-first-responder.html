@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <script src="../../../resources/basic-gestures.js"></script>
+    <script src="../../../resources/ui-helper.js"></script>
+    <script src="../../editing.js"></script>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+    
+        async function runTest()
+        {
+            if (!testRunner.runUIScript)
+                return;
+
+            const editableElement = document.getElementById("editable");
+            await UIHelper.activateElement(editableElement);
+            underlineCommand();
+            await UIHelper.resignFirstResponder();
+            await UIHelper.activateElement(editableElement);
+            
+            var output = '';
+            var state = document.queryCommandState("underline");
+            switch (state) {
+                case true:
+                    output += 'PASS: Underline still set as expected';
+                break;
+                case false:
+                    output += 'FAIL: Underline not set as expected';
+                break;
+                case null:
+                    output += 'FAIL: Underline is in indeterminite state';
+                break;
+            }
+
+            document.getElementById('output').innerHTML = output;
+            testRunner.notifyDone();
+        }
+
+        window.addEventListener('load', runTest, false);
+    </script>
+        <style>
+        #editable {
+            height: 200px;
+            width: 300px;
+            font-family: monospace;
+            font-size: 18px;
+        }
+    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+    <p>Dismissing the keyboard and then bringing it back again should not clear the editing styles
+    that were previously applied.</p>
+    <div id="editable" contenteditable>
+    </div>
+    <div id="output"></div> 
+</body>
+</html>

@@ -1,0 +1,6 @@
+
+PASS random-item() nested inside random-item()
+PASS random-item() resolved through var()
+PASS random-item() used as a var() fallback
+PASS random-item() expands in a shorthand property
+

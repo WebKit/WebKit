@@ -1,0 +1,4 @@
+
+
+PASS CSS Test: ::before matches when originating element has :focus-visible selector
+

@@ -1,0 +1,64 @@
+
+(UIView tree root view [class: <class not in allowed list of classes>]
+  (layer bounds [x: 0 y: 0 width: 800 height: 600])
+  (layer position [x: 400 y: 400])
+  (subviews
+    (view [class: WKScrollView]
+      (layer bounds [x: 0 y: 0 width: 800 height: 600])
+      (layer position [x: 400 y: 400])
+      (subviews
+        (view [class: WKContentView]
+          (layer bounds [x: 0 y: 0 width: 800 height: 600])
+          (layer anchorPoint [x: 0 y: 0])
+          (subviews
+            (view [class: UIView]
+              (layer bounds [x: 0 y: 0 width: 800 height: 600])
+              (layer anchorPoint [x: 0 y: 0])
+              (subviews
+                (view [class: UIView]
+                  (layer bounds [x: 0 y: 0 width: 800 height: 600])
+                  (layer position [x: 400 y: 400])
+                  (subviews
+                    (view [class: WKCompositingView]
+                      (layer bounds [x: 0 y: 0 width: 800 height: 600])
+                      (layer position [x: 400 y: 400])
+                      (subviews
+                        (view [class: WKCompositingView]
+                          (layer bounds [x: 0 y: 0 width: 800 height: 600])
+                          (layer anchorPoint [x: 0 y: 0])
+                          (subviews
+                            (view [class: WKCompositingView]
+                              (layer bounds [x: 0 y: 0 width: 800 height: 600])
+                              (layer position [x: 400 y: 400])
+                              (subviews
+                                (view [class: WKCompositingView]
+                                  (layer bounds [x: 0 y: 0 width: 0 height: 0]))
+                                (view [class: WKCompositingView]
+                                  (layer bounds [x: 0 y: 0 width: 0 height: 0])
+                                  (subviews
+                                    (view [class: WKCompositingView]
+                                      (layer bounds [x: 0 y: 0 width: 784 height: 20])
+                                      (layer position [x: 400 y: 400]))))))))))))))
+            (view [class: _UILayerHostView]
+              (layer bounds [x: 0 y: 0 width: 0 height: 0]))
+            (view [class: _UILayerHostView]
+              (layer bounds [x: 0 y: 0 width: 0 height: 0]))))
+        (view [class: UIView]
+          (layer bounds [x: 0 y: 0 width: 0 height: 0])
+          (layer anchorPoint [x: 0 y: 0]))
+        (view [class: <class not in allowed list of classes>]
+          (layer bounds [x: 0 y: 0 width: 3 height: 594])
+          (layer position [x: 795.5 y: 795.5])
+          (layer zPosition 1000)
+          (subviews
+            (view [class: UIView]
+              (layer bounds [x: 0 y: 0 width: 3 height: 594])
+              (layer position [x: 1.5 y: 1.5]))))
+        (view [class: <class not in allowed list of classes>]
+          (layer bounds [x: 0 y: 0 width: 794 height: 3])
+          (layer position [x: 400 y: 400])
+          (layer zPosition 1000)
+          (subviews
+            (view [class: UIView]
+              (layer bounds [x: 0 y: 0 width: 794 height: 3])
+              (layer position [x: 397 y: 397]))))))))

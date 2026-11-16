@@ -1,0 +1,63 @@
+(GraphicsLayer
+  (anchor 0.00 0.00)
+  (bounds 800.00 600.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 800.00 600.00)
+      (contentsOpaque 1)
+      (drawsContent 1)
+      (backgroundColor #FFFFFF)
+      (event region
+        (rect (0,0) width=800 height=600)
+
+      (interaction regions [
+        (occlusion (0,0) width=200 height=100),
+        (occlusion (0,200) width=200 height=100)])
+      )
+      (children 3
+        (GraphicsLayer
+          (position 0.00 400.00)
+          (preserves3D 1)
+          (children 1
+            (GraphicsLayer
+              (bounds 200.00 200.00)
+              (contentsOpaque 1)
+              (drawsContent 1)
+              (event region
+                (rect (0,0) width=200 height=200)
+              )
+            )
+          )
+        )
+        (GraphicsLayer
+          (position 600.00 400.00)
+          (preserves3D 1)
+          (children 1
+            (GraphicsLayer
+              (bounds 200.00 200.00)
+              (contentsOpaque 1)
+              (drawsContent 1)
+              (event region
+                (rect (0,0) width=200 height=200)
+              )
+            )
+          )
+        )
+        (GraphicsLayer
+          (position 600.00 0.00)
+          (preserves3D 1)
+          (children 1
+            (GraphicsLayer
+              (bounds 200.00 200.00)
+              (contentsOpaque 1)
+              (event region
+                (rect (0,0) width=200 height=200)
+              )
+            )
+          )
+        )
+      )
+    )
+  )
+)
+

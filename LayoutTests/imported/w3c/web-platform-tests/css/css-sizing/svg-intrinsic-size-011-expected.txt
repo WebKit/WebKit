@@ -1,0 +1,10 @@
+width: max-content, height: 45px:
+width: min-content, height: 45px:
+width: fit-content, height: 45px:
+width: max-content, height auto:
+
+PASS svg 1
+PASS svg 2
+PASS svg 3
+PASS svg 4
+

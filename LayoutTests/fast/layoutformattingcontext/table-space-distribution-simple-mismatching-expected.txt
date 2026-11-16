@@ -1,0 +1,7 @@
+foobar foobar	foobar foobar foobar foobar
+foobar foobar foobar	foobar foobar foobar foobar
+foobar foobar foobar foobar	foobar foobar foobar foobar foobar
+foobar foobar foobar	foobar foobar foobar foobar
+foobar foobar foobar foobar	foobar foobar foobar foobar foobar
+foobar foobar foobar foobar foobar	foobar foobar foobar foobar foobar
+It's a collection of special tests where LFC matches Chrome and Firefox but not trunk WebKit.

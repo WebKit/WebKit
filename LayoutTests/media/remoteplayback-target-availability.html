@@ -1,0 +1,71 @@
+<html>
+    <head>
+        <script src='media-file.js'></script>
+        <script src='video-test.js'></script>
+        <script>
+            var video;
+            var callbackId;
+
+            var nextStep;
+
+            function start()
+            {
+                findMediaElement();
+
+                if (window.internals) {
+                    internals.setMockMediaPlaybackTargetPickerEnabled(true);
+                    internals.settings.setAllowsAirPlayForMediaPlayback(true);
+                }
+
+                consoleWrite('<br>** test initial callback when device is unavailable');
+
+                video.remote.watchAvailability(step).then(setCallbackId).catch(failTest);
+                nextStep = initial;
+            }
+
+            function setCallbackId(id)
+            {
+                callbackId = id;
+            }
+
+            function step(available)
+            {
+                consoleWrite(`CALLBACK( available=${available} )`);
+
+                if (nextStep)
+                    nextStep(available);
+            }
+
+            function initial(available)
+            {
+                consoleWrite('<br>** simulate device becoming available');
+                if (window.internals)
+                    internals.setMockMediaPlaybackTargetPickerState('Sleepy TV', 'DeviceAvailable');
+                nextStep = haveTarget;
+            }
+
+            function haveTarget(available)
+            {
+                consoleWrite('<br>** test initial callback when device is available');
+
+                video.remote.cancelWatchAvailability(callbackId);
+                video.remote.watchAvailability(step).then(setCallbackId).catch(failTest);
+                nextStep = initialWithTarget;
+            }
+
+            function initialWithTarget(available)
+            {
+                consoleWrite('<br>** simulate device becoming unavailable');
+                if (window.internals)
+                    internals.setMockMediaPlaybackTargetPickerState('Sleepy TV', 'DeviceUnavailable');
+                nextStep = endTest;
+
+            }
+        </script>
+    </head>
+
+    <body onload='start()'>
+        <video controls></video>
+        <p>Test that 'RemotePlaybackAvailabilityCallback' callback is called when playback devices come and go.</p>
+    </body>
+</html>

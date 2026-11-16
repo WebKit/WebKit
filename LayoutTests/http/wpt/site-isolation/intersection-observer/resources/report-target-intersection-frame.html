@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<body style="margin: 0">
+<div id="target" style="position: absolute; left: 0; top: 0; width: 200px; height: 200px; background: green"></div>
+<script>
+
+const observer = new IntersectionObserver(entries => {
+    for (const entry of entries)
+        window.top.postMessage(JSON.stringify({ isIntersecting: entry.isIntersecting }), "*");
+});
+
+observer.observe(document.getElementById("target"));
+
+</script>

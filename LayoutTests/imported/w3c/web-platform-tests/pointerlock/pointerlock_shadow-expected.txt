@@ -1,0 +1,8 @@
+Description
+
+Click the button below to trigger pointer lock on an element in a shadow root.
+
+Click Me!
+
+PASS Test for pointerLockElement adjustment for Shadow DOM.
+

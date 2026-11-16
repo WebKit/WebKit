@@ -1,0 +1,8 @@
+2d.layer.malformed-operations
+
+FAIL Throws if createPattern is called while layers are open. assert_throws_dom: function "() => ctx.createPattern(canvas, 'repeat')" did not throw
+FAIL Throws if drawImage is called while layers are open. assert_throws_dom: function "() => ctx2.drawImage(canvas, 0, 0)" did not throw
+FAIL Throws if getImageData is called while layers are open. assert_throws_dom: function "() => ctx.getImageData(0, 0, 200, 200)" did not throw
+FAIL Throws if putImageData is called while layers are open. assert_throws_dom: function "() => ctx.putImageData(data, 0, 0)" did not throw
+FAIL Throws if toDataURL is called while layers are open. assert_throws_dom: function "() => canvas.toDataURL()" did not throw
+

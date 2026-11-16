@@ -1,0 +1,26 @@
+Basic tests for AudioNode API.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+PASS context.state is "suspended"
+node.connect(context.destination)
+PASS context.state is "running"
+Calling context.suspend()
+PASS context.suspend() promise resolved
+PASS context.state is "suspended"
+Calling context.resume()
+PASS context.resume() promise resolved
+PASS context.state is "running"
+Calling context.close()
+PASS context.close() promise resolved
+PASS context.state is "closed"
+Calling context.resume() (should fail)
+PASS context.resume() promise rejected (correctly)
+PASS context.state is "closed"
+Calling context.suspend() (should fail)
+PASS context.suspend() promise rejected (correctly)
+PASS context.state is "closed"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

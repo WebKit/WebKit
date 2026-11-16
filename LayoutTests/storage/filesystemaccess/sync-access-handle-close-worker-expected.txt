@@ -1,0 +1,21 @@
+[Worker] This test checks close() of FileSystemSyncAccessHandle
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Starting worker: resources/sync-access-handle-close.js
+[Worker] test closing handle:
+[Worker] testing getSize
+PASS [Worker] error.toString() is "InvalidStateError: AccessHandle is closed"
+[Worker] testing flush
+PASS [Worker] error.toString() is "InvalidStateError: AccessHandle is closed"
+[Worker] testing read
+PASS [Worker] error.toString() is "InvalidStateError: AccessHandle is closed"
+[Worker] testing write
+PASS [Worker] error.toString() is "InvalidStateError: AccessHandle is closed"
+[Worker] test closing multiple handles:
+[Worker] Create and close access handles successfully
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

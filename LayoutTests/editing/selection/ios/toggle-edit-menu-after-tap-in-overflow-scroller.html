@@ -1,0 +1,71 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<head>
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="utf8">
+<style>
+body, html {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+}
+
+.text {
+    font-size: 48px;
+    padding: 4px;
+    text-align: center;
+    box-sizing: border-box;
+}
+
+.tall {
+    width: 300px;
+    height: 500px;
+}
+
+.scroller {
+    width: 300px;
+    height: 200px;
+    overflow: scroll;
+    border: 1px solid skyblue;
+    box-sizing: border-box;
+}
+</style>
+<script>
+jsTestIsAsync = true;
+
+addEventListener("load", async () => {
+    description("This test verifies that tapping selected non-editable text inside an overflow scroller shows or hides the edit menu. To manually test, select the text above, and wait for the edit menu to show; tap inside the selection to dismiss the edit menu");
+    const text = document.querySelector(".text");
+    text.addEventListener("click", () => {
+        testFailed("Dispatched click during tap");
+    });
+
+    if (!window.testRunner)
+        return;
+
+    await UIHelper.longPressElement(text);
+    await UIHelper.waitForSelectionToAppear();
+    testPassed("Observed selection");
+
+    await UIHelper.waitForMenuToShow();
+    testPassed("Showed edit menu after selecting text");
+
+    await UIHelper.activateElement(text);
+    await UIHelper.waitForMenuToHide();
+    testPassed("Dismissed edit menu after tap in selected text");
+    shouldBeEqualToString("getSelection().type", "Range");
+    finishJSTest();
+});
+</script>
+</head>
+<body>
+    <div class="scroller">
+        <p class="text" onclick="return false;">Select</p>
+        <div class="tall"></div>
+    </div>
+    <p id="description"></p>
+    <p id="console"></p>
+</body>
+</html>

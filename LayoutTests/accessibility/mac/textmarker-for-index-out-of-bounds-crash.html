@@ -1,0 +1,20 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+<body>
+
+<div id="text">text</div>
+
+<script>
+if (window.accessibilityController) {
+    let output = "This verifies that textMarkerForIndex does not crash when given an index greater than 2^31.\n\n";
+
+    var text = accessibilityController.accessibleElementById("text");
+    output += expect("text.isTextMarkerNull(text.textMarkerForIndex(99999999999))", "false");
+
+    debug(output);
+}
+</script>
+</body>
+</html>

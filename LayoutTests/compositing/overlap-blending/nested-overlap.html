@@ -1,0 +1,35 @@
+<html>
+    <head>
+        <meta name="fuzzy" content="maxDifference=0-1; totalPixels=40000">
+        <style>
+            div {
+                -webkit-transform: translateZ(0);
+                width: 200px;
+                height: 200px;
+            }
+
+            span {
+                position: absolute;
+                opacity: 0;
+            }
+
+            .child {
+                opacity: 0.7;
+                background: green;
+            }
+            .container {
+                opacity: 0.7;
+            }
+            body > div {
+                opacity: 0.7;
+            }
+        </style>
+    </head>
+    <body>
+        <div><span></span>
+            <div class="container"><span></span>
+                <div class="child"><span></span></div>
+            </div>
+        </div>
+    </body>
+</html>

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>This test passes if it does not crash. To test manually, press on the text below and drag down across the lines.</p>
+<div id="host"></div>
+<script src="../../resources/ui-helper.js"></script>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+// Renderers torn down during a style update are normally deleted later, enabling this makes the crash deterministic.
+window.internals?.setImmediateRendererDestructionEnabled(true);
+
+const host = document.getElementById("host");
+const shadowRoot = host.attachShadow({ mode: "open" });
+shadowRoot.innerHTML = "<div>First line of text</div><div>Second line of text</div><div>Third line of text</div>";
+const lines = [...shadowRoot.querySelectorAll("div")];
+
+const slot = document.createElement("slot");
+slot.name = "gutter";
+host.addEventListener("pointermove", () => {
+    if (slot.isConnected)
+        slot.remove();
+    else
+        lines[0].append(slot);
+});
+
+if (window.eventSender) {
+    const [first, second, third] = lines.map(line => UIHelper.midPointOfRect(line.getBoundingClientRect()));
+    eventSender.mouseMoveTo(first.x, first.y);
+    eventSender.mouseDown();
+    eventSender.mouseMoveTo(second.x, second.y);
+    eventSender.mouseMoveTo(third.x, third.y);
+    eventSender.mouseUp();
+
+    window.internals?.setImmediateRendererDestructionEnabled(false);
+    host.remove();
+    document.body.append("PASS");
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,12 @@
+--- !tapi-tbd
+tbd-version: 4
+targets: [arm64-tvos, arm64e-tvos]
+install-name: /System/Library/PrivateFrameworks/RemotePairingDevice.framework/RemotePairingDevice
+current-version: 238
+swift-abi-version: 7
+exports:
+-       targets: [arm64-tvos, arm64e-tvos]
+        symbols: [_$s19RemotePairingDevice21AuxiliaryMetadataItemO7booleanyACSbcACmFWC, _$s19RemotePairingDevice21AuxiliaryMetadataItemOMa,
+                _$s19RemotePairingDevice21AuxiliaryMetadataItemOMn, _$s19RemotePairingDevice25AuxiliaryMetadataProviderC08registerE09forDomain8metadataySS_SDySSAA0dE4ItemOGtFTj,
+                _$s19RemotePairingDevice25AuxiliaryMetadataProviderC6sharedACvgZ, _$s19RemotePairingDevice25AuxiliaryMetadataProviderCMa]
+...

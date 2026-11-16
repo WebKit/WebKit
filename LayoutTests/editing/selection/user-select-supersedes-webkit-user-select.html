@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<div id="container">
+    <div style="-webkit-user-select: none">webkitNoneHost
+        <span style="-webkit-user-select: auto">webkitAutoChild</span>
+        <span style="user-select: text">unprefixedTextChild</span>
+    </div>
+    <div style="user-select: none">unprefixedNoneHost
+        <span style="user-select: auto">unprefixedAutoChild</span>
+        <span style="-webkit-user-select: text">webkitTextChild</span>
+        <span style="-webkit-user-select: text; user-select: none">bothSpellingsChild</span>
+    </div>
+</div>
+
+<div id="description"></div>
+<div id="console"></div>
+<script>
+description("Verifies that 'user-select' supersedes '-webkit-user-select' once the feature flag and the linked-on-or-after behavior are both enabled.");
+
+// Captured before anything is logged, because the console output would otherwise contain these
+// same tokens and pollute the checks below.
+(function() {
+    const container = document.getElementById("container");
+    const selection = getSelection();
+    selection.removeAllRanges();
+    selection.selectAllChildren(container);
+    window.selectedText = selection.toString();
+    selection.removeAllRanges();
+    container.remove();
+})();
+
+debug("");
+debug("'none' applies to whichever spelling was used, and 'user-select' wins when both are present.");
+shouldBeFalse('selectedText.includes("webkitNoneHost")');
+shouldBeFalse('selectedText.includes("unprefixedNoneHost")');
+shouldBeFalse('selectedText.includes("bothSpellingsChild")');
+
+debug("");
+debug("'-webkit-user-select' still applies when 'user-select' was not used, and its 'auto' still means 'text'.");
+shouldBeTrue('selectedText.includes("webkitTextChild")');
+shouldBeTrue('selectedText.includes("webkitAutoChild")');
+
+debug("");
+debug("'user-select' overrides an inherited '-webkit-user-select', and its 'auto' resolves against the parent's used value.");
+shouldBeTrue('selectedText.includes("unprefixedTextChild")');
+shouldBeFalse('selectedText.includes("unprefixedAutoChild")');
+
+</script>
+</body>
+</html>

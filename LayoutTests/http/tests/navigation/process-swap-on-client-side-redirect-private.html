@@ -1,0 +1,33 @@
+<!-- webkit-test-runner [ useEphemeralSession=true ] -->
+<!DOCTYPE html>
+<html>
+<head>
+<script src="/js-test-resources/js-test.js"></script>
+</head>
+<body onload="run()">
+<script>
+    description("Tests process swapping on client-side redirect in an ephemeral session.");
+    jsTestIsAsync = true;
+
+    function runTest() {
+        switch (document.location.hash) {
+            case "#step1":
+                document.location.href = "http://localhost:8000/navigation/process-swap-on-client-side-redirect-private.html#step2";
+                break;
+            case "#step2":
+                finishJSTest();
+                break;
+        }
+    }
+
+    function run() {
+        if (document.location.hash === "") {
+            document.location.hash = "step1";
+            setTimeout(runTest, 0);
+            return;
+        }
+        runTest();
+    }
+</script>
+</body>
+</html>

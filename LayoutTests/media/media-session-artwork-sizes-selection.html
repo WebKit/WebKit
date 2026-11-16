@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>media-session-artwork-sizes-selection</title>
+    <script src=video-test.js></script>
+    <script src=media-file.js></script>
+    <script>
+
+        async function runTest()
+        {
+            findMediaElement();
+
+            consoleWrite('<br>* Load a media file so a NowPlaying session can register.');
+            run('video.src = findMediaFile("video", "content/test")');
+            await waitFor(video, 'canplaythrough');
+
+            consoleWrite('<br>* Provide artwork with both square and non-square sizes.');
+            run('navigator.mediaSession.metadata = new MediaMetadata({title: "title", artwork: [{src: "content/abe.png", sizes: "130x130"}, {src: "content/greenbox.png", sizes: "1280x720"}]})');
+            run('navigator.mediaSession.playbackState = "paused"');
+            run('navigator.mediaSession.positionState = {duration: video.duration, position: video.currentTime}');
+
+            consoleWrite('<br>* Start to play so NowPlaying becomes active.');
+            runWithKeyDown(() => {
+                run('video.play()');
+            });
+            await waitFor(video, 'playing');
+
+            consoleWrite('<br>* The 1280x720 image has the higher score and must be the selected artwork.');
+            await testExpectedEventuallyIgnoringError('internals.nowPlayingMetadata.artwork', null, '!=', 10000);
+            testExpected('internals.nowPlayingMetadata.artwork.src.endsWith("greenbox.png")', true);
+            testExpected('internals.nowPlayingMetadata.artwork.src.endsWith("abe.png")', false);
+
+            consoleWrite('');
+        }
+
+        window.addEventListener('load', event => {
+            runTest().then(endTest).catch(failTest);
+        });
+    </script>
+</head>
+<body>
+    <video controls></video>
+    <br>
+    Tests that MediaMetadata selects the highest-scored artwork by parsing non-square "sizes" correctly.
+</body>
+</html>

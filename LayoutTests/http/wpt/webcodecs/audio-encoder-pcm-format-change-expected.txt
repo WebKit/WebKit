@@ -1,0 +1,3 @@
+
+PASS AudioEncoder handles switching PCM sample format from f32-planar to s16 mid-stream
+

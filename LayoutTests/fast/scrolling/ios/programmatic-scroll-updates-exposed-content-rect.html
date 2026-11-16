@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+    body {
+        margin: 0;
+        height: 400px;
+        background-image: repeating-linear-gradient(white, silver 300px);
+    }
+        
+    #composited {
+        position: absolute;
+        top: 10px;
+        width: 100%;
+        height: 200px;
+        background-color: green;
+        will-change: transform;
+    }
+    </style>
+<script src="../../../resources/ui-helper.js"></script>
+<script src="../../../resources/js-test.js"></script>
+<script>
+    jsTestIsAsync = true;
+
+    window.addEventListener('load', async () => {
+        await UIHelper.ensurePresentationUpdate();
+
+        const scrollAmount = 2000;
+        document.getElementById('composited').style.top = `${scrollAmount + 10}px`;
+        window.scrollTo(0, scrollAmount);
+
+        document.getElementById('layers').innerText = internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_VISIBLE_RECTS | internals.LAYER_TREE_INCLUDES_ROOT_LAYER_PROPERTIES);
+        
+        finishJSTest();
+    });
+</script>
+</head>
+<body>
+    <div id="composited">Composited</div>
+<pre id="layers"></pre>
+</body>
+</html>

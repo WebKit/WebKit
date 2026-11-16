@@ -1,0 +1,15 @@
+This test ensures that computing text markers includes all display:contents text content.
+
+Web area string for start-to-end text marker range:
+
+Foo text
+This is a table caption
+Author Title Year
+Stephen Hawking A Brief History of Time 1988
+Carl Sagan Cosmos 1980
+Will Gater The Mysteries of the Universe 2020
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,7 @@
+
+
+PASS setAttribute('target') updates SVGAElement.target.baseVal
+PASS Clicking the original <a> uses the updated target
+PASS Clicking a <use> instance of <a> uses the target set via setAttribute
+PASS Clicking a <use> instance of <a> uses the target set via target.baseVal
+

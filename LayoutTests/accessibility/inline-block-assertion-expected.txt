@@ -1,0 +1,8 @@
+Make sure that an inline block element is not cast incorrectly causing an assertion.
+
+PASS: element.role === 'AXRole: AXWebArea'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

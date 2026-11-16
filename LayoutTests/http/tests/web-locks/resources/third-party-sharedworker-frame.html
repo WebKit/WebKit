@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script>
+
+const worker = new SharedWorker('./shared-worker.js');
+worker.port.onmessage = (event) => top.postMessage(event.data, '*');
+
+</script>
+</body>
+</html>

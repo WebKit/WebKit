@@ -1,0 +1,10 @@
+abc
+xyz
+def
+
+PASS user-select:all should not be inherited.
+PASS user-select:auto should not be inherited.
+FAIL user-select:contain should not be inherited. assert_equals: user-select:contain should be supported. expected "contain" but got "auto"
+PASS user-select:none should not be inherited.
+PASS user-select:text should not be inherited.
+

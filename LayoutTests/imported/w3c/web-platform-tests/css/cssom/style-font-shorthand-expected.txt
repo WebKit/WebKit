@@ -1,0 +1,3 @@
+
+PASS should get normalized value for font shorthand
+

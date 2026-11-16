@@ -1,0 +1,188 @@
+// Copyright (C) 2019 Apple Inc. All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted provided that the following conditions
+// are met:
+// 1. Redistributions of source code must retain the above copyright
+//    notice, this list of conditions and the following disclaimer.
+// 2. Redistributions in binary form must reproduce the above copyright
+//    notice, this list of conditions and the following disclaimer in the
+//    documentation and/or other materials provided with the distribution.
+//
+// THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+// THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+// PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+// BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+// CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+// SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+// INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+// CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+// ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+// THE POSSIBILITY OF SUCH DAMAGE.
+
+WebCoreSupport/WebResourceLoadScheduler.mm @nonARC
+
+mac/DOM/DOM.mm @nonARC
+mac/DOM/DOMAbstractView.mm @nonARC
+mac/DOM/DOMAttr.mm @nonARC
+mac/DOM/DOMBlob.mm @nonARC
+mac/DOM/DOMCDATASection.mm @nonARC
+mac/DOM/DOMCSS.mm @nonARC
+mac/DOM/DOMCSSCharsetRule.mm @nonARC
+mac/DOM/DOMCSSFontFaceRule.mm @nonARC
+mac/DOM/DOMCSSImportRule.mm @nonARC
+mac/DOM/DOMCSSMediaRule.mm @nonARC
+mac/DOM/DOMCSSPageRule.mm @nonARC
+mac/DOM/DOMCSSPrimitiveValue.mm @nonARC
+mac/DOM/DOMCSSRule.mm @nonARC
+mac/DOM/DOMCSSRuleList.mm @nonARC
+mac/DOM/DOMCSSStyleDeclaration.mm @nonARC
+mac/DOM/DOMCSSStyleRule.mm @nonARC
+mac/DOM/DOMCSSStyleSheet.mm @nonARC
+mac/DOM/DOMCSSUnknownRule.mm @nonARC
+mac/DOM/DOMCSSValue.mm @nonARC
+mac/DOM/DOMCSSValueList.mm @nonARC
+mac/DOM/DOMCharacterData.mm @nonARC
+mac/DOM/DOMComment.h
+mac/DOM/DOMComment.mm @nonARC
+mac/DOM/DOMCommentInternal.h
+mac/DOM/DOMCounter.mm @nonARC
+mac/DOM/DOMCustomXPathNSResolver.mm @nonARC
+mac/DOM/DOMDocument.mm @nonARC
+mac/DOM/DOMDocumentFragment.mm @nonARC
+mac/DOM/DOMDocumentType.mm @nonARC
+mac/DOM/DOMElement.mm @nonARC
+mac/DOM/DOMEntity.mm @nonARC
+mac/DOM/DOMEntityReference.mm @nonARC
+mac/DOM/DOMEvent.mm @nonARC
+mac/DOM/DOMEvents.mm @nonARC
+mac/DOM/DOMFile.mm @nonARC
+mac/DOM/DOMFileList.mm @nonARC
+mac/DOM/DOMHTML.mm @nonARC
+mac/DOM/DOMHTMLAnchorElement.mm @nonARC
+mac/DOM/DOMHTMLAppletElement.mm @nonARC
+mac/DOM/DOMHTMLAreaElement.mm @nonARC
+mac/DOM/DOMHTMLBRElement.mm @nonARC
+mac/DOM/DOMHTMLBaseElement.mm @nonARC
+mac/DOM/DOMHTMLBaseFontElement.mm @nonARC
+mac/DOM/DOMHTMLBodyElement.mm @nonARC
+mac/DOM/DOMHTMLButtonElement.mm @nonARC
+mac/DOM/DOMHTMLCanvasElement.mm @nonARC
+mac/DOM/DOMHTMLCollection.mm @nonARC
+mac/DOM/DOMHTMLDListElement.mm @nonARC
+mac/DOM/DOMHTMLDirectoryElement.mm @nonARC
+mac/DOM/DOMHTMLDivElement.mm @nonARC
+mac/DOM/DOMHTMLDocument.mm @nonARC
+mac/DOM/DOMHTMLElement.mm @nonARC
+mac/DOM/DOMHTMLEmbedElement.mm @nonARC
+mac/DOM/DOMHTMLFieldSetElement.mm @nonARC
+mac/DOM/DOMHTMLFontElement.mm @nonARC
+mac/DOM/DOMHTMLFormElement.mm @nonARC
+mac/DOM/DOMHTMLFrameElement.mm @nonARC
+mac/DOM/DOMHTMLFrameSetElement.mm @nonARC
+mac/DOM/DOMHTMLHRElement.mm @nonARC
+mac/DOM/DOMHTMLHeadElement.mm @nonARC
+mac/DOM/DOMHTMLHeadingElement.mm @nonARC
+mac/DOM/DOMHTMLHtmlElement.mm @nonARC
+mac/DOM/DOMHTMLIFrameElement.mm @nonARC
+mac/DOM/DOMHTMLImageElement.mm @nonARC
+mac/DOM/DOMHTMLInputElement.mm @nonARC
+mac/DOM/DOMHTMLLIElement.mm @nonARC
+mac/DOM/DOMHTMLLabelElement.mm @nonARC
+mac/DOM/DOMHTMLLegendElement.mm @nonARC
+mac/DOM/DOMHTMLLinkElement.mm @nonARC
+mac/DOM/DOMHTMLMapElement.mm @nonARC
+mac/DOM/DOMHTMLMarqueeElement.mm @nonARC
+mac/DOM/DOMHTMLMediaElement.mm @nonARC
+mac/DOM/DOMHTMLMenuElement.mm @nonARC
+mac/DOM/DOMHTMLMetaElement.mm @nonARC
+mac/DOM/DOMHTMLModElement.mm @nonARC
+mac/DOM/DOMHTMLOListElement.mm @nonARC
+mac/DOM/DOMHTMLObjectElement.mm @nonARC
+mac/DOM/DOMHTMLOptGroupElement.mm @nonARC
+mac/DOM/DOMHTMLOptionElement.mm @nonARC
+mac/DOM/DOMHTMLOptionsCollection.mm @nonARC
+mac/DOM/DOMHTMLParagraphElement.mm @nonARC
+mac/DOM/DOMHTMLParamElement.mm @nonARC
+mac/DOM/DOMHTMLPreElement.mm @nonARC
+mac/DOM/DOMHTMLQuoteElement.mm @nonARC
+mac/DOM/DOMHTMLScriptElement.mm @nonARC
+mac/DOM/DOMHTMLSelectElement.mm @nonARC
+mac/DOM/DOMHTMLStyleElement.mm @nonARC
+mac/DOM/DOMHTMLTableCaptionElement.mm @nonARC
+mac/DOM/DOMHTMLTableCellElement.mm @nonARC
+mac/DOM/DOMHTMLTableColElement.mm @nonARC
+mac/DOM/DOMHTMLTableElement.mm @nonARC
+mac/DOM/DOMHTMLTableRowElement.mm @nonARC
+mac/DOM/DOMHTMLTableSectionElement.mm @nonARC
+mac/DOM/DOMHTMLTextAreaElement.mm @nonARC
+mac/DOM/DOMHTMLTitleElement.mm @nonARC
+mac/DOM/DOMHTMLUListElement.mm @nonARC
+mac/DOM/DOMHTMLVideoElement.mm @nonARC
+mac/DOM/DOMImplementation.mm @nonARC
+mac/DOM/DOMInternal.mm @nonARC @cost:4
+mac/DOM/DOMKeyboardEvent.mm @nonARC @cost:3
+mac/DOM/DOMMediaError.mm @nonARC @cost:3
+mac/DOM/DOMMediaList.mm @nonARC @cost:3
+mac/DOM/DOMMouseEvent.mm @nonARC @cost:3
+mac/DOM/DOMMutationEvent.mm @nonARC @cost:3
+mac/DOM/DOMNamedNodeMap.mm @nonARC @cost:3
+mac/DOM/DOMNode.mm @nonARC @cost:4
+mac/DOM/DOMNodeIterator.mm @nonARC @cost:3
+mac/DOM/DOMNodeList.mm @nonARC @cost:3
+mac/DOM/DOMObject.mm @nonARC
+mac/DOM/DOMOverflowEvent.mm @nonARC @cost:3
+mac/DOM/DOMProcessingInstruction.mm @nonARC @cost:3
+mac/DOM/DOMProgressEvent.mm @nonARC @cost:3
+mac/DOM/DOMRGBColor.mm @nonARC @cost:3
+mac/DOM/DOMRange.mm @nonARC @cost:5
+mac/DOM/DOMRect.mm @nonARC @cost:3
+mac/DOM/DOMStyleSheet.mm @nonARC @cost:3
+mac/DOM/DOMStyleSheetList.mm @nonARC @cost:3
+mac/DOM/DOMText.mm @nonARC @cost:3
+mac/DOM/DOMTextEvent.mm @nonARC @cost:3
+mac/DOM/DOMTimeRanges.mm @nonARC @cost:3
+mac/DOM/DOMTokenList.mm @nonARC @cost:3
+mac/DOM/DOMTreeWalker.mm @nonARC @cost:3
+mac/DOM/DOMUIEvent.mm @nonARC @cost:3
+mac/DOM/DOMUIKitExtensions.mm @nonARC
+mac/DOM/DOMUtility.mm @nonARC @cost:5
+mac/DOM/DOMWheelEvent.mm @nonARC @cost:3
+mac/DOM/DOMXPath.mm @nonARC
+mac/DOM/DOMXPathExpression.mm @nonARC @cost:3
+mac/DOM/DOMXPathResult.mm @nonARC @cost:3
+mac/DOM/ExceptionHandlers.mm @nonARC
+mac/DOM/ObjCEventListener.mm @nonARC @cost:3
+mac/DOM/ObjCNodeFilterCondition.mm @nonARC
+mac/DOM/WebDOMOperations.mm @nonARC @cost:11
+
+mac/DefaultDelegates/WebDefaultContextMenuDelegate.mm @nonARC @cost:4
+
+mac/Misc/WebSharingServicePickerController.mm @nonARC @cost:3
+
+mac/Plugins/WebBasePluginPackage.mm @nonARC
+mac/Plugins/WebPluginContainerCheck.mm @nonARC @cost:5
+mac/Plugins/WebPluginController.mm @nonARC @cost:4
+mac/Plugins/WebPluginDatabase.mm @nonARC
+
+mac/History/WebBackForwardList.mm @nonARC @cost:4
+mac/WebCoreSupport/TextIndicatorWindow.mm @nonARC
+mac/WebCoreSupport/WebFrameLoaderClient.mm @nonARC @cost:7
+
+mac/WebInspector/WebInspector.mm @nonARC @cost:4
+
+mac/WebView/WebClipView.mm @nonARC @cost:4
+mac/WebView/WebDataSource.mm @nonARC @cost:4
+mac/WebView/WebFrame.mm @nonARC @cost:14
+mac/WebView/WebFrameView.mm @nonARC @cost:5
+mac/WebView/WebFullScreenController.mm @nonARC @cost:8
+mac/WebView/WebHTMLView.mm @nonARC @cost:10
+mac/WebView/WebImmediateActionController.mm @nonARC @cost:9
+mac/WebView/WebPDFRepresentation.mm @nonARC
+mac/WebView/WebPDFView.mm @nonARC @cost:5
+mac/WebView/WebScriptDebugger.mm @nonARC @cost:4
+mac/WebView/WebScriptDebugDelegate.mm @nonARC @cost:4
+mac/WebView/WebScriptWorld.mm @nonARC @cost:3
+mac/WebView/WebView.mm @nonARC @cost:16
+mac/WebView/WebViewRenderingUpdateScheduler.mm @nonARC

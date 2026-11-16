@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test.js"></script>
+<script>
+
+description('This tests that requestIdleCallback will execute the function even when there is a pending task for a suspended document');
+
+jsTestIsAsync = true;
+didExecuteIdleCallback = false;
+
+window.onload = () => {
+    setTimeout(() => {
+        shouldBeTrue('didExecuteIdleCallback');
+        finishJSTest();
+    }, 100);
+    requestIdleCallback(() => {
+        didExecuteIdleCallback = true;
+    });
+}
+
+</script>
+</body>
+</html>

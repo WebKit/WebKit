@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Security-Policy" content="SCRIPT-SRC 'strict-dynamic' 'self' 'nonce-dummy'">
+        <script src="/js-test-resources/testharness.js" nonce='dummy'></script>
+        <script src="/js-test-resources/testharnessreport.js" nonce='dummy'></script>
+</head>
+<body>
+    <script nonce='dummy'>
+        async_test(function(t) {
+            window.addEventListener('securitypolicyviolation', t.step_func_done(function(e) {
+                assert_equals(e.effectiveDirective, 'script-src-elem');
+            }));
+        }, 'An uppercase SCRIPT-SRC directive still applies strict-dynamic, so a parser-inserted script is blocked.');
+    </script>
+    <script id='blockedScript' src='resources/simpleSourcedScript.js'></script>
+</body>
+</html>

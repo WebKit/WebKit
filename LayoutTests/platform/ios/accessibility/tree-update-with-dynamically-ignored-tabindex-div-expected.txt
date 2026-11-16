@@ -1,0 +1,17 @@
+This test ensures that we properly update the accessibility tree when an object becomes dynamically ignored in the middle of handling children updates for it.
+
+
+{StaticText AXLabel: Foo}
+
+{StaticText AXLabel: Foo}
+
+{StaticText AXLabel: Red}
+
+{StaticText AXLabel: Green}
+
+{StaticText AXLabel: Blue}
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,14 @@
+Hello World
+Foo-Bar
+John's Apple
+Hello World
+Foo_bar
+abc
+
+PASS text-transform: capitalize test for 'hello world'
+PASS text-transform: capitalize test for 'foo-bar'
+PASS text-transform: capitalize test for "john's apple"
+PASS text-transform: capitalize test for nested elements
+PASS text-transform: capitalize test for underscore
+PASS text-transform: capitalize test for not starting at word boundary
+

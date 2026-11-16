@@ -1,0 +1,26 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ LayerBasedSVGEngineEnabled=true ] -->
+<html>
+<head>
+<style>
+    html, body { margin: 0; padding: 0; }
+    svg { width: 200px; height: 200px; }
+</style>
+</head>
+<body>
+<!-- Plain circle between two composited <g> siblings. It must paint between the red and blue rects in DOM order. -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+    <g filter="url(#f)">
+        <rect x="10" y="10" width="120" height="120" fill="red"/>
+    </g>
+    <circle cx="100" cy="100" r="60" fill="green"/>
+    <g style="will-change: transform">
+        <rect x="70" y="70" width="120" height="120" fill="blue"/>
+    </g>
+    <defs>
+        <filter id="f" x="-10%" y="-10%" width="120%" height="120%">
+            <feOffset dx="0" dy="0"/>
+        </filter>
+    </defs>
+</svg>
+</body>
+</html>

@@ -1,0 +1,27 @@
+This test ensures mixed values are reported correctly.
+
+<div id="element1" role="radio" aria-checked="mixed"></div>
+Role: AXRole: AXRadioButton
+Mixed: false
+
+<div id="element2" role="menuitemradio" aria-checked="mixed"></div>
+Role: AXRole: AXRadioMenuItem
+Mixed: false
+
+<div id="element3" role="menuitemcheckbox" aria-checked="mixed"></div>
+Role: AXRole: AXCheckMenuItem
+Mixed: true
+
+<div id="element4" role="checkbox"></div>
+Role: AXRole: AXCheckBox
+Mixed: false
+
+<div id="element5" role="checkbox" aria-checked="mixed"></div>
+Role: AXRole: AXCheckBox
+Mixed: true
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

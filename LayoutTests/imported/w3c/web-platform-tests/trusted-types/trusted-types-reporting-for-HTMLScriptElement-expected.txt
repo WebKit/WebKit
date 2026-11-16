@@ -1,0 +1,10 @@
+
+PASS No violation reported for trusted input (innerText).
+PASS Violation report for plain string (innerText)
+PASS No violation reported for trusted input (textContent).
+PASS Violation report for plain string (textContent)
+PASS No violation reported for trusted input (src).
+PASS Violation report for plain string (src)
+PASS No violation reported for trusted input (text).
+PASS Violation report for plain string (text)
+

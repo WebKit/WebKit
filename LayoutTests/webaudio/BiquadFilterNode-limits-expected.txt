@@ -1,0 +1,21 @@
+Tests the limits of BiquadFilterNode's AudioParam attributes
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS node.frequency.defaultValue is 350
+PASS node.frequency.minValue is 0
+PASS node.frequency.maxValue is 0.5 * context.sampleRate
+PASS node.detune.defaultValue is 0
+PASS node.detune.minValue is -153600
+PASS node.detune.maxValue is 153600
+PASS node.Q.defaultValue is 1
+PASS diff(node.Q.minValue, -FLT_MAX) < 1e31 is true
+PASS diff(node.Q.maxValue, FLT_MAX) < 1e31 is true
+PASS node.gain.defaultValue is 0
+PASS diff(node.gain.minValue, -FLT_MAX) < 1e31 is true
+PASS diff(node.gain.maxValue, 1541) < 1 is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

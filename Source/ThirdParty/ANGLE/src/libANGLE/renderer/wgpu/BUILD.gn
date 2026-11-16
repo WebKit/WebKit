@@ -1,0 +1,48 @@
+# Copyright 2024 The ANGLE Project Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+#
+# This file houses the build configuration for the ANGLE Wgpu back-end.
+
+import("//third_party/dawn/scripts/dawn_features.gni")
+import("../../../../gni/angle.gni")
+import("wgpu_sources.gni")
+
+if (angle_use_wayland) {
+  import("//build_overrides/wayland.gni")
+}
+
+assert(angle_enable_wgpu)
+assert(defined(angle_dawn_dir))
+
+config("angle_wgpu_backend_config") {
+  defines = [ "ANGLE_ENABLE_WGPU" ]
+}
+
+angle_source_set("angle_wgpu_backend") {
+  sources = wgpu_backend_sources
+
+  public_deps = [ "$angle_root:libANGLE_headers" ]
+  defines = [ "WGPU_SKIP_DECLARATIONS" ]
+
+  deps = [
+    "$angle_root:angle_image_util",
+    "${angle_dawn_dir}/include/dawn:headers",
+    "${angle_dawn_dir}/src/dawn:proc",
+    "${angle_dawn_dir}/src/dawn/native",
+    "${angle_root}:translator",
+  ]
+
+  if (angle_use_wayland) {
+    public_configs += [ "$angle_root:angle_wayland_config" ]
+
+    # wl_proxy_get_display() (used by WindowSurfaceWgpuWayland) is declared in
+    # wayland-client-core.h, which is only exposed by the wayland_client
+    # target's config -- angle_wayland_config alone does not put it on the
+    # include path.
+    deps += [
+      "$wayland_gn_dir:wayland_client",
+      "$wayland_gn_dir:wayland_egl",
+    ]
+  }
+}

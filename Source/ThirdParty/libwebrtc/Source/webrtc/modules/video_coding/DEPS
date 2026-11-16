@@ -1,0 +1,28 @@
+include_rules = [
+  "+call",
+  "+common_video",
+  "+sdk",
+  "+system_wrappers",
+  "+rtc_tools",
+  "+third_party/libyuv",
+  "+rtc_base/system/rtc_export.h",
+  "+video/config",
+  "+third_party/libvpx",
+]
+
+specific_include_rules = {
+  "multiplex_encoder_adapter\\.cc": [
+    "+media/base",
+  ],
+  "timing\\.cc": [
+    "+video/timing/default_video_jitter_timing.h",
+  ],
+  "av1_qp_parser\\.cc": [
+    "+third_party/libgav1",
+  ],
+  ".*test.*\\.cc": [
+     "+media/base",
+     "+media/engine",
+     "+video/config",
+  ],
+}

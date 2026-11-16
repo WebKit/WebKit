@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<style>
+  .container {
+    width: max-content;
+    height: 50px;
+    background: green;
+  }
+  .test {
+    display: -webkit-box;
+    width: stretch(100px);
+    margin-right: 10px;
+  }
+</style>
+<!-- A fixed stretch() argument is the size of the margin box, so a -webkit-box and a file upload control contribute it, margins included. -->
+<div class="container"><div class="test"></div></div>
+<div class="container"><input type="file" style="display: block; visibility: hidden; width: stretch(100px); margin-right: 10px;"></div>

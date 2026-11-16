@@ -1,0 +1,6 @@
+There should be a green square to the left of a blue square, and no red.
+
+
+
+PASS #container 1
+

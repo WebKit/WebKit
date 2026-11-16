@@ -1,0 +1,13 @@
+This is some text.
+
+
+PASS :open pseudo-class invalidation with dialog.show() + dialog.close()
+PASS :open pseudo-class invalidation with dialog.show() + dialog.requestClose()
+PASS :open pseudo-class invalidation with dialog.show() + dialog.open = false
+PASS :open pseudo-class invalidation with dialog.showModal() + dialog.close()
+PASS :open pseudo-class invalidation with dialog.showModal() + dialog.requestClose()
+PASS :open pseudo-class invalidation with dialog.showModal() + dialog.open = false
+PASS :open pseudo-class invalidation with dialog.open = true/false
+PASS :open pseudo-class invalidation with details.open = true/false
+FAIL :open pseudo-class invalidation with select.showPicker() assert_equals: ancestor should be green since select is open expected "rgb(255, 0, 0)" but got "rgb(0, 0, 0)"
+

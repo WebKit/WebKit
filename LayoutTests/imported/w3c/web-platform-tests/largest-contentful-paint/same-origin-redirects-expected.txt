@@ -1,0 +1,4 @@
+
+
+PASS Same-origin image redirect without TAO should have its renderTime set.
+

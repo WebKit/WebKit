@@ -1,0 +1,11 @@
+Built on 2025-01-21T15:10:24Z
+
+Toolchain versions
+emcc (Emscripten gcc/clang-like replacement + linker emulating GNU ld) 3.1.73 (ac676d5e437525d15df5fd46bc2c208ec6d376a3)
+wasm-strip 1.0.34
+
+Getting sources from https://sqlite.org/2025/sqlite-src-3480000.zip
+
+Building...
+Copying files from sqlite-src-*/ext/wasm/ into build/
+Build success

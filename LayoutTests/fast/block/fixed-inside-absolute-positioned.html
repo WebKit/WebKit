@@ -1,0 +1,21 @@
+<style>
+.outer {
+  position: absolute;
+  width: 100px;
+  height: 100px;
+  background-color: red;
+}
+
+.inner {
+  position: fixed;
+  width: 100px;
+  height: 100px;
+  background-color: green;
+}
+</style>
+<!-- Pass if no red -->
+<div id=moveThis class=outer><div><div class=inner></div></div></div>
+<script>
+document.body.offsetHeight;
+moveThis.style.left = "100px";
+</script>

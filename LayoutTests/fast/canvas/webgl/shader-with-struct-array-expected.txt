@@ -1,0 +1,10 @@
+Tests that program compiling/linking with a struct-array construct.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS getError was expected value: NO_ERROR : no error for struct array in program
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

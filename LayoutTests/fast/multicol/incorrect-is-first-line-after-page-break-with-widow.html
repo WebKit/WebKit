@@ -1,0 +1,61 @@
+<style>
+div {
+  widows: 15;
+  font-family: Ahem;
+}
+</style>
+<!-- This test case only works in paginated mode -->
+<div>
+1 some text<br>
+2 some text<br>
+3 some text<br>
+4 some text<br>
+5 some text<br>
+6 some text<br>
+7 some text<br>
+8 some text<br>
+9 some text<br>
+10 some text<br>
+11 some text<br>
+12 some text<br>
+13 some text<br>
+14 some text<br>
+15 some text<br>
+16 some text<br>
+17 some text<br>
+18 some text<br>
+19 some text<br>
+20 some text<br>
+</div>
+<!-- This content overflows the page and we are required to wrap at least 15 lines to the next page -->
+<div id=page_overflow>
+1 some text<br>
+2 some text<br>
+3 some text<br>
+4 some text<br>
+5 some text<br>
+6 some text<br>
+7 some text<br>
+8 some text<br>
+9 some text<br>
+10 some text<br>
+11 some text<br>
+12 some text<br>
+13 some text<br>
+14 some text<br>
+15 some text<br>
+16 some text<br>
+17 some text<br>
+18 some text<br>
+19 some text<br>
+20 some text<br>
+</div>
+
+<script>
+if (window.testRunner)
+  testRunner.dumpAsText();
+if (window.internals) {
+  internals.setPagination("LeftToRightPaginated", 0);
+  document.body.innerText = internals.lineIndexAfterPageBreak(document.getElementById("page_overflow")) + " lines left on the previous page.";
+}
+</script>

@@ -1,0 +1,22 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 51x19
+          text run at (0,0) width 51: "Test for "
+        RenderInline {A} at (0,0) size 58x19 [color=#0000EE]
+          RenderText {#text} at (51,0) size 58x19
+            text run at (51,0) width 58: "bug 3438"
+        RenderText {#text} at (109,0) size 191x19
+          text run at (109,0) width 191: ": rendering of 1x1 PNG images."
+      RenderBlock {P} at (0,36) size 784x20
+        RenderText {#text} at (0,0) size 270x19
+          text run at (0,0) width 270: "The two squares should have the same color:"
+      RenderBlock (anonymous) at (0,72) size 784x55
+        RenderImage {IMG} at (0,0) size 50x50
+        RenderText {#text} at (50,35) size 4x19
+          text run at (50,35) width 4: " "
+        RenderImage {IMG} at (54,0) size 50x50
+        RenderText {#text} at (0,0) size 0x0

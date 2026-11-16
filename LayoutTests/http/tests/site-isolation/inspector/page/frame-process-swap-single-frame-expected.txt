@@ -1,0 +1,24 @@
+Test that an iframe that swaps process under Site Isolation leaves exactly one WI.Frame in the frontend frame tree.
+
+
+== Running test suite: SiteIsolation.Page.FrameProcessSwapSingleFrame
+-- Running test case: SiteIsolation.Page.FrameProcessSwapSingleFrame.AToBToA
+PASS: Initial same-site load: WI.networkManager.frames should hold one WI.Frame for the iframe.
+PASS: Initial same-site load: main frame should have one child frame.
+PASS: Initial same-site load: the iframe's WI.Frame should have the committed URL.
+PASS: Initial same-site load: the iframe's parent should be the main frame.
+PASS: Initial same-site load: the iframe's id should resolve to its WI.Frame.
+PASS: A to B: the frame for the previous process should be removed.
+PASS: A to B: WI.networkManager.frames should hold one WI.Frame for the iframe.
+PASS: A to B: main frame should have one child frame.
+PASS: A to B: the iframe's WI.Frame should have the committed URL.
+PASS: A to B: the iframe's parent should be the main frame.
+PASS: A to B: the iframe's id should resolve to its WI.Frame.
+PASS: B to A: the frame for the previous process should be removed.
+PASS: B to A: WI.networkManager.frames should hold one WI.Frame for the iframe.
+PASS: B to A: main frame should have one child frame.
+PASS: B to A: the iframe's WI.Frame should have the committed URL.
+PASS: B to A: the iframe's parent should be the main frame.
+PASS: B to A: the iframe's id should resolve to its WI.Frame.
+PASS: B to A: the iframe should be a new WI.Frame.
+

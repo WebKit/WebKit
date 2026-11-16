@@ -1,0 +1,20 @@
+<style>
+#changeThis {
+  white-space: normal;
+}
+</style>
+PASS if there's a wide (vertical) blank space between this
+<div id=changeThis>
+
+
+
+
+
+
+
+<span></span></div>
+and this.
+<script>
+document.body.offsetHeight;
+changeThis.style.whiteSpace = "pre";
+</script>

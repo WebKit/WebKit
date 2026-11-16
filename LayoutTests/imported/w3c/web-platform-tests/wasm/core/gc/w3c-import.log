@@ -1,0 +1,32 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/wasm/core/gc/WEB_FEATURES.yml
+/LayoutTests/imported/w3c/web-platform-tests/wasm/core/gc/array.wast.js.html
+/LayoutTests/imported/w3c/web-platform-tests/wasm/core/gc/array_copy.wast.js.html
+/LayoutTests/imported/w3c/web-platform-tests/wasm/core/gc/array_fill.wast.js.html
+/LayoutTests/imported/w3c/web-platform-tests/wasm/core/gc/array_init_data.wast.js.html
+/LayoutTests/imported/w3c/web-platform-tests/wasm/core/gc/array_init_elem.wast.js.html
+/LayoutTests/imported/w3c/web-platform-tests/wasm/core/gc/array_new_data.wast.js.html
+/LayoutTests/imported/w3c/web-platform-tests/wasm/core/gc/array_new_elem.wast.js.html
+/LayoutTests/imported/w3c/web-platform-tests/wasm/core/gc/binary-gc.wast.js.html
+/LayoutTests/imported/w3c/web-platform-tests/wasm/core/gc/br_on_cast.wast.js.html
+/LayoutTests/imported/w3c/web-platform-tests/wasm/core/gc/br_on_cast_fail.wast.js.html
+/LayoutTests/imported/w3c/web-platform-tests/wasm/core/gc/extern.wast.js.html
+/LayoutTests/imported/w3c/web-platform-tests/wasm/core/gc/i31.wast.js.html
+/LayoutTests/imported/w3c/web-platform-tests/wasm/core/gc/ref_cast.wast.js.html
+/LayoutTests/imported/w3c/web-platform-tests/wasm/core/gc/ref_eq.wast.js.html
+/LayoutTests/imported/w3c/web-platform-tests/wasm/core/gc/ref_test.wast.js.html
+/LayoutTests/imported/w3c/web-platform-tests/wasm/core/gc/struct.wast.js.html
+/LayoutTests/imported/w3c/web-platform-tests/wasm/core/gc/type-subtyping.wast.js.html

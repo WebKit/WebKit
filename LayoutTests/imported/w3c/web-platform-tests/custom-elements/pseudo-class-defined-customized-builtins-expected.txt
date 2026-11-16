@@ -1,0 +1,19 @@
+
+
+FAIL <abbr is="my-abbr"> should not be :defined assert_equals: matches(":defined") expected false but got true
+FAIL createElement("abbr", is:"my-abbr") should not be :defined assert_equals: matches(":defined") expected false but got true
+FAIL createElementNS("http://www.w3.org/1999/xhtml", "abbr", is:"my-abbr") should not be :defined assert_equals: matches(":defined") expected false but got true
+PASS createElementNS("http://www.w3.org/2000/svg", "abbr", is:"my-abbr") should be :defined
+PASS Upgraded createElement("abbr", is:"my-abbr") should be :defined
+PASS Upgraded createElementNS("http://www.w3.org/1999/xhtml", "abbr", is:"my-abbr") should be :defined
+FAIL Without browsing context: createElement("abbr", is:"my-abbr") should not be :defined assert_equals: matches(":defined") expected false but got true
+FAIL Without browsing context: createElementNS("http://www.w3.org/1999/xhtml", "abbr", is:"my-abbr") should not be :defined assert_equals: matches(":defined") expected false but got true
+PASS Without browsing context: createElementNS("http://www.w3.org/2000/svg", "abbr", is:"my-abbr") should be :defined
+FAIL <p is=""> should not be :defined assert_equals: matches(":defined") expected false but got true
+FAIL createElement("p", is:"") should not be :defined assert_equals: matches(":defined") expected false but got true
+FAIL createElementNS("http://www.w3.org/1999/xhtml", "p", is:"") should not be :defined assert_equals: matches(":defined") expected false but got true
+PASS createElementNS("http://www.w3.org/2000/svg", "p", is:"") should be :defined
+FAIL Without browsing context: createElement("p", is:"") should not be :defined assert_equals: matches(":defined") expected false but got true
+FAIL Without browsing context: createElementNS("http://www.w3.org/1999/xhtml", "p", is:"") should not be :defined assert_equals: matches(":defined") expected false but got true
+PASS Without browsing context: createElementNS("http://www.w3.org/2000/svg", "p", is:"") should be :defined
+

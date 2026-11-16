@@ -1,0 +1,10 @@
+Target
+SOURCE 1
+SOURCE 2
+SOURCE 3
+Target
+SOURCE 4
+SOURCE 5
+
+FAIL Among in-scope triggers with same name, last in tree-order is selected, unless name occurs in ancestry before scope is reached. assert_equals: animation on ancestor_chain_target has playState running. expected "running" but got "paused"
+

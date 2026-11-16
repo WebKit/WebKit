@@ -1,0 +1,19 @@
+Tests that popstate events do not fire when navigating between pages that are in the page cache, since those are not same-document navigations.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+load fired
+pushState with new state object for page 1
+going to page 2
+pageshow fired - persisted=false
+load fired
+going back to page 1 with new state object
+pageshow fired - persisted=true
+PASS testWindowPopstateFireCount is 0
+going back to page 1 in initial state
+popstate fired with state null
+PASS testWindowPopstateFireCount is 1
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

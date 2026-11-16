@@ -1,0 +1,82 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<head>
+    <style>
+        section {
+            display: flex;
+            margin: 2rem auto;
+            inline-size: 50%;
+            block-size: 10rem;
+            overflow: scroll;
+            scrollbar-width: none;
+            overscroll-behavior: none;
+            scroll-snap-type: x mandatory;
+        }
+
+        section > div {
+            min-inline-size: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            scroll-snap-align: start;
+            scroll-snap-stop: always;
+        }
+    </style>
+    <script src="../../resources/js-test.js"></script>
+    <script>
+        description("Changing page zoom on a horizontal scroll-snap carousel should not crash");
+        jsTestIsAsync = true;
+
+        async function startTest()
+        {
+            const carousel = document.getElementById('carousel');
+            const slide1 = document.getElementById('slide1');
+            const slide3 = document.getElementById('slide3');
+
+            let index = 0;
+            function updateIndex(step) {
+                index += step;
+                slide1.textContent = index - 1;
+                document.getElementById('slide2').textContent = index;
+                slide3.textContent = index + 1;
+            }
+
+            const observer = new IntersectionObserver(([{ isIntersecting, target }]) => {
+                if (isIntersecting) {
+                    updateIndex(target === slide1 ? -1 : 1);
+                    carousel.scrollLeft = carousel.clientWidth;
+                }
+            }, { root: carousel, threshold: 1.0 });
+
+            carousel.scrollLeft = carousel.clientWidth;
+            observer.observe(slide1);
+            observer.observe(slide3);
+
+            await new Promise(requestAnimationFrame);
+            await new Promise(requestAnimationFrame);
+
+            if (window.internals) {
+                internals.setPageZoomFactor(2);
+                await new Promise(requestAnimationFrame);
+                internals.setPageZoomFactor(1);
+                await new Promise(requestAnimationFrame);
+            }
+
+            testPassed("Did not crash.");
+            document.getElementById('carousel').remove();
+            finishJSTest();
+        }
+
+        window.addEventListener('load', startTest, false);
+    </script>
+</head>
+<body>
+    <section id="carousel">
+        <div id="slide1">-1</div>
+        <div id="slide2">0</div>
+        <div id="slide3">1</div>
+    </section>
+    <div id="console"></div>
+</body>
+</html>

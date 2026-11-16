@@ -1,0 +1,17 @@
+<!DOCTYPE HTML>
+<p>This test passes by not crashing.</p>
+<canvas id="canvas">
+    <button id="button"></button>
+</canvas>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+var button = document.getElementById("button");
+button.focus();
+var canvas = document.getElementById("canvas")
+var ctx = canvas.getContext("2d");
+ctx.rect(0, 0, 10, 10);
+canvas.style.display = "none";
+ctx.drawFocusIfNeeded(button);
+</script>

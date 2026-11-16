@@ -1,0 +1,1 @@
+root video video title='Video with controls' controls button label=Play audio title='Audio with controls' controls label='Audio Controls' button label=Play role=text label='Elapsed: 0 seconds' input range valuetext='0 seconds' value=0 role=text label='Remaining: 0 seconds'

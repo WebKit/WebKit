@@ -1,0 +1,6 @@
+
+PASS flex-basis: content makes specified height indefinite for percentage children
+PASS flex-basis: auto preserves specified height as definite for percentage children
+PASS flex-basis: content on row flex does not affect cross-axis percentage resolution
+PASS flex-basis: content makes specified height indefinite for partial percentage children
+

@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<iframe id="x" src="data:text/html,<p>Hello</p>"></iframe>
+<div id="description"></div>
+<div id="console"></div>
+<script>
+description('Test storing to a lazy global property.');
+window.frames[0].Math = window.Math;
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

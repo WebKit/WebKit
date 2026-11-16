@@ -1,0 +1,12 @@
+Test for error messages on function.apply
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS function foo(){}; foo.apply(null, 20) threw exception TypeError: second argument to Function.prototype.apply must be an Array-like object (evaluating 'foo.apply(null, 20)').
+PASS function foo(){}; foo.apply(null, 'hello') threw exception TypeError: second argument to Function.prototype.apply must be an Array-like object (evaluating 'foo.apply(null, 'hello')').
+PASS function foo(){}; foo.apply(null, true) threw exception TypeError: second argument to Function.prototype.apply must be an Array-like object (evaluating 'foo.apply(null, true)').
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

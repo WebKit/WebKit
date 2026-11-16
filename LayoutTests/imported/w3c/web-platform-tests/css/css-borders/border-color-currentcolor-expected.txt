@@ -1,0 +1,3 @@
+
+PASS Computed value of the border-color with currentcolor specified
+

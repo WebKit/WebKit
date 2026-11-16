@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 32 96">
+   <rect id="red-icon" fill="red" x="0" y="0" width="32" height="32"/>
+   <rect id="green-icon" fill="green" x="0" y="32" width="32" height="32"/>
+   <rect id="blue-icon" fill="blue" x="0" y="64" width="32" height="32"/>
+</svg>

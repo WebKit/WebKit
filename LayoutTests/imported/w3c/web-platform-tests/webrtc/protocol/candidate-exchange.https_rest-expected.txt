@@ -1,0 +1,5 @@
+
+PASS Two way ICE exchange works
+PASS Candidates always arrive after setLocalDescription(offer) resolves
+PASS Candidates always arrive after setLocalDescription(answer) resolves
+

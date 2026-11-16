@@ -1,0 +1,8 @@
+
+PASS svg simple class
+PASS svg compound class
+PASS svg complex class
+PASS html simple class
+PASS html compound class
+PASS html complex class
+

@@ -1,0 +1,35 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="/js-test-resources/js-test.js"></script>
+<script src="/js-test-resources/ui-helper.js"></script>
+<script>
+description("Long-pressing text inside a scrolled cross-origin iframe should select the word actually under the finger, accounting for the subframe's scroll offset (not double-counting or ignoring it).");
+jsTestIsAsync = true;
+
+// The iframe is at (0, 0). Its content lines are 40px tall and it is scrolled down by
+// 120px (3 lines) before it signals readiness. A long-press at viewport y=20 inside the
+// iframe therefore lands on contents y = 20 + 120 = 140, i.e. the 4th line ("token3").
+let selectedToken = "";
+addEventListener("message", (event) => {
+    if (event.data === "ready")
+        runTest();
+    else if (typeof event.data === "string" && event.data.startsWith("selection:")) {
+        const selection = event.data.substring("selection:".length);
+        if (selection.length)
+            selectedToken = selection;
+    }
+});
+
+async function runTest() {
+    await UIHelper.ensurePresentationUpdate();
+    // The long press is occasionally delivered before the subframe is ready to process it,
+    // producing no selection; retry until a word is selected inside the iframe.
+    for (let attempt = 0; attempt < 20 && !selectedToken.length; ++attempt) {
+        await UIHelper.longPressAtPoint(30, 20);
+        for (let frame = 0; frame < 10 && !selectedToken.length; ++frame)
+            await UIHelper.animationFrame();
+    }
+    shouldBeEqualToString("selectedToken", "token3");
+    finishJSTest();
+}
+</script>
+<iframe style="position: absolute; left: 0; top: 0; width: 400px; height: 300px; border: none;" src="http://localhost:8000/site-isolation/resources/scrollable-selectable-text-frame.html"></iframe>

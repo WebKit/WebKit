@@ -1,0 +1,6 @@
+2d.layer.layer-rendering-state-reset-in-layer
+Tests that rendering states are reset in layers and restored after.
+Actual output:
+
+PASS Tests that rendering states are reset in layers and restored after.
+

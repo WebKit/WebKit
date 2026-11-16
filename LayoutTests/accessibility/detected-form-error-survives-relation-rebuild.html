@@ -1,0 +1,57 @@
+<!DOCTYPE HTML><!-- webkit-test-runner [ AccessibilityFormErrorDetectionEnabled=true ] -->
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<form id="form">
+  <label for="origin">From</label><input id="origin" type="text">
+  <div id="origin-error"></div>
+  <button id="submit" type="submit">Search</button>
+</form>
+
+<div id="unrelated">Book a hotel</div>
+<div id="unrelated-label">Hotels</div>
+
+<script>
+var output = "This tests that a message paired with a field outlives a rebuild of the relations map. Relations are rebuilt from the markup, and a pairing the page never wrote is not in the markup to be rebuilt from, so it has to be re-established or the field quietly stops reporting the message that made it findable.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+    internals.setAccessibilityFormErrorSettleDelay(0.1);
+
+    document.getElementById("form").addEventListener("submit", (event) => {
+        event.preventDefault();
+        document.getElementById("origin-error").textContent = "Please enter a valid origin.";
+    });
+
+    function axElement(id) {
+        return accessibilityController.accessibleElementById(id);
+    }
+
+    setTimeout(async function() {
+        output += expect("axElement('origin').stringAttributeValue('AXInvalid')", "'false'");
+
+        document.getElementById("submit").click();
+
+        output += await expectAsync("axElement('origin').stringAttributeValue('AXInvalid')", "'true'");
+        output += await expectAsync("errorMessageText(axElement('origin'))", "'Please enter a valid origin.'");
+
+        // A relation attribute changing anywhere on the page rebuilds the whole map.
+        output += evalAndReturn("document.getElementById('unrelated').setAttribute('aria-labelledby', 'unrelated-label');");
+        // Read through description rather than AXTitle, which iOS does not vend.
+        output += await expectAsync("stripAXPrefix(axElement('unrelated').description)", "'Hotels'");
+
+        // The pairing has to still be there afterwards.
+        output += expect("errorMessageText(axElement('origin'))", "'Please enter a valid origin.'");
+        output += expect("axElement('origin').stringAttributeValue('AXInvalid')", "'true'");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

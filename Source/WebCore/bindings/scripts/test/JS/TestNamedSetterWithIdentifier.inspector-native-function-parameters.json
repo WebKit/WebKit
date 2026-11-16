@@ -1,0 +1,7 @@
+{
+    "TestNamedSetterWithIdentifier": {
+        "prototype": {
+            "namedSetter": "name, value"
+        }
+    }
+}

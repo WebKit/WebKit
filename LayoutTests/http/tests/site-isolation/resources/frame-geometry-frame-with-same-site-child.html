@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>windowClipRect reporter, with a same-site child</title>
+<style>
+body { margin: 0 }
+iframe { position: absolute; left: 20px; top: 20px; width: 100px; height: 100px; border: 0 }
+</style>
+<script src="frame-geometry-reporter.js"></script>
+<body>
+<iframe src="frame-geometry-frame.html?label=grandchild"></iframe>
+</body>

@@ -1,0 +1,9 @@
+
+RUN(video.src = "content/test-par-16-9.webm")
+EVENT(loadedmetadata)
+EXPECTED (video.videoWidth == '320') OK
+EXPECTED (video.videoHeight == '240') OK
+EXPECTED (video.clientWidth == '320') OK
+EXPECTED (video.clientHeight == '240') OK
+END OF TEST
+

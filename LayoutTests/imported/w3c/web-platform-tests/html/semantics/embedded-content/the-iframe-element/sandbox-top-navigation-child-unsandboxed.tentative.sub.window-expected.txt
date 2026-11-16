@@ -1,0 +1,3 @@
+
+PASS A same-origin unsandboxed frame can navigate top
+

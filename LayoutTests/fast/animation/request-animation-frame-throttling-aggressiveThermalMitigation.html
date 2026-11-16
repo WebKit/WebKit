@@ -1,0 +1,32 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ RespondToThermalPressureAggressively=true ] -->
+<html>
+<body>
+    <script src="../../resources/js-test-pre.js"></script>
+    <script>
+        description("Test that requestAnimationFrame gets throttled when aggressive thermal mitigation is enabled.");
+        window.jsTestIsAsync = true;
+
+        if (window.internals)
+            internals.setAggressiveThermalMitigationEnabled(true);
+
+        var start = null;
+        var framesPerSecond = 0;
+        function doWork(timestamp) {
+            if (!start)
+                start = timestamp;
+            if (timestamp - start < 1000) {
+                ++framesPerSecond;
+                window.requestAnimationFrame(doWork);
+            }
+            else {
+                // The LowPowerMode throttling interval = 30_ms. The frame rate ~= 33.3 fps.
+                shouldBeTrue("framesPerSecond < 36");
+                if (framesPerSecond >= 36) { alert("actual framesPerSecond " + framesPerSecond) }
+                finishJSTest();
+            }
+        }
+        window.requestAnimationFrame(doWork);
+    </script>
+    <script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

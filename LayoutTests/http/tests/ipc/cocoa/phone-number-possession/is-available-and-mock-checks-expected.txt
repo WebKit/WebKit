@@ -1,0 +1,5 @@
+
+PASS IsAvailable for a frame that doesn't exist answers false
+PASS IsAvailable answers false when the platform isn't available
+PASS SetMockConfiguration has no effect unless the web view's WKWebViewConfiguration sets _allowTestOnlyIPC, even with IPCTestingAPIEnabled
+

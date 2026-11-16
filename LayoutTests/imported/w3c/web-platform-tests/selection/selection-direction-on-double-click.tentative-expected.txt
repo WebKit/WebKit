@@ -1,0 +1,4 @@
+hello, world
+
+PASS direction returns "none" when there is a double click selection(directionless)
+

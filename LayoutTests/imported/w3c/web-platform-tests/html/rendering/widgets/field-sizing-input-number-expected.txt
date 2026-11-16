@@ -1,0 +1,12 @@
+
+
+PASS number: Empty value
+PASS number: Auto width and auto height with a long text
+PASS number: Explicit width and height
+PASS number: Explicit width and auto height
+PASS number: Explicit height and auto width
+PASS number: Text caret is taller than the placeholder
+PASS number: Text caret is shorter than the placeholder
+PASS number: Update field-sizing property dynamically
+PASS number: all content is visible
+

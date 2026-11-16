@@ -1,0 +1,10 @@
+Zoomed in to scale 2.00.
+  the scrolled contents layer position is owned by the scrolling thread: PASS
+  Before scrolling:
+    top left bar: FAIL (-400.0px across and -300.0px down from where the view puts it)
+    right bar   : FAIL (385.0px across and 0.0px down from where the view puts it)
+Scrolled down while zoomed: PASS
+  the scrolled contents layer followed the scroll: PASS
+  After scrolling:
+    top left bar: FAIL (-400.0px across and -410.0px down from where the view puts it)
+    right bar   : FAIL (385.0px across and -125.0px down from where the view puts it)

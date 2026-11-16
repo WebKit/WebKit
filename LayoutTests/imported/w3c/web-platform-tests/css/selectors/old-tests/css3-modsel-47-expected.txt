@@ -1,0 +1,10 @@
+The text in this paragraph should have a green background
+
+This address should have a green background
+This element in another namespace should have a green background.
+This element without a namespace should have a green background.
+This paragraph should be unstyled.
+
+
+PASS NEGATED type element selector
+

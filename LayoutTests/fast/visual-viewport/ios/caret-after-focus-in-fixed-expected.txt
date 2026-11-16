@@ -1,0 +1,10 @@
+Focusing first field
+Moving to next field
+PASS finalCaretRect.left.toFixed(2) is "44.00"
+PASS finalCaretRect.top.toFixed(2) is "1244.00"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Checks the location of the caret after focussing inputs inside position:fixed.
+
+

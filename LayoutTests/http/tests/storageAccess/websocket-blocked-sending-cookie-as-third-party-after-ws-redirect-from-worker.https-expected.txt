@@ -1,0 +1,14 @@
+Tests that a WebSocket opened from a DedicatedWorker in a cross-site iframe that has been granted storage access does not send the iframe's cookies after a WebSocket redirect.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS The iframe has storage access and can see its cookie.
+
+Created a socket to 'wss://127.0.0.1:8443/resources/redirect.py?cookie=setAsThirdPartyHTTP%3Dvalue&url=wss%3A%2F%2Flocalhost%3A9323%2Fwebsocket%2Ftests%2Fhybi%2Fwebsocket-blocked-sending-cookie-as-third-party'; readyState 0.
+PASS Connection was allowed (request did not contain cookies).
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

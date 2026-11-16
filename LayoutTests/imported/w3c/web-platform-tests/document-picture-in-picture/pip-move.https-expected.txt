@@ -1,0 +1,3 @@
+
+PASS Test that a moveTo and moveBy are disabled for a document picture-in-picture window
+

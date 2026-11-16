@@ -1,0 +1,39 @@
+<!DOCTYPE html><!-- webkit-test-runner [ LayoutFormattingContextEnabled=true InlineFormattingContextIntegrationEnabled=false ] -->
+<style>
+table {
+  border-spacing: 0px;
+  background-color: blue;
+}
+td {
+  background-color: green;
+  padding: 5px;
+}
+
+td:nth-child(even) {
+  background-color: blue;
+}
+
+</style>
+<div style="width: 1000px;">
+<table>
+<tr><td style="width: 99%"></td><td style="width: 1%"></td></tr>
+</table>
+
+<table>
+<tr><td style="width: 1%"></td><td style="width: 1%"></td></tr>
+</table>
+
+<table>
+<tr><td style="width: 1%"></td><td style="width: 101%"></td></tr>
+</table>
+
+<table>
+<tr><td style="width: 1%"></td><td style="width: 99%"></td></tr>
+<tr><td style="width: 99%"></td><td style="width: 1%"></td></tr>
+</table>
+
+<table>
+<tr><td style="width: 1%"></td><td style="width: 50%"></td></tr>
+<tr><td style="width: 1%"></td><td style="width: 1%"></td></tr>
+</table>
+</div>

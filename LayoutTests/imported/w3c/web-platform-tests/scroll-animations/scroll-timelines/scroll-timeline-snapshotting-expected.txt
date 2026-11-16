@@ -1,0 +1,3 @@
+
+PASS ScrollTimeline current time is updated after programmatic animated scroll.
+

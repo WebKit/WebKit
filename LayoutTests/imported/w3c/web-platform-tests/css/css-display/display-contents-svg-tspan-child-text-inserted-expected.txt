@@ -1,0 +1,4 @@
+TextMore
+
+PASS Inserting text into a display:contents tspan in SVG text should not crash
+

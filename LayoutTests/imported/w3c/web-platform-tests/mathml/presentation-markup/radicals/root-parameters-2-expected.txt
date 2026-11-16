@@ -1,0 +1,5 @@
+
+PASS RadicalKernBeforeDegree = -1em < 0
+PASS RadicalKernBeforeAfterDegree = -5em < -3em = -degree's inline size
+
+

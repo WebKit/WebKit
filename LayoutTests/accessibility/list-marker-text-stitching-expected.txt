@@ -1,0 +1,37 @@
+This test ensures we handle text stitching appropriately for list markers.
+
+PASS: fooText.pageX was equal or approximately equal to 22.
+PASS: fooText.pageY was equal or approximately equal to 8.
+PASS: fooText.width was equal or approximately equal to 52.
+PASS: fooText.height was equal or approximately equal to 15.
+
+{#ol AXRole: AXList}
+
+{AXRole: AXStaticText AXValue: 1. Foo}
+
+{AXRole: AXStaticText AXValue: 2. Bar}
+
+{#ul AXRole: AXList}
+
+{AXRole: AXStaticText AXValue: • Light blue}
+
+{AXRole: AXStaticText AXValue: • Red}
+
+{AXRole: AXList}
+
+{AXRole: AXListMarker}
+
+{AXRole: AXListMarker}
+
+Second traversal:
+
+{AXRole: AXStaticText AXValue: Foo Bar}
+
+{AXRole: AXStaticText AXValue: Light blue Red}
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Foo Bar
+Light blue Red
+

@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<head>
+<style>
+    #container {
+        width: 200px;
+        height: 300px;
+    }
+
+    iframe {
+        height: 100%;
+        width: 100%;
+        border: 1px solid black;
+    }
+</style>
+<script src="../resources/js-test-pre.js"></script>
+<script>
+    jsTestIsAsync = true;
+
+    const maxRAFsWithoutResizeObserver = 3;
+    const maxRAFsOnFailure = 10;
+
+    let rAFFireCount = 0;
+    let rAFsWithoutResizeObserverCount = 0;
+
+    function animationFrame()
+    {
+        ++rAFsWithoutResizeObserverCount;
+        ++rAFFireCount;
+        if (rAFsWithoutResizeObserverCount == maxRAFsWithoutResizeObserver) {
+            testPassed(`Got ${rAFsWithoutResizeObserverCount} rAF callbacks without Resize Observer firing`);
+            finishJSTest();
+            return;
+        }
+
+        if (rAFFireCount == maxRAFsOnFailure) {
+            testFailed(`Got ${rAFFireCount} rAF callbacks and the Resize Observer is still firing`);
+            finishJSTest();
+            return;
+        }
+
+        requestAnimationFrame(animationFrame)
+    }
+
+    let resizeObserverCount = 0;
+    window.addEventListener("message", (event) => {
+        if (!resizeObserverCount)
+            requestAnimationFrame(animationFrame)
+
+            ++resizeObserverCount;
+        rAFsWithoutResizeObserverCount = 0;
+        const container = document.getElementById("container");
+        container.style.height = event.data.height + "px";
+
+    }, false);
+</script>
+</head>
+<body>
+    <div id="container">
+        <iframe srcdoc="
+<style>
+    html {
+        font-size: 20px;
+        line-height: 20px;
+    }
+</style>
+<body>
+    <div>xx</div>
+    <div>xx</div>
+    <div>xxxxxxxxxxxxxxxxx z</div>
+    <div>xx</div>
+    <div>xx</div>
+    <div>xx</div>
+    <div>xx</div>
+    <div>xx</div>
+    <div>xx</div>
+    <div>xx</div>
+    <div>xx</div>
+    <div>xx</div>
+    <div>xx</div>
+    <div>x</div>
+<script>
+    const ro = new ResizeObserver(entries => {
+        for (let entry of entries) {
+            const cr = entry.contentRect;
+            const message = {
+                width: cr.width,
+                height: cr.height
+            };
+            window.parent.postMessage(message, '*');
+        }
+    });
+    ro.observe(document.documentElement);
+</script>
+</body>
+    "></iframe>
+    </div>
+    <div id="console"></div>
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

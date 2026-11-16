@@ -1,0 +1,5 @@
+AAAA
+(repaint rects
+  (rect 72 72 216 96)
+)
+

@@ -1,0 +1,31 @@
+This test ensures the string for a text marker range emits the same characters for replaced
+elements and table cells as the main-thread (TextIterator-based) implementation does.
+
+PASS: rangeStringFor('textfield') === 'x\ufffcy'
+PASS: rangeStringFor('textarea') === 'x\ufffcy'
+PASS: rangeStringFor('select') === 'x\ufffcy'
+PASS: rangeStringFor('file') === 'x\ufffcy'
+PASS: rangeStringFor('date') === 'x\ufffcy'
+PASS: rangeStringFor('submit') === 'x\ufffcy'
+PASS: rangeStringFor('progress') === 'x\ufffcy'
+PASS: rangeStringFor('two-controls') === 'x\ufffcy\ufffcz'
+PASS: rangeLengthFor('two-controls') === 5
+
+PASS: rangeStringFor('button') === 'x\ufffcbtny'
+PASS: rangeStringFor('block-button') === 'x\ufffcbtn\ny'
+PASS: rangeStringFor('output') === 'x\ufffcouty'
+PASS: rangeStringFor('fieldset') === 'x\ufffcin\ny'
+
+PASS: rangeStringFor('image-with-alt') === 'x\ufffcy'
+
+PASS: rangeStringFor('three-cells') === 'a\tb\tc'
+PASS: rangeLengthFor('three-cells') === 5
+PASS: rangeStringFor('empty-cell') === 'a\t\tc'
+PASS: rangeStringFor('nested-cell-text') === 'a\tb'
+PASS: rangeStringFor('first-row') === 'a\tb'
+PASS: rangeStringFor('second-row') === 'c\td'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

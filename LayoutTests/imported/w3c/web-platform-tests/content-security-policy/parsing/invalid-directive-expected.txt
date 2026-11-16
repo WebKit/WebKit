@@ -1,0 +1,3 @@
+
+PASS Even if an unknown directive is specified, img-src is honored.
+

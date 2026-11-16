@@ -1,0 +1,19 @@
+<style>
+div {
+  width: 30px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-family: Monospace;
+  font-size: 20px;
+}
+
+div::-webkit-scrollbar {
+  width: 0px;
+  height: 0px;
+}
+</style>
+PASS if ellipsis show
+<div style="overflow: hidden">X&#8230;</div>
+<div style="overflow: clip">X&#8230;</div>
+<div style="overflow-x: scroll">X&#8230;</div>
+<div style="overflow: scroll">X&#8230;</div>

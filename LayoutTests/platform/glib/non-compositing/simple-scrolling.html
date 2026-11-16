@@ -1,0 +1,20 @@
+<!DOCTYPE html><!-- webkit-test-runner [ AcceleratedCompositingEnabled=false ] -->
+<html lang="en">
+  <head>
+    <meta name="fuzzy" content="maxDifference=0-5; totalPixels=0-14" />
+  </head>
+  <body>
+    This is a text.
+    <div style="background-color: yellow;">This is a text in block</div>
+    <b>This is a text in bold</b>
+    <div id="scrollable" style="width: 200px; height: 100px; border: 2px solid blue; overflow:hidden;">
+      <div style="height: 300px; position: relative;">
+        <div style="width: 200px; height: 100px; position: absolute; bottom: 0; background-color: green;"></div>
+      </div>
+    </div>
+    <script>
+      document.getElementById("scrollable").scrollTop = 200;
+    </script>
+  </body>
+</html>
+

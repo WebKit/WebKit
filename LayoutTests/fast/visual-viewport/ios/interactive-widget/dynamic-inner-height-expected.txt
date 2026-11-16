@@ -1,0 +1,18 @@
+interactive-widget=resizes-content, keyboard shown:
+PASS window.innerHeight < window.innerHeightWithoutKeyboard is true
+PASS Math.abs(window.innerHeight - window.keyboardTopInView) < 1 is true
+PASS Math.abs(window.innerHeight - window.visualViewport.height) < 1 is true
+PASS Math.abs(window.innerHeight - internals.layoutViewportRect().height) < 1 is true
+
+interactive-widget=overlays-content, keyboard shown:
+PASS window.innerHeight became window.innerHeightWithoutKeyboard
+
+interactive-widget=resizes-visual, keyboard shown:
+PASS window.innerHeight became window.innerHeightWithoutKeyboard
+
+interactive-widget=resizes-content, keyboard hidden:
+PASS window.innerHeight became window.innerHeightWithoutKeyboard
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

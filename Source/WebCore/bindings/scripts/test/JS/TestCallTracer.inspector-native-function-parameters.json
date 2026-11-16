@@ -1,0 +1,12 @@
+{
+    "TestCallTracer": {
+        "prototype": {
+            "testOperationWithArguments": "a, b, c",
+            "testOperationWithDefaultVariantArgument": "[variantDefaultArg]",
+            "testOperationWithNullableArgument": "nodeNullableArg",
+            "testOperationWithNullableVariantArgument": "variantNullableArg",
+            "testOperationWithOptionalVariantArgument": "[variantOptionalArg]",
+            "testOperationWithVariantArgument": "variantArg"
+        }
+    }
+}

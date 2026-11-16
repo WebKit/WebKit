@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>mediasource-resume-after-stall</title>
+    <script src="media-source-loader.js"></script>
+    <script src="../video-test.js"></script>
+    <script>
+    var loader;
+    var source;
+    var sourceBuffer;
+
+    function loaderPromise(loader) {
+        return new Promise((resolve, reject) => {
+            loader.onload = resolve;
+            loader.onerror = reject;
+        });
+    }
+
+    window.addEventListener('load', async event => {
+        findMediaElement();
+
+        loader = new MediaSourceLoader('content/test-fragmented-manifest.json');
+        await loaderPromise(loader);
+
+        source = new ManagedMediaSource();
+        run('video.src = URL.createObjectURL(source)');
+        run('video.muted = true');
+        run('video.playsInline = true');
+        run('video.disableRemotePlayback = true');
+        run('video.autoplay = true');
+        await waitFor(source, 'sourceopen');
+        waitFor(video, 'error').then(failTest);
+        const playingPromise = waitFor(video, 'playing', true);
+
+        run('sourceBuffer = source.addSourceBuffer(loader.type())');
+        run('sourceBuffer.appendBuffer(loader.initSegment())');
+        await waitFor(sourceBuffer, 'update');
+
+        // Buffer a minimum of 3s to reach canPlayThrough and therefore autoplay.
+        run('sourceBuffer.appendBuffer(loader.mediaSegment(0))');
+        await waitFor(sourceBuffer, 'update');
+        run('sourceBuffer.appendBuffer(loader.mediaSegment(1))');
+        await waitFor(sourceBuffer, 'update');
+        run('sourceBuffer.appendBuffer(loader.mediaSegment(2))');
+        await waitFor(sourceBuffer, 'update');
+        testExpected('video.buffered.length', 1);
+        await playingPromise;
+
+        await waitFor(video, 'waiting');
+        testExpected('video.currentTime == video.buffered.end(0)', true);
+        testExpected('video.readyState', HTMLMediaElement.HAVE_CURRENT_DATA);
+
+        sourceBuffer.timestampOffset = -0.5;
+
+        // Again, buffer a minimum of 3s, see reasons above.
+        run('sourceBuffer.appendBuffer(loader.mediaSegment(3))');
+        await waitFor(sourceBuffer, 'update');
+        run('sourceBuffer.appendBuffer(loader.mediaSegment(4))');
+        await waitFor(sourceBuffer, 'update');
+        run('sourceBuffer.appendBuffer(loader.mediaSegment(5))');
+        await waitFor(sourceBuffer, 'update');
+
+        // Marching beyond 3s (range buffered before the stall) is enough to prove that playback has continued.
+        await testExpectedEventually("video.currentTime", 3.5, ">=");
+
+        endTest();
+    });
+    </script>
+</head>
+<body>
+    <video></video>
+</body>
+</html>

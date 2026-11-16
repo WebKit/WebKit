@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="resources/filter-helpers.css">
+    <script src="resources/filter-helpers.js"></script>
+</head>
+<body>
+    <script>
+        const filters = [
+            'drop-shadow(0 0 0 black)',
+            'drop-shadow(5px 5px 2px black)',
+            'drop-shadow(5px 5px 0px red)',
+            'drop-shadow(10px 10px 0px red)',
+            'drop-shadow(5px 5px 10px blue)',
+        ];
+
+        buildSVGFilteredBoxes(filters);
+        if (window.testRunner)
+            testRunner.forceRepaint();
+    </script>
+</body>
+</html>

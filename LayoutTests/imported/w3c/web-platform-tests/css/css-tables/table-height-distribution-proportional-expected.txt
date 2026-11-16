@@ -1,0 +1,4 @@
+
+PASS Table reaches specified height with fixed-height rows
+PASS Extra height distributed proportionally to row content heights, not inflated by spacing
+

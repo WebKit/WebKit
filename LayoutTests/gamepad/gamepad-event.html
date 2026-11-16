@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<body>
+<script src="../resources/js-test.js"></script>
+<script>
+    description("Tests the GamepadEvent constructor");
+
+    shouldThrowErrorName("new GamepadEvent()", "TypeError");
+    shouldNotThrow("event = new GamepadEvent('test')");
+    shouldBeEqualToString("event.type", "test");
+    shouldBeNull("event.gamepad");
+    shouldBeFalse("event.bubbles");
+    shouldBeFalse("event.cancelable");
+    shouldBeFalse("event.composed");
+
+    shouldNotThrow("event = new GamepadEvent('test', {'bubbles': true, 'cancelable': true, 'composed': true })");
+    shouldBeNull("event.gamepad");
+    shouldBeTrue("event.bubbles");
+    shouldBeTrue("event.cancelable");
+    shouldBeTrue("event.composed");
+
+    shouldBeDefined("navigator.getGamepads");
+</script>
+</body>

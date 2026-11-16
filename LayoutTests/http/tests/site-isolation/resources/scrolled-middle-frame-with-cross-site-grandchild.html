@@ -1,0 +1,11 @@
+<body style="margin: 0">
+<iframe style="position: absolute; left: 0; top: 200px; width: 400px; height: 400px; border: none;" src="http://127.0.0.1:8000/site-isolation/resources/multiline-selectable-text-frame.html"></iframe>
+<div style="height: 1000px;"></div>
+<script>
+// Scrolling on load, not immediately, so the spacer below has been laid out and the scroll takes.
+addEventListener("load", () => {
+    window.scrollTo(0, 120);
+    window.top.postMessage("middle scrolled to " + window.scrollY, "*");
+});
+</script>
+</body>

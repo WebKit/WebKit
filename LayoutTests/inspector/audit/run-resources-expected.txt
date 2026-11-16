@@ -1,0 +1,37 @@
+
+Tests for the injected WebInspectorAudit.Resources functions.
+
+
+== Running test suite: Audit.run.Resources
+-- Running test case: Audit.run.Resources.getResources
+Audit setup...
+Audit run `WebInspectorAudit.Resources.getResources()`...
+Found dataURL image.
+PASS: dataURL image should have the expected content.
+PASS: dataURL image should be base64 encoded.
+Found sample-resource.css.
+PASS: sample-resource.css should have the expected content.
+PASS: sample-resource.css should not be base64 encoded.
+Found sample-resource.js.
+PASS: sample-resource.js should have the expected content.
+PASS: sample-resource.js should not be base64 encoded.
+Audit teardown...
+
+-- Running test case: Audit.run.Resources.getResourceContent.InvalidId
+Audit setup...
+Audit run `WebInspectorAudit.Resources.getResourceContent(-1)`...
+PASS: Should throw an exception.
+NotFoundError: Unknown identifier -1
+Audit teardown...
+
+-- Running test case: Audit.run.Resources.InvalidCopiedFunctionCall
+Audit setup...
+Copying WebInspectorAudit to window...
+Audit teardown...
+Testing copied getResources...
+PASS: Should produce an exception.
+Error: NotAllowedError: Cannot be called outside of a Web Inspector Audit
+Testing copied getResourceContent...
+PASS: Should produce an exception.
+Error: NotAllowedError: Cannot be called outside of a Web Inspector Audit
+

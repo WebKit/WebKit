@@ -1,0 +1,14 @@
+The quick brown fox
+The quick brown fox
+The quick brown fox
+quick
+The quick brown fox
+Hello World
+
+PASS removeFormat removes background-color from bold element
+PASS removeFormat removes background-color from span element
+PASS removeFormat removes multiple styles including background-color
+PASS removeFormat removes background-color from nested elements
+PASS removeFormat handles complex background-color values
+PASS removeFormat preserves text when only background-color is present
+

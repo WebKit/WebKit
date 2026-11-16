@@ -1,0 +1,9 @@
+
+PASS Origin.from(window) returns a tuple origin.
+PASS Origin.from(Window) returns a tuple origin for same-origin frames.
+PASS Origin.from(Window) throws for cross-origin frames.
+PASS Origin.from(Window) throws for sandboxed frames.
+PASS Origin.from(Window) returns a tuple origin for same-origin windows.
+PASS Origin.from(Window) throws for cross-origin windows.
+PASS Origin.from(Window) returns an opaque origin for a data URL source.
+

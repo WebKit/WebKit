@@ -1,0 +1,1 @@
+The background of this element should be green. It is green

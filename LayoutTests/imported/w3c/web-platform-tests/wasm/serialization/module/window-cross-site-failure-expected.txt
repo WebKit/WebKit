@@ -1,0 +1,5 @@
+
+PASS postMessaging a wasm module to a cross-site iframe fails
+PASS postMessaging a wasm module to a same-host iframe with a different scheme fails
+PASS postMessaging a wasm module to a sandboxed iframe fails
+

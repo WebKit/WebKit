@@ -1,0 +1,2 @@
+CONSOLE MESSAGE: PASS: indexed PNG palette was resolved to colors, not uploaded as raw indices
+This test passes if it prints PASS: the palette of an indexed PNG must be resolved when copied to a WebGPU texture.

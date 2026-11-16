@@ -1,0 +1,7 @@
+
+PASS Viewport sizes, percentages and viewport units agree at zoom 0.5
+PASS Viewport sizes, percentages and viewport units agree at zoom 2
+PASS Media queries match the iframe's specified size at zoom 0.5
+PASS Media queries match the iframe's specified size at zoom 2
+PASS Each of three nested zoomed iframes sees its own specified size
+

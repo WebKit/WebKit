@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<style>
+li {
+    list-style-position: inside;
+}
+li::marker {
+    content: "a";
+}
+li.content-change::marker {
+    content: "b";
+}
+</style>
+<ul>
+    <li id="positionChange">One</li>
+    <li id="contentChange">Two</li>
+    <li id="positionChangeInAnonymousBlock"><div>Three</div></li>
+    <li id="contentChangeInAnonymousBlock"><div>Four</div></li>
+</ul>
+<p>PASS if no crash.</p>
+<script>
+window.testRunner?.dumpAsText();
+window.internals?.setImmediateRendererDestructionEnabled(true);
+document.body.offsetHeight;
+positionChange.style.listStylePosition = "outside";
+contentChange.classList.add("content-change");
+positionChangeInAnonymousBlock.style.listStylePosition = "outside";
+contentChangeInAnonymousBlock.classList.add("content-change");
+document.body.offsetHeight;
+window.internals?.setImmediateRendererDestructionEnabled(false);
+</script>

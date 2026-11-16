@@ -1,0 +1,5 @@
+The following two bars should be green.
+
+
+PASS Dynamic handling of :empty
+

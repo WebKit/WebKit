@@ -1,0 +1,11 @@
+This test ensures that drawFocusIfNeeded() accessibility bounds account for object-fit on the canvas.
+
+PASS: pageX was equal or approximately equal to 108.
+PASS: pageY was equal or approximately equal to 158.
+PASS: width was equal or approximately equal to 80.
+PASS: height was equal or approximately equal to 40.
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

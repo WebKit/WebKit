@@ -1,0 +1,20 @@
+Tests that hovering into a nested cross-origin frame clears the page target's highlight.
+
+
+
+== Running test suite: SiteIsolation.DOM.HoverIntoRemoteFrameClearsPageHighlight
+-- Running test case: Setup
+PASS: Should find the frame target for hover-middle-frame.html.
+PASS: Should find the frame target for hover-inner-frame.html.
+PASS: Middle and inner frames should be distinct targets.
+PASS: Middle frame should not be the page target.
+
+-- Running test case: HoverIntoRemoteFrameClearsPageHighlight
+PASS: Should not be a highlight yet.
+Hovering the main frame.
+PASS: Page target should draw its own frame's node.
+Hovering into the nested cross-origin frame.
+PASS: Page target should clear its highlight.
+Hovering the middle frame.
+PASS: Page target should draw the middle frame's node.
+

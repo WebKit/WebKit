@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.dumpChildFramesAsText();
+    testRunner.waitUntilDone();
+}
+</script>
+<iframe id="frame1" name="frame1"></iframe>
+<iframe id="frame2" name="frame2"></iframe>
+<script>
+
+var iframe1 = document.querySelector("#frame1").contentWindow;
+var iframe2 = document.querySelector("#frame2").contentWindow;
+
+if(iframe2.internals)
+    iframe2.internals.queueMicroTask(2);
+if(iframe1.internals)
+    iframe1.internals.queueMicroTask(1);
+if(window.internals)
+    internals.queueMicroTask(0);
+
+console.log("Finished queueing tests.");
+requestAnimationFrame(function() {
+    if (window.testRunner)
+        testRunner.notifyDone();
+});
+</script>

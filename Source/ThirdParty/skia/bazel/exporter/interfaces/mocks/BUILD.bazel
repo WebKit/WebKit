@@ -1,0 +1,22 @@
+load("@rules_go//go:def.bzl", "go_library")
+
+package(
+    default_applicable_licenses = ["//:license"],
+)
+
+licenses(["notice"])
+
+go_library(
+    name = "mocks",
+    srcs = [
+        "FileSystem.go",
+        "QueryCommand.go",
+        "generate.go",
+    ],
+    importpath = "go.skia.org/skia/bazel/exporter/interfaces/mocks",
+    visibility = ["//visibility:public"],
+    deps = [
+        "//bazel/exporter/interfaces",
+        "@com_github_stretchr_testify//mock",
+    ],
+)

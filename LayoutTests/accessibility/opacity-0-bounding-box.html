@@ -1,0 +1,69 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN"><!-- webkit-test-runner [ runSingly=true ] -->
+<!-- runSingly because of the usage of accessibilityController.setForceInitialFrameCaching, which sets a process-global static. -->
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+<style>
+.screenreader-only { opacity: 0; }
+</style>
+</head>
+<body>
+<div style="margin-top: 150px"></div>
+<div role="group" id="foo-group">Foo</div>
+<div id="container" role="group" aria-label="screenreader only content" class="screenreader-only">
+    <input type="radio" style="width: 300px; height: 300px">
+    <br/>
+    Opacity: 0 text
+    <br/>
+    <img src="./resources/cake.png" alt="adorned white cake on a table">
+</div>
+
+<script>
+var output = "This test ensures we compute the right frame for opacity: 0 elements.\n\n";
+
+var current;
+function verifyRoleAndRect(expectedRole) {
+    output += expect(`current.role.toLowerCase().includes("${expectedRole}")`, "true");
+    output += `x: ${current.pageX}\n`;
+    output += `y: ${current.pageY}\n`;
+    output += `width: ${current.width}\n`;
+    output += `height: ${current.height}\n\n`;
+}
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+    accessibilityController.setForceInitialFrameCaching(true);
+
+    var fooText = accessibilityController.accessibleElementById("foo-group").childAtIndex(0);
+    var container = accessibilityController.accessibleElementById("container");
+    setTimeout(async function() {
+        await waitFor(() => {
+            // Wait for paint to update accessibility geometry. Assume that if we have a valid width and height, it
+            // must have happened.
+            return fooText.width > 0 && fooText.height > 0;
+        });
+
+        // Use the position of this non-hidden text to give a frame of reference for where the opacity:0 elements should
+        // be placed (they should be nearby if positioned correctly, not at the top of the page or way off-screen).
+        current = fooText;
+        verifyRoleAndRect("statictext");
+
+        current = container.childAtIndex(0);
+        verifyRoleAndRect("radiobutton");
+
+        current = container.childAtIndex(1);
+        verifyRoleAndRect("statictext");
+
+        current = container.childAtIndex(2);
+        verifyRoleAndRect("image");
+
+        accessibilityController.setForceInitialFrameCaching(false);
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>
+

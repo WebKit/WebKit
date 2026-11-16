@@ -1,0 +1,16 @@
+abcdef
+ghijkl
+
+PASS forwarddelete at <div style="white-space:normal">abc[]</div><span style="white-space:nowrap">def</span>
+PASS forwarddelete at <div style="white-space:normal">abc[]</div><span class="nowrap">def</span>
+PASS forwarddelete at <div style="white-space:normal">abc[]</div><span style="white-space:nowrap">def<br>ghi</span>
+PASS forwarddelete at <div style="white-space:normal">abc[]</div><span class="nowrap">def<br>ghi</span>
+PASS forwarddelete at <div style="white-space:normal">abc[]</div><span style="white-space:nowrap"><b>def<br>ghi</b></span>
+PASS forwarddelete at <div style="white-space:normal">abc[]</div><span class="nowrap"><b>def<br>ghi</b></span>
+PASS forwarddelete at <div style="white-space:normal">abc[]</div><span style="white-space:nowrap"><b>def</b><br>ghi</span>
+PASS forwarddelete at <div style="white-space:normal">abc[]</div><span class="nowrap"><b>def</b><br>ghi</span>
+PASS forwarddelete at <div style="white-space:normal">abc[]</div><span style="white-space:nowrap"><b>def<br></b>ghi</span>
+PASS forwarddelete at <div style="white-space:normal">abc[]</div><span class="nowrap"><b>def<br></b>ghi</span>
+PASS forwarddelete at <div style="white-space:normal">abc[]</div><span style="white-space:nowrap"><b>def<br>ghi</b>jkl</span>
+PASS forwarddelete at <div style="white-space:normal">abc[]</div><span class="nowrap"><b>def<br>ghi</b>jkl</span>
+

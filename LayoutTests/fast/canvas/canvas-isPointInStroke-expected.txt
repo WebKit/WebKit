@@ -1,0 +1,70 @@
+Test the behavior of isPointInStroke in Canvas
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Initial behavior: lineWith = 1.0
+PASS ctx.isPointInStroke(20,20) is true
+PASS ctx.isPointInStroke(120,20) is true
+PASS ctx.isPointInStroke(20,120) is true
+PASS ctx.isPointInStroke(120,120) is true
+PASS ctx.isPointInStroke(70,20) is true
+PASS ctx.isPointInStroke(20,70) is true
+PASS ctx.isPointInStroke(120,70) is true
+PASS ctx.isPointInStroke(70,120) is true
+PASS ctx.isPointInStroke(22,22) is false
+PASS ctx.isPointInStroke(118,22) is false
+PASS ctx.isPointInStroke(22,118) is false
+PASS ctx.isPointInStroke(118,118) is false
+PASS ctx.isPointInStroke(70,18) is false
+PASS ctx.isPointInStroke(122,70) is false
+PASS ctx.isPointInStroke(70,122) is false
+PASS ctx.isPointInStroke(18,70) is false
+
+Set lineWith = 10.0
+PASS ctx.isPointInStroke(22,22) is true
+PASS ctx.isPointInStroke(118,22) is true
+PASS ctx.isPointInStroke(22,118) is true
+PASS ctx.isPointInStroke(118,118) is true
+PASS ctx.isPointInStroke(70,18) is true
+PASS ctx.isPointInStroke(122,70) is true
+PASS ctx.isPointInStroke(70,122) is true
+PASS ctx.isPointInStroke(18,70) is true
+PASS ctx.isPointInStroke(26,70) is false
+PASS ctx.isPointInStroke(70,26) is false
+PASS ctx.isPointInStroke(70,114) is false
+PASS ctx.isPointInStroke(114,70) is false
+
+Check lineJoin = 'bevel'
+PASS ctx.isPointInStroke(113,20) is false
+
+Check lineJoin = 'miter'
+PASS ctx.isPointInStroke(113,20) is true
+
+Check miterLimit = 2.0
+PASS ctx.isPointInStroke(113,20) is false
+
+Check lineCap = 'butt'
+PASS ctx.isPointInStroke(112,10) is false
+
+Check lineCap = 'round'
+PASS ctx.isPointInStroke(112,10) is true
+PASS ctx.isPointInStroke(117,10) is false
+
+Check lineCap = 'square'
+PASS ctx.isPointInStroke(112,10) is true
+PASS ctx.isPointInStroke(117,10) is false
+
+Check setLineDash([10,10])
+PASS ctx.isPointInStroke(15,10) is true
+PASS ctx.isPointInStroke(25,10) is false
+PASS ctx.isPointInStroke(35,10) is true
+
+Check dashOffset = 10
+PASS ctx.isPointInStroke(15,10) is false
+PASS ctx.isPointInStroke(25,10) is true
+PASS ctx.isPointInStroke(35,10) is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>BrowserBench.org &mdash; Announcements</title>
+    <link rel="stylesheet" href="/resources/main.css">
+
+    <meta itemprop="name" content="Announcing JetStream 3">
+    <meta itemprop="description" content="JetStream 3.0 is a major update to the JetStream benchmark suite, developed collaboratively by contributors from Apple, Google, Mozilla et al.">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image:src" content="https://browserbench.org/resources/JetStream3-Logo@2x.png">
+    <meta name="twitter:title" content="Announcing JetStream 3">
+    <meta name="twitter:description" content="JetStream 3.0 is a major update to the JetStream benchmark suite, developed collaboratively by contributors from Apple, Google, Mozilla et al.">
+
+    <meta property="og:title" content="Announcing JetStream 3">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://browserbench.org/announcements/jetstream3">
+    <meta property="og:description" content="JetStream 3.0 is a major update to the JetStream benchmark suite, developed collaboratively by contributors from Apple, Google, Mozilla et al.">
+    <meta property="og:site_name" content="BrowserBench.org">
+
+</head>
+<body>
+<main>
+
+<div id="logo">
+<a href="/"><span class="light">browser</span><span class="normal">bench</span><span class="highlight">.</span><span class="light">org</span></a>
+</div>
+
+<hr>
+
+<div class="navigation"><a href="/announcements">&lsaquo; Back to BrowserBench.org Announcements</a></p>
+
+<article>
+
+<h1>Announcing JetStream 3.0</h1>
+<div class="byline">
+    <span class="author">by contributors from Apple, Google, Mozilla et al.</span>
+    <span class="date">March 31, 2026</span>
+</div>
+
+<p>Today, we are proud to release JetStream 3.0, a major update to the JetStream benchmark suite! JetStream has been one of the major benchmark suites, alongside <a href="https://browserbench.org/Speedometer3.1/">Speedometer</a> and <a href="https://browserbench.org/MotionMark1.3.1/">MotionMark</a>, to track browser performance over time and drive optimizations in their respective engines. JetStream focuses in particular on the computationally intensive parts of modern JavaScript and WebAssembly web applications, e.g. parsing, formatting, or data conversions, algorithms and data structures, interpreters and language implementations, or simulations, to name a few use cases. The last major version of JetStream was released in 2019, more than 6 years ago. The web and browser engines have significantly evolved since then, so it is important that changes to the ecosystem are reflected in this major overhaul.</p>
+
+<h2>A Collaborative Effort</h2>
+
+<p>Similar to <a href="https://browserbench.org/announcements/speedometer3/">Speedometer 3</a>, this release is the result of a collaborative effort with many contributions from different companies, including engineers working on all major JavaScript and WebAssembly engines in web browsers. JetStream 3 follows the same <a href="https://github.com/WebKit/JetStream/blob/main/Governance.md"><strong>open governance model</strong></a> as Speedometer, driven by consensus, and is developed in a <a href="https://github.com/WebKit/JetStream">shared repository</a> that is open to contributions. Over the last 1.5 years, we have merged over 200 pull requests touching over 500 files across more than 70 workloads into JetStream 3. If you have feedback on the benchmark, individual workloads, or like to propose new workloads, feel free to reach out on the repository by filing an issue or opening a pull request if you have a suggested change.</p>
+
+<h2>New Workloads and General Improvements</h2>
+
+<p>JetStream 3 improves the benchmark suite in several ways that can be broadly divided into updated workloads (sometimes called line-items, that is, individual sub-benchmarks) and improvements of the overall benchmark runner and methodology.</p>
+
+<p>For its workloads, JetStream 3 focuses more than before on <strong>larger applications</strong>. While &ldquo;microbenchmarks&rdquo; are useful to catch regressions or drill into specific issues, they are <a href="https://v8.dev/blog/real-world-performance">less useful</a> over a longer period of time, since they tend to drive optimizations that over-fit to particular features or are sometimes detrimental on average. We removed some of these smaller workloads that became less useful over time (e.g. HashSet-wasm), or lowered their importance (e.g. SunSpider) and added many new ones that represent modern, real-world applications better.</p>
+
+<p>These new workloads also cover more new features than before, reflective of the modern web. In particular, JetStream 3 has a higher focus on <strong>WebAssembly</strong>, an important technology for high-performance web applications, now including twelve such workloads. Those also make use of several post-WebAssembly 1.0 language features, including exception handling, SIMD, and WasmGC. We are also now using a variety of toolchains from different source languages, e.g. C++, C#, Dart, Java, Kotlin, or Rust. We also removed several asm.js workloads, since WebAssembly supersedes said technology and should be used by modern web applications instead.</p>
+
+<p>In terms of <strong>JavaScript</strong> workloads, new features covered by JetStream 3 are Promises and async code, new regular expression features, and public class-fields. We also fixed or removed workloads that were amenable to benchmarking artifacts, e.g. where the generation of random input data accounted for more work than the core algorithm of the workload. We now also cover more realistic JavaScript parsing and first execution in the new startup benchmarks of larger workloads.</p>
+
+<p>JetStream 3 also improves the <strong>benchmark runner and methodology</strong> in several ways. The scoring of WebAssembly workloads was changed to account for compilation and instantiation time as part of the first iteration. This makes WebAssembly scoring consistent with most JavaScript workloads and avoids an over-emphasis on fast instantiation. To reduce network transfer sizes of the benchmark, large artifacts are now downloaded in compressed form and uncompressed before benchmark startup. Overall, runner ergonomics have been improved to better understand and debug individual workloads.</p>
+
+<h2>Serving to Make Browsers and Devices Faster</h2>
+
+<p>We expect this benchmark to be a practical tool for improving real-world performance across browsers and devices. For browser engineers working on optimizations, it provides quick feedback on whether a change meaningfully improves results and, by extension, should help users.</p>
+
+<p>JetStream also runs in engine shells, minimal environments that provide only JavaScript and WebAssembly execution, without requiring a full browser. This makes it straightforward to run in device emulators and on constrained systems, and makes JetStream 3 particularly useful for hardware and device vendors evaluating and tuning their platforms.</p>
+
+<h2>More Details and the Future</h2>
+
+<p>For more details about JetStream 3, the workloads it contains, or the scoring and runner, please see the <a href="/JetStream3.0/in-depth.html">in-depth page</a> of the benchmark. More browser engineering-focused information is also provided in blog posts by <a href="https://webkit.org/blog/17899/introducing-the-jetstream-3-benchmark-suite/">WebKit</a> and <a href="https://blog.chromium.org/2026/03/jetstream-3-a-modern-benchmark.html">Google</a>, so check those out!</p>
+
+<p>One goal of JetStream has already been realized in the past months, as engines started to implement optimizations improving JavaScript and WebAssembly performance. We are looking forward to more such improvements in the future. Medium to long-term, we also plan to update JetStream more regularly, e.g. to rebuild workloads with up-to-date toolchains or add new workloads if they are found to be realistic and interesting.</p>
+
+</article>
+
+<hr>
+
+<div class="navigation"><a href="/announcements">&lsaquo; Back to BrowserBench.org Announcements</a></p>
+
+</main>
+</body>
+</html>

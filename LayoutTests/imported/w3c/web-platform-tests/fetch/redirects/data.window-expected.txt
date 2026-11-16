@@ -1,0 +1,5 @@
+
+PASS <img> fetch that redirects to data: URL
+PASS <script> fetch that redirects to data: URL
+PASS XMLHttpRequest fetch that redirects to data: URL
+

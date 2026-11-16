@@ -1,0 +1,8 @@
+The child frame below has to be loaded when this page finishes loading.
+
+
+
+--------
+Frame: '<!--frame1-->'
+--------
+PASS: the child frame loaded.

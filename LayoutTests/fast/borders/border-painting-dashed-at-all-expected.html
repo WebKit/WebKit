@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>This test that dashed borders are painted at all.</title>
+<style>
+  div {
+    position: absolute;
+    top: 0px;
+    width: 1px;
+    background-color: red;
+  }
+  
+</style>
+<head>
+<body>
+<script>
+  var borderWidth = 1;
+  var x = 0;
+  for (var i = 1; i < 10; ++i) {
+      var e = document.createElement("div");
+      e.style.left = x + "px";
+      e.style.height = borderWidth + "px";
+      document.body.appendChild(e);
+
+      borderWidth += 1;
+      w = 10 * i;
+      x += (w + 2 * borderWidth);
+  }
+</script>
+</body>
+</html>

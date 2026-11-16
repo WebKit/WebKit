@@ -1,0 +1,7 @@
+
+PASS Event properties post dispatch with an open ShadowRoot and no listeners (composed: true)
+PASS Event properties post dispatch with an open ShadowRoot and no listeners (composed: false)
+PASS Event properties post dispatch with a closed ShadowRoot and no listeners (composed: true)
+PASS Event properties post dispatch with nested open ShadowRoots and no listeners (composed: true)
+PASS Event properties post dispatch with a disabled element in shadow tree and no listeners (composed: true)
+

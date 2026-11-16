@@ -1,0 +1,9 @@
+
+
+PASS horizontal-empty block size should match height and inline size should match width
+PASS horizontal-with-value block size should match height and inline size should match width
+PASS vertical-lr-empty block size should match width and inline size should match height
+PASS vertical-lr-with-value block size should match width and inline size should match height
+PASS vertical-rl-empty block size should match width and inline size should match height
+PASS vertical-rl-with-value block size should match width and inline size should match height
+

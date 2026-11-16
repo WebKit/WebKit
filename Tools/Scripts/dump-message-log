@@ -1,0 +1,159 @@
+#!/usr/bin/env python3
+"""
+LLDB script to dump the contents of WebKit's IPC message log for testing.
+
+Usage in LLDB:
+    (lldb) command script import Tools/Scripts/dump-message-log
+    (lldb) dump_message_log
+
+The script dumps messages in reverse chronological order (most recent first),
+starting from the last written position and stopping when it encounters either:
+- An Invalid message name (indicating unwritten slots)
+- A full traversal of the buffer (wrapping back to start)
+"""
+
+import lldb
+import re
+
+def dump_message_log(debugger, command, result, internal_dict):
+    """Dumps the contents of IPC::gMessageLog in reverse chronological order"""
+
+    target = debugger.GetSelectedTarget()
+    if not target or not target.IsValid():
+        print("Error: No valid target selected", file=result)
+        return
+
+    process = target.GetProcess()
+    if not process or not process.IsValid():
+        print("Error: No valid process attached", file=result)
+        return
+
+    # Find the global message log
+    buffer_var = target.FindFirstGlobalVariable("IPC::gMessageLog")
+    if not buffer_var or not buffer_var.IsValid():
+        print("Error: Could not find IPC::gMessageLog", file=result)
+        print("Make sure the process is using a build with the message log compiled in.", file=result)
+        return
+
+    # Get capacity from the type name (e.g., MessageLog<256>)
+    buffer_type = buffer_var.GetType()
+    type_name = buffer_type.GetName()
+    match = re.search(r'MessageLog<(\d+)>', type_name)
+    if not match:
+        print(f"Error: Could not parse capacity from type name: {type_name}", file=result)
+        return
+
+    capacity = int(match.group(1))
+
+    # Get m_index (std::atomic<size_t>)
+    # Note: m_index is a private member, but LLDB can access it for debugging
+    m_index_var = buffer_var.GetChildMemberWithName("m_index")
+    if not m_index_var or not m_index_var.IsValid():
+        print("Error: Could not access m_index member", file=result)
+        return
+
+    # Extract the actual value from std::atomic
+    # Try different member names used by different standard library implementations
+    index_value = None
+    for atomic_member in ["_M_i", "__a_", "_Value", "Value", "__a"]:
+        atomic_storage = m_index_var.GetChildMemberWithName(atomic_member)
+        if atomic_storage and atomic_storage.IsValid():
+            index_value = atomic_storage.GetValueAsUnsigned()
+            break
+
+    if index_value is None:
+        # Fallback: try to get value directly
+        index_value = m_index_var.GetValueAsUnsigned()
+        if index_value == 0xFFFFFFFFFFFFFFFF:  # Likely failed
+            print("Error: Could not read m_index value", file=result)
+            return
+
+    # Get m_buffer (std::array)
+    # Note: m_buffer is a private member, but LLDB can access it for debugging
+    m_buffer_var = buffer_var.GetChildMemberWithName("m_buffer")
+    if not m_buffer_var or not m_buffer_var.IsValid():
+        print("Error: Could not access m_buffer member", file=result)
+        return
+
+    # std::array may wrap the actual array in an __elems_ or similar member
+    # Try to access it, otherwise use m_buffer_var directly
+    elems_var = m_buffer_var.GetChildMemberWithName("__elems_")
+    if elems_var and elems_var.IsValid():
+        m_buffer_var = elems_var
+
+    # Try to find IPC::MessageName::Invalid
+    message_name_type = target.FindFirstType("IPC::MessageName")
+    message_name_invalid = None
+    if message_name_type and message_name_type.IsValid():
+        enum_members = message_name_type.GetEnumMembers()
+        for i in range(enum_members.GetSize()):
+            member = enum_members.GetTypeEnumMemberAtIndex(i)
+            if member.GetName() == "Invalid":
+                message_name_invalid = member.GetValueAsUnsigned()
+                break
+
+    # Print header
+    print("\n" + "=" * 80, file=result)
+    print(f"WebKit IPC Message Log Dump (Capacity: {capacity})", file=result)
+    print("=" * 80, file=result)
+    print("\nMessages (most recent first):\n", file=result)
+
+    # Calculate the last written index
+    # m_index points to the NEXT position to write, so last written is (m_index - 1) % capacity
+    if index_value == 0:
+        last_written = capacity - 1
+    else:
+        last_written = (index_value - 1) % capacity
+
+    current_index = last_written
+    messages_found = 0
+
+    for i in range(capacity):
+        # Get array element at current_index
+        element = m_buffer_var.GetChildAtIndex(current_index)
+        if not element or not element.IsValid():
+            print(f"Warning: Could not read buffer[{current_index}]", file=result)
+            break
+
+        message_value = element.GetValueAsUnsigned()
+
+        # Stop if we encounter Invalid
+        if message_name_invalid is not None and message_value == message_name_invalid:
+            print(f"\n[Stopped at Invalid message after {messages_found} messages (at buffer[{current_index}])]", file=result)
+            break
+
+        # Try to get the symbolic name
+        message_name_str = element.GetValue()
+        if message_name_str:
+            # Clean up the format (e.g., "IPCTester_EmptyMessage" instead of full enum path)
+            message_name_str = message_name_str.replace("IPC::MessageName::", "")
+            # Display "Invalid" instead of "Count" since they're semantically invalid messages
+            if message_name_str == "Count":
+                message_name_str = "Invalid"
+        else:
+            message_name_str = f"<value={message_value}>"
+
+        print(f"{messages_found}. {message_name_str}", file=result)
+
+        messages_found += 1
+
+        # Move to previous index (wrap around)
+        if current_index == 0:
+            current_index = capacity - 1
+        else:
+            current_index -= 1
+
+    print("\n" + "=" * 80 + "\n", file=result)
+
+def __lldb_init_module(debugger, internal_dict):
+    """Register the command when the script is loaded"""
+    debugger.HandleCommand(
+        'command script add -f dump_message_log.dump_message_log dump_message_log'
+    )
+    print('The "dump_message_log" command has been installed.')
+
+if __name__ == "__main__":
+    print("This script is intended to be used within LLDB, not run directly.")
+    print("\nUsage in LLDB:")
+    print("    (lldb) command script import Tools/Scripts/dump-message-log")
+    print("    (lldb) dump_message_log")

@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body onload="reportBackLoadedToTopFrame()">
+<script>
+    function reportBackLoadedToTopFrame() {
+        if (testRunner.hasAppBoundSession()) {
+            top.postMessage("PASS Frame has app-bound session.", "http://127.0.0.1:8000");
+        } else {
+            top.postMessage("FAIL Frame does not have app-bound session.", "http://127.0.0.1:8000");
+        }
+    }
+</script>
+</body>
+</html>

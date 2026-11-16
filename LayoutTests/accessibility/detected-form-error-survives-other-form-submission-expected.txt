@@ -1,0 +1,17 @@
+This tests that one form submitting does not throw away what was detected about another. Pages carry several forms, and a search box being used says nothing about whether the error beside the newsletter field is still true.
+
+PASS: axElement('email').stringAttributeValue('AXInvalid') === 'false'
+PASS: axElement('email').stringAttributeValue('AXInvalid') === 'true'
+PASS: errorMessageText(axElement('email')) === 'Enter a valid email address.'
+document.getElementById('go').click();
+PASS: axElement('email').stringAttributeValue('AXInvalid') === 'true'
+PASS: errorMessageText(axElement('email')) === 'Enter a valid email address.'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Email
+Enter a valid email address.
+Subscribe
+Search  Go
+

@@ -1,0 +1,25 @@
+Passive
+Active
+(GraphicsLayer
+  (anchor 0.00 0.00)
+  (bounds 800.00 600.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 800.00 600.00)
+      (contentsOpaque 1)
+      (drawsContent 1)
+      (backgroundColor #FFFFFF)
+      (event region
+        (rect (0,0) width=800 height=600)
+      (wheel event listener region
+        (rect (28,20) width=102 height=102)
+        (rect (28,142) width=102 height=102)
+        (non-passive
+          (rect (28,142) width=102 height=102)
+        )
+      )
+      )
+    )
+  )
+)
+

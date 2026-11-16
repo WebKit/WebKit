@@ -1,0 +1,3 @@
+
+PASS Fill mode is adjusted to be forward-filling for effects that do not participate in composition.
+

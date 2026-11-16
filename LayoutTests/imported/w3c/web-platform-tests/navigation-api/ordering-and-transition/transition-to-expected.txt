@@ -1,0 +1,3 @@
+
+PASS navigation.transition.to matches the navigate event's destination
+

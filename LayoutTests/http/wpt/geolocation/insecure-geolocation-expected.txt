@@ -1,0 +1,3 @@
+
+PASS Geolocation logs a console message when it is blocked in a non-secure context
+

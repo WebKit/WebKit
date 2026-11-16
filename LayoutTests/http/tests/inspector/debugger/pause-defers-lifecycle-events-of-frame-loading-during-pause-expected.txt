@@ -1,0 +1,19 @@
+Test that a frame that finishes loading while the debugger is paused gets its load, readystatechange, pageshow and image load events after resuming.
+
+
+== Running test suite: Debugger.PauseDefersLifecycleEventsOfFrameLoadingDuringPause
+-- Running test case: Debugger.PauseDefersLifecycleEventsOfFrameLoadingDuringPause.LoadFinishesWhilePaused
+PASS: The frame should be parsed while its image is still loading.
+PASS: The frame should finish loading while the page is paused.
+PASS: The events after the frame was parsed should not be dispatched while the page is paused.
+PASS: The frame should get its events after resuming.
+Events: readystatechange:interactive, DOMContentLoaded, readystatechange:complete, img:load, load target=document currentTarget=window trusted=true, load:once, pageshow persisted=false trusted=true
+PASS: The iframe element should get one load event.
+
+-- Running test case: Debugger.PauseDefersLifecycleEventsOfFrameLoadingDuringPause.FrameRemovedWhileEventsAreDeferred
+PASS: The new frame should be parsed while its image is still loading.
+PASS: The new frame should finish loading while the page is paused.
+PASS: The frame should be removed while the page is paused.
+PASS: A frame added after resuming should load normally.
+PASS: The new iframe element should get one load event.
+

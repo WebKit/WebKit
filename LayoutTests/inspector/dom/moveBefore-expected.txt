@@ -1,0 +1,32 @@
+Tests that moveBefore() correctly updates the Web Inspector's DOM tree.
+
+
+== Running test suite: moveBefore
+-- Running test case: DOM.moveBefore.SiblingBecomesChild
+Before moveBefore():
+Children of #container:
+  div#sibling-a (parent: div#container)
+  div#sibling-b (parent: div#container)
+Children of #sibling-a:
+Moving #sibling-b to be a child of #sibling-a via moveBefore()...
+Move complete.
+After moveBefore():
+Children of #container:
+  div#sibling-a (parent: div#container)
+Children of #sibling-a:
+  div#sibling-b (parent: div#sibling-a)
+
+-- Running test case: DOM.moveBefore.ChildMovedBackToBeSibling
+Before moveBefore():
+Children of #container:
+  div#sibling-a (parent: div#container)
+Children of #sibling-a:
+  div#sibling-b (parent: div#sibling-a)
+Moving #sibling-b back out to be a child of #container via moveBefore()...
+Move complete.
+After moveBefore():
+Children of #container:
+  div#sibling-a (parent: div#container)
+  div#sibling-b (parent: div#container)
+Children of #sibling-a:
+

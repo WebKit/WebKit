@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<meta charset="UTF-8">
+<title>ruby-overhang: spaces allows the annotation to overhang adjacent spaces</title>
+<link rel="help" href="https://drafts.csswg.org/css-ruby-1/#ruby-overhang">
+<link rel="author" title="Alan Baradlay" href="mailto:zalan@apple.com">
+<style>
+  body { margin: 0; }
+  div { font-family: Ahem; font-size: 20px; line-height: 3; }
+  ruby, rt { color: transparent; }
+</style>
+<!--
+  The annotation ("XXXX" at half size) is wider than its base ("X"), so it may overhang.
+  With 'ruby-overhang: spaces' it must overhang the adjacent spaces, shifting the trailing
+  (visible) "X" leftward exactly as 'ruby-overhang: auto' does (see the reference).
+-->
+<div>X <ruby style="ruby-overhang: spaces">X<rt>XXXX</rt></ruby> X</div>

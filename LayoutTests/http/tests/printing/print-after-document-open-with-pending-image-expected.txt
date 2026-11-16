@@ -1,0 +1,11 @@
+window.print() right after document.open(), write() and close() on a loaded document prints right away, without waiting for the written image.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+frameWindow.print()
+PASS stalledImageFinished is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

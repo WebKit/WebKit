@@ -1,0 +1,19 @@
+(
+∫
+)
+
+(
+∫
+)
+
+(
+∏
+)
+
+(
+∏
+)
+
+
+PASS The size of displaystyle largeops is taken into account when stretching fences.
+

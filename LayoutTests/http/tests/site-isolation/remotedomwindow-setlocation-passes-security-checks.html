@@ -1,0 +1,40 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<!DOCTYPE html>
+<html>
+<body>
+<p>This test verifies that navigating a cross-origin RemoteDOMWindow to a javascript: URL is blocked and produces the correct cross-origin error message.</p>
+<iframe id="child"></iframe>
+<script>
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+
+    const childFrame = document.getElementById('child');
+
+    childFrame.onload = function() {
+        const childWindow = childFrame.contentWindow;
+        // Make sure we're doing a cross-origin navigation to test RemoteDOMWindow
+        try {
+            const doc = childWindow.document;
+            alert("FAIL: Iframe window is not a cross-origin proxy. This test requires a cross-origin iframe.");
+            if (window.testRunner) testRunner.notifyDone();
+        } catch (e) {
+            if (e.name === 'SecurityError') {
+                alert("PASS: Iframe window is confirmed to be a cross-origin proxy.");
+            }
+        }
+
+        try {
+            childWindow.location = "javascript:alert('should not execute')";
+        } catch (e) {
+            alert(`FAIL: Should fail silently, not throw exception: ${e.name}`);
+        }
+
+        if (window.testRunner)
+            testRunner.notifyDone();
+    };
+    childFrame.src = "http://localhost:8000/site-isolation/resources/simple.html";
+</script>
+</body>
+</html>

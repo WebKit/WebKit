@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<script src="../../../resources/js-test-pre.js"></script>
+<body>
+<style>
+    audio {
+        box-model: content-box;
+        padding: 10px;
+    }
+</style>
+<script type="text/javascript">
+
+description("Testing the <code>&lt;audio></code> controls metrics.");
+
+const defaultAudio = document.body.appendChild(document.createElement("audio"));
+defaultAudio.controls = true;
+
+shouldBe("defaultAudio.getBoundingClientRect().width", "270");
+shouldBe("defaultAudio.getBoundingClientRect().height", "51");
+
+debug("");
+defaultAudio.remove();
+
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>

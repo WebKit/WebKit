@@ -1,0 +1,3 @@
+
+PASS leavepictureinpicture event is fired if document.exitPictureInPicture
+

@@ -1,0 +1,13 @@
+Removing a shadow host must not leave the surviving shadow tree pointing at the freed host. This tests both the observability verdict for a removed shadow root and the shadow-including-root scrub in removeShadowRootSlow. The test passes if it does not crash.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS removedShadowRoot.host is not null
+PASS removedShadowRoot.getRootNode({composed: true}) is removedShadowRoot.host
+PASS child.getRootNode({composed: true}) is shadowRootWithChild.host
+PASS child.getRootNode({composed: true}) is shadowRootWithChild.host
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

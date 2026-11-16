@@ -1,0 +1,17 @@
+Test that ApplePayPaymentMethod carries issuingRegionCode when a payment method is selected.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Testing ApplePaySession's paymentmethodselected event.
+PASS paymentMethod.issuingRegionCode is "GB"
+PASS 'issuingRegionCode' in paymentMethod is false
+
+Testing PaymentRequest's paymentmethodchange event.
+PASS methodDetails.issuingRegionCode is "GB"
+PASS 'issuingRegionCode' in methodDetails is false
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

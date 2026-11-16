@@ -1,0 +1,69 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true runSingly=true ] -->
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<head>
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+<style>
+div[contenteditable] {
+    font-family: monospace;
+    font-size: 32px;
+    border: 1px solid tomato;
+    width: 100%;
+}
+</style>
+<script>
+jsTestIsAsync = true;
+description(`This test verifies that tapping on an editable grammar text checking range shows the
+    edit menu and selects the range encompassing the grammatical error. This test requires
+    WebKitTestRunner to run.`);
+
+addEventListener("load", async () => {
+    const results = [
+        {
+            "type": "grammar",
+            "from": 13,
+            "to": 18,
+            "details": [{ "from": 0, "to": 5, "corrections": ["think"] }],
+        }
+    ];
+    await UIHelper.setSpellCheckerResults({
+        "I'll need to thing about it.\n": results,
+        "I'll need to thing about it.": results
+    });
+
+    let target = document.getElementById("target");
+    let editor = document.querySelector("div[contenteditable]");
+
+    await UIHelper.activateElementAndWaitForInputSession(editor);
+
+    // First, trigger grammar checking by inserting a newline.
+    getSelection().selectAllChildren(editor);
+    getSelection().collapseToEnd();
+    document.execCommand("InsertText", true, ".");
+    document.execCommand("InsertParagraph", true);
+    await UIHelper.ensurePresentationUpdate();
+
+    // Then, tap the grammar error and wait for the edit menu to show up.
+    await UIHelper.activateElement(target);
+    await UIHelper.waitForMenuToShow();
+
+    testPassed("Presented edit menu");
+    shouldBeEqualToString("getSelection().toString()", "thing");
+    shouldBeTrue("internals.hasGrammarMarker(0, 5)");
+
+    editor.blur();
+    await UIHelper.waitForKeyboardToHide();
+
+    finishJSTest();
+});
+</script>
+</head>
+<body>
+<div contenteditable>
+I'll need to <span id="target">thing</span> about it
+</div>
+<pre id="description"></pre>
+<pre id="console"></pre>
+</body>
+</html>

@@ -1,0 +1,6 @@
+
+PASS collapse can set selection to a node inside a shadow tree
+PASS collapse abort steps when called with a disconnected node inside a shadow tree
+PASS extend can set selection to a node inside a shadow tree
+PASS extend abort steps when called with a disconnected node inside a shadow tree
+

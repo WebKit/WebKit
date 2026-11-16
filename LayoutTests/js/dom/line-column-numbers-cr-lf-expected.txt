@@ -1,0 +1,15 @@
+This test checks line and column numbers in CR LF line ending HTML file.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+--> Case 1 Stack Trace:
+    0   global code at line-column-numbers-cr-lf.html:29:38
+
+--> Case 2 Stack Trace:
+    0   global code at line-column-numbers-cr-lf.html:33:34
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

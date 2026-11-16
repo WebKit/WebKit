@@ -1,0 +1,8 @@
+--- !tapi-tbd
+tbd-version: 4
+targets: [arm64-ios, arm64e-ios]
+install-name: /System/Library/PrivateFrameworks/MobileKeyBag.framework/MobileKeyBag
+exports:
+-       targets: [arm64-ios, arm64e-ios]
+        symbols: [_MKBDeviceUnlockedSinceBoot, _kMobileKeyBagLockStatusNotifyToken]
+...

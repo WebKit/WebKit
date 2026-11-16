@@ -1,0 +1,10 @@
+Test that caption styles override UA provided styles
+
+RUN(internals.setCaptionsStyleSheetOverride('::cue { color: blue; background-color: yellow; }'))
+EVENT(canplaythrough)
+EVENT(seeked)
+EXPECTED (firstCueElement() != 'null') OK
+EXPECTED (window.getComputedStyle(firstCueElement()).color == 'rgb(0, 0, 255)') OK
+EXPECTED (window.getComputedStyle(firstCueElement()).backgroundColor == 'rgb(255, 255, 0)') OK
+END OF TEST
+

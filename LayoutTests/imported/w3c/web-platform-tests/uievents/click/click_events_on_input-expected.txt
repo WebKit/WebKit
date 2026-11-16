@@ -1,0 +1,6 @@
+Clicking on input type=text element when placeholder changes
+
+
+
+PASS Test click and auxclick on input element
+

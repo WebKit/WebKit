@@ -1,0 +1,2 @@
+This tests that we support empty style sheets.
+Test succeeded!

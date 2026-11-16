@@ -1,0 +1,3 @@
+
+PASS event and promise ordering when location.href is set repeatedly and handled by intercept()
+

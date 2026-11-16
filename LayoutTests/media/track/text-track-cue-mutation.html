@@ -1,0 +1,88 @@
+<!doctype html>
+<html>
+<head>
+    <title>TextTrack.removeCue: NotFoundError and list mutation</title>
+    <script src="../../resources/testharness.js"></script>
+    <script src="../../resources/testharnessreport.js"></script>
+</head>
+<body>
+<div id="log"></div>
+<script>
+// HTML Living Standard §4.8.13.10 "Text track API" -- TextTrack.removeCue:
+//   https://html.spec.whatwg.org/multipage/media.html#dom-texttrack-removecue
+//
+// removeCue(cue) algorithm:
+//   1. If cue is not in the text track list of cues of the text track that
+//      the TextTrack object represents, then throw a NotFoundError
+//      DOMException.
+//   2. Remove cue from the text track list of cues.
+
+function makeShowingTrack() {
+    const video = document.createElement("video");
+    const tt = video.addTextTrack("captions", "test", "en");
+    tt.mode = "showing";
+    return tt;
+}
+
+test(() => {
+    const tt = makeShowingTrack();
+    const cue = new VTTCue(0, 1, "not added");
+    assert_equals(cue.track, null,
+        "VTTCue starts unattached");
+    assert_throws_dom("NotFoundError", () => { tt.removeCue(cue); },
+        "removeCue throws NotFoundError when cue is not in the track's list");
+}, "removeCue: throws NotFoundError when cue is not in the track's list");
+
+test(() => {
+    const tt1 = makeShowingTrack();
+    const tt2 = makeShowingTrack();
+    const cue = new VTTCue(0, 1, "in tt1");
+    tt1.addCue(cue);
+    assert_equals(cue.track, tt1, "cue is attached to tt1");
+    assert_throws_dom("NotFoundError", () => { tt2.removeCue(cue); },
+        "removeCue on a different track throws NotFoundError");
+    // tt1 still has the cue; tt2 still doesn't.
+    assert_equals(tt1.cues.length, 1, "tt1 still has the cue");
+    assert_equals(tt2.cues.length, 0, "tt2 still has no cues");
+}, "removeCue: throws NotFoundError when cue belongs to a different track");
+
+test(() => {
+    const tt = makeShowingTrack();
+    const cue = new VTTCue(0, 1, "test");
+    tt.addCue(cue);
+    assert_equals(tt.cues.length, 1, "cue is in the list before removal");
+    assert_equals(cue.track, tt, "cue.track points to tt");
+
+    tt.removeCue(cue);
+    assert_equals(tt.cues.length, 0, "cue removed from the list");
+    assert_equals(cue.track, null,
+        "cue.track is null after removeCue (cue is unattached)");
+}, "removeCue: removes the cue from the list and clears cue.track");
+
+test(() => {
+    const tt = makeShowingTrack();
+    const cue = new VTTCue(0, 1, "test");
+    tt.addCue(cue);
+    tt.removeCue(cue);
+    assert_throws_dom("NotFoundError", () => { tt.removeCue(cue); },
+        "second removeCue of the same cue throws NotFoundError");
+}, "removeCue: removing twice throws NotFoundError on the second call");
+
+test(() => {
+    // Spec is order-preserving. Verify add A B C, remove B, list is [A, C].
+    const tt = makeShowingTrack();
+    const a = new VTTCue(0, 1, "A");
+    const b = new VTTCue(1, 2, "B");
+    const c = new VTTCue(2, 3, "C");
+    tt.addCue(a);
+    tt.addCue(b);
+    tt.addCue(c);
+    assert_array_equals([...tt.cues], [a, b, c], "initial order is [A, B, C]");
+
+    tt.removeCue(b);
+    assert_array_equals([...tt.cues], [a, c],
+        "after removing B, the list is [A, C]");
+}, "removeCue: preserves order of remaining cues");
+</script>
+</body>
+</html>

@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="resources/routines.js"></script>
+</head>
+<body>
+<script>
+promise_test(async t => {
+    const registration = await navigator.serviceWorker.register("resources/update-with-importScripts-worker.js");
+    if (registration.installing)
+        await waitForState(registration.installing, "activated");
+
+    await registration.update();
+    assert_equals(registration.installing, null);
+}, 'A request to fetch service worker imported script should not have a Service-Worker header');
+</script>
+</body>
+</html>

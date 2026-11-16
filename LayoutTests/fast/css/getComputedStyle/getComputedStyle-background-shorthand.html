@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset='utf-8'>
+<script src='../../../resources/js-test.js'></script>
+</head>
+<body>
+<script>
+
+description('Test to make sure background shorthand properties parse and compute correctly');
+
+var testContainer = document.createElement('div');
+testContainer.contentEditable = true;
+document.body.appendChild(testContainer);
+
+testContainer.innerHTML = "<div id='test'>hello</div>";
+
+var e = document.getElementById("test");
+var computedStyle = getComputedStyle(e);
+
+function backgroundComputedStyleRoundTrip(value)
+{
+    e.style.background = "none";
+    e.style.background = value;
+    return computedStyle.getPropertyValue("background");
+}
+
+function testBackground(assignment, expected)
+{
+    shouldBeEqualToString("e.style." + assignment +"; computedStyle.getPropertyValue('background')", expected);
+    shouldBeEqualToString("backgroundComputedStyleRoundTrip('" + expected + "')", expected);
+}
+
+testBackground('background = "red"', 'rgb(255, 0, 0) none repeat scroll 0% 0% / auto padding-box border-box');
+testBackground('backgroundImage = "url(dummy://test.png)"', 'rgb(255, 0, 0) url("dummy://test.png") repeat scroll 0% 0% / auto padding-box border-box');
+testBackground('backgroundRepeat = "no-repeat"', 'rgb(255, 0, 0) url("dummy://test.png") no-repeat scroll 0% 0% / auto padding-box border-box');
+testBackground('backgroundAttachment = "fixed"', 'rgb(255, 0, 0) url("dummy://test.png") no-repeat fixed 0% 0% / auto padding-box border-box');
+testBackground('backgroundPosition = "right bottom"', 'rgb(255, 0, 0) url("dummy://test.png") no-repeat fixed 100% 100% / auto padding-box border-box');
+testBackground('backgroundSize = "cover"', 'rgb(255, 0, 0) url("dummy://test.png") no-repeat fixed 100% 100% / cover padding-box border-box');
+testBackground('backgroundOrigin = "content-box"', 'rgb(255, 0, 0) url("dummy://test.png") no-repeat fixed 100% 100% / cover content-box border-box');
+testBackground('backgroundClip = "padding-box"', 'rgb(255, 0, 0) url("dummy://test.png") no-repeat fixed 100% 100% / cover content-box padding-box');
+testBackground('background = "border-box padding-box url(dummy://test.png) green 45% / contain repeat fixed"', 'rgb(0, 128, 0) url("dummy://test.png") repeat fixed 45% 50% / contain border-box padding-box');
+testBackground('background = "url(dummy://test.png), red"', 'url("dummy://test.png") repeat scroll 0% 0% / auto padding-box border-box, rgb(255, 0, 0) none repeat scroll 0% 0% / auto padding-box border-box');
+
+document.body.removeChild(testContainer);
+
+</script>
+</body>
+</html>

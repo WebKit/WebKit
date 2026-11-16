@@ -1,0 +1,55 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[%# INTERFACE:
+  # product: object; Bugzilla::Product object representing the product to
+  #               which the milestone belongs.
+  #
+  # milestone: object; Bugzilla::Milestone object representing the
+  #                    milestone.
+  #
+  # no_XXX_link: boolean; if defined, then don't show the corresponding
+  #                       link. Supported parameters are:
+  #
+  # no_edit_milestone_link
+  # no_edit_other_milestones_link
+  # no_add_milestone_link
+  #%]
+
+<hr>
+
+<p>
+
+[% UNLESS no_add_milestone_link %]
+  <a title="Add a milestone to product '[% product.name FILTER html %]'"
+     href="editmilestones.cgi?action=add&amp;product=
+          [%- product.name FILTER uri %]">Add</a> a milestone. 
+[% END %]
+
+[% IF milestone.name && !no_edit_milestone_link %]
+  Edit milestone <a 
+  title="Edit Milestone '[% milestone.name FILTER html %]' of product '
+         [%- product.name FILTER html %]'"
+  href="editmilestones.cgi?action=edit&amp;product=
+        [%- product.name FILTER uri %]&amp;milestone=
+        [%- milestone.name FILTER uri %]">
+        '[% milestone.name FILTER html %]'</a>.
+[% END %]
+
+[% UNLESS no_edit_other_milestones_link %]
+  Edit other milestones of product <a 
+  href="editmilestones.cgi?product=
+        [%- product.name FILTER uri %]">'[% product.name FILTER html %]'</a>.
+
+[% END %]
+
+  Edit product <a 
+  href="editproducts.cgi?action=edit&amp;product=
+        [%- product.name FILTER uri %]">'[% product.name FILTER html %]'</a>.
+
+</p>

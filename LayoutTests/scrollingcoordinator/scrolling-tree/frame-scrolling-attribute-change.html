@@ -1,0 +1,80 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ AsyncFrameScrollingEnabled=true ] -->
+<html>
+<head>
+<style>
+    iframe {
+        width: 200px;
+        height: 200px;
+        border: 1px solid black;
+    }
+</style>
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/ui-helper.js"></script>
+<script>
+    description("Tests that changing an iframe's 'scrolling' attribute updates the scrollbar modes of its frame scrolling node.");
+    jsTestIsAsync = true;
+
+    const scrollbarModeNames = ["Auto", "AlwaysOff", "AlwaysOn"];
+
+    async function subframeScrollbarModes()
+    {
+        const tree = await UIHelper.getScrollingTree();
+        const frameNodeStart = tree.lastIndexOf("(frame scrolling node");
+        // The first frame scrolling node is the main frame's.
+        if (frameNodeStart == tree.indexOf("(frame scrolling node"))
+            return "not found";
+        const subframeTree = tree.slice(frameNodeStart);
+        const horizontal = subframeTree.match(/\(horizontal scrollbar mode (\d)\)/);
+        const vertical = subframeTree.match(/\(vertical scrollbar mode (\d)\)/);
+        if (!horizontal || !vertical)
+            return "not found";
+        return `horizontal ${scrollbarModeNames[horizontal[1]]}, vertical ${scrollbarModeNames[vertical[1]]}`;
+    }
+
+    var modes;
+
+    async function testScrollingChange(contentHeight, initialScrolling, newScrolling, initialModes, newModes)
+    {
+        debug(`<br>Content height ${contentHeight}px, scrolling="${initialScrolling}" to scrolling="${newScrolling}":`);
+
+        const iframe = document.createElement("iframe");
+        iframe.setAttribute("scrolling", initialScrolling);
+        iframe.srcdoc = `<body style="margin: 0"><div style="height: ${contentHeight}px; transform: translateZ(0); background-color: green"></div></body>`;
+        const loaded = new Promise(resolve => iframe.addEventListener("load", resolve, { once: true }));
+        document.body.appendChild(iframe);
+        await loaded;
+
+        await UIHelper.waitForConditionAsync(async () => {
+            modes = await subframeScrollbarModes();
+            return modes == initialModes;
+        }, 100);
+        shouldBeEqualToString("modes", initialModes);
+
+        iframe.setAttribute("scrolling", newScrolling);
+
+        await UIHelper.waitForConditionAsync(async () => {
+            modes = await subframeScrollbarModes();
+            return modes == newModes;
+        }, 100);
+        shouldBeEqualToString("modes", newModes);
+
+        iframe.remove();
+        await UIHelper.renderingUpdate();
+    }
+
+    window.addEventListener("load", async () => {
+        const off = "horizontal AlwaysOff, vertical AlwaysOff";
+        const auto = "horizontal Auto, vertical Auto";
+
+        await testScrollingChange(100, "no", "yes", off, auto);
+        await testScrollingChange(100, "yes", "no", auto, off);
+        await testScrollingChange(400, "no", "yes", off, auto);
+        await testScrollingChange(400, "yes", "no", auto, off);
+
+        finishJSTest();
+    });
+</script>
+</head>
+<body>
+</body>
+</html>

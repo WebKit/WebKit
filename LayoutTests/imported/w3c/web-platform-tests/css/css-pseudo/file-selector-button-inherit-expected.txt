@@ -1,0 +1,4 @@
+
+
+PASS ::file-selector-button should inherit from its originating element
+

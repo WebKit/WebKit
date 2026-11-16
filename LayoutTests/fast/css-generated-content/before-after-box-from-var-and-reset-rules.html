@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+<style>
+@keyframes generate { from, to { content: ""; } }
+*::before { transition: none; animation: none; content: normal; }
+.box::before { display: block; height: 25px; }
+#reset::before { content: ""; }
+#varContent { --content: ""; }
+#varContent::before { content: var(--content); }
+#varAnimation { --animation: generate 1000s; }
+#varAnimation::before { animation: var(--animation); }
+#varTransition { --transition: content 1000s allow-discrete; }
+#varTransition::before { transition: var(--transition); }
+#varTransition.content::before { content: ""; }
+</style>
+</head>
+<body>
+<div id="none" class="box"></div>
+<div id="reset" class="box"></div>
+<div id="varContent" class="box"></div>
+<div id="varAnimation" class="box"></div>
+<div id="varTransition" class="box content"></div>
+<script>
+description("::before gets a box when 'content', 'animation' or 'transition' come from var(), and reset rules that can't generate a box also match.");
+
+debug("Reset rules only");
+shouldBe("none.offsetHeight", "0");
+
+debug("");
+debug("Reset rules and a rule that sets 'content'");
+shouldBe("reset.offsetHeight", "25");
+
+debug("");
+debug("'content' from var()");
+shouldBe("varContent.offsetHeight", "25");
+
+debug("");
+debug("'animation' from var()");
+shouldBe("varAnimation.offsetHeight", "25");
+
+debug("");
+debug("'transition' from var()");
+shouldBe("varTransition.offsetHeight", "25");
+evalAndLog("varTransition.classList.remove('content')");
+shouldBe("varTransition.offsetHeight", "25");
+evalAndLog("varTransition.getAnimations({ subtree: true })[0].finish()");
+shouldBe("varTransition.offsetHeight", "0");
+</script>
+</body>
+</html>

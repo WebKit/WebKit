@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test.js"></script>
+<script>
+description("Makes sure that BroadcastChannel cannot be used to communicate between different sessions.");
+jsTestIsAsync = true;
+
+onload = () => {
+    channel = new BroadcastChannel('broadcast-channel-between-different-sessions');
+    channel.onmessage = (event) => {
+        testFailed("Received BroadcastChannel channel from ephemeral session Window");
+        clearTimeout(handle);
+        finishJSTest();
+    };
+    if (window.testRunner)
+        testRunner.setShouldSwapToEphemeralSessionOnNextNavigation(true);
+    open("resources/broadcast-channel-between-different-sessions-window.html", "testWindow", "noopener");
+    handle = setTimeout(() => {
+        testPassed("Did not receive BroadcastChannel channel from ephemeral session Window");
+        finishJSTest();
+    }, 1000);
+}
+</script>
+</body>
+</html>

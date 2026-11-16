@@ -1,0 +1,11 @@
+Successfully compiled asm.js code
+
+return1.js(46, 12)
+	Asm.js Compilation Error function : None::f
+	Expression for return must be subtype of Signed, Double, or Float
+
+Asm.js compilation failed.
+124
+124
+true
+true

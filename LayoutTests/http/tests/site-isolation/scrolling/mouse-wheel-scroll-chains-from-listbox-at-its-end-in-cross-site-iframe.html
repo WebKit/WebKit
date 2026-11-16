@@ -1,0 +1,80 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true AsyncOverflowScrollingEnabled=true AsyncFrameScrollingEnabled=true ] -->
+<!DOCTYPE html>
+<style>
+body { margin: 0; height: 3000px; }
+iframe { position: absolute; left: 10px; top: 10px; width: 400px; height: 300px; border: 0; }
+</style>
+<script src="/js-test-resources/js-test.js"></script>
+<script src="/js-test-resources/ui-helper.js"></script>
+<script src="resources/iframe-test-helpers.js"></script>
+<body>
+<script>
+description("Tests that mouse wheel events over a listbox that is already at its end scroll the nearest frame that can scroll, even when that frame is in another process.");
+jsTestIsAsync = true;
+
+async function runCase(name, src, expectedScroller, listWindow, parentWindow, listFrameMessage)
+{
+    scrollTo(0, 0);
+    await loadIframe(src);
+    await UIHelper.renderingUpdate();
+    if (listFrameMessage)
+        await sendToFrame(listWindow(), listFrameMessage, 'listScrollTop');
+    await UIHelper.startMonitoringWheelEvents();
+
+    const scrollPositions = async () => {
+        const list = await sendToFrame(listWindow(), 'query', 'listScrollTop');
+        const parentScrollY = parentWindow ? (await sendToFrame(parentWindow(), 'query', 'parentScrollY')).parentScrollY : 0;
+        return { 'main frame': scrollY, 'middle frame': parentScrollY, 'listbox frame': list.scrollY, list: list.listScrollTop };
+    };
+
+    const { listRect } = await sendToFrame(listWindow(), 'query', 'listScrollTop');
+    const before = await scrollPositions();
+    const iframeRect = iframe.getBoundingClientRect();
+    eventSender.mouseMoveTo(iframeRect.left + listRect.x + listRect.width / 2, iframeRect.top + listRect.y + listRect.height / 2);
+    eventSender.mouseScrollBy(0, -5);
+
+    let after;
+    const scrolledFrames = () => ['main frame', 'middle frame', 'listbox frame'].filter((frame) => after[frame] != before[frame]);
+    for (let i = 0; i < 20; ++i) {
+        await UIHelper.renderingUpdate();
+        after = await scrollPositions();
+        if (scrolledFrames().length || after.list != before.list)
+            break;
+    }
+
+    if (after.list == before.list && scrolledFrames().join() == (expectedScroller ?? ''))
+        testPassed(`${name}: ${expectedScroller ? `scrolled the ${expectedScroller}` : 'scrolled nothing'}`);
+    else
+        testFailed(`${name}: before ${JSON.stringify(before)}, after ${JSON.stringify(after)}`);
+}
+
+onload = async () => {
+    if (!window.eventSender) {
+        finishJSTest();
+        return;
+    }
+    const crossSiteOrigin = 'http://localhost:8000';
+    const sameSiteOrigin = 'http://127.0.0.1:8000';
+    const listbox = 'site-isolation/scrolling/resources/listbox-iframe.html';
+    const listboxInFrame = (query) => `${crossSiteOrigin}/site-isolation/scrolling/resources/listbox-parent-iframe.html?${query}childOrigin=${sameSiteOrigin}&childQuery=short%26end`;
+    await runCase('cross-site iframe that cannot scroll', `${crossSiteOrigin}/${listbox}?short&end`, 'main frame',
+        () => iframe.contentWindow, null);
+    await runCase('same-site frame inside a cross-site iframe that cannot scroll', listboxInFrame(''), 'main frame',
+        () => iframe.contentWindow.frames[0], () => iframe.contentWindow);
+    await runCase('same-site frame inside a cross-site iframe that can scroll', listboxInFrame('tall&'), 'middle frame',
+        () => iframe.contentWindow.frames[0], () => iframe.contentWindow);
+    await runCase('cross-site iframe that can scroll', `${crossSiteOrigin}/${listbox}?end`, 'listbox frame',
+        () => iframe.contentWindow, null);
+    await runCase('cross-site iframe that is already scrolled to its end', `${crossSiteOrigin}/${listbox}?end`, null,
+        () => iframe.contentWindow, null, 'scrollToEnd');
+    await runCase('cross-site iframe that cannot scroll with overscroll-behavior: contain', `${crossSiteOrigin}/${listbox}?short&end&contain`, null,
+        () => iframe.contentWindow, null);
+    await runCase('cross-site iframe whose wheel event listener calls preventDefault()', `${crossSiteOrigin}/${listbox}?short&end&preventWheel`, null,
+        () => iframe.contentWindow, null);
+    await runCase('same-site iframe that cannot scroll', `${sameSiteOrigin}/${listbox}?short&end`, 'main frame',
+        () => iframe.contentWindow, null);
+    iframe.remove();
+    finishJSTest();
+};
+</script>
+</body>

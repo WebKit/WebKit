@@ -1,0 +1,6 @@
+(repaint rects
+  (rect 20 20 40 40)
+  (rect 10 10 20 20)
+  (rect 20 20 40 40)
+)
+

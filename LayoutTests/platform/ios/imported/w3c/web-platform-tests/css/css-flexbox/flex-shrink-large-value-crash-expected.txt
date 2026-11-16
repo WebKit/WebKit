@@ -1,0 +1,20 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x155
+  RenderBlock {HTML} at (0,0) size 800x155
+    RenderBody {BODY} at (8,8) size 784x131
+      RenderBlock (anonymous) at (0,0) size 784x55
+        RenderFlexibleBox {DIV} at (0,0) size 40x40
+          RenderBlock {DIV} at (0,0) size 51x50
+          RenderBlock {DIV} at (50,0) size 41x40
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {P} at (0,71) size 784x60
+        RenderText {#text} at (0,0) size 483x19
+          text run at (0,0) width 483: "The high flex shrink factor can lead to loss of precision as we calculate the "
+        RenderInline {A} at (0,0) size 209x19 [color=#0000EE]
+          RenderText {#text} at (482,0) size 209x19
+            text run at (482,0) width 209: "sum of scaled flex shrink factors"
+        RenderText {#text} at (690,0) size 782x59
+          text run at (690,0) width 76: " as required"
+          text run at (0,20) width 782: "by the spec, and as we later subtract the scaled flex factors for frozen violations, we can get to a negative value due to that"
+          text run at (0,40) width 90: "lost precision."

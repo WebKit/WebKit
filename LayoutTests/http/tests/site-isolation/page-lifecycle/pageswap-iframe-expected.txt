@@ -1,0 +1,12 @@
+Tests that pageswap is fired in iframe when site isolation is enabled.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS caughtEvent.name is "pageswap"
+PASS caughtEvent.params.activation is null
+PASS caughtEvent.params.viewTransition is null
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

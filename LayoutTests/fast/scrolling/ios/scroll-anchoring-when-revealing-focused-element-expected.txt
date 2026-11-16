@@ -1,0 +1,10 @@
+Verifies that we scroll to avoid obscuring the focused element with the software keyboard, when scroll anchoring is enabled. To run the test manually, focus the text field without a hardware keyboard attached and check that the text field is visible
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+PASS distanceToTopOfKeyboard is > distanceToBottomOfTextField
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Scroll Anchor Element
+

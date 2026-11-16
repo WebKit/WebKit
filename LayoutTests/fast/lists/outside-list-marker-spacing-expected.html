@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+ol {
+    font: 20px/1 Ahem;
+    margin: 0;
+    padding-inline-start: 120px;
+    list-style: none;
+    counter-reset: item;
+}
+
+li {
+    counter-increment: item;
+    position: relative;
+}
+
+li::before {
+    content: counter(item) ". ";
+    position: absolute;
+    right: 100%;
+    white-space: pre;
+}
+</style>
+</head>
+<body>
+<ol>
+    <li>First</li>
+    <li>Second</li>
+    <li>Third</li>
+    <li style="counter-increment: item 7">Ten</li>
+    <li style="counter-increment: item 90">Hundred</li>
+</ol>
+</body>
+</html>

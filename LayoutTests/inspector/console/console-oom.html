@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("console oom");
+
+    suite.addTestCase({
+        name: "Don't oom",
+        description: "Test that we don't oom when sending a warning to the console of an unknown label",
+        timeout: -1,
+        async test() {
+            await InspectorTest.evaluateInPage(`
+                let s = 'a'.repeat(2**31-1);
+                console.countReset(s);
+
+                console.time(s);
+                console.time(s);
+
+                console.timeLog(s);
+                console.timeEnd(s);
+                console.timeEnd(s);
+                console.timeLog(s);
+
+                console.count(s);
+            `);
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+</body>
+</html>

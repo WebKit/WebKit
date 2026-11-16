@@ -1,0 +1,13 @@
+Recreating ::checkmark must not crash when destroying the old one collapses the anonymous block wrapping the option's text.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS select.value is "Two"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+One
+Two
+

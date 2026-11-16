@@ -1,0 +1,26 @@
+<!DOCTYPE html><!-- webkit-test-runner [ MouseEventsSimulationEnabled=true ] -->
+<html>
+<head>
+    <script src="resources/touch-regions-helper.js"></script>
+    <style>
+        .region {
+            display: block;
+            width:150px;
+            height:150px;
+            background: blue;
+            margin-top:20px;
+        }
+    </style>
+</head>
+<body>
+    <p>Test for <a href="https://webkit.org/b/313386">https://webkit.org/b/313386</a></p>
+    <div id="mousemove_region" class="region"></div>
+    <div id="mouseup_region" class="region"></div>
+    <script>
+        mousemove_region.addEventListener("mousemove", ()=>{});
+        mouseup_region.addEventListener("mouseup", ()=>{});
+        prepareForTest();
+        window.addEventListener('load', dumpRegions, false);
+    </script>
+</body>
+</html>

@@ -1,0 +1,5 @@
+
+PASS Should use the first fallback position at the initial scroll offsets
+PASS Should use the second fallback position after scrolling viewport down
+PASS Should use the third fallback position after scrolling the vrl scroller left
+

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+        <script src=../../media-resources/video-test.js></script>
+
+        <script>
+            var imageBitmap;
+
+            function getColorIndicesForCoord(x, y, width) {
+                var red = y * (width * 4) + x * 4;
+                return [red, red + 1, red + 2, red + 3];
+            }
+
+            async function canplaythrough()
+            {
+                // As we can't guarantee when an actual image will get painted;
+                // we loop until the condition becomes true: a pixel in the centre is no longer black.
+                let firstRun = true;
+                for (;;) {
+                    imageBitmap = await createImageBitmap(video);
+                    if (firstRun) {
+                        testExpected("imageBitmap instanceof ImageBitmap", true);
+                        testExpected("imageBitmap.width != 0", true);
+                        testExpected("imageBitmap.height != 0", true);
+                    }
+                    let ctx = c1.getContext("2d");
+                    ctx.drawImage(imageBitmap, 0, 0);
+                    const imageData = ctx.getImageData(0, 0, c1.width, c1.height);
+                    // At the centre of the video we have a circle, ensure that it's not black.
+                    let colorIndices = getColorIndicesForCoord(imageBitmap.width / 2, imageBitmap.height / 2, c1.width);
+                    let redIndex = colorIndices[0];
+                    let greenIndex = colorIndices[1];
+                    let blueIndex = colorIndices[2];
+                    let alphaIndex = colorIndices[3];
+
+                    let redForCoord = imageData.data[redIndex];
+                    let greenForCoord = imageData.data[greenIndex];
+                    let blueForCoord = imageData.data[blueIndex];
+                    let alphaForCoord = imageData.data[alphaIndex];
+
+                    if (redForCoord != 0 && greenForCoord != 0 && blueForCoord != 0 && alphaForCoord == 255) {
+                        consoleWrite("Image isn't all black \\o/");
+                        endTest();
+                        break;
+                    }
+                    firstRun = false;
+                    await sleepFor(100);
+                }
+            }
+
+            function start()
+            {
+                consoleWrite("<br><em>** Set video.src, wait for media data to load</em>");
+                findMediaElement();
+                run("video.src = 'http://127.0.0.1:8000/media/resources/hls/metadata/prog_index.m3u8'");
+                consoleWrite("");
+                waitForEventOnce("canplaythrough", canplaythrough);
+            }
+        </script>
+    </head>
+    <body onload="start()">
+        <video controls></video>
+        <p>Check that creating an ImageBitmap from a video succeeds.</p>
+        <canvas id="c1" width="640" height="480"></canvas>
+    </body>
+</html>

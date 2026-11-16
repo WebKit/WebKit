@@ -1,0 +1,5 @@
+
+
+FAIL Permissions policy "private-state-token-issuance" can be enabled in same-origin iframe using allow="private-state-token-issuance" attribute assert_equals: Private State Token issuance request expected 2 but got 1
+FAIL Permissions policy "private-state-token-issuance" can be enabled in cross-origin iframe using allow="private-state-token-issuance" attribute assert_equals: Private State Token issuance request expected 2 but got 1
+

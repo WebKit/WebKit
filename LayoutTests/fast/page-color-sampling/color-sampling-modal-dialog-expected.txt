@@ -1,0 +1,16 @@
+PASS edgeColorsBeforeShowingModalDialog.top is null
+PASS edgeColorsBeforeShowingModalDialog.left is null
+PASS edgeColorsBeforeShowingModalDialog.right is null
+PASS edgeColorsBeforeShowingModalDialog.bottom is null
+PASS edgeColorsAfterShowingModalDialog.top is "rgb(229, 229, 229)"
+PASS edgeColorsAfterShowingModalDialog.left is "rgb(229, 229, 229)"
+PASS edgeColorsAfterShowingModalDialog.right is "rgb(229, 229, 229)"
+PASS edgeColorsAfterShowingModalDialog.bottom is "rgb(229, 229, 229)"
+PASS edgeColorsAfterClosingModalDialog.top is null
+PASS edgeColorsAfterClosingModalDialog.left is null
+PASS edgeColorsAfterClosingModalDialog.right is null
+PASS edgeColorsAfterClosingModalDialog.bottom is null
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

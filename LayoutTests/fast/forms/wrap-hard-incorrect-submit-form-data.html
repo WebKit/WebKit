@@ -1,0 +1,26 @@
+<!-- hit submit button for manual testing -->
+<form id=submit_this action="#">
+  <textarea cols="50" name="txt" wrap="hard">
+PASS if there's no extra line between this
+and this.
+  </textarea>
+  <input id=submit_button type="submit">
+</form>
+<pre id=result></pre>
+<script>
+if (window.testRunner)
+  testRunner.dumpAsText();
+
+
+document.querySelector('form').addEventListener('submit', (e) => {
+  e.preventDefault();
+
+  const formData = new FormData(e.target);
+  result.innerText = formData.get('txt');
+
+  submit_this.style.display = "none";
+});
+
+submit_button.click();
+
+</script>

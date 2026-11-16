@@ -1,0 +1,1028 @@
+# Copyright (c) 2014 The WebRTC project authors. All Rights Reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS.  All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+# This is the root build file for GN. GN will start processing by loading this
+# file, and recursively load all dependencies until all dependencies are either
+# resolved or known not to exist (which will cause the build to fail). So if
+# you add a new build file, there must be some path of dependencies from this
+# file to your new one or GN won't know about it.
+
+# Use of visibility = clauses:
+# The default visibility for all rtc_ targets is equivalent to "//*", or
+# "all targets in webrtc can depend on this, nothing outside can".
+#
+# When overriding, the choices are:
+# - visibility = [ "*" ] - public. Stuff outside webrtc can use this.
+# - visibility = [ ":*" ] - directory private.
+# As a general guideline, only targets in api/ should have public visibility.
+
+import("//build/config/linux/pkg_config.gni")
+import("//build/config/sanitizers/sanitizers.gni")
+import("//testing/test.gni")
+import("webrtc.gni")
+
+if (rtc_rust) {
+  import("//build/rust/rust_unit_tests_group.gni")
+}
+
+if (rtc_enable_protobuf) {
+  import("//third_party/protobuf/proto_library.gni")
+}
+if (is_android) {
+  import("//build/config/android/config.gni")
+  import("//build/config/android/rules.gni")
+  import("//third_party/jni_zero/jni_zero.gni")
+}
+
+if (!build_with_chromium) {
+  # This target should (transitively) cause everything to be built; if you run
+  # 'ninja default' and then 'ninja all', the second build should do no work.
+  group("default") {
+    testonly = true
+    deps = [ ":webrtc" ]
+    if (rtc_build_examples) {
+      deps += [ "examples" ]
+    }
+    if (rtc_build_tools) {
+      deps += [ "rtc_tools" ]
+    }
+    if (rtc_include_tests) {
+      deps += [
+        ":rust_tests",
+        ":test_suites",
+        "examples:examples_unittests",
+        "modules/audio_coding:audio_coding_tests",
+        "modules/audio_processing:audio_processing_tests",
+        "modules/remote_bitrate_estimator:rtp_to_text",
+        "modules/rtp_rtcp:test_packet_masks_metrics",
+        "modules/video_capture:video_capture_internal_impl",
+        "modules/video_coding:video_codec_perf_tests",
+        "p2p:dtls_ice_integration_bench",
+        "pc:slow_peer_connection_unittests",
+        "pc:svc_tests",
+        "rtc_tools:video_encoder",
+        "rtc_tools:video_replay",
+        "test",
+        "video:screenshare_loopback",
+        "video:sv_loopback",
+        "video:video_loopback",
+      ]
+      deps += [ "tools_webrtc:validate_test_registration" ]
+      if (use_libfuzzer) {
+        deps += [ "test/fuzzers" ]
+      }
+
+      # TODO(bugs.webrtc.org/430260876): Remove once rust links with libwebrtc.
+      if (!is_asan) {
+        # Do not build :webrtc_lib_link_test because lld complains on some OS
+        # (e.g. when target_os = "mac") when is_asan=true. For more details,
+        # see bugs.webrtc.org/11027#c5.
+        deps += [ ":webrtc_lib_link_test" ]
+      }
+
+      if (is_ios) {
+        deps += [
+          "examples:apprtcmobile_tests",
+          "sdk:sdk_framework_unittests",
+          "sdk:sdk_unittests",
+        ]
+      }
+      if (is_android) {
+        deps += [
+          "examples:android_examples_junit_tests",
+          "modules/video_coding:videocodec_test_mediacodec",
+          "sdk/android:android_instrumentation_test_apk",
+          "sdk/android:android_sdk_junit_tests",
+        ]
+      } else {
+        deps += [ "modules/video_capture:video_capture_tests" ]
+      }
+      if (rtc_enable_protobuf) {
+        deps += [
+          "logging:rtc_event_log_rtp_dump",
+          "tools_webrtc/perf:webrtc_dashboard_upload",
+        ]
+      }
+      if ((is_linux || is_chromeos) && rtc_use_pipewire) {
+        deps += [ "modules/desktop_capture:shared_screencast_stream_test" ]
+      }
+    }
+    if (target_os == "android") {
+      deps += [ "tools_webrtc:binary_version_check" ]
+    }
+  }
+}
+
+if (rtc_include_tests) {
+  group("test_suites") {
+    testonly = true
+    deps = [
+      ":rtc_unittests",
+      ":voip_unittests",
+      ":webrtc_nonparallel_tests",
+      ":webrtc_perf_tests",
+      "//audio:audio_engine_tests",
+      "//call:call_tests",
+      "//call/adaptation:resource_adaptation_tests",
+      "//common_audio:common_audio_unittests",
+      "//common_video:common_video_unittests",
+      "//media:rtc_media_unittests",
+      "//modules:modules_unittests",
+      "//modules/audio_coding:audio_coding_unittests",
+      "//modules/audio_processing:audio_processing_unittests",
+      "//modules/rtp_rtcp:rtp_rtcp_unittests",
+      "//modules/video_coding:video_coding_unittests",
+      "//net/dcsctp:dcsctp_unittests",
+      "//p2p:rtc_p2p_unittests",
+      "//pc:peerconnection_unittests",
+      "//pc:rtc_pc_unittests",
+      "//rtc_tools:tools_unittests",
+      "//stats:rtc_stats_unittests",
+      "//system_wrappers:system_wrappers_unittests",
+      "//test:test_support_unittests",
+      "//video:video_tests",
+      "//video/adaptation:video_adaptation_tests",
+      "//video/timing:video_timing_tests",
+    ]
+    if (rtc_desktop_capture_supported) {
+      deps += [
+        "//modules/desktop_capture:desktop_capture_modules_tests",
+        "//modules/desktop_capture:desktop_capture_unittests",
+        "//modules/desktop_capture:xvfb_capture_tests",
+      ]
+      if (is_mac) {
+        deps += [ "//modules/desktop_capture:desktop_capture_mac_unittests" ]
+      }
+      if (is_win) {
+        deps += [ "//modules/desktop_capture:desktop_capture_win_unittests" ]
+      }
+    }
+  }
+}
+
+# Abseil Flags by default doesn't register command line flags on mobile
+# platforms, WebRTC tests requires them (e.g. on simualtors) so this
+# config will be applied to testonly targets globally (see webrtc.gni).
+config("absl_flags_configs") {
+  defines = [ "ABSL_FLAGS_STRIP_NAMES=0" ]
+}
+
+config("library_impl_config") {
+  # Build targets that contain WebRTC implementation need this macro to
+  # be defined in order to correctly export symbols when is_component_build
+  # is true.
+  # For more info see: rtc_base/build/rtc_export.h.
+  defines = [ "WEBRTC_LIBRARY_IMPL" ]
+}
+
+# Contains the defines and includes in common.gypi that are duplicated both as
+# target_defaults and direct_dependent_settings.
+config("common_inherited_config") {
+  defines = [ "PROTOBUF_ENABLE_DEBUG_LOGGING_MAY_LEAK_PII=0" ]
+  cflags = []
+  ldflags = []
+
+  if (rtc_objc_prefix != "") {
+    defines += [ "RTC_OBJC_TYPE_PREFIX=${rtc_objc_prefix}" ]
+  }
+
+  if (rtc_dlog_always_on) {
+    defines += [ "DLOG_ALWAYS_ON" ]
+  }
+
+  if (rtc_enable_symbol_export || is_component_build) {
+    defines += [ "WEBRTC_ENABLE_SYMBOL_EXPORT" ]
+  }
+  if (rtc_enable_objc_symbol_export) {
+    defines += [ "WEBRTC_ENABLE_OBJC_SYMBOL_EXPORT" ]
+  }
+
+  if (!rtc_builtin_ssl_root_certificates) {
+    defines += [ "WEBRTC_EXCLUDE_BUILT_IN_SSL_ROOT_CERTS" ]
+  }
+
+  if (rtc_disable_check_msg) {
+    defines += [ "RTC_DISABLE_CHECK_MSG" ]
+  }
+
+  if (rtc_enable_avx2) {
+    defines += [ "WEBRTC_ENABLE_AVX2" ]
+  }
+
+  if (rtc_enable_win_wgc) {
+    defines += [ "RTC_ENABLE_WIN_WGC" ]
+  }
+
+  if (deprecate_plan_b) {
+    defines += [ "WEBRTC_DEPRECATE_PLAN_B" ]
+  }
+
+  if (!rtc_rust) {
+    defines += [ "WEBRTC_WITHOUT_RUST" ]
+  }
+
+  if (!rtc_use_perfetto) {
+    # Some tests need to declare their own trace event handlers. If this define
+    # is not set, the first time TRACE_EVENT_* is called it will store the
+    # return value for the current handler in an static variable, so that
+    # subsequent changes to the handler for that TRACE_EVENT_* will be ignored.
+    # So when tests are included, we set this define, making it possible to use
+    # different event handlers in different tests.
+    if (rtc_include_tests) {
+      defines += [ "WEBRTC_NON_STATIC_TRACE_EVENT_HANDLERS=1" ]
+    } else {
+      defines += [ "WEBRTC_NON_STATIC_TRACE_EVENT_HANDLERS=0" ]
+    }
+  }
+  if (build_with_chromium) {
+    defines += [ "WEBRTC_CHROMIUM_BUILD" ]
+    include_dirs = [
+      # The overrides must be included first as that is the mechanism for
+      # selecting the override headers in Chromium.
+      "../webrtc_overrides",
+
+      # Allow includes to be prefixed with webrtc/ in case it is not an
+      # immediate subdirectory of the top-level.
+      ".",
+
+      # Just like the root WebRTC directory is added to include path, the
+      # corresponding directory tree with generated files needs to be added too.
+      # Note: this path does not change depending on the current target, e.g.
+      # it is always "//gen/third_party/webrtc" when building with Chromium.
+      # See also: http://cs.chromium.org/?q=%5C"default_include_dirs
+      # https://gn.googlesource.com/gn/+/master/docs/reference.md#target_gen_dir
+      target_gen_dir,
+    ]
+  }
+  if (is_posix || is_fuchsia) {
+    defines += [ "WEBRTC_POSIX" ]
+  }
+  if (is_ios) {
+    defines += [
+      "WEBRTC_MAC",
+      "WEBRTC_IOS",
+    ]
+  }
+  if (is_linux || is_chromeos) {
+    defines += [ "WEBRTC_LINUX" ]
+  }
+  if (is_mac) {
+    defines += [ "WEBRTC_MAC" ]
+  }
+  if (is_fuchsia) {
+    defines += [ "WEBRTC_FUCHSIA" ]
+  }
+  if (is_win) {
+    defines += [ "WEBRTC_WIN" ]
+  }
+  if (is_android) {
+    defines += [
+      "WEBRTC_LINUX",
+      "WEBRTC_ANDROID",
+    ]
+
+    if (build_with_mozilla) {
+      defines += [ "WEBRTC_ANDROID_OPENSLES" ]
+    }
+  }
+  if (is_chromeos) {
+    defines += [ "CHROMEOS" ]
+  }
+
+  if (rtc_sanitize_coverage != "") {
+    assert(is_clang, "sanitizer coverage requires clang")
+    cflags += [ "-fsanitize-coverage=${rtc_sanitize_coverage}" ]
+    ldflags += [ "-fsanitize-coverage=${rtc_sanitize_coverage}" ]
+  }
+
+  if (is_ubsan) {
+    cflags += [ "-fsanitize=float-cast-overflow" ]
+  }
+}
+
+# TODO(bugs.webrtc.org/9693): Remove the possibility to suppress this warning
+# as soon as WebRTC compiles without it.
+config("no_global_constructors") {
+  if (is_clang) {
+    cflags = [ "-Wno-global-constructors" ]
+  }
+}
+
+config("rtc_prod_config") {
+  # Ideally, WebRTC production code (but not test code) should have these flags.
+  if (is_clang) {
+    cflags = [
+      "-Wexit-time-destructors",
+      "-Wglobal-constructors",
+    ]
+  }
+}
+
+config("common_config") {
+  cflags = []
+  cflags_c = []
+  cflags_cc = []
+  cflags_objc = []
+  defines = []
+
+  if (rtc_enable_protobuf) {
+    defines += [ "WEBRTC_ENABLE_PROTOBUF=1" ]
+  } else {
+    defines += [ "WEBRTC_ENABLE_PROTOBUF=0" ]
+  }
+
+  if (rtc_strict_field_trials == "") {
+    defines += [ "WEBRTC_STRICT_FIELD_TRIALS=0" ]
+  } else if (rtc_strict_field_trials == "dcheck") {
+    defines += [ "WEBRTC_STRICT_FIELD_TRIALS=1" ]
+  } else if (rtc_strict_field_trials == "warn") {
+    defines += [ "WEBRTC_STRICT_FIELD_TRIALS=2" ]
+  } else {
+    assert(false,
+           "Unsupported value for rtc_strict_field_trials: " +
+               "$rtc_strict_field_trials")
+  }
+
+  if (rtc_include_internal_audio_device) {
+    defines += [ "WEBRTC_INCLUDE_INTERNAL_AUDIO_DEVICE" ]
+  }
+
+  if (rtc_libvpx_build_vp9) {
+    defines += [ "RTC_ENABLE_VP9" ]
+  }
+
+  if (rtc_use_h265) {
+    defines += [ "RTC_ENABLE_H265" ]
+  }
+
+  if (rtc_include_dav1d_in_internal_decoder_factory) {
+    defines += [ "RTC_DAV1D_IN_INTERNAL_DECODER_FACTORY" ]
+  }
+
+  if (rtc_enable_sctp) {
+    defines += [ "WEBRTC_HAVE_SCTP" ]
+  }
+
+  if (rtc_use_h264) {
+    defines += [ "WEBRTC_USE_H264" ]
+  }
+
+  if (rtc_use_absl_mutex) {
+    defines += [ "WEBRTC_ABSL_MUTEX" ]
+  }
+
+  if (rtc_disable_logging) {
+    defines += [ "RTC_DISABLE_LOGGING" ]
+  }
+
+  if (rtc_disable_trace_events) {
+    defines += [ "RTC_DISABLE_TRACE_EVENTS" ]
+  }
+
+  if (rtc_disable_metrics) {
+    defines += [ "RTC_DISABLE_METRICS" ]
+  }
+
+  if (rtc_exclude_audio_processing_module) {
+    defines += [ "WEBRTC_EXCLUDE_AUDIO_PROCESSING_MODULE" ]
+  }
+
+  if (rtc_video_psnr) {
+    defines += [ "WEBRTC_ENCODER_PSNR_STATS" ]
+  }
+
+  if (is_clang) {
+    cflags += [
+      "-Wshadow",
+
+      # See https://reviews.llvm.org/D56731 for details about this
+      # warning.
+      "-Wctad-maybe-unsupported",
+    ]
+  }
+
+  if (build_with_chromium) {
+    defines += [
+      # NOTICE: Since common_inherited_config is used in public_configs for our
+      # targets, there's no point including the defines in that config here.
+      # TODO(kjellander): Cleanup unused ones and move defines closer to the
+      # source when webrtc:4256 is completed.
+      "HAVE_WEBRTC_VIDEO",
+      "LOGGING_INSIDE_WEBRTC",
+    ]
+  } else {
+    if (is_posix || is_fuchsia) {
+      cflags_c += [
+        # TODO(bugs.webrtc.org/9029): enable commented compiler flags.
+        # Some of these flags should also be added to cflags_objc.
+
+        # "-Wextra",  (used when building C++ but not when building C)
+        # "-Wmissing-prototypes",  (C/Obj-C only)
+        # "-Wmissing-declarations",  (ensure this is always used C/C++, etc..)
+        "-Wstrict-prototypes",
+
+        # "-Wpointer-arith",  (ensure this is always used C/C++, etc..)
+        # "-Wbad-function-cast",  (C/Obj-C only)
+        # "-Wnested-externs",  (C/Obj-C only)
+      ]
+      cflags_objc += [ "-Wstrict-prototypes" ]
+      cflags_cc = [
+        "-Wnon-virtual-dtor",
+
+        # This is enabled for clang; enable for gcc as well.
+        "-Woverloaded-virtual",
+      ]
+    }
+
+    if (is_clang) {
+      cflags += [
+        "-Wc++11-narrowing",
+        "-Wundef",
+        "-Wunused-lambda-capture",
+      ]
+    }
+
+    if (is_win && !is_clang) {
+      # MSVC warning suppressions (needed to use Abseil).
+      # TODO(bugs.webrtc.org/9274): Remove these warnings as soon as MSVC allows
+      # external headers warning suppression (or fix them upstream).
+      cflags += [ "/wd4702" ]  # unreachable code
+
+      # MSVC 2019 warning suppressions for C++17 compiling
+      cflags +=
+          [ "/wd5041" ]  # out-of-line definition for constexpr static data
+                         # member is not needed and is deprecated in C++17
+    }
+  }
+
+  if (current_cpu == "arm64") {
+    defines += [ "WEBRTC_ARCH_ARM64" ]
+    defines += [ "WEBRTC_HAS_NEON" ]
+  }
+
+  if (current_cpu == "arm") {
+    defines += [ "WEBRTC_ARCH_ARM" ]
+    if (arm_version >= 7) {
+      defines += [ "WEBRTC_ARCH_ARM_V7" ]
+      if (arm_use_neon) {
+        defines += [ "WEBRTC_HAS_NEON" ]
+      }
+    }
+  }
+
+  if (current_cpu == "mipsel") {
+    defines += [ "MIPS32_LE" ]
+    if (mips_float_abi == "hard") {
+      defines += [ "MIPS_FPU_LE" ]
+    }
+    if (mips_arch_variant == "r2") {
+      defines += [ "MIPS32_R2_LE" ]
+    }
+    if (mips_dsp_rev == 1) {
+      defines += [ "MIPS_DSP_R1_LE" ]
+    } else if (mips_dsp_rev == 2) {
+      defines += [
+        "MIPS_DSP_R1_LE",
+        "MIPS_DSP_R2_LE",
+      ]
+    }
+  }
+
+  if (is_android && !is_clang) {
+    # The Android NDK doesn"t provide optimized versions of these
+    # functions. Ensure they are disabled for all compilers.
+    cflags += [
+      "-fno-builtin-cos",
+      "-fno-builtin-sin",
+      "-fno-builtin-cosf",
+      "-fno-builtin-sinf",
+    ]
+  }
+
+  if (use_fuzzing_engine) {
+    # Used in Chromium's overrides to disable logging
+    defines += [ "WEBRTC_UNSAFE_FUZZER_MODE" ]
+  }
+
+  if (!build_with_chromium && rtc_win_undef_unicode) {
+    cflags += [
+      "/UUNICODE",
+      "/U_UNICODE",
+    ]
+  }
+
+  if (rtc_use_perfetto) {
+    defines += [ "RTC_USE_PERFETTO" ]
+  }
+}
+
+config("common_objc") {
+  frameworks = [ "Foundation.framework" ]
+}
+
+if (!rtc_build_ssl) {
+  config("external_ssl_library") {
+    if (rtc_ssl_root != "") {
+      include_dirs = [ rtc_ssl_root ]
+    }
+    libs = [
+      "crypto",
+      "ssl",
+    ]
+  }
+}
+
+if (!build_with_chromium) {
+  # Target to build all the WebRTC production code.
+  rtc_static_library("webrtc") {
+    # Only the root target and the test should depend on this.
+    visibility = [
+      "//:default",
+      "//:webrtc_lib_link_test",
+    ]
+
+    sources = []
+
+    complete_static_lib = true
+    suppressed_configs += [ "//build/config/compiler:thin_archive" ]
+    defines = []
+
+    deps = [
+      "api:create_modular_peer_connection_factory",
+      "api:create_peerconnection_factory",
+      "api:enable_media",
+      "api:rtc_error",
+      "api:transport_api",
+      "api/audio_codecs:opus_audio_decoder_factory",
+      "api/crypto",
+      "api/rtc_event_log:rtc_event_log_factory",
+      "api/task_queue",
+      "api/task_queue:default_task_queue_factory",
+      "api/video_codecs:video_decoder_factory_template",
+      "api/video_codecs:video_decoder_factory_template_dav1d_adapter",
+      "api/video_codecs:video_decoder_factory_template_libvpx_vp8_adapter",
+      "api/video_codecs:video_decoder_factory_template_libvpx_vp9_adapter",
+      "api/video_codecs:video_decoder_factory_template_open_h264_adapter",
+      "api/video_codecs:video_encoder_factory_template",
+      "api/video_codecs:video_encoder_factory_template_libaom_av1_adapter",
+      "api/video_codecs:video_encoder_factory_template_libvpx_vp8_adapter",
+      "api/video_codecs:video_encoder_factory_template_libvpx_vp9_adapter",
+      "api/video_codecs:video_encoder_factory_template_open_h264_adapter",
+      "audio",
+      "call",
+      "common_audio",
+      "common_video",
+      "logging:rtc_event_log_api",
+      "media",
+      "modules",
+      "modules/video_capture:video_capture_internal_impl",
+      "pc:peer_connection_factory",
+      "pc:rtc_pc",
+      "pc:webrtc_sdp",
+      "video",
+    ]
+
+    if (rtc_include_builtin_audio_codecs) {
+      deps += [
+        "api/audio_codecs:builtin_audio_decoder_factory",
+        "api/audio_codecs:builtin_audio_encoder_factory",
+      ]
+    }
+
+    if (build_with_mozilla) {
+      deps += [
+        "api/video:video_frame",
+        "api/video:video_rtp_headers",
+      ]
+    }
+
+    if (rtc_include_internal_audio_device) {
+      deps += [ "api/audio:create_audio_device_module" ]
+    }
+    if (!build_with_chromium) {
+      if (is_android) {
+        deps += [ "sdk/android" ]
+      }
+      if (is_ios) {
+        deps += [ "sdk:framework_objc" ]
+      }
+    }
+  }
+
+  # TODO(bugs.webrtc.org/430260876): Compile webrtc lib with rust once toolchain
+  # is working.
+  if (rtc_include_tests && !is_asan) {
+    rtc_executable("webrtc_lib_link_test") {
+      testonly = true
+
+      # This target is used for checking to link, so do not check dependencies
+      # on gn check.
+      check_includes = false  # no-presubmit-check TODO(bugs.webrtc.org/12785)
+
+      sources = [ "webrtc_lib_link_test.cc" ]
+      deps = [
+        # NOTE: Don't add deps here. If this test fails to link, it means you
+        # need to add stuff to the webrtc static lib target above.
+        ":webrtc",
+      ]
+    }
+  }
+}
+
+if (use_libfuzzer) {
+  # This target is only here for gn to discover fuzzer build targets under
+  # webrtc/test/fuzzers/.
+  group("webrtc_fuzzers_dummy") {
+    testonly = true
+    deps = [ "test/fuzzers:webrtc_fuzzer_main" ]
+  }
+}
+
+if (rtc_include_tests && !build_with_chromium) {
+  rtc_test_suite("rtc_unittests") {
+    tests = [
+      "api:candidate_unittest",
+      "api:field_trials_unittest",
+      "api:frame_transformer_factory_unittest",
+      "api:function_view_unittest",
+      "api:jsep_unittest",
+      "api:peer_connection_interface_api_unittest",
+      "api:peerconnection_quality_test_fixture_unittest",
+      "api:rtc_error_unittest",
+      "api:rtc_event_log_output_file_unittest",
+      "api:rtp_header_extension_id_unittest",
+      "api:rtp_packet_info_unittest",
+      "api:rtp_packet_infos_unittest",
+      "api:rtp_parameters_unittest",
+      "api:scoped_refptr_unittest",
+      "api:sequence_checker_unittest",
+      "api:webrtc_sdp_encoding_options_unittest",
+      "api:webrtc_sdp_unittest",
+      "api/audio:audio_processing_api_unittest",
+      "api/audio:builtin_audio_processing_builder_unittest",
+      "api/audio/test:audio_frame_unittest",
+      "api/audio/test:audio_view_unittest",
+      "api/audio/test:echo_canceller3_config_unittest",
+      "api/audio_codecs/opus:audio_decoder_opus_api_unittest",
+      "api/audio_codecs/test:audio_decoder_factory_template_unittest",
+      "api/audio_codecs/test:audio_encoder_factory_template_unittest",
+      "api/crypto:crypto_options_unittest",
+      "api/environment:environment_unittest",
+      "api/numerics:samples_stats_counter_unittest",
+      "api/numerics:sequence_number_unwrapper_unittest",
+      "api/task_queue:default_task_queue_factory_unittest",
+      "api/task_queue:pending_task_safety_flag_unittest",
+      "api/test/metrics:global_metrics_logger_and_exporter_test",
+      "api/test/metrics:metrics_accumulator_test",
+      "api/test/metrics:metrics_logger_test",
+      "api/test/metrics:print_result_proxy_metrics_exporter_test",
+      "api/test/metrics:stdout_metrics_exporter_test",
+      "api/test/network_emulation:dual_pi2_network_queue_unittest",
+      "api/test/network_emulation:leaky_bucket_network_queue_unittest",
+      "api/transport:ecn_marking_unittest",
+      "api/transport:stun_unittest",
+      "api/transport/rtp:corruption_detection_message_unittest",
+      "api/units:data_rate_unittest",
+      "api/units:data_size_unittest",
+      "api/units:frequency_unittest",
+      "api/units:time_delta_unittest",
+      "api/units:timestamp_unittest",
+      "api/video:encoded_frame_unittest",
+      "api/video:frame_buffer_unittest",
+      "api/video:rtp_video_frame_assembler_unittests",
+      "api/video:video_adapter_unittest",
+      "api/video:video_broadcaster_unittest",
+      "api/video:video_common_unittest",
+      "api/video:video_frame_buffer_unittest",
+      "api/video:video_frame_metadata_unittest",
+      "api/video/corruption_detection:corruption_detection_settings_generator_unittest",
+      "api/video/corruption_detection:frame_instrumentation_data_reader_unittest",
+      "api/video/corruption_detection:frame_instrumentation_data_unittest",
+      "api/video/corruption_detection:frame_instrumentation_evaluation_unittest",
+      "api/video/test:color_space_unittest",
+      "api/video/test:i210_buffer_unittest",
+      "api/video/test:i410_buffer_unittest",
+      "api/video/test:i422_buffer_unittest",
+      "api/video/test:i444_buffer_unittest",
+      "api/video/test:nv12_buffer_unittest",
+      "api/video/test:video_adaptation_counters_unittest",
+      "api/video/test:video_bitrate_allocation_unittest",
+      "api/video_codecs:libaom_av1_encoder_factory_test",
+      "api/video_codecs:simple_encoder_wrapper_unittests",
+      "api/video_codecs/test:builtin_video_encoder_factory_unittest",
+      "api/video_codecs/test:h264_profile_level_id_unittest",
+      "api/video_codecs/test:sdp_video_format_unittest",
+      "api/video_codecs/test:temporal_layer_pattern_for_test_unittest",
+      "api/video_codecs/test:video_codec_unittest",
+      "api/video_codecs/test:video_decoder_factory_template_tests",
+      "api/video_codecs/test:video_decoder_software_fallback_wrapper_unittest",
+      "api/video_codecs/test:video_encoder_factory_template_tests",
+      "api/video_codecs/test:video_encoder_factory_unittest",
+      "api/video_codecs/test:video_encoder_functional_unittest",
+      "api/video_codecs/test:video_encoder_rate_control_unittest",
+      "api/video_codecs/test:video_encoder_software_fallback_wrapper_unittest",
+      "call:fake_network_pipe_unittest",
+      "rtc_base:async_dns_resolver_unittest",
+      "rtc_base:async_packet_socket_unittest",
+      "rtc_base:async_tcp_socket_unittest",
+      "rtc_base:async_udp_socket_unittest",
+      "rtc_base:base64_unittest",
+      "rtc_base:bit_buffer_unittest",
+      "rtc_base:bitrate_tracker_unittest",
+      "rtc_base:bitstream_reader_unittest",
+      "rtc_base:bounded_inline_vector_unittest",
+      "rtc_base:buffer_queue_unittest",
+      "rtc_base:buffer_unittest",
+      "rtc_base:byte_buffer_unittest",
+      "rtc_base:byte_order_unittest",
+      "rtc_base:callback_list_unittest",
+      "rtc_base:checks_unittest",
+      "rtc_base:clock_aligner_unittest",
+      "rtc_base:copy_on_write_buffer_unittest",
+      "rtc_base:crc32_unittest",
+      "rtc_base:crypto_random_unittest",
+      "rtc_base:data_rate_limiter_unittest",
+      "rtc_base:denormal_disabler_unittest",
+      "rtc_base:divide_round_unittest",
+      "rtc_base:event_based_exponential_moving_average_unittest",
+      "rtc_base:event_tracer_unittest",
+      "rtc_base:event_unittest",
+      "rtc_base:exp_filter_unittest",
+      "rtc_base:fake_clock_unittest",
+      "rtc_base:frequency_tracker_unittest",
+      "rtc_base:histogram_percentile_counter_unittest",
+      "rtc_base:ip_address_unittest",
+      "rtc_base:json_unittest",
+      "rtc_base:logging_unittest",
+      "rtc_base:memory_usage_unittest",
+      "rtc_base:message_digest_unittest",
+      "rtc_base:mod_ops_unittest",
+      "rtc_base:moving_average_unittest",
+      "rtc_base:moving_max_counter_unittest",
+      "rtc_base:moving_percentile_filter_unittest",
+      "rtc_base:network_route_unittest",
+      "rtc_base:network_unittest",
+      "rtc_base:one_time_event_unittest",
+      "rtc_base:openssl_stream_adapter_unittest",
+      "rtc_base:operations_chain_unittest",
+      "rtc_base:percentile_filter_unittest",
+      "rtc_base:platform_thread_unittest",
+      "rtc_base:random_unittest",
+      "rtc_base:rate_limiter_unittest",
+      "rtc_base:rate_statistics_unittest",
+      "rtc_base:rate_tracker_unittest",
+      "rtc_base:recursive_critical_section_unittest",
+      "rtc_base:ref_counted_object_unittest",
+      "rtc_base:rolling_accumulator_unittest",
+      "rtc_base:rtc_certificate_generator_unittest",
+      "rtc_base:rtc_certificate_unittest",
+      "rtc_base:rtp_to_ntp_estimator_unittest",
+      "rtc_base:running_statistics_unittest",
+      "rtc_base:safe_compare_unittest",
+      "rtc_base:safe_conversions_unittest",
+      "rtc_base:safe_minmax_unittest",
+      "rtc_base:sample_counter_unittest",
+      "rtc_base:sanitizer_unittest",
+      "rtc_base:sequence_number_util_unittest",
+      "rtc_base:str_join_unittest",
+      "rtc_base:string_builder_unittest",
+      "rtc_base:string_encode_unittest",
+      "rtc_base:string_format_unittest",
+      "rtc_base:string_to_number_unittest",
+      "rtc_base:string_utils_unittest",
+      "rtc_base:strong_alias_unittest",
+      "rtc_base:swap_queue_unittest",
+      "rtc_base:task_queue_stdlib_unittest",
+      "rtc_base:task_queue_unittest",
+      "rtc_base:test_client_unittest",
+      "rtc_base:thread_annotations_unittest",
+      "rtc_base:thread_unittest",
+      "rtc_base:time_utils_unittest",
+      "rtc_base:timestamp_aligner_unittest",
+      "rtc_base:unique_id_generator_unittest",
+      "rtc_base:untyped_function_unittest",
+      "rtc_base:virtual_socket_unittest",
+      "rtc_base:weak_ptr_unittest",
+      "rtc_base:windowed_min_filter_unittest",
+      "rtc_base:zero_memory_unittest",
+      "rtc_base/containers:flat_map_unittest",
+      "rtc_base/containers:flat_set_unittest",
+      "rtc_base/containers:flat_tree_unittest",
+      "rtc_base/experiments:balanced_degradation_settings_unittest",
+      "rtc_base/experiments:corruption_detection_frame_selector_settings_unittest",
+      "rtc_base/experiments:encoder_info_settings_unittest",
+      "rtc_base/experiments:encoder_speed_experiment_unittest",
+      "rtc_base/experiments:field_trial_list_unittest",
+      "rtc_base/experiments:field_trial_parser_unittest",
+      "rtc_base/experiments:field_trial_units_unittest",
+      "rtc_base/experiments:keyframe_interval_settings_unittest",
+      "rtc_base/experiments:min_video_bitrate_experiment_unittest",
+      "rtc_base/experiments:normalize_simulcast_size_experiment_unittest",
+      "rtc_base/experiments:quality_scaler_settings_unittest",
+      "rtc_base/experiments:quality_scaling_experiment_unittest",
+      "rtc_base/experiments:rate_control_settings_unittest",
+      "rtc_base/experiments:retransmit_flushed_packets_settings_unittest",
+      "rtc_base/experiments:struct_parameters_parser_unittest",
+      "rtc_base/memory:aligned_malloc_unittest",
+      "rtc_base/memory:always_valid_pointer_unittest",
+      "rtc_base/memory:fifo_buffer_unittest",
+      "rtc_base/system:file_wrapper_unittest",
+      "rtc_base/task_utils:repeating_task_unittest",
+      "rtc_base/units:unit_base_unittest",
+      "sdk:media_constraints_unittest",
+      "test/network:cross_traffic_unittest",
+      "test/network:network_emulation_pc_unittest",
+      "test/network:network_emulation_unittest",
+      "test/network:simulated_network_unittest",
+      "test/network:token_bucket_network_behavior_unittest",
+    ]
+
+    if (rtc_use_h265) {
+      tests += [
+        "api/video:rtp_video_frame_h265_assembler_unittests",
+        "api/video_codecs/test:h265_profile_tier_level_unittest",
+      ]
+    }
+
+    if (rtc_enable_protobuf) {
+      tests += [
+        "api/test/metrics:chrome_perf_dashboard_metrics_exporter_test",
+        "api/test/metrics:metrics_set_proto_file_exporter_test",
+        "logging:blob_encoding_unittest",
+        "logging:delta_encoding_unittest",
+        "logging:dependency_descriptor_encoder_decoder_unittest",
+        "logging:optional_blob_encoding_unittest",
+        "logging:rtc_event_field_encoding_unittest",
+        "logging:rtc_event_field_extraction_unittest",
+        "logging:rtc_event_log_encoder_common_unittest",
+        "logging:rtc_event_log_encoder_unittest",
+        "logging:rtc_event_log_impl_unittest",
+        "logging:rtc_event_log_unittest",
+        "logging:rtc_event_processor_unittest",
+        "test/network:feedback_generator_unittest",
+        "test/network:schedulable_network_behavior_test",
+      ]
+    }
+
+    if (rtc_rust) {
+      tests += [ "rtc_base:rate_tracker_comparison_unittest" ]
+    }
+
+    if (rtc_enable_google_benchmarks) {
+      tests += [
+        "rtc_base/synchronization:mutex_unittest",
+        "rtc_base/synchronization:yield_policy_unittest",
+      ]
+    }
+
+    if (is_mac || is_ios) {
+      tests += [ "rtc_base:task_queue_gcd_unittest" ]
+    }
+
+    if (is_win) {
+      tests += [
+        "rtc_base:win32_unittest",
+        "rtc_base/win:windows_version_unittest",
+      ]
+    }
+
+    if (is_posix || is_fuchsia || is_win) {
+      tests += [
+        "rtc_base:openssl_adapter_unittest",
+        "rtc_base:openssl_session_cache_unittest",
+        "rtc_base:openssl_utility_unittest",
+        "rtc_base:ssl_adapter_unittest",
+        "rtc_base:ssl_identity_unittest",
+        "rtc_base:ssl_stream_adapter_unittest",
+      ]
+    }
+
+    if (is_android) {
+      tests += [
+        "sdk/android:android_audio_device_unittest",
+        "sdk/android:android_network_monitor_unittest",
+        "sdk/android:android_peer_connection_factory_unittest",
+        "sdk/android:java_types_unittest",
+        "sdk/android:stacktrace_unittest",
+        "sdk/android:video_source_unittest",
+        "sdk/android:wrapper_unittest",
+      ]
+    }
+  }
+
+  if (rtc_enable_google_benchmarks) {
+    rtc_executable("benchmarks") {
+      testonly = true
+      deps = [
+        "api:webrtc_sdp_benchmark",
+        "rtc_base:base64_benchmark",
+        "rtc_base/synchronization:mutex_benchmark",
+        "test:benchmark_main",
+      ]
+      if (!rtc_disable_logging) {
+        deps += [ "rtc_base:logging_benchmark" ]
+      }
+    }
+  }
+
+  rtc_test_suite("webrtc_perf_tests") {
+    tests = [
+      "call:call_perf_tests",
+      "call:rampup_tests",
+      "modules/audio_coding:neteq_performance_unittest",
+      "modules/audio_coding:opus_complexity_unittest",
+      "modules/audio_processing:audio_processing_performance_unittest",
+      "pc:peer_connection_callsetup_perf_tests",
+      "pc:peer_connection_rampup_tests",
+      "video:full_stack_tests",
+      "video:pc_full_stack_tests",
+    ]
+  }
+
+  rtc_test_suite("webrtc_nonparallel_tests") {
+    tests = [
+      "rtc_base:cpu_time_unittest",
+      "rtc_base:file_rotating_stream_unittest",
+      "rtc_base:null_socket_server_unittest",
+      "rtc_base:physical_socket_server_unittest",
+      "rtc_base:socket_address_unittest",
+    ]
+  }
+
+  rtc_test_suite("voip_unittests") {
+    tests = [
+      "api/voip:voip_engine_factory_unittest",
+      "audio/voip/test:audio_channel_unittest",
+      "audio/voip/test:audio_egress_unittest",
+      "audio/voip/test:audio_ingress_unittest",
+      "audio/voip/test:voip_core_unittest",
+    ]
+  }
+
+  rtc_rust_test_suite("rust_tests") {
+    testonly = true
+    deps = [
+      "api/units:units_rust_unit_tests",
+      "modules/rtp_rtcp:rust_unit_tests",
+      "rtc_base:rust_unit_tests",
+      "rust/webrtc_import:tests",
+    ]
+  }
+}
+
+# Build target for standalone dcsctp
+rtc_static_library("dcsctp") {
+  # Only the root target should depend on this.
+  visibility = [ "//:default" ]
+  sources = []
+  complete_static_lib = true
+  suppressed_configs += [ "//build/config/compiler:thin_archive" ]
+  defines = []
+  deps = [
+    "net/dcsctp/public:factory",
+    "net/dcsctp/public:socket",
+    "net/dcsctp/public:types",
+    "net/dcsctp/socket:dcsctp_socket",
+    "net/dcsctp/timer:task_queue_timeout",
+  ]
+}
+
+# ---- Poisons ----
+#
+# Here is one empty dummy target for each poison type (needed because
+# "being poisonous with poison type foo" is implemented as "depends on
+# //:poison_foo").
+#
+# The set of poison_* targets needs to be kept in sync with the
+# `all_poison_types` list in webrtc.gni.
+#
+group("poison_audio_codecs") {
+}
+
+group("poison_default_echo_detector") {
+}
+
+group("poison_environment_construction") {
+}
+
+group("poison_software_video_codecs") {
+}
+
+group("poison_default_neural_residual_echo_estimator") {
+}
+
+if (!build_with_chromium) {
+  # Write debug logs to gn_logs.txt.
+  # This is also required for Siso builds.
+  import("//build/gn_logs.gni")
+  lines = [
+            "Generated during 'gn gen' by //BUILD.gn.",
+            "",
+          ] + build_gn_logs
+  write_file("$root_build_dir/gn_logs.txt", lines)
+}

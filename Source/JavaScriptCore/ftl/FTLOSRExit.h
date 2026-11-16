@@ -1,0 +1,221 @@
+/*
+ * Copyright (C) 2013-2018 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ */
+
+#pragma once
+
+#if ENABLE(FTL_JIT)
+
+#include "B3ValueRep.h"
+#include "CodeOrigin.h"
+#include "DFGExitProfile.h"
+#include "DFGNodeOrigin.h"
+#include "DFGOSRExitBase.h"
+#include "FTLAbbreviatedTypes.h"
+#include "FTLExitTimeObjectMaterialization.h"
+#include "FTLExitValue.h"
+#include "FTLFormattedValue.h"
+#include "FTLOSRExitHandle.h"
+#include "FTLStackmapArgumentList.h"
+#include "HandlerInfo.h"
+#include "MethodOfGettingAValueProfile.h"
+#include "Operands.h"
+#include "Reg.h"
+#include "ValueProfile.h"
+#include "VirtualRegister.h"
+#include <wtf/Bag.h>
+#include <wtf/FixedVector.h>
+
+namespace JSC {
+
+class TrackedReferences;
+
+namespace B3 {
+class StackmapGenerationParams;
+namespace Air {
+struct GenerationContext;
+} // namespace Air
+} // namespace B3
+
+namespace DFG {
+struct NodeOrigin;
+} // namespace DFG;
+
+namespace FTL {
+
+class State;
+struct OSRExitDescriptorImpl;
+struct OSRExitHandle;
+
+class JITCode;
+
+// Stores one ExitValue per operand of the exit (arguments, then locals, then tmps) as
+// a byte stream: a tag byte followed by an optional payload.
+//
+//   0x00-0x3F  (tag + 1) consecutive dead values
+//   0x40-0x43  InJSStack / AsInt32 / AsInt52 / AsDouble, flushed to the operand's own virtual register
+//   0x44-0x47  the same, flushed to another virtual register: SLEB128 register offset follows
+//   0x48       Constant: LEB128 index into JITCode::osrExitConstants follows
+//   0x49       MaterializeNewObject: LEB128 index into OSRExitDescriptor::m_materializations follows
+//   0x4A       Argument: DataFormat byte and LEB128 stackmap index follow
+//
+// Virtual registers are stored before the localsOffset adjustment; decode() applies it.
+class OSRExitValues {
+    WTF_MAKE_NONCOPYABLE(OSRExitValues);
+public:
+    OSRExitValues() = default;
+
+    void encode(const Operands<ExitValue>&, const Bag<ExitTimeObjectMaterialization>&, JITCode&);
+    FixedOperands<ExitValue> decode(const JITCode&, const Bag<ExitTimeObjectMaterialization>&) const;
+
+private:
+    FixedVector<uint8_t> m_bytes;
+    unsigned m_numberOfArguments { 0 };
+    unsigned m_numberOfLocals { 0 };
+    unsigned m_numberOfTmps { 0 };
+};
+
+struct OSRExitDescriptor {
+private:
+    WTF_MAKE_NONCOPYABLE(OSRExitDescriptor);
+public:
+    OSRExitDescriptor(unsigned index, DataFormat profileDataFormat, MethodOfGettingAValueProfile);
+
+    // The first argument to the exit call may be a value we wish to profile.
+    // If that's the case, the format will be not Invalid and we'll have a
+    // method of getting a value profile. Note that all of the ExitArgument's
+    // are already aware of this possible off-by-one, so there is no need to
+    // correct them.
+    DataFormat m_profileDataFormat;
+    unsigned m_index;
+    MethodOfGettingAValueProfile m_valueProfile;
+
+    OSRExitValues m_values;
+    Bag<ExitTimeObjectMaterialization> m_materializations;
+
+    FixedOperands<ExitValue> values(const JITCode& jitCode) const { return m_values.decode(jitCode, m_materializations); }
+
+    void validateReferences(const TrackedReferences&);
+
+    // Call this once we have a place to emit the OSR exit jump and we have data about how the state
+    // should be recovered. This effectively emits code that does the exit, though the code is really a
+    // call to the OSR exit generation thunk and we emit the real code lazily. The description of how to
+    // emit the real code is up to the OSRExit object, which this creates. Note that it's OK to drop the
+    // OSRExitHandle object on the ground. It contains information that is mostly not useful if you use
+    // this API, since after this call, the OSRExit is simply ready to go.
+    Ref<OSRExitHandle> emitOSRExit(
+        State&, ExitKind, const DFG::NodeOrigin&, CCallHelpers&, const B3::StackmapGenerationParams&,
+        uint32_t dfgNodeIndex, unsigned offset);
+
+    // In some cases you want an OSRExit to come into existence, but you don't want to emit it right now.
+    // This will emit the OSR exit in a late path. You can't be sure exactly when that will happen, but
+    // you know that it will be done by the time late path emission is done. So, a linker task will
+    // surely happen after that. You can use the OSRExitHandle to retrieve the exit's label.
+    //
+    // This API is meant to be used for things like exception handling, where some patchpoint wants to
+    // have a place to jump to for OSR exit. It doesn't care where that OSR exit is emitted so long as it
+    // eventually gets access to its label.
+    Ref<OSRExitHandle> emitOSRExitLater(
+        State&, ExitKind, const DFG::NodeOrigin&, const B3::StackmapGenerationParams&,
+        uint32_t dfgNodeIndex, unsigned offset);
+
+private:
+    // This is the low-level interface. It will create a handle representing the desire to emit code for
+    // an OSR exit. You can call OSRExitHandle::emitExitThunk() once you have a place to emit it. Note
+    // that the above two APIs are written in terms of this and OSRExitHandle::emitExitThunk().
+    Ref<OSRExitHandle> prepareOSRExitHandle(
+        State&, ExitKind, const DFG::NodeOrigin&, const B3::StackmapGenerationParams&,
+        uint32_t dfgNodeIndex, unsigned offset);
+};
+
+struct OSRExit : public DFG::OSRExitBase {
+    OSRExit(const OSRExitDescriptor*, ExitKind, CodeOrigin, CodeOrigin codeOriginForExitProfile, bool wasHoisted, uint32_t dfgNodeIndex, unsigned valueRepsOffset);
+
+    FixedVector<B3::ValueRep> valueReps(const JITCode&) const;
+
+    unsigned m_valueRepsOffset;
+    const OSRExitDescriptor* m_descriptor;
+    // This tells us where to place a jump.
+    uint32_t m_entranceOffset { 0 };
+
+    void considerAddingAsFrequentExitSite(CodeBlock* profiledCodeBlock)
+    {
+        OSRExitBase::considerAddingAsFrequentExitSite(profiledCodeBlock, ExitFromFTL);
+    }
+};
+
+// The FTL counterpart of DFG::OSRExitStream, with the same chunks, deltas and origin tags.
+// m_exceptionHandlerExits lists the generic unwind handler exits.
+//
+//   byte        ExitKind
+//   byte        flags:
+//     bits 0-1  origin tag of m_codeOrigin against the previous exit's m_codeOrigin
+//     bits 2-3  origin tag of m_codeOriginForExitProfile against m_codeOrigin
+//     bit 4     m_wasHoisted
+//   the payload of each origin tag, in the order of the flags
+//   LEB128      signed delta of m_dfgNodeIndex
+//   LEB128      signed delta of the index of m_descriptor in JITCode::osrExitDescriptors
+//   LEB128      signed delta of m_entranceOffset
+//   [LEB128]    WillThrowOutOfMemoryError: m_exitCallSiteIndex
+//   LEB128      number of exit arguments
+//   where B3 placed each exit argument, which is a B3::ValueRep::Kind byte and then:
+//     Register  the Reg index byte
+//     Stack     the SLEB128 offset from the frame pointer
+//     Constant  the SLEB128 value
+class OSRExitStream {
+public:
+    struct ExceptionHandlerExit {
+        CallSiteIndex callSiteIndex;
+        uint32_t valueRepsOffset;
+    };
+
+    OSRExitStream() = default;
+    OSRExitStream(const Vector<OSRExit>&, std::span<const uint8_t> valueReps);
+
+    OSRExit at(unsigned index, const JITCode&) const;
+    unsigned indexForEntranceOffset(uintptr_t, const JITCode&) const;
+    FixedVector<B3::ValueRep> valueReps(unsigned offset) const;
+    std::span<const ExceptionHandlerExit> exceptionHandlerExits() const LIFETIME_BOUND { return m_exceptionHandlerExits.span(); }
+
+private:
+    static constexpr unsigned exitsPerChunk = 16;
+
+    struct PreviousExit {
+        CodeOrigin codeOrigin { BytecodeIndex(0) };
+        uint32_t dfgNodeIndex { 0 };
+        unsigned descriptorIndex { 0 };
+        uint32_t entranceOffset { 0 };
+    };
+
+    OSRExit decode(size_t& offset, PreviousExit&, const JITCode&) const;
+
+    FixedVector<uint8_t> m_bytes;
+    FixedVector<uint32_t> m_chunkOffsets;
+    FixedVector<ExceptionHandlerExit> m_exceptionHandlerExits;
+    unsigned m_size { 0 };
+};
+
+} } // namespace JSC::FTL
+
+#endif // ENABLE(FTL_JIT)

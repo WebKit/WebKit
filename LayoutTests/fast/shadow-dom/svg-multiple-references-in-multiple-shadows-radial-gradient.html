@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <style>
+        div {
+            width: 100px;
+            height: 100px;
+        }
+    </style>
+    <script>
+        if (window.testRunner)
+            testRunner.waitUntilDone();
+        window.onload = () => {
+            const shadowRoot1 = container1.attachShadow({mode: "closed"});
+            shadowRoot1.appendChild(template.content.cloneNode(true));
+
+            const shadowRoot2 = container2.attachShadow({mode: "closed"});
+            shadowRoot2.appendChild(template.content.cloneNode(true));
+
+            requestAnimationFrame(() => {
+                container2.style.display = "none";
+                shadowRoot1.querySelector("rect").style.filter = "url(#flood-color)";
+                if (window.testRunner)
+                    testRunner.notifyDone();
+            });
+        }
+    </script>
+</head>
+<body>
+    <template id="template">
+        <svg>
+            <radialGradient id="gradient">
+                <stop offset="0%" stop-color="green" />
+            </radialGradient>
+            <radialGradient id="gradientUse" fill="red" href="#gradient"></radialGradient>
+            <rect id="rect" width="100" height="100" fill="url(#gradientUse)">
+        </svg>
+    </template>
+    <div id="container1"></div>
+    <div id="container2"></div>
+</body>
+</html>

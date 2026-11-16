@@ -1,0 +1,5 @@
+Details
+A
+
+FAIL drawElementImage does not reveal visited link colors in ::details-content assert_false: The canvas should not reflect the visited state. expected false got true
+

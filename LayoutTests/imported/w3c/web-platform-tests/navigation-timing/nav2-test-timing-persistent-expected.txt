@@ -1,0 +1,5 @@
+
+
+PASS iframe navigation times are persistent after the iframe is removed. Part 1.
+FAIL iframe navigation times are persistent after the iframe is removed Part 2. assert_equals: Only one navigation time entry expected 1 but got 0
+

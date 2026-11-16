@@ -1,0 +1,7 @@
+
+
+FAIL Permissions policy header "private-state-token-issuance=*" allows the top-level document. assert_unreached: Reached unreachable code
+FAIL Permissions policy header "private-state-token-issuance=*" allows same-origin iframes. assert_equals: Private State Token issuance request expected 2 but got 1
+FAIL Permissions policy header "private-state-token-issuance=*" allows cross-origin iframes. assert_equals: Private State Token issuance request expected 2 but got 1
+FAIL Permissions policy header "private-state-token-issuance=*" and allow="private-state-token-issuance 'none'" disallows cross-origin iframes. assert_equals: Private State Token issuance request expected 0 but got 1
+

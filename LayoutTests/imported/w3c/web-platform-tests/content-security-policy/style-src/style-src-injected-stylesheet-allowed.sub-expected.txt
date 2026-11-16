@@ -1,0 +1,3 @@
+
+PASS Programatically injected stylesheet should load
+Lorem ipsum

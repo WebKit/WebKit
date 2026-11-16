@@ -1,0 +1,8 @@
+
+ This should be written into the document
+
+PASS Test that image does not load
+FAIL csp violation report observed Can't find variable: ReportingObserver
+FAIL document policy violation observed promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ReportingObserver"
+FAIL Reporting endpoints received reports. assert_unreached: A report of csp-violation from https://localhost:9443/reporting/document-reporting-named-endpoints.https.sub.html is not found. Reached unreachable code
+

@@ -1,0 +1,40 @@
+Test that timeout, interval and animation frame breakpoints pause in cross-origin iframes.
+
+
+
+== Running test suite: SiteIsolation.DOMDebugger.Timer
+-- Running test case: SiteIsolation.DOMDebugger.Timer.Setup
+PASS: Should find the cross-origin frame target.
+-- Running test teardown.
+
+-- Running test case: SiteIsolation.DOMDebugger.Timer.Timeout
+Adding "timeout" Event Breakpoint...
+PASS: Should pause in the frame target that ran the code.
+PASS: Pause reason should be "timeout".
+PASS: Top call frame should be "handleTimeout".
+PASS: Timeout callback should run after resuming.
+-- Running test teardown.
+
+-- Running test case: SiteIsolation.DOMDebugger.Timer.Interval
+Adding "interval" Event Breakpoint...
+PASS: Should pause in the frame target that ran the code.
+PASS: Pause reason should be "interval".
+PASS: Top call frame should be "handleInterval".
+PASS: Interval callback should run after resuming.
+-- Running test teardown.
+
+-- Running test case: SiteIsolation.DOMDebugger.Timer.AnimationFrame
+Adding "animation-frame" Event Breakpoint...
+PASS: Should pause in the frame target that ran the code.
+PASS: Pause reason should be "animation-frame".
+PASS: Top call frame should be "handleAnimationFrame".
+PASS: Animation frame callback should run after resuming.
+-- Running test teardown.
+
+-- Running test case: SiteIsolation.DOMDebugger.Timer.Timeout.Disabled
+Adding "timeout" Event Breakpoint...
+Disabling "timeout" Event Breakpoint...
+PASS: Timeout callback should run.
+PASS: Should not pause for disabled breakpoint.
+-- Running test teardown.
+

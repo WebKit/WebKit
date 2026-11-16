@@ -1,0 +1,12 @@
+
+
+
+PASS setAttribute and setAttributeNode respect the element's node document's global's CSP;
+ Element=iframe; Parent=div; Attribute=srcdoc
+PASS setAttribute and setAttributeNode respect the element's node document's global's CSP;
+ Element=script; Parent=div; Attribute=src
+PASS setAttribute and setAttributeNode respect the element's node document's global's CSP;
+ Element=script; Parent=svg; Attribute=href
+PASS setAttribute and setAttributeNode respect the element's node document's global's CSP;
+ Element=script; Parent=svg; Attribute=xlink:href
+

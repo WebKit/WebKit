@@ -1,0 +1,35 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/interaction/focus/focusgroup/tentative/grid-navigation/col-flow-only.html
+/LayoutTests/imported/w3c/web-platform-tests/html/interaction/focus/focusgroup/tentative/grid-navigation/col-wrap-and-row-flow.html
+/LayoutTests/imported/w3c/web-platform-tests/html/interaction/focus/focusgroup/tentative/grid-navigation/col-wrap-only.html
+/LayoutTests/imported/w3c/web-platform-tests/html/interaction/focus/focusgroup/tentative/grid-navigation/colspan.html
+/LayoutTests/imported/w3c/web-platform-tests/html/interaction/focus/focusgroup/tentative/grid-navigation/css-table-not-focusgroup.html
+/LayoutTests/imported/w3c/web-platform-tests/html/interaction/focus/focusgroup/tentative/grid-navigation/css-table.html
+/LayoutTests/imported/w3c/web-platform-tests/html/interaction/focus/focusgroup/tentative/grid-navigation/does-not-wrap-or-flow.html
+/LayoutTests/imported/w3c/web-platform-tests/html/interaction/focus/focusgroup/tentative/grid-navigation/empty-spaces.html
+/LayoutTests/imported/w3c/web-platform-tests/html/interaction/focus/focusgroup/tentative/grid-navigation/flows-in-both-axes.html
+/LayoutTests/imported/w3c/web-platform-tests/html/interaction/focus/focusgroup/tentative/grid-navigation/moves-across-table-sections.html
+/LayoutTests/imported/w3c/web-platform-tests/html/interaction/focus/focusgroup/tentative/grid-navigation/non-table.html
+/LayoutTests/imported/w3c/web-platform-tests/html/interaction/focus/focusgroup/tentative/grid-navigation/relayout-before-navigation.html
+/LayoutTests/imported/w3c/web-platform-tests/html/interaction/focus/focusgroup/tentative/grid-navigation/row-flow-only.html
+/LayoutTests/imported/w3c/web-platform-tests/html/interaction/focus/focusgroup/tentative/grid-navigation/row-wrap-and-col-flow.html
+/LayoutTests/imported/w3c/web-platform-tests/html/interaction/focus/focusgroup/tentative/grid-navigation/row-wrap-only.html
+/LayoutTests/imported/w3c/web-platform-tests/html/interaction/focus/focusgroup/tentative/grid-navigation/rowspan.html
+/LayoutTests/imported/w3c/web-platform-tests/html/interaction/focus/focusgroup/tentative/grid-navigation/simple-case-with-non-focusable-cell-in-the-center.html
+/LayoutTests/imported/w3c/web-platform-tests/html/interaction/focus/focusgroup/tentative/grid-navigation/simple-case.html
+/LayoutTests/imported/w3c/web-platform-tests/html/interaction/focus/focusgroup/tentative/grid-navigation/wraps-in-both-axes.html

@@ -1,0 +1,5 @@
+abc
+def
+
+PASS Reading scroll position forces scroll anchoring adjustment.
+

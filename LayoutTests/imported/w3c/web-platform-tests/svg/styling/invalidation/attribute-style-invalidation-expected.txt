@@ -1,0 +1,7 @@
+
+PASS Changing an SVG length through baseVal updates attribute selector matching
+PASS An attribute change updates attr() after a pending inline style change
+PASS SVG attr() is invalidated by baseVal after an inline style change
+PASS SVG attr() tracks attribute removal and addition after geometry changes
+PASS SVG attr() invalidation propagates inherited changes to descendants
+

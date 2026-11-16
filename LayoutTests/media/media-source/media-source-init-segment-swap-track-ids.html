@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>media-source-init-segment-swap-track-ids</title>
+    <script src="media-source-loader.js"></script>
+    <script src="../video-test.js"></script>
+    <script>
+    var loader;
+    var source;
+    var sourceBuffer;
+
+    function loaderPromise(loader) {
+        return new Promise((resolve, reject) => {
+            loader.onload = resolve;
+            loader.onerror = reject;
+        });
+    }
+
+    async function runTest() {
+        findMediaElement();
+
+        try {
+            loader = new MediaSourceLoader('content/test-fragmented-manifest.json');
+            await loaderPromise(loader);
+
+            source = new MediaSource();
+            run('video.src = URL.createObjectURL(source)');
+            await waitFor(source, 'sourceopen');
+            waitForEventAndFail('error');
+
+            run('sourceBuffer = source.addSourceBuffer(loader.type())');
+            consoleWrite('Append an initialization segment.');
+            run('sourceBuffer.appendBuffer(loader.initSegment())');
+            await waitFor(sourceBuffer, 'update');
+
+            consoleWrite('Append a media segment.')
+            run('sourceBuffer.appendBuffer(loader.mediaSegment(0))');
+            await waitFor(sourceBuffer, 'update');
+
+            consoleWrite('Append a media segment.')
+            run('sourceBuffer.appendBuffer(loader.mediaSegment(1))');
+            await waitFor(sourceBuffer, 'update');
+
+            consoleWrite('');
+
+            loader = new MediaSourceLoader('content/test-fragmented-swap-track-ids-manifest.json');
+            await loaderPromise(loader);
+
+            consoleWrite('Append another initialization segment with audi/video track IDs swapped.');
+            run('sourceBuffer.appendBuffer(loader.initSegment())');
+            await waitFor(sourceBuffer, 'update');
+
+            consoleWrite('Append a media segment.')
+            run('sourceBuffer.appendBuffer(loader.mediaSegment(0))');
+            await waitFor(sourceBuffer, 'update');
+
+            endTest();
+        } catch (e) {
+            failTest(`Caught exception: "${e}"`);
+        }
+    }
+    </script>
+</head>
+<body onload="runTest()">
+    <div>
+        This tests that SourceBuffer deals with swapping audio/video track IDs properly (should not crash).
+    </div>
+    <video controls></video>
+</body>
+</html>

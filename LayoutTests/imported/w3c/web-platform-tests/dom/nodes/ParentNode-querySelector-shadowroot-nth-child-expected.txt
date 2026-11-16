@@ -1,0 +1,4 @@
+hello
+
+PASS div:nth-child(2) should select #first when preceded by a style inside shadow root
+

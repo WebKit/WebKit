@@ -1,0 +1,4 @@
+
+PASS COEP support on DedicatedWorker.
+PASS COEP-Report-Only support on DedicatedWorker.
+

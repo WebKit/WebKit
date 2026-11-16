@@ -1,0 +1,116 @@
+/*
+ * Copyright (C) 2010 Google Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ *  * Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ *  * Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE COPYRIGHT OWNER OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#import "WebDeviceOrientationProviderMockInternal.h"
+
+#import "WebDeviceOrientationInternal.h"
+#import <WebCore/SecurityOriginData.h>
+#import <wtf/NeverDestroyed.h>
+#import <wtf/RetainPtr.h>
+
+
+@implementation WebDeviceOrientationProviderMockInternal
+
+- (id)init
+{
+    self = [super init];
+    if (!self)
+        return nil;
+    lazyInitialize(m_core, makeUnique<WebCore::DeviceOrientationClientMock>());
+    return self;
+}
+
+- (void)setOrientation:(WebDeviceOrientation*)orientation
+{
+    m_core->setOrientation(core(orientation));
+}
+
+- (void)setController:(WebCore::DeviceOrientationController*)controller
+{
+    m_core->setController(controller);
+}
+
+- (void)startUpdating
+{
+    m_core->startUpdating();
+}
+
+- (void)stopUpdating
+{
+    m_core->stopUpdating();
+}
+
+- (WebDeviceOrientation*)lastOrientation
+{
+    return adoptNS([[WebDeviceOrientation alloc] initWithCoreDeviceOrientation:m_core->lastOrientation()]).autorelease();
+}
+
+@end
+
+@implementation WebDeviceOrientationProviderMock {
+    RetainPtr<WebDeviceOrientationProviderMockInternal> m_internal;
+}
+
++ (WebDeviceOrientationProviderMock *)shared
+{
+    static NeverDestroyed<RetainPtr<WebDeviceOrientationProviderMock>> provider = adoptNS([[WebDeviceOrientationProviderMock alloc] init]);
+    return provider.get();
+}
+
+- (id)init
+{
+    self = [super init];
+    if (!self)
+        return nil;
+    m_internal = adoptNS([[WebDeviceOrientationProviderMockInternal alloc] init]);
+    return self;
+}
+
+- (void)setOrientation:(WebDeviceOrientation*)orientation
+{
+    [protect(m_internal) setOrientation:orientation];
+}
+
+- (void)startUpdating
+{
+    [protect(m_internal) startUpdating];
+}
+
+- (void)stopUpdating
+{
+    [protect(m_internal) stopUpdating];
+}
+
+- (WebDeviceOrientation*)lastOrientation
+{
+    return [protect(m_internal) lastOrientation];
+}
+
+- (void)setController:(WebCore::DeviceOrientationController*)controller
+{
+    [protect(m_internal) setController:controller];
+}
+
+@end

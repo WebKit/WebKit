@@ -1,0 +1,64 @@
+<!doctype html><!-- webkit-test-runner [ IPCTestingAPIEnabled=true ] -->
+<title>Test that IPC system can send and receive semaphores.</title>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<body>
+<script>
+// NOTE: At the time we don't account for spurious wake-ups in IPC::Semaphore.
+const defaultTimeout = 5000;
+promise_test(async t => {
+    if (!window.IPC)
+        return;
+    const bufferSize = 100;
+    const streamTesterID = 447;
+    for (const processTarget of IPC.processTargets) {
+        const semaphore = IPC.createSemaphore();
+        assert_equals(semaphore.waitFor(100), false);
+
+        IPC.sendMessage(processTarget, 0, IPC.messages.IPCTester_SendSemaphoreBackAndSignalProtocol.name, [
+            { type: 'Semaphore', value: semaphore },
+        ]);
+        const reply = IPC.waitForMessage(processTarget, 0, IPC.messages.IPCTester_SendSemaphoreBackAndSignalProtocol.name, defaultTimeout);
+        assert_equals(reply[0].type, "Semaphore", `for ${ processTarget }`);
+        const replySemaphore = reply[0].value;
+        // Both semaphores can be waited on.
+        assert_equals(semaphore.waitFor(100), false);
+        assert_equals(replySemaphore.waitFor(100), false);
+        // Signal protocol is:
+        // 1) the other side waits for our semaphore
+        // 2) this side waits for the replySemaphore
+        // 3) the other side waits for our semaphore again (to prevent destruction race of replySemaphore).
+        semaphore.signal();
+        assert_equals(replySemaphore.waitFor(1000), true);
+        semaphore.signal(); // Signal for done, so the other end will destroy the semaphore.
+
+        // Check that we did not get confused by the other test during implementation:
+        // Check that semaphore and replySemaphore are distinct objects, and the previous
+        // success was due to the signal protocol.
+        semaphore.signal();
+        assert_equals(replySemaphore.waitFor(100), false);
+    }
+}, "Sending and receiving a semaphore works");
+
+promise_test(async t => {
+    if (!window.IPC)
+        return;
+    const bufferSize = 100;
+    const streamTesterID = 447;
+    for (const processTarget of IPC.processTargets) {
+        const semaphore = IPC.createSemaphore();
+        IPC.sendMessage(processTarget, 0, IPC.messages.IPCTester_SendSameSemaphoreBack.name, [
+            { type: 'Semaphore', value: semaphore },
+        ]);
+        const reply = IPC.waitForMessage(processTarget, 0, IPC.messages.IPCTester_SendSameSemaphoreBack.name, defaultTimeout);
+        assert_equals(reply[0].type, "Semaphore", `for ${ processTarget }`);
+        const replySemaphore = reply[0].value;
+        assert_equals(semaphore.waitFor(100), false);
+        assert_equals(replySemaphore.waitFor(100), false);
+        // The replySemaphore is the same as semaphore, so signaling one is visible in the another.
+        semaphore.signal();
+        assert_equals(replySemaphore.waitFor(100), true);
+    }
+}, "Sending and then receiving the same semaphore works");
+</script>
+</body>

@@ -1,0 +1,9 @@
+Test that Page.setShowPaintRects(false) produces no paint rects in cross-origin iframes under site isolation.
+
+
+
+== Running test suite: SiteIsolation.Page.SetShowPaintRectsCrossOriginIFrameDisabled
+-- Running test case: SiteIsolation.Page.SetShowPaintRects.Disabled
+Disabling paint rects...
+PASS: Cross-origin iframe should have no paint rects while disabled.
+

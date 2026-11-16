@@ -1,0 +1,12 @@
+Tests that the page target tells which process it runs in without site isolation.
+
+
+== Running test suite: Target.ProcessIdentifier
+-- Running test case: Target.ProcessIdentifier.PageTarget
+PASS: The page target should have a process identifier.
+
+-- Running test case: Target.ProcessIdentifier.ProvisionalPageTarget
+PASS: The provisional page target should have a process identifier.
+PASS: The provisional page target should not share the previous page target's process identifier.
+PASS: The provisional page target should become the page target.
+

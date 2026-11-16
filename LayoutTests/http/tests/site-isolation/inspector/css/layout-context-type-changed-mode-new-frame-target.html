@@ -1,0 +1,181 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="../debugger/resources/site-isolation-debugger-test-utilities.js"></script>
+<script>
+function addCrossOriginIFrame()
+{
+    let crossOriginHost = location.hostname === "localhost" ? "127.0.0.1" : "localhost";
+    let iframe = document.createElement("iframe");
+    iframe.src = `http://${crossOriginHost}:8000/site-isolation/inspector/css/resources/frame-with-layout-flags.html`;
+    document.body.appendChild(iframe);
+}
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.CSS.LayoutContextTypeChangedMode.NewFrameTarget");
+
+    let pageDocument = null;
+    let frameTarget = null;
+
+    // Keeps a list the way LayoutDetailsSidebarPanel keeps its node sets: rebuilt from `attachedNodes()` only after
+    // `Inserted`, or after `LayoutFlagsChanged` gives a node a layout context. Each new WI.DOMNode sends `LayoutFlagsChanged`.
+    class LayoutPanelNodeList
+    {
+        constructor()
+        {
+            this._nodes = null;
+
+            WI.DOMNode.addEventListener(WI.DOMNode.Event.Inserted, this._handleNodeInserted, this);
+            WI.DOMNode.addEventListener(WI.DOMNode.Event.Removed, this._handleNodeRemoved, this);
+            WI.DOMNode.addEventListener(WI.DOMNode.Event.LayoutFlagsChanged, this._handleLayoutFlagsChanged, this);
+        }
+
+        get nodes()
+        {
+            this._nodes ??= new Set(WI.domManager.attachedNodes({filter: (node) => node.layoutContextType}));
+            return Array.from(this._nodes);
+        }
+
+        _handleNodeInserted(event)
+        {
+            this._nodes = null;
+        }
+
+        _handleNodeRemoved(event)
+        {
+            this._nodes?.delete(event.target);
+        }
+
+        _handleLayoutFlagsChanged(event)
+        {
+            if (event.target.layoutContextType)
+                this._nodes = null;
+            else
+                this._nodes?.delete(event.target);
+        }
+    }
+
+    let layoutPanelNodeList = null;
+
+    // The panel rebuilds its list on the animation frame after the frame document is spliced. Rebuild it during the
+    // splice, as an animation frame would that runs before the frame target's next message.
+    function rebuildLayoutPanelNodeListWhenFrameDocumentIsSpliced() {
+        WI.DOMNode.addEventListener(WI.DOMNode.Event.Inserted, function listener(event) {
+            let node = event.target;
+            if (node.nodeType() !== Node.DOCUMENT_NODE || !node.documentURL?.includes("frame-with-layout-flags.html"))
+                return;
+
+            WI.DOMNode.removeEventListener(WI.DOMNode.Event.Inserted, listener, null);
+            InspectorTest.log("Rebuilding the Layout panel's list as the frame document is spliced...");
+            let frameNodeCount = layoutPanelNodeList.nodes.filter((listedNode) => listedNode.owningTarget === node.owningTarget).length;
+            InspectorTest.expectEqual(frameNodeCount, 0, "The rebuilt list should not have the frame's grids yet.");
+        }, null);
+    }
+
+    // Evaluating in every frame target can hang on the parent-process target, destroyed when the provisional one commits.
+    async function awaitFrameDocumentForURL(substring) {
+        while (true) {
+            let target = WI.targets.find((target) => WI.domManager.frameTargetDocumentForTarget(target)?.documentURL?.includes(substring));
+            if (target)
+                return target;
+            await WI.domManager.awaitEvent(WI.DOMManager.Event.FrameDocumentAvailable);
+        }
+    }
+
+    async function awaitFrameExpression(expression) {
+        let result = await waitForExpressionInTarget(frameTarget, expression, 50);
+        InspectorTest.assert(result, `Timed out waiting for \`${expression}\` in the frame.`);
+    }
+
+    async function awaitNewFrameDocument(previousDocument) {
+        while (true) {
+            let frameDocument = WI.domManager.frameTargetDocumentForTarget(frameTarget);
+            if (frameDocument && frameDocument !== previousDocument)
+                return;
+            await WI.domManager.awaitEvent(WI.DOMManager.Event.FrameDocumentAvailable);
+        }
+    }
+
+    // Dispatches the nodes the frame target sent before these replies, including those it pushes right after a `DOM.getDocument` reply.
+    async function flushFrameTarget() {
+        await frameTarget.DOMAgent.getSupportedEventNames();
+        await frameTarget.DOMAgent.getSupportedEventNames();
+    }
+
+    function expectLayoutPanelListsGrids() {
+        let iframeElement = pageDocument.body.children.find((node) => node.nodeName() === "IFRAME") ?? null;
+        InspectorTest.expectEqual(WI.domManager.frameTargetDocumentForTarget(frameTarget)?.parentNode, iframeElement, "The frame target's document should be spliced into the <iframe>.");
+
+        let layoutContextNodes = Array.from(WI.domManager.attachedNodes({filter: (node) => node.layoutContextType && node.owningTarget === frameTarget}));
+        let deepGrid = layoutContextNodes.find((node) => node.getAttribute("id") === "deep-grid") ?? null;
+        InspectorTest.expectNotNull(deepGrid, "#deep-grid should have been sent without changing layoutContextTypeChangedMode again.");
+        InspectorTest.expectEqual(deepGrid?.layoutContextType, WI.DOMNode.LayoutFlag.Grid, "#deep-grid should be a grid.");
+
+        let listedNodes = layoutPanelNodeList.nodes.filter((node) => node.owningTarget === frameTarget);
+        InspectorTest.expectShallowEqual(listedNodes.map((node) => node.getAttribute("id")), ["grid", "deep-grid"], "The Layout panel should list #grid and #deep-grid.");
+    }
+
+    suite.addTestCase({
+        name: "SiteIsolation.CSS.LayoutContextTypeChangedMode.NewFrameTarget.AllModeAppliesToNewTarget",
+        description: "The Layout panel should list the grids of a cross-origin iframe added after the mode is set to `All`.",
+        async test() {
+            // Load the children of <body>, as the Elements tab does, so the <iframe> is bound when it is added.
+            pageDocument = await WI.domManager.requestDocument();
+            await new Promise((resolve) => pageDocument.body.getChildNodes(resolve));
+
+            InspectorTest.log("Changing `layoutContextTypeChangedMode` to `All`...");
+            WI.cssManager.layoutContextTypeChangedMode = WI.CSSManager.LayoutContextTypeChangedMode.All;
+            layoutPanelNodeList = new LayoutPanelNodeList;
+
+            InspectorTest.log("Adding a cross-origin iframe...");
+            rebuildLayoutPanelNodeListWhenFrameDocumentIsSpliced();
+            await InspectorTest.evaluateInPage("addCrossOriginIFrame()");
+            frameTarget = await awaitFrameDocumentForURL("frame-with-layout-flags.html");
+            await awaitFrameExpression(`document.readyState === "complete"`);
+            await flushFrameTarget();
+
+            expectLayoutPanelListsGrids();
+        },
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.CSS.LayoutContextTypeChangedMode.NewFrameTarget.AllModeAppliesAfterReload",
+        description: "The Layout panel should still list the grids when the iframe reloads and lays out before the frontend requests the new document.",
+        async test() {
+            let previousDocument = WI.domManager.frameTargetDocumentForTarget(frameTarget);
+
+            // Hold the request for the new document until the reloaded frame has laid out its grids.
+            let originalDocumentUpdated = WI.domManager._frameTargetDocumentUpdated;
+            let documentUpdated = new Promise((resolve) => {
+                WI.domManager._frameTargetDocumentUpdated = function(target) {
+                    if (target !== frameTarget)
+                        return originalDocumentUpdated.call(this, target);
+                    WI.domManager._frameTargetDocumentUpdated = originalDocumentUpdated;
+                    resolve();
+                };
+            });
+
+            InspectorTest.log("Reloading the cross-origin iframe...");
+            await frameTarget.RuntimeAgent.evaluate.invoke({expression: "location.reload()", objectGroup: "test"});
+            await documentUpdated;
+            await awaitFrameExpression(`performance.getEntriesByType("navigation")[0]?.type === "reload" && document.readyState === "complete"`);
+
+            InspectorTest.log("Requesting the reloaded document...");
+            rebuildLayoutPanelNodeListWhenFrameDocumentIsSpliced();
+            WI.domManager._frameTargetDocumentUpdated(frameTarget);
+            await awaitNewFrameDocument(previousDocument);
+            await flushFrameTarget();
+
+            expectLayoutPanelListsGrids();
+        },
+        async teardown() {
+            WI.cssManager.layoutContextTypeChangedMode = WI.CSSManager.LayoutContextTypeChangedMode.Observed;
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+<body onload="runTest()">
+<p>Tests that the `All` layout context type changed mode applies to frame targets created after it was set, and to the documents they load later.</p>
+</body>

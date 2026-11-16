@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../resources/runner.js"></script>
+</head>
+<body>
+<iframe></iframe>
+</body>
+<script>
+
+function setup() {
+    var frame = document.getElementsByTagName("iframe")[0];
+    var testDoc = frame.contentDocument;
+    var docText = "";
+    docText += "<body><style>.foo {color:red}</style>";
+    docText += "<div class='bar'>Foo</div>";
+    for (var i = 0; i < 10000; ++i)
+        docText += "<div class='foo'>Foo</div>";
+    testDoc.body.innerHTML = docText;
+    return testDoc;
+}
+
+PerfTestRunner.measureTime({run:function() {
+    var testDoc = setup();
+    var start = PerfTestRunner.now();
+    for (var i = 0; i < 50; i++) {
+        var styleElem = testDoc.createElement("style");
+        styleElem.innerText = ".bar {color:green}";
+        testDoc.body.insertBefore(styleElem, testDoc.body.firstChild);
+    }
+    return PerfTestRunner.now() - start;
+}});
+</script>
+</html>

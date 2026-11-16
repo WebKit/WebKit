@@ -1,0 +1,6 @@
+
+PASS LNA Public to loopback webtransport with permission
+FAIL LNA Public to loopback webtransport without permission assert_equals: expected "error" but got "open"
+PASS LNA local to loopback webtransport with permission
+PASS LNA local to loopback webtransport without permission
+

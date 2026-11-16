@@ -1,0 +1,4 @@
+Test
+
+PASS Stylesheet in XHTML HEAD with @import blocking scripts
+

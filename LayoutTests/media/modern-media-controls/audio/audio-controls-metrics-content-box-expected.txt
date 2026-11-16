@@ -1,0 +1,12 @@
+Testing the <audio> controls metrics.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS defaultAudio.getBoundingClientRect().width is 270
+PASS defaultAudio.getBoundingClientRect().height is 51
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

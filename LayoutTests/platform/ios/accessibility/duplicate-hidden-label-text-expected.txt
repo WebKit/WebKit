@@ -1,0 +1,12 @@
+This test ensures we compute the right string value for unrendered text (with this test exercising one such possible way: hidden labels).
+
+	AXLabel: Foo!
+ Bar Baz,
+
+	AXLabel: Foo!
+ Baz,
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

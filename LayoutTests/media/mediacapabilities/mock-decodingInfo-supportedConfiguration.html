@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src=../video-test.js></script>
+    <script type="text/javascript">
+    var promise;
+    var info;
+
+    async function doTest()
+    {
+        if (!window.internals) {
+            failTest("Internals is required for this test.")
+            return;
+        }
+
+        run('internals.enableMockMediaCapabilities()');
+        run('internals.settings.setMediaCapabilitiesExtensionsEnabled(true)');
+
+        run("promise = navigator.mediaCapabilities.decodingInfo({ type: 'file', video: { contentType: 'video/mp4; codecs=\"avc1\"', height: 720, bitrate: 1000, width: 1280, framerate: 24.5 }, unsupportedProperty: true });");
+        info = await shouldResolve(promise);
+        testExpected('info.supported', true);
+        testExpected('info.smooth', true);
+        testExpected('info.powerEfficient', true);
+        testExpected('typeof info.configuration', 'undefined', '!=');
+        testExpected('info.configuration.type', 'file');
+        testExpected('info.configuration.video.contentType', 'video/mp4; codecs="avc1"');
+        testExpected('info.configuration.video.height', 720);
+        testExpected('info.configuration.video.bitrate', 1000);
+        testExpected('info.configuration.video.width', 1280);
+        testExpected('info.configuration.video.framerate', 24.5);
+        testExpected('typeof info.configuration.unsupportedProperty', 'undefined');
+
+        run("promise = navigator.mediaCapabilities.decodingInfo({ type: 'media-source', video: { contentType: 'video/mp4; codecs=\"avc1\"', height: 720, bitrate: 1000, width: 1280, framerate: 24.5 }, unsupportedProperty: true });");
+        info = await shouldResolve(promise);
+        testExpected('info.supported', false);
+        testExpected('info.smooth', false);
+        testExpected('info.powerEfficient', false);
+        testExpected('typeof info.configuration', 'undefined', '!=');
+        testExpected('info.configuration.type', 'media-source');
+        testExpected('info.configuration.video.contentType', 'video/mp4; codecs="avc1"');
+        testExpected('info.configuration.video.height', 720);
+        testExpected('info.configuration.video.bitrate', 1000);
+        testExpected('info.configuration.video.width', 1280);
+        testExpected('info.configuration.video.framerate', 24.5);
+        testExpected('typeof info.configuration.unsupportedProperty', 'undefined');
+        endTest();
+    }
+    </script>
+</head>
+<body onload="doTest()" />
+</html>

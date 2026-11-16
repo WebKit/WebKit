@@ -1,0 +1,83 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>exposedContentRect is the same whether or not the frame is in another process</title>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/js-test-resources/ui-helper.js"></script>
+<script src="../resources/frame-geometry-test.js"></script>
+<style>
+body { margin: 0 }
+.bordered { position: absolute; top: 100px; width: 200px; height: 150px; border: 5px solid black; padding: 10px }
+#borderSameSite { left: 0 }
+#borderCrossSite { left: 300px }
+.zoomWrapper { position: absolute; top: 1100px }
+#zoomSameSiteWrapper { left: 0 }
+#zoomCrossSiteWrapper { left: 400px }
+.zoomed { display: block; zoom: 2; width: 150px; height: 100px; border: 5px solid black }
+#spacer { height: 2500px }
+</style>
+<body>
+
+<iframe class="bordered" id="borderSameSite"
+    src="http://127.0.0.1:8000/site-isolation/resources/frame-geometry-frame.html?label=borderSameSite"></iframe>
+<iframe class="bordered" id="borderCrossSite"
+    src="http://localhost:8000/site-isolation/resources/frame-geometry-frame.html?label=borderCrossSite"></iframe>
+
+<div class="zoomWrapper" id="zoomSameSiteWrapper">
+    <iframe class="zoomed" scrolling="no"
+        src="http://127.0.0.1:8000/site-isolation/resources/frame-geometry-frame.html?label=zoomSameSite"></iframe>
+</div>
+<div class="zoomWrapper" id="zoomCrossSiteWrapper">
+    <iframe class="zoomed" scrolling="no"
+        src="http://localhost:8000/site-isolation/resources/frame-geometry-frame.html?label=zoomCrossSite"></iframe>
+</div>
+
+<div id="spacer"></div>
+<script>
+
+const CONFIGURATIONS = [
+    {
+        name: "an owner element with a border and padding",
+        sameSite: "borderSameSite",
+        crossSite: "borderCrossSite",
+        // These are nodes at y=100 with a border box of size 230x180 and a content box of size 200x150.
+        expected: {
+            0: "0,0 200x150",    // For scrollY=0, the entire content box should be tiled.
+            190: "0,75 200x75",  // For scrollY=190, half the content box should be tiled.
+            400: "0,0 0x0",      // For scrollY=400, none of the content box should be tiled.
+        },
+    },
+    {
+        name: "an owner element with a used zoom",
+        sameSite: "zoomSameSite",
+        crossSite: "zoomCrossSite",
+        // These are nodes at y=1100 with a border box of size 320x220 and a content box of size 300x200.
+        expected: {
+            1100: "0,0 300x200",    // For scrollY=1100, the entire content box should be tiled.
+            1210: "0,100 300x100",  // For scrollY=1210, half the content box should be tiled.
+            1500: "0,0 0x0",        // For scrollY=1500, none of the content box should be tiled.
+        },
+    },
+];
+
+const ALL_LABELS = CONFIGURATIONS.flatMap(configuration => [configuration.sameSite, configuration.crossSite]);
+
+promise_test(async t => {
+    assert_true(await waitForFirstReports(ALL_LABELS), "every frame reported at least once");
+
+    for (const configuration of CONFIGURATIONS) {
+        for (const [offset, expected] of Object.entries(configuration.expected)) {
+            window.scrollTo(0, Number(offset));
+            await UIHelper.ensureVisibleContentRectAndStablePresentationUpdate();
+
+            await assertExposedRect(configuration.sameSite, expected,
+                `${configuration.name}, same site, at scrollY=${offset}`);
+            await assertExposedRect(configuration.crossSite, expected,
+                `${configuration.name}, cross site, at scrollY=${offset}`);
+        }
+    }
+}, "A frame's exposedContentRect does not depend on whether it is in another process");
+
+</script>
+</body>

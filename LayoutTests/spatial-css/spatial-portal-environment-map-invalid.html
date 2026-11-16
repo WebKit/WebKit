@@ -1,0 +1,48 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ SpatialPortalEnabled=true ] -->
+<html>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<body>
+<script>
+'use strict';
+
+test(t => {
+    const invalidValues = [
+        ["studio", "an unquoted name is an identifier, not a string"],
+        ["--studio", "the spec references maps by string, not by dashed ident"],
+        ["url(studio.exr)", "a URL is not a name"],
+        ['"studio" "sunset"', "two names"],
+    ];
+
+    const element = document.body.appendChild(document.createElement("div"));
+    t.add_cleanup(() => element.remove());
+
+    for (const [value, description] of invalidValues) {
+        element.style.environmentMap = value;
+        assert_false(CSS.supports("environment-map", value), `CSS.supports("${value}")`);
+        assert_equals(element.style.environmentMap, "", `${value} is not accepted — ${description}`);
+        assert_equals(getComputedStyle(element).environmentMap, "auto", `${value} leaves the initial value in place`);
+    }
+}, "environment-map rejects invalid values");
+
+test(t => {
+    const listValues = [
+        '"studio", "sunset"',
+        'auto, "studio"',
+        'none, "studio"',
+        '"studio",',
+    ];
+
+    const element = document.body.appendChild(document.createElement("div"));
+    t.add_cleanup(() => element.remove());
+
+    for (const value of listValues) {
+        element.style.environmentMap = value;
+        assert_false(CSS.supports("environment-map", value), `CSS.supports("${value}")`);
+        assert_equals(getComputedStyle(element).environmentMap, "auto", `${value} leaves the initial value in place`);
+    }
+}, "environment-map rejects a list of names");
+
+</script>
+</body>
+</html>

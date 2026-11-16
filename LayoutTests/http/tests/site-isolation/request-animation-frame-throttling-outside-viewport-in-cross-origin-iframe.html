@@ -1,0 +1,50 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+
+<!DOCTYPE html>
+<html>
+<body>
+<script src="/js-test-resources/js-test.js"></script>
+<script>
+description("Tests that requestAnimationFrame and DOM timers are throttled in an out-of-process subframe that is outside the viewport");
+
+var jsTestIsAsync = true;
+var throttlingState = "";
+var testFrame;
+
+// The subframe is cross-origin, so its internals object cannot be reached directly.
+window.addEventListener("message", function(event) {
+    throttlingState = event.data;
+}, false);
+
+function runTest()
+{
+    testFrame = document.getElementById("testFrame");
+
+    // Ask repeatedly: the embedder-visible rect reaches the subframe's process asynchronously, one
+    // rendering update after the scroll.
+    setInterval(function() {
+        testFrame.contentWindow.postMessage("report-throttling-reasons", "*");
+    }, 50);
+
+    debug("The frame starts outside the viewport, so requestAnimationFrame and DOM timers should be throttled.");
+    shouldBecomeEqualToString("throttlingState", "requestAnimationFrame=true,timers=true", scrollFrameIntoView);
+}
+
+function scrollFrameIntoView()
+{
+    debug("Scrolling the frame into view.");
+    window.scroll(0, 1000);
+    shouldBecomeEqualToString("throttlingState", "requestAnimationFrame=false,timers=false", scrollFrameOutOfView);
+}
+
+function scrollFrameOutOfView()
+{
+    debug("Scrolling the frame out of view again.");
+    window.scroll(0, 0);
+    shouldBecomeEqualToString("throttlingState", "requestAnimationFrame=true,timers=true", finishJSTest);
+}
+</script>
+<div style="width: 100px; height: 1000px;"></div>
+<iframe id="testFrame" src="http://localhost:8000/site-isolation/resources/request-animation-frame-throttling-frame.html" onload="runTest()"></iframe>
+</body>
+</html>

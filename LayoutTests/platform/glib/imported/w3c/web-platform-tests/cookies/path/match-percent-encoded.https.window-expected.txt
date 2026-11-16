@@ -1,0 +1,12 @@
+
+PASS CONTROL a cookie for the probed path is visible in it
+PASS CONTROL a cookie for a prefix of the probed path is visible in it
+PASS A Path attribute where a literal space does not match a percent-encoded space
+PASS A Path attribute where a percent-encoded space matches a percent-encoded space
+PASS A Path attribute where a non-ASCII byte is not reachable at the percent-encoding of that byte
+PASS A Path attribute where a non-ASCII byte is not reachable at the percent-encoding of its isomorphic decoding
+PASS A Path attribute where a multi-byte non-ASCII sequence is not reachable at the percent-encoding of those bytes
+PASS A Path attribute where a multi-byte non-ASCII sequence is not reachable at the percent-encoding of its isomorphic decoding
+PASS A Path attribute where an already percent-encoded non-ASCII byte matches, being ASCII itself
+PASS cleanup: unregister the service worker
+

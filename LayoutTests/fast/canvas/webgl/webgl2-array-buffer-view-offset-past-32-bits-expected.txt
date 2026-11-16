@@ -1,0 +1,48 @@
+CONSOLE MESSAGE: WebGL: INVALID_VALUE: bufferData: srcOffset or length is out of bounds
+CONSOLE MESSAGE: WebGL: INVALID_VALUE: bufferData: srcOffset or length is out of bounds
+CONSOLE MESSAGE: WebGL: INVALID_VALUE: bufferData: srcOffset or length is out of bounds
+CONSOLE MESSAGE: WebGL: INVALID_VALUE: bufferSubData: srcOffset or length is out of bounds
+CONSOLE MESSAGE: WebGL: INVALID_VALUE: bufferSubData: srcOffset or length is out of bounds
+CONSOLE MESSAGE: WebGL: INVALID_VALUE: bufferSubData: srcOffset or length is out of bounds
+CONSOLE MESSAGE: WebGL: INVALID_VALUE: getBufferSubData: dstOffset is larger than the length of the destination buffer.
+CONSOLE MESSAGE: WebGL: INVALID_VALUE: getBufferSubData: dstOffset is larger than the length of the destination buffer.
+CONSOLE MESSAGE: WebGL: INVALID_VALUE: getBufferSubData: dstOffset is larger than the length of the destination buffer.
+CONSOLE MESSAGE: WebGL: INVALID_VALUE: readPixels: srcOffset or length is out of bounds
+CONSOLE MESSAGE: WebGL: INVALID_VALUE: readPixels: srcOffset or length is out of bounds
+CONSOLE MESSAGE: WebGL: INVALID_VALUE: readPixels: srcOffset or length is out of bounds
+CONSOLE MESSAGE: WebGL: INVALID_OPERATION: texImage2D: ArrayBufferView not big enough for request
+CONSOLE MESSAGE: WebGL: INVALID_OPERATION: texImage2D: ArrayBufferView not big enough for request
+CONSOLE MESSAGE: WebGL: INVALID_OPERATION: texImage2D: ArrayBufferView not big enough for request
+CONSOLE MESSAGE: WebGL: INVALID_OPERATION: texSubImage2D: ArrayBufferView not big enough for request
+CONSOLE MESSAGE: WebGL: INVALID_OPERATION: texSubImage2D: ArrayBufferView not big enough for request
+CONSOLE MESSAGE: WebGL: INVALID_OPERATION: texSubImage2D: ArrayBufferView not big enough for request
+An ArrayBufferView offset past 2^32 must be rejected rather than truncated to 32 bits, which would silently transfer the bytes at the truncated offset instead.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS bufferData with srcOffset 4294967296 was rejected
+PASS bufferData with srcOffset 4294967304 was rejected
+PASS bufferData with srcOffset 8589934592 was rejected
+PASS bufferSubData with srcOffset 4294967296 was rejected
+PASS bufferSubData with srcOffset 4294967304 was rejected
+PASS bufferSubData with srcOffset 8589934592 was rejected
+PASS getBufferSubData with srcOffset 4294967296 was rejected
+PASS getBufferSubData with srcOffset 4294967304 was rejected
+PASS getBufferSubData with srcOffset 8589934592 was rejected
+PASS readPixels with srcOffset 4294967296 was rejected
+PASS readPixels with srcOffset 4294967304 was rejected
+PASS readPixels with srcOffset 8589934592 was rejected
+PASS texImage2D with srcOffset 4294967296 was rejected
+PASS texImage2D with srcOffset 4294967304 was rejected
+PASS texImage2D with srcOffset 8589934592 was rejected
+PASS texSubImage2D with srcOffset 4294967296 was rejected
+PASS texSubImage2D with srcOffset 4294967304 was rejected
+PASS texSubImage2D with srcOffset 8589934592 was rejected
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getError() is gl.NO_ERROR
+PASS [...readBack].join() is '1,2,3,4'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

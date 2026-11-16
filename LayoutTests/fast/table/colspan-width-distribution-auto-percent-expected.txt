@@ -1,0 +1,5 @@
+100px div
+A	B
+
+PASS Colspan with 100px content over auto and 50% columns distributes width correctly
+

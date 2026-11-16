@@ -1,0 +1,6 @@
+This tests that an iframe in sandbox with 'allow-top-navigation-by-user-activation' cannot navigate its top level page, if it is not trigged by a user gesture.
+
+
+
+PASS The sandboxed iframe should post a message saying the test was in the state of 'PASS'.
+

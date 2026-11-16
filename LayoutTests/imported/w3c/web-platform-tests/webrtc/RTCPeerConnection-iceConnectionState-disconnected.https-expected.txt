@@ -1,0 +1,4 @@
+
+PASS ICE goes to disconnected if the other side goes away
+FAIL ICE restart when ICE is disconnected results in checking, then connected assert_equals: expected "checking" but got "connected"
+

@@ -1,0 +1,4 @@
+OPEN FILE PANEL
+Test that opening the file panel does not crash.
+
+

@@ -1,0 +1,9 @@
+<style>
+    body { color: red; }
+    div { color: green; }
+    span { color: -internal-document-text-color; }
+    @supports (color: -internal-document-text-color) {
+        span { color: red; }
+    }
+</style>
+<div><span>This should be green.</span></div>

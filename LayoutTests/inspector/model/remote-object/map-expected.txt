@@ -1,0 +1,399 @@
+
+-----------------------------------------------------
+EXPRESSION: new Map
+{
+  "_type": "object",
+  "_subtype": "map",
+  "_objectId": "<filtered>",
+  "_description": "Map",
+  "_size": 0,
+  "_preview": {
+    "_type": "object",
+    "_subtype": "map",
+    "_description": "Map",
+    "_lossless": true,
+    "_overflow": false,
+    "_size": 0,
+    "_properties": [],
+    "_entries": []
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: map = new Map; map.set(1, 2); map.set("key", "value"); map
+{
+  "_type": "object",
+  "_subtype": "map",
+  "_objectId": "<filtered>",
+  "_description": "Map",
+  "_size": 2,
+  "_preview": {
+    "_type": "object",
+    "_subtype": "map",
+    "_description": "Map",
+    "_lossless": true,
+    "_overflow": false,
+    "_size": 2,
+    "_properties": [],
+    "_entries": [
+      {
+        "_key": {
+          "_type": "number",
+          "_description": "1",
+          "_lossless": true,
+          "_overflow": false,
+          "_properties": null,
+          "_entries": null
+        },
+        "_value": {
+          "_type": "number",
+          "_description": "2",
+          "_lossless": true,
+          "_overflow": false,
+          "_properties": null,
+          "_entries": null
+        }
+      },
+      {
+        "_key": {
+          "_type": "string",
+          "_description": "key",
+          "_lossless": true,
+          "_overflow": false,
+          "_properties": null,
+          "_entries": null
+        },
+        "_value": {
+          "_type": "string",
+          "_description": "value",
+          "_lossless": true,
+          "_overflow": false,
+          "_properties": null,
+          "_entries": null
+        }
+      }
+    ]
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: map = new Map; map.set({a:1}, {b:2}); map.set(document.body, [1,2]); map
+{
+  "_type": "object",
+  "_subtype": "map",
+  "_objectId": "<filtered>",
+  "_description": "Map",
+  "_size": 2,
+  "_preview": {
+    "_type": "object",
+    "_subtype": "map",
+    "_description": "Map",
+    "_lossless": false,
+    "_overflow": false,
+    "_size": 2,
+    "_properties": [],
+    "_entries": [
+      {
+        "_key": {
+          "_type": "object",
+          "_description": "Object",
+          "_lossless": true,
+          "_overflow": false,
+          "_properties": [
+            {
+              "_name": "a",
+              "_type": "number",
+              "_value": "1"
+            }
+          ],
+          "_entries": null
+        },
+        "_value": {
+          "_type": "object",
+          "_description": "Object",
+          "_lossless": true,
+          "_overflow": false,
+          "_properties": [
+            {
+              "_name": "b",
+              "_type": "number",
+              "_value": "2"
+            }
+          ],
+          "_entries": null
+        }
+      },
+      {
+        "_key": {
+          "_type": "object",
+          "_subtype": "node",
+          "_description": "<body>",
+          "_lossless": false,
+          "_overflow": true,
+          "_properties": [
+            {
+              "_name": "aLink",
+              "_type": "string",
+              "_value": ""
+            },
+            {
+              "_name": "background",
+              "_type": "string",
+              "_value": ""
+            },
+            {
+              "_name": "bgColor",
+              "_type": "string",
+              "_value": ""
+            },
+            {
+              "_name": "link",
+              "_type": "string",
+              "_value": ""
+            },
+            {
+              "_name": "text",
+              "_type": "string",
+              "_value": ""
+            }
+          ],
+          "_entries": null
+        },
+        "_value": {
+          "_type": "object",
+          "_subtype": "array",
+          "_description": "Array",
+          "_lossless": true,
+          "_overflow": false,
+          "_size": 2,
+          "_properties": [
+            {
+              "_name": "0",
+              "_type": "number",
+              "_value": "1"
+            },
+            {
+              "_name": "1",
+              "_type": "number",
+              "_value": "2"
+            }
+          ],
+          "_entries": null
+        }
+      }
+    ]
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: map = new Map; for (var i = 0; i <= 100; i++) map.set(i, i); map
+{
+  "_type": "object",
+  "_subtype": "map",
+  "_objectId": "<filtered>",
+  "_description": "Map",
+  "_size": 101,
+  "_preview": {
+    "_type": "object",
+    "_subtype": "map",
+    "_description": "Map",
+    "_lossless": false,
+    "_overflow": true,
+    "_size": 101,
+    "_properties": [],
+    "_entries": [
+      {
+        "_key": {
+          "_type": "number",
+          "_description": "0",
+          "_lossless": true,
+          "_overflow": false,
+          "_properties": null,
+          "_entries": null
+        },
+        "_value": {
+          "_type": "number",
+          "_description": "0",
+          "_lossless": true,
+          "_overflow": false,
+          "_properties": null,
+          "_entries": null
+        }
+      },
+      {
+        "_key": {
+          "_type": "number",
+          "_description": "1",
+          "_lossless": true,
+          "_overflow": false,
+          "_properties": null,
+          "_entries": null
+        },
+        "_value": {
+          "_type": "number",
+          "_description": "1",
+          "_lossless": true,
+          "_overflow": false,
+          "_properties": null,
+          "_entries": null
+        }
+      },
+      {
+        "_key": {
+          "_type": "number",
+          "_description": "2",
+          "_lossless": true,
+          "_overflow": false,
+          "_properties": null,
+          "_entries": null
+        },
+        "_value": {
+          "_type": "number",
+          "_description": "2",
+          "_lossless": true,
+          "_overflow": false,
+          "_properties": null,
+          "_entries": null
+        }
+      },
+      {
+        "_key": {
+          "_type": "number",
+          "_description": "3",
+          "_lossless": true,
+          "_overflow": false,
+          "_properties": null,
+          "_entries": null
+        },
+        "_value": {
+          "_type": "number",
+          "_description": "3",
+          "_lossless": true,
+          "_overflow": false,
+          "_properties": null,
+          "_entries": null
+        }
+      },
+      {
+        "_key": {
+          "_type": "number",
+          "_description": "4",
+          "_lossless": true,
+          "_overflow": false,
+          "_properties": null,
+          "_entries": null
+        },
+        "_value": {
+          "_type": "number",
+          "_description": "4",
+          "_lossless": true,
+          "_overflow": false,
+          "_properties": null,
+          "_entries": null
+        }
+      }
+    ]
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: map = new Map; map.set(map, map); map
+{
+  "_type": "object",
+  "_subtype": "map",
+  "_objectId": "<filtered>",
+  "_description": "Map",
+  "_size": 1,
+  "_preview": {
+    "_type": "object",
+    "_subtype": "map",
+    "_description": "Map",
+    "_lossless": false,
+    "_overflow": false,
+    "_size": 1,
+    "_properties": [],
+    "_entries": [
+      {
+        "_key": {
+          "_type": "object",
+          "_subtype": "map",
+          "_description": "Map",
+          "_lossless": false,
+          "_overflow": true,
+          "_size": 1,
+          "_properties": [],
+          "_entries": []
+        },
+        "_value": {
+          "_type": "object",
+          "_subtype": "map",
+          "_description": "Map",
+          "_lossless": false,
+          "_overflow": true,
+          "_size": 1,
+          "_properties": [],
+          "_entries": []
+        }
+      }
+    ]
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: map = new WeakMap; strongKey = {id:1}; map.set(strongKey, [1,2]); map
+{
+  "_type": "object",
+  "_subtype": "weakmap",
+  "_objectId": "<filtered>",
+  "_description": "WeakMap",
+  "_size": 1,
+  "_preview": {
+    "_type": "object",
+    "_subtype": "weakmap",
+    "_description": "WeakMap",
+    "_lossless": true,
+    "_overflow": false,
+    "_size": 1,
+    "_properties": [],
+    "_entries": [
+      {
+        "_key": {
+          "_type": "object",
+          "_description": "Object",
+          "_lossless": true,
+          "_overflow": false,
+          "_properties": [
+            {
+              "_name": "id",
+              "_type": "number",
+              "_value": "1"
+            }
+          ],
+          "_entries": null
+        },
+        "_value": {
+          "_type": "object",
+          "_subtype": "array",
+          "_description": "Array",
+          "_lossless": true,
+          "_overflow": false,
+          "_size": 2,
+          "_properties": [
+            {
+              "_name": "0",
+              "_type": "number",
+              "_value": "1"
+            },
+            {
+              "_name": "1",
+              "_type": "number",
+              "_value": "2"
+            }
+          ],
+          "_entries": null
+        }
+      }
+    ]
+  }
+}
+

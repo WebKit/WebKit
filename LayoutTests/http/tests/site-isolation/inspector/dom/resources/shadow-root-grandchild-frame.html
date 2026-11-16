@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Cross-Origin Shadow DOM Grandchild Frame</title>
+</head>
+<body>
+    <div id="grandchild-host" data-role="grandchild-host"></div>
+    <script>
+    function attachShadowToGrandchildHost() {
+        document.getElementById("grandchild-host").attachShadow({mode: "open"});
+        return true;
+    }
+    </script>
+</body>
+</html>

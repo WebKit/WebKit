@@ -1,0 +1,34 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<div id="dialog" role="alertdialog" tabindex="0">
+<p id="title">Alert Box</p><p id="text">Alert text</p>
+</div>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that accessibilityElementDidBecomeFocused on elements inside a dialog won't set focus onto the dialog.");
+
+    var callbackCount = 0;
+    if (window.accessibilityController) {
+    
+        var dialog = document.getElementById("dialog");
+        var text = accessibilityController.accessibleElementById("text");
+        
+        // Test that VO focus onto the dialog's children won't set focus to the dialog itself.
+        text.assistiveTechnologySimulatedFocus();
+        shouldBeFalse("dialog === document.activeElement");
+    }
+    
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

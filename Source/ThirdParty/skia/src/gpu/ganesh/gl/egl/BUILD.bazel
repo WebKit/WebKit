@@ -1,0 +1,36 @@
+load("//bazel:skia_rules.bzl", "skia_cc_library")
+
+package(
+    default_applicable_licenses = ["//:license"],
+)
+
+licenses(["notice"])
+
+skia_cc_library(
+    name = "egl_factory",
+    srcs = [
+        "GrGLMakeEGLInterface.cpp",
+    ],
+    hdrs = [
+        "//include/gpu/ganesh/gl/egl:public_hdrs",
+    ],
+    defines = ["SK_DISABLE_LEGACY_EGLINTERFACE_FACTORY"],
+    linkopts = select({
+        "@platforms//os:android": [
+            "-lEGL",
+            "-lGLESv2",
+        ],
+        "//conditions:default": [],
+    }),
+    visibility = ["//:__pkg__"],
+    deps = [
+        "//:core",
+        "//:ganesh_gl",
+    ] + select({
+        "@platforms//os:android": [],
+        "//conditions:default": [
+            "//bazel/external/egl",
+            "//bazel/external/glesv2",
+        ],
+    }),
+)

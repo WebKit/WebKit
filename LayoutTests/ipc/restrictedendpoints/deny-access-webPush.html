@@ -1,0 +1,18 @@
+<!DOCTYPE html><!-- webkit-test-runner [ IPCTestingAPIEnabled=true BuiltInNotificationsEnabled=false ] -->
+<title>Test that we can only call into WebPush endpoints in Network Process if BuiltInNotificationsEnabled is set</title>
+<script src="../../resources/ipc.js"></script>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<body>
+<script>
+    if (window.IPC) {
+        IPC.sendMessage('Networking',IPC.webPageProxyID,IPC.messages.NotificationManagerMessageHandler_PageWasNotifiedOfNotificationPermission.name,[]);
+
+        asyncFlush('Networking').then(() => {
+            console.log("Should have crashed!");
+        });
+    } else {
+        testRunner.notifyDone();
+    }
+</script>
+</body>

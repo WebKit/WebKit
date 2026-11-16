@@ -1,0 +1,65 @@
+<!-- webkit-test-runner [ WebGPUEnabled=true ] -->
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="resources/shaderProgram-utilities-webgpu.js"></script>
+<script>
+async function load() {
+    await initializeWebGPU();
+    runTest();
+}
+
+function test() {
+    let suite = InspectorTest.createAsyncSuite("Canvas.requestShaderSource.WebGPU");
+    let canvas = InspectorTest.WebGPU.canvas();
+    InspectorTest.assert(canvas, "There should be a WebGPU Canvas.");
+
+    let computeProgram = InspectorTest.WebGPU.shaderProgramForType(canvas, WI.ShaderProgram.ProgramType.Compute);
+    InspectorTest.assert(computeProgram, "There should be a compute ShaderProgram.");
+    let renderProgram = InspectorTest.WebGPU.shaderProgramForType(canvas, WI.ShaderProgram.ProgramType.Render);
+    InspectorTest.assert(renderProgram, "There should be a render ShaderProgram.");
+
+    function addTestCase({name, shaderProgram, shaderType, expectedSourceExpression, collectGarbage}) {
+        suite.addTestCase({
+            name,
+            async test() {
+                if (collectGarbage)
+                    await InspectorTest.evaluateInPage(`GCController.collect()`);
+                let expectedSource = await InspectorTest.evaluateInPage(expectedSourceExpression);
+                let {source} = await shaderProgram.target.CanvasAgent.requestShaderSource(shaderProgram.identifier, shaderType);
+                InspectorTest.expectEqual(source, expectedSource, "Requested WGSL source should match the source used to create the pipeline.");
+            },
+        });
+    }
+
+    addTestCase({
+        name: "Canvas.requestShaderSource.WebGPU.Compute",
+        shaderProgram: computeProgram,
+        shaderType: WI.ShaderProgram.ShaderType.Compute,
+        expectedSourceExpression: `computeShaderSource`,
+        collectGarbage: true,
+    });
+
+    addTestCase({
+        name: "Canvas.requestShaderSource.WebGPU.Vertex",
+        shaderProgram: renderProgram,
+        shaderType: WI.ShaderProgram.ShaderType.Vertex,
+        expectedSourceExpression: `vertexShaderSource`,
+    });
+
+    addTestCase({
+        name: "Canvas.requestShaderSource.WebGPU.Fragment",
+        shaderProgram: renderProgram,
+        shaderType: WI.ShaderProgram.ShaderType.Fragment,
+        expectedSourceExpression: `fragmentShaderSource`,
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="load()">
+    <p>Tests Canvas.requestShaderSource for WebGPU pipelines.</p>
+</body>
+</html>

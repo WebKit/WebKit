@@ -1,0 +1,137 @@
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="../debugger/resources/site-isolation-debugger-test-utilities.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.CSS.LayoutFlags.FrameTarget");
+
+    let frameTarget = null;
+    let frameDocument = null;
+    let nodes = {};
+
+    async function frameDocumentForTarget(target) {
+        let document = WI.domManager.frameTargetDocumentForTarget(target);
+        while (!document) {
+            let event = await WI.domManager.awaitEvent(WI.DOMManager.Event.FrameDocumentAvailable);
+            if (event.data.target === target)
+                document = event.data.document;
+        }
+        return document;
+    }
+
+    async function querySelectorInFrame(selector) {
+        return WI.domManager.nodeForId(await frameDocument.querySelector(selector));
+    }
+
+    function frameNodeWithId(id) {
+        let pending = [frameDocument];
+        while (pending.length) {
+            let node = pending.shift();
+            if (node.nodeType() === Node.ELEMENT_NODE && node.getAttribute("id") === id)
+                return node;
+            pending.push(...(node.children || []));
+        }
+        return null;
+    }
+
+    function isRendered(node) {
+        return node.layoutFlags.includes(WI.DOMNode.LayoutFlag.Rendered);
+    }
+
+    async function setDisplayInFrame(id, value) {
+        await frameTarget.RuntimeAgent.evaluate.invoke({expression: `setDisplay("${id}", "${value}")`, objectGroup: "test"});
+    }
+
+    async function changeDisplayAndAwaitLayoutFlagsChanged(node, id, value) {
+        InspectorTest.log(`Changing #${id} to \`display: ${value};\`...`);
+        await Promise.all([
+            node.awaitEvent(WI.DOMNode.Event.LayoutFlagsChanged),
+            setDisplayInFrame(id, value),
+        ]);
+    }
+
+    suite.addTestCase({
+        name: "SiteIsolation.CSS.LayoutFlags.FrameTarget.Setup",
+        description: "Find the cross-origin frame target and the nodes under test.",
+        async test() {
+            frameTarget = await frameTargetForURLContaining("frame-with-layout-flags.html");
+            InspectorTest.expectNotNull(frameTarget, "Should find the cross-origin frame target.");
+
+            frameDocument = await frameDocumentForTarget(frameTarget);
+            for (let id of ["shown", "hidden", "grid"])
+                nodes[id] = await querySelectorInFrame(`#${id}`);
+            nodes.body = await querySelectorInFrame("body");
+
+            InspectorTest.expectEqual(nodes.hidden.owningTarget, frameTarget, "#hidden should belong to the frame target.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.CSS.LayoutFlags.FrameTarget.InitialLayoutFlags",
+        description: "Nodes sent by the frame target should carry their real layout flags.",
+        async test() {
+            InspectorTest.expectThat(isRendered(nodes.body), "<body> should be rendered.");
+            InspectorTest.expectThat(isRendered(nodes.shown), "#shown should be rendered.");
+            InspectorTest.expectFalse(isRendered(nodes.hidden), "#hidden (`display: none;`) should not be rendered.");
+            InspectorTest.expectEqual(nodes.grid.layoutContextType, WI.DOMNode.LayoutFlag.Grid, "#grid should be a grid.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.CSS.LayoutFlags.FrameTarget.LayoutOverlay",
+        description: "A grid in the frame should show and hide its layout overlay through the frame target, as its badge in the Elements tree does.",
+        async test() {
+            InspectorTest.log("Showing the layout overlay for #grid...");
+            await nodes.grid.showLayoutOverlay();
+            InspectorTest.expectThat(nodes.grid.layoutOverlayShowing, "#grid should show its layout overlay.");
+
+            InspectorTest.log("Hiding the layout overlay for #grid...");
+            await nodes.grid.hideLayoutOverlay();
+            InspectorTest.expectFalse(nodes.grid.layoutOverlayShowing, "#grid should not show its layout overlay.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.CSS.LayoutFlags.FrameTarget.LayoutFlagsChanged",
+        description: "Layout flag changes in the frame should be reported through the frame target.",
+        async test() {
+            await changeDisplayAndAwaitLayoutFlagsChanged(nodes.hidden, "hidden", "block");
+            InspectorTest.expectThat(isRendered(nodes.hidden), "#hidden should be rendered.");
+
+            await changeDisplayAndAwaitLayoutFlagsChanged(nodes.shown, "shown", "none");
+            InspectorTest.expectFalse(isRendered(nodes.shown), "#shown should not be rendered.");
+
+            await changeDisplayAndAwaitLayoutFlagsChanged(nodes.grid, "grid", "block");
+            InspectorTest.expectNull(nodes.grid.layoutContextType, "#grid should not be a grid.");
+            InspectorTest.expectThat(isRendered(nodes.grid), "#grid should still be rendered.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.CSS.LayoutFlags.FrameTarget.LayoutContextTypeChangedModeAll",
+        description: "Switching to the `All` mode should send grids in the frame that the frontend has not received yet.",
+        async test() {
+            InspectorTest.expectNull(frameNodeWithId("deep-grid"), "#deep-grid should not have been sent yet.");
+
+            InspectorTest.log("Changing `layoutContextTypeChangedMode` to `All`...");
+            WI.cssManager.layoutContextTypeChangedMode = WI.CSSManager.LayoutContextTypeChangedMode.All;
+
+            // The frame target answers commands in order, so this reply arrives after the nodes the mode change sent.
+            await frameTarget.RuntimeAgent.evaluate.invoke({expression: "0", objectGroup: "test"});
+
+            let deepGrid = frameNodeWithId("deep-grid");
+            InspectorTest.expectNotNull(deepGrid, "#deep-grid should have been sent.");
+            InspectorTest.expectEqual(deepGrid?.layoutContextType, WI.DOMNode.LayoutFlag.Grid, "#deep-grid should be a grid.");
+        },
+        async teardown() {
+            WI.cssManager.layoutContextTypeChangedMode = WI.CSSManager.LayoutContextTypeChangedMode.Observed;
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+<body onload="runTest()">
+    <p>Tests that nodes in a cross-origin iframe carry layout flags, and that changes are reported, through the frame target.</p>
+    <iframe src="http://localhost:8000/site-isolation/inspector/css/resources/frame-with-layout-flags.html"></iframe>
+</body>

@@ -1,0 +1,4 @@
+
+
+PASS A navigation started from the navigate event handler replaces a cancelled cross-site process swap (Site Isolation)
+

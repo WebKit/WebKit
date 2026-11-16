@@ -1,0 +1,7 @@
+
+EVENT(update)
+EVENT(update)
+EVENT(ended)
+EXPECTED (video.currentTime == '1') OK
+END OF TEST
+

@@ -1,0 +1,8 @@
+
+Harness Error (TIMEOUT), message = null
+
+FAIL Opener COOP assert_equals: No report received. expected 1 but got 0
+FAIL Openee COOP assert_equals: No report received. expected 1 but got 0
+TIMEOUT Access from same-origin iframe Test timed out
+NOTRUN Access from cross-site iframe
+

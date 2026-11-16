@@ -1,0 +1,6 @@
+2d.path.roundrect.1.radius.double
+Verify that when one radius is given to roundRect(), specified as a double, it applies to all corners.
+Actual output:
+
+PASS Verify that when one radius is given to roundRect(), specified as a double, it applies to all corners.
+

@@ -1,0 +1,14 @@
+
+Tests that creating an incompatible MediaKeys object with MediaSource does not crash.
+Loading media data:
+Promise resolved OK
+EVENT(sourceopen)
+EVENT(update)
+Requesting MediaKeySystemAccess:
+Promise resolved OK
+Creating MediaKeys:
+Promise resolved OK
+Setting keys on media element:
+Promise resolved OK
+END OF TEST
+

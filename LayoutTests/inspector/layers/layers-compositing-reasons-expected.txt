@@ -1,0 +1,14 @@
+
+== Running test suite: LayerTree.reasonsForCompositingLayer
+-- Running test case: LayerTree.reasonsForCompositingLayer
+PASS: Should have a node for #opacity-container.
+PASS: Should have a layer for #opacity-container.
+PASS: #opacity-container should be composited due to having an opacity style and a composited child.
+PASS: Should have a node for #child.
+PASS: Should have a layer for #child.
+PASS: #child should be composited due to having a 3D transform.
+PASS: #child should be composited due to having "backface-visibility: hidden".
+PASS: Should have a node for #canvas.
+PASS: Should have a layer for #canvas.
+PASS: #canvas should be composited due to having a 3D transform.
+

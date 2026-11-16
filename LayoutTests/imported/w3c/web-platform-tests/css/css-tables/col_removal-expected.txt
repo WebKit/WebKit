@@ -1,0 +1,4 @@
+x	x
+
+FAIL Table grid syncs after COL removal assert_equals: table shrinks after column is removed expected 64 but got 137
+

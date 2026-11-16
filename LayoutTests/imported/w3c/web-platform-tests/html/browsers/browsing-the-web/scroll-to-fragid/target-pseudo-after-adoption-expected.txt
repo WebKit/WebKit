@@ -1,0 +1,4 @@
+target
+
+PASS :target should follow the target element back after a round trip through another document.
+

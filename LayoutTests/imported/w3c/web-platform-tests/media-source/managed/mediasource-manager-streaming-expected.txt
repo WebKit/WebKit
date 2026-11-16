@@ -1,0 +1,4 @@
+
+PASS startstreaming fires once a ManagedMediaSource with no data is attached
+PASS endstreaming fires once all data is buffered, and startstreaming once it is removed
+

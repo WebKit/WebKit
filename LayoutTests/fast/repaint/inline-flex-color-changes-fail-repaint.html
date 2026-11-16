@@ -1,0 +1,38 @@
+<style>
+body {
+  font-family: Ahem;
+  font-size: 20px;
+}
+.inline-flex {
+  display: inline-flex;
+  text-decoration: underline;
+  text-decoration-color: black;
+}
+</style>
+<div>PASS <div id=change_this class="inline-flex">if this is red</div></div>
+<pre id=repaints></pre>
+<script src="../../resources/ui-helper.js"></script>
+<script>
+if (window.testRunner) {
+  testRunner.dumpAsText();
+  testRunner.waitUntilDone();
+}
+async function runTest() {
+  await UIHelper.renderingUpdate();
+
+  window.internals?.startTrackingRepaints();
+
+  change_this.style.textDecorationColor = "red";
+
+  await UIHelper.renderingUpdate();
+
+  if (window.internals) {
+    repaints.innerHTML = window.internals.repaintRectsAsText();
+    internals.stopTrackingRepaints();
+  }
+
+  window.testRunner?.notifyDone();
+}
+
+window.addEventListener('load', runTest);
+</script>

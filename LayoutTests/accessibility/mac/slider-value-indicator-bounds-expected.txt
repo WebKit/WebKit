@@ -1,0 +1,20 @@
+This test ensures the value indicator of a slider reports the thumb's own box, and that the box tracks the slider's value.
+
+PASS: indicator().role === 'AXRole: AXValueIndicator'
+
+The indicator reports the thumb's box, which is a real box narrower than the slider.
+PASS: indicatorWidth() > 0 === true
+PASS: indicatorHeight() > 0 === true
+PASS: sliderWidth() > indicatorWidth() === true
+
+At the minimum value the thumb sits in the left half of the slider.
+PASS: indicatorOffsetInSlider() < sliderWidth() / 2 === true
+
+At the maximum value it sits in the right half, still within the slider.
+PASS: indicatorOffsetInSlider() > sliderWidth() / 2 === true
+PASS: indicatorOffsetInSlider() + indicatorWidth() <= sliderWidth() === true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

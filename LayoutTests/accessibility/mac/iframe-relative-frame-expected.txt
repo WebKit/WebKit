@@ -1,0 +1,17 @@
+This test ensures we compute the relative frame of iframes and their descendants correctly.
+
+
+{ AXRole: AXButton #outer-button } has AXRelativeFrame: NSRect: {{2, 3004}, {95, 27}}
+
+{ AXRole: AXScrollArea } has AXRelativeFrame: NSRect: {{97, 2869}, {300, 150}}
+
+{ AXRole: AXWebArea } has AXRelativeFrame: NSRect: {{97, 2869}, {285, 2334}}
+
+{ AXRole: AXButton #inner-button } has AXRelativeFrame: NSRect: {{99, 4873}, {92, 27}}
+
+{ AXRole: AXScrollBar } has AXRelativeFrame: NSRect: {{382, 2869}, {15, 150}}
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Outer button

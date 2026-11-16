@@ -1,0 +1,15 @@
+Tests that innerHTML parsing of a select with many options is not O(nÂ²).
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS select.options.length is optionCount
+PASS select.value is "option 0"
+PASS select.selectedIndex is 0
+PASS select.options.length is optionCount
+PASS select.value is "selected option"
+PASS select.selectedIndex is optionCount - 1
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

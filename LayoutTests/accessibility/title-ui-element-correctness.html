@@ -1,0 +1,124 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<div id="container">
+  <div>
+    <label id="label1" for="control1">Label 1</label>
+    <input id="control1" type="text">
+  </div>
+
+  <div>
+    <label id="label2">
+      Label 2
+      <input id="control2" type="text">
+    </label>
+  </div>
+
+  <div>
+    <label id="label3">Label 3</label>
+    <input id="control3a" type="text">
+    <input id="control3b" type="text">
+  </div>
+
+  <div>
+    <input id="control4" type="text">
+  </div>
+
+  <div>
+    <label id="label5">
+      Label 5
+    </label>
+    <input id="control5" type="text">
+  </div>
+
+  <div>
+    <label id="label6b" for="control6">Label 6b</label>
+    <label id="label6c" for="control6">Label 6c</label>
+    <input id="control6" type="text">
+  </div>
+</div>
+
+<script>
+var output = "This tests that titleUIElement works correctly even when things change dynamically.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    function hasTitleUIElement(axElement) {
+        var label1 = accessibilityController.accessibleElementById("label1");
+        var titleUIElement = axElement.titleUIElement();
+        if (titleUIElement == null)
+            return false;
+        return titleUIElement.role == label1.role;
+    }
+
+    function createLabelWithIdAndForAttribute(id, forAttributeValue) {
+        var labelElement = document.createElement("label");
+        labelElement.id = id;
+        labelElement.setAttribute("for", forAttributeValue);
+        labelElement.innerText = "Label for " + forAttributeValue;
+        return labelElement;
+    }
+
+    function reparentNodeIntoContainer(node, container) {
+        node.parentElement.removeChild(node);
+        container.appendChild(node);
+    }
+
+    function axElement(id) {
+        return accessibilityController.accessibleElementById(id);
+    }
+
+    output += expect("axElement('control1').titleUIElement().isEqual(axElement('label1'))", "true");
+    output += expect("axElement('control2').titleUIElement().isEqual(axElement('label2'))", "true");
+
+    var label4Element;
+    // Test addition of the for attribute.
+    output += expect("hasTitleUIElement(axElement('control3a'))", "false");
+    output += evalAndReturn("document.getElementById('label3').setAttribute('for', 'control3a');");
+    setTimeout(async function() {
+        output += await expectAsync("axElement('control3a').titleUIElement().isEqual(axElement('label3'))", "true");
+        // Change "for" to point at a different control.
+        output += evalAndReturn("document.getElementById('label3').setAttribute('for', 'control3b');");
+        output += await expectAsync("hasTitleUIElement(axElement('control3a'))", "false");
+        output += await expectAsync("axElement('control3b').titleUIElement().isEqual(axElement('label3'))", "true");
+
+        // Test unattached label element that's subsequently attached.
+        output += evalAndReturn("label4Element = createLabelWithIdAndForAttribute('label4', 'control4');");
+        output += await expectAsync("hasTitleUIElement(axElement('control4'))", "false");
+        output += evalAndReturn("document.getElementById('container').appendChild(label4Element);");
+        output += await expectAsync("hasTitleUIElement(axElement('control4'))", "true");
+        output += await expectAsync("axElement('control4').titleUIElement().isEqual(axElement('label4'))", "true");
+
+        // Test what happens when the label is detached.
+        output += evalAndReturn("label4Element.parentElement.removeChild(label4Element);");
+        output += await expectAsync("hasTitleUIElement(axElement('control4'))", "false");
+
+        // Test label that gets a control reparented into it.
+        output += expect("hasTitleUIElement(axElement('control5'))", "false");
+        output += evalAndReturn("reparentNodeIntoContainer(document.getElementById('control5'), document.getElementById('label5'));");
+        await waitFor(() => axElement("control5"));
+        output += await expectAsync("axElement('control5').titleUIElement() != null", "true");
+        output += await expectAsync("axElement('control5').titleUIElement().isEqual(axElement('label5'))", "true");
+
+        // On Cocoa platforms, when there is no singular title UI element for an element (e.g. multiple <label for="some-id">), none should be returned.
+        const platform = accessibilityController.platformName;
+        const isCocoa = platform === "ios" || platform === "mac";
+        output += expect("hasTitleUIElement(axElement('control6'))", isCocoa ? "false" : "true");
+        output += evalAndReturn("document.getElementById('label6c').remove()");
+        await waitFor(() => axElement('control6').titleUIElement() != null);
+        output += await expectAsync("axElement('control6').titleUIElement().isEqual(axElement('label6b'))", "true");
+
+        document.getElementById('container').style.display = 'none';
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

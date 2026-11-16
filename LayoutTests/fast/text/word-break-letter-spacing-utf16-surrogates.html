@@ -1,0 +1,77 @@
+<style>
+  div {
+    word-break: break-word;
+    letter-spacing: 1000px;
+  }
+</style>
+<script>
+  onload = () => {
+    // only surrogate lead
+    document.getElementById("div1").append("\ud800");
+
+    // only surrogate trail
+    document.getElementById("div2").append("\udc00");
+
+    // surrogate lead + single
+    document.getElementById("div3").append("\ud800r");
+
+    // surrogate trail + single
+    document.getElementById("div4").append("\udc00r");
+
+    // single + surrogate lead
+    document.getElementById("div5").append("r\ud800");
+
+    // single + surrogate trail
+    document.getElementById("div6").append("\udc00");
+
+    // surrogate lead + surrogate trail
+    document.getElementById("div7").append("\ud800\udc00");
+
+    // single + surrogate lead + single
+    document.getElementById("div8").append("r\ud800r");
+
+    // single + surrogate trail + single
+    document.getElementById("div9").append("r\udc00r");
+
+    // surrogate trail + surrogate lead
+    document.getElementById("div10").append("\udc00\ud800");
+
+    // surrogate lead + single + surrogate trail
+    document.getElementById("div11").append("\ud800r\udc00");
+
+    // surrogate trail + single + surrogate lead
+    document.getElementById("div12").append("\udc00r\ud800");
+
+    // surrogate trail + surrogate lead + surrogate trail 
+    document.getElementById("div13").append("\udc00\ud800\udc00");
+
+    // surrogate lead + surrogate trail + surrogate lead
+    document.getElementById("div14").append("\ud800\udc00\ud800");
+
+    // single + surrogate trail + surrogate lead + single
+    document.getElementById("div15").append("r\udc00\ud800r");
+
+    // single + surrogate lead + surrogate trail + single
+    document.getElementById("div16").append("r\ud800\udc00r");
+
+    if (window.testRunner)
+        testRunner.dumpAsText();
+  };
+</script>
+<div id="div1"></div>
+<div id="div2"></div>
+<div id="div3"></div>
+<div id="div4"></div>
+<div id="div5"></div>
+<div id="div6"></div>
+<div id="div7"></div>
+<div id="div8"></div>
+<div id="div9"></div>
+<div id="div10"></div>
+<div id="div11"></div>
+<div id="div12"></div>
+<div id="div13"></div>
+<div id="div14"></div>
+<div id="div15"></div>
+<div id="div16"></div>
+PASS

@@ -1,0 +1,18 @@
+This test ensures that a rowspan cell does not extend outside its table section.
+
+#table cellForColumnAndRow(0, 0).domIdentifier is c0r0
+#table cellForColumnAndRow(1, 0).domIdentifier is c1r0
+#table cellForColumnAndRow(0, 1).domIdentifier is c0r1
+#table cellForColumnAndRow(1, 1).domIdentifier is c1r1
+#table cellForColumnAndRow(0, 2).domIdentifier is c0r2
+#table cellForColumnAndRow(1, 2).domIdentifier is c1r1
+#table cellForColumnAndRow(0, 3).domIdentifier is c0r3
+#table cellForColumnAndRow(1, 3).domIdentifier is c1r3
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Author	Title
+Stephen Hawking	A Brief History of Time
+Carl Sagan
+Stan Owocki	Fundamentals of Astrophysics

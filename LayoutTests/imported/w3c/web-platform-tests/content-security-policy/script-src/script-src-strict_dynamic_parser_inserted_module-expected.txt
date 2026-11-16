@@ -1,0 +1,7 @@
+Parser-inserted external module scripts without a correct nonce are not allowed with `strict-dynamic` in the script-src directive.
+
+
+PASS Parser-inserted external module script in markup without a correct nonce is not allowed with `strict-dynamic`.
+PASS Parser-inserted external module script via `document.write` without a correct nonce is not allowed with `strict-dynamic`.
+PASS Parser-inserted external module script via `document.writeln` without a correct nonce is not allowed with `strict-dynamic`.
+

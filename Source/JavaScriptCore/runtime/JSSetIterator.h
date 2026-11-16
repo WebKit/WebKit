@@ -1,0 +1,169 @@
+/*
+ * Copyright (C) 2013-2022 Apple, Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ */
+
+#pragma once
+
+#include <JavaScriptCore/IterationKind.h>
+#include <JavaScriptCore/JSInternalFieldObjectImpl.h>
+#include <JavaScriptCore/JSSet.h>
+
+namespace JSC {
+
+const static uint8_t JSSetIteratorNumberOFInternalFields = 4;
+
+class JSSetIterator final : public JSInternalFieldObjectImpl<JSSetIteratorNumberOFInternalFields> {
+public:
+    using Base = JSInternalFieldObjectImpl<JSSetIteratorNumberOFInternalFields>;
+
+    DECLARE_EXPORT_INFO;
+
+    DECLARE_VISIT_CHILDREN;
+
+    enum class Field : uint8_t {
+        Entry = 0,
+        IteratedObject,
+        Storage,
+        Kind,
+    };
+    static_assert(numberOfInternalFields == JSSetIteratorNumberOFInternalFields);
+
+    static std::array<JSValue, numberOfInternalFields> initialValues()
+    {
+        return { {
+            jsNumber(0),
+            jsNull(),
+            JSValue(),
+            jsNumber(0),
+        } };
+    }
+
+    const WriteBarrier<Unknown>& internalField(Field field) const { return Base::internalField(static_cast<uint32_t>(field)); }
+    WriteBarrier<Unknown>& internalField(Field field) { return Base::internalField(static_cast<uint32_t>(field)); }
+
+    template<typename CellType, SubspaceAccess mode>
+    static GCClient::IsoSubspace* subspaceFor(VM& vm)
+    {
+        return vm.setIteratorSpace<mode>();
+    }
+
+    inline static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
+
+    static JSSetIterator* create(VM& vm, Structure* structure, JSSet* iteratedObject, IterationKind kind)
+    {
+        JSSetIterator* instance = new (NotNull, allocateCell<JSSetIterator>(vm)) JSSetIterator(vm, structure);
+        instance->finishCreation(vm, iteratedObject, kind);
+        return instance;
+    }
+
+    static JSSetIterator* createWithInitialValues(VM&, Structure*);
+
+    ALWAYS_INLINE JSValue nextWithAdvance(VM& vm)
+    {
+        JSCell* sentinel = vm.orderedHashTableSentinel();
+        JSCell* storage = this->tryGetStorage();
+        if (storage == sentinel)
+            return { };
+
+        if (!storage) {
+            storage = iteratedObject()->storage();
+            if (!storage) {
+                markClosed(sentinel);
+                return { };
+            }
+
+            // This path is very unlikely path. This happens only when
+            // the iterator is created with empty set and set gets a new
+            // entry before this iterator.next() is called.
+            setStorage(vm, storage);
+        }
+
+        JSSet::Storage& storageRef = *uncheckedDowncast<JSSet::Storage>(storage);
+        auto result = JSSet::Helper::transitAndNext(vm, storageRef, entry());
+        if (!result.storage) {
+            markClosed(sentinel);
+            return { };
+        }
+
+        setEntry(vm, result.entry + 1);
+        if (result.storage != storage)
+            setStorage(vm, result.storage);
+        return result.key;
+    }
+
+    bool next(JSGlobalObject* globalObject, JSValue& value)
+    {
+        JSValue nextKey = nextWithAdvance(globalObject->vm());
+        if (nextKey.isEmpty())
+            return false;
+
+        switch (kind()) {
+        case IterationKind::Values:
+        case IterationKind::Keys:
+            value = nextKey;
+            break;
+        case IterationKind::Entries:
+            value = constructArrayPair(globalObject, nextKey, nextKey);
+            break;
+        }
+        return true;
+    }
+
+    IterationKind kind() const { return static_cast<IterationKind>(internalField(Field::Kind).get().asUInt32AsAnyInt()); }
+    JSSet* iteratedObject() const { return uncheckedDowncast<JSSet>(internalField(Field::IteratedObject).get()); }
+    JSCell* tryGetStorage() const
+    {
+        JSValue value = internalField(Field::Storage).get();
+        if (!value)
+            return nullptr;
+        return value.asCell();
+    }
+    JSSet::Helper::Entry entry() const { return JSSet::Helper::toNumber(internalField(Field::Entry).get()); }
+
+    void setIteratedObject(VM& vm, JSSet* set) { internalField(Field::IteratedObject).set(vm, this, set); }
+    void setStorage(VM& vm, JSCell* storage) { internalField(Field::Storage).set(vm, this, storage); }
+    void setEntry(VM& vm, JSSet::Helper::Entry entry) { internalField(Field::Entry).set(vm, this, JSSet::Helper::toJSValue(entry)); }
+
+    void close(VM& vm)
+    {
+        markClosed(vm.orderedHashTableSentinel());
+    }
+
+private:
+    JSSetIterator(VM& vm, Structure* structure)
+        : Base(vm, structure)
+    {
+    }
+
+    void markClosed(JSCell* sentinel)
+    {
+        internalField(Field::Storage).setWithoutWriteBarrier(sentinel);
+    }
+
+    JS_EXPORT_PRIVATE void finishCreation(VM&, JSSet*, IterationKind);
+    void finishCreation(VM&);
+};
+STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(JSSetIterator);
+
+} // namespace JSC

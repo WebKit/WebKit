@@ -1,0 +1,13 @@
+
+Tests clearing the selection of a multi-select select element.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+PASS listbox.selectedChildrenCount is 0
+PASS listbox.selectedChildrenCount is 1
+PASS listbox.selectedChildrenCount is 2
+PASS listbox.selectedChildrenCount is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

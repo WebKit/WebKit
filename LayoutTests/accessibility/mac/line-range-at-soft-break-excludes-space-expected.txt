@@ -1,0 +1,14 @@
+This test ensures a line ended by soft wrapping excludes the space at the wrap point.
+
+PASS: lineText(1) === 'aaa'
+PASS: lineText(2) === 'bbb'
+PASS: webArea.textMarkerRangeLength(lineRange(1)) === 3
+PASS: lineText(3) === 'ccc'
+PASS: lineText(4) === 'ddd'
+PASS: lineText(5) === 'eee'
+PASS: lineText(6) === 'fff'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

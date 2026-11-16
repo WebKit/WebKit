@@ -1,0 +1,7 @@
+2d.imageData.get.order.rows
+
+getImageData() returns topmost rows first
+
+
+PASS getImageData() returns topmost rows first
+

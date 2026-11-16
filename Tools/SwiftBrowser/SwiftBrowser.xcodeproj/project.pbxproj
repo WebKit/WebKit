@@ -1,0 +1,227 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 71;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		07A4CEC32D092C0800764F5E /* _WebKit_SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 07A4CEC22D092C0800764F5E /* _WebKit_SwiftUI.framework */; };
+		07A58C0E2D04DD4700CAB4ED /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 07A58C0D2D04DD4700CAB4ED /* WebKit.framework */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		07A4CEC52D092C0800764F5E /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		07A4CEC22D092C0800764F5E /* _WebKit_SwiftUI.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = _WebKit_SwiftUI.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		07A58BD42D0400B300CAB4ED /* SwiftBrowser.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SwiftBrowser.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		07A58C0D2D04DD4700CAB4ED /* WebKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WebKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		B975015F2FE9F5BA0067C5C8 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Assets.xcassets,
+			);
+			target = 07A58BD32D0400B300CAB4ED /* SwiftBrowser */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		B97501332FE9F5AD0067C5C8 /* Source */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Source; sourceTree = "<group>"; };
+		B975015D2FE9F5B90067C5C8 /* Resources */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (B975015F2FE9F5BA0067C5C8 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Resources; sourceTree = "<group>"; };
+		B97501632FE9F5BD0067C5C8 /* Configurations */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Configurations; sourceTree = "<group>"; };
+/* End PBXFileSystemSynchronizedRootGroup section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		07A58BD12D0400B300CAB4ED /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				07A4CEC32D092C0800764F5E /* _WebKit_SwiftUI.framework in Frameworks */,
+				07A58C0E2D04DD4700CAB4ED /* WebKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		07A58BCB2D0400B300CAB4ED = {
+			isa = PBXGroup;
+			children = (
+				B97501632FE9F5BD0067C5C8 /* Configurations */,
+				B975015D2FE9F5B90067C5C8 /* Resources */,
+				B97501332FE9F5AD0067C5C8 /* Source */,
+				07A58C0C2D04DD4700CAB4ED /* Frameworks */,
+				07A58BD52D0400B300CAB4ED /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		07A58BD52D0400B300CAB4ED /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				07A58BD42D0400B300CAB4ED /* SwiftBrowser.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		07A58C0C2D04DD4700CAB4ED /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				07A4CEC22D092C0800764F5E /* _WebKit_SwiftUI.framework */,
+				07A58C0D2D04DD4700CAB4ED /* WebKit.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		07A58BD32D0400B300CAB4ED /* SwiftBrowser */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 07A58BE32D0400B400CAB4ED /* Build configuration list for PBXNativeTarget "SwiftBrowser" */;
+			buildPhases = (
+				07A58BD02D0400B300CAB4ED /* Sources */,
+				07A58BD12D0400B300CAB4ED /* Frameworks */,
+				07A58BD22D0400B300CAB4ED /* Resources */,
+				07A4CEC52D092C0800764F5E /* Embed Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				B97501332FE9F5AD0067C5C8 /* Source */,
+			);
+			name = SwiftBrowser;
+			packageProductDependencies = (
+			);
+			productName = SwiftUIMiniBrowser;
+			productReference = 07A58BD42D0400B300CAB4ED /* SwiftBrowser.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		07A58BCC2D0400B300CAB4ED /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1620;
+				LastUpgradeCheck = 2700;
+				TargetAttributes = {
+					07A58BD32D0400B300CAB4ED = {
+						CreatedOnToolsVersion = 16.2;
+					};
+				};
+			};
+			buildConfigurationList = 07A58BCF2D0400B300CAB4ED /* Build configuration list for PBXProject "SwiftBrowser" */;
+			compatibilityVersion = "Xcode 15.3";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 07A58BCB2D0400B300CAB4ED;
+			minimizedProjectReferenceProxies = 1;
+			productRefGroup = 07A58BD52D0400B300CAB4ED /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				07A58BD32D0400B300CAB4ED /* SwiftBrowser */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		07A58BD22D0400B300CAB4ED /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		07A58BD02D0400B300CAB4ED /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		07A58BE12D0400B400CAB4ED /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = B97501632FE9F5BD0067C5C8 /* Configurations */;
+			baseConfigurationReferenceRelativePath = DebugRelease.xcconfig;
+			buildSettings = {
+			};
+			name = Debug;
+		};
+		07A58BE22D0400B400CAB4ED /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = B97501632FE9F5BD0067C5C8 /* Configurations */;
+			baseConfigurationReferenceRelativePath = DebugRelease.xcconfig;
+			buildSettings = {
+			};
+			name = Release;
+		};
+		07A58BE42D0400B400CAB4ED /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = B97501632FE9F5BD0067C5C8 /* Configurations */;
+			baseConfigurationReferenceRelativePath = SwiftBrowser.xcconfig;
+			buildSettings = {
+			};
+			name = Debug;
+		};
+		07A58BE52D0400B400CAB4ED /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = B97501632FE9F5BD0067C5C8 /* Configurations */;
+			baseConfigurationReferenceRelativePath = SwiftBrowser.xcconfig;
+			buildSettings = {
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		07A58BCF2D0400B300CAB4ED /* Build configuration list for PBXProject "SwiftBrowser" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				07A58BE12D0400B400CAB4ED /* Debug */,
+				07A58BE22D0400B400CAB4ED /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		07A58BE32D0400B400CAB4ED /* Build configuration list for PBXNativeTarget "SwiftBrowser" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				07A58BE42D0400B400CAB4ED /* Debug */,
+				07A58BE52D0400B400CAB4ED /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 07A58BCC2D0400B300CAB4ED /* Project object */;
+}

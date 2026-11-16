@@ -1,0 +1,25 @@
+<style>
+
+@keyframes anim { }
+
+frameset { animation: 10s anim }
+
+</style>
+<script>
+
+window.testRunner?.dumpAsText();
+window.testRunner?.waitUntilDone();
+
+window.addEventListener('DOMContentLoaded', async () => {
+    document.body.append(document.createElement('frameset'));
+    await frames.caches?.delete('');
+
+    const animation = document.getAnimations()[0];
+    animation.timeline = new ScrollTimeline({ axis: 'y' });
+    await animation.pause();
+
+    window.testRunner?.notifyDone();
+});
+
+</script>
+PASS if it does not crash.

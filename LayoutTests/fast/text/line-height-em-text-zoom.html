@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+if (window.internals)
+    internals.setTextZoomFactor(2.0);
+</script>
+<style>
+.test-em {
+    font-size: 16px;
+    line-height: 1.6em;
+}
+.test-percent {
+    font-size: 16px;
+    line-height: 160%;
+}
+</style>
+</head>
+<body>
+<div class="test-em">
+    line-height: 1.6em
+    <div>Line 1</div>
+    <div>Line 2</div>
+    <div>Line 3</div>
+</div>
+
+<div class="test-percent">
+    line-height: 160%
+    <div>Line 1</div>
+    <div>Line 2</div>
+    <div>Line 3</div>
+</div>
+</body>
+</html>

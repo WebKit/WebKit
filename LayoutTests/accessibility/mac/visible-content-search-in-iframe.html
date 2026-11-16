@@ -1,0 +1,41 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<button id="outside-iframe-button">Outside iframe</button>
+<iframe id="iframe" onload="runTest()" srcdoc="<button id='inside-iframe-button'>Inside iframe</button>"></iframe>
+
+<script>
+var output = "This test ensures we consider content inside iframes accessible from searches done via AXUIElementsForSearchPredicate with the AXVisibleOnly search key.\n\n";
+
+window.jsTestIsAsync = true;
+function runTest() {
+    if (!window.accessibilityController)
+        return;
+    var webArea = accessibilityController.rootElement.childAtIndex(0);
+    // We should find the button inside the iframe too.
+    output += dumpAXSearchTraversal(webArea, { visibleOnly: true });
+    output += expect("output.includes('#outside-iframe-button')", "true");
+    output += expect("output.includes('#inside-iframe-button')", "true");
+
+    // Make the button inside the iframe invisible.
+    document.getElementById("iframe").contentDocument.getElementById("inside-iframe-button").style.display = "none";
+    output += "\n";
+    setTimeout(async function() {
+        await waitFor(() => {
+            const traversalOutput = dumpAXSearchTraversal(webArea, { visibleOnly: true });
+            return traversalOutput.includes("#outside-iframe-button") && !traversalOutput.includes("#inside-iframe-button");
+        });
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>
+

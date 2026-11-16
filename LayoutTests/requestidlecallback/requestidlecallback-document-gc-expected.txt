@@ -1,0 +1,10 @@
+This tests that documents with pending requestIdleCallback is eventually collected
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS enoughDocumentCollected() became true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,48 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Testing basic video exchange from offerer to receiver</title>
+        <script src="../resources/testharness.js"></script>
+        <script src="../resources/testharnessreport.js"></script>
+    </head>
+    <body>
+        <video id="video" autoplay=""></video>
+        <canvas id="canvas" width="640" height="480"></canvas>
+        <script src ="routines.js"></script>
+        <script>
+video = document.getElementById("video");
+canvas = document.getElementById("canvas");
+
+var track;
+promise_test((test) => {
+    if (window.testRunner)
+        testRunner.setUserMediaPermission(true);
+
+    return navigator.mediaDevices.getUserMedia({ video: true}).then((localStream) => {
+        test.add_cleanup(() => localStream.getTracks().forEach(t => t.stop()));
+        return new Promise((resolve, reject) => {
+            createConnections((firstConnection) => {
+                firstConnection.addTrack(localStream.getVideoTracks()[0], localStream);
+            }, (secondConnection) => {
+                secondConnection.ontrack = (trackEvent) => { resolve(trackEvent.streams[0]); };
+            });
+            setTimeout(() => reject("Test timed out"), 5000);
+        });
+    }).then((remoteStream) => {
+        video.srcObject = remoteStream;
+        track = remoteStream.getVideoTracks()[0];
+        return video.play();
+    }).then(() => {
+        return checkVideoBlack(false, canvas, video, "enabled track is black");
+    }).then(() => {
+        track.enabled = false;
+        return checkVideoBlack(true, canvas, video, "disabled track is not black");
+    }).then(() => {
+        track.enabled = true;
+        return checkVideoBlack(false, canvas, video, "enabled track is black");
+    });
+}, "Incoming muted/unmuted video track");
+        </script>
+    </body>
+</html>

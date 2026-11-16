@@ -1,0 +1,4 @@
+
+PASS Initialize global state
+PASS HTMLLinkElement rel=compression-dictionary, integrity attribute is ignored.
+

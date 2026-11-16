@@ -1,0 +1,4 @@
+
+PASS Test isConfigSupported() and configure() using a SharedArrayBuffer
+PASS Test isConfigSupported() and configure() using a Uint8Array(SharedArrayBuffer)
+

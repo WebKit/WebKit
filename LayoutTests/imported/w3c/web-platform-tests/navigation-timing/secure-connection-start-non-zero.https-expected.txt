@@ -1,0 +1,7 @@
+Description
+
+The tests that secureConnectionStart has a non-zero value.
+
+
+PASS Test that secureConnectionStart is not zero
+

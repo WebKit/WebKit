@@ -1,0 +1,10 @@
+
+PASS Property scroll-axis-lock value 'initial'
+PASS Property scroll-axis-lock value 'inherit'
+PASS Property scroll-axis-lock value 'unset'
+PASS Property scroll-axis-lock value 'revert'
+PASS Property scroll-axis-lock value 'auto'
+PASS Property scroll-axis-lock value 'none'
+PASS The scroll-axis-lock property shows up in CSSStyleDeclaration enumeration
+PASS The scroll-axis-lock property shows up in CSSStyleDeclaration.cssText
+

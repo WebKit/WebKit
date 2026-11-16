@@ -1,0 +1,38 @@
+<html xmlns='http://www.w3.org/1999/xhtml'>
+<head>
+    <title>MathML: inserting arbitrary markup</title>
+    <script>
+        if (window.testRunner)
+        testRunner.dumpAsText();
+    </script>
+</head>
+<body>
+<table>
+    <tr>
+        <td><math id="math"></math></td>
+    </tr>
+    <tr>
+        <td>
+            <math xmlns="http://www.w3.org/1998/Math/MathML">
+                <msub>
+                    <mi id="mi1">a</mi>
+                    <mi id="mi2">b</mi>
+                </msub>
+            </math>
+        </td>
+    </tr>
+</table>
+<script>
+var elem = document.getElementById("mi2"); 
+var parent = elem.parentNode;
+var new_elem = document.createElement("wbr");
+parent.insertBefore(new_elem, elem);
+node = document.getElementById("math").appendChild(document.createElement("object")).lastElementChild;
+elem = document.getElementById("mi1"); 
+parent = elem.parentNode;
+new_elem = document.createElement("strong");
+parent.insertBefore(new_elem, elem);
+parent.removeChild(elem);
+</script>
+</body>
+</html>

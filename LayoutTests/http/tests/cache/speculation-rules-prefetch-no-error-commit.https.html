@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+}
+
+// Navigate to a URL with an in-flight prefetch that will return 503.
+// The server returns 503 (with a 1s delay) for prefetch requests and 200 for
+// normal requests. The test verifies the final page shows the 200 content,
+// not the 503 error response.
+window.addEventListener("load", () => {
+    const targetURL = new URL("/cache/resources/prefetch-delayed-error.py", location.href).href;
+
+    const s = document.createElement('script');
+    s.type = 'speculationrules';
+    s.textContent = JSON.stringify({
+        prefetch: [{ source: 'list', urls: [targetURL] }]
+    });
+    document.head.appendChild(s);
+
+    setTimeout(() => { window.location.href = targetURL; }, 100);
+});
+</script>
+</head>
+<body></body>
+</html>

@@ -1,0 +1,6 @@
+
+PASS RequestPhoneNumberPossession without a user activation is rejected
+PASS RequestPhoneNumberPossession with an activation only the WebContent process knows about is rejected
+PASS A user activation lets one RequestPhoneNumberPossession reach the platform, and only one
+PASS RequestPhoneNumberPossession from a page that isn't visible is rejected
+

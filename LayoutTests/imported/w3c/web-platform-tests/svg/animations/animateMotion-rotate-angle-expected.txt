@@ -1,0 +1,9 @@
+
+PASS rotate="45" applies a constant 45 degree rotation
+PASS rotate="-90" applies a constant -90 degree rotation
+PASS rotate="30" applies a constant 30 degree rotation to a path animation
+PASS rotate="0" applies no rotation
+PASS an absent rotate attribute applies no rotation
+PASS an unparseable rotate value applies no rotation
+PASS rotate="auto" follows the direction of motion
+

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<style>
+#container {
+    font: 20px/1 monospace;
+    width: 10ch;
+    height: 200px;
+}
+</style>
+<!-- Removing a line break moves the lines after it up. Partial layout has to repaint where the old trailing line was, even though the container does not change size. -->
+<div id="container">first<br>aa<br>bb<br>line<br>last</div>
+<pre id="log"></pre>
+<script>
+window.testRunner?.dumpAsText();
+
+function boundingRect(node)
+{
+    const range = document.createRange();
+    range.selectNodeContents(node);
+    return range.getBoundingClientRect();
+}
+
+function parseRepaintRects(text)
+{
+    return [...text.matchAll(/\(rect ([-\d.]+) ([-\d.]+) ([-\d.]+) ([-\d.]+)\)/g)].map(match => {
+        const [x, y, width, height] = match.slice(1).map(Number);
+        return { x, y, width, height };
+    });
+}
+
+function isRepainted(repaintRects, point)
+{
+    return repaintRects.some(rect => point.x >= rect.x && point.x < rect.x + rect.width && point.y >= rect.y && point.y < rect.y + rect.height);
+}
+
+function center(rect)
+{
+    return { x: rect.x + rect.width / 2, y: rect.y + rect.height / 2 };
+}
+
+document.body.offsetHeight;
+const firstLine = boundingRect(container.firstChild);
+const oldLastLine = boundingRect(container.lastChild);
+
+const results = [];
+if (window.internals) {
+    internals.startTrackingRepaints();
+    container.querySelectorAll("br")[1].remove();
+    document.body.offsetHeight;
+    const repaintRects = parseRepaintRects(internals.repaintRectsAsText());
+    internals.stopTrackingRepaints();
+
+    const newLastLine = boundingRect(container.lastChild);
+    results.push(newLastLine.y < oldLastLine.y ? "PASS: The last line moved up." : "FAIL: The last line did not move up.");
+    results.push(isRepainted(repaintRects, center(oldLastLine)) ? "PASS: The old last line was repainted." : "FAIL: The old last line was not repainted.");
+    results.push(isRepainted(repaintRects, center(newLastLine)) ? "PASS: The new last line was repainted." : "FAIL: The new last line was not repainted.");
+    results.push(!isRepainted(repaintRects, center(firstLine)) ? "PASS: The line before the damage was not repainted." : "FAIL: The line before the damage was repainted.");
+}
+log.textContent = results.join("\n");
+</script>

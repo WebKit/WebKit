@@ -1,0 +1,20 @@
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+description("Tests that the EventTarget API is no longer working on detached frames.");
+jsTestIsAsync = true;
+
+onload = function()
+{
+    childWindow = frames[0];
+    addEventListenerFunction = childWindow.addEventListener;
+    dispatchEventFunc = childWindow.dispatchEvent;
+    document.body.removeChild(document.getElementsByTagName("iframe")[0]);
+    callbackCalled = false;
+    evalAndLog("addEventListenerFunction.call(childWindow, 'myevent', function() { callbackCalled = true; });");
+    shouldBeUndefined("dispatchEventFunc.call(childWindow, new Event('myevent'))");
+    shouldBeFalse("callbackCalled");
+    finishJSTest();
+}
+</script>
+<iframe src="about:blank"></iframe>
+<script src="../../resources/js-test-post.js"></script>

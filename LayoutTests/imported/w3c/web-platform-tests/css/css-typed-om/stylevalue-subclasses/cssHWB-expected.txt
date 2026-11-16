@@ -1,0 +1,23 @@
+
+PASS Constructing a CSSHWB with degrees for the hue works as intended.
+PASS CSSHWB.h can be updated with a degrees.
+PASS Constructing a CSSHWB with radians for the hue works as intended.
+PASS CSSHWB.h can be updated with a radians.
+PASS Constructing a CSSHWB with gradians for the hue works as intended.
+PASS CSSHWB.h can be updated with a gradians.
+PASS Constructing a CSSHWB with a number for hue throws a TypeError.
+PASS Constructing a CSSHWB with undefined for hue throws a TypeError.
+PASS Constructing a CSSHWB with css pixels for hue throws a SyntaxError.
+PASS CSSHWB can be constructed from three numbers and will get an alpha of 100%.
+PASS CSSHWB can be constructed from four numbers.
+PASS Constructing a CSSHWB with CSS.number for s, l or alpha throws a SyntaxError
+PASS Updating a CSSHWB with CSS.number for w throws a SyntaxError
+PASS CSSHWB.w can be updated to a number.
+PASS CSSHWB.w can be updated with a CSS percent.
+PASS Updating a CSSHWB with CSS.number for b throws a SyntaxError
+PASS CSSHWB.b can be updated to a number.
+PASS CSSHWB.b can be updated with a CSS percent.
+PASS Updating a CSSHWB with CSS.number for alpha throws a SyntaxError
+PASS CSSHWB.alpha can be updated to a number.
+PASS CSSHWB.alpha can be updated with a CSS percent.
+

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+<script>
+description('Access key should work when input type attribute is mutated. To test this manually, press the &lt;alt&gt;+k keys (on Mac OS X, press &lt;Ctrl&gt;+&lt;Opt&gt; instead of &lt;alt&gt;).');
+
+jsTestIsAsync = true;
+
+function pressKey(key)
+{
+    if (navigator.userAgent.search(/\bMac OS X\b/) !== -1)
+        modifiers = ["ctrlKey", "altKey"];
+    else
+        modifiers = ["altKey"];
+
+    if (window.eventSender)
+        eventSender.keyDown(key, modifiers);
+}
+
+function eventhandler()
+{
+    input.type = "button"
+}
+
+function start()
+{
+    pressKey('k');
+    testPassed('if not crashed.');
+    finishJSTest();
+}
+</script>
+</head>
+<body>
+<input id="input" type="range" accesskey="k" onfocus="eventhandler()">
+<iframe onload="start()"></iframe>
+</body>
+</html>
+

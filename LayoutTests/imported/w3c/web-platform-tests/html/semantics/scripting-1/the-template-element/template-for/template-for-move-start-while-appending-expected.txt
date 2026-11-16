@@ -1,0 +1,4 @@
+0 1
+
+FAIL HTML partial updates - move <?start> while appending has no effect assert_array_equals: lengths differ, expected array ["0  1", "0 a", "0 ab", "0 abc", "0 abc", "0 abcd", "0 abcd", "0 abcde", "0 abcde", "0 abcdef", "0 abcdef"] length 11, got ["0  1"] length 1
+

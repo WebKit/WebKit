@@ -1,0 +1,28 @@
+<!DOCTYPE html><!-- webkit-test-runner [ SpatialPortalEnabled=false ] -->
+<html>
+<style>
+    #portal { spatial: portal; width: 300px; height: 150px; portal-action: orbit; }
+</style>
+<body>
+<div id="portal">
+    <span id="content">Hello!</span>
+</div>
+<pre id="results"></pre>
+<script>
+    window.testRunner?.dumpAsText();
+
+    const portal = document.getElementById("portal");
+    const lines = [];
+
+    lines.push(`portal-action is supported: ${CSS.supports("portal-action", "orbit")}`);
+    lines.push(`portal-action computed style is exposed: ${getComputedStyle(portal).portalAction !== undefined}`);
+
+    portal.style.portalAction = "orbit";
+    lines.push(`portal-action survives in cssText: ${portal.style.cssText.includes("portal-action")}`);
+
+    results.textContent = lines.join("\n");
+
+    portal.remove();
+</script>
+</body>
+</html>

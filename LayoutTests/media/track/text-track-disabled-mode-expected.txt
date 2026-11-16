@@ -1,0 +1,8 @@
+
+PASS disabled mode: activeCues returns null
+PASS disabled mode: UA does not attempt to obtain cues
+PASS active-flag clears synchronously when cue is removed from track
+PASS active-flag clears synchronously when mode changes to disabled
+PASS active-flag clears when track is removed from media element
+PASS active-flag clears synchronously when readyState reverts to HAVE_NOTHING
+

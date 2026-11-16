@@ -1,0 +1,5 @@
+
+FAIL Verify that a 200 null-typed object emits an entry. promise_test: Unhandled rejection with value: object "TimeoutError: Timeout was reached before load or error events fired"
+FAIL Verify that a 404 null-typed object emits an entry. promise_test: Unhandled rejection with value: object "TimeoutError: Timeout was reached before load or error events fired"
+FAIL Verify that a 404 img-typed object emits an entry. promise_test: Unhandled rejection with value: object "TimeoutError: Timeout was reached before load or error events fired"
+

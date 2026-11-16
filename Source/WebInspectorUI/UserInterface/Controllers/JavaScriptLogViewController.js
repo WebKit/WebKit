@@ -1,0 +1,562 @@
+/*
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+WI.JavaScriptLogViewController = class JavaScriptLogViewController extends WI.Object
+{
+    constructor(element, scrollElement, textPrompt, delegate, historySettingIdentifier)
+    {
+        super();
+
+        console.assert(textPrompt instanceof WI.ConsolePrompt);
+        console.assert(historySettingIdentifier);
+
+        this._element = element;
+        this._scrollElement = scrollElement;
+
+        this._promptHistorySetting = new WI.Setting(historySettingIdentifier, null);
+
+        this._prompt = textPrompt;
+        this._prompt.delegate = this;
+        this._prompt.history = this._promptHistorySetting.value;
+
+        this.delegate = delegate;
+
+        this._cleared = true;
+        this._previousMessageView = null;
+        this._lastConsoleMessageViewForTarget = new WeakMap;
+        this._lastCommitted = {text: "", special: false};
+        this._repeatCountWasInterrupted = false;
+        this._evaluationPreviewRequestIdentifier = 0;
+
+        this._sessions = [];
+        this._currentSession = null;
+        this._currentSessionOrGroup = null;
+
+        this._failedSourceMapsGroup = null;
+
+        this.messagesAlternateClearKeyboardShortcut = new WI.KeyboardShortcut(WI.KeyboardShortcut.Modifier.Control, "L", this.requestClearMessages.bind(this), this._element);
+
+        this._messagesFindNextKeyboardShortcut = new WI.KeyboardShortcut(WI.KeyboardShortcut.Modifier.CommandOrControl, "G", this._handleFindNextShortcut.bind(this), this._element);
+        this._messagesFindPreviousKeyboardShortcut = new WI.KeyboardShortcut(WI.KeyboardShortcut.Modifier.CommandOrControl | WI.KeyboardShortcut.Modifier.Shift, "G", this._handleFindPreviousShortcut.bind(this), this._element);
+
+        this._promptAlternateClearKeyboardShortcut = new WI.KeyboardShortcut(WI.KeyboardShortcut.Modifier.Control, "L", this.requestClearMessages.bind(this), this._prompt.element);
+        this._promptFindNextKeyboardShortcut = new WI.KeyboardShortcut(WI.KeyboardShortcut.Modifier.CommandOrControl, "G", this._handleFindNextShortcut.bind(this), this._prompt.element);
+        this._promptFindPreviousKeyboardShortcut = new WI.KeyboardShortcut(WI.KeyboardShortcut.Modifier.CommandOrControl | WI.KeyboardShortcut.Modifier.Shift, "G", this._handleFindPreviousShortcut.bind(this), this._prompt.element);
+
+        WI.settings.showConsoleMessageTimestamps.addEventListener(WI.Setting.Event.Changed, this._handleShowConsoleMessageTimestampsSettingChanged, this);
+
+        this._pendingMessagesForSession = new Map;
+        this._scheduledRenderIdentifier = 0;
+
+        this.startNewSession();
+    }
+
+    // Static
+
+    static isSideEffectFreeForEvaluationPreview(text)
+    {
+        // Match WI.RuntimeManager.prototype.evaluateInInspectedWindow, which treats `{a: 1}` as an object literal.
+        text = WI.RuntimeManager.wrapLiteralExpression(text);
+
+        let program = null;
+        try {
+            program = esprima.parse(text);
+        } catch {
+            return false;
+        }
+
+        if (program.body.length !== 1 || program.body[0].type !== "ExpressionStatement")
+            return false;
+
+        // Reject syntax that explicitly calls, constructs, mutates, or iterates. Implicit calls (e.g. getters,
+        // `valueOf`/`toString` coercion, `Proxy` traps) can't be detected statically, so they are allowed.
+        function isSideEffectFree(node) {
+            switch (node.type) {
+            case "Identifier":
+            case "Literal":
+            case "ThisExpression":
+            case "FunctionExpression":
+            case "ArrowFunctionExpression":
+                return true;
+
+            case "ChainExpression":
+                return isSideEffectFree(node.expression);
+
+            case "MemberExpression":
+                return isSideEffectFree(node.object) && (!node.computed || isSideEffectFree(node.property));
+
+            case "ArrayExpression":
+                // Spreading invokes the iterator protocol, which can consume generators.
+                return node.elements.every((element) => !element || (element.type !== "SpreadElement" && isSideEffectFree(element)));
+
+            case "ObjectExpression":
+                return node.properties.every((property) => {
+                    if (property.type === "SpreadElement")
+                        return isSideEffectFree(property.argument);
+                    return (!property.computed || isSideEffectFree(property.key)) && isSideEffectFree(property.value);
+                });
+
+            case "ClassExpression":
+                if (node.decorators?.length || (node.superClass && !isSideEffectFree(node.superClass)))
+                    return false;
+                // Static blocks, static field initializers, computed keys, and decorators run when the class is defined.
+                return node.body.body.every((element) => {
+                    if (element.type === "StaticBlock" || element.decorators?.length)
+                        return false;
+                    if (element.computed && !isSideEffectFree(element.key))
+                        return false;
+                    return element.type === "MethodDefinition" || !element.static || !element.value || isSideEffectFree(element.value);
+                });
+
+            case "TemplateLiteral":
+                return node.expressions.every(isSideEffectFree);
+
+            case "UnaryExpression":
+                return node.operator !== "delete" && isSideEffectFree(node.argument);
+
+            case "BinaryExpression":
+            case "LogicalExpression":
+                return isSideEffectFree(node.left) && isSideEffectFree(node.right);
+
+            case "ConditionalExpression":
+                return isSideEffectFree(node.test) && isSideEffectFree(node.consequent) && isSideEffectFree(node.alternate);
+
+            case "SequenceExpression":
+                return node.expressions.every(isSideEffectFree);
+            }
+
+            return false;
+        }
+
+        return isSideEffectFree(program.body[0].expression);
+    }
+
+    // Public
+
+    clear()
+    {
+        this._cleared = true;
+
+        const clearPreviousSessions = true;
+        this.startNewSession(clearPreviousSessions, {newSessionReason: WI.ConsoleSession.NewSessionReason.ConsoleCleared});
+    }
+
+    startNewSession(clearPreviousSessions = false, data = {})
+    {
+        if (clearPreviousSessions) {
+            this._pendingMessagesForSession.clear();
+
+            if (this._sessions.length) {
+                for (let session of this._sessions)
+                    session.element.remove();
+
+                this._sessions = [];
+                this._currentSession = null;
+                this._currentSessionOrGroup = null;
+            }
+        }
+
+        // First session shows the time when the console was opened.
+        if (!this._sessions.length)
+            data.timestamp = Date.now();
+
+        let lastSession = this._sessions.lastValue;
+
+        // Remove empty session.
+        if (lastSession && !lastSession.hasMessages() && !this._pendingMessagesForSession.has(lastSession)) {
+            this._sessions.pop();
+            lastSession.element.remove();
+        }
+
+        let consoleSession = new WI.ConsoleSession(data);
+
+        this._previousMessageView = null;
+        this._lastConsoleMessageViewForTarget = new WeakMap;
+        this._lastCommitted = {text: "", special: false};
+        this._repeatCountWasInterrupted = false;
+
+        this._sessions.push(consoleSession);
+        this._currentSession = consoleSession;
+
+        this._failedSourceMapsGroup = null;
+
+        this._element.appendChild(consoleSession.element);
+
+        // Make sure the new session is visible.
+        consoleSession.element.scrollIntoView();
+    }
+
+    appendImmediateExecutionWithResult(text, result, {addSpecialUserLogClass, shouldRevealConsole, handleClick} = {})
+    {
+        console.assert(result instanceof WI.RemoteObject);
+
+        if (this._lastCommitted.text !== text || this._lastCommitted.special !== addSpecialUserLogClass) {
+            let classNames = [];
+            if (addSpecialUserLogClass)
+                classNames.push("special-user-log");
+
+            let commandMessageView = new WI.ConsoleCommandView(text, {classNames, handleClick});
+            this._appendConsoleCommandView(commandMessageView);
+            this._lastCommitted = {text, special: addSpecialUserLogClass};
+        }
+
+        function saveResultCallback(savedResultIndex)
+        {
+            let commandResultMessage = new WI.ConsoleCommandResultMessage(result.target, result, false, savedResultIndex, { shouldRevealConsole });
+            let commandResultMessageView = new WI.ConsoleMessageView(commandResultMessage);
+            this._appendConsoleMessageView(commandResultMessageView, true);
+        }
+
+        WI.runtimeManager.saveResult(result, saveResultCallback.bind(this));
+    }
+
+    appendConsoleMessage(consoleMessage)
+    {
+        let consoleMessageView = new WI.ConsoleMessageView(consoleMessage);
+        this._appendConsoleMessageView(consoleMessageView);
+        return consoleMessageView;
+    }
+
+    updatePreviousMessageRepeatCount(target, count, timestamp)
+    {
+        let previousMessageView = this._previousMessageView;
+        console.assert(previousMessageView);
+        if (!previousMessageView)
+            return false;
+
+        if (previousMessageView.message.target !== target) {
+            previousMessageView = this._lastConsoleMessageViewForTarget.get(target);
+            console.assert(previousMessageView);
+            if (!previousMessageView)
+                return false;
+            let messageView = this.appendConsoleMessage(previousMessageView.message);
+            messageView.timestamp = timestamp;
+            messageView[WI.JavaScriptLogViewController.IgnoredRepeatCount] = count - 1;
+            messageView.repeatCount = 1;
+            this._repeatCountWasInterrupted = false;
+            return true;
+        }
+
+        let previousIgnoredCount = previousMessageView[WI.JavaScriptLogViewController.IgnoredRepeatCount] || 0;
+        let previousVisibleCount = previousMessageView.repeatCount;
+
+        if (!this._repeatCountWasInterrupted) {
+            previousMessageView.repeatCount = count - previousIgnoredCount;
+            previousMessageView.timestamp = timestamp;
+            return true;
+        }
+
+        let consoleMessage = previousMessageView.message;
+        let duplicatedConsoleMessageView = new WI.ConsoleMessageView(consoleMessage);
+        duplicatedConsoleMessageView[WI.JavaScriptLogViewController.IgnoredRepeatCount] = previousIgnoredCount + previousVisibleCount;
+        duplicatedConsoleMessageView.repeatCount = 1;
+        duplicatedConsoleMessageView.timestamp = timestamp;
+        this._appendConsoleMessageView(duplicatedConsoleMessageView);
+
+        return true;
+    }
+
+    isScrolledToBottom()
+    {
+        // Lie about being scrolled to the bottom if we have a pending request to scroll to the bottom soon.
+        return this._scrollToBottomTimeout || this._scrollElement.isScrolledToBottom();
+    }
+
+    scrollToBottom()
+    {
+        if (this._scrollToBottomTimeout)
+            return;
+
+        function delayedWork()
+        {
+            this._scrollToBottomTimeout = null;
+            this._scrollElement.scrollTop = this._scrollElement.scrollHeight;
+        }
+
+        // Don't scroll immediately so we are not causing excessive layouts when there
+        // are many messages being added at once.
+        this._scrollToBottomTimeout = setTimeout(delayedWork.bind(this), 0);
+    }
+
+    requestClearMessages()
+    {
+        WI.consoleManager.requestClearMessages();
+    }
+
+    // Protected
+
+    consolePromptHistoryDidChange(prompt)
+    {
+        this._promptHistorySetting.value = this._prompt.history;
+    }
+
+    consolePromptShouldCommitText(prompt, text, cursorIsAtLastPosition, handler)
+    {
+        // Always commit the text if we are not at the last position.
+        if (!cursorIsAtLastPosition) {
+            handler(true);
+            return;
+        }
+
+        function parseFinished(error, result, message, range)
+        {
+            handler(result !== InspectorBackend.Enum.Runtime.SyntaxErrorType.Recoverable);
+        }
+
+        let activeCallFrame = WI.runtimeManager.useActiveCallFrame ? WI.debuggerManager.activeCallFrame : null;
+        let target = activeCallFrame?.target || WI.runtimeManager.activeExecutionContext.target;
+        target.RuntimeAgent.parse(text, parseFinished.bind(this));
+    }
+
+    consolePromptGetEvaluationPreviewObject(prompt, text, callback)
+    {
+        if (!WI.JavaScriptLogViewController.isSideEffectFreeForEvaluationPreview(text)) {
+            callback(null, false);
+            return;
+        }
+
+        let activeCallFrame = WI.runtimeManager.useActiveCallFrame ? WI.debuggerManager.activeCallFrame : null;
+        let target = activeCallFrame?.target || WI.runtimeManager.activeExecutionContext.target;
+        let options = {
+            objectGroup: `console-evaluation-preview-${++this._evaluationPreviewRequestIdentifier}`,
+            includeCommandLineAPI: true,
+            doNotPauseOnExceptionsAndMuteConsole: true,
+            returnByValue: false,
+            generatePreview: true,
+            saveResult: false,
+            disableAwaitConvenience: true,
+            emulateUserGesture: WI.settings.emulateInUserGesture.value,
+            sourceURLAppender: appendWebInspectorSourceURL,
+        };
+        WI.runtimeManager.evaluateInInspectedWindow(text, options, function(result, wasThrown) {
+            target.RuntimeAgent.releaseObjectGroup(options.objectGroup);
+            callback(result, wasThrown);
+        });
+    }
+
+    consolePromptTextCommitted(prompt, text)
+    {
+        console.assert(text);
+
+        if (this._lastCommitted.text !== text || this._lastCommitted.special) {
+            let commandMessageView = new WI.ConsoleCommandView(text);
+            this._appendConsoleCommandView(commandMessageView);
+            this._lastCommitted = {text, special: false};
+        }
+
+        function printResult(result, wasThrown, savedResultIndex)
+        {
+            if (!result || this._cleared)
+                return;
+
+            let commandResultMessage = new WI.ConsoleCommandResultMessage(result.target, result, wasThrown, savedResultIndex, { shouldRevealConsole: true });
+            let commandResultMessageView = new WI.ConsoleMessageView(commandResultMessage);
+            this._appendConsoleMessageView(commandResultMessageView, true);
+        }
+
+        let options = {
+            objectGroup: WI.RuntimeManager.ConsoleObjectGroup,
+            includeCommandLineAPI: true,
+            doNotPauseOnExceptionsAndMuteConsole: false,
+            returnByValue: false,
+            generatePreview: true,
+            saveResult: true,
+            emulateUserGesture: WI.settings.emulateInUserGesture.value,
+            sourceURLAppender: appendWebInspectorConsoleEvaluationSourceURL,
+        };
+
+        WI.javaScriptRuntimeCompletionProvider.clearCachedPropertyNames();
+
+        WI.runtimeManager.evaluateInInspectedWindow(text, options, printResult.bind(this));
+    }
+
+    // Private
+
+    _handleFindNextShortcut()
+    {
+        this.delegate.highlightNextSearchMatch();
+    }
+
+    _handleFindPreviousShortcut()
+    {
+        this.delegate.highlightPreviousSearchMatch();
+    }
+
+    _appendConsoleMessageView(messageView, repeatCountWasInterrupted)
+    {
+        console.assert(messageView instanceof WI.ConsoleMessageView);
+
+        this._addToPendingMessages(messageView);
+        this._cleared = false;
+        this._repeatCountWasInterrupted = repeatCountWasInterrupted || false;
+
+        let message = messageView.message;
+
+        if (!repeatCountWasInterrupted) {
+            this._previousMessageView = messageView;
+            this._lastConsoleMessageViewForTarget.set(message.target, messageView);
+        }
+
+        if (message.source !== WI.ConsoleMessage.MessageSource.JS)
+            this._lastCommitted = {text: "", special: false};
+
+        if (WI.consoleContentView.isAttached)
+            this.renderPendingMessagesSoon();
+
+        if (!WI.isShowingConsoleTab() && message.shouldRevealConsole)
+            WI.showSplitConsole();
+    }
+
+    _appendConsoleCommandView(commandView)
+    {
+        console.assert(commandView instanceof WI.ConsoleCommandView);
+
+        this._addToPendingMessages(commandView);
+        this._cleared = false;
+        this._repeatCountWasInterrupted = true;
+
+        if (WI.consoleContentView.isAttached)
+            this.renderPendingMessagesSoon();
+    }
+
+    _addToPendingMessages(messageView)
+    {
+        let pendingMessagesForSession = this._pendingMessagesForSession.getOrInsert(this._currentSession, []);
+        pendingMessagesForSession.push(messageView);
+        this._pendingMessagesForSession.set(this._currentSession, pendingMessagesForSession);
+    }
+
+    renderPendingMessages()
+    {
+        if (this._scheduledRenderIdentifier) {
+            cancelAnimationFrame(this._scheduledRenderIdentifier);
+            this._scheduledRenderIdentifier = 0;
+        }
+
+        if (!this._pendingMessagesForSession.size)
+            return;
+
+        let wasScrolledToBottom = this.isScrolledToBottom();
+        let lastMessageView = null;
+
+        const maxMessagesPerFrame = 100;
+        let renderedMessages = 0;
+        for (let [session, messages] of this._pendingMessagesForSession) {
+            if (!this._currentSessionOrGroup || this._sessionForSessionOrGroup(this._currentSessionOrGroup) !== session)
+                this._currentSessionOrGroup = session;
+
+            let messagesToRender = messages.splice(0, maxMessagesPerFrame - renderedMessages);
+            for (let message of messagesToRender) {
+                message.render();
+                this._didRenderConsoleMessageView(message);
+            }
+
+            lastMessageView = messagesToRender.lastValue;
+
+            if (!messages.length)
+                this._pendingMessagesForSession.delete(session);
+
+            renderedMessages += messagesToRender.length;
+            if (renderedMessages >= maxMessagesPerFrame)
+                break;
+        }
+
+        this._handleShowConsoleMessageTimestampsSettingChanged();
+
+        if (wasScrolledToBottom || lastMessageView instanceof WI.ConsoleCommandView || lastMessageView.message.type === WI.ConsoleMessage.MessageType.Result || lastMessageView.message.type === WI.ConsoleMessage.MessageType.Image)
+            this.scrollToBottom();
+
+        WI.quickConsole.needsLayout();
+
+        if (this._pendingMessagesForSession.size)
+            this.renderPendingMessagesSoon();
+    }
+
+    renderPendingMessagesSoon()
+    {
+        if (this._scheduledRenderIdentifier)
+            return;
+
+        this._scheduledRenderIdentifier = requestAnimationFrame(() => this.renderPendingMessages());
+    }
+
+    _didRenderConsoleMessageView(messageView)
+    {
+        let type = messageView instanceof WI.ConsoleCommandView ? null : messageView.message.type;
+        if (type === WI.ConsoleMessage.MessageType.EndGroup) {
+            let parentGroup = this._currentSessionOrGroup.parentGroup;
+            if (parentGroup)
+                this._currentSessionOrGroup = parentGroup;
+        } else {
+            if (type === WI.ConsoleMessage.MessageType.StartGroup || type === WI.ConsoleMessage.MessageType.StartGroupCollapsed) {
+                let group = new WI.ConsoleGroup(this._currentSessionOrGroup);
+                let groupElement = group.render(messageView);
+                this._currentSessionOrGroup.append(groupElement);
+                this._currentSessionOrGroup = group;
+            } else
+                this._currentSessionOrGroup.addMessageView(messageView);
+            
+            // FIXME: <https://webkit.org/b/264490> (Improve failed SourceMap error grouping to avoid unnecessary work)
+            if (WI.settings.experimentalGroupSourceMapErrors.value && WI.consoleManager.failedSourceMapConsoleMessages.has(messageView.message))
+                this._addConsoleMessageToConsoleSourceMapErrorGroup(messageView);
+        }
+
+        if (this.delegate && typeof this.delegate.didAppendConsoleMessageView === "function")
+            this.delegate.didAppendConsoleMessageView(messageView);
+    }
+
+    _sessionForSessionOrGroup(sessionOrGroup)
+    {
+        let current = sessionOrGroup;
+        while (current instanceof WI.ConsoleGroup)
+            current = current.parentGroup;
+        return current;
+    }
+    
+    _addConsoleMessageToConsoleSourceMapErrorGroup(messageView)
+    {
+        if (!this._firstSourceMapErrorMessageView) {
+            this._firstSourceMapErrorMessageView = messageView;
+            return;
+        }
+        
+        if (!this._failedSourceMapsGroup) {
+            let currentTopLevelSession = this._sessions.lastValue;
+            this._failedSourceMapsGroup = new WI.ConsoleSourceMapMessageGroup;
+            currentTopLevelSession.append(this._failedSourceMapsGroup.element);
+            this._failedSourceMapsGroup.addMessageView(this._firstSourceMapErrorMessageView);
+        }
+
+        this._failedSourceMapsGroup.addMessageView(messageView);
+    }
+
+    _handleShowConsoleMessageTimestampsSettingChanged()
+    {
+        this._currentSession.element.classList.toggle("timestamps-visible", WI.settings.showConsoleMessageTimestamps.value);
+    }
+};
+
+WI.JavaScriptLogViewController.CachedPropertiesDuration = 30_000;
+WI.JavaScriptLogViewController.IgnoredRepeatCount = Symbol("ignored-repeat-count");

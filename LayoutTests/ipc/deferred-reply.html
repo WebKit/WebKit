@@ -1,0 +1,27 @@
+<!doctype html><!-- webkit-test-runner [ IPCTestingAPIEnabled=true ] -->
+<title>Test that a receiver can defer its reply until a later message.</title>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<script src="../resources/ipc.js"></script>
+<body>
+<script>
+
+promise_test(async t => {
+    if (!window.IPC)
+        return;
+    IPC.addTesterReceiver('UI');
+    try {
+        let deferredReply = IPC.sendWithPromisedReply('UI', 0, IPC.messages.IPCTester_SendDeferredReplyMessageToReceiver.name, [{type: 'int32_t', value: 42}]);
+        IPC.sendMessage('UI', 0, IPC.messages.IPCTester_CompleteDeferredReplyOnReceiver.name, [{type: 'int32_t', value: 1000000}]);
+
+        let result = await deferredReply;
+        let swiftReceiverUsed = result.arguments[1].value;
+        let sumOfBothArguments = 43 + 1000000;
+        assert_equals(result.arguments[0].value, sumOfBothArguments + (swiftReceiverUsed ? 2 : 1));
+    } finally {
+        IPC.removeTesterReceiver('UI');
+    }
+    done();
+}, "A reply deferred until a later message arrives.");
+</script>
+</body>

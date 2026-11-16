@@ -1,0 +1,36 @@
+Test that the call-to-action handler accepts the three supported labels, and a default label.
+no options: OK
+empty options: OK
+visit-website: OK
+download: OK
+visit-app-store: OK
+
+Test that any other label is rejected.
+unsupported label: threw TypeError
+wrong case: threw TypeError
+display string: threw TypeError
+
+Test that setting the handler again replaces the callback.
+firing after the first call:
+first callback ran
+firing after the second call:
+second callback ran
+
+Test that setting the handler again updates the label.
+label: download
+label after changing it: visit-app-store
+label after setting without options: visit-website
+
+Test that the callback and label can change in the same call.
+third callback ran
+label: download
+
+Test that a rejected label leaves the previous callback and label in place.
+unsupported label: threw TypeError
+third callback ran
+label: download
+
+Test that the handler can be removed.
+removed: OK, label: null
+END OF TEST
+

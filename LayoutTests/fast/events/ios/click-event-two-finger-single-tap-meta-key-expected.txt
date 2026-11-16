@@ -1,0 +1,1 @@
+PASS: received click event with metaKey set to true

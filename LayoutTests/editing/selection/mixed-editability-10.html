@@ -1,0 +1,116 @@
+<html>
+<head>
+    <title>This tests the ability to place the caret in an editable div that contains only non editable content</title>
+</head>
+<body>
+  <p>#1 DIV element with a non-editable element only <span style="color:red">align center</span>:</p>
+  <div style="width:100px;background-color:#cee;text-align: center;" contenteditable="true" id="edit1">
+    <span contenteditable="false" id="nonedit1">Hello</span>
+  </div>
+  <p>#2 DIV element with a non-editable element only <span style="color:red">align left</span>:</p>
+  <div style="width:100px;background-color:#cee;" contenteditable="true" id="edit2"><span contenteditable="false" id="nonedit2">Hello</span></div>
+  <p>#3 DIV element with a non-editable element only <span style="color:red">align right</span>:</p>
+  <div style="width:100px;background-color:#cee;text-align: right;" contenteditable="true" id="edit3">
+  <span contenteditable="false" id="nonedit3">Hello</span></div>
+  <p>#4 DIV element with two non-editable element<span style="color:red">with padding</span>:</p>
+  <div style="width:200px;background-color:#cee;" contenteditable="true" id="edit4">
+      <span contenteditable="false">Hello </span>
+      <span contenteditable="false" id="nonedit4">World</span>
+  </div>
+  <p>#5 DIV element empty</p>
+  <div style="width:100px;background-color:#cee;text-align: center;" contenteditable="true" id="edit5">
+  </div>
+  <p>#6 non editable DIV element with an editable empty span element</p>
+  <div id="nonedit6" style="width:100px;background-color:#cee;">
+    Hello:&nbsp;<span id="edit6" contenteditable="true"> </span>
+  </div>
+  <ul id="console"></ul>
+</body>
+<script>
+function log(str) {
+    var li = document.createElement("li");
+    li.appendChild(document.createTextNode(str));
+    var console = document.getElementById("console");
+    console.appendChild(li);
+}
+
+function caretCoordinates()
+{
+    if (!window.textInputController)
+        return { x: 0, y :0 };
+    var caretRect = textInputController.firstRectForCharacterRange(textInputController.selectedRange()[0], 0);
+    return { x: caretRect[0], y: caretRect[1] };
+}
+
+function runTest(x, y, elem, offset, refpos) {
+    eventSender.mouseMoveTo(x, y);
+    eventSender.mouseDown();
+    eventSender.mouseUp();
+    eventSender.mouseDown();
+    eventSender.mouseUp();
+    
+    var selection = window.getSelection();
+
+    var anchorNode = selection.anchorNode;
+    var anchorOffset = selection.anchorOffset;
+
+    var coord = caretCoordinates();
+    var anchorString = "Anchor (" + anchorNode + ", " + anchorOffset + " caret[" + coord.x + "," + coord.y + "] refpos=" + Math.round(refpos) + ")";
+    var anchorCorrect = anchorNode == elem && anchorOffset == offset && coord.x == Math.round(refpos);
+    if (anchorCorrect)
+        log(anchorString + " is correct.");
+    else
+        log(anchorString + " is incorrect.");
+}
+
+function automaticTest() {
+    if (window.testRunner) {   
+        window.testRunner.dumpAsText();
+            
+        var elem;
+        
+        // the div has text-alignment center
+        elem = document.getElementById("edit1");
+        x = elem.offsetLeft + 10;
+        y = elem.offsetTop + elem.offsetHeight / 2;
+        runTest(x, y, elem, 0, document.getElementById("nonedit1").offsetLeft);
+        x = elem.offsetLeft + elem.offsetWidth - 10;
+        runTest(x, y, elem, 3, document.getElementById("nonedit1").offsetLeft + document.getElementById("nonedit1").offsetWidth);       
+
+        // the div has text-alignment left
+        elem = document.getElementById("edit2");
+        x = elem.offsetLeft + elem.offsetWidth - 10;
+        y = elem.offsetTop + elem.offsetHeight / 2;
+        runTest(x, y, elem, 1, document.getElementById("nonedit2").offsetLeft + document.getElementById("nonedit2").offsetWidth);
+        x = elem.offsetLeft;
+        runTest(x, y, elem, 0, document.getElementById("nonedit2").offsetLeft);
+
+        // the div has text-alignment right
+        elem = document.getElementById("edit3");
+        x = elem.offsetLeft + 10;
+        y = elem.offsetTop + elem.offsetHeight / 2;
+        runTest(x, y, elem, 0, document.getElementById("nonedit3").offsetLeft);
+
+        // the div contains 2 non editable span
+        elem = document.getElementById("edit4");
+        x = document.getElementById("nonedit4").offsetLeft;
+        y = elem.offsetTop + elem.offsetHeight / 2;
+        runTest(x, y, elem, 3, document.getElementById("nonedit4").offsetLeft);
+
+        // the div is empty
+        elem = document.getElementById("edit5");
+        x = elem.offsetLeft;
+        y = elem.offsetTop + elem.offsetHeight / 2;
+        runTest(x, y, elem, 0, (elem.offsetLeft + elem.offsetWidth)/2 + 4);
+
+        // the div is non editable and contains an empty editable span
+        elem = document.getElementById("edit6");
+        x = document.getElementById("nonedit6").offsetLeft + document.getElementById("nonedit6").offsetWidth / 2;
+        y = document.getElementById("nonedit6").offsetTop + document.getElementById("nonedit6").offsetHeight / 2;
+        runTest(x, y, elem, 0, 0);
+    }
+}
+
+automaticTest();
+</script>
+</html>

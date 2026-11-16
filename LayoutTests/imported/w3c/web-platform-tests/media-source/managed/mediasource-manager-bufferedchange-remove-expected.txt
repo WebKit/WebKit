@@ -1,0 +1,5 @@
+
+PASS remove() of part of the buffered data fires bufferedchange reporting the removed range
+PASS remove() of all buffered data fires bufferedchange reporting all ranges as removed
+PASS remove() of an unbuffered range does not fire bufferedchange
+

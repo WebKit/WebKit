@@ -1,0 +1,5 @@
+PASS Slider thumb was repainted after movement.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

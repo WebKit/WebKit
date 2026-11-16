@@ -1,0 +1,52 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/ui-helper.js"></script>
+<style>
+body, html {
+    font-family: system-ui;
+    font-size: 16px;
+}
+
+.container {
+    width: 200px;
+    height: 200px;
+    text-align: center;
+    line-height: 200px;
+}
+
+.hover {
+    background: orange;
+}
+</style>
+<script>
+jsTestIsAsync = true;
+dispatchedClick = false;
+
+window.internals?.setTopDocumentURLForQuirks("https://soylent.com");
+
+addEventListener("load", async () => {
+    description("Verifies that tapping on a link inside of a container that hides itself when receiving pointerleave. This test requires WebKitTestRunner");
+    const hover = document.querySelector(".hover");
+    hover.addEventListener("pointerleave", (event) => {
+        hover.style.display = "none";
+    });
+
+    const link = document.querySelector(".hover > a");
+    link.addEventListener("click", (event) => {
+        dispatchedClick = true;
+        event.preventDefault();
+    });
+
+    await UIHelper.activateElement(link);
+    await shouldBecomeEqual("dispatchedClick", "true");
+    finishJSTest();
+});
+</script>
+</head>
+<body>
+    <div class="hover container"><a href="#">Tap here</a></div>
+</body>
+</html>

@@ -1,0 +1,10 @@
+Tests that we do not process Geolocation request until the page become visible. Once the page becomes visible, the request should go through. This test cannot be run manually, it relies on the testRunner.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS The geolocation request was processed after the page became visible.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

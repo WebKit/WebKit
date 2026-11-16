@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+<script>
+description("Cached querySelector() and querySelectorAll() results must not follow a node into another document. " +
+    "The cache lives in the Document, so adoption has to drop the entry, or the new document asserts on the next " +
+    "query and the old document can later serve a stale answer.");
+
+// Nodes start out in "home" and are adopted into "away". Adoption takes a fast path unless the old document has
+// something to keep up to date, such as a live Range.
+var home;
+var away;
+var liveRange;
+
+function build(markup)
+{
+    var container = home.createElement("div");
+    container.innerHTML = markup;
+    return container;
+}
+
+function adoptIntoOther(node, populateOtherCache)
+{
+    away.adoptNode(node);
+    if (!populateOtherCache)
+        return;
+    // Invalidation returns early while a document's cache is empty, so give it an entry on an unrelated node.
+    var filler = away.createElement("div");
+    filler.innerHTML = "<b class=filler></b>";
+    filler.querySelector(".filler");
+}
+
+function ordinaryElement()
+{
+    window.div = build("<span class=a></span>");
+    window.span = div.firstChild;
+    shouldBe("div.querySelector('.a')", "span");
+    shouldBe("div.querySelector('.a')", "span");
+    adoptIntoOther(div);
+    shouldBe("div.ownerDocument === away", "true");
+    shouldBe("div.querySelector('.a')", "span");
+    shouldBe("div.querySelectorAll('.a').length", "1");
+    span.remove();
+    shouldBeNull("div.querySelector('.a')");
+    shouldBe("div.querySelectorAll('.a').length", "0");
+}
+
+function roundTrip()
+{
+    window.div = build("<span class=a></span>");
+    shouldBeNonNull("div.querySelector('.a')");
+    adoptIntoOther(div);
+    div.firstChild.remove();
+    home.adoptNode(div);
+    shouldBe("div.ownerDocument === home", "true");
+    shouldBeNull("div.querySelector('.a')");
+    shouldBe("div.querySelectorAll('.a').length", "0");
+}
+
+function roundTripTagName()
+{
+    window.div = build("<em></em>");
+    shouldBeNonNull("div.querySelector('em')");
+    adoptIntoOther(div);
+    div.firstChild.remove();
+    home.adoptNode(div);
+    shouldBeNull("div.querySelector('em')");
+}
+
+function openShadowRoot()
+{
+    window.host = home.createElement("div");
+    window.shadow = host.attachShadow({ mode: "open" });
+    shadow.innerHTML = "<span class=a></span>";
+    window.shadowSpan = shadow.firstChild;
+    shouldBe("shadow.querySelector('.a')", "shadowSpan");
+    adoptIntoOther(host);
+    shouldBe("host.ownerDocument === away", "true");
+    shouldBe("shadow.ownerDocument === away", "true");
+    shouldBe("shadow.querySelector('.a')", "shadowSpan");
+    shouldBe("shadow.querySelectorAll('.a').length", "1");
+    shadowSpan.className = "b";
+    shouldBeNull("shadow.querySelector('.a')");
+    shouldBe("shadow.querySelectorAll('.a').length", "0");
+}
+
+function userAgentShadowRoot()
+{
+    if (!window.internals)
+        return;
+    window.input = home.createElement("input");
+    input.type = "range";
+    window.uaRoot = internals.shadowRoot(input);
+    window.uaDiv = uaRoot.querySelector("div");
+    shouldBeNonNull("uaDiv");
+    adoptIntoOther(input);
+    shouldBe("input.ownerDocument === away", "true");
+    shouldBe("uaRoot.querySelector('div')", "uaDiv");
+}
+
+function cachedOnDescendant()
+{
+    window.outer = build("<p><i class=a></i></p>");
+    window.inner = outer.firstChild;
+    window.leaf = inner.firstChild;
+    shouldBe("inner.querySelector('.a')", "leaf");
+    shouldBe("outer.querySelector('.a')", "leaf");
+    adoptIntoOther(outer);
+    shouldBe("inner.ownerDocument === away", "true");
+    shouldBe("inner.querySelector('.a')", "leaf");
+    shouldBe("outer.querySelector('.a')", "leaf");
+    leaf.className = "b";
+    shouldBeNull("inner.querySelector('.a')");
+    shouldBeNull("outer.querySelector('.a')");
+}
+
+function classChangeAfterAdopt()
+{
+    window.div = build("<span class=a></span><span></span>");
+    shouldBe("div.querySelectorAll('.a').length", "1");
+    adoptIntoOther(div, true);
+    shouldBe("div.querySelectorAll('.a').length", "1");
+    div.lastChild.className = "a";
+    shouldBe("div.querySelectorAll('.a').length", "2");
+    div.firstChild.className = "";
+    shouldBe("div.querySelectorAll('.a').length", "1");
+    shouldBe("div.querySelector('.a')", "div.lastChild");
+}
+
+function sameDocumentAdoption()
+{
+    window.div = build("<span class=a></span>");
+    shouldBeNonNull("div.querySelector('.a')");
+    home.adoptNode(div);
+    window.span = div.firstChild;
+    shouldBe("div.querySelector('.a')", "span");
+    span.remove();
+    shouldBeNull("div.querySelector('.a')");
+}
+
+var scenarios = [ordinaryElement, roundTrip, roundTripTagName, openShadowRoot, userAgentShadowRoot, cachedOnDescendant,
+    classChangeAfterAdopt, sameDocumentAdoption];
+
+function newDocument()
+{
+    return document.implementation.createHTMLDocument("");
+}
+
+// Every scenario gets a fresh home and away document so that cached results left behind by one cannot mask a problem
+// in another.
+function run(title, makeDocuments)
+{
+    debug("");
+    debug(title);
+    for (var scenario of scenarios) {
+        [home, away] = makeDocuments();
+        debug("");
+        debug(scenario.name);
+        scenario();
+    }
+}
+
+run("Fast adoption path", () => [newDocument(), newDocument()]);
+
+run("Slow adoption path (live Range in the old document)", () => {
+    var slowHome = newDocument();
+    liveRange = slowHome.createRange();
+    return [slowHome, newDocument()];
+});
+
+run("Adoption between iframes", () => {
+    var frames = [1, 2].map(() => document.body.appendChild(document.createElement("iframe")));
+    return [frames[0].contentDocument, frames[1].contentDocument];
+});
+</script>
+</body>
+</html>

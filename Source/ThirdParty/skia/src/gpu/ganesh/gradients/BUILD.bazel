@@ -1,0 +1,20 @@
+load("//bazel:skia_rules.bzl", "split_srcs_and_hdrs")
+
+package(
+    default_applicable_licenses = ["//:license"],
+)
+
+licenses(["notice"])
+
+GRADIENT_FILES = [
+    "GrGradientBitmapCache.cpp",
+    "GrGradientBitmapCache.h",
+    "GrGradientShader.cpp",
+    "GrGradientShader.h",
+]
+
+split_srcs_and_hdrs(
+    name = "gradient",
+    files = GRADIENT_FILES,
+    visibility = ["//src/gpu/ganesh:__pkg__"],
+)

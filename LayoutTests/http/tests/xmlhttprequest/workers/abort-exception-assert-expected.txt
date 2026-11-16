@@ -1,0 +1,5 @@
+XmlHttpRequest abort exception shouldn't assert.
+
+On success, you should see a single PASS below.
+
+PASS

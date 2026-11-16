@@ -1,0 +1,5 @@
+
+PASS RequestPhoneNumberPossession for a frame that doesn't exist is rejected
+PASS RequestPhoneNumberPossession for another page's frame is rejected
+PASS A sandboxed frame with an opaque origin can't request or check availability
+

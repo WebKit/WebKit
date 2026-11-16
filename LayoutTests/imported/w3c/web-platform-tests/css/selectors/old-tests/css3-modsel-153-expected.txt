@@ -1,0 +1,6 @@
+This line should have a green background.
+(Note: This test is based on unpublished errata.)
+
+
+PASS Empty CDATA section makes the element match :empty
+

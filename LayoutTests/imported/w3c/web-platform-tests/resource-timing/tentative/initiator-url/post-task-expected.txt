@@ -1,0 +1,9 @@
+Description
+
+This test verifies that, for a resource fetched with a postTask, the initiator_url points to the async caller script, instead of the callee script.
+
+
+
+Harness Error (FAIL), message = ReferenceError: Can't find variable: scheduler
+
+

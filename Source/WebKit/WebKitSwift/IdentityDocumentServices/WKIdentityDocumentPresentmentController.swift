@@ -1,0 +1,242 @@
+// Copyright (C) 2025 Apple Inc. All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted provided that the following conditions
+// are met:
+// 1. Redistributions of source code must retain the above copyright
+//    notice, this list of conditions and the following disclaimer.
+// 2. Redistributions in binary form must reproduce the above copyright
+//    notice, this list of conditions and the following disclaimer in the
+//    documentation and/or other materials provided with the distribution.
+//
+// THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+// THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+// PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+// BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+// CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+// SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+// INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+// CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+// ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+// THE POSSIBILITY OF SUCH DAMAGE.
+
+#if HAVE_DIGITAL_CREDENTIALS_UI
+
+import IdentityDocumentServices
+import IdentityDocumentServicesUI
+import os
+
+#if WTF_PLATFORM_IOS_FAMILY
+import UIKit
+#else
+import AppKit
+#endif
+
+#if WTF_PLATFORM_IOS_FAMILY
+private typealias IdentityDocumentPresentationAnchor = UIWindow
+#else
+private typealias IdentityDocumentPresentationAnchor = NSWindow
+#endif
+
+// MARK: WKIdentityDocumentPresentmentController.Base
+
+extension WKIdentityDocumentPresentmentController {
+    @MainActor
+    fileprivate final class Base {
+        private static let isoMdocProtocol = "org.iso.mdoc"
+
+        private static let logger = Logger(subsystem: "com.apple.WebKit", category: "DigitalCredentials")
+
+        private let controller: IdentityDocumentWebPresentmentController
+
+        private var performRequestTask: Task<any IdentityDocumentWebPresentmentResponse, any Error>?
+
+        // Single-use: one request per instance, so isCancelled is terminal and never reset.
+        // hasStartedRequest makes reuse fail loudly rather than silently reject as cancelled.
+        private var isCancelled = false
+
+        private var hasStartedRequest = false
+
+        weak var delegate: (any WKIdentityDocumentPresentmentDelegate)?
+
+        init() {
+            self.controller = IdentityDocumentWebPresentmentController()
+            self.controller.presentationContextProvider = self
+            self.controller.delegate = self
+        }
+
+        func perform(request: WKIdentityDocumentPresentmentRequest) async throws -> WKIdentityDocumentPresentmentResponse {
+            if isCancelled {
+                Self.logger.debug("IdentityDocumentPresentmentController perform called after cancellation; not presenting")
+                throw WKIdentityDocumentPresentmentError(.cancelled)
+            }
+
+            if hasStartedRequest {
+                assertionFailure("IdentityDocumentPresentmentController perform called more than once on a single-use controller")
+                throw WKIdentityDocumentPresentmentError(.requestInProgress)
+            }
+            hasStartedRequest = true
+
+            do {
+                Self.logger.debug("IdentityDocumentPresentmentController performRequest called with request \(String(describing: request))")
+                let convertedRequests: [any IdentityDocumentWebPresentmentRequest] = try request.requests.map { offeredRequest in
+                    if let mobileDocumentRequest = offeredRequest as? WKIdentityDocumentPresentmentMobileDocumentRequest {
+                        return ISO18013MobileDocumentRequest(mobileDocumentRequest)
+                    }
+                    #if HAVE_DIGITAL_CREDENTIALS_OPENID4VP
+                    if let openID4VPRequest = offeredRequest as? WKIdentityDocumentPresentmentOpenID4VPRequest,
+                        let convertedRequest = wkPlatformOpenID4VPRequest(from: openID4VPRequest)
+                    {
+                        return convertedRequest
+                    }
+                    #endif
+                    Self.logger.error("IdentityDocumentPresentmentController could not convert a request")
+                    throw WKIdentityDocumentPresentmentError(.invalidRequest)
+                }
+
+                if convertedRequests.isEmpty {
+                    throw WKIdentityDocumentPresentmentError(.invalidRequest)
+                }
+
+                Self.logger.debug("IdentityDocumentPresentmentController build converted request \(String(describing: convertedRequests))")
+
+                let task = Task {
+                    try await controller.performRequests(convertedRequests, origin: request.origin)
+                }
+
+                performRequestTask = task
+                let response = try await task.value
+
+                if let response = response as? ISO18013MobileDocumentResponse {
+                    guard request.requests.contains(where: { $0 is WKIdentityDocumentPresentmentMobileDocumentRequest }) else {
+                        Self.logger.error(
+                            "IdentityDocumentPresentmentController received a mobile document response that was not requested"
+                        )
+                        throw WKIdentityDocumentPresentmentError(.invalidRequest)
+                    }
+
+                    return .init(protocolString: Self.isoMdocProtocol, responseData: response.responseData)
+                }
+
+                #if HAVE_DIGITAL_CREDENTIALS_OPENID4VP
+                if let (exchangeProtocol, responseData) = wkPlatformOpenID4VPResponse(from: response) {
+                    let openID4VPRequests = request.requests.compactMap { $0 as? WKIdentityDocumentPresentmentOpenID4VPRequest }
+                    guard openID4VPRequests.contains(where: { $0.requestType == exchangeProtocol }) else {
+                        Self.logger.error(
+                            "IdentityDocumentPresentmentController received an OpenID4VP response for a protocol that was not requested"
+                        )
+                        throw WKIdentityDocumentPresentmentError(.invalidRequest)
+                    }
+
+                    return .init(protocolString: exchangeProtocol, responseData: responseData)
+                }
+                #endif
+
+                Self.logger.error(
+                    "IdentityDocumentPresentmentController unexpectedly received a response of an unrecognized type"
+                )
+                throw WKIdentityDocumentPresentmentError(.invalidRequest)
+            } catch let error as IdentityDocumentPresentmentError {
+                let userInfo = [NSDebugDescriptionErrorKey: error.debugDescription]
+
+                switch error {
+                case .unknown:
+                    throw WKIdentityDocumentPresentmentError(.unknown, userInfo: userInfo)
+                case .invalidRequest:
+                    throw WKIdentityDocumentPresentmentError(.invalidRequest, userInfo: userInfo)
+                case .requestInProgress:
+                    throw WKIdentityDocumentPresentmentError(.requestInProgress, userInfo: userInfo)
+                case .cancelled:
+                    throw WKIdentityDocumentPresentmentError(.cancelled, userInfo: userInfo)
+                case .notEntitled:
+                    throw WKIdentityDocumentPresentmentError(.notEntitled, userInfo: userInfo)
+                default:
+                    throw WKIdentityDocumentPresentmentError(.unknown, userInfo: userInfo)
+                }
+            } catch is CancellationError {
+                throw WKIdentityDocumentPresentmentError(.cancelled)
+            } catch {
+                throw WKIdentityDocumentPresentmentError(.unknown)
+            }
+        }
+
+        func cancelRequest() {
+            isCancelled = true
+            performRequestTask?.cancel()
+        }
+    }
+}
+
+// MARK: WKIdentityDocumentPresentmentController.Base  IdentityDocumentPresentmentControllerPresentationContextProviding & IdentityDocumentWebPresentmentControllerDelegate
+
+extension WKIdentityDocumentPresentmentController.Base: IdentityDocumentPresentmentControllerPresentationContextProviding,
+    IdentityDocumentWebPresentmentControllerDelegate
+{
+    func presentationAnchorForPresentmentController(
+        _ presentmentController: any IdentityDocumentPresentmentControlling
+    ) -> IdentityDocumentPresentationAnchor? {
+        delegate?.presentationAnchor()
+    }
+
+    func rawRequestsForWebPresentmentController(
+        _ webPresentmentController: IdentityDocumentWebPresentmentController
+    ) async -> [IdentityDocumentWebPresentmentRawRequest] {
+        guard let rawRequests = await delegate?.fetchRawRequests() else {
+            Self.logger.error("IdentityDocumentPresentmentController delegate is not implemented, sending no raw requests")
+            return []
+        }
+
+        let convertedRawRequests = rawRequests.compactMap { rawRequest -> IdentityDocumentWebPresentmentRawRequest? in
+            switch rawRequest.requestProtocol {
+            case Self.isoMdocProtocol:
+                return IdentityDocumentWebPresentmentRawRequest(requestType: .iso18013MobileDocument, requestData: rawRequest.requestData)
+
+            default:
+                #if HAVE_DIGITAL_CREDENTIALS_OPENID4VP
+                if let openID4VPRawRequest = wkPlatformOpenID4VPRawRequest(
+                    requestType: rawRequest.requestProtocol,
+                    requestData: rawRequest.requestData
+                ) {
+                    return openID4VPRawRequest
+                }
+                #endif
+                return nil
+            }
+        }
+
+        guard convertedRawRequests.count == rawRequests.count else {
+            Self.logger.error(
+                "IdentityDocumentPresentmentController raw request call back encountered an unsupported request, sending no raw requests"
+            )
+            return []
+        }
+
+        return convertedRawRequests
+    }
+}
+
+// MARK: WKIdentityDocumentPresentmentController
+
+@objc
+@implementation
+extension WKIdentityDocumentPresentmentController {
+    @nonobjc
+    private let base = Base()
+
+    weak var delegate: (any WKIdentityDocumentPresentmentDelegate)? {
+        get { base.delegate }
+        set { base.delegate = newValue }
+    }
+
+    @objc(performRequest:completionHandler:)
+    func perform(_ request: WKIdentityDocumentPresentmentRequest) async throws -> WKIdentityDocumentPresentmentResponse {
+        try await base.perform(request: request)
+    }
+
+    func cancelRequest() {
+        base.cancelRequest()
+    }
+}
+
+#endif

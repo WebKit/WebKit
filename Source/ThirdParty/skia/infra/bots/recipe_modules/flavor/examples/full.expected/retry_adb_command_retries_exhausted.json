@@ -1,0 +1,630 @@
+[
+  {
+    "cmd": [
+      "python3",
+      "RECIPE_MODULE[skia::vars]/resources/get_env_var.py",
+      "SWARMING_BOT_ID"
+    ],
+    "name": "get swarming bot id"
+  },
+  {
+    "cmd": [
+      "/usr/bin/adb",
+      "push",
+      "file.txt",
+      "file.txt"
+    ],
+    "cwd": "[START_DIR]/skia",
+    "env": {
+      "ADB_VENDOR_KEYS": "",
+      "CHROME_HEADLESS": "1",
+      "PATH": "<PATH>:RECIPE_REPO[depot_tools]"
+    },
+    "infra_step": true,
+    "name": "push file.txt file.txt"
+  },
+  {
+    "cmd": [
+      "/usr/bin/adb",
+      "shell",
+      "test",
+      "-f",
+      "file.txt"
+    ],
+    "cwd": "[START_DIR]/skia",
+    "env": {
+      "ADB_VENDOR_KEYS": "",
+      "CHROME_HEADLESS": "1",
+      "PATH": "<PATH>:RECIPE_REPO[depot_tools]"
+    },
+    "infra_step": true,
+    "name": "check if file.txt exists"
+  },
+  {
+    "cmd": [
+      "/usr/bin/adb",
+      "shell",
+      "cat",
+      "file.txt"
+    ],
+    "cwd": "[START_DIR]/skia",
+    "env": {
+      "ADB_VENDOR_KEYS": "",
+      "CHROME_HEADLESS": "1",
+      "PATH": "<PATH>:RECIPE_REPO[depot_tools]"
+    },
+    "infra_step": true,
+    "name": "read file.txt"
+  },
+  {
+    "cmd": [
+      "python3",
+      "RECIPE_MODULE[skia::flavor]/resources/remove_file_on_device.py",
+      "/usr/bin/adb",
+      "file.txt"
+    ],
+    "env": {
+      "CHROME_HEADLESS": "1",
+      "PATH": "<PATH>:RECIPE_REPO[depot_tools]"
+    },
+    "infra_step": true,
+    "name": "rm file.txt"
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "rmtree",
+      "results_dir"
+    ],
+    "infra_step": true,
+    "name": "rmtree results_dir"
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "ensure-directory",
+      "--mode",
+      "0o777",
+      "results_dir"
+    ],
+    "infra_step": true,
+    "name": "makedirs results_dir"
+  },
+  {
+    "cmd": [
+      "python3",
+      "RECIPE_MODULE[skia::flavor]/resources/remove_file_on_device.py",
+      "/usr/bin/adb",
+      "device_results_dir"
+    ],
+    "env": {
+      "CHROME_HEADLESS": "1",
+      "PATH": "<PATH>:RECIPE_REPO[depot_tools]"
+    },
+    "infra_step": true,
+    "name": "rm device_results_dir"
+  },
+  {
+    "cmd": [
+      "/usr/bin/adb",
+      "shell",
+      "mkdir",
+      "-p",
+      "device_results_dir"
+    ],
+    "cwd": "[START_DIR]/skia",
+    "env": {
+      "ADB_VENDOR_KEYS": "",
+      "CHROME_HEADLESS": "1",
+      "PATH": "<PATH>:RECIPE_REPO[depot_tools]"
+    },
+    "infra_step": true,
+    "name": "mkdir device_results_dir"
+  },
+  {
+    "cmd": [
+      "python3",
+      "RECIPE_MODULE[skia::flavor]/resources/wait_for_device.py",
+      "--adb",
+      "/usr/bin/adb"
+    ],
+    "env": {
+      "CHROME_HEADLESS": "1",
+      "PATH": "<PATH>:RECIPE_REPO[depot_tools]"
+    },
+    "name": "wait for device",
+    "timeout": 600
+  },
+  {
+    "cmd": [
+      "/usr/bin/adb",
+      "shell",
+      "mkdir",
+      "-p",
+      "/sdcard/revenge_of_the_skiabot/resources"
+    ],
+    "cwd": "[START_DIR]/skia",
+    "env": {
+      "ADB_VENDOR_KEYS": "",
+      "CHROME_HEADLESS": "1",
+      "PATH": "<PATH>:RECIPE_REPO[depot_tools]"
+    },
+    "infra_step": true,
+    "name": "mkdir /sdcard/revenge_of_the_skiabot/resources",
+    "~followup_annotations": [
+      "@@@STEP_EXCEPTION@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "recover device after failure of 'mkdir /sdcard/revenge_of_the_skiabot/resources' (attempt 1)"
+  },
+  {
+    "cmd": [
+      "/usr/bin/adb",
+      "kill-server"
+    ],
+    "cwd": "[START_DIR]/skia",
+    "env": {
+      "ADB_VENDOR_KEYS": "",
+      "CHROME_HEADLESS": "1",
+      "PATH": "<PATH>:RECIPE_REPO[depot_tools]"
+    },
+    "infra_step": true,
+    "name": "recover device after failure of 'mkdir /sdcard/revenge_of_the_skiabot/resources' (attempt 1).adb kill-server",
+    "timeout": 30,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "/usr/bin/adb",
+      "wait-for-device"
+    ],
+    "cwd": "[START_DIR]/skia",
+    "env": {
+      "ADB_VENDOR_KEYS": "",
+      "CHROME_HEADLESS": "1",
+      "PATH": "<PATH>:RECIPE_REPO[depot_tools]"
+    },
+    "infra_step": true,
+    "name": "recover device after failure of 'mkdir /sdcard/revenge_of_the_skiabot/resources' (attempt 1).wait for device",
+    "timeout": 180,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "/usr/bin/adb",
+      "devices",
+      "-l"
+    ],
+    "cwd": "[START_DIR]/skia",
+    "env": {
+      "ADB_VENDOR_KEYS": "",
+      "CHROME_HEADLESS": "1",
+      "PATH": "<PATH>:RECIPE_REPO[depot_tools]"
+    },
+    "infra_step": true,
+    "name": "recover device after failure of 'mkdir /sdcard/revenge_of_the_skiabot/resources' (attempt 1).adb devices -l",
+    "timeout": 30,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "recover device after failure of 'mkdir /sdcard/revenge_of_the_skiabot/resources' (attempt 1).reboot device and wait",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "/usr/bin/adb",
+      "reboot"
+    ],
+    "cwd": "[START_DIR]/skia",
+    "env": {
+      "ADB_VENDOR_KEYS": "",
+      "CHROME_HEADLESS": "1",
+      "PATH": "<PATH>:RECIPE_REPO[depot_tools]"
+    },
+    "infra_step": true,
+    "name": "recover device after failure of 'mkdir /sdcard/revenge_of_the_skiabot/resources' (attempt 1).reboot device and wait.reboot device",
+    "timeout": 30,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python3",
+      "RECIPE_MODULE[skia::flavor]/resources/wait_for_device.py",
+      "--adb",
+      "/usr/bin/adb"
+    ],
+    "cwd": "[START_DIR]/skia",
+    "env": {
+      "ADB_VENDOR_KEYS": "",
+      "CHROME_HEADLESS": "1",
+      "PATH": "<PATH>:RECIPE_REPO[depot_tools]"
+    },
+    "name": "recover device after failure of 'mkdir /sdcard/revenge_of_the_skiabot/resources' (attempt 1).reboot device and wait.wait for device",
+    "timeout": 600,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "/usr/bin/adb",
+      "root"
+    ],
+    "cwd": "[START_DIR]/skia",
+    "env": {
+      "ADB_VENDOR_KEYS": "",
+      "CHROME_HEADLESS": "1",
+      "PATH": "<PATH>:RECIPE_REPO[depot_tools]"
+    },
+    "name": "adb root",
+    "timeout": 180
+  },
+  {
+    "cmd": [
+      "/usr/bin/adb",
+      "shell",
+      "mkdir",
+      "-p",
+      "/sdcard/revenge_of_the_skiabot/resources"
+    ],
+    "cwd": "[START_DIR]/skia",
+    "env": {
+      "ADB_VENDOR_KEYS": "",
+      "CHROME_HEADLESS": "1",
+      "PATH": "<PATH>:RECIPE_REPO[depot_tools]"
+    },
+    "infra_step": true,
+    "name": "mkdir /sdcard/revenge_of_the_skiabot/resources (attempt 2)",
+    "~followup_annotations": [
+      "@@@STEP_EXCEPTION@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "recover device after failure of 'mkdir /sdcard/revenge_of_the_skiabot/resources' (attempt 2)"
+  },
+  {
+    "cmd": [
+      "/usr/bin/adb",
+      "kill-server"
+    ],
+    "cwd": "[START_DIR]/skia",
+    "env": {
+      "ADB_VENDOR_KEYS": "",
+      "CHROME_HEADLESS": "1",
+      "PATH": "<PATH>:RECIPE_REPO[depot_tools]"
+    },
+    "infra_step": true,
+    "name": "recover device after failure of 'mkdir /sdcard/revenge_of_the_skiabot/resources' (attempt 2).adb kill-server",
+    "timeout": 30,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "/usr/bin/adb",
+      "wait-for-device"
+    ],
+    "cwd": "[START_DIR]/skia",
+    "env": {
+      "ADB_VENDOR_KEYS": "",
+      "CHROME_HEADLESS": "1",
+      "PATH": "<PATH>:RECIPE_REPO[depot_tools]"
+    },
+    "infra_step": true,
+    "name": "recover device after failure of 'mkdir /sdcard/revenge_of_the_skiabot/resources' (attempt 2).wait for device",
+    "timeout": 180,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "/usr/bin/adb",
+      "devices",
+      "-l"
+    ],
+    "cwd": "[START_DIR]/skia",
+    "env": {
+      "ADB_VENDOR_KEYS": "",
+      "CHROME_HEADLESS": "1",
+      "PATH": "<PATH>:RECIPE_REPO[depot_tools]"
+    },
+    "infra_step": true,
+    "name": "recover device after failure of 'mkdir /sdcard/revenge_of_the_skiabot/resources' (attempt 2).adb devices -l",
+    "timeout": 30,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "recover device after failure of 'mkdir /sdcard/revenge_of_the_skiabot/resources' (attempt 2).reboot device and wait",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "/usr/bin/adb",
+      "reboot"
+    ],
+    "cwd": "[START_DIR]/skia",
+    "env": {
+      "ADB_VENDOR_KEYS": "",
+      "CHROME_HEADLESS": "1",
+      "PATH": "<PATH>:RECIPE_REPO[depot_tools]"
+    },
+    "infra_step": true,
+    "name": "recover device after failure of 'mkdir /sdcard/revenge_of_the_skiabot/resources' (attempt 2).reboot device and wait.reboot device",
+    "timeout": 30,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python3",
+      "RECIPE_MODULE[skia::flavor]/resources/wait_for_device.py",
+      "--adb",
+      "/usr/bin/adb"
+    ],
+    "cwd": "[START_DIR]/skia",
+    "env": {
+      "ADB_VENDOR_KEYS": "",
+      "CHROME_HEADLESS": "1",
+      "PATH": "<PATH>:RECIPE_REPO[depot_tools]"
+    },
+    "name": "recover device after failure of 'mkdir /sdcard/revenge_of_the_skiabot/resources' (attempt 2).reboot device and wait.wait for device",
+    "timeout": 600,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "/usr/bin/adb",
+      "root"
+    ],
+    "cwd": "[START_DIR]/skia",
+    "env": {
+      "ADB_VENDOR_KEYS": "",
+      "CHROME_HEADLESS": "1",
+      "PATH": "<PATH>:RECIPE_REPO[depot_tools]"
+    },
+    "name": "adb root (2)",
+    "timeout": 180
+  },
+  {
+    "cmd": [
+      "/usr/bin/adb",
+      "shell",
+      "mkdir",
+      "-p",
+      "/sdcard/revenge_of_the_skiabot/resources"
+    ],
+    "cwd": "[START_DIR]/skia",
+    "env": {
+      "ADB_VENDOR_KEYS": "",
+      "CHROME_HEADLESS": "1",
+      "PATH": "<PATH>:RECIPE_REPO[depot_tools]"
+    },
+    "infra_step": true,
+    "name": "mkdir /sdcard/revenge_of_the_skiabot/resources (attempt 3)",
+    "~followup_annotations": [
+      "@@@STEP_EXCEPTION@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "recover device after failure of 'mkdir /sdcard/revenge_of_the_skiabot/resources' (attempt 3)"
+  },
+  {
+    "cmd": [
+      "/usr/bin/adb",
+      "kill-server"
+    ],
+    "cwd": "[START_DIR]/skia",
+    "env": {
+      "ADB_VENDOR_KEYS": "",
+      "CHROME_HEADLESS": "1",
+      "PATH": "<PATH>:RECIPE_REPO[depot_tools]"
+    },
+    "infra_step": true,
+    "name": "recover device after failure of 'mkdir /sdcard/revenge_of_the_skiabot/resources' (attempt 3).adb kill-server",
+    "timeout": 30,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "/usr/bin/adb",
+      "wait-for-device"
+    ],
+    "cwd": "[START_DIR]/skia",
+    "env": {
+      "ADB_VENDOR_KEYS": "",
+      "CHROME_HEADLESS": "1",
+      "PATH": "<PATH>:RECIPE_REPO[depot_tools]"
+    },
+    "infra_step": true,
+    "name": "recover device after failure of 'mkdir /sdcard/revenge_of_the_skiabot/resources' (attempt 3).wait for device",
+    "timeout": 180,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "/usr/bin/adb",
+      "devices",
+      "-l"
+    ],
+    "cwd": "[START_DIR]/skia",
+    "env": {
+      "ADB_VENDOR_KEYS": "",
+      "CHROME_HEADLESS": "1",
+      "PATH": "<PATH>:RECIPE_REPO[depot_tools]"
+    },
+    "infra_step": true,
+    "name": "recover device after failure of 'mkdir /sdcard/revenge_of_the_skiabot/resources' (attempt 3).adb devices -l",
+    "timeout": 30,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "recover device after failure of 'mkdir /sdcard/revenge_of_the_skiabot/resources' (attempt 3).reboot device and wait",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "/usr/bin/adb",
+      "reboot"
+    ],
+    "cwd": "[START_DIR]/skia",
+    "env": {
+      "ADB_VENDOR_KEYS": "",
+      "CHROME_HEADLESS": "1",
+      "PATH": "<PATH>:RECIPE_REPO[depot_tools]"
+    },
+    "infra_step": true,
+    "name": "recover device after failure of 'mkdir /sdcard/revenge_of_the_skiabot/resources' (attempt 3).reboot device and wait.reboot device",
+    "timeout": 30,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python3",
+      "RECIPE_MODULE[skia::flavor]/resources/wait_for_device.py",
+      "--adb",
+      "/usr/bin/adb"
+    ],
+    "cwd": "[START_DIR]/skia",
+    "env": {
+      "ADB_VENDOR_KEYS": "",
+      "CHROME_HEADLESS": "1",
+      "PATH": "<PATH>:RECIPE_REPO[depot_tools]"
+    },
+    "name": "recover device after failure of 'mkdir /sdcard/revenge_of_the_skiabot/resources' (attempt 3).reboot device and wait.wait for device",
+    "timeout": 600,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "/usr/bin/adb",
+      "root"
+    ],
+    "cwd": "[START_DIR]/skia",
+    "env": {
+      "ADB_VENDOR_KEYS": "",
+      "CHROME_HEADLESS": "1",
+      "PATH": "<PATH>:RECIPE_REPO[depot_tools]"
+    },
+    "name": "adb root (3)",
+    "timeout": 180
+  },
+  {
+    "cmd": [
+      "python3",
+      "RECIPE_MODULE[skia::flavor]/resources/dump_adb_log.py",
+      "[START_DIR]/build",
+      "/usr/bin/adb"
+    ],
+    "env": {
+      "CHROME_HEADLESS": "1",
+      "PATH": "<PATH>:RECIPE_REPO[depot_tools]"
+    },
+    "infra_step": true,
+    "name": "dump log",
+    "timeout": 300
+  },
+  {
+    "cmd": [],
+    "name": "reboot device and wait"
+  },
+  {
+    "cmd": [
+      "/usr/bin/adb",
+      "reboot"
+    ],
+    "env": {
+      "CHROME_HEADLESS": "1",
+      "PATH": "<PATH>:RECIPE_REPO[depot_tools]"
+    },
+    "infra_step": true,
+    "name": "reboot device and wait.reboot device",
+    "timeout": 30,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python3",
+      "RECIPE_MODULE[skia::flavor]/resources/wait_for_device.py",
+      "--adb",
+      "/usr/bin/adb"
+    ],
+    "env": {
+      "CHROME_HEADLESS": "1",
+      "PATH": "<PATH>:RECIPE_REPO[depot_tools]"
+    },
+    "name": "reboot device and wait.wait for device",
+    "timeout": 600,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python3",
+      "RECIPE_MODULE[skia::flavor]/resources/dump_adb_log.py",
+      "[START_DIR]/build",
+      "/usr/bin/adb"
+    ],
+    "env": {
+      "CHROME_HEADLESS": "1",
+      "PATH": "<PATH>:RECIPE_REPO[depot_tools]"
+    },
+    "infra_step": true,
+    "name": "dump adb log",
+    "timeout": 300
+  },
+  {
+    "failure": {
+      "humanReason": "Infra Failure: Step('mkdir /sdcard/revenge_of_the_skiabot/resources (attempt 3)') (retcode: 1)"
+    },
+    "name": "$result"
+  }
+]

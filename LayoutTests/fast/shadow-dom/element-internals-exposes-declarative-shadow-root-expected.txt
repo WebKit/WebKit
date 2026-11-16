@@ -1,0 +1,6 @@
+
+PASS Declarative Shadow DOM in "closed" mode is exposed via ElementInternals.prototype.shadowRoot
+PASS Declarative Shadow DOM in "open" mode is exposed via ElementInternals.prototype.shadowRoot
+PASS Declarative Shadow DOM in "closed" mode is exposed via ElementInternals.prototype.shadowRoot after calling attachShadow
+PASS Declarative Shadow DOM in "open" mode is exposed via ElementInternals.prototype.shadowRoot after calling attachShadow
+

@@ -1,0 +1,28 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/default_styles/bold_object_default_font-style-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/default_styles/bold_object_default_font-style-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/default_styles/bold_object_default_font-style.html
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/default_styles/inherit_as_default_value_inherits_values_from_media_element-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/default_styles/inherit_as_default_value_inherits_values_from_media_element-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/default_styles/inherit_as_default_value_inherits_values_from_media_element.html
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/default_styles/italic_object_default_font-style-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/default_styles/italic_object_default_font-style-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/default_styles/italic_object_default_font-style.html
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/default_styles/underline_object_default_font-style-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/default_styles/underline_object_default_font-style-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/default_styles/underline_object_default_font-style.html

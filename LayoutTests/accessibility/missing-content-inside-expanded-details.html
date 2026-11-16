@@ -1,0 +1,39 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<details id="details">
+    <summary>Foo</summary>
+    <p>Bar</p>
+</details>
+
+<script>
+var output = "This test ensures content inside dynamically expanded details elements is accessible.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    var webarea = accessibilityController.rootElement.childAtIndex(0);
+    output += dumpAXSearchTraversal(webarea);
+
+    document.getElementById("details").setAttribute("open", "");
+    var traversalOutput;
+    setTimeout(async function() {
+        await waitFor(() => {
+            traversalOutput = dumpAXSearchTraversal(webarea);
+            return traversalOutput.includes("Bar");
+        });
+        output += traversalOutput;
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>
+

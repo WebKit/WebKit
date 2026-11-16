@@ -1,0 +1,5 @@
+
+PASS Mixed content checks apply to fetches in sandboxed documents
+PASS Mixed content checks apply to iframes in sandboxed documents
+PASS Mixed content checks apply to popups in sandboxed documents
+

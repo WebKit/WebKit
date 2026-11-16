@@ -1,0 +1,17 @@
+<select id="bomb" onfocus="this.parentNode.removeChild(this)">
+    <option>Clicking on this select element should not crash</option>
+</select>
+<h2>Layout test for <a href='https://bugs.webkit.org/show_bug.cgi?id=23858'>bug 23858</a></h2>
+<p>If this page is displayed without crashing then the test has passed.</p>
+<script src="../../../resources/ui-helper.js"></script>
+<script>
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+        (async () => {
+            var select = document.getElementById('bomb');
+            await UIHelper.activateElement(select);
+            testRunner.notifyDone();
+        })();
+    }
+</script>

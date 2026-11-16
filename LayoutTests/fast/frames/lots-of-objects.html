@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Lots of objects</title>
+<script>
+var maxNumberOfFrames = 1000;
+
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+function dumpResult()
+{
+    let objects = document.getElementsByTagName("object");
+    let objectCount = objects.length;
+    var result = "";
+
+    if (objectCount != maxNumberOfFrames + 1)
+        result = `Created an invalid number of objects (${objectCount}).<br>FAIL`;
+    else if (objects[objectCount - 1].contentDocument)
+        result = `Created ${objectCount} objects (max: ${maxNumberOfFrames}).<br>FAIL`;
+    else
+        result = `Created precisely ${maxNumberOfFrames} objects.<br>PASS`;
+
+    document.getElementById("status").innerHTML = result
+}
+
+
+function createObjects()
+{
+    var observer = new MutationObserver(dumpResult);
+    var config = { childList: true, attributes: false, subtree: false };
+    observer.observe(document.body, config);
+
+    let fragment = document.createDocumentFragment();
+    for (var i = 0; i < maxNumberOfFrames + 1; i++) {
+        let object = document.createElement("object");
+        object.type = 'text/html';
+        object.data = `data:text/html,object_${i}`;
+        object.style.visibility = 'hidden';
+        fragment.appendChild(object);
+    }
+    document.body.appendChild(fragment);
+}
+</script>
+</head>
+<body onLoad="createObjects()">
+<div id="status"></div>
+</body>
+</html>

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/ui-helper.js"></script>
+<style>
+#container { width: 200px; height: 200px; background: #eee; }
+#wrapper { width: 100%; height: 100%; }
+#btn { width: 100px; height: 50px; }
+#other { width: 200px; height: 200px; background: #ccc; margin-top: 20px; }
+</style>
+</head>
+<body>
+<div id="container">
+    <div id="wrapper"><button id="btn">Hover me</button></div>
+</div>
+<div id="other">Other</div>
+<script>
+    description("Verifies pointerleave fires on the retargeted ancestor after subtree removal.");
+    window.jsTestIsAsync = true;
+
+    var container = document.getElementById('container');
+    var wrapper = document.getElementById('wrapper');
+    var btn = document.getElementById('btn');
+    var other = document.getElementById('other');
+    var containerLeaveReceived = false;
+
+    container.addEventListener('pointerleave', function() { containerLeaveReceived = true; });
+
+    if (window.eventSender) {
+        var r = btn.getBoundingClientRect();
+        eventSender.mouseMoveTo(r.left + r.width / 2, r.top + r.height / 2);
+
+        container.removeChild(wrapper);
+
+        var r2 = other.getBoundingClientRect();
+        eventSender.mouseMoveTo(r2.left + r2.width / 2, r2.top + r2.height / 2);
+    }
+
+    UIHelper.waitForCondition(() => containerLeaveReceived).then(() => {
+        shouldBeTrue("containerLeaveReceived");
+        finishJSTest();
+    });
+</script>
+</body>
+</html>

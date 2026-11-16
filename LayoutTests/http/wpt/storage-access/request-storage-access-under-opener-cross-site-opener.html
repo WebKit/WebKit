@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>requestStorageAccessUnderOpener must not terminate the web process for a cross-site opener</title>
+<link rel="help" href="https://bugs.webkit.org/show_bug.cgi?id=999999">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/common/get-host-info.sub.js"></script>
+<body>
+<script>
+// A cross-site iframe opens a blank popup (which inherits the iframe's process, keeping the iframe a
+// local opener) and navigates it cross-site. A user interaction in that popup makes the web process
+// send NetworkConnectionToWebProcess::RequestStorageAccessUnderOpener(popupDomain, openerPageID,
+// openerDomain). Before the fix (regression from 316149@main / bug 312798), the network process
+// rejected the message because the opened window's process does not "own" the cross-site opener
+// domain, terminating the web process (both popup and opener reload). This test passes if the
+// opened window survives the interaction.
+if (window.testRunner)
+    testRunner.setStatisticsEnabled(true);
+
+const hostInfo = get_host_info();
+const openerIframeURL = hostInfo.HTTP_NOTSAMESITE_ORIGIN +
+    "/WebKit/storage-access/resources/opener-iframe.html";
+
+async_test(t => {
+    window.addEventListener("message", t.step_func(e => {
+        if (e.data === "popup-survived-user-interaction") {
+            if (window.testRunner)
+                testRunner.setStatisticsEnabled(false);
+            t.done();
+        }
+    }));
+    const frame = document.createElement("iframe");
+    frame.src = openerIframeURL;
+    document.body.appendChild(frame);
+}, "Storage-access-under-opener with a cross-site opener does not terminate the opened window's web process");
+</script>
+</body>

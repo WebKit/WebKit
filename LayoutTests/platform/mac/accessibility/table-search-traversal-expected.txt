@@ -1,0 +1,59 @@
+This test ensures we can traverse through entire tables via search.
+
+AXRole: AXTable
+
+AXRole: AXRow
+
+AXRole: AXCell
+
+AXRole: AXCell
+
+AXRole: AXStaticText
+AXValue: Duck
+
+AXRole: AXCell
+
+AXRole: AXStaticText
+AXValue: Cat
+
+AXRole: AXRow
+
+AXRole: AXCell
+
+AXRole: AXStaticText
+AXValue: Sound
+
+AXRole: AXCell
+
+AXRole: AXStaticText
+AXValue: Quack
+
+AXRole: AXCell
+
+AXRole: AXStaticText
+AXValue: Meow
+
+AXRole: AXRow
+
+AXRole: AXCell
+
+AXRole: AXStaticText
+AXValue: Biological family
+
+AXRole: AXCell
+
+AXRole: AXStaticText
+AXValue: Anatidae
+
+AXRole: AXCell
+
+AXRole: AXStaticText
+AXValue: Felidae
+
+Traversed 21 elements.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Duck	Cat
+Sound	Quack	Meow
+Biological family	Anatidae	Felidae

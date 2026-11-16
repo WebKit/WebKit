@@ -1,0 +1,11 @@
+PASS targetSelector is "SECTION:has(A[href='https://webkit.org'])"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+WebKit Homepage
+
+WebKit
+Apple Homepage
+
+Apple
+This test requires WebKitTestRunner

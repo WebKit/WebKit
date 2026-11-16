@@ -1,0 +1,8 @@
+Hello CSS Style
+
+
+PASS Setting a color with a decimal transparency should update the style
+PASS Setting a color with a nil value and percentages should update the style
+PASS Setting a mixed percent and value color should NOT update the style
+PASS Setting an hsl color should update the style
+

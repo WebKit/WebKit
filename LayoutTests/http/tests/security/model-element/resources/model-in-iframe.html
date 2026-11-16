@@ -1,0 +1,18 @@
+<body style="margin: 0">
+<model id="model" stagemode="orbit" style="display: block; width: 100px; height: 100px">
+    <source src="../../resources/cube.usdz"/>
+</model>
+<script>
+    const model = document.getElementById("model");
+    model.ready.then(() => {
+        window.parent.postMessage("ready", "*");
+    }, (error) => {
+        window.parent.postMessage("error: " + error, "*");
+    });
+
+    window.addEventListener("message", (event) => {
+        if (event.data === "getEntityTransform")
+            event.source.postMessage({ entityTransform: model.entityTransform }, "*");
+    });
+</script>
+</body>

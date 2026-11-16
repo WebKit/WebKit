@@ -1,0 +1,22 @@
+PASS colorsBeforeOpeningSidebar.top is "rgb(0, 122, 255)"
+PASS colorsBeforeOpeningSidebar.left is null
+PASS colorsBeforeOpeningSidebar.right is null
+PASS colorsBeforeOpeningSidebar.bottom is null
+PASS colorsAfterOpeningSidebar.top is "rgb(0, 122, 255)"
+PASS colorsAfterOpeningSidebar.left is "rgb(100, 100, 100)"
+PASS colorsAfterOpeningSidebar.right is null
+PASS colorsAfterOpeningSidebar.bottom is non-null.
+PASS ['multiple', 'rgb(100, 100, 100)'].includes(colorsAfterOpeningSidebar.bottom) is true
+PASS colorsAfterClosingSidebar.top is "rgb(0, 122, 255)"
+PASS colorsAfterClosingSidebar.left is null
+PASS colorsAfterClosingSidebar.right is null
+PASS colorsAfterClosingSidebar.bottom is null
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Toggle sidebar
+Main content area
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+
+

@@ -1,0 +1,52 @@
+<!DOCTYPE html><!-- webkit-test-runner [ WirelessPlaybackMediaPlayerEnabled=true ] -->
+<html>
+    <head>
+        <script src='../media-file.js'></script>
+        <script src='../video-test.js'></script>
+        <script>
+            var route;
+            var video;
+
+            async function start()
+            {
+                if (window.internals)
+                    internals.mockMediaDeviceRouteController.enabled = true;
+
+                route = internals.mockMediaDeviceRouteController.createMockMediaDeviceRoute();
+                run(`internals.mockMediaDeviceRouteController.activateRoute(route)`);
+
+                const urlPromise = new Promise((resolve) => {
+                    route.setURLCallback(async (url) => {
+                        resolve(url);
+                    });
+                });
+
+                video = document.getElementsByTagName('video')[0];
+                run(`video.src = findMediaFile('video', '../content/test')`);
+                run(`route.playbackRate = 1`);
+                run(`route.timeRange = { start: 0, duration: 60 }`);
+                run(`video.play()`);
+                await urlPromise;
+
+                const canplaythroughPromise = waitFor(video, 'canplaythrough');
+                run(`route.ready = true`);
+                await canplaythroughPromise;
+
+                run(`route.currentPlaybackPosition = 10`);
+                await waitFor(video, 'timeupdate');
+
+                run(`video.playbackRate = 2`);
+                // At 2x from ~10s, reaching 14s takes ~2s wall clock.
+                // At 1x, it would take ~4s, exceeding the 3000ms timeout.
+                await waitForConditionOrTimeout('video.currentTime > 14', false, 3000);
+                testExpected('video.playbackRate', 2);
+
+                endTest();
+            }
+        </script>
+    </head>
+    <body onload='start()'>
+        <video controls></video>
+        <p>Test that currentTime advances at the correct rate after a playback rate change.</p>
+    </body>
+</html>

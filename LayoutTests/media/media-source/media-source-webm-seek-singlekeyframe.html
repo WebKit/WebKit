@@ -1,0 +1,45 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <script src="../video-test.js"></script>
+        <script>
+            async function start()
+            {
+                const MediaSource = self.ManagedMediaSource || self.MediaSource;
+
+                findMediaElement();
+                video.disableRemotePlayback = true;
+
+                waitForEvent('canplay');
+                waitForEvent('seeking');
+                waitForEvent('seeked');
+
+                const source = new MediaSource();
+                await new Promise((resolve) => {
+                    video.src = URL.createObjectURL(source);
+                    source.addEventListener("sourceopen", resolve, { once: true });
+                });
+                const sourceBuffer = source.addSourceBuffer("video/webm; codecs=vp8,opus");
+                const response = await fetch("../content/test-vp8-singlekeyframe.webm");
+                const buffer = await response.arrayBuffer();
+                const canplayPromise = waitFor(video, "canplay", true);
+                await new Promise((resolve) => {
+                    sourceBuffer.addEventListener("updateend", resolve, { once: true });
+                    sourceBuffer.appendBuffer(buffer);
+                });
+                source.endOfStream();
+                await canplayPromise;
+                video.currentTime = 1;
+                await waitFor(video, "seeked", true);
+                video.currentTime = 0;
+                await waitFor(video, "seeked", true);
+                endTest();
+            }
+        </script>
+    </head>
+
+    <body onload="start()">
+        <p>Test that we can seek within a file containing a single keyframe (which starts with two frames having the same timestamp).</p>
+        <video controls></video>
+    </body>
+</html>

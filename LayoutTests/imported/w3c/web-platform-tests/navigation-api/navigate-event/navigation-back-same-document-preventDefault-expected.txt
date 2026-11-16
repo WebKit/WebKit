@@ -1,0 +1,3 @@
+
+PASS navigation.back() same-document preventDefault
+

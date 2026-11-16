@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="height=device-height">
+<style>
+#input1 {
+    position: absolute;
+    top: 880px;
+    left: 200px;
+}
+
+body {
+    height: 900px;
+}
+</style>
+</head>
+<body>
+<p>This test can be used to ensure that we scroll to the newly focused field when using the keyboard to switch focus from a text field positioned at the bottom of the page to a text field positioned at the top of the page.</p>
+<ol>
+    <li>Scroll all the way to the bottom of the page.</li>
+    <li>Tap the text field with text &quot;Field 2&quot;</li>
+    <li>Tap the '&lt;' above the keyboard to move the focus to the previous text field on the page, &quot;Field 1&quot;.</li>
+</ol>
+<p>This test PASSED if we scroll to &quot;Field 1&quot; such that it's visible.</p>
+<input type="text" id="input0" value="Field 1">
+<input type="text" id="input1" value="Field 2">
+</body>
+</html>

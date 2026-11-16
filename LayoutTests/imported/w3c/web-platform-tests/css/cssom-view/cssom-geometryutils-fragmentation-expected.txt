@@ -1,0 +1,6 @@
+
+FAIL getBoxQuads() returns every multicol fragment fragmented.getBoxQuads is not a function. (In 'fragmented.getBoxQuads()', 'fragmented.getBoxQuads' is undefined)
+FAIL getBoxQuads({relativeTo}) maps every fragment relative to a container fragmented.getBoxQuads is not a function. (In 'fragmented.getBoxQuads({ relativeTo: columns })', 'fragmented.getBoxQuads' is undefined)
+FAIL getBoxQuads({relativeTo}) maps every fragment relative to an ancestor fragmented.getBoxQuads is not a function. (In 'fragmented.getBoxQuads({ relativeTo: container })', 'fragmented.getBoxQuads' is undefined)
+FAIL getBoxQuads({relativeTo}) works when relativeTo is a fragmented element target.getBoxQuads is not a function. (In 'target.getBoxQuads({ relativeTo: fragmented })', 'target.getBoxQuads' is undefined)
+

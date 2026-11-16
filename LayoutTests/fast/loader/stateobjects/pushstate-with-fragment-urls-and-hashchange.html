@@ -1,0 +1,69 @@
+<html>
+<head>
+<script src="../../../resources/js-test.js"></script>
+<script>
+async function runTest()
+{
+    await testRunner?.clearBackForwardList();
+    try {
+        history.pushState(null, null, 'some-other.html');
+        testFailed("history.pushState(null, null, 'some-other.html') didn't throw");
+    } catch (e) {
+        testPassed("history.pushState(null, null, 'some-other.html') threw");
+    }
+    try {
+        history.replaceState(null, null, 'some-other.html');
+        testFailed("history.replaceState(null, null, 'some-other.html') didn't throw");
+    } catch (e) {
+        testPassed("history.replaceState(null, null, 'some-other.html') threw");
+    }
+    history.replaceState("OriginalEntry", "original");
+    history.pushState(null, null, "#");
+    history.pushState(null, null, "");
+    history.pushState(null, null, "#hash");
+    history.pushState(null, null, "#otherhash");
+    history.pushState(null, null, "#");
+    history.pushState(null, null, null);
+    history.pushState(null, null, "?withquery");
+    history.pushState(null, null, "?withquery#");
+    history.pushState(null, null, "?withquery");
+    history.pushState(null, null, "?withquery#somehash");
+    history.pushState(null, null, "?withquery#");
+    history.pushState(null, null, "?withquery#someotherhash");
+    history.pushState(null, null, "?withsomeotherquery#someotherhash");
+    history.pushState(null, null, "?withsomeotherquery#somehash");
+    history.pushState(null, null, "?withsomeotherquery");
+    history.pushState(null, null, "?withsomeotherquery#");
+    history.pushState(null, null, "?withsomeotherquery");
+
+    history.pushState("BufferEntry", "Last entry");
+    history.back();
+}
+
+function lastPathComponent(url)
+{
+    return url.split('/').pop();
+}
+
+onpopstate = function(event)
+{
+    debug("State popped with event " + event.state + " (type " + typeof event.state + ") and last path component " + lastPathComponent(location.href));
+    if (event.state != "OriginalEntry")
+        setTimeout("history.back();", 0);
+    else if (window.testRunner)
+        finishJSTest();
+}
+
+onhashchange = function(event)
+{
+    debug("Hash change fired and last path component is " + lastPathComponent(event.newURL));
+}
+
+</script>
+<body onload="runTest();">
+<script>
+description("This test pushes a series of state objects with different URLs and fragment identifiers meant to test the hashChange event as states are popped.");
+jsTestIsAsync = true;
+</script>
+</body>
+</html>

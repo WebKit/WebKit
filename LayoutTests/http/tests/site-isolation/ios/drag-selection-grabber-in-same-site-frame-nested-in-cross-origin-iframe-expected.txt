@@ -1,0 +1,12 @@
+Dragging a selection end grabber in a frame nested inside a same-site parent, which is itself a cross-origin iframe, should extend the selection to the line under the finger. The nested frame is not the local root of its process, so its offset within the parent must be applied only once.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS initialSelection is "token3"
+PASS extendedSelection.startsWith('token3') is true
+PASS endToken is "token6"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

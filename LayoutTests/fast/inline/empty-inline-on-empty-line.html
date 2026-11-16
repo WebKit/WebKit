@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<style>
+.container {
+  font-family: Ahem;
+  font-size: 20px;
+  outline: 1px solid red;
+}
+</style>
+<body>
+<div class=container>content before empty line<br><span id=span></span></div>
+<pre id=result></pre>
+</body>
+<script>
+window.testRunner?.dumpAsText();
+
+result.textContent = "span position on empty line: " + span.offsetTop;
+</script>

@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<style>
+    body { margin: 0; }
+    #test {
+        will-change: opacity;
+    }
+    .shape {
+        float: left;
+        background: blue;
+        width: 100px;
+        height: 100px;
+        cursor: pointer;
+    }
+    .radius {
+        border-radius: 16px;
+    }
+    .partial-radius {
+        border-radius: 14px 0 0 14px;
+    }
+    .non-uniform-radius {
+        border-radius: 10px 11px 12px 13px;
+    }
+    .plain {
+        width: 150px;
+        height: 60px;
+    }
+</style>
+<script src="../resources/ui-helper.js"></script>
+<body>
+<section id="test">
+    <div class="shape radius"></div>
+    <div class="shape partial-radius"></div>
+    <div class="shape non-uniform-radius"></div>
+</section>
+<pre id="results"></pre>
+<script>
+document.body.addEventListener("click", function(e) {
+    console.log(e, "event delegation");
+});
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+}
+
+function replaceChildren(container, classNames)
+{
+    container.replaceChildren(...classNames.map(className => {
+        const element = document.createElement("div");
+        element.className = `shape ${className}`;
+        return element;
+    }));
+}
+
+async function logLayerTree(container, title)
+{
+    await UIHelper.animationFrame();
+    await UIHelper.ensureStablePresentationUpdate();
+    results.textContent += `${title}\n${await UIHelper.getCALayerTreeForCompositedElement(container)}\n`;
+}
+
+window.onload = async function () {
+    if (!window.internals)
+        return;
+
+    const testEl = document.getElementById("test");
+    await logLayerTree(testEl, "Shaped elements:");
+
+    // The plain elements replace the shaped ones in a single update, so their region layers
+    // can be the ones the shaped elements leave behind. They must not keep a mask or rounded corners.
+    replaceChildren(testEl, ["plain", "plain", "plain"]);
+    await logLayerTree(testEl, "After replacing them with plain elements:");
+
+    // And the other way around, in a different order: each shape must be the element's own.
+    replaceChildren(testEl, ["non-uniform-radius", "radius", "partial-radius"]);
+    await logLayerTree(testEl, "After replacing those with shaped elements again:");
+
+    // A new element before the others: its region layer must come first.
+    const first = document.createElement("div");
+    first.className = "shape plain";
+    testEl.prepend(first);
+    await logLayerTree(testEl, "After inserting a plain element first:");
+
+    testEl.remove();
+    testRunner.notifyDone();
+};
+</script>
+</body>
+</html>

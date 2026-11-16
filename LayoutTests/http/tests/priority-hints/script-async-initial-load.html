@@ -1,0 +1,63 @@
+<script src=/resources/testharness.js></script>
+<script src=/resources/testharnessreport.js></script>
+<script src="http://127.0.0.1:8000/resources/slow-script.pl?delay=100"></script>
+<script src="http://127.0.0.1:8000/resources/checkResourcePriority.js"></script>
+
+<script>
+const priority_tests = [
+  {
+    url: new URL('../resources/dummy.js', location),
+    expected_priority: "ResourceLoadPriorityHigh",
+    description: 'high fetchpriority on async <script> raises the priority to high'
+  },
+  {
+    url: new URL('../resources/dummy.js?1', location),
+    expected_priority: "ResourceLoadPriorityLow",
+    description: 'low fetchpriority on async <script> lowers the priority to low'
+  },
+  {
+    url: new URL('../resources/dummy.js?2', location),
+    expected_priority: "ResourceLoadPriorityMedium",
+    description: 'auto fetchpriority on async <script> has no effect'
+  },
+  {
+    url: new URL('../resources/dummy.js?3', location),
+    expected_priority: "ResourceLoadPriorityMedium",
+    description: 'invalid fetchpriority on async <script> has no effect'
+  },
+  {
+    url: new URL('../resources/dummy.js?4', location),
+    expected_priority: "ResourceLoadPriorityMedium",
+    description: 'missing fetchpriority on async <script> has no effect'
+  },
+];
+
+</script>
+
+<script id=script1 async fetchpriority=high src=../resources/dummy.js></script>
+<script id=script2 async fetchpriority=low src=../resources/dummy.js?1></script>
+<script id=script3 async fetchpriority=auto src=../resources/dummy.js?2></script>
+<script id=script4 async fetchpriority=xyz src=../resources/dummy.js?3></script>
+<script id=script5 async src=../resources/dummy.js?4></script>
+
+<script>
+  promise_test(async (t) => {
+    await new Promise(resolve => {
+      addEventListener('DOMContentLoaded', resolve);
+    });
+    const base_msg = " was fetched by the preload scanner";
+    assert_true(internals.isPreloaded(script1.src), script1.src + base_msg);
+    assert_true(internals.isPreloaded(script2.src), script2.src + base_msg);
+    assert_true(internals.isPreloaded(script3.src), script3.src + base_msg);
+    assert_true(internals.isPreloaded(script4.src), script4.src + base_msg);
+    assert_true(internals.isPreloaded(script5.src), script5.src + base_msg);
+  }, 'all scripts must be fetched by the preload scanner');
+
+  // Setup the tests described by |priority_tests|.
+  for (const test of priority_tests) {
+    async_test(t => {
+      checkResourcePriority(test.url, test.expected_priority, test.description);
+      t.done();
+    });
+  }
+</script>

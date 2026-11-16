@@ -1,0 +1,5 @@
+
+PASS Verify EncodedAudioChunk is serializable.
+PASS Verify EncodedVideoChunk is serializable.
+PASS Verify EncodedVideoChunk cannot be stored
+

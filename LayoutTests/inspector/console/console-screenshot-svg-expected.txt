@@ -1,0 +1,36 @@
+CONSOLE MESSAGE: [object HTMLImageElement]
+CONSOLE MESSAGE: [object HTMLImageElement]
+CONSOLE MESSAGE: [object HTMLImageElement]
+CONSOLE MESSAGE: [object HTMLImageElement]
+CONSOLE MESSAGE: [object HTMLImageElement]
+CONSOLE MESSAGE: [object HTMLImageElement]
+Tests that console.screenshot sizes a detached SVG <img> with the default sizing algorithm.
+
+
+== Running test suite: console.screenshot.SVG
+-- Running test case: console.screenshot.SVG.WidthAndHeight
+PASS: The added message should be an image.
+PASS: The image width should be 200px.
+PASS: The image height should be 100px.
+
+-- Running test case: console.screenshot.SVG.WidthOnly
+PASS: The added message should be an image.
+PASS: The image width should be 200px.
+PASS: The image height should be 150px.
+
+-- Running test case: console.screenshot.SVG.ViewBoxOnly
+PASS: The added message should be an image.
+PASS: The image width should be 75px.
+PASS: The image height should be 150px.
+
+-- Running test case: console.screenshot.SVG.NoNaturalDimensions
+PASS: The added message should be an image.
+PASS: The image width should be 300px.
+PASS: The image height should be 150px.
+
+-- Running test case: console.screenshot.SVG.ZeroWidth
+PASS: Error: Could not capture screenshot
+
+-- Running test case: console.screenshot.SVG.TooLarge
+PASS: Error: Could not capture screenshot
+

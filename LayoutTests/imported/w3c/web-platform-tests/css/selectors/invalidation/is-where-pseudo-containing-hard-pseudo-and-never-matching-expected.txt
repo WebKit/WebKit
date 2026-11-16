@@ -1,0 +1,18 @@
+X
+X
+x
+x
+
+PASS subject1 initial color is grey
+PASS subject1 color after focus is red
+PASS subject1 color after blur is grey
+PASS subject2 initial color is grey
+PASS subject2 color after focus is orangered
+PASS subject2 color after blur is grey
+PASS subject3 initial color is grey
+PASS subject3 color after focus is darkred
+PASS subject3 color after blur is grey
+PASS subject4 initial color is grey
+PASS subject4 color after focus is pink
+PASS subject4 color after blur is grey
+

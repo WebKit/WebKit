@@ -1,0 +1,78 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script>
+function createSecureRequestInMainFrame() {
+    let img = document.createElement("img");
+    img.src = "https://localhost:8443/resources/square100.png?main-frame-" + Math.random();
+    document.body.appendChild(img);
+}
+
+function addSecureIFrame() {
+    let iframe = document.createElement("iframe");
+    iframe.src = "https://localhost:8443/site-isolation/inspector/network/resources/get-serialized-certificate-iframe.html";
+    iframe.addEventListener("load", () => iframe.contentWindow.postMessage({type: "TriggerLoads"}, "*"));
+    document.body.appendChild(iframe);
+}
+
+function test() {
+    function waitForResource(predicate) {
+        return new Promise((resolve) => {
+            function onResourceAdded(event) {
+                let resource = event.data.resource;
+                if (!resource?.url || !predicate(resource.url))
+                    return;
+                WI.Frame.removeEventListener(WI.Frame.Event.ResourceWasAdded, onResourceAdded);
+                resolve(resource);
+            }
+            WI.Frame.addEventListener(WI.Frame.Event.ResourceWasAdded, onResourceAdded);
+        });
+    }
+
+    async function resourceWithResponse(expression, predicate) {
+        let resourcePromise = waitForResource(predicate);
+        InspectorTest.evaluateInPage(expression);
+        let resource = await resourcePromise;
+        if (!resource.hasResponse())
+            await resource.awaitEvent(WI.Resource.Event.ResponseReceived);
+        return resource;
+    }
+
+    function checkCertificate(resource) {
+        InspectorTest.expectThat(resource.loadedSecurely, "Resource should have been loaded securely.");
+
+        let certificate = resource.security?.certificate;
+        InspectorTest.expectNotNull(certificate, "Security information should include certificate information.");
+        InspectorTest.log("Subject: " + certificate?.subject);
+        InspectorTest.expectGreaterThan(certificate?.validFrom, 0, "Certificate should have a validFrom date.");
+        InspectorTest.expectGreaterThan(certificate?.validUntil, 0, "Certificate should have a validUntil date.");
+    }
+
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Network.Resource.Security.Certificate");
+
+    suite.addTestCase({
+        name: "SiteIsolation.Network.Resource.Security.Certificate.MainFrame",
+        description: "A resource loaded over https by the main frame should have certificate information.",
+        async test() {
+            let resource = await resourceWithResponse("createSecureRequestInMainFrame()", (url) => url.includes("square100.png?main-frame-"));
+            InspectorTest.expectEqual(resource.parentFrame, WI.networkManager.mainFrame, "Resource should belong to the main frame.");
+            checkCertificate(resource);
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Network.Resource.Security.Certificate.CrossOriginIFrame",
+        description: "A resource loaded over https by a cross-origin iframe should have certificate information.",
+        async test() {
+            let resource = await resourceWithResponse("addSecureIFrame()", (url) => url.includes("square100.png") && !url.includes("main-frame-"));
+            InspectorTest.expectThat(resource.parentFrame !== WI.networkManager.mainFrame, "Resource should not belong to the main frame.");
+            checkCertificate(resource);
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+
+<body onload="runTest()">
+<p>Tests that resources loaded over https have certificate information under Site Isolation, in the main frame and in a cross-origin iframe.</p>
+</body>

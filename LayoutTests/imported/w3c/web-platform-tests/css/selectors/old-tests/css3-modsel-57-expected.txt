@@ -1,0 +1,7 @@
+This a:q element should be unstyled.
+This paragraph should have a green background.
+
+This b:r element should have a green background.
+
+PASS NEGATED Attribute existence selector with declared namespace
+

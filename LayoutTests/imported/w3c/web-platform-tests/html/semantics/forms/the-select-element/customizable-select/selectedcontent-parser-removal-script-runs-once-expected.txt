@@ -1,0 +1,4 @@
+
+
+PASS An option removed by the parser doesn't cause a not-yet-run script in a selected option to be cloned
+

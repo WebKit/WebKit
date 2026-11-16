@@ -1,0 +1,5 @@
+Hello
+World
+
+PASS CSS Test: ::scroll-marker click with active selection
+

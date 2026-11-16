@@ -1,0 +1,125 @@
+<head>
+<script>
+testRunner.dumpAsText();
+testRunner.waitUntilDone();
+
+function log(msg) {
+    document.getElementById("logger").innerHTML += msg + "<br>";
+}
+
+/**
+ * @param {Event} evt
+ * @param {string} type
+ */
+function logEvent(evt, type = evt.type) {
+    const { length } = navigator.getGamepads().filter((g) => g);
+    // don't bother printing ongamepadconnected & disconnected
+    if (!type.startsWith("on") || !type.includes("disconnected"))
+        logGamepad(evt.gamepad);
+    log(`${type ?? evt.type} event fired (${length}).`);
+}
+
+function logGamepad(gp) {
+    log("Name: " + gp.id);
+    log("Index: " + gp.index);
+    log("Mapping: " + gp.mapping);
+    log("Axes: " + gp.axes);
+
+    var buttonString = "";
+    for (button in gp.buttons) {
+        buttonString +=
+            gp.buttons[button].pressed +
+            "-" +
+            gp.buttons[button].value +
+            " ";
+    }
+
+    log("Buttons: " + buttonString);
+}
+
+function makeHandlerListenerPair(eventType) {
+    const pHandler = new Promise((resolve) => {
+        const attribute = `ongamepad${eventType}`;
+        const handler = (event) => {
+            logEvent(event, attribute);
+            window[attribute] = null;
+            resolve();
+        };
+        window[attribute] = handler;
+    });
+    const pListener = new Promise((resolve) => {
+        const handler = (event) => {
+            logEvent(event);
+            resolve();
+        };
+        window.addEventListener(`gamepad${eventType}`, handler, {
+            once: true,
+        });
+    });
+    return Promise.all([pListener, pHandler]);
+}
+
+async function runTest() {
+    log("Initial gamepads length: " + navigator.getGamepads().length);
+    log("Connecting 20 different gamepads");
+    // do one at a time...
+    for (var i = 0; i < 20; ++i) {
+        const p = makeHandlerListenerPair("connected");
+        testRunner.setMockGamepadDetails(i, i, "", i, i, false);
+        log("Connecting gamepad:");
+        testRunner.connectMockGamepad(i);
+        await p;
+        log(navigator.getGamepads().filter((x) => x));
+    }
+
+    log(
+        "Verifying there are 20 connected gamepads in the set of all gamepads"
+    );
+    var gamepads = navigator.getGamepads();
+    log(gamepads);
+    for (i in gamepads) {
+        logGamepad(gamepads[i]);
+    }
+
+    log(
+        "Disconnecting gamepads in reverse order, making sure gamepads array remains as expected"
+    );
+    for (var i = 19; i >= 0; --i) {
+        const p = makeHandlerListenerPair("disconnected");
+        log("Disconnecting gamepad:");
+        testRunner.disconnectMockGamepad(i);
+        await p;
+        log(navigator.getGamepads().filter((x) => x));
+    }
+
+    log("Checking non-zero'ed details for a gamepad");
+
+    testRunner.setMockGamepadDetails(
+        10,
+        "Awesome Joystick 5000",
+        "standard",
+        4,
+        16,
+        false
+    );
+    testRunner.setMockGamepadAxisValue(10, 0, 0.7);
+    testRunner.setMockGamepadAxisValue(10, 1, -0.9);
+    testRunner.setMockGamepadAxisValue(10, 2, 1.0);
+    testRunner.setMockGamepadAxisValue(10, 3, -1.0);
+    for (var i = 0; i < 16; ++i)
+        testRunner.setMockGamepadButtonValue(10, i, 1.0);
+
+    const p = makeHandlerListenerPair("connected");
+    testRunner.connectMockGamepad(10);
+    await p;
+    const p2 = makeHandlerListenerPair("disconnected");
+    log("Disconnecting final gamepad");
+    testRunner.disconnectMockGamepad(10);
+    await p2;
+    testRunner.notifyDone();
+}
+</script>
+</head>
+<body onload="runTest()">
+<div id="logger"></div>
+</body>

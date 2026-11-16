@@ -1,0 +1,10 @@
+This test ensures that hit testing into the shadow DOM returns the right object.
+
+PASS: axElement.role.toLowerCase().includes('text') === true
+AXValue: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+PASS: text.includes('Lorem ipsum') === true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

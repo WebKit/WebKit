@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Last-Modified - No Date</title>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="resources/last-modified-utilities.js"></script>
+</head>
+<body>
+<h1>Last-Modified: No Date</h1>
+<div id="log"></div>
+<script>
+promise_test(async () => {
+    let actual = await getLastModified("");
+    assert_approx_equals((new Date(Date.parse(actual))).getTime(), (new Date()).getTime(), 1000*60);
+}, "Last-Modified sent with no date");
+</script>
+</body>
+</html>

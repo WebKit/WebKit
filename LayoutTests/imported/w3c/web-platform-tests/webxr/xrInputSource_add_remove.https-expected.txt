@@ -1,0 +1,4 @@
+
+PASS XRInputSources can be properly added and removed from the session - webgl
+PASS XRInputSources can be properly added and removed from the session - webgl2
+

@@ -1,0 +1,7 @@
+
+
+PASS the local override applies to the literal address it is keyed on
+PASS the local override applies to a hostname that resolves to that address
+PASS the public override applies to a hostname that resolves to that address
+PASS a port with no override keeps the space its resolved address gives it
+

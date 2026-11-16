@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<!-- Regression test: JIT-compiled :has() arguments must not retain pointers into a
+     destroyed document's selector data. -->
+<html lang="en">
+<head>
+<style></style>
+</head>
+<body>
+<script>
+const limit = 50;
+const count = parseInt(sessionStorage.getItem('reloadCount') || '0');
+
+if (count === 0 && window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+(async () => {
+    const styleSheet = document.styleSheets[0];
+    const rules = styleSheet.rules;
+    try {
+        styleSheet?.insertRule(`*|mpath & { @supports selector(:nth-last-of-type(odd)::-webkit-scrollbar-thumb:active:increment:hover) { & slot, :is(:dir(rtl) :not(& ~ :where(svg|stop[a1], .c1))) { & :not(dialog, :has(#n1:only-child, :lang(en)), slot, [a2*=b]) { column-count: auto; } } } }`, rules?.length);
+    } catch { }
+
+    if (count >= limit) {
+        sessionStorage.removeItem('reloadCount');
+        document.body.textContent = 'PASS';
+        if (window.testRunner)
+            testRunner.notifyDone();
+        return;
+    }
+
+    sessionStorage.setItem('reloadCount', count + 1);
+
+    try {
+        const options = (() => {
+            const descriptor = { state: {} };
+            Object.defineProperty(descriptor, "info", {
+                get() {
+                    try {
+                        document.getElementById("n0")?.focus();
+                    } catch { }
+                    return descriptor.__origInfo;
+                },
+                configurable: true
+            });
+            descriptor.__origInfo = descriptor.info;
+            return descriptor;
+        })();
+        await frames.navigation.reload(options);
+    } catch { }
+})();
+</script>
+</body>
+</html>

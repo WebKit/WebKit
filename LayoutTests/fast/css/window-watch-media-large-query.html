@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>This test passes if it does not crash</p>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+let query = null;
+try {
+  query = 'a'.repeat(2 ** 30);
+} catch (e) {
+  query = 'a';
+  for (let i = 0; i < 2 ** 30; i++)
+    query += 'a';
+}
+try {
+    let result = window.matchMedia(query);
+    console.log("matchMedia returned: " + result);
+} catch (e) {
+    console.log("matchMedia threw: " + e);
+}
+</script>
+</body>
+</html>

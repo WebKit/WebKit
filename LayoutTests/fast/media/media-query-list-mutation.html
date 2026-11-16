@@ -1,0 +1,20 @@
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+const queries = [];
+queries.push(window.matchMedia("screen"));
+queries.push(window.matchMedia("screen"));
+
+queries[0].addListener(() => {
+    for (let i = 0; i < 20; ++i)
+        queries.push(window.matchMedia("screen"))
+
+    requestAnimationFrame(() => testRunner.notifyDone());
+});
+
+window.internals.settings.setMediaTypeOverride("handheld");
+</script>
+This test passes if it doesn't crash.

@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<head>
+<meta charset="utf-8" />
+<title>Scroll to text fragment generation - a long selection uses start and end text instead of inlining</title>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+window.addEventListener('load', () => {
+    const range = document.createRange();
+    range.selectNodeContents(document.getElementById("test"));
+    document.body.innerText = internals.textFragmentDirectiveForRange(range).split('#')[1];
+});
+</script>
+</head>
+<body>Prefix words here. <span id="test">This is a long sentence that is being used to test that when a selection exceeds the maximum inline string length the fragment directive generator will use start and end text instead of inlining the entire selection.</span> And suffix words here.</body>
+</html>

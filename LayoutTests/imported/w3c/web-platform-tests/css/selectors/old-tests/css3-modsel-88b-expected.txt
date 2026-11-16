@@ -1,0 +1,6 @@
+This text should be unstyled.
+This text should be green.
+
+
+PASS Nondeterministic matching of descendant and direct adjacent combinators
+

@@ -1,0 +1,7 @@
+2d.shadow.stroke.cap.2
+
+Shadows are drawn for stroke caps
+
+
+PASS Shadows are drawn for stroke caps
+

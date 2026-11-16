@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("DOMNodeStyles.usedCSSVariables");
+
+    function addTestCase({name, description, selector, checkUsedCSSVariables})
+    {
+        suite.addTestCase({
+            name,
+            description,
+            async test() {
+                let documentNode = await WI.domManager.requestDocument();
+                let nodeId = await documentNode.querySelector(selector);
+                let domNode = await WI.domManager.nodeForId(nodeId);
+                InspectorTest.assert(domNode, `Should find DOM Node for selector '${selector}'.`);
+
+                let cssStyles = WI.cssManager.stylesForNode(domNode);
+                InspectorTest.assert(cssStyles, `Should find CSS Styles for DOM Node.`);
+
+                await cssStyles.refreshIfNeeded();
+
+                await checkUsedCSSVariables(cssStyles.usedCSSVariables, cssStyles.allCSSVariables);
+            },
+        });
+    }
+
+    addTestCase({
+        name: "DOMNodeStyles.usedCSSVariables.InheritedUsed",
+        description: "A used inherited variable is found in the set of used variables",
+        selector: "#used-inherited-variable",
+        checkUsedCSSVariables(usedCSSVariables) {
+            InspectorTest.expectEqual(usedCSSVariables.size, 1, "Set should contain one used variable");
+            InspectorTest.expectTrue(usedCSSVariables.has("--inherited-color"), "--inherited-color should be used");
+        },
+    });
+
+    addTestCase({
+        name: "DOMNodeStyles.usedCSSVariables.InheritedUsedReferenced",
+        description: "An inherited variable referenced by another used variable is found in the set of used variables",
+        selector: "#used-referenced-inherited-variable",
+        checkUsedCSSVariables(usedCSSVariables) {
+            InspectorTest.expectEqual(usedCSSVariables.size, 2, "Set should contain two used variables");
+            InspectorTest.expectTrue(usedCSSVariables.has("--inherited-color"), "--inherited-color should be used");
+            InspectorTest.expectTrue(usedCSSVariables.has("--color"), "--color should be used");
+        },
+    });
+
+    addTestCase({
+        name: "DOMNodeStyles.usedCSSVariables.InheritedNotUsed",
+        description: "Unused inherited variables are not found in the set of used variables",
+        selector: "#unused-inherited-variable",
+        checkUsedCSSVariables(usedCSSVariables) {
+            InspectorTest.expectEqual(usedCSSVariables.size, 1, "Set should contain one used variable");
+            InspectorTest.expectTrue(usedCSSVariables.has("--color"), "--color should be used");
+            InspectorTest.expectFalse(usedCSSVariables.has("--inherited-color"), "--inherited-color should not be used");
+        },
+    });
+
+    for (let [name, selector] of [["InheritedReverseOrder", "#used-reversed-inherited-variable-chain"], ["InheritedDifferentRules", "#used-inherited-variable-chain-across-rules"]]) {
+        addTestCase({
+            name: `DOMNodeStyles.usedCSSVariables.${name}`,
+            description: "Inherited variable dependencies are independent of declaration order",
+            selector,
+            checkUsedCSSVariables(usedCSSVariables) {
+                InspectorTest.expectEqual(usedCSSVariables.size, 3, "The full inherited dependency chain should be used");
+                for (let variableName of ["--theme-button-color", "--theme-accent-color", "--theme-base-color"])
+                    InspectorTest.expectTrue(usedCSSVariables.has(variableName), `${variableName} should be used`);
+                InspectorTest.expectFalse(usedCSSVariables.has("--theme-unused-color"), "The unrelated inherited variable should remain unused");
+            },
+        });
+    }
+
+    addTestCase({
+        name: "DOMNodeStyles.usedCSSVariables.InheritedUnusedChain",
+        selector: "#unused-reversed-inherited-variable-chain",
+        checkUsedCSSVariables(usedCSSVariables) {
+            InspectorTest.expectEqual(usedCSSVariables.size, 0, "The unused inherited dependency chain should remain unused");
+        },
+    });
+
+    addTestCase({
+        name: "DOMNodeStyles.usedCSSVariables.InheritedCyclicChain",
+        selector: "#used-cyclic-inherited-variable-chain",
+        checkUsedCSSVariables(usedCSSVariables) {
+            InspectorTest.expectShallowEqual([...usedCSSVariables].sort(), ["--theme-cycle-a", "--theme-cycle-b"], "The inherited dependency cycle should include each variable once");
+        },
+    });
+
+    addTestCase({
+        name: "DOMNodeStyles.usedCSSVariables.InheritedUsedFunction",
+        description: "An inherited variable used in a function value is found in the set of used variables",
+        selector: "#used-inherited-variable-function",
+        checkUsedCSSVariables(usedCSSVariables) {
+            InspectorTest.expectEqual(usedCSSVariables.size, 1, "Set should contain one used variable");
+            InspectorTest.expectTrue(usedCSSVariables.has("--inherited-color"), "--inherited-color should be used");
+        },
+    });
+
+    addTestCase({
+        name: "DOMNodeStyles.usedCSSVariables.HighSpecificityUsed",
+        description: "A variable declared in a higher specificity rule but used in a lower specificity rule is found in the set of used variables",
+        selector: "#used-higher-specificity",
+        checkUsedCSSVariables(usedCSSVariables) {
+            InspectorTest.expectTrue(usedCSSVariables.has("--color"), "--color should be used");
+        },
+    });
+
+    addTestCase({
+        name: "DOMNodeStyles.usedCSSVariables.InheritedHighSpecificityUsed",
+        description: "An inherited variable declared in a higher specificity rule but used in a lower specificity rule on an inheritable property (`color`) is found in the set of used variables",
+        selector: "#used-higher-specificity-inheritable > p",
+        checkUsedCSSVariables(usedCSSVariables) {
+            InspectorTest.expectEqual(usedCSSVariables.size, 1, "Set should contain one used variable");
+            InspectorTest.expectTrue(usedCSSVariables.has("--color"), "--color should be used");
+        },
+    });
+
+    addTestCase({
+        name: "DOMNodeStyles.usedCSSVariables.InheritedHighSpecificityNotUsed",
+        description: "An inherited variable declared in a higher specificity rule but used in a lower specificity rule on a non-inheritable property (`background-color`) is not found in the set of used variables",
+        selector: "#unused-higher-specificity-non-inheritable > p",
+        checkUsedCSSVariables(usedCSSVariables) {
+            InspectorTest.expectFalse(usedCSSVariables.has("--color"), "--color should not be used");
+        },
+    });
+
+    for (let [name, selector] of [["PseudoElement", "#used-with-pseudo-element"], ["Keyframes", "#used-with-keyframes"]]) {
+        addTestCase({
+            name: `DOMNodeStyles.usedCSSVariables.${name}`,
+            description: "Processing pseudo elements or keyframes preserves the element's CSS variables",
+            selector,
+            checkUsedCSSVariables(usedCSSVariables, allCSSVariables) {
+                InspectorTest.expectEqual(usedCSSVariables.size, 1, "Set should contain one used variable");
+                InspectorTest.expectTrue(usedCSSVariables.has("--color"), "--color should be used");
+                InspectorTest.expectTrue(allCSSVariables.has("--color"), "--color should be available");
+                InspectorTest.expectTrue(allCSSVariables.has("--inherited-color"), "--inherited-color should be available");
+                InspectorTest.expectFalse(allCSSVariables.has("--pseudo-color"), "Pseudo element variables should not replace the element's variables");
+            },
+        });
+    }
+
+    addTestCase({
+        name: "DOMNodeStyles.usedCSSVariables.KeyframesInheritedReference",
+        description: "Variables referenced only by an element's keyframes remain used",
+        selector: "#used-only-in-keyframes",
+        async checkUsedCSSVariables(usedCSSVariables, allCSSVariables) {
+            InspectorTest.expectEqual(usedCSSVariables.size, 2, "Set should include the animation variable and its inherited dependency");
+            InspectorTest.expectTrue(usedCSSVariables.has("--animation-color"), "--animation-color should be used");
+            InspectorTest.expectTrue(usedCSSVariables.has("--inherited-color"), "--inherited-color should be used");
+            InspectorTest.expectTrue(allCSSVariables.has("--animation-color"), "--animation-color should be available");
+            let color = await InspectorTest.evaluateInPage('getComputedStyle(document.getElementById("used-only-in-keyframes")).color');
+            InspectorTest.expectEqual(color, "rgb(0, 128, 0)", "The animation should render the inherited variable value");
+        },
+    });
+
+    addTestCase({
+        name: "DOMNodeStyles.usedCSSVariables.KeyframeDeclaration",
+        description: "A variable declared by an element's keyframes remains available",
+        selector: "#defined-only-in-keyframes",
+        async checkUsedCSSVariables(usedCSSVariables, allCSSVariables) {
+            InspectorTest.expectTrue(usedCSSVariables.has("--keyframe-color"), "--keyframe-color should be used");
+            InspectorTest.expectTrue(allCSSVariables.has("--keyframe-color"), "--keyframe-color should be available");
+            let color = await InspectorTest.evaluateInPage('getComputedStyle(document.getElementById("defined-only-in-keyframes")).color');
+            InspectorTest.expectEqual(color, "rgb(0, 128, 0)", "The element should render the variable declared in keyframes");
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+<style>
+
+html {
+    --inherited-color: green;
+    --animation-color: var(--inherited-color);
+}
+
+div#used-inherited-variable {
+    color: var(--inherited-color, red);
+}
+
+div#used-referenced-inherited-variable {
+    --color: var(--inherited-color);
+    color: var(--color, red);
+}
+
+#reversed-inherited-variable-chain {
+    --theme-base-color: green;
+    --theme-accent-color: var(--theme-base-color);
+    --theme-button-color: var(--theme-accent-color);
+    --theme-unused-color: red;
+}
+
+#used-reversed-inherited-variable-chain,
+#used-inherited-variable-chain-across-rules {
+    background-color: var(--theme-button-color);
+}
+
+#inherited-variable-chain-across-rules {
+    --theme-base-color: green;
+    --theme-unused-color: red;
+}
+
+div.inherited-chain-middle {
+    --theme-accent-color: var(--theme-base-color);
+}
+
+.inherited-chain-lowest {
+    --theme-button-color: var(--theme-accent-color);
+}
+
+#cyclic-inherited-variable-chain {
+    --theme-cycle-a: var(--theme-cycle-b);
+    --theme-cycle-b: var(--theme-cycle-a);
+}
+
+#used-cyclic-inherited-variable-chain {
+    background-color: var(--theme-cycle-a, green);
+}
+
+div#unused-inherited-variable {
+    --color: green;
+    color: var(--color, red);
+}
+
+div#used-inherited-variable-function {
+    background: linear-gradient(90deg, var(--inherited-color, red), white);
+}
+
+div.used-lower-specificity {
+    background-color: var(--color, red);
+}
+
+div#used-higher-specificity {
+    --color: green;
+}
+
+div.used-lower-specificity-inheritable {
+    color: var(--color, red);
+}
+
+div#used-higher-specificity-inheritable {
+    --color: green;
+}
+
+div.unused-lower-specificity-non-inheritable {
+    background-color: var(--color, red);
+}
+
+div#unused-higher-specificity-non-inheritable {
+    --color: green;
+}
+
+div#used-with-pseudo-element,
+div#used-with-keyframes {
+    --color: green;
+    color: var(--color);
+}
+
+div#used-with-pseudo-element::before {
+    content: "";
+    --pseudo-color: blue;
+    color: var(--pseudo-color);
+}
+
+div#used-with-keyframes {
+    animation: fade 1s infinite;
+}
+
+@keyframes fade {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+#used-only-in-keyframes {
+    animation: inherited-variables 1s linear paused;
+}
+
+@keyframes inherited-variables {
+    from { color: var(--animation-color); }
+    to { color: var(--animation-color); }
+}
+
+#defined-only-in-keyframes {
+    animation: keyframe-variable 1s linear paused;
+    color: var(--keyframe-color);
+}
+
+@keyframes keyframe-variable {
+    from { --keyframe-color: green; }
+    to { --keyframe-color: green; }
+}
+
+</style>
+</head>
+<body onload="runTest();">
+<p>Test for DOMNodeStyles.usedCSSVariables</p>
+<div>
+    <div id="used-inherited-variable"></div>
+    <div id="used-referenced-inherited-variable"></div>
+    <div id="unused-inherited-variable"></div>
+    <div id="used-inherited-variable-function"></div>
+    <div id="used-with-pseudo-element"></div>
+    <div id="used-with-keyframes"></div>
+    <div id="used-only-in-keyframes"></div>
+    <div id="defined-only-in-keyframes"></div>
+    <div id="used-higher-specificity" class="used-lower-specificity"></div>
+    <div id="used-higher-specificity-inheritable" class="used-lower-specificity-inheritable">
+        <p></p>
+    </div>
+    <div id="unused-higher-specificity-non-inheritable" class="unused-lower-specificity-non-inheritable">
+        <p></p>
+    </div>
+</div>
+<div id="reversed-inherited-variable-chain">
+    <div id="used-reversed-inherited-variable-chain"></div>
+    <div id="unused-reversed-inherited-variable-chain"></div>
+</div>
+<div id="inherited-variable-chain-across-rules" class="inherited-chain-middle inherited-chain-lowest">
+    <div id="used-inherited-variable-chain-across-rules"></div>
+</div>
+<div id="cyclic-inherited-variable-chain">
+    <div id="used-cyclic-inherited-variable-chain"></div>
+</div>
+</body>
+</html>

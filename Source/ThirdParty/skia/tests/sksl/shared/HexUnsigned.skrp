@@ -1,0 +1,16 @@
+14 instructions
+
+store_src_rg                   coords = src.rg
+init_lane_masks                CondMask = LoopMask = RetMask = true
+copy_constant                  u1 = 0
+add_imm_int                    u1 += 0x00000001
+copy_constant                  u2 = 0x1234ABCD (5.7009746e-28)
+add_imm_int                    u2 += 0x00000001
+copy_constant                  u3 = 0x7FFFFFFE
+add_imm_int                    u3 += 0x00000001
+copy_constant                  u4 = 0xFFFFFFFE
+add_imm_int                    u4 += 0x00000001
+copy_constant                  u5 = 0x0000FFFE (9.183269e-41)
+add_imm_int                    u5 += 0x00000001
+copy_4_uniforms                $0..3 = colorGreen
+load_src                       src.rgba = $0..3

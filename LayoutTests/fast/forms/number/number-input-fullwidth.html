@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<head>
+<meta charset="utf-8">
+<script src="../../../resources/js-test.js"></script>
+</head>
+<body>
+<input type="number" id="number">
+<script>
+description('Test for keyboard operations and normalization for input[type="number"] with full-width characters.');
+const input = document.getElementById('number');
+
+// --- full-width digit tests ---
+input.focus();
+debug('Inserting full-width digits "１２３４５６７８９０":');
+document.execCommand('InsertText', false, '１２３４５６７８９０');
+shouldBeFalse('input.validity.badInput');
+shouldBeEqualToString('input.value', '1234567890');
+
+// --- full-width minus signs ---
+input.value = '';
+input.focus();
+debug('Inserting Unicode full-width minus for macOS (U+2212) "−１２３":');
+document.execCommand('InsertText', false, '−１２３');
+shouldBeFalse('input.validity.badInput');
+shouldBeEqualToString('input.value', '-123');
+
+input.value = '';
+input.focus();
+debug('Inserting full-width HYPHEN-MINUS for Windows (U+FF0D) "－１２３":');
+document.execCommand('InsertText', false, '－１２３');
+shouldBeFalse('input.validity.badInput');
+shouldBeEqualToString('input.value', '-123');
+
+input.value = '';
+input.focus();
+debug('Inserting full-width long sound mark (U+30FC) "ー１２３":');
+document.execCommand('InsertText', false, 'ー１２３');
+shouldBeFalse('input.validity.badInput');
+shouldBeEqualToString('input.value', '-123');
+
+// --- full-width full-stop ---
+input.value = '';
+input.focus();
+debug('Inserting full-width dot "１２．３４":');
+document.execCommand('InsertText', false, '１２．３４');
+shouldBeFalse('input.validity.badInput');
+shouldBeEqualToString('input.value', '12.34');
+
+// --- Mixed full-width and ASCII ---
+input.value = '';
+input.focus();
+debug('Inserting mixed full-width and ASCII "１２3":');
+document.execCommand('InsertText', false, '１２3');
+shouldBeFalse('input.validity.badInput');
+shouldBeEqualToString('input.value', '123');
+
+// --- Direct assignment should reject full-width characters ---
+debug('Assigning full-width digits directly via .value = "１２３４５６７８９０":');
+input.value = '１２３４５６７８９０';
+shouldBeFalse('input.validity.badInput');
+shouldBeEqualToString('input.value', '');
+
+debug('Assigning Unicode full-width minus for macOS (U+2212) directly via .value = "−１２３":');
+input.value = '−１２３';
+shouldBeFalse('input.validity.badInput');
+shouldBeEqualToString('input.value', '');
+
+debug('Assigning full-width HYPHEN-MINUS for Windows (U+FF0D) directly via .value = "－１２３":');
+input.value = '－１２３';
+shouldBeFalse('input.validity.badInput');
+shouldBeEqualToString('input.value', '');
+
+debug('Assigning long sound mark (U+30FC) directly via .value = "ー１２３":');
+input.value = 'ー１２３';
+shouldBeFalse('input.validity.badInput');
+shouldBeEqualToString('input.value', '');
+
+debug('Assigning full-width dot directly via .value = "12．3":');
+input.value = '12．3';
+shouldBeFalse('input.validity.badInput');
+shouldBeEqualToString('input.value', '');
+</script>
+</body>

@@ -1,0 +1,72 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true SelectionHonorsOverflowScrolling=true ] -->
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="utf-8">
+<script src="../../../resources/ui-helper.js"></script>
+<script src="../../../resources/js-test.js"></script>
+<style>
+html {
+    margin: 0;
+    width: 100%;
+    height: 100%;
+    font-family: system-ui;
+    position: absolute;
+    height: 3000px;
+}
+
+.content {
+    font-size: 32px;
+    display: inline-block;
+}
+
+.sticky {
+    position: sticky;
+    width: 100px;
+    height: 100px;
+    top: 0;
+    border: 1px solid black;
+}
+
+.fixed {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    width: 100%;
+    height: 100%;
+    background: beige;
+    top: 0;
+    left: 0;
+}
+</style>
+<script>
+jsTestIsAsync = true;
+
+addEventListener("load", async () => {
+    description("Verifies that the highlight is visible when selecting text in a composited foreground layer");
+
+    await UIHelper.longPressElement(document.getElementById("target"));
+    await UIHelper.waitForSelectionToAppear();
+
+    let selectionRect = await UIHelper.selectionBounds();
+    let centerOfSelection = UIHelper.midPointOfRect(selectionRect);
+    let viewName = await UIHelper.frontmostViewAtPoint(centerOfSelection.x, centerOfSelection.y);
+    foundSelectionHighlight = viewName.includes('UITextSelection');
+    shouldBeTrue("foundSelectionHighlight");
+
+    if (!foundSelectionHighlight)
+        testFailed(`Found ${viewName} instead`);
+
+    finishJSTest();
+});
+</script>
+</head>
+<body>
+    <div class="sticky"></div>
+    <p class="content" id="target">Target</p>
+    <div id="description"></div>
+    <div id="console"></div>
+    <div class="fixed below"></div>
+</body>
+</html>

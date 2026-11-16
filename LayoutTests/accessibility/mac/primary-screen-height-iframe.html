@@ -1,0 +1,61 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<div id="container"></div>
+
+<script>
+window.jsTestIsAsync = true;
+
+var output = "This test ensures AXPrimaryScreenHeight is non-zero for an iframe whose accessibility tree is built after accessibility is already active (a height of 0 mirrors elements vertically).\n\n";
+
+function checkPrimaryScreenHeight(element, label) {
+    return new Promise((resolve) => {
+        element.attributeValueAsync("_AXPrimaryScreenHeight", (value) => {
+            if (value > 0)
+                output += `PASS: ${label} AXPrimaryScreenHeight is > 0.\n`;
+            else
+                output += `FAIL: ${label} AXPrimaryScreenHeight should be > 0 but was ${value}.\n`;
+            resolve();
+        });
+    });
+}
+
+window.addEventListener("load", () => {
+    setTimeout(async () => {
+        if (!window.accessibilityController) {
+            finishJSTest();
+            return;
+        }
+
+        // Touch the main tree so the web process transitions to isolated-tree (AXThread) mode. Any
+        // AXObjectCache constructed after this point arms its build timer in its constructor, so the
+        // iframe we insert below gets its isolated tree built via that timer (the previously-broken path).
+        const root = accessibilityController.rootElement;
+        await waitForFrameGeometryReady();
+        await checkPrimaryScreenHeight(root, "Main-frame root element");
+
+        // Now insert the iframe. Because AXThread mode is already active, its cache builds the isolated
+        // tree via the constructor's build timer -> AXIsolatedTree::create(), not getOrCreateIsolatedTree().
+        document.getElementById("container").innerHTML =
+            "<iframe id='iframe' src=\"data:text/html,<body><h1 id='target'>Iframe heading</h1></body>\"></iframe>";
+
+        // Wait for the iframe's isolated tree and frame geometry to be built, then read
+        // AXPrimaryScreenHeight from an element inside it. It must be > 0.
+        const target = await waitForIframeAccessibilityReady("container", "target");
+        if (!target)
+            output += "FAIL: could not find the iframe's target element in the accessibility tree.\n";
+        else
+            await checkPrimaryScreenHeight(target, "Iframe descendant element");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+});
+</script>
+</body>
+</html>

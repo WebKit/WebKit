@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg">
+    <script>
+        if (window.testRunner)
+            testRunner.dumpAsText();
+    </script>
+    <filter id="f">
+        <feConvolveMatrix in="SourceGraphic" order="4, 1073741828" 
+            kernelMatrix="1 1 1 1
+                          1 1 1 1
+                          1 1 1 1
+                          1 1 1 1" />
+    </filter>
+    <rect x="10" y="30" width="100" height="100" fill="green" filter="url(#f)" />
+    <text x="10" y="10">Passes if it does not crash.</text>
+</svg>

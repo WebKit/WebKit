@@ -1,0 +1,4 @@
+
+PASS Page with <embed type=text/html src=undefined>
+PASS Page with <object type=text/html data=undefined>
+

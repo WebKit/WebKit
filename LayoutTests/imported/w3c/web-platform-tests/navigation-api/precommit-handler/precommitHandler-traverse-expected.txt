@@ -1,0 +1,5 @@
+
+PASS precommitHandler for a traverse navigation, reject before commit
+PASS precommitHandler for a traverse navigation, reject after commit
+PASS precommitHandler for a traverse navigation, success
+

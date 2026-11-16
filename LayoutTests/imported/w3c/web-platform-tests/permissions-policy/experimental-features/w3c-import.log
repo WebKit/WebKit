@@ -1,0 +1,43 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/experimental-features/focus-without-user-activation-default-permissions-policy.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/experimental-features/focus-without-user-activation-disabled-by-permissions-policy-cross-origin.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/experimental-features/focus-without-user-activation-disabled-by-permissions-policy.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/experimental-features/focus-without-user-activation-disabled.html
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/experimental-features/focus-without-user-activation-enabled.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/experimental-features/permissions-policy-header-host-wildcard.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/experimental-features/permissions-policy-header-host-wildcard.https.sub.html.sub.headers
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/experimental-features/permissions-policy-header-port-wildcard.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/experimental-features/permissions-policy-header-port-wildcard.https.sub.html.sub.headers
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/experimental-features/permissions-policy-header-scheme-only.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/experimental-features/permissions-policy-header-scheme-only.https.sub.html.sub.headers
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/experimental-features/private-state-token-redemption-default-permissions-policy.tentative.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/experimental-features/private-state-token-redemption-supported-by-permissions-policy.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/experimental-features/unload-allowed-by-default.tentative.window.js
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/experimental-features/unload-allowed-embed.tentative.window.js
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/experimental-features/unload-allowed-frameset.tentative.window.js
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/experimental-features/unload-allowed-headerless.tentative.window.js
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/experimental-features/unload-allowed-object.tentative.window.js
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/experimental-features/unload-disallowed-embed.tentative.window.js
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/experimental-features/unload-disallowed-frameset.tentative.window.js
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/experimental-features/unload-disallowed-headerless.tentative.window.js
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/experimental-features/unload-disallowed-object.tentative.window.js
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/experimental-features/unload-disallowed-subframe.tentative.window.js
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/experimental-features/unload-disallowed.tentative.window.js
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/experimental-features/vertical-scroll-disabled-scrollbar-tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/experimental-features/vertical-scroll-main-frame-manual.tentative.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/permissions-policy/experimental-features/vertical-scroll-scrollintoview.tentative.html

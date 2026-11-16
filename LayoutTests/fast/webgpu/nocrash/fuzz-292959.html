@@ -1,0 +1,103 @@
+<style>
+  :root { background: #102030e0; color: #99ddbbcc; font-size: 15px; }
+</style>
+<script id="shared">
+const log = console.log;
+
+</script>
+<script>
+globalThis.testRunner?.waitUntilDone();
+
+async function window0() {
+let adapter0 = await navigator.gpu.requestAdapter({});
+let promise0 = adapter0.requestDevice({
+  requiredFeatures: ['shader-f16'],
+  requiredLimits: {
+    maxBindGroups: 4,
+  },
+});
+let device0 = await promise0;
+// START
+let commandEncoder73 = device0.createCommandEncoder({});
+let computePassEncoder22 = commandEncoder73.beginComputePass();
+let veryExplicitBindGroupLayout0_ = device0.createBindGroupLayout({
+    entries: [{
+        binding: 0,
+        visibility: GPUShaderStage.FRAGMENT,
+        sampler: {
+            type: 'filtering'
+        }
+    }, {
+        binding: 76,
+        visibility: GPUShaderStage.COMPUTE | GPUShaderStage.VERTEX,
+        sampler: {
+            type: 'filtering'
+        },
+    }, ],
+});
+let pipelineLayout0_ = device0.createPipelineLayout({
+    bindGroupLayouts: [veryExplicitBindGroupLayout0_]
+});
+let shaderModule4 = device0.createShaderModule({
+    code: `
+enable f16;
+
+var<workgroup> vw0: array<f16, 120>;
+
+@compute @workgroup_size(1, 1, 1) fn compute3() {
+  while true {
+    return;
+  }
+  vw0[119] = workgroupUniformLoad(&vw0)[119];
+  vw0[119] = workgroupUniformLoad(&vw0)[119];
+  vw0[119] = workgroupUniformLoad(&vw0)[119];
+}
+`,
+});
+let pipeline9 = device0.createComputePipeline({
+    layout: pipelineLayout0_,
+    compute: {
+        module: shaderModule4,
+        entryPoint: 'compute3'
+    }
+});
+computePassEncoder22.setPipeline(pipeline9);
+let sampler8_ = device0.createSampler({
+    addressModeV: 'repeat',
+    addressModeW: 'mirror-repeat',
+    lodMinClamp: 93.91,
+    lodMaxClamp: 96.57
+});
+let sampler2_ = device0.createSampler({
+    magFilter: 'linear',
+    minFilter: 'linear',
+    mipmapFilter: 'linear',
+    lodMaxClamp: 95.71,
+    maxAnisotropy: 6
+});
+let bindGroup9_ = device0.createBindGroup({
+    layout: veryExplicitBindGroupLayout0_,
+    entries: [{
+        binding: 76,
+        resource: sampler8_
+    }, {
+        binding: 0,
+        resource: sampler2_
+    }],
+});
+computePassEncoder22.setBindGroup(0, bindGroup9_, []);
+computePassEncoder22.dispatchWorkgroups(1, 1);
+computePassEncoder22.end();
+let commandBuffer0 = commandEncoder73.finish();
+device0.queue.submit([commandBuffer0]);
+// END
+  await device0.queue.onSubmittedWorkDone();
+  log('Pass');
+}
+globalThis.testRunner?.dumpAsText();
+globalThis.testRunner?.waitUntilDone();
+onload = async () => {
+  await window0();
+  globalThis.testRunner?.notifyDone();
+};
+</script>

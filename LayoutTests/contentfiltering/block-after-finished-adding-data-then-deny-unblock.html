@@ -1,0 +1,9 @@
+<!DOCTYPE html>
+<script src="resources/contentfiltering.js"></script>
+<script>
+var internals = window.internals;
+if (internals) {
+    var settings = internals.mockContentFilterSettings;
+    testContentFiltering(/* decisionPoint */"afterFinishedAddingData", /* decision */"block", /* decideAfterUnblockRequest */true);
+}
+</script>

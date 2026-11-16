@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<script>
+ function run(){
+     marqueeElement.stop();
+     (async () => {
+         internals.withUserGesture(() => {
+             toFS.addEventListener("fullscreenchange", (event) => { testRunner.notifyDone(); });
+             toFS.requestFullscreen();
+         });
+         await (()=>{
+             return window.caches?.has("");
+         })();
+         divElement2.replaceWith(divElement);
+     })();
+ }
+ if (window.testRunner) {
+     testRunner.dumpAsText();
+     testRunner.waitUntilDone();
+ }
+</script>
+<body onload="run()">
+    <marquee id="marqueeElement"></marquee>
+    <input>
+    <div id="divElement"></div>
+    This test passes if it doesn't crash.
+    <div>
+        <div id="toFS"></div>
+    </div>
+    <div id="divElement2"></div>
+</body>

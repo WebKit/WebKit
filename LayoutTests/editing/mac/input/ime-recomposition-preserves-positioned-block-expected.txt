@@ -1,0 +1,19 @@
+Starting an IME recomposition should preserve the positioned block containing the selected text.
+
+Before recomposition:
+| <div>
+|   id="target"
+|   style="position: relative;"
+|   "<#selection-anchor>日本語<#selection-focus>"
+
+During recomposition:
+| <div>
+|   id="target"
+|   style="position: relative;"
+|   "<#selection-anchor>日本語<#selection-focus>"
+
+After committing recomposition:
+| <div>
+|   id="target"
+|   style="position: relative;"
+|   "日本語<#selection-caret>"

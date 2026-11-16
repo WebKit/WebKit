@@ -1,0 +1,5 @@
+
+PASS Translation transform can move sticky element past sticking point
+PASS Stuck elements can still be moved via translations
+PASS The sticky element should stick before the container is offset by a translation
+

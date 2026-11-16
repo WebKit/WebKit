@@ -1,0 +1,29 @@
+<!-- webkit-test-runner [ WebGPUEnabled=true ] -->
+<script src="../../resources/js-test.js"></script>
+<script>
+window.jsTestIsAsync = true;
+
+async function run() {
+    const adapter = await navigator.gpu.requestAdapter();
+    const device = await adapter.requestDevice();
+    const buffer = device.createBuffer({
+        size: 4,
+        usage: GPUBufferUsage.COPY_SRC | GPUBufferUsage.COPY_DST,
+    });
+
+    device.pushErrorScope("validation");
+
+    const commandEncoder = device.createCommandEncoder();
+    commandEncoder.copyBufferToBuffer(buffer, 0, buffer, 0, 4);
+    commandEncoder.clearBuffer(buffer, 0, 4);
+    commandEncoder.finish();
+
+    const validationError = await device.popErrorScope();
+    if (validationError instanceof GPUValidationError)
+        testPassed("Finishing the invalid command encoder generated a validation error.");
+    else
+        testFailed("Finishing the invalid command encoder should generate a validation error.");
+}
+
+run().catch((error) => testFailed(`Unexpected exception: ${error}`)).finally(finishJSTest);
+</script>

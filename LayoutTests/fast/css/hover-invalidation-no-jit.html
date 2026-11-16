@@ -1,0 +1,16 @@
+<!-- webkit-test-runner [ CSSSelectorJITCompilerEnabled=false ] -->
+<style>
+section:not(:hover) span {
+    visibility: hidden;
+}
+</style>
+<body onload="runTest()">
+<section id=t>
+    Hover me
+    <span>Hello</span>
+</section>
+<script>
+function runTest() {
+    eventSender?.mouseMoveTo(t.offsetLeft + t.offsetWidth / 2, t.offsetTop + t.offsetHeight / 2);
+}
+</script>

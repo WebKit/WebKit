@@ -1,0 +1,28 @@
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+function main() {
+    const div = document.querySelector('div');
+    const select = document.querySelector('select');
+    const outerOption = document.getElementById('outerOption');
+    const innerOption = document.getElementById('innerOption');
+    const container = document.querySelector('span');
+    (() => {
+        let iframe2 = document.createElement('iframe');
+        container.appendChild(iframe2);
+        iframe2.contentWindow.addEventListener('unload', () => {
+            select.options.length = 2;
+        });
+        let iframe1 = document.createElement('iframe');
+        innerOption.appendChild(iframe1);
+        iframe1.contentWindow.addEventListener('unload', () => {
+            outerOption.prepend(container);
+            select.add(outerOption, 1);
+        });
+    })();
+    select.textContent = '';
+    document.body.innerHTML = '<p>This tests inserting a new node to be removed during unload of an iframe. WebKit should not hit a crash.</p>PASS';
+}
+</script>
+<body onload="main()"><span><form><select><option id="innerOption"></option></select></form></span><option id="outerOption"></option></body>

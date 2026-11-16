@@ -1,0 +1,10 @@
+~>>>>>p+++
+
+
+PASS Symbols should be included while moving backward by word
+PASS Symbols should be included while moving forward by word
+PASS Symbols should be included while moving backward by word in textarea element
+PASS Symbols should be included while moving forward by word in textarea element
+PASS Symbols should be included while moving backward by word in input element
+PASS Symbols should be included while moving forward by word in input element
+

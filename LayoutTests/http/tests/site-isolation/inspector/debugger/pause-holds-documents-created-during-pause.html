@@ -1,0 +1,166 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="resources/site-isolation-debugger-test-utilities.js"></script>
+<script>
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Debugger.DocumentsCreatedDuringPause");
+
+    let frameATarget;
+    let frameBTarget;
+
+    function sleep(ms) {
+        return new Promise((resolve) => setTimeout(resolve, ms));
+    }
+
+    async function evaluate(target, expression) {
+        let {result} = await target.RuntimeAgent.evaluate.invoke({expression, objectGroup: "test", returnByValue: true});
+        return result.value;
+    }
+
+    async function pauseFrameA() {
+        let paused = new Promise((resolve) => {
+            let listener = WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.CallFramesDidChange, (event) => {
+                if (event.data.target !== frameATarget || !WI.debuggerManager.dataForTarget(frameATarget).paused)
+                    return;
+                WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.CallFramesDidChange, listener);
+                resolve();
+            });
+        });
+        frameATarget.RuntimeAgent.evaluate.invoke({expression: "pauseHere()", objectGroup: "test"}).catch(() => { });
+        await paused;
+    }
+
+    async function waitForFrameTarget(urlSubstring) {
+        for (let i = 0; i < 50; ++i) {
+            let target = await frameTargetForURLContaining(urlSubstring);
+            if (target)
+                return target;
+            await sleep(100);
+        }
+        return null;
+    }
+
+    function processIdentifier(target) {
+        return target.identifier.split("-").pop();
+    }
+
+    async function expectHeldUntilResumed(target, description) {
+        let ticksBefore = await evaluate(target, "window.ticks");
+        await sleep(300);
+        InspectorTest.expectEqual(await evaluate(target, "window.ticks"), ticksBefore, `${description}'s interval should not advance while frame A is paused.`);
+
+        let resumed = WI.debuggerManager.awaitEvent(WI.DebuggerManager.Event.Resumed);
+        await WI.debuggerManager.resume();
+        await resumed;
+        InspectorTest.expectThat(await waitForExpressionInTarget(target, `window.ticks > ${ticksBefore}`), `${description}'s interval should advance after resuming.`);
+    }
+
+    suite.addTestCase({
+        name: "SiteIsolation.Debugger.DocumentsCreatedDuringPause.Setup",
+        description: "Find the frame targets of two same-origin iframes.",
+        async test() {
+            frameATarget = await frameTargetForURLContaining("same-process-frame.html?A");
+            frameBTarget = await frameTargetForURLContaining("same-process-frame.html?B");
+
+            InspectorTest.expectNotNull(frameATarget, "Should find the frame target for frame A.");
+            InspectorTest.expectNotNull(frameBTarget, "Should find the frame target for frame B.");
+            InspectorTest.expectThat(await waitForExpressionInTarget(frameBTarget, "window.ticks > 2"), "Frame B's interval should be running.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Debugger.DocumentsCreatedDuringPause.NewFrame",
+        description: "A same-process iframe inserted while frame A is paused should be held until frame A resumes.",
+        async test() {
+            await pauseFrameA();
+            await evaluate(InspectorTest.mainFrameTarget, `(() => {
+                let iframe = document.createElement("iframe");
+                iframe.src = "resources/same-process-frame.html?C";
+                document.body.appendChild(iframe);
+            })()`);
+
+            let frameCTarget = await waitForFrameTarget("same-process-frame.html?C");
+            InspectorTest.expectNotNull(frameCTarget, "Should find the frame target for the inserted frame C.");
+            InspectorTest.expectThat(await waitForExpressionInTarget(frameCTarget, "'ticks' in window"), "Frame C's script should have run.");
+
+            // DebuggerManager asks a target that appears during a pause to pause too; cancel that, or frame C pauses once frame A resumes.
+            await frameCTarget.DebuggerAgent.resume();
+
+            await expectHeldUntilResumed(frameCTarget, "Frame C");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Debugger.DocumentsCreatedDuringPause.SiblingNavigation",
+        description: "A same-process sibling that navigates while frame A is paused should hold its new document until frame A resumes.",
+        async test() {
+            await pauseFrameA();
+            await evaluate(InspectorTest.mainFrameTarget, "document.getElementById('frameB').src = 'resources/same-process-frame.html?B2'");
+
+            InspectorTest.expectThat(await waitForExpressionInTarget(frameBTarget, "location.search === '?B2' && 'ticks' in window"), "Frame B should have navigated, and its new script should have run.");
+
+            await expectHeldUntilResumed(frameBTarget, "Frame B's new document");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Debugger.DocumentsCreatedDuringPause.CrossSiteFrameNavigatesIntoProcess",
+        description: "A cross-site iframe that navigates into frame A's process while frame A is paused should hold its new document until frame A resumes.",
+        async test() {
+            let frameDTarget = await waitForFrameTarget("same-process-frame.html?D");
+            InspectorTest.expectNotNull(frameDTarget, "Should find the frame target for the cross-site frame D.");
+            InspectorTest.expectNotEqual(processIdentifier(frameDTarget), processIdentifier(frameATarget), "Frame D should start in a different process than frame A.");
+
+            await pauseFrameA();
+            await evaluate(InspectorTest.mainFrameTarget, "document.getElementById('frameD').src = 'http://127.0.0.1:8000/site-isolation/inspector/debugger/resources/same-process-frame.html?D2'");
+
+            let newFrameDTarget = await waitForFrameTarget("same-process-frame.html?D2");
+            InspectorTest.expectNotNull(newFrameDTarget, "Should find the frame target for frame D's new document.");
+            InspectorTest.expectEqual(processIdentifier(newFrameDTarget), processIdentifier(frameATarget), "Frame D's new document should be in frame A's process.");
+            InspectorTest.expectThat(await waitForExpressionInTarget(newFrameDTarget, "'ticks' in window"), "Frame D's new script should have run.");
+
+            // Cancel the pause request that DebuggerManager sent to the new target, for the same reason as for frame C.
+            await newFrameDTarget.DebuggerAgent.resume();
+
+            await expectHeldUntilResumed(newFrameDTarget, "Frame D's new document");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Debugger.DocumentsCreatedDuringPause.SiblingNavigationWithoutScripts",
+        description: "A same-process sibling that navigates during the pause to a document that cannot run scripts should not stay paused once it loads a normal document after the pause.",
+        async test() {
+            await pauseFrameA();
+            await evaluate(InspectorTest.mainFrameTarget, `(() => {
+                let iframe = document.getElementById("frameB");
+                iframe.sandbox = "allow-same-origin";
+                iframe.src = "resources/same-process-frame.html?sandboxed";
+            })()`);
+            InspectorTest.expectThat(await waitForExpressionInTarget(InspectorTest.mainFrameTarget, "document.getElementById('frameB').contentWindow.location.search === '?sandboxed'"), "Frame B should have navigated to a document that cannot run scripts.");
+
+            let resumed = WI.debuggerManager.awaitEvent(WI.DebuggerManager.Event.Resumed);
+            await WI.debuggerManager.resume();
+            await resumed;
+
+            await evaluate(InspectorTest.mainFrameTarget, `(() => {
+                let iframe = document.getElementById("frameB");
+                iframe.removeAttribute("sandbox");
+                iframe.src = "resources/same-process-frame.html?B3";
+            })()`);
+            InspectorTest.expectThat(await waitForExpressionInTarget(frameBTarget, "location.search === '?B3' && 'testEventCount' in window"), "Frame B should have navigated to a document that runs scripts.");
+
+            await evaluate(InspectorTest.mainFrameTarget, "document.getElementById('frameB').contentDocument.dispatchEvent(new CustomEvent('test-event')), 0");
+            InspectorTest.expectEqual(await evaluate(frameBTarget, "window.testEventCount"), 1, "Frame B's event listener should run.");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+
+<body onload="runTest()">
+<p>Test that while a frame is paused, a same-process document that appears during the pause (a newly inserted iframe, a sibling's navigation, or a cross-site iframe that navigates into the process) is held until the pause ends, and that a frame that navigates to a document that cannot run scripts does not stay paused afterward.</p>
+<iframe id="frameA" src="resources/same-process-frame.html?A"></iframe>
+<iframe id="frameB" src="resources/same-process-frame.html?B"></iframe>
+<iframe id="frameD" src="http://localhost:8000/site-isolation/inspector/debugger/resources/same-process-frame.html?D"></iframe>
+</body>

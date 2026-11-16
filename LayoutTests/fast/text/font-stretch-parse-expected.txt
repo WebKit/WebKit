@@ -1,0 +1,14 @@
+PASS getComputedStyle(document.getElementById('test16')).font is "100 extra-condensed 48px / 49px Helvetica Neue"
+PASS getComputedStyle(document.getElementById('test17')).font is "100 extra-condensed 48px / 49px Helvetica Neue"
+PASS getComputedStyle(document.getElementById('test18')).font is "100 48px / 49px Helvetica Neue"
+PASS getComputedStyle(document.getElementById('test19')).font is "100 48px / 49px Helvetica Neue"
+PASS getComputedStyle(document.getElementById('test20')).font is "italic small-caps 100 extra-expanded 48px / 49px Helvetica Neue"
+PASS document.getElementById('test16').style.font is "100 extra-condensed 48px / 49px Helvetica Neue"
+PASS document.getElementById('test17').style.font is "100 extra-condensed 48px / 49px Helvetica Neue"
+PASS document.getElementById('test18').style.font is "100 48px / 49px Helvetica Neue"
+PASS document.getElementById('test19').style.font is "100 48px / 49px Helvetica Neue"
+PASS document.getElementById('test20').style.font is "italic small-caps 100 extra-expanded 48px / 49px Helvetica Neue"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

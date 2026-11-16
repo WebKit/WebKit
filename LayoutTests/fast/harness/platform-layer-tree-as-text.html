@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<style>
+#blur {
+    position: absolute;
+    width: 200px;
+    height: 200px;
+    left: 100px;
+    top: 100px;
+
+    box-sizing: border-box;
+    border: 1px solid green;
+
+    -webkit-backdrop-filter: blur(50px);
+}
+</style>
+<div id="blur"></div>
+<pre id="log"></pre>
+<script>
+    if (window.testRunner)
+        testRunner.dumpAsText();
+    const log = document.getElementById("log");
+    if (window.internals)
+        log.innerText = window.internals.platformLayerTreeAsText(document.getElementById("blur"));
+</script>

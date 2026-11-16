@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+}
+
+if (window.internals)
+    internals.setMockMediaPlaybackTargetPickerEnabled(true);
+
+const tolerance = 1;
+const firstMousePosition = { x: 200, y: 300 };
+const secondMousePosition = { x: 200, y: 340 };
+
+let frameWindow;
+let mainVideoIsAvailable = false;
+let frameVideoIsAvailable = false;
+
+function finish(result)
+{
+    document.body.textContent = result;
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+function nextFrame()
+{
+    return new Promise(requestAnimationFrame);
+}
+
+async function pickerRectDifferentFrom(previous)
+{
+    while (true) {
+        const rect = await internals.mockMediaPlaybackTargetPickerRect();
+        if (!previous || Math.abs(rect.x - previous.x) > tolerance || Math.abs(rect.y - previous.y) > tolerance)
+            return rect;
+        await nextFrame();
+    }
+}
+
+async function run()
+{
+    if (!window.internals || !window.eventSender) {
+        finish("PASS");
+        return;
+    }
+
+    eventSender.mouseMoveTo(firstMousePosition.x, firstMousePosition.y);
+    const before = await internals.mockMediaPlaybackTargetPickerRect();
+    document.getElementById("mainVideo").webkitShowPlaybackTargetPicker();
+    const mainFrameRect = await pickerRectDifferentFrom(before);
+
+    eventSender.mouseMoveTo(secondMousePosition.x, secondMousePosition.y);
+    frameWindow.postMessage({ type: "showPicker" }, "*");
+    const subframeRect = await pickerRectDifferentFrom(mainFrameRect);
+
+    const expectedDeltaY = secondMousePosition.y - firstMousePosition.y;
+    const deltaX = subframeRect.x - mainFrameRect.x;
+    const deltaY = subframeRect.y - mainFrameRect.y;
+
+    if (Math.abs(deltaX) <= tolerance && Math.abs(Math.abs(deltaY) - expectedDeltaY) <= tolerance) {
+        finish("PASS");
+        return;
+    }
+
+    finish(`FAIL: the picker for the video in the iframe moved by (${deltaX}, ${deltaY}) relative to the picker for `
+        + `the video in the main frame, expected (0, ${expectedDeltaY}) apart from the sign of the vertical offset. `
+        + `The iframe's location in the page was probably not accounted for.`);
+}
+
+function startIfReady()
+{
+    if (mainVideoIsAvailable && frameVideoIsAvailable)
+        run();
+}
+
+addEventListener("message", (event) => {
+    frameWindow = event.source;
+
+    if (event.data.type === "ready") {
+        if (window.internals)
+            internals.setMockMediaPlaybackTargetPickerState("", "DeviceAvailable");
+        return;
+    }
+
+    if (event.data.type === "available") {
+        frameVideoIsAvailable = true;
+        startIfReady();
+    }
+});
+
+addEventListener("load", () => {
+    const mainVideo = document.getElementById("mainVideo");
+
+    mainVideo.addEventListener("webkitplaybacktargetavailabilitychanged", (event) => {
+        if (event.availability !== "available")
+            return;
+        mainVideoIsAvailable = true;
+        startIfReady();
+    }, true);
+});
+</script>
+</head>
+<body style="margin: 0">
+<div style="height: 200px"></div>
+<iframe id="testFrame" frameborder="0" src="http://localhost:8000/media/resources/airplay-picker-rect-in-cross-origin-iframe-frame.html"
+    style="display: block; width: 320px; height: 240px; margin-left: 120px"></iframe>
+<video id="mainVideo" muted playsinline controls src="/media-resources/content/test.mp4" style="width: 320px"></video>
+<p>The AirPlay target picker for a video in a cross-origin iframe should be anchored in top-level page coordinates.
+Showing the picker from the video in the iframe and from the video in the main frame, with the pointer in the same
+place both times, should anchor the picker in the same place.</p>
+</body>
+</html>

@@ -1,0 +1,20 @@
+
+PASS createOffer must detect InvalidStateError synchronously when chain is empty (prerequisite)
+PASS createAnswer must detect InvalidStateError synchronously when chain is empty (prerequisite)
+PASS setParameters must detect InvalidStateError synchronously always when transceiver is stopped
+PASS pc.getStats must detect InvalidAccessError synchronously always
+PASS isOperationsChainEmpty detects empty in stable
+PASS isOperationsChainEmpty detects empty in have-local-offer
+PASS isOperationsChainEmpty detects empty in have-remote-offer
+PASS createAnswer uses operations chain
+PASS setLocalDescription uses operations chain
+PASS setRemoteDescription uses operations chain
+PASS addIceCandidate uses operations chain
+PASS Firing of negotiationneeded does NOT use operations chain
+PASS replaceTrack uses operations chain
+PASS pc.getStats does NOT use the operations chain
+PASS sender.getStats does NOT use the operations chain
+PASS receiver.getStats does NOT use the operations chain
+PASS Pack operations queue with implicit offer and answer
+PASS Negotiate solely by operations queue and signaling state
+

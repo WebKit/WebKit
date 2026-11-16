@@ -1,0 +1,4 @@
+
+FAIL Element loses hover when moved to different position assert_true: expected true got false
+FAIL Hover works immediately after moved assert_true: expected true got false
+

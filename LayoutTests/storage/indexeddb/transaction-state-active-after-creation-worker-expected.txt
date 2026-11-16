@@ -1,0 +1,14 @@
+Starting worker: resources/transaction-state-active-after-creation.js
+[Worker] dbname = "transaction-state-active-after-creation"
+[Worker] indexedDB.deleteDatabase(dbname)
+[Worker] indexedDB.open(dbname)
+[Worker] transaction = db.transaction("store", "readwrite")
+[Worker] transaction.objectStore("store").put("value", "key")
+[Worker] sleep 100ms
+[Worker] database exists
+[Worker] transaction = db.transaction("store", "readwrite")
+[Worker] transaction.objectStore("store").put("value", "key")
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

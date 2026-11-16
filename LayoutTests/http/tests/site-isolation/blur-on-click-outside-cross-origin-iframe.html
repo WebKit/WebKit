@@ -1,0 +1,50 @@
+<!DOCTYPE html><!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<html>
+<head>
+<script src="/js-test-resources/js-test.js"></script>
+<script src="/js-test-resources/ui-helper.js"></script>
+</head>
+<body>
+<iframe id="frame" src="http://localhost:8000/site-isolation/resources/focus-state-iframe.html" onload="runTest()"></iframe>
+<div id="outside" style="width: 300px; height: 100px;"></div>
+<script>
+description("Tests that clicking a non-focusable area of the main frame blurs the focused element inside a cross-origin iframe.");
+jsTestIsAsync = true;
+
+const iframe = document.getElementById("frame");
+let innerInputBlurred;
+let innerInputFocusedOut;
+let innerActiveElement;
+let resolveInnerInputFocused;
+const innerInputFocused = new Promise((resolve) => resolveInnerInputFocused = resolve);
+
+window.addEventListener("message", (event) => {
+    if (event.data.type === "focused")
+        resolveInnerInputFocused();
+    else if (event.data.type === "state") {
+        innerInputBlurred = event.data.blurred;
+        innerInputFocusedOut = event.data.focusedOut;
+        innerActiveElement = event.data.activeElement;
+        shouldBeTrue("innerInputBlurred");
+        shouldBeTrue("innerInputFocusedOut");
+        shouldBeEqualToString("innerActiveElement", "BODY");
+        finishJSTest();
+    }
+});
+
+async function runTest()
+{
+    const iframeRect = iframe.getBoundingClientRect();
+    await UIHelper.activateAt(iframeRect.left + 50, iframeRect.top + 15);
+    await innerInputFocused;
+
+    window.addEventListener("focus", () => {
+        // Query after the focus change has been broadcast, so the query is delivered after it.
+        setTimeout(() => iframe.contentWindow.postMessage({ type: "checkState" }, "http://localhost:8000"), 0);
+    }, { once: true });
+    const outsideRect = document.getElementById("outside").getBoundingClientRect();
+    await UIHelper.activateAt(outsideRect.left + 150, outsideRect.top + 50);
+}
+</script>
+</body>
+</html>

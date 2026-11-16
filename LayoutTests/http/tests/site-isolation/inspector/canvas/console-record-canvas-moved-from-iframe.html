@@ -1,0 +1,92 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script>
+    let iframe;
+    let context;
+
+    function addSameOriginIFrame() {
+        iframe = document.createElement("iframe");
+        iframe.src = "resources/iframe-with-canvas.html";
+        document.body.appendChild(iframe);
+    }
+
+    function createCanvasInIFrame() {
+        let canvas = iframe.contentDocument.createElement("canvas");
+        iframe.contentDocument.body.appendChild(canvas);
+        context = canvas.getContext("2d");
+        context.fillRect(0, 0, 10, 10);
+    }
+
+    function recordAndMoveCanvasToMainFrame() {
+        console.record(context, {singleFrame: true});
+        context.fillRect(1, 1, 1, 1);
+        document.body.appendChild(context.canvas);
+        context.fillRect(2, 2, 2, 2);
+        return context.canvas.ownerDocument === document;
+    }
+
+    function test() {
+        let suite = InspectorTest.createAsyncSuite("SiteIsolation.Canvas.ConsoleRecordCanvasMovedFromIFrame");
+
+        async function awaitCanvasAdded() {
+            let event = await WI.canvasManager.canvasCollection.awaitEvent(WI.Collection.Event.ItemAdded);
+            return event.data.item;
+        }
+
+        function processRecording(recording) {
+            if (recording.ready)
+                return Promise.resolve();
+
+            return new Promise((resolve) => {
+                let listener = recording.addEventListener(WI.Recording.Event.ProcessedAction, () => {
+                    if (!recording.ready)
+                        return;
+
+                    recording.removeEventListener(WI.Recording.Event.ProcessedAction, listener);
+                    resolve();
+                });
+
+                if (!recording.processing)
+                    recording.startProcessing();
+            });
+        }
+
+        suite.addTestCase({
+            name: "SiteIsolation.Canvas.ConsoleRecordCanvasMovedFromIFrame.DrawAfterMove",
+            description: "A recording of a canvas that moves from a same-origin iframe into the main frame should include the actions made after the move.",
+            async test() {
+                let iframeCanvasAddedPromise = awaitCanvasAdded();
+                InspectorTest.evaluateInPage("addSameOriginIFrame()");
+                let iframeCanvas = await iframeCanvasAddedPromise;
+
+                let canvasAddedPromise = awaitCanvasAdded();
+                InspectorTest.evaluateInPage("createCanvasInIFrame()");
+                let canvas = await canvasAddedPromise;
+                InspectorTest.expectEqual(canvas.target, iframeCanvas.target, "Canvas should be reported by the same target as the iframe's other canvas.");
+
+                let recordingStoppedPromise = canvas.awaitEvent(WI.Canvas.Event.RecordingStopped);
+                let moved = await InspectorTest.evaluateInPage("recordAndMoveCanvasToMainFrame()");
+                InspectorTest.expectThat(moved, "Canvas should be owned by the main frame's document.");
+
+                let {recording} = (await recordingStoppedPromise).data;
+                await processRecording(recording);
+
+                let fillRectActions = [];
+                for (let frame of recording.frames) {
+                    for (let action of frame.actions) {
+                        if (action.name === "fillRect")
+                            fillRectActions.push(`fillRect(${action.parameters.join(", ")})`);
+                    }
+                }
+                InspectorTest.log("Recorded actions: " + (fillRectActions.join(", ") || "(none)"));
+                InspectorTest.expectEqual(fillRectActions.length, 2, "Recording should include the actions made before and after the move.");
+            }
+        });
+
+        suite.runTestCasesAndFinish();
+    }
+</script>
+
+<body onload="runTest()">
+    <p>Test that a recording of a canvas includes the actions made after the canvas moves from a same-origin iframe into the main frame under site isolation.</p>
+</body>

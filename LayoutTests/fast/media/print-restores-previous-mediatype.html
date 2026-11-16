@@ -1,0 +1,24 @@
+<html>
+<head>
+<title>Test that print restores previous media type</title>
+<script src="../../resources/js-test-pre.js"></script>
+<script type="text/javascript" charset="utf-8">
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        window.internals.settings.setMediaTypeOverride("handheld");
+    }
+
+    function runTests()
+    {
+        debug("Media type is set to 'handheld' to be different than the default 'screen'");
+        shouldBeTrue("window.matchMedia('handheld').matches");
+        debug("");
+        debug("The page is printed, which changes the media type to 'print', and then back");
+        window.print();
+        shouldBeTrue("window.matchMedia('handheld').matches");
+    }
+</script>
+</head>
+<body onload="runTests()">
+</body>
+</html>

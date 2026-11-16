@@ -1,0 +1,8 @@
+
+PASS UTF-8 module script
+PASS UTF-8 module script with wrong charset in attribute
+PASS UTF-8 module script with wrong charset in Content-Type
+PASS Non-UTF-8 module script
+PASS Non-UTF-8 module script with charset in attribute
+PASS Non-UTF-8 module script with charset in Content-Type
+

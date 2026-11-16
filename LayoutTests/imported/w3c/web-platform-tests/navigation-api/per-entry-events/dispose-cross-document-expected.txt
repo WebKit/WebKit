@@ -1,0 +1,4 @@
+
+
+PASS No dispose events are fired due to cross-document forward pruning
+

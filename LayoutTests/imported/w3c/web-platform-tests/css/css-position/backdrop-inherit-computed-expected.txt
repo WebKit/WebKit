@@ -1,0 +1,6 @@
+
+PASS Inherit custom property
+PASS Apply inherited custom property to background-color
+PASS Implicitly inherited color-scheme
+PASS Explicitly inherited left
+

@@ -1,0 +1,6 @@
+
+PASS "H<U+212A>DF" does not match "HKDF"
+PASS "PB<U+212A>DF2" does not match "PBKDF2"
+PASS "AES-<U+212A>W" does not match "AES-KW"
+PASS "RSASSA-P<U+212A>CS1-V1_5" does not match "RSASSA-PKCS1-V1_5"
+

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html
+     PUBLIC "-//W3C//DTD XHTML 1.1 Strict//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<script src="../../../resources/js-test-pre.js"></script>
+</head>
+<body>
+    <!-- Check that in XHTML documents CSS selectors always use case-sensitive attribute name matching. -->
+    <div id="content">
+        <div style="display: none">
+            <div baR="10" id="bar"></div>
+
+            <svg xmlns="http://www.w3.org/2000/svg">
+                <path id="pa" pathLength="200"/>
+            </svg>
+        </div>
+    </div>
+    <script>
+        var content = document.getElementById("content");
+        function checkMatchingSelector(selector, elementId) {
+            shouldBe("document.querySelector('" + selector + "')", "document.getElementById('" + elementId + "')");
+            shouldBeTrue("document.getElementById('" + elementId + "').matches('" + selector + "')");
+            shouldBeTrue("document.getElementById('" + elementId + "').webkitMatchesSelector('" + selector + "')");
+        }
+
+        function checkNonMatchingSelector(selector) {
+            shouldBeNull("content.querySelector('" + selector + "')");
+        }
+
+        // everything should match case-sensitive
+        checkMatchingSelector('div[baR]', "bar");
+        checkNonMatchingSelector('div[bar]', "bar");
+        checkNonMatchingSelector('div[BAR]', "bar");
+        checkNonMatchingSelector('div[bAR]', "bar");
+        checkMatchingSelector('div[baR="10"]', "bar");
+        checkNonMatchingSelector('div[bar="10"]', "bar");
+        checkNonMatchingSelector('div[BAR="10"]', "bar");
+        checkNonMatchingSelector('div[bAR="10"]', "bar");
+
+        checkMatchingSelector('path[pathLength]', "pa");
+        checkNonMatchingSelector('path[pathlength]');
+        checkNonMatchingSelector('path[pathLengTh]');
+        checkMatchingSelector('path[pathLength="200"]', "pa");
+        checkNonMatchingSelector('path[pathlength="200"]');
+        checkNonMatchingSelector('path[pathLengTh="200"]');
+    </script>
+    <script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

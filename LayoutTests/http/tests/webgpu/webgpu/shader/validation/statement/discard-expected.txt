@@ -1,0 +1,9 @@
+
+PASS :placement:place="compute"
+PASS :placement:place="vertex"
+PASS :placement:place="fragment"
+PASS :placement:place="module"
+PASS :placement:place="subfrag"
+PASS :placement:place="subvert"
+PASS :placement:place="subcomp"
+

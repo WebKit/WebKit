@@ -1,0 +1,78 @@
+<!-- webkit-test-runner [ UsesBackForwardCache=true ] -->
+<!DOCTYPE html>
+<html>
+<body>
+<video id="video" autoplay=""></video>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<script src="routines.js"></script>
+<script>
+t = async_test();
+
+async function waitForConnectionState(pc, state)
+{
+    if (pc.connectionState === state)
+       return;
+    let resolveCallback;
+    const promise = new Promise((resolve, reject) => {
+        resolveCallback = resolve;
+        setTimeout(() => reject('did not go to state ' + state), 5000);
+    });
+    pc.onconnectionstatechange = () => {
+        if (pc.connectionState === state)
+            resolveCallback();
+    };
+    return promise;
+}
+
+window.addEventListener("pageshow", t.step_func(async (event) => {
+    if (!event.persisted)
+        return;
+
+    await waitForConnectionState(t.pc1, "disconnected");
+    waitForConnectionState(t.pc1, "connected").then(() => {
+        t.done();
+    });
+
+    t.pc1.onicecandidate = (e) => t.pc2.addIceCandidate(e.candidate);
+    t.pc2.onicecandidate = (e) => t.pc1.addIceCandidate(e.candidate);
+
+    const offer = await t.pc1.createOffer({ iceRestart: true });
+    await t.pc1.setLocalDescription(offer);
+    await t.pc2.setRemoteDescription(offer);
+
+    const answer = await t.pc2.createAnswer();
+    await t.pc2.setLocalDescription(answer);
+    await t.pc1.setRemoteDescription(answer);
+}));
+
+window.addEventListener("pagehide", t.step_func((event) => {
+    assert_equals(t.pc1.connectionState, "connected");
+    if (!event.persisted)
+        assert_uneached("Page failed to enter page cache");
+
+}));
+
+onload = () => {
+    setTimeout(async () => {
+        const localStream = await navigator.mediaDevices.getUserMedia({ video: true });
+        const stream = await new Promise((resolve, reject) => {
+            createConnections((firstConnection) => {
+                t.pc1 = firstConnection;
+                firstConnection.addTrack(localStream.getVideoTracks()[0], localStream);
+            }, (secondConnection) => {
+                t.pc2 = secondConnection;
+                secondConnection.ontrack = (trackEvent) => {
+                    resolve(trackEvent.streams[0]);
+                };
+            });
+            setTimeout(() => reject("Test timed out"), 5000);
+        });
+        video.srcObject = stream;
+        await video.play();
+
+        window.location = "../fast/history/resources/page-cache-helper-10000ms.html";
+    }, 0);
+};
+</script>
+</html>

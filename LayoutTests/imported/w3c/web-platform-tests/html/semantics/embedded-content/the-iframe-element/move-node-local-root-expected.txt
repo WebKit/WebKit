@@ -1,0 +1,4 @@
+
+
+PASS Event handler-bearing node moved across local roots in the same tab/page
+

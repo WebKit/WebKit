@@ -1,0 +1,265 @@
+# Copyright (C) 2017 Igalia S.L.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1.  Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer.
+# 2.  Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in the
+#     documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS'' AND ANY
+# EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS BE LIABLE FOR ANY
+# DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+# (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+# LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+# ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+# SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+import json
+import logging
+import importlib.abc
+import importlib.util
+import os
+from pathlib import Path
+import sys
+import time
+
+
+class WebDriverSeleniumFinder(importlib.abc.MetaPathFinder):
+    """
+    Custom finder for the WebDriverTests-specific version of selenium
+
+    It ensures we use the specific version require for the tests, which might
+    include unreleased fixes or features, instead of the stable one pulled from
+    AutoInstall by other webkit modules.
+    """
+    def __init__(self):
+        self.selenium_path = Path(__file__).parent.parent.parent.parent.parent / 'WebDriverTests' / 'imported' / 'selenium' / 'py'
+
+    def find_spec(self, fullname, path, target=None):
+        if fullname.startswith('selenium'):
+            module_path = self.selenium_path / fullname.replace('.', '/') / '__init__.py'
+            if module_path.exists():
+                return importlib.util.spec_from_file_location(fullname, module_path)
+
+            file_path = self.selenium_path / (fullname.replace('.', '/') + '.py')
+            if file_path.exists():
+                return importlib.util.spec_from_file_location(fullname, file_path)
+
+            logging.warning('Selenium module %s not found in %s' % (fullname, self.selenium_path))
+        return None
+
+
+sys.meta_path.insert(0, WebDriverSeleniumFinder())
+
+from webkitpy.common.webkit_finder import WebKitFinder
+from webkitpy.results.upload import Upload  # noqa: E402
+from webkitpy.webdriver_tests.webdriver_driver import create_driver
+from webkitpy.webdriver_tests.webdriver_test_expectations import WebDriverTestExpectations  # noqa: E402
+from webkitpy.webdriver_tests.webdriver_test_runner_selenium import WebDriverTestRunnerSelenium
+from webkitpy.webdriver_tests.webdriver_test_runner_w3c import WebDriverTestRunnerW3C
+
+_log = logging.getLogger(__name__)
+
+
+class WebDriverTestRunner(object):
+
+    RUNNER_CLASSES = (WebDriverTestRunnerSelenium, WebDriverTestRunnerW3C)
+
+    # The expected and actual results to upload for each subtest status, which already reflects the test expectations.
+    UPLOAD_RESULTS = {
+        'PASS': (None, None),
+        'FAIL': (None, Upload.Expectations.FAIL),
+        'ERROR': (None, Upload.Expectations.ERROR),
+        'TIMEOUT': (None, Upload.Expectations.TIMEOUT),
+        'XFAIL': (Upload.Expectations.FAIL, Upload.Expectations.FAIL),
+        'XPASS': (Upload.Expectations.FAIL, None),
+        'XPASS_TIMEOUT': (Upload.Expectations.TIMEOUT, None),
+    }
+    UPLOAD_HARNESS_RESULTS = {
+        'CRASH': Upload.Expectations.CRASH,
+        'TIMEOUT': Upload.Expectations.TIMEOUT,
+    }
+
+    def __init__(self, port):
+        self._port = port
+        _log.info('Using port %s' % self._port.name())
+        _log.info('Test configuration: %s' % self._port.test_configuration())
+        if self._port.get_option('site_isolation'):
+            _log.info('Site Isolation enabled')
+
+        self._display_driver = self._port._driver_class()(self._port, worker_number=0, pixel_tests=False, no_timeout=True)
+        if not self._display_driver.check_driver(self._port):
+            raise RuntimeError("Failed to check driver %s" % self._display_driver.__class__.__name__)
+        _log.info('Using display server %s' % (self._display_driver.__class__.__name__))
+
+        driver = create_driver(self._port)
+        _log.info('Using driver at %s' % (driver.binary_path()))
+        _log.info('Browser: %s' % (driver.browser_name()))
+
+        _log.info('Parsing expectations')
+        self._tests_dir = WebKitFinder(self._port.host.filesystem).path_from_webkit_base('WebDriverTests')
+        if self._port.get_option('force'):
+            _log.info('Force mode enabled: Ignoring test expectations')
+            expectations_file = ''
+        else:
+            expectations_file = os.path.join(self._tests_dir, 'TestExpectations.json')
+        build_type = 'Debug' if self._port.get_option('configuration') == 'Debug' else 'Release'
+        self._expectations = WebDriverTestExpectations(self._port, expectations_file, build_type, self._port.architecture())
+        for test in self._expectations._expectations.keys():
+            if not os.path.isfile(os.path.join(self._tests_dir, test)):
+                _log.warning('Test %s does not exist' % test)
+
+        env = self._display_driver._setup_environ_for_test()
+        self._runners = [runner_cls(self._port, driver, env, self._expectations) for runner_cls in self.RUNNER_CLASSES]
+
+    def teardown(self):
+        self._display_driver.stop()
+
+    def run(self, tests=[]):
+        self._start_time = time.time()
+        self._end_time = self._start_time
+        runner_tests = [runner.collect_tests(tests) for runner in self._runners]
+        collected_count = sum([len(tests) for tests in runner_tests])
+        if not collected_count:
+            _log.info('No tests found')
+            return 0
+
+        _log.info('Collected %d test files' % collected_count)
+        for i in range(len(self._runners)):
+            if runner_tests[i]:
+                self._runners[i].run(runner_tests[i])
+        self._end_time = time.time()
+
+    def process_results(self):
+        results = {}
+        expected_count = 0
+        passed_count = 0
+        failures_count = 0
+        timeout_count = 0
+        test_results = []
+        for runner in self._runners:
+            test_results.extend(runner.results())
+        for result in test_results:
+            if result.status == 'OK':
+                for subtest, status, _, _ in result.subtest_results:
+                    if status in ['PASS', 'SKIP', 'XFAIL']:
+                        expected_count += 1
+                    elif status in ['FAIL', 'ERROR']:
+                        results.setdefault('FAIL', []).append(os.path.join(os.path.dirname(result.test), subtest))
+                        failures_count += 1
+                    elif status == 'TIMEOUT':
+                        results.setdefault('TIMEOUT', []).append(os.path.join(os.path.dirname(result.test), subtest))
+                        timeout_count += 1
+                    elif status in ['XPASS', 'XPASS_TIMEOUT']:
+                        results.setdefault(status, []).append(os.path.join(os.path.dirname(result.test), subtest))
+                        passed_count += 1
+            elif result.status == 'ERROR':  # Harness execution error
+                results.setdefault('FAIL', []).append(result.test)
+            else:
+                # FIXME: handle other results.
+                pass
+
+        _log.info('')
+        retval = 0
+
+        if not results:
+            _log.info('All tests ran as expected')
+            return retval
+
+        _log.info('%d tests ran as expected, %d didn\'t\n' % (expected_count, failures_count + timeout_count + passed_count))
+
+        def report(status, actual, expected=None):
+            retval = 0
+            if status not in results:
+                return retval
+
+            tests = results[status]
+            tests_count = len(tests)
+            if expected is None:
+                _log.info('Unexpected %s (%d)' % (actual, tests_count))
+                retval += tests_count
+            else:
+                _log.info('Expected to %s, but %s (%d)' % (expected, actual, tests_count))
+            for test in tests:
+                _log.info('  %s' % test)
+            _log.info('')
+
+            return retval
+
+        report('XPASS', 'passed', 'fail')
+        report('XPASS_TIMEOUT', 'passed', 'timeout')
+        retval += report('FAIL', 'failures')
+        retval += report('TIMEOUT', 'timeouts')
+
+        return retval
+
+    @classmethod
+    def results_for_upload(cls, test_results):
+        results = {}
+        for result in test_results:
+            if result.status != 'OK':
+                results[result.test] = Upload.create_test_result(actual=cls.UPLOAD_HARNESS_RESULTS.get(result.status, Upload.Expectations.ERROR))
+                continue
+            for name, status, _, _ in result.subtest_results:
+                if status in cls.UPLOAD_RESULTS:
+                    expected, actual = cls.UPLOAD_RESULTS[status]
+                    results['%s/%s' % (result.test, name.split('::', 1)[1])] = Upload.create_test_result(expected=expected, actual=actual)
+        return results
+
+    def upload_results(self, options):
+        test_results = [result for runner in self._runners for result in runner.results()]
+        upload = Upload(
+            suite=options.suite or 'webdriver-tests',
+            configuration=self._port.configuration_for_upload(self._port.target_host(0)),
+            details=Upload.create_details(options=options),
+            commits=self._port.commits_for_upload(),
+            run_stats=Upload.create_run_stats(
+                start_time=self._start_time,
+                end_time=self._end_time,
+                tests_skipped=sum(1 for result in test_results for _, status, _, _ in result.subtest_results if status == 'SKIP'),
+            ),
+            results=self.results_for_upload(test_results),
+        )
+        succeeded = True
+        for url in options.report_urls:
+            _log.info('Uploading to %s ...' % url)
+            if not upload.upload(url, log_line_func=_log.info):
+                # The bots look for this message, keep it in sync with FAILED_RESULTS_UPLOAD_MESSAGE in Tools/CISupport/Shared/steps.py.
+                _log.error('Failed to upload test results to %s' % url)
+                succeeded = False
+        return succeeded
+
+    def dump_results_to_json_file(self, output_path):
+        json_results = {}
+        json_results['results'] = []
+        test_results = []
+        for runner in self._runners:
+            test_results.extend(runner.results())
+        for result in test_results:
+            results = {}
+            results['test'] = result.test
+            results['status'] = result.status
+            results['message'] = result.message
+            results['subtests'] = []
+            for name, status, message, backtrace in result.subtest_results:
+                subtest = {}
+                subtest['name'] = name.split('::', 1)[1]
+                subtest['status'] = status
+                subtest['message'] = message
+                if backtrace:
+                    subtest['stack'] = backtrace
+                results['subtests'].append(subtest)
+            json_results['results'].append(results)
+
+        directory = os.path.dirname(output_path)
+        if directory and not os.path.exists(directory):
+            os.makedirs(directory)
+
+        with open(output_path, 'w') as fp:
+            json.dump(json_results, fp)

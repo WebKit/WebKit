@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<body contenteditable></body>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+document.body.focus();
+document.execCommand("InsertHTML", true, "<img></img>");
+document.execCommand("SelectAll");
+document.execCommand("Underline");
+document.execCommand("InsertText", true, "foo");
+document.body.textContent = `The underlined text should be 'foo': '${document.querySelector("U").textContent}'`;
+</script>

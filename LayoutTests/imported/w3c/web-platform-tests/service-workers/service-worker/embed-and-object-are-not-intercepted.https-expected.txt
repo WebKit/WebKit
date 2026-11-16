@@ -1,0 +1,10 @@
+
+PASS initialize global state
+PASS requests for EMBED elements of embedded HTML content should not be intercepted by service workers
+PASS requests for OBJECT elements of embedded HTML content should not be intercepted by service workers
+PASS requests for EMBED elements of an image should not be intercepted by service workers
+PASS requests for OBJECT elements of an image should not be intercepted by service workers
+PASS post-load navigation of OBJECT elements should not be intercepted by service workers
+PASS post-load navigation of EMBED elements should not be intercepted by service workers
+PASS restore global state
+

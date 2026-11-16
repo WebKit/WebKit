@@ -1,0 +1,18 @@
+
+PASS :sized_buffer:size=256
+PASS :sized_buffer:size=512
+PASS :sized_buffer:size=600
+PASS :sized_buffer:size=1024
+PASS :sized_buffer:size=2048
+PASS :unsized_buffer:size=256
+PASS :unsized_buffer:size=512
+PASS :unsized_buffer:size=600
+PASS :unsized_buffer:size=1024
+PASS :unsized_buffer:size=2048
+PASS :max_size_buffer:aspace="workgroup";sized=true
+PASS :max_size_buffer:aspace="uniform";sized=true
+PASS :max_size_buffer:aspace="storage";sized=false
+PASS :max_size_buffer:aspace="storage";sized=true
+PASS :max_size_buffer:aspace="ro_storage";sized=false
+PASS :max_size_buffer:aspace="ro_storage";sized=true
+

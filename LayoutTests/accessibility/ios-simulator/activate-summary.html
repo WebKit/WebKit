@@ -1,0 +1,56 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<details id="custom-summary-details">
+    <summary>Custom summary text</summary>
+    <p>Extra details one</p>
+</details>
+
+<details id="default-summary-details">
+    <p>Extra details two</p>
+</details>
+
+<script>
+var output = "This test ensures that the accessibilityActivate API properly toggles details element open state.\n\n";
+
+var axCustomSummary, axDefaultSummary, displayContentsSummary, searchResult;
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    const container = accessibilityController.rootElement;
+    while (!axCustomSummary || !axDefaultSummary) {
+        searchResult = container.uiElementForSearchPredicate(searchResult, true, "AXAnyTypeSearchKey", "", false);
+        if (!searchResult)
+            break;
+        let description = searchResult.description;
+        if (description.includes("Custom summary text"))
+            axCustomSummary = searchResult;
+        // If the author does not provide a <summary> element, WebKit will create one with text "Details".
+        else if (description.includes("Details"))
+            axDefaultSummary = searchResult;
+    }
+
+    output += expect("axCustomSummary.role", "'StaticText'");
+    output += expect("axDefaultSummary.role", "'StaticText'");
+    output += expect("document.getElementById('custom-summary-details').open", "false");
+    output += expect("document.getElementById('default-summary-details').open", "false");
+
+    axCustomSummary.press();
+    axDefaultSummary.press();
+    setTimeout(async function() {
+        output += await expectAsync("document.getElementById('custom-summary-details').open", "true");
+        output += await expectAsync("document.getElementById('default-summary-details').open", "true");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>
+ 

@@ -1,0 +1,14 @@
+This test checks that the Permissions API on-change event works.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+No permission state is set
+PASS permissionStatusState is "prompt"
+Permission has been granted
+PASS permissionStatusState is "granted"
+PASS onChangeCalled became true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

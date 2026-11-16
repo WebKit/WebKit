@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<script src="/js-test-resources/js-test.js"></script>
+<script>
+
+description('This tests the default resource timing buffer size. It should be 250.');
+jsTestIsAsync = true;
+
+for (let i = 0; i < 300; ++i)
+    document.write(`<img src="../../resources/square100.png?${i}">`);
+
+window.addEventListener("load", function() {
+    shouldBe('performance.getEntriesByType("resource").length', '250');
+    finishJSTest();
+});
+</script>
+</body>
+</html>

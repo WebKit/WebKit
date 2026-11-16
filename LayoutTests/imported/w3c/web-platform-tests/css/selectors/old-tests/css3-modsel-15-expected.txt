@@ -1,0 +1,6 @@
+This list item should have a green background. because its ID is "t1"
+This list item should have a green background. because its ID is "t2"
+This list item should have a green background. because the inner SPAN does not match "#t4"
+
+PASS ID selectors match correctly
+

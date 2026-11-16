@@ -1,0 +1,4 @@
+ (repaint rects
+  (rect 78 28 7 7)
+)
+

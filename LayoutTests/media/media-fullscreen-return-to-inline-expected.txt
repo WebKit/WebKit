@@ -1,0 +1,25 @@
+
+Test that a <video> pauses after exiting fullscreen when the internal property "allowsInlineMediaPlaybackAfterFullscreen" is false.
+
+RUN(video.src = findMediaFile("video", "content/test"))
+EVENT(canplaythrough)
+RUN(video.play())
+EVENT(webkitpresentationmodechanged)
+EXPECTED (internals.isChangingPresentationMode(video) == 'false') OK
+EXPECTED (video.webkitDisplayingFullscreen == 'true') OK
+RUN(video.webkitExitFullscreen())
+EVENT(webkitpresentationmodechanged)
+EXPECTED (internals.isChangingPresentationMode(video) == 'false') OK
+EXPECTED (video.webkitDisplayingFullscreen == 'false') OK
+EXPECTED (video.paused == 'true') OK
+RUN(video.play())
+EVENT(webkitpresentationmodechanged)
+EXPECTED (internals.isChangingPresentationMode(video) == 'false') OK
+EXPECTED (video.webkitDisplayingFullscreen == 'true') OK
+RUN(video.webkitExitFullscreen())
+EVENT(webkitpresentationmodechanged)
+EXPECTED (internals.isChangingPresentationMode(video) == 'false') OK
+EXPECTED (video.webkitDisplayingFullscreen == 'false') OK
+EXPECTED (video.paused == 'false') OK
+END OF TEST
+

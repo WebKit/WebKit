@@ -1,0 +1,18 @@
+This test ensures we don't crash trying to update the modal node when a text node has recently been destroyed, and relations are dirty.
+
+
+{StaticText AXLabel: Some text}
+
+{StaticText AXLabel: A paragraph}
+
+{StaticText AXLabel: Foo}
+
+{StaticText AXLabel: More text}
+
+{#div Group}
+PASS: No crash
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

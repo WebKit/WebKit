@@ -1,0 +1,4 @@
+AnchorTagWithHREF
+
+FAIL Attribute href is missing after copy paste of anchor tag promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating 'pastedAnchor.hasAttribute')"
+

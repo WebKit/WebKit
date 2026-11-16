@@ -1,0 +1,11 @@
+This test ensures that the text entry trait is exposed for text controls with a combobox role.
+
+PASS: accessibilityController.accessibleElementById('textarea').hasTextEntryTrait === true
+PASS: accessibilityController.accessibleElementById('text-input').hasTextEntryTrait === true
+PASS: accessibilityController.accessibleElementById('submit-input').hasTextEntryTrait === false
+PASS: accessibilityController.accessibleElementById('select').hasTextEntryTrait === false
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

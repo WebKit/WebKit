@@ -1,0 +1,31 @@
+<!-- webkit-test-runner [ LayoutFormattingContextEnabled=true InlineFormattingContextIntegrationEnabled=false ] -->
+<style>
+.left {
+  float: left;
+  width: 100px;
+  height: 40px;
+}
+
+.right {
+  float: right;
+  width: 50px;
+  height: 10px;
+}
+
+.avoider {
+  width: auto;
+  height: 60px;
+  background-color: green;
+}
+</style>
+<div style="width: 300px; height: 300px; padding: 1px;">
+  <div class=left></div>
+  <div class=right></div>
+  <div class=avoider style="clear: left"></div>
+  <div class=left style="height: 60px"></div>
+  <div class=right style="height: 40px"></div>
+  <div class=avoider style="clear: right"></div>
+  <div class=left style="height: 40px"></div>
+  <div class=right style="height: 30px"></div>
+  <div class=avoider style="clear: both"></div>
+</div>

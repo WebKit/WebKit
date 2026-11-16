@@ -1,0 +1,31 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Testing H.264 high with various resolutions</title>
+        <script src="../resources/testharness.js"></script>
+        <script src="../resources/testharnessreport.js"></script>
+    </head>
+    <body>
+        <video id="video" autoplay=""></video>
+        <script src ="routines.js"></script>
+        <script src="h264-profile-tests.js"></script>
+        <script>
+const resolutions = [
+ [320, 240],
+ [640, 480],
+ [1024, 768],
+ [1280, 960],
+ [1600, 1200],
+
+ [320, 180],
+ [640, 360],
+ [1280, 720],
+ [1920, 1080]
+];
+
+testProfile(setH264HighCodec, "High video exchange");
+testResolutions(resolutions);
+        </script>
+    </body>
+</html>

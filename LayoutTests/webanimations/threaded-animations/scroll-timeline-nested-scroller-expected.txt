@@ -1,0 +1,3 @@
+
+PASS The timeline current time updates as its source is scrolled with a nested scroller
+

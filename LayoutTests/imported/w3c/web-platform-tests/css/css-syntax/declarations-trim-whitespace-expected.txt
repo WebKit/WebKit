@@ -1,0 +1,11 @@
+
+PASS --foo-1:bar;
+PASS --foo-2: bar;
+PASS --foo-3:bar ;
+PASS --foo-4: bar ;
+PASS --foo-5: bar !important;
+PASS --foo-6: bar !important ;
+PASS --foo-7:bar!important;
+PASS --foo-8:bar!important ;
+PASS --foo-9:bar (then ws until end of rule)
+foo

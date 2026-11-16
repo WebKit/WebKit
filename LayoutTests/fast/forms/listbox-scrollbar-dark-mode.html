@@ -1,0 +1,32 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ MockScrollbarsEnabled=false ] -->
+<html>
+<head>
+<style>
+
+select {
+    color-scheme: dark;
+
+    color: black;
+    background-color: red;
+    border: 1px solid black;
+}
+
+</style>
+<script>
+
+if (window.internals)
+    internals.setUsesOverlayScrollbars(false);
+
+</script>
+</head>
+<body>
+<select multiple>
+<option>Apple</option>
+<option>Banana</option>
+<option>Kiwi</option>
+<option>Orange</option>
+<option>Pear</option>
+<option>Strawberry</option>
+</select>
+</body>
+</html>

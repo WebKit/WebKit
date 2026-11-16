@@ -1,0 +1,78 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/accessibility-helper.js"></script>
+</head>
+<body>
+
+<iframe id="iframe" onload="startTest();" src="data:text/html,<body><label for='textarea'>Tell us your story:</label><textarea id='textarea' rows='3' cols='40'>It was a dark and stormy night.</textarea></body>"></iframe>
+
+<script>
+async function startTest() {
+    if (!window.accessibilityController)
+        return;
+
+    var output = "Tests that setting AXSelectedTextMarkerRange on a web area correctly moves the selection inside a textarea in an iframe. This exercises the setSelectedVisiblePositionRange code path where the accessibility object is the web area but the target position is inside a textarea's shadow DOM.\n\n";
+    window.jsTestIsAsync = true;
+
+    // Focus the textarea so it's editable and ready for selection changes.
+    var iframe = document.getElementById("iframe");
+    textareaElement = iframe.contentDocument.getElementById("textarea");
+    textareaElement.focus();
+
+    await waitFor(() => {
+        return accessibilityController.focusedElement.role == "AXRole: AXTextArea";
+    });
+
+    rootWebArea = accessibilityController.rootElement.childAtIndex(0);
+    output += expect("rootWebArea.role", "'AXRole: AXWebArea'");
+
+    textarea = accessibilityController.accessibleElementById("textarea");
+    output += expect("textarea.role", "'AXRole: AXTextArea'");
+
+    // Get the textarea's text range and create markers at specific offsets.
+    fullRange = textarea.textMarkerRangeForElement(textarea);
+
+    // Move caret to textarea offset 10 by walking from the textarea's start marker.
+    var marker = textarea.startTextMarkerForTextMarkerRange(fullRange);
+    for (var i = 0; i < 10; i++)
+        marker = textarea.nextTextMarker(marker);
+    var rangeAtOffset10 = rootWebArea.textMarkerRangeForMarkers(marker, marker);
+
+    // Set the selected text marker range on the top-level WEB AREA.
+    // The markers point to positions inside the iframe's textarea shadow DOM.
+    // Without the fix in setSelectedVisiblePositionRange, this fails because
+    // contains<ComposedTree> returns false for cross-document positions.
+    rootWebArea.setSelectedTextMarkerRange(rangeAtOffset10);
+    await waitFor(() => {
+        return textareaElement.selectionStart == 10;
+    });
+    output += expect("textareaElement.selectionStart", "10");
+    output += expect("textareaElement.selectionEnd", "10");
+
+    // Select "dark" (textarea offsets 9-13).
+    var startMarker = textarea.startTextMarkerForTextMarkerRange(fullRange);
+    for (var i = 0; i < 9; i++)
+        startMarker = textarea.nextTextMarker(startMarker);
+    var endMarker = startMarker;
+    for (var i = 0; i < 4; i++)
+        endMarker = textarea.nextTextMarker(endMarker);
+    var darkRange = rootWebArea.textMarkerRangeForMarkers(startMarker, endMarker);
+
+    rootWebArea.setSelectedTextMarkerRange(darkRange);
+    await waitFor(() => {
+        return textareaElement.selectionStart == 9 && textareaElement.selectionEnd == 13;
+    });
+    output += expect("textareaElement.selectionStart", "9");
+    output += expect("textareaElement.selectionEnd", "13");
+
+    selectedRange = textarea.selectedTextMarkerRange();
+    output += expect("textarea.stringForTextMarkerRange(selectedRange)", "'dark'");
+
+    debug(output);
+    finishJSTest();
+}
+</script>
+</body>
+</html>

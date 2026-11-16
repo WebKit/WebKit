@@ -1,0 +1,242 @@
+/*
+ * Copyright (C) 2013 Adobe Systems Incorporated. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ *
+ * 1. Redistributions of source code must retain the above
+ *    copyright notice, this list of conditions and the following
+ *    disclaimer.
+ * 2. Redistributions in binary form must reproduce the above
+ *    copyright notice, this list of conditions and the following
+ *    disclaimer in the documentation and/or other materials
+ *    provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
+ * FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+ * COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+ * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+ * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+ * OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#include "config.h"
+#include "BoxLayoutShape.h"
+
+#include "BorderShape.h"
+#include "PolygonLayoutShape.h"
+#include "RenderBoxInlines.h"
+#include "RenderElementInlines.h"
+#include <wtf/MathExtras.h>
+
+namespace WebCore {
+
+static inline LayoutUnit adjustRadiusForMarginBoxShape(LayoutUnit radius, LayoutUnit margin)
+{
+    // This algorithm is defined in the CSS Shapes specifcation
+    if (!margin)
+        return radius;
+
+    LayoutUnit ratio = radius / margin;
+    if (ratio < 1)
+        return LayoutUnit(radius + (margin * (1 + pow(ratio - 1, 3.0))));
+
+    return radius + margin;
+}
+
+static inline LayoutSize computeMarginBoxShapeRadius(const LayoutSize& radius, const LayoutSize& adjacentMargins)
+{
+    return LayoutSize(adjustRadiusForMarginBoxShape(radius.width(), adjacentMargins.width()),
+        adjustRadiusForMarginBoxShape(radius.height(), adjacentMargins.height()));
+}
+
+static inline LayoutRoundedRect::Radii computeMarginBoxShapeRadii(const LayoutRoundedRect::Radii& radii, const RenderBox& renderer)
+{
+    return LayoutRoundedRect::Radii(computeMarginBoxShapeRadius(radii.topLeft(), LayoutSize(renderer.marginLeft(), renderer.marginTop())),
+        computeMarginBoxShapeRadius(radii.topRight(), LayoutSize(renderer.marginRight(), renderer.marginTop())),
+        computeMarginBoxShapeRadius(radii.bottomLeft(), LayoutSize(renderer.marginLeft(), renderer.marginBottom())),
+        computeMarginBoxShapeRadius(radii.bottomRight(), LayoutSize(renderer.marginRight(), renderer.marginBottom())));
+}
+
+LayoutRoundedRect BoxShapeGeometry::roundedRect() const
+{
+    return edge == Edge::Inner ? borderShape.deprecatedInnerRoundedRect() : borderShape.deprecatedRoundedRect();
+}
+
+Vector<FloatPoint> BoxShapeGeometry::contour() const
+{
+    return edge == Edge::Inner ? borderShape.innerShapeAsPolygon() : borderShape.outerShapeAsPolygon();
+}
+
+static BoxShapeGeometry computeHalfBorderBoxGeometry(const RenderBox& renderer)
+{
+    auto borderShape = BorderShape::shapeForBorderRect(renderer.usedStyle(), renderer.borderBoxRect());
+    auto& borderWidths = borderShape.borderWidths();
+    auto halfTop = borderWidths.top() / 2;
+    auto halfRight = borderWidths.right() / 2;
+    auto halfBottom = borderWidths.bottom() / 2;
+    auto halfLeft = borderWidths.left() / 2;
+
+    auto borderRect = borderShape.borderRect();
+    LayoutRect halfRect { borderRect.x() + halfLeft, borderRect.y() + halfTop, borderRect.width() - halfLeft - halfRight, borderRect.height() - halfTop - halfBottom };
+    RectEdges<LayoutUnit> halfWidths { halfTop, halfRight, halfBottom, halfLeft };
+
+    if (!borderShape.hasNonZeroRadii())
+        return { BorderShape { halfRect, halfWidths }, BoxShapeGeometry::Edge::Outer };
+
+    // The radius at the half-border-box edge is midway between the outer and inner (padding edge) radii.
+    // FIXME: css-shapes-1 does not define the corner radii for half-border-box; this follows the
+    // padding-box rule. See https://github.com/w3c/csswg-drafts/issues/14794.
+    auto shrinkRadius = [](const LayoutSize& radius, LayoutUnit halfHorizontal, LayoutUnit halfVertical) {
+        return LayoutSize { std::max(0_lu, radius.width() - halfHorizontal), std::max(0_lu, radius.height() - halfVertical) };
+    };
+    auto& outerRadii = borderShape.radii();
+    LayoutRoundedRect::Radii radii {
+        shrinkRadius(outerRadii.topLeft(), halfLeft, halfTop),
+        shrinkRadius(outerRadii.topRight(), halfRight, halfTop),
+        shrinkRadius(outerRadii.bottomLeft(), halfLeft, halfBottom),
+        shrinkRadius(outerRadii.bottomRight(), halfRight, halfBottom)
+    };
+    auto cornerCurvatures = borderShape.cornerCurvatures();
+    radii.scale(BorderShape::constrainedRadiiScale(halfRect, radii, cornerCurvatures));
+    if (!radii.areRenderableInRect(halfRect))
+        radii.makeRenderableInRect(halfRect);
+    return { BorderShape { halfRect, halfWidths, radii, cornerCurvatures }, BoxShapeGeometry::Edge::Outer };
+}
+
+BoxShapeGeometry computeGeometryForBoxShape(CSSBoxType box, const RenderBox& renderer)
+{
+    CheckedRef style = renderer.style();
+    switch (box) {
+    case CSSBoxType::MarginBox: {
+        auto marginBox = renderer.marginBoxRect();
+        if (!style->border().hasBorderRadius())
+            return { BorderShape { marginBox, { } }, BoxShapeGeometry::Edge::Outer };
+
+        auto borderShape = BorderShape::shapeForBorderRect(renderer.usedStyle(), renderer.borderBoxRect());
+        auto cornerCurvatures = borderShape.cornerCurvatures();
+        auto radii = computeMarginBoxShapeRadii(borderShape.radii(), renderer);
+        // Expanding the radii for the margins can push concave corners into each other, so re-run the
+        // opposite-corner constraint rather than just the adjacent-corner one.
+        radii.scale(BorderShape::constrainedRadiiScale(marginBox, radii, cornerCurvatures));
+        if (!radii.areRenderableInRect(marginBox))
+            radii.makeRenderableInRect(marginBox);
+        return { BorderShape { marginBox, { }, radii, cornerCurvatures }, BoxShapeGeometry::Edge::Outer };
+    }
+    case CSSBoxType::HalfBorderBox:
+        return computeHalfBorderBoxGeometry(renderer);
+    case CSSBoxType::PaddingBox:
+        return { BorderShape::shapeForBorderRect(renderer.usedStyle(), renderer.borderBoxRect()), BoxShapeGeometry::Edge::Inner };
+    // fill-box compute to content-box for HTML elements.
+    case CSSBoxType::FillBox:
+    case CSSBoxType::ContentBox:
+        return { renderer.borderShapeForContentClipping(renderer.borderBoxRect()), BoxShapeGeometry::Edge::Inner };
+    // stroke-box, view-box compute to border-box for HTML elements.
+    case CSSBoxType::BorderBox:
+    case CSSBoxType::StrokeBox:
+    case CSSBoxType::ViewBox:
+    case CSSBoxType::BoxMissing:
+        return { BorderShape::shapeForBorderRect(renderer.usedStyle(), renderer.borderBoxRect()), BoxShapeGeometry::Edge::Outer };
+    }
+
+    ASSERT_NOT_REACHED();
+    return { BorderShape::shapeForBorderRect(renderer.usedStyle(), renderer.borderBoxRect()), BoxShapeGeometry::Edge::Outer };
+}
+
+LayoutRect BoxLayoutShape::shapeMarginLogicalBoundingBox() const
+{
+    FloatRect marginBounds(m_bounds.rect());
+    if (shapeMargin() > 0)
+        marginBounds.inflate(shapeMargin());
+    return static_cast<LayoutRect>(marginBounds);
+}
+
+FloatRoundedRect BoxLayoutShape::shapeMarginBounds() const
+{
+    auto shapeMargin = this->shapeMargin();
+    if (!shapeMargin)
+        return m_bounds;
+
+    auto marginBounds = FloatRoundedRect { m_bounds };
+    marginBounds.inflate(shapeMargin);
+    auto expandedRadii = marginBounds.radii();
+    expandedRadii.expandEvenIfZero(shapeMargin);
+    marginBounds.setRadii(expandedRadii);
+    return marginBounds;
+}
+
+LineSegment BoxLayoutShape::getExcludedInterval(LayoutUnit logicalTop, LayoutUnit logicalHeight) const
+{
+    const FloatRoundedRect& marginBounds = shapeMarginBounds();
+    if (marginBounds.isEmpty() || !lineOverlapsShapeMarginBounds(logicalTop, logicalHeight))
+        return LineSegment();
+
+    float y1 = logicalTop;
+    float y2 = logicalTop + logicalHeight;
+    const FloatRect& rect = marginBounds.rect();
+
+    if (!m_contour.isEmpty()) {
+        FloatShapeInterval excludedInterval;
+        for (size_t index = 0; index < m_contour.size(); ++index) {
+            auto vertex = m_contour[index];
+            // Corner shapes can result in some degenerate contours, e.g. notch with border-radius: 50%.
+            // The infinitely thin arm still needs to be taken into account.
+            if (!shapeMargin() && vertex.y() >= y1 && vertex.y() <= y2)
+                excludedInterval.unite({ vertex.x(), vertex.x() });
+            uniteEdgeExcludedInterval(excludedInterval, vertex, m_contour[(index + 1) % m_contour.size()], y1, y2, shapeMargin());
+        }
+
+        if (excludedInterval.isUndefined())
+            return LineSegment();
+        return LineSegment(excludedInterval.x1(), excludedInterval.x2());
+    }
+
+    if (!marginBounds.hasNonZeroRadii())
+        return LineSegment(rect.x(), rect.maxX());
+
+    float topCornerMaxY = std::max<float>(marginBounds.topLeftCorner().maxY(), marginBounds.topRightCorner().maxY());
+    float bottomCornerMinY = std::min<float>(marginBounds.bottomLeftCorner().y(), marginBounds.bottomRightCorner().y());
+
+    if (topCornerMaxY <= bottomCornerMinY && y1 <= topCornerMaxY && y2 >= bottomCornerMinY)
+        return LineSegment(rect.x(), rect.maxX());
+
+    float x1 = rect.maxX();
+    float x2 = rect.x();
+    float minXIntercept;
+    float maxXIntercept;
+
+    if (y1 <= marginBounds.topLeftCorner().maxY() && y2 >= marginBounds.bottomLeftCorner().y())
+        x1 = rect.x();
+
+    if (y1 <= marginBounds.topRightCorner().maxY() && y2 >= marginBounds.bottomRightCorner().y())
+        x2 = rect.maxX();
+
+    if (marginBounds.xInterceptsAtY(y1, minXIntercept, maxXIntercept)) {
+        x1 = std::min<float>(x1, minXIntercept);
+        x2 = std::max<float>(x2, maxXIntercept);
+    }
+
+    if (marginBounds.xInterceptsAtY(y2, minXIntercept, maxXIntercept)) {
+        x1 = std::min<float>(x1, minXIntercept);
+        x2 = std::max<float>(x2, maxXIntercept);
+    }
+
+    ASSERT(x2 >= x1);
+    return LineSegment(x1, x2);
+}
+
+void BoxLayoutShape::buildDisplayPaths(DisplayPaths& paths) const
+{
+    paths.shape.addRoundedRect(m_bounds, PathRoundedRect::Strategy::PreferBezier);
+    if (shapeMargin())
+        paths.marginShape.addRoundedRect(shapeMarginBounds(), PathRoundedRect::Strategy::PreferBezier);
+}
+
+} // namespace WebCore

@@ -1,0 +1,3 @@
+
+PASS Shorthand properties expand to longhand counterparts in computed keyframes.
+

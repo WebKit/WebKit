@@ -1,0 +1,4 @@
+
+PASS inherit keyword on a non-inherited custom property tracks the parent
+PASS inherit() on a non-inherited custom property tracks the parent
+

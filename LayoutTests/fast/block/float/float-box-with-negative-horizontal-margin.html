@@ -1,0 +1,50 @@
+<style>
+.container {
+  width: 250px;
+  color: transparent;
+}
+
+.float {
+  margin-left: -1px;
+  float: left;
+}
+
+.float:nth-child(1) {
+  background-color: green;
+  width: 30px;
+  height: 20px;
+}
+
+.float:nth-child(2) {
+  background-color: blue;
+  width: 100px;
+  height: 80px;
+}
+
+.float:nth-child(3) {
+  background-color: grey;
+  width: 30px;
+  height: 20px;
+}
+
+.float:nth-child(4) {
+  background-color: red;
+  width: 100px;
+  height: 20px;
+}
+
+.float:nth-child(5) {
+  background-color: cyan;
+  width: 5px;
+  height: 20px;
+}
+
+</style>
+<div class=container>
+  <div class=float></div>
+  <div class=float></div>
+  <div class=float></div>
+  <div class=float></div>
+  <div class=float></div>
+  PASS if floats don't overlap
+</div>

@@ -1,0 +1,40 @@
+<!doctype html>
+<!-- 
+    Platform-specific copy of imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/back-forward-opaque-origin.html
+    
+    UPSTREAM DIFFERENCE: Original uses fetch_tests_from_window(i.contentWindow) but that fails
+    due to CORS issues. The iframe cannot load testharness.js or other dependencies due to 
+    "Origin null is not allowed".
+    
+    This version uses postMessage communication as a workaround while maintaining the same test.
+    The iframe is modified to inline all test dependencies to avoid cross-origin resource loading.
+    
+    rdar://158265130
+-->
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+
+<iframe id="i" sandbox="allow-scripts" src="resources/back-forward-opaque-origin-page.html"></iframe>
+
+<script>
+// UPSTREAM: fetch_tests_from_window(i.contentWindow);
+// WORKAROUND: Use postMessage due to CORS blocking testharness.js in iframe
+async_test(function(t) {
+  window.addEventListener('message', function(e) {
+    if (e.data && e.data.type === 'test-complete') {
+      if (e.data.success) {
+        t.done();
+      } else {
+        t.step(function() {
+          assert_unreached("Test failed: " + (e.data.error || 'Unknown error'));
+        });
+      }
+    }
+  });
+  
+  // Set a timeout in case the iframe never sends a message
+  t.step_timeout(function() {
+    assert_unreached("Test timed out waiting for iframe");
+  }, 10000);
+}, "navigation.back()/forward() in an opaque origin iframe");
+</script>

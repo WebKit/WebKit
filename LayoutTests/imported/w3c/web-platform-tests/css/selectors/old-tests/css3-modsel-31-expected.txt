@@ -1,0 +1,22 @@
+This paragraph should have green background
+
+But this address is here only to fill space in the dom..
+So does this paragraph !
+
+And so does this one too.
+
+First definition term
+First definition
+Second definition term
+Second definition
+Third definition term that should have green background
+Third definition that should have green background
+Fourth definition term
+Fourth definition
+Fifth definition term
+Fifth definition
+Sixth definition term that should have green background
+Sixth definition that should have green background
+
+PASS nth-last-of-type
+

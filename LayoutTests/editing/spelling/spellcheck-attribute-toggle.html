@@ -1,0 +1,118 @@
+<!DOCTYPE html><!-- webkit-test-runner [ spellCheckingDots=true ] -->
+<html>
+<head>
+<script src="../../resources/ui-helper.js"></script>
+<style>
+
+::spelling-error {
+    color: red;
+    text-decoration-line: underline;
+    text-decoration-style: solid;
+    text-decoration-color: blue;
+}
+
+</style>
+</head>
+
+<body>
+
+<div>
+    <input spellcheck="false" class="insert-text toggle-spellcheck">
+</div>
+
+<div>
+    <input spellcheck="false" class="toggle-spellcheck" value="mitake">
+</div>
+
+<div spellcheck="false" class="toggle-spellcheck">
+    <input class="insert-text">
+</div>
+
+<div spellcheck="false" class="toggle-spellcheck">
+    <input spellcheck="false" class="insert-text">
+</div>
+
+<div spellcheck="false" class="toggle-spellcheck">
+    <div spellcheck="false">
+        <input class="insert-text">
+    </div>
+</div>
+
+<div spellcheck="false">
+    <div spellcheck="false" class="toggle-spellcheck">
+        <input class="insert-text">
+    </div>
+</div>
+
+<div spellcheck="false" class="toggle-spellcheck">
+    <input class="insert-text">
+    <input class="insert-text">
+    <input value="mitake">
+</div>
+
+<div>
+    <input spellcheck="true" class="insert-text">
+</div>
+
+<div>
+    <input spellcheck="true" class="insert-text toggle-spellcheck">
+</div>
+
+<div spellcheck="true" class="toggle-spellcheck">
+    <input class="insert-text">
+</div>
+
+<div spellcheck="true" class="toggle-spellcheck">
+    <input spellcheck="true" class="insert-text">
+</div>
+
+<div spellcheck="true" class="toggle-spellcheck">
+    <div spellcheck="true">
+        <input class="insert-text">
+    </div>
+</div>
+
+<div spellcheck="true" class="toggle-spellcheck">
+    <input class="insert-text">
+    <input class="insert-text">
+    <input spellcheck="true" class="insert-text">
+</div>
+
+<script>
+
+const incorrectPhrase = "mitake";
+
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+if (window.internals)
+    internals.setContinuousSpellCheckingEnabled(true);
+
+async function runTest()
+{
+    const inputs = document.querySelectorAll(".insert-text");
+    for (const input of inputs) {
+        input.focus();
+        document.execCommand("InsertText", false, incorrectPhrase);
+        input.blur();
+    }
+
+    const elementsToToggle = document.querySelectorAll(".toggle-spellcheck");
+    for (const element of elementsToToggle)
+        element.spellcheck = !element.spellcheck;
+
+    await UIHelper.ensurePresentationUpdate();
+
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+UIHelper.setSpellCheckerResults({
+    "mitake" : [
+        { type : "spelling", from : 0, to : 6 },
+    ]
+}).then(runTest);
+
+</script>
+</body>
+</html>

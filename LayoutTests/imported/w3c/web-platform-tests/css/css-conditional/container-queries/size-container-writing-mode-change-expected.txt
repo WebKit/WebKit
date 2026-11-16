@@ -1,0 +1,5 @@
+Should be green
+
+PASS Initial horizontal writing-mode
+PASS Vertical writing-mode changes logical query evaluation
+

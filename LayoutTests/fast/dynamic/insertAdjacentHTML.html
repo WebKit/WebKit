@@ -1,0 +1,41 @@
+<body>
+   <pre id="error-log"></pre>
+   <span id="container" style="color: green">
+   </span>
+   <span id="status" style="color: red">
+      FAILURE
+   </span>
+</body>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+   // verify all standard cases
+   document.getElementById("container").insertAdjacentHTML("beforeBegin", "<span id='1''> 1 (black)</span>");
+   document.getElementById("container").insertAdjacentHTML("afterBegin", "<span id='2''> 2 (green)</span>");
+   document.getElementById("container").insertAdjacentHTML("beforeEnd", "<span id='3''> 3 (green)</span>");
+   document.getElementById("container").insertAdjacentHTML("afterEnd", "<span id='4''> 4 (black)</span>");
+
+   function assertThrows(func) {
+      var testPassed = false;
+      try {
+         func();
+      } catch (e) {
+         document.getElementById("error-log").innerHTML += "Caught expected exception: " + e + "\n";
+         testPassed = true;
+      }
+      return testPassed;
+   }
+
+   // check that exceptions are thrown as required
+   var passes = true;
+   passes = passes & assertThrows(function() {
+      // should throw TYPE_MISMATCH_ERR
+      document.getElementById("container").insertAdjacentHTML("blah", "<span>html</span>");
+   });
+
+   if (passes) {
+      document.getElementById("status").style.color = "green";
+      document.getElementById("status").innerHTML = "<br><br>PASS";
+   }
+</script>

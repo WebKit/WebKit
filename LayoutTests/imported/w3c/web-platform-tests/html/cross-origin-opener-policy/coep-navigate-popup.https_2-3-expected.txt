@@ -1,0 +1,6 @@
+
+PASS Popup navigating to same-origin with coop/no coep
+PASS Popup navigating to same-site with coop/no coep
+PASS Popup navigating to same-origin with no coop/no coep
+PASS Popup navigating to same-site with no coop/no coep
+

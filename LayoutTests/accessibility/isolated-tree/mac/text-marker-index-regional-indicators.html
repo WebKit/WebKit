@@ -1,0 +1,43 @@
+<!DOCTYPE HTML><!-- webkit-test-runner [ IsAccessibilityIsolatedTreeEnabled=true ] -->
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../../resources/accessibility-helper.js"></script>
+<script src="../../../resources/ax-text-marker-helper.js"></script>
+<script src="../../../resources/js-test.js"></script>
+</head>
+<body>
+
+<p id="target">Flag &#x1F1EF;&#x1F1F5; end</p>
+
+<script>
+var output = "This test ensures a regional indicator pair, which is one flag to a reader but four code units and two code points, keeps a text marker index per code unit that still round-trips.\n\n";
+
+if (window.accessibilityController) {
+    var target = accessibilityController.accessibleElementById("target");
+    var targetRange = target.textMarkerRangeForElement(target);
+    var walk = checkRoundTripAllTextMarkerIndicesWithinContainer(target);
+
+    function text()
+    {
+        return target.stringForTextMarkerRange(targetRange);
+    }
+
+    output += "Both regional indicators survive into the accessibility text.\n";
+    output += expect("text().length", "13");
+    output += expect("text().codePointAt(5)", "0x1F1EF");
+    output += expect("text().codePointAt(7)", "0x1F1F5");
+
+    output += "\nEvery code unit has its own index, and it round-trips.\n";
+    output += expect("walk.containerTextLength", "13");
+    output += expect("walk.indicesChecked", "13");
+    output += expect("walk.worstRoundTripDrift", "0");
+    output += expect("walk.worstLengthDifference", "0");
+
+    document.getElementById("target").style.display = "none";
+
+    debug(output);
+}
+</script>
+</body>
+</html>

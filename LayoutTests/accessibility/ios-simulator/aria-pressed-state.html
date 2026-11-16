@@ -1,0 +1,50 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+var successfullyParsed = false;
+if (window.testRunner)
+   testRunner.dumpAsText();
+</script>
+</head>
+<body>
+
+<div id="button1" tabindex=0 role="button" aria-pressed="true">button 1</div>
+<div id="button2" tabindex=0 role="button">button 2</div>
+
+<button id="button3" role="button" aria-pressed="true">button3</button>
+<button id="button4" aria-pressed="true">button4</button>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This test thats aria-pressed changes the traits returned by buttons");
+
+    if (window.accessibilityController) {
+
+        document.getElementById("button1").focus();
+        var btn1 = accessibilityController.focusedElement;
+
+        document.getElementById("button2").focus();
+        var btn2 = accessibilityController.focusedElement;
+ 
+        shouldBeTrue("btn1.traits != btn2.traits");
+        
+        // Make sure aria-press value is exposed correctly with native button tags.
+        var btn3 = accessibilityController.accessibleElementById("button3");
+        shouldBe("btn3.stringValue", "'AXValue: 1'");
+        var btn4 = accessibilityController.accessibleElementById("button4");
+        shouldBe("btn4.stringValue", "'AXValue: 1'");
+    }
+
+    successfullyParsed = true;
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+
+</body>
+</html>
+

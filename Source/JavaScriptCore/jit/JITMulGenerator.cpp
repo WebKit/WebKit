@@ -1,0 +1,203 @@
+/*
+ * Copyright (C) 2015-2019 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#include "config.h"
+#include "JITMulGenerator.h"
+
+#if ENABLE(JIT)
+
+#include "ArithProfile.h"
+#include "JITMathIC.h"
+
+namespace JSC {
+
+JITMathICInlineResult JITMulGenerator::generateInline(CCallHelpers& jit, MathICGenerationState& state, const BinaryArithProfile* arithProfile)
+{
+    // We default to speculating int32.
+    ObservedType lhs = ObservedType().withInt32();
+    ObservedType rhs = ObservedType().withInt32();
+    if (arithProfile) {
+        lhs = arithProfile->lhsObservedType();
+        rhs = arithProfile->rhsObservedType();
+    }
+
+    if (lhs.isOnlyNonNumber() && rhs.isOnlyNonNumber())
+        return JITMathICInlineResult::DontGenerate;
+
+    if (lhs.isOnlyNumber() && rhs.isOnlyNumber() && !m_leftOperand.isConst() && !m_rightOperand.isConst()) {
+        ASSERT(m_left != InvalidGPRReg);
+        ASSERT(m_right != InvalidGPRReg);
+        if (!m_leftOperand.definitelyIsNumber())
+            state.slowPathJumps.append(jit.branchIfNotNumber(m_left));
+        if (!m_rightOperand.definitelyIsNumber())
+            state.slowPathJumps.append(jit.branchIfNotNumber(m_right));
+        state.slowPathJumps.append(jit.branchIfInt32(m_left));
+        state.slowPathJumps.append(jit.branchIfInt32(m_right));
+        jit.unboxDouble(m_left, m_scratchGPR, m_leftFPR);
+        jit.unboxDouble(m_right, m_scratchGPR, m_rightFPR);
+        jit.mulDouble(m_rightFPR, m_leftFPR);
+        jit.boxDouble(m_leftFPR, m_result);
+
+        return JITMathICInlineResult::GeneratedFastPath;
+    }
+
+    if ((lhs.isOnlyInt32() || m_leftOperand.isPositiveConstInt32()) && (rhs.isOnlyInt32() || m_rightOperand.isPositiveConstInt32())) {
+        ASSERT(!m_leftOperand.isPositiveConstInt32() || !m_rightOperand.isPositiveConstInt32());
+        if (!m_leftOperand.isPositiveConstInt32())
+            state.slowPathJumps.append(jit.branchIfNotInt32(m_left));
+        if (!m_rightOperand.isPositiveConstInt32())
+            state.slowPathJumps.append(jit.branchIfNotInt32(m_right));
+
+        if (m_leftOperand.isPositiveConstInt32() || m_rightOperand.isPositiveConstInt32()) {
+            GPRReg var = m_leftOperand.isPositiveConstInt32() ? m_right : m_left;
+            int32_t constValue = m_leftOperand.isPositiveConstInt32() ? m_leftOperand.asConstInt32() : m_rightOperand.asConstInt32();
+            state.slowPathJumps.append(jit.branchMul32(CCallHelpers::Overflow, var, CCallHelpers::Imm32(constValue), m_scratchGPR));
+        } else {
+            state.slowPathJumps.append(jit.branchMul32(CCallHelpers::Overflow, m_right, m_left, m_scratchGPR));
+            state.slowPathJumps.append(jit.branchTest32(CCallHelpers::Zero, m_scratchGPR)); // Go slow if potential negative zero.
+        }
+        jit.boxInt32(m_scratchGPR, m_result);
+
+        return JITMathICInlineResult::GeneratedFastPath;
+    }
+
+    return JITMathICInlineResult::GenerateFullSnippet;
+}
+
+bool JITMulGenerator::generateFastPath(CCallHelpers& jit, CCallHelpers::JumpList& endJumpList, CCallHelpers::JumpList& slowPathJumpList, const BinaryArithProfile* arithProfile, bool shouldEmitProfiling)
+{
+    ASSERT(m_scratchGPR != InvalidGPRReg);
+    ASSERT(m_scratchGPR != m_left);
+    ASSERT(m_scratchGPR != m_right);
+    ASSERT(m_scratchGPR != m_result);
+
+    ASSERT(!m_leftOperand.isPositiveConstInt32() || !m_rightOperand.isPositiveConstInt32());
+
+    if (!m_leftOperand.mightBeNumber() || !m_rightOperand.mightBeNumber())
+        return false;
+
+    if (m_leftOperand.isPositiveConstInt32() || m_rightOperand.isPositiveConstInt32()) {
+        GPRReg var = m_leftOperand.isPositiveConstInt32() ? m_right : m_left;
+        SnippetOperand& varOpr = m_leftOperand.isPositiveConstInt32() ? m_rightOperand : m_leftOperand;
+        SnippetOperand& constOpr = m_leftOperand.isPositiveConstInt32() ? m_leftOperand : m_rightOperand;
+
+        // Try to do intVar * intConstant.
+        CCallHelpers::Jump notInt32 = jit.branchIfNotInt32(var);
+
+        GPRReg multiplyResultGPR = m_result;
+        if (multiplyResultGPR == var)
+            multiplyResultGPR = m_scratchGPR;
+
+        slowPathJumpList.append(jit.branchMul32(CCallHelpers::Overflow, var, CCallHelpers::Imm32(constOpr.asConstInt32()), multiplyResultGPR));
+
+        jit.boxInt32(multiplyResultGPR, m_result);
+        endJumpList.append(jit.jump());
+
+        // Try to do doubleVar * double(intConstant).
+        notInt32.link(&jit);
+        if (!varOpr.definitelyIsNumber())
+            slowPathJumpList.append(jit.branchIfNotNumber(var));
+
+        jit.unboxDouble(var, m_scratchGPR, m_leftFPR);
+
+        jit.move(CCallHelpers::Imm32(constOpr.asConstInt32()), m_scratchGPR);
+        jit.convertInt32ToDouble(m_scratchGPR, m_rightFPR);
+
+        // Fall thru to doubleVar * doubleVar.
+
+    } else {
+        ASSERT(!m_leftOperand.isPositiveConstInt32() && !m_rightOperand.isPositiveConstInt32());
+
+        CCallHelpers::Jump leftNotInt;
+        CCallHelpers::Jump rightNotInt;
+
+        // Try to do intVar * intVar.
+        leftNotInt = jit.branchIfNotInt32(m_left);
+        rightNotInt = jit.branchIfNotInt32(m_right);
+
+        slowPathJumpList.append(jit.branchMul32(CCallHelpers::Overflow, m_right, m_left, m_scratchGPR));
+        slowPathJumpList.append(jit.branchTest32(CCallHelpers::Zero, m_scratchGPR)); // Go slow if potential negative zero.
+
+        jit.boxInt32(m_scratchGPR, m_result);
+        endJumpList.append(jit.jump());
+
+        leftNotInt.link(&jit);
+        if (!m_leftOperand.definitelyIsNumber())
+            slowPathJumpList.append(jit.branchIfNotNumber(m_left));
+        if (!m_rightOperand.definitelyIsNumber())
+            slowPathJumpList.append(jit.branchIfNotNumber(m_right));
+
+        jit.unboxDouble(m_left, m_scratchGPR, m_leftFPR);
+        CCallHelpers::Jump rightIsDouble = jit.branchIfNotInt32(m_right);
+
+        jit.convertInt32ToDouble(m_right, m_rightFPR);
+        CCallHelpers::Jump rightWasInteger = jit.jump();
+
+        rightNotInt.link(&jit);
+        if (!m_rightOperand.definitelyIsNumber())
+            slowPathJumpList.append(jit.branchIfNotNumber(m_right));
+
+        jit.convertInt32ToDouble(m_left, m_leftFPR);
+
+        rightIsDouble.link(&jit);
+        jit.unboxDouble(m_right, m_scratchGPR, m_rightFPR);
+
+        rightWasInteger.link(&jit);
+
+        // Fall thru to doubleVar * doubleVar.
+    }
+
+    // Do doubleVar * doubleVar.
+    jit.mulDouble(m_rightFPR, m_leftFPR);
+
+    if (!arithProfile || !shouldEmitProfiling)
+        jit.boxDouble(m_leftFPR, m_result);
+    else {
+        const int64_t negativeZeroBits = 1ll << 63;
+        jit.moveDoubleTo64(m_leftFPR, m_result);
+
+        CCallHelpers::Jump notNegativeZero = jit.branch64(CCallHelpers::NotEqual, m_result, CCallHelpers::TrustedImm64(negativeZeroBits));
+
+        arithProfile->emitUnconditionalSet(jit, ObservedResults::NegZeroDouble);
+        CCallHelpers::Jump done = jit.jump();
+
+        notNegativeZero.link(&jit);
+        arithProfile->emitUnconditionalSet(jit, ObservedResults::NonNegZeroDouble);
+
+        if (!arithProfile->didObserveInt52Overflow()) {
+            jit.move(m_result, m_scratchGPR);
+            arithProfile->emitSetInt52OverflowIfNeeded(jit, m_scratchGPR);
+        }
+
+        done.link(&jit);
+        jit.sub64(GPRInfo::numberTagRegister, m_result); // Box the double.
+    }
+
+    return true;
+}
+
+} // namespace JSC
+
+#endif // ENABLE(JIT)

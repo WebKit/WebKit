@@ -1,0 +1,11 @@
+
+Description
+
+This test loads a number of resources in the loading-resources.js and verifies that `iniatitor_url`s in ResourceTiming entries are as expected.
+
+
+FAIL The initiator Url for empty_style.css?no_cache initiatorUrl from external scripts must be 'http://web-platform.test:8800/resource-timing/resources/loading-resources.js' assert_equals: expected (string) "http://web-platform.test:8800/resource-timing/resources/loading-resources.js" but got (undefined) undefined
+FAIL The initiator Url for blue.png?no_cache initiatorUrl from external scripts must be 'http://web-platform.test:8800/resource-timing/resources/loading-resources.js' assert_equals: expected (string) "http://web-platform.test:8800/resource-timing/resources/loading-resources.js" but got (undefined) undefined
+FAIL The initiator Url for empty.js?no_cache initiatorUrl from external scripts must be 'http://web-platform.test:8800/resource-timing/resources/loading-resources.js' assert_equals: expected (string) "http://web-platform.test:8800/resource-timing/resources/loading-resources.js" but got (undefined) undefined
+FAIL The initiator Url for green.html?no_cache initiatorUrl from external scripts must be 'http://web-platform.test:8800/resource-timing/resources/loading-resources.js' assert_equals: expected (string) "http://web-platform.test:8800/resource-timing/resources/loading-resources.js" but got (undefined) undefined
+

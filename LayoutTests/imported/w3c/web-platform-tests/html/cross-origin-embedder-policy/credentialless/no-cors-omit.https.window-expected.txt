@@ -1,0 +1,5 @@
+
+PASS The document is cross-origin isolated
+PASS fetch() of a cross-origin no-cors resource without credentials or CORP
+PASS CacheStorage match() of a cross-origin no-cors resource without credentials or CORP
+

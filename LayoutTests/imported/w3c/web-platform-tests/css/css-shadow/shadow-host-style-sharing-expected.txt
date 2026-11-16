@@ -1,0 +1,8 @@
+
+PASS Different CascadeData must block sharing despite being same element type
+PASS Same :host rules but different inherited styles
+PASS :host with class selector should not share across different classes
+PASS :host with attribute selector should not share across different attributes
+PASS Same CascadeData but different inline styles should not share
+PASS Same :host rules but different CascadeData should prevent sharing
+

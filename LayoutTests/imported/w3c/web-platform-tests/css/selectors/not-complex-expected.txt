@@ -1,0 +1,22 @@
+
+PASS :not(#a) matches expected elements
+PASS :not(#a #d) matches expected elements
+PASS :not(#b div) matches expected elements
+PASS :not(div div) matches expected elements
+PASS :not(div + div) matches expected elements
+PASS :not(main > div) matches expected elements
+PASS :not(#a, #b) matches expected elements
+PASS :not(#f, main > div) matches expected elements
+PASS :not(div + div + div, div + div > div) matches expected elements
+PASS :not(div:nth-child(1)) matches expected elements
+PASS :not(:not(div)) matches expected elements
+PASS :not(:not(:not(div))) matches expected elements
+PASS :not(div, span) matches expected elements
+PASS :not(span, p) matches expected elements
+PASS :not(#unknown, .unknown) matches expected elements
+PASS :not(#unknown > div, span) matches expected elements
+PASS :not(#unknown ~ div, span) matches expected elements
+PASS :not(:hover div) matches expected elements
+PASS :not(:link div) matches expected elements
+PASS :not(:visited div) matches expected elements
+

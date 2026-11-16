@@ -1,0 +1,11 @@
+Pressing Enter on an empty list item (double newline) should break out of the list, moving the following text "C" outside the list as its own block.
+| <ul>
+|   class="Apple-disc-list"
+|   style="list-style-type: disc;"
+|   <li>
+|     "A"
+|     <br>
+|   <li>
+|     "B"
+| <div>
+|   "C<#selection-caret>"

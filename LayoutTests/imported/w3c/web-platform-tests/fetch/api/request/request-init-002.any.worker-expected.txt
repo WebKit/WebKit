@@ -1,0 +1,10 @@
+
+PASS Initialize Request with headers values
+PASS Initialize Request's body with "undefined", undefined
+PASS Initialize Request's body with "null", null
+PASS Initialize Request's body with "[object Blob]", application/octet-binary
+PASS Initialize Request's body with "[object FormData]", multipart/form-data
+PASS Initialize Request's body with "This is a USVString", text/plain;charset=UTF-8
+PASS Initialize Request's body with "hi!", text/plain;charset=UTF-8
+PASS Initialize Request's body with "name=value", application/x-www-form-urlencoded;charset=UTF-8
+

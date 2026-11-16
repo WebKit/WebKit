@@ -1,0 +1,7 @@
+
+
+PASS moveBefore() of an element with an id in a disconnected tree leaves the document's id map alone
+PASS moveBefore() of an element with a name in a disconnected tree leaves the document's name maps alone
+PASS moveBefore() into a shadow tree inside a disconnected tree adds the element to the shadow root's id map
+PASS moveBefore() out of a shadow tree inside a disconnected tree removes the element from the shadow root's id map
+

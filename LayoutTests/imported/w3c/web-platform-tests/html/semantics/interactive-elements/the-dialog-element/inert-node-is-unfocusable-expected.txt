@@ -1,0 +1,21 @@
+
+I'm editable
+I'm tabindexed.
+ Link
+
+PASS #html is not  focusable
+PASS #body is not  focusable
+PASS #top-dialog is  focusable
+PASS #top-dialog-button is  focusable
+PASS #bottom-dialog is not  focusable
+PASS #bottom-dialog-button is not  focusable
+PASS #container is not  focusable
+PASS #text is not  focusable
+PASS #datetime is not  focusable
+PASS #color is not  focusable
+PASS #select is not  focusable
+PASS #optgroup is not  focusable
+PASS #option is not  focusable
+PASS #contenteditable-div is not  focusable
+PASS #tabindex-span is not  focusable
+

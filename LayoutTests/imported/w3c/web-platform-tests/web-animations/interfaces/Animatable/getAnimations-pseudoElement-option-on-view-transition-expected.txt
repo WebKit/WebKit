@@ -1,0 +1,3 @@
+
+FAIL Returns view transition animations with pseudoElement option assert_equals: Returns view transition animation when pseudoElement is specified with pseudo expected 1 but got 0
+

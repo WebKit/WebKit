@@ -1,0 +1,8 @@
+
+PASS Trying to transfer a non-shared WebAssembly.Memory to this window throws
+PASS Trying to transfer a non-shared WebAssembly.Memory to a worker throws
+PASS Trying to transfer a non-shared WebAssembly.Memory through a MessagePort throws
+PASS Trying to transfer a shared WebAssembly.Memory to this window throws
+PASS Trying to transfer a shared WebAssembly.Memory to a worker throws
+PASS Trying to transfer a shared WebAssembly.Memory through a MessagePort throws
+

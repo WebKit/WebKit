@@ -1,0 +1,16 @@
+
+PASS Dialog show will not light dismiss if clicked inside of the dialog bounds
+PASS Dialog show will not light dismiss if clicked inside of the dialog bounds (bottom right)
+PASS Dialog show will not light dismiss if clicked inside the overflowing div bounds (center)
+PASS Dialog show will not light dismiss if clicked inside the overflowing div bounds (bottom right)
+FAIL Dialog show light dismisses when clicked outside of the bounds of both the dialog and the div assert_false: Dialog should be closed after clicking 250px-250px expected false got true
+FAIL Dialog show light dismisses when clicked outside of the bounds of the dialog - where the Y direction is in-line with the div still assert_false: Dialog should be closed after clicking 150px-1px expected false got true
+FAIL Dialog show light dismisses when clicked outside of the bounds of the dialog - where the X direction is in-line with the div still assert_false: Dialog should be closed after clicking 1px-150px expected false got true
+FAIL Dialog showModal will not light dismiss if clicked inside of the dialog bounds promise_test: Unhandled rejection with value: object "InvalidStateError: Cannot call showModal() on an open non-modal dialog."
+FAIL Dialog showModal will not light dismiss if clicked inside of the dialog bounds (bottom right) promise_test: Unhandled rejection with value: object "InvalidStateError: Cannot call showModal() on an open non-modal dialog."
+FAIL Dialog showModal will not light dismiss if clicked inside the overflowing div bounds (center) promise_test: Unhandled rejection with value: object "InvalidStateError: Cannot call showModal() on an open non-modal dialog."
+FAIL Dialog showModal will not light dismiss if clicked inside the overflowing div bounds (bottom right) promise_test: Unhandled rejection with value: object "InvalidStateError: Cannot call showModal() on an open non-modal dialog."
+FAIL Dialog showModal light dismisses when clicked outside of the bounds of both the dialog and the div promise_test: Unhandled rejection with value: object "InvalidStateError: Cannot call showModal() on an open non-modal dialog."
+FAIL Dialog showModal light dismisses when clicked outside of the bounds of the dialog - where the Y direction is in-line with the div still promise_test: Unhandled rejection with value: object "InvalidStateError: Cannot call showModal() on an open non-modal dialog."
+FAIL Dialog showModal light dismisses when clicked outside of the bounds of the dialog - where the X direction is in-line with the div still promise_test: Unhandled rejection with value: object "InvalidStateError: Cannot call showModal() on an open non-modal dialog."
+

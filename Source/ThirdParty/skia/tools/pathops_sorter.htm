@@ -1,0 +1,1457 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+<div style="height:0">
+
+    <div id="cubics">
+{{{fX=124.70011901855469 fY=9.3718261718750000 } {fX=124.66775026544929 fY=9.3744316215161234 } {fX=124.63530969619751 fY=9.3770743012428284 }{fX=124.60282897949219 fY=9.3797206878662109 } id=10      
+{{{fX=124.70011901855469 fY=9.3718004226684570 } {fX=124.66775026544929 fY=9.3744058723095804 } {fX=124.63530969619751 fY=9.3770485520362854 } {fX=124.60282897949219 fY=9.3796949386596680 } id=1
+{{{fX=124.70011901855469 fY=9.3718004226684570 } {fX=124.66786243087600 fY=9.3743968522034287 } {fX=124.63553249625420 fY=9.3770303056986286 } {fX=124.60316467285156 fY=9.3796672821044922 } id=2
+    </div>
+
+    </div>
+
+<script type="text/javascript">
+
+    var testDivs = [
+    cubics,
+    ];
+
+    var decimal_places = 3;
+
+    var tests = [];
+    var testTitles = [];
+    var testIndex = 0;
+    var ctx;
+
+    var subscale = 1;
+    var xmin, xmax, ymin, ymax;
+    var hscale, vscale;
+    var hinitScale, vinitScale;
+    var uniformScale = true;
+    var mouseX, mouseY;
+    var mouseDown = false;
+    var srcLeft, srcTop;
+    var screenWidth, screenHeight;
+    var drawnPts;
+    var curveT = 0;
+    var curveW = -1;
+
+    var lastX, lastY;
+    var activeCurve = [];
+    var activePt;
+    var ids = [];
+
+    var focus_on_selection = 0;
+    var draw_t = false;
+    var draw_w = false;
+    var draw_closest_t = false;
+    var draw_cubic_red = false;
+    var draw_derivative = false;
+    var draw_endpoints = 2;
+    var draw_id = 0;
+    var draw_midpoint = 0;
+    var draw_mouse_xy = false;
+    var draw_order = false;
+    var draw_point_xy = false;
+    var draw_ray_intersect = false;
+    var draw_quarterpoint = 0;
+    var draw_tangents = 1;
+    var draw_sortpoint = 0;
+    var retina_scale = !!window.devicePixelRatio;
+
+    function parse(test, title) {
+        var curveStrs = test.split("{{");
+        var pattern = /-?\d+\.*\d*e?-?\d*/g;
+        var curves = [];
+        for (var c in curveStrs) {
+            var curveStr = curveStrs[c];
+            var idPart = curveStr.split("id=");
+            var id = -1;
+            if (idPart.length == 2) {
+                id = parseInt(idPart[1]);
+                curveStr = idPart[0];
+            }
+            var points = curveStr.match(pattern);
+            var pts = [];
+            for (var wd in points) {
+                var num = parseFloat(points[wd]);
+                if (isNaN(num)) continue;
+                pts.push(num);
+            }
+            if (pts.length > 2) {
+                curves.push(pts);
+            }
+            if (id >= 0) {
+                ids.push(id);
+                ids.push(pts);
+            }
+        }
+        if (curves.length >= 1) {
+            tests.push(curves);
+            testTitles.push(title);
+        }
+    }
+
+    function init(test) {
+        var canvas = document.getElementById('canvas');
+        if (!canvas.getContext) return;
+        ctx = canvas.getContext('2d');
+        var resScale = retina_scale && window.devicePixelRatio ? window.devicePixelRatio : 1;
+        var unscaledWidth = window.innerWidth - 20;
+        var unscaledHeight = window.innerHeight - 20;
+        screenWidth = unscaledWidth;
+        screenHeight = unscaledHeight;
+        canvas.width = unscaledWidth * resScale;
+        canvas.height = unscaledHeight * resScale;
+        canvas.style.width = unscaledWidth + 'px';
+        canvas.style.height = unscaledHeight + 'px';
+        if (resScale != 1) {
+            ctx.scale(resScale, resScale);
+        }
+        xmin = Infinity;
+        xmax = -Infinity;
+        ymin = Infinity;
+        ymax = -Infinity;
+        for (var curves in test) {
+            var curve = test[curves];
+            var last = curve.length - (curve.length % 2 == 1 ? 1 : 0);
+            for (var idx = 0; idx < last; idx += 2) {
+                xmin = Math.min(xmin, curve[idx]);
+                xmax = Math.max(xmax, curve[idx]);
+                ymin = Math.min(ymin, curve[idx + 1]);
+                ymax = Math.max(ymax, curve[idx + 1]);
+            }
+        }
+        xmin -= Math.min(1, Math.max(xmax - xmin, ymax - ymin));
+        var testW = xmax - xmin;
+        var testH = ymax - ymin;
+        subscale = 1;
+        while (testW * subscale < 0.1 && testH * subscale < 0.1) {
+            subscale *= 10;
+        }
+        while (testW * subscale > 10 && testH * subscale > 10) {
+            subscale /= 10;
+        }
+        setScale(xmin, xmax, ymin, ymax);
+        mouseX = (screenWidth / 2) / hscale + srcLeft;
+        mouseY = (screenHeight / 2) / vscale + srcTop;
+        hinitScale = hscale;
+        vinitScale = vscale;
+    }
+
+    function setScale(x0, x1, y0, y1) {
+        var srcWidth = x1 - x0;
+        var srcHeight = y1 - y0;
+        var usableWidth = screenWidth;
+        var xDigits = Math.ceil(Math.log(Math.abs(xmax)) / Math.log(10));
+        var yDigits = Math.ceil(Math.log(Math.abs(ymax)) / Math.log(10));
+        usableWidth -= (xDigits + yDigits) * 10;
+        usableWidth -= decimal_places * 10;
+        hscale = usableWidth / srcWidth;
+        vscale = screenHeight / srcHeight;
+        if (uniformScale) {
+            hscale = Math.min(hscale, vscale);
+            vscale = hscale;
+        }
+        var hinvScale = 1 / hscale;
+        var vinvScale = 1 / vscale;
+        var sxmin = x0 - hinvScale * 5;
+        var symin = y0 - vinvScale * 10;
+        var sxmax = x1 + hinvScale * (6 * decimal_places + 10);
+        var symax = y1 + vinvScale * 10;
+        srcWidth = sxmax - sxmin;
+        srcHeight = symax - symin;
+        hscale = usableWidth / srcWidth;
+        vscale = screenHeight / srcHeight;
+        if (uniformScale) {
+            hscale = Math.min(hscale, vscale);
+            vscale = hscale;
+        }
+        srcLeft = sxmin;
+        srcTop = symin;
+    }
+
+function dxy_at_t(curve, t) {
+    var dxy = {};
+    if (curve.length == 6) {
+        var a = t - 1;
+        var b = 1 - 2 * t;
+        var c = t;
+        dxy.x = a * curve[0] + b * curve[2] + c * curve[4];
+        dxy.y = a * curve[1] + b * curve[3] + c * curve[5];
+    } else if (curve.length == 7) {
+        var p20x = curve[4] - curve[0];
+        var p20y = curve[5] - curve[1];
+        var p10xw = (curve[2] - curve[0]) * curve[6];
+        var p10yw = (curve[3] - curve[1]) * curve[6];
+        var coeff0x = curve[6] * p20x - p20x;
+        var coeff0y = curve[6] * p20y - p20y;
+        var coeff1x = p20x - 2 * p10xw;
+        var coeff1y = p20y - 2 * p10yw;
+        dxy.x = t * (t * coeff0x + coeff1x) + p10xw;
+        dxy.y = t * (t * coeff0y + coeff1y) + p10yw;
+    } else if (curve.length == 8) {
+        var one_t = 1 - t;
+        var a = curve[0];
+        var b = curve[2];
+        var c = curve[4];
+        var d = curve[6];
+        dxy.x = 3 * ((b - a) * one_t * one_t + 2 * (c - b) * t * one_t + (d - c) * t * t);
+        a = curve[1];
+        b = curve[3];
+        c = curve[5];
+        d = curve[7];
+        dxy.y = 3 * ((b - a) * one_t * one_t + 2 * (c - b) * t * one_t + (d - c) * t * t);
+    }
+    return dxy;
+}
+
+    var flt_epsilon = 1.19209290E-07;
+
+    function approximately_zero(A) {
+        return Math.abs(A) < flt_epsilon;
+    }
+
+    function approximately_zero_inverse(A) {
+        return Math.abs(A) > (1 / flt_epsilon);
+    }
+
+    function quad_real_roots(A, B, C) {
+        var s = [];
+        var p = B / (2 * A);
+        var q = C / A;
+        if (approximately_zero(A) && (approximately_zero_inverse(p)
+                || approximately_zero_inverse(q))) {
+            if (approximately_zero(B)) {
+                if (C == 0) {
+                    s[0] = 0;
+                }
+                return s;
+            }
+            s[0] = -C / B;
+            return s;
+        }
+        /* normal form: x^2 + px + q = 0 */
+        var p2 = p * p;
+        if (!approximately_zero(p2 - q) && p2 < q) {
+            return s;
+        }
+        var sqrt_D = 0;
+        if (p2 > q) {
+            sqrt_D = Math.sqrt(p2 - q);
+        }
+        s[0] = sqrt_D - p;
+        var flip = -sqrt_D - p;
+        if (!approximately_zero(s[0] - flip)) {
+            s[1] = flip;
+        }
+        return s;
+    }
+
+    function cubic_real_roots(A, B, C, D) {
+        if (approximately_zero(A)) {  // we're just a quadratic
+            return quad_real_roots(B, C, D);
+        }
+        if (approximately_zero(D)) {  // 0 is one root
+            var s = quad_real_roots(A, B, C);
+            for (var i = 0; i < s.length; ++i) {
+                if (approximately_zero(s[i])) {
+                    return s;
+                }
+            }
+            s.push(0);
+            return s;
+        }
+        if (approximately_zero(A + B + C + D)) {  // 1 is one root
+            var s = quad_real_roots(A, A + B, -D);
+            for (var i = 0; i < s.length; ++i) {
+                if (approximately_zero(s[i] - 1)) {
+                    return s;
+                }
+            }
+            s.push(1);
+            return s;
+        }
+        var a, b, c;
+        var invA = 1 / A;
+        a = B * invA;
+        b = C * invA;
+        c = D * invA;
+        var a2 = a * a;
+        var Q = (a2 - b * 3) / 9;
+        var R = (2 * a2 * a - 9 * a * b + 27 * c) / 54;
+        var R2 = R * R;
+        var Q3 = Q * Q * Q;
+        var R2MinusQ3 = R2 - Q3;
+        var adiv3 = a / 3;
+        var r;
+        var roots = [];
+        if (R2MinusQ3 < 0) {   // we have 3 real roots
+            var theta = Math.acos(R / Math.sqrt(Q3));
+            var neg2RootQ = -2 * Math.sqrt(Q);
+            r = neg2RootQ * Math.cos(theta / 3) - adiv3;
+            roots.push(r);
+            r = neg2RootQ * Math.cos((theta + 2 * Math.PI) / 3) - adiv3;
+            if (!approximately_zero(roots[0] - r)) {
+                roots.push(r);
+            }
+            r = neg2RootQ * Math.cos((theta - 2 * Math.PI) / 3) - adiv3;
+            if (!approximately_zero(roots[0] - r) && (roots.length == 1
+                        || !approximately_zero(roots[1] - r))) {
+                roots.push(r);
+            }
+        } else {  // we have 1 real root
+            var sqrtR2MinusQ3 = Math.sqrt(R2MinusQ3);
+            var A = Math.abs(R) + sqrtR2MinusQ3;
+            A = Math.pow(A, 1/3);
+            if (R > 0) {
+                A = -A;
+            }
+            if (A != 0) {
+                A += Q / A;
+            }
+            r = A - adiv3;
+            roots.push(r);
+            if (approximately_zero(R2 - Q3)) {
+                r = -A / 2 - adiv3;
+                if (!approximately_zero(roots[0] - r)) {
+                    roots.push(r);
+                }
+            }
+        }
+        return roots;
+    }
+
+    function approximately_zero_or_more(tValue) {
+        return tValue >= -flt_epsilon;
+    }
+
+    function approximately_one_or_less(tValue) {
+        return tValue <= 1 + flt_epsilon;
+    }
+
+    function approximately_less_than_zero(tValue) {
+        return tValue < flt_epsilon;
+    }
+
+    function approximately_greater_than_one(tValue) {
+        return tValue > 1 - flt_epsilon;
+    }
+
+    function add_valid_ts(s) {
+        var t = [];
+    nextRoot:
+        for (var index = 0; index < s.length; ++index) {
+            var tValue = s[index];
+            if (approximately_zero_or_more(tValue) && approximately_one_or_less(tValue)) {
+                if (approximately_less_than_zero(tValue)) {
+                    tValue = 0;
+                } else if (approximately_greater_than_one(tValue)) {
+                    tValue = 1;
+                }
+                for (var idx2 = 0; idx2 < t.length; ++idx2) {
+                    if (approximately_zero(t[idx2] - tValue)) {
+                        continue nextRoot;
+                    }
+                }
+                t.push(tValue);
+            }
+        }
+        return t;
+    }
+
+    function quad_roots(A, B, C) {
+        var s = quad_real_roots(A, B, C);
+        var foundRoots = add_valid_ts(s);
+        return foundRoots;
+    }
+
+    function cubic_roots(A, B, C, D) {
+        var s = cubic_real_roots(A, B, C, D);
+        var foundRoots = add_valid_ts(s);
+        return foundRoots;
+    }
+
+    function ray_curve_intersect(startPt, endPt, curve) {
+        var adj = endPt[0] - startPt[0];
+        var opp = endPt[1] - startPt[1];
+        var r = [];
+        var len = (curve.length == 7 ? 6 : curve.length) / 2;
+        for (var n = 0; n < len; ++n) {
+            r[n] = (curve[n * 2 + 1] - startPt[1]) * adj - (curve[n * 2] - startPt[0]) * opp;
+        }
+        if (curve.length == 6) {
+            var A = r[2];
+            var B = r[1];
+            var C = r[0];
+            A += C - 2 * B;  // A = a - 2*b + c
+            B -= C;  // B = -(b - c)
+            return quad_roots(A, 2 * B, C);
+        }
+        if (curve.length == 7) {
+            var A = r[2];
+            var B = r[1] * curve[6];
+            var C = r[0];
+            A += C - 2 * B;  // A = a - 2*b + c
+            B -= C;  // B = -(b - c)
+            return quad_roots(A, 2 * B, C);
+        }
+        var A = r[3];       // d
+        var B = r[2] * 3;   // 3*c
+        var C = r[1] * 3;   // 3*b
+        var D = r[0];       // a
+        A -= D - C + B;     // A =   -a + 3*b - 3*c + d
+        B += 3 * D - 2 * C; // B =  3*a - 6*b + 3*c
+        C -= 3 * D;         // C = -3*a + 3*b
+        return cubic_roots(A, B, C, D);
+    }
+
+    function x_at_t(curve, t) {
+        var one_t = 1 - t;
+        if (curve.length == 4) {
+            return one_t * curve[0] + t * curve[2];
+        }
+        var one_t2 = one_t * one_t;
+        var t2 = t * t;
+        if (curve.length == 6) {
+            return one_t2 * curve[0] + 2 * one_t * t * curve[2] + t2 * curve[4];
+        }
+        if (curve.length == 7) {
+            var numer = one_t2 * curve[0] + 2 * one_t * t * curve[2] * curve[6]
+                    + t2 * curve[4];
+            var denom = one_t2            + 2 * one_t * t            * curve[6]
+                    + t2;
+            return numer / denom;
+        }
+        var a = one_t2 * one_t;
+        var b = 3 * one_t2 * t;
+        var c = 3 * one_t * t2;
+        var d = t2 * t;
+        return a * curve[0] + b * curve[2] + c * curve[4] + d * curve[6];
+    }
+
+    function y_at_t(curve, t) {
+        var one_t = 1 - t;
+        if (curve.length == 4) {
+            return one_t * curve[1] + t * curve[3];
+        }
+        var one_t2 = one_t * one_t;
+        var t2 = t * t;
+        if (curve.length == 6) {
+            return one_t2 * curve[1] + 2 * one_t * t * curve[3] + t2 * curve[5];
+        }
+        if (curve.length == 7) {
+            var numer = one_t2 * curve[1] + 2 * one_t * t * curve[3] * curve[6]
+                    + t2 * curve[5];
+            var denom = one_t2            + 2 * one_t * t            * curve[6]
+                    + t2;
+            return numer / denom;
+        }
+        var a = one_t2 * one_t;
+        var b = 3 * one_t2 * t;
+        var c = 3 * one_t * t2;
+        var d = t2 * t;
+        return a * curve[1] + b * curve[3] + c * curve[5] + d * curve[7];
+    }
+
+    function drawPointAtT(curve) {
+        var x = x_at_t(curve, curveT);
+        var y = y_at_t(curve, curveT);
+        drawPoint(x, y, false);
+    }
+
+    function drawLine(x1, y1, x2, y2) {
+        ctx.beginPath();
+        ctx.moveTo((x1 - srcLeft) * hscale,
+                (y1 - srcTop) * vscale);
+        ctx.lineTo((x2 - srcLeft) * hscale,
+                (y2 - srcTop) * vscale);
+        ctx.stroke();
+    }
+
+    function drawPoint(px, py, xend) {
+        for (var pts = 0; pts < drawnPts.length; pts += 2) {
+            var x = drawnPts[pts];
+            var y = drawnPts[pts + 1];
+            if (px == x && py == y) {
+                return;
+            }
+        }
+        drawnPts.push(px);
+        drawnPts.push(py);
+        var _px = (px - srcLeft) * hscale;
+        var _py = (py - srcTop) * vscale;
+        ctx.beginPath();
+        if (xend) {
+            ctx.moveTo(_px - 3, _py - 3);
+            ctx.lineTo(_px + 3, _py + 3);
+            ctx.moveTo(_px - 3, _py + 3);
+            ctx.lineTo(_px + 3, _py - 3);
+        } else {
+            ctx.arc(_px, _py, 3, 0, Math.PI * 2, true);
+            ctx.closePath();
+        }
+        ctx.stroke();
+        if (draw_point_xy) {
+            var label = px.toFixed(decimal_places) + ", " + py.toFixed(decimal_places);
+            ctx.font = "normal 10px Arial";
+            ctx.textAlign = "left";
+            ctx.fillStyle = "black";
+            ctx.fillText(label, _px + 5, _py);
+        }
+    }
+
+    function drawPointSolid(px, py) {
+        drawPoint(px, py, false);
+        ctx.fillStyle = "rgba(0,0,0, 0.4)";
+        ctx.fill();
+    }
+
+    function crossPt(origin, pt1, pt2) {
+        return ((pt1[0] - origin[0]) * (pt2[1] - origin[1])
+              - (pt1[1] - origin[1]) * (pt2[0] - origin[0])) > 0 ? 0 : 1;
+    }
+
+    // may not work well for cubics
+    function curveClosestT(curve, x, y) {
+        var closest = -1;
+        var closestDist = Infinity;
+        var l = Infinity, t = Infinity, r = -Infinity, b = -Infinity;
+        for (var i = 0; i < 16; ++i) {
+            var testX = x_at_t(curve, i / 16);
+            l = Math.min(testX, l);
+            r = Math.max(testX, r);
+            var testY = y_at_t(curve, i / 16);
+            t = Math.min(testY, t);
+            b = Math.max(testY, b);
+            var dx = testX - x;
+            var dy = testY - y;
+            var dist = dx * dx + dy * dy;
+            if (closestDist > dist) {
+                closestDist = dist;
+                closest = i;
+            }
+        }
+        var boundsX = r - l;
+        var boundsY = b - t;
+        var boundsDist = boundsX * boundsX + boundsY * boundsY;
+        if (closestDist > boundsDist) {
+            return -1;
+        }
+        console.log("closestDist = " + closestDist + " boundsDist = " + boundsDist
+                + " t = " + closest / 16);
+        return closest / 16;
+    }
+
+    var kMaxConicToQuadPOW2 = 5;
+
+    function computeQuadPOW2(curve, tol) {
+        var a = curve[6] - 1;
+        var k = a / (4 * (2 + a));
+        var x = k * (curve[0] - 2 * curve[2] + curve[4]);
+        var y = k * (curve[1] - 2 * curve[3] + curve[5]);
+
+        var error = Math.sqrt(x * x + y * y);
+        var pow2;
+        for (pow2 = 0; pow2 < kMaxConicToQuadPOW2; ++pow2) {
+            if (error <= tol) {
+                break;
+            }
+            error *= 0.25;
+        }
+        return pow2;
+    }
+
+    function subdivide_w_value(w) {
+        return Math.sqrt(0.5 + w * 0.5);
+    }
+
+    function chop(curve, part1, part2) {
+        var w = curve[6];
+        var scale = 1 / (1 + w);
+        part1[0] = curve[0];
+        part1[1] = curve[1];
+        part1[2] = (curve[0] + curve[2] * w) * scale;
+        part1[3] = (curve[1] + curve[3] * w) * scale;
+        part1[4] = part2[0] = (curve[0] + (curve[2] * w) * 2 + curve[4]) * scale * 0.5;
+        part1[5] = part2[1] = (curve[1] + (curve[3] * w) * 2 + curve[5]) * scale * 0.5;
+        part2[2] = (curve[2] * w + curve[4]) * scale;
+        part2[3] = (curve[3] * w + curve[5]) * scale;
+        part2[4] = curve[4];
+        part2[5] = curve[5];
+        part1[6] = part2[6] = subdivide_w_value(w);
+    }
+
+    function subdivide(curve, level, pts) {
+        if (0 == level) {
+            pts.push(curve[2]);
+            pts.push(curve[3]);
+            pts.push(curve[4]);
+            pts.push(curve[5]);
+        } else {
+            var part1 = [], part2 = [];
+            chop(curve, part1, part2);
+            --level;
+            subdivide(part1, level, pts);
+            subdivide(part2, level, pts);
+        }
+    }
+
+    function chopIntoQuadsPOW2(curve, pow2, pts) {
+        subdivide(curve, pow2, pts);
+        return 1 << pow2;
+    }
+
+    function drawConic(curve, srcLeft, srcTop, hscale, vscale) {
+        var tol = 1 / Math.min(hscale, vscale);
+        var pow2 = computeQuadPOW2(curve, tol);
+        var pts = [];
+        chopIntoQuadsPOW2(curve, pow2, pts);
+        for (var i = 0; i < pts.length; i += 4) {
+            ctx.quadraticCurveTo(
+                (pts[i + 0] - srcLeft) * hscale, (pts[i + 1] - srcTop) * vscale,
+                (pts[i + 2] - srcLeft) * hscale, (pts[i + 3] - srcTop) * vscale);
+        }
+    }
+
+    function draw(test, title) {
+        ctx.font = "normal 50px Arial";
+        ctx.textAlign = "left";
+        ctx.fillStyle = "rgba(0,0,0, 0.1)";
+        ctx.fillText(title, 50, 50);
+        ctx.font = "normal 10px Arial";
+        //  ctx.lineWidth = "1.001"; "0.999";
+        var hullStarts = [];
+        var hullEnds = [];
+        var midSpokes = [];
+        var midDist = [];
+        var origin = [];
+        var shortSpokes = [];
+        var shortDist = [];
+        var sweeps = [];
+        drawnPts = [];
+        for (var curves in test) {
+            var curve = test[curves];
+            origin.push(curve[0]);
+            origin.push(curve[1]);
+            var startPt = [];
+            startPt.push(curve[2]);
+            startPt.push(curve[3]);
+            hullStarts.push(startPt);
+            var endPt = [];
+            if (curve.length == 4) {
+                endPt.push(curve[2]);
+                endPt.push(curve[3]);
+            } else if (curve.length == 6 || curve.length == 7) {
+                endPt.push(curve[4]);
+                endPt.push(curve[5]);
+            } else if (curve.length == 8) {
+                endPt.push(curve[6]);
+                endPt.push(curve[7]);
+            }
+            hullEnds.push(endPt);
+            var sweep = crossPt(origin, startPt, endPt);
+            sweeps.push(sweep);
+            var midPt = [];
+            midPt.push(x_at_t(curve, 0.5));
+            midPt.push(y_at_t(curve, 0.5));
+            midSpokes.push(midPt);
+            var shortPt = [];
+            shortPt.push(x_at_t(curve, 0.25));
+            shortPt.push(y_at_t(curve, 0.25));
+            shortSpokes.push(shortPt);
+            var dx = midPt[0] - origin[0];
+            var dy = midPt[1] - origin[1];
+            var dist = Math.sqrt(dx * dx + dy * dy);
+            midDist.push(dist);
+            dx = shortPt[0] - origin[0];
+            dy = shortPt[1] - origin[1];
+            dist = Math.sqrt(dx * dx + dy * dy);
+            shortDist.push(dist);
+        }
+        var intersect = [];
+        var useIntersect = false;
+        var maxWidth = Math.max(xmax - xmin, ymax - ymin);
+        for (var curves in test) {
+            var curve = test[curves];
+            if (curve.length >= 6 && curve.length <= 8) {
+                var opp = curves == 0 || curves == 1 ? 0 : 1;
+                var sects = ray_curve_intersect(origin, hullEnds[opp], curve);
+                intersect.push(sects);
+                if (sects.length > 1) {
+                    var intersection = sects[0];
+                    if (intersection == 0) {
+                        intersection = sects[1];
+                    }
+                    var ix = x_at_t(curve, intersection) - origin[0];
+                    var iy = y_at_t(curve, intersection) - origin[1];
+                    var ex = hullEnds[opp][0] - origin[0];
+                    var ey = hullEnds[opp][1] - origin[1];
+                    if (ix * ex >= 0 && iy * ey >= 0) {
+                        var iDist = Math.sqrt(ix * ix + iy * iy);
+                        var eDist = Math.sqrt(ex * ex + ey * ey);
+                        var delta = Math.abs(iDist - eDist) / maxWidth;
+                        if (delta > (curve.length != 8 ? 1e-5 : 1e-4)) {
+                            useIntersect ^= true;
+                        }
+                    }
+                }
+            }
+        }
+        var midLeft = curves != 0 ? crossPt(origin, midSpokes[0], midSpokes[1]) : 0;
+        var firstInside;
+        if (useIntersect) {
+            var sect1 = intersect[0].length > 1;
+            var sIndex = sect1 ? 0 : 1;
+            var sects = intersect[sIndex];
+            var intersection = sects[0];
+            if (intersection == 0) {
+                intersection = sects[1];
+            }
+            var curve = test[sIndex];
+            var ix = x_at_t(curve, intersection) - origin[0];
+            var iy = y_at_t(curve, intersection) - origin[1];
+            var opp = sect1 ? 1 : 0;
+            var ex = hullEnds[opp][0] - origin[0];
+            var ey = hullEnds[opp][1] - origin[1];
+            var iDist = ix * ix + iy * iy;
+            var eDist = ex * ex + ey * ey;
+            firstInside = (iDist > eDist) ^ (sIndex == 0) ^ sweeps[0];
+//            console.log("iDist=" + iDist + " eDist=" + eDist + " sIndex=" + sIndex
+ //                   + " sweeps[0]=" + sweeps[0]);
+        } else {
+ //           console.log("midLeft=" + midLeft);
+            firstInside = midLeft != 0;
+        }
+        var shorter = midDist[1] < midDist[0];
+        var shortLeft = shorter ? crossPt(origin, shortSpokes[0], midSpokes[1])
+                : crossPt(origin, midSpokes[0], shortSpokes[1]);
+        var startCross = crossPt(origin, hullStarts[0], hullStarts[1]);
+        var disallowShort = midLeft == startCross && midLeft == sweeps[0]
+                    && midLeft == sweeps[1];
+
+  //      console.log("midLeft=" + midLeft + " startCross=" + startCross);
+        var intersectIndex = 0;
+        for (var curves in test) {
+            var curve = test[draw_id != 2 ? curves : test.length - curves - 1];
+            if (curve.length != 4 && curve.length != 6 && curve.length != 7 && curve.length != 8) {
+                continue;
+            }
+            ctx.lineWidth = 1;
+            if (draw_tangents != 0) {
+                if (draw_cubic_red ? curve.length == 8 : firstInside == curves) {
+                    ctx.strokeStyle = "rgba(255,0,0, 0.3)";
+                } else {
+                    ctx.strokeStyle = "rgba(0,0,255, 0.3)";
+                }
+                drawLine(curve[0], curve[1], curve[2], curve[3]);
+                if (draw_tangents != 2) {
+                    if (curve.length > 4) drawLine(curve[2], curve[3], curve[4], curve[5]);
+                    if (curve.length == 8) drawLine(curve[4], curve[5], curve[6], curve[7]);
+                }
+                if (draw_tangents != 1) {
+                    if (curve.length == 6 || curve.length == 7) {
+                        drawLine(curve[0], curve[1], curve[4], curve[5]);
+                    }
+                    if (curve.length == 8) drawLine(curve[0], curve[1], curve[6], curve[7]);
+                }
+            }
+            ctx.beginPath();
+            ctx.moveTo((curve[0] - srcLeft) * hscale, (curve[1] - srcTop) * vscale);
+            if (curve.length == 4) {
+                ctx.lineTo((curve[2] - srcLeft) * hscale, (curve[3] - srcTop) * vscale);
+            } else if (curve.length == 6) {
+                ctx.quadraticCurveTo(
+                    (curve[2] - srcLeft) * hscale, (curve[3] - srcTop) * vscale,
+                    (curve[4] - srcLeft) * hscale, (curve[5] - srcTop) * vscale);
+            } else if (curve.length == 7) {
+                drawConic(curve, srcLeft, srcTop, hscale, vscale);
+            } else {
+                ctx.bezierCurveTo(
+                    (curve[2] - srcLeft) * hscale, (curve[3] - srcTop) * vscale,
+                    (curve[4] - srcLeft) * hscale, (curve[5] - srcTop) * vscale,
+                    (curve[6] - srcLeft) * hscale, (curve[7] - srcTop) * vscale);
+            }
+            if (draw_cubic_red ? curve.length == 8 : firstInside == curves) {
+                ctx.strokeStyle = "rgba(255,0,0, 1)";
+            } else {
+                ctx.strokeStyle = "rgba(0,0,255, 1)";
+            }
+            ctx.stroke();
+            if (draw_endpoints > 0) {
+                drawPoint(curve[0], curve[1], false);
+                if (draw_endpoints > 1 || curve.length == 4) {
+                    drawPoint(curve[2], curve[3], curve.length == 4 && draw_endpoints == 3);
+                }
+                if (curve.length == 6 || curve.length == 7 ||
+                        (draw_endpoints > 1 && curve.length == 8)) {
+                    drawPoint(curve[4], curve[5], (curve.length == 6 || curve.length == 7) && draw_endpoints == 3);
+                }
+                if (curve.length == 8) {
+                    drawPoint(curve[6], curve[7], curve.length == 8 && draw_endpoints == 3);
+                }
+            }
+            if (draw_midpoint != 0) {
+                if ((curves == 0) == (midLeft == 0)) {
+                    ctx.strokeStyle = "rgba(0,180,127, 0.6)";
+                } else {
+                    ctx.strokeStyle = "rgba(127,0,127, 0.6)";
+                }
+                var midX = x_at_t(curve, 0.5);
+                var midY = y_at_t(curve, 0.5);
+                drawPointSolid(midX, midY);
+                if (draw_midpoint > 1) {
+                    drawLine(curve[0], curve[1], midX, midY);
+                }
+            }
+            if (draw_quarterpoint != 0) {
+                if ((curves == 0) == (shortLeft == 0)) {
+                    ctx.strokeStyle = "rgba(0,191,63, 0.6)";
+                } else {
+                    ctx.strokeStyle = "rgba(63,0,191, 0.6)";
+                }
+                var midT = (curves == 0) == shorter ? 0.25 : 0.5;
+                var midX = x_at_t(curve, midT);
+                var midY = y_at_t(curve, midT);
+                drawPointSolid(midX, midY);
+                if (draw_quarterpoint > 1) {
+                    drawLine(curve[0], curve[1], midX, midY);
+                }
+            }
+            if (draw_sortpoint != 0) {
+                if ((curves == 0) == ((disallowShort == -1 ? midLeft : shortLeft) == 0)) {
+                    ctx.strokeStyle = "rgba(0,155,37, 0.6)";
+                } else {
+                    ctx.strokeStyle = "rgba(37,0,155, 0.6)";
+                }
+                var midT = (curves == 0) == shorter && disallowShort != curves ? 0.25 : 0.5;
+                console.log("curves=" + curves + " disallowShort=" + disallowShort
+                        + " midLeft=" + midLeft + " shortLeft=" + shortLeft
+                        + " shorter=" + shorter + " midT=" + midT);
+                var midX = x_at_t(curve, midT);
+                var midY = y_at_t(curve, midT);
+                drawPointSolid(midX, midY);
+                if (draw_sortpoint > 1) {
+                    drawLine(curve[0], curve[1], midX, midY);
+                }
+            }
+            if (draw_ray_intersect != 0) {
+                ctx.strokeStyle = "rgba(75,45,199, 0.6)";
+                if (curve.length >= 6 && curve.length <= 8) {
+                    var intersections = intersect[intersectIndex];
+                    for (var i in intersections) {
+                        var intersection = intersections[i];
+                        var x = x_at_t(curve, intersection);
+                        var y = y_at_t(curve, intersection);
+                        drawPointSolid(x, y);
+                        if (draw_ray_intersect > 1) {
+                            drawLine(curve[0], curve[1], x, y);
+                        }
+                    }
+                }
+                ++intersectIndex;
+            }
+            if (draw_order) {
+                var px = x_at_t(curve, 0.75);
+                var py = y_at_t(curve, 0.75);
+                var _px = (px - srcLeft) * hscale;
+                var _py = (py - srcTop) * vscale;
+                ctx.beginPath();
+                ctx.arc(_px, _py, 15, 0, Math.PI * 2, true);
+                ctx.closePath();
+                ctx.fillStyle = "white";
+                ctx.fill();
+                if (draw_cubic_red ? curve.length == 8 : firstInside == curves) {
+                    ctx.strokeStyle = "rgba(255,0,0, 1)";
+                    ctx.fillStyle = "rgba(255,0,0, 1)";
+                } else {
+                    ctx.strokeStyle = "rgba(0,0,255, 1)";
+                    ctx.fillStyle = "rgba(0,0,255, 1)";
+                }
+                ctx.stroke();
+                ctx.font = "normal 16px Arial";
+                ctx.textAlign = "center";
+                ctx.fillText(parseInt(curves) + 1, _px, _py + 5);
+            }
+            if (draw_closest_t) {
+                var t = curveClosestT(curve, mouseX, mouseY);
+                if (t >= 0) {
+                    var x = x_at_t(curve, t);
+                    var y = y_at_t(curve, t);
+                    drawPointSolid(x, y);
+                }
+            }
+            if (!approximately_zero(hscale - hinitScale)) {
+                ctx.font = "normal 20px Arial";
+                ctx.fillStyle = "rgba(0,0,0, 0.3)";
+                ctx.textAlign = "right";
+                var scaleTextOffset = hscale != vscale ? -25 : -5;
+                ctx.fillText(hscale.toFixed(decimal_places) + 'x',
+                        screenWidth - 10, screenHeight - scaleTextOffset);
+                if (hscale != vscale) {
+                    ctx.fillText(vscale.toFixed(decimal_places) + 'y',
+                            screenWidth - 10, screenHeight - 5);
+                }
+            }
+            if (draw_t) {
+                drawPointAtT(curve);
+            }
+            if (draw_id != 0) {
+                var id = -1;
+                for (var i = 0; i < ids.length; i += 2) {
+                    if (ids[i + 1] == curve) {
+                        id = ids[i];
+                        break;
+                    }
+                }
+                if (id >= 0) {
+                    var px = x_at_t(curve, 0.5);
+                    var py = y_at_t(curve, 0.5);
+                    var _px = (px - srcLeft) * hscale;
+                    var _py = (py - srcTop) * vscale;
+                    ctx.beginPath();
+                    ctx.arc(_px, _py, 15, 0, Math.PI * 2, true);
+                    ctx.closePath();
+                    ctx.fillStyle = "white";
+                    ctx.fill();
+                    ctx.strokeStyle = "rgba(255,0,0, 1)";
+                    ctx.fillStyle = "rgba(255,0,0, 1)";
+                    ctx.stroke();
+                    ctx.font = "normal 16px Arial";
+                    ctx.textAlign = "center";
+                    ctx.fillText(id, _px, _py + 5);
+                }
+            }
+        }
+        if (draw_t) {
+            drawCurveTControl();
+        }
+        if (draw_w) {
+            drawCurveWControl();
+        }
+    }
+
+    function drawCurveTControl() {
+        ctx.lineWidth = 2;
+        ctx.strokeStyle = "rgba(0,0,0, 0.3)";
+        ctx.beginPath();
+        ctx.rect(screenWidth - 80, 40, 28, screenHeight - 80);
+        ctx.stroke();
+        var ty = 40 + curveT * (screenHeight - 80);
+        ctx.beginPath();
+        ctx.moveTo(screenWidth - 80, ty);
+        ctx.lineTo(screenWidth - 85, ty - 5);
+        ctx.lineTo(screenWidth - 85, ty + 5);
+        ctx.lineTo(screenWidth - 80, ty);
+        ctx.fillStyle = "rgba(0,0,0, 0.6)";
+        ctx.fill();
+        var num = curveT.toFixed(decimal_places);
+        ctx.font = "normal 10px Arial";
+        ctx.textAlign = "left";
+        ctx.fillText(num, screenWidth - 78, ty);
+    }
+
+    function drawCurveWControl() {
+        var w = -1;
+        var choice = 0;
+        for (var curves in tests[testIndex]) {
+            var curve = tests[testIndex][curves];
+            if (curve.length != 7) {
+                continue;
+            }
+            if (choice == curveW) {
+                w = curve[6];
+                break;
+            }
+            ++choice;
+        }
+        if (w < 0) {
+            return;
+        }
+        ctx.lineWidth = 2;
+        ctx.strokeStyle = "rgba(0,0,0, 0.3)";
+        ctx.beginPath();
+        ctx.rect(screenWidth - 40, 40, 28, screenHeight - 80);
+        ctx.stroke();
+        var ty = 40 + w * (screenHeight - 80);
+        ctx.beginPath();
+        ctx.moveTo(screenWidth - 40, ty);
+        ctx.lineTo(screenWidth - 45, ty - 5);
+        ctx.lineTo(screenWidth - 45, ty + 5);
+        ctx.lineTo(screenWidth - 40, ty);
+        ctx.fillStyle = "rgba(0,0,0, 0.6)";
+        ctx.fill();
+        var num = w.toFixed(decimal_places);
+        ctx.font = "normal 10px Arial";
+        ctx.textAlign = "left";
+        ctx.fillText(num, screenWidth - 38, ty);
+    }
+
+    function ptInTControl() {
+        var e = window.event;
+        var tgt = e.target || e.srcElement;
+        var left = tgt.offsetLeft;
+        var top = tgt.offsetTop;
+        var x = (e.clientX - left);
+        var y = (e.clientY - top);
+        if (x < screenWidth - 80 || x > screenWidth - 50) {
+            return false;
+        }
+        if (y < 40 || y > screenHeight - 80) {
+            return false;
+        }
+        curveT = (y - 40) / (screenHeight - 120);
+        if (curveT < 0 || curveT > 1) {
+            throw "stop execution";
+        }
+        return true;
+    }
+
+    function ptInWControl() {
+        var e = window.event;
+        var tgt = e.target || e.srcElement;
+        var left = tgt.offsetLeft;
+        var top = tgt.offsetTop;
+        var x = (e.clientX - left);
+        var y = (e.clientY - top);
+        if (x < screenWidth - 40 || x > screenWidth - 10) {
+            return false;
+        }
+        if (y < 40 || y > screenHeight - 80) {
+            return false;
+        }
+        var w = (y - 40) / (screenHeight - 120);
+        if (w < 0 || w > 1) {
+            throw "stop execution";
+        }
+        var choice = 0;
+        for (var curves in tests[testIndex]) {
+            var curve = tests[testIndex][curves];
+            if (curve.length != 7) {
+                continue;
+            }
+            if (choice == curveW) {
+                curve[6] = w;
+                break;
+            }
+            ++choice;
+        }
+        return true;
+    }
+
+    function drawTop() {
+        init(tests[testIndex]);
+        redraw();
+    }
+
+    function redraw() {
+        if (focus_on_selection > 0) {
+            var focusXmin = focusYmin = Infinity;
+            var focusXmax = focusYmax = -Infinity;
+            var choice = 0;
+            for (var curves in tests[testIndex]) {
+                if (++choice != focus_on_selection) {
+                    continue;
+                }
+                var curve = tests[testIndex][curves];
+                var last = curve.length - (curve.length % 2 == 1 ? 1 : 0);
+                for (var idx = 0; idx < last; idx += 2) {
+                    focusXmin = Math.min(focusXmin, curve[idx]);
+                    focusXmax = Math.max(focusXmax, curve[idx]);
+                    focusYmin = Math.min(focusYmin, curve[idx + 1]);
+                    focusYmax = Math.max(focusYmax, curve[idx + 1]);
+                }
+            }
+            focusXmin -= Math.min(1, Math.max(focusXmax - focusXmin, focusYmax - focusYmin));
+            if (focusXmin < focusXmax && focusYmin < focusYmax) {
+                setScale(focusXmin, focusXmax, focusYmin, focusYmax);
+            }
+        }
+        ctx.beginPath();
+        ctx.rect(0, 0, ctx.canvas.width, ctx.canvas.height);
+        ctx.fillStyle = "white";
+        ctx.fill();
+        draw(tests[testIndex], testTitles[testIndex]);
+    }
+
+    function doKeyPress(evt) {
+        var char = String.fromCharCode(evt.charCode);
+        var focusWasOn = false;
+        switch (char) {
+            case '0':
+            case '1':
+            case '2':
+            case '3':
+            case '4':
+            case '5':
+            case '6':
+            case '7':
+            case '8':
+            case '9':
+                decimal_places = char - '0';
+                redraw();
+                break;
+            case '-':
+                focusWasOn = focus_on_selection;
+                if (focusWasOn) {
+                    focus_on_selection = false;
+                    hscale /= 1.2;
+                    vscale /= 1.2;
+                } else {
+                    hscale /= 2;
+                    vscale /= 2;
+                }
+                calcLeftTop();
+                redraw();
+                focus_on_selection = focusWasOn;
+                break;
+            case '=':
+            case '+':
+                focusWasOn = focus_on_selection;
+                if (focusWasOn) {
+                    focus_on_selection = false;
+                    hscale *= 1.2;
+                    vscale *= 1.2;
+                } else {
+                    hscale *= 2;
+                    vscale *= 2;
+                }
+                calcLeftTop();
+                redraw();
+                focus_on_selection = focusWasOn;
+                break;
+            case 'b':
+                draw_cubic_red ^= true;
+                redraw();
+                break;
+            case 'c':
+                drawTop();
+                break;
+            case 'd':
+                var test = tests[testIndex];
+                var testClone = [];
+                for (var curves in test) {
+                    var c = test[curves];
+                    var cClone = [];
+                    for (var index = 0; index < c.length; ++index) {
+                        cClone.push(c[index]);
+                    }
+                    testClone.push(cClone);
+                }
+                tests.push(testClone);
+                testTitles.push(testTitles[testIndex] + " copy");
+                testIndex = tests.length - 1;
+                redraw();
+                break;
+            case 'e':
+                draw_endpoints = (draw_endpoints + 1) % 4;
+                redraw();
+                break;
+            case 'f':
+                draw_derivative ^= true;
+                redraw();
+                break;
+            case 'g':
+                hscale *= 1.2;
+                calcLeftTop();
+                redraw();
+                break;
+            case 'G':
+                hscale /= 1.2;
+                calcLeftTop();
+                redraw();
+                break;
+            case 'h':
+                vscale *= 1.2;
+                calcLeftTop();
+                redraw();
+                break;
+            case 'H':
+                vscale /= 1.2;
+                calcLeftTop();
+                redraw();
+                break;
+            case 'i':
+                draw_ray_intersect = (draw_ray_intersect + 1) % 3;
+                redraw();
+                break;
+            case 'l':
+                var test = tests[testIndex];
+                console.log("<div id=\"" + testTitles[testIndex] + "\" >");
+                for (var curves in test) {
+                    var c = test[curves];
+                    var s = "{{";
+                    for (var i = 0; i < c.length; i += 2) {
+                        s += "{";
+                        s += c[i] + "," + c[i + 1];
+                        s += "}";
+                        if (i + 2 < c.length) {
+                            s += ", ";
+                        }
+                    }
+                    console.log(s + "}},");
+                }
+                console.log("</div>");
+                break;
+            case 'm':
+                draw_midpoint = (draw_midpoint + 1) % 3;
+                redraw();
+                break;
+            case 'N':
+                testIndex += 9;
+            case 'n':
+                testIndex = (testIndex + 1) % tests.length;
+                drawTop();
+                break;
+            case 'o':
+                draw_order ^= true;
+                redraw();
+                break;
+            case 'P':
+                testIndex -= 9;
+            case 'p':
+                if (--testIndex < 0)
+                    testIndex = tests.length - 1;
+                drawTop();
+                break;
+            case 'q':
+                draw_quarterpoint = (draw_quarterpoint + 1) % 3;
+                redraw();
+                break;
+            case 'r':
+                for (var i = 0; i < testDivs.length; ++i) {
+                    var title = testDivs[i].id.toString();
+                    if (title == testTitles[testIndex]) {
+                        var str = testDivs[i].firstChild.data;
+                        parse(str, title);
+                        var original = tests.pop();
+                        testTitles.pop();
+                        tests[testIndex] = original;
+                        break;
+                    }
+                }
+                redraw();
+                break;
+            case 's':
+                draw_sortpoint = (draw_sortpoint + 1) % 3;
+                redraw();
+                break;
+            case 't':
+                draw_t ^= true;
+                redraw();
+                break;
+            case 'u':
+                draw_closest_t ^= true;
+                redraw();
+                break;
+            case 'v':
+                draw_tangents = (draw_tangents + 1) % 4;
+                redraw();
+                break;
+            case 'w':
+                ++curveW;
+                var choice = 0;
+                draw_w = false;
+                for (var curves in tests[testIndex]) {
+                    var curve = tests[testIndex][curves];
+                    if (curve.length != 7) {
+                        continue;
+                    }
+                    if (choice == curveW) {
+                        draw_w = true;
+                        break;
+                    }
+                    ++choice;
+                }
+                if (!draw_w) {
+                    curveW = -1;
+                }
+                redraw();
+                break;
+            case 'x':
+                draw_point_xy ^= true;
+                redraw();
+                break;
+            case 'y':
+                draw_mouse_xy ^= true;
+                redraw();
+                break;
+            case '\\':
+                retina_scale ^= true;
+                drawTop();
+                break;
+            case '`':
+                ++focus_on_selection;
+                if (focus_on_selection >= tests[testIndex].length) {
+                    focus_on_selection = 0;
+                }
+                setScale(xmin, xmax, ymin, ymax);
+                redraw();
+                break;
+            case '.':
+                draw_id = (draw_id + 1) % 3;
+                redraw();
+                break;
+        }
+    }
+
+    function doKeyDown(evt) {
+        var char = evt.keyCode;
+        var preventDefault = false;
+        switch (char) {
+            case 37: // left arrow
+                if (evt.shiftKey) {
+                    testIndex -= 9;
+                }
+                if (--testIndex < 0)
+                    testIndex = tests.length - 1;
+                if (evt.ctrlKey) {
+                    redraw();
+                } else {
+                    drawTop();
+                }
+                preventDefault = true;
+                break;
+            case 39: // right arrow
+                if (evt.shiftKey) {
+                    testIndex += 9;
+                }
+                if (++testIndex >= tests.length)
+                    testIndex = 0;
+                if (evt.ctrlKey) {
+                    redraw();
+                } else {
+                    drawTop();
+                }
+                preventDefault = true;
+                break;
+        }
+        if (preventDefault) {
+            evt.preventDefault();
+            return false;
+        }
+        return true;
+    }
+
+    function calcXY() {
+        var e = window.event;
+        var tgt = e.target || e.srcElement;
+        var left = tgt.offsetLeft;
+        var top = tgt.offsetTop;
+        mouseX = (e.clientX - left) / hscale + srcLeft;
+        mouseY = (e.clientY - top) / vscale + srcTop;
+    }
+
+    function calcLeftTop() {
+        srcLeft = mouseX - screenWidth / 2 / hscale;
+        srcTop = mouseY - screenHeight / 2 / vscale;
+    }
+
+    function handleMouseClick() {
+        if ((!draw_t || !ptInTControl()) && (!draw_w || !ptInWControl())) {
+            calcXY();
+        } else {
+            redraw();
+        }
+    }
+
+    function initDown() {
+        var test = tests[testIndex];
+        var bestDistance = 1000000;
+        activePt = -1;
+        for (var curves in test) {
+            var testCurve = test[curves];
+            if (testCurve.length != 4 && (testCurve.length < 6 || testCurve.length > 8)) {
+                continue;
+            }
+            var testMax = testCurve.length == 7 ? 6 : testCurve.length;
+            for (var i = 0; i < testMax; i += 2) {
+                var testX = testCurve[i];
+                var testY = testCurve[i + 1];
+                var dx = testX - mouseX;
+                var dy = testY - mouseY;
+                var dist = dx * dx + dy * dy;
+                if (dist > bestDistance) {
+                    continue;
+                }
+                activeCurve = testCurve;
+                activePt = i;
+                bestDistance = dist;
+            }
+        }
+        if (activePt >= 0) {
+            lastX = mouseX;
+            lastY = mouseY;
+        }
+    }
+
+    function handleMouseOver() {
+        calcXY();
+        if (draw_mouse_xy) {
+            var num = mouseX.toFixed(decimal_places) + ", " + mouseY.toFixed(decimal_places);
+            ctx.beginPath();
+            ctx.rect(300, 100, num.length * 6, 10);
+            ctx.fillStyle = "white";
+            ctx.fill();
+            ctx.font = "normal 10px Arial";
+            ctx.fillStyle = "black";
+            ctx.textAlign = "left";
+            ctx.fillText(num, 300, 108);
+        }
+        if (!mouseDown) {
+            activePt = -1;
+            return;
+        }
+        if (activePt < 0) {
+            initDown();
+            return;
+        }
+        var deltaX = mouseX - lastX;
+        var deltaY = mouseY - lastY;
+        lastX = mouseX;
+        lastY = mouseY;
+        if (activePt == 0) {
+            var test = tests[testIndex];
+            for (var curves in test) {
+                var testCurve = test[curves];
+                testCurve[0] += deltaX;
+                testCurve[1] += deltaY;
+            }
+        } else {
+            activeCurve[activePt] += deltaX;
+            activeCurve[activePt + 1] += deltaY;
+        }
+        redraw();
+    }
+
+    function start() {
+        for (var i = 0; i < testDivs.length; ++i) {
+            var title = testDivs[i].id.toString();
+            var str = testDivs[i].firstChild.data;
+            parse(str, title);
+        }
+        drawTop();
+        window.addEventListener('keypress', doKeyPress, true);
+        window.addEventListener('keydown', doKeyDown, true);
+        window.onresize = function () {
+            drawTop();
+        }
+    }
+
+</script>
+</head>
+
+<body onLoad="start();">
+
+<canvas id="canvas" width="750" height="500"
+    onmousedown="mouseDown = true"
+    onmouseup="mouseDown = false"
+    onmousemove="handleMouseOver()"
+    onclick="handleMouseClick()"
+    ></canvas >
+</body>
+</html>

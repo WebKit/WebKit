@@ -1,0 +1,5 @@
+int output;
+
+/*%%*
+name 'output' is reserved
+*%%*/

@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<script src='../../resources/testharness.js'></script>
+<script src='../../resources/testharnessreport.js'></script>
+<script src='resources/streams-utils.js'></script>
+<script>
+const IsReadableStreamDisturbed = internals.isReadableStreamDisturbed.bind(internals);
+
+// This is updated till https://github.com/whatwg/streams/commit/4ba861e6f60c248060811830e11271c84b439cc3
+
+test(function() {
+    var rs = new ReadableStream();
+
+    assert_false(IsReadableStreamDisturbed(rs), 'rs should not be disturbed on construction');
+
+    var reader = rs.getReader();
+    assert_false(IsReadableStreamDisturbed(rs), 'getReader() call has no effect on whether a stream is disturbed or not');
+
+    reader.read();
+    assert_true(IsReadableStreamDisturbed(rs), 'rs should be disturbed after read() call');
+}, 'IsReadableStreamDisturbed returns true for an empty non-closed stream on which read() has been called');
+
+test(function() {
+    var rs = new ReadableStream();
+
+    assert_false(IsReadableStreamDisturbed(rs), 'rs should not be disturbed on construction');
+
+    var reader = rs.getReader();
+    assert_false(IsReadableStreamDisturbed(rs), 'getReader() call has no effect on whether a stream is disturbed or not');
+
+    reader.cancel();
+    assert_true(IsReadableStreamDisturbed(rs), 'rs should be disturbed after cancel() call');
+}, 'IsReadableStreamDisturbed returns true for an empty non-closed stream on which cancel() has been called');
+
+test(function() {
+    var rs = new ReadableStream({
+        start: function(c) {
+            c.close();
+        }
+    });
+
+    assert_false(IsReadableStreamDisturbed(rs), 'rs should not be disturbed on construction');
+
+    var reader = rs.getReader();
+    assert_false(IsReadableStreamDisturbed(rs), 'getReader() call has no effect on whether a stream is disturbed or not');
+
+    reader.read();
+    assert_true(IsReadableStreamDisturbed(rs), 'rs should be disturbed after read() call');
+}, 'IsReadableStreamDisturbed returns true for a closed stream on which read() has been called');
+
+test(function() {
+    var rs = new ReadableStream({
+        start: function(c) {
+            c.close();
+        }
+    });
+
+    assert_false(IsReadableStreamDisturbed(rs), 'rs should not be disturbed on construction');
+
+    var reader = rs.getReader();
+    assert_false(IsReadableStreamDisturbed(rs), 'getReader() call has no effect on whether a stream is disturbed or not');
+
+    reader.cancel();
+    assert_true(IsReadableStreamDisturbed(rs), 'rs should be disturbed after cancel() call');
+}, 'IsReadableStreamDisturbed returns true for a closed stream on which cancel() has been called');
+
+test(function() {
+    var rs = new ReadableStream({
+        start: function(c) {
+            c.error(new Error('waffles'));
+        }
+    });
+
+    assert_false(IsReadableStreamDisturbed(rs), 'rs should not be disturbed on construction');
+
+    var reader = rs.getReader();
+    assert_false(IsReadableStreamDisturbed(rs), 'getReader() call has no effect on whether a stream is disturbed or not');
+
+    reader.read();
+    assert_true(IsReadableStreamDisturbed(rs), 'rs should be disturbed after read() call');
+}, 'IsReadableStreamDisturbed returns true for an errored stream on which read() has been called');
+
+test(function() {
+    var rs = new ReadableStream({
+        start: function(c) {
+            c.error(new Error('waffles'));
+        }
+    });
+
+    assert_false(IsReadableStreamDisturbed(rs), 'rs should not be disturbed on construction');
+
+    var reader = rs.getReader();
+    assert_false(IsReadableStreamDisturbed(rs), 'getReader() call has no effect on whether a stream is disturbed or not');
+
+    reader.cancel();
+    assert_true(IsReadableStreamDisturbed(rs), 'rs should be disturbed after cancel() call');
+}, 'IsReadableStreamDisturbed returns true for an errored stream on which cancel() has been called');
+</script>

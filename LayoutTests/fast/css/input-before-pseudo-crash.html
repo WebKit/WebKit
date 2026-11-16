@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+if (window.testRunner)
+  testRunner.dumpAsText();
+</script>
+<style>
+.one::before {
+  float: left;
+  content: "B";
+}
+.two::before {
+  float: left;
+  content: "A";
+}
+</style>
+</head>
+<body>
+<input style="flex-direction: column;" class="one" type="range">
+</body>
+<script>
+for (let i = 0; i < 100; ++i) {
+  (i % 2) ? document.querySelector("input").classList = "one" : document.querySelector("input").classList = "two";
+  document.body.offsetHeight;
+}
+</script>
+<body>
+<p>Test passes if it does not crash.</p>
+</body>
+</html>

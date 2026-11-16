@@ -1,0 +1,62 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ ContentInsetBackgroundFillEnabled=true pageTopColorSamplingEnabled=true useFlexibleViewport=true obscuredInset.top=50 obscuredInset.left=50 ] -->
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body, html {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            font-family: system-ui;
+        }
+
+        .tall {
+            height: 200vh;
+        }
+    </style>
+    <script src="../../resources/js-test.js"></script>
+    <script src="../../resources/ui-helper.js"></script>
+    <script>
+    jsTestIsAsync = true;
+
+    addEventListener("load", async () => {
+        const dialog = document.querySelector("dialog");
+        await UIHelper.setObscuredInsets(50, 50, 50, 50);
+        await UIHelper.ensurePresentationUpdate();
+
+        edgeColorsBeforeShowingModalDialog = await UIHelper.fixedContainerEdgeColors();
+        shouldBeNull("edgeColorsBeforeShowingModalDialog.top");
+        shouldBeNull("edgeColorsBeforeShowingModalDialog.left");
+        shouldBeNull("edgeColorsBeforeShowingModalDialog.right");
+        shouldBeNull("edgeColorsBeforeShowingModalDialog.bottom");
+
+        dialog.showModal();
+        await UIHelper.ensurePresentationUpdate();
+
+        edgeColorsAfterShowingModalDialog = await UIHelper.fixedContainerEdgeColors();
+        shouldBeEqualToString("edgeColorsAfterShowingModalDialog.top", "rgb(229, 229, 229)");
+        shouldBeEqualToString("edgeColorsAfterShowingModalDialog.left", "rgb(229, 229, 229)");
+        shouldBeEqualToString("edgeColorsAfterShowingModalDialog.right", "rgb(229, 229, 229)");
+        shouldBeEqualToString("edgeColorsAfterShowingModalDialog.bottom", "rgb(229, 229, 229)");
+
+        dialog.close();
+        await UIHelper.ensurePresentationUpdate();
+
+        edgeColorsAfterClosingModalDialog = await UIHelper.fixedContainerEdgeColors();
+        shouldBeNull("edgeColorsAfterClosingModalDialog.top");
+        shouldBeNull("edgeColorsAfterClosingModalDialog.left");
+        shouldBeNull("edgeColorsAfterClosingModalDialog.right");
+        shouldBeNull("edgeColorsAfterClosingModalDialog.bottom");
+
+        finishJSTest();
+    });
+    </script>
+</head>
+<body>
+    <div class="tall"></div>
+    <dialog>
+        <p>Hello world</p>
+    </dialog>
+</body>
+</html>

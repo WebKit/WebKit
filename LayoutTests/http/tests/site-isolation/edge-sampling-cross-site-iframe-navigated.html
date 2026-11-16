@@ -1,0 +1,35 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ SiteIsolationEnabled=true pageTopColorSamplingEnabled=true ContentInsetBackgroundFillEnabled=true TopContentInsetBackgroundCanChangeAfterScrolling=true ] -->
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- The frame navigates to another site, which gives it a new process, and that process is sampled. -->
+<link rel="stylesheet" href="resources/edge-sampling.css">
+<script src="/js-test-resources/js-test.js"></script>
+<script src="/js-test-resources/ui-helper.js"></script>
+<script src="resources/edge-sampling.js"></script>
+</head>
+<body>
+<div class="edge top"><iframe id="frame" data-src="http://localhost:8000/site-isolation/resources/solid-color.html?color=ff7800"></iframe></div>
+<div class="tall"></div>
+<script>
+async function runTest()
+{
+    await prepareEdgeSampling();
+    await settledEdges({ top: "rgb(255, 120, 0)" });
+
+    await new Promise(resolve => {
+        const frame = document.getElementById("frame");
+        frame.addEventListener("load", resolve, { once: true });
+        frame.src = "https://localhost:8443/site-isolation/resources/solid-color.html?color=00ff00";
+    });
+
+    edgeSamplingColors = await settledEdges({ top: "rgb(0, 255, 0)" });
+    assertEdges({ top: "rgb(0, 255, 0)" });
+    finishJSTest();
+}
+
+runTest();
+</script>
+</body>
+</html>

@@ -1,0 +1,16 @@
+
+== Running test suite: CSS.Keyframes.TreeScope
+-- Running test case: CSS.Keyframes.TreeScope
+PASS: Only the resolved keyframe rule should be returned.
+PASS: The document target should use document keyframes.
+PASS: Only the resolved keyframe rule should be returned.
+PASS: The shadow target should use its last matching scoped rule.
+PASS: Only the resolved keyframe rule should be returned.
+PASS: A second shadow tree should use its own keyframes.
+PASS: Only the resolved keyframe rule should be returned.
+PASS: A slotted animation name should resolve in the declaring shadow scope.
+PASS: Only the resolved keyframe rule should be returned.
+PASS: A part animation name should resolve in the declaring document scope.
+PASS: Only the resolved keyframe rule should be returned.
+PASS: A shadow pseudo element should use its scoped keyframes.
+

@@ -1,0 +1,43 @@
+This tests the intersectionWithSelectionRange API, which returns the range of characters in an AX element that are part of the document selection, if any.
+
+Selecting: text1:0 - text1:5
+Selected text: 'Alpha'
+text1 range:   'Alpha Bravo'
+Intersection:  'Alpha'
+
+Selecting: text1:6 - text1:11
+Selected text: 'Bravo'
+text1 range:   'Alpha Bravo'
+Intersection:  'Bravo'
+
+Selecting: text2:2 - text2:9
+Selected text: 'Charlie'
+text2 range:   'Charlie Delta'
+Intersection:  'Charlie'
+
+Selecting: text2:11 - text2:16
+Selected text: 'Delta'
+text2 range:   'Charlie Delta'
+Intersection:  'Delta'
+
+Selecting: text1:6 - text2:9
+Selected text: 'Bravo\nCharlie'
+text1 range:   'Alpha Bravo'
+Intersection:  'Bravo'
+
+Selecting: text1:0 - text1:5
+Selected text: 'Alpha'
+text2 range:   'Charlie Delta'
+Intersection:  'null'
+
+Selecting: text1:6 - text2:9
+Selected text: 'Bravo\nCharlie'
+text2 range:   'Charlie Delta'
+Intersection:  'Charlie'
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Alpha Bravo
+Charlie Delta

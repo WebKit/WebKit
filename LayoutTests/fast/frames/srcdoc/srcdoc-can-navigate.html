@@ -1,0 +1,10 @@
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.dumpChildFramesAsText();
+    testRunner.waitUntilDone();
+}
+</script>
+<iframe srcdoc="FAIL
+<script>
+window.location = 'data:text/html,PASS<script>if (window.testRunner) testRunner.notifyDone();<\/script>';</script>"></iframe>

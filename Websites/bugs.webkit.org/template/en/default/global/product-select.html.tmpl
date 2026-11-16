@@ -1,0 +1,92 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[%# INTERFACE:
+  # name: mandatory; field name
+  # id: optional; field id
+  # value: optional; default field value/selection
+  # classes: optional; an array of classes to be added
+  # onchange: optional; onchange attribute value
+  # disabled: optional; if true, the field is disabled
+  # accesskey: optional;  accesskey attribute value
+  # add: optional;  prepend menu option for value specified to start of select
+  # dontchange: optional; prepend menu option for "dontchange" to start of select
+  # multiple: optional; do multiselect box, value is size (height) of box
+  # title: optional; extra information to display as a tooltip
+  # products: optional; an array of custom product names
+  # isselect: optional; whether the product list should be displayed as a <select>
+  #           or as just the plain text of its value.
+  # valueattribute: optional; the product attribute to be used for <option value="">,
+  #           defaults to product name
+  #%]
+
+[% IF !isselect.defined %]
+  [% isselect = 1 %]
+[% END %]
+[% DEFAULT valueattribute = "name" %]
+[% IF isselect %]
+  <select name="[% name FILTER html %]"
+    [% IF id %] id="[% id FILTER html %]" [% END %]
+    [% IF classes %] class="[% classes.join(' ') FILTER html %]" [% END %]
+    [% IF onchange %] onchange="[% onchange FILTER html %]" [% END %]
+    [% IF disabled %] disabled="[% disabled FILTER html %]" [% END %]
+    [% IF accesskey %] accesskey="[% accesskey FILTER html %]" [% END %]
+    [% IF multiple %] multiple="multiple" size="[% multiple FILTER html %]" [% END %]
+    [% IF title %] title="[% title FILTER html %]" [% END %]
+  >
+    [% IF add %]
+      <option value="">[% add FILTER html %]</option>
+    [% END %]
+    [% IF dontchange %]
+      <option value="[% dontchange FILTER html %]">[% dontchange FILTER html %]</option>
+    [% END %]
+
+    [% IF Param('useclassification') %]
+      [% classifications = {} %]
+      [% IF products %]
+        [% FOREACH p = products %]
+          [% IF NOT classifications.${p.classification.name}.defined %]
+            [% classifications.${p.classification.name} = [] %]
+          [% END %]
+          [% classifications.${p.classification.name}.push(p) %]
+        [% END %]
+      [% ELSE %]
+        [% FOREACH c = user.get_selectable_classifications %]
+          [% classifications.${c.name} = [] %]
+          [% FOREACH p = user.get_selectable_products(c.id) %]
+            [% classifications.${c.name}.push(p) %]
+          [% END %]
+        [% END %]
+      [% END %]
+
+      [% FOREACH c = all_classifications %]
+        [% NEXT UNLESS classifications.${c}.size %]
+        <optgroup label="[% c FILTER html %]">
+          [% FOREACH p = classifications.$c %]
+            <option value="[% p.$valueattribute FILTER html %]"
+              [% " selected" IF (cgi.param(name) == p.name) || (value.contains(p.name)) %]>
+              [% p.name FILTER html %]
+            </option>
+          [% END %]
+        </optgroup>
+      [% END %]
+    [% ELSE %]
+      [% IF NOT products.defined %]
+        [% products = user.get_selectable_products %]
+      [% END %]
+      [% FOREACH p = products %]
+        <option value="[% p.$valueattribute FILTER html %]"
+          [% " selected" IF (cgi.param(name) == p.name) || (value.contains(p.name)) %]>
+          [% p.name FILTER html %]
+        </option>
+      [% END %]
+    [% END %]
+  </select>
+[% ELSE %]
+  [% value.join(', ') FILTER html %]
+[% END %]

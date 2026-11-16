@@ -1,0 +1,11 @@
+
+PASS /* basic */
+PASS display: table
+PASS display: table-cell
+PASS display: inline
+PASS display: contents
+PASS display: none
+PASS container-type: normal
+PASS container-type: inline-size
+PASS container-type: inline-size; writing-mode: vertical-lr
+

@@ -1,0 +1,17 @@
+
+PASS # AUDIT TASK RUNNER STARTED.
+PASS Executing "Initializing AudioWorklet and Context"
+PASS Executing "Verify Size of AudioParam Arrays"
+PASS Audit report
+PASS > [Initializing AudioWorklet and Context]
+PASS   Creating offline context for testing did not throw an exception.
+PASS   Creating test worklet resolved correctly.
+PASS < [Initializing AudioWorklet and Context] All assertions passed. (total 2 assertions)
+PASS > [Verify Size of AudioParam Arrays]
+PASS   Render quantum 0: array size contains only the constant 1.
+PASS   Render quantum 1: array size contains only the constant 1.
+PASS   Render quantum 2-3: array size contains only the constant 128.
+PASS   Remaining renders: array size contains only the constant 1.
+PASS < [Verify Size of AudioParam Arrays] All assertions passed. (total 4 assertions)
+PASS # AUDIT TASK RUNNER FINISHED: 2 tasks ran successfully.
+

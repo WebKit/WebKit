@@ -1,0 +1,8 @@
+The color of this text should be green when the pointing device hovers over it.
+
+The color of this text should be green when the pointing device hovers over it.
+
+
+PASS Negated :hover on span
+PASS Negated :hover on link
+

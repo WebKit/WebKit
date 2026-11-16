@@ -1,0 +1,11 @@
+
+PASS Reporting to coep-none frame with coep-none worker
+PASS Reporting to coep-none frame with coep-report-only worker
+PASS Reporting to coep-none frame with coep-require-corp worker
+PASS Reporting to coep-report-only frame with coep-none worker
+PASS Reporting to coep-report-only frame with coep-report-only worker
+PASS Reporting to coep-report-only frame with coep-require-corp worker
+PASS Reporting to coep-require-corp frame with coep-none worker
+PASS Reporting to coep-require-corp frame with coep-report-only worker
+PASS Reporting to coep-require-corp frame with coep-require-corp worker
+

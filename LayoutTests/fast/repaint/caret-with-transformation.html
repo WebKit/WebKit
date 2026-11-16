@@ -1,0 +1,17 @@
+<script src="resources/repaint.js" type="text/javascript"></script>
+<script type="text/javascript">
+function repaintTest() {
+    var div = document.getElementById("div");
+    window.getSelection().setPosition(div, 1);
+}
+</script>
+<html>
+<body onload="runRepaintTest();">
+<div contenteditable="true" style="-webkit-transform:rotate(30deg)translate(100px,200px)">
+<div id="div">This test verifies caret repaint is correctly transformed.</div>
+</div>
+<script>
+window.getSelection().setPosition(div, 0);
+</script>
+</body>
+</html>

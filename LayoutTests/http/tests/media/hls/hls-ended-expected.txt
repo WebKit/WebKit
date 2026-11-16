@@ -1,0 +1,9 @@
+
+RUN(video.src = "../resources/hls/test-vod.m3u8")
+EVENT(canplay)
+RUN(video.currentTime = video.duration - 0.5)
+EVENT(seeked)
+RUN(video.play())
+EVENT(ended)
+END OF TEST
+

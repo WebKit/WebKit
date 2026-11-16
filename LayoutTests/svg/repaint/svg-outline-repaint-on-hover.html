@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>SVG root: repaint rects when toggling outline on :hover</title>
+<style>
+    body { margin: 0; }
+    svg { margin: 50px; }
+    svg:hover { outline: 10px solid green; outline-offset: 5px; }
+</style>
+</head>
+<body>
+<svg width="100" height="100"><rect width="100" height="100" fill="blue"/></svg>
+<pre id="result">FAIL: test did not run.</pre>
+<script>
+function run() {
+    const result = document.getElementById("result");
+    if (!window.internals || !window.eventSender || !window.testRunner) {
+        result.textContent = "This test requires window.internals, window.eventSender and window.testRunner.";
+        return;
+    }
+    testRunner.dumpAsText();
+
+    const svg = document.querySelector("svg");
+
+    // Establish a clean, un-hovered baseline.
+    eventSender.mouseMoveTo(400, 400);
+    document.body.offsetHeight;
+
+    const box = svg.getBoundingClientRect();
+    const cx = box.left + box.width / 2;
+    const cy = box.top + box.height / 2;
+
+    // 1) Hover -> :hover adds the outline.
+    internals.startTrackingRepaints();
+    eventSender.mouseMoveTo(cx, cy);
+    document.body.offsetHeight;
+    const hoverRects = internals.repaintRectsAsText();
+    internals.stopTrackingRepaints();
+
+    // 2) Un-hover -> outline removed.
+    internals.startTrackingRepaints();
+    eventSender.mouseMoveTo(400, 400);
+    document.body.offsetHeight;
+    const unhoverRects = internals.repaintRectsAsText();
+    internals.stopTrackingRepaints();
+
+    result.textContent =
+        "SVG border box: " + box.width + "x" + box.height + " at (" + box.left + "," + box.top + ")\n\n" +
+        "Repaint rects on hover (outline added):\n" + hoverRects + "\n" +
+        "Repaint rects on un-hover (outline removed):\n" + unhoverRects;
+}
+
+run();
+</script>
+</body>
+</html>

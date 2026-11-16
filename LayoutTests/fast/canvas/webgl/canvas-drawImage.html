@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script src="../../resources/js-test.js"></script>
+    <script src="resources/webgl-test.js"></script>
+    <script src="resources/webgl-test-utils.js"></script>
+    <script id="quadFragmentShader" type="x-shader/x-fragment">
+      precision highp float;
+      varying vec2 texCoord;
+
+      void main() {
+          gl_FragColor = vec4(texCoord, 0.5, 1.0);
+      }
+    </script>
+    <script>
+      "use strict";
+
+      var wtu = WebGLTestUtils;
+
+      function runTest(canvas, premultipliedAlpha)
+      {
+          const canvasGL = document.createElement("canvas");
+          canvasGL.width = 256;
+          canvasGL.height = 256;
+          const gl = wtu.create3DContext(canvasGL, { premultipliedAlpha: premultipliedAlpha });
+
+          const program = wtu.setupProgram(gl,
+                                           [wtu.setupSimpleTextureVertexShader(gl), "quadFragmentShader"],
+                                           ['vPosition', 'texCoord0']);
+          const quadParameters = wtu.setupUnitQuad(gl);
+          wtu.clearAndDrawUnitQuad(gl);
+
+          const context2D = canvas.getContext('2d');
+          /* 2D canvas is rendered upside-down if premultipliedAlpha is set to
+           * false above */
+          context2D.drawImage(canvasGL, 0, 0);
+      }
+
+      function init()
+      {
+          runTest(document.getElementById("canvas0"), true);
+          runTest(document.getElementById("canvas1"), false);
+          finishTest();
+      }
+    </script>
+  </head>
+  <body onload="init()">
+    <canvas id="canvas0" width="256" height="256"></canvas>
+    <canvas id="canvas1" width="256" height="256"></canvas>
+  </body>
+</html>

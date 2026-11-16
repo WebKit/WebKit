@@ -1,0 +1,38 @@
+
+PASS
+      normal `div`
+
+PASS
+      normal `span`
+
+PASS
+      normal `a`
+
+PASS
+      `div` in `display: none`
+
+PASS
+      `span` in `display: none`
+
+PASS
+      `a` in `display: none`
+
+PASS
+      inert `div`
+
+PASS
+      inert `span`
+
+PASS
+      inert `a`
+
+PASS
+      inert `div` in `display: none`
+
+PASS
+      inert `span` in `display: none`
+
+PASS
+      inert `a` in `display: none`
+
+

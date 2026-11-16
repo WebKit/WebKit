@@ -1,0 +1,13 @@
+This test makes sure the isolated tree resolves a node correctly when a subtree removal and a later re-append of that same node reach the accessibility thread in one committed batch.
+
+PASS: parentCountAfterOwnerRemoved === 1
+PASS: restoredRole === expectedButtonRole
+PASS: movedOwnerCount === 1
+PASS: movedRole === expectedButtonRole
+PASS: movedParentCount === 0
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Child
+Moved child

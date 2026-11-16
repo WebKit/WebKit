@@ -1,0 +1,31 @@
+<p>This tests that the onload handler for an iframe is delayed by a pending SVGFont load.</p>
+<pre id="console"></pre>
+<script>
+    if (window.testRunner)
+        testRunner.dumpAsText();
+
+    function log(msg)
+    {
+        document.getElementById('console').appendChild(document.createTextNode(msg + "\n"));
+    }
+
+    var onloadFired = false;
+
+    iframe = document.createElement('iframe');
+    iframe.onload = function() { 
+        onloadFired = true;
+    };
+    iframe.src = "resources/SVGFont-delayed-loader.svg";
+    document.body.appendChild(iframe);
+
+    function contentLoaded()
+    {
+        if (onloadFired)
+            log("FAIL: the onload event fired before the SVGFont load finished");
+        else
+            log("PASS: the onload event did not fire.");
+
+        // Stop the infinite load.
+        iframe.contentWindow.stop();
+    }
+</script>

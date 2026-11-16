@@ -1,0 +1,43 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true useFlexibleViewport=true AsyncOverflowScrollingEnabled=true AsyncFrameScrollingEnabled=true ScrollAnimatorEnabled=true ] -->
+<style>
+body {
+    height: 3000px;
+    margin: 0;
+    padding: 20px;
+    background: repeating-linear-gradient(#ff7e5f, #feb47b 500px);
+}
+</style>
+<script src="/js-test-resources/ui-helper.js"></script>
+<script>
+const fromNavigation = new URLSearchParams(location.search).has('fromNavigation');
+
+// Only set up testRunner if running standalone (not navigated to from another test)
+if (window.testRunner && !fromNavigation) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+async function runScrollTest() {
+    document.getElementById('results').textContent = `eventSender: ${!!window.eventSender}, testRunner: ${!!window.testRunner}`;
+
+    if (!window.eventSender && window.testRunner) {
+        testRunner.notifyDone();
+        return;
+    }
+
+    await UIHelper.mouseWheelScrollAt(100, 100, 0, 0, 0, -200);
+    await UIHelper.waitForScrollCompletion();
+
+    const scrollY = window.scrollY;
+    document.getElementById('results').textContent = `scrollY: ${scrollY}, works: ${scrollY > 0}`;
+
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+window.addEventListener('load', runScrollTest);
+</script>
+<body>
+<p>Testing scrolling</p>
+<pre id="results">Running test...</pre>
+</body>

@@ -1,0 +1,10 @@
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.dumpPolicyDelegateCallbacks();
+    testRunner.queueLoad("resources/window-open-to-notify-done.html", "", true);
+}
+</script>
+This page opens a 2nd page with the "should open external URLs" flag set to true.<br>
+That page does a window.open to open a 3rd page.<br>
+That 3rd page should have the flag set to true because it should propagate from main frame to main frame.<br>

@@ -1,0 +1,12 @@
+
+Harness Error (TIMEOUT), message = null
+
+PASS Scroll timeline with percentage range [JavaScript API]
+PASS Scroll timeline with px range [JavaScript API]
+FAIL Scroll timeline with calculated range [JavaScript API] assert_approx_equals: expected a number but got a "object"
+FAIL Scroll timeline with EM range [JavaScript API] assert_approx_equals: expected a number but got a "object"
+TIMEOUT Scroll timeline with percentage range [CSS] Test timed out
+NOTRUN Scroll timeline with px range [CSS]
+NOTRUN Scroll timeline with calculated range [CSS]
+NOTRUN Scroll timeline with EM range [CSS]
+

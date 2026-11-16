@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+  <body>
+    <h1>Enforce non-integer SVG location</h1>
+    <svg width="100" height="100" style="overflow: visible; display: block;">
+      <rect x="0" y="0" width="100" height="100" fill="green"/>
+    </svg>
+    <h1>Effect of overflow</h1>
+    <svg width="100" height="100" style="overflow: hidden; display: block;">
+      <rect x="0" y="0" width="100" height="100" fill="green"/>
+    </svg>
+    <h1>With transformation</h1>
+    <svg width="50" height="50" style="overflow: visible; transform: scale(2); transform-origin: 0 0; display: block;">
+      <rect x="0" y="0" width="50" height="50" fill="green"/>
+    </svg>
+  </body>
+</html>

@@ -1,0 +1,7 @@
+
+PASS var() in a param() value is substituted
+PASS var() in a param() value uses its fallback when the referenced property is not set
+PASS var() in a param() value is substituted from an inherited custom property
+PASS an unresolvable var() in a param() value makes the declaration invalid at computed-value time
+PASS var() is substituted in one of several param() values
+

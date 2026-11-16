@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<head>
+    <script src="../../resources/ui-helper.js"></script>
+    <script src="../../resources/js-test.js"></script>
+    <style>
+        input {
+            font-size: 20px;
+        }
+
+        #container {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <input type="text" value="Click me">
+    <div id="container">
+        <textarea></textarea>
+    </div>
+    <script>
+        jsTestIsAsync = true;
+        didFinishActivatingElement = false;
+        input = document.querySelector("input[type='text']");
+        textarea = document.querySelector("textarea");
+        container = document.getElementById("container");
+
+        input.addEventListener("focus", async () => {
+            getComputedStyle(container).display; // This is necessary in order to reproduce the bug.
+            container.style.display = "block";
+            textarea.focus();
+
+            shouldBe("document.activeElement", "textarea");
+            container.remove();
+            input.remove();
+
+            await new Promise(resolve => shouldBecomeEqual("didFinishActivatingElement", "true", resolve));
+            finishJSTest();
+        });
+
+        addEventListener("load", async () => {
+            description("This test verifies that programmatically focusing a textarea in a newly displayed container changes the active element. To test manually, tap or click below.");
+            if (window.testRunner)
+                await UIHelper.activateElement(input);
+            didFinishActivatingElement = true;
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/dump-as-markup.js"></script>
+<script>
+Markup.noAutoDump();
+Markup.waitUntilDone();
+
+addEventListener("load", () => {
+    getSelection().setPosition(document.body, 1);
+    document.execCommand("InsertHTML", false, `<div>Apple</div>WebKit<span class="Apple-style-span"></span>`);
+    Markup.dump(document.body);
+    Markup.notifyDone();
+});
+</script>
+</head>
+<body contenteditable autofocus>This test passes if we do not crash...</body>
+</html>

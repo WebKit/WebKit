@@ -1,0 +1,4 @@
+
+FAIL access-from-coop-page-to-openee, cross-origin assert_equals: expected (string) "coop" but got (undefined) undefined
+FAIL access-from-coop-page-to-openee, cross-origin + redirect assert_equals: expected (string) "coop" but got (undefined) undefined
+

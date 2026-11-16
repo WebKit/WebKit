@@ -1,0 +1,107 @@
+<!doctype html>
+<html>
+<head>
+    <title>TextTrackCue event handler IDL attributes and endTime mutation</title>
+    <script src="../../resources/testharness.js"></script>
+    <script src="../../resources/testharnessreport.js"></script>
+</head>
+<body>
+<div id="log"></div>
+<script>
+// HTML Living Standard:
+//   §4.8.13.10 "Text track API" -- TextTrackCue event handler IDL attributes:
+//     https://html.spec.whatwg.org/multipage/media.html#texttrackcue
+//   §4.8.13.7 "Text tracks" -- text-track-cue-end-time:
+//     https://html.spec.whatwg.org/multipage/media.html#text-track-cue-end-time
+//
+// - TextTrackCue exposes onenter and onexit event handler IDL attributes.
+// - Setting cue.endTime to a value <= currentTime while the cue is in a
+//   showing/hidden track in a media element triggers time marches on,
+//   which fires 'exit' on the cue.
+// - The endTime setter throws TypeError for -Infinity or NaN.
+
+const MEDIA_SRC = "../content/test-25fps.mp4";
+
+function makeReadyVideo(t) {
+    const video = document.createElement("video");
+    video.muted = true;
+    document.body.appendChild(video);
+    t.add_cleanup(() => video.remove());
+    video.src = MEDIA_SRC;
+    return video;
+}
+
+function whenSeekedTo(video, time) {
+    return new Promise(resolve => {
+        video.addEventListener("seeked", resolve, { once: true });
+        if (video.readyState >= video.HAVE_METADATA)
+            video.currentTime = time;
+        else
+            video.addEventListener("loadedmetadata",
+                () => { video.currentTime = time; }, { once: true });
+    });
+}
+
+test(() => {
+    // onenter and onexit IDL attributes exist and default to null.
+    const cue = new VTTCue(0, 1, "test");
+    assert_true("onenter" in cue, "TextTrackCue exposes onenter");
+    assert_true("onexit" in cue, "TextTrackCue exposes onexit");
+    assert_equals(cue.onenter, null, "onenter default is null");
+    assert_equals(cue.onexit, null, "onexit default is null");
+}, "TextTrackCue: onenter and onexit IDL attributes exist (default null)");
+
+test(() => {
+    // endTime setter throws TypeError for NaN.
+    const cue = new VTTCue(0, 1, "test");
+    assert_throws_js(TypeError, () => { cue.endTime = NaN; },
+        "endTime = NaN throws TypeError");
+}, "endTime setter: throws TypeError for NaN");
+
+test(() => {
+    // endTime setter throws TypeError for -Infinity.
+    const cue = new VTTCue(0, 1, "test");
+    assert_throws_js(TypeError, () => { cue.endTime = -Infinity; },
+        "endTime = -Infinity throws TypeError");
+}, "endTime setter: throws TypeError for -Infinity");
+
+test(() => {
+    // +Infinity is allowed.
+    const cue = new VTTCue(0, 1, "test");
+    cue.endTime = Infinity;
+    assert_equals(cue.endTime, Infinity);
+}, "endTime setter: accepts +Infinity");
+
+promise_test(async t => {
+    // Mutating endTime such that the cue is no longer active triggers
+    // time marches on. Per the time-marches-on algorithm step 11, a cue
+    // that transitioned from "current cues" to "other cues" with its
+    // active flag still set queues an 'exit' event task. WebKit must:
+    //   (a) fire 'exit' on the cue
+    //   (b) clear the active flag (so the cue is no longer in activeCues)
+    const video = makeReadyVideo(t);
+    const tt = video.addTextTrack("captions", "test", "en");
+    tt.mode = "showing";
+    const cue = new VTTCue(0, 100, "covers t=0.5");
+    tt.addCue(cue);
+
+    await whenSeekedTo(video, 0.5);
+    await new Promise(r => t.step_timeout(r, 50));
+    assert_array_equals([...tt.activeCues], [cue], "cue active at t=0.5");
+
+    let exitFired = false;
+    cue.onexit = () => { exitFired = true; };
+
+    // Shrink the cue to end before currentTime. Per spec, "If cue is in
+    // a text track that is in a media element, run time marches on."
+    cue.endTime = 0.1;
+    await new Promise(r => t.step_timeout(r, 100));
+
+    assert_true(exitFired,
+        "'exit' fires when endTime is shrunk past currentTime");
+    assert_array_equals([...tt.activeCues], [],
+        "cue no longer active after endTime moved before currentTime");
+}, "endTime setter: shrinking past currentTime fires 'exit' via time marches on");
+</script>
+</body>
+</html>

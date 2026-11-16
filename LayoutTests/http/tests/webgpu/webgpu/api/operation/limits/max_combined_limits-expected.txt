@@ -1,0 +1,5 @@
+
+PASS :max_storage_buffer_texture_frag_outputs:format="r8uint"
+PASS :max_storage_buffer_texture_frag_outputs:format="rgba8uint"
+PASS :max_storage_buffer_texture_frag_outputs:format="rgba32uint"
+

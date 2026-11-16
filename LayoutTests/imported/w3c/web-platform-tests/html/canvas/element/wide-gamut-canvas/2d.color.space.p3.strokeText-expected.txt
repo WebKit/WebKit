@@ -1,0 +1,6 @@
+2d.color.space.p3.strokeText
+Test if strokeText can be used with a solid display-p3 color
+Actual output:
+
+PASS Test if strokeText can be used with a solid display-p3 color
+

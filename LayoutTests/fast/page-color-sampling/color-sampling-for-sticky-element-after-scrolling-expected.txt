@@ -1,0 +1,14 @@
+Scroll down
+
+PASS colorsBeforeScrolling.top is null
+PASS colorsBeforeScrolling.left is null
+PASS colorsBeforeScrolling.right is null
+PASS colorsBeforeScrolling.bottom is null
+PASS colorsAfterScrolling.top is "rgb(28, 28, 30)"
+PASS colorsAfterScrolling.left is null
+PASS colorsAfterScrolling.right is null
+PASS colorsAfterScrolling.bottom is null
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

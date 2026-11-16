@@ -1,0 +1,7 @@
+
+PASS Error handling: Path renders up to (not including) trailing decimal error
+PASS Error handling: Path ends at last valid segment before error
+PASS Error handling: First trailing decimal stops rendering
+PASS Error handling: Trailing decimal in first coordinate of pair
+PASS Error handling: Complete valid subpath renders before trailing decimal error
+

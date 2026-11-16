@@ -1,0 +1,11 @@
+
+PASS Test that the autocorrect attribute is available on HTMLInputElement.
+PASS Test that the autocorrect attribute is available on HTMLTextAreaElement.
+PASS Test that the autocorrect attribute is available on div.
+PASS Test that the autocorrect attribute is available on form.
+PASS Test setting the autocorrect IDL attribute.
+PASS Test setting the autocorrect attribute using setAttribute.
+PASS Test inheriting autocorrection from a form.
+PASS Test autocorrection in an editing host.
+PASS Test autocorrection in password, URL, and email inputs.
+

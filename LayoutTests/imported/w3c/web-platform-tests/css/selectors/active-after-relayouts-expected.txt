@@ -1,0 +1,3 @@
+
+PASS :active pseudo-class works properly when triggering a layout that changes the target's position
+

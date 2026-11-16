@@ -1,0 +1,8 @@
+
+== Running test suite: Utilities
+-- Running test case: xor
+PASS: xor should explicitly return false when both values are falsy.
+PASS: xor should return the first value when the second value is falsy.
+PASS: xor should return the second value when the first value is falsy.
+PASS: xor should explicitly return false when both values are truthy.
+

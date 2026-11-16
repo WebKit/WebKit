@@ -1,0 +1,12 @@
+
+PASS #gridLanes 1
+FAIL #gridLanes 2 assert_equals:
+<div class="grid-lanes" id="gridLanes">
+  <div class="span2" id="A" data-offset-x="0" data-offset-y="0" style="height: 50px; background: blue;"></div>
+  <div id="B" data-offset-x="0" data-offset-y="50" style="height: 50px; background: orange;"></div>
+
+  <div class="span2" id="D" data-offset-x="0" data-offset-y="100" style="height: 50px; background: green;"></div>
+  <div id="E" data-offset-x="50" data-offset-y="50" style="height: 50px; background: purple;"></div>
+</div>
+offsetLeft expected 50 but got 0
+

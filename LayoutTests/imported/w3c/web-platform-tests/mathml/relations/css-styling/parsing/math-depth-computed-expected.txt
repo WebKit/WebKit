@@ -1,0 +1,7 @@
+
+PASS Property math-depth value 'auto-add'
+PASS Property math-depth value 'add(0)'
+PASS Property math-depth value 'add(1)'
+PASS Property math-depth value '0'
+PASS Property math-depth value '1'
+

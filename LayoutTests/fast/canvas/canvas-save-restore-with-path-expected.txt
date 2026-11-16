@@ -1,0 +1,15 @@
+This test ensures that paths are correctly handled over save/restore boundaries
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS getPixel(25,25) is [0,128,0,255]
+PASS getPixel(75,25) is [0,128,0,255]
+PASS getPixel(75,75) is [255,0,0,255]
+PASS getPixel(25,75) is [0,128,0,255]
+PASS getPixel(75,75) is [255,0,0,255]
+PASS getPixel(75,75) is [0,128,0,255]
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

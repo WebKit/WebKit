@@ -1,0 +1,6 @@
+2d.text.drawing.style.wordSpacing.measure
+Testing word spacing with different length units
+Actual output:
+
+PASS Testing word spacing with different length units
+

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<script src='../resources/testharness.js'></script>
+<script src='../resources/testharnessreport.js'></script>
+<script>
+promise_test(async t => {
+
+    return promise_rejects_js(t, TypeError, internals.testAsyncIterator(1));
+    return promise_rejects_js(t, TypeError, internals.testAsyncIterator({ }));
+
+    const error = new Error("test");
+    await promise_rejects_exactly(t, error, internals.testAsyncIterator({
+        [Symbol.asyncIterator]: () => { throw error; }
+    }));
+
+    await promise_rejects_exactly(t, error, internals.testAsyncIterator({
+        [Symbol.iterator]: () => { throw error; }
+    }));
+
+    await promise_rejects_exactly(t, error, internals.testAsyncIterator({
+        [Symbol.asyncIterator]: () => { return {
+            next() {
+                return Promise.rejects(error);
+            }
+        };}
+    }));
+}, "Test asnc iterator error cases");
+
+promise_test(async t => {
+    if (!window.internals)
+        return;
+
+    const chunks = ["a", 1];
+    const asyncIterator = {
+        next() {
+            return Promise.resolve({
+                done: chunks.length === 0,
+                value: chunks.shift()
+            });
+        }
+    };
+
+    const results = await internals.testAsyncIterator({
+        [Symbol.asyncIterator]: () => asyncIterator
+    });
+
+    assert_equals(JSON.stringify(results), '[{"done":false,"value":"a"},{"done":false,"value":1},{"done":true}]');
+}, "Test async iterator from asyncIterator");
+
+promise_test(async t => {
+    if (!window.internals)
+        return;
+
+    const results = await internals.testAsyncIterator(["a", 1]);
+
+    assert_equals(JSON.stringify(results), '[{"value":"a","done":false},{"value":1,"done":false},{"done":true}]');
+}, "Test async iterator from syncIterator");
+</script>

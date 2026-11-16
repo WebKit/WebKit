@@ -1,0 +1,25 @@
+<head>
+<style>
+@import url("resources/css-insert-import-rule-red.css");
+div {
+    width: 100px;
+    height: 100px;
+}
+</style>
+
+<script>
+function test() {
+    document.styleSheets[0].insertRule('@import url("resources/css-insert-import-rule.css");', 0);
+    if (location.href.indexOf("?") == -1) {
+        if (window.testRunner)
+            testRunner.waitUntilDone();
+        location.href = location.href + "?";
+    } else if (window.testRunner)
+        testRunner.notifyDone();
+}
+</script>
+
+</head>
+<body onload="test()";>
+<div></div>
+</body>

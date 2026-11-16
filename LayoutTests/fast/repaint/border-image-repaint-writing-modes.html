@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        .container {
+            margin: 20px;
+            border: 1px solid black;
+            width: 400px;
+            height: 250px;
+        }
+
+        .box {
+            margin: 100px;
+            width: 50px;
+            height: 50px;
+            background-color: green;
+            border-image-source: linear-gradient(red, red);
+            border-image-slice: 20 20;
+            border-image-width: 50px;
+            border-image-outset: 20px 10px 50px 100px;
+        }
+        
+        body.changed .box {
+            border-image-source: linear-gradient(green, green);
+        }
+    </style>
+</head>
+<body>
+    <div class="container" style="writing-mode: vertical-rl">
+        <div class="box"></div>
+    </div>
+
+    <div class="container" style="writing-mode: horizontal-bt">
+        <div class="box"></div>
+    </div>
+
+    <script src="resources/text-based-repaint.js"></script>
+    <script>
+        repaintTest = function() {
+            document.body.classList.add('changed');
+        };
+        runRepaintTest();
+    </script>
+</body>
+</html>

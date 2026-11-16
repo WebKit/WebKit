@@ -1,0 +1,4 @@
+
+PASS text-size-adjust percentages are not applied with <meta name=text-scale content=scale>
+PASS Removing and adding the text-scale meta toggles text-size-adjust percentages
+

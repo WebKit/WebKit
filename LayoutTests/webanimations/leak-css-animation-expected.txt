@@ -1,0 +1,10 @@
+This test asserts that a CSSAnimation doesn't leak after it was removed declaratively and the document was replaced.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS The CSS animation was destroyed.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

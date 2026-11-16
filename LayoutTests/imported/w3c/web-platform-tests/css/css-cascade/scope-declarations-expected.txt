@@ -1,0 +1,7 @@
+
+PASS Scoped declarations apply to the scoping root
+PASS Scoped declarations apply to implicit scoping root
+PASS Scoped declarations apply with zero specificity
+PASS Declarations are parsed into CSSNestedDeclarations, prelude=(.a)
+PASS Declarations are parsed into CSSNestedDeclarations, prelude=
+

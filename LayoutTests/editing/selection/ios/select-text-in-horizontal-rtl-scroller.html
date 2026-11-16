@@ -1,0 +1,65 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true AsyncOverflowScrollingEnabled=true SelectionHonorsOverflowScrolling=true ] -->
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="utf-8">
+<script src="../../../resources/ui-helper.js"></script>
+<script src="../../../resources/js-test.js"></script>
+<style>
+body, html {
+    font-size: 20px;
+    font-family: system-ui;
+}
+
+.scrollable {
+    width: 300px;
+    height: 300px;
+    border: solid 1px lightgray;
+    border-radius: 4px;
+    box-sizing: border-box;
+    overflow-x: scroll;
+    overflow-y: hidden;
+    line-height: 1.5em;
+    outline: none;
+    padding: 1em;
+    direction: rtl;
+}
+
+.target {
+    border: 1px solid tomato;
+    padding: 3px;
+}
+
+.horizontal-space {
+    width: 2000px;
+    height: 10px;
+    background-color: tomato;
+}
+</style>
+<script>
+jsTestIsAsync = true;
+
+addEventListener("load", async () => {
+    description("Verifies that the text selection shows up in the correct place inside a right-to-left overflow scrolling container");
+
+    await UIHelper.longPressElement(document.querySelector(".target"));
+    selectionRects = await UIHelper.waitForSelectionToAppear();
+
+    shouldBe("selectionRects.length", "1");
+    shouldBeGreaterThanOrEqual("selectionRects[0].top", "1");
+    shouldBeGreaterThanOrEqual("selectionRects[0].left", "1");
+    shouldBeGreaterThanOrEqual("selectionRects[0].width", "1");
+    shouldBeGreaterThanOrEqual("selectionRects[0].height", "1");
+    finishJSTest();
+});
+</script>
+</head>
+<body>
+    <div class="scrollable">
+        <p>عنوان بريدي الإلكتروني هو <span class="target">select</span>@this.text. أرسل لي تحديثًا عند وصولك إلى المطار</p>
+        <div class="horizontal-space"></div>
+    </div>
+    <div id="description"></div>
+    <div id="console"></div>
+</body>
+</html>

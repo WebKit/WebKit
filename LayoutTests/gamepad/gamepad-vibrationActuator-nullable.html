@@ -1,0 +1,41 @@
+<head>
+<script src="../resources/js-test.js"></script>
+<body>
+<script>
+description("Tests that Gamepad.vibrationActuator is null when the gamepad doesn't support dual-rumble");
+jsTestIsAsync = true;
+
+let gamepadCount = 0;
+
+function runTest() {
+    addEventListener("gamepadconnected", e => {
+        gamepadCount++;
+        if (gamepadCount < 2)
+            return;
+
+        shouldNotBe("navigator.getGamepads()[0].vibrationActuator", "null");
+        shouldBe("navigator.getGamepads()[1].vibrationActuator", "null");
+
+        finishJSTest();
+    });
+
+    let supportsDualRumble = true;
+    testRunner.setMockGamepadDetails(0, "Test Gamepad", "", 2, 2, supportsDualRumble);
+    testRunner.setMockGamepadAxisValue(0, 0, 0.7);
+    testRunner.setMockGamepadAxisValue(0, 1, -1.0);
+    testRunner.setMockGamepadButtonValue(0, 0, 1.0);
+    testRunner.setMockGamepadButtonValue(0, 1, 1.0);
+    testRunner.connectMockGamepad(0);
+
+    supportsDualRumble = false;
+    testRunner.setMockGamepadDetails(1, "Test Gamepad Without Vibration", "", 2, 2, supportsDualRumble);
+    testRunner.setMockGamepadAxisValue(1, 0, 0.7);
+    testRunner.setMockGamepadAxisValue(1, 1, -1.0);
+    testRunner.setMockGamepadButtonValue(1, 0, 1.0);
+    testRunner.setMockGamepadButtonValue(1, 1, 1.0);
+    testRunner.connectMockGamepad(1);
+}
+
+onload = runTest;
+</script>
+</body>

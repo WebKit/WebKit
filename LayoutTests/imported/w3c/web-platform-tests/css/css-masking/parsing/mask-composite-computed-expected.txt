@@ -1,0 +1,6 @@
+
+PASS Property mask-composite value 'add'
+PASS Property mask-composite value 'subtract'
+PASS Property mask-composite value 'intersect'
+PASS Property mask-composite value 'exclude'
+

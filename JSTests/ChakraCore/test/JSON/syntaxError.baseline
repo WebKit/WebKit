@@ -1,0 +1,7 @@
+SyntaxError: JSON.parse Error: Unexpected input at position:0
+SyntaxError: JSON.parse Error: Invalid number at position:2
+SyntaxError: JSON.parse Error: Unterminated string constant at position:9
+SyntaxError: JSON.parse Error: Expected ':' at position:9
+SyntaxError: JSON.parse Error: Expected '}' at position:9
+SyntaxError: JSON.parse Error: Expected ']' at position:3
+SyntaxError: JSON.parse Error: Invalid character at position:5

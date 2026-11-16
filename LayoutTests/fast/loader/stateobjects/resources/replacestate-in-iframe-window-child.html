@@ -1,0 +1,19 @@
+<script>
+window.onunload = function() {
+  // No page cache
+}
+
+window.onpageshow = function(e) {
+  alert("onpageshow");
+  if (sessionStorage.alreadyShown)
+    top.opener.notifyDone(window == parent ? "FAIL" : "PASS");
+  else
+    sessionStorage.alreadyShown = true;
+  if (!sessionStorage.beganTest) {
+    sessionStorage.beganTest = true;
+    top.opener.windowLoaded();
+  } else {
+    top.opener.notifyDone(window == parent ? "FAIL" : "PASS");
+  }
+}
+</script>

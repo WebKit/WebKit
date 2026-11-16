@@ -1,0 +1,76 @@
+(GraphicsLayer
+  (anchor 0.00 0.00)
+  (bounds 785.00 4208.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 785.00 4208.00)
+      (contentsOpaque 1)
+      (children 9
+        (GraphicsLayer
+          (offsetFromRenderer width=-32 height=-14)
+          (position 116.00 186.00)
+          (anchor 0.53 0.50)
+          (bounds 346.00 228.00)
+          (drawsContent 1)
+        )
+        (GraphicsLayer
+          (offsetFromRenderer width=-32 height=-14)
+          (position 116.00 586.00)
+          (anchor 0.53 0.50)
+          (bounds 346.00 228.00)
+          (drawsContent 1)
+        )
+        (GraphicsLayer
+          (offsetFromRenderer width=-32 height=-14)
+          (position 116.00 986.00)
+          (anchor 0.53 0.50)
+          (bounds 346.00 228.00)
+          (drawsContent 1)
+        )
+        (GraphicsLayer
+          (offsetFromRenderer width=-32 height=-14)
+          (position 116.00 1386.00)
+          (anchor 0.53 0.50)
+          (bounds 346.00 228.00)
+          (drawsContent 1)
+        )
+        (GraphicsLayer
+          (offsetFromRenderer width=-32 height=-14)
+          (position 116.00 1786.00)
+          (anchor 0.53 0.50)
+          (bounds 346.00 228.00)
+          (drawsContent 1)
+        )
+        (GraphicsLayer
+          (offsetFromRenderer width=-32 height=-14)
+          (position 116.00 2186.00)
+          (anchor 0.53 0.50)
+          (bounds 346.00 228.00)
+          (drawsContent 1)
+        )
+        (GraphicsLayer
+          (offsetFromRenderer width=-32 height=-14)
+          (position 116.00 2586.00)
+          (anchor 0.53 0.50)
+          (bounds 346.00 228.00)
+          (drawsContent 1)
+        )
+        (GraphicsLayer
+          (offsetFromRenderer width=-32 height=-14)
+          (position 116.00 2986.00)
+          (anchor 0.53 0.50)
+          (bounds 346.00 228.00)
+          (drawsContent 1)
+        )
+        (GraphicsLayer
+          (offsetFromRenderer width=-32 height=-14)
+          (position 116.00 3386.00)
+          (anchor 0.53 0.50)
+          (bounds 346.00 228.00)
+          (drawsContent 1)
+        )
+      )
+    )
+  )
+)
+

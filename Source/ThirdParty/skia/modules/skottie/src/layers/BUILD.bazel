@@ -1,0 +1,21 @@
+load("//bazel:skia_rules.bzl", "skia_filegroup")
+
+package(
+    default_applicable_licenses = ["//:license"],
+)
+
+licenses(["notice"])
+
+skia_filegroup(
+    name = "srcs",
+    srcs = [
+        "AudioLayer.cpp",
+        "FootageLayer.cpp",
+        "NullLayer.cpp",
+        "PrecompLayer.cpp",
+        "SolidLayer.cpp",
+        "TextLayer.cpp",
+        "//modules/skottie/src/layers/shapelayer:srcs",
+    ],
+    visibility = ["//modules/skottie/src:__pkg__"],
+)

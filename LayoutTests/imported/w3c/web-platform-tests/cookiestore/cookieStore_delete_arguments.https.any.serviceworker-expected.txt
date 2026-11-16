@@ -1,0 +1,20 @@
+
+PASS cookieStore.delete with positional name
+PASS cookieStore.delete with name in options
+PASS cookieStore.delete domain starts with "."
+PASS cookieStore.delete with domain that is not equal current host
+PASS cookieStore.delete with domain set to the current hostname
+PASS cookieStore.delete with domain set to a subdomain of the current hostname
+PASS cookieStore.delete with domain set to a non-domain-matching suffix of the current hostname
+PASS cookieStore.delete with path set to the current directory
+PASS cookieStore.delete with path set to subdirectory of the current directory
+PASS cookieStore.delete does not append / at the end of path
+PASS cookieStore.delete can delete a cookie set by document.cookie if document is defined
+PASS cookieStore.delete with path that does not start with /
+PASS cookieStore.delete with get result
+FAIL cookieStore.delete with positional empty name promise_test: Unhandled rejection with value: object "TypeError: Type error"
+FAIL cookieStore.delete with empty name in options promise_test: Unhandled rejection with value: object "TypeError: Type error"
+PASS cookieStore.delete with maximum cookie name size
+PASS cookieStore.delete with a __Host- prefix should not have a domain
+PASS cookieStore.delete with whitespace
+

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="/js-test-resources/js-test.js"></script>
+</head>
+<body>
+<iframe id="frame"></iframe>
+<script>
+description("Tests that site-specific quirks are re-resolved when history.pushState() or history.replaceState() changes the top document URL, in the top document and in its subframes. apple.com has a quirk for paths containing /retail.");
+
+const quirk = "ShouldDisableScrollAnchoringQuirk";
+
+function topDocumentHasQuirk()
+{
+    return internals.activeQuirkNames().includes(quirk);
+}
+
+function subframeHasQuirk()
+{
+    return frames[0].internals.activeQuirkNames().includes(quirk);
+}
+
+if (!window.internals)
+    testFailed("This test requires window.internals.");
+else {
+    internals.setTopDocumentHostForQuirks("www.apple.com");
+
+    debug("Initial URL:");
+    shouldBeFalse("topDocumentHasQuirk()");
+    shouldBeFalse("subframeHasQuirk()");
+
+    debug("");
+    debug("history.pushState() to /retail:");
+    history.pushState({ }, "", "/retail");
+    shouldBeTrue("topDocumentHasQuirk()");
+    shouldBeTrue("subframeHasQuirk()");
+
+    debug("");
+    debug("history.replaceState() to /:");
+    history.replaceState({ }, "", "/");
+    shouldBeFalse("topDocumentHasQuirk()");
+    shouldBeFalse("subframeHasQuirk()");
+
+    debug("");
+    debug("history.replaceState() to /retail/store:");
+    history.replaceState({ }, "", "/retail/store");
+    shouldBeTrue("topDocumentHasQuirk()");
+    shouldBeTrue("subframeHasQuirk()");
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,4 @@
+
+PASS "isolate-and-require-corp" top-level: fetch() to CORP: cross-origin response should succeed
+PASS "isolate-and-require-corp" top-level: fetch() to cross-origin response without CORP should fail
+

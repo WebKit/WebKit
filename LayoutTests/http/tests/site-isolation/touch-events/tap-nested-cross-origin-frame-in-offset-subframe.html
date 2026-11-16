@@ -1,0 +1,30 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="/js-test-resources/js-test.js"></script>
+<script src="/js-test-resources/ui-helper.js"></script>
+<script>
+description("Tapping a cross-origin iframe that is nested inside an offset same-site subframe must reach the iframe. Regression test: potentialTapAtPosition transformed the tap using the nested owner frame's view with a top-level-frame position, double-counting the container's offset so the tap landed outside the cross-origin frame.");
+jsTestIsAsync = true;
+
+let done = false;
+addEventListener("message", (event) => {
+    if (event.data === "ready") {
+        // The same-site container iframe is at (350, 300) sized 300x250, and the cross-origin ad
+        // fills it. Tap the ad's center at the top-level point (500, 425), which is (150, 125)
+        // inside the ad. With the bug the container's (350, 300) offset is double-counted, so the
+        // ad receives the tap at (500, 425) -- outside its 300x250 box -- and nothing happens.
+        UIHelper.tapAt(500, 425);
+        setTimeout(() => {
+            if (done)
+                return;
+            done = true;
+            testFailed("The nested cross-origin iframe did not receive the tap.");
+            finishJSTest();
+        }, 3000);
+    } else if (event.data === "clicked" && !done) {
+        done = true;
+        testPassed("The nested cross-origin iframe received the tap.");
+        finishJSTest();
+    }
+});
+</script>
+<iframe style="position: absolute; left: 350px; top: 300px; width: 300px; height: 250px; border: none;" src="http://127.0.0.1:8000/site-isolation/touch-events/resources/samesite-offset-container.html"></iframe>

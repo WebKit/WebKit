@@ -1,0 +1,48 @@
+<html>
+<body>
+<pre id='console'></pre>
+<script type="text/javascript">
+function log(message)
+{
+    document.getElementById('console').appendChild(document.createTextNode(message + "\n"));
+}
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+window.addEventListener("message", function(evt) {
+    if (evt.data == "done") {
+        testRunner.notifyDone();
+        return;
+    }
+
+    log(evt.data);
+}, false);
+</script>
+<iframe src='data:text/html,
+<script>
+(function() {
+    var xhr = new XMLHttpRequest;
+
+    try {
+        xhr.open("GET", "http://localhost:8000/xmlhttprequest/resources/access-control-basic-allow-access-control-origin-header.cgi", false);
+    } catch(e) {
+        parent.postMessage("FAIL: Exception thrown. Cross-domain access is not allowed in open. [" + e.message + "].", "*");
+        return;
+    }
+
+    try {
+        xhr.send();
+    } catch(e) {
+        parent.postMessage("FAIL: Exception thrown. Cross-domain access is not allowed in send. [" + e.message + "].", "*");
+        return;
+    }
+
+    parent.postMessage(xhr.responseText, "*");
+})();
+parent.postMessage("done", "*");
+</script>'>
+</body>
+</html>

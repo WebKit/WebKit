@@ -1,0 +1,33 @@
+Viewport units and a column centred with them, compared with before zooming:
+  Held zoom out, below unity: PASS
+    100vw: PASS
+    100vh: PASS
+    100svw: PASS
+    100lvw: PASS
+    calc(50vw - 300px) centred column: PASS
+  Held zoom out, further, below unity: PASS
+    100vw: PASS
+    100vh: PASS
+    100svw: PASS
+    100lvw: PASS
+    calc(50vw - 300px) centred column: PASS
+  After releasing the zoom out, at unity: PASS
+    100vw: PASS
+    100vh: PASS
+    100svw: PASS
+    100lvw: PASS
+    calc(50vw - 300px) centred column: PASS
+    100dvw: PASS
+    100dvh: PASS
+  Held zoom in, above unity: PASS
+    100vw: PASS
+    100vh: PASS
+    100svw: PASS
+    100lvw: PASS
+    calc(50vw - 300px) centred column: PASS
+  After releasing the zoom in, above unity: PASS
+    100vw: PASS
+    100vh: PASS
+    100svw: PASS
+    100lvw: PASS
+    calc(50vw - 300px) centred column: PASS

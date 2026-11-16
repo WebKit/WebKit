@@ -1,0 +1,47 @@
+# WebKit TSan suppressions
+# JSC parallel GC: workers access different cells in the same MarkedBlock.
+# TSan can't see that mark bits partition the block into non-overlapping work.
+race:JSC::SlotVisitor::appendSlow
+race:JSC::SlotVisitor::appendHiddenSlow
+race:JSC::SlotVisitor::appendHiddenSlowImpl
+race:JSC::SlotVisitor::markAuxiliary
+race:JSC::SlotVisitor::visitChildren
+race:JSC::SlotVisitor::setMarkedAndAppendToMarkStack
+race:JSC::SlotVisitor::donateKnownParallel
+race:JSC::SlotVisitor::hasAcknowledgedThatTheMutatorIsResumed
+race:JSC::JSObjectWithButterfly::visitChildren
+race:JSC::JSFunction::visitChildren
+race:JSC::JSGlobalObject::visitChildren
+race:JSC::UnlinkedCodeBlock::visitChildren
+race:JSC::UnlinkedFunctionExecutable::visitChildren
+race:JSC::FunctionExecutable::visitChildren
+race:JSC::JSSymbolTableObject::visitChildren
+race:JSC::Structure::visitChildren
+race:JSC::IsoCellSet::parallelNotEmptyMarkedBlockSource
+race:JSC::Heap::reportExtraMemoryVisited
+race:JSC::Heap::resumeThePeriphery
+race:JSC::MarkingConstraintSolver::runExecutionThread
+race:stop_allocator
+# JSC JIT compiler (concurrent compilation reads object state while mutator writes)
+race:JSC::JITThunks::ctiStub
+race:JSC::InlineWatchpointSet::add
+race:JSC::speculationFromValue
+race:JSC::DFG::DesiredWatchpoints::consider
+race:JSC::DFG::ByteCodeParser::parseBlock
+race:JSC::CodeBlock::valueProfilePredictionForBytecodeIndex
+race:JSC::CodeBlock::linkIncomingCall
+race:JSC::ExecutionCounter
+race:JSC::SecureARM64EHashPins::allocatePinForCurrentThreadImpl
+race:WTF::Thread::registerGCThread
+# JSC/bmalloc allocator internals
+race:jit_heap_config_specialized_local_allocator_try_allocate_small_segregated_slow
+race:pas_page_sharing_pool_add_at_index
+race:pas_thread_local_cache_stop_local_allocators_if_necessary
+# WTF parallel helpers
+race:WTF::ParallelHelperPool::Thread::poll
+# WebCore GC visitors (same parallel GC issue)
+race:WebCore::JSDOMGlobalObject::visitChildren
+race:WebCore::JSDOMWindow::visitChildren
+race:WebCore::JSDOMWindow::visitAdditionalChildrenInGCThread
+race:WebCore::JSNode::visitAdditionalChildrenInGCThread
+race:WebCore::JSEventListener::visitJSFunctionInGCThread

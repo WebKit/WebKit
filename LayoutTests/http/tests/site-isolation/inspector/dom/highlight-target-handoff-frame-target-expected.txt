@@ -1,0 +1,27 @@
+Tests that highlighting hands off cleanly between the page target and a cross-origin frame target.
+
+
+
+== Running test suite: SiteIsolation.DOM.FrameHighlightTargetHandoff
+-- Running test case: Setup
+PASS: Should find the cross-origin frame target.
+PASS: Frame document should have a BODY.
+PASS: Frame document should have #container.
+PASS: Page target should resolve the iframe element.
+
+-- Running test case: InnerNodeRoutesToFrameTarget
+PASS: Should resolve #target in the frame target.
+PASS: Inner node should report the frame target as its owning target.
+PASS: backendNodeId should be the raw protocol nodeId, not the scoped id.
+PASS: The scoped frontend id should differ from the backend nodeId.
+
+-- Running test case: IframeElementRoutesToPageTarget
+PASS: The iframe element should have no owning frame target.
+PASS: A page-target node's backendNodeId should equal its id.
+
+-- Running test case: BothTargetsAcceptHideHighlight
+PASS: Page and frame targets should be distinct.
+PASS: Page target should support DOM.hideHighlight.
+PASS: Frame target should support DOM.hideHighlight.
+Both targets accepted DOM.hideHighlight.
+

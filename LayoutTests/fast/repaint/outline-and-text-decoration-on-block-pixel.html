@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<!-- webkit.org/b/322481: pixel version of missing-repaint-when-text-decoration-is-present.html. Adding an
+     outline plus an underline to a block is an ink overflow only change, so it now recomputes in place.
+     Paints before mutating: anything the repaint misses shows up against the reference. -->
+<style>
+.container {
+  width: 300px;
+  font-family: Ahem;
+  font-size: 20px;
+}
+
+.decoration {
+  outline: 8px solid blue;
+  text-decoration: underline;
+}
+</style>
+<div class=container>
+  <div id=outline_and_text_decoration>XXX</div>
+</div>
+<script src="resources/repaint.js"></script>
+<script>
+repaintTest = function() {
+  outline_and_text_decoration.className = "decoration";
+};
+onload = runRepaintTest;
+</script>

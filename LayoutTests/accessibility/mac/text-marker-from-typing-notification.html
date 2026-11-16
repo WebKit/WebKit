@@ -1,0 +1,63 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<textarea id="textarea"></textarea>
+    
+<script>
+var output = "This test ensures we behave correctly when immediately using an AXTextChangeValueStartMarker from a notification.\n\n";
+
+var notificationCount = 0;
+var webarea;
+var textChangeMarker;
+var textarea = document.getElementById("textarea");
+function notificationCallback(notification, userInfo) {
+    if (notification !== "AXValueChanged")
+        return;
+
+    notificationCount++;
+    textChangeMarker = userInfo["AXTextChangeValues"][0]["AXTextChangeValueStartMarker"];
+
+    // This "dummy" indexForTextMarker call is necessary for the test to pass in ITM because of this sequence:
+    //   1. eventSender.keyDown("a") happens, which causes an AXValueChanged notification, bringing us here
+    //   2. The keydown causes a new RenderText to be created, and |textChangeMarker| points to offset 1 of the
+    //      associated object's text runs (which is just "a"). This is correct and valid.
+    //   3. However, by the time we get here, we still have not created the isolated object for the AX object associated
+    //      with the RenderText, meaning `indexForTextMarker` exits early because it is "not valid" (it can't get an object
+    //      for the ID associated with the marker).
+    //   4. Doing a "dummy" indexForTextMarker before actually doing so in the `expect` lets the isolated tree update
+    //      before the expectation. But this just masks the bug. When we send out a text marker, we _must_ guarantee
+    //      that the object, and the tree in general is valid. i.e., it's not enough to guarantee the object has been
+    //      created, as ATs may want to use `indexForTextMarker`, which won't work if the object is created but not
+    //      connected to its ancestors.
+    webarea.indexForTextMarker(textChangeMarker)
+
+    output += expect("webarea.indexForTextMarker(textChangeMarker)", `${notificationCount}`);
+
+    if (notificationCount == 1)
+        eventSender.keyDown("b")
+    else if (notificationCount == 2) {
+        webarea.removeNotificationListener();
+        debug(output);
+        finishJSTest();
+    }
+}
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    webarea = accessibilityController.rootElement.childAtIndex(0);
+    var addedNotificationListener = webarea.addNotificationListener(notificationCallback);
+    output += expect("addedNotificationListener", "true");
+
+    textarea.focus();
+    eventSender.keyDown("a")
+}
+</script>
+</body>
+</html>
+

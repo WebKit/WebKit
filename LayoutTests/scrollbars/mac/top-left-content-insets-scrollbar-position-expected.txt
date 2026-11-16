@@ -1,0 +1,13 @@
+Verifies that setting a left and top obscured content insets correctly offsets vertical and horizontal scrollbars. This requires WebKitTestRunner.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS horizontalPositionAfter.x is > horizontalPositionBefore.x
+PASS horizontalPositionAfter.y is horizontalPositionBefore.y
+PASS verticalPositionAfter.x is verticalPositionBefore.x
+PASS verticalPositionAfter.y is > verticalPositionBefore.y
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

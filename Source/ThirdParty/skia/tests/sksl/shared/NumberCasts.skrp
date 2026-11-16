@@ -1,0 +1,28 @@
+26 instructions
+
+store_src_rg                   coords = src.rg
+init_lane_masks                CondMask = LoopMask = RetMask = true
+splat_3_constants              B = 0
+splat_3_constants              B = 0xFFFFFFFF
+splat_3_constants              F = 0
+copy_constant                  F(0) = 0x3F9D70A4 (1.23)
+copy_constant                  F(1) = 0
+copy_constant                  F(2) = 0x3F800000 (1.0)
+splat_3_constants              I = 0
+splat_3_constants              I = 0x00000001 (1.401298e-45)
+copy_2_slots_unmasked          $0..1 = F(0..1)
+mul_float                      $0 *= $1
+copy_slot_unmasked             $1 = F(2)
+mul_float                      $0 *= $1
+copy_2_slots_unmasked          $1..2 = B(0..1)
+bitwise_and_int                $1 &= $2
+copy_slot_unmasked             $2 = B(2)
+bitwise_and_int                $1 &= $2
+bitwise_and_imm_int            $1 &= 0x3F800000
+copy_constant                  $2 = 0
+copy_2_slots_unmasked          $3..4 = I(0..1)
+mul_int                        $3 *= $4
+copy_slot_unmasked             $4 = I(2)
+mul_int                        $3 *= $4
+cast_to_float_from_int         $3 = IntToFloat($3)
+load_src                       src.rgba = $0..3

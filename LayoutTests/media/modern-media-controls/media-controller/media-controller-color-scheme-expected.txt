@@ -1,0 +1,10 @@
+Testing that the media controls container has a CSS color-scheme value.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS window.getComputedStyle(mediaControlsContainer).colorScheme is "light dark"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

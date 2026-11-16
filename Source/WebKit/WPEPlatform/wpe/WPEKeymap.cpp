@@ -1,0 +1,109 @@
+/*
+ * Copyright (C) 2023 Igalia S.L.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
+ * PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+ * HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+ * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#include "config.h"
+#include "WPEKeymap.h"
+
+#include <wtf/glib/WTFGType.h>
+
+/**
+ * WPEKeymap:
+ *
+ * A keyboard mapping.
+ *
+ * [class@Keymap] is an abstract class that platform implementations derive to
+ * translate between hardware keycodes and key symbols, and to track the state
+ * of modifier keys. Get the keymap of a display with [method@Display.get_keymap].
+ *
+ * Use [method@Keymap.get_entries_for_keyval] and
+ * [method@Keymap.translate_keyboard_state] to convert between keycodes and
+ * key symbols.
+ */
+struct _WPEKeymapPrivate {
+};
+
+WEBKIT_DEFINE_ABSTRACT_TYPE(WPEKeymap, wpe_keymap, G_TYPE_OBJECT)
+
+static void wpe_keymap_class_init(WPEKeymapClass*)
+{
+}
+
+/**
+ * wpe_keymap_get_entries_for_keyval:
+ * @keymap: a #WPEKeymap
+ * @keyval: a keyval
+ * @entries: (out): return location for array of #WPEKeymapEntry
+ * @n_entries: (out): return location for length of @entries
+ *
+ * Get the @keymap list of keycode/group/level combinations that will generate @keyval
+ *
+ * Returns: %TRUE if there were entries, or %FALSE otherwise
+ */
+gboolean wpe_keymap_get_entries_for_keyval(WPEKeymap* keymap, guint keyval, WPEKeymapEntry** entries, guint *entriesCount)
+{
+    g_return_val_if_fail(WPE_IS_KEYMAP(keymap), FALSE);
+    g_return_val_if_fail(entries, FALSE);
+    g_return_val_if_fail(entriesCount, FALSE);
+
+    return WPE_KEYMAP_GET_CLASS(keymap)->get_entries_for_keyval(keymap, keyval, entries, entriesCount);
+}
+
+/**
+ * wpe_keymap_translate_keyboard_state:
+ * @keymap: a #WPEKeymap
+ * @keycode: a hardware keycode
+ * @modifiers: a #WPEModifiers
+ * @group: active keyboard group
+ * @keyval: (out) (optional): return location for keyval
+ * @effective_group: (out) (optional): return location for effective group
+ * @level: (out) (optional): return location for level
+ * @consumed_modifiers: (out) (optional): return location for modifiers that were used to determine the group or level
+ *
+ * Translate @keycode, @modifiers and @group into a keyval, effective group and level.
+ * Modifiers that affected the translation are returned in @consumed_modifiers.
+ *
+ * Returns: %TRUE if there was a keyval bound to keycode, modifiers and group, or %FALSE otherwise
+ */
+gboolean wpe_keymap_translate_keyboard_state(WPEKeymap* keymap, guint keycode, WPEModifiers modifiers, int group, guint* keyval, int* effectiveGroup, int* level, WPEModifiers* consumedModifiers)
+{
+    g_return_val_if_fail(WPE_IS_KEYMAP(keymap), FALSE);
+
+    return WPE_KEYMAP_GET_CLASS(keymap)->translate_keyboard_state(keymap, keycode, modifiers, group, keyval, effectiveGroup, level, consumedModifiers);
+}
+
+/**
+ * wpe_keymap_get_modifiers:
+ * @keymap: a #WPEKeymap
+ *
+ * Get the modifiers state of @keymap
+ *
+ * Returns: a #WPEModifiers
+ */
+WPEModifiers wpe_keymap_get_modifiers(WPEKeymap* keymap)
+{
+    g_return_val_if_fail(WPE_IS_KEYMAP(keymap), static_cast<WPEModifiers>(0));
+
+    return WPE_KEYMAP_GET_CLASS(keymap)->get_modifiers(keymap);
+}

@@ -1,0 +1,43 @@
+
+FAIL setPathData() with an unknown command letter truncates at that segment path.setPathData is not a function. (In 'path.setPathData([
+    { type: "M", values: [0, 0] },
+    { type: "L", values: [10, 10] },
+    { type: "X", values: [] },
+    { type: "L", values: [20, 20] }
+  ])', 'path.setPathData' is undefined)
+FAIL setPathData() with extra values truncates at that segment path.setPathData is not a function. (In 'path.setPathData([
+    { type: "M", values: [0, 0] },
+    { type: "L", values: [10, 10, 20, 20] }
+  ])', 'path.setPathData' is undefined)
+FAIL setPathData() with too few values truncates at that segment path.setPathData is not a function. (In 'path.setPathData([
+    { type: "M", values: [0, 0] },
+    { type: "L", values: [10] }
+  ])', 'path.setPathData' is undefined)
+FAIL setPathData() with NaN truncates at that segment path.setPathData is not a function. (In 'path.setPathData([
+    { type: "M", values: [0, 0] },
+    { type: "L", values: [NaN, 10] }
+  ])', 'path.setPathData' is undefined)
+FAIL setPathData() with Infinity truncates at that segment path.setPathData is not a function. (In 'path.setPathData([
+    { type: "M", values: [0, 0] },
+    { type: "L", values: [Infinity, 10] }
+  ])', 'path.setPathData' is undefined)
+FAIL setPathData() rejects ClosePath with non-empty values path.setPathData is not a function. (In 'path.setPathData([
+    { type: "M", values: [0, 0] },
+    { type: "Z", values: [1, 2] }
+  ])', 'path.setPathData' is undefined)
+FAIL setPathData() rejects multi-character type strings path.setPathData is not a function. (In 'path.setPathData([
+    { type: "M", values: [0, 0] },
+    { type: "MM", values: [10, 10] }
+  ])', 'path.setPathData' is undefined)
+FAIL setPathData() rejects a leading non-moveto segment path.setPathData is not a function. (In 'path.setPathData([
+    { type: "L", values: [10, 10] },
+    { type: "L", values: [20, 20] }
+  ])', 'path.setPathData' is undefined)
+FAIL setPathData() rejects a leading moveto with the wrong arity path.setPathData is not a function. (In 'path.setPathData([
+    { type: "M", values: [0] }
+  ])', 'path.setPathData' is undefined)
+FAIL setPathData() accepts a leading relative moveto path.setPathData is not a function. (In 'path.setPathData([
+    { type: "m", values: [5, 5] },
+    { type: "l", values: [3, 4] }
+  ])', 'path.setPathData' is undefined)
+

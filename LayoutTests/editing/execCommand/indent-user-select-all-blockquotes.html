@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+  blockquote {
+    -webkit-user-select: all;
+  }
+</style>
+</head>
+<body>
+<p id="object"></p>
+<script src="../../resources/js-test.js"></script>
+<script>
+description('This tests indenting into a new blockquote when blockquotes are styled as -webkit-user-select: all. Editability now overrides user-select: all, so the new blockquote is editable and the indent goes through. See indent-user-select-all-blockquotes-legacy.html for the legacy behavior, where user-select: all made the blockquote uneditable and we bailed out instead of indenting.');
+
+if (window.testRunner)
+    window.testRunner.dumpAsText();
+
+let selection = window.getSelection();
+selection.removeAllRanges();
+let range = document.createRange();
+range.setStartBefore(object, 0);
+range.setEndAfter(object, 0);
+selection.addRange(range);
+document.designMode = 'on'
+document.execCommand('Indent');
+
+if (document.getElementsByTagName("blockquote").length)
+    testPassed("Blockquote created");
+else
+    testFailed("Should have blockquote");
+
+</script>
+</body>
+</html>

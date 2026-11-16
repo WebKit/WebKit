@@ -1,0 +1,14 @@
+
+PASS getComputedStyle() returns computed value for width: calc(100% - 1rem)
+PASS getComputedStyle() returns computed value for width: calc(100% - 1em)
+PASS getComputedStyle() returns computed value for margin-left: calc(50% - 0.5rem)
+PASS getComputedStyle() returns computed value for width: min(20rem, 100%)
+PASS getComputedStyle() returns computed value for width: max(20rem, 100%)
+PASS getComputedStyle() returns computed value for width: clamp(10rem, 50%, 20rem)
+PASS getComputedStyle() returns computed value for width: calc(2rem + 8px)
+PASS getComputedStyle() returns computed value for width: 50%
+PASS getComputedStyle() returns computed value for font-size: calc(100% + 20px)
+PASS getComputedStyle() returns computed value for font-size: max(1rem, 150%)
+PASS getComputedStyle() returns computed value for font-size: calc(50% + 1rem)
+PASS getComputedStyle() preserves the case of line names around a math function
+

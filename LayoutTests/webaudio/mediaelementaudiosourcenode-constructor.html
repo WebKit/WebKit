@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../resources/js-test.js"></script>
+<script>
+description("Tests the MediaElementAudioSourceNode constructor");
+
+context = new AudioContext;
+
+shouldThrowErrorName("new MediaElementAudioSourceNode();", "TypeError");
+shouldThrowErrorName("new MediaElementAudioSourceNode(context);", "TypeError");
+shouldThrowErrorName("new MediaElementAudioSourceNode(context, { });", "TypeError");
+shouldThrowErrorName("new MediaElementAudioSourceNode(context, { mediaElement: document.body });", "TypeError");
+
+audioElement = document.createElement("audio");
+shouldNotThrow("node = new MediaElementAudioSourceNode(context, { mediaElement: audioElement });");
+shouldBe("node.mediaElement", "audioElement");
+
+// audioElement is already associated with a node.
+shouldThrowErrorName("new MediaElementAudioSourceNode(context, { mediaElement: audioElement });", "InvalidStateError");
+
+</script>
+</body>
+</html>

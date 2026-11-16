@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<script src="../../resources/js-test.js"></script>
+<style>
+#outer {
+    width: 2000000px;
+}
+
+table {
+    border-collapse: collapse;
+}</style>
+<div id='outer'>
+<table id='onlyTable'>
+  <tr>
+    <td width='100%'>
+      <div></div>
+    </td>
+    <td width='60%'>
+      <div width='10px;'></div>
+    </td>
+  </tr>
+</table>
+</div>
+<script>
+    shouldEvaluateTo('document.getElementById("onlyTable").offsetWidth', 1000000);
+</script>

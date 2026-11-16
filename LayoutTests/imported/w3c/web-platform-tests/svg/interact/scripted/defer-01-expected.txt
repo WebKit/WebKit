@@ -1,0 +1,3 @@
+
+FAIL defer script runs later assert_equals: script run status expected "deferred" but got "inline"
+

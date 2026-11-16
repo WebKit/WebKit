@@ -1,0 +1,2 @@
+Layout viewport off the document on 6 of 6 samples: PASS
+After release: fixed layer 10px from the top left: PASS

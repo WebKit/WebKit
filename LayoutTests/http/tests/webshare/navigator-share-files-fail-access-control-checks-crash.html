@@ -1,0 +1,17 @@
+<p>This test passes if it doesn't crash.</p>
+<script>
+  if (window.testRunner)
+    testRunner.dumpAsText();
+
+  onload = async () => {
+    internals.withUserGesture(() => { });
+    document.createElement('audio').src = 'data:';
+    location.href = "data:dummy"
+    try {
+      await navigator.serviceWorker.register('x');
+    } catch (e) {
+      $vm.print(e);
+    }
+    navigator.share({ files: [new File([], 'a'), new File([], 'b')] });
+  };
+</script>

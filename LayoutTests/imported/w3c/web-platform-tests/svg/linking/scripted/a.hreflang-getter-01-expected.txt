@@ -1,0 +1,4 @@
+
+PASS SVGAElement.hreflang getter
+PASS Test anchor's hreflang getter
+

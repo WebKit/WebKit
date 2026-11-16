@@ -1,0 +1,6 @@
+Test for <input autofocus>
+
+PASS inputFocusCount is 1
+PASS input.selectionStart is 0
+PASS input.selectionEnd is 0
+

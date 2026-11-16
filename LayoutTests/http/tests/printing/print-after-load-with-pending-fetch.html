@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="/js-test-resources/js-test.js"></script>
+</head>
+<body>
+<script>
+description("window.print() after the load event prints right away, even while a fetch is still loading.");
+jsTestIsAsync = true;
+
+const stalledURL = new URL("/resources/load-and-stall.py?name=dummy.js&mimeType=text%2Fjavascript&stallAt=0&stallFor=5&rand=" + Math.random(), location.href).href;
+let insidePrintCall = false;
+let beforePrintFiredInsidePrintCall;
+let stalledFetchFinished;
+
+addEventListener("beforeprint", () => {
+    beforePrintFiredInsidePrintCall = insidePrintCall;
+    // A resource timing entry is only added once the load has finished.
+    stalledFetchFinished = performance.getEntriesByName(stalledURL).length > 0;
+});
+
+addEventListener("afterprint", () => {
+    shouldBeTrue("beforePrintFiredInsidePrintCall");
+    shouldBeFalse("stalledFetchFinished");
+    finishJSTest();
+});
+
+onload = () => {
+    setTimeout(() => {
+        fetch(stalledURL).catch(() => { });
+        debug("window.print()");
+        insidePrintCall = true;
+        window.print();
+        insidePrintCall = false;
+    }, 0);
+};
+</script>
+</body>
+</html>

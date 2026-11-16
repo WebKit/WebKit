@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<script src='../resources/testharness.js'></script>
+<script src='../resources/testharnessreport.js'></script>
+<script>
+function printMethodError(method, target)
+{
+    try {
+        method.call(target);
+        assert_unreached();
+    } catch(e) {
+         console.log(e);
+    }
+}
+
+function printPromiseMethodError(method, target)
+{
+    return method.call(target).then(assert_unreached, (e) => {
+         console.log(e);
+    });
+}
+
+function printGetterError(object, getterName, target)
+{
+    const getter = Object.getOwnPropertyDescriptor(Object.getPrototypeOf(object), getterName).get;
+    printMethodError(getter, target);
+}
+
+function printPromiseGetterError(object, getterName, target)
+{
+    const getter = Object.getOwnPropertyDescriptor(Object.getPrototypeOf(object), getterName).get;
+    printPromiseMethodError(getter, target);
+}
+
+promise_test(function(test) {
+    // This test prints exceptions to check the format of their messages.
+    var controller;
+    var stream = new ReadableStream({
+        start: (c) => {
+            controller = c;
+        }
+    });
+    var reader = stream.getReader();
+
+    var results = [];
+
+    results.push(printPromiseMethodError(stream.cancel, controller));
+    results.push(printMethodError(stream.getReader, controller));
+    results.push(printMethodError(stream.tee, controller));
+    results.push(printGetterError(stream, "locked", controller));
+
+    results.push(printMethodError(controller.enqueue, reader));
+    results.push(printMethodError(controller.error, reader));
+    results.push(printMethodError(controller.close, reader));
+    results.push(printGetterError(controller, "desiredSize", reader));
+
+    results.push(printPromiseMethodError(reader.cancel, stream));
+    results.push(printPromiseMethodError(reader.read, stream));
+    results.push(printMethodError(reader.releaseLock, stream));
+    results.push(printPromiseGetterError(reader, "closed", stream));
+
+    return Promise.all(results);
+}, "Exercising TypeError messages in ReadableStream, ReadableStreamDefaultController and ReadableStreamDefaultReader");
+</script>

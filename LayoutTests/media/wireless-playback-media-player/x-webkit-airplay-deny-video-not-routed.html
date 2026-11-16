@@ -1,0 +1,61 @@
+<!DOCTYPE html><!-- webkit-test-runner [ WirelessPlaybackMediaPlayerEnabled=true ] -->
+<html>
+    <head>
+        <script src='../media-file.js'></script>
+        <script src='../video-test.js'></script>
+        <script>
+            var route;
+            var optedOut;
+            var main;
+            var routeReceivedOptedOutURL = false;
+
+            async function start()
+            {
+                if (window.internals)
+                    internals.mockMediaDeviceRouteController.enabled = true;
+
+                route = internals.mockMediaDeviceRouteController.createMockMediaDeviceRoute();
+                const mainURLPromise = new Promise((resolve) => {
+                    route.setURLCallback(async (url) => {
+                        if (url.includes('/content/test-25fps.'))
+                            routeReceivedOptedOutURL = true;
+                        else if (url.includes('/content/test.'))
+                            resolve();
+                    });
+                });
+
+                run(`internals.mockMediaDeviceRouteController.activateRoute(route)`);
+
+                optedOut = document.createElement('video');
+                optedOut.playsInline = true;
+                run(`optedOut.setAttribute('x-webkit-airplay', 'deny')`);
+                optedOut.src = findMediaFile('video', '../content/test-25fps');
+                document.body.appendChild(optedOut);
+
+                await waitFor(optedOut, 'canplaythrough');
+
+                run(`optedOut.play()`);
+                await waitFor(optedOut, 'playing');
+
+                main = document.createElement('video');
+                main.playsInline = true;
+                main.src = findMediaFile('video', '../content/test');
+                document.body.appendChild(main);
+
+                await waitFor(main, 'canplaythrough');
+
+                run(`main.play()`);
+                await mainURLPromise;
+
+                testExpected('routeReceivedOptedOutURL', false);
+                testExpected('optedOut.webkitCurrentPlaybackTargetIsWireless', false);
+
+                endTest();
+            }
+        </script>
+    </head>
+    <body onload='start()'>
+        <p>Test that a video with x-webkit-airplay="deny" that starts playing while a MediaDeviceRoute is active is not played on the route,
+        while a video without it that starts playing afterward is.</p>
+    </body>
+</html>

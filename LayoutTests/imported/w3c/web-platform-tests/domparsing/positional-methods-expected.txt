@@ -1,0 +1,1268 @@
+
+FAIL Position check: Element.appendHTML (Element) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: Element.appendHTML (Element) (runScripts=true) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: Element.appendHTML (Element) (runScripts=false) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Sanitizer should remove forbidden elements: Element.appendHTML (Element) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span><p>forbidden</p>", {
+          sanitizer: { removeElements: ["p"] },
+        })', 'object[method_name]' is undefined)
+FAIL Position check: Element.appendHTMLUnsafe (Element) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: Element.appendHTMLUnsafe (Element) (runScripts=true) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: Element.appendHTMLUnsafe (Element) (runScripts=false) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Sanitizer should remove forbidden elements: Element.appendHTMLUnsafe (Element) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span><p>forbidden</p>", {
+          sanitizer: { removeElements: ["p"] },
+        })', 'object[method_name]' is undefined)
+FAIL Position check: Element.prependHTML (Element) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: Element.prependHTML (Element) (runScripts=true) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: Element.prependHTML (Element) (runScripts=false) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Sanitizer should remove forbidden elements: Element.prependHTML (Element) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span><p>forbidden</p>", {
+          sanitizer: { removeElements: ["p"] },
+        })', 'object[method_name]' is undefined)
+FAIL Position check: Element.prependHTMLUnsafe (Element) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: Element.prependHTMLUnsafe (Element) (runScripts=true) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: Element.prependHTMLUnsafe (Element) (runScripts=false) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Sanitizer should remove forbidden elements: Element.prependHTMLUnsafe (Element) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span><p>forbidden</p>", {
+          sanitizer: { removeElements: ["p"] },
+        })', 'object[method_name]' is undefined)
+FAIL Position check: Element.beforeHTML (Element) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: Element.beforeHTML (Element) (runScripts=true) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: Element.beforeHTML (Element) (runScripts=false) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Sanitizer should remove forbidden elements: Element.beforeHTML (Element) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span><p>forbidden</p>", {
+          sanitizer: { removeElements: ["p"] },
+        })', 'object[method_name]' is undefined)
+FAIL Position check: Element.beforeHTMLUnsafe (Element) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: Element.beforeHTMLUnsafe (Element) (runScripts=true) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: Element.beforeHTMLUnsafe (Element) (runScripts=false) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Sanitizer should remove forbidden elements: Element.beforeHTMLUnsafe (Element) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span><p>forbidden</p>", {
+          sanitizer: { removeElements: ["p"] },
+        })', 'object[method_name]' is undefined)
+FAIL Position check: Element.afterHTML (Element) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: Element.afterHTML (Element) (runScripts=true) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: Element.afterHTML (Element) (runScripts=false) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Sanitizer should remove forbidden elements: Element.afterHTML (Element) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span><p>forbidden</p>", {
+          sanitizer: { removeElements: ["p"] },
+        })', 'object[method_name]' is undefined)
+FAIL Position check: Element.afterHTMLUnsafe (Element) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: Element.afterHTMLUnsafe (Element) (runScripts=true) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: Element.afterHTMLUnsafe (Element) (runScripts=false) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Sanitizer should remove forbidden elements: Element.afterHTMLUnsafe (Element) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span><p>forbidden</p>", {
+          sanitizer: { removeElements: ["p"] },
+        })', 'object[method_name]' is undefined)
+FAIL Position check: Element.replaceWithHTML (Element) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: Element.replaceWithHTML (Element) (runScripts=true) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: Element.replaceWithHTML (Element) (runScripts=false) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Sanitizer should remove forbidden elements: Element.replaceWithHTML (Element) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span><p>forbidden</p>", {
+          sanitizer: { removeElements: ["p"] },
+        })', 'object[method_name]' is undefined)
+FAIL Position check: Element.replaceWithHTMLUnsafe (Element) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: Element.replaceWithHTMLUnsafe (Element) (runScripts=true) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: Element.replaceWithHTMLUnsafe (Element) (runScripts=false) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Sanitizer should remove forbidden elements: Element.replaceWithHTMLUnsafe (Element) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span><p>forbidden</p>", {
+          sanitizer: { removeElements: ["p"] },
+        })', 'object[method_name]' is undefined)
+FAIL Position check: Comment.beforeHTML (Element) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: Comment.beforeHTML (Element) (runScripts=true) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: Comment.beforeHTML (Element) (runScripts=false) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Sanitizer should remove forbidden elements: Comment.beforeHTML (Element) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span><p>forbidden</p>", {
+          sanitizer: { removeElements: ["p"] },
+        })', 'object[method_name]' is undefined)
+FAIL Position check: Comment.beforeHTMLUnsafe (Element) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: Comment.beforeHTMLUnsafe (Element) (runScripts=true) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: Comment.beforeHTMLUnsafe (Element) (runScripts=false) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Sanitizer should remove forbidden elements: Comment.beforeHTMLUnsafe (Element) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span><p>forbidden</p>", {
+          sanitizer: { removeElements: ["p"] },
+        })', 'object[method_name]' is undefined)
+FAIL Position check: Comment.afterHTML (Element) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: Comment.afterHTML (Element) (runScripts=true) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: Comment.afterHTML (Element) (runScripts=false) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Sanitizer should remove forbidden elements: Comment.afterHTML (Element) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span><p>forbidden</p>", {
+          sanitizer: { removeElements: ["p"] },
+        })', 'object[method_name]' is undefined)
+FAIL Position check: Comment.afterHTMLUnsafe (Element) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: Comment.afterHTMLUnsafe (Element) (runScripts=true) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: Comment.afterHTMLUnsafe (Element) (runScripts=false) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Sanitizer should remove forbidden elements: Comment.afterHTMLUnsafe (Element) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span><p>forbidden</p>", {
+          sanitizer: { removeElements: ["p"] },
+        })', 'object[method_name]' is undefined)
+FAIL Position check: Comment.replaceWithHTML (Element) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: Comment.replaceWithHTML (Element) (runScripts=true) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: Comment.replaceWithHTML (Element) (runScripts=false) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Sanitizer should remove forbidden elements: Comment.replaceWithHTML (Element) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span><p>forbidden</p>", {
+          sanitizer: { removeElements: ["p"] },
+        })', 'object[method_name]' is undefined)
+FAIL Position check: Comment.replaceWithHTMLUnsafe (Element) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: Comment.replaceWithHTMLUnsafe (Element) (runScripts=true) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: Comment.replaceWithHTMLUnsafe (Element) (runScripts=false) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Sanitizer should remove forbidden elements: Comment.replaceWithHTMLUnsafe (Element) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span><p>forbidden</p>", {
+          sanitizer: { removeElements: ["p"] },
+        })', 'object[method_name]' is undefined)
+FAIL Position check: Text.beforeHTML (Element) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: Text.beforeHTML (Element) (runScripts=true) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: Text.beforeHTML (Element) (runScripts=false) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Sanitizer should remove forbidden elements: Text.beforeHTML (Element) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span><p>forbidden</p>", {
+          sanitizer: { removeElements: ["p"] },
+        })', 'object[method_name]' is undefined)
+FAIL Position check: Text.beforeHTMLUnsafe (Element) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: Text.beforeHTMLUnsafe (Element) (runScripts=true) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: Text.beforeHTMLUnsafe (Element) (runScripts=false) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Sanitizer should remove forbidden elements: Text.beforeHTMLUnsafe (Element) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span><p>forbidden</p>", {
+          sanitizer: { removeElements: ["p"] },
+        })', 'object[method_name]' is undefined)
+FAIL Position check: Text.afterHTML (Element) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: Text.afterHTML (Element) (runScripts=true) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: Text.afterHTML (Element) (runScripts=false) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Sanitizer should remove forbidden elements: Text.afterHTML (Element) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span><p>forbidden</p>", {
+          sanitizer: { removeElements: ["p"] },
+        })', 'object[method_name]' is undefined)
+FAIL Position check: Text.afterHTMLUnsafe (Element) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: Text.afterHTMLUnsafe (Element) (runScripts=true) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: Text.afterHTMLUnsafe (Element) (runScripts=false) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Sanitizer should remove forbidden elements: Text.afterHTMLUnsafe (Element) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span><p>forbidden</p>", {
+          sanitizer: { removeElements: ["p"] },
+        })', 'object[method_name]' is undefined)
+FAIL Position check: Text.replaceWithHTML (Element) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: Text.replaceWithHTML (Element) (runScripts=true) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: Text.replaceWithHTML (Element) (runScripts=false) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Sanitizer should remove forbidden elements: Text.replaceWithHTML (Element) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span><p>forbidden</p>", {
+          sanitizer: { removeElements: ["p"] },
+        })', 'object[method_name]' is undefined)
+FAIL Position check: Text.replaceWithHTMLUnsafe (Element) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: Text.replaceWithHTMLUnsafe (Element) (runScripts=true) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: Text.replaceWithHTMLUnsafe (Element) (runScripts=false) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Sanitizer should remove forbidden elements: Text.replaceWithHTMLUnsafe (Element) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span><p>forbidden</p>", {
+          sanitizer: { removeElements: ["p"] },
+        })', 'object[method_name]' is undefined)
+FAIL Position check: ProcessingInstruction.beforeHTML (Element) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: ProcessingInstruction.beforeHTML (Element) (runScripts=true) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: ProcessingInstruction.beforeHTML (Element) (runScripts=false) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Sanitizer should remove forbidden elements: ProcessingInstruction.beforeHTML (Element) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span><p>forbidden</p>", {
+          sanitizer: { removeElements: ["p"] },
+        })', 'object[method_name]' is undefined)
+FAIL Position check: ProcessingInstruction.beforeHTMLUnsafe (Element) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: ProcessingInstruction.beforeHTMLUnsafe (Element) (runScripts=true) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: ProcessingInstruction.beforeHTMLUnsafe (Element) (runScripts=false) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Sanitizer should remove forbidden elements: ProcessingInstruction.beforeHTMLUnsafe (Element) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span><p>forbidden</p>", {
+          sanitizer: { removeElements: ["p"] },
+        })', 'object[method_name]' is undefined)
+FAIL Position check: ProcessingInstruction.afterHTML (Element) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: ProcessingInstruction.afterHTML (Element) (runScripts=true) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: ProcessingInstruction.afterHTML (Element) (runScripts=false) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Sanitizer should remove forbidden elements: ProcessingInstruction.afterHTML (Element) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span><p>forbidden</p>", {
+          sanitizer: { removeElements: ["p"] },
+        })', 'object[method_name]' is undefined)
+FAIL Position check: ProcessingInstruction.afterHTMLUnsafe (Element) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: ProcessingInstruction.afterHTMLUnsafe (Element) (runScripts=true) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: ProcessingInstruction.afterHTMLUnsafe (Element) (runScripts=false) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Sanitizer should remove forbidden elements: ProcessingInstruction.afterHTMLUnsafe (Element) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span><p>forbidden</p>", {
+          sanitizer: { removeElements: ["p"] },
+        })', 'object[method_name]' is undefined)
+FAIL Position check: ProcessingInstruction.replaceWithHTML (Element) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: ProcessingInstruction.replaceWithHTML (Element) (runScripts=true) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: ProcessingInstruction.replaceWithHTML (Element) (runScripts=false) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Sanitizer should remove forbidden elements: ProcessingInstruction.replaceWithHTML (Element) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span><p>forbidden</p>", {
+          sanitizer: { removeElements: ["p"] },
+        })', 'object[method_name]' is undefined)
+FAIL Position check: ProcessingInstruction.replaceWithHTMLUnsafe (Element) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: ProcessingInstruction.replaceWithHTMLUnsafe (Element) (runScripts=true) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: ProcessingInstruction.replaceWithHTMLUnsafe (Element) (runScripts=false) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Sanitizer should remove forbidden elements: ProcessingInstruction.replaceWithHTMLUnsafe (Element) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span><p>forbidden</p>", {
+          sanitizer: { removeElements: ["p"] },
+        })', 'object[method_name]' is undefined)
+FAIL Position check: Element.appendHTML (ShadowRoot) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: Element.appendHTML (ShadowRoot) (runScripts=true) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: Element.appendHTML (ShadowRoot) (runScripts=false) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Sanitizer should remove forbidden elements: Element.appendHTML (ShadowRoot) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span><p>forbidden</p>", {
+          sanitizer: { removeElements: ["p"] },
+        })', 'object[method_name]' is undefined)
+FAIL Position check: Element.appendHTMLUnsafe (ShadowRoot) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: Element.appendHTMLUnsafe (ShadowRoot) (runScripts=true) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: Element.appendHTMLUnsafe (ShadowRoot) (runScripts=false) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Sanitizer should remove forbidden elements: Element.appendHTMLUnsafe (ShadowRoot) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span><p>forbidden</p>", {
+          sanitizer: { removeElements: ["p"] },
+        })', 'object[method_name]' is undefined)
+FAIL Position check: Element.prependHTML (ShadowRoot) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: Element.prependHTML (ShadowRoot) (runScripts=true) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: Element.prependHTML (ShadowRoot) (runScripts=false) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Sanitizer should remove forbidden elements: Element.prependHTML (ShadowRoot) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span><p>forbidden</p>", {
+          sanitizer: { removeElements: ["p"] },
+        })', 'object[method_name]' is undefined)
+FAIL Position check: Element.prependHTMLUnsafe (ShadowRoot) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: Element.prependHTMLUnsafe (ShadowRoot) (runScripts=true) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: Element.prependHTMLUnsafe (ShadowRoot) (runScripts=false) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Sanitizer should remove forbidden elements: Element.prependHTMLUnsafe (ShadowRoot) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span><p>forbidden</p>", {
+          sanitizer: { removeElements: ["p"] },
+        })', 'object[method_name]' is undefined)
+FAIL Position check: Element.beforeHTML (ShadowRoot) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: Element.beforeHTML (ShadowRoot) (runScripts=true) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: Element.beforeHTML (ShadowRoot) (runScripts=false) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Sanitizer should remove forbidden elements: Element.beforeHTML (ShadowRoot) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span><p>forbidden</p>", {
+          sanitizer: { removeElements: ["p"] },
+        })', 'object[method_name]' is undefined)
+FAIL Position check: Element.beforeHTMLUnsafe (ShadowRoot) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: Element.beforeHTMLUnsafe (ShadowRoot) (runScripts=true) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: Element.beforeHTMLUnsafe (ShadowRoot) (runScripts=false) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Sanitizer should remove forbidden elements: Element.beforeHTMLUnsafe (ShadowRoot) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span><p>forbidden</p>", {
+          sanitizer: { removeElements: ["p"] },
+        })', 'object[method_name]' is undefined)
+FAIL Position check: Element.afterHTML (ShadowRoot) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: Element.afterHTML (ShadowRoot) (runScripts=true) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: Element.afterHTML (ShadowRoot) (runScripts=false) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Sanitizer should remove forbidden elements: Element.afterHTML (ShadowRoot) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span><p>forbidden</p>", {
+          sanitizer: { removeElements: ["p"] },
+        })', 'object[method_name]' is undefined)
+FAIL Position check: Element.afterHTMLUnsafe (ShadowRoot) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: Element.afterHTMLUnsafe (ShadowRoot) (runScripts=true) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: Element.afterHTMLUnsafe (ShadowRoot) (runScripts=false) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Sanitizer should remove forbidden elements: Element.afterHTMLUnsafe (ShadowRoot) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span><p>forbidden</p>", {
+          sanitizer: { removeElements: ["p"] },
+        })', 'object[method_name]' is undefined)
+FAIL Position check: Element.replaceWithHTML (ShadowRoot) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: Element.replaceWithHTML (ShadowRoot) (runScripts=true) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: Element.replaceWithHTML (ShadowRoot) (runScripts=false) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Sanitizer should remove forbidden elements: Element.replaceWithHTML (ShadowRoot) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span><p>forbidden</p>", {
+          sanitizer: { removeElements: ["p"] },
+        })', 'object[method_name]' is undefined)
+FAIL Position check: Element.replaceWithHTMLUnsafe (ShadowRoot) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: Element.replaceWithHTMLUnsafe (ShadowRoot) (runScripts=true) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: Element.replaceWithHTMLUnsafe (ShadowRoot) (runScripts=false) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Sanitizer should remove forbidden elements: Element.replaceWithHTMLUnsafe (ShadowRoot) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span><p>forbidden</p>", {
+          sanitizer: { removeElements: ["p"] },
+        })', 'object[method_name]' is undefined)
+FAIL Position check: Comment.beforeHTML (ShadowRoot) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: Comment.beforeHTML (ShadowRoot) (runScripts=true) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: Comment.beforeHTML (ShadowRoot) (runScripts=false) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Sanitizer should remove forbidden elements: Comment.beforeHTML (ShadowRoot) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span><p>forbidden</p>", {
+          sanitizer: { removeElements: ["p"] },
+        })', 'object[method_name]' is undefined)
+FAIL Position check: Comment.beforeHTMLUnsafe (ShadowRoot) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: Comment.beforeHTMLUnsafe (ShadowRoot) (runScripts=true) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: Comment.beforeHTMLUnsafe (ShadowRoot) (runScripts=false) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Sanitizer should remove forbidden elements: Comment.beforeHTMLUnsafe (ShadowRoot) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span><p>forbidden</p>", {
+          sanitizer: { removeElements: ["p"] },
+        })', 'object[method_name]' is undefined)
+FAIL Position check: Comment.afterHTML (ShadowRoot) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: Comment.afterHTML (ShadowRoot) (runScripts=true) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: Comment.afterHTML (ShadowRoot) (runScripts=false) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Sanitizer should remove forbidden elements: Comment.afterHTML (ShadowRoot) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span><p>forbidden</p>", {
+          sanitizer: { removeElements: ["p"] },
+        })', 'object[method_name]' is undefined)
+FAIL Position check: Comment.afterHTMLUnsafe (ShadowRoot) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: Comment.afterHTMLUnsafe (ShadowRoot) (runScripts=true) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: Comment.afterHTMLUnsafe (ShadowRoot) (runScripts=false) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Sanitizer should remove forbidden elements: Comment.afterHTMLUnsafe (ShadowRoot) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span><p>forbidden</p>", {
+          sanitizer: { removeElements: ["p"] },
+        })', 'object[method_name]' is undefined)
+FAIL Position check: Comment.replaceWithHTML (ShadowRoot) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: Comment.replaceWithHTML (ShadowRoot) (runScripts=true) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: Comment.replaceWithHTML (ShadowRoot) (runScripts=false) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Sanitizer should remove forbidden elements: Comment.replaceWithHTML (ShadowRoot) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span><p>forbidden</p>", {
+          sanitizer: { removeElements: ["p"] },
+        })', 'object[method_name]' is undefined)
+FAIL Position check: Comment.replaceWithHTMLUnsafe (ShadowRoot) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: Comment.replaceWithHTMLUnsafe (ShadowRoot) (runScripts=true) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: Comment.replaceWithHTMLUnsafe (ShadowRoot) (runScripts=false) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Sanitizer should remove forbidden elements: Comment.replaceWithHTMLUnsafe (ShadowRoot) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span><p>forbidden</p>", {
+          sanitizer: { removeElements: ["p"] },
+        })', 'object[method_name]' is undefined)
+FAIL Position check: Text.beforeHTML (ShadowRoot) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: Text.beforeHTML (ShadowRoot) (runScripts=true) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: Text.beforeHTML (ShadowRoot) (runScripts=false) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Sanitizer should remove forbidden elements: Text.beforeHTML (ShadowRoot) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span><p>forbidden</p>", {
+          sanitizer: { removeElements: ["p"] },
+        })', 'object[method_name]' is undefined)
+FAIL Position check: Text.beforeHTMLUnsafe (ShadowRoot) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: Text.beforeHTMLUnsafe (ShadowRoot) (runScripts=true) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: Text.beforeHTMLUnsafe (ShadowRoot) (runScripts=false) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Sanitizer should remove forbidden elements: Text.beforeHTMLUnsafe (ShadowRoot) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span><p>forbidden</p>", {
+          sanitizer: { removeElements: ["p"] },
+        })', 'object[method_name]' is undefined)
+FAIL Position check: Text.afterHTML (ShadowRoot) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: Text.afterHTML (ShadowRoot) (runScripts=true) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: Text.afterHTML (ShadowRoot) (runScripts=false) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Sanitizer should remove forbidden elements: Text.afterHTML (ShadowRoot) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span><p>forbidden</p>", {
+          sanitizer: { removeElements: ["p"] },
+        })', 'object[method_name]' is undefined)
+FAIL Position check: Text.afterHTMLUnsafe (ShadowRoot) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: Text.afterHTMLUnsafe (ShadowRoot) (runScripts=true) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: Text.afterHTMLUnsafe (ShadowRoot) (runScripts=false) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Sanitizer should remove forbidden elements: Text.afterHTMLUnsafe (ShadowRoot) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span><p>forbidden</p>", {
+          sanitizer: { removeElements: ["p"] },
+        })', 'object[method_name]' is undefined)
+FAIL Position check: Text.replaceWithHTML (ShadowRoot) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: Text.replaceWithHTML (ShadowRoot) (runScripts=true) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: Text.replaceWithHTML (ShadowRoot) (runScripts=false) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Sanitizer should remove forbidden elements: Text.replaceWithHTML (ShadowRoot) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span><p>forbidden</p>", {
+          sanitizer: { removeElements: ["p"] },
+        })', 'object[method_name]' is undefined)
+FAIL Position check: Text.replaceWithHTMLUnsafe (ShadowRoot) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: Text.replaceWithHTMLUnsafe (ShadowRoot) (runScripts=true) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: Text.replaceWithHTMLUnsafe (ShadowRoot) (runScripts=false) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Sanitizer should remove forbidden elements: Text.replaceWithHTMLUnsafe (ShadowRoot) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span><p>forbidden</p>", {
+          sanitizer: { removeElements: ["p"] },
+        })', 'object[method_name]' is undefined)
+FAIL Position check: ProcessingInstruction.beforeHTML (ShadowRoot) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: ProcessingInstruction.beforeHTML (ShadowRoot) (runScripts=true) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: ProcessingInstruction.beforeHTML (ShadowRoot) (runScripts=false) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Sanitizer should remove forbidden elements: ProcessingInstruction.beforeHTML (ShadowRoot) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span><p>forbidden</p>", {
+          sanitizer: { removeElements: ["p"] },
+        })', 'object[method_name]' is undefined)
+FAIL Position check: ProcessingInstruction.beforeHTMLUnsafe (ShadowRoot) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: ProcessingInstruction.beforeHTMLUnsafe (ShadowRoot) (runScripts=true) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: ProcessingInstruction.beforeHTMLUnsafe (ShadowRoot) (runScripts=false) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Sanitizer should remove forbidden elements: ProcessingInstruction.beforeHTMLUnsafe (ShadowRoot) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span><p>forbidden</p>", {
+          sanitizer: { removeElements: ["p"] },
+        })', 'object[method_name]' is undefined)
+FAIL Position check: ProcessingInstruction.afterHTML (ShadowRoot) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: ProcessingInstruction.afterHTML (ShadowRoot) (runScripts=true) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: ProcessingInstruction.afterHTML (ShadowRoot) (runScripts=false) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Sanitizer should remove forbidden elements: ProcessingInstruction.afterHTML (ShadowRoot) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span><p>forbidden</p>", {
+          sanitizer: { removeElements: ["p"] },
+        })', 'object[method_name]' is undefined)
+FAIL Position check: ProcessingInstruction.afterHTMLUnsafe (ShadowRoot) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: ProcessingInstruction.afterHTMLUnsafe (ShadowRoot) (runScripts=true) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: ProcessingInstruction.afterHTMLUnsafe (ShadowRoot) (runScripts=false) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Sanitizer should remove forbidden elements: ProcessingInstruction.afterHTMLUnsafe (ShadowRoot) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span><p>forbidden</p>", {
+          sanitizer: { removeElements: ["p"] },
+        })', 'object[method_name]' is undefined)
+FAIL Position check: ProcessingInstruction.replaceWithHTML (ShadowRoot) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: ProcessingInstruction.replaceWithHTML (ShadowRoot) (runScripts=true) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: ProcessingInstruction.replaceWithHTML (ShadowRoot) (runScripts=false) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Sanitizer should remove forbidden elements: ProcessingInstruction.replaceWithHTML (ShadowRoot) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span><p>forbidden</p>", {
+          sanitizer: { removeElements: ["p"] },
+        })', 'object[method_name]' is undefined)
+FAIL Position check: ProcessingInstruction.replaceWithHTMLUnsafe (ShadowRoot) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: ProcessingInstruction.replaceWithHTMLUnsafe (ShadowRoot) (runScripts=true) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: ProcessingInstruction.replaceWithHTMLUnsafe (ShadowRoot) (runScripts=false) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Sanitizer should remove forbidden elements: ProcessingInstruction.replaceWithHTMLUnsafe (ShadowRoot) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span><p>forbidden</p>", {
+          sanitizer: { removeElements: ["p"] },
+        })', 'object[method_name]' is undefined)
+FAIL Position check: Element.appendHTML (template.content) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: Element.appendHTML (template.content) (runScripts=true) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: Element.appendHTML (template.content) (runScripts=false) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Sanitizer should remove forbidden elements: Element.appendHTML (template.content) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span><p>forbidden</p>", {
+          sanitizer: { removeElements: ["p"] },
+        })', 'object[method_name]' is undefined)
+FAIL Position check: Element.appendHTMLUnsafe (template.content) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: Element.appendHTMLUnsafe (template.content) (runScripts=true) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: Element.appendHTMLUnsafe (template.content) (runScripts=false) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Sanitizer should remove forbidden elements: Element.appendHTMLUnsafe (template.content) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span><p>forbidden</p>", {
+          sanitizer: { removeElements: ["p"] },
+        })', 'object[method_name]' is undefined)
+FAIL Position check: Element.prependHTML (template.content) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: Element.prependHTML (template.content) (runScripts=true) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: Element.prependHTML (template.content) (runScripts=false) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Sanitizer should remove forbidden elements: Element.prependHTML (template.content) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span><p>forbidden</p>", {
+          sanitizer: { removeElements: ["p"] },
+        })', 'object[method_name]' is undefined)
+FAIL Position check: Element.prependHTMLUnsafe (template.content) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: Element.prependHTMLUnsafe (template.content) (runScripts=true) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: Element.prependHTMLUnsafe (template.content) (runScripts=false) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Sanitizer should remove forbidden elements: Element.prependHTMLUnsafe (template.content) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span><p>forbidden</p>", {
+          sanitizer: { removeElements: ["p"] },
+        })', 'object[method_name]' is undefined)
+FAIL Position check: Element.beforeHTML (template.content) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: Element.beforeHTML (template.content) (runScripts=true) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: Element.beforeHTML (template.content) (runScripts=false) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Sanitizer should remove forbidden elements: Element.beforeHTML (template.content) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span><p>forbidden</p>", {
+          sanitizer: { removeElements: ["p"] },
+        })', 'object[method_name]' is undefined)
+FAIL Position check: Element.beforeHTMLUnsafe (template.content) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: Element.beforeHTMLUnsafe (template.content) (runScripts=true) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: Element.beforeHTMLUnsafe (template.content) (runScripts=false) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Sanitizer should remove forbidden elements: Element.beforeHTMLUnsafe (template.content) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span><p>forbidden</p>", {
+          sanitizer: { removeElements: ["p"] },
+        })', 'object[method_name]' is undefined)
+FAIL Position check: Element.afterHTML (template.content) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: Element.afterHTML (template.content) (runScripts=true) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: Element.afterHTML (template.content) (runScripts=false) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Sanitizer should remove forbidden elements: Element.afterHTML (template.content) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span><p>forbidden</p>", {
+          sanitizer: { removeElements: ["p"] },
+        })', 'object[method_name]' is undefined)
+FAIL Position check: Element.afterHTMLUnsafe (template.content) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: Element.afterHTMLUnsafe (template.content) (runScripts=true) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: Element.afterHTMLUnsafe (template.content) (runScripts=false) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Sanitizer should remove forbidden elements: Element.afterHTMLUnsafe (template.content) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span><p>forbidden</p>", {
+          sanitizer: { removeElements: ["p"] },
+        })', 'object[method_name]' is undefined)
+FAIL Position check: Element.replaceWithHTML (template.content) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: Element.replaceWithHTML (template.content) (runScripts=true) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: Element.replaceWithHTML (template.content) (runScripts=false) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Sanitizer should remove forbidden elements: Element.replaceWithHTML (template.content) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span><p>forbidden</p>", {
+          sanitizer: { removeElements: ["p"] },
+        })', 'object[method_name]' is undefined)
+FAIL Position check: Element.replaceWithHTMLUnsafe (template.content) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: Element.replaceWithHTMLUnsafe (template.content) (runScripts=true) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: Element.replaceWithHTMLUnsafe (template.content) (runScripts=false) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Sanitizer should remove forbidden elements: Element.replaceWithHTMLUnsafe (template.content) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span><p>forbidden</p>", {
+          sanitizer: { removeElements: ["p"] },
+        })', 'object[method_name]' is undefined)
+FAIL Position check: Comment.beforeHTML (template.content) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: Comment.beforeHTML (template.content) (runScripts=true) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: Comment.beforeHTML (template.content) (runScripts=false) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Sanitizer should remove forbidden elements: Comment.beforeHTML (template.content) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span><p>forbidden</p>", {
+          sanitizer: { removeElements: ["p"] },
+        })', 'object[method_name]' is undefined)
+FAIL Position check: Comment.beforeHTMLUnsafe (template.content) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: Comment.beforeHTMLUnsafe (template.content) (runScripts=true) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: Comment.beforeHTMLUnsafe (template.content) (runScripts=false) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Sanitizer should remove forbidden elements: Comment.beforeHTMLUnsafe (template.content) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span><p>forbidden</p>", {
+          sanitizer: { removeElements: ["p"] },
+        })', 'object[method_name]' is undefined)
+FAIL Position check: Comment.afterHTML (template.content) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: Comment.afterHTML (template.content) (runScripts=true) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: Comment.afterHTML (template.content) (runScripts=false) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Sanitizer should remove forbidden elements: Comment.afterHTML (template.content) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span><p>forbidden</p>", {
+          sanitizer: { removeElements: ["p"] },
+        })', 'object[method_name]' is undefined)
+FAIL Position check: Comment.afterHTMLUnsafe (template.content) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: Comment.afterHTMLUnsafe (template.content) (runScripts=true) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: Comment.afterHTMLUnsafe (template.content) (runScripts=false) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Sanitizer should remove forbidden elements: Comment.afterHTMLUnsafe (template.content) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span><p>forbidden</p>", {
+          sanitizer: { removeElements: ["p"] },
+        })', 'object[method_name]' is undefined)
+FAIL Position check: Comment.replaceWithHTML (template.content) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: Comment.replaceWithHTML (template.content) (runScripts=true) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: Comment.replaceWithHTML (template.content) (runScripts=false) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Sanitizer should remove forbidden elements: Comment.replaceWithHTML (template.content) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span><p>forbidden</p>", {
+          sanitizer: { removeElements: ["p"] },
+        })', 'object[method_name]' is undefined)
+FAIL Position check: Comment.replaceWithHTMLUnsafe (template.content) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: Comment.replaceWithHTMLUnsafe (template.content) (runScripts=true) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: Comment.replaceWithHTMLUnsafe (template.content) (runScripts=false) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Sanitizer should remove forbidden elements: Comment.replaceWithHTMLUnsafe (template.content) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span><p>forbidden</p>", {
+          sanitizer: { removeElements: ["p"] },
+        })', 'object[method_name]' is undefined)
+FAIL Position check: Text.beforeHTML (template.content) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: Text.beforeHTML (template.content) (runScripts=true) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: Text.beforeHTML (template.content) (runScripts=false) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Sanitizer should remove forbidden elements: Text.beforeHTML (template.content) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span><p>forbidden</p>", {
+          sanitizer: { removeElements: ["p"] },
+        })', 'object[method_name]' is undefined)
+FAIL Position check: Text.beforeHTMLUnsafe (template.content) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: Text.beforeHTMLUnsafe (template.content) (runScripts=true) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: Text.beforeHTMLUnsafe (template.content) (runScripts=false) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Sanitizer should remove forbidden elements: Text.beforeHTMLUnsafe (template.content) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span><p>forbidden</p>", {
+          sanitizer: { removeElements: ["p"] },
+        })', 'object[method_name]' is undefined)
+FAIL Position check: Text.afterHTML (template.content) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: Text.afterHTML (template.content) (runScripts=true) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: Text.afterHTML (template.content) (runScripts=false) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Sanitizer should remove forbidden elements: Text.afterHTML (template.content) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span><p>forbidden</p>", {
+          sanitizer: { removeElements: ["p"] },
+        })', 'object[method_name]' is undefined)
+FAIL Position check: Text.afterHTMLUnsafe (template.content) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: Text.afterHTMLUnsafe (template.content) (runScripts=true) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: Text.afterHTMLUnsafe (template.content) (runScripts=false) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Sanitizer should remove forbidden elements: Text.afterHTMLUnsafe (template.content) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span><p>forbidden</p>", {
+          sanitizer: { removeElements: ["p"] },
+        })', 'object[method_name]' is undefined)
+FAIL Position check: Text.replaceWithHTML (template.content) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: Text.replaceWithHTML (template.content) (runScripts=true) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: Text.replaceWithHTML (template.content) (runScripts=false) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Sanitizer should remove forbidden elements: Text.replaceWithHTML (template.content) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span><p>forbidden</p>", {
+          sanitizer: { removeElements: ["p"] },
+        })', 'object[method_name]' is undefined)
+FAIL Position check: Text.replaceWithHTMLUnsafe (template.content) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: Text.replaceWithHTMLUnsafe (template.content) (runScripts=true) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: Text.replaceWithHTMLUnsafe (template.content) (runScripts=false) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Sanitizer should remove forbidden elements: Text.replaceWithHTMLUnsafe (template.content) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span><p>forbidden</p>", {
+          sanitizer: { removeElements: ["p"] },
+        })', 'object[method_name]' is undefined)
+FAIL Position check: ProcessingInstruction.beforeHTML (template.content) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: ProcessingInstruction.beforeHTML (template.content) (runScripts=true) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: ProcessingInstruction.beforeHTML (template.content) (runScripts=false) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Sanitizer should remove forbidden elements: ProcessingInstruction.beforeHTML (template.content) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span><p>forbidden</p>", {
+          sanitizer: { removeElements: ["p"] },
+        })', 'object[method_name]' is undefined)
+FAIL Position check: ProcessingInstruction.beforeHTMLUnsafe (template.content) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: ProcessingInstruction.beforeHTMLUnsafe (template.content) (runScripts=true) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: ProcessingInstruction.beforeHTMLUnsafe (template.content) (runScripts=false) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Sanitizer should remove forbidden elements: ProcessingInstruction.beforeHTMLUnsafe (template.content) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span><p>forbidden</p>", {
+          sanitizer: { removeElements: ["p"] },
+        })', 'object[method_name]' is undefined)
+FAIL Position check: ProcessingInstruction.afterHTML (template.content) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: ProcessingInstruction.afterHTML (template.content) (runScripts=true) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: ProcessingInstruction.afterHTML (template.content) (runScripts=false) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Sanitizer should remove forbidden elements: ProcessingInstruction.afterHTML (template.content) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span><p>forbidden</p>", {
+          sanitizer: { removeElements: ["p"] },
+        })', 'object[method_name]' is undefined)
+FAIL Position check: ProcessingInstruction.afterHTMLUnsafe (template.content) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: ProcessingInstruction.afterHTMLUnsafe (template.content) (runScripts=true) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: ProcessingInstruction.afterHTMLUnsafe (template.content) (runScripts=false) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Sanitizer should remove forbidden elements: ProcessingInstruction.afterHTMLUnsafe (template.content) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span><p>forbidden</p>", {
+          sanitizer: { removeElements: ["p"] },
+        })', 'object[method_name]' is undefined)
+FAIL Position check: ProcessingInstruction.replaceWithHTML (template.content) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: ProcessingInstruction.replaceWithHTML (template.content) (runScripts=true) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: ProcessingInstruction.replaceWithHTML (template.content) (runScripts=false) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Sanitizer should remove forbidden elements: ProcessingInstruction.replaceWithHTML (template.content) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span><p>forbidden</p>", {
+          sanitizer: { removeElements: ["p"] },
+        })', 'object[method_name]' is undefined)
+FAIL Position check: ProcessingInstruction.replaceWithHTMLUnsafe (template.content) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: ProcessingInstruction.replaceWithHTMLUnsafe (template.content) (runScripts=true) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Only unsafe variants should run scripts: ProcessingInstruction.replaceWithHTMLUnsafe (template.content) (runScripts=false) object[method_name] is not a function. (In 'object[method_name](
+            "<span>html;</span><script>window.did_run = true<" + "/script>",
+            { runScripts },
+          )', 'object[method_name]' is undefined)
+FAIL Sanitizer should remove forbidden elements: ProcessingInstruction.replaceWithHTMLUnsafe (template.content) object[method_name] is not a function. (In 'object[method_name]("<span>html;</span><p>forbidden</p>", {
+          sanitizer: { removeElements: ["p"] },
+        })', 'object[method_name]' is undefined)
+FAIL afterHTML throws HierarchyRequestError if parent is a Document (Comment node) assert_throws_dom: function "() => {
+            comment[method_name]("<span>fails</span>");
+          }" threw object "TypeError: comment[method_name] is not a function. (In 'comment[method_name]("<span>fails</span>")', 'comment[method_name]' is undefined)" that is not a DOMException HierarchyRequestError: property "code" is equal to undefined, expected 3
+FAIL afterHTML is exposed via the NonDocumentTypeChildNode mixin assert_own_property: expected property "afterHTML" missing
+PASS afterHTML is not available on DocumentType nodes
+FAIL afterHTML throws HierarchyRequestError if parent is a DocumentFragment assert_throws_dom: function "() => {
+            span[method_name]("<p>fails</p>");
+          }" threw object "TypeError: span[method_name] is not a function. (In 'span[method_name]("<p>fails</p>")', 'span[method_name]' is undefined)" that is not a DOMException HierarchyRequestError: property "code" is equal to undefined, expected 3
+FAIL afterHTML throws HierarchyRequestError if parent is an html element assert_throws_dom: function "() => {
+            doc.body[method_name]("<p>fails</p>");
+          }" threw object "TypeError: doc.body[method_name] is not a function. (In 'doc.body[method_name]("<p>fails</p>")', 'doc.body[method_name]' is undefined)" that is not a DOMException HierarchyRequestError: property "code" is equal to undefined, expected 3
+FAIL afterHTML throws HierarchyRequestError if parent is a disconnected html element assert_throws_dom: function "() => {
+            child[method_name]("<p>fails</p>");
+          }" threw object "TypeError: child[method_name] is not a function. (In 'child[method_name]("<p>fails</p>")', 'child[method_name]' is undefined)" that is not a DOMException HierarchyRequestError: property "code" is equal to undefined, expected 3
+FAIL afterHTML on Element without a parent returns undefined and does not throw element[method_name] is not a function. (In 'element[method_name]("<span>fails</span>")', 'element[method_name]' is undefined)
+FAIL afterHTML on Comment without a parent returns undefined and does not throw comment[method_name] is not a function. (In 'comment[method_name]("<span>fails</span>")', 'comment[method_name]' is undefined)
+FAIL afterHTML on Text without a parent returns undefined and does not throw text[method_name] is not a function. (In 'text[method_name]("<span>fails</span>")', 'text[method_name]' is undefined)
+FAIL afterHTML on ProcessingInstruction without a parent returns undefined and does not throw pi[method_name] is not a function. (In 'pi[method_name]("<span>fails</span>")', 'pi[method_name]' is undefined)
+FAIL beforeHTML throws HierarchyRequestError if parent is a Document (Comment node) assert_throws_dom: function "() => {
+            comment[method_name]("<span>fails</span>");
+          }" threw object "TypeError: comment[method_name] is not a function. (In 'comment[method_name]("<span>fails</span>")', 'comment[method_name]' is undefined)" that is not a DOMException HierarchyRequestError: property "code" is equal to undefined, expected 3
+FAIL beforeHTML is exposed via the NonDocumentTypeChildNode mixin assert_own_property: expected property "beforeHTML" missing
+PASS beforeHTML is not available on DocumentType nodes
+FAIL beforeHTML throws HierarchyRequestError if parent is a DocumentFragment assert_throws_dom: function "() => {
+            span[method_name]("<p>fails</p>");
+          }" threw object "TypeError: span[method_name] is not a function. (In 'span[method_name]("<p>fails</p>")', 'span[method_name]' is undefined)" that is not a DOMException HierarchyRequestError: property "code" is equal to undefined, expected 3
+FAIL beforeHTML throws HierarchyRequestError if parent is an html element assert_throws_dom: function "() => {
+            doc.body[method_name]("<p>fails</p>");
+          }" threw object "TypeError: doc.body[method_name] is not a function. (In 'doc.body[method_name]("<p>fails</p>")', 'doc.body[method_name]' is undefined)" that is not a DOMException HierarchyRequestError: property "code" is equal to undefined, expected 3
+FAIL beforeHTML throws HierarchyRequestError if parent is a disconnected html element assert_throws_dom: function "() => {
+            child[method_name]("<p>fails</p>");
+          }" threw object "TypeError: child[method_name] is not a function. (In 'child[method_name]("<p>fails</p>")', 'child[method_name]' is undefined)" that is not a DOMException HierarchyRequestError: property "code" is equal to undefined, expected 3
+FAIL beforeHTML on Element without a parent returns undefined and does not throw element[method_name] is not a function. (In 'element[method_name]("<span>fails</span>")', 'element[method_name]' is undefined)
+FAIL beforeHTML on Comment without a parent returns undefined and does not throw comment[method_name] is not a function. (In 'comment[method_name]("<span>fails</span>")', 'comment[method_name]' is undefined)
+FAIL beforeHTML on Text without a parent returns undefined and does not throw text[method_name] is not a function. (In 'text[method_name]("<span>fails</span>")', 'text[method_name]' is undefined)
+FAIL beforeHTML on ProcessingInstruction without a parent returns undefined and does not throw pi[method_name] is not a function. (In 'pi[method_name]("<span>fails</span>")', 'pi[method_name]' is undefined)
+FAIL replaceWithHTML throws HierarchyRequestError if parent is a Document (Comment node) assert_throws_dom: function "() => {
+            comment[method_name]("<span>fails</span>");
+          }" threw object "TypeError: comment[method_name] is not a function. (In 'comment[method_name]("<span>fails</span>")', 'comment[method_name]' is undefined)" that is not a DOMException HierarchyRequestError: property "code" is equal to undefined, expected 3
+FAIL replaceWithHTML is exposed via the NonDocumentTypeChildNode mixin assert_own_property: expected property "replaceWithHTML" missing
+PASS replaceWithHTML is not available on DocumentType nodes
+FAIL replaceWithHTML throws HierarchyRequestError if parent is a DocumentFragment assert_throws_dom: function "() => {
+            span[method_name]("<p>fails</p>");
+          }" threw object "TypeError: span[method_name] is not a function. (In 'span[method_name]("<p>fails</p>")', 'span[method_name]' is undefined)" that is not a DOMException HierarchyRequestError: property "code" is equal to undefined, expected 3
+FAIL replaceWithHTML throws HierarchyRequestError if parent is an html element assert_throws_dom: function "() => {
+            doc.body[method_name]("<p>fails</p>");
+          }" threw object "TypeError: doc.body[method_name] is not a function. (In 'doc.body[method_name]("<p>fails</p>")', 'doc.body[method_name]' is undefined)" that is not a DOMException HierarchyRequestError: property "code" is equal to undefined, expected 3
+FAIL replaceWithHTML throws HierarchyRequestError if parent is a disconnected html element assert_throws_dom: function "() => {
+            child[method_name]("<p>fails</p>");
+          }" threw object "TypeError: child[method_name] is not a function. (In 'child[method_name]("<p>fails</p>")', 'child[method_name]' is undefined)" that is not a DOMException HierarchyRequestError: property "code" is equal to undefined, expected 3
+FAIL replaceWithHTML on Element without a parent returns undefined and does not throw element[method_name] is not a function. (In 'element[method_name]("<span>fails</span>")', 'element[method_name]' is undefined)
+FAIL replaceWithHTML on Comment without a parent returns undefined and does not throw comment[method_name] is not a function. (In 'comment[method_name]("<span>fails</span>")', 'comment[method_name]' is undefined)
+FAIL replaceWithHTML on Text without a parent returns undefined and does not throw text[method_name] is not a function. (In 'text[method_name]("<span>fails</span>")', 'text[method_name]' is undefined)
+FAIL replaceWithHTML on ProcessingInstruction without a parent returns undefined and does not throw pi[method_name] is not a function. (In 'pi[method_name]("<span>fails</span>")', 'pi[method_name]' is undefined)
+FAIL appendHTML is exposed on Element and ShadowRoot only assert_own_property: expected property "appendHTML" missing
+FAIL appendHTML on an html element throws HierarchyRequestError assert_throws_dom: function "() => {
+            doc.documentElement[method_name]("<p>fails</p>");
+          }" threw object "TypeError: doc.documentElement[method_name] is not a function. (In 'doc.documentElement[method_name]("<p>fails</p>")', 'doc.documentElement[method_name]' is undefined)" that is not a DOMException HierarchyRequestError: property "code" is equal to undefined, expected 3
+FAIL appendHTML on a disconnected html element throws HierarchyRequestError assert_throws_dom: function "() => {
+            html[method_name]("<p>fails</p>");
+          }" threw object "TypeError: html[method_name] is not a function. (In 'html[method_name]("<p>fails</p>")', 'html[method_name]' is undefined)" that is not a DOMException HierarchyRequestError: property "code" is equal to undefined, expected 3
+FAIL prependHTML is exposed on Element and ShadowRoot only assert_own_property: expected property "prependHTML" missing
+FAIL prependHTML on an html element throws HierarchyRequestError assert_throws_dom: function "() => {
+            doc.documentElement[method_name]("<p>fails</p>");
+          }" threw object "TypeError: doc.documentElement[method_name] is not a function. (In 'doc.documentElement[method_name]("<p>fails</p>")', 'doc.documentElement[method_name]' is undefined)" that is not a DOMException HierarchyRequestError: property "code" is equal to undefined, expected 3
+FAIL prependHTML on a disconnected html element throws HierarchyRequestError assert_throws_dom: function "() => {
+            html[method_name]("<p>fails</p>");
+          }" threw object "TypeError: html[method_name] is not a function. (In 'html[method_name]("<p>fails</p>")', 'html[method_name]' is undefined)" that is not a DOMException HierarchyRequestError: property "code" is equal to undefined, expected 3
+FAIL setHTML on an html element succeeds doc.documentElement[set_method] is not a function. (In 'doc.documentElement[set_method]("<head><title>t</title></head><body><p>ok</p></body>")', 'doc.documentElement[set_method]' is undefined)
+FAIL appendHTML in an XML document uses the HTML parser and supports sanitization receiver[method_name] is not a function. (In 'receiver[method_name]("<span id=s>unclosed<p id=p>dropped", {
+            sanitizer: { removeElements: ["p"] },
+          })', 'receiver[method_name]' is undefined)
+FAIL appendHTML supports declarative shadow roots object[method_name] is not a function. (In 'object[method_name](
+            "<div id='dsd-host'><template shadowrootmode='open'><span id='dsd-inner'>shadow</span></template></div>",
+            safe ? { sanitizer: {} } : undefined,
+          )', 'object[method_name]' is undefined)
+FAIL appendHTML parses using parent Element (<tr>) as context receiver[method_name] is not a function. (In 'receiver[method_name]("<td>x</td>")', 'receiver[method_name]' is undefined)
+FAIL appendHTML drops <td> when parsed using parent <div> as context receiver[method_name] is not a function. (In 'receiver[method_name]("<td>x</td>")', 'receiver[method_name]' is undefined)
+FAIL appendHTML parses using <template> host as context receiver[method_name] is not a function. (In 'receiver[method_name]("<td>x</td>")', 'receiver[method_name]' is undefined)
+FAIL appendHTML parses using ShadowRoot host as context receiver[method_name] is not a function. (In 'receiver[method_name]("<td>x</td>")', 'receiver[method_name]' is undefined)
+FAIL appendHTML on disconnected node with a parent inserts content receiver[method_name] is not a function. (In 'receiver[method_name]("<b>inserted</b>")', 'receiver[method_name]' is undefined)
+FAIL prependHTML in an XML document uses the HTML parser and supports sanitization receiver[method_name] is not a function. (In 'receiver[method_name]("<span id=s>unclosed<p id=p>dropped", {
+            sanitizer: { removeElements: ["p"] },
+          })', 'receiver[method_name]' is undefined)
+FAIL prependHTML supports declarative shadow roots object[method_name] is not a function. (In 'object[method_name](
+            "<div id='dsd-host'><template shadowrootmode='open'><span id='dsd-inner'>shadow</span></template></div>",
+            safe ? { sanitizer: {} } : undefined,
+          )', 'object[method_name]' is undefined)
+FAIL prependHTML parses using parent Element (<tr>) as context receiver[method_name] is not a function. (In 'receiver[method_name]("<td>x</td>")', 'receiver[method_name]' is undefined)
+FAIL prependHTML drops <td> when parsed using parent <div> as context receiver[method_name] is not a function. (In 'receiver[method_name]("<td>x</td>")', 'receiver[method_name]' is undefined)
+FAIL prependHTML parses using <template> host as context receiver[method_name] is not a function. (In 'receiver[method_name]("<td>x</td>")', 'receiver[method_name]' is undefined)
+FAIL prependHTML parses using ShadowRoot host as context receiver[method_name] is not a function. (In 'receiver[method_name]("<td>x</td>")', 'receiver[method_name]' is undefined)
+FAIL prependHTML on disconnected node with a parent inserts content receiver[method_name] is not a function. (In 'receiver[method_name]("<b>inserted</b>")', 'receiver[method_name]' is undefined)
+FAIL beforeHTML in an XML document uses the HTML parser and supports sanitization receiver[method_name] is not a function. (In 'receiver[method_name]("<span id=s>unclosed<p id=p>dropped", {
+            sanitizer: { removeElements: ["p"] },
+          })', 'receiver[method_name]' is undefined)
+FAIL beforeHTML supports declarative shadow roots object[method_name] is not a function. (In 'object[method_name](
+            "<div id='dsd-host'><template shadowrootmode='open'><span id='dsd-inner'>shadow</span></template></div>",
+            safe ? { sanitizer: {} } : undefined,
+          )', 'object[method_name]' is undefined)
+FAIL beforeHTML parses using parent Element (<tr>) as context receiver[method_name] is not a function. (In 'receiver[method_name]("<td>x</td>")', 'receiver[method_name]' is undefined)
+FAIL beforeHTML drops <td> when parsed using parent <div> as context receiver[method_name] is not a function. (In 'receiver[method_name]("<td>x</td>")', 'receiver[method_name]' is undefined)
+FAIL beforeHTML parses using <template> host as context receiver[method_name] is not a function. (In 'receiver[method_name]("<td>x</td>")', 'receiver[method_name]' is undefined)
+FAIL beforeHTML parses using ShadowRoot host as context receiver[method_name] is not a function. (In 'receiver[method_name]("<td>x</td>")', 'receiver[method_name]' is undefined)
+FAIL beforeHTML on disconnected node with a parent inserts content receiver[method_name] is not a function. (In 'receiver[method_name]("<b>inserted</b>")', 'receiver[method_name]' is undefined)
+FAIL afterHTML in an XML document uses the HTML parser and supports sanitization receiver[method_name] is not a function. (In 'receiver[method_name]("<span id=s>unclosed<p id=p>dropped", {
+            sanitizer: { removeElements: ["p"] },
+          })', 'receiver[method_name]' is undefined)
+FAIL afterHTML supports declarative shadow roots object[method_name] is not a function. (In 'object[method_name](
+            "<div id='dsd-host'><template shadowrootmode='open'><span id='dsd-inner'>shadow</span></template></div>",
+            safe ? { sanitizer: {} } : undefined,
+          )', 'object[method_name]' is undefined)
+FAIL afterHTML parses using parent Element (<tr>) as context receiver[method_name] is not a function. (In 'receiver[method_name]("<td>x</td>")', 'receiver[method_name]' is undefined)
+FAIL afterHTML drops <td> when parsed using parent <div> as context receiver[method_name] is not a function. (In 'receiver[method_name]("<td>x</td>")', 'receiver[method_name]' is undefined)
+FAIL afterHTML parses using <template> host as context receiver[method_name] is not a function. (In 'receiver[method_name]("<td>x</td>")', 'receiver[method_name]' is undefined)
+FAIL afterHTML parses using ShadowRoot host as context receiver[method_name] is not a function. (In 'receiver[method_name]("<td>x</td>")', 'receiver[method_name]' is undefined)
+FAIL afterHTML on disconnected node with a parent inserts content receiver[method_name] is not a function. (In 'receiver[method_name]("<b>inserted</b>")', 'receiver[method_name]' is undefined)
+FAIL replaceWithHTML in an XML document uses the HTML parser and supports sanitization receiver[method_name] is not a function. (In 'receiver[method_name]("<span id=s>unclosed<p id=p>dropped", {
+            sanitizer: { removeElements: ["p"] },
+          })', 'receiver[method_name]' is undefined)
+FAIL replaceWithHTML supports declarative shadow roots object[method_name] is not a function. (In 'object[method_name](
+            "<div id='dsd-host'><template shadowrootmode='open'><span id='dsd-inner'>shadow</span></template></div>",
+            safe ? { sanitizer: {} } : undefined,
+          )', 'object[method_name]' is undefined)
+FAIL replaceWithHTML parses using parent Element (<tr>) as context receiver[method_name] is not a function. (In 'receiver[method_name]("<td>x</td>")', 'receiver[method_name]' is undefined)
+FAIL replaceWithHTML drops <td> when parsed using parent <div> as context receiver[method_name] is not a function. (In 'receiver[method_name]("<td>x</td>")', 'receiver[method_name]' is undefined)
+FAIL replaceWithHTML parses using <template> host as context receiver[method_name] is not a function. (In 'receiver[method_name]("<td>x</td>")', 'receiver[method_name]' is undefined)
+FAIL replaceWithHTML parses using ShadowRoot host as context receiver[method_name] is not a function. (In 'receiver[method_name]("<td>x</td>")', 'receiver[method_name]' is undefined)
+FAIL replaceWithHTML on disconnected node with a parent inserts content receiver[method_name] is not a function. (In 'receiver[method_name]("<b>inserted</b>")', 'receiver[method_name]' is undefined)
+FAIL afterHTMLUnsafe throws HierarchyRequestError if parent is a Document (Comment node) assert_throws_dom: function "() => {
+            comment[method_name]("<span>fails</span>");
+          }" threw object "TypeError: comment[method_name] is not a function. (In 'comment[method_name]("<span>fails</span>")', 'comment[method_name]' is undefined)" that is not a DOMException HierarchyRequestError: property "code" is equal to undefined, expected 3
+FAIL afterHTMLUnsafe is exposed via the NonDocumentTypeChildNode mixin assert_own_property: expected property "afterHTMLUnsafe" missing
+PASS afterHTMLUnsafe is not available on DocumentType nodes
+FAIL afterHTMLUnsafe throws HierarchyRequestError if parent is a DocumentFragment assert_throws_dom: function "() => {
+            span[method_name]("<p>fails</p>");
+          }" threw object "TypeError: span[method_name] is not a function. (In 'span[method_name]("<p>fails</p>")', 'span[method_name]' is undefined)" that is not a DOMException HierarchyRequestError: property "code" is equal to undefined, expected 3
+FAIL afterHTMLUnsafe throws HierarchyRequestError if parent is an html element assert_throws_dom: function "() => {
+            doc.body[method_name]("<p>fails</p>");
+          }" threw object "TypeError: doc.body[method_name] is not a function. (In 'doc.body[method_name]("<p>fails</p>")', 'doc.body[method_name]' is undefined)" that is not a DOMException HierarchyRequestError: property "code" is equal to undefined, expected 3
+FAIL afterHTMLUnsafe throws HierarchyRequestError if parent is a disconnected html element assert_throws_dom: function "() => {
+            child[method_name]("<p>fails</p>");
+          }" threw object "TypeError: child[method_name] is not a function. (In 'child[method_name]("<p>fails</p>")', 'child[method_name]' is undefined)" that is not a DOMException HierarchyRequestError: property "code" is equal to undefined, expected 3
+FAIL afterHTMLUnsafe on Element without a parent returns undefined and does not throw element[method_name] is not a function. (In 'element[method_name]("<span>fails</span>")', 'element[method_name]' is undefined)
+FAIL afterHTMLUnsafe on Comment without a parent returns undefined and does not throw comment[method_name] is not a function. (In 'comment[method_name]("<span>fails</span>")', 'comment[method_name]' is undefined)
+FAIL afterHTMLUnsafe on Text without a parent returns undefined and does not throw text[method_name] is not a function. (In 'text[method_name]("<span>fails</span>")', 'text[method_name]' is undefined)
+FAIL afterHTMLUnsafe on ProcessingInstruction without a parent returns undefined and does not throw pi[method_name] is not a function. (In 'pi[method_name]("<span>fails</span>")', 'pi[method_name]' is undefined)
+FAIL beforeHTMLUnsafe throws HierarchyRequestError if parent is a Document (Comment node) assert_throws_dom: function "() => {
+            comment[method_name]("<span>fails</span>");
+          }" threw object "TypeError: comment[method_name] is not a function. (In 'comment[method_name]("<span>fails</span>")', 'comment[method_name]' is undefined)" that is not a DOMException HierarchyRequestError: property "code" is equal to undefined, expected 3
+FAIL beforeHTMLUnsafe is exposed via the NonDocumentTypeChildNode mixin assert_own_property: expected property "beforeHTMLUnsafe" missing
+PASS beforeHTMLUnsafe is not available on DocumentType nodes
+FAIL beforeHTMLUnsafe throws HierarchyRequestError if parent is a DocumentFragment assert_throws_dom: function "() => {
+            span[method_name]("<p>fails</p>");
+          }" threw object "TypeError: span[method_name] is not a function. (In 'span[method_name]("<p>fails</p>")', 'span[method_name]' is undefined)" that is not a DOMException HierarchyRequestError: property "code" is equal to undefined, expected 3
+FAIL beforeHTMLUnsafe throws HierarchyRequestError if parent is an html element assert_throws_dom: function "() => {
+            doc.body[method_name]("<p>fails</p>");
+          }" threw object "TypeError: doc.body[method_name] is not a function. (In 'doc.body[method_name]("<p>fails</p>")', 'doc.body[method_name]' is undefined)" that is not a DOMException HierarchyRequestError: property "code" is equal to undefined, expected 3
+FAIL beforeHTMLUnsafe throws HierarchyRequestError if parent is a disconnected html element assert_throws_dom: function "() => {
+            child[method_name]("<p>fails</p>");
+          }" threw object "TypeError: child[method_name] is not a function. (In 'child[method_name]("<p>fails</p>")', 'child[method_name]' is undefined)" that is not a DOMException HierarchyRequestError: property "code" is equal to undefined, expected 3
+FAIL beforeHTMLUnsafe on Element without a parent returns undefined and does not throw element[method_name] is not a function. (In 'element[method_name]("<span>fails</span>")', 'element[method_name]' is undefined)
+FAIL beforeHTMLUnsafe on Comment without a parent returns undefined and does not throw comment[method_name] is not a function. (In 'comment[method_name]("<span>fails</span>")', 'comment[method_name]' is undefined)
+FAIL beforeHTMLUnsafe on Text without a parent returns undefined and does not throw text[method_name] is not a function. (In 'text[method_name]("<span>fails</span>")', 'text[method_name]' is undefined)
+FAIL beforeHTMLUnsafe on ProcessingInstruction without a parent returns undefined and does not throw pi[method_name] is not a function. (In 'pi[method_name]("<span>fails</span>")', 'pi[method_name]' is undefined)
+FAIL replaceWithHTMLUnsafe throws HierarchyRequestError if parent is a Document (Comment node) assert_throws_dom: function "() => {
+            comment[method_name]("<span>fails</span>");
+          }" threw object "TypeError: comment[method_name] is not a function. (In 'comment[method_name]("<span>fails</span>")', 'comment[method_name]' is undefined)" that is not a DOMException HierarchyRequestError: property "code" is equal to undefined, expected 3
+FAIL replaceWithHTMLUnsafe is exposed via the NonDocumentTypeChildNode mixin assert_own_property: expected property "replaceWithHTMLUnsafe" missing
+PASS replaceWithHTMLUnsafe is not available on DocumentType nodes
+FAIL replaceWithHTMLUnsafe throws HierarchyRequestError if parent is a DocumentFragment assert_throws_dom: function "() => {
+            span[method_name]("<p>fails</p>");
+          }" threw object "TypeError: span[method_name] is not a function. (In 'span[method_name]("<p>fails</p>")', 'span[method_name]' is undefined)" that is not a DOMException HierarchyRequestError: property "code" is equal to undefined, expected 3
+FAIL replaceWithHTMLUnsafe throws HierarchyRequestError if parent is an html element assert_throws_dom: function "() => {
+            doc.body[method_name]("<p>fails</p>");
+          }" threw object "TypeError: doc.body[method_name] is not a function. (In 'doc.body[method_name]("<p>fails</p>")', 'doc.body[method_name]' is undefined)" that is not a DOMException HierarchyRequestError: property "code" is equal to undefined, expected 3
+FAIL replaceWithHTMLUnsafe throws HierarchyRequestError if parent is a disconnected html element assert_throws_dom: function "() => {
+            child[method_name]("<p>fails</p>");
+          }" threw object "TypeError: child[method_name] is not a function. (In 'child[method_name]("<p>fails</p>")', 'child[method_name]' is undefined)" that is not a DOMException HierarchyRequestError: property "code" is equal to undefined, expected 3
+FAIL replaceWithHTMLUnsafe on Element without a parent returns undefined and does not throw element[method_name] is not a function. (In 'element[method_name]("<span>fails</span>")', 'element[method_name]' is undefined)
+FAIL replaceWithHTMLUnsafe on Comment without a parent returns undefined and does not throw comment[method_name] is not a function. (In 'comment[method_name]("<span>fails</span>")', 'comment[method_name]' is undefined)
+FAIL replaceWithHTMLUnsafe on Text without a parent returns undefined and does not throw text[method_name] is not a function. (In 'text[method_name]("<span>fails</span>")', 'text[method_name]' is undefined)
+FAIL replaceWithHTMLUnsafe on ProcessingInstruction without a parent returns undefined and does not throw pi[method_name] is not a function. (In 'pi[method_name]("<span>fails</span>")', 'pi[method_name]' is undefined)
+FAIL appendHTMLUnsafe is exposed on Element and ShadowRoot only assert_own_property: expected property "appendHTMLUnsafe" missing
+FAIL appendHTMLUnsafe on an html element throws HierarchyRequestError assert_throws_dom: function "() => {
+            doc.documentElement[method_name]("<p>fails</p>");
+          }" threw object "TypeError: doc.documentElement[method_name] is not a function. (In 'doc.documentElement[method_name]("<p>fails</p>")', 'doc.documentElement[method_name]' is undefined)" that is not a DOMException HierarchyRequestError: property "code" is equal to undefined, expected 3
+FAIL appendHTMLUnsafe on a disconnected html element throws HierarchyRequestError assert_throws_dom: function "() => {
+            html[method_name]("<p>fails</p>");
+          }" threw object "TypeError: html[method_name] is not a function. (In 'html[method_name]("<p>fails</p>")', 'html[method_name]' is undefined)" that is not a DOMException HierarchyRequestError: property "code" is equal to undefined, expected 3
+FAIL prependHTMLUnsafe is exposed on Element and ShadowRoot only assert_own_property: expected property "prependHTMLUnsafe" missing
+FAIL prependHTMLUnsafe on an html element throws HierarchyRequestError assert_throws_dom: function "() => {
+            doc.documentElement[method_name]("<p>fails</p>");
+          }" threw object "TypeError: doc.documentElement[method_name] is not a function. (In 'doc.documentElement[method_name]("<p>fails</p>")', 'doc.documentElement[method_name]' is undefined)" that is not a DOMException HierarchyRequestError: property "code" is equal to undefined, expected 3
+FAIL prependHTMLUnsafe on a disconnected html element throws HierarchyRequestError assert_throws_dom: function "() => {
+            html[method_name]("<p>fails</p>");
+          }" threw object "TypeError: html[method_name] is not a function. (In 'html[method_name]("<p>fails</p>")', 'html[method_name]' is undefined)" that is not a DOMException HierarchyRequestError: property "code" is equal to undefined, expected 3
+PASS setHTMLUnsafe on an html element succeeds
+FAIL appendHTMLUnsafe in an XML document uses the HTML parser and supports sanitization receiver[method_name] is not a function. (In 'receiver[method_name]("<span id=s>unclosed<p id=p>dropped", {
+            sanitizer: { removeElements: ["p"] },
+          })', 'receiver[method_name]' is undefined)
+FAIL appendHTMLUnsafe supports declarative shadow roots object[method_name] is not a function. (In 'object[method_name](
+            "<div id='dsd-host'><template shadowrootmode='open'><span id='dsd-inner'>shadow</span></template></div>",
+            safe ? { sanitizer: {} } : undefined,
+          )', 'object[method_name]' is undefined)
+FAIL appendHTMLUnsafe parses using parent Element (<tr>) as context receiver[method_name] is not a function. (In 'receiver[method_name]("<td>x</td>")', 'receiver[method_name]' is undefined)
+FAIL appendHTMLUnsafe drops <td> when parsed using parent <div> as context receiver[method_name] is not a function. (In 'receiver[method_name]("<td>x</td>")', 'receiver[method_name]' is undefined)
+FAIL appendHTMLUnsafe parses using <template> host as context receiver[method_name] is not a function. (In 'receiver[method_name]("<td>x</td>")', 'receiver[method_name]' is undefined)
+FAIL appendHTMLUnsafe parses using ShadowRoot host as context receiver[method_name] is not a function. (In 'receiver[method_name]("<td>x</td>")', 'receiver[method_name]' is undefined)
+FAIL appendHTMLUnsafe on disconnected node with a parent inserts content receiver[method_name] is not a function. (In 'receiver[method_name]("<b>inserted</b>")', 'receiver[method_name]' is undefined)
+FAIL prependHTMLUnsafe in an XML document uses the HTML parser and supports sanitization receiver[method_name] is not a function. (In 'receiver[method_name]("<span id=s>unclosed<p id=p>dropped", {
+            sanitizer: { removeElements: ["p"] },
+          })', 'receiver[method_name]' is undefined)
+FAIL prependHTMLUnsafe supports declarative shadow roots object[method_name] is not a function. (In 'object[method_name](
+            "<div id='dsd-host'><template shadowrootmode='open'><span id='dsd-inner'>shadow</span></template></div>",
+            safe ? { sanitizer: {} } : undefined,
+          )', 'object[method_name]' is undefined)
+FAIL prependHTMLUnsafe parses using parent Element (<tr>) as context receiver[method_name] is not a function. (In 'receiver[method_name]("<td>x</td>")', 'receiver[method_name]' is undefined)
+FAIL prependHTMLUnsafe drops <td> when parsed using parent <div> as context receiver[method_name] is not a function. (In 'receiver[method_name]("<td>x</td>")', 'receiver[method_name]' is undefined)
+FAIL prependHTMLUnsafe parses using <template> host as context receiver[method_name] is not a function. (In 'receiver[method_name]("<td>x</td>")', 'receiver[method_name]' is undefined)
+FAIL prependHTMLUnsafe parses using ShadowRoot host as context receiver[method_name] is not a function. (In 'receiver[method_name]("<td>x</td>")', 'receiver[method_name]' is undefined)
+FAIL prependHTMLUnsafe on disconnected node with a parent inserts content receiver[method_name] is not a function. (In 'receiver[method_name]("<b>inserted</b>")', 'receiver[method_name]' is undefined)
+FAIL beforeHTMLUnsafe in an XML document uses the HTML parser and supports sanitization receiver[method_name] is not a function. (In 'receiver[method_name]("<span id=s>unclosed<p id=p>dropped", {
+            sanitizer: { removeElements: ["p"] },
+          })', 'receiver[method_name]' is undefined)
+FAIL beforeHTMLUnsafe supports declarative shadow roots object[method_name] is not a function. (In 'object[method_name](
+            "<div id='dsd-host'><template shadowrootmode='open'><span id='dsd-inner'>shadow</span></template></div>",
+            safe ? { sanitizer: {} } : undefined,
+          )', 'object[method_name]' is undefined)
+FAIL beforeHTMLUnsafe parses using parent Element (<tr>) as context receiver[method_name] is not a function. (In 'receiver[method_name]("<td>x</td>")', 'receiver[method_name]' is undefined)
+FAIL beforeHTMLUnsafe drops <td> when parsed using parent <div> as context receiver[method_name] is not a function. (In 'receiver[method_name]("<td>x</td>")', 'receiver[method_name]' is undefined)
+FAIL beforeHTMLUnsafe parses using <template> host as context receiver[method_name] is not a function. (In 'receiver[method_name]("<td>x</td>")', 'receiver[method_name]' is undefined)
+FAIL beforeHTMLUnsafe parses using ShadowRoot host as context receiver[method_name] is not a function. (In 'receiver[method_name]("<td>x</td>")', 'receiver[method_name]' is undefined)
+FAIL beforeHTMLUnsafe on disconnected node with a parent inserts content receiver[method_name] is not a function. (In 'receiver[method_name]("<b>inserted</b>")', 'receiver[method_name]' is undefined)
+FAIL afterHTMLUnsafe in an XML document uses the HTML parser and supports sanitization receiver[method_name] is not a function. (In 'receiver[method_name]("<span id=s>unclosed<p id=p>dropped", {
+            sanitizer: { removeElements: ["p"] },
+          })', 'receiver[method_name]' is undefined)
+FAIL afterHTMLUnsafe supports declarative shadow roots object[method_name] is not a function. (In 'object[method_name](
+            "<div id='dsd-host'><template shadowrootmode='open'><span id='dsd-inner'>shadow</span></template></div>",
+            safe ? { sanitizer: {} } : undefined,
+          )', 'object[method_name]' is undefined)
+FAIL afterHTMLUnsafe parses using parent Element (<tr>) as context receiver[method_name] is not a function. (In 'receiver[method_name]("<td>x</td>")', 'receiver[method_name]' is undefined)
+FAIL afterHTMLUnsafe drops <td> when parsed using parent <div> as context receiver[method_name] is not a function. (In 'receiver[method_name]("<td>x</td>")', 'receiver[method_name]' is undefined)
+FAIL afterHTMLUnsafe parses using <template> host as context receiver[method_name] is not a function. (In 'receiver[method_name]("<td>x</td>")', 'receiver[method_name]' is undefined)
+FAIL afterHTMLUnsafe parses using ShadowRoot host as context receiver[method_name] is not a function. (In 'receiver[method_name]("<td>x</td>")', 'receiver[method_name]' is undefined)
+FAIL afterHTMLUnsafe on disconnected node with a parent inserts content receiver[method_name] is not a function. (In 'receiver[method_name]("<b>inserted</b>")', 'receiver[method_name]' is undefined)
+FAIL replaceWithHTMLUnsafe in an XML document uses the HTML parser and supports sanitization receiver[method_name] is not a function. (In 'receiver[method_name]("<span id=s>unclosed<p id=p>dropped", {
+            sanitizer: { removeElements: ["p"] },
+          })', 'receiver[method_name]' is undefined)
+FAIL replaceWithHTMLUnsafe supports declarative shadow roots object[method_name] is not a function. (In 'object[method_name](
+            "<div id='dsd-host'><template shadowrootmode='open'><span id='dsd-inner'>shadow</span></template></div>",
+            safe ? { sanitizer: {} } : undefined,
+          )', 'object[method_name]' is undefined)
+FAIL replaceWithHTMLUnsafe parses using parent Element (<tr>) as context receiver[method_name] is not a function. (In 'receiver[method_name]("<td>x</td>")', 'receiver[method_name]' is undefined)
+FAIL replaceWithHTMLUnsafe drops <td> when parsed using parent <div> as context receiver[method_name] is not a function. (In 'receiver[method_name]("<td>x</td>")', 'receiver[method_name]' is undefined)
+FAIL replaceWithHTMLUnsafe parses using <template> host as context receiver[method_name] is not a function. (In 'receiver[method_name]("<td>x</td>")', 'receiver[method_name]' is undefined)
+FAIL replaceWithHTMLUnsafe parses using ShadowRoot host as context receiver[method_name] is not a function. (In 'receiver[method_name]("<td>x</td>")', 'receiver[method_name]' is undefined)
+FAIL replaceWithHTMLUnsafe on disconnected node with a parent inserts content receiver[method_name] is not a function. (In 'receiver[method_name]("<b>inserted</b>")', 'receiver[method_name]' is undefined)
+

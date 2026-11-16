@@ -1,0 +1,4 @@
+
+PASS getComputedStyle gets invalidated for slotted content of a display: none shadow host
+PASS getComputedStyle gets invalidated in nested shadow trees of a display: none shadow host
+

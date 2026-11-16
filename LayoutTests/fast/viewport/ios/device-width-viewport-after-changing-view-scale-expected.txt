@@ -1,0 +1,46 @@
+setViewScale(0.50)
+PASS window size is scaled by the inverse of the view scale
+PASS square size is 10% of window size
+PASS zoom scale is 0.50
+
+setViewScale(0.75)
+PASS window size is scaled by the inverse of the view scale
+PASS square size is 10% of window size
+PASS zoom scale is 0.75
+
+setViewScale(1.00)
+PASS window size is scaled by the inverse of the view scale
+PASS square size is 10% of window size
+PASS zoom scale is 1.00
+
+setViewScale(1.25)
+PASS window size is scaled by the inverse of the view scale
+PASS square size is 10% of window size
+PASS zoom scale is 1.25
+
+setViewScale(1.50)
+PASS window size is scaled by the inverse of the view scale
+PASS square size is 10% of window size
+PASS zoom scale is 1.50
+
+setViewScale(1.25)
+PASS window size is scaled by the inverse of the view scale
+PASS square size is 10% of window size
+PASS zoom scale is 1.25
+
+setViewScale(1.00)
+PASS window size is scaled by the inverse of the view scale
+PASS square size is 10% of window size
+PASS zoom scale is 1.00
+
+setViewScale(0.75)
+PASS window size is scaled by the inverse of the view scale
+PASS square size is 10% of window size
+PASS zoom scale is 0.75
+
+setViewScale(0.50)
+PASS window size is scaled by the inverse of the view scale
+PASS square size is 10% of window size
+PASS zoom scale is 0.50
+
+

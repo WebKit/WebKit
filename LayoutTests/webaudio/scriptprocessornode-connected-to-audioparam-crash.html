@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../resources/js-test.js"></script>
+<script>
+description("Tests that a ScriptProcessorNode connected to an AudioParam does not crash when the node gets destroyed on the audio rendering thread. This test passes if it does not crash.");
+
+jsTestIsAsync = true;
+
+function gc() {
+    if (window.GCController)
+        return GCController.collect();
+    for (let i = 0; i < 10000; i++)
+        new String("abc" + i);
+}
+
+// Build up the audio graph in a function scope so that all JavaScript
+// references become collectible once the function returns.
+function buildGraph() {
+    const context = new OfflineAudioContext({ numberOfChannels: 4, length: 7831, sampleRate: 66003 });
+    const scriptProcessor = context.createScriptProcessor();
+    const param = context.listener.upY;
+    param.linearRampToValueAtTime(0.6056944018169216, 0.44540190562655235);
+    scriptProcessor.connect(param);
+    scriptProcessor.connect(context.destination);
+    context.startRendering();
+    return context;
+}
+
+buildGraph();
+
+// Force the ScriptProcessorNode (and its JS wrapper) to be collected while
+// rendering is in progress on the audio thread, so that the node gets marked
+// for deletion on the audio thread and disconnects from the AudioParam there.
+gc();
+gc();
+
+setTimeout(() => {
+    gc();
+    setTimeout(() => {
+        testPassed("Did not crash.");
+        finishJSTest();
+    }, 100);
+}, 0);
+</script>
+</body>
+</html>

@@ -1,0 +1,6 @@
+item1
+item2 item3
+item4
+
+FAIL When the focus is set on the first item of an extending focusgroup that inherited its wrapping behavior, it should only wrap if the focused item is also the first item of that parent focusgroup. If it is, then it should wrap within the parent focusgroup, not within the extending focusgroup. assert_equals: expected Element node <span id="item4" tabindex="-1">item4</span> but got Element node <span id="item1" tabindex="0">item1</span>
+

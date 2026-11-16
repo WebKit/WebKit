@@ -1,0 +1,12 @@
+This tests that when setting focus, the cursor moves.
+
+PASS: textfield.stringValue === 'AXValue: '
+PASS: textfield.stringValue === 'AXValue: '
+PASS: textfield.isFocused === true
+PASS: document.activeElement == document.getElementById('textfield') === true
+PASS: textfield.stringValue === 'AXValue: a'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

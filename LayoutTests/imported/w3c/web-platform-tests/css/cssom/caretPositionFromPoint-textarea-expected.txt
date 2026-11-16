@@ -1,0 +1,7 @@
+
+
+PASS Point in blank space below the text of a textarea resolves to the end of the value
+PASS Point at the start of the first line of a textarea resolves to offset 0
+PASS Point past the end of the first line of a textarea resolves to the end of the value
+PASS Point in blank space below non-Latin text of a textarea resolves to the end of the value
+

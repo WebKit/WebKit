@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../resources/js-test.js"></script>
+<script>
+
+description("Tests the interfaces of the highlight API, which include Highlight, HighlightRegistry, and extensions to the CSS namespace.");
+
+debug("Testing Highlight:");
+shouldBeTrue("Highlight instanceof Function");
+shouldBeEqualToString("typeof Highlight", "function");
+shouldBeTrue("new Highlight(new StaticRange({startContainer: document.body, startOffset: 1, endContainer: document.body, endOffset: 2})) instanceof Highlight");
+shouldBe("Highlight.prototype[Symbol.iterator]", "Highlight.prototype.values");
+shouldBeTrue("HighlightRegistry instanceof Function");
+shouldBeEqualToString("typeof HighlightRegistry", "function");
+shouldBeDefined('CSS.highlights');
+shouldBe('CSS.highlights.set("foo-styling",new Highlight(new StaticRange({startContainer: document.body, startOffset: 1, endContainer: document.body, endOffset: 2})))', 'CSS.highlights');
+
+</script>
+</body>
+</html>

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="/js-test-resources/js-test.js"></script>
+<script src="/js-test-resources/ui-helper.js"></script>
+<script src="resources/util.js"></script>
+<script>
+description("Tests that user interaction is always logged for the top document/frame.");
+jsTestIsAsync = true;
+
+const topFrameOrigin = "http://127.0.0.1:8000";
+const subFrameOrigin = "http://localhost:8000";
+
+async function activateElement(elementId) {
+    var element = document.getElementById(elementId);
+    var centerX = element.offsetLeft + element.offsetWidth / 2;
+    var centerY = element.offsetTop + element.offsetHeight / 2;
+    await UIHelper.activateAt(centerX, centerY);
+}
+
+function finishTest() {
+    shouldBeTrue("testRunner.isStatisticsHasHadUserInteraction(topFrameOrigin)");
+    shouldBeFalse("testRunner.isStatisticsHasHadUserInteraction(subFrameOrigin)");
+
+    setEnableFeature(false, finishJSTest);
+}
+
+onload = async function() {
+    setEnableFeature(true, async function() {
+        shouldBe("document.location.origin", "topFrameOrigin");
+
+        if (testRunner) {
+            shouldBeFalse("testRunner.isStatisticsHasHadUserInteraction(topFrameOrigin)");
+            shouldBeFalse("testRunner.isStatisticsHasHadUserInteraction(subFrameOrigin)");
+
+            await activateElement("testFrame");
+        }
+        await testRunner.statisticsProcessStatisticsAndDataRecords();
+        finishTest();
+    });
+};
+</script>
+<iframe id="testFrame" src="http://localhost:8000/resourceLoadStatistics/resources/dummy.html"></iframe>
+</body>
+</html>

@@ -1,0 +1,9 @@
+XXXX
+XXXX
+XXXX
+XXXX
+XXXX
+XXXX
+
+FAIL 'textLength' on <textPath> with 'text-anchor' adjustments assert_approx_equals: x, text-anchor=middle expected 37.5 +/- 0.5 but got 10
+

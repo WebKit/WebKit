@@ -1,0 +1,11 @@
+Tests that an SVG image with no animations does not report that it is animating.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS internals.isImageAnimating(animatedImage) became true
+PASS internals.isImageAnimating(staticImage) is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

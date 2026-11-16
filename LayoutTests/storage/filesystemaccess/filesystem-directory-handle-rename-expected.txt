@@ -1,0 +1,4 @@
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Test Passes if there are no files inside the root storage location. This is verified by the absence of an output from the `debug(v)` statement above.

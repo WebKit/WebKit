@@ -1,0 +1,5 @@
+
+PASS drm, temporary, update() immediately after createSession()
+PASS drm, temporary, close() immediately after createSession()
+PASS drm, temporary, remove() immediately after createSession()
+

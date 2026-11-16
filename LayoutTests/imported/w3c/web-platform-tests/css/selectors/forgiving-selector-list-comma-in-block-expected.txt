@@ -1,0 +1,21 @@
+
+PASS :is(:unknown-pseudo(1, .b, .c)) does not match via matches()
+PASS :is(:unknown-pseudo(1, .b, .c)) does not match via querySelector()
+PASS :is(:unknown-pseudo(.b, .c, .b)) does not match via matches()
+PASS :is(:unknown-pseudo(.b, .c, .b)) does not match via querySelector()
+PASS :is(:unknown-pseudo(.b, .c) .b) does not match via matches()
+PASS :is(:unknown-pseudo(.b, .c) .b) does not match via querySelector()
+PASS :is(.x[a, .b, .c]) does not match via matches()
+PASS :is(.x[a, .b, .c]) does not match via querySelector()
+PASS :is() still matches a valid selector after an invalid one containing a comma
+PASS :where(:unknown-pseudo(1, .b, .c)) does not match via matches()
+PASS :where(:unknown-pseudo(1, .b, .c)) does not match via querySelector()
+PASS :where(:unknown-pseudo(.b, .c, .b)) does not match via matches()
+PASS :where(:unknown-pseudo(.b, .c, .b)) does not match via querySelector()
+PASS :where(:unknown-pseudo(.b, .c) .b) does not match via matches()
+PASS :where(:unknown-pseudo(.b, .c) .b) does not match via querySelector()
+PASS :where(.x[a, .b, .c]) does not match via matches()
+PASS :where(.x[a, .b, .c]) does not match via querySelector()
+PASS :where() still matches a valid selector after an invalid one containing a comma
+PASS Style rules do not apply via a comma inside an invalid functional pseudo-class
+

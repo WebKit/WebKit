@@ -1,0 +1,38 @@
+<!doctype html>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="resources/helpers.js"></script>
+
+<script type="module">
+
+promise_test(async t => {
+  async function ensureWindowLoadEventFired(t) {
+    return new Promise(resolve => {
+      const callback = () => t.step_timeout(resolve, 0);
+      if (document.readyState === 'complete') {
+        callback();
+      } else {
+        window.onload = callback;
+      }
+    });
+  }
+
+  // Wait for after the load event so that we are definitely testing the
+  // javascript: URL as the cause of the rejections.
+  await ensureWindowLoadEventFired(t);
+
+  navigation.onnavigate = t.unreached_func("onnavigate should not be called");
+  navigation.onnavigatesuccess = t.unreached_func("onnavigatesuccess should not be called");
+  navigation.onnavigateerror = t.unreached_func("onnavigateerror should not be called");
+
+  let result;
+  result = navigation.navigate("javascript:'foo'");
+  await assertBothRejectDOM(t, result, "NotSupportedError");
+
+  result = navigation.navigate("javascript:'foo'", { history: "replace" });
+  await assertBothRejectDOM(t, result, "NotSupportedError");
+
+  result = navigation.navigate("javascript:'foo'", { history: "push" });
+  await assertBothRejectDOM(t, result, "NotSupportedError");
+}, "navigate() to a javascript: URL");
+</script>

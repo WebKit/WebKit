@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+</script>
+</head>
+<body>
+<script>
+const isAsynchronous = false;
+var xhr = new XMLHttpRequest;
+try {
+    xhr.open("GET", "resources/nph-fail.pl", isAsynchronous);
+    xhr.send();
+
+    alert("FAIL");
+} catch (e) {
+    // FIXME: Assert that a specific exception is thrown.
+    alert("PASS");
+}
+</script>
+</body>
+</html>

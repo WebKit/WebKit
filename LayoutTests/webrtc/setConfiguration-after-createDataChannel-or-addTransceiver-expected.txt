@@ -1,0 +1,5 @@
+
+PASS setConfiguration after data channel is created
+PASS setConfiguration after video transceiver is added
+PASS setConfiguration after audio transceiver is added
+

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>A font change inside content that is shaped across inline boxes should only terminate the shaping range</title>
+<style>
+@font-face {
+    font-family: "WebFont";
+    src: url("resources/Gulf-regular.ttf") format("truetype");
+}
+@font-face {
+    /* Same font file under a different family name: content using it renders identically
+       but has a different font cascade, which is what terminates a shaping range. */
+    font-family: "WebFontUnderAnotherName";
+    src: url("resources/Gulf-regular.ttf") format("truetype");
+}
+div {
+    font: 32px WebFont;
+}
+.otherFontCascade {
+    font-family: WebFontUnderAnotherName;
+}
+</style>
+</head>
+<body>
+<p>When Arabic content spanning multiple inline boxes changes font, the content in front of the font
+change still has to stay joined and so does the content after it. This test passes if each line
+below renders the same as the reference.</p>
+<div dir="rtl" lang="ar"><span>ٱلْوا</span><span class="otherFontCascade">حِدة</span></div>
+<div dir="rtl" lang="ar"><span>ٱلْوا</span><span class="otherFontCascade">حِدة</span><span>.</span></div>
+<div dir="rtl" lang="ar"><span>ٱلْوا</span><span class="otherFontCascade">حِدة</span><span>ٱلْوا</span></div>
+</body>
+</html>

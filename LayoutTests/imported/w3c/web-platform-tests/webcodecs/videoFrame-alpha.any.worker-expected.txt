@@ -1,0 +1,4 @@
+
+PASS OffscreenCanvas source preserves alpha
+PASS ImageBitmap source preserves alpha
+

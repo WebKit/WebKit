@@ -1,0 +1,4 @@
+
+PASS Open a popup to a document without COOP, then navigate it to a document with
+PASS verify remaining reports
+

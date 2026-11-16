@@ -1,0 +1,10 @@
+Testing MacOSInlineMediaControls with disabled fullscreen and picture-in-picture buttons.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS mediaControls.topLeftControlsBar.visible is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,6 @@
+
+PASS Create WebSocket - Pass a non absolute URL: test
+PASS Create WebSocket - Pass a non absolute URL: ?
+PASS Create WebSocket - Pass a non absolute URL: null
+PASS Create WebSocket - Pass a non absolute URL: 123
+

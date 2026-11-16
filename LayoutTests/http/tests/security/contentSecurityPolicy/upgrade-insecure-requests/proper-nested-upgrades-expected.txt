@@ -1,0 +1,11 @@
+CONSOLE MESSAGE: PASS
+CONSOLE MESSAGE: PASS
+CONSOLE MESSAGE: PASS
+This test loads a secure iframe with the 'upgrade-insecure-requests' header. The secure frame has an insecure script reference, which will get upgraded. The secure frame does a secure load of another frame. This other frame specifies an insecure load of this same script. If the nested subresource logic is working properly, the non-secure load in the second nested frame should be upgraded, even though that frame does not use the 'upgrade-insecure-requests' header, because it had been previously upgraded by an enclosing context. The frame two-layers deep also loads a second script using HTTP. This should also be upgraded to HTTPS, since the nested frame inherits the 'upgrade-insecure-request' from its parent.
+
+PASS directCSPScriptLoaded is true
+PASS inheritedCSPScriptsLoaded is 2
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

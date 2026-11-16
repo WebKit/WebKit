@@ -1,0 +1,67 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/accessibility-helper.js"></script>
+</head>
+<body id="body">
+
+<table tabindex=0 id="grid-1" role="treegrid" aria-labelledby="grid-1-header" border="1" aria-activedescendant="row1">
+<thead>
+    <tr ca="tr" role="row" aria-level="1" id="row1">
+        <th id="grid-1-isbn_id">Book Name / ISBN</th><th id="grid-1-author_id">Author</th><th id="grid-1-price_id" class="numeric" >Price ($)</th>
+    </tr>
+</thead>
+<tbody>
+    <tr ca="to" role="row" aria-level="1" aria-expanded="true">
+         <td headers="grid-1-title_id" id="table_entry" role="gridcell" colspan="3"  tabindex="0">
+         <span class="expand">+</span> A Question of Love</td>                  
+     </tr>
+     <tr ca="ti" role="row"  aria-level="2" aria-expanded="true">
+         <td headers="grid-1-isbn_id" role="gridcell">978-3-453-40540-0</td>
+         <td headers="grid-1-author_id" role="gridcell">Nora Roberts</td>
+         <td headers="grid-1-price_id" class="numeric" role="gridcell" ca="te"><div>9.99</div></td>
+     </tr>
+</tbody>
+</table>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+description("This tests that the treegrid ARIA role does what it should (be exposed as a AXTable and support AXSelectedRows)");
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true
+    document.getElementById("grid-1").focus();
+
+    var output = "";
+    var treegrid, selectedRow, secondRow, thirdRow;
+    setTimeout(function() {
+        treegrid = accessibilityController.focusedElement;
+        selectedRow = treegrid.childAtIndex(0);
+        output += expect("treegrid.isAttributeSupported('AXSelectedRows')", "true");
+        output += expect("treegrid.selectedRowAtIndex(0).isEqual(selectedRow)", "true");
+        output += expect("selectedRow.isExpanded", "false");
+        output += expect("selectedRow.hierarchicalLevel", "0");
+
+        secondRow = treegrid.childAtIndex(1);
+        output += expect("secondRow.isExpanded", "true");
+        output += expect("secondRow.hierarchicalLevel", "0");
+
+        thirdRow = treegrid.childAtIndex(2);
+        output += expect("thirdRow.isExpanded", "true");
+        output += expect("thirdRow.hierarchicalLevel", "1");
+
+        // Make sure that the row disclosure works correctly.
+        output += expect("thirdRow.disclosedByRow().isEqual(secondRow)", "true");
+        output += expect("secondRow.disclosedRowAtIndex(0).isEqual(thirdRow)", "true");
+        debug(output);
+        finishJSTest();   
+    }, 0);
+}
+</script>
+
+</body>
+</html>

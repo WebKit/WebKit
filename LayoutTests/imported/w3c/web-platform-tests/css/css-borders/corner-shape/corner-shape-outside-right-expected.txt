@@ -1,0 +1,10 @@
+
+PASS corner-shape: notch with shape-outside
+PASS corner-shape: bevel with shape-outside
+PASS corner-shape: notch bevel with shape-outside
+PASS corner-shape: round with shape-outside
+PASS corner-shape: square with shape-outside
+PASS corner-shape: scoop with shape-outside
+PASS corner-shape: superellipse(1.5) with shape-outside
+PASS corner-shape: superellipse(-.8) with shape-outside
+

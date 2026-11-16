@@ -1,0 +1,8 @@
+test1 PASS: innerText is Lorem-ipsum as expected
+test2 PASS: innerText is Loremipsum as expected
+test3 PASS: innerText is Lorem-ipsum as expected
+test4 PASS: innerText is Loremipsum as expected
+Lorem-ipsum
+Loremipsum
+Lorem-ipsum
+Loremipsum

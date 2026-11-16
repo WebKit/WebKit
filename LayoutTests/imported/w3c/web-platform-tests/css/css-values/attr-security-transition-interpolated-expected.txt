@@ -1,0 +1,8 @@
+div
+div
+div
+
+PASS Transitioning <number> from attr() should remain attr-tainted in if(style())
+PASS Transitioning <number> from attr() should remain attr-tainted in if(style()) range query
+PASS Transitioning <length> from attr() should remain attr-tainted in if(style())
+

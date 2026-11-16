@@ -1,0 +1,17 @@
+Tests that touch-dragging a [role='slider'] element on facebook.com dispatches synthetic mouse events, and that non-slider elements do not receive them (rdar://174179871)
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+PASS mouseDownFired is true
+PASS mouseDownTrusted is true
+PASS mouseMoveCount > 0 is true
+PASS mouseMoveTrusted is true
+PASS mouseUpFired is true
+PASS mouseUpTrusted is true
+PASS nonSliderMouseDownFired is false
+PASS nonSliderMouseMoveFired is false
+PASS nonSliderMouseUpFired is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,4 @@
+
+PASS Parser-inserted classic script blocked by `strict-dynamic` fires an error event.
+PASS Parser-inserted module script blocked by `strict-dynamic` fires an error event.
+

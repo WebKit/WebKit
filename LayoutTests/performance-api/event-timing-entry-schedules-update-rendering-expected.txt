@@ -1,0 +1,29 @@
+Test if a rendering update is scheduled after an event timing entry is queued.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS timeToDispatch[0] is <= 100
+PASS timeToDispatch[1] is <= 100
+PASS timeToDispatch[2] is <= 100
+PASS timeToDispatch[3] is <= 100
+PASS timeToDispatch[4] is <= 100
+PASS timeToDispatch[5] is <= 100
+PASS timeToDispatch[6] is <= 100
+PASS timeToDispatch[7] is <= 100
+PASS timeToDispatch[8] is <= 100
+PASS timeToDispatch[9] is <= 100
+PASS timeToDispatch[10] is <= 100
+PASS timeToDispatch[11] is <= 100
+PASS timeToDispatch[12] is <= 100
+PASS timeToDispatch[13] is <= 100
+PASS timeToDispatch[14] is <= 100
+PASS timeToDispatch[15] is <= 100
+PASS timeToDispatch[16] is <= 100
+PASS timeToDispatch[17] is <= 100
+PASS timeToDispatch[18] is <= 100
+PASS timeToDispatch[19] is <= 100
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Click me!

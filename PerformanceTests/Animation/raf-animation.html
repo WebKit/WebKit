@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="initial-scale=1.0">
+    <style>
+        body {
+            margin: 0;
+        }
+        #stage {
+            position: relative;
+            width: 320px;
+            height: 320px;
+            border: 1px solid black;
+        }
+        
+        .particle {
+            position: absolute;
+            height: 20px;
+            width: 20px;
+            background-color: blue;
+            border-radius: 50%;
+        }
+    </style>
+    <script>
+
+        function randomInt(min, max)
+        {
+            return Math.round(this.random(min, max));
+        }
+
+        function random(min, max)
+        {
+            return (Math.random() * (max - min)) + min;
+        }
+
+        function randomColor()
+        {
+            var min = 32;
+            var max = 256 - 32;
+            return "#"
+                + this.randomInt(min, max).toString(16)
+                + this.randomInt(min, max).toString(16)
+                + this.randomInt(min, max).toString(16);
+        }
+        
+        function Point(x, y)
+        {
+            this.x = x;
+            this.y = y;
+        }
+
+        Point.pointOnCircle = function(angle, radius)
+        {
+            return new Point(radius * Math.cos(angle), radius * Math.sin(angle));
+        }
+
+        Point.prototype =
+        {
+            add: function(other)
+            {
+                if(isNaN(other.x))
+                    return new Point(this.x + other, this.y + other);
+                return new Point(this.x + other.x, this.y + other.y);
+            },
+
+            subtract: function(other)
+            {
+                if(isNaN(other.x))
+                    return new Point(this.x - other, this.y - other);
+                return new Point(this.x - other.x, this.y - other.y);
+            },
+
+            move: function(angle, velocity, timeDelta)
+            {
+                return this.add(Point.pointOnCircle(angle, velocity * (timeDelta / 1000)));
+            },
+
+            multiply: function(other)
+            {
+                if(isNaN(other.x))
+                    return new Point(this.x * other, this.y * other);
+                return new Point(this.x * other.x, this.y * other.y);
+            },
+
+            length: function() {
+                return Math.sqrt( this.x * this.x + this.y * this.y );
+            },
+
+            normalize: function() {
+                var l = Math.sqrt( this.x * this.x + this.y * this.y );
+                this.x /= l;
+                this.y /= l;
+                return this;
+            }
+        }
+
+        function Particle(maxPosition)
+        {
+            this.element = document.createElement('div');
+            this.element.className = 'particle';
+            this.element.style.backgroundColor = randomColor();
+            this.maxPosition = maxPosition;
+            this.reset();
+            this.move();
+        }
+
+        Particle.prototype =
+        {
+            reset: function()
+            {
+                this.size = new Point(20, 20);
+                this.maxLocation = this.maxPosition.subtract(this.size);
+                this.position = new Point(this.maxPosition.x / 2, this.maxPosition.y / 4);
+
+                var angle = Math.random() * Math.PI * 2;
+                this._velocity = new Point(Math.sin(angle), Math.cos(angle)).multiply(random(.8, 1.2));
+            },
+
+            animate: function(timeDelta)
+            {
+                this.position = this.position.add(this._velocity.multiply(timeDelta));
+                this._velocity.y += 0.03;
+
+                // If particle is going to move off right side
+                if (this.position.x > this.maxLocation.x) {
+                    if (this._velocity.x > 0)
+                        this._velocity.x *= -1;
+                    this.position.x = this.maxLocation.x;
+                } else if (this.position.x < 0) {
+                    // If particle is going to move off left side
+                    if (this._velocity.x < 0)
+                        this._velocity.x *= -1;
+                    this.position.x = 0;
+                }
+
+                // If particle is going to move off bottom side
+                if (this.position.y > this.maxLocation.y) {
+                    // Adjust direction but maintain magnitude
+                    var magnitude = this._velocity.length();
+                    this._velocity.x *= 1.5 + .005 * this.size.x;
+                    this._velocity = this._velocity.normalize().multiply(magnitude);
+                    if (Math.abs(this._velocity.y) < 0.7)
+                        this.reset();
+                    else {
+                        if (this._velocity.y > 0)
+                            this._velocity.y *= -0.999;
+                        this.position.y = this.maxLocation.y;
+                    }
+                } else if (this.position.y < 0) {
+                    // If particle is going to move off top side
+                    var magnitude = this._velocity.length();
+                    this._velocity.x *= 1.5 + .005 * this.size.x;
+                    this._velocity = this._velocity.normalize().multiply(magnitude);
+                    if (this._velocity.y < 0)
+                        this._velocity.y *= -0.998;
+                    this.position.y = 0;
+                }
+                
+                this.move();
+            },
+
+            move: function()
+            {
+                this.element.style.transform = "translate(" + this.position.x + "px," + this.position.y + "px) ";
+            }
+        }
+
+        var numParticles = 20;
+        var particles = [];
+
+        function makeParticles()
+        {
+            var stage = document.getElementById('stage');
+            var maxPosition = new Point(320, 320);
+            for (var i = 0; i < numParticles; ++i) {
+                particles.push(new Particle(maxPosition));
+                stage.appendChild(particles[i].element);
+            }
+        }
+        
+        function moveParticles()
+        {
+            for (var particle of particles)
+                particle.animate(1);
+        }
+        
+        function animate()
+        {
+            moveParticles();
+            window.requestAnimationFrame(animate);
+        }
+        
+        function setupAnimation()
+        {
+            makeParticles();
+            animate();
+        }
+        
+        window.addEventListener('load', setupAnimation, false);
+    </script>
+</head>
+<body>
+
+<div id="stage">
+</div>
+
+</body>
+</html>

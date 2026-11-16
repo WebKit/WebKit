@@ -1,0 +1,9 @@
+
+PASS Offsets for: position-area: none for basic ICB
+PASS Offsets for: position-area: span-all for basic ICB
+PASS Offsets for: position-area: span-all for abspos overflowing ICB
+PASS Offsets for: position-area: span-all for in-flow overflowing ICB
+PASS Offsets for: position-area: span-all for root overflowing ICB
+PASS Offsets for: position-area: span-all for abspos overflowing ICB and reduced root
+PASS Offsets for: position-area: none for in-flow overflowing ICB and reduced root
+

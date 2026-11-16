@@ -1,0 +1,6 @@
+ABCDEF
+
+PASS control: the three declared members are on the prototype
+PASS path is not reflected on SVGTextPathElement
+PASS path round-trips through getAttribute and setAttribute unchanged
+

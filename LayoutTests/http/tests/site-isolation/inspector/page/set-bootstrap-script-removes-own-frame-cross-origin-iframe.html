@@ -1,0 +1,62 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<!DOCTYPE html>
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="../debugger/resources/site-isolation-debugger-test-utilities.js"></script>
+<script>
+let frameCount = 0;
+let lastFrame = null;
+
+function addFrame(path) {
+    lastFrame = document.createElement("iframe");
+    lastFrame.src = `${path}?${++frameCount}`;
+    lastFrame.onload = (event) => { TestPage.dispatchEventToFrontend("FrameLoaded", event.target.src); };
+    document.body.appendChild(lastFrame);
+}
+
+function addCrossOriginFrame(file) {
+    let crossOriginHost = location.hostname === "localhost" ? "127.0.0.1" : "localhost";
+    addFrame(`http://${crossOriginHost}:8000/site-isolation/inspector/page/resources/${file}`);
+}
+
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Page.SetBootstrapScriptRemovesOwnFrame");
+
+    suite.addTestCase({
+        name: "SiteIsolation.Page.SetBootstrapScript.SameOriginNestedFrameRemovesItself",
+        description: "A bootstrap script that removes its own nested frame in the main-frame process should not crash.",
+        async test() {
+            await WI.networkManager.createBootstrapScript(`if (location.search.includes("remove-self")) window.frameElement.remove();`);
+            WI.networkManager.bootstrapScriptEnabled = true;
+
+            InspectorTest.log("Adding same-origin iframe with a self-removing child...");
+            await Promise.all([
+                InspectorTest.awaitEvent("FrameLoaded"),
+                InspectorTest.evaluateInPage(`addFrame("resources/bootstrap-frame-with-child.html")`),
+            ]);
+            let count = await InspectorTest.evaluateInPage(`lastFrame.contentDocument.querySelectorAll("iframe").length`);
+            InspectorTest.expectEqual(count, 0, "Nested frame should have removed itself.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Page.SetBootstrapScript.CrossOriginNestedFrameRemovesItself",
+        description: "A bootstrap script that removes its own same-site nested frame in a cross-origin process should not crash that process.",
+        async test() {
+            InspectorTest.log("Adding cross-origin iframe with a self-removing same-site child...");
+            let [frameLoadedEvent] = await Promise.all([
+                InspectorTest.awaitEvent("FrameLoaded"),
+                InspectorTest.evaluateInPage(`addCrossOriginFrame("bootstrap-frame-with-child.html")`),
+            ]);
+            let url = frameLoadedEvent.data;
+            let target = await waitForFrameTargetForURLContaining(url.substring(url.lastIndexOf("/") + 1));
+            let response = await target.RuntimeAgent.evaluate.invoke({expression: `document.querySelectorAll("iframe").length`, objectGroup: "test", returnByValue: true});
+            InspectorTest.expectEqual(response.result.value, 0, "Nested frame should have removed itself, and its process should still be alive.");
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+<body onload="runTest()">
+<p>Test that a bootstrap script removing its own frame in a cross-origin process does not crash.</p>
+</body>

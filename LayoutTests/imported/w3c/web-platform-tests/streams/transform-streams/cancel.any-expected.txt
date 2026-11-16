@@ -1,0 +1,13 @@
+
+FAIL cancelling the readable side should call transformer.cancel() assert_equals: transformer.cancel() should be called with the passed reason expected (object) object "error1: bad things are happening!" but got (undefined) undefined
+FAIL cancelling the readable side should reject if transformer.cancel() throws assert_unreached: Should have rejected: readable.cancel() should reject with thrownError Reached unreachable code
+FAIL aborting the writable side should call transformer.abort() assert_equals: transformer.abort() should be called with the passed reason expected (object) object "error1: bad things are happening!" but got (undefined) undefined
+FAIL aborting the writable side should reject if transformer.cancel() throws assert_unreached: Should have rejected: writable.abort() should reject with thrownError Reached unreachable code
+FAIL closing the writable side should reject if a parallel transformer.cancel() throws assert_unreached: Should have rejected: cancelPromise should reject with thrownError Reached unreachable code
+FAIL readable.cancel() and a parallel writable.close() should reject if a transformer.cancel() calls controller.error() assert_unreached: Should have rejected: cancelPromise should reject with thrownError Reached unreachable code
+FAIL writable.abort() and readable.cancel() should reject if a transformer.cancel() calls controller.error() assert_unreached: Should have rejected: cancelPromise should reject with thrownError Reached unreachable code
+PASS readable.cancel() should not call cancel() when flush() is already called from writable.close()
+FAIL readable.cancel() should not call cancel() again when already called from writable.abort() assert_equals: expected 1 but got 0
+FAIL writable.close() should not call flush() when cancel() is already called from readable.cancel() assert_true: cancel() was called expected true got false
+FAIL writable.abort() should not call cancel() again when already called from readable.cancel() assert_unreached: Should have rejected: undefined Reached unreachable code
+

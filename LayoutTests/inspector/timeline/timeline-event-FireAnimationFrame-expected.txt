@@ -1,0 +1,13 @@
+Tests 'FireAnimationFrame' Timeline event records.
+
+
+== Running test suite: TimelineEvent.FireAnimationFrame
+-- Running test case: TimelineEvent.FireAnimationFrame.requestAnimationFrame
+Starting Capture...
+Evaluating...
+PASS: requestAnimationFrame fired
+Stopping Capture...
+PASS: Should be 1 AnimationFrameFired record.
+DETAILS: number
+PASS: ScriptTimelineRecord details should be the requestAnimationFrame identifier.
+

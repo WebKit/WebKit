@@ -1,0 +1,48 @@
+<html>
+<head>
+<script src="../../../resources/js-test-pre.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+<script>
+description("Wheel events should be dispatched to an empty SVG root element.");
+
+jsTestIsAsync = true;
+
+async function runTest()
+{
+    if (!window.eventSender) {
+        testFailed("This test requires window.eventSender.");
+        finishJSTest();
+        return;
+    }
+
+    var svg = document.querySelector('svg');
+    svg.addEventListener('wheel', function(e) {
+        testPassed("wheel event was dispatched to empty SVG element.");
+        finishJSTest();
+    });
+
+    await UIHelper.ensurePresentationUpdate();
+    eventSender.mouseMoveTo(350, 350);
+    eventSender.mouseScrollBy(0, 10);
+}
+
+window.addEventListener('load', runTest);
+</script>
+<style>
+body { margin: 0; }
+svg {
+    position: absolute;
+    top: 250px;
+    left: 250px;
+    width: 200px;
+    height: 200px;
+    background-color: brown;
+}
+</style>
+</head>
+<body>
+<svg></svg>
+<div id="console"></div>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

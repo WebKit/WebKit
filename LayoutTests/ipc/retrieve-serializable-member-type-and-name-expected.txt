@@ -1,0 +1,3 @@
+
+PASS Retrieving the type and name from a known member of a known serializable type
+

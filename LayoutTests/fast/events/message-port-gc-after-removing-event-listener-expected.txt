@@ -1,0 +1,11 @@
+Checks that MessagePort objects get GC'd once they no longer have an event listener
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Removing event listeners on ports...
+PASS At least one port got GC'd after removing their event listener
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

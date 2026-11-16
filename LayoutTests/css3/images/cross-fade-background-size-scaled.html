@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+    .box {
+        width: 200px;
+        height: 200px;
+        background-repeat: no-repeat;
+    }
+    /* The cross-fade's natural size, 100x100, is scaled by 'background-size' to fill the box. */
+    .test {
+        background-image: -webkit-cross-fade(url(resources/green-100.png), url(resources/green-100.png), 50%);
+        background-size: 200px 200px;
+    }
+</style>
+</head>
+<body>
+    <div class="box test"></div>
+</body>
+</html>

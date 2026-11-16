@@ -1,0 +1,4 @@
+
+
+PASS When a loading=lazy iframe is changed to eager later before loading, it loads relative to the document's base URL computed at parse-time.
+

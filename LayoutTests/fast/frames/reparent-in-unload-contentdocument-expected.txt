@@ -1,0 +1,11 @@
+PASS frame.contentDocument is null
+PASS frame.contentDocument is not null
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+
+--------
+Frame: '<!--frame1-->'
+--------
+Should be visible.

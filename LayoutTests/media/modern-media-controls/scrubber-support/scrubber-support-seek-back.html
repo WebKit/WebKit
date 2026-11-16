@@ -1,0 +1,75 @@
+<script src='../../../resources/js-test-pre.js'></script>
+<script src='../resources/media-controls-loader.js' type='text/javascript'></script>
+<script src='../resources/media-controls-utils.js' type='text/javascript'></script>
+<body>
+<style type='text/css' media='screen'>
+
+    video, #host {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 800px;
+        height: 240px;
+    }
+
+</style>
+
+<video src='../../content/test-video-only-one-keyframe.mp4' controls></video>
+<div id='host'></div>
+<script type='text/javascript'>
+
+window.jsTestIsAsync = true;
+
+description('Scrubbing backwards in a video file with one keyframe should not seek to time zero.');
+
+let container;
+let media;
+let mediaController;
+let scrubber;
+let originalTime;
+
+window.addEventListener('load', async () => {
+
+    container = document.querySelector('div#host');
+    media = document.querySelector('video');
+    mediaController = createControls(container, media, null);
+    scrubber = mediaController.controls.timeControl.scrubber.children[1].element;
+
+    mediaController.controls.showsStartButton = false;
+
+    const waitForEvent = (name) => {
+        return new Promise((resolve) => {
+            media.addEventListener(name, () => { resolve(event); }, { once: true });
+        });
+    }
+
+    media.currentTime = media.duration - 0.1;
+    await waitForEvent('seeked');
+
+    originalTime = media.currentTime;
+
+    await shouldBecomeDifferent('scrubber.getBoundingClientRect().width', '0');
+
+    media.scrollIntoViewIfNeeded(false);
+
+    const scrubberBounds = scrubber.getBoundingClientRect();
+    const x = window.scrollX + scrubberBounds.left + 80;
+    const y = window.scrollY + scrubberBounds.top + scrubberBounds.height / 2;
+    const seekedPromise = waitForEvent('seeked');
+
+    pressAtPoint(x, y);
+
+    await seekedPromise;
+    shouldBeTrue('media.currentTime < originalTime');
+
+    shouldBecomeDifferent('media.currentTime', '0', () => {
+        container.remove();
+        media.remove();
+        finishJSTest();
+    });
+});
+
+</script>
+<script src='../../../resources/js-test-post.js'></script>
+</body>
+

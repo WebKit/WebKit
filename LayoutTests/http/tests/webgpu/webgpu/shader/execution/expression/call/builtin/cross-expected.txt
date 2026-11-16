@@ -1,0 +1,11 @@
+
+PASS :abstract_float:inputSource="const"
+PASS :f32:inputSource="const"
+PASS :f32:inputSource="uniform"
+PASS :f32:inputSource="storage_r"
+PASS :f32:inputSource="storage_rw"
+PASS :f16:inputSource="const"
+PASS :f16:inputSource="uniform"
+PASS :f16:inputSource="storage_r"
+PASS :f16:inputSource="storage_rw"
+

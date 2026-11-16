@@ -1,0 +1,28 @@
+<script>
+function test()
+{
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+
+    var worker = new Worker("resources/termination-with-port-messages.js");
+    var channel = new MessageChannel();
+
+    channel.port2.onmessage = function(evt)
+    {
+        // On first message back from worker, terminate it.
+        worker.terminate();
+        if (window.testRunner)
+            setTimeout("testRunner.notifyDone();", 0);
+    }
+    channel.port2.start();
+
+    worker.postMessage("", [channel.port1]);
+    for (i = 0; i < 1000; i++)
+        channel.port2.postMessage("message to worker");
+}
+</script>
+<body onload=test()>
+<p>This test terminates a worker when there are many undelivered MessagePort messages still waiting to be dispatched into the Worker Context. This causes termination of JS execution and test should not try to dispatch the remaining messages. Test succeeds if it does not hang or crash (if worker thread is running in the separate process, that process could hang or crash).</p>
+</body>

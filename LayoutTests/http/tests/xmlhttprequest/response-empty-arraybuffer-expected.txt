@@ -1,0 +1,20 @@
+Test that XMLHttpRequest.response returns an empty ArrayBuffer when received a response without an entity body.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Test that XMLHttpRequest.response returns an empty ArrayBuffer when received a response with zero content length.
+PASS request.status is 200
+PASS Object.prototype.toString.call(request.response) is '[object ArrayBuffer]'
+PASS request.response.byteLength is 0
+Test that XMLHttpRequest.response returns an empty ArrayBuffer when received status is '304 not modified'.
+PASS request.status is 200
+PASS Object.prototype.toString.call(request.response) is '[object ArrayBuffer]'
+PASS request.response.byteLength is 68
+PASS request2.status is 304
+PASS Object.prototype.toString.call(request2.response) is '[object ArrayBuffer]'
+PASS request2.response.byteLength is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

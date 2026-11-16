@@ -1,0 +1,9 @@
+This test ensures that spaces that were trimmed when rendering soft line breaks are included in ranges that span over them.
+
+PASS: paragraph.stringForTextMarkerRange(range) === 'Good morning'
+PASS: paragraph.stringForTextMarkerRange(range) === 'Good morning world'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Good morning world.

@@ -1,0 +1,5 @@
+
+PASS document.registerElement should not exist
+PASS ShadowRoot doesn't have importNode or createElement[NS]
+PASS attachShadow() does not recognize a registry member
+

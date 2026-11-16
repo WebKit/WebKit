@@ -1,0 +1,30 @@
+<!DOCTYPE html><!-- webkit-test-runner [ RequestIdleCallbackEnabled=true ] -->
+<html>
+<body>
+<script src="../resources/js-test.js"></script>
+<script>
+
+description('This tests that idle callbacks are not starved by setInterval().');
+
+jsTestIsAsync = true;
+
+// The interval needs to fire enough times to exercise the maximum timer nesting level.
+const totalFirings = 20;
+let firingCount = 0;
+let idleCallbackCount = 0;
+const interval = setInterval(() => {
+    if (++firingCount > totalFirings)
+        return;
+    requestIdleCallback(() => {
+        // Don't report each interaction: updating rendering would affect scheduling, giving idle callbacks a chance to run:
+        if (++idleCallbackCount < totalFirings)
+            return;
+        clearInterval(interval);
+        testPassed('All idle callbacks ran.');
+        finishJSTest();
+    });
+}, 50);
+
+</script>
+</body>
+</html>

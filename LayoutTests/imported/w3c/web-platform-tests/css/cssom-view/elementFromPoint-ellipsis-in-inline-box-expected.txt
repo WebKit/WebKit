@@ -1,0 +1,8 @@
+XXXXXXXXXXXXXXXXXXXX
+XXXXXXXXXXXXXXXXXXXX
+XXXXXXXXXXXXXXXXXXXX
+
+PASS elementFromPoint-ellipsis-in-inline-box
+PASS elementFromPoint-ellipsis-in-inline-box 1
+PASS elementFromPoint-ellipsis-in-inline-box 2
+

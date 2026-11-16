@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<body>
+    <model></model>
+    <script>
+        window.addEventListener('message', (event) => {
+            const { action, count } = event.data;
+            if (action === 'add') {
+                for (let i = 0; i < count; i++)
+                    document.body.appendChild(document.createElement('model'));
+                event.source.postMessage({ action: 'add', count, completed: true }, event.origin);
+            } else if (action === 'remove') {
+                const models = document.querySelectorAll('model');
+                const toRemove = Math.min(count, models.length);
+                for (let i = 0; i < toRemove; i++)
+                    models[i].remove();
+                event.source.postMessage({ action: 'remove', count: toRemove, completed: true }, event.origin);
+            } else if (action === 'clear') {
+                const models = document.querySelectorAll('model');
+                const cleared = models.length;
+                models.forEach(model => model.remove());
+                event.source.postMessage({ action: 'clear', count: cleared, completed: true }, event.origin);
+            } else if (action === 'navigate')
+                window.location.href = 'no-models.html';
+        });
+        window.addEventListener('load', () => {
+            window.parent.postMessage({ action: 'frameLoaded', completed: true }, '*');
+        });
+    </script>
+</body>
+</html>

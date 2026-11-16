@@ -1,0 +1,15 @@
+This test ensures that an AX user changing the selected children of a list box only changes the options whose selectedness changes, as for a non-AX user.
+
+PASS: selection('native') === 'Red,Green'
+native: input (Red,Green), change (Red,Green)
+PASS: selection('native') === 'Green'
+native: input (Green), change (Green)
+PASS: selection('base') === 'Red,Green'
+base: input (Red,Green), change (Red,Green)
+PASS: selection('base') === 'Green'
+base: input (Green), change (Green)
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

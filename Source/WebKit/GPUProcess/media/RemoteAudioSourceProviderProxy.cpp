@@ -1,0 +1,92 @@
+/*
+ * Copyright (C) 2019-2020 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#include "config.h"
+#include "RemoteAudioSourceProviderProxy.h"
+
+#if ENABLE(GPU_PROCESS) && ENABLE(WEB_AUDIO) && PLATFORM(COCOA)
+
+#include "RemoteAudioSourceProviderManagerMessages.h"
+#include <WebCore/AudioSourceProviderAVFObjC.h>
+
+namespace WebKit {
+
+Ref<RemoteAudioSourceProviderProxy> RemoteAudioSourceProviderProxy::create(WebCore::MediaPlayerIdentifier identifier, Ref<IPC::Connection>&& connection, WebCore::AudioSourceProviderAVFObjC& localProvider)
+{
+    auto remoteProvider = adoptRef(*new RemoteAudioSourceProviderProxy(identifier, WTF::move(connection)));
+
+    localProvider.setConfigureAudioStorageCallback([remoteProvider](auto&&... args) {
+        return remoteProvider->configureAudioStorage(args...);
+    });
+    localProvider.setAudioCallback([remoteProvider](auto startFrame, auto numberOfFrames, bool needsFlush) {
+        remoteProvider->newAudioSamples(startFrame, numberOfFrames, needsFlush);
+    });
+
+    return remoteProvider;
+}
+
+RemoteAudioSourceProviderProxy::RemoteAudioSourceProviderProxy(WebCore::MediaPlayerIdentifier identifier, Ref<IPC::Connection>&& connection)
+    : m_identifier(identifier)
+    , m_connection(WTF::move(connection))
+{
+}
+
+RemoteAudioSourceProviderProxy::~RemoteAudioSourceProviderProxy() = default;
+
+std::unique_ptr<WebCore::CARingBuffer> RemoteAudioSourceProviderProxy::configureAudioStorage(const WebCore::CAAudioStreamDescription& format, size_t frameCount)
+{
+    auto result = ProducerSharedCARingBuffer::allocate(format, frameCount);
+    RELEASE_ASSERT(result); // FIXME(https://bugs.webkit.org/show_bug.cgi?id=262690): Handle allocation failure.
+    auto [ringBuffer, handle] = WTF::move(*result);
+    m_connection->send(Messages::RemoteAudioSourceProviderManager::AudioStorageChanged { m_identifier, WTF::move(handle), format }, 0);
+    // Use a redundant variable to avoid move in return position and to obtain copy elision. Clang or libc++ does not allow returning covariant of Ts from std::unique_ptr<T>s in this position.
+    std::unique_ptr<WebCore::CARingBuffer> caRingBuffer = WTF::move(ringBuffer);  // NOLINT: see above.
+    return caRingBuffer;
+}
+
+void RemoteAudioSourceProviderProxy::newAudioSamples(uint64_t, uint64_t, bool needsFlush)
+{
+    if (needsFlush)
+        m_connection->send(Messages::RemoteAudioSourceProviderManager::SetNeedsFlush { m_identifier }, 0);
+}
+
+void RemoteAudioSourceProviderProxy::setPlaybackRate(double playbackRate)
+{
+    m_connection->send(Messages::RemoteAudioSourceProviderManager::SetPlaybackRate { m_identifier, playbackRate }, 0);
+}
+
+void RemoteAudioSourceProviderProxy::setPreservesPitch(bool preservesPitch)
+{
+    m_connection->send(Messages::RemoteAudioSourceProviderManager::SetPreservesPitch { m_identifier, preservesPitch }, 0);
+}
+
+void RemoteAudioSourceProviderProxy::setVolume(double volume)
+{
+    m_connection->send(Messages::RemoteAudioSourceProviderManager::SetVolume { m_identifier, volume }, 0);
+}
+
+} // namespace WebKit
+
+#endif // ENABLE(GPU_PROCESS) && ENABLE(WEB_AUDIO) && PLATFORM(COCOA)

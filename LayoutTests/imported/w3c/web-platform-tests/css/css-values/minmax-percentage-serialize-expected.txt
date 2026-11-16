@@ -1,0 +1,37 @@
+
+PASS 'min(1%)' as a specified value should serialize as 'calc(1%)'.
+PASS 'min(1%)' as a computed value should serialize as '1%'.
+PASS 'min(1%)' as a used value should serialize as '1px'.
+PASS 'max(1%)' as a specified value should serialize as 'calc(1%)'.
+PASS 'max(1%)' as a computed value should serialize as '1%'.
+PASS 'max(1%)' as a used value should serialize as '1px'.
+PASS 'min(1%, 2%, 3%)' as a specified value should serialize as 'min(1%, 2%, 3%)'.
+PASS 'min(1%, 2%, 3%)' as a computed value should serialize as 'min(1%, 2%, 3%)'.
+PASS 'min(1%, 2%, 3%)' as a used value should serialize as '1px'.
+PASS 'min(3%, 2%, 1%)' as a specified value should serialize as 'min(3%, 2%, 1%)'.
+PASS 'min(3%, 2%, 1%)' as a computed value should serialize as 'min(3%, 2%, 1%)'.
+PASS 'min(3%, 2%, 1%)' as a used value should serialize as '1px'.
+PASS 'min(-1%, 1%)' as a specified value should serialize as 'min(-1%, 1%)'.
+PASS 'min(-1%, 1%)' as a computed value should serialize as 'min(-1%, 1%)'.
+PASS 'min(-1%, 1%)' as a used value should serialize as '-1px'.
+PASS 'min(-0%, 0%)' as a specified value should serialize as 'min(0%, 0%)'.
+PASS 'min(-0%, 0%)' as a computed value should serialize as 'min(0%, 0%)'.
+PASS 'min(-0%, 0%)' as a used value should serialize as '0px'.
+PASS 'max(1%, 2%, 3%)' as a specified value should serialize as 'max(1%, 2%, 3%)'.
+PASS 'max(1%, 2%, 3%)' as a computed value should serialize as 'max(1%, 2%, 3%)'.
+PASS 'max(1%, 2%, 3%)' as a used value should serialize as '3px'.
+PASS 'max(3%, 2%, 1%)' as a specified value should serialize as 'max(3%, 2%, 1%)'.
+PASS 'max(3%, 2%, 1%)' as a computed value should serialize as 'max(3%, 2%, 1%)'.
+PASS 'max(3%, 2%, 1%)' as a used value should serialize as '3px'.
+PASS 'max(-1%, 1%)' as a specified value should serialize as 'max(-1%, 1%)'.
+PASS 'max(-1%, 1%)' as a computed value should serialize as 'max(-1%, 1%)'.
+PASS 'max(-1%, 1%)' as a used value should serialize as '1px'.
+PASS 'max(-0%, 0%)' as a specified value should serialize as 'max(0%, 0%)'.
+PASS 'max(-0%, 0%)' as a computed value should serialize as 'max(0%, 0%)'.
+PASS 'max(-0%, 0%)' as a used value should serialize as '0px'.
+PASS 'min(1%, 2%, 3%) 0px' as a specified value should serialize as 'min(1%, 2%, 3%) 0px'.
+PASS 'min(1%, 2%, 3%) 0px' as a computed value should serialize as 'min(1%, 2%, 3%) 0px'.
+PASS 'calc(min(1%, 2%) + max(3%, 4%) + 10%)' as a specified value should serialize as 'calc(10% + min(1%, 2%) + max(3%, 4%))'.
+PASS 'calc(min(1%, 2%) + max(3%, 4%) + 10%)' as a computed value should serialize as 'calc(10% + min(1%, 2%) + max(3%, 4%))'.
+PASS 'calc(min(1%, 2%) + max(3%, 4%) + 10%)' as a used value should serialize as '15px'.
+

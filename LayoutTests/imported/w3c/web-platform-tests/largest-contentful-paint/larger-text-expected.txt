@@ -1,0 +1,6 @@
+
+This is some text.
+This is more text so it will be the Largest Contentful Paint!
+
+PASS Largest Contentful Paint: largest text is reported.
+

@@ -1,0 +1,7 @@
+eval() should not run without 'unsafe-eval' script-src directive.
+
+
+PASS Test that securitypolicyviolation event is fired
+PASS eval() should throw without 'unsafe-eval' keyword source in script-src directive.
+PASS eval() should not run without 'unsafe-eval' script-src directive.
+

@@ -1,0 +1,13 @@
+WebSocket: Test server-initiated close.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Connected
+Closed
+PASS closeEvent.wasClean is false
+PASS closeEvent.code is 1006
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

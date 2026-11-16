@@ -1,0 +1,6 @@
+
+PASS SVGTransformList interface, appendItem() with SVGTransform that already exist in a list
+PASS SVGTransformList interface, insertItemBefore() with SVGTransform that already exist in a list
+PASS SVGTransformList interface, replaceItem() with SVGTransform that already exist in a list
+PASS SVGTransformList interface, initialize() with SVGTransform that already exist in a list
+

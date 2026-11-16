@@ -1,0 +1,6 @@
+
+PASS absn-set-onended: onended event fires for AudioBufferSourceNode when set directly
+PASS absn-add-listener: onended event fires for AudioBufferSourceNode when using addEventListener
+PASS osc-set-onended: onended event fires for OscillatorNode when set directly
+PASS osc-add-listener: onended event fires for OscillatorNode when using addEventListener
+

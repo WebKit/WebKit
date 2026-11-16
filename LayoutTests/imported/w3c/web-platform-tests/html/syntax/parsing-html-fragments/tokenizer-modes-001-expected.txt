@@ -1,0 +1,12 @@
+
+PASS </title> should not break out of title.
+PASS </textarea> should not break out of textarea.
+PASS </style> should not break out of style.
+PASS </xmp> should not break out of xmp.
+PASS </iframe> should not break out of iframe.
+PASS </noembed> should not break out of noembed.
+PASS </noframes> should not break out of noframes.
+PASS </script> should not break out of script.
+PASS </noscript> should not break out of noscript.
+PASS </plaintext> should not break out of plaintext.
+

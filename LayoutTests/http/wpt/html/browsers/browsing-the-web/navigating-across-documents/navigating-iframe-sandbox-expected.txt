@@ -1,0 +1,4 @@
+
+PASS Ensure document gets replaced with an error document in case of blocked navigation
+PASS Ensure document gets replaced with an error document in case of blocked redirection
+

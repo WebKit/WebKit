@@ -1,0 +1,4 @@
+
+PASS Border radius percentages are supported
+PASS Border radius lengths respond to style changes
+

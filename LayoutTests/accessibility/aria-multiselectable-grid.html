@@ -1,0 +1,41 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<div id="grid1" role="grid" tabindex="0"></div>
+<div id="grid2" role="grid" aria-multiselectable="true" tabindex="0"></div>
+<div id="grid3" role="grid" aria-multiselectable="false" tabindex="0"></div>
+
+<script>
+    var testOutput = "This tests that aria-multiselectable is exposed correctly for grids.\n\n";
+
+    if (window.accessibilityController) {
+        window.jsTestIsAsync = true;
+
+        var gridMultiselectableUnspecified = accessibilityController.accessibleElementById("grid1");
+        testOutput += expect("gridMultiselectableUnspecified.isMultiSelectable", "true");
+
+        var gridMultiselectableTrue = accessibilityController.accessibleElementById("grid2");
+        testOutput += expect("gridMultiselectableTrue.isMultiSelectable", "true");
+
+        var gridMultiselectableFalse = accessibilityController.accessibleElementById("grid3");
+        testOutput += expect("gridMultiselectableFalse.isMultiSelectable", "false");
+
+        testOutput += "\nUpdating aria-multiselectable for #grid3 from false to true.\n";
+        document.getElementById("grid3").setAttribute("aria-multiselectable", "true");
+        setTimeout(async function() {
+            await waitFor(() => accessibilityController.accessibleElementById("grid3").isMultiSelectable);
+            testOutput += expect("accessibilityController.accessibleElementById('grid3').isMultiSelectable", "true");
+
+            debug(testOutput);
+            finishJSTest();
+        }, 0);
+    }
+</script>
+</body>
+</html>
+

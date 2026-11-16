@@ -1,0 +1,30 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>exposedContentRect mapped down through a scrolled same-site frame to its cross-site child</title>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/js-test-resources/ui-helper.js"></script>
+<script src="../resources/frame-geometry-test.js"></script>
+<style>
+body { margin: 0 }
+#child {
+    position: absolute;
+    left: 200px;
+    top: 100px;
+    width: 300px;
+    height: 250px;
+    border: 0;
+}
+</style>
+<body>
+<iframe id="child" src="http://127.0.0.1:8000/site-isolation/resources/frame-geometry-scrolled-child-same-site.html?label=child"></iframe>
+<script>
+
+promise_test(async t => {
+    await assertExposedRect("child", "0,250 300x250", "the scrolled-to part of the child frame should have tiled backing");
+    await assertExposedRect("grandchild", "0,0 200x150", "whole grandchild frame should have tiled backing");
+}, "exposedContentRect is mapped down through a scrolled same-site frame to its cross-site child");
+
+</script>
+</body>

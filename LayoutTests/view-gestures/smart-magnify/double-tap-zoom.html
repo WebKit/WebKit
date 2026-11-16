@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        .target {
+            margin: 100px;
+            width: 400px;
+            height: 400px;
+            background-color: silver;
+        }
+    </style>
+    <script src="../../resources/ui-helper.js"></script>
+    <script src="../resources/view-gesture-helpers.js"></script>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+
+        async function doSmartMagnify()
+        {
+            await UIHelper.setWebViewAllowsMagnification(true);
+            await UIHelper.smartMagnifyAt(300, 300);
+
+            document.getElementById('output').textContent = 'Visual viewport after smart magnify: ' + visualViewportDescription();
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }
+        
+        window.addEventListener('load', () => {
+            doSmartMagnify();
+        }, false);
+    </script>   
+</head>
+<body>
+    <div id="output"></div>
+    <div class="target"></div>
+</body>
+</html>

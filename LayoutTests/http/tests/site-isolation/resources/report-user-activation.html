@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script>
+window.addEventListener("message", function(event) {
+    parent.postMessage({
+        type: event.data,
+        isActive: navigator.userActivation.isActive,
+        hasBeenActive: navigator.userActivation.hasBeenActive
+    }, "*");
+}, false);
+
+parent.postMessage({ type: "ready" }, "*");
+</script>
+</body>
+</html>

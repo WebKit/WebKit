@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("Network.loadResource.Redirect");
+
+    let pageURL = WI.networkManager.mainFrame.mainResource.url;
+    let testCases = [
+        {name: "NotListed", kind: "same-origin", targetDirectory: new URL("resources/", pageURL).href},
+        {name: "CrossOrigin.NotListed", kind: "cross-origin", targetDirectory: "http://localhost:8000/inspector/network/resources/"},
+    ];
+
+    for (let {name, kind, targetDirectory} of testCases) {
+        suite.addTestCase({
+            name: `Network.loadResource.Redirect.${name}`,
+            description: `Network.loadResource of a URL that redirects to a ${kind} URL should load the target without listing a resource for either hop.`,
+            async test() {
+                let suffix = Date.now();
+                let hiddenToken = `hidden-${kind}-redirect-${suffix}`;
+                let controlToken = `control-${kind}-fetch-${suffix}`;
+                let targetURL = `${targetDirectory}data.txt?${hiddenToken}`;
+                let redirectURL = new URL(`/resources/redirect.py?url=${encodeURIComponent(targetURL)}`, pageURL).href;
+
+                let addedURLs = [];
+                let listener = WI.Frame.addEventListener(WI.Frame.Event.ResourceWasAdded, (event) => {
+                    addedURLs.push(event.data.resource.url);
+                });
+
+                let {content, status} = await NetworkAgent.loadResource(WI.networkManager.mainFrame.id, redirectURL);
+                InspectorTest.expectEqual(status, 200, "Network.loadResource should resolve with a 200 status.");
+                InspectorTest.expectEqual(content, "Plain text resource.\n", "Network.loadResource should resolve with the content of the redirect target.");
+
+                let [controlEvent] = await Promise.all([
+                    WI.Frame.awaitEvent(WI.Frame.Event.ResourceWasAdded),
+                    InspectorTest.evaluateInPage(`fetch("resources/data.txt?${controlToken}")`),
+                ]);
+                WI.Frame.removeEventListener(WI.Frame.Event.ResourceWasAdded, listener);
+
+                InspectorTest.expectThat(controlEvent.data.resource.url.includes(controlToken), "Should list a fetch made by the page.");
+                InspectorTest.expectEqual(addedURLs.filter((url) => url.includes(hiddenToken)).length, 0, "Should not list either hop of the redirected load.");
+                InspectorTest.expectEqual(Array.from(WI.networkManager.mainFrame.resourceCollection).filter((resource) => resource.url.includes(hiddenToken)).length, 0, "Main frame should have no resource for either hop.");
+            }
+        });
+    }
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests that Network.loadResource of a URL that redirects does not list a resource for either hop.</p>
+</body>
+</html>

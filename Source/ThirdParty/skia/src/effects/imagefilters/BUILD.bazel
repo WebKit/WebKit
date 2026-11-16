@@ -1,0 +1,34 @@
+load("//bazel:skia_rules.bzl", "skia_filegroup")
+
+package(
+    default_applicable_licenses = ["//:license"],
+)
+
+licenses(["notice"])
+
+IMAGEFILTERS_FILES = [
+    "SkBlendImageFilter.cpp",
+    "SkBlurImageFilter.cpp",
+    "SkColorFilterImageFilter.cpp",
+    "SkComposeImageFilter.cpp",
+    "SkCropImageFilter.cpp",
+    "SkDisplacementMapImageFilter.cpp",
+    "SkDropShadowImageFilter.cpp",
+    "SkImageImageFilter.cpp",
+    "SkLightingImageFilter.cpp",
+    "SkMagnifierImageFilter.cpp",
+    "SkMatrixConvolutionImageFilter.cpp",
+    "SkMatrixConvolutionImageFilter.h",
+    "SkMatrixTransformImageFilter.cpp",
+    "SkMergeImageFilter.cpp",
+    "SkMorphologyImageFilter.cpp",
+    "SkPictureImageFilter.cpp",
+    "SkRuntimeImageFilter.cpp",
+    "SkShaderImageFilter.cpp",
+]
+
+skia_filegroup(
+    name = "srcs",
+    srcs = IMAGEFILTERS_FILES,
+    visibility = ["//src/effects:__pkg__"],
+)

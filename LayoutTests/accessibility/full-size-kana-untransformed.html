@@ -1,0 +1,29 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+<meta charset=utf-8>
+</head>
+<body>
+
+<div id="text">
+<strong style="text-transform: full-size-kana" id="full-size-kana-text">じゅう</strong> must read the same as じゅう not じゆう.
+</div>
+
+<script>
+var output = "This tests that text with full-size-kana returns the untransformed text to Accessibility APIs.\n\n";
+
+if (window.accessibilityController) {
+    var textElement = accessibilityController.accessibleElementById("text");
+    var textMarkerRange = textElement.textMarkerRangeForElement(textElement);
+
+    output += `AX String: ${textElement.stringForTextMarkerRange(textMarkerRange)}\n`;
+      
+    debug(output);
+    finishJSTest();
+}
+</script>
+
+</body>
+</html>

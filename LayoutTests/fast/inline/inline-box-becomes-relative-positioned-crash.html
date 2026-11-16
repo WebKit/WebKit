@@ -1,0 +1,26 @@
+<script src="../../resources/ui-helper.js"></script>
+<style>
+span {
+  outline-offset: 1px;
+  border-image-source: url("data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==");
+}
+</style>
+PASS if no crash or assert.
+<span id=inlineBox>
+  <dialog open="true"></dialog>
+</span>
+<script>
+if (window.testRunner) {
+  testRunner.dumpAsText();
+  testRunner.waitUntilDone();
+}
+
+async function runTest() {
+  await UIHelper.renderingUpdate();
+
+  inlineBox.style.position = "relative";
+  window.testRunner?.notifyDone();
+}
+
+window.addEventListener('load', runTest, false);
+</script>

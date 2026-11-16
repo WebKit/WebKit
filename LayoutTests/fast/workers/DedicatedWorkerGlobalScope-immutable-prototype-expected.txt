@@ -1,0 +1,10 @@
+Tests that DedicatedWorkerGlobalScope's prototype is immutable
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Object.setPrototypeOf(self, { }): TypeError: Cannot set prototype of immutable prototype object
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

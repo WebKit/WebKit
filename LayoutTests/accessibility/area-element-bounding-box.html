@@ -1,0 +1,28 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<map name="imagemap1">
+    <area id="link" shape="rect" coords="10,10,133,72" href="http://www.apple.com"/>
+</map>
+<img src="resources/cake.png" border="0" align="left" usemap="#imagemap1" vspace="1">
+
+<script>
+var output = "This test ensures we compute a non-zero size for area elements.\n\n";
+
+if (window.accessibilityController) {
+    var link = accessibilityController.accessibleElementById("link");
+    // The actual width and height don't really matter, so long as they're within some reasonable range.
+    output += expect("link.width > 100", "true");
+    output += expect("link.height > 50", "true");
+
+    debug(output);
+}
+</script>
+</body>
+</html>
+

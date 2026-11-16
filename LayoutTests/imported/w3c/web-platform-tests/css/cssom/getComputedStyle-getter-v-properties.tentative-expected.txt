@@ -1,0 +1,12 @@
+
+PASS border-top
+PASS border-right
+PASS border-bottom
+PASS border-left
+PASS border
+PASS font
+PASS margin-top
+PASS font-size
+PASS max-width
+PASS width
+

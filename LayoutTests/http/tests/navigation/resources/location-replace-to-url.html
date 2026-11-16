@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script>
+window.addEventListener("load", function() {
+    setTimeout(function() {
+        location.replace(new URLSearchParams(location.search).get("url"));
+    }, 0);
+}, false);
+</script>
+</body>
+</html>

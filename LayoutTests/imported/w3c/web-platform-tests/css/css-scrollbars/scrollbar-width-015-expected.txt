@@ -1,0 +1,7 @@
+Test scrollbar-width: vertical scrollbar
+auto
+thin
+
+PASS scrollbar-width auto defers to ::-webkit-scrollbar
+PASS scrollbar-width thin overrides ::-webkit-scrollbar
+

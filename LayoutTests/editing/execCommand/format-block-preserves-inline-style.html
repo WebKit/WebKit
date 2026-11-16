@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/dump-as-markup.js"></script>
+<div id="test" contenteditable="true">
+<p id="p1" style="color: blue">Hello world</p>
+<p id="p2" style="color: blue; font-size: 18px">Styled text</p>
+<p id="p3">No style</p>
+<p id="p4" style="color: red">Cursor at end</p>
+</div>
+<script>
+
+Markup.description("This tests that FormatBlock preserves inline styles when converting between block elements.");
+Markup.dump("test", "Before FormatBlock");
+
+var s = window.getSelection();
+
+// Test 1: <p style="color: blue"> to <div> should preserve color.
+s.setPosition(document.getElementById("p1"), 0);
+document.execCommand("FormatBlock", false, "div");
+
+// Test 2: <p style="color: blue; font-size: 18px"> to <h1> should preserve all properties.
+s.setPosition(document.getElementById("p2"), 0);
+document.execCommand("FormatBlock", false, "h1");
+
+// Test 3: <p> with no style to <div> should have no style attribute.
+s.setPosition(document.getElementById("p3"), 0);
+document.execCommand("FormatBlock", false, "div");
+
+// Test 4: Cursor at end of paragraph (Yahoo Mail's exact scenario).
+var p4 = document.getElementById("p4");
+s.setPosition(p4.firstChild, p4.firstChild.length);
+document.execCommand("FormatBlock", false, "div");
+
+Markup.dump("test", "After FormatBlock");
+
+</script>
+</body>
+</html>

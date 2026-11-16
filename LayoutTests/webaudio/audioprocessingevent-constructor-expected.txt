@@ -1,0 +1,34 @@
+Tests the AudioProcessingEvent constructor
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS event = new AudioProcessingEvent; threw exception TypeError: Not enough arguments.
+PASS event = new AudioProcessingEvent('foo'); threw exception TypeError: Not enough arguments.
+PASS iBuffer = context.createBuffer(3, 200, 47000); did not throw exception.
+PASS oBuffer = context.createBuffer(2, 100, 46000); did not throw exception.
+PASS wrongBuffer = context.createBufferSource(); did not throw exception.
+PASS event = new AudioProcessingEvent('foo', { inputBuffer: iBuffer, outputBuffer: oBuffer }); threw exception TypeError: Member AudioProcessingEventInit.playbackTime is required and must be an instance of double.
+PASS event = new AudioProcessingEvent('foo', { playbackTime: 5, inputBuffer: iBuffer }); threw exception TypeError: Member AudioProcessingEventInit.outputBuffer is required and must be an instance of AudioBuffer.
+PASS event = new AudioProcessingEvent('foo', { playbackTime: 5, outputBuffer: oBuffer }); threw exception TypeError: Member AudioProcessingEventInit.inputBuffer is required and must be an instance of AudioBuffer.
+PASS event = new AudioProcessingEvent('foo', { playbackTime: 5, inputBuffer: null, outputBuffer: oBuffer }); threw exception TypeError: Type error.
+PASS event = new AudioProcessingEvent('foo', { playbackTime: 5, inputBuffer: iBuffer, outputBuffer: null }); threw exception TypeError: Type error.
+PASS event = new AudioProcessingEvent('foo', { playbackTime: 5, inputBuffer: wrongBuffer, outputBuffer: oBuffer }); threw exception TypeError: Type error.
+PASS event = new AudioProcessingEvent('foo', { playbackTime: 5, inputBuffer: iBuffer, outputBuffer: wrongBuffer }); threw exception TypeError: Type error.
+PASS event = new AudioProcessingEvent('foo', { playbackTime: 5, inputBuffer: iBuffer, outputBuffer: oBuffer, bubbles: true }); did not throw exception.
+PASS event.type is "foo"
+PASS event.bubbles is true
+PASS event.cancelable is false
+PASS event.composed is false
+PASS event.isTrusted is false
+PASS event.playbackTime is 5
+PASS event.inputBuffer.length is iBuffer.length
+PASS event.inputBuffer.duration is iBuffer.duration
+PASS event.inputBuffer.sampleRate is iBuffer.sampleRate
+PASS event.outputBuffer.length is oBuffer.length
+PASS event.outputBuffer.duration is oBuffer.duration
+PASS event.outputBuffer.sampleRate is oBuffer.sampleRate
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,6 @@
+Anchored away from the left edge: true
+Commit 1 after release still anchored: true
+Commit 2 after release still anchored: true
+Commit 3 after release still anchored: true
+Commit 4 after release still anchored: true
+Commit 5 after release still anchored: true

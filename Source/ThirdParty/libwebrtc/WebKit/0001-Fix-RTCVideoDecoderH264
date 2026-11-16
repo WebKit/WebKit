@@ -1,0 +1,19 @@
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/components/video_codec/RTCVideoDecoderH264.mm b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/components/video_codec/RTCVideoDecoderH264.mm
+index c3342800e0e..8e2a7d9c90f 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/components/video_codec/RTCVideoDecoderH264.mm
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/components/video_codec/RTCVideoDecoderH264.mm
+@@ -245,10 +245,14 @@ void decompressionOutputCallback(void *decoderRef,
+ 
+ - (void)destroyDecompressionSession {
+   if (_decompressionSession) {
++#if defined(WEBRTC_WEBKIT_BUILD)
++    VTDecompressionSessionWaitForAsynchronousFrames(_decompressionSession);
++#else
+ #if defined(WEBRTC_IOS)
+     if ([UIDevice isIOS11OrLater]) {
+       VTDecompressionSessionWaitForAsynchronousFrames(_decompressionSession);
+     }
++#endif
+ #endif
+     VTDecompressionSessionInvalidate(_decompressionSession);
+     CFRelease(_decompressionSession);

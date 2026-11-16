@@ -1,0 +1,6 @@
+
+
+PASS Recording a muted audio track should produce silence
+PASS Muting an audio track should record silence
+PASS Muting a video track should produce black frames
+

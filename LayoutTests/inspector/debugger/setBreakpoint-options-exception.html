@@ -1,0 +1,60 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/protocol-test.js"></script>
+<script src="../../http/tests/inspector/resources/console-test.js"></script>
+<script src="resources/breakpoint.js"></script>
+<script>
+function test()
+{
+    InspectorProtocol.sendCommand("Console.enable", {});
+    InspectorProtocol.sendCommand("Debugger.enable", {});
+    InspectorProtocol.sendCommand("Debugger.setBreakpointsActive", {active: true});
+
+    var logsSeen = 0;
+    const expectedLogs = 2;
+
+    InspectorProtocol.eventHandler["Debugger.scriptParsed"] = function(messageObject)
+    {
+        if (/resources\/breakpoint\.js$/.test(messageObject.params.url)) {
+            ProtocolTest.log("Found breakpoint.js");
+            var scriptIdentifier = messageObject.params.scriptId;
+            var location = {scriptId: scriptIdentifier, lineNumber: 8, columnNumber: 0};
+            var options = {condition: "this.will.cause.exception", autoContinue: true};
+            InspectorProtocol.sendCommand("Debugger.setBreakpoint", {location: location, options: options}, function(responseObject) {
+                InspectorProtocol.checkForError(responseObject);
+                ProtocolTest.log("Running breakpointWithCondition to trigger condition exception.");
+                InspectorProtocol.sendCommand("Runtime.evaluate", {expression: "breakpointWithCondition(1,2)"}, function() {
+                    location = {scriptId: scriptIdentifier, lineNumber: 18, columnNumber: 0};
+                    options = {actions: [{"type": "evaluate", "data": "this.will.cause.exception"}], autoContinue: true};
+                    InspectorProtocol.sendCommand("Debugger.setBreakpoint", {location: location, options: options}, function(responseObject) {
+                        ProtocolTest.log("Running breakpointActions to trigger actions exception.");
+                        InspectorProtocol.sendCommand("Runtime.evaluate", {expression: "breakpointActions(1,2)"});
+                    });
+                });
+            });
+        }
+    }
+
+    InspectorProtocol.eventHandler["Debugger.paused"] = function(messageObject)
+    {
+        ProtocolTest.log("Hit Breakpoint!");
+
+        ProtocolTest.log("FAIL: should not have hit breakpoint, autoContinue was true");
+        ProtocolTest.completeTest();
+    }
+
+    InspectorProtocol.eventHandler["Console.messageAdded"] = function(messageObject)
+    {
+        var message = ProtocolTest.Console.sanitizeConsoleMessage(messageObject);
+        ProtocolTest.log("PASS: Console Message: " + JSON.stringify(message));
+
+        if (++logsSeen === expectedLogs)
+            ProtocolTest.completeTest();
+    }
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Debugger.setBreakpoint options.condition or options.action with exception</p>
+</body>
+</html>

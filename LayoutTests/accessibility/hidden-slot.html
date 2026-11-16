@@ -1,0 +1,46 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<x-button id="x-button"><button id="inside">inside slot</button></x-button>
+
+<script>
+class XButton extends HTMLElement {
+    constructor() {
+        super();
+        this.attachShadow({ mode: "open", delegatesFocus: true });
+        const fragment = document.createRange().createContextualFragment("<button id='outside'>outside slot</button><slot id='slot' aria-hidden='true'></slot>");
+        this.shadowRoot.append(fragment.cloneNode(true));
+    }
+}
+customElements.define("x-button", XButton);
+
+var output = "This test ensures we don't expose elements within an aria-hidden slot element.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    output += expect("accessibilityController.accessibleElementById('outside').role.toLowerCase().includes('button')", "true");
+    var insideButton = accessibilityController.accessibleElementById("inside");
+    output += expect("!insideButton || insideButton.isIgnored", "true");
+
+    document.getElementById("x-button").shadowRoot.getElementById("slot").removeAttribute("aria-hidden");
+    setTimeout(async function() {
+        await waitFor(() => {
+            insideButton = accessibilityController.accessibleElementById("inside");
+            return insideButton && !insideButton.isIgnored;
+        });
+        output += expect("insideButton.role.toLowerCase().includes('button')", "true");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>
+

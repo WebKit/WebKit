@@ -1,0 +1,37 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+<my-simple></my-simple>
+
+<script>
+class MySimple extends HTMLElement {
+    constructor() {
+        super();
+        const root = this.attachShadow({ mode: "open" });
+        root.innerHTML = `<button id="button"><my-span>test</my-span></button>`;
+    }
+}
+customElements.define("my-simple", MySimple);
+
+class MySpan extends HTMLElement {
+    constructor() {
+        super();
+        const root = this.attachShadow({ mode: "open" });
+        root.innerHTML = `<span><slot></slot></span>`;
+    }
+}
+customElements.define("my-span", MySpan);
+
+let output = "This test ensures that we compute the correct accessible name for nested custom elements.\n\n";
+if (window.accessibilityController) {
+    output += `${platformTextAlternatives(accessibilityController.accessibleElementById("button"))}\n\n`;
+    debug(output);
+}
+</script>
+</body>
+</html>
+

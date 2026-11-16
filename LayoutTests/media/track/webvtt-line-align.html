@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src=../video-test.js></script>
+        <script>
+        async function runTest() {
+            findMediaElement();
+
+            let trackElement = video.appendChild(document.createElement('track'));
+            trackElement.src = 'captions-webvtt/line-align.vtt';
+            trackElement.track.mode = 'showing';
+
+            waitFor(trackElement, 'error').then(failTest);
+            await waitFor(trackElement, 'load');
+
+            let expected = {
+                length: 4,
+                tests: [
+                    { property: 'line', values: [0, 50, 100, 'auto']},
+                    { property: 'lineAlign', values: ['start', 'center', 'end', 'start']},
+                ],
+            };
+            testCues(0, expected);
+        }
+
+        window.addEventListener('load', event => {
+            runTest().then(endTest).catch(failTest);
+        })
+        </script>
+    </head>
+    <body">
+        <video></video>
+    </body>
+</html>

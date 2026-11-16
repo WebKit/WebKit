@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<style>
+    .wrapper {
+        display: inline-block;
+    }
+    .grid {
+        display: grid;
+        min-width: 400px;
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: 1fr 1fr;
+    }
+    .item1 {
+        width: 100px;
+        height: 100px;
+        grid-row: 1/2;
+    }
+    .item2 {
+        width: 100px;
+        height: 100px;
+        grid-row: 2/3;
+    }
+</style>
+<div class="wrapper">
+    <div class="grid">
+        <div class="item1"></div>
+        <div class="item2"></div>
+    </div>
+</div>
+<div>PASS if no crash.</div>
+<script>
+    window.testRunner?.dumpAsText();
+    document.body.offsetHeight;
+</script>

@@ -1,0 +1,23 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+description("Tests whether SVG tearoff objects with tearoffs update properly.");
+
+var svgDoc = document.implementation.createDocument("http://www.w3.org/2000/svg", "svg", null);
+var transform = svgDoc.documentElement.createSVGTransform();
+
+shouldBe("transform.matrix.a", "1");
+transform.matrix.a = 2;
+shouldBe("transform.matrix.a", "2");
+
+var successfullyParsed = true;
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

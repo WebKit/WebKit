@@ -1,0 +1,13 @@
+These tests assert the behavior described at https://github.com/w3c/csswg-drafts/issues/11044#issuecomment-2599101601
+
+text
+some more text
+lorem ipsum
+cats
+dogs
+
+PASS main > div > div 1
+PASS main > div > div 2
+PASS main > div > div 3
+PASS main > div > div 4
+

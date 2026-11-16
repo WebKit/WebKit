@@ -1,0 +1,33 @@
+<!doctype html>
+<html>
+<head>
+<title>Non-positioned table row does not contain absolute descendants</title>
+<link rel="match" href="non-positioned-row-no-containment-expected.html">
+<style>
+body {
+    margin: 0;
+}
+table {
+    border-spacing: 0;
+    border-collapse: collapse;
+    border: none;
+}
+td {
+    padding: 0;
+    border: none;
+}
+</style>
+</head>
+<body>
+<!-- Without position: relative on the row, the absolute div should escape to the
+     nearest positioned ancestor (the outer div), covering it entirely. -->
+<div style="position: relative; width: 200px; height: 200px">
+    <table>
+        <tr>
+            <td style="width: 50px; height: 50px">Cell</td>
+        </tr>
+    </table>
+    <div style="position: absolute; inset: 0; background: green"></div>
+</div>
+</body>
+</html>

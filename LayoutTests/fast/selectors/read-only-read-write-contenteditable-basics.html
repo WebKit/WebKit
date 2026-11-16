@@ -1,0 +1,129 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<style>
+#test-block * {
+    background-color: white;
+    color: black;
+}
+#test-block :read-only {
+    background-color: red;
+}
+#test-block :read-write {
+    color: lime;
+}
+</style>
+</head>
+<body>
+    <div style="display:none;" id="test-block">
+        <!-- Default is true -->
+        <div id="editing-host-1" contenteditable>
+            <div id="editable-block-1">Editable</div>
+            <div id="non-editable-block-1" contenteditable=false>
+                <div id="non-editable-subblock-1">Not editable</div>
+            </div>
+        </div>
+        <!-- True is true :) -->
+        <div id="editing-host-2" contenteditable=true>
+            <div id="editable-block-2">Editable</div>
+            <div id="non-editable-block-2" contenteditable=false>
+                <div id="non-editable-subblock-2">Not editable</div>
+            </div>
+        </div>
+        <!-- The case of the attribute's value is irrelevant. -->
+        <div id="editing-host-3" contenteditable="TrUe">
+            <div id="editable-block-3">Editable</div>
+            <div id="non-editable-block-3" contenteditable="FaLsE">
+                <div id="non-editable-subblock-3">Not editable</div>
+            </div>
+        </div>
+        <!-- The value "plaintext-only" is a WebKit extension, it defines an editing host too. -->
+        <div id="editing-host-4" contenteditable="plaintext-only">
+            <div id="editable-block-4">Editable</div>
+            <div id="non-editable-block-4" contenteditable="false">
+                <div id="non-editable-subblock-4">Not editable</div>
+            </div>
+        </div>
+
+        <!-- Per definition, the rules for editing host and editable elements do not apply do <input> elements. -->
+        <div id="editing-host-5" contenteditable=true>
+            <input type="text" id="read-write-input" value="read-write input">
+            <input type="text" disabled id="read-only-input-1" value="read-only input">
+            <input type="text" readonly id="read-only-input-2" value="read-only input">
+        </div>
+        <input type="text" contenteditable=true disabled id="read-only-input-3" value="read-only input">
+        <input type="text" contenteditable=true readonly id="read-only-input-4" value="read-only input">
+
+        <!-- Same story for <textarea>, it has its own definition of :read-write/:read-only. The rules for editing host and editable elements do not apply must be ignored. -->
+        <div id="editing-host-6" contenteditable=true>
+            <textarea id="read-write-textarea">Editable text area</textarea>
+            <textarea disabled id="read-only-textarea-1">Non editable text area</textarea>
+            <textarea readonly id="read-only-textarea-2">Non editable text area</textarea>
+        </div>
+        <textarea contenteditable=true disabled id="read-only-textarea-3">Non editable text area</textarea>
+        <textarea contenteditable=true readonly id="read-only-textarea-4">Non editable text area</textarea>
+    </div>
+</body>
+<script>
+description('Test the basic features of ":read-only", ":read-write" on elements with the contenteditable attribute. The definition is that ":read-write" is matches for "elements that are editing hosts or editable and are neither input elements nor textarea elements"');
+
+var editableElements = [
+    "editing-host-1",
+    "editable-block-1",
+    "editing-host-2",
+    "editable-block-2",
+    "editing-host-3",
+    "editable-block-3",
+    "editing-host-4",
+    "editable-block-4",
+    "editing-host-5",
+    "read-write-input",
+    "editing-host-6",
+    "read-write-textarea",
+];
+
+var nonEditableElements = [
+    "non-editable-block-1",
+    "non-editable-subblock-1",
+    "non-editable-block-2",
+    "non-editable-subblock-2",
+    "non-editable-block-3",
+    "non-editable-subblock-3",
+    "non-editable-block-4",
+    "non-editable-subblock-4",
+    "read-only-input-1",
+    "read-only-input-2",
+    "read-only-input-3",
+    "read-only-input-4",
+    "read-only-textarea-1",
+    "read-only-textarea-2",
+    "read-only-textarea-3",
+    "read-only-textarea-4"
+];
+
+function testQuerySelector(selector, expectedResults)
+{
+    shouldBe('document.querySelectorAll("' + selector + '").length', "" + expectedResults.length);
+    for (var i = 0; i < expectedResults.length; ++i)
+        shouldBeEqualToString('document.querySelectorAll("' + selector + '")[' + i + '].id', expectedResults[i]);
+}
+
+function testStyling(expectedReadOnlyElements)
+{
+    var allTestCases = document.querySelectorAll('#test-block *');
+    for (var i = 0; i < allTestCases.length; ++i) {
+        var isReadOnly = expectedReadOnlyElements.indexOf(allTestCases[i].id) >= 0;
+        shouldBeEqualToString('getComputedStyle(document.querySelectorAll("#test-block *")[' + i + ']).color', isReadOnly ? 'rgb(0, 0, 0)' : 'rgb(0, 255, 0)')
+        shouldBeEqualToString('getComputedStyle(document.querySelectorAll("#test-block *")[' + i + ']).backgroundColor', isReadOnly ? 'rgb(255, 0, 0)' : 'rgb(255, 255, 255)')
+    }
+}
+
+testStyling(nonEditableElements);
+
+testQuerySelector("#test-block :read-write", editableElements);
+testQuerySelector("#test-block :read-only", nonEditableElements);
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</html>

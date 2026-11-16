@@ -1,0 +1,10 @@
+Test for a bug that spin buttons did not work if a number input has large padding-right value.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS numberInput.value is "1"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

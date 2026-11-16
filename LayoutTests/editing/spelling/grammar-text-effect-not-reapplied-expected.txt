@@ -1,0 +1,13 @@
+This test verifies that grammar text effects are not reapplied when grammar checking re-fires on the same text with the same UUID. This test requires WebKitTestRunner to run.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS internals.hasGrammarMarker(4, 4) became true
+PASS effectCountAfterFirstCheck is >= 1
+PASS internals.hasGrammarMarker(4, 4) became true
+PASS effectCountAfterSecondCheck is effectCountAfterFirstCheck
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

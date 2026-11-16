@@ -1,0 +1,57 @@
+<html>
+    <head>
+        <script src="media-file.js"></script>
+        <script src="video-test.js"></script>
+        <script>
+
+            function start()
+            {
+                if (!window.internals) {
+                    failTest('This test requires window.internals.');
+                    return;
+                }
+
+                findMediaElement();
+
+                waitForEventOnce('playing', playing)
+
+                consoleWrite('* set video.src');
+                video.src = findMediaFile('video', 'content/test');
+            }
+
+            async function playing()
+            {
+                consoleWrite('<br>* Send a "begin scrubbing" command.');
+                run("internals.postRemoteControlCommand('beginscrubbing')");
+
+                await sleepFor(20)
+                consoleWrite('<br>* Send a seek command.');
+                run("internals.postRemoteControlCommand('seekToPlaybackPosition', 1.1)");
+
+                await waitFor(video, 'seeked')
+                consoleWrite('<br>* Send another seek command.');
+                run("internals.postRemoteControlCommand('seekToPlaybackPosition', 1.2)");
+
+                await waitFor(video, 'seeked')
+                consoleWrite('<br>* Send another seek command.');
+                run("internals.postRemoteControlCommand('seekToPlaybackPosition', 1.3)");
+
+                await waitFor(video, 'seeked')
+                consoleWrite('<br>* Send an "end scrubbing" command.');
+                run("internals.postRemoteControlCommand('endscrubbing')");
+
+                await sleepFor(20)
+                testExpected('video.paused', false);
+
+                consoleWrite("");
+                endTest();
+            }
+
+        </script>
+    </head>
+
+    <body onload="start()">
+        <p>Test that playback resumes after "begingscrubbing/endscrubbing" remote control commands.</p>
+        <video controls autoplay></video>
+    </body>
+</html>

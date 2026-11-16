@@ -1,0 +1,43 @@
+<html> 
+<head>
+
+<style>
+.editing { 
+    border: 1px solid red; 
+}
+</style>
+<script src=../editing.js language="JavaScript" type="text/JavaScript" ></script>
+
+<script>
+
+function editingTest() {
+    extendSelectionForwardByLineCommand();
+    copyCommand();
+    boldCommand();
+    moveSelectionBackwardByCharacterCommand();
+    insertParagraphCommand();
+    moveSelectionBackwardByCharacterCommand();
+    pasteAndMatchStyleCommand();
+}
+
+</script>
+
+<title>Paste and match style on an empty (but styled) line</title> 
+</head> 
+<body>
+
+<p>This tests paste and match style on an empty (but styled) line</p>
+<p>The first line is copied (unstyled), then it's bolded, then a paragraph separator is inserted and the original unstyled line is pasted (with style matching).</p>
+
+<hr>
+
+<div contenteditable id="root" style="word-wrap: break-word; -khtml-nbsp-mode: space; -khtml-line-break: after-white-space;">
+<div id="test" class="editing">this text should end up bold</div>
+</div>
+
+<script>
+runEditingTest();
+</script>
+
+</body>
+</html>

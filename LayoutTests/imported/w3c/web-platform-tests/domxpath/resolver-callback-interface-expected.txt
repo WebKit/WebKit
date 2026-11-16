@@ -1,0 +1,12 @@
+
+PASS callable resolver
+PASS callable resolver: result is not cached
+PASS callable resolver: abrupt completion from Call
+PASS callable resolver: no 'lookupNamespaceURI' lookups
+PASS object resolver
+PASS object resolver: this value and `prefix` argument
+PASS object resolver: 'lookupNamespaceURI' is not cached
+PASS object resolver: abrupt completion from Get
+PASS object resolver: 'lookupNamespaceURI' is thruthy and not callable
+PASS object resolver: 'lookupNamespaceURI' is falsy and not callable
+

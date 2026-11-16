@@ -1,0 +1,2 @@
+# Allow anyone to update the field trial experiment list.
+per-file field_trials.py=*

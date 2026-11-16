@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            margin: 0;
+            width: 100%;
+            height: 3000px;
+            background: linear-gradient(silver, gray);
+        }
+    </style>
+    <script src="../resources/ui-helper.js"></script>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+
+        // The scrolling tree only learns the position a zoom anchored to once the stable visible content rect
+        // update has made it through the web process, so for the first few commits after a release it still reads
+        // the position the gesture started from. Those commits re-assert the override, and when they re-derived the
+        // position from the tree the page jumped back to where the zoom began, which for a page that starts at the
+        // left edge means snapping to the left. Every commit in that window has to keep showing what was committed.
+        //
+        // Sampled rather than compared against a fixed position, since the commit the round trip lands on isn't
+        // deterministic; what has to hold is that no commit in between shows a different position.
+        async function doTest()
+        {
+            const output = [];
+            const anchoringScrollPosition = async () => {
+                const override = await UIHelper.delegatedZoomOverrideAsText();
+                const match = override.match(/anchoring scroll position \((-?\d+), (-?\d+)\)/);
+                return match ? { x: parseInt(match[1]), y: parseInt(match[2]) } : null;
+            };
+
+            window.scrollTo(0, 400);
+            await UIHelper.ensurePresentationUpdate();
+            await UIHelper.ensurePresentationUpdate();
+
+            // Zoom in away from the left edge, so the anchored position has somewhere horizontal to snap back from.
+            await UIHelper.beginMagnifyGestureAt(400, 300, 1.0);
+            const committed = await anchoringScrollPosition();
+
+            // Ended without waiting for the scale to settle, since that outlasts the round trip and every sample
+            // would land after the tree already knew the anchored position.
+            eventSender.scaleGestureEnd(0);
+
+            output.push('Anchored away from the left edge: ' + !!(committed && committed.x > 0));
+
+            for (let i = 1; i <= 5; ++i) {
+                await UIHelper.ensurePresentationUpdate();
+                const position = await anchoringScrollPosition();
+                const held = !!(position && committed && position.x == committed.x && position.y == committed.y);
+                output.push('Commit ' + i + ' after release still anchored: ' + held);
+            }
+
+            document.getElementById('output').textContent = output.join('\n');
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }
+
+        window.addEventListener('load', doTest, false);
+    </script>
+</head>
+<body>
+    <pre id="output"></pre>
+</body>
+</html>

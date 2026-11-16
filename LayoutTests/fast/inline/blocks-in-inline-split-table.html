@@ -1,0 +1,11 @@
+<!-- webkit-test-runner [ BlocksInInlineLayoutEnabled=true ] -->
+<style>
+.cell { display: table-cell }
+</style>
+<div class=cell>a</div>
+<div id=t class=cell>b</div>
+<div class=cell>c</div>
+<script>
+document.body.offsetLeft;
+t.classList.remove("cell");
+</script>

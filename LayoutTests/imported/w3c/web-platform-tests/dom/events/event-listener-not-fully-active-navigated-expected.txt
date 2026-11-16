@@ -1,0 +1,5 @@
+
+PASS Targets in a document that its iframe has navigated away from
+PASS Targets in a nested iframe whose parent document is no longer fully active
+PASS Targets in a nested iframe whose parent iframe was removed
+

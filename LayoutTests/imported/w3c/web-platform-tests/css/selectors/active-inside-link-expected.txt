@@ -1,0 +1,4 @@
+click me
+
+PASS element clicked inside a link matches :active
+

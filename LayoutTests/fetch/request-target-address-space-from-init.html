@@ -1,0 +1,26 @@
+<!DOCTYPE html><!-- webkit-test-runner [ LocalNetworkAccessEnabled=true ] -->
+<html>
+<head>
+<title>Request must read targetAddressSpace from init when constructed from a URL string</title>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+</head>
+<body>
+<script>
+test(() => {
+    assert_equals(new Request("http://example.com/", { targetAddressSpace: "local" }).targetAddressSpace, "local");
+    assert_equals(new Request("http://example.com/", { targetAddressSpace: "loopback" }).targetAddressSpace, "loopback");
+    assert_equals(new Request("http://example.com/", { targetAddressSpace: "public" }).targetAddressSpace, "public");
+}, "Request constructed from a URL string reads targetAddressSpace from init");
+
+test(() => {
+    const original = new Request("http://example.com/");
+    assert_equals(new Request(original, { targetAddressSpace: "local" }).targetAddressSpace, "local");
+}, "Request constructed from another Request reads targetAddressSpace from init");
+
+test(() => {
+    assert_equals(new Request("http://example.com/").targetAddressSpace, "public");
+}, "Request defaults targetAddressSpace to public when init omits it");
+</script>
+</body>
+</html>

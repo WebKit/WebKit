@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        iframe {
+            width: 400px;
+            height: 300px;
+            border: none;
+            display: none;
+        }
+        
+        body.changed iframe {
+            display: block;
+        }
+    </style>
+    <script src="../../resources/ui-helper.js"></script>
+    <script>
+        if (window.testRunner) {
+            testRunner.waitUntilDone();
+            if (testRunner.dontForceRepaint)
+                testRunner.dontForceRepaint();
+        }
+
+        window.addEventListener('load', async () => {
+            
+            await UIHelper.renderingUpdate();
+            document.body.classList.add('changed');
+
+            await UIHelper.renderingUpdate();
+            const iframe = document.getElementsByTagName('iframe')[0];
+            iframe.contentDocument.body.classList.add('changed');
+
+            await UIHelper.renderingUpdate();
+            await UIHelper.renderingUpdate();
+
+            window.testRunner?.notifyDone();
+        }, false);
+    </script>
+</head>
+<body>
+
+<iframe scrolling="no" srcdoc="
+<style>
+    body {
+        width: 400px;
+        height: 300px;
+        background-color: red;
+    }
+    
+    body.changed {
+        background-color: green;
+    }
+</style>
+<body>
+</body>
+"></iframe>
+
+</body>
+</html>

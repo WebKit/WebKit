@@ -1,0 +1,15 @@
+A
+AB
+ABCDE
+PASS: single char (0-1) rect count = 1
+PASS: single char (0-1) has nonzero width = true
+PASS: two chars (0-1) total width = 20
+PASS: two chars (1-2) total width = 20
+PASS: two chars (0-2) total width = 40
+PASS: two chars (0-1) x < (1-2) x = true
+PASS: multi (0-1) total width = 20
+PASS: multi (1-5) total width = 80
+PASS: multi (0-5) total width = 100
+PASS: multi (2-3) total width = 20
+PASS: multi (0-1) x < (1-5) first x = true
+

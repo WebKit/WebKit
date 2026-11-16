@@ -1,0 +1,5 @@
+
+PASS A deferred audio element moved with adoptNode() is observed by the new document and builds its controls there
+PASS A deferred audio element inserted into another frame's document is observed by the new document and builds its controls there
+PASS A deferred audio element adopted before being inserted is observed by the new document and builds its controls there
+

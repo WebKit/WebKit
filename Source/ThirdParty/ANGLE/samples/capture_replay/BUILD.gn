@@ -1,0 +1,17 @@
+# Copyright 2022 The Chromium Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("../../gni/angle.gni")
+import("../../src/tests/angle_traces.gni")
+
+angle_trace("capture_replay_sample_trace") {
+  _trace = "angle_capture"
+
+  json_file_name = "$_trace.json"
+
+  data = [
+    "$_trace.json",
+    "$_trace.angledata.gz",
+  ]
+}

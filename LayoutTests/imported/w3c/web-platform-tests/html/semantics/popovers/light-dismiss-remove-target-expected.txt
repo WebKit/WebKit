@@ -1,0 +1,3 @@
+
+FAIL Light dismiss should still happen if the clicked element is removed during pointerdown. assert_true: popover should not be light dismissed after removing the target during pointerdown. expected true got false
+

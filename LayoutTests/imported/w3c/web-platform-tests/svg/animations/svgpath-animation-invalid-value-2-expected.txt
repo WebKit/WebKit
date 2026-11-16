@@ -1,0 +1,3 @@
+
+PASS Test SVGPath animation with invalid values: Malformed path in to attribute.
+

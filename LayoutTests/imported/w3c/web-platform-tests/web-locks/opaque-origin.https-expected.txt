@@ -1,0 +1,6 @@
+
+PASS navigator.locks.request() in non-sandboxed iframe should not throw
+PASS navigator.locks.request() in sandboxed iframe should throw SecurityError
+PASS navigator.locks.query() in non-sandboxed iframe should not throw
+PASS navigator.locks.query() in sandboxed iframe should throw SecurityError
+

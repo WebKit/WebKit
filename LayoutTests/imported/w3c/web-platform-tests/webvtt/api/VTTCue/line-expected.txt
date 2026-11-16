@@ -1,0 +1,4 @@
+
+PASS VTTCue.line, script-created cue
+PASS VTTCue.line, parsed cue
+

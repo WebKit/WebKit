@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<body>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<script src="resources/request-frames-until-true.js"></script>
+<style>
+
+    #target {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100px;
+        height: 100px;
+        background-color: black;
+        will-change: opacity;
+    }
+
+</style>
+<div id="target"></div>
+<script>
+
+promise_test(async t => {
+    const target = document.getElementById("target");
+
+    const acceleratedAnimationsStarted = async numberOfAnimations => {
+        return requestFramesUntilTrue(
+            () => internals.acceleratedAnimationsForElement(target).length == numberOfAnimations,
+            () => !"acceleratedAnimationsForElement" in window.internals);
+    };
+
+    // Set initial styles.
+    target.style.opacity = "0.5";
+    target.style.marginLeft = "100px";
+
+    await new Promise(setTimeout);
+
+    // Now update styles to trigger a transition for properties, only one of which should yield an accelerated animation.
+    target.style.removeProperty("opacity");
+    target.style.removeProperty("margin-left");
+    target.style.transitionProperty = "margin-left opacity";
+    target.style.transitionDuration = "1s";
+
+    // Wait a few frames for the opacity animation to be commited.
+    await acceleratedAnimationsStarted(1);
+}, "Transtioning two properties, one of which can be accelerated while the other cannot, yields only one accelerated animation.");
+
+</script>
+</body>

@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<body>
+<script>
+test(() => {
+    let count = 0;
+    const listener = () => count++;
+    document.addEventListener("DOMActivate", listener);
+    document.dispatchEvent(new MouseEvent("click", { bubbles: true }));
+    document.removeEventListener("DOMActivate", listener);
+    assert_equals(count, 1);
+}, "A bubbling click dispatched at the document fires DOMActivate once");
+
+test(() => {
+    let count = 0;
+    const listener = () => count++;
+    document.addEventListener("DOMActivate", listener);
+    document.dispatchEvent(new MouseEvent("click", { bubbles: false }));
+    document.removeEventListener("DOMActivate", listener);
+    assert_equals(count, 1);
+}, "A non-bubbling click dispatched at the document fires DOMActivate once");
+
+test(() => {
+    let count = 0;
+    const listener = () => count++;
+    document.addEventListener("DOMActivate", listener);
+    document.body.dispatchEvent(new MouseEvent("click", { bubbles: true }));
+    document.removeEventListener("DOMActivate", listener);
+    assert_equals(count, 1);
+}, "A bubbling click dispatched at the body fires DOMActivate once");
+
+test(() => {
+    let path;
+    const listener = event => path = event.composedPath();
+    document.addEventListener("click", listener);
+    document.dispatchEvent(new MouseEvent("click", { bubbles: true }));
+    document.removeEventListener("click", listener);
+    assert_array_equals(path, [document, window]);
+}, "composedPath() of a click dispatched at the document contains the document once, followed by the window");
+
+test(() => {
+    let count = 0;
+    const listener = () => count++;
+    window.addEventListener("DOMActivate", listener);
+    document.dispatchEvent(new MouseEvent("click", { bubbles: true }));
+    window.removeEventListener("DOMActivate", listener);
+    assert_equals(count, 1);
+}, "DOMActivate from a click dispatched at the document bubbles to the window once");
+
+test(() => {
+    let count = 0;
+    const domActivateListener = () => count++;
+    const clickListener = event => event.preventDefault();
+    document.addEventListener("DOMActivate", domActivateListener);
+    window.addEventListener("click", clickListener);
+    document.dispatchEvent(new MouseEvent("click", { bubbles: true, cancelable: true }));
+    window.removeEventListener("click", clickListener);
+    document.removeEventListener("DOMActivate", domActivateListener);
+    assert_equals(count, 0);
+}, "A click dispatched at the document and canceled by a window listener does not fire DOMActivate");
+
+promise_test(async () => {
+    const iframe = document.createElement("iframe");
+    document.body.appendChild(iframe);
+    await new Promise(resolve => {
+        if (iframe.contentDocument.readyState === "complete")
+            resolve();
+        else
+            iframe.onload = resolve;
+    });
+    const frameDocument = iframe.contentDocument;
+    const frameWindow = iframe.contentWindow;
+    let documentCount = 0;
+    let windowCount = 0;
+    frameDocument.addEventListener("DOMActivate", () => documentCount++);
+    frameWindow.addEventListener("DOMActivate", () => windowCount++);
+    frameDocument.dispatchEvent(new frameWindow.MouseEvent("click", { bubbles: true }));
+    iframe.remove();
+    assert_equals(documentCount, 1);
+    assert_equals(windowCount, 1);
+}, "A bubbling click dispatched at an iframe's document fires DOMActivate once");
+</script>
+</body>

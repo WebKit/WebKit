@@ -1,0 +1,4 @@
+^^^bar$$$bar$bar
+
+PASS substring-before() arguments depending on the context node
+

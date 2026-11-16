@@ -1,0 +1,7 @@
+Clicking a button that is not mouse-focusable should record a click focus trigger, even when the button is inside an ancestor which is focusable and already focused, so that a later element.focus() does not show :focus-visible.
+
+Open
+
+
+PASS focus() after clicking a non-mouse-focusable button inside an already-focused ancestor should not show :focus-visible
+

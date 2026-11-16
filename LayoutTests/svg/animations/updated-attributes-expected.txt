@@ -1,0 +1,2 @@
+PASS: animated width is 100
+

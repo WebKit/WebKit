@@ -1,0 +1,96 @@
+This test checks the SIMD-optimized newline splitting patterns for correctness.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS "".split(newlinePatterns[0]) is [""]
+PASS "no newlines".split(newlinePatterns[0]) is ["no newlines"]
+PASS "abc".split(newlinePatterns[0]) is ["abc"]
+PASS "Line1\r\nLine2\nLine3\rLine4".split(newlinePatterns[0]) is ["Line1", "Line2", "Line3", "Line4"]
+PASS "\n".split(newlinePatterns[0]) is ["", ""]
+PASS "\ntext".split(newlinePatterns[0]) is ["", "text"]
+PASS "a\nb".split(newlinePatterns[0]) is ["a", "b"]
+PASS "a\nb\nc".split(newlinePatterns[0]) is ["a", "b", "c"]
+PASS "text\n".split(newlinePatterns[0]) is ["text", ""]
+PASS "\n\n".split(newlinePatterns[0]) is ["", "", ""]
+PASS "a\n\nb".split(newlinePatterns[0]) is ["a", "", "b"]
+PASS "a\nb\nc".split(newlinePatterns[0], 2) is ["a", "b"]
+PASS "a\nb\n".split(newlinePatterns[0], 2) is ["a", "b"]
+PASS "a\nb\nc\n".split(newlinePatterns[0], 3) is ["a", "b", "c"]
+PASS "This is a very long string that exceeds 32 chars to test vectorMatch in the SIMD-optimized function\nSecond line".split(newlinePatterns[0]) is ["This is a very long string that exceeds 32 chars to test vectorMatch in the SIMD-optimized function", "Second line"]
+PASS "\r".split(newlinePatterns[0]) is ["", ""]
+PASS "\rtext".split(newlinePatterns[0]) is ["", "text"]
+PASS "a\rb".split(newlinePatterns[0]) is ["a", "b"]
+PASS "a\rb\rc".split(newlinePatterns[0]) is ["a", "b", "c"]
+PASS "text\r".split(newlinePatterns[0]) is ["text", ""]
+PASS "\r\r".split(newlinePatterns[0]) is ["", "", ""]
+PASS "a\r\rb".split(newlinePatterns[0]) is ["a", "", "b"]
+PASS "a\rb\rc".split(newlinePatterns[0], 2) is ["a", "b"]
+PASS "a\rb\r".split(newlinePatterns[0], 2) is ["a", "b"]
+PASS "a\rb\rc\r".split(newlinePatterns[0], 3) is ["a", "b", "c"]
+PASS "This is a very long string that exceeds 32 chars to test vectorMatch in the SIMD-optimized function\rSecond line".split(newlinePatterns[0]) is ["This is a very long string that exceeds 32 chars to test vectorMatch in the SIMD-optimized function", "Second line"]
+PASS "\r\n".split(newlinePatterns[0]) is ["", ""]
+PASS "\r\ntext".split(newlinePatterns[0]) is ["", "text"]
+PASS "a\r\nb".split(newlinePatterns[0]) is ["a", "b"]
+PASS "a\r\nb\r\nc".split(newlinePatterns[0]) is ["a", "b", "c"]
+PASS "text\r\n".split(newlinePatterns[0]) is ["text", ""]
+PASS "\r\n\r\n".split(newlinePatterns[0]) is ["", "", ""]
+PASS "a\r\n\r\nb".split(newlinePatterns[0]) is ["a", "", "b"]
+PASS "a\r\nb\r\nc".split(newlinePatterns[0], 2) is ["a", "b"]
+PASS "a\r\nb\r\n".split(newlinePatterns[0], 2) is ["a", "b"]
+PASS "a\r\nb\r\nc\r\n".split(newlinePatterns[0], 3) is ["a", "b", "c"]
+PASS "This is a very long string that exceeds 32 chars to test vectorMatch in the SIMD-optimized function\r\nSecond line".split(newlinePatterns[0]) is ["This is a very long string that exceeds 32 chars to test vectorMatch in the SIMD-optimized function", "Second line"]
+PASS "".split(newlinePatterns[1]) is [""]
+PASS "no newlines".split(newlinePatterns[1]) is ["no newlines"]
+PASS "abc".split(newlinePatterns[1]) is ["abc"]
+PASS "Line1\r\nLine2\nLine3\rLine4".split(newlinePatterns[1]) is ["Line1", "Line2", "Line3", "Line4"]
+PASS "\n".split(newlinePatterns[1]) is ["", ""]
+PASS "\ntext".split(newlinePatterns[1]) is ["", "text"]
+PASS "a\nb".split(newlinePatterns[1]) is ["a", "b"]
+PASS "a\nb\nc".split(newlinePatterns[1]) is ["a", "b", "c"]
+PASS "text\n".split(newlinePatterns[1]) is ["text", ""]
+PASS "\n\n".split(newlinePatterns[1]) is ["", "", ""]
+PASS "a\n\nb".split(newlinePatterns[1]) is ["a", "", "b"]
+PASS "a\nb\nc".split(newlinePatterns[1], 2) is ["a", "b"]
+PASS "a\nb\n".split(newlinePatterns[1], 2) is ["a", "b"]
+PASS "a\nb\nc\n".split(newlinePatterns[1], 3) is ["a", "b", "c"]
+PASS "This is a very long string that exceeds 32 chars to test vectorMatch in the SIMD-optimized function\nSecond line".split(newlinePatterns[1]) is ["This is a very long string that exceeds 32 chars to test vectorMatch in the SIMD-optimized function", "Second line"]
+PASS "\r".split(newlinePatterns[1]) is ["", ""]
+PASS "\rtext".split(newlinePatterns[1]) is ["", "text"]
+PASS "a\rb".split(newlinePatterns[1]) is ["a", "b"]
+PASS "a\rb\rc".split(newlinePatterns[1]) is ["a", "b", "c"]
+PASS "text\r".split(newlinePatterns[1]) is ["text", ""]
+PASS "\r\r".split(newlinePatterns[1]) is ["", "", ""]
+PASS "a\r\rb".split(newlinePatterns[1]) is ["a", "", "b"]
+PASS "a\rb\rc".split(newlinePatterns[1], 2) is ["a", "b"]
+PASS "a\rb\r".split(newlinePatterns[1], 2) is ["a", "b"]
+PASS "a\rb\rc\r".split(newlinePatterns[1], 3) is ["a", "b", "c"]
+PASS "This is a very long string that exceeds 32 chars to test vectorMatch in the SIMD-optimized function\rSecond line".split(newlinePatterns[1]) is ["This is a very long string that exceeds 32 chars to test vectorMatch in the SIMD-optimized function", "Second line"]
+PASS "\r\n".split(newlinePatterns[1]) is ["", ""]
+PASS "\r\ntext".split(newlinePatterns[1]) is ["", "text"]
+PASS "a\r\nb".split(newlinePatterns[1]) is ["a", "b"]
+PASS "a\r\nb\r\nc".split(newlinePatterns[1]) is ["a", "b", "c"]
+PASS "text\r\n".split(newlinePatterns[1]) is ["text", ""]
+PASS "\r\n\r\n".split(newlinePatterns[1]) is ["", "", ""]
+PASS "a\r\n\r\nb".split(newlinePatterns[1]) is ["a", "", "b"]
+PASS "a\r\nb\r\nc".split(newlinePatterns[1], 2) is ["a", "b"]
+PASS "a\r\nb\r\n".split(newlinePatterns[1], 2) is ["a", "b"]
+PASS "a\r\nb\r\nc\r\n".split(newlinePatterns[1], 3) is ["a", "b", "c"]
+PASS "This is a very long string that exceeds 32 chars to test vectorMatch in the SIMD-optimized function\r\nSecond line".split(newlinePatterns[1]) is ["This is a very long string that exceeds 32 chars to test vectorMatch in the SIMD-optimized function", "Second line"]
+PASS RegExp.$1 is "test"
+PASS RegExp.$2 is "123"
+PASS RegExp.$1 is "test"
+PASS RegExp.$2 is "123"
+PASS RegExp.$1 is ""
+PASS RegExp.$2 is ""
+PASS RegExp.$1 is "foo"
+PASS RegExp.$2 is "bar"
+PASS RegExp.$1 is ""
+PASS RegExp.$2 is ""
+PASS RegExp.lastMatch is "\n"
+PASS RegExp.lastMatch is "\r\n"
+PASS RegExp.lastMatch is "\r"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

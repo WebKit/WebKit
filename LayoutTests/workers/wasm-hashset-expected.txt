@@ -1,0 +1,8 @@
+CONSOLE MESSAGE: about to start worker
+CONSOLE MESSAGE: Byte length of response: 52733
+CONSOLE MESSAGE: Got the wasm module from worker
+CONSOLE MESSAGE: Finished running
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

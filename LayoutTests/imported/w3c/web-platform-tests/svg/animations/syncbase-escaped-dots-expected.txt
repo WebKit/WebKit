@@ -1,0 +1,4 @@
+
+PASS Single escaped dot in syncbase ID (begin="my\.anim.begin")
+PASS Multiple escaped dots in syncbase ID (begin="a\.b\.c.begin")
+

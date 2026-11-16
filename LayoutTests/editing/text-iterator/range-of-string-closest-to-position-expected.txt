@@ -1,0 +1,11 @@
+PASS internals.rangeOfStringNearLocation(rangeOfNodeContent(p1), 'the', 11).toArray() is secondThe
+PASS internals.rangeOfStringNearLocation(rangeOfNodeContent(p1), 'the', 9).toArray() is secondThe
+PASS internals.rangeOfStringNearLocation(rangeOfNodeContent(p1), 'the', 6).toArray() is firstThe
+PASS internals.rangeOfStringNearLocation(rangeOfNodeContent(p1), 'the', 16).toArray() is secondThe
+PASS internals.rangeOfStringNearLocation(rangeOfNodeContent(p1), 'The', 11).toArray() is upperThe
+PASS internals.rangeOfStringNearLocation(rangeOfNodeContent(p2), '中文', 5).toArray() is chineseMatch
+PASS internals.rangeOfStringNearLocation(rangeOfNodeContent(p3), 'the', 5).toArray() is rtlMatch
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

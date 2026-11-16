@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="video-test.js"></script>
+    <script>
+    window.addEventListener('load', event => {
+        consoleWrite('* Main Profile');
+        consoleWrite('Only 8 or 10 bit color is supported:')
+        testExpected(`internals.validateAV1ConfigurationRecord("av01.0.00M.08")`, true);
+        testExpected(`internals.validateAV1ConfigurationRecord("av01.0.00M.10")`, true);
+        testExpected(`internals.validateAV1ConfigurationRecord("av01.0.00M.12")`, false);
+        testExpected(`internals.validateAV1ConfigurationRecord("av01.0.00M.09")`, false);
+        consoleWrite('Only 4:2:0 subsampling is supported:')
+        testExpected(`internals.validateAV1ConfigurationRecord("av01.0.00M.08.0.000.1.1.1.0")`, false);
+        testExpected(`internals.validateAV1ConfigurationRecord("av01.0.00M.08.0.100.1.1.1.0")`, false);
+        testExpected(`internals.validateAV1ConfigurationRecord("av01.0.00M.08.0.110.1.1.1.0")`, true);
+        testExpected(`internals.validateAV1ConfigurationRecord("av01.0.00M.08.0.111.1.1.1.0")`, true);
+        testExpected(`internals.validateAV1ConfigurationRecord("av01.0.00M.08.0.112.1.1.1.0")`, true);
+
+        consoleWrite('');
+        consoleWrite('* High Profile');
+        consoleWrite('Only 8 or 10 bit color is supported:')
+        testExpected(`internals.validateAV1ConfigurationRecord("av01.1.00M.08.0.000.1.1.1.0")`, true);
+        testExpected(`internals.validateAV1ConfigurationRecord("av01.1.00M.10.0.000.1.1.1.0")`, true);
+        testExpected(`internals.validateAV1ConfigurationRecord("av01.1.00M.12.0.000.1.1.1.0")`, false);
+        testExpected(`internals.validateAV1ConfigurationRecord("av01.1.00M.09.0.000.1.1.1.0")`, false);
+        consoleWrite('Only 4:4:4 subsampling is supported:')
+        testExpected(`internals.validateAV1ConfigurationRecord("av01.1.00M.08.0.000.1.1.1.0")`, true);
+        testExpected(`internals.validateAV1ConfigurationRecord("av01.1.00M.08.0.100.1.1.1.0")`, false);
+        testExpected(`internals.validateAV1ConfigurationRecord("av01.1.00M.08.0.110.1.1.1.0")`, false);
+        testExpected(`internals.validateAV1ConfigurationRecord("av01.1.00M.08.0.111.1.1.1.0")`, false);
+        testExpected(`internals.validateAV1ConfigurationRecord("av01.1.00M.08.0.112.1.1.1.0")`, false);
+        consoleWrite('Monochrome is not supported:');
+        testExpected(`internals.validateAV1ConfigurationRecord("av01.1.00M.08.0.000.1.1.1.0")`, true);
+        testExpected(`internals.validateAV1ConfigurationRecord("av01.1.00M.08.1.000.1.1.1.0")`, false);
+
+        consoleWrite('');
+        consoleWrite('* Professional Profile');
+        consoleWrite('Only 8, 10, or 12 bit color is supported:')
+        testExpected(`internals.validateAV1ConfigurationRecord("av01.2.00M.08.0.000.1.1.1.0")`, true);
+        testExpected(`internals.validateAV1ConfigurationRecord("av01.2.00M.10.0.000.1.1.1.0")`, true);
+        testExpected(`internals.validateAV1ConfigurationRecord("av01.2.00M.12.0.000.1.1.1.0")`, true);
+        testExpected(`internals.validateAV1ConfigurationRecord("av01.2.00M.09.0.000.1.1.1.0")`, false);
+        consoleWrite('For 8 and 10 bit color, only 4:4:4 subsampling is supported:')
+        testExpected(`internals.validateAV1ConfigurationRecord("av01.2.00M.08.0.000.1.1.1.0")`, true);
+        testExpected(`internals.validateAV1ConfigurationRecord("av01.2.00M.08.0.100.1.1.1.0")`, false);
+        testExpected(`internals.validateAV1ConfigurationRecord("av01.2.00M.08.0.110.1.1.1.0")`, false);
+        testExpected(`internals.validateAV1ConfigurationRecord("av01.2.00M.08.0.111.1.1.1.0")`, false);
+        testExpected(`internals.validateAV1ConfigurationRecord("av01.2.00M.08.0.112.1.1.1.0")`, false);
+        consoleWrite('For 12 bit color, only all subsampling values are supported:')
+        testExpected(`internals.validateAV1ConfigurationRecord("av01.2.00M.12.0.000.1.1.1.0")`, true);
+        testExpected(`internals.validateAV1ConfigurationRecord("av01.2.00M.12.0.100.1.1.1.0")`, true);
+        testExpected(`internals.validateAV1ConfigurationRecord("av01.2.00M.12.0.110.1.1.1.0")`, true);
+        testExpected(`internals.validateAV1ConfigurationRecord("av01.2.00M.12.0.111.1.1.1.0")`, true);
+        testExpected(`internals.validateAV1ConfigurationRecord("av01.2.00M.12.0.112.1.1.1.0")`, true);
+        consoleWrite('Monochrome is supported for 12 bit color:');
+        testExpected(`internals.validateAV1ConfigurationRecord("av01.2.00M.12.0.000.1.1.1.0")`, true);
+        testExpected(`internals.validateAV1ConfigurationRecord("av01.2.00M.12.1.110.1.1.1.0")`, true);
+        endTest();
+    }, { once: true });
+    </script>
+</head>
+<body>
+</body>
+</html>

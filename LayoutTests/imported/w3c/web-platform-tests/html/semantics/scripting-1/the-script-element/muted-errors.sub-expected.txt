@@ -1,0 +1,10 @@
+
+
+PASS Errors for same-origin script shouldn't be muted
+PASS Errors for cross-origin script should be muted
+PASS Errors for cross-origin script should be muted even if the script is once loaded as same-origin
+PASS Errors for same-origin scripts redirected to a cross-origin url and redirected back to same-origin should be muted
+PASS Errors for cross-origin scripts redirected to a same-origin url should be muted
+PASS Non-synthetic errors for same-origin scripts redirected to a cross-origin URL and redirected back to same-origin should be muted
+PASS Syntax error for same-origin script redirected to a cross-origin URL and redirected back to same-origin should be muted
+

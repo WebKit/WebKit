@@ -1,0 +1,55 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<!DOCTYPE html>
+<html>
+<head>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+</head>
+<body>
+<script>
+// This test verifies that same-site window.open with noopener shares the same process.
+// We use BroadcastChannel to communicate since noopener prevents direct communication.
+
+promise_test(async (t) => {
+    if (!window.internals) {
+        assert_unreached("This test requires internals API");
+        return;
+    }
+
+    const openerPID = internals.processIdentifier;
+    const channelName = "same-site-noopener-test-" + Math.random();
+
+    // Create a BroadcastChannel to receive the process ID from the opened window
+    const bc = new BroadcastChannel(channelName);
+    t.add_cleanup(() => bc.close());
+
+    const messagePromise = new Promise((resolve, reject) => {
+        const timeout = t.step_timeout(() => reject(new Error("Timeout waiting for message")), 5000);
+        bc.onmessage = (e) => {
+            clearTimeout(timeout);
+            resolve(e.data);
+        };
+    });
+
+    // Open a same-site window with noopener
+    // The URL includes the channel name so the opened page knows which channel to use
+    const openedWindow = window.open(
+        "/site-isolation/resources/report-process-id-via-broadcast.html?channel=" + encodeURIComponent(channelName),
+        "_blank",
+        "noopener"
+    );
+
+    // With noopener, openedWindow should be null
+    assert_equals(openedWindow, null, "window.open with noopener should return null");
+
+    const data = await messagePromise;
+
+    assert_equals(data.type, "processId", "Should receive processId message");
+    const openedPID = data.pid;
+
+    assert_equals(openerPID, openedPID, "Same-site window.open with noopener should use the same process");
+}, "Same-site window.open with noopener uses the same process");
+</script>
+</body>
+</html>
+

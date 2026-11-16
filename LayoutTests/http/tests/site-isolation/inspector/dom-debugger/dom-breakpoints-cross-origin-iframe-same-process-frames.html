@@ -1,0 +1,69 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="../debugger/resources/site-isolation-debugger-test-utilities.js"></script>
+<script src="resources/dom-debugger-test-utilities.js"></script>
+<script src="resources/dom-breakpoint-test-utilities.js"></script>
+<script>
+
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.DOMDebugger.DOMBreakpoint.SameProcessFrames");
+
+    addDOMBreakpointSetupTestCase(suite, {withNestedFrame: true});
+
+    addDOMBreakpointTestCase(suite, {
+        name: "SiteIsolation.DOMDebugger.DOMBreakpoint.SameProcessFrames.NestedFrameNode",
+        description: "The same-process frame nested in the cross-origin iframe has its own frame target, whose document is spliced into the cross-origin iframe's tree. A DOM breakpoint on its node should go to that target and pause for the nested frame's own script, but not for script of its parent frame.",
+        async test() {
+            InspectorTest.log(`Adding "attribute-modified" DOM Breakpoint on the nested frame's #nested-target...`);
+            let node = await nodeForExpression(nestedTarget, `document.getElementById("nested-target")`);
+            InspectorTest.expectThat(node?.owningTarget === nestedTarget, "Node should belong to the nested frame's target.");
+            let breakpoint = addDOMBreakpointForNode(node, WI.DOMBreakpoint.Type.AttributeModified);
+            await evaluateInFrameTarget(nestedTarget, "0");
+            InspectorTest.expectThat(WI.domDebuggerManager.domBreakpointsForNode(node).includes(breakpoint), "Breakpoint should be listed for the node.");
+
+            InspectorTest.log("Script of the nested frame sets a property of the node, then calls a method of it...");
+            await expectDOMBreakpointPause("modifyOwnAttribute()", breakpoint, {functionName: "modifyOwnAttribute", inNestedFrame: true});
+            await expectDOMBreakpointPause("setOwnAttributeByMethod()", breakpoint, {functionName: "setOwnAttributeByMethod", inNestedFrame: true});
+
+            InspectorTest.log("Script of the parent frame sets a property of the node, then calls a method of it...");
+            await expectNoPause("modifyNestedAttribute()", "Should not pause when script of the parent frame sets a property of the node.");
+            await expectNoPause("setNestedAttributeByMethod()", "Should not pause when script of the parent frame calls a method of the node.");
+
+            InspectorTest.log("Script of the parent frame calls a function of the nested frame...");
+            await expectDOMBreakpointPause(`document.getElementById("nested-frame").contentWindow.modifyOwnAttribute()`, breakpoint, {functionName: "modifyOwnAttribute"});
+
+            InspectorTest.log(`Setting a "subtree-modified" DOM Breakpoint on the same node in the cross-origin frame target directly...`);
+            let {result} = await crossOriginTarget.RuntimeAgent.evaluate.invoke({expression: "nestedNode()", objectGroup: "test"});
+            let {nodeId} = await crossOriginTarget.DOMAgent.requestNode(result.objectId);
+            await InspectorTest.expectException(async () => {
+                await crossOriginTarget.DOMDebuggerAgent.setDOMBreakpoint.invoke({nodeId, type: WI.DOMBreakpoint.Type.SubtreeModified});
+            });
+        }
+    });
+
+    addDOMBreakpointTestCase(suite, {
+        name: "SiteIsolation.DOMDebugger.DOMBreakpoint.SameProcessFrames.ScriptOfNestedFrame",
+        description: "A DOM breakpoint on a node of the cross-origin iframe should pause for the iframe's own script, also when the nested same-process frame calls it, but not when script of the nested frame mutates the node itself, since the iframe's debugger cannot pause that script.",
+        async test() {
+            let breakpoint = await addDOMBreakpoint("attribute-target", WI.DOMBreakpoint.Type.AttributeModified);
+
+            InspectorTest.log("Script of the nested frame sets a property of the node, then calls a method of it...");
+            await expectNoPause("modifyParentAttribute()", "Should not pause when script of the nested frame sets a property of the node.", {inNestedFrame: true});
+            await expectNoPause("setParentAttributeByMethod()", "Should not pause when script of the nested frame calls a method of the node.", {inNestedFrame: true});
+
+            InspectorTest.log("Script of the nested frame calls a function of the cross-origin iframe...");
+            await expectDOMBreakpointPause("callParentFunction()", breakpoint, {functionName: "modifyAttribute", inNestedFrame: true});
+
+            InspectorTest.log("Script of the cross-origin iframe calls a method of the node...");
+            await expectDOMBreakpointPause("setAttributeByMethod()", breakpoint, {functionName: "setAttributeByMethod"});
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+
+<body onload="runTest()">
+<p>Test that a frame target's DOM breakpoints pause for script of that frame, whether it sets a property or calls a method of the node, and do not pause for script of another frame in the same process.</p>
+<iframe src="http://localhost:8000/site-isolation/inspector/dom-debugger/resources/dom-breakpoint-frame.html"></iframe>
+</body>

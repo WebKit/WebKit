@@ -1,0 +1,5 @@
+
+
+PASS With web security disabled, a document can access a cross-site frame in another agent cluster
+PASS With web security disabled, a popup's initial Window is reused for a cross-site document in another agent cluster
+

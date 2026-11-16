@@ -1,0 +1,79 @@
+<DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="scroller" style="width: 800px; overflow: hidden">
+    <div id="scroller-cont" style="height: 245px; width: 1410px; position: relative; top: 0; left: 0; -webkit-transform: translate(0px, 0px) translateZ(0px);">
+        <div id="wrapper1" style="-webkit-transform: translate3d(0px, 0px, 0px); width: 710px; height: 245px; float: left; margin: 0; padding: 0">
+            <iframe id="testFrame1" src="resources/iframe-with-animated-gif.html" style="width: 245px; height: 245px;" onload="frameLoaded()"></iframe>
+        </div>
+        <div id="wrapper2" style="-webkit-transform: translate3d(0px, 0px, 0px); width: 700px; height: 245px; float: left; margin: 0; padding: 0">
+            <iframe id="testFrame2" src="resources/iframe-with-animated-gif2.html" style="margin-left: 100px; width: 245px; height: 245px;" onload="frameLoaded()"></iframe>
+        </div>
+    </div>
+</div>
+<div id="console"></div>
+<script>
+description("Test that animated images in iframes are correctly paused / resumed when the iframe is translated in and out of view using -webkit-transform.");
+jsTestIsAsync = true;
+
+function isFirstImagePaused()
+{
+  var firstFrame = document.getElementById("testFrame1");
+  return internals.hasPausedImageAnimations(firstFrame.contentDocument.getElementById('testImage'));
+}
+
+function isSecondImagePaused()
+{
+  var secondFrame = document.getElementById("testFrame2");
+  return internals.hasPausedImageAnimations(secondFrame.contentDocument.getElementById('testImage'));
+}
+
+function forceLayout()
+{
+  document.getElementById("scroller-cont").offsetLeft;
+}
+
+function checkSecondImageUnpaused()
+{
+  shouldBecomeEqual("isSecondImagePaused()", "false", translateImagesRight);
+}
+
+function checkSecondImagePaused()
+{
+  shouldBecomeEqual("isSecondImagePaused()", "true", finishJSTest);
+}
+
+function translateImagesLeft()
+{
+  shouldBeFalse("isFirstImagePaused()");
+  debug("Translating images left so that first image is no longer visible, but second image is.");
+  forceLayout();
+  document.getElementById("scroller-cont").style["-webkit-transform"] = "translate(-610px, 0px)";
+  shouldBecomeEqual("isFirstImagePaused()", "true", checkSecondImageUnpaused);
+}
+
+function translateImagesRight()
+{
+  debug("Translating images right so that second image is no longer visible, but first image is.");
+  forceLayout();
+  document.getElementById("scroller-cont").style["-webkit-transform"] = "translate(0px, 0px)";
+  shouldBecomeEqual("isFirstImagePaused()", "false", checkSecondImagePaused);
+}
+
+var numberFramesLoaded = 0;
+function frameLoaded()
+{
+  ++numberFramesLoaded;
+  if (numberFramesLoaded != 2)
+    return;
+  shouldBecomeEqual("!isFirstImagePaused() && isSecondImagePaused()", "true", translateImagesLeft);
+}
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

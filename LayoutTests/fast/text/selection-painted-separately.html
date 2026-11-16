@@ -1,0 +1,11 @@
+<style>
+    div > div { width: 100px; font-family: Ahem; font-size: 20px; }
+    div > div::selection { color: white; }
+</style>
+<div style="overflow: hidden; background: red; width: 100px; color: green;">
+<div id="target">xxxxx xxxxx</div><div>xxxxx xxxxx</div>
+</div>
+<script>
+    var target = document.getElementById("target");
+    getSelection().setBaseAndExtent(target.firstChild, 6, target.nextSibling.firstChild, 5);
+</script>

@@ -1,0 +1,4 @@
+
+This test is to test whether preload image will require 2 more requests or not.
+
+PASSED

@@ -1,0 +1,128 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/protocol-test.js"></script>
+</head>
+<body onLoad="runTest()">
+
+<p>Checking Web Inspector protocol (specifically live region properties) for the Accessibility Node Inspector.</p>
+
+<div id="examples">
+
+	<div class="ex" role="group" aria-live="off" aria-busy="true" aria-atomic="true">off</div>
+    <div class="ex" role="group" aria-live="polite" aria-busy="true" aria-atomic="true">polite</div>
+    <div class="ex" role="group" aria-live="assertive" aria-busy="true" aria-atomic="true">assertive</div>
+    <div class="ex" role="group" aria-live="off" aria-busy="true" aria-atomic="false">off</div>
+    <div class="ex" role="group" aria-live="polite" aria-busy="true" aria-atomic="false">polite</div>
+    <div class="ex" role="group" aria-live="assertive" aria-busy="true" aria-atomic="false">assertive</div>
+    
+    <div class="ex" role="alert">assertive (default)</div>
+	<div class="ex" role="alert" aria-live="off">off</div>
+	<div class="ex" role="alert" aria-live="polite">polite</div>
+	<div class="ex" role="log">polite (default)</div>
+	<div class="ex" role="log" aria-live="assertive">assertive</div>
+	<div class="ex" role="log" aria-live="off">off</div>
+	<div class="ex" role="marquee">off (default)</div>
+	<div class="ex" role="status">polite (default)</div>
+	<div class="ex" role="status" aria-live="assertive">assertive</div>
+	<div class="ex" role="status" aria-live="off">off</div>
+	<div class="ex" role="timer">off (default)</div>
+
+    <div class="ex" role="alert">relevant: additions text (implicit)</div>
+    <div class="ex" role="alert" aria-relevant="additions text">relevant: additions text (explicit)</div>
+    <div class="ex" role="alert" aria-relevant="text additions">relevant: additions text (order should be normalized)</div>
+    <div class="ex" role="alert" aria-relevant="additions removals">relevant: additions removals</div>
+    <div class="ex" role="alert" aria-relevant="removals text">relevant: removals text</div>
+    <div class="ex" role="alert" aria-relevant="removals">relevant: removals</div>
+    <div class="ex" role="alert" aria-relevant="text">relevant: text</div>
+    <div class="ex" role="alert" aria-relevant="additions">relevant: additions</div>
+    <div class="ex" role="alert" aria-relevant="all">relevant: all (explicit)</div>
+    <div class="ex" role="alert" aria-relevant="additions removals text">relevant: all (implicit)</div>
+    <div class="ex" role="alert" aria-relevant="text additions removals">relevant: all (implicit)</div>
+    <div class="ex" role="alert" aria-relevant="text removals additions">relevant: all (implicit)</div>
+    <div class="ex" role="alert" aria-relevant="additions removals removals">relevant: additions removals (duplicate)</div>
+    <div class="ex" role="alert" aria-relevant="text text">relevant: text (duplicate)</div>
+
+</div>
+
+<script>
+
+function $(id) {
+    return document.getElementById(id);
+}
+
+function cleanup() {
+    // Hide the test element container to avoid irrelevant output diffs on subsequent updates.
+    $("examples").style.display = "none";
+}
+
+function test() {
+
+    var examples = [];
+    var documentNodeId = null;
+    var bodyNodeId = null;
+
+    function onGotDocument(response) {
+        InspectorProtocol.checkForError(response);
+        documentNodeId = response.result.root.nodeId;
+        InspectorProtocol.sendCommand("DOM.querySelectorAll", {"nodeId": documentNodeId, "selector": ".ex"}, onGotQuerySelectorAll);
+    }
+
+    function onGotQuerySelectorAll(response) {
+        InspectorProtocol.checkForError(response);
+        examples = response.result.nodeIds;
+        ProtocolTest.log("Total elements to be tested: " + examples.length + ".");
+        loop();
+    }
+
+    function loop() {
+        if (examples.length) {
+            InspectorProtocol.sendCommand("DOM.getOuterHTML", {"nodeId": examples[examples.length-1]}, onGotOuterHTML);
+        } else {
+            finishTest();
+        }
+    }
+
+    function onGotOuterHTML(response) {
+        InspectorProtocol.checkForError(response);
+        var outerHTML = response.result.outerHTML;
+        outerHTML = outerHTML.replace(/ class="ex"/g, ""); // remove any duplicated, unnecessary class attributes
+        ProtocolTest.log("\n" + outerHTML);
+        InspectorProtocol.sendCommand("DOM.getAccessibilityPropertiesForNode", {"nodeId": examples[examples.length-1]}, onGotAccessibilityProperties);
+    }
+
+    function onGotAccessibilityProperties(response) {
+        InspectorProtocol.checkForError(response);
+        logAccessibilityProperties(response.result.properties);
+        examples.pop();
+        loop();
+    }
+
+    function logAccessibilityProperties(properties) {
+        for (var key in properties) {
+            var value = properties[key];
+            switch (key){
+            case "busy":
+            case "exists":
+            case "liveRegionAtomic":
+            case "liveRegionRelevant":
+            case "liveRegionStatus":
+                ProtocolTest.log("    " + key + ": " + value);
+                break;
+            default:
+                continue;
+            }
+        }
+    }
+
+    function finishTest() {
+        InspectorProtocol.sendCommand("Runtime.evaluate", {"expression": "cleanup()"}, function(){
+            ProtocolTest.completeTest();
+        });
+    }
+
+    InspectorProtocol.sendCommand("DOM.getDocument", {}, onGotDocument);
+
+}
+</script>
+</body>
+</html>

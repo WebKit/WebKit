@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <script>
+    async function doLoad() {
+      if (window.testRunner) {
+        testRunner.waitUntilDone();
+        if (testRunner.dontForceRepaint)
+          testRunner.dontForceRepaint();
+      }
+
+      var canvas = document.createElement('canvas');
+      document.body.appendChild(canvas);
+      var ctx = canvas.getContext('2d');
+
+      canvas.width = 200;
+      canvas.height = 200;
+      ctx.lineWidth = 29.04;
+      ctx.lineCap = "round";
+
+      ctx.clearRect(0, 0, 200, 200);
+
+      // Paint the whole cleared canvas.
+      await new Promise(requestAnimationFrame);
+      await new Promise(requestAnimationFrame);
+
+      // After this, repaints should be restricted to the new stroke bounds.
+
+      ctx.strokeStyle = "#f00";
+      ctx.beginPath();
+      ctx.moveTo(50, 50);
+      ctx.lineTo(100, 150);
+      ctx.stroke();
+
+      ctx.strokeStyle = "#0f0";
+      ctx.beginPath();
+      ctx.moveTo(100, 150);
+      ctx.bezierCurveTo(150, 100, 150, 100, 150, 50);
+      ctx.stroke();
+
+      await new Promise(requestAnimationFrame);
+      await new Promise(requestAnimationFrame);
+
+      if (window.testRunner) {
+        testRunner.notifyDone();
+      }
+    }
+  </script>
+</head>
+
+<body onload="doLoad()">
+</body>
+
+</html>

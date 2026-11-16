@@ -1,0 +1,5 @@
+
+PASS Escape start parenthesis in ::part name.
+PASS Escape start space in ::part name.
+PASS Collapse spaces in ::part names list.
+

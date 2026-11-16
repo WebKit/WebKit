@@ -1,0 +1,5 @@
+
+PASS getCapabilities returns the [[Capabilities]] internal slot as a plain object
+PASS getConstraints returns the [[Constraints]] internal slot (most recent successfully applied)
+PASS getSettings returns the [[Settings]] internal slot as a plain object
+

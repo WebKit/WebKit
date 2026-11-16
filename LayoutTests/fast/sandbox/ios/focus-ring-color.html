@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/js-test-pre.js"></script>
+<script>
+description('Test that the focus ring color is as expected.');
+
+if (window.internals) {
+    shouldBe("internals.focusRingColor()", "'rgb(0, 122, 255)'");
+}
+</script>
+</head>
+<body>
+</body>

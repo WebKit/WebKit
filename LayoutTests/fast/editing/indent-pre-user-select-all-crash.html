@@ -1,0 +1,23 @@
+<style>
+    #DETAILS { -webkit-user-select: all; }
+</style>
+<script>
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+
+    window.onload = () => {
+        document.execCommand("selectAll", false);
+        document.execCommand("indent", false);
+
+        requestAnimationFrame(function () {
+            document.body.innerHTML = "<p>Tests indenting pre element that has user-select:all parent. The test passes if WebKit doesn't crash or hit an assertion.</p>";
+            if (window.testRunner) {
+                testRunner.notifyDone();
+            }
+        });
+    }
+</script>
+<body contentEditable="true"><br></br><details id=DETAILS open="true"><pre>a
+</pre></details><span>a</span>

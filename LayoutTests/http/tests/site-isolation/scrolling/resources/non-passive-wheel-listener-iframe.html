@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<style>
+html, body { margin: 0; }
+body { height: 2000px; }
+body.short { height: 100px; }
+</style>
+<body>
+<script>
+const params = new URLSearchParams(location.search);
+if (params.has('short'))
+    document.body.className = 'short';
+if (params.has('overflowHidden'))
+    document.documentElement.style.overflow = 'hidden';
+
+let wheelEventCount = 0;
+addEventListener('wheel', (event) => {
+    ++wheelEventCount;
+    if (params.has('preventDefault'))
+        event.preventDefault();
+}, { passive: false });
+
+addEventListener('message', (event) => {
+    event.source.postMessage({ scrollY, wheelEventCount }, '*');
+});
+
+top.postMessage({ loaded: true }, '*');
+</script>
+</body>

@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<body id="test">
+<script src="../../../resources/js-test-pre.js"></script>
+<script>
+description("Tests that Attr Nodes cannot have children.");
+
+const idAttr = document.body.getAttributeNode("id");
+shouldBe("idAttr.__proto__", "Attr.prototype");
+shouldBe("idAttr.ownerElement", "document.body");
+shouldBeEqualToString("idAttr.name", "id");
+shouldBeEqualToString("idAttr.localName", "id");
+shouldBeNull("idAttr.parentNode");
+shouldBeNull("idAttr.firstChild");
+shouldBeNull("idAttr.lastChild");
+shouldBeFalse("idAttr.hasChildNodes()");
+shouldBe("idAttr.childNodes.length" , "0");
+shouldBeEqualToString("idAttr.value", "test");
+shouldBeEqualToString("idAttr.nodeValue", "test");
+shouldBeEqualToString("idAttr.textContent", "test");
+
+const text = document.createTextNode("bar");
+shouldThrowErrorName("idAttr.appendChild(text)", "HierarchyRequestError");
+shouldThrowErrorName("idAttr.insertBefore(text, null)", "HierarchyRequestError");
+
+debug("");
+let detachedAttr = document.createAttribute("foo");
+shouldBeEqualToString("detachedAttr.name", "foo");
+shouldBeEqualToString("detachedAttr.localName", "foo");
+shouldBeEqualToString("detachedAttr.value", "");
+shouldBeEqualToString("detachedAttr.nodeValue", "");
+shouldBeEqualToString("detachedAttr.textContent", "");
+shouldBeNull("detachedAttr.ownerElement")
+shouldBeNull("detachedAttr.parentNode");
+shouldBeNull("detachedAttr.firstChild");
+shouldBeNull("detachedAttr.lastChild");
+shouldBeFalse("detachedAttr.hasChildNodes()");
+shouldBe("detachedAttr.childNodes.length" , "0");
+shouldThrowErrorName("detachedAttr.appendChild(text)", "HierarchyRequestError");
+shouldThrowErrorName("detachedAttr.insertBefore(text, null)", "HierarchyRequestError");
+
+debug("");
+evalAndLog("detachedAttr.value = 'bar'");
+shouldBeEqualToString("detachedAttr.value", "bar");
+shouldBeEqualToString("detachedAttr.nodeValue", "bar");
+shouldBeEqualToString("detachedAttr.textContent", "bar");
+shouldBeNull("detachedAttr.firstChild");
+shouldBeNull("detachedAttr.lastChild");
+shouldBeFalse("detachedAttr.hasChildNodes()");
+shouldBe("detachedAttr.childNodes.length" , "0");
+
+debug("");
+evalAndLog("detachedAttr.nodeValue = 'bar2'");
+shouldBeEqualToString("detachedAttr.value", "bar2");
+shouldBeEqualToString("detachedAttr.nodeValue", "bar2");
+shouldBeEqualToString("detachedAttr.textContent", "bar2");
+
+debug("");
+evalAndLog("detachedAttr.textContent = 'bar3'");
+shouldBeEqualToString("detachedAttr.value", "bar3");
+shouldBeEqualToString("detachedAttr.nodeValue", "bar3");
+shouldBeEqualToString("detachedAttr.textContent", "bar3");
+
+debug("");
+evalAndLog("detachedAttr.value = null");
+shouldBeEqualToString("detachedAttr.value", "null");
+
+debug("");
+evalAndLog("detachedAttr.nodeValue = null");
+shouldBeEqualToString("detachedAttr.value", "");
+
+debug("");
+evalAndLog("detachedAttr.textContent = null");
+shouldBeEqualToString("detachedAttr.value", "");
+
+debug("");
+evalAndLog("detachedAttr.value = 'bar'");
+evalAndLog("document.body.setAttributeNode(detachedAttr)");
+const fooAttr = detachedAttr;
+detachedAttr = null;
+shouldBe("fooAttr.ownerElement", "document.body");
+shouldBe("document.body.getAttributeNode('foo')", "fooAttr");
+shouldBeEqualToString("document.body.getAttribute('foo')", "bar");
+shouldBeEqualToString("fooAttr.value", "bar");
+shouldBe("document.body.attributes.foo", "fooAttr");
+shouldBe("document.body.attributes['foo']", "fooAttr");
+shouldBe("document.body.attributes[1]", "fooAttr");
+shouldBeNull("fooAttr.firstChild");
+shouldBeNull("fooAttr.lastChild");
+shouldBeFalse("fooAttr.hasChildNodes()");
+shouldBe("fooAttr.childNodes.length" , "0");
+shouldThrowErrorName("fooAttr.appendChild(text)", "HierarchyRequestError");
+shouldThrowErrorName("fooAttr.insertBefore(text, null)", "HierarchyRequestError");
+
+debug("");
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

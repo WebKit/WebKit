@@ -1,0 +1,5 @@
+This text should be in green characters
+This text should be in green characters
+
+PASS NEGATED attribute existence selector
+

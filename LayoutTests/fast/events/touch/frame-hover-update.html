@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test that hover is unset in inner documents</title>
+    <style>
+        #sandbox {
+            position: absolute;
+            top: 0px;
+            left: 0px;
+            width: 300px;
+            height: 100px;
+        }
+        #iframe1 {
+            left: 0px;
+            top: 0px;
+            width: 100px;
+            height: 100px;
+            border: none;
+        }
+        #iframe2 {
+            left: 100px;
+            top: 0px;
+            width: 100px;
+            height: 100px;
+            border: none;
+        }
+    </style>
+    <script src="../../../resources/js-test.js"></script>
+</head>
+<body>
+    <div id='sandbox'>
+        <iframe id="iframe1" src="data:text/html,<body>iframe1</body>"></iframe>
+        <iframe id="iframe2" src="data:text/html,<body>iframe2</body>"></iframe>
+    </div>
+
+    <script>
+        window.jsTestIsAsync = true;
+
+        async function runTest() {
+            if (window.testRunner) {
+                var idoc1 = document.getElementById('iframe1').contentDocument;
+                var idoc2 = document.getElementById('iframe2').contentDocument;
+                shouldBeNonNull(idoc1);
+                shouldBeNonNull(idoc2);
+                eventSender.clearTouchPoints();
+
+                eventSender.addTouchPoint(50, 50);
+                await eventSender.asyncTouchStart();
+                hoveredTop = document.querySelectorAll('iframe:hover');
+                hoveredIframe1 = idoc1.querySelectorAll('body:hover');
+                hoveredIframe2 = idoc2.querySelectorAll('body:hover');
+                shouldBe('hoveredTop.length', '1');
+                shouldBe('hoveredIframe1.length', '1');
+                shouldBe('hoveredIframe2.length', '0');
+                eventSender.releaseTouchPoint(0);
+                await eventSender.asyncTouchEnd();
+
+                eventSender.addTouchPoint(150, 50);
+                await eventSender.asyncTouchStart();
+                hoveredTop = document.querySelectorAll('iframe:hover');
+                hoveredIframe1 = idoc1.querySelectorAll('body:hover');
+                hoveredIframe2 = idoc2.querySelectorAll('body:hover');
+                shouldBe('hoveredTop.length', '1');
+                shouldBe('hoveredIframe1.length', '0');
+                shouldBe('hoveredIframe2.length', '1');
+                eventSender.releaseTouchPoint(0);
+                await eventSender.asyncTouchCancel();
+
+                eventSender.addTouchPoint(250, 50);
+                await eventSender.asyncTouchStart();
+                hoveredTop = document.querySelectorAll('iframe:hover');
+                hoveredIframe1 = idoc1.querySelectorAll('body:hover');
+                hoveredIframe2 = idoc2.querySelectorAll('body:hover');
+                shouldBe('hoveredTop.length', '0');
+                shouldBe('hoveredIframe1.length', '0');
+                shouldBe('hoveredIframe2.length', '0');
+                eventSender.addTouchPoint(150, 50);
+                await eventSender.asyncTouchMove();
+                hoveredTop = document.querySelectorAll('#sandbox:hover');
+                hoveredIframe1 = idoc1.querySelectorAll('body:hover');
+                hoveredIframe2 = idoc2.querySelectorAll('body:hover');
+                shouldBe('hoveredTop.length', '1');
+                shouldBe('hoveredIframe1.length', '0');
+                shouldBe('hoveredIframe2.length', '0');
+                eventSender.releaseTouchPoint(0);
+                await eventSender.asyncTouchMove();
+                hoveredTop = document.querySelectorAll('#sandbox:hover');
+                hoveredIframe1 = idoc1.querySelectorAll('body:hover');
+                hoveredIframe2 = idoc2.querySelectorAll('body:hover');
+                shouldBe('hoveredTop.length', '1');
+                shouldBe('hoveredIframe1.length', '0');
+                shouldBe('hoveredIframe2.length', '0');
+                eventSender.releaseTouchPoint(0);
+                await eventSender.asyncTouchEnd();
+            }
+        }
+        onload = async () => {
+            await runTest();
+            finishJSTest();
+        };
+    </script>
+</body>
+</html>

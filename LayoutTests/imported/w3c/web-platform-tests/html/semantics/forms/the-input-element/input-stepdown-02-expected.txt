@@ -1,0 +1,9 @@
+
+
+PASS stepDown() on input with no initial or min values
+FAIL stepDown() on input with no initial value and positive min value assert_equals: expected "7" but got ""
+PASS stepDown() on input with no initial value and negative min value
+PASS stepDown() on input with initial value equal to min value
+PASS stepDown() on input with initial value less than min value
+PASS stepDown() on input with initial value greater than min value
+

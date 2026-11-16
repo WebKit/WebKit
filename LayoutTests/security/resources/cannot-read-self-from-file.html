@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+var req = new XMLHttpRequest();
+req.open('GET', location);
+try {
+    req.send();
+} catch (e) {
+    window.parent.postMessage(e.name, '*');
+}
+
+if (req.responseText == "")
+    window.parent.postMessage('SUCCESS', '*');
+else
+    window.parent.postMessage('FAIL', '*');
+</script>
+</head>
+<body>
+Documents loaded from file: shouldn't be able to access themselves via XHR.
+</body>
+</html>

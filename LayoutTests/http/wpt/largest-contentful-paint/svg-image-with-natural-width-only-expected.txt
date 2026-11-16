@@ -1,0 +1,6 @@
+
+Text
+
+
+PASS An SVG image whose natural area is 0, having a natural width but no natural height, has no effective visual size, and is not a candidate
+

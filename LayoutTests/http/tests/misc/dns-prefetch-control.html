@@ -1,0 +1,33 @@
+<!doctype html>
+<style>
+    iframe
+    { 
+        height: 60px;
+        width: 200px;
+    }
+</style>
+<script>
+    if (window.testRunner)
+        testRunner.dumpAsText();
+    function emitFrameWithContents(contents)
+    {
+        document.write("<iframe src=\"data:text/html," + contents + "\"></iframe>");
+    }
+    function getRandomHost()
+    {
+        return "www." + Math.floor(Math.random() * 10000000000) + ".invalid";
+    }
+    function emitFrameForManualDNSPrefetch()
+    {
+        const host = getRandomHost();
+        emitFrameWithContents("<link rel='dns-prefetch' href='http://" + host + "'>" + host);
+    }
+</script>
+<p>This is a test of DNS prefetch control. It's considered a pass if it doesn't crash. It can also be used as 
+a manual test of DNS prefetch using a networking monitoring tool.</p>
+
+<p>The following frames contain links that are expected to trigger a DNS prefetch.</p>
+
+<div>
+  <script>emitFrameForManualDNSPrefetch()</script>
+</div>

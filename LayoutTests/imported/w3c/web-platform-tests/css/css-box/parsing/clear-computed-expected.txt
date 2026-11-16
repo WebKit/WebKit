@@ -1,0 +1,8 @@
+
+PASS Property clear value 'none'
+PASS Property clear value 'left'
+PASS Property clear value 'right'
+PASS Property clear value 'both'
+PASS Property clear value 'inline-start'
+PASS Property clear value 'inline-end'
+

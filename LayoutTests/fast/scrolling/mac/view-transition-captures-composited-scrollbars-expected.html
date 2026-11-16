@@ -1,0 +1,23 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ MockScrollbarsEnabled=false AsyncOverflowScrollingEnabled=true ] -->
+<title>view-transition snapshot includes a composited scroll container's scrollbars</title>
+<style>
+#scroller {
+    overflow: scroll;
+    width: 200px;
+    height: 200px;
+}
+#content {
+    width: 1000px;
+    height: 1000px;
+}
+</style>
+<script>
+if (window.internals)
+    internals.setUsesOverlayScrollbars(false);
+
+onload = () => {
+    scroller.scrollTop = 300;
+    scroller.scrollLeft = 300;
+};
+</script>
+<div id="scroller"><div id="content"></div></div>

@@ -1,0 +1,4 @@
+Body needed for test_driver.click()
+
+FAIL navigator.clipboard.writeText() fails when permission denied assert_unreached: Should have rejected: undefined Reached unreachable code
+

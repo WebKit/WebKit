@@ -1,0 +1,6 @@
+
+PASS SVGLength, value updates after font-size change on em/ex conversion, changing em basis
+PASS SVGLength, value updates after font-size change on em/ex conversion, doubling em basis doubles value
+PASS SVGLength, value updates after font-size change on em/ex conversion, changing ex basis
+PASS SVGLength, value updates after font-size change on em/ex conversion, inherited font-size change
+

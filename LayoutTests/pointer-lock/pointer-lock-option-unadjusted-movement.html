@@ -1,0 +1,68 @@
+<!DOCTYPE HTML> <!-- webkit-test-runner [ PointerLockEnabled=true ] -->
+<html>
+<head>
+<script src="../resources/js-test.js"></script>
+<script src="../resources/ui-helper.js"></script>
+<script src="../http/tests/resources/pointer-lock/pointer-lock-test-harness.js"></script>
+</head>
+<body>
+<div>
+  <div id="target1"></div>
+</div>
+<script>
+    description("Test pointer lock unadjustedMovement option.")
+    window.jsTestIsAsync = true;
+    shouldBeDefined("window.testRunner");
+    window.testRunner?.setHasMouseDeviceForTesting(true);
+
+    targetDiv1 = document.getElementById("target1");
+
+    todo = [
+        // verify that requestPointerLock returns a promise
+        async () => {
+            debug("     requestPointerLock()")
+            const promise = targetDiv1.requestPointerLock();
+            shouldBeNonNull(promise);
+            try {
+                await promise;
+                debug("     Promise resolved.");
+                doNextStepWithUserGesture();
+            } catch (error) {
+                testFailed(`     Promise rejected with ${error}`);
+                finishJSTest();            
+            }
+        },
+        // verify that it is possible to change to unadjustedMovement
+        // or, if it isn't possible on this platform, that we get the correct error for that.
+        async () => {
+            debug("     requestPointerLock({unadjustedMovement: true})");
+            const promise = targetDiv1.requestPointerLock({unadjustedMovement: true});
+            shouldBeNonNull(promise);
+            try {
+                await promise;
+                debug("     unadjustedMovement is supported.");
+            } catch (error) {
+                // Not all platforms support unadjustedMovement
+                if (error instanceof DOMException && error.code == DOMException.NOT_SUPPORTED_ERR) {
+                    debug("     unadjustedMovement is not supported.");
+                } else {
+                    testFailed(`     Promise rejected with unexpected error ${error}`);
+                }
+            }
+            doNextStep();
+        },
+        // remove pointer lock
+        () => {
+            expectOnlyChangeEvent("Unlock");
+            document.exitPointerLock();
+        },
+    ];
+    (async () => {
+        window.testRunner?.focusWebView();
+        await UIHelper.setWindowIsKey(true);
+        doNextStepWithUserGesture();
+    })();
+</script>
+</body>
+</html>
+

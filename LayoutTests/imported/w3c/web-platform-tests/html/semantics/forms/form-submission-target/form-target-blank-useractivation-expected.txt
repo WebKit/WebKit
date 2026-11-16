@@ -1,0 +1,6 @@
+
+FAIL <form target=_blank>.submit() assert_false: navigator.userActivation.isActive after opening a new window expected false got true
+FAIL <form target=_blank>.requestSubmit() assert_false: navigator.userActivation.isActive after opening a new window expected false got true
+FAIL <form target=_blank> click submit assert_false: navigator.userActivation.isActive after opening a new window expected false got true
+Submit
+

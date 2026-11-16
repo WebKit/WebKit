@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<title>Subpage that navigates away to a cross-origin page and sends a message when an event is fired</title>
+
+<script>
+
+const params = new URLSearchParams(location.search);
+const is_new_page = params.has('new');
+
+if (!is_new_page) {
+  onload = () => {
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      // This is cross-origin, since this page will initially be loaded from 127.0.0.1:8000
+      location.href = "http://localhost:8000/site-isolation/page-lifecycle/resources/event-subpage.html?new";
+    }));
+  };
+
+  const event_name = params.get('event');
+
+  addEventListener(event_name, (event) => {
+    // In the case of pageswap event, this wouldn't work if PageSwapEvent.activation or
+    // PageSwap.viewTransition is not null, since the objects can't be serialized
+    // for BroadcastChannel. But we only care that they're null, so this is okay.
+    let event_params = { };
+    for (let param of params.getAll('param'))
+      event_params[param] = event[param];
+
+    let message = {
+      "name": event_name,
+      "params": event_params
+    };
+
+    const chan = new BroadcastChannel("channel");
+    chan.postMessage(message);
+  });
+}
+</script>

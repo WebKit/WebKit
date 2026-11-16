@@ -1,0 +1,7 @@
+Dragging a range input's thumb out of its container keeps the container :hover and does not dispatch leave events to it until the mouse is released.
+
+
+before drag: container:hover=true
+dragging outside: container:hover=true
+after mouseup: container:hover=false
+

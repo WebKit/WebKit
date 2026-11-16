@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+.container {
+    background-color: silver;
+    margin: 20px;
+    border-radius: 20px;
+    padding: 20px;
+}
+.positioned-child {
+    position: relative;
+    height: 200px;
+    width: 14em;
+    border: 1px solid blue;
+}
+.absolute-positioned-child {
+    position: absolute;
+    top: 100px;
+    left: 200px;
+    width: 12em;
+    height: 4em;
+    border: 2px solid blue;
+}
+</style>
+</head>
+<body>
+<div class="container">
+    <div class="positioned-child" contenteditable="true">
+        <div class="absolute-positioned-child"></div>
+    </div>
+</div>
+<pre id="results"></pre>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+if (window.internals)
+    internals.settings.setEditableRegionEnabled(true);
+if (window.internals)
+    results.textContent = internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_EVENT_REGION | internals.LAYER_TREE_INCLUDES_ROOT_LAYER_PROPERTIES);
+</script>
+</body>
+</html>

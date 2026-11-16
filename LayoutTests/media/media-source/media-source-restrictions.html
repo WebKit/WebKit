@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>media-source-restrictions</title>
+    <script src="mock-media-source.js"></script>
+    <script src="../video-test.js"></script>
+    <script>
+    var source;
+    var sourceBuffer;
+    var initSegment;
+    var samples;
+    var errorName;
+
+    if (window.internals)
+        internals.initializeMockMediaSource();
+
+    async function runTest() {
+        findMediaElement();
+
+        run(`internals.setMediaElementRestrictions(video, 'RequireUserGestureForAudioRateChange')`);
+
+        source = new MediaSource();
+        testExpected('source.readyState', 'closed');
+
+        video.src = URL.createObjectURL(source);
+        await waitFor(source, 'sourceopen');
+
+        waitFor(video, "ended").then(failTest);
+
+        run('sourceBuffer = source.addSourceBuffer("video/mock; codecs=mock")');
+        initSegment = makeAInit(8, [makeATrack(1, 'mock', TRACK_KIND.AUDIO)]);
+        run('sourceBuffer.appendBuffer(initSegment)');
+        await waitFor(sourceBuffer, 'updateend');
+
+        samples = concatenateSamples([
+            makeASample(0, 0, 1, 1, 1, SAMPLE_FLAG.SYNC),
+            makeASample(1, 1, 1, 1, 1, SAMPLE_FLAG.SYNC),
+            makeASample(2, 2, 1, 1, 1, SAMPLE_FLAG.SYNC),
+            makeASample(3, 3, 1, 1, 1, SAMPLE_FLAG.SYNC),
+            makeASample(4, 4, 1, 1, 1, SAMPLE_FLAG.SYNC),
+            makeASample(5, 5, 1, 1, 1, SAMPLE_FLAG.SYNC),
+            makeASample(6, 6, 1, 1, 1, SAMPLE_FLAG.SYNC),
+            makeASample(7, 7, 1, 1, 1, SAMPLE_FLAG.SYNC),
+        ]);
+
+        run('sourceBuffer.appendBuffer(samples)');
+        await waitFor(sourceBuffer, 'updateend');
+
+        video.play().catch(function(error) {
+            errorName = error.name;
+            testExpected('errorName', "NotAllowedError");
+            testExpected(error instanceof DOMException, true);
+            endTest();
+        });
+    }
+    </script>
+</head>
+<body onload="runTest()">
+    <video></video>
+</body>
+</html>

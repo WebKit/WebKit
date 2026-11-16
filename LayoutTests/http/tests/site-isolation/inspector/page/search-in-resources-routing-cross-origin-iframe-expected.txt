@@ -1,0 +1,26 @@
+Tests that resource search is routed to the WebPage target under site isolation, so matches inside a cross-origin iframe are found.
+
+
+
+== Running test suite: SiteIsolation.Page.SearchInResourcesRouting
+-- Running test case: SiteIsolation.Page.SearchInResourcesRouting.TargetSelection
+PASS: Should find the cross-origin frame target.
+PASS: Cross-origin frame should be in the frame model.
+PASS: Resource search should go to the WebPage target.
+PASS: WebPage target should support Page.searchInResources.
+
+-- Running test case: SiteIsolation.Page.SearchInResourcesRouting.FindsMatchesInCrossOriginFrame
+PASS: Should find a hit in search-in-resources-routing-frame.html.
+PASS: search-in-resources-routing-frame.html hit should resolve to the cross-origin frame.
+PASS: search-in-resources-routing-frame.html hit should resolve to a resource with the hit's URL.
+PASS: searchInResource should find a match in search-in-resources-routing-frame.html.
+PASS: Each match in search-in-resources-routing-frame.html should include the needle.
+PASS: Should find a hit in search-in-resources-routing-frame.css.
+PASS: search-in-resources-routing-frame.css hit should resolve to the cross-origin frame.
+PASS: search-in-resources-routing-frame.css hit should resolve to a resource with the hit's URL.
+PASS: searchInResource should find a match in search-in-resources-routing-frame.css.
+PASS: Each match in search-in-resources-routing-frame.css should include the needle.
+
+-- Running test case: SiteIsolation.Page.SearchInResourcesRouting.PageTargetMissesCrossOriginFrame
+PASS: Page target should not find the cross-origin frame's document.
+

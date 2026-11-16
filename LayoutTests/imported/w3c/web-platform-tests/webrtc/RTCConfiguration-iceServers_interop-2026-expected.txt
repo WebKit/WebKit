@@ -1,0 +1,6 @@
+
+PASS new RTCPeerConnection(config) - with a turn server and a username of 510 characters throw InvalidAccessError
+PASS setConfiguration(config) - with a turn server and a username of 510 characters throw InvalidAccessError
+PASS new RTCPeerConnection(config) - with invalid stun url should throw SyntaxError
+PASS setConfiguration(config) - with invalid stun url should throw SyntaxError
+

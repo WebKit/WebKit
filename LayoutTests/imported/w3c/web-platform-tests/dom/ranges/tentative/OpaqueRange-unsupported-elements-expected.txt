@@ -1,0 +1,5 @@
+
+FAIL createValueRange throws NotSupportedError for unsupported input types. assert_throws_dom: createValueRange should throw NotSupportedError for <input type="hidden" value="test"> function "() => {
+      input.createValueRange(0, 0);
+    }" threw object "TypeError: input.createValueRange is not a function. (In 'input.createValueRange(0, 0)', 'input.createValueRange' is undefined)" that is not a DOMException NotSupportedError: property "code" is equal to undefined, expected 9
+

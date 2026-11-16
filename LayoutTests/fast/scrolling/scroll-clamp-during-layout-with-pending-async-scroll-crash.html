@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+<div id="spacer" style="height: 20000px"></div>
+<script>
+description("Test for bug 250907: scrollTo() should not assert when a layout clamps the scroll position while an asynchronous scroll update is pending.");
+jsTestIsAsync = true;
+
+const spacer = document.getElementById("spacer");
+
+function tick(remaining)
+{
+    if (!remaining) {
+        testPassed("Did not crash.");
+        finishJSTest();
+        return;
+    }
+
+    if (window.eventSender) {
+        eventSender.mouseScrollBy(0, -20);
+        eventSender.mouseScrollBy(0, -20);
+    }
+
+    spacer.style.height = (remaining % 2) ? "400px" : "20000px";
+    document.body.offsetWidth;
+
+    requestAnimationFrame(() => tick(remaining - 1));
+}
+
+onload = () => {
+    window.scrollTo(0, 20000);
+    tick(20);
+};
+</script>
+</body>
+</html>

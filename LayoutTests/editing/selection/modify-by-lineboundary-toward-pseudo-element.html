@@ -1,0 +1,21 @@
+<style>
+  :after, :before {
+      content: counter(a);
+      -webkit-appearance: meter;
+  }
+</style>
+<script>
+  function main() {
+      if (window.testRunner)
+          testRunner.dumpAsText();
+      console.log("This test passes if it does not crash.");
+      document.execCommand("selectAll",false,null);
+      window.getSelection().modify("extend","forward","lineboundary");
+      window.getSelection().getRangeAt(0);
+      document.execCommand("selectAll",false,null);
+      window.getSelection().modify("extend","backward","lineboundary");
+      window.getSelection().getRangeAt(0);
+  }
+</script>
+<body onload="main()">
+A

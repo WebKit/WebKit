@@ -1,0 +1,4 @@
+popover
+
+FAIL Popovers should not be light dismissed when scrolling via touch. assert_not_equals: The page should have been scrolled by touching and dragging. got disallowed value 0
+

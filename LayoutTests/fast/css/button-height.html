@@ -1,0 +1,45 @@
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<style>
+#button3, #button5 { height: 40px; }
+#button4 { height: 40px; background-color: yellow; }
+</style>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+window.onload = function()
+{
+    shouldBe("document.getElementById('button1').offsetHeight", "document.getElementById('button2').offsetHeight");
+    shouldEvaluateTo("document.getElementById('button3').offsetHeight", 40);
+    shouldEvaluateTo("document.getElementById('button4').offsetHeight", 40);
+    shouldEvaluateTo("document.getElementById('button5').offsetHeight", 40);
+
+    if (window.testRunner) {
+        var testContainer = document.getElementById("test-container");
+        if (testContainer)
+            document.body.removeChild(testContainer);
+    }
+    debug('<br /><span class="pass">TEST COMPLETE</span>');
+}
+</script>
+</head>
+<body>
+<p id="description"></p>
+<div id="test-container">
+    <ol>
+        <li><input id="button1" type="button" value="unspecified height"/><p><strong>Expected height:</strong> height of button label font.</p></li>
+        <li><button id="button2">unspecified height</button><p><strong>Expected height:</strong> height of button label font.</p></li>
+        <li><button id="button3">height 40 pixels</button><p><strong>Expected height:</strong> 40 pixels.</p></li>
+        <li><input id="button4" type="button" value="height 40 pixels, background yellow"/><p><strong>Expected height:</strong> 40 pixels.</p></li>
+        <li><input id="button5" type="button" value="height 40 pixels (*)"/><p><strong>(*) Expected height:</strong><br/>Mac: height of button label font.<br/>Other: 40 pixels.</p></li>
+    </ol>
+</div>
+<hr/>
+<div id="console"></div>
+<script>
+    description("This tests that the specified height is honored (*) for &lt;input&gt; and &lt;button&gt; elements.");
+</script>
+</body>
+</html>

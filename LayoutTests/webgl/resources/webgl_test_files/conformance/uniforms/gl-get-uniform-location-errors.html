@@ -1,0 +1,112 @@
+<!--
+Copyright (c) 2025 The Khronos Group Inc.
+Use of this source code is governed by an MIT-style license that can be
+found in the LICENSE.txt file.
+-->
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>WebGL Get Uniform Location Errors Test</title>
+    <link rel="stylesheet" href="../../resources/js-test-style.css" />
+    <script src="../../js/js-test-pre.js"></script>
+    <script src="../../js/webgl-test-utils.js"> </script>
+</head>
+<body>
+<canvas id="one" width="50" height="50"></canvas>
+<canvas id="two" width="50" height="50"></canvas>
+<div id="description"></div>
+<div id="console"></div>
+<script>
+"use strict";
+description("Tests error conditions for getUniformLocation");
+const wtu = WebGLTestUtils;
+
+const canvas1 = document.getElementById("one");
+const canvas2 = document.getElementById("two");
+const gl1 = wtu.create3DContext(canvas1);
+const gl2 = wtu.create3DContext(canvas2);
+
+const notLinkedProgram = gl1.createProgram();
+const deletedProgram = wtu.setupSimpleColorProgram(gl1);
+gl1.deleteProgram(deletedProgram);
+
+const validProgram = wtu.setupSimpleColorProgram(gl1);
+const validProgramOtherContext = wtu.setupSimpleColorProgram(gl2);
+
+function runTests() {
+    for (const prefix of ["", "gl_", "webgl_", "_webgl_"]) {
+        debug("");
+        debug(`Running tests with ${prefix == '' ? 'no' : prefix} prefix`);
+
+        if (!gl1.isContextLost()) {
+            shouldBeNonNull("gl1.getUniformLocation(validProgram, 'u_color')");
+        } else {
+            shouldBeNull("gl1.getUniformLocation(validProgram, 'u_color')");
+        }
+        wtu.glErrorShouldBe(gl1, gl1.NO_ERROR, "Valid uniform");
+
+        shouldBeNull(`gl1.getUniformLocation(validProgram, '${prefix}unknown')`);
+        wtu.glErrorShouldBe(gl1, gl1.NO_ERROR, "Not found uniform");
+
+        const length = wtu.getDefault3DContextVersion() > 1 ? 1025 : 257;
+        shouldBeNull(`gl1.getUniformLocation(validProgram, '${prefix}${"a".repeat(length)}')`);
+        wtu.glErrorShouldBe(gl1, gl1.isContextLost() ? gl1.NO_ERROR : gl1.INVALID_VALUE,
+                            "Too long uniform name");
+
+        shouldBeNull(`gl1.getUniformLocation(validProgram, '${prefix}à')`);
+        wtu.glErrorShouldBe(gl1, gl1.isContextLost() ? gl1.NO_ERROR : gl1.INVALID_VALUE,
+                            "Uniform name with an unsupported character");
+
+        shouldBeNull(`gl1.getUniformLocation(deletedProgram, '${prefix}u_color')`);
+        wtu.glErrorShouldBe(gl1, gl1.isContextLost() ? gl1.NO_ERROR : gl1.INVALID_VALUE,
+                            "Deleted program");
+
+        shouldBeNull(`gl1.getUniformLocation(validProgramOtherContext, '${prefix}u_color')`);
+        wtu.glErrorShouldBe(gl1, gl1.isContextLost() ? gl1.NO_ERROR : gl1.INVALID_OPERATION,
+                            "Program from another context");
+
+        shouldBeNull(`gl1.getUniformLocation(notLinkedProgram, '${prefix}u_color')`);
+        wtu.glErrorShouldBe(gl1, gl1.isContextLost() ? gl1.NO_ERROR : gl1.INVALID_OPERATION,
+                            "Not linked program");
+    }
+}
+
+runTests();
+
+const ext = gl1.getExtension("WEBGL_lose_context");
+if (ext) {
+    canvas1.addEventListener("webglcontextlost", function (event) {
+        event.preventDefault();
+
+        setTimeout(function() {
+            debug("");
+            debug("Retrying all tests with lost context");
+            wtu.glErrorShouldBe(gl1, gl1.CONTEXT_LOST_WEBGL);
+            runTests();
+            ext.restoreContext();
+        }, 0);
+    }, false);
+
+    canvas1.addEventListener("webglcontextrestored", function (_) {
+        debug("");
+        debug("Test an invalidated program with a restored context");
+        wtu.glErrorShouldBe(gl1, gl1.NO_ERROR, "No errors after context restore");
+
+        shouldBeFalse("gl1.isProgram(validProgram)");
+        shouldBeNull("gl1.getUniformLocation(validProgram, 'u_color')");
+        wtu.glErrorShouldBe(gl1, gl1.INVALID_OPERATION, "Program created before the context lost event");
+
+        finishTest();
+    }, false);
+
+    ext.loseContext();
+} else {
+    finishTest();
+}
+
+var successfullyParsed = true;
+</script>
+</body>
+</html>

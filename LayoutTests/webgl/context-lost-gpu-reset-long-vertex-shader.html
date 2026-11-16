@@ -1,0 +1,37 @@
+<!DOCTYPE html><!-- webkit-test-runner [ runSingly=true ] -->
+<html>
+<head>
+<meta charset="utf-8">
+<title>WebGL context loss caused by a GPU reset from a long running vertex shader</title>
+<script src="../resources/js-test.js"></script>
+<script src="resources/webgl_test_files/js/webgl-test-utils.js"></script>
+<script src="resources/context-lost-gpu-reset.js"></script>
+</head>
+<body>
+<div id="description"></div>
+<div id="console"></div>
+<script>
+"use strict";
+description("Tests that a draw whose vertex shader runs for too long to complete causes the GPU to reset the work, and that the context reports this as a real context loss. The context is restored, and a context created after the reset works. Every context that shares the GPU state with the reset context is lost, too.");
+
+var vertexShaderSource = `#version 300 es
+uniform int count;
+uniform float seed;
+void main() {
+    float value = seed;
+    ${longRunningLoopsSource}
+    gl_Position = vec4(value * 0.0001, 0.0, 0.0, 1.0);
+    gl_PointSize = 1.0;
+}`;
+
+var fragmentShaderSource = `#version 300 es
+precision mediump float;
+out vec4 fragColor;
+void main() {
+    fragColor = vec4(1.0, 0.0, 0.0, 1.0);
+}`;
+
+runTest(vertexShaderSource, fragmentShaderSource, () => gl.drawArrays(gl.POINTS, 0, 10000));
+</script>
+</body>
+</html>

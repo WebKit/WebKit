@@ -1,0 +1,5 @@
+Select and paste Selectsomething (like plain text) into the middle of this text node. 
+
+
+FAIL Copy pasting in editable area should not lose data in non-editable area assert_equals: expected 3 but got 1
+

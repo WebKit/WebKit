@@ -1,0 +1,83 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ allowTestOnlyIPC=true LocalNetworkAccessEnabled=true ] -->
+<html>
+<body>
+<script src=/resources/testharness.js></script>
+<script src=/resources/testharnessreport.js></script>
+<script>
+
+// The web process describes each load's client to the network process, which decides the check. A
+// compromised web process could claim loopback, or claim the target's own origin to reach the check's
+// same-origin early return. The network process now judges the client by the response that created
+// its document: a claimed address space can only make a request stricter, and a claimed origin that
+// does not match is treated as opaque. Each frame overwrites what its loads report through internals to
+// play the compromised process, then fetches the same loopback target.
+
+const loopbackTarget = new URL('resources/lna-reporting-frame.html', location.href).href
+    .replace(location.origin, 'https://web-platform.test:9443');
+const PUBLIC_SECURE_ORIGIN = 'https://web-platform.test:9446';
+
+function fetchFromFrame(label, sourceOrigin, claim, test, forgedOrigin)
+{
+    const reply = new Promise((resolve) => {
+        const listener = (event) => {
+            if (event.data.from !== label)
+                return;
+            window.removeEventListener('message', listener);
+            resolve(event.data);
+        };
+        window.addEventListener('message', listener);
+        test.step_timeout(() => resolve({ result: 'no reply' }), 4000);
+    });
+
+    const params = new URLSearchParams({ label, target: loopbackTarget });
+    if (claim)
+        params.set('claim', claim);
+    if (forgedOrigin)
+        params.set('origin', forgedOrigin);
+    const frame = document.createElement('iframe');
+    frame.allow = 'loopback-network';
+    frame.src = new URL(`resources/lna-forging-frame.html?${params}`, location.href).href.replace(location.origin, sourceOrigin);
+    document.body.appendChild(frame);
+    test.add_cleanup(() => frame.remove());
+    return reply;
+}
+
+promise_test(async (t) => {
+    // The refusal is recorded, so it would otherwise answer the granted case below.
+    t.add_cleanup(() => testRunner.revokeLocalNetworkAccessPermissions());
+    const reply = await fetchFromFrame('public-claims-loopback', PUBLIC_SECURE_ORIGIN, 'loopback', t);
+    assert_equals(reply.claimed, 'loopback', 'the frame is claiming loopback');
+    assert_equals(reply.result, 'blocked', 'the network process judges it as the public document it served');
+}, 'a public document that claims loopback still needs permission to reach loopback');
+
+promise_test(async (t) => {
+    t.add_cleanup(() => testRunner.revokeLocalNetworkAccessPermissions());
+    await testRunner.setLocalNetworkAccessPermission(true, true, PUBLIC_SECURE_ORIGIN);
+    const reply = await fetchFromFrame('public-claims-loopback-granted', PUBLIC_SECURE_ORIGIN, 'loopback', t);
+    assert_equals(reply.result, 'fetched', 'the grant is what lets it through');
+}, 'a public document that claims loopback reaches loopback once granted');
+
+promise_test(async (t) => {
+    const reply = await fetchFromFrame('public-claims-target-origin', PUBLIC_SECURE_ORIGIN, null, t, new URL(loopbackTarget).origin);
+    assert_equals(reply.claimed, 'public', 'the frame makes no address space claim');
+    assert_equals(reply.result, 'blocked', 'a same-origin request is exempt, but only for the origin the network process served');
+}, 'a public document that claims the loopback target\'s origin still needs permission to reach it');
+
+// The cases above expect a refusal, so they would also pass if the fetch were broken outright. These are
+// the controls.
+
+promise_test(async (t) => {
+    const reply = await fetchFromFrame('loopback', location.origin, null, t);
+    assert_equals(reply.claimed, 'loopback');
+    assert_equals(reply.result, 'fetched', 'loopback reaching loopback is not a local network request');
+}, 'a loopback document reaches loopback without permission');
+
+promise_test(async (t) => {
+    const reply = await fetchFromFrame('loopback-claims-public', location.origin, 'public', t);
+    assert_equals(reply.claimed, 'public', 'the frame is claiming public');
+    assert_equals(reply.result, 'blocked', 'a more public claim than the response is kept');
+}, 'a loopback document that claims public is held to its claim');
+
+</script>
+</body>
+</html>

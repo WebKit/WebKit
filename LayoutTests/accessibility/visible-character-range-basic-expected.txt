@@ -1,0 +1,11 @@
+This tests that visibleCharacterRange returns expected visible ranges.
+
+Range of text-less div is empty: true
+Got expected visible-character-range for window width 0px, height 500px, scrollTop 0px
+Got expected visible-character-range for window width 500px, height 0px, scrollTop 0px
+Got expected visible-character-range for window width 80px, height 80px, scrollTop 0px
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

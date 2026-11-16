@@ -1,0 +1,4 @@
+
+
+FAIL Allow origins check: container=subdomain, origin=same, allow=wildcard assert_equals: iframe height should be 400px for container=subdomain, origin=same, allow=wildcard expected 400 but got 150
+

@@ -1,0 +1,144 @@
+/*
+ * Copyright (C) 2025 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#include "config.h"
+#include "DigitalCredentialsCoordinator.h"
+
+#if ENABLE(WEB_AUTHN)
+#include "DigitalCredentialsCoordinatorMessages.h"
+#include "DigitalCredentialsRequestValidatorBridge.h"
+#include "Logging.h"
+#include "MessageSenderInlines.h"
+#include "NetworkConnectionToWebProcessMessages.h"
+#include "NetworkProcessConnection.h"
+#include "WebPage.h"
+#include "WebPageProxyMessages.h"
+#include "WebProcess.h"
+#include <WebCore/DigitalCredentialsProtocols.h>
+#include <WebCore/DigitalCredentialsRequestData.h>
+#include <WebCore/DigitalCredentialsResponseData.h>
+#include <WebCore/ExceptionData.h>
+#include <wtf/CompletionHandler.h>
+#include <wtf/TZoneMallocInlines.h>
+
+namespace WebKit {
+using namespace WebCore;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(DigitalCredentialsCoordinator);
+
+DigitalCredentialsCoordinator::DigitalCredentialsCoordinator(WebPage& page)
+    : m_page(page)
+    , m_pageIdentifier(page.identifier())
+{
+    WebProcess::singleton().addMessageReceiver(Messages::DigitalCredentialsCoordinator::messageReceiverName(), m_pageIdentifier, *this);
+}
+
+DigitalCredentialsCoordinator::~DigitalCredentialsCoordinator()
+{
+    WebProcess::singleton().removeMessageReceiver(Messages::DigitalCredentialsCoordinator::messageReceiverName(), m_pageIdentifier);
+}
+
+Ref<DigitalCredentialsCoordinator> DigitalCredentialsCoordinator::create(WebPage& webPage)
+{
+    return adoptRef(*new DigitalCredentialsCoordinator(webPage));
+}
+
+#if PLATFORM(COCOA)
+static bool uiProcessMayPresentDigitalCredentials()
+{
+    static bool mayPresent = WebProcess::singleton().parentProcessHasEntitlement("com.apple.developer.web-browser"_s)
+        || WebProcess::singleton().parentProcessHasEntitlement("com.apple.developer.identity-document-services.web-presentment-controller"_s);
+    return mayPresent;
+}
+#endif
+
+void DigitalCredentialsCoordinator::showDigitalCredentialsChooser(std::optional<WebCore::FrameIdentifier> frameID, WebCore::DigitalCredentialsRawRequests&& rawRequests, const WebCore::DigitalCredentialsRequestData& request, WTF::CompletionHandler<void(std::expected<WebCore::DigitalCredentialsResponseData, WebCore::ExceptionData>&&)>&& completionHandler)
+{
+    ASSERT(m_rawRequests.isEmpty());
+
+#if PLATFORM(COCOA)
+    if (!uiProcessMayPresentDigitalCredentials()) {
+        RefPtr page = m_page;
+        if (!page)
+            return completionHandler(makeUnexpected(WebCore::ExceptionData { WebCore::ExceptionCode::InvalidStateError, "The page is not available."_s }));
+        page->sendWithAsyncReply(Messages::WebPageProxy::HasVirtualWalletForDigitalCredentials(frameID), [weakThis = WeakPtr { *this }, frameID, rawRequests = WTF::move(rawRequests), request = WebCore::DigitalCredentialsRequestData { request }, completionHandler = WTF::move(completionHandler)](bool hasVirtualWallet) mutable {
+            RefPtr protectedThis = weakThis;
+            RefPtr page = protectedThis ? protectedThis->m_page.get() : nullptr;
+            if (!page)
+                return completionHandler(makeUnexpected(WebCore::ExceptionData { WebCore::ExceptionCode::AbortError, "The coordinator is no longer available."_s }));
+            if (hasVirtualWallet)
+                return protectedThis->showChooserInUIProcess(frameID, WTF::move(rawRequests), request, WTF::move(completionHandler));
+            protect(WebProcess::singleton().ensureNetworkProcessConnection().connection())->sendWithAsyncReply(Messages::NetworkConnectionToWebProcess::PresentDigitalCredentialRequest(page->webPageProxyIdentifier(), request, WTF::move(rawRequests)), WTF::move(completionHandler));
+        });
+        return;
+    }
+#endif
+
+    showChooserInUIProcess(frameID, WTF::move(rawRequests), request, WTF::move(completionHandler));
+}
+
+void DigitalCredentialsCoordinator::showChooserInUIProcess(std::optional<WebCore::FrameIdentifier> frameID, WebCore::DigitalCredentialsRawRequests&& rawRequests, const WebCore::DigitalCredentialsRequestData& request, CompletionHandler<void(std::expected<WebCore::DigitalCredentialsResponseData, WebCore::ExceptionData>&&)>&& completionHandler)
+{
+    m_rawRequests = WTF::move(rawRequests);
+
+    if (RefPtr page = m_page.get()) {
+        page->showDigitalCredentialsChooser(frameID, request, [weakThis = WeakPtr { *this }, completionHandler = WTF::move(completionHandler)](std::expected<WebCore::DigitalCredentialsResponseData, WebCore::ExceptionData>&& responseOrException) mutable {
+            RefPtr protectedThis = weakThis.get();
+            if (!protectedThis)
+                return completionHandler(makeUnexpected(WebCore::ExceptionData { WebCore::ExceptionCode::AbortError, "The coordinator is no longer available."_s }));
+
+            protectedThis->m_rawRequests.clear();
+            completionHandler(WTF::move(responseOrException));
+        });
+    } else {
+        m_rawRequests.clear();
+        completionHandler(makeUnexpected(WebCore::ExceptionData { WebCore::ExceptionCode::InvalidStateError, "The page is not available."_s }));
+    }
+}
+
+ExceptionOr<Vector<std::optional<WebCore::ValidatedDigitalCredentialRequest>>> DigitalCredentialsCoordinator::validateAndParseDigitalCredentialRequests(const SecurityOrigin& topOrigin, const Document& document, const Vector<UnvalidatedDigitalCredentialRequest>& unvalidatedRequests)
+{
+    return DigitalCredentials::validateRequests(topOrigin.data(), unvalidatedRequests, [&](const String& message) {
+        const_cast<Document&>(document).addConsoleMessage(MessageSource::JS, MessageLevel::Warning, message);
+    });
+}
+
+void DigitalCredentialsCoordinator::dismissDigitalCredentialsChooser(CompletionHandler<void(bool)>&& completionHandler)
+{
+    m_rawRequests.clear();
+    if (RefPtr page = m_page.get())
+        page->dismissDigitalCredentialsChooser(WTF::move(completionHandler));
+    else
+        completionHandler(false);
+}
+
+void DigitalCredentialsCoordinator::provideRawDigitalCredentialRequests(CompletionHandler<void(WebCore::DigitalCredentialsRawRequests&&)>&& completionHandler)
+{
+    ASSERT(!m_rawRequests.isEmpty());
+    completionHandler(std::exchange(m_rawRequests, { }));
+}
+
+} // namespace WebKit
+#endif // ENABLE(WEB_AUTHN)

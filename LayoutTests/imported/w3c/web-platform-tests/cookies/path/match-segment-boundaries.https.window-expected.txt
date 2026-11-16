@@ -1,0 +1,8 @@
+
+PASS A Path equal to the request path matches
+PASS A Path that is a prefix ending at a segment boundary matches
+PASS A Path that is a prefix ending in a slash matches
+PASS A Path that is a prefix not ending at a segment boundary does not match
+PASS A Path that is the request path followed by a slash does not match
+PASS A Path that is the request path followed by a segment does not match
+

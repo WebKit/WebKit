@@ -1,0 +1,4 @@
+
+PASS Validate write quota
+PASS Validate truncate quota
+

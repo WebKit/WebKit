@@ -1,0 +1,16 @@
+Fetching Tests From a Child Context
+
+This test demonstrates the use of fetch_tests_from_window to pull tests from an iframe into the primary document.
+
+The test suite will not complete until tests in the child context have finished executing
+
+
+PASS Test executing in parent context
+PASS Promises are supported in your browser
+PASS Promise resolution
+PASS Promise rejection
+PASS Promises resolution chaining
+PASS Use of step_func with Promises
+FAIL Promises and test assertion failures (should fail) assert_true: This failure is expected expected true got false
+FAIL Use of unreached_func with Promises (should fail) assert_unreached: This failure is expected Reached unreachable code
+

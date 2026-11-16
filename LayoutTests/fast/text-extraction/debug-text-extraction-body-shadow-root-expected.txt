@@ -1,0 +1,6 @@
+Slotted light text
+root
+    role=alert
+        'Success!'
+    link uid=… url=example.com/privacy
+    'Shadow text before Slotted light text'

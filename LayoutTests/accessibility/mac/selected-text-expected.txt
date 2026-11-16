@@ -1,0 +1,10 @@
+This test ensures that the selected text accessibility API works as expected.
+
+PASS: contenteditable.selectedText === "One foo" === true
+PASS: contenteditable.selectedText === "Two foo" === true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+One foo
+Two foo

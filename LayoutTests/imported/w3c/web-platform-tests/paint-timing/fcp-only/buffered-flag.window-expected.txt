@@ -1,0 +1,3 @@
+
+PASS PerformanceObserver with buffered flag sees previous FCP entry.
+

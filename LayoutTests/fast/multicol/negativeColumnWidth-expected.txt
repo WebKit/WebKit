@@ -1,0 +1,2 @@
+This test succeeds if it does not crash.
+

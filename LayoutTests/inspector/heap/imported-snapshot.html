@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("HeapSnapshot.imported");
+    let importedSnapshot;
+
+    suite.addTestCase({
+        name: "HeapSnapshot.imported",
+        description: "createSnapshot() and createImportedSnapshot() differences.",
+        test(resolve, reject) {
+            HeapAgent.snapshot((error, timestamp, snapshotStringData) => {
+                InspectorTest.expectThat(!error, "Should not have an error creating a snapshot.");
+
+                const importedTitle = "Imported Snapshot";
+                let workerProxy = WI.HeapSnapshotWorkerProxy.singleton();
+                workerProxy.createSnapshot(WI.mainTarget.identifier, snapshotStringData, ({objectId, snapshot: serializedSnapshot}) => {
+                    let snapshot = WI.HeapSnapshotProxy.deserialize(WI.mainTarget, objectId, serializedSnapshot);
+                    snapshot.snapshotStringData = snapshotStringData;
+                    workerProxy.createImportedSnapshot(snapshotStringData, importedTitle, ({objectId, snapshot: serializedSnapshot}) => {
+                        const target = null;
+                        importedSnapshot = WI.HeapSnapshotProxy.deserialize(target, objectId, serializedSnapshot);
+                        importedSnapshot.snapshotStringData = snapshotStringData;
+
+                        InspectorTest.expectFalse(snapshot.imported, "Normal snapshot is not imported.");
+                        InspectorTest.expectNull(snapshot.title, "Normal snapshot title should not be set.");
+                        InspectorTest.expectTrue(importedSnapshot.imported, "Imported snapshot is imported.");
+                        InspectorTest.expectEqual(importedSnapshot.title, importedTitle, "Imported snapshot title should be set.");
+                        resolve();
+                    });
+                });
+            });
+        }
+    });
+
+    suite.addTestCase({
+        name: "HeapSnapshot.imported.TimelineExport",
+        async test() {
+            let record = new WI.HeapAllocationsTimelineRecord(NaN, importedSnapshot);
+            let exported = JSON.parse(JSON.stringify(record));
+            InspectorTest.expectFalse("target" in exported, "An imported snapshot should serialize without an inspected target.");
+            InspectorTest.expectEqual(exported.title, importedSnapshot.title, "Export should preserve the original imported snapshot title.");
+            InspectorTest.expectNull(exported.timestamp, "An unknown snapshot timestamp should serialize as null.");
+            InspectorTest.expectTrue(exported.snapshotStringData === importedSnapshot.snapshotStringData, "Export should preserve the original snapshot data.");
+
+            let importedRecord = await WI.HeapAllocationsTimelineRecord.fromJSON(exported);
+            InspectorTest.expectTrue(importedRecord.heapSnapshot.imported, "The snapshot should still be imported after a recording round trip.");
+            InspectorTest.expectTrue(Number.isNaN(importedRecord.timestamp), "The imported record should restore its unknown timestamp.");
+            InspectorTest.expectEqual(importedRecord.heapSnapshot.title, importedSnapshot.title, "Import should preserve the original snapshot title.");
+            let secondExport = JSON.parse(JSON.stringify(importedRecord));
+            InspectorTest.expectEqual(secondExport.title, exported.title, "Repeated export should not add another Imported Snapshot prefix.");
+            InspectorTest.expectTrue(secondExport.snapshotStringData === exported.snapshotStringData, "Repeated export should preserve snapshot data.");
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Test for an imported HeapSnapshot.</p>
+</body>
+</html>

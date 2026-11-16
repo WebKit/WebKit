@@ -1,0 +1,4 @@
+CONSOLE MESSAGE: Refused to load test.mp4 because it does not appear in the media-src directive of the Content Security Policy.
+
+END OF TEST
+This test passes if it doesn't alert failure.

@@ -1,0 +1,3 @@
+
+PASS same-document traversals are not stopped by stop()
+

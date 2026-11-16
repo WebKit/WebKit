@@ -1,0 +1,3 @@
+
+PASS Render pass with deprecated resolveTexture field should set correct storeAction
+

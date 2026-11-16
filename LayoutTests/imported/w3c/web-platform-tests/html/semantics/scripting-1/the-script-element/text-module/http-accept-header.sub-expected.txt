@@ -1,0 +1,4 @@
+
+FAIL Static import of a text module should send a valid HTTP Accept header. assert_equals: The HTTP Accept header should be set to 'text/plain' when statically importing a text module. expected "text/plain,*/*;q=0.5" but got "*/*"
+FAIL Dynamic import of a text module should send a valid HTTP Accept header. assert_equals: The HTTP Accept header should be set to 'text/plain' when dynamically importing a text module. expected "text/plain,*/*;q=0.5" but got "*/*"
+

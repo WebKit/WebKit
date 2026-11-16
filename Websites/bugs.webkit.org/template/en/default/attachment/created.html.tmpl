@@ -1,0 +1,58 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[%# INTERFACE:
+  # attachment: object of the attachment just created.
+  # contenttypemethod: string. How we got the content type of the attachment.
+  #  Possible values: autodetect, list, manual.
+  #%]
+
+[% bug = bugs.0 %]
+[% PROCESS "bug/show-header.html.tmpl" %]
+[% PROCESS global/header.html.tmpl
+  title = "Attachment $attachment.id added to $terms.Bug $attachment.bug_id"
+%]
+
+<dl>
+  <dt>
+[%# if WEBKIT_CHANGES %]
+    <a title="[% attachment.description FILTER html %]"
+       href="attachment.cgi?id=[% attachment.id %]&amp;action=review">Attachment #[% attachment.id %]</a>
+[%# endif // WEBKIT_CHANGES %]
+    to [% "$terms.bug $attachment.bug_id" FILTER bug_link(attachment.bug_id) FILTER none %] created
+  </dt>
+  <dd>
+    [% PROCESS "bug/process/bugmail.html.tmpl" mailing_bugid = attachment.bug_id %]
+    [% IF convertedbmp %]
+      <p>
+        <b>Note:</b> Bugzilla automatically converted your BMP image file to a
+        compressed PNG format.
+      </p>
+    [% END %]
+    [% IF contenttypemethod == 'autodetect' %]
+      <p>
+        <b>Note:</b> Bugzilla automatically detected the content type
+        <em>[% attachment.contenttype FILTER html %]</em> for this attachment.  If this is
+        incorrect, correct the value by editing the attachment's
+[%# if WEBKIT_CHANGES %]
+        <a href="attachment.cgi?id=[% attachment.id %]&amp;action=review">details</a>.
+[%# endif // WEBKIT_CHANGES %]
+      </p>
+    [% END %]
+
+    [%# Links to more information about the changed bug. %]
+    [% Hook.process("links") %]
+  </dd>
+</dl>
+
+<p>
+<a href="attachment.cgi?bugid=[% attachment.bug_id %]&amp;action=enter">Create
+ Another Attachment to [% terms.Bug %] [%+ attachment.bug_id %]</a>
+</p>
+
+[% PROCESS bug/show.html.tmpl %]

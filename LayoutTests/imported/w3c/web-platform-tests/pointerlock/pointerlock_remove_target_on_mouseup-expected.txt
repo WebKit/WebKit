@@ -1,0 +1,5 @@
+Click anywhere to run the test. If a "PASS" result appears the test passes, otherwise it fails
+
+
+PASS Remove PointerLock target on mouseup
+

@@ -1,0 +1,3 @@
+
+PASS Test simple shared worker construction case.
+

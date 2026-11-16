@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+body {
+    font-family: system-ui;
+    font-size: 18px;
+}
+
+div {
+    margin: 1em;
+}
+</style>
+</head>
+<body contenteditable role="textbox">
+    <div aria-label="Heading">Nested subframe</div>
+    <script>
+    addEventListener("load", () => {
+        window.parent.postMessage("loaded", "*");
+    }, { once: true });
+    </script>
+</body>
+</html>

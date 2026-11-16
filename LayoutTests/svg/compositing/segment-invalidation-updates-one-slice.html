@@ -1,0 +1,29 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ LayerBasedSVGEngineEnabled=true ] -->
+<html>
+<head>
+<style>
+    html, body { margin: 0; padding: 0; }
+    svg { width: 200px; height: 200px; }
+</style>
+</head>
+<body>
+<!-- Two composited anchors each with a trailing plain rect. The second trailing rect recolors at runtime and must repaint orange. -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+    <rect style="will-change: transform" x="10" y="10" width="60" height="60" fill="red"/>
+    <rect x="10" y="90" width="60" height="60" fill="green"/>
+    <rect style="will-change: transform" x="110" y="10" width="60" height="60" fill="blue"/>
+    <rect id="t1" x="110" y="90" width="60" height="60" fill="cyan"/>
+</svg>
+<script>
+    if (window.testRunner)
+        testRunner.waitUntilDone();
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+        document.getElementById("t1").setAttribute("fill", "orange");
+        requestAnimationFrame(() => requestAnimationFrame(() => {
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }));
+    }));
+</script>
+</body>
+</html>

@@ -1,0 +1,107 @@
+<script src=../resources/testharness.js></script>
+<script src=../resources/testharnessreport.js></script>
+<script src="http://127.0.0.1:8000/resources/checkResourcePriority.js"></script>
+
+<script>
+  const tests = [
+    // rel=style
+    {
+      description: 'low fetchPriority on <link rel=preload as=style> not loaded by the preload scanner must be fetched with medium resource load priority',
+      as: 'style',
+      fetchPriority: 'low',
+      resource: 'dummy.css',
+      expected_priority: "ResourceLoadPriorityMedium"
+    },
+    {
+      description: 'missing fetchPriority on <link rel=preload as=style> not loaded by the preload scanner must be fetched with high resource load priority',
+      as: 'style',
+      resource: 'dummy.css',
+      expected_priority: "ResourceLoadPriorityHigh"
+    },
+    {
+      description: 'high fetchPriority on <link rel=preload as=style> not loaded by the preload scanner must be fetched with very high resource load priority',
+      as: 'style',
+      fetchPriority: 'high',
+      resource: 'dummy.css',
+      expected_priority: "ResourceLoadPriorityVeryHigh"
+    },
+    // rel=script
+    {
+      description: 'low fetchPriority on <link rel=preload as=script> not loaded by the preload scanner must be fetched with medium resource load priority',
+      as: 'script',
+      fetchPriority: 'low',
+      resource: 'dummy.js',
+      expected_priority: "ResourceLoadPriorityMedium"
+    },
+    {
+      description: 'missing fetchPriority on <link rel=preload as=script> not loaded by the preload scanner must be fetched with high resource load priority',
+      as: 'script',
+      resource: 'dummy.js',
+      expected_priority: "ResourceLoadPriorityHigh"
+    },
+    {
+      description: 'high fetchPriority on <link rel=preload as=script> not loaded by the preload scanner must be fetched with very high resource load priority',
+      as: 'script',
+      fetchPriority: 'high',
+      resource: 'dummy.js',
+      expected_priority: "ResourceLoadPriorityVeryHigh"
+    },
+    // rel=fetch
+    {
+      description: 'low fetchPriority on <link rel=preload as=fetch> not loaded by the preload scanner must be fetched with low resource load priority',
+      as: 'fetch',
+      fetchPriority: 'low',
+      resource: 'dummy.css',
+      expected_priority: "ResourceLoadPriorityLow"
+    },
+    {
+      description: 'missing fetchPriority on <link rel=preload as=fetch> not loaded by the preload scanner must be fetched with medium resource load priority',
+      as: 'fetch',
+      resource: 'dummy.css',
+      expected_priority: "ResourceLoadPriorityMedium"
+    },
+    {
+      description: 'high fetchPriority on <link rel=preload as=fetch> not loaded by the preload scanner must be fetched with high resource load priority',
+      as: 'fetch',
+      fetchPriority: 'high',
+      resource: 'dummy.css',
+      expected_priority: "ResourceLoadPriorityHigh"
+    },
+    // rel=image
+    {
+      description: 'low fetchPriority on <link rel=preload as=image> not loaded by the preload scanner must be fetched with very low resource load priority',
+      as: 'image',
+      fetchPriority: 'low',
+      resource: 'square100.png',
+      expected_priority: "ResourceLoadPriorityVeryLow"
+    },
+    {
+      description: 'missing fetchPriority on <link rel=preload as=image> not loaded by the preload scanner must be fetched with low resource load priority',
+      as: 'image',
+      resource: 'square100.png',
+      expected_priority: "ResourceLoadPriorityLow"
+    },
+    {
+      description: 'high fetchPriority on <link rel=preload as=image> not loaded by the preload scanner must be fetched with medium resource load priority',
+      as: 'image',
+      fetchPriority: 'high',
+      resource: 'square100.png',
+      expected_priority: "ResourceLoadPriorityMedium"
+    }
+  ];
+
+  let iteration = 0;
+  for (const test of tests) {
+    async_test(t => {
+      const link = document.createElement('link');
+      link.rel = 'preload';
+      link.as = test.as;
+      if (test.fetchPriority) link.fetchPriority = test.fetchPriority;
+
+      const url = new URL(`../resources/${test.resource}?lpdi${iteration++}`, location);
+      link.href = url;
+      link.onload = t.step_func(() => { checkResourcePriority(url, test.expected_priority, test.description); t.done(); });
+      document.head.appendChild(link);
+    });
+  }
+</script>

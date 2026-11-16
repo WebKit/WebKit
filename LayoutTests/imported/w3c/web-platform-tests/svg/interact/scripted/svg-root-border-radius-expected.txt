@@ -1,0 +1,3 @@
+
+PASS SVG root with border-radius hit test
+

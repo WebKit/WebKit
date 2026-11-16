@@ -1,0 +1,25 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="resources/accessibility-helper.js"></script>
+</head>
+<body>
+
+<script>
+    if (window.accessibilityController) {
+        let output = "This tests setting caret browsing preference via AX API.\n\n";
+        var webArea = accessibilityController.rootElement.childAtIndex(0);
+
+        setCaretBrowsingEnabled(webArea, true);
+        output += expect("caretBrowsingEnabled(webArea)", "true");
+
+        setCaretBrowsingEnabled(webArea, false);
+        output += expect("caretBrowsingEnabled(webArea)", "false");
+
+        debug(output);
+    }
+</script>
+</body>
+</html>

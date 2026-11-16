@@ -1,0 +1,5 @@
+
+PASS import.meta is an object
+PASS import.meta is extensible
+PASS import.meta's properties are writable, configurable, and enumerable
+

@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Bug 53123: Crashes loading pages when cancelling subresource loads through WebKit</title>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.setWillSendRequestReturnsNull(true);
+        }
+    </script>
+    <script type="text/javascript" src="resources/empty-script.js"></script>
+</head>
+<body>
+    <p>Test for <a href="https://bugs.webkit.org/show_bug.cgi?id=53123">Bug 53123: Crashes loading pages when cancelling subresource loads through WebKit</a>.
+    If the test doesn't crash, then it has passed. It must be run in DRT.</p>
+    <script src="http://www.example.org" type="text/javascript"></script>
+</body>
+</html>

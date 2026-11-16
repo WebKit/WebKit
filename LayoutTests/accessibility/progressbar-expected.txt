@@ -1,0 +1,15 @@
+This test makes sure that progress element can be accessed by Accessibility FW.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS progressbar1.intValue is 7
+PASS progressbar2.intValue is 5
+PASS progressbar3.intValue is 7
+PASS progressbar3.role is 'AXRole: AXProgressIndicator'
+PASS progressbar4.intValue is 0
+PASS progressbar4.role is 'AXRole: AXProgressIndicator'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+X X

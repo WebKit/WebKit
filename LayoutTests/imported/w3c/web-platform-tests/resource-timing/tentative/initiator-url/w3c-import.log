@@ -1,0 +1,44 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/resource-timing/tentative/initiator-url/direct.any.js
+/LayoutTests/imported/w3c/web-platform-tests/resource-timing/tentative/initiator-url/event-handler-overwritten.html
+/LayoutTests/imported/w3c/web-platform-tests/resource-timing/tentative/initiator-url/event-handler.html
+/LayoutTests/imported/w3c/web-platform-tests/resource-timing/tentative/initiator-url/external-script-in-posted-task.html
+/LayoutTests/imported/w3c/web-platform-tests/resource-timing/tentative/initiator-url/external-script.html
+/LayoutTests/imported/w3c/web-platform-tests/resource-timing/tentative/initiator-url/iframe-post-message.html
+/LayoutTests/imported/w3c/web-platform-tests/resource-timing/tentative/initiator-url/inline-document-write.html
+/LayoutTests/imported/w3c/web-platform-tests/resource-timing/tentative/initiator-url/inline-script.html
+/LayoutTests/imported/w3c/web-platform-tests/resource-timing/tentative/initiator-url/module-script-from-document.html
+/LayoutTests/imported/w3c/web-platform-tests/resource-timing/tentative/initiator-url/module-script-from-dynamic-importer.html
+/LayoutTests/imported/w3c/web-platform-tests/resource-timing/tentative/initiator-url/module-script-from-static-importer.html
+/LayoutTests/imported/w3c/web-platform-tests/resource-timing/tentative/initiator-url/module-script-from-worker.html
+/LayoutTests/imported/w3c/web-platform-tests/resource-timing/tentative/initiator-url/post-message-shared-worker.html
+/LayoutTests/imported/w3c/web-platform-tests/resource-timing/tentative/initiator-url/post-message-worker.html
+/LayoutTests/imported/w3c/web-platform-tests/resource-timing/tentative/initiator-url/post-task.any.js
+/LayoutTests/imported/w3c/web-platform-tests/resource-timing/tentative/initiator-url/post-task.html
+/LayoutTests/imported/w3c/web-platform-tests/resource-timing/tentative/initiator-url/promise.any.js
+/LayoutTests/imported/w3c/web-platform-tests/resource-timing/tentative/initiator-url/promise.html
+/LayoutTests/imported/w3c/web-platform-tests/resource-timing/tentative/initiator-url/queue-microtask.any.js
+/LayoutTests/imported/w3c/web-platform-tests/resource-timing/tentative/initiator-url/queue-microtask.html
+/LayoutTests/imported/w3c/web-platform-tests/resource-timing/tentative/initiator-url/request-animation-frame.html
+/LayoutTests/imported/w3c/web-platform-tests/resource-timing/tentative/initiator-url/request-idle-callback.html
+/LayoutTests/imported/w3c/web-platform-tests/resource-timing/tentative/initiator-url/set-interval.any.js
+/LayoutTests/imported/w3c/web-platform-tests/resource-timing/tentative/initiator-url/set-interval.html
+/LayoutTests/imported/w3c/web-platform-tests/resource-timing/tentative/initiator-url/set-timeout.any.js
+/LayoutTests/imported/w3c/web-platform-tests/resource-timing/tentative/initiator-url/set-timeout.html
+/LayoutTests/imported/w3c/web-platform-tests/resource-timing/tentative/initiator-url/static-resource.html
+/LayoutTests/imported/w3c/web-platform-tests/resource-timing/tentative/initiator-url/stylesheet-dynamic.html
+/LayoutTests/imported/w3c/web-platform-tests/resource-timing/tentative/initiator-url/stylesheet-static.html
+/LayoutTests/imported/w3c/web-platform-tests/resource-timing/tentative/initiator-url/xml-http-request.html

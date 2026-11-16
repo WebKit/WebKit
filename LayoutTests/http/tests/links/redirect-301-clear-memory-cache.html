@@ -1,0 +1,44 @@
+<html>
+<head>
+<title>301 Redirect</title>
+
+<iframe id="first_load" width="200" height="200" src="resources/redirect-helper.pl?301#key=foo"></iframe>
+<iframe id="second_load" width="200" height="200"></iframe>
+<div id="console"></div>
+
+<script>
+    function shouldBe(a, b)
+    {
+        var log = (s) => { document.getElementById("console").appendChild(document.createTextNode(s + "\n")); }
+
+        var evalA = eval(a);
+        if (evalA == b) 
+            log("PASS: " + a + " should be " + b + " and is.\n", "green");
+        else {
+            log("FAIL: " + a + " should be " + b + " but instead is " + evalA + ".", "red");
+        }
+    }
+
+    if (window.testRunner) {
+        testRunner.waitUntilDone();
+    }
+
+    document.getElementById('first_load').onload = function() {
+        shouldBe('document.getElementById("first_load").contentWindow.location.hash', "#key=foo");
+
+        // Clear memory cache
+        internals.clearMemoryCache();
+
+        document.getElementById('second_load').src = "resources/redirect-helper.pl?301#key=bar"
+
+        document.getElementById('second_load').onload = function() {
+            shouldBe('document.getElementById("second_load").contentWindow.location.hash', "#key=bar");
+
+            if (window.testRunner) {
+              testRunner.dumpAsText();
+              testRunner.notifyDone();
+            }
+        }
+    }
+</script>
+</html>

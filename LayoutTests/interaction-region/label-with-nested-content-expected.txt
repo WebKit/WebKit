@@ -1,0 +1,36 @@
+
+iPhone Pro
+6.3-inch display
+Buy from $1199
+or $49.95/mo.
+
+iPhone Pro Max
+Compare
+Own pointer
+(GraphicsLayer
+  (anchor 0.00 0.00)
+  (bounds 800.00 600.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 800.00 600.00)
+      (contentsOpaque 1)
+      (drawsContent 1)
+      (backgroundColor #FFFFFF)
+      (event region
+        (rect (0,0) width=800 height=600)
+
+      (interaction regions [
+        (interaction (20,20) width=300 height=80)
+        (cornerRadius 12.00),
+        (interaction (20,120) width=300 height=80)
+        (cornerRadius 12.00),
+        (guard (36,144) width=104 height=38),
+        (interaction (36,154) width=104 height=18)
+        (cornerRadius 8.00),
+        (interaction (36,236) width=80.50 height=48)
+        (cornerRadius 8.00)])
+      )
+    )
+  )
+)
+

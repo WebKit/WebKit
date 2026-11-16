@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script>
+const w = screen.width;
+const h = screen.height;
+window.parent.postMessage({
+    screenWidth: w,
+    screenHeight: h,
+    deviceWidthZeroMatches: matchMedia('(device-width: 0px)').matches,
+    deviceHeightZeroMatches: matchMedia('(device-height: 0px)').matches,
+    minDeviceWidthMatchesScreen: matchMedia(`(min-device-width: ${w}px)`).matches,
+    maxDeviceWidthMatchesScreen: matchMedia(`(max-device-width: ${w}px)`).matches,
+    minDeviceHeightMatchesScreen: matchMedia(`(min-device-height: ${h}px)`).matches,
+    maxDeviceHeightMatchesScreen: matchMedia(`(max-device-height: ${h}px)`).matches,
+    deviceAspectRatioMatchesScreen: matchMedia(`(device-aspect-ratio: ${w}/${h})`).matches,
+}, "*");
+</script>
+</body>
+</html>

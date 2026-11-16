@@ -1,0 +1,44 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/js-test.js"></script>
+</head>
+<body id="body">
+
+<div id="content" role="group">
+
+<main id="main" aria-hidden="true">
+    <video controls="controls"></video>
+    <select id="select"><option>a</select>
+    <input type="range">
+    <input type="data">
+    <progress></progress>
+    <ul><li>item</li></ul>
+    <select size="10"><option>a</select>
+    <img src="resources/cake.png" width="145" height="126" usemap="#map">
+    <map name="map">
+        <area shape="rect" coords="0,0,100,100" href="#" alt="cake">
+    </map>
+</main>
+
+</div>
+
+<script>
+
+    description("This tests aria-hidden on a parent node will hide all these special subclass objects.");
+
+    if (window.accessibilityController) {
+      
+        var content = accessibilityController.accessibleElementById("content");
+        shouldBe("content.childrenCount", "0");
+
+        // Clear the HTML for better results.
+        document.getElementById("content").innerHTML = "";  
+    }
+
+
+</script>
+
+</body>
+</html>
+

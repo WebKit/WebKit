@@ -1,0 +1,5 @@
+Some text.^
+Not editable.
+
+PASS compositionend reports the text left behind in the document when a composition is aborted
+

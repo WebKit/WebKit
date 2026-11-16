@@ -1,0 +1,3 @@
+
+PASS A module script should load even if an earlier modulepreload for the same URL failed its integrity check, with an import map registered
+

@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+<script src="../resources/document-leak-test.js"></script>
+</head>
+<body>
+<script>
+description("Tests that navigator.geolocation.watchPosition() does not leak the document object.");
+onload = () => runDocumentLeakTest({ frameURL: "https://127.0.0.1:8443/geolocation/resources/geolocation-watch-position-callback.html", framesToCreate: 20 });
+</script>
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

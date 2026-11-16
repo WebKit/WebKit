@@ -1,0 +1,10 @@
+This tests whether focused/active menu items are reported as selected children of the parent container. Only ATSPI reports them, since ARIA menu items have no selected state.
+First menu has 0 selected child(ren)
+Second menu has 0 selected child(ren)
+First menubar has 0 selected child(ren)
+Second menubar has 0 selected child(ren)
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

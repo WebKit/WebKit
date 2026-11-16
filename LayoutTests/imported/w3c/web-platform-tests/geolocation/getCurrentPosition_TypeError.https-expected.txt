@@ -1,0 +1,9 @@
+
+PASS Call getCurrentPosition without arguments, check that exception is thrown
+PASS Call getCurrentPosition with null success callback, check that exception is thrown
+PASS Call getCurrentPosition with null success and error callbacks, check that exception is thrown
+PASS Call getCurrentPosition() with wrong type for first argument. Exception expected.
+PASS Call getCurrentPosition() with wrong type for second argument. Exception expected.
+PASS Call getCurrentPosition() with wrong type for third argument. Exception expected.
+PASS Calling getCurrentPosition() with a legacy event handler objects.
+

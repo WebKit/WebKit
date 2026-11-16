@@ -1,0 +1,13 @@
+
+Test that a <video> that was playing before entering the back/forward cache is still playing (and currentTime is advancing again) after being restored.
+
+EVENT(canplaythrough)
+EXPECTED (loadCount == '0') OK
+EVENT(playing)
+*** Page going into cache while playing
+*** Page going into cache, video.paused = false
+*** Page returned from cache
+EXPECTED (loadCount == '1') OK
+EXPECTED (video.paused == 'false') OK
+EXPECTED (video.currentTime > timeBeforeCache == 'true') OK
+

@@ -1,0 +1,3 @@
+Test pass if assertions don't cause error
+
+PASS

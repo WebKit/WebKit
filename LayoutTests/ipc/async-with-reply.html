@@ -1,0 +1,53 @@
+<!doctype html><!-- webkit-test-runner [ IPCTestingAPIEnabled=true ] -->
+<title>Test that async messages can be sent and replies received</title>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<body>
+<script>
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+async function runTest() {
+    const defaultTimeout = 1000;
+    const testerID = 0;
+    const IPCTester_AsyncPingName = IPC.messages.IPCTester_AsyncPing.name;
+    const IPCTester_AsyncPingReplyName = IPC.messages.IPCTester_AsyncPingReply.name;
+
+    for (const processTarget of IPC.processTargets) {
+        // Test starts here.
+        let results = { };
+        let asyncReplyIDs = { };
+        const requestCount = 100;
+        let connection = IPC.connectionForProcessTarget(processTarget);
+        for (let request = 0; request < requestCount; ++request) {
+            asyncReplyIDs[request] = connection.sendWithAsyncReply(testerID, IPCTester_AsyncPingName, [{type: 'int32_t', value: request}], (message) => {
+                results[request] = message;
+            });
+            assert_greater_than(asyncReplyIDs[request], 0, "asyncReplyID is valid");
+            if (request == 17)
+                await sleep(100); // Let some requests be fullfilled asynchronously and some are force-waited.
+        }
+        for (let request = 0; request < requestCount; ++request) {
+            if (typeof results[request] === "undefined")
+                connection.waitForAsyncReplyAndDispatchImmediately(asyncReplyIDs[request], IPCTester_AsyncPingReplyName, defaultTimeout);
+        }
+        for (let request = 0; request < requestCount; ++request) {
+            const subcase = `${processTarget} request:${request}`
+            const result = results[request];
+            assert_equals(typeof result, "object", subcase);
+            const firstReply = result.arguments[0];
+            assert_equals(firstReply.type, "uint32_t", subcase);
+            assert_equals(firstReply.value, request + 1, subcase);
+        }
+    }
+    done();
+}
+
+setup({ single_test: true });
+if (window.IPC)
+    runTest();
+else
+    done();
+
+</script>
+</body>

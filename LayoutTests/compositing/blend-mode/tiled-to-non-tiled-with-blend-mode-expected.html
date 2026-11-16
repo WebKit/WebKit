@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        :root {
+            background-color: silver;
+        }
+
+        .blending {
+            margin: 50px;
+            width: 200px;
+            height: 200px;
+            border: 1px solid black;
+            background-color: green;
+            mix-blend-mode: screen;
+        }
+        
+        .composited {
+            transform: translateZ(0);
+        }
+    </style>
+    <script src="../../resources/ui-helper.js"></script>
+</head>
+<body>
+    <div class="composited blending"></div>
+</body>
+</html>

@@ -1,0 +1,8 @@
+
+
+FAIL permissions policy header "payment=()" disallows Payment Request API in top-level document. assert_throws_dom: function "() => {
+        new PaymentRequest(supportedInstruments, details);
+      }" did not throw
+FAIL permissions policy header "payment=()" disallows Payment Request API in same-origin iframes. assert_false: PaymentRequest() expected false got true
+FAIL permissions policy header "payment=()" disallows Payment Request API in cross-origin iframes. assert_false: PaymentRequest() expected false got true
+

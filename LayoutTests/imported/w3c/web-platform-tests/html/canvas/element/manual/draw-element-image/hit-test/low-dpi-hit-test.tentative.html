@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+<title>Low-DPI hit tests</title>
+<link rel="help" href="https://github.com/WICG/html-in-canvas">
+<link rel="author" href="mailto:vmpstr@chromium.org">
+
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/html/canvas/resources/wait-for-canvas-paint.js"></script>
+
+<script src="/resources/testdriver.js"></script>
+<script src="/resources/testdriver-actions.js"></script>
+<script src="/resources/testdriver-vendor.js"></script>
+
+<style>
+#canvas {
+  width: 200px;
+  height: 200px;
+}
+div {
+  width: 100px;
+  height: 100px;
+  background: green;
+}
+</style>
+
+<canvas id=canvas width="200" height="200" content=drawable>
+  <div drawable id=target></div>
+  <div drawable id=negative></div>
+</canvas>
+
+<script>
+
+function movePointer(x, y) {
+  return new test_driver.Actions().addTick().pointerMove(x, y).send();
+}
+
+function noHit(reject, signal) {
+  if (signal.aborted) {
+    return;
+  }
+  reject("no hit");
+}
+
+async function cleanup(controller) {
+  await movePointer(0, 0);
+  controller.abort();
+  const target = canvas.querySelector("#target");
+  target.style.pointerEvents = '';
+  const negative = canvas.querySelector("#negative");
+  negative.style.pointerEvents = '';
+}
+
+promise_test((t) => {
+  assert_implements('requestPaint' in HTMLCanvasElement.prototype,
+                    'html-in-canvas is not supported');
+  return new Promise(async (resolve, reject) => {
+    const controller = new AbortController();
+    t.add_cleanup(() => cleanup(controller));
+
+    const canvas = document.getElementById("canvas");
+    const ctx = canvas.getContext('2d');
+    const canvasRect = canvas.getBoundingClientRect();
+
+    await waitForCanvasPaint(canvas);
+    const target = canvas.querySelector("#target");
+    ctx.translate(15, 35);
+    ctx.scale(0.01, 0.01);
+    ctx.drawElementImage(target, 0, 0);
+    ctx.resetTransform();
+
+    target.addEventListener("pointerenter", resolve, { signal: controller.signal });
+    await movePointer(canvasRect.x + 15, canvasRect.y + 35);
+    requestAnimationFrame(() => noHit(reject, controller.signal));
+  });
+}, "single target");
+
+promise_test((t) => {
+  assert_implements('requestPaint' in HTMLCanvasElement.prototype,
+                    'html-in-canvas is not supported');
+  return new Promise(async (resolve, reject) => {
+    const controller = new AbortController();
+    t.add_cleanup(() => cleanup(controller));
+
+    const canvas = document.getElementById("canvas");
+    const ctx = canvas.getContext('2d');
+    const canvasRect = canvas.getBoundingClientRect();
+
+    await waitForCanvasPaint(canvas);
+    const target = canvas.querySelector("#target");
+    ctx.translate(15, 35);
+    ctx.scale(0.01, 0.01);
+    ctx.drawElementImage(target, 0, 0);
+    const negative = canvas.querySelector("#negative");
+    ctx.drawElementImage(negative, 0, 0);
+    ctx.resetTransform();
+
+    target.addEventListener("pointerenter", reject, { signal: controller.signal });
+    negative.addEventListener("pointerenter", resolve, { signal: controller.signal });
+    await movePointer(canvasRect.x + 15, canvasRect.y + 35);
+    requestAnimationFrame(() => noHit(reject, controller.signal));
+  });
+}, "multiple targets, should only hit first");
+
+promise_test((t) => {
+  assert_implements('requestPaint' in HTMLCanvasElement.prototype,
+                    'html-in-canvas is not supported');
+  return new Promise(async (resolve, reject) => {
+    const controller = new AbortController();
+    t.add_cleanup(() => cleanup(controller));
+
+    const canvas = document.getElementById("canvas");
+    const ctx = canvas.getContext('2d');
+    const canvasRect = canvas.getBoundingClientRect();
+
+    // Do not hit test #target for this test.
+    const target = canvas.querySelector("#target");
+    target.style.pointerEvents = "none";
+
+    await waitForCanvasPaint(canvas);
+    const negative = canvas.querySelector("#negative");
+    ctx.translate(15, 35);
+    ctx.scale(0.01, 0.01);
+    ctx.drawElementImage(negative, 0, 0);
+    ctx.resetTransform();
+
+    negative.addEventListener("pointerenter", evt => reject([evt.clientX - canvasRect.x, evt.clientY - canvasRect.y]), { signal: controller.signal });
+    await movePointer(canvasRect.x + 14, canvasRect.y + 35);
+    await movePointer(canvasRect.x + 16, canvasRect.y + 35);
+    await movePointer(canvasRect.x + 15, canvasRect.y + 34);
+    await movePointer(canvasRect.x + 15, canvasRect.y + 36);
+    requestAnimationFrame(resolve);
+  });
+}, "single target miss");
+</script>
+</html>

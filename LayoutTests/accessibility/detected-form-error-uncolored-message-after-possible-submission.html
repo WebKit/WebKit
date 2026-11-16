@@ -1,0 +1,77 @@
+<!DOCTYPE HTML><!-- webkit-test-runner [ AccessibilityFormErrorDetectionEnabled=true ] -->
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<div id="checkout">
+  <label for="name">Name</label><input id="name" type="text">
+  <div id="name-error"></div>
+  <label for="email">Email</label><input id="email" type="email" value="not-an-address">
+  <div id="email-error"></div>
+  <label for="phone">Phone</label><input id="phone" type="tel" value="555 0100">
+  <div id="phone-status"></div>
+  <label for="code">Code</label><input id="code" type="text">
+  <template id="gift-fields">
+    <div>
+      <label for="gift-message">Gift message</label><input id="gift-message" type="text">
+      <div id="gift-hint"></div>
+    </div>
+  </template>
+  <div id="continue" role="button" tabindex="0">Continue</div>
+</div>
+
+<script>
+var output = "This tests that after activating a control that only may have been meant to submit the fields around it, a message in no error color still counts when it appears right under a field the user left empty or wrong. A status line under a field the user filled in, text above a field rather than under it, and a hint under a field the page only just revealed are not errors.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+    internals.setAccessibilityFormErrorSettleDelay(0.1);
+
+    var payload = "";
+    accessibilityController.addNotificationListener((element, notification, userInfo) => {
+        if (notification == "AXPossibleFormValidationError")
+            payload = formatFormValidationUserInfo(userInfo);
+    });
+
+    function writeMessage(id, text) {
+        document.getElementById(id).textContent = text;
+    }
+
+    document.getElementById("continue").addEventListener("click", () => {
+        writeMessage("name-error", "Enter your name.");
+        writeMessage("email-error", "Enter a valid email address.");
+        writeMessage("phone-status", "We sent a code to your phone.");
+        const giftFields = document.getElementById("gift-fields");
+        giftFields.replaceWith(giftFields.content.cloneNode(true));
+        writeMessage("gift-hint", "Up to 200 characters.");
+    });
+
+    function axElement(id) {
+        return accessibilityController.accessibleElementById(id);
+    }
+
+    setTimeout(async function() {
+        // Read the field first, since nothing arms detection on a page no assistive technology has looked at.
+        output += expect("axElement('name').stringAttributeValue('AXInvalid')", "'false'");
+
+        axElement("continue").press();
+
+        output += await expectAsync("payload", "'AXFormValidationUnannouncedText: Enter your name. | Enter a valid email address.\\nAXFormValidationErrorFieldCount: 2\\n'");
+        output += await expectAsync("axElement('name').stringAttributeValue('AXInvalid')", "'true'");
+        output += expect("errorMessageText(axElement('name'))", "'Enter your name.'");
+        output += expect("errorMessageText(axElement('email'))", "'Enter a valid email address.'");
+        output += expect("axElement('phone').stringAttributeValue('AXInvalid')", "'false'");
+        output += expect("errorMessageText(axElement('phone'))", "'no error messages'");
+        output += expect("errorMessageText(axElement('code'))", "'no error messages'");
+        output += expect("errorMessageText(axElement('gift-message'))", "'no error messages'");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

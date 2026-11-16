@@ -1,0 +1,66 @@
+<script src="../../../resources/js-test-pre.js"></script>
+<script src="../resources/media-controls-loader.js" type="text/javascript"></script>
+<script src="../resources/media-controls-utils.js" type="text/javascript"></script>
+<body>
+<script type="text/javascript">
+
+description("Testing the <code>MacOSInlineMediaControls</code> layout.");
+
+window.jsTestIsAsync = true;
+
+const mediaControls = new MacOSInlineMediaControls({ width: 680, height: 400 });
+
+const iconButtons = [
+    mediaControls.playPauseButton,
+    mediaControls.skipBackButton,
+    mediaControls.airplayButton,
+    mediaControls.pipButton,
+    mediaControls.tracksButton,
+    mediaControls.muteButton,
+    mediaControls.fullscreenButton
+];
+
+scheduler.frameDidFire = function()
+{
+    if (iconButtons.some(button => button.width == 0))
+        return;
+
+    debug("mediaControls.children.length " + String(mediaControls.children.length));
+    debug("mediaControls.children[0].constructor.name " + String(mediaControls.children[0].constructor.name));
+    debug("mediaControls.children[1].constructor.name " + String(mediaControls.children[1].constructor.name));
+
+    debug("mediaControls.topLeftControlsBar.children.length " + String(mediaControls.topLeftControlsBar.children.length));
+    shouldBeTrue("mediaControls.topLeftControlsBar.children[0] instanceof BackgroundTint");
+    shouldBeTrue("mediaControls.topLeftControlsBar.children[1] instanceof ButtonsContainer");
+    debug("mediaControls.topLeftControlsBar.children[1].children.length " + String(mediaControls.topLeftControlsBar.children[1].children.length));
+    debug("mediaControls.topLeftControlsBar.children[1].children[0].constructor.name " + String(mediaControls.topLeftControlsBar.children[1].children[0].constructor.name));
+    debug("mediaControls.topLeftControlsBar.children[1].children[1].constructor.name " + String(mediaControls.topLeftControlsBar.children[1].children[1].constructor.name));
+
+    debug("mediaControls.bottomControlsBar.children.length " + String(mediaControls.bottomControlsBar.children.length));
+    shouldBeTrue("mediaControls.bottomControlsBar.children[0] instanceof BackgroundTint");
+    debug("mediaControls.bottomControlsBar.children[1].constructor.name " + String(mediaControls.bottomControlsBar.children[1].constructor.name));
+    debug("mediaControls.bottomControlsBar.children[2].constructor.name " + String(mediaControls.bottomControlsBar.children[2].constructor.name));
+    debug("mediaControls.bottomControlsBar.children[3].constructor.name " + String(mediaControls.bottomControlsBar.children[3].constructor.name));
+
+    debug("mediaControls.leftContainer.children.length " + String(mediaControls.leftContainer.children.length));
+    debug("mediaControls.leftContainer.children[0].constructor.name " + String(mediaControls.leftContainer.children[0].constructor.name));
+    debug("mediaControls.leftContainer.children[1].constructor.name " + String(mediaControls.leftContainer.children[1].constructor.name));
+    debug("mediaControls.leftContainer.children[2].constructor.name " + String(mediaControls.leftContainer.children[2].constructor.name));
+
+    debug("mediaControls.timeControl.children.length " + String(mediaControls.timeControl.children.length));
+    debug("mediaControls.timeControl.children[0].constructor.name " + String(mediaControls.timeControl.children[0].constructor.name));
+    debug("mediaControls.timeControl.children[1].constructor.name " + String(mediaControls.timeControl.children[1].constructor.name));
+    debug("mediaControls.timeControl.children[2].constructor.name " + String(mediaControls.timeControl.children[2].constructor.name));
+    debug("mediaControls.timeControl.children[3].constructor.name " + String(mediaControls.timeControl.children[3].constructor.name));
+
+    debug("mediaControls.rightContainer.children.length " + String(mediaControls.rightContainer.children.length));
+    debug("mediaControls.rightContainer.children[0].constructor.name " + String(mediaControls.rightContainer.children[0].constructor.name));
+    debug("mediaControls.rightContainer.children[1].constructor.name " + String(mediaControls.rightContainer.children[1].constructor.name));
+    debug("mediaControls.rightContainer.children[2].constructor.name " + String(mediaControls.rightContainer.children[2].constructor.name));
+
+    finishMediaControlsTest();
+};
+
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>

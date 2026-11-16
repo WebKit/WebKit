@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<script src="../resources/common.js"></script>
+
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+description("Test importing a P-384 SPKI ECDSA COMPRESSED key ");
+jsTestIsAsync = true;
+
+
+  const spki = new Uint8Array([48, 70, 48, 16, 6, 7, 42, 134, 72, 206, 61, 2, 1, 6, 5, 43, 129, 4, 0, 34, 3, 50, 0, 2, 251, 203, 124, 105, 238, 28, 96, 87, 155, 231, 163, 52, 19, 72, 120, 217, 197, 197, 191, 53, 213, 82, 218, 182, 60, 1, 64, 57, 126, 209, 76, 239, 99, 125, 119, 32, 146, 92, 68, 105, 158, 163, 14, 114, 135, 76, 114, 251])
+  var extractable = true;
+
+  debug("Importing a key...");
+  crypto.subtle.importKey('spki', spki, { name: 'ECDSA', namedCurve: 'P-384' }, extractable, []).then(function(result){
+        publicKey = result;
+
+         shouldBe("publicKey.toString()", "'[object CryptoKey]'");
+         shouldBe("publicKey.type", "'public'");
+         shouldBe("publicKey.extractable", "true");
+         shouldBe("publicKey.algorithm.name", "'ECDSA'");
+         shouldBe("publicKey.algorithm.namedCurve", "'P-384'");
+         shouldBe("publicKey.usages", "[ ]");
+
+         finishJSTest();
+     });
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+
+</body>
+</html>

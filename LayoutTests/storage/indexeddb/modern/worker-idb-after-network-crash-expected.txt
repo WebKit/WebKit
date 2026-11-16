@@ -1,0 +1,9 @@
+Starting worker and asking it to open an IDB database.
+[Worker] db-ready
+Terminating network process.
+[Worker] recovery-ok
+PASS Worker opened a new IndexedDB database after network process crash without main page IDB activity
+PASS successfullyParsed is true
+
+TEST COMPLETE
+This test verifies that IndexedDB operations in a dedicated worker recover after the network process is terminated, without any IndexedDB activity on the main page to trigger the recovery.

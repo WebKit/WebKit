@@ -1,0 +1,17 @@
+Testing the PlaybackSupport behavior by using the media API.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS mediaController.controls.playPauseButton.playing is false
+
+Media is playing
+PASS mediaController.controls.playPauseButton.playing is true
+
+Media is paused
+PASS mediaController.controls.playPauseButton.playing is false
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

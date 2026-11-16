@@ -1,0 +1,18 @@
+<style>
+   #x13 { letter-spacing: 1em; text-wrap: pretty;direction: ltr;}
+   *:first-child, style {margin-right: 999px; display: table-header-group;box-align: baseline;}
+   *:last-child { font-family: system-ui;}
+</style>
+<script>
+   function main() {
+   try { x21.appendChild(document.createTextNode("A { Awebkit-align-self: AAAA;tab-size: 1em;-webkit-line-clamp: 16;-webkit-hyphenate-character: auto }")); } catch (e) { }
+   }
+   if (window.testRunner)
+       testRunner.dumpAsText();
+</script>
+<body onload="main()">
+   <summary id="x13" contenteditable="true">
+   <style id="x21"></style>
+AAAAAAAAAAAAAAAAAAAA
+</body>
+This test passes if it doesn't crash.

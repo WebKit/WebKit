@@ -1,0 +1,14 @@
+This tests that a field paired with a different message than last time ends up holding only the new one. Sites keep the old message element around with its wording intact and merely stop showing it, so the field must not go on reading a message the page has replaced.
+
+PASS: axElement('email').stringAttributeValue('AXInvalid') === 'false'
+PASS: axElement('email').stringAttributeValue('AXInvalid') === 'true'
+PASS: errorMessageText(axElement('email')) === 'Enter a valid email address.'
+PASS: errorMessageText(axElement('email')) === 'That address is already registered.'
+PASS: axElement('email').stringAttributeValue('AXInvalid') === 'true'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Email
+That address is already registered.
+Sign in

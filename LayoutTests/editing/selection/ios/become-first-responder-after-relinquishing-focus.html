@@ -1,0 +1,48 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true focusStartsInputSessionPolicy=allow ] -->
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<head>
+<script src="../../../resources/ui-helper.js"></script>
+<script src="../../../resources/js-test.js"></script>
+<style>
+body, html {
+    width: 100%;
+    height: 100%;
+}
+</style>
+<script>
+jsTestIsAsync = true;
+
+addEventListener("load", async () => {
+    description(`This test verifies that after relinquishing focus by pressing shift-tab and then
+        becoming first responder in an editable web view, we'll begin an input session. This test
+        requires WebKitTestRunner; to test manually, use the iOS Mail app.`);
+
+    await UIHelper.setWebViewEditable(true);
+    await UIHelper.activateElementAndWaitForInputSession(document.body);
+
+    await UIHelper.keyDown("\t", ["shiftKey"]);
+    await UIHelper.resignFirstResponder();
+    await UIHelper.waitForKeyboardToHide();
+    testPassed("1. Input view disappeared after pressing Shift-Tab");
+
+    await UIHelper.becomeFirstResponder();
+    await UIHelper.waitForKeyboardToShow();
+    testPassed("2. Input view appeared after becoming first responder");
+
+    caretRect = await UIHelper.getUICaretViewRect();
+    shouldBeTrue("caretRect.width > 0");
+    shouldBeTrue("caretRect.height > 0");
+
+    document.activeElement.blur();
+    await UIHelper.waitForKeyboardToHide();
+    testPassed("3. Input view disappeared after blurring focused element");
+
+    finishJSTest();
+});
+</script>
+</head>
+<body>
+<div><br></div>
+</body>
+</html>

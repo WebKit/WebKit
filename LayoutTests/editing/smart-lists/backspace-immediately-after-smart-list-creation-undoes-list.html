@@ -1,0 +1,19 @@
+<!DOCTYPE html><!-- webkit-test-runner [ SmartListsAvailable=true ] -->
+<html>
+<head>
+<script src="../editing.js"></script>
+<script src="../../resources/dump-as-markup.js"></script>
+</head>
+<body>
+<div id="test" contenteditable></div>
+<script>
+Markup.description('Pressing Backspace immediately after Smart Lists converts two consecutive lines into a list should undo the conversion, restoring the original markers and the trigger space.');
+
+const test = document.getElementById('test');
+test.focus();
+[...'* A\n* '].forEach(typeCharacterCommand);
+deleteCommand();
+Markup.dump('test');
+</script>
+</body>
+</html>

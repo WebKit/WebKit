@@ -1,0 +1,3 @@
+
+PASS Wake Lock API is not exposed in an insecure context
+

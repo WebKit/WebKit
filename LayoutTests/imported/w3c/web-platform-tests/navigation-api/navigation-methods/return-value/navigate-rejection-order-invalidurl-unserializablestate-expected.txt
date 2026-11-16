@@ -1,0 +1,3 @@
+
+PASS navigate() with an invalid URL and unserializable state throws "SyntaxError", not "DataCloneError"
+

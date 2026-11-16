@@ -1,0 +1,11 @@
+Body needed for test_driver.click()
+
+FAIL navigator.clipboard.write() fails for more than 100 custom formats assert_unreached: Should have rejected: undefined Reached unreachable code
+FAIL navigator.clipboard.write() fails for custom formats without web prefix assert_unreached: Should have rejected: undefined Reached unreachable code
+FAIL new ClipboardItem() fails for custom formats with web prefix, but invalid MIME types assert_throws_js: function "() => {
+    const clipboardItemInput = new ClipboardItem(
+    {[format1]: blobInput1, [format2]: blobInput2});
+  }" did not throw
+FAIL navigator.clipboard.write() fails for custom format with web prefix, but different Blob type assert_unreached: Should have rejected: undefined Reached unreachable code
+FAIL navigator.clipboard.write() fails when standard format does not match the Blob type assert_unreached: Should have rejected: undefined Reached unreachable code
+

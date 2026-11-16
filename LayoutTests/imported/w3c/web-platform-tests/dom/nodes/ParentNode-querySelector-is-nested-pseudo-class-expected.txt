@@ -1,0 +1,5 @@
+Button 1      Button 2  Button 3
+
+PASS Simple nested :is selector should match all inputs and buttons
+PASS Complex nested :is selector with attribute and :not selectors should work
+

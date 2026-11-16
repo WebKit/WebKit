@@ -1,0 +1,13 @@
+
+Hello
+
+PASS Nonce on BODY tag don't leak via CSS side-channels.
+PASS Nonce on DIV tag don't leak via CSS side-channels.
+PASS Nonce on SCRIPT tag don't leak via CSS side-channels.
+PASS Nonce on svg tag don't leak via CSS side-channels.
+PASS Nonce on g tag don't leak via CSS side-channels.
+PASS Nonce on script tag don't leak via CSS side-channels.
+PASS Nonce on math tag don't leak via CSS side-channels.
+PASS Nonce on mrow tag don't leak via CSS side-channels.
+PASS Nonce on mtext tag don't leak via CSS side-channels.
+

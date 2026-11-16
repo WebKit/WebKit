@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="/js-test-resources/js-test.js"></script>
+</head>
+<body>
+<script>
+description("window.print() after the load event prints right away while an iframe and a fetch are still loading.");
+jsTestIsAsync = true;
+
+// The iframe's load never counted towards this document's loads. It is here because it marks every
+// ancestor frame as not complete while it loads.
+const stalledFetchURL = new URL("/resources/load-and-stall.py?name=dummy.js&mimeType=text%2Fjavascript&stallAt=0&stallFor=5&rand=" + Math.random(), location.href).href;
+const stalledFrameURL = "/resources/load-and-stall.py?name=dummy.js&mimeType=text%2Fplain&stallAt=0&stallFor=5&rand=" + Math.random();
+let insidePrintCall = false;
+let beforePrintFiredInsidePrintCall;
+let stalledFetchFinished;
+
+addEventListener("beforeprint", () => {
+    beforePrintFiredInsidePrintCall = insidePrintCall;
+    // A resource timing entry is only added once the load has finished.
+    stalledFetchFinished = performance.getEntriesByName(stalledFetchURL).length > 0;
+});
+
+addEventListener("afterprint", () => {
+    shouldBeTrue("beforePrintFiredInsidePrintCall");
+    shouldBeFalse("stalledFetchFinished");
+    finishJSTest();
+});
+
+onload = () => {
+    setTimeout(() => {
+        fetch(stalledFetchURL).catch(() => { });
+        const frame = document.createElement("iframe");
+        frame.src = stalledFrameURL;
+        document.body.appendChild(frame);
+
+        debug("window.print()");
+        insidePrintCall = true;
+        window.print();
+        insidePrintCall = false;
+    }, 0);
+};
+</script>
+</body>
+</html>

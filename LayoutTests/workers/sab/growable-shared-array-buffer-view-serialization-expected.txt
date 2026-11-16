@@ -1,0 +1,26 @@
+Growable SharedArrayBuffers typed array should be serializable
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS arrayBuffer.growable is true
+PASS arrayBuffer.byteLength is 36
+PASS arrayBuffer.maxByteLength is 128
+PASS int32AutoArray.length is 8
+PASS int32AutoArray.byteOffset is 4
+PASS result.buffer.growable is true
+PASS result.buffer.byteLength is 36
+PASS result.buffer.maxByteLength is 128
+PASS result.length is 8
+PASS result.byteOffset is 4
+PASS int32AutoArray[0] is 42
+PASS result.buffer.byteLength is 128
+PASS result.buffer.maxByteLength is 128
+PASS int32AutoArray.length is 31
+PASS int32AutoArray.byteOffset is 4
+PASS result.length is 31
+PASS result.byteOffset is 4
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,16 @@
+in-band CEA-608: cue endTime is set by EDM clear
+
+RUN(video.src = blobUrl)
+EVENT(addtrack)
+EVENT(canplaythrough)
+RUN(track = video.textTracks[0])
+RUN(track.mode = "showing")
+RUN(video.play())
+EXPECTED (video.currentTime > '0.5') OK
+EXPECTED (track.cues && track.cues.length >= '1') OK
+EXPECTED (track.cues[track.cues.length - 1] && track.cues[track.cues.length - 1].endTime < video.duration === 'true') OK
+RUN(video.pause())
+RUN(lastCue = track.cues[track.cues.length - 1])
+EXPECTED (lastCue.endTime < video.duration == 'true') OK
+END OF TEST
+

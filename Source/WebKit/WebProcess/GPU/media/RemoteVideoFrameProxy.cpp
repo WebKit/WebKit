@@ -1,0 +1,158 @@
+/*
+ * Copyright (C) 2022 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#include "config.h"
+#include "RemoteVideoFrameProxy.h"
+
+#if ENABLE(GPU_PROCESS) && ENABLE(VIDEO)
+#include "GPUConnectionToWebProcess.h"
+#include "RemoteVideoFrameObjectHeapMessages.h"
+#include "RemoteVideoFrameObjectHeapProxy.h"
+#include <wtf/TZoneMallocInlines.h>
+
+#if PLATFORM(COCOA)
+#include <WebCore/CVUtilities.h>
+#include <WebCore/RealtimeIncomingVideoSourceCocoa.h>
+#include <WebCore/VideoFrameCV.h>
+#include <wtf/MainThread.h>
+#include <wtf/threads/BinarySemaphore.h>
+#endif
+
+namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteVideoFrameProxy);
+
+RemoteVideoFrameProxy::Properties RemoteVideoFrameProxy::properties(const WebCore::VideoFrame& videoFrame)
+{
+    return {
+        videoFrame.presentationTime(),
+        videoFrame.isMirrored(),
+        videoFrame.rotation(),
+        expandedIntSize(videoFrame.presentationSize()),
+        videoFrame.pixelFormat(),
+        videoFrame.colorSpace(),
+        videoFrame.shouldIgnoreAlpha()
+    };
+}
+
+Ref<RemoteVideoFrameProxy> RemoteVideoFrameProxy::create(IPC::Connection& connection, RemoteVideoFrameObjectHeapProxy& videoFrameObjectHeapProxy, RemoteVideoFrameReference reference, Properties&& properties)
+{
+    return adoptRef(*new RemoteVideoFrameProxy(connection, videoFrameObjectHeapProxy, WTF::move(reference), WTF::move(properties)));
+}
+
+static void releaseRemoteVideoFrameProxy(IPC::Connection& connection, const RemoteVideoFrameWriteReference& reference)
+{
+    connection.send(Messages::RemoteVideoFrameObjectHeap::ReleaseVideoFrame(reference), 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
+}
+
+RemoteVideoFrameProxy::RemoteVideoFrameProxy(IPC::Connection& connection, RemoteVideoFrameObjectHeapProxy& videoFrameObjectHeapProxy, RemoteVideoFrameReference reference, Properties&& properties)
+    : VideoFrame(properties.presentationTime, properties.isMirrored, properties.rotation, WTF::move(properties.colorSpace))
+    , m_connection(&connection)
+    , m_referenceTracker(reference)
+    , m_size(properties.size)
+    , m_pixelFormat(properties.pixelFormat)
+    , m_shouldIgnoreAlpha(properties.shouldIgnoreAlpha)
+    , m_videoFrameObjectHeapProxy(&videoFrameObjectHeapProxy)
+{
+}
+
+RemoteVideoFrameProxy::RemoteVideoFrameProxy(CloneConstructor, RemoteVideoFrameProxy& baseVideoFrame)
+    : VideoFrame(baseVideoFrame.presentationTime(), baseVideoFrame.isMirrored(), baseVideoFrame.rotation(), WebCore::PlatformVideoColorSpace { baseVideoFrame.colorSpace() })
+    , m_baseVideoFrame(baseVideoFrame.m_baseVideoFrame ? baseVideoFrame.m_baseVideoFrame.get() : &baseVideoFrame)
+    , m_size(baseVideoFrame.m_size)
+    , m_pixelFormat(baseVideoFrame.m_pixelFormat)
+    , m_shouldIgnoreAlpha(baseVideoFrame.m_shouldIgnoreAlpha)
+{
+}
+
+RemoteVideoFrameProxy::~RemoteVideoFrameProxy()
+{
+    if (m_connection)
+        releaseRemoteVideoFrameProxy(*m_connection, m_referenceTracker->write());
+}
+
+RemoteVideoFrameIdentifier RemoteVideoFrameProxy::identifier() const
+{
+    return m_baseVideoFrame ? m_baseVideoFrame->identifier() : m_referenceTracker->identifier();
+}
+
+std::optional<RemoteVideoFrameReadReference> RemoteVideoFrameProxy::newReadReference(const IPC::Connection& connection) const
+{
+    if (m_baseVideoFrame)
+        return m_baseVideoFrame->newReadReference(connection);
+    if (m_connection.get() != &connection)
+        return std::nullopt;
+    return m_referenceTracker->read();
+}
+
+uint32_t RemoteVideoFrameProxy::pixelFormat() const
+{
+    return m_pixelFormat;
+}
+
+#if PLATFORM(COCOA)
+CVPixelBufferRef RemoteVideoFrameProxy::pixelBuffer() const
+{
+    if (m_baseVideoFrame)
+        return m_baseVideoFrame->pixelBuffer();
+
+    Locker lock(m_pixelBufferLock);
+    if (!m_pixelBuffer && m_videoFrameObjectHeapProxy) {
+        auto videoFrameObjectHeapProxy = std::exchange(m_videoFrameObjectHeapProxy, nullptr);
+
+        Ref protectedThis { *this };
+        BinarySemaphore semaphore;
+        videoFrameObjectHeapProxy->getVideoFrameBuffer(*this, [&protectedThis, &semaphore](auto pixelBuffer) {
+            protectedThis->m_pixelBuffer = WTF::move(pixelBuffer);
+            semaphore.signal();
+        });
+        semaphore.wait();
+    }
+    // FIXME: Some code paths do not like empty pixel buffers.
+    if (!m_pixelBuffer)
+        m_pixelBuffer = WebCore::createBlackPixelBuffer(static_cast<size_t>(m_size.width()), static_cast<size_t>(m_size.height()));
+    return m_pixelBuffer.get();
+}
+#endif
+
+Ref<WebCore::VideoFrame> RemoteVideoFrameProxy::clone()
+{
+    return adoptRef(*new RemoteVideoFrameProxy(cloneConstructor, *this));
+}
+
+TextStream& operator<<(TextStream& ts, const RemoteVideoFrameProxy::Properties& properties)
+{
+    ts << "{ presentationTime="_s << properties.presentationTime
+        << ", isMirrored=" << properties.isMirrored
+        << ", rotation=" << static_cast<int>(properties.rotation)
+        << ", size=" << properties.size
+        << ", pixelFormat=" << properties.pixelFormat
+        << ", shouldIgnoreAlpha=" << properties.shouldIgnoreAlpha
+        << " }";
+    return ts;
+}
+
+}
+#endif

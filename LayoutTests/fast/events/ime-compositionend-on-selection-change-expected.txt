@@ -1,0 +1,21 @@
+To manually test, start editing a composition in the input field and focus the contenteditable without committing the composition. A compositionend event should be logged, with the event target being the input field. Next, insert a pending composition in the contenteditable and focus the input. A compositionend should be logged, with the event target being the contenteditable. Then insert a pending composition in the input field and focus the document. A compositionend event should be logged with the target being the input field. Lastly, insert a pending composition in the rich contenteditable and click and drag to select all the text in the contenteditable. A compositionend event should be fired on the contenteditable.
+
+
+defb
+
+1. Editing the plain input field
+Focusing the rich contenteditable
+PASS: Dispatched compositionend on <INPUT id="plain">
+
+2. Editing the rich contenteditable
+Focusing the plain input field
+PASS: Dispatched compositionend on <DIV id="rich">
+
+3. Editing the plain input field again
+Blurring the plain input field
+PASS: Dispatched compositionend on <INPUT id="plain">
+
+4. Editing the rich contenteditable again
+Changing selection within the rich contenteditable
+PASS: Dispatched compositionend on <DIV id="rich">
+

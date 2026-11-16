@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>EnablePressuredExit</key>
+	<true/>
+	<key>EnableTransactions</key>
+	<true/>
+	<key>Label</key>
+	<string>com.apple.webkit.adattributiond</string>
+	<key>MachServices</key>
+	<dict>
+		<key>com.apple.webkit.adattributiond.service</key>
+		<true/>
+	</dict>
+	<key>LaunchEvents</key>
+	<dict>
+		<key>com.apple.xpc.activity</key>
+		<dict>
+			<key>com.apple.webkit.adattributiond.activity</key>
+			<dict>
+				<key>Interval</key>
+				<integer>86400</integer>
+				<key>GracePeriod</key>
+				<real>3600</real>
+				<key>Priority</key>
+				<string>Maintenance</string>
+				<key>AllowBattery</key>
+				<true/>
+				<key>RandomInitialDelay</key>
+				<integer>86400</integer>
+				<key>RequireNetworkConnectivity</key>
+				<true/>
+				<key>Repeating</key>
+				<true/>
+			</dict>
+		</dict>
+	</dict>
+	<key>ProcessType</key>
+	<string>Adaptive</string>
+	<key>ProgramArguments</key>
+	<array>
+		<string>${INSTALL_PATH}/${PRODUCT_NAME}</string>
+		<string>--machServiceName</string>
+		<string>com.apple.webkit.adattributiond.service</string>
+		<string>--storageLocation</string>
+		<string>/var/mobile/Library/com.apple.webkit.adattributiond/Version1</string>
+		<string>--startActivity</string>
+	</array>
+	<key>StandardErrorPath</key>
+	<string>/dev/null</string>
+</dict>
+</plist>

@@ -1,0 +1,5 @@
+
+PASS appendMedium with a comma-separated list is a no-op
+PASS appendMedium with a comma-separated list leaves an existing list unchanged
+PASS appendMedium does not append a duplicate medium
+

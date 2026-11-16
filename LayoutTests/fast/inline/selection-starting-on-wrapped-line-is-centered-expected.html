@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Reference: a selection starting on a wrapped line covers its line box and continues onto the next line without a gap.</title>
+<style>
+  ::selection { background-color: green; }
+  body { margin: 0; font: 20px/60px Ahem; color: transparent; }
+  .container { width: 50px; }
+  .strut { padding-block: 20px; }
+</style>
+</head>
+<body>
+<div class="container"><span class="strut">xx</span> <span id="target"><span class="strut">xx</span> <span class="strut">xx</span></span></div>
+<script>
+  var range = document.createRange();
+  range.selectNodeContents(document.getElementById("target"));
+  window.getSelection().addRange(range);
+</script>
+</body>
+</html>

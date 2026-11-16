@@ -1,0 +1,3 @@
+PASS: saw no more layer flushes than rendering updates
+
+

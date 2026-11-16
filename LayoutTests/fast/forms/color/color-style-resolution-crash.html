@@ -1,0 +1,29 @@
+<style></style>
+<script>
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+(async () => {
+    const testStyle = document.styleSheets[0];
+
+    try {
+        testStyle.insertRule(`@keyframes {}`, testStyle.cssRules.length);
+    } catch {}
+
+    try {
+        testStyle.insertRule(`& { 29%; container-type: inline-size; }`, testStyle.cssRules.length);
+    } catch {}
+
+    const input = document.createElement('input');
+    document.documentElement.appendChild(input);
+    input.type = 'color';
+    testRunner?.notifyDone();
+})();
+
+</script>
+<body>
+    <p>PASS if no crash.</p>
+</body>

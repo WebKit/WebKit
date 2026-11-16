@@ -1,0 +1,3 @@
+
+FAIL Sync-xhr Report Format assert_throws_dom: Synchronous XHR.send should throw an exception when disabled function "() => xhr.send()" did not throw
+

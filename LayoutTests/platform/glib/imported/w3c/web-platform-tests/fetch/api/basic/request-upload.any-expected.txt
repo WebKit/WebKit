@@ -1,0 +1,21 @@
+
+PASS Fetch with PUT with body
+PASS Fetch with POST with text body
+PASS Fetch with POST with URLSearchParams body
+PASS Fetch with POST with Blob body
+PASS Fetch with POST with ArrayBuffer body
+PASS Fetch with POST with Uint8Array body
+PASS Fetch with POST with Int8Array body
+PASS Fetch with POST with Float16Array body
+PASS Fetch with POST with Float32Array body
+PASS Fetch with POST with Float64Array body
+PASS Fetch with POST with DataView body
+PASS Fetch with POST with Blob body with mime type
+PASS Fetch with POST with ReadableStream containing String
+PASS Fetch with POST with ReadableStream containing null
+PASS Fetch with POST with ReadableStream containing number
+PASS Fetch with POST with ReadableStream containing ArrayBuffer
+PASS Fetch with POST with ReadableStream containing Blob
+FAIL Fetch with POST with text body on 421 response should be retried once on new connection. assert_equals: expected "ok. Request was sent 2 times. 2 connections were created." but got "ok. Request was sent 2 times. 0 connections were created."
+PASS Streaming upload shouldn't work on Http/1.1.
+

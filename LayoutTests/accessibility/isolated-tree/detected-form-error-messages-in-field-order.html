@@ -1,0 +1,58 @@
+<!DOCTYPE HTML><!-- webkit-test-runner [ AccessibilityFormErrorDetectionEnabled=true IsAccessibilityIsolatedTreeEnabled=true ] -->
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+<style>
+input { display: block; height: 30px; box-sizing: border-box; }
+.error { color: #c62828; line-height: 20px; }
+#first-name-error { margin-top: 12px; }
+</style>
+</head>
+<body>
+
+<div id="signup">
+  <input id="first-name" type="text" aria-label="First name">
+  <div id="first-name-error" class="error"></div>
+  <input id="last-name" type="text" aria-label="Last name">
+  <div id="last-name-error" class="error"></div>
+  <div id="sign-up" role="button" tabindex="0">Sign up</div>
+</div>
+
+<script>
+var output = "This tests that the messages a page never announced are read in the order their fields come on the page, even when a later field's message sits closer to its field than an earlier one's.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+    internals.setAccessibilityFormErrorSettleDelay(0.1);
+
+    var payload = "";
+    accessibilityController.addNotificationListener((element, notification, userInfo) => {
+        if (notification == "AXPossibleFormValidationError")
+            payload = formatFormValidationUserInfo(userInfo);
+    });
+
+    document.getElementById("sign-up").addEventListener("click", () => {
+        document.getElementById("first-name-error").textContent = "Enter your first name.";
+        document.getElementById("last-name-error").textContent = "Enter your last name.";
+    });
+
+    function axElement(id) {
+        return accessibilityController.accessibleElementById(id);
+    }
+
+    setTimeout(async function() {
+        output += expect("axElement('first-name').stringAttributeValue('AXInvalid')", "'false'");
+
+        axElement("sign-up").press();
+        output += await expectAsync("payload", "'AXFormValidationUnannouncedText: Enter your first name. | Enter your last name.\\nAXFormValidationErrorFieldCount: 2\\n'");
+        output += expect("errorMessageText(axElement('first-name'))", "'Enter your first name.'");
+        output += expect("errorMessageText(axElement('last-name'))", "'Enter your last name.'");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

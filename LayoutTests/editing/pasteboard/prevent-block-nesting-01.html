@@ -1,0 +1,24 @@
+<script src="../../resources/dump-as-markup.js"></script>
+<style>
+div {
+    border: 1px solid red;
+    margin: 2px;
+}
+</style>
+<p id="description">The code in paste that prevents block nesting had a bug where the order of pasted paragraphs could be reversed.</p>
+<div id="test" contenteditable="true"><br></div>
+
+<script>
+if (window.testRunner)
+    testRunner.dumpEditingCallbacks();
+
+var s = window.getSelection();
+var e = document.getElementById("test");
+
+s.setPosition(e, 0);
+document.execCommand("InsertHTML", false, "There should be an empty line between these two paragraphs.<span><div><br></div></span><div>This paragraph and the empty line should have be in their own divs with a red border.</div>");
+
+Markup.description(document.getElementById('description').textContent);
+Markup.dump(e);
+
+</script>

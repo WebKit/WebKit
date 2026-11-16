@@ -1,0 +1,99 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<head>
+    <style>
+        body {
+            height: 2000px;
+        }
+        .scroller {
+            scroll-snap-type: both mandatory;
+            position: absolute;
+            top: 310px;
+            left: 10px;
+            height: 300px;
+            width: 300px;
+            border: 20px solid gray;
+            overflow: scroll;
+        }
+        .content {
+            width: 200%;
+            height: 300%;
+        }
+        .target {
+            width: 200px;
+            height: 800px;
+            scroll-snap-align: start;
+        }
+        #space {
+            width: 2000px;
+            height: 2000px;
+        }
+        
+    </style>
+    <script src="../../../resources/js-test.js"></script>
+    <script src="../../../resources/ui-helper.js"></script>
+    <script>
+        var jsTestIsAsync = true;
+
+        var scroller;
+        var scrollendEventFired = false;
+        var scrollendEventWasFiredDuringScroll = false;
+
+        async function resetScrollPositions()
+        {
+            window.scrollTo(0, 300);
+            
+            // Wait for scroll events to fire.
+            await UIHelper.ensurePresentationUpdate();
+        }
+        
+        async function testScrollOverContent()
+        {
+            debug('');
+            debug('Test scroll over content');
+            await resetScrollPositions();
+            scrollendEventFired = false;
+            scrollendEventWasFiredDuringScroll = false
+            await UIHelper.startMonitoringWheelEvents();
+
+            scroller.scrollTo({top: 750, behavior: 'smooth'});
+            await UIHelper.waitForScrollCompletion();
+
+            await UIHelper.ensurePresentationUpdate();
+            await UIHelper.renderingUpdate();
+
+            shouldBe('scrollendEventFired', 'true');
+            shouldBe('scrollendEventWasFiredDuringScroll', 'false');
+        }
+
+        async function scrollTest()
+        {
+            await testScrollOverContent();
+            finishJSTest();
+        }
+
+        window.addEventListener('load', () => {
+            scroller = document.querySelector('.scroller');
+            scroller.addEventListener('scrollend', () => {
+                scrollendEventFired = true;
+            }, false);
+
+            scroller.addEventListener('scroll', () => {
+                if (scrollendEventFired) {
+                    scrollendEventWasFiredDuringScroll = true;
+                }
+            }, false);
+
+            setTimeout(scrollTest, 0);
+        }, false);
+    </script>
+</head>
+<body>
+    <div class="scroller">
+        <div class="target" style="left: 0px; top: 0px; background-color: blue;"></div>
+        <div class="target" style="left: 80px; top: 80px; background-color: red;"></div>
+        <div class="target" style="left: 200px; top: 200px; background-color: yellow;"></div>    
+    </div>
+    <div class="overlapper"></div>
+</body>
+</html>

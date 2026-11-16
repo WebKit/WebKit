@@ -1,0 +1,64 @@
+
+FAIL AudioContext with no hint hint assert_equals: renderQuantumSize with no hint hint expected (number) 128 but got (undefined) undefined
+FAIL AudioContext with "default" hint assert_equals: renderQuantumSize with "default" hint expected (number) 128 but got (undefined) undefined
+FAIL AudioContext with "hardware" hint assert_greater_than: renderQuantumSize with "hardware" hint expected a number but got a "undefined"
+FAIL AudioContext [Honored Exactly]: sampleRate 48000, renderSizeHint 1 assert_equals: renderQuantumSize should be exactly 1 expected (number) 1 but got (undefined) undefined
+FAIL AudioContext [Honored Exactly]: sampleRate 48000, renderSizeHint 13 assert_equals: renderQuantumSize should be exactly 13 expected (number) 13 but got (undefined) undefined
+FAIL AudioContext [Honored Exactly]: sampleRate 48000, renderSizeHint 127 assert_equals: renderQuantumSize should be exactly 127 expected (number) 127 but got (undefined) undefined
+FAIL AudioContext [Honored Exactly]: sampleRate 48000, renderSizeHint 129 assert_equals: renderQuantumSize should be exactly 129 expected (number) 129 but got (undefined) undefined
+FAIL AudioContext [Honored Exactly]: sampleRate 48000, renderSizeHint 256 assert_equals: renderQuantumSize should be exactly 256 expected (number) 256 but got (undefined) undefined
+FAIL AudioContext [Honored Exactly]: sampleRate 48000, renderSizeHint 500 assert_equals: renderQuantumSize should be exactly 500 expected (number) 500 but got (undefined) undefined
+FAIL AudioContext [Honored Exactly]: sampleRate 48000, renderSizeHint 16383 assert_equals: renderQuantumSize should be exactly 16383 expected (number) 16383 but got (undefined) undefined
+FAIL AudioContext [Honored Exactly]: sampleRate 3000, renderSizeHint 18000 assert_equals: renderQuantumSize should be exactly 18000 expected (number) 18000 but got (undefined) undefined
+FAIL AudioContext [Honored Exactly]: sampleRate 48000, renderSizeHint 288000 assert_equals: renderQuantumSize should be exactly 288000 expected (number) 288000 but got (undefined) undefined
+FAIL AudioContext [Honored Exactly]: sampleRate 44100.1, renderSizeHint 264600 assert_equals: renderQuantumSize should be exactly 264600 expected (number) 264600 but got (undefined) undefined
+FAIL AudioContext [Throws Exception]: sampleRate 48000, renderSizeHint 0 assert_throws_dom: function "() => {
+        if (isOffline) {
+          new OfflineAudioContext(
+              {
+                length: OFFLINE_CONTEXT_LENGTH,
+                sampleRate,
+                renderSizeHint: hint
+              });
+        } else {
+          new AudioContext({ sampleRate, renderSizeHint: hint });
+        }
+      }" did not throw
+FAIL AudioContext [Throws Exception]: sampleRate 3000, renderSizeHint 18001 assert_throws_dom: function "() => {
+        if (isOffline) {
+          new OfflineAudioContext(
+              {
+                length: OFFLINE_CONTEXT_LENGTH,
+                sampleRate,
+                renderSizeHint: hint
+              });
+        } else {
+          new AudioContext({ sampleRate, renderSizeHint: hint });
+        }
+      }" did not throw
+FAIL AudioContext [Throws Exception]: sampleRate 48000, renderSizeHint 288001 assert_throws_dom: function "() => {
+        if (isOffline) {
+          new OfflineAudioContext(
+              {
+                length: OFFLINE_CONTEXT_LENGTH,
+                sampleRate,
+                renderSizeHint: hint
+              });
+        } else {
+          new AudioContext({ sampleRate, renderSizeHint: hint });
+        }
+      }" did not throw
+FAIL AudioContext [Throws Exception]: sampleRate 48000, renderSizeHint -1 assert_throws_dom: function "() => {
+        if (isOffline) {
+          new OfflineAudioContext(
+              {
+                length: OFFLINE_CONTEXT_LENGTH,
+                sampleRate,
+                renderSizeHint: hint
+              });
+        } else {
+          new AudioContext({ sampleRate, renderSizeHint: hint });
+        }
+      }" did not throw
+FAIL Base latency scales with render quantum size assert_greater_than: Large quantum should increase latency expected a number greater than 0.0029024943310657597 but got 0.0029024943310657597
+

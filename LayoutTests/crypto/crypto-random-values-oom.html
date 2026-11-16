@@ -1,0 +1,34 @@
+<!DOCTYPE HTML><!-- webkit-test-runner [ dumpJSConsoleLogInStdErr=true ] -->
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+<script>
+description("Test crypto.getRandomValues behavior in oom situation.")
+
+let exceptionString = undefined;
+
+function useAllMemory() {
+    try {
+        for (let i = 0; i < 1000; i++) {
+          new ArrayBuffer(2**20);
+        }
+    } catch {
+    }
+}
+
+useAllMemory();
+try {
+    crypto.getRandomValues(new Uint8Array());
+} catch (e) {
+    gc();
+    exceptionString = e.toString();
+}
+gc();
+shouldBeTrue("exceptionString == undefined || exceptionString === \"TypeError: Argument 1 ('array') to Crypto.getRandomValues must be an instance of ArrayBufferView\"");
+testPassed("crypto.getRandomValues didn't crash");
+</script>
+</body>
+</html>

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/js-test.js"></script>
+</head>
+<body onload="runTest()">
+<div id=parent>
+<input id='datetime-local' type='datetime-local'>
+<input id='date' type='date'>
+<input id='time' type='time'>
+<input id='month' type='month'>
+<input id='week' type='week'>
+</div>
+<pre id="description"></pre>
+<pre id="console"></pre>
+<script>
+var initialWidth;
+var initialHeight;
+
+function runTest() {
+    description("This test verifies that the initial width of date/time-related inputs with no value is equal to the input's width when its value is set to one which would produce the widest possible displayed string for the date or time, and that the displayed value does not overflow onto two lines.");
+    debug("NOTE: Since the values to check are hardcoded, the values are only certain to produce the widest possible displayed string for locale en_US with 12 hour time.\n");
+
+    var values = [ "4444-05-30T10:44", "4444-05-30", "10:44", "4444-09", "4444-W44" ];
+    var children = document.getElementsByTagName("input")
+
+    for (var i = 0; i < children.length; i++) {
+        let input = children[i];
+        initialWidth = input.clientWidth;
+        initialHeight = input.clientHeight;
+        input.value = values[i];
+        
+        if (initialWidth == input.clientWidth)
+            testPassed("The " + input.id + " input's width did not change after its value was set.");
+        else
+            testFailed("The " + input.id + " input's width changed from " + initialWidth + " to " + input.clientWidth + "after its value was set.");
+
+        if (initialHeight == input.clientHeight)
+            testPassed("The " + input.id + " input's height did not change after its value was set.");
+        else
+            testFailed("The " + input.id + " input's height changed from " + initialHeight + " to " + input.clientHeight + "after its value was set.");
+    }
+
+    finishJSTest();
+}
+</script>
+</body>
+</html>

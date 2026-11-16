@@ -1,0 +1,6 @@
+
+PASS WebTransport session established with congestionControl "default" and attribute is readable
+PASS WebTransport session established with congestionControl "throughput" and attribute is readable
+PASS WebTransport session established with congestionControl "low-latency" and attribute is readable
+PASS WebTransport session without congestionControl option defaults to "default"
+

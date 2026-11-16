@@ -1,0 +1,6 @@
+void func() {}
+void func() {}
+
+/*%%*
+function 'void func()' was already defined
+*%%*/

@@ -1,0 +1,1 @@
+This tests that garbage collecting a node iterator or a tree walker without a filter doesn't crash.

@@ -1,0 +1,4 @@
+
+PASS Test that enter event is fired at documentPictureInPicture
+  when the PiP window in opened.
+

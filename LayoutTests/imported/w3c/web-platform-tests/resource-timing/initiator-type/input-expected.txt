@@ -1,0 +1,4 @@
+
+
+PASS The initiator type for <input type=image> must be 'input'
+

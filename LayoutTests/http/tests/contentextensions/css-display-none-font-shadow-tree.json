@@ -1,0 +1,14 @@
+[
+    {
+        "action": {
+            "type": "css-display-none",
+            "selector": "#hideme"
+        },
+        "trigger": {
+            "url-filter": ".*",
+            "resource-type": [
+                "font"
+            ]
+        }
+    }
+]

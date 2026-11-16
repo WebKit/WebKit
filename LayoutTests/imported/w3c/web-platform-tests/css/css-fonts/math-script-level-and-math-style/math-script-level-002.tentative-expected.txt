@@ -1,0 +1,8 @@
+
+PASS auto
+PASS auto ; starting from level 7
+PASS add(<integer>)
+PASS add(<integer>) ; starting from level 3
+PASS <integer>
+PASS <integer> ; starting from level 50
+

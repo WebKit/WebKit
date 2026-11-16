@@ -1,0 +1,5 @@
+PASS createStrings() threw exception RangeError: Out of memory.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

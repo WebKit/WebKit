@@ -1,0 +1,5 @@
+
+PASS clip-path: url(#%6d%79%20%63%6c%69%70) resolves to clipPath id="my clip"
+PASS filter: url(#%66%31) resolves to filter id="f1"
+PASS mask: url(#%6d%31) resolves to mask id="m1"
+

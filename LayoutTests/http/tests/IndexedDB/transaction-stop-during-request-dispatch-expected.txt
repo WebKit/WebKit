@@ -1,0 +1,3 @@
+
+PASS IDBTransaction should not leak when stopped while a request's event dispatch is in flight
+

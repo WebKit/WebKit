@@ -1,0 +1,13 @@
+A function called both with a literal and with a runtime value is miscompiled on Apple GPU family 9 and later when the Metal frontend leaves it out of line: the literal call site comes out using the argument another call site passed. Runs the same compute shader twice over one 16x16 workgroup, once with waveHeight's time argument written as the literal -10.0 and once as (inp.w - 12.0), which is also -10.0, and checks that every invocation agrees.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS literal.length is 256
+PASS allFinite is true
+PASS outputVaries is true
+PASS differingInvocations is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

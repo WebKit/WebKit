@@ -1,0 +1,6 @@
+Toggle the popover  Toggle the popover  Toggle the popover  Other hover target
+
+FAIL Shadow root reference target works with interestfor attribute. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: hoverOver"
+FAIL Shadow root reference target works with interestfor attribute via options. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: hoverOver"
+FAIL Shadow root reference target works with .interestForElement property. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: hoverOver"
+

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <script src="../../../../resources/js-test.js"></script>
+    <script>
+        window.jsTestIsAsync = true;
+        
+        function doTest()
+        {
+            var iframe = document.querySelector('iframe');
+
+            var node = iframe.contentDocument.createElement('input');
+            node.setAttribute('type', 'range');
+            
+            iframe.contentDocument.body.appendChild(node);
+            iframe.contentDocument.body.offsetWidth;
+
+            document.body.appendChild(node);
+            document.body.offsetWidth;
+            node.remove();
+
+            window.setTimeout(removeFrameAndGC, 0)
+        }
+        
+        function removeFrameAndGC()
+        {
+            var iframe = document.querySelector('iframe');
+            iframe.remove();
+            iframe = undefined;
+
+            gc();
+            finishJSTest();
+        }
+
+        window.addEventListener('load', doTest, false);
+    </script>
+</head>
+<body>
+    This test should not crash or assert.
+    <iframe srcdoc="<body></body>"></iframe>
+</body>
+</html>

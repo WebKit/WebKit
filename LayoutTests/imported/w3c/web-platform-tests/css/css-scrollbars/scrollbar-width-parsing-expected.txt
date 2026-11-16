@@ -1,0 +1,17 @@
+
+PASS e.style['scrollbar-width'] = "auto" should set the property value
+PASS e.style['scrollbar-width'] = "thin" should set the property value
+PASS e.style['scrollbar-width'] = "none" should set the property value
+PASS e.style['scrollbar-width'] = "" should not set the property value
+PASS e.style['scrollbar-width'] = "auto none" should not set the property value
+PASS e.style['scrollbar-width'] = "thin auto" should not set the property value
+PASS e.style['scrollbar-width'] = "none thin" should not set the property value
+PASS e.style['scrollbar-width'] = "auto thin none" should not set the property value
+PASS e.style['scrollbar-width'] = "tiny" should not set the property value
+PASS e.style['scrollbar-width'] = "enormous" should not set the property value
+PASS e.style['scrollbar-width'] = "12px" should not set the property value
+PASS e.style['scrollbar-width'] = "3em" should not set the property value
+PASS e.style['scrollbar-width'] = "20%" should not set the property value
+PASS e.style['scrollbar-width'] = "#FF0000" should not set the property value
+PASS e.style['scrollbar-width'] = "red green" should not set the property value
+

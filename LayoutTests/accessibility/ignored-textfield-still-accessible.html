@@ -1,0 +1,45 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<span role="button">
+    <label for="password">Please enter your password</label>
+    <input id="password" name="password" type="password">
+</span>
+
+<script>
+    // Before we can enable this test for iOS, we need:
+    //   1. An implementation of EventSenderProxyIOS::keyDown
+    //   2. To attach the event listener via accessibilityController.addNotificationListener on iOS
+    var testOutput = "This test ensures that a textfield ignored due to invalid markup (buttons should have no children) is still usable by AX clients when the textfield is included in a published notification.\n\n";
+    var webArea;
+
+    function notificationCallback(notification, userInfo) {
+        if (notification == "AXValueChanged") {
+            const axElement = userInfo["AXTextChangeElement"];
+            // If we get a non-empty role, we know the wrapper is not detached is generally queryable by AX clients.
+            testOutput += `Got AXValueChanged notification. Role for element included in notification: ${axElement.role}\n`;
+            webArea.removeNotificationListener();
+            debug(testOutput);
+            finishJSTest();
+        }
+    }
+
+    if (window.accessibilityController) {
+        window.jsTestIsAsync = true;
+
+        webArea = accessibilityController.rootElement.childAtIndex(0);
+        testOutput += `Successfully added notification listener: ${webArea.addNotificationListener(notificationCallback)}\n`;
+
+        document.getElementById("password").focus();
+        testOutput += "Sending keyDown to password field.\n";
+        eventSender.keyDown("6");
+    }
+</script>
+</body>
+</html>
+

@@ -1,0 +1,8 @@
+
+FAIL AccentColor updates when accent-color changes assert_equals: expected "rgb(1, 2, 3)" but got "rgb(0, 122, 255)"
+FAIL AccentColor resolves against the element's own accent-color assert_equals: expected "rgb(11, 22, 33)" but got "rgb(0, 122, 255)"
+FAIL AccentColor resolves in a registered color custom property assert_equals: expected "rgb(123, 45, 67)" but got "rgb(0, 122, 255)"
+FAIL AccentColor resolves in a color function in a registered property assert_equals: expected "color(srgb 0.482353 0.176471 0.262745)" but got "color(srgb 0 0.478431 1)"
+FAIL Canvas AccentColor mirrors inherited and updated accent-color assert_array_equals: expected property 0 to be 12 but got 0 (expected array [12, 34, 56, 255] got object "0,122,255,255")
+FAIL Canvas color functions resolve AccentColor against accent-color assert_array_equals: expected property 0 to be 45 but got 0 (expected array [45, 67, 89, 255] got object "0,122,255,255")
+

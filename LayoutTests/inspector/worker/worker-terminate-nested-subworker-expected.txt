@@ -1,0 +1,17 @@
+Test that terminating a Worker also removes Targets for its nested (grandchild) Subworkers.
+
+
+== Running test suite: Worker.Terminate.NestedSubworker
+-- Running test case: Worker.Terminate.NestedSubworker.SetUp
+PASS: Should have a Target for the top-level Worker.
+PASS: Should have a Target for the Subworker.
+PASS: Should have a Target for the Subworker's Subworker.
+
+-- Running test case: Worker.Terminate.NestedSubworker.Terminate
+PASS: Should remove the Target for the top-level Worker.
+PASS: Should remove the Target for the Subworker.
+PASS: Should remove the Target for the Subworker's Subworker.
+PASS: Worker Targets should no longer include the top-level Worker.
+PASS: Worker Targets should no longer include the Subworker.
+PASS: Worker Targets should no longer include the Subworker's Subworker.
+

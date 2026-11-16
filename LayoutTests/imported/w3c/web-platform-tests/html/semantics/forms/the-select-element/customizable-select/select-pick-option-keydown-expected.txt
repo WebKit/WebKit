@@ -1,0 +1,4 @@
+
+
+PASS Canceling keypress does not prevent an option from being picked.
+

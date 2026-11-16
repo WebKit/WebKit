@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+@font-face {
+    font-family: "WebFont";
+    src: url("resources/Ahem-sbix.ttf") format("truetype");
+}
+</style>
+</head>
+<body>
+<canvas id="canvas" width="700" height="500" style="width: 700px; height: 500px;"></canvas>
+<script>
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+let font = "100px 'WebFont'";
+document.fonts.load(font).then(function() {
+    let canvas = document.getElementById("canvas");
+    let context = canvas.getContext("2d");
+    context.lineWidth = 2;
+    context.font = font;
+    context.strokeStyle = "white";
+    context.shadowColor = "green";
+    context.shadowOffsetX = 100;
+    context.shadowOffsetY = 105;
+    context.strokeText("A\u7EB5B", 100, 100);
+    if (window.testRunner)
+        testRunner.notifyDone();
+});
+</script>
+</body>
+</html>

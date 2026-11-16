@@ -1,0 +1,13 @@
+This test verifies that a paragraph with ltr text in English, containining a cite element with dir="rtl", containing a span element with dir="ltr" is read correctly by accessibility.
+
+PASS: staticText.textMarkerRangeLength(staticTextTextMarkerRange) === 16
+PASS: staticText.accessibilityElementForTextMarker(startMarker).isEqual(staticText) === true
+PASS: staticText.accessibilityElementForTextMarker(endMarker).isEqual(staticText) === true
+PASS: staticText.stringForTextMarkerRange(staticTextTextMarkerRange).trim() === 'The alphabet is'
+PASS: citeRTL.textMarkerRangeLength(citeTextMarkerRange) === 34
+PASS: citeRTL.stringForTextMarkerRange(citeTextMarkerRange).trim() === 'ABC DEF GHI JKL MNO PQR STU VWX YZ'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+The alphabet is ABC DEF GHI JKL MNO PQR STU VWX YZ.

@@ -1,0 +1,10 @@
+
+PASS Valid protocol 'org-iso-mdoc' passes through filtering
+PASS Protocol matching is case sensitive - 'ORG-ISO-MDOC' filtered
+PASS Empty protocol string is filtered out
+PASS Protocol with leading whitespace is filtered out
+PASS Protocol with trailing whitespace is filtered out
+PASS Partial protocol match 'org-iso' is filtered out
+PASS Protocol with invalid characters 'org_iso_mdoc' is filtered out
+PASS Unknown protocol 'unknown-protocol' is filtered out
+

@@ -1,0 +1,7 @@
+
+PASS WebAssembly module global values should be unwrapped when importing in ESM integration
+PASS WebAssembly mutable global values should be unwrapped when importing in ESM integration
+PASS WebAssembly local global values should be unwrapped when exporting in ESM integration
+PASS WebAssembly module globals from imported WebAssembly modules should be unwrapped
+PASS WebAssembly should properly handle all global types
+

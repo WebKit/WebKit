@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>This tests that simple line layout paints at the same position when transition is present/not present.</title>
+<style>
+  .outer{
+    -webkit-align-items: center;
+    box-sizing: border-box;
+    padding-top: 1px;
+    min-height: 25px;
+    display: -webkit-flex;
+  }
+
+  .inner {
+    font: -webkit-small-control;
+    font-size: 20px;
+  }
+</style>
+</head>
+<body>
+  <div class=outer>
+    <div class=inner>This text should not move.</div>
+  </div>
+  <script>
+</body>
+</html>

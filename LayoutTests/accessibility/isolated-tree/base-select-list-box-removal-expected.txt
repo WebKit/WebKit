@@ -1,0 +1,10 @@
+This test verifies that destroying the options of a base appearance list box does not crash with the isolated tree.
+
+PASS: accessibilityController.accessibleElementById('single').childrenCount === 2
+PASS: accessibilityController.accessibleElementById('multiple').childrenCount === 2
+PASS: accessibilityController.accessibleElementById('single').childrenCount === 1
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

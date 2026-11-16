@@ -1,0 +1,5 @@
+
+PASS Autonomous custom element prefix is set after constructor returns
+PASS Reentrant construction does not leak prefix between instances
+PASS Nested createElementNS calls do not corrupt prefix state
+

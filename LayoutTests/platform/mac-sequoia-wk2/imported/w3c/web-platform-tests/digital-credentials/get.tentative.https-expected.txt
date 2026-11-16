@@ -1,0 +1,15 @@
+
+
+PASS Type conversion happens on the data member of the DigitalCredentialGetRequest object.
+PASS Calling navigator.credentials.get() without a digital member same origin.
+PASS navigator.credentials.get() API rejects if there are no credential request.
+PASS navigator.credentials.get() API rejects if there are no credential request for same-origin iframe.
+PASS navigator.credentials.get() API rejects if there are no credential request in cross-origin iframe.
+PASS navigator.credentials.get() promise is rejected if called with an aborted controller.
+PASS navigator.credentials.get() promise is rejected if called with an aborted controller in same-origin iframe.
+PASS navigator.credentials.get() promise is rejected if called with an aborted signal in cross-origin iframe.
+FAIL navigator.credentials.get() promise is rejected if abort controller is aborted after call to get(). promise_rejects_dom: function "function() { throw e }" threw object "NotSupportedError: Digital credentials are not supported." that is not a DOMException AbortError: property "code" is equal to 9, expected 20
+FAIL navigator.credentials.get() promise is rejected if abort controller is aborted after call to get() in cross-origin iframe. assert_equals: expected "AbortError" but got "NotAllowedError"
+PASS Mediation is required to get a DigitalCredential.
+PASS Throws TypeError when request data is not JSON stringifiable.
+

@@ -1,0 +1,14 @@
+
+PASS Initial color for ::before
+PASS Initial color for ::after
+PASS Initial color for ::marker
+PASS Initial color for ::first-line
+PASS Initial color for ::first-letter
+PASS Initial color for ::backdrop
+PASS Color for ::before depending on container
+PASS Color for ::after depending on container
+PASS Color for ::marker depending on container
+PASS Color for ::first-line depending on container
+PASS Color for ::first-letter depending on container
+PASS Color for ::backdrop depending on container
+

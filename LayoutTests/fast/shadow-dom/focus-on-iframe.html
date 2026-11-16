@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>Tests for setting a negative tabindex on shadow host. Elements inside such a shadow tree should not be in the sequential navigation order.<br>
+To manually test, press tab key four times. It should traverse focusable elements in the increasing numerical order.</p>
+<div id="test-content">
+<div id="first" tabindex="1">1. First sequentially focusable element</div>
+<iframe src="about:blank">2. An iframe without a focusable element</iframe>
+<iframe src="about:blank">An iframe with a focusable element should not be focused</iframe>
+<iframe src="about:blank">5. An iframe without a focusable shadow host or shadow content</iframe>
+<iframe src="about:blank">An iframe with a focusable shadow content should not be focused (1)</iframe>
+<iframe src="about:blank">An iframe with a focusable shadow content should not be focused (2)</iframe>
+</div>
+<pre></pre>
+<script>
+
+var oldActiveElement = null;
+function log()
+{
+    setTimeout(function () {
+        var newActiveElement = document.activeElement;
+
+        if (newActiveElement instanceof HTMLIFrameElement) {
+            var contentDocument = newActiveElement.contentDocument;
+            var activeElementInsideFrame = contentDocument.activeElement;
+            if (activeElementInsideFrame != contentDocument.body && activeElementInsideFrame != contentDocument.documentElement /* Firefox */)
+                newActiveElement = activeElementInsideFrame;
+        }
+
+        if (newActiveElement.shadowRoot) {
+            var activeElementInShadow = newActiveElement.shadowRoot.activeElement;
+            if (activeElementInShadow)
+                newActiveElement = activeElementInShadow;
+        }
+
+        if (oldActiveElement == newActiveElement || newActiveElement == document.body)
+            return;
+        oldActiveElement = newActiveElement;
+        document.querySelector('pre').textContent += newActiveElement.textContent + '\n';
+    }, 0);
+}
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+window.onload = function () {
+    document.onkeydown = log;
+
+    var iframes = document.querySelectorAll('iframe');
+    for (var i = 0; i < iframes.length; i++)
+        iframes[i].contentDocument.onkeydown = log;
+
+    iframes[0].contentDocument.body.innerHTML = 'Content of an iframe without a focusable element should not be focused';
+    iframes[1].contentDocument.body.innerHTML = `
+        <div tabindex="0" onfocus="top.log(this)">3. First focusable element inside an iframe</div>
+        <div tabindex="0" onfocus="top.log(this)">4. Second focusable element inside an iframe</div>`;
+
+    iframes[2].contentDocument.body.innerHTML = '<div>A non-focusable shadow host without a focusable content should not be focused</div>';
+    var host = iframes[2].contentDocument.body.querySelector('div');
+    var shadowRoot = host.attachShadow({mode: 'closed'});
+    shadowRoot.innerHTML = '<slot></slot>';
+
+    iframes[3].contentDocument.body.innerHTML = '<div></div>';
+    var host = iframes[3].contentDocument.querySelector('div');
+    var shadowRoot = host.attachShadow({mode: 'open'});
+    shadowRoot.innerHTML = '<div tabindex="0" onfocus="top.log(this)">6. Focusable content inside a shadow tree</div>';
+
+    iframes[4].contentDocument.body.innerHTML = '<div></div><i tabindex="1">7. A focusable element with a high tabindex</i><span></span>';
+    host = iframes[4].contentDocument.querySelector('div');
+    shadowRoot = host.attachShadow({mode: 'open'});
+    shadowRoot.innerHTML = '<div tabindex="0" onfocus="top.log(this)">8. Focusable content inside the first shadow tree</div>';
+
+    host = iframes[4].contentDocument.querySelector('span');
+    shadowRoot = host.attachShadow({mode: 'open'});
+    shadowRoot.innerHTML = '<div tabindex="0" onfocus="top.log(this)">9. Focusable content inside the second shadow tree</div>';
+
+    document.getElementById('first').focus();
+    document.onkeydown();
+
+    if (window.eventSender)
+        moveFocusForward(8);
+}
+
+function moveFocusForward(focusCount)
+{
+    setTimeout(function () {
+        if (!focusCount)
+            return moveFocusBackward(8);
+        eventSender.keyDown('\t');
+        setTimeout(function () {
+            moveFocusForward(focusCount - 1);            
+        }, 1);
+    }, 1);
+}
+
+function moveFocusBackward(focusCount)
+{
+    setTimeout(function () {
+        if (!focusCount) {
+            document.getElementById('test-content').style.display = 'none';
+            testRunner.notifyDone();
+            return;
+        }
+        eventSender.keyDown('\t', ['shiftKey']);
+        setTimeout(function () {
+            moveFocusBackward(focusCount - 1);            
+        }, 1);
+    }, 1);
+}
+
+</script>
+</body>
+</html>

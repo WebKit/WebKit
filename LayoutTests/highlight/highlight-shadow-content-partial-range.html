@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>CSS Custom Highlight API: shadow tree content is highlighted when a range boundary is in the host's light DOM</title>
+<style>
+#target {
+    font: 16px/20px monospace;
+    white-space: pre;
+    width: max-content;
+    color: black;
+}
+#target::highlight(test),
+#host::highlight(test) {
+    background-color: lime;
+}
+</style>
+</head>
+<body>
+<p>PASS if the first two characters of the first "BBBB" are unhighlighted and everything from the third "B" to the end is one solid lime rectangle with no gap in the middle.</p>
+<div id="target">AAAA<span id="host">BBBB</span>CCCC</div>
+<script>
+const host = document.getElementById("host");
+host.attachShadow({ mode: "open" }).innerHTML = "<slot></slot>DDDD";
+
+// Neither boundary is the host, so a walk of the light DOM from the start to the end never visits the host
+// whose shadow tree contains the DDDD between the slotted BBBB and the CCCC.
+const target = document.getElementById("target");
+const range = new Range();
+range.setStart(host.firstChild, 2);
+range.setEnd(target.lastChild, 4);
+CSS.highlights.set("test", new Highlight(range));
+</script>
+</body>
+</html>

@@ -1,0 +1,2 @@
+Link
+SUCCESS! We did not navigate to the link after starting a force click.

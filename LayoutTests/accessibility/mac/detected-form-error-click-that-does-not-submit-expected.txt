@@ -1,0 +1,27 @@
+This tests that a real click only starts a watch for errors when it reaches a control of the page's own that can act. The clear button the browser builds inside a search field is not a control the page wrote, and a disabled button does nothing when clicked, so text the page writes afterwards is not taken for the result of either. The control that does submit still finds its errors afterwards.
+
+PASS: invalidStatus('name') === 'false'
+clickSearchFieldClearButton();
+PASS: document.getElementById('filter').value === ''
+PASS: isWatching() === false
+clickDisabledButton();
+PASS: isWatching() === false
+writeMessage('email-error', 'Enter a valid email address.');
+PASS: notifications === 0
+PASS: invalidStatus('name') === 'false'
+PASS: invalidStatus('email') === 'false'
+axElement('place-order').press();
+PASS: notifications === 1
+PASS: payload === 'AXFormValidationUnannouncedText: Enter your name. | Enter a valid email address.\nAXFormValidationErrorFieldCount: 2\n'
+PASS: invalidStatus('name') === 'true'
+PASS: invalidStatus('email') === 'true'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Name
+Enter your name.
+Email
+Enter a valid email address.
+Filter  Continue
+Place order

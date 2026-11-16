@@ -1,0 +1,6 @@
+Not red
+Not red
+
+PASS Size @container query against inline box never matches
+PASS Size @container query against svg element never matches
+

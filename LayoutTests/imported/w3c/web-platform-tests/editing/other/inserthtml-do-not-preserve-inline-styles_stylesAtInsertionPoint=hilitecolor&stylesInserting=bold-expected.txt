@@ -1,0 +1,6 @@
+abc
+
+PASS insertHTML with "<b>abc</b>" into <span style="background-color:rgb(0, 255, 255)">[]def</span>
+PASS insertHTML with "<b>def</b>" into <span style="background-color:rgb(0, 255, 255)">abc[]</span>
+PASS insertHTML with "<b>b</b>" into <span style="background-color:rgb(0, 255, 255)">a[]c</span>
+

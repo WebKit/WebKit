@@ -1,0 +1,78 @@
+<!DOCTYPE html><!-- webkit-test-runner [ IsAccessibilityIsolatedTreeEnabled=true ] -->
+<html>
+<head>
+<script src="../../../resources/accessibility-helper.js"></script>
+<script src="../../../resources/js-test.js"></script>
+<style>
+.base {
+    appearance: base-select;
+}
+</style>
+</head>
+<body>
+
+<button id="start">Start</button>
+
+<select id="single" size="3">
+    <option id="singleRed">Red</option>
+    <option id="singleGreen">Green</option>
+</select>
+
+<select id="multiple" multiple>
+    <option id="multipleRed" selected>Red</option>
+    <option id="multipleGreen">Green</option>
+</select>
+
+<select id="base" class="base" size="3">
+    <option id="baseRed">Red</option>
+    <option id="baseGreen">Green</option>
+</select>
+
+<script>
+var output = "This test ensures that setting AXSelected on an option of a list box changes the selection as users can, and is not otherwise observable.\n\n";
+
+var events = [];
+for (const select of document.querySelectorAll("select")) {
+    for (const type of ["focus", "mousedown", "mouseup", "click", "input", "change"])
+        select.addEventListener(type, () => events.push(type));
+}
+
+function selectedOptions(id)
+{
+    return Array.from(document.getElementById(id).options).filter(option => option.selected).map(option => option.id).join() || "none";
+}
+
+async function setSelected(selectId, optionId, selected, expectedSelectedOptions)
+{
+    events = [];
+    (await waitForElementById(optionId))?.setBoolAttributeValue("AXSelected", selected);
+    output += await expectAsync(`selectedOptions('${selectId}')`, `'${expectedSelectedOptions}'`);
+    await new Promise(resolve => setTimeout(resolve, 50));
+    output += `${selectId}: events after setting AXSelected to ${selected} on ${optionId}: ${events.join(", ") || "none"}\n`;
+    output += expect("document.activeElement.id", "'start'");
+}
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    setTimeout(async function() {
+        document.getElementById("start").focus();
+
+        await setSelected("single", "singleGreen", true, "singleGreen");
+        await setSelected("single", "singleGreen", false, "singleGreen");
+
+        await setSelected("multiple", "multipleGreen", true, "multipleRed,multipleGreen");
+        await setSelected("multiple", "multipleRed", false, "multipleGreen");
+
+        await setSelected("base", "baseGreen", true, "baseGreen");
+        await setSelected("base", "baseGreen", false, "baseGreen");
+
+        for (const element of document.querySelectorAll("select, button"))
+            element.style.display = "none";
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

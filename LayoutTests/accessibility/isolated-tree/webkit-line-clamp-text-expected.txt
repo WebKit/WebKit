@@ -1,0 +1,12 @@
+This tests that line clamp drops the lines past the clamp visually without changing the text accessibility reports for the element.
+
+PASS: heightOf('clamped') < heightOf('unclamped') === true
+
+Both elements hold the same text, and the clamped one reports all of it.
+PASS: textOf('clamped') === 'Alpha bravo charlie delta echo foxtrot golf hotel india juliet.'
+PASS: textOf('unclamped') === 'Alpha bravo charlie delta echo foxtrot golf hotel india juliet.'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../../../resources/js-test.js"></script>
+    <script src="../../../resources/ui-helper.js"></script>
+
+<style>
+#target {
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    width: 200px;
+    height: 100px;
+}
+</style>
+
+</head>
+<body>
+
+<div id="target"></div>
+<div id="console"></div>
+
+<script>
+description("Tests that a tap dispatches pointerdown and pointerup only once, for the touch, and not again for the mouse events synthesized from the tap.");
+window.jsTestIsAsync = true;
+
+const target = document.getElementById("target");
+let pointerEvents = [];
+
+window.addEventListener("load", async () => {
+    target.addEventListener("pointerdown", event => pointerEvents.push(`${event.type}:${event.pointerType}`));
+    target.addEventListener("pointerup", event => pointerEvents.push(`${event.type}:${event.pointerType}`));
+
+    target.addEventListener("mouseup", () => {
+        setTimeout(() => {
+            shouldBeEqualToString("pointerEvents.join(' ')", "pointerdown:touch pointerup:touch");
+            finishJSTest();
+        }, 0);
+    });
+
+    await UIHelper.renderingUpdate();
+
+    eventSender.clearTouchPoints();
+    eventSender.addTouchPoint(100, 50);
+    await eventSender.asyncTouchStart();
+    eventSender.releaseTouchPoint(0);
+    await eventSender.asyncTouchEnd();
+});
+</script>
+</body>
+
+</html>

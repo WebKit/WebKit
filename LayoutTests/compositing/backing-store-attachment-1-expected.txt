@@ -1,0 +1,28 @@
+(GraphicsLayer
+  (anchor 0.00 0.00)
+  (bounds 785.00 2221.00)
+  (backingStoreAttached 1)
+  (children 1
+    (GraphicsLayer
+      (bounds 785.00 2221.00)
+      (contentsOpaque 1)
+      (backingStoreAttached 1)
+      (children 2
+        (GraphicsLayer
+          (position 8.00 13.00)
+          (bounds 600.00 600.00)
+          (drawsContent 1)
+          (backingStoreAttached 1)
+        )
+        (GraphicsLayer
+          (position 8.00 1613.00)
+          (bounds 600.00 600.00)
+          (drawsContent 1)
+          (backingStoreAttached 0)
+        )
+      )
+    )
+  )
+)
+I'm attached.
+I'm detached.

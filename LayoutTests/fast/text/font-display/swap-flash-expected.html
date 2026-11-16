@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script>
+if (window.internals) {
+    internals.settings.setFontLoadTimingOverride("Failure");
+    internals.settings.setShouldIgnoreFontLoadCompletions(false);
+}
+</script>
+<style>
+@font-face {
+    font-family: "MyFont";
+    src: url("../../../resources/Ahem.ttf") format("truetype");
+}
+</style>
+</head>
+<body>
+This test makes sure that text rendered in the "swap" period is identical to text rendered in the "failure" period. The test passes if the vertical position of the text below is identital (to the subpixel) between this file and the expected file.
+<div style="font-family: MyFont, Palatino; font-size: 24px; height: 30px; line-height: 28px;"><span style="font-family: MyFont, Palatino; font-size: 24px; line-height: 30px;">Descriptors</span></div>
+</body>
+</html>

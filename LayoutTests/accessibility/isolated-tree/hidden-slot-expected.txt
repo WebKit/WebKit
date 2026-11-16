@@ -1,0 +1,10 @@
+This test ensures we don't expose elements within an aria-hidden slot element.
+
+PASS: accessibilityController.accessibleElementById('outside').role.toLowerCase().includes('button') === true
+PASS: !insideButton || insideButton.isIgnored === true
+PASS: insideButton.role.toLowerCase().includes('button') === true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+inside slot

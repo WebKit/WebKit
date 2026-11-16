@@ -1,0 +1,10 @@
+
+PASS Initial state
+PASS Adding the selected attribute
+PASS Setting selected
+PASS Setting selectedIndex
+PASS Setting value
+PASS Setting selectedIndex to -1
+PASS Resetting the form
+PASS Disabling a selected option
+

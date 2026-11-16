@@ -1,0 +1,41 @@
+<html>
+<head>
+<script>
+function createRuntimeObjects()
+{
+    // Each call to testObject() creates an ObjcInstance wrapping a fresh NSObject,
+    // with a RuntimeObject registered via RootObject::addRuntimeObject().
+    // Returned values are not stored, so they become eligible for GC.
+    for (var i = 0; i < 50; i++)
+        objCController.testObject();
+}
+
+function test()
+{
+    if (!window.objCController || !window.GCController) {
+        document.getElementById("console").textContent = "FAIL: This test requires DumpRenderTree on Mac.";
+        return;
+    }
+
+    if (window.testRunner)
+        testRunner.dumpAsText();
+
+    // Repeat to increase the chance of triggering the crash, since weak
+    // reference sweeping timing can vary.
+    for (var i = 0; i < 10; i++) {
+        createRuntimeObjects();
+        GCController.collect();
+    }
+
+    document.getElementById("console").textContent = "PASS: You didn't crash.";
+}
+</script>
+</head>
+<body onload="test()">
+<p>Test that garbage collection of RuntimeObjects does not crash during
+RootObject::finalize().</p>
+<p>This test only works in DumpRenderTree on Mac, because it depends on objCController.</p>
+<hr>
+<div id="console"></div>
+</body>
+</html>

@@ -1,0 +1,19 @@
+
+PASS auto content-box
+PASS auto border-box
+PASS min-content content-box
+PASS min-content border-box
+PASS max-content content-box
+PASS max-content border-box
+Legend
+Contents
+Legend
+Contents
+Legend
+Contents
+Legend
+Contents
+Legend
+Contents
+Legend
+Contents

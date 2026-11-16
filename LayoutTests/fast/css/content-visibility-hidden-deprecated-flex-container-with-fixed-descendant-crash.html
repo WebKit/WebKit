@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<style>
+#skippedRoot {
+    display: -webkit-box;
+    content-visibility: hidden;
+}
+#fixedBox {
+    position: fixed;
+}
+</style>
+<div id="skippedRoot"><div><div id="fixedBox"></div></div></div>
+PASS if no crash
+<script>
+window.testRunner?.dumpAsText();
+document.body.offsetHeight;
+fixedBox.style.width = "100px";
+</script>

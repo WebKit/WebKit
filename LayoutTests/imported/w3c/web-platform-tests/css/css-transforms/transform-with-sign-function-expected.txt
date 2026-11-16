@@ -1,0 +1,13 @@
+
+PASS skew(calc(sign(1em - 1px) * 2deg), calc(sign(1em - 1px) * 2deg)) should be used-value-equivalent to skew(2deg, 2deg)
+PASS skewX(calc(sign(1em - 1px) * 2deg)) should be used-value-equivalent to skewX(2deg)
+PASS skewY(calc(sign(1em - 1px) * 2deg)) should be used-value-equivalent to skewY(2deg)
+PASS matrix(calc(sign(1em - 1px) * 2), calc(sign(1em - 1px) * 2), calc(sign(1em - 1px) * 2), calc(sign(1em - 1px) * 2), calc(sign(1em - 1px) * 2), calc(sign(1em - 1px) * 2)) should be used-value-equivalent to matrix(2, 2, 2, 2, 2, 2)
+PASS matrix3d(calc(sign(1em - 1px) * 2), calc(sign(1em - 1px) * 2), calc(sign(1em - 1px) * 2), calc(sign(1em - 1px) * 2), calc(sign(1em - 1px) * 2), calc(sign(1em - 1px) * 2), calc(sign(1em - 1px) * 2), calc(sign(1em - 1px) * 2),calc(sign(1em - 1px) * 2), calc(sign(1em - 1px) * 2), calc(sign(1em - 1px) * 2), calc(sign(1em - 1px) * 2), calc(sign(1em - 1px) * 2), calc(sign(1em - 1px) * 2), calc(sign(1em - 1px) * 2), calc(sign(1em - 1px) * 2)) should be used-value-equivalent to matrix3d(2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2)
+PASS rotate(calc(sign(1em - 1px) * 2deg)) should be used-value-equivalent to rotate(2deg)
+PASS rotateX(calc(sign(1em - 1px) * 2deg)) should be used-value-equivalent to rotateX(2deg)
+PASS rotateY(calc(sign(1em - 1px) * 2deg)) should be used-value-equivalent to rotateY(2deg)
+PASS rotateZ(calc(sign(1em - 1px) * 2deg)) should be used-value-equivalent to rotateZ(2deg)
+PASS calc(sign(1em - 1px) * 2) calc(sign(1em - 1px) * 2) calc(sign(1em - 1px) * 2) should be used-value-equivalent to 2 2 2
+PASS calc(sign(1em - 1px) * 2) calc(sign(1em - 1px) * 2) calc(sign(1em - 1px) * 2) calc(sign(1em - 1px) * 2deg) should be used-value-equivalent to 2 2 2 2deg
+

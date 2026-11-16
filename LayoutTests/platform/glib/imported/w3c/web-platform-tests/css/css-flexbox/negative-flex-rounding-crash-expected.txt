@@ -1,0 +1,26 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x102
+  RenderBlock {HTML} at (0,0) size 800x102
+    RenderBody {BODY} at (8,8) size 784x86
+      RenderFlexibleBox {DIV} at (0,4) size 8x83
+        RenderFlexibleBox {DIV} at (0,0) size 8x83
+          RenderFlexibleBox {DIV} at (0,0) size 8x28
+            RenderBlock {DIV} at (0,0) size 8x9
+              RenderText {#text} at (0,-4) size 8x17
+                text run at (0,-4) width 8: "x"
+            RenderBlock {DIV} at (0,15) size 8x13
+              RenderText {#text} at (0,-3) size 8x17
+                text run at (0,-3) width 8: "y"
+          RenderFlexibleBox {DIV} at (0,33) size 8x44
+            RenderFlexibleBox {DIV} at (0,0) size 8x28
+              RenderBlock {DIV} at (0,0) size 8x9
+                RenderText {#text} at (0,-4) size 8x17
+                  text run at (0,-4) width 8: "x"
+              RenderBlock {DIV} at (0,15) size 8x13
+                RenderText {#text} at (0,-3) size 8x17
+                  text run at (0,-3) width 8: "y"
+            RenderBlock {DIV} at (0,33) size 8x10
+              RenderText {#text} at (0,-4) size 7x17
+                text run at (0,-4) width 7: "z"
+      RenderText {#text} at (0,0) size 0x0

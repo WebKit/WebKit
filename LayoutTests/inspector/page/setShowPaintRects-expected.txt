@@ -1,0 +1,17 @@
+Tests for the Page.setShowPaintRects.
+
+
+== Running test suite: Page.setShowPaintRects
+-- Running test setup.
+-- Running test case: Page.setShowPaintRects.Enabled
+PASS: Should not have paint rects displayed.
+PASS: Should have paint rects displayed.
+PASS: Should not have paint rects displayed.
+-- Running test teardown.
+
+-- Running test setup.
+-- Running test case: Page.setShowPaintRects.Disabled
+PASS: Should not have paint rects displayed.
+PASS: Should not have had any paint rects displayed.
+-- Running test teardown.
+

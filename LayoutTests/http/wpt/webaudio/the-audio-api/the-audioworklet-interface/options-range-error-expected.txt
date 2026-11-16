@@ -1,0 +1,4 @@
+
+PASS Test with -1
+PASS Test with Number.MAX_SAFE_INTEGER
+

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<style>
+@media only screen and (max-device-width: 1000px) {
+    body {
+        color: red;
+    }
+}
+</style>
+<script>
+function test() {
+    let suite = InspectorTest.createAsyncSuite("Page.setScreenSizeOverride");
+
+    suite.addTestCase({
+        name: "ScreenSizeOverrideOverride",
+        description: "Verify that the inspector can override the screen size.",
+        async test() {
+            let originalScreenWidth = await InspectorTest.evaluateInPage(`window.screen.width`);
+            let originalScreenHeight = await InspectorTest.evaluateInPage(`window.screen.height`);
+
+            let currentBackgroundColor = await InspectorTest.evaluateInPage("getComputedStyle(document.body).color");
+            InspectorTest.expectEqual(currentBackgroundColor, "rgb(0, 0, 0)", "Body should be white.");
+
+            InspectorTest.log("Overriding screen size to 1000x500");
+            await PageAgent.setScreenSizeOverride(1000, 500);
+            await InspectorTest.evaluateInPage(`location.reload()`);
+
+            let newScreenWidth = await InspectorTest.evaluateInPage(`window.screen.width`);
+            InspectorTest.expectEqual(newScreenWidth, 1000, "Default screen width should be 1000.");
+            let newScreenHeight = await InspectorTest.evaluateInPage(`window.screen.height`);
+            InspectorTest.expectEqual(newScreenHeight, 500, "Default screen height should be 500.");
+
+            let newBackgroundColor = await InspectorTest.evaluateInPage("getComputedStyle(document.body).color");
+            InspectorTest.expectEqual(newBackgroundColor, "rgb(255, 0, 0)", "Body should be red.");
+
+            InspectorTest.log("Removing screen size override");
+            await PageAgent.setScreenSizeOverride();
+            await InspectorTest.evaluateInPage(`location.reload()`);
+
+            newScreenWidth = await InspectorTest.evaluateInPage(`window.screen.width`);
+            InspectorTest.expectEqual(newScreenWidth, originalScreenWidth, "Screen width override should be removed.");
+            newScreenHeight = await InspectorTest.evaluateInPage(`window.screen.height`);
+            InspectorTest.expectEqual(newScreenHeight, originalScreenHeight, "Screen height override should be removed.");
+        }
+    });
+
+    WI.domManager.requestDocument((node) => {
+        suite.runTestCasesAndFinish();
+    });
+}
+</script>
+</head>
+<body onload="runTest()"/>
+</html>

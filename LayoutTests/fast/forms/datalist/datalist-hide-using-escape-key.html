@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<script src="../../../resources/ui-helper.js"></script>
+<style>
+input {
+    width: 300px;
+    height: 50px;
+}
+
+body {
+    margin: 0;
+}
+</style>
+<head>
+<body onload="runTest()">
+<input id="input" list="fruits" type="text"/>
+<datalist id="fruits">
+    <option>Apple</option>
+    <option>Orange</option>
+    <option>Pear</option>
+</datalist>
+<pre>1. Is showing suggestions? <span id="before"></span></pre>
+<pre>2. Is showing suggestions? <span id="after"></span></pre>
+<br>
+<div>This test verifies that datalist suggestions UI can be shown, and then hidden using the escape key. To test manually:</div>
+<ol>
+    <li>Focus the text field; on iOS, additionally tap the suggestions dropdown button.</li>
+    <li>Verify that a menu containing suggestions is shown.</li>
+    <li>Press the escape key.</li>
+    <li>Verify that the suggestions menu is no longer shown.</li>
+</ol>
+</body>
+<script>
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+}
+
+async function runTest() {
+    await UIHelper.activateAndWaitForInputSessionAt(150, 25);
+
+    if (UIHelper.isIOSFamily())
+        await UIHelper.tapAt(290, 30);
+
+    await UIHelper.waitForDataListSuggestionsToChangeVisibility(true);
+
+    before.textContent = await UIHelper.isShowingDataListSuggestions();
+
+    await UIHelper.keyDown("escape");
+    await UIHelper.waitForDataListSuggestionsToChangeVisibility(false);
+
+    after.textContent = await UIHelper.isShowingDataListSuggestions();
+
+    testRunner.notifyDone();
+}
+</script>
+</html>

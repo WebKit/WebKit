@@ -1,0 +1,14 @@
+Calling Debugger.evaluateOnCallFrame protocol error cases.
+
+
+== Running test suite: Debugger.evaluateOnCallFrame.errors
+-- Running test case: EvaluateOnCallFrameNotPaused
+PASS: Paused
+PASS: Resumed
+PASS: Should be an error: Must be paused
+
+-- Running test case: EvaluateOnCallFrameBadCallFrameIdentifier
+PASS: Paused
+PASS: Should be an error: Missing injected script for given callFrameId
+PASS: Resumed
+

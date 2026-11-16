@@ -1,0 +1,3 @@
+
+FAIL speculation rules based prefetch should not use cookies for cross origin urls. assert_equals: expected "prefetch" but got "navigate"
+

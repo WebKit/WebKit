@@ -1,0 +1,32 @@
+<!doctype html>
+<html>
+<head>
+<title>Positioned table row as containing block for absolute descendants</title>
+<link rel="match" href="relative-position-row-containment-expected.html">
+<style>
+body {
+    margin: 0;
+}
+table {
+    border-spacing: 0;
+    border-collapse: collapse;
+    border: none;
+}
+td {
+    padding: 0;
+    border: none;
+}
+</style>
+</head>
+<body>
+<!-- Push the table down to verify the absolute div is anchored to the row, not the viewport. -->
+<div style="height: 50px"></div>
+<table>
+    <tr style="position: relative">
+        <td style="width: 100px; height: 100px">
+            <div style="position: absolute; inset: 0; background: green"></div>
+        </td>
+    </tr>
+</table>
+</body>
+</html>

@@ -1,0 +1,3 @@
+
+PASS A nonce-source with trailing characters after the closing quote ('nonce-abc'X) is invalid, so a script carrying that nonce must be blocked.
+

@@ -1,0 +1,4 @@
+
+FAIL 'stroke' does not support 'black' assert_class_string: Unsupported value must be a CSSStyleValue and not one of its subclasses expected "[object CSSStyleValue]" but got "[object CSSKeywordValue]"
+FAIL 'stroke' does not support 'red gray' assert_class_string: Unsupported value must be a CSSStyleValue and not one of its subclasses expected "[object CSSStyleValue]" but got "[object Undefined]"
+

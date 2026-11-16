@@ -1,0 +1,12 @@
+PASS document.getElementById('selectionChange').textContent is "1"
+PASS document.getElementById('selectionStart').textContent is "45"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+The selectionchange event should only be fired once when clicking a node that is being edited.
+
+The selectionchange count in the editable node is: 1
+
+The caret position in the editable node is: 45
+
+

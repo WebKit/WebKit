@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<link rel="help" href="https://drafts.csswg.org/css-text-4/#valdef-text-wrap-balance">
+<!-- This tests that we prefer to accumulate longer lines at the beginning of the block, rather than at the end.
+Since specification (see href) doesn't dictates the shape itself, this should not be a general web-platform test, since other UAs might prefer to shape it on a different way. -->
+<style>
+.container {
+  font-family: monospace;
+  font-size: 20px;
+  width: 20ch;
+  text-wrap: balance;
+}
+</style>
+<div class="container">
+  123 567 901 345 789
+  123 567 901 345 789 123
+  123 567 901 345 789
+  123 567 901 345 789
+  123
+</div>

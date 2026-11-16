@@ -1,0 +1,4 @@
+
+PASS Element.setHTMLUnsafe should trigger custom element reactions.
+PASS ShadowRoot.setHTMLUnsafe should trigger custom element reactions.
+

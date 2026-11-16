@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>Cross-origin frame that disconnects its own inspector target from a breakpoint action</title>
+<script src="breakpoint-detach-frame-script.js"></script>
+<script>
+function report(message)
+{
+    parent.postMessage(message, "*");
+}
+
+function firstBreakpointAction()
+{
+    report("iframe: first breakpoint action ran, disconnecting this frame's inspector target");
+    testRunner.disconnectFrameInspectorTarget();
+}
+
+function secondBreakpointAction()
+{
+    report("iframe: FAIL: second breakpoint action ran");
+}
+
+window.addEventListener("message", (event) => {
+    if (event.data !== "run")
+        return;
+
+    functionWithBreakpoint();
+    report("iframe: execution continued after the breakpoint");
+});
+</script>

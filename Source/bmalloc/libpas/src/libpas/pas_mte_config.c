@@ -1,0 +1,481 @@
+/*
+ * Copyright (c) 2025-2026 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ */
+
+#include "pas_config.h"
+
+#if LIBPAS_ENABLED
+#include "pas_mte_config.h"
+
+#include "stdlib.h"
+#if PAS_OS(DARWIN)
+#include <sys/sysctl.h>
+#include <mach/mach.h>
+#endif
+#if !PAS_OS(WINDOWS)
+#include "unistd.h"
+#include <pthread.h>
+#endif
+
+#include "pas_all_heaps.h"
+#include "pas_basic_heap_runtime_config.h"
+#include "pas_heap.h"
+#include "pas_internal_config.h"
+#include "pas_mte.h"
+#include "pas_scavenger.h"
+#include "pas_segregated_heap.h"
+#include "pas_system_heap.h"
+#include "pas_utility_heap_config.h"
+#include "pas_utils.h"
+#include "pas_zero_memory.h"
+
+#if PAS_ENABLE_BMALLOC
+extern pas_heap bmalloc_common_primitive_heap;
+extern const pas_heap_config bmalloc_heap_config;
+extern pas_basic_heap_runtime_config bmalloc_flex_runtime_config;
+extern pas_basic_heap_runtime_config bmalloc_intrinsic_runtime_config;
+extern pas_basic_heap_runtime_config bmalloc_typed_runtime_config;
+extern pas_basic_heap_runtime_config bmalloc_primitive_runtime_config;
+
+extern pas_heap tagged_bmalloc_common_primitive_heap;
+extern const pas_heap_config tagged_bmalloc_heap_config;
+extern pas_basic_heap_runtime_config tagged_bmalloc_flex_runtime_config;
+extern pas_basic_heap_runtime_config tagged_bmalloc_intrinsic_runtime_config;
+extern pas_basic_heap_runtime_config tagged_bmalloc_typed_runtime_config;
+extern pas_basic_heap_runtime_config tagged_bmalloc_primitive_runtime_config;
+
+/* Every in-use bmalloc-family runtime config that serves user allocations.
+   The tagged heap only exposes the intrinsic and primitive pathways, since the
+   typed and flex runtimes (while technically defined) are unreachable. */
+static pas_basic_heap_runtime_config* all_bmalloc_runtime_configs[] = {
+    &bmalloc_flex_runtime_config,
+    &bmalloc_intrinsic_runtime_config,
+    &bmalloc_typed_runtime_config,
+    &bmalloc_primitive_runtime_config,
+    &tagged_bmalloc_intrinsic_runtime_config,
+    &tagged_bmalloc_primitive_runtime_config,
+};
+#endif // PAS_ENABLE_BMALLOC
+#if PAS_ENABLE_JIT
+extern const pas_heap_config jit_heap_config;
+extern pas_heap_runtime_config jit_heap_runtime_config;
+#endif // PAS_ENABLE_JIT
+#if PAS_ENABLE_ISO
+extern const pas_heap_config iso_heap_config;
+#endif // PAS_ENABLE_ISO
+extern const pas_heap_config pas_utility_heap_config;
+
+#if PAS_ENABLE_MTE || PAS_OS(DARWIN)
+static inline bool pas_mte_is_mte_enabled_unchecked(void)
+{
+    return PAS_RUNTIME_CONFIG_PTR->mte_state == pas_mte_state_enabled;
+}
+#endif
+
+#if defined(PAS_USE_OPENSOURCE_MTE) && PAS_USE_OPENSOURCE_MTE
+#if PAS_ENABLE_MTE
+
+static int is_env_false(const char* var)
+{
+    const char* value = getenv(var);
+    if (!value)
+        return 0;
+    return !strcasecmp(value, "false") || !strcasecmp(value, "no") || !strcasecmp(value, "0");
+}
+
+static int is_env_true(const char* var)
+{
+    const char* value = getenv(var);
+    if (!value)
+        return 0;
+    return !strcasecmp(value, "true") || !strcasecmp(value, "yes") || !strcasecmp(value, "1");
+}
+
+static bool get_value_if_available(unsigned* valuePtr, const char* var)
+{
+    const char* varStr = getenv(var);
+    if (varStr) {
+        unsigned value = 0;
+        if (sscanf(varStr, "%u", &value) == 1) {
+            *valuePtr = value;
+            return true; // Found.
+        }
+    }
+    return false; // Not found.
+}
+
+static void pas_mte_do_initialization(void)
+{
+    pas_runtime_config* config = PAS_RUNTIME_CONFIG_PTR;
+
+    bool enabled = false;
+
+    struct proc_bsdinfo info;
+    int rc = proc_pidinfo(getpid(), PROC_PIDTBSDINFO, 0, &info, sizeof(info));
+    if (rc == sizeof(info) && info.pbi_flags & PAS_MTE_PROC_FLAG_SEC_ENABLED)
+        enabled = true;
+
+    if (is_env_true("MTE_overrideEnablementForJavaScriptCore")) {
+        PAS_ASSERT(!is_env_false("MTE_overrideEnablementForJavaScriptCore"));
+        enabled = true;
+    }
+    if (is_env_false("MTE_overrideEnablementForJavaScriptCore"))
+        enabled = false;
+
+    if (!enabled) {
+        pas_atomic_store_uint8(&config->mte_state, pas_mte_state_disabled);
+        return;
+    }
+
+    uint64_t ldmState = 0;
+    size_t sysCtlLen = sizeof(ldmState);
+    const char* lockdownModeProcName = "com.apple.WebKit.WebContent.CaptivePortal";
+    bool isLockdownModeWebContentProcess = !strncmp(getprogname(), lockdownModeProcName, strlen(lockdownModeProcName));
+    if ((sysctlbyname("security.mac.lockdown_mode_state", &ldmState, &sysCtlLen, NULL, 0) >= 0 && ldmState == 1) || isLockdownModeWebContentProcess)
+        config->is_lockdown_mode = true;
+    else
+        config->is_lockdown_mode = false;
+
+    unsigned mode = 0;
+    if (get_value_if_available(&mode, "MTE_libpasConfig")) {
+        uint8_t mode_byte = (uint8_t)(mode & 0xFF);
+        config->mode_bits.retag_on_scavenge = (mode_byte >> PAS_MTE_FEATURE_RETAG_ON_SCAVENGE) & 1;
+        config->mode_bits.log_on_tag = (mode_byte >> PAS_MTE_FEATURE_LOG_ON_TAG) & 1;
+        config->mode_bits.log_on_purify = (mode_byte >> PAS_MTE_FEATURE_LOG_ON_PURIFY) & 1;
+        config->mode_bits.log_page_alloc = (mode_byte >> PAS_MTE_FEATURE_LOG_PAGE_ALLOC) & 1;
+        config->mode_bits.zero_tag_all = (mode_byte >> PAS_MTE_FEATURE_ZERO_TAG_ALL) & 1;
+        config->mode_bits.adjacent_tag_exclusion = (mode_byte >> PAS_MTE_FEATURE_ADJACENT_TAG_EXCLUSION) & 1;
+        config->mode_bits.assert_adjacent_tags_are_disjoint = (mode_byte >> PAS_MTE_FEATURE_ASSERT_ADJACENT_TAGS_ARE_DISJOINT) & 1;
+    }
+
+    const char* name = getprogname();
+    bool isWebContentProcess = !strncmp(name, "com.apple.WebKit.WebContent", 27) || !strncmp(name, "jsc", 3);
+
+    if (isWebContentProcess) {
+        // For a variety of reasons, a full MTE implementation in the WebContent process is not generally practical.
+        // As such, by default, we disable MTE in the WebContent process while leaving it on in the privileged
+        // processes. However, in certain "extra secure" contexts, this disablement is overridden such that we
+        // treat WebContent like any other process for the purposes of MTE.
+
+        bool wcp_is_hardened = false;
+        bool isEnhancedSecurityWebContentProcess = !strncmp(name, "com.apple.WebKit.WebContent.EnhancedSecurity", 44);
+        if (config->is_lockdown_mode || isEnhancedSecurityWebContentProcess)
+            wcp_is_hardened = true;
+
+        if (wcp_is_hardened) {
+            enabled = true;
+            config->is_hardened = true;
+
+            pas_mte_force_nontaggable_user_allocations_into_large_heap();
+        } else {
+            config->is_hardened = false;
+#if !PAS_USE_MTE_IN_WEBCONTENT
+            // Disable tagging in libpas by default in WebContent process
+            enabled = false;
+#else
+            enabled = true;
+#endif
+        }
+
+#ifndef NDEBUG
+        if (is_env_true("MTE_disableForWebContent")) {
+            PAS_ASSERT(!is_env_true("MTE_overrideEnablementForWebContent"));
+            enabled = false;
+        }
+#endif
+        if (is_env_true("MTE_overrideEnablementForWebContent")) {
+            enabled = true;
+        } else if (is_env_false("MTE_overrideEnablementForWebContent")) {
+            enabled = false;
+        }
+    } else {
+        config->is_hardened = true;
+    }
+
+    /* We must publish here at the latest,
+       since the tail may read the enablement bits via
+       pas_bmalloc_force_allocations_into_biftit_heaps_where_available() */
+    pas_atomic_store_uint8(&config->mte_state,
+        enabled ? pas_mte_state_enabled : pas_mte_state_disabled);
+
+    PAS_IGNORE_WARNINGS_BEGIN("unreachable-code");
+    // Retag-on-scavenge functionally supports both segregated and bitfit heaps.
+    // However, true to the name, for segregated heaps the retag operation only
+    // takes place on the scavenging path.
+    // For bitfit heaps, there is no such path: as such, freed bitfit objects are
+    // immediately retagged. This closes the window where attackers could in
+    // theory exploit a UAF.
+    // As such, when retag-on-scavenge is enabled, we prefer to allocate from
+    // bitfit heaps to exploit this property -- the exception of course being
+    // isoheaps, due to the intrinsic type-unsafety of bitfit heaps.
+    // In practice, for privileged processes this already takes place when WebCore
+    // enables fastMiniMode(), but that enablement takes place later on and as such
+    // can allow for some local-allocators to sneak by. This is not a problem for
+    // mini-mode because a few stray allocations there won't hurt, but for a
+    // security boundary those stray allocations are more of a problem. So we force
+    // this here, prior to the creation of such segregated directories.
+    if (PAS_MTE_FEATURE_ENABLED(PAS_MTE_FEATURE_RETAG_ON_SCAVENGE))
+        pas_bmalloc_force_allocations_into_bitfit_heaps_where_available();
+    PAS_IGNORE_WARNINGS_END;
+}
+
+static bool pas_mte_is_mte_on_for_process(void)
+{
+    struct proc_bsdinfo info;
+    int rc = proc_pidinfo(getpid(), PROC_PIDTBSDINFO, 0, &info, sizeof(info));
+    return (rc == sizeof(info) && (info.pbi_flags & PAS_MTE_PROC_FLAG_SEC_ENABLED)
+        && pas_mte_is_mte_enabled_unchecked());
+}
+
+#else // !PAS_ENABLE_MTE
+
+static PAS_UNUSED void pas_mte_do_initialization(void)
+{
+    pas_runtime_config* config = PAS_RUNTIME_CONFIG_PTR;
+    config->mte_state = pas_mte_state_disabled;
+}
+
+static PAS_UNUSED bool pas_mte_is_mte_on_for_process(void)
+{
+    return false;
+}
+
+#endif // PAS_ENABLE_MTE
+
+#if PAS_OS(DARWIN)
+static size_t max_object_size_for_page_config_sans_heap(const pas_page_base_config* page_config)
+{
+    if (!page_config->is_enabled)
+        return 0;
+    return pas_round_down_to_power_of_2(
+        page_config->max_object_size,
+        pas_page_base_config_min_align(*page_config));
+}
+
+static void pas_report_page_config(const char* label,
+                                   const pas_page_base_config* base,
+                                   size_t payload_size,
+                                   const pas_segregated_page_config* segregated_config,
+                                   pas_heap_runtime_config* runtime_config)
+{
+    char min_objects[8];
+    char handicap[8];
+    char view_cache[16];
+
+    if (!base->is_enabled) {
+        fprintf(stderr, "\n\t\t%-18s disabled", label);
+        return;
+    }
+
+    /* The least number of objects of max_object_size that a page of this config can hold. */
+    snprintf(min_objects, sizeof(min_objects), "%zu", payload_size / max_object_size_for_page_config_sans_heap(base));
+
+    snprintf(handicap, sizeof(handicap), "n/a");
+    snprintf(view_cache, sizeof(view_cache), "n/a");
+    if (segregated_config) {
+        snprintf(handicap, sizeof(handicap), "%.2f", segregated_config->wasteage_handicap);
+        if (!segregated_config->enable_view_cache)
+            snprintf(view_cache, sizeof(view_cache), "off");
+        else if (runtime_config && runtime_config->view_cache_capacity_for_object_size)
+            snprintf(view_cache, sizeof(view_cache), "cap %zu", runtime_config->view_cache_capacity_for_object_size(0, segregated_config));
+    }
+
+    /* The widths here must be kept in sync with the headers printed in pas_report_heap_config */
+    fprintf(stderr, "\n\t\t%-18s %7zuB %7zuB %4zuB %8s %7zuB %8s %7zuB  %-10s %4u",
+            label, base->page_size, payload_size,
+            pas_page_base_config_min_align(*base), min_objects, max_object_size_for_page_config_sans_heap(base),
+            handicap, base->granule_size, view_cache, base->allow_mte_tagging);
+}
+
+static void pas_report_segregated_page_config(const char* label,
+                                              const pas_segregated_page_config* page_config,
+                                              pas_heap_runtime_config* runtime_config)
+{
+    pas_report_page_config(label, &page_config->base, page_config->exclusive_payload_size, page_config, runtime_config);
+}
+
+static void pas_report_bitfit_page_config(const char* label, const pas_bitfit_page_config* page_config)
+{
+    pas_report_page_config(label, &page_config->base, page_config->page_object_payload_size, NULL, NULL);
+}
+
+/* The runtime config is used for the view cache capacity of the segregated page configs, so it must be the config of
+   the heap that is normally used to allocate from this heap config (NULL if there is none). */
+static void pas_report_heap_config(const char* name, const pas_heap_config* config, pas_heap_runtime_config* runtime_config)
+{
+    fprintf(stderr, "\n\tHeap-Config %s:", name);
+    /* The widths here must be kept in sync with the per-row widths printed in pas_report_page_config */
+    fprintf(stderr, "\n\t\t%-18s %8s %8s %5s %8s %8s %8s %8s  %-10s %4s",
+            "Page Configs:", "page", "payload", "align", "min-objs", "max obj", "handicap", "granule", "view-cache", "+MTE");
+    pas_report_segregated_page_config("Small Segregated", &config->small_segregated_config, runtime_config);
+    pas_report_segregated_page_config("Medium Segregated", &config->medium_segregated_config, runtime_config);
+    pas_report_bitfit_page_config("Small Bitfit", &config->small_bitfit_config);
+    pas_report_bitfit_page_config("Medium Bitfit", &config->medium_bitfit_config);
+    pas_report_bitfit_page_config("Marge Bitfit", &config->marge_bitfit_config);
+}
+
+#if PAS_ENABLE_BMALLOC || PAS_ENABLE_JIT
+static void pas_report_runtime_config(const char* label, const pas_heap_runtime_config* runtime_config)
+{
+    fprintf(stderr, "\n\t\t\t%s: %uB, %uB, %uB, %uB", label,
+            runtime_config->max_segregated_object_size, runtime_config->max_bitfit_object_size,
+            runtime_config->directory_size_bound_for_baseline_allocators, runtime_config->directory_size_bound_for_no_view_cache);
+}
+
+static void pas_report_runtime_config_header(void)
+{
+    fprintf(stderr, "\n\t\tRuntime Heap Config Size-Maximums (Segregated, Bitfit, Baseline Dir, No-View-Cache Dir):");
+}
+#endif
+
+static void pas_report_config(void)
+{
+    const char* progname = getprogname();
+    const int pid = getpid();
+    const mach_port_t threadno = pthread_mach_thread_np(pthread_self());
+
+    const pas_runtime_config* config = PAS_RUNTIME_CONFIG_PTR;
+
+    fprintf(stderr,
+        "%s(%d,0x%x) malloc: libpas config:"
+        "\n\tDeallocation Log (Max Entries, Max Bytes): %zu, %zuB"
+        "\n\tScavenger (Period, Deep-Sleep Timeout, Epoch-Delta): %.2fms, %.2fms, %llu"
+        "\n\tMTE (Enabled/Lockdown/Hardened/ATE/RoS/ZTA): (%u, %u, %u, %u, %u, %u)",
+        progname, pid, (int)threadno,
+        (size_t)PAS_DEALLOCATION_LOG_SIZE, (size_t)PAS_DEALLOCATION_LOG_MAX_BYTES,
+        pas_scavenger_period_in_milliseconds, pas_scavenger_deep_sleep_timeout_in_milliseconds, pas_scavenger_max_epoch_delta,
+        pas_mte_is_mte_enabled_unchecked(), config->is_lockdown_mode, config->is_hardened,
+        config->mode_bits.adjacent_tag_exclusion, config->mode_bits.retag_on_scavenge, config->mode_bits.zero_tag_all);
+
+#if PAS_ENABLE_BMALLOC
+    fprintf(stderr, "\n\tForwarding to System Heap: %u", pas_system_heap_should_supplant_bmalloc(pas_heap_config_kind_bmalloc));
+    pas_report_heap_config("bmalloc", &bmalloc_heap_config, &bmalloc_intrinsic_runtime_config.base);
+    pas_report_runtime_config_header();
+    pas_report_runtime_config("Flex", &bmalloc_flex_runtime_config.base);
+    pas_report_runtime_config("Intrinsic", &bmalloc_intrinsic_runtime_config.base);
+    pas_report_runtime_config("Typed", &bmalloc_typed_runtime_config.base);
+    pas_report_runtime_config("Primitive", &bmalloc_primitive_runtime_config.base);
+    pas_report_heap_config("tagged_bmalloc", &tagged_bmalloc_heap_config, &tagged_bmalloc_intrinsic_runtime_config.base);
+    pas_report_runtime_config_header();
+    pas_report_runtime_config("Intrinsic", &tagged_bmalloc_intrinsic_runtime_config.base);
+    pas_report_runtime_config("Primitive", &tagged_bmalloc_primitive_runtime_config.base);
+#endif
+#if PAS_ENABLE_JIT
+    pas_report_heap_config("jit", &jit_heap_config, NULL);
+    pas_report_runtime_config_header();
+    pas_report_runtime_config("Flex", &jit_heap_runtime_config);
+#endif
+#if PAS_ENABLE_ISO
+    pas_report_heap_config("iso", &iso_heap_config, NULL);
+#endif
+    pas_report_heap_config("utility", &pas_utility_heap_config, NULL);
+    fprintf(stderr, "\n");
+}
+
+// rdar://164588924: We should refactor this to a more general mechanism
+// for handling 'libpas setup' tasks, e.g. LibpasMallocReportConfig,
+// probably in its own file with a hook back to this MTE setup work.
+static void pas_mte_do_and_check_initialization(void* context)
+{
+    (void)context;
+    pas_mte_do_initialization();
+    const char* crashIfMTENotEnabled = getenv("MTE_crashIfNotEnabled");
+    if (crashIfMTENotEnabled) {
+        if (!strcasecmp(crashIfMTENotEnabled, "true")
+            || !strcasecmp(crashIfMTENotEnabled, "yes")
+            || !strcasecmp(crashIfMTENotEnabled, "1")) {
+            PAS_ASSERT(pas_mte_is_mte_on_for_process() && "MTE is not enabled for the process, crashing");
+            PAS_ASSERT(pas_mte_is_mte_enabled_unchecked() && "MTE is not enabled, crashing");
+        }
+    }
+    const char* logLibpasConfiguration = getenv("LibpasMallocReportConfig");
+    if (logLibpasConfiguration) {
+        if (!strcasecmp(logLibpasConfiguration, "true")
+            || !strcasecmp(logLibpasConfiguration, "yes")
+            || !strcasecmp(logLibpasConfiguration, "1"))
+            pas_report_config();
+    }
+}
+
+void pas_mte_ensure_initialized(void)
+{
+    static dispatch_once_t pred;
+    dispatch_once_f(&pred, NULL, pas_mte_do_and_check_initialization);
+}
+#else // !PAS_OS(DARWIN)
+#if PAS_ENABLE_MTE
+#error "pas_mte_ensure_initialized does not support non-Darwin systems"
+#endif
+void pas_mte_ensure_initialized(void) { }
+#endif // PAS_OS(DARWIN)
+
+void pas_bmalloc_force_allocations_into_bitfit_heaps_where_available(void)
+{
+#if PAS_ENABLE_BMALLOC
+    // Switch to bitfit allocation for anything that isn't isoheaped.
+    tagged_bmalloc_intrinsic_runtime_config.base.max_segregated_object_size = 0;
+    tagged_bmalloc_primitive_runtime_config.base.max_segregated_object_size = 0;
+    tagged_bmalloc_intrinsic_runtime_config.base.max_bitfit_object_size = UINT_MAX;
+    tagged_bmalloc_primitive_runtime_config.base.max_bitfit_object_size = UINT_MAX;
+#endif
+
+    // If large-object delegation is enabled, we don't want to override that
+    // just because we've entered mini-mode.
+    // One way we could get around that would be to leave the bitfit object
+    // size limits the way they are. However, in cases where the bitfit
+    // size-limit had previously been constrained for performance, e.g. by
+    // setting them to 0, we do want enableMiniMode to be able to re-expand
+    // them.
+    // So we take the object-delegation path to be a special case and make
+    // sure to re-apply after performing the above expansion.
+    PAS_IGNORE_WARNINGS_BEGIN("unreachable-code");
+#if defined(PAS_MTE_USE_LARGE_OBJECT_DELEGATION)
+    if (PAS_MTE_USE_LARGE_OBJECT_DELEGATION)
+        pas_mte_force_nontaggable_user_allocations_into_large_heap();
+#endif // defined(PAS_MTE_USE_LARGE_OBJECT_DELEGATION)
+    PAS_IGNORE_WARNINGS_END;
+}
+
+bool pas_mte_is_mte_enabled_slow(void)
+{
+    pas_mte_ensure_initialized();
+#if PAS_ENABLE_MTE
+    return pas_mte_is_mte_enabled_unchecked();
+#else
+    return false;
+#endif
+}
+
+void pas_mte_force_nontaggable_user_allocations_into_large_heap(void)
+{
+#if PAS_ENABLE_BMALLOC
+    for (size_t i = 0; i < sizeof(all_bmalloc_runtime_configs) / sizeof(void*); i++) {
+        pas_basic_heap_runtime_config* cfg = all_bmalloc_runtime_configs[i];
+        cfg->base.max_segregated_object_size = (unsigned)PAS_MIN((size_t)cfg->base.max_segregated_object_size, PAS_MAX_MTE_TAGGABLE_OBJECT_SIZE);
+        cfg->base.max_bitfit_object_size = (unsigned)PAS_MIN((size_t)cfg->base.max_bitfit_object_size, PAS_MAX_MTE_TAGGABLE_OBJECT_SIZE);
+    }
+#endif
+}
+#endif // defined(PAS_USE_OPENSOURCE_MTE) && PAS_USE_OPENSOURCE_MTE
+#endif // LIBPAS_ENABLED

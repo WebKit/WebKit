@@ -1,0 +1,23 @@
+Typing a single digit followed by "." or ")" plus space at the start of two consecutive lines should auto-convert them into an ordered (decimal) list. Both delimiters are accepted.
+
+Period delimiter:
+| <ol>
+|   class="Apple-decimal-list"
+|   start="1"
+|   style="list-style-type: decimal;"
+|   <li>
+|     "Hello"
+|     <br>
+|   <li>
+|     "World<#selection-caret>"
+
+Parenthesis delimiter:
+| <ol>
+|   class="Apple-decimal-list"
+|   start="1"
+|   style="list-style-type: decimal;"
+|   <li>
+|     "Hello"
+|     <br>
+|   <li>
+|     "World<#selection-caret>"

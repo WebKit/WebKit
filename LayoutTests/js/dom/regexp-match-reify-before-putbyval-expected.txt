@@ -1,0 +1,5 @@
+PASS matches is ['http://www.dummy.com/images/123x456/image.jpg','http://www.dummy.com/images/',111,'x',222,'/image.jpg']
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

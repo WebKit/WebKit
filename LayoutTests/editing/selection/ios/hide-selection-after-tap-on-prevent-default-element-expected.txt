@@ -1,0 +1,11 @@
+HelloWorld
+
+Verifies that text selection is suppressed when tapping on a different element that prevents default. To manually run the test, select some text, and then tap the button below it. Platform selection views should disappear.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+PASS selectionRects.length is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

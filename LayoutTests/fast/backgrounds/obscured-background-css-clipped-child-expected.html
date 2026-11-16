@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<title>A child with CSS clip does not obscure its parent's background</title>
+<style>
+#parent {
+    position: relative;
+    width: 200px;
+    height: 200px;
+    background-color: green;
+}
+#child {
+    position: absolute;
+    left: 50px;
+    top: 50px;
+    width: 100px;
+    height: 100px;
+    background-color: blue;
+}
+</style>
+<body>
+<p>The green square below should have a blue square in its center. There should be no white area inside the green square.</p>
+<div id="parent">
+    <div id="child"></div>
+</div>
+</body>
+</html>

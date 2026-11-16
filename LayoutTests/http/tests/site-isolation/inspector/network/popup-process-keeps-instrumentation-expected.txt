@@ -1,0 +1,16 @@
+Tests that Network events reach the frontend from the process of a popup that existed before the inspector attached, when an iframe is added to that process under Site Isolation.
+
+
+== Running test suite: SiteIsolation.Network.PopupProcessKeepsInstrumentation
+-- Running test case: SiteIsolation.Network.PopupProcessKeepsInstrumentation.IFrameInPopupProcess
+PASS: The popup should report its process identifier.
+PASS: The iframe should be in the process of the popup.
+PASS: The iframe should be in the frame model.
+PASS: Iframe document should be listed once.
+PASS: Iframe document should finish loading.
+PASS: Iframe document should carry the request identifier of its load.
+PASS: Iframe document should have a response.
+PASS: Iframe script should be added to the child frame.
+PASS: Iframe script should be listed once.
+PASS: Iframe script should finish loading.
+

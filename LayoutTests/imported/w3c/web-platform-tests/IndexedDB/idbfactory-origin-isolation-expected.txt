@@ -1,0 +1,3 @@
+
+PASS Test to make sure that origins have separate locking schemes
+

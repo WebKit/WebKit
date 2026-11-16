@@ -1,0 +1,55 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true focusStartsInputSessionPolicy=allow ] -->
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+<style>
+body {
+    margin: 0;
+}
+
+.spacer {
+    height: 2000px;
+}
+
+input {
+    font-size: 16px;
+    width: 200px;
+}
+</style>
+<script>
+jsTestIsAsync = true;
+
+addEventListener("load", async () => {
+    description("Verifies that focusing a text field below the visible area scrolls it into view when a hardware keyboard is attached. This test requires WebKitTestRunner.");
+
+    if (!window.testRunner)
+        return;
+
+    await UIHelper.setHardwareKeyboardAttached(true);
+    await UIHelper.waitForKeyboardToHide();
+    await UIHelper.ensurePresentationUpdate();
+
+    textField = document.querySelector("input");
+    textField.focus();
+    await UIHelper.waitForZoomingOrScrollingToEnd();
+    while (pageYOffset < textField.offsetTop - innerHeight)
+        await UIHelper.delayFor(10);
+
+    shouldBe("document.activeElement", "textField");
+    shouldBeGreaterThan("pageYOffset + innerHeight", "textField.offsetTop");
+
+    textField.blur();
+    finishJSTest();
+});
+</script>
+</head>
+<body>
+<div class="spacer"></div>
+<input placeholder="Focus me">
+<div class="spacer"></div>
+<div id="description"></div>
+<div id="console"></div>
+</body>
+</html>

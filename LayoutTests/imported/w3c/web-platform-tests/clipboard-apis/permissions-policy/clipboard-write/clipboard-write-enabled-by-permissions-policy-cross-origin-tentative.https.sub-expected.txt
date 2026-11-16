@@ -1,0 +1,4 @@
+Body needed for test_driver.click()
+
+PASS Permissions-Policy header clipboard-write=* allows cross-origin iframes.
+

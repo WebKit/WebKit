@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+<svg viewBox="0 0 1000 1000" xmlns="http://www.w3.org/2000/svg"  xmlns:xlink="http://www.w3.org/1999/xlink">
+<defs>
+    <path id="p1" d="M100,100C-300,200 2000,700 100,800" />
+    <path id="p2" d="M800,800C1200,700 -1100,200 800,100" />
+</defs>
+
+<g transform="translate(900,900)">
+<circle id="c1" cx="0" cy="0" r="40" stroke="#888" stroke-width="60" fill="#f00"/>
+</g>
+
+<g fill="none" stroke-width="5" stroke="#888" stroke-linecap="round" stroke-linejoin="round">
+    <use xlink:href="#p1" />
+    <use xlink:href="#p2" />
+</g>
+
+<circle id="c2" cx="900" cy="900" r="10" fill="#888" />
+</svg>
+

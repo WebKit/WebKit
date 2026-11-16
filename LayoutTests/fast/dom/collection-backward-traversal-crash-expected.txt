@@ -1,0 +1,13 @@
+Tests that backward traversal of an HTMLCollection works as expected and does not crash.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS divs.item(3).id is "D"
+PASS divs.item(2).id is "C"
+PASS divs.item(1).id is "B"
+PASS divs.item(0).id is "A"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

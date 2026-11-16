@@ -1,0 +1,14 @@
+Testing that the volume slider container has concentric (equal horizontal and vertical) padding.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS mediaControls.volumeSlider.parent ? mediaControls.volumeSlider.parent.element.parentNode : null became mediaControls.element
+PASS paddingLeft is paddingTop
+PASS paddingRight is paddingBottom
+PASS paddingLeft is paddingRight
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

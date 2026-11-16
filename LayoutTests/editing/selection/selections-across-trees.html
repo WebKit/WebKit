@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../../resources/js-test.js"></script>
+</head>
+<body>
+    <script>
+        const shadowHost = document.body.appendChild(document.createElement('div'));
+        const shadowRoot = shadowHost.attachShadow({mode: 'closed'});
+        shadowHost.innerHTML = '<b>hello</b><b slot="second">world</b>';
+        shadowRoot.innerHTML = '<span><slot></slot> <slot name="second"></slot></span>';
+        const shadowNode = shadowRoot.firstChild;
+        const nodeInSlot = document.querySelector('b[slot=second]').firstChild;
+
+        function selectionAddRange(startContainer, startOffset, endContainer, endOffset)
+        {
+            const range = document.createRange();
+            range.setStart(startContainer, startOffset);
+            range.setEnd(endContainer, endOffset);
+            getSelection().addRange(range);
+        }
+
+        shouldBe("getSelection().setBaseAndExtent(document.body, 0, nodeInSlot, 5); selectionAddRange(shadowNode, 0, shadowRoot, 1); getSelection().focusNode", "nodeInSlot");
+
+        shouldBeFalse("getSelection().selectAllChildren(document.body); getSelection().containsNode(shadowNode)");
+        shouldBeFalse("getSelection().selectAllChildren(document.body); getSelection().containsNode(shadowNode, true)");
+
+        getSelection().empty();
+        document.body.removeChild(shadowHost);
+
+        successfullyParsed = true;
+    </script>
+</html>

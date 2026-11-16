@@ -1,0 +1,22 @@
+typeof (x): object
+typeof (z): object
+x === y: true
+x !== z: true
+y.foo: 3
+z.foo: 3
+z[1]: bob
+z[2]: bob2
+x.foo: 3
+x.bar: null
+x.baz: new prop
+x.notPresent: undefined
+z[0]: undefined
+z[5]: undefined
+post update -- z[0]: undefined
+post update -- z.foo: 0
+post update -- x.foo: 10
+post update -- x.foo2: ten
+post update -- x[0]: undefined
+post update -- x[10]: foo
+post update -- y.bar: 3
+post update -- x.bar: 3

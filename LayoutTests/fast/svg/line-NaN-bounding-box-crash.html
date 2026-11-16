@@ -1,0 +1,21 @@
+<p>This test passes if it does not crash</p>
+<script>
+    if (testRunner)
+        testRunner.dumpAsText();
+</script>
+<head>
+    <style>
+        :read-only {
+            transform: rotate(90deg) skewX(90deg);
+        }
+    </style>
+</head>
+<body>
+    <svg width="200" height="200">
+        <line id="myline"
+              x1="0" y1="0"
+              x2="0" y2="0" 
+              stroke="green"
+              vector-effect="non-scaling-stroke" />
+    </svg>
+</body>

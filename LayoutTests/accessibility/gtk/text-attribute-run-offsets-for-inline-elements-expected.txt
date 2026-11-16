@@ -1,0 +1,17 @@
+before link after
+
+one two
+
+solo
+An inline element that starts right after preceding text must report in-bounds text-attribute-run offsets without hanging or crashing.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS inlineRuns.includes("Range attributes for 'link'") is true
+PASS secondRuns.includes("Range attributes for 'two'") is true
+PASS soloItemRuns.includes("Range attributes for '<obj>'") is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

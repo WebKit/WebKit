@@ -1,0 +1,34 @@
+A put() that fails a unique index constraint must be atomic: the record it would have overwritten must remain in the object store unchanged.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
+
+indexedDB.deleteDatabase(dbname)
+indexedDB.open(dbname)
+store = db.createObjectStore('users', { keyPath: 'id' })
+store.createIndex('username', 'username', { unique: true })
+store.add({ id: 1, username: 'foo' })
+store.add({ id: 2, username: 'bar' })
+
+Put {id:1, username:'bar'}: this overwrites id:1 but its username collides with id:2's unique index entry.
+transaction = db.transaction('users', 'readwrite')
+store = transaction.objectStore('users')
+request = store.put({ id: 1, username: 'bar' })
+PASS errorName is "ConstraintError"
+Preventing default so the transaction commits instead of aborting.
+Transaction committed.
+
+The failed put() must have left the store untouched.
+transaction = db.transaction('users', 'readonly')
+store = transaction.objectStore('users')
+getRequest = store.get(1)
+countRequest = store.count()
+PASS record is non-null.
+PASS username is "foo"
+PASS count is 2
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

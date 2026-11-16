@@ -1,0 +1,9 @@
+
+PASS getScreenCTM with padding-left and rotation
+PASS getScreenCTM with padding-top and rotation
+PASS getScreenCTM with padding-right and rotation
+PASS getScreenCTM with padding and rotation
+PASS getScreenCTM with padding-left, rotation and content-box
+FAIL getScreenCTM with padding-left, scale assert_equals: expected 47 but got 41
+PASS getScreenCTM with border-width and rotation
+

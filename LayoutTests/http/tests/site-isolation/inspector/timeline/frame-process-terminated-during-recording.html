@@ -1,0 +1,131 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ ignoreWebProcessTermination=true ] -->
+<meta charset="utf-8">
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="../debugger/resources/site-isolation-debugger-test-utilities.js"></script>
+<script src="resources/frame-timeline-test-utilities.js"></script>
+<script>
+let iframe;
+
+function addCrossOriginIFrame(url)
+{
+    iframe = document.createElement("iframe");
+    iframe.src = url;
+    document.body.appendChild(iframe);
+}
+
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Timeline.FrameProcessTerminatedDuringRecording");
+
+    let mainFrameTarget = InspectorTest.mainFrameTarget;
+
+    function awaitTargetEvent(eventType, predicate) {
+        return new Promise((resolve) => {
+            let listener = WI.targetManager.addEventListener(eventType, (event) => {
+                let {target} = event.data;
+                if (!predicate(target))
+                    return;
+
+                WI.targetManager.removeEventListener(eventType, listener);
+                resolve(target);
+            });
+        });
+    }
+
+    // The process exits before it can reply, so the evaluation never settles and is not awaited.
+    function terminateProcess(target) {
+        FrameTimelineTest.evaluateInTarget(target, "internals.terminateWebContentProcess()");
+    }
+
+    async function addCrossOriginIFrameTarget(name) {
+        await FrameTimelineTest.evaluateInTarget(mainFrameTarget, `addCrossOriginIFrame("http://localhost:8000/site-isolation/inspector/timeline/resources/timeline-frame.html?${name}")`);
+        let iframeTarget = await waitForFrameTargetForURLContaining(`timeline-frame.html?${name}`);
+        InspectorTest.expectNotNull(iframeTarget, "Should find the cross-origin iframe target.");
+        return iframeTarget;
+    }
+
+    suite.addTestCase({
+        name: "SiteIsolation.Timeline.FrameProcessTerminatedDuringRecording.Active",
+        description: "Stopping a recording, and later recordings, should finish when the process of a cross-origin iframe exits during the recording.",
+        async test() {
+            let iframeTarget = await addCrossOriginIFrameTarget("active");
+
+            await FrameTimelineTest.startCapturing([mainFrameTarget, iframeTarget]);
+            InspectorTest.pass("Both frame targets started tracking.");
+
+            let iframeTargetRemovedPromise = awaitTargetEvent(WI.TargetManager.Event.TargetRemoved, (target) => target === iframeTarget);
+            terminateProcess(iframeTarget);
+            await iframeTargetRemovedPromise;
+            InspectorTest.pass("The frame target of the terminated process was removed.");
+            InspectorTest.expectEqual(WI.timelineManager.capturingState, WI.TimelineManager.CapturingState.Active, "Capturing should still be active.");
+
+            await FrameTimelineTest.stopCapturing();
+            InspectorTest.pass("Capturing stopped.");
+
+            await FrameTimelineTest.startCapturing([mainFrameTarget]);
+            await FrameTimelineTest.stopCapturing();
+            InspectorTest.pass("A later recording stopped.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Timeline.FrameProcessTerminatedDuringRecording.Stopping",
+        description: "Stopping a recording should finish when the process of a cross-origin iframe exits before the iframe stops its recording.",
+        async test() {
+            let iframeTarget = await addCrossOriginIFrameTarget("stopping");
+
+            await FrameTimelineTest.startCapturing([mainFrameTarget, iframeTarget]);
+            InspectorTest.pass("Both frame targets started tracking.");
+
+            // The process receives the stop after the termination, so it never reports that it stopped.
+            let iframeTargetRemovedPromise = awaitTargetEvent(WI.TargetManager.Event.TargetRemoved, (target) => target === iframeTarget);
+            terminateProcess(iframeTarget);
+            await FrameTimelineTest.stopCapturing();
+            InspectorTest.pass("Capturing stopped.");
+
+            await iframeTargetRemovedPromise;
+            InspectorTest.pass("The frame target of the terminated process was removed.");
+            InspectorTest.expectFalse(FrameTimelineTest.didReportTrackingEvent("capturingStopped", iframeTarget), "The frame target of the terminated process should not have reported that it stopped.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Timeline.FrameProcessTerminatedDuringRecording.PausedProvisionalTarget",
+        description: "Stopping a recording should finish when a process exits while a provisional frame target in it is paused on start.",
+        async test() {
+            let iframeTarget = await addCrossOriginIFrameTarget("paused-provisional-committed");
+
+            // Keep the next provisional frame target paused on start, so that its load is still waiting when its process exits.
+            let originalResumeIfPaused = WI.Target.prototype._resumeIfPaused;
+            WI.Target.prototype._resumeIfPaused = function() { };
+
+            // The second iframe has the same site as the first one, so its provisional frame is in the same process.
+            let provisionalTargetPromise = awaitTargetEvent(WI.TargetManager.Event.TargetAdded, (target) => target.type === WI.TargetType.Frame && target.isProvisional);
+            await FrameTimelineTest.evaluateInTarget(mainFrameTarget, `addCrossOriginIFrame("http://localhost:8000/site-isolation/inspector/timeline/resources/timeline-frame.html?paused-provisional")`);
+            let provisionalTarget = await provisionalTargetPromise;
+            InspectorTest.expectTrue(provisionalTarget.isPaused, "The provisional frame target should be paused.");
+
+            await FrameTimelineTest.startCapturing([mainFrameTarget, iframeTarget]);
+            InspectorTest.pass("Both committed frame targets started tracking.");
+
+            let targetsRemovedPromise = Promise.all([
+                awaitTargetEvent(WI.TargetManager.Event.TargetRemoved, (target) => target === iframeTarget),
+                awaitTargetEvent(WI.TargetManager.Event.TargetRemoved, (target) => target === provisionalTarget),
+            ]);
+            terminateProcess(iframeTarget);
+            await targetsRemovedPromise;
+            InspectorTest.pass("The committed and provisional frame targets of the terminated process were removed.");
+
+            WI.Target.prototype._resumeIfPaused = originalResumeIfPaused;
+
+            await FrameTimelineTest.stopCapturing();
+            InspectorTest.pass("Capturing stopped.");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+
+<body onload="runTest()">
+<p>Test that under Site Isolation, the frame target of a cross-origin iframe is removed when its process exits, so that a Timeline recording that was waiting for it can stop.</p>
+</body>

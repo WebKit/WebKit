@@ -1,0 +1,14 @@
+
+PASS Transfer ImageBitmap created from an HTMLCanvasElement
+PASS Transfer ImageBitmap created from an HTMLVideoElement
+PASS Transfer ImageBitmap created from an HTMLVideoElement from a data URL
+PASS Transfer ImageBitmap created from a bitmap HTMLImageElement
+PASS Transfer ImageBitmap created from a vector HTMLImageElement
+PASS Transfer ImageBitmap created from a bitmap SVGImageElement
+PASS Transfer ImageBitmap created from a vector SVGImageElement
+PASS Transfer ImageBitmap created from an OffscreenCanvas
+PASS Transfer ImageBitmap created from an ImageData
+PASS Transfer ImageBitmap created from an ImageBitmap
+PASS Transfer ImageBitmap created from a Blob
+PASS Transferring a non-origin-clean ImageBitmap throws.
+

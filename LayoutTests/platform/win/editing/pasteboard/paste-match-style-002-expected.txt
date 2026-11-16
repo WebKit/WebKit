@@ -1,0 +1,49 @@
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 3 of DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldDeleteDOMRange:range from 1 of #text > DIV > DIV > BODY > HTML > #document to 6 of #text > DIV > DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of DIV > DIV > BODY > HTML > #document to 0 of DIV > DIV > BODY > HTML > #document toDOMRange:range from 0 of DIV > DIV > BODY > HTML > #document to 0 of DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: shouldInsertText:hello replacingDOMRange:range from 0 of DIV > DIV > BODY > HTML > #document to 0 of DIV > DIV > BODY > HTML > #document givenAction:WebViewInsertActionPasted
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 5 of #text > B > DIV > DIV > BODY > HTML > #document to 5 of #text > B > DIV > DIV > BODY > HTML > #document toDOMRange:range from 5 of #text > B > DIV > DIV > BODY > HTML > #document to 5 of #text > B > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {DIV} at (0,0) size 784x237 [border: (2px solid #0000FF)]
+        RenderBlock {DIV} at (14,14) size 756x83
+          RenderText {#text} at (0,0) size 66x26
+            text run at (0,0) width 66: "Tests: "
+          RenderBR {BR} at (0,0) size 0x0
+          RenderText {#text} at (0,27) size 745x55
+            text run at (0,27) width 745: "Pasting and matching style when there is nothing typed, but the typing style is"
+            text run at (0,55) width 431: "set to bold. This test was created after fixing "
+          RenderInline {A} at (0,0) size 84x27 [color=#0000EE]
+            RenderText {#text} at (431,55) size 84x27
+              text run at (431,55) width 84: "3976872"
+          RenderText {#text} at (515,55) size 6x27
+            text run at (515,55) width 6: "."
+        RenderBlock {DIV} at (14,113) size 756x110
+          RenderText {#text} at (0,0) size 189x26
+            text run at (0,0) width 189: "Expected Results: "
+          RenderBR {BR} at (189,21) size 0x0
+          RenderText {#text} at (0,27) size 750x55
+            text run at (0,27) width 750: "The pasted word should match the current typing style. In this case, the typing"
+            text run at (0,55) width 620: "style is set to bold. Should see this content in the red box below: "
+          RenderBR {BR} at (620,76) size 0x0
+          RenderInline {B} at (0,0) size 50x26
+            RenderText {#text} at (0,83) size 50x26
+              text run at (0,83) width 50: "hello"
+          RenderText {#text} at (0,0) size 0x0
+      RenderBlock {DIV} at (0,261) size 784x31
+        RenderBlock {DIV} at (0,0) size 784x31 [border: (2px solid #FF0000)]
+          RenderInline {B} at (0,0) size 50x26
+            RenderText {#text} at (2,2) size 50x26
+              text run at (2,2) width 50: "hello"
+caret: position 5 of child 0 {#text} of child 0 {B} of child 1 {DIV} of child 3 {DIV} of body

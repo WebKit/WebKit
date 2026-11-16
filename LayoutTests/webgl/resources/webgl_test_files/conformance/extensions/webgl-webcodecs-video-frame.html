@@ -1,0 +1,211 @@
+<!--
+Copyright (c) 2021 The Khronos Group Inc.
+Use of this source code is governed by an MIT-style license that can be
+found in the LICENSE.txt file.
+-->
+
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="../../resources/js-test-style.css" />
+  <script src="../../js/js-test-pre.js"></script>
+  <script src="../../js/webgl-test-utils.js"></script>
+  <script src="../../js/tests/out-of-bounds-test.js"></script>
+  <script src="../../../../extensions/proposals/WEBGL_webcodecs_video_frame/webgl_webcodecs_video_frame.js"></script>
+  <style>
+    canvas {
+      padding: 10px;
+      background: gold;
+    }
+
+    button {
+      background-color: #555555;
+      border: none;
+      color: white;
+      padding: 15px 32px;
+      width: 150px;
+      text-align: center;
+      display: block;
+      font-size: 16px;
+    }
+  </style>
+</head>
+
+<body>
+  <canvas id="src" width="640" height="480"></canvas>
+  <canvas id="dst" width="640" height="480"></canvas>
+  <p id="info"></p>
+  <div id="description"></div>
+  <div id="console"></div>
+  <script>
+    "use strict";
+    description("Test of importing Videoframe from Webcodecs to Webgl");
+
+    const kIsRunningTest = true;
+    const kMaxFrame = 10;
+    const kTestPixel = [255, 128, 0, 255];
+    // Sum of pixel difference of R/G/B channel. Use to decide whether a
+    // pixel is matched with another.
+    const codec_string = "vp09.00.51.08.00";
+
+    let wtu = WebGLTestUtils;
+    let cnv = document.getElementById("src");
+    let src_width = cnv.width;
+    let src_height = cnv.height;
+    let src_color = "rgba(" + kTestPixel[0].toString() + "," + kTestPixel[1].toString() + ","
+      + kTestPixel[2].toString() + "," + kTestPixel[3].toString() + ")";
+    let frame_counter = 0;
+    let pixelCompareTolerance = 5;
+
+    function getQueryVariable(variable) {
+      var query = window.location.search.substring(1);
+      var vars = query.split("&");
+      for (var i = 0; i < vars.length; i++) {
+        var pair = vars[i].split("=");
+        if (pair[0] == variable) { return pair[1]; }
+      }
+      return false;
+    }
+
+    let th = parseInt(getQueryVariable('threshold'));
+    if (!isNaN(th))
+      pixelCompareTolerance = th;
+
+    async function startDrawing() {
+      let cnv = document.getElementById("src");
+      var ctx = cnv.getContext('2d', { alpha: false });
+
+      ctx.fillStyle = src_color;
+      let drawOneFrame = function (time) {
+        ctx.fillStyle = src_color;
+        ctx.fillRect(0, 0, src_width, src_height);
+        window.requestAnimationFrame(drawOneFrame);
+      }
+      window.requestAnimationFrame(drawOneFrame);
+    }
+
+    function captureAndEncode(processChunk) {
+      let cnv = document.getElementById("src");
+      let fps = 60;
+      let pending_outputs = 0;
+      let stream = cnv.captureStream(fps);
+      let processor = new MediaStreamTrackProcessor(stream.getVideoTracks()[0]);
+
+      const init = {
+        output: (chunk) => {
+          testPassed("Encode frame successfully.");
+          pending_outputs--;
+          processChunk(chunk);
+        },
+        error: (e) => {
+          testFailed("Failed to encode frame.");
+          finishTest();
+          vtr.stop();
+        }
+      };
+
+      const config = {
+        codec: codec_string,
+        width: cnv.width,
+        height: cnv.height,
+        bitrate: 10e6,
+        framerate: fps,
+      };
+
+      let encoder = new VideoEncoder(init);
+      encoder.configure(config);
+
+      const frame_reader = processor.readable.getReader();
+      frame_reader.read().then(function processFrame({done, value}) {
+        if (done)
+          return;
+
+        if (pending_outputs > 30) {
+          console.log("drop this frame");
+          // Too many frames in flight, encoder is overwhelmed
+          // let's drop this frame.
+          value.close();
+          frame_reader.read().then(processFrame);
+          return;
+        }
+
+        if(frame_counter == kMaxFrame) {
+          frame_reader.releaseLock();
+          processor.readable.cancel();
+          value.close();
+          return;
+        }
+
+        frame_counter++;
+        pending_outputs++;
+        const insert_keyframe = (frame_counter % 150) == 0;
+        encoder.encode(value, { keyFrame: insert_keyframe });
+
+        frame_reader.read().then(processFrame);
+      });
+    }
+
+    function startDecodingAndRendering(cnv, handleFrame) {
+      const init = {
+        output: handleFrame,
+        error: (e) => {
+          testFailed("Failed to decode frame.");
+          finishTest();
+        }
+      };
+
+      const config = {
+        codec: codec_string,
+        codedWidth: cnv.width,
+        codedHeight: cnv.height,
+        acceleration: "deny",
+
+      };
+
+      let decoder = new VideoDecoder(init);
+      decoder.configure(config);
+      return decoder;
+    }
+
+    function isFramePixelMatched(gl, th_per_pixel = pixelCompareTolerance) {
+      WebGLTestUtils.checkCanvasRect(gl, 0, 0, src_width, src_width, kTestPixel, "should be orange", pixelCompareTolerance)
+    }
+
+    function main() {
+      if (!("VideoEncoder" in window)) {
+        testPassed("WebCodecs API is not supported.");
+        finishTest();
+        return;
+      }
+      let cnv = document.getElementById("dst");
+
+      let webgl_webcodecs_test_context = {
+        maxFrameTested: kMaxFrame,
+        displayed_frame: 0,
+        isFramePixelMatched: isFramePixelMatched,
+        testFailed: testFailed,
+        testPassed: testPassed,
+        finishTest: finishTest
+      };
+      setTestMode(webgl_webcodecs_test_context);
+      let handleFrame = requestWebGLVideoFrameHandler(cnv);
+      if (handleFrame === null) {
+        finishTest();
+        return;
+      }
+
+      startDrawing();
+      let decoder = startDecodingAndRendering(cnv, handleFrame);
+      captureAndEncode((chunk) => {
+        decoder.decode(chunk);
+      });
+    }
+
+    document.body.onload = main;
+  </script>
+
+</body>
+
+</html>

@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<!-- webkit.org/b/322481: pixel version. Paints before mutating, so an underline the in place ink overflow
+     recompute fails to cover shows up as a missing line against the reference. -->
+<script src="resources/repaint.js"></script>
+<script>
+function repaintTest() {
+    document.getElementById('target').style.textDecorationLine = 'underline';
+}
+onload = runRepaintTest;
+</script>
+<style>
+body { margin: 0; }
+#container { width: 800px; font: 16px/20px monospace; }
+.a { text-decoration: none; text-underline-position: under; color: black; }
+.tall { font-size: 2em; }
+</style>
+<div id="container">
+  <a id="target" class="a" href=".">the link</a><span class="tall">X</span>
+</div>

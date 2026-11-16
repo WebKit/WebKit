@@ -1,0 +1,47 @@
+<!DOCTYPE html><!-- webkit-test-runner [ IsAccessibilityIsolatedTreeEnabled=true ] -->
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+<style>
+select, select::picker(select) {
+    appearance: base-select;
+}
+</style>
+</head>
+<body>
+
+<div id="container">
+<select id="single" size="3">
+    <option>Apple</option>
+    <option selected>Banana</option>
+</select>
+<select id="multiple" multiple>
+    <option>Cheese</option>
+    <option selected>Ham</option>
+</select>
+</div>
+
+<script>
+var output = "This test verifies that destroying the options of a base appearance list box does not crash with the isolated tree.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    output += expect("accessibilityController.accessibleElementById('single').childrenCount", "2");
+    output += expect("accessibilityController.accessibleElementById('multiple').childrenCount", "2");
+
+    setTimeout(async function() {
+        document.getElementById("single").innerHTML = "<option>Cherry</option>";
+        output += await expectAsync("accessibilityController.accessibleElementById('single').childrenCount", "1");
+
+        document.getElementById("container").innerHTML = "";
+        await sleep(100);
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

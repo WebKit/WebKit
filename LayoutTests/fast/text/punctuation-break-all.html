@@ -1,0 +1,25 @@
+<style>
+body {
+  margin: 0px;
+  font-family: ahem;
+}
+
+div {
+  width: 0px;
+}
+
+.test {
+  word-break: break-all;
+  color: red;
+}
+
+.ref {
+  word-break: normal;
+  color: green;
+  position: absolute;
+  top: 0px;
+}
+</style>
+<!-- punctuation should not break -->
+<div class=test>!!!but_this_should</div>
+<div class=ref>!!! b u t _ t h i s _ s h o u l d</div>

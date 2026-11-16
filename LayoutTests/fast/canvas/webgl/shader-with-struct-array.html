@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../../../resources/js-test.js" type="text/javascript"></script>
+    <script src="resources/webgl-test.js" type="text/javascript"></script>
+    <script src="resources/webgl-test-utils.js"> </script>
+    
+</head>
+<body>
+    <canvas id="webgl-canvas" width="100px" height="100px"></canvas>
+    <script>
+    var wtu = WebGLTestUtils;
+    
+    function runShaderTest(gl, vShaderSource, fshaderSource, errorShouldBeText)
+    {
+        var fragmentShader = gl.createShader(gl.FRAGMENT_SHADER);
+        var program = gl.createProgram();
+        var vertexShader = gl.createShader(gl.VERTEX_SHADER);
+        gl.shaderSource(vertexShader, vShaderSource);
+        gl.compileShader(vertexShader);
+        gl.shaderSource(fragmentShader, fshaderSource);
+        gl.compileShader(fragmentShader);
+        gl.attachShader(program, vertexShader);
+        gl.attachShader(program, fragmentShader);
+        gl.linkProgram(program);
+        gl.useProgram(program);
+        gl.drawArrays(gl.TRIANGLES, 0, 3);
+        
+        wtu.glErrorShouldBe(gl,0,errorShouldBeText);
+        gl.deleteProgram(program)
+        gl.deleteShader(vertexShader);
+        gl.deleteShader(fragmentShader);
+    }
+    function runTest()
+    {
+        description("Tests that program compiling/linking with a struct-array construct.");
+        var canvas = document.getElementById('webgl-canvas');
+        var gl = canvas.getContext("webgl2");
+  
+        {
+            var vShaderSource = '#version 300 es\n in vec2 pos;\nvoid main() { gl_Position = vec4(pos, 0, 1); }'
+            var fshaderSource = '#version 300 es\n precision mediump float;\n out vec4 color;\n struct s { float a; } global[2];\n void main() { float a = global[1].a; color = vec4(a,0.8,0,1); }\n'
+            runShaderTest(gl, vShaderSource, fshaderSource, "no error for struct array in program")
+        }
+        
+       
+        
+        
+
+    }
+    runTest();
+
+    </script>
+</body>
+</html>

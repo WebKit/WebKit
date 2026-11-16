@@ -1,0 +1,75 @@
+Name
+
+    ANGLE_trim_memory
+
+Name Strings
+
+    GL_ANGLE_trim_memory
+
+Status
+
+    Draft
+
+Version
+
+    Last Modified Date: July 27, 2026
+    Author Revision: 1
+
+Number
+
+    OpenGL ES Extension XX
+
+Dependencies
+
+    OpenGL ES 2.0 is required.
+
+    This extension is written against the OpenGL ES 2.0 specification.
+
+Overview
+
+    OpenGL contexts do not control the application message loop and cannot
+    easily respond to system memory pressure or detect when they have been
+    dormant. This extension provides a hint to the driver that it should free
+    internal non-critical memory used for caches and scratch buffers.
+
+
+New Procedures and Functions
+
+    void TrimMemoryANGLE(enum trimLevel);
+
+New Tokens
+
+    Accepted by the <trimLevel> parameter of TrimMemoryANGLE:
+
+        MEMORY_TRIM_LOW_ANGLE                     0x0960
+        MEMORY_TRIM_MEDIUM_ANGLE                  0x0961
+        MEMORY_TRIM_HIGH_ANGLE                    0x0962
+
+Additions to the OpenGL ES 2.0 Specification
+
+    The command
+
+        void TrimMemoryANGLE(enum trimLevel);
+
+    acts as a hint to the implementation that non-critical internal memory
+    should be freed. The value of <trimLevel> is used to indicate to the
+    implementation the level of memory pressure the system is under and how
+    aggressively to trim memory. The interpretation of which and how much
+    memory is trimmed is implementation-dependent but increasing the trimLevel
+    from MEMORY_TRIM_LOW_ANGLE to MEMORY_TRIM_MEDIUM_ANGLE to
+    MEMORY_TRIM_HIGH_ANGLE should generally increase the amount of memory
+    freed. An implementation may ignore the command entirely.
+
+Errors
+
+    INVALID_ENUM is generated when TrimMemoryANGLE is called with a
+    <trimLevel> that is not MEMORY_TRIM_LOW_ANGLE, MEMORY_TRIM_MEDIUM_ANGLE
+    or MEMORY_TRIM_HIGH_ANGLE.
+
+New State
+
+    None
+
+Revision History
+
+    2026/07/27   First revision

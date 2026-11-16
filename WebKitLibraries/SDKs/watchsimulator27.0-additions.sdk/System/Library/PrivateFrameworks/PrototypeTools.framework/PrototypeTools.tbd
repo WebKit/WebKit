@@ -1,0 +1,25 @@
+--- !tapi-tbd
+tbd-version:     4
+targets:         [ i386-watchos-simulator, x86_64-watchos-simulator, arm64-watchos-simulator ]
+install-name:    '/System/Library/PrivateFrameworks/PrototypeTools.framework/PrototypeTools'
+exports:
+  - targets:         [ i386-watchos-simulator, x86_64-watchos-simulator, arm64-watchos-simulator ]
+    symbols:         [ _PTDisableFileProtection, _PTDomainIdentifierKey, _PTDomainServerActiveTestRecipeChangedNotification, 
+                       _PTDomainServerDomainsChangedNotification, _PTDomainServerSettingsProxyDefinitionChangedNotification, 
+                       _PTDomainServerTestRecipesChangedNotification, _PTDomainSettingsProxyDefinitionKey, 
+                       _PTHomeDirectory, _PTLogObjectForTopic, _PTPrototypeDirectory, 
+                       _PTPrototypingEnumerateHardwareEventsWithBlock, _PTPrototypingEventAvailable, 
+                       _PTPrototypingEventName, _PTPrototypingEventShortName, _PTPrototypingEventsDescription, 
+                       _PTPrototypingIsActiveDarwinNotification, _PTTransactionBegin, 
+                       _PTTransactionEnd ]
+    objc-classes:    [ PTButtonRow, PTChoiceRow, PTDefaults, PTDomain, PTDomainInfo, 
+                       PTDomainServer, PTDoubleTestRecipe, PTDrillDownRow, PTEditFloatRow, 
+                       PTEditStringRow, PTFrameRateRangeSettings, PTModule, PTOutlet, 
+                       PTParameterRecordLeaf, PTParameterRecords, PTPointSettings, 
+                       PTProxySettings, PTProxySettingsDefinition, PTRestoreDefaultSettingsRowAction, 
+                       PTRow, PTRowAction, PTSButtonRow, PTSChoiceRow, PTSDrillDownRow, 
+                       PTSEditFloatRow, PTSEditStringRow, PTSModule, PTSRestoreDefaultSettingsRowAction, 
+                       PTSRow, PTSRowAction, PTSSection, PTSSliderRow, PTSSwitchRow, 
+                       PTSection, PTSettings, PTSingleTestRecipe, PTSizeSettings, 
+                       PTSliderRow, PTSwitchRow, PTTestRecipe, PTToggleTestRecipe ]
+...

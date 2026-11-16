@@ -1,0 +1,5 @@
+
+PASS Use of SVGAnimatedEnumeration within SVGTextPathElement
+PASS Use of SVGAnimatedEnumeration within SVGTextPathElement 1
+PASS Use of SVGAnimatedEnumeration within SVGTextPathElement 2
+

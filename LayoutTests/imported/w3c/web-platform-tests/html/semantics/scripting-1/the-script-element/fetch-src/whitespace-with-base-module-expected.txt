@@ -1,0 +1,3 @@
+
+PASS Module script src with only ASCII whitespace resolves to the base URL
+

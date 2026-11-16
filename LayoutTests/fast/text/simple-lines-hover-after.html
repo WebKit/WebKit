@@ -1,0 +1,22 @@
+<style>
+a { display: none; }
+a:after { content: "after"; }
+div:hover a { display: inline-block }
+</style>
+<script>
+function test()
+{
+    var target = document.getElementById("target");
+    if (window.testRunner)
+        testRunner.waitUntilDone();
+    if (window.eventSender)
+        eventSender.mouseMoveTo(target.offsetLeft + 10, target.offsetTop + 10);
+}
+function done()
+{
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+</script>
+<body onload="test()">
+<div id="target" onmouseenter="done()">target <a></a></div>

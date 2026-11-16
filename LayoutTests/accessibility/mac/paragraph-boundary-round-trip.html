@@ -1,0 +1,62 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+<style>
+#wrapped { width: 12ch; font: 16px/1 monospace; }
+</style>
+</head>
+<body>
+
+<p id="wrapped">One paragraph long enough to wrap onto more than one line.</p>
+<p id="broken">Before the break.<br>After the break.</p>
+
+<script>
+var output = "This test ensures that stepping to the next paragraph end and then back to the previous paragraph start lands on the start of the paragraph the marker began on. Paragraph boundaries come from rendered newlines, so a br element starts a new paragraph and a soft wrap does not, and both are covered.\n\n";
+
+function baseIndexOf(paragraphId)
+{
+    var paragraph = accessibilityController.accessibleElementById(paragraphId);
+    return paragraph.indexForTextMarker(paragraph.startTextMarkerForTextMarkerRange(paragraph.textMarkerRangeForElement(paragraph)));
+}
+
+function paragraphStartOffsetFrom(paragraphId, offset)
+{
+    var paragraph = accessibilityController.accessibleElementById(paragraphId);
+    var base = baseIndexOf(paragraphId);
+    var paragraphEnd = paragraph.nextParagraphEndTextMarkerForTextMarker(paragraph.textMarkerForIndex(base + offset));
+    return paragraph.indexForTextMarker(paragraph.previousParagraphStartTextMarkerForTextMarker(paragraphEnd)) - base;
+}
+
+function paragraphTextFrom(paragraphId, offset)
+{
+    var paragraph = accessibilityController.accessibleElementById(paragraphId);
+    var base = baseIndexOf(paragraphId);
+    var paragraphEnd = paragraph.nextParagraphEndTextMarkerForTextMarker(paragraph.textMarkerForIndex(base + offset));
+    var paragraphStart = paragraph.previousParagraphStartTextMarkerForTextMarker(paragraphEnd);
+    return paragraph.stringForTextMarkerRange(paragraph.textMarkerRangeForMarkers(paragraphStart, paragraphEnd)).trim();
+}
+
+if (window.accessibilityController) {
+    output += "A soft wrap does not start a new paragraph, so every line recovers the same start.\n";
+    output += expect("paragraphStartOffsetFrom('wrapped', 5)", "0");
+    output += expect("paragraphStartOffsetFrom('wrapped', 40)", "0");
+    output += expect("paragraphTextFrom('wrapped', 40)", "'One paragraph long enough to wrap onto more than one line.'");
+
+    output += "\nA br element does start a new paragraph, so the two halves recover different starts.\n";
+    output += expect("paragraphStartOffsetFrom('broken', 5)", "0");
+    output += expect("paragraphStartOffsetFrom('broken', 25)", "18");
+
+    output += "\nEach half is recovered whole, without the line break.\n";
+    output += expect("paragraphTextFrom('broken', 5)", "'Before the break.'");
+    output += expect("paragraphTextFrom('broken', 25)", "'After the break.'");
+
+    document.getElementById("wrapped").style.display = "none";
+    document.getElementById("broken").style.display = "none";
+
+    debug(output);
+}
+</script>
+</body>
+</html>

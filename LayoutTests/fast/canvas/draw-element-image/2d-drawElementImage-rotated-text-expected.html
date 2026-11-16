@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<meta charset="utf-8" />
+<style>
+    .container {
+        width: 638px;
+        height: 318px;
+        border: solid 1px black;
+    }
+    .box {
+        height: 400px;
+        width: 600px;
+        transform: translate(80px, 0px) rotate(15deg);
+        transform-origin: top left;
+    }
+</style>
+<body>
+    <h3>Test drawing a drawable element that contains text into a 2D canvas.</h3>
+    <div class="container">
+        <div class="box">
+            Hello from <a href="https://github.com/WICG/html-in-canvas">html-in-canvas</a>!
+            <br>I'm multi-line, <b>formatted</b>,
+            rotated text with emoji (&#128512;), RTL text
+            <span dir=rtl>من فارسی صحبت میکنم</span>,
+            vertical text,
+            <p style="writing-mode: vertical-rl;">
+                这是垂直文本
+            </p>
+            an inline image (<img width="150" src="resources/wolf.jpg">), and
+            <svg width="50" height="50">
+                <circle cx="25" cy="25" r="20" fill="green" />
+                <text x="25" y="30" font-size="15" text-anchor="middle" fill="#fff">
+                    SVG
+                </text>
+            </svg>!
+        </div>
+    </div>
+</body>

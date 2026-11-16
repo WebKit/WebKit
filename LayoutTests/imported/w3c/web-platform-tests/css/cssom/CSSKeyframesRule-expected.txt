@@ -1,0 +1,5 @@
+
+PASS name, cssRules, appendRule, findRule, deleteRule
+PASS indexed getter, length
+PASS cssText serialization of <string> names
+

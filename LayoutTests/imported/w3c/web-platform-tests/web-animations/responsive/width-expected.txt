@@ -1,0 +1,6 @@
+
+PASS width responsive to style changes
+PASS width clamped to 0px on keyframes
+PASS width responsive to inherited changes from keyword
+PASS width responsive to inherited changes from length
+

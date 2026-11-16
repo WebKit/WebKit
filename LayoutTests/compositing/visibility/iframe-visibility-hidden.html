@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>This tests iframe with visibility hidden</title>
+<script>
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+var iframe1IsVisible = false;
+var iframe2IsVisible = false;
+
+function makeiframe1Visible()
+{
+    document.getElementById("iframe1").style.visibility = "visible";
+    iframe1IsVisible = true;
+    elementIsVisibleNow();
+}
+
+function makeiframe2Visible()
+{
+    document.getElementById("iframe2").style.visibility = "visible";
+    iframe2IsVisible = true;
+    elementIsVisibleNow();
+}
+
+function elementIsVisibleNow()
+{
+    if (!iframe1IsVisible || !iframe2IsVisible)
+        return;
+    document.body.offsetHeight;
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+</script>
+<style>
+    iframe {
+        border: none;
+        width: 80px;
+        height: 80px;
+    }
+    .positioned {
+        position: absolute;
+        top: 8px;
+    }
+    .composited {
+        transform: translateZ(0);
+    }
+    </style>
+</head>
+<body>
+<iframe id=iframe1 onload="makeiframe1Visible()" style="visibility: hidden"
+    srcdoc="<div style='will-change: transform; width: 50px; height: 50px; background-color: green;'>
+          <div style='visibility: visible;'></div>
+        </div>">
+</iframe>
+<iframe id=iframe2 class="positioned" onload="makeiframe2Visible()" style="left: 100px; visibility: hidden"
+    srcdoc="
+        <video style='width: 50px; height: 50px; background-color: green;'>
+            <source src='movie.mp4' type='video/mp4'>
+        </video>">
+</iframe>
+<iframe class="positioned" style="left: 200px; visibility: hidden"
+    srcdoc="<div style='will-change: transform; width: 50px; height: 50px; background-color: red;'>
+          <div style='visibility: visible;'></div>
+        </div>">
+</iframe>
+<iframe class="positioned composited" style="left: 300px; visibility: hidden"
+    srcdoc="<div style='will-change: transform; width: 50px; height: 50px; background-color: red;'>
+          <div style='visibility: visible;'></div>
+        </div>">
+</iframe>
+</body>
+</html>

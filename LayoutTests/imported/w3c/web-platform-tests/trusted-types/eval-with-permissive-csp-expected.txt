@@ -1,0 +1,11 @@
+
+PASS eval with plain string with Trusted Types and permissive CSP throws (no type).
+PASS indirect eval with plain string with Trusted Types and permissive CSP throws (no type).
+PASS Function constructor with plain string with Trusted Types and permissive CSP throws (no type).
+PASS eval with TrustedScript and permissive CSP works.
+PASS indirect eval with TrustedScript and permissive CSP works.
+PASS new Function with TrustedScript and permissive CSP works.
+PASS eval with plain string with Trusted Types and permissive CSP works with default policy.
+PASS indirect eval with plain string with Trusted Types and permissive CSP works with default policy.
+PASS new Function with plain string default policy and permissive CSP works with default policy.
+

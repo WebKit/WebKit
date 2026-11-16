@@ -1,0 +1,5 @@
+
+PASS A CSS module fetched through a redirect loads and applies
+PASS Repeated import of a redirecting URL returns the same CSSStyleSheet
+PASS A redirecting URL and its target are distinct module map entries
+

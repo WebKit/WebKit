@@ -1,0 +1,8 @@
+hello
+
+
+PASS querySelector with :scope
+PASS querySelector with id and sibling
+PASS querySelectorAll with :scope
+PASS querySelectorAll with id and sibling
+

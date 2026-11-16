@@ -1,0 +1,15 @@
+Test that pausing a frame holds every page in its process, including a same-origin popup, which is a different page.
+
+
+
+== Running test suite: SiteIsolation.Debugger.PauseHoldsSameProcessPages
+-- Running test case: SiteIsolation.Debugger.PauseHoldsSameProcessPages.Setup
+PASS: Should find the frame target for frame A.
+PASS: Should find the frame target for frame B.
+PASS: The popup's interval should be running.
+
+-- Running test case: SiteIsolation.Debugger.PauseHoldsSameProcessPages.Popup
+PASS: Frame B's interval should not advance while frame A is paused.
+PASS: The popup's interval should not advance while frame A is paused.
+PASS: The popup's interval should advance after resuming.
+

@@ -1,0 +1,9 @@
+<!DOCTYPE html>
+<body>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    let observer = new IntersectionObserver(() => { });
+    observer.observe(document.createElement("div"));
+    parent.subframeDidStartObserving(window);
+});
+</script>

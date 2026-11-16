@@ -1,0 +1,124 @@
+<html>
+<style>
+#test {
+    writing-mode: vertical-rl;
+    /* If this test ends up being flaky, consider using Ahem. But it's more rigorous not to. */
+    outline: solid gray 1px;
+    padding: 1em;
+    width: 10em;
+    height: 20ch;
+    font: 20px/1 monospace;
+    background: /* Create a 10px grid to help with debugging. */
+        repeating-linear-gradient(transparent 0em 9px, #FC88 9px 10px),
+        repeating-linear-gradient(to left, transparent 0px 9px, #FC88 9px 10px);
+}
+span {
+    border: 1px solid aqua;
+}
+</style>
+
+<div id=test contenteditable>
+This is a test <span id=first>of writingsideways in vertical text</span><br>
+with multiline <span id=second>text</span> and alongwordthat'slong andanotherword.
+</div>
+
+<hr>
+
+<ul id="console"></ul>
+
+<script src="../../resources/ui-helper.js"></script>
+<script>
+
+var test = document.getElementById('test');
+var first = document.getElementById('first');
+var second = document.getElementById('second');
+
+var testRightEdge = test.offsetLeft + test.offsetWidth;
+var testTopEdge = test.offsetTop;
+var measure = test.offsetHeight;
+
+function stringifyCaret(caretRect) {
+    // Convert to LTR-relative coords and stringify
+    return -(caretRect.x - testRightEdge) + ","
+        + (caretRect.y - testTopEdge) + ","
+        + caretRect.width + ","
+        + caretRect.height;
+}
+
+function log(str) {
+    var li = document.createElement("li");
+    li.appendChild(document.createTextNode(str));
+    var console = document.getElementById("console");
+    console.appendChild(li);
+}
+
+function testCaretPosition(testID, element)
+{
+    element.focus();
+    var caretRect = window.internals.absoluteCaretBounds();
+    log(testID + " : " + stringifyCaret(caretRect));
+}
+
+async function clickInTest(target, blockCoord, inlineCoord)
+{
+    if (window.eventSender) {
+        await UIHelper.activateAt(testRightEdge - blockCoord, testTopEdge + inlineCoord);
+    }
+    else {
+        log("FAIL: could not send click event");
+    }
+}
+
+// To make it easier to reason about individual tests, this test method
+// accepts click coordinates in LTR-relative terms. See helper functions for conversion.
+async function testCaretClick(testID, blockCoord, inlineCoord, element)
+{
+    await clickInTest(element, blockCoord, inlineCoord);
+    testCaretPosition("Click at " + blockCoord + ", " + inlineCoord + " for " + testID, element);
+}
+
+async function runTest()
+{
+    if (window.testRunner) {
+        testRunner.waitUntilDone();
+        testRunner.dumpAsText();
+    }
+
+    // Tests for bugs that are oddly specific and hard to describe
+    window.getSelection().collapse(first.firstChild, 24);
+    await testCaretPosition("Bug 286961", first);
+
+    // Check caret insertion
+    await testCaretClick("left above first line", 5, 5, test);
+    await testCaretClick("right above first line", 5, measure - 5, test);
+
+    await testCaretClick("left of first line", 25, 5, test);
+    await testCaretClick("right of first line", 25, measure - 5, test);
+    await testCaretClick("left of second line", 45, 5, test);
+    await testCaretClick("right of second line", 45, measure - 5, test);
+    await testCaretClick("left of third line", 65, 5, test);
+    await testCaretClick("right of third line", 65, measure - 5, test);
+    await testCaretClick("left of fourth line", 85, 5, test);
+    await testCaretClick("right of fourth line", 85, measure - 5, test);
+    await testCaretClick("left of fifth line", 105, 5, test);
+    await testCaretClick("right of fifth line", 105, measure - 5, test);
+    await testCaretClick("left of sixth line", 125, 5, test);
+    await testCaretClick("right of sixth line", 125, measure - 5, test);
+    await testCaretClick("left of seventh line", 145, 5, test);
+    await testCaretClick("right of seventh line", 145, measure - 5, test);
+
+    await testCaretClick("left below last line", 170, 5, test);
+    await testCaretClick("right below last line", 170, measure - 5, test);
+
+    await testCaretClick("inside first root inline fragment", 25, 30, test);
+    await testCaretClick("inside middle fragment of root inline fragment", 125, 30, test);
+    await testCaretClick("inside middle fragment of non-root inline fragment", 45, 30, first);
+    await testCaretClick("inside last fragment of non-root inline fragment", 65, 30, first);
+    await testCaretClick("inside unfragmented non-root inline", 85, measure - 60, second);
+
+    testRunner.notifyDone();
+}
+
+runTest();
+
+</script>

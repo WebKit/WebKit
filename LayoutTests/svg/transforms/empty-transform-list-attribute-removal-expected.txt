@@ -1,0 +1,6 @@
+
+PASS Transform attribute should remain removed after emptying list via removeItem()
+PASS Transform attribute should remain removed after emptying list iteratively
+PASS Transform attribute should serialize to empty string when list is emptied without removal
+PASS Transform attribute removal should work on dynamically created elements
+

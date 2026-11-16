@@ -1,0 +1,6 @@
+
+PASS FetchResponse property names
+PASS ReadableStream property names
+PASS ReadableStreamDefaultReader property names
+PASS WritableStreamDefaultWriter property names
+

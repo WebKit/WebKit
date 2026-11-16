@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<meta charset="utf-8" />
+<title>Scroll to text fragment - second navigation clears first highlight</title>
+<link rel="help" href="https://wicg.github.io/scroll-to-text-fragment/">
+<meta name="assert" content="This test checks that a fragment directive is cleared when a second one is navigated to.">
+<meta name="fuzzy" content="maxDifference=0-1; totalPixels=0-1100" />
+
+<p>The test passes if only the 2nd word has a yellow background.</p>
+<div>First</div>
+<div><span>Second</span></div>
+
+<script>
+  location.href = "#:~:text=First";
+  setTimeout(function () {
+        location.href = "#:~:text=Second";
+    }, 1);
+</script>
+</html>

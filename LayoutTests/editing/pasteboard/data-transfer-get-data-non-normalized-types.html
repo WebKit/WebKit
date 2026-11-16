@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<html>
+<style>
+html, body {
+    margin: 0;
+    font-family: -apple-system;
+}
+
+#source, #destination {
+    width: 100%;
+    margin: 0;
+}
+
+#destination {
+    height: 1024px;
+}
+
+#source {
+    font-size: 150px;
+    white-space: nowrap;
+    height: 200px;
+}
+</style>
+<body>
+    <div id="source">Rich text</div>
+    <div id="destination" contenteditable></div>
+    <pre id="output"></pre>
+</body>
+<script>
+
+function handleCopy1(event) {
+    event.clipboardData.setData("Text", "");
+    event.clipboardData.setData(" URL\r", "http://www.apple.com/");
+    event.clipboardData.setData(" text/html;charset=utf-8 ", "<b style='color: green'></b>");
+    event.clipboardData.setData("custom type\t\n", "custom data");
+    event.preventDefault();
+}
+
+function handleCopy2(event) {
+    event.clipboardData.setData("text/plain;\t", "");
+    event.clipboardData.setData("text/uri-list;\n", "http://www.apple.com/");
+    event.clipboardData.setData("text/html;    ", "<b style='color: green'></b>");
+    event.clipboardData.setData("custom type", "custom data");
+    event.preventDefault();
+}
+
+function getDataWithTypesFromEvent(event, types) {
+    const result = {};
+    for (const type of types)
+        result[type] = event.clipboardData.getData(type);
+    return result;
+}
+
+function handlePaste1(event) {
+    output.textContent += JSON.stringify(getDataWithTypesFromEvent(event, [" text/plain; ", "text/uri-list; ", "text/html; ", "\fcustom type\r"]), null, "    ") + "\n";
+    event.preventDefault();
+}
+
+function handlePaste2(event) {
+    output.textContent += JSON.stringify(getDataWithTypesFromEvent(event, ["\tText", "\r\nURL", "    text/html;charset=utf-8 ", " custom type\t\n"]), null, "    ") + "\n";
+    event.preventDefault();
+}
+
+getSelection().setBaseAndExtent(source, 0, source, 1);
+source.addEventListener("copy", handleCopy1);
+destination.addEventListener("paste", handlePaste1);
+
+if (window.testRunner && window.internals) {
+    internals.settings.setCustomPasteboardDataEnabled(true);
+    testRunner.dumpAsText();
+    testRunner.execCommand("Copy");
+    destination.focus();
+    testRunner.execCommand("Paste");
+    destination.blur();
+
+    source.removeEventListener("copy", handleCopy1);
+    source.addEventListener("copy", handleCopy2);
+    destination.removeEventListener("paste", handlePaste1);
+    destination.addEventListener("paste", handlePaste2);
+
+    getSelection().setBaseAndExtent(source, 0, source, 1);
+    testRunner.execCommand("Copy");
+    destination.focus();
+    testRunner.execCommand("Paste");
+}
+</script>
+</html>

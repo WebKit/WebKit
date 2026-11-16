@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/ui-helper.js"></script>
+</head>
+<body>
+    <input type="checkbox" style="width: 5px; height: 5px; writing-mode: vertical-rl">
+    <pre id="result"></pre>
+</body>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+(async () => {
+    if (window.internals)
+        internals.startTrackingRepaints();
+
+    document.querySelector("input").checked = true;
+
+    if (window.internals) {
+        let repaintRects = internals.repaintRectsAsText();
+        internals.stopTrackingRepaints();
+        result.textContent = repaintRects;
+    }
+
+    if (window.testRunner)
+        testRunner.notifyDone();
+})();
+</script>
+</html>

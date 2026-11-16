@@ -1,0 +1,12 @@
+This test ensures that we compute the correct accessible name when the default contents of a slot are used.
+
+	AXTitle: slotted label
+	AXDescription:
+
+	AXTitle: default label
+	AXDescription:
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+slotted label

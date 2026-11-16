@@ -1,0 +1,12 @@
+A two-finger tap inside a cross-origin iframe should send the iframe a click with metaKey set, at the tapped point in the iframe's coordinates.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS receivedClick.metaKey is true
+PASS receivedClick.clientX is 200
+PASS receivedClick.clientY is 150
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

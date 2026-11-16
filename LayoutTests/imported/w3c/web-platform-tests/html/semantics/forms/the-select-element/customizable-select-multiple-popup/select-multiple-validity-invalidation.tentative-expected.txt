@@ -1,0 +1,6 @@
+
+one
+two
+
+PASS select-multiple-validity-invalidation
+

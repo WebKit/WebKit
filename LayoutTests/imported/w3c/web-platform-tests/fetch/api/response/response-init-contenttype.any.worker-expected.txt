@@ -1,0 +1,20 @@
+
+PASS Default Content-Type for Response with empty body
+PASS Default Content-Type for Response with Blob body (no type set)
+PASS Default Content-Type for Response with Blob body (empty type)
+PASS Default Content-Type for Response with Blob body (set type)
+PASS Default Content-Type for Response with buffer source body
+PASS Default Content-Type for Response with FormData body
+PASS Default Content-Type for Response with URLSearchParams body
+PASS Default Content-Type for Response with string body
+PASS Default Content-Type for Response with ReadableStream body
+PASS Can override Content-Type for Response with empty body
+PASS Can override Content-Type for Response with Blob body (no type set)
+PASS Can override Content-Type for Response with Blob body (empty type)
+PASS Can override Content-Type for Response with Blob body (set type)
+PASS Can override Content-Type for Response with buffer source body
+PASS Can override Content-Type for Response with FormData body
+PASS Can override Content-Type for Response with URLSearchParams body
+PASS Can override Content-Type for Response with string body
+PASS Can override Content-Type for Response with ReadableStream body
+

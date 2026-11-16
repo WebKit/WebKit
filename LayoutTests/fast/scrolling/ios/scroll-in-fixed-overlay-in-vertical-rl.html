@@ -1,0 +1,74 @@
+<!DOCTYPE html><!-- webkit-test-runner [ useFlexibleViewport=true AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+    :root {
+        scrollbar-width: none;
+    }
+    body {
+        writing-mode: vertical-rl;
+        margin: 0;
+    }
+
+    #overlay {
+        position: fixed;
+        background-color: rgba(0, 0, 0, 0.25);
+        width: 50%;
+        overflow: auto;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        border: 1px solid black;
+        box-sizing: border-box;
+    }
+
+    .scrollable-content {
+        width: 4000px;
+        height: 100%;
+    }
+</style>
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+<script>
+    window.jsTestIsAsync = true;
+
+    var initialDocumentScrollLeft;
+    var initialOverlayScrollLeft;
+    var overlayScrolled;
+    var documentScrolled;
+
+    async function runTest()
+    {
+        description("Verifies that a drag on the left side of the viewport, where a position:fixed overlay sits in a vertical-rl page, scrolls the overlay's contents and not the main page.");
+
+        const overlay = document.getElementById('overlay');
+        const scrollingElement = document.scrollingElement;
+
+        initialDocumentScrollLeft = scrollingElement.scrollLeft;
+        initialOverlayScrollLeft = overlay.scrollLeft;
+
+        await UIHelper.callFunctionAndWaitForTargetScrollToFinish(overlay, async () => {
+            // Drag horizontally on the left side of the viewport, where the fixed overlay is rendered.
+            await UIHelper.dragFromPointToPoint(50, 300, 100, 300, 0.1);
+        });
+
+        overlayScrolled = overlay.scrollLeft !== initialOverlayScrollLeft;
+        documentScrolled = scrollingElement.scrollLeft !== initialDocumentScrollLeft;
+
+        shouldBeTrue("overlayScrolled");
+        shouldBeFalse("documentScrolled");
+
+        finishJSTest();
+    }
+    window.addEventListener('load', runTest, false);
+</script>
+</head>
+<body>
+    <div id="console"></div>
+    <div class="scrollable-content"></div>
+    <div id="overlay">
+        <div class="scrollable-content"></div>
+    </div>
+</body>
+</html>

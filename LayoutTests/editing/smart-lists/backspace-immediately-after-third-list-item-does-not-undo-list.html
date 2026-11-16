@@ -1,0 +1,19 @@
+<!DOCTYPE html><!-- webkit-test-runner [ SmartListsAvailable=true ] -->
+<html>
+<head>
+<script src="../editing.js"></script>
+<script src="../../resources/dump-as-markup.js"></script>
+</head>
+<body>
+<div id="test" contenteditable></div>
+<script>
+Markup.description('Reaching a third list item necessarily closes the immediate-undo window (typing the second item\'s content and then pressing Enter both invalidate it). Pressing Backspace from the empty third list item should therefore fall through to the normal break-out-of-empty-list behavior, leaving the original list intact with its two non-empty items.');
+
+const test = document.getElementById('test');
+test.focus();
+[...'* A\n* B\n'].forEach(typeCharacterCommand);
+deleteCommand();
+Markup.dump('test');
+</script>
+</body>
+</html>

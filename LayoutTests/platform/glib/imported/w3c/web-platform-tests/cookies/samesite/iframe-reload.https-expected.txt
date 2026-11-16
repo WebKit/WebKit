@@ -1,0 +1,5 @@
+
+PASS Reloaded same-host fetches are strictly same-site
+PASS Reloaded subdomain fetches are strictly same-site
+PASS Reloaded cross-site fetches are cross-site
+

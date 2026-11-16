@@ -1,0 +1,6 @@
+
+
+PASS Test :playing and :paused timing without media resource
+PASS Test :playing and :paused timing with a media resource
+PASS Test :seeking timing when setting currentTime
+

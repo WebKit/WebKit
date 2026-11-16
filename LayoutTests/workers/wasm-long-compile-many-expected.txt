@@ -1,0 +1,25 @@
+CONSOLE MESSAGE: Good result
+CONSOLE MESSAGE: Good result
+CONSOLE MESSAGE: Good result
+CONSOLE MESSAGE: Good result
+CONSOLE MESSAGE: Good result
+CONSOLE MESSAGE: Good result
+CONSOLE MESSAGE: Good result
+CONSOLE MESSAGE: Good result
+CONSOLE MESSAGE: Good result
+CONSOLE MESSAGE: Good result
+CONSOLE MESSAGE: Good result
+CONSOLE MESSAGE: Good result
+CONSOLE MESSAGE: Good result
+CONSOLE MESSAGE: Good result
+CONSOLE MESSAGE: Good result
+CONSOLE MESSAGE: Good result
+CONSOLE MESSAGE: Good result
+CONSOLE MESSAGE: Good result
+CONSOLE MESSAGE: Good result
+CONSOLE MESSAGE: Good result
+CONSOLE MESSAGE: Finished test
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

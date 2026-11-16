@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../../resources/js-test.js"></script>
+    <script>
+
+        function assertPixelApprox(ctx, x,y, r,g,b,a, tolerance)
+        {
+            var imgdata = ctx.getImageData(x, y, 1, 1);
+            var diff = Math.max(Math.abs(r-imgdata.data[0]), Math.abs(g-imgdata.data[1]), Math.abs(b-imgdata.data[2]), Math.abs(a-imgdata.data[3]));
+            shouldBeFalse((diff > tolerance).toString());
+        }
+
+        window.addEventListener('load', () => {
+            
+            const canvas = document.getElementsByTagName('canvas')[0];
+            const ctx = canvas.getContext('2d', { colorSpace: "display-p3" });
+            
+            const gradient = ctx.createLinearGradient(0, 0, 50, 50);
+
+            gradient.addColorStop(0, "blue");
+            gradient.addColorStop(0.25, "green");
+            gradient.addColorStop(0.5, "blue");
+            gradient.addColorStop(1, "blue");
+
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, 50, 50);
+
+            assertPixelApprox(ctx, 48, 48, 0, 0, 244, 255, 2);
+        }, false);
+    </script>
+</head>
+<body>
+    <canvas height=50 width=50></canvas>
+</body>
+</html>

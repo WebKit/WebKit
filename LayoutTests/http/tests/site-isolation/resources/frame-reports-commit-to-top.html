@@ -1,0 +1,9 @@
+<!DOCTYPE html>
+<html>
+<body style="margin: 0; padding: 0;">
+<p id="container">Hello from committed cross-origin iframe</p>
+<script>
+top.postMessage("committed:" + location.href, "*");
+</script>
+</body>
+</html>

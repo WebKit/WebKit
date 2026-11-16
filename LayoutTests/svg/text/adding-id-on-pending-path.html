@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<svg>
+  <path d="M0,20h100" fill="none"/>
+  <text><textPath xlink:href="#path">PASS</textPath></text>
+</svg>
+<script>
+function runAfterLayoutAndPaint(callback, autoNotifyDone) {
+    if (!window.testRunner) {
+        // For manual test. Delay 500ms to allow us to see the visual change
+        // caused by the callback.
+        setTimeout(callback, 500);
+        return;
+    }
+
+    if (autoNotifyDone)
+        testRunner.waitUntilDone();
+
+    // We do requestAnimationFrame and setTimeout to ensure a frame has started
+    // and layout and paint have run. The requestAnimationFrame fires after the
+    // frame has started but before layout and paint. The setTimeout fires
+    // at the beginning of the next frame, meaning that the previous frame has
+    // completed layout and paint.
+    // See http://crrev.com/c/1395193/10/third_party/blink/web_tests/http/tests/resources/run-after-layout-and-paint.js
+    // for more discussions.
+    requestAnimationFrame(function() {
+        setTimeout(function() {
+            callback();
+            if (autoNotifyDone)
+                testRunner.notifyDone();
+        }, 1);
+    });
+}
+</script>
+<script>
+runAfterLayoutAndPaint(function() {
+  document.querySelector('path').id = 'path';
+}, true);
+</script>

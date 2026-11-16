@@ -1,0 +1,139 @@
+/*
+ * Copyright (C) 2019-2022 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#import "config.h"
+#import "RedirectSOAuthorizationSession.h"
+
+#if HAVE(APP_SSO)
+
+#import "APINavigationAction.h"
+#import "WebPageProxy.h"
+#import <WebCore/HTTPStatusCodes.h>
+#import <WebCore/ResourceResponse.h>
+#import <wtf/cocoa/SpanCocoa.h>
+#import <wtf/text/MakeString.h>
+
+#define AUTHORIZATIONSESSION_RELEASE_LOG(fmt, ...) RELEASE_LOG(AppSSO, "%p - [InitiatingAction=%s][State=%s] RedirectSOAuthorizationSession::" fmt, this, initiatingActionString().characters(), stateString().characters(), ##__VA_ARGS__)
+
+namespace WebKit {
+using namespace WebCore;
+
+Ref<SOAuthorizationSession> RedirectSOAuthorizationSession::create(RetainPtr<WKSOAuthorizationDelegate> delegate, Ref<API::NavigationAction>&& navigationAction, WebPageProxy& page, Callback&& completionHandler)
+{
+    return adoptRef(*new RedirectSOAuthorizationSession(delegate, WTF::move(navigationAction), page, WTF::move(completionHandler)));
+}
+
+RedirectSOAuthorizationSession::RedirectSOAuthorizationSession(RetainPtr<WKSOAuthorizationDelegate> delegate, Ref<API::NavigationAction>&& navigationAction, WebPageProxy& page, Callback&& completionHandler)
+    : NavigationSOAuthorizationSession(delegate, WTF::move(navigationAction), page, InitiatingAction::Redirect, WTF::move(completionHandler))
+{
+}
+
+void RedirectSOAuthorizationSession::fallBackToWebPathInternal()
+{
+    AUTHORIZATIONSESSION_RELEASE_LOG("fallBackToWebPathInternal: navigationAction=%p", navigationAction());
+    invokeCallback(false);
+}
+
+void RedirectSOAuthorizationSession::abortInternal()
+{
+    AUTHORIZATIONSESSION_RELEASE_LOG("abortInternal");
+    invokeCallback(true);
+}
+
+void RedirectSOAuthorizationSession::completeInternal(const ResourceResponse& response, NSData *data)
+{
+    AUTHORIZATIONSESSION_RELEASE_LOG("completeInternal: httpState=%d, navigationAction=%p", response.httpStatusCode(), navigationAction());
+
+    RefPtr navigationAction = this->navigationAction();
+    ASSERT(navigationAction);
+    RefPtr page = this->page();
+
+    if (!page) {
+        AUTHORIZATIONSESSION_RELEASE_LOG("completeInternal: httpState=%d page=%d, so falling back to web path.", response.httpStatusCode(), !!page);
+        fallBackToWebPathInternal();
+        return;
+    }
+
+    if (response.httpStatusCode() == httpStatus302Found) {
+        invokeCallback(true);
+#if PLATFORM(IOS) || PLATFORM(VISION)
+        // MobileSafari has a WBSURLSpoofingMitigator, which will not display the provisional URL for navigations without user gestures.
+        // For slow loads that are initiated from the MobileSafari Favorites screen, the aforementioned behavior will create a period
+        // after authentication completion where the new request to the application site loads with a blank URL and blank page. To
+        // work around this issue, we load a page that does a client side redirection to the application site on behalf of the
+        // request URL, instead of directly loading a new request. This local page should be super fast to load and therefore will not
+        // show an empty URL or a blank page. These changes ensure a relevant URL bar and useful page content during the load.
+        if (!navigationAction->isProcessingUserGesture()) {
+            page->setShouldSuppressSOAuthorizationInNextNavigationPolicyDecision();
+            auto html = makeString("<script>location = '"_s, response.httpHeaderFields().get(HTTPHeaderName::Location), "'</script>"_s).utf8();
+            page->loadData(SharedBuffer::create(html.span()), "text/html"_s, "UTF-8"_s, navigationAction->request().url().string(), nullptr, navigationAction->shouldOpenExternalURLsPolicy());
+            return;
+        }
+#endif
+        page->loadRequest(ResourceRequest(response.httpHeaderFields().get(HTTPHeaderName::Location)));
+        return;
+    }
+
+    if (response.httpStatusCode() == httpStatus200OK) {
+        invokeCallback(true);
+        page->setShouldSuppressSOAuthorizationInNextNavigationPolicyDecision();
+        page->loadData(SharedBuffer::create(data), "text/html"_s, "UTF-8"_s, response.url().string(), nullptr, navigationAction->shouldOpenExternalURLsPolicy());
+        return;
+    }
+
+    // FIXME: Enable the useRedirectionForCurrentNavigation code path for all redirections.
+    if (response.httpStatusCode() == httpStatus307TemporaryRedirect
+        && navigationAction->request().httpMethod() == "POST"_s) {
+        page->useRedirectionForCurrentNavigation(response);
+        invokeCallback(false);
+        return;
+    }
+
+    // When the SSO extension completes with a 401 response and non-empty body data,
+    // load the response body so the page can continue the authentication flow.
+    // The extension chose didCompleteWithHTTPResponse: over authorizationDidNotHandle:,
+    // indicating it has meaningful content for the browser to render. rdar://145336725
+    if (response.httpStatusCode() == httpStatus401Unauthorized && data.length) {
+        AUTHORIZATIONSESSION_RELEASE_LOG("completeInternal: loading 401 response body (%zu bytes)", static_cast<size_t>(data.length));
+        invokeCallback(true);
+        page->setShouldSuppressSOAuthorizationInNextNavigationPolicyDecision();
+        page->loadData(SharedBuffer::create(data), "text/html"_s, "UTF-8"_s, response.url().string(), nullptr, navigationAction->shouldOpenExternalURLsPolicy());
+        return;
+    }
+
+    AUTHORIZATIONSESSION_RELEASE_LOG("completeInternal: httpState=%d, so falling back to web path.", response.httpStatusCode());
+    fallBackToWebPathInternal();
+}
+
+void RedirectSOAuthorizationSession::beforeStart()
+{
+    AUTHORIZATIONSESSION_RELEASE_LOG("beforeStart");
+}
+
+} // namespace WebKit
+
+#undef AUTHORIZATIONSESSION_RELEASE_LOG
+
+#endif

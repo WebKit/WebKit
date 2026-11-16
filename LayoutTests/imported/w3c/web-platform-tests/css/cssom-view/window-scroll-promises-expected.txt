@@ -1,0 +1,20 @@
+
+FAIL Window.scroll(auto): return type assert_true: expected true got false
+FAIL Window.scroll(auto): promise behavior assert_equals: expected "object" but got "undefined"
+FAIL Window.scroll(instant): return type assert_true: expected true got false
+FAIL Window.scroll(instant): promise behavior assert_equals: expected "object" but got "undefined"
+FAIL Window.scroll(smooth): return type assert_true: expected true got false
+FAIL Window.scroll(smooth): promise behavior assert_equals: Position after await expected 5000 but got 0
+FAIL Window.scrollTo(auto): return type assert_true: expected true got false
+FAIL Window.scrollTo(auto): promise behavior assert_equals: expected "object" but got "undefined"
+FAIL Window.scrollTo(instant): return type assert_true: expected true got false
+FAIL Window.scrollTo(instant): promise behavior assert_equals: expected "object" but got "undefined"
+FAIL Window.scrollTo(smooth): return type assert_true: expected true got false
+FAIL Window.scrollTo(smooth): promise behavior assert_equals: Position after await expected 5000 but got 0
+FAIL Window.scrollBy(auto): return type assert_true: expected true got false
+FAIL Window.scrollBy(auto): promise behavior assert_equals: expected "object" but got "undefined"
+FAIL Window.scrollBy(instant): return type assert_true: expected true got false
+FAIL Window.scrollBy(instant): promise behavior assert_equals: expected "object" but got "undefined"
+FAIL Window.scrollBy(smooth): return type assert_true: expected true got false
+FAIL Window.scrollBy(smooth): promise behavior assert_equals: Position after await expected 5000 but got 0
+

@@ -1,0 +1,18 @@
+These tests create a "parent" popup window which is an HTML document with a specific Cross-Origin-Opener-Policy. The parent creates a "child" popup window which is a non-HTML document with a Cross-Origin-Opener-Policy of its own. The parent waits for the child's location to change from "about:blank" and then inspects its name and closed properties which it reports back to the test context.
+
+The HTTP `Refresh` header is used to ensure the child eventually closes itself (since proper observance of COOP will prevent the parent from closing the child in some cases).
+
+
+PASS /common/dummy.xml - parent COOP: ""; child COOP: "same-origin"
+PASS /common/dummy.xml - parent COOP: "same-origin"; child COOP: ""
+PASS /common/dummy.xml - parent COOP: "same-origin"; child COOP: "same-origin"
+PASS /images/red.png - parent COOP: ""; child COOP: "same-origin"
+PASS /images/red.png - parent COOP: "same-origin"; child COOP: ""
+PASS /images/red.png - parent COOP: "same-origin"; child COOP: "same-origin"
+PASS /common/text-plain.txt - parent COOP: ""; child COOP: "same-origin"
+PASS /common/text-plain.txt - parent COOP: "same-origin"; child COOP: ""
+PASS /common/text-plain.txt - parent COOP: "same-origin"; child COOP: "same-origin"
+PASS /media/2x2-green.mp4 - parent COOP: ""; child COOP: "same-origin"
+PASS /media/2x2-green.mp4 - parent COOP: "same-origin"; child COOP: ""
+PASS /media/2x2-green.mp4 - parent COOP: "same-origin"; child COOP: "same-origin"
+

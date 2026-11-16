@@ -1,0 +1,95 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+<style>
+#dialog-container {
+    bottom: auto;
+    position: fixed;
+    z-index: 2000;
+    left: 0;
+    right: 0;
+    top: 100px;
+}
+#dialog {
+    margin: 0 auto;
+    box-shadow: 0 2px 7px rgba(5,27,44,.06),0 2px 32px rgba(5,27,44,.16);
+    color: #050b2c;
+    padding: 1.25em;
+    border-bottom-left-radius: .6em;
+    border-bottom-right-radius: .6em;
+    width: 550px;
+}
+@keyframes transformAnimation {
+  0% { transform: scale(1, 1); }
+  100% { transform: scale(2, 2); }
+}
+</style>
+<script>
+window.jsTestIsAsync = true;
+var output = "This test ensures we compute the relative frame of iframes and their descendants correctly.\n\n";
+
+function runTest() {
+    if (!window.accessibilityController)
+        return;
+
+    traverseBodyContent();
+    output += "\nAdding transform animation to #dialog-container.\n"
+    document.getElementById("dialog-container").setAttribute("style", "animation-name: transformAnimation; animation-iteration-count: 1; animation-timing-function: ease-out; animation-duration: 250ms; animation-fill-mode: forwards;");
+    setTimeout(async () => {
+        // Wait for the animation to complete.
+        await sleep(250);
+        // Scroll the dialog back into view just like an AT might.
+        accessibilityController.accessibleElementById("dialog").scrollToMakeVisible();
+        // Wait for the scroll to finish and for the AX tree to update (if necessary).
+        await sleep(1000);
+
+        traverseBodyContent();
+
+        debug(output);
+        finishJSTest();
+    });
+}
+
+function traverseBodyContent() {
+    const body = accessibilityController.accessibleElementById("body");
+
+    let searchResult = null;
+    while (true) {
+        searchResult = body.uiElementForSearchPredicate(searchResult, true, "AXAnyTypeSearchKey", "", false);
+        if (!searchResult)
+            break;
+
+        let id = searchResult.domIdentifier;
+        id = id ? `#${id}` : '';
+        const role = searchResult.role;
+        if (role && role.includes("StaticText"))
+            id = searchResult.stringValue;
+        output += `\n{ ${role}${id ? ` ${id}` : ''} } has AXRelativeFrame: ${searchResult.stringDescriptionOfAttributeValue("AXRelativeFrame")}\n`;
+    }
+}
+</script>
+</head>
+<body id="body" role="group" onload="runTest()" style="height: 4000px">
+
+<div id="dialog-container" role="group">
+    <div id="dialog" role="group">
+        <div id="dialog-text-wrapper" style="margin-top: 10px; margin-bottom: 50px" role="group">This is some filler text. You can read it, but it's not overly important. Have a great day!</div>
+        <img src="../resources/cake.png" alt="Cake in front of a glass door">
+    </div>
+</div>
+
+<div id="end-of-page-container" role="group" style="margin-top: 3000px">
+    End of page
+</div>
+<script>
+// For manual testing.
+if (!window.testRunner && !window.accessibilityController) {
+    setTimeout(() => {
+        document.getElementById("dialog-container").setAttribute("style", "animation-name: transformAnimation; animation-iteration-count: 1; animation-timing-function: ease-out; animation-duration: 250ms; animation-fill-mode: forwards;");
+    }, 3000)
+}
+</script>
+</body>
+</html>

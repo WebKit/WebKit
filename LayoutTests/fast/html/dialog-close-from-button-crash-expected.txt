@@ -1,0 +1,4 @@
+This tests removing the value attribute of a button as it tries to close the dialog element.
+WebKit should not crash or hit any assertions under ASAN.
+
+PASS

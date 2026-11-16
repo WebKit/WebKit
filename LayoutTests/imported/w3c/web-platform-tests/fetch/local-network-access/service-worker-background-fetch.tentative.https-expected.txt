@@ -1,0 +1,4 @@
+
+PASS LNA Service Worker Public to Loopback Background Fetch with permission
+FAIL LNA Service Worker Public to Loopback Background Fetch without permission assert_true: expected an error but got none expected true got false
+

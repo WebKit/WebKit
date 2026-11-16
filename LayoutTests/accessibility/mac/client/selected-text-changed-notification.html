@@ -1,0 +1,57 @@
+<html>
+<head>
+<script src="../../../resources/accessibility-helper.js"></script>
+<script src="../../../resources/js-test.js"></script>
+</head>
+<body>
+
+<input id="field" type="text" aria-label="Field" value="hello world">
+
+<script>
+var output = "Tests that a client-side accessibility notification listener receives AXSelectedTextChanged with its userInfo.\n\n";
+
+var selectionChangeCount = 0;
+var changes = [];
+function notificationCallback(element, notificationName, userInfo) {
+    if (notificationName !== "AXSelectedTextChanged" || element.domIdentifier !== "field")
+        return;
+    selectionChangeCount++;
+    if (userInfo)
+        changes.push(userInfo);
+}
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+    accessibilityController.setClientAccessibilityMode(true);
+
+    setTimeout(async function() {
+        await waitForElements([(element) => element.domIdentifier === "field"]);
+        output += expect("accessibilityController.addNotificationListener(notificationCallback)", "true");
+
+        const field = document.getElementById("field");
+        field.focus();
+        field.setSelectionRange(0, 0);
+        // Accessibility coalesces selection changes made before its next update, so wait for these to be
+        // posted. Otherwise the change under test would be folded into them.
+        await waitFor(() => selectionChangeCount);
+
+        // Extend the selection by a word. That's the only change here that selects any text, which tells
+        // its notification apart from any remaining ones for focusing the field and placing the caret.
+        eventSender.keyDown("rightArrow", ["altKey", "shiftKey"]);
+        const selectsText = (userInfo) => userInfo.AXSelectedTextMarkerRange?.AXTextMarkerRangeString;
+        await waitFor(() => changes.some(selectsText));
+        window.userInfo = changes.find(selectsText) || { };
+        output += expect("userInfo.AXTextStateChangeType", "3"); // SelectionExtend
+        output += expect("userInfo.AXTextSelectionDirection", "4"); // Next
+        output += expect("userInfo.AXTextSelectionGranularity", "2"); // Word
+        output += expect("userInfo.AXSelectedTextMarkerRange.AXTextMarkerRangeString", "'hello'");
+        output += expect("userInfo.AXTextChangeElement.domIdentifier", "'field'");
+
+        accessibilityController.removeNotificationListener();
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

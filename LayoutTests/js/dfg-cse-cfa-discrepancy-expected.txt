@@ -1,0 +1,9 @@
+Tests stability when the CFA finds a constant in block-local data flow over captured variables but the CSE doesn't because of differences in heap modeling.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Passed some tests silently.
+
+TEST COMPLETE
+

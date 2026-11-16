@@ -1,0 +1,17 @@
+This tests that a notification listener on an element only listens to that one element, and that a global notification listener listens to all notifications.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+SELECT AXInvalidStatusChanged
+GLOBAL AXInvalidStatusChanged on element with role AXRole: AXPopUpButton
+PASS selectNotificationCount === 1
+SLIDER AXValueChanged
+GLOBAL AXValueChanged on element with role AXRole: AXSlider
+PASS sliderNotificationCount === 1
+PASS globalNotificationCount === 2
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+Slider

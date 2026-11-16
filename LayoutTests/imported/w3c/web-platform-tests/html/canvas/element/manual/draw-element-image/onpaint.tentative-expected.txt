@@ -1,0 +1,16 @@
+
+Harness Error (FAIL), message = Test named 'onpaint should not fire if a canvas child transform changes' specified 1 'cleanup' function, and 1 failed.
+
+PASS onpaint should not fire without changes
+PASS onpaint should fire once if a canvas child changes
+PASS onpaint should fire if a canvas child is added or removed
+PASS onpaint should fire once if a canvas grandchild changes
+PASS onpaint should not fire if the canvas itself changes
+PASS onpaint should not fire if a canvas sibling changes
+PASS onpaint should not fire if a canvas ancestor changes
+PASS onpaint should fire once if a canvas child CSS transform changes
+FAIL onpaint should not fire if a canvas child transform changes promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
+NOTRUN onpaint should not fire after canvas drawing operations
+NOTRUN onpaint should respect content=drawable attribute mutation
+NOTRUN onpaint should work with addEventListener
+

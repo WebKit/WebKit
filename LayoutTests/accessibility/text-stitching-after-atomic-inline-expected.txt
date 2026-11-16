@@ -1,0 +1,26 @@
+This test ensures text stitching works after atomic inline boxes (like buttons).
+
+Test 1: text after button
+
+{AXRole: AXButton}
+
+{AXRole: AXStaticText AXValue:  Hello team!}
+
+Test 2: text between multiple buttons
+
+{AXRole: AXStaticText AXValue: Before }
+
+{AXRole: AXButton}
+
+{AXRole: AXStaticText AXValue:  middle text here }
+
+{AXRole: AXButton}
+
+{AXRole: AXStaticText AXValue:  after end}
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Foo Hello team!
+Before A middle text here B after end

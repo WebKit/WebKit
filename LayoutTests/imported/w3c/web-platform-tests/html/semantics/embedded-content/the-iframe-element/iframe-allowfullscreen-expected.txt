@@ -1,0 +1,6 @@
+
+PASS iframe-same-origin-allowfullscreen
+PASS iframe-cross-origin-allowfullscreen
+PASS iframe-noload-noallowfullscreen
+PASS iframe-noload-allowfullscreen
+

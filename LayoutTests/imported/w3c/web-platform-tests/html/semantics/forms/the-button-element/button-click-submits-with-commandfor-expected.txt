@@ -1,0 +1,9 @@
+
+
+PASS clicking a button (implicit type) should NOT trigger a submit (with command attribute)
+PASS clicking a button (implicit type) should NOT trigger a submit (with commandfor attribute)
+PASS clicking a button (implicit type) should NOT trigger a submit (with command and commandfor attribute)
+PASS clicking a button (explicit type=submit) SHOULD trigger a submit (with command attribute)
+PASS clicking a button (explicit type=submit) SHOULD trigger a submit (with commandfor attribute)
+PASS clicking a button (explicit type=submit) SHOULD trigger a submit (with command and commandfor attribute)
+

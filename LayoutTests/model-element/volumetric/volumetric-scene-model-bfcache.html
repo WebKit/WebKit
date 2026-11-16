@@ -1,0 +1,50 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ SpatialPortalEnabled=true ModelElementEnabled=true ModelProcessEnabled=true MockVolumetricSceneEnabled=true UsesBackForwardCache=true allowTestOnlyIPC=true ] -->
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../resources/js-test.js"></script>
+<script src="resources/volumetric-utils.js"></script>
+</head>
+<body>
+<model id="model"><source src="../resources/cube.usdz"></model>
+<script>
+description("A &lt;model&gt; restored from the back/forward cache after a volumetric scene should be fitted inline again, not keep the fit of the volume.");
+jsTestIsAsync = true;
+internals.disableModelLoadDelaysForTesting();
+
+const model = document.getElementById("model");
+let inlineFit;
+let volumetricFit;
+let transformBeforeReload;
+let restoredFit;
+
+const modelFit = async () => {
+    const sceneGraph = await internals.modelSceneGraphAsText(model);
+    return sceneGraph.split("\n").filter(line => /\((scale|rotation|translation) /.test(line)).join("\n");
+};
+
+addEventListener("pageshow", async event => {
+    if (!event.persisted)
+        return;
+
+    transformBeforeReload = model.entityTransform;
+    await shouldBecomeDifferent("model.entityTransform", "transformBeforeReload");
+
+    restoredFit = await modelFit();
+    shouldBe("restoredFit", "inlineFit");
+    finishJSTest();
+});
+
+addEventListener("load", async () => {
+    await model.ready;
+    inlineFit = await modelFit();
+
+    await requestVolumetricScene(model);
+    volumetricFit = await modelFit();
+    shouldNotBe("volumetricFit", "inlineFit");
+
+    location.href = "../resources/go-back-on-load.html";
+});
+</script>
+</body>
+</html>

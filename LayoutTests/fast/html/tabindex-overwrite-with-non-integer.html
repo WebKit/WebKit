@@ -1,0 +1,27 @@
+<div id="a" tabindex="1">PASS</div>
+
+<script>
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+    }
+    var a = document.getElementById('a');
+    a.addEventListener('focus', function (e) {
+        a.innerText = 'FAIL';
+    }, false);
+
+    a.setAttribute('tabindex', 1);
+    a.setAttribute('tabindex', null);
+    a.focus();
+
+    a.setAttribute('tabindex', 1);
+    a.setAttribute('tabindex', undefined);
+    a.focus();
+
+    a.setAttribute('tabindex', 1);
+    a.setAttribute('tabindex', "string");
+    a.focus();
+
+    a.setAttribute('tabindex', 1);
+    a.setAttribute('tabindex', "");
+    a.focus();
+</script>

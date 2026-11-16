@@ -1,0 +1,166 @@
+//
+// Copyright 2016 The ANGLE Project Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+//
+// BufferNULL.cpp:
+//    Implements the class methods for BufferNULL.
+//
+
+#include "libANGLE/renderer/null/BufferNULL.h"
+#include "common/unsafe_buffers.h"
+
+#include "common/debug.h"
+#include "common/utilities.h"
+#include "libANGLE/Context.h"
+#include "libANGLE/angletypes.h"
+#include "libANGLE/renderer/null/ContextNULL.h"
+
+namespace rx
+{
+
+BufferNULL::BufferNULL(const gl::BufferState &state, AllocationTrackerNULL *allocationTracker)
+    : BufferImpl(state), mAllocationTracker(allocationTracker)
+{
+    ASSERT(mAllocationTracker != nullptr);
+}
+
+BufferNULL::~BufferNULL()
+{
+    bool memoryReleaseResult = mAllocationTracker->updateMemoryAllocation(mData.size(), 0);
+    ASSERT(memoryReleaseResult);
+}
+
+angle::Result BufferNULL::setDataWithUsageFlags(const gl::Context *context,
+                                                gl::BufferBinding target,
+                                                GLeglClientBufferEXT clientBuffer,
+                                                const void *data,
+                                                size_t size,
+                                                gl::BufferUsage usage,
+                                                GLbitfield flags,
+                                                gl::BufferStorage bufferStorage,
+                                                BufferFeedback *feedback,
+                                                gl::ZeroFillRequired zeroFillRequired)
+{
+    ANGLE_CHECK_GL_ALLOC(GetImplAs<ContextNULL>(context),
+                         mAllocationTracker->updateMemoryAllocation(mData.size(), size));
+
+    mData.resize(size, 0);
+
+    const void *dataForImpl = data;
+    if (zeroFillRequired == gl::ZeroFillRequired::Yes)
+    {
+        const angle::MemoryBuffer *scratchBuffer = nullptr;
+        ANGLE_CHECK_GL_ALLOC(
+            GetImplAs<ContextNULL>(context),
+            context->getZeroFilledBuffer(static_cast<size_t>(size), &scratchBuffer));
+        dataForImpl = scratchBuffer->data();
+    }
+
+    if (size > 0 && dataForImpl != nullptr)
+    {
+        ANGLE_UNSAFE_TODO(memcpy(mData.data(), dataForImpl, size));
+    }
+    return angle::Result::Continue;
+}
+
+angle::Result BufferNULL::setData(const gl::Context *context,
+                                  gl::BufferBinding target,
+                                  const void *data,
+                                  size_t size,
+                                  gl::BufferUsage usage,
+                                  BufferFeedback *feedback,
+                                  gl::ZeroFillRequired zeroFillRequired)
+{
+    ANGLE_CHECK_GL_ALLOC(GetImplAs<ContextNULL>(context),
+                         mAllocationTracker->updateMemoryAllocation(mData.size(), size));
+
+    mData.resize(size, 0);
+    if (size > 0 && data != nullptr)
+    {
+        ANGLE_UNSAFE_TODO(memcpy(mData.data(), data, size));
+    }
+    return angle::Result::Continue;
+}
+
+angle::Result BufferNULL::setSubData(const gl::Context *context,
+                                     gl::BufferBinding target,
+                                     const void *data,
+                                     size_t size,
+                                     size_t offset,
+                                     BufferFeedback *feedback)
+{
+    if (size > 0)
+    {
+        ANGLE_UNSAFE_TODO(memcpy(mData.data() + offset, data, size));
+    }
+    return angle::Result::Continue;
+}
+
+angle::Result BufferNULL::copySubData(const gl::Context *context,
+                                      BufferImpl *source,
+                                      GLintptr sourceOffset,
+                                      GLintptr destOffset,
+                                      GLsizeiptr size,
+                                      BufferFeedback *feedback)
+{
+    BufferNULL *sourceNULL = GetAs<BufferNULL>(source);
+    if (size > 0)
+    {
+        ANGLE_UNSAFE_TODO(
+            memcpy(mData.data() + destOffset, sourceNULL->mData.data() + sourceOffset, size));
+    }
+    return angle::Result::Continue;
+}
+
+angle::Result BufferNULL::map(const gl::Context *context,
+                              GLenum access,
+                              void **mapPtr,
+                              BufferFeedback *feedback)
+{
+    *mapPtr = mData.data();
+    return angle::Result::Continue;
+}
+
+angle::Result BufferNULL::mapRange(const gl::Context *context,
+                                   size_t offset,
+                                   size_t length,
+                                   GLbitfield access,
+                                   void **mapPtr,
+                                   BufferFeedback *feedback)
+{
+    *mapPtr = ANGLE_UNSAFE_TODO(mData.data() + offset);
+    return angle::Result::Continue;
+}
+
+angle::Result BufferNULL::unmap(const gl::Context *context,
+                                GLboolean *result,
+                                BufferFeedback *feedback)
+{
+    *result = GL_TRUE;
+    return angle::Result::Continue;
+}
+
+angle::Result BufferNULL::getIndexRange(const gl::Context *context,
+                                        gl::DrawElementsType type,
+                                        size_t offset,
+                                        size_t count,
+                                        bool primitiveRestartEnabled,
+                                        gl::IndexRange *outRange)
+{
+    *outRange = gl::ComputeIndexRange(type, ANGLE_UNSAFE_TODO(mData.data() + offset), count,
+                                      primitiveRestartEnabled);
+    return angle::Result::Continue;
+}
+
+uint8_t *BufferNULL::getDataPtr()
+{
+    return mData.data();
+}
+
+const uint8_t *BufferNULL::getDataPtr() const
+{
+    return mData.data();
+}
+
+}  // namespace rx

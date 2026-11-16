@@ -1,0 +1,5 @@
+This text should be green
+This text should be green
+
+PASS Importing quirks mode element into standards mode document
+

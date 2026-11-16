@@ -1,0 +1,3 @@
+
+PASS Testing value setting of fontStretch in Canvas
+

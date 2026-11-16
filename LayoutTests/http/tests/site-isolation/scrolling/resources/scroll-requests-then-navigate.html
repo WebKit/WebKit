@@ -1,0 +1,14 @@
+<body style="margin: 0; height: 10000px;">
+<script>
+onmessage = (event) => {
+    let count = 0;
+    function scrollEveryFrame() {
+        scrollTo(0, 100 * (++count % 50));
+        if (count == 3)
+            location.href = event.data;
+        requestAnimationFrame(scrollEveryFrame);
+    }
+    requestAnimationFrame(scrollEveryFrame);
+};
+</script>
+</body>

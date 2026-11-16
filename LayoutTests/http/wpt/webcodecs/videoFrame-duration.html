@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<header>
+<script src='/resources/testharness.js'></script>
+<script src='/resources/testharnessreport.js'></script>
+</header>
+<body>
+<script>
+
+function makeVideoFrame(width, height, timestamp, duration) {
+  let canvas = new OffscreenCanvas(width, height);
+  let ctx = canvas.getContext('2d');
+  ctx.fillStyle = 'rgba(50, 100, 150, 255)';
+  ctx.fillRect(0, 0, width, height);
+  return new VideoFrame(canvas, { timestamp, duration });
+}
+
+promise_test(async () => {
+  const config = { codec: 'avc1.42001E' };
+  config.width = 320;
+  config.height = 200;
+  config.bitrate = 1000000;
+  config.framerate = 30;
+
+  let resolve, reject;
+  const promise = new Promise((res, rej) => {
+    resolve = res;
+    reject = rej;
+  });
+
+  let results = [];
+  const encoderInit = {
+    output(chunk, metadata) {
+      results.push(chunk);
+      if (results.length === 3)
+         resolve();
+    },
+    error(e) {
+      reject(e.message);
+    }
+  };
+
+  const encoder = new VideoEncoder(encoderInit);
+  encoder.configure(config);
+
+  const w = config.width;
+  const h = config.height;
+
+  const frame1 = makeVideoFrame(w, h, -10, 1);
+  encoder.encode(frame1);
+  frame1.close();
+
+  const frame2 = makeVideoFrame(w, h, -10, 2);
+  encoder.encode(frame2);
+  frame2.close();
+
+  const frame3 = makeVideoFrame(w, h, -10, undefined);
+  encoder.encode(frame3);
+  frame3.close();
+
+  await encoder.flush();
+  encoder.close();
+
+  await promise;
+
+  assert_equals(results.length, 3);
+  assert_equals(results[0].timestamp, -10, "frame1 timestamp");
+  assert_equals(results[0].duration, 1);
+  assert_equals(results[1].timestamp, -10, "frame2 timestamp");
+  assert_equals(results[1].duration, 2);
+  assert_equals(results[2].timestamp, -10, "frame3 timestamp");
+  assert_equals(results[2].duration, null);
+}, "H.264 encoder with frames having the same timestamp");
+</script>
+</body>
+</html>

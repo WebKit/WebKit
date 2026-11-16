@@ -1,0 +1,8 @@
+
+PASS cy="0" should be a valid attribute value
+PASS cy="5" should be a valid attribute value
+PASS cy="-10" should be a valid attribute value
+PASS cy="5px" should be a valid attribute value
+PASS cy="-10px" should be a valid attribute value
+PASS cy="5%" should be a valid attribute value
+

@@ -1,0 +1,38 @@
+<!DOCTYPE HTML><!-- webkit-test-runner [ IsARIANotifyEnabled=true displayedTranslationLocale=fr announcementTranslationMode=fail ] -->
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+<meta http-equiv="content-language" content="en">
+</head>
+<body>
+
+<script>
+var output = "Tests that when the translation client declines to translate, the original announcement is used with its original language.\n\n";
+var testFinished = false;
+
+function notificationCallback(object, notification, userInfo) {
+    if (notification == "AXAnnouncementRequested") {
+        output += `Received announcement request:\n`;
+        output += formatAriaNotifyUserInfo(userInfo);
+        testFinished = true;
+    }
+}
+
+if (accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    accessibilityController.addNotificationListener(notificationCallback);
+
+    document.ariaNotify("San Francisco");
+
+    setTimeout(async function() {
+        await waitFor(() => testFinished);
+        accessibilityController.removeNotificationListener();
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

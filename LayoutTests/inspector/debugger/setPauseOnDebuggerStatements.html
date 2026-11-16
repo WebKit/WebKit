@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="resources/breakpoint-options-utilities.js"></script>
+<script>
+function triggerDebuggerStatement() {
+    debugger;
+
+    TestPage.dispatchEventToFrontend("TestPage-debugger-statement");
+}
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("Debugger.setPauseOnDebuggerStatements");
+
+    suite.addTestCase({
+        name: "Debugger.setPauseOnDebuggerStatements.Disabled",
+        description: "Test that the debugger does not pause on `debugger` statements when `setPauseOnDebuggerStatements` is disabled.",
+        test(resolve, reject) {
+            WI.debuggerManager.debuggerStatementsBreakpoint.disabled = true;
+
+            let listener = WI.debuggerManager.singleFireEventListener(WI.DebuggerManager.Event.Paused, (event) => {
+                InspectorTest.fail("Should not have paused.");
+                reject();
+            });
+
+            InspectorTest.evaluateInPage("triggerDebuggerStatement()", () => {
+                InspectorTest.pass("Should not pause.");
+                WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.Paused, listener);
+                resolve();
+            });
+        }
+    });
+
+    suite.addTestCase({
+        name: "Debugger.setPauseOnDebuggerStatements.Enabled",
+        description: "Test that the debugger does pause on `debugger` statements when `setPauseOnDebuggerStatements` is enabled.",
+        test(resolve, reject) {
+            WI.debuggerManager.debuggerStatementsBreakpoint.disabled = false;
+
+            let didPause = false;
+            let listener = WI.debuggerManager.singleFireEventListener(WI.DebuggerManager.Event.Paused, (event) => {
+                InspectorTest.pass("Should paused.");
+                WI.debuggerManager.resume();
+                didPause = true;
+            });
+
+            InspectorTest.evaluateInPage("triggerDebuggerStatement()", () => {
+                if (!didPause)
+                    InspectorTest.fail("Should have paused.");
+                resolve();
+            });
+        }
+    });
+
+    InspectorTest.BreakpointOptions.addTestCases(suite, {
+        createBreakpoint() {
+            WI.debuggerManager.debuggerStatementsBreakpoint.disabled = false;
+            return WI.debuggerManager.debuggerStatementsBreakpoint;
+        },
+        triggerBreakpoint() {
+            return Promise.all([
+                InspectorTest.evaluateInPage(`triggerDebuggerStatement()`),
+                InspectorTest.awaitEvent("TestPage-debugger-statement"),
+            ]);
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests for Debugger.setPauseOnDebuggerStatements command.</p>
+</body>
+</html>

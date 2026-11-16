@@ -1,0 +1,5 @@
+
+PASS IntersectionObserver observing an SVG image element changing position
+PASS First rAF.
+PASS change image location
+

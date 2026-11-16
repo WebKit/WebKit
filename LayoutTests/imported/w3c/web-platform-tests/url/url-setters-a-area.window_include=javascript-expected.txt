@@ -1,0 +1,15 @@
+
+PASS Loading data…
+PASS <a>: Setting <javascript:alert(1)>.protocol = 'defuse'
+PASS <area>: Setting <javascript:alert(1)>.protocol = 'defuse'
+PASS <a>: Setting <javascript:alert(1)>.username = 'wario'
+PASS <area>: Setting <javascript:alert(1)>.username = 'wario'
+PASS <a>: Setting <javascript://x/>.username = 'wario'
+PASS <area>: Setting <javascript://x/>.username = 'wario'
+PASS <a>: Setting <javascript://x/>.password = 'bowser'
+PASS <area>: Setting <javascript://x/>.password = 'bowser'
+PASS <a>: Setting <javascript://x/>.port = '12'
+PASS <area>: Setting <javascript://x/>.port = '12'
+PASS <a>: Setting <javascript:alert(1)>.hash = 'castle'
+PASS <area>: Setting <javascript:alert(1)>.hash = 'castle'
+

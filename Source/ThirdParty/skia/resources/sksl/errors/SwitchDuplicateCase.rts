@@ -1,0 +1,12 @@
+void func() {
+    switch (1) {
+        case 0:
+        case 1:
+        case 0:
+            break;
+    }
+}
+
+/*%%*
+duplicate case value '0'
+*%%*/

@@ -1,0 +1,101 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[% curpanel = -1 %]
+[% panels = panels.nsort('sortkey') %]
+
+[% FOREACH panel = panels %]
+  [% PROCESS "admin/params/${panel.name}.html.tmpl"
+             params = panel.param_list %]
+  [% panel.title = title %]
+  [% panel.desc = desc %]
+  [% panel.param_descs = param_descs %]
+  [% IF panel.current %][% curpanel = loop.index %][% END %]
+[% END %]
+
+[% current_panel = panels.$curpanel %]
+
+[%# We cannot call header.html.tmpl earlier as we have to know
+    which panel is active first, in order to get its title %]
+
+[% title = BLOCK %]
+  [% IF curpanel == -1 %]
+    Parameters: Index
+  [% ELSE %]
+    Configuration:
+    [%+ current_panel.title FILTER html %]
+  [% END %]
+[% END %]
+
+[% PROCESS global/header.html.tmpl
+   title = title
+   message = message
+   style_urls = ['skins/standard/admin.css']
+   javascript_urls = ['js/params.js', 'js/util.js']
+   doc_section = "administering/parameters.html"
+%]
+
+<div class="table">
+  <div class="cell">
+      [%# NAVIGATION BAR %]
+      <table id="menu">
+        <tr>
+          <td class="index">
+            <a href="editparams.cgi?section=index" title="Show all parameters">Index</a>
+          </td>
+        </tr>
+        [% FOREACH panel = panels %]
+          <tr>
+            [% IF panel.current %]
+              [% Hook.process("current_panel") %]
+              <td class="selected_section">
+                <span title="[% panel.desc FILTER html %]">[% panel.title FILTER html %]</span>
+              </td>
+            [% ELSE %]
+              <td>
+                <a href="editparams.cgi?section=[% panel.name FILTER uri %]"
+                   title="[% panel.desc FILTER html %]">[% panel.title FILTER html %]</a>
+              </td>
+            [% END %]
+          </tr>
+        [% END %]
+      </table>
+  </div>
+
+  <div class="cell">
+    <div id="contribute">
+      <strong>Note:</strong>
+      Bugzilla is developed entirely by volunteers.
+      The best way to give back to the Bugzilla project is to
+      <a href="http://www.bugzilla.org/contribute/">contribute</a> yourself!
+      You don't have to be a programmer to contribute, there are lots of
+      things that we need.
+    </div>
+
+    [% IF curpanel == -1 %]
+      [% PROCESS admin/params/index.html.tmpl panels = panels %]
+    [% ELSE %]
+        <p>
+          This lets you edit the basic operating parameters of Bugzilla.
+          Be careful!<br>
+          Any item you check "Reset" on will get reset to its default value.
+        </p>
+
+        [%# CONTENT PANEL %]
+        <form id="edit_params" method="post" action="editparams.cgi">
+          [% PROCESS admin/params/common.html.tmpl panel = current_panel %]
+          <input type="hidden" name="section" value="[% current_panel.name FILTER html %]">
+          <input type="hidden" name="action" value="save">
+          <input type="hidden" name="token" value="[% token FILTER html %]">
+          <input type="submit" id="save-params" value="Save Changes">
+        </form>
+    [% END %]
+  </div>
+</div>
+
+[% INCLUDE global/footer.html.tmpl %]

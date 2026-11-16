@@ -1,0 +1,13 @@
+Tests that a source map for a stylesheet in a cross-origin iframe loads under Site Isolation, routed through the backend target's NetworkAgent.
+
+
+== Running test suite: SiteIsolation.Network.CrossOriginIFrame.SourceMapLoads
+-- Running test case: SiteIsolation.Network.CrossOriginIFrame.SourceMapLoads.SourceMap
+PASS: Stylesheet should belong to the cross-origin iframe.
+PASS: Stylesheet should have loaded 1 SourceMap.
+PASS: SourceMap should be a WI.SourceMap instance.
+
+-- Running test case: SiteIsolation.Network.CrossOriginIFrame.SourceMapLoads.SourceMapResourceContent
+PASS: SourceMap should have 1 resource.
+PASS: SourceMapResource should load the original source content.
+

@@ -1,0 +1,11 @@
+This test ensures we compute the correct focusable ancestor.
+
+PASS: accessibilityController.accessibleElementById('button').focusableAncestor().domIdentifier === 'inner-ancestor'
+document.getElementById('inner-ancestor').removeAttribute('tabindex')
+document.getElementById('outer-ancestor').setAttribute('tabindex', '0')
+PASS: accessibilityController.accessibleElementById('button').focusableAncestor().domIdentifier === 'outer-ancestor'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Click me

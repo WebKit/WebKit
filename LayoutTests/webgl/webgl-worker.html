@@ -1,0 +1,27 @@
+<!DOCTYPE html><!-- webkit-test-runner [ UseGPUProcessForWebGLEnabled=true OffscreenCanvasEnabled=true ] -->
+<html>
+<body>
+<script>
+function runTest() {
+    if (!window.Worker) {
+        document.body.innerHTML +=  "<p>Workers not supported";
+        return;
+    }
+
+    if (window.testRunner) {
+        testRunner.waitUntilDone();
+        testRunner.dumpAsText();
+    }
+
+    const worker = new Worker("./resources/webgl-worker.js");
+    worker.addEventListener("message", (e) => {
+        for (result of e.data)
+            document.body.innerHTML += `<p>${result}` ;
+        if (window.testRunner)
+            testRunner.notifyDone();
+    });
+}
+runTest();
+ </script>
+</body>
+</html>

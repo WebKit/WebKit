@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test.js"></script>
+<script>
+description("Checks that CSSStyleDeclaration.getPropertyPriority() returns the empty string for invalid CSS properties.");
+
+var declaration = document.styleSheets[0].cssRules[0].style;
+shouldBeEqualToString("declaration.getPropertyPriority('invalidProperty')", "");
+shouldBeEqualToString("declaration.getPropertyPriority('margin')", "");
+</script>
+</body>
+</html>

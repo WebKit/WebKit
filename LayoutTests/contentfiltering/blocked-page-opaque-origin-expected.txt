@@ -1,0 +1,4 @@
+
+
+PASS The page shown in place of a blocked document has an opaque origin
+

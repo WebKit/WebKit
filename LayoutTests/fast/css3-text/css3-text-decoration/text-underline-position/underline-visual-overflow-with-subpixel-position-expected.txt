@@ -1,0 +1,7 @@
+PASS repaintRects.indexOf('8 8 36 13') is not -1
+PASS repaintRects.indexOf('8 20 36 13') is not -1
+PASS successfullyParsed is true
+
+TEST COMPLETE
+foobar
+foobar

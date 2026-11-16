@@ -1,0 +1,26 @@
+<!-- webkit-test-runner [ enableMetalDebugDevice=true ] -->
+<script src="../../../resources/js-test-pre.js"></script>
+<script>
+async function run() {
+    let adapter = await navigator.gpu.requestAdapter();
+    let device = await adapter.requestDevice();
+    let buffer = device.createBuffer({ size: 147045, usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.MAP_READ });
+    buffer.destroy();
+    try {
+        await buffer.mapAsync(GPUMapMode.READ, 0, 144756);
+    } catch {
+    }
+    let commandEncoder = device.createCommandEncoder();
+    let buffer2 = device.createBuffer({ size: 391719, usage: GPUBufferUsage.COPY_SRC | GPUBufferUsage.MAP_WRITE });
+    buffer.unmap();
+    commandEncoder.copyBufferToBuffer(buffer2, 278668, buffer, 14060, 64684);
+    await device.queue.onSubmittedWorkDone();
+    debug('Pass')
+    globalThis.testRunner?.notifyDone();
+}
+globalThis.testRunner?.dumpAsText();
+globalThis.testRunner?.waitUntilDone();
+
+run();
+</script>
+

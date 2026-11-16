@@ -1,0 +1,27 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/fetch/content-encoding/zstd/resources/bad-zstd-body.py
+/LayoutTests/imported/w3c/web-platform-tests/fetch/content-encoding/zstd/resources/big.text.zst
+/LayoutTests/imported/w3c/web-platform-tests/fetch/content-encoding/zstd/resources/big.text.zst.headers
+/LayoutTests/imported/w3c/web-platform-tests/fetch/content-encoding/zstd/resources/big.window.zst
+/LayoutTests/imported/w3c/web-platform-tests/fetch/content-encoding/zstd/resources/big.window.zst.headers
+/LayoutTests/imported/w3c/web-platform-tests/fetch/content-encoding/zstd/resources/foo.octetstream.zst
+/LayoutTests/imported/w3c/web-platform-tests/fetch/content-encoding/zstd/resources/foo.octetstream.zst.headers
+/LayoutTests/imported/w3c/web-platform-tests/fetch/content-encoding/zstd/resources/foo.text.zst
+/LayoutTests/imported/w3c/web-platform-tests/fetch/content-encoding/zstd/resources/foo.text.zst.headers
+/LayoutTests/imported/w3c/web-platform-tests/fetch/content-encoding/zstd/resources/hello.html.zst
+/LayoutTests/imported/w3c/web-platform-tests/fetch/content-encoding/zstd/resources/hello.html.zst.headers

@@ -1,0 +1,47 @@
+Test that DOM mutation events from cross-origin iframes are correctly forwarded to the frontend under site isolation.
+
+
+
+== Running test suite: SiteIsolation.DOM.FrameDOMAgent.MutationEvents
+-- Running test case: Setup
+PASS: Should find a cross-origin frame target.
+PASS: Frame target should have a document.
+PASS: Should find #container.
+PASS: #container should have data-role='frame-root'.
+
+-- Running test case: SiteIsolation.DOM.MutationEvents.AttributeModified
+PASS: Modified node should be #container.
+PASS: Modified attribute should be 'data-role'.
+PASS: Attribute value should be 'updated-role'.
+
+-- Running test case: SiteIsolation.DOM.MutationEvents.AttributeRemoved
+PASS: Removed attribute node should be #container.
+PASS: Removed attribute should be 'data-role'.
+PASS: data-role attribute should no longer exist.
+
+-- Running test case: SiteIsolation.DOM.MutationEvents.CharacterDataModified
+PASS: Should find #text-node.
+PASS: Text node should have updated content.
+
+-- Running test case: SiteIsolation.DOM.MutationEvents.ChildNodeInserted
+PASS: Inserted node's parent should be #container.
+PASS: Inserted node should be a SPAN.
+PASS: Inserted node should have id='inserted-span'.
+PASS: Container should have one more child.
+
+-- Running test case: SiteIsolation.DOM.MutationEvents.ChildNodeRemoved
+PASS: Should find #heading before removal.
+PASS: Removed node should be #heading.
+PASS: Removed node's parent should be #container.
+PASS: Container should have one fewer child.
+
+-- Running test case: SiteIsolation.DOM.MutationEvents.InlineStyleInvalidated
+PASS: Style-invalidated node should be #container.
+PASS: Modified attribute should be 'style'.
+PASS: Style attribute should include the updated color.
+
+-- Running test case: SiteIsolation.DOM.MutationEvents.ChildNodeCountUpdated
+PASS: Should find #list.
+PASS: Count-updated node should be #list.
+PASS: #list should report one more child.
+

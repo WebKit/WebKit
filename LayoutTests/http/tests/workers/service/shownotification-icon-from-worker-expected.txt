@@ -1,0 +1,10 @@
+Tests that a service worker can show a notification with an icon.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Notification was shown
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

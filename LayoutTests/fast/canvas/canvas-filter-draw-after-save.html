@@ -1,0 +1,119 @@
+<!-- webkit-test-runner [ CanvasFiltersEnabled=true ] -->
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+@font-face {
+    font-family: Ahem;
+    src: url("../../resources/Ahem.ttf");
+}
+</style>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+<script>
+description("Tests drawing with a filter after save(), with no state change between save() and the draw.");
+jsTestIsAsync = true;
+
+const size = 100;
+// The checked pixel is inside the fills and in the middle of the strokes. The filter inverts red to cyan.
+const checkX = size / 4;
+const checkY = size / 2;
+const unfilteredColor = [255, 0, 0, 255];
+const filteredColor = [0, 255, 255, 255];
+
+function createRedCanvas()
+{
+    const canvas = document.createElement("canvas");
+    canvas.width = size;
+    canvas.height = size;
+    const context = canvas.getContext("2d");
+    context.fillStyle = "red";
+    context.fillRect(0, 0, size, size);
+    return canvas;
+}
+
+const operations = {
+    "fillRect()": context => context.fillRect(0, 0, size, size),
+    "strokeRect()": context => context.strokeRect(size / 4, size / 4, size / 2, size / 2),
+    "fill()": context => {
+        context.beginPath();
+        context.rect(0, 0, size, size);
+        context.fill();
+    },
+    "stroke()": context => {
+        context.beginPath();
+        context.rect(size / 4, size / 4, size / 2, size / 2);
+        context.stroke();
+    },
+    "fillText()": context => context.fillText("X", 0, 0),
+    "strokeText()": context => context.strokeText("X", size / 4, size / 4),
+    "drawImage()": context => context.drawImage(createRedCanvas(), 0, 0),
+};
+
+const saveCounts = [1, 3];
+
+// The filter needs the canvas element to be rendered.
+function createContext()
+{
+    const canvas = document.createElement("canvas");
+    canvas.width = size;
+    canvas.height = size;
+    document.body.appendChild(canvas);
+    const context = canvas.getContext("2d");
+    context.fillStyle = "red";
+    context.strokeStyle = "red";
+    context.lineWidth = size / 2;
+    context.textBaseline = "top";
+    context.filter = "invert(100%)";
+    return context;
+}
+
+function checkColor(context, expected, name)
+{
+    const actual = Array.from(context.getImageData(checkX, checkY, 1, 1).data);
+    if (actual.every((value, i) => Math.abs(value - expected[i]) <= 2))
+        testPassed(`${name}: ${actual}`);
+    else
+        testFailed(`${name}: ${actual}, expected ${expected}`);
+}
+
+function runCase(operationName, saveCount)
+{
+    const operation = operations[operationName];
+    const context = createContext();
+    // fillText() draws the glyph at the origin, so it uses a font that covers the canvas.
+    context.font = operationName == "fillText()" ? `${size}px Ahem` : `${size / 2}px Ahem`;
+    const name = `${operationName} after ${saveCount} save()`;
+
+    for (let i = 0; i < saveCount; ++i)
+        context.save();
+    operation(context);
+    checkColor(context, filteredColor, `${name}, before restore()`);
+    for (let i = 0; i < saveCount; ++i)
+        context.restore();
+    context.clearRect(0, 0, size, size);
+    operation(context);
+    checkColor(context, filteredColor, `${name}, after restore()`);
+
+    context.filter = "none";
+    context.clearRect(0, 0, size, size);
+    operation(context);
+    checkColor(context, unfilteredColor, `${name}, after restore(), without the filter`);
+    context.canvas.remove();
+}
+
+async function runTests()
+{
+    await document.fonts.load(`${size}px Ahem`);
+    for (const operationName in operations) {
+        for (const saveCount of saveCounts)
+            runCase(operationName, saveCount);
+    }
+    finishJSTest();
+}
+
+runTests();
+</script>
+</body>
+</html>

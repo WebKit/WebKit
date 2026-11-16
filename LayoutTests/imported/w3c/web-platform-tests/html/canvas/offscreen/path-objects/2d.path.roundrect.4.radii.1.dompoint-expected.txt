@@ -1,0 +1,7 @@
+2d.path.roundrect.4.radii.1.dompoint
+
+Verify that when four radii are given to roundRect(), the first radius, specified as a DOMPoint, applies to the top-left corner.
+
+
+PASS Verify that when four radii are given to roundRect(), the first radius, specified as a DOMPoint, applies to the top-left corner.
+

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<html xmlns="http://www.w3.org/1999/xhtml"><body><p>Test passes if it does not crash.</p><script>
+testRunner?.dumpAsText();
+// XMLDocumentParser::end() dispatches readystatechange from setReadyState(). window.stop()
+// calls DocumentParser::finish() re-entrantly, which ends up detaching this parser and
+// nulling out its document, so end() must not keep using document() afterwards.
+document.onreadystatechange = function () { window.stop(); };
+</script></body></html>

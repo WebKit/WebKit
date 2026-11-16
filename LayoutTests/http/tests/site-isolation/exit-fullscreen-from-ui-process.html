@@ -1,0 +1,9 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script>
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+</script>
+<iframe src="http://localhost:8000/site-isolation/resources/exit-fullscreen-from-ui-process.html" allowfullscreen></iframe>
+This test passes if it runs to completion.

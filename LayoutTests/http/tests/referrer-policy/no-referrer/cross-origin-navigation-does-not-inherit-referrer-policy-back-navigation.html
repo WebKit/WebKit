@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="referrer" content="no-referrer">
+<script src="/js-test-resources/js-test.js"></script>
+</head>
+<body>
+<script>
+description("Tests that referrer policy does not persist across cross-origin navigations with a back navigation.");
+jsTestIsAsync = true;
+
+const channelName = "referrer-back-navigation-test";
+const bc = new BroadcastChannel(channelName);
+bc.onmessage = function(event) {
+    referrer = event.data.referrer;
+    // Referrer should be present because the no-referrer policy should NOT have persisted.
+    shouldNotBe("referrer", "''");
+    bc.close();
+    finishJSTest();
+};
+
+// Must use noopener to trigger PSON (opener keeps popup in same process).
+window.open("/referrer-policy/no-referrer/resources/navigate-and-go-back.html?channel=" + encodeURIComponent(channelName), "_blank", "noopener");
+</script>
+</body>
+</html>

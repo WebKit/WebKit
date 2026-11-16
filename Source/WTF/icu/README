@@ -1,0 +1,12 @@
+The headers in this directory are for compiling on macOS 14.6 (Sonoma) and newer.
+macOS releases include the ICU binary, but not ICU headers.
+
+For other platforms, installed ICU headers should be used rather than these.
+They are specific to the macOS platform.
+
+The headers here are from ICU version 74.2 downloaded from the ICU project.
+https://github.com/unicode-org/icu/releases/tag/release-74-2
+
+Local modification: each header contains "#pragma clang system_header" right after its include guard, so that
+these headers are treated like installed ICU headers (e.g. ICU's opaque types are not reported by the static analyzer).
+Re-apply this when updating the headers.
