@@ -168,6 +168,7 @@ Ref<MediaPlayerPrivateInterface> RemoteMediaPlayerManager::createRemoteMediaPlay
     proxyConfiguration.logIdentifier = reinterpret_cast<uint64_t>(player.mediaPlayerLogIdentifier());
 #endif
     proxyConfiguration.shouldUsePersistentCache = player.shouldUsePersistentCache();
+    proxyConfiguration.allowsAutomaticMediaDataLoading = player.allowsAutomaticMediaDataLoading();
     proxyConfiguration.isVideo = player.isVideoPlayer();
 
 #if PLATFORM(COCOA)

@@ -58,6 +58,7 @@ struct RemoteMediaPlayerProxyConfiguration {
     WebCore::FloatSize videoLayerSize { };
     uint64_t logIdentifier { 0 };
     bool shouldUsePersistentCache { false };
+    bool allowsAutomaticMediaDataLoading { false };
     bool isVideo { false };
     bool renderingCanBeAccelerated { false };
     bool shouldDisableHDR { false };

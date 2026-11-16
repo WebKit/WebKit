@@ -302,6 +302,7 @@ private:
     Ref<WebCore::PlatformMediaResourceLoader> mediaPlayerCreateResourceLoader() final;
     bool doesHaveAttribute(const AtomString&, AtomString* = nullptr) const final;
     bool mediaPlayerShouldUsePersistentCache() const final;
+    bool mediaPlayerAllowsAutomaticMediaDataLoading() const final;
     String mediaPlayerMediaCacheDirectory() const final;
     WebCore::LayoutRect mediaPlayerContentBoxRect() const final;
 

@@ -9339,6 +9339,11 @@ bool HTMLMediaElement::mediaPlayerShouldUsePersistentCache() const
     return false;
 }
 
+bool HTMLMediaElement::mediaPlayerAllowsAutomaticMediaDataLoading() const
+{
+    return protect(mediaSession())->allowsAutomaticMediaDataLoading();
+}
+
 String HTMLMediaElement::mediaPlayerMediaCacheDirectory() const
 {
     return mediaCacheDirectory();
