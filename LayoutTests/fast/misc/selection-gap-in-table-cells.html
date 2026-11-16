@@ -1,0 +1,17 @@
+<style>
+body { margin: 20px; background: white; }
+table { border-collapse: collapse; font: 20px/1 Ahem; color: transparent; }
+td { padding: 10px; width: 200px; height: 40px; vertical-align: top; text-align: left; }
+td.big { font-size: 40px; }
+span { display: inline-block; }
+::selection { color: transparent; background: rgba(0, 128, 0, 0.5); }
+</style>
+<table>
+<tr><td><span>XXXX</span></td><td class="big"><span>XX</span></td><td><span>XXXXXX</span></td></tr>
+<tr><td><span>XX</span></td><td><span>XXXXXXXX</span></td><td class="big"><span>X</span></td></tr>
+<tr><td><span>XXXXXX</span></td><td><span>X</span></td><td><span>XXX</span></td></tr>
+</table>
+<script>
+const tds = document.querySelectorAll('td');
+getSelection().setBaseAndExtent(tds[0], 0, tds[tds.length - 1], tds[tds.length - 1].childNodes.length);
+</script>

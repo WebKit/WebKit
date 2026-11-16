@@ -1,0 +1,10 @@
+<style>
+body { margin: 8px; background: white; }
+td { padding: 10px; border: 1px solid; font: 20px/1 Ahem; color: transparent; }
+p { margin: 20px 0; }
+::selection { color: transparent; background: rgba(0, 128, 0, 0.5); }
+</style>
+<table><tr><td>A</td><td><p>B</p></td><td>C</td></tr></table>
+<script>
+getSelection().selectAllChildren(document.querySelector("table"));
+</script>
