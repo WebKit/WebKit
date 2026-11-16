@@ -466,8 +466,6 @@ imported/w3c/web-platform-tests/pointerevents/pointerevent_attributes.html?pen-n
 
 css3/scroll-snap/resnap-after-layout.html [ Skip ] # Timeout.
 
-webkit.org/b/314537 imported/w3c/web-platform-tests/css/filter-effects/animation/css-filters-animation-combined-001.html [ ImageOnlyFailure ]
-
 #////////////////////////////////////////////////////////////////////////////////////////
 # 4. TESTS CRASHING
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -849,7 +847,6 @@ webkit.org/b/278719 fast/events/touch/touch-event-frames.html [ Failure ]
 webkit.org/b/278719 fast/events/touch/frame-hover-update.html [ Failure ]
 webkit.org/b/278719 fast/events/touch/touch-event-pageXY.html [ Failure ]
 
-fast/hidpi/filters-drop-shadow.html [ ImageOnlyFailure ]
 fast/multicol/layers-split-across-columns.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/mathml/relations/css-styling/color-003.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/mathml/relations/css-styling/color-004.tentative.html [ ImageOnlyFailure ]
@@ -1110,7 +1107,6 @@ webkit.org/b/309266 [ Release x86_64 ] css3/scroll-snap/scroll-snap-drag-scrollb
 webkit.org/b/252878 [ Debug ] fast/frames/exponential-frames.html [ Pass Timeout ]
 
 webkit.org/b/277912 [ arm64 ] imported/w3c/web-platform-tests/css/css-borders/corner-shape/corner-shape-inset-shadow.html [ ImageOnlyFailure ]
-webkit.org/b/277912 imported/w3c/web-platform-tests/css/css-borders/corner-shape/corner-shape-notch-mixed.html [ ImageOnlyFailure ]
 webkit.org/b/277912 imported/w3c/web-platform-tests/css/css-borders/corner-shape/corner-shape-superellipse-negative-100.html [ ImageOnlyFailure ]
 
 webkit.org/b/321450 [ arm64 ] fast/mediacapturefromelement/CanvasCaptureMediaStream-capture-out-of-DOM-canvas.html [ Failure Pass ]
@@ -1223,9 +1219,8 @@ webkit.org/b/329968 [ arm64 ] media/track/texttrackcue/texttrackcue-adopt-node-d
 webkit.org/b/329972 [ arm64 ] media/modern-media-controls/scrubber-support/scrubber-support-drag.html [ Pass Timeout ]
 
 webkit.org/b/310411 [ arm64 ] fast/events/site-isolation/event-timing-back-forward-cache-duration.html [ Pass Failure ]
+[ arm64 ] imported/w3c/web-platform-tests/event-timing/pointerdown-pointerup-no-overlap.html [ Failure ]
 webkit.org/b/330312 [ arm64 ] accessibility/accessible-name-chain-depth-no-crash.html [ Timeout Pass ]
 webkit.org/b/330315 [ arm64 ] imported/w3c/web-platform-tests/webrtc-encoded-transform/script-metadata-transform.https.html [ Crash Pass ]
-
-webkit.org/b/331268 [ arm64 ] http/tests/workers/service/fetch-timeout-after-cancel.html [ Pass Timeout ]
 
 webkit.org/b/217938 [ arm64 ] http/wpt/service-workers/mac/throttleable.https.html [ Pass Timeout ]

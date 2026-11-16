@@ -138,6 +138,18 @@
             },
             "WebKit.ResizeWindowAfterCrash": {
                 "expected": {"all": {"slow": true}}
+            },
+            "TestHeaderForTest.CommaSeparatedSkipIfDisabledKeys": {
+                "expected": {"all": {"status": ["CRASH"], "bug": "webkit.org/b/323618"}}
+            },
+            "TestHeaderForTest.RepeatedSkipIfDisabledKeys": {
+                "expected": {"all": {"status": ["CRASH"], "bug": "webkit.org/b/323618"}}
+            },
+            "TestHeaderForTest.HeaderWithoutSkipIfDisabledHasNoSkipIfDisabledKeys": {
+                "expected": {"all": {"status": ["CRASH"], "bug": "webkit.org/b/323618"}}
+            },
+            "TestHeaderForTest.SkipIfDisabledIsNotATestFeature": {
+                "expected": {"all": {"status": ["CRASH"], "bug": "webkit.org/b/323618"}}
             }
         }
     },
