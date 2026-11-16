@@ -104,9 +104,6 @@ MayNeedToIgnoreContentObservation:
   accessor: shouldIgnoreContentObservationForClick
   export: true
 
-# spotify.com rdar://138918575
-NeedsBodyScrollbarWidthNoneDisabledQuirk:
-
 # box.com rdar://187475153
 NeedsBoxAnnotationQuirk:
   available: mac
@@ -195,10 +192,6 @@ NeedsFormControlToBeMouseFocusableQuirk:
 
 # gizmodo.com rdar://102227302
 NeedsFullscreenDisplayNoneQuirk:
-  available: iOSFamily
-
-# cnn.com rdar://119640248
-NeedsFullscreenObjectFitQuirk:
   available: iOSFamily
 
 # FIXME: Remove after the site is fixed, <rdar://problem/50374200>
@@ -352,17 +345,8 @@ NeedsYouTubeMouseOutQuirk:
   available: twoPhaseClicks
   implementation: custom
 
-# FIXME: Remove after the site is fixed, <rdar://problem/50374311>
-# youtube.com rdar://49582231
-NeedsYouTubeOverflowScrollQuirk:
-  available: iOSFamily
-
 # hbomax.com: rdar://138424489
 NeedsZeroMaxTouchPointsQuirk:
-
-# zomato.com <rdar://problem/128962778>
-NeedsZomatoEmailLoginLabelQuirk:
-  available: mac
 
 # x.com: rdar://73369869
 # X (Twitter) will remove the "src" attribute of a <video> element that has scrolled out of the viewport and

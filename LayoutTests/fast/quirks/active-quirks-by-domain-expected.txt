@@ -425,7 +425,8 @@ https://soundcloud.com/
 https://soylent.com/
     (none)
 https://open.spotify.com/
-    NeedsBodyScrollbarWidthNoneDisabledQuirk
+    NeedsStyleSheetInjectedQuirk
+        styleSheet: body { scrollbar-width: auto; }
     NeedsWebKitMediaKeysTransportStreamIsTypeSupportedQuirk
     ShouldAvoidStartingSelectionOnMouseDownOverPointerCursor
     ShouldBlockAudiblePlaybackWhileAudioIsPlaying
@@ -572,7 +573,8 @@ https://www.zillow.com/
     ShouldAvoidScrollingWhenFocusedContentIsVisibleQuirk
     ShouldTranscodeHeicImagesQuirk
 https://www.zomato.com/
-    NeedsZomatoEmailLoginLabelQuirk
+    NeedsStyleSheetInjectedQuirk
+        styleSheet: label.eNjKGZ { background-color: transparent; }
 https://zoom.us/
     ShouldAllowMediaStreamTrackSerializationQuirk
     ShouldAutoplayWebAudioForArbitraryUserGestureQuirk

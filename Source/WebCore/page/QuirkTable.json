@@ -274,7 +274,12 @@
             "matches": ["*://*.cnn.com/*"],
             "available": "iOSFamily",
             "behaviors": [
-                { "id": "NeedsFullscreenObjectFitQuirk", "bugs": ["rdar://119640248"] },
+                {
+                    "id": "NeedsStyleSheetInjectedQuirk",
+                    "bugs": ["rdar://119640248"],
+                    "comment": "bitmovin sets object-fit: contain on the fullscreen video, but a same-specificity fill rule sometimes wins because the player stylesheet is inserted at varying positions.",
+                    "styleSheet": "video.top-player-video-element:fullscreen { object-fit: contain; }"
+                },
                 { "id": "NeedsCNNCaptionQuirk" },
                 { "id": "ShouldDisableThreadedAnimationsQuirk", "bugs": ["rdar://176539646"] }
             ]
@@ -1178,7 +1183,11 @@
             "bugs": ["rdar://138918575"],
             "matches": ["*://open.spotify.com/*"],
             "behaviors": [
-                { "id": "NeedsBodyScrollbarWidthNoneDisabledQuirk" },
+                {
+                    "id": "NeedsStyleSheetInjectedQuirk",
+                    "comment": "scrollbar-width: none on body makes the ::-webkit-scrollbar workaround ineffective, which flashes a scrollbar. Temporary until the underlying layout instability is fixed.",
+                    "styleSheet": "body { scrollbar-width: auto; }"
+                },
                 { "id": "ShouldAvoidStartingSelectionOnMouseDownOverPointerCursor" },
                 { "id": "ShouldLimitHLSPlaybackRate" },
                 { "id": "ShouldDeferIntersectionObserversDuringResize" },
@@ -1537,7 +1546,14 @@
         {
             "bugs": ["rdar://49582231"],
             "matches": ["*://www.youtube.com/*"],
-            "behaviors": [{ "id": "NeedsYouTubeOverflowScrollQuirk" }]
+            "available": "iOSFamily",
+            "behaviors": [
+                {
+                    "id": "NeedsStyleSheetInjectedQuirk",
+                    "comment": "Make the sidebar scrollable without hover. FIXME: Remove after the site is fixed, rdar://50374311.",
+                    "styleSheet": "#guide-inner-content { overflow-y: auto; }"
+                }
+            ]
         },
         {
             "matches": ["*://*.youtube.com/*"],
@@ -1575,8 +1591,16 @@
             ]
         },
         {
+            "bugs": ["rdar://128962778"],
             "matches": ["*://*.zomato.com/*"],
-            "behaviors": [{ "id": "NeedsZomatoEmailLoginLabelQuirk" }]
+            "available": "mac",
+            "behaviors": [
+                {
+                    "id": "NeedsStyleSheetInjectedQuirk",
+                    "comment": "The label's white background can hide the email input's caret at certain zoom levels.",
+                    "styleSheet": "label.eNjKGZ { background-color: transparent; }"
+                }
+            ]
         },
         {
             "matches": ["*://*.zoom.us/*"],

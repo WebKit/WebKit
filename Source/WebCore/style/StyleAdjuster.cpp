@@ -1102,17 +1102,6 @@ void Adjuster::adjustForSiteSpecificQuirks(Style::ComputedStyle& style) const
     if (!documentQuirks.hasRelevantQuirks())
         return;
 
-    if (documentQuirks.needsBodyScrollbarWidthNoneDisabledQuirk() && is<HTMLBodyElement>(*m_element)) {
-        if (style.scrollbarWidth() == ScrollbarWidth::None)
-            style.setScrollbarWidth(ScrollbarWidth::Auto);
-    }
-
-    if (documentQuirks.needsYouTubeOverflowScrollQuirk()) {
-        // This turns sidebar scrollable without hover.
-        static MainThreadNeverDestroyed<const AtomString> idValue("guide-inner-content"_s);
-        if (style.overflowY() == Overflow::Hidden && m_element->idForStyleResolution() == idValue)
-            style.setOverflowY(Overflow::Auto);
-    }
     if (documentQuirks.needsGMailOverflowScrollQuirk()) {
         // This turns sidebar scrollable without mouse move event.
         static MainThreadNeverDestroyed<const AtomString> roleValue("navigation"_s);
@@ -1175,14 +1164,6 @@ void Adjuster::adjustForSiteSpecificQuirks(Style::ComputedStyle& style) const
             }
         }
     }
-#if ENABLE(FULLSCREEN_API)
-    if (RefPtr documentFullscreen = m_document->fullscreenIfExists(); documentFullscreen && documentQuirks.needsFullscreenObjectFitQuirk()) {
-        static MainThreadNeverDestroyed<const AtomString> playerClassName("top-player-video-element"_s);
-        bool isFullscreen = documentFullscreen->isFullscreen();
-        if (is<HTMLVideoElement>(*m_element) && isFullscreen && m_element->hasClassName(playerClassName) && style.objectFit() == ObjectFit::Fill)
-            style.setObjectFit(ObjectFit::Contain);
-    }
-#endif
 #endif
 
 #if PLATFORM(IOS_FAMILY)
@@ -1204,16 +1185,6 @@ void Adjuster::adjustForSiteSpecificQuirks(Style::ComputedStyle& style) const
             auto dynamicViewportHeight = renderView->sizeForCSSDynamicViewportUnits().height();
             style.setHeight(PreferredSize::Fixed { resolvedHeight - (defaultViewportHeight - dynamicViewportHeight) });
         }
-    }
-#endif
-
-#if PLATFORM(MAC)
-    if (documentQuirks.needsZomatoEmailLoginLabelQuirk()) {
-        static MainThreadNeverDestroyed<const AtomString> class1("eNjKGZ"_s);
-        if (is<HTMLLabelElement>(*m_element)
-            && m_element->hasClassName(class1)
-            && style.backgroundColorResolvingCurrentColor() == WebCore::Color::white)
-            style.setBackgroundColor({ WebCore::Color::transparentBlack });
     }
 #endif
 

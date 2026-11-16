@@ -402,7 +402,8 @@ https://soundcloud.com/
 https://soylent.com/
     (none)
 https://open.spotify.com/
-    NeedsBodyScrollbarWidthNoneDisabledQuirk
+    NeedsStyleSheetInjectedQuirk
+        styleSheet: body { scrollbar-width: auto; }
     ShouldAvoidStartingSelectionOnMouseDownOverPointerCursor
     ShouldBlockAudiblePlaybackWhileAudioIsPlaying
     ShouldDeferIntersectionObserversDuringResize
