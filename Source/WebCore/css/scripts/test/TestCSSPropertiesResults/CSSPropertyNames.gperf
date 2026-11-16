@@ -53,7 +53,7 @@ const std::array<CSSPropertyID, 23> computedPropertyIDs {
     CSSPropertyID::TestSettingsOne,
 };
 
-static constexpr std::array<StringImpl::StaticStringImpl, 119> propertyNameData = {{
+static constexpr std::array<StringImpl::StaticStringImpl, 121> propertyNameData = {{
     StringImpl::StaticStringImpl("test-top-priority", StringImpl::StringAtom),
     StringImpl::StaticStringImpl("test-high-priority", StringImpl::StringAtom),
     StringImpl::StaticStringImpl("test-medium-priority", StringImpl::StringAtom),
@@ -137,6 +137,7 @@ static constexpr std::array<StringImpl::StaticStringImpl, 119> propertyNameData 
     StringImpl::StaticStringImpl("test-match-one-with-reference-with-settings-flag", StringImpl::StringAtom),
     StringImpl::StaticStringImpl("test-match-one-with-settings-flag", StringImpl::StringAtom),
     StringImpl::StaticStringImpl("test-numeric-value-range", StringImpl::StringAtom),
+    StringImpl::StaticStringImpl("test-prefixed-values", StringImpl::StringAtom),
     StringImpl::StaticStringImpl("test-property", StringImpl::StringAtom),
     StringImpl::StaticStringImpl("test-render-style-getter-nodelete-false", StringImpl::StringAtom),
     StringImpl::StaticStringImpl("test-render-style-has-explicitly-set-policy-all-author-origin", StringImpl::StringAtom),
@@ -164,6 +165,7 @@ static constexpr std::array<StringImpl::StaticStringImpl, 119> propertyNameData 
     StringImpl::StaticStringImpl("test-using-shared-rule", StringImpl::StringAtom),
     StringImpl::StaticStringImpl("test-using-shared-rule-exported", StringImpl::StringAtom),
     StringImpl::StaticStringImpl("test-using-shared-rule-with-override-function", StringImpl::StringAtom),
+    StringImpl::StaticStringImpl("-webkit-test-prefixed-values", StringImpl::StringAtom),
     StringImpl::StaticStringImpl("test-sink-priority", StringImpl::StringAtom),
     StringImpl::StaticStringImpl("test-logical-property-group-physical-horizontal", StringImpl::StringAtom),
     StringImpl::StaticStringImpl("test-logical-property-group-physical-vertical", StringImpl::StringAtom),
@@ -190,6 +192,7 @@ struct CSSPropertyHashTableEntry {
 %enum
 
 %%
+-webkit-test-prefixed-values, CSSPropertyID::WebkitTestPrefixedValues
 all, CSSPropertyID::All
 background-coordinated-value-list-property-test-discrete, CSSPropertyID::BackgroundCoordinatedValueListPropertyTestDiscrete
 background-coordinated-value-list-property-test-two, CSSPropertyID::BackgroundCoordinatedValueListPropertyTestTwo
@@ -278,6 +281,7 @@ test-match-one-with-reference-with-settings-flag, CSSPropertyID::TestMatchOneWit
 test-match-one-with-settings-flag, CSSPropertyID::TestMatchOneWithSettingsFlag
 test-medium-priority, CSSPropertyID::TestMediumPriority
 test-numeric-value-range, CSSPropertyID::TestNumericValueRange
+test-prefixed-values, CSSPropertyID::TestPrefixedValues
 test-property, CSSPropertyID::TestProperty
 test-render-style-getter-nodelete-false, CSSPropertyID::TestRenderStyleGetterNodeleteFalse
 test-render-style-has-explicitly-set-policy-all-author-origin, CSSPropertyID::TestRenderStyleHasExplicitlySetPolicyAllAuthorOrigin
@@ -519,6 +523,7 @@ constexpr bool isInheritedPropertyTable[cssPropertyIDEnumValueCount] = {
     false, // CSSPropertyID::TestMatchOneWithReferenceWithSettingsFlag
     false, // CSSPropertyID::TestMatchOneWithSettingsFlag
     false, // CSSPropertyID::TestNumericValueRange
+    false, // CSSPropertyID::TestPrefixedValues
     false, // CSSPropertyID::TestProperty
     false, // CSSPropertyID::TestRenderStyleGetterNodeleteFalse
     false, // CSSPropertyID::TestRenderStyleHasExplicitlySetPolicyAllAuthorOrigin
@@ -546,6 +551,7 @@ constexpr bool isInheritedPropertyTable[cssPropertyIDEnumValueCount] = {
     false, // CSSPropertyID::TestUsingSharedRule
     false, // CSSPropertyID::TestUsingSharedRuleExported
     false, // CSSPropertyID::TestUsingSharedRuleWithOverrideFunction
+    false, // CSSPropertyID::WebkitTestPrefixedValues
     false, // CSSPropertyID::TestSinkPriority
     false, // CSSPropertyID::TestLogicalPropertyGroupPhysicalHorizontal
     false, // CSSPropertyID::TestLogicalPropertyGroupPhysicalVertical
@@ -885,6 +891,11 @@ TextStream& operator<<(TextStream& stream, CSSPropertyID property)
     return stream << nameLiteral(property);
 }
 
+static constexpr std::array validKeywordsForTestPrefixedValues {
+    CSSValueID::Auto,
+    CSSValueID::None,
+};
+
 static constexpr std::array validKeywordsForTestUsingSharedRule {
     CSSValueID::Auto,
 };
@@ -897,15 +908,24 @@ static constexpr std::array validKeywordsForTestUsingSharedRuleWithOverrideFunct
     CSSValueID::Auto,
 };
 
+static constexpr std::array validKeywordsForWebkitTestPrefixedValues {
+    CSSValueID::Auto,
+    CSSValueID::Normal,
+};
+
 std::span<const CSSValueID> CSSProperty::validKeywordsForProperty(CSSPropertyID id)
 {
     switch (id) {
+    case CSSPropertyID::TestPrefixedValues:
+        return std::span<const CSSValueID> { validKeywordsForTestPrefixedValues };
     case CSSPropertyID::TestUsingSharedRule:
         return std::span<const CSSValueID> { validKeywordsForTestUsingSharedRule };
     case CSSPropertyID::TestUsingSharedRuleExported:
         return std::span<const CSSValueID> { validKeywordsForTestUsingSharedRuleExported };
     case CSSPropertyID::TestUsingSharedRuleWithOverrideFunction:
         return std::span<const CSSValueID> { validKeywordsForTestUsingSharedRuleWithOverrideFunction };
+    case CSSPropertyID::WebkitTestPrefixedValues:
+        return std::span<const CSSValueID> { validKeywordsForWebkitTestPrefixedValues };
     default:
         return { };
     }
@@ -914,12 +934,16 @@ std::span<const CSSValueID> CSSProperty::validKeywordsForProperty(CSSPropertyID 
 bool CSSProperty::isKeywordValidForPropertyValues(CSSPropertyID id, CSSValueID keyword, const CSSParserContext& context)
 {
     switch (id) {
+    case CSSPropertyID::TestPrefixedValues:
+        return std::ranges::find(validKeywordsForTestPrefixedValues, keyword) != validKeywordsForTestPrefixedValues.end();
     case CSSPropertyID::TestUsingSharedRule:
         return std::ranges::find(validKeywordsForTestUsingSharedRule, keyword) != validKeywordsForTestUsingSharedRule.end();
     case CSSPropertyID::TestUsingSharedRuleExported:
         return std::ranges::find(validKeywordsForTestUsingSharedRuleExported, keyword) != validKeywordsForTestUsingSharedRuleExported.end();
     case CSSPropertyID::TestUsingSharedRuleWithOverrideFunction:
         return std::ranges::find(validKeywordsForTestUsingSharedRuleWithOverrideFunction, keyword) != validKeywordsForTestUsingSharedRuleWithOverrideFunction.end();
+    case CSSPropertyID::WebkitTestPrefixedValues:
+        return std::ranges::find(validKeywordsForWebkitTestPrefixedValues, keyword) != validKeywordsForWebkitTestPrefixedValues.end();
     default:
         return false;
     }

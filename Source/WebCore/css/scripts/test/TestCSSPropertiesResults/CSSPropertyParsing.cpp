@@ -84,6 +84,17 @@ static bool isKeywordValidForTestMatchOneWithReferenceWithSettingsFlag(CSSValueI
     }
 }
 
+static bool isKeywordValidForTestPrefixedValues(CSSValueID keyword)
+{
+    switch (keyword) {
+    case CSSValueID::Auto:
+    case CSSValueID::None:
+        return true;
+    default:
+        return false;
+    }
+}
+
 static bool isKeywordValidForTestRenderStyleGetterNodeleteFalse(CSSValueID keyword)
 {
     switch (keyword) {
@@ -161,6 +172,17 @@ static bool isKeywordValidForTestUsingSharedRuleWithOverrideFunction(CSSValueID 
 {
     switch (keyword) {
     case CSSValueID::Auto:
+        return true;
+    default:
+        return false;
+    }
+}
+
+static bool isKeywordValidForWebkitTestPrefixedValues(CSSValueID keyword)
+{
+    switch (keyword) {
+    case CSSValueID::Auto:
+    case CSSValueID::Normal:
         return true;
     default:
         return false;
@@ -3480,6 +3502,8 @@ RefPtr<CSSValue> CSSPropertyParsing::parseStylePropertyLonghand(CSSParserTokenRa
         return consumeTestMatchOneWithSettingsFlag(range, state);
     case CSSPropertyID::TestNumericValueRange:
         return consumeTestNumericValueRange(range, state);
+    case CSSPropertyID::TestPrefixedValues:
+        return consumeIdent(range, isKeywordValidForTestPrefixedValues);
     case CSSPropertyID::TestRenderStyleGetterNodeleteFalse:
         return consumeIdent(range, isKeywordValidForTestRenderStyleGetterNodeleteFalse);
     case CSSPropertyID::TestRenderStyleStorageOneLevelEnum:
@@ -3516,6 +3540,8 @@ RefPtr<CSSValue> CSSPropertyParsing::parseStylePropertyLonghand(CSSParserTokenRa
         return consumeTestUsingSharedRuleExported(range, state);
     case CSSPropertyID::TestUsingSharedRuleWithOverrideFunction:
         return consumeTestUsingSharedRuleWithOverrideFunction(range, state);
+    case CSSPropertyID::WebkitTestPrefixedValues:
+        return consumeIdent(range, isKeywordValidForWebkitTestPrefixedValues);
     default:
         return { };
     }
@@ -3556,6 +3582,8 @@ bool CSSPropertyParsing::isKeywordValidForStyleProperty(CSSPropertyID id, CSSVal
         return isKeywordValidForTestMatchOneWithMultipleKeywords(keyword);
     case CSSPropertyID::TestMatchOneWithReferenceWithSettingsFlag:
         return isKeywordValidForTestMatchOneWithReferenceWithSettingsFlag(keyword);
+    case CSSPropertyID::TestPrefixedValues:
+        return isKeywordValidForTestPrefixedValues(keyword);
     case CSSPropertyID::TestRenderStyleGetterNodeleteFalse:
         return isKeywordValidForTestRenderStyleGetterNodeleteFalse(keyword);
     case CSSPropertyID::TestRenderStyleStorageOneLevelEnum:
@@ -3572,6 +3600,8 @@ bool CSSPropertyParsing::isKeywordValidForStyleProperty(CSSPropertyID id, CSSVal
         return isKeywordValidForTestUsingSharedRuleExported(keyword);
     case CSSPropertyID::TestUsingSharedRuleWithOverrideFunction:
         return isKeywordValidForTestUsingSharedRuleWithOverrideFunction(keyword);
+    case CSSPropertyID::WebkitTestPrefixedValues:
+        return isKeywordValidForWebkitTestPrefixedValues(keyword);
     default:
         return false;
     }
@@ -3586,6 +3616,7 @@ bool CSSPropertyParsing::isKeywordFastPathEligibleStyleProperty(CSSPropertyID id
     case CSSPropertyID::TestMatchOneWithKeywordWithSettingsFlag:
     case CSSPropertyID::TestMatchOneWithMultipleKeywords:
     case CSSPropertyID::TestMatchOneWithReferenceWithSettingsFlag:
+    case CSSPropertyID::TestPrefixedValues:
     case CSSPropertyID::TestRenderStyleGetterNodeleteFalse:
     case CSSPropertyID::TestRenderStyleStorageOneLevelEnum:
     case CSSPropertyID::TestRenderStyleStorageTwoLevelEnum:
@@ -3594,6 +3625,7 @@ bool CSSPropertyParsing::isKeywordFastPathEligibleStyleProperty(CSSPropertyID id
     case CSSPropertyID::TestUsingSharedRule:
     case CSSPropertyID::TestUsingSharedRuleExported:
     case CSSPropertyID::TestUsingSharedRuleWithOverrideFunction:
+    case CSSPropertyID::WebkitTestPrefixedValues:
         return true;
     default:
         return false;

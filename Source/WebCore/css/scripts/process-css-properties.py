@@ -3943,38 +3943,25 @@ class GenerateCSSPropertyNames:
         # Inspector to provide completions for properties that aren't keyword-fast-path
         # eligible but still have enumerated values.
 
-        # First, collect all properties with values and generate static arrays for them
-        properties_with_values = []
-        seen_array_names = set()
+        # Name arrays by the full property ID (not name_for_methods, which strips "Webkit")
+        # so that properties like -webkit-ruby-position and ruby-position don't collide.
+        all_properties_with_values = []
         for prop in self.properties_and_descriptors.style_properties.all:
             if hasattr(prop, 'values') and prop.values:
                 # Filter to only include values that have a valid keyword_term (actual keywords)
                 keyword_values = [value for value in prop.values if hasattr(value, 'value_keyword_name') and value.value_keyword_name]
                 if keyword_values:
-                    array_name = f"validKeywordsFor{prop.property_name.name_for_methods}"
-                    # Skip if we've already generated an array with this name (handles aliases)
-                    if array_name not in seen_array_names:
-                        seen_array_names.add(array_name)
-                        properties_with_values.append((prop, keyword_values, array_name))
+                    array_name = f"validKeywordsFor{prop.property_name.id_without_prefix}"
+                    all_properties_with_values.append((prop, keyword_values, array_name))
 
         # Generate static arrays for each property with values
-        for prop, keywordValues, array_name in properties_with_values:
-            value_ids = [value.value_keyword_name.id for value in keywordValues]
+        for prop, keyword_values, array_name in all_properties_with_values:
             to.write(f"static constexpr std::array {array_name} {{")
             with to.indent():
-                for value_id in value_ids:
-                    to.write(f"{value_id},")
+                for value in keyword_values:
+                    to.write(f"{value.value_keyword_name.id},")
             to.write("};")
             to.newline()
-
-        # Generate the switch function - include all properties, even those with duplicate array names
-        all_properties_with_values = []
-        for prop in self.properties_and_descriptors.style_properties.all:
-            if hasattr(prop, 'values') and prop.values:
-                keyword_values = [value for value in prop.values if hasattr(value, 'value_keyword_name') and value.value_keyword_name]
-                if keyword_values:
-                    array_name = f"validKeywordsFor{prop.property_name.name_for_methods}"
-                    all_properties_with_values.append((prop, keyword_values, array_name))
 
         to.write("std::span<const CSSValueID> CSSProperty::validKeywordsForProperty(CSSPropertyID id)")
         to.write("{")
@@ -4004,7 +3991,7 @@ class GenerateCSSPropertyNames:
 
         # Generate helper functions for properties with settings-flagged keywords
         for prop, keyword_values in properties_with_settings_flags:
-            func_name = f"isKeywordValidFor{prop.property_name.name_for_methods}Values"
+            func_name = f"isKeywordValidFor{prop.property_name.id_without_prefix}Values"
             to.write(f"static bool {func_name}(CSSValueID keyword, const CSSParserContext& context)")
             to.write("{")
             with to.indent():
@@ -4056,7 +4043,7 @@ class GenerateCSSPropertyNames:
                     # Check if this property has any keywords with settings flags
                     has_settings_flags = any(value.settings_flag for value in keyword_values)
                     if has_settings_flags:
-                        func_name = f"isKeywordValidFor{prop.property_name.name_for_methods}Values"
+                        func_name = f"isKeywordValidFor{prop.property_name.id_without_prefix}Values"
                         to.write(f"return {func_name}(keyword, context);")
                     else:
                         # No settings flags, just check if keyword is in the valid set

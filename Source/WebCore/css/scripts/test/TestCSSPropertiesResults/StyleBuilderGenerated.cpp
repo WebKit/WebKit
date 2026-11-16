@@ -583,6 +583,8 @@ void BuilderGenerated::applyProperty(CSSPropertyID id, BuilderState& builderStat
         break;
     case CSSPropertyID::TestNumericValueRange:
         break;
+    case CSSPropertyID::TestPrefixedValues:
+        break;
     case CSSPropertyID::TestProperty:
         break;
     case CSSPropertyID::TestRenderStyleGetterNodeleteFalse:
@@ -779,6 +781,8 @@ void BuilderGenerated::applyProperty(CSSPropertyID id, BuilderState& builderStat
     case CSSPropertyID::TestUsingSharedRuleExported:
         break;
     case CSSPropertyID::TestUsingSharedRuleWithOverrideFunction:
+        break;
+    case CSSPropertyID::WebkitTestPrefixedValues:
         break;
     case CSSPropertyID::TestSinkPriority:
         break;

@@ -114,6 +114,7 @@ WrapperMap::WrapperMap()
         new DiscreteWrapper(CSSPropertyID::TestMatchOneWithReferenceWithSettingsFlag, &ComputedStyle::testMatchOneWithReferenceWithSettingsFlag, &ComputedStyle::setTestMatchOneWithReferenceWithSettingsFlag), // CSSPropertyID::TestMatchOneWithReferenceWithSettingsFlag
         new DiscreteWrapper(CSSPropertyID::TestMatchOneWithSettingsFlag, &ComputedStyle::testMatchOneWithSettingsFlag, &ComputedStyle::setTestMatchOneWithSettingsFlag), // CSSPropertyID::TestMatchOneWithSettingsFlag
         new DiscreteWrapper(CSSPropertyID::TestNumericValueRange, &ComputedStyle::testNumericValueRange, &ComputedStyle::setTestNumericValueRange), // CSSPropertyID::TestNumericValueRange
+        new DiscreteWrapper(CSSPropertyID::TestPrefixedValues, &ComputedStyle::testPrefixedValues, &ComputedStyle::setTestPrefixedValues), // CSSPropertyID::TestPrefixedValues
         new DiscreteWrapper(CSSPropertyID::TestProperty, &ComputedStyle::testProperty, &ComputedStyle::setTestProperty), // CSSPropertyID::TestProperty
         new DiscreteWrapper(CSSPropertyID::TestRenderStyleGetterNodeleteFalse, &ComputedStyle::testRenderStyleGetterNodeleteFalse, &ComputedStyle::setTestRenderStyleGetterNodeleteFalse), // CSSPropertyID::TestRenderStyleGetterNodeleteFalse
         new DiscreteWrapper(CSSPropertyID::TestRenderStyleHasExplicitlySetPolicyAllAuthorOrigin, &ComputedStyle::testRenderStyleHasExplicitlySetPolicyAllAuthorOrigin, &ComputedStyle::setTestRenderStyleHasExplicitlySetPolicyAllAuthorOrigin), // CSSPropertyID::TestRenderStyleHasExplicitlySetPolicyAllAuthorOrigin
@@ -141,6 +142,7 @@ WrapperMap::WrapperMap()
         new DiscreteWrapper(CSSPropertyID::TestUsingSharedRule, &ComputedStyle::testUsingSharedRule, &ComputedStyle::setTestUsingSharedRule), // CSSPropertyID::TestUsingSharedRule
         new DiscreteWrapper(CSSPropertyID::TestUsingSharedRuleExported, &ComputedStyle::testUsingSharedRuleExported, &ComputedStyle::setTestUsingSharedRuleExported), // CSSPropertyID::TestUsingSharedRuleExported
         new DiscreteWrapper(CSSPropertyID::TestUsingSharedRuleWithOverrideFunction, &ComputedStyle::testUsingSharedRuleWithOverrideFunction, &ComputedStyle::setTestUsingSharedRuleWithOverrideFunction), // CSSPropertyID::TestUsingSharedRuleWithOverrideFunction
+        new DiscreteWrapper(CSSPropertyID::WebkitTestPrefixedValues, &ComputedStyle::testPrefixedValues, &ComputedStyle::setTestPrefixedValues), // CSSPropertyID::WebkitTestPrefixedValues
         new DiscreteWrapper(CSSPropertyID::TestSinkPriority, &ComputedStyle::testSinkPriority, &ComputedStyle::setTestSinkPriority), // CSSPropertyID::TestSinkPriority
         new DiscreteWrapper(CSSPropertyID::TestLogicalPropertyGroupPhysicalHorizontal, &ComputedStyle::testLogicalPropertyGroupPhysicalHorizontal, &ComputedStyle::setTestLogicalPropertyGroupPhysicalHorizontal), // CSSPropertyID::TestLogicalPropertyGroupPhysicalHorizontal
         new DiscreteWrapper(CSSPropertyID::TestLogicalPropertyGroupPhysicalVertical, &ComputedStyle::testLogicalPropertyGroupPhysicalVertical, &ComputedStyle::setTestLogicalPropertyGroupPhysicalVertical), // CSSPropertyID::TestLogicalPropertyGroupPhysicalVertical
