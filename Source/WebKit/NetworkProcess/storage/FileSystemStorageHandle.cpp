@@ -301,17 +301,22 @@ std::optional<FileSystemStorageError> FileSystemStorageHandle::closeWritable(Web
         return FileSystemStorageError::InvalidState;
 
     auto activeWritableFile = m_activeWritableFiles.take(iterator);
+    // The temporary file is only a staging copy: once its contents are copied
+    // to m_path (or the stream is aborted) it must be removed, otherwise every
+    // stream leaves a full copy of the file behind in the temporary directory.
+    auto temporaryFileRemover = makeScopeExit([&activeWritableFile] {
+        activeWritableFile.handle = { };
+        FileSystem::deleteFile(activeWritableFile.path);
+    });
+
     RefPtr manager = m_manager.get();
     if (!manager)
         return FileSystemStorageError::Unknown;
 
     manager->releaseLockForFile(m_path);
 
-    if (reason == WebCore::FileSystemWriteCloseReason::Aborted) {
-        activeWritableFile.handle = { };
-        FileSystem::deleteFile(activeWritableFile.path);
+    if (reason == WebCore::FileSystemWriteCloseReason::Aborted)
         return std::nullopt;
-    }
 
     ASSERT(!activeWritableFile.path.isEmpty());
     if (!FileSystem::copyFile(m_path, activeWritableFile.path))
