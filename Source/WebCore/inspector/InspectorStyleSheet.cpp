@@ -801,7 +801,8 @@ Ref<JSON::ArrayOf<Inspector::Protocol::CSS::Grouping>> InspectorStyleSheet::buil
 
         RefPtr styleSheet = parentRule->parentStyleSheet();
         while (styleSheet) {
-            RefPtr media = styleSheet->media();
+            // An imported style sheet shares its MediaList with the owner @import rule, which is reported as a MediaImportRule grouping.
+            RefPtr media = styleSheet->ownerRule() ? nullptr : styleSheet->media();
             // FIXME: <webkit.org/b/246959> Support editing `style` and `link` node media queries.
             if (media && media->length() && media->mediaText() != "all"_s) {
                 auto sheetGroupingPayload = Inspector::Protocol::CSS::Grouping::create()
