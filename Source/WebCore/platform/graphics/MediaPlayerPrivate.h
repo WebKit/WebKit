@@ -101,6 +101,7 @@ public:
     using HostingContextPromise = MediaPlayer::HostingContextPromise;
     virtual Ref<HostingContextPromise> requestHostingContext();
     virtual HostingContext hostingContext() const { return { }; }
+    virtual bool supportsUIProcessVideoLayerHosting() const { return false; }
     virtual FloatSize videoLayerSize() const { return { }; }
     virtual void setVideoLayerSizeFenced(const FloatSize&, WTF::MachSendRightAnnotated&&) { }
 

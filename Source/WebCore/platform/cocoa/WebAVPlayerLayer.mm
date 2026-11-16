@@ -85,6 +85,7 @@ private:
     std::unique_ptr<WebCore::WebAVPlayerLayerPresentationModelClient> _presentationModelClient;
     NSEdgeInsets _legibleContentInsets;
     BOOL _showingCaptionPreview;
+    BOOL _previewsResizeWithTransform;
 #if !RELEASE_LOG_DISABLED
     uint64_t _logIdentifier;
 #endif
@@ -101,6 +102,7 @@ private:
         self.name = @"WebAVPlayerLayer";
         _presentationModelClient = WTF::makeUnique<WebCore::WebAVPlayerLayerPresentationModelClient>(self);
         _showingCaptionPreview = NO;
+        _previewsResizeWithTransform = YES;
     }
     return self;
 }
@@ -260,6 +262,11 @@ NODELETE static bool areFramesEssentiallyEqualWithTolerance(const WebCore::Float
         [_captionsLayer setFrame:captionsFrame];
         if (auto model = _presentationModel.get())
             model->setTextTrackRepresentationBounds(enclosingIntRect(captionsFrame));
+    }
+
+    if (!_previewsResizeWithTransform) {
+        [self resolveBounds];
+        return;
     }
 
     float videoAspectRatio = self.videoDimensions.width / self.videoDimensions.height;

@@ -36,7 +36,7 @@ messages -> VideoPresentationManagerProxy {
     HasBeenInteractedWith(WebCore::MediaPlayerClientIdentifier identifier)
     SetVideoDimensions(WebCore::MediaPlayerClientIdentifier identifier, WebCore::FloatSize videoDimensions)
     SetHasObjectViewBox(WebCore::MediaPlayerClientIdentifier identifier, bool hasObjectViewBox)
-    SetupFullscreenWithID(WebCore::MediaPlayerClientIdentifier identifier, struct WebCore::HostingContext hostingContext, WebCore::FloatRect screenRect, WebCore::FloatSize initialSize, WebCore::FloatSize videoDimensions, float hostingScaleFactor, uint32_t videoFullscreenMode, bool allowsPictureInPicture, bool standby, bool blocksReturnToFullscreenFromPictureInPicture, bool hasObjectViewBox)
+    SetupFullscreenWithID(WebCore::MediaPlayerClientIdentifier identifier, struct WebCore::HostingContext hostingContext, WebCore::FloatRect screenRect, WebCore::FloatSize initialSize, WebCore::FloatSize videoDimensions, float hostingScaleFactor, uint32_t videoFullscreenMode, bool allowsPictureInPicture, bool standby, bool blocksReturnToFullscreenFromPictureInPicture, bool hasObjectViewBox, bool hostedByUIProcess)
     SetPlayerIdentifier(WebCore::MediaPlayerClientIdentifier identifier, std::optional<WebCore::MediaPlayerIdentifier> playerIdentifier)
 #if !PLATFORM(IOS_FAMILY)
     EnterFullscreen(WebCore::MediaPlayerClientIdentifier identifier)

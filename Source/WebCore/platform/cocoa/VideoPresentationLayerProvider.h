@@ -45,6 +45,9 @@ public:
     WebAVPlayerLayer *playerLayer() const LIFETIME_BOUND { return m_playerLayer.get(); }
     virtual void setPlayerLayer(RetainPtr<WebAVPlayerLayer>&& layer) { m_playerLayer = WTF::move(layer); }
 
+    bool previewsResizeWithTransform() const { return m_previewsResizeWithTransform; }
+    void setPreviewsResizeWithTransform(bool previewsResizeWithTransform) { m_previewsResizeWithTransform = previewsResizeWithTransform; }
+
 #if PLATFORM(IOS_FAMILY)
     WebAVPlayerLayerView *playerLayerView() const LIFETIME_BOUND { return m_playerLayerView.get(); }
     void setPlayerLayerView(RetainPtr<WebAVPlayerLayerView>&& playerLayerView) { m_playerLayerView = WTF::move(playerLayerView); }
@@ -59,6 +62,7 @@ protected:
 private:
     RetainPtr<CocoaView> m_layerHostView;
     RetainPtr<WebAVPlayerLayer> m_playerLayer;
+    bool m_previewsResizeWithTransform { true };
 
 #if PLATFORM(IOS_FAMILY)
     RetainPtr<WebAVPlayerLayerView> m_playerLayerView;

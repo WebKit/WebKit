@@ -139,6 +139,7 @@ headers: "LayerProperties.h" "PlatformCALayerRemote.h"
     WebCore::MediaPlayerClientIdentifier playerIdentifier;
     WebCore::FloatSize initialSize;
     WebCore::FloatSize naturalSize;
+    bool hostedByUIProcess;
 };
 
 [Nested] struct WebKit::RemoteLayerTreeTransaction::LayerCreationProperties::CustomData {

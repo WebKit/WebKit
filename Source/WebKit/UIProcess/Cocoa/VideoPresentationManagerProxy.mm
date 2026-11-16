@@ -39,10 +39,12 @@
 #import "PlaybackSessionInterfaceAVKit.h"
 #import "PlaybackSessionInterfaceLMK.h"
 #import "PlaybackSessionManagerProxy.h"
+#import "RemoteLayerHostingManagerProxy.h"
 #import "VideoPresentationInterfaceAVKit.h"
 #import "VideoPresentationInterfaceLMK.h"
 #import "VideoPresentationManagerMessages.h"
 #import "VideoPresentationManagerProxyMessages.h"
+#import "WKVideoLayerHostView.h"
 #import "WKVideoView.h"
 #import "WebFullScreenManagerProxy.h"
 #import "WebPageProxy.h"
@@ -82,6 +84,9 @@
 
 #define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, connection)
 
+// FIXME: Remove WKLayerHostView, and everything guarded by !isHostedByUIProcess(), once
+// RemoteLayerHostingBypassesWebContentProcess is enabled unconditionally and every player
+// supports it. See https://bugs.webkit.org/show_bug.cgi?id=309973.
 @interface WKLayerHostView : CocoaView
 @property (nonatomic, assign) uint32_t contextID;
 #if HAVE(VISIBILITY_PROPAGATION_VIEW)
@@ -637,6 +642,11 @@ VideoPresentationManagerProxy::~VideoPresentationManagerProxy()
 void VideoPresentationManagerProxy::invalidate()
 {
     ALWAYS_LOG(LOGIDENTIFIER);
+    if (RefPtr remoteLayerHostingManager = this->remoteLayerHostingManager()) {
+        for (auto contextId : std::exchange(m_contextsHostedByUIProcess, { }))
+            remoteLayerHostingManager->releaseLayerHostForIdentifier(contextId);
+    }
+
     if (RefPtr page = m_page.get()) {
         protect(page->legacyMainFrameProcess())->removeMessageReceiver(Messages::VideoPresentationManagerProxy::messageReceiverName(), page->webPageIDInMainFrameProcess());
         m_page = nullptr;
@@ -645,6 +655,7 @@ void VideoPresentationManagerProxy::invalidate()
     auto contextMap = std::exchange(m_contextMap, { });
     m_clientCounts.clear();
     m_contextsHoldingFullscreenClient.clear();
+    m_contextsHostedByUIProcess.clear();
 
     for (auto& [model, interface] : contextMap.values())
         invalidateInterface(interface);
@@ -838,11 +849,15 @@ void VideoPresentationManagerProxy::removeClientForContext(PlaybackSessionContex
     ALWAYS_LOG(LOGIDENTIFIER, clientCount);
 
     if (clientCount <= 0) {
+        if (RefPtr remoteLayerHostingManager = this->remoteLayerHostingManager())
+            remoteLayerHostingManager->releaseLayerHostForIdentifier(contextId);
+
         invalidateInterface(ensureInterface(contextId));
         m_playbackSessionManagerProxy->removeClientForContext(contextId);
         m_clientCounts.remove(contextId);
         m_contextMap.remove(contextId);
         m_contextsHoldingFullscreenClient.remove(contextId);
+        m_contextsHostedByUIProcess.remove(contextId);
 
         if (RefPtr page = m_page.get())
             page->didCleanupFullscreen(contextId);
@@ -880,23 +895,27 @@ void VideoPresentationManagerProxy::hasVideoInPictureInPictureDidChange(bool val
     m_pipChangeObservers.forEach([value] (auto& observer) { observer(value); });
 }
 
-PlatformLayerContainer VideoPresentationManagerProxy::createLayerWithID(PlaybackSessionContextIdentifier contextId, const WebCore::HostingContext& hostingContext, const WebCore::FloatSize& initialSize, const WebCore::FloatSize& nativeSize, float hostingDeviceScaleFactor)
+PlatformLayerContainer VideoPresentationManagerProxy::createLayerWithID(PlaybackSessionContextIdentifier contextId, const WebCore::HostingContext& hostingContext, const WebCore::FloatSize& initialSize, const WebCore::FloatSize& nativeSize, float hostingDeviceScaleFactor, bool hostedByUIProcess)
 {
     auto [model, interface] = ensureModelAndInterface(contextId);
     addClientForContext(contextId);
+    setHostedByUIProcess(contextId, hostedByUIProcess);
 
     if (model->videoDimensions().isEmpty() && !nativeSize.isEmpty())
         model->setVideoDimensions(nativeSize);
 
-    RetainPtr<WKLayerHostView> view = createLayerHostViewWithID(contextId, hostingContext, initialSize, hostingDeviceScaleFactor);
+    RetainPtr<CocoaView> view = createLayerHostViewWithID(contextId, hostingContext, initialSize, hostingDeviceScaleFactor);
+    if (!view)
+        return nullptr;
 
     if (!interface->playerLayer()) {
         ALWAYS_LOG(LOGIDENTIFIER, model->logIdentifier(), ", Creating AVPlayerLayer, initialSize: ", initialSize, ", nativeSize: ", nativeSize);
-        auto playerLayer = adoptNS([[WebAVPlayerLayer alloc] init]);
+        RetainPtr playerLayer = adoptNS([[WebAVPlayerLayer alloc] init]);
         RetainPtr viewLayer = [view layer];
 
         [playerLayer setPresentationModel:model.ptr()];
         [playerLayer setVideoSublayer:viewLayer.get()];
+        [playerLayer setPreviewsResizeWithTransform:interface->previewsResizeWithTransform()];
 
         // The videoView may already be reparented in fullscreen, so only parent the view
         // if it has no existing parent:
@@ -908,6 +927,14 @@ PlatformLayerContainer VideoPresentationManagerProxy::createLayerWithID(Playback
         [playerLayer setFrame:CGRectMake(0, 0, initialSize.width(), initialSize.height())];
         [playerLayer setNeedsLayout];
         [playerLayer layoutIfNeeded];
+    } else if (RetainPtr playerLayer = interface->playerLayer(); [playerLayer videoSublayer] != [view layer]) {
+        // setHostedByUIProcess() replaced the layer host view, because the element's player
+        // changed to one whose video layer is hosted differently.
+        RetainPtr viewLayer = [view layer];
+        [playerLayer setVideoSublayer:viewLayer.get()];
+        if (![viewLayer superlayer])
+            [playerLayer addSublayer:viewLayer.get()];
+        [playerLayer setNeedsLayout];
     }
 
     sendToWebProcess(contextId, Messages::VideoPresentationManager::EnsureUpdatedVideoDimensions(contextId.object(), nativeSize));
@@ -915,7 +942,48 @@ PlatformLayerContainer VideoPresentationManagerProxy::createLayerWithID(Playback
     return interface->playerLayer();
 }
 
-RetainPtr<WKLayerHostView> VideoPresentationManagerProxy::createLayerHostViewWithID(PlaybackSessionContextIdentifier contextId, const WebCore::HostingContext& hostingContext, const WebCore::FloatSize& initialSize, float hostingDeviceScaleFactor)
+RetainPtr<CocoaView> VideoPresentationManagerProxy::createLayerHostViewWithID(PlaybackSessionContextIdentifier contextId, const WebCore::HostingContext& hostingContext, const WebCore::FloatSize& initialSize, float hostingDeviceScaleFactor)
+{
+    if (isHostedByUIProcess(contextId))
+        return createRemoteLayerHostViewWithID(contextId, initialSize);
+    return createLegacyLayerHostViewWithID(contextId, hostingContext, initialSize, hostingDeviceScaleFactor);
+}
+
+RetainPtr<CocoaView> VideoPresentationManagerProxy::createRemoteLayerHostViewWithID(PlaybackSessionContextIdentifier contextId, const WebCore::FloatSize& initialSize)
+{
+    auto [model, interface] = ensureModelAndInterface(contextId);
+
+    RetainPtr view = interface->layerHostView();
+    if (!view) {
+        RefPtr remoteLayerHostingManager = this->remoteLayerHostingManager();
+        if (!remoteLayerHostingManager)
+            return nil;
+        RefPtr page = m_page;
+        if (!page)
+            return nil;
+        remoteLayerHostingManager->setPageForIdentifier(contextId, *page);
+        view = (CocoaView *)remoteLayerHostingManager->ensureLayerHostViewForIdentifier(contextId).get();
+        if (!view)
+            return nil;
+
+#if USE(EXTENSIONKIT)
+        remoteLayerHostingManager->addVisibilityPropagationView(contextId);
+#endif
+
+        interface->setLayerHostView(view.get());
+
+        RetainPtr layer = [view layer];
+        layer.get().masksToBounds = NO;
+        layer.get().name = @"WKVideoLayerHostView layer";
+        layer.get().frame = CGRectMake(0, 0, initialSize.width(), initialSize.height());
+    }
+
+    interface->setupCaptionsLayer(retainPtr([view layer]).get(), initialSize);
+
+    return view;
+}
+
+RetainPtr<WKLayerHostView> VideoPresentationManagerProxy::createLegacyLayerHostViewWithID(PlaybackSessionContextIdentifier contextId, const WebCore::HostingContext& hostingContext, const WebCore::FloatSize& initialSize, float hostingDeviceScaleFactor)
 {
     auto [model, interface] = ensureModelAndInterface(contextId);
 
@@ -955,7 +1023,7 @@ RetainPtr<WKLayerHostView> VideoPresentationManagerProxy::createLayerHostViewWit
     if (layerHandle)
         [view->_hostingView setHandle:layerHandle.get()];
     else
-        RELEASE_LOG_ERROR(Media, "VideoPresentationManagerProxy::createLayerHostViewWithID: could not create layer handle");
+        RELEASE_LOG_ERROR(Media, "VideoPresentationManagerProxy::createLegacyLayerHostViewWithID: could not create layer handle");
 #else
     [view setContextID:hostingContext.contextID];
 #endif
@@ -994,14 +1062,15 @@ RefPtr<PlatformVideoPresentationInterface> VideoPresentationManagerProxy::return
     return nullptr;
 }
 
-RetainPtr<WKVideoView> VideoPresentationManagerProxy::createViewWithID(PlaybackSessionContextIdentifier contextId, const WebCore::HostingContext& hostingContext, const WebCore::FloatSize& initialSize, const WebCore::FloatSize& nativeSize, float hostingDeviceScaleFactor)
+RetainPtr<WKVideoView> VideoPresentationManagerProxy::createViewWithID(PlaybackSessionContextIdentifier contextId, const WebCore::HostingContext& hostingContext, const WebCore::FloatSize& initialSize, const WebCore::FloatSize& nativeSize, float hostingDeviceScaleFactor, bool hostedByUIProcess)
 {
     RELEASE_LOG(Media, "VideoPresentationManagerProxy::createViewWithID: context ID %d", hostingContext.contextID);
 
     auto [model, interface] = ensureModelAndInterface(contextId);
     addClientForContext(contextId);
+    setHostedByUIProcess(contextId, hostedByUIProcess);
 
-    RetainPtr<WKLayerHostView> view = createLayerHostViewWithID(contextId, hostingContext, initialSize, hostingDeviceScaleFactor);
+    RetainPtr view = createLayerHostViewWithID(contextId, hostingContext, initialSize, hostingDeviceScaleFactor);
 
     if (!interface->videoView()) {
         ALWAYS_LOG(LOGIDENTIFIER, model->logIdentifier(), ", Creating AVPlayerLayerView");
@@ -1014,6 +1083,7 @@ RetainPtr<WKVideoView> VideoPresentationManagerProxy::createViewWithID(PlaybackS
         [playerLayer setVideoDimensions:nativeSize];
         [playerLayer setPresentationModel:model.ptr()];
         [playerLayer setVideoSublayer:[view layer]];
+        [playerLayer setPreviewsResizeWithTransform:interface->previewsResizeWithTransform()];
 
         [playerView addSubview:view.get()];
         [playerView setUserInteractionEnabled:NO];
@@ -1028,6 +1098,13 @@ RetainPtr<WKVideoView> VideoPresentationManagerProxy::createViewWithID(PlaybackS
         interface->setPlayerLayer(WTF::move(playerLayer));
         interface->setPlayerLayerView(playerView.get());
         interface->setVideoView(videoView.get());
+    } else if (RetainPtr playerLayer = interface->playerLayer(); view && [playerLayer videoSublayer] != [view layer]) {
+        // setHostedByUIProcess() replaced the layer host view, because the element's player
+        // changed to one whose video layer is hosted differently.
+        [playerLayer setVideoSublayer:[view layer]];
+        if (RetainPtr playerView = interface->playerLayerView())
+            [playerView addSubview:view.get()];
+        [playerLayer setNeedsLayout];
     }
 
     sendToWebProcess(contextId, Messages::VideoPresentationManager::EnsureUpdatedVideoDimensions(contextId.object(), nativeSize));
@@ -1098,7 +1175,7 @@ Ref<WebCore::PlatformVideoPresentationInterface> VideoPresentationManagerProxy::
 
 #pragma mark Messages from VideoPresentationManager
 
-void VideoPresentationManagerProxy::setupFullscreenWithID(IPC::Connection& connection, HTMLMediaElementIdentifier identifier, const WebCore::HostingContext& hostingContext, const WebCore::FloatRect& screenRect, const WebCore::FloatSize& initialSize, const WebCore::FloatSize& videoDimensions, float hostingDeviceScaleFactor, HTMLMediaElementEnums::VideoFullscreenMode videoFullscreenMode, bool allowsPictureInPicture, bool standby, bool blocksReturnToFullscreenFromPictureInPicture, bool hasObjectViewBox)
+void VideoPresentationManagerProxy::setupFullscreenWithID(IPC::Connection& connection, HTMLMediaElementIdentifier identifier, const WebCore::HostingContext& hostingContext, const WebCore::FloatRect& screenRect, const WebCore::FloatSize& initialSize, const WebCore::FloatSize& videoDimensions, float hostingDeviceScaleFactor, HTMLMediaElementEnums::VideoFullscreenMode videoFullscreenMode, bool allowsPictureInPicture, bool standby, bool blocksReturnToFullscreenFromPictureInPicture, bool hasObjectViewBox, bool hostedByUIProcess)
 {
     RefPtr page = m_page.get();
     if (!page)
@@ -1137,25 +1214,31 @@ void VideoPresentationManagerProxy::setupFullscreenWithID(IPC::Connection& conne
     MESSAGE_CHECK(videoFullscreenMode == HTMLMediaElementEnums::VideoFullscreenModePictureInPicture); // setupFullscreen() ASSERTs this so catch it here while we can still fail the message
 #endif
 
+    setHostedByUIProcess(contextId, hostedByUIProcess);
+
 #if PLATFORM(IOS_FAMILY)
     // The video may not have been rendered yet, which would have triggered a call to createViewWithID/createLayerHostViewWithID making the AVPlayerLayer and AVPlayerLayerView not yet set. Create them as needed.
     if (!interface->videoView())
-        createViewWithID(contextId, hostingContext, initialSize, videoDimensions, hostingDeviceScaleFactor);
+        createViewWithID(contextId, hostingContext, initialSize, videoDimensions, hostingDeviceScaleFactor, hostedByUIProcess);
     ASSERT(interface->videoView());
 #endif
 
-    RetainPtr view = interface->layerHostView() ? RetainPtr { static_cast<WKLayerHostView*>(interface->layerHostView()) } : createLayerHostViewWithID(contextId, hostingContext, initialSize, hostingDeviceScaleFactor);
+    RetainPtr<CocoaView> view = interface->layerHostView() ? RetainPtr<CocoaView> { interface->layerHostView() } : createLayerHostViewWithID(contextId, hostingContext, initialSize, hostingDeviceScaleFactor);
+    if (!isHostedByUIProcess(contextId)) {
 #if HAVE(VISIBILITY_PROPAGATION_VIEW)
-    RefPtr pageClient = page->pageClient();
-    if (RetainPtr visibilityPropagationView = pageClient ? pageClient->createVisibilityPropagationView() : nil)
-        setVisibilityPropagationViewForLayerHostView(visibilityPropagationView.get(), view.get());
+        RefPtr pageClient = page->pageClient();
+        if (RetainPtr layerHostView = dynamic_objc_cast<WKLayerHostView>(view.get())) {
+            if (RetainPtr visibilityPropagationView = pageClient ? pageClient->createVisibilityPropagationView() : nil)
+                setVisibilityPropagationViewForLayerHostView(visibilityPropagationView.get(), layerHostView.get());
+        }
 #if ENABLE(ENDOWMENT_BASED_APPLICATION_STATE_TRACKING)
-    if (RefPtr layerHostingVisibilityPropagator = pageClient ? pageClient->createLayerHostingVisibilityPropagator() : nil)
-        model->setLayerHostingVisibilityPropagator(WTF::move(layerHostingVisibilityPropagator));
+        if (RefPtr layerHostingVisibilityPropagator = pageClient ? pageClient->createLayerHostingVisibilityPropagator() : nil)
+            model->setLayerHostingVisibilityPropagator(WTF::move(layerHostingVisibilityPropagator));
 #endif
 #else
-    UNUSED_VARIABLE(view);
+        UNUSED_VARIABLE(view);
 #endif
+    }
 
 #if PLATFORM(IOS_FAMILY)
     UNUSED_PARAM(hasObjectViewBox);
@@ -1526,15 +1609,18 @@ void VideoPresentationManagerProxy::returnVideoView(PlaybackSessionContextIdenti
 
 void VideoPresentationManagerProxy::didSetupFullscreen(PlaybackSessionContextIdentifier contextId)
 {
-#if PLATFORM(IOS_FAMILY)
+#if !PLATFORM(IOS_FAMILY)
+    if (!isHostedByUIProcess(contextId)) {
+        sendToWebProcess(contextId, Messages::VideoPresentationManager::DidSetupFullscreen(contextId.object()));
+        return;
+    }
+#endif
+
     RefPtr page = m_page.get();
     if (page)
         page->willEnterFullscreen(contextId);
 
     enterFullscreenForContext(contextId);
-#else
-    sendToWebProcess(contextId, Messages::VideoPresentationManager::DidSetupFullscreen(contextId.object()));
-#endif
 }
 
 void VideoPresentationManagerProxy::willExitFullscreen(PlaybackSessionContextIdentifier contextId)
@@ -1597,13 +1683,20 @@ void VideoPresentationManagerProxy::didCleanupFullscreen(PlaybackSessionContextI
 
     auto [model, interface] = ensureModelAndInterface(contextId);
 
+    if (isHostedByUIProcess(contextId)) {
+#if USE(EXTENSIONKIT)
+        if (RefPtr remoteLayerHostingManager = this->remoteLayerHostingManager())
+            remoteLayerHostingManager->removeVisibilityPropagationView(contextId);
+#endif
+    } else {
 #if HAVE(VISIBILITY_PROPAGATION_VIEW)
-    if (RetainPtr layerHostView = dynamic_objc_cast<WKLayerHostView>(interface->layerHostView()))
-        setVisibilityPropagationViewForLayerHostView(nil, layerHostView.get());
+        if (RetainPtr layerHostView = dynamic_objc_cast<WKLayerHostView>(interface->layerHostView()))
+            setVisibilityPropagationViewForLayerHostView(nil, layerHostView.get());
 #if ENABLE(ENDOWMENT_BASED_APPLICATION_STATE_TRACKING)
-    model->setLayerHostingVisibilityPropagator(nullptr);
+        model->setLayerHostingVisibilityPropagator(nullptr);
 #endif
 #endif
+    }
 
     [protect(interface->layerHostView()) removeFromSuperview];
     interface->removeCaptionsLayer();
@@ -1637,6 +1730,18 @@ void VideoPresentationManagerProxy::setVideoLayerFrame(PlaybackSessionContextIde
 
     auto [model, interface] = ensureModelAndInterface(contextId);
     interface->setCaptionsFrame(CGRectMake(0, 0, frame.width(), frame.height()));
+
+    // The captions layer above lives in this process and must be updated on both paths.
+    // The video layer geometry, however, is forwarded to the GPU process directly by
+    // -[WKVideoLayerHost setFrame:] when remote layer hosting bypasses the WebContent
+    // process. The WebContent process still needs the new frame to keep HTMLMediaElement's
+    // video layer size and the text track representation bounds current, but the GPU process
+    // ignores the resulting size for hosted layers, so no fence is needed.
+    if (isHostedByUIProcess(contextId)) {
+        sendToWebProcess(contextId, Messages::VideoPresentationManager::SetVideoLayerFrameFenced(contextId.object(), frame, WTF::MachSendRightAnnotated { }));
+        return;
+    }
+
     WTF::MachSendRightAnnotated sendRightAnnotated;
 #if PLATFORM(IOS_FAMILY)
 #if USE(EXTENSIONKIT)
@@ -1804,6 +1909,83 @@ RefPtr<PlatformVideoPresentationInterface> VideoPresentationManagerProxy::bestVi
 #else
     return nullptr;
 #endif
+}
+
+RefPtr<RemoteLayerHostingManagerProxy> VideoPresentationManagerProxy::remoteLayerHostingManager()
+{
+    RefPtr page = m_page;
+    if (!page)
+        return nullptr;
+
+    RefPtr gpuProcess = page->configuration().processPool().gpuProcess();
+    if (!gpuProcess)
+        return nullptr;
+
+    return gpuProcess->remoteLayerHostingManagerProxy();
+}
+
+bool VideoPresentationManagerProxy::remoteLayerHostingBypassesWebContentProcess() const
+{
+#if ENABLE(GPU_PROCESS) && PLATFORM(COCOA)
+    if (RefPtr page = m_page)
+        return protect(page->preferences())->remoteLayerHostingBypassesWebContentProcess();
+#endif
+    return false;
+}
+
+bool VideoPresentationManagerProxy::isHostedByUIProcess(PlaybackSessionContextIdentifier contextId) const
+{
+    return m_contextsHostedByUIProcess.contains(contextId);
+}
+
+void VideoPresentationManagerProxy::setHostedByUIProcess(PlaybackSessionContextIdentifier contextId, bool hostedByUIProcess)
+{
+    hostedByUIProcess = hostedByUIProcess && remoteLayerHostingBypassesWebContentProcess();
+
+    bool wasHostedByUIProcess = isHostedByUIProcess(contextId);
+    if (hostedByUIProcess == wasHostedByUIProcess)
+        return;
+
+    if (hostedByUIProcess)
+        m_contextsHostedByUIProcess.add(contextId);
+    else
+        m_contextsHostedByUIProcess.remove(contextId);
+
+    auto [model, interface] = ensureModelAndInterface(contextId);
+    interface->setPreviewsResizeWithTransform(!hostedByUIProcess);
+    if (RetainPtr playerLayer = interface->playerLayer())
+        [playerLayer setPreviewsResizeWithTransform:!hostedByUIProcess];
+
+    // If the element already has a layer host view, its player has changed between one whose
+    // video layer is hosted directly from the GPU process and one whose layer is relayed through
+    // the WebContent process, and the view is of the wrong kind. Discard it, so that the caller
+    // creates one of the right kind and attaches it to the player layer.
+    RetainPtr layerHostView = interface->layerHostView();
+    if (!layerHostView)
+        return;
+
+    ALWAYS_LOG(LOGIDENTIFIER, "replacing layer host view, hostedByUIProcess: ", hostedByUIProcess);
+
+#if HAVE(VISIBILITY_PROPAGATION_VIEW)
+    if (RetainPtr legacyLayerHostView = dynamic_objc_cast<WKLayerHostView>(layerHostView.get()))
+        setVisibilityPropagationViewForLayerHostView(nil, legacyLayerHostView.get());
+#endif
+
+    interface->removeCaptionsLayer();
+    if (RetainPtr playerLayer = interface->playerLayer(); playerLayer && [playerLayer videoSublayer] == [layerHostView layer])
+        [playerLayer setVideoSublayer:nil];
+    [[layerHostView layer] removeFromSuperlayer];
+    [layerHostView removeFromSuperview];
+    interface->setLayerHostView(nullptr);
+
+    if (wasHostedByUIProcess) {
+        if (RefPtr remoteLayerHostingManager = this->remoteLayerHostingManager()) {
+#if USE(EXTENSIONKIT)
+            remoteLayerHostingManager->removeVisibilityPropagationView(contextId);
+#endif
+            remoteLayerHostingManager->releaseLayerHostForIdentifier(contextId);
+        }
+    }
 }
 
 } // namespace WebKit
