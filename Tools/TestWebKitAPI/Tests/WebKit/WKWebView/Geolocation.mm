@@ -178,6 +178,26 @@ static void expectException(void (^completionHandler)())
 }
 @end
 
+@interface GeolocationAuthorizationOriginValidationDelegate : NSObject <WKUIDelegatePrivate>
+@property (nonatomic, copy) void (^validationHandler)(WKSecurityOrigin *, WKFrameInfo *);
+@end
+
+@implementation GeolocationAuthorizationOriginValidationDelegate
+- (void)_webView:(WKWebView *)webView requestGeolocationAuthorizationForOrigin:(WKSecurityOrigin *)origin initiatedByFrame:(WKFrameInfo *)frame decisionHandler:(void (^)(BOOL))decisionHandler
+{
+    if (_validationHandler)
+        _validationHandler(origin, frame);
+    decisionHandler(YES);
+}
+
+// This must not be called when the origin variant above is implemented.
+- (void)_webView:(WKWebView *)webView requestGeolocationAuthorizationForURL:(NSURL *)url frame:(WKFrameInfo *)frame decisionHandler:(void (^)(BOOL))decisionHandler
+{
+    ADD_FAILURE() << "The URL variant must not be called when the origin variant is implemented";
+    decisionHandler(NO);
+}
+@end
+
 namespace TestWebKitAPI {
 
 // These tests need to use TestWKWebView because it sets up a visible window for the web
@@ -257,6 +277,62 @@ TEST(Geolocation, PermissionURLDuringPendingNavigation)
     }];
     [webView evaluateJavaScript:@"location.href = 'https://example2.com/target'" completionHandler:nil];
     TestWebKitAPI::Util::run(&receivedAuthorizationRequest);
+}
+
+// Loads https://example1.com/main, which embeds a cross-origin iframe (https://example2.com/frame) that requests geolocation
+// as soon as it loads, and runs until the client sets *receivedAuthorizationRequest.
+static void loadCrossOriginIFrameRequestingGeolocation(id<WKUIDelegatePrivate> uiDelegate, bool* receivedAuthorizationRequest)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/main"_s, { "<iframe src='https://example2.com/frame' allow='geolocation'></iframe>"_s } },
+        { "/frame"_s, { "<script>navigator.geolocation.getCurrentPosition(function() { }, function() { });</script>"_s } }
+    }, TestWebKitAPI::HTTPServer::Protocol::HttpsProxy);
+
+    RetainPtr coreLocationProvider = adoptNS([[TestCoreLocationProvider alloc] init]);
+    coreLocationProvider.get().shouldAuthorizeGeolocation = YES;
+    RetainPtr processPool = adoptNS([[WKProcessPool alloc] init]);
+    processPool.get()._coreLocationProvider = coreLocationProvider.get();
+
+    RetainPtr configuration = server.httpsProxyConfiguration();
+    configuration.get().processPool = processPool.get();
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    [webView setUIDelegate:uiDelegate];
+    RetainPtr navigationDelegate = adoptNS([TestNavigationDelegate new]);
+    [navigationDelegate allowAnyTLSCertificate];
+    [webView setNavigationDelegate:navigationDelegate.get()];
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example1.com/main"]]];
+    TestWebKitAPI::Util::run(receivedAuthorizationRequest);
+}
+
+TEST(Geolocation, AuthorizationOriginIsTopLevelForCrossOriginIFrame)
+{
+    RetainPtr uiDelegate = adoptNS([[GeolocationAuthorizationOriginValidationDelegate alloc] init]);
+    static bool receivedAuthorizationRequest;
+    receivedAuthorizationRequest = false;
+    [uiDelegate setValidationHandler:[&](WKSecurityOrigin *origin, WKFrameInfo *frame) {
+        // The origin is the top-level page's; the frame is the cross-origin iframe that asked.
+        EXPECT_WK_STREQ(origin.protocol, @"https");
+        EXPECT_WK_STREQ(origin.host, @"example1.com");
+        EXPECT_WK_STREQ(frame.securityOrigin.host, @"example2.com");
+        EXPECT_FALSE(frame.isMainFrame);
+        receivedAuthorizationRequest = true;
+    }];
+    loadCrossOriginIFrameRequestingGeolocation(uiDelegate.get(), &receivedAuthorizationRequest);
+}
+
+TEST(Geolocation, AuthorizationURLCallbackUsedWhenOriginCallbackNotImplemented)
+{
+    RetainPtr uiDelegate = adoptNS([[GeolocationURLValidationDelegate alloc] init]);
+    static bool receivedAuthorizationRequest;
+    receivedAuthorizationRequest = false;
+    [uiDelegate setValidationHandler:[&](NSURL *url) {
+        // Existing behavior for clients that only implement the URL variant: the requesting frame's URL.
+        EXPECT_WK_STREQ(url.scheme, @"https");
+        EXPECT_WK_STREQ(url.host, @"example2.com");
+        receivedAuthorizationRequest = true;
+    }];
+    loadCrossOriginIFrameRequestingGeolocation(uiDelegate.get(), &receivedAuthorizationRequest);
 }
 
 TEST(Geolocation, DeniedByLocationProvider)
