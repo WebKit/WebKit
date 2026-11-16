@@ -1,0 +1,109 @@
+This test ensures that a display:contents listbox whose options are flex items of an ancestor, like the selected items of a multi-select combobox, exposes the right attributes.
+
+PASS: listbox.role === 'AXRole: AXList'
+PASS: listbox.subrole === 'AXSubrole: '
+PASS: listbox.roleDescription === 'AXRoleDescription: list'
+	AXTitle: Items
+	AXDescription: Items
+	AXHelp:
+PASS: listbox.orientation === 'AXOrientation: AXVerticalOrientation'
+PASS: listbox.isMultiSelectable === false
+PASS: listbox.isEnabled === true
+PASS: listbox.isRequired === false
+PASS: listbox.stringAttributeValue('AXInvalid') === 'false'
+PASS: listbox.selectedChildrenCount === 0
+PASS: listbox.uiElementAttributeValue('AXActiveElement') === null
+PASS: domIdentifiers(listbox.uiElementArrayAttributeValue('AXVisibleChildren')) === 'english, french, portuguese'
+
+The generic and role="none" containers are ignored, so the listbox and combobox are children of the group, in DOM order.
+PASS: listbox.parentElement().domIdentifier === 'field'
+PASS: childDOMIdentifiers(field) === 'listbox, combobox'
+PASS: childDOMIdentifiers(listbox) === 'english, french, portuguese'
+PASS: domIdentifiers(listbox.uiElementArrayAttributeValue('AXChildrenInNavigationOrder')) === 'english, french, portuguese'
+PASS: forwardSearchResultDOMIdentifiers(field, 'AXAnyTypeSearchKey') === 'listbox, english, french, portuguese, combobox'
+PASS: forwardSearchResultDOMIdentifiers(field, 'AXKeyboardFocusableSearchKey') === 'english, french, portuguese, combobox'
+PASS: forwardSearchResultDOMIdentifiers(field, 'AXControlSearchKey') === 'listbox, combobox'
+PASS: field.uiElementForSearchPredicate(accessibilityController.accessibleElementById('english'), true, 'AXSameTypeSearchKey', '', false).domIdentifier === 'french'
+PASS: textMarkerRangeStringForElement(listbox) === 'English\nFrench\nPortuguese'
+
+#english:
+PASS: option.role === 'AXRole: AXStaticText'
+	AXTitle: English
+	AXDescription:
+	AXHelp:
+PASS: option.parentElement().isEqual(listbox) === true
+PASS: option.childrenCount === 0
+PASS: option.isSelected === false
+PASS: option.isEnabled === true
+PASS: option.isAttributeSettable('AXFocused') === true
+
+#french:
+PASS: option.role === 'AXRole: AXStaticText'
+	AXTitle: French
+	AXDescription:
+	AXHelp:
+PASS: option.parentElement().isEqual(listbox) === true
+PASS: option.childrenCount === 0
+PASS: option.isSelected === false
+PASS: option.isEnabled === false
+PASS: option.isAttributeSettable('AXFocused') === true
+
+#portuguese:
+PASS: option.role === 'AXRole: AXStaticText'
+	AXTitle: Portuguese
+	AXDescription:
+	AXHelp:
+PASS: option.parentElement().isEqual(listbox) === true
+PASS: option.childrenCount === 0
+PASS: option.isSelected === false
+PASS: option.isEnabled === true
+PASS: option.isAttributeSettable('AXFocused') === true
+
+Disabling the listbox.
+PASS: listbox.isEnabled === false
+PASS: accessibilityController.accessibleElementById('english').isEnabled === false
+PASS: accessibilityController.accessibleElementById('portuguese').isEnabled === false
+
+Enabling the listbox.
+PASS: listbox.isEnabled === true
+PASS: accessibilityController.accessibleElementById('english').isEnabled === true
+PASS: accessibilityController.accessibleElementById('portuguese').isEnabled === true
+PASS: accessibilityController.accessibleElementById('french').isEnabled === false
+
+Marking the listbox invalid.
+PASS: invalidStatusNotifications.includes('listbox') === true
+PASS: listbox.stringAttributeValue('AXInvalid') === 'true'
+
+Changing the listbox's aria-label.
+PASS: listbox.description === 'AXDescription: Selected languages'
+	AXTitle: Selected languages
+	AXDescription: Selected languages
+	AXHelp:
+
+Setting aria-orientation="horizontal" on the listbox, matching how its options are laid out.
+PASS: listbox.orientation === 'AXOrientation: AXHorizontalOrientation'
+
+Setting aria-multiselectable="true" on the listbox.
+PASS: listbox.isMultiSelectable === true
+
+Setting aria-required="true" on the listbox.
+PASS: listbox.isRequired === true
+
+Setting aria-activedescendant="french" on the listbox.
+PASS: listbox.uiElementAttributeValue('AXActiveElement')?.domIdentifier === 'french'
+
+Removing the listbox, like a multi-select combobox does when nothing is selected.
+PASS: childDOMIdentifiers(field) === 'combobox'
+
+Inserting a new listbox before the combobox.
+PASS: childDOMIdentifiers(field) === 'new-listbox, combobox'
+PASS: listbox.role === 'AXRole: AXList'
+PASS: childDOMIdentifiers(listbox) === 'german'
+PASS: accessibilityController.accessibleElementById('german').parentElement().isEqual(listbox) === true
+PASS: forwardSearchResultDOMIdentifiers(field, 'AXAnyTypeSearchKey') === 'new-listbox, german, combobox'
+PASS: textMarkerRangeStringForElement(listbox) === 'German'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

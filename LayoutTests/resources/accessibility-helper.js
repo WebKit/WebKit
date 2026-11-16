@@ -78,6 +78,35 @@ function dumpAXSearchTraversal(axElement, options = { }) {
     return output;
 }
 
+// Returns the DOM identifiers of the given AccessibilityUIElements as a comma-separated string,
+// e.g. "first, second". This makes it easy to compare lists of elements in expect() calls.
+function domIdentifiers(axElements) {
+    return axElements.map(axElement => axElement.domIdentifier).join(", ");
+}
+
+// Returns the DOM identifiers of the children of the given AccessibilityUIElement, in order.
+function childDOMIdentifiers(axElement) {
+    const children = [];
+    for (let i = 0; i < axElement.childrenCount; i++)
+        children.push(axElement.childAtIndex(i));
+    return domIdentifiers(children);
+}
+
+// Returns the DOM identifiers of every element found by searching forward from the start of
+// the given AccessibilityUIElement with the given search key (e.g. "AXAnyTypeSearchKey").
+function forwardSearchResultDOMIdentifiers(axElement, searchKey) {
+    const results = [];
+    let result = null;
+    while ((result = axElement.uiElementForSearchPredicate(result, true, searchKey, "", false)))
+        results.push(result);
+    return domIdentifiers(results);
+}
+
+// Returns the text of the text marker range spanning the given AccessibilityUIElement.
+function textMarkerRangeStringForElement(axElement) {
+    return axElement.stringForTextMarkerRange(axElement.textMarkerRangeForElement(axElement));
+}
+
 function platformStaticTextValue(axElement) {
     if (!axElement)
         return "";

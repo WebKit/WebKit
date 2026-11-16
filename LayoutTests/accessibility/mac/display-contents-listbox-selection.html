@@ -1,0 +1,139 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+<style>
+.input-container {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px;
+    padding: 4px;
+}
+/* The listbox generates no box, so its options are flex items of .input-container. */
+.tokens-listbox {
+    display: contents;
+}
+.token {
+    display: flex;
+    align-items: center;
+}
+.input-wrapper {
+    flex: auto;
+}
+</style>
+</head>
+<body>
+
+<div id="content">
+<div role="none" class="input-container">
+    <div id="listbox" role="listbox" aria-label="Items" tabindex="-1" class="tokens-listbox"></div>
+    <div class="input-wrapper">
+        <div id="combobox" role="combobox" tabindex="0" contenteditable="plaintext-only" aria-autocomplete="list" aria-expanded="false" aria-label="Translation languages"></div>
+    </div>
+</div>
+</div>
+
+<script>
+var output = "This test ensures that the selected options of a display:contents listbox are exposed through AXSelectedChildren and AXSelected, and that AXSelectedChildrenChanged is posted on the listbox when they change.\n\n";
+
+var listboxElement = document.getElementById("listbox");
+
+// Like the selected items of a multi-select combobox, rebuild every option whenever the items change.
+function renderOptions(labels, selectedLabels) {
+    listboxElement.textContent = "";
+    labels.forEach((label, index) => {
+        const option = document.createElement("div");
+        option.id = label.toLowerCase();
+        option.setAttribute("role", "option");
+        option.setAttribute("aria-selected", selectedLabels.includes(label));
+        option.tabIndex = index === labels.length - 1 ? 0 : -1;
+        option.innerHTML = `<span class="token" contenteditable="false"><span>${label}</span><span aria-hidden="true"><svg viewBox="0 0 20 20" width="16" height="16"><path d="M4 4L16 16M16 4L4 16" stroke="currentColor"/></svg></span></span>`;
+        listboxElement.appendChild(option);
+    });
+}
+renderOptions(["English", "French", "Portuguese"], []);
+
+function setSelectedOptions(selectedIds) {
+    for (const option of listboxElement.querySelectorAll("[role='option']"))
+        option.setAttribute("aria-selected", selectedIds.includes(option.id));
+}
+
+function optionIsSelected(id) {
+    return accessibilityController.accessibleElementById(id).isSelected;
+}
+
+var notifications = [];
+async function expectSelectedChildrenChangedNotification() {
+    output += await expectAsync("notifications.includes('listbox')", "true");
+    output += expect("[...new Set(notifications)].join()", "'listbox'");
+    notifications = [];
+}
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    var listbox;
+    setTimeout(async function() {
+        listbox = await waitForElementById("listbox");
+        await waitFor(() => listbox.childrenCount === 3);
+        accessibilityController.addNotificationListener((element, notification) => {
+            if (notification == "AXSelectedChildrenChanged")
+                notifications.push(element.domIdentifier);
+        });
+
+        output += expect("listbox.selectedChildrenCount", "0");
+        output += expect("optionIsSelected('english')", "false");
+        output += expect("optionIsSelected('french')", "false");
+        output += expect("optionIsSelected('portuguese')", "false");
+
+        output += "\nSelecting #french.\n";
+        setSelectedOptions(["french"]);
+        await expectSelectedChildrenChangedNotification();
+        output += await expectAsync("domIdentifiers(listbox.selectedChildren())", "'french'");
+        output += expect("listbox.selectedChildAtIndex(0).domIdentifier", "'french'");
+        output += expect("optionIsSelected('english')", "false");
+        output += expect("optionIsSelected('french')", "true");
+
+        output += "\nMoving the selection to #english.\n";
+        setSelectedOptions(["english"]);
+        await expectSelectedChildrenChangedNotification();
+        output += await expectAsync("domIdentifiers(listbox.selectedChildren())", "'english'");
+        output += expect("optionIsSelected('english')", "true");
+        output += expect("optionIsSelected('french')", "false");
+
+        output += "\nSelecting every option. Unless it is aria-multiselectable, a listbox only reports its first selected option as a selected child.\n";
+        setSelectedOptions(["english", "french", "portuguese"]);
+        await expectSelectedChildrenChangedNotification();
+        output += await expectAsync("optionIsSelected('portuguese')", "true");
+        output += expect("optionIsSelected('french')", "true");
+        output += expect("domIdentifiers(listbox.selectedChildren())", "'english'");
+
+        output += "\nMaking the listbox aria-multiselectable.\n";
+        listboxElement.setAttribute("aria-multiselectable", "true");
+        output += await expectAsync("domIdentifiers(listbox.selectedChildren())", "'english, french, portuguese'");
+        output += expect("listbox.selectedChildrenCount", "3");
+
+        output += "\nClearing the selection.\n";
+        setSelectedOptions([]);
+        await expectSelectedChildrenChangedNotification();
+        output += await expectAsync("listbox.selectedChildrenCount", "0");
+        output += expect("optionIsSelected('english')", "false");
+
+        output += "\nRebuilding the options with #french and #german selected.\n";
+        renderOptions(["English", "French", "German"], ["French", "German"]);
+        output += await expectAsync("domIdentifiers(listbox.selectedChildren())", "'french, german'");
+        output += expect("optionIsSelected('english')", "false");
+        output += expect("optionIsSelected('french')", "true");
+        output += expect("optionIsSelected('german')", "true");
+
+        accessibilityController.removeNotificationListener();
+        document.getElementById("content").style.display = "none";
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>
