@@ -24,8 +24,11 @@
 use strict;
 use warnings;
 use English;
+use Cwd qw/ abs_path /;
 use File::Basename;
 use File::Copy qw/ move /;
+use File::Find;
+use File::Spec;
 use File::Temp qw/ tempdir tempfile /;
 use FindBin;
 use Getopt::Long qw(:config pass_through);
@@ -76,25 +79,29 @@ setConfiguration();
 
 my $platform = xcodeSDKPlatformName();
 
-my @privateFrameworks;
-if ($platform eq 'macosx') {
-    @privateFrameworks = qw(WebGPU);
-} else {
-    @privateFrameworks = qw(WebCore WebGPU WebKitLegacy);
-}
+my @privateFrameworks = qw(WebGPU);
 my @publicFrameworks = qw(JavaScriptCore WebKit);
+my @platformDependentFrameworks = qw(WebCore WebKitLegacy);
 my @extensions = qw(GPUExtension NetworkingExtension WebContentCaptivePortalExtension WebContentEnhancedSecurityExtension WebContentExtension);
 my $packagedRootBasePath = usesCryptexPath() ? "/System/Cryptexes/OS/" : "/";
 $packagedRootBasePath = "$packagedRootBasePath" . "System/iOSSupport/" if isMacCatalystWebKit();
 my $privateInstallPath = "$packagedRootBasePath" . "System/Library/PrivateFrameworks";
 my $publicInstallPath = "$packagedRootBasePath" . "System/Library/Frameworks";
+my $platformDependentInstallPath = isAppleMacWebKit() ? "$publicInstallPath/WebKit.framework/Versions/A/Frameworks" : $privateInstallPath;
 my $extensionsInstallPath = "/System/Library/ExtensionKit/Extensions";
+
+# On macOS, engineering builds link these with an install name of @loader_path/../../../ (see
+# WK_RELOCATABLE_FRAMEWORKS). From WebCore that resolves to the directory containing WebCore.framework, but
+# from WebKit.framework/Versions/A/WebKit it resolves to the directory containing WebKit.framework, so the
+# libraries are placed in the former and symlinked from the latter.
+my @platformDependentLibraries = isAppleMacWebKit() ? qw(libwebrtc.dylib libANGLE-shared.dylib) : ();
 
 my $configuration = configuration();
 my $productDir = productDir();
 my $stagingRoot = tempdir(CLEANUP => 1);
 my $stagingPrivatePath = "$stagingRoot$privateInstallPath";
 my $stagingPublicPath = "$stagingRoot$publicInstallPath";
+my $stagingPlatformDependentPath = "$stagingRoot$platformDependentInstallPath";
 my $stagingExtensionsPath = "$stagingRoot$extensionsInstallPath";
 my $archiveName = "webkit-$configuration-$platform";
 my $archivePath = "$productDir/$archiveName.tar.gz";
@@ -104,16 +111,66 @@ system 'mkdir', '-p', $stagingPrivatePath;
 system 'mkdir', '-p', $stagingPublicPath;
 system 'mkdir', '-p', $stagingExtensionsPath;
 
+# Copies a framework into a staging directory.
+#
+# The framework's own symlinks are kept as symlinks, so that the root has the same layout as the installed framework.
+#
+# Engineering builds also symlink some bundle contents to products outside the framework (for example,
+# WebKit.framework's XPC services). In the installed framework these are real bundles, and the symlinks
+# wouldn't resolve once installed, so they're replaced with copies of what they point to.
+sub copyFramework
+{
+    my ($source, $destinationDirectory) = @_;
+    my $destination = "$destinationDirectory/" . basename($source);
+
+    system 'cp', '-HpR', $source, "$destinationDirectory/";
+    return 0 if $?;
+
+    my $realSource = abs_path($source);
+    my @externalSymlinks;
+    find({ no_chdir => 1, wanted => sub {
+        return unless -l $_;
+        my $relativePath = File::Spec->abs2rel($_, $destination);
+        my $target = abs_path("$source/$relativePath");
+        push @externalSymlinks, $relativePath if defined $target && index($target, "$realSource/") != 0;
+    } }, $destination);
+
+    foreach my $relativePath (@externalSymlinks) {
+        unlink "$destination/$relativePath" or return 0;
+        system 'cp', '-LpR', "$source/$relativePath", "$destination/$relativePath";
+        return 0 if $?;
+    }
+
+    return 1;
+}
+
 foreach my $framework (@privateFrameworks) {
     print "Copying Private $framework from $productDir ...\n";
-    system 'cp', '-LpR', $productDir . "/$framework.framework", "$stagingPrivatePath/";
-    die "Check to see that you have built $framework for $configuration-$platform" if $? and $framework ne 'WebKit2';
+    my $copied = copyFramework("$productDir/$framework.framework", $stagingPrivatePath);
+    die "Check to see that you have built $framework for $configuration-$platform" if !$copied and $framework ne 'WebKit2';
 }
 
 foreach my $framework (@publicFrameworks) {
     print "Copying Public $framework from $productDir ...\n";
-    system 'cp', '-LpR', $productDir . "/$framework.framework", "$stagingPublicPath/";
-    die "Check to see that you have built $framework for $configuration-$platform" if $?;
+    copyFramework("$productDir/$framework.framework", $stagingPublicPath) or die "Check to see that you have built $framework for $configuration-$platform";
+}
+
+# On MacOS, this path is inside WebKit.framework. We create this path after copying the
+# public frameworks, since that step copies WebKit.framework.
+system 'mkdir', '-p', $stagingPlatformDependentPath;
+
+foreach my $framework (@platformDependentFrameworks) {
+    print "Copying $framework from $productDir ...\n";
+    copyFramework("$productDir/$framework.framework", $stagingPlatformDependentPath) or die "Check to see that you have built $framework for $configuration-$platform";
+}
+
+foreach my $library (@platformDependentLibraries) {
+    print "Copying $library from $productDir ...\n";
+    system 'cp', '-Lp', "$productDir/$library", "$stagingPlatformDependentPath/";
+    die "Check to see that you have built $library for $configuration-$platform" if $?;
+
+    my $symlinkTarget = File::Spec->abs2rel("$stagingPlatformDependentPath/$library", $stagingPublicPath);
+    symlink $symlinkTarget, "$stagingPublicPath/$library" or die "Couldn't create symlink to $library: $!";
 }
 
 foreach my $extension (@extensions) {
