@@ -1205,7 +1205,11 @@ static RefPtr<Element> findImplicitAnchor(const Styleable& anchorPositioned)
         // "If [a spec] defines is an implicit anchor element for query el which is an acceptable anchor element for query el, return that element."
         // https://drafts.csswg.org/css-anchor-position-1/#target
         CheckedPtr anchor = dynamicDowncast<RenderBoxModelObject>(implicitAnchorElement->renderer());
-        if (anchor && isAcceptableAnchorElement(*anchor, anchorPositioned))
+        if (!anchor) {
+            // Not yet rendered isn't the same as "no anchor" -- return it so the caller can retry.
+            return implicitAnchorElement;
+        }
+        if (isAcceptableAnchorElement(*anchor, anchorPositioned))
             return implicitAnchorElement;
     }
 
@@ -1302,12 +1306,26 @@ void AnchorPositionEvaluator::updateAnchorPositioningStatesAfterInterleavedLayou
                     renderer->setNeedsLayout();
 
                 Vector<ResolvedAnchor> anchors;
+                bool anchorCandidateMissingRenderer = false;
                 for (auto& anchorNameAndElement : state->anchorElements) {
                     CheckedPtr anchorElement = anchorNameAndElement.value.get();
+                    auto* anchorRenderer = anchorElement ? dynamicDowncast<RenderBoxModelObject>(anchorElement->renderer()) : nullptr;
+                    if (anchorElement && !anchorRenderer)
+                        anchorCandidateMissingRenderer = true;
                     anchors.append(ResolvedAnchor {
-                        .renderer = anchorElement ? dynamicDowncast<RenderBoxModelObject>(anchorElement->renderer()) : nullptr,
+                        .renderer = anchorRenderer,
                         .name = anchorNameAndElement.key
                     });
+                }
+
+                // Retry a bounded number of times before giving up on a candidate with no
+                // renderer yet. Don't publish anchorPositionedToAnchorMap until then -- the
+                // loop below treats a null anchor renderer as "nothing to wait for" and would
+                // prematurely force this element's stage to Resolved.
+                static constexpr uint8_t maxPendingAnchorRendererRetries = 4;
+                if (anchorCandidateMissingRenderer && state->pendingAnchorRendererRetryCount < maxPendingAnchorRendererRetries) {
+                    ++state->pendingAnchorRendererRetryCount;
+                    break;
                 }
 
                 anchorPositionedToAnchorMap.set(*anchorPositioned, AnchorPositionedToAnchorEntry {
