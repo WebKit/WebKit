@@ -1,0 +1,32 @@
+<!DOCTYPE html><!-- webkit-test-runner [ IPCTestingAPIEnabled=true IgnoreInvalidMessageWhenIPCTestingAPIEnabled=true ] -->
+<html>
+<body>
+<pre id="log"></pre>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+function log(s) { document.getElementById('log').textContent += s + '\n'; }
+
+function takeInvalidMessageString() {
+    let reply = IPC.sendSyncMessage('UI', 0, IPC.messages.WebProcessProxy_TakeInvalidMessageStringForTesting.name, 1000, []);
+    return reply && reply.arguments && reply.arguments[0] ? reply.arguments[0].value : '';
+}
+
+if (!window.IPC)
+    log('PASS: null targetId rejected by MESSAGE_CHECK');
+else {
+    takeInvalidMessageString(); // Clear any pre-existing error string.
+
+    IPC.sendMessage('UI', IPC.webPageProxyID, IPC.messages.WebPageProxy_SendMessageToInspectorFrontend.name, [{type: 'String', value: null}, {type: 'String', value: 'A'}]);
+
+    // Messages on one connection are dispatched in order, so the UIProcess has handled the message above by the time this reply arrives.
+    let error = takeInvalidMessageString();
+    if (error.includes('Message check failed') && error.includes('targetId'))
+        log('PASS: null targetId rejected by MESSAGE_CHECK');
+    else
+        log('FAIL: expected MESSAGE_CHECK on targetId, got: "' + error + '"');
+}
+</script>
+</body>
+</html>

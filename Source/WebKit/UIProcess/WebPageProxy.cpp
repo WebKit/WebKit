@@ -3552,8 +3552,9 @@ RefPtr<WebAutomationSession> WebPageProxy::activeAutomationSession() const
     return m_configuration->processPool().automationSession();
 }
 
-void WebPageProxy::sendMessageToInspectorFrontend(const String& targetId, const String& message)
+void WebPageProxy::sendMessageToInspectorFrontend(IPC::Connection& connection, const String& targetId, const String& message)
 {
+    MESSAGE_CHECK_BASE(!targetId.isNull(), connection);
     m_inspectorController->sendMessageToInspectorFrontend(targetId, message);
 }
 
