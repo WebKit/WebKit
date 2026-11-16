@@ -423,8 +423,6 @@ webkit.org/b/318739 [ ios debug ] TestWebKitAPI.WebKitLegacy.TimeInputAccessoryV
 webkit.org/b/318739 [ ios debug ] TestWebKitAPI.WebKitLegacy.WebGLNoCrashOnOtherThreadAccess [ Pass Crash ]
 webkit.org/b/318739 [ ios debug ] TestWebKitAPI.WebKitLegacy.WebGLPrepareDisplayOnWebThread [ Pass Crash ]
 webkit.org/b/309952 TestWebKitAPI.WebPageNavigationTests/navigationProceedsAfterDiscardingNavigationStream() [ Skip ]
-webkit.org/b/330986 [ mac debug siteisolation ] TestWebKitAPI.WebpagePreferences.LoadHTMLString [ Timeout ]
-webkit.org/b/330986 [ mac release siteisolation ] TestWebKitAPI.WebpagePreferences.LoadHTMLString [ Crash ]
 webkit.org/b/325226 [ ios ipad ] TestWebKitAPI.WebPageTransferableTests/exportToRichText(type:) [ Failure ]
 rdar://147876703 TestWebKitAPI.WebSocket.CloseCode [ Skip ]
 rdar://157795985 TestWebKitAPI.WebTransport.ClientStreamAborts [ Skip ]

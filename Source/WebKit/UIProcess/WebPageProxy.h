@@ -2602,6 +2602,7 @@ public:
     void decidePolicyForResponseShared(Ref<WebProcessProxy>&&, WebCore::PageIdentifier, FrameInfoData&&, std::optional<WebCore::NavigationIdentifier>, const WebCore::ResourceResponse&, const WebCore::ResourceRequest&, bool canShowMIMEType, String&& downloadAttribute, bool isShowingInitialAboutBlank, WebCore::CrossOriginOpenerPolicyValue activeDocumentCOOPValue, CompletionHandler<void(PolicyDecision&&)>&&);
     void startURLSchemeTaskShared(IPC::Connection&, Ref<WebProcessProxy>&&, WebCore::PageIdentifier, URLSchemeTaskParameters&&);
     void loadDataWithNavigationShared(Ref<WebProcessProxy>&&, WebCore::PageIdentifier, API::Navigation&, Ref<WebCore::SharedBuffer>&&, const String& MIMEType, const String& encoding, const String& baseURL, API::Object* userData, WebCore::ShouldTreatAsContinuingLoad, std::optional<NavigatingToAppBoundDomain>, RefPtr<API::WebsitePolicies>&&, WebCore::ShouldOpenExternalURLsPolicy, WebCore::SessionHistoryVisibility);
+    void loadAlternateHTMLWithNavigationShared(Ref<WebProcessProxy>&&, WebCore::PageIdentifier, API::Navigation&, BrowsingContextGroup&);
     void loadRequestWithNavigationShared(Ref<WebProcessProxy>&&, WebCore::PageIdentifier, API::Navigation&, WebCore::ResourceRequest&&, WebCore::ShouldOpenExternalURLsPolicy, WebCore::NavigationUpgradeToHTTPSBehavior, API::Object* userData, WebCore::ShouldTreatAsContinuingLoad, std::optional<NavigatingToAppBoundDomain>, RefPtr<API::WebsitePolicies>&&, std::optional<NetworkResourceLoadIdentifier> existingNetworkResourceLoadIdentifierToResume, MonotonicTime originalNavigationStartTime);
     void backForwardAddItemShared(IPC::Connection&, Ref<FrameState>&&, BrowsingContextGroup&);
     void backForwardGoToItemShared(IPC::Connection&, WebCore::BackForwardItemIdentifier);
@@ -4139,8 +4140,15 @@ private:
     void beginEnhancedSecurityLinkCheck(const URL&, API::Navigation&, WebFramePolicyListenerProxy&);
 
     enum class IsEnhancedSecurityExplicitlySet : bool { No, Yes };
+    LockdownMode lockdownModeForNavigation(const API::WebsitePolicies*) const;
+    EnhancedSecurity requestedEnhancedSecurityForNavigation(const API::WebsitePolicies*, WebFrameProxy* securityRestrictionsSourceFrame) const;
+    IsEnhancedSecurityExplicitlySet isEnhancedSecurityExplicitlySetForNavigation(const API::WebsitePolicies*) const;
+    EnhancedSecurity enhancedSecurityForSiteInBrowsingContextGroup(EnhancedSecurity, IsEnhancedSecurityExplicitlySet, BrowsingContextGroup&, const WebCore::Site&, const WebFrameProxy&) const;
     Ref<BrowsingContextGroup> browsingContextGroupForNavigation(WebFrameProxy&, API::Navigation&, WebsiteDataStore&, LockdownMode, EnhancedSecurity, IsEnhancedSecurityExplicitlySet, ProcessSwapRequestedByClient);
     Ref<BrowsingContextGroup> browsingContextGroupForCommittingNavigation(const API::Navigation*) const;
+    void processForNavigation(WebFrameProxy&, API::Navigation&, BrowsingContextGroup&, WebsiteDataStore&, API::WebsitePolicies*, const WebCore::Site&, const WebCore::Site& mainFrameSite, const URL& sourceURL, ProcessSwapRequestedByClient, LockdownMode, EnhancedSecurity, LoadedWebArchive, const FrameInfoData&, const std::optional<WebCore::Site>& backForwardInheritedSite, CompletionHandler<void(Ref<WebProcessProxy>&&, SuspendedPageProxy*, ASCIILiteral)>&&);
+    void updateFrameProcessForSite(WebFrameProxy&, const API::Navigation&, const WebCore::Site&, const WebCore::Site& mainFrameSite);
+    void loadAlternateHTMLInProcessForNavigation(WebFrameProxy& mainFrame, API::Navigation&);
 
     Ref<WebProcessProxy> processForTheFrameItem(WebBackForwardListFrameItem&) const;
     Ref<FrameState> copyFrameStateForBackForwardNavigation(WebBackForwardListFrameItem&) const;
