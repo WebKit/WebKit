@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<!-- Test for the purpletie.com size shorthand quirk (rdar://192538351). -->
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="../../imported/w3c/web-platform-tests/css/support/parsing-testcommon.js"></script>
+<script>
+window.internals?.setTopDocumentURLForQuirks("https://www.purpletie.com/");
+</script>
+</head>
+<body>
+<div style="float: left; size: 12%; margin: 2px;" id="day"><div style="width: 40px; height: 50px"></div></div>
+<script>
+test_valid_rule(".icon { size: 12%; }", ".icon { }");
+test_valid_rule(".icon { min-size: 12px; max-size: 12px; }", ".icon { }");
+test_valid_rule("@page { size: a4; }");
+
+test(() => {
+    assert_equals(day.style.width, "");
+    assert_equals(day.style.height, "");
+    assert_equals(day.offsetWidth, 40);
+    assert_equals(day.offsetHeight, 50);
+}, "The inline size declaration does not change the width or height of the calendar day");
+</script>
+</body>
+</html>

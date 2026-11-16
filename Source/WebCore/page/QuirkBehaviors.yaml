@@ -482,6 +482,8 @@ ShouldDisableAdSkippingInPip:
   available: pipSkipPreroll
   export: true
 
+ShouldDisableCSSSizeShorthandQuirk:
+
 # Microsoft office online generates data URLs with incorrect padding on Safari only (rdar://114573089).
 ShouldDisableDataURLPaddingValidation:
 
