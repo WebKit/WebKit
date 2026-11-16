@@ -1063,13 +1063,14 @@ unsigned RenderGrid::computeAutoRepeatTracksCount(Style::GridTrackSizingDirectio
     auto usedZoomForLength = style().usedZoomForLength();
     LayoutUnit autoRepeatTracksSize;
     for (auto& autoTrackSize : autoRepeatTracks) {
-        ASSERT(autoTrackSize.minTrackBreadth().isLength());
-        ASSERT(!autoTrackSize.minTrackBreadth().isFlex());
-
         auto& minTrackSizingFunction = autoTrackSize.minTrackBreadth();
         auto& maxTrackSizingFunction = autoTrackSize.maxTrackBreadth();
         bool hasDefiniteMaxTrackSizingFunction = maxTrackSizingFunction.isLength() && !maxTrackSizingFunction.isContentSized();
         bool hasDefiniteMinTrackSizingFunction = minTrackSizingFunction.isLength() && !minTrackSizingFunction.isContentSized();
+        if (!hasDefiniteMaxTrackSizingFunction && !hasDefiniteMinTrackSizingFunction)
+            return autoRepeatTrackListLength;
+        ASSERT(minTrackSizingFunction.isLength());
+        ASSERT(!minTrackSizingFunction.isFlex());
 
         auto contributingTrackSize = [&] {
             if (hasDefiniteMaxTrackSizingFunction && hasDefiniteMinTrackSizingFunction)

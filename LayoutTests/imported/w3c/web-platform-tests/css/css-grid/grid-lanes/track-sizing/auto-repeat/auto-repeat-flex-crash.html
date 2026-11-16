@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>CSS Grid Lanes Test: repeat(auto-fill) and repeat(auto-fit) with flexible track sizes don't crash</title>
+  <link rel="author" title="Joanne Pan" href="mailto:jopan@apple.com">
+  <link rel="help" href="https://drafts.csswg.org/css-grid-3/#intrinsic-auto-repeat">
+</head>
+<body>
+<div style="display: grid-lanes; width: 300px; grid-template-columns: repeat(auto-fill, 1fr);"><div>item</div></div>
+<div style="display: grid-lanes; width: 300px; grid-template-columns: repeat(auto-fit, minmax(auto, 1fr));"><div>item</div></div>
+<div style="display: grid-lanes; height: 300px; grid-template-rows: repeat(auto-fill, 1fr);"><div>item</div></div>
+</body>
+</html>
