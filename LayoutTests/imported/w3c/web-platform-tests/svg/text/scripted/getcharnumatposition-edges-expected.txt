@@ -1,0 +1,6 @@
+ABC
+ABCDEF
+
+FAIL A point on the edge between two glyph cells belongs to one of them assert_equals: shared edge expected 1 but got 0
+PASS Characters beyond the end of a text path
+

@@ -1,0 +1,5 @@
+fia
+fia
+
+FAIL The dx of the second character of a ligature moves the characters after it assert_equals: the second character is part of the ligature expected 0 but got 12
+

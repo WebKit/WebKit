@@ -1,0 +1,26 @@
+مرحبا بالعالم
+abc مرحبا def
+مرحبا abc عالم
+لا إله
+AVATAR office
+مرحبا بالعالم
+abc مرحبا def
+مرحبا abc عالم
+لا إله
+AVATAR office
+office
+office
+ مرحبا بالعالمabc مرحبا defمرحبا abc عالملا إلهAVATAR officeمرحبا بالعالمabc مرحبا defمرحبا abc عالملا إلهAVATAR office
+
+PASS Arabic in ltr text has the width of the shaped text
+PASS Latin, then Arabic in ltr text has the width of the shaped text
+PASS Arabic, then Latin in ltr text has the width of the shaped text
+PASS Arabic lam-alef ligature in ltr text has the width of the shaped text
+FAIL Latin with kerning in ltr text has the width of the shaped text assert_approx_equals: expected 249.8046875 +/- 0.5 but got 269.921875
+PASS Arabic in rtl text has the width of the shaped text
+PASS Latin, then Arabic in rtl text has the width of the shaped text
+PASS Arabic, then Latin in rtl text has the width of the shaped text
+PASS Arabic lam-alef ligature in rtl text has the width of the shaped text
+FAIL Latin with kerning in rtl text has the width of the shaped text assert_approx_equals: expected 249.8046875 +/- 0.5 but got 269.921875
+PASS The text DOM APIs measure Latin in rtl text left to right
+

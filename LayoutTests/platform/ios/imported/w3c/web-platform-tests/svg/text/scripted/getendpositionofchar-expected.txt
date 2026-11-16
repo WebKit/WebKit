@@ -1,0 +1,14 @@
+ABC
+אבג
+ABC
+Wil
+ABC
+ABC
+
+PASS Left to right text
+FAIL Right to left text assert_approx_equals: x of character 0 expected -6.0009765625 +/- 0.01 but got 6.0009765625
+PASS Rotated glyphs
+FAIL Sideways glyphs in vertical text assert_approx_equals: x of character 0 expected 0 +/- 0.01 but got -22.1484375
+PASS Upright glyphs in vertical text
+FAIL Rotated glyphs in vertical text assert_approx_equals: x of character 0 expected -10 +/- 0.01 but got 0
+

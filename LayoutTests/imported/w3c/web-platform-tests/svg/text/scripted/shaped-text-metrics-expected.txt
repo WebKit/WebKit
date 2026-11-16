@@ -1,0 +1,26 @@
+AVATAR office
+AVATAR office
+AV
+A
+V
+fiat
+AVATAR officé
+fiat
+AVATAR office
+AVATAR office
+AVATAR office
+AV
+AVATAR office
+fiat
+AVATAR officé
+AV
+fiat
+
+FAIL The metrics and the anchoring of a text chunk use the shaped text assert_approx_equals: start: getComputedTextLength() expected 320.2249755859375 +/- 1 but got 336.3749694824219
+FAIL A dx shift does not break the shaping of a text chunk assert_approx_equals: the end of 'V' expected 95.4000015258789 +/- 0.5 but got 98.14999389648438
+FAIL Text on a path uses the shaped text assert_approx_equals: the end of the text on the path expected 330.2249755859375 +/- 1 but got 346.3749694824219
+FAIL textLength spaces out typographic characters, not the characters of a ligature assert_approx_equals: the position of 'a' expected 98 +/- 1 but got 119.03334045410156
+PASS The anchoring of text with a combining mark uses the shaped text
+FAIL A rotate value does not break the shaping of a text chunk assert_approx_equals: the position of 'V' expected 41.32500076293945 +/- 0.5 but got 44.07500076293945
+FAIL Letter spacing breaks the shaping of a text chunk assert_approx_equals: getComputedTextLength() expected 112.54999542236328 +/- 1 but got 72.875
+

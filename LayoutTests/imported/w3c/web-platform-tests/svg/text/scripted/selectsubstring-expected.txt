@@ -1,0 +1,5 @@
+Hello world
+
+PASS Selects the characters in the range
+PASS A character index past the end throws
+
