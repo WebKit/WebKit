@@ -79,6 +79,9 @@ public:
     void setShouldShapeTextAcrossInlineBoxes() { m_shouldShapeTextAcrossInlineBoxes = true; }
     bool shouldShapeTextAcrossInlineBoxes() const { return m_shouldShapeTextAcrossInlineBoxes; }
 
+    void setShouldUseAlignmentBaseline() { m_shouldUseAlignmentBaseline = true; }
+    bool shouldUseAlignmentBaseline() const { return m_shouldUseAlignmentBaseline; }
+
     // Excluded list markers belonging to ancestor list items, which are aligned with this formatting context's first formatted line but are no part of its content.
     using AscentAndDescent = std::pair<InlineLayoutUnit, InlineLayoutUnit>;
     void setExcludedMarkerLayoutBounds(Vector<AscentAndDescent>&& layoutBounds) { m_excludedMarkerLayoutBounds = WTF::move(layoutBounds); }
@@ -112,6 +115,7 @@ private:
     bool m_inStandardsMode { false };
     bool m_inQuirksMode { false };
     bool m_shouldShapeTextAcrossInlineBoxes { false };
+    bool m_shouldUseAlignmentBaseline { false };
 };
 
 inline InlineLayoutState::InlineLayoutState(BlockLayoutState& parentBlockLayoutState)

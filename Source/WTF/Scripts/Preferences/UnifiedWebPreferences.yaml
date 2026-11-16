@@ -840,6 +840,14 @@ CSS3DTransformBackfaceVisibilityInteroperabilityEnabled:
   humanReadableDescription: "Enable 3D transform behavior for backface-visibility that is specification-compliant but backwards incompatible"
   defaultValue: false
 
+CSSAlignmentBaselineOnInlineBoxesEnabled:
+  type: bool
+  status: testable
+  category: css
+  humanReadableName: "CSS alignment-baseline on inline boxes"
+  humanReadableDescription: "Enable CSS alignment-baseline on inline boxes"
+  defaultValue: false
+
 CSSAppearanceBaseEnabled:
   type: bool
   status: testable

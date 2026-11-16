@@ -27,6 +27,7 @@
 #include "config.h"
 #include "InlineLineBoxBuilder.h"
 
+#include "BaselineAlignment.h"
 #include "InlineLevelBoxInlines.h"
 #include "InlineLineBoxVerticalAligner.h"
 #include "InlineLineBuilder.h"
@@ -155,6 +156,43 @@ NODELETE static bool isLineFitEdgeLeading(const InlineLevelBox& inlineBox)
 {
     ASSERT(inlineBox.isInlineBox());
     return inlineBox.lineFitEdge().isLeading();
+}
+
+static InlineLayoutUnit alignmentBaselineOffset(const InlineLevelBox& inlineBox, const InlineLevelBox& parentInlineBox, FontBaseline lineBaselineType)
+{
+    // https://drafts.csswg.org/css-inline-3/#alignment-baseline-property
+    // The box's alignment baseline lines up with the same baseline of its parent, instead of the line's baseline.
+    ASSERT(inlineBox.isInlineBox() && !inlineBox.isRootInlineBox());
+    auto alignmentBaseline = inlineBox.alignmentBaseline();
+    if (alignmentBaseline == AlignmentBaseline::Baseline)
+        return { };
+    // The 'vertical-align' values that pick a baseline of their own (e.g. middle) or align with the line box (top and bottom) win.
+    auto& verticalAlign = inlineBox.verticalAlign();
+    auto isBaselineRelative = WTF::holdsAlternative<CSS::Keyword::Baseline>(verticalAlign)
+        || WTF::holdsAlternative<CSS::Keyword::Sub>(verticalAlign)
+        || WTF::holdsAlternative<CSS::Keyword::Super>(verticalAlign)
+        || WTF::holdsAlternative<InlineLayoutUnit>(verticalAlign);
+    if (!isBaselineRelative)
+        return { };
+
+    if (alignmentBaseline == AlignmentBaseline::Middle) {
+        // Center the box on its parent's x-middle baseline the way 'vertical-align: middle' does, instead of lining up the two
+        // x-middle baselines as the spec now says, which would move text once 'vertical-align' becomes the shorthand.
+        // https://github.com/w3c/csswg-drafts/issues/13951
+        auto parentXHeight = parentInlineBox.primarymetricsOfPrimaryFont().xHeight().value_or(0.f);
+        return parentXHeight / 2 - (inlineBox.ascent() - inlineBox.descent()) / 2;
+    }
+
+    auto offsetFromLineBaseline = [&](const InlineLevelBox& inlineLevelBox) -> InlineLayoutUnit {
+        auto& fontMetrics = inlineLevelBox.primarymetricsOfPrimaryFont();
+        auto offset = BaselineAlignment::baselineOffsetFromAlphabeticBaseline(alignmentBaseline, fontMetrics);
+        if (lineBaselineType == FontBaseline::Ideographic) {
+            // Vertical lines are aligned on the central baseline, which sits this much above the alphabetic one.
+            offset -= fontMetrics.ascent(FontBaseline::Alphabetic) - fontMetrics.ascent(FontBaseline::Ideographic);
+        }
+        return offset;
+    };
+    return offsetFromLineBaseline(parentInlineBox) - offsetFromLineBaseline(inlineBox);
 }
 
 static InlineLevelBox::AscentAndDescent layoutBoundsWithEdgeAdjustmentForInlineBox(const InlineLevelBox& inlineBox, const FontMetrics& fontMetrics, FontBaseline fontBaseline)
@@ -382,6 +420,9 @@ void LineBoxBuilder::setVerticalPropertiesForInlineLevelBox(const LineBox& lineB
         // With text-box-trim, the inline box top is not always where the content starts.
         auto fontMetricBasedAscent = primaryFontMetricsForInlineBox(inlineLevelBox, lineBox.baselineType()).ascent;
         inlineLevelBox.setInlineBoxContentOffsetForTextBoxTrim(fontMetricBasedAscent - ascentAndDescent.ascent);
+
+        if (!inlineLevelBox.isRootInlineBox() && layoutState().shouldUseAlignmentBaseline())
+            inlineLevelBox.setAlignmentBaselineOffset(alignmentBaselineOffset(inlineLevelBox, lineBox.parentInlineBox(inlineLevelBox), lineBox.baselineType()));
         return;
     }
     if (inlineLevelBox.isLineBreakBox()) {
