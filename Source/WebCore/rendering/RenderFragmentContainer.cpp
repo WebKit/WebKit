@@ -138,21 +138,6 @@ LayoutRect RenderFragmentContainer::fragmentedFlowPortionOverflowRect() const
     return overflowRectForFragmentedFlowPortion(fragmentedFlowPortionRect(), isFirstFragment(), isLastFragment());
 }
 
-LayoutPoint RenderFragmentContainer::fragmentedFlowPortionLocation() const
-{
-    LayoutPoint portionLocation;
-    LayoutRect portionRect = fragmentedFlowPortionRect();
-
-    if (fragmentedFlow()->writingMode().isBlockFlipped()) {
-        LayoutRect physicalFragmentedFlowPortionRect(portionRect);
-        fragmentedFlow()->blockStartRelativeToPhysical(physicalFragmentedFlowPortionRect);
-        portionLocation = physicalFragmentedFlowPortionRect.location();
-    } else
-        portionLocation = portionRect.location();
-
-    return portionLocation;
-}
-
 LayoutRect RenderFragmentContainer::overflowRectForFragmentedFlowPortion(const LayoutRect& fragmentedFlowPortionRect, bool isFirstPortion, bool isLastPortion) const
 {
     ASSERT(isValid());
@@ -197,22 +182,6 @@ bool RenderFragmentContainer::isLastFragment() const
     ASSERT(isValid());
 
     return m_fragmentedFlow->lastFragment() == this;
-}
-
-bool RenderFragmentContainer::shouldClipFragmentedFlowContent() const
-{
-    return hasNonVisibleOverflow();
-}
-
-void RenderFragmentContainer::styleDidChange(Style::Difference diff, const Style::ComputedStyle* oldStyle)
-{
-    RenderBlockFlow::styleDidChange(diff, oldStyle);
-
-    if (!isValid())
-        return;
-
-    if (oldStyle && oldStyle->writingMode().computedWritingMode() !=writingMode().computedWritingMode())
-        m_fragmentedFlow->fragmentChangedWritingMode(this);
 }
 
 void RenderFragmentContainer::repaintFragmentedFlowContent(const LayoutRect& repaintRect) const

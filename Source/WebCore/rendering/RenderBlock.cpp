@@ -778,11 +778,6 @@ bool RenderBlock::simplifiedLayout()
     if (needsSimplifiedNormalFlowLayout())
         simplifiedNormalFlowLayout();
 
-    // Make sure a forced break is applied after the content if we are a flow thread in a simplified layout.
-    // This ensures the size information is correctly computed for the last auto-height fragment receiving content.
-    if (CheckedPtr fragmentedFlow = dynamicDowncast<RenderFragmentedFlow>(*this))
-        fragmentedFlow->applyBreakAfterContent(paddingBoxLogicalBottom());
-
     // Recompute our overflow information.
     // FIXME: Skip recalculation if we didn't actually relayout our in-flow boxes and don't have cached overflow.
     auto contentArea = hasRenderOverflow() ? m_overflow->contentArea() : blockStartRelativeContentBoxRect();

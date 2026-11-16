@@ -47,13 +47,9 @@ class RenderFragmentContainer : public RenderBlockFlow {
     WTF_MAKE_TZONE_ALLOCATED(RenderFragmentContainer);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderFragmentContainer);
 public:
-    void styleDidChange(Style::Difference, const Style::ComputedStyle* oldStyle) override;
-
     void setFragmentedFlowPortionRect(const LayoutRect& rect) { m_fragmentedFlowPortionRect = rect; }
     LayoutRect fragmentedFlowPortionRect() const { return m_fragmentedFlowPortionRect; }
     LayoutRect fragmentedFlowPortionOverflowRect() const;
-
-    NODELETE LayoutPoint fragmentedFlowPortionLocation() const;
 
     virtual void attachFragment();
     virtual void detachFragment();
@@ -72,7 +68,6 @@ public:
 
     bool isFirstFragment() const;
     bool isLastFragment() const;
-    NODELETE virtual bool shouldClipFragmentedFlowContent() const;
 
     // These methods represent the width and height of a "page" and for a RenderFragmentContainer they are just the
     // content width and content height of a fragment. For RenderMultiColumnSets, however, they will be the width and
@@ -106,9 +101,6 @@ public:
     LayoutRect visualOverflowRectForBoxForPropagation(const RenderBox&);
 
     LayoutRect rectFlowPortionForBox(const RenderBox&, const LayoutRect&) const;
-    
-    void setFragmentObjectsFragmentStyle();
-    void restoreFragmentObjectsOriginalStyle();
 
     bool canHaveChildren() const override { return false; }
     bool canHaveGeneratedChildren() const override { return true; }

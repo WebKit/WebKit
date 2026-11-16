@@ -640,11 +640,6 @@ void RenderBlockFlow::layoutBlock(RelayoutChildren relayoutChildren, LayoutUnit 
     LayoutUnit oldHeight = logicalHeight();
     auto afterPaddingEdge = paddingBoxLogicalBottom();
 
-    // Before updating the final size of the flow thread make sure a forced break is applied after the content.
-    // This ensures the size information is correctly computed for the last auto-height fragment receiving content.
-    if (CheckedPtr fragmentedFlow = dynamicDowncast<RenderFragmentedFlow>(*this))
-        fragmentedFlow->applyBreakAfterContent(afterPaddingEdge);
-
     updateLogicalHeight();
     LayoutUnit newHeight = logicalHeight();
 
