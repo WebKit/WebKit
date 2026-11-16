@@ -255,7 +255,6 @@ private:
         bool webViewDidNegotiateModernTLS : 1;
         bool webViewWebContentProcessDidTerminate : 1;
         bool webViewWebContentProcessDidTerminateWithReason : 1;
-        bool webViewWebContentProcessDidTerminateForTesting : 1;
         bool webViewWebProcessDidCrash : 1;
         bool webViewWebProcessDidBecomeResponsive : 1;
         bool webViewWebProcessDidBecomeUnresponsive : 1;

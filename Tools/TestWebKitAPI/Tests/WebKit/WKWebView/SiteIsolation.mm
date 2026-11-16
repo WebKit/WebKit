@@ -292,6 +292,10 @@
 {
     _didBecomeResponsive = true;
 }
+- (void)_webView:(WKWebView *)webView webContentProcessDidTerminateWithReason:(_WKProcessTerminationReason)reason
+{
+    // Handle the termination, so that WebKit doesn't reload the page.
+}
 - (void)webView:(WKWebView *)webView decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction preferences:(WKWebpagePreferences *)preferences decisionHandler:(void (^)(WKNavigationActionPolicy, WKWebpagePreferences *))decisionHandler
 {
     if (_decidePolicyForNavigationActionWithPreferences)
@@ -539,6 +543,15 @@ namespace TestWebKitAPI {
 static void disableSharedProcess(WKWebViewConfiguration *configuration)
 {
     setFeatureEnabled(configuration, @"SiteIsolationSharedProcessEnabled", false);
+}
+
+static void runFunctionsDispatchedToMainRunLoop()
+{
+    bool done = false;
+    RunLoop::mainSingleton().dispatch([&] {
+        done = true;
+    });
+    Util::run(&done);
 }
 
 // WKPreferences._usesPageCache is macOS-only, so disable BFCache via the
@@ -10516,17 +10529,19 @@ TEST(SiteIsolation, ProcessTerminationReason)
     EXPECT_EQ(server.totalRequests(), 2u);
 
     kill([webView firstChildFrame]._processIdentifier, 9);
-    Util::runFor(0.1_s);
-    EXPECT_EQ(server.totalRequests(), 2u);
+    [navigationDelegate waitForDidFinishNavigation];
+    EXPECT_EQ(server.totalRequests(), 4u);
 
     [webView evaluateJavaScript:@"onlyiframe.src='https://webkit.org/iframe2'" completionHandler:nil];
-    while (server.totalRequests() < 3u)
-        Util::spinRunLoop();
-
-    kill([webView mainFrame].info._processIdentifier, 9);
-    [navigationDelegate waitForDidFinishNavigation];
     while (server.totalRequests() < 5u)
         Util::spinRunLoop();
+
+    // The iframe crash used up the page's reload attempt, so a subsequent main frame crash does not reload.
+    pid_t mainFrameProcess = [webView mainFrame].info._processIdentifier;
+    kill(mainFrameProcess, SIGKILL);
+    EXPECT_TRUE(waitForProcessExitWithoutSpinningRunLoop(mainFrameProcess));
+    EXPECT_TRUE([[webView configuration].processPool _detectAndHandleTerminationForTesting:mainFrameProcess]);
+    EXPECT_FALSE([webView isLoading]);
     EXPECT_EQ(server.totalRequests(), 5u);
 }
 
@@ -13585,7 +13600,12 @@ TEST(SiteIsolation, ProvisionalSubframeProcessCrashCompletesParentLoad)
     kill(iframeProcess, SIGKILL);
     [navigationDelegate waitForDidFinishNavigation];
     EXPECT_EQ([webView _webProcessIdentifier], mainFrameProcess);
-    EXPECT_EQ(terminationCount, 0u);
+
+    EXPECT_TRUE(Util::waitFor(^{
+        return terminationCount > 0;
+    }));
+    runFunctionsDispatchedToMainRunLoop();
+    EXPECT_EQ(terminationCount, 1u);
 }
 
 enum class CloseViewsTiming : uint8_t { OpenedViewCallback, OpenerViewCallback };
@@ -13628,8 +13648,7 @@ static void runCloseViewsInsideTerminationCallbackTest(CloseViewsTiming closeVie
         [openerView _close];
         [openedView _close];
     };
-    // webContentProcessDidTerminate isn't called for the opener's iframe crash.
-    openerNavigationDelegate.get().webContentProcessDidTerminateForTesting = ^(WKWebView *, _WKProcessTerminationReason) {
+    openerNavigationDelegate.get().webContentProcessDidTerminate = ^(WKWebView *, _WKProcessTerminationReason) {
         ++openerTerminationCount;
         if (closeViewsTiming == CloseViewsTiming::OpenerViewCallback)
             closeViews();
@@ -13705,10 +13724,10 @@ TEST(SiteIsolation, OpenerWithoutFramesInTerminatedProcessIsNotNotified)
 
     __block unsigned openerTerminationCount = 0;
     __block unsigned openedTerminationCount = 0;
-    openerNavigationDelegate.get().webContentProcessDidTerminateForTesting = ^(WKWebView *, _WKProcessTerminationReason) {
+    openerNavigationDelegate.get().webContentProcessDidTerminate = ^(WKWebView *, _WKProcessTerminationReason) {
         ++openerTerminationCount;
     };
-    opened.navigationDelegate.get().webContentProcessDidTerminateForTesting = ^(WKWebView *, _WKProcessTerminationReason) {
+    opened.navigationDelegate.get().webContentProcessDidTerminate = ^(WKWebView *, _WKProcessTerminationReason) {
         ++openedTerminationCount;
     };
 
@@ -13759,7 +13778,7 @@ TEST(SiteIsolation, ProvisionalMainFrameNavigationToIframeSiteThenProcessCrash)
     auto opened = openWindowFromFrame(webView.get(), uiDelegate.get(), @"https://apple.com/apple", [webView mainFrame].info);
 
     __block unsigned terminationCount = 0;
-    navigationDelegate.get().webContentProcessDidTerminateForTesting = ^(WKWebView *, _WKProcessTerminationReason) {
+    navigationDelegate.get().webContentProcessDidTerminate = ^(WKWebView *, _WKProcessTerminationReason) {
         ++terminationCount;
     };
     [webView evaluateJavaScript:@"location.href = 'https://webkit.org/delayed'" completionHandler:nil];
@@ -13823,18 +13842,6 @@ TEST(SiteIsolation, SameSiteOpenerAndOpeneeMainProcessCrashCallbackReloadsOther)
     EXPECT_WK_STREQ([opened.webView objectByEvaluatingJavaScript:@"document.body.textContent" inFrame:[opened.webView firstChildFrame]], "webkit");
 }
 
-// Termination handling notifies clients of subframe terminations in a function that it dispatches
-// to the main run loop. RunLoop runs dispatched functions in order, so they have all run when this
-// returns.
-static void runFunctionsDispatchedToMainRunLoop()
-{
-    bool done = false;
-    RunLoop::mainSingleton().dispatch([&] {
-        done = true;
-    });
-    Util::run(&done);
-}
-
 enum class HandleExitFirst : bool { Subframe, MainFrame };
 static void runSubframeAndMainFrameProcessExitNotifyOnceTest(HandleExitFirst handleExitFirst)
 {
@@ -13850,7 +13857,7 @@ static void runSubframeAndMainFrameProcessExitNotifyOnceTest(HandleExitFirst han
 
     __block Vector<_WKProcessTerminationReason> reasons;
     RetainPtr<TestWKWebView> view = webView;
-    navigationDelegate.get().webContentProcessDidTerminateForTesting = ^(WKWebView *, _WKProcessTerminationReason reason) {
+    navigationDelegate.get().webContentProcessDidTerminate = ^(WKWebView *, _WKProcessTerminationReason reason) {
         reasons.append(reason);
         [view reload];
     };
@@ -13899,7 +13906,7 @@ TEST(SiteIsolation, TwoSubframeProcessExitsNotifyOnce)
     EXPECT_NE(webKitProcess, appleProcess);
 
     __block unsigned terminationCount = 0;
-    navigationDelegate.get().webContentProcessDidTerminateForTesting = ^(WKWebView *, _WKProcessTerminationReason) {
+    navigationDelegate.get().webContentProcessDidTerminate = ^(WKWebView *, _WKProcessTerminationReason) {
         ++terminationCount;
     };
     kill(webKitProcess, SIGKILL);
@@ -13931,7 +13938,7 @@ TEST(SiteIsolation, PendingSubframeTerminationThenClientTerminationReportsReques
     pid_t iframeProcess = [webView firstChildFrame]._processIdentifier;
 
     __block Vector<_WKProcessTerminationReason> reasons;
-    navigationDelegate.get().webContentProcessDidTerminateForTesting = ^(WKWebView *, _WKProcessTerminationReason reason) {
+    navigationDelegate.get().webContentProcessDidTerminate = ^(WKWebView *, _WKProcessTerminationReason reason) {
         reasons.append(reason);
     };
     kill(iframeProcess, SIGKILL);
@@ -13961,7 +13968,7 @@ TEST(SiteIsolation, PendingSubframeTerminationThenCancelledMainFrameNavigationNo
     pid_t iframeProcess = [webView firstChildFrame]._processIdentifier;
 
     __block unsigned terminationCount = 0;
-    navigationDelegate.get().webContentProcessDidTerminateForTesting = ^(WKWebView *, _WKProcessTerminationReason) {
+    navigationDelegate.get().webContentProcessDidTerminate = ^(WKWebView *, _WKProcessTerminationReason) {
         ++terminationCount;
     };
     __block bool decidedPolicy = false;
@@ -14014,10 +14021,10 @@ TEST(SiteIsolation, TerminateAllWebContentProcessesNotifiesOncePerPage)
 
     __block unsigned openerTerminationCount = 0;
     __block unsigned openedTerminationCount = 0;
-    navigationDelegate.get().webContentProcessDidTerminateForTesting = ^(WKWebView *, _WKProcessTerminationReason) {
+    navigationDelegate.get().webContentProcessDidTerminate = ^(WKWebView *, _WKProcessTerminationReason) {
         ++openerTerminationCount;
     };
-    opened.navigationDelegate.get().webContentProcessDidTerminateForTesting = ^(WKWebView *, _WKProcessTerminationReason) {
+    opened.navigationDelegate.get().webContentProcessDidTerminate = ^(WKWebView *, _WKProcessTerminationReason) {
         ++openedTerminationCount;
     };
     [[webView configuration].processPool _terminateAllWebContentProcesses];
@@ -14075,7 +14082,24 @@ static void killIframeProcessForMemoryLimit(TestWKWebView *webView)
     EXPECT_TRUE([webView.configuration.processPool _requestWebProcessTerminationForTesting:[webView firstChildFrame]._processIdentifier reason:_WKProcessTerminationReasonExceededMemoryLimit]);
 }
 
-TEST(SiteIsolation, SubframeMemoryLimitKillReloadsOnceWhileIframeIsReinserted)
+enum class IframeProcessTermination : bool { MemoryLimitKill, Crash };
+static void terminateIframeProcess(TestWKWebView *webView, IframeProcessTermination termination)
+{
+    switch (termination) {
+    case IframeProcessTermination::MemoryLimitKill:
+        killIframeProcessForMemoryLimit(webView);
+        break;
+    case IframeProcessTermination::Crash: {
+        pid_t iframeProcess = [webView firstChildFrame]._processIdentifier;
+        kill(iframeProcess, SIGKILL);
+        EXPECT_TRUE(waitForProcessExitWithoutSpinningRunLoop(iframeProcess));
+        EXPECT_TRUE([webView.configuration.processPool _detectAndHandleTerminationForTesting:iframeProcess]);
+        break;
+    }
+    }
+}
+
+static void runSubframeTerminationReloadsOnceWhileIframeIsReinsertedTest(IframeProcessTermination termination)
 {
     HTTPServer server({
         { "/example"_s, { "<!DOCTYPE html><iframe src='https://webkit.org/webkit'></iframe>"_s } },
@@ -14087,12 +14111,11 @@ TEST(SiteIsolation, SubframeMemoryLimitKillReloadsOnceWhileIframeIsReinserted)
     [navigationDelegate waitForDidFinishNavigation];
     EXPECT_EQ([navigationDelegate didStartProvisionalNavigationCount], 1u);
 
-    killIframeProcessForMemoryLimit(webView.get());
+    terminateIframeProcess(webView.get(), termination);
     [navigationDelegate waitForDidFinishNavigation];
     EXPECT_EQ([navigationDelegate didStartProvisionalNavigationCount], 2u);
 
-    // A reload sets a pending API request, so the page is loading as soon as WebKit reloads it.
-    killIframeProcessForMemoryLimit(webView.get());
+    terminateIframeProcess(webView.get(), termination);
     runFunctionsDispatchedToMainRunLoop();
     EXPECT_FALSE([webView isLoading]);
     EXPECT_EQ([navigationDelegate didStartProvisionalNavigationCount], 2u);
@@ -14104,14 +14127,24 @@ TEST(SiteIsolation, SubframeMemoryLimitKillReloadsOnceWhileIframeIsReinserted)
         "document.body.appendChild(iframe)" completionHandler:nil];
     while (![webView firstChildFrame] || [webView firstChildFrame]._processIdentifier == terminatedProcess || [webView firstChildFrame]._processIdentifier == [webView _webProcessIdentifier])
         Util::spinRunLoop();
-    killIframeProcessForMemoryLimit(webView.get());
+    terminateIframeProcess(webView.get(), termination);
     runFunctionsDispatchedToMainRunLoop();
     EXPECT_FALSE([webView isLoading]);
     EXPECT_EQ([navigationDelegate didStartProvisionalNavigationCount], 2u);
     EXPECT_EQ([navigationDelegate crashCount], 0u);
 }
 
-TEST(SiteIsolation, SubframeMemoryLimitKillDoesNotReloadFormSubmissionResult)
+TEST(SiteIsolation, SubframeMemoryLimitKillReloadsOnceWhileIframeIsReinserted)
+{
+    runSubframeTerminationReloadsOnceWhileIframeIsReinsertedTest(IframeProcessTermination::MemoryLimitKill);
+}
+
+TEST(SiteIsolation, SubframeCrashReloadsOnceWhileIframeIsReinserted)
+{
+    runSubframeTerminationReloadsOnceWhileIframeIsReinsertedTest(IframeProcessTermination::Crash);
+}
+
+static void runSubframeTerminationDoesNotReloadFormSubmissionResultTest(IframeProcessTermination termination)
 {
     size_t resultRequests { 0 };
     HTTPServer server(HTTPServer::UseCoroutines::Yes, [&](Connection connection) -> ConnectionTask {
@@ -14138,12 +14171,60 @@ TEST(SiteIsolation, SubframeMemoryLimitKillDoesNotReloadFormSubmissionResult)
     [navigationDelegate waitForDidFinishNavigation];
     EXPECT_EQ(resultRequests, 1u);
 
-    // A reload sets a pending API request, so the page is loading as soon as WebKit reloads it.
-    killIframeProcessForMemoryLimit(webView.get());
+    terminateIframeProcess(webView.get(), termination);
     runFunctionsDispatchedToMainRunLoop();
     EXPECT_FALSE([webView isLoading]);
     EXPECT_EQ(resultRequests, 1u);
     EXPECT_EQ([navigationDelegate didStartProvisionalNavigationCount], 1u);
+}
+
+TEST(SiteIsolation, SubframeMemoryLimitKillDoesNotReloadFormSubmissionResult)
+{
+    runSubframeTerminationDoesNotReloadFormSubmissionResultTest(IframeProcessTermination::MemoryLimitKill);
+}
+
+TEST(SiteIsolation, SubframeCrashDoesNotReloadFormSubmissionResult)
+{
+    runSubframeTerminationDoesNotReloadFormSubmissionResultTest(IframeProcessTermination::Crash);
+}
+
+TEST(SiteIsolation, HiddenPageReloadsAfterIframeCrashWhenVisible)
+{
+    size_t exampleRequests { 0 };
+    HTTPServer server(HTTPServer::UseCoroutines::Yes, [&](Connection connection) -> ConnectionTask {
+        while (1) {
+            auto request = co_await connection.awaitableReceiveHTTPRequest();
+            auto path = HTTPServer::parsePath(request);
+            if (path == "/example"_s) {
+                ++exampleRequests;
+                co_await connection.awaitableSend(HTTPResponse("<!DOCTYPE html><iframe src='https://webkit.org/webkit'></iframe>"_s).serialize());
+                continue;
+            }
+            if (path == "/webkit"_s) {
+                co_await connection.awaitableSend(HTTPResponse("webkit"_s).serialize());
+                continue;
+            }
+            EXPECT_FALSE(true);
+        }
+    }, HTTPServer::Protocol::HttpsProxy);
+    auto [webView, navigationDelegate] = siteIsolatedWebViewWithoutCrashHandler(server);
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    pid_t iframeProcess = [webView firstChildFrame]._processIdentifier;
+
+    [webView removeFromSuperview];
+    kill(iframeProcess, SIGKILL);
+    EXPECT_TRUE(waitForProcessExitWithoutSpinningRunLoop(iframeProcess));
+    EXPECT_TRUE([[webView configuration].processPool _detectAndHandleTerminationForTesting:iframeProcess]);
+    runFunctionsDispatchedToMainRunLoop();
+    EXPECT_FALSE([webView isLoading]);
+    EXPECT_EQ(exampleRequests, 1u);
+
+    [webView addToTestWindow];
+    [navigationDelegate waitForDidFinishNavigation];
+    EXPECT_EQ(exampleRequests, 2u);
+    EXPECT_NE([webView firstChildFrame]._processIdentifier, iframeProcess);
+    EXPECT_WK_STREQ([webView objectByEvaluatingJavaScript:@"document.body.textContent" inFrame:[webView firstChildFrame]], "webkit");
 }
 
 static std::pair<RetainPtr<TestWKWebView>, RetainPtr<TestNavigationDelegate>> siteIsolatedViewWithProcessCache(const HTTPServer& server, EnableBackForwardCache enableBackForwardCache = EnableBackForwardCache::No)
@@ -21242,9 +21323,9 @@ TEST(SiteIsolation, NonMainFrameProcessCrash)
     enableSiteIsolation(configuration.get());
     RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
     RetainPtr delegate = adoptNS([TestNavigationDelegate new]);
-    delegate.get().webContentProcessDidTerminate = ^(WKWebView *, _WKProcessTerminationReason) {
-        // Test passes if this delegate is not called for iframe process crashes.
-        EXPECT_FALSE(true);
+    __block Vector<_WKProcessTerminationReason> reasons;
+    delegate.get().webContentProcessDidTerminate = ^(WKWebView *, _WKProcessTerminationReason reason) {
+        reasons.append(reason);
     };
     [webView setNavigationDelegate:delegate.get()];
 
@@ -21262,7 +21343,12 @@ TEST(SiteIsolation, NonMainFrameProcessCrash)
     [webView loadRequest:server.request()];
     NSString *iframeProcessPort = [webView _test_waitForAlert];
     kill([iframeProcessPort intValue], 9);
-    Util::runFor(0.1_s);
+    EXPECT_TRUE(Util::waitFor(^{
+        return !reasons.isEmpty();
+    }));
+    runFunctionsDispatchedToMainRunLoop();
+    ASSERT_EQ(reasons.size(), 1u);
+    EXPECT_EQ(reasons[0], _WKProcessTerminationReasonCrash);
 }
 
 enum class KillIframeProcess : bool { WhileHiddenBeforeNavigation, DuringNavigation };
