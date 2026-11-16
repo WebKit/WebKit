@@ -471,6 +471,10 @@ public:
     bool isInLargestContentfulPaintTextContentSet() const { return hasStateFlag(StateFlag::InLargestContentfulPaintTextContentSet); }
     void setInLargestContentfulPaintTextContentSet() { setStateFlag(StateFlag::InLargestContentfulPaintTextContentSet); }
 
+    bool hasPendingUserAgentShadowTreeUpdate() const { return hasStateFlag(StateFlag::HasPendingUserAgentShadowTreeUpdate); }
+    void setHasPendingUserAgentShadowTreeUpdate() { setStateFlag(StateFlag::HasPendingUserAgentShadowTreeUpdate); }
+    void clearHasPendingUserAgentShadowTreeUpdate() { clearStateFlag(StateFlag::HasPendingUserAgentShadowTreeUpdate); }
+
     enum class CustomElementRegistryKind : bool { Window, Null };
 
     WEBCORE_EXPORT ExceptionOr<ShadowRoot&> attachShadow(const ShadowRootInit&, std::optional<CustomElementRegistryKind> = std::nullopt);

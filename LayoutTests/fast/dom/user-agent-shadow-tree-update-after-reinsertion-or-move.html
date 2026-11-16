@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<body>
+<iframe id="second-document-frame"></iframe>
+<script src="../../resources/js-test.js"></script>
+<script>
+description("Tests that an input gets its shadow tree when it is removed and inserted again before many other inputs are inserted, or moved to another document and back, before a style update, that inputs inserted while many other inputs are inserted and removed around them all get their shadow trees, and that a use element that is listed twice around a use element it depends on shows the current content.");
+
+function makeInput(parent) {
+    const input = document.createElement("input");
+    input.style.width = "50px";
+    input.defaultValue = "a long value that does not fit in the text field";
+    parent.appendChild(input);
+    return input;
+}
+
+// The long value overflows the field only once the input has built its shadow tree, which holds the text.
+// internals.shadowRoot() would build a pending shadow tree itself, so it cannot be used to check this.
+function hasShadowTree(input) {
+    return input.scrollWidth > input.clientWidth;
+}
+
+const frameDocument = document.getElementById("second-document-frame").contentDocument;
+
+const reinsertedInput = makeInput(document.body);
+reinsertedInput.remove();
+document.body.appendChild(reinsertedInput);
+for (let i = 0; i < 100; ++i)
+    document.body.appendChild(document.createElement("input"));
+shouldBeTrue("hasShadowTree(reinsertedInput)");
+
+const movedBackInput = makeInput(frameDocument.body);
+document.body.appendChild(movedBackInput);
+frameDocument.body.appendChild(movedBackInput);
+document.body.offsetHeight;
+shouldBeTrue("hasShadowTree(movedBackInput)");
+
+function allHaveShadowTrees(inputs) {
+    return inputs.every(hasShadowTree);
+}
+
+const keptInputs = [];
+for (let i = 0; i < 150; ++i) {
+    keptInputs.push(makeInput(document.body));
+    const removedInput = document.createElement("input");
+    document.body.appendChild(removedInput);
+    removedInput.remove();
+}
+shouldBeTrue("allHaveShadowTrees(keptInputs)");
+
+function reinsert(element) {
+    const parent = element.parentNode;
+    element.remove();
+    parent.appendChild(element);
+}
+
+// <use href="#x"> draws a copy of element x. Here outer-use copies inner-use, which copies the rectangle.
+// When inner-use is updated, it makes outer-use update again. The reinserts below make the next style update
+// handle outer-use before and after inner-use, so outer-use gets updated twice. Check that it still draws the
+// widened rectangle.
+document.body.insertAdjacentHTML("beforeend", "<svg><rect id='shape' width='40' height='10'/><use id='inner-use' href='#shape'/><use id='outer-use' href='#inner-use'/></svg>");
+const shape = document.getElementById("shape");
+const innerUse = document.getElementById("inner-use");
+const outerUse = document.getElementById("outer-use");
+document.body.offsetHeight;
+reinsert(outerUse);
+reinsert(innerUse);
+reinsert(outerUse);
+shape.setAttribute("width", "60");
+shouldBe("outerUse.getBBox().width", "60");
+</script>
+</body>
+</html>

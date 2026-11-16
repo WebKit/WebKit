@@ -1837,10 +1837,8 @@ Node::NeedsPostConnectionSteps HTMLInputElement::insertionSteps(InsertionType in
     resetListAttributeTargetObserver();
     if (isRadioButton())
         updateValidity();
-    if (insertionType.connectedToDocument && m_inputType->needsShadowSubtree() && !m_inputType->hasCreatedShadowSubtree() && !m_hasPendingUserAgentShadowTreeUpdate) {
+    if (insertionType.connectedToDocument && m_inputType->needsShadowSubtree() && !m_inputType->hasCreatedShadowSubtree() && !hasPendingUserAgentShadowTreeUpdate())
         protect(document())->addElementWithPendingUserAgentShadowTreeUpdate(*this);
-        m_hasPendingUserAgentShadowTreeUpdate = true;
-    }
     if (!insertionType.connectedToDocument) {
         addToRadioButtonGroup();
         return result;
@@ -1850,9 +1848,8 @@ Node::NeedsPostConnectionSteps HTMLInputElement::insertionSteps(InsertionType in
 
 void HTMLInputElement::updateUserAgentShadowTree()
 {
-    ASSERT(m_hasPendingUserAgentShadowTreeUpdate);
+    ASSERT(hasPendingUserAgentShadowTreeUpdate());
     protect(document())->removeElementWithPendingUserAgentShadowTreeUpdate(*this);
-    m_hasPendingUserAgentShadowTreeUpdate = false;
     protect(m_inputType)->createShadowSubtreeIfNeeded();
 }
 
@@ -1870,10 +1867,8 @@ void HTMLInputElement::removingSteps(RemovalType removalType, ContainerNode& old
         protect(oldParentOfRemovedTree.treeScope())->radioButtonGroups().removeButton(*this);
     if (removalType.disconnectedFromDocument && !form())
         removeFromRadioButtonGroup();
-    if (removalType.disconnectedFromDocument && m_hasPendingUserAgentShadowTreeUpdate) {
+    if (removalType.disconnectedFromDocument && hasPendingUserAgentShadowTreeUpdate())
         protect(document())->removeElementWithPendingUserAgentShadowTreeUpdate(*this);
-        m_hasPendingUserAgentShadowTreeUpdate = false;
-    }
     ASSERT(!isConnected());
     if (removalType.disconnectedFromDocument && !form() && isRadioButton())
         updateValidity();
