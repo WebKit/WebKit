@@ -41,6 +41,7 @@ namespace WebCore {
 class MessagePortChannelRegistry;
 
 enum class MessagePortStatus : uint8_t { Open, Unclaimed, Closed };
+enum class MessagePortPostResult : uint8_t { Dropped, Queued, QueuedFirstMessage };
 
 class MessagePortChannel : public RefCountedAndCanMakeWeakPtr<MessagePortChannel> {
 public:
@@ -55,8 +56,8 @@ public:
     NODELETE WEBCORE_EXPORT bool includesPort(const MessagePortIdentifier&);
     void entanglePortWithProcess(const MessagePortIdentifier&, ProcessIdentifier);
     void disentanglePort(const MessagePortIdentifier&);
-    void closePort(const MessagePortIdentifier&, MessagePortStatus);
-    bool postMessageToRemote(MessageWithMessagePorts&&, const MessagePortIdentifier& remoteTarget, CompletionHandlerCallingScope&& blobURLsInFlight);
+    Vector<TransferredMessagePort> closePort(const MessagePortIdentifier&, MessagePortStatus);
+    MessagePortPostResult postMessageToRemote(MessageWithMessagePorts&&, const MessagePortIdentifier& remoteTarget, CompletionHandlerCallingScope&& blobURLsInFlight);
 
     void takeAllMessagesForPort(const MessagePortIdentifier&, CompletionHandler<void(Vector<MessageWithMessagePorts>&&, CompletionHandler<void()>&&)>&&);
 

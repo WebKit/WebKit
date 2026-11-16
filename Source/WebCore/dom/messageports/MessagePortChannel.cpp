@@ -110,7 +110,7 @@ void MessagePortChannel::disentanglePort(const MessagePortIdentifier& port)
     auto protectedThis = WTF::move(m_entangledToProcessProtectors[i]);
 }
 
-void MessagePortChannel::closePort(const MessagePortIdentifier& port, MessagePortStatus status)
+Vector<TransferredMessagePort> MessagePortChannel::closePort(const MessagePortIdentifier& port, MessagePortStatus status)
 {
     ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
     ASSERT(status != MessagePortStatus::Open);
@@ -122,13 +122,18 @@ void MessagePortChannel::closePort(const MessagePortIdentifier& port, MessagePor
     if (m_status[i] != MessagePortStatus::Closed)
         m_status[i] = status;
 
-    m_pendingMessages[i].clear();
+    Vector<TransferredMessagePort> droppedPorts;
+    for (auto& pendingMessage : std::exchange(m_pendingMessages[i], { }))
+        droppedPorts.appendVector(WTF::move(pendingMessage.first.transferredPorts));
+
     m_pendingMessagePortTransfers[i].clear();
     m_pendingMessageProtectors[i] = nullptr;
     m_entangledToProcessProtectors[i] = nullptr;
+
+    return droppedPorts;
 }
 
-bool MessagePortChannel::postMessageToRemote(MessageWithMessagePorts&& message, const MessagePortIdentifier& remoteTarget, CompletionHandlerCallingScope&& blobURLsInFlight)
+MessagePortPostResult MessagePortChannel::postMessageToRemote(MessageWithMessagePorts&& message, const MessagePortIdentifier& remoteTarget, CompletionHandlerCallingScope&& blobURLsInFlight)
 {
     ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
 
@@ -136,18 +141,18 @@ bool MessagePortChannel::postMessageToRemote(MessageWithMessagePorts&& message, 
     size_t i = remoteTarget == m_ports[0] ? 0 : 1;
 
     if (m_status[i] != MessagePortStatus::Open)
-        return false;
+        return MessagePortPostResult::Dropped;
 
     m_pendingMessages[i].append({ WTF::move(message), WTF::move(blobURLsInFlight) });
     LOG_WITH_STREAM(MessagePorts, stream << "MessagePortChannel "_s << logString() << " ("_s << this << ") now has "_s << m_pendingMessages[i].size() << " messages pending on port "_s << remoteTarget.logString());
 
     if (m_pendingMessages[i].size() == 1) {
         m_pendingMessageProtectors[i] = this;
-        return true;
+        return MessagePortPostResult::QueuedFirstMessage;
     }
 
     ASSERT(m_pendingMessageProtectors[i] == this);
-    return false;
+    return MessagePortPostResult::Queued;
 }
 
 void MessagePortChannel::takeAllMessagesForPort(const MessagePortIdentifier& port, CompletionHandler<void(Vector<MessageWithMessagePorts>&&, CompletionHandler<void()>&&)>&& callback)

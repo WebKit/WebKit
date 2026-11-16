@@ -118,7 +118,7 @@ void MessagePortChannelRegistry::didCloseMessagePort(const MessagePortIdentifier
         LOG_WITH_STREAM(MessagePorts, stream << "Registry: (Note) The channel closed for port "_s << port.logString() << " had messages pending or in flight"_s);
 #endif
 
-    channel->closePort(port, status);
+    closeTransferredPorts(channel->closePort(port, status));
 
     // FIXME: When making message ports be multi-process, this should probably push a notification
     // to the remaining port to tell it this port closed.
@@ -134,10 +134,34 @@ bool MessagePortChannelRegistry::didPostMessageToRemote(MessageWithMessagePorts&
     RefPtr channel = m_openChannels.get(remoteTarget);
     if (!channel) {
         LOG_WITH_STREAM(MessagePorts, stream << "Registry: Could not find MessagePortChannel for port "_s << remoteTarget.logString() << "; It was probably closed. Message will be dropped."_s);
+        closeTransferredPorts(WTF::move(message.transferredPorts));
         return false;
     }
 
-    return channel->postMessageToRemote(WTF::move(message), remoteTarget, WTF::move(blobURLsInFlight));
+    // Keep the transferred ports so they can be closed if the channel drops the message.
+    auto transferredPorts = message.transferredPorts;
+    switch (channel->postMessageToRemote(WTF::move(message), remoteTarget, WTF::move(blobURLsInFlight))) {
+    case MessagePortPostResult::Dropped:
+        closeTransferredPorts(WTF::move(transferredPorts));
+        return false;
+    case MessagePortPostResult::Queued:
+        return false;
+    case MessagePortPostResult::QueuedFirstMessage:
+        return true;
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
+void MessagePortChannelRegistry::closeTransferredPorts(Vector<TransferredMessagePort>&& transferredPorts)
+{
+    // These ports were disentangled for transfer but will never be entangled, so nothing else would close them.
+    // Closing one can drop messages carrying more ports, so use a worklist rather than recursing.
+    auto worklist = WTF::move(transferredPorts);
+    while (!worklist.isEmpty()) {
+        auto port = worklist.takeLast().first;
+        if (RefPtr channel = m_openChannels.get(port))
+            worklist.appendVector(channel->closePort(port, MessagePortStatus::Closed));
+    }
 }
 
 void MessagePortChannelRegistry::takeAllMessagesForPort(const MessagePortIdentifier& port, CompletionHandler<void(Vector<MessageWithMessagePorts>&&, CompletionHandler<void()>&&)>&& callback)
