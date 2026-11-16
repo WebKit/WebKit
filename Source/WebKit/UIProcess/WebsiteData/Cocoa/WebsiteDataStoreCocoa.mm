@@ -240,6 +240,7 @@ void WebsiteDataStore::platformSetNetworkParameters(WebsiteDataStoreParameters& 
     parameters.networkSessionParameters.resourceLoadStatisticsParameters.standaloneApplicationDomain = WebCore::RegistrableDomain { m_configuration->standaloneApplicationURL() };
     parameters.networkSessionParameters.resourceLoadStatisticsParameters.manualPrevalentResource = WTF::move(resourceLoadStatisticsManualPrevalentResource);
     parameters.networkSessionParameters.resourceLoadStatisticsParameters.exemptAllowlistedCookiesFromITP = internalDebugFeatureEnabled(WebPreferencesKey::exemptAllowlistedCookiesFromItpKey());
+    parameters.networkSessionParameters.resourceLoadStatisticsParameters.extendAllowlistedCookieLifetime = internalDebugFeatureEnabled(WebPreferencesKey::extendAllowlistedCookieLifetimeKey());
 
     auto cookieFile = directories.cookieStorageFile;
 #if PLATFORM(MAC)

@@ -1809,6 +1809,13 @@ void NetworkProcess::setShouldEnbleSameSiteStrictEnforcementForTesting(PAL::Sess
     completionHandler();
 }
 
+void NetworkProcess::setExtendAllowlistedCookieLifetime(PAL::SessionID sessionID, bool extend, CompletionHandler<void()>&& completionHandler)
+{
+    if (CheckedPtr session = networkSession(sessionID))
+        session->setExtendAllowlistedCookieLifetime(extend);
+    completionHandler();
+}
+
 void NetworkProcess::setExemptAllowlistedCookiesFromITP(PAL::SessionID sessionID, bool exempt, CompletionHandler<void()>&& completionHandler)
 {
     if (CheckedPtr session = networkSession(sessionID))
