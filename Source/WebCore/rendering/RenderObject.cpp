@@ -232,7 +232,7 @@ void RenderObject::setFragmentedFlowStateIncludingDescendants(FragmentedFlowStat
 
     for (CheckedRef child : childrenOfType<RenderObject>(*renderElement)) {
         // If the child is a fragmentation context it already updated the descendants flag accordingly.
-        if (child->isRenderFragmentedFlow() && skipDescendentFragmentedFlow == SkipDescendentFragmentedFlow::Yes)
+        if (child->isRenderMultiColumnFlow() && skipDescendentFragmentedFlow == SkipDescendentFragmentedFlow::Yes)
             continue;
         if (child->isOutOfFlowPositioned()) {
             // Fragmented status propagation stops at out-of-flow boundary.
@@ -283,7 +283,7 @@ void RenderObject::initializeFragmentedFlowStateOnInsertion()
     ASSERT(parent());
 
     // A RenderFragmentedFlow is always considered to be inside itself, so it never has to change its state in response to parent changes.
-    if (isRenderFragmentedFlow())
+    if (isRenderMultiColumnFlow())
         return;
 
     auto computedState = computedFragmentedFlowState(*this);
@@ -306,7 +306,7 @@ void RenderObject::resetFragmentedFlowStateOnRemoval()
     }
 
     // A RenderFragmentedFlow is always considered to be inside itself, so it never has to change its state in response to parent changes.
-    if (isRenderFragmentedFlow())
+    if (isRenderMultiColumnFlow())
         return;
 
     setFragmentedFlowStateIncludingDescendants(FragmentedFlowState::NotInsideFlow);

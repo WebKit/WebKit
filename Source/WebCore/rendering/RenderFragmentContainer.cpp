@@ -55,13 +55,13 @@ namespace WebCore {
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderFragmentContainer);
 
 RenderFragmentContainer::RenderFragmentContainer(Type type, Element& element, Style::ComputedStyle&& style, RenderFragmentedFlow* fragmentedFlow)
-    : RenderBlockFlow(type, element, WTF::move(style), BlockFlowFlag::IsFragmentContainer)
+    : RenderBlockFlow(type, element, WTF::move(style))
     , m_fragmentedFlow(fragmentedFlow)
 {
 }
 
 RenderFragmentContainer::RenderFragmentContainer(Type type, Document& document, Style::ComputedStyle&& style, RenderFragmentedFlow* fragmentedFlow)
-    : RenderBlockFlow(type, document, WTF::move(style), BlockFlowFlag::IsFragmentContainer)
+    : RenderBlockFlow(type, document, WTF::move(style))
     , m_fragmentedFlow(fragmentedFlow)
 {
 }

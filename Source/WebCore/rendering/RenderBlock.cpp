@@ -1386,7 +1386,7 @@ bool RenderBlock::createsNewFormattingContext() const
         || isRenderTableCaption()
         || isFieldset()
         || isDocumentElementRenderer()
-        || isRenderFragmentedFlow()
+        || isRenderMultiColumnFlow()
         || isRenderOrLegacyRenderSVGForeignObject()
         || style.specifiesColumns()
         || style.columnSpan() == ColumnSpan::All
@@ -1412,7 +1412,7 @@ bool RenderBlock::isSelectionRoot() const
         || isPositioned() || isFloating()
         || isRenderTableCell() || isNonReplacedAtomicInlineLevelBox()
         || isTransformed() || hasReflection() || hasMask() || isWritingModeRoot()
-        || isRenderFragmentedFlow() || style().columnSpan() == ColumnSpan::All
+        || isRenderMultiColumnFlow() || style().columnSpan() == ColumnSpan::All
         || isFlexItemIncludingDeprecated() || isGridItem())
         return true;
     
@@ -1538,7 +1538,7 @@ GapRects RenderBlock::selectionGaps(RenderBlock& rootBlock, const LayoutPoint& r
         return { };
     }
 
-    if (isTransformed() || style().columnSpan() == ColumnSpan::All || isRenderFragmentedFlow()) {
+    if (isTransformed() || style().columnSpan() == ColumnSpan::All || isRenderMultiColumnFlow()) {
         // FIXME: We should learn how to gap fill multiple columns and transforms eventually.
         lastLogicalTop = blockDirectionOffset(rootBlock, offsetFromRootBlock) + logicalHeight();
         lastLogicalLeft = logicalLeftSelectionOffset(rootBlock, logicalHeight(), cache);
@@ -2082,7 +2082,7 @@ PositionWithAffinity RenderBlock::positionForPointWithInlineChildren(const Layou
 NODELETE static inline bool isChildHitTestCandidate(const RenderBox& box, HitTestSource source)
 {
     auto isVisible = source == HitTestSource::Script ? box.style().visibility() == Visibility::Visible : box.usedStyle().visibility() == UsedVisibility::Visible;
-    return box.borderBoxHeight() && isVisible && !box.isOutOfFlowPositioned() && !box.isRenderFragmentedFlow();
+    return box.borderBoxHeight() && isVisible && !box.isOutOfFlowPositioned() && !box.isRenderMultiColumnFlow();
 }
 
 // Valid candidates in a FragmentedFlow must be rendered by the fragment.

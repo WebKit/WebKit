@@ -1065,7 +1065,7 @@ void RenderBoxModelObject::addOutOfFlowBox(RenderBox& outOfFlowBox)
 
     outOfFlowBox.clearGridAreaContentSize();
 
-    if (outOfFlowBox.isRenderFragmentedFlow())
+    if (outOfFlowBox.isRenderMultiColumnFlow())
         return;
     // FIXME: Find out if we can do this as part of outOfFlowBox.setChildNeedsLayout(MarkingBehavior::OnlyThis)
     if (outOfFlowBox.needsLayout()) {

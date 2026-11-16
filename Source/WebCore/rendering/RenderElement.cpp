@@ -2564,7 +2564,7 @@ void RenderElement::removeFromRenderFragmentedFlowIncludingDescendants(bool shou
 {
     // Once we reach another flow thread we don't need to update the flow thread state
     // but we have to continue cleanup the flow thread info.
-    if (isRenderFragmentedFlow())
+    if (isRenderMultiColumnFlow())
         shouldUpdateState = false;
 
     for (CheckedRef child : childrenOfType<RenderObject>(*this)) {

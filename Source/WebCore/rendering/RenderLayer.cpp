@@ -651,7 +651,7 @@ bool RenderLayer::shouldBeNormalFlowOnly() const
         || renderer().isRenderEmbeddedObject()
         || renderer().isRenderIFrame()
         || (renderer().style().specifiesColumns() && !isRenderViewLayer())
-        || renderer().isRenderFragmentedFlow();
+        || renderer().isRenderMultiColumnFlow();
 }
 
 bool RenderLayer::shouldBeCSSStackingContext() const
@@ -1328,7 +1328,7 @@ void RenderLayer::recursiveUpdateLayerPositions(OptionSet<UpdateLayerPositionsFl
 #endif
         updatePagination();
         LAYER_POSITIONS_ASSERT_IMPLIES(mode == Verify, m_enclosingPaginationLayer.get() ==  oldEnclosingPaginationLayer);
-    } else if (renderer().isRenderFragmentedFlow()) {
+    } else if (renderer().isRenderMultiColumnFlow()) {
         LAYER_POSITIONS_ASSERT_IMPLIES(mode == Verify, m_enclosingPaginationLayer.get() == this);
         m_enclosingPaginationLayer = *this;
         flags.add(UpdatePagination);
@@ -2021,7 +2021,7 @@ void RenderLayer::updatePagination()
     // genuinely know if it is going to have to split itself up when painting only its contents (and not any other descendant
     // layers). We track an enclosingPaginationLayer instead of using a simple bit, since we want to be able to get back
     // to that layer easily.
-    if (renderer().isRenderFragmentedFlow()) {
+    if (renderer().isRenderMultiColumnFlow()) {
         m_enclosingPaginationLayer = *this;
         return;
     }
@@ -4715,7 +4715,7 @@ bool RenderLayer::hitTest(const HitTestRequest& request, const HitTestLocation& 
     ASSERT(isSelfPaintingLayer() || hasSelfPaintingLayerDescendant());
     ASSERT(!renderer().view().needsLayout());
     
-    ASSERT(!isRenderFragmentedFlow());
+    ASSERT(!isRenderMultiColumnFlow());
     LayoutRect hitTestArea = renderer().view().documentRect();
     if (!request.ignoreClipping()) {
         const auto& settings = renderer().settings();
@@ -4810,7 +4810,7 @@ void RenderLayer::establishesTopLayerDidChange()
 RenderLayer* RenderLayer::enclosingFragmentedFlowAncestor() const
 {
     RenderLayer* curr = parent();
-    for (; curr && !curr->isRenderFragmentedFlow(); curr = curr->parent()) {
+    for (; curr && !curr->isRenderMultiColumnFlow(); curr = curr->parent()) {
         if (curr->isStackingContext() && curr->isComposited()) {
             // We only adjust the position of the first level of layers.
             return nullptr;
@@ -6292,7 +6292,7 @@ bool RenderLayer::shouldBeSelfPaintingLayer() const
         || renderer().isRenderVideo()
         || renderer().isRenderEmbeddedObject()
         || renderer().isRenderIFrame()
-        || renderer().isRenderFragmentedFlow()
+        || renderer().isRenderMultiColumnFlow()
         || isScreenCaptureProtectionLayer();
 }
 

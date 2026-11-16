@@ -933,7 +933,7 @@ void RenderTreeBuilder::destroyAndCleanUpAnonymousWrappers(RenderObject& rendere
     }
 
     auto isAnonymousAndSafeToDelete = [] (const auto& renderer) {
-        return renderer.isAnonymous() && !renderer.isRenderView() && !renderer.isRenderFragmentedFlow() && !renderer.isRenderSVGViewportContainer();
+        return renderer.isAnonymous() && !renderer.isRenderView() && !renderer.isRenderMultiColumnFlow() && !renderer.isRenderSVGViewportContainer();
     };
 
     auto destroyRootIncludingAnonymous = [&] () -> RenderObject& {

@@ -81,7 +81,7 @@ inline bool RenderElement::isAnonymousBlock() const
         && !isRenderMathMLBlock()
 #endif
         && !isRenderListOutsideMarker()
-        && !isRenderFragmentedFlow()
+        && !isRenderMultiColumnFlow()
         && !isRenderMultiColumnSet()
         && !isRenderView()
         && !isViewTransitionContainingBlock();

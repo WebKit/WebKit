@@ -225,7 +225,7 @@ void RenderTreeBuilder::MultiColumn::restoreColumnSpannersForContainer(RenderMul
 
 void RenderTreeBuilder::MultiColumn::multiColumnDescendantInserted(RenderMultiColumnFlow& flow, RenderObject& newDescendant)
 {
-    if (gShiftingSpanner || gRestoringColumnSpannersForContainer || newDescendant.isRenderFragmentedFlow())
+    if (gShiftingSpanner || gRestoringColumnSpannersForContainer || newDescendant.isRenderMultiColumnFlow())
         return;
 
     auto* subtreeRoot = &newDescendant;

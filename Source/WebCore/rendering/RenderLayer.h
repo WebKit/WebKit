@@ -988,7 +988,7 @@ public:
 
     IndirectCompositingReason indirectCompositingReason() const { return static_cast<IndirectCompositingReason>(m_indirectCompositingReason); }
 
-    bool isRenderFragmentedFlow() const { return renderer().isRenderFragmentedFlow(); }
+    bool isRenderMultiColumnFlow() const { return renderer().isRenderMultiColumnFlow(); }
     bool isInsideFragmentedFlow() const { return renderer().fragmentedFlowState() != RenderObject::FragmentedFlowState::NotInsideFlow; }
 
     NODELETE RenderLayer* enclosingFragmentedFlowAncestor() const;

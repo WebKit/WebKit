@@ -149,4 +149,4 @@ TextStream& operator<<(TextStream&, const RenderFragmentContainer&);
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderFragmentContainer, isRenderFragmentContainer())
+SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderFragmentContainer, isRenderMultiColumnSet())

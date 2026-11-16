@@ -223,4 +223,4 @@ protected:
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderFragmentedFlow, isRenderFragmentedFlow())
+SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderFragmentedFlow, isRenderMultiColumnFlow())

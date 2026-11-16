@@ -155,7 +155,7 @@ NODELETE static bool canMapBetweenRenderersViaLayers(const RenderLayerModelObjec
         if (current->hasTransformOrPerspective())
             return false;
         
-        if (current->isRenderFragmentedFlow())
+        if (current->isRenderMultiColumnFlow())
             return false;
 
         if (current->isLegacyRenderSVGRoot())

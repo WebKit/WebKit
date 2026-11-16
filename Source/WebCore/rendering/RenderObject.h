@@ -253,11 +253,9 @@ public:
     // Type Specific Flags
 
     enum class BlockFlowFlag : uint8_t {
-        IsFragmentContainer = 1 << 0,
-        IsFragmentedFlow = 1 << 1,
-        IsTextControl = 1 << 2,
-        IsSVGBlock = 1 << 3,
-        IsViewTransitionContainingBlock = 1 << 4,
+        IsTextControl = 1 << 0,
+        IsSVGBlock = 1 << 1,
+        IsViewTransitionContainingBlock = 1 << 2,
     };
 
     enum class LineBreakFlag : uint8_t {
@@ -465,7 +463,6 @@ public:
 #if ENABLE(MODEL_ELEMENT)
     bool isRenderModel() const { return type() == Type::Model; }
 #endif
-    bool isRenderFragmentContainer() const { return isRenderBlockFlow() && m_typeSpecificFlags.blockFlowFlags().contains(BlockFlowFlag::IsFragmentContainer); }
     bool isRenderReplica() const { return type() == Type::Replica; }
 
     bool isRenderSlider() const { return type() == Type::Slider; }
@@ -684,7 +681,6 @@ public:
     bool isHorizontalWritingMode() const { return !m_stateBitfields.hasFlag(StateFlag::VerticalWritingMode); }
 
     bool hasReflection() const { return hasRareData() && rareData().hasReflection; }
-    bool isRenderFragmentedFlow() const { return isRenderBlockFlow() && m_typeSpecificFlags.blockFlowFlags().contains(BlockFlowFlag::IsFragmentedFlow); }
     bool hasOutlineAutoAncestor() const { return hasRareData() && rareData().hasOutlineAutoAncestor; }
     bool paintContainmentApplies() const { return m_stateBitfields.hasFlag(StateFlag::PaintContainmentApplies); }
     bool hasSVGTransform() const { return m_stateBitfields.hasFlag(StateFlag::HasSVGTransform); }

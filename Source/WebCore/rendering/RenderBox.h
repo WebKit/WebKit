@@ -568,7 +568,7 @@ public:
     NODELETE RenderBoxFragmentInfo* renderBoxFragmentInfo(RenderFragmentContainer*, RenderBoxFragmentInfoFlags = RenderBoxFragmentInfoFlags::CacheRenderBoxFragmentInfo) const;
 
     // True if this box can have a range in an outside fragmentation context.
-    bool canHaveOutsideFragmentRange() const { return !isRenderFragmentedFlow(); }
+    bool canHaveOutsideFragmentRange() const { return !isRenderMultiColumnFlow(); }
     virtual bool needsLayoutAfterFragmentRangeChange() const { return false; }
 
     bool hasUnsplittableScrollingOverflow() const;

@@ -72,12 +72,12 @@ static void forEachFragmentInRange(FragmentList& fragmentList, const RenderFragm
 }
 
 RenderFragmentedFlow::RenderFragmentedFlow(Type type, Document& document, Style::ComputedStyle&& style)
-    : RenderBlockFlow(type, document, WTF::move(style), BlockFlowFlag::IsFragmentedFlow)
+    : RenderBlockFlow(type, document, WTF::move(style))
     , m_fragmentsInvalidated(false)
     , m_fragmentsHaveUniformLogicalHeight(true)
     , m_pageLogicalSizeChanged(false)
 {
-    ASSERT(isRenderFragmentedFlow());
+    ASSERT(isRenderMultiColumnFlow());
 }
 
 RenderFragmentedFlow::~RenderFragmentedFlow() = default;
@@ -534,7 +534,7 @@ bool RenderFragmentedFlow::computedFragmentRangeForBox(const RenderBox& box, Ren
 
     // Search the fragment range using the information provided by the containing block chain.
     auto* containingBlock = const_cast<RenderBox*>(&box);
-    while (!containingBlock->isRenderFragmentedFlow()) {
+    while (!containingBlock->isRenderMultiColumnFlow()) {
         // FIXME: Use the containingBlock() value once we patch all the layout systems to be fragment range aware
         // (e.g. if we use containingBlock() the shadow controls of a video element won't get the range from the
         // video box because it's not a block; they need to be patched separately).
@@ -652,7 +652,7 @@ LayoutUnit RenderFragmentedFlow::offsetFromLogicalTopOfFirstFragment(const Rende
             container = container->container();
         return container;
     };
-    while (currentBox && !is<RenderView>(*currentBox) && !currentBox->isRenderFragmentedFlow()) {
+    while (currentBox && !is<RenderView>(*currentBox) && !currentBox->isRenderMultiColumnFlow()) {
         CheckedPtr containerBox = dynamicDowncast<RenderBox>(nextBoxContainer(*currentBox));
         if (!containerBox)
             return 0;
