@@ -31,6 +31,7 @@
 #include "CryptoAlgorithmAesCtrParams.h"
 #include "CryptoKeyAES.h"
 #include "ExceptionOr.h"
+#include "GCryptUtilities.h"
 #include <pal/crypto/gcrypt/Handle.h>
 #include <pal/crypto/gcrypt/Utilities.h>
 
@@ -161,7 +162,6 @@ static std::optional<Vector<uint8_t>> gcryptAESCTR(PAL::GCrypt::CipherOperation 
     // starting from the counter set to 0.
 
     Vector<uint8_t> output;
-    Vector<uint8_t> blockCounterData(16);
     size_t inputTextSize = inputText.size();
 
     for (size_t i = 0; i < inputTextSize; i += 16) {
@@ -171,15 +171,13 @@ static std::optional<Vector<uint8_t>> gcryptAESCTR(PAL::GCrypt::CipherOperation 
         PAL::GCrypt::Handle<gcry_mpi_t> blockCounterMPI(gcry_mpi_new(0));
         gcry_mpi_add(blockCounterMPI, nonceMPI, counterMPI);
 
-        error = gcry_mpi_print(GCRYMPI_FMT_USG, blockCounterData.mutableSpan().data(), blockCounterData.size(), nullptr, blockCounterMPI);
-        if (error != GPG_ERR_NO_ERROR) {
-            PAL::GCrypt::logError(error);
+        auto blockCounterData = mpiZeroPrefixedData(blockCounterMPI, blockSize);
+        if (!blockCounterData)
             return std::nullopt;
-        }
 
         // Encrypt/decrypt this single block with the block-specific counter. Output for this
         // single block is appended to the general output vector.
-        auto blockOutput = callOperation(operation, handle, blockCounterData, inputText.subspan(i).data(), blockInputSize);
+        auto blockOutput = callOperation(operation, handle, *blockCounterData, inputText.subspan(i).data(), blockInputSize);
         if (!blockOutput)
             return std::nullopt;
 
