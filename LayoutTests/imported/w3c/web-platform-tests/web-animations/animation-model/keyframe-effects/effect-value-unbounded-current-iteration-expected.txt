@@ -1,0 +1,5 @@
+
+PASS iteration composition with an infinite current iteration
+PASS iteration composition with a current iteration too large to be applied one accumulation at a time
+PASS iteration composition with a current iteration small enough to be applied one accumulation at a time
+
