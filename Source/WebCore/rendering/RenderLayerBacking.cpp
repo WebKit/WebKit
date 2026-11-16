@@ -389,7 +389,7 @@ RenderLayerBacking::~RenderLayerBacking()
     updateForegroundLayer(false);
     clearSVGSegmentLayers();
     updateBackgroundLayer(false);
-    updateMaskingLayer(false, false, false);
+    updateMaskingLayer(false, false);
     updateScrollingLayers(false);
     
     ASSERT(!m_viewportConstrainedNodeID);
@@ -1391,7 +1391,7 @@ void RenderLayerBacking::updateReflectionLayer()
 void RenderLayerBacking::updateConfigurationAfterStyleChange()
 {
     CheckedRef renderer = this->renderer();
-    updateMaskingLayer(renderer->hasMask(), renderer->hasClipPath(), needsCornerShapeMask());
+    updateMaskingLayer(renderer->hasMask(), renderer->hasClipPath());
 
     updateReflectionLayer();
 
@@ -1501,7 +1501,7 @@ bool RenderLayerBacking::updateConfiguration(const RenderLayer* compositingAnces
         }
     }
 
-    if (updateMaskingLayer(renderer->hasMask(), renderer->hasClipPath(), needsCornerShapeMask()))
+    if (updateMaskingLayer(renderer->hasMask(), renderer->hasClipPath()))
         layerConfigChanged = true;
 
     updateReflectionLayer();
@@ -1965,6 +1965,11 @@ void RenderLayerBacking::updateGeometry(const RenderLayer* compositedAncestor)
         };
 
         clipLayer->setContentsClippingRect(computeMasksToBoundsRect());
+
+        if (CheckedPtr box = dynamicDowncast<RenderBox>(renderer)) {
+            auto borderShape = BorderShape::shapeForBorderRect(box->usedStyle(), owningLayer->rendererBorderBoxRect());
+            setContentsClipShapePath(*clipLayer, style, borderShape, pixelSnappingScaleFactor, -clipLayer->offsetFromRenderer());
+        }
     }
 
     if (m_maskLayer)
@@ -2216,19 +2221,6 @@ void RenderLayerBacking::updateMaskingLayerGeometry()
     
     if (!maskLayer->drawsContent()) {
         CheckedRef renderer = this->renderer();
-        if (!renderer->hasClipPath() && needsCornerShapeMask()) {
-            CheckedPtr box = dynamicDowncast<RenderBox>(renderer);
-            if (!box)
-                return;
-
-            auto borderShape = BorderShape::shapeForBorderRect(box->usedStyle(), box->borderBoxRect());
-            auto shapePath = borderShape.pathForOuterShape(pixelSnappingScaleFactor());
-            shapePath.translate(-maskLayer->offsetFromRenderer());
-            maskLayer->setShapeLayerPath(shapePath);
-            maskLayer->setShapeLayerWindRule(WindRule::NonZero);
-            return;
-        }
-
         if (renderer->hasClipPath()) {
             ASSERT(!WTF::holdsAlternative<Style::ReferencePath>(renderer->style().clipPath()));
 
@@ -3412,20 +3404,11 @@ void RenderLayerBacking::paintSystemPreviewBadgeLayer(GraphicsContext& context, 
 }
 #endif
 
-bool RenderLayerBacking::needsCornerShapeMask() const
-{
-    if (!renderer().style().border().hasCornerShapeOutsideRoundedRect())
-        return false;
-
-    return m_graphicsLayer->contentsRectClipsDescendants() || m_childContainmentLayer || m_scrollContainerLayer;
-}
-
-// Masking layer is used for masks, clip-path, or corner-shape
-bool RenderLayerBacking::updateMaskingLayer(bool hasMask, bool hasClipPath, bool hasCornerShapeMask)
+bool RenderLayerBacking::updateMaskingLayer(bool hasMask, bool hasClipPath)
 {
     bool layerChanged = false;
     Ref graphicsLayer = *m_graphicsLayer;
-    if (hasMask || hasClipPath || hasCornerShapeMask) {
+    if (hasMask || hasClipPath) {
         OptionSet<GraphicsLayerPaintingPhase> maskPhases;
         if (hasMask)
             maskPhases = GraphicsLayerPaintingPhase::Mask;

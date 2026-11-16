@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>CSS Borders and Box Decorations 4: 'corner-shape' on a composited box with a composited descendant does not clip the box's own box-shadow — reference</title>
+    <style>
+        body {
+            margin: 0;
+            background-color: white;
+        }
+
+        .stage {
+            position: relative;
+            margin: 80px;
+            width: 240px;
+            height: 160px;
+            border-radius: 60px;
+            corner-shape: bevel;
+            overflow: hidden;
+            background-color: lightgray;
+            box-shadow: 0 0 0 30px rgba(255, 0, 0, 0.5), 20px 20px 0 30px rgba(0, 0, 255, 0.5);
+        }
+
+        .contents {
+            position: absolute;
+            inset: 0;
+            background-color: green;
+        }
+    </style>
+</head>
+<body>
+    <div class="stage">
+        <div class="contents"></div>
+    </div>
+</body>
+</html>

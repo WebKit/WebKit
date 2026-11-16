@@ -4859,6 +4859,7 @@ imported/w3c/web-platform-tests/largest-contentful-paint/repeated-image.html [ P
 compositing/corner-shape-ancestor-clip.html [ ImageOnlyFailure ]
 compositing/corner-shape-ancestor-clip-nested-rect-clip.html [ ImageOnlyFailure ]
 compositing/corner-shape-mask-layer-offset.html [ ImageOnlyFailure ]
+compositing/corner-shape-box-shadow-composited.html [ ImageOnlyFailure ]
 http/tests/canvas/canvas-tainted-image-capture-video-frame.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-borders/corner-shape/corner-shape-bevel-overflow-composite.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-borders/corner-shape/corner-shape-notch-mixed.html [ ImageOnlyFailure ]

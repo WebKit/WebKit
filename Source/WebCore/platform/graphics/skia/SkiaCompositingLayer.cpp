@@ -842,8 +842,6 @@ void SkiaCompositingLayer::paintContents(SkCanvas& canvas, PaintContext& context
         if (shouldPaintNow) {
             canvas.concat(transform);
 
-            // A corner shape the clipping rect cannot express arrives as a path instead; the rect has had
-            // its radii dropped in that case, so the path is the whole clip.
             if (m_contentsClipPath)
                 canvas.clipPath(*m_contentsClipPath, true);
             else if (m_contentsClippingRect.hasNonZeroRadii() || !m_contentsClippingRect.rect().contains(m_contentsRect))
@@ -1157,8 +1155,12 @@ void SkiaCompositingLayer::paintSelfAndChildren(SkCanvas& canvas, PaintContext& 
             clippingRect = rect;
     }
 
-    ScopedFlush autoFlush(canvas, context.imageSetBatch, clippingRect.isEmpty() ? ScopedFlush::Mode::DoNothing : ScopedFlush::Mode::FlushBeforeAndAfter);
-    if (!clippingRect.isEmpty())
+    const bool clipsDescendantsToPath = contentsRectClipsDescendants && m_contentsClipPath;
+
+    ScopedFlush autoFlush(canvas, context.imageSetBatch, (clippingRect.isEmpty() && !clipsDescendantsToPath) ? ScopedFlush::Mode::DoNothing : ScopedFlush::Mode::FlushBeforeAndAfter);
+    if (clipsDescendantsToPath)
+        canvas.clipPath(m_contentsClipPath->makeTransform(SkM44(clipTransform).asM33()), true);
+    else if (!clippingRect.isEmpty())
         clipRectToDevicePixels(canvas, clippingRect, clipTransform);
 
     for (auto& child : m_children)

@@ -397,8 +397,7 @@ private:
 #if ENABLE(MODEL_PROCESS)
     bool updateContentsContainmentLayer();
 #endif
-    bool updateMaskingLayer(bool hasMask, bool hasClipPath, bool hasCornerShapeMask);
-    bool needsCornerShapeMask() const;
+    bool updateMaskingLayer(bool hasMask, bool hasClipPath);
     void updateReflectionLayer();
     bool updateTransformFlatteningLayer(const RenderLayer* compositingAncestor);
 #if USE(SYSTEM_PREVIEW) && ENABLE(MODEL_PROCESS)
