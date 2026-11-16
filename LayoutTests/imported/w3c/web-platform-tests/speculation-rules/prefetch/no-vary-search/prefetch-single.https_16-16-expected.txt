@@ -1,0 +1,3 @@
+
+PASS Don't use prefetched response as even though all query parameters except c can be ignored, c has different value.
+

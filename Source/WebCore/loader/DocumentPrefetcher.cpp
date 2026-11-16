@@ -41,6 +41,7 @@
 #include "LocalFrame.h"
 #include "LocalFrameInlines.h"
 #include "MemoryCache.h"
+#include "NoVarySearch.h"
 #include "OriginAccessPatterns.h"
 #include "ReferrerPolicy.h"
 #include "ResourceRequest.h"
@@ -123,7 +124,7 @@ static ResourceRequest makePrefetchRequest(URL&& url, const Vector<String>& tags
     return request;
 }
 
-void DocumentPrefetcher::prefetch(const URL& url, const Vector<String>& tags, std::optional<ReferrerPolicy> referrerPolicy, bool lowPriority)
+void DocumentPrefetcher::prefetch(const URL& url, const Vector<String>& tags, std::optional<ReferrerPolicy> referrerPolicy, bool lowPriority, const String& noVarySearchHint)
 {
     RefPtr document = m_frame ? m_frame->document() : nullptr;
     if (!document)
@@ -168,7 +169,7 @@ void DocumentPrefetcher::prefetch(const URL& url, const Vector<String>& tags, st
     if (!resourceErrorOr)
         return;
     auto& prefetchedResource = resourceErrorOr.value();
-    m_prefetchedData.set(url, PrefetchedResourceData { CachedResourceHandle { prefetchedResource.get() }, { } });
+    m_prefetchedData.set(url, PrefetchedResourceData { CachedResourceHandle { prefetchedResource.get() }, { }, noVarySearchEnabled() ? NoVarySearch::parse(noVarySearchHint) : NoVarySearch { }, m_nextPrefetchOrder++ });
     prefetchedResource->addClient(*this);
 }
 
@@ -254,19 +255,74 @@ void DocumentPrefetcher::removePrefetch(const URL& url)
     m_prefetchedData.remove(it);
 }
 
-bool DocumentPrefetcher::wasPrefetched(const URL& url) const
+// A prefetch can serve a navigation to a different URL if its No-Vary-Search value says the URLs are equivalent.
+// Until the response headers arrive, the value the speculation rule expects stands in for the header.
+// https://httpwg.org/http-extensions/draft-ietf-httpbis-no-vary-search.html#name-caching
+static bool isUsableThroughNoVarySearch(const DocumentPrefetcher::PrefetchedResourceData& data, const URL& prefetchedURL, const URL& url)
+{
+    RefPtr resource = data.resource;
+    if (!resource || resource->errorOccurred())
+        return false;
+    auto noVarySearch = resource->response().isNull() ? data.expectedNoVarySearch : NoVarySearch::obtain(resource->response());
+    return !noVarySearch.isDefault() && noVarySearch.equivalent(prefetchedURL, url);
+}
+
+bool DocumentPrefetcher::noVarySearchEnabled() const
+{
+    RefPtr document = m_frame ? m_frame->document() : nullptr;
+    return document && document->settings().noVarySearchEnabled();
+}
+
+std::optional<URL> DocumentPrefetcher::keyMatching(const URL& url, MatchExactURL matchExactURL) const
 {
     if (url.isNull())
-        return false;
-    return m_prefetchedData.contains(url);
+        return std::nullopt;
+    if (matchExactURL == MatchExactURL::Yes && m_prefetchedData.contains(url))
+        return url;
+    if (!noVarySearchEnabled())
+        return std::nullopt;
+    // The map is unordered, so pick the earliest started prefetch like the spec's list order.
+    std::optional<URL> result;
+    uint64_t earliestOrder = 0;
+    for (auto& [prefetchedURL, data] : m_prefetchedData) {
+        if (prefetchedURL == url || !isUsableThroughNoVarySearch(data, prefetchedURL, url))
+            continue;
+        if (result && data.order > earliestOrder)
+            continue;
+        RefPtr resource = data.resource;
+        if (!resource->response().isNull() && !canServeNavigations(resource->response()))
+            continue;
+        result = prefetchedURL;
+        earliestOrder = data.order;
+    }
+    return result;
+}
+
+// Exact URL matches are left to the memory cache, which owns the lifetime of those entries.
+RefPtr<CachedResource> DocumentPrefetcher::resourceMatchingNoVarySearch(const URL& url) const
+{
+    auto key = keyMatching(url, MatchExactURL::No);
+    if (!key)
+        return nullptr;
+    auto it = m_prefetchedData.find(*key);
+    if (it == m_prefetchedData.end())
+        return nullptr;
+    RefPtr resource = it->value.resource;
+    return resource && resource->inCache() ? WTF::move(resource) : nullptr;
+}
+
+bool DocumentPrefetcher::wasPrefetched(const URL& url) const
+{
+    return keyMatching(url, MatchExactURL::Yes).has_value();
 }
 
 Box<NetworkLoadMetrics> DocumentPrefetcher::takePrefetchedResourceMetrics(const URL& url)
 {
-    if (url.isNull())
+    auto key = keyMatching(url, MatchExactURL::Yes);
+    if (!key)
         return { };
 
-    auto it = m_prefetchedData.find(url);
+    auto it = m_prefetchedData.find(*key);
     if (it != m_prefetchedData.end() && it->value.metrics) {
         auto metrics = WTF::move(it->value.metrics);
         if (CachedResourceHandle<CachedRawResource>& resourceHandle = it->value.resource) {
@@ -283,8 +339,10 @@ Box<NetworkLoadMetrics> DocumentPrefetcher::takePrefetchedResourceMetrics(const 
 
 void DocumentPrefetcher::clearPrefetchedResourcesExcept(const URL& url)
 {
+    // Only the entry that serves this navigation survives, which is the exact match or else the first No-Vary-Search match.
+    auto keyToKeep = keyMatching(url, MatchExactURL::Yes);
     m_prefetchedData.removeIf([&](auto& entry) {
-        if (entry.key != url) {
+        if (!keyToKeep || entry.key != *keyToKeep) {
             if (CachedResourceHandle<CachedRawResource>& resourceHandle = entry.value.resource) {
                 RefPtr resource = resourceHandle;
                 if (resource->hasClient(*this))

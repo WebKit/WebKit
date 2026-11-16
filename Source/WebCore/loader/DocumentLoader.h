@@ -848,6 +848,7 @@ private:
 
     bool m_canUseServiceWorkers { true };
     bool m_prefetchResponseFailed { false };
+    bool m_hasCheckedPrefetchRedirect { false };
 
 #if ASSERT_ENABLED
     bool m_hasEverBeenAttached { false };

@@ -37,6 +37,7 @@ PrefetchCache::Entry::Entry(WebCore::ResourceResponse&& response, PrivateRelayed
     : response(WTF::move(response))
     , privateRelayed(privateRelayed)
     , buffer(WTF::move(buffer))
+    , noVarySearch(WebCore::NoVarySearch::obtain(this->response))
 {
 }
 
@@ -60,11 +61,36 @@ void PrefetchCache::clear()
         m_sessionPrefetches->clear();
 }
 
-std::unique_ptr<PrefetchCache::Entry> PrefetchCache::take(const URL& url)
+// Finds the URL of a stored entry that can serve a navigation to the given URL.
+// https://httpwg.org/http-extensions/draft-ietf-httpbis-no-vary-search.html#name-caching
+std::optional<URL> PrefetchCache::findKeyMatching(const URL& url, MatchNoVarySearch matchNoVarySearch) const
+{
+    auto* resources = m_sessionPrefetches.get();
+    if (!resources)
+        return std::nullopt;
+    if (resources->contains(url))
+        return url;
+    if (matchNoVarySearch == MatchNoVarySearch::No)
+        return std::nullopt;
+    for (auto& [storedURL, entry] : *resources) {
+        // A redirect is stored under the URL that was requested, so it is only reused for that URL.
+        if (!entry->redirectRequest.isNull() || entry->noVarySearch.isDefault())
+            continue;
+        if (entry->noVarySearch.equivalent(storedURL, url))
+            return storedURL;
+    }
+    return std::nullopt;
+}
+
+std::unique_ptr<PrefetchCache::Entry> PrefetchCache::take(const URL& requestURL, MatchNoVarySearch matchNoVarySearch)
 {
     auto* resources = m_sessionPrefetches.get();
     if (!resources)
         return nullptr;
+    auto key = findKeyMatching(requestURL, matchNoVarySearch);
+    if (!key)
+        return nullptr;
+    const URL& url = *key;
     m_sessionExpirationList.removeAllMatching([&url] (const auto& tuple) {
         return std::get<0>(tuple) == url;
     });

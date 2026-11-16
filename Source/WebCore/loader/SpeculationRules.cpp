@@ -291,8 +291,11 @@ static std::optional<SpeculationRules::Rule> parseSingleRule(const JSON::Object&
     }
 
     auto noVarySearchValue = input.getValue("expects_no_vary_search"_s);
-    if (noVarySearchValue && noVarySearchValue->type() == JSON::Value::Type::String)
+    if (noVarySearchValue) {
+        if (noVarySearchValue->type() != JSON::Value::Type::String)
+            return std::nullopt;
         rule.noVarySearchHint = noVarySearchValue->asString();
+    }
 
     if (!rulesetLevelTag.isNull())
         rule.tags.append(rulesetLevelTag);

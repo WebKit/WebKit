@@ -27,6 +27,7 @@
 
 #include "CachedRawResourceClient.h"
 #include "CachedResourceHandle.h"
+#include "NoVarySearch.h"
 #include <optional>
 #include <wtf/CompletionHandler.h>
 #include <wtf/Forward.h>
@@ -50,6 +51,10 @@ public:
         // The resource needs to be here in order to be kept alive.
         CachedResourceHandle<CachedRawResource> resource;
         Box<NetworkLoadMetrics> metrics;
+        // The No-Vary-Search value the speculation rule expects, used until the response headers arrive.
+        NoVarySearch expectedNoVarySearch;
+        // Position in the order prefetches were started.
+        uint64_t order { 0 };
     };
     static Ref<DocumentPrefetcher> create(LocalFrame& frame) { return adoptRef(*new DocumentPrefetcher(frame)); }
     ~DocumentPrefetcher();
@@ -59,13 +64,15 @@ public:
     void deref() const final { RefCounted::deref(); }
 
     void clear();
-    void prefetch(const URL&, const Vector<String>& tags, std::optional<ReferrerPolicy>, bool lowPriority = false);
+    void prefetch(const URL&, const Vector<String>& tags, std::optional<ReferrerPolicy>, bool lowPriority = false, const String& noVarySearchHint = { });
     void removePrefetch(const URL&);
     bool wasPrefetched(const URL&) const;
     Box<NetworkLoadMetrics> takePrefetchedResourceMetrics(const URL&);
     void clearPrefetchedResourcesExcept(const URL&);
     void clearPrefetchedResourcesForOrigin(const SecurityOrigin&);
     bool canServeNavigations(const ResourceResponse&) const;
+    // Finds a prefetched resource whose No-Vary-Search header makes it usable for the given URL, even if the URLs differ in their query.
+    RefPtr<CachedResource> resourceMatchingNoVarySearch(const URL&) const;
 
     // CachedRawResourceClient
     void responseReceived(const CachedResource&, const ResourceResponse&, CompletionHandler<void()>&&) override;
@@ -77,8 +84,13 @@ public:
 private:
     explicit DocumentPrefetcher(LocalFrame&);
 
+    bool noVarySearchEnabled() const;
+    enum class MatchExactURL : bool { No, Yes };
+    std::optional<URL> keyMatching(const URL&, MatchExactURL) const;
+
     WeakPtr<LocalFrame> m_frame;
     HashMap<URL, PrefetchedResourceData> m_prefetchedData;
+    uint64_t m_nextPrefetchOrder { 0 };
 };
 
 } // namespace WebCore
