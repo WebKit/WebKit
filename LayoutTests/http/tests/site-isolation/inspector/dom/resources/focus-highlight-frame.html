@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Cross-Origin Focus And Highlight Frame</title>
+</head>
+<body>
+    <div id="container">
+        <input id="input">
+        <div id="plain">not focusable</div>
+    </div>
+    <script>
+    // This frame is cross-origin to the main frame. The first child is same-origin with this frame, so it is
+    // a LocalFrame in this process; the second is same-origin with the main frame, so it is a RemoteFrame here.
+    let remoteHost = location.hostname === "localhost" ? "127.0.0.1" : "localhost";
+    for (let [name, host] of [["local-child", location.hostname], ["remote-child", remoteHost]]) {
+        let iframe = document.createElement("iframe");
+        iframe.src = `http://${host}:8000/site-isolation/inspector/dom/resources/focus-highlight-child-frame.html?${name}`;
+        document.body.appendChild(iframe);
+    }
+    </script>
+</body>
+</html>

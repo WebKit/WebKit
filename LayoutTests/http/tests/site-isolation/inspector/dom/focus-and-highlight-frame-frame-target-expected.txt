@@ -1,0 +1,49 @@
+Tests DOM.focus, DOM.highlightFrame, and DOM.requestFrameOwner on a cross-origin iframe's FrameDOMAgent, and DOM.highlightFrame and DOM.requestFrameOwner on the page target.
+
+
+
+== Running test suite: SiteIsolation.DOM.FocusAndHighlightFrame
+-- Running test case: Setup
+PASS: Should find the frame target.
+PASS: Frame document should have #container.
+PASS: Frame target should expose DOM.focus.
+PASS: Frame target should expose DOM.highlightFrame.
+
+-- Running test case: Focus
+PASS: Should get a nodeId for '#input'.
+PASS: DOM.focus should be accepted by the frame target.
+PASS: #input should be the active element.
+
+-- Running test case: FocusNotFocusable
+PASS: DOM.focus should report that #plain is not focusable.
+
+-- Running test case: HighlightFrameLocalChild
+PASS: Should get the frameId of the local child.
+PASS: DOM.highlightFrame should be accepted for a local child frame.
+
+-- Running test case: HighlightFrameRemoteChild
+PASS: Should get the frameId of the remote child.
+PASS: DOM.highlightFrame should be accepted for a remote child frame.
+
+-- Running test case: HighlightFrameNotAChild
+PASS: DOM.highlightFrame should reject the frame target's own frame.
+PASS: DOM.highlightFrame should reject a malformed frameId.
+
+-- Running test case: RequestFrameOwnerLocalChild
+PASS: DOM.requestFrameOwner should return a nodeId for a local child frame.
+
+-- Running test case: RequestFrameOwnerRemoteChild
+PASS: DOM.requestFrameOwner should return a nodeId for a remote child frame.
+
+-- Running test case: RequestFrameOwnerNotAChild
+PASS: DOM.requestFrameOwner should reject the frame target's own frame.
+
+-- Running test case: HighlightFramePageTarget
+PASS: DOM.highlightFrame should be accepted by the page target for a cross-site child frame.
+
+-- Running test case: HighlightFramePageTargetBelowRemoteFrame
+PASS: DOM.highlightFrame should reject a frame below a RemoteFrame.
+
+-- Running test case: RequestFrameOwnerPageTarget
+PASS: DOM.requestFrameOwner should return a nodeId for a cross-site child frame.
+
