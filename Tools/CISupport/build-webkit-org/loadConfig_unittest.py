@@ -130,16 +130,14 @@ class TestcheckValidWorker(unittest.TestCase):
     def test_valid_worker(self):
         loadConfig.checkValidWorker({'name': 'ews101', 'platform': 'mac-sierra'})
 
-    def test_worker_with_machine_and_missing_fleet(self):
-        with self.assertRaises(Exception) as context:
-            loadConfig.checkValidWorker({'name': 'bot10000', 'platform': 'mac-tahoe', 'device': 'Mac16,11'})
-        self.assertEqual(context.exception.args, ('Worker bot10000 has os/device/xcode, so its fleet must be one of aws, air-cloud.',))
+    def test_valid_worker_with_machine_and_no_fleet(self):
+        loadConfig.checkValidWorker({'name': 'bot243', 'platform': 'mac-golden-gate', 'os': 'macOS Golden Gate 27.2-26B123', 'device': 'Mac14,12'})
 
     def test_worker_with_machine_and_invalid_fleet(self):
         for fleet in ['AWS', 'aircloud', '']:
             with self.assertRaises(Exception) as context:
                 loadConfig.checkValidWorker({'name': 'bot10000', 'platform': 'mac-tahoe', 'os': 'macOS Tahoe 26.5-25F71', 'fleet': fleet})
-            self.assertEqual(context.exception.args, ('Worker bot10000 has os/device/xcode, so its fleet must be one of aws, air-cloud.',))
+            self.assertEqual(context.exception.args, (f'Worker bot10000 has fleet "{fleet}", which must be one of aws, air-cloud.',))
 
     def test_valid_worker_with_machine_and_fleet(self):
         for fleet in ['aws', 'air-cloud']:
