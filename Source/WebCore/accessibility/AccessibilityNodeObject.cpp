@@ -1015,7 +1015,9 @@ bool AccessibilityNodeObject::isValidTree() const
             continue;
         if (hasRole(*childElement, "treeitem"_s))
             continue;
-        if (!hasAnyRole(*childElement, { "group"_s, "presentation"_s }))
+        // Generic wrappers (a div or span without a role) are transparent, so look through them like we do for groups.
+        bool isGenericWrapper = (childElement->hasTagName(divTag) || childElement->hasTagName(spanTag)) && hasRole(*childElement, nullAtom());
+        if (!isGenericWrapper && !hasAnyRole(*childElement, { "group"_s, "presentation"_s }))
             return false;
 
         for (RefPtr groupChild = child->firstChild(); groupChild; groupChild = queue.last()->nextSibling())
