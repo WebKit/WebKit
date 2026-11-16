@@ -1,0 +1,79 @@
+Test that viewport lengths resize with the viewport in shadow trees that share stylesheets, and so share a style resolver.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+PASS innerWidth is 800
+PASS innerHeight is 600
+PASS getComputedStyle(shadowElement(0, "width")).width is "400px"
+PASS getComputedStyle(shadowElement(0, "font-size")).fontSize is "30px"
+PASS getComputedStyle(shadowElement(0, "calc")).width is "140px"
+PASS getComputedStyle(shadowElement(1, "width")).width is "400px"
+PASS getComputedStyle(shadowElement(1, "font-size")).fontSize is "30px"
+PASS getComputedStyle(shadowElement(1, "calc")).width is "140px"
+PASS getComputedStyle(shadowElement(2, "width")).width is "400px"
+PASS getComputedStyle(shadowElement(2, "font-size")).fontSize is "30px"
+PASS getComputedStyle(shadowElement(2, "calc")).width is "140px"
+PASS getComputedStyle(shadowElement(3, "width")).width is "400px"
+PASS getComputedStyle(shadowElement(3, "font-size")).fontSize is "30px"
+PASS getComputedStyle(shadowElement(3, "calc")).width is "140px"
+PASS innerWidth is 900
+PASS innerHeight is 600
+PASS getComputedStyle(shadowElement(0, "width")).width is "450px"
+PASS getComputedStyle(shadowElement(0, "font-size")).fontSize is "30px"
+PASS getComputedStyle(shadowElement(0, "calc")).width is "150px"
+PASS getComputedStyle(shadowElement(1, "width")).width is "450px"
+PASS getComputedStyle(shadowElement(1, "font-size")).fontSize is "30px"
+PASS getComputedStyle(shadowElement(1, "calc")).width is "150px"
+PASS getComputedStyle(shadowElement(2, "width")).width is "450px"
+PASS getComputedStyle(shadowElement(2, "font-size")).fontSize is "30px"
+PASS getComputedStyle(shadowElement(2, "calc")).width is "150px"
+PASS getComputedStyle(shadowElement(3, "width")).width is "450px"
+PASS getComputedStyle(shadowElement(3, "font-size")).fontSize is "30px"
+PASS getComputedStyle(shadowElement(3, "calc")).width is "150px"
+PASS innerWidth is 900
+PASS innerHeight is 640
+PASS getComputedStyle(shadowElement(0, "width")).width is "450px"
+PASS getComputedStyle(shadowElement(0, "font-size")).fontSize is "32px"
+PASS getComputedStyle(shadowElement(0, "calc")).width is "154px"
+PASS getComputedStyle(shadowElement(1, "width")).width is "450px"
+PASS getComputedStyle(shadowElement(1, "font-size")).fontSize is "32px"
+PASS getComputedStyle(shadowElement(1, "calc")).width is "154px"
+PASS getComputedStyle(shadowElement(2, "width")).width is "450px"
+PASS getComputedStyle(shadowElement(2, "font-size")).fontSize is "32px"
+PASS getComputedStyle(shadowElement(2, "calc")).width is "154px"
+PASS getComputedStyle(shadowElement(3, "width")).width is "450px"
+PASS getComputedStyle(shadowElement(3, "font-size")).fontSize is "32px"
+PASS getComputedStyle(shadowElement(3, "calc")).width is "154px"
+PASS innerWidth is 500
+PASS innerHeight is 640
+PASS getComputedStyle(shadowElement(0, "width")).width is "250px"
+PASS getComputedStyle(shadowElement(0, "font-size")).fontSize is "32px"
+PASS getComputedStyle(shadowElement(0, "calc")).width is "114px"
+PASS getComputedStyle(shadowElement(1, "width")).width is "250px"
+PASS getComputedStyle(shadowElement(1, "font-size")).fontSize is "32px"
+PASS getComputedStyle(shadowElement(1, "calc")).width is "114px"
+PASS getComputedStyle(shadowElement(2, "width")).width is "250px"
+PASS getComputedStyle(shadowElement(2, "font-size")).fontSize is "32px"
+PASS getComputedStyle(shadowElement(2, "calc")).width is "114px"
+PASS getComputedStyle(shadowElement(3, "width")).width is "250px"
+PASS getComputedStyle(shadowElement(3, "font-size")).fontSize is "32px"
+PASS getComputedStyle(shadowElement(3, "calc")).width is "114px"
+PASS innerWidth is 800
+PASS innerHeight is 600
+PASS getComputedStyle(shadowElement(0, "width")).width is "400px"
+PASS getComputedStyle(shadowElement(0, "font-size")).fontSize is "30px"
+PASS getComputedStyle(shadowElement(0, "calc")).width is "140px"
+PASS getComputedStyle(shadowElement(1, "width")).width is "400px"
+PASS getComputedStyle(shadowElement(1, "font-size")).fontSize is "30px"
+PASS getComputedStyle(shadowElement(1, "calc")).width is "140px"
+PASS getComputedStyle(shadowElement(2, "width")).width is "400px"
+PASS getComputedStyle(shadowElement(2, "font-size")).fontSize is "30px"
+PASS getComputedStyle(shadowElement(2, "calc")).width is "140px"
+PASS getComputedStyle(shadowElement(3, "width")).width is "400px"
+PASS getComputedStyle(shadowElement(3, "font-size")).fontSize is "30px"
+PASS getComputedStyle(shadowElement(3, "calc")).width is "140px"
+

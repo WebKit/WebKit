@@ -82,6 +82,7 @@ private:
     HashMap<unsigned, Vector<Entry>, AlreadyHashed> m_entries;
     Timer m_sweepTimer;
     unsigned m_additionsSinceLastSweep { 0 };
+    bool m_mayHaveViewportUnitEntries { false };
 };
 
 }
