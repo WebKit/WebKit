@@ -623,11 +623,9 @@ void SimulatedInputDispatcher::startPointerMoveInterpolation(const WebCore::IntP
     ASSERT(!m_pointerMoveInterpolation);
     ASSERT(!m_pointerMoveInterpolationTimer.isActive());
 
-    // FIXME: Compute each step from elapsed time so the move keeps to its duration under load. <https://webkit.org/b/329455>
-    auto stepCount = static_cast<unsigned>(std::clamp(std::ceil(duration / pointerMoveInterpolationInterval), 1.0, static_cast<double>(maximumPointerMoveInterpolationSteps)));
-    auto stepInterval = duration / stepCount;
+    auto stepInterval = std::max(pointerMoveInterpolationInterval, duration / maximumPointerMoveInterpolationSteps);
 
-    LOG(Automation, "SimulatedInputDispatcher[%p]: interpolating pointer move from (%d, %d) to (%d, %d) in %u steps over %.3f seconds", this, start.x(), start.y(), end.x(), end.y(), stepCount, duration.value());
+    LOG(Automation, "SimulatedInputDispatcher[%p]: interpolating pointer move from (%d, %d) to (%d, %d) over %.3f seconds", this, start.x(), start.y(), end.x(), end.y(), duration.value());
 
     m_pointerMoveInterpolation = PointerMoveInterpolation {
         ++m_lastPointerMoveInterpolationIdentifier,
@@ -635,8 +633,8 @@ void SimulatedInputDispatcher::startPointerMoveInterpolation(const WebCore::IntP
         end,
         button,
         pointerType,
-        stepCount,
-        0,
+        MonotonicTime::now(),
+        duration,
         stepInterval,
         start,
         WTF::move(completionHandler),
@@ -651,12 +649,12 @@ void SimulatedInputDispatcher::pointerMoveInterpolationTimerFired()
         return;
 
     auto& interpolation = *m_pointerMoveInterpolation;
-    ++interpolation.stepIndex;
-    bool isFinalStep = interpolation.stepIndex >= interpolation.stepCount;
+    auto elapsed = MonotonicTime::now() - interpolation.startTime;
+    bool isFinalStep = elapsed >= interpolation.duration;
 
     WebCore::IntPoint location = interpolation.end;
     if (!isFinalStep) {
-        float progress = static_cast<float>(interpolation.stepIndex) / interpolation.stepCount;
+        float progress = static_cast<float>(elapsed / interpolation.duration);
         WebCore::FloatPoint start(interpolation.start);
         location = flooredIntPoint(start + (WebCore::FloatPoint(interpolation.end) - start) * progress);
     }
@@ -668,14 +666,14 @@ void SimulatedInputDispatcher::pointerMoveInterpolationTimerFired()
 
     interpolation.lastDispatchedLocation = location;
 
-    LOG(Automation, "SimulatedInputDispatcher[%p]: simulating interpolated pointer move %u/%u @ (%d, %d) for transition to %d.%d", this, interpolation.stepIndex, interpolation.stepCount, location.x(), location.y(), m_keyframeIndex, m_inputSourceStateIndex);
+    LOG(Automation, "SimulatedInputDispatcher[%p]: simulating interpolated pointer move @ (%d, %d) for transition to %d.%d", this, location.x(), location.y(), m_keyframeIndex, m_inputSourceStateIndex);
 
-    m_client.simulateMouseInteraction(protect(m_page), MouseInteraction::Move, interpolation.button, location, interpolation.pointerType, [this, protectedThis = Ref { *this }, identifier = interpolation.identifier](std::optional<AutomationCommandError> error) {
+    m_client.simulateMouseInteraction(protect(m_page), MouseInteraction::Move, interpolation.button, location, interpolation.pointerType, [this, protectedThis = Ref { *this }, identifier = interpolation.identifier, isFinalStep](std::optional<AutomationCommandError> error) {
         if (!m_pointerMoveInterpolation || m_pointerMoveInterpolation->identifier != identifier)
             return;
 
         auto& interpolation = *m_pointerMoveInterpolation;
-        if (error || interpolation.stepIndex >= interpolation.stepCount) {
+        if (error || isFinalStep) {
             finishPointerMoveInterpolation(error);
             return;
         }
