@@ -129,6 +129,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/webcodecs/videoDecoder-codec-specific.https.any.js
 /LayoutTests/imported/w3c/web-platform-tests/webcodecs/videoDecoder-h264-sei.https.any.js
 /LayoutTests/imported/w3c/web-platform-tests/webcodecs/videoDecoder-interlaced-h264.https.any.js
+/LayoutTests/imported/w3c/web-platform-tests/webcodecs/videoDecoder-resolution-change.https.any.js
 /LayoutTests/imported/w3c/web-platform-tests/webcodecs/videoFrame-alpha-discard-utils.js
 /LayoutTests/imported/w3c/web-platform-tests/webcodecs/videoFrame-alpha-discard.any.js
 /LayoutTests/imported/w3c/web-platform-tests/webcodecs/videoFrame-alpha-discard.window.js

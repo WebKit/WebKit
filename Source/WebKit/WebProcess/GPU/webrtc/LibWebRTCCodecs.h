@@ -42,6 +42,7 @@
 #include <WebCore/PlatformVideoColorSpace.h>
 #include <WebCore/TrackInfo.h>
 #include <WebCore/VideoCodecType.h>
+#include <WebCore/VideoDecoder.h>
 #include <WebCore/VideoEncoder.h>
 #include <WebCore/VideoEncoderScalabilityMode.h>
 #include <map>
@@ -124,9 +125,11 @@ public:
         DecoderCallback decoderCallback WTF_GUARDED_BY_LOCK(decodedImageCallbackLock);
         Lock decodedImageCallbackLock;
         bool hasError { false };
-        bool isWaitingForVideoInfo { false };
+        enum class WaitingFor : uint8_t { Nothing, VideoInfoReply, SoftwareDecoderCreation, SoftwareDecoderFlush };
+        WaitingFor waitingFor { WaitingFor::Nothing };
         RefPtr<IPC::Connection> connection;
         RefPtr<WebCore::VideoInfo> videoInfo;
+        RefPtr<WebCore::VideoDecoder> softwareDecoder;
         Deque<Variant<EncodedFrame, PendingFlush>> pendingTasks;
     };
 
@@ -273,11 +276,18 @@ private:
     template<typename Frame> RefPtr<FramePromise> encodeFrameInternalWithLock(Encoder&, const Frame&, bool shouldEncodeAsKeyFrame, WebCore::VideoFrameRotation, bool isMirrored, MediaTime, int64_t timestamp, std::optional<uint64_t> duration) WTF_REQUIRES_LOCK(m_encodersConnectionLock);
 
     template<typename Data> RefPtr<FramePromise> decodeFrameInternal(Decoder&, int64_t timeStamp, Data&&, uint16_t width, uint16_t height);
-    Ref<FramePromise> sendFrameToDecode(Decoder&, int64_t timeStamp, std::span<const uint8_t>) WTF_REQUIRES_LOCK(m_connectionLock);
+    template<typename Data> RefPtr<FramePromise> sendFrameToDecoder(Decoder&, int64_t timeStamp, const Data&, uint16_t width, uint16_t height) WTF_REQUIRES_LOCK(m_connectionLock);
+    Ref<FramePromise> sendFrameToGPUProcess(Decoder&, int64_t timeStamp, std::span<const uint8_t>) WTF_REQUIRES_LOCK(m_connectionLock);
+    Ref<FramePromise> sendFrameToSoftwareDecoder(Decoder&, int64_t timeStamp, Ref<WebCore::SharedBuffer>&&, bool isKeyFrame) WTF_REQUIRES_LOCK(m_connectionLock);
     Ref<GenericPromise> sendFlushDecoder(Decoder&) WTF_REQUIRES_LOCK(m_connectionLock);
     void updateDecoderVideoInfo(Decoder&, Ref<WebCore::VideoInfo>&&) WTF_REQUIRES_LOCK(m_connectionLock);
+    void sendDecoderVideoInfo(Decoder&) WTF_REQUIRES_LOCK(m_connectionLock);
     void processPendingDecoderTasks(Decoder&) WTF_REQUIRES_LOCK(m_connectionLock);
     void settlePendingDecoderTasks(Decoder&, std::optional<ASCIILiteral> errorMessage) WTF_REQUIRES_LOCK(m_connectionLock);
+    void createSoftwareDecoder(Decoder&) WTF_REQUIRES_LOCK(m_connectionLock);
+    void softwareDecoderCreated(VideoDecoderIdentifier, WebCore::VideoDecoder::CreateResult&&);
+    void softwareDecoderFlushed(VideoDecoderIdentifier);
+    void softwareDecoderOutput(VideoDecoderIdentifier, std::expected<WebCore::VideoDecoder::DecodedFrame, String>&&);
 
     HashMap<VideoDecoderIdentifier, std::unique_ptr<Decoder>> m_decoders WTF_GUARDED_BY_CAPABILITY(workQueue());
     Lock m_encodersConnectionLock;

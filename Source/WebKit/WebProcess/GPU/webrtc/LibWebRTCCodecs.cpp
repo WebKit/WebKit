@@ -394,6 +394,8 @@ int32_t LibWebRTCCodecs::releaseDecoder(Decoder& decoder)
         if (auto decoder = m_decoders.take(decoderIdentifier)) {
             Locker locker { m_connectionLock };
             settlePendingDecoderTasks(*decoder, { });
+            if (RefPtr softwareDecoder = decoder->softwareDecoder)
+                softwareDecoder->close();
             protect(decoderConnection(*decoder))->send(Messages::LibWebRTCCodecsProxy::ReleaseDecoder { decoderIdentifier }, 0);
             gpuProcessConnectionMayNoLongerBeNeeded();
         }
@@ -408,7 +410,7 @@ Ref<GenericPromise> LibWebRTCCodecs::flushDecoder(Decoder& decoder)
     if (!decoder.connection || decoder.hasError)
         return GenericPromise::createAndResolve();
 
-    if (decoder.isWaitingForVideoInfo) {
+    if (decoder.waitingFor != Decoder::WaitingFor::Nothing) {
         GenericPromise::AutoRejectProducer producer;
         Ref promise = producer.promise();
         decoder.pendingTasks.append(Decoder::PendingFlush { WTF::move(producer) });
@@ -420,6 +422,10 @@ Ref<GenericPromise> LibWebRTCCodecs::flushDecoder(Decoder& decoder)
 
 Ref<GenericPromise> LibWebRTCCodecs::sendFlushDecoder(Decoder& decoder)
 {
+    // Decoded frames are delivered on workQueue(); settle there so the flush completes after them.
+    if (RefPtr softwareDecoder = decoder.softwareDecoder)
+        return softwareDecoder->flush()->whenSettled(workQueue(), [](auto&&) { });
+
     return Ref { *decoder.connection }->sendWithPromisedReply(Messages::LibWebRTCCodecsProxy::FlushDecoder { decoder.identifier }, 0)->whenSettled(workQueue(), [] (auto&&) {
         return GenericPromise::createAndResolve();
     });
@@ -540,14 +546,20 @@ void LibWebRTCCodecs::updateDecoderVideoInfo(Decoder& decoder, Ref<WebCore::Vide
     if (RefPtr currentVideoInfo = decoder.videoInfo; currentVideoInfo && *currentVideoInfo == videoInfo)
         return;
 
-    decoder.videoInfo = videoInfo.copyRef();
+    decoder.videoInfo = WTF::move(videoInfo);
+    sendDecoderVideoInfo(decoder);
+}
+
+void LibWebRTCCodecs::sendDecoderVideoInfo(Decoder& decoder)
+{
     RefPtr connection = decoder.connection;
-    if (!connection)
+    RefPtr videoInfo = decoder.videoInfo;
+    if (!connection || !videoInfo)
         return;
 
-    ASSERT(!decoder.isWaitingForVideoInfo);
-    decoder.isWaitingForVideoInfo = true;
-    connection->sendWithPromisedReply(Messages::LibWebRTCCodecsProxy::SetDecoderVideoInfo { decoder.identifier, videoInfo }, 0)->whenSettled(workQueue(), [protectedThis = Ref { *this }, identifier = decoder.identifier, connection](auto&& result) {
+    ASSERT(decoder.waitingFor == Decoder::WaitingFor::Nothing);
+    decoder.waitingFor = Decoder::WaitingFor::VideoInfoReply;
+    connection->sendWithPromisedReply(Messages::LibWebRTCCodecsProxy::SetDecoderVideoInfo { decoder.identifier, videoInfo.releaseNonNull() }, 0)->whenSettled(workQueue(), [protectedThis = Ref { *this }, identifier = decoder.identifier, connection](auto&& result) {
         assertIsCurrent(protectedThis->workQueue());
 
         // The GPU process connection closed. setDecoderConnection() sends the VideoInfo again and
@@ -559,39 +571,44 @@ void LibWebRTCCodecs::updateDecoderVideoInfo(Decoder& decoder, Ref<WebCore::Vide
         if (!decoder)
             return;
 
-        {
-            Locker locker { protectedThis->m_connectionLock };
-            // Ignore replies from a GPU process connection that has since been replaced.
-            if (decoder->connection != connection)
-                return;
+        Locker locker { protectedThis->m_connectionLock };
+        // Ignore replies from a GPU process connection that has since been replaced.
+        if (decoder->connection != connection)
+            return;
 
-            ASSERT(decoder->isWaitingForVideoInfo);
-            decoder->isWaitingForVideoInfo = false;
-            if (*result) {
-                protectedThis->processPendingDecoderTasks(*decoder);
+        ASSERT(decoder->waitingFor == Decoder::WaitingFor::VideoInfoReply);
+        if (*result) {
+            if (RefPtr softwareDecoder = decoder->softwareDecoder) {
+                decoder->waitingFor = Decoder::WaitingFor::SoftwareDecoderFlush;
+                softwareDecoder->flush()->whenSettled(protectedThis->workQueue(), [protectedThis, identifier](auto&&) {
+                    protectedThis->softwareDecoderFlushed(identifier);
+                });
                 return;
             }
-
-            decoder->videoInfo = nullptr;
-            protectedThis->settlePendingDecoderTasks(*decoder, "Decoding task failed"_s);
+            decoder->waitingFor = Decoder::WaitingFor::Nothing;
+            protectedThis->processPendingDecoderTasks(*decoder);
+            return;
         }
 
-        protectedThis->failedDecoding(identifier);
+        if (decoder->softwareDecoder) {
+            decoder->waitingFor = Decoder::WaitingFor::Nothing;
+            protectedThis->processPendingDecoderTasks(*decoder);
+            return;
+        }
+
+        protectedThis->createSoftwareDecoder(*decoder);
     });
 }
 
 void LibWebRTCCodecs::processPendingDecoderTasks(Decoder& decoder)
 {
-    while (decoder.connection && !decoder.isWaitingForVideoInfo && !decoder.pendingTasks.isEmpty()) {
+    while (decoder.connection && decoder.waitingFor == Decoder::WaitingFor::Nothing && !decoder.pendingTasks.isEmpty()) {
         auto& task = decoder.pendingTasks.first();
         if (auto* frame = std::get_if<Decoder::EncodedFrame>(&task)) {
-            auto decodableFrame = makeDecodableFrame(decoder, protect(frame->data)->span(), frame->width, frame->height);
-            if (decodableFrame.videoInfo) {
-                updateDecoderVideoInfo(decoder, decodableFrame.videoInfo.releaseNonNull());
-                if (decoder.isWaitingForVideoInfo)
-                    return;
-            }
-            sendFrameToDecode(decoder, frame->timeStamp, decodableFrame.data())->chainTo(WTF::move(frame->producer));
+            RefPtr promise = sendFrameToDecoder(decoder, frame->timeStamp, frame->data, frame->width, frame->height);
+            if (!promise)
+                return;
+            promise->chainTo(WTF::move(frame->producer));
         } else
             sendFlushDecoder(decoder)->chainTo(WTF::move(std::get<Decoder::PendingFlush>(task).producer));
         decoder.pendingTasks.removeFirst();
@@ -613,7 +630,109 @@ void LibWebRTCCodecs::settlePendingDecoderTasks(Decoder& decoder, std::optional<
     }
 }
 
-Ref<LibWebRTCCodecs::FramePromise> LibWebRTCCodecs::sendFrameToDecode(Decoder& decoder, int64_t timeStamp, std::span<const uint8_t> data)
+void LibWebRTCCodecs::createSoftwareDecoder(Decoder& decoder)
+{
+    RefPtr videoInfo = decoder.videoInfo;
+    ASSERT(videoInfo);
+    ASSERT(!decoder.softwareDecoder);
+
+    decoder.waitingFor = Decoder::WaitingFor::SoftwareDecoderCreation;
+    WebCore::VideoDecoder::Config config {
+        .colorSpace = decoder.colorSpaceOverride,
+        .rotation = decoder.rotation,
+        .isMirrored = decoder.isMirrored,
+    };
+    WebCore::VideoDecoder::createLocalDecoder(videoInfo->codecString(), config, [protectedThis = Ref { *this }, identifier = decoder.identifier](auto&& result) {
+        protectedThis->workQueue().dispatch([protectedThis, identifier, result = WTF::move(result)] mutable {
+            protectedThis->softwareDecoderCreated(identifier, WTF::move(result));
+        });
+    }, [protectedThis = Ref { *this }, identifier = decoder.identifier](auto&& result) {
+        protectedThis->workQueue().dispatch([protectedThis, identifier, result = WTF::move(result)] mutable {
+            protectedThis->softwareDecoderOutput(identifier, WTF::move(result));
+        });
+    });
+}
+
+void LibWebRTCCodecs::softwareDecoderCreated(VideoDecoderIdentifier identifier, WebCore::VideoDecoder::CreateResult&& result)
+{
+    assertIsCurrent(workQueue());
+
+    auto* decoder = m_decoders.get(identifier);
+    if (!decoder) {
+        if (result)
+            protect(*result)->close();
+        return;
+    }
+
+    {
+        Locker locker { m_connectionLock };
+        if (decoder->waitingFor != Decoder::WaitingFor::SoftwareDecoderCreation) {
+            if (result)
+                protect(*result)->close();
+            return;
+        }
+
+        decoder->waitingFor = Decoder::WaitingFor::Nothing;
+        if (result) {
+            decoder->softwareDecoder = WTF::move(*result);
+            processPendingDecoderTasks(*decoder);
+            return;
+        }
+
+        decoder->videoInfo = nullptr;
+        settlePendingDecoderTasks(*decoder, "Decoding task failed"_s);
+    }
+
+    failedDecoding(identifier);
+}
+
+void LibWebRTCCodecs::softwareDecoderFlushed(VideoDecoderIdentifier identifier)
+{
+    assertIsCurrent(workQueue());
+
+    auto* decoder = m_decoders.get(identifier);
+    if (!decoder)
+        return;
+
+    Locker locker { m_connectionLock };
+    if (decoder->waitingFor != Decoder::WaitingFor::SoftwareDecoderFlush)
+        return;
+
+    decoder->waitingFor = Decoder::WaitingFor::Nothing;
+    if (RefPtr softwareDecoder = std::exchange(decoder->softwareDecoder, nullptr))
+        softwareDecoder->close();
+    processPendingDecoderTasks(*decoder);
+}
+
+void LibWebRTCCodecs::softwareDecoderOutput(VideoDecoderIdentifier identifier, std::expected<WebCore::VideoDecoder::DecodedFrame, String>&& result)
+{
+    assertIsCurrent(workQueue());
+
+    auto* decoder = m_decoders.get(identifier);
+    if (!decoder)
+        return;
+
+    if (!result) {
+        failedDecoding(identifier);
+        return;
+    }
+
+    if (!decoder->decodedImageCallbackLock.tryLock())
+        return;
+    Locker locker { AdoptLock, decoder->decodedImageCallbackLock };
+    if (decoder->decoderCallback) {
+        decoder->decoderCallback(WTF::move(result->frame), result->timestamp);
+        return;
+    }
+
+    if (!decoder->decodedImageCallback)
+        return;
+
+    if (RetainPtr pixelBuffer = protect(result->frame)->pixelBuffer())
+        webrtc::videoDecoderTaskComplete(decoder->decodedImageCallback, result->timestamp, pixelBuffer);
+}
+
+Ref<LibWebRTCCodecs::FramePromise> LibWebRTCCodecs::sendFrameToGPUProcess(Decoder& decoder, int64_t timeStamp, std::span<const uint8_t> data)
 {
     return Ref { *decoder.connection }->sendWithPromisedReply(Messages::LibWebRTCCodecsProxy::DecodeFrame { decoder.identifier, timeStamp, data }, 0)->whenSettled(workQueue(), [](auto&& result) mutable {
         if (!result)
@@ -623,6 +742,15 @@ Ref<LibWebRTCCodecs::FramePromise> LibWebRTCCodecs::sendFrameToDecode(Decoder& d
             return FramePromise::createAndReject("Decoding task failed"_s);
 
         return FramePromise::createAndResolve();
+    });
+}
+
+Ref<LibWebRTCCodecs::FramePromise> LibWebRTCCodecs::sendFrameToSoftwareDecoder(Decoder& decoder, int64_t timeStamp, Ref<WebCore::SharedBuffer>&& data, bool isKeyFrame)
+{
+    return Ref { *decoder.softwareDecoder }->decode({ WTF::move(data), isKeyFrame, timeStamp, { } })->whenSettled(workQueue(), [protectedThis = Ref { *this }, identifier = decoder.identifier](auto&& result) {
+        if (!result)
+            protectedThis->failedDecoding(identifier);
+        return FramePromise::createAndSettle(WTF::move(result));
     });
 }
 
@@ -652,6 +780,22 @@ static std::span<const uint8_t> frameDataSpan(const Ref<WebCore::SharedBuffer>& 
 
 static Ref<WebCore::SharedBuffer> frameDataBuffer(std::span<const uint8_t> data) { return WebCore::SharedBuffer::create(data); }
 static Ref<WebCore::SharedBuffer> frameDataBuffer(Ref<WebCore::SharedBuffer>&& data) { return WTF::move(data); }
+static Ref<WebCore::SharedBuffer> frameDataBuffer(const Ref<WebCore::SharedBuffer>& data) { return data.copyRef(); }
+
+template<typename Data>
+RefPtr<LibWebRTCCodecs::FramePromise> LibWebRTCCodecs::sendFrameToDecoder(Decoder& decoder, int64_t timeStamp, const Data& data, uint16_t width, uint16_t height)
+{
+    auto decodableFrame = makeDecodableFrame(decoder, frameDataSpan(data), width, height);
+    bool isKeyFrame = !!decodableFrame.videoInfo;
+    if (decodableFrame.videoInfo) {
+        updateDecoderVideoInfo(decoder, decodableFrame.videoInfo.releaseNonNull());
+        if (decoder.waitingFor != Decoder::WaitingFor::Nothing)
+            return nullptr;
+    }
+    if (decoder.softwareDecoder)
+        return sendFrameToSoftwareDecoder(decoder, timeStamp, frameDataBuffer(data), isKeyFrame);
+    return sendFrameToGPUProcess(decoder, timeStamp, decodableFrame.data());
+}
 
 template<typename Data>
 RefPtr<LibWebRTCCodecs::FramePromise> LibWebRTCCodecs::decodeFrameInternal(Decoder& decoder, int64_t timeStamp, Data&& data, uint16_t width, uint16_t height)
@@ -662,12 +806,9 @@ RefPtr<LibWebRTCCodecs::FramePromise> LibWebRTCCodecs::decodeFrameInternal(Decod
         return nullptr;
     }
 
-    if (decoder.connection && !decoder.isWaitingForVideoInfo) {
-        auto decodableFrame = makeDecodableFrame(decoder, frameDataSpan(data), width, height);
-        if (decodableFrame.videoInfo)
-            updateDecoderVideoInfo(decoder, decodableFrame.videoInfo.releaseNonNull());
-        if (!decoder.isWaitingForVideoInfo)
-            return sendFrameToDecode(decoder, timeStamp, decodableFrame.data());
+    if (decoder.connection && decoder.waitingFor == Decoder::WaitingFor::Nothing) {
+        if (RefPtr promise = sendFrameToDecoder(decoder, timeStamp, data, width, height))
+            return promise;
     }
 
     FramePromise::AutoRejectProducer producer;
@@ -1224,9 +1365,11 @@ IPC::Connection* LibWebRTCCodecs::decoderConnection(Decoder& decoder)
 void LibWebRTCCodecs::setDecoderConnection(Decoder& decoder, RefPtr<IPC::Connection>&& connection)
 {
     decoder.connection = WTF::move(connection);
-    decoder.isWaitingForVideoInfo = false;
-    if (RefPtr videoInfo = std::exchange(decoder.videoInfo, nullptr))
-        updateDecoderVideoInfo(decoder, videoInfo.releaseNonNull());
+    bool needsVideoInfo = decoder.waitingFor == Decoder::WaitingFor::Nothing ? !decoder.softwareDecoder : decoder.waitingFor != Decoder::WaitingFor::SoftwareDecoderCreation;
+    if (needsVideoInfo) {
+        decoder.waitingFor = Decoder::WaitingFor::Nothing;
+        sendDecoderVideoInfo(decoder);
+    }
     processPendingDecoderTasks(decoder);
 }
 
