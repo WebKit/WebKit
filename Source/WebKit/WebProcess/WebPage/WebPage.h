@@ -1234,7 +1234,7 @@ public:
     bool allowsUserScaling() const;
 
     void attemptSyntheticClick(std::optional<WebCore::FrameIdentifier>, const WebCore::IntPoint&, OptionSet<WebKit::WebEventModifier>, TransactionID lastLayerTreeTransactionId, CompletionHandler<void(std::optional<WebCore::RemoteUserInputEventData>)>&&);
-    void tapHighlightAtPosition(WebKit::TapIdentifier, const WebCore::FloatPoint&);
+    void tapHighlightAtPosition(std::optional<WebCore::FrameIdentifier>, WebKit::TapIdentifier, const WebCore::FloatPoint&, CompletionHandler<void(std::optional<WebCore::RemoteUserInputEventData>)>&&);
     void didRecognizeLongPress();
 
     void inspectorNodeSearchMovedToPosition(const WebCore::FloatPoint&);

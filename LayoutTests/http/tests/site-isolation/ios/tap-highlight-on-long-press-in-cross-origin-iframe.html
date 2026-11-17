@@ -1,0 +1,40 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true allowsLinkPreview=false ] -->
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="/js-test-resources/js-test.js"></script>
+<script src="/js-test-resources/ui-helper.js"></script>
+<script>
+description("With link previews off, long-pressing a link inside a cross-origin iframe should highlight the link, not the iframe.");
+jsTestIsAsync = true;
+
+// The iframe is at (0, 100), and the link is at (50, 50) inside it, 200 by 60.
+const linkLeft = 50;
+const linkTop = 100 + 50;
+const linkWidth = 200;
+const linkHeight = 60;
+const tapHighlightInflationPerSide = 4;
+let highlight;
+
+addEventListener("message", async (event) => {
+    if (event.data !== "ready")
+        return;
+
+    await UIHelper.ensurePresentationUpdate();
+
+    await UIHelper.longPressAtPoint(linkLeft + linkWidth / 2, linkTop + linkHeight / 2);
+    for (let i = 0; i < 100; i++) {
+        highlight = await UIHelper.tapHighlightViewRect();
+        if (highlight.width > 0 && highlight.height > 0)
+            break;
+        await UIHelper.ensurePresentationUpdate();
+    }
+
+    shouldBe("highlight.left", "linkLeft - tapHighlightInflationPerSide");
+    shouldBe("highlight.top", "linkTop - tapHighlightInflationPerSide");
+    shouldBe("highlight.width", "linkWidth + 2 * tapHighlightInflationPerSide");
+    shouldBe("highlight.height", "linkHeight + 2 * tapHighlightInflationPerSide");
+    finishJSTest();
+});
+</script>
+<body style="margin: 0;">
+<iframe style="position: absolute; left: 0; top: 100px; width: 400px; height: 300px; border: none;" src="http://localhost:8000/site-isolation/resources/long-press-link-frame.html"></iframe>
+</body>

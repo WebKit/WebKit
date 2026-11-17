@@ -1,0 +1,13 @@
+With link previews off, long-pressing a link inside a cross-origin iframe should highlight the link, not the iframe.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS highlight.left is linkLeft - tapHighlightInflationPerSide
+PASS highlight.top is linkTop - tapHighlightInflationPerSide
+PASS highlight.width is linkWidth + 2 * tapHighlightInflationPerSide
+PASS highlight.height is linkHeight + 2 * tapHighlightInflationPerSide
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -2228,6 +2228,7 @@ public:
     bool mainFramePluginHandlesPageScaleGesture() const { return m_mainFramePluginHandlesPageScaleGesture; }
 
     void tapHighlightAtPosition(const WebCore::FloatPoint&, TapIdentifier requestID);
+    void tapHighlightAtPositionInFrame(std::optional<WebCore::FrameIdentifier>, const WebCore::FloatPoint&, TapIdentifier requestID);
     void attemptSyntheticClick(const WebCore::FloatPoint&, OptionSet<WebEventModifier>, TransactionID layerTreeTransactionIdAtLastTouchStart);
     void attemptSyntheticClickInFrame(std::optional<WebCore::FrameIdentifier>, const WebCore::IntPoint&, OptionSet<WebEventModifier>, TransactionID layerTreeTransactionIdAtLastTouchStart);
     void didRecognizeLongPress();

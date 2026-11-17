@@ -1197,13 +1197,22 @@ void WebPage::didRecognizeLongPress()
         ContentChangeObserver::didRecognizeLongPress(*localMainFrame);
 }
 
-void WebPage::tapHighlightAtPosition(WebKit::TapIdentifier requestID, const FloatPoint& position)
+void WebPage::tapHighlightAtPosition(std::optional<WebCore::FrameIdentifier> frameID, WebKit::TapIdentifier requestID, const FloatPoint& position, CompletionHandler<void(std::optional<RemoteUserInputEventData>)>&& completionHandler)
 {
-    RefPtr localMainFrame = protect(*m_page)->localMainFrame();
-    if (!localMainFrame)
-        return;
+    if (frameID && !WebProcess::singleton().webFrame(*frameID))
+        return completionHandler(std::nullopt);
+
+    RefPtr localRootFrame = this->localRootFrame(frameID);
+    if (!localRootFrame)
+        return completionHandler(std::nullopt);
+
     FloatPoint adjustedPoint;
-    sendTapHighlightForNodeIfNecessary(requestID, localMainFrame->nodeRespondingToClickEvents(position, adjustedPoint), position);
+    RefPtr nodeRespondingToClick = localRootFrame->nodeRespondingToClickEvents(position, adjustedPoint);
+    if (auto remoteUserInputEventData = remoteUserInputEventDataForTapTarget(localRootFrame.get(), nodeRespondingToClick.get(), adjustedPoint))
+        return completionHandler(WTF::move(remoteUserInputEventData));
+    completionHandler(std::nullopt);
+
+    sendTapHighlightForNodeIfNecessary(requestID, nodeRespondingToClick.get(), position);
 }
 
 void WebPage::inspectorNodeSearchMovedToPosition(const FloatPoint& position)

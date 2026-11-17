@@ -826,7 +826,23 @@ void WebPageProxy::didEndUserTriggeredZooming()
 
 void WebPageProxy::tapHighlightAtPosition(const WebCore::FloatPoint& position, WebKit::TapIdentifier requestID)
 {
-    protect(legacyMainFrameProcess())->send(Messages::WebPage::TapHighlightAtPosition(requestID, position), webPageIDInMainFrameProcess());
+    tapHighlightAtPositionInFrame(std::nullopt, position, requestID);
+}
+
+void WebPageProxy::tapHighlightAtPositionInFrame(std::optional<FrameIdentifier> frameID, const WebCore::FloatPoint& position, WebKit::TapIdentifier requestID)
+{
+    RefPtr frame = frameID ? WebFrameProxy::webFrame(*frameID) : m_mainFrame.get();
+    if (!frame || frame->page() != this)
+        return;
+
+    sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::WebPage::TapHighlightAtPosition(frameID, requestID, position), Messages::WebPage::TapHighlightAtPosition::Reply { [weakThis = WeakPtr { *this }, requestID](auto remoteUserInputEventData) {
+        if (!remoteUserInputEventData)
+            return;
+        RefPtr protectedThis = weakThis;
+        if (!protectedThis)
+            return;
+        protectedThis->tapHighlightAtPositionInFrame(remoteUserInputEventData->targetFrameID, FloatPoint { remoteUserInputEventData->transformedPoint }, requestID);
+    } });
 }
 
 void WebPageProxy::attemptSyntheticClick(const FloatPoint& location, OptionSet<WebEventModifier> modifiers, TransactionID layerTreeTransactionIdAtLastTouchStart)

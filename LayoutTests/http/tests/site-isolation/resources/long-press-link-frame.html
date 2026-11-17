@@ -1,0 +1,8 @@
+<body style="margin: 0;">
+<a id="link" href="#" style="position: absolute; left: 50px; top: 50px; width: 200px; height: 60px; display: block; background-color: silver;">Link</a>
+<script>
+// The long-press clicks the link when it ends. Stay on this page.
+document.getElementById("link").addEventListener("click", (event) => event.preventDefault());
+window.top.postMessage("ready", "*");
+</script>
+</body>
