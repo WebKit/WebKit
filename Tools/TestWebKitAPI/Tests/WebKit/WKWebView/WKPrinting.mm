@@ -210,10 +210,10 @@ TEST(Printing, PrintPageBorders)
 }
 
 #if HAVE(PDFKIT)
-static RetainPtr<TestPDFDocument> printToPDF(NSString *styleSheet)
+static RetainPtr<TestPDFDocument> printToPDF(NSString *html)
 {
     RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
-    [webView synchronouslyLoadHTMLString:[NSString stringWithFormat:@"<style>%@ body { margin: 0 }</style><div>Hello</div>", styleSheet]];
+    [webView synchronouslyLoadHTMLString:html];
 
     return TestWebKitAPI::printToPDF(^(NSPrintInfo *printInfo) {
         return [webView printOperationWithPrintInfo:printInfo];
@@ -222,7 +222,7 @@ static RetainPtr<TestPDFDocument> printToPDF(NSString *styleSheet)
 
 static CGPoint firstCharacterPosition(NSString *styleSheet)
 {
-    return TestWebKitAPI::firstCharacterPosition(printToPDF(styleSheet).get());
+    return TestWebKitAPI::firstCharacterPosition(printToPDF([NSString stringWithFormat:@"<style>%@ body { margin: 0 }</style><div>Hello</div>", styleSheet]).get());
 }
 
 static void expectFirstCharacterOffset(NSString *styleSheet, NSString *referenceStyleSheet, CGFloat left, CGFloat top)
@@ -238,6 +238,20 @@ TEST(Printing, PrintedContentUsesCSSUnits)
     // 1in = 96px = 72pt.
     auto oneInch = TestWebKitAPI::pointsFromCSSPixels(96);
     expectFirstCharacterOffset(@"@page { margin: 0 } div { margin-left: 1in; padding-top: 1in }", @"@page { margin: 0 }", oneInch, oneInch);
+}
+
+TEST(Printing, ViewportUnitsUsePageArea)
+{
+    NSString *cases[] = {
+        @"<div style='width: 1000px'></div>",
+        @"<script>matchMedia('print').addEventListener('change', () => document.body.offsetHeight)</script>",
+    };
+    for (NSString *content : cases) {
+        RetainPtr document = printToPDF([NSString stringWithFormat:@"<body style='margin: 0'>%@<div style='height: 100vh'></div>Next page</body>", content]);
+        EXPECT_EQ([document pageCount], 2) << content.UTF8String;
+        if ([document pageCount] == 2)
+            EXPECT_TRUE([[[document pageAtIndex:1] text] containsString:@"Next page"]) << content.UTF8String;
+    }
 }
 
 static CGSize drawnPDFPageSize(NSString *html)

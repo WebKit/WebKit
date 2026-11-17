@@ -165,6 +165,8 @@ LayoutUnit RenderView::availableLogicalHeight(AvailableLogicalHeightType) const
     if (document().isPluginDocument() && frameView->useFixedLayout())
         return frameView->fixedLayoutSize().height();
 #endif
+    if (auto pageAreaLogicalSize = printedPageAreaLogicalSize())
+        return pageAreaLogicalSize->height();
     return isHorizontalWritingMode() ? frameView->layoutSize().height() : frameView->layoutSize().width();
 }
 
@@ -728,10 +730,22 @@ int RenderView::viewLogicalHeight() const
 
 void RenderView::setPageLogicalSize(LayoutSize size)
 {
+    if (m_pageLogicalSize == size)
+        return;
+
     if (!m_pageLogicalSize || m_pageLogicalSize->height() != size.height())
         m_pageLogicalHeightChanged = true;
 
     m_pageLogicalSize = size;
+    // Viewport units resolve against the page area while printing.
+    protect(document())->updateViewportUnitsOnResize();
+}
+
+std::optional<LayoutSize> RenderView::printedPageAreaLogicalSize() const
+{
+    if (!shouldUsePrintingLayout() || !m_pageLogicalSize || m_pageLogicalSize->isEmpty())
+        return std::nullopt;
+    return m_pageLogicalSize;
 }
 
 FloatSize RenderView::sizeForCSSSmallViewportUnits() const

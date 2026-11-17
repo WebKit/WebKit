@@ -6445,6 +6445,7 @@ void LocalFrameView::forceLayoutForPagination(const FloatSize& pageSize, const F
 
     // Dumping externalRepresentation(m_frame->renderer()).ascii() is a good trick to see
     // the state of things before and after the layout
+    // FIXME: This is the writing mode from before print styles apply, so print styles that change writing-mode swap the page's logical width and height.
     bool isHorizontalWritingMode = renderView->writingMode().isHorizontal();
     float pageLogicalWidth = isHorizontalWritingMode ? pageSize.width() : pageSize.height();
     float pageLogicalHeight = isHorizontalWritingMode ? pageSize.height() : pageSize.width();
@@ -7273,8 +7274,23 @@ static bool hasDelegatedPageScale(const LocalFrameView& view)
     return page && page->delegatesScaling();
 }
 
+static std::optional<FloatSize> printedPageAreaSize(const LocalFrameView& view)
+{
+    CheckedPtr renderView = view.renderView();
+    if (!renderView)
+        return std::nullopt;
+    auto pageAreaLogicalSize = renderView->printedPageAreaLogicalSize();
+    if (!pageAreaLogicalSize)
+        return std::nullopt;
+    FloatSize size { *pageAreaLogicalSize };
+    return renderView->writingMode().isHorizontal() ? size : size.transposedSize();
+}
+
 FloatSize LocalFrameView::calculateSizeForCSSViewportUnitsOverride(std::optional<OverrideViewportSize> override) const
 {
+    if (auto pageAreaSize = printedPageAreaSize(*this))
+        return *pageAreaSize;
+
     OverrideViewportSize viewportSize;
 
     if (override) {
@@ -7307,6 +7323,9 @@ FloatSize LocalFrameView::calculateSizeForCSSViewportUnitsOverride(std::optional
 
 FloatSize LocalFrameView::sizeForCSSDynamicViewportUnits() const
 {
+    if (auto pageAreaSize = printedPageAreaSize(*this))
+        return *pageAreaSize;
+
     bool useFixedLayout = this->useFixedLayout();
 
     if (useFixedLayout && sizeForCSSSmallViewportUnits() == sizeForCSSLargeViewportUnits())
