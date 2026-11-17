@@ -37,7 +37,6 @@ struct TimelineTriggerName : ValueOrKeyword<CustomIdent, CSS::Keyword::None> {
     using Base::Base;
 
     bool isNone() const { return isKeyword(); }
-    bool isDashedIdentifier() const { return isValue(); }
 };
 
 } // namespace Style

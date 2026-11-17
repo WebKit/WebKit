@@ -282,41 +282,6 @@ bool Color::isCurrentColor() const
     return std::holds_alternative<CurrentColor>(value);
 }
 
-bool Color::isColorMix() const
-{
-    return std::holds_alternative<UniqueRef<ColorMix>>(value);
-}
-
-bool Color::isContrastColor() const
-{
-    return std::holds_alternative<UniqueRef<ContrastColor>>(value);
-}
-
-bool Color::isRelativeAlphaColor() const
-{
-    return std::holds_alternative<UniqueRef<RelativeAlphaColor>>(value);
-}
-
-bool Color::isRelativeColor() const
-{
-    return std::holds_alternative<UniqueRef<RelativeColor<RGBFunctionModernRelative>>>(value)
-        || std::holds_alternative<UniqueRef<RelativeColor<HSLFunctionModern>>>(value)
-        || std::holds_alternative<UniqueRef<RelativeColor<HWBFunction>>>(value)
-        || std::holds_alternative<UniqueRef<RelativeColor<LabFunction>>>(value)
-        || std::holds_alternative<UniqueRef<RelativeColor<LCHFunction>>>(value)
-        || std::holds_alternative<UniqueRef<RelativeColor<OKLabFunction>>>(value)
-        || std::holds_alternative<UniqueRef<RelativeColor<OKLCHFunction>>>(value)
-        || std::holds_alternative<UniqueRef<RelativeColor<ColorRGBFunction<ExtendedA98RGB<float>>>>>(value)
-        || std::holds_alternative<UniqueRef<RelativeColor<ColorRGBFunction<ExtendedDisplayP3<float>>>>>(value)
-        || std::holds_alternative<UniqueRef<RelativeColor<ColorRGBFunction<ExtendedLinearDisplayP3<float>>>>>(value)
-        || std::holds_alternative<UniqueRef<RelativeColor<ColorRGBFunction<ExtendedProPhotoRGB<float>>>>>(value)
-        || std::holds_alternative<UniqueRef<RelativeColor<ColorRGBFunction<ExtendedRec2020<float>>>>>(value)
-        || std::holds_alternative<UniqueRef<RelativeColor<ColorRGBFunction<ExtendedSRGBA<float>>>>>(value)
-        || std::holds_alternative<UniqueRef<RelativeColor<ColorRGBFunction<ExtendedLinearSRGBA<float>>>>>(value)
-        || std::holds_alternative<UniqueRef<RelativeColor<ColorXYZFunction<XYZA<float, WhitePoint::D50>>>>>(value)
-        || std::holds_alternative<UniqueRef<RelativeColor<ColorXYZFunction<XYZA<float, WhitePoint::D65>>>>>(value);
-}
-
 bool Color::isResolvedColor() const
 {
     return std::holds_alternative<ResolvedColor>(value);
