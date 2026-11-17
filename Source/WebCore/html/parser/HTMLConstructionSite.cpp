@@ -903,7 +903,9 @@ std::tuple<RefPtr<HTMLElement>, RefPtr<JSCustomElementInterface>, RefPtr<CustomE
         }
         if (!element) {
             auto qualifiedName = qualifiedNameForHTMLTag(token);
-            if (NameValidation::validateCustomElementName(token.name()) == CustomElementNameValidationStatus::Valid) {
+            // HTMLTagNames.in lists builtin SVG/MathML elements with "-" in their names explicitly as HTMLUnknownElement.
+            ASSERT(NameValidation::validateCustomElementName(token.name()) != CustomElementNameValidationStatus::ConflictsWithStandardElementName);
+            if (NameValidation::classifyElementName(token.name()) == NameValidation::ElementNameKind::CustomElementName) {
                 element = HTMLMaybeFormAssociatedCustomElement::create(qualifiedName, ownerDocument);
                 element->setIsCustomElementUpgradeCandidate();
             } else
