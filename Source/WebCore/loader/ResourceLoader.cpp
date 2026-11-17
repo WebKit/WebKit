@@ -680,6 +680,12 @@ void ResourceLoader::didFinishLoadingOnePart(const NetworkLoadMetrics& networkLo
         frameLoader->notifier().didFinishLoad(*this, *m_identifier, networkLoadMetrics);
 }
 
+#if USE(QUICK_LOOK)
+void ResourceLoader::didFinishQuickLookLoading(URL&&)
+{
+}
+#endif
+
 void ResourceLoader::didFail(const ResourceError& error)
 {
     RESOURCELOADER_RELEASE_LOG("didFail:");

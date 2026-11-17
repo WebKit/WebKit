@@ -171,6 +171,8 @@ WTF_EXPORT_PRIVATE String decodeFromFilename(const String&);
 
 WTF_EXPORT_PRIVATE bool filesHaveSameVolume(const String&, const String&);
 
+WTF_EXPORT_PRIVATE String createTemporaryDirectory(const String& directoryPrefix = nullString());
+
 #if USE(CF)
 WTF_EXPORT_PRIVATE RetainPtr<CFURLRef> pathAsURL(const String&);
 #endif
@@ -185,7 +187,6 @@ WTF_EXPORT_PRIVATE String filenameForDisplay(const String&);
 WTF_EXPORT_PRIVATE UTF8CString currentExecutablePath();
 WTF_EXPORT_PRIVATE String userCacheDirectory();
 WTF_EXPORT_PRIVATE String userDataDirectory();
-WTF_EXPORT_PRIVATE String createTemporaryDirectory(const String& directoryPrefix = nullString());
 #if ENABLE(DEVELOPER_MODE)
 WTF_EXPORT_PRIVATE UTF8CString webkitTopLevelDirectory();
 #endif

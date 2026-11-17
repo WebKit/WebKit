@@ -37,6 +37,17 @@ DECLARE_SYSTEM_HEADER
 
 #import <QuickLook/QuickLook.h>
 
+@interface QLPreviewParts : NSObject {
+}
+@end
+
+@interface QLPreviewConverterParts : QLPreviewParts
+@end
+
+@interface QLPreviewConverterParts ()
+@property (weak, nonatomic) id delegate;
+@end
+
 // FIXME: (rdar://165510931) Remove the `__has_feature(modules)` condition when possible.
 #if USE(APPLE_INTERNAL_SDK) && !__has_feature(modules)
 
@@ -51,6 +62,7 @@ DECLARE_SYSTEM_HEADER
 - (NSURLRequest *)safeRequestForRequest:(NSURLRequest *)request;
 - (id)initWithConnection:(NSURLConnection *)connection delegate:(id)delegate response:(NSURLResponse *)response options:(NSDictionary *)options;
 - (id)initWithData:(NSData *)data name:(NSString *)name uti:(NSString *)uti options:(NSDictionary *)options;
+- (id)initWithURL:(NSURL *)url uti:(NSString *)uti options:(NSDictionary *)options;
 - (void)appendData:(NSData *)data;
 - (void)appendDataArray:(NSArray *)dataArray;
 - (void)finishConverting;
@@ -59,6 +71,7 @@ DECLARE_SYSTEM_HEADER
 @property (readonly, nonatomic) NSString *previewUTI;
 @property (readonly, nonatomic) NSURLRequest *previewRequest;
 @property (readonly, nonatomic) NSURLResponse *previewResponse;
+@property (readonly, nonatomic) QLPreviewConverterParts* previewParts;
 @end
 
 @class QLItem;

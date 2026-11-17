@@ -108,6 +108,14 @@ bool LegacyPreviewLoader::didFinishLoading()
     return true;
 }
 
+#if USE(QUICK_LOOK)
+void LegacyPreviewLoader::didFinishQuickLookLoading(URL&& temporaryQuickLookFileURL)
+{
+    if (RefPtr converter = m_converter)
+        converter->receivedTemporaryFileURL(WTF::move(temporaryQuickLookFileURL));
+}
+#endif // USE(QUICK_LOOK)
+
 void LegacyPreviewLoader::didFail()
 {
     if (m_finishedLoadingDataIntoConverter)

@@ -356,6 +356,10 @@ private:
     bool isLocalFileLoadAllowed(const URL&);
 #endif
 
+#if USE(QUICK_LOOK)
+    void removeQuickLookTemporaryFilesIfNeeded(const String& folder);
+#endif
+
     NetworkResourceLoadParameters m_parameters;
     Vector<Ref<SandboxExtension>> m_extensionsToRevoke;
 
@@ -447,6 +451,11 @@ private:
     MemoryCompactRobinHoodHashMap<String, String> m_reportingEndpoints;
 
     std::unique_ptr<WebCore::ResourceResponse> m_redirectionForCurrentNavigation;
+
+#if USE(QUICK_LOOK)
+    String m_temporaryQuickLookFilename;
+    FileSystem::FileHandle m_temporaryQuickLookFileHandle;
+#endif
 };
 
 } // namespace WebKit

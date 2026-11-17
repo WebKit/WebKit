@@ -28,6 +28,7 @@
 
 #if ENABLE(PREVIEW_CONVERTER)
 
+#include "Logging.h"
 #include "PreviewConverterClient.h"
 #include "PreviewConverterProvider.h"
 #include <wtf/RunLoop.h>
@@ -84,11 +85,19 @@ void PreviewConverter::updateMainResource()
         return;
     }
 
+#if !ENABLE(BLOCKING_OF_WEBCONTENT_FILE_WRITE)
     provider->provideMainResourceForPreviewConverter(*this, [this, protectedThis = Ref { *this }](Ref<FragmentedSharedBuffer>&& buffer) {
         appendFromBuffer(WTF::move(buffer));
     });
+#endif
 }
 
+void PreviewConverter::receivedTemporaryFileURL(URL&& temporaryFileURL)
+{
+    platformReceivedTemporaryFileURL(WTF::move(temporaryFileURL));
+}
+
+#if !ENABLE(BLOCKING_OF_WEBCONTENT_FILE_WRITE)
 void PreviewConverter::appendFromBuffer(const FragmentedSharedBuffer& buffer)
 {
     while (buffer.size() > m_lengthAppended) {
@@ -97,6 +106,7 @@ void PreviewConverter::appendFromBuffer(const FragmentedSharedBuffer& buffer)
         m_lengthAppended += newData.size();
     }
 }
+#endif // !ENABLE(BLOCKING_OF_WEBCONTENT_FILE_WRITE)
 
 void PreviewConverter::finishUpdating()
 {
@@ -106,7 +116,7 @@ void PreviewConverter::finishUpdating()
     if (m_state != State::Updating)
         return;
 
-    platformFinishedAppending();
+    platformFinishedUpdating();
 
     iterateClients([&](auto& client) {
         client.previewConverterDidFinishUpdating(*this);
@@ -122,7 +132,7 @@ void PreviewConverter::failedUpdating()
         return;
 
     m_state = State::FailedUpdating;
-    platformFailedAppending();
+    platformFailedUpdating();
 }
 
 bool PreviewConverter::hasClient(PreviewConverterClient& client) const
