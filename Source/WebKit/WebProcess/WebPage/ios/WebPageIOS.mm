@@ -1589,11 +1589,17 @@ void WebPage::dispatchSyntheticMouseEventsForSelectionGesture(SelectionTouch tou
 
 void WebPage::clearSelectionAfterTappingSelectionHighlightIfNeeded(WebCore::FloatPoint location)
 {
-    RefPtr localMainFrame = protect(m_page)->localMainFrame();
-    if (!localMainFrame)
+    RefPtr focusedOrMainFrame = protect(m_page)->focusController().focusedOrMainFrame();
+    if (!focusedOrMainFrame)
         return;
 
-    auto result = localMainFrame->eventHandler().hitTestResultAtPoint(LayoutPoint { location }, {
+    Ref localRootFrame = focusedOrMainFrame->rootFrame();
+    RefPtr localRootView = localRootFrame->view();
+    if (!localRootView)
+        return;
+
+    auto pointInLocalRootView = localRootView->convertFromRootViewAcrossIsolatedFrames(location);
+    auto result = localRootFrame->eventHandler().hitTestResultAtPoint(LayoutPoint { localRootView->rootViewToContents(pointInLocalRootView) }, {
         HitTestRequest::Type::ReadOnly,
         HitTestRequest::Type::AllowVisibleChildFrameContentOnly,
         HitTestRequest::Type::IncludeAllElementsUnderPoint,

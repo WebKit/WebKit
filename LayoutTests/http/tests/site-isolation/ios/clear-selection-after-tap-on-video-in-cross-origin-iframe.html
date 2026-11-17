@@ -1,0 +1,48 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true useFlexibleViewport=true ] -->
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="/js-test-resources/js-test.js"></script>
+<script src="/js-test-resources/ui-helper.js"></script>
+<script>
+description("Tapping a video under the selection inside a cross-origin iframe should clear the selection instead of toggling the edit menu.");
+jsTestIsAsync = true;
+
+const iframeTop = 100;
+
+function waitForMessage(type)
+{
+    return new Promise(resolve => {
+        addEventListener("message", function listener(event) {
+            if (event.data.type !== type)
+                return;
+            removeEventListener("message", listener);
+            resolve(event.data);
+        });
+    });
+}
+
+// The iframe reports where its elements are when it loads, which is before this page's load event.
+const ready = waitForMessage("ready");
+
+addEventListener("load", async () => {
+    const frame = document.querySelector("iframe");
+    const { bottom, video } = await ready;
+    await UIHelper.ensurePresentationUpdate();
+
+    await UIHelper.longPressAtPoint(bottom.x, iframeTop + bottom.y);
+    await UIHelper.waitForSelectionToAppear();
+
+    const selectedAll = waitForMessage("selected all");
+    frame.contentWindow.postMessage("select all", "*");
+    await selectedAll;
+    await UIHelper.ensurePresentationUpdate();
+
+    await UIHelper.activateAt(video.x, iframeTop + video.y);
+    await UIHelper.waitForSelectionToDisappear();
+
+    testPassed("Cleared selection");
+    finishJSTest();
+});
+</script>
+<body style="margin: 0;">
+<iframe style="position: absolute; left: 0; top: 100px; width: 400px; height: 500px; border: none;" src="http://localhost:8000/site-isolation/resources/clear-selection-after-tap-on-video-frame.html"></iframe>
+</body>

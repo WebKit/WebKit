@@ -476,7 +476,7 @@ void WebPageProxy::handleAutocorrectionContext(const WebAutocorrectionContext& c
 void WebPageProxy::clearSelectionAfterTappingSelectionHighlightIfNeeded(WebCore::FloatPoint location)
 {
     if (hasRunningProcess())
-        protect(legacyMainFrameProcess())->send(Messages::WebPage::ClearSelectionAfterTappingSelectionHighlightIfNeeded(location), webPageIDInMainFrameProcess());
+        sendToFocusedOrMainFrameProcess(Messages::WebPage::ClearSelectionAfterTappingSelectionHighlightIfNeeded(location));
 }
 
 void WebPageProxy::getSelectionContext(CompletionHandler<void(const String&, const String&, const String&)>&& callbackFunction)

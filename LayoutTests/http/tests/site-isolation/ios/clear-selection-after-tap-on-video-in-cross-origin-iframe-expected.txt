@@ -1,0 +1,10 @@
+Tapping a video under the selection inside a cross-origin iframe should clear the selection instead of toggling the edit menu.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Cleared selection
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
