@@ -114,7 +114,7 @@ public:
     bool containsConstructor(const JSC::JSObject*) const;
 
     JSC::JSValue get(const AtomString&);
-    String getName(JSC::JSValue);
+    ExceptionOr<const AtomString&> getName(JSC::JSValue);
     void upgrade(Node& root);
     ExceptionOr<void> initialize(Node& root);
 

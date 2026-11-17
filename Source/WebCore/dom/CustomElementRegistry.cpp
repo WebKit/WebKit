@@ -167,14 +167,13 @@ JSC::JSValue CustomElementRegistry::get(const AtomString& name)
     return JSC::jsUndefined();
 }
 
-String CustomElementRegistry::getName(JSC::JSValue constructorValue)
+ExceptionOr<const AtomString&> CustomElementRegistry::getName(JSC::JSValue constructorValue)
 {
-    auto* constructor = constructorValue.getObject();
-    if (!constructor)
-        return String { };
-    RefPtr elementInterface = findInterface(constructor);
+    if (!constructorValue.isCallable())
+        return Exception { ExceptionCode::TypeError, "The argument must be a function"_s };
+    RefPtr elementInterface = findInterface(constructorValue.getObject());
     if (!elementInterface)
-        return String { };
+        return nullAtom();
     return elementInterface->name().localName();
 }
 
