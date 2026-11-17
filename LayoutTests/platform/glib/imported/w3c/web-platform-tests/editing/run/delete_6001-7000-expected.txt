@@ -995,7 +995,7 @@ PASS [["delete",""]] "<p><span>[abc]</span><br></p>" queryCommandState("delete")
 PASS [["delete",""]] "<p><span>[abc]</span><br></p>" queryCommandValue("delete") after
 PASS [["delete",""]] "<p contenteditable=false><span contenteditable=true>[abc]</span></p>": execCommand("delete", false, "") return value
 PASS [["delete",""]] "<p contenteditable=false><span contenteditable=true>[abc]</span></p>" checks for modifications to non-editable content
-FAIL [["delete",""]] "<p contenteditable=false><span contenteditable=true>[abc]</span></p>" compare innerHTML assert_equals: Unexpected innerHTML (after normalizing inline style) expected "<p contenteditable=\"false\"><span contenteditable=\"true\"></span></p>" but got "<p contenteditable=\"false\"><span contenteditable=\"true\"><br></span></p>"
+PASS [["delete",""]] "<p contenteditable=false><span contenteditable=true>[abc]</span></p>" compare innerHTML
 PASS [["delete",""]] "<p contenteditable=false><span contenteditable=true>[abc]</span></p>" queryCommandIndeterm("delete") before
 PASS [["delete",""]] "<p contenteditable=false><span contenteditable=true>[abc]</span></p>" queryCommandState("delete") before
 PASS [["delete",""]] "<p contenteditable=false><span contenteditable=true>[abc]</span></p>" queryCommandValue("delete") before
