@@ -269,7 +269,7 @@ RefPtr<VideoFrame> VideoFrame::createI420A(std::span<const uint8_t>, size_t, siz
     return nullptr;
 }
 
-RefPtr<VideoFrame> VideoFrame::createPlanarYUV(VideoPixelFormat, std::span<const uint8_t>, size_t, size_t, std::span<const ComputedPlaneLayout, 3>, Init&&)
+RefPtr<VideoFrame> VideoFrame::createPlanarYUV(VideoPixelFormat, std::span<const uint8_t>, size_t, size_t, std::span<const ComputedPlaneLayout>, Init&&)
 {
     // FIXME: Add support.
     return nullptr;
