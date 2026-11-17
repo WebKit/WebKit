@@ -63,6 +63,22 @@ public func parseWebExtension(
     return manager
 }
 
+/// Creates a manager for an extension that has already been created, without loading it.
+///
+/// - Parameters:
+///   - extension: The extension to manage.
+///   - configuration: The controller configuration to use. Defaults to a non-persistent one.
+/// - Returns: A manager for the extension.
+@MainActor
+public func parseWebExtension(
+    _ extension: WKWebExtension,
+    configuration: WKWebExtensionController.Configuration? = nil
+) -> TestWebExtensionManager {
+    let manager = TestWebExtensionManager(for: `extension`, extensionControllerConfiguration: configuration)
+    manager.collectsFailures = true
+    return manager
+}
+
 /// Creates a manager for an extension parsed from a manifest, and loads it.
 ///
 /// - Parameters:
