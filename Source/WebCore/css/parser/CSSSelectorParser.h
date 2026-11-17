@@ -48,7 +48,7 @@ class StyleRule;
 class CSSSelectorParser {
 public:
     enum class DisallowPseudoElement : bool { No, Yes };
-    CSSSelectorParser(const CSSSelectorParserContext&, StyleSheetContents*, CSSParserEnum::NestedContext = { }, DisallowPseudoElement= DisallowPseudoElement::No);
+    CSSSelectorParser(const CSSSelectorParserContext&, StyleSheetContents*, DisallowPseudoElement = DisallowPseudoElement::No);
 
     MutableCSSSelectorList consumeComplexSelectorList(CSSParserTokenRange&);
     MutableCSSSelectorList consumeNestedSelectorList(CSSParserTokenRange&);
@@ -100,7 +100,6 @@ private:
 
     const CSSSelectorParserContext m_context;
     const RefPtr<StyleSheetContents> m_styleSheet;
-    CSSParserEnum::NestedContext m_nestedContext;
 
     // FIXME: This m_failedParsing is ugly and confusing, we should look into removing it (the return value of each function already convey this information).
     bool m_failedParsing { false };

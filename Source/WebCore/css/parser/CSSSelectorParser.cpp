@@ -90,7 +90,7 @@ static void appendImplicitSelectorIfNeeded(MutableCSSSelector& selector, CSSPars
 
 MutableCSSSelectorList parseMutableCSSSelectorList(CSSParserTokenRange& range, const CSSSelectorParserContext& context, StyleSheetContents* styleSheet, CSSParserEnum::NestedContext nestedContext, CSSParserEnum::IsForgiving isForgiving, CSSSelectorParser::DisallowPseudoElement disallowPseudoElement)
 {
-    CSSSelectorParser parser(context, styleSheet, nestedContext, disallowPseudoElement);
+    CSSSelectorParser parser(context, styleSheet, disallowPseudoElement);
     range.consumeWhitespace();
     auto consume = [&] {
         if (nestedContext && isForgiving == CSSParserEnum::IsForgiving::No)
@@ -124,10 +124,9 @@ std::optional<CSSSelectorList> parseCSSSelectorList(CSSParserTokenRange range, c
     return CSSSelectorList { WTF::move(result) };
 }
 
-CSSSelectorParser::CSSSelectorParser(const CSSSelectorParserContext& context, StyleSheetContents* styleSheet, CSSParserEnum::NestedContext nestedContext, DisallowPseudoElement disallowPseudoElement)
+CSSSelectorParser::CSSSelectorParser(const CSSSelectorParserContext& context, StyleSheetContents* styleSheet, DisallowPseudoElement disallowPseudoElement)
     : m_context(context)
     , m_styleSheet(styleSheet)
-    , m_nestedContext(nestedContext)
     , m_disallowPseudoElements(disallowPseudoElement == DisallowPseudoElement::Yes)
 {
 }

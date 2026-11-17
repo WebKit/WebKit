@@ -62,9 +62,6 @@ std::optional<CSS::Color> consumeUnresolvedColor(CSSParserTokenRange&, CSS::Prop
 // MARK: <color> consuming (CSSValue)
 RefPtr<CSSValue> consumeColor(CSSParserTokenRange&, CSS::PropertyParserState&, const CSSColorParsingOptions& = { });
 
-// MARK: <color> consuming (raw)
-WebCore::Color consumeColorRaw(CSSParserTokenRange&, CSS::PropertyParserState&, const CSSColorParsingOptions&, CSS::PlatformColorResolutionState&);
-
 // MARK: <color> parsing (raw)
 
 // Parse with default options.

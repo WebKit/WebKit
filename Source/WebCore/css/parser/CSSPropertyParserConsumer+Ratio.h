@@ -48,7 +48,6 @@ std::optional<CSS::Ratio> consumeUnresolvedRatioWithBothNumeratorAndDenominator(
 
 // MARK: <ratio> consuming (value)
 RefPtr<CSSValue> consumeRatio(CSSParserTokenRange&, CSS::PropertyParserState&);
-RefPtr<CSSValue> consumeRatioWithBothNumeratorAndDenominator(CSSParserTokenRange&, CSS::PropertyParserState&);
 
 } // namespace CSSPropertyParserHelpers
 } // namespace WebCore

@@ -94,20 +94,6 @@ inline bool isGenericFontFamilyKeyword(CSSValueID valueID)
     }
 }
 
-// https://drafts.csswg.org/css-conditional-5/#propdef-container-name
-inline bool isValidContainerNameIdentifier(CSSValueID valueID)
-{
-    switch (valueID) {
-    case CSSValueID::None:
-    case CSSValueID::And:
-    case CSSValueID::Or:
-    case CSSValueID::Not:
-        return false;
-    default:
-        return isValidCustomIdentifier(valueID);
-    }
-}
-
 // https://drafts.csswg.org/css-animations/#typedef-keyframes-name
 inline bool isValidCustomIdentifierForKeyframeName(CSSValueID valueID)
 {

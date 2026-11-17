@@ -892,17 +892,6 @@ RefPtr<CSSValue> consumeColor(CSSParserTokenRange& range, CSS::PropertyParserSta
     return nullptr;
 }
 
-// MARK: - Raw consuming entry points
-
-Color consumeColorRaw(CSSParserTokenRange& range, CSS::PropertyParserState& propertyParserState, const CSSColorParsingOptions& options, CSS::PlatformColorResolutionState& eagerResolutionState)
-{
-    ColorParserState state { propertyParserState, options };
-
-    if (auto color = consumeColor(range, state))
-        return createColor(*color, eagerResolutionState);
-    return { };
-}
-
 // MARK: - Raw parsing entry points
 
 Color parseColorRawGeneral(StringView string, const CSSParserContext& context, ScriptExecutionContext& scriptExecutionContext, const CSSColorParsingOptions& options, CSS::PlatformColorResolutionState& eagerResolutionState)

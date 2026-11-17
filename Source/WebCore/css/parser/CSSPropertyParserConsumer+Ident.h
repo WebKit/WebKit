@@ -48,10 +48,6 @@ std::optional<CSSValueID> consumeIdentRaw(CSSParserTokenRange&);
 std::optional<CSS::Keyword> consumeUnresolvedIdent(CSSParserTokenRange&);
 RefPtr<CSSKeywordValue> consumeIdent(CSSParserTokenRange&);
 
-std::optional<CSSValueID> consumeIdentRangeRaw(CSSParserTokenRange&, CSSValueID lower, CSSValueID upper);
-std::optional<CSS::Keyword> consumeUnresolvedIdentRange(CSSParserTokenRange&, CSSValueID lower, CSSValueID upper);
-RefPtr<CSSKeywordValue> consumeIdentRange(CSSParserTokenRange&, CSSValueID lower, CSSValueID upper);
-
 template<typename... emptyBaseCase> bool identMatches(CSSValueID);
 template<CSSValueID head, CSSValueID... tail> bool identMatches(CSSValueID);
 

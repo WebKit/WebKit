@@ -54,27 +54,6 @@ RefPtr<CSSKeywordValue> consumeIdent(CSSParserTokenRange& range)
     return CSSKeywordValue::create(CSS::Keyword { range.consumeIncludingWhitespace().id() });
 }
 
-std::optional<CSSValueID> consumeIdentRangeRaw(CSSParserTokenRange& range, CSSValueID lower, CSSValueID upper)
-{
-    if (range.peek().id() < lower || range.peek().id() > upper)
-        return std::nullopt;
-    return consumeIdentRaw(range);
-}
-
-std::optional<CSS::Keyword> consumeUnresolvedIdentRange(CSSParserTokenRange& range, CSSValueID lower, CSSValueID upper)
-{
-    if (range.peek().id() < lower || range.peek().id() > upper)
-        return std::nullopt;
-    return consumeUnresolvedIdent(range);
-}
-
-RefPtr<CSSKeywordValue> consumeIdentRange(CSSParserTokenRange& range, CSSValueID lower, CSSValueID upper)
-{
-    if (range.peek().id() < lower || range.peek().id() > upper)
-        return nullptr;
-    return consumeIdent(range);
-}
-
 // MARK: <custom-ident>
 // https://drafts.csswg.org/css-values/#custom-idents
 

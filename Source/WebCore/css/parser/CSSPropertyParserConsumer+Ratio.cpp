@@ -90,12 +90,5 @@ RefPtr<CSSValue> consumeRatio(CSSParserTokenRange& range, CSS::PropertyParserSta
     return nullptr;
 }
 
-RefPtr<CSSValue> consumeRatioWithBothNumeratorAndDenominator(CSSParserTokenRange& range, CSS::PropertyParserState& state)
-{
-    if (auto ratio = consumeUnresolvedRatioWithBothNumeratorAndDenominator(range, state))
-        return CSSRatioValue::create(WTF::move(*ratio));
-    return nullptr;
-}
-
 } // namespace CSSPropertyParserHelpers
 } // namespace WebCore
