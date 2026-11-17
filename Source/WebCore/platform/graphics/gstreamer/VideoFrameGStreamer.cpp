@@ -740,14 +740,32 @@ void VideoFrame::copyTo(std::span<uint8_t> destination, VideoPixelFormat pixelFo
     }
 
     if (pixelFormat == VideoPixelFormat::RGBA || pixelFormat == VideoPixelFormat::BGRA) {
+        auto rgbFormat = pixelFormat == VideoPixelFormat::RGBA ? GST_VIDEO_FORMAT_RGBA : GST_VIDEO_FORMAT_BGRA;
+        std::optional<GstMappedFrame> convertedFrame;
+        if (static_cast<GstVideoFormat>(inputFrame.format()) != rgbFormat) {
+            auto convertedSample = self.convert(rgbFormat, IntSize { inputFrame.width(), inputFrame.height() });
+            if (!convertedSample) {
+                GST_WARNING("Could not convert the frame to %s", gst_video_format_to_string(rgbFormat));
+                callback({ });
+                return;
+            }
+            convertedFrame.emplace(convertedSample, GST_MAP_READ);
+            if (!*convertedFrame) {
+                GST_WARNING("Could not map the converted frame");
+                callback({ });
+                return;
+            }
+        }
+        auto& rgbFrame = convertedFrame ? *convertedFrame : inputFrame;
+
         ComputedPlaneLayout planeLayout;
         if (!computedPlaneLayout.isEmpty())
             planeLayout = computedPlaneLayout[0];
-        auto plane = inputFrame.planeData(0);
-        auto bytesPerRow = inputFrame.componentStride(0);
+        auto plane = rgbFrame.planeData(0);
+        auto bytesPerRow = rgbFrame.componentStride(0);
         copyPlane(destination, plane, bytesPerRow, planeLayout);
         Vector<PlaneLayout> planeLayouts;
-        planeLayouts.append({ planeLayout.destinationOffset, planeLayout.destinationStride ? planeLayout.destinationStride : 4 * inputFrame.width() });
+        planeLayouts.append({ planeLayout.destinationOffset, planeLayout.destinationStride ? planeLayout.destinationStride : 4 * rgbFrame.width() });
         callback(WTF::move(planeLayouts));
         return;
     }
