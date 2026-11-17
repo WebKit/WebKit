@@ -26,6 +26,7 @@
 #include "config.h"
 #include "CSSTypeSpecifier.h"
 
+#include <wtf/Hasher.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/TextStream.h>
 
@@ -36,6 +37,15 @@ void Serialize<TypeSpecifier>::operator()(StringBuilder& builder, const Serializ
 {
     serializeCustomPropertySyntaxAsCSSType(builder, value.syntax);
 }
+
+// MARK: - Hashing
+
+void add(Hasher& hasher, const TypeSpecifier& value)
+{
+    add(hasher, value.syntax.definition);
+}
+
+// MARK: - Logging
 
 WTF::TextStream& operator<<(WTF::TextStream& ts, const TypeSpecifier& value)
 {

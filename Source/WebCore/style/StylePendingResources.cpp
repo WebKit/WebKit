@@ -95,8 +95,7 @@ static void loadExternalSVGResource(Document& document, const Element* element, 
     documentURL.removeFragmentIdentifier();
 
     CheckedRef extensions = document.svgExtensions();
-    // FIXME: External resources should be keyed by URL + modifiers. See https://bugs.webkit.org/show_bug.cgi?id=331477.
-    if (extensions->hasExternalSVGResource(documentURL))
+    if (extensions->hasExternalSVGResource(location))
         return;
 
     // The resource is fetched as an image, so it is subject to img-src CSP unless it lives in a user-agent
@@ -116,7 +115,7 @@ static void loadExternalSVGResource(Document& document, const Element* element, 
     RefPtr cachedImage = protect(document.cachedResourceLoader())->requestImage(WTF::move(request)).value_or(nullptr);
     if (!cachedImage)
         return;
-    extensions->addExternalSVGResource(documentURL, *cachedImage, document);
+    extensions->addExternalSVGResource(location, *cachedImage, document);
 }
 
 static void loadPendingExternalSVGPaint(Document& document, const Element* element, const Style::SVGPaint& paint)

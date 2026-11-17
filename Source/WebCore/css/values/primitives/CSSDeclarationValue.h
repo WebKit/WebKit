@@ -59,6 +59,10 @@ template<> struct CSSValueChildrenVisitor<DeclarationValue> {
     }
 };
 
+// MARK: - Hashing
+
+void add(Hasher&, const DeclarationValue&);
+
 // MARK: - Logging
 
 WTF::TextStream& operator<<(WTF::TextStream&, const DeclarationValue&);

@@ -101,6 +101,10 @@ template<size_t I> const auto& get(const URLModifiers& value)
 // Applies `URLModifiers` to `ResourceLoaderOptions`.
 void applyModifiersToLoaderOptions(const URLModifiers&, ResourceLoaderOptions&);
 
+// MARK: - Hashing
+
+void add(Hasher&, const URLModifiers&);
+
 } // namespace CSS
 } // namespace WebCore
 

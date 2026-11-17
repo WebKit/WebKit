@@ -92,6 +92,11 @@ struct LinkParameters : ListOrNone<LinkParameterList> {
     using ListOrNone<LinkParameterList>::ListOrNone;
 };
 
+// MARK: - Hashing
+
+void add(Hasher&, const ParamSpec&);
+void add(Hasher&, const LinkParameter&);
+
 } // namespace CSS
 } // namespace WebCore
 

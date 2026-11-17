@@ -30,6 +30,7 @@
 #include "CSSParserTokenRange.h"
 #include "CSSPropertyParserConsumer+Primitives.h"
 #include "CSSTokenizer.h"
+#include <wtf/Hasher.h>
 #include <wtf/SortedArrayMap.h>
 #include <wtf/text/ParsingUtilities.h>
 #include <wtf/text/StringBuilder.h>
@@ -275,6 +276,13 @@ void serializeCustomPropertySyntaxAsCSSType(StringBuilder& builder, const CSSCus
     builder.append("type("_s);
     serializeCustomPropertySyntax(builder, syntax);
     builder.append(')');
+}
+
+// MARK: - Hashing
+
+void add(Hasher& hasher, const CSSCustomPropertySyntax::Component& component)
+{
+    add(hasher, component.type, component.multiplier, component.ident);
 }
 
 }
