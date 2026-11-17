@@ -1,0 +1,27 @@
+Test that decoding an HE-AAC v2 M4A file decodes the SBR and Parametric Stereo layers
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+he-aac-v2-apple.m4a
+PASS Successfully decoded content
+PASS Decoding returned the right number of channels.
+PASS Decoding returned the right sample rate.
+PASS Decoding returned the right number of frames.
+PASS Left channel carries the 1kHz tone only.
+PASS Right channel carries the 3kHz tone only.
+PASS Spectral band replication was decoded.
+
+he-aac-v2-fdkaac.m4a
+PASS Successfully decoded content
+PASS Decoding returned the right number of channels.
+PASS Decoding returned the right sample rate.
+PASS Decoding returned the right number of frames.
+PASS Left channel carries the 1kHz tone only.
+PASS Right channel carries the 3kHz tone only.
+PASS Spectral band replication was decoded.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

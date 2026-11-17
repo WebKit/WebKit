@@ -55,6 +55,8 @@ WEBCORE_EXPORT RetainPtr<CMFormatDescriptionRef> createFormatDescriptionFromTrac
 WEBCORE_EXPORT RefPtr<AudioInfo> createAudioInfoFromFormatDescription(CMFormatDescriptionRef);
 // audioStreamDescriptFromAudioInfo only works with compressed audio format (non PCM)
 WEBCORE_EXPORT CAAudioStreamDescription audioStreamDescriptionFromAudioInfo(const AudioInfo&);
+// For layered codecs (e.g. HE-AAC), the stream basic description only describes the base layer.
+const AudioStreamBasicDescription* richestDecodableStreamBasicDescription(CMFormatDescriptionRef);
 WEBCORE_EXPORT RefPtr<VideoInfo> createVideoInfoFromFormatDescription(CMFormatDescriptionRef, std::optional<uint8_t> reorderQueueMaxSize = { });
 WEBCORE_EXPORT Ref<SharedBuffer> sharedBufferFromCMBlockBuffer(CMBlockBufferRef);
 WEBCORE_EXPORT RetainPtr<CMBlockBufferRef> ensureContiguousBlockBuffer(CMBlockBufferRef);

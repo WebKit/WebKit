@@ -630,6 +630,13 @@ RetainPtr<CMFormatDescriptionRef> createFormatDescriptionFromTrackInfo(const Tra
     return adoptCF(formatDescription);
 }
 
+const AudioStreamBasicDescription* richestDecodableStreamBasicDescription(CMFormatDescriptionRef description)
+{
+    if (auto* formatListItem = PAL::CMAudioFormatDescriptionGetRichestDecodableFormat(description))
+        return &formatListItem->mASBD;
+    return PAL::CMAudioFormatDescriptionGetStreamBasicDescription(description);
+}
+
 RefPtr<AudioInfo> createAudioInfoFromFormatDescription(CMFormatDescriptionRef description)
 {
     // This method currently only works for compressed content.

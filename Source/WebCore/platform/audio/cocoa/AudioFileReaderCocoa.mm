@@ -333,7 +333,7 @@ static std::optional<size_t> framesInSamples(Vector<Ref<MediaSampleAVFObjC>>& sa
         RetainPtr formatDescription = PAL::CMSampleBufferGetFormatDescription(sampleBuffer.get());
         if (!formatDescription)
             continue;
-        const AudioStreamBasicDescription* const asbd = PAL::CMAudioFormatDescriptionGetStreamBasicDescription(formatDescription.get());
+        const AudioStreamBasicDescription* const asbd = richestDecodableStreamBasicDescription(formatDescription.get());
         if (!asbd)
             return { };
 
@@ -738,7 +738,9 @@ std::optional<AudioStreamBasicDescription> AudioFileReader::fileDataFormat() con
     if (!formatDescription)
         return { };
 
-    const AudioStreamBasicDescription* const asbd = PAL::CMAudioFormatDescriptionGetStreamBasicDescription(formatDescription.get());
+    const AudioStreamBasicDescription* const asbd = richestDecodableStreamBasicDescription(formatDescription.get());
+    if (!asbd)
+        return { };
     return *asbd;
 }
 

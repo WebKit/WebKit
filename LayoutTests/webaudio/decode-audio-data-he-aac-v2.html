@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../resources/js-test.js"></script>
+<script type="text/javascript" src="resources/audio-testing.js"></script>
+</head>
+<body>
+<script>
+description("Test that decoding an HE-AAC v2 M4A file decodes the SBR and Parametric Stereo layers");
+
+// Both files hold 0.5s of the same 44.1kHz stereo signal: left = 1kHz tone, right = 3kHz tone,
+// both channels = 12-16kHz noise. The AAC-LC core layer alone is mono at 22.05kHz.
+
+window.jsTestIsAsync = true;
+
+const sampleRate = 44100;
+const analysisStart = sampleRate / 10;
+const analysisLength = sampleRate * 3 / 10;
+
+function load(url)
+{
+    return new Promise((resolve, reject) => {
+        const request = new XMLHttpRequest();
+        request.open("GET", url, true);
+        request.responseType = "arraybuffer";
+        request.onload = () => resolve(request.response);
+        request.onerror = reject;
+        request.send();
+    });
+}
+
+function toneLevel(data, frequency)
+{
+    // Goertzel algorithm.
+    const k = 2 * Math.cos(2 * Math.PI * frequency / sampleRate);
+    let s1 = 0;
+    let s2 = 0;
+    for (let i = analysisStart; i < analysisStart + analysisLength; ++i) {
+        const s0 = data[i] + k * s1 - s2;
+        s2 = s1;
+        s1 = s0;
+    }
+    const power = s1 * s1 + s2 * s2 - k * s1 * s2;
+    return 10 * Math.log10(power / (analysisLength * analysisLength) * 4 + 1e-12);
+}
+
+function highBandLevel(data)
+{
+    // A 4th-order difference attenuates the tones by over 50dB relative to the 12-16kHz band.
+    let samples = Array.from(data.subarray(analysisStart - 4, analysisStart + analysisLength));
+    for (let order = 0; order < 4; ++order)
+        samples = samples.slice(1).map((value, i) => value - samples[i]);
+    const energy = samples.reduce((sum, value) => sum + value * value, 0) / samples.length;
+    return 10 * Math.log10(energy + 1e-12);
+}
+
+async function testFile(context, name)
+{
+    debug("");
+    debug(name);
+    let buffer;
+    try {
+        buffer = await context.decodeAudioData(await load("resources/media/" + name));
+    } catch (e) {
+        testFailed("Failed to decode file");
+        return;
+    }
+    testPassed("Successfully decoded content");
+
+    if (buffer.numberOfChannels === 2)
+        testPassed("Decoding returned the right number of channels.");
+    else
+        testFailed("Decoding returned the wrong number of channels: " + buffer.numberOfChannels);
+    if (buffer.sampleRate === sampleRate)
+        testPassed("Decoding returned the right sample rate.");
+    else
+        testFailed("Decoding returned the wrong sample rate: " + buffer.sampleRate);
+    if (Math.abs(buffer.length - sampleRate / 2) <= sampleRate / 10)
+        testPassed("Decoding returned the right number of frames.");
+    else
+        testFailed("Decoding returned the wrong number of frames: " + buffer.length);
+    if (buffer.numberOfChannels !== 2)
+        return;
+
+    const left = buffer.getChannelData(0);
+    const right = buffer.getChannelData(1);
+    if (toneLevel(left, 1000) - toneLevel(left, 3000) > 15)
+        testPassed("Left channel carries the 1kHz tone only.");
+    else
+        testFailed("Left channel does not carry the 1kHz tone only.");
+    if (toneLevel(right, 3000) - toneLevel(right, 1000) > 15)
+        testPassed("Right channel carries the 3kHz tone only.");
+    else
+        testFailed("Right channel does not carry the 3kHz tone only.");
+    if (highBandLevel(left) > -25 && highBandLevel(right) > -25)
+        testPassed("Spectral band replication was decoded.");
+    else
+        testFailed("Spectral band replication was not decoded.");
+}
+
+(async () => {
+    const context = new AudioContext({ sampleRate });
+    // Encoded with `afconvert -f m4af -d aacp -b 32000`.
+    await testFile(context, "he-aac-v2-apple.m4a");
+    // Encoded with `fdkaac -S -p29 -b32`.
+    await testFile(context, "he-aac-v2-fdkaac.m4a");
+    finishJSTest();
+})();
+</script>
+</body>
+</html>
