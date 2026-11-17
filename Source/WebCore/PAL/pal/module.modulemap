@@ -19,6 +19,8 @@ module pal [system] {
 
         requires cplusplus23
 
+        exclude header "cocoa/BrowserEngineKitSoftLink.h"
+
         explicit module * {
             export *
         }

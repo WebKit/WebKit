@@ -42,6 +42,7 @@
 #import <wtf/cocoa/VectorCocoa.h>
 
 #import <pal/cocoa/WebContentRestrictionsSoftLink.h>
+#import <pal/cocoa/BrowserEngineKitSoftLink.h>
 
 namespace WebCore {
 
@@ -113,6 +114,32 @@ bool ParentalControlsURLFilter::hasGlobalFilter()
 
 #endif
 
+#if HAVE(BROWSERENGINEKIT_WEBCONTENTFILTER)
+BEWebContentFilter* ParentalControlsURLFilter::ensureWebContentFilter()
+#else
+id ParentalControlsURLFilter::ensureWebContentFilter()
+#endif
+{
+    if (PAL::getBEWebContentFilterClassSingleton()) {
+        assertIsCurrent(workQueueSingleton());
+        if (!m_webContentFilter)
+            lazyInitialize(m_webContentFilter, adoptNS([PAL::allocBEWebContentFilterInstance() init]));
+
+        ASSERT([m_webContentFilter isKindOfClass:PAL::getBEWebContentFilterClassSingleton()]);
+        return m_webContentFilter.get();
+    }
+
+#if PLATFORM(IOS)
+    // iOS platforms should always use a BEWebContentFilter
+    ASSERT_NOT_REACHED();
+    return nil;
+#else
+    ASSERT(isMainThread());
+    // If BrowserEngineKit is unavailable, keep using WCRBrowserEngineClient
+    return effectiveWCRBrowserEngineClient();
+#endif
+}
+
 void ParentalControlsURLFilter::setFilterForTesting(Ref<ParentalControlsURLFilter>&& filter)
 {
 #if HAVE(WEBCONTENTRESTRICTIONS_PATH_SPI)
@@ -158,6 +185,10 @@ ParentalControlsURLFilter::~ParentalControlsURLFilter() = default;
 
 bool ParentalControlsURLFilter::isEnabledImpl() const
 {
+    if (Class beWebContentFilterClass = PAL::getBEWebContentFilterClassSingleton())
+        return [beWebContentFilterClass shouldEvaluateURLs];
+
+// If BrowserEngineKit is unavailable, fall back to WCRBrowserEngineClient
 #if HAVE(WEBCONTENTRESTRICTIONS_PATH_SPI)
     return wcrBrowserEngineClientEnabled(m_configurationPath);
 #else
@@ -313,18 +344,26 @@ void ParentalControlsURLFilter::requestPermissionForURL(const URL& url, const UR
 
 WCRBrowserEngineClient* ParentalControlsURLFilter::effectiveWCRBrowserEngineClient()
 {
+#if PLATFORM(IOS)
+    // iOS platforms should always use a BEWebContentFilter over a WCRBrowserEngineClient
+    ASSERT_NOT_REACHED();
+    return nullptr;
+#else
     if (!isEnabled())
         return nullptr;
 
 #if HAVE(WEBCONTENTRESTRICTIONS_PATH_SPI)
-    if (!m_wcrBrowserEngineClient && !m_configurationPath.isEmpty())
-        lazyInitialize(m_wcrBrowserEngineClient, adoptNS([PAL::allocWCRBrowserEngineClientInstance() initWithConfigurationAtPath:m_configurationPath.createNSString().get()]));
+    if (!m_webContentFilter && !m_configurationPath.isEmpty())
+        lazyInitialize(m_webContentFilter, adoptNS([PAL::allocWCRBrowserEngineClientInstance() initWithConfigurationAtPath:m_configurationPath.createNSString().get()]));
 #endif
 
-    if (!m_wcrBrowserEngineClient)
-        lazyInitialize(m_wcrBrowserEngineClient, adoptNS([PAL::allocWCRBrowserEngineClientInstance() init]));
+    if (!m_webContentFilter)
+        lazyInitialize(m_webContentFilter, adoptNS([PAL::allocWCRBrowserEngineClientInstance() init]));
 
-    return m_wcrBrowserEngineClient.get();
+    // effectiveWCRBrowserEngineClient() should always return a WCRBrowserEngineClient
+    ASSERT([m_webContentFilter isKindOfClass:PAL::getWCRBrowserEngineClientClassSingleton()]);
+    return (WCRBrowserEngineClient *)m_webContentFilter.get();
+#endif
 }
 
 } // namespace WebCore
