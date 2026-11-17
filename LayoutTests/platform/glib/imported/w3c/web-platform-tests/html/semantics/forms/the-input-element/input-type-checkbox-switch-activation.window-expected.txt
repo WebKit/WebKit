@@ -2,6 +2,7 @@
 PASS click() toggles a switch and fires click, input, and change
 FAIL Clicking a switch toggles it and fires click, input, and change once promise_test: Unhandled rejection with value: object "Error: element click intercepted error"
 PASS Dragging across a disabled switch does not toggle it
+FAIL Clicking a switch whose switch attribute was removed toggles it like a checkbox promise_test: Unhandled rejection with value: object "Error: element click intercepted error"
 PASS Canceling the click event reverts a switch and fires neither input nor change
 PASS Clicking the label of a switch toggles it
 PASS A switch keeps its indeterminateness until a click resets it

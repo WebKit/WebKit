@@ -32,28 +32,23 @@
 #pragma once
 
 #include "BaseCheckableInputType.h"
-#include "SwitchTrigger.h"
-#include <wtf/CanMakeWeakPtr.h>
 #include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
-#if ENABLE(IOS_TOUCH_EVENTS)
-class Touch;
-#endif
-
-class LayoutPoint;
+class CheckboxSwitch;
 
 enum class WasSetByJavaScript : bool;
-enum class SwitchAnimationType : bool { VisuallyOn, Held };
 
-class CheckboxInputType final : public BaseCheckableInputType, public CanMakeWeakPtr<CheckboxInputType> {
+class CheckboxInputType final : public BaseCheckableInputType {
     WTF_MAKE_TZONE_ALLOCATED(CheckboxInputType);
 public:
     static Ref<CheckboxInputType> create(HTMLInputElement& element)
     {
         return adoptRef(*new CheckboxInputType(element));
     }
+
+    ~CheckboxInputType();
 
     bool valueMissing(StringView) const final;
     float switchAnimationVisuallyOnProgress() const;
@@ -62,10 +57,7 @@ public:
     NODELETE bool isSwitchHeld() const;
 
 private:
-    explicit CheckboxInputType(HTMLInputElement& element)
-        : BaseCheckableInputType(Type::Checkbox, element)
-    {
-    }
+    explicit CheckboxInputType(HTMLInputElement&);
 
     const AtomString& formControlType() const final;
     String valueMissingText() const final;
@@ -77,43 +69,17 @@ private:
 // FIXME: It should not be iOS-specific, but it's not been tested with a non-iOS touch
 // implementation thus far.
 #if ENABLE(IOS_TOUCH_EVENTS)
-    Touch* subsequentTouchEventTouch(const TouchEvent&) const;
     void handleTouchEvent(TouchEvent&) final;
 #endif
-    void startSwitchPointerTracking(LayoutPoint);
-    void stopSwitchPointerTracking();
-    NODELETE bool isSwitchPointerTracking() const;
-    bool hasSwitchThumbReturned() const;
     void willDispatchClick(InputElementClickState&) final;
     void didDispatchClick(Event&, const InputElementClickState&) final;
     bool matchesIndeterminatePseudoClass() const final;
     void willUpdateCheckedness(bool /* nowChecked */, WasSetByJavaScript);
     void disabledStateChanged() final;
-    NODELETE Seconds switchAnimationStartTime(SwitchAnimationType) const;
-    NODELETE void setSwitchAnimationStartTime(SwitchAnimationType, Seconds);
-    NODELETE bool isSwitchAnimating(SwitchAnimationType) const;
-    void performSwitchAnimation(SwitchAnimationType);
-    void performSwitchVisuallyOnAnimation(SwitchTrigger);
-    void setIsSwitchHeld(bool /* isHeld */);
-    NODELETE void stopSwitchAnimation(SwitchAnimationType);
-    float switchAnimationProgress(SwitchAnimationType) const;
-    void updateIsSwitchVisuallyOnFromAbsoluteLocation(LayoutPoint);
-    void switchAnimationTimerFired();
+    void attributeChanged(const QualifiedName&) final;
+    CheckboxSwitch& ensureSwitch();
 
-    // FIXME: Consider moving all switch-related state (and methods?) to their own object so
-    // CheckboxInputType can stay somewhat small.
-    std::optional<int> m_switchPointerTrackingLogicalLeftPositionStart { std::nullopt };
-    bool m_hasSwitchVisuallyOnChanged { false };
-    bool m_isSwitchVisuallyOn { false };
-    bool m_isSwitchHeld { false };
-    bool m_didSkipSwitchToggle { false };
-    Seconds m_switchAnimationVisuallyOnStartTime { 0_s };
-    Seconds m_switchAnimationHeldStartTime { 0_s };
-    const std::unique_ptr<Timer> m_switchAnimationTimer;
-#if ENABLE(IOS_TOUCH_EVENTS)
-    const std::unique_ptr<Timer> m_switchHeldTimer;
-    std::optional<unsigned> m_switchPointerTrackingTouchIdentifier { std::nullopt };
-#endif
+    std::unique_ptr<CheckboxSwitch> m_switch;
 };
 
 } // namespace WebCore

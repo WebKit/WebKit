@@ -414,7 +414,7 @@ void SliderThumbElement::clearExclusiveTouchIdentifier()
     m_exclusiveTouchIdentifier = NoIdentifier;
 }
 
-// FIXME: Share these functions with CheckboxInputType somehow?
+// FIXME: Share these functions with CheckboxSwitch somehow?
 static Touch* findTouchWithIdentifier(TouchList& list, unsigned identifier)
 {
     unsigned length = list.length();

@@ -7288,6 +7288,7 @@
 		F55B3DAE1251F12D003EF269 /* BaseTextInputType.h in Headers */ = {isa = PBXBuildFile; fileRef = F55B3D7A1251F12D003EF269 /* BaseTextInputType.h */; };
 		F55B3DB01251F12D003EF269 /* ButtonInputType.h in Headers */ = {isa = PBXBuildFile; fileRef = F55B3D7C1251F12D003EF269 /* ButtonInputType.h */; };
 		F55B3DB21251F12D003EF269 /* CheckboxInputType.h in Headers */ = {isa = PBXBuildFile; fileRef = F55B3D7E1251F12D003EF269 /* CheckboxInputType.h */; };
+		3DB2FA31C88A0E14584E7BCF /* CheckboxSwitch.h in Headers */ = {isa = PBXBuildFile; fileRef = 56B095298CB8BAFD815F2B66 /* CheckboxSwitch.h */; };
 		F55B3DB41251F12D003EF269 /* ColorInputType.h in Headers */ = {isa = PBXBuildFile; fileRef = F55B3D801251F12D003EF269 /* ColorInputType.h */; };
 		F55B3DB61251F12D003EF269 /* DateInputType.h in Headers */ = {isa = PBXBuildFile; fileRef = F55B3D821251F12D003EF269 /* DateInputType.h */; };
 		F55B3DBA1251F12D003EF269 /* DateTimeLocalInputType.h in Headers */ = {isa = PBXBuildFile; fileRef = F55B3D861251F12D003EF269 /* DateTimeLocalInputType.h */; };
@@ -23615,6 +23616,8 @@
 		F55B3D7C1251F12D003EF269 /* ButtonInputType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ButtonInputType.h; sourceTree = "<group>"; };
 		F55B3D7D1251F12D003EF269 /* CheckboxInputType.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CheckboxInputType.cpp; sourceTree = "<group>"; };
 		F55B3D7E1251F12D003EF269 /* CheckboxInputType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CheckboxInputType.h; sourceTree = "<group>"; };
+		45BD41F406E88849D71D522A /* CheckboxSwitch.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CheckboxSwitch.cpp; sourceTree = "<group>"; };
+		56B095298CB8BAFD815F2B66 /* CheckboxSwitch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CheckboxSwitch.h; sourceTree = "<group>"; };
 		F55B3D801251F12D003EF269 /* ColorInputType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ColorInputType.h; sourceTree = "<group>"; };
 		F55B3D811251F12D003EF269 /* DateInputType.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DateInputType.cpp; sourceTree = "<group>"; };
 		F55B3D821251F12D003EF269 /* DateInputType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DateInputType.h; sourceTree = "<group>"; };
@@ -33386,6 +33389,8 @@
 				CD3570EF2EC561BA0054E843 /* CaptionDisplaySettingsOptions.idl */,
 				F55B3D7D1251F12D003EF269 /* CheckboxInputType.cpp */,
 				F55B3D7E1251F12D003EF269 /* CheckboxInputType.h */,
+				45BD41F406E88849D71D522A /* CheckboxSwitch.cpp */,
+				56B095298CB8BAFD815F2B66 /* CheckboxSwitch.h */,
 				46EBEA011B7D4D5D00BE4941 /* CollectionTraversal.h */,
 				CD814C322996C90E005A780A /* CollectionTraversalInlines.h */,
 				93C441FF0F813AE100C1A634 /* CollectionType.h */,
@@ -44994,6 +44999,7 @@
 				6550B6A0099DF0270090D781 /* CharacterData.h in Headers */,
 				93F2CC932427FB9C005851D8 /* CharacterRange.h in Headers */,
 				F55B3DB21251F12D003EF269 /* CheckboxInputType.h in Headers */,
+				3DB2FA31C88A0E14584E7BCF /* CheckboxSwitch.h in Headers */,
 				E4C4C61A27452A7900A040E7 /* ChildChangeInvalidation.h in Headers */,
 				D619A308144E00BE004BC302 /* ChildListMutationScope.h in Headers */,
 				A81872200977D3C0005826D9 /* ChildNodeList.h in Headers */,

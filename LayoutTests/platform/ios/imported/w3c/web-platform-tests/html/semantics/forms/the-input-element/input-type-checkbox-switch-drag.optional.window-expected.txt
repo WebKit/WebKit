@@ -6,6 +6,8 @@ FAIL Moving the thumb without reaching the other end is a click assert_true: exp
 PASS Releasing outside the switch without reaching the other end does not fire a click event
 FAIL Setting checked during a drag stops the drag assert_true: expected true got false
 PASS Disabling the switch during a drag stops the drag
+PASS Removing the switch attribute during a drag stops the drag
+PASS Changing the type during a drag stops the drag
 FAIL Dragging the thumb of a right-to-left switch from right to left toggles it assert_true: expected true got false
 FAIL Dragging the thumb of a vertical switch from top to bottom toggles it assert_true: expected true got false
 

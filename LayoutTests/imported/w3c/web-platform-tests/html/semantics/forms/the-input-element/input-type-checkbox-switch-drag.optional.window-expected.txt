@@ -6,6 +6,8 @@ PASS Moving the thumb without reaching the other end is a click
 PASS Releasing outside the switch without reaching the other end does not fire a click event
 PASS Setting checked during a drag stops the drag
 PASS Disabling the switch during a drag stops the drag
+PASS Removing the switch attribute during a drag stops the drag
+PASS Changing the type during a drag stops the drag
 PASS Dragging the thumb of a right-to-left switch from right to left toggles it
 PASS Dragging the thumb of a vertical switch from top to bottom toggles it
 
