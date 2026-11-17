@@ -223,12 +223,6 @@ namespace TestWebKitAPI::Util {
 
 inline NSString * _Nonnull constructScript(NSArray * _Nonnull lines) { return [lines componentsJoinedByString:@"\n"]; }
 
-NSData * _Nonnull makePNGData(CGSize, SEL _Nonnull colorSelector);
-
-enum class Appearance { Light, Dark };
-
-void performWithAppearance(Appearance, void (^ _Nonnull block)(void));
-
 #endif
 
 extern bool shouldEnableSiteIsolationForWebExtensionsTest;

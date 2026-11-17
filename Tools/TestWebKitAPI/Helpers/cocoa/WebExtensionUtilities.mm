@@ -31,7 +31,6 @@
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 
-#import "Helpers/cocoa/TestCocoaImageUtilities.h"
 #import "Helpers/cocoa/TestWebExtensionsDelegate.h"
 #import "Helpers/cocoa/WebExtensionUtilities.h"
 #import <WebKit/WKPreferencesPrivate.h>
@@ -1265,20 +1264,6 @@ RetainPtr<TestWebExtensionManager> loadExtension(NSDictionary *manifest, NSDicti
 void loadAndRunExtension(NSDictionary *manifest, NSDictionary *resources, WKWebExtensionControllerConfiguration *configuration)
 {
     [loadExtension(manifest, resources, configuration) run];
-}
-
-NSData *makePNGData(CGSize size, SEL colorSelector)
-{
-#if USE(APPKIT)
-    return [TestCocoaImageUtilities pngDataWithSize:size color:[NSColor performSelector:colorSelector]];
-#else
-    return [TestCocoaImageUtilities pngDataWithSize:size color:[UIColor performSelector:colorSelector]];
-#endif
-}
-
-void performWithAppearance(Appearance appearance, void (^block)(void))
-{
-    [TestCocoaImageUtilities performWithDarkAppearance:appearance == Appearance::Dark block:block];
 }
 
 } // namespace Util
