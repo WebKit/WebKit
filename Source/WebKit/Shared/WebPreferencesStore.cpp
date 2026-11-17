@@ -93,7 +93,9 @@ String WebPreferencesStore::getStringValueForKey(const String& key) const
 
 bool WebPreferencesStore::setBoolValueForKey(const String& key, bool value)
 {
-    return setValueForKey<bool>(m_values, m_overriddenDefaults, key, value);
+    // Clients can pass a "bool" whose byte is not 0 or 1 (e.g. via performSelector:withObject:) so read the raw byte to normalize it.
+    bool normalizedValue = !!*std::bit_cast<volatile uint8_t*>(&value);
+    return setValueForKey<bool>(m_values, m_overriddenDefaults, key, normalizedValue);
 }
 
 SUPPRESS_NODELETE bool WebPreferencesStore::getBoolValueForKey(const String& key) const
