@@ -245,6 +245,9 @@ messages -> WebProcess : AuxiliaryProcess WantsAsyncDispatchMessage {
 #endif
 
     ReleaseMemory() -> ()
+#if PLATFORM(COCOA)
+    SimulateMemoryPressureForTesting(bool isCritical)
+#endif
 
     JSHandleDestroyed(WebCore::JSHandleIdentifier identifier);
 
