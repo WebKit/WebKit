@@ -1289,6 +1289,10 @@ void EventHandler::updateSelectionForMouseDrag(const HitTestResult& hitTestResul
             dragStartSelection.expandUsingGranularity(m_frame->selection().granularity());
             if (!dragStartSelection.isNoneOrOrphaned())
                 newSelection.setBase(dragStartSelection.start());
+        } else if (!newSelection.isBaseFirst() && oldSelection.isBaseFirst() && newSelection.start() < oldSelection.start() && m_dragStartSelection && m_dragStartSelection->start.container && m_dragStartSelection->end.container) {
+            VisibleSelection dragStartSelection { createSimpleRangeFromDragStartSelection() };
+            if (!dragStartSelection.isNoneOrOrphaned())
+                newSelection.setBase(dragStartSelection.end());
         }
     }
 

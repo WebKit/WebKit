@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+<style>
+div { font: 20px monospace; }
+</style>
+</head>
+<body>
+<div id="codesearch">foo @_objcImplementation bar</div>
+<div id="space">hello world</div>
+<div id="middle">hello world</div>
+<script>
+description(`Tests that drag-extending a double-click selection backwards keeps the double-clicked word in the DOM selection.<br>
+To manually test, double-click and hold on the second word of each line, then drag left by one character.`);
+
+function characterRect(element, offset)
+{
+    let range = document.createRange();
+    range.setStart(element.firstChild, offset);
+    range.setEnd(element.firstChild, offset + 1);
+    return range.getBoundingClientRect();
+}
+
+function doubleClickAndDrag(element, wordOffset, x)
+{
+    let wordRect = characterRect(element, wordOffset);
+    let y = wordRect.top + wordRect.height / 2;
+    eventSender.mouseMoveTo(wordRect.left + wordRect.width / 2, y);
+    eventSender.mouseDown();
+    eventSender.leapForward(1);
+    eventSender.mouseUp();
+    eventSender.leapForward(50);
+    eventSender.mouseDown();
+    eventSender.leapForward(50);
+    eventSender.mouseMoveTo(x, y);
+    eventSender.leapForward(50);
+    eventSender.mouseUp();
+    eventSender.leapForward(1000);
+}
+
+if (window.eventSender) {
+    internals.settings.setSelectTrailingWhitespaceEnabled(false);
+
+    // Drag onto the left half of "@", so only the selection's end is moved by word granularity.
+    doubleClickAndDrag(codesearch, 10, characterRect(codesearch, 4).left + 1);
+    shouldBeEqualToString("getSelection().toString()", "@_objcImplementation");
+    shouldBe("getSelection().anchorOffset", "24");
+    shouldBe("getSelection().focusOffset", "4");
+
+    // Drag onto the right half of the "o" in "hello", so the drag position is the start of the space.
+    doubleClickAndDrag(space, 8, characterRect(space, 4).right - 1);
+    shouldBeEqualToString("getSelection().toString()", " world");
+    shouldBe("getSelection().anchorOffset", "11");
+    shouldBe("getSelection().focusOffset", "5");
+
+    // Drag into the middle of "hello", so both ends of the selection are moved by word granularity.
+    doubleClickAndDrag(middle, 8, characterRect(middle, 2).left + 1);
+    shouldBeEqualToString("getSelection().toString()", "hello world");
+    shouldBe("getSelection().anchorOffset", "11");
+    shouldBe("getSelection().focusOffset", "0");
+
+    codesearch.remove();
+    space.remove();
+    middle.remove();
+}
+</script>
+</body>
+</html>

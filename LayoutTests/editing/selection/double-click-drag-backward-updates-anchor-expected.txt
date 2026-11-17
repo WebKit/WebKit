@@ -1,0 +1,19 @@
+Tests that drag-extending a double-click selection backwards keeps the double-clicked word in the DOM selection.
+To manually test, double-click and hold on the second word of each line, then drag left by one character.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS getSelection().toString() is "@_objcImplementation"
+PASS getSelection().anchorOffset is 24
+PASS getSelection().focusOffset is 4
+PASS getSelection().toString() is " world"
+PASS getSelection().anchorOffset is 11
+PASS getSelection().focusOffset is 5
+PASS getSelection().toString() is "hello world"
+PASS getSelection().anchorOffset is 11
+PASS getSelection().focusOffset is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
