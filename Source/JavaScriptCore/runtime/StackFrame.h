@@ -100,6 +100,10 @@ public:
     SourceID sourceID() const;
     JS_EXPORT_PRIVATE String sourceURL(VM&, AllowURLOverride = AllowURLOverride::Yes) const;
     String sourceURLStripped(VM&) const;
+
+    // A data: URL is the whole script, so one source URL can be tens of thousands of characters.
+    // Sentry caps its own stack lines at 1024, so use the same number.
+    static constexpr unsigned maximumSourceURLLengthInStackTrace = 1024;
     void appendTo(VM&, StringBuilder&) const;
 
     bool hasBytecodeIndex() const;
@@ -113,5 +117,7 @@ public:
 private:
     FrameData m_frameData { JSFrameData { } };
 };
+
+JS_EXPORT_PRIVATE String truncateSourceURLForStackTrace(const String&);
 
 } // namespace JSC

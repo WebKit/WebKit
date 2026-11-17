@@ -261,33 +261,23 @@ LineColumn StackFrame::computeLineAndColumn() const
     return { };
 }
 
-// A `data:` URL is the whole script, so one frame can be tens of thousands of characters long.
-// Sentry caps its own stack lines at 1024, so use the same number.
-// FIXME: other schemes, and other places that print a source URL, are not capped.
-// https://bugs.webkit.org/show_bug.cgi?id=323716
-static constexpr unsigned maximumDataURLLengthInStackTrace = 1024;
-
-static StringView truncateLongDataURL(StringView sourceURL)
+String truncateSourceURLForStackTrace(const String& sourceURL)
 {
-    if (sourceURL.length() <= maximumDataURLLengthInStackTrace)
-        return sourceURL;
-    if (!protocolIs(sourceURL, "data"_s))
+    if (sourceURL.length() <= StackFrame::maximumSourceURLLengthInStackTrace)
         return sourceURL;
 
     // Don't cut in the middle of a %XX escape, or the URL won't decode.
-    unsigned length = maximumDataURLLengthInStackTrace;
+    unsigned length = StackFrame::maximumSourceURLLengthInStackTrace;
     size_t lastPercent = sourceURL.reverseFind('%', length - 1);
     if (lastPercent != notFound && length - lastPercent < 3)
-        length = lastPercent;
+        length = static_cast<unsigned>(lastPercent);
     return sourceURL.left(length);
 }
 
 void StackFrame::appendTo(VM& vm, StringBuilder& builder) const
 {
     String functionName = this->functionName(vm);
-    // sourceURL points into fullSourceURL, so keep fullSourceURL around.
-    String fullSourceURL = this->sourceURLStripped(vm);
-    auto sourceURL = truncateLongDataURL(fullSourceURL);
+    String sourceURL = truncateSourceURLForStackTrace(this->sourceURLStripped(vm));
 
     if (sourceURL.isEmpty() || !hasLineAndColumnInfo()) {
         builder.append(functionName, '@', sourceURL);

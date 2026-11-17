@@ -6,7 +6,7 @@
 <p id="description"></p>
 <div id="console"></div>
 <script>
-description("Tests that a data: URL over 1024 characters is cut down in a stack frame, that the cut avoids %XX escapes, and that short URLs and other schemes are left alone.");
+description("Tests that a source URL over 1024 characters is cut down in Error.stack, error.sourceURL, and ErrorEvent.filename, that the cut avoids %XX escapes, and that a short URL is left alone.");
 
 window.jsTestIsAsync = true;
 
@@ -32,46 +32,83 @@ function makeModuleURL(totalLength, percentAt)
 }
 
 // A frame looks like fn@url:line:column. Pull out the url.
-function sourceURLOfDataFrame(stack)
+function sourceURLOfFrame(stack, prefix)
 {
-    const frame = stack.split("\n").filter(function (each) { return each.indexOf("data:text/javascript,") !== -1; })[0];
+    const frame = stack.split("\n").filter(function (each) { return each.indexOf(prefix) !== -1; })[0];
     if (!frame)
         return null;
-    return frame.substring(frame.indexOf("data:text/javascript,")).replace(/:\d+:\d+$/, "");
+    return frame.substring(frame.indexOf(prefix)).replace(/:\d+:\d+$/, "");
 }
 
-async function urlLengthInStackFor(totalLength, percentAt)
+async function lengthsFor(totalLength, percentAt)
 {
     const module = await import(makeModuleURL(totalLength, percentAt));
-    const url = sourceURLOfDataFrame(module.mk().stack);
-    return url === null ? -1 : url.length;
+    const error = module.mk();
+    const url = sourceURLOfFrame(error.stack, "data:text/javascript,");
+    return {
+        stack: url === null ? -1 : url.length,
+        source: error.sourceURL.length,
+    };
 }
 
-// This file's own URL is not a data: URL, so it should stay whole.
+// This file's own URL is short, so it stays whole.
 // Read it here: inside the async function below there is no caller frame.
 window.ordinaryFrameSurvives = new Error().stack.indexOf("error-stack-data-url-truncation.html") !== -1;
 
 async function runTests()
 {
     try {
-        // Long data: URL, cut to 1024.
-        window.plainLength = await urlLengthInStackFor(5000);
+        // Long data: URL, cut to 1024 in the stack and in sourceURL.
+        const plain = await lengthsFor(5000);
+        window.plainLength = plain.stack;
+        window.plainSourceLength = plain.source;
         shouldBe("plainLength", "1024");
+        shouldBe("plainSourceLength", "1024");
 
         // %20 starts at 1023, so cut before it.
-        window.escapeAtEndLength = await urlLengthInStackFor(5000, limit - 1);
+        const escapeAtEnd = await lengthsFor(5000, limit - 1);
+        window.escapeAtEndLength = escapeAtEnd.stack;
+        window.escapeAtEndSourceLength = escapeAtEnd.source;
         shouldBe("escapeAtEndLength", "1023");
+        shouldBe("escapeAtEndSourceLength", "1023");
 
         // %20 starts at 1022, so cut before it.
-        window.escapeStraddlingLength = await urlLengthInStackFor(5000, limit - 2);
+        const escapeStraddling = await lengthsFor(5000, limit - 2);
+        window.escapeStraddlingLength = escapeStraddling.stack;
+        window.escapeStraddlingSourceLength = escapeStraddling.source;
         shouldBe("escapeStraddlingLength", "1022");
+        shouldBe("escapeStraddlingSourceLength", "1022");
+
+        // %20 starts at 1021, the whole escape fits, so no cut before it.
+        const escapeFits = await lengthsFor(5000, limit - 3);
+        window.escapeFitsLength = escapeFits.stack;
+        window.escapeFitsSourceLength = escapeFits.source;
+        shouldBe("escapeFitsLength", "1024");
+        shouldBe("escapeFitsSourceLength", "1024");
 
         // Under 1024, so unchanged.
-        window.shortLength = await urlLengthInStackFor(500);
+        const short = await lengthsFor(500);
+        window.shortLength = short.stack;
+        window.shortSourceLength = short.source;
         shouldBe("shortLength", "500");
+        shouldBe("shortSourceLength", "500");
 
-        // Not a data: URL, so unchanged.
+        // This file's own URL is short, so it stays whole.
         shouldBeTrue("ordinaryFrameSurvives");
+
+        const filename = await new Promise(function (resolve) {
+            window.addEventListener("error", function (event) {
+                event.preventDefault();
+                resolve(event.filename);
+            }, { once: true });
+            window.expectingError = true;
+            const script = document.createElement("script");
+            script.type = "module";
+            script.src = "data:text/javascript,throw%20new%20Error('t')%3B%2F%2F" + "a".repeat(3000);
+            document.body.appendChild(script);
+        });
+        window.filenameLength = filename.length;
+        shouldBe("filenameLength", "1024");
     } catch (exception) {
         testFailed("threw " + exception);
     }
