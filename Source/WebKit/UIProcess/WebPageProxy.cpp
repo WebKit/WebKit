@@ -9824,7 +9824,9 @@ void WebPageProxy::preconnectTo(ResourceRequest&& request, OptionSet<WebCore::Ad
 void WebPageProxy::setCanUseCredentialStorage(bool canUseCredentialStorage)
 {
     m_canUseCredentialStorage = canUseCredentialStorage;
-    send(Messages::WebPage::SetCanUseCredentialStorage(canUseCredentialStorage));
+    forEachWebContentProcess([&](auto& process, auto pageID) {
+        process.send(Messages::WebPage::SetCanUseCredentialStorage(canUseCredentialStorage), pageID);
+    });
 }
 
 void WebPageProxy::didDestroyNavigation(IPC::Connection& connection, WebCore::NavigationIdentifier navigationID)

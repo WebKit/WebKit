@@ -1001,6 +1001,53 @@ static RetainPtr<WKWebViewConfiguration> configurationWithInternals(const HTTPSe
     return configuration;
 }
 
+TEST(SiteIsolation, CanUseCredentialStorageInCrossOriginIframe)
+{
+    HTTPServer server(HTTPServer::UseCoroutines::Yes, [](Connection connection) -> ConnectionTask {
+        while (true) {
+            auto request = co_await connection.awaitableReceiveHTTPRequest();
+            auto path = HTTPServer::parsePath(request);
+            if (path == "/mainframe"_s)
+                co_await connection.awaitableSend(HTTPResponse(mainFrameTextWithCrossOriginIframe).serialize());
+            else if (path == "/iframe"_s)
+                co_await connection.awaitableSend(HTTPResponse("iframe"_s).serialize());
+            else if (contains(request.span(), "Authorization: Basic"_span))
+                co_await connection.awaitableSend(HTTPResponse("authorized"_s).serialize());
+            else
+                co_await connection.awaitableSend(HTTPResponse(401, { { "WWW-Authenticate"_s, "Basic realm=\"testrealm\""_s } }, "unauthorized"_s).serialize());
+        }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server);
+    __block unsigned passwordChallenges = 0;
+    navigationDelegate.get().didReceiveAuthenticationChallenge = ^(WKWebView *, NSURLAuthenticationChallenge *challenge, void (^callback)(NSURLSessionAuthChallengeDisposition, NSURLCredential *)) {
+        if ([challenge.protectionSpace.authenticationMethod isEqualToString:NSURLAuthenticationMethodServerTrust])
+            return callback(NSURLSessionAuthChallengeUseCredential, [NSURLCredential credentialForTrust:challenge.protectionSpace.serverTrust]);
+
+        ++passwordChallenges;
+        callback(NSURLSessionAuthChallengeUseCredential, [NSURLCredential credentialWithUser:@"user" password:@"pass" persistence:NSURLCredentialPersistenceForSession]);
+    };
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    [webView _setCanUseCredentialStorage:NO];
+
+    __block bool committedProtectedPage = false;
+    navigationDelegate.get().didCommitLoadWithRequestInFrame = ^(WKWebView *, NSURLRequest *request, WKFrameInfo *frame) {
+        if (!frame.isMainFrame && [request.URL.path hasPrefix:@"/protected/"])
+            committedProtectedPage = true;
+    };
+
+    // With credential storage, the credential from the first challenge would be reused for the second navigation.
+    RetainPtr childFrame = [webView firstChildFrame];
+    for (NSString *path in @[ @"/protected/first", @"/protected/second" ]) {
+        committedProtectedPage = false;
+        [webView objectByEvaluatingJavaScript:[NSString stringWithFormat:@"location.href = '%@'; true", path] inFrame:childFrame.get()];
+        Util::run(&committedProtectedPage);
+    }
+    EXPECT_EQ(passwordChallenges, 2u);
+}
+
 #if PLATFORM(IOS_FAMILY)
 
 static NSUInteger markerCountInFrame(TestWKWebView *webView, WKFrameInfo *frame, NSString *markerType)
