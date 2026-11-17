@@ -1180,6 +1180,23 @@ TEST_F(QuirksTest, StorageAccessQuirksCarrySignInSelectors)
     EXPECT_FALSE(resolveQuirksForTopURL("https://www.example.com/"_s).isBehaviorEnabled(kinjaID));
 }
 
+TEST_F(QuirksTest, StorageAccessIframeQuirks)
+{
+    constexpr auto googleID = WebCore::QuirkBehaviorID::NeedsStorageAccessForGoogleMyAccountProfilePictureIframeQuirk;
+    auto profilePictureFrame = URL { "https://myaccount.google.com/?startPath=profile-picture&x=1"_str };
+    for (auto topURL : { "https://www.google.com/"_s, "https://accounts.google.co.uk/"_s })
+        EXPECT_TRUE(resolveQuirksForTopURL(topURL).behaviorAppliesToURL(googleID, profilePictureFrame));
+    EXPECT_FALSE(resolveQuirksForTopURL("https://www.example.com/"_s).behaviorAppliesToURL(googleID, profilePictureFrame));
+    EXPECT_FALSE(resolveQuirksForTopURL("https://www.google.com/"_s).behaviorAppliesToURL(googleID, URL { "https://myaccount.google.com/"_str }));
+    EXPECT_FALSE(resolveQuirksForTopURL("https://www.google.com/"_s).behaviorAppliesToURL(googleID, URL { "https://other.google.com/?startPath=profile-picture"_str }));
+
+    constexpr auto skipID = WebCore::QuirkBehaviorID::ShouldSkipStorageAccessIframeDomainListQuirk;
+    EXPECT_TRUE(resolveQuirksForTopURL("https://login.microsoftonline.com/common/oauth2?client_id=1"_s).isBehaviorEnabled(skipID));
+    EXPECT_FALSE(resolveQuirksForTopURL("https://login.microsoftonline.com/common/oauth2?redirect_uri=https%3A%2F%2Fteams.microsoft.com%2F"_s).isBehaviorEnabled(skipID));
+    EXPECT_FALSE(resolveQuirksForTopURL("https://login.microsoftonline.com/common/oauth2"_s).isBehaviorEnabled(skipID));
+    EXPECT_FALSE(resolveQuirksForTopURL("https://www.example.com/?client_id=1"_s).isBehaviorEnabled(skipID));
+}
+
 #if PLATFORM(COCOA)
 TEST_F(QuirksTest, YouTubeWatchLaterStorageAccessIsEmbeddedOnly)
 {

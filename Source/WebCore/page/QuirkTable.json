@@ -1527,6 +1527,20 @@
             "behaviors": [{ "id": "ShouldIgnoreTextAutoSizingQuirk" }]
         },
         {
+            "matches": ["*://*.google.*/*"],
+            "behaviors": [
+                {
+                    "id": "NeedsStorageAccessForGoogleMyAccountProfilePictureIframeQuirk",
+                    "secondaryURL": ["*://myaccount.google.com/*?*startPath=profile-picture*"]
+                }
+            ]
+        },
+        {
+            "matches": ["*://login.microsoftonline.com/*?*"],
+            "excludeMatches": ["*://login.microsoftonline.com/*redirect_uri=https%3A%2F%2Fteams.microsoft.com*"],
+            "behaviors": [{ "id": "ShouldSkipStorageAccessIframeDomainListQuirk" }]
+        },
+        {
             "bugs": ["rdar://64549429"],
             "embeddedMatches": ["*://*.youtube.com/*"],
             "behaviors": [{ "id": "NeedsStorageAccessForYouTubeWatchLaterQuirk", "elementSelector": ".ytp-watch-later-icon" }]

@@ -631,11 +631,6 @@ Quirks::StorageAccessResult Quirks::requestStorageAccessAndHandleClick(Completio
     return Quirks::StorageAccessResult::ShouldCancelEvent;
 }
 
-static bool isProbablyRegistrableDomainForBrand(const RegistrableDomain& domain, const String& brandName)
-{
-    return PublicSuffixStore::singleton().topPrivatelyControlledDomain(domain.string()).startsWithIgnoringASCIICase(makeString(brandName, "."_s));
-}
-
 void Quirks::triggerOptionalStorageAccessIframeQuirk(const URL& frameURL, CompletionHandler<void()>&& completionHandler) const
 {
     if (RefPtr document = m_document.get()) {
@@ -647,11 +642,10 @@ void Quirks::triggerOptionalStorageAccessIframeQuirk(const URL& frameURL, Comple
             }
         }
 
-        bool isMSOLoginButNotMSTeams = document->url().hasQuery() && document->url().host() == "login.microsoftonline.com"_s && !document->url().query().contains("redirect_uri=https%3A%2F%2Fteams.microsoft.com"_s);
-        bool isProbablyGoogleCCTLD = isProbablyRegistrableDomainForBrand(RegistrableDomain { document->url() }, "google"_s);
-        bool isGoogleMyAccountForProfilePicture = isProbablyGoogleCCTLD && frameURL.hasQuery() && frameURL.host() == "myaccount.google.com"_s && frameURL.query().contains("startPath=profile-picture"_s);
+        bool isGoogleMyAccountForProfilePicture = m_quirksData.behaviorAppliesToURL(QuirkBehaviorID::NeedsStorageAccessForGoogleMyAccountProfilePictureIframeQuirk, frameURL);
+        bool shouldSkipDomainList = m_quirksData.isBehaviorEnabled(QuirkBehaviorID::ShouldSkipStorageAccessIframeDomainListQuirk);
         RegistrableDomain frameDomain { frameURL };
-        if (isGoogleMyAccountForProfilePicture || (!isMSOLoginButNotMSTeams && subFrameDomainsForStorageAccessQuirk().contains(frameDomain))) {
+        if (isGoogleMyAccountForProfilePicture || (!shouldSkipDomainList && subFrameDomainsForStorageAccessQuirk().contains(frameDomain))) {
             return DocumentStorageAccess::requestStorageAccessForNonDocumentQuirk(*document, WTF::move(frameDomain), [completionHandler = WTF::move(completionHandler)](StorageAccessWasGranted) mutable {
                 completionHandler();
             });

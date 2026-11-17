@@ -802,6 +802,14 @@ NeedsStorageAccessForYouTubeWatchLaterQuirk:
   conditions: [ElementSelector]
   implementation: custom
 
+NeedsStorageAccessForGoogleMyAccountProfilePictureIframeQuirk:
+  conditions: [SecondaryURL]
+  conditionsRequired: true
+  implementation: custom
+
+ShouldSkipStorageAccessIframeDomainListQuirk:
+  implementation: custom
+
 # Outlook on the web: rdar://187832523
 # icloud.com: rdar://188875593
 ShouldTreatLongClickAsSecondaryClickQuirk:
