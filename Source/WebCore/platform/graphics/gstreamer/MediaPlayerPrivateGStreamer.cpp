@@ -1684,6 +1684,9 @@ GstElement* MediaPlayerPrivateGStreamer::createAudioSink()
 bool MediaPlayerPrivateGStreamer::isMediaStreamPlayer() const
 {
 #if ENABLE(MEDIA_STREAM)
+    // Set by load(MediaStreamPrivate&) before the pipeline is created, unlike m_url and m_source.
+    if (m_streamPrivate)
+        return true;
     if (m_source)
         return WEBKIT_IS_MEDIA_STREAM_SRC(m_source.get());
 #endif
