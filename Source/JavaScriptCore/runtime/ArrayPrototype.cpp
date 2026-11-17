@@ -568,13 +568,23 @@ JSC_DEFINE_HOST_FUNCTION(arrayProtoFuncPush, (JSGlobalObject* globalObject, Call
     auto scope = DECLARE_THROW_SCOPE(vm);
     JSValue thisValue = callFrame->thisValue().toThis(globalObject, ECMAMode::strict());
 
-    if (isJSArray(thisValue) && callFrame->argumentCount() == 1) [[likely]] {
+    if (isJSArray(thisValue)) [[likely]] {
         JSArray* array = asArray(thisValue);
-        scope.release();
-        array->pushInline(globalObject, callFrame->uncheckedArgument(0));
-        return JSValue::encode(jsNumber(array->length()));
+        unsigned argumentCount = callFrame->argumentCount();
+        if (argumentCount == 1) [[likely]] {
+            scope.release();
+            array->pushInline(globalObject, callFrame->uncheckedArgument(0));
+            return JSValue::encode(jsNumber(array->length()));
+        }
+        if (argumentCount > 1 && !shouldUseSlowPut(array->indexingType()) && static_cast<uint64_t>(array->length()) + argumentCount <= static_cast<uint64_t>(MAX_ARRAY_INDEX) + 1) {
+            for (unsigned index = 0; index < argumentCount; ++index) {
+                array->pushInline(globalObject, callFrame->uncheckedArgument(index));
+                RETURN_IF_EXCEPTION(scope, { });
+            }
+            return JSValue::encode(jsNumber(array->length()));
+        }
     }
-    
+
     JSObject* thisObj = thisValue.toObject(globalObject);
     EXCEPTION_ASSERT(!!scope.exception() == !thisObj);
     if (!thisObj) [[unlikely]]

@@ -109,6 +109,7 @@ public:
     JS_EXPORT_PRIVATE bool setLength(JSGlobalObject*, unsigned, bool throwException = false);
 
     void pushInline(JSGlobalObject*, JSValue);
+    void pushSlowPutElement(JSGlobalObject*, JSValue, uint64_t index, bool& deferLength);
     JS_EXPORT_PRIVATE void push(JSGlobalObject*, JSValue);
     JS_EXPORT_PRIVATE JSValue pop(JSGlobalObject*);
     JSValue fastShift(VM&);

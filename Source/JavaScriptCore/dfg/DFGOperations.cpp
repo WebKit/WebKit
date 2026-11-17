@@ -1286,12 +1286,30 @@ JSC_DEFINE_JIT_OPERATION(operationArrayPushMultipleSlow, EncodedJSValue, (JSGlob
         OPERATION_RETURN(scope, encodedJSValue());
     }
 
+    uint64_t startLength = array->length();
+    if (startLength + static_cast<uint64_t>(elementCount) > maxSafeIntegerAsUInt64()) [[unlikely]] {
+        throwVMTypeError(globalObject, scope, "push cannot produce an array of length larger than (2 ** 53) - 1"_s);
+        OPERATION_RETURN(scope, encodedJSValue());
+    }
+
+    if (!elementCount) {
+        scope.release();
+        setLength(globalObject, vm, array, startLength);
+        OPERATION_RETURN(scope, JSValue::encode(jsNumber(startLength)));
+    }
+
+    bool deferLength = false;
     for (int32_t i = 0; i < elementCount; ++i) {
-        array->pushInline(globalObject, arguments.at(i));
+        array->pushSlowPutElement(globalObject, arguments.at(i), startLength + static_cast<uint64_t>(i), deferLength);
         OPERATION_RETURN_IF_EXCEPTION(scope, encodedJSValue());
     }
 
-    OPERATION_RETURN(scope, JSValue::encode(jsNumber(array->length())));
+    uint64_t newLength = startLength + static_cast<uint64_t>(elementCount);
+    if (deferLength) {
+        scope.release();
+        setLength(globalObject, vm, array, newLength);
+    }
+    OPERATION_RETURN(scope, JSValue::encode(jsNumber(newLength)));
 }
 
 JSC_DEFINE_JIT_OPERATION(operationArrayPop, EncodedJSValue, (JSGlobalObject* globalObject, JSArray* array))

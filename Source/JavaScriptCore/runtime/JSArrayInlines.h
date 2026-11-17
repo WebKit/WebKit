@@ -231,6 +231,53 @@ ALWAYS_INLINE uint64_t toLength(JSGlobalObject* globalObject, JSObject* object)
     RELEASE_AND_RETURN(scope, lengthValue.toLength(globalObject));
 }
 
+ALWAYS_INLINE void JSArray::pushSlowPutElement(JSGlobalObject* globalObject, JSValue value, uint64_t index, bool& deferLength)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    if (indexingMode() != ArrayWithSlowPutArrayStorage || length() != index || index > MAX_ARRAY_INDEX) {
+        putByIndexInline(globalObject, index, value, true);
+        RETURN_IF_EXCEPTION(scope, void());
+        deferLength = true;
+        return;
+    }
+
+    bool putResult = false;
+    bool intercepted = attemptToInterceptPutByIndexOnHole(globalObject, static_cast<unsigned>(index), value, true, putResult);
+    RETURN_IF_EXCEPTION(scope, void());
+    if (intercepted) {
+        deferLength = true;
+        return;
+    }
+
+    if (!hasAnyArrayStorage(indexingType())) {
+        putByIndexInline(globalObject, index, value, true);
+        RETURN_IF_EXCEPTION(scope, void());
+        deferLength = true;
+        return;
+    }
+
+    ArrayStorage* storage = butterfly()->arrayStorage();
+    unsigned storageLength = storage->length();
+    if (storageLength != index) {
+        putByIndexInline(globalObject, index, value, true);
+        RETURN_IF_EXCEPTION(scope, void());
+        deferLength = true;
+        return;
+    }
+
+    if (storageLength < storage->vectorLength()) {
+        storage->m_vector[storageLength].set(vm, this, value);
+        storage->setLength(storageLength + 1);
+        ++storage->m_numValuesInVector;
+        return;
+    }
+
+    putByIndexBeyondVectorLengthWithArrayStorage(globalObject, storageLength, value, true, storage);
+    RETURN_IF_EXCEPTION(scope, void());
+}
+
 ALWAYS_INLINE void JSArray::pushInline(JSGlobalObject* globalObject, JSValue value)
 {
     VM& vm = globalObject->vm();
