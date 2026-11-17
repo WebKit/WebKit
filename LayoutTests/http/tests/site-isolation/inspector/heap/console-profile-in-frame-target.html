@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="../debugger/resources/site-isolation-debugger-test-utilities.js"></script>
+<script src="../timeline/resources/frame-timeline-test-utilities.js"></script>
+<script src="resources/heap-test-utilities.js"></script>
+<script src="resources/heap-markers.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Heap.ConsoleProfileInFrameTarget");
+
+    const mainFrameMarkerClassName = HeapTest.markerClassName("MainFrameMarker");
+    const iframeMarkerClassName = HeapTest.markerClassName("IFrameMarker");
+
+    // The snapshots that Heap tracking reports when it starts and stops, by target.
+    let trackingSnapshots = [];
+    let trackingSnapshotListeners = [];
+    let originalHeapSnapshotAdded = WI.timelineManager.heapSnapshotAdded;
+    WI.timelineManager.heapSnapshotAdded = function(timestamp, snapshot) {
+        trackingSnapshots.push(snapshot);
+        for (let listener of trackingSnapshotListeners.slice()) {
+            if (trackingSnapshots.filter((trackingSnapshot) => trackingSnapshot.target === listener.target).length === listener.count) {
+                trackingSnapshotListeners.remove(listener);
+                listener.resolve(snapshot);
+            }
+        }
+        return originalHeapSnapshotAdded.call(this, timestamp, snapshot);
+    };
+
+    // Resolves with the target's snapshot with the given number (starting at 1).
+    function awaitTrackingSnapshot(target, count) {
+        let snapshots = trackingSnapshots.filter((snapshot) => snapshot.target === target);
+        if (snapshots.length >= count)
+            return Promise.resolve(snapshots[count - 1]);
+
+        return new Promise((resolve) => {
+            trackingSnapshotListeners.push({target, count, resolve});
+        });
+    }
+
+    let trackingCompletedCountForTarget = new Map;
+    let originalHeapTrackingCompleted = WI.timelineManager.heapTrackingCompleted;
+    WI.timelineManager.heapTrackingCompleted = function(target, timestamp) {
+        trackingCompletedCountForTarget.set(target, (trackingCompletedCountForTarget.get(target) ?? 0) + 1);
+        return originalHeapTrackingCompleted.call(this, target, timestamp);
+    };
+
+    // Sets the instruments of the next capture. A programmatic capture uses the active recording, so that recording
+    // gets the same instruments.
+    function setTimelineTypes(timelineTypes) {
+        WI.timelineManager.enabledTimelineTypes = timelineTypes;
+
+        let recording = WI.timelineManager.activeRecording;
+        for (let instrument of recording.instruments.slice()) {
+            if (!timelineTypes.includes(instrument.timelineRecordType))
+                recording.removeInstrument(instrument);
+        }
+        for (let timelineType of timelineTypes) {
+            if (!recording.instruments.some((instrument) => instrument.timelineRecordType === timelineType))
+                recording.addInstrument(WI.Instrument.createForTimelineType(timelineType));
+        }
+    }
+
+    suite.addTestCase({
+        name: "SiteIsolation.Heap.ConsoleProfileInFrameTarget.CrossOriginFrame",
+        description: "console.profile() in a cross-origin iframe, with JavaScript Allocations enabled, should start Heap tracking on the iframe's target, and console.profileEnd() should stop it once.",
+        async test() {
+            // FIXME: <https://webkit.org/b/332030> Use an InspectorTest helper that waits for the main frame target,
+            // instead of matching this test's URL. InspectorTest.mainFrameTarget falls back to the page target while the
+            // frontend does not yet know the main frame target's frame.
+            let mainFrameTarget = await waitForFrameTargetForURLContaining("/console-profile-in-frame-target.html");
+            InspectorTest.assert(mainFrameTarget, "Should find the main frame's target.");
+            let iframeTarget = await waitForFrameTargetForURLContaining("heap-frame.html");
+            InspectorTest.assert(iframeTarget, "Should find the cross-origin iframe's target.");
+            await waitForExpressionInTarget(iframeTarget, "typeof createMarker === 'function'");
+
+            await HeapTest.evaluate(mainFrameTarget, `createMarker("${mainFrameMarkerClassName}")`);
+            await HeapTest.evaluate(iframeTarget, `createMarker("${iframeMarkerClassName}")`);
+
+            setTimelineTypes([WI.TimelineRecord.Type.Script, WI.TimelineRecord.Type.HeapAllocations]);
+
+            FrameTimelineTest.clearTrackingEvents();
+
+            let activePromise = FrameTimelineTest.awaitCapturingState(WI.TimelineManager.CapturingState.Active);
+            await FrameTimelineTest.evaluateInTarget(iframeTarget, `console.profile("frame-profile")`);
+            await activePromise;
+            InspectorTest.pass("Capturing is active.");
+
+            // The frontend doesn't start Heap on the target that started capturing, so the iframe's target starts it
+            // by itself.
+            await FrameTimelineTest.awaitTrackingEvent("capturingStarted", iframeTarget, "Heap");
+            InspectorTest.pass("The iframe's target started Heap.");
+
+            let startSnapshot = await awaitTrackingSnapshot(iframeTarget, 1);
+            InspectorTest.expectEqual(HeapTest.objectCount(startSnapshot, iframeMarkerClassName), 1, "The iframe's first tracking snapshot should include the iframe's marker.");
+            InspectorTest.expectEqual(HeapTest.objectCount(startSnapshot, mainFrameMarkerClassName), 0, "The iframe's first tracking snapshot should not include the main frame's marker.");
+
+            let inactivePromise = FrameTimelineTest.awaitCapturingState(WI.TimelineManager.CapturingState.Inactive);
+            await FrameTimelineTest.evaluateInTarget(iframeTarget, `console.profileEnd("frame-profile")`);
+            await inactivePromise;
+            InspectorTest.pass("Capturing stopped.");
+
+            InspectorTest.expectThat(FrameTimelineTest.didReportTrackingEvent("capturingStopped", iframeTarget, "Heap"), "The iframe's target should report that Heap stopped.");
+
+            let endSnapshot = await awaitTrackingSnapshot(iframeTarget, 2);
+            InspectorTest.expectEqual(HeapTest.objectCount(endSnapshot, iframeMarkerClassName), 1, "The iframe's last tracking snapshot should include the iframe's marker.");
+
+            // A second stop would be sent before the reply to this.
+            await FrameTimelineTest.evaluateInTarget(iframeTarget, "0");
+            InspectorTest.expectEqual(trackingCompletedCountForTarget.get(iframeTarget), 1, "The iframe's target should report that Heap stopped once.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Heap.ConsoleProfileInFrameTarget.StoppedByFrontend",
+        description: "When the frontend stops a capture that console.profile() in a cross-origin iframe started, the iframe's target should stop Heap tracking once.",
+        async test() {
+            let iframeTarget = await waitForFrameTargetForURLContaining("heap-frame.html");
+            InspectorTest.assert(iframeTarget, "Should find the cross-origin iframe's target.");
+
+            let snapshotCountBefore = trackingSnapshots.filter((snapshot) => snapshot.target === iframeTarget).length;
+            let trackingCompletedCountBefore = trackingCompletedCountForTarget.get(iframeTarget) ?? 0;
+
+            FrameTimelineTest.clearTrackingEvents();
+
+            let activePromise = FrameTimelineTest.awaitCapturingState(WI.TimelineManager.CapturingState.Active);
+            await FrameTimelineTest.evaluateInTarget(iframeTarget, `console.profile("frame-profile-stopped-by-frontend")`);
+            await activePromise;
+            InspectorTest.pass("Capturing is active.");
+
+            await FrameTimelineTest.awaitTrackingEvent("capturingStarted", iframeTarget, "Heap");
+            InspectorTest.pass("The iframe's target started Heap.");
+
+            // The iframe's Timeline domain doesn't stop Heap when the frontend stops it, so the frontend stops Heap.
+            await FrameTimelineTest.stopCapturing();
+            InspectorTest.pass("Capturing stopped.");
+
+            InspectorTest.expectThat(FrameTimelineTest.didReportTrackingEvent("capturingStopped", iframeTarget, "Heap"), "The iframe's target should report that Heap stopped.");
+
+            let endSnapshot = await awaitTrackingSnapshot(iframeTarget, snapshotCountBefore + 2);
+            InspectorTest.expectEqual(HeapTest.objectCount(endSnapshot, iframeMarkerClassName), 1, "The iframe's last tracking snapshot should include the iframe's marker.");
+
+            // A second stop would be sent before the reply to this.
+            await FrameTimelineTest.evaluateInTarget(iframeTarget, "0");
+            InspectorTest.expectEqual(trackingCompletedCountForTarget.get(iframeTarget) - trackingCompletedCountBefore, 1, "The iframe's target should report that Heap stopped once.");
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+<body onload="runTest()">
+<p>Test that under Site Isolation, console.profile() in a cross-origin iframe starts Heap tracking on the iframe's frame target when JavaScript Allocations is enabled, and that console.profileEnd() or the frontend stops it once.</p>
+<iframe src="http://localhost:8000/site-isolation/inspector/heap/resources/heap-frame.html"></iframe>
+</body>
