@@ -29,7 +29,6 @@
 #include "JSCJSValueInlines.h"
 #include "MathCommon.h"
 #include "PageCount.h"
-#include <charconv>
 #include <wtf/Float16.h>
 #include <wtf/dtoa.h>
 #include <wtf/text/ParsingUtilities.h>
@@ -81,7 +80,7 @@ template<std::integral IntegerType>
 static constexpr ByteIntegerStrings<IntegerType> byteIntegerStrings;
 
 template<typename CharacterType, std::integral IntegerType>
-static inline void appendStringToData(std::span<CharacterType>& data, IntegerType value)
+static ALWAYS_INLINE void appendStringToData(std::span<CharacterType>& data, IntegerType value)
 {
     if constexpr (std::is_same_v<CharacterType, Latin1Character> && sizeof(IntegerType) == 1) {
         uint8_t index = static_cast<uint8_t>(value);
@@ -92,15 +91,8 @@ static inline void appendStringToData(std::span<CharacterType>& data, IntegerTyp
         else
             memcpySpan(data, std::span { characters }.first(length));
         skip(data, length);
-    } else if constexpr (std::is_same_v<CharacterType, Latin1Character>) {
-        auto result = std::to_chars(std::bit_cast<char*>(data.data()), std::bit_cast<char*>(std::to_address(data.end())), value);
-        ASSERT(result.ec != std::errc::value_too_large);
-        skip(data, result.ptr - std::bit_cast<char*>(data.data()));
-    } else {
-        WTF::StringTypeAdapter<IntegerType> adapter { value };
-        adapter.writeTo(data);
-        skip(data, adapter.length());
-    }
+    } else
+        skip(data, writeIntegerToBuffer(value, data));
 }
 
 template<std::integral IntegerType>

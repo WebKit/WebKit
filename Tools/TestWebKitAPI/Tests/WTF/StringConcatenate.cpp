@@ -27,12 +27,16 @@
 
 #include "MoveOnly.h"
 #include "Helpers/Test.h"
+#include <array>
 #include <cstddef>
 #include <cstdint>
 #include <limits>
 #include <string>
 #include <unicode/uvernum.h>
 #include <wtf/HexNumber.h>
+#include <wtf/Int128.h>
+#include <wtf/StringPrintStream.h>
+#include <wtf/text/IntegerToStringConversion.h>
 #include <wtf/text/MakeString.h>
 
 namespace TestWebKitAPI {
@@ -109,10 +113,24 @@ TEST(WTF, StringConcatenate_Unsigned)
 }
 
 template<typename IntegerType>
-static void testLengthOfIntegerAsStringAtPowersOf10()
+static void testIntegerAsStringAtPowersOf10()
 {
     auto check = [](IntegerType value) {
-        EXPECT_EQ(std::to_string(value).size(), WTF::lengthOfIntegerAsString(value));
+        auto expected = std::to_string(value);
+        EXPECT_EQ(expected.size(), WTF::lengthOfIntegerAsString(value));
+
+        std::array<Latin1Character, 21> latin1 { };
+        size_t latin1Length = WTF::writeIntegerToBuffer(value, std::span { latin1 }.first(expected.size()));
+        EXPECT_EQ(expected.size(), latin1Length);
+        EXPECT_EQ(String::fromLatin1(expected.c_str()), String(std::span { latin1 }.first(latin1Length)));
+
+        std::array<char16_t, 21> utf16 { };
+        size_t utf16Length = WTF::writeIntegerToBuffer(value, std::span { utf16 }.first(expected.size()));
+        EXPECT_EQ(expected.size(), utf16Length);
+        EXPECT_EQ(String::fromLatin1(expected.c_str()), String(std::span { utf16 }.first(utf16Length)));
+
+        EXPECT_EQ(String::fromLatin1(expected.c_str()), makeString(value));
+        EXPECT_EQ(String::fromLatin1(expected.c_str()), String::number(value));
     };
     check(std::numeric_limits<IntegerType>::min());
     check(std::numeric_limits<IntegerType>::max());
@@ -129,16 +147,57 @@ static void testLengthOfIntegerAsStringAtPowersOf10()
     }
 }
 
-TEST(WTF, StringConcatenate_LengthOfIntegerAsString)
+TEST(WTF, StringConcatenate_IntegerAsString)
 {
-    testLengthOfIntegerAsStringAtPowersOf10<int8_t>();
-    testLengthOfIntegerAsStringAtPowersOf10<uint8_t>();
-    testLengthOfIntegerAsStringAtPowersOf10<int16_t>();
-    testLengthOfIntegerAsStringAtPowersOf10<uint16_t>();
-    testLengthOfIntegerAsStringAtPowersOf10<int32_t>();
-    testLengthOfIntegerAsStringAtPowersOf10<uint32_t>();
-    testLengthOfIntegerAsStringAtPowersOf10<int64_t>();
-    testLengthOfIntegerAsStringAtPowersOf10<uint64_t>();
+    testIntegerAsStringAtPowersOf10<int8_t>();
+    testIntegerAsStringAtPowersOf10<uint8_t>();
+    testIntegerAsStringAtPowersOf10<int16_t>();
+    testIntegerAsStringAtPowersOf10<uint16_t>();
+    testIntegerAsStringAtPowersOf10<int32_t>();
+    testIntegerAsStringAtPowersOf10<uint32_t>();
+    testIntegerAsStringAtPowersOf10<int64_t>();
+    testIntegerAsStringAtPowersOf10<uint64_t>();
+}
+
+template<typename UInt128Type>
+static void testUInt128AsString()
+{
+    auto toString = [](UInt128Type value) {
+        return String(numberToStringUnsigned<Vector<Latin1Character, 50>>(value).span());
+    };
+    auto expect = [](const std::string& expected) {
+        return String::fromLatin1(expected.c_str());
+    };
+
+    EXPECT_EQ("0"_s, toString(0));
+    EXPECT_EQ("9"_s, toString(9));
+    EXPECT_EQ("10"_s, toString(10));
+    EXPECT_EQ("18446744073709551615"_s, toString(std::numeric_limits<uint64_t>::max()));
+    EXPECT_EQ("18446744073709551616"_s, toString(static_cast<UInt128Type>(std::numeric_limits<uint64_t>::max()) + 1));
+    EXPECT_EQ("340282366920938463463374607431768211455"_s, toString(std::numeric_limits<UInt128Type>::max()));
+
+    UInt128Type power = 1;
+    for (unsigned exponent = 1; exponent <= std::numeric_limits<UInt128Type>::digits10; ++exponent) {
+        power *= 10;
+        EXPECT_EQ(expect(std::string(exponent, '9')), toString(power - 1));
+        EXPECT_EQ(expect("1" + std::string(exponent, '0')), toString(power));
+        EXPECT_EQ(expect("1" + std::string(exponent - 1, '0') + "1"), toString(power + 1));
+    }
+}
+
+TEST(WTF, StringConcatenate_UInt128AsString)
+{
+    testUInt128AsString<UInt128>();
+    testUInt128AsString<WTF::UInt128Impl>();
+}
+
+TEST(WTF, StringConcatenate_Int128AsString)
+{
+    EXPECT_EQ("0"_s, toString(static_cast<Int128>(0)));
+    EXPECT_EQ("-1"_s, toString(static_cast<Int128>(-1)));
+    EXPECT_EQ("-10000000000000000000"_s, toString(-static_cast<Int128>(10'000'000'000'000'000'000ULL)));
+    EXPECT_EQ("170141183460469231731687303715884105727"_s, toString(std::numeric_limits<Int128>::max()));
+    EXPECT_EQ("-170141183460469231731687303715884105728"_s, toString(std::numeric_limits<Int128>::min()));
 }
 
 TEST(WTF, StringConcatenate_Enum)
