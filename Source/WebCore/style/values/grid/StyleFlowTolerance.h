@@ -39,13 +39,6 @@ struct FlowTolerance : PrimitiveNumericOrKeyword<LengthPercentage<CSS::Nonnegati
     ALWAYS_INLINE bool isInfinite() const { return holdsAlternative<CSS::Keyword::Infinite>(); }
 };
 
-// MARK: - Blending
-
-template<> struct Blending<FlowTolerance> {
-    bool NODELETE canBlend(const FlowTolerance&, const FlowTolerance&);
-    auto blend(const FlowTolerance&, const FlowTolerance&, const BlendingContext&) -> FlowTolerance;
-};
-
 } // namespace Style
 } // namespace WebCore
 
