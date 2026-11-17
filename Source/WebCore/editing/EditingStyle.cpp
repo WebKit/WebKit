@@ -778,8 +778,7 @@ Ref<EditingStyle> EditingStyle::copy() const
     return copy;
 }
 
-// This is the list of properties we want to copy in the copyBlockProperties() function.
-// It is the list of CSS properties that apply specially to block-level elements.
+// CSS properties that apply specially to block-level elements.
 static constexpr auto blockProperties = WTF::toArray<CSSPropertyID>({
     CSSPropertyID::Orphans,
     CSSPropertyID::Overflow, // This can be also be applied to replaced elements

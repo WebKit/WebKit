@@ -101,7 +101,6 @@ private:
     // https://www.w3.org/TR/css-counter-styles-3/#counter-style-range
     NODELETE bool isInRange(int) const;
     // https://www.w3.org/TR/css-counter-styles-3/#counter-style-negative
-    bool usesNegativeSign();
     NODELETE bool shouldApplyNegativeSymbols(int) const;
     // https://www.w3.org/TR/css-counter-styles-3/#counter-style-fallback
     WeakPtr<CSSRegisteredCounterStyle> fallback() const { return m_fallbackReference; };
@@ -121,9 +120,6 @@ private:
 
     bool isPredefinedCounterStyle() const { return m_predefinedCounterStyle; }
     bool isAutoRange() const { return ranges().isEmpty(); }
-
-    // Fixed and Extends system can/must have extra data in the system descriptor (https://www.w3.org/TR/css-counter-styles-3/#fixed-system and https://www.w3.org/TR/css-counter-styles-3/#extends-system).
-    void extractDataFromSystemDescriptor(const StyleRuleCounterStyle&);
 
     CSSCounterStyleDescriptors m_descriptors;
     bool m_predefinedCounterStyle { false };

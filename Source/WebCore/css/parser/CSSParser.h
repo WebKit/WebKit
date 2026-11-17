@@ -64,7 +64,6 @@ class StyleRuleNamespace;
 class StyleRulePage;
 class StyleRulePositionTry;
 class StyleRuleSupports;
-class StyleRuleViewport;
 class StyleRuleViewTransition;
 #if ENABLE(SPATIAL_PORTAL)
 class StyleRuleEnvironmentMap;
@@ -163,7 +162,6 @@ private:
     RefPtr<StyleRuleNamespace> consumeNamespaceRule(CSSParserTokenRange prelude);
     RefPtr<StyleRuleMedia> consumeMediaRule(CSSParserTokenRange prelude, CSSParserTokenRange block);
     RefPtr<StyleRuleSupports> consumeSupportsRule(CSSParserTokenRange prelude, CSSParserTokenRange block);
-    RefPtr<StyleRuleViewport> consumeViewportRule(CSSParserTokenRange prelude, CSSParserTokenRange block);
     RefPtr<StyleRuleFontFace> consumeFontFaceRule(CSSParserTokenRange prelude, CSSParserTokenRange block);
     RefPtr<StyleRuleFontFeatureValuesBlock> consumeFontFeatureValuesRuleBlock(CSSAtRuleID, CSSParserTokenRange prelude, CSSParserTokenRange block);
     RefPtr<StyleRuleFontFeatureValues> consumeFontFeatureValuesRule(CSSParserTokenRange prelude, CSSParserTokenRange block);

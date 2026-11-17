@@ -53,7 +53,6 @@ public:
     String symbols() const { return m_descriptors.symbolsCSSText(); }
     String additiveSymbols() const { return m_descriptors.additiveSymbolsCSSText(); }
     String speakAs() const { return { }; }
-    bool newValueInvalidOrEqual(CSSPropertyID, const RefPtr<CSSValue> newValue) const;
 
 private:
     explicit StyleRuleCounterStyle(CSSCounterStyleDescriptors&&);
@@ -98,7 +97,6 @@ public:
 private:
     CSSCounterStyleRule(StyleRuleCounterStyle&, CSSStyleSheet* parent);
 
-    bool setterInternal(CSSPropertyID, const String&);
     RefPtr<CSSValue> cssValueFromText(CSSPropertyID, const String&);
     const CSSCounterStyleDescriptors& descriptors() const LIFETIME_BOUND { return m_counterStyleRule->descriptors(); }
     CSSCounterStyleDescriptors& mutableDescriptors() LIFETIME_BOUND { return m_counterStyleRule->mutableDescriptors(); }

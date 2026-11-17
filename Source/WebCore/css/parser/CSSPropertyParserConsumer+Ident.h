@@ -61,7 +61,6 @@ template<CSSValueID... names> RefPtr<CSSKeywordValue> consumeIdent(CSSParserToke
 template<typename KeywordOrKeywords> std::optional<KeywordOrKeywords> consumeSpecificUnresolvedIdent(CSSParserTokenRange&);
 
 template<typename Predicate, typename... Args> std::optional<CSSValueID> consumeIdentRaw(CSSParserTokenRange&, NOESCAPE const Predicate&, Args&&...);
-template<typename Predicate, typename... Args> std::optional<CSS::Keyword> consumeUnresolvedRaw(CSSParserTokenRange&, NOESCAPE const Predicate&, Args&&...);
 template<typename Predicate, typename... Args> RefPtr<CSSKeywordValue> consumeIdent(CSSParserTokenRange&, NOESCAPE const Predicate&, Args&&...);
 
 template<typename Map> std::optional<typename Map::ValueType> consumeIdentUsingMapping(CSSParserTokenRange&, Map&);

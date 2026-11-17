@@ -120,8 +120,6 @@ public:
     String getCustomPropertyValue(const String& propertyName) const;
     bool customPropertyIsImportant(const String& propertyName) const;
 
-    Ref<MutableStyleProperties> copyBlockProperties() const;
-
     CSSParserMode cssParserMode() const { return static_cast<CSSParserMode>(m_cssParserMode); }
 
     WEBCORE_EXPORT Ref<MutableStyleProperties> mutableCopy() const;

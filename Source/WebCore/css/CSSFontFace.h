@@ -170,7 +170,6 @@ private:
 
     size_t pump(ExternalResourceDownloadPolicy);
     void setStatus(Status);
-    void notifyClientsOfFontPropertyChange();
 
     void initializeWrapper();
 

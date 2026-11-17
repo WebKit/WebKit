@@ -47,7 +47,6 @@ protected:
 
 private:
     bool isStylePropertyMap() const final { return true; }
-    RefPtr<CSSStyleValue> shorthandPropertyValue(Document&, CSSPropertyID) const;
 };
 
 } // namespace WebCore
