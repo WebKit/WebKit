@@ -155,26 +155,30 @@ UsedMargins usedMarginsForStretchFit(const PlacedGridItem& gridItem, const Compu
     return UsedMargins { usedMarginForStretchFit(axisSizes.marginStart), usedMarginForStretchFit(axisSizes.marginEnd) };
 }
 
+// https://drafts.csswg.org/css-grid-1/#grid-area-concept
+// "A grid item’s grid area forms the containing block into which it is laid out."
+// https://www.w3.org/TR/CSS2/visudet.html#blockwidth
+// "'margin-left' + 'border-left-width' + 'padding-left' + 'width' + 'padding-right' + 'border-right-width'
+// + 'margin-right' = width of containing block"
+static LayoutUnit freeSpaceForAutoMargins(const PlacedGridItem& gridItem, const ComputedSizes& axisSizes, LayoutUnit borderBoxSize, LayoutUnit gridAreaSize)
+{
+    auto sumOfNonAutoMargins = [&] {
+        auto sum = 0_lu;
+        if (!axisSizes.marginStart.isAuto())
+            sum += usedMargin(gridItem, axisSizes.marginStart);
+        if (!axisSizes.marginEnd.isAuto())
+            sum += usedMargin(gridItem, axisSizes.marginEnd);
+        return sum;
+    };
+    return gridAreaSize - borderBoxSize - sumOfNonAutoMargins();
+}
+
 // https://drafts.csswg.org/css-grid-1/#auto-margins
 UsedMargins usedMarginsForAlignment(const PlacedGridItem& gridItem, const ComputedSizes& axisSizes, LayoutUnit borderBoxSize, LayoutUnit gridAreaSize)
 {
     auto marginStartIsAuto = axisSizes.marginStart.isAuto();
     auto marginEndIsAuto = axisSizes.marginEnd.isAuto();
-
-    // https://drafts.csswg.org/css-grid-1/#grid-area-concept
-    // "A grid item’s grid area forms the containing block into which it is laid out."
-    // https://www.w3.org/TR/CSS2/visudet.html#blockwidth
-    // "'margin-left' + 'border-left-width' + 'padding-left' + 'width' + 'padding-right' + 'border-right-width'
-    // + 'margin-right' = width of containing block"
-    auto sumOfNonAutoMargins = [&] {
-        auto sum = 0_lu;
-        if (!marginStartIsAuto)
-            sum += usedMargin(gridItem, axisSizes.marginStart);
-        if (!marginEndIsAuto)
-            sum += usedMargin(gridItem, axisSizes.marginEnd);
-        return sum;
-    };
-    auto freeSpace = gridAreaSize - borderBoxSize - sumOfNonAutoMargins();
+    auto freeSpace = freeSpaceForAutoMargins(gridItem, axisSizes, borderBoxSize, gridAreaSize);
 
     auto usedMarginForAlignment = [&](const Style::MarginEdge& marginEdge) -> LayoutUnit {
         if (!marginEdge.isAuto())
