@@ -256,6 +256,8 @@ private:
     // Build up a map of min/max sizes for each span length for use during resolving intrinsic track sizes.
     // We also need to keep track of definite items separately, since they do not contribute to every track like indefinite items do.
     void computeDefiniteAndIndefiniteItemsForGridLanes(StdMap<SpanLength, GridLanesMinMaxTrackSize>&, StdMap<SpanLength, Vector<GridLanesMinMaxTrackSizeWithGridSpan>>&, Vector<GridLanesMinMaxTrackSizeWithGridSpan>&, RenderGridLayoutState&);
+    bool includesContentSizedTrack(const GridSpan& tracks) const;
+    void addGridLanesItemAtEveryStartLine(RenderBox& gridItem, unsigned spanLength, const GridSpan& placementRange, StdMap<SpanLength, Vector<GridLanesMinMaxTrackSizeWithGridSpan>>& definiteItemSizes, Vector<GridLanesMinMaxTrackSizeWithGridSpan>& definiteItemSizesSpanFlexTrack, RenderGridLayoutState&);
 
     // Track sizing algorithm steps. Note that the "Maximize Tracks" step is done
     // entirely inside the strategies, that's why we don't need an additional
