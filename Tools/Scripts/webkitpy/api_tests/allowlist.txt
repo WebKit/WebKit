@@ -716,14 +716,14 @@ TestWebKitAPI.WKWebExtensionAPINamespaceTests/notificationsUnsupported()
 TestWebKitAPI.WKWebExtensionAPINamespaceTests/objectEquality()
 TestWebKitAPI.WKWebExtensionAPINamespaceTests/webNavigationObjectWithPermission()
 TestWebKitAPI.WKWebExtensionAPIOffscreenTests/offscreenDocumentCanCreateJSHandle()
-TestWebKitAPI.WKWebExtensionAPITabs.CreateWithDataURL
-TestWebKitAPI.WKWebExtensionAPITabs.CreateWithFileURLIsRejected
-TestWebKitAPI.WKWebExtensionAPITabs.CreateWithFileURLWhenFileAccessIsAllowed
-TestWebKitAPI.WKWebExtensionAPITabs.CreateWithJavaScriptURLIsRejected
-TestWebKitAPI.WKWebExtensionAPITabs.CreateWithMailtoURL
-TestWebKitAPI.WKWebExtensionAPITabs.UpdatedEventOmitsUnchangedProperties
-TestWebKitAPI.WKWebExtensionAPITabs.UpdatedEventReportsRapidToggles
-TestWebKitAPI.WKWebExtensionAPITabs.WindowType
+TestWebKitAPI.WKWebExtensionAPITabsTests/createWithDataURL()
+TestWebKitAPI.WKWebExtensionAPITabsTests/createWithFileURLIsRejected()
+TestWebKitAPI.WKWebExtensionAPITabsTests/createWithFileURLWhenFileAccessIsAllowed()
+TestWebKitAPI.WKWebExtensionAPITabsTests/createWithJavaScriptURLIsRejected()
+TestWebKitAPI.WKWebExtensionAPITabsTests/createWithMailtoURL()
+TestWebKitAPI.WKWebExtensionAPITabsTests/updatedEventOmitsUnchangedProperties()
+TestWebKitAPI.WKWebExtensionAPITabsTests/updatedEventReportsRapidToggles()
+TestWebKitAPI.WKWebExtensionAPITabsTests/windowType()
 TestWebKitAPI.WKWebExtensionAPITestTests/addAnonymousAsyncTest()
 TestWebKitAPI.WKWebExtensionAPITestTests/addAnonymousTest()
 TestWebKitAPI.WKWebExtensionAPITestTests/addAsyncTestThatFails()
@@ -4306,18 +4306,18 @@ TestWebKitAPI.WKWebExtensionAPIPermissionsTests/hasAccessToFileURLsDefaultsToNo(
 TestWebKitAPI.WKWebExtensionAPIPermissionsTests/requestAllURLsMatchPattern()
 TestWebKitAPI.WKWebExtensionAPIPermissionsTests/requestMatchPatternsOnly()
 TestWebKitAPI.WKWebExtensionAPIPermissionsTests/requestPermissionsOnly()
-TestWebKitAPI.WKWebExtensionAPITabs.ConnectWithoutUserGesture
-TestWebKitAPI.WKWebExtensionAPITabs.MoveBetweenPrivateAndNonPrivateFails
-TestWebKitAPI.WKWebExtensionAPITabs.MoveDelegateErrorIsPropagated
-TestWebKitAPI.WKWebExtensionAPITabs.MoveMultiWindowGroupErrorIsPropagated
-TestWebKitAPI.WKWebExtensionAPITabs.MoveMultipleTabsReturnsArray
-TestWebKitAPI.WKWebExtensionAPITabs.MovePrivateTabsAllowed
-TestWebKitAPI.WKWebExtensionAPITabs.MoveToAnotherWindow
-TestWebKitAPI.WKWebExtensionAPITabs.MoveToOrFromPopupWindowFails
-TestWebKitAPI.WKWebExtensionAPITabs.MoveWithoutWindowIdGroupsTabsByWindow
-TestWebKitAPI.WKWebExtensionAPITabs.PortPostMessageWithUserGesture
-TestWebKitAPI.WKWebExtensionAPITabs.PortPostMessageWithoutUserGesture
-TestWebKitAPI.WKWebExtensionAPITabs.SendMessageWithoutUserGesture
+TestWebKitAPI.WKWebExtensionAPITabsTests/connectWithoutUserGesture()
+TestWebKitAPI.WKWebExtensionAPITabsTests/moveBetweenPrivateAndNonPrivateFails()
+TestWebKitAPI.WKWebExtensionAPITabsTests/moveDelegateErrorIsPropagated()
+TestWebKitAPI.WKWebExtensionAPITabsTests/moveMultiWindowGroupErrorIsPropagated()
+TestWebKitAPI.WKWebExtensionAPITabsTests/moveMultipleTabsReturnsArray()
+TestWebKitAPI.WKWebExtensionAPITabsTests/movePrivateTabsAllowed()
+TestWebKitAPI.WKWebExtensionAPITabsTests/moveToAnotherWindow()
+TestWebKitAPI.WKWebExtensionAPITabsTests/moveToOrFromPopupWindowFails()
+TestWebKitAPI.WKWebExtensionAPITabsTests/moveWithoutWindowIdGroupsTabsByWindow()
+TestWebKitAPI.WKWebExtensionAPITabsTests/portPostMessageWithUserGesture()
+TestWebKitAPI.WKWebExtensionAPITabsTests/portPostMessageWithoutUserGesture()
+TestWebKitAPI.WKWebExtensionAPITabsTests/sendMessageWithoutUserGesture()
 TestWebKitAPI.WKWebExtensionAPIWebNavigationTests/emptyFilterMatchesEverything()
 TestWebKitAPI.WKWebExtensionAPIWebNavigationTests/urlFilterMatchesOnePredicate()
 TestWebKitAPI.WKWebExtensionAPIWebNavigationTests/urlFilterTestMatchAllPredicates()
@@ -6801,90 +6801,90 @@ TestWebKitAPI._WKDownload.SystemPreviewUSDZBlobNaming
 [ ios ] TestWebKitAPI.WKWebExtensionAPIStorageTests/storageFromSubframe()
 [ ios ] TestWebKitAPI.WKWebExtensionAPIStorageTests/storageOnChanged()
 [ ios ] TestWebKitAPI.WKWebExtensionAPIStorageTests/undefinedProperties()
-[ ios ] TestWebKitAPI.WKWebExtensionAPITabs.ActivatedEvent
-[ ios ] TestWebKitAPI.WKWebExtensionAPITabs.ActiveTab
-[ ios ] TestWebKitAPI.WKWebExtensionAPITabs.ActiveTabRemovedWithDeniedPermissions
-[ ios ] TestWebKitAPI.WKWebExtensionAPITabs.ActiveTabWithDeniedPermissions
-[ ios ] TestWebKitAPI.WKWebExtensionAPITabs.CSSAuthorOrigin
-[ ios ] TestWebKitAPI.WKWebExtensionAPITabs.CSSUserOrigin
-[ ios ] TestWebKitAPI.WKWebExtensionAPITabs.Connect
-[ ios ] TestWebKitAPI.WKWebExtensionAPITabs.ConnectToSpecificDocument
-[ ios ] TestWebKitAPI.WKWebExtensionAPITabs.ConnectToSpecificFrame
-[ ios ] TestWebKitAPI.WKWebExtensionAPITabs.ConnectToSubframe
-[ ios ] TestWebKitAPI.WKWebExtensionAPITabs.ConnectWithMultipleListeners
-[ ios ] TestWebKitAPI.WKWebExtensionAPITabs.ConnectWithUserGesture
-[ ios ] TestWebKitAPI.WKWebExtensionAPITabs.Create
-[ ios ] TestWebKitAPI.WKWebExtensionAPITabs.CreateTabsOverflowIndex
-[ ios ] TestWebKitAPI.WKWebExtensionAPITabs.CreateTabsZeroIndex
-[ ios ] TestWebKitAPI.WKWebExtensionAPITabs.CreateWithRelativeURL
-[ ios ] TestWebKitAPI.WKWebExtensionAPITabs.CreateWithSpecifiedOptions
-[ ios ] TestWebKitAPI.WKWebExtensionAPITabs.CreatedEvent
-[ ios ] TestWebKitAPI.WKWebExtensionAPITabs.DetachAndAttachFromWindowIDNone
-[ ios ] TestWebKitAPI.WKWebExtensionAPITabs.DetachAndAttachToWindowIDNone
-[ ios ] TestWebKitAPI.WKWebExtensionAPITabs.DetachedAndAttachedEvent
-[ ios ] TestWebKitAPI.WKWebExtensionAPITabs.DetectLanguage
-[ ios ] TestWebKitAPI.WKWebExtensionAPITabs.Duplicate
-[ ios ] TestWebKitAPI.WKWebExtensionAPITabs.DuplicateWithOptions
-[ ios ] TestWebKitAPI.WKWebExtensionAPITabs.Errors
-[ ios ] TestWebKitAPI.WKWebExtensionAPITabs.ExecuteScript
-[ ios ] TestWebKitAPI.WKWebExtensionAPITabs.ExecuteScriptJSONTypes
-[ ios ] TestWebKitAPI.WKWebExtensionAPITabs.ExecuteScriptWithDocumentId
-[ ios ] TestWebKitAPI.WKWebExtensionAPITabs.ExecuteScriptWithFrameId
-[ ios ] TestWebKitAPI.WKWebExtensionAPITabs.ExecuteScriptWithUserGesture
-[ ios ] TestWebKitAPI.WKWebExtensionAPITabs.ExecuteScriptWithoutUserGesture
-[ ios ] TestWebKitAPI.WKWebExtensionAPITabs.Get
-[ ios ] TestWebKitAPI.WKWebExtensionAPITabs.GetCurrentFromBackgroundPage
-[ ios ] TestWebKitAPI.WKWebExtensionAPITabs.GetCurrentFromOptionsPage
-[ ios ] TestWebKitAPI.WKWebExtensionAPITabs.GetSelected
-[ ios ] TestWebKitAPI.WKWebExtensionAPITabs.GoBack
-[ ios ] TestWebKitAPI.WKWebExtensionAPITabs.GoForward
-[ ios ] TestWebKitAPI.WKWebExtensionAPITabs.HighlightedAlsoActivatesTab
-[ ios ] TestWebKitAPI.WKWebExtensionAPITabs.HighlightedEvent
-[ ios ] TestWebKitAPI.WKWebExtensionAPITabs.InsertAndRemoveCSSInAllFrames
-[ ios ] TestWebKitAPI.WKWebExtensionAPITabs.InsertAndRemoveCSSInMainFrame
-[ ios ] TestWebKitAPI.WKWebExtensionAPITabs.InsertCSSInAllFramesWithCrossSiteFrame
-[ ios ] TestWebKitAPI.WKWebExtensionAPITabs.MoveErrors
-[ ios ] TestWebKitAPI.WKWebExtensionAPITabs.MoveOverflowIndexClampsToEnd
-[ ios ] TestWebKitAPI.WKWebExtensionAPITabs.MoveSingleTabInSingleWindow
-[ ios ] TestWebKitAPI.WKWebExtensionAPITabs.MoveSingleTabToEndOfWindow
-[ ios ] TestWebKitAPI.WKWebExtensionAPITabs.MoveToCurrentIndexReturnsTab
-[ ios ] TestWebKitAPI.WKWebExtensionAPITabs.MovedEvent
-[ ios ] TestWebKitAPI.WKWebExtensionAPITabs.PortDisconnect
-[ ios ] TestWebKitAPI.WKWebExtensionAPITabs.PortDisconnectWithMultipleListeners
-[ ios ] TestWebKitAPI.WKWebExtensionAPITabs.PortPostMessageGestureFromContentScriptIsNotPropagated
-[ ios ] TestWebKitAPI.WKWebExtensionAPITabs.Query
-[ ios ] TestWebKitAPI.WKWebExtensionAPITabs.QueryWithAccessPrompt
-[ ios ] TestWebKitAPI.WKWebExtensionAPITabs.QueryWithCurrentWindow
-[ ios ] TestWebKitAPI.WKWebExtensionAPITabs.QueryWithPermissionBypass
-[ ios ] TestWebKitAPI.WKWebExtensionAPITabs.QueryWithPrivateAccess
-[ ios ] TestWebKitAPI.WKWebExtensionAPITabs.Reload
-[ ios ] TestWebKitAPI.WKWebExtensionAPITabs.Remove
-[ ios ] TestWebKitAPI.WKWebExtensionAPITabs.RemoveMultipleInvalidTabs
-[ ios ] TestWebKitAPI.WKWebExtensionAPITabs.RemoveMultipleTabs
-[ ios ] TestWebKitAPI.WKWebExtensionAPITabs.RemovedEvent
-[ ios ] TestWebKitAPI.WKWebExtensionAPITabs.ReplacedEvent
-[ ios ] TestWebKitAPI.WKWebExtensionAPITabs.SendMessage
-[ ios ] TestWebKitAPI.WKWebExtensionAPITabs.SendMessageBackAndForwardNavigation
-[ ios ] TestWebKitAPI.WKWebExtensionAPITabs.SendMessageFromBackgroundPageToFullPageExtensionContent
 [ ios ] TestWebKitAPI.WKWebExtensionAPITabs.SendMessageFromBackgroundToOpenedWindow
-[ ios ] TestWebKitAPI.WKWebExtensionAPITabs.SendMessageFromBackgroundToSpecificDocument
-[ ios ] TestWebKitAPI.WKWebExtensionAPITabs.SendMessageFromBackgroundToSpecificFrame
-[ ios ] TestWebKitAPI.WKWebExtensionAPITabs.SendMessageFromBackgroundToSubframe
-[ ios ] TestWebKitAPI.WKWebExtensionAPITabs.SendMessageWithAsyncPromiseReply
-[ ios ] TestWebKitAPI.WKWebExtensionAPITabs.SendMessageWithAsyncReply
-[ ios ] TestWebKitAPI.WKWebExtensionAPITabs.SendMessageWithPromiseReply
-[ ios ] TestWebKitAPI.WKWebExtensionAPITabs.SendMessageWithUserGesture
-[ ios ] TestWebKitAPI.WKWebExtensionAPITabs.SendMessageWithoutReply
-[ ios ] TestWebKitAPI.WKWebExtensionAPITabs.TabStatus
-[ ios ] TestWebKitAPI.WKWebExtensionAPITabs.ToggleReaderMode
-[ ios ] TestWebKitAPI.WKWebExtensionAPITabs.UnsupportedMV3APIs
-[ ios ] TestWebKitAPI.WKWebExtensionAPITabs.Update
-[ ios ] TestWebKitAPI.WKWebExtensionAPITabs.UpdateWithoutTabId
-[ ios ] TestWebKitAPI.WKWebExtensionAPITabs.UpdatedEvent
-[ ios ] TestWebKitAPI.WKWebExtensionAPITabs.UpdatedEventWithPrivateAccess
-[ ios ] TestWebKitAPI.WKWebExtensionAPITabs.UpdatedEventWithoutPrivateAccess
-[ ios ] TestWebKitAPI.WKWebExtensionAPITabs.UserGestureWithoutActiveTab
-[ ios ] TestWebKitAPI.WKWebExtensionAPITabs.Zoom
+[ ios ] TestWebKitAPI.WKWebExtensionAPITabsTests/activatedEvent()
+[ ios ] TestWebKitAPI.WKWebExtensionAPITabsTests/activeTab()
+[ ios ] TestWebKitAPI.WKWebExtensionAPITabsTests/activeTabRemovedWithDeniedPermissions()
+[ ios ] TestWebKitAPI.WKWebExtensionAPITabsTests/activeTabWithDeniedPermissions()
+[ ios ] TestWebKitAPI.WKWebExtensionAPITabsTests/connect()
+[ ios ] TestWebKitAPI.WKWebExtensionAPITabsTests/connectToSpecificDocument()
+[ ios ] TestWebKitAPI.WKWebExtensionAPITabsTests/connectToSpecificFrame()
+[ ios ] TestWebKitAPI.WKWebExtensionAPITabsTests/connectToSubframe()
+[ ios ] TestWebKitAPI.WKWebExtensionAPITabsTests/connectWithMultipleListeners()
+[ ios ] TestWebKitAPI.WKWebExtensionAPITabsTests/connectWithUserGesture()
+[ ios ] TestWebKitAPI.WKWebExtensionAPITabsTests/create()
+[ ios ] TestWebKitAPI.WKWebExtensionAPITabsTests/createTabsOverflowIndex()
+[ ios ] TestWebKitAPI.WKWebExtensionAPITabsTests/createTabsZeroIndex()
+[ ios ] TestWebKitAPI.WKWebExtensionAPITabsTests/createWithRelativeURL()
+[ ios ] TestWebKitAPI.WKWebExtensionAPITabsTests/createWithSpecifiedOptions()
+[ ios ] TestWebKitAPI.WKWebExtensionAPITabsTests/createdEvent()
+[ ios ] TestWebKitAPI.WKWebExtensionAPITabsTests/cssAuthorOrigin()
+[ ios ] TestWebKitAPI.WKWebExtensionAPITabsTests/cssUserOrigin()
+[ ios ] TestWebKitAPI.WKWebExtensionAPITabsTests/detachAndAttachFromWindowIDNone()
+[ ios ] TestWebKitAPI.WKWebExtensionAPITabsTests/detachAndAttachToWindowIDNone()
+[ ios ] TestWebKitAPI.WKWebExtensionAPITabsTests/detachedAndAttachedEvent()
+[ ios ] TestWebKitAPI.WKWebExtensionAPITabsTests/detectLanguage()
+[ ios ] TestWebKitAPI.WKWebExtensionAPITabsTests/duplicate()
+[ ios ] TestWebKitAPI.WKWebExtensionAPITabsTests/duplicateWithOptions()
+[ ios ] TestWebKitAPI.WKWebExtensionAPITabsTests/errors()
+[ ios ] TestWebKitAPI.WKWebExtensionAPITabsTests/executeScript()
+[ ios ] TestWebKitAPI.WKWebExtensionAPITabsTests/executeScriptJSONTypes()
+[ ios ] TestWebKitAPI.WKWebExtensionAPITabsTests/executeScriptWithDocumentId()
+[ ios ] TestWebKitAPI.WKWebExtensionAPITabsTests/executeScriptWithFrameId()
+[ ios ] TestWebKitAPI.WKWebExtensionAPITabsTests/executeScriptWithUserGesture()
+[ ios ] TestWebKitAPI.WKWebExtensionAPITabsTests/executeScriptWithoutUserGesture()
+[ ios ] TestWebKitAPI.WKWebExtensionAPITabsTests/get()
+[ ios ] TestWebKitAPI.WKWebExtensionAPITabsTests/getCurrentFromBackgroundPage()
+[ ios ] TestWebKitAPI.WKWebExtensionAPITabsTests/getCurrentFromOptionsPage()
+[ ios ] TestWebKitAPI.WKWebExtensionAPITabsTests/getSelected()
+[ ios ] TestWebKitAPI.WKWebExtensionAPITabsTests/goBack()
+[ ios ] TestWebKitAPI.WKWebExtensionAPITabsTests/goForward()
+[ ios ] TestWebKitAPI.WKWebExtensionAPITabsTests/highlightedAlsoActivatesTab()
+[ ios ] TestWebKitAPI.WKWebExtensionAPITabsTests/highlightedEvent()
+[ ios ] TestWebKitAPI.WKWebExtensionAPITabsTests/insertAndRemoveCSSInAllFrames()
+[ ios ] TestWebKitAPI.WKWebExtensionAPITabsTests/insertAndRemoveCSSInMainFrame()
+[ ios ] TestWebKitAPI.WKWebExtensionAPITabsTests/insertCSSInAllFramesWithCrossSiteFrame()
+[ ios ] TestWebKitAPI.WKWebExtensionAPITabsTests/moveErrors()
+[ ios ] TestWebKitAPI.WKWebExtensionAPITabsTests/moveOverflowIndexClampsToEnd()
+[ ios ] TestWebKitAPI.WKWebExtensionAPITabsTests/moveSingleTabInSingleWindow()
+[ ios ] TestWebKitAPI.WKWebExtensionAPITabsTests/moveSingleTabToEndOfWindow()
+[ ios ] TestWebKitAPI.WKWebExtensionAPITabsTests/moveToCurrentIndexReturnsTab()
+[ ios ] TestWebKitAPI.WKWebExtensionAPITabsTests/movedEvent()
+[ ios ] TestWebKitAPI.WKWebExtensionAPITabsTests/portDisconnect()
+[ ios ] TestWebKitAPI.WKWebExtensionAPITabsTests/portDisconnectWithMultipleListeners()
+[ ios ] TestWebKitAPI.WKWebExtensionAPITabsTests/portPostMessageGestureFromContentScriptIsNotPropagated()
+[ ios ] TestWebKitAPI.WKWebExtensionAPITabsTests/query()
+[ ios ] TestWebKitAPI.WKWebExtensionAPITabsTests/queryWithAccessPrompt()
+[ ios ] TestWebKitAPI.WKWebExtensionAPITabsTests/queryWithCurrentWindow()
+[ ios ] TestWebKitAPI.WKWebExtensionAPITabsTests/queryWithPermissionBypass()
+[ ios ] TestWebKitAPI.WKWebExtensionAPITabsTests/queryWithPrivateAccess()
+[ ios ] TestWebKitAPI.WKWebExtensionAPITabsTests/reload()
+[ ios ] TestWebKitAPI.WKWebExtensionAPITabsTests/remove()
+[ ios ] TestWebKitAPI.WKWebExtensionAPITabsTests/removeMultipleInvalidTabs()
+[ ios ] TestWebKitAPI.WKWebExtensionAPITabsTests/removeMultipleTabs()
+[ ios ] TestWebKitAPI.WKWebExtensionAPITabsTests/removedEvent()
+[ ios ] TestWebKitAPI.WKWebExtensionAPITabsTests/replacedEvent()
+[ ios ] TestWebKitAPI.WKWebExtensionAPITabsTests/sendMessage()
+[ ios ] TestWebKitAPI.WKWebExtensionAPITabsTests/sendMessageBackAndForwardNavigation()
+[ ios ] TestWebKitAPI.WKWebExtensionAPITabsTests/sendMessageFromBackgroundPageToFullPageExtensionContent()
+[ ios ] TestWebKitAPI.WKWebExtensionAPITabsTests/sendMessageFromBackgroundToSpecificDocument()
+[ ios ] TestWebKitAPI.WKWebExtensionAPITabsTests/sendMessageFromBackgroundToSpecificFrame()
+[ ios ] TestWebKitAPI.WKWebExtensionAPITabsTests/sendMessageFromBackgroundToSubframe()
+[ ios ] TestWebKitAPI.WKWebExtensionAPITabsTests/sendMessageWithAsyncPromiseReply()
+[ ios ] TestWebKitAPI.WKWebExtensionAPITabsTests/sendMessageWithAsyncReply()
+[ ios ] TestWebKitAPI.WKWebExtensionAPITabsTests/sendMessageWithPromiseReply()
+[ ios ] TestWebKitAPI.WKWebExtensionAPITabsTests/sendMessageWithUserGesture()
+[ ios ] TestWebKitAPI.WKWebExtensionAPITabsTests/sendMessageWithoutReply()
+[ ios ] TestWebKitAPI.WKWebExtensionAPITabsTests/tabStatus()
+[ ios ] TestWebKitAPI.WKWebExtensionAPITabsTests/toggleReaderMode()
+[ ios ] TestWebKitAPI.WKWebExtensionAPITabsTests/unsupportedMV3APIs()
+[ ios ] TestWebKitAPI.WKWebExtensionAPITabsTests/update()
+[ ios ] TestWebKitAPI.WKWebExtensionAPITabsTests/updateWithoutTabId()
+[ ios ] TestWebKitAPI.WKWebExtensionAPITabsTests/updatedEvent()
+[ ios ] TestWebKitAPI.WKWebExtensionAPITabsTests/updatedEventWithPrivateAccess()
+[ ios ] TestWebKitAPI.WKWebExtensionAPITabsTests/updatedEventWithoutPrivateAccess()
+[ ios ] TestWebKitAPI.WKWebExtensionAPITabsTests/userGestureWithoutActiveTab()
+[ ios ] TestWebKitAPI.WKWebExtensionAPITabsTests/zoom()
 [ ios ] TestWebKitAPI.WKWebExtensionAPIWebNavigationTests/allEventsFired()
 [ ios ] TestWebKitAPI.WKWebExtensionAPIWebNavigationTests/allowedFilter()
 [ ios ] TestWebKitAPI.WKWebExtensionAPIWebNavigationTests/beforeNavigateEvent()
@@ -8444,35 +8444,35 @@ TestWebKitAPI._WKDownload.SystemPreviewUSDZBlobNaming
 [ mac ] TestWebKitAPI.WKWebExtensionAPIStorageTests/storageFromSubframe()
 [ mac ] TestWebKitAPI.WKWebExtensionAPIStorageTests/storageOnChanged()
 [ mac ] TestWebKitAPI.WKWebExtensionAPIStorageTests/undefinedProperties()
-[ mac ] TestWebKitAPI.WKWebExtensionAPITabs.ActivatedEvent
-[ mac ] TestWebKitAPI.WKWebExtensionAPITabs.CSSAuthorOrigin
-[ mac ] TestWebKitAPI.WKWebExtensionAPITabs.CSSUserOrigin
-[ mac ] TestWebKitAPI.WKWebExtensionAPITabs.Create
-[ mac ] TestWebKitAPI.WKWebExtensionAPITabs.CreateTabsOverflowIndex
-[ mac ] TestWebKitAPI.WKWebExtensionAPITabs.CreateTabsZeroIndex
-[ mac ] TestWebKitAPI.WKWebExtensionAPITabs.CreateWithRelativeURL
-[ mac ] TestWebKitAPI.WKWebExtensionAPITabs.CreateWithSpecifiedOptions
-[ mac ] TestWebKitAPI.WKWebExtensionAPITabs.CreatedEvent
-[ mac ] TestWebKitAPI.WKWebExtensionAPITabs.DetachedAndAttachedEvent
-[ mac ] TestWebKitAPI.WKWebExtensionAPITabs.DetectLanguage
-[ mac ] TestWebKitAPI.WKWebExtensionAPITabs.Duplicate
-[ mac ] TestWebKitAPI.WKWebExtensionAPITabs.DuplicateWithOptions
-[ mac ] TestWebKitAPI.WKWebExtensionAPITabs.GetCurrentFromOptionsPage
-[ mac ] TestWebKitAPI.WKWebExtensionAPITabs.GoBack
-[ mac ] TestWebKitAPI.WKWebExtensionAPITabs.GoForward
-[ mac ] TestWebKitAPI.WKWebExtensionAPITabs.HighlightedAlsoActivatesTab
-[ mac ] TestWebKitAPI.WKWebExtensionAPITabs.HighlightedEvent
-[ mac ] TestWebKitAPI.WKWebExtensionAPITabs.Query
-[ mac ] TestWebKitAPI.WKWebExtensionAPITabs.QueryWithAccessPrompt
-[ mac ] TestWebKitAPI.WKWebExtensionAPITabs.QueryWithPrivateAccess
-[ mac ] TestWebKitAPI.WKWebExtensionAPITabs.Reload
-[ mac ] TestWebKitAPI.WKWebExtensionAPITabs.ReplacedEvent
-[ mac ] TestWebKitAPI.WKWebExtensionAPITabs.SendMessageFromBackgroundPageToFullPageExtensionContent
-[ mac ] TestWebKitAPI.WKWebExtensionAPITabs.ToggleReaderMode
-[ mac ] TestWebKitAPI.WKWebExtensionAPITabs.UnsupportedMV3APIs
-[ mac ] TestWebKitAPI.WKWebExtensionAPITabs.UpdateWithoutTabId
-[ mac ] TestWebKitAPI.WKWebExtensionAPITabs.UpdatedEventWithoutPrivateAccess
-[ mac ] TestWebKitAPI.WKWebExtensionAPITabs.Zoom
+[ mac ] TestWebKitAPI.WKWebExtensionAPITabsTests/activatedEvent()
+[ mac ] TestWebKitAPI.WKWebExtensionAPITabsTests/create()
+[ mac ] TestWebKitAPI.WKWebExtensionAPITabsTests/createTabsOverflowIndex()
+[ mac ] TestWebKitAPI.WKWebExtensionAPITabsTests/createTabsZeroIndex()
+[ mac ] TestWebKitAPI.WKWebExtensionAPITabsTests/createWithRelativeURL()
+[ mac ] TestWebKitAPI.WKWebExtensionAPITabsTests/createWithSpecifiedOptions()
+[ mac ] TestWebKitAPI.WKWebExtensionAPITabsTests/createdEvent()
+[ mac ] TestWebKitAPI.WKWebExtensionAPITabsTests/cssAuthorOrigin()
+[ mac ] TestWebKitAPI.WKWebExtensionAPITabsTests/cssUserOrigin()
+[ mac ] TestWebKitAPI.WKWebExtensionAPITabsTests/detachedAndAttachedEvent()
+[ mac ] TestWebKitAPI.WKWebExtensionAPITabsTests/detectLanguage()
+[ mac ] TestWebKitAPI.WKWebExtensionAPITabsTests/duplicate()
+[ mac ] TestWebKitAPI.WKWebExtensionAPITabsTests/duplicateWithOptions()
+[ mac ] TestWebKitAPI.WKWebExtensionAPITabsTests/getCurrentFromOptionsPage()
+[ mac ] TestWebKitAPI.WKWebExtensionAPITabsTests/goBack()
+[ mac ] TestWebKitAPI.WKWebExtensionAPITabsTests/goForward()
+[ mac ] TestWebKitAPI.WKWebExtensionAPITabsTests/highlightedAlsoActivatesTab()
+[ mac ] TestWebKitAPI.WKWebExtensionAPITabsTests/highlightedEvent()
+[ mac ] TestWebKitAPI.WKWebExtensionAPITabsTests/query()
+[ mac ] TestWebKitAPI.WKWebExtensionAPITabsTests/queryWithAccessPrompt()
+[ mac ] TestWebKitAPI.WKWebExtensionAPITabsTests/queryWithPrivateAccess()
+[ mac ] TestWebKitAPI.WKWebExtensionAPITabsTests/reload()
+[ mac ] TestWebKitAPI.WKWebExtensionAPITabsTests/replacedEvent()
+[ mac ] TestWebKitAPI.WKWebExtensionAPITabsTests/sendMessageFromBackgroundPageToFullPageExtensionContent()
+[ mac ] TestWebKitAPI.WKWebExtensionAPITabsTests/toggleReaderMode()
+[ mac ] TestWebKitAPI.WKWebExtensionAPITabsTests/unsupportedMV3APIs()
+[ mac ] TestWebKitAPI.WKWebExtensionAPITabsTests/updateWithoutTabId()
+[ mac ] TestWebKitAPI.WKWebExtensionAPITabsTests/updatedEventWithoutPrivateAccess()
+[ mac ] TestWebKitAPI.WKWebExtensionAPITabsTests/zoom()
 [ mac ] TestWebKitAPI.WKWebExtensionAPIWebNavigationTests/eventListenerRegistration()
 [ mac ] TestWebKitAPI.WKWebExtensionAPIWebNavigationTests/urlKeyTypeChecking()
 [ mac ] TestWebKitAPI.WKWebExtensionAPIWebRequestTests/beforeRequestEventForSidebarSubframe()
