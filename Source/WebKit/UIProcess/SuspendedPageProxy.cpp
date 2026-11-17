@@ -225,16 +225,8 @@ void SuspendedPageProxy::teardown()
 {
     allSuspendedPages().remove(*this);
 
+    removeFromSubframeProcesses();
     if (RefPtr page = m_page.get()) {
-        if (hasSuspensionStarted() && m_suspendedFrameItemID) {
-            m_browsingContextGroup->forEachRemotePage(*page, [suspendedPage = Ref { *this }](auto& remotePage) {
-                Ref process = remotePage.siteIsolatedProcess();
-                // Mirror the suspendSubframeProcesses() filter: only processes that received addSuspendedPageProxy() need the matching remove.
-                if (!suspendedPage->hasSubframeInProcess(process->coreProcessIdentifier()))
-                    return;
-                process->removeSuspendedPageProxy(suspendedPage);
-            });
-        }
         if (m_suspensionState != SuspensionState::Resumed)
             m_browsingContextGroup->closeRemotePagesForPage(*page);
     }
@@ -425,6 +417,21 @@ void SuspendedPageProxy::suspendSubframeProcesses(BackForwardFrameItemIdentifier
     });
 }
 
+void SuspendedPageProxy::removeFromSubframeProcesses()
+{
+    RefPtr page = m_page;
+    if (!page || !hasSuspensionStarted() || !m_suspendedFrameItemID)
+        return;
+
+    m_browsingContextGroup->forEachRemotePage(*page, [suspendedPage = Ref { *this }](auto& remotePage) {
+        Ref process = remotePage.siteIsolatedProcess();
+        // Mirror the suspendSubframeProcesses() filter: only processes that received addSuspendedPageProxy() need the matching remove.
+        if (!suspendedPage->hasSubframeInProcess(process->coreProcessIdentifier()))
+            return;
+        process->removeSuspendedPageProxy(suspendedPage);
+    });
+}
+
 bool SuspendedPageProxy::hasSubframeInProcess(WebCore::ProcessIdentifier processIdentifier) const
 {
     // FIXME: Add WebFrameProxy::forEachDescendant() to avoid manual traverseNext() loops.
@@ -442,6 +449,12 @@ HashSet<Ref<WebProcessProxy>> SuspendedPageProxy::iframeProcesses() const
     for (RefPtr frame = m_mainFrame->traverseNext().frame; frame; frame = frame->traverseNext().frame)
         processes.add(Ref { frame->process() });
     return processes;
+}
+
+Vector<Ref<WebFrameProxy>> SuspendedPageProxy::takeChildFramesOfSuspendedDocument()
+{
+    removeFromSubframeProcesses();
+    return m_mainFrame->takeChildFrames();
 }
 
 void SuspendedPageProxy::maybeCompleteSuspension()
