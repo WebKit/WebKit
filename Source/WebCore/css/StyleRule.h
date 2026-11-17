@@ -148,7 +148,6 @@ public:
 #endif
 
     NODELETE static unsigned averageSizeInBytes();
-    void setProperties(Ref<StyleProperties>&&);
 
     String debugDescription() const;
 protected:

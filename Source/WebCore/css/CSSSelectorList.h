@@ -96,7 +96,6 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     const_iterator end() const LIFETIME_BOUND { return { m_selectorArray.end() }; }
 
     bool hasExplicitNestingParent() const;
-    NODELETE bool hasOnlyNestingSelector() const;
 
     String selectorsText() const;
     void buildSelectorsText(StringBuilder&) const;

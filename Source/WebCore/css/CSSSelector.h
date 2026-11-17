@@ -180,7 +180,6 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     PagePseudoClass pagePseudoClass() const;
 
     bool matchesPseudoElement() const;
-    bool isSiblingSelector() const;
     bool isAttributeSelector() const;
 
     // True for [class~="foo"] selectors that match exactly like .foo, so matching can test
@@ -350,13 +349,6 @@ inline bool isLogicalCombinationPseudoClass(CSSSelector::PseudoClass pseudoClass
 }
 
 NODELETE bool isElementBackedPseudoElement(CSSSelector::PseudoElement);
-
-inline bool CSSSelector::isSiblingSelector() const
-{
-    return relation() == Relation::DirectAdjacent
-        || relation() == Relation::IndirectAdjacent
-        || (match() == CSSSelector::Match::PseudoClass && pseudoClassIsRelativeToSiblings(pseudoClass()));
-}
 
 inline bool CSSSelector::isAttributeSelector() const
 {

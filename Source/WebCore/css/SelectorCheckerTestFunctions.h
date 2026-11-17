@@ -554,14 +554,6 @@ ALWAYS_INLINE bool isFrameFocused(const Element& element)
     return element.document().frame() && element.document().frame()->selection().isFocusedAndActive();
 }
 
-ALWAYS_INLINE bool matchesLegacyDirectFocusPseudoClass(const Element& element)
-{
-    if (InspectorInstrumentation::forcePseudoState(element, CSSSelector::PseudoClass::Focus))
-        return true;
-
-    return element.focused() && isFrameFocused(element);
-}
-
 ALWAYS_INLINE bool doesShadowTreeContainFocusedElement(const Element& element)
 {
     auto* shadowRoot = element.shadowRoot();

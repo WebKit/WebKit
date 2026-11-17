@@ -203,20 +203,6 @@ bool CSSSelectorList::hasExplicitNestingParent() const
     return forEachSelector(functor, *this);
 }
 
-bool CSSSelectorList::hasOnlyNestingSelector() const
-{
-    if (componentCount() != 1)
-        return false;
-
-    auto& singleSelector = first();
-    
-    // Selector should be a single selector
-    if (singleSelector.precedingInComplexSelector())
-        return false;
-
-    return singleSelector.match() == CSSSelector::Match::NestingParent;
-}
-
 bool CSSSelectorList::operator==(const CSSSelectorList& other) const
 {
     if (componentCount() != other.componentCount())

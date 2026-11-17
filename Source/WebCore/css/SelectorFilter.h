@@ -43,7 +43,6 @@ public:
     void pushParentInitializingIfNeeded(Element& parent);
     NODELETE void popParent();
     NODELETE void popParentsUntil(Element* parent);
-    bool parentStackIsEmpty() const { return m_parentStack.isEmpty(); }
     NODELETE bool parentStackIsConsistent(const ContainerNode* parentNode) const;
     void parentStackReserveInitialCapacity(size_t initialCapacity) { m_parentStack.reserveInitialCapacity(initialCapacity); }
 
