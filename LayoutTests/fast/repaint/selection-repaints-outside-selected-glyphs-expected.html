@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+body { margin: 0; }
+#text { font: 20px/60px Ahem; width: 200px; }
+</style>
+<script src="../../resources/ui-helper.js"></script>
+<script>
+window.testRunner?.waitUntilDone();
+window.testRunner?.dontForceRepaint();
+
+window.addEventListener("load", async () => {
+    getSelection().selectAllChildren(document.getElementById("text"));
+    await UIHelper.renderingUpdate();
+    await UIHelper.renderingUpdate();
+    await UIHelper.renderingUpdate();
+    window.testRunner?.notifyDone();
+});
+</script>
+</head>
+<body>
+<div id="text">XXXX</div>
+</body>
+</html>

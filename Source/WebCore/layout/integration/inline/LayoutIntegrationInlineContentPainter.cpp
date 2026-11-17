@@ -29,6 +29,9 @@
 #include "EllipsisBoxPainter.h"
 #include "InlineBoxPainter.h"
 #include "InlineDisplayBoxInlines.h"
+#include "InlineIteratorBoxInlines.h"
+#include "InlineIteratorLineBoxInlines.h"
+#include "LineSelection.h"
 #include "OutlinePainter.h"
 #include "PaintInfo.h"
 #include "PaintInfoInlines.h"
@@ -120,7 +123,15 @@ void InlineContentPainter::paintDisplayBox(const InlineDisplay::Box& box)
     }
 
     if (box.isText()) {
-        auto hasVisibleDamage = box.text().length() && box.isVisible() && hasDamage(box);
+        // A selected box paints its selection over the line's selection extent, which can reach past its glyphs.
+        auto hasSelectionDamage = [&] {
+            CheckedPtr renderer = box.layoutBox().rendererForIntegration();
+            if (renderer->selectionState() == RenderObject::HighlightState::None)
+                return false;
+            auto selectionRect = enclosingLayoutRect(LineSelection::physicalRect(InlineIterator::LineBox { m_inlineContent, box.lineIndex() }));
+            return m_damageRect.maxY() > selectionRect.y() && m_damageRect.y() < selectionRect.maxY();
+        };
+        auto hasVisibleDamage = box.text().length() && box.isVisible() && (hasDamage(box) || hasSelectionDamage());
         if (!hasVisibleDamage)
             return;
 

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+body { margin: 0; }
+#text { font: 20px/60px Ahem; width: 200px; }
+#cover { position: absolute; left: 0; top: 45px; width: 100px; height: 10px; background-color: green; }
+</style>
+<script src="../../resources/ui-helper.js"></script>
+<script>
+window.testRunner?.waitUntilDone();
+window.testRunner?.dontForceRepaint();
+
+window.addEventListener("load", async () => {
+    getSelection().selectAllChildren(document.getElementById("text"));
+    await UIHelper.renderingUpdate();
+    // Only the strip under the cover repaints. It is inside the line's selection but below the selected glyphs.
+    document.getElementById("cover").style.visibility = "hidden";
+    await UIHelper.renderingUpdate();
+    await UIHelper.renderingUpdate();
+    window.testRunner?.notifyDone();
+});
+</script>
+</head>
+<body>
+<div id="text">XXXX</div>
+<div id="cover"></div>
+</body>
+</html>
