@@ -137,6 +137,7 @@ def matches_bundle(item, bundle_filter):
 # Supported member attributes:
 #
 # BitField - work around the need for http://wg21.link/P0572 and don't check that the serialization order matches the memory layout.
+# Const - decode into a const local and pass it to the constructor or create function as a const lvalue instead of moving it. Use this when the decoded value is only read during construction (e.g. a Vector passed to a std::span parameter), so that the borrow checker can see that the loan on it is guarded by const.
 # EncodeRequestBody - Include the body of the WebCore::ResourceRequest when encoding (by default, it is omitted).
 # Validator - additional C++ to validate the value when decoding
 # NotSerialized - member is present in structure but intentionally not serialized.
@@ -440,6 +441,9 @@ class MemberVariable(object):
             if attribute == 'OptionalTupleBits':
                 return True
         return False
+
+    def is_const(self):
+        return 'Const' in self.attributes
 
     def value_without_question_mark(self):
         value = self.name
@@ -1069,6 +1073,11 @@ def decode_type(type, serialized_types):
         if member.condition is not None:
             result.append(f'#if {member.condition}')
         sanitized_variable_name = sanitize_string_for_variable_name(member.name)
+        if member.is_const():
+            if member.is_subclass or member.optional_tuple_bits() or member.optional_tuple_bit() is not None or 'EncodeRequestBody' in member.attributes:
+                raise Exception(f'{type.namespace_and_name()}: member {member.name}: Const is not supported together with OptionalTupleBits, OptionalTupleBit, or EncodeRequestBody')
+            if type.populate_from_empty_constructor:
+                raise Exception(f'{type.namespace_and_name()}: member {member.name}: Const is not supported on types with LegacyPopulateFromEmptyConstructor')
         for attribute in member.attributes:
             precondition = re.search(r'Precondition=\'(.*)\'', attribute)
             if precondition:
@@ -1112,10 +1121,11 @@ def decode_type(type, serialized_types):
                 result.append('            return std::nullopt;')
                 result.append('    }')
         else:
+            const_qualifier = 'const ' if member.is_const() else ''
             if should_decode_ref(member, serialized_types):
-                result.append(f'    auto {sanitized_variable_name} = decoder.decode<Ref<{member.type}>>();')
+                result.append(f'    {const_qualifier}auto {sanitized_variable_name} = decoder.decode<Ref<{member.type}>>();')
             else:
-                result.append(f'    auto {sanitized_variable_name} = decoder.decode<{member.type}>();')
+                result.append(f'    {const_qualifier}auto {sanitized_variable_name} = decoder.decode<{member.type}>();')
             if 'EncodeRequestBody' in member.attributes:
                 result.append(f'    if ({sanitized_variable_name}) {{')
                 result.append(f'        if (auto {sanitized_variable_name}Body = decoder.decode<IPC::FormDataReference>())')
@@ -1183,7 +1193,12 @@ def construct_type(type, specialization, indentation):
         member = serialized_members[i]
         if member.condition is not None:
             result.append(f'#if {member.condition}')
-        result.append(f'{indent(indentation + 1)}WTF::move({"" if member.optional_tuple_bit() else "*"}{sanitize_string_for_variable_name(member.name)}){"" if i == len(serialized_members) - 1 else ","}')
+        separator = '' if i == len(serialized_members) - 1 else ','
+        variable_name = sanitize_string_for_variable_name(member.name)
+        if member.is_const():
+            result.append(f'{indent(indentation + 1)}*{variable_name}{separator}')
+        else:
+            result.append(f'{indent(indentation + 1)}WTF::move({"" if member.optional_tuple_bit() else "*"}{variable_name}){separator}')
         if member.condition is not None:
             result.append('#endif')
     for i in range(len(type.dictionary_members)):
@@ -2274,7 +2289,7 @@ _SWIFT_COMPATIBLE_TYPE_ATTRIBUTES = frozenset([
     'LegacyPopulateFromEmptyConstructor', 'Nested', 'RValue', 'RefCounted', 'Swift', 'WebKitPlatform', 'Wrapper',
 ])
 _SWIFT_COMPATIBLE_ENUM_ATTRIBUTES = frozenset(['AdditionalEncoder', 'CustomHeader', 'Nested', 'OptionSet', 'Swift', 'WebKitPlatform'])
-_SWIFT_COMPATIBLE_MEMBER_ATTRIBUTES = frozenset(['BitField', 'NotSerialized'])
+_SWIFT_COMPATIBLE_MEMBER_ATTRIBUTES = frozenset(['BitField', 'Const', 'NotSerialized'])
 
 # Types that generated Swift names without qualification, so must not be shadowed by a type in IPCTypes.
 _SWIFT_RESERVED_TYPE_NAMES = frozenset([

@@ -121,7 +121,7 @@ using WebCore::DashArray = FixedVector<float>
 
 [CustomHeader] class WebCore::DisplayList::DrawLinesForText {
     WebCore::FloatPoint point();
-    Vector<WebCore::FloatSegment> lineSegments();
+    [Const] Vector<WebCore::FloatSegment> lineSegments();
     float thickness();
     bool isPrinting();
     bool doubleLines();

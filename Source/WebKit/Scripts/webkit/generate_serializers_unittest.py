@@ -524,5 +524,45 @@ struct WebKit::S {
 ''', r"alternative int: 'int' has no Swift form")
 
 
+class ConstMemberTest(unittest.TestCase):
+    def decode(self, source):
+        serialized_types, _, _, _, _, _ = generate_serializers.parse_serialized_types(source.splitlines())
+        serialized_types = generate_serializers.resolve_inheritance(serialized_types)
+        type = serialized_types[0]
+        return generate_serializers.decode_type(type, serialized_types) + generate_serializers.construct_type(type, None, 0)
+
+    def test_const_member(self):
+        lines = self.decode('''
+[RefCounted] class WebKit::C {
+    [Const] Vector<int> values;
+    Vector<int> others;
+}
+''')
+        self.assertIn('    const auto values = decoder.decode<Vector<int>>();', lines)
+        self.assertIn('    auto others = decoder.decode<Vector<int>>();', lines)
+        self.assertIn('    *values,', lines)
+        self.assertIn('    WTF::move(*others)', lines)
+
+    def test_unsupported_combinations(self):
+        for source in ['''
+class WebKit::C {
+    [Const, EncodeRequestBody] WebCore::ResourceRequest request;
+}
+''', '''
+class WebKit::C {
+    [OptionalTupleBits] OptionSet<WebKit::Bits> bits;
+    [Const, OptionalTupleBit=WebKit::Bits::Value] Vector<int> values;
+}
+''']:
+            with self.assertRaisesRegex(Exception, r'WebKit::C: member \w+: Const is not supported together with OptionalTupleBits, OptionalTupleBit, or EncodeRequestBody'):
+                self.decode(source)
+        with self.assertRaisesRegex(Exception, r'WebKit::C: member values: Const is not supported on types with LegacyPopulateFromEmptyConstructor'):
+            self.decode('''
+[LegacyPopulateFromEmptyConstructor] class WebKit::C {
+    [Const] Vector<int> values;
+}
+''')
+
+
 if __name__ == '__main__':
     unittest.main()

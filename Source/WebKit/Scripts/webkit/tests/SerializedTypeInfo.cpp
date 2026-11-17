@@ -52,6 +52,7 @@
 #endif
 #include "SwiftTypes.h"
 #include "TemplateTest.h"
+#include <Namespace/ConstMemberClass.h>
 #include <Namespace/CreateUsingUniqueRefClass.h>
 #include <Namespace/EmptyConstructorStruct.h>
 #include <Namespace/EmptyConstructorWithIf.h>
@@ -187,6 +188,20 @@ Vector<SerializedTypeInfo> allSerializedTypes()
             {
                 "double"_s,
                 "functionCall().member2"_s
+            },
+            {
+                "std::unique_ptr<int>"_s,
+                "uniqueMember"_s
+            },
+        } },
+        { "Namespace::ConstMemberClass"_s, {
+            {
+                "Vector<int>"_s,
+                "values()"_s
+            },
+            {
+                "Vector<double>"_s,
+                "segments"_s
             },
             {
                 "std::unique_ptr<int>"_s,

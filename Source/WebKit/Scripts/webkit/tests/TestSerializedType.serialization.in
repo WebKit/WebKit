@@ -29,6 +29,12 @@ headers: "StructHeader.h" "FirstMemberType.h" "SecondMemberType.h"
     std::unique_ptr<int> uniqueMember
 }
 
+[RefCounted] class Namespace::ConstMemberClass {
+    [Const] Vector<int> values();
+    [Const, Validator='!segments->isEmpty()'] Vector<double> segments
+    std::unique_ptr<int> uniqueMember
+}
+
 [UniqueRef] class Namespace::ReturnUniqueRefClass {
     int member
 }

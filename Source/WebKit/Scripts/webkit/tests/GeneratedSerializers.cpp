@@ -52,6 +52,7 @@
 #endif
 #include "SwiftTypes.h"
 #include "TemplateTest.h"
+#include <Namespace/ConstMemberClass.h>
 #include <Namespace/CreateUsingUniqueRefClass.h>
 #include <Namespace/EmptyConstructorStruct.h>
 #include <Namespace/EmptyConstructorWithIf.h>
@@ -305,6 +306,42 @@ std::optional<Ref<Namespace::ReturnRefClass>> ArgumentCoder<Namespace::ReturnRef
         Namespace::ReturnRefClass::create(
             WTF::move(*functionCallmember1),
             WTF::move(*functionCallmember2),
+            WTF::move(*uniqueMember)
+        )
+    };
+}
+
+void ArgumentCoder<Namespace::ConstMemberClass>::encode(Encoder& encoder, const Namespace::ConstMemberClass& instance)
+{
+    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.values())>, Vector<int>>);
+    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.segments)>, Vector<double>>);
+    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.uniqueMember)>, std::unique_ptr<int>>);
+
+    encoder << instance.values();
+    encoder << instance.segments;
+    encoder << instance.uniqueMember;
+}
+
+std::optional<Ref<Namespace::ConstMemberClass>> ArgumentCoder<Namespace::ConstMemberClass>::decode(Decoder& decoder)
+{
+    const auto values = decoder.decode<Vector<int>>();
+    const auto segments = decoder.decode<Vector<double>>();
+    if (!decoder.isValid()) [[unlikely]]
+        return std::nullopt;
+
+    if (!(!segments->isEmpty())) {
+#if ENABLE(IPC_TESTING_API)
+        decoder.setErrorString("Validation failed: !segments->isEmpty()"_s);
+#endif
+        return std::nullopt;
+    }
+    auto uniqueMember = decoder.decode<std::unique_ptr<int>>();
+    if (!decoder.isValid()) [[unlikely]]
+        return std::nullopt;
+    return {
+        Namespace::ConstMemberClass::create(
+            *values,
+            *segments,
             WTF::move(*uniqueMember)
         )
     };
