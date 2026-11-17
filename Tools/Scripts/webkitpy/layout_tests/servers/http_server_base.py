@@ -31,7 +31,9 @@
 import errno
 import json
 import logging
+import shutil
 import socket
+import subprocess
 import sys
 import tempfile
 import time
@@ -212,7 +214,7 @@ class HttpServerBase(object):
 
         for mapping in self._mappings:
             if mapping.get('udp'):
-                if not self._is_udp_port_listening(mapping['port']):
+                if not self._is_udp_port_listening(mapping['port'], owner_pid=self._pid):
                     return False
             elif not self._is_running_on_port(mapping['port']):
                 return False
@@ -233,37 +235,124 @@ class HttpServerBase(object):
             s.close()
         return True
 
-    @staticmethod
-    def _is_udp_port_listening(port):
+    @classmethod
+    def _is_udp_port_listening(cls, port, owner_pid=None):
         # No UDP equivalent of TCP connect(): the server holds the port bound, so a bind() to its address
         # (127.0.0.1) failing with EADDRINUSE means "listening".
         s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         try:
             s.bind(('127.0.0.1', port))
         except OSError as e:
-            if e.errno == errno.EADDRINUSE:
+            if e.errno != errno.EADDRINUSE:
+                raise
+            if owner_pid is None:
                 return True
-            raise
+            # Accept the port unless every holder is known to belong to another process tree.
+            holders = cls.processes_holding_port(port, is_udp=True)
+            if not holders:
+                return True
+            parents = cls._parent_pids()
+            if any(cls._is_pid_or_descendant(pid, owner_pid, parents) is not False
+                   for pid, _ in holders):
+                return True
+            _log.debug('UDP port %d is held by %s, none of which belongs to pid %s' % (
+                port, ', '.join('%s (pid %s)' % (command, pid) for pid, command in holders),
+                owner_pid))
+            return False
         finally:
             s.close()
         return False
 
+    @staticmethod
+    def _parent_pids():
+        try:
+            completed = subprocess.run(['/bin/ps', '-A', '-o', 'pid=,ppid='],
+                                       capture_output=True, text=True, timeout=5)
+        except (OSError, subprocess.SubprocessError):
+            return None
+        if completed.returncode:
+            return None
+        parents = {}
+        for line in completed.stdout.splitlines():
+            fields = line.split()
+            if len(fields) != 2:
+                continue
+            try:
+                parents[int(fields[0])] = int(fields[1])
+            except ValueError:
+                continue
+        return parents or None
+
+    @staticmethod
+    def _is_pid_or_descendant(pid, ancestor_pid, parents):
+        try:
+            current = int(pid)
+            ancestor = int(ancestor_pid)
+        except (TypeError, ValueError):
+            return None
+        if current == ancestor:
+            return True
+        if parents is None:
+            return None
+        seen = set()
+        while current > 1 and current not in seen:
+            seen.add(current)
+            current = parents.get(current)
+            if current is None:
+                return False
+            if current == ancestor:
+                return True
+        return False
+
     def _check_that_all_ports_are_available(self):
         for mapping in self._mappings:
-            s = socket.socket()
-            s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
             port = mapping['port']
+            is_udp = bool(mapping.get('udp'))
+            s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM if is_udp else socket.SOCK_STREAM)
+            if not is_udp:
+                s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
             try:
-                s.bind(('localhost', port))
+                s.bind(('127.0.0.1' if is_udp else 'localhost', port))
             except IOError as e:
                 if e.errno in (errno.EALREADY, errno.EADDRINUSE):
-                    raise ServerError('Port %d is already in use.' % port)
+                    raise ServerError(self.port_in_use_message(port, is_udp=is_udp))
                 elif sys.platform.startswith('win') and e.errno in (errno.WSAEACCES,):  # pylint: disable=E1101
-                    raise ServerError('Port %d is already in use.' % port)
+                    raise ServerError(self.port_in_use_message(port, is_udp=is_udp))
                 else:
                     raise
             finally:
                 s.close()
+
+    @staticmethod
+    def processes_holding_port(port, is_udp=False):
+        lsof = shutil.which('lsof') or shutil.which('lsof', path='/usr/sbin')
+        if not lsof:
+            return []
+        command = [lsof, '-nP', '-F', 'pc', '-i{}:{}'.format('UDP' if is_udp else 'TCP', port)]
+        if not is_udp:
+            command.append('-sTCP:LISTEN')
+        try:
+            output = subprocess.run(command, capture_output=True, text=True, timeout=5).stdout
+        except (OSError, subprocess.SubprocessError):
+            return []
+        holders = []
+        pid = None
+        for line in output.splitlines():
+            if line.startswith('p'):
+                pid = line[1:]
+            elif line.startswith('c') and pid:
+                holders.append((pid, line[1:]))
+                pid = None
+        return holders
+
+    @classmethod
+    def port_in_use_message(cls, port, is_udp=False):
+        message = '{} port {} is already in use.'.format('UDP' if is_udp else 'TCP', port)
+        holders = cls.processes_holding_port(port, is_udp=is_udp)
+        if holders:
+            message += ' Held by {}.'.format(
+                ', '.join('{} (pid {})'.format(command, pid) for pid, command in holders))
+        return message
 
 
 def is_http_server_running():
