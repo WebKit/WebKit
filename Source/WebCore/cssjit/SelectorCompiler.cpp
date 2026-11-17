@@ -779,7 +779,7 @@ static FunctionType addNthChildType(const CSSSelector& selector, SelectorContext
         if (nthChildOfSelectorInfo.selectorList.isEmpty())
             return FunctionType::CannotMatchAnything;
 
-        filteredCases.append(nthChildOfSelectorInfo);
+        filteredCases.append(WTF::move(nthChildOfSelectorInfo));
         return globalFunctionType;
     }
 
@@ -1496,7 +1496,7 @@ static inline FunctionType addPseudoClassType(const CSSSelector& selector, Selec
             if (matchesList.isEmpty())
                 return FunctionType::CannotMatchAnything;
 
-            fragment.matchesFilters.append(matchesList);
+            fragment.matchesFilters.append(WTF::move(matchesList));
 
             return functionType;
         }
