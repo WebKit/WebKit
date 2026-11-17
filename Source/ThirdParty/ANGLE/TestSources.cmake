@@ -6,12 +6,11 @@
 # gl*/egl* entry points, but ANGLE-static contains them.
 #
 # The Xcode utils target compiles WebKit/UtilsSourcesPlatform{.cpp,-mm.mm}, which
-# include the platform files and SystemInfo_macos.mm. ANGLE-static already contains
-# SystemInfo_macos.mm, so the rest of the platform files are listed here directly.
+# include the platform files and SystemInfo_macos.mm or SystemInfo_ios.cpp. ANGLE-static
+# already contains those, so the rest of the platform files are listed here directly.
 
 set(angle_test_utils_sources
     "src/common/frame_capture_shared.cpp"
-    "src/tests/test_expectations/GPUTestConfig_mac.mm"
     "src/tests/test_utils/CompilerTest.cpp"
     "src/tests/test_utils/ShaderCompileTreeTest.cpp"
     "src/tests/test_utils/compiler_test.cpp"
@@ -20,15 +19,27 @@ set(angle_test_utils_sources
     "util/OSWindow.cpp"
     "util/Timer.cpp"
     "util/autogen/angle_features_autogen.cpp"
-    "util/osx/OSXPixmap.mm"
-    "util/osx/OSXWindow.mm"
-    "util/osx/osx_backtrace.cpp"
     "util/posix/crash_handler_posix.cpp"
     "util/posix/test_utils_posix.cpp"
     "util/random_utils.cpp"
     "util/shader_utils.cpp"
     "util/test_blob_cache.cpp"
     "util/test_utils.cpp"
+)
+
+set(angle_test_utils_macos_sources
+    "src/tests/test_expectations/GPUTestConfig_mac.mm"
+    "util/osx/OSXPixmap.mm"
+    "util/osx/OSXWindow.mm"
+    "util/osx/osx_backtrace.cpp"
+)
+
+set(angle_test_utils_ios_sources
+    "src/tests/test_expectations/GPUTestConfig_ios.mm"
+    "util/ios/IOSPixmap.mm"
+    "util/ios/IOSWindow.mm"
+    "util/ios/ios_backtrace.cpp"
+    "util/ios/ios_main.mm"
 )
 
 set(angle_unittests_sources

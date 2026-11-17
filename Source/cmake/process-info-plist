@@ -47,6 +47,7 @@ def main(argv):
     parser.add_argument('--sdk')
     parser.add_argument('--deployment-target')
     parser.add_argument('--device-family', type=int, nargs='+')
+    parser.add_argument('--required-device-capabilities', nargs='+')
     parser.add_argument('--app-icon')
     parser.add_argument('--cpp')
     parser.add_argument('-D', dest='definitions', action='append', default=[])
@@ -83,6 +84,13 @@ def main(argv):
         # Xcode leaves the iOS-only keys out of a Mac Catalyst bundle.
         plist.pop('LSRequiresIPhoneOS', None)
         plist.pop('UIRequiredDeviceCapabilities', None)
+    if args.required_device_capabilities and args.device_family and args.platform != 'MacOSX':
+        capabilities = plist.setdefault('UIRequiredDeviceCapabilities', [])
+        for capability in args.required_device_capabilities:
+            if isinstance(capabilities, dict):
+                capabilities.setdefault(capability, True)
+            elif capability not in capabilities:
+                capabilities.append(capability)
     if args.app_icon:
         # The icon keys actool writes to its partial Info.plist for the app icon set.
         if args.device_family and args.platform != 'MacOSX':

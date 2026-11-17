@@ -373,6 +373,6 @@ target_include_directories(ANGLEFramework INTERFACE ${ANGLE_FRAMEWORK_HEADERS_DI
 add_library(ANGLE::ANGLE ALIAS ANGLEFramework)
 
 # gtest is added after ANGLE (Source/CMakeLists.txt), so check the option, not the target.
-if (is_mac AND ENABLE_API_TESTS AND TARGET ANGLE-static)
+if ((is_mac OR WEBKIT_SDK_IS_IOS) AND ENABLE_API_TESTS AND TARGET ANGLE-static)
     include(Tests.cmake)
 endif ()

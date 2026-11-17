@@ -13,6 +13,7 @@ Examples:
     run-angle-tests
     run-angle-tests --release
     run-angle-tests --cmake --product ANGLEUnitTests
+    run-angle-tests --cmake --simulator SIM_ID
     run-angle-tests --gtest_filter='ClearTestES3.*'
     run-angle-tests --maccatalyst --gtest_filter='WebGLTransformFeedbackTest.*'
     run-angle-tests --simulator --gtest_list_tests
@@ -36,12 +37,14 @@ from pathlib import Path
 
 DEFAULT_TIMEOUT = 120
 
-# gtest's end-of-run banner is printed once a run completes cleanly (whether
-# tests pass or fail). Its absence in captured output means the test process
-# aborted before reaching the end — used as a crash signal on simulator/device,
-# where simctl --console returns 0 even on SIGABRT.
-END_OF_RUN_RE = re.compile(r"^\[==========\].*ran\.", re.MULTILINE)
-NO_BANNER_EXIT = -999
+# The test apps print one line with the return value of main() as they exit. simctl and devicectl
+# exit 0 whatever the app does, so a missing line means the app died before it finished.
+EXIT_RECORD_RE = re.compile(r"^ANGLE test app exit code: (-?\d+)$", re.MULTILINE)
+NO_EXIT_RECORD = -999
+
+
+# Test executables with no .app. The simulator runs them directly and a device can't.
+EXECUTABLE_PRODUCTS = ("ANGLEUnitTests",)
 
 
 def default_paths(config, product="ANGLEEnd2EndTests", cmake=False):
@@ -49,16 +52,22 @@ def default_paths(config, product="ANGLEEnd2EndTests", cmake=False):
 
     `product` selects the test runner: ANGLEEnd2EndTests (default),
     ANGLEUnitTests, or the dEQP runners ANGLEDeqpGLES2Tests /
-    ANGLEDeqpGLES3Tests (Mac-only command-line tools; they have no .app
-    wrapper, so the app-bundle modes don't apply). `cmake` selects the CMake
-    build directory, which only has the Mac command-line tools."""
-    return {
-        "mac":          f"WebKitBuild/cmake-mac/{config}/{product}" if cmake else f"WebKitBuild/{config}/{product}",
+    ANGLEDeqpGLES3Tests. ANGLEUnitTests is a test executable with no .app, so it
+    runs in the mac and simulator modes only. `cmake` selects the CMake build
+    directories instead of the Xcode ones."""
+    simulator_product = product if product in EXECUTABLE_PRODUCTS else f"{product}App.app"
+    paths = {
+        "mac":          f"WebKitBuild/{config}/{product}",
         "maccatalyst":  f"WebKitBuild/{config}-maccatalyst/{product}App.app",
-        "simulator":    f"WebKitBuild/{config}-iphonesimulator/{product}App.app",
+        "simulator":    f"WebKitBuild/{config}-iphonesimulator/{simulator_product}",
         "ios":          f"WebKitBuild/{config}-iphoneos/{product}App.app",
         "xros":         f"WebKitBuild/{config}-xros/{product}App.app",
     }
+    if cmake:
+        paths["mac"] = f"WebKitBuild/cmake-mac/{config}/{product}"
+        paths["simulator"] = f"WebKitBuild/cmake-iphonesimulator/{config}/{simulator_product}"
+        paths["ios"] = f"WebKitBuild/cmake-iphoneos/{config}/{product}App.app"
+    return paths
 
 
 def read_bundle_id(app_path):
@@ -98,6 +107,34 @@ def run(cmd, verbose, *, capture, timeout=None, cwd=None, env=None):
                 sys.stderr.write("\n")
             sys.stderr.flush()
     return result
+
+
+def finished_code(returncode, output):
+    """Returns the exit code the app printed, or NO_EXIT_RECORD if it never got that far.
+    A nonzero returncode from simctl or devicectl is returned as it is."""
+    if returncode != 0:
+        return returncode
+    records = EXIT_RECORD_RE.findall(output)
+    return int(records[-1]) if records else NO_EXIT_RECORD
+
+
+def run_and_check_finished(cmd, verbose):
+    """Runs the launch command and streams its output. Returns the exit code of the app, or 2 if
+    the app never printed it."""
+    if verbose:
+        print(f"+ {shlex.join(cmd)}", flush=True)
+    proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
+    output = []
+    for line in proc.stdout:
+        sys.stdout.write(line)
+        sys.stdout.flush()
+        output.append(line)
+    proc.wait()
+    code = finished_code(proc.returncode, "".join(output))
+    if code == NO_EXIT_RECORD:
+        print("Error: the app ended without printing its exit code.", file=sys.stderr)
+        return 2
+    return code
 
 
 # The ANGLE source root. The test binaries find their expectations files, such as
@@ -158,20 +195,20 @@ class SimulatorRunner:
     def launch(self, gtest_args):
         cmd = [
             "xcrun", "simctl", "launch",
-            "--console", "--terminate-running-process",
+            "--console-pty", "--terminate-running-process",
             self.device, self.bundle_id, *gtest_args,
         ]
-        return run(cmd, self.verbose, capture=False).returncode
+        return run_and_check_finished(cmd, self.verbose)
 
     def run_capturing(self, gtest_args, timeout):
         cmd = [
             "xcrun", "simctl", "launch",
-            "--console", "--terminate-running-process",
+            "--console-pty", "--terminate-running-process",
             self.device, self.bundle_id, *gtest_args,
         ]
         try:
             result = run(cmd, self.verbose, capture=True, timeout=timeout)
-            return result.returncode, result.stdout
+            return finished_code(result.returncode, result.stdout), result.stdout
         except subprocess.TimeoutExpired:
             subprocess.run(
                 ["xcrun", "simctl", "terminate", self.device, self.bundle_id],
@@ -181,7 +218,7 @@ class SimulatorRunner:
 
     def format_command(self, filter_str):
         return (
-            f"xcrun simctl launch --console --terminate-running-process "
+            f"xcrun simctl launch --console-pty --terminate-running-process "
             f"{self.device} {self.bundle_id} "
             f"--gtest_filter={shlex.quote(filter_str)}"
         )
@@ -212,6 +249,40 @@ class SimulatorRunner:
         print(f"Attaching lldb ...")
         # Replace this process with lldb so the user gets the prompt directly.
         os.execvp("lldb", ["lldb", "-p", str(pid), "-o", "continue"])
+
+
+class SimulatorExecutableRunner:
+    """Runs a test executable, which has no app bundle, in the simulator with simctl
+    spawn. Killing simctl also ends the process, so a timeout leaves nothing running."""
+
+    def __init__(self, executable, device):
+        self.executable = Path(executable).resolve()
+        self.device = device
+        self.verbose = False
+
+    def _command(self, gtest_args):
+        return ["xcrun", "simctl", "spawn", self.device, str(self.executable), *gtest_args]
+
+    def install(self):
+        pass  # simctl spawn runs the executable where it is
+
+    def launch(self, gtest_args):
+        return run(self._command(gtest_args), self.verbose, capture=False).returncode
+
+    def run_capturing(self, gtest_args, timeout):
+        try:
+            result = run(self._command(gtest_args), self.verbose, capture=True, timeout=timeout)
+            return result.returncode, result.stdout
+        except subprocess.TimeoutExpired:
+            return None, ""
+
+    def format_command(self, filter_str):
+        return shlex.join(self._command([f"--gtest_filter={filter_str}"]))
+
+    def launch_for_debug(self, gtest_args):
+        print("Error: --lldb isn't supported for test executables in the simulator.",
+              file=sys.stderr)
+        sys.exit(1)
 
 
 class DeviceRunner:
@@ -278,7 +349,7 @@ class DeviceRunner:
             "--console", "--terminate-existing",
             self.bundle_id, *gtest_args,
         ]
-        return run(cmd, self.verbose, capture=False).returncode
+        return run_and_check_finished(cmd, self.verbose)
 
     def run_capturing(self, gtest_args, timeout):
         self.resolve_device()
@@ -290,7 +361,7 @@ class DeviceRunner:
         ]
         try:
             result = run(cmd, self.verbose, capture=True, timeout=timeout)
-            return result.returncode, result.stdout
+            return finished_code(result.returncode, result.stdout), result.stdout
         except subprocess.TimeoutExpired:
             # devicectl has no simple "terminate by bundle id"; the next launch's
             # --terminate-existing will clean up any leftover instance.
@@ -361,26 +432,18 @@ def list_tests(runner, timeout, extra_args=()):
 
 
 def run_filter(runner, filter_str, timeout):
-    code, stdout = runner.run_capturing(
+    code, _ = runner.run_capturing(
         [f"--gtest_filter={filter_str}", "--gtest_color=no"],
         timeout,
     )
-    if code is None or is_crash(code):
-        return code
-    # gtest prints "[==========] N tests from M test suites ran. (X ms total)"
-    # at the end of every clean run, pass or fail. simctl --console returns 0
-    # even when the app aborts with SIGABRT, so the absence of this banner is
-    # our crash signal of last resort.
-    if not END_OF_RUN_RE.search(stdout):
-        return NO_BANNER_EXIT
     return code
 
 
 def status_for(code):
     if code is None:
         return "TIMEOUT"
-    if code == NO_BANNER_EXIT:
-        return "CRASH (no end-of-run banner)"
+    if code == NO_EXIT_RECORD:
+        return "CRASH (no exit code printed)"
     if is_crash(code):
         return f"CRASH (exit {code})"
     return f"ok (exit {code})"
@@ -492,12 +555,14 @@ def main():
     )
     parser.set_defaults(config="Debug")
     parser.add_argument("--cmake", action="store_true",
-        help="Use the CMake build directory (WebKitBuild/cmake-mac/<Debug|Release>). "
-             "Build the tests with the ANGLETests target. macOS mode only.")
+        help="Use the CMake build directories (WebKitBuild/cmake-mac, cmake-iphonesimulator, "
+             "cmake-iphoneos). Build the tests with the ANGLETests target. Works with --mac, "
+             "--simulator and --ios-device.")
     parser.add_argument("--app", default=None,
         help="Path to test binary or .app bundle. Defaults to "
              "WebKitBuild/<Debug|Release>[-maccatalyst|-iphonesimulator|"
-             "-iphoneos|-xros]/ANGLEEnd2EndTests[App.app] depending on mode.")
+             "-iphoneos|-xros]/ANGLEEnd2EndTests[App.app] depending on mode "
+             "(with --cmake, the CMake build directories).")
     parser.add_argument("--bundle-id", default=None,
         help="Override bundle id (default: read from Info.plist)")
     parser.add_argument("--no-install", action="store_true",
@@ -518,8 +583,9 @@ def main():
              "captured silently.")
     parser.add_argument("--product", default="ANGLEEnd2EndTests",
         choices=["ANGLEEnd2EndTests", "ANGLEUnitTests", "ANGLEDeqpGLES2Tests", "ANGLEDeqpGLES3Tests"],
-        help="Which test runner to run (default: ANGLEEnd2EndTests). The "
-             "ANGLEUnitTests and ANGLEDeqp* runners are Mac-only command-line tools.")
+        help="Which test runner to run (default: ANGLEEnd2EndTests). "
+             "ANGLEUnitTests is a test executable. It runs in the macOS mode and in "
+             "the simulator, but a device can't run it.")
     args, gtest_args = parser.parse_known_args()
 
     # Default to local mac mode if no mode flag was given.
@@ -527,8 +593,19 @@ def main():
             and args.ios_device is None and args.xros_device is None):
         args.mac = True
 
-    if args.cmake and not args.mac:
-        parser.error("--cmake only supports macOS mode")
+    if args.cmake and (args.maccatalyst or args.xros_device is not None):
+        parser.error("--cmake only supports the macOS, simulator and iOS device modes")
+
+    if (args.product in EXECUTABLE_PRODUCTS and not args.app
+            and (args.ios_device is not None or args.xros_device is not None)):
+        parser.error(f"{args.product} is not an app, so a device can't run it. "
+                     "Use --mac or --simulator.")
+
+    if ((args.simulator is not None or args.ios_device is not None)
+            and any(a in ("--bot-mode", "--test-launcher-bot-mode") for a in gtest_args)):
+        parser.error("--bot-mode can't be used with --simulator or --ios-device. Bot mode runs "
+                     "the tests in child processes, which the iOS test apps can't start. "
+                     "Run without --bot-mode.")
 
     paths = default_paths(args.config, args.product, args.cmake)
 
@@ -563,15 +640,21 @@ def main():
             default_app = paths["simulator"]
 
         app_path = Path(args.app) if args.app else Path(default_app)
-        if not app_path.is_dir():
-            print(f"Error: not a bundle: {app_path}", file=sys.stderr)
-            sys.exit(1)
-        bundle_id = args.bundle_id or read_bundle_id(app_path)
-
-        if args.ios_device is not None or args.xros_device is not None:
-            runner = DeviceRunner(app_path, device_id, bundle_id)
+        if args.simulator is not None and app_path.is_file():
+            if not os.access(app_path, os.X_OK):
+                print(f"Error: not an executable: {app_path}", file=sys.stderr)
+                sys.exit(1)
+            runner = SimulatorExecutableRunner(app_path, device_id)
         else:
-            runner = SimulatorRunner(app_path, device_id, bundle_id)
+            if not app_path.is_dir():
+                print(f"Error: not a bundle: {app_path}", file=sys.stderr)
+                sys.exit(1)
+            bundle_id = args.bundle_id or read_bundle_id(app_path)
+
+            if args.ios_device is not None or args.xros_device is not None:
+                runner = DeviceRunner(app_path, device_id, bundle_id)
+            else:
+                runner = SimulatorRunner(app_path, device_id, bundle_id)
 
     if args.suites_only and not args.per_suite:
         parser.error("--suites-only requires --per-suite")

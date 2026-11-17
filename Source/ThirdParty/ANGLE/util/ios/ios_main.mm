@@ -38,7 +38,11 @@ int main(int argc, char *_Nullable *_Nullable argv);
 - (void)runMain
 {
     chdir([NSTemporaryDirectory() fileSystemRepresentation]);
-    exit(main(original_argc, original_argv));
+    int status = main(original_argc, original_argv);
+    // simctl and devicectl exit 0 whatever the app does, so print the result for the runner.
+    printf("ANGLE test app exit code: %d\n", status);
+    fflush(stdout);
+    exit(status);
 }
 
 - (void)scene:(UIScene *_Nonnull)scene

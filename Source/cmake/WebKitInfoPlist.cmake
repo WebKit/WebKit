@@ -5,6 +5,7 @@
 #   [PREPROCESS]                                # run <input> through the C preprocessor first
 #   [PREPROCESSOR_DEFINITIONS <definition>...]  # NAME or NAME=VALUE macros to define while preprocessing
 #   [TARGETED_DEVICE_FAMILY <family>...]        # UIDeviceFamily values, narrowed to the SDK; defaults to the SDK's primary family
+#   [REQUIRED_DEVICE_CAPABILITIES <capability>...] # added to UIRequiredDeviceCapabilities (iOS family)
 #   [APP_ICON <name>]                           # the asset catalog's app icon set, for the icon keys actool's partial Info.plist has
 # )
 #
@@ -19,7 +20,7 @@
 # relink or re-sign the bundle it belongs to.
 
 function(WEBKIT_PROCESS_INFO_PLIST _input _output)
-    cmake_parse_arguments(_arg "PREPROCESS" "APP_ICON" "PREPROCESSOR_DEFINITIONS;TARGETED_DEVICE_FAMILY" ${ARGN})
+    cmake_parse_arguments(_arg "PREPROCESS" "APP_ICON" "PREPROCESSOR_DEFINITIONS;REQUIRED_DEVICE_CAPABILITIES;TARGETED_DEVICE_FAMILY" ${ARGN})
     if (_arg_UNPARSED_ARGUMENTS)
         message(FATAL_ERROR "WEBKIT_PROCESS_INFO_PLIST: unexpected arguments: ${_arg_UNPARSED_ARGUMENTS}")
     endif ()
@@ -45,6 +46,9 @@ function(WEBKIT_PROCESS_INFO_PLIST _input _output)
     if (WEBKIT_SDK_IS_IOS_FAMILY)
         WEBKIT_GET_DEVICE_FAMILY(_device_family ${_arg_TARGETED_DEVICE_FAMILY})
         list(APPEND _options --device-family ${_device_family})
+    endif ()
+    if (_arg_REQUIRED_DEVICE_CAPABILITIES)
+        list(APPEND _options --required-device-capabilities ${_arg_REQUIRED_DEVICE_CAPABILITIES})
     endif ()
     if (_arg_APP_ICON)
         list(APPEND _options --app-icon ${_arg_APP_ICON})
