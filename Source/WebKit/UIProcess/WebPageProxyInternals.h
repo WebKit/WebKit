@@ -145,7 +145,8 @@ struct PendingBackForwardIframeRestore {
 
     WebCore::ProcessIdentifier mainFrameProcessIdentifier;
     WebCore::BackForwardFrameItemIdentifier mainFrameItemID;
-    Vector<Ref<WebProcessProxy>> iframeProcesses;
+    Vector<std::pair<Ref<WebProcessProxy>, WebCore::PageIdentifier>> iframePages;
+    std::optional<std::pair<URL, WebCore::SecurityOriginData>> mainFrameURLAndOrigin;
     Ref<MainRunLoopSuccessCallbackAggregator> aggregator;
 };
 
