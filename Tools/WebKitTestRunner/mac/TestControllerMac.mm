@@ -218,6 +218,8 @@ bool TestController::platformResetStateToConsistentValues(const TestOptions& opt
     setHasFakePaymentUIForTesting(false);
 #endif
 
+    [[NSPasteboard generalPasteboard] clearContents];
+
     if (RetainPtr webView = m_mainWebView ? m_mainWebView->platformView() : nil) {
         auto newObscuredInsetTop = options.obscuredInsetTop();
         auto newObscuredInsetLeft = options.obscuredInsetLeft();
