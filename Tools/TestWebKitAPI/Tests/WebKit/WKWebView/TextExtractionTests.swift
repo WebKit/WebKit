@@ -792,6 +792,66 @@ struct TextExtractionTests {
     }
 
     @Test
+    func interactionDescriptionUsesAltTextForImageButton() async throws {
+        let source = "data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw=="
+        try await webView.load(
+            html: """
+                <form>\
+                <label><input type='checkbox' name='remember'> Remember me</label>\
+                <ul><li><input type='image' name='signin' class='sign-in-button' alt='Sign in' src='\(source)' style='width: 60px; height: 20px'></li></ul>\
+                <input type='image' name='ariaimg' class='aria-button' alt='Alt name' aria-label='Aria name' src='\(source)' style='width: 60px; height: 20px'>\
+                </form>\
+                <div><span>Search</span><input type='image' name='lookup' class='search-button' src='\(source)' style='width: 60px; height: 20px'></div>
+                """
+        )
+
+        let debugText = try await webView.debugText()
+        let interaction = _WKTextExtractionInteraction(action: .click)
+
+        interaction.nodeIdentifier = extractNodeIdentifier(debugText, "signin")
+        var expected = "Click on input labeled “Sign in” of type image with class “sign-in-button”"
+        #expect(try await interaction.debugDescription(in: webView) == expected)
+
+        interaction.nodeIdentifier = extractNodeIdentifier(debugText, "ariaimg")
+        expected = "Click on input labeled “Aria name” of type image with class “aria-button”"
+        #expect(try await interaction.debugDescription(in: webView) == expected)
+
+        interaction.nodeIdentifier = extractNodeIdentifier(debugText, "lookup")
+        expected = "Click on input of type image with class “search-button” after rendered text “Search”"
+        #expect(try await interaction.debugDescription(in: webView) == expected)
+
+        interaction.nodeIdentifier = extractNodeIdentifier(debugText, "remember")
+        expected = "Click on input labeled “Remember me” of type checkbox"
+        #expect(try await interaction.debugDescription(in: webView) == expected)
+    }
+
+    @Test
+    func interactionDescriptionUsesAltTextOfImagesInControls() async throws {
+        let source = "data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw=="
+        try await webView.load(
+            html: """
+                <a id='home-link' href='/home'><img alt='Home page' src='\(source)' style='width: 20px; height: 20px'></a>\
+                <div><span>Create</span><button class='avatar-menu'><img alt='Avatar menu' src='\(source)' style='width: 20px; height: 20px'></button></div>
+                """
+        )
+
+        let debugText = try await webView.debugText()
+        let interaction = _WKTextExtractionInteraction(action: .click)
+
+        interaction.nodeIdentifier = extractNodeIdentifier(debugText, "Home page")
+        var expected = "Click on img labeled “Home page” under link with href “/home” with id “home-link”"
+        #expect(try await interaction.debugDescription(in: webView) == expected)
+
+        interaction.nodeIdentifier = extractNodeIdentifier(debugText, "Avatar menu")
+        expected = "Click on img labeled “Avatar menu” under button with class “avatar-menu”"
+        #expect(try await interaction.debugDescription(in: webView) == expected)
+
+        interaction.nodeIdentifier = extractNodeIdentifier(debugText, "button")
+        expected = "Click on button with class “avatar-menu”, containing child labeled “Avatar menu”"
+        #expect(try await interaction.debugDescription(in: webView) == expected)
+    }
+
+    @Test
     func interactionClicksThroughOccludingOverlay() async throws {
         try await webView.load(
             html: """

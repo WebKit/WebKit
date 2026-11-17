@@ -2937,13 +2937,34 @@ static bool containsMultipleWords(StringView text)
     return false;
 }
 
+static String normalizedAltText(const Element& element)
+{
+    if (RefPtr image = dynamicDowncast<HTMLImageElement>(element))
+        return normalizeText(image->attributeWithoutSynchronization(HTMLNames::altAttr));
+
+    if (RefPtr input = dynamicDowncast<HTMLInputElement>(element)) {
+        if (input->isImageButton())
+            return normalizeText(input->attributeWithoutSynchronization(HTMLNames::altAttr));
+    }
+
+    return { };
+}
+
+static String labelTextForDescription(Element& element, IncludeAssociatedLabels includeAssociatedLabels = IncludeAssociatedLabels::No)
+{
+    if (auto text = normalizedLabelText(element, includeAssociatedLabels); !text.isEmpty())
+        return text;
+
+    return normalizedAltText(element);
+}
+
 static bool hasNoRenderedTextOrLabeledChild(Element& element)
 {
     if (containsLetterOrDigit(normalizeText(plainText(makeRangeSelectingNodeContents(element), behaviorsForTextExtraction))))
         return false;
 
     for (Ref child : descendantsOfType<Element>(element)) {
-        if (!normalizedLabelText(child).isEmpty())
+        if (!labelTextForDescription(child).isEmpty())
             return false;
     }
 
@@ -3005,7 +3026,7 @@ static String textDescription(Element& element, Vector<String>& stringsToValidat
         hasAccessibleName = true;
     }
 
-    if (auto text = normalizedLabelText(element, IncludeAssociatedLabels::Yes); !text.isEmpty()) {
+    if (auto text = labelTextForDescription(element, IncludeAssociatedLabels::Yes); !text.isEmpty()) {
         description.append(makeString(" labeled "_s, wrapWithDoubleQuotes(WTF::move(text))));
         stringsToValidate.append(WTF::move(text));
         needsParentContext = false;
@@ -3150,7 +3171,7 @@ static String textDescription(Node* node, Vector<String>& stringsToValidate)
         String labeledChildSuffix;
         if (RefPtr container = dynamicDowncast<ContainerNode>(node)) {
             for (Ref child : descendantsOfType<Element>(*container)) {
-                auto label = normalizedLabelText(child);
+                auto label = labelTextForDescription(child);
                 if (label.isEmpty())
                     continue;
 
