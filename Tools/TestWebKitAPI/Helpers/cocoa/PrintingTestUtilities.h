@@ -25,7 +25,9 @@
 
 #pragma once
 
-#ifdef __cplusplus
+#include <wtf/Platform.h>
+
+#if defined(__cplusplus) && (!PLATFORM(COCOA) || !__has_feature(modules))
 
 #import <WebCore/CSSUnits.h>
 #import <array>
@@ -74,4 +76,4 @@ CGPoint firstCharacterPosition(TestPDFDocument *);
 
 } // namespace TestWebKitAPI
 
-#endif // __cplusplus
+#endif
