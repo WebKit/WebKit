@@ -30,6 +30,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+@class WKWebExtensionContext;
 @class WKWebView;
 @class _WKAutomationSession;
 
@@ -77,6 +78,7 @@ typedef NS_ENUM(NSInteger, _WKAutomationSessionWebExtensionResourceOptions) {
 
 - (void)_automationSession:(_WKAutomationSession *)automationSession loadWebExtensionWithOptions:(_WKAutomationSessionWebExtensionResourceOptions)options resource:(NSString *)resource completionHandler:(void(^)(NSString *))completionHandler WK_API_AVAILABLE(macos(15.4));
 - (void)_automationSession:(_WKAutomationSession *)automationSession unloadWebExtensionWithIdentifier:(NSString *)identifier completionHandler:(void(^)(BOOL))completionHandler WK_API_AVAILABLE(macos(15.4));
+- (nullable WKWebExtensionContext *)_automationSession:(_WKAutomationSession *)automationSession webExtensionContextForIdentifier:(NSString *)identifier WK_API_AVAILABLE(macos(WK_MAC_TBA));
 
 - (void)_automationSession:(_WKAutomationSession *)automationSession performCommandForWebView:(WKWebView *)webView commandName:(NSString *)commandName arguments:(NSString *)arguments completionHandler:(void(^)(NSString * _Nullable))completionHandler WK_API_AVAILABLE(macos(27.0), ios(27.0), visionos(27.0));
 

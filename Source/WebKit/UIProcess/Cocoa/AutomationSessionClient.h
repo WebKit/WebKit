@@ -54,6 +54,7 @@ private:
 #if ENABLE(WK_WEB_EXTENSIONS_IN_WEBDRIVER)
     void loadWebExtensionWithOptions(WebKit::WebAutomationSession&, API::AutomationSessionWebExtensionResourceOptions, const String& resource, CompletionHandler<void(const String&)>&&) override;
     void unloadWebExtension(WebKit::WebAutomationSession&, const String& identifier, CompletionHandler<void(bool)>&&) override;
+    RefPtr<WebExtensionContext> webExtensionContextForIdentifier(WebKit::WebAutomationSession&, const String& identifier) override;
 #endif
 
     void performApplicationCommand(WebKit::WebAutomationSession&, WebKit::WebPageProxy&, const String& commandName, const String& arguments, CompletionHandler<void(const String&)>&&) override;
@@ -91,6 +92,7 @@ private:
         bool currentPresentationForWebView : 1;
         bool loadWebExtensionWithOptions : 1;
         bool unloadWebExtension : 1;
+        bool webExtensionContextForIdentifier : 1;
         bool performApplicationCommand : 1;
         bool shouldEnableInspectorTesting : 1;
     } m_delegateMethods;

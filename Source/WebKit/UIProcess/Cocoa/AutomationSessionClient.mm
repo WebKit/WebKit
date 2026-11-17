@@ -27,6 +27,7 @@
 #import "AutomationSessionClient.h"
 
 #import "WKSharedAPICast.h"
+#import "WKWebExtensionContextInternal.h"
 #import "WKWebViewInternal.h"
 #import "WebAutomationSession.h"
 #import "WebPageProxy.h"
@@ -61,6 +62,7 @@ AutomationSessionClient::AutomationSessionClient(id <_WKAutomationSessionDelegat
 #if ENABLE(WK_WEB_EXTENSIONS_IN_WEBDRIVER)
     m_delegateMethods.loadWebExtensionWithOptions = [delegate respondsToSelector:@selector(_automationSession:loadWebExtensionWithOptions:resource:completionHandler:)];
     m_delegateMethods.unloadWebExtension = [delegate respondsToSelector:@selector(_automationSession:unloadWebExtensionWithIdentifier:completionHandler:)];
+    m_delegateMethods.webExtensionContextForIdentifier = [delegate respondsToSelector:@selector(_automationSession:webExtensionContextForIdentifier:)];
 #endif
     m_delegateMethods.performApplicationCommand = [delegate respondsToSelector:@selector(_automationSession:performCommandForWebView:commandName:arguments:completionHandler:)];
     m_delegateMethods.shouldEnableInspectorTesting = [delegate respondsToSelector:@selector(_automationSessionShouldEnableInspectorTesting:)];
@@ -163,6 +165,18 @@ void AutomationSessionClient::unloadWebExtension(WebKit::WebAutomationSession& s
     [m_delegate.get() _automationSession:RetainPtr { wrapper(session) }.get() unloadWebExtensionWithIdentifier:identifier.createNSString().get() completionHandler:makeBlockPtr([completionHandler = WTF::move(completionHandler)](BOOL success) mutable {
         completionHandler(success);
     }).get()];
+}
+
+RefPtr<WebExtensionContext> AutomationSessionClient::webExtensionContextForIdentifier(WebKit::WebAutomationSession& session, const String& identifier)
+{
+    if (!m_delegateMethods.webExtensionContextForIdentifier)
+        return nullptr;
+
+    RetainPtr extensionContext = [m_delegate.get() _automationSession:RetainPtr { wrapper(session) }.get() webExtensionContextForIdentifier:identifier.createNSString().get()];
+    if (!extensionContext)
+        return nullptr;
+
+    return &extensionContext.get()._webExtensionContext;
 }
 #endif
 

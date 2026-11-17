@@ -884,6 +884,7 @@ list(APPEND TestWebKit_SOURCES
     Tests/WebKit/WKWebView/WKWebExtensionWindow.swift
     Tests/WebKit/WKWebView/WKWebViewHitTestTests.swift
     Tests/WebKit/WKWebView/WKWebViewSwiftOverlayTests.swift
+    Tests/WebKit/WKWebView/WebAutomationWebExtensionPages.swift
 
     Tests/WebKit/WebPage/ControlledByExternalAgent.swift
     Tests/WebKit/WebPage/EditingFontSizeTests.swift
