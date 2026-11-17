@@ -2290,7 +2290,7 @@ private:
 
     // ScriptExecutionContext
     CSSFontSelector* cssFontSelector() final;
-    RefPtr<FontLoadRequest> fontLoadRequest(const String&, bool, bool, LoadedFromOpaqueSource) final;
+    RefPtr<FontLoadRequest> fontLoadRequest(const String&, bool, bool, const CSS::URLModifiers&) final;
     void beginLoadingFontSoon(FontLoadRequest&) final;
 
     // FontSelectorClient

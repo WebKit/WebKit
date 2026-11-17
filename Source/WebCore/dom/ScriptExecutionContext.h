@@ -77,6 +77,10 @@ class SessionID;
 
 namespace WebCore {
 
+namespace CSS {
+struct URLModifiers;
+}
+
 class ActiveDOMObject;
 class EventLoop;
 class CachedScript;
@@ -105,7 +109,6 @@ class WeakPtrImplWithEventTargetData;
 class WebCoreOpaqueRoot;
 enum class AdvancedPrivacyProtections : uint16_t;
 enum class CrossOriginMode : bool;
-enum class LoadedFromOpaqueSource : bool;
 enum class NoiseInjectionPolicy : uint8_t;
 enum class ReasonForSuspension : uint8_t;
 enum class ScriptTrackingPrivacyCategory : uint8_t;
@@ -240,7 +243,7 @@ public:
 
     virtual CSSFontSelector* cssFontSelector() { return nullptr; }
     virtual CSSValuePool& cssValuePool();
-    virtual RefPtr<FontLoadRequest> fontLoadRequest(const String& url, bool isSVG, bool isInitiatingElementInUserAgentShadowTree, LoadedFromOpaqueSource);
+    virtual RefPtr<FontLoadRequest> fontLoadRequest(const String& url, bool isSVG, bool isInitiatingElementInUserAgentShadowTree, const CSS::URLModifiers&);
     virtual void beginLoadingFontSoon(FontLoadRequest&) { }
 
     NODELETE WEBCORE_EXPORT static void setCrossOriginMode(CrossOriginMode);

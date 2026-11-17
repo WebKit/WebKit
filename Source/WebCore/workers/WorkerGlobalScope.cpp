@@ -643,9 +643,9 @@ Ref<FontFaceSet> WorkerGlobalScope::fonts()
     return cssFontSelector()->fontFaceSet();
 }
 
-RefPtr<FontLoadRequest> WorkerGlobalScope::fontLoadRequest(const String& url, bool, bool, LoadedFromOpaqueSource loadedFromOpaqueSource)
+RefPtr<FontLoadRequest> WorkerGlobalScope::fontLoadRequest(const String& url, bool, bool, const CSS::URLModifiers& modifiers)
 {
-    return WorkerFontLoadRequest::create(parseURL(url), loadedFromOpaqueSource);
+    return WorkerFontLoadRequest::create(parseURL(url), modifiers);
 }
 
 void WorkerGlobalScope::beginLoadingFontSoon(FontLoadRequest& request)

@@ -29,6 +29,7 @@
 #include "DocumentFontLoader.h"
 
 #include "CSSFontSelector.h"
+#include "CSSURLModifiers.h"
 #include "CachedFont.h"
 #include "CachedResourceRequest.h"
 #include "CachedResourceRequestInitiatorTypes.h"
@@ -64,12 +65,13 @@ void DocumentFontLoader::deref() const
     m_document->deref();
 }
 
-RefPtr<CachedFont> DocumentFontLoader::cachedFont(URL&& url, bool isSVG, bool isInitiatingElementInUserAgentShadowTree, LoadedFromOpaqueSource loadedFromOpaqueSource)
+RefPtr<CachedFont> DocumentFontLoader::cachedFont(URL&& url, bool isSVG, bool isInitiatingElementInUserAgentShadowTree, const CSS::URLModifiers& modifiers)
 {
     ResourceLoaderOptions options = CachedResourceLoader::defaultCachedResourceOptions();
     options.contentSecurityPolicyImposition = isInitiatingElementInUserAgentShadowTree ? ContentSecurityPolicyImposition::SkipPolicyCheck : ContentSecurityPolicyImposition::DoPolicyCheck;
-    options.loadedFromOpaqueSource = loadedFromOpaqueSource;
     options.sameOriginDataURLFlag = SameOriginDataURLFlag::Set;
+
+    CSS::applyModifiersToLoaderOptions(modifiers, options);
 
     CachedResourceRequest request(ResourceRequest(WTF::move(url)), options);
     request.setInitiatorType(cachedResourceRequestInitiatorTypes().css);

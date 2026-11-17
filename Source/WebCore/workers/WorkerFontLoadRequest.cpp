@@ -28,6 +28,7 @@
 #include "config.h"
 #include "WorkerFontLoadRequest.h"
 
+#include "CSSURLModifiers.h"
 #include "CachedFont.h"
 #include "Font.h"
 #include "FontCreationContext.h"
@@ -44,14 +45,14 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(WorkerFontLoadRequest);
 
-Ref<WorkerFontLoadRequest> WorkerFontLoadRequest::create(URL&& url, LoadedFromOpaqueSource loadedFromOpaqueSource)
+Ref<WorkerFontLoadRequest> WorkerFontLoadRequest::create(URL&& url, const CSS::URLModifiers& modifiers)
 {
-    return adoptRef(*new WorkerFontLoadRequest(WTF::move(url), loadedFromOpaqueSource));
+    return adoptRef(*new WorkerFontLoadRequest(WTF::move(url), modifiers));
 }
 
-WorkerFontLoadRequest::WorkerFontLoadRequest(URL&& url, LoadedFromOpaqueSource loadedFromOpaqueSource)
+WorkerFontLoadRequest::WorkerFontLoadRequest(URL&& url, const CSS::URLModifiers& modifiers)
     : m_url(WTF::move(url))
-    , m_loadedFromOpaqueSource(loadedFromOpaqueSource)
+    , m_modifiers(modifiers)
 {
 }
 
@@ -72,8 +73,9 @@ void WorkerFontLoadRequest::load(WorkerGlobalScope& workerGlobalScope)
     ThreadableLoaderOptions options { WTF::move(fetchOptions) };
     options.sendLoadCallbacks = SendCallbackPolicy::SendCallbacks;
     options.contentSecurityPolicyEnforcement = Ref { *m_context }->shouldBypassMainWorldContentSecurityPolicy() ? ContentSecurityPolicyEnforcement::DoNotEnforce : ContentSecurityPolicyEnforcement::EnforceWorkerSrcDirective;
-    options.loadedFromOpaqueSource = m_loadedFromOpaqueSource;
     options.sameOriginDataURLFlag = SameOriginDataURLFlag::Set;
+
+    CSS::applyModifiersToLoaderOptions(m_modifiers, options);
 
     options.serviceWorkersMode = ServiceWorkersMode::All;
     if (auto* activeServiceWorker = workerGlobalScope.activeServiceWorker())

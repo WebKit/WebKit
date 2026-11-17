@@ -26,6 +26,7 @@
 
 #pragma once
 
+#include "CSSURLModifiers.h"
 #include "FontLoadRequest.h"
 #include "ResourceLoaderOptions.h"
 #include "SharedBuffer.h"
@@ -45,7 +46,7 @@ struct FontCustomPlatformData;
 class WorkerFontLoadRequest final : public FontLoadRequest, public ThreadableLoaderClient, public RefCounted<WorkerFontLoadRequest> {
     WTF_MAKE_TZONE_ALLOCATED(WorkerFontLoadRequest);
 public:
-    NODELETE static Ref<WorkerFontLoadRequest> create(URL&&, LoadedFromOpaqueSource);
+    NODELETE static Ref<WorkerFontLoadRequest> create(URL&&, const CSS::URLModifiers&);
 
     void load(WorkerGlobalScope&);
 
@@ -54,7 +55,7 @@ public:
     void deref() const final { RefCounted::deref(); }
 
 private:
-    WorkerFontLoadRequest(URL&&, LoadedFromOpaqueSource);
+    WorkerFontLoadRequest(URL&&, const CSS::URLModifiers&);
 
     URL url() const LIFETIME_BOUND final { return m_url; }
     bool isPending() const final { return !m_isLoading && !m_errorOccurred && !m_data; }
@@ -76,7 +77,7 @@ private:
     RefPtr<FontCustomPlatformData> loadCustomFont(SharedBuffer&, const String&);
 
     URL m_url;
-    LoadedFromOpaqueSource m_loadedFromOpaqueSource;
+    CSS::URLModifiers m_modifiers;
 
     bool m_isLoading { false };
     bool m_notifyOnClientSet { false };
