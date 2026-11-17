@@ -99,6 +99,7 @@ public:
     void cancelPendingSessionForDevice(const CaptureDevice&);
 
     WEBCORE_EXPORT void promptForGetDisplayMedia(DisplayCapturePromptType, CompletionHandler<void(std::optional<CaptureDevice>)>&&);
+    WEBCORE_EXPORT void selectWindowForCapture(uint32_t windowID, CompletionHandler<void(std::optional<CaptureDevice>)>&&);
     WEBCORE_EXPORT void cancelGetDisplayMediaPrompt();
 
 private:
@@ -119,7 +120,8 @@ private:
 
     RetainPtr<WebDisplayMediaPromptHelper> m_promptHelper;
     CompletionHandler<void(std::optional<CaptureDevice>)> m_completionHandler;
-    std::unique_ptr<RunLoop::Timer> m_promptWatchdogTimer;
+    std::unique_ptr<RunLoop::Timer> m_watchdogTimer;
+    size_t m_requestCount { 0 };
 };
 
 } // namespace WebCore

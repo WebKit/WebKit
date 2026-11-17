@@ -157,11 +157,81 @@ void ScreenCaptureKitSharingSessionManager::cancelGetDisplayMediaPrompt()
         cancelPicking();
 }
 
+void ScreenCaptureKitSharingSessionManager::selectWindowForCapture(uint32_t windowID, CompletionHandler<void(std::optional<CaptureDevice>)>&& completionHandler)
+{
+#if HAVE(WINDOW_CAPTURE)
+    ASSERT(isMainThread());
+    ASSERT(isAvailable());
+    if (!isAvailable()) {
+        completionHandler(std::nullopt);
+        return;
+    }
+
+    ASSERT(!m_completionHandler);
+    if (m_completionHandler) {
+        RELEASE_LOG_ERROR(WebRTC, "ScreenCaptureKitSharingSessionManager::selectWindowForCapture with a pending completion handler");
+        cancelPicking();
+    }
+    RELEASE_LOG_INFO(WebRTC, "ScreenCaptureKitSharingSessionManager::selectWindowForCapture");
+
+    m_completionHandler = WTF::move(completionHandler);
+    ++m_requestCount;
+
+    auto lookupBlock = makeBlockPtr([weakThis = WeakPtr { *this }, windowID, requestCount = m_requestCount](SCShareableContent *content, NSError *error) mutable {
+        callOnMainThread([weakThis = WTF::move(weakThis), windowID, content = retainPtr(content), error = retainPtr(error), requestCount] {
+            RefPtr protectedThis = weakThis;
+            if (!protectedThis || protectedThis->m_requestCount != requestCount)
+                return;
+
+            protectedThis->completeDeviceSelection([&] -> RetainPtr<SCContentFilter> {
+                if (error || !content) {
+                    RELEASE_LOG_ERROR(WebRTC, "ScreenCaptureKitSharingSessionManager::selectWindowForCapture - SCShareableContent failed.");
+                    return nullptr;
+                }
+
+                RetainPtr<SCWindow> targetWindow;
+                for (SCWindow *window in [content windows]) {
+                    if ([window windowID] == windowID) {
+                        targetWindow = window;
+                        break;
+                    }
+                }
+
+                if (!targetWindow) {
+                    RELEASE_LOG_ERROR(WebRTC, "ScreenCaptureKitSharingSessionManager::selectWindowForCapture - window %u not found.", static_cast<unsigned>(windowID));
+                    return nullptr;
+                }
+
+                return adoptNS([PAL::allocSCContentFilterInstance() initWithDesktopIndependentWindow:targetWindow]);
+            }());
+        });
+    });
+
+    [PAL::getSCShareableContentClassSingleton() getShareableContentExcludingDesktopWindows:YES onScreenWindowsOnly:NO completionHandler:lookupBlock.get()];
+
+    constexpr Seconds selectWatchdogInterval = 10_s;
+    m_watchdogTimer = makeUnique<RunLoop::Timer>(RunLoop::mainSingleton(), "ScreenCaptureKitSharingSessionManager::selectWindowForCapture Timer"_s, [weakThis = WeakPtr { *this }, interval = selectWatchdogInterval]() mutable {
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis)
+            return;
+
+        RELEASE_LOG_ERROR(WebRTC, "ScreenCaptureKitSharingSessionManager::selectWindowForCapture nothing received after %f seconds, cancelling.", interval.value());
+
+        protectedThis->cancelPicking();
+    });
+    m_watchdogTimer->startOneShot(selectWatchdogInterval);
+#else
+    UNUSED_PARAM(windowID);
+    completionHandler(std::nullopt);
+#endif
+}
+
 void ScreenCaptureKitSharingSessionManager::cancelPicking()
 {
     ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
 
-    m_promptWatchdogTimer = nullptr;
+    m_watchdogTimer = nullptr;
+    ++m_requestCount;
 
     if (m_activeSources.isEmpty()) {
         RetainPtr picker = [PAL::getSCContentSharingPickerClassSingleton() sharedPicker];
@@ -177,7 +247,7 @@ void ScreenCaptureKitSharingSessionManager::cancelPicking()
 
 void ScreenCaptureKitSharingSessionManager::completeDeviceSelection(SCContentFilter* contentFilter)
 {
-    m_promptWatchdogTimer = nullptr;
+    m_watchdogTimer = nullptr;
 
     if (!contentFilter || !m_completionHandler) {
         if (m_completionHandler)
@@ -275,6 +345,7 @@ void ScreenCaptureKitSharingSessionManager::promptForGetDisplayMedia(DisplayCapt
         m_promptHelper = adoptNS([[WebDisplayMediaPromptHelper alloc] initWithCallback:this]);
 
     m_completionHandler = WTF::move(completionHandler);
+    ++m_requestCount;
 
     bool showingPicker = promptWithSCContentSharingPicker(promptType);
     if (!showingPicker) {
@@ -283,7 +354,7 @@ void ScreenCaptureKitSharingSessionManager::promptForGetDisplayMedia(DisplayCapt
     }
 
     constexpr Seconds userPromptWatchdogInterval = 60_s;
-    m_promptWatchdogTimer = makeUnique<RunLoop::Timer>(RunLoop::mainSingleton(), "ScreenCaptureKitSharingSessionManager::PromptWatchdogTimer"_s, [weakThis = WeakPtr { *this }, interval = userPromptWatchdogInterval]() mutable {
+    m_watchdogTimer = makeUnique<RunLoop::Timer>(RunLoop::mainSingleton(), "ScreenCaptureKitSharingSessionManager::PromptWatchdogTimer"_s, [weakThis = WeakPtr { *this }, interval = userPromptWatchdogInterval]() mutable {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return;
@@ -292,7 +363,7 @@ void ScreenCaptureKitSharingSessionManager::promptForGetDisplayMedia(DisplayCapt
 
         protectedThis->cancelPicking();
     });
-    m_promptWatchdogTimer->startOneShot(userPromptWatchdogInterval);
+    m_watchdogTimer->startOneShot(userPromptWatchdogInterval);
 }
 
 bool ScreenCaptureKitSharingSessionManager::promptWithSCContentSharingPicker(DisplayCapturePromptType promptType)
