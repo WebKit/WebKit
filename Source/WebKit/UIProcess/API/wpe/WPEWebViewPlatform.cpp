@@ -222,7 +222,7 @@ void ViewPlatform::requestExitFullScreen()
 #if ENABLE(GAMEPAD)
 WebPageProxy* ViewPlatform::platformWebPageProxyForGamepadInput()
 {
-    // Find the visible view getting the input focus in the active toplevel.
+    // Find a mapped view in the active toplevel, preferring the one with the keyboard focus.
     GUniquePtr<GList> toplevels(wpe_toplevel_list());
     for (GList* iter = toplevels.get(); iter; iter = g_list_next(iter)) {
         auto* toplevel = WPE_TOPLEVEL(iter->data);
@@ -231,11 +231,15 @@ WebPageProxy* ViewPlatform::platformWebPageProxyForGamepadInput()
 
         WPEView* view = nullptr;
         wpe_toplevel_foreach_view(toplevel, +[](WPEToplevel* toplevel, WPEView* view, gpointer userData) -> gboolean {
-            if (wpe_view_get_visible(view) && wpe_view_get_has_focus(view)) {
-                *static_cast<WPEView**>(userData) = view;
-                return TRUE;
-            }
-            return FALSE;
+            if (!wpe_view_get_mapped(view))
+                return FALSE;
+
+            auto** candidate = static_cast<WPEView**>(userData);
+            auto hasFocus = wpe_view_get_has_focus(view);
+            if (!*candidate || hasFocus)
+                *candidate = view;
+
+            return hasFocus;
         }, &view);
 
         if (view) {
