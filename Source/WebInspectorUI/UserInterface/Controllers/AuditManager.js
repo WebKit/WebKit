@@ -104,7 +104,7 @@ WI.AuditManager = class AuditManager extends WI.Object
             let disabledDefaultTests = [];
             let saveDisabledDefaultTest = (test) => {
                 if (test.supported && test.disabled)
-                    disabledDefaultTests.push(test.name);
+                    disabledDefaultTests.push(this._identityForDefaultTest(test));
 
                 if (test instanceof WI.AuditTestGroup) {
                     for (let child of test.tests)
@@ -300,8 +300,22 @@ WI.AuditManager = class AuditManager extends WI.Object
 
             test.disabled = true;
 
+            // Save the descendants too: edit mode may never end, and the restore needs them to
+            // tell a default test apart from another one with the same localized name.
             let disabledTests = this._disabledDefaultTestsSetting.value.slice();
-            disabledTests.push(test.name);
+            let saveDisabledDefaultTest = (test) => {
+                if (test.supported && test.disabled) {
+                    let identity = this._identityForDefaultTest(test);
+                    if (!disabledTests.includes(identity))
+                        disabledTests.push(identity);
+                }
+
+                if (test instanceof WI.AuditTestGroup) {
+                    for (let child of test.tests)
+                        saveDisabledDefaultTest(child);
+                }
+            };
+            saveDisabledDefaultTest(test);
             this._disabledDefaultTestsSetting.value = disabledTests;
 
             return;
@@ -317,6 +331,41 @@ WI.AuditManager = class AuditManager extends WI.Object
     }
 
     // Private
+
+    _defaultTestNameCounts(tests)
+    {
+        let nameCounts = new Map;
+        let countName = (test) => {
+            nameCounts.set(test.name, (nameCounts.get(test.name) || 0) + 1);
+            if (test instanceof WI.AuditTestGroup) {
+                for (let child of test.tests)
+                    countName(child);
+            }
+        };
+        for (let test of tests)
+            countName(test);
+        return nameCounts;
+    }
+
+    _identityForDefaultTest(test)
+    {
+        console.assert(test.default, test);
+
+        // A unique name is kept as-is: leaf test names are not localized, so they survive a locale change.
+        // A path is needed only to tell apart default tests that share a localized group name.
+        let nameCounts = this._defaultTestNameCounts(this._tests.filter((candidate) => candidate.default));
+        return nameCounts.get(test.name) === 1 ? test.name : this._pathForDefaultTest(test);
+    }
+
+    _pathForDefaultTest(test)
+    {
+        console.assert(test.default, test);
+
+        let path = [];
+        for (let ancestor = test; ancestor; ancestor = ancestor._parent)
+            path.unshift(ancestor.name);
+        return path.join("/");
+    }
 
     _addResult(result)
     {
@@ -415,20 +464,35 @@ WI.AuditManager = class AuditManager extends WI.Object
             ], {description: WI.UIString("Diagnoses common accessibility problems affecting screen readers and other assistive technology.")}),
         ];
 
-        let checkDisabledDefaultTest = (test) => {
+        let disabledDefaultTests = this._disabledDefaultTestsSetting.value;
+        // COMPATIBILITY: older versions saved the bare name of every disabled default test. A name shared with another
+        // default test (two default groups are both named "Accessibility") belongs to the test whose supported children
+        // were all saved with it, because disabling a group always disables all of its children.
+        let legacyDisabledNames = new Set(disabledDefaultTests.filter((nameOrPath) => !nameOrPath.includes("/")));
+        let defaultTestNameCounts = this._defaultTestNameCounts(defaultTests);
+
+        let checkDisabledDefaultTest = (test, path) => {
             test.markAsDefault();
 
-            if (this._disabledDefaultTestsSetting.value.includes(test.name))
+            let testPath = path.concat(test.name);
+            let testPathString = testPath.join("/");
+            let hasUniqueName = defaultTestNameCounts.get(test.name) === 1;
+            if (disabledDefaultTests.includes(testPathString) && (testPath.length > 1 || hasUniqueName))
                 test.disabled = true;
+            else if (legacyDisabledNames.has(test.name)) {
+                let hasAllChildrenSaved = test instanceof WI.AuditTestGroup && test.tests.every((child) => !child.supported || disabledDefaultTests.includes(child.name) || disabledDefaultTests.includes(testPathString + "/" + child.name));
+                if (hasUniqueName || hasAllChildrenSaved)
+                    test.disabled = true;
+            }
 
             if (test instanceof WI.AuditTestGroup) {
                 for (let child of test.tests)
-                    checkDisabledDefaultTest(child);
+                    checkDisabledDefaultTest(child, testPath);
             }
         };
 
         for (let test of defaultTests) {
-            checkDisabledDefaultTest(test);
+            checkDisabledDefaultTest(test, []);
 
             this.addTest(test);
         }
