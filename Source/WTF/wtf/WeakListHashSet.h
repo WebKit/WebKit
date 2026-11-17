@@ -320,7 +320,8 @@ public:
     bool computeIsEmpty()
     {
         bool result = m_set.computeIsEmpty();
-        cleanupHappened();
+        if (result)
+            cleanupHappened();
         return result;
     }
 

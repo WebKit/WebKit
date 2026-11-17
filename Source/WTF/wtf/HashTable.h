@@ -1197,14 +1197,19 @@ static_assert(std::is_trivial_v<StatusBytes>);
     template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits, typename Malloc>
     inline bool HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits, Malloc>::computeIsEmpty() const requires (KeyTraits::hasIsWeakNullValueFunction)
     {
-        return !computeSize();
+        // Iterators skip weak null buckets, so this stops at the first live entry instead of
+        // scanning the whole table. Callers use this on hot paths (e.g. once per add / remove).
+        return isEmpty() || begin() == end();
     }
 
     template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits, typename Malloc>
     inline bool HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits, Malloc>::computeIsEmpty() requires (KeyTraits::hasIsWeakNullValueFunction)
     {
-        if (computeSize())
+        if (isEmpty())
+            return true;
+        if (!std::as_const(*this).computeIsEmpty())
             return false;
+        // Only weak null entries remain; reclaim them.
         clear();
         return true;
     }

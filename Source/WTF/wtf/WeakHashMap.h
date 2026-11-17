@@ -360,7 +360,8 @@ public:
     bool computeIsEmpty()
     {
         bool result = m_map.computeIsEmpty();
-        cleanupHappened();
+        if (result)
+            cleanupHappened();
         return result;
     }
 
