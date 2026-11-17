@@ -2656,7 +2656,7 @@ void SelectorCodeGenerator::generateElementMatchesSelectorList(Assembler::JumpLi
 
         unsigned selectorListSize = selectorList.size();
         unsigned selectorListLastIndex = selectorListSize - 1;
-        for (unsigned i = 0; i < selectorList.size(); ++i) {
+        for (unsigned i = 0; i < selectorListSize; ++i) {
             const SelectorFragmentList& nestedSelectorFragmentList = selectorList[i];
             Assembler::JumpList localSelectorFailureCases;
             generateSelectorCheckerExcludingPseudoElements(localSelectorFailureCases, nestedSelectorFragmentList);
