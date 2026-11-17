@@ -68,6 +68,8 @@ NS_SWIFT_UI_ACTOR
 
 @property (nonatomic, copy, nullable) void (^sendMessage)(id message, NSString * _Nullable applicationIdentifier, void (^)(id _Nullable replyMessage, NSError * _Nullable));
 @property (nonatomic, copy, nullable) void (^connectUsingMessagePort)(WKWebExtensionMessagePort *);
+// Like connectUsingMessagePort, but passes the completion handler to the block, so the test can do asynchronous work before completing the connection. Takes precedence over connectUsingMessagePort.
+@property (nonatomic, copy, nullable) void (^connectUsingMessagePortWithCompletionHandler)(WKWebExtensionMessagePort *, void (^)(NSError * _Nullable));
 
 @property (nonatomic, copy, nullable) void (^didUpdateAction)(WKWebExtensionAction *);
 @property (nonatomic, copy, nullable) void (^presentPopupForAction)(WKWebExtensionAction *);
