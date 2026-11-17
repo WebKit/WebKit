@@ -116,17 +116,30 @@ void DisplayCaptureSessionManager::alertForGetDisplayMedia(WebPageProxy& page, c
 
 void DisplayCaptureSessionManager::showTabPicker(WebPageProxy& requestingPage, const WebCore::SecurityOriginData& origin, CompletionHandler<void(std::optional<WebCore::CaptureDevice>)>&& completionHandler)
 {
+    startTabPicker(requestingPage, origin, [completionHandler = WTF::move(completionHandler)](auto&&) mutable {
+        // FIXME: Implement capture of the selected tab.
+        completionHandler(std::nullopt);
+    });
+}
+
+Ref<TabCapturePicker> DisplayCaptureSessionManager::startTabPicker(WebPageProxy& requestingPage, const WebCore::SecurityOriginData& origin, CompletionHandler<void(RefPtr<WebPageProxy>&&)>&& callback)
+{
     if (RefPtr previousPicker = m_tabCapturePicker)
         previousPicker->cancel();
     ASSERT(!m_tabCapturePicker);
 
-    m_tabCapturePicker = TabCapturePicker::create(requestingPage, origin, [completionHandler = WTF::move(completionHandler)](auto&&) mutable {
+    Ref picker = TabCapturePicker::create(requestingPage, origin, [callback = WTF::move(callback)](RefPtr<WebPageProxy>&& pickedPage) mutable {
         DisplayCaptureSessionManager::singleton().m_tabCapturePicker = nullptr;
-        // FIXME: Implement capture of the selected tab.
-        completionHandler(std::nullopt);
+        callback(WTF::move(pickedPage));
     });
-    if (RefPtr picker = m_tabCapturePicker)
-        picker->start();
+    m_tabCapturePicker = picker.copyRef();
+    picker->start();
+    return picker;
+}
+
+Ref<TabCapturePicker> DisplayCaptureSessionManager::showTabPickerForTesting(WebPageProxy& requestingPage, CompletionHandler<void(RefPtr<WebPageProxy>&&)>&& callback)
+{
+    return startTabPicker(requestingPage, WebCore::SecurityOriginData::fromURL(URL { requestingPage.currentURL() }), WTF::move(callback));
 }
 
 void DisplayCaptureSessionManager::showWindowOrScreenPicker(WebPageProxy& requestingPage, CompletionHandler<void(std::optional<WebCore::CaptureDevice>)>&& completionHandler)

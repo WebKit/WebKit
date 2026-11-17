@@ -109,6 +109,18 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
 
 @end
 
+#if !TARGET_OS_IPHONE
+// Wrapper arround WebKit::TabCapturePicker.
+WK_CLASS_AVAILABLE(macos(WK_MAC_TBA))
+@interface _WKTabCapturePickerForTesting : NSObject
+
+- (instancetype)init NS_UNAVAILABLE;
++ (instancetype)new NS_UNAVAILABLE;
+- (void)cancel;
+
+@end
+#endif // !TARGET_OS_IPHONE
+
 @interface WKWebView (WKTesting)
 
 @property (nonatomic, readonly) NSString *_caLayerTreeAsText;
@@ -160,6 +172,11 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
 
 // With @runsPreview, the camera preview and microphone meter are active exactly as they are in a real prompt.
 - (void)_setMediaCapturePermissionPromptHandlerForTesting:(nullable void (^)(_WKMediaCapturePermissionPromptForTesting *prompt))handler runsPreview:(BOOL)runsPreview WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+
+#if !TARGET_OS_IPHONE
+// Shows the tab capture picker as if this web view's page had asked to share a tab.
+- (nullable _WKTabCapturePickerForTesting *)_showTabCapturePickerForTesting:(void (^)(WKWebView * _Nullable pickedWebView))completionHandler WK_API_AVAILABLE(macos(WK_MAC_TBA));
+#endif
 
 - (BOOL)_beginBackSwipeForTesting;
 - (BOOL)_completeBackSwipeForTesting;

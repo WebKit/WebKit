@@ -60,12 +60,17 @@ public:
     void setSystemCanPromptForTesting(bool canPrompt) { m_systemCanPromptForTesting = canPrompt ? PromptOverride::CanPrompt : PromptOverride::CanNotPrompt; }
     bool overrideCanRequestDisplayCapturePermissionForTesting() const { return useMockCaptureDevices() && m_systemCanPromptForTesting != PromptOverride::Default; }
 
+#if HAVE(SCREEN_CAPTURE_KIT)
+    Ref<TabCapturePicker> showTabPickerForTesting(WebPageProxy&, CompletionHandler<void(RefPtr<WebPageProxy>&&)>&&);
+#endif
+
 private:
 
 #if HAVE(SCREEN_CAPTURE_KIT)
     enum class CaptureSessionType : uint8_t { None, Screen, Window, WindowOrScreen, Tab };
     void alertForGetDisplayMedia(WebPageProxy&, const WebCore::SecurityOriginData&, CompletionHandler<void(DisplayCaptureSessionManager::CaptureSessionType)>&&);
     void showTabPicker(WebPageProxy&, const WebCore::SecurityOriginData&, CompletionHandler<void(std::optional<WebCore::CaptureDevice>)>&&);
+    Ref<TabCapturePicker> startTabPicker(WebPageProxy&, const WebCore::SecurityOriginData&, CompletionHandler<void(RefPtr<WebPageProxy>&&)>&&);
     void showWindowOrScreenPicker(WebPageProxy&, CompletionHandler<void(std::optional<WebCore::CaptureDevice>)>&&);
 #endif
     void showWindowPicker(const WebCore::SecurityOriginData&, CompletionHandler<void(std::optional<WebCore::CaptureDevice>)>&&);

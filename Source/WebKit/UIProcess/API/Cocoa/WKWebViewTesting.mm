@@ -27,6 +27,7 @@
 #import "WKWebViewPrivateForTesting.h"
 
 #import "AudioSessionRoutingArbitratorProxy.h"
+#import "DisplayCaptureSessionManager.h"
 #import "EditingRange.h"
 #import "EndowmentStateTracker.h"
 #import "GPUProcessProxy.h"
@@ -41,6 +42,7 @@
 #import "RemoteLayerTreeNode.h"
 #import "RemoteScrollingCoordinatorProxy.h"
 #import "SuspendedPageProxy.h"
+#import "TabCapturePicker.h"
 #import "UserMediaProcessManager.h"
 #import "VideoPresentationManagerProxy.h"
 #import "ViewGestureController.h"
@@ -282,6 +284,29 @@ static RetainPtr<NSArray<NSDictionary<NSString *, NSString *> *>> devicesForTest
 }
 
 @end
+
+#if PLATFORM(MAC)
+@implementation _WKTabCapturePickerForTesting {
+    WeakPtr<WebKit::TabCapturePicker> _picker;
+}
+
+- (instancetype)_initWithPicker:(WebKit::TabCapturePicker&)picker
+{
+    if (!(self = [super init]))
+        return nil;
+
+    _picker = picker;
+    return self;
+}
+
+- (void)cancel
+{
+    if (RefPtr picker = _picker)
+        picker->cancel();
+}
+
+@end
+#endif // PLATFORM(MAC)
 
 @implementation WKWebView (WKTesting)
 
@@ -883,6 +908,21 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse, _WKCALaye
     UNUSED_PARAM(runsPreview);
 #endif
 }
+
+#if PLATFORM(MAC)
+- (_WKTabCapturePickerForTesting *)_showTabCapturePickerForTesting:(void (^)(WKWebView *))completionHandler
+{
+    if (!_page) {
+        completionHandler(nil);
+        return nil;
+    }
+
+    Ref picker = WebKit::DisplayCaptureSessionManager::singleton().showTabPickerForTesting(*_page, [completionHandler = makeBlockPtr(completionHandler)](RefPtr<WebKit::WebPageProxy>&& pickedPage) {
+        completionHandler(pickedPage ? pickedPage->cocoaView().get() : nil);
+    });
+    return adoptNS([[_WKTabCapturePickerForTesting alloc] _initWithPicker:picker]).autorelease();
+}
+#endif // PLATFORM(MAC)
 
 - (void)_setSystemCanPromptForGetDisplayMediaForTesting:(BOOL)canPrompt
 {
