@@ -156,12 +156,25 @@ bool BrowsingContextGroup::canUseProcessForEnhancedSecurity(const WebProcessProx
         && (process.isolatedProcessType() == WebProcessProxy::IsolatedProcessType::SubFrame || process.isolatedProcessType() == WebProcessProxy::IsolatedProcessType::Shared);
 }
 
+bool BrowsingContextGroup::canUseProcess(const WebProcessProxy& process, const WebPreferences& preferences) const
+{
+    return canUseProcessForCrossOriginIsolation(process) && process.websiteDataStore() == m_websiteDataStore.get() && process.lockdownMode() == m_lockdownMode && canUseProcessForEnhancedSecurity(process, preferences);
+}
+
+// Unlike canUseProcess(), this doesn't allow a subframe process with Enhanced Security the navigation doesn't have.
+bool BrowsingContextGroup::canUseProcessForNavigation(const WebProcessProxy& process, const WebsiteDataStore& websiteDataStore, WebProcessProxy::LockdownMode lockdownMode, EnhancedSecurity enhancedSecurity) const
+{
+    return canUseProcessForCrossOriginIsolation(process) && process.websiteDataStore() == &websiteDataStore && process.matchesLockdownModeAndEnhancedSecurity(lockdownMode, enhancedSecurity);
+}
+
+bool BrowsingContextGroup::hasSameModesAs(const BrowsingContextGroup& other) const
+{
+    return m_crossOriginMode == other.m_crossOriginMode && m_websiteDataStore.get() == other.m_websiteDataStore.get() && m_lockdownMode == other.m_lockdownMode && enhancedSecurityStatesAreConsistent(m_enhancedSecurity, other.m_enhancedSecurity);
+}
+
 Ref<FrameProcess> BrowsingContextGroup::ensureProcessForSite(const Site& site, const Site& mainFrameSite, WebProcessProxy& process, const WebPreferences& preferences, LoadedWebArchive loadedWebArchive, BrowsingContextGroupUpdate browsingContextGroupUpdate)
 {
-    ASSERT(process.isDummyProcessProxy() || canUseProcessForCrossOriginIsolation(process));
-    ASSERT(process.isDummyProcessProxy() || process.websiteDataStore() == m_websiteDataStore.get());
-    ASSERT(process.isDummyProcessProxy() || process.lockdownMode() == m_lockdownMode);
-    ASSERT(process.isDummyProcessProxy() || canUseProcessForEnhancedSecurity(process, preferences));
+    ASSERT(process.isDummyProcessProxy() || canUseProcess(process, preferences));
 
     if (preferences.siteIsolationEnabled()) {
         RefPtr sharedProcess = liveSharedProcess();
@@ -228,6 +241,17 @@ RefPtr<FrameProcess> BrowsingContextGroup::processForSite(const Site& site, Proc
     if (!process)
         return nullptr;
     if (process->process().wasTerminated())
+        return nullptr;
+    return process;
+}
+
+RefPtr<WebProcessProxy> BrowsingContextGroup::processForNavigationToSite(const Site& site, ProcessCrossOriginIsolation crossOriginIsolation, const WebsiteDataStore& websiteDataStore, WebProcessProxy::LockdownMode lockdownMode, EnhancedSecurity enhancedSecurity)
+{
+    RefPtr frameProcess = processForSite(site, crossOriginIsolation);
+    if (!frameProcess)
+        return nullptr;
+    Ref process = frameProcess->process();
+    if (process->isInProcessCache() || !canUseProcessForNavigation(process, websiteDataStore, lockdownMode, enhancedSecurity))
         return nullptr;
     return process;
 }

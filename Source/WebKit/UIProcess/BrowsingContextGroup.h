@@ -79,11 +79,15 @@ public:
     EnhancedSecurity enhancedSecurity() const { return m_enhancedSecurity; }
     NODELETE bool canUseProcessForCrossOriginIsolation(const WebProcessProxy&) const;
     NODELETE bool canUseProcessForEnhancedSecurity(const WebProcessProxy&, const WebPreferences&) const;
+    NODELETE bool canUseProcess(const WebProcessProxy&, const WebPreferences&) const;
+    NODELETE bool canUseProcessForNavigation(const WebProcessProxy&, const WebsiteDataStore&, WebProcessProxy::LockdownMode, EnhancedSecurity) const;
+    NODELETE bool hasSameModesAs(const BrowsingContextGroup&) const;
 
     void sharedProcessForSite(WebsiteDataStore&, API::WebsitePolicies*, const WebPreferences&, const WebCore::Site&, const WebCore::Site& mainFrameSite, WebProcessProxy::LockdownMode, EnhancedSecurity, API::PageConfiguration&, IsMainFrame, CompletionHandler<void(FrameProcess*)>&&);
     Ref<FrameProcess> ensureProcessForSite(const WebCore::Site&, const WebCore::Site& mainFrameSite, WebProcessProxy&, const WebPreferences&, LoadedWebArchive = LoadedWebArchive::No, BrowsingContextGroupUpdate = BrowsingContextGroupUpdate::AddProcessAndInjectBrowsingContext);
     RefPtr<FrameProcess> processForSite(const WebCore::Site&);
     RefPtr<FrameProcess> processForSite(const WebCore::Site&, ProcessCrossOriginIsolation);
+    RefPtr<WebProcessProxy> processForNavigationToSite(const WebCore::Site&, ProcessCrossOriginIsolation, const WebsiteDataStore&, WebProcessProxy::LockdownMode, EnhancedSecurity);
     void addFrameProcess(FrameProcess&);
     void addFrameProcessAndInjectPageContextIf(FrameProcess&, Function<bool(WebPageProxy&)>);
     bool addFrameProcessWithoutInjectingPageContext(FrameProcess&);

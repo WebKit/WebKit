@@ -955,7 +955,7 @@ WebPageProxy* WebPageProxy::fromIdentifier(std::optional<WebPageProxyIdentifier>
 static Ref<BrowsingContextGroup> getOrCreateBrowsingContextGroup(const API::PageConfiguration& configuration, const WebProcessProxy& process)
 {
     Ref websiteDataStore = configuration.websiteDataStore();
-    if (RefPtr preferredBrowsingContextGroup = configuration.preferredBrowsingContextGroup(); preferredBrowsingContextGroup && preferredBrowsingContextGroup->websiteDataStore() == websiteDataStore.ptr() && preferredBrowsingContextGroup->lockdownMode() == process.lockdownMode() && preferredBrowsingContextGroup->canUseProcessForEnhancedSecurity(process, protect(configuration.preferences())))
+    if (RefPtr preferredBrowsingContextGroup = configuration.preferredBrowsingContextGroup(); preferredBrowsingContextGroup && preferredBrowsingContextGroup->canUseProcess(process, protect(configuration.preferences())))
         return *preferredBrowsingContextGroup;
 
     return BrowsingContextGroup::create(CrossOriginMode::Shared, websiteDataStore, process.lockdownMode(), process.enhancedSecurity());
@@ -1529,7 +1529,7 @@ void WebPageProxy::launchProcess(const Site& site, ProcessLaunchReason reason)
     if (RefPtr frameProcess = protect(browsingContextGroup())->processForSite(site)) {
         ASSERT(siteIsolationEnabled);
         m_legacyMainFrameProcess = frameProcess->process();
-    } else if (relatedPage && !relatedPage->isClosed() && reason == ProcessLaunchReason::InitialProcess && hasSameGPUAndNetworkProcessPreferencesAs(*relatedPage) && !siteIsolationEnabled && protect(relatedPage->browsingContextGroup())->crossOriginMode() == crossOriginMode && protect(relatedPage->browsingContextGroup())->lockdownMode() == protect(browsingContextGroup())->lockdownMode()) {
+    } else if (relatedPage && !relatedPage->isClosed() && reason == ProcessLaunchReason::InitialProcess && hasSameGPUAndNetworkProcessPreferencesAs(*relatedPage) && !siteIsolationEnabled && protect(browsingContextGroup())->hasSameModesAs(protect(relatedPage->browsingContextGroup()))) {
         m_legacyMainFrameProcess = relatedPage->ensureRunningProcess();
         WEBPAGEPROXY_RELEASE_LOG(Loading, "launchProcess: Using process (process=%p, PID=%i) from related page", m_legacyMainFrameProcess.ptr(), m_legacyMainFrameProcess->processID());
     } else
@@ -12812,12 +12812,9 @@ void WebPageProxy::triggerProcessSwapForDocumentIsolationPolicy(WebCore::Navigat
 
     Site responseSite { response.url };
     auto crossOriginIsolation = needsIsolation ? ProcessCrossOriginIsolation::DocumentIsolationPolicy : ProcessCrossOriginIsolation::None;
-    RefPtr frameProcess = browsingContextGroupForSwap->processForSite(responseSite, crossOriginIsolation);
-    RefPtr<WebProcessProxy> processForNavigation = frameProcess ? &frameProcess->process() : nullptr;
     // The navigation already picked its website data store, Lockdown Mode and Enhanced Security.
     Ref dataStore = websiteDataStoreOfLoad(*processLoadingNavigation, protect(websiteDataStore()));
-    if (processForNavigation && (processForNavigation->websiteDataStore() != dataStore.ptr() || !processForNavigation->matchesLockdownModeAndEnhancedSecurity(processLoadingNavigation->lockdownMode(), processLoadingNavigation->enhancedSecurity())))
-        processForNavigation = nullptr;
+    RefPtr processForNavigation = browsingContextGroupForSwap->processForNavigationToSite(responseSite, crossOriginIsolation, dataStore, processLoadingNavigation->lockdownMode(), processLoadingNavigation->enhancedSecurity());
     if (!processForNavigation) {
         auto isolatedProcessType = frame->isMainFrame() ? WebProcessProxy::IsolatedProcessType::MainFrame : WebProcessProxy::IsolatedProcessType::SubFrame;
         auto mainFrameSite = frame->isMainFrame() ? responseSite : Site { protect(mainFrame())->url() };
