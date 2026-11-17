@@ -60,6 +60,17 @@
  * implementations dispatch events with [method@View.event], which a
  * browser application can observe through the [signal@View::event] signal.
  */
+
+/**
+ * WPEViewClass::set_tooltip:
+ * @view: a #WPEView
+ * @tooltip: (nullable): a #WPETooltip, or %NULL to hide the tooltip
+ *
+ * Show @tooltip for @view, or hide the current one when @tooltip is %NULL.
+ *
+ * Since: 2.56
+ */
+
 struct _WPEViewPrivate {
     GRefPtr<WPEDisplay> display;
     GRefPtr<WPEToplevel> toplevel;
@@ -926,6 +937,26 @@ void wpe_view_set_cursor_from_bytes_with_scale(WPEView* view, GBytes* bytes, gui
 
     if (viewClass->set_cursor_from_bytes)
         viewClass->set_cursor_from_bytes(view, bytes, width, height, stride, hotspotX, hotspotY);
+}
+
+/**
+ * wpe_view_set_tooltip:
+ * @view: a #WPEView
+ * @tooltip: (nullable): a #WPETooltip, or %NULL
+ *
+ * Set the tooltip to be shown for @view, or %NULL to hide it. This is set by
+ * WebKit when the pointer moves over an element with a tooltip, and is meant
+ * to be rendered by the platform implementation.
+ *
+ * Since: 2.56
+ */
+void wpe_view_set_tooltip(WPEView* view, WPETooltip* tooltip)
+{
+    g_return_if_fail(WPE_IS_VIEW(view));
+
+    auto* viewClass = WPE_VIEW_GET_CLASS(view);
+    if (viewClass->set_tooltip)
+        viewClass->set_tooltip(view, tooltip);
 }
 
 /**
