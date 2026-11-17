@@ -64,7 +64,6 @@ public:
     void deref() const;
     bool hasOneRef() const { return m_refCount == refCountIncrement; }
     unsigned refCount() const { return m_refCount / refCountIncrement; }
-    bool hasAtLeastOneRef() const { return m_refCount; }
 
     WEBCORE_EXPORT String cssText(const CSS::SerializationContext&) const;
 
@@ -179,10 +178,6 @@ public:
 
     // Returns false if the hash is computed from the CSSValue pointer instead of the underlying values.
     bool addHash(Hasher&) const;
-
-    // https://www.w3.org/TR/css-values-4/#local-urls
-    // Empty URLs and fragment-only URLs should not be resolved relative to the base URL.
-    NODELETE static bool isCSSLocalURL(StringView relativeURL);
 
     enum StaticCSSValueTag { StaticCSSValue };
 
@@ -349,23 +344,6 @@ IGNORE_GCC_WARNINGS_END
     }
 
     m_refCount = tempRefCount;
-}
-
-template<typename ValueType>
-inline bool compareCSSValueVector(const Vector<Ref<ValueType>>& firstVector, const Vector<Ref<ValueType>>& secondVector)
-{
-    size_t size = firstVector.size();
-    if (size != secondVector.size())
-        return false;
-
-    for (size_t i = 0; i < size; ++i) {
-        auto& firstPtr = firstVector[i];
-        auto& secondPtr = secondVector[i];
-        if (firstPtr.ptr() == secondPtr.ptr() || firstPtr->equals(secondPtr))
-            continue;
-        return false;
-    }
-    return true;
 }
 
 template<typename ValueType>

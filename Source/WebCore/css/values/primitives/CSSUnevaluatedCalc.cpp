@@ -246,41 +246,6 @@ bool UnevaluatedCalcBase::requiresConversionData() const
     return calcValue().tree().requiresConversionData;
 }
 
-bool UnevaluatedCalcBase::canBeCastedTo(Category targetCategory) const
-{
-    switch (runtimeCategory()) {
-    case Category::Integer:
-    case Category::Number:
-        return targetCategory == Category::Integer
-            || targetCategory == Category::Number;
-    case Category::Percentage:
-        return targetCategory == Category::Percentage
-            || targetCategory == Category::AnglePercentage
-            || targetCategory == Category::LengthPercentage;
-    case Category::Length:
-        return targetCategory == Category::Length
-            || targetCategory == Category::LengthPercentage;
-    case Category::Angle:
-        return targetCategory == Category::Angle
-            || targetCategory == Category::AnglePercentage;
-    case Category::Time:
-        return targetCategory == Category::Time;
-    case Category::Frequency:
-        return targetCategory == Category::Frequency;
-    case Category::Resolution:
-        return targetCategory == Category::Resolution;
-    case Category::Flex:
-        return targetCategory == Category::Flex;
-    case Category::LengthPercentage:
-        return targetCategory == Category::LengthPercentage;
-    case Category::AnglePercentage:
-        return targetCategory == Category::AnglePercentage;
-    }
-
-    ASSERT_NOT_REACHED();
-    return false;
-}
-
 WTF::String UnevaluatedCalcBase::serializationForCSS(const SerializationContext& context) const
 {
     auto options = CSSCalc::SerializationOptions {

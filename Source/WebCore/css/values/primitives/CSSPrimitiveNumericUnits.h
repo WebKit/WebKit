@@ -167,36 +167,6 @@ constexpr bool isUnit(U other)
         return UnitTraits<U>::template is<T>(other);
 }
 
-// Allows identity casts, upcasts or downcasts of a unit type.
-template<UnitEnum T, UnitEnum U>
-constexpr T unitCast(U other)
-{
-    if constexpr (std::same_as<T, U>)
-        return other;
-    else if constexpr (NestedUnitEnumOf<U, T>)
-        return UnitTraits<T>::upcast(other);
-    else if constexpr (NestedUnitEnumOf<T, U>) {
-        RELEASE_ASSERT(isUnit<T>(other));
-        return UnitTraits<U>::template downcast<T>(other);
-    }
-}
-
-// Allows casting UP from a unit type to a composite unit type that includes it.
-//    `AnglePercentageUnit::Deg` == unitUpcast<AnglePercentageUnit>(AngleUnit::Deg)
-template<UnitEnum T, UnitEnum U>
-constexpr std::optional<T> dynamicUnitCast(U other)
-{
-    if constexpr (std::same_as<T, U>)
-        return other;
-    else if constexpr (NestedUnitEnumOf<U, T>)
-        return UnitTraits<T>::upcast(other);
-    else if constexpr (NestedUnitEnumOf<T, U>) {
-        if (!isUnit<T>(other))
-            return { };
-        return UnitTraits<U>::template downcast<T>(other);
-    }
-}
-
 // Allows casting UP from a unit type to a composite unit type that includes it.
 //    `AnglePercentageUnit::Deg` == unitUpcast<AnglePercentageUnit>(AngleUnit::Deg)
 template<UnitEnum T, UnitEnum U>
@@ -357,7 +327,6 @@ template<> struct UnitTraits<PercentageUnit> {
     static consteval bool isValidRangeForCategory(Range) { return true; }
 
     static constexpr std::optional<PercentageUnit> validate(CSSUnitType cssUnit) { return toPercentageUnit(cssUnit); }
-    static consteval bool isValidRangeForUnitType(Range) { return true; }
 };
 static_assert(UnitTraits<PercentageUnit>::count == std::to_underlying(PercentageUnit::Percentage) + 1);
 

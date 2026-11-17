@@ -176,16 +176,6 @@ template<auto filterFunction> static constexpr bool filterFunctionAllowsValuesGr
     return CSSFilterFunctionDescriptor<filterFunction>::allowsValuesGreaterThanOne;
 }
 
-template<auto filterFunction> static constexpr decltype(auto) filterFunctionDefaultValue()
-{
-    return CSSFilterFunctionDescriptor<filterFunction>::defaultValue;
-}
-
-template<auto filterFunction> static constexpr decltype(auto) filterFunctionInitialValueForInterpolation()
-{
-    return CSSFilterFunctionDescriptor<filterFunction>::initialValueForInterpolation;
-}
-
 template<auto filterFunction> static constexpr decltype(auto) filterFunctionOperationType()
 {
     return CSSFilterFunctionDescriptor<filterFunction>::operationType;

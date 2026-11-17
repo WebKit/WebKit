@@ -388,11 +388,6 @@ bool CSSValue::addDerivedHash(Hasher& hasher) const
     return false;
 }
 
-bool CSSValue::isCSSLocalURL(StringView relativeURL)
-{
-    return relativeURL.isEmpty() || relativeURL.startsWith('#');
-}
-
 String CSSValue::cssText(const CSS::SerializationContext& context) const
 {
     return visitDerived([&](auto& value) {

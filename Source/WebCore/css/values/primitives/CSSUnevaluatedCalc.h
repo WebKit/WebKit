@@ -90,8 +90,6 @@ public:
     NODELETE bool rootNodeIsPercentage() const;
     NODELETE bool requiresConversionData() const;
 
-    NODELETE bool canBeCastedTo(Category) const;
-
     WTF::String serializationForCSS(const SerializationContext&) const;
     void serializationForCSS(StringBuilder&, const SerializationContext&) const;
 

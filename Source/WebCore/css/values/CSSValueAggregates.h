@@ -2217,13 +2217,6 @@ template<typename T> TextStream& operator<<(TextStream& ts, const MinimallySeria
     return ts;
 }
 
-// Helper for using `Markable<>` with `RangeLike` types where an empty range can represent `Markable::emptyValue`.
-template<typename RangeLike>
-struct NonEmptyRangeLikeMarkableTraits {
-    static bool isEmptyValue(const RangeLike& value) { return value.isEmpty(); }
-    static RangeLike emptyValue() { return RangeLike { }; }
-};
-
 } // namespace WebCore
 
 namespace std {
