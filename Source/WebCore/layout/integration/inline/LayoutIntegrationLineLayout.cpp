@@ -607,6 +607,14 @@ void LineLayout::setExcludedMarkerPositions(const ExcludedMarkerList& excludedMa
 
 std::optional<LayoutRect> LineLayout::layout(RenderBlockFlow::MarginInfo& marginInfo, ForceFullLayout forcedFullLayout)
 {
+    auto repaintRect = layoutInFlowContent(marginInfo, forcedFullLayout);
+    // Line layout may have changed the containing block rectangle the inline boxes form for their out-of-flow boxes.
+    layoutOutOfFlowBoxes(RelayoutChildren::Yes);
+    return repaintRect;
+}
+
+std::optional<LayoutRect> LineLayout::layoutInFlowContent(RenderBlockFlow::MarginInfo& marginInfo, ForceFullLayout forcedFullLayout)
+{
     ensureInlineContentCache();
 
     if (forcedFullLayout == ForceFullLayout::Yes && m_lineDamage)
@@ -675,7 +683,7 @@ std::optional<LayoutRect> LineLayout::layout(RenderBlockFlow::MarginInfo& margin
 
     if (m_lineDamage) {
         // Pagination may require another layout pass.
-        layout(marginInfo);
+        layoutInFlowContent(marginInfo, ForceFullLayout::No);
 
         ASSERT(!m_lineDamage);
     }
@@ -750,6 +758,11 @@ void LineLayout::setLayoutInfoForTesting(std::unique_ptr<LayoutInfoForTesting>&&
     m_layoutInfoForTesting = WTF::move(layoutInfo);
 }
 
+static bool canContainOutOfFlowBoxes(const RenderBoxModelObject& inlineBox)
+{
+    return inlineBox.canContainAbsolutelyPositionedObjects() || inlineBox.canContainFixedPositionObjects();
+}
+
 void LineLayout::updateRenderTreePositions(const Vector<LineAdjustment>& lineAdjustments, const Layout::InlineLayoutState& inlineLayoutState, bool didDiscardContent)
 {
     if (!m_inlineContent && !didDiscardContent)
@@ -806,7 +819,12 @@ void LineLayout::updateRenderTreePositions(const Vector<LineAdjustment>& lineAdj
         }
     }
 
+    auto hasInlineBoxWithOutOfFlowBoxes = false;
     for (CheckedRef layoutBox : formattingContextBoxes(rootLayoutBox())) {
+        if (layoutBox->isInlineBox() && !layoutBox->isLineBreakBox()) {
+            CheckedRef inlineBox = downcast<RenderBoxModelObject>(*layoutBox->rendererForIntegration());
+            hasInlineBoxWithOutOfFlowBoxes |= canContainOutOfFlowBoxes(inlineBox) && inlineBox->hasOutOfFlowBoxes();
+        }
         if (didDiscardContent) {
             CheckedRef renderer = *layoutBox->rendererForIntegration();
             // Atomic inline-level boxes after the clamp point are not laid out and neither is their content (e.g. inline-block, ruby annotation).
@@ -884,6 +902,8 @@ void LineLayout::updateRenderTreePositions(const Vector<LineAdjustment>& lineAdj
             continue;
         }
     }
+    if (m_inlineContent)
+        m_inlineContent->setHasInlineBoxWithOutOfFlowBoxes(hasInlineBoxWithOutOfFlowBoxes);
 }
 
 bool LineLayout::layoutSVGText()
@@ -1338,6 +1358,19 @@ void LineLayout::collectOverflow()
     blockFlow->addLayoutOverflow(LayoutRect { m_inlineContent->scrollableOverflow() });
     if (!blockFlow->hasNonVisibleOverflow())
         blockFlow->addVisualOverflow(LayoutRect { m_inlineContent->inkOverflow() });
+
+    for (auto& inlineBox : inlineBoxesThatCanContainOutOfFlowBoxes()) {
+        auto* outOfFlowBoxes = inlineBox->outOfFlowBoxes();
+        if (!outOfFlowBoxes)
+            continue;
+        // The out-of-flow boxes of an inline box are positioned relative to the inline box.
+        auto inlineBoxOffset = toLayoutSize(blockStartRelativeFirstInlineBoxRect(inlineBox).location());
+        for (auto& outOfFlowBox : *outOfFlowBoxes) {
+            // Fixed positioned elements don't contribute to layout overflow, since they don't scroll with the content.
+            if (outOfFlowBox.isAbsolutelyPositioned())
+                blockFlow->addOverflowWithRendererOffset(outOfFlowBox, outOfFlowBox.locationOffset() + inlineBoxOffset);
+        }
+    }
 }
 
 InlineContent& LineLayout::ensureInlineContent()
@@ -1502,6 +1535,69 @@ static LayoutRect toPhysicalRect(const RenderBlockFlow& root, const FloatRect& r
     auto physicalRect = LayoutRect { rect };
     root.blockStartRelativeToPhysical(physicalRect);
     return physicalRect;
+}
+
+// Post-order, the order in which render tree layout lays out out-of-flow boxes, since a block lays out its out-of-flow boxes at the
+// end of its own layout: an inline box comes after the inline boxes nested in it.
+static void collectInlineBoxesThatCanContainOutOfFlowBoxes(const Layout::ElementBox& parent, Vector<CheckedRef<RenderBoxModelObject>>& inlineBoxes)
+{
+    for (CheckedPtr child = parent.firstChild(); child; child = child->nextSibling()) {
+        // Inline formatting context content is reachable through inline boxes only.
+        if (!child->isInlineBox() || child->isLineBreakBox())
+            continue;
+        collectInlineBoxesThatCanContainOutOfFlowBoxes(downcast<Layout::ElementBox>(*child), inlineBoxes);
+        CheckedRef inlineBox = downcast<RenderBoxModelObject>(*child->rendererForIntegration());
+        if (canContainOutOfFlowBoxes(inlineBox))
+            inlineBoxes.append(WTF::move(inlineBox));
+    }
+}
+
+Vector<CheckedRef<RenderBoxModelObject>> LineLayout::inlineBoxesThatCanContainOutOfFlowBoxes() const
+{
+    Vector<CheckedRef<RenderBoxModelObject>> inlineBoxes;
+    // The common case: none of the inline boxes is the containing block of out-of-flow boxes, so there is nothing to walk for.
+    // All of the inline boxes that can be one are collected otherwise, since laying out an out-of-flow box can add to the list
+    // of an inline box that has none yet.
+    if (!m_inlineContent || !m_inlineContent->hasInlineBoxWithOutOfFlowBoxes()) {
+#if ASSERT_ENABLED
+        collectInlineBoxesThatCanContainOutOfFlowBoxes(rootLayoutBox(), inlineBoxes);
+        ASSERT(std::ranges::none_of(inlineBoxes, [](auto& inlineBox) {
+            return inlineBox->hasOutOfFlowBoxes();
+        }));
+#endif
+        return { };
+    }
+    collectInlineBoxesThatCanContainOutOfFlowBoxes(rootLayoutBox(), inlineBoxes);
+    return inlineBoxes;
+}
+
+void LineLayout::layoutOutOfFlowBoxes(RelayoutChildren relayoutChildren, FixedPositionObjectsOnly fixedPositionObjectsOnly)
+{
+    // Laying out an out-of-flow box adds its own out-of-flow descendants to the lists of their containing blocks, which can be
+    // inline boxes it is nested in. Those come later, since an inline box comes after the inline boxes nested in it.
+    for (auto& inlineBox : inlineBoxesThatCanContainOutOfFlowBoxes())
+        layoutOutOfFlowBoxes(inlineBox, relayoutChildren, fixedPositionObjectsOnly);
+}
+
+void LineLayout::layoutOutOfFlowBoxes(RenderBoxModelObject& inlineBox, RelayoutChildren relayoutChildren, FixedPositionObjectsOnly fixedPositionObjectsOnly)
+{
+    ASSERT(inlineBox.isInlineBox());
+    if (auto* outOfFlowBoxes = inlineBox.outOfFlowBoxes()) {
+        // Code that doesn't run line layout (e.g. simplified layout) reaches an inline box through its out-of-flow bit, so the
+        // list may have been made after line layout last looked.
+        if (m_inlineContent)
+            m_inlineContent->setHasInlineBoxWithOutOfFlowBoxes(true);
+        // Laying out an out-of-flow box can append its own out-of-flow descendants to this list (e.g. a fixed positioned box in an
+        // absolutely positioned box, both contained by a filtered inline box). The loop lays those out too.
+        for (CheckedRef outOfFlowBox : *outOfFlowBoxes)
+            layoutOutOfFlowBox(outOfFlowBox, inlineBox, relayoutChildren, fixedPositionObjectsOnly);
+    }
+    CheckedRef layoutContext = flow().view().frameView().layoutContext();
+    for (auto& box : layoutContext->takeBoxesNeedingTransformUpdateAfterContainerLayout(inlineBox)) {
+        if (box && box->hasLayer() && box->isOutOfFlowPositioned())
+            protect(box->layer())->updateTransform();
+    }
+    inlineBox.clearOutOfFlowChildNeedsLayout();
 }
 
 bool LineLayout::isContentConsideredStale() const

@@ -105,6 +105,12 @@ public:
     LayoutRect inkOverflowBoundingBoxRectFor(const RenderBoxModelObject&) const;
     Vector<FloatRect> collectInlineBoxRects(const RenderBoxModelObject&) const;
 
+    // The out-of-flow boxes whose containing block is one of the inline boxes of this inline formatting context.
+    void layoutOutOfFlowBoxes(RelayoutChildren, FixedPositionObjectsOnly = FixedPositionObjectsOnly::No);
+    void layoutOutOfFlowBoxes(RenderBoxModelObject& inlineBox, RelayoutChildren, FixedPositionObjectsOnly = FixedPositionObjectsOnly::No);
+    // An inline box comes after the inline boxes nested in it.
+    Vector<CheckedRef<RenderBoxModelObject>> inlineBoxesThatCanContainOutOfFlowBoxes() const;
+
     NODELETE LayoutUnit contentLogicalHeight() const;
     std::optional<LayoutUnit> clampedContentLogicalHeight() const;
     NODELETE bool hasEllipsisInBlockDirectionOnLastFormattedLine() const;
@@ -163,7 +169,7 @@ public:
 
     NODELETE bool hasBlocks() const;
 
-    // The last layout() pass. A pagination restart runs a second pass from inside layout().
+    // The last layoutInFlowContent() pass. A pagination restart runs a second pass from inside it.
     struct LayoutInfoForTesting {
         WTF_MAKE_STRUCT_TZONE_ALLOCATED(LayoutInfoForTesting);
         // Increases with every inline layout of any block container.
@@ -178,6 +184,7 @@ public:
     const LayoutInfoForTesting* layoutInfoForTesting() const { return m_layoutInfoForTesting.get(); }
 
 private:
+    std::optional<LayoutRect> layoutInFlowContent(RenderBlockFlow::MarginInfo&, ForceFullLayout);
     void preparePlacedFloats();
     FloatRect constructContent(const Layout::InlineLayoutState&, std::unique_ptr<Layout::InlineLayoutResult>&&);
     static std::unique_ptr<LayoutInfoForTesting> collectLayoutInfoForTesting(const Layout::InlineLayoutResult*);
