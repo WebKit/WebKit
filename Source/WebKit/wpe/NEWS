@@ -1,4 +1,30 @@
 =================
+WPE WebKit 2.54.3
+=================
+
+What's new in WPE WebKit 2.54.3?
+
+  - Add User-Agent quirk for XBox Play.
+  - Add support for WebXR static layers.
+  - Add support for WebXR layer deletion.
+  - Support pressure-sensitive reporting for gamepad buttons.
+  - Reduce video format conversions when using the DMA-BUF video sink.
+  - Improve WebAudio graph rendering performance.
+  - Improve Web content process startup time by lazy-loading the FLite library.
+  - Improve handling of scroll and pointer events simulated for touch input.
+  - Improve handling of text input methods focus handling.
+  - Improve handling of surrounding text for input methods.
+  - Support usage of GStreamer 1.28.
+  - Fix wpe_buffer_import_to_pixels() to ensure that return pixel data rows
+    do not include padding.
+  - Fix a number of small leaks in WPEPlatform.
+  - Fix usage of pre-warmed Web content processes under Bubblewrap.
+  - Fix CSS SVG image cursor scaling.
+  - Fix the JSCOnly build with ENABLE_JSC_GLIB_API enabled.
+  - Fix build issues with GCC 16.
+  - Fix several crashes and rendering issues.
+
+=================
 WPE WebKit 2.54.2
 =================
 
