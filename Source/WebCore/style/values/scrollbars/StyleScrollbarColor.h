@@ -65,7 +65,6 @@ struct ScrollbarColor : ValueOrKeyword<ScrollbarColorParts, CSS::Keyword::Auto, 
     using Parts = typename Base::Value;
 
     bool isAuto() const { return isKeyword(); }
-    bool isParts() const { return isValue(); }
 };
 
 // MARK: - Conversion

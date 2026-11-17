@@ -55,7 +55,6 @@ struct ClipPath {
 
     std::optional<ReferencePath> tryReference() const;
     std::optional<BasicShapePath> tryBasicShape() const;
-    std::optional<BoxPath> tryBox() const;
 
     template<typename> bool holdsAlternative() const;
     template<typename... F> decltype(auto) switchOn(NOESCAPE F&&...) const;
@@ -126,13 +125,6 @@ inline std::optional<BasicShapePath> ClipPath::tryBasicShape() const
 {
     if (RefPtr basicShape = dynamicDowncast<ShapePathOperation>(operation))
         return BasicShapePath { basicShape.releaseNonNull() };
-    return { };
-}
-
-inline std::optional<BoxPath> ClipPath::tryBox() const
-{
-    if (RefPtr box = dynamicDowncast<BoxPathOperation>(operation))
-        return BoxPath { box.releaseNonNull() };
     return { };
 }
 

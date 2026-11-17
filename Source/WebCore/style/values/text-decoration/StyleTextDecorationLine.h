@@ -130,11 +130,6 @@ struct TextDecorationLine {
         return (isFlags()) && (m_packed & LineThroughBit);
     }
 
-    constexpr bool hasBlink() const
-    {
-        return (isFlags()) && (m_packed & BlinkBit);
-    }
-
     constexpr bool containsAny(OptionSet<TextDecorationLine::Flag> options) const
     {
         if (!isFlags())

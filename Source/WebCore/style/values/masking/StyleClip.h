@@ -68,7 +68,6 @@ struct ClipRect {
     }
 
     bool isAllAuto() const { return value->allOf([](auto& side) { return side.isAuto(); }); }
-    bool isAnyAuto() const { return value->anyOf([](auto& side) { return side.isAuto(); }); }
 
     bool operator==(const ClipRect&) const = default;
 };

@@ -57,11 +57,6 @@ struct OffsetPath {
     bool isBasicShape() const { return is<ShapePathOperation>(operation); }
     bool isBox() const { return is<BoxPathOperation>(operation); }
 
-    std::optional<RayPath> tryRay() const;
-    std::optional<ReferencePath> tryReference() const;
-    std::optional<BasicShapePath> tryBasicShape() const;
-    std::optional<BoxPath> tryBox() const;
-
     bool affectedByTransformOrigin() const { return !isNone(); }
 
     template<typename> bool holdsAlternative() const;
@@ -115,34 +110,6 @@ template<typename... F> decltype(auto) OffsetPath::switchOn(NOESCAPE F&&... f) c
         return visitor(RayPath { downcast<RayPathOperation>(*operation) });
     }
     RELEASE_ASSERT_NOT_REACHED();
-}
-
-inline std::optional<RayPath> OffsetPath::tryRay() const
-{
-    if (RefPtr ray = dynamicDowncast<RayPathOperation>(operation))
-        return RayPath { ray.releaseNonNull() };
-    return { };
-}
-
-inline std::optional<ReferencePath> OffsetPath::tryReference() const
-{
-    if (RefPtr reference = dynamicDowncast<ReferencePathOperation>(operation))
-        return ReferencePath { reference.releaseNonNull() };
-    return { };
-}
-
-inline std::optional<BasicShapePath> OffsetPath::tryBasicShape() const
-{
-    if (RefPtr basicShape = dynamicDowncast<ShapePathOperation>(operation))
-        return BasicShapePath { basicShape.releaseNonNull() };
-    return { };
-}
-
-inline std::optional<BoxPath> OffsetPath::tryBox() const
-{
-    if (RefPtr box = dynamicDowncast<BoxPathOperation>(operation))
-        return BoxPath { box.releaseNonNull() };
-    return { };
 }
 
 // MARK: - Conversion

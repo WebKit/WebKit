@@ -50,7 +50,6 @@ struct ScrollbarGutter {
     }
 
     constexpr bool isAuto() const { return m_type == Type::Auto; }
-    constexpr bool isStable() const { return m_type == Type::Stable; }
     constexpr bool isStableBothEdges() const { return m_type == Type::StableBothEdges; }
 
     template<typename... F> decltype(auto) switchOn(NOESCAPE F&&... f) const

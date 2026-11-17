@@ -97,7 +97,6 @@ struct ListStyleType {
     bool isNone() const { return m_type == Type::None; }
     bool isCounterStyle() const { return m_type == Type::CounterStyle; }
     bool isString() const { return m_type == Type::String; }
-    bool isSymbolsFunction() const { return m_type == Type::Symbols; }
 
     // <counter-style> specific predicates.
 
@@ -109,16 +108,6 @@ struct ListStyleType {
     std::optional<CounterStyle> tryCounterStyle() const
     {
         return isCounterStyle() ? std::make_optional(CounterStyle { CustomIdent { m_identifier } }) : std::nullopt;
-    }
-
-    std::optional<SymbolsFunction> trySymbolsFunction() const
-    {
-        return isSymbolsFunction() ? std::make_optional(m_symbolsFunction) : std::nullopt;
-    }
-
-    std::optional<AtomString> tryString() const
-    {
-        return isString() ? std::make_optional(m_identifier) : std::nullopt;
     }
 
     template<typename... F> decltype(auto) switchOn(NOESCAPE F&&... f) const
