@@ -33,7 +33,6 @@
 #include "RenderBlockFlowInlines.h"
 #include "RenderBoxInlines.h"
 #include "RenderChildIterator.h"
-#include "RenderListOutsideMarker.h"
 #include "RenderObjectInlines.h"
 #include "RenderView.h"
 #include "StyleDisplay.h"
@@ -115,8 +114,8 @@ LineClampUpdater::LineClampUpdater(const RenderBlock& blockContainer)
             // A ruby annotation belongs to the line of its base: it is clamped with that line, not line by line on its own.
             if (blockContainer.style().display() == Style::DisplayType::RubyText)
                 return true;
-            // An outside list marker's content is laid out like an inline-block (see RenderListOutsideMarker::layoutContentContainer).
-            return is<RenderListOutsideMarker>(blockContainer.parent());
+            // The list item's line clamp does not reach into its outside marker, whose own line would otherwise use up the list item's lines.
+            return blockContainer.isOutsideListMarker();
         };
         if (shouldIgnoreLineClamp()) {
             layoutState->setLineClamp({ });

@@ -70,7 +70,6 @@
 #include "RenderLayerScrollableArea.h"
 #include "RenderLineBreak.h"
 #include "RenderListItem.h"
-#include "RenderListOutsideMarker.h"
 #include "RenderMultiColumnFlow.h"
 #include "RenderMultiColumnSet.h"
 #include "RenderMultiColumnSpannerPlaceholder.h"
@@ -2035,8 +2034,8 @@ Node* RenderObject::nodeForHitTest() const
     auto* node = this->node();
     // If we hit the anonymous renderers inside generated content we should
     // actually hit the generated content so walk up to the PseudoElement.
-    // A marker has no element of its own, so hitting its content is hitting the list item.
-    if (!node && parent() && (parent()->isBeforeOrAfterContent() || parent()->style().isListMarkerStyle())) {
+    // A marker has no element of its own, so hitting it or its content is hitting the list item.
+    if (!node && (isOutsideListMarker() || (parent() && (parent()->isBeforeOrAfterContent() || parent()->style().isListMarkerStyle())))) {
         for (auto* renderer = parent(); renderer && !node; renderer = renderer->parent())
             node = renderer->element();
     }
@@ -3266,16 +3265,9 @@ VisibleInViewportState RenderObject::imageFrameAvailable(CachedImage& image, Ima
 
 bool RenderObject::isOutsideListMarker() const
 {
-    return isRenderListOutsideMarker();
-}
-
-bool RenderObject::isExcludedMarker() const
-{
-    // An excluded list marker is the direct child of its list item, never wrapped in an anonymous block, and no part of in-flow layout.
-    auto* marker = dynamicDowncast<RenderListOutsideMarker>(*this);
-    if (!marker)
-        return false;
-    return parent() && parent() == marker->listItem();
+    // An inside marker is an inline box, so a block with the ::marker style can only be an outside one.
+    CheckedPtr blockFlow = dynamicDowncast<RenderBlockFlow>(*this);
+    return blockFlow && blockFlow->style().isListMarkerStyle();
 }
 
 #if ENABLE(TREE_DEBUGGING)

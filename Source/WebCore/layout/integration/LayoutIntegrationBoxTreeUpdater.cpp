@@ -86,7 +86,7 @@ static bool synthesizesGlyph(const RenderText& textRenderer)
     if (textRenderer.layoutBox().contentGlyph())
         return true;
 
-    // The marker is this text's parent when it is an inline box, and its grandparent when a marker box holds the text in a content container of its own.
+    // The marker is this text's parent: the inline box of an inside marker, or the block of an outside one.
     for (CheckedPtr marker = textRenderer.parent(); marker; marker = marker->parent()) {
         if (marker->style().isListMarkerStyle())
             return listMarkerSynthesizesGlyph(protect(marker->style()), protect(marker->document()));
@@ -215,8 +215,6 @@ void updateSimplifiedMeasuring(RenderText& textRenderer)
 Layout::Box::ElementAttributes elementAttributes(const RenderObject& renderer)
 {
     auto nodeType = [&] {
-        if (renderer.isRenderListOutsideMarker())
-            return Layout::Box::NodeType::ListMarker;
         if (renderer.isRenderReplaced())
             return renderer.isRenderImage() && !renderer.isRenderMedia() ? Layout::Box::NodeType::Image : Layout::Box::NodeType::ReplacedElement;
         if (renderer.isRenderButton() || renderer.isRenderMenuList() || renderer.isRenderTextControlInnerContainer() || renderer.isRenderSlider() || renderer.isRenderSliderContainer())
