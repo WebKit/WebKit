@@ -26,7 +26,6 @@
 #import "config.h"
 
 #import "Helpers/cocoa/CGImagePixelReader.h"
-#import "Helpers/DeprecatedGlobalValues.h"
 #import "Helpers/PlatformUtilities.h"
 #import "Helpers/Test.h"
 #import "Helpers/cocoa/HTTPServer.h"
@@ -112,7 +111,7 @@ TEST(WKWebView, SnapshotImageError)
     [snapshotConfiguration setRect:NSMakeRect(0, 0, viewWidth, viewHeight)];
     [snapshotConfiguration setSnapshotWidth:@(viewWidth)];
 
-    isDone = false;
+    __block bool isDone = false;
     [webView takeSnapshotWithConfiguration:snapshotConfiguration.get() completionHandler:^(Util::PlatformImage *snapshotImage, NSError *error) {
         EXPECT_NULL(snapshotImage);
         EXPECT_WK_STREQ(@"WKErrorDomain", error.domain);
@@ -138,7 +137,7 @@ TEST(WKWebView, SnapshotImageEmptyRect)
     [snapshotConfiguration setRect:NSMakeRect(0, 0, 0, 0)];
     [snapshotConfiguration setSnapshotWidth:@(viewWidth)];
 
-    isDone = false;
+    __block bool isDone = false;
     [webView takeSnapshotWithConfiguration:snapshotConfiguration.get() completionHandler:^(Util::PlatformImage *snapshotImage, NSError *error) {
         EXPECT_NULL(error);
         EXPECT_EQ(0, snapshotImage.size.width);
@@ -166,7 +165,7 @@ TEST(WKWebView, SnapshotImageZeroWidth)
     [snapshotConfiguration setRect:NSMakeRect(0, 0, viewWidth, viewHeight)];
     [snapshotConfiguration setSnapshotWidth:@(0.0)]; // Will fall back to the view width.
 
-    isDone = false;
+    __block bool isDone = false;
     [webView takeSnapshotWithConfiguration:snapshotConfiguration.get() completionHandler:^(Util::PlatformImage *snapshotImage, NSError *error) {
         EXPECT_NULL(error);
         EXPECT_EQ(viewWidth, snapshotImage.size.width);
@@ -192,7 +191,7 @@ TEST(WKWebView, SnapshotImageZeroSizeView)
     [snapshotConfiguration setRect:NSMakeRect(0, 0, viewWidth, viewHeight)];
     [snapshotConfiguration setSnapshotWidth:@(100)];
 
-    isDone = false;
+    __block bool isDone = false;
     [webView takeSnapshotWithConfiguration:snapshotConfiguration.get() completionHandler:^(Util::PlatformImage *snapshotImage, NSError *error) {
         EXPECT_NULL(error);
         EXPECT_EQ(0, snapshotImage.size.width);
@@ -216,7 +215,7 @@ TEST(WKWebView, SnapshotImageZeroSizeViewNoConfiguration)
 
     auto pid = [webView _webProcessIdentifier];
 
-    isDone = false;
+    __block bool isDone = false;
     [webView takeSnapshotWithConfiguration:nil completionHandler:^(Util::PlatformImage *snapshotImage, NSError *error) {
         EXPECT_NULL(error);
         EXPECT_EQ(0, snapshotImage.size.width);
@@ -244,7 +243,7 @@ TEST(WKWebView, SnapshotImageEmptyWithOutOfScopeCompletionHandler)
     [snapshotConfiguration setRect:NSMakeRect(0, 0, 0, 0)];
     [snapshotConfiguration setSnapshotWidth:@(viewWidth)];
 
-    isDone = false;
+    __block bool isDone = false;
 
     RetainPtr snapshotWrapper = adoptNS([[TestSnapshotWrapper alloc] init]);
     [snapshotWrapper takeSnapshotWithWebView:webView.get() configuration:snapshotConfiguration.get() completionHandler:^{
@@ -288,7 +287,7 @@ TEST(WKWebView, SnapshotImageBaseCase)
     [snapshotConfiguration setRect:NSMakeRect(0, 0, viewWidth, viewHeight)];
     [snapshotConfiguration setSnapshotWidth:@(viewWidth)];
 
-    isDone = false;
+    __block bool isDone = false;
     [webView takeSnapshotWithConfiguration:snapshotConfiguration.get() completionHandler:^(Util::PlatformImage *snapshotImage, NSError *error) {
         EXPECT_NULL(error);
 
@@ -342,7 +341,7 @@ TEST(WKWebView, SnapshotImageScale)
     [snapshotConfiguration setRect:NSMakeRect(0, 0, viewWidth, viewHeight)];
     [snapshotConfiguration setSnapshotWidth:@(viewWidth * scaleFactor)];
 
-    isDone = false;
+    __block bool isDone = false;
     [webView takeSnapshotWithConfiguration:snapshotConfiguration.get() completionHandler:^(Util::PlatformImage *snapshotImage, NSError *error) {
         EXPECT_NULL(error);
         EXPECT_NOT_NULL(snapshotImage);
@@ -364,7 +363,7 @@ TEST(WKWebView, SnapshotImageNilConfiguration)
     [webView loadHTMLString:@"<body style='background-color: red;'></body>" baseURL:nil];
     [webView _test_waitForDidFinishNavigation];
 
-    isDone = false;
+    __block bool isDone = false;
     [webView takeSnapshotWithConfiguration:nil completionHandler:^(Util::PlatformImage *snapshotImage, NSError *error) {
         EXPECT_NULL(error);
         EXPECT_NOT_NULL(snapshotImage);
@@ -387,7 +386,7 @@ TEST(WKWebView, SnapshotImageUninitializedConfiguration)
 
     RetainPtr<WKSnapshotConfiguration> snapshotConfiguration = adoptNS([[WKSnapshotConfiguration alloc] init]);
 
-    isDone = false;
+    __block bool isDone = false;
     [webView takeSnapshotWithConfiguration:snapshotConfiguration.get() completionHandler:^(Util::PlatformImage *snapshotImage, NSError *error) {
         EXPECT_NULL(error);
         EXPECT_NOT_NULL(snapshotImage);
@@ -411,7 +410,7 @@ TEST(WKWebView, SnapshotImageUninitializedSnapshotWidth)
     RetainPtr<WKSnapshotConfiguration> snapshotConfiguration = adoptNS([[WKSnapshotConfiguration alloc] init]);
     [snapshotConfiguration setRect:NSMakeRect(0, 0, viewWidth, viewHeight)];
 
-    isDone = false;
+    __block bool isDone = false;
     [webView takeSnapshotWithConfiguration:snapshotConfiguration.get() completionHandler:^(Util::PlatformImage *snapshotImage, NSError *error) {
         EXPECT_NULL(error);
         EXPECT_NOT_NULL(snapshotImage);
@@ -438,7 +437,7 @@ TEST(WKWebView, SnapshotImageLargeAsyncDecoding)
     [snapshotConfiguration setRect:NSMakeRect(0, 0, viewWidth, viewHeight)];
     [snapshotConfiguration setSnapshotWidth:@(viewWidth)];
 
-    isDone = false;
+    __block bool isDone = false;
     [webView takeSnapshotWithConfiguration:snapshotConfiguration.get() completionHandler:^(Util::PlatformImage *snapshotImage, NSError *error) {
         EXPECT_NULL(error);
 
@@ -510,7 +509,7 @@ TEST(WKWebView, SnapshotAfterScreenUpdates)
 
     [webView evaluateJavaScript:@"var div = document.getElementById('change-me');div.style.backgroundColor = 'blue';" completionHandler:nil];
 
-    isDone = false;
+    __block bool isDone = false;
     [webView takeSnapshotWithConfiguration:snapshotConfiguration.get() completionHandler:^(Util::PlatformImage *snapshotImage, NSError *error) {
         EXPECT_NULL(error);
         
@@ -573,7 +572,7 @@ TEST(WKWebView, SnapshotWithoutAfterScreenUpdates)
     
     [webView evaluateJavaScript:@"var div = document.getElementById('change-me');div.style.backgroundColor = 'blue';" completionHandler:nil];
     
-    isDone = false;
+    __block bool isDone = false;
     [webView takeSnapshotWithConfiguration:snapshotConfiguration.get() completionHandler:^(Util::PlatformImage *snapshotImage, NSError *error) {
         EXPECT_NULL(error);
         
@@ -631,7 +630,7 @@ TEST(WKWebView, SnapshotWebGL)
     [snapshotConfiguration setSnapshotWidth:@(viewWidth)];
     [snapshotConfiguration setAfterScreenUpdates:YES];
 
-    isDone = false;
+    __block bool isDone = false;
     [webView takeSnapshotWithConfiguration:snapshotConfiguration.get() completionHandler:^(Util::PlatformImage *snapshotImage, NSError *error) {
         EXPECT_NULL(error);
 
@@ -680,7 +679,7 @@ TEST(WKWebView, SnapshotWithoutSelectionHighlighting)
     RetainPtr<WKSnapshotConfiguration> snapshotConfiguration = adoptNS([[WKSnapshotConfiguration alloc] init]);
     [snapshotConfiguration _setIncludesSelectionHighlighting:NO];
 
-    isDone = false;
+    __block bool isDone = false;
     [webView takeSnapshotWithConfiguration:snapshotConfiguration.get() completionHandler:^(Util::PlatformImage *snapshotImage, NSError *error) {
         EXPECT_NULL(error);
 
@@ -726,7 +725,7 @@ TEST(WKWebView, SnapshotWithContentsRect)
     RetainPtr snapshotConfiguration = adoptNS([[WKSnapshotConfiguration alloc] init]);
     [snapshotConfiguration _setUsesContentsRect:YES];
 
-    isDone = false;
+    __block bool isDone = false;
     [webView takeSnapshotWithConfiguration:snapshotConfiguration.get() completionHandler:^(Util::PlatformImage *snapshotImage, NSError *error) {
         EXPECT_NULL(error);
 
@@ -1005,7 +1004,7 @@ TEST(WKWebView, RemoteSnapshotWithTransform)
     [snapshotConfiguration setRect:NSMakeRect(0, 0, viewWidth, viewHeight)];
     [snapshotConfiguration setSnapshotWidth:@(viewWidth)];
 
-    isDone = false;
+    __block bool isDone = false;
     [webView takeSnapshotWithConfiguration:snapshotConfiguration.get() completionHandler:^(Util::PlatformImage *snapshotImage, NSError *error) {
         EXPECT_NULL(error);
 
@@ -1060,7 +1059,7 @@ TEST(WKWebView, RemoteSnapshotWithContentsRect)
     RetainPtr snapshotConfiguration = adoptNS([[WKSnapshotConfiguration alloc] init]);
     [snapshotConfiguration _setUsesContentsRect:YES];
 
-    isDone = false;
+    __block bool isDone = false;
     [webView takeSnapshotWithConfiguration:snapshotConfiguration.get() completionHandler:^(Util::PlatformImage *snapshotImage, NSError *error) {
         // Before the fix the GPU process crashed here, so the reply never arrived.
         EXPECT_NULL(error);
@@ -1092,7 +1091,7 @@ TEST(WKWebView, RemoteSnapshotSVGImageClipping)
     [snapshotConfiguration setRect:NSMakeRect(0, 0, viewWidth, viewHeight)];
     [snapshotConfiguration setSnapshotWidth:@(viewWidth)];
 
-    isDone = false;
+    __block bool isDone = false;
     [webView takeSnapshotWithConfiguration:snapshotConfiguration.get() completionHandler:^(Util::PlatformImage *snapshotImage, NSError *error) {
         EXPECT_NULL(error);
 
