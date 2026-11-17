@@ -1518,6 +1518,9 @@ void WebProcess::switchFromStaticFontRegistryToUserFontRegistry(Vector<WebKit::S
 void WebProcess::setScreenProperties(WebCore::ScreenProperties&& properties)
 {
 #if HAVE(SUPPORT_HDR_DISPLAY)
+    // Contents formats for testing are only ever set in this process, so the UI process's properties never include them.
+    properties.screenContentsFormatsForTesting = WebCore::PlatformScreen::singleton()->screenContentsFormatsForTesting();
+
     auto propertiesWithStyleAffectingOnly = [](auto properties) {
         for (auto& value : properties.screenDataMap.values()) {
             value.suppressEDR = false;
