@@ -91,7 +91,6 @@ public:
     bool mayNeedYAdjustment() const { return m_needsYAdjustment; }
 
     bool isHidden() const { return m_isHidden; }
-    void setHidden(bool hide) { m_isHidden = hide; }
 
     inline void addScrollSnapshot(const RenderBox& scroller);
     enum Direction : int8_t { Normal = 1, Reverse = -1 };
@@ -237,7 +236,6 @@ private:
     static CheckedPtr<RenderBoxModelObject> findAnchorForAnchorFunctionAndAttemptResolution(BuilderState&, std::optional<ScopedName> elementName);
     static RefPtr<const Element> anchorPositionedElementOrPseudoElement(BuilderState&);
     static void addAnchorFunctionScrollCompensatedAxis(Style::ComputedStyle&, const RenderBox& anchored, const RenderBoxModelObject& anchor, BoxAxis);
-    static LayoutSize scrollOffsetFromAnchor(const RenderBoxModelObject& anchor, const RenderBox& anchored);
 };
 
 } // namespace Style

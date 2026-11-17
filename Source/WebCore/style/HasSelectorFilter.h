@@ -42,8 +42,6 @@ public:
     enum class Type : uint8_t { Children, Descendants };
     HasSelectorFilter(const Element&, Type);
 
-    Type type() const { return m_type; }
-
     using Key = unsigned;
     static Key makeKey(const CSSSelector& hasSelector);
 
@@ -53,7 +51,6 @@ public:
 private:
     void add(const Element&);
 
-    const Type m_type;
     BloomFilter<12> m_filter;
 };
 

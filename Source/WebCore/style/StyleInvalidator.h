@@ -55,7 +55,6 @@ public:
 
     ~Invalidator();
 
-    bool dirtiesAllStyle() const { return m_dirtiesAllStyle; }
     void invalidateStyle(Document&);
     void invalidateStyle(Scope&);
     void invalidateStyle(ShadowRoot&);

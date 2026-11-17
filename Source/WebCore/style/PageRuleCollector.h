@@ -44,7 +44,6 @@ public:
 
 private:
     NODELETE bool isLeftPage(int pageIndex) const;
-    bool isRightPage(int pageIndex) const { return !isLeftPage(pageIndex); }
     NODELETE bool isFirstPage(int pageIndex) const;
     NODELETE WTF::String pageName(int pageIndex) const;
 
