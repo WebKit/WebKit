@@ -2227,7 +2227,7 @@ LayoutUnit RenderGrid::columnAxisOffsetForGridItem(const RenderBox& gridItem, Gr
     auto [startOfRow, endOfRow] = gridAreaPositionForInFlowGridItem(gridItem, Style::GridTrackSizingDirection::Rows);
     LayoutUnit startPosition = startOfRow + marginBeforeForChild(gridItem);
     LayoutUnit columnAxisGridItemSize = GridLayoutFunctions::isOrthogonalGridItem(*this, gridItem) ? gridItem.logicalWidth() + gridItem.marginLogicalWidth() : gridItem.logicalHeight() + gridItem.marginLogicalHeight();
-    LayoutUnit stackingAxisOffset = hasStackingAxisRows() ? gridLanesResult->get().stackingAxisOffsetForGridItem(gridItem) : 0_lu;
+    LayoutUnit stackingAxisOffset = hasStackingAxisRows() ? gridLanesResult->get().stackingAxisAlignmentContainerForGridItem(gridItem).start : 0_lu;
     auto overflow = selfAlignmentForGridItem(gridItem, LogicalBoxAxis::Block).overflow();
     LayoutUnit offsetFromStartPosition = computeOverflowAlignmentOffset(overflow, endOfRow - startOfRow, columnAxisGridItemSize);
     if (GridLayoutFunctions::hasAutoMarginsInColumnAxis(gridItem, writingMode()))
@@ -2250,7 +2250,7 @@ LayoutUnit RenderGrid::rowAxisOffsetForGridItem(const RenderBox& gridItem, GridL
 {
     auto [startOfColumn, endOfColumn] = gridAreaPositionForInFlowGridItem(gridItem, Style::GridTrackSizingDirection::Columns);
     LayoutUnit startPosition = startOfColumn + marginStartForChild(gridItem);
-    LayoutUnit stackingAxisOffset = hasStackingAxisColumns() ? gridLanesResult->get().stackingAxisOffsetForGridItem(gridItem) : 0_lu;
+    LayoutUnit stackingAxisOffset = hasStackingAxisColumns() ? gridLanesResult->get().stackingAxisAlignmentContainerForGridItem(gridItem).start : 0_lu;
     if (GridLayoutFunctions::hasAutoMarginsInRowAxis(gridItem, writingMode()))
         return startPosition;
     LayoutUnit rowAxisGridItemSize = GridLayoutFunctions::isOrthogonalGridItem(*this, gridItem) ? gridItem.logicalHeight() + gridItem.marginLogicalHeight() : gridItem.logicalWidth() + gridItem.marginLogicalWidth();
