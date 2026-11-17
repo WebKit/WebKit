@@ -673,6 +673,7 @@
 				WebKit/WKWebView/WKWebExtensionAPINotifications.swift,
 				WebKit/WKWebView/WKWebExtensionAPIOffscreen.swift,
 				WebKit/WKWebView/WKWebExtensionAPIPermissions.swift,
+				WebKit/WKWebView/WKWebExtensionAPIRuntime.swift,
 				WebKit/WKWebView/WKWebExtensionAPIScripting.swift,
 				WebKit/WKWebView/WKWebExtensionAPIStorage.swift,
 				WebKit/WKWebView/WKWebExtensionAPITabs.swift,

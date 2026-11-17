@@ -883,6 +883,7 @@ list(APPEND TestWebKit_SOURCES
     Tests/WebKit/WKWebView/WKWebExtensionAPINotifications.swift
     Tests/WebKit/WKWebView/WKWebExtensionAPIOffscreen.swift
     Tests/WebKit/WKWebView/WKWebExtensionAPIPermissions.swift
+    Tests/WebKit/WKWebView/WKWebExtensionAPIRuntime.swift
     Tests/WebKit/WKWebView/WKWebExtensionAPIScripting.swift
     Tests/WebKit/WKWebView/WKWebExtensionAPIStorage.swift
     Tests/WebKit/WKWebView/WKWebExtensionAPITabs.swift
