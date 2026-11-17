@@ -104,6 +104,11 @@ WEBKIT_COPY_FILES(WebGPU_CopyPrivateHeaders
     FILES ${WebGPU_PRIVATE_FRAMEWORK_HEADERS}
     FLATTENED
 )
+# WebGPU_Private.modulemap's umbrella is PrivateHeaders.
+WEBKIT_ADD_UMBRELLA_INVALIDATION_HEADER(WebGPU_CopyPrivateHeaders
+    DESTINATION ${WebGPU_PRIVATE_HEADERS_DIR}
+    FILES ${WebGPU_PRIVATE_FRAMEWORK_HEADERS}
+)
 
 # Stage the module maps into the bundle so the Swift clang importer finds WebGPU
 # and WebGPU_Private via -F. WEBKIT_COPY_FILES cannot rename, so these need the

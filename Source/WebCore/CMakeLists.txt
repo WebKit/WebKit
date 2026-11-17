@@ -3380,6 +3380,13 @@ WEBKIT_SYMLINK_FILES(WebCore_CopyPrivateHeaders
     FILES ${WebCore_PRIVATE_FRAMEWORK_HEADERS}
     FLATTENED
 )
+if (APPLE)
+    # WebCore_Private.modulemap's umbrella is PrivateHeaders.
+    WEBKIT_ADD_UMBRELLA_INVALIDATION_HEADER(WebCore_CopyPrivateHeaders
+        DESTINATION ${WebCore_PRIVATE_HEADERS_DIR}
+        FILES ${WebCore_PRIVATE_FRAMEWORK_HEADERS}
+    )
+endif ()
 if (NOT USE_HEADER_MAPS)
     list(APPEND WebCore_INTERFACE_DEPENDENCIES WebCore_CopyPrivateHeaders)
     if (ENABLE_WEBCORE_TEST_SUPPORT)

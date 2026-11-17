@@ -305,7 +305,6 @@ list(APPEND JavaScriptCore_PUBLIC_FRAMEWORK_HEADERS
 list(APPEND JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     API/MARReportCrashPrivate.h
     API/PASReportCrashPrivate.h
-    API/WorkAround173516139.h
 
     assembler/MacroAssemblerPrinter.h
 

@@ -1858,6 +1858,13 @@ WEBKIT_SYMLINK_FILES(JavaScriptCore_CopyPrivateHeaders
     FILES ${JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS}
     FLATTENED
 )
+if (APPLE)
+    # JavaScriptCore_Private.modulemap's umbrella is PrivateHeaders.
+    WEBKIT_ADD_UMBRELLA_INVALIDATION_HEADER(JavaScriptCore_CopyPrivateHeaders
+        DESTINATION ${JavaScriptCore_PRIVATE_HEADERS_DIR}
+        FILES ${JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS}
+    )
+endif ()
 
 add_dependencies(JavaScriptCore_CopyPrivateHeaders Bytecodes JSCBuiltins JSCWebPreferenceOptions)
 
