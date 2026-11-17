@@ -93,9 +93,6 @@ public:
     FontFaceSet& fontFaceSet();
     CSSFontFaceSet& cssFontFaceSet() { return m_cssFontFaceSet; }
 
-    void incrementIsComputingRootStyleFont() { ++m_computingRootStyleFontCount; }
-    void decrementIsComputingRootStyleFont() { --m_computingRootStyleFontCount; }
-
     void loadPendingFonts();
 
     void updateStyleIfNeeded();
@@ -150,7 +147,6 @@ private:
 
     unsigned m_uniqueId;
     unsigned m_version;
-    unsigned m_computingRootStyleFontCount { 0 };
     bool m_creatingFont { false };
     bool m_buildIsUnderway { false };
     bool m_isStopped { false };

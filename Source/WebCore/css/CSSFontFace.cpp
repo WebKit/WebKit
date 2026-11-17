@@ -856,13 +856,6 @@ void CSSFontFace::updateStyleIfNeeded()
     });
 }
 
-bool CSSFontFace::hasSVGFontFaceSource() const
-{
-    return m_sources.containsIf([](auto& source) {
-        return protect(*source)->isSVGFontFaceSource();
-    });
-}
-
 bool CSSFontFace::supportsSVGVariantCaps(FontVariantCaps variantCaps) const
 {
     return std::ranges::all_of(m_sources, [&](auto& source) {

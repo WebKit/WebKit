@@ -439,11 +439,6 @@ String CSSCounterStyleDescriptors::Symbol::cssText() const
     return builder.toString();
 }
 
-String CSSCounterStyleDescriptors::nameCSSText() const
-{
-    return m_name;
-}
-
 String CSSCounterStyleDescriptors::systemCSSText() const
 {
     if (!m_explicitlySetDescriptors.contains(ExplicitlySetDescriptors::System))

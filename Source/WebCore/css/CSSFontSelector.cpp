@@ -440,7 +440,7 @@ static const MathFontList& mathFontList()
 FontRanges CSSFontSelector::fontRangesForFamily(const FontDescription& fontDescription, const FontFamily& fontFamily)
 {
     // If this ASSERT() fires, it usually means you forgot a document.updateStyleIfNeeded() somewhere.
-    ASSERT(!m_buildIsUnderway || m_computingRootStyleFontCount);
+    ASSERT(!m_buildIsUnderway);
 
     const auto& familyName = fontFamily.name;
 

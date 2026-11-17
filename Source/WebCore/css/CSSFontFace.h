@@ -162,7 +162,6 @@ public:
 
     void updateStyleIfNeeded();
 
-    bool hasSVGFontFaceSource() const;
     bool supportsSVGVariantCaps(FontVariantCaps) const;
     void setErrorState();
 

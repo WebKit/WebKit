@@ -30,21 +30,6 @@
 
 namespace WebCore {
 
-inline std::optional<FontSelectionValue> fontWeightValue(CSSValueID value)
-{
-    switch (value) {
-    case CSSValueID::Normal:
-        return normalWeightValue();
-    case CSSValueID::Bold:
-    case CSSValueID::Bolder:
-        return boldWeightValue();
-    case CSSValueID::Lighter:
-        return lightWeightValue();
-    default:
-        return std::nullopt;
-    }
-}
-
 inline std::optional<CSSValueID> fontWidthKeyword(FontSelectionValue width)
 {
     if (width == ultraCondensedWidthValue())
@@ -101,11 +86,6 @@ inline std::optional<CSSValueID> fontStyleKeyword(std::optional<FontSelectionVal
     if (style && style.value() == italicValue())
         return axis == FontStyleAxis::ital ? CSSValueID::Italic : CSSValueID::Oblique;
     return std::nullopt;
-}
-
-inline FontSelectionValue normalizedFontItalicValue(float inputValue)
-{
-    return FontSelectionValue { std::clamp(inputValue, -90.0f, 90.0f) };
 }
 
 }
