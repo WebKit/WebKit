@@ -96,7 +96,6 @@ public:
     void resetOriginAccessAllowLists();
     void setAsynchronousSpellCheckingEnabled(bool);
     int numberOfPages(WebFrame*, double, double);
-    int pageNumberForElementById(WebFrame*, const String&, double, double);
     String pageSizeAndMarginsInPixels(WebFrame*, int, int, int, int, int, int, int);
     bool isPageBoxVisible(WebFrame*, int);
     void setUserStyleSheetLocation(const String&);

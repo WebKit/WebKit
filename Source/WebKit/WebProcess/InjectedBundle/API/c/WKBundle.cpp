@@ -156,11 +156,6 @@ int WKBundleNumberOfPages(WKBundleRef bundleRef, WKBundleFrameRef frameRef, doub
     return protect(WebKit::toImpl(bundleRef))->numberOfPages(protect(WebKit::toImpl(frameRef)).get(), pageWidthInPixels, pageHeightInPixels);
 }
 
-int WKBundlePageNumberForElementById(WKBundleRef bundleRef, WKBundleFrameRef frameRef, WKStringRef idRef, double pageWidthInPixels, double pageHeightInPixels)
-{
-    return protect(WebKit::toImpl(bundleRef))->pageNumberForElementById(protect(WebKit::toImpl(frameRef)).get(), WebKit::toWTFString(idRef), pageWidthInPixels, pageHeightInPixels);
-}
-
 WKStringRef WKBundlePageSizeAndMarginsInPixels(WKBundleRef bundleRef, WKBundleFrameRef frameRef, int pageIndex, int width, int height, int marginTop, int marginRight, int marginBottom, int marginLeft)
 {
     return WebKit::toCopiedAPI(protect(WebKit::toImpl(bundleRef))->pageSizeAndMarginsInPixels(protect(WebKit::toImpl(frameRef)).get(), pageIndex, width, height, marginTop, marginRight, marginBottom, marginLeft));
