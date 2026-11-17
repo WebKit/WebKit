@@ -46,7 +46,6 @@ class MutableStyleProperties;
 namespace Style {
 
 class Builder;
-class ComputedStyle;
 class CustomProperty;
 class LocalPropertyRegistry;
 

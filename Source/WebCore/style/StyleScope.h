@@ -61,7 +61,6 @@ class ProcessingInstruction;
 class RenderBoxModelObject;
 class StyleSheet;
 class StyleSheetContents;
-class StyleSheetList;
 class ShadowRoot;
 class TreeScope;
 class WeakPtrImplWithEventTargetData;

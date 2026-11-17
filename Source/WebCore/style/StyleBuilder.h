@@ -35,7 +35,6 @@ class CSSCustomPropertyValue;
 class CSSVariableData;
 enum class CSSWideKeyword : uint8_t;
 struct CSSCustomPropertySyntax;
-struct CSSRegisteredCustomProperty;
 
 namespace Style {
 

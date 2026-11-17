@@ -37,7 +37,6 @@ class Document;
 class Element;
 class EventTarget;
 class SVGElement;
-class Settings;
 
 enum class AnimationImpact : uint8_t;
 enum class PaginationMode : uint8_t;

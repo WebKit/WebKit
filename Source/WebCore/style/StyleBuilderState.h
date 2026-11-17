@@ -44,8 +44,6 @@
 namespace WebCore {
 
 class FontCascadeDescription;
-class FontSelectionValue;
-class StyleResolver;
 struct CSSRegisteredCustomProperty;
 
 namespace CSSCalc {
@@ -57,7 +55,6 @@ namespace Style {
 class BuilderStatePropertyScope;
 class BuilderState;
 class Builder;
-class CustomPropertyRegistry;
 class Image;
 class Scope;
 struct Color;

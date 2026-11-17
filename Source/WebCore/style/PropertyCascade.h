@@ -34,9 +34,6 @@
 #include <wtf/ValueOrReference.h>
 
 namespace WebCore {
-
-class StyleResolver;
-
 namespace Style {
 
 class PropertyCascade {

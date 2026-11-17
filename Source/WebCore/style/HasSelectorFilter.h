@@ -34,8 +34,6 @@ class Element;
 
 namespace Style {
 
-struct MatchElement;
-
 class HasSelectorFilter {
     WTF_MAKE_TZONE_ALLOCATED(HasSelectorFilter);
 public:

@@ -45,7 +45,6 @@ namespace WebCore {
 
 class Document;
 class Element;
-class Node;
 class ShadowRoot;
 
 namespace Style {

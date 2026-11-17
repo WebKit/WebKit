@@ -32,7 +32,6 @@
 
 namespace WebCore {
 
-class CSSPrimitiveValue;
 class CSSStyleDeclaration;
 class CSSValue;
 class CSSValuePool;

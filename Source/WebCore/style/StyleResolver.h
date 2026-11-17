@@ -46,19 +46,11 @@ class BlendingKeyframes;
 class CSSStyleSheet;
 class Document;
 class Element;
-class RuleData;
-class RuleSet;
-class SelectorFilter;
 class Settings;
 class StyleRuleKeyframe;
-class StyleProperties;
 class StyleRule;
 class StyleRuleKeyframes;
-class StyleRulePage;
-class StyleSheet;
-class StyleSheetList;
 class TimingFunction;
-class ViewportStyleResolver;
 
 enum class RuleMatchingBehavior: uint8_t {
     MatchAllRules,

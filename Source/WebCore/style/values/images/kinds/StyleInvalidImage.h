@@ -30,8 +30,6 @@
 
 namespace WebCore {
 
-class CSSInvalidImageValue;
-
 namespace Style {
 
 class InvalidImage final : public GeneratedImage {
