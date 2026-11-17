@@ -1589,6 +1589,11 @@ bool TestRunner::didLoadNonAppInitiatedRequest()
     return postSynchronousPageMessageReturningBoolean("DidLoadNonAppInitiatedRequest");
 }
 
+bool TestRunner::isDisplayCaptureCapabilityActive()
+{
+    return postSynchronousPageMessageReturningBoolean("IsDisplayCaptureCapabilityActive");
+}
+
 void TestRunner::setIsSpeechRecognitionPermissionGranted(bool granted)
 {
     postSynchronousPageMessage("SetIsSpeechRecognitionPermissionGranted", granted);

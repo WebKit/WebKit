@@ -50,6 +50,10 @@
 #include "WebPhoneNumberPossessionCoordinatorProxy.h"
 #endif
 
+#if ENABLE(EXTENSION_CAPABILITIES)
+#include "MediaCapability.h"
+#endif
+
 namespace WebKit {
 using namespace WebCore;
 
@@ -269,6 +273,15 @@ void WebPageProxyTesting::setIndexOfGetDisplayMediaDeviceSelectedForTesting(std:
 void WebPageProxyTesting::setSystemCanPromptForGetDisplayMediaForTesting(bool canPrompt)
 {
     DisplayCaptureSessionManager::singleton().setSystemCanPromptForTesting(canPrompt);
+}
+#endif
+
+#if ENABLE(EXTENSION_CAPABILITIES)
+bool WebPageProxyTesting::isDisplayCaptureCapabilityActive() const
+{
+    Ref page = m_page;
+    RefPtr capability = page->displayCaptureCapability();
+    return capability && capability->isActivatingOrActive();
 }
 #endif
 
