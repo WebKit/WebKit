@@ -196,6 +196,19 @@ BorderBoxPositions GridLayout::performSelfAlignment(const PlacedGridItems& place
         auto& gridItem = placedGridItems[gridItemIndex];
 
         auto& [marginStart, marginEnd] = usedMargins[gridItemIndex];
+
+        // https://drafts.csswg.org/css-grid-1/#auto-margins
+        // "As defined for the inline axis of block layout (see CSS2§10.3.3), auto margins in either axis absorb
+        // positive free space prior to alignment via the box alignment properties, thereby disabling the effects
+        // of any self-alignment properties in that axis."
+        auto& axisSizes = alignmentAxis == LogicalBoxAxis::Inline ? gridItem.inlineAxisSizes() : gridItem.blockAxisSizes();
+        if (GridLayoutUtils::hasAutoMarginsForAxis(axisSizes)) {
+            // Set border box position using marginStart.
+            borderBoxPositions.append(marginStart);
+            // Skip alignment.
+            continue;
+        }
+
         auto marginBoxSize = marginStart + borderBoxSizes[gridItemIndex] + marginEnd;
         auto remainingSpace = gridAreaSizes[gridItemIndex] - marginBoxSize;
 

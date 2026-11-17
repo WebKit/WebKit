@@ -204,6 +204,11 @@ UsedMargins usedMarginsForAlignment(const PlacedGridItem& gridItem, const Comput
     return UsedMargins { usedMarginForAlignment(axisSizes.marginStart), usedMarginForAlignment(axisSizes.marginEnd) };
 }
 
+bool hasAutoMarginsForAxis(const ComputedSizes& axisSizes)
+{
+    return axisSizes.marginStart.isAuto() || axisSizes.marginEnd.isAuto();
+}
+
 // https://drafts.csswg.org/css-sizing-4/#aspect-ratio
 std::optional<double> preferredAspectRatio(const ElementBox& gridItem)
 {
@@ -1224,6 +1229,13 @@ Vector<BaselineSharingGroup> baselineSharingGroups(const PlacedGridItems& gridIt
         auto& alignment = alignmentAxis == LogicalBoxAxis::Inline ? gridItem.inlineAxisAlignment() : gridItem.blockAxisAlignment();
         auto position = alignment.position();
         if (position != ItemPosition::Baseline && position != ItemPosition::LastBaseline)
+            continue;
+
+        // https://drafts.csswg.org/css-grid-1/#auto-margins
+        // "As defined for the inline axis of block layout (see CSS2§10.3.3), auto margins in either axis absorb
+        // positive free space prior to alignment via the box alignment properties, thereby disabling the effects
+        // of any self-alignment properties in that axis."
+        if (hasAutoMarginsForAxis(alignmentAxis == LogicalBoxAxis::Inline ? gridItem.inlineAxisSizes() : gridItem.blockAxisSizes()))
             continue;
 
         // FIXME: Items whose size depends on an intrinsically-sized track do not participate in
