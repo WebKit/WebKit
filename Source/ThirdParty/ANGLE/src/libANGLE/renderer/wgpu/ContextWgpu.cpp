@@ -1256,11 +1256,15 @@ angle::Result ContextWgpu::setupDraw(const gl::Context *context,
     {
         VertexArrayWgpu *vertexArrayWgpu = GetImplAs<VertexArrayWgpu>(mState.getVertexArray());
         // Pass in original indexTypeOrInvalid into syncClientArrays because the method will need to
-        // determine if the original draw call was a DrawElements or DrawArrays call.
+        // determine if the original draw call was a DrawElements or DrawArrays call. Primitive
+        // restart applies only to DrawElements calls.
+        const bool primitiveRestartEnabled =
+            mState.isPrimitiveRestartEnabled() &&
+            indexTypeOrInvalid != gl::DrawElementsType::InvalidEnum;
         ANGLE_TRY(vertexArrayWgpu->syncClientArrays(
             context, mState.getProgramExecutable()->getActiveAttribLocationsMask(), mode,
             firstVertexOrInvalid, vertexOrIndexCount, instanceCount, indexTypeOrInvalid, indices,
-            baseVertex, mState.isPrimitiveRestartEnabled(), &adjustedIndicesPtr, indexCountOut));
+            baseVertex, primitiveRestartEnabled, &adjustedIndicesPtr, indexCountOut));
     }
 
     bool reAddDirtyIndexBufferBit = false;
