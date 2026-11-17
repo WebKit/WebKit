@@ -3587,7 +3587,7 @@ Awaitable<std::optional<WebCore::FrameIdentifier>> WebPage::commitPotentialTap(s
                 return;
         }
 #endif // HAVE(APPKIT_GESTURES_SUPPORT)
-        commitPotentialTapFailed();
+        commitPotentialTapFailed(localRootFrame.get());
     };
 
     if (invalidTargetForSingleClick) {
@@ -3622,7 +3622,7 @@ Awaitable<std::optional<WebCore::FrameIdentifier>> WebPage::commitPotentialTap(s
     if (firstTransactionID
         && lastLayerTreeTransactionId.processIdentifier() == firstTransactionID->processIdentifier()
         && lastLayerTreeTransactionId.lessThanSameProcess(*firstTransactionID)) {
-        commitPotentialTapFailed();
+        commitPotentialTapFailed(localRootFrame.get());
         co_return std::nullopt;
     }
 
@@ -3634,7 +3634,7 @@ Awaitable<std::optional<WebCore::FrameIdentifier>> WebPage::commitPotentialTap(s
     bool syntheticClickMayBeHandledAsDoubleClick = m_potentialTapInputSource == WebCore::MouseEventInputSource::Touch;
 
     if (m_potentialTapNode != nodeRespondingToClick)
-        commitPotentialTapFailed();
+        commitPotentialTapFailed(localRootFrame.get());
     else if (completesDoubleClick == CompletesDoubleClick::Yes && syntheticClickMayBeHandledAsDoubleClick && respondsToDoubleClick()) {
         dispatchDeferredSyntheticClickIfNeeded();
         completeSyntheticClick(frameID, *nodeRespondingToClick, adjustedPoint, modifiers, WebCore::SyntheticClickType::OneFingerTap, pointerId, 2);
@@ -3916,7 +3916,7 @@ void WebPage::invokePendingSyntheticClickCallback(SyntheticClickResult result)
         callback(result);
 }
 
-void WebPage::commitPotentialTapFailed()
+void WebPage::commitPotentialTapFailed(LocalFrame* localRootFrame)
 {
 #if HAVE(APPKIT_GESTURES_SUPPORT)
     m_lastSyntheticMousePressPreventedSelection = false;
@@ -3935,7 +3935,14 @@ void WebPage::commitPotentialTapFailed()
     invokePendingSyntheticClickCallback(SyntheticClickResult::Failed);
 
     send(Messages::WebPageProxy::CommitPotentialTapFailed());
-    send(Messages::WebPageProxy::DidNotHandleTapAsClick(roundedIntPoint(m_potentialTapLocation)));
+    sendDidNotHandleTapAsClick(localRootFrame, m_potentialTapLocation);
+}
+
+void WebPage::sendDidNotHandleTapAsClick(LocalFrame* localRootFrame, FloatPoint pointInLocalRootView)
+{
+    RefPtr localRootView = localRootFrame ? localRootFrame->view() : nullptr;
+    auto pointInMainFrameView = localRootView ? localRootView->convertToRootViewAcrossIsolatedFrames(pointInLocalRootView) : pointInLocalRootView;
+    send(Messages::WebPageProxy::DidNotHandleTapAsClick(roundedIntPoint(pointInMainFrameView)));
 }
 
 void WebPage::completeSyntheticClick(std::optional<WebCore::FrameIdentifier> frameID, Node& nodeRespondingToClick, const WebCore::FloatPoint& location, OptionSet<WebEventModifier> modifiers, SyntheticClickType syntheticClickType, WebCore::PointerID pointerId, int clickCount)
@@ -4067,7 +4074,7 @@ void WebPage::completeSyntheticClick(std::optional<WebCore::FrameIdentifier> fra
     invokePendingSyntheticClickCallback(SyntheticClickResult::Click);
 
     if ((!handledPress && !handledRelease) || !nodeRespondingToClick.isElementNode())
-        send(Messages::WebPageProxy::DidNotHandleTapAsClick(roundedIntPoint(location)));
+        sendDidNotHandleTapAsClick(localRootFrame.get(), location);
 
 #if PLATFORM(IOS_FAMILY)
     flushPendingFocusedElementUpdateIfNeeded();

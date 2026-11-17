@@ -53,6 +53,10 @@
 @property (nonatomic, copy) void (^insertInputSuggestion)(WKWebView *, UIInputSuggestion *);
 #endif
 
+#if PLATFORM(IOS_FAMILY)
+@property (nonatomic, copy) void (^didNotHandleTapAsClickAtPoint)(WKWebView *, CGPoint);
+#endif
+
 #if ENABLE(DEVICE_ORIENTATION) && PLATFORM(IOS_FAMILY)
 @property (nonatomic, copy) void (^requestDeviceOrientationAndMotionPermissionForOrigin)(WKSecurityOrigin *, WKFrameInfo *, void(^)(WKPermissionDecision));
 #endif

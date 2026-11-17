@@ -964,7 +964,6 @@ void WebPage::attemptSyntheticClick(std::optional<FrameIdentifier> frameID, cons
     completionHandler(std::nullopt);
 
     RefPtr frameRespondingToClick = nodeRespondingToClick ? nodeRespondingToClick->document().frame() : nullptr;
-    IntPoint adjustedIntPoint = roundedIntPoint(adjustedPoint);
 
     bool didNotHandleTapAsClick = !frameRespondingToClick;
     if (frameRespondingToClick) {
@@ -976,7 +975,7 @@ void WebPage::attemptSyntheticClick(std::optional<FrameIdentifier> frameID, cons
     }
 
     if (didNotHandleTapAsClick)
-        send(Messages::WebPageProxy::DidNotHandleTapAsClick(adjustedIntPoint));
+        sendDidNotHandleTapAsClick(localRootFrame.get(), adjustedPoint);
     else if (m_interactionNode == nodeRespondingToClick)
         completeSyntheticClick(frameID, *nodeRespondingToClick, adjustedPoint, modifiers, WebCore::SyntheticClickType::OneFingerTap);
     else
@@ -1165,7 +1164,7 @@ void WebPage::handleTwoFingerTapAtPoint(std::optional<WebCore::FrameIdentifier> 
     completionHandler(std::nullopt);
 
     if (!nodeRespondingToClick || !nodeRespondingToClick->renderer()) {
-        send(Messages::WebPageProxy::DidNotHandleTapAsClick(roundedIntPoint(adjustedPoint)));
+        sendDidNotHandleTapAsClick(localRootFrame.get(), adjustedPoint);
         return;
     }
     sendTapHighlightForNodeIfNecessary(requestID, nodeRespondingToClick, point);

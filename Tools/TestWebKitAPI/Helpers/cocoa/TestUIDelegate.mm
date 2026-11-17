@@ -170,6 +170,16 @@
 
 #endif
 
+#if PLATFORM(IOS_FAMILY)
+
+- (void)_webView:(WKWebView *)webView didNotHandleTapAsClickAtPoint:(CGPoint)point
+{
+    if (_didNotHandleTapAsClickAtPoint)
+        _didNotHandleTapAsClickAtPoint(webView, point);
+}
+
+#endif
+
 #if ENABLE(DEVICE_ORIENTATION) && PLATFORM(IOS_FAMILY)
 
 - (void)webView:(WKWebView *)webView requestDeviceOrientationAndMotionPermissionForOrigin:(WKSecurityOrigin *)origin initiatedByFrame:(WKFrameInfo *)requestingFrame decisionHandler:(void (^)(WKPermissionDecision))decisionHandler

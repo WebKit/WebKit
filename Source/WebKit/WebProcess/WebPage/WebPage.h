@@ -1192,7 +1192,7 @@ public:
     Awaitable<std::optional<WebCore::FrameIdentifier>> commitPotentialTap(std::optional<WebCore::FrameIdentifier>, OptionSet<WebKit::WebEventModifier>, TransactionID lastLayerTreeTransactionId, WebCore::PointerID, CompletesDoubleClick);
     void cancelPotentialTap();
     void cancelPotentialTapInFrame(WebFrame&);
-    void commitPotentialTapFailed();
+    void commitPotentialTapFailed(WebCore::LocalFrame* localRootFrame);
     void didHandleTapAsHover(WebCore::Node& nodeRespondingToClick);
 #if HAVE(APPKIT_GESTURES_SUPPORT)
     bool isHoverActivatedByClick(const WebCore::Node& hitNode, const WebCore::IntPoint& locationInRootView) const;
@@ -2525,6 +2525,7 @@ private:
 
 #if ENABLE(TWO_PHASE_CLICKS)
     void dispatchDeferredSyntheticClickIfNeeded();
+    void sendDidNotHandleTapAsClick(WebCore::LocalFrame* localRootFrame, WebCore::FloatPoint pointInLocalRootView);
 #endif
 
     void cancelPointer(WebCore::PointerID, const WebCore::IntPoint&);

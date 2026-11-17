@@ -2176,6 +2176,37 @@ TEST(SiteIsolation, OpenElementActionOnLinkInCrossOriginIframe)
     EXPECT_FALSE(targetsMainFrame);
 }
 
+// When a tap in a cross-origin iframe isn't handled as a click, clients are told where it was, in the main frame's
+// coordinates. The iframe's process only knows the point relative to the iframe, so it has to convert it.
+TEST(SiteIsolation, OpenElementActionOnNothingClickableInCrossOriginIframeReportsMainFramePoint)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { mainFrameWithPositionedCrossOriginIframe } },
+        { "/iframe"_s, { "<body style='margin: 0'><div style='width: 400px; height: 300px;'></div></body>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server, CGRectMake(0, 0, 800, 600));
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    [webView waitForNextPresentationUpdate];
+
+    __block bool didReportPoint = false;
+    __block CGPoint reportedPoint = CGPointZero;
+    RetainPtr uiDelegate = adoptNS([TestUIDelegate new]);
+    [uiDelegate setDidNotHandleTapAsClickAtPoint:^(WKWebView *, CGPoint point) {
+        reportedPoint = point;
+        didReportPoint = true;
+    }];
+    [webView setUIDelegate:uiDelegate.get()];
+
+    // The iframe covers (100, 100) to (500, 400).
+    [webView _simulateElementAction:_WKElementActionTypeOpen atLocation:CGPointMake(300, 250)];
+
+    ASSERT_TRUE(Util::runFor(&didReportPoint, 5_s));
+    EXPECT_EQ(300, reportedPoint.x);
+    EXPECT_EQ(250, reportedPoint.y);
+}
+
 #endif // PLATFORM(IOS_FAMILY)
 
 #if PLATFORM(MAC)
