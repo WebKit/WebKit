@@ -1,0 +1,16 @@
+
+PASS Element of a document with a scoped registry, adopted into a document with a global registry
+PASS Element in a document with a scoped registry, whose parent is adopted into a document with a global registry
+PASS Element parsed into a shadow root with a scoped registry, whose host is adopted into a document with a global registry
+PASS Element created with the scoped registry of the shadow root it is appended to, whose host is adopted into a document with a global registry
+PASS Element of a document with a scoped registry, adopted into a document with a scoped registry
+PASS Element in a document with a scoped registry, whose parent is adopted into a document with a scoped registry
+PASS Element parsed into a shadow root with a scoped registry, whose host is adopted into a document with a scoped registry
+PASS Element created with the scoped registry of the shadow root it is appended to, whose host is adopted into a document with a scoped registry
+PASS Element of a document with a scoped registry, adopted into a document without a registry
+PASS Element in a document with a scoped registry, whose parent is adopted into a document without a registry
+PASS Element parsed into a shadow root with a scoped registry, whose host is adopted into a document without a registry
+PASS Element created with the scoped registry of the shadow root it is appended to, whose host is adopted into a document without a registry
+PASS Element of a document with a scoped registry, appended to a shadow root with another scoped registry in a document with a global registry
+PASS Element with the global registry, appended to a shadow root with a scoped registry in a document with a scoped registry
+

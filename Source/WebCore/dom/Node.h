@@ -845,8 +845,8 @@ private:
     static unsigned moveShadowTreeToNewDocumentFastCase(ShadowRoot&, Document& oldDocument, Document& newDocument);
     static void moveShadowTreeToNewDocumentSlowCase(ShadowRoot&, Document& oldDocument, Document& newDocument);
     static void moveTreeToNewScope(Node&, TreeScope& oldScope, TreeScope& newScope);
-    void moveNodeToNewDocumentFastCase(Document& oldDocument, Document& newDocument);
-    void moveNodeToNewDocumentSlowCase(Document& oldDocument, Document& newDocument);
+    void moveNodeToNewDocumentFastCase(Document& oldDocument, Document& newDocument, CustomElementRegistry* scopedRegistryOfOldTreeScope);
+    void moveNodeToNewDocumentSlowCase(Document& oldDocument, Document& newDocument, CustomElementRegistry* scopedRegistryOfOldTreeScope);
 
     WEBCORE_EXPORT void notifyInspectorOfRendererChange();
 

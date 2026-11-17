@@ -89,9 +89,7 @@ ShadowRoot::ShadowRoot(Document& document, ShadowRootMode mode, SlotAssignmentMo
     setEventTargetFlag(EventTargetFlag::IsInShadowTree);
     if (m_mode == ShadowRootMode::UserAgent)
         setEventTargetFlag(EventTargetFlag::HasBeenInUserAgentShadowTree);
-    else if (customElementRegistry())
-        resetCustomElementRegistryType(); // Unset flag potentially set by DocumentFragment constructor
-    else
+    else if (!customElementRegistry())
         setUsesNullCustomElementRegistry();
 }
 

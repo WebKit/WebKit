@@ -1657,17 +1657,13 @@ NODELETE static ALWAYS_INLINE NameValidation::ElementNameKind classifyUnknownEle
     return NameValidation::classifyElementName(name.localName());
 }
 
-static ALWAYS_INLINE Ref<HTMLElement> createUpgradeCandidateElement(Document& document, CustomElementRegistry* registry, const QualifiedName& name, NameValidation::ElementNameKind kind)
+static ALWAYS_INLINE Ref<HTMLElement> createUpgradeCandidateElement(Document& document, const QualifiedName& name, NameValidation::ElementNameKind kind)
 {
     // HTMLTagNames.in lists builtin SVG/MathML elements with "-" in their names explicitly as HTMLUnknownElement.
     ASSERT(NameValidation::validateCustomElementName(name.localName()) != CustomElementNameValidationStatus::ConflictsWithStandardElementName);
 
-    if (kind != NameValidation::ElementNameKind::CustomElementName) {
-        Ref element = HTMLUnknownElement::create(name, document);
-        if (!registry && document.usesNullCustomElementRegistry())
-            element->setUsesNullCustomElementRegistry();
-        return element;
-    }
+    if (kind != NameValidation::ElementNameKind::CustomElementName)
+        return HTMLUnknownElement::create(name, document);
 
     Ref element = HTMLMaybeFormAssociatedCustomElement::create(name, document);
     element->setIsCustomElementUpgradeCandidate();
@@ -1675,9 +1671,9 @@ static ALWAYS_INLINE Ref<HTMLElement> createUpgradeCandidateElement(Document& do
     return element;
 }
 
-static ALWAYS_INLINE Ref<HTMLElement> createUpgradeCandidateElement(Document& document, CustomElementRegistry* registry, const AtomString& localName, NameValidation::ElementNameKind kind)
+static ALWAYS_INLINE Ref<HTMLElement> createUpgradeCandidateElement(Document& document, const AtomString& localName, NameValidation::ElementNameKind kind)
 {
-    return createUpgradeCandidateElement(document, registry, QualifiedName { nullAtom(), localName, xhtmlNamespaceURI }, kind);
+    return createUpgradeCandidateElement(document, QualifiedName { nullAtom(), localName, xhtmlNamespaceURI }, kind);
 }
 
 template<typename NameType>
@@ -1699,14 +1695,14 @@ static ExceptionOr<Ref<Element>> createHTMLElementWithNameValidation(Document& d
     if (kind == NameValidation::ElementNameKind::Invalid) [[unlikely]]
         return Exception { ExceptionCode::InvalidCharacterError };
 
-    return Ref<Element> { createUpgradeCandidateElement(document, registry, name, kind) };
+    return Ref<Element> { createUpgradeCandidateElement(document, name, kind) };
 }
 
 ExceptionOr<Ref<Element>> Document::createElementForBindings(const AtomString& name, Variant<String, ElementCreationOptions>&& argument)
 {
     Ref document = *this;
     RefPtr<CustomElementRegistry> registry;
-    bool shouldUseNullRegistry = usesNullCustomElementRegistry();
+    bool shouldUseNullRegistry = false;
     if (auto* options = std::get_if<ElementCreationOptions>(&argument)) {
         auto optionalRegistry = options->customElementRegistry;
         if (optionalRegistry) [[unlikely]] {
@@ -1875,7 +1871,7 @@ static Ref<HTMLElement> createFallbackHTMLElement(Document& document, CustomElem
             return element;
         }
     }
-    return createUpgradeCandidateElement(document, registry, name, classifyUnknownElementName(name));
+    return createUpgradeCandidateElement(document, name, classifyUnknownElementName(name));
 }
 
 // FIXME: This should really be in a possible ElementFactory class.
@@ -1903,9 +1899,6 @@ Ref<Element> Document::createElement(const QualifiedName& name, bool createdByPa
     if (registry && registry->isScoped()) [[unlikely]]
         CustomElementRegistry::addToScopedCustomElementRegistryMap(*element, *registry);
 
-    if (!registry && usesNullCustomElementRegistry())
-        element->setUsesNullCustomElementRegistry();
-
     // <image> uses imgTag so we need a special rule.
     ASSERT((name.matches(imageTag) && element->tagQName().matches(imgTag) && element->tagQName().prefix() == name.prefix()) || name == element->tagQName());
 
@@ -1923,7 +1916,7 @@ ExceptionOr<Ref<Element>> Document::createElementNS(const AtomString& namespaceU
 {
     Ref document = *this;
     RefPtr<CustomElementRegistry> registry;
-    bool shouldUseNullRegistry = usesNullCustomElementRegistry();
+    bool shouldUseNullRegistry = false;
     if (auto* options = std::get_if<ElementCreationOptions>(&argument)) {
         auto optionalRegistry = options->customElementRegistry;
         if (optionalRegistry) [[unlikely]] {

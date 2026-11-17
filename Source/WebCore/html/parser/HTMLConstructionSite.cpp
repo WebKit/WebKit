@@ -911,7 +911,7 @@ std::tuple<RefPtr<HTMLElement>, RefPtr<JSCustomElementInterface>, RefPtr<CustomE
         }
     }
     ASSERT(element);
-    if (!registry && containerForCurrentNode().usesNullCustomElementRegistry())
+    if (!registry && ownerDocument->customElementRegistry() && containerForCurrentNode().usesNullCustomElementRegistry())
         element->setUsesNullCustomElementRegistry();
     if (registry && registry->isScoped() && registry != treeScope->customElementRegistry()) [[unlikely]]
         CustomElementRegistry::addToScopedCustomElementRegistryMap(*element, *registry);

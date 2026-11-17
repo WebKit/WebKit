@@ -225,9 +225,10 @@ ExceptionOr<void> CustomElementRegistry::initialize(Node& root)
 
     RefPtr registryOfTreeScope = root.isInTreeScope() ? root.treeScope().customElementRegistry() : nullptr;
     auto updateRegistryIfNeeded = [&](Element& element) {
-        if (!element.usesNullCustomElementRegistry())
+        if (element.usesNullCustomElementRegistry())
+            element.resetCustomElementRegistryType();
+        else if (registryForElement(element))
             return;
-        element.resetCustomElementRegistryType();
         if (this != registryOfTreeScope) {
             if (isScoped())
                 addToScopedCustomElementRegistryMap(element, *this);

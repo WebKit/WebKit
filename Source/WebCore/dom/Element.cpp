@@ -772,7 +772,7 @@ Ref<Element> Element::cloneElementWithoutChildren(Document& document, CustomElem
     RefPtr registry = CustomElementRegistry::registryForElement(*this);
     if (!registry)
         registry = fallbackRegistry;
-    if (registry && !registry->isScoped())
+    if (registry && !registry->isScoped() && registry != document.customElementRegistry())
         registry = document.effectiveGlobalCustomElementRegistry();
 
     Ref clone = cloneElementWithoutAttributesAndChildren(document, registry.get());
@@ -783,7 +783,7 @@ Ref<Element> Element::cloneElementWithoutChildren(Document& document, CustomElem
 
     clone->cloneDataFromElement(*this);
 
-    if (usesNullCustomElementRegistry() && !registry)
+    if (!registry && document.customElementRegistry())
         clone->setUsesNullCustomElementRegistry();
 
     return clone;
@@ -3263,7 +3263,7 @@ static void preserveCustomElementRegistryAfterEnteringTreeScope(Element& element
                 CustomElementRegistry::addToScopedCustomElementRegistryMap(element, *registry);
             } else
                 element.setUsesGlobalCustomElementRegistry();
-        } else
+        } else if (element.usesGlobalCustomElementRegistry())
             element.resetCustomElementRegistryType();
     }
 }
@@ -6422,7 +6422,7 @@ static ExceptionOr<Ref<Element>> contextElementForInsertion(const String& where,
     RefPtr contextElement = dynamicDowncast<Element>(contextNode.get());
     if (!contextElement || (contextNode->document().isHTMLDocument() && is<HTMLHtmlElement>(contextNode.get()))) {
         Ref bodyElement = HTMLBodyElement::create(protect(contextNode->document()));
-        if (contextNode->usesNullCustomElementRegistry())
+        if (contextNode->usesNullCustomElementRegistry() && contextNode->document().customElementRegistry())
             bodyElement->setUsesNullCustomElementRegistry();
         return Ref<Element> { WTF::move(bodyElement) };
     }
