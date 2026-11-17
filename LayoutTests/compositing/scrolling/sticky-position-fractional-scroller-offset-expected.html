@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+    body { margin: 0; }
+    .bar { height: 78px; background: #333; }
+    .sticky { height: 40px; background: red; }
+</style>
+<script>
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+window.addEventListener("load", () => {
+    if (window.testRunner)
+        testRunner.setBackingScaleFactor(2, () => testRunner.notifyDone());
+});
+</script>
+</head>
+<body>
+<div class="bar"></div>
+<div class="sticky"></div>
+</body>
+</html>

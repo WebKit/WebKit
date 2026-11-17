@@ -1,0 +1,35 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="match" href="sticky-position-fractional-scroller-offset-expected.html">
+<style>
+    body { margin: 0; }
+    .bar { height: 77.78px; background: #333; }
+    .scroller { height: 400px; overflow-y: auto; scrollbar-width: none; }
+    .sticky { position: sticky; top: 0; height: 40px; background: red; }
+    .block { height: 300px; margin: 300px 0 900px; background: white; }
+</style>
+<script>
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+function run()
+{
+    document.getElementById("scroller").scrollTop = 370;
+    requestAnimationFrame(() => setTimeout(() => testRunner.notifyDone(), 0));
+}
+
+window.addEventListener("load", () => {
+    if (window.testRunner)
+        testRunner.setBackingScaleFactor(2, run);
+    else
+        run();
+});
+</script>
+</head>
+<body>
+<div class="bar"></div>
+<div class="scroller" id="scroller"><div class="sticky"></div><div class="block"></div></div>
+</body>
+</html>
