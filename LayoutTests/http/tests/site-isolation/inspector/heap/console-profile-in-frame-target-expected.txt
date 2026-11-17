@@ -1,0 +1,23 @@
+Test that under Site Isolation, console.profile() in a cross-origin iframe starts Heap tracking on the iframe's frame target when JavaScript Allocations is enabled, and that console.profileEnd() or the frontend stops it once.
+
+
+
+== Running test suite: SiteIsolation.Heap.ConsoleProfileInFrameTarget
+-- Running test case: SiteIsolation.Heap.ConsoleProfileInFrameTarget.CrossOriginFrame
+PASS: Capturing is active.
+PASS: The iframe's target started Heap.
+PASS: The iframe's first tracking snapshot should include the iframe's marker.
+PASS: The iframe's first tracking snapshot should not include the main frame's marker.
+PASS: Capturing stopped.
+PASS: The iframe's target should report that Heap stopped.
+PASS: The iframe's last tracking snapshot should include the iframe's marker.
+PASS: The iframe's target should report that Heap stopped once.
+
+-- Running test case: SiteIsolation.Heap.ConsoleProfileInFrameTarget.StoppedByFrontend
+PASS: Capturing is active.
+PASS: The iframe's target started Heap.
+PASS: Capturing stopped.
+PASS: The iframe's target should report that Heap stopped.
+PASS: The iframe's last tracking snapshot should include the iframe's marker.
+PASS: The iframe's target should report that Heap stopped once.
+

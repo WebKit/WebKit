@@ -520,10 +520,11 @@ function test()
 
     suite.addTestCase({
         name: "Timeline.MultipleTargets.RestartedByBackendWithoutStartingWithBusyWorker",
-        description: "Check that a capture that the backend restarts while active, and that waits only for a busy Worker, stops once that Worker is removed, since the busy Worker never reports that it stopped.",
+        description: "Check that a capture that the backend restarts while active, and for which the frontend starts no domain on other targets, stops once a busy Worker that has not stopped the previous capture is removed, since the busy Worker never reports that it stopped.",
         async test() {
-            // Like the previous test case, but JavaScript Allocations also starts Heap on Workers, and not on frame
-            // targets (FIXME: <https://webkit.org/b/298984>), so the restarted capture waits only for the busy Worker.
+            // Like the previous test case, but the capture that the frontend starts also starts Heap on Workers, and
+            // not on frame targets (FIXME: <https://webkit.org/b/298984>). An auto-capture starts Heap on no other
+            // target, so the restarted capture waits only for the busy Worker to stop the previous capture.
             let originalTimelineTypes = WI.timelineManager.enabledTimelineTypes;
             setTimelineTypes([WI.TimelineRecord.Type.CPU, WI.TimelineRecord.Type.HeapAllocations]);
 

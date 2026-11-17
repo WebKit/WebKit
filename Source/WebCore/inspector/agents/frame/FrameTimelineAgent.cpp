@@ -85,10 +85,11 @@ void FrameTimelineAgent::internalStop()
 bool FrameTimelineAgent::shouldToggleInstrument(Inspector::Protocol::Timeline::Instrument instrument) const
 {
     // CPU stays off: its data covers the whole process, so the frontend picks which target in a process tracks it.
-    // Frame targets do not have the domains of the other instruments yet, so their getters would reach the page's agents.
-    // FIXME: <https://webkit.org/b/331558> Also toggle Heap, which frame targets have.
+    // Frame targets do not have the Memory domain yet, and Animation tracking stays on the page target, so the
+    // getters of those instruments would reach the page's agents.
     return instrument == Inspector::Protocol::Timeline::Instrument::Timeline
-        || instrument == Inspector::Protocol::Timeline::Instrument::ScriptProfiler;
+        || instrument == Inspector::Protocol::Timeline::Instrument::ScriptProfiler
+        || instrument == Inspector::Protocol::Timeline::Instrument::Heap;
 }
 
 void FrameTimelineAgent::willInvalidateLayout(const RenderObject& renderer)
