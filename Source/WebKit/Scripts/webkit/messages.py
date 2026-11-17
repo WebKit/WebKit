@@ -1398,6 +1398,7 @@ def class_template_headers(template_string):
         'Ref': {'headers': ['<wtf/Ref.h>'], 'argument_coder_headers': ['"ArgumentCoders.h"']},
         'RefPtr': {'headers': ['<wtf/RefCounted.h>'], 'argument_coder_headers': ['"ArgumentCoders.h"']},
         'RetainPtr': {'headers': ['<wtf/RetainPtr.h>'], 'argument_coder_headers': []},
+        'UniqueRef': {'headers': ['<wtf/UniqueRef.h>'], 'argument_coder_headers': ['"ArgumentCoders.h"']},
         'WebCore::ProcessQualified': {'headers': ['<WebCore/ProcessQualified.h>'], 'argument_coder_headers': ['"ArgumentCoders.h"']},
         'std::unique_ptr': {'headers': ['<memory>'], 'argument_coder_headers': ['"ArgumentCoders.h"']},
         'FixedVector': {'headers': ['<wtf/FixedVector.h>'], 'argument_coder_headers': ['"ArgumentCoders.h"']},

@@ -110,14 +110,28 @@ bool RemoteLayerTreeContext::canShowWhileLocked() const
 }
 #endif
 
+static RemoteLayerTreeTransaction::LayerCreationProperties creationProperties(const RemoteLayerTreeContext& context, PlatformCALayerRemote& layer, PlatformCALayer::LayerType type, HTMLVideoElement* videoElement)
+{
+    RemoteLayerTreeTransaction::LayerCreationProperties creationProperties;
+    layer.populateCreationProperties(creationProperties, context, type);
+
+    if (videoElement) {
+        ASSERT(!creationProperties.videoElementData);
+        creationProperties.videoElementData = RemoteLayerTreeTransaction::LayerCreationProperties::VideoElementData {
+            videoElement->identifier(),
+            videoElement->videoLayerSize(),
+            videoElement->naturalSize()
+        };
+    }
+
+    return creationProperties;
+}
+
 void RemoteLayerTreeContext::layerDidEnterContext(PlatformCALayerRemote& layer, PlatformCALayer::LayerType type)
 {
     PlatformLayerIdentifier layerID = layer.layerID();
 
-    RemoteLayerTreeTransaction::LayerCreationProperties creationProperties;
-    layer.populateCreationProperties(creationProperties, *this, type);
-
-    m_createdLayers.add(layerID, WTF::move(creationProperties));
+    m_createdLayers.add(layerID, creationProperties(*this, layer, type, nullptr));
     m_livePlatformLayers.add(layerID, &layer);
 }
 
@@ -130,19 +144,12 @@ void RemoteLayerTreeContext::layerDidEnterContext(PlatformCALayerRemote& layer, 
     layer.setSendRightAnnotated(videoElement.layerHostingContext().sendRightAnnotated);
 #endif
 
-    RemoteLayerTreeTransaction::LayerCreationProperties creationProperties;
-    layer.populateCreationProperties(creationProperties, *this, type);
-    ASSERT(!creationProperties.videoElementData);
-    creationProperties.videoElementData = RemoteLayerTreeTransaction::LayerCreationProperties::VideoElementData {
-        videoElement.identifier(),
-        videoElement.videoLayerSize(),
-        videoElement.naturalSize()
-    };
+    auto properties = creationProperties(*this, layer, type, &videoElement);
 
     protect(protect(webPage())->videoPresentationManager())->setupRemoteLayerHosting(videoElement);
     m_videoLayers.add(layerID, videoElement.identifier());
 
-    m_createdLayers.add(layerID, WTF::move(creationProperties));
+    m_createdLayers.add(layerID, WTF::move(properties));
     m_livePlatformLayers.add(layerID, &layer);
 }
 
@@ -219,6 +226,48 @@ void RemoteLayerTreeContext::buildTransaction(RemoteLayerTreeTransaction& transa
 
     transaction.setCreatedLayers(moveToVector(std::exchange(m_createdLayers, { }).values()));
     transaction.setDestroyedLayerIDs(WTF::move(m_destroyedLayers));
+}
+
+RemoteLayerTreeContext::FullStateEncodingScope::FullStateEncodingScope(RemoteLayerTreeContext& context)
+{
+    // Let's not send backing store, the UI process will copy content from the primary layer tree.
+    constexpr OptionSet<LayerChange> propertiesNotSent { LayerChange::BackingStoreChanged };
+
+    m_layers.reserveInitialCapacity(context.m_livePlatformLayers.size());
+    for (auto& weakLayer : context.m_livePlatformLayers.values()) {
+        RefPtr layer = weakLayer;
+        if (!layer || context.m_createdLayers.contains(layer->layerID()))
+            continue;
+
+        // Let's send every modified property by marking them as changed for the lifetime of FullStateEncodingScope.
+        layer->updateChildrenPropertyIfNeeded();
+        auto originalChangedProperties = layer->properties().changedProperties;
+        layer->properties().changedProperties = layer->properties().everChangedProperties - propertiesNotSent;
+        m_layers.append({ layer.releaseNonNull(), originalChangedProperties });
+    }
+}
+
+RemoteLayerTreeContext::FullStateEncodingScope::~FullStateEncodingScope()
+{
+    for (auto& [layer, originalChangedProperties] : borrow(m_layers))
+        layer->properties().changedProperties = originalChangedProperties;
+}
+
+UniqueRef<RemoteLayerTreeTransaction> RemoteLayerTreeContext::FullStateEncodingScope::buildLayersTransaction(RemoteLayerTreeContext& context) const
+{
+    auto transaction = makeUniqueRef<RemoteLayerTreeTransaction>();
+    transaction->setCreatedLayers(WTF::map(m_layers, [&](auto& layerAndOriginalChanges) {
+        auto& layer = layerAndOriginalChanges.first;
+        RefPtr videoElement = context.videoElementForLayer(layer->layerID());
+        return creationProperties(context, layer, layer->layerType(), videoElement);
+    }));
+
+    for (auto& [layer, originalChanges] : borrow(m_layers)) {
+        if (layer->sendsPropertiesToUIProcess())
+            transaction->layerPropertiesChanged(layer);
+    }
+
+    return transaction;
 }
 
 void RemoteLayerTreeContext::layerPropertyChangedWhileBuildingTransaction(PlatformCALayerRemote& layer)

@@ -58,6 +58,17 @@ void RemoteLayerTreeTransaction::setRootLayerID(WebCore::PlatformLayerIdentifier
     m_rootLayerID = rootLayerID;
 }
 
+void RemoteLayerTreeTransaction::copyRootStateFrom(const RemoteLayerTreeTransaction& other)
+{
+    m_rootLayerID = other.m_rootLayerID;
+    m_remoteContextHostedIdentifier = other.m_remoteContextHostedIdentifier;
+    m_contentsSize = other.m_contentsSize;
+    m_scrollGeometryContentSize = other.m_scrollGeometryContentSize;
+    m_scrollOrigin = other.m_scrollOrigin;
+    m_scrollPosition = other.m_scrollPosition;
+    // No need to copy m_timelinesUpdate: timelines are registered with the page-wide drawing area, not per layer tree.
+}
+
 void RemoteLayerTreeTransaction::layerPropertiesChanged(PlatformCALayerRemote& remoteLayer)
 {
     ASSERT(isInWebProcess());

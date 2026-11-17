@@ -360,8 +360,9 @@ void RemoteLayerTreeDrawingAreaProxy::notifyFlushingLayerTree(IPC::Connection& c
     }
 }
 
-void RemoteLayerTreeDrawingAreaProxy::commitLayerTree(IPC::Connection& connection, const RemoteLayerTreeCommitBundle& bundle, HashMap<ImageBufferSetIdentifier, std::unique_ptr<BufferSetBackendHandle>>&& handlesMap)
+void RemoteLayerTreeDrawingAreaProxy::commitLayerTree(IPC::Connection& connection, const RemoteLayerTreeCommitBundle& bundle, RemoteLayerTreeFullState&&, HashMap<ImageBufferSetIdentifier, std::unique_ptr<BufferSetBackendHandle>>&& handlesMap)
 {
+    // FIXME: If not empty, use RemoteLayerTreeFullState to create a mirror of the layer tree.
     {
         ProcessState& state = processStateForConnection(connection);
         LOG_WITH_STREAM(RemoteLayerTree, stream << "RemoteLayerTreeDrawingAreaProxy::commitLayerTree old state: " << state.pendingCommits);

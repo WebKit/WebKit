@@ -291,6 +291,9 @@ public:
     std::optional<WTF::MachSendRightAnnotated> sendRightAnnotated() const { return m_sendRightAnnotated; }
 #endif
 
+    void updateChildrenPropertyIfNeeded();
+    bool sendsPropertiesToUIProcess() const;
+
 protected:
     PlatformCALayerRemote(WebCore::PlatformCALayer::LayerType, WebCore::PlatformCALayerClient* owner, RemoteLayerTreeContext&);
     PlatformCALayerRemote(const PlatformCALayerRemote&, WebCore::PlatformCALayerClient*, RemoteLayerTreeContext&);

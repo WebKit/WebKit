@@ -109,6 +109,8 @@ public:
     virtual void acceleratedAnimationDidEnd(WebCore::PlatformLayerIdentifier, const String& /*key*/) { }
     virtual void addFence(const WTF::MachSendRight&) { }
 
+    virtual void buildFullLayerTreeState() { }
+
     virtual WebCore::FloatRect exposedContentRect() const = 0;
     virtual void setExposedContentRect(const WebCore::FloatRect&) = 0;
 #endif
