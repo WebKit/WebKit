@@ -45,9 +45,9 @@ bool tryToDisassemble(const CodePtr<DisassemblyPtrTag>& codePtr, size_t size, vo
     uint32_t* armCodeEnd = std::bit_cast<uint32_t*>(codeEnd);
     A64DOpcode arm64Opcode(armCodeStart, armCodeEnd);
 
-    unsigned pcOffset = (currentPC - armCodeStart) * sizeof(uint32_t);
+    unsigned pcOffset = codeStart ? (currentPC - armCodeStart) * sizeof(uint32_t) : 0;
     char pcInfo[25];
-    while (byteCount) {
+    while (byteCount >= sizeof(uint32_t)) {
         if (codeStart)
             snprintf(pcInfo, sizeof(pcInfo) - 1, "<%u> %#llx", pcOffset, static_cast<unsigned long long>(std::bit_cast<uintptr_t>(currentPC)));
         else

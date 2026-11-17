@@ -81,7 +81,7 @@ public:
     template<PtrTag otherTag>
     MacroAssemblerCodeRef& operator=(const MacroAssemblerCodeRef<otherTag>& otherCodeRef)
     {
-        m_codePtr = CodePtr<tag>::fromTaggedPtr(otherCodeRef.code().template retaggedPtr<tag>());
+        m_codePtr = otherCodeRef.template retaggedCode<tag>();
         m_executableMemory = otherCodeRef.m_executableMemory;
         return *this;
     }

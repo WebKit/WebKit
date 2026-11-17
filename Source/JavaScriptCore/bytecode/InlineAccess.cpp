@@ -148,8 +148,7 @@ void InlineAccess::dumpCacheSizesAndCrash()
 ALWAYS_INLINE static bool linkCodeInline(ASCIILiteral name, CCallHelpers& jit, RepatchingPropertyInlineCache& propertyCache)
 {
     if (jit.m_assembler.buffer().codeSize() <= propertyCache.inlineCodeSize()) {
-        bool needsBranchCompaction = true;
-        LinkBuffer linkBuffer(jit, propertyCache.startLocation, propertyCache.inlineCodeSize(), LinkBuffer::Profile::InlineCache, JITCompilationMustSucceed, needsBranchCompaction);
+        LinkBuffer linkBuffer(jit, propertyCache.startLocation, propertyCache.inlineCodeSize(), LinkBuffer::Profile::InlineCache, JITCompilationMustSucceed);
         ASSERT(linkBuffer.isValid());
         FINALIZE_CODE(linkBuffer, NoPtrTag, name, "InlineAccessType: '%s'", name.characters());
         return true;

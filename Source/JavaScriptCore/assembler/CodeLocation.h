@@ -71,9 +71,9 @@ public:
 
     template<typename T>
         requires (std::is_base_of_v<CodeLocationCommon<tag>, T>)
-    operator T()
+    operator T() const
     {
-        return T(CodePtr<tag>::fromTaggedPtr(this->taggedPtr()));
+        return T(static_cast<const CodePtr<tag>&>(*this));
     }
 
 protected:

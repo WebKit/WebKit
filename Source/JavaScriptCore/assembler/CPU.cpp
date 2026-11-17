@@ -152,11 +152,11 @@ static std::optional<CoreCategory> categoryFromPerfLevelName(unsigned level)
 
 // Fallback for a level whose name is missing or unfamiliar. The slowest level always holds the
 // efficiency cores, and only a chip reporting all three levels has Super cores.
-static CoreCategory categoryFromPerfLevelIndex(unsigned level, unsigned lastLevel)
+static CoreCategory categoryFromPerfLevelRank(unsigned rank, unsigned count)
 {
-    if (lastLevel && level == lastLevel)
+    if (count > 1 && rank == count - 1)
         return CoreCategory::Efficiency;
-    if (lastLevel > 1 && !level)
+    if (count > 2 && !rank)
         return CoreCategory::Super;
     return CoreCategory::Performance;
 }
@@ -169,7 +169,7 @@ int32_t hwNumberOfCores(CoreCategory category)
         constexpr unsigned maxLevelCount = perfLevelSysctls.size();
         std::array<int32_t, maxLevelCount> coresPerLevel { };
         std::array<std::optional<CoreCategory>, maxLevelCount> categoryPerLevel { };
-        unsigned lastLevel = 0;
+        unsigned populatedCount = 0;
         // A level this chip does not have simply fails to answer, so ask about every level rather
         // than assuming the ones that answer are contiguous.
         for (unsigned level = 0; level < maxLevelCount; ++level) {
@@ -178,13 +178,15 @@ int32_t hwNumberOfCores(CoreCategory category)
                 continue;
             coresPerLevel[level] = cores;
             categoryPerLevel[level] = categoryFromPerfLevelName(level);
-            lastLevel = level;
+            ++populatedCount;
         }
+        unsigned populatedRank = 0;
         for (unsigned level = 0; level < maxLevelCount; ++level) {
             if (coresPerLevel[level] <= 0)
                 continue;
-            CoreCategory levelCategory = categoryPerLevel[level].value_or(categoryFromPerfLevelIndex(level, lastLevel));
+            CoreCategory levelCategory = categoryPerLevel[level].value_or(categoryFromPerfLevelRank(populatedRank, populatedCount));
             coresPerCategory[static_cast<unsigned>(levelCategory)] += coresPerLevel[level];
+            ++populatedRank;
         }
     });
     return coresPerCategory[static_cast<unsigned>(category)];
