@@ -3023,11 +3023,6 @@ static inline const RenderLayer* accumulateOffsetTowardsAncestor(const RenderLay
     const auto& renderer = layer->renderer();
     auto position = renderer.style().position();
 
-    // FIXME: Positioning of out-of-flow(fixed, absolute) elements collected in a RenderFragmentedFlow
-    // may need to be revisited in a future patch.
-    // If the fixed renderer is inside a RenderFragmentedFlow, we should not compute location using localToAbsolute,
-    // since localToAbsolute maps the coordinates from named flow to regions coordinates and regions can be
-    // positioned in a completely different place in the viewport (RenderView).
     if (position == PositionType::Fixed && (!ancestorLayer || ancestorLayer == renderer.view().layer())) {
         // If the fixed layer's container is the root, just add in the offset of the view. We can obtain this by calling
         // localToAbsolute() on the RenderView.
@@ -3035,9 +3030,6 @@ static inline const RenderLayer* accumulateOffsetTowardsAncestor(const RenderLay
         return ancestorLayer;
     }
 
-    // For the fixed positioned elements inside a render flow thread, we should also skip the code path below
-    // Otherwise, for the case of ancestorLayer == rootLayer and fixed positioned element child of a transformed
-    // element in render flow thread, we will hit the fixed positioned container before hitting the ancestor layer.
     if (position == PositionType::Fixed) {
         // For a fixed layers, we need to walk up to the root to see if there's a fixed position container
         // (e.g. a transformed layer). It's an error to call offsetFromAncestor() across a layer with a transform,
@@ -3070,27 +3062,12 @@ static inline const RenderLayer* accumulateOffsetTowardsAncestor(const RenderLay
         }
     }
 
-    if (position == PositionType::Fixed) {
-        ASSERT(ancestorLayer);
-        if (ancestorLayer == renderer.view().layer()) {
-            // Add location in flow thread coordinates.
-            location.moveBy(layer->location());
-
-            // Add flow thread offset in view coordinates since the view may be scrolled.
-            location.moveBy(LayoutPoint(renderer.view().localToAbsolute({ }, MapCoordinatesMode::IsFixed)));
-            return ancestorLayer;
-        }
-    }
-
     RenderLayer* parentLayer;
     if (position == PositionType::Absolute || position == PositionType::Fixed) {
         // Do what enclosingAncestorForPosition() does, but check for ancestorLayer along the way.
         parentLayer = layer->parent();
         bool foundAncestorFirst = false;
         while (parentLayer) {
-            // RenderFragmentedFlow is a positioned container, child of RenderView, positioned at (0,0).
-            // This implies that, for out-of-flow positioned elements inside a RenderFragmentedFlow,
-            // we are bailing out before reaching root layer.
             if (isContainerForPositioned(*parentLayer, position, layer->establishesTopLayer()))
                 break;
 
@@ -3102,8 +3079,8 @@ static inline const RenderLayer* accumulateOffsetTowardsAncestor(const RenderLay
             parentLayer = parentLayer->parent();
         }
 
-        // We should not reach RenderView layer past the RenderFragmentedFlow layer for any
-        // children of the RenderFragmentedFlow.
+        // enclosingFragmentedFlow() follows the containing block chain, so a box inside a fragmented flow
+        // has its containing block inside the flow, and the walk stops before the RenderView layer.
         if (renderer.enclosingFragmentedFlow())
             ASSERT(parentLayer != renderer.view().layer());
 
@@ -4496,7 +4473,6 @@ void RenderLayer::paintBackgroundForFragments(const LayerFragments& layerFragmen
         clipToRect(context, stateSaver, regionContextStateSaver, localPaintingInfo, paintBehavior, fragment.dirtyBackgroundRect(), DoNotIncludeSelfForBorderRadius); // Background painting will handle clipping to self.
 
         // Paint the background.
-        // FIXME: Eventually we will collect the region from the fragment itself instead of just from the paint info.
         PaintInfo paintInfo(context, fragment.dirtyBackgroundRect().rect(), PaintPhase::BlockBackground, paintBehavior, subtreePaintRootForRenderer, nullptr, nullptr, &localPaintingInfo.rootLayer->renderer(), this);
         paintContentForRenderer(paintInfo, paintOffsetForRenderer(fragment, localPaintingInfo));
     }
@@ -4621,7 +4597,6 @@ void RenderLayer::paintMaskForFragments(const LayerFragments& layerFragments, Gr
         clipToRect(context, stateSaver, regionContextStateSaver, localPaintingInfo, paintBehavior, fragment.dirtyBackgroundRect(), DoNotIncludeSelfForBorderRadius); // Mask painting will handle clipping to self.
 
         // Paint the mask.
-        // FIXME: Eventually we will collect the region from the fragment itself instead of just from the paint info.
         PaintInfo paintInfo(context, fragment.dirtyBackgroundRect().rect(), PaintPhase::Mask, paintBehavior, subtreePaintRootForRenderer, nullptr, nullptr, &localPaintingInfo.rootLayer->renderer(), this);
         paintContentForRenderer(paintInfo, paintOffsetForRenderer(fragment, localPaintingInfo));
     }
@@ -5647,8 +5622,6 @@ ClipRect RenderLayer::calculateBackgroundRect(const ClipRectsContext& clipRectsC
     // If we establish a clip at all, then make sure our background rect is intersected with our layer's bounds including our visual overflow,
     // since any visual overflow like box-shadow or border-outset is not clipped by overflow:auto/hidden.
     if (rendererHasVisualOverflow()) {
-        // FIXME: Does not do the right thing with CSS regions yet, since we don't yet factor in the
-        // individual region boxes as overflow.
         auto layerBoundsWithVisualOverflow = rendererVisualOverflowRect();
         if (renderer().isRenderBox())
             renderBox()->blockStartRelativeToPhysical(layerBoundsWithVisualOverflow); // Layers are in physical coordinates, so the overflow has to be converted.
@@ -5660,7 +5633,7 @@ ClipRect RenderLayer::calculateBackgroundRect(const ClipRectsContext& clipRectsC
 
     auto bounds = rendererBorderBoxRect();
 
-    // Shift the bounds to be for our region only.
+    // Shift the bounds into the root layer's coordinate space.
     bounds.move(offsetFromRoot);
     backgroundRect.intersect(bounds);
     return backgroundRect;
@@ -5705,7 +5678,6 @@ LayerFragment::Rects RenderLayer::calculateRects(const ClipRectsContext& clipRec
 LayoutRect RenderLayer::childrenClipRect() const
 {
     // FIXME: border-radius not accounted for.
-    // FIXME: Regions not accounted for.
     RenderLayer* clippingRootLayer = clippingRootForPainting();
     ClipRectsContext clipRectsContext(clippingRootLayer, PaintingClipRects, { ClipRectsOption::Temporary });
     // Need to use temporary clip rects, because the value of 'dontClipToOverflow' may be different from the painting path (<rdar://problem/11844909>).
@@ -5730,7 +5702,6 @@ LayoutRect RenderLayer::clipRectRelativeToAncestor(const RenderLayer* ancestor, 
 LayoutRect RenderLayer::selfClipRect() const
 {
     // FIXME: border-radius not accounted for.
-    // FIXME: Regions not accounted for.
     RenderLayer* clippingRootLayer = clippingRootForPainting();
     LayoutRect clipRect = clipRectRelativeToAncestor(clippingRootLayer, offsetFromAncestor(clippingRootLayer), renderer().view().documentRect());
     return clippingRootLayer->renderer().localToAbsoluteQuad(FloatQuad(clipRect)).enclosingBoundingBox();
@@ -5970,7 +5941,6 @@ LayoutRect RenderLayer::calculateLayerBounds(const RenderLayer* ancestorLayer, c
             return infiniteRect;
 
         // FIXME: border-radius not accounted for.
-        // FIXME: Regions not accounted for.
         const RenderLayer* clippingRootLayer = flags & UseLocalClipRectExcludingCompositingIfPossible ? this : clippingRootForPainting();
         LayoutSize offsetFromRoot = offsetFromAncestor(clippingRootLayer);
         LayoutRect clipRect = clipRectRelativeToAncestor(clippingRootLayer, offsetFromRoot, infiniteRect);

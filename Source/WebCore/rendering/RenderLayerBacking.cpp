@@ -1273,7 +1273,7 @@ bool RenderLayerBacking::updateCompositedBounds()
                 clippingBounds.intersect(clipsSampledByFilters);
             }
 
-            auto backgroundClipRect = owningLayer->backgroundClipRect(RenderLayer::ClipRectsContext(rootLayer, AbsoluteClipRects)).rect(); // FIXME: Incorrect for CSS regions.
+            auto backgroundClipRect = owningLayer->backgroundClipRect(RenderLayer::ClipRectsContext(rootLayer, AbsoluteClipRects)).rect();
             expandClipRectByFilterSamplingOutsets(backgroundClipRect, outsetsForFilters);
             clippingBounds.intersect(backgroundClipRect);
         }

@@ -427,7 +427,7 @@ public:
 
     void outputRenderObject(WTF::TextStream&, bool mark, int depth) const;
     void outputRenderSubTreeAndMark(WTF::TextStream&, const RenderObject* markedObject, int depth) const;
-    void outputRegionsInformation(WTF::TextStream&) const;
+    void outputFragmentInformation(WTF::TextStream&) const;
 #endif
 
     inline bool isPseudoElement() const; // Defined in RenderObjectNode.h

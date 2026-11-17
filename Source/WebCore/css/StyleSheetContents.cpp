@@ -64,7 +64,7 @@ unsigned StyleSheetContents::estimatedSizeInBytes() const
     // The assumption is that nearly all of of them are atoms that would exist anyway.
     unsigned size = sizeof(*this);
 
-    // FIXME: This ignores the children of media and region rules.
+    // FIXME: This ignores the children of grouping rules like @media, @supports, @layer and @container.
     // Most rules are StyleRules.
     size += ruleCount() * StyleRule::averageSizeInBytes();
 

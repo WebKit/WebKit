@@ -2773,7 +2773,7 @@ LayoutRect RenderLayerCompositor::computeClippedOverlapBounds(LayerOverlapMap& o
         if (!clipRect.isInfinite())
             clipRect.setLocation(scopeLayer->convertToLayerCoords(&rootRenderLayer(), clipRect.location()));
     } else
-        clipRect = layer.backgroundClipRect(RenderLayer::ClipRectsContext(&rootRenderLayer(), AbsoluteClipRects)).rect(); // FIXME: Incorrect for CSS regions.
+        clipRect = layer.backgroundClipRect(RenderLayer::ClipRectsContext(&rootRenderLayer(), AbsoluteClipRects)).rect();
 
     auto clippedBounds = extent.bounds;
     if (!clipRect.isInfinite()) {
@@ -3389,8 +3389,8 @@ bool RenderLayerCompositor::canBeComposited(const RenderLayer& layer) const
         if (!layer.isInsideFragmentedFlow())
             return true;
 
-        // CSS Regions flow threads do not need to be composited as we use composited RenderFragmentContainers
-        // to render the background of the RenderFragmentedFlow.
+        // The multi-column flow is painted column by column through layer fragments, so it can't be
+        // represented by a single composited layer.
         if (layer.isRenderFragmentedFlow())
             return false;
 
@@ -3711,7 +3711,7 @@ bool RenderLayerCompositor::clippedByAncestor(RenderLayer& layer, const RenderLa
     }
 
     auto backgroundClipRect = layer.backgroundClipRect(RenderLayer::ClipRectsContext(computeClipRoot, PaintingClipRects, RenderLayer::clipRectTemporaryOptions));
-    return !backgroundClipRect.isInfinite(); // FIXME: Incorrect for CSS regions.
+    return !backgroundClipRect.isInfinite();
 }
 
 bool RenderLayerCompositor::updateAncestorClippingStack(const RenderLayer& layer, const RenderLayer* compositingAncestor) const

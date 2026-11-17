@@ -290,10 +290,8 @@ void RenderTable::updateLogicalWidth()
 
         // Subtract out our margins to get the available content width.
         LayoutUnit availableContentLogicalWidth = std::max<LayoutUnit>(0, containerWidthInInlineDirection - marginTotal);
-        if (CheckedPtr block = dynamicDowncast<RenderBlock>(containingBlock); block && shrinkToAvoidFloats() && block->containsFloats() && !hasPerpendicularContainingBlock) {
-            // FIXME: Work with regions someday.
+        if (CheckedPtr block = dynamicDowncast<RenderBlock>(containingBlock); block && shrinkToAvoidFloats() && block->containsFloats() && !hasPerpendicularContainingBlock)
             availableContentLogicalWidth = shrinkLogicalWidthToAvoidFloats(marginStart, marginEnd, *block);
-        }
 
         // Ensure we aren't bigger than our available width.
         LayoutUnit maxWidth = maxContentLogicalWidthContribution();

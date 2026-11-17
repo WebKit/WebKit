@@ -554,15 +554,12 @@ LayoutPoint RenderBoxModelObject::adjustedPositionRelativeToOffsetParent(const L
             else if (isStickilyPositioned())
                 referencePoint.move(stickyPositionOffset());
             
-            // CSS regions specification says that region flows should return the body element as their offsetParent.
-            // Since we will bypass the body’s renderer anyway, just end the loop if we encounter a region flow (named flow thread).
-            // See http://dev.w3.org/csswg/css-regions/#cssomview-offset-attributes
             auto* ancestor = parent();
             while (ancestor != offsetParent) {
                 // FIXME: What are we supposed to do inside SVG content?
                 
                 if (auto* renderMultiColumnFlow = dynamicDowncast<RenderMultiColumnFlow>(*ancestor)) {
-                    // We need to apply a translation based off what region we are inside.
+                    // Translate from the flow into the column the point falls in.
                     if (auto* fragment = renderMultiColumnFlow->physicalTranslationFromFlowToFragment(referencePoint))
                         referencePoint.moveBy(fragment->topLeftLocation());
                 } else if (!isOutOfFlowPositioned()) {

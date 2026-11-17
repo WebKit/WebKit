@@ -553,7 +553,7 @@ void RenderDeprecatedFlexibleBox::layoutHorizontalBox(RelayoutChildren relayoutC
             if (child->isOutOfFlowPositioned()) {
                 child->containingBlock()->addOutOfFlowBox(*child);
                 CheckedPtr childLayer = child->layer();
-                childLayer->setStaticInlinePosition(xPos); // FIXME: Not right for regions.
+                childLayer->setStaticInlinePosition(xPos);
                 if (childLayer->staticBlockPosition() != yPos) {
                     childLayer->setStaticBlockPosition(yPos);
                     if (child->style().hasStaticBlockPosition(writingMode().isHorizontal()))
@@ -824,7 +824,7 @@ void RenderDeprecatedFlexibleBox::layoutVerticalBox(RelayoutChildren relayoutChi
             if (child->isOutOfFlowPositioned()) {
                 child->containingBlock()->addOutOfFlowBox(*child);
                 CheckedPtr childLayer = child->layer();
-                childLayer->setStaticInlinePosition(borderAndPaddingStart()); // FIXME: Not right for regions.
+                childLayer->setStaticInlinePosition(borderAndPaddingStart());
                 if (childLayer->staticBlockPosition() != borderBoxHeight()) {
                     childLayer->setStaticBlockPosition(borderBoxHeight());
                     if (child->style().hasStaticBlockPosition(writingMode().isHorizontal()))
