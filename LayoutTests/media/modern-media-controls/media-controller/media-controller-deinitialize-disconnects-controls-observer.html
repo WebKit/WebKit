@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<body>
+<video src="../../content/test.mp4" controls></video>
+<div id="shadow"></div>
+<script src="../../../resources/js-test.js"></script>
+<script src="../resources/media-controls-loader.js" type="text/javascript"></script>
+<script type="text/javascript">
+
+window.jsTestIsAsync = true;
+
+description("Testing that MediaController.deinitialize() disconnects the MutationObserver watching the media element's \"controls\" attribute, so mutating that attribute no longer updates controls availability once the controls have been torn down.");
+
+const shadowRoot = document.querySelector("div#shadow").attachShadow({ mode: "open" });
+const media = document.querySelector("video");
+const mediaController = createControls(shadowRoot, media, null);
+
+shouldBeType("mediaController", "MediaController");
+shouldBeTrue("mediaController.controls.visible");
+
+debug("");
+debug("Sanity check: while the controls are live, removing the \"controls\" attribute updates availability.");
+media.removeAttribute("controls");
+
+// MutationObserver callbacks are delivered as a microtask, so we assert on the next turn.
+setTimeout(() => {
+    shouldBeFalse("mediaController.controls.visible");
+
+    media.setAttribute("controls", "");
+    setTimeout(() => {
+        shouldBeTrue("mediaController.controls.visible");
+
+        debug("");
+        debug("Tearing down the controls with deinitialize().");
+        mediaController.deinitialize();
+
+        debug("");
+        debug("Removing the \"controls\" attribute again. A leaked MutationObserver would flip controls.visible back to false.");
+        media.removeAttribute("controls");
+
+        setTimeout(() => {
+            shouldBeTrue("mediaController.controls.visible");
+
+            shadowRoot.host.remove();
+            media.remove();
+            debug("");
+            finishJSTest();
+        }, 0);
+    }, 0);
+}, 0);
+
+</script>
+</body>
