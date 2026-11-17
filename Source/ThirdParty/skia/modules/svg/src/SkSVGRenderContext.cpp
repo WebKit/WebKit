@@ -419,6 +419,7 @@ std::optional<SkPaint> SkSVGRenderContext::commonPaint(const SkSVGPaint& paint_s
         // and node being rendered.
         SkSVGPresentationContext pctx;
         pctx.fNamedColors = fPresentationContext->fNamedColors;
+        pctx.fInherited.fColor = fPresentationContext->fInherited.fColor;
         SkSVGRenderContext local_ctx(fCanvas,
                                      fFontMgr,
                                      fResourceProvider,
