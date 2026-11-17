@@ -1091,8 +1091,11 @@ WI.Recording = class Recording extends WI.Object
         }
 
         function processValue(value) {
-            if (typeof value === "object" && !Array.isArray(value))
-                return processObject(value);
+            if (value !== null && typeof value === "object" && !Array.isArray(value)) {
+                let prototype = Object.getPrototypeOf(value);
+                if (prototype !== Object.prototype && prototype !== null)
+                    return processObject(value);
+            }
             return JSON.stringify(value);
         }
 
@@ -1164,7 +1167,7 @@ WI.Recording = class Recording extends WI.Object
                 else
                     callString = ` = ${processValue(value)}`;
 
-                lines.push(`        ${contextString}.${name}${callString};`);
+                lines.push(`        ${contextString}.${name === "transform" ? "setTransform" : name}${callString};`);
             }
 
             if (state !== this._actions[0].states.lastValue) {
