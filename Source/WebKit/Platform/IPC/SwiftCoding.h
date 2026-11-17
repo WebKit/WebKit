@@ -83,9 +83,9 @@ public:
     size_t remainingByteCount() const
     {
         auto& decoder = borrowed();
-        auto span = decoder.span();
+        size_t size = decoder.span().size();
         size_t offset = decoder.currentBufferOffset();
-        return offset < span.size() ? span.size() - offset : 0;
+        return offset < size ? size - offset : 0;
     }
 
     bool isValid() const { return borrowed().isValid(); }

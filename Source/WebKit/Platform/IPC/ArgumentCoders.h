@@ -91,7 +91,8 @@ template<typename T, size_t Extent> struct ArgumentCoder<std::span<T, Extent>> {
                 return std::span<T, Extent> { };
         }
 
-        auto data = decoder.template decodeSpan<T>(size);
+        Borrow borrowedDecoder { decoder };
+        auto data = borrowedDecoder->template decodeSpan<T>(size);
         if (!data.data() || data.size() != size)
             return std::nullopt;
 
@@ -146,7 +147,8 @@ struct ArgumentCoder<ArrayReferenceTuple<Types...>> {
 
         if constexpr (Index < sizeof...(Types)) {
             using ElementType = std::tuple_element_t<Index, std::tuple<Types...>>;
-            auto data = decoder.template decodeSpan<ElementType>(size);
+            Borrow borrowedDecoder { decoder };
+            auto data = borrowedDecoder->template decodeSpan<ElementType>(size);
             if (!data.data())
                 return std::nullopt;
             return decode(decoder, size, std::forward<DataPointerTypes>(dataPointers)..., data.data());
