@@ -647,7 +647,7 @@ if (NOT HAS_RUN_WEBKIT_COMMON)
     # -----------------------------------------------------------------------------
     if (DEFINED ENV{WEBKIT_NINJA_LINK_MAX})
         list(APPEND WK_POOLS "link_pool_jobs=$ENV{WEBKIT_NINJA_LINK_MAX}")
-    elseif (${CMAKE_BUILD_TYPE} STREQUAL "Release" OR ${CMAKE_BUILD_TYPE} STREQUAL "MinSizeRel")
+    elseif (APPLE OR ${CMAKE_BUILD_TYPE} STREQUAL "Release" OR ${CMAKE_BUILD_TYPE} STREQUAL "MinSizeRel")
         list(APPEND WK_POOLS link_pool_jobs=4)
     else ()
         list(APPEND WK_POOLS link_pool_jobs=2)
