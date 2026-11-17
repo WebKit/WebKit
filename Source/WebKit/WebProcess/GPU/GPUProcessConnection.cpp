@@ -175,13 +175,20 @@ void GPUProcessConnection::invalidate()
     m_hasInitialized = true;
 }
 
+void GPUProcessConnection::close()
+{
+    didClose(m_connection);
+}
+
 void GPUProcessConnection::didClose(IPC::Connection&)
 {
     RELEASE_LOG_ERROR(Process, "%p - GPUProcessConnection::didClose", this);
     auto protector = Ref { *this };
     Ref webProcess = WebProcess::singleton();
     assertIsMainRunLoop();
-    ASSERT(webProcess->existingGPUProcessConnection() == this);
+    if (webProcess->existingGPUProcessConnection() != this)
+        return;
+    invalidate();
     webProcess->gpuProcessConnectionClosed();
 
 #if ENABLE(ROUTING_ARBITRATION)

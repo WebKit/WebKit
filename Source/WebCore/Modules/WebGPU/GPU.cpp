@@ -38,9 +38,10 @@
 
 namespace WebCore {
 
-GPU::GPU(Ref<WebGPUIntegration>&& backing)
+GPU::GPU(Ref<WebGPUIntegration>&& backing, CreateBacking&& createBacking)
     : m_backing(WTF::move(backing))
     , m_wgslLanguageFeatures(WGSLLanguageFeatures::create())
+    , m_createBacking(WTF::move(createBacking))
 {
 }
 
@@ -69,12 +70,39 @@ void GPU::requestAdapter(const std::optional<GPURequestAdapterOptions>& options,
         return;
     }
 
-    m_backing->requestAdapter(convertToBacking(options), [promise = WTF::move(promise), gpu = m_backing](RefPtr<WebGPU::Adapter>&& adapter) mutable {
-        if (!adapter) {
-            promise.resolve(nullptr);
+    requestAdapter(convertToBacking(options), WTF::move(promise), true);
+}
+
+Ref<WebGPUIntegration> GPU::backing()
+{
+    // A backing whose GPU process has exited stays lost, so whatever is made from here on has to come
+    // from a new one. There is no backoff: if the GPU process cannot come back, each new backing is
+    // lost straight away, and each call that finds it lost makes another, with its own connection.
+    // That is bounded by how often the page asks for something, which then fails as it would anyway.
+    if (protect(m_backing)->isLost() && m_createBacking) {
+        if (RefPtr backing = m_createBacking())
+            m_backing = backing.releaseNonNull();
+    }
+    return m_backing;
+}
+
+void GPU::requestAdapter(WebGPU::RequestAdapterOptions&& options, RequestAdapterPromise&& promise, bool retryIfBackingIsLost)
+{
+    Ref backing = this->backing();
+    backing->requestAdapter(options, [protectedThis = Ref { *this }, options, promise = WTF::move(promise), backing, retryIfBackingIsLost](RefPtr<WebGPU::Adapter>&& adapter) mutable {
+        if (adapter) {
+            promise.resolve(GPUAdapter::create(adapter.releaseNonNull(), WTF::move(backing)).ptr());
             return;
         }
-        promise.resolve(GPUAdapter::create(adapter.releaseNonNull(), WTF::move(gpu)).ptr());
+        // The GPU process can exit after backing() checked it, and then nothing else was wrong with
+        // the request. A failing RemoteGPUProxy::requestAdapter() calls back before it returns, so
+        // this can run inside the outer backing->requestAdapter() call above; that is safe, as the
+        // outer call holds its own reference to the old backing and the retry only replaces m_backing.
+        if (retryIfBackingIsLost && backing->isLost()) {
+            protectedThis->requestAdapter(WTF::move(options), WTF::move(promise), false);
+            return;
+        }
+        promise.resolve(nullptr);
     });
 }
 
@@ -83,17 +111,17 @@ GPUTextureFormat GPU::getPreferredCanvasFormat() const
     return GPUTextureFormat::Bgra8unorm;
 }
 
-RefPtr<GPUPresentationContext> GPU::createPresentationContext(const GPUPresentationContextDescriptor& presentationContextDescriptor)
+RefPtr<GPUPresentationContext> GPU::createPresentationContext(WebGPUIntegration& backing, const GPUPresentationContextDescriptor& presentationContextDescriptor)
 {
-    RefPtr context = m_backing->createPresentationContext(presentationContextDescriptor.convertToBacking());
+    RefPtr context = backing.createPresentationContext(presentationContextDescriptor.convertToBacking());
     if (!context)
         return nullptr;
     return GPUPresentationContext::create(context.releaseNonNull());
 }
 
-RefPtr<GPUCompositorIntegration> GPU::createCompositorIntegration()
+RefPtr<GPUCompositorIntegration> GPU::createCompositorIntegration(WebGPUIntegration& backing)
 {
-    RefPtr integration = m_backing->createCompositorIntegration();
+    RefPtr integration = backing.createCompositorIntegration();
     if (!integration)
         return nullptr;
     return GPUCompositorIntegration::create(integration.releaseNonNull());

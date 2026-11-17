@@ -328,6 +328,7 @@ public:
     // Returns timeout duration for GPU process connections. Thread-safe.
     NODELETE Seconds gpuProcessTimeoutDuration() const;
     void gpuProcessConnectionClosed();
+    void gpuProcessConnectionDidClose(IPC::Connection&);
     void gpuProcessConnectionDidBecomeUnresponsive();
 
 #if PLATFORM(COCOA) && USE(LIBWEBRTC)

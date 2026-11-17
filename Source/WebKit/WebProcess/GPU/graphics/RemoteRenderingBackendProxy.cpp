@@ -103,8 +103,13 @@ RemoteRenderingBackendProxy::~RemoteRenderingBackendProxy()
 
 void RemoteRenderingBackendProxy::ensureGPUProcessConnection()
 {
-    if (m_connection)
+    if (m_connection && m_gpuProcessIPCConnection && m_gpuProcessIPCConnection->isValid())
         return;
+    if (m_connection) {
+        gpuProcessConnectionDidClose();
+        if (m_connection)
+            return;
+    }
     constexpr unsigned connectionBufferSizeLog2 = 21u;
     auto connectionPair = IPC::StreamClientConnection::create(connectionBufferSizeLog2, WebProcess::singleton().gpuProcessTimeoutDuration());
     if (!connectionPair)
@@ -180,10 +185,29 @@ bool RemoteRenderingBackendProxy::isCurrent() const
     return dispatcher && dispatcher->isCurrent();
 }
 
+void RemoteRenderingBackendProxy::gpuProcessConnectionDidClose(IPC::Connection& connection)
+{
+    assertIsCurrent(*this);
+    if (m_gpuProcessIPCConnection != &connection)
+        return;
+    gpuProcessConnectionDidClose();
+}
+
 void RemoteRenderingBackendProxy::didClose(IPC::Connection&)
+{
+    gpuProcessConnectionDidClose();
+}
+
+void RemoteRenderingBackendProxy::gpuProcessConnectionDidClose()
 {
     if (!m_connection)
         return;
+    Ref protectedThis { *this };
+    if (RefPtr gpuProcessIPCConnection = m_gpuProcessIPCConnection) {
+        ensureOnMainRunLoop([gpuProcessIPCConnection = WTF::move(gpuProcessIPCConnection)] {
+            WebProcess::singleton().gpuProcessConnectionDidClose(*gpuProcessIPCConnection);
+        });
+    }
     disconnectGPUProcess();
     m_remoteResourceCacheProxy->disconnect();
 

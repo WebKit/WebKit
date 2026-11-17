@@ -1587,6 +1587,9 @@ GPUProcessConnection& WebProcess::ensureGPUProcessConnection()
     RELEASE_ASSERT(RunLoop::isMain());
     assertIsMainRunLoop();
 
+    if (RefPtr gpuProcessConnection = m_gpuProcessConnection; gpuProcessConnection && !gpuProcessConnection->connection().isValid())
+        gpuProcessConnection->close();
+
     // If we've lost our connection to the GPU process (e.g. it crashed) try to re-establish it.
     if (!m_gpuProcessConnection) {
         auto connectionIdentifiers = IPC::Connection::createConnectionIdentifierPair();
@@ -1639,6 +1642,13 @@ void WebProcess::gpuProcessConnectionClosed()
     if (m_audioMediaStreamTrackRendererInternalUnitManager)
         m_audioMediaStreamTrackRendererInternalUnitManager->restartAllUnits();
 #endif
+}
+
+void WebProcess::gpuProcessConnectionDidClose(IPC::Connection& connection)
+{
+    assertIsMainRunLoop();
+    if (RefPtr gpuProcessConnection = m_gpuProcessConnection; gpuProcessConnection && &gpuProcessConnection->connection() == &connection)
+        gpuProcessConnection->close();
 }
 
 void WebProcess::gpuProcessConnectionDidBecomeUnresponsive()

@@ -1,0 +1,18 @@
+After the GPU process exits, navigator.gpu has to provide adapters again, in the page and in a worker, a new canvas has to get a WebGPU context before any adapter is requested, and canvases have to work with a device from the new adapter, including one that was configured with a lost device.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS workerResult is 42
+PASS The device was lost when the GPU process exited.
+PASS freshContext is non-null.
+PASS adapter is non-null.
+PASS texturePixel.join() is "0,255,0,255"
+PASS canvasPixel.join() is "0,255,0,255"
+PASS compositedPixel.join() is "0,255,0,255"
+PASS freshCompositedPixel.join() is "0,255,0,255"
+PASS workerResult is 42
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

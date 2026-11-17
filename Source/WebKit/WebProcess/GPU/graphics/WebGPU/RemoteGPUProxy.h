@@ -76,6 +76,7 @@ public:
 
     void ref() const final { return ThreadSafeRefCounted<RemoteGPUProxy>::ref(); }
     void deref() const final { return ThreadSafeRefCounted<RemoteGPUProxy>::deref(); }
+    bool isLost() const final { return m_lost; }
 
     void paintToCanvas(WebCore::NativeImage&, const WebCore::IntSize&, WebCore::GraphicsContext&) final;
     void copyExternalImageToTexture(::WebGPU::Queue&, const WebCore::WebGPUExternalImageSource&, const WebCore::WebGPUImageCopyTextureTagged& destination, const ::WebGPU::Extent3D& copySize) final;
@@ -90,8 +91,8 @@ public:
 private:
     friend class WebGPU::DowncastConvertToBackingContext;
 
-    RemoteGPUProxy(WebGPU::ConvertToBackingContext&, ModelConvertToBackingContext&, SerialFunctionDispatcher&);
-    void initializeIPC(Ref<IPC::StreamClientConnection>&&, RemoteRenderingBackendIdentifier, IPC::StreamServerConnection::Handle&&);
+    RemoteGPUProxy(WebGPU::ConvertToBackingContext&, ModelConvertToBackingContext&, RemoteRenderingBackendProxy&, SerialFunctionDispatcher&);
+    void initializeIPC(Ref<IPC::StreamClientConnection>&&, IPC::Connection& renderingBackendIPCConnection, IPC::StreamServerConnection::Handle&&);
 
     RemoteGPUProxy(const RemoteGPUProxy&) = delete;
     RemoteGPUProxy(RemoteGPUProxy&&) = delete;
@@ -160,6 +161,7 @@ private:
     bool isValid(const ::WebGPU::XRView&) const final;
 
     void abandonGPUProcess();
+    void gpuProcessConnectionDidClose();
     void disconnectGpuProcessIfNeeded();
 
     // SerialFunctionDispatcher
@@ -172,6 +174,7 @@ private:
     WeakPtr<GPUProcessConnection> m_gpuProcessConnection;
     const RefPtr<IPC::StreamClientConnection> m_streamConnection;
     const RefPtr<IPC::Connection> m_gpuProcessIPCConnection;
+    const Ref<RemoteRenderingBackendProxy> m_renderingBackend;
     WebGPUIdentifier m_backing { WebGPUIdentifier::generate() };
     bool m_didInitialize { false };
     bool m_lost { false };

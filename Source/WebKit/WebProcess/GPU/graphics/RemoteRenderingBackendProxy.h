@@ -201,6 +201,7 @@ public:
     RefPtr<IPC::StreamClientConnection> connection();
     // The connection of the GPU process connection that connection() was created on.
     RefPtr<IPC::Connection> gpuProcessIPCConnection();
+    void gpuProcessConnectionDidClose(IPC::Connection&);
 
     bool isCurrent() const final;
     Ref<WorkQueue> workQueue() { return m_queue; }
@@ -227,6 +228,7 @@ private:
     // Connection::Client
     void didClose(IPC::Connection&) final;
     void didReceiveInvalidMessage(IPC::Connection&, IPC::MessageName, const Vector<uint32_t>& indicesOfObjectsFailingDecoding) final { }
+    void gpuProcessConnectionDidClose();
     void disconnectGPUProcess();
     void ensureGPUProcessConnection();
 

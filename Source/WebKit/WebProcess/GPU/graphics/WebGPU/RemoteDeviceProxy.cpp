@@ -447,6 +447,11 @@ bool RemoteDeviceProxy::isValid() const
 
 void RemoteDeviceProxy::resolveDeviceLostPromise(CompletionHandler<void(::WebGPU::DeviceLostReason, String&&)>&& callback)
 {
+    if (protect(root())->isLost()) {
+        callback(::WebGPU::DeviceLostReason::Unknown, { });
+        return;
+    }
+
     // The GPU process does not send the message, so the device is lost with an empty one.
     auto sendResult = sendWithAsyncReply(Messages::RemoteDevice::ResolveDeviceLostPromise(), [callback = WTF::move(callback)](::WebGPU::DeviceLostReason reason) mutable {
         callback(reason, { });
