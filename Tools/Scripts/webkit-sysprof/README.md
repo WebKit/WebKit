@@ -21,7 +21,7 @@ This installs the `webkit-sysprof` command.
 Dump marks, counters, or collapsed stack traces from a capture as CSV or JSON.
 
 ```
-webkit-sysprof dump [--marks|--counters|--collapsed-stacktraces] [-f csv|json] CAPTURE_FILE
+webkit-sysprof dump [--marks|--counters|--collapsed-stacktraces] [-f csv|json] [-t TIMESPAN] CAPTURE_FILE
 ```
 
 `--marks` is the default when no flag is given. `-f`/`--format`: `csv` (default) or
@@ -29,12 +29,20 @@ webkit-sysprof dump [--marks|--counters|--collapsed-stacktraces] [-f csv|json] C
 names the kind of process a mark came from, e.g. `WebKit (Web)`, and `pid` the process
 itself, which two of one kind share a group name for.
 
+`-t`/`--timespan` restricts the dump to a window, given as in `analyze`. Marks are kept
+only if they lie wholly inside it, as in `analyze`; counter values and stack samples
+are kept if their time falls in `[begin, end)`. Without it the whole capture is dumped.
+
 ```
 $ webkit-sysprof dump capture.syscap
 group;pid;name;message;time;duration;end_time
 ...
 
 $ webkit-sysprof dump --counters capture.syscap
+category;name;description;time;offset;value
+...
+
+$ webkit-sysprof dump --counters -t 500-1000 capture.syscap
 category;name;description;time;offset;value
 ...
 

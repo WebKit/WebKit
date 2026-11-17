@@ -8,7 +8,12 @@ from typing import Any, Dict, List, Optional, Tuple
 from ..mounts import MountTranslator
 from ..parser import parse
 from ..symbolizer import ElfSymbolizer
-from ..utils import mark_begin, mark_pid
+from ..utils import (
+    check_timespan_holds_data,
+    mark_begin,
+    mark_pid,
+    parse_timespan_argument,
+)
 
 # perf context markers in a raw stack. Addresses after one, up to the next, are in
 # the context it names. A stack without markers is all user space.
@@ -36,12 +41,21 @@ _CONTEXT_SWITCH_LABELS = {
 
 def dump(args: argparse.Namespace) -> None:
     collapsed_stacktraces = getattr(args, "collapsed_stacktraces", False)
+    timespan_begin, timespan_end = parse_timespan_argument(
+        getattr(args, "timespan", "-")
+    )
     data = parse(
         args.capture_file,
         marks=args.marks or not (args.counters or collapsed_stacktraces),
         counters=args.counters,
         stacktraces=collapsed_stacktraces,
     )
+    if timespan_begin is not None or timespan_end is not None:
+        capture_begin, capture_end = data["document"]["timespan"]
+        check_timespan_holds_data(
+            capture_begin, capture_end, timespan_begin, timespan_end
+        )
+        _trim_to_timespan(data, timespan_begin, timespan_end)
 
     if collapsed_stacktraces:
         rows = _collapsed_stacktraces_to_rows(data)
@@ -62,6 +76,34 @@ def dump(args: argparse.Namespace) -> None:
         _dump_json(rows)
     else:
         _dump_csv(headers, rows)
+
+
+def _trim_to_timespan(
+    data: Dict[str, Any], timespan_begin: Optional[int], timespan_end: Optional[int]
+) -> None:
+    """Narrow parsed data in place to the --timespan window, clamped to the capture.
+
+    Marks are kept only if they lie wholly inside the window, as in analyze.
+    Counter values and stack samples are instants, kept if in [begin, end).
+    """
+    begin, end = data["document"]["timespan"]
+    if timespan_begin is not None:
+        begin = max(begin, timespan_begin)
+    if timespan_end is not None:
+        end = min(end, timespan_end)
+
+    data["marks"] = [
+        mark
+        for mark in data["marks"]
+        if mark_begin(mark) >= begin and mark["end_time"] <= end
+    ]
+    for counter in data["counters"]:
+        counter["values"] = [
+            value for value in counter["values"] if begin <= value["time"] < end
+        ]
+    data["stacktraces"] = [
+        sample for sample in data["stacktraces"] if begin <= sample["time"] < end
+    ]
 
 
 def _marks_to_rows(marks: List[Dict[str, Any]]) -> List[Dict[str, Any]]:

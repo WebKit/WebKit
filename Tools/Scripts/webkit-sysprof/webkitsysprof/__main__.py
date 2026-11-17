@@ -62,6 +62,13 @@ def build_parser() -> argparse.ArgumentParser:
         help="Format to be printed to STDOUT. For --collapsed-stacktraces, csv means"
         " the plain folded-stack text format, and json a list of {stack, count}",
     )
+    dump_parser.add_argument(
+        "-t",
+        "--timespan",
+        type=str,
+        default="-",
+        help=TIMESPAN_HELP,
+    )
 
     summary_parser = _add_subcommand(
         subparsers, "summary", "Print a summary of a capture", summary

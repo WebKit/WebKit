@@ -114,6 +114,43 @@ class SubcommandsTest(SysprofTestCase):
             },
         )
 
+    def test_dump_marks_with_custom_timespan(self):
+        main(["dump", "-t", "500-1000", "-f", "json", SAMPLE_CAPTURE_FILE])
+
+        marks = json.loads(self.stdout())
+        self.assertEqual(len(marks), 313)
+        for dumped_mark in marks:
+            self.assertGreaterEqual(dumped_mark["time"], msec_to_nsec(500))
+            self.assertLessEqual(dumped_mark["end_time"], msec_to_nsec(1000))
+
+    def test_dump_counters_with_custom_timespan(self):
+        main(
+            ["dump", "--counters", "-t", "500-1000", "-f", "json", SAMPLE_CAPTURE_FILE]
+        )
+
+        counter_values = json.loads(self.stdout())
+        self.assertEqual(len(counter_values), 57)
+        for value in counter_values:
+            self.assertGreaterEqual(value["time"], msec_to_nsec(500))
+            self.assertLess(value["time"], msec_to_nsec(1000))
+
+    def test_dump_collapsed_stacktraces_with_custom_timespan(self):
+        main(
+            [
+                "dump",
+                "--collapsed-stacktraces",
+                "-t",
+                "500-1000",
+                "-f",
+                "json",
+                SAMPLE_CAPTURE_FILE,
+            ]
+        )
+
+        rows = json.loads(self.stdout())
+        self.assertEqual(len(rows), 97)
+        self.assertEqual(sum(row["count"] for row in rows), 115)
+
     def test_analyze_text(self):
         args = argparse.Namespace(
             capture_file=SAMPLE_CAPTURE_FILE, format="text", timespan="-", explain=False
