@@ -272,6 +272,10 @@ void WebExtensionContext::fireStorageChangedEventIfNeeded(HashMap<String, String
         });
 
         WorkQueue::mainSingleton().dispatch([this, protectedThis = Ref { *this }, serializedJSONStrings = crossThreadCopy(WTF::move(serializedJSONStrings)), dataType]() mutable {
+            // The extension could have been unloaded while the change was processed on the storage queue.
+            if (!isLoaded())
+                return;
+
             // Unlike other extension events which are only dispatched to the web process that hosts all the extension-related web views (background page, popup, full page extension content),
             // content scripts are allowed to listen to storage.onChanged events.
             if (isStorageAllowedInUntrustedContexts(dataType))
