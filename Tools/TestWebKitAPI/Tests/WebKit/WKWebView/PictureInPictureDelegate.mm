@@ -27,7 +27,6 @@
 
 #if PLATFORM(MAC)
 
-#import "Helpers/DeprecatedGlobalValues.h"
 #import "Helpers/PlatformUtilities.h"
 #import "Helpers/PlatformWebView.h"
 #import "Helpers/Test.h"
@@ -69,9 +68,9 @@ static void waitUntilOnLoadIsCompleted(WKPageRef page)
     }
 }
 
-static void didFinishNavigation(WKPageRef, WKNavigationRef, WKTypeRef, const void*)
+static void didFinishNavigation(WKPageRef, WKNavigationRef, WKTypeRef, const void* clientInfo)
 {
-    receivedLoadedMessage = true;
+    *static_cast<bool*>(const_cast<void*>(clientInfo)) = true;
 }
 
 static void hasVideoInPictureInPictureDidChange(WKPageRef, bool hasVideoInPictureInPicture, const void* context)
@@ -81,9 +80,12 @@ static void hasVideoInPictureInPictureDidChange(WKPageRef, bool hasVideoInPictur
 }
 
 @interface PictureInPictureUIDelegate : NSObject <WKUIDelegate, WKScriptMessageHandler>
+- (void)waitForLoadedMessage;
 @end
 
-@implementation PictureInPictureUIDelegate
+@implementation PictureInPictureUIDelegate {
+    bool _receivedLoadedMessage;
+}
 
 - (void)_webView:(WKWebView *)webView hasVideoInPictureInPictureDidChange:(BOOL)hasVideoInPictureInPicture
 {
@@ -95,7 +97,13 @@ static void hasVideoInPictureInPictureDidChange(WKPageRef, bool hasVideoInPictur
 {
     NSString *bodyString = (NSString *)[message body];
     if ([bodyString isEqualToString:@"load"])
-        receivedLoadedMessage = true;
+        _receivedLoadedMessage = true;
+}
+
+- (void)waitForLoadedMessage
+{
+    EXPECT_FALSE(_receivedLoadedMessage);
+    TestWebKitAPI::Util::run(&_receivedLoadedMessage);
 }
 @end
 
@@ -122,10 +130,8 @@ TEST(PictureInPicture, WKUIDelegate)
 
     NSURLRequest *request = [NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"PictureInPictureDelegate" withExtension:@"html"]];
 
-    receivedLoadedMessage = false;
-    
     [webView loadRequest:request];
-    TestWebKitAPI::Util::run(&receivedLoadedMessage);
+    [handler waitForLoadedMessage];
 
     hasVideoInPictureInPictureValue = false;
     hasVideoInPictureInPictureCalled = false;
@@ -192,6 +198,7 @@ TEST(PictureInPicture, AudioCannotTogglePictureInPicture)
 
 TEST(PictureInPicture, WKPageUIClient)
 {
+    bool receivedLoadedMessage = false;
     WKRetainPtr<WKContextRef> context = adoptWK(WKContextCreateWithConfiguration(nullptr));
     
     PlatformWebView webView(context.get());
@@ -211,14 +218,14 @@ TEST(PictureInPicture, WKPageUIClient)
     WKPageNavigationClientV0 loaderClient;
     zeroBytes(loaderClient);
     loaderClient.base.version = 0;
+    loaderClient.base.clientInfo = &receivedLoadedMessage;
     loaderClient.didFinishNavigation = didFinishNavigation;
     WKPageSetPageNavigationClient(webView.page(), &loaderClient.base);
     
     RetainPtr<NSWindow> window = adoptNS([[NSWindow alloc] initWithContentRect:NSMakeRect(0, 0, 100, 100) styleMask:NSBorderlessWindowMask backing:NSBackingStoreBuffered defer:NO]);
     [window.get() makeKeyAndOrderFront:nil];
     [window.get().contentView addSubview:webView.platformView()];
-    
-    receivedLoadedMessage = false;
+
     WKRetainPtr<WKURLRef> url = adoptWK(Util::createURLForResource("PictureInPictureDelegate", "html"));
     WKPageLoadURL(webView.page(), url.get());
     TestWebKitAPI::Util::run(&receivedLoadedMessage);

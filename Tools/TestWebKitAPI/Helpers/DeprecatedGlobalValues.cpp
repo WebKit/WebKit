@@ -37,4 +37,3 @@ bool didBecomeUnresponsive { false };
 bool wasPrompted { false };
 bool didFinishNavigationBoolean { false };
 bool didCreateWebView { false };
-bool receivedLoadedMessage { false };
