@@ -78,6 +78,8 @@ public:
     FolderType folderType() const;
     bool isManaged() const;
     bool isSynced() const;
+    bool isReadOnly() const;
+    bool isContentsReadOnly() const;
 
     RefPtr<WebExtensionBookmark> parent() const;
     std::optional<size_t> index() const;
@@ -117,6 +119,8 @@ private:
     explicit WebExtensionBookmark(const WebExtensionContext&, NSObject *delegate, WebExtensionBookmark* parent = nullptr, std::optional<size_t> index = std::nullopt);
 
     std::optional<WebExtensionError> modificationError(const String& apiName) const;
+    std::optional<WebExtensionError> readOnlyError(const String& apiName) const;
+    std::optional<WebExtensionError> contentsReadOnlyError(const String& apiName) const;
 
     WeakPtr<WebExtensionContext> m_extensionContext;
     RetainPtr<NSObject> m_delegate;
@@ -134,6 +138,8 @@ private:
     bool m_respondsToFolderType : 1 { false };
     bool m_respondsToIsManaged : 1 { false };
     bool m_respondsToIsSynced : 1 { false };
+    bool m_respondsToIsReadOnly : 1 { false };
+    bool m_respondsToIsContentsReadOnly : 1 { false };
     bool m_respondsToCreateChild : 1 { false };
     bool m_respondsToSetTitle : 1 { false };
     bool m_respondsToSetURL : 1 { false };
