@@ -774,8 +774,9 @@ CapturePreviewPromptHandles alertForPermissionWithCapturePreview(WebPageProxy& p
     RetainPtr allowButton = [sheet addButtonWithTitle:promptAllowButtonText(textRequest).get() response:NSAlertFirstButtonReturn];
 
     RetainPtr allowButtons = adoptNS([[NSMutableArray alloc] initWithObjects:allowButton.get(), nil]);
-    for (size_t index = 0; index < request.customization.additionalActions.size(); ++index) {
-        auto& action = request.customization.additionalActions[index];
+    Borrow additionalActions = request.customization.additionalActions;
+    for (size_t index = 0; index < additionalActions->size(); ++index) {
+        auto& action = additionalActions->at(index);
         RetainPtr additionalButton = [sheet addButtonWithTitle:action.title.createNSString().get() response:NSAlertThirdButtonReturn + index];
         if (action.decision == MediaPermissionPromptAdditionalAction::Decision::Allow)
             [allowButtons addObject:additionalButton.get()];
