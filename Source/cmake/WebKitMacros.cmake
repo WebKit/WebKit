@@ -316,7 +316,12 @@ function(_WEBKIT_ADD_PCH_OBJECT _target)
         return ()
     endif ()
     cmake_parse_arguments(PARSE_ARGV 1 _PO "PREFIX_NO_CODEGEN" "" "PREFIX_LANGUAGES")
-    set(_stub_flags "-fpch-debuginfo;-Xclang;-building-pch-with-obj")
+    set(_stub_flags "-Xclang;-building-pch-with-obj")
+    # Apple clang before 2100.3 omits the vtable of a prefix header class from the
+    # translation unit that defines its key function under -fpch-debuginfo.
+    if (NOT (CMAKE_CXX_COMPILER_ID STREQUAL "AppleClang" AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS 21.0.0.21000300))
+        list(PREPEND _stub_flags "-fpch-debuginfo")
+    endif ()
     if (NOT _PO_PREFIX_NO_CODEGEN AND USE_PCH_CODEGEN)
         list(PREPEND _stub_flags "-fpch-codegen")
     endif ()
