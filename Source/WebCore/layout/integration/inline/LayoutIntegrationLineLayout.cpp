@@ -75,9 +75,12 @@
 #include <ranges>
 #include <wtf/Assertions.h>
 #include <wtf/Range.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 namespace LayoutIntegration {
+
+WTF_MAKE_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER_IMPL(LineLayout);
 
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(LayoutIntegration_LineLayout);
 

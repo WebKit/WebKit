@@ -29,6 +29,7 @@
 #include <WebCore/NetworkLoadMetrics.h>
 #include <WebCore/ResourceLoadTiming.h>
 #include <WebCore/ServerTiming.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/URL.h>
 
 namespace WebCore {
@@ -40,7 +41,7 @@ class ResourceLoadTiming;
 class SecurityOrigin;
 
 class ResourceTiming {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(ResourceTiming, Loader);
+    WTF_MAKE_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER(ResourceTiming, Loader);
 public:
     NODELETE static ResourceTiming fromMemoryCache(const URL&, const String& initiator, const ResourceLoadTiming&, const ResourceResponse&, const NetworkLoadMetrics&, const SecurityOrigin&);
     static ResourceTiming fromLoad(CachedResource&, const URL&, const String& initiator, const ResourceLoadTiming&, const NetworkLoadMetrics&, const SecurityOrigin&);

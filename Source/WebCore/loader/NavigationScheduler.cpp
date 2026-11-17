@@ -61,8 +61,11 @@
 #include "URLKeepingBlobAlive.h"
 #include "UserGestureIndicator.h"
 #include <wtf/Ref.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER_IMPL(NavigationScheduler);
 
 unsigned NavigationDisabler::s_globalNavigationDisableCount = 0;
 

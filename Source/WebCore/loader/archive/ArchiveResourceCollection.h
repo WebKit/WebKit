@@ -32,6 +32,7 @@
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/StringHash.h>
 
 namespace WebCore {
@@ -41,7 +42,7 @@ class ArchiveResource;
 
 class ArchiveResourceCollection {
     WTF_MAKE_NONCOPYABLE(ArchiveResourceCollection);
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(ArchiveResourceCollection, Loader);
+    WTF_MAKE_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER(ArchiveResourceCollection, Loader);
 
 public:
     ArchiveResourceCollection() = default;

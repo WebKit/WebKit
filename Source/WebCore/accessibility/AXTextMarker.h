@@ -30,6 +30,7 @@
 #include <WebCore/VisiblePosition.h>
 #include <wtf/Platform.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/WTFString.h>
 
 #define TEXT_MARKER_ASSERT(assertion) \
@@ -214,7 +215,7 @@ using PlatformTextMarkerData = NSData *;
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(AXTextMarker);
 class AXTextMarker {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(AXTextMarker, AXTextMarker);
+    WTF_MAKE_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER(AXTextMarker, AXTextMarker);
     friend class AXTextMarkerRange;
     friend std::partial_ordering operator<=>(const AXTextMarker&, const AXTextMarker&);
 public:

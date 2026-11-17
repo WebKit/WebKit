@@ -45,9 +45,12 @@
 #include <wtf/MathExtras.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/SetForScope.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/CString.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER_IMPL(MemoryCache);
 
 static const int cDefaultCacheCapacity = 8192 * 1024;
 static const Seconds cMinDelayBeforeLiveDecodedPrune { 1_s };

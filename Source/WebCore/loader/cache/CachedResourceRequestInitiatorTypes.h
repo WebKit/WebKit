@@ -27,6 +27,7 @@
 
 #include "LoaderMalloc.h"
 #include "ThreadGlobalData.h"
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/AtomString.h>
 
 namespace WebCore {
@@ -41,7 +42,7 @@ struct CachedResourceRequestInitiatorTypes {
     const AtomString navigation;
     const AtomString xmlhttprequest;
     WTF_MAKE_NONCOPYABLE(CachedResourceRequestInitiatorTypes);
-    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(CachedResourceRequestInitiatorTypes, Loader);
+    WTF_MAKE_STRUCT_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER(CachedResourceRequestInitiatorTypes, Loader);
 private:
     friend class ThreadGlobalData;
 };

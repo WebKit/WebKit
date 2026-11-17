@@ -28,9 +28,13 @@
 
 #include "DOMCSSNamespace.h"
 #include "Document.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER_IMPL(CSSNumericFactory);
+
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(CSSNumericFactory);
 
 CSSNumericFactory* CSSNumericFactory::from(DOMCSSNamespace& css)

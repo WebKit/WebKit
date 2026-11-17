@@ -36,6 +36,7 @@
 #include <wtf/DataRef.h>
 #include <wtf/FixedVector.h>
 #include <wtf/OptionSet.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -465,7 +466,7 @@ using PseudoElementStyles = HashMap<PseudoElementIdentifier, std::unique_ptr<Com
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(ComputedStyleBase);
 class ComputedStyleBase : public CanMakeCheckedPtr<ComputedStyleBase, WTF::DefaultedOperatorEqual::No, WTF::CheckedPtrDeleteCheckException::Yes> {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(ComputedStyleBase, ComputedStyleBase);
+    WTF_MAKE_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER(ComputedStyleBase, ComputedStyleBase);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(ComputedStyleBase);
 public:
     enum CloneTag { Clone };

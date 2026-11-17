@@ -36,6 +36,7 @@
 #include <WebCore/StyleSVGRadiusComponent.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 namespace Style {
@@ -43,7 +44,7 @@ namespace Style {
 // Positioning and sizing properties.
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(SVGLayoutData);
 class SVGLayoutData : public RefCounted<SVGLayoutData> {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(SVGLayoutData, SVGLayoutData);
+    WTF_MAKE_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER(SVGLayoutData, SVGLayoutData);
 public:
     static Ref<SVGLayoutData> create() { return adoptRef(*new SVGLayoutData); }
     Ref<SVGLayoutData> copy() const;

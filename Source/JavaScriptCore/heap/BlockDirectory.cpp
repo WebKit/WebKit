@@ -37,8 +37,11 @@
 
 #include <wtf/FunctionTraits.h>
 #include <wtf/Lock.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace JSC {
+
+WTF_MAKE_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER_IMPL(BlockDirectory);
 
 namespace BlockDirectoryInternal {
 static constexpr bool verbose = false;

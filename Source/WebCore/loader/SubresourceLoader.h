@@ -33,6 +33,7 @@
 #include <WebCore/ResourceLoader.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/Platform.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/WTFString.h>
  
 namespace WebCore {
@@ -122,7 +123,7 @@ private:
     };
 
     class RequestCountTracker {
-        WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(RequestCountTracker, Loader);
+        WTF_MAKE_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER(RequestCountTracker, Loader);
     public:
         RequestCountTracker(CachedResourceLoader&, const CachedResource&);
         RequestCountTracker(RequestCountTracker&&);

@@ -36,11 +36,15 @@
 #include "CSSTokenizerInputStream.h"
 #include <wtf/NeverDestroyed.h>
 #include <wtf/SIMDHelpers.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/CodePointIterator.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/unicode/CharacterNames.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER_IMPL(CSSTokenizer);
+
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(CSSTokenizer);
 
 // https://drafts.csswg.org/css-syntax/#input-preprocessing

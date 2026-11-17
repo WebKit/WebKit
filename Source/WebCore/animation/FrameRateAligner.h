@@ -30,11 +30,12 @@
 #include <wtf/HashMap.h>
 #include <wtf/ReducedResolutionSeconds.h>
 #include <wtf/Seconds.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class FrameRateAligner {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(FrameRateAligner, Animation);
+    WTF_MAKE_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER(FrameRateAligner, Animation);
 public:
     FrameRateAligner();
     ~FrameRateAligner();

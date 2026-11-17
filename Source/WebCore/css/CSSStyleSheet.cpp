@@ -47,6 +47,7 @@
 #include "StyleSheetContents.h"
 #include "StyleSheetContentsCache.h"
 #include <wtf/HexNumber.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
 
@@ -62,7 +63,7 @@ NODELETE static Style::Scope& styleScopeFor(ContainerNode& treeScope)
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StyleSheetCSSRuleList);
 class StyleSheetCSSRuleList final : public CSSRuleList {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(StyleSheetCSSRuleList, StyleSheetCSSRuleList);
+    WTF_MAKE_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER(StyleSheetCSSRuleList, StyleSheetCSSRuleList);
 public:
     StyleSheetCSSRuleList(CSSStyleSheet* sheet) : m_styleSheet(sheet) { }
     
@@ -87,6 +88,9 @@ private:
 
     SingleThreadWeakPtr<CSSStyleSheet> m_styleSheet;
 };
+
+WTF_MAKE_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER_IMPL(StyleSheetCSSRuleList);
+
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StyleSheetCSSRuleList);
 
 #if ASSERT_ENABLED

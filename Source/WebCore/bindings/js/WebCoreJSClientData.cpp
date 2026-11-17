@@ -62,6 +62,7 @@
 #include "runtime_object.h"
 #include <mutex>
 #include <wtf/MainThread.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #if PLATFORM(COCOA)
 #include "objc_runtime.h"
@@ -80,6 +81,11 @@
 #endif
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER_IMPL(JSHeapData);
+
+WTF_MAKE_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER_IMPL(JSVMClientData);
+
 using namespace JSC;
 
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(JSHeapData);

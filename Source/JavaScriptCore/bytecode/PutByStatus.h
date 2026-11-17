@@ -31,6 +31,7 @@
 #include "PrivateFieldPutKind.h"
 #include "PropertyInlineCacheSummary.h"
 #include "PutByVariant.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace JSC {
 
@@ -44,7 +45,7 @@ class PropertyInlineCache;
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(PutByStatus);
 
 class PutByStatus final {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(PutByStatus, PutByStatus);
+    WTF_MAKE_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER(PutByStatus, PutByStatus);
 public:
     enum State {
         // It's uncached so we have no information.

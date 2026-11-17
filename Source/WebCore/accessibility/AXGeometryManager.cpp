@@ -29,6 +29,7 @@
 #include "AXLoggerBase.h"
 #include "AXObjectCache.h"
 #include "DocumentPage.h"
+#include <wtf/TZoneMallocInlines.h>
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
 #include "AXIsolatedTree.h"
@@ -42,6 +43,9 @@
 #endif
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER_IMPL(AXGeometryManager);
+
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(AXGeometryManager);
 
 AXGeometryManager::AXGeometryManager(AXObjectCache& owningCache)

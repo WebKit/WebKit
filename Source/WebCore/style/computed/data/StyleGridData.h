@@ -33,13 +33,14 @@
 #include <WebCore/StyleGridTrackSizes.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 namespace Style {
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(GridData);
 class GridData : public RefCounted<GridData> {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(GridData, GridData);
+    WTF_MAKE_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER(GridData, GridData);
 public:
     static Ref<GridData> create() { return adoptRef(*new GridData); }
     Ref<GridData> copy() const;

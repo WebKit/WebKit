@@ -29,13 +29,14 @@
 #include <WebCore/StyleAppleColorFilter.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 namespace Style {
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(AppleColorFilterData);
 class AppleColorFilterData : public RefCounted<AppleColorFilterData> {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(AppleColorFilterData, AppleColorFilterData);
+    WTF_MAKE_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER(AppleColorFilterData, AppleColorFilterData);
 public:
     static Ref<AppleColorFilterData> create() { return adoptRef(*new AppleColorFilterData); }
     Ref<AppleColorFilterData> copy() const;

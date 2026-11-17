@@ -34,6 +34,7 @@
 #include "VMManager.h"
 #include "WeakSetInlines.h"
 #include <wtf/CommaPrinter.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #if PLATFORM(COCOA)
 #include <wtf/cocoa/CrashReporter.h>
@@ -42,6 +43,11 @@
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace JSC {
+
+WTF_MAKE_STRUCT_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER_IMPL(MarkedBlock);
+
+WTF_MAKE_STRUCT_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER_IMPL(MarkedBlock::Handle);
+
 namespace MarkedBlockInternal {
 static constexpr bool verbose = false;
 }

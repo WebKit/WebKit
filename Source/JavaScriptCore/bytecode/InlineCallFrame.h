@@ -33,6 +33,7 @@
 #include <JavaScriptCore/WriteBarrier.h>
 #include <wtf/PrintStream.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 
 namespace JSC {
@@ -44,7 +45,7 @@ class JSFunction;
 DECLARE_COMPACT_ALLOCATOR_WITH_HEAP_IDENTIFIER(InlineCallFrame);
 
 struct InlineCallFrame {
-    WTF_DEPRECATED_MAKE_STRUCT_FAST_COMPACT_ALLOCATED_WITH_HEAP_IDENTIFIER(InlineCallFrame, InlineCallFrame);
+    WTF_MAKE_STRUCT_COMPACT_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER(InlineCallFrame, InlineCallFrame);
 
     enum Kind {
         Call,

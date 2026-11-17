@@ -34,6 +34,7 @@
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakListHashSet.h>
 #include <wtf/text/StringHash.h>
@@ -64,7 +65,7 @@ struct ClientOrigin;
 
 class MemoryCache final : public CanMakeCheckedPtr<MemoryCache> {
     WTF_MAKE_NONCOPYABLE(MemoryCache);
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(MemoryCache, Loader);
+    WTF_MAKE_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER_EXPORT(MemoryCache, Loader, WEBCORE_EXPORT);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(MemoryCache);
 
     friend NeverDestroyed<MemoryCache>;

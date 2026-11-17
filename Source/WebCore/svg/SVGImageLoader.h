@@ -20,6 +20,7 @@
 #pragma once
 
 #include "ImageLoader.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -27,7 +28,7 @@ class SVGImageElement;
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(SVGImageLoader);
 class SVGImageLoader final : public ImageLoader {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(SVGImageLoader, SVGImageLoader);
+    WTF_MAKE_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER(SVGImageLoader, SVGImageLoader);
 public:
     explicit SVGImageLoader(SVGImageElement&);
     virtual ~SVGImageLoader();

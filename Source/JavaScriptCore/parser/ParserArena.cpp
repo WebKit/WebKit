@@ -31,11 +31,14 @@
 #include "Nodes.h"
 #include "TopExceptionScope.h"
 #include "VMTrapsInlines.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace JSC {
+
+WTF_MAKE_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER_IMPL(IdentifierArena);
 
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(IdentifierArena);
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(ParserArena);

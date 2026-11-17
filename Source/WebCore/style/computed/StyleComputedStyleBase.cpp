@@ -41,6 +41,7 @@
 #include <algorithm>
 #include <wtf/MathExtras.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/TextStream.h>
 
 #define SET_VAR(group, variable, value) do { \
@@ -55,6 +56,8 @@
 
 namespace WebCore {
 namespace Style {
+
+WTF_MAKE_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER_IMPL(ComputedStyleBase);
 
 static_assert(ComputedStyleBase::PublicPseudoIDBits == allPublicPseudoElementTypes.size());
 static_assert(!(static_cast<unsigned>(maxTextTransformValue) >> ComputedStyleBase::TextTransformBits));

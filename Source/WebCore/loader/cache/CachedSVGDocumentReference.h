@@ -30,6 +30,7 @@
 #include <WebCore/CachedSVGDocumentClient.h>
 #include <WebCore/LoaderMalloc.h>
 #include <WebCore/StyleURL.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -38,7 +39,7 @@ class CachedResourceLoader;
 struct ResourceLoaderOptions;
 
 class CachedSVGDocumentReference final : public CachedSVGDocumentClient, public RefCounted<CachedSVGDocumentReference> {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(CachedSVGDocumentReference, Loader);
+    WTF_MAKE_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER(CachedSVGDocumentReference, Loader);
 public:
     NODELETE static Ref<CachedSVGDocumentReference> create(const Style::URL&);
 

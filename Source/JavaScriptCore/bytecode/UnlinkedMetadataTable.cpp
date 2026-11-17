@@ -28,10 +28,13 @@
 
 #include "BytecodeStructs.h"
 #include <wtf/CheckedArithmetic.h>
+#include <wtf/TZoneMallocInlines.h>
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace JSC {
+
+WTF_MAKE_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER_IMPL(UnlinkedMetadataTable);
 
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(MetadataTable);
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(UnlinkedMetadataTable);

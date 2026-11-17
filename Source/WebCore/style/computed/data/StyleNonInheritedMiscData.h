@@ -48,6 +48,7 @@
 #include <wtf/DataRef.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 namespace Style {
@@ -61,7 +62,7 @@ class VisitedLinkColorData;
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(NonInheritedMiscData);
 class NonInheritedMiscData : public RefCounted<NonInheritedMiscData> {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(NonInheritedMiscData, NonInheritedMiscData);
+    WTF_MAKE_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER(NonInheritedMiscData, NonInheritedMiscData);
 public:
     static Ref<NonInheritedMiscData> create() { return adoptRef(*new NonInheritedMiscData); }
     Ref<NonInheritedMiscData> copy() const;

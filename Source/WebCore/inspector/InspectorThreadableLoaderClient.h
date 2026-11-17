@@ -28,6 +28,7 @@
 #include "InspectorResourceUtilities.h" // for Inspector::LoadResourceCompletionHandler.
 #include "ThreadableLoaderClient.h"
 #include <wtf/Forward.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/WTFString.h>
@@ -46,7 +47,7 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(InspectorThreadableLoaderClient);
 // InspectorNetworkAgent and the Site Isolation WebProcess load leg. Use ResourceUtilities::loadResource().
 class InspectorThreadableLoaderClient final : public ThreadSafeRefCounted<InspectorThreadableLoaderClient, WTF::DestructionThread::Main>, public WebCore::ThreadableLoaderClient {
     WTF_MAKE_NONCOPYABLE(InspectorThreadableLoaderClient);
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(InspectorThreadableLoaderClient, InspectorThreadableLoaderClient);
+    WTF_MAKE_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER(InspectorThreadableLoaderClient, InspectorThreadableLoaderClient);
 public:
     static Ref<InspectorThreadableLoaderClient> create(LoadResourceCompletionHandler&& completionHandler)
     {

@@ -56,9 +56,12 @@
 #include "StyleResolver.h"
 #include "StyleZoomPrimitivesInlines.h"
 #include "Styleable.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 namespace Style {
+
+WTF_MAKE_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER_IMPL(Extractor);
 
 // Define this to 1 to enable validation of direct serialization against serialization using CSSValue.
 #define VALIDATE_DIRECT_COMPUTED_VALUE_SERIALIZATION 0

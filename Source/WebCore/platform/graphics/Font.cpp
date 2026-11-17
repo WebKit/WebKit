@@ -56,6 +56,8 @@
 
 namespace WebCore {
 
+WTF_MAKE_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER_IMPL(Font);
+
 std::atomic<unsigned> GlyphPage::s_count = 0;
 
 unsigned GlyphPage::count()

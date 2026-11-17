@@ -29,13 +29,14 @@
 #include <WebCore/StyleFilter.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 namespace Style {
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(FilterData);
 class FilterData : public RefCounted<FilterData> {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(FilterData, FilterData);
+    WTF_MAKE_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER(FilterData, FilterData);
 public:
     static Ref<FilterData> create() { return adoptRef(*new FilterData); }
     Ref<FilterData> copy() const;

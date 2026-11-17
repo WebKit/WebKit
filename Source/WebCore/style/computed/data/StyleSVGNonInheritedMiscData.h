@@ -34,13 +34,14 @@
 #include <WebCore/StyleSVGBaselineShift.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 namespace Style {
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(SVGNonInheritedMiscData);
 class SVGNonInheritedMiscData : public RefCounted<SVGNonInheritedMiscData> {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(SVGNonInheritedMiscData, SVGNonInheritedMiscData);
+    WTF_MAKE_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER(SVGNonInheritedMiscData, SVGNonInheritedMiscData);
 public:
     static Ref<SVGNonInheritedMiscData> create() { return adoptRef(*new SVGNonInheritedMiscData); }
     Ref<SVGNonInheritedMiscData> copy() const;

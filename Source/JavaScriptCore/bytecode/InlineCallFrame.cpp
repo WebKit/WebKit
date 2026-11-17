@@ -29,8 +29,11 @@
 #include "CodeBlock.h"
 #include "FunctionExecutable.h"
 #include "JSCJSValueInlines.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace JSC {
+
+WTF_MAKE_STRUCT_COMPACT_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER_IMPL(InlineCallFrame);
 
 DEFINE_COMPACT_ALLOCATOR_WITH_HEAP_IDENTIFIER(InlineCallFrame);
 

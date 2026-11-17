@@ -25,11 +25,12 @@
 #pragma once
 
 #include "HTMLDocumentParser.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class TextDocumentParser final : public HTMLDocumentParser {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(TextDocumentParser, HTMLDocumentParser);
+    WTF_MAKE_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER(TextDocumentParser, HTMLDocumentParser);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(TextDocumentParser);
 public:
     static Ref<TextDocumentParser> create(HTMLDocument& document)

@@ -32,13 +32,14 @@
 #include "StyleBoxShadow.h"
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 namespace Style {
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(SVGShadowData);
 class SVGShadowData : public RefCounted<SVGShadowData> {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(SVGShadowData, SVGShadowData);
+    WTF_MAKE_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER(SVGShadowData, SVGShadowData);
 public:
     static Ref<SVGShadowData> create() { return adoptRef(*new SVGShadowData); }
     Ref<SVGShadowData> copy() const;

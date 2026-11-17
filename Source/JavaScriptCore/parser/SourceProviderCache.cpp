@@ -26,7 +26,11 @@
 #include "config.h"
 #include "SourceProviderCache.h"
 
+#include <wtf/TZoneMallocInlines.h>
+
 namespace JSC {
+
+WTF_MAKE_STRUCT_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER_IMPL(SourceProviderCache);
 
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(SourceProviderCache);
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(SourceProviderCacheItem);

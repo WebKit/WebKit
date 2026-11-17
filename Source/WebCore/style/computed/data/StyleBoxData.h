@@ -33,13 +33,14 @@
 #include <WebCore/StyleZIndex.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 namespace Style {
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(BoxData);
 class BoxData : public RefCounted<BoxData> {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(BoxData, BoxData);
+    WTF_MAKE_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER(BoxData, BoxData);
 public:
     static Ref<BoxData> create() { return adoptRef(*new BoxData); }
     Ref<BoxData> copy() const;

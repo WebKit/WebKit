@@ -31,6 +31,7 @@
 
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -39,7 +40,7 @@ class DOMCSSNamespace;
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(CSSNumericFactory);
 class CSSNumericFactory final : public Supplement<DOMCSSNamespace> {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(CSSNumericFactory, CSSNumericFactory);
+    WTF_MAKE_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER(CSSNumericFactory, CSSNumericFactory);
 public:
     explicit CSSNumericFactory(DOMCSSNamespace&) { }
 

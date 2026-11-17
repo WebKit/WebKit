@@ -33,8 +33,11 @@
 #include "CachedResourceRequestInitiatorTypes.h"
 #include "CachedSVGDocument.h"
 #include "Document.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER_IMPL(CachedSVGDocumentReference);
 
 Ref<CachedSVGDocumentReference> CachedSVGDocumentReference::create(const Style::URL& location)
 {

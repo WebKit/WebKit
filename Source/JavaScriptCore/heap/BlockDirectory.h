@@ -37,6 +37,7 @@
 #include <wtf/Lock.h>
 #include <wtf/ReadWriteLock.h>
 #include <wtf/SharedTask.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 #include <wtf/VersionedField.h>
 
@@ -66,7 +67,7 @@ public:
 
 class BlockDirectory {
     WTF_MAKE_NONCOPYABLE(BlockDirectory);
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(BlockDirectory, BlockDirectory);
+    WTF_MAKE_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER(BlockDirectory, BlockDirectory);
     
     friend class LLIntOffsetsExtractor;
 

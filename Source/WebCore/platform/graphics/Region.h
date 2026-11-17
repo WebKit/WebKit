@@ -36,7 +36,7 @@ namespace WebCore {
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(Region);
 class Region {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(Region, Region);
+    WTF_MAKE_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER(Region, Region);
 public:
     WEBCORE_EXPORT Region();
     WEBCORE_EXPORT Region(const IntRect&);

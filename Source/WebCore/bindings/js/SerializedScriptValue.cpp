@@ -137,6 +137,7 @@
 #include <wtf/RuntimeApplicationChecks.h>
 #include <wtf/StackCheck.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/Vector.h>
 #include <wtf/text/ParsingUtilities.h>
 #include <wtf/threads/BinarySemaphore.h>
@@ -157,6 +158,8 @@
 #endif
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER_IMPL(SerializedScriptValue);
 
 WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(SerializedScriptValueInternals);
 

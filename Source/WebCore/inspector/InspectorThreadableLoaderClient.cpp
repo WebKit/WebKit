@@ -31,8 +31,11 @@
 #include "ThreadableLoader.h"
 #include <pal/text/TextEncoding.h>
 #include <tuple>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace Inspector {
+
+WTF_MAKE_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER_IMPL(InspectorThreadableLoaderClient);
 
 using namespace WebCore;
 

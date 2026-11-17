@@ -30,6 +30,7 @@
 #pragma once
 
 #include <WebCore/CSSPrimitiveValue.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/StringView.h>
 
 namespace WebCore {
@@ -91,7 +92,7 @@ enum HashTokenType {
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(CSSParserToken);
 class CSSParserToken {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(CSSParserToken, CSSParserToken);
+    WTF_MAKE_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER(CSSParserToken, CSSParserToken);
 public:
     enum BlockType {
         NotBlock,

@@ -32,13 +32,14 @@
 #include <WebCore/StyleSVGMarkerResource.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 namespace Style {
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(SVGMarkerResourceData);
 class SVGMarkerResourceData : public RefCounted<SVGMarkerResourceData> {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(SVGMarkerResourceData, SVGMarkerResourceData);
+    WTF_MAKE_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER(SVGMarkerResourceData, SVGMarkerResourceData);
 public:
     static Ref<SVGMarkerResourceData> create() { return adoptRef(*new SVGMarkerResourceData); }
     Ref<SVGMarkerResourceData> copy() const;

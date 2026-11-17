@@ -56,8 +56,13 @@
 #include "StyleRuleFunction.h"
 #include "StyleRuleImport.h"
 #include "StyleSheetContents.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_STRUCT_COMPACT_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER_IMPL(StyleRuleWithNesting);
+
+WTF_MAKE_STRUCT_COMPACT_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER_IMPL(StyleRuleNestedDeclarations);
 
 struct SameSizeAsStyleRuleBase : public WTF::RefCountedBase {
     unsigned bitfields : 5;

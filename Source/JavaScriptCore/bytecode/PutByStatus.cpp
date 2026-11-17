@@ -37,8 +37,11 @@
 #include "PropertyInlineCache.h"
 #include "StructureInlines.h"
 #include <wtf/ListDump.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace JSC {
+
+WTF_MAKE_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER_IMPL(PutByStatus);
 
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(PutByStatus);
 

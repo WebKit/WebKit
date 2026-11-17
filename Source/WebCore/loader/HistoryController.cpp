@@ -59,6 +59,7 @@
 #include "ShouldTreatAsContinuingLoad.h"
 #include "VisitedLinkStore.h"
 #include <WebCore/HTTPStatusCodes.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/TextStream.h>
 
@@ -67,6 +68,8 @@
 #endif
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER_IMPL(HistoryController);
 
 static inline void addVisitedLink(Page& page, const URL& url)
 {
