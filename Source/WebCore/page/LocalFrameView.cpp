@@ -7566,9 +7566,12 @@ void LocalFrameView::writeRenderTreeAsText(TextStream& ts, OptionSet<RenderAsTex
 
 void LocalFrameView::scrollbarStyleDidChange()
 {
+    // Updating the scroll bars lays out the scrollable areas again, which can add and remove scrollable areas.
     if (auto scrollableAreas = this->scrollableAreas()) {
-        for (CheckedRef scrollableArea : *scrollableAreas)
-            scrollableArea->scrollbarsController().updateScrollbarStyle();
+        for (auto& weakScrollableArea : copyToVectorOf<WeakPtr<ScrollableArea>>(*scrollableAreas)) {
+            if (CheckedPtr scrollableArea = weakScrollableArea.get())
+                scrollableArea->scrollbarsController().updateScrollbarStyle();
+        }
     }
     scrollbarsController().updateScrollbarStyle();
 }

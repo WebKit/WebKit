@@ -182,11 +182,10 @@ HostWindow* FrameView::hostWindow() const
 void FrameView::scrollbarStyleChanged(ScrollbarStyle newStyle, bool forceUpdate)
 {
     Ref frame = this->frame();
-    if (!frame->isMainFrame())
-        return;
-
-    if (RefPtr page = frame->page())
-        page->chrome().client().recommendedScrollbarStyleDidChange(newStyle);
+    if (frame->isMainFrame()) {
+        if (RefPtr page = frame->page())
+            page->chrome().client().recommendedScrollbarStyleDidChange(newStyle);
+    }
 
     ScrollView::scrollbarStyleChanged(newStyle, forceUpdate);
 }

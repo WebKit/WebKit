@@ -27,10 +27,12 @@
 
 #if PLATFORM(MAC)
 
+#import "ClassMethodSwizzler.h"
 #import "Helpers/mac/AppKitSPI.h"
 #import "Helpers/cocoa/CGImagePixelReader.h"
 #import "Helpers/PlatformUtilities.h"
 #import "Helpers/Test.h"
+#import "Helpers/Utilities.h"
 #import "Helpers/cocoa/TestWKWebView.h"
 #import "Helpers/cocoa/WKWebViewConfigurationExtras.h"
 #import <WebCore/Color.h>
@@ -772,6 +774,73 @@ TEST(ScrollbarTests, CustomScrollbarScrollCornerSmallCornerRadius)
 }
 
 #endif // HAVE(NSVIEW_CORNER_CONFIGURATION)
+
+static NSScrollerStyle scrollbarTestsScrollerStyle;
+
+static NSScrollerStyle scrollbarTestsPreferredScrollerStyle(id, SEL)
+{
+    return scrollbarTestsScrollerStyle;
+}
+
+// The right edge, the top and the height of the vertical scroll bar of the node, which don't depend on the scroll bar style.
+static NSString *verticalScrollbarGeometry(TestWKWebView *webView, NSString *node)
+{
+    return [webView stringByEvaluatingJavaScript:[NSString stringWithFormat:@"(() => { const r = internals.verticalScrollbarFrameRect(%@); return [r.x + r.width, r.y, r.height].join(','); })()", node]];
+}
+
+// Its own suite, so that it runs in its own process: it changes the scroller style of the process.
+TEST(ScrollerStyleChange, UpdatesIFrameAndOverflowScrollbars)
+{
+    {
+        // Web processes take their scroller style from the UI process.
+        scrollbarTestsScrollerStyle = NSScrollerStyleLegacy;
+        ClassMethodSwizzler swizzler(NSScroller.class, @selector(preferredScrollerStyle), reinterpret_cast<IMP>(scrollbarTestsPreferredScrollerStyle));
+
+        RetainPtr configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
+        RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400) configuration:configuration.get()]);
+        [webView synchronouslyLoadHTMLString:@"<body style='margin: 0'>"
+            "<iframe style='display: block; width: 200px; height: 200px; border: none' srcdoc=\"<body style='margin: 0; height: 2000px'></body>\"></iframe>"
+            "<div id='scroller' style='width: 200px; height: 200px; overflow-y: scroll'><div style='height: 2000px'></div></div></body>"];
+        [webView waitForNextPresentationUpdate];
+
+        static NSString *iframeDocument = @"document.querySelector('iframe').contentDocument";
+        static NSString *scroller = @"document.getElementById('scroller')";
+        NSString *iframeClientWidthScript = [iframeDocument stringByAppendingString:@".documentElement.clientWidth"];
+        NSString *scrollerClientWidthScript = [scroller stringByAppendingString:@".clientWidth"];
+
+        auto expectScrollbars = [&](NSString *description) {
+            SCOPED_TRACE(description.UTF8String);
+            // The iframe's scroll bar spans its right edge, and the scroller's spans the scroller's right edge below the iframe.
+            EXPECT_WK_STREQ("200,0,200", verticalScrollbarGeometry(webView.get(), iframeDocument));
+            EXPECT_WK_STREQ("200,200,200", verticalScrollbarGeometry(webView.get(), scroller));
+        };
+
+        auto changeScrollerStyle = [&](NSScrollerStyle style) {
+            scrollbarTestsScrollerStyle = style;
+            [NSNotificationCenter.defaultCenter postNotificationName:NSPreferredScrollerStyleDidChangeNotification object:nil];
+            // Legacy scroll bars take up space, and overlay scroll bars don't.
+            EXPECT_TRUE(Util::waitFor([&] {
+                bool isOverlay = style == NSScrollerStyleOverlay;
+                int iframeClientWidth = [webView stringByEvaluatingJavaScript:iframeClientWidthScript].intValue;
+                int scrollerClientWidth = [webView stringByEvaluatingJavaScript:scrollerClientWidthScript].intValue;
+                return isOverlay ? iframeClientWidth == 200 && scrollerClientWidth == 200 : iframeClientWidth < 200 && scrollerClientWidth < 200;
+            }));
+        };
+
+        EXPECT_LT([webView stringByEvaluatingJavaScript:iframeClientWidthScript].intValue, 200);
+        EXPECT_LT([webView stringByEvaluatingJavaScript:scrollerClientWidthScript].intValue, 200);
+        expectScrollbars(@"Legacy");
+
+        changeScrollerStyle(NSScrollerStyleOverlay);
+        expectScrollbars(@"Overlay");
+
+        changeScrollerStyle(NSScrollerStyleLegacy);
+        expectScrollbars(@"Legacy again");
+    }
+
+    // Put anything that observed the swizzled style back on the real one.
+    [NSNotificationCenter.defaultCenter postNotificationName:NSPreferredScrollerStyleDidChangeNotification object:nil];
+}
 
 } // namespace TestWebKitAPI
 
