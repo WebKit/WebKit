@@ -104,26 +104,16 @@ float BorderShape::constrainedRadiiScale(const LayoutRect& borderRect, const Lay
 
 BorderShape BorderShape::shapeForBorderRect(const UsedStyle& usedStyle, const LayoutRect& borderRect, RectEdges<bool> closedEdges)
 {
-    return shapeForBorderRect(usedStyle.computedStyle(), borderRect, usedStyle.borderWidths(), closedEdges);
+    return shapeForBorderRect(usedStyle, borderRect, usedStyle.borderWidths(), closedEdges);
 }
 
-BorderShape BorderShape::shapeForBorderRect(const Style::ComputedStyle& style, const LayoutRect& borderRect, RectEdges<bool> closedEdges)
-{
-    auto zoom = style.usedZoomForLength();
-    auto deviceScaleFactor = style.deviceScaleFactor();
-    auto borderWidths = RectEdges<LayoutUnit>::map(Style::effectiveBorderWidths(style), [&](const auto& width) {
-        return Style::evaluate<LayoutUnit>(width, zoom, deviceScaleFactor);
-    });
-    return shapeForBorderRect(style, borderRect, borderWidths, closedEdges);
-}
-
-BorderShape BorderShape::shapeForBorderRect(const Style::ComputedStyle& style, const LayoutRect& borderRect, const RectEdges<LayoutUnit>& overrideBorderWidths, RectEdges<bool> closedEdges)
+BorderShape BorderShape::shapeForBorderRect(const UsedStyle& usedStyle, const LayoutRect& borderRect, const RectEdges<LayoutUnit>& overrideBorderWidths, RectEdges<bool> closedEdges)
 {
     auto usedBorderWidths = applyClosedEdges(overrideBorderWidths, closedEdges);
 
-    if (style.border().hasBorderRadius()) {
-        auto radii = Style::evaluate<LayoutRoundedRectRadii>(style.borderRadii(), borderRect.size(), style.usedZoomForLength());
-        auto cornerCurvatures = cornerCurvaturesFromStyle(style);
+    if (usedStyle.hasBorderRadius()) {
+        auto radii = usedStyle.borderRadii(borderRect.size());
+        auto cornerCurvatures = cornerCurvaturesFromStyle(usedStyle.computedStyle());
         radii.scale(constrainedRadiiScale(borderRect, radii, cornerCurvatures));
         zeroRadiiForOpenEdges(radii, closedEdges);
 
@@ -136,12 +126,12 @@ BorderShape BorderShape::shapeForBorderRect(const Style::ComputedStyle& style, c
     return BorderShape { borderRect, usedBorderWidths };
 }
 
-BorderShape BorderShape::shapeForOffsetRect(const Style::ComputedStyle& style, const LayoutRect& borderRect, const LayoutRect& offsetRect, const RectEdges<LayoutUnit>& edgeWidths, RectEdges<bool> closedEdges)
+BorderShape BorderShape::shapeForOffsetRect(const UsedStyle& usedStyle, const LayoutRect& borderRect, const LayoutRect& offsetRect, const RectEdges<LayoutUnit>& edgeWidths, RectEdges<bool> closedEdges)
 {
     auto usedEdgeWidths = applyClosedEdges(edgeWidths, closedEdges);
 
-    if (style.border().hasBorderRadius()) {
-        auto radii = Style::evaluate<LayoutRoundedRectRadii>(style.borderRadii(), borderRect.size(), style.usedZoomForLength());
+    if (usedStyle.hasBorderRadius()) {
+        auto radii = usedStyle.borderRadii(borderRect.size());
         // Copy the unmodified border-box radii for the offset reference, before we expand them for the offset rect.
         auto referenceRadii = radii;
 
@@ -156,7 +146,7 @@ BorderShape BorderShape::shapeForOffsetRect(const Style::ComputedStyle& style, c
         if (!radii.areRenderableInRect(offsetRect))
             radii.makeRenderableInRect(offsetRect);
 
-        auto shape = BorderShape { offsetRect, usedEdgeWidths, radii, cornerCurvaturesFromStyle(style) };
+        auto shape = BorderShape { offsetRect, usedEdgeWidths, radii, cornerCurvaturesFromStyle(usedStyle.computedStyle()) };
 
         // Always record the border-box shape for offset shapes: corners with no radius to expand or inset (bevel,
         // notch, square) are rebuilt by offsetting this reference curve to the moved rect

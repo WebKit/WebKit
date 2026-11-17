@@ -377,7 +377,7 @@ void RenderReplaced::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
     }
 
     bool completelyClippedOut = false;
-    if (style().border().hasBorderRadius()) {
+    if (usedStyle().hasBorderRadius()) {
         completelyClippedOut = borderBoxSize().isEmpty();
         if (!completelyClippedOut) {
             // Push a clip if we have a border radius, since we want to round the foreground content that gets painted.
@@ -390,7 +390,7 @@ void RenderReplaced::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
         if (!isSkippedContentRoot(*this))
             paintReplaced(paintInfo, adjustedPaintOffset);
 
-        if (style().border().hasBorderRadius())
+        if (usedStyle().hasBorderRadius())
             paintInfo.context().restore();
     }
 

@@ -349,7 +349,7 @@ bool AccessibilityNodeObject::supportsPath() const
         if (is<RenderText>(renderer) || renderer->isRenderOrLegacyRenderSVGShape())
             return true;
         if (CheckedPtr renderBox = dynamicDowncast<RenderBox>(renderer)) {
-            if (renderBox->style().border().hasBorderRadius())
+            if (renderBox->usedStyle().hasBorderRadius())
                 return true;
         }
         if (auto* renderElement = dynamicDowncast<RenderElement>(renderer); renderElement && renderElement->hasClipPath())

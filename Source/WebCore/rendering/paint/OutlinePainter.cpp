@@ -117,11 +117,10 @@ void OutlinePainter::paintOutline(const RenderElement& renderer, const LayoutRec
     if (outerRect.isEmpty())
         return;
 
-    auto hasBorderRadius = styleToUse->border().hasBorderRadius();
     auto closedEdges = RectEdges<bool> { true };
 
     auto outlineEdgeWidths = RectEdges<LayoutUnit> { outlineWidth };
-    auto outlineShape = BorderShape::shapeForOffsetRect(styleToUse.get(), paintRect, outerRect, outlineEdgeWidths, closedEdges);
+    auto outlineShape = BorderShape::shapeForOffsetRect(usedStyle, paintRect, outerRect, outlineEdgeWidths, closedEdges);
 
     auto bleedAvoidance = BleedAvoidance::ShrinkBackground;
     auto appliedClipAlready = false;
@@ -129,7 +128,6 @@ void OutlinePainter::paintOutline(const RenderElement& renderer, const LayoutRec
     auto haveAllSolidEdges = BorderPainter::decorationHasAllSolidEdges(edges);
 
     BorderPainter { renderer, m_paintInfo }.paintSides(outlineShape, {
-        hasBorderRadius ? std::make_optional(styleToUse->borderRadii()) : std::nullopt,
         edges,
         haveAllSolidEdges,
         outlineShape.outerShapeIsRectangular(),
@@ -306,7 +304,7 @@ void OutlinePainter::paintFocusRing(const RenderElement& renderer, const Vector<
     styleOptions.add(StyleColorOptions::UseSystemAppearance);
     auto focusRingColor = usePlatformFocusRingColorForOutlineStyleAuto() ? RenderTheme::singleton().focusRingColor(styleOptions) : style->visitedDependentOutlineColorApplyingColorFilter();
 
-    if (!useShrinkWrappedFocusRingForOutlineStyleAuto() || !style->border().hasBorderRadius()) {
+    if (!useShrinkWrappedFocusRingForOutlineStyleAuto() || !usedStyle.hasBorderRadius()) {
         drawFocusRing(m_paintInfo.context(), pixelSnappedFocusRingRects, usedStyle, focusRingColor);
         return;
     }
@@ -330,7 +328,7 @@ void OutlinePainter::paintFocusRing(const RenderElement& renderer, const Vector<
         auto borderRect = focusRingRects[0];
         auto outlineRect = borderRect;
         outlineRect.inflate(LayoutUnit(outlineOffset));
-        auto outlineShape = BorderShape::shapeForOffsetRect(style.get(), borderRect, outlineRect, RectEdges<LayoutUnit> { }, RectEdges<bool> { true });
+        auto outlineShape = BorderShape::shapeForOffsetRect(usedStyle, borderRect, outlineRect, RectEdges<LayoutUnit> { }, RectEdges<bool> { true });
         auto path = outlineShape.pathForOuterShape(deviceScaleFactor);
         drawFocusRing(m_paintInfo.context(), path, usedStyle, focusRingColor);
         return;

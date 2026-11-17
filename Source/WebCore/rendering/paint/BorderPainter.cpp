@@ -268,7 +268,7 @@ void BorderPainter::paintBorder(const LayoutRect& rect, const UsedStyle& usedSty
             };
 
             return std::tuple<BorderShape, BorderEdges> {
-                BorderShape::shapeForBorderRect(style, rect, borderWidths, closedEdges),
+                BorderShape::shapeForBorderRect(usedStyle, rect, borderWidths, closedEdges),
                 WTF::move(edges)
             };
         }
@@ -282,7 +282,6 @@ void BorderPainter::paintBorder(const LayoutRect& rect, const UsedStyle& usedSty
     bool innerEdgeIsRectangular = shape.innerShapeIsRectangular();
 
     paintSides(shape, {
-        style.border().hasBorderRadius() ? std::optional { style.borderRadii() } : std::nullopt,
         edges,
         haveAllSolidEdges,
         outerEdgeIsRectangular,

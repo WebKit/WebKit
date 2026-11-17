@@ -7259,7 +7259,7 @@ void AXObjectCache::onPaint(const RenderObject& renderer, IntRect&& paintRect, c
                         },
                         [](const auto&) { }
                     );
-                } else if (renderBox->style().border().hasBorderRadius()) {
+                } else if (renderBox->usedStyle().hasBorderRadius()) {
                     auto borderRect = renderBox->borderBoxRect();
                     borderRect.inflate(shapePathInflationPx);
                     auto borderShape = BorderShape::shapeForBorderRect(renderBox->usedStyle(), WTF::move(borderRect));

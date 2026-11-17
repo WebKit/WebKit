@@ -247,7 +247,7 @@ template<typename Layer> void BackgroundPainter::paintFillLayerImpl(const Color&
     auto& style = m_renderer.style();
     auto layerClip = m_overrideClip.value_or(layer.layer.clip());
 
-    bool hasRoundedBorder = style.border().hasBorderRadius()
+    bool hasRoundedBorder = m_renderer.usedStyle().hasBorderRadius()
         && (closedEdges.start(style.writingMode()) || closedEdges.end(style.writingMode()));
     bool clippedWithLocalScrolling = m_renderer.hasNonVisibleOverflow() && layer.layer.attachment() == FillAttachment::LocalBackground;
     bool isBorderFill = layerClip == FillBox::BorderBox;
@@ -978,7 +978,7 @@ void BackgroundPainter::paintBoxShadow(const LayoutRect& paintRect, const UsedSt
 
     const auto borderShape = BorderShape::shapeForBorderRect(usedStyle, paintRect, closedEdges);
 
-    bool hasBorderRadius = style.border().hasBorderRadius();
+    bool hasBorderRadius = usedStyle.hasBorderRadius();
     float snappingScaleFactor = document().pixelSnappingScaleFactor();
 
     bool hasOpaqueBackground = style.visitedDependentUsedBackgroundColorApplyingColorFilter(m_paintInfo.paintBehavior).isOpaque();
@@ -1027,7 +1027,7 @@ void BackgroundPainter::paintBoxShadow(const LayoutRect& paintRect, const UsedSt
                     spreadRect.inflate(LayoutSize { inflateX, inflateY });
                 } else
                     spreadRect.inflate(shadowSpread);
-                return BorderShape::shapeForOffsetRect(style, paintRect, spreadRect, { }, closedEdges);
+                return BorderShape::shapeForOffsetRect(usedStyle, paintRect, spreadRect, { }, closedEdges);
             }();
 
             if (shadowShape.isEmpty())
@@ -1181,7 +1181,7 @@ bool BackgroundPainter::boxShadowShouldBeAppliedToBackground(const RenderBoxMode
         return false;
 
     RefPtr image = lastBackgroundLayer.image().tryStyleImage();
-    if (image && style.border().hasBorderRadius())
+    if (image && renderer.usedStyle().hasBorderRadius())
         return false;
 
     auto applyToInlineBox = [&] {
@@ -1193,7 +1193,7 @@ bool BackgroundPainter::boxShadowShouldBeAppliedToBackground(const RenderBoxMode
             return true;
         auto& renderer = inlineBox->renderer();
         bool hasFillImage = image && image->canRender(&renderer);
-        return !hasFillImage && !renderer.style().border().hasBorderRadius();
+        return !hasFillImage && !renderer.usedStyle().hasBorderRadius();
     };
 
     if (inlineBox && !applyToInlineBox())

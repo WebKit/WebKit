@@ -117,7 +117,7 @@ BoxShapeGeometry computeGeometryForBoxShape(CSSBoxType box, const RenderBox& ren
     switch (box) {
     case CSSBoxType::MarginBox: {
         auto marginBox = renderer.marginBoxRect();
-        if (!style->border().hasBorderRadius())
+        if (!renderer.usedStyle().hasBorderRadius())
             return { BorderShape { marginBox, { } }, BoxShapeGeometry::Edge::Outer };
 
         auto borderShape = BorderShape::shapeForBorderRect(renderer.usedStyle(), renderer.borderBoxRect());

@@ -843,7 +843,7 @@ Path AccessibilityRenderObject::elementPath() const
             if (clipPathResult)
                 return *clipPathResult;
         }
-        if (renderBox->style().border().hasBorderRadius())
+        if (renderBox->usedStyle().hasBorderRadius())
             return computePathForRenderBox(*renderBox);
     }
 

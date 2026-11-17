@@ -53,7 +53,6 @@ private:
     friend class OutlinePainter;
 
     struct Sides {
-        std::optional<BorderData::Radii> radii { }; // FIXME: Do we need this separately from the shape?
         const BorderEdges& edges;
         bool haveAllSolidEdges { true };
         bool outerEdgeIsRectangular { true };

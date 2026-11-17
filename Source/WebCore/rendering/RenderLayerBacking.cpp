@@ -1961,7 +1961,7 @@ void RenderLayerBacking::updateGeometry(const RenderLayer* compositedAncestor)
         clipLayer->setOffsetFromRenderer(toLayoutSize(clippingBox.location() - snappedClippingGraphicsLayer.m_snapDelta));
 
         auto computeMasksToBoundsRect = [&] {
-            if ((renderer->hasClipPath() || style->border().hasBorderRadius())) {
+            if ((renderer->hasClipPath() || renderer->usedStyle().hasBorderRadius())) {
                 auto borderShape = BorderShape::shapeForBorderRect(renderer->usedStyle(), owningLayer->rendererBorderBoxRect());
                 auto contentsClippingRect = contentsClippingRectForCornerShape(borderShape.deprecatedPixelSnappedInnerRoundedRect(pixelSnappingScaleFactor), style);
                 contentsClippingRect.move(LayoutSize(-clipLayer->offsetFromRenderer()));

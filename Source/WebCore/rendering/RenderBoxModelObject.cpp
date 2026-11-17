@@ -896,7 +896,7 @@ BorderShape RenderBoxModelObject::borderShapeForContentClipping(const LayoutRect
         borderWidths.left() + padding.left(),
     };
 
-    return BorderShape::shapeForBorderRect(style(), borderBoxRect, contentBoxInsets, closedEdges);
+    return BorderShape::shapeForBorderRect(usedStyle(), borderBoxRect, contentBoxInsets, closedEdges);
 }
 
 LayoutUnit RenderBoxModelObject::containingBlockLogicalWidthForContent() const

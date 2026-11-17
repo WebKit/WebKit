@@ -3458,7 +3458,7 @@ void RenderLayer::applyAncestorClippingForBorderRadius(GraphicsContext& context,
         if (paintBehavior.contains(PaintBehavior::CompositedOverflowScrollContent) && layer->usesCompositedScrolling())
             break;
 
-        if (layer->renderer().hasNonVisibleOverflow() && layer->renderer().style().border().hasBorderRadius() && ancestorLayerIsInContainingBlockChain(*layer)) {
+        if (layer->renderer().hasNonVisibleOverflow() && layer->renderer().usedStyle().hasBorderRadius() && ancestorLayerIsInContainingBlockChain(*layer)) {
             auto adjustedClipRect = LayoutRect { LayoutPoint { layer->offsetFromAncestor(paintingInfo.rootLayer, AdjustForColumns) }, layer->rendererBorderBoxRect().size() };
             adjustedClipRect.move(paintingInfo.subpixelOffset);
             auto borderShape = BorderShape::shapeForBorderRect(layer->renderer().usedStyle(), adjustedClipRect);
@@ -5489,7 +5489,7 @@ void RenderLayer::calculateClipRects(const ClipRectsContext& clipRectsContext, C
                 if (needsTransform)
                     newOverflowClip = LayoutRect(renderer().localToContainerQuad(FloatRect(newOverflowClip.rect()), &clipRectsContext.rootLayer->renderer()).boundingBox());
                 newOverflowClip.moveBy(offset);
-                newOverflowClip.setAffectedByRadius(renderer().style().border().hasBorderRadius());
+                newOverflowClip.setAffectedByRadius(renderer().usedStyle().hasBorderRadius());
                 clipRects.setOverflowClipRect(intersection(newOverflowClip, clipRects.overflowClipRect()));
                 if (renderer().canContainAbsolutelyPositionedObjects())
                     clipRects.setPosClipRect(intersection(newOverflowClip, clipRects.posClipRect()));
@@ -5508,7 +5508,7 @@ void RenderLayer::calculateClipRects(const ClipRectsContext& clipRectsContext, C
                 clipRects.setFixedClipRect(intersection(newPosClip, clipRects.fixedClipRect()));
             }
         }
-    } else if (renderer().hasNonVisibleOverflow() && transform() && renderer().style().border().hasBorderRadius())
+    } else if (renderer().hasNonVisibleOverflow() && transform() && renderer().usedStyle().hasBorderRadius())
         clipRects.setOverflowClipRectAffectedByRadius();
 
     // A float painted as its own root layer (e.g. through its transform) is already clipped as a whole (see backgroundClipRect).
@@ -5659,7 +5659,7 @@ ClipRect RenderLayer::calculateForegroundRect(const ClipRectsContext& clipRectsC
         return foregroundRect;
     }
 
-    if (transform() && renderer().style().border().hasBorderRadius())
+    if (transform() && renderer().usedStyle().hasBorderRadius())
         foregroundRect.setAffectedByRadius(true);
 
     return foregroundRect;

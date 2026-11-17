@@ -1874,7 +1874,7 @@ bool RenderBox::hitTestClipPath(const HitTestLocation& hitTestLocation, const La
 
 bool RenderBox::hitTestBorderRadius(const HitTestLocation& hitTestLocation, const LayoutPoint& accumulatedOffset) const
 {
-    if (isRenderView() || !style().border().hasBorderRadius())
+    if (isRenderView() || !usedStyle().hasBorderRadius())
         return true;
 
     LayoutPoint adjustedLocation = accumulatedOffset + location();
@@ -1992,7 +1992,7 @@ bool RenderBox::backgroundIsKnownToBeOpaqueInRect(const LayoutRect& localRect) c
         return false;
 
     // FIXME: Use rounded rect if border radius is present.
-    if (style().border().hasBorderRadius())
+    if (usedStyle().hasBorderRadius())
         return false;
     
     // FIXME: The background color clip is defined by the last layer.
@@ -2294,7 +2294,7 @@ bool RenderBox::pushContentsClip(PaintInfo& paintInfo, const LayoutPoint& accumu
     float snappingScaleFactor = document().pixelSnappingScaleFactor();
     FloatRect clipRect = snapRectToDevicePixels((isControlClip ? controlClipRect(accumulatedOffset) : overflowClipRect(accumulatedOffset, OverlayScrollbarSizeRelevancy::IgnoreOverlayScrollbarSize, paintInfo.phase)), snappingScaleFactor);
     paintInfo.context().save();
-    if (style().border().hasBorderRadius())
+    if (usedStyle().hasBorderRadius())
         clipToPaddingBoxShape(paintInfo.context(), accumulatedOffset, snappingScaleFactor);
 
     paintInfo.context().clip(clipRect);

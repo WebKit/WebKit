@@ -288,7 +288,7 @@ template<typename Layer> void InlineBoxPainter::paintFillLayer(const Color& colo
 {
     RefPtr image = fillLayer.layer.image().tryStyleImage();
     bool hasFillImage = image && image->canRender(&renderer());
-    bool hasFillImageOrBorderRadius = hasFillImage || renderer().style().border().hasBorderRadius();
+    bool hasFillImageOrBorderRadius = hasFillImage || renderer().usedStyle().hasBorderRadius();
 
     BackgroundPainter backgroundPainter { renderer(), m_paintInfo };
 

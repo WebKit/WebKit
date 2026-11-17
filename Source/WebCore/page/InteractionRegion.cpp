@@ -447,7 +447,7 @@ static GuardContainer guardContainerStatus(const Element& element, const RenderE
 
     CheckedRef style = renderer.style();
     if (!hasTransparentContainerStyle(style)) {
-        if (!hasTransparentBoxDecorations(style) || style->border().hasBorderRadius())
+        if (!hasTransparentBoxDecorations(style) || renderer.usedStyle().hasBorderRadius())
             return { };
 
         CheckedPtr childRenderer = child->renderer();

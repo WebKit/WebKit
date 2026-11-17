@@ -1593,7 +1593,7 @@ bool RenderElement::repaintAfterLayoutIfNeeded(SingleThreadWeakPtr<const RenderL
         if (hasFilter() && !computeFilterOutsets().isZero())
             return true;
 
-        if (style().border().hasBorderRadius()) {
+        if (usedStyle().hasBorderRadius()) {
             // If the border radius changed, repaints at style change time will take care of that.
             // This code is attempting to detect whether border-radius constraining based on box size
             // affects the radii, using the outlineBoundsRect as a proxy for the border box.
@@ -1711,11 +1711,11 @@ bool RenderElement::repaintAfterLayoutIfNeeded(SingleThreadWeakPtr<const RenderL
                 auto* renderBox = dynamicDowncast<RenderBox>(*this);
                 if (!renderBox)
                     return { };
-                auto borderBoxWidth = renderBox->borderBoxWidth();
+                auto borderBoxSize = renderBox->borderBoxSize();
                 return std::max({
                     renderBox->borderRight(),
-                    Style::evaluate<LayoutUnit>(style->borderTopRightRadius().width(), borderBoxWidth, zoom),
-                    Style::evaluate<LayoutUnit>(style->borderBottomRightRadius().width(), borderBoxWidth, zoom),
+                    renderBox->usedStyle().borderTopRightRadius(borderBoxSize).width(),
+                    renderBox->usedStyle().borderBottomRightRadius(borderBoxSize).width(),
                 });
             };
             auto outlineRightInsetExtent = [&] -> LayoutUnit {
@@ -1755,11 +1755,11 @@ bool RenderElement::repaintAfterLayoutIfNeeded(SingleThreadWeakPtr<const RenderL
                 auto* renderBox = dynamicDowncast<RenderBox>(*this);
                 if (!renderBox)
                     return { };
-                auto borderBoxHeight = renderBox->borderBoxHeight();
+                auto borderBoxSize = renderBox->borderBoxSize();
                 return std::max({
                     renderBox->borderBottom(),
-                    Style::evaluate<LayoutUnit>(style->borderBottomLeftRadius().height(), borderBoxHeight, zoom),
-                    Style::evaluate<LayoutUnit>(style->borderBottomRightRadius().height(), borderBoxHeight, zoom),
+                    renderBox->usedStyle().borderBottomLeftRadius(borderBoxSize).height(),
+                    renderBox->usedStyle().borderBottomRightRadius(borderBoxSize).height(),
                 });
             };
             auto outlineBottomInsetExtent = [&] -> LayoutUnit {

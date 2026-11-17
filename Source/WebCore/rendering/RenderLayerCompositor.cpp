@@ -3785,13 +3785,13 @@ Vector<CompositedClipData> RenderLayerCompositor::computeAncestorClippingStack(c
                 clipRoundedRect.moveBy(-offset);
 
                 RectCorners<float> cornerCurvatures { 1.0f, 1.0f, 1.0f, 1.0f };
-                if (box->style().border().hasBorderRadius())
-                    cornerCurvatures = BorderShape::shapeForBorderRect(box->style(), box->borderBoxRect()).cornerCurvatures();
+                if (box->usedStyle().hasBorderRadius())
+                    cornerCurvatures = BorderShape::shapeForBorderRect(box->usedStyle(), box->borderBoxRect()).cornerCurvatures();
 
                 CompositedClipData clipData { const_cast<RenderLayer*>(&ancestorLayer), clipRoundedRect, true, cornerCurvatures };
                 newStack.insert(0, WTF::move(clipData));
                 currentClippedLayer = &ancestorLayer;
-            } else if (box->hasNonVisibleOverflow() && box->style().border().hasBorderRadius()) {
+            } else if (box->hasNonVisibleOverflow() && box->usedStyle().hasBorderRadius()) {
                 if (haveNonScrollableClippingIntermediateLayer) {
                     pushNonScrollableClip(*currentClippedLayer, ancestorLayer);
                     haveNonScrollableClippingIntermediateLayer = false;
@@ -6105,7 +6105,7 @@ LayoutRoundedRect RenderLayerCompositor::parentRelativeScrollableRect(const Rend
             return LayoutRoundedRect { LayoutRect { } };
 
         scrollableRect = LayoutRoundedRect { box->paddingBoxRect() };
-        if (box->style().border().hasBorderRadius()) {
+        if (box->usedStyle().hasBorderRadius()) {
             auto borderShape = BorderShape::shapeForBorderRect(box->usedStyle(), box->borderBoxRect());
             scrollableRect = borderShape.deprecatedInnerRoundedRect();
         }

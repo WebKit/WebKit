@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <WebCore/LayoutRoundedRect.h>
 #include <WebCore/RenderObjectStyle.h>
 #include <WebCore/StyleComputedStyle+GettersInlines.h>
 #include <WebCore/StylePrimitiveNumericTypes+Evaluation.h>
@@ -67,6 +68,13 @@ public:
     LayoutUnit borderWidthEnd() const { return computedStyle().hasZeroEffectiveBorderWidths() ? 0_lu : evaluateZoomed<LayoutUnit>(Style::effectiveBorderWidths(computedStyle()).end(computedStyle().writingMode())); }
     LayoutUnit borderWidthBefore() const { return computedStyle().hasZeroEffectiveBorderWidths() ? 0_lu : evaluateZoomed<LayoutUnit>(Style::effectiveBorderWidths(computedStyle()).before(computedStyle().writingMode())); }
     LayoutUnit borderWidthAfter() const { return computedStyle().hasZeroEffectiveBorderWidths() ? 0_lu : evaluateZoomed<LayoutUnit>(Style::effectiveBorderWidths(computedStyle()).after(computedStyle().writingMode())); }
+
+    bool hasBorderRadius() const { return computedStyle().border().hasBorderRadius(); }
+    LayoutRoundedRectRadii borderRadii(const LayoutSize& borderBoxSize) const { return Style::evaluate<LayoutRoundedRectRadii>(computedStyle().borderRadii(), borderBoxSize, computedStyle().usedZoomForLength()); }
+    LayoutSize borderTopLeftRadius(const LayoutSize& borderBoxSize) const { return Style::evaluate<LayoutSize>(computedStyle().borderTopLeftRadius(), borderBoxSize, computedStyle().usedZoomForLength()); }
+    LayoutSize borderTopRightRadius(const LayoutSize& borderBoxSize) const { return Style::evaluate<LayoutSize>(computedStyle().borderTopRightRadius(), borderBoxSize, computedStyle().usedZoomForLength()); }
+    LayoutSize borderBottomLeftRadius(const LayoutSize& borderBoxSize) const { return Style::evaluate<LayoutSize>(computedStyle().borderBottomLeftRadius(), borderBoxSize, computedStyle().usedZoomForLength()); }
+    LayoutSize borderBottomRightRadius(const LayoutSize& borderBoxSize) const { return Style::evaluate<LayoutSize>(computedStyle().borderBottomRightRadius(), borderBoxSize, computedStyle().usedZoomForLength()); }
 
     // Zoomed and snapped to device pixels, like the border widths.
     template<typename T = LayoutUnit> T outlineWidth() const { return evaluateZoomed<T>(Style::effectiveOutlineWidth(computedStyle())); }

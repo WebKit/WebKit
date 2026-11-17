@@ -228,7 +228,7 @@ static inline bool rendererObscuresBackground(const RenderElement& rootElement)
     if (rootElement.usedStyle().visibility() != UsedVisibility::Visible || !style->opacity().isOpaque() || !style->transform().isNone() || !style->offsetPath().isNone())
         return false;
 
-    if (style->border().hasBorderRadius())
+    if (rootElement.usedStyle().hasBorderRadius())
         return false;
 
     if (rootElement.isComposited())
@@ -329,7 +329,7 @@ BleedAvoidance BoxDecorationPainter::determineBleedAvoidance() const
 
     CheckedRef style = m_renderer->style();
 
-    if (!style->hasBackground() || !style->border().hasBorder() || !style->border().hasBorderRadius() || m_renderer->borderImageIsLoadedAndCanBeRendered())
+    if (!style->hasBackground() || !style->border().hasBorder() || !m_renderer->usedStyle().hasBorderRadius() || m_renderer->borderImageIsLoadedAndCanBeRendered())
         return BleedAvoidance::None;
 
     if (!m_renderer->theme().mayNeedBleedAvoidance(style))

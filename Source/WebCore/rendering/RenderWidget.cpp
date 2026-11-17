@@ -385,7 +385,7 @@ void RenderWidget::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
     if (paintInfo.phase != PaintPhase::Foreground && !needsEventRegionContentPaint)
         return;
 
-    if (style().border().hasBorderRadius()) {
+    if (usedStyle().hasBorderRadius()) {
         LayoutRect borderRect = LayoutRect(adjustedPaintOffset, borderBoxSize());
 
         if (borderRect.isEmpty())
@@ -399,7 +399,7 @@ void RenderWidget::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
     if (m_widget && !isSkippedContentRoot(*this))
         paintContents(paintInfo, paintOffset);
 
-    if (style().border().hasBorderRadius())
+    if (usedStyle().hasBorderRadius())
         paintInfo.context().restore();
 
     if (paintInfo.phase == PaintPhase::EventRegion || paintInfo.phase == PaintPhase::Accessibility)
