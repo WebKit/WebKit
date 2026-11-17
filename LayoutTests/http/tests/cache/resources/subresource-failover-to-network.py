@@ -1,15 +1,15 @@
-#!/usr/bin/perl -w
-binmode STDOUT;
+#!/usr/bin/env python3
 
-print "content-type: text/html\n";
-print "\n";
-print <<EOF
-<script>
+import sys
+
+sys.stdout.write(
+    'Content-Type: text/html\r\n\r\n'
+    '''<script>
 try {
   var result = document.cookie.split(';')[0].split('=')[1];
 
   var r = new XMLHttpRequest();
-  r.open('POST', 'echo-no-store.cgi', false);
+  r.open('POST', 'echo-no-store.py', false);
   r.send(result);
   document.write(r.responseText);
 } catch (e) {
@@ -27,4 +27,5 @@ if (!sessionStorage.subresourceFailoverToNetworkCGILoadedBefore) {
     testRunner.notifyDone();
 }
 </script>
-EOF
+'''
+)

@@ -6,9 +6,9 @@
 function runTest() {
     origSize = internals.memoryCacheSize();
 
-    let postFetch = fetch('resources/echo-cacheable.cgi', { method: 'POST' });
-    let putFetch = fetch('resources/echo-cacheable.cgi', { method: 'PUT' });
-    let deleteFetch = fetch('resources/echo-cacheable.cgi', { method: 'DELETE' });
+    let postFetch = fetch('resources/echo-cacheable.py', { method: 'POST' });
+    let putFetch = fetch('resources/echo-cacheable.py', { method: 'PUT' });
+    let deleteFetch = fetch('resources/echo-cacheable.py', { method: 'DELETE' });
 
     Promise.all([postFetch, putFetch, deleteFetch])
         .then(vals => {

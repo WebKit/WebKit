@@ -20,7 +20,7 @@ var thirdRandomNumber = 0;
 function firstLoaded() {
     firstRandomNumber = randomNumber;
     var newScript = document.createElement("script");
-    newScript.src = "resources/cache-simulator.cgi?uniqueId=1&Cache-control=max-age=0";
+    newScript.src = "resources/cache-simulator.py?uniqueId=1&Cache-control=max-age=0";
     newScript.onload = secondLoaded;
     document.getElementsByTagName("head")[0].appendChild(newScript);
 }
@@ -29,7 +29,7 @@ function secondLoaded() {
 }
 function loadNextScript() {
     var newScript = document.createElement("script");
-    newScript.src = "resources/cache-simulator.cgi?uniqueId=1&Cache-control=max-age=0";
+    newScript.src = "resources/cache-simulator.py?uniqueId=1&Cache-control=max-age=0";
     newScript.onload = thirdLoaded;
     document.getElementsByTagName("head")[0].appendChild(newScript);
 }
@@ -45,7 +45,7 @@ function thirdLoaded() {
 window.addEventListener("load", function() { setTimeout(loadNextScript, 0); }, false);
 var jsTestIsAsync = true;
 </script>
-<script src="resources/cache-simulator.cgi?uniqueId=1&Cache-control=max-age=0" onload="firstLoaded()" async></script>
+<script src="resources/cache-simulator.py?uniqueId=1&Cache-control=max-age=0" onload="firstLoaded()" async></script>
 <script src="../../js-test-resources/js-test-post.js"></script>
 </body>
 </html>

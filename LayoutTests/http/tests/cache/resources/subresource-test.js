@@ -29,7 +29,7 @@ function getServerDate()
 {
     var req = new XMLHttpRequest();
     var t0 = new Date().getTime();
-    req.open('GET', "/cache/resources/current-time.cgi", false /* blocking */);
+    req.open('GET', "/cache/resources/current-time.py", false /* blocking */);
     req.send();
     var serverToClientTime = (new Date().getTime() - t0) / 2;
     if (req.status != 200) {
@@ -44,7 +44,7 @@ var serverClientTimeDelta = getServerDate().getTime() - new Date().getTime();
 function loadTestFrame(frame, testSpec)
 {
     var first = true;
-    var queryString = 'cache-simulator.cgi?uniqueId=' + uniqueId + '&';
+    var queryString = 'cache-simulator.py?uniqueId=' + uniqueId + '&';
     for (var header in testSpec.testHeaders) {
         if (!first)
             queryString += '&';
