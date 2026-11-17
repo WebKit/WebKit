@@ -65,6 +65,7 @@
 #import <wtf/SoftLinking.h>
 #import <wtf/WeakObjCPtr.h>
 #import <wtf/WeakPtr.h>
+#import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 #import <wtf/cocoa/SpanCocoa.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/cocoa/VectorCocoa.h>
@@ -209,6 +210,10 @@ using WebCore::DigitalCredentialPresentationProtocol;
 
     [self performRequest:requestData];
 
+    // performRequest: can reject the request right away, which also dismisses the picker.
+    if (!_completionHandler)
+        return;
+
     if ([self.delegate respondsToSelector:@selector(digitalCredentialsPickerDidPresent:)])
         [self.delegate digitalCredentialsPickerDidPresent:self];
 }
@@ -224,6 +229,13 @@ using WebCore::DigitalCredentialPresentationProtocol;
 
 - (void)performRequest:(const WebCore::DigitalCredentialsRequestData &)requestData
 {
+    if (!_presentmentController) {
+        RELEASE_LOG_ERROR(DigitalCredentials, "WKDigitalCredentialsPicker: WKIdentityDocumentPresentmentController is unavailable, probably because libWebKitSwift failed to load. WebKit requires libWebKitSwift outside the base system.");
+        RELEASE_ASSERT(isInBaseSystem());
+        [self completeWith:makeUnexpected(WebCore::ExceptionData { ExceptionCode::TypeError, "The Digital Credentials picker is not available."_s })];
+        return;
+    }
+
     RetainPtr request = WebKit::createPresentmentRequest(requestData);
     if (!request) {
         [self completeWith:makeUnexpected(WebCore::ExceptionData { ExceptionCode::TypeError, "No supported credential requests to present."_s })];
