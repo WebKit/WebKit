@@ -92,7 +92,8 @@ protected:
     // belong to no realm are always included.
     virtual bool includesGlobalObject(JSC::JSGlobalObject&) const;
 
-    virtual bool observesGarbageCollections() const { return true; }
+    // Whether this agent reports garbage collections and takes snapshots. An agent that doesn't can still be enabled.
+    virtual bool reportsHeap() const { return true; }
 
     // Whether an injected script can describe the objects of the given realm. Injecting fails fatally if the realm
     // cannot access what its globalThis currently stands for.

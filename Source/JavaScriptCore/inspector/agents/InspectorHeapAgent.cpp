@@ -203,7 +203,7 @@ Protocol::ErrorStringOr<void> InspectorHeapAgent::enable()
 
     m_enabled = true;
 
-    if (observesGarbageCollections())
+    if (reportsHeap())
         protect(m_environment)->vm().heap.addObserver(this);
 
     return { };
@@ -237,6 +237,9 @@ Protocol::ErrorStringOr<void> InspectorHeapAgent::gc()
 
 Protocol::ErrorStringOr<std::tuple<double, Protocol::Heap::HeapSnapshotData>> InspectorHeapAgent::snapshot()
 {
+    if (!reportsHeap())
+        return makeUnexpected("Heap snapshots are not supported for this target"_s);
+
     VM& vm = protect(m_environment)->vm();
     JSLockHolder lock(vm);
 
@@ -293,11 +296,11 @@ Protocol::ErrorStringOr<void> InspectorHeapAgent::startTracking()
     if (m_tracking)
         return { };
 
-    m_tracking = true;
-
     auto result = snapshot();
     if (!result)
         return makeUnexpected(WTF::move(result.error()));
+
+    m_tracking = true;
 
     auto [timestamp, snapshotData] = WTF::move(result.value());
     m_frontendDispatcher->trackingStart(timestamp, snapshotData);

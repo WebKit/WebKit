@@ -12,12 +12,18 @@ window.worker = new Worker(URL.createObjectURL(new Blob(["onmessage = () => { };
 function test() {
     let suite = InspectorTest.createAsyncSuite("SiteIsolation.Timeline.AutoCaptureWithHeapAllocations");
 
-    // The targets that the frontend asks to start Heap.
+    // The targets that the frontend asks to start Heap, the main frame's main resource at that time, and the URL of the
+    // target's frame at that time.
     let heapStartedTargets = [];
+    let mainResourceWhenHeapStartedForTarget = new Map;
+    let frameURLWhenHeapStartedForTarget = new Map;
     let originalWillStartTrackingForTarget = WI.timelineManager.willStartTrackingForTarget;
     WI.timelineManager.willStartTrackingForTarget = function(target, domain) {
-        if (domain === "Heap")
+        if (domain === "Heap") {
             heapStartedTargets.push(target);
+            mainResourceWhenHeapStartedForTarget.set(target, WI.networkManager.mainFrame.mainResource);
+            frameURLWhenHeapStartedForTarget.set(target, WI.networkManager.frameForIdentifier(target.executionContext?.frameId)?.mainResource.url);
+        }
         return originalWillStartTrackingForTarget.call(this, target, domain);
     };
 
@@ -55,7 +61,7 @@ function test() {
 
     suite.addTestCase({
         name: "SiteIsolation.Timeline.AutoCaptureWithHeapAllocations.Reload",
-        description: "An auto-capture started by a reload, with JavaScript Allocations enabled, should start Heap only on the page target, which starts it by itself, and not on the targets that exist when it starts or are created during it.",
+        description: "An auto-capture started by a reload, with JavaScript Allocations enabled, should start Heap on each frame target once its frame has committed a document other than the initial about:blank document, and not on the Worker targets or the page target.",
         async test() {
             // Layout starts Timeline.
             setTimelineTypes([WI.TimelineRecord.Type.Layout, WI.TimelineRecord.Type.HeapAllocations]);
@@ -66,11 +72,14 @@ function test() {
 
             let iframeTargetBeforeReload = await waitForFrameTargetForURLContaining("timeline-frame.html");
             InspectorTest.expectNotNull(iframeTargetBeforeReload, "Should find the cross-origin iframe target.");
+            let scriptInsertedIframeTargetBeforeReload = await waitForFrameTargetForURLContaining("delayed-frame.py");
+            InspectorTest.expectNotNull(scriptInsertedIframeTargetBeforeReload, "Should find the script-inserted iframe target.");
             let workerTargetBeforeReload = await awaitWorkerTarget();
             InspectorTest.pass("Should find the Worker target.");
             InspectorTest.expectFalse(WI.timelineManager.isCapturing(), "TimelineManager should not be capturing.");
 
             FrameTimelineTest.clearTrackingEvents();
+            let mainResourceBeforeReload = WI.networkManager.mainFrame.mainResource;
 
             let activePromise = FrameTimelineTest.awaitCapturingState(WI.TimelineManager.CapturingState.Active);
             await Promise.all([
@@ -87,6 +96,8 @@ function test() {
             InspectorTest.assert(mainFrameTarget, "Should find the main frame's target.");
             let iframeTarget = await waitForFrameTargetForURLContaining("timeline-frame.html");
             InspectorTest.expectThat(iframeTarget && iframeTarget !== iframeTargetBeforeReload, "The reload should create a new cross-origin iframe target.");
+            let scriptInsertedIframeTarget = await waitForFrameTargetForURLContaining("delayed-frame.py");
+            InspectorTest.expectThat(scriptInsertedIframeTarget && scriptInsertedIframeTarget !== scriptInsertedIframeTargetBeforeReload, "The reload should create a new script-inserted iframe target.");
             let workerTarget = await awaitWorkerTarget(workerTargetBeforeReload);
             InspectorTest.pass("The reload should create a new Worker target.");
 
@@ -96,15 +107,24 @@ function test() {
                 InspectorTest.pass(`The ${description} started Timeline.`);
             }
 
-            // The page target starts Heap by itself once the new document is committed.
-            await FrameTimelineTest.awaitTrackingEvent("capturingStarted", WI.mainTarget, "Heap");
-            InspectorTest.pass("The page target started Heap.");
+            // Each frame target starts Heap once its frame has committed the new document.
+            for (let [target, description] of [[mainFrameTarget, "main frame target"], [iframeTarget, "cross-origin iframe target"], [scriptInsertedIframeTarget, "script-inserted iframe target"]]) {
+                await FrameTimelineTest.awaitTrackingEvent("capturingStarted", target, "Heap");
+                InspectorTest.pass(`The ${description} started Heap.`);
+            }
 
             await FrameTimelineTest.stopCapturing();
             InspectorTest.pass("Capturing stopped.");
 
-            InspectorTest.expectEqual(heapStartedTargets.length, 0, "The frontend should not start Heap on any target.");
-            for (let [target, description] of [[workerTargetBeforeReload, "Worker target that existed before the reload"], [workerTarget, "Worker target created by the reload"], [mainFrameTarget, "main frame target"], [iframeTarget, "cross-origin iframe target"]])
+            InspectorTest.expectEqual(heapStartedTargets.filter((target) => target === mainFrameTarget).length, 1, "The frontend should start Heap on the main frame target once.");
+            InspectorTest.expectNotEqual(mainResourceWhenHeapStartedForTarget.get(mainFrameTarget), mainResourceBeforeReload, "The frontend should start Heap on the main frame target after the main frame committed the new document.");
+            InspectorTest.expectEqual(heapStartedTargets.filter((target) => target === iframeTarget).length, 1, "The frontend should start Heap on the cross-origin iframe target once.");
+            InspectorTest.expectFalse(heapStartedTargets.includes(iframeTargetBeforeReload), "The frontend should not start Heap on the cross-origin iframe target that existed before the reload.");
+
+            // The script-inserted iframe first commits its initial about:blank document, which should not get the snapshot.
+            InspectorTest.expectEqual(heapStartedTargets.filter((target) => target === scriptInsertedIframeTarget).length, 1, "The frontend should start Heap on the script-inserted iframe target once.");
+            InspectorTest.expectThat(frameURLWhenHeapStartedForTarget.get(scriptInsertedIframeTarget)?.includes("delayed-frame.py"), "The frontend should start Heap on the script-inserted iframe target after its frame committed its real document, not its initial about:blank document.");
+            for (let [target, description] of [[workerTargetBeforeReload, "Worker target that existed before the reload"], [workerTarget, "Worker target created by the reload"], [WI.pageTarget, "page target"]])
                 InspectorTest.expectFalse(FrameTimelineTest.didReportTrackingEvent("capturingStarted", target, "Heap"), `The ${description} should not report that Heap started.`);
 
             WI.timelineManager.autoCaptureOnPageLoad = false;
@@ -117,6 +137,13 @@ function test() {
 </script>
 
 <body onload="runTest()">
-<p>Test that under Site Isolation, an auto-capture with JavaScript Allocations enabled does not start Heap on the frame and Worker targets.</p>
+<p>Test that under Site Isolation, an auto-capture with JavaScript Allocations enabled starts Heap on each frame target only after its frame has committed a document other than the initial about:blank document, and not on the Worker targets.</p>
 <iframe src="http://localhost:8000/site-isolation/inspector/timeline/resources/timeline-frame.html"></iframe>
+<script>
+// Inserting the iframe before giving it a URL makes it commit its initial about:blank document first. Its real document
+// loads after a delay.
+let scriptInsertedIframe = document.createElement("iframe");
+document.body.appendChild(scriptInsertedIframe);
+scriptInsertedIframe.src = "resources/delayed-frame.py";
+</script>
 </body>

@@ -522,9 +522,9 @@ function test()
         name: "Timeline.MultipleTargets.RestartedByBackendWithoutStartingWithBusyWorker",
         description: "Check that a capture that the backend restarts while active, and for which the frontend starts no domain on other targets, stops once a busy Worker that has not stopped the previous capture is removed, since the busy Worker never reports that it stopped.",
         async test() {
-            // Like the previous test case, but the capture that the frontend starts also starts Heap on Workers, and
-            // not on frame targets (FIXME: <https://webkit.org/b/298984>). An auto-capture starts Heap on no other
-            // target, so the restarted capture waits only for the busy Worker to stop the previous capture.
+            // Like the previous test case, but the capture that the frontend starts also starts Heap on the other
+            // targets. An auto-capture doesn't start Heap on them, so the restarted capture waits only for them to stop
+            // the previous capture, and the busy Worker never does.
             let originalTimelineTypes = WI.timelineManager.enabledTimelineTypes;
             setTimelineTypes([WI.TimelineRecord.Type.CPU, WI.TimelineRecord.Type.HeapAllocations]);
 
@@ -558,8 +558,8 @@ function test()
             setTimelineTypes([...originalTimelineTypes, WI.TimelineRecord.Type.HeapAllocations]);
 
             // Heap starts after the domain that makes capturing active, so wait for it too. Under Site Isolation,
-            // `console.profile()` reaches the main frame target, and the frontend starts Heap on the page target.
-            let heapStartedPromise = awaitTrackingEvent("capturingStarted", WI.mainTarget, "Heap");
+            // `console.profile()` reaches the main frame target, which starts its own Heap.
+            let heapStartedPromise = awaitTrackingEvent("capturingStarted", mainFrameTarget, "Heap");
             let activePromise = awaitCapturingState(WI.TimelineManager.CapturingState.Active);
             await InspectorTest.evaluateInPage(`console.profile("first")`);
             await Promise.all([activePromise, heapStartedPromise]);

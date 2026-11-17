@@ -31,6 +31,9 @@ WI.HeapAllocationsInstrument = class HeapAllocationsInstrument extends WI.Instru
 
         this._snapshotIntervalIdentifier = undefined;
         this._shouldStartTrackingForTargets = false;
+        this._listeningForFrameCommits = false;
+        this._committedFrameIdentifiers = new Set;
+        this._targetsStartedAfterCommit = new Set;
     }
 
     // Protected
@@ -46,9 +49,9 @@ WI.HeapAllocationsInstrument = class HeapAllocationsInstrument extends WI.Instru
         // FIXME: Include a periodic snapshot interval option for this instrument.
 
         // An auto-capture starts when the main frame starts loading. Starting Heap takes a snapshot, which runs a full
-        // garbage collection, so don't start it on other targets during the auto-capture, including targets created
-        // during it (e.g. a new frame's load waits until its target is set up). The target that started the
-        // auto-capture starts its own Heap once the new document is committed.
+        // garbage collection, so don't start it on other targets while the page loads (a new frame's load even waits
+        // until its target is set up). Instead, the target that started the auto-capture starts its own Heap once the
+        // new document is committed, and each frame target is started once its frame has committed a document.
         this._shouldStartTrackingForTargets = !autoCapture;
 
         if (this._shouldStartTrackingForTargets) {
@@ -56,6 +59,10 @@ WI.HeapAllocationsInstrument = class HeapAllocationsInstrument extends WI.Instru
                 if (target !== initiatingTarget)
                     this.#startTrackingForTarget(target);
             }
+        } else {
+            this._listeningForFrameCommits = true;
+            WI.Frame.addEventListener(WI.Frame.Event.MainResourceDidChange, this._handleFrameMainResourceDidChange, this);
+            WI.FrameTarget.addEventListener(WI.FrameTarget.Event.ExecutionContextAdded, this._handleFrameTargetExecutionContextAdded, this);
         }
 
         // Periodic snapshots.
@@ -75,6 +82,14 @@ WI.HeapAllocationsInstrument = class HeapAllocationsInstrument extends WI.Instru
 
         window.clearInterval(this._snapshotIntervalIdentifier);
         this._snapshotIntervalIdentifier = undefined;
+
+        if (this._listeningForFrameCommits) {
+            this._listeningForFrameCommits = false;
+            WI.Frame.removeEventListener(WI.Frame.Event.MainResourceDidChange, this._handleFrameMainResourceDidChange, this);
+            WI.FrameTarget.removeEventListener(WI.FrameTarget.Event.ExecutionContextAdded, this._handleFrameTargetExecutionContextAdded, this);
+            this._committedFrameIdentifiers.clear();
+            this._targetsStartedAfterCommit.clear();
+        }
     }
 
     // Private
@@ -83,6 +98,9 @@ WI.HeapAllocationsInstrument = class HeapAllocationsInstrument extends WI.Instru
     {
         for (let target of this.#allSupportedTargets()) {
             WI.heapManager.snapshot(target, (error, timestamp, snapshotStringData) => {
+                if (error)
+                    return;
+
                 let workerProxy = WI.HeapSnapshotWorkerProxy.singleton();
                 workerProxy.createSnapshot(target.identifier, snapshotStringData, ({objectId, snapshot: serializedSnapshot}) => {
                     let snapshot = WI.HeapSnapshotProxy.deserialize(target, objectId, serializedSnapshot);
@@ -93,16 +111,56 @@ WI.HeapAllocationsInstrument = class HeapAllocationsInstrument extends WI.Instru
         }
     }
 
+    // A frame's commit and the frame target's execution context for the new document can arrive in either order: a
+    // frame target that already exists keeps its old context (with the same frame identifier) until after the commit,
+    // and a frame target created during the load reports its first context after the commit.
+    _handleFrameMainResourceDidChange(event)
+    {
+        let frame = event.target;
+
+        // A frame inserted by script commits its initial about:blank document before its real one, so wait for the real
+        // one. A frame that stays on about:blank only gets periodic snapshots.
+        if (/^about:blank([?#]|$)/.test(frame.mainResource.url))
+            return;
+
+        this._committedFrameIdentifiers.add(frame.id);
+
+        for (let target of WI.targets) {
+            if (target instanceof WI.FrameTarget && target.executionContext?.frameId === frame.id)
+                this.#startTrackingAfterCommitForTarget(target);
+        }
+    }
+
+    _handleFrameTargetExecutionContextAdded(event)
+    {
+        let {context} = event.data;
+        if (context.type === WI.ExecutionContext.Type.Normal && this._committedFrameIdentifiers.has(context.frameId))
+            this.#startTrackingAfterCommitForTarget(event.target);
+    }
+
+    #startTrackingAfterCommitForTarget(target)
+    {
+        if (target.isDestroyed || this._targetsStartedAfterCommit.has(target) || !this.#isSupportedTarget(target))
+            return;
+
+        this._targetsStartedAfterCommit.add(target);
+        this.#startTrackingForTarget(target);
+    }
+
     #startTrackingForTarget(target)
     {
         WI.timelineManager.willStartTrackingForTarget(target, "Heap");
-        target.HeapAgent.startTracking();
+        target.HeapAgent.startTracking((error) => {
+            // A target that failed to start (e.g. the page target under Site Isolation, if it is asked before the frame
+            // targets exist) never reports that it stopped, so stop waiting for it.
+            if (error)
+                WI.timelineManager.heapTrackingCompleted(target);
+        });
     }
 
-    // FIXME: <https://webkit.org/b/298984> Add Heap support for FrameTarget.
     #isSupportedTarget(target)
     {
-        return !(target instanceof WI.FrameTarget);
+        return WI.heapManager.targetReportsHeap(target);
     }
 
     *#allSupportedTargets() {

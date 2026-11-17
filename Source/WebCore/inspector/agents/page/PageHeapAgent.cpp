@@ -61,9 +61,10 @@ Inspector::Protocol::ErrorStringOr<void> PageHeapAgent::disable()
     return WebHeapAgent::disable();
 }
 
-bool PageHeapAgent::observesGarbageCollections() const
+bool PageHeapAgent::reportsHeap() const
 {
-    // Under Site Isolation, each frame target reports the garbage collections of its own process.
+    // Under Site Isolation, each frame target reports the garbage collections of its own process and the objects of
+    // its own frame.
     return !protect(m_inspectedPage)->settings().siteIsolationEnabled();
 }
 

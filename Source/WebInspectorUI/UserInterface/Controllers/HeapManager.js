@@ -85,6 +85,19 @@ WI.HeapManager = class HeapManager extends WI.Object
         this._enabled = false;
     }
 
+    // Under Site Isolation, every frame target reports the heap of its own frame, and the page target reports nothing.
+    targetReportsHeap(target)
+    {
+        if (!target.hasDomain("Heap"))
+            return false;
+
+        // COMPATIBILITY (macOS 27.3, iOS 27.3): Frame targets did not have the Heap domain, so the page target reported every frame of its process.
+        if (target.type === WI.TargetType.Page)
+            return !WI.targets.some((otherTarget) => otherTarget instanceof WI.FrameTarget && otherTarget.hasDomain("Heap"));
+
+        return true;
+    }
+
     snapshot(target, callback)
     {
         console.assert(this._enabled);

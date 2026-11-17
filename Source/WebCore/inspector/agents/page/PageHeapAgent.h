@@ -49,7 +49,7 @@ public:
 
 private:
     // InspectorHeapAgent
-    bool observesGarbageCollections() const final;
+    bool reportsHeap() const final;
 
     WeakRef<InstrumentingAgents> m_instrumentingAgents;
     WeakRef<Page> m_inspectedPage;
