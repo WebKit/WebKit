@@ -1408,7 +1408,7 @@ WebCore::CertificateInfo WebFrameProxy::provisionalCertificateInfoFromNetworkPro
     if (!url.protocolIsSecure())
         return { };
 
-    if (CertificateInfo certificateInfo = m_hostAndPortToCertificateInfo.get(hostAndPort); !certificateInfo.isEmpty())
+    if (CertificateInfo certificateInfo = protect(process())->certificateInfoForHostAndPort(hostAndPort); !certificateInfo.isEmpty())
         return certificateInfo;
 
     RefPtr page = m_page.get();
@@ -1423,7 +1423,7 @@ WebCore::CertificateInfo WebFrameProxy::provisionalCertificateInfoFromNetworkPro
 
     connection->waitForAndDispatchImmediately<Messages::WebFrameProxyFromNetworkProcess::ReceivedMainResourceResponseWithCertificateInfo>(frameID(), 0_s);
 
-    CertificateInfo certificateInfo = m_hostAndPortToCertificateInfo.get(hostAndPort);
+    CertificateInfo certificateInfo = protect(process())->certificateInfoForHostAndPort(hostAndPort);
     if (certificateInfo.isEmpty())
         RELEASE_LOG_ERROR(Network, "Unexpectedly missing certificate info");
     return certificateInfo;
@@ -1436,20 +1436,17 @@ void WebFrameProxy::commitCertificateInfo(const URL& url, bool hasCertificateInf
 
 void WebFrameProxy::receivedMainResourceResponseWithCertificateInfo(String&& hostAndPort, WebCore::CertificateInfo&& certificateInfo)
 {
-    // FIXME: This has no corresponding remove call. If we know a host is not being used by the back/forward
-    // cache and is not being navigated to, we could clean up this map. Since we don't re-use main frames for
-    // multiple hosts, this would only affect iframes that navigate to many hosts.
-    if (!hostAndPort.isNull())
-        m_hostAndPortToCertificateInfo.set(WTF::move(hostAndPort), WTF::move(certificateInfo));
+    if (RefPtr provisionalFrame = m_provisionalFrame)
+        return protect(provisionalFrame->process())->setCertificateInfoForHostAndPort(WTF::move(hostAndPort), WTF::move(certificateInfo));
+    protect(process())->setCertificateInfoForHostAndPort(WTF::move(hostAndPort), WTF::move(certificateInfo));
 }
 
 void WebFrameProxy::setCertificateInfoForProcessSwapOnNavigationResponse(const URL& url, WebCore::CertificateInfo&& certificateInfo)
 {
     ASSERT(isMainFrame());
     ASSERT(!certificateInfo.isEmpty());
-    ASSERT(m_hostAndPortToCertificateInfo.isEmpty());
 
-    m_hostAndPortToCertificateInfo.set(url.hostAndPort(), WTF::move(certificateInfo));
+    protect(process())->setCertificateInfoForHostAndPort(url.hostAndPort(), WTF::move(certificateInfo));
 }
 
 } // namespace WebKit

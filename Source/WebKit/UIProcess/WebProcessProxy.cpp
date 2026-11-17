@@ -4356,6 +4356,20 @@ void WebProcessProxy::ensureMediaKeysStorageDirectory(WebCore::FrameIdentifier f
     WebCore::StorageUtilities::writeOriginToFile(FileSystem::pathByAppendingComponent(originDirectory, "origin"_s), WebCore::ClientOrigin { origin, origin });
 }
 
+WebCore::CertificateInfo WebProcessProxy::certificateInfoForHostAndPort(const String& hostAndPort) const
+{
+    return m_hostAndPortToCertificateInfo.get(hostAndPort);
+}
+
+void WebProcessProxy::setCertificateInfoForHostAndPort(String&& hostAndPort, WebCore::CertificateInfo&& certificateInfo)
+{
+    if (hostAndPort.isNull())
+        return;
+
+    // FIXME: This has no corresponding remove call. It is bounded by the number of distinct hosts and ports loaded in this process.
+    m_hostAndPortToCertificateInfo.set(WTF::move(hostAndPort), WTF::move(certificateInfo));
+}
+
 } // namespace WebKit
 
 #undef EXTRACT_WITH_MESSAGE_CHECK

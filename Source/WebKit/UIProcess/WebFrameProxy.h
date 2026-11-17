@@ -400,7 +400,6 @@ private:
     bool m_hasPDFPlugin { false };
 #endif
     WebCore::CertificateInfo m_certificateInfo;
-    HashMap<String, WebCore::CertificateInfo> m_hostAndPortToCertificateInfo;
     RefPtr<WebFramePolicyListenerProxy> m_activeListener;
     HashMap<uint64_t, Ref<WebFramePolicyListenerProxy>> m_activeNonNavigationListeners;
     uint64_t m_nextNonNavigationListenerID { 0 };
