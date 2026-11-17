@@ -49,6 +49,12 @@
 - (nullable NSError *)_collectedFailuresError;
 @end
 
+namespace TestWebKitAPI::Util {
+
+static bool shouldEnableSiteIsolationForWebExtensionsTest = false;
+
+} // namespace TestWebKitAPI::Util
+
 static NSError *managerError(NSString *description)
 {
     return [NSError errorWithDomain:@"TestWebExtensionManager" code:1 userInfo:@{ NSLocalizedDescriptionKey: description }];
@@ -1220,8 +1226,6 @@ static WKUserContentController *userContentController(BOOL usingPrivateBrowsing)
 
 namespace TestWebKitAPI {
 namespace Util {
-
-bool shouldEnableSiteIsolationForWebExtensionsTest = false;
 
 RetainPtr<TestWebExtensionManager> parseExtension(NSDictionary *manifest, NSDictionary *resources, WKWebExtensionControllerConfiguration *configuration, BOOL usesEnhancedSecurity)
 {

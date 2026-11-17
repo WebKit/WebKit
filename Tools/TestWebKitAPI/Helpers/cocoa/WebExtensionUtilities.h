@@ -51,7 +51,7 @@ NS_SWIFT_UI_ACTOR
 - (instancetype)initWithManifest:(NSDictionary<NSString *, id> *)manifest resources:(nullable NSDictionary<NSString *, id> *)resources;
 - (instancetype)initWithManifest:(NSDictionary<NSString *, id> *)manifest resources:(nullable NSDictionary<NSString *, id> *)resources extensionControllerConfiguration:(nullable WKWebExtensionControllerConfiguration *)configuration usesEnhancedSecurity:(BOOL)usesEnhancedSecurity;
 
-// The equivalent of Util::shouldEnableSiteIsolationForWebExtensionsTest for callers that cannot reach C++ globals, such as Swift.
+// Whether managers and tabs created afterwards enable site isolation.
 @property (class, nonatomic) BOOL shouldEnableSiteIsolation;
 
 @property (nonatomic, strong) WKWebExtension *extension;
@@ -222,8 +222,6 @@ namespace TestWebKitAPI::Util {
 inline NSString * _Nonnull constructScript(NSArray * _Nonnull lines) { return [lines componentsJoinedByString:@"\n"]; }
 
 #endif
-
-extern bool shouldEnableSiteIsolationForWebExtensionsTest;
 
 RetainPtr<TestWebExtensionManager> parseExtension(NSDictionary * _Nonnull manifest, NSDictionary * _Nonnull resources, WKWebExtensionControllerConfiguration * _Nullable = nil, BOOL usesEnhancedSecurity = NO);
 RetainPtr<TestWebExtensionManager> loadExtension(NSDictionary * _Nonnull manifest, NSDictionary * _Nonnull resources, WKWebExtensionControllerConfiguration * _Nullable = nil, BOOL usesEnhancedSecurity = NO);
