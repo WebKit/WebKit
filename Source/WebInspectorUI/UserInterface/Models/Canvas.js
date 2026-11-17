@@ -540,7 +540,9 @@ WI.Canvas.ContextType = {
 
 WI.Canvas.ColorSpace = {
     SRGB: "srgb",
+    SRGBLinear: "srgb-linear",
     DisplayP3: "display-p3",
+    DisplayP3Linear: "display-p3-linear",
 };
 
 WI.Canvas.RecordingState = {

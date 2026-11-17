@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function createCanvas(colorSpace)
+{
+    document.body.appendChild(document.createElement("canvas")).getContext("2d", {colorSpace});
+}
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("Canvas.ColorSpaceDisplayName");
+
+    function addTestCase({name, colorSpace, expectedDisplayName})
+    {
+        suite.addTestCase({
+            name,
+            description: `A canvas with the "${colorSpace}" color space should have a display name.`,
+            test(resolve, reject) {
+                WI.canvasManager.canvasCollection.awaitEvent(WI.Collection.Event.ItemAdded)
+                .then((event) => {
+                    let canvas = event.data.item;
+
+                    InspectorTest.expectEqual(canvas.contextAttributes.colorSpace, colorSpace, `Canvas context should have color space "${colorSpace}".`);
+                    InspectorTest.expectEqual(WI.Canvas.displayNameForColorSpace(canvas.contextAttributes.colorSpace), expectedDisplayName, `Color space "${colorSpace}" should have display name "${expectedDisplayName}".`);
+
+                    resolve();
+                })
+                .catch(reject);
+
+                InspectorTest.evaluateInPage(`createCanvas("${colorSpace}")`);
+            },
+        });
+    }
+
+    suite.addTestCase({
+        name: "Canvas.ColorSpaceDisplayName.EveryProtocolColorSpace",
+        description: "Every canvas color space of the protocol should have a display name.",
+        async test() {
+            let colorSpaces = InspectorBackend.Enum.Canvas.ColorSpace;
+            InspectorTest.expectThat(colorSpaces, "The Canvas domain should define a ColorSpace enum.");
+            for (let colorSpace of Object.values(colorSpaces || {}))
+                InspectorTest.expectThat(WI.Canvas.displayNameForColorSpace(colorSpace), `Color space "${colorSpace}" should have a display name.`);
+        },
+    });
+
+    // Live canvases cover the backend path. Ports without display-p3 support cannot create the P3 contexts,
+    // so their display names are checked directly.
+    addTestCase({name: "Canvas.ColorSpaceDisplayName.SRGB", colorSpace: "srgb", expectedDisplayName: "sRGB"});
+    addTestCase({name: "Canvas.ColorSpaceDisplayName.SRGBLinear", colorSpace: "srgb-linear", expectedDisplayName: "Linear sRGB"});
+
+    suite.addTestCase({
+        name: "Canvas.ColorSpaceDisplayName.DisplayP3",
+        description: "The Display P3 color spaces should have display names.",
+        async test() {
+            InspectorTest.expectEqual(WI.Canvas.displayNameForColorSpace("display-p3"), "Display P3", "Color space \"display-p3\" should have display name \"Display P3\".");
+            InspectorTest.expectEqual(WI.Canvas.displayNameForColorSpace("display-p3-linear"), "Linear Display P3", "Color space \"display-p3-linear\" should have display name \"Linear Display P3\".");
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Test that every canvas color space has a display name.</p>
+</body>
+</html>
