@@ -113,15 +113,6 @@
             "RunLoopObserver.CrossThread_TwoObserversOnDifferentLoops": {
                 "expected": {"all": {"status": ["CRASH", "PASS"], "bug": "webkit.org/b/315297"}}
             },
-            "PushDatabase.ManyInFlightOps": {
-                "expected": {"all": {"status": ["CRASH"], "bug": "webkit.org/b/323618"}}
-            },
-            "PushDatabase.StartsFromScratchOnDowngrade": {
-                "expected": {"all": {"status": ["CRASH"], "bug": "webkit.org/b/323618"}}
-            },
-            "PushDatabase.CanMigrateV2DatabaseToCurrentSchema": {
-                "expected": {"all": {"status": ["CRASH"], "bug": "webkit.org/b/323618"}}
-            },
             "FontCascadeTest.ComplexTextRetainsSystemFallbackFonts": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/323619"}}
             }
@@ -143,18 +134,6 @@
             },
             "WebKit.ResizeWindowAfterCrash": {
                 "expected": {"all": {"slow": true}}
-            },
-            "TestHeaderForTest.CommaSeparatedSkipIfDisabledKeys": {
-                "expected": {"all": {"status": ["CRASH"], "bug": "webkit.org/b/323618"}}
-            },
-            "TestHeaderForTest.RepeatedSkipIfDisabledKeys": {
-                "expected": {"all": {"status": ["CRASH"], "bug": "webkit.org/b/323618"}}
-            },
-            "TestHeaderForTest.HeaderWithoutSkipIfDisabledHasNoSkipIfDisabledKeys": {
-                "expected": {"all": {"status": ["CRASH"], "bug": "webkit.org/b/323618"}}
-            },
-            "TestHeaderForTest.SkipIfDisabledIsNotATestFeature": {
-                "expected": {"all": {"status": ["CRASH"], "bug": "webkit.org/b/323618"}}
             }
         }
     },

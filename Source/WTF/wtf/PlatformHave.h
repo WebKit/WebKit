@@ -173,6 +173,9 @@
 #if !defined(HAVE_PTHREAD_MAIN_NP)
 #define HAVE_PTHREAD_MAIN_NP 1
 #endif
+#if !defined(HAVE_MKOSTEMPS)
+#define HAVE_MKOSTEMPS 1
+#endif
 #endif // OS(DARWIN)
 
 /* watchOS (ARM64_32) must not use int128_t because of wrong behavior. */
