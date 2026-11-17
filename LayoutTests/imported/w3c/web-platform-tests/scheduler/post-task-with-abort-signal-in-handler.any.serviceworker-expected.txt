@@ -1,0 +1,4 @@
+
+FAIL Posting a task with a signal and abort the signal when running the sync callback Can't find variable: TaskController
+FAIL Posting a task with a signal and abort the signal when running the async callback Can't find variable: TaskController
+

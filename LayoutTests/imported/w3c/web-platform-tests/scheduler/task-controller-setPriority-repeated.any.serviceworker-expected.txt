@@ -1,0 +1,4 @@
+
+FAIL TaskController.setPriority() changes the priority of all associated tasks when called repeatedly promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: TaskController"
+FAIL TaskController.setPriority() changes the priority of all associated tasks when called repeatedly before tasks run promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: TaskController"
+

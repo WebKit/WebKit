@@ -1,0 +1,10 @@
+
+FAIL yield() inherits priority (string) across promises (user-blocking) promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: scheduler"
+FAIL yield() inherits priority (signal) across promises (user-blocking) promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: TaskController"
+FAIL yield() inherits priority (string) across promises (background) promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: scheduler"
+FAIL yield() inherits priority (signal) across promises (background) promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: TaskController"
+FAIL yield() inherits abort across promises promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: TaskController"
+FAIL yield() inherits .then() context, not resolve context promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: scheduler"
+FAIL yield() inherits priority in queueMicrotask() promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: scheduler"
+FAIL yield() inherits priority while dealing with thenable promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: scheduler"
+

@@ -1,0 +1,43 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/scheduler/META.yml
+/LayoutTests/imported/w3c/web-platform-tests/scheduler/WEB_FEATURES.yml
+/LayoutTests/imported/w3c/web-platform-tests/scheduler/post-task-abort-reason.any.js
+/LayoutTests/imported/w3c/web-platform-tests/scheduler/post-task-delay.any.js
+/LayoutTests/imported/w3c/web-platform-tests/scheduler/post-task-multiple-scheduler-order.window.js
+/LayoutTests/imported/w3c/web-platform-tests/scheduler/post-task-result-success.any.js
+/LayoutTests/imported/w3c/web-platform-tests/scheduler/post-task-result-throws.any.js
+/LayoutTests/imported/w3c/web-platform-tests/scheduler/post-task-run-order.any.js
+/LayoutTests/imported/w3c/web-platform-tests/scheduler/post-task-then-detach.html
+/LayoutTests/imported/w3c/web-platform-tests/scheduler/post-task-with-abort-signal-in-handler.any.js
+/LayoutTests/imported/w3c/web-platform-tests/scheduler/post-task-with-abort-signal.any.js
+/LayoutTests/imported/w3c/web-platform-tests/scheduler/post-task-with-aborted-signal.any.js
+/LayoutTests/imported/w3c/web-platform-tests/scheduler/post-task-with-signal-and-priority.any.js
+/LayoutTests/imported/w3c/web-platform-tests/scheduler/post-task-with-signal-from-detached-iframe.html
+/LayoutTests/imported/w3c/web-platform-tests/scheduler/post-task-without-signals.any.js
+/LayoutTests/imported/w3c/web-platform-tests/scheduler/scheduler-replaceable.any.js
+/LayoutTests/imported/w3c/web-platform-tests/scheduler/task-controller-abort-completed-tasks.any.js
+/LayoutTests/imported/w3c/web-platform-tests/scheduler/task-controller-abort-signal-and-priority.any.js
+/LayoutTests/imported/w3c/web-platform-tests/scheduler/task-controller-abort1.any.js
+/LayoutTests/imported/w3c/web-platform-tests/scheduler/task-controller-abort2.any.js
+/LayoutTests/imported/w3c/web-platform-tests/scheduler/task-controller-setPriority-delayed-task.any.js
+/LayoutTests/imported/w3c/web-platform-tests/scheduler/task-controller-setPriority-recursive.any.js
+/LayoutTests/imported/w3c/web-platform-tests/scheduler/task-controller-setPriority-repeated.any.js
+/LayoutTests/imported/w3c/web-platform-tests/scheduler/task-controller-setPriority1.any.js
+/LayoutTests/imported/w3c/web-platform-tests/scheduler/task-controller-setPriority2.any.js
+/LayoutTests/imported/w3c/web-platform-tests/scheduler/task-signal-any-abort.tentative.any.js
+/LayoutTests/imported/w3c/web-platform-tests/scheduler/task-signal-any-post-task-run-order.tentative.any.js
+/LayoutTests/imported/w3c/web-platform-tests/scheduler/task-signal-any-priority.tentative.any.js
+/LayoutTests/imported/w3c/web-platform-tests/scheduler/task-signal-onprioritychange.any.js

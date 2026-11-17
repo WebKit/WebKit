@@ -1,0 +1,3 @@
+
+FAIL Test that TaskController.abort() prevents a task from running and rejects the promise promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: TaskController"
+
