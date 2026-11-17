@@ -39,7 +39,6 @@ extern bool didEnterPiP;
 extern bool didExitPiP;
 extern bool readyToContinue;
 extern bool didFinishLoad;
-extern bool didBecomeUnresponsive;
 extern bool wasPrompted;
 extern bool didFinishNavigationBoolean;
 extern bool didCreateWebView;

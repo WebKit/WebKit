@@ -27,9 +27,9 @@
 
 #if PLATFORM(MAC)
 
-#import "Helpers/DeprecatedGlobalValues.h"
 #import "Helpers/PlatformUtilities.h"
 #import "Helpers/PlatformWebView.h"
+#import "Helpers/cocoa/TestNavigationDelegate.h"
 #import "Helpers/cocoa/TestWKWebView.h"
 #import <wtf/RetainPtr.h>
 
@@ -52,19 +52,15 @@ static void setInjectedBundleClient(WKContextRef context)
     WKContextSetInjectedBundleClient(context, &injectedBundleClient.base);
 }
 
-@interface ResponsivenessDelegate : NSObject <WKNavigationDelegate>
+@interface ResponsivenessDelegate : TestNavigationDelegate
+@property (nonatomic, readonly) BOOL didBecomeUnresponsive;
 @end
 
 @implementation ResponsivenessDelegate
 
-- (void)webView:(WKWebView *)webView didFinishNavigation:(WKNavigation *)navigation
-{
-    didFinishLoad = true;
-}
-
 - (void)_webViewWebProcessDidBecomeUnresponsive:(WKWebView *)webView
 {
-    didBecomeUnresponsive = true;
+    _didBecomeUnresponsive = YES;
 }
 
 @end
@@ -83,7 +79,7 @@ TEST(WebKit, ResponsivenessTimerDoesntFireEarly)
     [webView setNavigationDelegate:delegate.get()];
 
     [webView loadRequest:[NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"simple" withExtension:@"html"]]];
-    Util::run(&didFinishLoad);
+    [delegate waitForDidFinishNavigation];
 
     WKContextPostMessageToInjectedBundle(context.get(), Util::toWK("BrieflyPause").get(), 0);
 
@@ -94,7 +90,7 @@ TEST(WebKit, ResponsivenessTimerDoesntFireEarly)
 
     Util::run(&didBrieflyPause);
 
-    EXPECT_FALSE(didBecomeUnresponsive);
+    EXPECT_FALSE([delegate didBecomeUnresponsive]);
 }
 
 } // namespace TestWebKitAPI
