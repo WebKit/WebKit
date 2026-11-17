@@ -94,6 +94,15 @@ struct WebViewRepresentable {
         }
         #endif
 
+        if let systemBackgroundColorExtensionEdges = environment.webViewSystemBackgroundColorExtensionEdges {
+            webView.systemBackgroundColorExtensionEnabledEdges = WKRectEdge(
+                systemBackgroundColorExtensionEdges,
+                layoutDirection: environment.layoutDirection
+            )
+        } else {
+            webView._resetSystemBackgroundColorExtensionEnabledEdges()
+        }
+
         #if WTF_PLATFORM_VISION
         if let scrollInputBehavior = environment.webViewScrollInputBehaviorContext {
             if scrollInputBehavior.input == .look {

@@ -319,12 +319,6 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
 + (void)_setVisibilityEndowmentForTesting:(BOOL)isVisible;
 #endif
 
-#if defined(ENABLE_HORIZONTAL_BANNER_VIEW_OVERLAYS) && ENABLE_HORIZONTAL_BANNER_VIEW_OVERLAYS
-- (void)_enableColorExtensionBehaviorForHorizontalBannerViewOverlaysForTesting;
-- (void)_disableColorExtensionBehaviorForHorizontalBannerViewOverlaysForTesting;
-- (void)_clearColorExtensionBehaviorOverridesForHorizontalBannerViewOverlaysForTesting;
-#endif
-
 @end
 
 typedef NS_ENUM(NSInteger, _WKMediaSessionReadyState) {

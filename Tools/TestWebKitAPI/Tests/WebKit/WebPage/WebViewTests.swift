@@ -26,8 +26,9 @@
 import Observation
 import SwiftUI
 import Testing
-@_spi(Testing) import WebKit
+@_spi(Testing) @_spi(CrossImportOverlay) import WebKit
 import WebKit_Private.WKWebViewPrivate
+import WebKit_Private.WKWebViewPrivateForTesting
 @_spi(Experimental) import _WebKit_SwiftUI
 private import TestWebKitAPILibrary
 import struct Swift.String
@@ -61,6 +62,13 @@ private final class ViewModel {
     var attachments = Attachments()
 
     var scrollPosition = ScrollPosition(edge: .top)
+
+    struct SystemBackgroundColorExtension: Equatable, Sendable {
+        var edges: Edge.Set = .leading
+        var layoutDirection: LayoutDirection = .leftToRight
+    }
+
+    var systemBackgroundColorExtension = SystemBackgroundColorExtension()
 }
 
 private struct TestView: View {
@@ -104,6 +112,52 @@ private struct ScrollPositionTestView: View {
             .webViewScrollPosition($model.scrollPosition)
     }
 }
+
+private struct SystemBackgroundColorExtensionTestView: View {
+    @Environment(ViewModel.self)
+    var model
+
+    var body: some View {
+        WebView(model.page)
+            .webViewSystemBackgroundColorExtensionEdges(model.systemBackgroundColorExtension.edges)
+            .environment(\.layoutDirection, model.systemBackgroundColorExtension.layoutDirection)
+    }
+}
+
+#if ENABLE_HORIZONTAL_BANNER_VIEW_OVERLAYS && HAVE_LIQUID_GLASS_ADJUSTMENTS
+@MainActor
+private func isSystemBackgroundColorExtensionVisible(in webView: WKWebView, side: String) -> Bool {
+    func firstLayer(in layer: CALayer, named name: String) -> CALayer? {
+        if layer.name?.contains(name) == true {
+            return layer
+        }
+
+        for sublayer in layer.sublayers ?? [] {
+            if let match = firstLayer(in: sublayer, named: name) {
+                return match
+            }
+        }
+
+        return nil
+    }
+
+    webView._cancelFixedColorExtensionFadeAnimationsForTesting()
+
+    #if WTF_PLATFORM_MAC
+    guard let rootLayer = webView.layer else {
+        return false
+    }
+    #else
+    let rootLayer = webView.layer
+    #endif
+
+    guard let layer = firstLayer(in: rootLayer, named: "\(side) system background color extension") else {
+        return false
+    }
+
+    return !layer.isHidden && (layer.backgroundColor?.alpha ?? 0) > 0
+}
+#endif
 
 @MainActor
 struct WebViewTests {
@@ -186,6 +240,97 @@ struct WebViewTests {
         #expect(model.attachments.removed == [firstAttachment])
         #expect(model.attachments.inserted == [firstAttachment, secondAttachment])
     }
+
+    @Test
+    func systemBackgroundColorExtensionEdgesFollowLayoutDirection() async throws {
+        let model = ViewModel()
+
+        render {
+            SystemBackgroundColorExtensionTestView()
+                .environment(model)
+        } observing: {
+            model.systemBackgroundColorExtension
+        }
+
+        try await model.page.load(html: "<body></body>").wait()
+        await model.page.waitForNextPresentationUpdate()
+
+        let webView = model.page.backingWebView
+        #expect(webView.systemBackgroundColorExtensionEnabledEdges == .left)
+
+        model.systemBackgroundColorExtension.layoutDirection = .rightToLeft
+        await model.page.waitForNextPresentationUpdate()
+        #expect(webView.systemBackgroundColorExtensionEnabledEdges == .right)
+
+        model.systemBackgroundColorExtension.edges = .horizontal
+        await model.page.waitForNextPresentationUpdate()
+        #expect(webView.systemBackgroundColorExtensionEnabledEdges == WKRectEdge([.left, .right]))
+
+        model.systemBackgroundColorExtension.edges = []
+        await model.page.waitForNextPresentationUpdate()
+        #expect(webView.systemBackgroundColorExtensionEnabledEdges == [])
+    }
+
+    @Test
+    func systemBackgroundColorExtensionEdgesUsePlatformDefaultWithoutModifier() async throws {
+        let model = ViewModel()
+
+        render {
+            TestView()
+                .environment(model)
+        }
+
+        try await model.page.load(html: "<body></body>").wait()
+        await model.page.waitForNextPresentationUpdate()
+
+        let defaultEdges = WKWebView(frame: .zero, configuration: WKWebViewConfiguration()).systemBackgroundColorExtensionEnabledEdges
+        #expect(model.page.backingWebView.systemBackgroundColorExtensionEnabledEdges == defaultEdges)
+    }
+
+    #if ENABLE_HORIZONTAL_BANNER_VIEW_OVERLAYS && HAVE_LIQUID_GLASS_ADJUSTMENTS
+    @Test
+    func systemBackgroundColorExtensionViewsFollowModifier() async throws {
+        let model = ViewModel()
+
+        render {
+            SystemBackgroundColorExtensionTestView()
+                .environment(model)
+        } observing: {
+            model.systemBackgroundColorExtension
+        }
+
+        let webView = model.page.backingWebView
+        #if WTF_PLATFORM_MAC
+        webView.obscuredContentInsets = NSEdgeInsets(top: 60, left: 200, bottom: 0, right: 100)
+        #else
+        webView.obscuredContentInsets = UIEdgeInsets(top: 60, left: 200, bottom: 0, right: 100)
+        #endif
+
+        try await model.page.load(html: "<body style='margin: 0; width: 3000px; height: 1000px'></body>").wait()
+        await model.page.waitForNextPresentationUpdate()
+
+        #expect(isSystemBackgroundColorExtensionVisible(in: webView, side: "Left"))
+        #expect(!isSystemBackgroundColorExtensionVisible(in: webView, side: "Right"))
+
+        model.systemBackgroundColorExtension.layoutDirection = .rightToLeft
+        await model.page.waitForNextPresentationUpdate()
+
+        #expect(!isSystemBackgroundColorExtensionVisible(in: webView, side: "Left"))
+        #expect(isSystemBackgroundColorExtensionVisible(in: webView, side: "Right"))
+
+        model.systemBackgroundColorExtension.edges = .horizontal
+        await model.page.waitForNextPresentationUpdate()
+
+        #expect(isSystemBackgroundColorExtensionVisible(in: webView, side: "Left"))
+        #expect(isSystemBackgroundColorExtensionVisible(in: webView, side: "Right"))
+
+        model.systemBackgroundColorExtension.edges = []
+        await model.page.waitForNextPresentationUpdate()
+
+        #expect(!isSystemBackgroundColorExtensionVisible(in: webView, side: "Left"))
+        #expect(!isSystemBackgroundColorExtensionVisible(in: webView, side: "Right"))
+    }
+    #endif
 
     #if WTF_PLATFORM_MAC
     @Test

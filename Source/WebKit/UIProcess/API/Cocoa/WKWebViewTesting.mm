@@ -1695,23 +1695,6 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse, _WKCALaye
     return textIndicator->textBoundingRectInRootViewCoordinates();
 }
 
-#if ENABLE(HORIZONTAL_BANNER_VIEW_OVERLAYS)
-- (void)_enableColorExtensionBehaviorForHorizontalBannerViewOverlaysForTesting
-{
-    _adjustedColorExtensionsForBannerViewOverlaysEnablement = WebKit::AdjustedColorExtensionsForBannerViewOverlaysEnablement::ForcedOnForTesting;
-}
-
-- (void)_disableColorExtensionBehaviorForHorizontalBannerViewOverlaysForTesting
-{
-    _adjustedColorExtensionsForBannerViewOverlaysEnablement = WebKit::AdjustedColorExtensionsForBannerViewOverlaysEnablement::ForcedOffForTesting;
-}
-
-- (void)_clearColorExtensionBehaviorOverridesForHorizontalBannerViewOverlaysForTesting
-{
-    _adjustedColorExtensionsForBannerViewOverlaysEnablement = WebKit::AdjustedColorExtensionsForBannerViewOverlaysEnablement::EnabledIfHorizontalBannerViewPresent;
-}
-#endif
-
 - (void)_cancelFixedColorExtensionFadeAnimationsForTesting
 {
 #if ENABLE(CONTENT_INSET_BACKGROUND_FILL)

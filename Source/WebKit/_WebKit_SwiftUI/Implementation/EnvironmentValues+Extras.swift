@@ -49,6 +49,9 @@ extension EnvironmentValues {
     var webViewContentBackground: Visibility = .automatic
 
     @Entry
+    var webViewSystemBackgroundColorExtensionEdges: Edge.Set? = nil
+
+    @Entry
     var webViewOnScrollGeometryChange: OnScrollGeometryChangeContext? = nil
 
     @Entry

@@ -760,6 +760,34 @@ typedef NS_OPTIONS(NSUInteger, WKWebViewDataType) {
 @property (nonatomic) UIEdgeInsets obscuredContentInsets WK_API_AVAILABLE(ios(26.0), visionos(26.0));
 #endif
 
+/*! @enum WKRectEdge
+ @abstract Options that identify the edges of a @link WKWebView @/link.
+ @constant WKRectEdgeNone No edges.
+ @constant WKRectEdgeLeft The left edge.
+ @constant WKRectEdgeTop The top edge.
+ @constant WKRectEdgeRight The right edge.
+ @constant WKRectEdgeBottom The bottom edge.
+ @constant WKRectEdgeAll All four edges.
+ */
+typedef NS_OPTIONS(NSUInteger, WKRectEdge) {
+    WKRectEdgeNone = 0,
+    WKRectEdgeLeft = 1 << 0,
+    WKRectEdgeTop = 1 << 1,
+    WKRectEdgeRight = 1 << 2,
+    WKRectEdgeBottom = 1 << 3,
+    WKRectEdgeAll = WKRectEdgeLeft | WKRectEdgeTop | WKRectEdgeRight | WKRectEdgeBottom,
+} WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
+
+/*! @abstract The edges where the web view will display the system background color in the obscured content inset regions.
+ @discussion For each edge in this set with a non-zero @link obscuredContentInsets @/link value, the web view displays
+ the system background color in the portion of that edge's obscured content inset region that isn't occupied by overflowing web
+ content.
+
+ Only @link WKRectEdgeLeft @/link and/or @link WKRectEdgeRight @/link are supported; other edges are ignored.
+ The default value is WKRectEdgeLeft | WKRectEdgeRight on Mac, iPad, and visionOS, and WKRectEdgeNone on iPhone.
+ */
+@property (nonatomic) WKRectEdge systemBackgroundColorExtensionEnabledEdges WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
+
 #if defined(TARGET_OS_VISION) && TARGET_OS_VISION
 /*! @abstract The delegate that manages immersive environment presentation.
  */
