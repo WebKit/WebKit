@@ -44,6 +44,7 @@ if (USE_TEXTURE_MAPPER)
 
     list(APPEND WebCore_SOURCES
         platform/graphics/texmap/coordinated/CoordinatedBackingStore.cpp
+        platform/graphics/texmap/coordinated/CoordinatedBackingStoreProxyTextureMapper.cpp
         platform/graphics/texmap/coordinated/CoordinatedBackingStoreTile.cpp
         platform/graphics/texmap/coordinated/CoordinatedImageBackingStoreTextureMapper.cpp
         platform/graphics/texmap/coordinated/CoordinatedPlatformLayerBufferNativeImage.cpp
