@@ -68,7 +68,8 @@ struct pas_page_base_config {
     /* whether profiling macros should ignore pages of this kind */
     bool allow_profiling;
 
-    /* Whether this page can be allocated with backing MTE tag memory. */
+    /* Whether objects in pages of this config may be MTE-tagged. This requires the heap config's memory flavor
+       to have MTE tag storage, but some page configs of such heaps still opt out (e.g. marge). */
     bool allow_mte_tagging;
 
     /* This points to the owning heap config. Currently there is always an owning heap config. */

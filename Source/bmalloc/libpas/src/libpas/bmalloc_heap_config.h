@@ -87,8 +87,7 @@ PAS_API void bmalloc_heap_config_activate(void);
     .marge_bitfit_min_objects_per_page = BMALLOC_MARGE_BITFIT_MIN_OBJECTS_PER_PAGE, \
     .pgm_enabled = true, \
     .delegate_large_user_allocations = true, \
-    .large_map_variant = pas_default_large_map_variant, \
-    .allow_mte_tagging = false)
+    .large_map_variant = pas_default_large_map_variant)
 
 PAS_API extern const pas_heap_config bmalloc_heap_config;
 

@@ -187,14 +187,16 @@ struct pas_heap_config {
      * memory protection guarantees. */
     bool delegate_large_user_allocations;
 
-    /* If true, allocations from this heap may be MTE-tagged. This mirrors the
-     * per-page-config allow_mte_tagging and is used to decide, when allocating
-     * through the system heap, whether we may receive MTE-tagged memory or
-     * must request canonical (zero-tagged) memory. */
-    bool allow_mte_tagging;
-
     pas_large_map_variant large_map_variant;
 };
+
+/* Allocations from a heap may be MTE-tagged only if its memory has MTE tag storage. This is also used to
+   decide, when allocating through the system heap, whether we may receive MTE-tagged memory or must
+   request canonical (zero-tagged) memory. */
+static PAS_ALWAYS_INLINE bool pas_heap_config_allows_mte_tagging(pas_heap_config config)
+{
+    return pas_memory_flavor_needs_mte_tag_storage(config.memory_flavor);
+}
 
 /*
  * This is called on every heap_config at activation time,
@@ -208,7 +210,17 @@ pas_heap_config_assert_global_invariants(pas_heap_config config)
     pas_heap_lock_assert_held();
 
     PAS_ASSERT(!pas_memory_flavor_client_owns_permissions(config.memory_flavor) || !config.delegate_large_user_allocations);
-    PAS_ASSERT(!config.allow_mte_tagging || pas_memory_flavor_needs_mte_tag_storage(config.memory_flavor));
+
+    /*
+     * Objects can only be MTE-tagged if the heap's memory has tag storage.
+     */
+    if (!pas_heap_config_allows_mte_tagging(config)) {
+        PAS_ASSERT(!config.small_segregated_config.base.allow_mte_tagging);
+        PAS_ASSERT(!config.medium_segregated_config.base.allow_mte_tagging);
+        PAS_ASSERT(!config.small_bitfit_config.base.allow_mte_tagging);
+        PAS_ASSERT(!config.medium_bitfit_config.base.allow_mte_tagging);
+        PAS_ASSERT(!config.marge_bitfit_config.base.allow_mte_tagging);
+    }
 }
 
 #define PAS_HEAP_CONFIG_SPECIALIZATIONS(lower_case_heap_config_name) \
