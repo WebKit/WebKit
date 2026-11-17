@@ -124,10 +124,10 @@ protected:
 
 private:
     void executeScriptAndDispatchEvent(LoadableScript&);
+    void runRespectingUserGestureIndicator(NOESCAPE const Function<void()>&);
 
     std::optional<ScriptType> determineScriptType() const;
     NODELETE bool ignoresLoadRequest() const;
-    void dispatchLoadEventRespectingUserGestureIndicator();
 
     bool requestClassicScript(const String& sourceURL);
     bool requestModuleScript(const String& sourceText, const TextPosition& scriptStartPosition);

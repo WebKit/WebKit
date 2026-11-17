@@ -1,0 +1,10 @@
+A script inserted from a click handler runs with the click's user gesture, so it can open a pop-up.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS newWindow is non-null.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Click

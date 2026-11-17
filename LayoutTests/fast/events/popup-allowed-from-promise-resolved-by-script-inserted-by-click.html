@@ -1,0 +1,37 @@
+<!DOCTYPE html><!-- webkit-test-runner [ JavaScriptCanOpenWindowsAutomatically=false ] -->
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+<button id="button" onclick="loadScriptThenOpenPopup()">Click</button>
+<script>
+description("A promise resolved by a script inserted from a click handler keeps the click's user gesture, so its reaction can open a pop-up.");
+jsTestIsAsync = true;
+
+var newWindow;
+var resolveScriptPromise;
+
+function loadScriptThenOpenPopup()
+{
+    new Promise(resolve => {
+        resolveScriptPromise = resolve;
+        let script = document.createElement("script");
+        script.src = "resources/resolve-promise-from-script-body.js";
+        document.body.appendChild(script);
+    }).then(() => {
+        newWindow = window.open("about:blank");
+        shouldBeNonNull("newWindow");
+        finishJSTest();
+    });
+}
+
+if (window.eventSender) {
+    let button = document.getElementById("button");
+    eventSender.mouseMoveTo(button.offsetLeft + button.offsetWidth / 2, button.offsetTop + button.offsetHeight / 2);
+    eventSender.mouseDown();
+    eventSender.mouseUp();
+}
+</script>
+</body>
+</html>

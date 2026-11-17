@@ -571,15 +571,15 @@ void ScriptElement::executeModuleScript(LoadableModuleScript& loadableModuleScri
     WTFEndSignpost(this, ExecuteScriptElement, "executing module script");
 }
 
-void ScriptElement::dispatchLoadEventRespectingUserGestureIndicator()
+void ScriptElement::runRespectingUserGestureIndicator(NOESCAPE const Function<void()>& function)
 {
     if (MonotonicTime::now() - m_creationTime > maxUserGesturePropagationTime) {
-        dispatchLoadEvent();
+        function();
         return;
     }
 
     UserGestureIndicator indicator(m_userGestureToken);
-    dispatchLoadEvent();
+    function();
 }
 
 void ScriptElement::executeScriptAndDispatchEvent(LoadableScript& loadableScript)
@@ -610,8 +610,11 @@ void ScriptElement::executeScriptAndDispatchEvent(LoadableScript& loadableScript
         case LoadableScript::ErrorType::Resolve: {
             if (RefPtr frame = element().document().frame())
                 protect(frame->script())->reportExceptionFromScriptError(error.value(), loadableScript.isModuleScript());
-            if (!loadableScript.isInlineModule())
-                dispatchLoadEventRespectingUserGestureIndicator();
+            if (!loadableScript.isInlineModule()) {
+                runRespectingUserGestureIndicator([&] {
+                    dispatchLoadEvent();
+                });
+            }
             break;
         }
 
@@ -627,9 +630,14 @@ void ScriptElement::executeScriptAndDispatchEvent(LoadableScript& loadableScript
         }
         }
     } else if (!loadableScript.wasCanceled()) {
-        loadableScript.execute(*this);
-        if (!loadableScript.isInlineModule())
-            dispatchLoadEventRespectingUserGestureIndicator();
+        runRespectingUserGestureIndicator([&] {
+            loadableScript.execute(*this);
+        });
+        if (!loadableScript.isInlineModule()) {
+            runRespectingUserGestureIndicator([&] {
+                dispatchLoadEvent();
+            });
+        }
     }
 }
 
@@ -652,7 +660,9 @@ void ScriptElement::executePendingScript(PendingScript& pendingScript)
                 registerImportMap(ScriptSourceCode(scriptContent(), m_taintedOrigin, URL(document->url()), pendingScript.startingPosition(), JSC::SourceProviderSourceType::ImportMap));
             else
                 registerSpeculationRules(ScriptSourceCode(scriptContent(), m_taintedOrigin, URL(document->url()), pendingScript.startingPosition(), JSC::SourceProviderSourceType::Program));
-            dispatchLoadEventRespectingUserGestureIndicator();
+            runRespectingUserGestureIndicator([&] {
+                dispatchLoadEvent();
+            });
         }
     }
 }
