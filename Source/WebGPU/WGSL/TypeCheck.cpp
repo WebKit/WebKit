@@ -250,6 +250,8 @@ private:
 
     template<typename CallArguments>
     [[nodiscard]] Result<const Type*> chooseOverload(ASCIILiteral, const SourceSpan&, AST::Expression*, const String&, CallArguments&& valueArguments, const Vector<const Type*>& typeArguments);
+    template<typename CallArguments>
+    [[nodiscard]] Result<const Type*> chooseOverloadForInferredArguments(ASCIILiteral, const SourceSpan&, AST::Expression*, const String&, CallArguments&& valueArguments, const Vector<const Type*>& typeArguments);
 
     template<typename Node>
     [[nodiscard]] Result<void> setConstantValue(Node&, const Type*, const ConstantValue&);
@@ -1466,6 +1468,12 @@ Result<void> TypeChecker::binaryExpression(const SourceSpan& span, AST::Expressi
                 }
             }
         }
+
+        // The left operand has already been inferred above. Inferring it again in chooseOverload
+        // would make checking a chain of N short-circuiting operators take O(2^N) time.
+        CHECK(infer(rightExpression, m_maxEvaluation));
+        CHECK(chooseOverloadForInferredArguments("operator"_s, span, expression, toASCIILiteral(operation), ReferenceWrapperVector<AST::Expression, 2> { leftExpression, rightExpression }, { }));
+        return { };
     }
 
     CHECK(chooseOverload("operator"_s, span, expression, toASCIILiteral(operation), ReferenceWrapperVector<AST::Expression, 2> { leftExpression, rightExpression }, { }));
@@ -2243,15 +2251,25 @@ Result<const Type*> TypeChecker::vectorFieldAccess(const Types::Vector& vector, 
 template<typename CallArguments>
 Result<const Type*> TypeChecker::chooseOverload(ASCIILiteral kind, const SourceSpan& span, AST::Expression* expression, const String& target, CallArguments&& callArguments, const Vector<const Type*>& typeArguments)
 {
+    if (!m_shaderModule.lookupOverload(target))
+        return { nullptr };
+
+    for (unsigned i = 0; i < callArguments.size(); ++i)
+        CHECK(infer(callArguments[i], m_maxEvaluation));
+
+    return chooseOverloadForInferredArguments(kind, span, expression, target, std::forward<CallArguments>(callArguments), typeArguments);
+}
+
+template<typename CallArguments>
+Result<const Type*> TypeChecker::chooseOverloadForInferredArguments(ASCIILiteral kind, const SourceSpan& span, AST::Expression* expression, const String& target, CallArguments&& callArguments, const Vector<const Type*>& typeArguments)
+{
     auto* overload = m_shaderModule.lookupOverload(target);
     if (!overload)
         return { nullptr };
 
     Vector<const Type*> valueArguments(ReserveCapacityTag { }, callArguments.size());
-    for (unsigned i = 0; i < callArguments.size(); ++i) {
-        UNWRAP(type, infer(callArguments[i], m_maxEvaluation));
-        valueArguments.append(type);
-    }
+    for (unsigned i = 0; i < callArguments.size(); ++i)
+        valueArguments.append(callArguments[i].inferredType());
 
     auto selectedOverload = resolveOverloads(m_types, m_shaderModule.overloadCandidates(*overload), valueArguments, typeArguments);
     if (selectedOverload.has_value()) {
