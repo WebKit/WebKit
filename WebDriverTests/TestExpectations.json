@@ -803,7 +803,7 @@
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/270895"}}
             },
             "test_pointer_down_closes_browsing_context": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/184967"}}
+                "expected": {"mac": {"status": ["PASS"]}, "all": {"status": ["FAIL"], "bug": "webkit.org/b/184967"}}
             },
             "test_pen_pointer_in_shadow_tree[inner-closed]": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/320461"}}
@@ -826,7 +826,7 @@
                 "expected": {"wpe": {"status": ["FAIL"], "bug": "webkit.org/b/184967"}}
             },
             "test_pointer_down_closes_browsing_context": {
-                "expected": {"mac": {"status": ["FAIL"], "note": "Simulated input fails on Mac"}, "wpe": {"status": ["FAIL"], "bug": "webkit.org/b/184967"}}
+                "expected": {"wpe": {"status": ["FAIL"], "bug": "webkit.org/b/184967"}}
             },
             "test_touch_pointer_in_shadow_tree[inner-open]": {
                 "expected": {"mac": {"status": ["FAIL"], "note": "Simulated input fails on Mac"}, "gtk": {"status": ["FAIL"], "bug": "webkit.org/b/184967"}}
@@ -870,7 +870,7 @@
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/184967"}}
             },
             "test_key_down_closes_browsing_context": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/184967"}}
+                "expected": {"mac": {"status": ["PASS"]}, "all": {"status": ["FAIL"], "bug": "webkit.org/b/184967"}}
             },
             "test_element_in_shadow_tree[inner-closed]": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/320461"}}

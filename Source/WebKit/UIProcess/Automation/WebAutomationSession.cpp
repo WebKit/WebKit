@@ -308,21 +308,21 @@ void WebAutomationSession::terminate()
 #if ENABLE(WEBDRIVER_KEYBOARD_INTERACTIONS)
     for (auto& identifier : copyToVector(m_pendingKeyboardEventsFlushedCallbacksPerPage.keys())) {
         auto callback = m_pendingKeyboardEventsFlushedCallbacksPerPage.take(identifier);
-        ASYNC_FAIL_WITH_PREDEFINED_ERROR(InternalError);
+        callback(makeUnexpected(STRING_FOR_PREDEFINED_ERROR_NAME(InternalError)));
     }
 #endif // ENABLE(WEBDRIVER_KEYBOARD_INTERACTIONS)
 
 #if ENABLE(WEBDRIVER_MOUSE_INTERACTIONS)
     for (auto& identifier : copyToVector(m_pendingMouseEventsFlushedCallbacksPerPage.keys())) {
         auto callback = m_pendingMouseEventsFlushedCallbacksPerPage.take(identifier);
-        ASYNC_FAIL_WITH_PREDEFINED_ERROR(InternalError);
+        callback(makeUnexpected(STRING_FOR_PREDEFINED_ERROR_NAME(InternalError)));
     }
 #endif // ENABLE(WEBDRIVER_MOUSE_INTERACTIONS)
 
 #if ENABLE(WEBDRIVER_WHEEL_INTERACTIONS)
     for (auto& identifier : copyToVector(m_pendingWheelEventsFlushedCallbacksPerPage.keys())) {
         auto callback = m_pendingWheelEventsFlushedCallbacksPerPage.take(identifier);
-        ASYNC_FAIL_WITH_PREDEFINED_ERROR(InternalError);
+        callback(makeUnexpected(STRING_FOR_PREDEFINED_ERROR_NAME(InternalError)));
     }
 #endif // ENABLE(WEBDRIVER_WHEEL_INTERACTIONS)
 
@@ -1960,21 +1960,21 @@ void WebAutomationSession::willClosePage(const WebPageProxy& page)
     // actions to be aborted and the SimulatedInputDispatcher::run() call will unwind and fail.
 #if ENABLE(WEBDRIVER_MOUSE_INTERACTIONS)
     if (auto callback = m_pendingMouseEventsFlushedCallbacksPerPage.take(page.identifier()))
-        ASYNC_FAIL_WITH_PREDEFINED_ERROR(WindowNotFound);
+        callback(makeUnexpected(STRING_FOR_PREDEFINED_ERROR_NAME(WindowNotFound)));
 #endif
 #if ENABLE(WEBDRIVER_KEYBOARD_INTERACTIONS)
     if (auto callback = m_pendingKeyboardEventsFlushedCallbacksPerPage.take(page.identifier()))
-        ASYNC_FAIL_WITH_PREDEFINED_ERROR(WindowNotFound);
+        callback(makeUnexpected(STRING_FOR_PREDEFINED_ERROR_NAME(WindowNotFound)));
 #endif
 #if ENABLE(WEBDRIVER_WHEEL_INTERACTIONS)
     if (auto callback = m_pendingWheelEventsFlushedCallbacksPerPage.take(page.identifier()))
-        ASYNC_FAIL_WITH_PREDEFINED_ERROR(WindowNotFound);
+        callback(makeUnexpected(STRING_FOR_PREDEFINED_ERROR_NAME(WindowNotFound)));
 #endif
 
 #if ENABLE(WEBDRIVER_ACTIONS_API)
     // Then tell the input dispatcher to cancel so timers are stopped, and let it go out of scope.
     if (auto inputDispatcher = m_inputDispatchersByPage.take(page.identifier()))
-        inputDispatcher->cancel();
+        inputDispatcher->cancel(AUTOMATION_COMMAND_ERROR_WITH_NAME(WindowNotFound));
 #endif
 
 #if ENABLE(WEBDRIVER_BIDI)
@@ -3674,7 +3674,7 @@ void WebAutomationSession::cancelInteractionSequence(const Inspector::Protocol::
 
     Vector<SimulatedInputKeyFrame> keyFrames({ SimulatedInputKeyFrame::keyFrameToResetInputSources(m_inputSources) });
     Ref inputDispatcher = inputDispatcherForPage(*page);
-    inputDispatcher->cancel();
+    inputDispatcher->cancel(AUTOMATION_COMMAND_ERROR_WITH_NAME(InternalError));
     
     inputDispatcher->run(frameID, WTF::move(keyFrames), m_inputSources, SimulatedInputRunOptions { }, [this, protectedThis = Ref { *this }, callback = WTF::move(callback)](std::optional<AutomationCommandError> error) {
         if (error)

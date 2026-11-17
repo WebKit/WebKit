@@ -188,7 +188,7 @@ public:
     ~SimulatedInputDispatcher();
 
     void run(std::optional<WebCore::FrameIdentifier>, Vector<SimulatedInputKeyFrame>&& keyFrames, const HashMap<String, Ref<SimulatedInputSource>>& inputSources, SimulatedInputRunOptions, AutomationCompletionHandler&&);
-    void cancel();
+    void cancel(AutomationCommandError);
 
     NODELETE bool isActive() const;
 
@@ -246,6 +246,7 @@ private:
 #endif
 
     Vector<SimulatedInputKeyFrame> m_keyframes;
+    uint64_t m_runCompletionCount { 0 };
 
     // The position within m_keyframes.
     unsigned m_keyframeIndex { 0 };

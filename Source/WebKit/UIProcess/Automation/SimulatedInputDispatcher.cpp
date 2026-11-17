@@ -247,7 +247,10 @@ void SimulatedInputDispatcher::transitionToNextInputSourceState()
     SUPPRESS_UNBORROWED_LOCAL auto& postStateEntry = nextKeyFrame.states[m_inputSourceStateIndex];
     Ref inputSource = postStateEntry.first;
 
-    transitionInputSourceToState(inputSource, postStateEntry.second, [this, protectedThis = Ref { *this }](std::optional<AutomationCommandError> error) {
+    transitionInputSourceToState(inputSource, postStateEntry.second, [this, protectedThis = Ref { *this }, runCompletionCount = m_runCompletionCount](std::optional<AutomationCommandError> error) {
+        if (runCompletionCount != m_runCompletionCount)
+            return;
+
         if (error) {
             auto finish = std::exchange(m_keyFrameTransitionCompletionHandler, nullptr);
             finish(error);
@@ -388,8 +391,8 @@ void SimulatedInputDispatcher::transitionInputSourceToState(SimulatedInputSource
 
     LOG(Automation, "SimulatedInputDispatcher[%p]: transition started between input source states: [%d.%d] --> %d.%d", this, m_keyframeIndex - 1, m_inputSourceStateIndex, m_keyframeIndex, m_inputSourceStateIndex);
 
-    AutomationCompletionHandler eventDispatchFinished = [this, protectedThis = Ref { *this }, inputSource = Ref { inputSource }, &newState, completionHandler = WTF::move(completionHandler)](std::optional<AutomationCommandError> error) mutable {
-        if (error) {
+    AutomationCompletionHandler eventDispatchFinished = [this, protectedThis = Ref { *this }, inputSource = Ref { inputSource }, &newState, runCompletionCount = m_runCompletionCount, completionHandler = WTF::move(completionHandler)](std::optional<AutomationCommandError> error) mutable {
+        if (error || runCompletionCount != m_runCompletionCount) {
             completionHandler(error);
             return;
         }
@@ -421,8 +424,8 @@ void SimulatedInputDispatcher::transitionInputSourceToState(SimulatedInputSource
 #elif !ENABLE(WEBDRIVER_TOUCH_INTERACTIONS)
         RELEASE_ASSERT(!isTouch);
 #endif
-        resolveLocation(currentLocationOfSource(a), b.location, b.origin.value_or(isTouch ? MouseMoveOrigin::Viewport : MouseMoveOrigin::Pointer), b.nodeHandle, [this, protectedThis = Ref { *this }, &a, &b, pointerType = pointerTypeForInputSource(inputSource.type), isTouch, eventDispatchFinished = WTF::move(eventDispatchFinished)](std::optional<WebCore::IntPoint> location, std::optional<AutomationCommandError> error) mutable {
-            if (error) {
+        resolveLocation(currentLocationOfSource(a), b.location, b.origin.value_or(isTouch ? MouseMoveOrigin::Viewport : MouseMoveOrigin::Pointer), b.nodeHandle, [this, protectedThis = Ref { *this }, &a, &b, pointerType = pointerTypeForInputSource(inputSource.type), isTouch, runCompletionCount = m_runCompletionCount, eventDispatchFinished = WTF::move(eventDispatchFinished)](std::optional<WebCore::IntPoint> location, std::optional<AutomationCommandError> error) mutable {
+            if (error || runCompletionCount != m_runCompletionCount) {
                 eventDispatchFinished(error);
                 return;
             }
@@ -560,8 +563,8 @@ void SimulatedInputDispatcher::transitionInputSourceToState(SimulatedInputSource
 #if !ENABLE(WEBDRIVER_WHEEL_INTERACTIONS)
         RELEASE_ASSERT_NOT_REACHED();
 #else
-        resolveLocation(currentLocationOfSource(a), b.location, b.origin.value_or(MouseMoveOrigin::Viewport), b.nodeHandle, [this, protectedThis = Ref { *this }, &a, &b, eventDispatchFinished = WTF::move(eventDispatchFinished)](std::optional<WebCore::IntPoint> location, std::optional<AutomationCommandError> error) mutable {
-            if (error) {
+        resolveLocation(currentLocationOfSource(a), b.location, b.origin.value_or(MouseMoveOrigin::Viewport), b.nodeHandle, [this, protectedThis = Ref { *this }, &a, &b, runCompletionCount = m_runCompletionCount, eventDispatchFinished = WTF::move(eventDispatchFinished)](std::optional<WebCore::IntPoint> location, std::optional<AutomationCommandError> error) mutable {
+            if (error || runCompletionCount != m_runCompletionCount) {
                 eventDispatchFinished(error);
                 return;
             }
@@ -602,8 +605,8 @@ void SimulatedInputDispatcher::dispatchKeyboardInteractions(Vector<KeyboardInter
     auto interaction = interactions[nextIndex].first;
     auto key = interactions[nextIndex].second;
 
-    m_client.simulateKeyboardInteraction(protect(m_page), interaction, WTF::move(key), [this, protectedThis = Ref { *this }, interactions = WTF::move(interactions), nextIndex, completionHandler = WTF::move(completionHandler)](std::optional<AutomationCommandError> error) mutable {
-        if (error) {
+    m_client.simulateKeyboardInteraction(protect(m_page), interaction, WTF::move(key), [this, protectedThis = Ref { *this }, interactions = WTF::move(interactions), nextIndex, runCompletionCount = m_runCompletionCount, completionHandler = WTF::move(completionHandler)](std::optional<AutomationCommandError> error) mutable {
+        if (error || runCompletionCount != m_runCompletionCount) {
             completionHandler(error);
             return;
         }
@@ -713,28 +716,31 @@ void SimulatedInputDispatcher::run(std::optional<WebCore::FrameIdentifier> frame
     transitionToNextKeyFrame();
 }
 
-void SimulatedInputDispatcher::cancel()
+void SimulatedInputDispatcher::cancel(AutomationCommandError error)
 {
-    // If we were waiting for m_client to finish an interaction and the interaction had an error,
-    // then the rest of the async chain will have been torn down. If we are just waiting on a
-    // dispatch timer, then this will cancel the timer and clear
-
     if (!isActive())
         return;
 
 #if ENABLE(WEBDRIVER_MOUSE_INTERACTIONS)
     if (m_pointerMoveInterpolation) {
-        finishPointerMoveInterpolation(AUTOMATION_COMMAND_ERROR_WITH_NAME(InternalError));
+        finishPointerMoveInterpolation(WTF::move(error));
         ASSERT(!isActive());
         return;
     }
 #endif
 
-    finishDispatching(AUTOMATION_COMMAND_ERROR_WITH_NAME(InternalError));
+    if (auto finish = std::exchange(m_keyFrameTransitionCompletionHandler, nullptr)) {
+        finish(WTF::move(error));
+        ASSERT(!isActive());
+        return;
+    }
+
+    finishDispatching(WTF::move(error));
 }
 
 void SimulatedInputDispatcher::finishDispatching(std::optional<AutomationCommandError> error)
 {
+    ASSERT(!m_keyFrameTransitionCompletionHandler);
     m_keyFrameTransitionDurationTimer.stop();
 #if ENABLE(WEBDRIVER_MOUSE_INTERACTIONS)
     m_pointerMoveInterpolationTimer.stop();
@@ -747,6 +753,7 @@ void SimulatedInputDispatcher::finishDispatching(std::optional<AutomationCommand
     m_frameID = std::nullopt;
     m_options = { };
     m_keyframes.clear();
+    ++m_runCompletionCount;
     m_keyframeIndex = 0;
     m_inputSourceStateIndex = 0;
 #if ENABLE(WEBDRIVER_MOUSE_INTERACTIONS)
