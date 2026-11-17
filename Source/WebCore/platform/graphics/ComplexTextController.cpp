@@ -198,16 +198,16 @@ Vector<float> ComplexTextController::glyphAdvancesForTextRun(const FontCascade& 
     for (size_t runIndex = 0; runIndex < textController.m_complexTextRuns.size(); ++runIndex)
         numberOfCharacters += textController.m_complexTextRuns[runIndex]->stringLength();
 
-    Vector<float> resolvedAdavances(numberOfCharacters);
+    Vector<float> resolvedAdvances(FillWith { }, numberOfCharacters, 0);
     size_t offset = 0;
     for (auto runIndex = textController.m_complexTextRuns.size(); runIndex--;) {
         auto complexRun = textController.m_complexTextRuns[runIndex];
         auto advances = complexRun->baseAdvances();
         for (size_t index = 0; index < advances.size(); ++index)
-            resolvedAdavances[offset + complexRun->indexAt(index)] += advances[index].width();
+            resolvedAdvances[offset + complexRun->indexAt(index)] += advances[index].width();
         offset += complexRun->stringLength();
     }
-    return resolvedAdavances;
+    return resolvedAdvances;
 }
 
 void ComplexTextController::finishConstruction()
