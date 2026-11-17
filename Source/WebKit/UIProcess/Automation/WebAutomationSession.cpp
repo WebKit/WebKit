@@ -3808,13 +3808,21 @@ void WebAutomationSession::takeScreenshot(const Inspector::Protocol::Automation:
 #if PLATFORM(GTK) || PLATFORM(COCOA) || PLATFORM(WPE)
     Function<void(WebPageProxy&, std::optional<WebCore::IntRect>&&, CommandCallback<String>&&)> takeViewSnapshot = [](WebPageProxy& page, std::optional<WebCore::IntRect>&& rect, CommandCallback<String>&& callback) {
         page.callAfterNextPresentationUpdate([page = protect(page), rect = WTF::move(rect), callback = WTF::move(callback)] () mutable {
-            RefPtr snapshot = page->takeViewSnapshot(WTF::move(rect), ForceSoftwareCapturingViewportSnapshot::Yes);
-            ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!snapshot, InternalError);
+            auto snapshotView = [page, rect = WTF::move(rect), callback = WTF::move(callback)] mutable {
+                RefPtr snapshot = page->takeViewSnapshot(WTF::move(rect), ForceSoftwareCapturingViewportSnapshot::Yes);
+                ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!snapshot, InternalError);
 
-            std::optional<String> base64EncodedData = platformGetBase64EncodedPNGData(*snapshot);
-            ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!base64EncodedData, InternalError);
+                std::optional<String> base64EncodedData = platformGetBase64EncodedPNGData(*snapshot);
+                ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!base64EncodedData, InternalError);
 
-            callback(base64EncodedData.value());
+                callback(base64EncodedData.value());
+            };
+#if PLATFORM(MAC)
+            // The view snapshot is a window server capture, and the layer changes this presentation update waited for haven't reached the window server yet.
+            platformCallAfterWindowServerDrawsView(page, WTF::move(snapshotView));
+#else
+            snapshotView();
+#endif
         });
     };
 

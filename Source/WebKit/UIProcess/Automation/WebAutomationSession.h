@@ -481,6 +481,10 @@ private:
 #if PLATFORM(COCOA)
     static std::optional<String> platformGetBase64EncodedPNGData(CGImageRef);
 #endif
+#if PLATFORM(MAC)
+    // Calls the completion handler once the window server has drawn the view's latest layer changes.
+    static void platformCallAfterWindowServerDrawsView(WebPageProxy&, Function<void()>&&);
+#endif
 
     // Save base64-encoded file contents to a local file path and return the path.
     // This reuses the basename of the remote file path so that the filename exposed to DOM API remains the same.

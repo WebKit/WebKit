@@ -1506,6 +1506,10 @@ static void changeContentOffsetBoundedInValidRange(UIScrollView *scrollView, Web
         return nullptr;
 
     RetainPtr<NSString> displayName = self.window.screen.displayConfiguration.name;
+    // FIXME: WebAutomationSession::takeScreenshot() calls this from a presentation update callback, before Core Animation
+    // has committed the update's layer changes, so WebDriver screenshots can show the previous frame. On macOS,
+    // WebAutomationSession::platformCallAfterWindowServerDrawsView() waits until the changes are drawn. Here, that could be
+    // committing them and calling +[CATransaction synchronize], as -_snapshotRectAfterScreenUpdates:... does.
     CARenderServerSnapshot(MACH_PORT_NULL, @{
         kCASnapshotMode: kCASnapshotModeLayer,
         kCASnapshotDisplayName: displayName.get() ?: kCARenderServerDefaultDisplay,
