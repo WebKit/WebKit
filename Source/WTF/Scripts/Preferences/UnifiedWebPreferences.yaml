@@ -5365,7 +5365,7 @@ ReplayCGDisplayListsIntoBackingStore:
 
 RequestIdleCallbackEnabled:
   type: bool
-  status: testable
+  status: preview
   category: dom
   humanReadableName: "requestIdleCallback"
   humanReadableDescription: "Enable requestIdleCallback support"
