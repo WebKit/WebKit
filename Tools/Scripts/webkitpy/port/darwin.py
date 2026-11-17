@@ -285,7 +285,11 @@ class DarwinPort(ApplePort):
         if host.platform.is_mac():
             command = ['/usr/bin/sudo', '-n'] + command
 
-        exit_status = host.executive.run_command(command, return_exit_code=True)
+        try:
+            exit_status = host.executive.run_command(command, return_exit_code=True)
+        except (IOError, ScriptError, OSError) as e:
+            _log.warning('Unable to run tailspin: ' + str(e))
+            exit_status = 1
         if not exit_status:  # Symbolicate tailspin log using spindump
             spindump_command = [
                 '/usr/sbin/spindump',
