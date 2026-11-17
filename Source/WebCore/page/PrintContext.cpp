@@ -125,17 +125,6 @@ FloatBoxExtent PrintContext::computedPageMargin(FloatBoxExtent printMargin)
     };
 }
 
-FloatSize PrintContext::computedPageSize(FloatSize pageSize, FloatBoxExtent printMargin)
-{
-    auto computedMargin = computedPageMargin(printMargin);
-    if (computedMargin == printMargin)
-        return pageSize;
-
-    auto horizontalMarginDelta = (printMargin.left() - computedMargin.left()) + (printMargin.right() - computedMargin.right()); 
-    auto verticalMarginDelta = (printMargin.top() - computedMargin.top()) + (printMargin.bottom() - computedMargin.bottom());
-    return { pageSize.width() + horizontalMarginDelta, pageSize.height() + verticalMarginDelta };
-}
-
 void PrintContext::computePageRectsWithPageSize(const FloatSize& pageSizeInPixels, bool allowHorizontalTiling)
 {
     RELEASE_LOG(Printing, "Computing page rects with page size and clearing existing page rects. Existing page rects size = %zu", m_pageRects.size());

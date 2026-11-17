@@ -27,6 +27,8 @@
 
 #if HAVE(UIKIT_PRINTING)
 
+#import <optional>
+
 @interface UIPrintFormatter ()
 - (CGRect)_pageContentRect:(BOOL)firstPage;
 - (void)_setNeedsRecalc;
@@ -36,6 +38,8 @@
 - (BOOL)_shouldDrawUsingBitmap;
 - (void)_setSnapshotPaperRect:(CGRect)paperRect;
 - (void)_setPrintedDocument:(CGPDFDocumentRef)printedDocument;
+// Measured from the paper's edge.
+- (void)_setExplicitPageMargin:(std::optional<UIEdgeInsets>)explicitPageMargin;
 - (void)_setPrintPreviewImage:(CGImageRef)printPreviewImage;
 - (void)_invalidatePrintRenderingState;
 

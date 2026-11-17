@@ -65,7 +65,6 @@ public:
     const IntRect& pageRect(size_t pageNumber) const LIFETIME_BOUND { return m_pageRects[pageNumber]; }
     const Vector<IntRect>& pageRects() const LIFETIME_BOUND { return m_pageRects; }
     WEBCORE_EXPORT FloatBoxExtent computedPageMargin(FloatBoxExtent printMargin);
-    WEBCORE_EXPORT FloatSize computedPageSize(FloatSize pageSize, FloatBoxExtent printMargin);
 
     WEBCORE_EXPORT float computeAutomaticScaleFactor(const FloatSize& availablePaperSize);
 

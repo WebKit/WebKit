@@ -7563,6 +7563,27 @@ void WebPage::swipeAnimationDidEnd()
     corePage()->setIsInSwipeAnimation(false);
 }
 
+static FloatBoxExtent computedPageMargin(PrintContext& printContext, const PrintInfo& printInfo)
+{
+    auto margin = printContext.computedPageMargin(printInfo.margin);
+#if PLATFORM(IOS_FAMILY)
+    // Auto sides keep UIKit's margin which already leaves room for the header and footer.
+    if (printInfo.minimumTopMargin > 0 && margin.top() != printInfo.margin.top())
+        margin.setTop(std::max(margin.top(), printInfo.minimumTopMargin));
+    if (printInfo.minimumBottomMargin > 0 && margin.bottom() != printInfo.margin.bottom())
+        margin.setBottom(std::max(margin.bottom(), printInfo.minimumBottomMargin));
+#endif
+    return margin;
+}
+
+static FloatSize computedPageAreaSize(PrintContext& printContext, const PrintInfo& printInfo)
+{
+    auto margin = computedPageMargin(printContext, printInfo);
+    auto horizontalMarginDelta = (printInfo.margin.left() - margin.left()) + (printInfo.margin.right() - margin.right());
+    auto verticalMarginDelta = (printInfo.margin.top() - margin.top()) + (printInfo.margin.bottom() - margin.bottom());
+    return { printInfo.availablePaperWidth + horizontalMarginDelta, printInfo.availablePaperHeight + verticalMarginDelta };
+}
+
 void WebPage::beginPrinting(FrameIdentifier frameID, const PrintInfo& printInfo)
 {
     RELEASE_LOG(Printing, "Begin printing.");
@@ -7590,21 +7611,31 @@ void WebPage::beginPrinting(FrameIdentifier frameID, const PrintInfo& printInfo)
 
     updatePrintingLayerTreeFreezeState();
 
-    auto computedPageSize = printContext->computedPageSize(FloatSize(printInfo.availablePaperWidth, printInfo.availablePaperHeight), printInfo.margin);
+    auto beginLayout = [&](FloatSize size) {
+        printContext->begin(size.width(), size.height());
 
-    printContext->begin(computedPageSize.width(), computedPageSize.height());
+        // PrintContext::begin() performed a synchronous layout which might have executed a
+        // script that closed the WebPage, clearing m_printContext.
+        // See <rdar://problem/49731211> for cases of this happening.
+        printContext = m_printContext;
+        return !!printContext;
+    };
 
-    // PrintContext::begin() performed a synchronous layout which might have executed a
-    // script that closed the WebPage, clearing m_printContext.
-    // See <rdar://problem/49731211> for cases of this happening.
-    printContext = m_printContext;
-    if (!printContext) {
+    // Lay out with print media first so that @page rules inside @media print size the page area.
+    FloatSize availablePaperSize { printInfo.availablePaperWidth, printInfo.availablePaperHeight };
+    if (!beginLayout(availablePaperSize)) {
+        updatePrintingLayerTreeFreezeState();
+        return;
+    }
+
+    auto pageSize = computedPageAreaSize(*printContext, printInfo);
+    if (pageSize != availablePaperSize && !beginLayout(pageSize)) {
         updatePrintingLayerTreeFreezeState();
         return;
     }
 
     float fullPageHeight;
-    printContext->computePageRects(FloatRect(0, 0, computedPageSize.width(), computedPageSize.height()), 0, 0, printInfo.pageSetupScaleFactor, fullPageHeight, true);
+    printContext->computePageRects(FloatRect(0, 0, pageSize.width(), pageSize.height()), 0, 0, printInfo.pageSetupScaleFactor, fullPageHeight, true);
 
 #if PLATFORM(GTK)
     if (!m_printOperation)
@@ -7669,7 +7700,7 @@ void WebPage::computePagesForPrintingImpl(FrameIdentifier frameID, const PrintIn
     if (RefPtr printContext = m_printContext) {
         PrintContextAccessScope scope { *this };
         resultPageRects = printContext->pageRects();
-        computedPageMargin = printContext->computedPageMargin(printInfo.margin);
+        computedPageMargin = WebKit::computedPageMargin(*printContext, printInfo);
         resultTotalScaleFactorForPrinting = totalScaleFactorForPrinting(*printContext, printInfo);
     }
 #if PLATFORM(COCOA)
@@ -7685,8 +7716,7 @@ void WebPage::computePagesForPrintingImpl(FrameIdentifier frameID, const PrintIn
 // Converts page rects from CSS px to points.
 float WebPage::totalScaleFactorForPrinting(PrintContext& printContext, const PrintInfo& printInfo)
 {
-    auto computedPageSize = printContext.computedPageSize(FloatSize(printInfo.availablePaperWidth, printInfo.availablePaperHeight), printInfo.margin);
-    return printContext.computeAutomaticScaleFactor(computedPageSize) * printInfo.pageSetupScaleFactor;
+    return printContext.computeAutomaticScaleFactor(computedPageAreaSize(printContext, printInfo)) * printInfo.pageSetupScaleFactor;
 }
 
 void WebPage::paintRemoteFrameContents(FrameIdentifier frameID, const IntRect& rect, GraphicsContext& context)

@@ -419,6 +419,11 @@ WebCore::FloatBoxExtent floatBoxExtent(const UIEdgeInsets& insets)
     };
 }
 
+UIEdgeInsets uiEdgeInsets(const WebCore::FloatBoxExtent& extent)
+{
+    return UIEdgeInsetsMake(extent.top(), extent.left(), extent.bottom(), extent.right());
+}
+
 } // namespace WebKit
 
 #endif // PLATFORM(IOS_FAMILY)
