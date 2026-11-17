@@ -50,12 +50,6 @@ template<auto R, typename V> struct RawToCSSMapping<CSS::FlexRaw<R, V>>         
 template<auto R, typename V> struct RawToCSSMapping<CSS::AnglePercentageRaw<R, V>>  { using type = CSS::AnglePercentage<R, V>; };
 template<auto R, typename V> struct RawToCSSMapping<CSS::LengthPercentageRaw<R, V>> { using type = CSS::LengthPercentage<R, V>; };
 
-// MARK: CSS -> Raw
-
-template<CSS::Numeric T> struct CSSToRawMapping {
-    using type = typename T::Raw;
-};
-
 // MARK: - Raw canonicalization
 
 template<auto R, typename V, typename... Rest> constexpr Integer<R, V> canonicalize(const CSS::IntegerRaw<R, V>& raw, Rest&&...)

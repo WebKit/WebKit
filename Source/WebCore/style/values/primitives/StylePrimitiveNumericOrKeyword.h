@@ -166,7 +166,6 @@ public:
 
     std::optional<Dimension> tryDimension() const { return isDimension() ? std::make_optional(Dimension { m_value.value() }) : std::nullopt; }
     std::optional<Percentage> tryPercentage() const { return isPercent() ? std::make_optional(Percentage { m_value.value() }) : std::nullopt; }
-    std::optional<Calc> tryCalc() const { return isCalculated() ? std::make_optional(Calc { m_value.calculationValue() }) : std::nullopt; }
 
     std::optional<Numeric> tryNumeric() const
     {
@@ -380,7 +379,6 @@ public:
     ALWAYS_INLINE bool isPercentOrCalculated() const { return holdsAlternative<Percentage>() || holdsAlternative<Calc>(); }
     ALWAYS_INLINE bool isSpecified() const { return holdsAlternative<Numeric>(); }
     std::optional<Dimension> tryFixed() const { return tryDimension(); }
-    std::optional<Numeric> trySpecified() const { return tryNumeric(); }
 
 protected:
     // For predicates that must not construct a CalcSize, since its Ref would run a destructor in
