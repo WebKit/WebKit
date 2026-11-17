@@ -31,11 +31,6 @@ import Testing
 import WebKit
 private import WebKit_Private._WKWebExtensionWebRequestFilter
 
-#if ENABLE_WK_WEB_EXTENSIONS_SIDEBAR || ENABLE_WK_WEB_EXTENSIONS_OFFSCREEN
-private import WebKit_Private._WKFeature
-private import WebKit_Private.WKPreferencesPrivate
-#endif
-
 #if ENABLE_WK_WEB_EXTENSIONS_SIDEBAR
 private import WebKit_Private._WKWebExtensionSidebar
 #endif
@@ -53,18 +48,6 @@ struct WKWebExtensionAPIWebRequestTests {
             "type": "module",
         ],
     ]
-
-    #if ENABLE_WK_WEB_EXTENSIONS_SIDEBAR || ENABLE_WK_WEB_EXTENSIONS_OFFSCREEN
-    private func configurationEnablingFeature(_ featureKey: String) -> WKWebExtensionController.Configuration {
-        let configuration = WKWebExtensionController.Configuration.nonPersistent()
-
-        for feature in WKPreferences._features() where feature.key == featureKey {
-            configuration.webViewConfiguration.preferences._setEnabled(true, for: feature)
-        }
-
-        return configuration
-    }
-    #endif
 
     private func makeFilter(
         with dictionary: [String: Any],
