@@ -195,9 +195,6 @@ static inline LayoutUnit marginBorderAndPaddingBeforeWithStyleForWritingMode(con
 
 static LayoutUnit logicalLeftOffset(const RenderBox& renderer)
 {
-    if (renderer.isRenderFragmentContainer())
-        return 0_lu;
-
     // The offset converts from reference-box coordinates to border-box coordinates.
     // Shape coordinates are physical before the RTL flip, so use physical-left (horizontal)
     // or physical-top (vertical) values, not inline-start values.
