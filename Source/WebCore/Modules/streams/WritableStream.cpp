@@ -40,8 +40,11 @@
 #include "StreamTransferUtilities.h"
 #include "WritableStreamDefaultWriter.h"
 #include <JavaScriptCore/CallFrameInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WritableStream);
 
 ExceptionOr<Ref<WritableStream>> WritableStream::create(JSC::JSGlobalObject& globalObject, JSC::Strong<JSC::JSObject>&& underlyingSink, JSC::Strong<JSC::JSObject>&& strategy)
 {

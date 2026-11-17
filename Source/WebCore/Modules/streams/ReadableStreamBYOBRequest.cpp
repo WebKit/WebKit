@@ -32,8 +32,11 @@
 #include "ReadableByteStreamController.h"
 #include "ReadableStream.h"
 #include <JavaScriptCore/ArrayBufferView.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ReadableStreamBYOBRequest);
 
 Ref<ReadableStreamBYOBRequest> ReadableStreamBYOBRequest::create(ReadableByteStreamController& controller, Ref<JSC::ArrayBufferView>&& view)
 {

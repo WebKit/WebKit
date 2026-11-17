@@ -33,10 +33,13 @@
 #include "UniqueIDBDatabase.h"
 #include "UniqueIDBDatabaseManager.h"
 
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
 namespace IDBServer {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(UniqueIDBDatabaseConnection);
 
 Ref<UniqueIDBDatabaseConnection> UniqueIDBDatabaseConnection::create(UniqueIDBDatabase& database, ServerOpenDBRequest& request)
 {

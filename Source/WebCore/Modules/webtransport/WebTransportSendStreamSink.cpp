@@ -43,8 +43,11 @@
 #include <wtf/CompletionHandler.h>
 #include <wtf/RunLoop.h>
 #include <wtf/Scope.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebTransportSendStreamSink);
 
 WebTransportSendStreamSink::WebTransportSendStreamSink(WebTransport& transport, WebTransportStreamIdentifier identifier)
     : m_transport(transport)

@@ -30,10 +30,12 @@
 
 #include "ExceptionOr.h"
 #include "SQLValue.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class SQLResultSetRowList : public RefCounted<SQLResultSetRowList> {
+    WTF_MAKE_TZONE_ALLOCATED(SQLResultSetRowList);
 public:
     static Ref<SQLResultSetRowList> create() { return adoptRef(*new SQLResultSetRowList); }
 

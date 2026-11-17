@@ -30,8 +30,11 @@
 #include "GPUDevice.h"
 #include "GPUTexture.h"
 #include "GPUTextureDescriptor.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(GPUPresentationContext);
 
 bool GPUPresentationContext::configure(const GPUCanvasConfiguration& canvasConfiguration, GPUIntegerCoordinate width, GPUIntegerCoordinate height, bool reportValidationErrors)
 {

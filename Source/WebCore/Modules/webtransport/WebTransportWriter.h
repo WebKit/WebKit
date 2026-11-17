@@ -27,6 +27,7 @@
 
 #include "WritableStreamDefaultWriter.h"
 #include <JavaScriptCore/JSCJSValue.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/TypeCasts.h>
 
 namespace WebCore {
@@ -38,6 +39,7 @@ class WritableStream;
 template<typename> class ExceptionOr;
 
 class WebTransportWriter final : public WritableStreamDefaultWriter {
+    WTF_MAKE_TZONE_ALLOCATED(WebTransportWriter);
 public:
     static ExceptionOr<Ref<WebTransportWriter>> create(JSDOMGlobalObject&, WritableStream&);
 

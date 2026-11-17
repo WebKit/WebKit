@@ -37,9 +37,12 @@
 #include "PhoneNumberPossessionCoordinator.h"
 #include "PhoneNumberPossessionRequest.h"
 #include "PhoneNumberPossessionResponse.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/UUID.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PhoneNumberPossessionCredential);
 
 Ref<PhoneNumberPossessionCredential> PhoneNumberPossessionCredential::create(PhoneNumberPossessionResponse&& response)
 {

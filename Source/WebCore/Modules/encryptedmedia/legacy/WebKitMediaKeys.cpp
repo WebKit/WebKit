@@ -34,8 +34,11 @@
 #include "MediaKeySystemRequest.h"
 #include "WebKitMediaKeySession.h"
 #include <JavaScriptCore/Uint8Array.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebKitMediaKeys);
 
 ExceptionOr<Ref<WebKitMediaKeys>> WebKitMediaKeys::create(const String& keySystem)
 {

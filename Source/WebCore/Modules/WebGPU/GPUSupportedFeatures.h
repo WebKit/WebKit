@@ -30,12 +30,14 @@
 #include "WebGPUSupportedFeatures.h"
 #include <WebCore/WebGPUCppAPI.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
 class GPUSupportedFeatures : public RefCounted<GPUSupportedFeatures> {
+    WTF_MAKE_TZONE_ALLOCATED(GPUSupportedFeatures);
 public:
     static Ref<GPUSupportedFeatures> create(Ref<WebGPUSupportedFeatures>&& backing)
     {

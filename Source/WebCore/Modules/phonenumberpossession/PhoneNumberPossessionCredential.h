@@ -30,6 +30,7 @@
 #include <JavaScriptCore/ArrayBuffer.h>
 #include <WebCore/BasicCredential.h>
 #include <WebCore/IDLTypes.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -43,6 +44,7 @@ template<typename IDLType> class DOMPromiseDeferred;
 using CredentialPromise = DOMPromiseDeferred<IDLNullable<IDLInterface<BasicCredential>>>;
 
 class PhoneNumberPossessionCredential final : public BasicCredential {
+    WTF_MAKE_TZONE_ALLOCATED(PhoneNumberPossessionCredential);
 public:
     NODELETE static Ref<PhoneNumberPossessionCredential> create(PhoneNumberPossessionResponse&&);
     virtual ~PhoneNumberPossessionCredential();

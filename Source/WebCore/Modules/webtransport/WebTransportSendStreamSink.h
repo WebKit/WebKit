@@ -27,6 +27,7 @@
 
 #include "WritableStreamSink.h"
 #include <wtf/Ref.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeWeakPtr.h>
 #include <wtf/WeakPtr.h>
 
@@ -40,6 +41,7 @@ class WebTransport;
 class WritableStream;
 
 class WebTransportSendStreamSink : public WritableStreamSink, public CanMakeWeakPtr<WebTransportSendStreamSink> {
+    WTF_MAKE_TZONE_ALLOCATED(WebTransportSendStreamSink);
 public:
     static Ref<WebTransportSendStreamSink> create(WebTransport& transport, WebTransportStreamIdentifier identifier) { return adoptRef(*new WebTransportSendStreamSink(transport, identifier)); }
     ~WebTransportSendStreamSink();

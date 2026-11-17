@@ -34,8 +34,11 @@
 #include <JavaScriptCore/ArrayBuffer.h>
 #include <JavaScriptCore/HeapCellInlines.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(DatagramByteSource);
 
 DatagramByteSource::DatagramByteSource() = default;
 

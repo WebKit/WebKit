@@ -46,6 +46,8 @@
 
 namespace WebCore {
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(DOMCacheStorage);
+
 Ref<DOMCacheStorage> DOMCacheStorage::create(ScriptExecutionContext& context, Ref<CacheStorageConnection>&& connection)
 {
     auto cacheStorage = adoptRef(*new DOMCacheStorage(context, WTF::move(connection)));

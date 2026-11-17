@@ -30,11 +30,13 @@
 #include <optional>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
 class GPUDeviceLostInfo : public RefCounted<GPUDeviceLostInfo> {
+    WTF_MAKE_TZONE_ALLOCATED(GPUDeviceLostInfo);
 public:
     static Ref<GPUDeviceLostInfo> create(Ref<WebGPUDeviceLostInfo>&& backing)
     {

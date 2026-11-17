@@ -34,6 +34,7 @@
 #include <wtf/Forward.h>
 #include <wtf/Identified.h>
 #include <wtf/ObjectIdentifier.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/UniqueRef.h>
 
 namespace WebCore {
@@ -44,6 +45,7 @@ class MediaKeySystem;
 template <typename IDLType> class DOMPromiseDeferred;
 
 class MediaKeySystemRequest : public RefCounted<MediaKeySystemRequest>, public ActiveDOMObject, public Identified<MediaKeySystemRequestIdentifier> {
+    WTF_MAKE_TZONE_ALLOCATED(MediaKeySystemRequest);
 public:
     void ref() const final { RefCounted::ref(); }
     void deref() const final { RefCounted::deref(); }

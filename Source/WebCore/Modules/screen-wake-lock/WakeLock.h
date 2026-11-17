@@ -29,6 +29,7 @@
 #include "WakeLockType.h"
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -37,6 +38,7 @@ class Document;
 class WakeLockSentinel;
 
 class WakeLock : public ContextDestructionObserver, public RefCounted<WakeLock> {
+    WTF_MAKE_TZONE_ALLOCATED(WakeLock);
 public:
     static Ref<WakeLock> create(Document* document)
     {

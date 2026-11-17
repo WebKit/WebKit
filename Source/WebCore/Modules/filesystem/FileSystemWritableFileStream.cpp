@@ -35,8 +35,11 @@
 #include "JSDOMPromiseDeferred.h"
 #include "JSFileSystemWritableFileStream.h"
 #include <JavaScriptCore/JSPromise.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(FileSystemWritableFileStream);
 
 ExceptionOr<Ref<FileSystemWritableFileStream>> FileSystemWritableFileStream::create(JSDOMGlobalObject& globalObject, Ref<WritableStreamSink>&& sink)
 {

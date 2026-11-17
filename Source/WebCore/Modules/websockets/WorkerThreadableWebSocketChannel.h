@@ -114,6 +114,7 @@ public:
 private:
     // Bridge for Peer.  Running on the worker thread.
     class Bridge : public RefCounted<Bridge> {
+        WTF_MAKE_TZONE_ALLOCATED(Bridge);
     public:
         static Ref<Bridge> create(Ref<ThreadableWebSocketChannelClientWrapper>&& workerClientWrapper, WorkerGlobalScope& workerGlobalScope, const String& taskMode, Ref<SocketProvider>&& provider)
         {

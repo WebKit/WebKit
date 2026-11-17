@@ -37,8 +37,11 @@
 #include "WebTransportSendGroup.h"
 #include "WebTransportSession.h"
 #include <wtf/CompletionHandler.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(DatagramSink);
 
 DatagramSink::DatagramSink(WebTransport* transport)
     : m_transport(transport) { }

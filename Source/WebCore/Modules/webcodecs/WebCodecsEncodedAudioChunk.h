@@ -31,6 +31,7 @@
 #include <WebCore/AudioEncodedData.h>
 #include <WebCore/BufferSource.h>
 #include <WebCore/WebCodecsEncodedAudioChunkData.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
 namespace JSC {
@@ -57,6 +58,7 @@ private:
 };
 
 class WebCodecsEncodedAudioChunk : public RefCounted<WebCodecsEncodedAudioChunk> {
+    WTF_MAKE_TZONE_ALLOCATED(WebCodecsEncodedAudioChunk);
 public:
     struct Init {
         WebCodecsEncodedAudioChunkType type { WebCodecsEncodedAudioChunkType::Key };

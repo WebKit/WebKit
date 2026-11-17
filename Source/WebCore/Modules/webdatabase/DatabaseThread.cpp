@@ -35,8 +35,11 @@
 #include "SQLTransaction.h"
 #include "SQLTransactionCoordinator.h"
 #include <wtf/AutodrainedPool.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(DatabaseThread);
 
 DatabaseThread::DatabaseThread()
     : m_transactionCoordinator(makeUniqueRef<SQLTransactionCoordinator>())

@@ -32,11 +32,13 @@
 
 #include "DOMException.h"
 #include "MediaConstraintType.h"
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
 class OverconstrainedError final : public DOMException {
+    WTF_MAKE_TZONE_ALLOCATED(OverconstrainedError);
 public:
     static Ref<OverconstrainedError> create(const String& constraint, const String& message)
     {

@@ -34,6 +34,7 @@
 #include <wtf/Lock.h>
 #include <wtf/MessageQueue.h>
 #include <wtf/RefPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Threading.h>
 
 namespace WebCore {
@@ -43,6 +44,7 @@ class Document;
 class SQLTransactionCoordinator;
 
 class DatabaseThread : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<DatabaseThread> {
+    WTF_MAKE_TZONE_ALLOCATED(DatabaseThread);
 public:
     static Ref<DatabaseThread> create() { return adoptRef(*new DatabaseThread); }
     ~DatabaseThread();

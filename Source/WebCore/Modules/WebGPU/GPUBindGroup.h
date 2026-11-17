@@ -29,6 +29,7 @@
 #include <WebCore/WebGPUCppAPI.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
@@ -39,6 +40,7 @@ class GPUDevice;
 class GPUExternalTexture;
 
 class GPUBindGroup : public RefCountedAndCanMakeWeakPtr<GPUBindGroup> {
+    WTF_MAKE_TZONE_ALLOCATED(GPUBindGroup);
 public:
     static Ref<GPUBindGroup> create(Ref<::WebGPU::BindGroup>&& backing, String&& label, Ref<GPUBindGroupLayout>&& layout, GPUDevice& device)
     {

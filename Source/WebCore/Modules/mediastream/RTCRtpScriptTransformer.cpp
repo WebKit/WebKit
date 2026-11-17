@@ -37,8 +37,11 @@
 #include "ScriptExecutionContextInlines.h"
 #include "WorkerThread.h"
 #include <JavaScriptCore/HeapCellInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RTCRtpScriptTransformer);
 
 ExceptionOr<Ref<RTCRtpScriptTransformer>> RTCRtpScriptTransformer::create(ScriptExecutionContext& context, MessageWithMessagePorts&& options)
 {

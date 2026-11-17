@@ -32,8 +32,11 @@
 #include "SQLError.h"
 #include "SQLTransactionBackend.h"
 #include <wtf/RefPtr.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ChangeVersionWrapper);
 
 ChangeVersionWrapper::ChangeVersionWrapper(String&& oldVersion, String&& newVersion)
     : m_oldVersion(WTF::move(oldVersion).isolatedCopy())

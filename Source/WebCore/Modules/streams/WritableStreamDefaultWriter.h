@@ -27,6 +27,7 @@
 
 #include "InternalWritableStreamWriter.h"
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -36,6 +37,7 @@ class WritableStream;
 template<typename> class ExceptionOr;
 
 class WritableStreamDefaultWriter : public RefCounted<WritableStreamDefaultWriter> {
+    WTF_MAKE_TZONE_ALLOCATED(WritableStreamDefaultWriter);
 public:
     static ExceptionOr<Ref<WritableStreamDefaultWriter>> create(JSDOMGlobalObject&, WritableStream&);
 

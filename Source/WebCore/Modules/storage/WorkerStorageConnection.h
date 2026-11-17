@@ -26,6 +26,7 @@
 #pragma once
 
 #include "StorageConnection.h"
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -35,6 +36,7 @@ class WorkerGlobalScope;
 struct StorageEstimate;
 
 class WorkerStorageConnection final : public StorageConnection  {
+    WTF_MAKE_TZONE_ALLOCATED(WorkerStorageConnection);
 public:
     NODELETE static Ref<WorkerStorageConnection> create(WorkerGlobalScope&);
     void scopeClosed();

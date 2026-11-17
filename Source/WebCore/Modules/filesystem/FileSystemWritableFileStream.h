@@ -29,12 +29,14 @@
 #include "FileSystemWriteCommandType.h"
 #include "WritableStream.h"
 #include <JavaScriptCore/ArrayBufferView.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 template<typename> class DOMPromiseDeferred;
 
 class FileSystemWritableFileStream : public WritableStream {
+    WTF_MAKE_TZONE_ALLOCATED(FileSystemWritableFileStream);
 public:
     static ExceptionOr<Ref<FileSystemWritableFileStream>> create(JSDOMGlobalObject&, Ref<WritableStreamSink>&&);
 

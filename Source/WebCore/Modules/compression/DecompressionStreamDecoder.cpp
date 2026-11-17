@@ -30,8 +30,11 @@
 #include <JavaScriptCore/GenericTypedArrayViewInlines.h>
 #include <JavaScriptCore/JSCInlines.h>
 #include <JavaScriptCore/JSGenericTypedArrayViewInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(DecompressionStreamDecoder);
 
 ExceptionOr<Ref<DecompressionStreamDecoder>> DecompressionStreamDecoder::create(unsigned char formatChar)
 {

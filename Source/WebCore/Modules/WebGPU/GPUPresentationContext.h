@@ -31,6 +31,7 @@
 #include <wtf/CompletionHandler.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 
 #if PLATFORM(COCOA)
 #include <wtf/MachSendRight.h>
@@ -43,6 +44,7 @@ class GPUDevice;
 class GPUTexture;
 
 class GPUPresentationContext : public RefCounted<GPUPresentationContext> {
+    WTF_MAKE_TZONE_ALLOCATED(GPUPresentationContext);
 public:
     static Ref<GPUPresentationContext> create(Ref<::WebGPU::PresentationContext>&& backing)
     {

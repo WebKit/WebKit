@@ -33,8 +33,11 @@
 #include "GPURenderBundle.h"
 #include "GPURenderPipeline.h"
 #include "InspectorInstrumentation.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(GPURenderBundleEncoder);
 
 GPURenderBundleEncoder::GPURenderBundleEncoder(Ref<WebGPU::RenderBundleEncoder>&& backing, String&& label, GPUDevice& device)
     : m_backing(WTF::move(backing))

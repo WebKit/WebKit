@@ -32,10 +32,12 @@
 #include <webrtc/api/scoped_refptr.h>
 #include <wtf/Lock.h>
 #include <wtf/StdUnorderedMap.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class LibWebRTCRtpTransformBackend : public RTCRtpTransformBackend, public webrtc::FrameTransformerInterface {
+    WTF_MAKE_TZONE_ALLOCATED(LibWebRTCRtpTransformBackend);
 protected:
     LibWebRTCRtpTransformBackend(MediaType, Side);
     void setInputCallback(Callback&&);

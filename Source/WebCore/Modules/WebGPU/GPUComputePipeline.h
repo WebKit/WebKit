@@ -35,6 +35,7 @@
 #include <wtf/Lock.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
@@ -44,6 +45,7 @@ class GPUDevice;
 class WeakPtrImplWithEventTargetData;
 
 class GPUComputePipeline : public RefCountedAndCanMakeWeakPtr<GPUComputePipeline> {
+    WTF_MAKE_TZONE_ALLOCATED(GPUComputePipeline);
 public:
     static Ref<GPUComputePipeline> create(Ref<::WebGPU::ComputePipeline>&&, uint64_t uniqueId, GPUDevice*, WebGPUComputePipelineDescriptor&&, const WebGPUShaderModuleDescriptor&);
 

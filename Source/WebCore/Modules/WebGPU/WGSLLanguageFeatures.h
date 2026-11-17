@@ -28,12 +28,14 @@
 #include "IDLTypes.h"
 #include "JSDOMSetLike.h"
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
 class WGSLLanguageFeatures : public RefCounted<WGSLLanguageFeatures> {
+    WTF_MAKE_TZONE_ALLOCATED(WGSLLanguageFeatures);
 public:
     static Ref<WGSLLanguageFeatures> create()
     {

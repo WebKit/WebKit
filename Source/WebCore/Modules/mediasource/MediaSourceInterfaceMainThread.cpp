@@ -32,8 +32,11 @@
 #include "MediaSource.h"
 #include "SourceBufferList.h"
 #include "TimeRanges.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(MediaSourceInterfaceMainThread);
 
 MediaSourceInterfaceMainThread::MediaSourceInterfaceMainThread(Ref<MediaSource>&& mediaSource)
     : m_mediaSource(WTF::move(mediaSource))

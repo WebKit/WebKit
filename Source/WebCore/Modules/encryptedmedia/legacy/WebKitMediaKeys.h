@@ -30,6 +30,7 @@
 #include "LegacyCDM.h"
 #include <JavaScriptCore/Forward.h>
 #include <wtf/CheckedRef.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
 
@@ -42,7 +43,7 @@ class WebKitMediaKeySession;
 template<typename> class ExceptionOr;
 
 class WebKitMediaKeys final : public RefCounted<WebKitMediaKeys>, private LegacyCDMClient {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(WebKitMediaKeys);
+    WTF_MAKE_TZONE_ALLOCATED(WebKitMediaKeys);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(WebKitMediaKeys);
 public:
     static ExceptionOr<Ref<WebKitMediaKeys>> create(const String& keySystem);

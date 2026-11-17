@@ -56,6 +56,8 @@
 
 namespace WebCore {
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(Clipboard::ItemWriter);
+
 WTF_MAKE_TZONE_ALLOCATED_IMPL(Clipboard);
 
 // https://w3c.github.io/clipboard-apis/ requires the relevant global object to have transient

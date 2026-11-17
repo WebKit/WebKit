@@ -27,8 +27,11 @@
 #include "GPUExternalTexture.h"
 
 #include "GPUDevice.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(GPUExternalTexture);
 
 GPUExternalTexture::GPUExternalTexture(Ref<WebGPU::ExternalTexture>&& backing, String&& label, GPUDevice& device)
     : m_backing(WTF::move(backing))

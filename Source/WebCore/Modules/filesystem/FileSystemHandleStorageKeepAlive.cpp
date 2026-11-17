@@ -28,8 +28,11 @@
 
 #include "FileSystemStorageConnection.h"
 #include <wtf/CrossThreadCopier.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(FileSystemHandleStorageKeepAlive);
 
 Ref<FileSystemHandleStorageKeepAlive> FileSystemHandleStorageKeepAlive::create(ClientOrigin&& origin, Vector<FileSystemHandleGlobalIdentifier>&& globalIdentifiers, Ref<FileSystemStorageConnection>&& connection)
 {

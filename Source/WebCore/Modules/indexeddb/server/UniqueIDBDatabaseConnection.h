@@ -31,6 +31,7 @@
 #include <wtf/Identified.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -46,6 +47,7 @@ class UniqueIDBDatabase;
 class UniqueIDBDatabaseTransaction;
 
 class UniqueIDBDatabaseConnection : public RefCountedAndCanMakeWeakPtr<UniqueIDBDatabaseConnection>, public Identified<IDBDatabaseConnectionIdentifier> {
+    WTF_MAKE_TZONE_ALLOCATED(UniqueIDBDatabaseConnection);
 public:
     static Ref<UniqueIDBDatabaseConnection> create(UniqueIDBDatabase&, ServerOpenDBRequest&);
 

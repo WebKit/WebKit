@@ -30,8 +30,11 @@
 #include "SQLResultSet.h"
 
 #include "ExceptionOr.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SQLResultSet);
 
 SQLResultSet::SQLResultSet()
     : m_rows(SQLResultSetRowList::create())

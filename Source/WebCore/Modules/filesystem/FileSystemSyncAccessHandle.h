@@ -33,6 +33,7 @@
 #include <wtf/FileHandle.h>
 #include <wtf/FileSystem.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -42,6 +43,7 @@ template<typename> class DOMPromiseDeferred;
 template<typename> class ExceptionOr;
 
 class FileSystemSyncAccessHandle : public RefCounted<FileSystemSyncAccessHandle>, public ActiveDOMObject {
+    WTF_MAKE_TZONE_ALLOCATED(FileSystemSyncAccessHandle);
 public:
     void ref() const final { RefCounted::ref(); }
     void deref() const final { RefCounted::deref(); }

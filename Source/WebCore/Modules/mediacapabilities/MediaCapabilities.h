@@ -28,6 +28,7 @@
 #include "PlatformMediaEngineConfigurationFactory.h"
 #include <wtf/HashMap.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -39,6 +40,7 @@ struct MediaDecodingConfiguration;
 struct MediaEncodingConfiguration;
 
 class MediaCapabilities : public RefCountedAndCanMakeWeakPtr<MediaCapabilities> {
+    WTF_MAKE_TZONE_ALLOCATED(MediaCapabilities);
 public:
     static Ref<MediaCapabilities> create(NavigatorBase& navigator) { return adoptRef(*new MediaCapabilities(navigator)); }
 

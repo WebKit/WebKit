@@ -33,11 +33,16 @@
 #include "HTTPParsers.h"
 #include "ScriptExecutionContext.h"
 #include <JavaScriptCore/ConsoleTypes.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 
 namespace WebCore {
 
 namespace DOMCacheEngine {
+
+WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(Record);
+
+WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(CrossThreadRecord);
 
 Exception convertToException(Error error)
 {

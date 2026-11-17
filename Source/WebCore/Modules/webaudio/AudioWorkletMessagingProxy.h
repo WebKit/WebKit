@@ -31,6 +31,7 @@
 #if ENABLE(WEB_AUDIO)
 #include "WorkerLoaderProxy.h"
 #include "WorkletGlobalScopeProxy.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -39,7 +40,7 @@ class AudioWorkletThread;
 class Document;
 
 class AudioWorkletMessagingProxy final : public WorkletGlobalScopeProxy, public WorkerLoaderProxy, public CanMakeThreadSafeCheckedPtr<AudioWorkletMessagingProxy> {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(AudioWorkletMessagingProxy);
+    WTF_MAKE_TZONE_ALLOCATED(AudioWorkletMessagingProxy);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(AudioWorkletMessagingProxy);
 public:
     static Ref<AudioWorkletMessagingProxy> create(AudioWorklet& worklet)

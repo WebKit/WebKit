@@ -29,6 +29,7 @@
 #include <WebCore/HighlightVisibility.h>
 #include <wtf/HashMap.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/AtomStringHash.h>
 
 namespace WebCore {
@@ -43,6 +44,7 @@ struct HighlightHitResult;
 struct HighlightsFromPointOptions;
 
 class HighlightRegistry : public RefCounted<HighlightRegistry> {
+    WTF_MAKE_TZONE_ALLOCATED(HighlightRegistry);
 public:
     static Ref<HighlightRegistry> create() { return adoptRef(*new HighlightRegistry); }
 

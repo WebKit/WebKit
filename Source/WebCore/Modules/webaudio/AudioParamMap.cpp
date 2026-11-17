@@ -34,8 +34,11 @@
 #include "AudioParam.h"
 #include "JSAudioParam.h"
 #include "JSDOMMapLike.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(AudioParamMap);
 
 AudioParamMap::AudioParamMap() = default;
 

@@ -38,8 +38,11 @@
 #include "PasteboardItemInfo.h"
 #include "Settings.h"
 #include "SharedBuffer.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ClipboardItem);
 
 ClipboardItem::~ClipboardItem() = default;
 
