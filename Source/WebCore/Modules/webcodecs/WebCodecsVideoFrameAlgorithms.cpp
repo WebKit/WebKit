@@ -74,15 +74,23 @@ bool verifyRectOffsetAlignment(VideoPixelFormat format, const DOMRectInit& rect)
     case VideoPixelFormat::I420P10:
     case VideoPixelFormat::I420P12:
     case VideoPixelFormat::I420A:
+    case VideoPixelFormat::I420AP10:
+    case VideoPixelFormat::I420AP12:
     case VideoPixelFormat::NV12:
         return isMultiple(rect.x, 2) && isMultiple(rect.y, 2);
     case VideoPixelFormat::I422:
     case VideoPixelFormat::I422P10:
     case VideoPixelFormat::I422P12:
+    case VideoPixelFormat::I422A:
+    case VideoPixelFormat::I422AP10:
+    case VideoPixelFormat::I422AP12:
         return isMultiple(rect.x, 2);
     case VideoPixelFormat::I444:
     case VideoPixelFormat::I444P10:
     case VideoPixelFormat::I444P12:
+    case VideoPixelFormat::I444A:
+    case VideoPixelFormat::I444AP10:
+    case VideoPixelFormat::I444AP12:
     case VideoPixelFormat::RGBA:
     case VideoPixelFormat::RGBX:
     case VideoPixelFormat::BGRA:
@@ -126,6 +134,14 @@ size_t videoPixelFormatToPlaneCount(VideoPixelFormat format)
     case VideoPixelFormat::I422P12:
         return 3;
     case VideoPixelFormat::I420A:
+    case VideoPixelFormat::I420AP10:
+    case VideoPixelFormat::I420AP12:
+    case VideoPixelFormat::I422A:
+    case VideoPixelFormat::I422AP10:
+    case VideoPixelFormat::I422AP12:
+    case VideoPixelFormat::I444A:
+    case VideoPixelFormat::I444AP10:
+    case VideoPixelFormat::I444AP12:
         return 4;
     case VideoPixelFormat::NV12:
         return 2;
@@ -150,12 +166,20 @@ NODELETE static inline size_t sampleCountPerPixel(VideoPixelFormat format, size_
     case VideoPixelFormat::I420P10:
     case VideoPixelFormat::I420P12:
     case VideoPixelFormat::I420A:
+    case VideoPixelFormat::I420AP10:
+    case VideoPixelFormat::I420AP12:
     case VideoPixelFormat::I444:
     case VideoPixelFormat::I444P10:
     case VideoPixelFormat::I444P12:
+    case VideoPixelFormat::I444A:
+    case VideoPixelFormat::I444AP10:
+    case VideoPixelFormat::I444AP12:
     case VideoPixelFormat::I422:
     case VideoPixelFormat::I422P10:
     case VideoPixelFormat::I422P12:
+    case VideoPixelFormat::I422A:
+    case VideoPixelFormat::I422AP10:
+    case VideoPixelFormat::I422AP12:
         return 1;
     case VideoPixelFormat::NV12:
         return planeNumber ? 2 : 1;
@@ -182,14 +206,22 @@ size_t videoPixelFormatToHorizontalSubSampling(VideoPixelFormat format, size_t p
     case VideoPixelFormat::I420P10:
     case VideoPixelFormat::I420P12:
     case VideoPixelFormat::I420A:
+    case VideoPixelFormat::I420AP10:
+    case VideoPixelFormat::I420AP12:
     case VideoPixelFormat::I422:
     case VideoPixelFormat::I422P10:
     case VideoPixelFormat::I422P12:
+    case VideoPixelFormat::I422A:
+    case VideoPixelFormat::I422AP10:
+    case VideoPixelFormat::I422AP12:
     case VideoPixelFormat::NV12:
         return isChromaPlane(format, planeNumber) ? 2 : 1;
     case VideoPixelFormat::I444:
     case VideoPixelFormat::I444P10:
     case VideoPixelFormat::I444P12:
+    case VideoPixelFormat::I444A:
+    case VideoPixelFormat::I444AP10:
+    case VideoPixelFormat::I444AP12:
     case VideoPixelFormat::RGBA:
     case VideoPixelFormat::RGBX:
     case VideoPixelFormat::BGRA:
@@ -206,14 +238,22 @@ size_t videoPixelFormatToVerticalSubSampling(VideoPixelFormat format, size_t pla
     case VideoPixelFormat::I420P10:
     case VideoPixelFormat::I420P12:
     case VideoPixelFormat::I420A:
+    case VideoPixelFormat::I420AP10:
+    case VideoPixelFormat::I420AP12:
     case VideoPixelFormat::NV12:
         return isChromaPlane(format, planeNumber) ? 2 : 1;
     case VideoPixelFormat::I422:
     case VideoPixelFormat::I422P10:
     case VideoPixelFormat::I422P12:
+    case VideoPixelFormat::I422A:
+    case VideoPixelFormat::I422AP10:
+    case VideoPixelFormat::I422AP12:
     case VideoPixelFormat::I444:
     case VideoPixelFormat::I444P10:
     case VideoPixelFormat::I444P12:
+    case VideoPixelFormat::I444A:
+    case VideoPixelFormat::I444AP10:
+    case VideoPixelFormat::I444AP12:
     case VideoPixelFormat::RGBA:
     case VideoPixelFormat::RGBX:
     case VideoPixelFormat::BGRA:
