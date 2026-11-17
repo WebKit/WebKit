@@ -170,6 +170,7 @@ void RTCRtpSender::setParameters(RTCRtpSendParameters&& parameters, DOMPromiseDe
         for (auto& encoding : parameters.encodings) {
             encoding.scaleResolutionDownBy = { };
             encoding.maxFramerate = { };
+            encoding.scalabilityMode = { };
         }
     } else {
         for (auto& encoding : borrow(parameters.encodings)) {

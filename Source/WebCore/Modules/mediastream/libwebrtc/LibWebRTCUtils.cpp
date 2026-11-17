@@ -170,6 +170,8 @@ static inline RTCRtpEncodingParameters toRTCEncodingParameters(const webrtc::Rtp
         parameters.rid = fromStdString(rtcParameters.rid);
     if (rtcParameters.scale_resolution_down_by && !isAudio)
         parameters.scaleResolutionDownBy = *rtcParameters.scale_resolution_down_by;
+    if (rtcParameters.scalability_mode && !isAudio)
+        parameters.scalabilityMode = fromStdString(*rtcParameters.scalability_mode);
 
     parameters.priority = fromWebRTCBitRatePriority(rtcParameters.bitrate_priority);
     parameters.networkPriority = toRTCPriorityType(rtcParameters.network_priority);
@@ -219,6 +221,8 @@ static inline webrtc::RtpEncodingParameters fromRTCEncodingParameters(const RTCR
     rtcParameters.rid = parameters.rid.utf8().toStdString();
     if (parameters.scaleResolutionDownBy)
         rtcParameters.scale_resolution_down_by = parameters.scaleResolutionDownBy;
+    if (!parameters.scalabilityMode.isNull())
+        rtcParameters.scalability_mode = parameters.scalabilityMode.utf8().toStdString();
 
     rtcParameters.bitrate_priority = toWebRTCBitRatePriority(parameters.priority);
     if (parameters.networkPriority)

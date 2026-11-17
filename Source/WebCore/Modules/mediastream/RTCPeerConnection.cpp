@@ -211,6 +211,7 @@ static std::optional<Exception> validateSendEncodings(Vector<RTCRtpEncodingParam
         if (isAudio) {
             encoding.scaleResolutionDownBy = { };
             encoding.maxFramerate = { };
+            encoding.scalabilityMode = { };
             continue;
         }
         if (encoding.scaleResolutionDownBy && *encoding.scaleResolutionDownBy < 1)
