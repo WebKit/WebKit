@@ -55,15 +55,12 @@ set(_test_swift_resp "${CMAKE_BINARY_DIR}/DerivedSources/TestWebKitAPI/platform-
 _webkit_generate_platform_swift_args(TestWebKitAPI "${_test_swift_resp}")
 add_custom_target(TestWebKitAPISwiftArgs DEPENDS "${_test_swift_resp}")
 
-# Swift flags for all Test* targets.
-_WEBKIT_COMPUTE_SWIFT_SHARED_CLANG_FLAGS(_test_swift_cc_flags)
-
+# Swift flags for all Test* targets. The shared importer options come first so they reuse WebKit's SDK modules.
 set(_testwebkitapi_swiftmodule_dir "${CMAKE_CURRENT_BINARY_DIR}/SwiftModules")
-set(_testwebkitapi_swift_options
-    ${WEBKIT_SWIFT_CXX_INTEROP_FLAGS}
+_WEBKIT_SWIFT_SHARED_IMPORTER_OPTIONS(_testwebkitapi_swift_options "${_test_swift_resp}" ON)
+list(APPEND _testwebkitapi_swift_options
     "-D ENABLE_CXX_INTEROP"
     -no-verify-emitted-module-interface
-    "@${_test_swift_resp}"
     -F${CMAKE_LIBRARY_OUTPUT_DIRECTORY}
     "-Xcc -I${CMAKE_BINARY_DIR}"
     "-Xcc -I${TESTWEBKITAPI_DIR}"
@@ -73,19 +70,12 @@ set(_testwebkitapi_swift_options
 
     "-I${_testwebkitapi_swiftmodule_dir}"
 )
-if (CMAKE_Swift_COMPILER_TARGET)
-    list(APPEND _testwebkitapi_swift_options "-clang-target ${CMAKE_Swift_COMPILER_TARGET}")
-endif ()
-
 # @Test and @Suite expand through libTestingMacros, in a `testing` subdirectory
 # swiftc does not search on its own. WebKitXcodeSDK.cmake finds the plugin from
 # the toolchain that built the Testing.framework staged above.
 if (SWIFT_TESTING_PLUGIN_FLAGS)
     list(APPEND _testwebkitapi_swift_options "${SWIFT_TESTING_PLUGIN_FLAGS}")
 endif ()
-foreach (_f IN LISTS _test_swift_cc_flags)
-    list(APPEND _testwebkitapi_swift_options "-Xcc ${_f}")
-endforeach ()
 
 macro(WEBKIT_TEST_ENABLE_SWIFT _target)
     target_sources(${_target} PRIVATE
