@@ -1278,6 +1278,7 @@ URL WebPage::allowedQueryParametersForAdvancedPrivacyProtections(const URL& url)
 void WebPage::setMediaPlaybackEnvironment(const String& environment)
 {
     m_mediaPlaybackEnvironment = environment;
+    assertIsMainRunLoop();
     if (RefPtr gpuProcessConnection = WebProcess::singleton().existingGPUProcessConnection())
         gpuProcessConnection->setMediaPlaybackEnvironment(identifier(), environment);
 }
@@ -1285,6 +1286,7 @@ void WebPage::setMediaPlaybackEnvironment(const String& environment)
 void WebPage::setDisplayCaptureEnvironment(const String& environment)
 {
     m_displayCaptureEnvironment = environment;
+    assertIsMainRunLoop();
     if (RefPtr gpuProcessConnection = WebProcess::singleton().existingGPUProcessConnection())
         gpuProcessConnection->setDisplayCaptureEnvironment(identifier(), environment);
 }

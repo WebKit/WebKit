@@ -94,7 +94,7 @@ void WebMediaStrategy::ensureCodecsSupportChecksInitialized()
 bool WebMediaStrategy::canDecodeExtendedType(PlatformMediaDecodingType platformType, const ContentType& contentType)
 {
     Ref connection = [&] {
-        RefPtr connection = WebProcess::singleton().existingGPUProcessConnection();
+        RefPtr connection = WebProcess::singleton().existingGPUProcessConnectionOffMainThread();
         if (connection)
             return connection.releaseNonNull();
         callOnMainRunLoopAndWait([&] {
@@ -123,6 +123,7 @@ std::unique_ptr<WebCore::NowPlayingManager> WebMediaStrategy::createNowPlayingMa
         class NowPlayingInfoForGPUManager : public WebCore::NowPlayingManager {
             void clearNowPlayingInfoPrivate() final
             {
+                assertIsMainRunLoop();
                 if (RefPtr connection = WebProcess::singleton().existingGPUProcessConnection())
                     connection->connection().send(Messages::GPUConnectionToWebProcess::ClearNowPlayingInfo { }, 0);
             }

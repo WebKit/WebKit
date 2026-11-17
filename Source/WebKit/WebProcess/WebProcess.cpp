@@ -1065,6 +1065,7 @@ void WebProcess::createWebPage(PageIdentifier pageID, WebPageCreationParameters&
     // link) the WebPage gets created both in the synchronous handler and through the normal way.
     if (addResult.isNewEntry) {
 #if ENABLE(GPU_PROCESS)
+        assertIsMainRunLoop();
         if (RefPtr gpuProcessConnection = m_gpuProcessConnection)
             page->gpuProcessConnectionDidBecomeAvailable(*gpuProcessConnection);
 #endif
@@ -1526,6 +1527,7 @@ WebLoaderStrategy& WebProcess::webLoaderStrategy()
 GPUProcessConnection& WebProcess::ensureGPUProcessConnection()
 {
     RELEASE_ASSERT(RunLoop::isMain());
+    assertIsMainRunLoop();
 
     // If we've lost our connection to the GPU process (e.g. it crashed) try to re-establish it.
     if (!m_gpuProcessConnection) {
@@ -1538,12 +1540,21 @@ GPUProcessConnection& WebProcess::ensureGPUProcessConnection()
         if (gpuConnection->ignoreInvalidMessageForTesting())
             gpuConnection->setIgnoreInvalidMessageForTesting();
 #endif
-        m_gpuProcessConnection = GPUProcessConnection::create(WTF::move(gpuConnection));
+        {
+            Locker locker { m_gpuProcessConnectionLock };
+            m_gpuProcessConnection = GPUProcessConnection::create(WTF::move(gpuConnection));
+        }
         protect(parentProcessConnection())->send(Messages::WebProcessProxy::CreateGPUProcessConnection(m_gpuProcessConnection->identifier(),  WTF::move(connectionIdentifiers->client)), 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
         for (auto& page : m_pageMap.values())
             page->gpuProcessConnectionDidBecomeAvailable(Ref { *m_gpuProcessConnection });
     }
     return *m_gpuProcessConnection;
+}
+
+RefPtr<GPUProcessConnection> WebProcess::existingGPUProcessConnectionOffMainThread() WTF_IGNORES_THREAD_SAFETY_ANALYSIS
+{
+    Locker locker { m_gpuProcessConnectionLock };
+    return m_gpuProcessConnection;
 }
 
 Seconds WebProcess::gpuProcessTimeoutDuration() const
@@ -1554,8 +1565,14 @@ Seconds WebProcess::gpuProcessTimeoutDuration() const
 
 void WebProcess::gpuProcessConnectionClosed()
 {
+    assertIsMainRunLoop();
     ASSERT(m_gpuProcessConnection);
-    m_gpuProcessConnection = nullptr;
+    // Keeps the connection alive until after the lock is released.
+    RefPtr<GPUProcessConnection> closedConnection;
+    {
+        Locker locker { m_gpuProcessConnectionLock };
+        closedConnection = std::exchange(m_gpuProcessConnection, nullptr);
+    }
 
     for (auto& page : m_pageMap.values())
         page->gpuProcessConnectionWasDestroyed();
@@ -1568,6 +1585,7 @@ void WebProcess::gpuProcessConnectionClosed()
 
 void WebProcess::gpuProcessConnectionDidBecomeUnresponsive()
 {
+    assertIsMainRunLoop();
     ASSERT(m_gpuProcessConnection);
     protect(parentProcessConnection())->send(Messages::WebProcessProxy::GPUProcessConnectionDidBecomeUnresponsive(m_gpuProcessConnection->identifier()), 0);
 }
