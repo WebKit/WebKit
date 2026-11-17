@@ -91,13 +91,19 @@ WI.Cookie = class Cookie
 
         let pairs = header.split(/; /);
         for (let pair of pairs) {
-            let match = pair.match(/^(?<name>[^\s=]+)[ \t]*=[ \t]*(?<value>.*)$/);
-            if (!match) {
-                WI.reportInternalError("Failed to parse Cookie pair", {header, pair});
+            if (!pair)
                 continue;
-            }
 
-            let {name, value} = match.groups;
+            // RFC 6265bis: split at the first "="; without one, the name is
+            // empty and the whole pair is the value. Both sides are trimmed.
+            // <https://httpwg.org/http-extensions/rfc6265bis.html>
+            let separatorIndex = pair.indexOf("=");
+            let name = (separatorIndex === -1 ? "" : pair.substring(0, separatorIndex)).trim();
+            let value = (separatorIndex === -1 ? pair : pair.substring(separatorIndex + 1)).trim();
+
+            if (!name && !value)
+                continue;
+
             cookies.push(new WI.Cookie(WI.Cookie.Type.Request, name, value));
         }
 
@@ -144,14 +150,28 @@ WI.Cookie = class Cookie
         // NOTE: Some attributes can have pairs (e.g. "Path=/"), some are only a
         // single word (e.g. "Secure").
 
-        // Parse name/value.
-        let nameValueMatch = header.match(/^(?<name>[^\s=]+)[ \t]*=[ \t]*(?<value>[^;]*)/);
-        if (!nameValueMatch) {
-            WI.reportInternalError("Failed to parse Set-Cookie header", {header});
-            return null;
-        }
+        // Parse name/value. The pair ends at the first ";".
+        // RFC 6265bis: split at the first "="; without one, the name is empty
+        // and the whole pair is the value. Both sides are trimmed.
+        let pairEndIndex = header.indexOf(";");
+        if (pairEndIndex === -1)
+            pairEndIndex = header.length;
+        let pair = header.substring(0, pairEndIndex);
 
-        let {name, value} = nameValueMatch.groups;
+        let separatorIndex = pair.indexOf("=");
+        let name = (separatorIndex === -1 ? "" : pair.substring(0, separatorIndex)).trim();
+        let value = (separatorIndex === -1 ? pair : pair.substring(separatorIndex + 1)).trim();
+
+        // A pair with no name and no value is not a cookie.
+        if (!name && !value)
+            return null;
+
+        // A nameless value that starts with a quote is most likely a fragment of a combined
+        // "Set-Cookie" header that was split on a comma inside a value (see
+        // WI.Resource.prototype.responseCookies), not a real cookie.
+        if (!name && value.startsWith("\""))
+            return null;
+
         let expires = null;
         let session = false;
         let maxAge = null;
@@ -163,7 +183,7 @@ WI.Cookie = class Cookie
         let sameSite = WI.Cookie.SameSiteType.None;
 
         // Parse Attributes
-        let remaining = header.substring(nameValueMatch[0].length);
+        let remaining = header.substring(pairEndIndex);
         let attributes = remaining.split(/; ?/);
         for (let attribute of attributes) {
             if (!attribute)
