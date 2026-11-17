@@ -28,6 +28,7 @@
 #if ENABLE(UNIFIED_PDF)
 
 #include "PDFDocumentLayout.h"
+#include <wtf/Borrow.h>
 #include <wtf/text/ParsingUtilities.h>
 
 namespace WTF {
@@ -55,8 +56,10 @@ inline PDFPageCoverage unite(const PDFPageCoverage& a, const PDFPageCoverage& b)
 {
     PDFPageCoverage result;
     result.reserveCapacity(a.size() + b.size());
-    auto as = a.span();
-    auto bs = b.span();
+    Borrow borrowedA(a);
+    Borrow borrowedB(b);
+    auto as = borrowedA->span();
+    auto bs = borrowedB->span();
     while (!as.empty() && !bs.empty()) {
         auto cmp = as.front().pageIndex <=> bs.front().pageIndex;
         if (cmp < 0)

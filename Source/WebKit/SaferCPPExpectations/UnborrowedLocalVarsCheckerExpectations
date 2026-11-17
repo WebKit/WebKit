@@ -7,4 +7,3 @@ Platform/IPC/SwiftCoding.h
 [ iOS ] UIProcess/ios/forms/WKFormSelectControl.mm
 [ iOS ] UIProcess/ios/forms/WKFormSelectPicker.mm
 [ iOS ] UIProcess/ios/forms/WKFormSelectPopover.mm
-WebProcess/Plugins/PDF/UnifiedPDF/PDFPageCoverage.h
