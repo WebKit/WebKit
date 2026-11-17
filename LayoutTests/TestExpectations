@@ -7679,7 +7679,6 @@ webkit.org/b/328881 imported/w3c/web-platform-tests/css/css-page/page-margin-001
 webkit.org/b/328881 imported/w3c/web-platform-tests/css/css-page/page-margin-002-print.html [ ImageOnlyFailure ]
 webkit.org/b/328881 imported/w3c/web-platform-tests/css/css-page/page-margin-003-print.html [ ImageOnlyFailure ]
 webkit.org/b/328881 imported/w3c/web-platform-tests/css/css-page/page-margin-004-print.html [ ImageOnlyFailure ]
-webkit.org/b/328881 imported/w3c/web-platform-tests/css/css-page/page-margin-005-print.html [ ImageOnlyFailure ]
 webkit.org/b/328881 imported/w3c/web-platform-tests/css/css-page/page-margin-007-print.html [ ImageOnlyFailure ]
 webkit.org/b/328881 imported/w3c/web-platform-tests/css/css-page/page-margin-auto-and-non-zero-print.html [ ImageOnlyFailure ]
 webkit.org/b/328881 imported/w3c/web-platform-tests/css/css-page/page-margin-auto-negative-print.tentative.html [ ImageOnlyFailure ]
