@@ -183,6 +183,7 @@ protected:
     bool wasCancelled() const { return m_cancellationStatus >= Cancelled; }
 
     void setReferrerPolicy(ReferrerPolicy referrerPolicy) { m_options.referrerPolicy = referrerPolicy; }
+    void setStoredCredentialsPolicy(StoredCredentialsPolicy storedCredentialsPolicy) { m_options.storedCredentialsPolicy = storedCredentialsPolicy; }
     ReferrerPolicy referrerPolicy() const { return m_options.referrerPolicy; }
 
 #if PLATFORM(COCOA)
