@@ -194,6 +194,15 @@ void NetworkRTCProvider::dispatch(Function<void()>&& callback)
     callOnRTCNetworkThread((WTF::move(callback)));
 }
 
+static std::optional<RTCNetwork::IPAddress> toRTCNetworkIPAddress(const WebCore::IPAddress& address)
+{
+    if (address.isIPv4())
+        return RTCNetwork::IPAddress { webrtc::IPAddress { address.ipv4Address() } };
+    if (address.isIPv6())
+        return RTCNetwork::IPAddress { webrtc::IPAddress { address.ipv6Address() } };
+    return std::nullopt;
+}
+
 void NetworkRTCProvider::createResolver(LibWebRTCResolverIdentifier identifier, String&& address)
 {
     MESSAGE_CHECK(!address.isNull());
@@ -208,14 +217,17 @@ void NetworkRTCProvider::createResolver(LibWebRTCResolverIdentifier identifier, 
     }
 
     RefPtr connection = m_connection.get();
-    if (connection && protect(connection->mdnsRegister())->hasRegisteredName(address)) {
-        Vector<WebKit::WebRTCNetwork::IPAddress> ipAddresses;
-        Ref rtcMonitor = m_rtcMonitor;
-        if (!rtcMonitor->ipv4().isUnspecified())
-            ipAddresses.append(rtcMonitor->ipv4());
-        if (!rtcMonitor->ipv6().isUnspecified())
-            ipAddresses.append(rtcMonitor->ipv6());
-        protect(this->connection())->send(Messages::WebRTCResolver::SetResolvedAddress(ipAddresses), identifier);
+    auto registeredAddress = connection ? protect(connection->mdnsRegister())->registeredAddress(address) : String { };
+    if (!registeredAddress.isNull()) {
+        auto ipAddress = WebCore::IPAddress::fromString(registeredAddress);
+        auto rtcAddress = ipAddress ? toRTCNetworkIPAddress(*ipAddress) : std::nullopt;
+        if (!rtcAddress) {
+            protect(this->connection())->send(Messages::WebRTCResolver::ResolvedAddressError { 1 }, identifier);
+            return;
+        }
+        protect(this->connection())->send(Messages::WebRTCResolver::SetResolvedAddress {
+            { WTF::move(*rtcAddress) }
+        }, identifier);
         return;
     }
 
@@ -231,13 +243,7 @@ void NetworkRTCProvider::createResolver(LibWebRTCResolverIdentifier identifier, 
             return;
         }
 
-        auto ipAddresses = WTF::compactMap(result.value(), [](auto& address) -> std::optional<RTCNetwork::IPAddress> {
-            if (address.isIPv4())
-                return RTCNetwork::IPAddress { webrtc::IPAddress { address.ipv4Address() } };
-            if (address.isIPv6())
-                return RTCNetwork::IPAddress { webrtc::IPAddress { address.ipv6Address() } };
-            return std::nullopt;
-        });
+        auto ipAddresses = WTF::compactMap(result.value(), toRTCNetworkIPAddress);
 
         protectedConnection->connection().send(Messages::WebRTCResolver::SetResolvedAddress(ipAddresses), identifier);
     };

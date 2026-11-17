@@ -72,9 +72,9 @@ void NetworkMDNSRegister::deref() const
     m_connection->deref();
 }
 
-bool NetworkMDNSRegister::hasRegisteredName(const String& name) const
+String NetworkMDNSRegister::registeredAddress(const String& name) const
 {
-    return m_registeredNames.contains(name);
+    return m_registeredNames.get(name);
 }
 
 #if ENABLE_MDNS
@@ -122,7 +122,7 @@ void NetworkMDNSRegister::registerMDNSName(WebCore::ScriptExecutionContextIdenti
 {
     auto name = makeString(WTF::UUID::createVersion4(), ".local"_s);
 
-    m_registeredNames.add(name);
+    m_registeredNames.add(name, ipAddress);
     m_perDocumentRegisteredNames.ensure(documentIdentifier, [] {
         return Vector<String>();
     }).iterator->value.append(name);

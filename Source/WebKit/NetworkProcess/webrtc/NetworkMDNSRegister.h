@@ -37,7 +37,6 @@
 #include <wtf/CompletionHandler.h>
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
-#include <wtf/HashSet.h>
 
 #if PLATFORM(COCOA) && defined __has_include && __has_include(<dns_sd.h>)
 #define ENABLE_MDNS 1
@@ -85,7 +84,7 @@ public:
     void closeAndForgetService(DNSServiceRef);
 #endif
 
-    bool hasRegisteredName(const String&) const;
+    String registeredAddress(const String& name) const;
 
     NODELETE std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebProcess() const;
 
@@ -113,7 +112,7 @@ private:
     NODELETE PAL::SessionID sessionID() const;
 
     WeakRef<NetworkConnectionToWebProcess> m_connection;
-    HashSet<String> m_registeredNames;
+    HashMap<String, String> m_registeredNames;
 
     HashMap<WebCore::ScriptExecutionContextIdentifier, Vector<String>> m_perDocumentRegisteredNames;
 

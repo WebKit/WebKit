@@ -84,7 +84,7 @@ void NetworkMDNSRegister::registerMDNSName(WebCore::ScriptExecutionContextIdenti
         return;
     }
 
-    m_registeredNames.add(name);
+    m_registeredNames.add(name, ipAddress);
     m_perDocumentRegisteredNames.ensure(documentIdentifier, [] {
         return Vector<String>();
     }).iterator->value.append(name);
