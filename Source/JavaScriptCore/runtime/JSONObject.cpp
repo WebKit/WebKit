@@ -739,6 +739,16 @@ public:
     };
     static_assert(sizeof(PreparedProperty) == 8);
 
+    // A string value already written without escapes, as the offset and length of its quoted text in the output.
+    struct PreparedString {
+        JSCell* string;
+        uint32_t offset;
+        uint32_t length;
+    };
+    static constexpr bool usePreparedStrings = bufferMode == BufferMode::DynamicBuffer && std::same_as<CharType, Latin1Character>;
+    static constexpr unsigned preparedStringTableSizeLog2 = 8;
+    static constexpr unsigned preparedStringTableSize = usePreparedStrings ? 1u << preparedStringTableSizeLog2 : 1;
+
 private:
     explicit FastStringifier(JSGlobalObject&);
     template<HasGap hasGap> void append(JSValue);
@@ -752,6 +762,11 @@ private:
     static ALWAYS_INLINE unsigned preparedStructureSlot(StructureID structureID)
     {
         return (structureID.bits() * 0x9e3779b9u) >> (32 - preparedStructureTableSizeLog2);
+    }
+
+    static ALWAYS_INLINE unsigned preparedStringSlot(JSCell* cell)
+    {
+        return (std::bit_cast<uintptr_t>(cell) >> 4) & (preparedStringTableSize - 1);
     }
 
     static constexpr unsigned maxInt32StringLength = ("-2147483648"_s).length();
@@ -803,6 +818,7 @@ private:
     std::array<PreparedStructureRange, preparedStructureTableSize> m_preparedStructureRanges;
     std::array<PreparedProperty, maxPreparedProperties> m_preparedProperties;
     std::array<PreparedProperty, maxPreparedPropertyScratch> m_preparedPropertyScratch;
+    std::array<PreparedString, preparedStringTableSize> m_preparedStrings { };
 
     CharType m_buffer[staticBufferSize];
 };
@@ -1388,17 +1404,43 @@ static ALWAYS_INLINE bool stringCopyUpconvert(std::span<const Latin1Character> s
     return false;
 }
 
+#if JSON_STRING_COPY_HAS_SIMD
+template<typename CharType> static constexpr unsigned earlierTextCopyGranularity = SIMD::stride<CharType>;
+#else
+template<typename CharType> static constexpr unsigned earlierTextCopyGranularity = 1;
+#endif
+
+// Copies text written earlier in buffer, ending at or before destination. Both the read from source and the write to
+// destination may extend to max(length, earlierTextCopyGranularity) characters.
+template<typename CharType>
+static ALWAYS_INLINE void copyEarlierText(CharType* buffer, unsigned destination, unsigned source, unsigned length)
+{
+    ASSERT(source + length <= destination);
+#if JSON_STRING_COPY_HAS_SIMD
+    using UnsignedType = SameSizeUnsignedInteger<CharType>;
+    constexpr unsigned stride = SIMD::stride<CharType>;
+    const CharType* sourcePtr = buffer + source;
+    if (length <= stride) [[likely]] {
+        SIMD::store(SIMD::load(std::bit_cast<const UnsignedType*>(sourcePtr)), std::bit_cast<UnsignedType*>(buffer + destination));
+        return;
+    }
+    unsigned offset = 0;
+    for (; offset + stride < length; offset += stride)
+        SIMD::store(SIMD::load(std::bit_cast<const UnsignedType*>(sourcePtr + offset)), std::bit_cast<UnsignedType*>(buffer + destination + offset));
+    SIMD::store(SIMD::load(std::bit_cast<const UnsignedType*>(sourcePtr + length - stride)), std::bit_cast<UnsignedType*>(buffer + destination + length - stride));
+#else
+    memcpySpan(std::span { buffer + destination, length }, std::span { buffer + source, length });
+#endif
+}
+
+#undef JSON_STRING_COPY_HAS_SIMD
+
 template<typename CharType, BufferMode bufferMode>
 template<HasGap hasGap>
 ALWAYS_INLINE bool FastStringifier<CharType, bufferMode>::appendPreparedObjectKey(const PreparedProperty& property, bool& wroteProperty, unsigned newLineAndIndent, unsigned valueCapacity, CharType*& out, unsigned& length, unsigned& capacity)
 {
     unsigned keyLength = property.keyLength;
-#if JSON_STRING_COPY_HAS_SIMD
-    static constexpr unsigned copyGranularity = SIMD::stride<CharType>;
-#else
-    static constexpr unsigned copyGranularity = 1;
-#endif
-    unsigned requiredCapacity = std::max<unsigned>(keyLength + valueCapacity, copyGranularity);
+    unsigned requiredCapacity = std::max<unsigned>(keyLength + valueCapacity, earlierTextCopyGranularity<CharType>);
     if constexpr (hasGap == HasGap::Yes)
         requiredCapacity += wroteProperty + newLineAndIndent;
     if (capacity - length < requiredCapacity) [[unlikely]] {
@@ -1421,26 +1463,10 @@ ALWAYS_INLINE bool FastStringifier<CharType, bufferMode>::appendPreparedObjectKe
         length = m_length;
     }
 
-    const CharType* keyPtr = out + property.keyOffset;
-#if JSON_STRING_COPY_HAS_SIMD
-    using UnsignedType = SameSizeUnsignedInteger<CharType>;
-    if (keyLength <= copyGranularity) [[likely]]
-        SIMD::store(SIMD::load(std::bit_cast<const UnsignedType*>(keyPtr)), std::bit_cast<UnsignedType*>(out + length));
-    else {
-        unsigned offset = 0;
-        for (; offset + copyGranularity < keyLength; offset += copyGranularity)
-            SIMD::store(SIMD::load(std::bit_cast<const UnsignedType*>(keyPtr + offset)), std::bit_cast<UnsignedType*>(out + length + offset));
-        SIMD::store(SIMD::load(std::bit_cast<const UnsignedType*>(keyPtr + keyLength - copyGranularity)), std::bit_cast<UnsignedType*>(out + length + keyLength - copyGranularity));
-    }
-#else
-    memcpySpan(std::span { out + length, keyLength }, std::span { keyPtr, keyLength });
-#endif
-
+    copyEarlierText(out, length, property.keyOffset, keyLength);
     length += keyLength;
     return true;
 }
-
-#undef JSON_STRING_COPY_HAS_SIMD
 
 template<typename CharType, BufferMode bufferMode>
 template<HasGap hasGap>
@@ -1493,26 +1519,42 @@ NEVER_INLINE void FastStringifier<CharType, bufferMode>::appendPreparedObject(JS
         }
 
         if constexpr (std::same_as<CharType, Latin1Character>) {
-            if (value.isCell() && value.asCell()->type() == StringType) [[likely]] {
-                auto valueString = asString(value.asCell())->tryGetView();
-                if (!valueString.data.isNull() && valueString.data.is8Bit()) [[likely]] {
-                    unsigned valueLength = valueString.data.length();
-                    if (!appendPreparedObjectKey<hasGap>(property, wroteProperty, newLineAndIndent, 1 + valueLength + 1, out, length, capacity)) [[unlikely]]
-                        return;
-                    out[length] = '"';
-                    if (!stringCopySameType<CharType, useShortCopyTier>(valueString.data.span8(), out + length + 1)) [[likely]] {
-                        out[length + 1 + valueLength] = '"';
-                        length += 1 + valueLength + 1;
+            if (value.isCell()) [[likely]] {
+                JSCell* cell = value.asCell();
+                PreparedString& preparedString = m_preparedStrings[preparedStringSlot(cell)];
+                if constexpr (usePreparedStrings) {
+                    if (preparedString.string == cell) {
+                        unsigned quotedLength = preparedString.length;
+                        if (!appendPreparedObjectKey<hasGap>(property, wroteProperty, newLineAndIndent, quotedLength + earlierTextCopyGranularity<CharType>, out, length, capacity)) [[unlikely]]
+                            return;
+                        copyEarlierText(out, length, preparedString.offset, quotedLength);
+                        length += quotedLength;
                         continue;
                     }
-                    m_length = length;
-                    append<hasGap>(value);
-                    if (haveFailure()) [[unlikely]]
-                        return;
-                    out = buffer();
-                    length = m_length;
-                    capacity = m_capacity;
-                    continue;
+                }
+                if (cell->type() == StringType) [[likely]] {
+                    auto valueString = asString(cell)->tryGetView();
+                    if (!valueString.data.isNull() && valueString.data.is8Bit()) [[likely]] {
+                        unsigned valueLength = valueString.data.length();
+                        if (!appendPreparedObjectKey<hasGap>(property, wroteProperty, newLineAndIndent, 1 + valueLength + 1, out, length, capacity)) [[unlikely]]
+                            return;
+                        out[length] = '"';
+                        if (!stringCopySameType<CharType, useShortCopyTier>(valueString.data.span8(), out + length + 1)) [[likely]] {
+                            out[length + 1 + valueLength] = '"';
+                            if constexpr (usePreparedStrings)
+                                preparedString = { cell, length, 1 + valueLength + 1 };
+                            length += 1 + valueLength + 1;
+                            continue;
+                        }
+                        m_length = length;
+                        append<hasGap>(value);
+                        if (haveFailure()) [[unlikely]]
+                            return;
+                        out = buffer();
+                        length = m_length;
+                        capacity = m_capacity;
+                        continue;
+                    }
                 }
             }
         }
