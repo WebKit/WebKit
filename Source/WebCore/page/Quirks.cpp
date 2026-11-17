@@ -923,15 +923,6 @@ bool Quirks::needsNetflixVolumeSliderQuirk() const
 #endif
 }
 
-// play.geforcenow.com https://webkit.org/b/303622
-// FIXME: Remove as soon as nvidia adjusts the site for Safari. https://webkit.org/b/303718
-bool Quirks::needsGeforcenowWarningDisplayNoneQuirk() const
-{
-    QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
-
-    return m_quirksData.quirkIsEnabled(QuirksData::SiteSpecificQuirk::NeedsGeforcenowWarningDisplayNoneQuirk);
-}
-
 // zillow.com rdar://171279940
 // FIXME: Remove after rdar://172303198 is implemented.
 bool Quirks::needsZillowFloorplanMarginQuirk() const
@@ -3492,13 +3483,6 @@ static void handleEAQuirks(QuirksData& quirksData, const URL& /* quirksURL */, c
     quirksData.isEA = true;
 }
 
-static void handleGeforcenowQuirks(QuirksData& quirksData, const URL& /* quirksURL */, const String& quirksDomainString, const URL&  /* documentURL */)
-{
-    QUIRKS_EARLY_RETURN_IF_NOT_DOMAIN("play.geforcenow.com"_s);
-
-    quirksData.enableQuirk(QuirksData::SiteSpecificQuirk::NeedsGeforcenowWarningDisplayNoneQuirk);
-}
-
 static void handleGoogleQuirks(QuirksData& quirksData, const URL& quirksURL, const String& /* quirksDomainString */, const URL& /* documentURL */)
 {
     quirksData.isGoogleProperty = true;
@@ -4219,7 +4203,6 @@ void Quirks::determineRelevantQuirks()
 #if PLATFORM(IOS_FAMILY)
         { "gizmodo"_s, &handleGizmodoQuirks },
 #endif
-        { "geforcenow"_s, &handleGeforcenowQuirks },
         { "google"_s, &handleGoogleQuirks },
         { "hbomax"_s, &handleHBOMaxQuirks },
         // Expedia Group rdar://126631968

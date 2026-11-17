@@ -1004,13 +1004,6 @@ void Adjuster::adjustForSiteSpecificQuirks(Style::ComputedStyle& style) const
             style.setOverflowY(Overflow::Auto);
     }
 
-    if (documentQuirks.needsGeforcenowWarningDisplayNoneQuirk()) {
-        static MainThreadNeverDestroyed<const AtomString> overlayClassName("cdk-overlay-container"_s);
-        static MainThreadNeverDestroyed<const AtomString> unsupportedClassName("unsupported-scenario-container"_s);
-        if (is<HTMLDivElement>(*m_element) && (m_element->hasClassName(overlayClassName) || m_element->hasClassName(unsupportedClassName)))
-            style.setDisplayMaintainingOriginalDisplay(DisplayType::None);
-    }
-
     // zillow.com rdar://171279940
     // FIXME(309831): Remove after rdar://172303198 is implemented.
     if (documentQuirks.needsZillowFloorplanMarginQuirk()) {
