@@ -5,5 +5,4 @@ PASS I422P10 can be constructed
 PASS I422P12 can be constructed
 PASS I444P10 can be constructed
 PASS I444P12 can be constructed
-PASS I420AP10 is not a known format
 
