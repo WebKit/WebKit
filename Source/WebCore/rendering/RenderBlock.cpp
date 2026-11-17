@@ -75,7 +75,6 @@
 #include "RenderLayer.h"
 #include "RenderLayerScrollableArea.h"
 #include "RenderLayoutState.h"
-#include "RenderListOutsideMarker.h"
 #include "RenderMenuList.h"
 #include "RenderObjectInlines.h"
 #include "RenderReplaced.h"
@@ -1598,6 +1597,10 @@ Node* RenderBlock::nodeForHitTest() const
             // The view transition pseudo-elements should hit-test to their originating element (the document element).
             return document().documentElement();
 
+        case PseudoElementType::Marker:
+            // A block marker is an outside one, which has no element of its own: hitting it is hitting its list item.
+            return RenderBox::nodeForHitTest();
+
         default:
             break;
         }
@@ -1957,7 +1960,7 @@ std::pair<LayoutUnit, LayoutUnit> RenderBlock::computeBlockIntrinsicLogicalWidth
         // since they compute outside of any one layout system, and an outside list marker hangs outside
         // the content box. Other children excluded from normal layout are only used with block flows,
         // so it's ok to calculate them here.
-        if (childBox.isOutOfFlowPositioned() || childBox.isExcludedAndPlacedInBorder() || childBox.isExcludedMarker())
+        if (childBox.isOutOfFlowPositioned() || childBox.isExcludedAndPlacedInBorder() || childBox.isOutsideListMarker())
             continue;
 
         // Either the box itself of its content avoids floats.
@@ -2089,7 +2092,7 @@ std::optional<LayoutUnit> RenderBlock::firstLineBaseline() const
 
     auto firstInFlowBaseline = [&] -> std::optional<LayoutUnit> {
         for (CheckedPtr child = firstInFlowChildBox(); child; child = child->nextInFlowSiblingBox()) {
-            if ((child->isLegend() && child->isExcludedFromNormalLayout()) || child->isExcludedMarker())
+            if ((child->isLegend() && child->isExcludedFromNormalLayout()) || child->isOutsideListMarker())
                 continue;
             if (auto baseline = child->firstLineBaseline())
                 return child->logicalTop() + *baseline;
@@ -2109,7 +2112,7 @@ std::optional<LayoutUnit> RenderBlock::lastLineBaseline() const
 
     auto lastInFlowBaseline = [&] -> std::optional<LayoutUnit> {
         for (CheckedPtr child = lastInFlowChildBox(); child; child = child->previousInFlowSiblingBox()) {
-            if ((child->isLegend() && child->isExcludedFromNormalLayout()) || child->isExcludedMarker())
+            if ((child->isLegend() && child->isExcludedFromNormalLayout()) || child->isOutsideListMarker())
                 continue;
             // CSS Align §9.1: for legacy reasons a block container that is a block-axis scroll container has its last baseline at its block-end margin edge.
             auto isBlockAxisScrollContainer = is<RenderBlockFlow>(*child) && !child->isWritingModeRoot() && (child->isHorizontalWritingMode() ? child->isScrollContainerY() : child->isScrollContainerX());

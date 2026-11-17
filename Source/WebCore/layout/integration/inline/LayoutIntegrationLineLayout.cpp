@@ -66,7 +66,6 @@
 #include "RenderLayoutState.h"
 #include "RenderLineBreak.h"
 #include "RenderListItem.h"
-#include "RenderListOutsideMarker.h"
 #include "RenderObjectInlines.h"
 #include "RenderView.h"
 #include "SVGTextDisplayContentBuilder.h"
@@ -559,6 +558,9 @@ void LineLayout::setExcludedMarkerPositions(const ExcludedMarkerList& excludedMa
     }
 
     auto lineBoxLogicalRect = firstContentfulLine->lineBoxLogicalRect();
+    // The line's baseline is from its line-over edge, which is its block-end edge when lines are inverted. The marker's
+    // first baseline is from its block-start edge.
+    auto lineBaseline = rootLayoutBox().writingMode().isLineInverted() ? lineBoxLogicalRect.height() - firstContentfulLine->baseline() : firstContentfulLine->baseline();
     auto isLeftToRight = flow().writingMode().isLogicalLeftInlineStart();
     // text-indent is a margin on the line box, not content the marker hangs off.
     ASSERT(m_inlineContentConstraints);
@@ -586,25 +588,14 @@ void LineLayout::setExcludedMarkerPositions(const ExcludedMarkerList& excludedMa
         CheckedPtr marker = listItem->markerBox();
         if (!marker)
             continue;
-        auto markerLogicalTop = [&]() -> float {
-            if (firstContentfulLine->baselineType() == FontBaseline::Ideographic)
-                return lineBoxLogicalRect.y() + (lineBoxLogicalRect.height() - marker->logicalHeight().toFloat()) / 2;
-            auto markerAscent = [&] -> float {
-                if (marker->isImage())
-                    return marker->logicalHeight().toFloat();
-                // A marker with `content` is the box of its content, aligned by the content's first baseline.
-                if (CheckedPtr content = marker->contentContainer(); content && listMarkerHasContent(marker->style(), protect(marker->document())))
-                    return content->firstLineBaseline().value_or(content->logicalHeight()).toFloat();
-                return protect(marker->style())->metricsOfPrimaryFont().ascent(FontBaseline::Alphabetic);
-            }();
-            return lineBoxLogicalRect.y() + firstContentfulLine->baseline() - markerAscent;
-        }();
+        // The marker's first baseline goes on the line's.
+        auto markerLogicalTop = lineBoxLogicalRect.y() + lineBaseline - marker->firstLineBaseline().value_or(marker->logicalHeight()).toFloat();
         // The marker goes on the inline start side of its list item, in the list item's writing mode (css-lists-3
         // marker-side: match-self), which is the line's end side when the line runs the other way.
         auto listItemIsLeftToRight = listItem->writingMode().isLogicalLeftInlineStart();
         auto isOnLineStart = listItemIsLeftToRight == isLeftToRight;
         auto markerEdge = isOnLineStart ? lineStartEdge : listItemIsLeftToRight ? lineBoxLogicalRect.x() : lineBoxLogicalRect.maxX();
-        auto markerMarginStart = marker->marginStart(listItem->writingMode()).toFloat();
+        auto markerMarginStart = excludedMarkerMarginStart(*marker).toFloat();
         auto markerLogicalLeft = listItemIsLeftToRight ? markerEdge + markerMarginStart : markerEdge - markerMarginStart - marker->logicalWidth().toFloat();
         auto topLeft = FloatPoint { markerLogicalLeft, markerLogicalTop };
         listItem->setExcludedMarkerPosition({ flow(), topLeft, isOnLineStart && isLineStartConstrainedByFloat });

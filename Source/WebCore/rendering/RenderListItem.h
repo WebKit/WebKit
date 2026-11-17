@@ -23,7 +23,6 @@
 #pragma once
 
 #include "RenderBlockFlow.h"
-#include "RenderListOutsideMarker.h"
 
 namespace WebCore {
 
@@ -73,7 +72,8 @@ public:
         m_marker = marker;
         m_excludedMarkerPosition = { };
     }
-    NODELETE RenderListOutsideMarker* markerBox() const;
+    // The outside marker. We place it against our first formatted line after layout.
+    NODELETE RenderBlockFlow* markerBox() const;
     static RenderListItem* listItemForMarker(const RenderObject&);
 
     // Fills in what the marker shows, in whichever shape it was built.
@@ -112,8 +112,7 @@ private:
     void layoutBlock(RelayoutChildren, LayoutUnit pageLogicalHeight = 0_lu) final;
     void layoutExcludedChildren(RelayoutChildren) final;
 
-    void placeExcludedMarker(RenderListOutsideMarker&);
-    NODELETE RenderListOutsideMarker* excludedMarker() const;
+    void placeExcludedMarker(RenderBlockFlow&);
     void invalidateExcludedMarkerContainer();
     LayoutSize markerImageSize(const Style::Image&) const;
 
@@ -145,6 +144,13 @@ RefPtr<Style::Image> listMarkerImage(const Style::ComputedStyle& markerStyle);
 bool listMarkerIsDisclosure(const Style::ComputedStyle& markerStyle, Document&);
 bool listMarkerIsDisclosure(const RenderElement*);
 void setListMarkerInlineMargins(Style::ComputedStyle& markerStyle, WritingMode listItemWritingMode, LayoutUnit marginStart, LayoutUnit marginEnd);
+
+// The start margin of an excluded marker, in its list item's inline direction, against the start edge of the line it
+// goes on. It is negative: the marker hangs off the start of the line.
+LayoutUnit excludedMarkerMarginStart(const RenderBlockFlow&);
+// The logical top of an excluded marker in the box of its primary font or image, which puts its first baseline on
+// theirs. A marker with `content` is that box itself.
+LayoutUnit excludedMarkerContentLogicalTop(const RenderBlockFlow&);
 
 inline int RenderListItem::value() const
 {

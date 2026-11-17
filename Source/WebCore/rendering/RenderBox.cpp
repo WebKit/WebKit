@@ -85,7 +85,6 @@
 #include "RenderLayerScrollableArea.h"
 #include "RenderLayoutState.h"
 #include "RenderListItem.h"
-#include "RenderListOutsideMarker.h"
 #include "RenderMathMLBlock.h"
 #include "RenderMultiColumnFlow.h"
 #include "RenderObjectInlines.h"
@@ -4791,7 +4790,7 @@ LayoutRect RenderBox::applyVisualEffectOverflow(const LayoutRect& borderBox, Enu
 void RenderBox::addOverflowFromInFlowChildren(OptionSet<ComputeOverflowOptions> options)
 {
     for (auto& child : childrenOfType<RenderBox>(*this)) {
-        if (child.isExcludedMarker() || child.isForceHiddenByLineClamp())
+        if (child.isOutsideListMarker() || child.isForceHiddenByLineClamp())
             continue;
         if (!child.isFloatingOrOutOfFlowPositioned())
             addOverflowFromContainedBox(child, options);
@@ -5029,14 +5028,7 @@ bool RenderBox::isUnsplittableForPagination() const
 
 LayoutUnit RenderBox::lineHeight() const
 {
-    auto shouldUseLineHeightFromStyle = [&] {
-        if (is<RenderBlock>(*this))
-            return true;
-        if (CheckedPtr listMarkerRenderer = dynamicDowncast<RenderListOutsideMarker>(*this))
-            return !listMarkerRenderer->isImage();
-        return false;
-    };
-    if (shouldUseLineHeightFromStyle())
+    if (is<RenderBlock>(*this))
         return LayoutUnit::fromFloatCeil(firstLineStyle().usedLineHeight());
 
     if (isBlockLevelReplacedOrAtomicInline())
