@@ -25,10 +25,10 @@
 
 #import "config.h"
 
-#import "Helpers/DeprecatedGlobalValues.h"
 #import "Helpers/PlatformUtilities.h"
 #import "Helpers/Test.h"
 #import "Helpers/cocoa/TestCocoa.h"
+#import "Helpers/cocoa/TestScriptMessageHandler.h"
 #import <WebCore/SQLiteFileSystem.h>
 #import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKUserContentControllerPrivate.h>
@@ -39,21 +39,9 @@
 #import <WebKit/_WKUserStyleSheet.h>
 #import <wtf/RetainPtr.h>
 
-@interface IDBObjectStoreInfoUpgradeToV2MessageHandler : NSObject <WKScriptMessageHandler>
-@end
-
-@implementation IDBObjectStoreInfoUpgradeToV2MessageHandler
-
-- (void)userContentController:(WKUserContentController *)userContentController didReceiveScriptMessage:(WKScriptMessage *)message
-{
-    receivedScriptMessage = true;
-    lastScriptMessage = message;
-}
-@end
-
 TEST(IndexedDB, IDBObjectStoreInfoUpgradeToV2)
 {
-    RetainPtr<IDBObjectStoreInfoUpgradeToV2MessageHandler> handler = adoptNS([[IDBObjectStoreInfoUpgradeToV2MessageHandler alloc] init]);
+    RetainPtr handler = adoptNS([TestScriptMessageHandler new]);
     RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     [configuration setWebsiteDataStore:TestWebKitAPI::Util::temporaryPersistentDataStore()];
     [[configuration userContentController] addScriptMessageHandler:handler.get() name:@"testHandler"];
@@ -66,6 +54,7 @@ TEST(IndexedDB, IDBObjectStoreInfoUpgradeToV2)
     RetainPtr hash = WebCore::SQLiteFileSystem::computeHashForFileName("objectstoreinfo-upgrade-test"_s).createNSString();
     RetainPtr originURL = [NSURL URLWithString:@"file://"];
     __block RetainPtr<NSString> originDirectory;
+    __block bool done = false;
     [configuration.get().websiteDataStore _originDirectoryForTesting:originURL.get() topOrigin:originURL.get() type:WKWebsiteDataTypeIndexedDBDatabases completionHandler:^(NSString *result) {
         originDirectory = result;
         done = true;
@@ -82,7 +71,5 @@ TEST(IndexedDB, IDBObjectStoreInfoUpgradeToV2)
     NSURLRequest *request = [NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"IDBObjectStoreInfoUpgradeToV2" withExtension:@"html"]];
     [webView loadRequest:request];
 
-    TestWebKitAPI::Util::run(&receivedScriptMessage);
-
-    EXPECT_WK_STREQ(@"Success", [lastScriptMessage body]);
+    EXPECT_WK_STREQ(@"Success", [handler waitForMessage].body);
 }

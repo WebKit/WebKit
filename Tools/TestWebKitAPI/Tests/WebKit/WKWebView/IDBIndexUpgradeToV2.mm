@@ -25,10 +25,10 @@
 
 #import "config.h"
 
-#import "Helpers/DeprecatedGlobalValues.h"
 #import "Helpers/PlatformUtilities.h"
 #import "Helpers/Test.h"
 #import "Helpers/cocoa/TestCocoa.h"
+#import "Helpers/cocoa/TestScriptMessageHandler.h"
 #import <WebCore/SQLiteFileSystem.h>
 #import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKUserContentControllerPrivate.h>
@@ -39,25 +39,12 @@
 #import <WebKit/_WKUserStyleSheet.h>
 #import <wtf/RetainPtr.h>
 
-@interface IDBIndexUpgradeToV2MessageHandler : NSObject <WKScriptMessageHandler>
-@end
-
-@implementation IDBIndexUpgradeToV2MessageHandler
-
-- (void)userContentController:(WKUserContentController *)userContentController didReceiveScriptMessage:(WKScriptMessage *)message
-{
-    receivedScriptMessage = true;
-    lastScriptMessage = message;
-}
-
-@end
-
 static RetainPtr<NSURL> createEmptyIndexUpgradeTestDatabaseDirectory(WKWebsiteDataStore *dataStore)
 {
     String hash = WebCore::SQLiteFileSystem::computeHashForFileName("index-upgrade-test"_s);
     RetainPtr originURL = [NSURL URLWithString:@"file://"];
     __block RetainPtr<NSString> originDirectoryString;
-    done = false;
+    __block bool done = false;
     [dataStore _originDirectoryForTesting:originURL.get() topOrigin:originURL.get() type:WKWebsiteDataTypeIndexedDBDatabases completionHandler:^(NSString *result) {
         originDirectoryString = result;
         done = true;
@@ -71,7 +58,7 @@ static RetainPtr<NSURL> createEmptyIndexUpgradeTestDatabaseDirectory(WKWebsiteDa
 
 TEST(IndexedDB, IndexUpgradeToV2)
 {
-    RetainPtr<IDBIndexUpgradeToV2MessageHandler> handler = adoptNS([[IDBIndexUpgradeToV2MessageHandler alloc] init]);
+    RetainPtr handler = adoptNS([TestScriptMessageHandler new]);
     RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     [configuration setWebsiteDataStore:TestWebKitAPI::Util::temporaryPersistentDataStore()];
     [[configuration userContentController] addScriptMessageHandler:handler.get() name:@"testHandler"];
@@ -91,14 +78,12 @@ TEST(IndexedDB, IndexUpgradeToV2)
     NSURLRequest *request = [NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"IDBIndexUpgradeToV2" withExtension:@"html"]];
     [webView loadRequest:request];
 
-    TestWebKitAPI::Util::run(&receivedScriptMessage);
-
-    EXPECT_WK_STREQ(@"Object expected to be a blob: [object Blob]", [lastScriptMessage body]);
+    EXPECT_WK_STREQ(@"Object expected to be a blob: [object Blob]", [handler waitForMessage].body);
 }
 
 static void runMultipleIndicesTestWithDatabase(NSString* databaseName)
 {
-    RetainPtr handler = adoptNS([[IDBIndexUpgradeToV2MessageHandler alloc] init]);
+    RetainPtr handler = adoptNS([TestScriptMessageHandler new]);
     RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     [configuration setWebsiteDataStore:TestWebKitAPI::Util::temporaryPersistentDataStore()];
     [[configuration userContentController] addScriptMessageHandler:handler.get() name:@"testHandler"];
@@ -111,9 +96,8 @@ static void runMultipleIndicesTestWithDatabase(NSString* databaseName)
     RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
     RetainPtr request = [NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"IDBIndexUpgradeToV2WithMultipleIndices" withExtension:@"html"]];
     [webView loadRequest:request.get()];
-    TestWebKitAPI::Util::run(&receivedScriptMessage);
 
-    EXPECT_WK_STREQ(@"Get object: {\"name\":\"apple\",\"color\":\"red\"}", [lastScriptMessage body]);
+    EXPECT_WK_STREQ(@"Get object: {\"name\":\"apple\",\"color\":\"red\"}", [handler waitForMessage].body);
 }
 
 TEST(IndexedDB, IndexUpgradeToV2WithMultipleIndices)
