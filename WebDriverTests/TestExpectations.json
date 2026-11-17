@@ -6639,7 +6639,7 @@
                 "expected": {"wpe": {"status": ["FAIL"], "bug": "webkit.org/b/331460"}}
             },
             "test_scroll_with_key_pressed": {
-                "expected": {"mac": {"status": ["FAIL"], "note": "Simulated input fails on Mac"}, "glib": {"status": ["FAIL"], "bug": "webkit.org/b/331460"}}
+                "expected": {"glib": {"status": ["FAIL"], "bug": "webkit.org/b/331460"}}
             },
             "test_scroll_emits_scrollend_event": {
                 "expected": {"wpe": {"status": ["FAIL"], "bug": "webkit.org/b/331460"}}
