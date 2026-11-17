@@ -2944,7 +2944,7 @@ HiddenPageCSSAnimationSuspensionEnabled:
   status: embedder
   webcoreOnChange: hiddenPageCSSAnimationSuspensionEnabledChanged
   defaultValue:
-    "PLATFORM(COCOA) || PLATFORM(GTK)": true
+    "PLATFORM(COCOA) || PLATFORM(GTK) || PLATFORM(WPE)": true
     default: false
     WebKitLegacy: true
     WebCore: false
@@ -2965,7 +2965,7 @@ HiddenPageDOMTimerThrottlingEnabled:
   defaultValue:
     default: false
     WebKit:
-      "PLATFORM(COCOA) || PLATFORM(GTK)": true
+      "PLATFORM(COCOA) || PLATFORM(GTK) || PLATFORM(WPE)": true
       default: false
 
 HiddenUntilFoundEnabled:

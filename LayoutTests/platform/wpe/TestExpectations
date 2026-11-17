@@ -18,6 +18,8 @@
 
 editing/pasteboard/drag-drop-dead-frame.html [ Pass ]
 
+fast/animation/request-animation-frame-in-two-pages.html [ Pass ]
+
 fast/events/constructors/keyboard-event-constructor.html [ Pass ]
 
 webkit.org/b/136754 imported/w3c/web-platform-tests/css/css-flexbox/flexbox_flex-natural-mixed-basis-auto.html [ Pass ]
