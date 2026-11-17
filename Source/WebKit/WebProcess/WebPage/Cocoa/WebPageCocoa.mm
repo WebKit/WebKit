@@ -1272,16 +1272,30 @@ std::pair<URL, DidFilterLinkDecoration> WebPage::applyLinkDecorationFilteringWit
     if (!url.hasQuery())
         return { url, DidFilterLinkDecoration::No };
 
-    bool needsConsistentQueryParameterFiltering { false };
-    if (RefPtr document = mainFrame->document(); document && trigger == LinkDecorationFilteringTrigger::Navigation) {
-        auto consistencyLevel = document->quirks().consistentQueryParameterFilteringLevel(document->url(), url);
-        needsConsistentQueryParameterFiltering = consistencyLevel == ConsistentQueryParameterFilteringLevel::Medium || consistencyLevel == ConsistentQueryParameterFilteringLevel::High;
-    }
-
     if (!hasOptedInToLinkDecorationFiltering && !m_page->settings().filterLinkDecorationByDefaultEnabled())
         return { url, DidFilterLinkDecoration::No };
 
     auto sanitizedURL = url;
+    bool needsConsistentQueryParameterFiltering { false };
+    if (RefPtr document = mainFrame->document(); document && trigger == LinkDecorationFilteringTrigger::Navigation) {
+        RegistrableDomain sourceDomain { document->url() };
+        bool isCrossSiteNavigation = !sourceDomain.isEmpty() && !sourceDomain.matches(url);
+        auto consistencyLevel = document->quirks().consistentQueryParameterFilteringLevel(document->url(), url);
+        if (isCrossSiteNavigation && consistencyLevel == ConsistentQueryParameterFilteringLevel::High) {
+            auto removedParameters = WTF::removeQueryParameters(sanitizedURL, [](auto&, auto&) {
+                return true;
+            });
+            if (!removedParameters.isEmpty()) {
+                send(Messages::WebPageProxy::DidApplyLinkDecorationFiltering(url, sanitizedURL));
+                auto removedParametersString = makeStringByJoining(borrow(removedParameters).get(), ", "_s);
+                WEBPAGE_RELEASE_LOG(ResourceLoadStatistics, "applyLinkDecorationFilteringWithResult: Removed all query parameters after cross-site navigation: %s", removedParametersString.utf8());
+            }
+            return { sanitizedURL, removedParameters.isEmpty() ? DidFilterLinkDecoration::No : DidFilterLinkDecoration::Yes };
+        }
+
+        needsConsistentQueryParameterFiltering = consistencyLevel >= ConsistentQueryParameterFilteringLevel::Medium;
+    }
+
     bool allowLowEntropyException = !(hasOptedInToLinkDecorationFiltering || needsConsistentQueryParameterFiltering);
     const Vector removedParameters = WTF::removeQueryParameters(sanitizedURL, [&](auto& key, auto& value) {
         auto it = m_internals->linkDecorationFilteringData.find(key);
