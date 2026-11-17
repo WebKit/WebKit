@@ -1037,19 +1037,9 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
         this._internalWebKitScripts.delete(target);
         this._targetDebuggerDataMap.delete(target);
 
-        this._ignoreBreakpointDisplayLocationDidChangeEvent = true;
-
         // Mark this target's breakpoints as unresolved. They will be reported as resolved when
-        // breakpointResolved is called as the page loads. A breakpoint can be resolved in more
-        // than one target, so only drop the locations belonging to the cleared target.
-        for (let breakpoint of this._breakpoints) {
-            breakpoint.clearResolvedLocationsForTarget(target);
-
-            if (breakpoint.sourceCodeLocation.sourceCode?.target === target)
-                breakpoint.sourceCodeLocation.sourceCode = null;
-        }
-
-        this._ignoreBreakpointDisplayLocationDidChangeEvent = false;
+        // breakpointResolved is called as the page loads.
+        this._clearBreakpointLocationsForTarget(target);
 
         this.dispatchEventToListeners(WI.DebuggerManager.Event.ScriptsCleared, {target});
 
@@ -1780,6 +1770,21 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
         this._stopDisablingBreakpointsTemporarily();
     }
 
+    _clearBreakpointLocationsForTarget(target)
+    {
+        this._ignoreBreakpointDisplayLocationDidChangeEvent = true;
+
+        // A breakpoint can be resolved in more than one target, so only drop the locations belonging to this target.
+        for (let breakpoint of this._breakpoints) {
+            breakpoint.clearResolvedLocationsForTarget(target);
+
+            if (breakpoint.sourceCodeLocation.sourceCode?.target === target)
+                breakpoint.sourceCodeLocation.sourceCode = null;
+        }
+
+        this._ignoreBreakpointDisplayLocationDidChangeEvent = false;
+    }
+
     _targetRemoved(event)
     {
         let wasPaused = this.paused;
@@ -1798,6 +1803,9 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
         }
 
         this._targetDebuggerDataMap.delete(target);
+
+        // A removed target sends no globalObjectCleared, so drop its breakpoint locations here.
+        this._clearBreakpointLocationsForTarget(target);
 
         if (!this.paused && wasPaused)
             this.dispatchEventToListeners(WI.DebuggerManager.Event.Resumed);
