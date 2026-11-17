@@ -1487,7 +1487,6 @@ public:
     void initContentSecurityPolicy();
 
     void inheritPolicyContainerFrom(const PolicyContainer&) final;
-    void enforceSandboxFlags(SandboxFlags, SandboxFlagsSource = SandboxFlagsSource::Other) final;
 
     WEBCORE_EXPORT void updateURLForPushOrReplaceState(const URL&);
     void statePopped(Ref<SerializedScriptValue>&&);
@@ -1772,7 +1771,7 @@ public:
     void setIsOriginKeyed(OriginKeyed value) { m_isOriginKeyed = value; }
 
     std::optional<AgentClusterIdentifier> agentClusterIdentifier() const { return m_agentClusterIdentifier; }
-    void setAgentClusterIdentifier(std::optional<AgentClusterIdentifier> identifier) { m_agentClusterIdentifier = identifier; }
+    void setAgentClusterIdentifier(std::optional<AgentClusterIdentifier>);
 
     void willLoadScriptElement(const URL&);
     void willLoadFrameElement(const URL&);

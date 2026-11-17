@@ -1,0 +1,4 @@
+
+PASS An iframe whose response has a CSP sandbox is a secure context
+PASS A popup whose response has a CSP sandbox is a secure context
+

@@ -5053,7 +5053,7 @@ String Document::navigatorPlatform() const
 void Document::disableEval(const String& errorMessage)
 {
     RefPtr frame = this->frame();
-    if (!frame)
+    if (!frame || frame->document() != this)
         return;
 
     protect(frame->script())->setEvalEnabled(false, errorMessage);
@@ -5062,7 +5062,7 @@ void Document::disableEval(const String& errorMessage)
 void Document::disableWebAssembly(const String& errorMessage)
 {
     RefPtr frame = this->frame();
-    if (!frame)
+    if (!frame || frame->document() != this)
         return;
 
     protect(frame->script())->setWebAssemblyEnabled(false, errorMessage);
@@ -5077,7 +5077,8 @@ void Document::setTrustedTypesEnforcement(JSC::TrustedTypesEnforcement enforceme
     if (!frame)
         return;
 
-    protect(frame->script())->setTrustedTypesEnforcement(enforcement);
+    if (frame->document() == this)
+        protect(frame->script())->setTrustedTypesEnforcement(enforcement);
     m_requiresTrustedTypes = enforcement != JSC::TrustedTypesEnforcement::None;
 }
 
@@ -8778,6 +8779,7 @@ void Document::initContentSecurityPolicy()
 {
     if (!m_frame)
         return;
+    ASSERT(m_frame->document() != this);
     RefPtr parentFrame = dynamicDowncast<LocalFrame>(m_frame->tree().parent());
     if (parentFrame)
         protect(contentSecurityPolicy())->copyUpgradeInsecureRequestStateFrom(*protect(parentFrame->document()->contentSecurityPolicy()));
@@ -8801,22 +8803,9 @@ void Document::initContentSecurityPolicy()
 
 void Document::inheritPolicyContainerFrom(const PolicyContainer& policyContainer)
 {
+    ASSERT(!m_frame || m_frame->document() != this);
     setContentSecurityPolicy(makeUnique<ContentSecurityPolicy>(URL { m_url }, *this));
     SecurityContext::inheritPolicyContainerFrom(policyContainer);
-}
-
-void Document::enforceSandboxFlags(SandboxFlags flags, SandboxFlagsSource source)
-{
-    bool wasSandboxedOrigin = isSandboxed(SandboxFlag::Origin);
-    SecurityContext::enforceSandboxFlags(flags, source);
-
-    if (RefPtr page = this->page(); page && page->mainFrame().tree().containsRemoteFrame()) {
-        bool sandboxedStateDidChange = wasSandboxedOrigin != isSandboxed(SandboxFlag::Origin);
-        if (!sandboxedStateDidChange)
-            return;
-
-        m_frame->loader().client().broadcastFrameDocumentIsSandboxedOriginToOtherProcesses(isSandboxed(SandboxFlag::Origin));
-    }
 }
 
 // https://html.spec.whatwg.org/#the-rules-for-choosing-a-browsing-context-given-a-browsing-context-name (Step 8.2)
@@ -8891,6 +8880,12 @@ bool Document::crossOriginIsolated() const
     if (documentIsolationPolicy().value != DocumentIsolationPolicyValue::None)
         return true;
     return PermissionsPolicy::isFeatureEnabled(PermissionsPolicy::Feature::CrossOriginIsolated, *this, PermissionsPolicy::ShouldReportViolation::No);
+}
+
+void Document::setAgentClusterIdentifier(std::optional<AgentClusterIdentifier> identifier)
+{
+    ASSERT(!m_eventLoop);
+    m_agentClusterIdentifier = identifier;
 }
 
 String Document::agentClusterID() const
@@ -12711,6 +12706,7 @@ PermissionsPolicy Document::permissionsPolicy() const
 
 void Document::securityOriginDidChange()
 {
+    ASSERT(!m_eventLoop);
     m_syncData->documentSecurityOrigin = SecurityContext::securityOrigin();
     m_permissionsPolicy = nullptr;
     if (m_hasUnpartitionedStorageAccess) {

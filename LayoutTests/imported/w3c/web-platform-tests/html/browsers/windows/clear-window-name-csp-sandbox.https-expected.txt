@@ -1,0 +1,4 @@
+
+PASS window.name is kept across a same-origin navigation
+PASS window.name is reset by a same-origin navigation to a response with a CSP sandbox
+

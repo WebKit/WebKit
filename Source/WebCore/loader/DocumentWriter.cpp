@@ -167,56 +167,9 @@ bool DocumentWriter::begin(const URL& urlReference, bool dispatch, Document* own
     if (document->isPluginDocument() && document->isSandboxed(SandboxFlag::Plugins))
         document = SinkDocument::create(frame, url);
 
-    // FIXME: Do we need to consult the content security policy here about blocked plug-ins?
-
-    bool mayReuseDefaultView = frameLoader->stateMachine().isDisplayingInitialEmptyDocument()
-        && frame->document()->isSecureTransitionTo(url)
-        && (frame->window() && !frame->window()->wasWrappedWithoutInitializedSecurityOrigin() && frame->window()->mayReuseForNavigation());
-
-    bool shouldReuseDefaultView = [&] {
-        if (!mayReuseDefaultView)
-            return false;
-
-        ASSERT(frameLoader->documentLoader());
-        Ref documentLoader = *frameLoader->documentLoader();
-        if (auto* contentSecurityPolicy = documentLoader->contentSecurityPolicy(); contentSecurityPolicy && contentSecurityPolicy->sandboxFlags().contains(SandboxFlag::Origin))
-            return false;
-
-        if (!canAccessAgentCluster(protect(protect(frame->document())->securityOrigin()), frame->document()->agentClusterIdentifier(), documentLoader->agentClusterAssignment().identifier))
-            return false;
-
-        return true;
-    }();
-
-    RefPtr previousWindow = mayReuseDefaultView ? nullptr : frame->window();
-
-    // Temporarily extend the lifetime of the existing document so that FrameLoader::clear() doesn't destroy it as
-    // we need to retain its ongoing set of upgraded requests in new navigation contexts per <http://www.w3.org/TR/upgrade-insecure-requests/>
-    // and we may also need to inherit its Content Security Policy below.
+    // Keep the existing document alive through FrameLoader::clear(), as FrameLoader::didBeginDocument() still uses the previous window's document.
     RefPtr existingDocument = frame->document();
 
-    Function<void()> handleDOMWindowCreation = [document, frame, shouldReuseDefaultView] {
-        if (shouldReuseDefaultView)
-            document->takeDOMWindowFrom(*protect(frame->document()));
-        else
-            document->createDOMWindow();
-    };
-
-    frameLoader->clear(document.ptr(), !shouldReuseDefaultView, !shouldReuseDefaultView, true, WTF::move(handleDOMWindowCreation));
-    clear();
-
-    // frameLoader->clear() might fire unload event which could remove the view of the document.
-    // Bail out if document has no view.
-    if (!document->view())
-        return false;
-
-    if (!shouldReuseDefaultView)
-        protect(frame->script())->updatePlatformScriptObjects();
-
-    frameLoader->setOutgoingReferrer(url);
-
-    if (m_decoder)
-        document->setDecoder(m_decoder.copyRef());
     if (ownerDocument) {
         // |document| is the result of evaluating a JavaScript URL.
         document->setCookieURL(ownerDocument->cookieURL());
@@ -231,22 +184,13 @@ bool DocumentWriter::begin(const URL& urlReference, bool dispatch, Document* own
         CheckedRef ownerContentSecurityPolicy = *ownerDocument->contentSecurityPolicy();
         contentSecurityPolicy->copyStateFrom(ownerContentSecurityPolicy.ptr());
         contentSecurityPolicy->setInsecureNavigationRequestsToUpgrade(ownerContentSecurityPolicy->takeNavigationRequestsToUpgrade());
-    }
-
-    // Documents that inherit their origin, such as about:blank, keep the identifier they inherited.
-    if (RefPtr documentLoader = frameLoader->documentLoader()) {
-        if (auto agentClusterIdentifier = documentLoader->agentClusterAssignment().identifier; agentClusterIdentifier && !frameLoader->stateMachine().creatingInitialEmptyDocument())
-            document->setAgentClusterIdentifier(agentClusterIdentifier);
-    }
-
-    frame->setDocument(document.copyRef());
-
-    if (!ownerDocument && (url.protocolIsAbout() || url.protocolIsData())) {
+    } else if (url.protocolIsAbout() || url.protocolIsData()) {
         // https://html.spec.whatwg.org/multipage/origin.html#determining-navigation-params-policy-container
         RefPtr currentHistoryItem = frame->loader().history().currentItem();
 
-        auto isLoadingBrowserControlledHTML = [document] {
-            return document->loader() && document->loader()->substituteData().isValid();
+        auto isLoadingBrowserControlledHTML = [frameLoader] {
+            RefPtr documentLoader = frameLoader->documentLoader();
+            return documentLoader && documentLoader->substituteData().isValid();
         };
 
         if (triggeringAction && triggeringAction->type() == NavigationType::BackForward && currentHistoryItem && currentHistoryItem->policyContainer()) {
@@ -271,6 +215,75 @@ bool DocumentWriter::begin(const URL& urlReference, bool dispatch, Document* own
 
     if (existingDocument && existingDocument->contentSecurityPolicy() && document->contentSecurityPolicy())
         protect(document->contentSecurityPolicy())->setInsecureNavigationRequestsToUpgrade(existingDocument->contentSecurityPolicy()->takeNavigationRequestsToUpgrade());
+
+    document->initContentSecurityPolicy();
+    if (RefPtr documentLoader = frameLoader->documentLoader()) {
+        // The DocumentLoader may have already parsed the CSP header to do some checks. If so, reuse the already parsed version instead of parsing again.
+        if (CheckedPtr contentSecurityPolicy = documentLoader->contentSecurityPolicy())
+            protect(document->contentSecurityPolicy())->didReceiveHeaders(*contentSecurityPolicy, ContentSecurityPolicy::ReportParsingErrors::No);
+        else
+            protect(document->contentSecurityPolicy())->didReceiveHeaders(ContentSecurityPolicyResponseHeaders(documentLoader->response()), frameLoader->referrer(), ContentSecurityPolicy::ReportParsingErrors::No);
+
+        if (document->url().protocolIsBlob())
+            protect(document->contentSecurityPolicy())->updateSourceSelf(SecurityOrigin::create(document->url()));
+
+        if (documentLoader->isLoadingErrorDocument())
+            document->enforceSandboxFlags(SandboxFlag::Origin);
+    }
+
+    // FIXME: Do we need to consult the content security policy here about blocked plug-ins?
+
+    bool mayReuseDefaultView = frameLoader->stateMachine().isDisplayingInitialEmptyDocument()
+        && frame->document()->isSecureTransitionTo(url)
+        && (frame->window() && !frame->window()->wasWrappedWithoutInitializedSecurityOrigin() && frame->window()->mayReuseForNavigation());
+
+    bool shouldReuseDefaultView = [&] {
+        if (!mayReuseDefaultView)
+            return false;
+
+        ASSERT(frameLoader->documentLoader());
+        Ref documentLoader = *frameLoader->documentLoader();
+        if (auto* contentSecurityPolicy = documentLoader->contentSecurityPolicy(); contentSecurityPolicy && contentSecurityPolicy->sandboxFlags().contains(SandboxFlag::Origin))
+            return false;
+
+        if (!canAccessAgentCluster(protect(protect(frame->document())->securityOrigin()), frame->document()->agentClusterIdentifier(), documentLoader->agentClusterAssignment().identifier))
+            return false;
+
+        return true;
+    }();
+
+    RefPtr previousWindow = mayReuseDefaultView ? nullptr : frame->window();
+
+    Function<void()> handleDOMWindowCreation = [document, frame, shouldReuseDefaultView] {
+        if (shouldReuseDefaultView)
+            document->takeDOMWindowFrom(*protect(frame->document()));
+        else
+            document->createDOMWindow();
+    };
+
+    frameLoader->clear(document.ptr(), !shouldReuseDefaultView, !shouldReuseDefaultView, true, WTF::move(handleDOMWindowCreation));
+    clear();
+
+    // frameLoader->clear() might fire unload event which could remove the view of the document.
+    // Bail out if document has no view.
+    if (!document->view())
+        return false;
+
+    if (!shouldReuseDefaultView)
+        protect(frame->script())->updatePlatformScriptObjects();
+
+    frameLoader->setOutgoingReferrer(url);
+
+    if (m_decoder)
+        document->setDecoder(m_decoder.copyRef());
+
+    // Documents that inherit their origin, such as about:blank, keep the identifier they inherited.
+    if (RefPtr documentLoader = frameLoader->documentLoader()) {
+        if (auto agentClusterIdentifier = documentLoader->agentClusterAssignment().identifier; agentClusterIdentifier && !frameLoader->stateMachine().creatingInitialEmptyDocument())
+            document->setAgentClusterIdentifier(agentClusterIdentifier);
+    }
+
+    frame->setDocument(document.copyRef());
 
     frameLoader->didBeginDocument(dispatch, previousWindow);
 

@@ -191,7 +191,7 @@ WebFrameProxy::WebFrameProxy(WebPageProxy& page, FrameProcess& process, FrameIde
 
     // The initial about:blank document is as secure as its creator and in its agent cluster.
     if (RefPtr creator = parent ? parent : opener; creator && creator->m_documentSecurityPolicy)
-        m_documentSecurityPolicy = DocumentSecurityPolicy { { }, { }, creator->m_documentSecurityPolicy->isSecureContext, creator->m_documentSecurityPolicy->agentClusterIdentifier };
+        m_documentSecurityPolicy = DocumentSecurityPolicy { { }, { }, creator->m_documentSecurityPolicy->isSecureContext, creator->m_documentSecurityPolicy->agentClusterIdentifier, m_effectiveSandboxFlags.contains(WebCore::SandboxFlag::Origin) };
 }
 
 WebFrameProxy::~WebFrameProxy()
@@ -404,6 +404,8 @@ void WebFrameProxy::didCommitLoad(const String& contentType, bool containsPlugin
     m_hasPDFPlugin = false;
 #endif
     m_documentSecurityPolicy = WTF::move(documentSecurityPolicy);
+    if ((m_effectiveSandboxFlags | responseSandboxFlags).contains(WebCore::SandboxFlag::Origin))
+        m_documentSecurityPolicy->isSandboxedOrigin = true;
     m_cspOriginsThatUpgradeInsecureNavigations = WTF::move(cspOriginsThatUpgradeInsecureNavigations);
     m_lastActivationTimestamp = -MonotonicTime::infinity();
 
@@ -914,7 +916,7 @@ Ref<FrameTreeSyncData> WebFrameProxy::calculateFrameTreeSyncData() const
     bool isSecureForPaymentSession = false;
 #endif
 
-    return FrameTreeSyncData::create(isSecureForPaymentSession, securityOrigin(), m_documentSecurityPolicy, m_effectiveSandboxFlags.contains(WebCore::SandboxFlag::Origin), url().protocol().toString(), IntRect { }, FrameGeometrySyncData { m_frameGeometry }, FrameViewportInfo { m_frameViewportInfo });
+    return FrameTreeSyncData::create(isSecureForPaymentSession, securityOrigin(), m_documentSecurityPolicy, url().protocol().toString(), IntRect { }, FrameGeometrySyncData { m_frameGeometry }, FrameViewportInfo { m_frameViewportInfo });
 }
 
 Ref<SecurityOrigin> WebFrameProxy::securityOrigin() const

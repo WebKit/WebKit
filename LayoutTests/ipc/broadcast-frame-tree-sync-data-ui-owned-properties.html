@@ -12,8 +12,7 @@ if (window.testRunner) {
 const properties = [
     { name: "FrameCanCreatePaymentSession", variantIndex: 0, variant: true, expectRejected: true },
     { name: "FrameDocumentSecurityPolicy", variantIndex: 2, variant: { }, expectRejected: true },
-    { name: "FrameDocumentIsSandboxedOrigin", variantIndex: 3, variant: false, expectRejected: false },
-    { name: "FrameURLProtocol", variantIndex: 4, variant: "https", expectRejected: true },
+    { name: "FrameURLProtocol", variantIndex: 3, variant: "https", expectRejected: true },
 ];
 
 function log(s) { document.getElementById("log").textContent += s + "\n"; }

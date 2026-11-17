@@ -7388,6 +7388,7 @@ struct WebCore::DocumentSecurityPolicy {
     WebCore::CrossOriginOpenerPolicy crossOriginOpenerPolicy;
     WebCore::IsSecureContext isSecureContext;
     std::optional<WebCore::AgentClusterIdentifier> agentClusterIdentifier;
+    bool isSandboxedOrigin;
 };
 
 struct WebCore::MessageForTesting {

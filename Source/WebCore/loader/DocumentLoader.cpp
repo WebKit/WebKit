@@ -2191,6 +2191,7 @@ void DocumentLoader::loadErrorDocument()
 {
     m_response = ResourceResponse(URL { m_request.url() }, String { textHTMLContentTypeAtom() }, 0, "UTF-8"_s);
     SetForScope isInFinishedLoadingOfEmptyDocument { m_isInFinishedLoadingOfEmptyDocument, true };
+    SetForScope isLoadingErrorDocument { m_isLoadingErrorDocument, true };
 
     commitIfReady();
     if (!frameLoader())

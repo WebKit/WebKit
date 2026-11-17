@@ -522,8 +522,10 @@ void ScriptController::updateDocument()
     for (auto& jsWindowProxy : protect(windowProxy())->jsWindowProxiesAsVector()) {
         JSLockHolder lock(jsWindowProxy->world().vm());
         downcast<JSDOMWindow>(jsWindowProxy->window())->updateDocument();
-        if (document)
+        if (document) {
+            protect(document->contentSecurityPolicy())->didCreateWindowProxy(*jsWindowProxy.get());
             document->addMicrotaskGlobalObject(jsWindowProxy->window());
+        }
     }
 }
 

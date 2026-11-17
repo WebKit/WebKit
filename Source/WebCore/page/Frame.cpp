@@ -303,8 +303,6 @@ void Frame::disownOpener(NotifyUIProcess notifyUIProcess)
     }
 
     m_opener = nullptr;
-
-    reinitializeDocumentSecurityContext();
 }
 
 void Frame::setOpenerForWebKitLegacy(Frame* frame)

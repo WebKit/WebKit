@@ -1,0 +1,5 @@
+CONSOLE MESSAGE: Script executed in iframe.
+CONSOLE MESSAGE: SecurityError: Sandbox access violation: Blocked a frame at "http://127.0.0.1:8000" from accessing a cross-origin frame.  The frame being accessed is sandboxed and lacks the "allow-same-origin" flag.
+Accessing a cross-site iframe whose response has a CSP sandbox reports that the iframe is sandboxed.
+
+

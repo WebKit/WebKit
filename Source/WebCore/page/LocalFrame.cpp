@@ -1838,7 +1838,7 @@ std::optional<DocumentSecurityPolicy> LocalFrame::frameDocumentSecurityPolicy() 
     if (!document)
         return std::nullopt;
 
-    return DocumentSecurityPolicy { document->crossOriginEmbedderPolicy(), document->crossOriginOpenerPolicy(), document->isSecureContext() ? IsSecureContext::Yes : IsSecureContext::No, document->agentClusterIdentifier() };
+    return DocumentSecurityPolicy { document->crossOriginEmbedderPolicy(), document->crossOriginOpenerPolicy(), document->isSecureContext() ? IsSecureContext::Yes : IsSecureContext::No, document->agentClusterIdentifier(), document->isSandboxed(SandboxFlag::Origin) };
 }
 
 std::optional<AgentClusterIdentifier> LocalFrame::frameAgentClusterIdentifier() const

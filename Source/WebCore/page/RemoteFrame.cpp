@@ -260,7 +260,8 @@ std::optional<AgentClusterIdentifier> RemoteFrame::frameAgentClusterIdentifier()
 
 bool RemoteFrame::frameDocumentIsSandboxedOrigin() const
 {
-    return frameTreeSyncData().frameDocumentIsSandboxedOrigin;
+    auto& securityPolicy = frameTreeSyncData().frameDocumentSecurityPolicy;
+    return securityPolicy && securityPolicy->isSandboxedOrigin;
 }
 
 String RemoteFrame::frameURLProtocol() const

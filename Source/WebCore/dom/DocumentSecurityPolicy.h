@@ -37,6 +37,7 @@ struct DocumentSecurityPolicy {
     CrossOriginOpenerPolicy crossOriginOpenerPolicy;
     IsSecureContext isSecureContext;
     std::optional<AgentClusterIdentifier> agentClusterIdentifier;
+    bool isSandboxedOrigin { false };
 };
 
 } // namespace WebCore

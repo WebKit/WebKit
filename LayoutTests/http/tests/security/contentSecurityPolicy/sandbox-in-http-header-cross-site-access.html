@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+function checkAccess() {
+    try {
+        document.querySelector("iframe").contentWindow.location.href;
+        console.log("FAIL: Could read contentWindow.location.href");
+    } catch (e) {
+        console.log(e);
+    }
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+</script>
+<p>Accessing a cross-site iframe whose response has a CSP sandbox reports that the iframe is sandboxed.</p>
+<iframe src="http://localhost:8000/security/contentSecurityPolicy/resources/sandbox.py?sandbox=allow-scripts" onload="checkAccess()"></iframe>

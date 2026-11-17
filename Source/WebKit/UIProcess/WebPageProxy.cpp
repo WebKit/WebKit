@@ -10894,7 +10894,6 @@ void WebPageProxy::applyDeferredTopDocumentSyncDataFromCommittedProcess(Ref<WebC
 NODELETE static bool frameTreePropertyCanBeBroadcastByWebProcess(WebCore::FrameTreeSyncDataType property)
 {
     switch (property) {
-    case WebCore::FrameTreeSyncDataType::FrameDocumentIsSandboxedOrigin:
     case WebCore::FrameTreeSyncDataType::FrameRect:
         return true;
     case WebCore::FrameTreeSyncDataType::FrameCanCreatePaymentSession:
