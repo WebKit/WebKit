@@ -51,6 +51,7 @@
 #include <WebCore/ResourceLoadNotifier.h>
 #include <WebCore/ResourceLoaderOptions.h>
 #include <WebCore/ResourceRequestBase.h>
+#include <WebCore/ScriptExecutionContextIdentifier.h>
 #include <WebCore/SecurityContext.h>
 #include <WebCore/StoredCredentialsPolicy.h>
 #include <WebCore/Timer.h>
@@ -505,6 +506,7 @@ private:
     void dispatchGlobalObjectAvailableInAllWorlds();
 
     NODELETE bool isNavigationAllowed() const;
+    bool currentDocumentPassedBeforeUnload(const DocumentLoader&) const;
     NODELETE bool isStopLoadingAllowed() const;
 
     enum class LoadContinuingState : uint8_t { NotContinuing, ContinuingWithRequest, ContinuingWithHistoryItem };
@@ -588,6 +590,12 @@ private:
     bool m_isStrictRawResourceValidationPolicyDisabledForTesting { false };
 
     LoadContinuingState m_currentLoadContinuingState { LoadContinuingState::NotContinuing };
+
+    struct NavigationThatPassedBeforeUnload {
+        NavigationIdentifier navigationID;
+        ScriptExecutionContextIdentifier documentID;
+    };
+    std::optional<NavigationThatPassedBeforeUnload> m_navigationThatPassedBeforeUnload;
 
     bool m_checkingLoadCompleteForDetachment { false };
 
