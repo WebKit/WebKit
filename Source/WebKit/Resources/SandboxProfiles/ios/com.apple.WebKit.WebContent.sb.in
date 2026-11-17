@@ -60,8 +60,14 @@
     (internal-debugging-support))
 
 #if USE(EXTENSIONKIT)
+#if ENABLE(BLOCKING_OF_WEBCONTENT_FILE_WRITE)
+(with-filter (require-not (process-attribute is-apple-signed-executable))
+    (allow file-read* file-write*
+        (container-subpath "tmp")))
+#else
 (allow file-read* file-write*
     (container-subpath "tmp"))
+#endif
 #endif
 
 (allow file-read*
