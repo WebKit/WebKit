@@ -105,7 +105,6 @@ public:
 
     // For RenderLayer only
     LayoutPoint topLeftLocationEquivalent() const { return currentSVGLayoutLocation(); }
-    LayoutRect borderBoxRectInFragmentEquivalent(RenderFragmentContainer*, RenderBox::RenderBoxFragmentInfoFlags = RenderBox::RenderBoxFragmentInfoFlags::CacheRenderBoxFragmentInfo) const { return borderBoxRectEquivalent(); }
     virtual LayoutRect overflowClipRect(const LayoutPoint& location, OverlayScrollbarSizeRelevancy = OverlayScrollbarSizeRelevancy::IgnoreOverlayScrollbarSize, PaintPhase = PaintPhase::BlockBackground) const;
     LayoutRect overflowClipRectForPainting(const LayoutPoint& location, OverlayScrollbarSizeRelevancy = OverlayScrollbarSizeRelevancy::IgnoreOverlayScrollbarSize, PaintPhase = PaintPhase::BlockBackground) const;
     LayoutRect overflowClipRectForChildLayers(const LayoutPoint& location, OverlayScrollbarSizeRelevancy relevancy) { return overflowClipRectForPainting(location, relevancy); }
