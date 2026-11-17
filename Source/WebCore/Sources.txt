@@ -2793,6 +2793,7 @@ platform/graphics/PixelBuffer.cpp
 platform/graphics/PixelBufferConversion.cpp
 platform/graphics/PixelBufferFormat.cpp
 platform/graphics/PixelFormat.cpp
+platform/graphics/PlanarImageConverter.cpp
 platform/graphics/PlatformDynamicRangeLimit.cpp
 platform/graphics/PlatformTimeRanges.cpp
 platform/graphics/PlatformVideoColorSpace.cpp

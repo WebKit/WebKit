@@ -1391,6 +1391,7 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/cv/CVUtilities.h
     platform/graphics/cv/ImageRotationSessionVT.h
     platform/graphics/cv/PixelBufferConformerCV.h
+    platform/graphics/cv/PlanarImageConverterCV.h
     platform/graphics/cv/VideoFrameCV.h
 
     platform/ios/DeviceOrientationUpdateProvider.h

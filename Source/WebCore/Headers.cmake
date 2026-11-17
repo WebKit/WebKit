@@ -2602,6 +2602,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/PixelBufferFormat.h
     platform/graphics/PixelFormat.h
     platform/graphics/PlaceholderFrameIdentifier.h
+    platform/graphics/PlanarImageConverter.h
     platform/graphics/PlatformAudioTrackConfiguration.h
     platform/graphics/PlatformColorSpace.h
     platform/graphics/PlatformDisplay.h
