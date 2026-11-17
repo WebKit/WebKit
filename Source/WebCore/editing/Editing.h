@@ -98,6 +98,7 @@ NODELETE bool isBlock(const Node&);
 NODELETE bool isBlockFlowElement(const Node&);
 NODELETE bool isInline(const Node&);
 bool isMailBlockquote(const Node&);
+RefPtr<HTMLElement> codeElementOfCodeBlock(const Element&);
 NODELETE bool isRenderedTable(const Node*);
 NODELETE bool isTableCell(const Node&);
 NODELETE bool isEmptyTableCell(const Node*);

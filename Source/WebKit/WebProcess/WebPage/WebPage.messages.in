@@ -341,6 +341,7 @@ messages -> WebPage WantsAsyncDispatchMessage {
     IncreaseListLevel()
     DecreaseListLevel()
     ChangeListType()
+    ApplyBlockPresentationIntent(struct WebCore::BlockPresentationIntent intent)
 
     SetBaseWritingDirection(enum:uint8_t WebCore::WritingDirection direction)
 

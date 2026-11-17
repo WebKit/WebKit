@@ -96,6 +96,7 @@ class TextPlaceholderElement;
 class CachedMatchFinder;
 class WritingSuggestionData;
 
+struct BlockPresentationIntent;
 struct CompositionHighlight;
 struct DictationAlternative;
 struct FontAttributes;
@@ -287,6 +288,7 @@ public:
     WEBCORE_EXPORT RefPtr<Node> increaseSelectionListLevelUnordered();
     WEBCORE_EXPORT void decreaseSelectionListLevel();
     WEBCORE_EXPORT void changeSelectionListType();
+    WEBCORE_EXPORT void applyBlockPresentationIntent(const BlockPresentationIntent&);
    
     void removeFormattingAndStyle();
 
@@ -598,6 +600,7 @@ public:
     WEBCORE_EXPORT FontAttributes fontAttributesAtSelectionStart();
 
 #if PLATFORM(COCOA)
+    WEBCORE_EXPORT Vector<BlockPresentationIntent> blockPresentationIntentsAtSelectionStart() const;
     WEBCORE_EXPORT String stringSelectionForPasteboard();
     String stringSelectionForPasteboardWithImageAltText();
     void takeFindStringFromSelection();

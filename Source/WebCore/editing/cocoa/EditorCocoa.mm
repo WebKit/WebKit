@@ -86,6 +86,11 @@
 
 namespace WebCore {
 
+Vector<BlockPresentationIntent> Editor::blockPresentationIntentsAtSelectionStart() const
+{
+    return blockPresentationIntentsAtPosition(document().selection().selection().start());
+}
+
 String Editor::selectionInHTMLFormat()
 {
     if (ImageOverlay::isInsideOverlay(document().selection().selection()))

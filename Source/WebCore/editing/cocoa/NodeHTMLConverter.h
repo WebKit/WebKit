@@ -28,6 +28,9 @@
 
 namespace WebCore {
 
+class Position;
+struct BlockPresentationIntent;
+
 enum class IgnoreUserSelectNone : bool;
 
 // Marks a placeholder for the contents of a remote frame.
@@ -43,5 +46,8 @@ WEBCORE_EXPORT AttributedString attributedString(const SimpleRange&, IgnoreUserS
 
 // Overrides the __NSPresentationIntentHTMLInterchange default, or stops overriding it if the value is null.
 WEBCORE_EXPORT void setPresentationIntentHTMLInterchangeEnabledForTesting(std::optional<bool>);
+WEBCORE_EXPORT bool presentationIntentHTMLInterchangeEnabled();
+
+Vector<BlockPresentationIntent> blockPresentationIntentsAtPosition(const Position&);
 
 } // namespace WebCore

@@ -30,6 +30,7 @@
 
 #include "AXObjectCache.h"
 #include "AlternativeTextController.h"
+#include "ApplyBlockPresentationIntentCommand.h"
 #include "ApplyStyleCommand.h"
 #include "AttachmentAssociatedElement.h"
 #include "BoundaryPointInlines.h"
@@ -1770,6 +1771,19 @@ void Editor::changeSelectionListType()
     Ref document = this->document();
     if (auto type = ChangeListTypeCommand::listConversionType(document))
         ChangeListTypeCommand::create(WTF::move(document), *type)->apply();
+}
+
+void Editor::applyBlockPresentationIntent(const BlockPresentationIntent& intent)
+{
+    if (!canEditRichly())
+        return;
+
+    // fromPresentationIntent() makes a list item its list, but a message from the UI process could still carry one.
+    if (intent.kind == BlockPresentationIntent::Kind::ListItem)
+        return;
+
+    ApplyBlockPresentationIntentCommand::create(protect(document()), intent)->apply();
+    revealSelectionAfterEditingOperation();
 }
 
 void Editor::simplifyMarkup(Node* startNode, Node* endNode)
