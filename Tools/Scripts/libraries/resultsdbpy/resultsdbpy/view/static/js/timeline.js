@@ -1318,6 +1318,7 @@ class TimelineFromEndpoint {
                         if (viewDiff.clickedRun)
                             this.select({kind: 'run', queueUrl: viewDiff.clickedRun.row.queueUrl, uuid: viewDiff.clickedRun.uuid});
                     },
+                    clearMarkedCommit,
                     bringStripIntoView: (row) => setTimeout(() => {
                         const strip = stripWithQueueUrl(condensedViewRef.element, row.queueUrl);
                         if (strip)
@@ -1355,6 +1356,16 @@ class TimelineFromEndpoint {
             else if (condensedViewRef.state.markedCommit?.source === 'search')
                 condensedViewRef.setState({markedCommit: null});
             return markedCommit;
+        };
+        let clearTimelineMark = () => {};
+        const clearMarkedCommit = () => {
+            clearTimelineMark();
+            if (this.selection?.kind === 'search') {
+                this.searchEvent.add(null);
+                return;
+            }
+            condensedViewRef.setState({clickedRun: null, markedCommit: null});
+            this.select(null);
         };
         this.selectionToGoTo = () => {
             const selection = this.selection;
@@ -1395,6 +1406,7 @@ class TimelineFromEndpoint {
         });
         this.searchScale = null;
         let searchDot = null;
+        let dotShowsSelection = false;
         const composer = FP.composer(FP.currying((updateTimeline, notifyRerender, exportedSearchScale, exportedSearchDot) => {
             self.timelineUpdate = (xAxises) => {
                 children.splice(0, 1);
@@ -1443,6 +1455,7 @@ class TimelineFromEndpoint {
 
             const targetResult = allConfigResults.find(r => r.uuid === regression.uuid);
             searchDot(targetResult);
+            dotShowsSelection = false;
 
             updateNavigationButtons();
         };
@@ -1585,6 +1598,7 @@ class TimelineFromEndpoint {
             }
             this.searchScale(null);
             searchDot({uuid: selection.uuid});
+            dotShowsSelection = true;
         };
         const showTimelineFromStrips = () => {
             if (!this.selection?.isNew)
@@ -1617,7 +1631,23 @@ class TimelineFromEndpoint {
             if (row)
                 scrollToMiddleIfOffScreen(row);
         });
-        this.showSelection = () => goToSelectionButtonRef.setState({label: commitLabelOf(markForSelection(this.selection))});
+        const clearSelectionButtonRef = REF.createRef({
+            state: {show: Boolean(goToSelectionButtonRef.state.label)},
+            onStateUpdate: (element, stateDiff) => {
+                element.style.display = stateDiff.show ? '' : 'none';
+            },
+        });
+        clearSelectionButtonRef.fromEvent('click').action(e => clearMarkedCommit());
+        clearTimelineMark = () => {
+            if (dotShowsSelection)
+                searchDot(null);
+            dotShowsSelection = false;
+        };
+        this.showSelection = () => {
+            const label = commitLabelOf(markForSelection(this.selection));
+            goToSelectionButtonRef.setState({label});
+            clearSelectionButtonRef.setState({show: Boolean(label)});
+        };
 
         const searchBarRef = REF.createRef({
             state: {
@@ -1711,6 +1741,7 @@ class TimelineFromEndpoint {
                     </button>
                 </div>
                 <button class="button" ref="${goToSelectionButtonRef}" style="display: none"></button>
+                <a class="link-button" ref="${clearSelectionButtonRef}" style="display: none" title="Clear the marked commit" aria-label="Clear the marked commit">X</a>
             </div>
             <div class="row" ref="${placeHolderRef}">
                 <div class="col-12" style="height: 40px; padding: 0"></div>
@@ -1829,7 +1860,7 @@ function commitLabelOf(markedCommit) {
     return `${repository ? `${repository.charAt(0).toUpperCase()}${repository.slice(1)} ` : ''}${markedCommit.commit.label()}`;
 }
 
-function CondensedView(rows, minimumUuid, view, {failureTypeFor, commitLinksFor, handlersFor, setView, bringStripIntoView}) {
+function CondensedView(rows, minimumUuid, view, {failureTypeFor, commitLinksFor, handlersFor, setView, clearMarkedCommit, bringStripIntoView}) {
     const maxLines = Math.floor(MAX_CONDENSED_RUN_COUNT / view.runsPerLine);
     const runCount = view.runCount || Math.min(view.lineCount || 1, maxLines) * view.runsPerLine;
     const strips = rows.map(row => {
@@ -1940,8 +1971,14 @@ function CondensedView(rows, minimumUuid, view, {failureTypeFor, commitLinksFor,
                 };
             },
         });
+        const clearButtonRef = REF.createRef({
+            onElementMount: (element) => {
+                element.onclick = clearMarkedCommit;
+            },
+        });
         return `<div class="next-regress-bar">
                 <button class="button" ref="${goToButtonRef}">Go to ${escapeHTML(view.goToLabel)}</button>
+                <a class="link-button" ref="${clearButtonRef}" title="Clear the marked commit" aria-label="Clear the marked commit">X</a>
             </div>`;
     };
     const markedCommitLabel = commitLabelOf(view.markedCommit);
