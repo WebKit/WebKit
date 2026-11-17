@@ -1107,7 +1107,7 @@ webkit.org/b/309266 [ Release x86_64 ] css3/scroll-snap/scroll-snap-drag-scrollb
 webkit.org/b/252878 [ Debug ] fast/frames/exponential-frames.html [ Pass Timeout ]
 
 webkit.org/b/277912 [ arm64 ] imported/w3c/web-platform-tests/css/css-borders/corner-shape/corner-shape-inset-shadow.html [ ImageOnlyFailure ]
-webkit.org/b/277912 imported/w3c/web-platform-tests/css/css-borders/corner-shape/corner-shape-superellipse-negative-100.html [ ImageOnlyFailure ]
+webkit.org/b/277912 [ x86_64 ] imported/w3c/web-platform-tests/css/css-borders/corner-shape/corner-shape-superellipse-negative-100.html [ ImageOnlyFailure ]
 
 webkit.org/b/321450 [ arm64 ] fast/mediacapturefromelement/CanvasCaptureMediaStream-capture-out-of-DOM-canvas.html [ Failure Pass ]
 [ arm64 ] webrtc/video-rotation.html [ Failure Pass ]
@@ -1224,5 +1224,9 @@ webkit.org/b/330312 [ arm64 ] accessibility/accessible-name-chain-depth-no-crash
 webkit.org/b/330315 [ arm64 ] imported/w3c/web-platform-tests/webrtc-encoded-transform/script-metadata-transform.https.html [ Crash Pass ]
 
 webkit.org/b/331816 imported/w3c/web-platform-tests/screen-orientation/nested-documents.html [ Pass Failure Crash ]
+webkit.org/b/331816 imported/w3c/web-platform-tests/screen-orientation/fullscreen-interactions.html [ Pass Crash ]
+webkit.org/b/331816 imported/w3c/web-platform-tests/screen-orientation/idlharness.window.html [ Pass Crash ]
+
+webkit.org/b/331957 fast/quirks/active-quirks-by-domain.html [ Failure ]
 
 webkit.org/b/217938 [ arm64 ] http/wpt/service-workers/mac/throttleable.https.html [ Pass Timeout ]
