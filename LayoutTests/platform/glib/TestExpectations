@@ -890,6 +890,19 @@ imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-inset-svg-fra
 imported/w3c/web-platform-tests/css/css-writing-modes/text-combine-upright-compression-006a.html [ Pass ]
 imported/w3c/web-platform-tests/webcodecs/video-encoder-canvasImageSource.https.html [ Pass ]
 
+imported/w3c/web-platform-tests/webcodecs/temporal-svc-encoding.https.any.html?av1 [ Failure ]
+imported/w3c/web-platform-tests/webcodecs/temporal-svc-encoding.https.any.worker.html?av1 [ Failure ]
+imported/w3c/web-platform-tests/webcodecs/video-encoder-rescaling.https.any.html?av1 [ Failure ]
+imported/w3c/web-platform-tests/webcodecs/video-encoder-rescaling.https.any.html?h264_annexb [ Failure ]
+imported/w3c/web-platform-tests/webcodecs/video-encoder-rescaling.https.any.html?h264_avc [ Failure ]
+imported/w3c/web-platform-tests/webcodecs/video-encoder-rescaling.https.any.html?vp8 [ Failure ]
+imported/w3c/web-platform-tests/webcodecs/video-encoder-rescaling.https.any.html?vp9_p0 [ Failure ]
+imported/w3c/web-platform-tests/webcodecs/video-encoder-rescaling.https.any.worker.html?av1 [ Failure ]
+imported/w3c/web-platform-tests/webcodecs/video-encoder-rescaling.https.any.worker.html?h264_annexb [ Failure ]
+imported/w3c/web-platform-tests/webcodecs/video-encoder-rescaling.https.any.worker.html?h264_avc [ Failure ]
+imported/w3c/web-platform-tests/webcodecs/video-encoder-rescaling.https.any.worker.html?vp8 [ Failure ]
+imported/w3c/web-platform-tests/webcodecs/video-encoder-rescaling.https.any.worker.html?vp9_p0 [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of PASSING tests.
 #////////////////////////////////////////////////////////////////////////////////////////

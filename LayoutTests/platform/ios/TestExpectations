@@ -4428,6 +4428,13 @@ webkit.org/b/251040 [ Debug ] fast/forms/ios/remove-view-after-focus.html [ Pass
 
 webkit.org/b/251192 [ Release arm64 ] imported/w3c/web-platform-tests/webcodecs/videoFrame-texImage.any.html [ Failure ]
 
+imported/w3c/web-platform-tests/webcodecs/video-encoder-rescaling.https.any.html?h264_annexb [ Failure ]
+imported/w3c/web-platform-tests/webcodecs/video-encoder-rescaling.https.any.html?h264_avc [ Failure ]
+imported/w3c/web-platform-tests/webcodecs/video-encoder-rescaling.https.any.worker.html?h264_annexb [ Failure ]
+imported/w3c/web-platform-tests/webcodecs/video-encoder-rescaling.https.any.worker.html?h264_avc [ Failure ]
+imported/w3c/web-platform-tests/webcodecs/videoDecoder-codec-specific.https.any.html?vp9 [ Failure ]
+imported/w3c/web-platform-tests/webcodecs/videoDecoder-codec-specific.https.any.worker.html?vp9 [ Failure ]
+
 imported/w3c/web-platform-tests/webcodecs/videoFrame-createImageBitmap.https.any.html [ Failure ]
 imported/w3c/web-platform-tests/webcodecs/videoFrame-createImageBitmap.https.any.worker.html [ Failure ]
 
@@ -8151,18 +8158,6 @@ http/tests/site-isolation/fullscreen-escape-key.html [ Skip ]
 fast/forms/ios/file-upload-panel-accept.html [ Pass Crash ]
 fast/forms/ios/file-upload-panel-capture.html [ Pass Crash ]
 fast/forms/ios/file-upload-panel-dismiss-when-view-removed-from-window.html [ Pass Crash ]
-
-# webkit.org/b/292111 REGRESSION ( 294024@main): [ MacOS iOS WK2 Debug ] ASSERTION FAILED: bytecodeCanIgnoreNegativeZero(node->arithNodeFlags())
-[ Debug ] imported/w3c/web-platform-tests/webcodecs/video-encoder-rescaling.https.any.html?av1 [ Skip ]
-[ Debug ] imported/w3c/web-platform-tests/webcodecs/video-encoder-rescaling.https.any.html?h264_annexb [ Skip ]
-[ Debug ] imported/w3c/web-platform-tests/webcodecs/video-encoder-rescaling.https.any.html?h264_avc [ Skip ]
-[ Debug ] imported/w3c/web-platform-tests/webcodecs/video-encoder-rescaling.https.any.html?vp8 [ Skip ]
-[ Debug ] imported/w3c/web-platform-tests/webcodecs/video-encoder-rescaling.https.any.html?vp9_p0 [ Skip ]
-[ Debug ] imported/w3c/web-platform-tests/webcodecs/video-encoder-rescaling.https.any.worker.html?av1 [ Skip ]
-[ Debug ] imported/w3c/web-platform-tests/webcodecs/video-encoder-rescaling.https.any.worker.html?h264_annexb [ Skip ]
-[ Debug ] imported/w3c/web-platform-tests/webcodecs/video-encoder-rescaling.https.any.worker.html?h264_avc [ Skip ]
-[ Debug ] imported/w3c/web-platform-tests/webcodecs/video-encoder-rescaling.https.any.worker.html?vp8 [ Skip ]
-[ Debug ] imported/w3c/web-platform-tests/webcodecs/video-encoder-rescaling.https.any.worker.html?vp9_p0 [ Skip ]
 
 webkit.org/b/292294 webgl/2.0.y/conformance2/extensions/webgl-stencil-texturing.html [ Failure ]
 
