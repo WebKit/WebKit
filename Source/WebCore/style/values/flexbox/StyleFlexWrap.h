@@ -48,11 +48,6 @@ struct FlexWrap : CSS::FlexWrap {
     }
 };
 
-inline AxisDirection toAxisDirection(const FlexWrap& flexWrap)
-{
-    return flexWrap.isReverse() ? AxisDirection::Reverse : AxisDirection::Normal;
-}
-
 // MARK: - Conversion
 
 template<> struct CSSValueConversion<FlexWrap> {

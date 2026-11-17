@@ -435,8 +435,6 @@ enum class FlexDirection : uint8_t {
     ColumnReverse
 };
 
-inline AxisDirection toAxisDirection(FlexDirection direction) { return static_cast<AxisDirection>(direction == FlexDirection::RowReverse || direction == FlexDirection::ColumnReverse); }
-
 enum class ItemPosition : uint8_t {
     Legacy,
     Auto,

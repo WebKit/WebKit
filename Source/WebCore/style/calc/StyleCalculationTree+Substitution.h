@@ -45,7 +45,6 @@ std::optional<Tree> substituteSize(const Tree&, const Child& insertion);
 // linearly rather than quadratically.
 Tree dePercentify(const Tree&);
 
-bool containsSize(const Tree&);
 bool containsPercentage(const Tree&);
 
 } // namespace Calculation

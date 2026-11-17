@@ -624,7 +624,6 @@ public:
     NODELETE std::optional<PseudoElementIdentifier> pseudoElementIdentifier() const;
     void setPseudoElementIdentifier(std::optional<PseudoElementIdentifier>&&);
 
-    inline bool hasAnyPublicPseudoStyles() const;
     inline bool hasPseudoStyle(PseudoElementType) const;
     inline EnumSet<PseudoElementType> highlightPseudoElementTypes() const;
     inline void setHasPseudoStyles(EnumSet<PseudoElementType>, PseudoElementBoxGeneration);
@@ -734,7 +733,6 @@ public:
     inline const BorderValue& borderLeft() const LIFETIME_BOUND;
     inline const BorderValue& borderRight() const LIFETIME_BOUND;
     inline const BorderValue& borderTop() const LIFETIME_BOUND;
-    inline const BorderValue& columnRule() const LIFETIME_BOUND;
     inline const OutlineValue& outline() const LIFETIME_BOUND;
     inline const Animations& animations() const LIFETIME_BOUND;
     inline const BackgroundLayers& backgroundLayers() const LIFETIME_BOUND;
@@ -761,12 +759,9 @@ public:
     inline void setBorderRight(BorderValue&&);
     inline void setBorderBottom(BorderValue&&);
     inline void setBorderLeft(BorderValue&&);
-    inline void setInsetBox(InsetBox&&);
-    inline void setMarginBox(MarginBox&&);
     inline void setMaskBorder(MaskBorder&&);
     inline void setMaskLayers(MaskLayers&&);
     inline void setPaddingBox(PaddingBox&&);
-    inline void setPerspectiveOrigin(PerspectiveOrigin&&);
     inline void setTransformOrigin(TransformOrigin&&);
 
     inline bool hasLegacyLineClamp() const;
@@ -796,7 +791,6 @@ public:
 
         inline void copyNonInheritedFrom(const NonInheritedFlags&);
 
-        inline bool hasAnyPublicPseudoStyles() const;
         bool hasPseudoStyle(PseudoElementType) const;
         void setHasPseudoStyles(EnumSet<PseudoElementType>, PseudoElementBoxGeneration);
 

@@ -97,7 +97,6 @@ public:
     inline void resetBorderBottom();
     inline void resetBorderLeft();
     inline void resetBorderRadius();
-    inline void resetMargin();
     inline void resetPadding();
 
     // MARK: - Non-property initial values.
@@ -195,7 +194,6 @@ public:
     inline bool isColumnFlexDirection() const;
     inline bool isRowFlexDirection() const;
     inline bool isReverseFlexDirection() const;
-    inline FlowMode flexFlowMode() const; // This is not trivial so cache it.
 
     inline bool isFixedTableLayout() const;
     inline bool isInterCharacterRubyPosition() const;
@@ -213,7 +211,6 @@ public:
     inline bool preserveNewline() const;
     inline bool collapseWhiteSpace() const;
     inline bool isCollapsibleWhiteSpace(char16_t) const;
-    inline bool breakOnlyAfterWhiteSpace() const;
     inline bool breakWords() const;
     static constexpr bool preserveNewline(WhiteSpaceCollapse);
     static constexpr bool collapseWhiteSpace(WhiteSpaceCollapse);
