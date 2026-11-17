@@ -204,6 +204,11 @@ JSArrayBuffer* JSWebAssemblyMemory::toResizableBuffer(JSGlobalObject* globalObje
     VM& vm = globalObject->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 
+    if (!m_memory->maximum()) [[unlikely]] {
+        throwTypeError(globalObject, throwScope, "WebAssembly.Memory.prototype.toResizableBuffer requires a memory with a maximum"_s);
+        return { };
+    }
+
     if (!m_buffer) {
         associateArrayBuffer(globalObject, false);
         RETURN_IF_EXCEPTION(throwScope, { });

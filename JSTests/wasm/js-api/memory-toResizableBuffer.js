@@ -129,11 +129,9 @@ function assertSharedGrowableBufferOfPageSize(pageCount, buffer, maxPageCount) {
     assertSharedGrowableBufferOfPageSize(4, buffer, 5);
 }
 
-// Non-shared memory with no user-specified maximum
+// A memory with no declared maximum cannot produce a resizable buffer.
 
 {
     let memory = new WebAssembly.Memory({ initial: 0 });
-    let buffer = memory.toResizableBuffer();
-    const expectedPageCount = is32BitPlatform() ? 32767 : 65536;
-    assertEq(buffer.maxByteLength, pageSize * expectedPageCount);
+    assertThrows(() => memory.toResizableBuffer(), TypeError, "WebAssembly.Memory.prototype.toResizableBuffer requires a memory with a maximum");
 }

@@ -15,12 +15,11 @@ const maxMemory64Pages = 2 ** 48;
 const maxRepresentablePages = 262144;
 const maxMemory32Pages = 65536;
 
-// A memory with no declared maximum reports its own address type's ceiling, so it discovers what this
-// platform will reserve. A memory32's ceiling is reservable in full everywhere.
-const ceilingBytes = new WebAssembly.Memory({ initial: 1n, address: "i64" }).toResizableBuffer().maxByteLength;
+// A declared maximum past what this platform can reserve reports that ceiling.
+const ceilingBytes = new WebAssembly.Memory({ initial: 1n, maximum: BigInt(maxMemory64Pages), address: "i64" }).toResizableBuffer().maxByteLength;
 assert.truthy(ceilingBytes <= maxRepresentablePages * pageSize, `memory64 ceiling ${ceilingBytes} is not a representable byte length`);
 assert.truthy(ceilingBytes >= maxMemory32Pages * pageSize, `memory64 ceiling ${ceilingBytes} is below the memory32 ceiling`);
-assert.eq(new WebAssembly.Memory({ initial: 1 }).toResizableBuffer().maxByteLength, maxMemory32Pages * pageSize);
+assert.throws(() => new WebAssembly.Memory({ initial: 1 }).toResizableBuffer(), TypeError, "WebAssembly.Memory.prototype.toResizableBuffer requires a memory with a maximum");
 
 // A declared maximum at the largest representable byte length is accepted, and the buffer reports it
 // clamped to that ceiling. The shared memory reserves the whole thing up front, so this arm is why the

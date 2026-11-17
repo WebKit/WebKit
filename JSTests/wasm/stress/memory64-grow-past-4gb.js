@@ -12,9 +12,9 @@ const maxMemory64Pages = 262144;
 const fourGiB = 4 * 1024 * 1024 * 1024;
 const pastFourGiB = fourGiB + pageSize;
 
-// A memory with no declared maximum reports the most this platform could grow it to, which is what
-// bounds every maxByteLength below.
-const ceilingBytes = new WebAssembly.Memory({ initial: 1n, address: "i64" }).toResizableBuffer().maxByteLength;
+// A declared maximum past what this platform can reserve reports that ceiling, which bounds every
+// maxByteLength below.
+const ceilingBytes = new WebAssembly.Memory({ initial: 1n, maximum: (1n << 48n), address: "i64" }).toResizableBuffer().maxByteLength;
 
 // A memory whose initial size is already past 4GiB proves this port can host one at all. Where it
 // can, growing past 4GiB below must succeed; where it cannot, refusing cleanly is the only option.
