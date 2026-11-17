@@ -1,0 +1,86 @@
+Tests keyboard navigation in WI.TabBar.
+
+
+== Running test suite: TabBar.Keyboard
+-- Running test case: TabBar.Keyboard.TabIndex
+PASS: Without a selection, the first tab should be in the tab order.
+PASS: The selected tab should be in the tab order.
+PASS: Every tab should say whether it is selected.
+PASS: The show hidden tabs button should be in the tab order.
+PASS: The open closed tabs button should be in the tab order.
+PASS: Removing the selected tab should select the next one.
+PASS: The new selected tab should be in the tab order.
+
+-- Running test case: TabBar.Keyboard.ArrowKeys
+PASS: ArrowRight should focus the next tab.
+PASS: ArrowRight should be handled.
+PASS: Moving focus should not select the tab.
+PASS: The tab order should follow the focus.
+PASS: ArrowRight should focus the last tab.
+PASS: ArrowRight on the last tab should wrap to the first tab.
+PASS: ArrowLeft on the first tab should wrap to the last tab.
+PASS: ArrowLeft should focus the previous tab.
+PASS: End should focus the last tab.
+PASS: Home should focus the first tab.
+PASS: No key press so far should have changed the selection.
+
+-- Running test case: TabBar.Keyboard.Activate
+PASS: Enter should select the focused tab.
+PASS: Enter should be handled.
+PASS: The selected tab should keep focus.
+PASS: Space should select the focused tab.
+PASS: Space should be handled.
+PASS: Selections should report the keyboard as the initiator.
+PASS: A disabled tab should not be selectable.
+
+-- Running test case: TabBar.Keyboard.HiddenTabs
+PASS: ArrowRight should skip a hidden tab.
+PASS: ArrowRight should wrap past a hidden last tab.
+PASS: End should focus the last visible tab.
+
+-- Running test case: TabBar.Keyboard.HiddenFocusableTab
+PASS: The last tab should be in the tab order.
+PASS: A hidden tab should leave the tab order for the selected tab.
+PASS: A tab that shows again should not take the tab stop back.
+PASS: Layout should update the tab order once.
+
+-- Running test case: TabBar.Keyboard.RemoveFocusableTab
+PASS: The last tab should be in the tab order.
+PASS: Removing another tab should not change the selection.
+PASS: The selected tab should be in the tab order.
+
+-- Running test case: TabBar.Keyboard.PinnedTab
+PASS: The selected pinned tab should be the only tab stop of the tabs.
+PASS: ArrowLeft should be handled on a pinned tab.
+PASS: ArrowLeft should move from the pinned tab to the last normal tab.
+PASS: The tab stop should follow the focus off the pinned tab.
+PASS: Home should focus the first normal tab.
+PASS: End should focus the pinned tab.
+PASS: ArrowRight on the pinned tab should wrap to the first normal tab.
+PASS: Enter should select the pinned tab.
+PASS: Enter should select a pinned tab instead of opening a menu.
+PASS: Selecting a normal tab should move the tab stop to it.
+
+-- Running test case: TabBar.Keyboard.Reselect
+PASS: Arrow keys should move the tab stop.
+PASS: Selecting the selected tab again should move the tab stop back.
+
+-- Running test case: TabBar.Keyboard.RightToLeft
+PASS: ArrowRight should focus the previous tab.
+PASS: ArrowLeft should focus the next tab.
+PASS: Home should still focus the first tab.
+
+-- Running test case: TabBar.Keyboard.IgnoredKeys
+PASS: ArrowRight with metaKey should not be handled.
+PASS: ArrowRight with ctrlKey should not be handled.
+PASS: ArrowRight with altKey should not be handled.
+PASS: ArrowRight with shiftKey should not be handled.
+PASS: Shortcuts with modifiers should not move focus.
+PASS: Other keys should not be handled.
+
+-- Running test case: TabBar.Keyboard.PinnedButtons
+PASS: Arrow keys should not be handled on a pinned button.
+PASS: Arrow keys should not move focus off a pinned button.
+PASS: Enter and Space should press the pinned buttons.
+PASS: Pressing a pinned button should not change the selection.
+

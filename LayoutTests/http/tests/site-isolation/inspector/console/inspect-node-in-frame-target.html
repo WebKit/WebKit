@@ -15,7 +15,7 @@ function test() {
     let nestedSameSiteTarget = null;
 
     // Inspector.inspect is the path for a node the page DOM agent covers. Test.html has no
-    // WI.TabBrowser, which WI.DOMManager.prototype.inspectElement needs, so record the call instead.
+    // WI.consoleLogViewController, which WI.DOMManager.prototype.inspectNodeObject needs, so record the call instead.
     let inspectorInspectObjects = [];
     let didReceiveInspectorInspect = null;
     WI.domManager.inspectNodeObject = (remoteObject) => {
