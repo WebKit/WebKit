@@ -81,6 +81,7 @@ public:
     bool hasBlockLevelBoxes() const { return m_hasBlockLevelBoxes; }
     bool hasFloats() const { return m_hasFloats; }
     bool hasPaintedInlineLevelBoxes() const { return m_hasPaintedInlineLevelBoxes; }
+    bool hasInlineBoxWithOutOfFlowBoxes() const { return m_hasInlineBoxWithOutOfFlowBoxes; }
     bool contentFitsWithinMaximumLines() const { return m_contentFitsWithinMaximumLines; }
 
     IteratorRange<const InlineDisplay::Box*> boxesForRect(const LayoutRect&) const;
@@ -121,6 +122,7 @@ private:
     void setContentMayHaveInkOverflow(bool mayHaveInkOverflow) { m_contentMayHaveInkOverflow = mayHaveInkOverflow; }
     bool contentMayHaveInkOverflow() const { return m_contentMayHaveInkOverflow; }
     void setHasPaintedInlineLevelBoxes() { m_hasPaintedInlineLevelBoxes = true; }
+    void setHasInlineBoxWithOutOfFlowBoxes(bool hasInlineBoxWithOutOfFlowBoxes) { m_hasInlineBoxWithOutOfFlowBoxes = hasInlineBoxWithOutOfFlowBoxes; }
     void setContentFitsWithinMaximumLines(bool contentFits) { m_contentFitsWithinMaximumLines = contentFits; }
 
     const Vector<size_t>& nonRootInlineBoxIndexesForLayoutBox(const Layout::Box&) const LIFETIME_BOUND;
@@ -145,6 +147,7 @@ private:
     bool m_hasFloats { false };
     bool m_contentMayHaveInkOverflow { false };
     bool m_hasPaintedInlineLevelBoxes { false };
+    bool m_hasInlineBoxWithOutOfFlowBoxes { false };
 
     Vector<Vector<SVGTextFragment>> m_svgTextFragmentsForBoxes;
 };

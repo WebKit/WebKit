@@ -222,6 +222,7 @@ public:
     LayoutRect clampToAllowedLayoutOverflow(const LayoutRect&, const LayoutRect& blockStartRelativePaddingBoxRect);
     void addLayoutOverflow(const LayoutRect&);
     void addVisualOverflow(const LayoutRect&);
+    void addOverflowWithRendererOffset(const RenderBox&, LayoutSize, OptionSet<ComputeOverflowOptions> = { });
     void clearOverflow();
     RenderOverflow& ensureOverflow();
 
@@ -676,8 +677,6 @@ protected:
 
     bool overflowChangesMayAffectLayout() const final;
     virtual std::pair<LayoutUnit, LayoutUnit> computeIntrinsicKeywordLogicalWidths() const { return computeIntrinsicLogicalWidths(); }
-
-    void addOverflowWithRendererOffset(const RenderBox&, LayoutSize, OptionSet<ComputeOverflowOptions> = { });
 
 private:
     bool isBlockSizeResolvableForStretch() const;
