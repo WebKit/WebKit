@@ -171,7 +171,9 @@
 
 - (void)webExtensionController:(WKWebExtensionController *)controller connectUsingMessagePort:(WKWebExtensionMessagePort *)port forExtensionContext:(WKWebExtensionContext *)extensionContext completionHandler:(void (^)(NSError *error))completionHandler
 {
-    if (_connectUsingMessagePort) {
+    if (_connectUsingMessagePortWithCompletionHandler)
+        _connectUsingMessagePortWithCompletionHandler(port, completionHandler);
+    else if (_connectUsingMessagePort) {
         _connectUsingMessagePort(port);
         completionHandler(nil);
     } else

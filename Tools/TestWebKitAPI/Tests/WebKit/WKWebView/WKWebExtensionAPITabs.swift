@@ -26,6 +26,8 @@
 import Foundation
 private import TestWebKitAPILibrary
 private import TestWebKitAPILibrary.Helpers.cocoa.TestNavigationDelegate
+private import TestWebKitAPILibrary.Helpers.cocoa.TestUIDelegate
+private import TestWebKitAPILibrary.Helpers.cocoa.TestWKWebView
 private import TestWebKitAPILibrary.Helpers.cocoa.TestWebExtensionsDelegate
 private import TestWebKitAPILibrary.Helpers.cocoa.WebExtensionUtilities
 import Testing
@@ -4903,6 +4905,219 @@ struct WKWebExtensionAPITabsTests {
             expectFalse(context.hasPermission(.tabs, in: defaultTab))
             expectFalse(context.hasAccess(to: localhostURL))
             expectFalse(context.hasAccess(to: localhostURL, in: defaultTab))
+        }
+    }
+
+    // MARK: - Opened Windows
+
+    @Test
+    func sendMessageFromBackgroundToOpenedWindow() async throws {
+        var server = try HTTPServer(protocol: .http) {
+            Route("/", headerFields: ["Content-Type": "text/html"]) {
+                "<script>browser.test.runWithUserGesture(() => { window.open('/window.html', '_blank') })</script>"
+            }
+            Route("/window.html", headerFields: ["Content-Type": "text/html"]) {
+                ""
+            }
+        }
+
+        let manifest: [String: Any] = [
+            "manifest_version": 3,
+            "name": "Tabs Test",
+            "description": "Tabs Test",
+            "version": "1",
+
+            "background": [
+                "scripts": ["background.js"],
+                "type": "module",
+                "persistent": false,
+            ],
+
+            "content_scripts": [
+                ["js": ["main-script.js"], "matches": ["*://localhost/"], "all_frames": false],
+                ["js": ["window-script.js"], "matches": ["*://localhost/window.html"], "all_frames": false],
+            ],
+        ]
+
+        let backgroundScript = """
+            browser.runtime.onMessage.addListener(async (message, sender) => {
+              browser.test.assertEq(message, 'Begin Test', 'Message content should match')
+
+              const tabId = sender?.tab?.id
+              browser.test.assertTrue(typeof tabId === 'number', 'tabId should be a valid number')
+
+              const response = await browser.tabs.sendMessage(tabId, 'Hello, window!')
+              browser.test.assertEq(response, 'Message received', 'Should receive response from window script')
+
+              browser.test.notifyPass()
+            })
+
+            browser.test.sendMessage('Load Tab')
+            """
+
+        let mainScript = """
+            browser.runtime.onMessage.addListener(() => {
+              browser.test.assertTrue(false, 'Main page should not receive messages intended for opened window')
+            })
+            """
+
+        let windowScript = """
+            browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
+              browser.test.assertEq(message, 'Hello, window!', 'Message should be received in the opened window')
+              sendResponse('Message received')
+            })
+
+            browser.runtime.sendMessage('Begin Test')
+            """
+
+        let resources: [String: Any] = [
+            "background.js": backgroundScript,
+            "main-script.js": mainScript,
+            "window-script.js": windowScript,
+        ]
+
+        try await server.run { configuration in
+            let manager = try loadWebExtension(manifest: manifest, resources: resources)
+            let context = try requireNonNil(manager.context)
+
+            let matchPattern = try requireNonNil(WKWebExtension.MatchPattern.cachedPattern(scheme: "*", host: "localhost", path: "/*"))
+            context.setPermissionStatus(.grantedExplicitly, for: matchPattern)
+
+            try await manager.waitForTestMessage("Load Tab")
+
+            var openedWindow: TestWebExtensionWindow?
+
+            // A web view only holds its UI delegate weakly, so this is kept alive until the extension finishes.
+            let uiDelegate = TestUIDelegate()
+            uiDelegate.createWebViewWithConfiguration = { [weak manager] webViewConfiguration, _, _ in
+                guard let manager, let webViewConfiguration else {
+                    return nil
+                }
+
+                let window = manager.openNewWindow(usingPrivateBrowsing: false)
+                window.activeTab?.webView = TestWKWebView(frame: .zero, configuration: webViewConfiguration)
+                openedWindow = window
+                return window.activeTab?.webView
+            }
+
+            let webView = try requireNonNil(manager.defaultTab?.webView)
+            webView.uiDelegate = uiDelegate
+            webView.load(URLRequest(url: configuration.localhostAddress))
+
+            try await manager.run()
+
+            extendLifetime(uiDelegate)
+            extendLifetime(openedWindow)
+        }
+    }
+
+    @Test
+    func connectFromBackgroundToOpenedWindow() async throws {
+        var server = try HTTPServer(protocol: .http) {
+            Route("/", headerFields: ["Content-Type": "text/html"]) {
+                "<script>browser.test.runWithUserGesture(() => { window.open('/window.html', '_blank') })</script>"
+            }
+            Route("/window.html", headerFields: ["Content-Type": "text/html"]) {
+                ""
+            }
+        }
+
+        let manifest: [String: Any] = [
+            "manifest_version": 3,
+            "name": "Tabs Test",
+            "description": "Tabs Test",
+            "version": "1",
+
+            "background": [
+                "scripts": ["background.js"],
+                "type": "module",
+                "persistent": false,
+            ],
+
+            "content_scripts": [
+                ["js": ["main-script.js"], "matches": ["*://localhost/"], "all_frames": false],
+                ["js": ["window-script.js"], "matches": ["*://localhost/window.html"], "all_frames": false],
+            ],
+        ]
+
+        let backgroundScript = """
+            browser.runtime.onMessage.addListener((message, sender) => {
+              browser.test.assertEq(message, 'Begin Test', 'Message content should match')
+
+              const tabId = sender?.tab?.id
+              browser.test.assertTrue(typeof tabId === 'number', 'tabId should be a valid number')
+
+              const port = browser.tabs.connect(tabId, { name: 'testPort' })
+
+              port.onMessage.addListener((response) => {
+                browser.test.assertEq(response, 'Message received', 'Should receive response from window script')
+
+                browser.test.notifyPass()
+              })
+
+              port.postMessage('Hello, window!')
+            })
+
+            browser.test.sendMessage('Load Tab')
+            """
+
+        let mainScript = """
+            browser.runtime.onConnect.addListener(() => {
+              browser.test.assertTrue(false, 'Main page should not receive connections intended for opened window')
+            })
+            """
+
+        let windowScript = """
+            browser.runtime.onConnect.addListener((port) => {
+              browser.test.assertEq(port.name, 'testPort', 'Port name should match')
+
+              port.onMessage.addListener((message) => {
+                browser.test.assertEq(message, 'Hello, window!', 'Message should be received in the opened window')
+                port.postMessage('Message received')
+              })
+            })
+
+            browser.runtime.sendMessage('Begin Test')
+            """
+
+        let resources: [String: Any] = [
+            "background.js": backgroundScript,
+            "main-script.js": mainScript,
+            "window-script.js": windowScript,
+        ]
+
+        try await server.run { configuration in
+            let manager = try loadWebExtension(manifest: manifest, resources: resources)
+            let context = try requireNonNil(manager.context)
+
+            let matchPattern = try requireNonNil(WKWebExtension.MatchPattern.cachedPattern(scheme: "*", host: "localhost", path: "/*"))
+            context.setPermissionStatus(.grantedExplicitly, for: matchPattern)
+
+            try await manager.waitForTestMessage("Load Tab")
+
+            var openedWindow: TestWebExtensionWindow?
+
+            // A web view only holds its UI delegate weakly, so this is kept alive until the extension finishes.
+            let uiDelegate = TestUIDelegate()
+            uiDelegate.createWebViewWithConfiguration = { [weak manager] webViewConfiguration, _, _ in
+                guard let manager, let webViewConfiguration else {
+                    return nil
+                }
+
+                let window = manager.openNewWindow(usingPrivateBrowsing: false)
+                window.activeTab?.webView = TestWKWebView(frame: .zero, configuration: webViewConfiguration)
+                openedWindow = window
+                return window.activeTab?.webView
+            }
+
+            let webView = try requireNonNil(manager.defaultTab?.webView)
+            webView.uiDelegate = uiDelegate
+            webView.load(URLRequest(url: configuration.localhostAddress))
+
+            try await manager.run()
+
+            extendLifetime(uiDelegate)
+            extendLifetime(openedWindow)
         }
     }
 }
