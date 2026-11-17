@@ -38,6 +38,19 @@ To test the imported suite, run it:
 Tools/Scripts/run-webdriver-tests --verbose --wpe --release --display-server=xvfb
 ```
 
+## Exporting tests
+
+Once a commit with changes to the tests in `imported/w3c/webdriver/` lands, export them to WPT with the same script as
+for `LayoutTests/imported/w3c/web-platform-tests/`. It makes a pull request with the changes of the given commit,
+including the ones to the WebDriver client in `imported/w3c/tools/webdriver/`:
+
+```
+Tools/Scripts/export-w3c-test-changes -c -g <commit>
+```
+
+Changes to `imported/w3c/tools/wptrunner/` aren't exported, because WebKit keeps local changes there. Make them in WPT
+directly.
+
 ## Expectations
 
 `TestExpectations.json` lists the tests that don't simply pass. Each test file can have an `expected` entry for
