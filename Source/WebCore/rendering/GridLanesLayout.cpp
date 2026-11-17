@@ -79,10 +79,13 @@ GridLanesResult GridLanesLayout::placeGridLanesItems(const GridTrackSizingAlgori
 
 GridArea GridLanesLayout::gridAreaForDefiniteGridAxisItem(const RenderBox& gridItem) const
 {
-    auto itemSpan = m_renderGrid->currentGrid().gridItemSpan(gridItem, gridAxisDirection());
-    ASSERT(!itemSpan.isIndefinite());
-    itemSpan.translate(m_renderGrid->currentGrid().explicitGridStart(gridAxisDirection()));
-    return gridAreaFromGridAxisSpan(itemSpan);
+    auto& grid = m_renderGrid->currentGrid();
+    auto itemArea = grid.gridItemArea(gridItem);
+    grid.clampAreaToSubgridIfNeeded(itemArea);
+    auto gridAxisPosition = gridAxisSpanFromArea(itemArea);
+    ASSERT(!gridAxisPosition.isIndefinite());
+    gridAxisPosition.translate(grid.explicitGridStart(gridAxisDirection()));
+    return gridAreaFromGridAxisSpan(gridAxisPosition);
 }
 
 LayoutUnit GridLanesLayout::calculateGridLanesIntrinsicLogicalWidth(RenderBox& gridItem, Phase layoutPhase)
