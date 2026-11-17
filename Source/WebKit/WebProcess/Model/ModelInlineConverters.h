@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(WEBGPU_SWIFT) && ENABLE(GPU_PROCESS_MODEL)
+#if ENABLE(GPU_PROCESS_MODEL)
 
 #include "ModelTypes.h"
 #include <ImageIO/CGImageSource.h>

@@ -109,9 +109,21 @@ function gpuProcessIsAlive(environment) {
 const answerTimeout = 5000;
 const silenceTimeout = 500;
 
+function streamServicedAllMessages(mesh) {
+    const serverIsSleepingTag = 0x80000000;
+    const header = new Uint32Array(mesh.connection.streamBuffer().readHeaderBytes(0, 136));
+    return header[32] === serverIsSleepingTag || header[0] === header[32];
+}
+
 function answersWithin(mesh, ms, meshRemovals = []) {
     return withTimeout(new Promise(resolve => {
-        mesh.ProcessRemovals({ meshRemovals, materialRemovals: [], textureRemovals: [] }, reply => resolve(reply.success === true));
+        mesh.ProcessRemovals({ meshRemovals, materialRemovals: [], textureRemovals: [] }, reply => {
+            if (reply?.success !== true) {
+                resolve(false);
+                return;
+            }
+            mesh.Render({ textureIndex: 0xffffffff }, () => resolve(streamServicedAllMessages(mesh)));
+        });
     }), ms).then(answered => answered === true);
 }
 

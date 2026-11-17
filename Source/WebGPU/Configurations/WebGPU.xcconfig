@@ -123,7 +123,9 @@ ENABLE_WEBGPU_SWIFT[sdk=xros*] = ENABLE_WEBGPU_SWIFT;
 ENABLE_WEBGPU_SWIFT[sdk=xros*26.2*] = ;
 ENABLE_WEBGPU_SWIFT[sdk=xros*26.3*] = ;
 
-ENABLE_WEBGPU_SWIFT[sdk=appletvos*] = ;
+// Keep in sync with ENABLE_WEBGPU_SWIFT in PlatformEnableCocoa.h (tvOS 27 and later).
+ENABLE_WEBGPU_SWIFT[sdk=appletv*] = ENABLE_WEBGPU_SWIFT;
+ENABLE_WEBGPU_SWIFT[sdk=appletv*26*] = ;
 
 ENABLE_WEBGPU_SWIFT[sdk=watch*] = ;
 
