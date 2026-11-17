@@ -29,6 +29,7 @@
 
 #include "JSWebExtensionAPISidebarAction.h"
 #include "WebExtensionAPIObject.h"
+#include "WebExtensionError.h"
 
 OBJC_CLASS NSDictionary;
 OBJC_CLASS NSString;
