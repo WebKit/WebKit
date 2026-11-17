@@ -86,8 +86,8 @@ typedef NS_OPTIONS(NSUInteger, WKXRTrackingProviderType) {
 #endif
 
     BOOL _handTrackingEnabled;
-    OSObjectPtr<ar_hand_tracking_provider_t> _handTrackingProvider;
 #if ENABLE(WEBXR_HANDS) && !PLATFORM(IOS_FAMILY_SIMULATOR)
+    OSObjectPtr<ar_hand_tracking_provider_t> _handTrackingProvider;
     OSObjectPtr<ar_hand_anchor_t> _leftHandAnchor;
     OSObjectPtr<ar_hand_anchor_t> _rightHandAnchor;
 #endif
@@ -301,8 +301,10 @@ static NSTimeInterval currentMachTimeInSeconds()
         WKXRTrackingProviderType newRunningProviderTypes = 0;
         if (_worldTrackingProvider && ar_data_provider_get_state(_worldTrackingProvider.get()) == ar_data_provider_state_running)
             newRunningProviderTypes |= WKXRTrackingProviderTypeWorldTracking;
+#if ENABLE(WEBXR_HANDS) && !PLATFORM(IOS_FAMILY_SIMULATOR)
         if (_handTrackingProvider && ar_data_provider_get_state(_handTrackingProvider.get()) == ar_data_provider_state_running)
             newRunningProviderTypes |= WKXRTrackingProviderTypeHandTracking;
+#endif
 #if HAVE(SPATIAL_CONTROLLERS)
         if (_accessoryTrackingProvider && ar_data_provider_get_state(_accessoryTrackingProvider.get()) == ar_data_provider_state_running)
             newRunningProviderTypes |= WKXRTrackingProviderTypeAccessoryTracking;
@@ -324,7 +326,9 @@ static NSTimeInterval currentMachTimeInSeconds()
     ar_session_stop(_arSession.get());
 
     _worldTrackingProvider = nil;
+#if ENABLE(WEBXR_HANDS) && !PLATFORM(IOS_FAMILY_SIMULATOR)
     _handTrackingProvider = nil;
+#endif
 #if HAVE(SPATIAL_CONTROLLERS)
     _accessoryTrackingProvider = nil;
 #endif
