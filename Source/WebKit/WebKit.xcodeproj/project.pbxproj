@@ -3713,8 +3713,6 @@
 		07EF0752274593FA0066EA04 /* UserMediaPermissionRequestProxyCocoa.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UserMediaPermissionRequestProxyCocoa.h; sourceTree = "<group>"; };
 		07EF07582745A8160066EA04 /* DisplayCaptureSessionManager.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = DisplayCaptureSessionManager.mm; sourceTree = "<group>"; };
 		07EF07592745A8160066EA04 /* DisplayCaptureSessionManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DisplayCaptureSessionManager.h; sourceTree = "<group>"; };
-		5E7A1C3F2EA1B0C000D1A001 /* TabCapturePicker.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TabCapturePicker.h; sourceTree = "<group>"; };
-		5E7A1C402EA1B0C000D1A001 /* TabCapturePicker.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = TabCapturePicker.mm; sourceTree = "<group>"; };
 		07EF24BE2E309EFE004429B6 /* WebKitInternalCxx.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebKitInternalCxx.h; sourceTree = "<group>"; };
 		5E55104200000000000C000F /* SecurityFlagsForSwift.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SecurityFlagsForSwift.h; sourceTree = "<group>"; };
 		07F0337B30107D3900B69551 /* WKFastScrollTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WKFastScrollTracker.swift; sourceTree = "<group>"; };
@@ -6546,8 +6544,6 @@
 		5628440F2ED9E5580080DD29 /* EnhancedSecuritySitesHolder.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = EnhancedSecuritySitesHolder.cpp; sourceTree = "<group>"; };
 		5630659E2F2A2E70000BF1BF /* EnhancedSecurityLinkUtilities.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = EnhancedSecurityLinkUtilities.mm; sourceTree = "<group>"; };
 		5630659F2F2A2E92000BF1BF /* EnhancedSecurityLinkUtilities.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EnhancedSecurityLinkUtilities.h; sourceTree = "<group>"; };
-		5E7A1C412EA1B0C000D1A001 /* CapturePromptUtilities.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CapturePromptUtilities.h; sourceTree = "<group>"; };
-		5E7A1C422EA1B0C000D1A001 /* CapturePromptUtilities.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = CapturePromptUtilities.mm; sourceTree = "<group>"; };
 		5641685ADE7EE247669DC0A7 /* WKCapturePreviewPrompt.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WKCapturePreviewPrompt.mm; sourceTree = "<group>"; };
 		564599932B71BBA000BC59E6 /* CoreIPCPresentationIntent.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = CoreIPCPresentationIntent.serialization.in; sourceTree = "<group>"; };
 		564599942B71BBB200BC59E6 /* CoreIPCPresentationIntent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CoreIPCPresentationIntent.h; sourceTree = "<group>"; };
@@ -11129,8 +11125,6 @@
 				1A002D47196B345D00B9AD44 /* SessionStateCoding.h */,
 				1A002D46196B345D00B9AD44 /* SessionStateCoding.mm */,
 				3157135C2040A9B20084F9CF /* SystemPreviewControllerCocoa.mm */,
-				5E7A1C3F2EA1B0C000D1A001 /* TabCapturePicker.h */,
-				5E7A1C402EA1B0C000D1A001 /* TabCapturePicker.mm */,
 				2D0CF64C21F2A80300787566 /* TextCheckingController.h */,
 				2D0CF64B21F2A80300787566 /* TextCheckingController.mm */,
 				5C1A7E502FA0000000000001 /* TransientZoomState.h */,
@@ -17347,8 +17341,6 @@
 				97AD28882ECFA4AE00039097 /* _WKCaptionStyleMenuControllerAVKitMac.h */,
 				97AD28872ECFA49800039097 /* _WKCaptionStyleMenuControllerAVKitMac.mm */,
 				CD89ACBB2EA696A300C76423 /* _WKCaptionStyleMenuControllerMac.mm */,
-				5E7A1C412EA1B0C000D1A001 /* CapturePromptUtilities.h */,
-				5E7A1C422EA1B0C000D1A001 /* CapturePromptUtilities.mm */,
 				B878B613133428DC006888E9 /* CorrectionPanel.h */,
 				B878B614133428DC006888E9 /* CorrectionPanel.mm */,
 				7AFA6F682A9F57C50055322A /* DisplayLinkMac.cpp */,
