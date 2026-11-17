@@ -602,11 +602,11 @@ void SimulatedInputDispatcher::transitionInputSourceToState(SimulatedInputSource
             auto aScrollDelta = a.scrollDelta.value_or(WebCore::IntSize());
             auto bScrollDelta = b.scrollDelta.value_or(WebCore::IntSize());
             auto usedScrollDelta = bScrollDelta;
-            if (!aScrollDelta.isZero())
+            if (!m_options.scrollDeltasArePerAction && !aScrollDelta.isZero())
                 usedScrollDelta.contract(aScrollDelta.width(), aScrollDelta.height());
 
             if (!usedScrollDelta.isZero()) {
-                LOG(Automation, "SimulatedInputDispatcher[%p]: simulating Wheel from (%d, %d) to (%d, %d) for transition to %d.%d", this, aScrollDelta.width(), aScrollDelta.height(), bScrollDelta.width(), bScrollDelta.height(), m_keyframeIndex, m_inputSourceStateIndex);
+                LOG(Automation, "SimulatedInputDispatcher[%p]: simulating Wheel by (%d, %d) for transition to %d.%d", this, usedScrollDelta.width(), usedScrollDelta.height(), m_keyframeIndex, m_inputSourceStateIndex);
                 // FIXME: This does not interpolate mouse scrolls per the "perform a scroll" algorithm (§15.4.4 Wheel actions).
                 m_client.simulateWheelInteraction(protect(m_page), b.location.value(), usedScrollDelta, WTF::move(eventDispatchFinished));
             } else
