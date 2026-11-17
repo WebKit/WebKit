@@ -2,5 +2,5 @@
 PASS Default appearance value
 PASS Default appearance value: display:none
 PASS appearance:none should work
-FAIL appearance:none should work: display is inline-block assert_equals: expected "inline-block" but got "inline"
+PASS appearance:none should work: display is inline-block
 

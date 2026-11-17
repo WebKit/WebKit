@@ -26,7 +26,6 @@
 
 input[type="checkbox"][switch] {
     margin: initial;
-    display: initial;
 }
 
 #if defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY
