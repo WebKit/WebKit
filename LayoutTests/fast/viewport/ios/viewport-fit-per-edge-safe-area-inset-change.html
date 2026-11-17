@@ -1,0 +1,25 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true PerEdgeViewportFitEnabled=true ] -->
+<html>
+<head>
+<meta name="viewport" content="initial-scale=1, width=device-width, viewport-fit=cover, viewport-fit-top=contain, viewport-fit-left=contain">
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+<script src="resources/viewport-fit-per-edge.js"></script>
+<script>
+jsTestIsAsync = true;
+
+addEventListener("load", async () => {
+    description("Tests that when only some edges of the page are within the safe area, changing the safe area insets updates those edges.");
+
+    await setSafeAreaInsets();
+    await shouldBeWithinSafeAreaAt(["top", "left"]);
+    await setSafeAreaInsets({ top: 15, right: 25, bottom: 35, left: 45 });
+    await shouldBeWithinSafeAreaAt(["top", "left"]);
+
+    finishJSTest();
+});
+</script>
+</head>
+<body>
+</body>
+</html>

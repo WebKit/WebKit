@@ -1,0 +1,35 @@
+Tests that when only some edges of the page are within the safe area, changing the safe area insets updates those edges.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Set the safe area insets to top 10, right 20, bottom 30 and left 40
+Within the safe area at: top, left
+PASS adjustedContentInset.top is 10
+PASS safeAreaInsetStyle.paddingTop is "0px"
+PASS adjustedContentInset.right is 0
+PASS safeAreaInsetStyle.paddingRight is "20px"
+PASS adjustedContentInset.bottom is 0
+PASS safeAreaInsetStyle.paddingBottom is "30px"
+PASS adjustedContentInset.left is 40
+PASS safeAreaInsetStyle.paddingLeft is "0px"
+PASS innerWidth is viewportWidthWithoutSafeArea - 40
+PASS innerHeight is viewportHeightWithoutSafeArea - 10
+
+Set the safe area insets to top 15, right 25, bottom 35 and left 45
+Within the safe area at: top, left
+PASS adjustedContentInset.top is 15
+PASS safeAreaInsetStyle.paddingTop is "0px"
+PASS adjustedContentInset.right is 0
+PASS safeAreaInsetStyle.paddingRight is "25px"
+PASS adjustedContentInset.bottom is 0
+PASS safeAreaInsetStyle.paddingBottom is "35px"
+PASS adjustedContentInset.left is 45
+PASS safeAreaInsetStyle.paddingLeft is "0px"
+PASS innerWidth is viewportWidthWithoutSafeArea - 45
+PASS innerHeight is viewportHeightWithoutSafeArea - 15
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

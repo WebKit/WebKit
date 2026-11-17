@@ -1,0 +1,23 @@
+CONSOLE MESSAGE: Viewport argument key "viewport-fit-top" not recognized and ignored.
+Tests that viewport-fit-top is ignored when per-edge viewport-fit is disabled, so every edge of the page stays within the safe area.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Set the safe area insets to top 10, right 20, bottom 30 and left 40
+Within the safe area at: top, right, bottom, left
+PASS adjustedContentInset.top is 10
+PASS safeAreaInsetStyle.paddingTop is "0px"
+PASS adjustedContentInset.right is 20
+PASS safeAreaInsetStyle.paddingRight is "0px"
+PASS adjustedContentInset.bottom is 30
+PASS safeAreaInsetStyle.paddingBottom is "0px"
+PASS adjustedContentInset.left is 40
+PASS safeAreaInsetStyle.paddingLeft is "0px"
+PASS innerWidth is viewportWidthWithoutSafeArea - 60
+PASS innerHeight is viewportHeightWithoutSafeArea - 10
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

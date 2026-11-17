@@ -1,0 +1,23 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true PerEdgeViewportFitEnabled=true ] -->
+<html>
+<head>
+<meta name="viewport" content="initial-scale=1, width=device-width, viewport-fit-top=cover">
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+<script src="resources/viewport-fit-per-edge.js"></script>
+<script>
+jsTestIsAsync = true;
+
+addEventListener("load", async () => {
+    description("Tests that with viewport-fit-top=cover alone, only the top edge of the page extends underneath the safe area.");
+
+    await setSafeAreaInsets();
+    await shouldBeWithinSafeAreaAt(["right", "bottom", "left"]);
+
+    finishJSTest();
+});
+</script>
+</head>
+<body>
+</body>
+</html>

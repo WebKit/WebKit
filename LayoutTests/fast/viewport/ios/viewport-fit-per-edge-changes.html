@@ -1,0 +1,33 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true PerEdgeViewportFitEnabled=true ] -->
+<html>
+<head>
+<meta name="viewport" content="initial-scale=1, width=device-width">
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+<script src="resources/viewport-fit-per-edge.js"></script>
+<script>
+jsTestIsAsync = true;
+
+addEventListener("load", async () => {
+    description("Tests that changing the viewport-fit of individual edges changes which edges of the page extend underneath the safe area.");
+
+    await setSafeAreaInsets();
+    await shouldBeWithinSafeAreaAt(["top", "right", "bottom", "left"]);
+    await setViewport("initial-scale=1, width=device-width, viewport-fit=cover, viewport-fit-left=contain");
+    await shouldBeWithinSafeAreaAt(["left"]);
+    await setViewport("initial-scale=1, width=device-width, viewport-fit=cover, viewport-fit-right=contain");
+    await shouldBeWithinSafeAreaAt(["right"]);
+    await setViewport("initial-scale=1, width=device-width, viewport-fit=cover");
+    await shouldBeWithinSafeAreaAt([]);
+    await setViewport("initial-scale=1, width=device-width, viewport-fit-bottom=cover");
+    await shouldBeWithinSafeAreaAt(["top", "right", "left"]);
+    await setViewport("initial-scale=1, width=device-width, viewport-fit=contain");
+    await shouldBeWithinSafeAreaAt(["top", "right", "bottom", "left"]);
+
+    finishJSTest();
+});
+</script>
+</head>
+<body>
+</body>
+</html>

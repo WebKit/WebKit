@@ -1,0 +1,87 @@
+Tests that changing the viewport-fit of individual edges changes which edges of the page extend underneath the safe area.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Set the safe area insets to top 10, right 20, bottom 30 and left 40
+Within the safe area at: top, right, bottom, left
+PASS adjustedContentInset.top is 10
+PASS safeAreaInsetStyle.paddingTop is "0px"
+PASS adjustedContentInset.right is 20
+PASS safeAreaInsetStyle.paddingRight is "0px"
+PASS adjustedContentInset.bottom is 30
+PASS safeAreaInsetStyle.paddingBottom is "0px"
+PASS adjustedContentInset.left is 40
+PASS safeAreaInsetStyle.paddingLeft is "0px"
+PASS innerWidth is viewportWidthWithoutSafeArea - 60
+PASS innerHeight is viewportHeightWithoutSafeArea - 10
+
+Set the viewport to "initial-scale=1, width=device-width, viewport-fit=cover, viewport-fit-left=contain"
+Within the safe area at: left
+PASS adjustedContentInset.top is 0
+PASS safeAreaInsetStyle.paddingTop is "10px"
+PASS adjustedContentInset.right is 0
+PASS safeAreaInsetStyle.paddingRight is "20px"
+PASS adjustedContentInset.bottom is 0
+PASS safeAreaInsetStyle.paddingBottom is "30px"
+PASS adjustedContentInset.left is 40
+PASS safeAreaInsetStyle.paddingLeft is "0px"
+PASS innerWidth is viewportWidthWithoutSafeArea - 40
+PASS innerHeight is viewportHeightWithoutSafeArea
+
+Set the viewport to "initial-scale=1, width=device-width, viewport-fit=cover, viewport-fit-right=contain"
+Within the safe area at: right
+PASS adjustedContentInset.top is 0
+PASS safeAreaInsetStyle.paddingTop is "10px"
+PASS adjustedContentInset.right is 20
+PASS safeAreaInsetStyle.paddingRight is "0px"
+PASS adjustedContentInset.bottom is 0
+PASS safeAreaInsetStyle.paddingBottom is "30px"
+PASS adjustedContentInset.left is 0
+PASS safeAreaInsetStyle.paddingLeft is "40px"
+PASS innerWidth is viewportWidthWithoutSafeArea - 20
+PASS innerHeight is viewportHeightWithoutSafeArea
+
+Set the viewport to "initial-scale=1, width=device-width, viewport-fit=cover"
+Within the safe area at: no edges
+PASS adjustedContentInset.top is 0
+PASS safeAreaInsetStyle.paddingTop is "10px"
+PASS adjustedContentInset.right is 0
+PASS safeAreaInsetStyle.paddingRight is "20px"
+PASS adjustedContentInset.bottom is 0
+PASS safeAreaInsetStyle.paddingBottom is "30px"
+PASS adjustedContentInset.left is 0
+PASS safeAreaInsetStyle.paddingLeft is "40px"
+PASS innerWidth is viewportWidthWithoutSafeArea
+PASS innerHeight is viewportHeightWithoutSafeArea
+
+Set the viewport to "initial-scale=1, width=device-width, viewport-fit-bottom=cover"
+Within the safe area at: top, right, left
+PASS adjustedContentInset.top is 10
+PASS safeAreaInsetStyle.paddingTop is "0px"
+PASS adjustedContentInset.right is 20
+PASS safeAreaInsetStyle.paddingRight is "0px"
+PASS adjustedContentInset.bottom is 0
+PASS safeAreaInsetStyle.paddingBottom is "30px"
+PASS adjustedContentInset.left is 40
+PASS safeAreaInsetStyle.paddingLeft is "0px"
+PASS innerWidth is viewportWidthWithoutSafeArea - 60
+PASS innerHeight is viewportHeightWithoutSafeArea - 10
+
+Set the viewport to "initial-scale=1, width=device-width, viewport-fit=contain"
+Within the safe area at: top, right, bottom, left
+PASS adjustedContentInset.top is 10
+PASS safeAreaInsetStyle.paddingTop is "0px"
+PASS adjustedContentInset.right is 20
+PASS safeAreaInsetStyle.paddingRight is "0px"
+PASS adjustedContentInset.bottom is 30
+PASS safeAreaInsetStyle.paddingBottom is "0px"
+PASS adjustedContentInset.left is 40
+PASS safeAreaInsetStyle.paddingLeft is "0px"
+PASS innerWidth is viewportWidthWithoutSafeArea - 60
+PASS innerHeight is viewportHeightWithoutSafeArea - 10
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
