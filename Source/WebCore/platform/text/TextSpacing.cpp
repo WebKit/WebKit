@@ -66,13 +66,6 @@ bool TextAutospace::shouldApplySpacing(char32_t firstCharacter, char32_t secondC
     return shouldApplySpacing(TextSpacing::characterClass(firstCharacter), TextSpacing::characterClass(secondCharacter));
 }
 
-float TextAutospace::textAutospaceSize(const Font& font)
-{
-    // https://www.w3.org/TR/css-text-4/#text-autospace-property
-    // The amount of space introduced by these keywords is 1/8 of the CJK advance measure, i.e 0.125ic.
-    return 0.125 * font.fontMetrics().ideogramWidth().value_or(0);
-}
-
 namespace TextSpacing {
 
 bool isIdeograph(char32_t character)

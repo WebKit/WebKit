@@ -238,6 +238,15 @@ inline void BuilderState::setFontDescriptionTextAutospace(TextAutospace textAuto
     m_style->mutableFontDescriptionWithoutUpdate().setTextAutospace(toPlatform(textAutospace));
 }
 
+inline void BuilderState::setFontDescriptionTextAutospaceSize(TextAutospaceSize textAutospaceSize)
+{
+    if (m_style->fontDescription().textAutospaceSize() == textAutospaceSize.value)
+        return;
+
+    m_fontDirty = true;
+    m_style->mutableFontDescriptionWithoutUpdate().setTextAutospaceSize(textAutospaceSize.value);
+}
+
 inline void BuilderState::setFontDescriptionTextRenderingMode(TextRenderingMode textRenderingMode)
 {
     if (m_style->fontDescription().textRenderingMode() == textRenderingMode)

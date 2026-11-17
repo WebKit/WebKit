@@ -269,7 +269,7 @@ class NumericLiteral(object):
             raise Exception(f"Invalid numeric literal suffix: {suffix}")
 
     def __init__(self, string):
-        match = re.fullmatch(r"(\d+)([a-z%]*)", string)
+        match = re.fullmatch(r"(\d+(?:\.\d+)?)([a-z%]*)", string)
         if not match:
             raise Exception(f"Invalid numeric literal specified: {string}")
 
@@ -326,7 +326,7 @@ class InitialValue(object):
     def process(element):
         if re.fullmatch(r"[A-Za-z-]+", element):
             return ValueKeywordName(element)
-        elif re.fullmatch(r"\d+[a-z%]*", element):
+        elif re.fullmatch(r"\d+(?:\.\d+)?[a-z%]*", element):
             return NumericLiteral(element)
         elif re.fullmatch(r"@[A-Za-z-]+", element):
             return SpecialLiteral(element)

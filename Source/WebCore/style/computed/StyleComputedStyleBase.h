@@ -438,6 +438,7 @@ using InsetBox = MinimallySerializingSpaceSeparatedRectEdges<InsetEdge>;
 using LineWidthBox = MinimallySerializingSpaceSeparatedRectEdges<LineWidth>;
 using MarginBox = MinimallySerializingSpaceSeparatedRectEdges<MarginEdge>;
 using MaskLayers = CoordinatedValueList<MaskLayer>;
+using TextAutospaceSize = Number<CSS::Nonnegative, float>;
 using ObjectPosition = Position;
 using Order = Integer<>;
 using PaddingBox = MinimallySerializingSpaceSeparatedRectEdges<PaddingEdge>;

@@ -231,6 +231,7 @@ public:
     void setFontDescriptionOpticalSizing(FontOpticalSizing);
     void setFontDescriptionLocale(WebkitLocale&&);
     void setFontDescriptionTextAutospace(TextAutospace);
+    void setFontDescriptionTextAutospaceSize(TextAutospaceSize);
     void setFontDescriptionTextRenderingMode(TextRenderingMode);
     void setFontDescriptionTextSpacingTrim(TextSpacingTrim);
     void setFontDescriptionVariantCaps(FontVariantCaps);

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<meta charset="UTF-8">
+<link rel="author" title="Tim Nguyen" href="https://github.com/nt1m">
+<link rel="help" href="https://github.com/w3c/csswg-drafts/issues/8510#issuecomment-6438888621">
+<meta name="test" content="text-autospace-size supports animation by computed value type">
+
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/css/support/interpolation-testcommon.js"></script>
+
+<style>
+.parent {
+  text-autospace-size: 1;
+}
+.target {
+  text-autospace-size: 0.25;
+}
+</style>
+
+<body></body>
+
+<script>
+test_interpolation({
+  property: 'text-autospace-size',
+  from: neutralKeyframe,
+  to: '0.5',
+}, [
+  {at: -0.3, expect: '0.175'},
+  {at: 0, expect: '0.25'},
+  {at: 0.3, expect: '0.325'},
+  {at: 0.6, expect: '0.4'},
+  {at: 1, expect: '0.5'},
+  {at: 1.5, expect: '0.625'},
+]);
+
+test_interpolation({
+  property: 'text-autospace-size',
+  from: 'initial',
+  to: '0.5',
+}, [
+  {at: -0.3, expect: '0.0125'},
+  {at: 0, expect: '0.125'},
+  {at: 0.3, expect: '0.2375'},
+  {at: 0.6, expect: '0.35'},
+  {at: 1, expect: '0.5'},
+  {at: 1.5, expect: '0.6875'},
+]);
+
+test_interpolation({
+  property: 'text-autospace-size',
+  from: 'inherit',
+  to: '0.5',
+}, [
+  {at: -0.3, expect: '1.15'},
+  {at: 0, expect: '1'},
+  {at: 0.3, expect: '0.85'},
+  {at: 0.6, expect: '0.7'},
+  {at: 1, expect: '0.5'},
+  {at: 1.5, expect: '0.25'},
+]);
+
+test_interpolation({
+  property: 'text-autospace-size',
+  from: '0',
+  to: '1',
+}, [
+  {at: -0.3, expect: '0'},
+  {at: 0, expect: '0'},
+  {at: 0.3, expect: '0.3'},
+  {at: 0.6, expect: '0.6'},
+  {at: 1, expect: '1'},
+  {at: 1.5, expect: '1.5'},
+]);
+</script>

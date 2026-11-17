@@ -141,7 +141,6 @@ public:
 
     bool shouldApplySpacing(TextSpacing::CharacterClass firstCharacterClass, TextSpacing::CharacterClass secondCharacterClass) const;
     bool shouldApplySpacing(char32_t firstCharacter, char32_t secondCharacter) const;
-    NODELETE static float textAutospaceSize(const Font&);
 
 private:
     Options m_options { };
