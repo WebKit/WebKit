@@ -291,7 +291,6 @@ void RemoteInspectorClient::setTargetList(uint64_t connectionID, Vector<Target>&
 void RemoteInspectorClient::sendMessageToFrontend(uint64_t connectionID, uint64_t targetID, const char* message)
 {
     auto proxy = m_inspectorProxyMap.get(std::make_pair(connectionID, targetID));
-    ASSERT(proxy);
     if (!proxy)
         return;
     proxy->sendMessageToFrontend(String::fromUTF8(message));
