@@ -115,7 +115,6 @@ struct MatchElement {
     bool operator==(const MatchElement&) const = default;
     unsigned hash() const { return pairIntHash(static_cast<unsigned>(relation), hasRelation ? static_cast<unsigned>(*hasRelation) : 255u); }
 };
-constexpr unsigned matchRelationCount = static_cast<unsigned>(MatchElement::Relation::HostChild) + 1;
 
 enum class IsNegation : bool { No, Yes };
 
@@ -175,9 +174,6 @@ struct RuleFeatureSet {
     };
     void collectFeatures(CollectionContext&, const RuleData&, const Vector<Ref<const StyleRuleScope>>& scopeRules = { });
 
-    bool usesRelation(MatchElement::Relation relation) const { return usedRelations[std::to_underlying(relation)]; }
-    void setUsesRelation(MatchElement::Relation relation) { usedRelations[std::to_underlying(relation)] = true; }
-
     HashSet<AtomString> idsInRules;
     HashSet<AtomString> idsMatchingAncestorsInRules;
     HashSet<AtomString> attributeLowercaseLocalNamesInRules;
@@ -193,8 +189,6 @@ struct RuleFeatureSet {
     HashSet<AtomString> attributesAffectingHost;
     HashSet<CSSSelector::PseudoClass, IntHash<CSSSelector::PseudoClass>> pseudoClassesAffectingHost;
     HashSet<CSSSelector::PseudoClass, IntHash<CSSSelector::PseudoClass>> pseudoClasses;
-
-    std::array<bool, matchRelationCount> usedRelations { };
 
     bool usesFirstLineRules { false };
     bool usesFirstLetterRules { false };
