@@ -2,12 +2,12 @@ layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,6) size 534x594
-    RenderSVGText {text} at (110,6) size 112x18 contains 1 chunk(s)
+    RenderSVGText {text} at (110,6) size 111x18 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 111x18
+        chunk 1 text run 1 at (110.00,20.00) startOffset 0 endOffset 19 width 110.61: "Visibility: visible"
+    RenderSVGText {text} at (340,6) size 112x18 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 112x18
-        chunk 1 text run 1 at (110.00,20.00) startOffset 0 endOffset 19 width 111.56: "Visibility: visible"
-    RenderSVGText {text} at (340,6) size 113x18 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 113x18
-        chunk 1 text run 1 at (340.00,20.00) startOffset 0 endOffset 18 width 112.45: "Visibility: hidden"
+        chunk 1 text run 1 at (340.00,20.00) startOffset 0 endOffset 18 width 111.49: "Visibility: hidden"
     RenderSVGContainer {g} at (0,23) size 534x577
       RenderSVGText {text} at (0,46) size 28x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 28x18
@@ -315,9 +315,9 @@ layer at (0,0) size 800x600
       RenderSVGText {text} at (504,321) size 27x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 27x18
           chunk 1 text run 1 at (504.00,335.00) startOffset 0 endOffset 3 width 26.66: "HIT"
-      RenderSVGText {text} at (0,388) size 19x18 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 19x18
-          chunk 1 text run 1 at (0.00,402.00) startOffset 0 endOffset 4 width 18.66: "fill"
+      RenderSVGText {text} at (0,388) size 18x18 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 18x18
+          chunk 1 text run 1 at (0.00,402.00) startOffset 0 endOffset 4 width 17.79: "fill"
       RenderSVGText {text} at (100,366) size 20x46 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 20x46
           chunk 1 text run 1 at (100.00,402.00) startOffset 0 endOffset 1 width 20.00: "#"

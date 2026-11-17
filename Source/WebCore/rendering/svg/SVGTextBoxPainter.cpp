@@ -79,7 +79,7 @@ FloatRect selectionRectForTextFragment(const RenderSVGInlineText& renderer, Text
 
     LayoutRect selectionRect { textOrigin, LayoutSize(0, LayoutUnit(fragment.height * scalingFactor)) };
     TextRun run = constructTextRun(renderer.text(), direction, style, fragment);
-    scaledFont.adjustSelectionRectForText(renderer.canUseSimplifiedTextMeasuringWithScaledFont().value_or(false), run, selectionRect, startPosition, endPosition);
+    scaledFont.adjustSelectionRectForText(false, run, selectionRect, startPosition, endPosition);
     FloatRect snappedSelectionRect = snapRectToDevicePixelsWithWritingDirection(selectionRect, renderer.document().deviceScaleFactor(), run.ltr());
     if (scalingFactor == 1)
         return snappedSelectionRect;
@@ -622,9 +622,9 @@ void SVGTextBoxPainter::paintText(const Style::ComputedStyle& style, const Style
         paintTextWithShadows(style, textRun, fragment, endPosition, fragment.length);
 }
 
-TextRun constructTextRun(StringView text, TextDirection direction, const Style::ComputedStyle& style, const SVGTextFragment& fragment)
+TextRun constructTextRun(StringView text, TextDirection direction, const Style::ComputedStyle& style)
 {
-    TextRun run(text.substring(fragment.characterOffset, fragment.length),
+    TextRun run(text,
         0, /* xPos, only relevant with allowTabs=true */
         0, /* padding, only relevant for justified text, not relevant for SVG */
         ExpansionBehavior::allowRightOnly(),
@@ -634,6 +634,11 @@ TextRun constructTextRun(StringView text, TextDirection direction, const Style::
     // We handle letter & word spacing ourselves.
     run.disableSpacing();
     return run;
+}
+
+TextRun constructTextRun(StringView text, TextDirection direction, const Style::ComputedStyle& style, const SVGTextFragment& fragment)
+{
+    return constructTextRun(text.substring(fragment.characterOffset, fragment.length), direction, style);
 }
 
 std::pair<unsigned, unsigned> SVGTextBoxPainter::selectionStartEnd() const

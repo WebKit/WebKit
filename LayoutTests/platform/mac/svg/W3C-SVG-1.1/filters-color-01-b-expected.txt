@@ -32,24 +32,24 @@ layer at (0,0) size 480x360
               chunk 1 text run 1 at (20.00,95.00) startOffset 0 endOffset 10 width 196.02: "Unfiltered"
           RenderSVGRect {rect} at (19,74) size 442x24 [fill={[type=LINEAR-GRADIENT] [id="MyGradient"]}] [x=20.00] [y=120.00] [width=760.00] [height=40.00]
             [filter="Matrix"] RenderSVGResourceFilter {filter} at (20,120) size 760x40
-          RenderSVGText {text} at (20,154) size 674x50 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,0) size 674x49
-              chunk 1 text run 1 at (20.00,195.00) startOffset 0 endOffset 32 width 673.11: "type=\"matrix\" (grayscale matrix)"
+          RenderSVGText {text} at (20,154) size 672x50 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 672x49
+              chunk 1 text run 1 at (20.00,195.00) startOffset 0 endOffset 32 width 671.89: "type=\"matrix\" (grayscale matrix)"
           RenderSVGRect {rect} at (0,131) size 480x26 [fill={[type=LINEAR-GRADIENT] [id="MyGradient"]}] [x=20.00] [y=220.00] [width=760.00] [height=40.00]
             [filter="Saturate40"] RenderSVGResourceFilter {filter} at (-18,218) size 836x44
-          RenderSVGText {text} at (20,254) size 577x50 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,0) size 577x49
-              chunk 1 text run 1 at (20.00,295.00) startOffset 0 endOffset 27 width 576.41: "type=\"saturate\" values=\".4\""
+          RenderSVGText {text} at (20,254) size 575x50 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 575x49
+              chunk 1 text run 1 at (20.00,295.00) startOffset 0 endOffset 27 width 574.73: "type=\"saturate\" values=\".4\""
           RenderSVGRect {rect} at (0,189) size 480x26 [fill={[type=LINEAR-GRADIENT] [id="MyGradient"]}] [x=20.00] [y=320.00] [width=760.00] [height=40.00]
             [filter="HueRotate90"] RenderSVGResourceFilter {filter} at (-18,318) size 836x44
-          RenderSVGText {text} at (20,354) size 627x50 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,0) size 627x49
-              chunk 1 text run 1 at (20.00,395.00) startOffset 0 endOffset 28 width 626.58: "type=\"hueRotate\" values=\"90\""
+          RenderSVGText {text} at (20,354) size 625x50 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 625x49
+              chunk 1 text run 1 at (20.00,395.00) startOffset 0 endOffset 28 width 624.63: "type=\"hueRotate\" values=\"90\""
           RenderSVGRect {rect} at (0,247) size 480x26 [fill={[type=LINEAR-GRADIENT] [id="MyGradient"]}] [x=20.00] [y=420.00] [width=760.00] [height=40.00]
             [filter="LuminanceToAlpha"] RenderSVGResourceFilter {filter} at (-18,418) size 836x44
-          RenderSVGText {text} at (20,454) size 525x50 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,0) size 525x49
-              chunk 1 text run 1 at (20.00,495.00) startOffset 0 endOffset 23 width 524.63: "type=\"luminanceToAlpha\""
+          RenderSVGText {text} at (20,454) size 518x50 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 518x49
+              chunk 1 text run 1 at (20.00,495.00) startOffset 0 endOffset 23 width 517.40: "type=\"luminanceToAlpha\""
     RenderSVGText {text} at (10,304) size 264x46 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 264x46
         chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 263.34: "$Revision: 1.6 $"

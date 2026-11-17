@@ -6,14 +6,14 @@ layer at (0,0) size 480x360
       RenderSVGText {text} at (3,8) size 364x46 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 364x45
           chunk 1 text run 1 at (3.00,45.00) startOffset 0 endOffset 19 width 363.01: "calcMode=\"discrete\""
-      RenderSVGText {text} at (3,63) size 379x46 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 379x45
-          chunk 1 text run 1 at (3.00,100.00) startOffset 0 endOffset 21 width 378.55: "keyTimes=\"0;.2;.6;.8\""
+      RenderSVGText {text} at (3,63) size 378x46 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 378x45
+          chunk 1 text run 1 at (3.00,100.00) startOffset 0 endOffset 21 width 377.07: "keyTimes=\"0;.2;.6;.8\""
       RenderSVGContainer {g} at (10,138) size 451x150
         RenderSVGContainer {g} at (10,138) size 451x150 [transform={m=((1.00,0.00)(0.00,1.00)) t=(150.00,140.00)}]
-          RenderSVGText {text} at (-140,107) size 142x41 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,0) size 142x41
-              chunk 1 text run 1 at (-140.00,140.00) startOffset 0 endOffset 9 width 141.98: "Time (s):"
+          RenderSVGText {text} at (-140,107) size 141x41 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 141x41
+              chunk 1 text run 1 at (-140.00,140.00) startOffset 0 endOffset 9 width 140.64: "Time (s):"
           RenderSVGText {text} at (290,107) size 21x41 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,0) size 21x41
               chunk 1 text run 1 at (290.00,140.00) startOffset 0 endOffset 1 width 20.02: "0"

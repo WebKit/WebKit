@@ -13,16 +13,16 @@ layer at (0,0) size 480x360
       RenderSVGContainer {g} at (71,112) size 179x107 [transform={m=((1.00,0.00)(0.00,1.00)) t=(120.00,45.00)}]
         RenderSVGText {text} at (-179,-13) size 179x17 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 179x16
-            chunk 1 (end anchor) text run 1 at (-178.96,0.00) startOffset 0 endOffset 30 width 178.96: "dur=5s repeatCount unspecified"
+            chunk 1 (end anchor) text run 1 at (-178.19,0.00) startOffset 0 endOffset 30 width 178.19: "dur=5s repeatCount unspecified"
         RenderSVGText {text} at (-126,12) size 126x17 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 126x16
             chunk 1 (end anchor) text run 1 at (-125.82,25.00) startOffset 0 endOffset 20 width 125.82: "dur=1s repeatCount=5"
         RenderSVGText {text} at (-144,37) size 144x17 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 144x16
             chunk 1 (end anchor) text run 1 at (-143.32,50.00) startOffset 0 endOffset 23 width 143.32: "dur=10s repeatCount=0.5"
-        RenderSVGText {text} at (-173,62) size 173x17 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 173x16
-            chunk 1 (end anchor) text run 1 at (-172.47,75.00) startOffset 0 endOffset 29 width 172.47: "dur=1s repeatCount=indefinite"
+        RenderSVGText {text} at (-172,62) size 172x17 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 172x16
+            chunk 1 (end anchor) text run 1 at (-171.71,75.00) startOffset 0 endOffset 29 width 171.71: "dur=1s repeatCount=indefinite"
         RenderSVGText {text} at (-41,77) size 41x17 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 41x16
             chunk 1 (end anchor) text run 1 at (-40.56,90.00) startOffset 0 endOffset 6 width 40.56: "end=5s"

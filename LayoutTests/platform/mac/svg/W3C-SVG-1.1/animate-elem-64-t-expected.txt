@@ -14,9 +14,9 @@ layer at (0,0) size 480x360
         RenderSVGText {text} at (-65,-13) size 65x17 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 65x16
             chunk 1 (end anchor) text run 1 at (-64.13,0.00) startOffset 0 endOffset 11 width 64.13: "clock value"
-        RenderSVGText {text} at (-54,52) size 54x17 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 54x16
-            chunk 1 (end anchor) text run 1 at (-53.65,65.00) startOffset 0 endOffset 10 width 53.65: "indefinite"
+        RenderSVGText {text} at (-53,52) size 53x17 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 53x16
+            chunk 1 (end anchor) text run 1 at (-52.88,65.00) startOffset 0 endOffset 10 width 52.88: "indefinite"
         RenderSVGText {text} at (-35,117) size 35x17 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 35x16
             chunk 1 (end anchor) text run 1 at (-34.21,130.00) startOffset 0 endOffset 5 width 34.21: "media"

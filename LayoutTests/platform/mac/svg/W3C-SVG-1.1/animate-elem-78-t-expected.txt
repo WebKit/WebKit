@@ -13,10 +13,10 @@ layer at (0,0) size 480x360
       RenderSVGContainer {g} at (27,74) size 83x214 [transform={m=((1.00,0.00)(0.00,1.00)) t=(30.00,10.00)}]
         RenderSVGText {text} at (-14,-11) size 14x14 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 14x14
-            chunk 1 (end anchor) text run 1 at (-14.00,0.00) startOffset 0 endOffset 4 width 14.00: "fill"
-        RenderSVGText {text} at (-37,9) size 37x14 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 37x14
-            chunk 1 (end anchor) text run 1 at (-36.65,20.00) startOffset 0 endOffset 9 width 36.65: "fill-rule"
+            chunk 1 (end anchor) text run 1 at (-13.34,0.00) startOffset 0 endOffset 4 width 13.34: "fill"
+        RenderSVGText {text} at (-36,9) size 36x14 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 36x14
+            chunk 1 (end anchor) text run 1 at (-35.99,20.00) startOffset 0 endOffset 9 width 35.99: "fill-rule"
         RenderSVGText {text} at (-30,29) size 30x14 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 30x14
             chunk 1 (end anchor) text run 1 at (-29.33,40.00) startOffset 0 endOffset 6 width 29.33: "stroke"
@@ -34,7 +34,7 @@ layer at (0,0) size 480x360
             chunk 1 (end anchor) text run 1 at (-81.32,120.00) startOffset 0 endOffset 17 width 81.32: "stroke-miterlimit"
         RenderSVGText {text} at (-83,129) size 83x14 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 83x14
-            chunk 1 (end anchor) text run 1 at (-82.64,140.00) startOffset 0 endOffset 17 width 82.64: "stroke-dashoffset"
+            chunk 1 (end anchor) text run 1 at (-82.43,140.00) startOffset 0 endOffset 17 width 82.43: "stroke-dashoffset"
         RenderSVGText {text} at (-35,149) size 35x14 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 35x14
             chunk 1 (end anchor) text run 1 at (-34.66,160.00) startOffset 0 endOffset 7 width 34.66: "display"

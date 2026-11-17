@@ -72,6 +72,7 @@ private:
         bool isAddressable : 1 { false };
         bool isClusterStart : 1 { false };
         bool startsAnchoredChunk : 1 { false };
+        bool startsShapingRun : 1 { false };
         bool isHidden : 1 { false };
         bool isPositioned : 1 { false };
         bool isOnPath : 1 { false };
@@ -115,6 +116,8 @@ private:
     void collectTextBoxes();
     void computeCSSPositions();
     void resolveCharacterPositioning();
+    void computeShapingRunStarts();
+    void measureText();
     NODELETE void adjustRelativePositions();
     void applyTextLength();
     NODELETE void adjustAbsolutePositions();

@@ -13,7 +13,7 @@ layer at (0,0) size 480x360
       RenderSVGContainer {g} at (104,112) size 76x167 [transform={m=((1.00,0.00)(0.00,1.00)) t=(80.00,25.00)}]
         RenderSVGText {text} at (-48,-13) size 48x17 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 48x16
-            chunk 1 (end anchor) text run 1 at (-47.82,0.00) startOffset 0 endOffset 9 width 47.82: "2 offsets"
+            chunk 1 (end anchor) text run 1 at (-47.58,0.00) startOffset 0 endOffset 9 width 47.58: "2 offsets"
         RenderSVGText {text} at (-70,12) size 70x17 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 70x16
             chunk 1 (end anchor) text run 1 at (-69.99,25.00) startOffset 0 endOffset 12 width 69.99: "2 sync bases"

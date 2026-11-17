@@ -105,7 +105,6 @@ void RenderSVGInlineText::setRenderedText(const String& text)
 {
     bool preservesWhiteSpace = style().whiteSpaceCollapse() == WhiteSpaceCollapse::Preserve;
     RenderText::setRenderedText(preservesWhiteSpace ? applySVGWhitespaceRules(text, true) : text);
-    m_canUseSimplifiedTextMeasuringWithScaledFont = { };
 }
 
 void RenderSVGInlineText::styleDidChange(Style::Difference diff, const Style::ComputedStyle* oldStyle)
@@ -219,8 +218,7 @@ void RenderSVGInlineText::updateScaledFont()
 {
     float scalingFactor = 1;
     FontCascade scaledFont;
-    if (computeNewScaledFontForStyle(*this, style(), scalingFactor, scaledFont))
-        m_canUseSimplifiedTextMeasuringWithScaledFont = { };
+    computeNewScaledFontForStyle(*this, style(), scalingFactor, scaledFont);
     if (scalingFactor != m_scalingFactor || scaledFont != m_scaledFont)
         m_hasValidTextMetrics = false;
     m_scalingFactor = scalingFactor;
@@ -251,14 +249,14 @@ float RenderSVGInlineText::computeNonScalingStrokeScaleForRenderer(const RenderO
     return narrowPrecisionToFloat(std::hypot(transform.xScale(), transform.yScale()) / std::numbers::sqrt2);
 }
 
-bool RenderSVGInlineText::computeNewScaledFontForStyle(const RenderObject& renderer, const Style::ComputedStyle& style, float& scalingFactor, FontCascade& scaledFont)
+void RenderSVGInlineText::computeNewScaledFontForStyle(const RenderObject& renderer, const Style::ComputedStyle& style, float& scalingFactor, FontCascade& scaledFont)
 {
     // Alter font-size to the right on-screen value to avoid scaling the glyphs themselves, except when GeometricPrecision is specified
     scalingFactor = computeScalingFactorForRenderer(renderer);
     if (!scalingFactor) {
         scalingFactor = 1;
         scaledFont = style.fontCascade();
-        return false;
+        return;
     }
 
     if (style.fontDescription().textRenderingMode() == TextRenderingMode::GeometricPrecision)
@@ -276,7 +274,6 @@ bool RenderSVGInlineText::computeNewScaledFontForStyle(const RenderObject& rende
 
     scaledFont = FontCascade(WTF::move(fontDescription));
     scaledFont.update(protect(protect(renderer.document())->fontSelector()).ptr());
-    return true;
 }
 
 }

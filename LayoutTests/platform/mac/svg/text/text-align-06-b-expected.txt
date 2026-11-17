@@ -3,9 +3,9 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 800x600
     RenderSVGContainer {g} at (0,6) size 800x594
-      RenderSVGText {text} at (0,3) size 485x46 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 485x45
-          chunk 1 text run 1 at (0.00,40.00) startOffset 0 endOffset 31 width 484.30: "Test 'baseline-shift' (vertic.)"
+      RenderSVGText {text} at (0,3) size 480x46 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 480x45
+          chunk 1 text run 1 at (0.00,40.00) startOffset 0 endOffset 31 width 479.86: "Test 'baseline-shift' (vertic.)"
       RenderSVGContainer {g} at (136,100) size 490x500
         RenderSVGContainer {g} at (136,100) size 490x500 [transform={m=((1.00,0.00)(0.00,1.00)) t=(90.00,60.00)}]
           RenderSVGText {text} at (-9,0) size 25x168 contains 1 chunk(s)

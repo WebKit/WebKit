@@ -29,6 +29,15 @@
 
 namespace WebCore {
 
+struct SVGTextShapingRun {
+    unsigned start { 0 };
+    TextDirection direction { TextDirection::LTR };
+
+    friend bool operator==(const SVGTextShapingRun&, const SVGTextShapingRun&) = default;
+};
+
+using SVGTextShapingRuns = Vector<SVGTextShapingRun, 1>;
+
 class RenderSVGInlineText final : public RenderText {
     WTF_MAKE_TZONE_ALLOCATED(RenderSVGInlineText);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderSVGInlineText);
@@ -38,21 +47,20 @@ public:
 
     Text& textNode() const { return downcast<Text>(nodeForNonAnonymous()); }
 
-    // Used by SVGTextLayoutAlgorithm, which measures only when the text or the font changes.
+    // Used by SVGTextLayoutAlgorithm, which measures only when the text, the font or the shaping runs change.
     Vector<SVGTextMetrics>& textMetrics() LIFETIME_BOUND { return m_textMetrics; }
     const Vector<SVGTextMetrics>& textMetrics() const LIFETIME_BOUND { return m_textMetrics; }
     bool hasValidTextMetrics() const { return m_hasValidTextMetrics; }
     void setHasValidTextMetrics(bool value) { m_hasValidTextMetrics = value; }
+    const SVGTextShapingRuns& shapingRuns() const LIFETIME_BOUND { return m_shapingRuns; }
+    void setShapingRuns(SVGTextShapingRuns&& runs) { m_shapingRuns = WTF::move(runs); }
 
     static float computeNonScalingStrokeScaleForRenderer(const RenderObject&);
 
     float scalingFactor() const { return m_scalingFactor; }
     const FontCascade& scaledFont() const { return m_scaledFont; }
     void updateScaledFont();
-    // Unknown until the text is measured with the scaled font.
-    std::optional<bool> canUseSimplifiedTextMeasuringWithScaledFont() const { return m_canUseSimplifiedTextMeasuringWithScaledFont; }
-    void setCanUseSimplifiedTextMeasuringWithScaledFont(bool value) { m_canUseSimplifiedTextMeasuringWithScaledFont = value; }
-    static bool computeNewScaledFontForStyle(const RenderObject&, const Style::ComputedStyle&, float& scalingFactor, FontCascade& scaledFont);
+    static void computeNewScaledFontForStyle(const RenderObject&, const Style::ComputedStyle&, float& scalingFactor, FontCascade& scaledFont);
 
     // Preserves floating point precision for the use in DRT. It knows how to round and does a better job than enclosingIntRect.
     FloatRect floatLinesBoundingBox() const;
@@ -74,8 +82,8 @@ private:
     float m_scalingFactor;
     FontCascade m_scaledFont;
     Vector<SVGTextMetrics> m_textMetrics;
+    SVGTextShapingRuns m_shapingRuns;
     bool m_hasValidTextMetrics { false };
-    std::optional<bool> m_canUseSimplifiedTextMeasuringWithScaledFont;
 };
 
 } // namespace WebCore

@@ -80,6 +80,7 @@ private:
     LegacyRenderSVGResource* m_legacyPaintingResource { nullptr };
 };
 
+TextRun constructTextRun(StringView, TextDirection, const Style::ComputedStyle&);
 TextRun constructTextRun(StringView, TextDirection, const Style::ComputedStyle&, const SVGTextFragment&);
 FloatRect selectionRectForTextFragment(const RenderSVGInlineText&, TextDirection, const SVGTextFragment&, unsigned startPosition, unsigned endPosition, const Style::ComputedStyle&);
 NODELETE bool mapStartEndPositionsIntoFragmentCoordinates(unsigned textBoxStart, const SVGTextFragment&, unsigned& startPosition, unsigned& endPosition);

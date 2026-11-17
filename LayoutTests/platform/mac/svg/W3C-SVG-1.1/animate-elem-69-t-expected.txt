@@ -9,20 +9,20 @@ layer at (0,0) size 480x360
     RenderSVGText {text} at (200,12) size 80x23 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 80x23
         chunk 1 (middle anchor) text run 1 at (200.02,30.00) startOffset 0 endOffset 9 width 79.95: "repeatDur"
-    RenderSVGContainer {g} at (83,92) size 322x162 [transform={m=((1.00,0.00)(0.00,1.00)) t=(130.00,80.00)}]
-      RenderSVGContainer {g} at (83,112) size 167x142 [transform={m=((1.00,0.00)(0.00,1.00)) t=(120.00,45.00)}]
-        RenderSVGText {text} at (-167,-13) size 167x17 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 167x16
-            chunk 1 (end anchor) text run 1 at (-166.50,0.00) startOffset 0 endOffset 28 width 166.50: "dur=5s repeatDur unspecified"
+    RenderSVGContainer {g} at (84,92) size 321x162 [transform={m=((1.00,0.00)(0.00,1.00)) t=(130.00,80.00)}]
+      RenderSVGContainer {g} at (84,112) size 166x142 [transform={m=((1.00,0.00)(0.00,1.00)) t=(120.00,45.00)}]
+        RenderSVGText {text} at (-166,-13) size 166x17 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 166x16
+            chunk 1 (end anchor) text run 1 at (-165.74,0.00) startOffset 0 endOffset 28 width 165.74: "dur=5s repeatDur unspecified"
         RenderSVGText {text} at (-119,12) size 119x17 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 119x16
             chunk 1 (end anchor) text run 1 at (-118.82,25.00) startOffset 0 endOffset 19 width 118.82: "dur=1s repeatDur=5s"
         RenderSVGText {text} at (-130,37) size 130x17 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 130x16
             chunk 1 (end anchor) text run 1 at (-129.32,50.00) startOffset 0 endOffset 21 width 129.32: "dur=0.5s repeatDur=5s"
-        RenderSVGText {text} at (-161,62) size 161x17 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 161x16
-            chunk 1 (end anchor) text run 1 at (-160.02,75.00) startOffset 0 endOffset 27 width 160.02: "dur=1s repeatDur=indefinite"
+        RenderSVGText {text} at (-160,62) size 160x17 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 160x16
+            chunk 1 (end anchor) text run 1 at (-159.25,75.00) startOffset 0 endOffset 27 width 159.25: "dur=1s repeatDur=indefinite"
         RenderSVGText {text} at (-41,77) size 41x17 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 41x16
             chunk 1 (end anchor) text run 1 at (-40.56,90.00) startOffset 0 endOffset 6 width 40.56: "end=5s"

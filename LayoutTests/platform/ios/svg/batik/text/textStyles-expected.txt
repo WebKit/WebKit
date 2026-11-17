@@ -7,9 +7,9 @@ layer at (0,0) size 450x500
         RenderSVGInlineText {#text} at (0,0) size 46x18
           chunk 1 (middle anchor) text run 1 at (-22.66,0.00) startOffset 0 endOffset 6 width 45.32: "sample"
     RenderSVGContainer {g} at (31,36) size 384x392
-      RenderSVGText {text} at (133,36) size 184x18 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 183x17
-          chunk 1 (middle anchor) text run 1 at (133.71,50.00) startOffset 0 endOffset 26 width 182.58: "Text Font Faces and Styles"
+      RenderSVGText {text} at (134,36) size 182x18 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 181x17
+          chunk 1 (middle anchor) text run 1 at (134.54,50.00) startOffset 0 endOffset 26 width 180.92: "Text Font Faces and Styles"
       RenderSVGText {text} at (184,66) size 82x12 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 82x12
           chunk 1 (middle anchor) text run 1 at (184.17,75.00) startOffset 0 endOffset 19 width 81.66: "Standard Font Faces"
@@ -114,7 +114,7 @@ layer at (0,0) size 450x500
           chunk 1 (middle anchor) text run 1 at (181.67,310.00) startOffset 0 endOffset 19 width 86.66: "Named Font Families"
       RenderSVGText {text} at (129,316) size 192x12 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 191x12
-          chunk 1 (middle anchor) text run 1 at (129.74,325.00) startOffset 0 endOffset 49 width 190.52: "(Not all typefaces are available on all systems.)"
+          chunk 1 (middle anchor) text run 1 at (129.93,325.00) startOffset 0 endOffset 49 width 190.15: "(Not all typefaces are available on all systems.)"
       RenderSVGContainer {g} at (57,333) size 86x45 [transform={m=((1.00,0.00)(0.00,1.00)) t=(100.00,360.00)}]
         RenderSVGContainer {use} at (57,333) size 86x34
           RenderSVGText {text} at (-43,-27) size 86x34 contains 1 chunk(s)
@@ -122,15 +122,15 @@ layer at (0,0) size 450x500
               chunk 1 (middle anchor) text run 1 at (-42.49,0.00) startOffset 0 endOffset 6 width 84.98: "sample"
         RenderSVGText {text} at (-15,4) size 30x14 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 30x14
-            chunk 1 (middle anchor) text run 1 at (-15.00,15.00) startOffset 0 endOffset 5 width 29.99: "Times"
+            chunk 1 (middle anchor) text run 1 at (-14.79,15.00) startOffset 0 endOffset 5 width 29.57: "Times"
       RenderSVGContainer {g} at (171,329) size 108x49 [transform={m=((1.00,0.00)(0.00,1.00)) t=(225.00,360.00)}]
         RenderSVGContainer {use} at (171,329) size 108x38
           RenderSVGText {text} at (-54,-31) size 108x38 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,0) size 108x37
               chunk 1 (middle anchor) text run 1 at (-53.81,0.00) startOffset 0 endOffset 6 width 107.62: "sample"
-        RenderSVGText {text} at (-21,4) size 42x14 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 41x14
-            chunk 1 (middle anchor) text run 1 at (-20.32,15.00) startOffset 0 endOffset 7 width 40.64: "Verdana"
+        RenderSVGText {text} at (-20,4) size 40x14 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 40x14
+            chunk 1 (middle anchor) text run 1 at (-19.66,15.00) startOffset 0 endOffset 7 width 39.31: "Verdana"
       RenderSVGContainer {g} at (301,332) size 98x46 [transform={m=((1.00,0.00)(0.00,1.00)) t=(350.00,360.00)}]
         RenderSVGContainer {use} at (301,332) size 98x35
           RenderSVGText {text} at (-49,-28) size 98x35 contains 1 chunk(s)
@@ -162,7 +162,7 @@ layer at (0,0) size 450x500
               chunk 1 (middle anchor) text run 1 at (-42.49,0.00) startOffset 0 endOffset 6 width 84.98: "sample"
         RenderSVGText {text} at (-65,4) size 130x14 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 129x14
-            chunk 1 (middle anchor) text run 1 at (-64.48,15.00) startOffset 0 endOffset 25 width 128.95: "AvantGarde (line-through)"
+            chunk 1 (middle anchor) text run 1 at (-64.03,15.00) startOffset 0 endOffset 25 width 128.06: "AvantGarde (line-through)"
     RenderSVGContainer {use} at (0,0) size 448x498
       RenderSVGContainer {g} at (0,0) size 448x498
         RenderSVGRect {rect} at (0,0) size 448x498 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=446.00] [height=496.00]
