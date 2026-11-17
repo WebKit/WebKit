@@ -25,34 +25,22 @@
 
 #pragma once
 
-#ifdef __cplusplus
+#include <wtf/Compiler.h>
+#include <wtf/Platform.h>
+
+DECLARE_SYSTEM_HEADER
+
+#ifdef __OBJC__
 
 #import <Foundation/Foundation.h>
-#import <wtf/Noncopyable.h>
-#import <wtf/RetainPtr.h>
 
-namespace TestWebKitAPI {
+NS_HEADER_AUDIT_BEGIN(nullability, sendability)
 
-class AppleLanguagesOverride {
-    WTF_MAKE_NONCOPYABLE(AppleLanguagesOverride);
-public:
-    explicit AppleLanguagesOverride(NSArray<NSString *> *languages)
-        : m_savedArgumentDomain([NSUserDefaults.standardUserDefaults volatileDomainForName:NSArgumentDomain])
-    {
-        RetainPtr argumentDomain = adoptNS([m_savedArgumentDomain mutableCopy]);
-        [argumentDomain setObject:languages forKey:@"AppleLanguages"];
-        [NSUserDefaults.standardUserDefaults setVolatileDomain:argumentDomain.get() forName:NSArgumentDomain];
-    }
+@interface NSLocale ()
+// The language the device is set to, independent of AppleLanguages overrides.
++ (NSString *)_deviceLanguage;
+@end
 
-    ~AppleLanguagesOverride()
-    {
-        [NSUserDefaults.standardUserDefaults setVolatileDomain:m_savedArgumentDomain.get() forName:NSArgumentDomain];
-    }
+NS_HEADER_AUDIT_END(nullability, sendability)
 
-private:
-    RetainPtr<NSDictionary> m_savedArgumentDomain;
-};
-
-} // namespace TestWebKitAPI
-
-#endif // __cplusplus
+#endif // __OBJC__

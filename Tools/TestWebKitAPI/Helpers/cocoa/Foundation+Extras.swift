@@ -350,3 +350,31 @@ public func createTuple<S, each T>(of type: (repeat each T).Type, from sequence:
 
     return (repeat extract((each T).self, iterator: &iterator))
 }
+
+/// Runs `body` with the process's preferred languages overridden.
+///
+/// Replaces `AppleLanguages` in the volatile argument domain and restores the previous domain when `body`
+/// returns or throws. The argument domain is process-wide, so a suite using this must be `.serialized`.
+/// `.serialized` only orders the tests within that suite, so if the runner ran suites in parallel,
+/// locale-sensitive tests in other suites could observe the override.
+///
+/// - Parameters:
+///   - languages: The language identifiers to prefer, most preferred first.
+///   - body: The work to perform while the override is in effect.
+/// - Returns: Whatever `body` returns.
+/// - Throws: Whatever `body` throws.
+@MainActor
+public func withAppleLanguages<T, E: Error>(
+    _ languages: [String],
+    _ body: @MainActor () async throws(E) -> T
+) async throws(E) -> T {
+    let defaults = UserDefaults.standard
+    let savedArgumentDomain = defaults.volatileDomain(forName: UserDefaults.argumentDomain)
+
+    var argumentDomain = savedArgumentDomain
+    argumentDomain["AppleLanguages"] = languages
+    defaults.setVolatileDomain(argumentDomain, forName: UserDefaults.argumentDomain)
+    defer { defaults.setVolatileDomain(savedArgumentDomain, forName: UserDefaults.argumentDomain) }
+
+    return try await body()
+}

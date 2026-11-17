@@ -460,6 +460,13 @@ extension HTTPServer {
             storage.totalRequests
         }
 
+        /// The `Cookie` header field of the most recent request, or an empty string if it had none or if no request has
+        /// arrived yet.
+        @MainActor
+        public var lastRequestCookies: String {
+            storage.lastRequestCookies
+        }
+
         /// Replaces the responses for paths the server already has, so that later requests for them get the new
         /// responses.
         ///
@@ -477,6 +484,32 @@ extension HTTPServer {
         public func replaceResponses(@RouteBuilder _ route: () -> Route) {
             for child in route().children {
                 storage.setResponse(child.responseData, for: child.path)
+            }
+        }
+
+        /// Adds responses for paths the server doesn't have responses for yet.
+        ///
+        /// Use this for a response that can't be written until the server is running, such as a redirect to another of
+        /// its routes, whose address includes the server's port. Use it also to add routes to a server that another
+        /// helper created, such as routes that only some of its callers need, which the route builder can't express
+        /// because it has no conditionals.
+        ///
+        /// Add a route before anything requests its path, because a request for a path the server has no response for
+        /// crashes the test process.
+        ///
+        /// ```swift
+        /// let destination = serverConfiguration.address.appending(path: "destination")
+        /// serverConfiguration.addResponses {
+        ///     Route("/redirect", statusCode: 302, headerFields: ["Location": destination.absoluteString])
+        /// }
+        /// ```
+        ///
+        /// - Parameter route: The new responses, for paths the server doesn't have responses for yet. Adding a response
+        ///   for a path that already has one traps; use ``replaceResponses(_:)`` to change it instead.
+        @MainActor
+        public func addResponses(@RouteBuilder _ route: () -> Route) {
+            for child in route().children {
+                storage.addResponse(child.responseData, for: child.path)
             }
         }
     }

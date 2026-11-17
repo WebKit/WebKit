@@ -399,7 +399,6 @@ list(APPEND TestWebKit_SOURCES
     Tests/WebKit/WKWebView/SmartLists.mm
     Tests/WebKit/WKWebView/SpatialAudioExperience.mm
     Tests/WebKit/WKWebView/WKBackForwardListTests.mm
-    Tests/WebKit/WKWebView/WKWebExtensionAPILocalization.mm
     Tests/WebKit/WKWebView/WKWebViewLogging.mm
     Tests/WebKit/WKWebView/WKWebViewSpatialTrackingLabels.mm
     Tests/WebKit/WKWebView/WebRTC.mm
@@ -607,7 +606,6 @@ endif ()
 
 set_source_files_properties(
     Helpers/cocoa/WebExtensionUtilities.mm
-    Tests/WebKit/WKWebView/WKWebExtensionAPILocalization.mm
     PROPERTIES
     COMPILE_FLAGS "-fobjc-arc -include ${CMAKE_CURRENT_SOURCE_DIR}/Helpers/TestWebKitAPIPrefix.h"
     SKIP_PRECOMPILE_HEADERS ON)
@@ -860,17 +858,27 @@ list(APPEND TestWebKit_SOURCES
     Tests/WebKit/WKWebView/TimeZoneOverride.swift
     Tests/WebKit/WKWebView/ViewportFitEdges.swift
     Tests/WebKit/WKWebView/WKBackForwardListTests.swift
+    Tests/WebKit/WKWebView/WKWebExtension.swift
     Tests/WebKit/WKWebView/WKWebExtensionAPIAction.swift
     Tests/WebKit/WKWebView/WKWebExtensionAPIAlarms.swift
     Tests/WebKit/WKWebView/WKWebExtensionAPICommands.swift
     Tests/WebKit/WKWebView/WKWebExtensionAPICookies.swift
     Tests/WebKit/WKWebView/WKWebExtensionAPIDOM.swift
     Tests/WebKit/WKWebView/WKWebExtensionAPIDeclarativeNetRequest.swift
+    Tests/WebKit/WKWebView/WKWebExtensionAPIDevTools.swift
     Tests/WebKit/WKWebView/WKWebExtensionAPIEvent.swift
     Tests/WebKit/WKWebView/WKWebExtensionAPIExtension.swift
+    Tests/WebKit/WKWebView/WKWebExtensionAPIExtensionTypes.swift
+    Tests/WebKit/WKWebView/WKWebExtensionAPILocalization.swift
+    Tests/WebKit/WKWebView/WKWebExtensionAPIMenus.swift
     Tests/WebKit/WKWebView/WKWebExtensionAPINamespace.swift
+    Tests/WebKit/WKWebView/WKWebExtensionAPINotifications.swift
     Tests/WebKit/WKWebView/WKWebExtensionAPIOffscreen.swift
     Tests/WebKit/WKWebView/WKWebExtensionAPIPermissions.swift
+    Tests/WebKit/WKWebView/WKWebExtensionAPIRuntime.swift
+    Tests/WebKit/WKWebView/WKWebExtensionAPIScripting.swift
+    Tests/WebKit/WKWebView/WKWebExtensionAPIStorage.swift
+    Tests/WebKit/WKWebView/WKWebExtensionAPITabs.swift
     Tests/WebKit/WKWebView/WKWebExtensionAPITest.swift
     Tests/WebKit/WKWebView/WKWebExtensionAPIWebNavigation.swift
     Tests/WebKit/WKWebView/WKWebExtensionAPIWebRequest.swift
@@ -881,6 +889,7 @@ list(APPEND TestWebKit_SOURCES
     Tests/WebKit/WKWebView/WKWebExtensionDataRecord.swift
     Tests/WebKit/WKWebView/WKWebExtensionMatchPattern.swift
     Tests/WebKit/WKWebView/WKWebExtensionTab.swift
+    Tests/WebKit/WKWebView/WKWebExtensionUnpartitionedStorage.swift
     Tests/WebKit/WKWebView/WKWebExtensionWindow.swift
     Tests/WebKit/WKWebView/WKWebViewHitTestTests.swift
     Tests/WebKit/WKWebView/WKWebViewSwiftOverlayTests.swift
@@ -1112,8 +1121,8 @@ add_dependencies(TestWebKit TestWebKitAPIWebProcessPlugIn)
 # For a non-.app executable, NSBundle.mainBundle is the directory containing
 # the binary, so the .bundle must sit next to the test executables.
 # Directory structure under Resources/cocoa/ is preserved -- some tests
-# (e.g. WKWebExtension.mm) load entire subdirectories as nested bundles via
-# URLForResource:withExtension:@"", which requires web-extension/, *.appex/,
+# (e.g. WKWebExtension.swift) load entire subdirectories as nested bundles via
+# url(forResource:withExtension: ""), which requires web-extension/, *.appex/,
 # and *.mlmodelc/ to retain their layout.
 set(_resources_bundle_dir "${_twkapi_main_bundle_resources_dir}/TestWebKitAPIResources.bundle")
 if (WEBKIT_SDK_IS_MACOS)
