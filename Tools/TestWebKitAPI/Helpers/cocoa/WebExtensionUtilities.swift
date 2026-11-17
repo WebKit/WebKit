@@ -24,12 +24,13 @@
 #if ENABLE_WK_WEB_EXTENSIONS
 
 import CoreGraphics
-import Foundation
+public import Foundation
 private import TestWebKitAPILibrary.Helpers.cocoa.WebExtensionUtilities
 private import WebKit_Private._WKFeature
 private import WebKit_Private.WKPreferencesPrivate
 public import WebKit
 
+public import struct Foundation.URL
 public import struct Swift.String
 
 #if WTF_PLATFORM_MAC
@@ -236,6 +237,20 @@ extension TestWebExtensionManager {
         internalDelegate.promptForPermissionToAccessURLs = { _, urls, callback in
             callback(urls, nil)
         }
+    }
+}
+
+extension WKWebExtension.MatchPattern {
+    /// Returns the cached pattern that matches every path on a URL's scheme and host.
+    ///
+    /// - Parameter url: The URL whose scheme and host to match.
+    /// - Returns: The pattern, or `nil` if the URL has no scheme or host, or if no pattern can be made from them.
+    public static func cachedPattern(matchingAllPathsOf url: URL) -> WKWebExtension.MatchPattern? {
+        guard let scheme = url.scheme, let host = url.host() else {
+            return nil
+        }
+
+        return cachedPattern(scheme: scheme, host: host, path: "/*")
     }
 }
 
