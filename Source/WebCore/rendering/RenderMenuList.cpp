@@ -129,7 +129,8 @@ void RenderMenuList::updateOptionsWidth()
             auto text = htmlSelectMultipleItems(count);
             if (countReplacesSelectedContent)
                 text = select->buttonLabelText(text);
-            auto run = RenderBlock::constructTextRun(applyTextTransform(style, text), style);
+            auto transformed = applyTextTransform(style, text);
+            auto run = RenderBlock::constructTextRun(transformed, style);
             return font->width(run);
         };
         widthWithoutOptions = countTextWidth(0);

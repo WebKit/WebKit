@@ -1,0 +1,13 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ HTMLEnhancedSelectMultipleDropdownBoxEnabled=true ] -->
+<html>
+<body>
+<p>This test passes if it does not crash.</p>
+<select multiple size="1" style="text-transform: uppercase"><option>a</option><option>b</option><option>c</option><option>d</option></select>
+<select multiple size="1" style="text-transform: full-width"><option>a</option><option>b</option><option>c</option><option>d</option></select>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+document.body.offsetTop;
+</script>
+</body>
+</html>

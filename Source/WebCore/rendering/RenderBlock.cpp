@@ -2869,7 +2869,7 @@ String RenderBlock::debugDescription() const
     return RenderObject::debugDescription();
 }
 
-TextRun RenderBlock::constructTextRun(StringView stringView, const Style::ComputedStyle& style, ExpansionBehavior expansion, TextRunFlags flags)
+static TextRun constructTextRunFromString(String&& string, const Style::ComputedStyle& style, ExpansionBehavior expansion, TextRunFlags flags)
 {
     auto textDirection = TextDirection::LTR;
     bool directionalOverride = style.rtlOrdering() == Order::Visual;
@@ -2880,22 +2880,25 @@ TextRun RenderBlock::constructTextRun(StringView stringView, const Style::Comput
             directionalOverride |= isOverride(style.unicodeBidi());
     }
 
-    // This works because:
-    // 1. TextRun owns its text string. Its member is a String, not a StringView
-    // 2. This replacement doesn't affect string indices. We're replacing a single Unicode code unit with another Unicode code unit.
-    // How convenient.
-    auto updatedString = RenderBlock::updateSecurityDiscCharacters(style, stringView.toStringWithoutCopying());
+    // This replacement doesn't affect string indices. We're replacing a single Unicode code unit with another Unicode code unit.
+    auto updatedString = RenderBlock::updateSecurityDiscCharacters(style, WTF::move(string));
     return TextRun(WTF::move(updatedString), 0, 0, expansion, textDirection, directionalOverride);
+}
+
+TextRun RenderBlock::constructTextRun(StringView stringView, const Style::ComputedStyle& style, ExpansionBehavior expansion, TextRunFlags flags)
+{
+    // The TextRun does not own the characters, the caller must keep them alive while the TextRun is used.
+    return constructTextRunFromString(stringView.toStringWithoutCopying(), style, expansion, flags);
 }
 
 TextRun RenderBlock::constructTextRun(const String& string, const Style::ComputedStyle& style, ExpansionBehavior expansion, TextRunFlags flags)
 {
-    return constructTextRun(StringView(string), style, expansion, flags);
+    return constructTextRunFromString(String { string.isNull() ? emptyString() : string }, style, expansion, flags);
 }
 
 TextRun RenderBlock::constructTextRun(const AtomString& atomString, const Style::ComputedStyle& style, ExpansionBehavior expansion, TextRunFlags flags)
 {
-    return constructTextRun(StringView(atomString), style, expansion, flags);
+    return constructTextRun(atomString.string(), style, expansion, flags);
 }
 
 TextRun RenderBlock::constructTextRun(const RenderText& text, const Style::ComputedStyle& style, ExpansionBehavior expansion)
