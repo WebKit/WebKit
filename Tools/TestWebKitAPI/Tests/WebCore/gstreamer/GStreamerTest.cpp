@@ -34,10 +34,18 @@
 #include <WebCore/GStreamerCommon.h>
 #include <WebCore/GUniquePtrGStreamer.h>
 #include <WebCore/IntSize.h>
+#if USE(GSTREAMER_GL)
+#include <WebCore/PlatformDisplay.h>
+#endif
 #include <WebCore/PlatformVideoColorSpace.h>
 #include <wtf/URL.h>
 #include <wtf/glib/GMallocString.h>
 #include <wtf/text/MakeString.h>
+#if USE(GSTREAMER_GL)
+#include <array>
+#include <barrier>
+#include <thread>
+#endif
 
 using namespace WebCore;
 
@@ -384,6 +392,40 @@ TEST_F(GStreamerTest, protocolValidationEnvironmentVariable)
 
     g_unsetenv("WEBKIT_GST_ALLOWED_URI_PROTOCOLS");
 }
+
+#if USE(GSTREAMER_GL)
+TEST_F(GStreamerTest, concurrentGLContextInitialization)
+{
+    auto& display = PlatformDisplay::sharedDisplay();
+    ASSERT_NE(display.sharingGLContext(), nullptr);
+
+    for (unsigned iteration = 0; iteration < 16; ++iteration) {
+        display.clearGStreamerGLState();
+        constexpr unsigned threadCount = 8;
+        std::barrier start(threadCount);
+        std::array<GstGLDisplay*, threadCount> displays { };
+        std::array<GstGLContext*, threadCount> contexts { };
+        std::array<std::thread, threadCount> threads;
+        for (unsigned index = 0; index < threadCount; ++index) {
+            threads[index] = std::thread([&, index] {
+                start.arrive_and_wait();
+                displays[index] = display.gstGLDisplay();
+                contexts[index] = display.gstGLContext();
+            });
+        }
+        for (auto& thread : threads)
+            thread.join();
+        ASSERT_NE(displays[0], nullptr);
+        ASSERT_NE(contexts[0], nullptr);
+        for (unsigned index = 1; index < threadCount; ++index) {
+            EXPECT_EQ(displays[index], displays[0]);
+            EXPECT_EQ(contexts[index], contexts[0]);
+        }
+    }
+    display.clearGStreamerGLState();
+}
+#endif
+
 } // namespace TestWebKitAPI
 
 #endif // USE(GSTREAMER)
