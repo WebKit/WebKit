@@ -103,6 +103,9 @@ public:
     void moveTo(const String& apiName, WebExtensionBookmark& newParent, std::optional<size_t> index, CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&&);
     void remove(const String& apiName, Recursively, CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&&);
 
+    // Returns why remove() would fail on a rule WebKit checks itself, without calling the delegate node.
+    std::optional<WebExtensionError> removalError(const String& apiName, Recursively) const;
+
 #ifdef __OBJC__
     NSObject *delegate() const { return m_delegate.get(); }
 #endif

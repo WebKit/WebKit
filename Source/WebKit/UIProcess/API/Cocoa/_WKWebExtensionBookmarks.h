@@ -187,8 +187,9 @@ WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA)) NS_S
  @param context The context in which the web extension is running.
  @param completionHandler A block that must be called upon completion. It takes a single error argument,
  which should be provided if any errors occurred.
- @discussion If the node is a folder, the bookmarks and folders in it are removed too. No action is performed if not
- implemented.
+ @discussion If the node is a folder, the bookmarks and folders in it are removed too. When an extension removes
+ several bookmarks in one call, this is called for each one in order after WebKit has checked its own rules, and
+ stops at the first error, so the bookmarks before it stay removed. No action is performed if not implemented.
  */
 - (void)removeForWebExtensionContext:(WKWebExtensionContext *)context completionHandler:(void (^)(NSError * _Nullable error))completionHandler NS_SWIFT_NAME(remove(for:completionHandler:));
 

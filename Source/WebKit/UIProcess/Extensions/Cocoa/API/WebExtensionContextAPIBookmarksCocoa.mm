@@ -41,6 +41,9 @@
 #import "WebExtensionPermission.h"
 #import "_WKWebExtensionBookmarks.h"
 #import <wtf/BlockPtr.h>
+#import <wtf/HashMap.h>
+#import <wtf/HashSet.h>
+#import <wtf/RunLoop.h>
 #import <wtf/Vector.h>
 
 namespace WebKit {
@@ -432,28 +435,74 @@ void WebExtensionContext::bookmarksMove(const WebExtensionBookmarkChanges& bookm
     });
 }
 
-static void removeBookmark(const String& bookmarkIdentifier, WebExtensionBookmark::Recursively recursively, NSString *apiName, BookmarkTreeResult&& root, CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&& completionHandler)
+// Removes each bookmark in turn and stops at the first failure from the app, naming the bookmark it stopped at.
+// The next removal starts from the run loop, so an app that completes synchronously does not nest one call inside the previous one.
+static void removeBookmarks(Vector<Ref<WebExtensionBookmark>>&& bookmarks, size_t index, WebExtensionBookmark::Recursively recursively, NSString *apiName, CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&& completionHandler)
 {
-    if (!root) {
-        completionHandler(std::unexpected(WTF::move(root.error())));
+    if (index >= bookmarks.size()) {
+        completionHandler({ });
         return;
     }
 
-    RefPtr found = root.value()->find(bookmarkIdentifier);
-    if (!found) {
-        completionHandler(toWebExtensionError(apiName, nullString(), @"bookmark not found"));
-        return;
-    }
+    Ref bookmark = bookmarks[index].copyRef();
+    bookmark->remove(apiName, recursively, [bookmarks = WTF::move(bookmarks), index, recursively, apiName, completionHandler = WTF::move(completionHandler)](std::expected<void, WebExtensionError>&& result) mutable {
+        if (!result) {
+            if (index)
+                completionHandler(std::unexpected(makeString(result.error(), " (stopped at bookmark '"_s, bookmarks[index]->identifier(), "'; the bookmarks before it in the list were removed)"_s)));
+            else
+                completionHandler(std::unexpected(WTF::move(result.error())));
 
-    found->remove(apiName, recursively, WTF::move(completionHandler));
+            return;
+        }
+
+        RunLoop::mainSingleton().dispatch([bookmarks = WTF::move(bookmarks), index, recursively, apiName, completionHandler = WTF::move(completionHandler)] mutable {
+            removeBookmarks(WTF::move(bookmarks), index + 1, recursively, apiName, WTF::move(completionHandler));
+        });
+    });
 }
 
-void WebExtensionContext::bookmarksRemove(const String& bookmarkIdentifier, CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&& completionHandler)
+void WebExtensionContext::bookmarksRemove(const Vector<String>& bookmarkIdentifiers, CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&& completionHandler)
 {
     static NSString * const apiName = @"bookmarks.remove()";
 
-    bookmarkTree(apiName, [bookmarkIdentifier, completionHandler = WTF::move(completionHandler)](BookmarkTreeResult&& root) mutable {
-        removeBookmark(bookmarkIdentifier, WebExtensionBookmark::Recursively::No, apiName, WTF::move(root), WTF::move(completionHandler));
+    bookmarkTree(apiName, [bookmarkIdentifiers, completionHandler = WTF::move(completionHandler)](BookmarkTreeResult&& root) mutable {
+        if (!root) {
+            completionHandler(std::unexpected(WTF::move(root.error())));
+            return;
+        }
+
+        // Check every bookmark against the rules WebKit enforces before removing any of them.
+        HashMap<String, Ref<WebExtensionBookmark>> bookmarksByIdentifier;
+        for (auto& descendant : root.value()->descendants())
+            bookmarksByIdentifier.add(descendant->identifier(), descendant.copyRef());
+
+        HashSet<String> seenIdentifiers;
+        Vector<Ref<WebExtensionBookmark>> bookmarks;
+        bookmarks.reserveInitialCapacity(bookmarkIdentifiers.size());
+        for (auto& bookmarkIdentifier : bookmarkIdentifiers) {
+            if (!seenIdentifiers.add(bookmarkIdentifier).isNewEntry)
+                continue;
+
+            RefPtr<WebExtensionBookmark> bookmark;
+            if (bookmarkIdentifier == WebExtensionBookmark::rootIdentifier())
+                bookmark = root.value().ptr();
+            else if (auto found = bookmarksByIdentifier.find(bookmarkIdentifier); found != bookmarksByIdentifier.end())
+                bookmark = found->value.ptr();
+
+            if (!bookmark) {
+                completionHandler(toWebExtensionError(apiName, nullString(), @"bookmark not found"));
+                return;
+            }
+
+            if (auto error = bookmark->removalError(apiName, WebExtensionBookmark::Recursively::No)) {
+                completionHandler(std::unexpected(WTF::move(*error)));
+                return;
+            }
+
+            bookmarks.append(bookmark.releaseNonNull());
+        }
+
+        removeBookmarks(WTF::move(bookmarks), 0, WebExtensionBookmark::Recursively::No, apiName, WTF::move(completionHandler));
     });
 }
 
@@ -462,7 +511,21 @@ void WebExtensionContext::bookmarksRemoveTree(const String& bookmarkIdentifier, 
     static NSString * const apiName = @"bookmarks.removeTree()";
 
     bookmarkTree(apiName, [bookmarkIdentifier, completionHandler = WTF::move(completionHandler)](BookmarkTreeResult&& root) mutable {
-        removeBookmark(bookmarkIdentifier, WebExtensionBookmark::Recursively::Yes, apiName, WTF::move(root), WTF::move(completionHandler));
+        if (!root) {
+            completionHandler(std::unexpected(WTF::move(root.error())));
+            return;
+        }
+
+        RefPtr found = root.value()->find(bookmarkIdentifier);
+        if (!found) {
+            completionHandler(toWebExtensionError(apiName, nullString(), @"bookmark not found"));
+            return;
+        }
+
+        Vector<Ref<WebExtensionBookmark>> bookmarks;
+        bookmarks.append(found.releaseNonNull());
+
+        removeBookmarks(WTF::move(bookmarks), 0, WebExtensionBookmark::Recursively::Yes, apiName, WTF::move(completionHandler));
     });
 }
 

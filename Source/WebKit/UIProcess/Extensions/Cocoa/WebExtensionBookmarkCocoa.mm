@@ -418,20 +418,24 @@ void WebExtensionBookmark::moveTo(const String& apiName, WebExtensionBookmark& n
     }).get()];
 }
 
+std::optional<WebExtensionError> WebExtensionBookmark::removalError(const String& apiName, Recursively recursively) const
+{
+    if (auto error = modificationError(apiName))
+        return error;
+
+    if (recursively == Recursively::No && isFolder() && !children().isEmpty())
+        return toWebExtensionError(apiName, nullString(), @"the folder is not empty, use removeTree() to remove it").error();
+
+    if (!m_respondsToRemove)
+        return toWebExtensionError(apiName, nullString(), @"it is not implemented").error();
+
+    return std::nullopt;
+}
+
 void WebExtensionBookmark::remove(const String& apiName, Recursively recursively, CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&& completionHandler)
 {
-    if (auto error = modificationError(apiName)) {
+    if (auto error = removalError(apiName, recursively)) {
         completionHandler(std::unexpected(WTF::move(*error)));
-        return;
-    }
-
-    if (recursively == Recursively::No && isFolder() && !children().isEmpty()) {
-        completionHandler(toWebExtensionError(apiName, nullString(), @"the folder is not empty, use removeTree() to remove it"));
-        return;
-    }
-
-    if (!m_respondsToRemove) {
-        completionHandler(toWebExtensionError(apiName, nullString(), @"it is not implemented"));
         return;
     }
 

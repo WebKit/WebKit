@@ -963,7 +963,7 @@ private:
     void bookmarksSearch(std::optional<String> query, std::optional<String> url, std::optional<String> title, CompletionHandler<void(std::expected<Vector<WebExtensionBookmarkParameters>, WebExtensionError>&&)>&&);
     void bookmarksUpdate(const WebExtensionBookmarkChanges&, CompletionHandler<void(std::expected<WebExtensionBookmarkParameters, WebExtensionError>&&)>&&);
     void bookmarksMove(const WebExtensionBookmarkChanges&, CompletionHandler<void(std::expected<WebExtensionBookmarkParameters, WebExtensionError>&&)>&&);
-    void bookmarksRemove(const String& bookmarkIdentifier, CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&&);
+    void bookmarksRemove(const Vector<String>& bookmarkIdentifiers, CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&&);
     void bookmarksRemoveTree(const String& bookmarkIdentifier, CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&&);
 #endif // ENABLE(WK_WEB_EXTENSIONS_BOOKMARKS)
 
