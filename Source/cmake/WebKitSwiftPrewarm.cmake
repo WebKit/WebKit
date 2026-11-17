@@ -119,6 +119,21 @@ endfunction()
 # Compile <target>'s Swift after <predecessor>'s. All Swift targets share one module cache, and an SDK
 # module that two compile steps build at once can end up rebuilt by every later build.
 function(WEBKIT_ORDER_SWIFT_COMPILE_AFTER _target _predecessor)
-    add_custom_command(OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/${_target}_SwiftRebuildTrigger.swift" APPEND
-        DEPENDS "$<FILTER:$<TARGET_OBJECTS:${_predecessor}>,INCLUDE,\\.swift\\.o>")
+    set(_order_source "${CMAKE_CURRENT_BINARY_DIR}/${_target}_SwiftCompileAfter${_predecessor}.swift")
+    target_sources(${_target} PRIVATE "${_order_source}")
+    set_source_files_properties("${_order_source}" PROPERTIES GENERATED ON)
+    target_compile_options(${_target} PRIVATE "$<$<COMPILE_LANGUAGE:Swift>:--ninja-depfile-exclude=${_order_source}>")
+    cmake_language(EVAL CODE "cmake_language(DEFER DIRECTORY [[${CMAKE_SOURCE_DIR}]] CALL _webkit_add_swift_compile_order_rule [[${_order_source}]] ${_predecessor})")
+endfunction()
+
+function(_webkit_add_swift_compile_order_rule _order_source _predecessor)
+    file(WRITE "${_order_source}.in" "// Auto-generated; orders this module's compile after ${_predecessor}'s.\n")
+    add_custom_command(
+        OUTPUT "${_order_source}"
+        COMMAND "${CMAKE_COMMAND}" -E copy_if_different "${_order_source}.in" "${_order_source}"
+        DEPENDS "$<FILTER:$<TARGET_OBJECTS:${_predecessor}>,INCLUDE,\\.swift\\.o>"
+        VERBATIM
+    )
+    cmake_path(GET _order_source STEM _name)
+    add_custom_target(${_name} DEPENDS "${_order_source}")
 endfunction()
