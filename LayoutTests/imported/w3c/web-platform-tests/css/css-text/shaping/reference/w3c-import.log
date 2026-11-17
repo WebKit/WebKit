@@ -10,10 +10,9 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/shaping/reference/monospace-contextual-forms-incremental-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/shaping/reference/shaping-000-ref-expected-mismatch.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/shaping/reference/shaping-000-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/shaping/reference/shaping-000-sanity-ref.html

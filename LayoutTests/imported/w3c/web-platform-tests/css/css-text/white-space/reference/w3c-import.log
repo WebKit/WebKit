@@ -10,8 +10,6 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/reference/break-spaces-tab-003-ref.html
@@ -31,6 +29,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/reference/object-replacement-2-notref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/reference/pre-001-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/reference/pre-float-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/reference/pre-tab-001-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/reference/pre-wrap-001-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/reference/pre-wrap-012-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/reference/pre-wrap-013-ref.html
@@ -51,6 +50,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/reference/tab-bidi-001-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/reference/tab-stop-threshold-001-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/reference/tab-stop-threshold-002-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/reference/tab-stop-threshold-007-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/reference/text-wrap-balance-002-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/reference/text-wrap-balance-003-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/reference/text-wrap-balance-004-a-ref.html
@@ -60,6 +60,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/reference/text-wrap-balance-align-001-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/reference/text-wrap-balance-before-after-001-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/reference/text-wrap-balance-before-after-002-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/reference/text-wrap-balance-bidi-001-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/reference/text-wrap-balance-dynamic-001-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/reference/text-wrap-balance-float-001-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/reference/text-wrap-balance-float-002-ref.html
@@ -71,6 +72,11 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/reference/text-wrap-balance-line-clamp-004-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/reference/text-wrap-balance-line-clamp-005-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/reference/text-wrap-balance-line-clamp-006-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/reference/text-wrap-balance-line-clamp-008-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/reference/text-wrap-balance-line-clamp-009-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/reference/text-wrap-balance-line-clamp-010-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/reference/text-wrap-balance-line-clamp-011-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/reference/text-wrap-balance-line-clamp-012-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/reference/text-wrap-balance-overflow-001-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/reference/text-wrap-balance-overflow-002-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/reference/text-wrap-balance-text-indent-001-ref.html
@@ -85,6 +91,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/reference/trailing-ideographic-space-003-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/reference/trailing-ideographic-space-004-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/reference/trailing-ideographic-space-011-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/reference/trailing-ideographic-space-026-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/reference/trailing-ideographic-space-028-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/reference/trailing-ideographic-space-alt-003-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/reference/trailing-ideographic-space-alt-011-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/reference/trailing-ideographic-space-break-spaces-001-ref.html
@@ -123,6 +131,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/reference/white-space-pre-wrap-justify-002-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/reference/white-space-pre-wrap-justify-003-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/reference/white-space-pre-wrap-justify-004-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/reference/white-space-pre-wrap-justify-005-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/reference/white-space-pre-wrap-trailing-spaces-001-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/reference/white-space-pre-wrap-trailing-spaces-002-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/reference/white-space-pre-wrap-trailing-spaces-003-ref.html
@@ -137,7 +146,26 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/reference/white-space-pre-wrap-trailing-spaces-alt-013-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/reference/white-space-pre-wrap-trailing-spaces-alt-014-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/reference/white-space-pre-wrap-trailing-spaces-alt-015-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/reference/white-space-trim-atomic-inline-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/reference/white-space-trim-block-in-inline-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/reference/white-space-trim-break-spaces-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/reference/white-space-trim-content-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/reference/white-space-trim-discard-after-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/reference/white-space-trim-discard-before-after-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/reference/white-space-trim-discard-before-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/reference/white-space-trim-discard-inner-001-ref.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/reference/white-space-trim-discard-inner-block-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/reference/white-space-trim-discard-inner-preserved-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/reference/white-space-trim-discard-inner-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/reference/white-space-trim-dynamic-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/reference/white-space-trim-generated-content-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/reference/white-space-trim-inline-block-dynamic-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/reference/white-space-trim-inline-block-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/reference/white-space-trim-interaction-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/reference/white-space-trim-nested-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/reference/white-space-trim-rtl-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/reference/white-space-trim-white-space-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/reference/white-space-trim-wrap-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/reference/white-space-vs-joiners-001-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/reference/white-space-vs-joiners-002-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/reference/white-space-wrap-after-nowrap-001-ref.html

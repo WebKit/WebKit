@@ -10,8 +10,6 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/parsing/WEB_FEATURES.yml
@@ -23,6 +21,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/parsing/hyphenate-limit-chars-computed.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/parsing/hyphenate-limit-chars-invalid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/parsing/hyphenate-limit-chars-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/parsing/hyphenate-limit-lines-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/parsing/hyphenate-limit-lines-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/parsing/hyphenate-limit-lines-valid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/parsing/hyphens-computed.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/parsing/hyphens-invalid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/parsing/hyphens-valid.html
@@ -49,6 +50,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/parsing/text-align-valid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/parsing/text-autospace-computed.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/parsing/text-autospace-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/parsing/text-autospace-size-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/parsing/text-autospace-size-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/parsing/text-autospace-size-valid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/parsing/text-autospace-valid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/parsing/text-fit-computed.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/parsing/text-fit-invalid.html
@@ -86,8 +90,12 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/parsing/white-space-collapse-valid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/parsing/white-space-computed.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/parsing/white-space-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/parsing/white-space-shorthand-longhands.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/parsing/white-space-shorthand-text-wrap.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/parsing/white-space-shorthand.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/parsing/white-space-trim-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/parsing/white-space-trim-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/parsing/white-space-trim-valid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/parsing/white-space-valid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/parsing/word-break-computed.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/parsing/word-break-invalid.html

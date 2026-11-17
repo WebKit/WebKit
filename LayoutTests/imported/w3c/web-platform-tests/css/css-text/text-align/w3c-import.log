@@ -10,8 +10,6 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-align/WEB_FEATURES.yml
@@ -91,6 +89,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-align/text-align-justify-bidi-control-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-align/text-align-justify-bidi-control-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-align/text-align-justify-bidi-control.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-align/text-align-justify-block-in-inline-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-align/text-align-justify-block-in-inline.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-align/text-align-justify-last-center-expected-mismatch.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-align/text-align-justify-last-center.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-align/text-align-justify-last-default-expected.html
@@ -151,6 +151,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-align/text-align-last-end-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-align/text-align-last-end.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-align/text-align-last-interpolation.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-align/text-align-last-justify-block-in-inline-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-align/text-align-last-justify-block-in-inline.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-align/text-align-last-justify-br-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-align/text-align-last-justify-br-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-align/text-align-last-justify-br.html

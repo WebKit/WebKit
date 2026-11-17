@@ -10,8 +10,6 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/hyphens/reference/hyphenate-character-001-ref.html
@@ -19,6 +17,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/hyphens/reference/hyphenate-character-004-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/hyphens/reference/hyphenate-character-005-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/hyphens/reference/hyphenate-limit-chars-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/hyphens/reference/hyphenate-limit-lines-001-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/hyphens/reference/hyphens-auto-001-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/hyphens/reference/hyphens-auto-002-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/hyphens/reference/hyphens-auto-004H-ref.html

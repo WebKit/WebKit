@@ -10,8 +10,6 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/WEB_FEATURES.yml
@@ -99,6 +97,13 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-fullwidth-009.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-fullwidth-010-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-fullwidth-010.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-georgian.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-letter-spacing-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-letter-spacing-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-letter-spacing-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-letter-spacing-002-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-letter-spacing-002-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-letter-spacing-002.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-lowercase-101-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-lowercase-101.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-lowercase-102-expected.xht
@@ -128,6 +133,10 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-tailoring-004.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-tailoring-005-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-tailoring-005.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-tailoring-document-lang-dynamic-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-tailoring-document-lang-dynamic.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-tailoring-dynamic-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-tailoring-dynamic.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-uppercase-101-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-uppercase-101.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-uppercase-dynamic-expected.html
@@ -227,3 +236,5 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-upperlower-106-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-upperlower-106.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-upperlower-107.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-upperlower-108-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-upperlower-108.html

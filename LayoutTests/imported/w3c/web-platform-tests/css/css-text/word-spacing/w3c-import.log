@@ -10,8 +10,6 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-spacing/WEB_FEATURES.yml
@@ -28,6 +26,10 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-spacing/word-spacing-animating-font-size.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-spacing/word-spacing-animating-word-spacing-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-spacing/word-spacing-animating-word-spacing.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-spacing/word-spacing-combining-mark-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-spacing/word-spacing-combining-mark-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-spacing/word-spacing-combining-mark-002-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-spacing/word-spacing-combining-mark-002.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-spacing/word-spacing-computed-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-spacing/word-spacing-negative-value-001-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-spacing/word-spacing-negative-value-001.html

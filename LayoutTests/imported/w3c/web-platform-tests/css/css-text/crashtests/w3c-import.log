@@ -10,13 +10,13 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/crashtests/eol-spaces-bidi-min-content-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/crashtests/line-break-float-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/crashtests/line-breaker-overflow-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/crashtests/overflow-wrap-anywhere-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/crashtests/overflow-wrap-anywhere-fractional-width-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/crashtests/rendering-rtl-bidi-override-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/crashtests/rendering-table-caption-with-list-item-and-svg-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/crashtests/rendering-table-caption-with-negative-margins-crash.html

@@ -10,8 +10,6 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/reference/text-transform-capitalize-001-ref.html
@@ -56,6 +54,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/reference/text-transform-tailoring-003-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/reference/text-transform-tailoring-004-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/reference/text-transform-tailoring-005-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/reference/text-transform-tailoring-document-lang-dynamic-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/reference/text-transform-tailoring-dynamic-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/reference/text-transform-uppercase-101-ref.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/reference/text-transform-uppercase-dynamic-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/reference/text-transform-upperlower-001-ref.html
@@ -105,3 +105,4 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/reference/text-transform-upperlower-104-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/reference/text-transform-upperlower-105-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/reference/text-transform-upperlower-106-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/reference/text-transform-upperlower-108-ref.html

@@ -10,8 +10,6 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-indent/reference/anonymous-flex-grid-item-001-ref.html
@@ -23,6 +21,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-indent/reference/text-indent-hanging-001-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-indent/reference/text-indent-length-001-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-indent/reference/text-indent-length-002-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-indent/reference/text-indent-list-001-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-indent/reference/text-indent-min-max-content-001-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-indent/reference/text-indent-overflow-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-indent/reference/text-indent-percentage-001-ref.xht

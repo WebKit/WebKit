@@ -1,0 +1,10 @@
+
+PASS Uppercase maps Mkhedruli to Mtavruli
+PASS Uppercase preserves Mtavruli capitals
+PASS Lowercase maps Mtavruli to Mkhedruli
+PASS Capitalize leaves Mkhedruli unchanged
+PASS Uppercase preserves Georgian characters without case mappings
+PASS Uppercase preserves unassigned characters
+PASS Uppercase without a language declaration
+PASS Uppercase with an English language declaration
+

@@ -1,16 +1,16 @@
 
-FAIL linebreak only ﾉｺﾘ２４ assert_equals: expected 84 but got 91
-FAIL spaces linebreak ﾉｺﾘ２４ assert_equals: expected 84 but got 91
-FAIL linebreak spaces ﾉｺﾘ２４ assert_equals: expected 84 but got 91
-FAIL spaces linebreak spaces ﾉｺﾘ２４ assert_equals: expected 84 but got 91
-FAIL multiple linebreaks ﾉｺﾘ２４ assert_equals: expected 84 but got 91
-FAIL multiple linebreaks + spaces ﾉｺﾘ２４ assert_equals: expected 84 but got 91
-FAIL linebreak only ２４ｺ assert_equals: expected 60 but got 67
-FAIL spaces linebreak ２４ｺ assert_equals: expected 60 but got 67
-FAIL linebreak spaces ２４ｺ assert_equals: expected 60 but got 67
-FAIL spaces linebreak spaces ２４ｺ assert_equals: expected 60 but got 67
-FAIL multiple linebreaks ２４ｺ assert_equals: expected 60 but got 67
-FAIL multiple linebreaks + spaces ２４ｺ assert_equals: expected 60 but got 67
+FAIL linebreak only ﾉｺﾘ２４ assert_equals: expected 120 but got 144
+FAIL spaces linebreak ﾉｺﾘ２４ assert_equals: expected 120 but got 144
+FAIL linebreak spaces ﾉｺﾘ２４ assert_equals: expected 120 but got 144
+FAIL spaces linebreak spaces ﾉｺﾘ２４ assert_equals: expected 120 but got 144
+FAIL multiple linebreaks ﾉｺﾘ２４ assert_equals: expected 120 but got 144
+FAIL multiple linebreaks + spaces ﾉｺﾘ２４ assert_equals: expected 120 but got 144
+FAIL linebreak only ２４ｺ assert_equals: expected 72 but got 96
+FAIL spaces linebreak ２４ｺ assert_equals: expected 72 but got 96
+FAIL linebreak spaces ２４ｺ assert_equals: expected 72 but got 96
+FAIL spaces linebreak spaces ２４ｺ assert_equals: expected 72 but got 96
+FAIL multiple linebreaks ２４ｺ assert_equals: expected 72 but got 96
+FAIL multiple linebreaks + spaces ２４ｺ assert_equals: expected 72 but got 96
 ﾉｺﾘ ２４
 ﾉｺﾘ ２４
 ﾉｺﾘ ２４

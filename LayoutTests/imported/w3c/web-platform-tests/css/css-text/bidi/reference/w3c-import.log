@@ -10,10 +10,12 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/bidi/reference/bidi-lines-001-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/bidi/reference/bidi-lines-002-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/bidi/reference/bidi-plaintext-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/bidi/reference/bidi-plaintext-002-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/bidi/reference/bidi-plaintext-003-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/bidi/reference/bidi-plaintext-004-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/bidi/reference/bidi-tab-001-ref.html

@@ -10,11 +10,11 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-spacing/reference/ref-filled-green-100px-square.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-spacing/reference/word-spacing-animating-font-size-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-spacing/reference/word-spacing-animating-word-spacing-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-spacing/reference/word-spacing-combining-mark-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-spacing/reference/word-spacing-combining-mark-002-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-spacing/reference/word-spacing-percent-001-ref.html

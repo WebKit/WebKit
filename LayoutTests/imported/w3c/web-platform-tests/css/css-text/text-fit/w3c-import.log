@@ -10,8 +10,6 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-fit/background-image-expected.html
@@ -44,6 +42,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-fit/selection-highlight-painting-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-fit/selection-highlight-painting-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-fit/selection-highlight-painting.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-fit/shrink-consistent-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-fit/shrink-consistent-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-fit/shrink-consistent-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-fit/shrink-consistent.html
@@ -60,6 +59,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-fit/text-align-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-fit/text-align.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-fit/text-autospace.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-fit/text-box-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-fit/text-box-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-fit/text-box-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-fit/text-box.html

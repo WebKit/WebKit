@@ -1,0 +1,84 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/wrap-inside/wrap-inside-auto-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/wrap-inside/wrap-inside-auto-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/wrap-inside/wrap-inside-auto.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/wrap-inside/wrap-inside-avoid-block-child-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/wrap-inside/wrap-inside-avoid-block-child-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/wrap-inside/wrap-inside-avoid-block-child.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/wrap-inside/wrap-inside-avoid-break-all-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/wrap-inside/wrap-inside-avoid-break-all-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/wrap-inside/wrap-inside-avoid-break-all.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/wrap-inside/wrap-inside-avoid-break-before-then-inside-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/wrap-inside/wrap-inside-avoid-break-before-then-inside-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/wrap-inside/wrap-inside-avoid-break-before-then-inside.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/wrap-inside/wrap-inside-avoid-dynamic-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/wrap-inside/wrap-inside-avoid-dynamic-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/wrap-inside/wrap-inside-avoid-dynamic.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/wrap-inside/wrap-inside-avoid-forced-break-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/wrap-inside/wrap-inside-avoid-forced-break-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/wrap-inside/wrap-inside-avoid-forced-break.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/wrap-inside/wrap-inside-avoid-inline-block-child-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/wrap-inside/wrap-inside-avoid-inline-block-child-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/wrap-inside/wrap-inside-avoid-inline-block-child.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/wrap-inside/wrap-inside-avoid-inline-flex-child-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/wrap-inside/wrap-inside-avoid-inline-flex-child-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/wrap-inside/wrap-inside-avoid-inline-flex-child.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/wrap-inside/wrap-inside-avoid-inline-grid-child-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/wrap-inside/wrap-inside-avoid-inline-grid-child-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/wrap-inside/wrap-inside-avoid-inline-grid-child.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/wrap-inside/wrap-inside-avoid-inline-table-child-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/wrap-inside/wrap-inside-avoid-inline-table-child-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/wrap-inside/wrap-inside-avoid-inline-table-child.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/wrap-inside/wrap-inside-avoid-keeps-box-together-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/wrap-inside/wrap-inside-avoid-keeps-box-together-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/wrap-inside/wrap-inside-avoid-keeps-box-together.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/wrap-inside/wrap-inside-avoid-last-resort-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/wrap-inside/wrap-inside-avoid-last-resort-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/wrap-inside/wrap-inside-avoid-last-resort.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/wrap-inside/wrap-inside-avoid-line-break-anywhere-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/wrap-inside/wrap-inside-avoid-line-break-anywhere-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/wrap-inside/wrap-inside-avoid-line-break-anywhere.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/wrap-inside/wrap-inside-avoid-nested-auto-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/wrap-inside/wrap-inside-avoid-nested-auto-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/wrap-inside/wrap-inside-avoid-nested-auto.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/wrap-inside/wrap-inside-avoid-nested-deep-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/wrap-inside/wrap-inside-avoid-nested-deep-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/wrap-inside/wrap-inside-avoid-nested-deep.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/wrap-inside/wrap-inside-avoid-nested-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/wrap-inside/wrap-inside-avoid-nested-only-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/wrap-inside/wrap-inside-avoid-nested-only-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/wrap-inside/wrap-inside-avoid-nested-only.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/wrap-inside/wrap-inside-avoid-nested-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/wrap-inside/wrap-inside-avoid-nested.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/wrap-inside/wrap-inside-avoid-nowrap-child-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/wrap-inside/wrap-inside-avoid-nowrap-child-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/wrap-inside/wrap-inside-avoid-nowrap-child.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/wrap-inside/wrap-inside-avoid-nowrap-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/wrap-inside/wrap-inside-avoid-nowrap-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/wrap-inside/wrap-inside-avoid-nowrap.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/wrap-inside/wrap-inside-avoid-overflow-wrap-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/wrap-inside/wrap-inside-avoid-overflow-wrap-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/wrap-inside/wrap-inside-avoid-overflow-wrap.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/wrap-inside/wrap-inside-avoid-removed-dynamic-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/wrap-inside/wrap-inside-avoid-removed-dynamic-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/wrap-inside/wrap-inside-avoid-removed-dynamic.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/wrap-inside/wrap-inside-avoid-siblings-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/wrap-inside/wrap-inside-avoid-siblings-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/wrap-inside/wrap-inside-avoid-siblings.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/wrap-inside/wrap-inside-avoid-single-word-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/wrap-inside/wrap-inside-avoid-single-word-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/wrap-inside/wrap-inside-avoid-single-word.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/wrap-inside/wrap-inside-computed.html

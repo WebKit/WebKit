@@ -10,8 +10,6 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-indent/WEB_FEATURES.yml
@@ -40,12 +38,17 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-indent/text-indent-dynamic-hanging-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-indent/text-indent-dynamic-hanging-002-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-indent/text-indent-dynamic-hanging-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-indent/text-indent-each-line-after-block-level-box-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-indent/text-indent-each-line-after-block-level-box-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-indent/text-indent-each-line-after-block-level-box.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-indent/text-indent-each-line-hanging-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-indent/text-indent-each-line-hanging.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-indent/text-indent-length-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-indent/text-indent-length-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-indent/text-indent-length-002-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-indent/text-indent-length-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-indent/text-indent-list-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-indent/text-indent-list-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-indent/text-indent-long-line-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-indent/text-indent-min-max-content-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-indent/text-indent-min-max-content-001.html

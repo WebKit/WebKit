@@ -10,8 +10,6 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-align/reference/text-align-end-ref-001.html
@@ -27,6 +25,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-align/reference/text-align-end-ref-014.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-align/reference/text-align-end-ref-015.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-align/reference/text-align-end-ref-016.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-align/reference/text-align-justify-block-in-inline-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-align/reference/text-align-justify-ref-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-align/reference/text-align-justify-ref-002.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-align/reference/text-align-justify-ref-003.html
@@ -38,6 +37,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-align/reference/text-align-justify-tabs-002-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-align/reference/text-align-justifyall-ref-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-align/reference/text-align-justifyall-ref-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-align/reference/text-align-last-justify-block-in-inline-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-align/reference/text-align-last-wins-001-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-align/reference/text-align-start-ref-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-align/reference/text-align-start-ref-002.html

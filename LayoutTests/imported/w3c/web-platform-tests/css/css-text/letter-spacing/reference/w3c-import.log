@@ -10,8 +10,6 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/letter-spacing/reference/letter-spacing-200-ref.html
@@ -31,6 +29,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/letter-spacing/reference/letter-spacing-bidi-003-ref.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/letter-spacing/reference/letter-spacing-bidi-004-ref.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/letter-spacing/reference/letter-spacing-bidi-005-ref.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/letter-spacing/reference/letter-spacing-combining-mark-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/letter-spacing/reference/letter-spacing-combining-mark-002-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/letter-spacing/reference/letter-spacing-control-chars-001.ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/letter-spacing/reference/letter-spacing-cursive-001-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/letter-spacing/reference/letter-spacing-cursive-002-ref.html

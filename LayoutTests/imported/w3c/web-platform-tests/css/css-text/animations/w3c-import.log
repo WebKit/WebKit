@@ -10,13 +10,12 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/animations/WEB_FEATURES.yml
-/LayoutTests/imported/w3c/web-platform-tests/css/css-text/animations/hyphen-limit-chars-interpolation.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/animations/hyphen-no-interpolation.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/animations/hyphenate-limit-chars-interpolation.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/animations/hyphenate-limit-lines-interpolation.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/animations/letter-spacing-composition.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/animations/letter-spacing-interpolation.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/animations/line-break-no-interpolation.html

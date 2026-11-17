@@ -10,8 +10,6 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-spacing-trim/WEB_FEATURES.yml
@@ -30,6 +28,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-spacing-trim/text-spacing-trim-end-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-spacing-trim/text-spacing-trim-end-001-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-spacing-trim/text-spacing-trim-end-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-spacing-trim/text-spacing-trim-end-span-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-spacing-trim/text-spacing-trim-end-span-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-spacing-trim/text-spacing-trim-end-span-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-spacing-trim/text-spacing-trim-fallback-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-spacing-trim/text-spacing-trim-fallback-001-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-spacing-trim/text-spacing-trim-fallback-001.html

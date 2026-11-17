@@ -10,8 +10,6 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/line-break/reference/line-break-anywhere-001-ref.html
@@ -43,6 +41,11 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/line-break/reference/line-break-normal-018-ref.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/line-break/reference/line-break-normal-hyphens-001-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/line-break/reference/line-break-normal-hyphens-002-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/line-break/reference/line-break-quotation-double-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/line-break/reference/line-break-quotation-double-002-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/line-break/reference/line-break-quotation-double-cjk-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/line-break/reference/line-break-quotation-double-cjk-002-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/line-break/reference/line-break-quotation-double-cjk-003-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/line-break/reference/line-break-shaping-001-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/line-break/reference/line-break-strict-011-ref.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/line-break/reference/line-break-strict-012-ref.xht

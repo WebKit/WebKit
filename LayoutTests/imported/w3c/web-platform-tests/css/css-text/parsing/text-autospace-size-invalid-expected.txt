@@ -1,0 +1,7 @@
+
+PASS e.style['text-autospace-size'] = "normal" should not set the property value
+PASS e.style['text-autospace-size'] = "none" should not set the property value
+PASS e.style['text-autospace-size'] = "10%" should not set the property value
+PASS e.style['text-autospace-size'] = "10px" should not set the property value
+PASS e.style['text-autospace-size'] = "calc(1em / 3)" should not set the property value
+
