@@ -31,7 +31,6 @@
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 
-#import "Helpers/cocoa/TestCocoaImageUtilities.h"
 #import "Helpers/cocoa/TestWebExtensionsDelegate.h"
 #import "Helpers/cocoa/WebExtensionUtilities.h"
 #import <WebKit/WKPreferencesPrivate.h>
@@ -49,6 +48,12 @@
 - (void)_recordFailureWithMessage:(NSString *)message sourceURL:(NSString *)sourceURL lineNumber:(unsigned)lineNumber;
 - (nullable NSError *)_collectedFailuresError;
 @end
+
+namespace TestWebKitAPI::Util {
+
+static bool shouldEnableSiteIsolationForWebExtensionsTest = false;
+
+} // namespace TestWebKitAPI::Util
 
 static NSError *managerError(NSString *description)
 {
@@ -101,11 +106,6 @@ NSExceptionName testExceptionRaisedBySettingValue(id object, NSString *key, id v
 + (void)setShouldEnableSiteIsolation:(BOOL)shouldEnableSiteIsolation
 {
     TestWebKitAPI::Util::shouldEnableSiteIsolationForWebExtensionsTest = shouldEnableSiteIsolation;
-}
-
-- (instancetype)initForExtension:(WKWebExtension *)extension
-{
-    return [self initForExtension:extension extensionControllerConfiguration:nil];
 }
 
 - (instancetype)initWithManifest:(NSDictionary<NSString *, id> *)manifest resources:(NSDictionary<NSString *, id> *)resources
@@ -350,31 +350,6 @@ NSExceptionName testExceptionRaisedBySettingValue(id object, NSString *key, id v
     TestWebKitAPI::Util::run(&_done);
 }
 
-- (void)runForTimeInterval:(NSTimeInterval)interval
-{
-    _done = false;
-
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(interval * NSEC_PER_SEC)), mainDispatchQueueSingleton(), ^{
-        self->_done = true;
-    });
-
-    TestWebKitAPI::Util::run(&_done);
-}
-
-- (void)runUntilContextError
-{
-    if (_context.errors.count)
-        return;
-
-    id observer = [NSNotificationCenter.defaultCenter addObserverForName:WKWebExtensionContextErrorsDidUpdateNotification object:_context queue:nil usingBlock:^(NSNotification *) {
-        self->_done = true;
-    }];
-
-    [self runForTimeInterval:5];
-
-    [NSNotificationCenter.defaultCenter removeObserver:observer];
-}
-
 - (id)runUntilTestMessage:(NSString *)message
 {
     if (id result = [self _takeTestMessage:message])
@@ -451,7 +426,7 @@ NSExceptionName testExceptionRaisedBySettingValue(id object, NSString *key, id v
         finish();
     }];
 
-    // Like -runUntilContextError, stop waiting after 5 seconds, so that a test whose error never arrives fails its own expectations instead of hanging.
+    // Stop waiting after 5 seconds, so that a test whose error never arrives fails its own expectations instead of hanging.
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(5 * NSEC_PER_SEC)), mainDispatchQueueSingleton(), finish);
 }
 
@@ -465,12 +440,6 @@ NSExceptionName testExceptionRaisedBySettingValue(id object, NSString *key, id v
     [messagesArray removeObjectAtIndex:0];
 
     return argument;
-}
-
-- (void)loadAndRun
-{
-    [self load];
-    [self run];
 }
 
 - (void)done
@@ -1247,8 +1216,6 @@ static WKUserContentController *userContentController(BOOL usingPrivateBrowsing)
 namespace TestWebKitAPI {
 namespace Util {
 
-bool shouldEnableSiteIsolationForWebExtensionsTest = false;
-
 RetainPtr<TestWebExtensionManager> parseExtension(NSDictionary *manifest, NSDictionary *resources, WKWebExtensionControllerConfiguration *configuration, BOOL usesEnhancedSecurity)
 {
     RetainPtr extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:manifest resources:resources]);
@@ -1265,20 +1232,6 @@ RetainPtr<TestWebExtensionManager> loadExtension(NSDictionary *manifest, NSDicti
 void loadAndRunExtension(NSDictionary *manifest, NSDictionary *resources, WKWebExtensionControllerConfiguration *configuration)
 {
     [loadExtension(manifest, resources, configuration) run];
-}
-
-NSData *makePNGData(CGSize size, SEL colorSelector)
-{
-#if USE(APPKIT)
-    return [TestCocoaImageUtilities pngDataWithSize:size color:[NSColor performSelector:colorSelector]];
-#else
-    return [TestCocoaImageUtilities pngDataWithSize:size color:[UIColor performSelector:colorSelector]];
-#endif
-}
-
-void performWithAppearance(Appearance appearance, void (^block)(void))
-{
-    [TestCocoaImageUtilities performWithDarkAppearance:appearance == Appearance::Dark block:block];
 }
 
 } // namespace Util

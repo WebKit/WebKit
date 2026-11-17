@@ -28,8 +28,6 @@ private import TestWebKitAPILibrary
 private import TestWebKitAPILibrary.Helpers.cocoa.WebExtensionUtilities
 import Testing
 import WebKit
-private import WebKit_Private._WKFeature
-private import WebKit_Private.WKPreferencesPrivate
 private import WebKit_Private.WKWebExtensionContextPrivate
 private import WebKit_Private.WKWebViewPrivate
 
@@ -66,11 +64,7 @@ struct WKWebExtensionAPIOffscreenTests {
     private let offscreenConfiguration: WKWebExtensionController.Configuration
 
     init() {
-        offscreenConfiguration = .nonPersistent()
-
-        for feature in WKPreferences._features() where feature.key == "WebExtensionOffscreenEnabled" {
-            offscreenConfiguration.webViewConfiguration.preferences._setEnabled(true, for: feature)
-        }
+        offscreenConfiguration = configurationEnablingFeature("WebExtensionOffscreenEnabled")
     }
 
     private func loadAndRun(manifest: [String: Any], resources: [String: Any]) async throws {

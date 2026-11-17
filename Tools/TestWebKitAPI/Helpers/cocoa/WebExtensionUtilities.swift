@@ -24,10 +24,13 @@
 #if ENABLE_WK_WEB_EXTENSIONS
 
 import CoreGraphics
-import Foundation
+public import Foundation
 private import TestWebKitAPILibrary.Helpers.cocoa.WebExtensionUtilities
+private import WebKit_Private._WKFeature
+private import WebKit_Private.WKPreferencesPrivate
 public import WebKit
 
+public import struct Foundation.URL
 public import struct Swift.String
 
 #if WTF_PLATFORM_MAC
@@ -61,6 +64,22 @@ public func parseWebExtension(
     return manager
 }
 
+/// Creates a manager for an extension that has already been created, without loading it.
+///
+/// - Parameters:
+///   - extension: The extension to manage.
+///   - configuration: The controller configuration to use. Defaults to a non-persistent one.
+/// - Returns: A manager for the extension.
+@MainActor
+public func parseWebExtension(
+    _ extension: WKWebExtension,
+    configuration: WKWebExtensionController.Configuration? = nil
+) -> TestWebExtensionManager {
+    let manager = TestWebExtensionManager(for: `extension`, extensionControllerConfiguration: configuration)
+    manager.collectsFailures = true
+    return manager
+}
+
 /// Creates a manager for an extension parsed from a manifest, and loads it.
 ///
 /// - Parameters:
@@ -89,6 +108,21 @@ public func loadWebExtension(
     try manager.checkCollectedFailures()
 
     return manager
+}
+
+/// Creates a non-persistent controller configuration whose web views have a feature turned on.
+///
+/// - Parameter featureKey: The key of the feature to turn on, such as `WebExtensionNotificationsEnabled`.
+/// - Returns: The configuration.
+@MainActor
+public func configurationEnablingFeature(_ featureKey: String) -> WKWebExtensionController.Configuration {
+    let configuration = WKWebExtensionController.Configuration.nonPersistent()
+
+    for feature in WKPreferences._features() where feature.key == featureKey {
+        configuration.webViewConfiguration.preferences._setEnabled(true, for: feature)
+    }
+
+    return configuration
 }
 
 extension TestWebExtensionManager {
@@ -203,6 +237,20 @@ extension TestWebExtensionManager {
         internalDelegate.promptForPermissionToAccessURLs = { _, urls, callback in
             callback(urls, nil)
         }
+    }
+}
+
+extension WKWebExtension.MatchPattern {
+    /// Returns the cached pattern that matches every path on a URL's scheme and host.
+    ///
+    /// - Parameter url: The URL whose scheme and host to match.
+    /// - Returns: The pattern, or `nil` if the URL has no scheme or host, or if no pattern can be made from them.
+    public static func cachedPattern(matchingAllPathsOf url: URL) -> WKWebExtension.MatchPattern? {
+        guard let scheme = url.scheme, let host = url.host() else {
+            return nil
+        }
+
+        return cachedPattern(scheme: scheme, host: host, path: "/*")
     }
 }
 
