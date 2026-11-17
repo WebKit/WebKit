@@ -28,6 +28,7 @@
 #include <unicode/uchar.h>
 #include <unicode/ustring.h>
 #include <wtf/ASCIICType.h>
+#include <wtf/Atomics.h>
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/CompactPtr.h>
 #include <wtf/DebugHeap.h>
@@ -315,7 +316,7 @@ public:
     static constexpr ptrdiff_t lengthMemoryOffset() { return OBJECT_OFFSETOF(StringImpl, m_length); }
     bool isEmpty() const { return !m_length; }
 
-    bool is8Bit() const { return m_hashAndFlags & s_hashFlag8BitBuffer; }
+    bool is8Bit() const { return immutableFlags() & s_hashFlag8BitBuffer; }
     ALWAYS_INLINE std::span<const Latin1Character> span8() const LIFETIME_BOUND { ASSERT_WITH_SECURITY_IMPLICATION(is8Bit()); return unsafeMakeSpan(m_data8, length()); }
     ALWAYS_INLINE std::span<const char16_t> span16() const LIFETIME_BOUND { ASSERT_WITH_SECURITY_IMPLICATION(!is8Bit() || isEmpty()); return unsafeMakeSpan(m_data16, length()); }
 
@@ -326,8 +327,8 @@ public:
 
     NODELETE WTF_EXPORT_PRIVATE size_t sizeInBytes() const;
 
-    bool isSymbol() const { return m_hashAndFlags & s_hashFlagStringKindIsSymbol; }
-    bool isAtom() const { return m_hashAndFlags & s_hashFlagStringKindIsAtom; }
+    bool isSymbol() const { return immutableFlags() & s_hashFlagStringKindIsSymbol; }
+    bool isAtom() const { return mutableFlags() & s_hashFlagStringKindIsAtom; }
     void setIsAtom(bool);
     
     bool isExternal() const { return bufferOwnership() == BufferExternal; }
@@ -359,13 +360,26 @@ private:
     // So, we shift left and right when setting and getting our hash code.
     void setHash(unsigned) const;
 
-    unsigned rawHash() const { return m_hashAndFlags >> s_flagCount; }
+    unsigned rawHash() const { return mutableFlags() >> s_flagCount; }
+
+    // The hash, isAtom and didReportCost bits may be mutated concurrently, so they are accessed atomically.
+    // The other bits never change after construction and are read without synchronization so that the
+    // compiler can still combine and hoist these loads.
+    SUPPRESS_TSAN unsigned immutableFlags() const { return m_hashAndFlags; }
+    unsigned mutableFlags() const { return atomicLoad<MemoryOrder::Relaxed>(&m_hashAndFlags); }
+    // Sets mutable bits and returns the previous flags.
+    unsigned setMutableFlags(unsigned) const;
 
 public:
     bool hasHash() const { return !!rawHash(); }
 
     unsigned existingHash() const { ASSERT(hasHash()); return rawHash(); }
-    unsigned hash() const { return hasHash() ? rawHash() : hashSlowCase(); }
+    unsigned hash() const
+    {
+        if (unsigned existingHash = rawHash())
+            return existingHash;
+        return hashSlowCase();
+    }
 
     WTF_EXPORT_PRIVATE unsigned concurrentHash() const;
 
@@ -409,7 +423,7 @@ public:
         //    c. setHash() is never called on a StaticStringImpl.
         //       StaticStringImpl's constructor sets the hash on construction.
         //       StringImpl::hash() only sets a new hash iff !hasHash().
-        //       Additionally, StringImpl::setHash() asserts hasHash() and !isStatic().
+        //       Additionally, StringImpl::setHash() asserts !isStatic().
 
         explicit constexpr StaticStringImpl(ASCIILiteral, StringKind = StringNormal);
         template<unsigned characterCount> explicit constexpr StaticStringImpl(const char16_t (&characters)[characterCount], StringKind = StringNormal);
@@ -536,7 +550,7 @@ public:
     ALWAYS_INLINE static StringStats& stringStats() { return m_stringStats; }
 #endif
 
-    BufferOwnership bufferOwnership() const { return static_cast<BufferOwnership>(m_hashAndFlags & s_hashMaskBufferOwnership); }
+    BufferOwnership bufferOwnership() const { return static_cast<BufferOwnership>(immutableFlags() & s_hashMaskBufferOwnership); }
 
     template<typename T> static constexpr size_t headerSize() { return tailOffset<T>(); }
     
@@ -1121,10 +1135,11 @@ inline size_t StringImpl::cost() const
     // We ensure this by pre-setting the s_hashFlagDidReportCost bit in all instances of
     // StaticStringImpl. As a result, StaticStringImpl instances will always return a cost of
     // 0 here and avoid modifying m_hashAndFlags.
-    if (m_hashAndFlags & s_hashFlagDidReportCost)
+    if (mutableFlags() & s_hashFlagDidReportCost)
         return 0;
 
-    m_hashAndFlags |= s_hashFlagDidReportCost;
+    if (setMutableFlags(s_hashFlagDidReportCost) & s_hashFlagDidReportCost)
+        return 0;
     size_t result = m_length;
     if (!is8Bit())
         result <<= 1;
@@ -1145,14 +1160,28 @@ inline size_t StringImpl::costDuringGC()
     return divideRoundedUp<size_t>(result, refCount());
 }
 
+ALWAYS_INLINE unsigned StringImpl::setMutableFlags(unsigned bits) const
+{
+    // An atomic read-modify-write is expensive (a full barrier on x86), and these bits are set on hot paths
+    // (hashing, atomization, JSString creation). If the caller holds the only reference, no other thread
+    // can be mutating m_hashAndFlags, so a plain load and store cannot lose an update. Threads that read
+    // the string without holding a ref (GC marking, concurrent JIT) never write these bits.
+    if (hasOneRef()) {
+        unsigned oldFlags = mutableFlags();
+        atomicStore<MemoryOrder::Relaxed>(&m_hashAndFlags, oldFlags | bits);
+        return oldFlags;
+    }
+    return atomicExchangeOr<MemoryOrder::Relaxed>(&m_hashAndFlags, bits);
+}
+
 inline void StringImpl::setIsAtom(bool isAtom)
 {
     ASSERT(!isStatic());
     ASSERT(!isSymbol());
     if (isAtom)
-        m_hashAndFlags |= s_hashFlagStringKindIsAtom;
+        setMutableFlags(s_hashFlagStringKindIsAtom);
     else
-        m_hashAndFlags &= ~s_hashFlagStringKindIsAtom;
+        atomicExchangeAnd<MemoryOrder::Relaxed>(&m_hashAndFlags, ~s_hashFlagStringKindIsAtom);
 }
 
 inline void StringImpl::setHash(unsigned hash) const
@@ -1161,17 +1190,18 @@ inline void StringImpl::setHash(unsigned hash) const
     // in the low bits because it makes them slightly more efficient to access.
     // So, we shift left and right when setting and getting our hash code.
 
-    ASSERT(!hasHash());
     ASSERT(!isStatic());
     // Multiple clients assume that StringHasher is the canonical string hash function.
     ASSERT(hash == (is8Bit() ? StringHasher::computeHashAndMaskTop8Bits(span8()) : StringHasher::computeHashAndMaskTop8Bits(span16())));
     ASSERT(!(hash & (s_flagMask << (8 * sizeof(hash) - s_flagCount)))); // Verify that enough high bits are empty.
 
-    hash <<= s_flagCount;
-    ASSERT(!(hash & m_hashAndFlags)); // Verify that enough low bits are empty after shift.
-    ASSERT(hash); // Verify that 0 is a valid sentinel hash value.
+    unsigned shiftedHash = hash << s_flagCount;
+    ASSERT(!(shiftedHash & s_flagMask)); // Verify that enough low bits are empty after shift.
+    ASSERT(shiftedHash); // Verify that 0 is a valid sentinel hash value.
 
-    m_hashAndFlags |= hash; // Store hash with flags in low bits.
+    // Another thread may have concurrently stored the same hash.
+    [[maybe_unused]] unsigned oldHash = setMutableFlags(shiftedHash) >> s_flagCount;
+    ASSERT(!oldHash || oldHash == hash);
 }
 
 inline void StringImpl::ref()

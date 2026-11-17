@@ -1691,11 +1691,9 @@ UTF8CString StringImpl::utf8(ConversionMode mode) const
 
 NEVER_INLINE unsigned StringImpl::hashSlowCase() const
 {
-    if (is8Bit())
-        setHash(StringHasher::computeHashAndMaskTop8Bits(span8()));
-    else
-        setHash(StringHasher::computeHashAndMaskTop8Bits(span16()));
-    return existingHash();
+    unsigned hash = is8Bit() ? StringHasher::computeHashAndMaskTop8Bits(span8()) : StringHasher::computeHashAndMaskTop8Bits(span16());
+    setHash(hash);
+    return hash;
 }
 
 unsigned StringImpl::concurrentHash() const
