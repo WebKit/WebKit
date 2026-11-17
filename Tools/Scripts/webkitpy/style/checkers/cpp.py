@@ -50,6 +50,7 @@ from webkitcorepy import unicode, Version
 from webkitpy.style.checkers.common import match, search, sub, subn
 from webkitpy.style.checkers.computed_style_inline_includes import ComputedStyleInlineIncludesChecker
 from webkitpy.style.checkers.inclusive_language import InclusiveLanguageChecker
+from webkitpy.style.checkers.license import LicenseChecker
 from webkitpy.common.memoized import memoized
 from webkitpy.common.version_name_map import VersionNameMap
 
@@ -6363,6 +6364,7 @@ class CppChecker(object):
         self.handle_style_error = handle_style_error
         self.min_confidence = min_confidence
         self._inclusive_language_checker = InclusiveLanguageChecker(handle_style_error)
+        self._license_checker = LicenseChecker(handle_style_error)
         self._computed_style_inline_includes_checker = ComputedStyleInlineIncludesChecker(file_path, handle_style_error)
         _unit_test_config = unit_test_config
 
@@ -6399,4 +6401,5 @@ class CppChecker(object):
                        self.handle_style_error, self.min_confidence,
                        set(line_numbers) if line_numbers is not None else None)
         self._inclusive_language_checker.check(lines)
+        self._license_checker.check(lines, line_numbers)
         self._computed_style_inline_includes_checker.check(lines, line_numbers)

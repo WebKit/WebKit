@@ -59,6 +59,7 @@ from webkitpy.style.checkers.jsonchecker import JSONCSSPropertiesChecker
 from webkitpy.style.checkers.jsonchecker import JSONImportExpectationsChecker
 from webkitpy.style.checkers.jsonchecker import JSONQuirkTableChecker
 from webkitpy.style.checkers.jstest import JSTestChecker
+from webkitpy.style.checkers.license import categories as LicenseCategories
 from webkitpy.style.checkers.messagesin import MessagesInChecker
 from webkitpy.style.checkers.png import PNGChecker
 from webkitpy.style.checkers.python import PythonChecker, Python3Checker
@@ -695,6 +696,7 @@ def _all_categories():
     categories = categories.union(CMakeChecker.categories)
     categories = categories.union(DeprecatedJSTestIncludesCategories)
     categories = categories.union(ComputedStyleInlineIncludesCategories)
+    categories = categories.union(LicenseCategories)
     categories = categories.union(ESLintChecker.categories)
     categories = categories.union(JSChecker.categories)
     categories = categories.union(JSONChecker.categories)

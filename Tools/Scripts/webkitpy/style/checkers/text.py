@@ -32,6 +32,7 @@
 from webkitpy.style.checkers.common import TabChecker
 from webkitpy.style.checkers.deprecated_js_test_includes import DeprecatedJSTestIncludesChecker
 from webkitpy.style.checkers.inclusive_language import InclusiveLanguageChecker
+from webkitpy.style.checkers.license import LicenseChecker
 
 
 class TextChecker(object):
@@ -43,9 +44,11 @@ class TextChecker(object):
         self.handle_style_error = handle_style_error
         self._tab_checker = TabChecker(file_path, handle_style_error)
         self._inclusive_language_checker = InclusiveLanguageChecker(handle_style_error)
+        self._license_checker = LicenseChecker(handle_style_error)
         self._deprecated_js_test_includes_checker = DeprecatedJSTestIncludesChecker(handle_style_error)
 
     def check(self, lines, line_numbers=None):
         self._tab_checker.check(lines)
         self._inclusive_language_checker.check(lines)
+        self._license_checker.check(lines, line_numbers)
         self._deprecated_js_test_includes_checker.check(lines)

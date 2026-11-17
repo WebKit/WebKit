@@ -33,6 +33,7 @@ This checker is only used to check WebInspector JavaScript files.
 import re
 from webkitpy.style.checkers.common import TabChecker
 from webkitpy.style.checkers.inclusive_language import InclusiveLanguageChecker
+from webkitpy.style.checkers.license import LicenseChecker
 
 
 class JSChecker(object):
@@ -46,11 +47,13 @@ class JSChecker(object):
         self._tab_checker = TabChecker(file_path, handle_style_error)
         self._single_quote_checker = SingleQuoteChecker(file_path, handle_style_error)
         self._inclusive_language_checker = InclusiveLanguageChecker(handle_style_error)
+        self._license_checker = LicenseChecker(handle_style_error)
 
     def check(self, lines, line_numbers=None):
         self._tab_checker.check(lines)
         self._single_quote_checker.check(lines)
         self._inclusive_language_checker.check(lines)
+        self._license_checker.check(lines, line_numbers)
 
 
 class SingleQuoteChecker(object):

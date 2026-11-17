@@ -30,6 +30,7 @@ from webkitcorepy import StringIO
 from webkitpy.common.system.filesystem import FileSystem
 from webkitpy.common.webkit_finder import WebKitFinder
 from webkitpy.style.checkers.inclusive_language import InclusiveLanguageChecker
+from webkitpy.style.checkers.license import LicenseChecker
 
 import pycodestyle
 
@@ -41,12 +42,14 @@ class PythonChecker(object):
         self._file_path = file_path
         self._handle_style_error = handle_style_error
         self._inclusive_language_checker = InclusiveLanguageChecker(handle_style_error)
+        self._license_checker = LicenseChecker(handle_style_error)
 
     def check(self, lines, line_numbers=None):
         self._check_pycodestyle(lines)
         # FIXME: https://bugs.webkit.org/show_bug.cgi?id=204133
         # Pylint disabled for now
         self._inclusive_language_checker.check(lines)
+        self._license_checker.check(lines, line_numbers)
 
     def _check_pycodestyle(self, lines):
         # Initialize pycodestyle.options, which is necessary for
