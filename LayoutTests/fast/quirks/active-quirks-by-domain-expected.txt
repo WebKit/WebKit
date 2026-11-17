@@ -490,8 +490,8 @@ https://www.thetimes.com/
 https://www.tiktok.com/
     NeedsChromeCompatibilityUserAgentQuirk
         chromeCompatibilityVersion: 136
-    NeedsTikTokCaptchaSliderTouchActionQuirk
-        elementSelector: #secsdk-captcha-drag-wrapper
+    NeedsStyleSheetInjectedQuirk
+        styleSheet: #secsdk-captcha-drag-wrapper { touch-action: none; }
     NeedsTikTokCommentsOverflowingContentQuirk
         elementSelector: [class*=DivBrowserModeContainer] > [class*=DivContentContainer]
     NeedsTikTokVideoOverflowingContentQuirk

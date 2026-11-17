@@ -218,10 +218,6 @@ NeedsGoogleMapsEmbedManipulationSurfaceQuirk:
 NeedsGoogleMapsMagnificationWheelDeltaScalingQuirk:
   available: mac
 
-# maps.google.com rdar://67358928
-NeedsGoogleMapsScrollingQuirk:
-  available: iOSFamily
-
 # translate.google.com rdar://106539018
 NeedsGoogleTranslateScrollingQuirk:
   available: iOSFamily
@@ -317,10 +313,6 @@ NeedsSupportsProgressMonitoringQuirk:
   accessor: needsSupportsProgressMonitoring
 
 NeedsSuppressPostLayoutBoundaryEventsQuirk:
-
-# tiktok.com rdar://problem/183445905
-NeedsTikTokCaptchaSliderTouchActionQuirk:
-  conditions: [ElementSelector]
 
 NeedsTikTokCommentsOverflowingContentQuirk:
   conditions: [ElementSelector]

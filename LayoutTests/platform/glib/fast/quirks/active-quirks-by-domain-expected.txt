@@ -462,8 +462,8 @@ https://www.thesaurus.com/
 https://www.thetimes.com/
     (none)
 https://www.tiktok.com/
-    NeedsTikTokCaptchaSliderTouchActionQuirk
-        elementSelector: #secsdk-captcha-drag-wrapper
+    NeedsStyleSheetInjectedQuirk
+        styleSheet: #secsdk-captcha-drag-wrapper { touch-action: none; }
     NeedsTikTokCommentsOverflowingContentQuirk
         elementSelector: [class*=DivBrowserModeContainer] > [class*=DivContentContainer]
     NeedsTikTokVideoOverflowingContentQuirk

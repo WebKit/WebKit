@@ -53,7 +53,6 @@ inline constexpr auto onExpandablePanel = "[data-expc], [data-expc] *"_s;
 inline constexpr auto onClaudeSidebar = "[aria-label=\"Sidebar\"]"_s;
 inline constexpr auto onTikTokCommentsContainer = "[class*=DivBrowserModeContainer] > [class*=DivContentContainer]"_s;
 inline constexpr auto onTikTokVideoContainer = "[class*=DivBrowserModeContainer] > [class*=DivVideoContainer]"_s;
-inline constexpr auto onTikTokCaptchaDragWrapper = "#secsdk-captcha-drag-wrapper"_s;
 inline constexpr auto onGoogleSitesButton = ".DPvwYc.sm8sCf"_s;
 inline constexpr auto onYahooButton = ".DPvwYc.sm8sCf, .vjs-subs-cap-button.vjs-menu-button"_s;
 inline constexpr auto onOutlookSuggestions = ".ms-Suggestions, .ms-Suggestions *"_s;

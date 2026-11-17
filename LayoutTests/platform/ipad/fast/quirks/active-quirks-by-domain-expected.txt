@@ -190,9 +190,10 @@ https://www.google.co.jp/search
 https://www.google.com/maps
     MayNeedToIgnoreContentObservation
         elementSelector: [aria-label=Suggestions], [aria-label=Suggestions] *
-    NeedsGoogleMapsScrollingQuirk
     NeedsSingleOwnerMainFrameCNAMECloakingCookieCapQuirk
         secondaryURL: [*://*.youtube.com/*, *://*.google.com/*]
+    NeedsStyleSheetInjectedQuirk
+        styleSheet: body.PUtLdf { touch-action: auto; }
     ShouldAvoidResizingWhenInputViewBoundsChangeQuirk
     ShouldBypassBackForwardCacheWhenElementMatchesQuirk
         documentSelector: body > div.docs-homescreen-freeze-el-full:first-child
@@ -200,9 +201,10 @@ https://www.google.com/maps
 https://www.google.com/maps/
     MayNeedToIgnoreContentObservation
         elementSelector: [aria-label=Suggestions], [aria-label=Suggestions] *
-    NeedsGoogleMapsScrollingQuirk
     NeedsSingleOwnerMainFrameCNAMECloakingCookieCapQuirk
         secondaryURL: [*://*.youtube.com/*, *://*.google.com/*]
+    NeedsStyleSheetInjectedQuirk
+        styleSheet: body.PUtLdf { touch-action: auto; }
     ShouldAvoidResizingWhenInputViewBoundsChangeQuirk
     ShouldBypassBackForwardCacheWhenElementMatchesQuirk
         documentSelector: body > div.docs-homescreen-freeze-el-full:first-child
@@ -210,9 +212,10 @@ https://www.google.com/maps/
 https://www.google.com/maps/@37.33,-122.01,15z
     MayNeedToIgnoreContentObservation
         elementSelector: [aria-label=Suggestions], [aria-label=Suggestions] *
-    NeedsGoogleMapsScrollingQuirk
     NeedsSingleOwnerMainFrameCNAMECloakingCookieCapQuirk
         secondaryURL: [*://*.youtube.com/*, *://*.google.com/*]
+    NeedsStyleSheetInjectedQuirk
+        styleSheet: body.PUtLdf { touch-action: auto; }
     ShouldAvoidResizingWhenInputViewBoundsChangeQuirk
     ShouldBypassBackForwardCacheWhenElementMatchesQuirk
         documentSelector: body > div.docs-homescreen-freeze-el-full:first-child
@@ -225,9 +228,10 @@ https://www.google.com/mapsearch
 https://maps.google.com/maps/
     MayNeedToIgnoreContentObservation
         elementSelector: [aria-label=Suggestions], [aria-label=Suggestions] *
-    NeedsGoogleMapsScrollingQuirk
     NeedsSingleOwnerMainFrameCNAMECloakingCookieCapQuirk
         secondaryURL: [*://*.youtube.com/*, *://*.google.com/*]
+    NeedsStyleSheetInjectedQuirk
+        styleSheet: body.PUtLdf { touch-action: auto; }
     ShouldAvoidResizingWhenInputViewBoundsChangeQuirk
     ShouldBypassBackForwardCacheWhenElementMatchesQuirk
         documentSelector: body > div.docs-homescreen-freeze-el-full:first-child
@@ -550,8 +554,8 @@ https://www.thetimes.com/
 https://www.tiktok.com/
     NeedsChromeCompatibilityUserAgentQuirk
         chromeCompatibilityVersion: 136
-    NeedsTikTokCaptchaSliderTouchActionQuirk
-        elementSelector: #secsdk-captcha-drag-wrapper
+    NeedsStyleSheetInjectedQuirk
+        styleSheet: #secsdk-captcha-drag-wrapper { touch-action: none; }
     NeedsTikTokCommentsOverflowingContentQuirk
         elementSelector: [class*=DivBrowserModeContainer] > [class*=DivContentContainer]
     NeedsTikTokVideoOverflowingContentQuirk

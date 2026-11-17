@@ -1139,11 +1139,6 @@ void Adjuster::adjustForSiteSpecificQuirks(Style::ComputedStyle& style) const
 #endif // HAVE(APPKIT_GESTURES_SUPPORT)
 
 #if PLATFORM(IOS_FAMILY)
-    if (documentQuirks.needsGoogleMapsScrollingQuirk()) {
-        static MainThreadNeverDestroyed<const AtomString> className("PUtLdf"_s);
-        if (is<HTMLBodyElement>(*m_element) && m_element->hasClassName(className))
-            style.setUsedTouchAction(CSS::Keyword::Auto { });
-    }
     if (documentQuirks.needsFacebookStoriesCreationFormQuirk(*m_element, style))
         style.setDisplayMaintainingOriginalDisplay(DisplayType::BlockFlex);
 #endif // PLATFORM(IOS_FAMILY)
@@ -1157,10 +1152,6 @@ void Adjuster::adjustForSiteSpecificQuirks(Style::ComputedStyle& style) const
             style.setFlexShrink({ 2 });
         }
     }
-
-    // tiktok.com rdar://problem/183445905
-    if (documentQuirks.needsTikTokCaptchaSliderTouchActionQuirk(protect(*m_element)))
-        style.setUsedTouchAction(CSS::Keyword::None { });
 
 #if ENABLE(VIDEO)
     if (documentQuirks.needsFullscreenDisplayNoneQuirk()) {
