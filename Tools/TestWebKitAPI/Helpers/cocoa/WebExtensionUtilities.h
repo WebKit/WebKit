@@ -222,7 +222,6 @@ namespace TestWebKitAPI::Util {
 #ifdef __OBJC__
 
 inline NSString * _Nonnull constructScript(NSArray * _Nonnull lines) { return [lines componentsJoinedByString:@"\n"]; }
-inline NSString * _Nonnull constructJSArrayOfStrings(NSArray * _Nonnull elements) { return [NSString stringWithFormat:@"['%@']", [elements componentsJoinedByString:@"', '"]]; }
 
 NSData * _Nonnull makePNGData(CGSize, SEL _Nonnull colorSelector);
 
