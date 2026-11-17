@@ -53,9 +53,6 @@ struct SVGBaselineShift {
     {
     }
 
-    bool isBaseline() const { return WTF::holdsAlternative<CSS::Keyword::Baseline>(m_value); }
-    bool isSub() const { return WTF::holdsAlternative<CSS::Keyword::Sub>(m_value); }
-    bool isSuper() const { return WTF::holdsAlternative<CSS::Keyword::Super>(m_value); }
     bool isLengthPercentage() const { return WTF::holdsAlternative<LengthPercentage>(m_value); }
     std::optional<LengthPercentage> tryLengthPercentage() const { return isLengthPercentage() ? std::make_optional(std::get<LengthPercentage>(m_value)) : std::nullopt; }
 
