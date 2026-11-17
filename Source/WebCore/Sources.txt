@@ -1177,7 +1177,6 @@ css/parser/CSSSupportsParser.cpp
 css/parser/CSSTokenizer.cpp
 css/parser/CSSTokenizerInputStream.cpp
 css/parser/CSSSubstitutionParser.cpp
-css/parser/MediaQueryBlockWatcher.cpp
 css/parser/MutableCSSSelector.cpp
 css/parser/SizesAttributeParser.cpp @header:RenderStyleGetters
 css/query/ContainerQuery.cpp

@@ -20072,8 +20072,6 @@
 		BC7C5E8F2BE2A8FB00AE645C /* CSSTokenizerInputStream.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CSSTokenizerInputStream.h; sourceTree = "<group>"; };
 		BC7C5E902BE2A8FB00AE645C /* CSSSubstitutionParser.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CSSSubstitutionParser.cpp; sourceTree = "<group>"; };
 		BC7C5E912BE2A8FB00AE645C /* CSSSubstitutionParser.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CSSSubstitutionParser.h; sourceTree = "<group>"; };
-		BC7C5E922BE2A8FB00AE645C /* MediaQueryBlockWatcher.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = MediaQueryBlockWatcher.cpp; sourceTree = "<group>"; };
-		BC7C5E932BE2A8FB00AE645C /* MediaQueryBlockWatcher.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MediaQueryBlockWatcher.h; sourceTree = "<group>"; };
 		BC7C5E942BE2A8FB00AE645C /* MutableCSSSelector.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = MutableCSSSelector.cpp; sourceTree = "<group>"; };
 		BC7C5E952BE2A8FB00AE645C /* MutableCSSSelector.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MutableCSSSelector.h; sourceTree = "<group>"; };
 		BC7C5E962BE2A8FB00AE645C /* SizesAttributeParser.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SizesAttributeParser.cpp; sourceTree = "<group>"; };
@@ -34037,8 +34035,6 @@
 				BC7C5E8D2BE2A8FB00AE645C /* CSSTokenizer.h */,
 				BC7C5E8E2BE2A8FB00AE645C /* CSSTokenizerInputStream.cpp */,
 				BC7C5E8F2BE2A8FB00AE645C /* CSSTokenizerInputStream.h */,
-				BC7C5E922BE2A8FB00AE645C /* MediaQueryBlockWatcher.cpp */,
-				BC7C5E932BE2A8FB00AE645C /* MediaQueryBlockWatcher.h */,
 				BC7C5E942BE2A8FB00AE645C /* MutableCSSSelector.cpp */,
 				BC7C5E952BE2A8FB00AE645C /* MutableCSSSelector.h */,
 				BC7C5E962BE2A8FB00AE645C /* SizesAttributeParser.cpp */,
