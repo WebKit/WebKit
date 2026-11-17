@@ -1745,28 +1745,6 @@ class FindModifiedLayoutTests(shell.ShellCommand, AnalyzeChange):
 
 
 class BugzillaMixin(AddToLogMixin):
-    addURLs = False
-
-    def send_email_for_infrastructure_issue(self, infrastructure_issue_text):
-        try:
-            builder_name = self.getProperty('buildername', '')
-            worker_name = self.getProperty('workername', '')
-            pr_number = self.getProperty('github.number')
-            sha = self.getProperty('github.head.sha', '')[:HASH_LENGTH_TO_DISPLAY]
-            owners = self.getProperty('owners', [])
-            author = owners[0] if owners else '?'
-            build_url = '{}#/builders/{}/builds/{}'.format(self.master.config.buildbotURL, self.build._builderid, self.build.number)
-            email_subject = f'Infrastructure issue at {builder_name}'
-            email_text = f'The following infrastructure issue happened at:\n\n'
-            email_text += f'    - Build : <a href="{build_url}">{build_url}</a>\n'
-            email_text += f'    - Builder : {builder_name}\n'
-            email_text += f'    - Worker : {worker_name}\n'
-            email_text += f'    - PR: {pr_number}, Hash: {sha}, By: {author}\n'
-            email_text += f'    - Issue: {infrastructure_issue_text}\n'
-            send_email_to_bot_watchers(email_subject, email_text, builder_name, f'infrastructure-{builder_name}')
-        except Exception as e:
-            print(f'Error in sending email for infrastructure issue: {e}')
-
     def get_bugzilla_api_key(self):
         password = load_password('BUGZILLA_API_KEY', default='')
         if not password:
@@ -1812,7 +1790,7 @@ class BugzillaMixin(AddToLogMixin):
             defer.returnValue(FAILURE)
 
 
-class ValidateChange(buildstep.BuildStep, BugzillaMixin, GitHubMixin):
+class ValidateChange(buildstep.BuildStep, AddToLogMixin, GitHubMixin):
     name = 'validate-change'
     description = ['validate-change running']
     descriptionDone = ['Validated change']
@@ -1822,7 +1800,7 @@ class ValidateChange(buildstep.BuildStep, BugzillaMixin, GitHubMixin):
     def __init__(
         self,
         verifyObsolete=True,
-        verifyBugClosed=True,
+        verifyPRClosed=True,
         addURLs=True,
         verifyMergeQueue=False,
         verifyNoDraftForMergeQueue=False,
@@ -1831,7 +1809,7 @@ class ValidateChange(buildstep.BuildStep, BugzillaMixin, GitHubMixin):
         excluded_branches=None,
     ):
         self.verifyObsolete = verifyObsolete
-        self.verifyBugClosed = verifyBugClosed
+        self.verifyPRClosed = verifyPRClosed
         self.verifyMergeQueue = verifyMergeQueue
         self.verifyNoDraftForMergeQueue = verifyNoDraftForMergeQueue
         self.enableSkipEWSLabel = enableSkipEWSLabel
@@ -1931,7 +1909,7 @@ class ValidateChange(buildstep.BuildStep, BugzillaMixin, GitHubMixin):
                 if data.get('name') in GitHub.LABELS
             ])
 
-        pr_closed = yield self._is_pr_closed(pr_json) if self.verifyBugClosed else 0
+        pr_closed = yield self._is_pr_closed(pr_json) if self.verifyPRClosed else 0
         if pr_closed == 1:
             rc = yield self.skip_build('Pull request {} is already closed'.format(pr_number))
             return defer.returnValue(rc)
@@ -3318,7 +3296,7 @@ class CompileWebKit(shell.Compile, AddToLogMixin, ShellMixin):
         steps_to_add = self.follow_up_steps()
 
         if cmd.didFail():
-            steps_to_add += [RevertAppliedChanges(), CleanWorkingDirectory(), ValidateChange(verifyBugClosed=False, addURLs=False)]
+            steps_to_add += [RevertAppliedChanges(), CleanWorkingDirectory(), ValidateChange(verifyPRClosed=False, addURLs=False)]
             platform = self.getProperty('platform')
             if platform == 'wpe':
                 steps_to_add.append(InstallWpeDependencies())
@@ -3349,7 +3327,7 @@ class CompileWebKit(shell.Compile, AddToLogMixin, ShellMixin):
                     if self.getProperty('rebuild_without_change_on_builder', False):
                         steps_to_add.extend([
                             RevertAppliedChanges(),
-                            ValidateChange(verifyBugClosed=False, addURLs=False),
+                            ValidateChange(verifyPRClosed=False, addURLs=False),
                             CompileWebKitWithoutChange(),
                             ArchiveBuiltProduct(),
                             GenerateS3URL(f"{self.getProperty('fullPlatform')}-{self.getProperty('archForUpload')}-{self.getProperty('configuration')}{SUFFIX_WITHOUT_CHANGE}"),
@@ -3410,7 +3388,7 @@ class CompileWebKitWithoutChange(CompileWebKit):
             print(f'Error in sending email for unexpected build failure: {e}')
 
 
-class AnalyzeCompileWebKitResults(buildstep.BuildStep, BugzillaMixin, GitHubMixin):
+class AnalyzeCompileWebKitResults(buildstep.BuildStep, AddToLogMixin, GitHubMixin):
     name = 'analyze-compile-webkit-results'
     description = ['analyze-compile-webkit-results']
     descriptionDone = ['analyze-compile-webkit-results']
@@ -3756,7 +3734,7 @@ class RunJavaScriptCoreTests(shell.Test, ResultsDBReportMixin, AddToLogMixin, Sh
             steps_to_add += [
                 RevertAppliedChanges(),
                 CleanWorkingDirectory(),
-                ValidateChange(verifyBugClosed=False, addURLs=False),
+                ValidateChange(verifyPRClosed=False, addURLs=False),
             ]
             if platform == 'wpe':
                 steps_to_add.append(InstallWpeDependencies())
@@ -3770,7 +3748,7 @@ class RunJavaScriptCoreTests(shell.Test, ResultsDBReportMixin, AddToLogMixin, Sh
             else:
                 steps_to_add.append(CompileWebKitWithoutChange() if usesBuildWebKitForJSC(platform) else CompileJSCWithoutChange())
             steps_to_add += [
-                ValidateChange(verifyBugClosed=False, addURLs=False),
+                ValidateChange(verifyPRClosed=False, addURLs=False),
                 KillOldProcesses(),
                 RunJSCTestsWithoutChange(),
                 AnalyzeJSCTestsResults()
@@ -4346,7 +4324,7 @@ class RunWebKitTests(shell.Test, ResultsDBReportMixin, AddToLogMixin, ShellMixin
                 ArchiveTestResults(),
                 UploadTestResults(),
                 ExtractTestResults(),
-                ValidateChange(verifyBugClosed=False, addURLs=False),
+                ValidateChange(verifyPRClosed=False, addURLs=False),
             ]
             if GitHub.NO_FAILURE_LIMITS_LABEL not in self.getProperty('github_labels', []):
                 steps_to_add += [
@@ -4357,7 +4335,7 @@ class RunWebKitTests(shell.Test, ResultsDBReportMixin, AddToLogMixin, ShellMixin
                 steps_to_add += [
                     RevertAppliedChanges(),
                     CleanWorkingDirectory(),
-                    ValidateChange(verifyBugClosed=False, addURLs=False)
+                    ValidateChange(verifyPRClosed=False, addURLs=False)
                 ]
                 if self.getProperty('rebuild_without_change_on_builder', False):
                     steps_to_add.extend([DownloadBuiltProduct(suffix=SUFFIX_WITHOUT_CHANGE), ExtractBuiltProduct()])
@@ -4365,7 +4343,7 @@ class RunWebKitTests(shell.Test, ResultsDBReportMixin, AddToLogMixin, ShellMixin
                     steps_to_add.append(CompileWebKitWithoutChange(retry_build_on_failure=True))
 
                 steps_to_add += [
-                    ValidateChange(verifyBugClosed=False, addURLs=False),
+                    ValidateChange(verifyPRClosed=False, addURLs=False),
                     KillOldProcesses(),
                     RunWebKitTestsWithoutChange(),
                 ]
@@ -4572,7 +4550,7 @@ class ReRunWebKitTests(RunWebKitTests):
                     ExtractTestResults(identifier='rerun'),
                     RevertAppliedChanges(),
                     CleanWorkingDirectory(),
-                    ValidateChange(verifyBugClosed=False, addURLs=False),
+                    ValidateChange(verifyPRClosed=False, addURLs=False),
                 ]
                 if self.getProperty('rebuild_without_change_on_builder', False):
                     steps_to_add.extend([DownloadBuiltProduct(suffix=SUFFIX_WITHOUT_CHANGE), ExtractBuiltProduct()])
@@ -4580,7 +4558,7 @@ class ReRunWebKitTests(RunWebKitTests):
                     steps_to_add.append(CompileWebKitWithoutChange(retry_build_on_failure=True))
 
                 steps_to_add += [
-                    ValidateChange(verifyBugClosed=False, addURLs=False),
+                    ValidateChange(verifyPRClosed=False, addURLs=False),
                     KillOldProcesses(),
                     RunWebKitTestsWithoutChange()
                 ]
@@ -4768,11 +4746,31 @@ class ReRunWebKitTestsEWSSiteIsolation(SiteIsolationResultsDBMixin, ReRunWebKitT
     name = 're-run-layout-tests-site-isolation'
 
 
-class AnalyzeLayoutTestsResults(ResultsDBReportMixin, buildstep.BuildStep, BugzillaMixin, GitHubMixin):
+class AnalyzeLayoutTestsResults(ResultsDBReportMixin, buildstep.BuildStep, AddToLogMixin, GitHubMixin):
     name = 'analyze-layout-tests-results'
     suite = 'layout-tests'
     description = ['analyze-layout-test-results']
     descriptionDone = ['analyze-layout-tests-results']
+
+    def send_email_for_infrastructure_issue(self, infrastructure_issue_text):
+        try:
+            builder_name = self.getProperty('buildername', '')
+            worker_name = self.getProperty('workername', '')
+            pr_number = self.getProperty('github.number')
+            sha = self.getProperty('github.head.sha', '')[:HASH_LENGTH_TO_DISPLAY]
+            owners = self.getProperty('owners', [])
+            author = owners[0] if owners else '?'
+            build_url = '{}#/builders/{}/builds/{}'.format(self.master.config.buildbotURL, self.build._builderid, self.build.number)
+            email_subject = f'Infrastructure issue at {builder_name}'
+            email_text = f'The following infrastructure issue happened at:\n\n'
+            email_text += f'    - Build : <a href="{build_url}">{build_url}</a>\n'
+            email_text += f'    - Builder : {builder_name}\n'
+            email_text += f'    - Worker : {worker_name}\n'
+            email_text += f'    - PR: {pr_number}, Hash: {sha}, By: {author}\n'
+            email_text += f'    - Issue: {infrastructure_issue_text}\n'
+            send_email_to_bot_watchers(email_subject, email_text, builder_name, f'infrastructure-{builder_name}')
+        except Exception as e:
+            print(f'Error in sending email for infrastructure issue: {e}')
 
     @defer.inlineCallbacks
     def report_failure(self, new_failures=None, exceed_failure_limit=False, failure_message=''):
@@ -5096,7 +5094,7 @@ class RunWebKitTestsRedTree(RunWebKitTests):
             ]
         steps_to_add += [ArchiveTestResults(), UploadTestResults(), ExtractTestResults()]
         if first_results_failing_tests:
-            steps_to_add.extend([ValidateChange(verifyBugClosed=False, addURLs=False), KillOldProcesses(), RunWebKitTestsRepeatFailuresRedTree()])
+            steps_to_add.extend([ValidateChange(verifyPRClosed=False, addURLs=False), KillOldProcesses(), RunWebKitTestsRepeatFailuresRedTree()])
         elif first_results_flaky_tests:
             steps_to_add.append(AnalyzeLayoutTestsResultsRedTree())
         elif first_run_failures:
@@ -5130,7 +5128,7 @@ class RunWebKitTestsRedTree(RunWebKitTests):
                     steps_to_add.append(InstallGtkDependencies())
                 steps_to_add.extend([
                     CompileWebKitWithoutChange(retry_build_on_failure=True),
-                    ValidateChange(verifyBugClosed=False, addURLs=False),
+                    ValidateChange(verifyPRClosed=False, addURLs=False),
                     RunWebKitTestsWithoutChangeRedTree(),
                 ])
         if steps_to_add:
@@ -5180,7 +5178,7 @@ class RunWebKitTestsRepeatFailuresRedTree(RunWebKitTestsRedTree):
         steps_to_add += [ArchiveTestResults(), UploadTestResults(identifier='repeat-failures'), ExtractTestResults(identifier='repeat-failures')]
         if with_change_repeat_failures_results_nonflaky_failures or with_change_repeat_failures_timedout:
             steps_to_add.extend([
-                ValidateChange(verifyBugClosed=False, addURLs=False),
+                ValidateChange(verifyPRClosed=False, addURLs=False),
                 KillOldProcesses(),
                 RevertAppliedChanges(),
                 CleanWorkingDirectory(),
@@ -5191,7 +5189,7 @@ class RunWebKitTestsRepeatFailuresRedTree(RunWebKitTestsRedTree):
                 steps_to_add.append(InstallGtkDependencies())
             steps_to_add.extend([
                 CompileWebKitWithoutChange(retry_build_on_failure=True),
-                ValidateChange(verifyBugClosed=False, addURLs=False),
+                ValidateChange(verifyPRClosed=False, addURLs=False),
                 RunWebKitTestsRepeatFailuresWithoutChangeRedTree(),
             ])
         else:
@@ -6026,7 +6024,7 @@ class RunAPITests(shell.Test, ResultsDBReportMixin, AddToLogMixin, ShellMixin):
 
     def doOnFailure(self):
         self.steps_to_add += [
-            ValidateChange(verifyBugClosed=False, addURLs=False),
+            ValidateChange(verifyPRClosed=False, addURLs=False),
             KillOldProcesses(),
             ReRunAPITests(),
         ]
@@ -6181,7 +6179,7 @@ class ReRunAPITests(RunAPITests):
                 yield self.report_to_results_db(results)
                 return
 
-        self.steps_to_add += [RevertAppliedChanges(), CleanWorkingDirectory(), ValidateChange(verifyBugClosed=False, addURLs=False)]
+        self.steps_to_add += [RevertAppliedChanges(), CleanWorkingDirectory(), ValidateChange(verifyPRClosed=False, addURLs=False)]
         platform = self.getProperty('platform')
         if platform == 'wpe':
             self.steps_to_add.append(InstallWpeDependencies())
@@ -6193,7 +6191,7 @@ class ReRunAPITests(RunAPITests):
         else:
             self.steps_to_add.append(CompileWebKitWithoutChange(retry_build_on_failure=True))
 
-        self.steps_to_add.append(ValidateChange(verifyBugClosed=False, addURLs=False))
+        self.steps_to_add.append(ValidateChange(verifyPRClosed=False, addURLs=False))
         self.steps_to_add.append(KillOldProcesses())
         self.steps_to_add.append(RunAPITestsWithoutChange())
         self.steps_to_add.append(AnalyzeAPITestsResults())
@@ -6451,7 +6449,7 @@ class RunWebDriverTests(shell.Test, AddToLogMixin, ShellMixin):
             self.set_build_summary('Passed WebDriver tests')
             return
         self.steps_to_add += [
-            ValidateChange(verifyBugClosed=False, addURLs=False),
+            ValidateChange(verifyPRClosed=False, addURLs=False),
             KillOldProcesses(),
             ReRunWebDriverTests(),
         ]
@@ -6479,13 +6477,13 @@ class ReRunWebDriverTests(RunWebDriverTests):
             self.set_build_summary(self.describe('Found flaky test', first_run_failures | self.failures), force_success=True)
             return
 
-        self.steps_to_add += [RevertAppliedChanges(), CleanWorkingDirectory(), ValidateChange(verifyBugClosed=False, addURLs=False)]
+        self.steps_to_add += [RevertAppliedChanges(), CleanWorkingDirectory(), ValidateChange(verifyPRClosed=False, addURLs=False)]
         if self.getProperty('rebuild_without_change_on_builder', False):
             self.steps_to_add += [DownloadBuiltProduct(suffix=SUFFIX_WITHOUT_CHANGE), ExtractBuiltProduct()]
         else:
             self.steps_to_add.append(CompileWebKitWithoutChange(retry_build_on_failure=True))
         self.steps_to_add += [
-            ValidateChange(verifyBugClosed=False, addURLs=False),
+            ValidateChange(verifyPRClosed=False, addURLs=False),
             KillOldProcesses(),
             RunWebDriverTestsWithoutChange(),
             AnalyzeWebDriverTestsResults(),
@@ -7366,7 +7364,7 @@ class DetermineLandedIdentifier(shell.ShellCommand):
         return comment
 
 
-class CheckStatusOnEWSQueues(buildstep.BuildStep, BugzillaMixin):
+class CheckStatusOnEWSQueues(buildstep.BuildStep, AddToLogMixin):
     name = 'check-status-on-other-ewses'
     descriptionDone = ['Checked change status on other queues']
 
@@ -8327,7 +8325,7 @@ class ScanBuild(steps.ShellSequence, ShellMixin):
         if rc == SUCCESS:
             steps_to_add += self.addResultsSteps()
         else:
-            steps_to_add += [ValidateChange(verifyBugClosed=False, addURLs=False), RevertAppliedChanges(exclude=['new*', 'scan-build-output*']), ScanBuildWithoutChange(analyze_safercpp_results=False)]
+            steps_to_add += [ValidateChange(verifyPRClosed=False, addURLs=False), RevertAppliedChanges(exclude=['new*', 'scan-build-output*']), ScanBuildWithoutChange(analyze_safercpp_results=False)]
 
         self.build.addStepsAfterCurrentStep(steps_to_add)
 
@@ -8621,7 +8619,7 @@ class FindUnexpectedStaticAnalyzerResults(shell.ShellCommand, ResultsDBReportMix
                 if not successful_filter:
                     yield self._addToLog('stdio', f'\nFailed to consult results database. Falling back to tip-of-tree...\n')
                     # If results db failed, rebuild without changes to verify causation
-                    self.build.addStepsAfterCurrentStep([ValidateChange(verifyBugClosed=False, addURLs=False), RevertAppliedChanges(exclude=['new*', 'scan-build-output*']), ScanBuildWithoutChange()])
+                    self.build.addStepsAfterCurrentStep([ValidateChange(verifyPRClosed=False, addURLs=False), RevertAppliedChanges(exclude=['new*', 'scan-build-output*']), ScanBuildWithoutChange()])
                     self.result_message = self.createResultMessage()
                     return defer.returnValue(rc)
 

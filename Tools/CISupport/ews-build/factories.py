@@ -380,7 +380,7 @@ class WPETestsFactory(TestFactory):
 class ServicesFactory(Factory):
     def __init__(self, platform, configuration=None, architectures=None, additionalArguments=None, **kwargs):
         Factory.__init__(self, platform=platform, configuration=configuration, architectures=architectures, buildOnly=False, additionalArguments=additionalArguments, checkRelevance=True)
-        self.addStep(ValidateChange(verifyBugClosed=False, addURLs=False))
+        self.addStep(ValidateChange(verifyPRClosed=False, addURLs=False))
         self.addStep(RunBuildWebKitOrgUnitTests())
         self.addStep(RunBuildbotCheckConfigForBuildWebKit())
         self.addStep(RunEWSUnitTests())

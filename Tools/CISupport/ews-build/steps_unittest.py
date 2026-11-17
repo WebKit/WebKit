@@ -4823,8 +4823,8 @@ class TestReRunAPITestsExcusesKnownFlakes(BuildStepMixinAdditions, unittest.Test
     makes all four unnecessary."""
 
     LADDER = [
-        RevertAppliedChanges(), CleanWorkingDirectory(), ValidateChange(verifyBugClosed=False, addURLs=False),
-        CompileWebKitWithoutChange(retry_build_on_failure=True), ValidateChange(verifyBugClosed=False, addURLs=False),
+        RevertAppliedChanges(), CleanWorkingDirectory(), ValidateChange(verifyPRClosed=False, addURLs=False),
+        CompileWebKitWithoutChange(retry_build_on_failure=True), ValidateChange(verifyPRClosed=False, addURLs=False),
         KillOldProcesses(), RunAPITestsWithoutChange(), AnalyzeAPITestsResults(),
     ]
 
@@ -4973,8 +4973,8 @@ class TestReRunAPITestsExcusesKnownFlakes(BuildStepMixinAdditions, unittest.Test
         yield step.doOnFailure()
 
         self.assertEqual(step.steps_to_add, [
-            RevertAppliedChanges(), CleanWorkingDirectory(), ValidateChange(verifyBugClosed=False, addURLs=False), InstallGtkDependencies(),
-            CompileWebKitWithoutChange(retry_build_on_failure=True), ValidateChange(verifyBugClosed=False, addURLs=False), KillOldProcesses(), RunAPITestsWithoutChange(),
+            RevertAppliedChanges(), CleanWorkingDirectory(), ValidateChange(verifyPRClosed=False, addURLs=False), InstallGtkDependencies(),
+            CompileWebKitWithoutChange(retry_build_on_failure=True), ValidateChange(verifyPRClosed=False, addURLs=False), KillOldProcesses(), RunAPITestsWithoutChange(),
             AnalyzeAPITestsResults(),
         ])
 
@@ -9638,7 +9638,7 @@ class TestValidateChange(BuildStepMixinAdditions, unittest.TestCase):
 
 
     def test_success_pr(self):
-        self.setup_step(ValidateChange(verifyBugClosed=False))
+        self.setup_step(ValidateChange(verifyPRClosed=False))
         ValidateChange.get_pr_json = lambda x, pull_request, repository_url=None, retry=None: self.get_pr(pr_number=pull_request)
         self.setProperty('github.number', '1234')
         self.setProperty('repository', 'https://github.com/WebKit/WebKit')
@@ -9648,7 +9648,7 @@ class TestValidateChange(BuildStepMixinAdditions, unittest.TestCase):
         return rc
 
     def test_success_pr_blocked(self):
-        self.setup_step(ValidateChange(verifyBugClosed=False))
+        self.setup_step(ValidateChange(verifyPRClosed=False))
         ValidateChange.get_pr_json = lambda x, pull_request, repository_url=None, retry=None: self.get_pr(pr_number=pull_request, labels=['merging-blocked'])
         self.setProperty('github.number', '1234')
         self.setProperty('repository', 'https://github.com/WebKit/WebKit')
@@ -9659,7 +9659,7 @@ class TestValidateChange(BuildStepMixinAdditions, unittest.TestCase):
 
 
     def test_obsolete_pr(self):
-        self.setup_step(ValidateChange(verifyBugClosed=False))
+        self.setup_step(ValidateChange(verifyPRClosed=False))
         ValidateChange.get_pr_json = lambda x, pull_request, repository_url=None, retry=None: self.get_pr(pr_number=pull_request)
         self.setProperty('github.number', '1234')
         self.setProperty('repository', 'https://github.com/WebKit/WebKit')
@@ -9669,7 +9669,7 @@ class TestValidateChange(BuildStepMixinAdditions, unittest.TestCase):
         return rc
 
     def test_deleted_pr(self):
-        self.setup_step(ValidateChange(verifyBugClosed=True))
+        self.setup_step(ValidateChange(verifyPRClosed=True))
         ValidateChange.get_pr_json = lambda x, pull_request, repository_url=None, retry=None: False
         self.setProperty('github.number', '1234')
         self.setProperty('repository', 'https://github.com/WebKit/WebKit')
@@ -9731,7 +9731,7 @@ class TestValidateChange(BuildStepMixinAdditions, unittest.TestCase):
 
 
     def test_skipped_branch(self):
-        self.setup_step(ValidateChange(verifyBugClosed=False, branches=[r'main']))
+        self.setup_step(ValidateChange(verifyPRClosed=False, branches=[r'main']))
         ValidateChange.get_pr_json = lambda x, pull_request, repository_url=None, retry=None: self.get_pr(pr_number=pull_request)
         self.setProperty('github.number', '1234')
         self.setProperty('repository', 'https://github.com/WebKit/WebKit')
@@ -9743,7 +9743,7 @@ class TestValidateChange(BuildStepMixinAdditions, unittest.TestCase):
         return rc
 
     def test_excluded_branch(self):
-        self.setup_step(ValidateChange(verifyBugClosed=False, excluded_branches=[r'webkitglib/\d+\.\d+']))
+        self.setup_step(ValidateChange(verifyPRClosed=False, excluded_branches=[r'webkitglib/\d+\.\d+']))
         ValidateChange.get_pr_json = lambda x, pull_request, repository_url=None, retry=None: self.get_pr(pr_number=pull_request)
         self.setProperty('github.number', '1234')
         self.setProperty('repository', 'https://github.com/WebKit/WebKit')
@@ -9755,7 +9755,7 @@ class TestValidateChange(BuildStepMixinAdditions, unittest.TestCase):
         return rc
 
     def test_allowed_branch_not_in_excluded(self):
-        self.setup_step(ValidateChange(verifyBugClosed=False, excluded_branches=[r'webkitglib/\d+\.\d+']))
+        self.setup_step(ValidateChange(verifyPRClosed=False, excluded_branches=[r'webkitglib/\d+\.\d+']))
         ValidateChange.get_pr_json = lambda x, pull_request, repository_url=None, retry=None: self.get_pr(pr_number=pull_request)
         self.setProperty('github.number', '1234')
         self.setProperty('repository', 'https://github.com/WebKit/WebKit')
@@ -13604,7 +13604,7 @@ class TestScanBuild(BuildStepMixinAdditions, unittest.TestCase):
         expected_steps = [
             GenerateS3URL('mac-tahoe-arm64-release-scan-build', extension='txt', content_type='text/plain'),
             UploadFileToS3('build-log.txt', links={'scan-build': 'Full build log'}, content_type='text/plain'),
-            ValidateChange(verifyBugClosed=False, addURLs=False),
+            ValidateChange(verifyPRClosed=False, addURLs=False),
             RevertAppliedChanges(exclude=['new*', 'scan-build-output*']),
             ScanBuildWithoutChange(analyze_safercpp_results=False)
         ]
@@ -14170,7 +14170,7 @@ class TestFindUnexpectedStaticAnalyzerResults(BuildStepMixinAdditions, unittest.
         self.expect_outcome(result=SUCCESS, state_string='19 new issues 3 fixed files')
         with current_hostname(EWS_BUILD_HOSTNAMES[0]):
             rc = self.run_step()
-        self.assertEqual([ValidateChange(verifyBugClosed=False, addURLs=False), RevertAppliedChanges(exclude=['new*', 'scan-build-output*']), ScanBuildWithoutChange()], next_steps)
+        self.assertEqual([ValidateChange(verifyPRClosed=False, addURLs=False), RevertAppliedChanges(exclude=['new*', 'scan-build-output*']), ScanBuildWithoutChange()], next_steps)
         return rc
 
     @expectedFailure
@@ -14259,7 +14259,7 @@ class TestFindUnexpectedStaticAnalyzerResults(BuildStepMixinAdditions, unittest.
         self.expect_outcome(result=SUCCESS, state_string='1 new issue 2 fixed files')
         with current_hostname(EWS_BUILD_HOSTNAMES[0]):
             return self.run_step()
-        self.assertEqual([ValidateChange(verifyBugClosed=False, addURLs=False), RevertAppliedChanges(exclude=['new*', 'scan-build-output*']), ScanBuildWithoutChange()], next_steps)
+        self.assertEqual([ValidateChange(verifyPRClosed=False, addURLs=False), RevertAppliedChanges(exclude=['new*', 'scan-build-output*']), ScanBuildWithoutChange()], next_steps)
         return rc
 
     @expectedFailure
@@ -14344,7 +14344,7 @@ class TestFindUnexpectedStaticAnalyzerResults(BuildStepMixinAdditions, unittest.
         self.expect_outcome(result=SUCCESS, state_string='1 new issue 1 failing file ')
         with current_hostname(EWS_BUILD_HOSTNAMES[0]):
             yield self.run_step()
-        self.assertEqual([ValidateChange(verifyBugClosed=False, addURLs=False), RevertAppliedChanges(exclude=['new*', 'scan-build-output*']), ScanBuildWithoutChange()], next_steps)
+        self.assertEqual([ValidateChange(verifyPRClosed=False, addURLs=False), RevertAppliedChanges(exclude=['new*', 'scan-build-output*']), ScanBuildWithoutChange()], next_steps)
 
     @defer.inlineCallbacks
     def test_no_results_db_data_for_failures_escalates_despite_empty_passes(self):
@@ -14357,7 +14357,7 @@ class TestFindUnexpectedStaticAnalyzerResults(BuildStepMixinAdditions, unittest.
         self.expect_outcome(result=SUCCESS, state_string='1 new issue 1 failing file ')
         with current_hostname(EWS_BUILD_HOSTNAMES[0]):
             yield self.run_step()
-        self.assertEqual([ValidateChange(verifyBugClosed=False, addURLs=False), RevertAppliedChanges(exclude=['new*', 'scan-build-output*']), ScanBuildWithoutChange()], next_steps)
+        self.assertEqual([ValidateChange(verifyPRClosed=False, addURLs=False), RevertAppliedChanges(exclude=['new*', 'scan-build-output*']), ScanBuildWithoutChange()], next_steps)
 
     @defer.inlineCallbacks
     def test_pre_existing_failure_is_filtered_without_rebuilding(self):
