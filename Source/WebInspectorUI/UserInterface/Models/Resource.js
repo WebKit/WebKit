@@ -105,6 +105,43 @@ WI.Resource = class Resource extends WI.SourceCode
 
     // Static
 
+    static _splitCombinedSetCookieHeader(rawCombinedHeader)
+    {
+        let headers = [];
+        for (let header of rawCombinedHeader.split(/, (?![0-9])/)) {
+            // If the previous header's value has an unclosed brace or bracket, the ", " was part
+            // of that value (e.g. JSON) and not a separator between headers.
+            if (headers.length && WI.Resource._cookieValueIsUnterminated(headers.lastValue))
+                headers[headers.length - 1] += ", " + header;
+            else
+                headers.push(header);
+        }
+        return headers;
+    }
+
+    static _cookieValueIsUnterminated(header)
+    {
+        let pairEndIndex = header.indexOf(";");
+        let pair = pairEndIndex === -1 ? header : header.substring(0, pairEndIndex);
+        let separatorIndex = pair.indexOf("=");
+        if (separatorIndex === -1)
+            return false;
+
+        let depth = 0;
+        let inQuotes = false;
+        for (let character of pair.substring(separatorIndex + 1)) {
+            if (character === "\"")
+                inQuotes = !inQuotes;
+            else if (!inQuotes) {
+                if (character === "{" || character === "[")
+                    ++depth;
+                else if (character === "}" || character === "]")
+                    --depth;
+            }
+        }
+        return depth > 0;
+    }
+
     static resolvedType(type, mimeType)
     {
         if (type && type !== WI.Resource.Type.Other)
@@ -516,7 +553,7 @@ WI.Resource = class Resource extends WI.SourceCode
             // ", " in the the date format "Expires=Tue, 03-Oct-2017 04:39:21 GMT". To improve heuristics
             // we do a negative lookahead for numbers, but we can still fail on cookie values containing ", ".
             let rawCombinedHeader = this._responseHeaders.valueForCaseInsensitiveKey("Set-Cookie") || "";
-            let setCookieHeaders = rawCombinedHeader.split(/, (?![0-9])/);
+            let setCookieHeaders = WI.Resource._splitCombinedSetCookieHeader(rawCombinedHeader);
             let cookies = [];
             for (let header of setCookieHeaders) {
                 let cookie = WI.Cookie.parseSetCookieResponseHeader(header);

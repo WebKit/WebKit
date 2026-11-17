@@ -43,6 +43,34 @@ function test()
                 {name: "beta", value: "gamma"},
             ]);
 
+            // A pair without an "=" has an empty name and the whole string as its value.
+            test(`flag`, [
+                {name: "", value: "flag"},
+            ]);
+
+            test(`foo=bar; flag; alpha=beta`, [
+                {name: "foo", value: "bar"},
+                {name: "", value: "flag"},
+                {name: "alpha", value: "beta"},
+            ]);
+
+            // The name is the text before the first "=" and both sides are trimmed.
+            test(`foo bar=baz; alpha=beta`, [
+                {name: "foo bar", value: "baz"},
+                {name: "alpha", value: "beta"},
+            ]);
+
+            test(` foo = bar `, [
+                {name: "foo", value: "bar"},
+            ]);
+
+            test(`=v`, [
+                {name: "", value: "v"},
+            ]);
+
+            // A pair with no name and no value is not a cookie.
+            test(`=`, []);
+
             return true;
         }
     });
@@ -268,6 +296,106 @@ function test()
                 httpOnly: false,
                 sameSite: WI.Cookie.SameSiteType.None,
             });
+
+            // A pair without an "=" has an empty name and the whole string as its value.
+            test(`flag`, {
+                name: "",
+                value: "flag",
+                expires: null,
+                maxAge: null,
+                path: null,
+                domain: null,
+                secure: false,
+                httpOnly: false,
+                sameSite: WI.Cookie.SameSiteType.None,
+            });
+
+            test(`flag; path=/one/two`, {
+                name: "",
+                value: "flag",
+                expires: null,
+                maxAge: null,
+                path: "/one/two",
+                domain: null,
+                secure: false,
+                httpOnly: false,
+                sameSite: WI.Cookie.SameSiteType.None,
+            });
+
+            test(`=value; Domain=.example.com`, {
+                name: "",
+                value: "value",
+                expires: null,
+                maxAge: null,
+                path: null,
+                domain: ".example.com",
+                secure: false,
+                httpOnly: false,
+                sameSite: WI.Cookie.SameSiteType.None,
+            });
+
+            // The name is the text before the first "=" and both sides are trimmed.
+            test(`foo bar=baz; path=/one/two`, {
+                name: "foo bar",
+                value: "baz",
+                expires: null,
+                maxAge: null,
+                path: "/one/two",
+                domain: null,
+                secure: false,
+                httpOnly: false,
+                sameSite: WI.Cookie.SameSiteType.None,
+            });
+
+            test(` flag ; Secure`, {
+                name: "",
+                value: "flag",
+                expires: null,
+                maxAge: null,
+                path: null,
+                domain: null,
+                secure: true,
+                httpOnly: false,
+                sameSite: WI.Cookie.SameSiteType.None,
+            });
+
+            // A nameless cookie is valid even when its value looks like part of something else.
+            test(`"quoted"; Path=/`, {
+                name: "",
+                value: `"quoted"`,
+                expires: null,
+                maxAge: null,
+                path: "/",
+                domain: null,
+                secure: false,
+                httpOnly: false,
+                sameSite: WI.Cookie.SameSiteType.None,
+            });
+
+            // A pair with no name and no value is not a cookie.
+            InspectorTest.expectNull(WI.Cookie.parseSetCookieResponseHeader(`=`), "Set-Cookie '=' should produce null.");
+            InspectorTest.expectNull(WI.Cookie.parseSetCookieResponseHeader(`;`), "Set-Cookie ';' should produce null.");
+
+            return true;
+        }
+    });
+
+    suite.addTestCase({
+        name: "WI.Resource.responseCookies",
+        description: "Response cookies from a combined Set-Cookie header.",
+        test() {
+            function responseCookiesForHeader(setCookie) {
+                let resource = new WI.Resource("https://example.com/page.html", {mimeType: "text/html", type: WI.Resource.Type.Document, requestMethod: "GET", requestHeaders: {}, requestSentWalltime: 0});
+                resource.updateForResponse("https://example.com/page.html", "text/html", WI.Resource.Type.Document, {"Set-Cookie": setCookie}, 200, "OK", undefined, {}, "network");
+                return resource.responseCookies.map((cookie) => `${cookie.name}=${cookie.value}`);
+            }
+
+            // A ", " inside an unclosed brace or bracket is part of the value, not a separator.
+            InspectorTest.expectShallowEqual(responseCookiesForHeader(`a=1; Path=/, pref={"a":1, "b":2}; Path=/`), ["a=1", `pref={"a":1, "b":2}`], "A ', ' inside a JSON value should not split the cookie.");
+            InspectorTest.expectShallowEqual(responseCookiesForHeader(`pref=["x", "y", "z"]; Path=/, b=2`), [`pref=["x", "y", "z"]`, "b=2"], "A ', ' inside a bracketed value should not split the cookie.");
+
+            // Otherwise a ", " separates headers, and a nameless cookie is kept.
+            InspectorTest.expectShallowEqual(responseCookiesForHeader(`a=1; Path=/, flag; Secure, "quoted"`), ["a=1", "=flag", `="quoted"`], "Nameless cookies should be kept.");
 
             return true;
         }
