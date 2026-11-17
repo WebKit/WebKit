@@ -64,6 +64,21 @@ JSC_DEFINE_HOST_FUNCTION(constructJSWebAssemblyTable, (JSGlobalObject* globalObj
         memoryDescriptor = uncheckedDowncast<JSObject>(argument);
     }
 
+    Wasm::TableElementType type;
+    {
+        Identifier elementIdent = Identifier::fromString(vm, "element"_s);
+        JSValue elementValue = memoryDescriptor->get(globalObject, elementIdent);
+        RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
+        String elementString = elementValue.toWTFString(globalObject);
+        RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
+        if (elementString == "funcref"_s || elementString == "anyfunc"_s)
+            type = Wasm::TableElementType::Funcref;
+        else if (elementString == "externref"_s)
+            type = Wasm::TableElementType::Externref;
+        else
+            return throwVMTypeError(globalObject, throwScope, "WebAssembly.Table expects its 'element' field to be the string 'funcref' or 'externref'"_s);
+    }
+
     Wasm::AddressType addressType = Wasm::AddressType::I32;
     Identifier addressIdent = Identifier::fromString(vm, "address"_s);
     JSValue addressTypeValue = memoryDescriptor->get(globalObject, addressIdent);
@@ -83,21 +98,6 @@ JSC_DEFINE_HOST_FUNCTION(constructJSWebAssemblyTable, (JSGlobalObject* globalObj
             throwTypeError(globalObject, throwScope, "WebAssembly.Table 'address' of 'i64' requires Memory64 to be enabled"_s);
             return { };
         }
-    }
-
-    Wasm::TableElementType type;
-    {
-        Identifier elementIdent = Identifier::fromString(vm, "element"_s);
-        JSValue elementValue = memoryDescriptor->get(globalObject, elementIdent);
-        RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-        String elementString = elementValue.toWTFString(globalObject);
-        RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-        if (elementString == "funcref"_s || elementString == "anyfunc"_s)
-            type = Wasm::TableElementType::Funcref;
-        else if (elementString == "externref"_s)
-            type = Wasm::TableElementType::Externref;
-        else
-            return throwVMTypeError(globalObject, throwScope, "WebAssembly.Table expects its 'element' field to be the string 'funcref' or 'externref'"_s);
     }
 
     Identifier initialIdent = Identifier::fromString(vm, "initial"_s);
