@@ -23,7 +23,7 @@
 
 class ARM64E
     # FIXME: This is fragile and needs to match the enum value in PtrTag.h.
-    CFunctionPtrTag = 2
+    CFunctionPtrTag = 1
 end
 
 class Sequence
@@ -56,7 +56,9 @@ class Instruction
                     newList << node.cloneWithNewOperands([target, tag])
                     wasHandled = true
                 elsif node.operands.size > 1
-                    if node.operands[1].is_a? RegisterID or node.operands[1].is_a? Tmp
+                    if node.operands[1].immediate? and node.operands[1].value == ARM64E::CFunctionPtrTag
+                        tag = node.operands[1]
+                    elsif node.operands[1].is_a? RegisterID or node.operands[1].is_a? Tmp
                         tag = riscLowerOperandToRegister(node, newList, postInstructions, 1, "p", false)
                     else
                         tag = Tmp.new(codeOrigin, :gpr)
@@ -74,27 +76,37 @@ class Instruction
                 if node.operands.size == 4
                     raise unless node.operands[3].register?
                     raise unless node.operands[2].immediate? and node.operands[2].value == 1
-                    raise unless node.operands[1].immediate? and node.operands[1].value <= 0xffff
                     address = node.operands[3]
                     if node.operands[1].immediate?
+                        raise unless node.operands[1].value <= 0xffff
                         tag = Tmp.new(codeOrigin, :gpr)
                         newList << Instruction.new(codeOrigin, "move", [Immediate.new(codeOrigin, node.operands[1].value << 48), tag], annotation)
-                    elsif operands[1].register?
-                        tag = node.operands[1]
+                    elsif node.operands[1].register?
+                        tag = Tmp.new(codeOrigin, :gpr)
+                        newList << Instruction.new(codeOrigin, "lshiftq", [node.operands[1], Immediate.new(codeOrigin, 48), tag], annotation)
+                    else
+                        raise "Invalid tag operand at #{node.codeOriginString}"
                     end
                     newList << Instruction.new(codeOrigin, "xorp", [address, tag], annotation)
                     newList << node.cloneWithNewOperands([node.operands[0], tag])
                     wasHandled = true
+                elsif node.operands.size == 2 and node.operands[1].immediate?
+                    tag = Tmp.new(codeOrigin, :gpr)
+                    newList << Instruction.new(codeOrigin, "move", [node.operands[1], tag], annotation)
+                    newList << node.cloneWithNewOperands([node.operands[0], tag])
+                    wasHandled = true
                 end
             when "untagArrayPtr"
-                newOperands = node.operands.map {
-                    | operand |
+                newOperands = []
+                node.operands.each_with_index {
+                    | operand, index |
                     if operand.address?
                         tmp = Tmp.new(codeOrigin, :gpr)
                         newList << Instruction.new(codeOrigin, "loadp", [operand, tmp], annotation)
-                        tmp
+                        postInstructions << Instruction.new(codeOrigin, "storep", [tmp, operand], annotation) if index == 1
+                        newOperands << tmp
                     else
-                        operand
+                        newOperands << operand
                     end
                 }
                 newList << node.cloneWithNewOperands(newOperands)
@@ -110,7 +122,7 @@ class Instruction
         when "call"
             if operands.size == 1 or operands[0].label?
                 lowerARM64
-            elsif operands[1] == ARM64E::CFunctionPtrTag
+            elsif operands[1].immediate? and operands[1].value == ARM64E::CFunctionPtrTag
                 emitARM64Unflipped("blraaz", [operands[0]], :ptr)
             else
                 emitARM64Unflipped("blrab", operands, :ptr)
@@ -118,6 +130,8 @@ class Instruction
         when "jmp"
             if operands.size == 1 or operands[0].label?
                 lowerARM64
+            elsif operands[1].immediate? and operands[1].value == ARM64E::CFunctionPtrTag
+                emitARM64Unflipped("braaz", [operands[0]], :ptr)
             else
                 emitARM64Unflipped("brab", operands, :ptr)
             end
