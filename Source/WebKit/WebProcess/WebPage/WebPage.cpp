@@ -1866,6 +1866,7 @@ void WebPage::reinitializeWebPage(WebPageCreationParameters&& parameters)
 
     setMinimumSizeForAutoLayout(parameters.minimumSizeForAutoLayout);
     setSizeToContentAutoSizeMaximumSize(parameters.sizeToContentAutoSizeMaximumSize);
+    setViewportSegments(parameters.viewportSegments);
 
     setObscuredContentInsets(parameters.obscuredContentInsets);
 #if PLATFORM(IOS_FAMILY)
