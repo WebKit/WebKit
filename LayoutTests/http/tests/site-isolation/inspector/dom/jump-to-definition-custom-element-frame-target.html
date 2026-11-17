@@ -1,0 +1,124 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="../debugger/resources/site-isolation-debugger-test-utilities.js"></script>
+<script>
+class MainElement extends HTMLElement {
+    constructor() { super(); }
+}
+customElements.define("main-element", MainElement);
+
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.DOM.JumpToDefinition.CustomElement");
+
+    let mainFrameTarget;
+    let childFrameTarget;
+
+    function loadFrontendScript(path) {
+        return new Promise((resolve, reject) => {
+            let script = document.createElement("script");
+            script.src = path;
+            script.onload = resolve;
+            script.onerror = () => reject(new Error("Failed to load " + path));
+            document.head.appendChild(script);
+        });
+    }
+
+    async function findElementInFrameTarget(target) {
+        while (!WI.domManager.frameTargetDocumentForTarget(target))
+            await WI.domManager.awaitEvent(WI.DOMManager.Event.FrameDocumentAvailable);
+        let nodeId = await WI.domManager.frameTargetDocumentForTarget(target).querySelector("#element");
+        return WI.domManager.nodeForId(nodeId);
+    }
+
+    async function findElementInPageTree() {
+        let document = await new Promise((resolve) => WI.domManager.requestDocument(resolve));
+        let nodeId = await document.querySelector("#element");
+        return WI.domManager.nodeForId(nodeId);
+    }
+
+    // Chooses "Jump to Definition" in the node's context menu. Resolves with the location that the menu item shows, or null if it shows none.
+    async function jumpToDefinition(domNode) {
+        let shown = Promise.withResolvers();
+        WI.showSourceCodeLocation = (location, options) => shown.resolve(location);
+
+        let contextMenu = new WI.ContextMenu;
+        try {
+            WI.appendContextMenuItemsForDOMNode(contextMenu, domNode, {});
+        } catch {
+            // The items after "Jump to Definition" need parts of the UI that the test frontend does not have.
+        }
+
+        let item = contextMenu.items.find((item) => item.title === "Jump to Definition");
+        InspectorTest.expectNotNull(item, "The context menu should have a Jump to Definition item.");
+        item.callback();
+
+        let location = await Promise.race([shown.promise, new Promise((resolve) => setTimeout(() => resolve(null), 3000))]);
+        delete WI.showSourceCodeLocation;
+        return location;
+    }
+
+    async function expectLocationInScript(location, target, className, lineNumber) {
+        InspectorTest.expectNotNull(location, "Jump to Definition should show a location.");
+        let script = location?.sourceCode;
+        InspectorTest.expectThat(script instanceof WI.Script, "The location should be in a script.");
+        InspectorTest.expectEqual(script?.target, target, "The script should belong to the frame target that owns the element.");
+        let {content} = script ? await script.requestContent() : {};
+        InspectorTest.expectThat(content?.includes(`class ${className} extends HTMLElement`), `The script should define ${className}.`);
+        InspectorTest.expectEqual(location?.lineNumber, lineNumber, "The location should be the line of the constructor.");
+    }
+
+    suite.addTestCase({
+        name: "SiteIsolation.DOM.JumpToDefinition.CustomElement.Setup",
+        async test() {
+            let frameTargets = WI.targets.filter((target) => target.type === WI.TargetType.Frame);
+            let urlTargetMap = await fetchDocumentURLsForTargets(frameTargets);
+            mainFrameTarget = urlTargetMap.get(WI.networkManager.mainFrame.url);
+            childFrameTarget = frameTargets.find((target) => target !== mainFrameTarget);
+            InspectorTest.expectNotNull(mainFrameTarget, "Should find the main frame target.");
+            InspectorTest.expectNotNull(childFrameTarget, "Should find the cross-origin iframe's frame target.");
+            InspectorTest.expectNotEqual(mainFrameTarget, WI.assumingMainTarget(), "The main frame target should not be the page target.");
+
+            // The test frontend has no context menu, and the menu code is not part of it.
+            WI.ContextMenu ||= class ContextMenu {
+                constructor() { this.items = []; }
+                appendItem(title, callback) { this.items.push({title, callback}); return {}; }
+                appendCheckboxItem(title, callback) { return {}; }
+                appendSubMenuItem() { return new WI.ContextMenu; }
+                appendSeparator() { }
+            };
+            await loadFrontendScript("Views/ContextMenuUtilities.js");
+            InspectorTest.expectEqual(typeof WI.appendContextMenuItemsForDOMNode, "function", "Should load the context menu code.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.DOM.JumpToDefinition.CustomElement.CrossOriginIFrame",
+        async test() {
+            let domNode = await findElementInFrameTarget(childFrameTarget);
+            InspectorTest.expectTrue(domNode.isCustomElement(), "The element in the iframe should be a custom element.");
+
+            let location = await jumpToDefinition(domNode);
+            await expectLocationInScript(location, childFrameTarget, "FrameElement", 3);
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.DOM.JumpToDefinition.CustomElement.MainFrame",
+        description: "A node of the page's DOM tree is resolved through the page target, which owns no scripts.",
+        async test() {
+            let domNode = await findElementInPageTree();
+            InspectorTest.expectTrue(domNode.isCustomElement(), "The element in the main frame should be a custom element.");
+
+            let location = await jumpToDefinition(domNode);
+            await expectLocationInScript(location, mainFrameTarget, "MainElement", 5);
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+<body onload="runTest()">
+<p>Test that "Jump to Definition" on a custom element shows its definition, in the main frame and in a cross-origin iframe, under Site Isolation.</p>
+<main-element id="element">Custom element in the main frame.</main-element>
+<iframe src="http://localhost:8000/site-isolation/inspector/dom/resources/jump-to-definition-frame.html"></iframe>
+</body>

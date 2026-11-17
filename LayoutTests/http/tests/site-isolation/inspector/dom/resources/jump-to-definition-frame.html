@@ -1,0 +1,8 @@
+<!DOCTYPE html>
+<script>
+class FrameElement extends HTMLElement {
+    constructor() { super(); }
+}
+customElements.define("frame-element", FrameElement);
+</script>
+<frame-element id="element">Custom element in a cross-origin iframe.</frame-element>
