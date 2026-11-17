@@ -1,0 +1,210 @@
+<!DOCTYPE html><!-- webkit-test-runner [ AccessibilityTextStitchingEnabled=true IsAccessibilityIsolatedTreeEnabled=true ] -->
+<html>
+<head>
+<script src="../../../resources/js-test.js"></script>
+<style>
+body { counter-reset: c 3; }
+
+#multipleStrings::before { content: "a" "b" / "ALT MULTIPLE STRINGS"; }
+#counterOnly::before { content: counter(c) / "ALT COUNTER"; }
+#quoteOnly::before { content: open-quote / "ALT QUOTE"; }
+#counterAndString::before { content: counter(c) ". " / "ALT COUNTER AND STRING"; }
+#emptyAltCounter::before { content: counter(c) "." / ""; }
+#emptyString::before { content: "" / "ALT EMPTY STRING"; }
+#multipleImages::after { content: url(../../mac/resources/cake.png) url(../../mac/resources/cake.png) / "ALT MULTIPLE IMAGES"; }
+#blockBefore::before { display: block; content: "a" / "ALT BLOCK"; }
+#emptyAltImageInFigure::after { content: url(../../mac/resources/cake.png) / ""; }
+#markerMultipleStrings::marker { content: "a" "b" / "ALT MARKER MULTIPLE STRINGS"; }
+#markerCounter::marker { content: counter(c) ". " / "ALT MARKER COUNTER"; }
+#markerEmptyAlt::marker { content: "x" / ""; }
+#markerImages::marker { content: url(../../mac/resources/cake.png) url(../../mac/resources/cake.png) / "ALT MARKER IMAGES"; }
+#markerInsideMultipleStrings::marker { content: "a" "b" / "ALT MARKER INSIDE MULTIPLE STRINGS"; }
+#markerInsideCounter::marker { content: counter(c) ". " / "ALT MARKER INSIDE COUNTER"; }
+#markerInsideEmptyAlt::marker { content: "x" / ""; }
+#markerInsideImages::marker { content: url(../../mac/resources/cake.png) url(../../mac/resources/cake.png) / "ALT MARKER INSIDE IMAGES"; }
+#markerInsideContent::marker { content: "* "; }
+.inside { list-style-position: inside; }
+
+#multipleStringsButton::before { content: "a" "b" / "ALT MULTIPLE STRINGS"; }
+#counterAndStringButton::before { content: counter(c) ". " / "ALT COUNTER AND STRING"; }
+#emptyAltCounterButton::before { content: counter(c) "." / ""; }
+#multipleImagesButton::before { content: url(../../mac/resources/cake.png) url(../../mac/resources/cake.png) / "ALT MULTIPLE IMAGES"; }
+#emptyStringButton::before { content: "" / "ALT EMPTY STRING"; }
+
+.replacedEmptyAlt { content: url(../../mac/resources/cake.png) / ""; }
+#replacedWithAlt { content: url(../../mac/resources/cake.png) / "ALT REPLACED"; }
+#replacedButton { content: url(../../mac/resources/cake.png) / "ALT REPLACED BUTTON"; }
+#replacedImageMap { content: url(../../mac/resources/cake.png); }
+#replacedOverlay { content: url(../../resources/green-400x400.png); }
+#unusedContentAlt { content: "x" / "ALT UNUSED"; }
+#replacedLabel { content: url(../../mac/resources/cake.png) / "ALT LABEL"; }
+#replacedLabelTitled { content: url(../../mac/resources/cake.png) / "ALT LABEL TITLED"; }
+</style>
+</head>
+<body>
+
+<div id="content">
+<div id="multipleStrings" aria-expanded="true">text</div>
+<div id="counterOnly" aria-expanded="true">text</div>
+<div id="quoteOnly" aria-expanded="true">text</div>
+<div id="counterAndString" aria-expanded="true">text</div>
+<div id="emptyAltCounter" aria-expanded="true">text</div>
+<div id="emptyString" aria-expanded="true">text</div>
+<div id="multipleImages" aria-expanded="true">text</div>
+<div id="blockBefore" role="group">text</div>
+<figure><div id="emptyAltImageInFigure" aria-expanded="true">text</div></figure>
+<ul>
+<li id="markerMultipleStrings">text</li>
+<li id="markerCounter">text</li>
+<li id="markerEmptyAlt">text</li>
+<li id="markerImages">text</li>
+</ul>
+<ul class="inside">
+<li id="markerInsidePlain">text</li>
+<li id="markerInsideContent">text</li>
+<li id="markerInsideMultipleStrings">text</li>
+<li id="markerInsideCounter">text</li>
+<li id="markerInsideEmptyAlt">text</li>
+<li id="markerInsideImages">text</li>
+</ul>
+
+<button id="multipleStringsButton"></button>
+<button id="counterAndStringButton"></button>
+<button id="emptyAltCounterButton">text</button>
+<button id="multipleImagesButton"></button>
+<button id="emptyStringButton"></button>
+
+<div id="replacedFocusable" class="replacedEmptyAlt" tabindex="0"></div>
+<figure><div id="replacedInFigure" class="replacedEmptyAlt"></div></figure>
+<div id="replacedLabeled" class="replacedEmptyAlt" aria-label="ARIA LABEL"></div>
+<div id="replacedWithAlt"></div>
+<div id="replacedButton" role="button" tabindex="0"></div>
+<img id="replacedImageMap" usemap="#map" alt="ALT IMAGE MAP">
+<map name="map"><area href="#" alt="AREA" shape="rect" coords="0,0,10,10"></map>
+<img id="replacedOverlay" alt="ALT OVERLAY">
+<div id="unusedContentAlt" role="img"></div>
+<label id="replacedLabel" for="replacedLabelInput">LABEL TEXT</label><input id="replacedLabelInput">
+<label id="replacedLabelTitled" for="replacedLabelTitledInput" title="LABEL TITLE">LABEL TEXT</label><input id="replacedLabelTitledInput">
+</div>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+description("This tests that the alt text of CSS content stands in for the generated content as a whole, whatever it is made of, and that it only applies where that content is used.");
+
+var overlayData = [
+    {
+        topLeft: new DOMPointReadOnly(0, 0),
+        topRight: new DOMPointReadOnly(1, 0),
+        bottomRight: new DOMPointReadOnly(1, 1),
+        bottomLeft: new DOMPointReadOnly(0, 1),
+        children: [
+            {
+                text: "overlay text",
+                topLeft: new DOMPointReadOnly(0, 0),
+                topRight: new DOMPointReadOnly(1, 0),
+                bottomRight: new DOMPointReadOnly(1, 1),
+                bottomLeft: new DOMPointReadOnly(0, 1),
+            }
+        ],
+    }
+];
+
+function outputElement(element) {
+    return (element ? element.role : "AXRole:") + "\n"
+        + (element ? element.description : "AXDescription:") + "\n"
+        + (element ? element.title : "AXTitle:") + "\n"
+        + (element ? element.stringValue : "AXValue:") + "\n\n";
+}
+
+function outputChild(id, index) {
+    var parent = accessibilityController.accessibleElementById(id);
+    return id + " children: " + parent.childrenCount + "\n" + outputElement(parent.childAtIndex(index));
+}
+
+function outputChildren(id) {
+    var parent = accessibilityController.accessibleElementById(id);
+    var result = id + " children: " + parent.childrenCount + "\n";
+    for (var i = 0; i < parent.childrenCount; ++i)
+        result += "child " + i + "\n" + outputElement(parent.childAtIndex(i));
+    return result;
+}
+
+function outputTitle(id) {
+    var element = accessibilityController.accessibleElementById(id);
+    return id + "\n" + element.title + "\n\n";
+}
+
+function outputReplaced(id) {
+    var element = accessibilityController.accessibleElementById(id);
+    return id + " children: " + (element ? element.childrenCount : 0) + "\n" + outputElement(element);
+}
+
+function outputHasChildren(id) {
+    var element = accessibilityController.accessibleElementById(id);
+    return id + " has children: " + (element ? element.childrenCount > 0 : false) + "\n"
+        + (element ? element.role : "AXRole:") + "\n\n";
+}
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    addEventListener("load", () => {
+        internals.installImageOverlay(document.getElementById("replacedOverlay"), overlayData);
+
+        setTimeout(() => {
+            var output = "Generated content\n";
+            output += outputChild("multipleStrings", 0);
+            output += outputChild("counterOnly", 0);
+            output += outputChild("quoteOnly", 0);
+            output += outputChild("counterAndString", 0);
+            output += outputChild("emptyAltCounter", 0);
+            output += outputChild("emptyString", 0);
+            output += outputChild("multipleImages", 1);
+            output += outputChild("blockBefore", 0);
+            output += outputChild("emptyAltImageInFigure", 0);
+            output += outputChildren("markerMultipleStrings");
+            output += outputChildren("markerCounter");
+            output += outputChildren("markerEmptyAlt");
+            output += outputChildren("markerImages");
+            output += outputChildren("markerInsidePlain");
+            output += outputChildren("markerInsideContent");
+            output += outputChildren("markerInsideMultipleStrings");
+            output += outputChildren("markerInsideCounter");
+            output += outputChildren("markerInsideEmptyAlt");
+            output += outputChildren("markerInsideImages");
+
+            output += "Names from generated content\n";
+            output += outputTitle("multipleStringsButton");
+            output += outputTitle("counterAndStringButton");
+            output += outputTitle("emptyAltCounterButton");
+            output += outputTitle("multipleImagesButton");
+            output += outputTitle("emptyStringButton");
+            output += outputTitle("replacedLabelInput");
+            output += outputTitle("replacedLabelTitledInput");
+
+            output += "Elements replaced by a content image\n";
+            output += outputReplaced("replacedFocusable");
+            output += outputReplaced("replacedInFigure");
+            output += outputReplaced("replacedLabeled");
+            output += outputReplaced("replacedWithAlt");
+            output += outputReplaced("replacedButton");
+            output += outputHasChildren("replacedImageMap");
+            output += outputHasChildren("replacedOverlay");
+
+            output += "Unused content alt text\n";
+            output += outputReplaced("unusedContentAlt");
+
+            // debug() ends the output with a line break of its own.
+            debug(output.slice(0, -1));
+
+            document.getElementById("content").style.visibility = "hidden";
+            finishJSTest();
+        }, 0);
+    });
+}
+</script>
+
+</body>
+</html>

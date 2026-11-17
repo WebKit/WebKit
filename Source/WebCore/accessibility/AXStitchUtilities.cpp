@@ -130,11 +130,15 @@ StitchAction stitchActionFor(const RenderObject& renderer, const AccessibilityOb
         return StitchAction::BreakAndSkip;
     }
 
-    if (renderer.parent() && (renderer.parent()->isBeforeOrAfterContent() || renderer.parent()->isFirstLetter())) {
+    if (renderer.parent() && (renderer.parent()->isBeforeOrAfterContent() || renderer.parent()->isFirstLetter() || renderer.parent()->style().isListMarkerStyle())) {
         // Stitching generated content will cause incorrect behavior because
         // some of our code that handles stitched text (e.g. stringValue) assumes
         // the presence of a Node. For now, stop stitching at generated content.
         // Ideally we remove this restriction in the future.
+        // The text of an inside list marker is generated content too. If it started a group it would be the
+        // group's representative, and the list item's own text would then be stitched into an object that
+        // has no node to build a value from. (An outside marker is stitched as the marker box, see
+        // AccessibilityNodeObject::stitchGroups().)
         return StitchAction::BreakAndSkip;
     }
 

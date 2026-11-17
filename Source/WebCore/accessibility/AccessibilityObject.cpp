@@ -1450,7 +1450,7 @@ Vector<String> AccessibilityObject::performTextOperation(const AccessibilityText
     return result;
 }
 
-String AccessibilityObject::altTextFromAttributeOrStyle() const
+String AccessibilityObject::altText() const
 {
     const auto& alt = getAttribute(altAttr);
     if (!alt.isNull()) {
@@ -1459,8 +1459,26 @@ String AccessibilityObject::altTextFromAttributeOrStyle() const
         return alt;
     }
 
-    CheckedPtr style = this->style();
-    return style ? style->content().altText() : nullString();
+    return altTextFromContent();
+}
+
+// Alternative text from 'content' only applies where that content is used: a pseudo-element's
+// generated content, or an element replaced by a 'content' image.
+String AccessibilityObject::altTextFromContent() const
+{
+    if (auto contentAlt = altTextFromStyle(); !contentAlt.isNull())
+        return contentAlt;
+    if (CheckedPtr image = dynamicDowncast<RenderImage>(renderer()); image && image->isGeneratedContent())
+        return image->altText();
+    return nullString();
+}
+
+String AccessibilityObject::altTextFromStyle() const
+{
+    CheckedPtr renderer = dynamicDowncast<RenderElement>(this->renderer());
+    if (!renderer || !renderer->style().pseudoElementType())
+        return nullString();
+    return renderer->style().content().altText();
 }
 
 bool AccessibilityObject::isARIAInput(AccessibilityRole ariaRole)
@@ -2342,8 +2360,8 @@ bool AccessibilityObject::shouldCacheStringValue() const
     if (renderer->isAnonymous()) {
         auto* parent = renderer ? renderer->parent() : nullptr;
         if (is<PseudoElement>(parent ? parent->element() : nullptr)) {
-            // RenderTexts descending from pseudo-elements (e.g. ::before) can have alt text that
-            // we don't currently handle via text runs, and thus we must cache the string value.
+            // RenderTexts descending from pseudo-elements (e.g. ::before) have no text runs,
+            // and thus we must cache the string value.
             return true;
         }
     }

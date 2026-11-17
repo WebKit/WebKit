@@ -593,30 +593,27 @@ static bool needsPseudoElementForAnimation(const Element& element, PseudoElement
     return stack->requiresPseudoElement() || stack->containsProperty(CSSPropertyID::Display);
 }
 
-static RenderPtr<RenderObject> createContentRenderer(const Style::Content::Text& value, const String& altText, Document& document, const Style::ComputedStyle&)
+static RenderPtr<RenderObject> createContentRenderer(const Style::Content::Text& value, Document& document, const Style::ComputedStyle&)
 {
-    if (value.text.value.isEmpty() && altText.isEmpty())
+    if (value.text.value.isEmpty())
         return { };
 
-    auto contentRenderer = createRenderer<RenderTextFragment>(document, value.text.value);
-    contentRenderer->setAltText(altText);
-    return contentRenderer;
+    return createRenderer<RenderTextFragment>(document, value.text.value);
 }
 
-static RenderPtr<RenderObject> createContentRenderer(const Style::Content::Image& value, const String& altText, Document& document, const Style::ComputedStyle& pseudoStyle)
+static RenderPtr<RenderObject> createContentRenderer(const Style::Content::Image& value, Document& document, const Style::ComputedStyle& pseudoStyle)
 {
     auto contentRenderer = createRenderer<RenderImage>(RenderObject::Type::Image, document, Style::ComputedStyle::createStyleInheritingFromPseudoStyle(pseudoStyle), value.image.value.ptr());
     contentRenderer->initializeStyle();
-    contentRenderer->setAltText(altText);
     return contentRenderer;
 }
 
-static RenderPtr<RenderObject> createContentRenderer(const Style::Content::Counter& value, const String&, Document& document, const Style::ComputedStyle&)
+static RenderPtr<RenderObject> createContentRenderer(const Style::Content::Counter& value, Document& document, const Style::ComputedStyle&)
 {
     return createRenderer<RenderCounter>(document, value);
 }
 
-static RenderPtr<RenderObject> createContentRenderer(const Style::Content::Quote& value, const String&, Document& document, const Style::ComputedStyle&)
+static RenderPtr<RenderObject> createContentRenderer(const Style::Content::Quote& value, Document& document, const Style::ComputedStyle&)
 {
     // The quote mark is only known once the quotes before this one are in the tree, see updateQuotesUpTo().
     auto contentRenderer = createRenderer<RenderTextFragment>(document, emptyString());
@@ -624,21 +621,18 @@ static RenderPtr<RenderObject> createContentRenderer(const Style::Content::Quote
     return contentRenderer;
 }
 
-static RenderPtr<RenderObject> createContentRenderer(const Style::Content::Glyph& value, const String& altText, Document& document, const Style::ComputedStyle&)
+static RenderPtr<RenderObject> createContentRenderer(const Style::Content::Glyph& value, Document& document, const Style::ComputedStyle&)
 {
-    auto contentRenderer = createRenderer<RenderText>(document, value.glyph);
-    contentRenderer->setAltText(altText);
-    return contentRenderer;
+    return createRenderer<RenderText>(document, value.glyph);
 }
 
 void RenderTreeUpdater::GeneratedContent::createContentRenderers(RenderTreeBuilder& builder, RenderElement& pseudoRenderer, const Style::ComputedStyle& style, PseudoElementType pseudoElementType)
 {
     if (auto* contentData = style.content().tryData()) {
-        auto altText = contentData->alt.value_or(String { nullString() });
         for (auto& contentItem : contentData->visible) {
             WTF::switchOn(contentItem,
                 [&](const auto& item) {
-                    if (auto child = createContentRenderer(item, altText.value, pseudoRenderer.document(), style); child && pseudoRenderer.isChildAllowed(*child, style))
+                    if (auto child = createContentRenderer(item, pseudoRenderer.document(), style); child && pseudoRenderer.isChildAllowed(*child, style))
                         builder.attach(pseudoRenderer, WTF::move(child));
                 }
             );

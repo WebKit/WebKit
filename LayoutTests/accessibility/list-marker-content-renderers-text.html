@@ -9,6 +9,8 @@
 .rtl-counter li { list-style-type: rtl-cyclic; }
 .rtl-list { direction: rtl; }
 .marker-content li::marker { content: "radish "; }
+.marker-content-alt li::marker { content: "radish " / "fish "; }
+.inside { list-style-position: inside; }
 </style>
 </head>
 <body>
@@ -24,11 +26,20 @@
 
     <ul class="marker-content"><li id="generated">Item D</li></ul>
     <a role="button" href="#" id="generated-button" aria-labelledby="generated-button generated"><span>Reply</span></a>
+
+    <ul class="marker-content-alt"><li id="generated-alt">Item E</li></ul>
+    <a role="button" href="#" id="generated-alt-button" aria-labelledby="generated-alt-button generated-alt"><span>Reply</span></a>
+
+    <ul class="marker-content inside"><li id="inside-generated">Item F</li></ul>
+    <a role="button" href="#" id="inside-generated-button" aria-labelledby="inside-generated-button inside-generated"><span>Reply</span></a>
+
+    <ul class="marker-content-alt inside"><li id="inside-alt">Item G</li></ul>
+    <a role="button" href="#" id="inside-alt-button" aria-labelledby="inside-alt-button inside-alt"><span>Reply</span></a>
 </div>
 <p id="description"></p>
 <div id="console"></div>
 <script>
-description("This tests that a marker keeping its text in content renderers does not report that text to callers asking for text without list markers.");
+description("This tests that no list marker's text is reported to callers asking for text without list markers, whether the marker is outside or inside, takes its text from list-style or from content, or has alternative text.");
 
 async function focusAndWait(buttonId) {
     // The isolated tree publishes the newly focused object as part of handling this notification,
@@ -65,11 +76,24 @@ if (window.accessibilityController) {
         shouldBeEqualToString("nameOfFocusedButton()", "Reply Item C");
         shouldBeEqualToString("itemValue('decimal')", "AXValue: Item C");
 
-        // A `content` marker is the exception: it computes no text of its own, so the renderers
-        // holding its content are the only source and they keep contributing. accname asks for that
-        // text in the name, see accname/name/comp_name_from_pseudo_content_marker.tentative.html.
+        // A `content` marker is a marker like the others: its text belongs to the caller to ask for, and so does
+        // its alternative text. Inside markers are inline boxes of the item's line, not boxes of their own, and
+        // keep nothing apart from the outside ones.
         await focusAndWait("generated-button");
-        shouldBeEqualToString("nameOfFocusedButton()", "Reply radish Item D");
+        shouldBeEqualToString("nameOfFocusedButton()", "Reply Item D");
+        shouldBeEqualToString("itemValue('generated')", "AXValue: Item D");
+
+        await focusAndWait("generated-alt-button");
+        shouldBeEqualToString("nameOfFocusedButton()", "Reply Item E");
+        shouldBeEqualToString("itemValue('generated-alt')", "AXValue: Item E");
+
+        await focusAndWait("inside-generated-button");
+        shouldBeEqualToString("nameOfFocusedButton()", "Reply Item F");
+        shouldBeEqualToString("itemValue('inside-generated')", "AXValue: Item F");
+
+        await focusAndWait("inside-alt-button");
+        shouldBeEqualToString("nameOfFocusedButton()", "Reply Item G");
+        shouldBeEqualToString("itemValue('inside-alt')", "AXValue: Item G");
 
         document.getElementById("content").style.visibility = "hidden";
         finishJSTest();

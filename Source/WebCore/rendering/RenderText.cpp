@@ -96,7 +96,7 @@ bool isDutchLocale(const AtomString& locale)
 
 struct SameSizeAsRenderText : public RenderObject, private Layout::InlineTextBox {
     String text;
-    uint32_t bitfields : 9;
+    uint32_t bitfields : 8;
     float candidateTextSize;
 };
 
@@ -150,12 +150,6 @@ void SecureTextTimer::fired()
 }
 
 NODELETE static HashMap<SingleThreadWeakRef<const RenderText>, String>& originalTextMap()
-{
-    static NeverDestroyed<HashMap<SingleThreadWeakRef<const RenderText>, String>> map;
-    return map;
-}
-
-NODELETE static HashMap<SingleThreadWeakRef<const RenderText>, String>& altTextMap()
 {
     static NeverDestroyed<HashMap<SingleThreadWeakRef<const RenderText>, String>> map;
     return map;
@@ -462,7 +456,6 @@ RenderText::~RenderText()
 {
     // Do not add any code here. Add it to willBeDestroyed() instead.
     ASSERT(!originalTextMap().contains(this));
-    ASSERT(!altTextMap().contains(this));
 }
 
 ASCIILiteral RenderText::renderName() const
@@ -630,34 +623,12 @@ void RenderText::willBeDestroyed()
     if (m_originalTextDiffersFromRendered)
         originalTextMap().remove(this);
 
-    if (m_hasAltText)
-        altTextMap().remove(this);
-
     RenderObject::willBeDestroyed();
 }
 
 String RenderText::originalText() const
 {
     return m_originalTextDiffersFromRendered ? originalTextMap().get(this) : m_text;
-}
-
-const String& RenderText::altText() const
-{
-    if (!m_hasAltText)
-        return nullString();
-    return altTextMap().find(this)->value;
-}
-
-void RenderText::setAltText(const String& altText)
-{
-    if (altText.isNull()) {
-        if (m_hasAltText)
-            altTextMap().remove(this);
-        m_hasAltText = false;
-        return;
-    }
-    altTextMap().set(*this, altText);
-    m_hasAltText = true;
 }
 
 void RenderText::boundingRects(Vector<LayoutRect>& rects, const LayoutPoint& accumulatedOffset) const

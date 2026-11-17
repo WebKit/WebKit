@@ -77,8 +77,7 @@ public:
 
     bool isGeneratedContent() const { return m_isGeneratedContent; }
 
-    const String& altText() const LIFETIME_BOUND { return m_altText; }
-    void setAltText(const String& altText) { m_altText = altText; }
+    WEBCORE_EXPORT String altText() const;
 
     // https://html.spec.whatwg.org/multipage/images.html#current-pixel-density
     float currentPixelDensity() const { return m_currentPixelDensity; }
@@ -188,7 +187,7 @@ private:
 
     bool imageRepresentsNothing() const;
 
-    // Text to display as long as the image isn't available.
+    // The alt text of the element; 'content'-derived alt lives in style data.
     String m_altText;
     const std::unique_ptr<RenderImageResource> m_imageResource;
     bool m_needsToSetSizeForAltText { false };

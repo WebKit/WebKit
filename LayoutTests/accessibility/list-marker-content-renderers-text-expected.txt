@@ -1,4 +1,4 @@
-This tests that a marker keeping its text in content renderers does not report that text to callers asking for text without list markers.
+This tests that no list marker's text is reported to callers asking for text without list markers, whether the marker is outside or inside, takes its text from list-style or from content, or has alternative text.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
@@ -9,7 +9,14 @@ PASS nameOfFocusedButton() is "Reply Item B"
 PASS itemValue('counter') is "AXValue: Item B"
 PASS nameOfFocusedButton() is "Reply Item C"
 PASS itemValue('decimal') is "AXValue: Item C"
-PASS nameOfFocusedButton() is "Reply radish Item D"
+PASS nameOfFocusedButton() is "Reply Item D"
+PASS itemValue('generated') is "AXValue: Item D"
+PASS nameOfFocusedButton() is "Reply Item E"
+PASS itemValue('generated-alt') is "AXValue: Item E"
+PASS nameOfFocusedButton() is "Reply Item F"
+PASS itemValue('inside-generated') is "AXValue: Item F"
+PASS nameOfFocusedButton() is "Reply Item G"
+PASS itemValue('inside-alt') is "AXValue: Item G"
 PASS successfullyParsed is true
 
 TEST COMPLETE

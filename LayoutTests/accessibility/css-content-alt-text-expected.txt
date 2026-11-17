@@ -20,4 +20,4 @@ This test ensures we represent alt text provided by the CSS `content` property c
 PASS successfullyParsed is true
 
 TEST COMPLETE
- Press
+
