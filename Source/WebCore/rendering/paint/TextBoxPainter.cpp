@@ -163,10 +163,9 @@ static void buildTextForShaping(ShapedContent& shapedContent, const InlineIterat
     };
     buildTextContent();
 
-    if (shapedContent.text.isEmpty()) {
-        ASSERT_NOT_REACHED();
+    // LTR content (e.g. an LTR embedding) may sit visually inside the range, in which case we bail out with empty text.
+    if (shapedContent.text.isEmpty())
         return;
-    }
 
     auto computeVisualLeftForTextBox = [&] {
         if (!needsTextBoxVisualLeft)
@@ -647,6 +646,10 @@ LayoutRect TextBoxPainter::measuredSelectionRectForRange(unsigned startOffset, u
         auto shapedContent = ShapedContent { };
 
         buildTextForShaping(shapedContent, makeIterator(), true);
+        if (shapedContent.text.isEmpty()) {
+            fontCascade().adjustSelectionRectForText(m_renderer->canUseSimplifiedTextMeasuring(), m_paintTextRun, rect, startOffset, endOffset);
+            return rect;
+        }
         rect.setX(rect.x() - shapedContent.textBoxVisualLeft);
         auto rangeLength = endOffset - startOffset;
         auto adjustedStartOffset = shapedContent.textBoxStartOffset + startOffset;
@@ -845,7 +848,7 @@ bool TextBoxPainter::paintForegroundForShapeRange(TextPainter& textPainter)
         // FIXME: Setup a semi-inifite rect for the (visually) first box where x is -inifite with fixed maxX.
         return rect;
     };
-    context.save();
+    GraphicsContextStateSaver stateSaver(context);
     context.clip(clipRect());
     auto shapedContent = ShapedContent { };
     buildTextForShaping(shapedContent, makeIterator());
@@ -862,7 +865,6 @@ bool TextBoxPainter::paintForegroundForShapeRange(TextPainter& textPainter)
     run.disableSpacing();
 
     textPainter.paintRange(run, paintRect, textOriginFromPaintRect(paintRect), 0, shapedContent.text.length());
-    context.restore();
     return true;
 }
 
