@@ -1,0 +1,38 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ AudioDecodingInContentProcessEnabled=true IgnoreAudioDecodingErrors=false ] -->
+<html>
+<head>
+    <title>media-source-audio-decoding-error-fatal</title>
+    <script src="../../media/video-test.js"></script>
+    <script>
+    var source;
+    var sourceBuffer;
+
+    window.addEventListener('load', async event => {
+        try {
+            findMediaElement();
+            const mediaBuffer = await (await fetch('../content/test.mp4')).arrayBuffer();
+
+            source = new MediaSource();
+            run('video.src = URL.createObjectURL(source)');
+            await waitFor(source, 'sourceopen');
+            const errorPromise = waitFor(video, 'error');
+
+            run('sourceBuffer = source.addSourceBuffer("video/mp4")');
+            sourceBuffer.appendBuffer(mediaBuffer);
+            await waitFor(sourceBuffer, 'updateend', true);
+
+            video.play().catch(() => { });
+            await errorPromise;
+            testExpected('video.error.code', MediaError.MEDIA_ERR_DECODE);
+            endTest();
+        } catch (e) {
+            failTest(`Caught exception: "${e}"`);
+        }
+    });
+    </script>
+</head>
+<body>
+    <p>Test that an audio decoding error stops playback when IgnoreAudioDecodingErrors is off. The first audio chunk of test.mp4 can't be decoded (rdar://192851438).</p>
+    <video></video>
+</body>
+</html>

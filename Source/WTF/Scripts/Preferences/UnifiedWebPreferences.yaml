@@ -3082,6 +3082,15 @@ IPCTestingAPIEnabled:
   excludeFrom: [ WebKitLegacy, WebCore ]
   defaultValue: false
 
+IgnoreAudioDecodingErrors:
+  type: bool
+  status: stable
+  category: media
+  humanReadableName: "Ignore audio decoding errors"
+  humanReadableDescription: "Keep playing when audio fails to decode"
+  defaultValue: true
+  sharedPreferenceForWebProcess: true
+
 IgnoreIframeEmbeddingProtectionsEnabled:
   type: bool
   status: internal

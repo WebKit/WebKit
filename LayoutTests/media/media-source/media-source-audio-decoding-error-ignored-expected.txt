@@ -1,0 +1,12 @@
+Test that an audio decoding error doesn't stop playback when IgnoreAudioDecodingErrors is on. The first audio chunk of test.mp4 can't be decoded (rdar://192851438).
+
+
+RUN(video.src = URL.createObjectURL(source))
+EVENT(sourceopen)
+RUN(sourceBuffer = source.addSourceBuffer("video/mp4"))
+EVENT(updateend)
+RUN(video.play())
+EXPECTED (video.currentTime >= '1') OK
+EXPECTED (video.error == 'null') OK
+END OF TEST
+

@@ -29,6 +29,7 @@
 #include "AV1Utilities.h"
 #include "AudioDecoder.h"
 #include "AudioSampleFormat.h"
+#include "Logging.h"
 #include "PlatformRawAudioData.h"
 #include "SharedBuffer.h"
 #include "SharedMemory.h"
@@ -551,6 +552,11 @@ Ref<MediaSamplesDecoder::DecodePromise> MediaSamplesDecoder::decodeOnQueue(Media
     }
 
     return AudioDecoder::DecodePromise::all(promises)->whenSettled(m_queue.get(), [protectedThis = Ref { *this }, generation = m_generation](auto&& result) {
+        assertIsCurrent(protectedThis->m_queue.get());
+        if (!result && protectedThis->m_filters.contains(Filter::IgnoreAudioDecodingErrors)) {
+            RELEASE_LOG_ERROR(Media, "MediaSamplesDecoder ignoring audio decoding error: %s", result.error().utf8());
+            return protectedThis->settleWithPendingOutput(true, generation);
+        }
         return protectedThis->settleWithPendingOutput(!!result, generation);
     });
 }

@@ -59,6 +59,7 @@ public:
         UseSharedMemory = 1 << 3,
         // Decode in software formats normally left to a hardware decoder.
         ForceSoftware = 1 << 4,
+        IgnoreAudioDecodingErrors = 1 << 5,
     };
     using Filters = OptionSet<Filter>;
 

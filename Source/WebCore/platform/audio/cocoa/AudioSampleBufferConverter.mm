@@ -683,6 +683,7 @@ Ref<GenericPromise> AudioSampleBufferConverter::addSampleBuffer(CMSampleBufferRe
         assertIsCurrent(protectedThis->queue());
         if (!protectedThis->m_isEncoding)
             return GenericPromise::createAndReject();
+        protectedThis->m_lastError = noErr;
         protectedThis->processSampleBuffer(buffer.get());
         return protectedThis->m_lastError ? GenericPromise::createAndReject() : GenericPromise::createAndResolve();
     });

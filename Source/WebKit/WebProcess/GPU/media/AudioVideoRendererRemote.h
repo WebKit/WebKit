@@ -372,6 +372,7 @@ private:
     bool m_videoAwaitingFlush WTF_GUARDED_BY_CAPABILITY(queueSingleton()) { false };
     bool m_videoAwaitingKeyframe WTF_GUARDED_BY_CAPABILITY(queueSingleton()) { false };
     const bool m_audioDecodingInContentProcess;
+    const bool m_ignoreAudioDecodingErrors;
     const Vector<WebCore::FourCC> m_videoCodecsDecodedInContentProcess;
 
     WebCore::HostingContext m_layerHostingContext WTF_GUARDED_BY_LOCK(m_lock);

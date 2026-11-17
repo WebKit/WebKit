@@ -92,6 +92,7 @@ AudioVideoRendererRemote::AudioVideoRendererRemote(LoggerHelper* loggerHelper, G
     , m_identifier(identifier)
     , m_stallRequest(NativePromiseRequest::create())
     , m_audioDecodingInContentProcess(WebProcess::singleton().sharedPreferencesForWebProcessValue().audioDecodingInContentProcessEnabled)
+    , m_ignoreAudioDecodingErrors(WebProcess::singleton().sharedPreferencesForWebProcessValue().ignoreAudioDecodingErrors)
     , m_videoCodecsDecodedInContentProcess(WebProcess::singleton().sharedPreferencesForWebProcessValue().videoSoftwareDecodingInContentProcessEnabled ? WebProcess::singleton().videoCodecsDecodedInContentProcess() : Vector<FourCC> { })
     , m_prepareSeekRequest(NativePromiseRequest::create())
     , m_finishSeekRequest(NativePromiseRequest::create())
@@ -835,6 +836,8 @@ AudioVideoRendererRemote::TrackState& AudioVideoRendererRemote::createTrackState
     auto filters = contentProcessDecoderFilters();
     if (hardwareUnavailable)
         filters.add(MediaSamplesDecoder::Filter::ForceSoftware);
+    if (!info->isVideo() && m_ignoreAudioDecodingErrors)
+        filters.add(MediaSamplesDecoder::Filter::IgnoreAudioDecodingErrors);
     if (!MediaSamplesDecoder::canDecode(info, filters)) {
         ERROR_LOG(LOGIDENTIFIER, "track ", trackIdentifier.toUInt64(), " codec ", info->codecName(), " cannot be decoded in the content process");
         failTrack(trackIdentifier, WTF::move(info), isProtected, PlatformMediaError::NotSupportedError, 0);
