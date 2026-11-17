@@ -22,11 +22,13 @@ TestPage.registerInitializer(() => {
         return response.result.value;
     };
 
+    // Sends the command right away, so several calls in one task send their commands together.
     HeapTest.takeSnapshot = async function(target) {
-        let {snapshotData} = await target.HeapAgent.snapshot();
+        let {timestamp, snapshotData} = await target.HeapAgent.snapshot();
         let {objectId, snapshot: serializedSnapshot} = await new Promise((resolve) => workerProxy.createSnapshot(target.identifier, snapshotData, resolve));
         let snapshot = WI.HeapSnapshotProxy.deserialize(target, objectId, serializedSnapshot);
         snapshot.snapshotStringData = snapshotData;
+        snapshot.timestamp = timestamp;
         return snapshot;
     };
 

@@ -1,0 +1,43 @@
+Test that under Site Isolation, frame targets in one process that request heap snapshots together share one snapshot build, unless the heap may have changed in between.
+
+
+
+== Running test suite: SiteIsolation.Heap.SameProcessFramesSharedSnapshot
+-- Running test case: SiteIsolation.Heap.SameProcessFramesSharedSnapshot.Setup
+PASS: The same-origin iframe should be in the main frame's process.
+
+-- Running test case: SiteIsolation.Heap.SameProcessFramesSharedSnapshot.RequestedTogether
+PASS: The snapshots should come from one build.
+PASS: The main frame's snapshot should include the main frame's marker.
+PASS: The main frame's snapshot should not include the iframe's marker.
+PASS: The iframe's snapshot should include the iframe's marker.
+PASS: The iframe's snapshot should not include the main frame's marker.
+
+-- Running test case: SiteIsolation.Heap.SameProcessFramesSharedSnapshot.SnapshotUsers.mainFrameTargetDisabled
+PASS: The snapshots should come from one build.
+PASS: The other target should still preview its marker.
+PASS: The marker should keep its identifier in the other target's next snapshot.
+
+-- Running test case: SiteIsolation.Heap.SameProcessFramesSharedSnapshot.SnapshotUsers.iframeTargetDisabled
+PASS: The snapshots should come from one build.
+PASS: The other target should still preview its marker.
+PASS: The marker should keep its identifier in the other target's next snapshot.
+
+-- Running test case: SiteIsolation.Heap.SameProcessFramesSharedSnapshot.JavaScriptInBetween
+PASS: The snapshots should come from different builds.
+PASS: The iframe's snapshot should include the marker created after the main frame's snapshot was requested.
+
+-- Running test case: SiteIsolation.Heap.SameProcessFramesSharedSnapshot.GarbageCollectionInBetween
+PASS: The snapshots should come from different builds.
+
+-- Running test case: SiteIsolation.Heap.SameProcessFramesSharedSnapshot.SnapshotsClearedInBetween
+PASS: The snapshots should come from different builds.
+PASS: The iframe's snapshot should include the iframe's marker.
+
+-- Running test case: SiteIsolation.Heap.SameProcessFramesSharedSnapshot.SameTargetTwice
+PASS: The snapshots should come from different builds.
+
+-- Running test case: SiteIsolation.Heap.SameProcessFramesSharedSnapshot.ConsoleSnapshots
+PASS: The snapshots should come from different builds.
+PASS: The main frame's snapshot should include the marker created after the iframe's snapshot.
+

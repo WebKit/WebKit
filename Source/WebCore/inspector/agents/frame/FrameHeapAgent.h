@@ -43,6 +43,7 @@ public:
 private:
     // InspectorHeapAgent
     bool includesGlobalObject(JSC::JSGlobalObject&) const final;
+    bool canShareSnapshotBuilds() const final { return true; }
 };
 
 } // namespace WebCore
