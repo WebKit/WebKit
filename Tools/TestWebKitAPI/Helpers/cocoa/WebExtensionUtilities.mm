@@ -108,11 +108,6 @@ NSExceptionName testExceptionRaisedBySettingValue(id object, NSString *key, id v
     TestWebKitAPI::Util::shouldEnableSiteIsolationForWebExtensionsTest = shouldEnableSiteIsolation;
 }
 
-- (instancetype)initForExtension:(WKWebExtension *)extension
-{
-    return [self initForExtension:extension extensionControllerConfiguration:nil];
-}
-
 - (instancetype)initWithManifest:(NSDictionary<NSString *, id> *)manifest resources:(NSDictionary<NSString *, id> *)resources
 {
     return [self initWithManifest:manifest resources:resources extensionControllerConfiguration:nil usesEnhancedSecurity:NO];
@@ -445,12 +440,6 @@ NSExceptionName testExceptionRaisedBySettingValue(id object, NSString *key, id v
     [messagesArray removeObjectAtIndex:0];
 
     return argument;
-}
-
-- (void)loadAndRun
-{
-    [self load];
-    [self run];
 }
 
 - (void)done

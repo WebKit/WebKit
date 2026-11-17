@@ -43,7 +43,6 @@ NS_HEADER_AUDIT_BEGIN(nullability, sendability)
 NS_SWIFT_UI_ACTOR
 @interface TestWebExtensionManager : NSObject
 
-- (instancetype)initForExtension:(WKWebExtension *)extension;
 - (instancetype)initForExtension:(WKWebExtension *)extension extensionControllerConfiguration:(nullable WKWebExtensionControllerConfiguration *)configuration;
 - (instancetype)initForExtension:(WKWebExtension *)extension extensionControllerConfiguration:(nullable WKWebExtensionControllerConfiguration *)configuration usesEnhancedSecurity:(BOOL)usesEnhancedSecurity;
 
@@ -87,8 +86,6 @@ NS_SWIFT_UI_ACTOR
 - (void)sendTestMessage:(NSString *)message withArgument:(nullable id)argument;
 - (void)sendTestStartedWithArgument:(nullable id)argument;
 - (void)sendTestFinishedWithArgument:(nullable id)argument;
-
-- (void)loadAndRun NS_SWIFT_UNAVAILABLE("Spins the run loop; use loadAndRun() async instead.");
 
 - (void)load;
 - (void)unload;

@@ -869,6 +869,7 @@ list(APPEND TestWebKit_SOURCES
     Tests/WebKit/WKWebView/WKWebExtension.swift
     Tests/WebKit/WKWebView/WKWebExtensionAPIAction.swift
     Tests/WebKit/WKWebView/WKWebExtensionAPIAlarms.swift
+    Tests/WebKit/WKWebView/WKWebExtensionAPIBookmarks.swift
     Tests/WebKit/WKWebView/WKWebExtensionAPICommands.swift
     Tests/WebKit/WKWebView/WKWebExtensionAPICookies.swift
     Tests/WebKit/WKWebView/WKWebExtensionAPIDOM.swift
@@ -885,6 +886,7 @@ list(APPEND TestWebKit_SOURCES
     Tests/WebKit/WKWebView/WKWebExtensionAPIPermissions.swift
     Tests/WebKit/WKWebView/WKWebExtensionAPIRuntime.swift
     Tests/WebKit/WKWebView/WKWebExtensionAPIScripting.swift
+    Tests/WebKit/WKWebView/WKWebExtensionAPISidebar.swift
     Tests/WebKit/WKWebView/WKWebExtensionAPIStorage.swift
     Tests/WebKit/WKWebView/WKWebExtensionAPITabs.swift
     Tests/WebKit/WKWebView/WKWebExtensionAPITest.swift
