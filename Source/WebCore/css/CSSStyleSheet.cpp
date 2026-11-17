@@ -245,7 +245,6 @@ void CSSStyleSheet::didMutateRules(RuleMutationType mutationType, ContentsCloned
 {
     ASSERT(m_contents->isMutable());
     ASSERT(m_contents->hasOneClient());
-    m_contents->setHasResolvedNesting(false);
 
     forEachStyleScope([&](Style::Scope& scope) {
         if ((mutationType == RuleInsertion || mutationType == RuleReplace) && contentsClonedForMutation == ContentsClonedForMutation::No && !scope.activeStyleSheetsContains(*this)) {

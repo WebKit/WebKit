@@ -86,7 +86,6 @@ StyleSheetContents::StyleSheetContents(StyleRuleImport* ownerRule, const String&
 
 StyleSheetContents::StyleSheetContents(const StyleSheetContents& o)
     : m_originalURL(o.m_originalURL)
-    , m_encodingFromCharsetRule(o.m_encodingFromCharsetRule)
     , m_layerRulesBeforeImportRules(o.m_layerRulesBeforeImportRules.size())
     , m_importRules(o.m_importRules.size())
     , m_namespaceRules(o.m_namespaceRules.size())
@@ -252,11 +251,6 @@ unsigned StyleSheetContents::ruleCount() const
     return result;
 }
 
-void StyleSheetContents::clearCharsetRule()
-{
-    m_encodingFromCharsetRule = String();
-}
-
 void StyleSheetContents::clearRules()
 {
     for (unsigned i = 0; i < m_importRules.size(); ++i) {
@@ -267,14 +261,6 @@ void StyleSheetContents::clearRules()
     m_importRules.clear();
     m_namespaceRules.clear();
     m_childRules.clear();
-    clearCharsetRule();
-}
-
-void StyleSheetContents::parserSetEncodingFromCharsetRule(const String& encoding)
-{
-    // Parser enforces that there is ever only one @charset.
-    ASSERT(m_encodingFromCharsetRule.isNull());
-    m_encodingFromCharsetRule = encoding; 
 }
 
 bool StyleSheetContents::wrapperInsertRule(Ref<StyleRuleBase>&& rule, unsigned index)

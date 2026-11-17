@@ -98,16 +98,13 @@ public:
     void setIsUserStyleSheet(bool b) { m_isUserStyleSheet = b; }
     bool isUserStyleSheet() const { return m_isUserStyleSheet; }
     void setHasSyntacticallyValidCSSHeader(bool b) { m_hasSyntacticallyValidCSSHeader = b; }
-    bool hasSyntacticallyValidCSSHeader() const { return m_hasSyntacticallyValidCSSHeader; }
 
     void parserAddNamespace(const AtomString& prefix, const AtomString& uri);
     void parserAppendRule(Ref<StyleRuleBase>&&);
-    void parserSetEncodingFromCharsetRule(const String& encoding);
     void parserSetUsesStyleBasedEditability() { m_usesStyleBasedEditability = true; }
 
     void clearRules();
 
-    String encodingFromCharsetRule() const { return m_encodingFromCharsetRule; }
     const Vector<Ref<StyleRuleLayer>>& layerRulesBeforeImportRules() const LIFETIME_BOUND { return m_layerRulesBeforeImportRules; }
     const Vector<Ref<StyleRuleImport>>& importRules() const LIFETIME_BOUND { return m_importRules; }
     const Vector<Ref<StyleRuleNamespace>>& namespaceRules() const LIFETIME_BOUND { return m_namespaceRules; }
@@ -163,20 +160,14 @@ public:
 
     friend class CSSStyleSheet;
 
-    bool hasResolvedNesting() const { return m_hasResolvedNesting; }
-    void setHasResolvedNesting(bool value) const { m_hasResolvedNesting = value; }
-
 private:
     WEBCORE_EXPORT StyleSheetContents(StyleRuleImport* ownerRule, const String& originalURL, const CSSParserContext&);
     StyleSheetContents(const StyleSheetContents&);
-
-    void clearCharsetRule();
 
     WeakPtr<StyleRuleImport> m_ownerRule;
 
     String m_originalURL;
 
-    String m_encodingFromCharsetRule;
     Vector<Ref<StyleRuleLayer>> m_layerRulesBeforeImportRules;
     Vector<Ref<StyleRuleImport>> m_importRules;
     Vector<Ref<StyleRuleNamespace>> m_namespaceRules;
@@ -190,7 +181,6 @@ private:
     bool m_didLoadErrorOccur { false };
     bool m_usesStyleBasedEditability { false };
     bool m_isMutable { false };
-    mutable bool m_hasResolvedNesting { false };
     mutable std::optional<bool> m_hasNestingRulesCache;
     unsigned m_inMemoryCacheCount { 0 };
 
