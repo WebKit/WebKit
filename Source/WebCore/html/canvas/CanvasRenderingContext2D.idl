@@ -36,8 +36,6 @@
     // back-reference to the canvas
     readonly attribute HTMLCanvasElement canvas;
 
-    CanvasRenderingContext2DSettings getContextAttributes();
-
     // Non-standard legacy aliases (CanvasFillStrokeStyles).
     undefined setStrokeColor(DOMString color, optional unrestricted float alpha);
     undefined setStrokeColor(unrestricted float grayLevel, optional unrestricted float alpha = 1);
@@ -63,6 +61,7 @@
     [EnabledBySetting=DOMTestingAPIsEnabled] RenderingMode? getEffectiveRenderingModeForTesting();
 };
 
+CanvasRenderingContext2D includes CanvasSettings;
 CanvasRenderingContext2D includes CanvasState;
 CanvasRenderingContext2D includes CanvasLayers;
 CanvasRenderingContext2D includes CanvasTransform;

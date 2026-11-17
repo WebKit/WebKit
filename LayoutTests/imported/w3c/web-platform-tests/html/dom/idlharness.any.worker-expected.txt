@@ -349,7 +349,7 @@ PASS OffscreenCanvasRenderingContext2D interface: existence and properties of in
 PASS OffscreenCanvasRenderingContext2D interface: existence and properties of interface prototype object's "constructor" property
 PASS OffscreenCanvasRenderingContext2D interface: existence and properties of interface prototype object's @@unscopables property
 PASS OffscreenCanvasRenderingContext2D interface: attribute canvas
-FAIL OffscreenCanvasRenderingContext2D interface: operation getContextAttributes() assert_own_property: interface prototype object missing non-static operation expected property "getContextAttributes" missing
+PASS OffscreenCanvasRenderingContext2D interface: operation getContextAttributes()
 PASS OffscreenCanvasRenderingContext2D interface: operation save()
 PASS OffscreenCanvasRenderingContext2D interface: operation restore()
 PASS OffscreenCanvasRenderingContext2D interface: operation reset()

@@ -15052,6 +15052,7 @@
 		7C193BAF1F5E0EB40088F3E6 /* ImageSmoothingQuality.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImageSmoothingQuality.h; sourceTree = "<group>"; };
 		7C193BB01F5E0EB50088F3E6 /* CanvasImageSmoothing.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CanvasImageSmoothing.idl; sourceTree = "<group>"; };
 		7C193BB11F5E0EB50088F3E6 /* CanvasLineCap.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CanvasLineCap.idl; sourceTree = "<group>"; };
+		9559DF0D970B0C42A789C78C /* CanvasSettings.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CanvasSettings.idl; sourceTree = "<group>"; };
 		7C193BB21F5E0EB60088F3E6 /* CanvasState.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CanvasState.idl; sourceTree = "<group>"; };
 		7C193BB31F5E0EB70088F3E6 /* CanvasFilters.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CanvasFilters.idl; sourceTree = "<group>"; };
 		7C193BB41F5E0EB70088F3E6 /* Path2D.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Path2D.idl; sourceTree = "<group>"; };
@@ -28491,6 +28492,7 @@
 				3140C5221FDF318600D2A873 /* CanvasRenderingContext2DBase.h */,
 				BCE0490C263A2F1C009DCBB8 /* CanvasRenderingContext2DSettings.h */,
 				BCE0490E263A2F1C009DCBB8 /* CanvasRenderingContext2DSettings.idl */,
+				9559DF0D970B0C42A789C78C /* CanvasSettings.idl */,
 				7C193BAD1F5E0EB30088F3E6 /* CanvasShadowStyles.idl */,
 				7C193BB21F5E0EB60088F3E6 /* CanvasState.idl */,
 				49484FBF102CF23C00187DD3 /* CanvasStyle.cpp */,

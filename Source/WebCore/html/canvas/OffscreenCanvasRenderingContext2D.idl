@@ -41,6 +41,7 @@
     [EnabledBySetting=DOMTestingAPIsEnabled] RenderingMode? getEffectiveRenderingModeForTesting();
 };
 
+OffscreenCanvasRenderingContext2D includes CanvasSettings;
 OffscreenCanvasRenderingContext2D includes CanvasState;
 OffscreenCanvasRenderingContext2D includes CanvasLayers;
 OffscreenCanvasRenderingContext2D includes CanvasTransform;

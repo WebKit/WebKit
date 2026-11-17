@@ -1477,6 +1477,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/html/canvas/CanvasRect.idl \
     $(WebCore)/html/canvas/CanvasRenderingContext2D.idl \
     $(WebCore)/html/canvas/CanvasRenderingContext2DSettings.idl \
+    $(WebCore)/html/canvas/CanvasSettings.idl \
     $(WebCore)/html/canvas/CanvasShadowStyles.idl \
     $(WebCore)/html/canvas/CanvasState.idl \
     $(WebCore)/html/canvas/CanvasText.idl \

@@ -2150,6 +2150,7 @@ set(WebCore_SUPPLEMENTAL_IDL_FILES
     html/canvas/CanvasPath.idl
     html/canvas/CanvasPathDrawingStyles.idl
     html/canvas/CanvasRect.idl
+    html/canvas/CanvasSettings.idl
     html/canvas/CanvasShadowStyles.idl
     html/canvas/CanvasState.idl
     html/canvas/CanvasText.idl
