@@ -27,9 +27,14 @@
 
 #if ENABLE(SPATIAL_PORTAL)
 
+#include <WebCore/FloatRect.h>
+#include <WebCore/NodeIdentifier.h>
 #include <WebCore/TransformationMatrix.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
+
+class GraphicsLayer;
 
 struct UsedPortalTransform {
     bool fitsContent { true };
@@ -40,6 +45,17 @@ struct UsedPortalTransform {
     bool hasContentTransform() const { return !transformBeforeAuto.isIdentity() || !transformAfterAuto.isIdentity(); }
 
     bool operator==(const UsedPortalTransform&) const = default;
+};
+
+struct PortalPromotedChild {
+    NodeIdentifier nodeID;
+    NodeIdentifier rootNodeID;
+    WeakPtr<GraphicsLayer> layer;
+    FloatRect quadRectInChildSpace;
+    FloatPoint childOriginInPortal;
+    // The border box of the promoted child, whose center goes on the anchor when the child is anchored to a model.
+    FloatSize childSize;
+    TransformationMatrix transform;
 };
 
 } // namespace WebCore

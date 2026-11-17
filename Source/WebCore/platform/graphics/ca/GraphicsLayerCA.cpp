@@ -1003,6 +1003,17 @@ void GraphicsLayerCA::setHidesFromScreenCapture(bool hides)
     noteLayerPropertyChanged(HidesFromScreenCaptureChanged);
 }
 
+#if ENABLE(SPATIAL_PORTAL)
+void GraphicsLayerCA::setIsHostedInSpatialPortalScene(bool hosted)
+{
+    if (hosted == isHostedInSpatialPortalScene())
+        return;
+
+    GraphicsLayer::setIsHostedInSpatialPortalScene(hosted);
+    noteLayerPropertyChanged(HostedInSpatialPortalSceneChanged);
+}
+#endif
+
 void GraphicsLayerCA::setBackdropFiltersRect(const FloatRoundedRect& backdropFiltersRect)
 {
     if (backdropFiltersRect == m_backdropFiltersRect)
@@ -2455,6 +2466,11 @@ void GraphicsLayerCA::commitLayerChangesBeforeSublayers(CommitState& commitState
     if (m_uncommittedChanges & HidesFromScreenCaptureChanged)
         updateHidesFromScreenCapture();
 
+#if ENABLE(SPATIAL_PORTAL)
+    if (m_uncommittedChanges & HostedInSpatialPortalSceneChanged)
+        updatePrimaryLayerHidden();
+#endif
+
     if (m_uncommittedChanges & BackdropFiltersRectChanged)
         updateBackdropFiltersRect();
 
@@ -2810,12 +2826,22 @@ void GraphicsLayerCA::updateContentsVisibility()
     if (RefPtr backdropLayer = m_backdropLayer)
         backdropLayer->setHidden(!m_contentsVisible);
 
-#if HAVE(MATERIAL_HOSTING)
-    if (RefPtr structuralLayer = m_structuralLayer; structuralLayer && structuralLayerPurpose() == StructuralLayerForMaterial)
-        structuralLayer->setHidden(!m_contentsVisible);
-#endif
+    updatePrimaryLayerHidden();
 
     layer->setContentsHidden(!m_contentsVisible);
+}
+
+void GraphicsLayerCA::updatePrimaryLayerHidden()
+{
+    bool hidden = false;
+#if HAVE(MATERIAL_HOSTING)
+    if (m_structuralLayer && structuralLayerPurpose() == StructuralLayerForMaterial)
+        hidden = !m_contentsVisible;
+#endif
+#if ENABLE(SPATIAL_PORTAL)
+    hidden = hidden || isHostedInSpatialPortalScene();
+#endif
+    protect(primaryLayer())->setHidden(hidden);
 }
 
 void GraphicsLayerCA::updateUserInteractionEnabled()
@@ -3092,7 +3118,7 @@ bool GraphicsLayerCA::updateStructuralLayer()
 
 bool GraphicsLayerCA::ensureStructuralLayer(StructuralLayerPurpose purpose)
 {
-    const LayerChangeFlags structuralLayerChangeFlags = NameChanged
+    LayerChangeFlags structuralLayerChangeFlags = NameChanged
         | GeometryChanged
         | TransformChanged
         | ChildrenTransformChanged
@@ -3104,6 +3130,9 @@ bool GraphicsLayerCA::ensureStructuralLayer(StructuralLayerPurpose purpose)
         | BackdropRootChanged
         | MaskLayerChanged
         | OpacityChanged;
+#if ENABLE(SPATIAL_PORTAL)
+    structuralLayerChangeFlags |= HostedInSpatialPortalSceneChanged;
+#endif
 
     bool structuralLayerChanged = false;
 
@@ -3178,6 +3207,7 @@ bool GraphicsLayerCA::ensureStructuralLayer(StructuralLayerPurpose purpose)
     layer->setTransform(TransformationMatrix());
     layer->setOpacity(1);
     layer->setBlendMode(BlendMode::Normal);
+    layer->setHidden(false);
     if (m_layerClones) {
         for (auto& cloneLayer : m_layerClones->primaryLayerClones.values()) {
             cloneLayer->setPosition(point);
@@ -4981,6 +5011,9 @@ ASCIILiteral GraphicsLayerCA::layerChangeAsString(LayerChange layerChange)
 #endif
     case LayerChange::ShadowPathChanged: return "ShadowPathChanged"_s;
     case LayerChange::HidesFromScreenCaptureChanged: return "HidesFromScreenCaptureChanged"_s;
+#if ENABLE(SPATIAL_PORTAL)
+    case LayerChange::HostedInSpatialPortalSceneChanged: return "HostedInSpatialPortalSceneChanged"_s;
+#endif
     }
     ASSERT_NOT_REACHED();
     return ""_s;
@@ -5184,6 +5217,10 @@ void GraphicsLayerCA::changeLayerTypeTo(PlatformCALayer::LayerType newLayerType)
 
         if (isTiledLayer)
             addUncommittedChanges(CoverageRectChanged);
+#endif
+
+#if ENABLE(SPATIAL_PORTAL)
+    addUncommittedChanges(HostedInSpatialPortalSceneChanged);
 #endif
 
     adjustContentsScaleLimitingFactor();

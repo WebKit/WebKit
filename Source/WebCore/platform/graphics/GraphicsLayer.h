@@ -567,6 +567,11 @@ public:
     virtual void setHidesFromScreenCapture(bool hides) { m_hidesFromScreenCapture = hides; }
     bool hidesFromScreenCapture() const { return m_hidesFromScreenCapture; }
 
+#if ENABLE(SPATIAL_PORTAL)
+    virtual void setIsHostedInSpatialPortalScene(bool hosted) { m_isHostedInSpatialPortalScene = hosted; }
+    bool isHostedInSpatialPortalScene() const { return m_isHostedInSpatialPortalScene; }
+#endif
+
 protected:
     WEBCORE_EXPORT explicit GraphicsLayer(Type, GraphicsLayerClient&);
 
@@ -682,6 +687,9 @@ protected:
     bool m_canDetachBackingStore : 1;
     bool m_shouldPaintUsingCompositeCopy : 1;
     bool m_renderingIsSuppressedIncludingDescendants : 1 { false };
+#if ENABLE(SPATIAL_PORTAL)
+    bool m_isHostedInSpatialPortalScene : 1 { false };
+#endif
 #if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
     bool m_isSeparated : 1;
     bool m_isSeparatedImage : 1;

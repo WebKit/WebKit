@@ -995,6 +995,11 @@ void GraphicsLayer::dumpProperties(TextStream& ts, OptionSet<LayerTreeAsTextOpti
     if (m_hidesFromScreenCapture)
         ts << indent << "(hidesFromScreenCapture "_s << m_hidesFromScreenCapture << ")\n"_s;
 
+#if ENABLE(SPATIAL_PORTAL)
+    if (m_isHostedInSpatialPortalScene)
+        ts << indent << "(hostedInSpatialPortalScene "_s << m_isHostedInSpatialPortalScene << ")\n"_s;
+#endif
+
     if (options & LayerTreeAsTextOptions::Debug)
         ts << indent << "(primary-layer-id "_s << primaryLayerID() << ")\n"_s;
 

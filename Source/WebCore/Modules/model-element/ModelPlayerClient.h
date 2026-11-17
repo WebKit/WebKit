@@ -63,6 +63,8 @@ public:
 #endif
 #if ENABLE(SPATIAL_PORTAL)
     virtual void didUpdatePortalTransform(ModelPlayer&, const TransformationMatrix&) = 0;
+    virtual bool willRenderPortalFrame(ModelPlayer&);
+    virtual void didUpdateHostedPortalChildren(ModelPlayer&);
 #endif
 #if ENABLE(MODEL_ELEMENT_BOUNDING_BOX)
     virtual void didUpdateBoundingBox(ModelPlayer&, NodeIdentifier, const FloatPoint3D&, const FloatPoint3D&) = 0;

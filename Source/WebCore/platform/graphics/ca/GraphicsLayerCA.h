@@ -254,6 +254,10 @@ public:
 
     WEBCORE_EXPORT void setHidesFromScreenCapture(bool) override;
 
+#if ENABLE(SPATIAL_PORTAL)
+    WEBCORE_EXPORT void setIsHostedInSpatialPortalScene(bool) override;
+#endif
+
 private:
     friend class FrameProcessIndicators;
 
@@ -517,6 +521,7 @@ private:
     void updateChildrenTransform();
     void updateMasksToBounds();
     void updateContentsVisibility();
+    void updatePrimaryLayerHidden();
     void updateContentsOpaque(float pageScaleFactor);
     void updateBackfaceVisibility();
     bool updateStructuralLayer();
@@ -700,6 +705,9 @@ private:
 #endif
         ShadowPathChanged                       = 1LLU << 49,
         HidesFromScreenCaptureChanged           = 1LLU << 50,
+#if ENABLE(SPATIAL_PORTAL)
+        HostedInSpatialPortalSceneChanged       = 1LLU << 51,
+#endif
     };
     typedef uint64_t LayerChangeFlags;
     static ASCIILiteral layerChangeAsString(LayerChange);

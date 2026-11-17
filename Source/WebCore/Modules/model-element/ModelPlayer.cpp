@@ -216,6 +216,19 @@ void ModelPlayer::setAnchor(NodeIdentifier, std::optional<NodeIdentifier>, const
 {
 }
 
+void ModelPlayer::setPortalPromotedChildren(const Vector<PortalPromotedChild>&)
+{
+}
+
+void ModelPlayer::portalPromotedChildDidPaint()
+{
+}
+
+bool ModelPlayer::hostsPortalPromotedChild(NodeIdentifier) const
+{
+    return false;
+}
+
 #endif
 
 #if ENABLE(MODEL_ELEMENT_STAGE_MODE)

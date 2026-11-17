@@ -92,6 +92,7 @@ promise_test(async t => {
     testRunner.setPageVisibility("hidden");
     await sleepForSeconds(0.5);
     assert_true(document.hidden, "Page should be hidden");
+    await waitForModelState(model, "Unloaded");
 
     testRunner.setPageVisibility("visible");
     await sleepForSeconds(0.5);
