@@ -360,13 +360,16 @@ void GenerateCaps(const WGPULimits &limitsWgpu,
         limitsWgpu.maxVertexBuffers);  // WebGPU has maxVertexBuffers and maxVertexAttributes but
                                        // since each vertex attribute can use a unique buffer, we
                                        // are limited by the total number of vertex buffers
-    glCaps->maxVertexUniformVectors =
-        maxUniformVectors;  // Uniforms are implemented using a uniform buffer, so the max number of
-                            // uniforms we can support is the max buffer range divided by the size
-                            // of a single uniform (4X float).
-    glCaps->maxVertexOutputComponents = maxVaryingComponents;
+    // Uniforms are implemented using a uniform buffer, so the max number of uniforms we can support
+    // is the max buffer range divided by the size of a single uniform (4X float). The default
+    // uniforms are the members of one struct, and every uniform takes at least one vector, but WGSL
+    // implementations are only required to support 1023 members in a struct.
+    constexpr GLuint kMaxWgslStructMembers = 1023;
+    const GLuint maxDefaultUniformVectors  = std::min(maxUniformVectors, kMaxWgslStructMembers);
+    glCaps->maxVertexUniformVectors        = maxDefaultUniformVectors;
+    glCaps->maxVertexOutputComponents      = maxVaryingComponents;
 
-    glCaps->maxFragmentUniformVectors     = maxUniformVectors;
+    glCaps->maxFragmentUniformVectors     = maxDefaultUniformVectors;
     glCaps->maxFragmentInputComponents    = maxVaryingComponents;
     glCaps->minProgramTextureGatherOffset = 0;
     glCaps->maxProgramTextureGatherOffset = 0;
