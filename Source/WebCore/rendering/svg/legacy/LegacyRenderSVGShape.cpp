@@ -269,7 +269,13 @@ void LegacyRenderSVGShape::paint(PaintInfo& paintInfo, const LayoutPoint&)
         return;
 
     if (paintInfo.phase == PaintPhase::EventRegion) {
-        paintInfo.eventRegionContext()->unite(FloatRoundedRect(strokeBoundingBox()), *this, style(), false);
+        CheckedRef eventRegionContext = *paintInfo.eventRegionContext();
+        // Avoid stroking the path when an upper bound cannot change the event region.
+        if (!m_strokeBoundingBox) {
+            if (auto bound = boundOfStrokeBoundingBox(); bound && eventRegionContext->uniteWouldNotChangeRegions(*bound, *this, style()))
+                return;
+        }
+        eventRegionContext->unite(FloatRoundedRect(strokeBoundingBox()), *this, style(), false);
         return;
     }
 
@@ -373,6 +379,28 @@ bool LegacyRenderSVGShape::nodeAtFloatPoint(const HitTestRequest& request, HitTe
         }
     }
     return false;
+}
+
+std::optional<FloatRect> LegacyRenderSVGShape::boundOfStrokeBoundingBox() const
+{
+    if (!hasPath() || hasNonScalingStroke())
+        return std::nullopt;
+
+    auto bound = path().fastBoundingRect();
+    if (!style().stroke().isNone()) {
+        // Stroke geometry reaches at most (strokeWidth / 2) * max(sqrt(2), miterLimit) from the
+        // path; double that to also cover the stroked outline's curve control points.
+        auto reach = std::numbers::sqrt2_v<float>;
+        if (style().joinStyle() == LineJoin::Miter)
+            reach = std::max(reach, style().strokeMiterLimit().value.value);
+        bound.inflate(strokeWidth() * reach);
+    }
+    // Paths with markers compute their stroke bounding box at layout, so this only adds
+    // zero-length subpaths, in the same way as for the stroke bounding box.
+    bound = adjustStrokeBoundingBoxForMarkersAndZeroLengthLinecaps(RepaintRectCalculation::Fast, bound);
+    // Cover the LayoutUnit precision of the event region.
+    bound.inflate(std::max(1.0f, strokeWidth() / 100));
+    return bound;
 }
 
 FloatRect LegacyRenderSVGShape::strokeBoundingBox() const

@@ -60,21 +60,7 @@ EventRegionContext::~EventRegionContext() = default;
 
 void EventRegionContext::unite(const FloatRoundedRect& roundedRect, const RenderObject& renderer, const Style::ComputedStyle& style, bool overrideUserModifyIsEditable, ContributeToInteractionRegions contributeToInteractionRegions)
 {
-    auto transformAndClipIfNeeded = [&](auto input, auto transform) {
-        if (m_transformStack.isEmpty() && m_clipStack.isEmpty())
-            return input;
-
-        auto transformedAndClippedInput = m_transformStack.isEmpty() ? input : transform(m_transformStack.last(), input);
-        if (!m_clipStack.isEmpty())
-            transformedAndClippedInput.intersect(m_clipStack.last());
-
-        return transformedAndClippedInput;
-    };
-
-    auto region = transformAndClipIfNeeded(approximateAsRegion(roundedRect), [](auto affineTransform, auto region) {
-        return affineTransform.mapRegion(region);
-    });
-    m_eventRegion.unite(region, renderer, style, overrideUserModifyIsEditable);
+    m_eventRegion.unite(transformAndClip(approximateAsRegion(roundedRect)), renderer, style, overrideUserModifyIsEditable);
 
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
     if (contributeToInteractionRegions == ContributeToInteractionRegions::No)
@@ -83,11 +69,14 @@ void EventRegionContext::unite(const FloatRoundedRect& roundedRect, const Render
     auto rect = roundedRect.rect();
     if (auto* modelObject = dynamicDowncast<RenderLayerModelObject>(renderer))
         rect = snapRectToDevicePixelsIfNeeded(rect, *modelObject);
-    auto layerBounds = transformAndClipIfNeeded(rect, [](auto affineTransform, auto rect) {
-        return affineTransform.mapRect(rect);
-    });
+    // Same transform and clip as transformAndClip().
+    auto layerBounds = rect;
+    if (!m_transformStack.isEmpty())
+        layerBounds = m_transformStack.last().mapRect(layerBounds);
+    if (!m_clipStack.isEmpty())
+        layerBounds.intersect(m_clipStack.last());
 
-    // Same transform as `transformAndClipIfNeeded`.
+    // Same transform as transformAndClip().
     std::optional<AffineTransform> transform;
     if (!m_transformStack.isEmpty()) {
         transform = m_transformStack.last();
@@ -104,6 +93,26 @@ void EventRegionContext::unite(const FloatRoundedRect& roundedRect, const Render
     UNUSED_PARAM(renderer);
     UNUSED_PARAM(contributeToInteractionRegions);
 #endif
+}
+
+Region EventRegionContext::transformAndClip(Region&& region) const
+{
+    if (!m_transformStack.isEmpty())
+        region = m_transformStack.last().mapRegion(region);
+    if (!m_clipStack.isEmpty())
+        region.intersect(m_clipStack.last());
+    return WTF::move(region);
+}
+
+bool EventRegionContext::uniteWouldNotChangeRegions(const FloatRect& rect, const RenderObject& renderer, const Style::ComputedStyle& style, bool overrideUserModifyIsEditable) const
+{
+#if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
+    if (renderer.page().shouldBuildInteractionRegions())
+        return false;
+#endif
+    auto region = approximateAsRegion(FloatRoundedRect(rect));
+    auto transformedAndClippedRegion = transformAndClip(WTF::move(region));
+    return m_eventRegion.uniteWouldNotChangeRegions(transformedAndClippedRegion, renderer, style, overrideUserModifyIsEditable);
 }
 
 bool EventRegionContext::contains(const IntRect& rect) const
@@ -640,6 +649,7 @@ EventRegion::EventRegion(Region&& region
 {
 }
 
+// Keep uniteWouldNotChangeRegions() in sync with this function.
 void EventRegion::unite(const Region& region, const RenderObject& renderer, const Style::ComputedStyle& style, bool overrideUserModifyIsEditable)
 {
     if (renderer.usedPointerEvents() == PointerEvents::None)
@@ -929,6 +939,69 @@ void EventRegion::uniteEventListeners(const Region& region, OptionSet<EventListe
     UNUSED_PARAM(region);
     UNUSED_PARAM(eventListenerRegionTypes);
 #endif
+}
+
+bool EventRegion::uniteWouldNotChangeRegions(const Region& region, const RenderObject& renderer, const Style::ComputedStyle& style, bool overrideUserModifyIsEditable) const
+{
+    if (renderer.usedPointerEvents() == PointerEvents::None)
+        return true;
+
+#if ENABLE(TOUCH_ACTION_REGIONS)
+    // unite() adds touch-action region slots even for an empty region.
+    if (!style.usedTouchAction().isAuto())
+        return false;
+#endif
+
+    if (region.isEmpty())
+        return true;
+
+    if (!m_region.contains(region))
+        return false;
+
+#if ENABLE(TOUCH_ACTION_REGIONS)
+    for (auto& touchActionRegion : m_touchActionRegions) {
+        if (touchActionRegion.intersects(region))
+            return false;
+    }
+#endif
+
+#if ENABLE(WHEEL_EVENT_REGIONS) || ENABLE(TOUCH_EVENT_REGIONS)
+    auto eventListenerRegionTypes = style.eventListenerRegionTypes();
+#endif
+#if ENABLE(WHEEL_EVENT_REGIONS)
+    if (renderer.isRenderListBox())
+        eventListenerRegionTypes.add(EventListenerRegionType::NonPassiveWheel);
+    if (eventListenerRegionTypes.contains(EventListenerRegionType::Wheel) && !m_wheelEventListenerRegion.contains(region))
+        return false;
+    if (eventListenerRegionTypes.contains(EventListenerRegionType::NonPassiveWheel) && !m_nonPassiveWheelEventListenerRegion.contains(region))
+        return false;
+#endif
+#if ENABLE(TOUCH_EVENT_REGIONS)
+    if (containsTouchEventType(eventListenerRegionTypes)) {
+        if (!m_touchEventListenerRegion.asynchronousDispatchRegion.contains(region))
+            return false;
+        auto& synchronousRegions = m_touchEventListenerRegion.eventSpecificSynchronousDispatchRegions;
+        for (auto eventType : eventListenerRegionTypes) {
+            if (!isNonPassiveTouchEventType(eventType))
+                continue;
+            auto it = synchronousRegions.find(eventTypeForEventListenerType(eventType));
+            if (it == synchronousRegions.end() || !it->value.contains(region))
+                return false;
+        }
+    }
+#endif
+
+#if ENABLE(EDITABLE_REGION)
+    if (m_editableRegion && (overrideUserModifyIsEditable || style.usedUserModify() != UserModify::ReadOnly) && !m_editableRegion->contains(region))
+        return false;
+#else
+    UNUSED_PARAM(overrideUserModifyIsEditable);
+#endif
+
+#if !ENABLE(TOUCH_ACTION_REGIONS) && !ENABLE(WHEEL_EVENT_REGIONS) && !ENABLE(TOUCH_EVENT_REGIONS) && !ENABLE(EDITABLE_REGION)
+    UNUSED_PARAM(style);
+#endif
+    return true;
 }
 
 #if ENABLE(TOUCH_EVENT_REGIONS)

@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="resources/touch-regions-helper.js"></script>
+    <style>
+        body {
+            margin: 0;
+        }
+
+        svg {
+            display: block;
+            margin: 10px;
+        }
+
+        .visible-overflow {
+            overflow: visible;
+        }
+    </style>
+</head>
+<body>
+    <svg id="coveredRoot" width="120" height="80">
+        <rect x="10" y="10" width="40" height="30" fill="green" stroke="black" stroke-width="6"/>
+        <path d="M60 60 L80 10 L100 60" fill="none" stroke="black" stroke-width="8" stroke-linejoin="miter"/>
+        <circle cx="30" cy="60" r="10" fill="green" stroke="black" stroke-width="4"/>
+    </svg>
+
+    <svg id="overflowingRoot" class="visible-overflow" width="120" height="80">
+        <path d="M10 10 L60 70 L110 10" fill="none" stroke="black" stroke-width="30" stroke-linejoin="miter" stroke-miterlimit="10"/>
+        <line x1="10" y1="40" x2="110" y2="40" stroke="black" stroke-width="10" stroke-linecap="square"/>
+    </svg>
+
+    <svg width="200" height="100">
+        <g id="groupTarget">
+            <rect x="10" y="10" width="40" height="30" fill="green" stroke="black" stroke-width="6"/>
+            <path d="M60 80 L80 20 L100 80" fill="none" stroke="black" stroke-width="12" stroke-linejoin="miter" stroke-miterlimit="8"/>
+            <ellipse cx="150" cy="50" rx="30" ry="15" fill="none" stroke="black" stroke-width="5"/>
+            <polyline points="10 90 40 60 70 90" fill="none" stroke="black" stroke-width="7" stroke-linecap="round"/>
+        </g>
+    </svg>
+
+    <svg width="200" height="120">
+        <g transform="translate(100 60) rotate(30)">
+            <rect id="rotatedTarget" x="-40" y="-20" width="80" height="40" fill="green" stroke="black" stroke-width="10"/>
+        </g>
+    </svg>
+
+    <svg width="200" height="100">
+        <g transform="scale(2)">
+            <path id="nonScalingTarget" d="M10 10 L50 40 L90 10" fill="none" stroke="black" stroke-width="10" vector-effect="non-scaling-stroke"/>
+        </g>
+    </svg>
+
+    <svg id="touchActionRoot" width="200" height="60">
+        <rect id="touchActionShape" x="10" y="10" width="60" height="40" fill="green" stroke="black" stroke-width="6" style="touch-action: none"/>
+        <rect id="pointerEventsNoneShape" x="90" y="10" width="60" height="40" fill="green" stroke="black" stroke-width="6" style="pointer-events: none"/>
+        <rect x="300" y="10" width="60" height="40" fill="green" stroke="black" stroke-width="6"/>
+    </svg>
+
+    <svg width="200" height="60">
+        <rect id="overlapTarget" x="10" y="10" width="100" height="40" fill="green" stroke="black" stroke-width="6"/>
+        <rect id="overlappedShape" x="30" y="20" width="40" height="20" fill="blue" stroke="black" stroke-width="2"/>
+    </svg>
+    <svg id="curvesRoot" class="visible-overflow" width="320" height="120">
+        <path d="M20 100 C 60 -20, 120 140, 160 20" fill="none" stroke="black" stroke-width="18"/>
+        <path d="M180 20 A 40 30 0 1 1 260 60" fill="none" stroke="black" stroke-width="14"/>
+        <rect x="20" y="20" width="60" height="40" rx="12" fill="none" stroke="black" stroke-width="10" shape-rendering="crispEdges"/>
+        <polyline points="100 100 140 70 180 100" fill="none" stroke="black" stroke-width="12" stroke-linecap="square" stroke-linejoin="round"/>
+        <path d="M200 100 l 0 0 M 230 100 l 0 0" fill="none" stroke="black" stroke-width="16" stroke-linecap="round"/>
+        <path d="M260 100 l 0 0" fill="none" stroke="black" stroke-width="16" stroke-linecap="square"/>
+        <circle cx="300" cy="40" r="20" fill="none" stroke="black" stroke-width="8" stroke-dasharray="5 3" pathLength="40"/>
+    </svg>
+
+    <svg width="220" height="80">
+        <defs>
+            <marker id="arrow" markerWidth="10" markerHeight="10" refX="0" refY="5" orient="auto">
+                <path d="M0 0 L10 5 L0 10 z"/>
+            </marker>
+        </defs>
+        <path id="markerTarget" d="M20 40 L180 40" stroke="black" stroke-width="4" marker-start="url(#arrow)" marker-end="url(#arrow)"/>
+        <path d="M20 70 Q 100 50, 180 70" fill="none" stroke="black" stroke-width="6" stroke-dasharray="10 4" marker-mid="url(#arrow)"/>
+    </svg>
+    <!-- Square dash caps reach past strokeWidth / 2 on curves and corners. -->
+    <svg id="dashedRoundedRectRoot" class="visible-overflow" width="200" height="90">
+        <rect width="200" height="90" fill="silver"/>
+        <rect x="20" y="13" width="50" height="50" rx="2" fill="none" stroke="black" stroke-width="20" stroke-linecap="square" stroke-dasharray="3 5"/>
+        <rect x="110" y="13" width="50" height="50" rx="6" fill="none" stroke="black" stroke-width="20" stroke-linecap="square" stroke-dasharray="7 4" stroke-dashoffset="2"/>
+    </svg>
+
+    <svg id="dashedSquareCapsRoot" class="visible-overflow" width="260" height="90">
+        <rect width="260" height="90" fill="silver"/>
+        <circle cx="45" cy="45" r="30" fill="none" stroke="black" stroke-width="16" stroke-linecap="square" stroke-dasharray="4 6"/>
+        <ellipse cx="130" cy="45" rx="35" ry="25" fill="none" stroke="black" stroke-width="16" stroke-linecap="square" stroke-dasharray="5 5"/>
+        <path d="M180 75 Q 215 -20, 250 75" fill="none" stroke="black" stroke-width="16" stroke-linecap="square" stroke-linejoin="round" stroke-dasharray="6 4"/>
+    </svg>
+    <!-- Stroked outline control points can extend well past the fill box. -->
+    <svg width="220" height="190">
+        <g id="controlPointsGroup">
+            <rect x="5" y="45" width="190" height="100"/>
+            <path d="M10 140 Q 100 -40 190 140" stroke="black" stroke-width="2" fill="none"/>
+        </g>
+    </svg>
+    <svg width="220" height="140">
+        <g id="roundCapsGroup">
+            <rect x="0" y="0" width="110" height="110"/>
+            <line x1="20" y1="20" x2="80" y2="80" stroke="black" stroke-width="40" stroke-linecap="round"/>
+            <rect x="120" y="5" width="80" height="80" rx="10" fill="none" stroke="black" stroke-width="20" stroke-linecap="round" stroke-dasharray="5 7"/>
+        </g>
+    </svg>
+    <svg class="visible-overflow" width="220" height="140">
+        <g id="roundJoinsGroup">
+            <rect x="0" y="0" width="220" height="140"/>
+            <polyline points="20 70 200 72 20 74" fill="none" stroke="black" stroke-width="60" stroke-linejoin="round"/>
+        </g>
+    </svg>
+    <script>
+        controlPointsGroup.addEventListener("touchstart", () => { }, { passive: false });
+        roundCapsGroup.addEventListener("touchstart", () => { }, { passive: false });
+        roundJoinsGroup.addEventListener("pointerdown", () => { }, { passive: false });
+        dashedRoundedRectRoot.addEventListener("touchstart", () => { }, { passive: false });
+        dashedSquareCapsRoot.addEventListener("pointerdown", () => { }, { passive: false });
+        curvesRoot.addEventListener("touchstart", () => { }, { passive: false });
+        markerTarget.addEventListener("pointerdown", () => { }, { passive: false });
+        coveredRoot.addEventListener("touchstart", () => { }, { passive: false });
+        overflowingRoot.addEventListener("touchstart", () => { }, { passive: true });
+        groupTarget.addEventListener("pointerdown", () => { }, { passive: false });
+        rotatedTarget.addEventListener("touchmove", () => { }, { passive: false });
+        nonScalingTarget.addEventListener("touchend", () => { }, { passive: true });
+        touchActionRoot.addEventListener("touchstart", () => { }, { passive: true });
+        pointerEventsNoneShape.addEventListener("touchstart", () => { }, { passive: false });
+        overlapTarget.addEventListener("touchstart", () => { }, { passive: false });
+        overlappedShape.addEventListener("touchstart", () => { }, { passive: true });
+
+        prepareForTest();
+        window.addEventListener("load", dumpRegions, false);
+    </script>
+</body>
+</html>

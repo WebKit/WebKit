@@ -136,6 +136,8 @@ private:
     bool setupNonScalingStrokeContext(AffineTransform&, GraphicsContextStateSaver&);
 
     FloatRect calculateApproximateStrokeBoundingBox() const;
+    // Upper bound on strokeBoundingBox(), computed without stroking the path.
+    std::optional<FloatRect> boundOfStrokeBoundingBox() const;
     
     std::unique_ptr<Path> createPath() const;
 

@@ -70,6 +70,9 @@ public:
     enum class ContributeToInteractionRegions : bool { No, Yes };
     WEBCORE_EXPORT void unite(const FloatRoundedRect&, const RenderObject&, const Style::ComputedStyle&, bool overrideUserModifyIsEditable = false, ContributeToInteractionRegions = ContributeToInteractionRegions::Yes);
     bool contains(const IntRect&) const;
+    // True if unite() with any rect inside this one is a no-op. Callers must inflate for LayoutUnit
+    // precision.
+    bool uniteWouldNotChangeRegions(const FloatRect&, const RenderObject&, const Style::ComputedStyle&, bool overrideUserModifyIsEditable = false) const;
 
 #if ENABLE(TOUCH_EVENT_REGIONS)
     bool mayHaveDescendantTouchEventTargets(const RenderElement&);
@@ -89,6 +92,8 @@ public:
 #endif
 
 private:
+    Region transformAndClip(Region&&) const;
+
     EventRegion& m_eventRegion;
 
 #if ENABLE(TOUCH_EVENT_REGIONS)
@@ -157,6 +162,8 @@ public:
 #if ENABLE(TOUCH_EVENT_REGIONS)
     bool touchEventListenerRegionsContain(const IntRect&, OptionSet<EventListenerRegionType>) const;
 #endif
+    // True if unite() with this region or any subset of it is a no-op.
+    bool uniteWouldNotChangeRegions(const Region&, const RenderObject&, const Style::ComputedStyle&, bool overrideUserModifyIsEditable = false) const;
     NODELETE void translate(const IntSize&);
 
     bool contains(const IntPoint& point) const { return m_region.contains(point); }
