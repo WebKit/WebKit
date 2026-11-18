@@ -22,6 +22,7 @@
 
 #include "StyleURL.h"
 #include <wtf/CheckedPtr.h>
+#include <wtf/FixedVector.h>
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
@@ -29,9 +30,11 @@
 #include <wtf/URLHash.h>
 #include <wtf/WeakHashSet.h>
 #include <wtf/WeakListHashSet.h>
+#include <wtf/text/AtomString.h>
 
 namespace WebCore {
 
+class CSSValue;
 class CachedImage;
 class Document;
 class IsolatedSVGDocumentContext;
@@ -44,6 +47,8 @@ class SVGSMILElement;
 class SVGSVGElement;
 class SVGUseElement;
 class WeakPtrImplWithEventTargetData;
+
+enum class CSSPropertyID : uint16_t;
 
 struct SVGExternalResourceKey {
     URL url;
@@ -115,7 +120,18 @@ public:
     // document to resolve in. Requires the SVGExternalResourcesEnabled setting.
     std::optional<RefPtr<SVGDocument>> externalResourceDocument(const Style::URL&) const;
 
+    std::optional<RefPtr<CSSValue>> cachedPresentationalHintValue(CSSPropertyID, const AtomString&) const;
+    void cachePresentationalHintValue(CSSPropertyID, const AtomString&, RefPtr<CSSValue>&&);
+    void clearPresentationalHintValueCache();
+
 private:
+    struct PresentationalHintValueCacheEntry {
+        CSSPropertyID propertyID { };
+        AtomString value;
+        RefPtr<CSSValue> parsedValue;
+    };
+    static unsigned presentationalHintValueCacheIndex(CSSPropertyID, const AtomString&);
+
     WeakRef<Document, WeakPtrImplWithEventTargetData> m_document;
     WeakHashSet<SVGSVGElement, WeakPtrImplWithEventTargetData> m_timeContainers; // For SVG 1.2 support this will need to be made more general.
     WeakListHashSet<SVGFontFaceElement, WeakPtrImplWithEventTargetData> m_svgFontFaceElements;
@@ -125,6 +141,9 @@ private:
     bool m_areAnimationsPaused { false };
 
     HashMap<SVGExternalResourceKey, Ref<IsolatedSVGDocumentContext>> m_externalSVGDocuments;
+
+    static constexpr unsigned presentationalHintValueCacheSize = 256;
+    FixedVector<PresentationalHintValueCacheEntry> m_presentationalHintValueCache;
 };
 
 } // namespace WebCore

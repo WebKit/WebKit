@@ -22,6 +22,7 @@
 #include "config.h"
 #include "SVGDocumentExtensions.h"
 
+#include "CSSValue.h"
 #include "CachedImage.h"
 #include "Document.h"
 #include "DocumentPage.h"
@@ -222,6 +223,33 @@ std::optional<RefPtr<SVGDocument>> SVGDocumentExtensions::externalResourceDocume
 
     RefPtr isolatedContext = isolatedSVGDocumentContext(location);
     return RefPtr { isolatedContext ? isolatedContext->document() : nullptr };
+}
+
+unsigned SVGDocumentExtensions::presentationalHintValueCacheIndex(CSSPropertyID propertyID, const AtomString& value)
+{
+    return pairIntHash(value.existingHash(), std::to_underlying(propertyID)) & (presentationalHintValueCacheSize - 1);
+}
+
+std::optional<RefPtr<CSSValue>> SVGDocumentExtensions::cachedPresentationalHintValue(CSSPropertyID propertyID, const AtomString& value) const
+{
+    if (m_presentationalHintValueCache.isEmpty())
+        return std::nullopt;
+    auto& entry = m_presentationalHintValueCache[presentationalHintValueCacheIndex(propertyID, value)];
+    if (entry.propertyID != propertyID || entry.value != value)
+        return std::nullopt;
+    return entry.parsedValue;
+}
+
+void SVGDocumentExtensions::cachePresentationalHintValue(CSSPropertyID propertyID, const AtomString& value, RefPtr<CSSValue>&& parsedValue)
+{
+    if (m_presentationalHintValueCache.isEmpty())
+        m_presentationalHintValueCache = FixedVector<PresentationalHintValueCacheEntry>(presentationalHintValueCacheSize);
+    m_presentationalHintValueCache[presentationalHintValueCacheIndex(propertyID, value)] = { propertyID, value, WTF::move(parsedValue) };
+}
+
+void SVGDocumentExtensions::clearPresentationalHintValueCache()
+{
+    m_presentationalHintValueCache = { };
 }
 
 }
