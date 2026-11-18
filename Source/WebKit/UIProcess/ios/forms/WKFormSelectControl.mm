@@ -36,6 +36,7 @@
 #import "WebPageProxy.h"
 #import <UIKit/UIPickerView.h>
 #import <pal/system/ios/UserInterfaceIdiom.h>
+#import <wtf/Borrow.h>
 #import <wtf/RetainPtr.h>
 
 using namespace WebKit;
@@ -45,8 +46,7 @@ static const CGFloat minimumOptionFontSize = 12;
 CGFloat adjustedFontSize(CGFloat textWidth, UIFont *font, CGFloat initialFontSize, const Vector<OptionItem>& items)
 {
     CGFloat adjustedSize = initialFontSize;
-    for (size_t i = 0; i < items.size(); ++i) {
-        const OptionItem& item = items[i];
+    for (auto& item : borrow(items)) {
         if (item.text.isEmpty())
             continue;
 

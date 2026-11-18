@@ -178,8 +178,8 @@ static const float GroupOptionTextColorAlpha = 0.5;
     [self reloadAllComponents];
 
     if (!_allowsMultipleSelection) {
-        const Vector<OptionItem>& selectOptions = [_view.get() focusedSelectElementOptions];
-        for (size_t i = 0; i < selectOptions.size(); ++i) {
+        Borrow selectOptions { [_view.get() focusedSelectElementOptions] };
+        for (size_t i = 0; i < selectOptions->size(); ++i) {
             const OptionItem& item = selectOptions[i];
             if (item.isGroup)
                 continue;
@@ -237,7 +237,8 @@ static const float GroupOptionTextColorAlpha = 0.5;
 
 - (UIView *)pickerView:(UIPickerView *)pickerView viewForRow:(NSInteger)rowIndex forComponent:(NSInteger)columnIndex reusingView:(UIView *)view
 {
-    auto& item = [_view.get() focusedSelectElementOptions][rowIndex];
+    Borrow options { [_view.get() focusedSelectElementOptions] };
+    auto& item = options[rowIndex];
     RetainPtr<WKOptionPickerCell> pickerItem;
     if (item.isGroup)
         pickerItem = adoptNS([[WKOptionGroupPickerCell alloc] initWithOptionItem:item]);
@@ -302,7 +303,8 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     if (numberOfOptions <= static_cast<NSUInteger>(rowIndex))
         return;
 
-    auto& item = [view focusedSelectElementOptions][rowIndex];
+    Borrow options { [view focusedSelectElementOptions] };
+    auto& item = options[rowIndex];
 
     // FIXME: Remove this workaround once <rdar://problem/18745253> is fixed.
     // Group rows and disabled rows should not be checkable, but we are getting
@@ -322,7 +324,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     } else if (isChecked) {
         // Single selection.
         if (_singleSelectionIndex < numberOfOptions)
-            [view focusedSelectElementOptions][_singleSelectionIndex].isSelected = false;
+            options[_singleSelectionIndex].isSelected = false;
 
         _singleSelectionIndex = rowIndex;
 
@@ -438,7 +440,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if (row < 0 || row >= (NSInteger)[view focusedSelectElementOptions].size())
         return nil;
 
-    const OptionItem& option = [view focusedSelectElementOptions][row];
+    Borrow options { [view focusedSelectElementOptions] };
+    const OptionItem& option = options[row];
     RetainPtr trimmedText = adoptNS([option.text.createNSString() mutableCopy]);
     CFStringTrimWhitespace((CFMutableStringRef)trimmedText.get());
 
@@ -455,13 +458,14 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if (row < 0 || row >= (NSInteger)[view focusedSelectElementOptions].size())
         return;
 
-    const OptionItem& newSelectedOption = [view focusedSelectElementOptions][row];
+    Borrow options { [view focusedSelectElementOptions] };
+    const OptionItem& newSelectedOption = options[row];
     if (newSelectedOption.disabled) {
         NSInteger rowToSelect = NSNotFound;
 
         // Search backwards for the previous enabled option.
         for (NSInteger i = row - 1; i >= 0; --i) {
-            const OptionItem& earlierOption = [view focusedSelectElementOptions][i];
+            const OptionItem& earlierOption = options[i];
             if (!earlierOption.disabled) {
                 rowToSelect = i;
                 break;
@@ -470,8 +474,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
         // If nothing previous, search forwards for the next enabled option.
         if (rowToSelect == NSNotFound) {
-            for (size_t i = row + 1; i < [view focusedSelectElementOptions].size(); ++i) {
-                const OptionItem& laterOption = [view focusedSelectElementOptions][i];
+            for (size_t i = row + 1; i < options->size(); ++i) {
+                const OptionItem& laterOption = options[i];
                 if (!laterOption.disabled) {
                     rowToSelect = i;
                     break;
@@ -607,17 +611,18 @@ static constexpr auto removeLineLimitForChildrenMenuOption = static_cast<UIMenuO
     NSMutableArray *items = [NSMutableArray array];
     NSInteger optionIndex = 0;
 
+    Borrow options { [view focusedSelectElementOptions] };
     size_t currentIndex = 0;
-    while (currentIndex < [view focusedSelectElementOptions].size()) {
-        auto& optionItem = [view focusedSelectElementOptions][currentIndex];
+    while (currentIndex < options->size()) {
+        auto& optionItem = options[currentIndex];
         if (optionItem.isGroup) {
             auto groupID = optionItem.parentGroupID;
             RetainPtr groupText = optionItem.text.createNSString();
             NSMutableArray *groupedItems = [NSMutableArray array];
 
             currentIndex++;
-            while (currentIndex < [view focusedSelectElementOptions].size()) {
-                auto& childOptionItem = [view focusedSelectElementOptions][currentIndex];
+            while (currentIndex < options->size()) {
+                auto& childOptionItem = options[currentIndex];
                 if (childOptionItem.isGroup || childOptionItem.parentGroupID != groupID)
                     break;
 

@@ -38,6 +38,7 @@
 #import <UIKit/UIPickerView.h>
 #import <WebCore/LocalizedStrings.h>
 #import <pal/spi/cocoa/IOKitSPI.h>
+#import <wtf/Borrow.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/WeakObjCPtr.h>
 
@@ -107,14 +108,14 @@ static RetainPtr<NSString> stringWithWritingDirection(NSString *string, NSWritin
 
     _contentView = view;
     RetainPtr contentView = _contentView.get();
-    Vector<OptionItem>& selectOptions = [contentView focusedSelectElementOptions];
+    Borrow selectOptions { [contentView focusedSelectElementOptions] };
     _allowsMultipleSelection = [contentView focusedElementInformation].isMultiSelect;
     
     // Even if the select is empty, there is at least one tableview section.
     _numberOfSections = 1;
     _singleSelectionIndex = NSNotFound;
     NSInteger currentIndex = 0;
-    for (size_t i = 0; i < selectOptions.size(); ++i) {
+    for (size_t i = 0; i < selectOptions->size(); ++i) {
         const OptionItem& item = selectOptions[i];
         if (item.isGroup) {
             _numberOfSections++;
@@ -173,8 +174,9 @@ static RetainPtr<NSString> stringWithWritingDirection(NSString *string, NSWritin
         return 1;
 
     int rowCount = 0;
-    for (size_t i = 0; i < [contentView focusedSelectElementOptions].size(); ++i) {
-        const OptionItem& item = [contentView focusedSelectElementOptions][i];
+    Borrow options { [contentView focusedSelectElementOptions] };
+    for (size_t i = 0; i < options->size(); ++i) {
+        const OptionItem& item = options[i];
         if (item.isGroup)
             continue;
         if (item.parentGroupID == section)
@@ -193,8 +195,9 @@ static RetainPtr<NSString> stringWithWritingDirection(NSString *string, NSWritin
 
     RetainPtr contentView = _contentView.get();
     int groupCount = 0;
-    for (size_t i = 0; i < [contentView focusedSelectElementOptions].size(); ++i) {
-        const OptionItem& item = [contentView focusedSelectElementOptions][i];
+    Borrow options { [contentView focusedSelectElementOptions] };
+    for (size_t i = 0; i < options->size(); ++i) {
+        const OptionItem& item = options[i];
         if (!item.isGroup)
             continue;
         groupCount++;
@@ -223,8 +226,9 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     RetainPtr contentView = _contentView.get();
     int optionIndex = 0;
     int rowIndex = 0;
-    for (size_t i = 0; i < [contentView focusedSelectElementOptions].size(); ++i) {
-        const OptionItem& item = [contentView focusedSelectElementOptions][i];
+    Borrow options { [contentView focusedSelectElementOptions] };
+    for (size_t i = 0; i < options->size(); ++i) {
+        const OptionItem& item = options[i];
         if (item.isGroup) {
             rowIndex = 0;
             continue;
@@ -243,13 +247,15 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     ASSERT(indexPath.section <= _numberOfSections);
 
     RetainPtr contentView = _contentView.get();
+    auto& options = [contentView focusedSelectElementOptions];
+    Borrow borrowedOptions { options };
     int index = 0;
-    for (size_t i = 0; i < [contentView focusedSelectElementOptions].size(); ++i) {
-        OptionItem& item = [contentView focusedSelectElementOptions][i];
+    for (size_t i = 0; i < borrowedOptions->size(); ++i) {
+        auto& item = borrowedOptions[i];
         if (item.isGroup || item.parentGroupID != indexPath.section)
             continue;
         if (index == indexPath.row)
-            return &item;
+            return &options[i];
         index++;
     }
     return nil;
@@ -325,8 +331,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         // SPI which mimics a user action on the <select>. Normally programmatic
         // changes do not trigger "change" events on such selects.
         [contentView updateFocusedElementSelectedIndex:itemIndex allowsMultipleSelection:true];
-        OptionItem& item = [contentView focusedSelectElementOptions][itemIndex];
-        item.isSelected = newStateIsSelected;
+        [contentView focusedSelectElementOptions][itemIndex].isSelected = newStateIsSelected;
     } else {
         [tableView deselectRowAtIndexPath:indexPath animated:NO];
 
@@ -361,8 +366,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
             _singleSelectionSection = indexPath.section;
 
             [contentView updateFocusedElementSelectedIndex:itemIndex allowsMultipleSelection:false];
-            OptionItem& newItem = [contentView focusedSelectElementOptions][itemIndex];
-            newItem.isSelected = true;
+            [contentView focusedSelectElementOptions][itemIndex].isSelected = true;
         }
 
         // Need to update the model even if there isn't a cell.

@@ -263,7 +263,7 @@ void DragDropInteractionState::deliverDelayedDropPreview(UIView *contentView, CG
 
     for (size_t i = 0; i < placeholderRects.size(); ++i) {
         UIDragItem *item = [items objectAtIndex:i];
-        auto& placeholderRect = placeholderRects[i];
+        auto placeholderRect = placeholderRects[i];
         RetainPtr defaultPreview = defaultDropPreview(item);
         auto defaultPreviewSize = [defaultPreview size];
         if (!defaultPreview || defaultPreviewSize.width <= 0 || defaultPreviewSize.height <= 0 || placeholderRect.isEmpty())

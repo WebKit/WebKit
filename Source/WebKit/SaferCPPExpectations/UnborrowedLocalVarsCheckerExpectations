@@ -1,6 +1,0 @@
-[ iOS ] UIProcess/Cocoa/WebPasteboardProxyCocoa.mm
-[ iOS ] UIProcess/ios/DragDropInteractionState.mm
-[ iOS ] UIProcess/ios/WKTouchEventsGestureRecognizer.mm
-[ iOS ] UIProcess/ios/forms/WKFormSelectControl.mm
-[ iOS ] UIProcess/ios/forms/WKFormSelectPicker.mm
-[ iOS ] UIProcess/ios/forms/WKFormSelectPopover.mm

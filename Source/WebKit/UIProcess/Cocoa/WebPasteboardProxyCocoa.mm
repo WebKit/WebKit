@@ -637,10 +637,12 @@ static Vector<HEICTranscodingInfo> findHEICPathsForTranscoding(Vector<Pasteboard
     if (!shouldTranscodeHEICImagesForPage(pageID))
         return transcodingInfo;
 
-    for (size_t infoIndex = 0; infoIndex < allInfo.size(); ++infoIndex) {
-        auto& info = allInfo[infoIndex];
-        for (size_t pathIndex = 0; pathIndex < info.pathsForFileUpload.size(); ++pathIndex) {
-            auto& path = info.pathsForFileUpload[pathIndex];
+    Borrow borrowedAllInfo { allInfo };
+    for (size_t infoIndex = 0; infoIndex < borrowedAllInfo->size(); ++infoIndex) {
+        auto& info = borrowedAllInfo[infoIndex];
+        Borrow paths { info.pathsForFileUpload };
+        for (size_t pathIndex = 0; pathIndex < paths->size(); ++pathIndex) {
+            auto& path = paths[pathIndex];
             if (path.isEmpty())
                 continue;
             auto mimeType = WebCore::MIMETypeRegistry::mimeTypeForPath(path);

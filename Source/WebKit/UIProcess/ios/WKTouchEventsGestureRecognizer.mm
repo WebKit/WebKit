@@ -318,6 +318,7 @@ static CGFloat rollAngleOrDefault(UITouch *touch, bool shouldReadRollAngle)
 
     [_activeTouchesByIdentifier removeAllObjects];
 
+    Borrow touchPoints { _lastTouchEvent.touchPoints };
     for (UITouch *touch in touches) {
         // Get the identifier of this touch. Or create one if one did not exist.
         RetainPtr associatedIdentifier = dynamic_objc_cast<NSNumber>(objc_getAssociatedObject(touch, &associatedTouchIdentifierKey));
@@ -338,7 +339,7 @@ static CGFloat rollAngleOrDefault(UITouch *touch, bool shouldReadRollAngle)
         [_activeTouchesByIdentifier setObject:touch forKey:associatedIdentifier.get()];
 
         // iPhone WebKit works as if it is full screen. Therefore Web coords are Global coords.
-        auto& touchPoint = _lastTouchEvent.touchPoints[touchIndex];
+        auto& touchPoint = touchPoints[touchIndex];
         auto locationInWindow = [touch locationInView:nil];
         auto locationInRootView = [[self view] convertPoint:locationInWindow fromView:nil];
         auto previousLocationInWindow = [touch previousLocationInView:nil];
