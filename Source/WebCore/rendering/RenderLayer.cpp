@@ -1798,6 +1798,17 @@ void RenderLayer::forceStackingContextIfNeeded()
     }
 }
 
+float RenderLayer::currentOpacity() const
+{
+    auto styleable = Styleable::fromRenderer(renderer());
+    if (styleable && styleable->isRunningAcceleratedAnimationOfProperty(CSSPropertyOpacity)) {
+        std::unique_ptr<Style::ComputedStyle> animatedStyle = renderer().animatedStyle();
+        return Style::evaluate<float>(animatedStyle->opacity());
+    }
+
+    return renderer().opacity();
+}
+
 TransformationMatrix RenderLayer::currentTransform(OptionSet<Style::TransformResolverOption> options) const
 {
     if (!m_transform)
@@ -2757,7 +2768,7 @@ void RenderLayer::beginTransparencyLayers(GraphicsContext& context, const LayerP
         m_usedTransparency = true;
         if (canPaintTransparencyWithSetOpacity()) {
             m_savedAlphaForTransparency = context.alpha();
-            context.setAlpha(context.alpha() * renderer().opacity());
+            context.setAlpha(context.alpha() * opacityForPainting(paintingInfo.paintBehavior));
             return;
         }
         context.save();
@@ -2770,7 +2781,7 @@ void RenderLayer::beginTransparencyLayers(GraphicsContext& context, const LayerP
         if (usesCompositeOperation)
             context.setCompositeOperation(context.compositeOperation(), blendMode());
 
-        context.beginTransparencyLayer(renderer().opacity());
+        context.beginTransparencyLayer(opacityForPainting(paintingInfo.paintBehavior));
 
         if (usesCompositeOperation)
             context.setCompositeOperation(context.compositeOperation(), BlendMode::Normal);
@@ -3382,7 +3393,7 @@ void RenderLayer::paintLayerWithEffects(GraphicsContext& context, const LayerPai
         return;
 
     // If this layer is totally invisible then there is nothing to paint.
-    if (!renderer().opacity()
+    if (!opacityForPainting(paintingInfo.paintBehavior)
         && !is<AccessibilityRegionContext>(paintingInfo.regionContext)
         && !paintFlags.contains(PaintLayerFlag::CollectingEventRegion)) {
         // However, we do want to continue painting for accessibility paints, as we still need accurate
@@ -6550,10 +6561,10 @@ bool RenderLayer::isTransparentRespectingParentFrames() const
 {
     static const double minimumVisibleOpacity = 0.01;
 
-    float currentOpacity = 1;
+    float accumulatedOpacity = 1;
     for (auto* layer = this; layer; layer = parentLayerCrossFrame(*layer)) {
-        currentOpacity *= Style::evaluate<float>(layer->renderer().style().opacity());
-        if (currentOpacity < minimumVisibleOpacity)
+        accumulatedOpacity *= Style::evaluate<float>(layer->renderer().style().opacity());
+        if (accumulatedOpacity < minimumVisibleOpacity)
             return true;
     }
 
