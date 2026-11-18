@@ -1,0 +1,117 @@
+#!/usr/bin/env python3
+# Copyright (C) 2026 Apple Inc.  All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+#
+# 1.  Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer.
+# 2.  Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in the
+#     documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
+# EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL APPLE OR ITS CONTRIBUTORS BE LIABLE FOR ANY
+# DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+# (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+# LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+# ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+# THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+import argparse
+import json
+import os
+import shutil
+import subprocess
+import sys
+
+REPORT_PREFIX = 'DISK_SPACE_REPORT: '
+BYTES_PER_GB = 1024 ** 3
+COMPILATION_CACHE_DIRECTORY = os.path.expanduser('~/Library/Developer/Xcode/DerivedData/CompilationCache.noindex')
+
+
+def existing_ancestor(path):
+    path = os.path.abspath(path)
+    while not os.path.exists(path):
+        path = os.path.dirname(path)
+    return path
+
+
+def free_gb(path):
+    return round(shutil.disk_usage(existing_ancestor(path)).free / BYTES_PER_GB, 1)
+
+
+def volume_id(path):
+    return os.stat(existing_ancestor(path)).st_dev
+
+
+def webkit_build_directory():
+    script = os.path.join(os.path.dirname(os.path.abspath(__file__)), os.pardir, 'Scripts', 'webkit-build-directory')
+    try:
+        output = subprocess.run(['perl', script, '--top-level'], stdout=subprocess.PIPE, check=True).stdout
+        directory = output.decode('utf-8', 'replace').strip()
+    except (OSError, subprocess.CalledProcessError) as error:
+        print(f'Could not resolve WebKitBuild directory ({error}); assuming ./WebKitBuild')
+        directory = ''
+    return directory or os.path.abspath('WebKitBuild')
+
+
+def remove_directory(path):
+    if not os.path.isdir(path):
+        return False
+    print(f'Removing {path}')
+    try:
+        shutil.rmtree(path)
+    except OSError as error:
+        print(f'Failed to remove {path} ({error})')
+        return False
+    return True
+
+
+def ensure_free_disk_space(directories, minimum_free_gb):
+    def low_volumes():
+        return {volume_id(path) for path in directories.values() if free_gb(path) < minimum_free_gb}
+
+    initial_free_gb = {name: free_gb(path) for name, path in directories.items()}
+    for name, path in directories.items():
+        print(f'{initial_free_gb[name]} GB free on the volume containing {name} directory {path}')
+
+    removed = []
+    failed_to_remove = []
+    for name, path in directories.items():
+        if volume_id(path) not in low_volumes() or not os.path.isdir(path):
+            continue
+        print(f'Less than {minimum_free_gb} GB free on the volume containing {path}')
+        (removed if remove_directory(path) else failed_to_remove).append(name)
+
+    final_free_gb = {name: free_gb(path) for name, path in directories.items()}
+    return {
+        'minimum_free_gb': minimum_free_gb,
+        'initial_free_gb': initial_free_gb,
+        'free_gb': final_free_gb,
+        'removed': removed,
+        'failed_to_remove': failed_to_remove,
+        'sufficient': not low_volumes(),
+    }
+
+
+def main():
+    parser = argparse.ArgumentParser(description='Delete build caches, then the build directory, until there is enough free disk space to build')
+    parser.add_argument('--minimum-free-gb', type=int, required=True)
+    args = parser.parse_args()
+
+    directories = {
+        'compilation-cache': COMPILATION_CACHE_DIRECTORY,
+        'build': webkit_build_directory(),
+    }
+    report = ensure_free_disk_space(directories, args.minimum_free_gb)
+    print(f'{REPORT_PREFIX}{json.dumps(report)}')
+    return 0 if report['sufficient'] else 2
+
+
+if __name__ == '__main__':
+    sys.exit(main())
