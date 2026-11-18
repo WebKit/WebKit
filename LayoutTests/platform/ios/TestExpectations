@@ -4437,6 +4437,13 @@ imported/w3c/web-platform-tests/webcodecs/video-encoder-rescaling.https.any.work
 imported/w3c/web-platform-tests/webcodecs/videoDecoder-codec-specific.https.any.html?vp9 [ Failure ]
 imported/w3c/web-platform-tests/webcodecs/videoDecoder-codec-specific.https.any.worker.html?vp9 [ Failure ]
 
+webkit.org/b/331641 imported/w3c/web-platform-tests/webcodecs/video-encoder-hbd.https.any.html?av1 [ Pass Failure ]
+webkit.org/b/331641 imported/w3c/web-platform-tests/webcodecs/video-encoder-hbd.https.any.worker.html?av1 [ Pass Failure ]
+webkit.org/b/331641 imported/w3c/web-platform-tests/webcodecs/video-encoder-hbd.https.any.html?vp9 [ Pass Failure ]
+webkit.org/b/331641 imported/w3c/web-platform-tests/webcodecs/video-encoder-hbd.https.any.html?vp9_p2 [ Pass Failure ]
+webkit.org/b/331641 imported/w3c/web-platform-tests/webcodecs/video-encoder-hbd.https.any.worker.html?vp9 [ Pass Failure ]
+webkit.org/b/331641 imported/w3c/web-platform-tests/webcodecs/video-encoder-hbd.https.any.worker.html?vp9_p2 [ Pass Failure ]
+
 imported/w3c/web-platform-tests/webcodecs/videoFrame-createImageBitmap.https.any.html [ Failure ]
 imported/w3c/web-platform-tests/webcodecs/videoFrame-createImageBitmap.https.any.worker.html [ Failure ]
 

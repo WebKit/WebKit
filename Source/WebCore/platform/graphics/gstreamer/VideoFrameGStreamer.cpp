@@ -387,6 +387,85 @@ RefPtr<VideoFrame> VideoFrame::createI420A(std::span<const uint8_t> span, size_t
     return VideoFrameGStreamer::create(WTF::move(sample), createOptionsWithInit(width, height, info, init), WTF::move(init.colorSpace));
 }
 
+// GStreamer formats whose planes hold the same bytes as the WebCodecs planar formats.
+static std::optional<GstVideoFormat> gstVideoFormatForPlanarYUV(VideoPixelFormat format)
+{
+    switch (format) {
+    case VideoPixelFormat::I420:
+        return GST_VIDEO_FORMAT_I420;
+    case VideoPixelFormat::I420P10:
+        return GST_VIDEO_FORMAT_I420_10LE;
+    case VideoPixelFormat::I420P12:
+        return GST_VIDEO_FORMAT_I420_12LE;
+    case VideoPixelFormat::I422:
+        return GST_VIDEO_FORMAT_Y42B;
+    case VideoPixelFormat::I422P10:
+        return GST_VIDEO_FORMAT_I422_10LE;
+    case VideoPixelFormat::I422P12:
+        return GST_VIDEO_FORMAT_I422_12LE;
+    case VideoPixelFormat::I444:
+        return GST_VIDEO_FORMAT_Y444;
+    case VideoPixelFormat::I444P10:
+        return GST_VIDEO_FORMAT_Y444_10LE;
+    case VideoPixelFormat::I444P12:
+        return GST_VIDEO_FORMAT_Y444_12LE;
+    case VideoPixelFormat::I420A:
+    case VideoPixelFormat::NV12:
+    case VideoPixelFormat::RGBA:
+    case VideoPixelFormat::RGBX:
+    case VideoPixelFormat::BGRA:
+    case VideoPixelFormat::BGRX:
+        return { };
+    }
+    ASSERT_NOT_REACHED();
+    return { };
+}
+
+RefPtr<VideoFrame> VideoFrame::createPlanarYUV(VideoPixelFormat format, std::span<const uint8_t> span, size_t width, size_t height, std::span<const ComputedPlaneLayout, 3> layouts, Init&& init)
+{
+    ensureVideoFrameDebugCategoryInitialized();
+    auto layout = planarYUVFormatLayout(format);
+    auto gstFormat = gstVideoFormatForPlanarYUV(format);
+    if (!layout || !gstFormat || !width || !height)
+        return nullptr;
+    GST_TRACE("Creating VideoFrame from %s raw buffer", gst_video_format_to_string(*gstFormat));
+
+    GstVideoInfo info;
+    if (!gst_video_info_set_format(&info, *gstFormat, width, height))
+        return nullptr;
+    fillVideoInfoColorimetryFromColorSpace(&info, init.colorSpace);
+
+    GRefPtr buffer = adoptGRef(gst_buffer_new_allocate(nullptr, GST_VIDEO_INFO_SIZE(&info), nullptr));
+    if (!buffer)
+        return nullptr;
+    {
+        GstMappedBuffer mappedBuffer(buffer, GST_MAP_WRITE);
+        if (!mappedBuffer)
+            return nullptr;
+        auto destination = mappedBuffer.mutableSpan<uint8_t>();
+        auto sampleFormat = layout->format;
+        for (unsigned plane = 0; plane < layouts.size(); ++plane) {
+            WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN; // GLib port
+            size_t planeWidth = GST_VIDEO_INFO_COMP_WIDTH(&info, plane);
+            size_t planeHeight = GST_VIDEO_INFO_COMP_HEIGHT(&info, plane);
+            size_t destinationOffset = GST_VIDEO_INFO_PLANE_OFFSET(&info, plane);
+            size_t destinationStride = GST_VIDEO_INFO_PLANE_STRIDE(&info, plane);
+            WTF_ALLOW_UNSAFE_BUFFER_USAGE_END;
+            auto sourcePlane = PlanarImageConverter::makePlane(span, layouts[plane].destinationOffset, layouts[plane].destinationStride, planeWidth, planeHeight, sampleFormat);
+            auto destinationPlane = PlanarImageConverter::makePlane(destination, destinationOffset, destinationStride, planeWidth, planeHeight, sampleFormat);
+            if (!sourcePlane || !destinationPlane || !PlanarImageConverter::copyPlane(*sourcePlane, *destinationPlane)) {
+                GST_WARNING("%s plane %u doesn't fit in the source or destination buffer", gst_video_format_to_string(*gstFormat), plane);
+                return nullptr;
+            }
+        }
+    }
+    gst_buffer_add_video_meta(buffer.get(), GST_VIDEO_FRAME_FLAG_NONE, *gstFormat, width, height);
+
+    GRefPtr caps = adoptGRef(gst_video_info_to_caps(&info));
+    GRefPtr sample = adoptGRef(gst_sample_new(buffer.get(), caps.get(), nullptr, nullptr));
+    return VideoFrameGStreamer::create(WTF::move(sample), createOptionsWithInit(width, height, info, init), WTF::move(init.colorSpace));
+}
+
 static inline void setBufferFields(GstBuffer* buffer, const MediaTime& presentationTime, double frameRate)
 {
     GST_BUFFER_FLAG_SET(buffer, GST_BUFFER_FLAG_LIVE);
@@ -745,6 +824,37 @@ void VideoFrame::copyTo(std::span<uint8_t> destination, VideoPixelFormat pixelFo
         return;
     }
 
+    if (auto layout = planarYUVFormatLayout(pixelFormat)) {
+        // The frame's planes must already be in the requested format: only RGB destinations are converted.
+        auto frameFormat = static_cast<GstVideoFormat>(inputFrame.format());
+        if (gstVideoFormatForPlanarYUV(pixelFormat) != frameFormat || computedPlaneLayout.size() != 3) {
+            GST_WARNING("Cannot copy a %s frame to %s", gst_video_format_to_string(frameFormat), convertVideoPixelFormatToString(pixelFormat).ascii().data());
+            callback({ });
+            return;
+        }
+
+        auto sampleFormat = layout->format;
+        size_t sampleSize = sampleFormat.sampleSize();
+        Vector<PlaneLayout> planeLayouts;
+        for (unsigned plane = 0; plane < computedPlaneLayout.size(); ++plane) {
+            auto& planeLayout = computedPlaneLayout[plane];
+            auto framePlane = PlanarImageConverter::makePlane(std::span<const uint8_t> { inputFrame.planeData(plane) }, 0, inputFrame.planeStride(plane), inputFrame.componentWidth(plane), inputFrame.planeHeight(plane), sampleFormat);
+            size_t width = planeLayout.sourceWidthBytes / sampleSize;
+            std::optional<PlanarImageConverter::SourcePlane> sourcePlane;
+            if (framePlane && !(planeLayout.sourceLeftBytes % sampleSize) && !(planeLayout.sourceWidthBytes % sampleSize))
+                sourcePlane = PlanarImageConverter::subplane(*framePlane, planeLayout.sourceLeftBytes / sampleSize, planeLayout.sourceTop, width, planeLayout.sourceHeight);
+            auto destinationPlane = PlanarImageConverter::makePlane(destination, planeLayout.destinationOffset, planeLayout.destinationStride, width, planeLayout.sourceHeight, sampleFormat);
+            if (!sourcePlane || !destinationPlane || !PlanarImageConverter::copyPlane(*sourcePlane, *destinationPlane)) {
+                GST_WARNING("%s plane %u doesn't fit in the frame or destination", convertVideoPixelFormatToString(pixelFormat).ascii().data(), plane);
+                callback({ });
+                return;
+            }
+            planeLayouts.append({ planeLayout.destinationOffset, planeLayout.destinationStride });
+        }
+        callback(WTF::move(planeLayouts));
+        return;
+    }
+
     if (pixelFormat == VideoPixelFormat::RGBA || pixelFormat == VideoPixelFormat::BGRA) {
         auto rgbFormat = pixelFormat == VideoPixelFormat::RGBA ? GST_VIDEO_FORMAT_RGBA : GST_VIDEO_FORMAT_BGRA;
         std::optional<GstMappedFrame> convertedFrame;
@@ -776,7 +886,7 @@ void VideoFrame::copyTo(std::span<uint8_t> destination, VideoPixelFormat pixelFo
         return;
     }
 
-    // FIXME: Handle I422, I444, RGBX and BGRX formats.
+    // FIXME: Handle RGBX and BGRX formats.
     callback({ });
 }
 

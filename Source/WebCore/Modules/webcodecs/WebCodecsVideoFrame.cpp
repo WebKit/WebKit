@@ -349,6 +349,16 @@ ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::create(ScriptExecutio
     case VideoPixelFormat::I420A:
         videoFrame = VideoFrame::createI420A(data.span(), parsedRect.width, parsedRect.height, borrow(layout.computedLayouts)[0], borrow(layout.computedLayouts)[1], borrow(layout.computedLayouts)[2], borrow(layout.computedLayouts)[3], WTF::move(videoFrameInit));
         break;
+    case VideoPixelFormat::I420P10:
+    case VideoPixelFormat::I420P12:
+    case VideoPixelFormat::I422:
+    case VideoPixelFormat::I422P10:
+    case VideoPixelFormat::I422P12:
+    case VideoPixelFormat::I444:
+    case VideoPixelFormat::I444P10:
+    case VideoPixelFormat::I444P12:
+        videoFrame = VideoFrame::createPlanarYUV(pixelFormat, data.span(), parsedRect.width, parsedRect.height, borrow(layout.computedLayouts)->span().first<3>(), WTF::move(videoFrameInit));
+        break;
     default:
         return Exception { ExceptionCode::NotSupportedError, "VideoPixelFormat is not supported"_s };
     }

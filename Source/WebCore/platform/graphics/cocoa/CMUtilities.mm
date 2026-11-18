@@ -1207,7 +1207,12 @@ PlatformVideoColorSpace computeVideoFrameColorSpace(CVPixelBufferRef pixelBuffer
 
     auto pixelFormat = CVPixelBufferGetPixelFormatType(pixelBuffer);
     // FIXME: We should do a more comprehensive check.
-    bool isFullRange = pixelFormat != kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange && pixelFormat != kCVPixelFormatType_420YpCbCr10BiPlanarVideoRange;
+    bool isFullRange = pixelFormat != kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange
+        && pixelFormat != kCVPixelFormatType_420YpCbCr10BiPlanarVideoRange
+        && pixelFormat != kCVPixelFormatType_422YpCbCr8BiPlanarVideoRange
+        && pixelFormat != kCVPixelFormatType_422YpCbCr10BiPlanarVideoRange
+        && pixelFormat != kCVPixelFormatType_444YpCbCr8BiPlanarVideoRange
+        && pixelFormat != kCVPixelFormatType_444YpCbCr10BiPlanarVideoRange;
 
     std::optional<PlatformVideoChromaLocation> chromaLocation;
     RetainPtr pixelChromaLocation = CVBufferGetAttachment(pixelBuffer, kCVImageBufferChromaLocationTopFieldKey, nil);

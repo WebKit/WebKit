@@ -103,6 +103,8 @@ public:
     static RefPtr<VideoFrame> createBGRX(std::span<const uint8_t>, size_t width, size_t height, const ComputedPlaneLayout&, Init&&);
     static RefPtr<VideoFrame> createI420(std::span<const uint8_t>, size_t width, size_t height, const ComputedPlaneLayout&, const ComputedPlaneLayout&, const ComputedPlaneLayout&, Init&&);
     static RefPtr<VideoFrame> createI420A(std::span<const uint8_t>, size_t width, size_t height, const ComputedPlaneLayout&, const ComputedPlaneLayout&, const ComputedPlaneLayout&, const ComputedPlaneLayout&, Init&&);
+    // I422, I444 and the 10 and 12-bit formats of planarYUVFormatLayout().
+    static RefPtr<VideoFrame> createPlanarYUV(VideoPixelFormat, std::span<const uint8_t>, size_t width, size_t height, std::span<const ComputedPlaneLayout, 3>, Init&&);
 
     MediaTime presentationTime() const { return m_presentationTime; }
     Rotation rotation() const { return m_rotation; }

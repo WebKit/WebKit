@@ -29,6 +29,7 @@
 #if ENABLE(VIDEO) && USE(AVFOUNDATION)
 #include "CMUtilities.h"
 #include "CVUtilities.h"
+#include "FourCC.h"
 #include "GraphicsContext.h"
 #include "ImageTransferSessionVT.h"
 #include "Logging.h"
@@ -184,6 +185,39 @@ RefPtr<VideoFrame> VideoFrame::createI420A(std::span<const uint8_t> buffer, size
     return VideoFrameCV::create(init.presentationTime, init.isMirrored, init.rotation, WTF::move(pixelBuffer), WTF::move(init.colorSpace), VideoFrameCV::ShouldIgnoreAlpha::No);
 }
 
+template<typename Byte>
+static std::optional<PlanarImageConverter::PlanarFrame<Byte>> planarFrame(std::span<Byte> buffer, const PlanarYUVFormatLayout& layout, bool isFullRange, size_t width, size_t height, size_t chromaWidth, size_t chromaHeight, std::span<const ComputedPlaneLayout, 3> layouts)
+{
+    auto y = PlanarImageConverter::makePlane(buffer, layouts[0].destinationOffset, layouts[0].destinationStride, width, height, layout.format);
+    auto u = PlanarImageConverter::makePlane(buffer, layouts[1].destinationOffset, layouts[1].destinationStride, chromaWidth, chromaHeight, layout.format);
+    auto v = PlanarImageConverter::makePlane(buffer, layouts[2].destinationOffset, layouts[2].destinationStride, chromaWidth, chromaHeight, layout.format);
+    if (!y || !u || !v)
+        return { };
+    return PlanarImageConverter::PlanarFrame<Byte> { layout.subsampling, isFullRange, *y, *u, *v, { } };
+}
+
+RefPtr<VideoFrame> VideoFrame::createPlanarYUV(VideoPixelFormat format, std::span<const uint8_t> buffer, size_t width, size_t height, std::span<const ComputedPlaneLayout, 3> layouts, Init&& init)
+{
+    auto layout = planarYUVFormatLayout(format);
+    if (!layout)
+        return nullptr;
+    auto sampleFormat = PlanarImageConverter::pixelBufferSampleFormat(layout->format);
+    if (!sampleFormat)
+        return nullptr;
+
+    bool isFullRange = init.colorSpace.fullRange.value_or(false);
+    auto frame = planarFrame(buffer, *layout, isFullRange, width, height, PlanarImageConverter::chromaWidth(layout->subsampling, width), PlanarImageConverter::chromaHeight(layout->subsampling, height), layouts);
+    auto pixelFormat = PlanarImageConverter::pixelFormat(layout->subsampling, *sampleFormat, isFullRange);
+    if (!frame || !pixelFormat)
+        return nullptr;
+
+    RetainPtr pixelBuffer = createPixelBuffer(width, height, *pixelFormat);
+    if (!pixelBuffer || !PlanarImageConverter::copyFrame(*frame, pixelBuffer.get()))
+        return nullptr;
+
+    return VideoFrameCV::create(init.presentationTime, init.isMirrored, init.rotation, WTF::move(pixelBuffer), WTF::move(init.colorSpace), VideoFrameCV::ShouldIgnoreAlpha::No);
+}
+
 static Vector<PlaneLayout> planeLayouts(std::span<const ComputedPlaneLayout> computedPlaneLayout)
 {
     Vector<PlaneLayout> layouts;
@@ -254,6 +288,32 @@ static Vector<PlaneLayout> copyI420OrI420A(std::span<uint8_t> span, std::span<co
     return planeLayouts(computedPlaneLayout);
 }
 
+static Vector<PlaneLayout> copyPlanarYUV(std::span<uint8_t> span, const PlanarYUVFormatLayout& layout, std::span<const ComputedPlaneLayout> computedPlaneLayout, CVPixelBufferRef pixelBuffer)
+{
+    if (computedPlaneLayout.size() != 3)
+        return { };
+
+    auto pixelFormat = CVPixelBufferGetPixelFormatType(pixelBuffer);
+    auto description = PlanarImageConverter::pixelFormatDescription(pixelFormat);
+    if (!description || description->alpha || description->subsampling != layout.subsampling || description->color != PlanarImageConverter::pixelBufferSampleFormat(layout.format)) {
+        RELEASE_LOG_ERROR(WebRTC, "VideoFrame::copyTo pixel buffer format %" PUBLIC_LOG_STRING " doesn't match the requested format", FourCC(pixelFormat).string().data());
+        return { };
+    }
+
+    auto& layoutY = computedPlaneLayout[0];
+    auto& layoutU = computedPlaneLayout[1];
+    size_t sampleSize = layout.format.sampleSize();
+    if (layoutY.sourceWidthBytes % sampleSize || layoutU.sourceWidthBytes % sampleSize || layoutY.sourceLeftBytes % sampleSize)
+        return { };
+
+    auto frame = planarFrame(span, layout, description->isFullRange, layoutY.sourceWidthBytes / sampleSize, layoutY.sourceHeight, layoutU.sourceWidthBytes / sampleSize, layoutU.sourceHeight, computedPlaneLayout.first<3>());
+    if (!frame || !PlanarImageConverter::copyFrame(pixelBuffer, layoutY.sourceLeftBytes / sampleSize, layoutY.sourceTop, *frame)) {
+        RELEASE_LOG_ERROR(WebRTC, "VideoFrame::copyTo failed to copy the planes");
+        return { };
+    }
+    return planeLayouts(computedPlaneLayout);
+}
+
 void VideoFrame::copyTo(std::span<uint8_t> span, VideoPixelFormat format, ColorSpace colorSpace, Vector<ComputedPlaneLayout>&& computedPlaneLayout, CompletionHandler<void(std::optional<Vector<PlaneLayout>>&&)>&& callback)
 {
     // FIXME: We should get the pixel buffer and copy the bytes asynchronously.
@@ -301,6 +361,11 @@ void VideoFrame::copyTo(std::span<uint8_t> span, VideoPixelFormat format, ColorS
 
     if (format == VideoPixelFormat::I420 || format == VideoPixelFormat::I420A) {
         callback(copyI420OrI420A(span, computedPlaneLayout.span(), pixelBuffer));
+        return;
+    }
+
+    if (auto layout = planarYUVFormatLayout(format)) {
+        callback(copyPlanarYUV(span, *layout, computedPlaneLayout.span(), pixelBuffer));
         return;
     }
 

@@ -1,0 +1,42 @@
+
+PASS I422: tightly packed round trip
+PASS I422: padded source, misaligned destination
+PASS I422: misaligned source, tightly packed destination
+PASS I422: visibleRect smaller than the coded size
+PASS I422: copyTo() with a rect
+PASS I444: tightly packed round trip
+PASS I444: padded source, misaligned destination
+PASS I444: misaligned source, tightly packed destination
+PASS I444: visibleRect smaller than the coded size
+PASS I444: copyTo() with a rect
+PASS I420P10: tightly packed round trip
+PASS I420P10: padded source, misaligned destination
+PASS I420P10: misaligned source, tightly packed destination
+PASS I420P10: visibleRect smaller than the coded size
+PASS I420P10: copyTo() with a rect
+PASS I420P12: tightly packed round trip
+PASS I420P12: padded source, misaligned destination
+PASS I420P12: misaligned source, tightly packed destination
+PASS I420P12: visibleRect smaller than the coded size
+PASS I420P12: copyTo() with a rect
+PASS I422P10: tightly packed round trip
+PASS I422P10: padded source, misaligned destination
+PASS I422P10: misaligned source, tightly packed destination
+PASS I422P10: visibleRect smaller than the coded size
+PASS I422P10: copyTo() with a rect
+PASS I422P12: tightly packed round trip
+PASS I422P12: padded source, misaligned destination
+PASS I422P12: misaligned source, tightly packed destination
+PASS I422P12: visibleRect smaller than the coded size
+PASS I422P12: copyTo() with a rect
+PASS I444P10: tightly packed round trip
+PASS I444P10: padded source, misaligned destination
+PASS I444P10: misaligned source, tightly packed destination
+PASS I444P10: visibleRect smaller than the coded size
+PASS I444P10: copyTo() with a rect
+PASS I444P12: tightly packed round trip
+PASS I444P12: padded source, misaligned destination
+PASS I444P12: misaligned source, tightly packed destination
+PASS I444P12: visibleRect smaller than the coded size
+PASS I444P12: copyTo() with a rect
+

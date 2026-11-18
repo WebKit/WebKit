@@ -34,20 +34,20 @@ PASS Test I420A VideoFrame and alpha={keep,discard}
 PASS Test RGBA, BGRA VideoFrames with alpha={keep,discard}
 PASS Test a VideoFrame constructed from canvas can drop the alpha channel.
 PASS Test we can construct a I420 VideoFrame
-FAIL Test we can construct a I420P10 VideoFrame VideoPixelFormat is not supported
-FAIL Test we can construct a I420P12 VideoFrame VideoPixelFormat is not supported
+PASS Test we can construct a I420P10 VideoFrame
+PASS Test we can construct a I420P12 VideoFrame
 PASS Test we can construct a I420A VideoFrame
 FAIL Test we can construct a I420AP10 VideoFrame Type error
 FAIL Test we can construct a I420AP12 VideoFrame Type error
-FAIL Test we can construct a I422 VideoFrame VideoPixelFormat is not supported
-FAIL Test we can construct a I422P10 VideoFrame VideoPixelFormat is not supported
-FAIL Test we can construct a I422P12 VideoFrame VideoPixelFormat is not supported
+PASS Test we can construct a I422 VideoFrame
+PASS Test we can construct a I422P10 VideoFrame
+PASS Test we can construct a I422P12 VideoFrame
 FAIL Test we can construct a I422A VideoFrame Type error
 FAIL Test we can construct a I422AP10 VideoFrame Type error
 FAIL Test we can construct a I422AP12 VideoFrame Type error
-FAIL Test we can construct a I444 VideoFrame VideoPixelFormat is not supported
-FAIL Test we can construct a I444P10 VideoFrame VideoPixelFormat is not supported
-FAIL Test we can construct a I444P12 VideoFrame VideoPixelFormat is not supported
+PASS Test we can construct a I444 VideoFrame
+PASS Test we can construct a I444P10 VideoFrame
+PASS Test we can construct a I444P12 VideoFrame
 FAIL Test we can construct a I444A VideoFrame Type error
 FAIL Test we can construct a I444AP10 VideoFrame Type error
 FAIL Test we can construct a I444AP12 VideoFrame Type error

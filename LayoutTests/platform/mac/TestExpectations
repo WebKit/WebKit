@@ -1791,6 +1791,13 @@ imported/w3c/web-platform-tests/webcodecs/videoFrame-drawImage.any.worker.html [
 [ x86_64 ] imported/w3c/web-platform-tests/webcodecs/videoDecoder-codec-specific.https.any.html?vp9 [ Failure ]
 [ x86_64 ] imported/w3c/web-platform-tests/webcodecs/videoDecoder-codec-specific.https.any.worker.html?vp9 [ Failure ]
 
+webkit.org/b/331641 imported/w3c/web-platform-tests/webcodecs/video-encoder-hbd.https.any.html?av1 [ Pass Failure ]
+webkit.org/b/331641 imported/w3c/web-platform-tests/webcodecs/video-encoder-hbd.https.any.worker.html?av1 [ Pass Failure ]
+webkit.org/b/331641 imported/w3c/web-platform-tests/webcodecs/video-encoder-hbd.https.any.html?vp9 [ Pass Failure ]
+webkit.org/b/331641 imported/w3c/web-platform-tests/webcodecs/video-encoder-hbd.https.any.html?vp9_p2 [ Pass Failure ]
+webkit.org/b/331641 imported/w3c/web-platform-tests/webcodecs/video-encoder-hbd.https.any.worker.html?vp9 [ Pass Failure ]
+webkit.org/b/331641 imported/w3c/web-platform-tests/webcodecs/video-encoder-hbd.https.any.worker.html?vp9_p2 [ Pass Failure ]
+
 
 [ x86_64 ] imported/w3c/web-platform-tests/webcodecs/audioDecoder-codec-specific.https.any.html?mp3 [ Failure ]
 [ x86_64 ] imported/w3c/web-platform-tests/webcodecs/audioDecoder-codec-specific.https.any.worker.html?mp3 [ Failure ]

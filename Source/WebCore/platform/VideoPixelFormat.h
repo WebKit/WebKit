@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <WebCore/PlanarImageConverter.h>
 #include <optional>
 #include <wtf/Forward.h>
 
@@ -60,6 +61,46 @@ inline bool isHighBitDepthVideoPixelFormat(VideoPixelFormat format)
     return format == VideoPixelFormat::I420P10 || format == VideoPixelFormat::I420P12
         || format == VideoPixelFormat::I422P10 || format == VideoPixelFormat::I422P12
         || format == VideoPixelFormat::I444P10 || format == VideoPixelFormat::I444P12;
+}
+
+struct PlanarYUVFormatLayout {
+    PlanarImageConverter::ChromaSubsampling subsampling;
+    PlanarImageConverter::SampleFormat format;
+};
+
+// The three plane Y'CbCr formats without alpha. Samples above 8 bits are stored in 16 bits, LSB aligned.
+inline std::optional<PlanarYUVFormatLayout> planarYUVFormatLayout(VideoPixelFormat format)
+{
+    using enum PlanarImageConverter::ChromaSubsampling;
+    switch (format) {
+    case VideoPixelFormat::I420:
+        return PlanarYUVFormatLayout { HorizontalAndVertical, PlanarImageConverter::eightBit };
+    case VideoPixelFormat::I420P10:
+        return PlanarYUVFormatLayout { HorizontalAndVertical, PlanarImageConverter::tenBitLSB };
+    case VideoPixelFormat::I420P12:
+        return PlanarYUVFormatLayout { HorizontalAndVertical, PlanarImageConverter::twelveBitLSB };
+    case VideoPixelFormat::I422:
+        return PlanarYUVFormatLayout { Horizontal, PlanarImageConverter::eightBit };
+    case VideoPixelFormat::I422P10:
+        return PlanarYUVFormatLayout { Horizontal, PlanarImageConverter::tenBitLSB };
+    case VideoPixelFormat::I422P12:
+        return PlanarYUVFormatLayout { Horizontal, PlanarImageConverter::twelveBitLSB };
+    case VideoPixelFormat::I444:
+        return PlanarYUVFormatLayout { None, PlanarImageConverter::eightBit };
+    case VideoPixelFormat::I444P10:
+        return PlanarYUVFormatLayout { None, PlanarImageConverter::tenBitLSB };
+    case VideoPixelFormat::I444P12:
+        return PlanarYUVFormatLayout { None, PlanarImageConverter::twelveBitLSB };
+    case VideoPixelFormat::I420A:
+    case VideoPixelFormat::NV12:
+    case VideoPixelFormat::RGBA:
+    case VideoPixelFormat::RGBX:
+    case VideoPixelFormat::BGRA:
+    case VideoPixelFormat::BGRX:
+        return { };
+    }
+    ASSERT_NOT_REACHED();
+    return { };
 }
 
 WEBCORE_EXPORT String convertVideoPixelFormatToString(VideoPixelFormat);
