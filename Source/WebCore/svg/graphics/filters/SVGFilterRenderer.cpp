@@ -277,6 +277,11 @@ OptionSet<FilterRenderingMode> SVGFilterRenderer::supportedFilterRenderingModes(
         auto& effect = m_effects[term.index];
 
         OptionSet<FilterRenderingMode> effectModes = preferredFilterRenderingModes;
+
+        // FIXME: rdar://193025821 CoreGraphics filters should be able to operate in the linearSRGB color space.
+        if (effect->operatingColorSpace() != ColorSpace::SRGB())
+            effectModes.remove(FilterRenderingMode::GraphicsContext);
+
         for (unsigned i = 0; i < effect->numberOfEffectInputs(); ++i)
             effectModes = effectModes & stack.takeLast();
 
