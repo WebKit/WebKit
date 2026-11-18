@@ -32,6 +32,7 @@
 #include <WebCore/FrameIdentifier.h>
 #include <WebCore/IntPoint.h>
 #include <wtf/CompletionHandler.h>
+#include <wtf/Deque.h>
 #include <wtf/ListHashSet.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
@@ -207,13 +208,15 @@ private:
 
     void keyFrameTransitionDurationTimerFired();
     bool isKeyFrameTransitionComplete() const;
+    void finishKeyFrameTransitionIfComplete();
+    void failKeyFrameTransition(AutomationCommandError);
 
     WebCore::IntPoint currentLocationOfSource(const SimulatedInputSourceState&) const;
     void resolveLocation(const WebCore::IntPoint& currentLocation, std::optional<WebCore::IntPoint> location, MouseMoveOrigin, std::optional<String> nodeHandle, Function<void (std::optional<WebCore::IntPoint>, std::optional<AutomationCommandError>)>&&);
 
 #if ENABLE(WEBDRIVER_MOUSE_INTERACTIONS)
     struct PointerMoveInterpolation {
-        uint64_t identifier { 0 };
+        Ref<SimulatedInputSource> inputSource;
         WebCore::IntPoint start;
         WebCore::IntPoint end;
         MouseButton button;
@@ -222,12 +225,23 @@ private:
         Seconds duration;
         Seconds stepInterval;
         WebCore::IntPoint lastDispatchedLocation;
+        MonotonicTime lastDispatchTime;
+        WebCore::IntPoint lastDeliveredLocation;
+    };
+
+    void startPointerMoveInterpolation(SimulatedInputSource&, const WebCore::IntPoint& start, const WebCore::IntPoint& end, MouseButton, const String& pointerType, Seconds duration);
+    void pointerMoveInterpolationTimerFired();
+
+    struct PendingMouseInteraction {
+        MouseInteraction interaction;
+        MouseButton button;
+        WebCore::IntPoint location;
+        String pointerType;
         AutomationCompletionHandler completionHandler;
     };
 
-    void startPointerMoveInterpolation(const WebCore::IntPoint& start, const WebCore::IntPoint& end, MouseButton, const String& pointerType, Seconds duration, AutomationCompletionHandler&&);
-    void pointerMoveInterpolationTimerFired();
-    void finishPointerMoveInterpolation(std::optional<AutomationCommandError>);
+    void enqueueMouseInteraction(MouseInteraction, MouseButton, const WebCore::IntPoint&, const String& pointerType, AutomationCompletionHandler&&);
+    void dispatchNextMouseInteraction();
 #endif
 
     WeakRef<WebPageProxy> m_page;
@@ -237,12 +251,14 @@ private:
     AutomationCompletionHandler m_runCompletionHandler;
     AutomationCompletionHandler m_keyFrameTransitionCompletionHandler;
     RunLoop::Timer m_keyFrameTransitionDurationTimer;
+    MonotonicTime m_keyFrameStartTime;
     SimulatedInputRunOptions m_options;
 
 #if ENABLE(WEBDRIVER_MOUSE_INTERACTIONS)
     RunLoop::Timer m_pointerMoveInterpolationTimer;
-    std::optional<PointerMoveInterpolation> m_pointerMoveInterpolation;
-    uint64_t m_lastPointerMoveInterpolationIdentifier { 0 };
+    Vector<PointerMoveInterpolation> m_pointerMoveInterpolations;
+    Deque<PendingMouseInteraction> m_pendingMouseInteractions;
+    bool m_isDispatchingMouseInteraction { false };
 #endif
 
     Vector<SimulatedInputKeyFrame> m_keyframes;

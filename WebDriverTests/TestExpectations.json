@@ -6256,6 +6256,9 @@
             },
             "test_wheel_scroll_dispatches_multiple_events": {
                 "expected": {"mac": {"status": ["FAIL"], "note": "Simulated input fails on Mac"}, "glib": {"status": ["FAIL"], "bug": "webkit.org/b/331469"}}
+            },
+            "test_pointer_moves_in_one_tick_are_dispatched_concurrently": {
+                "expected": {"glib": {"status": ["FAIL"], "bug": "webkit.org/b/281949"}}
             }
         }
     },

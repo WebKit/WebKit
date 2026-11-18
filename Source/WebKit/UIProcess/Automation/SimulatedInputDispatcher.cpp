@@ -192,10 +192,7 @@ void SimulatedInputDispatcher::keyFrameTransitionDurationTimerFired()
 
     LOG(Automation, "SimulatedInputDispatcher[%p]: timer finished for transition between keyframes: %d --> %d", this, m_keyframeIndex - 1, m_keyframeIndex);
 
-    if (isKeyFrameTransitionComplete()) {
-        auto finish = std::exchange(m_keyFrameTransitionCompletionHandler, nullptr);
-        finish(std::nullopt);
-    }
+    finishKeyFrameTransitionIfComplete();
 }
 
 bool SimulatedInputDispatcher::isKeyFrameTransitionComplete() const
@@ -208,7 +205,38 @@ bool SimulatedInputDispatcher::isKeyFrameTransitionComplete() const
     if (m_keyFrameTransitionDurationTimer.isActive())
         return false;
 
+#if ENABLE(WEBDRIVER_MOUSE_INTERACTIONS)
+    if (!m_pointerMoveInterpolations.isEmpty() || m_isDispatchingMouseInteraction || !m_pendingMouseInteractions.isEmpty())
+        return false;
+#endif
+
     return true;
+}
+
+void SimulatedInputDispatcher::finishKeyFrameTransitionIfComplete()
+{
+    if (!m_keyFrameTransitionCompletionHandler || !isKeyFrameTransitionComplete())
+        return;
+
+    auto finish = std::exchange(m_keyFrameTransitionCompletionHandler, nullptr);
+    finish(std::nullopt);
+}
+
+void SimulatedInputDispatcher::failKeyFrameTransition(AutomationCommandError error)
+{
+    auto finish = std::exchange(m_keyFrameTransitionCompletionHandler, nullptr);
+    if (!finish)
+        return;
+
+#if ENABLE(WEBDRIVER_MOUSE_INTERACTIONS)
+    m_pointerMoveInterpolationTimer.stop();
+    // https://w3c.github.io/webdriver/#dfn-perform-a-pointer-move
+    auto interpolations = std::exchange(m_pointerMoveInterpolations, { });
+    for (auto& interpolation : borrow(interpolations))
+        interpolation.inputSource->state.location = interpolation.lastDeliveredLocation;
+#endif
+
+    finish(WTF::move(error));
 }
 
 void SimulatedInputDispatcher::transitionToNextKeyFrame()
@@ -231,15 +259,10 @@ void SimulatedInputDispatcher::transitionToNextKeyFrame()
 
 void SimulatedInputDispatcher::transitionToNextInputSourceState()
 {
-    if (isKeyFrameTransitionComplete()) {
-        auto finish = std::exchange(m_keyFrameTransitionCompletionHandler, nullptr);
-        finish(std::nullopt);
+    if (m_inputSourceStateIndex == m_keyframes[m_keyframeIndex].states.size()) {
+        finishKeyFrameTransitionIfComplete();
         return;
     }
-
-    // In this case, transitions are done but we need to wait for the tick timer.
-    if (m_inputSourceStateIndex == m_keyframes[m_keyframeIndex].states.size())
-        return;
 
     // FIXME: These references do not enforce lifetime safety.
     // We keep them this way for now because the synchronous error case would crash otherwise.
@@ -252,8 +275,7 @@ void SimulatedInputDispatcher::transitionToNextInputSourceState()
             return;
 
         if (error) {
-            auto finish = std::exchange(m_keyFrameTransitionCompletionHandler, nullptr);
-            finish(error);
+            failKeyFrameTransition(WTF::move(*error));
             return;
         }
 
@@ -271,6 +293,7 @@ void SimulatedInputDispatcher::transitionBetweenKeyFrames(AutomationCompletionHa
 
     // The "dispatch tick actions" algorithm (§17.4 Dispatching Actions).
     m_keyFrameTransitionCompletionHandler = WTF::move(completionHandler);
+    m_keyFrameStartTime = MonotonicTime::now();
     m_keyFrameTransitionDurationTimer.startOneShot(maximumDuration);
 
     LOG(Automation, "SimulatedInputDispatcher[%p]: started transition between keyframes: %d --> %d", this, m_keyframeIndex - 1, m_keyframeIndex);
@@ -424,7 +447,7 @@ void SimulatedInputDispatcher::transitionInputSourceToState(SimulatedInputSource
 #elif !ENABLE(WEBDRIVER_TOUCH_INTERACTIONS)
         RELEASE_ASSERT(!isTouch);
 #endif
-        resolveLocation(currentLocationOfSource(a), b.location, b.origin.value_or(isTouch ? MouseMoveOrigin::Viewport : MouseMoveOrigin::Pointer), b.nodeHandle, [this, protectedThis = Ref { *this }, &a, &b, pointerType = pointerTypeForInputSource(inputSource.type), isTouch, runCompletionCount = m_runCompletionCount, eventDispatchFinished = WTF::move(eventDispatchFinished)](std::optional<WebCore::IntPoint> location, std::optional<AutomationCommandError> error) mutable {
+        resolveLocation(currentLocationOfSource(a), b.location, b.origin.value_or(isTouch ? MouseMoveOrigin::Viewport : MouseMoveOrigin::Pointer), b.nodeHandle, [this, protectedThis = Ref { *this }, inputSource = Ref { inputSource }, &a, &b, pointerType = pointerTypeForInputSource(inputSource.type), isTouch, runCompletionCount = m_runCompletionCount, eventDispatchFinished = WTF::move(eventDispatchFinished)](std::optional<WebCore::IntPoint> location, std::optional<AutomationCommandError> error) mutable {
             if (error || runCompletionCount != m_runCompletionCount) {
                 eventDispatchFinished(error);
                 return;
@@ -470,12 +493,12 @@ void SimulatedInputDispatcher::transitionInputSourceToState(SimulatedInputSource
                     } else {
 #if ENABLE(WEBDRIVER_MOUSE_INTERACTIONS)
                         if (m_options.interpolatePointerMoves && b.mouseInteraction == MouseInteraction::Move && b.duration && *b.duration > 0_s && a.location != b.location) {
-                            // FIXME: Interpolate the pointer moves of a tick concurrently. <https://webkit.org/b/329453>
-                            startPointerMoveInterpolation(currentLocationOfSource(a), b.location.value(), b.pressedMouseButton.value_or(MouseButton::None), pointerType, *b.duration, WTF::move(eventDispatchFinished));
+                            startPointerMoveInterpolation(inputSource, currentLocationOfSource(a), b.location.value(), b.pressedMouseButton.value_or(MouseButton::None), pointerType, *b.duration);
+                            eventDispatchFinished(std::nullopt);
                             return;
                         }
 
-                        m_client.simulateMouseInteraction(protect(m_page), b.mouseInteraction.value(), button.value_or(MouseButton::None), b.location.value(), pointerType, WTF::move(eventDispatchFinished));
+                        enqueueMouseInteraction(b.mouseInteraction.value(), button.value_or(MouseButton::None), b.location.value(), pointerType, WTF::move(eventDispatchFinished));
 #else
                         UNUSED_VARIABLE(pointerType);
                         UNUSED_VARIABLE(button);
@@ -621,76 +644,124 @@ void SimulatedInputDispatcher::dispatchKeyboardInteractions(Vector<KeyboardInter
 static constexpr Seconds pointerMoveInterpolationInterval = 16_ms;
 static constexpr unsigned maximumPointerMoveInterpolationSteps = 50;
 
-void SimulatedInputDispatcher::startPointerMoveInterpolation(const WebCore::IntPoint& start, const WebCore::IntPoint& end, MouseButton button, const String& pointerType, Seconds duration, AutomationCompletionHandler&& completionHandler)
+void SimulatedInputDispatcher::startPointerMoveInterpolation(SimulatedInputSource& inputSource, const WebCore::IntPoint& start, const WebCore::IntPoint& end, MouseButton button, const String& pointerType, Seconds duration)
 {
-    ASSERT(!m_pointerMoveInterpolation);
-    ASSERT(!m_pointerMoveInterpolationTimer.isActive());
-
     auto stepInterval = std::max(pointerMoveInterpolationInterval, duration / maximumPointerMoveInterpolationSteps);
 
     LOG(Automation, "SimulatedInputDispatcher[%p]: interpolating pointer move from (%d, %d) to (%d, %d) over %.3f seconds", this, start.x(), start.y(), end.x(), end.y(), duration.value());
 
-    m_pointerMoveInterpolation = PointerMoveInterpolation {
-        ++m_lastPointerMoveInterpolationIdentifier,
+    if (m_pointerMoveInterpolations.isEmpty())
+        m_pointerMoveInterpolationTimer.startOneShot(pointerMoveInterpolationInterval);
+
+    m_pointerMoveInterpolations.append(PointerMoveInterpolation {
+        inputSource,
         start,
         end,
         button,
         pointerType,
-        MonotonicTime::now(),
+        m_keyFrameStartTime,
         duration,
         stepInterval,
         start,
-        WTF::move(completionHandler),
-    };
-    m_pointerMoveInterpolationTimer.startOneShot(stepInterval);
+        m_keyFrameStartTime,
+        start,
+    });
 }
 
 void SimulatedInputDispatcher::pointerMoveInterpolationTimerFired()
 {
-    ASSERT(m_pointerMoveInterpolation);
-    if (!m_pointerMoveInterpolation)
-        return;
+    auto now = MonotonicTime::now();
+    Vector<std::tuple<Ref<SimulatedInputSource>, MouseButton, String, WebCore::IntPoint>> moves;
+    for (auto& interpolation : borrow(m_pointerMoveInterpolations)) {
+        auto elapsed = now - interpolation.startTime;
+        bool isFinalStep = elapsed >= interpolation.duration;
+        if (!isFinalStep && now - interpolation.lastDispatchTime < interpolation.stepInterval)
+            continue;
 
-    auto& interpolation = *m_pointerMoveInterpolation;
-    auto elapsed = MonotonicTime::now() - interpolation.startTime;
-    bool isFinalStep = elapsed >= interpolation.duration;
-
-    WebCore::IntPoint location = interpolation.end;
-    if (!isFinalStep) {
-        float progress = static_cast<float>(elapsed / interpolation.duration);
-        WebCore::FloatPoint start(interpolation.start);
-        location = flooredIntPoint(start + (WebCore::FloatPoint(interpolation.end) - start) * progress);
-    }
-
-    if (!isFinalStep && (location == interpolation.lastDispatchedLocation || location == interpolation.end)) {
-        m_pointerMoveInterpolationTimer.startOneShot(interpolation.stepInterval);
-        return;
-    }
-
-    interpolation.lastDispatchedLocation = location;
-
-    LOG(Automation, "SimulatedInputDispatcher[%p]: simulating interpolated pointer move @ (%d, %d) for transition to %d.%d", this, location.x(), location.y(), m_keyframeIndex, m_inputSourceStateIndex);
-
-    m_client.simulateMouseInteraction(protect(m_page), MouseInteraction::Move, interpolation.button, location, interpolation.pointerType, [this, protectedThis = Ref { *this }, identifier = interpolation.identifier, isFinalStep](std::optional<AutomationCommandError> error) {
-        if (!m_pointerMoveInterpolation || m_pointerMoveInterpolation->identifier != identifier)
-            return;
-
-        auto& interpolation = *m_pointerMoveInterpolation;
-        if (error || isFinalStep) {
-            finishPointerMoveInterpolation(error);
-            return;
+        WebCore::IntPoint location = interpolation.end;
+        if (!isFinalStep) {
+            float progress = static_cast<float>(elapsed / interpolation.duration);
+            WebCore::FloatPoint start(interpolation.start);
+            location = flooredIntPoint(start + (WebCore::FloatPoint(interpolation.end) - start) * progress);
         }
 
-        m_pointerMoveInterpolationTimer.startOneShot(interpolation.stepInterval);
-    });
+        if (!isFinalStep && (location == interpolation.lastDispatchedLocation || location == interpolation.end))
+            continue;
+
+        interpolation.lastDispatchedLocation = location;
+        interpolation.lastDispatchTime = now;
+
+        LOG(Automation, "SimulatedInputDispatcher[%p]: simulating interpolated pointer move @ (%d, %d) for transition to %d.%d", this, location.x(), location.y(), m_keyframeIndex, m_inputSourceStateIndex);
+
+        moves.append({ interpolation.inputSource, interpolation.button, interpolation.pointerType, location });
+    }
+
+    if (moves.isEmpty()) {
+        m_pointerMoveInterpolationTimer.startOneShot(pointerMoveInterpolationInterval);
+        return;
+    }
+
+    auto runCompletionCount = m_runCompletionCount;
+    for (size_t i = 0; i < moves.size() && runCompletionCount == m_runCompletionCount; ++i) {
+        auto [inputSource, button, pointerType, location] = moves[i];
+        enqueueMouseInteraction(MouseInteraction::Move, button, location, pointerType, [this, protectedThis = Ref { *this }, runCompletionCount, inputSource = WTF::move(inputSource), location, isLastMove = i == moves.size() - 1](std::optional<AutomationCommandError> error) {
+            if (runCompletionCount != m_runCompletionCount)
+                return;
+
+            if (error) {
+                failKeyFrameTransition(WTF::move(*error));
+                return;
+            }
+
+            auto index = m_pointerMoveInterpolations.findIf([&](auto& interpolation) {
+                return interpolation.inputSource.ptr() == inputSource.ptr();
+            });
+            if (index != notFound)
+                m_pointerMoveInterpolations[index].lastDeliveredLocation = location;
+
+            if (!isLastMove)
+                return;
+
+            m_pointerMoveInterpolations.removeAllMatching([](auto& interpolation) {
+                return interpolation.lastDeliveredLocation == interpolation.end;
+            });
+
+            if (!m_pointerMoveInterpolations.isEmpty()) {
+                m_pointerMoveInterpolationTimer.startOneShot(pointerMoveInterpolationInterval);
+                return;
+            }
+
+            finishKeyFrameTransitionIfComplete();
+        });
+    }
 }
 
-void SimulatedInputDispatcher::finishPointerMoveInterpolation(std::optional<AutomationCommandError> error)
+void SimulatedInputDispatcher::enqueueMouseInteraction(MouseInteraction interaction, MouseButton button, const WebCore::IntPoint& location, const String& pointerType, AutomationCompletionHandler&& completionHandler)
 {
-    ASSERT(m_pointerMoveInterpolation);
-    m_pointerMoveInterpolationTimer.stop();
-    auto interpolation = std::exchange(m_pointerMoveInterpolation, std::nullopt);
-    interpolation->completionHandler(error);
+    m_pendingMouseInteractions.append(PendingMouseInteraction { interaction, button, location, pointerType, WTF::move(completionHandler) });
+    dispatchNextMouseInteraction();
+}
+
+void SimulatedInputDispatcher::dispatchNextMouseInteraction()
+{
+    if (m_isDispatchingMouseInteraction || m_pendingMouseInteractions.isEmpty())
+        return;
+
+    m_isDispatchingMouseInteraction = true;
+
+    auto interaction = m_pendingMouseInteractions.first().interaction;
+    auto button = m_pendingMouseInteractions.first().button;
+    auto location = m_pendingMouseInteractions.first().location;
+    auto pointerType = m_pendingMouseInteractions.first().pointerType;
+    m_client.simulateMouseInteraction(protect(m_page), interaction, button, location, pointerType, [this, protectedThis = Ref { *this }, runCompletionCount = m_runCompletionCount](std::optional<AutomationCommandError> error) {
+        if (runCompletionCount != m_runCompletionCount)
+            return;
+
+        m_isDispatchingMouseInteraction = false;
+        auto completed = m_pendingMouseInteractions.takeFirst();
+        completed.completionHandler(error);
+        dispatchNextMouseInteraction();
+    });
 }
 #endif // ENABLE(WEBDRIVER_MOUSE_INTERACTIONS)
 
@@ -721,16 +792,8 @@ void SimulatedInputDispatcher::cancel(AutomationCommandError error)
     if (!isActive())
         return;
 
-#if ENABLE(WEBDRIVER_MOUSE_INTERACTIONS)
-    if (m_pointerMoveInterpolation) {
-        finishPointerMoveInterpolation(WTF::move(error));
-        ASSERT(!isActive());
-        return;
-    }
-#endif
-
-    if (auto finish = std::exchange(m_keyFrameTransitionCompletionHandler, nullptr)) {
-        finish(WTF::move(error));
+    if (m_keyFrameTransitionCompletionHandler) {
+        failKeyFrameTransition(WTF::move(error));
         ASSERT(!isActive());
         return;
     }
@@ -741,15 +804,18 @@ void SimulatedInputDispatcher::cancel(AutomationCommandError error)
 void SimulatedInputDispatcher::finishDispatching(std::optional<AutomationCommandError> error)
 {
     ASSERT(!m_keyFrameTransitionCompletionHandler);
+    auto finish = std::exchange(m_runCompletionHandler, nullptr);
+    if (!finish)
+        return;
+
     m_keyFrameTransitionDurationTimer.stop();
 #if ENABLE(WEBDRIVER_MOUSE_INTERACTIONS)
     m_pointerMoveInterpolationTimer.stop();
-    m_pointerMoveInterpolation = std::nullopt;
+    ASSERT(m_pointerMoveInterpolations.isEmpty());
 #endif
 
     LOG(Automation, "SimulatedInputDispatcher[%p]: finished all input simulation at [%u.%u]", this, m_keyframeIndex, m_inputSourceStateIndex);
 
-    auto finish = std::exchange(m_runCompletionHandler, nullptr);
     m_frameID = std::nullopt;
     m_options = { };
     m_keyframes.clear();
@@ -757,6 +823,12 @@ void SimulatedInputDispatcher::finishDispatching(std::optional<AutomationCommand
     m_keyframeIndex = 0;
     m_inputSourceStateIndex = 0;
 #if ENABLE(WEBDRIVER_MOUSE_INTERACTIONS)
+    m_isDispatchingMouseInteraction = false;
+    while (!m_pendingMouseInteractions.isEmpty()) {
+        auto pending = m_pendingMouseInteractions.takeFirst();
+        pending.completionHandler(AUTOMATION_COMMAND_ERROR_WITH_NAME(InternalError));
+    }
+
     // It is unclear if this is desirable; see
     // https://github.com/w3c/webdriver/issues/1772 for ongoing discussion:
     m_client.clearDoubleClicks();
