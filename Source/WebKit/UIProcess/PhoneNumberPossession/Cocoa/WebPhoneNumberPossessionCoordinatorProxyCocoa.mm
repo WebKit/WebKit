@@ -29,15 +29,63 @@
 #if ENABLE(PHONE_NUMBER_POSSESSION)
 
 #import "WebKit-Swift.h"
-#import "WebKitSwiftSoftLink.h"
 #import "WebPageProxy.h"
+#import "WebPreferences.h"
+#import "WebPreferencesKeys.h"
+#import "WebProcessPool.h"
+#import "WebProcessProxy.h"
 #import <WebKit/WKWebView.h>
+#import <wtf/BlockPtr.h>
+#import <wtf/RunLoop.h>
+
+#import "WebKitSwiftSoftLink.h"
 
 namespace WebKit {
 
 id<WKPhoneNumberPossessionPlatformManaging> phoneNumberPossessionPlatformManager()
 {
     return adoptNS([getWKPhoneNumberPossessionPlatformManagerClassSingleton() new]).autorelease();
+}
+
+NODELETE static bool& cachedPhoneNumberPossessionPlatformEnabled()
+{
+    static bool enabled;
+    return enabled;
+}
+
+NODELETE bool isPhoneNumberPossessionEnabledByPlatform()
+{
+    return cachedPhoneNumberPossessionPlatformEnabled();
+}
+
+bool canPlatformEnablePhoneNumberPossession()
+{
+    return [getWKPhoneNumberPossessionPlatformManagerClassSingleton() respondsToSelector:@selector(isEnabledWithCompletionHandler:)];
+}
+
+void fetchPhoneNumberPossessionPlatformEnabledIfNeeded()
+{
+    ASSERT(RunLoop::isMain());
+    static bool didFetch;
+    if (std::exchange(didFetch, true))
+        return;
+
+    [getWKPhoneNumberPossessionPlatformManagerClassSingleton() isEnabledWithCompletionHandler:makeBlockPtr([](BOOL enabled) {
+        if (!enabled)
+            return;
+
+        RunLoop::mainSingleton().dispatch([] {
+            cachedPhoneNumberPossessionPlatformEnabled() = true;
+            for (Ref processPool : WebProcessPool::allProcessPools()) {
+                for (Ref process : processPool->processes()) {
+                    for (Ref page : process->pages()) {
+                        protect(page->preferences())->removeOverriddenDefaultValueForKey(WebPreferencesKey::phoneNumberPossessionEnabledKey());
+                        page->preferencesDidChange();
+                    }
+                }
+            }
+        });
+    }).get()];
 }
 
 static PhoneNumberPossessionController createController(const std::optional<WebCore::MockPhoneNumberPossessionConfiguration>& mockConfiguration)

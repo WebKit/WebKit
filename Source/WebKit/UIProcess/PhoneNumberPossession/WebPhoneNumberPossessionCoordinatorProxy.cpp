@@ -32,6 +32,8 @@
 #include "WebFrameProxy.h"
 #include "WebPageProxy.h"
 #include "WebPhoneNumberPossessionCoordinatorProxyMessages.h"
+#include "WebPreferences.h"
+#include "WebPreferencesKeys.h"
 #include "WebProcessProxy.h"
 #include <WebCore/Exception.h>
 #include <WebCore/PhoneNumberPossessionRequest.h>
@@ -71,6 +73,9 @@ WebPhoneNumberPossessionCoordinatorProxy::WebPhoneNumberPossessionCoordinatorPro
 {
     // FIXME: Also receive messages from cross-origin iframes in other processes, as RemotePageWebAuthenticatorCoordinatorProxy does.
     m_process->addMessageReceiver(Messages::WebPhoneNumberPossessionCoordinatorProxy::messageReceiverName(), m_webPageID, *this);
+
+    if (isPhoneNumberPossessionEnabledByPlatform())
+        protect(webPageProxy.preferences())->removeOverriddenDefaultValueForKey(WebPreferencesKey::phoneNumberPossessionEnabledKey());
 }
 
 WebPhoneNumberPossessionCoordinatorProxy::~WebPhoneNumberPossessionCoordinatorProxy()

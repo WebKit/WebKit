@@ -268,6 +268,11 @@ void WebPreferences::deleteKey(const String& key)
     update(); // FIXME: Only send over the changed key and value.
 }
 
+void WebPreferences::removeOverriddenDefaultValueForKey(const String& key)
+{
+    m_store.m_overriddenDefaults.remove(key);
+}
+
 void WebPreferences::registerDefaultBoolValueForKey(const String& key, bool value)
 {
     m_store.setOverrideDefaultsBoolValueForKey(key, value);

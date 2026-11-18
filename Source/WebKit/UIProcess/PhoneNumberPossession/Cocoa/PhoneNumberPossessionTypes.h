@@ -69,6 +69,10 @@ using PhoneNumberPossessionCancelCompletionHandler = WTF::RefCountable<Completio
 id<WKPhoneNumberPossessionPlatformManaging> _Nullable phoneNumberPossessionPlatformManager();
 #endif
 
+bool canPlatformEnablePhoneNumberPossession();
+NODELETE bool isPhoneNumberPossessionEnabledByPlatform();
+void fetchPhoneNumberPossessionPlatformEnabledIfNeeded();
+
 } // namespace WebKit
 
 #endif // ENABLE(PHONE_NUMBER_POSSESSION)

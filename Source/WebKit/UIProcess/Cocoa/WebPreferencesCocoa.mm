@@ -34,6 +34,10 @@
 #include "UserMediaPermissionRequestManagerProxy.h"
 #endif
 
+#if ENABLE(PHONE_NUMBER_POSSESSION)
+#include "PhoneNumberPossessionTypes.h"
+#endif
+
 namespace WebKit {
 
 static inline RetainPtr<NSString> makeKey(const String& identifier, const String& keyPrefix, const String& key)
@@ -154,6 +158,13 @@ void WebPreferences::platformInitializeStore()
 #endif
 
         m_store.setBoolValueForKey(WebPreferencesKey::searchInputResultsAttributeEnabledKey(), defaultSearchInputResultsAttributeEnabled());
+
+#if ENABLE(PHONE_NUMBER_POSSESSION)
+        if (m_store.getBoolValueForKey(WebPreferencesKey::phoneNumberPossessionEnabledKey()) && !isPhoneNumberPossessionEnabledByPlatform() && canPlatformEnablePhoneNumberPossession()) {
+            m_store.setOverrideDefaultsBoolValueForKey(WebPreferencesKey::phoneNumberPossessionEnabledKey(), false);
+            fetchPhoneNumberPossessionPlatformEnabledIfNeeded();
+        }
+#endif
 
 #define INITIALIZE_DEFAULT_OVERRIDABLE_PREFERENCE_FROM_NSUSERDEFAULTS(KeyUpper, KeyLower, TypeName, Type, DefaultValue, HumanReadableName, HumanReadableDescription) \
         setDebug##TypeName##ValueIfInUserDefaults(m_identifier, m_keyPrefix, m_globalDebugKeyPrefix, WebPreferencesKey::KeyLower##Key(), m_store);
