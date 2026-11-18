@@ -47,6 +47,9 @@ void RemoveNodePreservingChildrenCommand::doApply()
     if (!parent || (m_shouldAssumeContentIsAlwaysEditable == DoNotAssumeContentIsAlwaysEditable && !isEditableNode(*parent)))
         return;
 
+    if (m_shouldAssumeContentIsAlwaysEditable == DoNotAssumeContentIsAlwaysEditable && !isEditableNode(m_node) && m_node->renderer())
+        return;
+
     for (RefPtr child = m_node->firstChild(); child; child = child->nextSibling())
         children.append(*child);
 
