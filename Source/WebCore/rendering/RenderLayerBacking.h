@@ -236,6 +236,10 @@ public:
     
     bool needsEventRegionUpdate() const { return m_needsEventRegionUpdate; }
     NODELETE void setNeedsEventRegionUpdate(bool needsUpdate = true);
+    // A repaint of dirtyRect (renderer coordinates): only that part of the event region can have changed.
+    void setNeedsEventRegionUpdateInRect(const LayoutRect& dirtyRect);
+    // The current event region can no longer be patched; the next update rebuilds it completely.
+    NODELETE void setNeedsFullEventRegionUpdate();
 #endif
 
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
@@ -519,6 +523,12 @@ private:
 
     void setNeedsFixedContainerEdgesUpdateIfNeeded();
 
+#if ENABLE(ASYNC_SCROLLING)
+    bool hasOnlyPrimaryEventRegionLayer() const;
+    bool updateEventRegionIncrementally(GraphicsLayer&, bool visibleToHitTesting);
+    void didUpdateEventRegion(bool visibleToHitTesting);
+#endif
+
     RenderLayer& m_owningLayer;
     
     // A list other layers that paint into this backing store, later than m_owningLayer in paint order.
@@ -593,8 +603,18 @@ private:
     bool m_hasSubpixelRounding { false };
 #if ENABLE(ASYNC_SCROLLING)
     bool m_needsEventRegionUpdate { true };
+    bool m_needsFullEventRegionUpdate { true };
+    bool m_eventRegionVisibleToHitTesting { false };
 #endif
     bool m_shouldPaintUsingCompositeCopy { false };
+#if ENABLE(ASYNC_SCROLLING)
+    // Union of the repaint rects (renderer coordinates) since the last event region update; only valid while !m_needsFullEventRegionUpdate.
+    IntRect m_eventRegionDirtyRect;
+    // Geometry of m_graphicsLayer at the last event region update.
+    FloatPoint m_eventRegionLayerOffset;
+    FloatSize m_eventRegionLayerSize;
+    OptionSet<GraphicsLayerPaintingPhase> m_eventRegionPaintingPhase;
+#endif
 };
 
 enum CanvasCompositingStrategy {

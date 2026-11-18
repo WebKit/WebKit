@@ -1,0 +1,138 @@
+
+Initial:
+(GraphicsLayer
+  (anchor 0.00 0.00)
+  (bounds 800.00 600.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 800.00 600.00)
+      (contentsOpaque 1)
+      (event region
+        (rect (0,0) width=800 height=600)
+      )
+      (children 1
+        (GraphicsLayer
+          (position 8.00 8.00)
+          (bounds 600.00 400.00)
+          (contentsOpaque 1)
+          (drawsContent 1)
+          (event region
+            (rect (0,0) width=600 height=400)
+          (wheel event listener region
+            (rect (20,20) width=50 height=50)
+            (rect (380,170) width=150 height=100)
+            (non-passive
+              (rect (20,20) width=50 height=50)
+              (rect (380,170) width=150 height=100)
+            )
+          )
+          )
+        )
+      )
+    )
+  )
+)
+
+After moving the box with the wheel listener:
+(GraphicsLayer
+  (anchor 0.00 0.00)
+  (bounds 800.00 600.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 800.00 600.00)
+      (contentsOpaque 1)
+      (event region
+        (rect (0,0) width=800 height=600)
+      )
+      (children 1
+        (GraphicsLayer
+          (position 8.00 8.00)
+          (bounds 600.00 400.00)
+          (contentsOpaque 1)
+          (drawsContent 1)
+          (event region
+            (rect (0,0) width=600 height=400)
+          (wheel event listener region
+            (rect (200,20) width=50 height=50)
+            (rect (380,170) width=150 height=100)
+            (non-passive
+              (rect (200,20) width=50 height=50)
+              (rect (380,170) width=150 height=100)
+            )
+          )
+          )
+        )
+      )
+    )
+  )
+)
+
+After repainting a box without listeners:
+(GraphicsLayer
+  (anchor 0.00 0.00)
+  (bounds 800.00 600.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 800.00 600.00)
+      (contentsOpaque 1)
+      (event region
+        (rect (0,0) width=800 height=600)
+      )
+      (children 1
+        (GraphicsLayer
+          (position 8.00 8.00)
+          (bounds 600.00 400.00)
+          (contentsOpaque 1)
+          (drawsContent 1)
+          (event region
+            (rect (0,0) width=600 height=400)
+          (wheel event listener region
+            (rect (200,20) width=50 height=50)
+            (rect (380,170) width=150 height=100)
+            (non-passive
+              (rect (200,20) width=50 height=50)
+              (rect (380,170) width=150 height=100)
+            )
+          )
+          )
+        )
+      )
+    )
+  )
+)
+
+After moving a box over the scrolled iframe:
+(GraphicsLayer
+  (anchor 0.00 0.00)
+  (bounds 800.00 600.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 800.00 600.00)
+      (contentsOpaque 1)
+      (event region
+        (rect (0,0) width=800 height=600)
+      )
+      (children 1
+        (GraphicsLayer
+          (position 8.00 8.00)
+          (bounds 600.00 400.00)
+          (contentsOpaque 1)
+          (drawsContent 1)
+          (event region
+            (rect (0,0) width=600 height=400)
+          (wheel event listener region
+            (rect (200,20) width=50 height=50)
+            (rect (380,170) width=150 height=100)
+            (non-passive
+              (rect (200,20) width=50 height=50)
+              (rect (380,170) width=150 height=100)
+            )
+          )
+          )
+        )
+      )
+    )
+  )
+)
+
+

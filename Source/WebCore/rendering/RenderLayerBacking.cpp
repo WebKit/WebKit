@@ -438,6 +438,9 @@ void RenderLayerBacking::setBackingSharingLayers(InlineWeakKeyListHashSet<Render
     if (sharingLayersChanged) {
         if (!sharingLayers.computeIsEmpty())
             setRequiresOwnBackingStore(true);
+#if ENABLE(ASYNC_SCROLLING)
+        setNeedsFullEventRegionUpdate();
+#endif
     }
 
     auto oldSharingLayers = std::exchange(m_backingSharingLayers, WTF::move(sharingLayers));
@@ -2724,14 +2727,158 @@ bool RenderLayerBacking::maintainsEventRegion() const
 void RenderLayerBacking::setNeedsEventRegionUpdate(bool needsUpdate)
 {
     m_needsEventRegionUpdate = needsUpdate;
+    if (needsUpdate)
+        setNeedsFullEventRegionUpdate();
+}
+
+void RenderLayerBacking::setNeedsFullEventRegionUpdate()
+{
+    m_needsFullEventRegionUpdate = true;
+    m_eventRegionDirtyRect = { };
+}
+
+// Incremental event region updates are only implemented for the event region contents built on macOS
+// (hit-test region, touch-action regions and wheel event listener regions).
+#if ENABLE(TOUCH_EVENT_REGIONS) || ENABLE(EDITABLE_REGION) || ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
+static constexpr bool canUpdateEventRegionIncrementally = false;
+#else
+static constexpr bool canUpdateEventRegionIncrementally = true;
+#endif
+
+void RenderLayerBacking::setNeedsEventRegionUpdateInRect(const LayoutRect& dirtyRect)
+{
+    m_needsEventRegionUpdate = true;
+    if (!canUpdateEventRegionIncrementally || m_needsFullEventRegionUpdate)
+        return;
+
+    auto rect = enclosingIntRect(dirtyRect);
+    if (rect.isEmpty())
+        return;
+    // Covers device-pixel snapping of the rounded rects united into the event region.
+    rect.inflate(2);
+    // One rect covering all repaints: the update then walks the layer once, however many repaints there were.
+    m_eventRegionDirtyRect.unite(rect);
+}
+
+// The event region of m_graphicsLayer is the whole event region of the layer's painted content.
+bool RenderLayerBacking::hasOnlyPrimaryEventRegionLayer() const
+{
+    if (m_scrolledContentsLayer || m_foregroundLayer)
+        return false;
+
+    bool hasSVGSegmentLayers = false;
+    forEachSVGSegmentLayer([&](GraphicsLayer&) {
+        hasSVGSegmentLayers = true;
+    });
+    return !hasSVGSegmentLayers;
+}
+
+// Rebuilds the event region only inside the union of the rects repainted since the last update; every other change that can
+// affect the region forces a full update. A partial paint that reaches a non-composited subframe is discarded, because the
+// region clip of the subframe's content depends on the subframe's scroll position.
+bool RenderLayerBacking::updateEventRegionIncrementally(GraphicsLayer& graphicsLayer, bool visibleToHitTesting)
+{
+    if (!canUpdateEventRegionIncrementally || m_needsFullEventRegionUpdate)
+        return false;
+
+    if (&graphicsLayer != m_graphicsLayer.get() || !hasOnlyPrimaryEventRegionLayer())
+        return false;
+
+    if (renderer().view().needsEventRegionUpdateForNonCompositedFrame())
+        return false;
+
+    auto layerOffset = graphicsLayer.scrollOffset() - graphicsLayer.offsetFromRenderer();
+    if (layerOffset != m_eventRegionLayerOffset || graphicsLayer.size() != m_eventRegionLayerSize
+        || graphicsLayer.paintingPhase() != m_eventRegionPaintingPhase || visibleToHitTesting != m_eventRegionVisibleToHitTesting)
+        return false;
+
+    auto layerRect = enclosingIntRect(FloatRect(FloatPoint(graphicsLayer.offsetFromRenderer()), graphicsLayer.size()));
+    auto dirtyRect = intersection(m_eventRegionDirtyRect, layerRect);
+    // The partial update still walks the layer's painted content: below half of the layer it is cheaper than the full
+    // update, from half of the layer on both cost about the same.
+    auto area = [](const IntRect& rect) {
+        return static_cast<uint64_t>(rect.width()) * static_cast<uint64_t>(rect.height());
+    };
+    if (area(dirtyRect) * 2 >= area(layerRect))
+        return false;
+
+    auto offset = toIntSize(roundedIntPoint(layerOffset));
+    auto layerBounds = FloatRoundedRect(FloatRect(-layerOffset, graphicsLayer.size()));
+    EventRegion eventRegion = graphicsLayer.eventRegion();
+    if (!dirtyRect.isEmpty()) {
+        NullGraphicsContext nullContext;
+        EventRegion partialEventRegion;
+        auto eventRegionContext = partialEventRegion.makeContext();
+        if (m_owningLayer.isRenderViewLayer()) {
+            // Same as the full update: event handlers on the root cover the entire layer.
+            eventRegionContext->unite(layerBounds, renderer(), renderer().style());
+        }
+        paintIntoLayer(&graphicsLayer, nullContext, dirtyRect, { }, eventRegionContext.ptr());
+        if (eventRegionContext->paintedSubframeContent())
+            return false;
+        partialEventRegion.translate(offset);
+        dirtyRect.move(offset);
+        eventRegion.replaceInRect(dirtyRect, partialEventRegion);
+    }
+
+#if ASSERT_ENABLED
+    {
+        // Verifier: the patched region must cover exactly the same points as a full update.
+        NullGraphicsContext nullContext;
+        EventRegion fullEventRegion;
+        auto eventRegionContext = fullEventRegion.makeContext();
+        if (m_owningLayer.isRenderViewLayer())
+            eventRegionContext->unite(layerBounds, renderer(), renderer().style());
+        paintIntoLayer(&graphicsLayer, nullContext, layerRect, { }, eventRegionContext.ptr());
+        fullEventRegion.translate(offset);
+        auto sameRegion = [](const Region& a, const Region& b) {
+            auto aMinusB = a;
+            aMinusB.subtract(b);
+            auto bMinusA = b;
+            bMinusA.subtract(a);
+            return aMinusB.isEmpty() && bMinusA.isEmpty();
+        };
+        ASSERT(sameRegion(eventRegion.region(), fullEventRegion.region()));
+#if ENABLE(TOUCH_ACTION_REGIONS)
+        for (auto touchAction : { TouchAction::None, TouchAction::Manipulation, TouchAction::PanX, TouchAction::PanY, TouchAction::PinchZoom }) {
+            auto* patched = eventRegion.regionForTouchAction(touchAction);
+            auto* full = fullEventRegion.regionForTouchAction(touchAction);
+            ASSERT(sameRegion(patched ? *patched : Region { }, full ? *full : Region { }));
+        }
+#endif
+#if ENABLE(WHEEL_EVENT_REGIONS)
+        ASSERT(sameRegion(eventRegion.eventListenerRegionForType(EventListenerRegionType::Wheel), fullEventRegion.eventListenerRegionForType(EventListenerRegionType::Wheel)));
+        ASSERT(sameRegion(eventRegion.eventListenerRegionForType(EventListenerRegionType::NonPassiveWheel), fullEventRegion.eventListenerRegionForType(EventListenerRegionType::NonPassiveWheel)));
+#endif
+    }
+#endif
+
+    graphicsLayer.setEventRegion(WTF::move(eventRegion));
+    return true;
+}
+
+void RenderLayerBacking::didUpdateEventRegion(bool visibleToHitTesting)
+{
+    m_needsEventRegionUpdate = false;
+    // Only a region built while m_graphicsLayer holds all of the layer's event region, and not in the non-composited
+    // frame mode (which paints more of the tree), can be patched later.
+    m_needsFullEventRegionUpdate = !canUpdateEventRegionIncrementally || !hasOnlyPrimaryEventRegionLayer()
+        || renderer().view().needsEventRegionUpdateForNonCompositedFrame();
+    m_eventRegionDirtyRect = { };
+    m_eventRegionLayerOffset = m_graphicsLayer->scrollOffset() - m_graphicsLayer->offsetFromRenderer();
+    m_eventRegionLayerSize = m_graphicsLayer->size();
+    m_eventRegionPaintingPhase = m_graphicsLayer->paintingPhase();
+    m_eventRegionVisibleToHitTesting = visibleToHitTesting;
 }
 
 void RenderLayerBacking::updateEventRegion()
 {
     LOG_WITH_STREAM(EventRegions, stream << m_owningLayer << " " << this << " updateEventRegion (needs update: " << needsEventRegionUpdate() << ", maintainsEventRegion: " << maintainsEventRegion() << ")");
 
-    if (!maintainsEventRegion())
+    if (!maintainsEventRegion()) {
+        setNeedsFullEventRegionUpdate();
         return;
+    }
 
     if (!needsEventRegionUpdate())
         return;
@@ -2792,7 +2939,8 @@ void RenderLayerBacking::updateEventRegion()
         graphicsLayer.setEventRegion(WTF::move(eventRegion));
     };
 
-    updateEventRegionForLayer(*m_graphicsLayer);
+    if (!updateEventRegionIncrementally(*m_graphicsLayer, visibleToHitTesting))
+        updateEventRegionForLayer(*m_graphicsLayer);
 
     setEventRegionToLayerBounds(m_scrollContainerLayer.get());
     setEventRegionToLayerBounds(m_layerForHorizontalScrollbar.get());
@@ -2838,7 +2986,7 @@ void RenderLayerBacking::updateEventRegion()
         controller->promotedChildEventRegionDidChange();
 #endif
 
-    setNeedsEventRegionUpdate(false);
+    didUpdateEventRegion(visibleToHitTesting);
 }
 #endif
 
@@ -4718,7 +4866,7 @@ void RenderLayerBacking::setContentsNeedDisplayInRect(const LayoutRect& r, Graph
     if (!m_owningLayer.isRenderViewLayer())
         m_owningLayer.setNeedsCompositingConfigurationUpdate();
 
-    m_owningLayer.invalidateEventRegion(RenderLayer::EventRegionInvalidationReason::Paint);
+    m_owningLayer.invalidateEventRegion(RenderLayer::EventRegionInvalidationReason::Paint, &r);
 
 #if ENABLE(AX_CUSTOM_COLOR_MODE)
     // Without a controller no pass has run yet, and the first one will cover this repaint anyway.

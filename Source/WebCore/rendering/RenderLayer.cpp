@@ -6988,7 +6988,7 @@ void RenderLayer::setAncestorsHaveDescendantNeedingEventRegionUpdate()
     }
 }
 
-bool RenderLayer::invalidateEventRegion(EventRegionInvalidationReason reason)
+bool RenderLayer::invalidateEventRegion(EventRegionInvalidationReason reason, const LayoutRect* dirtyRect)
 {
 #if ENABLE(ASYNC_SCROLLING)
     auto* compositingLayer = enclosingCompositingLayerForRepaint().layer;
@@ -7003,12 +7003,19 @@ bool RenderLayer::invalidateEventRegion(EventRegionInvalidationReason reason)
         return compositingLayer->backing()->maintainsEventRegion();
     };
 
-    if (!shouldInvalidate())
+    if (!shouldInvalidate()) {
+        // The backing's event region is not maintained right now, so the region misses this change: the next update must not be incremental.
+        if (compositingLayer && compositingLayer->backing())
+            compositingLayer->backing()->setNeedsFullEventRegionUpdate();
         return false;
+    }
 
     LOG_WITH_STREAM(EventRegions, stream << this << " invalidateEventRegion for reason " << reason << " invalidating in compositing layer " << compositingLayer);
 
-    compositingLayer->backing()->setNeedsEventRegionUpdate();
+    if (dirtyRect && reason == EventRegionInvalidationReason::Paint && compositingLayer == this)
+        compositingLayer->backing()->setNeedsEventRegionUpdateInRect(*dirtyRect);
+    else
+        compositingLayer->backing()->setNeedsEventRegionUpdate();
     compositingLayer->setAncestorsHaveDescendantNeedingEventRegionUpdate();
 
     if (reason == EventRegionInvalidationReason::NonCompositedFrame) {
@@ -7023,6 +7030,7 @@ bool RenderLayer::invalidateEventRegion(EventRegionInvalidationReason reason)
     return true;
 #else
     UNUSED_PARAM(reason);
+    UNUSED_PARAM(dirtyRect);
     return false;
 #endif
 }

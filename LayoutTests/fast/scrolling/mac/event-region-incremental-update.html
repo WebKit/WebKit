@@ -1,0 +1,92 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<style>
+#container {
+    position: relative;
+    will-change: transform;
+    width: 600px;
+    height: 400px;
+    background-color: silver;
+}
+#mover {
+    position: absolute;
+    left: 20px;
+    top: 20px;
+    width: 50px;
+    height: 50px;
+    background-color: blue;
+}
+#painted {
+    position: absolute;
+    left: 20px;
+    top: 120px;
+    width: 50px;
+    height: 50px;
+    background-color: green;
+}
+#neighbor {
+    position: absolute;
+    left: 360px;
+    top: 160px;
+    width: 20px;
+    height: 40px;
+    background-color: orange;
+}
+iframe {
+    position: absolute;
+    left: 380px;
+    top: 20px;
+    width: 200px;
+    height: 200px;
+    border: none;
+}
+</style>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+function dump(title)
+{
+    if (!window.internals)
+        return "";
+    return title + "\n" + internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_EVENT_REGION) + "\n";
+}
+
+window.addEventListener("load", () => {
+    const frameDocument = document.querySelector("iframe").contentDocument;
+    frameDocument.getElementById("scroller").addEventListener("wheel", () => { });
+    frameDocument.scrollingElement.scrollTop = 100;
+    document.getElementById("mover").addEventListener("wheel", () => { });
+    document.body.offsetLeft;
+
+    let log = dump("Initial:");
+
+    // Repaint-only change that moves a non-passive wheel region inside the composited container.
+    document.getElementById("mover").style.left = "200px";
+    log += dump("After moving the box with the wheel listener:");
+
+    // Repaint-only change that does not change any region.
+    document.getElementById("painted").style.backgroundColor = "red";
+    log += dump("After repainting a box without listeners:");
+
+    // Repaint that overlaps the scrolled, non-composited iframe where its content has a wheel listener.
+    document.getElementById("neighbor").style.left = "370px";
+    log += dump("After moving a box over the scrolled iframe:");
+
+    document.getElementById("results").textContent = log;
+    if (window.testRunner)
+        testRunner.notifyDone();
+});
+</script>
+<body>
+<div id="container">
+    <div id="mover"></div>
+    <div id="painted"></div>
+    <div id="neighbor"></div>
+    <iframe srcdoc="<style>body { margin: 0; height: 1000px; } #scroller { margin-top: 150px; width: 150px; height: 100px; background-color: purple; }</style><div id='scroller'></div>"></iframe>
+</div>
+<pre id="results"></pre>
+</body>
+</html>

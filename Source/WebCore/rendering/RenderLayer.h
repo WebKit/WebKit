@@ -1006,7 +1006,9 @@ public:
     // Invalidation can fail if there is no enclosing compositing layer (e.g. nested iframe)
     // or the layer does not maintain an event region.
     enum class EventRegionInvalidationReason { Paint, SettingDidChange, Style, NonCompositedFrame };
-    bool invalidateEventRegion(EventRegionInvalidationReason);
+    // dirtyRect (Paint only) is in the coordinates of this layer's renderer; it is only used when this layer
+    // is its own compositing layer, so the backing can rebuild just that part of its event region.
+    bool invalidateEventRegion(EventRegionInvalidationReason, const LayoutRect* dirtyRect = nullptr);
 
     String debugDescription() const;
 
