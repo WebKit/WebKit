@@ -1721,6 +1721,49 @@ private:
                 break;
             }
 
+            case ObjectIsExtensible: {
+                AbstractValue& child = m_state.forNode(node->child1());
+                if (!child.couldBeType(SpecObject)) {
+                    m_interpreter.execute(indexInBlock);
+                    alreadyHandled = true;
+                    m_insertionSet.insertCheck(m_graph, indexInBlock, node);
+                    m_graph.convertToConstant(node, jsBoolean(false));
+                    changed = true;
+                    break;
+                }
+                if (child.isType(SpecObject)
+                    && !child.couldBeType(SpecProxyObject | SpecGlobalProxy)
+                    && child.m_structure.isFinite() && !child.m_structure.isClear()) {
+                    std::optional<TriState> extensible;
+                    child.m_structure.forEach([&](RegisteredStructure structure) {
+                        TriState current = structure->typeInfo().overridesIsExtensible()
+                            ? TriState::Indeterminate
+                            : triState(structure->isStructureExtensible());
+                        if (!extensible)
+                            extensible = current;
+                        else if (*extensible != current)
+                            extensible = TriState::Indeterminate;
+                    });
+                    if (extensible == TriState::False) {
+                        m_interpreter.execute(indexInBlock);
+                        alreadyHandled = true;
+                        m_insertionSet.insertCheck(m_graph, indexInBlock, node);
+                        m_graph.convertToConstant(node, jsBoolean(false));
+                        changed = true;
+                        break;
+                    }
+                    if (extensible == TriState::True) {
+                        m_interpreter.execute(indexInBlock);
+                        alreadyHandled = true;
+                        m_insertionSet.insertCheck(m_graph, indexInBlock, node);
+                        m_graph.convertToConstant(node, jsBoolean(true));
+                        changed = true;
+                        break;
+                    }
+                }
+                break;
+            }
+
             case GetScope: {
                 if (JSValue base = m_state.forNode(node->child1()).m_value) {
                     if (JSFunction* function = dynamicDowncast<JSFunction>(base)) {
