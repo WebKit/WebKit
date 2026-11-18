@@ -139,6 +139,11 @@ public:
     RefPtr<WebCore::ImageBuffer> allocateImageBuffer(const WebCore::FloatSize& logicalSize, WebCore::RenderingMode, WebCore::RenderingPurpose, float resolutionScale, const WebCore::ColorSpace&, WebCore::ImageBufferFormat, WebCore::ImageBufferCreationContext, std::optional<ImageBufferBackendHandle>&& providedBackingStore = std::nullopt);
 
     RemoteRenderingBackendIdentifier identifier() { return m_renderingBackendIdentifier; }
+
+#if HAVE(IOSURFACE)
+    void frontBufferForExternalRead(ImageBufferSetIdentifier, WTF::UUID externalReadToken, Vector<uint64_t>&& alreadyMappedBuffers, CompletionHandler<void(std::optional<MachSendRight>&&, uint64_t bufferIdentifier, bool isBusy)>&&);
+#endif
+
 private:
     friend class RemoteImageBufferSet;
     RemoteRenderingBackend(GPUConnectionToWebProcess&, RemoteRenderingBackendIdentifier, Ref<IPC::StreamServerConnection>&&);

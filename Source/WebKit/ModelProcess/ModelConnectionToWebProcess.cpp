@@ -55,6 +55,50 @@
 namespace WebKit {
 using namespace WebCore;
 
+#if ENABLE(GPU_PROCESS)
+class ModelConnectionToWebProcess::GPUProcessConnectionClient final : public ThreadSafeRefCounted<GPUProcessConnectionClient, WTF::DestructionThread::Main>, public IPC::Connection::Client {
+    WTF_MAKE_NONCOPYABLE(GPUProcessConnectionClient);
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(GPUProcessConnectionClient);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(GPUProcessConnectionClient);
+public:
+    static Ref<GPUProcessConnectionClient> create(ModelConnectionToWebProcess& webProcessConnection, IPC::Connection::Identifier&& connectionIdentifier)
+    {
+        return adoptRef(*new GPUProcessConnectionClient(webProcessConnection, WTF::move(connectionIdentifier)));
+    }
+
+    ~GPUProcessConnectionClient()
+    {
+        m_connection->invalidate();
+    }
+
+    void ref() const final { ThreadSafeRefCounted::ref(); }
+    void deref() const final { ThreadSafeRefCounted::deref(); }
+
+    IPC::Connection& connection() { return m_connection.get(); }
+
+private:
+    GPUProcessConnectionClient(ModelConnectionToWebProcess& webProcessConnection, IPC::Connection::Identifier&& connectionIdentifier)
+        : m_connection(IPC::Connection::createServerConnection(WTF::move(connectionIdentifier)))
+        , m_webProcessConnection(webProcessConnection)
+    {
+        m_connection->open(*this);
+    }
+
+    void didClose(IPC::Connection&) final
+    {
+        Ref protectedThis { *this };
+        if (RefPtr webProcessConnection = m_webProcessConnection)
+            webProcessConnection->gpuProcessConnectionClosed(*this);
+    }
+
+    void didReceiveInvalidMessage(IPC::Connection&, IPC::MessageName, const Vector<uint32_t>&) final { }
+    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final { ASSERT_NOT_REACHED(); }
+
+    const Ref<IPC::Connection> m_connection;
+    WeakPtr<ModelConnectionToWebProcess> m_webProcessConnection;
+};
+#endif
+
 Ref<ModelConnectionToWebProcess> ModelConnectionToWebProcess::create(
     ModelProcess& modelProcess,
     WebCore::ProcessIdentifier webProcessIdentifier,
@@ -121,6 +165,39 @@ void ModelConnectionToWebProcess::didClose(IPC::Connection& connection)
     modelProcess().connectionToWebProcessClosed(connection);
     modelProcess().removeModelConnectionToWebProcess(*this); // May destroy |this|.
 }
+
+#if ENABLE(GPU_PROCESS)
+IPC::Connection* ModelConnectionToWebProcess::ensureGPUProcessConnection()
+{
+    RELEASE_ASSERT(RunLoop::isMain());
+    if (!m_gpuProcessConnection) {
+        auto connectionIdentifiers = IPC::Connection::createConnectionIdentifierPair();
+        if (!connectionIdentifiers)
+            return nullptr;
+
+        RefPtr parentConnection = m_modelProcess->parentProcessConnection();
+        if (!parentConnection)
+            return nullptr;
+
+        parentConnection->send(Messages::ModelProcessProxy::CreateGPUProcessConnectionForWebProcess(m_webProcessIdentifier, WTF::move(connectionIdentifiers->client)), 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
+
+        Ref connection = GPUProcessConnectionClient::create(*this, WTF::move(connectionIdentifiers->server));
+#if ENABLE(IPC_TESTING_API)
+        if (m_connection->ignoreInvalidMessageForTesting())
+            connection->connection().setIgnoreInvalidMessageForTesting();
+#endif
+        m_gpuProcessConnection = WTF::move(connection);
+    }
+    return &m_gpuProcessConnection->connection();
+}
+
+void ModelConnectionToWebProcess::gpuProcessConnectionClosed(GPUProcessConnectionClient& connection)
+{
+    RELEASE_ASSERT(RunLoop::isMain());
+    if (m_gpuProcessConnection.get() == &connection)
+        m_gpuProcessConnection = nullptr;
+}
+#endif
 
 #if HAVE(VISIBILITY_PROPAGATION_VIEW)
 void ModelConnectionToWebProcess::createVisibilityPropagationContextForPage(WebPageProxyIdentifier pageProxyID, WebCore::PageIdentifier pageID, bool canShowWhileLocked)

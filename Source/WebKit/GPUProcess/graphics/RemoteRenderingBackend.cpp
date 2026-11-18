@@ -456,6 +456,38 @@ void RemoteRenderingBackend::releaseImageBufferSet(ImageBufferSetIdentifier iden
     MESSAGE_CHECK(success, "Missing ImageBufferSet");
 }
 
+#if HAVE(IOSURFACE)
+void RemoteRenderingBackend::frontBufferForExternalRead(ImageBufferSetIdentifier identifier, WTF::UUID externalReadToken, Vector<uint64_t>&& alreadyMappedBuffers, CompletionHandler<void(std::optional<MachSendRight>&&, uint64_t, bool)>&& completionHandler)
+{
+    ASSERT(RunLoop::isMain());
+    struct ReplyGuard {
+        explicit ReplyGuard(CompletionHandler<void(std::optional<MachSendRight>&&, uint64_t, bool)>&& handler)
+            : completionHandler(WTF::move(handler))
+        {
+        }
+        ReplyGuard(ReplyGuard&&) = default;
+        ~ReplyGuard()
+        {
+            if (!completionHandler)
+                return;
+            ensureOnMainRunLoop([completionHandler = WTF::move(completionHandler)] mutable {
+                completionHandler(std::nullopt, 0, false);
+            });
+        }
+        CompletionHandler<void(std::optional<MachSendRight>&&, uint64_t, bool)> completionHandler;
+    };
+
+    dispatch([protectedThis = Ref { *this }, identifier, externalReadToken, alreadyMappedBuffers = WTF::move(alreadyMappedBuffers), reply = ReplyGuard { WTF::move(completionHandler) }] mutable {
+        assertIsCurrent(protectedThis->workQueue());
+        RefPtr<RemoteImageBufferSet> bufferSet = protectedThis->m_remoteImageBufferSets.get(identifier);
+        auto result = bufferSet ? bufferSet->frontBufferSendRightForExternalRead(externalReadToken, alreadyMappedBuffers) : RemoteImageBufferSet::ExternalReadSendRight { };
+        callOnMainRunLoop([completionHandler = WTF::move(reply.completionHandler), result = WTF::move(result)] mutable {
+            completionHandler(WTF::move(result.sendRight), result.bufferIdentifier, result.isBusy);
+        });
+    });
+}
+#endif
+
 void RemoteRenderingBackend::destroyGetPixelBufferSharedMemory()
 {
     m_getPixelBufferSharedMemory = nullptr;

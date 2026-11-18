@@ -127,6 +127,9 @@ private:
     void didCreateContextForVisibilityPropagation(WebPageProxyIdentifier, WebCore::PageIdentifier, LayerHostingContextID);
 #endif
 
+#if ENABLE(GPU_PROCESS)
+    void createGPUProcessConnectionForWebProcess(WebCore::ProcessIdentifier, IPC::Connection::Handle&&);
+#endif
 #if PLATFORM(VISION) && ENABLE(GPU_PROCESS)
     void requestSharedSimulationConnection(WebCore::ProcessIdentifier, CompletionHandler<void(std::optional<IPC::SharedFileHandle>)>&&);
 #endif
@@ -140,6 +143,7 @@ private:
     RefPtr<ProcessThrottler::Activity> m_activityFromWebProcesses;
 
     HashSet<PAL::SessionID> m_sessionIDs;
+    HashSet<WebCore::ProcessIdentifier> m_webProcessIdentifiers;
 
 #if PLATFORM(VISION) && ENABLE(GPU_PROCESS)
     bool m_didInitializeSharedSimulationConnection { false };

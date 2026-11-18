@@ -554,6 +554,18 @@ void GPUProcessProxy::createGPUProcessConnection(WebProcessProxy& webProcessProx
     }, 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
 }
 
+#if ENABLE(MODEL_PROCESS)
+void GPUProcessProxy::createGPUConnectionToModelProcess(WebCore::ProcessIdentifier webProcessIdentifier, IPC::Connection::Handle&& connectionIdentifier)
+{
+    RELEASE_LOG(ProcessSuspension, "%p - GPUProcessProxy is taking a background assertion because the model process is requesting a connection", this);
+    startResponsivenessTimer(UseLazyStop::No);
+    sendWithAsyncReply(Messages::GPUProcess::CreateGPUConnectionToModelProcess { webProcessIdentifier, WTF::move(connectionIdentifier) }, [weakThis = WeakPtr { *this }] mutable {
+        if (RefPtr protectedThis = weakThis)
+            protectedThis->stopResponsivenessTimer();
+    }, 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
+}
+#endif
+
 void GPUProcessProxy::sharedPreferencesForWebProcessDidChange(WebProcessProxy& webProcessProxy, SharedPreferencesForWebProcess&& sharedPreferencesForWebProcess, CompletionHandler<void()>&& completionHandler)
 {
     sendWithAsyncReply(Messages::GPUProcess::SharedPreferencesForWebProcessDidChange { webProcessProxy.coreProcessIdentifier(), WTF::move(sharedPreferencesForWebProcess) }, WTF::move(completionHandler));

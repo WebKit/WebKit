@@ -606,12 +606,17 @@ void ModelProcessModelPlayer::setAnchor(WebCore::NodeIdentifier nodeID, std::opt
 }
 
 struct PortalLayerBacking {
+#if ENABLE(GPU_PROCESS)
     RefPtr<RemoteImageBufferSetProxy> bufferSet;
+#endif
+    RemoteRenderingBackendIdentifier renderingBackendID;
+    ImageBufferSetIdentifier bufferSetID;
     bool isOpaque { false };
 };
 
 static std::optional<PortalLayerBacking> portalLayerBacking(WebCore::GraphicsLayer* layer)
 {
+#if ENABLE(GPU_PROCESS)
     RefPtr graphicsLayer = dynamicDowncast<GraphicsLayerCARemote>(layer);
     if (!graphicsLayer)
         return std::nullopt;
@@ -628,8 +633,53 @@ static std::optional<PortalLayerBacking> portalLayerBacking(WebCore::GraphicsLay
     if (!bufferSet)
         return std::nullopt;
 
-    return PortalLayerBacking { WTF::move(bufferSet), backingStore->isOpaque() };
+    auto renderingBackendID = bufferSet->renderingBackendIdentifier();
+    if (!renderingBackendID)
+        return std::nullopt;
+
+    auto bufferSetID = bufferSet->identifier();
+    return PortalLayerBacking { WTF::move(bufferSet), *renderingBackendID, bufferSetID, backingStore->isOpaque() };
+#else
+    UNUSED_PARAM(layer);
+    return std::nullopt;
+#endif
 }
+
+ModelProcessModelPlayer::PortalHostedLayerContentsState::PortalHostedLayerContentsState() = default;
+ModelProcessModelPlayer::PortalHostedLayerContentsState::PortalHostedLayerContentsState(PortalHostedLayerContentsState&&) = default;
+
+ModelProcessModelPlayer::PortalHostedLayerContentsState& ModelProcessModelPlayer::PortalHostedLayerContentsState::operator=(PortalHostedLayerContentsState&& other)
+{
+    if (this == &other)
+        return *this;
+#if ENABLE(GPU_PROCESS)
+    setSharedBufferSet(nullptr);
+    sharedBufferSet = WTF::move(other.sharedBufferSet);
+#endif
+    needsUpdate = other.needsUpdate;
+    isRequestPending = other.isRequestPending;
+    return *this;
+}
+
+ModelProcessModelPlayer::PortalHostedLayerContentsState::~PortalHostedLayerContentsState()
+{
+#if ENABLE(GPU_PROCESS)
+    setSharedBufferSet(nullptr);
+#endif
+}
+
+#if ENABLE(GPU_PROCESS)
+void ModelProcessModelPlayer::PortalHostedLayerContentsState::setSharedBufferSet(RefPtr<RemoteImageBufferSetProxy>&& bufferSet)
+{
+    if (sharedBufferSet == bufferSet)
+        return;
+    if (sharedBufferSet)
+        sharedBufferSet->releaseExternalReadToken();
+    sharedBufferSet = WTF::move(bufferSet);
+    if (sharedBufferSet)
+        sharedBufferSet->retainExternalReadToken();
+}
+#endif
 
 void ModelProcessModelPlayer::setPortalPromotedChildren(const Vector<WebCore::PortalPromotedChild>& children)
 {
@@ -734,6 +784,7 @@ void ModelProcessModelPlayer::resolvePortalHostedLayers()
 
 void ModelProcessModelPlayer::updatePortalHostedLayerContents()
 {
+#if ENABLE(GPU_PROCESS)
     for (auto& child : m_portalPromotedChildren) {
         auto it = m_portalHostedLayerContents.find(child.nodeID);
         if (it == m_portalHostedLayerContents.end() || !it->value.needsUpdate || it->value.isRequestPending)
@@ -743,16 +794,22 @@ void ModelProcessModelPlayer::updatePortalHostedLayerContents()
         if (!backing)
             continue;
 
+        it->value.setSharedBufferSet(WTF::move(backing->bufferSet));
+        auto externalReadToken = it->value.sharedBufferSet ? it->value.sharedBufferSet->externalReadToken() : std::nullopt;
+        if (!externalReadToken)
+            continue;
+
         it->value.needsUpdate = false;
         it->value.isRequestPending = true;
-        backing->bufferSet->frontBufferForExternalRead([weakThis = WeakPtr { *this }, nodeID = child.nodeID](std::optional<MachSendRight>&& surface) mutable {
+        sendWithAsyncReply(Messages::ModelProcessModelPlayerProxy::UpdatePortalHostedLayerContents(child.nodeID, backing->renderingBackendID, backing->bufferSetID, *externalReadToken), [weakThis = WeakPtr { *this }, nodeID = child.nodeID](bool didUpdate) {
             if (RefPtr protectedThis = weakThis)
-                protectedThis->didFetchPortalHostedLayerContents(nodeID, WTF::move(surface));
+                protectedThis->didUpdatePortalHostedLayerContents(nodeID, didUpdate);
         });
     }
+#endif
 }
 
-void ModelProcessModelPlayer::didFetchPortalHostedLayerContents(WebCore::NodeIdentifier nodeID, std::optional<MachSendRight>&& surface)
+void ModelProcessModelPlayer::didUpdatePortalHostedLayerContents(WebCore::NodeIdentifier nodeID, bool didUpdate)
 {
     auto it = m_portalHostedLayerContents.find(nodeID);
     if (it == m_portalHostedLayerContents.end())
@@ -761,15 +818,13 @@ void ModelProcessModelPlayer::didFetchPortalHostedLayerContents(WebCore::NodeIde
     it->value.isRequestPending = false;
 
     // Nothing is shared while the buffers are being prepared for display, or before the first paint, so try again later.
-    if (!surface) {
+    if (!didUpdate) {
         it->value.needsUpdate = true;
         startPortalFrameTimerIfNeeded();
         return;
     }
 
-    send(Messages::ModelProcessModelPlayerProxy::SetPortalHostedLayerContents(nodeID, WTF::move(*surface)));
-
-    // A paint during the fetch may not be in the buffer that was sent.
+    // A paint during the fetch may not be in the buffer that was read.
     if (it->value.needsUpdate)
         startPortalFrameTimerIfNeeded();
 }

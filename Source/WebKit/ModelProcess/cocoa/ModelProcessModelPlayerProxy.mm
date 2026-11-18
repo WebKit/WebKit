@@ -36,6 +36,9 @@
 #import "ModelProcessModelPlayerMessages.h"
 #import "WKModelProcessModelLayer.h"
 #import "WKRKEntity.h"
+#if ENABLE(GPU_PROCESS) && ENABLE(SPATIAL_PORTAL)
+#import "GPUConnectionToModelProcessMessages.h"
+#endif
 #if ENABLE(SPATIAL_PORTAL) && ENABLE(GAZE_GLOW_FOR_INTERACTION_REGIONS)
 #import "RemoteLayerTreeInteractionRegionLayers.h"
 #endif
@@ -1923,40 +1926,84 @@ void ModelProcessModelPlayerProxy::setPortalHostedLayers(Vector<WebCore::PortalH
     updateDisplayedPortalChildren();
 }
 
-void ModelProcessModelPlayerProxy::setPortalHostedLayerContents(WebCore::NodeIdentifier nodeID, MachSendRight&& sendRight)
+void ModelProcessModelPlayerProxy::updatePortalHostedLayerContents(WebCore::NodeIdentifier nodeID, RemoteRenderingBackendIdentifier renderingBackendID, ImageBufferSetIdentifier bufferSetID, WTF::UUID externalReadToken, CompletionHandler<void(bool)>&& completionHandler)
 {
+#if ENABLE(GPU_PROCESS) && HAVE(IOSURFACE)
     auto index = m_portalSceneLayers.findIf([&](auto& sceneLayer) {
         return sceneLayer.layer && sceneLayer.hostedLayer.nodeID == nodeID;
     });
     if (index == notFound)
-        return;
+        return completionHandler(false);
 
-    auto surface = WebCore::IOSurface::createFromSendRight(WTF::move(sendRight));
-    if (!surface)
-        return;
+    RefPtr manager = m_manager;
+    RefPtr webProcessConnection = manager ? manager->modelConnectionToWebProcess() : nullptr;
+    if (!webProcessConnection)
+        return completionHandler(false);
 
-    auto& sceneLayer = m_portalSceneLayers[index];
+    RefPtr gpuConnection = webProcessConnection->ensureGPUProcessConnection();
+    if (!gpuConnection)
+        return completionHandler(false);
 
-    // The GPU process doesn't paint a buffer while it is in use, so the one the layer shows is still current.
-    if (sceneLayer.contents && sceneLayer.contents->surfaceID() == surface->surfaceID())
-        return;
+    Vector<uint64_t> alreadyMappedBuffers;
+    auto& currentSceneLayer = m_portalSceneLayers[index];
+    if (currentSceneLayer.contents && currentSceneLayer.bufferSetID == bufferSetID && currentSceneLayer.bufferIdentifier)
+        alreadyMappedBuffers.append(currentSceneLayer.bufferIdentifier);
 
-    // Put the new front buffer in use before the previous one leaves it, so that the GPU process always paints its next
-    // frames into a buffer the scene doesn't show.
-    IOSurfaceIncrementUseCount(surface->surface());
+    gpuConnection->sendWithAsyncReply(Messages::GPUConnectionToModelProcess::FrontBufferForExternalRead(renderingBackendID, bufferSetID, externalReadToken, WTF::move(alreadyMappedBuffers)), [weakThis = WeakPtr { *this }, nodeID, bufferSetID, completionHandler = WTF::move(completionHandler)](std::optional<MachSendRight>&& sendRight, uint64_t bufferIdentifier, bool isBusy) mutable {
+        RefPtr protectedThis = weakThis;
+        if (!protectedThis || isBusy || !bufferIdentifier)
+            return completionHandler(false);
 
-    RetainPtr layer = sceneLayer.layer;
-    [layer setContents:surface->asCAIOSurfaceLayerContents().get()];
+        auto index = protectedThis->m_portalSceneLayers.findIf([&](auto& sceneLayer) {
+            return sceneLayer.layer && sceneLayer.hostedLayer.nodeID == nodeID;
+        });
+        if (index == notFound)
+            return completionHandler(false);
 
-    // The layer may have shown this surface before it was painted again, so all of it is new. The rect is in the
-    // surface's pixels, not in the layer's points.
-    if ([CALayer instancesRespondToSelector:@selector(setContentsDirtyRect:)]) {
-        auto size = surface->size();
-        [layer setContentsDirtyRect:CGRectMake(0, 0, size.width(), size.height())];
-    }
+        auto& sceneLayer = protectedThis->m_portalSceneLayers[index];
+        if (!sendRight) {
+            // The GPU process omits the send right when the front buffer is the one already mapped here.
+            return completionHandler(sceneLayer.contents && sceneLayer.bufferSetID == bufferSetID && sceneLayer.bufferIdentifier == bufferIdentifier);
+        }
 
-    sceneLayer.contents = std::unique_ptr<WebCore::IOSurface, PortalSceneLayerContentsDeleter> { surface.release() };
-    updateDisplayedPortalChildren();
+        auto surface = WebCore::IOSurface::createFromSendRight(WTF::move(*sendRight));
+        if (!surface || surface->size().isEmpty())
+            return completionHandler(false);
+
+        // The GPU process doesn't paint a buffer while it is in use, so the one the layer shows is still current.
+        if (sceneLayer.contents && sceneLayer.contents->surfaceID() == surface->surfaceID()) {
+            sceneLayer.bufferSetID = bufferSetID;
+            sceneLayer.bufferIdentifier = bufferIdentifier;
+            return completionHandler(true);
+        }
+
+        // Put the new front buffer in use before the previous one leaves it, so that the GPU process always paints its next
+        // frames into a buffer the scene doesn't show.
+        IOSurfaceIncrementUseCount(surface->surface());
+
+        RetainPtr layer = sceneLayer.layer;
+        [layer setContents:surface->asCAIOSurfaceLayerContents().get()];
+
+        // The layer may have shown this surface before it was painted again, so all of it is new. The rect is in the
+        // surface's pixels, not in the layer's points.
+        if ([CALayer instancesRespondToSelector:@selector(setContentsDirtyRect:)]) {
+            auto size = surface->size();
+            [layer setContentsDirtyRect:CGRectMake(0, 0, size.width(), size.height())];
+        }
+
+        sceneLayer.contents = std::unique_ptr<WebCore::IOSurface, PortalSceneLayerContentsDeleter> { surface.release() };
+        sceneLayer.bufferSetID = bufferSetID;
+        sceneLayer.bufferIdentifier = bufferIdentifier;
+        protectedThis->updateDisplayedPortalChildren();
+        completionHandler(true);
+    }, 0);
+#else
+    UNUSED_PARAM(nodeID);
+    UNUSED_PARAM(renderingBackendID);
+    UNUSED_PARAM(bufferSetID);
+    UNUSED_PARAM(externalReadToken);
+    completionHandler(false);
+#endif
 }
 
 void ModelProcessModelPlayerProxy::updatePortalSceneLayerGeometry()

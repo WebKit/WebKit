@@ -42,11 +42,14 @@
 
 #if ENABLE(SPATIAL_PORTAL)
 #import <WebCore/PortalTransform.h>
-#import <wtf/MachSendRight.h>
 #import <wtf/RunLoop.h>
 #endif
 
 namespace WebKit {
+
+#if ENABLE(GPU_PROCESS) && ENABLE(SPATIAL_PORTAL)
+class RemoteImageBufferSetProxy;
+#endif
 
 class ModelProcessModelPlayer
     : public WebCore::ModelPlayer
@@ -161,13 +164,22 @@ private:
 
     // The model process draws each hosted layer of a promoted child from that layer's front buffer.
     struct PortalHostedLayerContentsState {
+        PortalHostedLayerContentsState();
+        PortalHostedLayerContentsState(PortalHostedLayerContentsState&&);
+        PortalHostedLayerContentsState& operator=(PortalHostedLayerContentsState&&);
+        ~PortalHostedLayerContentsState();
+
+#if ENABLE(GPU_PROCESS)
+        void setSharedBufferSet(RefPtr<RemoteImageBufferSetProxy>&&);
+        RefPtr<RemoteImageBufferSetProxy> sharedBufferSet;
+#endif
         bool needsUpdate { true };
         bool isRequestPending { false };
     };
 
     void resolvePortalHostedLayers();
     void updatePortalHostedLayerContents();
-    void didFetchPortalHostedLayerContents(WebCore::NodeIdentifier, std::optional<MachSendRight>&&);
+    void didUpdatePortalHostedLayerContents(WebCore::NodeIdentifier, bool didUpdate);
     void setDisplayedPortalChildren(Vector<WebCore::NodeIdentifier>&&);
     bool hasPendingPortalWork() const;
     void startPortalFrameTimerIfNeeded();

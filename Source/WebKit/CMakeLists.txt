@@ -204,6 +204,7 @@ set(WebKit_CPP_BINDINGS_IN_FILES
 )
 
 set(WebKit_MESSAGES_IN_FILES
+    GPUProcess/GPUConnectionToModelProcess
     GPUProcess/GPUConnectionToWebProcess
     GPUProcess/GPUProcess
     GPUProcess/RemoteSharedResourceCache

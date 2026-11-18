@@ -129,9 +129,12 @@ void RemoteImageBufferSet::endPrepareForDisplay(RenderingUpdateID renderingUpdat
 }
 
 #if HAVE(IOSURFACE)
-auto RemoteImageBufferSet::frontBufferSendRightForExternalRead(const Vector<uint64_t>& alreadyMappedBuffers) -> ExternalReadSendRight
+auto RemoteImageBufferSet::frontBufferSendRightForExternalRead(WTF::UUID externalReadToken, const Vector<uint64_t>& alreadyMappedBuffers) -> ExternalReadSendRight
 {
     assertIsCurrent(workQueue());
+
+    if (!m_externalReadToken || *m_externalReadToken != externalReadToken)
+        return { };
 
     if (isPreparingForDisplay())
         return { .isBusy = true };
@@ -167,9 +170,14 @@ auto RemoteImageBufferSet::frontBufferSendRightForExternalRead(const Vector<uint
 #endif
 
 #if ENABLE(MODEL_PROCESS) && ENABLE(SPATIAL_PORTAL)
-void RemoteImageBufferSet::frontBufferForExternalRead(CompletionHandler<void(std::optional<MachSendRight>&&)>&& completionHandler)
+void RemoteImageBufferSet::setExternalReadToken(std::optional<WTF::UUID> externalReadToken)
 {
-    completionHandler(frontBufferSendRightForExternalRead({ }).sendRight);
+    assertIsCurrent(workQueue());
+#if HAVE(IOSURFACE)
+    m_externalReadToken = externalReadToken;
+#else
+    UNUSED_PARAM(externalReadToken);
+#endif
 }
 #endif
 

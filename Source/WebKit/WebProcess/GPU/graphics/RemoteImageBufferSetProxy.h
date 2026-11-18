@@ -31,6 +31,7 @@
 #include "PrepareBackingStoreBuffersData.h"
 #include "RemoteGraphicsContextProxy.h"
 #include "RemoteImageBufferSetConfiguration.h"
+#include "RemoteRenderingBackendIdentifier.h"
 #include "RenderingUpdateID.h"
 #include "WorkQueueMessageReceiver.h"
 #include <wtf/AbstractCanMakeCheckedPtr.h>
@@ -38,10 +39,8 @@
 #include <wtf/Identified.h>
 #include <wtf/Lock.h>
 #include <wtf/TZoneMallocInlines.h>
-
 #if ENABLE(MODEL_PROCESS) && ENABLE(SPATIAL_PORTAL)
-#include <wtf/CompletionHandler.h>
-#include <wtf/MachSendRight.h>
+#include <wtf/UUID.h>
 #endif
 
 #if ENABLE(GPU_PROCESS)
@@ -125,10 +124,12 @@ public:
     std::optional<WebCore::DynamicContentScalingDisplayList> dynamicContentScalingDisplayList();
 #endif
 
+    std::optional<RemoteRenderingBackendIdentifier> renderingBackendIdentifier() const;
+
 #if ENABLE(MODEL_PROCESS) && ENABLE(SPATIAL_PORTAL)
-    // Shares the current front buffer so another process can display it, replying on the main run loop. There is no
-    // buffer to share while one is being prepared for display, or before the first one is painted.
-    void frontBufferForExternalRead(CompletionHandler<void(std::optional<MachSendRight>&&)>&&);
+    void retainExternalReadToken();
+    void releaseExternalReadToken();
+    std::optional<WTF::UUID> externalReadToken();
 #endif
 
     unsigned generation() const { return m_generation; }
@@ -155,6 +156,11 @@ private:
 
     unsigned m_generation { 0 };
     bool m_remoteNeedsConfigurationUpdate { false };
+#if ENABLE(MODEL_PROCESS) && ENABLE(SPATIAL_PORTAL)
+    std::optional<WTF::UUID> m_externalReadToken;
+    unsigned m_externalReadUseCount { 0 };
+    bool m_remoteNeedsExternalReadTokenUpdate { false };
+#endif
 
     Lock m_lock;
     bool m_prepareForDisplayIsPending WTF_GUARDED_BY_LOCK(m_lock) { false };

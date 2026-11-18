@@ -29,6 +29,9 @@
 #if ENABLE(MODEL_PROCESS)
 
 #include "DrawingAreaProxy.h"
+#if ENABLE(GPU_PROCESS)
+#include "GPUProcessProxy.h"
+#endif
 #include "Logging.h"
 #include "ModelProcessConnectionParameters.h"
 #include "ModelProcessCreationParameters.h"
@@ -127,6 +130,7 @@ void ModelProcessProxy::processWillShutDown(IPC::Connection& connection)
 {
     ASSERT_UNUSED(connection, &this->connection() == &connection);
 
+    m_webProcessIdentifiers.clear();
 #if PLATFORM(VISION) && ENABLE(GPU_PROCESS)
     m_didInitializeSharedSimulationConnection = false;
 #endif
@@ -134,6 +138,8 @@ void ModelProcessProxy::processWillShutDown(IPC::Connection& connection)
 
 void ModelProcessProxy::createModelProcessConnection(WebProcessProxy& webProcessProxy, IPC::Connection::Handle&& connectionIdentifier, ModelProcessConnectionParameters&& parameters)
 {
+    m_webProcessIdentifiers.add(webProcessProxy.coreProcessIdentifier());
+
     auto createConnectionBlock = [this, &webProcessProxy](
         IPC::Connection::Handle&& connectionIdentifier,
         ModelProcessConnectionParameters&& parameters,
@@ -366,6 +372,28 @@ void ModelProcessProxy::didCreateContextForVisibilityPropagation(WebPageProxyIde
         return;
     }
     RELEASE_LOG(Process, "ModelProcessProxy::didCreateContextForVisibilityPropagation() There was a WebPageProxy for this identifier, but it had the wrong WebPage identifier.");
+}
+#endif
+
+#if ENABLE(GPU_PROCESS)
+void ModelProcessProxy::createGPUProcessConnectionForWebProcess(WebCore::ProcessIdentifier webProcessIdentifier, IPC::Connection::Handle&& connectionIdentifier)
+{
+#if ENABLE(SPATIAL_PORTAL)
+    MESSAGE_CHECK(m_webProcessIdentifiers.contains(webProcessIdentifier));
+    RefPtr webProcessProxy = WebProcessProxy::processForIdentifier(webProcessIdentifier);
+    if (!webProcessProxy) {
+        m_webProcessIdentifiers.remove(webProcessIdentifier);
+        return;
+    }
+
+    const auto& preferences = webProcessProxy->sharedPreferencesForWebProcessValue();
+    MESSAGE_CHECK(preferences.modelElementEnabled && preferences.modelProcessEnabled && preferences.spatialPortalEnabled);
+
+    GPUProcessProxy::getOrCreate()->createGPUConnectionToModelProcess(webProcessIdentifier, WTF::move(connectionIdentifier));
+#else
+    UNUSED_PARAM(webProcessIdentifier);
+    UNUSED_PARAM(connectionIdentifier);
+#endif
 }
 #endif
 

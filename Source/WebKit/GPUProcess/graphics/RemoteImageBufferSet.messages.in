@@ -37,7 +37,7 @@ messages -> RemoteImageBufferSet Stream {
 #endif
 
 #if ENABLE(MODEL_PROCESS) && ENABLE(SPATIAL_PORTAL)
-    FrontBufferForExternalRead() -> (std::optional<MachSendRight> surface)
+    SetExternalReadToken(std::optional<WTF::UUID> externalReadToken)
 #endif
 }
 

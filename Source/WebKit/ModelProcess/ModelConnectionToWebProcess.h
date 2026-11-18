@@ -87,6 +87,9 @@ public:
     IPC::MessageReceiverMap& messageReceiverMap() LIFETIME_BOUND { return m_messageReceiverMap; }
     ModelProcess& modelProcess() { return m_modelProcess.get(); }
     WebCore::ProcessIdentifier webProcessIdentifier() const { return m_webProcessIdentifier; }
+#if ENABLE(GPU_PROCESS)
+    IPC::Connection* ensureGPUProcessConnection();
+#endif
 
     PAL::SessionID sessionID() const { return m_sessionID; }
 
@@ -155,6 +158,11 @@ private:
     std::optional<String> m_attributionTaskID;
 
     SharedPreferencesForWebProcess m_sharedPreferencesForWebProcess;
+#if ENABLE(GPU_PROCESS)
+    class GPUProcessConnectionClient;
+    void gpuProcessConnectionClosed(GPUProcessConnectionClient&);
+    RefPtr<GPUProcessConnectionClient> m_gpuProcessConnection;
+#endif
 };
 
 } // namespace WebKit
