@@ -1,0 +1,25 @@
+Checks that an OffscreenCanvas's fillStyle gives the right color when color strings are assigned again, on the main thread and in a worker.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+Main thread:
+PASS first string
+PASS first string object after another one
+PASS different string object with the same text
+PASS string object reused after its cache entry was replaced
+PASS currentcolor
+PASS same currentcolor string object again
+
+Worker:
+PASS first string
+PASS first string object after another one
+PASS different string object with the same text
+PASS string object reused after its cache entry was replaced
+PASS currentcolor
+PASS same currentcolor string object again
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

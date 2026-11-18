@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test.js"></script>
+<script>
+description("Checks that an OffscreenCanvas's fillStyle gives the right color when color strings are assigned again, on the main thread and in a worker.");
+
+const offscreenSequence = `
+    function pixelOf(ctx) {
+        ctx.clearRect(0, 0, 1, 1);
+        ctx.fillRect(0, 0, 1, 1);
+        return Array.from(ctx.getImageData(0, 0, 1, 1).data).join(",");
+    }
+    function runSequence() {
+        const ctx = new OffscreenCanvas(1, 1).getContext("2d", { willReadFrequently: true });
+        const red = "#ff0000", blue = "blue", currentColor = "currentcolor";
+        const results = [];
+        function record(label, expectedStyle, expectedPixel) {
+            results.push([label, ctx.fillStyle, pixelOf(ctx), expectedStyle, expectedPixel]);
+        }
+        ctx.fillStyle = red;
+        record("first string", "#ff0000", "255,0,0,255");
+        ctx.fillStyle = blue;
+        ctx.fillStyle = red;
+        record("first string object after another one", "#ff0000", "255,0,0,255");
+        ctx.fillStyle = red.split("").join("");
+        record("different string object with the same text", "#ff0000", "255,0,0,255");
+        for (let i = 0; i < 9; ++i)
+            ctx.fillStyle = "rgb(" + i + ", 1, 2)";
+        ctx.fillStyle = red;
+        record("string object reused after its cache entry was replaced", "#ff0000", "255,0,0,255");
+        ctx.fillStyle = currentColor;
+        record("currentcolor", "#000000", "0,0,0,255");
+        ctx.fillStyle = red;
+        ctx.fillStyle = currentColor;
+        record("same currentcolor string object again", "#000000", "0,0,0,255");
+        return results;
+    }
+`;
+
+function reportOffscreen(results) {
+    for (const [label, style, pixel, expectedStyle, expectedPixel] of results) {
+        if (style == expectedStyle && pixel == expectedPixel)
+            testPassed(label);
+        else
+            testFailed(label + ": got " + style + " (pixel " + pixel + "), expected " + expectedStyle + " (pixel " + expectedPixel + ")");
+    }
+}
+
+debug("");
+debug("Main thread:");
+eval(offscreenSequence);
+reportOffscreen(runSequence());
+
+jsTestIsAsync = true;
+const worker = new Worker(URL.createObjectURL(new Blob([offscreenSequence + "postMessage(runSequence());"], { type: "text/javascript" })));
+worker.onmessage = event => {
+    debug("");
+    debug("Worker:");
+    reportOffscreen(event.data);
+    finishJSTest();
+};
+worker.onerror = event => {
+    testFailed("worker error: " + event.message);
+    finishJSTest();
+};
+</script>
+</body>
+</html>
