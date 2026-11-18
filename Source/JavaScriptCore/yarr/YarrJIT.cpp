@@ -85,10 +85,6 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(BoyerMooreFastCandidates);
 WTF_MAKE_TZONE_ALLOCATED_IMPL(YarrBoyerMooreData);
 WTF_MAKE_TZONE_ALLOCATED_IMPL(YarrCodeBlock);
 
-#if CPU(ARM64E)
-JSC_ANNOTATE_JIT_OPERATION_RETURN(vmEntryToYarrJITAfter);
-#endif
-
 // We should pick the less frequently appearing character as a BM search's anchor to make BM search more and more efficient.
 // This class takes some samples from the passed subject string to put weight on characters so that we can pick an optimal one adaptively.
 class SubjectSampler {
@@ -7037,19 +7033,17 @@ class YarrGenerator final : public YarrJITInfo {
         noStartAdjustment.link(&m_jit);
     }
 
+    bool needsFrame() const
+    {
+        return mayCall() || m_callFrameSizeInBytes || m_containsNestedSubpatterns || m_calleeSaves.registerCount();
+    }
+
     void generateEnter()
     {
-#if CPU(X86_64) || CPU(RISCV64)
-        m_jit.emitFunctionPrologue();
-#elif CPU(ARM64)
-        // JITCage code is doing prologue and epilogue in thunk.
-        if (!Options::useJITCage()) {
-            if (mayCall() || m_callFrameSizeInBytes || m_containsNestedSubpatterns)
-                m_jit.emitFunctionPrologue();
-            else
-                m_jit.tagReturnAddress();
-        }
-#endif
+        if (needsFrame())
+            m_jit.emitFunctionPrologue();
+        else
+            m_jit.tagReturnAddress();
 
         if (m_calleeSaves.registerCount()) {
             size_t stackSizeForCalleeSaves = WTF::roundUpToMultipleOf<stackAlignmentBytes()>(m_calleeSaves.registerCount() * sizeof(UCPURegister));
@@ -7071,24 +7065,9 @@ class YarrGenerator final : public YarrJITInfo {
         }
 
         m_jit.emitRestoreCalleeSavesFor(&m_calleeSaves);
-#if CPU(X86_64) || CPU(RISCV64)
-        m_jit.emitFunctionEpilogue();
-#elif CPU(ARM64)
-        // JITCage code is doing prologue and epilogue in thunk.
-        if (!Options::useJITCage()) {
-            if (mayCall() || m_callFrameSizeInBytes || m_containsNestedSubpatterns)
-                m_jit.emitFunctionEpilogue();
-        }
-#endif
-
-#if CPU(ARM64E)
-        if (Options::useJITCage())
-            m_jit.farJump(MacroAssembler::TrustedImmPtr(retagCodePtr<void*, CFunctionPtrTag, OperationPtrTag>(&vmEntryToYarrJITAfter)), OperationPtrTag);
-        else
-            m_jit.ret();
-#else
+        if (needsFrame())
+            m_jit.emitFunctionEpilogue();
         m_jit.ret();
-#endif
     }
 
     void loadSubPattern(unsigned subpatternId, MacroAssembler::RegisterID startIndexGPR, MacroAssembler::RegisterID endIndexOrLenGPR)
