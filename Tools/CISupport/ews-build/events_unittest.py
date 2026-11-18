@@ -250,3 +250,62 @@ class TestSendDataToEWS(unittest.TestCase):
             ('ews-step', 'started', False),
             ('ews-step', 'finished', False),
         ])
+
+
+class TestRedactChange(unittest.TestCase):
+    FILES = ['+++ Source/WebCore/rendering/RenderLayer.cpp', '+++ LayoutTests/fast/test.html']
+
+    def payload(self, repo, number=1230):
+        return dict(
+            number=number,
+            action='opened',
+            sender=dict(login='contributor'),
+            repository=dict(full_name=repo, html_url=f'https://github.com/{repo}'),
+            pull_request=dict(
+                state='open',
+                labels=[],
+                commits=1,
+                title='Fix a bug in RenderLayer',
+                body='https://bugs.webkit.org/show_bug.cgi?id=1234',
+                created_at='2026-01-01T00:00:00Z',
+                head=dict(sha=f'{repo}-{number}', ref='eng/fix-bug', repo=dict(full_name=repo)),
+                base=dict(ref='main', repo=dict(full_name=repo)),
+                _links=dict(html=dict(href=f'https://github.com/{repo}/pull/{number}')),
+            ),
+        )
+
+    def handle(self, payload):
+        handler = GitHubEventHandlerNoEdits(None, False)
+        classified_files = []
+
+        def classifiy(message, files):
+            classified_files.append(files)
+            return defer.succeed('Unclassified')
+
+        results = []
+        with patch.object(handler, '_get_commit_msg', return_value=defer.succeed('')), \
+                patch.object(handler, '_get_pr_files', return_value=defer.succeed(list(self.FILES))), \
+                patch.object(handler, '_get_commit_messages', return_value=defer.succeed(['Fix a bug in RenderLayer'])), \
+                patch.object(handler, 'classifiy', side_effect=classifiy):
+            handler.handle_pull_request(payload, 'pull_request').addBoth(results.append)
+        self.assertEqual(len(results), 1)
+        changes, _ = results[0]
+        self.assertEqual(len(changes), 1)
+        return changes[0], classified_files
+
+    def test_non_public_repository(self):
+        change, classified_files = self.handle(self.payload('Example/Repository'))
+        self.assertEqual(change['comments'], 'GitHub Pull Request #1230 (1 commit)')
+        self.assertEqual(change['files'], [])
+        self.assertEqual(classified_files, [['Source/WebCore/rendering/RenderLayer.cpp', 'LayoutTests/fast/test.html']])
+
+    def test_public_repository(self):
+        change, classified_files = self.handle(self.payload('WebKit/WebKit'))
+        self.assertEqual(change['comments'], 'GitHub Pull Request #1230 (1 commit)\nFix a bug in RenderLayer\nhttps://bugs.webkit.org/show_bug.cgi?id=1234')
+        self.assertEqual(change['files'], self.FILES)
+        self.assertEqual(classified_files, [['Source/WebCore/rendering/RenderLayer.cpp', 'LayoutTests/fast/test.html']])
+
+    def test_redact_change_handles_missing_comments(self):
+        change = GitHubEventHandlerNoEdits.redact_change(dict(comments=None, files=[]))
+        self.assertEqual(change['comments'], '')
+        self.assertEqual(change['files'], [])

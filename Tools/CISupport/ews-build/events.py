@@ -578,6 +578,12 @@ class GitHubEventHandlerNoEdits(GitHubEventHandler):
                     del result[field]
         return result
 
+    @classmethod
+    def redact_change(cls, change):
+        change['comments'] = (change.get('comments') or '').split('\n', 1)[0]
+        change['files'] = []
+        return change
+
     @defer.inlineCallbacks
     def handle_pull_request(self, payload, event):
         pr_number = payload['number']
@@ -614,6 +620,12 @@ class GitHubEventHandlerNoEdits(GitHubEventHandler):
         result = yield super().handle_pull_request(payload, event)
         changes = result[0]
 
+        pr_files = (changes[0].get('files') or []) if changes else []
+        repo_full_name = payload['repository']['full_name']
+        if repo_full_name not in self.PUBLIC_REPOS:
+            for change in changes:
+                self.redact_change(change)
+
         # Ignore pull-request events that don't include changes (such as "assigning" a pull-request)
         if not changes or 'properties' not in changes[0]:
             return defer.returnValue(result)
@@ -629,12 +641,11 @@ class GitHubEventHandlerNoEdits(GitHubEventHandler):
 
         change = changes[0]
 
-        repo_full_name = payload['repository']['full_name']
         head_sha = payload['pull_request']['head']['sha']
         number_commits = payload['pull_request']['commits']
         messages = yield self._get_commit_messages(repo_full_name, head_sha, number_commits)
 
-        raw_files = [file.split(' ', 1)[-1] for file in change.get('files') or []]
+        raw_files = [file.split(' ', 1)[-1] for file in pr_files]
 
         classes = set()
         for message in messages:
