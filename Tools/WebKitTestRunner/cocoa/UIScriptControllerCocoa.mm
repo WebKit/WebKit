@@ -451,7 +451,7 @@ RetainPtr<_WKTextExtractionConfiguration> createTextExtractionConfiguration(WKWe
 
     // FIXME (328093): Opting into text-recognition-based filtering causes sporadic timeouts on macOS 27,
     // since test runners almost always need to recompile underlying E5 models.
-    [configuration setFilterOptions:_WKTextExtractionFilterAll & ~_WKTextExtractionFilterTextRecognition];
+    [configuration setFilterOptions:_WKTextExtractionFilterAll & ~(_WKTextExtractionFilterTextRecognition | _WKTextExtractionFilterRules)];
     [configuration setIncludeAccessibilityAttributes:options && options->includeAccessibilityAttributes];
     [configuration setIncludeTextInAutoFilledControls:options && options->includeTextInAutoFilledControls];
     [configuration setIncludeOffscreenPasswordFields:options && options->includeOffscreenPasswordFields];
