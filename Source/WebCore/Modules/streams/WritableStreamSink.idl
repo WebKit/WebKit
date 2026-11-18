@@ -30,7 +30,7 @@
 ] interface WritableStreamSink {
     [Custom] undefined start(WritableStreamDefaultController controller);
     [CallWith=CurrentScriptExecutionContext] Promise<undefined> write(any value);
-    [CallWith=CurrentGlobalObject] undefined close();
+    [CallWith=CurrentGlobalObject] Promise<undefined> close();
     [CallWith=CurrentGlobalObject] Promise<undefined> abort(any reason);
 
     // Place holder to keep the controller linked to the source.

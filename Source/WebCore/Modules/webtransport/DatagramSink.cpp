@@ -85,4 +85,10 @@ void DatagramSink::write(ScriptExecutionContext& context, JSC::JSValue value, DO
     });
 }
 
+void DatagramSink::close(JSDOMGlobalObject&, DOMPromiseDeferred<void>&& promise)
+{
+    m_isClosed = true;
+    promise.resolve();
+}
+
 }

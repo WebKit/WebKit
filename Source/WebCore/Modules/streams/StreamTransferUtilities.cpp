@@ -342,10 +342,11 @@ private:
             promise.resolve();
         });
     }
-    void close(JSDOMGlobalObject& globalObject) final
+    void close(JSDOMGlobalObject& globalObject, DOMPromiseDeferred<void>&& promise) final
     {
         packAndPostMessage(globalObject, m_port, "close"_s, JSC::jsUndefined());
         m_port->close();
+        promise.resolve();
     }
     void abort(JSDOMGlobalObject& globalObject, JSC::JSValue reason, DOMPromiseDeferred<void>&& promise) final
     {

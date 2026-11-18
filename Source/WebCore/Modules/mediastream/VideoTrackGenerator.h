@@ -90,7 +90,7 @@ private:
         explicit Sink(Ref<Source>&&);
 
         void write(ScriptExecutionContext&, JSC::JSValue, DOMPromiseDeferred<void>&&) final;
-        void close(JSDOMGlobalObject&) final;
+        void close(JSDOMGlobalObject&, DOMPromiseDeferred<void>&&) final;
         void abort(JSDOMGlobalObject&, JSC::JSValue, DOMPromiseDeferred<void>&&) final;
 
         bool m_muted { false };
