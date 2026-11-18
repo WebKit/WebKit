@@ -1,0 +1,154 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="../debugger/resources/pause-reasons.js"></script>
+<script src="resources/event-breakpoint-utilities.js"></script>
+<script src="resources/url-breakpoint-utilities.js"></script>
+<script>
+window.internals?.evaluateInWorldIgnoringException("testInternalWorld", "0");
+
+window.addEventListener("click", triggerBreakpoint);
+
+window.addEventListener("message", function pageMessage(event) {
+    TestPage.dispatchEventToFrontend(event.data);
+});
+
+function clickAfterDebuggerStatement()
+{
+    debugger;
+    document.body.click();
+}
+
+async function clickBeforeAwait()
+{
+    debugger;
+    document.body.click();
+    await 1;
+    return 1;
+}
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("DOMDebugger.BreakpointsNotPausingCoincidingPause");
+
+    function addListenerBreakpoint()
+    {
+        return InspectorTest.EventBreakpoint.addBreakpoint(new WI.EventBreakpoint(WI.EventBreakpoint.Type.Listener, {eventName: "click", condition: "false"}));
+    }
+
+    function evaluateInInternalWorld(expression)
+    {
+        let context = WI.networkManager.mainFrame.executionContextList.contexts.find((context) => {
+            return context.type === WI.ExecutionContext.Type.Internal && context.name === "testInternalWorld";
+        });
+        return context.target.RuntimeAgent.evaluate.invoke({contextId: context.id, expression});
+    }
+
+    function expectPause({pauseReason, functionName})
+    {
+        let activeCallFrame = WI.debuggerManager.activeCallFrame;
+        if (functionName)
+            InspectorTest.expectEqual(activeCallFrame.functionName, functionName, `Should pause in ${functionName}.`);
+
+        let targetData = WI.debuggerManager.dataForTarget(activeCallFrame.target);
+        InspectorTest.expectEqual(targetData.pauseReason, pauseReason, `Pause reason should be ${pauseReason}.`);
+        InspectorTest.expectFalse(targetData.pauseData, "Pause should not have data.");
+    }
+
+    suite.addTestCase({
+        name: suite.name + ".Listener.StepInto",
+        description: "Check that stepping into an event listener whose breakpoint has a false condition is reported as a step.",
+        async test() {
+            await addListenerBreakpoint();
+
+            InspectorTest.evaluateInPage("setTimeout(clickAfterDebuggerStatement)");
+            await WI.debuggerManager.awaitEvent(WI.DebuggerManager.Event.Paused);
+
+            InspectorTest.log("Stepping over debugger statement...");
+            await WI.debuggerManager.stepOver();
+
+            InspectorTest.log("Stepping into click...");
+            await WI.debuggerManager.stepInto();
+
+            expectPause({pauseReason: WI.DebuggerManager.PauseReason.Other, functionName: "triggerBreakpoint"});
+
+            await WI.debuggerManager.resume();
+        },
+        teardown: InspectorTest.EventBreakpoint.teardown,
+    });
+
+    suite.addTestCase({
+        name: suite.name + ".Listener.PauseOnNextStatement",
+        description: "Check that pausing at the first statement of an event listener whose breakpoint has a false condition is reported as pausing at the next statement.",
+        async test() {
+            await addListenerBreakpoint();
+
+            InspectorTest.log("Pausing and firing \"click\" on body from an internal world...");
+            let pausePromise = WI.debuggerManager.pause();
+            let evaluatePromise = evaluateInInternalWorld("document.body.click()");
+            await pausePromise;
+
+            expectPause({pauseReason: WI.DebuggerManager.PauseReason.PauseOnNextStatement, functionName: "triggerBreakpoint"});
+
+            await WI.debuggerManager.resume();
+            await evaluatePromise;
+        },
+        teardown: InspectorTest.EventBreakpoint.teardown,
+    });
+
+    suite.addTestCase({
+        name: suite.name + ".Listener.StepOverAwait",
+        description: "Check that an event listener breakpoint with a false condition does not change the reason restored after stepping over an await.",
+        async test() {
+            await addListenerBreakpoint();
+
+            InspectorTest.evaluateInPage("setTimeout(clickBeforeAwait)");
+            await WI.debuggerManager.awaitEvent(WI.DebuggerManager.Event.Paused);
+
+            InspectorTest.log("Stepping over debugger statement...");
+            await WI.debuggerManager.stepOver();
+
+            InspectorTest.log("Stepping over click...");
+            await WI.debuggerManager.stepOver();
+
+            InspectorTest.log("Stepping over await...");
+            let pausedAfterAwaitPromise = WI.debuggerManager.awaitEvent(WI.DebuggerManager.Event.Paused);
+            await WI.debuggerManager.stepOver();
+            await pausedAfterAwaitPromise;
+
+            expectPause({pauseReason: WI.DebuggerManager.PauseReason.DebuggerStatement});
+
+            await WI.debuggerManager.resume();
+        },
+        teardown: InspectorTest.EventBreakpoint.teardown,
+    });
+
+    suite.addTestCase({
+        name: suite.name + ".URL.InternalProgram",
+        description: "Check that a URL breakpoint that matches in a program of an internal world does not change the reason of pausing at the next statement after that program.",
+        async test() {
+            await InspectorTest.URLBreakpoint.addBreakpoint(new WI.URLBreakpoint(WI.URLBreakpoint.Type.Text, "dataDOM"));
+
+            InspectorTest.log("Pausing and requesting \"resources/dataDOM.json\" from a program of an internal world...");
+            let messagePromise = InspectorTest.awaitEvent("internal-program-complete");
+            let pausePromise = WI.debuggerManager.pause();
+            let evaluatePromise = evaluateInInternalWorld(`setTimeout("document.body.appendChild(document.createElement('img')).src = 'resources/dataDOM.json?' + Math.random(); window.postMessage('internal-program-complete', '*');")`);
+            await pausePromise;
+
+            expectPause({pauseReason: WI.DebuggerManager.PauseReason.PauseOnNextStatement, functionName: "pageMessage"});
+
+            await WI.debuggerManager.resume();
+            await Promise.all([evaluatePromise, messagePromise]);
+        },
+        teardown: InspectorTest.URLBreakpoint.teardown,
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests that a step or a pause that coincides with a breakpoint that matches but does not pause is not reported with the reason of that breakpoint.</p>
+</body>
+</html>
