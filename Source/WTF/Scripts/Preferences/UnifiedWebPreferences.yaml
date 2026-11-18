@@ -978,7 +978,7 @@ CSSFieldSizingEnabled:
 
 CSSFitContentFunctionEnabled:
   type: bool
-  status: testable
+  status: preview
   category: css
   humanReadableName: "CSS fit-content() sizing function"
   humanReadableDescription: "Enable support for CSS fit-content() in the sizing properties"
@@ -1293,7 +1293,7 @@ CSSSizeShorthandEnabled:
 
 CSSStretchFunctionEnabled:
   type: bool
-  status: testable
+  status: preview
   category: css
   humanReadableName: "CSS stretch() sizing function"
   humanReadableDescription: "Enable support for CSS stretch() in the sizing properties"
