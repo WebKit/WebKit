@@ -345,8 +345,8 @@ imported/w3c/web-platform-tests/speech-api/ [ Skip ]
 compositing/background-color/background-color-clamping.html [ Skip ]
 
 # Support for COEP violation reporting is missing.
-imported/w3c/web-platform-tests/html/cross-origin-opener-policy/reporting/access-reporting/
-imported/w3c/web-platform-tests/html/cross-origin-opener-policy/reporting/document-reporting/
+imported/w3c/web-platform-tests/html/cross-origin-opener-policy/reporting/access-reporting/ [ Skip ]
+imported/w3c/web-platform-tests/html/cross-origin-opener-policy/reporting/document-reporting/ [ Skip ]
 
 fast/frames/frame-append-body-child-crash.html [ Slow ]
 [ Debug ] fast/frames/lots-of-objects.html [ Slow ]
@@ -361,7 +361,7 @@ fast/frames/frame-append-body-child-crash.html [ Slow ]
 
 # This test is failing in all major browser engines as of Sept 2022. The reason is that the Reporting-Endpoints header
 # is served on the parent of the reporting frame, not the reporting frame.
-imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/reporting-to-endpoint.https.html
+imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/reporting-to-endpoint.https.html [ Skip ]
 
 # Only Mac and iOS have an implementation of UIScriptController::doAsyncTask().
 fast/harness/uiscriptcontroller [ Skip ]
@@ -462,7 +462,7 @@ compositing/geometry/frame-clipping-layer-with-bottom-right-inset.html [ Skip ]
 compositing/geometry/frame-clipping-layer-with-top-left-inset.html [ Skip ]
 
 # A rounding error may cause 90deg 3d-rotated elements to count as painted
-imported/w3c/web-platform-tests/paint-timing/fcp-only/fcp-invisible-3d-rotate-descendant.html
+imported/w3c/web-platform-tests/paint-timing/fcp-only/fcp-invisible-3d-rotate-descendant.html [ Skip ]
 
 webkit.org/b/202617 imported/w3c/web-platform-tests/picture-in-picture/leave-picture-in-picture-disable-attribute.optional.html [ Skip ]
 webkit.org/b/202617 imported/w3c/web-platform-tests/picture-in-picture/mediastream.html [ Skip ]
@@ -1453,10 +1453,10 @@ imported/w3c/web-platform-tests/content-security-policy/reporting/report-cross-o
 webkit.org/b/321358 [ Debug ] imported/w3c/web-platform-tests/content-security-policy/inheritance/history.sub.html [ Crash Pass ]
 
 # Content Security Policy: Embedded Enforcement is not supported
-imported/w3c/web-platform-tests/content-security-policy/embedded-enforcement
+imported/w3c/web-platform-tests/content-security-policy/embedded-enforcement [ Skip ]
 
 # Test is timing out.
-imported/w3c/web-platform-tests/content-security-policy/securitypolicyviolation/inside-shared-worker.html
+imported/w3c/web-platform-tests/content-security-policy/securitypolicyviolation/inside-shared-worker.html [ Skip ]
 
 imported/w3c/web-platform-tests/content-security-policy/generic/image-document-ignores-csp-for-loading-main-image.tentative.html [ ImageOnlyFailure ]
 
@@ -1636,16 +1636,16 @@ imported/w3c/web-platform-tests/fetch/content-encoding/zstd [ Pass Failure ]
 http/tests/workers/service/other_resources [ Skip ]
 
 # These are resource files.
-http/wpt/html/browsers/browsing-the-web/navigating-across-documents/click.html
-http/wpt/html/browsers/browsing-the-web/navigating-across-documents/href.html
+http/wpt/html/browsers/browsing-the-web/navigating-across-documents/click.html [ Skip ]
+http/wpt/html/browsers/browsing-the-web/navigating-across-documents/href.html [ Skip ]
 
 # Test should be rewritten to use async_test, but it also doesn't appear upstream?
 imported/w3c/web-platform-tests/html/user-activation/consumption-crossorigin.sub.html [ Pass Failure ]
 
 # Tests in this directory take > 30 minutes to run on debug bots.
-[ Debug ] imported/w3c/web-platform-tests/encoding/legacy-mb-japanese
-[ Debug ] imported/w3c/web-platform-tests/encoding/legacy-mb-korean
-[ Debug ] imported/w3c/web-platform-tests/encoding/legacy-mb-tchinese
+[ Debug ] imported/w3c/web-platform-tests/encoding/legacy-mb-japanese [ Skip ]
+[ Debug ] imported/w3c/web-platform-tests/encoding/legacy-mb-korean [ Skip ]
+[ Debug ] imported/w3c/web-platform-tests/encoding/legacy-mb-tchinese [ Skip ]
 
 # Content encoding sniffing is only supported by CFNetwork.
 http/tests/xmlhttprequest/gzip-content-type-no-content-encoding.html [ Skip ]
@@ -1920,8 +1920,8 @@ imported/w3c/web-platform-tests/css/css-flexbox/stretch-flex-item-checkbox-input
 imported/w3c/web-platform-tests/css/css-flexbox/stretch-flex-item-radio-input.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-flexbox/webkit-box-vertical-writing-mode.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-flexbox/aspect-ratio-intrinsic-size-009.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-flexbox/align-content-007.htm
-imported/w3c/web-platform-tests/css/css-flexbox/align-self-016.html
+imported/w3c/web-platform-tests/css/css-flexbox/align-content-007.htm [ Skip ]
+imported/w3c/web-platform-tests/css/css-flexbox/align-self-016.html [ Skip ]
 imported/w3c/web-platform-tests/css/css-flexbox/abspos/flex-abspos-align-self-safe-outer-cb-001.tentative.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-flexbox/abspos/flex-abspos-align-self-safe-outer-cb-002.tentative.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-flexbox/abspos/flex-abspos-align-self-safe-outer-cb-003.tentative.html [ ImageOnlyFailure ]
@@ -2751,7 +2751,7 @@ webkit.org/b/137883 transitions/rounded-rect-becomes-non-renderable-while-transi
 webkit.org/b/137883 transitions/shorthand-border-transitions.html [ Pass Failure ]
 webkit.org/b/137883 transitions/shorthand-transitions.html [ Pass Failure ]
 webkit.org/b/137883 transitions/started-while-suspended.html [ Pass Failure ]
-webkit.org/b/137883 transitions/transition-shorthand-delay.html
+webkit.org/b/137883 transitions/transition-shorthand-delay.html [ Skip ]
 webkit.org/b/137883 transitions/transition-timing-function.html [ Pass Failure ]
 
 # W3C web platform tests infrastructure directories are skipped as they may contain html files
@@ -3219,10 +3219,10 @@ fast/mediastream/RTCPeerConnection-overloaded-operations-params.html [ Skip ]
 fast/mediastream/RTCRtpSender-replaceTrack.html [ Skip ]
 fast/mediastream/RTCPeerConnection-inspect-offer-bundlePolicy-bundle-only.html [ Failure ]
 
-imported/w3c/web-platform-tests/webrtc/simulcast/rid-manipulation.html
-imported/w3c/web-platform-tests/webrtc/simulcast/setParameters-encodings.https.html
-imported/w3c/web-platform-tests/webrtc/simulcast/vp9-scalability-mode.https.html
-imported/w3c/web-platform-tests/webrtc/simulcast/vp9.https.html
+imported/w3c/web-platform-tests/webrtc/simulcast/rid-manipulation.html [ Skip ]
+imported/w3c/web-platform-tests/webrtc/simulcast/setParameters-encodings.https.html [ Skip ]
+imported/w3c/web-platform-tests/webrtc/simulcast/vp9-scalability-mode.https.html [ Skip ]
+imported/w3c/web-platform-tests/webrtc/simulcast/vp9.https.html [ Skip ]
 
 # Missing API support.
 imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-capture-video.https.html [ Skip ]
@@ -3364,19 +3364,19 @@ fast/css-intrinsic-dimensions/height-tables.html [ ImageOnlyFailure ]
 webkit.org/b/52185 fast/css/vertical-align-baseline-rowspan-010.html [ ImageOnlyFailure ]
 
 # Content Security Policy failures
-webkit.org/b/111869 http/tests/security/contentSecurityPolicy/eval-blocked-and-sends-report.html
-webkit.org/b/153148 http/tests/security/contentSecurityPolicy/eval-allowed-in-report-only-mode-and-sends-report.py
-webkit.org/b/153150 http/tests/security/contentSecurityPolicy/1.1/child-src/frame-fires-load-event-when-blocked.html
-webkit.org/b/153150 http/tests/security/contentSecurityPolicy/1.1/child-src/frame-fires-load-event-when-redirect-blocked.html
-webkit.org/b/153155 http/tests/security/contentSecurityPolicy/1.1/scripthash-basic-blocked-error-event.html
-webkit.org/b/153155 http/tests/security/contentSecurityPolicy/1.1/stylehash-basic-blocked-error-event.html
-webkit.org/b/153155 http/tests/security/contentSecurityPolicy/1.1/stylehash-svg-style-basic-blocked-error-event.html
-webkit.org/b/153155 http/tests/security/contentSecurityPolicy/1.1/stylenonce-basic-blocked-error-event.html
-webkit.org/b/153155 http/tests/security/contentSecurityPolicy/1.1/stylenonce-svg-style-basic-blocked-error-event.html
+webkit.org/b/111869 http/tests/security/contentSecurityPolicy/eval-blocked-and-sends-report.html [ Skip ]
+webkit.org/b/153148 http/tests/security/contentSecurityPolicy/eval-allowed-in-report-only-mode-and-sends-report.py [ Skip ]
+webkit.org/b/153150 http/tests/security/contentSecurityPolicy/1.1/child-src/frame-fires-load-event-when-blocked.html [ Skip ]
+webkit.org/b/153150 http/tests/security/contentSecurityPolicy/1.1/child-src/frame-fires-load-event-when-redirect-blocked.html [ Skip ]
+webkit.org/b/153155 http/tests/security/contentSecurityPolicy/1.1/scripthash-basic-blocked-error-event.html [ Skip ]
+webkit.org/b/153155 http/tests/security/contentSecurityPolicy/1.1/stylehash-basic-blocked-error-event.html [ Skip ]
+webkit.org/b/153155 http/tests/security/contentSecurityPolicy/1.1/stylehash-svg-style-basic-blocked-error-event.html [ Skip ]
+webkit.org/b/153155 http/tests/security/contentSecurityPolicy/1.1/stylenonce-basic-blocked-error-event.html [ Skip ]
+webkit.org/b/153155 http/tests/security/contentSecurityPolicy/1.1/stylenonce-svg-style-basic-blocked-error-event.html [ Skip ]
 webkit.org/b/153159 http/tests/security/contentSecurityPolicy/image-document-default-src-none.html [ Failure ]
 webkit.org/b/153160 http/tests/security/contentSecurityPolicy/plugin-in-iframe-with-csp.html [ Failure ]
 webkit.org/b/153161 http/tests/security/contentSecurityPolicy/register-bypassing-scheme-partial.html [ Failure ]
-webkit.org/b/154522 http/tests/security/contentSecurityPolicy/1.1/securitypolicyviolation-base-uri-deny.html
+webkit.org/b/154522 http/tests/security/contentSecurityPolicy/1.1/securitypolicyviolation-base-uri-deny.html [ Skip ]
 
 # WK CSP extension support is WebKit2 only
 http/tests/security/contentSecurityPolicy/extensions [ Skip ]
@@ -4962,7 +4962,7 @@ imported/w3c/web-platform-tests/css/css-fonts/font-variant-position-05.html [ Im
 imported/w3c/web-platform-tests/css/css-fonts/separators.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-fonts/size-adjust-unicode-range-system-fallback.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-fonts/variation-sequences.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-fonts/downloadable-font-scoped-to-document.html
+imported/w3c/web-platform-tests/css/css-fonts/downloadable-font-scoped-to-document.html [ Skip ]
 
 # Triaged css-fonts failures
 webkit.org/b/246564 imported/w3c/web-platform-tests/css/css-fonts/font-synthesis-small-caps-not-applied.html [ ImageOnlyFailure ]
@@ -5017,7 +5017,7 @@ webkit.org/b/292182 [ x86_64 ] webgl/2.0.y/conformance/textures/misc/copytexsubi
 webkit.org/b/292182 webgl/2.0.y/conformance/textures/misc/texture-video-transparent.html [ Failure Pass ]
 webkit.org/b/292182 [ x86_64 ] webgl/2.0.y/conformance2/rendering/clipping-wide-points.html [ Failure Pass ]
 
-webkit.org/b/313392 webgl/2.0.y/conformance2/textures/misc/tex-image-10bpc.html
+webkit.org/b/313392 webgl/2.0.y/conformance2/textures/misc/tex-image-10bpc.html [ Skip ]
 
 # To be fixed failures after "Update WebGL conformance tests 2026-07-18 (f15a73f727d8ee66a3ec6d0bed9f02f08cacc2c1)"
 webkit.org/b/320901 webgl/1.0.x/conformance/glsl/misc/shader-with-double-underscore.html [ Failure ]
@@ -5484,7 +5484,7 @@ imported/w3c/web-platform-tests/css/css-multicol/multicol-span-all-rule-001.html
 imported/w3c/web-platform-tests/css/css-multicol/multicol-under-vertical-rl-scroll.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-multicol/multicol-width-004.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-multicol/multicol-width-005.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-multicol/with-custom-layout-on-same-element.https.html
+imported/w3c/web-platform-tests/css/css-multicol/with-custom-layout-on-same-element.https.html [ Skip ]
 imported/w3c/web-platform-tests/css/css-multicol/multicol-span-all-children-height-003.html [ Skip ] # times out
 imported/w3c/web-platform-tests/css/css-multicol/multicol-breaking-006.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-multicol/multicol-fill-balance-nested-000.html [ ImageOnlyFailure ]
@@ -5797,7 +5797,7 @@ webkit.org/b/208988 imported/w3c/web-platform-tests/webxr/xrDevice_disconnect_en
 webkit.org/b/208988 imported/w3c/web-platform-tests/webxr/xrFrame_getViewerPose_getPose_identities.https.html [ Skip ]
 webkit.org/b/208988 imported/w3c/web-platform-tests/webxr/xr_viewport_scale.https.html [ Skip ]
 webkit.org/b/302408 imported/w3c/web-platform-tests/webxr/xrSession_enabledFeatures.https.html [ Skip ]
-webkit.org/b/302410 imported/w3c/web-platform-tests/webxr/xrViewerPose_secondaryViews.https.html
+webkit.org/b/302410 imported/w3c/web-platform-tests/webxr/xrViewerPose_secondaryViews.https.html [ Skip ]
 
 # WebXR - Currently failing and needs more investigation.
 webkit.org/b/208988 imported/w3c/web-platform-tests/webxr/exclusive_requestFrame_nolayer.https.html [ Skip ]
@@ -6503,7 +6503,7 @@ webkit.org/b/293821 imported/w3c/web-platform-tests/dom/events/scrolling/wheel-e
 webkit.org/b/255101 imported/w3c/web-platform-tests/css/css-backgrounds/background-attachment-fixed-inside-transform-1.html [ ImageOnlyFailure ]
 webkit.org/b/255101 imported/w3c/web-platform-tests/css/css-backgrounds/background-attachment-local-hidden.html [ ImageOnlyFailure ]
 webkit.org/b/255101 imported/w3c/web-platform-tests/css/css-backgrounds/background-image-gradient-currentcolor-visited.html [ ImageOnlyFailure ]
-webkit.org/b/255101 imported/w3c/web-platform-tests/css/css-backgrounds/background-image-table-cells-straddling-no-repeat.html
+webkit.org/b/255101 imported/w3c/web-platform-tests/css/css-backgrounds/background-image-table-cells-straddling-no-repeat.html [ Skip ]
 webkit.org/b/255101 imported/w3c/web-platform-tests/css/css-backgrounds/background-margin-iframe-root.html [ ImageOnlyFailure ]
 webkit.org/b/255101 imported/w3c/web-platform-tests/css/css-backgrounds/background-margin-transformed-root.html [ ImageOnlyFailure ]
 webkit.org/b/255101 imported/w3c/web-platform-tests/css/css-backgrounds/background-margin-will-change-root.html [ ImageOnlyFailure ]
@@ -8160,13 +8160,13 @@ webkit.org/b/294105 webanimations/document-teardown-due-to-last-reference-crash.
 imported/w3c/web-platform-tests/html/obsolete/requirements-for-implementations/the-marquee-element-0/marquee-with-trusted-types.html [ ImageOnlyFailure ]
 
 # Skip WPT tests that rely on the deprecated block-all-mixed-content CSP directive
-imported/w3c/web-platform-tests/mixed-content/gen/top.http-rp/opt-in/audio-tag.https.html
-imported/w3c/web-platform-tests/mixed-content/gen/top.http-rp/opt-in/beacon.https.html
-imported/w3c/web-platform-tests/mixed-content/gen/top.http-rp/opt-in/img-tag.https.html
-imported/w3c/web-platform-tests/mixed-content/gen/top.http-rp/opt-in/video-tag.https.html
-imported/w3c/web-platform-tests/mixed-content/gen/top.meta/opt-in/audio-tag.https.html
-imported/w3c/web-platform-tests/mixed-content/gen/top.meta/opt-in/beacon.https.html
-imported/w3c/web-platform-tests/mixed-content/gen/top.meta/opt-in/video-tag.https.html
+imported/w3c/web-platform-tests/mixed-content/gen/top.http-rp/opt-in/audio-tag.https.html [ Skip ]
+imported/w3c/web-platform-tests/mixed-content/gen/top.http-rp/opt-in/beacon.https.html [ Skip ]
+imported/w3c/web-platform-tests/mixed-content/gen/top.http-rp/opt-in/img-tag.https.html [ Skip ]
+imported/w3c/web-platform-tests/mixed-content/gen/top.http-rp/opt-in/video-tag.https.html [ Skip ]
+imported/w3c/web-platform-tests/mixed-content/gen/top.meta/opt-in/audio-tag.https.html [ Skip ]
+imported/w3c/web-platform-tests/mixed-content/gen/top.meta/opt-in/beacon.https.html [ Skip ]
+imported/w3c/web-platform-tests/mixed-content/gen/top.meta/opt-in/video-tag.https.html [ Skip ]
 
 webkit.org/b/297505 ipc/LocalSampleBufferDisplayLayer-LogIdentifier-data-race-uaf.html [ Skip ]
 

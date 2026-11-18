@@ -88,7 +88,7 @@ storage/websql/sql-error-codes.html [ Failure ]
 # <rdar://problem/52689856> storage/websql/test-authorizer.html is failing
 storage/websql/test-authorizer.html [ Failure ]
 # <rdar://problem/11187491> storage/websql/quota-tracking.html is failing on Mountain Lion
-storage/websql/quota-tracking.html
+storage/websql/quota-tracking.html [ Skip ]
 # rdar://problem/26478296
 svg/hixie/text/003.html [ Pass Failure ]
 # <rdar://problem/42627562>

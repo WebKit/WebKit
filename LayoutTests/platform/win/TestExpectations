@@ -184,7 +184,7 @@ http/tests/security/contentSecurityPolicy/userAgentShadowDOM/allow-video.html [ 
 http/tests/security/contentSecurityPolicy/video-redirect-allowed.html [ Skip ]
 http/tests/security/contentSecurityPolicy/video-redirect-allowed2.html [ Skip ]
 http/tests/security/contentSecurityPolicy/video-redirect-blocked.html [ Skip ]
-http/tests/security/contentSecurityPolicy/video-with-http-url-allowed-by-csp-media-src-star.html
+http/tests/security/contentSecurityPolicy/video-with-http-url-allowed-by-csp-media-src-star.html [ Skip ]
 http/tests/security/mixedContent/insecure-audio-video-in-main-frame-UpgradeMixedContent.html [ Skip ]
 http/wpt/service-workers/media-range-request.html [ Skip ]
 imported/w3c/web-platform-tests/css/selectors/invalidation/media-pseudo-classes-in-has.html [ Skip ]
@@ -569,11 +569,11 @@ http/tests/scroll-to-text-fragment/no-scroll-after-stylesheet-load.html [ Skip ]
 # Mix of errors related to the harness:
 # Unhandled Promise Rejection: TypeError: Load failed
 # Harness Error (TIMEOUT), message = null
-imported/w3c/web-platform-tests/scroll-to-text-fragment/redirects.html
-imported/w3c/web-platform-tests/scroll-to-text-fragment/scroll-to-text-fragment-after-DOMContentLoaded.html
-imported/w3c/web-platform-tests/scroll-to-text-fragment/scroll-to-text-fragment-scroll-to-center.html
-imported/w3c/web-platform-tests/scroll-to-text-fragment/scroll-to-text-fragment-security.sub.html
-imported/w3c/web-platform-tests/scroll-to-text-fragment/scroll-to-text-fragment.html
+imported/w3c/web-platform-tests/scroll-to-text-fragment/redirects.html [ Skip ]
+imported/w3c/web-platform-tests/scroll-to-text-fragment/scroll-to-text-fragment-after-DOMContentLoaded.html [ Skip ]
+imported/w3c/web-platform-tests/scroll-to-text-fragment/scroll-to-text-fragment-scroll-to-center.html [ Skip ]
+imported/w3c/web-platform-tests/scroll-to-text-fragment/scroll-to-text-fragment-security.sub.html [ Skip ]
+imported/w3c/web-platform-tests/scroll-to-text-fragment/scroll-to-text-fragment.html [ Skip ]
 
 # WebKitTestRunner: test fonts are not available in GPU process
 webkit.org/b/278895 fast/canvas/canvas-blending-text.html [ Skip ]
@@ -2000,7 +2000,7 @@ webkit.org/b/238644 fast/events/mouse-click-events.html [ Skip ]
 webkit.org/b/238644 fast/events/mouse-event-buttons.html [ Skip ]
 
 # Makes a subsequent test an assertion failure crash
-webkit.org/b/277121 [ Debug ] fast/events/event-handler-detached-document.html
+webkit.org/b/277121 [ Debug ] fast/events/event-handler-detached-document.html [ Skip ]
 
 webkit.org/b/168136 performance-api/performance-observer-periodic.html [ Pass Failure ]
 

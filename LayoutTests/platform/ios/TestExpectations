@@ -327,8 +327,8 @@ fast/events/touch/ios/touch-event-regions-layer-tree/dispatch [ Skip ]
 ##
 # Cannot enable AX tests because there are too many differences between what is available
 # through the iPhone AX API and the OS X AX API.
-accessibility
-perf/accessibility-title-ui-element.html
+accessibility [ Skip ]
+perf/accessibility-title-ui-element.html [ Skip ]
 
 fast/element-targeting/adjust-region-after-viewport-height-change.html [ Skip ]
 
@@ -348,18 +348,18 @@ fast/images/video-as-image.html [ Pass ]
 fast/images/apng-acTL-zero-frame-count.html [ Skip ]
 
 # No fullscreen API on iOS
-fullscreen
-http/tests/fullscreen
-imported/w3c/web-platform-tests/fullscreen
-compositing/no-compositing-when-full-screen-is-present.html
-http/tests/site-isolation/viewer-mode-fullscreens-owner-iframe.html
+fullscreen [ Skip ]
+http/tests/fullscreen [ Skip ]
+imported/w3c/web-platform-tests/fullscreen [ Skip ]
+compositing/no-compositing-when-full-screen-is-present.html [ Skip ]
+http/tests/site-isolation/viewer-mode-fullscreens-owner-iframe.html [ Skip ]
 webkit.org/b/200308 fast/events/touch/ios/content-observation/non-visible-content-change-in-fullscreen-mode.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/popovers/popover-top-layer-interactions.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/popovers/popover-top-layer-combinations.html [ Skip ]
 media/video-supports-fullscreen.html [ Skip ]
 
 # Encrypted Media Extensions are not enabled
-media/encrypted-media/
+media/encrypted-media/ [ Skip ]
 
 # Tests that rely on custom domain names.
 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/overlapping-navigations-and-traversals/nav-cancelation-2.sub.html [ Skip ]
@@ -367,11 +367,11 @@ imported/w3c/web-platform-tests/cookies/attributes/domain.sub.html [ Skip ]
 imported/w3c/web-platform-tests/cookies/ordering/ordering.sub.html [ Skip ]
 
 # Web Notifications are not supported on iOS.
-http/tests/notifications
-http/wpt/notifications
-fast/history/page-cache-notification-showing.html
-fast/history/page-cache-notification-suspendable.html
-imported/w3c/web-platform-tests/notifications/
+http/tests/notifications [ Skip ]
+http/wpt/notifications [ Skip ]
+fast/history/page-cache-notification-showing.html [ Skip ]
+fast/history/page-cache-notification-suspendable.html [ Skip ]
+imported/w3c/web-platform-tests/notifications/ [ Skip ]
 
 # Web Audio failures
 webaudio/audiocontext-restriction-audiobuffersourcenode-start.html [ Skip ]
@@ -381,7 +381,7 @@ webaudio/codec-tests/vorbis [ Skip ]
 # vorbis decoder not available on simulator.
 webaudio/decode-audio-data-webm-vorbis.html [ Failure ]
 webaudio/decode-audio-data-ogg-vorbis.html  [ Failure ]
-media/track/audio-track-configuration-webm.html
+media/track/audio-track-configuration-webm.html [ Skip ]
 
 # ogg not available in simulator
 http/wpt/media/blob-and-ogg.html [ Skip ]
@@ -415,16 +415,16 @@ http/tests/site-isolation/scrolling/wheel-scroll-listbox-in-multiple-root-frames
 compositing/video/video-background-color.html [ WontFix ]
 
 # Not supported on iOS
-fast/speechsynthesis
-gamepad
-imported/w3c/web-platform-tests/gamepad
-mhtml
+fast/speechsynthesis [ Skip ]
+gamepad [ Skip ]
+imported/w3c/web-platform-tests/gamepad [ Skip ]
+mhtml [ Skip ]
 
 # ENABLE(MEDIA_CAPTURE) is not enabled
-fast/forms/file/file-input-capture.html
+fast/forms/file/file-input-capture.html [ Skip ]
 
 # ENABLE(DRAGGABLE_REGION) is disabled
-fast/css/draggable-region-parser.html
+fast/css/draggable-region-parser.html [ Skip ]
 
 # Retro-correction is not supported on iOS
 editing/spelling/retro-correction-spelling-markers.html [ WontFix ]
@@ -455,12 +455,12 @@ fast/text/selection-with-text-decorations.html [ WontFix ]
 imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-inset-marked-text-gap.html [ WontFix ]
 
 # Plugins are not supported on iOS
-fast/frames/sandboxed-iframe-plugins.html
-http/tests/download/convert-cached-load-to-download.html
-http/tests/security/contentSecurityPolicy/embed-redirect-blocked2.html
-http/tests/security/contentSecurityPolicy/embed-redirect-blocked3.html
-http/tests/security/contentSecurityPolicy/object-redirect-blocked2.html
-http/tests/security/contentSecurityPolicy/object-redirect-blocked3.html
+fast/frames/sandboxed-iframe-plugins.html [ Skip ]
+http/tests/download/convert-cached-load-to-download.html [ Skip ]
+http/tests/security/contentSecurityPolicy/embed-redirect-blocked2.html [ Skip ]
+http/tests/security/contentSecurityPolicy/embed-redirect-blocked3.html [ Skip ]
+http/tests/security/contentSecurityPolicy/object-redirect-blocked2.html [ Skip ]
+http/tests/security/contentSecurityPolicy/object-redirect-blocked3.html [ Skip ]
 
 # Pointer-lock not supported on iOS: https://bugs.webkit.org/show_bug.cgi?id=216621
 imported/w3c/web-platform-tests/pointerlock [ Skip ]
@@ -481,9 +481,9 @@ pointer-lock/lock-lost-on-esc-in-fullscreen.html [ Skip ]
 pointer-lock/locked-element-iframe-removed-from-dom.html [ Skip ]
 
 # FIXME: Media tests not supported on iOS
-http/tests/media
-imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements
-http/tests/cache/disk-cache/disk-cache-media-small.html
+http/tests/media [ Skip ]
+imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements [ Skip ]
+http/tests/cache/disk-cache/disk-cache-media-small.html [ Skip ]
 http/tests/media/audio-load-loadeddata.html [ Pass ]
 
 # Digital Credentials
@@ -519,8 +519,8 @@ pointerevents/pointer-event-twist-on-tap-or-click.html [ Skip ]
 media/modern-media-controls/css/pointer-events-none.html [ Skip ]
 
 # Calls into the Opportunistic Task Scheduler which is currently disabled on IOS
-fast/dom/gc-dom-tree-lifetime.html
-fast/dom/gc-dom-tree-lifetime-shadow-tree.html
+fast/dom/gc-dom-tree-lifetime.html [ Skip ]
+fast/dom/gc-dom-tree-lifetime-shadow-tree.html [ Skip ]
 
 platform/ipad/fast/forms [ Skip ]
 
@@ -542,7 +542,7 @@ media/video-size-intrinsic-scale.html [ WontFix ]
 media/video-element-fullscreen-not-in-dom-accelerated-iphone.html [ Pass ]
 
 # MediaSource is not currently supported on iOS.
-media/media-source
+media/media-source [ Skip ]
 http/tests/media/media-source [ Skip ]
 imported/w3c/web-platform-tests/media-source/ [ Skip ]
 # ManagedMediaSource is supported on iOS.
@@ -559,13 +559,13 @@ imported/w3c/web-platform-tests/fetch/orb/tentative/img-png-mislabeled-as-html.s
 imported/w3c/web-platform-tests/fetch/orb/tentative/img-png-unlabeled.sub.html [ ImageOnlyFailure ]
 
 # Quota API is not supported on iOS
-storage/domstorage/quota.html
-storage/storageinfo-missing-arguments.html
-storage/storageinfo-no-callbacks.html
-storage/storageinfo-query-usage.html
-storage/storageinfo-request-quota.html
-storage/storagequota-query-usage.html
-storage/storagequota-request-quota.html
+storage/domstorage/quota.html [ Skip ]
+storage/storageinfo-missing-arguments.html [ Skip ]
+storage/storageinfo-no-callbacks.html [ Skip ]
+storage/storageinfo-query-usage.html [ Skip ]
+storage/storageinfo-request-quota.html [ Skip ]
+storage/storagequota-query-usage.html [ Skip ]
+storage/storagequota-request-quota.html [ Skip ]
 
 # iOS doesn't have a local inspector
 inspector/ [ Skip ]
@@ -574,19 +574,19 @@ http/tests/site-isolation/inspector/ [ Skip ]
 http/tests/websocket/tests/hybi/inspector/ [ Skip ]
 
 # Needs testRunner.enableAutoResizeMode()
-fast/autoresize
+fast/autoresize [ Skip ]
 
 # Need to implement DumpRenderTree support for repaint tests
-fast/repaint
-fast/sub-pixel/transformed-iframe-copy-on-scroll.html
-fast/sub-pixel/sub-pixel-iframe-copy-on-scroll.html
+fast/repaint [ Skip ]
+fast/sub-pixel/transformed-iframe-copy-on-scroll.html [ Skip ]
+fast/sub-pixel/sub-pixel-iframe-copy-on-scroll.html [ Skip ]
 
 # Need to reconcile differences between iOS and non-iOS differences in DeviceOrientation implementation
-fast/dom/DeviceOrientation
+fast/dom/DeviceOrientation [ Skip ]
 
 # WebP image format is not supported
-fast/canvas/canvas-toDataURL-webp.html
-fast/images/animated-webp-expected.html
+fast/canvas/canvas-toDataURL-webp.html [ Skip ]
+fast/images/animated-webp-expected.html [ Skip ]
 
 # Drag-and-drop is not supported:
 editing/pasteboard/datatransfer-items-drop-plaintext-file.html [ Skip ]
@@ -676,11 +676,11 @@ webkit.org/b/165799 svg/animations/animations-paused-page-non-visible.html [ Ski
 webkit.org/b/165799 svg/animations/animations-paused-in-background-page-iframe.html [ Skip ]
 webkit.org/b/165799 svg/animations/animations-paused-in-background-page.html [ Skip ]
 webkit.org/b/165799 webaudio/silent-audio-interrupted-in-background.html [ Skip ]
-webkit.org/b/165799 imported/w3c/web-platform-tests/screen-orientation/hidden_document.html
+webkit.org/b/165799 imported/w3c/web-platform-tests/screen-orientation/hidden_document.html [ Skip ]
 webkit.org/b/165799 fast/mediastream/device-change-event-2.html [ Skip ]
 
 # AutoFill button is not supported
-fast/forms/auto-fill-button/mouse-down-input-mouse-release-auto-fill-button.html
+fast/forms/auto-fill-button/mouse-down-input-mouse-release-auto-fill-button.html [ Skip ]
 
 # SecureEventInput is not supported on iOS.
 editing/secure-input [ Skip ]
@@ -1123,7 +1123,7 @@ http/tests/security/isolatedWorld/events.html [ Skip ]
 http/tests/security/isolatedWorld/userGestureEvents.html [ Skip ]
 http/tests/security/listener/xss-window-onclick-addEventListener.html [ Skip ]
 http/tests/security/listener/xss-window-onclick-shortcut.html [ Skip ]
-ietestcenter/css3/bordersbackgrounds/background-attachment-local-scrolling.htm
+ietestcenter/css3/bordersbackgrounds/background-attachment-local-scrolling.htm [ Skip ]
 imported/blink/fast/css/border-current-color.html [ Skip ]
 imported/blink/fast/css/crash-corner-present.html [ Skip ]
 imported/blink/fast/events/click-focus-anchor-no-ring.html [ Skip ]
@@ -1251,7 +1251,7 @@ editing/selection/caret-mode-paragraph-keys-navigation.html [ Skip ]
 editing/selection/editable-div-clear-on-keydown.html [ Skip ]
 editing/selection/move-begin-end.html [ Skip ]
 editing/selection/shrink-selection-after-shift-pagedown.html [ Skip ]
-editing/spelling/spelling-changed-text.html
+editing/spelling/spelling-changed-text.html [ Skip ]
 editing/undo/undo-deleteWord.html [ Skip ]
 fast/dom/access-key-iframe.html [ Skip ]
 fast/dom/focus-navigation-in-plugin.html [ Skip ]
@@ -1268,7 +1268,7 @@ fast/events/before-input-events-different-start-end-elements.html [ Skip ]
 fast/events/before-input-events-prevent-default-in-textfield.html [ Skip ]
 fast/events/before-input-events-prevent-default.html [ Skip ]
 fast/events/before-input-prevent-biu.html [ Skip ]
-fast/events/before-input-prevent-insert-replacement.html
+fast/events/before-input-prevent-insert-replacement.html [ Skip ]
 fast/events/before-input-prevent-typing.html [ Skip ]
 fast/events/before-input-prevent-undo.html [ Skip ]
 fast/events/before-input-replace-text-target-ranges.html [ Skip ]
@@ -1280,7 +1280,7 @@ fast/events/event-input-contentEditable.html [ Skip ]
 fast/events/focus-change-crash.html [ Skip ]
 fast/events/focus-change-crash2.html [ Skip ]
 fast/events/imagemap-norender-crash.html [ Skip ]
-fast/events/input-event-insert-replacement.html
+fast/events/input-event-insert-replacement.html [ Skip ]
 fast/events/input-events-fired-when-typing.html [ Skip ]
 fast/events/input-events-insert-newlines-after-mutation.html [ Skip ]
 fast/events/input-events-typing-data.html [ Skip ]
@@ -1346,11 +1346,11 @@ fast/forms/number/number-input-changeevent.html [ Skip ]
 fast/forms/number/number-keyoperation.html [ Skip ]
 fast/forms/onchange-enter-submit.html [ Skip ]
 fast/forms/onchange-select-check-validity.html [ Skip ]
-fast/forms/placeholder-crash-with-scrollbar-corner.html
+fast/forms/placeholder-crash-with-scrollbar-corner.html [ Skip ]
 fast/forms/radio/input-radio-checked-tab.html [ Skip ]
 fast/forms/radio/radio-group-keyboard-change-event.html [ Skip ]
 fast/forms/range/range-keyboard-oninput-event.html [ Skip ]
-fast/forms/range/range-type-change-onchange.html
+fast/forms/range/range-type-change-onchange.html [ Skip ]
 fast/forms/restore-selection-after-layout.html [ Skip ]
 fast/forms/select-accesskey.html [ Skip ]
 fast/dom/accesskey-focus-element.html [ Skip ]
@@ -1377,7 +1377,7 @@ fast/forms/textinput-not-fired-on-enter-in-input.html [ Skip ]
 fast/forms/validation-bubble-escape-key-dismiss.html [ Skip ]
 fast/forms/validation-message-maxLength.html [ Skip ]
 fast/forms/ValidityState-valueMissing-002.html [ Skip ]
-fast/frames/focus-controller-crash-change-event.html
+fast/frames/focus-controller-crash-change-event.html [ Skip ]
 fast/html/details-keyboard-show-hide.html [ Skip ]
 fast/html/details-no-summary-keyboard-show-hide.html [ Skip ]
 fast/html/transient-activation.html [ Skip ]
@@ -1449,7 +1449,7 @@ editing/pasteboard/can-read-in-dragstart-event.html [ Skip ]
 editing/pasteboard/cleanup-on-move.html [ Skip ]
 editing/pasteboard/copy-crash.html [ Skip ]
 editing/pasteboard/copy-standalone-image-crash.html [ Skip ]
-editing/pasteboard/entries-api/
+editing/pasteboard/entries-api/ [ Skip ]
 editing/pasteboard/data-transfer-items-drag-drop-entry.html [ Skip ]
 editing/pasteboard/data-transfer-items-drag-drop-file.html [ Skip ]
 editing/pasteboard/data-transfer-items-drag-drop-string.html [ Skip ]
@@ -1643,21 +1643,21 @@ http/tests/site-isolation/accessibility/remote-frame-element-frame.html [ Pass ]
 ##
 
 # <rdar://problem/14590711> CrashTracer: [USER] DumpRenderTree at WebCore: WebCore::Element::detach + 17
-svg/as-image/svg-nested.html
+svg/as-image/svg-nested.html [ Skip ]
 
 # Height of actual image is 1-2 pixels shorter than expected image.
 fast/backgrounds/gradient-background-on-subpixel-position.html [ ImageOnlyFailure ]
 
 # HTTP tests that time out:
-http/tests/security/XFrameOptions/x-frame-options-deny-delete-frame-in-load-event.html
-http/tests/local/blob/send-hybrid-blob.html
-http/tests/local/formdata/upload-events.html
-http/tests/navigation/scrollstate-after-http-equiv-refresh-fragment-identifier-2.html
-http/tests/navigation/scrollstate-after-http-equiv-refresh-fragment-identifier.html
-http/tests/navigation/scrollstate-after-http-equiv-refresh.html
-http/tests/navigation/scrollstate-after-location-reload.html
-http/tests/security/contentSecurityPolicy/media-src-allowed.html
-http/tests/canvas/webgl/origin-clean-conformance.html
+http/tests/security/XFrameOptions/x-frame-options-deny-delete-frame-in-load-event.html [ Skip ]
+http/tests/local/blob/send-hybrid-blob.html [ Skip ]
+http/tests/local/formdata/upload-events.html [ Skip ]
+http/tests/navigation/scrollstate-after-http-equiv-refresh-fragment-identifier-2.html [ Skip ]
+http/tests/navigation/scrollstate-after-http-equiv-refresh-fragment-identifier.html [ Skip ]
+http/tests/navigation/scrollstate-after-http-equiv-refresh.html [ Skip ]
+http/tests/navigation/scrollstate-after-location-reload.html [ Skip ]
+http/tests/security/contentSecurityPolicy/media-src-allowed.html [ Skip ]
+http/tests/canvas/webgl/origin-clean-conformance.html [ Skip ]
 
 # HTTP tests that fail:
 http/tests/loading/promote-img-preload-priority.html [ Failure ]
@@ -1676,16 +1676,16 @@ http/tests/security/local-user-CSS-from-remote.html [ Failure ]
 http/tests/security/svg-image-with-css-cross-domain.html [ ImageOnlyFailure ]
 
 # HTTP test that assert:
-http/tests/xmlhttprequest/access-control-repeated-failed-preflight-crash.html
+http/tests/xmlhttprequest/access-control-repeated-failed-preflight-crash.html [ Skip ]
 
 # <rdar://problem/19191637> compositing/layer-creation/deep-tree.html fails
-compositing/layer-creation/deep-tree.html
+compositing/layer-creation/deep-tree.html [ Skip ]
 
 # <rdar://problem/19193263> compositing/geometry/outline-change.html: ASSERTION FAILED: loader->identifier() in DocumentLoader::removeSubresourceLoader()
-compositing/geometry/outline-change.html
-compositing/geometry/partial-layout-update.html
-fast/dom/HTMLObjectElement/children-changed.html
-fast/events/menu-keydown-on-hidden-element.html
+compositing/geometry/outline-change.html [ Skip ]
+compositing/geometry/partial-layout-update.html [ Skip ]
+fast/dom/HTMLObjectElement/children-changed.html [ Skip ]
+fast/events/menu-keydown-on-hidden-element.html [ Skip ]
 
 # Compositing tests to triage
 webkit.org/b/178487 compositing/backing/form-controls-backing.html [ Failure ]
@@ -1796,15 +1796,15 @@ webkit.org/b/160161 mathml/presentation/bug159513.html [ Skip ]
 webkit.org/b/150394 imported/w3c/web-platform-tests/mathml/relations/text-and-math/use-typo-metrics-1.html [ ImageOnlyFailure ]
 
 # This test fails because iframes are expanded on iOS.
-webkit.org/b/149264 imported/w3c/web-platform-tests/mathml/relations/html5-tree/unique-identifier-1.html
+webkit.org/b/149264 imported/w3c/web-platform-tests/mathml/relations/html5-tree/unique-identifier-1.html [ Skip ]
 
 # These tests use key navigation to test MathML links but do not seem to work on iOS simulator.
 webkit.org/b/159662 mathml/presentation/href-enter.html [ Skip ]
 webkit.org/b/159662 mathml/presentation/href-style.html [ Skip ]
 
 # <rdar://problem/19215305> ASSERT(m_cgFont.get()) fails in FontPlatformData::ctFont()
-svg/text/svg-fallback-font-crash.html
-svg/css/font-face-variant-crash.html
+svg/text/svg-fallback-font-crash.html [ Skip ]
+svg/css/font-face-variant-crash.html [ Skip ]
 
 # storage/indexeddb tests to triage
 webkit.org/b/181752 storage/indexeddb/dont-commit-on-blocked-private.html [ Failure ]
@@ -1906,15 +1906,15 @@ webarchive/test-css-url-resources-inline-styles.html [ Failure ]
 webarchive/test-link-rel-icon.html [ Failure ]
 
 # Webarchive tests that fail due to <https://bugs.webkit.org/show_bug.cgi?id=82665>:
-http/tests/webarchive/test-css-url-encoding-shift-jis.html
-http/tests/webarchive/test-css-url-encoding-utf-8.html
-http/tests/webarchive/test-css-url-encoding.html
+http/tests/webarchive/test-css-url-encoding-shift-jis.html [ Skip ]
+http/tests/webarchive/test-css-url-encoding-utf-8.html [ Skip ]
+http/tests/webarchive/test-css-url-encoding.html [ Skip ]
 
 # XMLHttpRequest tests that fail:
 http/tests/xmlhttprequest/basic-auth-nopassword.html [ Failure ]
 
 # DeviceMotion tests that time out:
-fast/dom/DeviceMotion/no-page-cache.html
+fast/dom/DeviceMotion/no-page-cache.html [ Skip ]
 
 # LayoutTests/fast tests that fail:
 fast/autoresize/autoresize-with-iframe.html [ Failure ]
@@ -2235,88 +2235,88 @@ webkit.org/b/178739 css3/viewport-percentage-lengths/viewport-percentage-lengths
 webkit.org/b/178739 css3/viewport-percentage-lengths/viewport-percentage-lengths-resize.html [ Skip ]
 
 # LayoutTests/fast tests that timeout:
-fast/events/reveal-link-when-focused.html
-fast/dom/DeviceOrientation/add-listener-from-callback.html
-fast/dom/DeviceOrientation/basic-operation.html
-fast/dom/DeviceOrientation/multiple-frames.html
-fast/dom/DeviceOrientation/no-page-cache.html
-fast/dom/DeviceOrientation/no-synchronous-events.html
-fast/dom/DeviceOrientation/null-values.html
-fast/dom/DeviceOrientation/updates.html
-fast/dom/MutationObserver/inline-event-listener.html
-fast/dom/Window/open-window-min-size.html
-fast/dom/rtl-scroll-to-leftmost-and-resize.html
-fast/events/resize-subframe.html
-fast/files/read-blob-async.html
-fast/files/read-file-async.html
-fast/files/workers/worker-read-blob-async.html
-fast/files/workers/worker-read-blob-sync.html
-fast/files/workers/worker-read-file-async.html
-fast/files/workers/worker-read-file-sync.html
-fast/forms/interactive-validation-attach-assertion.html
-fast/images/animated-gif-body-delegated-background-image.html
-fast/images/animated-gif-body-outside-viewport.html
-fast/images/animated-gif-html-background-image.html
-fast/replaced/frame-removed-during-resize-smaller.html
-fast/workers/worker-close-more.html
-fast/workers/worker-lifecycle.html
-fast/block/positioning/vertical-lr/001.html
-fast/body-propagation/overflow/001.html
-fast/borders/0px-borders.html
-fast/box-decoration-break/box-decoration-break-rendering.html
-fast/box-shadow/border-radius-big.html
+fast/events/reveal-link-when-focused.html [ Skip ]
+fast/dom/DeviceOrientation/add-listener-from-callback.html [ Skip ]
+fast/dom/DeviceOrientation/basic-operation.html [ Skip ]
+fast/dom/DeviceOrientation/multiple-frames.html [ Skip ]
+fast/dom/DeviceOrientation/no-page-cache.html [ Skip ]
+fast/dom/DeviceOrientation/no-synchronous-events.html [ Skip ]
+fast/dom/DeviceOrientation/null-values.html [ Skip ]
+fast/dom/DeviceOrientation/updates.html [ Skip ]
+fast/dom/MutationObserver/inline-event-listener.html [ Skip ]
+fast/dom/Window/open-window-min-size.html [ Skip ]
+fast/dom/rtl-scroll-to-leftmost-and-resize.html [ Skip ]
+fast/events/resize-subframe.html [ Skip ]
+fast/files/read-blob-async.html [ Skip ]
+fast/files/read-file-async.html [ Skip ]
+fast/files/workers/worker-read-blob-async.html [ Skip ]
+fast/files/workers/worker-read-blob-sync.html [ Skip ]
+fast/files/workers/worker-read-file-async.html [ Skip ]
+fast/files/workers/worker-read-file-sync.html [ Skip ]
+fast/forms/interactive-validation-attach-assertion.html [ Skip ]
+fast/images/animated-gif-body-delegated-background-image.html [ Skip ]
+fast/images/animated-gif-body-outside-viewport.html [ Skip ]
+fast/images/animated-gif-html-background-image.html [ Skip ]
+fast/replaced/frame-removed-during-resize-smaller.html [ Skip ]
+fast/workers/worker-close-more.html [ Skip ]
+fast/workers/worker-lifecycle.html [ Skip ]
+fast/block/positioning/vertical-lr/001.html [ Skip ]
+fast/body-propagation/overflow/001.html [ Skip ]
+fast/borders/0px-borders.html [ Skip ]
+fast/box-decoration-break/box-decoration-break-rendering.html [ Skip ]
+fast/box-shadow/border-radius-big.html [ Skip ]
 
 # <rdar://problem/19226186> ASSERT(m_mainThreadLoader) fails in WorkerThreadableLoader::MainThreadBridge::MainThreadBridge()
-fast/workers/stress-js-execution.html
-fast/workers/termination-early.html
-fast/workers/termination-with-port-messages.html
-fast/workers/use-machine-stack.html
-fast/workers/worker-strict.html
-fast/workers/worker-structure-message.html
-fast/workers/worker-terminate-forever.html
-fast/workers/worker-terminate.html
-fast/workers/worker-call.html
-fast/workers/worker-timeout.html
+fast/workers/stress-js-execution.html [ Skip ]
+fast/workers/termination-early.html [ Skip ]
+fast/workers/termination-with-port-messages.html [ Skip ]
+fast/workers/use-machine-stack.html [ Skip ]
+fast/workers/worker-strict.html [ Skip ]
+fast/workers/worker-structure-message.html [ Skip ]
+fast/workers/worker-terminate-forever.html [ Skip ]
+fast/workers/worker-terminate.html [ Skip ]
+fast/workers/worker-call.html [ Skip ]
+fast/workers/worker-timeout.html [ Skip ]
 
 # <rdar://problem/19226254> ASSERT(!_chooser) in -[WebOpenPanelResultListener dealloc]
-fast/events/domactivate-sets-underlying-click-event-as-handled.html
+fast/events/domactivate-sets-underlying-click-event-as-handled.html [ Skip ]
 
 # <rdar://problem/19226320> ASSERT(useDownstream ? (result > vp) : (result < vp)) fails in WebCore::nextSentenceBoundaryInDirection()
-fast/events/special-key-events-in-input-text.html
-fast/events/key-events-in-input-text.html
+fast/events/special-key-events-in-input-text.html [ Skip ]
+fast/events/key-events-in-input-text.html [ Skip ]
 
 # <rdar://problem/11533338> fast/events/message-port-close.html hits ASSERT in Debug in MessagePort::contextDestroyed
-fast/events/message-port-context-destroyed.html
-fast/events/message-port-deleted-document.html
-fast/events/message-port-deleted-frame.html
+fast/events/message-port-context-destroyed.html [ Skip ]
+fast/events/message-port-deleted-document.html [ Skip ]
+fast/events/message-port-deleted-frame.html [ Skip ]
 
 # <rdar://problem/19226482> fast/selectors/nth-child-of-boundaries-2.html fails
-fast/selectors/nth-child-of-boundaries-2.html
-fast/selectors/nth-child-of-boundaries-3.html
-fast/selectors/not-nested.html
+fast/selectors/nth-child-of-boundaries-2.html [ Skip ]
+fast/selectors/nth-child-of-boundaries-3.html [ Skip ]
+fast/selectors/not-nested.html [ Skip ]
 
 # <rdar://problem/19226573> fast/parser/residual-style-hang.html fails
-fast/parser/residual-style-hang.html
+fast/parser/residual-style-hang.html [ Skip ]
 
 # <rdar://problem/19226623> ASSERT(isIdentifierStart<CharacterType>()) fails in CSSParser::parseIdentifier()
-fast/css/css-selector-text.html
+fast/css/css-selector-text.html [ Skip ]
 
 # <rdar://problem/19227549> ASSERT(!m_webFrame->_private->provisionalURL) fails in WebFrameLoaderClient::dispatchDidStartProvisionalLoad()
-fast/forms/validation-message-user-modify.html
+fast/forms/validation-message-user-modify.html [ Skip ]
 
 # <rdar://problem/10348432> DumpRenderTree at WebCore: WebCore::HistoryController::restoreScrollPositionAndViewState
-fast/dom/location-new-window-no-crash.html
+fast/dom/location-new-window-no-crash.html [ Skip ]
 
 # <rdar://problem/19017693> ASSERTION FAILED: [[dataSource webFrame] dataSource] || [[dataSource webFrame] provisionalDataSource] in -[ResourceLoadDelegate webView:identifierForInitialRequest:fromDataSource:]
-fast/events/message-port-inactive-document.html
+fast/events/message-port-inactive-document.html [ Skip ]
 
 # Failure as of 01/16/2015:
 svg/hixie/text/003.html [ Failure ]
 
 # Editing tests that are flaky:
-editing/selection/extend-selection-home-end.html
-editing/spelling/spellcheck-async.html
-editing/style/style-text-node-without-editable-parent.html
+editing/selection/extend-selection-home-end.html [ Skip ]
+editing/spelling/spellcheck-async.html [ Skip ]
+editing/style/style-text-node-without-editable-parent.html [ Skip ]
 
 # Editing tests that fail:
 editing/inserting/typing-at-end-of-line.html [ Failure ]
@@ -2358,7 +2358,7 @@ fast/css/object-position/object-position-img.html [ ImageOnlyFailure ]
 webkit.org/b/145432 media/video-transformed-by-javascript.html [ Failure ]
 
 # iOS tests that assert:
-platform/ios/ios/fast/text/combining-enclosing-keycap.html
+platform/ios/ios/fast/text/combining-enclosing-keycap.html [ Skip ]
 
 webkit.org/b/104954 http/tests/canvas/canvas-slow-font-loading.html [ ImageOnlyFailure ]
 
@@ -3048,7 +3048,7 @@ fast/forms/select/listbox-keydown-change-event-destroys-renderer-crash.html [ Sk
 fast/images/image-map-outline-in-positioned-container.html [ Pass ImageOnlyFailure ]
 fast/images/image-map-outline-with-paint-root-offset.html [ Pass ImageOnlyFailure ]
 fast/images/image-map-outline-with-scale-transform.html [ Pass ImageOnlyFailure ]
-fast/dom/Window/child-window-focus.html
+fast/dom/Window/child-window-focus.html [ Skip ]
 
 # iOS does not allow you to scroll by dragging the scrollbar thumb.
 webkit.org/b/157201 fast/scrolling/rtl-drag-vertical-scroller.html [ Failure ]
@@ -3068,42 +3068,42 @@ webkit.org/b/157592 fast/images/composited-animated-gif-outside-viewport.html [ 
 
 webkit.org/b/156561 perf/rel-list-remove.html [ Pass Timeout Failure ]
 
-webkit.org/b/142969 editing/spelling/copy-paste-crash.html
+webkit.org/b/142969 editing/spelling/copy-paste-crash.html [ Skip ]
 
 # This test is iPad only
 platform/ios/media/video-interruption-suspendunderlock.html [ Skip ]
 
-media/airplay-allows-buffering.html
-media/airplay-autoplay.html
-media/airplay-target-availability.html
-media/airplay-target-availability-disableremoteplayback.html
-http/tests/media/airplay-target-availability-in-cross-origin-iframe.html
-http/tests/media/airplay-select-target-in-cross-origin-iframe.html
-http/tests/media/airplay-picker-rect-in-cross-origin-iframe.html
+media/airplay-allows-buffering.html [ Skip ]
+media/airplay-autoplay.html [ Skip ]
+media/airplay-target-availability.html [ Skip ]
+media/airplay-target-availability-disableremoteplayback.html [ Skip ]
+http/tests/media/airplay-target-availability-in-cross-origin-iframe.html [ Skip ]
+http/tests/media/airplay-select-target-in-cross-origin-iframe.html [ Skip ]
+http/tests/media/airplay-picker-rect-in-cross-origin-iframe.html [ Skip ]
 
 # needs enhanced eventSender.contextMenu() return value
-webkit.org/b/116651 media/context-menu-actions.html
+webkit.org/b/116651 media/context-menu-actions.html [ Skip ]
 webkit.org/b/317174 media/context-menu-download-media-uses-media-url.html [ Skip ]
 
-media/crash-closing-page-with-media-as-plugin-fallback.html
+media/crash-closing-page-with-media-as-plugin-fallback.html [ Skip ]
 
-webkit.org/b/122042 media/media-controller-playback.html
+webkit.org/b/122042 media/media-controller-playback.html [ Skip ]
 
-media/media-event-listeners.html
-media/media-fullscreen-inline.html
+media/media-event-listeners.html [ Skip ]
+media/media-fullscreen-inline.html [ Skip ]
 
-webkit.org/b/136708 media/media-fullscreen-not-in-document.html
+webkit.org/b/136708 media/media-fullscreen-not-in-document.html [ Skip ]
 
-media/no-autoplay-with-user-gesture-requirement.html
-media/video-controls-drag.html
-media/video-fullscreen-restriction-removed.html
-media/video-playsinline.html
-media/video-remote-control-playpause.html
-media/video-webkit-playsinline.html
+media/no-autoplay-with-user-gesture-requirement.html [ Skip ]
+media/video-controls-drag.html [ Skip ]
+media/video-fullscreen-restriction-removed.html [ Skip ]
+media/video-playsinline.html [ Skip ]
+media/video-remote-control-playpause.html [ Skip ]
+media/video-webkit-playsinline.html [ Skip ]
 
 webkit.org/b/112659 media/video-playing-and-pause.html [ Skip ]
 
-webkit.org/b/112492 media/track/track-prefer-captions.html
+webkit.org/b/112492 media/track/track-prefer-captions.html [ Skip ]
 
 media/video-object-fit-change.html [ ImageOnlyFailure ]
 
@@ -3195,7 +3195,7 @@ fast/visual-viewport/client-coordinates-relative-to-layout-viewport.html [ Skip 
 fast/visual-viewport/client-rects-relative-to-layout-viewport-zoomed.html [ Skip ]
 
 # On iOS we do not visually highlight a programmatic selection
-fast/selectors/040.html
+fast/selectors/040.html [ Skip ]
 
 webkit.org/b/245610 http/tests/security/xss-DENIED-xsl-external-entity.xml [ Failure ]
 
@@ -3377,24 +3377,24 @@ imported/w3c/web-platform-tests/css/mediaqueries/device-aspect-ratio-003.html [ 
 fast/text/font-lookup-dot-prefix-case-sensitive.html [ Pass ]
 
 # Missing support for 521-bit elliptic curves.
-crypto/subtle/ec-import-pkcs8-key-export-pkcs8-key-p521.html
-crypto/subtle/ec-import-spki-key-export-spki-key-p521.html
-crypto/subtle/ecdh-generate-export-jwk-key-p521.html
-crypto/subtle/ecdh-generate-export-key-pkcs8-p521.html
-crypto/subtle/ecdh-generate-export-key-raw-p521.html
-crypto/subtle/ecdh-generate-export-key-spki-p521.html
-crypto/subtle/ecdh-generate-key-p521.html
-crypto/subtle/ecdh-import-jwk-private-key-p521.html
-crypto/subtle/ecdh-import-jwk-public-key-p521.html
-crypto/subtle/ecdh-import-pkcs8-key-p521-validate-ecprivatekey-parameters-publickey.html
-crypto/subtle/ecdh-import-pkcs8-key-p521.html
-crypto/subtle/ecdh-import-raw-key-p521.html
-crypto/subtle/ecdh-import-spki-key-p521.html
-crypto/subtle/ecdsa-generate-key-sign-verify-p521.html
-crypto/subtle/ecdsa-import-jwk-public-key-alg-521.html
-crypto/subtle/ecdsa-import-key-sign-p521.html
-crypto/subtle/ecdsa-import-key-verify-p521.html
-crypto/subtle/ecdsa-import-pkcs8-key-p521-validate-ecprivatekey-parameters-publickey.html
+crypto/subtle/ec-import-pkcs8-key-export-pkcs8-key-p521.html [ Skip ]
+crypto/subtle/ec-import-spki-key-export-spki-key-p521.html [ Skip ]
+crypto/subtle/ecdh-generate-export-jwk-key-p521.html [ Skip ]
+crypto/subtle/ecdh-generate-export-key-pkcs8-p521.html [ Skip ]
+crypto/subtle/ecdh-generate-export-key-raw-p521.html [ Skip ]
+crypto/subtle/ecdh-generate-export-key-spki-p521.html [ Skip ]
+crypto/subtle/ecdh-generate-key-p521.html [ Skip ]
+crypto/subtle/ecdh-import-jwk-private-key-p521.html [ Skip ]
+crypto/subtle/ecdh-import-jwk-public-key-p521.html [ Skip ]
+crypto/subtle/ecdh-import-pkcs8-key-p521-validate-ecprivatekey-parameters-publickey.html [ Skip ]
+crypto/subtle/ecdh-import-pkcs8-key-p521.html [ Skip ]
+crypto/subtle/ecdh-import-raw-key-p521.html [ Skip ]
+crypto/subtle/ecdh-import-spki-key-p521.html [ Skip ]
+crypto/subtle/ecdsa-generate-key-sign-verify-p521.html [ Skip ]
+crypto/subtle/ecdsa-import-jwk-public-key-alg-521.html [ Skip ]
+crypto/subtle/ecdsa-import-key-sign-p521.html [ Skip ]
+crypto/subtle/ecdsa-import-key-verify-p521.html [ Skip ]
+crypto/subtle/ecdsa-import-pkcs8-key-p521-validate-ecprivatekey-parameters-publickey.html [ Skip ]
 
 webkit.org/b/155092 js/arraybuffer-wrappers.html [ Pass Timeout ]
 
@@ -3405,8 +3405,8 @@ imported/w3c/web-platform-tests/fetch/api/basic/request-headers.any.html [ Failu
 imported/w3c/web-platform-tests/fetch/api/basic/request-headers.any.worker.html [ Failure ]
 
 # <rdar://problem/30517283>
-security/block-test.html
-security/block-test-no-port.html
+security/block-test.html [ Skip ]
+security/block-test-no-port.html [ Skip ]
 
 # <rdar://problem/29031509>
 svg/W3C-SVG-1.1/text-intro-01-t.svg [ Failure ]
@@ -3554,7 +3554,7 @@ webkit.org/b/178127 media/modern-media-controls/media-controller/media-controlle
 media/modern-media-controls/time-labels-support/elapsed-time.html [ Skip ]
 
 # Requries AVFoundation support <rdar://problem/34502208>
-http/tests/images/image-supports-video.html
+http/tests/images/image-supports-video.html [ Skip ]
 
 # User-installed font infrastructure is ony present on certain OSes.
 webkit.org/b/180062 fast/text/user-installed-fonts/shadow-family.html [ ImageOnlyFailure ]
@@ -3898,7 +3898,7 @@ webkit.org/b/212227 imported/w3c/web-platform-tests/css/css-grid/alignment/self-
 imported/w3c/web-platform-tests/css/css-grid/alignment/grid-self-baseline-not-applied-if-sizing-cyclic-dependency-001.html [ Skip ]
 imported/w3c/web-platform-tests/css/css-grid/alignment/grid-self-baseline-not-applied-if-sizing-cyclic-dependency-002.html [ Skip ]
 imported/w3c/web-platform-tests/css/css-grid/subgrid/alignment-in-subgridded-axes-001.html [ Skip ]
-webkit.org/b/266091 imported/w3c/web-platform-tests/css/css-grid/grid-lanes/intrinsic-sizing/grid-lanes-intrinsic-sizing-cols-006.html
+webkit.org/b/266091 imported/w3c/web-platform-tests/css/css-grid/grid-lanes/intrinsic-sizing/grid-lanes-intrinsic-sizing-cols-006.html [ Skip ]
 
 imported/w3c/web-platform-tests/css/css-grid/layout-algorithm/flex-sizing-rows-indefinite-height.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-grid/layout-algorithm/grid-template-flexible-rerun-track-sizing.html [ ImageOnlyFailure ]
@@ -4260,9 +4260,9 @@ webkit.org/b/240579 http/wpt/push-api [ Skip ]
 http/tests/workers/service/registerServiceWorkerClient-after-network-process-crash.html [ Skip ]
 
 # These tests finish with unfired UI script callbacks, causing crashes. See webkit.org/b/236794
-imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-047.html
-imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-048.html
-imported/w3c/web-platform-tests/html/user-activation/no-activation-thru-escape-key.html
+imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-047.html [ Skip ]
+imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-048.html [ Skip ]
+imported/w3c/web-platform-tests/html/user-activation/no-activation-thru-escape-key.html [ Skip ]
 
 webkit.org/b/240670 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/image-loading-lazy-move-into-script-disabled-iframe.html [ Pass Crash ]
 
@@ -5262,14 +5262,14 @@ animations/cross-fade-background-image.html [ ImageOnlyFailure ]
 webkit.org/b/157105 compositing/contents-scale/incremental-change.html [ Pass ImageOnlyFailure ]
 
 # jquery test that time out:
-jquery/manipulation.html
+jquery/manipulation.html [ Skip ]
 
 # storage tests that time out:
-storage/domstorage/localstorage/close-idle-localstorage-databases-immediately.html
-storage/domstorage/storage-close-database-on-idle.html
+storage/domstorage/localstorage/close-idle-localstorage-databases-immediately.html [ Skip ]
+storage/domstorage/storage-close-database-on-idle.html [ Skip ]
 
 # JavaScript tests that time out:
-js/dom/dfg-inline-resolve.html
+js/dom/dfg-inline-resolve.html [ Skip ]
 
 # Scrollbar test that fail:
 scrollbars/corner-resizer-window-inactive.html [ ImageOnlyFailure ]
@@ -5284,69 +5284,69 @@ svg/transforms/rotation-tiny-element-in-group.svg [ ImageOnlyFailure ]
 svg/transforms/translation-tiny-element.svg [ ImageOnlyFailure ]
 
 # SVG tests that time out (these require EventSender)
-svg/animations/animate-color-rgba-calcMode-discrete.html
-svg/animations/animate-end-attribute.html
-svg/animations/animate-endElement-beginElement.html
-svg/animations/animate-mpath-insert.html
-svg/animations/animate-path-nested-transforms.html
-svg/animations/animate-text-nested-transforms.html
-svg/animations/animateTransform-translate-attributetype-auto.html
-svg/animations/animateTransform-translate-invalid-attributetype.html
-svg/animations/deferred-insertion.html
-svg/animations/svgPreserveAspectRatio-animation-1.html
-svg/animations/svglength-animation-px-to-exs.html
-svg/animations/svglength-animation-px-to-percentage.html
-svg/animations/use-animate-transform-and-position.html
+svg/animations/animate-color-rgba-calcMode-discrete.html [ Skip ]
+svg/animations/animate-end-attribute.html [ Skip ]
+svg/animations/animate-endElement-beginElement.html [ Skip ]
+svg/animations/animate-mpath-insert.html [ Skip ]
+svg/animations/animate-path-nested-transforms.html [ Skip ]
+svg/animations/animate-text-nested-transforms.html [ Skip ]
+svg/animations/animateTransform-translate-attributetype-auto.html [ Skip ]
+svg/animations/animateTransform-translate-invalid-attributetype.html [ Skip ]
+svg/animations/deferred-insertion.html [ Skip ]
+svg/animations/svgPreserveAspectRatio-animation-1.html [ Skip ]
+svg/animations/svglength-animation-px-to-exs.html [ Skip ]
+svg/animations/svglength-animation-px-to-percentage.html [ Skip ]
+svg/animations/use-animate-transform-and-position.html [ Skip ]
 svg/animations/use-animate-width-and-height.html [ Skip ]
-svg/custom/gradient-attr-update.svg
-svg/custom/hit-test-path-stroke.svg
-svg/custom/hit-test-path.svg
-svg/custom/hit-test-unclosed-subpaths.svg
-svg/custom/js-update-container2.svg
-svg/custom/linking-a-03-b-preserveAspectRatio.svg
-svg/custom/linking-a-03-b-transform.svg
-svg/custom/linking-a-03-b-viewBox-transform.svg
-svg/custom/linking-a-03-b-viewBox.svg
-svg/custom/linking-a-03-b-viewTarget.svg
-svg/custom/linking-a-03-b-zoomAndPan.svg
-svg/custom/linking-uri-01-b.svg
-svg/custom/mask-changes.svg
-svg/custom/mouse-move-on-svg-container-standalone.svg
-svg/custom/mouse-move-on-svg-container.xhtml
-svg/custom/mouse-move-on-svg-root-standalone.svg
-svg/custom/mouse-move-on-svg-root.xhtml
-svg/custom/pointer-events-invalid-fill.svg
-svg/custom/pointer-events-on-rounded-rect.xhtml
-svg/custom/pointer-events-on-svg-with-pointer.xhtml
-svg/custom/pointer-events-on-svg-without-pointer.xhtml
-svg/custom/pointer-events-with-linecaps-and-miterlimits.xhtml
-svg/custom/prevent-default.svg
-svg/custom/use-event-handler-on-referenced-element.svg
-svg/custom/use-event-handler-on-use-element.svg
-svg/custom/use-instanceRoot-event-bubbling.xhtml
-svg/custom/use-move-to-offset.svg
-svg/dom/viewspec-parser-1.html
-svg/dom/viewspec-parser-2.html
-svg/dom/viewspec-parser-3.html
-svg/dom/viewspec-parser-4.html
-svg/dom/viewspec-parser-5.html
-svg/dom/viewspec-parser-6.html
-svg/dom/viewspec-parser-7.html
-svg/dynamic-updates/SVGAElement-dom-href-attr.html
-svg/dynamic-updates/SVGAElement-dom-target-attr.html
-svg/dynamic-updates/SVGAElement-svgdom-href-prop.html
-svg/dynamic-updates/SVGAElement-svgdom-target-prop.html
-svg/dynamic-updates/SVGClipPath-influences-hitTesting.html
-svg/dynamic-updates/SVGClipPathElement-css-transform-influences-hitTesting.html
-svg/dynamic-updates/SVGClipPathElement-prefixed-css-transform-influences-hitTesting.html
-svg/dynamic-updates/SVGClipPathElement-prefixed-transform-influences-hitTesting.html
-svg/dynamic-updates/SVGClipPath-prefixed-influences-hitTesting.html
-svg/dynamic-updates/SVGClipPath-prefixed-path-influences-hitTesting.html
-svg/dynamic-updates/SVGClipPathElement-transform-influences-hitTesting.html
-svg/custom/linking-a-03-b-all.svg
+svg/custom/gradient-attr-update.svg [ Skip ]
+svg/custom/hit-test-path-stroke.svg [ Skip ]
+svg/custom/hit-test-path.svg [ Skip ]
+svg/custom/hit-test-unclosed-subpaths.svg [ Skip ]
+svg/custom/js-update-container2.svg [ Skip ]
+svg/custom/linking-a-03-b-preserveAspectRatio.svg [ Skip ]
+svg/custom/linking-a-03-b-transform.svg [ Skip ]
+svg/custom/linking-a-03-b-viewBox-transform.svg [ Skip ]
+svg/custom/linking-a-03-b-viewBox.svg [ Skip ]
+svg/custom/linking-a-03-b-viewTarget.svg [ Skip ]
+svg/custom/linking-a-03-b-zoomAndPan.svg [ Skip ]
+svg/custom/linking-uri-01-b.svg [ Skip ]
+svg/custom/mask-changes.svg [ Skip ]
+svg/custom/mouse-move-on-svg-container-standalone.svg [ Skip ]
+svg/custom/mouse-move-on-svg-container.xhtml [ Skip ]
+svg/custom/mouse-move-on-svg-root-standalone.svg [ Skip ]
+svg/custom/mouse-move-on-svg-root.xhtml [ Skip ]
+svg/custom/pointer-events-invalid-fill.svg [ Skip ]
+svg/custom/pointer-events-on-rounded-rect.xhtml [ Skip ]
+svg/custom/pointer-events-on-svg-with-pointer.xhtml [ Skip ]
+svg/custom/pointer-events-on-svg-without-pointer.xhtml [ Skip ]
+svg/custom/pointer-events-with-linecaps-and-miterlimits.xhtml [ Skip ]
+svg/custom/prevent-default.svg [ Skip ]
+svg/custom/use-event-handler-on-referenced-element.svg [ Skip ]
+svg/custom/use-event-handler-on-use-element.svg [ Skip ]
+svg/custom/use-instanceRoot-event-bubbling.xhtml [ Skip ]
+svg/custom/use-move-to-offset.svg [ Skip ]
+svg/dom/viewspec-parser-1.html [ Skip ]
+svg/dom/viewspec-parser-2.html [ Skip ]
+svg/dom/viewspec-parser-3.html [ Skip ]
+svg/dom/viewspec-parser-4.html [ Skip ]
+svg/dom/viewspec-parser-5.html [ Skip ]
+svg/dom/viewspec-parser-6.html [ Skip ]
+svg/dom/viewspec-parser-7.html [ Skip ]
+svg/dynamic-updates/SVGAElement-dom-href-attr.html [ Skip ]
+svg/dynamic-updates/SVGAElement-dom-target-attr.html [ Skip ]
+svg/dynamic-updates/SVGAElement-svgdom-href-prop.html [ Skip ]
+svg/dynamic-updates/SVGAElement-svgdom-target-prop.html [ Skip ]
+svg/dynamic-updates/SVGClipPath-influences-hitTesting.html [ Skip ]
+svg/dynamic-updates/SVGClipPathElement-css-transform-influences-hitTesting.html [ Skip ]
+svg/dynamic-updates/SVGClipPathElement-prefixed-css-transform-influences-hitTesting.html [ Skip ]
+svg/dynamic-updates/SVGClipPathElement-prefixed-transform-influences-hitTesting.html [ Skip ]
+svg/dynamic-updates/SVGClipPath-prefixed-influences-hitTesting.html [ Skip ]
+svg/dynamic-updates/SVGClipPath-prefixed-path-influences-hitTesting.html [ Skip ]
+svg/dynamic-updates/SVGClipPathElement-transform-influences-hitTesting.html [ Skip ]
+svg/custom/linking-a-03-b-all.svg [ Skip ]
 
 # SVG tests that fail due to an assert failure:
-svg/custom/image-with-prefix-in-webarchive.svg
+svg/custom/image-with-prefix-in-webarchive.svg [ Skip ]
 
 # SVG tests that fail:
 imported/mozilla/svg/filters/feColorMatrix-1.svg [ ImageOnlyFailure ]
@@ -5385,7 +5385,7 @@ svg/zoom/page/zoom-svg-through-object-with-override-size.html [ Failure ]
 svg/zoom/page/zoom-svg-through-object-with-percentage-size.xhtml [ Failure ]
 
 # <rdar://problem/19223413> ASSERT(animatedTypes[0].properties.size() == 1) failed in SVGAnimatedTypeAnimator::constructFromBaseValue()
-svg/animations/unsupported-animate-element-attributes.svg
+svg/animations/unsupported-animate-element-attributes.svg [ Skip ]
 
 # Webarchive tests that fail:
 webarchive/archive-empty-frame-source.html [ Failure ]
@@ -5416,36 +5416,36 @@ http/tests/security/setDomainRelaxationForbiddenForURLScheme.html [ Failure ]
 http/tests/uri/css-href.py [ Failure ]
 
 # HTTP tests that assert:
-http/tests/security/inactive-document-with-empty-security-origin.html
-http/tests/security/popup-blocked-from-fake-event.html
-http/tests/security/popup-blocked-from-window-open.html
-http/tests/xmlhttprequest/cross-origin-no-authorization.html
+http/tests/security/inactive-document-with-empty-security-origin.html [ Skip ]
+http/tests/security/popup-blocked-from-fake-event.html [ Skip ]
+http/tests/security/popup-blocked-from-window-open.html [ Skip ]
+http/tests/xmlhttprequest/cross-origin-no-authorization.html [ Skip ]
 
 # HTTP tests that time out:
-http/tests/cache/history-only-cached-subresource-loads-max-age-https.html
-http/tests/cache/subresource-expiration-1.html
-http/tests/cache/subresource-expiration-2.html
-http/tests/loading/cross-origin-XHR-willLoadRequest.html
-http/tests/misc/acid3.html
-http/tests/navigation/javascriptlink-basic.html
-http/tests/navigation/javascriptlink-frames.html
-http/tests/navigation/javascriptlink-goback.html
-http/tests/navigation/navigation-interrupted-by-fragment.html
-http/tests/security/aboutBlank/xss-DENIED-navigate-opener-document-write.html
-http/tests/security/aboutBlank/xss-DENIED-navigate-opener-javascript-url.html
-http/tests/security/aboutBlank/xss-DENIED-set-opener.html
-http/tests/security/isolatedWorld/cross-origin-xhr.html
-http/tests/security/javascriptURL/xss-ALLOWED-from-javascript-url-window-open.html
-http/tests/security/javascriptURL/xss-ALLOWED-to-javascript-url-window-open.html
-http/tests/security/mixedContent/redirect-http-to-https-iframe-in-main-frame.html
-http/tests/security/referrer-policy-redirect-link.html
-http/tests/security/referrer-policy-redirect-link-downgrade.html
-http/tests/security/referrer-policy-rel-noreferrer.html
-http/tests/security/video-cross-origin-accessfailure.html
-http/tests/security/video-cross-origin-accesssameorigin.html
-http/tests/security/video-cross-origin-readback.html
-http/tests/websocket/tests/hybi/invalid-subprotocol-characters.html
-http/tests/xmlhttprequest/cross-origin-authorization-with-embedder.html
+http/tests/cache/history-only-cached-subresource-loads-max-age-https.html [ Skip ]
+http/tests/cache/subresource-expiration-1.html [ Skip ]
+http/tests/cache/subresource-expiration-2.html [ Skip ]
+http/tests/loading/cross-origin-XHR-willLoadRequest.html [ Skip ]
+http/tests/misc/acid3.html [ Skip ]
+http/tests/navigation/javascriptlink-basic.html [ Skip ]
+http/tests/navigation/javascriptlink-frames.html [ Skip ]
+http/tests/navigation/javascriptlink-goback.html [ Skip ]
+http/tests/navigation/navigation-interrupted-by-fragment.html [ Skip ]
+http/tests/security/aboutBlank/xss-DENIED-navigate-opener-document-write.html [ Skip ]
+http/tests/security/aboutBlank/xss-DENIED-navigate-opener-javascript-url.html [ Skip ]
+http/tests/security/aboutBlank/xss-DENIED-set-opener.html [ Skip ]
+http/tests/security/isolatedWorld/cross-origin-xhr.html [ Skip ]
+http/tests/security/javascriptURL/xss-ALLOWED-from-javascript-url-window-open.html [ Skip ]
+http/tests/security/javascriptURL/xss-ALLOWED-to-javascript-url-window-open.html [ Skip ]
+http/tests/security/mixedContent/redirect-http-to-https-iframe-in-main-frame.html [ Skip ]
+http/tests/security/referrer-policy-redirect-link.html [ Skip ]
+http/tests/security/referrer-policy-redirect-link-downgrade.html [ Skip ]
+http/tests/security/referrer-policy-rel-noreferrer.html [ Skip ]
+http/tests/security/video-cross-origin-accessfailure.html [ Skip ]
+http/tests/security/video-cross-origin-accesssameorigin.html [ Skip ]
+http/tests/security/video-cross-origin-readback.html [ Skip ]
+http/tests/websocket/tests/hybi/invalid-subprotocol-characters.html [ Skip ]
+http/tests/xmlhttprequest/cross-origin-authorization-with-embedder.html [ Skip ]
 
 http/wpt/service-workers/mac/ [ Skip ]
 
@@ -5458,7 +5458,7 @@ http/tests/webarchive/cross-origin-stylesheet-crash.html [ Failure Pass ]
 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/history-traversal/scroll-restoration-order.html [ Failure Pass ]
 
 # <rdar://problem/19270403> BitmapImage::cacheFrame(); ASSERT(isInBounds<ToType>(value)) fails in WTF::safeCast(FromType)
-fast/images/large-size-image-crash.html
+fast/images/large-size-image-crash.html [ Skip ]
 
 # LayoutTests/fast tests that fail:
 fast/backgrounds/size/contain-and-cover-zoomed.html [ Failure ]
@@ -5528,82 +5528,82 @@ fast/multicol/nested-filter-in-columns.html [ ImageOnlyFailure ]
 
 
 # LayoutTests/fast tests that time out:
-fast/borders/0px-borders-no-line-height.html
-fast/borders/bidi-002.html
-fast/box-decoration-break/box-decoration-break-parsing.html
-fast/box-shadow/basic-shadows.html
-fast/box-shadow/box-shadow-clipped-slices.html
-fast/box-sizing/box-sizing.html
-fast/dom/Geolocation/cached-position-iframe.html
-fast/dom/Geolocation/callback-exception.html
-fast/dom/Geolocation/callback-to-remote-context.html
-fast/dom/Geolocation/callback-to-remote-context2.html
-fast/dom/Geolocation/coordinates-interface-attributes.html
-fast/dom/Geolocation/delayed-permission-allowed-for-multiple-requests.html
-fast/dom/Geolocation/error-clear-watch.html
-fast/dom/Geolocation/maximum-age.html
-fast/dom/Geolocation/page-reload-cancel-permission-requests.html # TODO: marked failure above. Uncomment that line when this is resolved.
-fast/dom/Geolocation/permission-denied-already-clear-watch.html
-fast/dom/Geolocation/permission-denied-already-error.html
-fast/dom/Geolocation/permission-denied-stops-watches.html
-fast/dom/Geolocation/requestQueuingForHiddenPage.html
-fast/dom/HTMLLinkElement/prefetch.html
-fast/dom/Window/new-window-opener.html # TODO: marked failure above. Uncomment that line when this is resolved.
-fast/dom/Window/window-resize-contents.html
-fast/dom/html-link-element-activation-behavior-on-mouse-click.html
-fast/dom/remove-body-during-body-replacement2.html
-fast/events/attempt-scroll-with-no-scrollbars.html
-fast/events/page-visibility-iframe-delete-test.html
-fast/events/page-visibility-iframe-propagation-test.html
-fast/events/page-visibility-transition-test.html
+fast/borders/0px-borders-no-line-height.html [ Skip ]
+fast/borders/bidi-002.html [ Skip ]
+fast/box-decoration-break/box-decoration-break-parsing.html [ Skip ]
+fast/box-shadow/basic-shadows.html [ Skip ]
+fast/box-shadow/box-shadow-clipped-slices.html [ Skip ]
+fast/box-sizing/box-sizing.html [ Skip ]
+fast/dom/Geolocation/cached-position-iframe.html [ Skip ]
+fast/dom/Geolocation/callback-exception.html [ Skip ]
+fast/dom/Geolocation/callback-to-remote-context.html [ Skip ]
+fast/dom/Geolocation/callback-to-remote-context2.html [ Skip ]
+fast/dom/Geolocation/coordinates-interface-attributes.html [ Skip ]
+fast/dom/Geolocation/delayed-permission-allowed-for-multiple-requests.html [ Skip ]
+fast/dom/Geolocation/error-clear-watch.html [ Skip ]
+fast/dom/Geolocation/maximum-age.html [ Skip ]
+fast/dom/Geolocation/page-reload-cancel-permission-requests.html [ Skip ] # TODO: marked failure above. Uncomment that line when this is resolved.
+fast/dom/Geolocation/permission-denied-already-clear-watch.html [ Skip ]
+fast/dom/Geolocation/permission-denied-already-error.html [ Skip ]
+fast/dom/Geolocation/permission-denied-stops-watches.html [ Skip ]
+fast/dom/Geolocation/requestQueuingForHiddenPage.html [ Skip ]
+fast/dom/HTMLLinkElement/prefetch.html [ Skip ]
+fast/dom/Window/new-window-opener.html [ Skip ] # TODO: marked failure above. Uncomment that line when this is resolved.
+fast/dom/Window/window-resize-contents.html [ Skip ]
+fast/dom/html-link-element-activation-behavior-on-mouse-click.html [ Skip ]
+fast/dom/remove-body-during-body-replacement2.html [ Skip ]
+fast/events/attempt-scroll-with-no-scrollbars.html [ Skip ]
+fast/events/page-visibility-iframe-delete-test.html [ Skip ]
+fast/events/page-visibility-iframe-propagation-test.html [ Skip ]
+fast/events/page-visibility-transition-test.html [ Skip ]
 
-fast/forms/formmethod-attribute-input-2.html
-fast/forms/formtarget-attribute-input-2.html
-fast/forms/interactive-validation-formnovalidate-2.html
-fast/forms/mailto/formenctype-attribute-input-2.html
+fast/forms/formmethod-attribute-input-2.html [ Skip ]
+fast/forms/formtarget-attribute-input-2.html [ Skip ]
+fast/forms/interactive-validation-formnovalidate-2.html [ Skip ]
+fast/forms/mailto/formenctype-attribute-input-2.html [ Skip ]
 fast/history/history-scroll-restoration.html [ Skip ]
-fast/images/animate-list-item-image-assertion.html
-fast/loader/document-with-fragment-url-2.html
-fast/loader/fragment-after-redirect-gets-back-entry.html
-fast/replaced/no-focus-ring-iframe.html
-fast/shapes/shape-outside-floats/shape-outside-animation.html
-fast/shapes/shape-outside-floats/shape-outside-shape-image-threshold-animation.html
-fast/shapes/shape-outside-floats/shape-outside-shape-margin-animation.html
-fast/borders/bidi-009a.html
-fast/box-shadow/box-shadow-currentcolor.html
-fast/box-sizing/css-table-collapse.html
-fast/dom/Geolocation/delayed-permission-allowed.html
-fast/images/destroyed-image-load-event.html
-fast/box-shadow/box-shadow-obscured-backgrounds.html
-fast/box-sizing/css-table-no-collapse.html
-fast/dom/Geolocation/delayed-permission-denied-for-multiple-requests.html
+fast/images/animate-list-item-image-assertion.html [ Skip ]
+fast/loader/document-with-fragment-url-2.html [ Skip ]
+fast/loader/fragment-after-redirect-gets-back-entry.html [ Skip ]
+fast/replaced/no-focus-ring-iframe.html [ Skip ]
+fast/shapes/shape-outside-floats/shape-outside-animation.html [ Skip ]
+fast/shapes/shape-outside-floats/shape-outside-shape-image-threshold-animation.html [ Skip ]
+fast/shapes/shape-outside-floats/shape-outside-shape-margin-animation.html [ Skip ]
+fast/borders/bidi-009a.html [ Skip ]
+fast/box-shadow/box-shadow-currentcolor.html [ Skip ]
+fast/box-sizing/css-table-collapse.html [ Skip ]
+fast/dom/Geolocation/delayed-permission-allowed.html [ Skip ]
+fast/images/destroyed-image-load-event.html [ Skip ]
+fast/box-shadow/box-shadow-obscured-backgrounds.html [ Skip ]
+fast/box-sizing/css-table-no-collapse.html [ Skip ]
+fast/dom/Geolocation/delayed-permission-denied-for-multiple-requests.html [ Skip ]
 
 # LayoutTests/fast test that assert:
-fast/canvas/canvas-transform-nan.html
-fast/dom/Document/early-document-access.html
-fast/dom/MutationObserver/observer-wrapper-dropoff-transient.html
-fast/dom/Window/window-open-pending-url.html
-fast/events/message-port-no-wrapper.html
-fast/events/scroll-event-during-modal-dialog.html
-fast/forms/fallback-content-submission.html
-fast/hidpi/image-srcset-relative-svg-canvas.html
-fast/history/history-subframe-with-name.html
-fast/history/location-replace-hash.html
-fast/images/image-css3-content-data.html
-fast/inline/vertical-align-text-bottom.html
-fast/layers/overflow-scroll-auto-switch.html
-fast/loader/crash-copying-backforwardlist.html
-fast/loader/image-in-page-cache.html
-fast/loader/stateobjects/pushstate-with-fragment-urls-and-hashchange.html
-fast/multicol/flipped-blocks-border-after.html
-fast/multicol/newmulticol/direct-child-column-span-all.html
-fast/parser/xhtml-close-while-parsing.xhtml
-fast/text/selection-hard-linebreak.html
-fast/workers/wrapper-map-gc.html
-fast/events/message-port.html
-fast/loader/dynamic-iframe-extra-back-forward-item.html
-fast/history/history-back-initial-vs-final-url.html
-fast/loader/form-submission-before-load-get.html
+fast/canvas/canvas-transform-nan.html [ Skip ]
+fast/dom/Document/early-document-access.html [ Skip ]
+fast/dom/MutationObserver/observer-wrapper-dropoff-transient.html [ Skip ]
+fast/dom/Window/window-open-pending-url.html [ Skip ]
+fast/events/message-port-no-wrapper.html [ Skip ]
+fast/events/scroll-event-during-modal-dialog.html [ Skip ]
+fast/forms/fallback-content-submission.html [ Skip ]
+fast/hidpi/image-srcset-relative-svg-canvas.html [ Skip ]
+fast/history/history-subframe-with-name.html [ Skip ]
+fast/history/location-replace-hash.html [ Skip ]
+fast/images/image-css3-content-data.html [ Skip ]
+fast/inline/vertical-align-text-bottom.html [ Skip ]
+fast/layers/overflow-scroll-auto-switch.html [ Skip ]
+fast/loader/crash-copying-backforwardlist.html [ Skip ]
+fast/loader/image-in-page-cache.html [ Skip ]
+fast/loader/stateobjects/pushstate-with-fragment-urls-and-hashchange.html [ Skip ]
+fast/multicol/flipped-blocks-border-after.html [ Skip ]
+fast/multicol/newmulticol/direct-child-column-span-all.html [ Skip ]
+fast/parser/xhtml-close-while-parsing.xhtml [ Skip ]
+fast/text/selection-hard-linebreak.html [ Skip ]
+fast/workers/wrapper-map-gc.html [ Skip ]
+fast/events/message-port.html [ Skip ]
+fast/loader/dynamic-iframe-extra-back-forward-item.html [ Skip ]
+fast/history/history-back-initial-vs-final-url.html [ Skip ]
+fast/loader/form-submission-before-load-get.html [ Skip ]
 
 # LayoutTests/fast tests that are flaky:
 fast/text/soft-hyphen-min-preferred-width.html [ ImageOnlyFailure Pass ]
@@ -5613,7 +5613,7 @@ fast/text/word-space-nbsp.html [ ImageOnlyFailure Pass ]
 fast/loader/local-CSS-from-local.html [ Failure ]
 fast/loader/local-JavaScript-from-local.html [ Failure ]
 fast/loader/local-image-from-local.html [ Failure ]
-fast/dom/frame-loading-via-document-write.html # Timeout
+fast/dom/frame-loading-via-document-write.html [ Skip ] # Timeout
 
 # CSS transform tests that fail:
 transforms/2d/transform-fixed-container.html [ Failure ]
@@ -5699,28 +5699,28 @@ editing/undo/undo-typing-001.html [ Failure ]
 # editing/caret/ios/emoji.html [ Failure ] # TODO: marked Skip above. Uncomment this line when that is resolved.
 
 # Editing tests that time out:
-editing/selection/designmode-no-caret.html
-editing/selection/move-by-character-brute-force.html
-editing/spelling/delete-into-misspelled-word.html
-editing/spelling/inline-spelling-markers-hidpi.html
-editing/spelling/inline-spelling-markers.html
-editing/spelling/grammar-edit-word.html
-editing/spelling/grammar.html
-editing/spelling/markers.html
-editing/spelling/move-cursor-around-misspelled-word.html
-editing/spelling/spellcheck-attribute.html
-editing/spelling/spelling-attribute-at-child.html
-editing/spelling/spelling-attribute-change.html
-editing/spelling/spelling-backspace-between-lines.html
-editing/spelling/spelling-backward.html
-editing/spelling/spelling-exactly-selected-word.html
-editing/spelling/spelling-hasspellingmarker.html
-editing/spelling/spelling-insert-html.html
-editing/spelling/spelling-linebreak.html
-editing/spelling/spelling-marker-description.html
-editing/spelling/spelling-with-punctuation-selection.html
-editing/spelling/spelling-with-whitespace-selection.html
-editing/unsupported-content/list-delete-001.html
+editing/selection/designmode-no-caret.html [ Skip ]
+editing/selection/move-by-character-brute-force.html [ Skip ]
+editing/spelling/delete-into-misspelled-word.html [ Skip ]
+editing/spelling/inline-spelling-markers-hidpi.html [ Skip ]
+editing/spelling/inline-spelling-markers.html [ Skip ]
+editing/spelling/grammar-edit-word.html [ Skip ]
+editing/spelling/grammar.html [ Skip ]
+editing/spelling/markers.html [ Skip ]
+editing/spelling/move-cursor-around-misspelled-word.html [ Skip ]
+editing/spelling/spellcheck-attribute.html [ Skip ]
+editing/spelling/spelling-attribute-at-child.html [ Skip ]
+editing/spelling/spelling-attribute-change.html [ Skip ]
+editing/spelling/spelling-backspace-between-lines.html [ Skip ]
+editing/spelling/spelling-backward.html [ Skip ]
+editing/spelling/spelling-exactly-selected-word.html [ Skip ]
+editing/spelling/spelling-hasspellingmarker.html [ Skip ]
+editing/spelling/spelling-insert-html.html [ Skip ]
+editing/spelling/spelling-linebreak.html [ Skip ]
+editing/spelling/spelling-marker-description.html [ Skip ]
+editing/spelling/spelling-with-punctuation-selection.html [ Skip ]
+editing/spelling/spelling-with-whitespace-selection.html [ Skip ]
+editing/unsupported-content/list-delete-001.html [ Skip ]
 
 # Editing tests that are flaky:
 editing/spelling/spelling.html [ Failure Pass ]
@@ -5732,8 +5732,8 @@ editing/unsupported-content/table-type-after.html [ Failure Pass ]
 platform/ios/ios/storage/domstorage/5mb-quota-expected.txt [ Failure ]
 
 # iOS-specific tests that time out or fail in WebKitTestRunner due to missing DRT-specific functionality:
-platform/ios/ios/fast/coordinates/touch-event-zoomed.html
-platform/ios/ios/fast/coordinates/touch-event.html
+platform/ios/ios/fast/coordinates/touch-event-zoomed.html [ Skip ]
+platform/ios/ios/fast/coordinates/touch-event.html [ Skip ]
 
 # Flaky tests:
 fast/text/atsui-kerning-and-ligatures.html [ Failure Pass ]
@@ -5813,29 +5813,29 @@ fast/text/zero-font-size.html [ Failure Pass ]
 transitions/svg-text-shadow-transition.html [ Failure Pass ]
 
 # Flaky tests that time out:
-fast/dom/Geolocation/delayed-permission-denied.html
-fast/dom/Geolocation/disconnected-frame-permission-denied.html
-fast/dom/Geolocation/error.html
-fast/loader/frames-with-unload-handlers-in-page-cache.html
-http/tests/cache/cache-redirections.html
-js/promises-tests/promises-tests-2-2-6.html
-js/promises-tests/promises-tests-2-2-7.html
-js/promises-tests/promises-tests-2-3-1.html
-js/promises-tests/promises-tests-2-3-2.html
-js/promises-tests/promises-tests-2-3-3.html
-js/promises-tests/promises-tests-2-3-4.html
+fast/dom/Geolocation/delayed-permission-denied.html [ Skip ]
+fast/dom/Geolocation/disconnected-frame-permission-denied.html [ Skip ]
+fast/dom/Geolocation/error.html [ Skip ]
+fast/loader/frames-with-unload-handlers-in-page-cache.html [ Skip ]
+http/tests/cache/cache-redirections.html [ Skip ]
+js/promises-tests/promises-tests-2-2-6.html [ Skip ]
+js/promises-tests/promises-tests-2-2-7.html [ Skip ]
+js/promises-tests/promises-tests-2-3-1.html [ Skip ]
+js/promises-tests/promises-tests-2-3-2.html [ Skip ]
+js/promises-tests/promises-tests-2-3-3.html [ Skip ]
+js/promises-tests/promises-tests-2-3-4.html [ Skip ]
 
 # Flaky tests that assert/time out:
-fast/loader/form-submission-before-load-post.html
-fast/loader/frame-location-change-not-added-to-history.html
-fast/loader/frame-src-change-added-to-history.html
-fast/loader/frame-src-change-not-added-to-history.html
-fast/loader/stateobjects/pushstate-clears-forward-history.html
-http/tests/cookies/double-quoted-value-with-semi-colon.html
-storage/domstorage/sessionstorage/window-open.html
-transitions/cubic-bezier-overflow-transform.html
-transitions/default-timing-function.html
-transitions/interrupt-transform-transition.html
+fast/loader/form-submission-before-load-post.html [ Skip ]
+fast/loader/frame-location-change-not-added-to-history.html [ Skip ]
+fast/loader/frame-src-change-added-to-history.html [ Skip ]
+fast/loader/frame-src-change-not-added-to-history.html [ Skip ]
+fast/loader/stateobjects/pushstate-clears-forward-history.html [ Skip ]
+http/tests/cookies/double-quoted-value-with-semi-colon.html [ Skip ]
+storage/domstorage/sessionstorage/window-open.html [ Skip ]
+transitions/cubic-bezier-overflow-transform.html [ Skip ]
+transitions/default-timing-function.html [ Skip ]
+transitions/interrupt-transform-transition.html [ Skip ]
 
 # Crashes when running all tests, but not by itself.
 webkit.org/b/141436 fast/loader/subframe-navigate-during-main-frame-load.html [ Crash Pass ]
@@ -5903,30 +5903,30 @@ fast/masking/clip-path-on-subpixel-position.html [ ImageOnlyFailure ]
 fast/text/hidpi-text-selection-gap-between-words.html [ ImageOnlyFailure ]
 
 # Time outs as of 06/08/2015
-fast/images/animated-gif-iframe-webkit-transform.html
-http/tests/cache/disk-cache/disk-cache-validation-no-body.html
-loader/navigation-policy/should-open-external-urls/main-frame-click.html
-loader/navigation-policy/should-open-external-urls/subframe-click-target-self.html
-loader/navigation-policy/should-open-external-urls/subframe-click-target-top.html
-loader/navigation-policy/should-open-external-urls/user-gesture-target-blank-with-flag-from-subframe.html
-loader/navigation-policy/should-open-external-urls/user-gesture-target-blank-with-flag.html
-loader/navigation-policy/should-open-external-urls/user-gesture-target-blank-without-flag-from-subframe.html
-loader/navigation-policy/should-open-external-urls/user-gesture-target-blank-without-flag.html
-loader/navigation-policy/should-open-external-urls/user-gesture-window-open-with-flag-from-subframe.html
-loader/navigation-policy/should-open-external-urls/user-gesture-window-open-with-flag.html
-loader/navigation-policy/should-open-external-urls/user-gesture-window-open-without-flag-from-subframe.html
-loader/navigation-policy/should-open-external-urls/user-gesture-window-open-without-flag.html
-transitions/transition-hit-test-transform.html
+fast/images/animated-gif-iframe-webkit-transform.html [ Skip ]
+http/tests/cache/disk-cache/disk-cache-validation-no-body.html [ Skip ]
+loader/navigation-policy/should-open-external-urls/main-frame-click.html [ Skip ]
+loader/navigation-policy/should-open-external-urls/subframe-click-target-self.html [ Skip ]
+loader/navigation-policy/should-open-external-urls/subframe-click-target-top.html [ Skip ]
+loader/navigation-policy/should-open-external-urls/user-gesture-target-blank-with-flag-from-subframe.html [ Skip ]
+loader/navigation-policy/should-open-external-urls/user-gesture-target-blank-with-flag.html [ Skip ]
+loader/navigation-policy/should-open-external-urls/user-gesture-target-blank-without-flag-from-subframe.html [ Skip ]
+loader/navigation-policy/should-open-external-urls/user-gesture-target-blank-without-flag.html [ Skip ]
+loader/navigation-policy/should-open-external-urls/user-gesture-window-open-with-flag-from-subframe.html [ Skip ]
+loader/navigation-policy/should-open-external-urls/user-gesture-window-open-with-flag.html [ Skip ]
+loader/navigation-policy/should-open-external-urls/user-gesture-window-open-without-flag-from-subframe.html [ Skip ]
+loader/navigation-policy/should-open-external-urls/user-gesture-window-open-without-flag.html [ Skip ]
+transitions/transition-hit-test-transform.html [ Skip ]
 
 # Flaky as of 06/09/2015
 fast/images/animated-gif-no-layout.html [ ImageOnlyFailure Pass ]
-http/tests/cache/disk-cache/disk-cache-validation.html
+http/tests/cache/disk-cache/disk-cache-validation.html [ Skip ]
 
 # Failures as of 06/09/2015
 editing/input/emacs-ctrl-o.html [ Failure ]
 
 # Time outs as of 06/09/2015
-fast/images/animated-gif-webkit-transform.html
+fast/images/animated-gif-webkit-transform.html [ Skip ]
 
 # Latest iOS failures as of Sept 1, 2015
 webkit.org/b/149087 http/tests/cache/disk-cache/disk-cache-validation-back-navigation-policy.html [ Pass Timeout ]
@@ -6014,9 +6014,9 @@ css3/filters/backdrop/backdrop-filter-with-border-radius-and-reflection.html [ I
 css3/filters/backdrop/backdrop-filter-with-clip-path.html [ ImageOnlyFailure ]
 svg/animations/mozilla/animateMotion-mpath-pathLength-1.svg [ ImageOnlyFailure ]
 
-webkit.org/b/192045 css3/filters/blur-filter-page-scroll-parents.html
-webkit.org/b/192045 css3/filters/blur-filter-page-scroll-self.html
-webkit.org/b/192045 css3/filters/blur-filter-page-scroll.html
+webkit.org/b/192045 css3/filters/blur-filter-page-scroll-parents.html [ Skip ]
+webkit.org/b/192045 css3/filters/blur-filter-page-scroll-self.html [ Skip ]
+webkit.org/b/192045 css3/filters/blur-filter-page-scroll.html [ Skip ]
 
 webkit.org/b/229829 css3/filters/canvas-with-filter-after-repaint.html [ Pass ImageOnlyFailure ]
 
@@ -7392,13 +7392,13 @@ webkit.org/b/269760 mathml/presentation/scripts-underover.html [ Failure ]
 webkit.org/b/271018 imported/w3c/web-platform-tests/svg/painting/reftests/marker-path-012.svg [ ImageOnlyFailure ]
 
 # rdar://124987637 (REGRESSION (iOS 17.4): 7 imported/w3c/web-platform-tests/css/css-break/out-of-flow-in-multicolumn-*.html layout tests are flaky/consistent ImageOnlyFailures.)
-imported/w3c/web-platform-tests/css/css-break/out-of-flow-in-multicolumn-048.html
-imported/w3c/web-platform-tests/css/css-break/out-of-flow-in-multicolumn-049.html
-imported/w3c/web-platform-tests/css/css-break/out-of-flow-in-multicolumn-050.html
-imported/w3c/web-platform-tests/css/css-break/out-of-flow-in-multicolumn-053.html
-imported/w3c/web-platform-tests/css/css-break/out-of-flow-in-multicolumn-057.html
-imported/w3c/web-platform-tests/css/css-break/out-of-flow-in-multicolumn-067.html
-imported/w3c/web-platform-tests/css/css-break/out-of-flow-in-multicolumn-068.html
+imported/w3c/web-platform-tests/css/css-break/out-of-flow-in-multicolumn-048.html [ Skip ]
+imported/w3c/web-platform-tests/css/css-break/out-of-flow-in-multicolumn-049.html [ Skip ]
+imported/w3c/web-platform-tests/css/css-break/out-of-flow-in-multicolumn-050.html [ Skip ]
+imported/w3c/web-platform-tests/css/css-break/out-of-flow-in-multicolumn-053.html [ Skip ]
+imported/w3c/web-platform-tests/css/css-break/out-of-flow-in-multicolumn-057.html [ Skip ]
+imported/w3c/web-platform-tests/css/css-break/out-of-flow-in-multicolumn-067.html [ Skip ]
+imported/w3c/web-platform-tests/css/css-break/out-of-flow-in-multicolumn-068.html [ Skip ]
 # rdar://125193148 (REGRESSION (iOS 17.4): 40+ layout tests consistently failing.)
 imported/w3c/web-platform-tests/css/css-position/multicol/vlr-ltr-ltr-in-multicols.html [ Pass ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-position/multicol/vrl-ltr-ltr-in-multicols.html [ Pass ImageOnlyFailure ]

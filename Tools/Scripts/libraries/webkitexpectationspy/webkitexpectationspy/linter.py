@@ -310,6 +310,27 @@ class UniversalSkipRule(LintRule):
         return warnings, []
 
 
+class ExplicitResultsRule(LintRule):
+    """Flag lines that name no result, which webkitpy skips and this package reads as Pass."""
+
+    def check(self, entries, filepath, version_tokens):
+        warnings = []
+        fixes = []
+        for entry in entries:
+            if entry['expectations']:
+                continue
+            warnings.append(LintWarning(
+                filepath,
+                entry['line_number'],
+                'Test "{}" names no result; add [ Skip ], which is how webkitpy reads it'.format(entry['test_pattern']),
+                fixable=True,
+            ))
+            body, hash_mark, comment = entry['raw_line'].partition('#')
+            stripped = body.rstrip()
+            fixes.append(LineFix(entry['line_number'], stripped + ' [ Skip ]' + body[len(stripped):] + hash_mark + comment))
+        return warnings, fixes
+
+
 def _make_reorder_fix(entry, version_tokens):
     config_tokens = entry['config_tokens']
     if not config_tokens:
@@ -370,7 +391,7 @@ class ExpectationsLinter:
         self._parsed_entries = []
         self._warnings = []
         self._fixes = []
-        self._rules = rules or _DEFAULT_RULES
+        self._rules = rules or (_DEFAULT_RULES + [ExplicitResultsRule()] if suite and suite.requires_results else _DEFAULT_RULES)
 
     def lint(self):
         self._parse_all_lines()

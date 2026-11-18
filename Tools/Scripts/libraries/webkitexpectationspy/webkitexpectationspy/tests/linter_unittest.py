@@ -6,6 +6,8 @@
 import unittest
 
 from webkitexpectationspy.linter import ExpectationsLinter
+from webkitexpectationspy.suites.api_tests import APITestSuite
+from webkitexpectationspy.suites.layout_tests import LayoutTestSuite
 
 
 class ExpectationsLinterTest(unittest.TestCase):
@@ -269,6 +271,26 @@ rdar://5 TestAaa [ Skip ]'''
         relinter.lint()
         self.assertEqual(once, relinter.generate_sorted_content())
 
+
+class ExplicitResultsRuleTest(unittest.TestCase):
+
+    def lint(self, content, suite):
+        linter = ExpectationsLinter(content, 'TestExpectations', suite)
+        return linter, [w for w in linter.lint() if 'names no result' in w.message]
+
+    def test_layout_line_without_results_is_flagged(self):
+        _, warnings = self.lint('fast/a.html\n', LayoutTestSuite())
+        self.assertEqual([(w.line_number, w.fixable) for w in warnings], [(1, True)])
+
+    def test_fix_adds_skip_before_the_comment(self):
+        linter, _ = self.lint('webkit.org/b/1 [ Debug ] fast/a.html # flaky\nfast/b.html\n', LayoutTestSuite())
+        self.assertEqual(linter.apply_fixes(), 'webkit.org/b/1 [ Debug ] fast/a.html [ Skip ] # flaky\nfast/b.html [ Skip ]\n')
+
+    def test_layout_line_with_results_is_not_flagged(self):
+        self.assertEqual(self.lint('fast/a.html [ Pass ]\n[ Debug ] fast/b.html [ Slow ]\n', LayoutTestSuite())[1], [])
+
+    def test_api_line_without_results_is_not_flagged(self):
+        self.assertEqual(self.lint('TestWebKitAPI.A.b\n', APITestSuite())[1], [])
 
 if __name__ == '__main__':
     unittest.main()

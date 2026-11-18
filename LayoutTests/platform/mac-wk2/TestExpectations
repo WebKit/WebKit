@@ -215,104 +215,104 @@ http/tests/eventloop/idle-callback-not-affected-by-timers-in-cross-origin.html [
 
 # WebKitTestRunner needs a more complete implementation of eventSender
 # <https://bugs.webkit.org/show_bug.cgi?id=42194>
-editing/mac/pasteboard/dataTransfer-set-data-file-url.html
-editing/mac/pasteboard/drag-selections-to-contenteditable.html
-editing/pasteboard/4947130.html
-editing/pasteboard/cleanup-on-move.html
-editing/pasteboard/copy-standalone-image-crash.html
+editing/mac/pasteboard/dataTransfer-set-data-file-url.html [ Skip ]
+editing/mac/pasteboard/drag-selections-to-contenteditable.html [ Skip ]
+editing/pasteboard/4947130.html [ Skip ]
+editing/pasteboard/cleanup-on-move.html [ Skip ]
+editing/pasteboard/copy-standalone-image-crash.html [ Skip ]
 # webkit.org/b/309400 Times out due to web archive UTI issue on modern macOS
 editing/pasteboard/copy-standalone-image.html [ Skip ]
-editing/pasteboard/drag-drop-paragraph-crasher.html
-editing/pasteboard/emacs-cntl-y-001.html
-editing/pasteboard/emacs-ctrl-k-y-001.html
-editing/pasteboard/files-during-page-drags.html
-editing/pasteboard/get-data-text-plain-drop.html
-editing/pasteboard/smart-drag-drop.html
-editing/pasteboard/smart-paste-004.html
-editing/pasteboard/subframe-dragndrop-1.html
-editing/selection/4895428-1.html
-editing/selection/4895428-4.html
-editing/selection/5354455-2.html
-editing/selection/caret-after-keypress.html
-editing/selection/contains-boundaries.html
-editing/selection/doubleclick-beside-cr-span.html
-editing/selection/doubleclick-whitespace.html
-editing/selection/drag-to-contenteditable-iframe.html
-editing/selection/mixed-editability-10.html
-editing/selection/select-out-of-editable.html
-editing/spelling/spellcheck-paste-continuous-disabled.html
-editing/spelling/spellcheck-paste-disabled.html
-editing/spelling/spellcheck-paste.html
-fast/dom/vertical-scrollbar-in-rtl.html
-fast/events/5056619.html
-fast/events/autoscroll-in-textfield.html
-fast/events/bogus-dropEffect-effectAllowed.html
-fast/events/content-changed-during-drop.html
-fast/events/context-onmousedown-event.html
-fast/events/crash-on-mutate-during-drop.html
-fast/events/drag-and-drop-dataTransfer-types-nocrash.html
-fast/events/drag-and-drop-fire-drag-dragover.html
-fast/events/drag-and-drop-link-containing-block.html
-fast/events/drag-and-drop-link-fast-multiple-times-does-not-crash.html
-fast/events/drag-and-drop-link.html
-fast/events/drag-and-drop.html
-fast/events/drag-image-with-border-image.html
-fast/events/drag-in-frames.html
-fast/events/drag-parent-node.html
-fast/events/draggable-div-nodata.html
-fast/events/dropzone-001.html
-fast/events/dropzone-002.html
-fast/events/dropzone-003.html
-fast/events/dropzone-005.html
-fast/events/keydown-numpad-keys.html
-fast/events/mouseup-from-button2.html
-fast/events/node-event-anchor-lock.html
-fast/events/ondragenter.html
-fast/events/right-click-focus.html
-fast/events/standalone-image-drag-to-editable.html
-fast/events/wheel/continuous-platform-wheelevent-in-scrolling-div.html
-fast/events/wheel/wheelevent-direction-inverted-from-device.html
-fast/events/wheel/wheelevent-in-horizontal-scrollbar-in-rtl.html
-fast/events/wheel/wheelevent-in-vertical-scrollbar-in-rtl.html
-fast/forms/drag-into-textarea.html
-fast/forms/drag-out-of-textarea.html
-fast/forms/listbox-typeahead-cyrillic.html
-fast/forms/listbox-typeahead-greek.html
-fast/forms/select-type-ahead-non-latin.html
-fast/history/window-open.html
-fast/lists/drag-into-marker.html
-fast/repaint/japanese-rl-selection-repaint.html
-fast/repaint/repaint-across-writing-mode-boundary.html
-http/tests/local/drag-over-remote-content.html
-http/tests/misc/bubble-drag-events.html
-http/tests/security/drag-drop-same-unique-origin.html
-http/tests/security/drag-over-remote-content-iframe.html
+editing/pasteboard/drag-drop-paragraph-crasher.html [ Skip ]
+editing/pasteboard/emacs-cntl-y-001.html [ Skip ]
+editing/pasteboard/emacs-ctrl-k-y-001.html [ Skip ]
+editing/pasteboard/files-during-page-drags.html [ Skip ]
+editing/pasteboard/get-data-text-plain-drop.html [ Skip ]
+editing/pasteboard/smart-drag-drop.html [ Skip ]
+editing/pasteboard/smart-paste-004.html [ Skip ]
+editing/pasteboard/subframe-dragndrop-1.html [ Skip ]
+editing/selection/4895428-1.html [ Skip ]
+editing/selection/4895428-4.html [ Skip ]
+editing/selection/5354455-2.html [ Skip ]
+editing/selection/caret-after-keypress.html [ Skip ]
+editing/selection/contains-boundaries.html [ Skip ]
+editing/selection/doubleclick-beside-cr-span.html [ Skip ]
+editing/selection/doubleclick-whitespace.html [ Skip ]
+editing/selection/drag-to-contenteditable-iframe.html [ Skip ]
+editing/selection/mixed-editability-10.html [ Skip ]
+editing/selection/select-out-of-editable.html [ Skip ]
+editing/spelling/spellcheck-paste-continuous-disabled.html [ Skip ]
+editing/spelling/spellcheck-paste-disabled.html [ Skip ]
+editing/spelling/spellcheck-paste.html [ Skip ]
+fast/dom/vertical-scrollbar-in-rtl.html [ Skip ]
+fast/events/5056619.html [ Skip ]
+fast/events/autoscroll-in-textfield.html [ Skip ]
+fast/events/bogus-dropEffect-effectAllowed.html [ Skip ]
+fast/events/content-changed-during-drop.html [ Skip ]
+fast/events/context-onmousedown-event.html [ Skip ]
+fast/events/crash-on-mutate-during-drop.html [ Skip ]
+fast/events/drag-and-drop-dataTransfer-types-nocrash.html [ Skip ]
+fast/events/drag-and-drop-fire-drag-dragover.html [ Skip ]
+fast/events/drag-and-drop-link-containing-block.html [ Skip ]
+fast/events/drag-and-drop-link-fast-multiple-times-does-not-crash.html [ Skip ]
+fast/events/drag-and-drop-link.html [ Skip ]
+fast/events/drag-and-drop.html [ Skip ]
+fast/events/drag-image-with-border-image.html [ Skip ]
+fast/events/drag-in-frames.html [ Skip ]
+fast/events/drag-parent-node.html [ Skip ]
+fast/events/draggable-div-nodata.html [ Skip ]
+fast/events/dropzone-001.html [ Skip ]
+fast/events/dropzone-002.html [ Skip ]
+fast/events/dropzone-003.html [ Skip ]
+fast/events/dropzone-005.html [ Skip ]
+fast/events/keydown-numpad-keys.html [ Skip ]
+fast/events/mouseup-from-button2.html [ Skip ]
+fast/events/node-event-anchor-lock.html [ Skip ]
+fast/events/ondragenter.html [ Skip ]
+fast/events/right-click-focus.html [ Skip ]
+fast/events/standalone-image-drag-to-editable.html [ Skip ]
+fast/events/wheel/continuous-platform-wheelevent-in-scrolling-div.html [ Skip ]
+fast/events/wheel/wheelevent-direction-inverted-from-device.html [ Skip ]
+fast/events/wheel/wheelevent-in-horizontal-scrollbar-in-rtl.html [ Skip ]
+fast/events/wheel/wheelevent-in-vertical-scrollbar-in-rtl.html [ Skip ]
+fast/forms/drag-into-textarea.html [ Skip ]
+fast/forms/drag-out-of-textarea.html [ Skip ]
+fast/forms/listbox-typeahead-cyrillic.html [ Skip ]
+fast/forms/listbox-typeahead-greek.html [ Skip ]
+fast/forms/select-type-ahead-non-latin.html [ Skip ]
+fast/history/window-open.html [ Skip ]
+fast/lists/drag-into-marker.html [ Skip ]
+fast/repaint/japanese-rl-selection-repaint.html [ Skip ]
+fast/repaint/repaint-across-writing-mode-boundary.html [ Skip ]
+http/tests/local/drag-over-remote-content.html [ Skip ]
+http/tests/misc/bubble-drag-events.html [ Skip ]
+http/tests/security/drag-drop-same-unique-origin.html [ Skip ]
+http/tests/security/drag-over-remote-content-iframe.html [ Skip ]
 
 # [WK2] [Mac] Spellcheck tests don't seem to work
-webkit.org/b/105616 editing/spelling/context-menu-suggestions-multiword-selection.html
-webkit.org/b/105616 editing/spelling/context-menu-suggestions-subword-selection.html
-webkit.org/b/105616 editing/spelling/copy-paste-crash.html
-webkit.org/b/105616 editing/spelling/delete-into-misspelled-word.html
-webkit.org/b/105616 editing/spelling/editing-multiple-words-with-markers.html
-webkit.org/b/105616 editing/spelling/editing-word-with-marker-2.html
-webkit.org/b/105616 editing/spelling/move-cursor-around-misspelled-word.html
-webkit.org/b/105616 editing/spelling/spelling-changed-text.html
-webkit.org/b/105616 editing/spelling/spelling-backspace-between-lines.html
-webkit.org/b/105616 editing/spelling/design-mode-spellcheck-off.html
-webkit.org/b/105616 editing/spelling/spellcheck-attribute.html
-webkit.org/b/105616 editing/spelling/spelling-attribute-at-child.html
-webkit.org/b/105616 editing/spelling/spelling-attribute-change.html
-webkit.org/b/105616 editing/spelling/spelling-backward.html
-webkit.org/b/105616 editing/spelling/spelling-double-clicked-word.html
-webkit.org/b/105616 editing/spelling/spelling-exactly-selected-word.html
-webkit.org/b/105616 editing/spelling/spelling-hasspellingmarker.html
-webkit.org/b/105616 editing/spelling/spelling-linebreak.html
-webkit.org/b/105616 editing/spelling/spelling-with-punctuation-selection.html
-webkit.org/b/105616 editing/spelling/spelling-with-whitespace-selection.html
-webkit.org/b/105616 editing/spelling/grammar.html
-webkit.org/b/105616 editing/spelling/markers.html
-webkit.org/b/105616 editing/spelling/retro-correction-spelling-markers.html
-webkit.org/b/105616 editing/spelling/spelling-markers-after-pasting-sentence.html
+webkit.org/b/105616 editing/spelling/context-menu-suggestions-multiword-selection.html [ Skip ]
+webkit.org/b/105616 editing/spelling/context-menu-suggestions-subword-selection.html [ Skip ]
+webkit.org/b/105616 editing/spelling/copy-paste-crash.html [ Skip ]
+webkit.org/b/105616 editing/spelling/delete-into-misspelled-word.html [ Skip ]
+webkit.org/b/105616 editing/spelling/editing-multiple-words-with-markers.html [ Skip ]
+webkit.org/b/105616 editing/spelling/editing-word-with-marker-2.html [ Skip ]
+webkit.org/b/105616 editing/spelling/move-cursor-around-misspelled-word.html [ Skip ]
+webkit.org/b/105616 editing/spelling/spelling-changed-text.html [ Skip ]
+webkit.org/b/105616 editing/spelling/spelling-backspace-between-lines.html [ Skip ]
+webkit.org/b/105616 editing/spelling/design-mode-spellcheck-off.html [ Skip ]
+webkit.org/b/105616 editing/spelling/spellcheck-attribute.html [ Skip ]
+webkit.org/b/105616 editing/spelling/spelling-attribute-at-child.html [ Skip ]
+webkit.org/b/105616 editing/spelling/spelling-attribute-change.html [ Skip ]
+webkit.org/b/105616 editing/spelling/spelling-backward.html [ Skip ]
+webkit.org/b/105616 editing/spelling/spelling-double-clicked-word.html [ Skip ]
+webkit.org/b/105616 editing/spelling/spelling-exactly-selected-word.html [ Skip ]
+webkit.org/b/105616 editing/spelling/spelling-hasspellingmarker.html [ Skip ]
+webkit.org/b/105616 editing/spelling/spelling-linebreak.html [ Skip ]
+webkit.org/b/105616 editing/spelling/spelling-with-punctuation-selection.html [ Skip ]
+webkit.org/b/105616 editing/spelling/spelling-with-whitespace-selection.html [ Skip ]
+webkit.org/b/105616 editing/spelling/grammar.html [ Skip ]
+webkit.org/b/105616 editing/spelling/markers.html [ Skip ]
+webkit.org/b/105616 editing/spelling/retro-correction-spelling-markers.html [ Skip ]
+webkit.org/b/105616 editing/spelling/spelling-markers-after-pasting-sentence.html [ Skip ]
 webkit.org/b/105616 editing/mac/spelling/autocorrection-delete.html [ Failure ]
 webkit.org/b/105616 editing/mac/spelling/autocorrection-removing-underline-after-paste.html [ Failure ]
 webkit.org/b/105616 editing/mac/spelling/autocorrection-removing-underline.html [ Failure ]
@@ -335,10 +335,10 @@ webkit.org/b/105616 editing/spelling/spelling-markers-in-overlapping-lines-large
 # <https://bugs.webkit.org/show_bug.cgi?id=68552>
 editing/pasteboard/drag-and-drop-color-input-events.html [ Skip ]
 editing/pasteboard/drag-and-drop-color-input.html [ Skip ]
-fast/events/clear-drag-state.html
-fast/events/drag-and-drop-subframe-dataTransfer.html
-fast/events/drag-selects-image.html
-fast/events/remove-target-with-shadow-in-drag.html
+fast/events/clear-drag-state.html [ Skip ]
+fast/events/drag-and-drop-subframe-dataTransfer.html [ Skip ]
+fast/events/drag-selects-image.html [ Skip ]
+fast/events/remove-target-with-shadow-in-drag.html [ Skip ]
 
 fast/events/before-input-events-prevent-drag-and-drop.html [ Failure ]
 fast/events/input-events-drag-and-drop.html [ Failure ]
@@ -351,10 +351,10 @@ fast/forms/file/file-input-empty-validation.html [ Failure ]
 
 # Missing functionality of textInputController
 # https://bugs.webkit.org/show_bug.cgi?id=89401
-editing/mac/input/insert-dictated-text.html
-editing/mac/input/crash-for-empty-text-alternative.html
-editing/mac/input/edit-dictated-text-with-alternative.html
-editing/mac/attributed-string/
+editing/mac/input/insert-dictated-text.html [ Skip ]
+editing/mac/input/crash-for-empty-text-alternative.html [ Skip ]
+editing/mac/input/edit-dictated-text-with-alternative.html [ Skip ]
+editing/mac/attributed-string/ [ Skip ]
 
 # This test times out on Mac WK2 every time.
 webkit.org/b/89199 editing/spelling/grammar-edit-word.html [ Skip ]
@@ -364,18 +364,18 @@ webkit.org/b/90156 editing/mac/spelling/autocorrection-blockquote-crash.html [ F
 webkit.org/b/95043 http/tests/security/local-user-CSS-from-remote.html [ Failure ]
 
 # These tests test the Shadow DOM based HTML form validation UI but Mac WK2 is using native dialogs instead.
-fast/forms/validation-message-on-listbox.html
-fast/forms/validation-message-on-menulist.html
-fast/forms/validation-message-on-radio.html
-fast/forms/validation-message-on-checkbox.html
-fast/forms/validation-message-on-range.html
-fast/forms/validation-message-clone.html
-fast/forms/validation-message-in-relative-body.html
-fast/forms/validation-message-appearance.html
-fast/forms/validation-message-on-textarea.html
+fast/forms/validation-message-on-listbox.html [ Skip ]
+fast/forms/validation-message-on-menulist.html [ Skip ]
+fast/forms/validation-message-on-radio.html [ Skip ]
+fast/forms/validation-message-on-checkbox.html [ Skip ]
+fast/forms/validation-message-on-range.html [ Skip ]
+fast/forms/validation-message-clone.html [ Skip ]
+fast/forms/validation-message-in-relative-body.html [ Skip ]
+fast/forms/validation-message-appearance.html [ Skip ]
+fast/forms/validation-message-on-textarea.html [ Skip ]
 
 # All spatial navigation tests fail on Mac WK2
-webkit.org/b/96438 fast/spatial-navigation
+webkit.org/b/96438 fast/spatial-navigation [ Skip ]
 
 fast/images/text-recognition [ Pass ]
 fast/images/text-recognition/ios [ Skip ]
@@ -521,33 +521,33 @@ webkit.org/b/309824 [ x86_64 ] media/media-source/media-source-h264-bframes-lowf
 
 # WebKitTestRunner needs textInputController
 # <https://bugs.webkit.org/show_bug.cgi?id=42337>
-editing/mac/input/5576619.html
-editing/mac/input/bold-node.html
-editing/mac/input/caret-primary-bidi.html
-editing/mac/input/firstrectforcharacterrange-caret-in-br.html
-editing/mac/input/firstrectforcharacterrange-plain.html
-editing/mac/input/firstrectforcharacterrange-styled.html
-editing/mac/input/firstrectforcharacterrange-vertical.html
-editing/mac/input/hangul-enter-confirms-and-sends-keypress.html
-editing/mac/input/insert-delete-smp-symbol.html
-editing/mac/input/kotoeri-enter-to-confirm-and-newline.html
-editing/mac/input/range-for-empty-document.html
-editing/mac/input/replace-invalid-range.html
-editing/mac/input/secure-input.html
-editing/mac/input/text-input-controller.html
-editing/mac/input/text-input-controller-no-editable-no-crash.html
-editing/mac/input/wrapped-line-char-rect.html
-editing/mac/input/NSBackgroundColor-transparent.html
-editing/mac/selection/25228.html
+editing/mac/input/5576619.html [ Skip ]
+editing/mac/input/bold-node.html [ Skip ]
+editing/mac/input/caret-primary-bidi.html [ Skip ]
+editing/mac/input/firstrectforcharacterrange-caret-in-br.html [ Skip ]
+editing/mac/input/firstrectforcharacterrange-plain.html [ Skip ]
+editing/mac/input/firstrectforcharacterrange-styled.html [ Skip ]
+editing/mac/input/firstrectforcharacterrange-vertical.html [ Skip ]
+editing/mac/input/hangul-enter-confirms-and-sends-keypress.html [ Skip ]
+editing/mac/input/insert-delete-smp-symbol.html [ Skip ]
+editing/mac/input/kotoeri-enter-to-confirm-and-newline.html [ Skip ]
+editing/mac/input/range-for-empty-document.html [ Skip ]
+editing/mac/input/replace-invalid-range.html [ Skip ]
+editing/mac/input/secure-input.html [ Skip ]
+editing/mac/input/text-input-controller.html [ Skip ]
+editing/mac/input/text-input-controller-no-editable-no-crash.html [ Skip ]
+editing/mac/input/wrapped-line-char-rect.html [ Skip ]
+editing/mac/input/NSBackgroundColor-transparent.html [ Skip ]
+editing/mac/selection/25228.html [ Skip ]
 
 # WebKitTestRunner needs testRunner.setCallCloseOnWebViews
 # http://webkit.org/b/46714
-accessibility/search-predicate-visited-links.html
+accessibility/search-predicate-visited-links.html [ Skip ]
 
 # AX tests that require hit testing do not work in WK2.
-webkit.org/b/71298 accessibility/mac/html-slider-indicator.html
-webkit.org/b/71298 accessibility/mac/listbox-hit-test.html
-webkit.org/b/71298 accessibility/mac/iframe-with-title-correct-hierarchy.html
+webkit.org/b/71298 accessibility/mac/html-slider-indicator.html [ Skip ]
+webkit.org/b/71298 accessibility/mac/listbox-hit-test.html [ Skip ]
+webkit.org/b/71298 accessibility/mac/iframe-with-title-correct-hierarchy.html [ Skip ]
 
 ### END OF (4) Features that are not supported in WebKit2 and likely never will be
 ########################################
@@ -1293,7 +1293,7 @@ webkit.org/b/320158 [ x86_64 ] fast/canvas/hdr/float16-canvas-imagedata-small-ac
 fast/text/web-font-load-invisible-during-loading.html [ Failure ]
 
 # rdar://107460135 ([UI-side compositing] svg/compositing/outermost-svg-with-border-padding.html fails)
-svg/compositing/outermost-svg-with-border-padding.html
+svg/compositing/outermost-svg-with-border-padding.html [ Skip ]
 
 # rdar://103256284 (REGRESSION : [ GuardMalloc ] com.apple.WebCore: WebCore::RunLoopObserver::invalidate :: dyld config: DYLD_INSERT_LIBRARIES=libgmalloc.dylib DYLD_LIBRARY_PATH=buildToTest DYLD_FRAMEWORK_PATH=buildToTest)
 imported/mozilla/svg/as-image/img-simple-6.html [ Crash ]

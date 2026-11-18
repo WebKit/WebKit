@@ -232,7 +232,7 @@ fast/shadow-dom/touch-event-on-text-assigned-to-slot.html [ Skip ]
 webkit.org/b/141467 fast/multicol/pagination/LeftToRight-tb-hittest.html [ Failure ]
 
 # Path::addPath needs to be implemented
-webkit.org/b/130464 fast/canvas/canvas-path-addPath.html
+webkit.org/b/130464 fast/canvas/canvas-path-addPath.html [ Skip ]
 
 # Requires ENABLE(MEDIA_CAPTURE)
 webkit.org/b/85958 fast/forms/file/file-input-capture.html [ Failure ]
@@ -816,7 +816,7 @@ webkit.org/b/142479 svg/text/select-textLength-spacingAndGlyphs-squeeze-4.svg [ 
 webkit.org/b/142479 svg/text/select-textLength-spacingAndGlyphs-stretch-2.svg [ Failure ]
 webkit.org/b/142479 svg/text/select-textLength-spacingAndGlyphs-stretch-3.svg [ Failure ]
 
-webkit.org/b/144763 fast/events/scroll-in-scaled-page-with-overflow-hidden.html
+webkit.org/b/144763 fast/events/scroll-in-scaled-page-with-overflow-hidden.html [ Skip ]
 
 # web-platform-tests XHR tests
 imported/w3c/web-platform-tests/xhr/event-readystatechange-loaded.any.js [ Slow ]

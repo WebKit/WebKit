@@ -194,7 +194,7 @@ webkit.org/b/157179 fast/events/input-events-drag-and-drop.html [ Crash Failure 
 webkit.org/b/157179 fast/events/input-events-insert-by-drop.html [ Crash Failure ]
 webkit.org/b/157179 fast/events/ondragenter.html [ Crash Failure ]
 webkit.org/b/157179 fast/events/ondrop-text-html.html [ Crash Failure ]
-webkit.org/b/157179 fast/events/remove-target-with-shadow-in-drag.html
+webkit.org/b/157179 fast/events/remove-target-with-shadow-in-drag.html [ Skip ]
 webkit.org/b/157179 fast/events/selectstart-by-drag.html [ Crash Failure ]
 webkit.org/b/157179 fast/events/setDragImage-in-document-element-crash.html [ Crash Failure ]
 webkit.org/b/157179 fast/events/shift-drag-selection-on-link-triggers-drag-n-drop.html [ Crash Failure ]

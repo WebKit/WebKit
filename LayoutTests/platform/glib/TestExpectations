@@ -1491,8 +1491,8 @@ webkit.org/b/233478 imported/w3c/web-platform-tests/css/css-transforms/backface-
 
 imported/w3c/web-platform-tests/css/css-transforms/css-scale-of-clip-path.html [ ImageOnlyFailure ]
 
-webkit.org/b/230277 imported/w3c/web-platform-tests/css/css-transforms/composited-under-rotateY-180deg-clip.html
-webkit.org/b/230277 imported/w3c/web-platform-tests/css/css-transforms/composited-under-rotateY-180deg.html
+webkit.org/b/230277 imported/w3c/web-platform-tests/css/css-transforms/composited-under-rotateY-180deg-clip.html [ Skip ]
+webkit.org/b/230277 imported/w3c/web-platform-tests/css/css-transforms/composited-under-rotateY-180deg.html [ Skip ]
 
 webkit.org/b/315151 imported/w3c/web-platform-tests/css/css-transforms/huge-length-tiny-scale.html [ Pass Timeout ]
 
@@ -1813,7 +1813,7 @@ webkit.org/b/213699 fast/mediacapturefromelement/CanvasCaptureMediaStream-imageb
 webkit.org/b/307032 imported/w3c/web-platform-tests/mediacapture-streams/MediaStream-removetrack.https.html [ Timeout Failure ]
 
 # No support for Matroska container in GStreamer port.
-http/wpt/mediarecorder/MediaRecorder-matroska-AV-audio-video-dataavailable.html
+http/wpt/mediarecorder/MediaRecorder-matroska-AV-audio-video-dataavailable.html [ Skip ]
 
 webkit.org/b/293119 http/wpt/mediarecorder/MediaRecorder-webm-AV-audio-video-dataavailable.html [ Failure ]
 
@@ -2268,10 +2268,10 @@ http/tests/security/dataTransfer-set-data-file-url.html [ WontFix Pass ]
 webkit.org/b/132914 http/tests/security/drag-drop-local-file.html [ Failure ]
 
 # JSC does not support setIsolatedWorldSecurityOrigin
-webkit.org/b/61540 http/tests/security/isolatedWorld/cross-origin-xhr.html
+webkit.org/b/61540 http/tests/security/isolatedWorld/cross-origin-xhr.html [ Skip ]
 
 # Requires CACHE_PARTITIONING or an alternative implementation
-webkit.org/b/168366 http/tests/security/credentials-iframes.html
+webkit.org/b/168366 http/tests/security/credentials-iframes.html [ Skip ]
 
 # This is a Mac specific feature
 webkit.org/b/168466 http/tests/security/bypassing-cors-checks-for-extension-urls.html [ Skip ]
@@ -3138,10 +3138,10 @@ webkit.org/b/203448 imported/w3c/web-platform-tests/css/css-position/position-ab
 webkit.org/b/215799 imported/w3c/web-platform-tests/css/css-content/quotes-005.html [ ImageOnlyFailure ]
 
 # WIRELESS_PLAYBACK_TARGET not enabled.
-media/airplay-target-availability.html
-http/tests/media/airplay-target-availability-in-cross-origin-iframe.html
-http/tests/media/airplay-select-target-in-cross-origin-iframe.html
-http/tests/media/airplay-picker-rect-in-cross-origin-iframe.html
+media/airplay-target-availability.html [ Skip ]
+http/tests/media/airplay-target-availability-in-cross-origin-iframe.html [ Skip ]
+http/tests/media/airplay-select-target-in-cross-origin-iframe.html [ Skip ]
+http/tests/media/airplay-picker-rect-in-cross-origin-iframe.html [ Skip ]
 webkit.org/b/205112 media/remoteplayback-cancel-invalid.html [ Skip ]
 webkit.org/b/205112 media/remoteplayback-prompt.html [ Skip ]
 webkit.org/b/205112 media/remoteplayback-target-availability.html [ Skip ]
@@ -4315,8 +4315,8 @@ webkit.org/b/191885 fast/inline/simple-intruding-floats3.html [ Failure ]
 webkit.org/b/195259 compositing/geometry/fixed-position-composited-page-scale-smaller-than-viewport.html [ ImageOnlyFailure Pass ]
 
 # Requires mix-blend-mode
-webkit.org/b/276086 imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/basic-cue-rendering.html
-webkit.org/b/276086 imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/white-space-pre-line.html
+webkit.org/b/276086 imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/basic-cue-rendering.html [ Skip ]
+webkit.org/b/276086 imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/white-space-pre-line.html [ Skip ]
 
 imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/align_center_position_50.html [ Pass ]
 imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/align_center_position_gt_50.html [ Pass ]

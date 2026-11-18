@@ -131,14 +131,14 @@ webkit.org/b/298585 fast/forms/validation-message-on-textarea.html [ Failure ]
 webkit.org/b/85958 fast/forms/file/file-input-capture.html [ Skip ]
 
 # Link target
-webkit.org/b/212083 loader/navigation-policy/should-open-external-urls/user-gesture-target-blank-with-flag-from-subframe.html
-webkit.org/b/212083 loader/navigation-policy/should-open-external-urls/user-gesture-target-blank-with-flag.html
-webkit.org/b/212083 loader/navigation-policy/should-open-external-urls/user-gesture-target-blank-without-flag-from-subframe.html
-webkit.org/b/212083 loader/navigation-policy/should-open-external-urls/user-gesture-target-blank-without-flag.html
-webkit.org/b/212083 loader/navigation-policy/should-open-external-urls/user-gesture-window-open-with-flag-from-subframe.html
-webkit.org/b/212083 loader/navigation-policy/should-open-external-urls/user-gesture-window-open-with-flag.html
-webkit.org/b/212083 loader/navigation-policy/should-open-external-urls/user-gesture-window-open-without-flag-from-subframe.html
-webkit.org/b/212083 loader/navigation-policy/should-open-external-urls/user-gesture-window-open-without-flag.html
+webkit.org/b/212083 loader/navigation-policy/should-open-external-urls/user-gesture-target-blank-with-flag-from-subframe.html [ Skip ]
+webkit.org/b/212083 loader/navigation-policy/should-open-external-urls/user-gesture-target-blank-with-flag.html [ Skip ]
+webkit.org/b/212083 loader/navigation-policy/should-open-external-urls/user-gesture-target-blank-without-flag-from-subframe.html [ Skip ]
+webkit.org/b/212083 loader/navigation-policy/should-open-external-urls/user-gesture-target-blank-without-flag.html [ Skip ]
+webkit.org/b/212083 loader/navigation-policy/should-open-external-urls/user-gesture-window-open-with-flag-from-subframe.html [ Skip ]
+webkit.org/b/212083 loader/navigation-policy/should-open-external-urls/user-gesture-window-open-with-flag.html [ Skip ]
+webkit.org/b/212083 loader/navigation-policy/should-open-external-urls/user-gesture-window-open-without-flag-from-subframe.html [ Skip ]
+webkit.org/b/212083 loader/navigation-policy/should-open-external-urls/user-gesture-window-open-without-flag.html [ Skip ]
 
 webkit.org/b/212202 compositing/fixed-with-main-thread-scrolling.html [ Timeout ]
 
@@ -258,52 +258,52 @@ fast/loader/plain-text-document-dark-mode.html [ Pass ]
 
 # WebKitTestRunner needs testRunner.abortModal
 # <https://bugs.webkit.org/show_bug.cgi?id=69548>
-fast/events/beforeunload-showModalDialog.html
-fast/events/pagehide-showModalDialog.html
-fast/events/scroll-event-during-modal-dialog.html
-fast/events/show-modal-dialog-onblur-onfocus.html
-fast/events/unload-showModalDialog.html
+fast/events/beforeunload-showModalDialog.html [ Skip ]
+fast/events/pagehide-showModalDialog.html [ Skip ]
+fast/events/scroll-event-during-modal-dialog.html [ Skip ]
+fast/events/show-modal-dialog-onblur-onfocus.html [ Skip ]
+fast/events/unload-showModalDialog.html [ Skip ]
 
 # WebKitTestRunner needs an implementation of eventSender.beginDragWithFiles
 # https://bugs.webkit.org/show_bug.cgi?id=64285
-fast/events/data-transfer-files-attribute-identity.html
-fast/events/drag-file-crash.html
-fast/events/drag-to-navigate.html
-fast/events/drop-handler-should-not-stop-navigate.html
-fast/events/drop-with-file-paths.html
-fast/events/dropzone-004.html
-fast/events/file-input-hidden-in-ondrop.html
-fast/events/input-element-display-none-in-dragleave-crash.html
-fast/events/only-valid-drop-targets-receive-file-drop.html
-fast/events/prevent-drag-to-navigate.html
+fast/events/data-transfer-files-attribute-identity.html [ Skip ]
+fast/events/drag-file-crash.html [ Skip ]
+fast/events/drag-to-navigate.html [ Skip ]
+fast/events/drop-handler-should-not-stop-navigate.html [ Skip ]
+fast/events/drop-with-file-paths.html [ Skip ]
+fast/events/dropzone-004.html [ Skip ]
+fast/events/file-input-hidden-in-ondrop.html [ Skip ]
+fast/events/input-element-display-none-in-dragleave-crash.html [ Skip ]
+fast/events/only-valid-drop-targets-receive-file-drop.html [ Skip ]
+fast/events/prevent-drag-to-navigate.html [ Skip ]
 fast/forms/file/file-input-empty-validation.html [ Skip ]
 fast/forms/file/file-input-reset-validation.html [ Skip ]
 
 # WebKitTestRunner needs textInputController
 # <https://bugs.webkit.org/show_bug.cgi?id=42337>
-fast/events/ime-composition-events-001.html
+fast/events/ime-composition-events-001.html [ Skip ]
 
 # testRunner.setWindowIsKey() has no effect on the web process side in WebKit2
-webkit.org/b/183144 fast/dom/Window/window-focus-self.html
-webkit.org/b/183144 fast/events/blur-focus-window-should-blur-focus-element.html
-webkit.org/b/183144 fast/selectors/querySelector-window-inactive.html
-webkit.org/b/183144 fast/selectors/selection-window-inactive.html
-webkit.org/b/183144 scrollbars/corner-resizer-window-inactive.html
-webkit.org/b/183144 fast/selectors/selection-window-inactive-stroke-color-expected.html
-webkit.org/b/183144 fast/selectors/selection-window-inactive-stroke-color.html
-webkit.org/b/183144 fast/selectors/selection-window-inactive-text-shadow-expected.html
-webkit.org/b/183144 fast/selectors/selection-window-inactive-text-shadow.html
-webkit.org/b/183144 fast/selectors/text-field-selection-window-inactive-stroke-color-expected.html
-webkit.org/b/183144 fast/selectors/text-field-selection-window-inactive-stroke-color.html
-webkit.org/b/183144 fast/selectors/text-field-selection-window-inactive-text-shadow-expected.html
-webkit.org/b/183144 fast/selectors/text-field-selection-window-inactive-text-shadow.html
+webkit.org/b/183144 fast/dom/Window/window-focus-self.html [ Skip ]
+webkit.org/b/183144 fast/events/blur-focus-window-should-blur-focus-element.html [ Skip ]
+webkit.org/b/183144 fast/selectors/querySelector-window-inactive.html [ Skip ]
+webkit.org/b/183144 fast/selectors/selection-window-inactive.html [ Skip ]
+webkit.org/b/183144 scrollbars/corner-resizer-window-inactive.html [ Skip ]
+webkit.org/b/183144 fast/selectors/selection-window-inactive-stroke-color-expected.html [ Skip ]
+webkit.org/b/183144 fast/selectors/selection-window-inactive-stroke-color.html [ Skip ]
+webkit.org/b/183144 fast/selectors/selection-window-inactive-text-shadow-expected.html [ Skip ]
+webkit.org/b/183144 fast/selectors/selection-window-inactive-text-shadow.html [ Skip ]
+webkit.org/b/183144 fast/selectors/text-field-selection-window-inactive-stroke-color-expected.html [ Skip ]
+webkit.org/b/183144 fast/selectors/text-field-selection-window-inactive-stroke-color.html [ Skip ]
+webkit.org/b/183144 fast/selectors/text-field-selection-window-inactive-text-shadow-expected.html [ Skip ]
+webkit.org/b/183144 fast/selectors/text-field-selection-window-inactive-text-shadow.html [ Skip ]
 
 # eventSender.dragMode is unimplemented in WKTR
 # Mac: https://bugs.webkit.org/show_bug.cgi?id=68552
-fast/events/controlclick-no-onclick.html
-fast/events/moving-text-should-fire-drop-and-dragend-events.html
-fast/events/moving-text-should-fire-drop-and-dragend-events-2.html
-fast/events/ondrop-text-html.html
+fast/events/controlclick-no-onclick.html [ Skip ]
+fast/events/moving-text-should-fire-drop-and-dragend-events.html [ Skip ]
+fast/events/moving-text-should-fire-drop-and-dragend-events-2.html [ Skip ]
+fast/events/ondrop-text-html.html [ Skip ]
 
 # WTR needs an implementation for eventSender.continuousMouseScrollBy
 # https://bugs.webkit.org/show_bug.cgi?id=69417
