@@ -161,7 +161,7 @@ JSC_DEFINE_HOST_FUNCTION(webAssemblyCompileFunc, (JSGlobalObject* globalObject, 
         }
     }
     auto compileOptions = WebAssemblyCompileOptions::tryCreate(globalObject, compileOptionsObject);
-    RETURN_IF_EXCEPTION(scope, { });
+    RETURN_IF_EXCEPTION(scope, JSValue::encode(promise->rejectWithCaughtException(vm, scope)));
 
     scope.release();
     JSWebAssembly::webAssemblyModuleValidateAsync(globalObject, promise, WTF::move(source), WTF::move(compileOptions));
@@ -389,7 +389,7 @@ JSC_DEFINE_HOST_FUNCTION(webAssemblyInstantiateFunc, (JSGlobalObject* globalObje
         instantiate(vm, globalObject, promise, uncheckedDowncast<JSWebAssemblyModule>(firstArgument), importObject, WTF::move(provider), JSWebAssemblyInstance::createPrivateModuleKey(), Resolve::WithInstance, Wasm::CreationMode::FromJS, /* alwaysAsync */ true);
     else {
         auto compileOptions = WebAssemblyCompileOptions::tryCreate(globalObject, compileOptionsObject);
-        RETURN_IF_EXCEPTION(scope, { });
+        RETURN_IF_EXCEPTION(scope, JSValue::encode(promise->rejectWithCaughtException(vm, scope)));
         compileAndInstantiate(vm, globalObject, promise, JSWebAssemblyInstance::createPrivateModuleKey(), firstArgument, importObject, WTF::move(provider), WTF::move(compileOptions), Resolve::WithModuleAndInstance, Wasm::CreationMode::FromJS);
     }
     RELEASE_AND_RETURN(scope, JSValue::encode(promise));
