@@ -71,6 +71,31 @@ public func makePNGData(size: CGSize, color: CocoaColor) -> Data {
     TestCocoaImageUtilities.pngData(size: size, color: color)
 }
 
+/// PDF data for a single-page document of the given size, filled with a single color.
+///
+/// - Parameters:
+///   - size: The size of the page, in points.
+///   - color: The color to fill the page with.
+/// - Returns: The encoded PDF data.
+public func makePDFData(size: CGSize, color: CocoaColor) -> Data {
+    let data = NSMutableData()
+    var mediaBox = CGRect(origin: .zero, size: size)
+
+    guard let consumer = CGDataConsumer(data: data as CFMutableData),
+        let context = unsafe CGContext(consumer: consumer, mediaBox: &mediaBox, nil)
+    else {
+        preconditionFailure("Could not create a PDF context for a \(size) page.")
+    }
+
+    context.beginPDFPage(nil)
+    context.setFillColor(color.cgColor)
+    context.fill(mediaBox)
+    context.endPDFPage()
+    context.closePDF()
+
+    return data as Data
+}
+
 /// The color of a single pixel of an image.
 ///
 /// - Parameters:
