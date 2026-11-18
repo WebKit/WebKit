@@ -78,6 +78,7 @@ public:
     unsigned autoRepeatEmptyTracksCount(Style::GridTrackSizingDirection) const;
     NODELETE bool hasAutoRepeatEmptyTracks(Style::GridTrackSizingDirection) const;
     NODELETE bool isEmptyAutoRepeatTrack(Style::GridTrackSizingDirection, unsigned) const;
+    bool containsEmptyAutoRepeatTrack(Style::GridTrackSizingDirection, const GridSpan& position) const;
 
     NODELETE OrderedTrackIndexSet* autoRepeatEmptyTracks(Style::GridTrackSizingDirection) const LIFETIME_BOUND;
 

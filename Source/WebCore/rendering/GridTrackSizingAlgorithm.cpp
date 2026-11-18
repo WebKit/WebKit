@@ -702,7 +702,7 @@ void GridTrackSizingAlgorithm::convertIndefiniteItemsToDefiniteGridLanes(const S
             auto endLine = trackIndex + indefiniteItem.first;
             auto itemSpan = GridSpan::translatedDefiniteGridSpan(trackIndex, endLine);
 
-            if (endLine > allTracks.size())
+            if (endLine > allTracks.size() || m_grid.containsEmptyAutoRepeatTrack(m_direction, itemSpan))
                 continue;
 
             // The spec requires items with a span of 1 to be handled earlier.
@@ -1533,6 +1533,8 @@ void IndefiniteSizeStrategy::accumulateFlexFractionGridLanes(double& flexFractio
             continue;
 
         span = GridSpan::translatedDefiniteGridSpan(flexTrackIndex, flexTrackIndex + spanLength);
+        if (m_algorithm.grid().containsEmptyAutoRepeatTrack(direction, span))
+            continue;
 
         // Removing gutters from the max-content contribution of the item, so they are not taken into account in FindFrUnitSize().
         auto leftOverSpace = maxContentContributionForGridItem(*gridItem, gridLayoutState) - renderGrid()->guttersSize(direction, span.startLine(), span.integerSpan(), availableSpace());

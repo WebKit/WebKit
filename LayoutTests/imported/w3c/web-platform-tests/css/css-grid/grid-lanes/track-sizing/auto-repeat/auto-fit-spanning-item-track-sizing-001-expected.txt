@@ -1,0 +1,7 @@
+
+PASS A spanning item doesn't size a track from a position that spans a collapsed track of the repetition
+PASS A spanning item doesn't size a track after the repetition from a position that spans a collapsed track
+PASS A spanning item doesn't size a row from a position that spans a collapsed row
+PASS A spanning item doesn't size flexible tracks from a position that spans a collapsed track
+PASS The max-content width of a container with flexible tracks comes from positions that don't span a collapsed track
+

@@ -194,6 +194,12 @@ GridLanesLayout::StackingAxisPlacement GridLanesLayout::updateRunningPositions(c
     return { previousRunningPosition, marginBoxEnd };
 }
 
+// "A collapsed grid track cannot accept placement of auto-placed items."
+bool GridLanesLayout::tracksAcceptAutoPlacedItem(unsigned startLine, unsigned trackCount) const
+{
+    return !m_renderGrid->currentGrid().containsEmptyAutoRepeatTrack(gridAxisDirection(), GridSpan::translatedDefiniteGridSpan(startLine, startLine + trackCount));
+}
+
 LayoutUnit GridLanesLayout::maxRunningPositionForSpan(unsigned startLine, unsigned spanLength) const
 {
     LayoutUnit maxPosition;
@@ -216,6 +222,11 @@ GridArea GridLanesLayout::gridAreaForIndefiniteGridAxisItem(const RenderBox& ite
         if (startingLine + itemSpanLength > gridAxisTracksCount())
             startingLine = 0;
 
+        for (unsigned attempt = 0; attempt < gridAxisTracksCount() && !tracksAcceptAutoPlacedItem(startingLine, itemSpanLength); ++attempt) {
+            if (++startingLine + itemSpanLength > gridAxisTracksCount())
+                startingLine = 0;
+        }
+
         auto gridAxisPosition = GridSpan::translatedDefiniteGridSpan(startingLine, startingLine + itemSpanLength);
         return gridAreaFromGridAxisSpan(gridAxisPosition);
     }
@@ -226,14 +237,18 @@ GridArea GridLanesLayout::gridAreaForIndefiniteGridAxisItem(const RenderBox& ite
     // Step 1: Find the absolute shortest position across all tracks
     auto maxStartingLine = gridAxisLines - itemSpanLength;
     LayoutUnit absoluteShortest = LayoutUnit::max();
-    for (unsigned i = 0; i < maxStartingLine; i++)
-        absoluteShortest = std::min(absoluteShortest, maxRunningPositionForSpan(i, itemSpanLength));
+    for (unsigned startingLine = 0; startingLine < maxStartingLine; ++startingLine) {
+        if (tracksAcceptAutoPlacedItem(startingLine, itemSpanLength))
+            absoluteShortest = std::min(absoluteShortest, maxRunningPositionForSpan(startingLine, itemSpanLength));
+    }
 
     // Step 2: Find first position within tolerance of shortest, starting from the cursor position.
     unsigned smallestMaxPosLine = 0;
     auto autoFlowNextCursorShift = (m_autoFlowNextCursor > maxStartingLine) ? 0 : m_autoFlowNextCursor;
-    for (unsigned i = 0; i < maxStartingLine; i++) {
-        auto startingLine = (autoFlowNextCursorShift + i) % maxStartingLine;
+    for (unsigned offsetFromCursor = 0; offsetFromCursor < maxStartingLine; ++offsetFromCursor) {
+        auto startingLine = (autoFlowNextCursorShift + offsetFromCursor) % maxStartingLine;
+        if (!tracksAcceptAutoPlacedItem(startingLine, itemSpanLength))
+            continue;
 
         auto maxPosForCurrentStartingLine = maxRunningPositionForSpan(startingLine, itemSpanLength);
 

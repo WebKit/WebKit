@@ -89,6 +89,7 @@ private:
     LayoutUnit stackingAxisMarginBoxForItem(const RenderBox& gridItem);
     StackingAxisPlacement updateRunningPositions(const RenderBox& gridItem, const GridArea&);
     NODELETE LayoutUnit maxRunningPositionForSpan(unsigned startLine, unsigned spanLength) const;
+    bool tracksAcceptAutoPlacedItem(unsigned startLine, unsigned trackCount) const;
     NODELETE inline Style::GridTrackSizingDirection gridAxisDirection() const;
 
     unsigned gridAxisTracksCount() const { return static_cast<unsigned>(m_runningPositions.size()); }
