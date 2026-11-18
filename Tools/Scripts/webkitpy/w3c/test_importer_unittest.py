@@ -119,9 +119,8 @@ class TestImporterTest(unittest.TestCase):
         importer = TestImporter(port, ['web-platform-tests/test1', 'web-platform-tests/test2'], self._parse_options(['-n', '-d', 'w3c', '-s', FAKE_SOURCE_DIR]))
         importer.do_import()
 
-        self.assertTrue(host.filesystem.exists("/mock-checkout/LayoutTests/w3c/web-platform-tests/test1/__init__.py"))
-        self.assertTrue(host.filesystem.exists("/mock-checkout/LayoutTests/w3c/web-platform-tests/test2/__init__.py"))
-        self.assertTrue(host.filesystem.getsize("/mock-checkout/LayoutTests/w3c/web-platform-tests/test1/__init__.py") > 0)
+        self.assertEqual(host.filesystem.read_binary_file("/mock-checkout/LayoutTests/w3c/web-platform-tests/test1/__init__.py"), b'')
+        self.assertEqual(host.filesystem.read_binary_file("/mock-checkout/LayoutTests/w3c/web-platform-tests/test2/__init__.py"), b'NOTEMPTY')
 
     def test_import_dir_not_web_platform_tests(self):
         FAKE_FILES = {}
@@ -535,7 +534,7 @@ class TestImporterTest(unittest.TestCase):
         self.assertIn("imported/w3c/web-platform-tests/cssom-view/old-test.html", tests_options)
         self.assertNotIn("imported/w3c/web-platform-tests/cssom/old-test.html", tests_options)
 
-    def test_initpy_generation(self):
+    def test_no_initpy_generation(self):
         FAKE_FILES = {
             '/mock-checkout/w3c-tests/csswg-tests/.gitmodules': '[submodule "tools/resources"]\n	path = tools/resources\n	url = https://github.com/w3c/testharness.js.git\n  ignore = dirty\n',
             f'{FAKE_WPT_DIR}/.gitmodules': '[submodule "tools/resources"]\n	path = tools/resources\n	url = https://github.com/w3c/testharness.js.git\n  ignore = dirty\n',
@@ -550,8 +549,7 @@ class TestImporterTest(unittest.TestCase):
         fs = self.import_downloaded_tests(['--no-fetch', '--import-all', '--no-clean-dest-dir', '-d', 'w3c'], FAKE_FILES)
 
         self.assertFalse(fs.exists('/mock-checkout/LayoutTests/w3c/csswg-tests/__init__.py'))
-        self.assertTrue(fs.exists('/mock-checkout/LayoutTests/w3c/web-platform-tests/__init__.py'))
-        self.assertTrue(fs.getsize('/mock-checkout/LayoutTests/w3c/web-platform-tests/__init__.py') > 0)
+        self.assertFalse(fs.exists('/mock-checkout/LayoutTests/w3c/web-platform-tests/__init__.py'))
 
     def test_remove_obsolete_content(self):
         FAKE_FILES = {

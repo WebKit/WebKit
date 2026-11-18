@@ -269,8 +269,6 @@ class TestImporter(object):
         for test_path in test_paths:
             self.remove_dangling_expectations(test_path)
 
-        self.generate_git_submodules_description_for_all_repositories()
-
         self.test_downloader().update_import_expectations(
             self.test_paths, self._to_skip_new_directories
         )
@@ -316,14 +314,6 @@ class TestImporter(object):
             "appear to be web-platform-tests"
         )
         return None
-
-    def generate_git_submodules_description_for_all_repositories(self):
-        for test_repository in self._test_downloader.test_repositories:
-            if 'generate_init_py' in test_repository['import_options']:
-                self.write_init_py(self.filesystem.join(self.destination_directory, test_repository['name'], '__init__.py'))
-
-    def write_init_py(self, filepath):
-        self.filesystem.write_text_file(filepath, '# This file is required for Python to search this directory for modules.')
 
     def test_downloader(self):
         if not self._test_downloader:
@@ -695,9 +685,6 @@ class TestImporter(object):
                         prefixed_properties.extend(set(converted_file[0]) - set(prefixed_properties))
 
                         self.filesystem.write_binary_file(new_filepath, converted_file[1])
-                elif orig_filepath.endswith('__init__.py') and not self.filesystem.getsize(orig_filepath):
-                    # Some bots dislike empty __init__.py.
-                    self.write_init_py(new_filepath)
                 elif 'html' in str(mimetype[0]):
                     self._copy_html_file(orig_filepath, new_filepath)
                 else:

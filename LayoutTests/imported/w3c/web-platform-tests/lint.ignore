@@ -706,9 +706,6 @@ WEB-PLATFORM.TEST:web-bundle/resources/wbn/*.wbn
 WEB-PLATFORM.TEST:web-bundle/subresource-loading/*.html
 WEB-PLATFORM.TEST:web-bundle/subresource-loading/resources/*.js
 
-# The /.well-known/shared-stored/trusted-origins file uses hard-coded hosts
-WEB-PLATFORM.TEST:shared-storage/resources/trusted-origins.py
-
 # Tests that depend on resources in /gen/ in Chromium:
 # https://github.com/web-platform-tests/wpt/issues/16455
 # Please consult with ecosystem-infra@chromium.org before adding more.
@@ -916,16 +913,3 @@ PROMISE_REJECTS: wasm/core/js/harness/testharness.js
 TEST DRIVER INTERNAL: resources/testdriver.js
 
 INDENT TABS: fetch/compression-dictionary/resources/static/Makefile
-
-# WebKit-only files.
-INDENT TABS: *w3c-import.log
-TESTHARNESS-IN-OTHER-TYPE: editing/run/first-letter-crossing-engine-boundary-crash.html
-# WebKit's import process materializes stub .window.html files for templated
-# (.window.js) tests so WebKit's test runner can find them. WPT lint flags the
-# pair as duplicate basenames; the stubs are required and intentional.
-DUPLICATE-BASENAME-PATH: navigation-timing/buffered-flag.window.html
-DUPLICATE-BASENAME-PATH: navigation-timing/buffered-flag.window.js
-DUPLICATE-BASENAME-PATH: navigation-timing/idlharness.window.html
-DUPLICATE-BASENAME-PATH: navigation-timing/idlharness.window.js
-DUPLICATE-BASENAME-PATH: navigation-timing/supported-navigation-type.window.html
-DUPLICATE-BASENAME-PATH: navigation-timing/supported-navigation-type.window.js

@@ -71,7 +71,6 @@ class TestDownloader(object):
                     "resources",
                     "serve.py",
                 ],
-                "import_options": ["generate_init_py"],
             }
         ]
 
