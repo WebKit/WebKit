@@ -1568,7 +1568,37 @@ class CheckChangeRelevance(AnalyzeChange):
         'webdriver': webdriver_path_regexes,
     }
 
+    # A change that only touches these paths has no build inputs, so queues created with
+    # skip_if_no_build_inputs skip it. Anything not listed here, or mixed with it, still builds.
+    no_build_inputs_path_regexes = [
+        re.compile(rb'^Websites/', re.IGNORECASE),
+        re.compile(rb'^docs/', re.IGNORECASE),
+        re.compile(rb'^metadata/', re.IGNORECASE),
+        re.compile(rb'^Tools/CISupport/(ews-build|build-webkit-org|ews-app)/', re.IGNORECASE),
+        re.compile(rb'^(?!Source/).*\.md$', re.IGNORECASE),
+    ]
+
+    def __init__(self, skip_if_no_build_inputs=False):
+        self.skip_if_no_build_inputs = skip_if_no_build_inputs
+        super().__init__()
+
+    def _has_build_inputs(self, changed_files):
+        files = changed_files.splitlines()
+        if not files:
+            return True
+        for line in files:
+            # '--- path' is a removed or renamed file, and a rename only lists the new path.
+            if line.startswith(b'--- '):
+                return True
+            path = line[4:] if line.startswith(b'+++ ') else line
+            if not any(regex.search(path) for regex in self.no_build_inputs_path_regexes):
+                return True
+        return False
+
     def _change_is_relevant(self, changed_files, builderName, timeout=30):
+        if self.skip_if_no_build_inputs:
+            return self._has_build_inputs(changed_files)
+
         group = [group for group in self.group_to_paths_mapping.keys() if group.lower() in builderName.lower()]
         if not group:
             # This builder doesn't have paths defined, all changes are relevant.

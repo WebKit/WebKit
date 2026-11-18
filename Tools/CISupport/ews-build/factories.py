@@ -37,11 +37,11 @@ class Factory(factory.BuildFactory):
     excluded_branches = [r'webkitglib/\d+\.\d+']
     requiresUserValidation = False
 
-    def __init__(self, platform, configuration=None, architectures=None, buildOnly=True, triggers=None, triggered_by=None, remotes=None, additionalArguments=None, checkRelevance=False, rebuild_without_change_on_builder=False, deployment_target=None, **kwargs):
+    def __init__(self, platform, configuration=None, architectures=None, buildOnly=True, triggers=None, triggered_by=None, remotes=None, additionalArguments=None, checkRelevance=False, rebuild_without_change_on_builder=False, deployment_target=None, skipIfNoBuildInputs=False, **kwargs):
         factory.BuildFactory.__init__(self)
         self.addStep(ConfigureBuild(platform=platform, configuration=configuration, architectures=architectures, buildOnly=buildOnly, triggers=triggers, triggered_by=triggered_by, remotes=remotes, additionalArguments=additionalArguments, rebuild_without_change_on_builder=rebuild_without_change_on_builder, deployment_target=deployment_target))
         if checkRelevance:
-            self.addStep(CheckChangeRelevance())
+            self.addStep(CheckChangeRelevance(skip_if_no_build_inputs=skipIfNoBuildInputs))
         excluded = [] if platform in LINUX_PLATFORMS else self.excluded_branches
         self.addStep(ValidateChange(branches=self.branches, excluded_branches=excluded))
         self.addStep(PrintConfiguration())
@@ -149,9 +149,10 @@ class WebKitPyFactory(Factory):
 
 class BuildFactory(Factory):
     skipUpload = False
+    skipIfNoBuildInputs = True
 
-    def __init__(self, platform, configuration=None, architectures=None, triggers=None, additionalArguments=None, checkRelevance=False, rebuild_without_change_on_builder=False, deployment_target=None, **kwargs):
-        Factory.__init__(self, platform=platform, configuration=configuration, architectures=architectures, buildOnly=False, triggers=triggers, additionalArguments=additionalArguments, checkRelevance=checkRelevance, rebuild_without_change_on_builder=rebuild_without_change_on_builder, deployment_target=deployment_target)
+    def __init__(self, platform, configuration=None, architectures=None, triggers=None, additionalArguments=None, checkRelevance=True, rebuild_without_change_on_builder=False, deployment_target=None, **kwargs):
+        Factory.__init__(self, platform=platform, configuration=configuration, architectures=architectures, buildOnly=False, triggers=triggers, additionalArguments=additionalArguments, checkRelevance=checkRelevance, rebuild_without_change_on_builder=rebuild_without_change_on_builder, deployment_target=deployment_target, skipIfNoBuildInputs=self.skipIfNoBuildInputs)
         self.addStep(KillOldProcesses())
         if platform == 'gtk':
             self.addStep(InstallGtkDependencies())

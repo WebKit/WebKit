@@ -22,12 +22,17 @@
 
 from __future__ import unicode_literals
 
-from django.test import TestCase
+import json
+from unittest import mock
+
+from django.test import RequestFactory, TestCase
 
 from ews.common.buildbot import Buildbot
 from ews.config import SUCCESS
 from ews.models.build import Build
 from ews.models.buildbotinstance import BuildbotInstance
+from ews.models.patch import Change
+from ews.views.status import Status
 import ews.config as config
 
 CHANGE_ID = '1234567890abcdef1234567890abcdef12345678'
@@ -72,3 +77,34 @@ class BuildUpdateTest(TestCase):
         self.assertEqual(build.result, Buildbot.SUCCESS)
         self.assertEqual(build.complete_at, 1700000060)
         self.assertEqual(build.state_string, 'build successful')
+
+
+def save_queue_build(queue, build_id, result, builder_id=None):
+    return Build.save_build(change_id=CHANGE_ID, hostname=HOSTNAME, build_id=build_id, builder_id=builder_id or build_id, builder_name=queue.title() + '-EWS',
+                            builder_display_name=queue, number=1, result=result, state_string='state', started_at=1700000000,
+                            complete_at=1700000060, pr_number=PR_NUMBER, pr_project=PR_PROJECT)
+
+
+class StatusViewTest(TestCase):
+    def setUp(self):
+        Change.save_change(CHANGE_ID, pr_number=PR_NUMBER, pr_project=PR_PROJECT)
+        patcher = mock.patch.dict(Buildbot.QUEUE_TRIGGERS, {'mac-wk2': 'mac', 'api-mac': 'mac'})
+        patcher.start()
+        self.addCleanup(patcher.stop)
+
+    def status(self):
+        return json.loads(Status().get(RequestFactory().get('/status/'), CHANGE_ID).content)
+
+    def test_testers_of_a_skipped_build_are_reported_skipped(self):
+        save_queue_build('mac', 1, Buildbot.SKIPPED)
+        status = self.status()
+        self.assertEqual(status['mac']['state'], Buildbot.SKIPPED)
+        self.assertEqual(status['mac-wk2']['state'], Buildbot.SKIPPED)
+        self.assertEqual(status['api-mac']['state'], Buildbot.SKIPPED)
+
+    def test_testers_of_a_passed_build_are_still_pending(self):
+        save_queue_build('mac', 1, Buildbot.SUCCESS)
+        status = self.status()
+        self.assertEqual(status['mac']['state'], Buildbot.SUCCESS)
+        self.assertNotIn('mac-wk2', status)
+        self.assertNotIn('api-mac', status)

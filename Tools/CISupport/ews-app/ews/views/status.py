@@ -35,8 +35,9 @@ _log = logging.getLogger(__name__)
 
 class Status(View):
     def _build_status(self, change, queue):
-        build, _ = StatusBubble().get_latest_build_for_queue(change, queue)
-        if not build:
+        build, is_parent_build = StatusBubble().get_latest_build_for_queue(change, queue, Buildbot.get_parent_queue(queue))
+        # A tester never starts when its build is skipped, so it has no build of its own to report.
+        if not build or (is_parent_build and build.result != Buildbot.SKIPPED):
             return {}
 
         return {

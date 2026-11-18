@@ -7241,6 +7241,61 @@ class TestCheckChangeRelevanceForWebDriver(unittest.TestCase):
         self.assertTrue(CheckChangeRelevance()._change_is_relevant('Source/WebCore/dom/Document.cpp', 'macOS-Tahoe-Debug-API-Tests-EWS'))
 
 
+class TestCheckChangeRelevanceNoBuildInputs(unittest.TestCase):
+    def needs_build(self, *files):
+        return CheckChangeRelevance(skip_if_no_build_inputs=True)._change_is_relevant('\n'.join(files).encode(), 'Platform-Build-EWS')
+
+    def test_changes_without_build_inputs_are_skipped(self):
+        for files in [
+            ('+++ Websites/webkit.org/_posts/2026-10-19-foo.md',),
+            ('+++ docs/porting-webkit.md', '+++ docs/images/diagram.png'),
+            ('+++ metadata/contributors.json',),
+            ('+++ Tools/CISupport/ews-build/steps.py', '+++ Tools/CISupport/build-webkit-org/loadConfig.py', '+++ Tools/CISupport/ews-app/ews/views/status.py'),
+            ('+++ README.md', '+++ JSTests/README.md', '+++ LayoutTests/fast/README.md'),
+            ('+++ Websites/webkit.org/foo.html', '+++ docs/bar.md', '+++ metadata/contributors.json'),
+        ]:
+            self.assertFalse(self.needs_build(*files), files)
+
+    def test_changes_with_build_inputs_need_a_build(self):
+        for files in [
+            ('+++ Source/WebCore/dom/Node.cpp',),
+            ('+++ docs/a.md', '+++ Source/WebCore/dom/Node.cpp'),
+            ('+++ Tools/CISupport/kill-old-processes',),
+            ('+++ Tools/CISupport/built-product-archive',),
+            ('+++ Tools/CISupport/Shared/steps.py',),
+            ('+++ Source/WebKit/WPEPlatform/docs/overview.md',),
+            ('+++ Tools/Scripts/docs/foo.py',),
+            ('+++ SomeNewTopLevelDir/foo.txt',),
+        ]:
+            self.assertTrue(self.needs_build(*files), files)
+
+    def test_removed_or_renamed_files_need_a_build(self):
+        # GitHub lists both as '--- path', and a rename only keeps the new path.
+        self.assertTrue(self.needs_build('--- docs/old.md'))
+        self.assertTrue(self.needs_build('+++ docs/other.md', '--- docs/moved.md'))
+
+
+class TestCheckChangeRelevanceNoBuildInputsRun(BuildStepMixinAdditions, unittest.TestCase):
+    def setUp(self):
+        self.longMessage = True
+        return self.setup_test_build_step()
+
+    def tearDown(self):
+        return self.tear_down_test_build_step()
+
+    def test_run_skips_a_change_without_build_inputs(self):
+        CheckChangeRelevance._get_changed_files = lambda x: b'+++ docs/porting-webkit.md'
+        self.setup_step(CheckChangeRelevance(skip_if_no_build_inputs=True))
+        self.expect_outcome(result=FAILURE, state_string="Pull request doesn't have relevant changes")
+        return self.run_step()
+
+    def test_run_builds_a_change_with_build_inputs(self):
+        CheckChangeRelevance._get_changed_files = lambda x: b'+++ docs/a.md\n+++ Source/WebCore/dom/Node.cpp'
+        self.setup_step(CheckChangeRelevance(skip_if_no_build_inputs=True))
+        self.expect_outcome(result=SUCCESS, state_string='Pull request contains relevant changes')
+        return self.run_step()
+
+
 class TestGetTestExpectationsBaseline(BuildStepMixinAdditions, unittest.TestCase):
     def setUp(self):
         self.longMessage = True
