@@ -1084,6 +1084,27 @@ static BOOL areEssentiallyEqual(double a, double b)
     return WKDragDestinationActionAny;
 }
 
+- (void)_webView:(WKWebView *)webView setWindowFrame:(CGRect)frame
+{
+    if (!webView.configuration._isControlledByAutomation)
+        return;
+
+    NSRect screensFrame = NSZeroRect;
+    for (NSScreen *screen in NSScreen.screens)
+        screensFrame = NSUnionRect(screensFrame, screen.frame);
+
+    // AppKit only enforces minSize for user resizes. WebDriver accepts frames far larger than any screen, so keep the
+    // frame no larger than the screens' bounding box, and touching or overlapping it.
+    NSSize minSize = self.window.minSize;
+    NSRect newFrame = frame;
+    newFrame.size.width = MAX(MIN(NSWidth(frame), NSWidth(screensFrame)), minSize.width);
+    newFrame.size.height = MAX(MIN(NSHeight(frame), NSHeight(screensFrame)), minSize.height);
+    newFrame.origin.y = NSMaxY(frame) - NSHeight(newFrame);
+    newFrame.origin.x = MIN(MAX(NSMinX(newFrame), NSMinX(screensFrame) - NSWidth(newFrame)), NSMaxX(screensFrame));
+    newFrame.origin.y = MIN(MAX(NSMinY(newFrame), NSMinY(screensFrame) - NSHeight(newFrame)), NSMaxY(screensFrame));
+    [self.window setFrame:newFrame display:YES];
+}
+
 - (void)_webView:(WKWebView *)webView printFrame:(_WKFrameHandle *)frame pdfFirstPageSize:(CGSize)size completionHandler:(void (^)(void))completionHandler
 {
     [[_webView printOperationWithPrintInfo:[NSPrintInfo sharedPrintInfo]] runOperationModalForWindow:self.window delegate:nil didRunSelector:nil contextInfo:nil];

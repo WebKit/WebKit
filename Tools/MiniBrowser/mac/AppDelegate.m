@@ -62,6 +62,10 @@ static BOOL sShouldEnableSiteIsolation = NO;
 
 static BOOL sOpenWebInspector = NO;
 
+static const NSTimeInterval windowStateChangeTimeout = 5;
+static const NSTimeInterval windowFramePollInterval = 0.1;
+static const NSTimeInterval windowFrameSettleTime = 0.5;
+
 // When minidriver launches MiniBrowser, it passes one end of the automation connection as --automation-fd <descriptor>.
 static int sAutomationFileDescriptor = -1;
 
@@ -822,6 +826,12 @@ static NSNumber *_currentBadge;
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
         [NSApp activateIgnoringOtherApps:YES];
 #pragma clang diagnostic pop
+        [self _waitForNotification:NSWindowDidChangeOcclusionStateNotification ofWindow:controller.window until:^{
+            return (BOOL)(controller.window.occlusionState & NSWindowOcclusionStateVisible);
+        } completionHandler:^{
+            completionHandler(controller.webView);
+        }];
+        return;
     }
     completionHandler(controller.webView);
 }
@@ -885,6 +895,112 @@ static NSNumber *_currentBadge;
     window.tabGroup.selectedWindow = window;
     [window makeKeyAndOrderFront:nil];
     completionHandler();
+}
+
+- (void)_waitForNotification:(NSNotificationName)name ofWindow:(NSWindow *)window until:(BOOL (^)(void))condition completionHandler:(void (^)(void))completionHandler
+{
+    if (condition()) {
+        completionHandler();
+        return;
+    }
+
+    __block BOOL done = NO;
+    __block id observer = nil;
+    void (^finish)(void) = ^{
+        done = YES;
+        [[NSNotificationCenter defaultCenter] removeObserver:observer];
+        observer = nil;
+        completionHandler();
+    };
+
+    observer = [[NSNotificationCenter defaultCenter] addObserverForName:name object:window queue:nil usingBlock:^(NSNotification *notification) {
+        if (!done && condition())
+            finish();
+    }];
+
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(windowStateChangeTimeout * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        if (done)
+            return;
+        NSLog(@"Timed out waiting for %@ of window %@, reporting success anyway.", name, window);
+        finish();
+    });
+}
+
+- (void)_automationSession:(_WKAutomationSession *)automationSession requestHideWindowOfWebView:(WKWebView *)webView completionHandler:(void (^)(void))completionHandler
+{
+    NSWindow *window = webView.window;
+    if (!window || window.isMiniaturized) {
+        completionHandler();
+        return;
+    }
+
+    // To WebDriver, a minimized window isn't maximized, but AppKit keeps the frame of a zoomed window when minimizing it.
+    if (window.isZoomed)
+        [window zoom:nil];
+
+    [self _waitForNotification:NSWindowDidMiniaturizeNotification ofWindow:window until:^{
+        return window.isMiniaturized;
+    } completionHandler:completionHandler];
+    [window miniaturize:nil];
+}
+
+- (void)_automationSession:(_WKAutomationSession *)automationSession requestRestoreWindowOfWebView:(WKWebView *)webView completionHandler:(void (^)(void))completionHandler
+{
+    NSWindow *window = webView.window;
+    if (!window || !window.isMiniaturized) {
+        completionHandler();
+        return;
+    }
+
+    [self _waitForNotification:NSWindowDidDeminiaturizeNotification ofWindow:window until:^{
+        return (BOOL)!window.isMiniaturized;
+    } completionHandler:^{
+        [self _waitForNotification:NSWindowDidChangeOcclusionStateNotification ofWindow:window until:^{
+            return (BOOL)(window.occlusionState & NSWindowOcclusionStateVisible);
+        } completionHandler:completionHandler];
+    }];
+    [window deminiaturize:nil];
+}
+
+- (void)_automationSession:(_WKAutomationSession *)automationSession requestMaximizeWindowOfWebView:(WKWebView *)webView completionHandler:(void (^)(void))completionHandler
+{
+    NSWindow *window = webView.window;
+    if (!window) {
+        completionHandler();
+        return;
+    }
+
+    if (!window.isZoomed)
+        [window zoom:nil];
+    [self _waitForFrameOfWindowToSettle:window completionHandler:completionHandler];
+}
+
+- (void)_waitForFrameOfWindowToSettle:(NSWindow *)window completionHandler:(void (^)(void))completionHandler
+{
+    __block NSRect lastFrame = window.frame;
+    __block NSRect lastVisibleFrame = window.screen.visibleFrame;
+    __block NSUInteger unchangedPolls = 0;
+    __block NSUInteger polls = 0;
+    [NSTimer scheduledTimerWithTimeInterval:windowFramePollInterval repeats:YES block:^(NSTimer *timer) {
+        polls++;
+        NSRect frame = window.frame;
+        NSRect visibleFrame = window.screen.visibleFrame;
+        if (NSEqualRects(frame, lastFrame) && NSEqualRects(visibleFrame, lastVisibleFrame))
+            unchangedPolls++;
+        else {
+            unchangedPolls = 0;
+            lastFrame = frame;
+            lastVisibleFrame = visibleFrame;
+        }
+
+        BOOL settled = unchangedPolls * windowFramePollInterval >= windowFrameSettleTime;
+        if (!settled && polls * windowFramePollInterval < windowStateChangeTimeout)
+            return;
+        if (!settled)
+            NSLog(@"Timed out waiting for the frame of window %@ to settle, reporting success anyway.", window);
+        [timer invalidate];
+        completionHandler();
+    }];
 }
 
 @end
