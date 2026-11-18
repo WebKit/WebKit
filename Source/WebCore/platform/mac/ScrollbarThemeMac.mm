@@ -544,15 +544,19 @@ void ScrollbarThemeMac::updateEnabledState(Scrollbar& scrollbar)
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
-void ScrollbarThemeMac::setPaintCharacteristicsForScrollbar(Scrollbar& scrollbar)
+static std::pair<float, float> scrollbarValueAndProportion(Scrollbar& scrollbar)
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS
-    RetainPtr painter = scrollerImpForScrollbar(scrollbar);
-
     float value;
     float overhang;
     ScrollableArea::computeScrollbarValueAndOverhang(scrollbar.currentPos(), scrollbar.totalSize(), scrollbar.visibleSize(), value, overhang);
     float proportion = scrollbar.totalSize() > 0 ? (static_cast<CGFloat>(scrollbar.visibleSize()) - overhang) / scrollbar.totalSize() : 1;
+    return { value, proportion };
+}
+
+void ScrollbarThemeMac::setPaintCharacteristicsForScrollbar(NSScrollerImp *painter, Scrollbar& scrollbar)
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
+    auto [value, proportion] = scrollbarValueAndProportion(scrollbar);
 
     [painter setEnabled:scrollbar.enabled()];
     [painter setBoundsSize:scrollbar.frameRect().size()];
@@ -566,14 +570,27 @@ void ScrollbarThemeMac::setPaintCharacteristicsForScrollbar(Scrollbar& scrollbar
 
 static void paintScrollbarUsingLayersForSnapshot(Scrollbar& scrollbar, GraphicsContext& context)
 {
-    LocalCurrentGraphicsContext localContext { context };
-
-    RetainPtr scrollerImp = ScrollbarThemeMac::scrollerImpForScrollbar(scrollbar);
-    if (!scrollerImp)
+    if (ScrollerStyle::recommendedScrollerStyle() == NSScrollerStyleOverlay)
         return;
 
+    LocalCurrentGraphicsContext localContext { context };
+
+    RetainPtr scrollerImp = [NSScrollerImp scrollerImpWithStyle:NSScrollerStyleLegacy controlSize:nsControlSizeFromScrollbarWidth(scrollbar.widthStyle()) horizontal:scrollbar.orientation() == ScrollbarOrientation::Horizontal replacingScrollerImp:nil];
+    CheckedRef scrollableArea = scrollbar.scrollableArea();
+    auto [value, proportion] = scrollbarValueAndProportion(scrollbar);
+    auto scrollbarColor = scrollableArea->scrollbarColorStyle();
+    setScrollerImpValues(scrollerImp.get(), {
+        .isEnabled = scrollbar.enabled(),
+        .layoutDirection = scrollableArea->shouldPlaceVerticalScrollbarOnLeft() ? UserInterfaceLayoutDirection::RTL : UserInterfaceLayoutDirection::LTR,
+        .size = scrollbar.frameRect().size(),
+        .value = value,
+        .proportion = proportion,
+        .trackColor = scrollbarColor ? cocoaColor(scrollbarColor->trackColor) : RetainPtr<NSColor> { },
+        .thumbColor = scrollbarColor ? cocoaColor(scrollbarColor->thumbColor) : RetainPtr<NSColor> { },
+    });
+
     RetainPtr delegate = adoptNS([[WebSnapshotScrollerImpDelegate alloc] init]);
-    [delegate setUseDarkAppearance:protect(scrollbar.scrollableArea())->useDarkAppearanceForScrollbars()];
+    [delegate setUseDarkAppearance:scrollableArea->useDarkAppearanceForScrollbars()];
     [delegate setScrollerImp:scrollerImp.get()];
     [scrollerImp setDelegate:delegate.get()];
 
@@ -590,6 +607,7 @@ static void paintScrollbarUsingLayersForSnapshot(Scrollbar& scrollbar, GraphicsC
 
     [hostLayer renderInContext:protect(localContext.cgContext())];
 
+    // The scroller is autoreleased, so it can outlive the delegate, which it does not retain.
     [scrollerImp setLayer:nil];
     [scrollerImp setDelegate:nil];
 }
@@ -624,7 +642,7 @@ bool ScrollbarThemeMac::paint(Scrollbar& scrollbar, GraphicsContext& context, co
     if (context.paintingDisabled())
         return false;
 
-    setPaintCharacteristicsForScrollbar(scrollbar);
+    setPaintCharacteristicsForScrollbar(protect(scrollerImpForScrollbar(scrollbar)).get(), scrollbar);
 
     if (scrollbar.supportsUpdateOnSecondaryThread() && !scrollbar.paintingIntoSnapshot())
         return true;

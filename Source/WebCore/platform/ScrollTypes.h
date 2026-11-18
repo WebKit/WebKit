@@ -182,6 +182,11 @@ enum class ScrollbarWidth : uint8_t {
     None
 };
 
+enum class ScrollbarPaintBehavior : uint8_t {
+    IncludeComposited = 1 << 0,
+    Snapshot = 1 << 1,
+};
+
 enum class NativeScrollbarVisibility : uint8_t {
     Visible,
     HiddenByStyle,

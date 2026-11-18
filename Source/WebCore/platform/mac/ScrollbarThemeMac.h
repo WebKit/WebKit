@@ -63,7 +63,7 @@ public:
 
     NODELETE static NSScrollerImp *scrollerImpForScrollbar(Scrollbar&);
 
-    void setPaintCharacteristicsForScrollbar(Scrollbar&);
+    static void setPaintCharacteristicsForScrollbar(NSScrollerImp *, Scrollbar&);
 
     NODELETE static bool isCurrentlyDrawingIntoLayer();
     NODELETE static void setIsCurrentlyDrawingIntoLayer(bool);

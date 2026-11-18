@@ -1,0 +1,16 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ MockScrollbarsEnabled=false AsyncFrameScrollingEnabled=true ] -->
+<title>view-transition snapshot includes the scroll bars of an iframe</title>
+<style>
+iframe {
+    width: 200px;
+    height: 200px;
+    border: none;
+}
+</style>
+<script>
+if (window.internals)
+    internals.setUsesOverlayScrollbars(false);
+
+onload = () => frame.contentWindow.scrollTo(300, 300);
+</script>
+<iframe id="frame" srcdoc="<body style='margin: 0'><div style='width: 1000px; height: 1000px'></div></body>"></iframe>

@@ -35,6 +35,7 @@
 #include <WebCore/ViewCoordinateSpaceRect.h>
 #include <WebCore/Widget.h>
 #include <wtf/HashSet.h>
+#include <wtf/OptionSet.h>
 #include <wtf/Platform.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
@@ -402,7 +403,6 @@ public:
 
     // Widget override. Handles painting of the contents of the view as well as the scrollbars.
     WEBCORE_EXPORT void paint(GraphicsContext&, const IntRect&, Widget::SecurityOriginPaintPolicy = SecurityOriginPaintPolicy::AnyOrigin, RegionContext* = nullptr) final;
-    void paintScrollbars(GraphicsContext&, const IntRect&);
 
     // Widget overrides to ensure that our children's visibility status is kept up to date when we get shown and hidden.
     WEBCORE_EXPORT void show() override;
@@ -419,7 +419,8 @@ public:
     bool scrollbarCornerPresent() const;
     IntRect scrollCornerRect() const final;
     virtual void paintScrollCorner(GraphicsContext&, const IntRect& cornerRect);
-    virtual void paintScrollbar(GraphicsContext&, Scrollbar&, const IntRect&);
+    virtual void paintScrollbar(GraphicsContext&, Scrollbar&, const IntRect&, OptionSet<ScrollbarPaintBehavior>);
+    virtual OptionSet<ScrollbarPaintBehavior> scrollbarPaintBehavior() const { return { }; }
 
     IntRect convertFromScrollbarToContainingView(const Scrollbar&, const IntRect&) const final;
     IntRect convertFromContainingViewToScrollbar(const Scrollbar&, const IntRect&) const final;
@@ -502,6 +503,8 @@ private:
     WEBCORE_EXPORT IntRect unobscuredContentRectInternal(VisibleContentRectIncludesScrollbars = VisibleContentRectIncludesScrollbars::No) const;
 
     void completeUpdatesAfterScrollTo(const IntSize& scrollDelta);
+
+    bool shouldPaintScrollbars(OptionSet<ScrollbarPaintBehavior>) const;
 
     bool setHasScrollbarInternal(RefPtr<Scrollbar>&, ScrollbarOrientation, bool hasBar, bool* contentSizeAffected);
 

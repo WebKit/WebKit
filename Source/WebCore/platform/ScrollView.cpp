@@ -1527,9 +1527,15 @@ void ScrollView::paintScrollCorner(GraphicsContext& context, const IntRect& corn
     ScrollbarTheme::theme().paintScrollCorner(*this, context, cornerRect);
 }
 
-void ScrollView::paintScrollbar(GraphicsContext& context, Scrollbar& bar, const IntRect& rect)
+void ScrollView::paintScrollbar(GraphicsContext& context, Scrollbar& bar, const IntRect& rect, OptionSet<ScrollbarPaintBehavior> paintBehavior)
 {
+    // FIXME: Pass the paint behavior to Scrollbar::paint() instead of setting it on the scroll bar (https://webkit.org/b/331966).
+    bool paintingIntoSnapshot = paintBehavior.contains(ScrollbarPaintBehavior::Snapshot);
+    if (paintingIntoSnapshot)
+        bar.setPaintingIntoSnapshot(true);
     bar.paint(context, rect);
+    if (paintingIntoSnapshot)
+        bar.setPaintingIntoSnapshot(false);
 }
 
 void ScrollView::invalidateScrollCornerRect(const IntRect& rect)
@@ -1537,17 +1543,13 @@ void ScrollView::invalidateScrollCornerRect(const IntRect& rect)
     invalidateRect(rect);
 }
 
-void ScrollView::paintScrollbars(GraphicsContext& context, const IntRect& rect)
+bool ScrollView::shouldPaintScrollbars(OptionSet<ScrollbarPaintBehavior> paintBehavior) const
 {
-    if (m_horizontalScrollbar && !layerForHorizontalScrollbar())
-        paintScrollbar(context, *m_horizontalScrollbar.get(), rect);
-    if (m_verticalScrollbar && !layerForVerticalScrollbar())
-        paintScrollbar(context, *m_verticalScrollbar.get(), rect);
-
-    if (layerForScrollCorner())
-        return;
-
-    paintScrollCorner(context, scrollCornerRect());
+    if (m_scrollbarsSuppressed || (!m_horizontalScrollbar && !m_verticalScrollbar))
+        return false;
+    if (paintBehavior.contains(ScrollbarPaintBehavior::IncludeComposited))
+        return true;
+    return (m_horizontalScrollbar && !layerForHorizontalScrollbar()) || (m_verticalScrollbar && !layerForVerticalScrollbar()) || !layerForScrollCorner();
 }
 
 void ScrollView::paintPanScrollIcon(GraphicsContext& context)
@@ -1605,7 +1607,8 @@ void ScrollView::paint(GraphicsContext& context, const IntRect& rect, SecurityOr
 #endif
 
     // Now paint the scrollbars.
-    if (!m_scrollbarsSuppressed && (m_horizontalScrollbar || m_verticalScrollbar)) {
+    auto paintBehavior = scrollbarPaintBehavior();
+    if (shouldPaintScrollbars(paintBehavior)) {
         GraphicsContextStateSaver stateSaver(context);
         IntRect scrollViewDirtyRect = rect;
         IntRect visibleAreaWithScrollbars(location(), unobscuredContentRectIncludingScrollbars().size());
@@ -1614,7 +1617,13 @@ void ScrollView::paint(GraphicsContext& context, const IntRect& rect, SecurityOr
         scrollViewDirtyRect.moveBy(-location());
         context.clip(IntRect(IntPoint(), visibleAreaWithScrollbars.size()));
 
-        paintScrollbars(context, scrollViewDirtyRect);
+        bool paintCompositedScrollbars = paintBehavior.contains(ScrollbarPaintBehavior::IncludeComposited);
+        if (m_horizontalScrollbar && (paintCompositedScrollbars || !layerForHorizontalScrollbar()))
+            paintScrollbar(context, *m_horizontalScrollbar.get(), scrollViewDirtyRect, paintBehavior);
+        if (m_verticalScrollbar && (paintCompositedScrollbars || !layerForVerticalScrollbar()))
+            paintScrollbar(context, *m_verticalScrollbar.get(), scrollViewDirtyRect, paintBehavior);
+        if (paintCompositedScrollbars || !layerForScrollCorner())
+            paintScrollCorner(context, scrollCornerRect());
     }
 
     // Paint the panScroll Icon

@@ -27,7 +27,13 @@
 
 #if USE(APPKIT)
 
+#include <WebCore/FloatSize.h>
+#include <WebCore/UserInterfaceLayoutDirection.h>
 #include <optional>
+#include <wtf/RetainPtr.h>
+
+OBJC_CLASS NSColor;
+OBJC_CLASS NSScrollerImp;
 
 enum NSScrollerStyle : long;
 
@@ -42,6 +48,18 @@ public:
 private:
     static std::optional<bool> m_useOverlayScrollbars;
 };
+
+struct ScrollerImpValues {
+    bool isEnabled { false };
+    UserInterfaceLayoutDirection layoutDirection { UserInterfaceLayoutDirection::LTR };
+    FloatSize size;
+    float value { 0 };
+    float proportion { 0 };
+    RetainPtr<NSColor> trackColor;
+    RetainPtr<NSColor> thumbColor;
+};
+
+WEBCORE_EXPORT void setScrollerImpValues(NSScrollerImp *, const ScrollerImpValues&);
 
 }
 

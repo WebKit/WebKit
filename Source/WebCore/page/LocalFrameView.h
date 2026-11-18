@@ -471,7 +471,8 @@ public:
 
     void paintOverhangAreas(GraphicsContext&, const IntRect& horizontalOverhangArea, const IntRect& verticalOverhangArea, const IntRect& dirtyRect) final;
     void paintScrollCorner(GraphicsContext&, const IntRect& cornerRect) final;
-    void paintScrollbar(GraphicsContext&, Scrollbar&, const IntRect&) final;
+    void paintScrollbar(GraphicsContext&, Scrollbar&, const IntRect&, OptionSet<ScrollbarPaintBehavior>) final;
+    OptionSet<ScrollbarPaintBehavior> scrollbarPaintBehavior() const final;
 
     WEBCORE_EXPORT Color documentBackgroundColor() const;
 

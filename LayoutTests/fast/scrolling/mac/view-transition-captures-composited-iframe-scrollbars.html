@@ -1,0 +1,36 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ MockScrollbarsEnabled=false AsyncFrameScrollingEnabled=true ] -->
+<html class="reftest-wait">
+<title>view-transition snapshot includes the scroll bars of an iframe</title>
+<meta name="fuzzy" content="maxDifference=0-19; totalPixels=0-152">
+<style>
+iframe {
+    view-transition-name: target;
+    width: 200px;
+    height: 200px;
+    border: none;
+}
+
+/* Freeze the transition at frame 0 with only ::view-transition-old(target) visible, so the
+   screenshot is the captured old snapshot of the iframe (including its scroll bars). */
+html::view-transition-group(root) { animation-duration: 300s; }
+html::view-transition-old(target) { animation: unset; opacity: 1; }
+html::view-transition-new(target) { animation: unset; opacity: 0; }
+</style>
+<script>
+// Always-on scroll bars are visible regardless of the "Show scroll bars" setting. On screen, the UI
+// process draws the iframe's scroll bars into their layers. The snapshot has to paint them itself.
+if (window.internals)
+    internals.setUsesOverlayScrollbars(false);
+
+function finishTest() {
+    document.documentElement.classList.remove("reftest-wait");
+}
+
+function runTest() {
+    frame.contentWindow.scrollTo(300, 300);
+    document.startViewTransition().ready.then(() => requestAnimationFrame(finishTest));
+}
+
+onload = () => requestAnimationFrame(() => requestAnimationFrame(runTest));
+</script>
+<iframe id="frame" srcdoc="<body style='margin: 0'><div style='width: 1000px; height: 1000px'></div></body>"></iframe>

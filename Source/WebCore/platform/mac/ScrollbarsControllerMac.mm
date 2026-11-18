@@ -462,8 +462,8 @@ using WebCore::LogOverlayScrollbars;
         scrollbarPartAnimation = nil;
     }
 
-    if (auto* macTheme = WebCore::macScrollbarTheme())
-        macTheme->setPaintCharacteristicsForScrollbar(*scrollbar);
+    ASSERT(scrollerPainter == scrollerImpForScrollbar(*scrollbar));
+    WebCore::ScrollbarThemeMac::setPaintCharacteristicsForScrollbar(scrollerPainter, *scrollbar);
 
     if (part == WebCore::ThumbPart && scrollbar->orientation() == WebCore::ScrollbarOrientation::Vertical) {
         if (newAlpha == 1) {

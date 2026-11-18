@@ -31,6 +31,7 @@
 #if USE(APPKIT)
 
 #import "DeprecatedGlobalSettings.h"
+#import <pal/spi/mac/NSScrollerImpSPI.h>
 
 namespace WebCore {
 
@@ -48,6 +49,20 @@ NSScrollerStyle ScrollerStyle::recommendedScrollerStyle()
 void ScrollerStyle::setUseOverlayScrollbars(bool useOverlayScrollbars)
 {
     m_useOverlayScrollbars = useOverlayScrollbars;
+}
+
+void setScrollerImpValues(NSScrollerImp *scrollerImp, const ScrollerImpValues& values)
+{
+    [scrollerImp setEnabled:values.isEnabled];
+    [scrollerImp setUserInterfaceLayoutDirection:values.layoutDirection == UserInterfaceLayoutDirection::RTL ? NSUserInterfaceLayoutDirectionRightToLeft : NSUserInterfaceLayoutDirectionLeftToRight];
+    [scrollerImp setBoundsSize:values.size];
+    [scrollerImp setDoubleValue:values.value];
+    [scrollerImp setPresentationValue:values.value];
+    [scrollerImp setKnobProportion:values.proportion];
+#if HAVE(APPKIT_SCROLLBAR_COLOR_SPI)
+    [scrollerImp setTrackColor:values.trackColor.get()];
+    [scrollerImp setKnobColor:values.thumbColor.get()];
+#endif
 }
 
 }

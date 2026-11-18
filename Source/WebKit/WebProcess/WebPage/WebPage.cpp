@@ -7868,6 +7868,8 @@ void WebPage::drawFrameToSnapshot(FrameIdentifier frameID, const IntRect& rectRe
 
     bool recorded = recordRemoteSnapshot(snapshotIdentifier, frameID, RemoteSnapshotRole::Frame, renderingMode, rectRelativeToVisibleContent, recordingScale, { }, MainRunLoopSuccessCallbackAggregator::create([](bool) { }), [&](GraphicsContext& context) {
         LocalFrameView::SelectionInSnapshot shouldPaintSelection = LocalFrameView::IncludeSelection;
+        // FIXME: Painting in document coordinates leaves out the scroll bars of the frame. Paint in view coordinates,
+        // which applies the scroll position and paints the scroll bars, as ScrollView::paint() does in the parent process.
         LocalFrameView::CoordinateSpaceForSnapshot coordinateSpace = LocalFrameView::DocumentCoordinates;
 
         // Map the rect into the document with the frame's current scroll position (see paintRemoteFrameContents()),

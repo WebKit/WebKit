@@ -407,16 +407,15 @@ void ScrollerMac::updateValues()
     auto values = pair->valuesForOrientation(m_orientation);
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS
-    [m_scrollerImp setEnabled:m_isEnabled];
-    [m_scrollerImp setUserInterfaceLayoutDirection: m_scrollbarLayoutDirection == UserInterfaceLayoutDirection::RTL ? NSUserInterfaceLayoutDirectionRightToLeft : NSUserInterfaceLayoutDirectionLeftToRight];
-    [m_scrollerImp setBoundsSize:NSSizeFromCGSize([m_hostLayer bounds].size)];
-    [m_scrollerImp setDoubleValue:values.value];
-    [m_scrollerImp setPresentationValue:values.value];
-    [m_scrollerImp setKnobProportion:values.proportion];
-#if HAVE(APPKIT_SCROLLBAR_COLOR_SPI)
-    [m_scrollerImp setTrackColor:m_trackColor.get()];
-    [m_scrollerImp setKnobColor:m_thumbColor.get()];
-#endif
+    setScrollerImpValues(m_scrollerImp.get(), {
+        .isEnabled = m_isEnabled,
+        .layoutDirection = m_scrollbarLayoutDirection,
+        .size = FloatSize { [m_hostLayer bounds].size },
+        .value = values.value,
+        .proportion = values.proportion,
+        .trackColor = m_trackColor,
+        .thumbColor = m_thumbColor,
+    });
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
