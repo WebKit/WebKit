@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+<script>
+description("drawImage() of a VideoFrame must draw nothing while the current transformation matrix is not invertible, and must draw again once it is invertible.");
+
+const sourceCanvas = document.createElement("canvas");
+sourceCanvas.width = 20;
+sourceCanvas.height = 20;
+const sourceContext = sourceCanvas.getContext("2d");
+sourceContext.fillStyle = "rgb(0, 0, 255)";
+sourceContext.fillRect(0, 0, 20, 20);
+const frame = new VideoFrame(sourceCanvas, { timestamp: 0 });
+
+let pixelCount;
+
+function countNonTransparentPixels(context)
+{
+    const data = context.getImageData(0, 0, 200, 100).data;
+    let count = 0;
+    for (let i = 3; i < data.length; i += 4) {
+        if (data[i])
+            ++count;
+    }
+    return count;
+}
+
+// [name, changes the transformation matrix, whether anything should be drawn]
+const testCases = [
+    ["invertible transform", context => context.scale(2, 2), true],
+    ["scale(0, 0)", context => context.scale(0, 0), false],
+    ["scale(1, 0)", context => context.scale(1, 0), false],
+    ["scale(0, 1)", context => context.scale(0, 1), false],
+    ["transform(1, 1, 1, 1, 0, 0)", context => context.transform(1, 1, 1, 1, 0, 0), false],
+    ["setTransform(0, 0, 0, 0, 0, 0)", context => context.setTransform(0, 0, 0, 0, 0, 0), false],
+    ["scale(0, 0), then resetTransform()", context => {
+        context.scale(0, 0);
+        context.resetTransform();
+    }, true],
+    ["scale(0, 0), then setTransform(1, 0, 0, 1, 0, 0)", context => {
+        context.scale(0, 0);
+        context.setTransform(1, 0, 0, 1, 0, 0);
+    }, true],
+    ["save(), scale(0, 0), then restore()", context => {
+        context.save();
+        context.scale(0, 0);
+        context.restore();
+    }, true],
+];
+
+for (const [name, changeTransform, shouldDraw] of testCases) {
+    debug("");
+    debug(`${name}:`);
+    const canvas = document.createElement("canvas");
+    canvas.width = 200;
+    canvas.height = 100;
+    const context = canvas.getContext("2d");
+    // The translation is applied before the transformation matrix becomes non-invertible, so a
+    // frame drawn with a stale transformation matrix lands somewhere visible.
+    context.translate(100, 10);
+    changeTransform(context);
+    context.drawImage(frame, 20, 20, 60, 60);
+    pixelCount = countNonTransparentPixels(context);
+    if (shouldDraw)
+        shouldBeTrue("pixelCount > 0");
+    else
+        shouldBe("pixelCount", "0");
+}
+
+frame.close();
+</script>
+</body>
+</html>

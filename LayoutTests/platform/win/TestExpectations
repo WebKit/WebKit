@@ -111,6 +111,7 @@ fast/webcodecs/audio-data-copy-to-crash.html [ Skip ]
 fast/webcodecs/audio-data-copy-to-zero-frames-crash.html [ Skip ]
 fast/webcodecs/audio-data-copy-to-planar-frame-offset.html [ Skip ]
 fast/canvas/canvas-drawImage-video-frame-composite.html [ Skip ]
+fast/canvas/canvas-drawImage-video-frame-noninvertible-transform.html [ Skip ]
 
 # WebGPU is disabled
 http/tests/webgpu [ Skip ]
