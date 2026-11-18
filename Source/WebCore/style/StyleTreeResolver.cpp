@@ -189,7 +189,7 @@ ResolvedStyle TreeResolver::styleForStyleable(const Styleable& styleable, Resolu
     if (auto optionStyle = tryChoosePositionOption(styleable, resolutionContext))
         return WTF::move(*optionStyle);
 
-    if (resolutionType == ResolutionType::FastPathInherit) {
+    if (resolutionType == ResolutionType::FastPathInherit && !styleable.hasKeyframeEffects()) {
         // If the only reason we are computing the style is that some parent inherited properties changed, we can just copy them.
         auto style = Style::ComputedStyle::clonePtr(*existingStyle);
         style->fastPathInheritFrom(parent().style);
