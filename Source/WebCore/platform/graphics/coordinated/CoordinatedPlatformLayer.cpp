@@ -1263,9 +1263,9 @@ void CoordinatedPlatformLayer::flushCompositingStateProperties(const OptionSet<C
         }
     }
     if (changes.contains(Change::BackgroundColor))
-        layer.setBackgroundColor(properties->backgroundColor);
+        layer.setBackgroundColor(WTF::move(properties->backgroundColor));
     if (changes.contains(Change::ContentsColor))
-        layer.setContentsSolidColor(properties->contentsColor);
+        layer.setContentsSolidColor(WTF::move(properties->contentsColor));
     if (changes.contains(Change::ContentsTiling))
         layer.setContentsTiling(properties->contentsTileSize, properties->contentsTilePhase);
     if (changes.contains(Change::ContentsImage))
@@ -1282,13 +1282,13 @@ void CoordinatedPlatformLayer::flushCompositingStateProperties(const OptionSet<C
         layer.setClipPath(WTF::move(clipPath));
     }
     if (changes.contains(Change::Filters))
-        layer.setFilters(properties->filters);
+        layer.setFilters(WTF::move(properties->filters));
     if (changes.contains(Change::Mask))
         layer.setMask(properties->mask ? RefPtr { &properties->mask->ensureTarget() } : nullptr);
     if (changes.contains(Change::Replica))
         layer.setReplica(properties->replica ? RefPtr { &properties->replica->ensureTarget() } : nullptr);
     if (changes.contains(Change::Backdrop))
-        layer.setBackdropFilters(properties->backdropFilters);
+        layer.setBackdropFilters(WTF::move(properties->backdropFilters));
     if (changes.contains(Change::BackdropRect))
         layer.setBackdropFiltersRect(properties->backdropRect);
     if (changes.contains(Change::BackdropShapePath)) {
@@ -1303,7 +1303,7 @@ void CoordinatedPlatformLayer::flushCompositingStateProperties(const OptionSet<C
     if (changes.contains(Change::BackdropRoot))
         layer.setIsBackdropRoot(properties->isBackdropRoot);
     if (changes.contains(Change::Animations))
-        layer.setAnimations(properties->animations);
+        layer.setAnimations(WTF::move(properties->animations));
     if (changes.contains(Change::Children)) {
         layer.setChildren(WTF::map(properties->children, [](auto& child) {
             return Ref { child->ensureTarget() };

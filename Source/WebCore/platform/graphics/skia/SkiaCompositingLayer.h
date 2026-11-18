@@ -84,7 +84,7 @@ public:
     void setChildrenTransform(const TransformationMatrix& matrix) { m_childrenTransform = matrix; }
     void setPreserves3D(bool preserves3D) { m_preserves3D = preserves3D; }
     void setBackfaceVisibility(bool visible) { m_backfaceVisibility = visible; }
-    void setBackgroundColor(const Color& color) { m_backgroundColor = color; }
+    void setBackgroundColor(Color&& color) { m_backgroundColor = WTF::move(color); }
     void setContentsVisible(bool visible) { m_contentsVisible = visible; }
     void setContentsOpaque(bool opaque) { m_contentsOpaque = opaque; }
     void setMasksToBounds(bool masksToBounds) { m_masksToBounds = masksToBounds; }
@@ -94,13 +94,13 @@ public:
     void setOpacity(float);
     void setBlendMode(BlendMode);
     void setContentsRect(const FloatRect& rect) { m_contentsRect = rect; }
-    void setAnimations(const AcceleratedAnimations& animations) { m_animations = animations; }
+    void setAnimations(AcceleratedAnimations&& animations) { m_animations = WTF::move(animations); }
     void setContentsTiling(const FloatSize& size, const FloatSize& phase) { m_contentsTiling = { size, phase }; }
     void setClipPath(SkPath&& clipPath) { m_clipPath = WTF::move(clipPath); }
     void setMask(RefPtr<SkiaCompositingLayer>&&);
     void setReplica(RefPtr<SkiaCompositingLayer>&&);
-    void setFilters(const FilterOperations&);
-    void setBackdropFilters(const FilterOperations&);
+    void setFilters(FilterOperations&&);
+    void setBackdropFilters(FilterOperations&&);
     void setBackdropFiltersRect(const FloatRoundedRect&);
     void setBackdropFiltersClipPath(std::optional<SkPath>&& clipPath) { m_backdrop.clipPath = WTF::move(clipPath); }
     void setIsBackdropRoot(bool isBackdropRoot) { m_isBackdropRoot = isBackdropRoot; }
@@ -133,7 +133,7 @@ public:
     void setContentsBuffer(std::unique_ptr<CoordinatedPlatformLayerBuffer>&&);
     std::unique_ptr<CoordinatedPlatformLayerBuffer> takeContentsBuffer();
     CoordinatedPlatformLayerBuffer* contentsBuffer() const { return m_contentsBuffer.get(); }
-    void setContentsSolidColor(const Color&);
+    void setContentsSolidColor(Color&&);
 
     void setDebugIndicators(Color&& debugBorderColor, std::optional<float> debugBorderWidth, std::optional<unsigned> repaintCount);
 
