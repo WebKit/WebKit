@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../../../../../resources/ui-helper.js"></script>
+    <script src="resources/touch-regions-helper.js"></script>
+    <style>
+        body {
+            margin: 0;
+        }
+
+        iframe {
+            display: block;
+            border: 0;
+            margin: 10px;
+        }
+
+        .box {
+            width: 100px;
+            height: 30px;
+            margin: 5px;
+            background-color: silver;
+        }
+    </style>
+</head>
+<body>
+    <div id="parentTarget" class="box"></div>
+    <div><div><div id="parentContainer"></div></div></div>
+    <div><div><iframe id="frame" scrolling="no" width="300" height="120" srcdoc="
+        <div><div><div id='container' style='padding: 5px'>Container</div></div></div>
+        <p>Content <span>without listeners</span>.</p>
+        <script>
+            for (const eventType of ['touchstart', 'touchmove', 'touchend', 'touchforcechange'])
+                container.addEventListener(eventType, () => { }, { passive: false });
+        </script>
+    "></iframe></div></div>
+    <script>
+        prepareForTest();
+
+        async function runTest()
+        {
+            parentTarget.addEventListener("touchstart", () => { }, { passive: true });
+
+            const frameDocument = frame.contentDocument;
+
+            // Both containers have non-passive touch listeners, so the synchronous touch regions
+            // are the same whether or not the moved elements also handle touches themselves.
+            for (const eventType of ["touchstart", "touchmove", "touchend", "touchforcechange"])
+                parentContainer.addEventListener(eventType, () => { }, { passive: false });
+
+            const movedIntoFrame = document.createElement("div");
+            movedIntoFrame.className = "box";
+            movedIntoFrame.style.cssText = "width: 100px; height: 30px; background-color: silver";
+            movedIntoFrame.addEventListener("gesturestart", () => { }, { passive: false });
+            frameDocument.getElementById("container").appendChild(frameDocument.adoptNode(movedIntoFrame));
+
+            const movedOutOfFrame = frameDocument.createElement("div");
+            movedOutOfFrame.className = "box";
+            movedOutOfFrame.addEventListener("gesturechange", () => { }, { passive: false });
+            parentContainer.appendChild(document.adoptNode(movedOutOfFrame));
+
+            await UIHelper.renderingUpdate();
+            dumpRegions();
+        }
+
+        window.addEventListener("load", runTest, false);
+    </script>
+</body>
+</html>

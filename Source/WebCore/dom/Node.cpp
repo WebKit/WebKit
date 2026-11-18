@@ -2440,7 +2440,7 @@ void Node::moveNodeToNewDocumentSlowCase(Document& oldDocument, Document& newDoc
     if (hasEventTargetData()) {
         unsigned numWheelEventHandlers = 0;
         unsigned numTouchEventListeners = 0;
-#if ENABLE(TOUCH_EVENTS) && ENABLE(IOS_GESTURE_EVENTS)
+#if ENABLE(TOUCH_EVENTS) || ENABLE(TOUCH_EVENT_REGIONS)
         unsigned numGestureEventListeners = 0;
 #endif
 
@@ -2467,7 +2467,7 @@ void Node::moveNodeToNewDocumentSlowCase(Document& oldDocument, Document& newDoc
                 numWheelEventHandlers += count;
             else if (typeInfo.isInCategory(touchEventCategory))
                 numTouchEventListeners += count;
-#if ENABLE(TOUCH_EVENTS) && ENABLE(IOS_GESTURE_EVENTS)
+#if ENABLE(TOUCH_EVENTS) || ENABLE(TOUCH_EVENT_REGIONS)
             else if (typeInfo.isInCategory(EventCategory::Gesture))
                 numGestureEventListeners += count;
 #endif
@@ -2486,6 +2486,20 @@ void Node::moveNodeToNewDocumentSlowCase(Document& oldDocument, Document& newDoc
             newDocument.addTouchEventListener(*this);
 #endif
         }
+
+#if ENABLE(TOUCH_EVENTS) || ENABLE(TOUCH_EVENT_REGIONS)
+        // Match tryAddEventListener(), which tracks gesture listeners in touchEventTargets.
+        if (numGestureEventListeners) {
+            bool oldDocumentUsesTouchEventRegions = oldDocument.shouldUseTouchEventRegions();
+            bool newDocumentUsesTouchEventRegions = newDocument.shouldUseTouchEventRegions();
+            for (unsigned i = 0; i < numGestureEventListeners; ++i) {
+                if (oldDocumentUsesTouchEventRegions)
+                    oldDocument.didRemoveTouchEventHandler(*this);
+                if (newDocumentUsesTouchEventRegions)
+                    newDocument.didAddTouchEventHandler(*this);
+            }
+        }
+#endif
 
 #if ENABLE(TOUCH_EVENTS) && ENABLE(IOS_GESTURE_EVENTS)
         for (unsigned i = 0; i < numGestureEventListeners; ++i) {

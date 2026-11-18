@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="resources/touch-regions-helper.js"></script>
+    <style>
+        iframe {
+            display: block;
+            border: 0;
+            margin: 10px;
+        }
+
+        .box {
+            width: 100px;
+            height: 30px;
+            margin: 5px;
+            background-color: silver;
+        }
+    </style>
+</head>
+<body>
+    <div class="box"></div>
+    <div><p>Parent content <span>without listeners</span>.</p></div>
+    <div><div><iframe scrolling="no" width="300" height="150" srcdoc="
+        <div class='box' style='width: 100px; height: 30px; background-color: silver'>No listener</div>
+        <div><div><div id='inner' style='width: 120px; height: 30px; background-color: silver'>Listener</div></div></div>
+        <p>More content <span>without listeners</span>.</p>
+        <script>
+            inner.addEventListener('touchstart', () => { }, { passive: true });
+        </script>
+    "></iframe></div></div>
+    <div class="box"></div>
+    <script>
+        prepareForTest();
+        window.addEventListener("load", dumpRegions, false);
+    </script>
+</body>
+</html>

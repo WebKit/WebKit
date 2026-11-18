@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../resources/touch-regions-helper.js"></script>
+    <style>
+        body {
+            margin: 0;
+        }
+
+        .container {
+            width: 300px;
+            margin: 10px;
+            padding: 5px;
+            border: 2px solid gray;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div><div><p>Switch: <input type="checkbox" switch></p></div></div>
+    </div>
+    <div class="container">
+        <div><div><div><input type="range" min="0" max="10" value="5"></div></div></div>
+    </div>
+    <div class="container">
+        <p>Text without controls.</p>
+    </div>
+    <script>
+        prepareForTest();
+        window.addEventListener("load", dumpRegions, false);
+    </script>
+</body>
+</html>

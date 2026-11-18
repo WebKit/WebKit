@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../../../../../resources/ui-helper.js"></script>
+    <script src="resources/touch-regions-helper.js"></script>
+    <style>
+        iframe {
+            display: block;
+            border: 0;
+            margin: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div><div><iframe id="frame" scrolling="no" width="300" height="150" srcdoc="
+        <div><div><div id='container' style='padding: 5px'>Container</div></div></div>
+        <p>Content <span>without listeners</span>.</p>
+    "></iframe></div></div>
+    <script>
+        prepareForTest();
+
+        async function runTest()
+        {
+            const frameDocument = frame.contentDocument;
+            const container = frameDocument.getElementById("container");
+
+            const touchTarget = document.createElement("div");
+            touchTarget.style.cssText = "width: 80px; height: 20px; background-color: gray";
+            touchTarget.addEventListener("touchmove", () => { }, { passive: true });
+            container.appendChild(frameDocument.adoptNode(touchTarget));
+            await UIHelper.renderingUpdate();
+
+            dumpRegions();
+        }
+
+        window.addEventListener("load", runTest, false);
+    </script>
+</body>
+</html>

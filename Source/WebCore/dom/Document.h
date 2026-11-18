@@ -1636,9 +1636,14 @@ public:
 #if ENABLE(TOUCH_EVENTS) || ENABLE(TOUCH_EVENT_REGIONS)
     bool hasTouchEventHandlers() const;
     bool touchEventTargetsContain(Node& node) const { return m_touchEventTargets.contains(node); }
+    const EventTargetSet& touchEventTargetsIncludingSubframeDocuments() const LIFETIME_BOUND { return m_touchEventTargets; }
 #else
     bool hasTouchEventHandlers() const { return false; }
     bool touchEventTargetsContain(Node&) const { return false; }
+#endif
+#if ENABLE(IOS_TOUCH_EVENTS) && ENABLE(TOUCH_EVENT_REGIONS)
+    // Nodes that handle touches themselves, such as switches and range inputs.
+    const EventTargetSet& touchEventHandlers() const LIFETIME_BOUND { return m_touchEventHandlerCounts; }
 #endif
 #if ENABLE(TOUCH_ACTION_REGIONS)
     bool mayHaveElementsWithNonAutoTouchAction() const { return m_mayHaveElementsWithNonAutoTouchAction; }

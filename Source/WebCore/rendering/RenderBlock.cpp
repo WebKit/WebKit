@@ -1241,12 +1241,6 @@ void RenderBlock::paintObject(PaintInfo& paintInfo, const LayoutPoint& paintOffs
         needsTraverseDescendants |= document->hasWheelEventHandlers() || document->mayHaveListBoxes();
         LOG_WITH_STREAM(EventRegions, stream << "  has wheel event handlers: " << document->hasWheelEventHandlers() << " may have list boxes: " << document->mayHaveListBoxes());
 #endif
-#if ENABLE(TOUCH_EVENT_REGIONS)
-        if (document->shouldUseTouchEventRegions()) {
-            needsTraverseDescendants |= document->hasTouchEventHandlers();
-            LOG_WITH_STREAM(EventRegions, stream << "  has touch event handlers: " << document->hasTouchEventHandlers());
-        }
-#endif
 
 #if ENABLE(EDITABLE_REGION)
         // We treat the entire text control as editable to match users' expectation even
@@ -1260,6 +1254,27 @@ void RenderBlock::paintObject(PaintInfo& paintInfo, const LayoutPoint& paintOffs
 
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
         needsTraverseDescendants |= page().shouldBuildInteractionRegions();
+#endif
+
+#if ENABLE(TOUCH_EVENT_REGIONS)
+        ASSERT_IMPLIES(!needsTraverseDescendants, !hasVisualOverflow() && !containsFloats());
+
+        // Skip traversing descendants of this block when building event regions if:
+        //
+        // 1. This block has no visual overflow or floats, so all descendants paint inside its
+        //    border box.
+        // 2. No descendant is a touch event target (e.g. an element with its own touch listener).
+        //    Since listener types are inherited, every descendant has this block's touch listener
+        //    types, and we don't have to traverse descendants to discover differing types.
+        // 3. The touch listener regions already cover the clipped border box for those types. By
+        //    (1) and (2), they then also cover each descendant's touch rect, so we don't have to
+        //    traverse descendants to discover their touch rects.
+        if (!needsTraverseDescendants && document->shouldUseTouchEventRegions() && document->hasTouchEventHandlers()) {
+            CheckedRef eventRegionContext = *paintInfo.eventRegionContext();
+            needsTraverseDescendants = eventRegionContext->mayHaveDescendantTouchEventTargets(*this)
+                || !eventRegionContext->touchEventListenerRegionsContain(enclosingIntRect(borderRect), style().eventListenerRegionTypes());
+            LOG_WITH_STREAM(EventRegions, stream << "  needs to traverse descendants for touch event listeners: " << needsTraverseDescendants);
+        }
 #endif
 
         if (!needsTraverseDescendants)

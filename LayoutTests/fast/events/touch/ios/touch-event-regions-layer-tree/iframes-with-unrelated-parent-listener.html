@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="resources/touch-regions-helper.js"></script>
+    <style>
+        iframe {
+            display: block;
+            border: 0;
+            margin: 10px;
+        }
+
+        .box {
+            width: 100px;
+            height: 30px;
+            margin: 5px;
+            background-color: silver;
+        }
+    </style>
+</head>
+<body>
+    <div id="parentTarget" class="box"></div>
+
+    <iframe scrolling="no" width="200" height="80" srcdoc="
+        <div style='touch-action: none; width: 100px; height: 30px; background-color: silver'>touch-action: none</div>
+    "></iframe>
+
+    <iframe scrolling="no" width="200" height="80" srcdoc="
+        <div><div><div id='inner' style='width: 100px; height: 30px; background-color: silver'>Listener</div></div></div>
+        <script>
+            inner.addEventListener('touchstart', () => { }, { passive: false });
+        </script>
+    "></iframe>
+
+    <iframe scrolling="no" width="200" height="80" srcdoc="
+        <div style='width: 100px; height: 30px; background-color: silver'>No listeners</div>
+    "></iframe>
+
+    <div><div><iframe scrolling="no" width="200" height="80" srcdoc="
+        <div style='width: 100px; height: 30px; background-color: silver'>Nested iframe owner, with a window listener</div>
+        <script>
+            window.addEventListener('pointerdown', () => { }, { passive: true });
+        </script>
+    "></iframe></div></div>
+    <script>
+        parentTarget.addEventListener("touchstart", () => { }, { passive: true });
+
+        prepareForTest();
+        window.addEventListener("load", dumpRegions, false);
+    </script>
+</body>
+</html>
