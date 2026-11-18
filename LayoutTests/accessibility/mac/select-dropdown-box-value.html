@@ -47,6 +47,30 @@
     <option>Banana</option>
 </select>
 
+<select id="nativeHiddenContent">
+    <button><span aria-hidden="true">Hidden </span><span style="display: none">Not rendered </span>Fruit: <selectedcontent></selectedcontent></button>
+    <option>Apple</option>
+    <option id="nativeHiddenContentBanana">Banana</option>
+</select>
+
+<select id="baseHiddenContent" class="base">
+    <button><span aria-hidden="true">Hidden </span><span style="display: none">Not rendered </span>Fruit: <selectedcontent></selectedcontent></button>
+    <option>Apple</option>
+    <option id="baseHiddenContentBanana">Banana</option>
+</select>
+
+<select id="nativeAlternativeText">
+    <button><span>Fruit:</span><selectedcontent></selectedcontent><img alt="(ripe)" src="data:image/gif;base64,R0lGODlhAQABAAAAACw="></button>
+    <option aria-label="Red apple">Apple</option>
+    <option id="nativeAlternativeTextBanana">Banana</option>
+</select>
+
+<select id="baseAlternativeText" class="base">
+    <button><span>Fruit:</span><selectedcontent></selectedcontent><img alt="(ripe)" src="data:image/gif;base64,R0lGODlhAQABAAAAACw="></button>
+    <option aria-label="Red apple">Apple</option>
+    <option id="baseAlternativeTextBanana">Banana</option>
+</select>
+
 <select id="nativeMultipleButton" multiple size="1">
     <button>Toppings: <selectedcontent></selectedcontent></button>
     <option id="nativeMultipleButtonCheese" selected>Cheese</option>
@@ -58,7 +82,14 @@
     <button>Toppings: <selectedcontent></selectedcontent></button>
     <option id="baseMultipleButtonCheese" selected>Cheese</option>
     <option id="baseMultipleButtonHam">Ham</option>
-    <option selected>Olives</option>
+    <option id="baseMultipleButtonOlives" selected>Olives</option>
+</select>
+
+<select id="baseMultipleButtonSpanish" class="base" multiple size="1" lang="es">
+    <button>Ingredientes: <selectedcontent></selectedcontent></button>
+    <option selected>Queso</option>
+    <option>Tomate</option>
+    <option selected>Aceitunas</option>
 </select>
 
 <script>
@@ -68,6 +99,15 @@ function selectOnly(id, optionIds)
 {
     for (const option of document.getElementById(id).options)
         option.selected = optionIds.includes(option.id);
+}
+
+async function expectValues(id, values)
+{
+    window.axSelect = await waitForElementById(id);
+    output += `${id}:\n`;
+    output += await expectAsync("axSelect.stringValue", `'AXValue: ${values[0]}'`);
+    document.getElementById(`${id}Banana`).selected = true;
+    output += await expectAsync("axSelect.stringValue", `'AXValue: ${values[1]}'`);
 }
 
 if (window.accessibilityController) {
@@ -104,15 +144,36 @@ if (window.accessibilityController) {
             output += await expectAsync("axSelect.stringValue", "'AXValue: Pick: Apple'");
         }
 
-        for (const id of ["nativeMultipleButton", "baseMultipleButton"]) {
-            window.axSelect = await waitForElementById(id);
-            output += `${id}:\n`;
-            output += await expectAsync("axSelect.stringValue", "'AXValue: Toppings: 2 Items'");
-            selectOnly(id, [`${id}Ham`]);
-            output += await expectAsync("axSelect.stringValue", "'AXValue: Toppings: Ham'");
-            selectOnly(id, []);
-            output += await expectAsync("axSelect.stringValue", "'AXValue: Toppings: 0 Items'");
-        }
+        // With base appearance the button renders, and the value is its content as accessibility reads it.
+        await expectValues("nativeHiddenContent", ["Hidden Not rendered Fruit: Apple", "Hidden Not rendered Fruit: Banana"]);
+        await expectValues("baseHiddenContent", ["Fruit: Apple", "Fruit: Banana"]);
+        await expectValues("nativeAlternativeText", ["Fruit:Apple", "Fruit:Banana"]);
+        await expectValues("baseAlternativeText", ["Fruit: Red apple (ripe)", "Fruit: Banana (ripe)"]);
+
+        window.axSelect = await waitForElementById("nativeMultipleButton");
+        output += "nativeMultipleButton:\n";
+        output += await expectAsync("axSelect.stringValue", "'AXValue: Toppings: 2 Items'");
+        selectOnly("nativeMultipleButton", ["nativeMultipleButtonHam"]);
+        output += await expectAsync("axSelect.stringValue", "'AXValue: Toppings: Ham'");
+        selectOnly("nativeMultipleButton", []);
+        output += await expectAsync("axSelect.stringValue", "'AXValue: Toppings: 0 Items'");
+
+        // With base appearance the selected options are listed in the language of the select.
+        window.axSelect = await waitForElementById("baseMultipleButton");
+        output += "baseMultipleButton:\n";
+        output += await expectAsync("axSelect.stringValue", "'AXValue: Toppings: Cheese and Olives'");
+        selectOnly("baseMultipleButton", ["baseMultipleButtonCheese", "baseMultipleButtonHam"]);
+        output += await expectAsync("axSelect.stringValue", "'AXValue: Toppings: Cheese and Ham'");
+        selectOnly("baseMultipleButton", ["baseMultipleButtonCheese", "baseMultipleButtonHam", "baseMultipleButtonOlives"]);
+        output += await expectAsync("axSelect.stringValue", "'AXValue: Toppings: Cheese, Ham, and Olives'");
+        selectOnly("baseMultipleButton", ["baseMultipleButtonHam"]);
+        output += await expectAsync("axSelect.stringValue", "'AXValue: Toppings: Ham'");
+        selectOnly("baseMultipleButton", []);
+        output += await expectAsync("axSelect.stringValue", "'AXValue: Toppings:'");
+
+        window.axSelect = await waitForElementById("baseMultipleButtonSpanish");
+        output += "baseMultipleButtonSpanish:\n";
+        output += await expectAsync("axSelect.stringValue", "'AXValue: Ingredientes: Queso y Aceitunas'");
 
         for (const select of document.querySelectorAll("select"))
             select.style.display = "none";
