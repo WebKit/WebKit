@@ -172,15 +172,18 @@ void RemoteAnimationStack::initEffectsFromMainThread(PlatformLayer *layer)
     [m_presentationModifierGroup setUpdatesAsynchronously:NO];
 
     if (canonicalFilters) {
-        WebCore::PlatformCAFilters::presentationModifiers(m_filtersAffectBackdrop ? computedValues.backdropFilter : computedValues.filter, canonicalFilters, m_filterPresentationModifiers, m_presentationModifierGroup);
+        auto& filter = m_filtersAffectBackdrop ? computedValues.backdropFilter : computedValues.filter;
+        WebCore::PlatformCAFilters::presentationModifiers(filter, canonicalFilters, m_filterPresentationModifiers, m_presentationModifierGroup);
         for (auto& filterPresentationModifier : borrow(m_filterPresentationModifiers))
             [layer addPresentationModifier:filterPresentationModifier.second.get()];
+        m_lastAppliedFilter = filter;
     }
 
     if (m_affectedLayerProperties.contains(LayerProperty::Opacity)) {
         RetainPtr opacity = @(computedValues.opacity.value);
         m_opacityPresentationModifier = adoptNS([[CAPresentationModifier alloc] initWithKeyPath:@"opacity" initialValue:opacity.get() additive:NO group:m_presentationModifierGroup.get()]);
         [layer addPresentationModifier:m_opacityPresentationModifier.get()];
+        m_lastAppliedOpacity = computedValues.opacity.value;
     }
 
     if (m_affectedLayerProperties.contains(LayerProperty::Transform)) {
@@ -188,37 +191,55 @@ void RemoteAnimationStack::initEffectsFromMainThread(PlatformLayer *layer)
         RetainPtr transform = [NSValue valueWithCATransform3D:computedTransform];
         m_transformPresentationModifier = adoptNS([[CAPresentationModifier alloc] initWithKeyPath:@"transform" initialValue:transform.get() additive:NO group:m_presentationModifierGroup.get()]);
         [layer addPresentationModifier:m_transformPresentationModifier.get()];
+        m_lastAppliedTransform = WTF::move(computedTransform);
     }
 
     [m_presentationModifierGroup flushWithTransaction];
 }
 
-void RemoteAnimationStack::applyEffects() const
+auto RemoteAnimationStack::applyEffects() -> ValuesChanged
 {
+    auto changed = ValuesChanged::No;
     if (!m_presentationModifierGroup)
-        return;
+        return changed;
 
     auto computedValues = computeValues();
 
-    if (!m_filterPresentationModifiers.isEmpty())
-        WebCore::PlatformCAFilters::updatePresentationModifiers(m_filtersAffectBackdrop ? computedValues.backdropFilter : computedValues.filter, m_filterPresentationModifiers);
+    if (!m_filterPresentationModifiers.isEmpty()) {
+        auto& filter = m_filtersAffectBackdrop ? computedValues.backdropFilter : computedValues.filter;
+        if (m_lastAppliedFilter != filter) {
+            WebCore::PlatformCAFilters::updatePresentationModifiers(filter, m_filterPresentationModifiers);
+            m_lastAppliedFilter = filter;
+            changed = ValuesChanged::Yes;
+        }
+    }
 
     if (m_opacityPresentationModifier) {
         // Setting 0.f here may result in a stale value for the CAPresentationModifier.
         // FIXME: rdar://188819673.
-        if (!computedValues.opacity.value)
-            computedValues.opacity.value = std::numeric_limits<float>::min();
-        RetainPtr opacity = @(computedValues.opacity.value);
-        [m_opacityPresentationModifier setValue:opacity.get()];
+        auto opacity = computedValues.opacity.value ? computedValues.opacity.value : std::numeric_limits<float>::min();
+        if (m_lastAppliedOpacity != opacity) {
+            RetainPtr opacityValue = @(opacity);
+            [m_opacityPresentationModifier setValue:opacityValue.get()];
+            m_lastAppliedOpacity = opacity;
+            changed = ValuesChanged::Yes;
+        }
     }
 
     if (m_transformPresentationModifier) {
         auto computedTransform = computedValues.computedTransformationMatrix(m_bounds);
-        RetainPtr transform = [NSValue valueWithCATransform3D:computedTransform];
-        [m_transformPresentationModifier setValue:transform.get()];
+        if (m_lastAppliedTransform != computedTransform) {
+            RetainPtr transform = [NSValue valueWithCATransform3D:computedTransform];
+            [m_transformPresentationModifier setValue:transform.get()];
+            m_lastAppliedTransform = WTF::move(computedTransform);
+            changed = ValuesChanged::Yes;
+        }
     }
 
-    [m_presentationModifierGroup flushWithTransaction];
+    if (changed == ValuesChanged::Yes)
+        [m_presentationModifierGroup flushWithTransaction];
+
+    return changed;
 }
 #endif
 
@@ -229,12 +250,15 @@ void RemoteAnimationStack::applyEffectsFromMainThread(PlatformLayer *layer, bool
     if (m_affectedLayerProperties.contains(LayerProperty::Filter))
         WebCore::PlatformCAFilters::setFiltersOnLayer(layer, m_filtersAffectBackdrop ? computedValues.backdropFilter : computedValues.filter, backdropRootIsOpaque);
 
-    if (m_affectedLayerProperties.contains(LayerProperty::Opacity))
+    // We compare against the layer's current value rather than the last value we applied since
+    // a remote layer tree commit may have reset the property to an updated base value.
+    if (m_affectedLayerProperties.contains(LayerProperty::Opacity) && [layer opacity] != computedValues.opacity.value)
         [layer setOpacity:computedValues.opacity.value];
 
     if (m_affectedLayerProperties.contains(LayerProperty::Transform)) {
-        auto computedTransform = computedValues.computedTransformationMatrix(m_bounds);
-        [layer setTransform:computedTransform];
+        CATransform3D computedTransform = computedValues.computedTransformationMatrix(m_bounds);
+        if (!CATransform3DEqualToTransform([layer transform], computedTransform))
+            [layer setTransform:computedTransform];
     }
 }
 
@@ -265,6 +289,9 @@ void RemoteAnimationStack::clear(PlatformLayer *layer)
     m_opacityPresentationModifier = nil;
     m_transformPresentationModifier = nil;
     m_presentationModifierGroup = nil;
+    m_lastAppliedOpacity = std::nullopt;
+    m_lastAppliedTransform = std::nullopt;
+    m_lastAppliedFilter = std::nullopt;
 #endif
 }
 

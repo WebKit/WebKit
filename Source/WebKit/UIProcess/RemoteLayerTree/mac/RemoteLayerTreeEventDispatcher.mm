@@ -805,8 +805,8 @@ bool RemoteLayerTreeEventDispatcher::updateAnimations(AnimationStacksToUpdate an
     for (auto [layerID, currentAnimationStack] : animationStacks) {
         Ref animationStack = currentAnimationStack;
         if (animationStacksToUpdate == AnimationStacksToUpdate::All || animationStack->hasProgressBasedAnimations()) {
-            animationStack->applyEffects();
-            appliedEffects = true;
+            if (animationStack->applyEffects() == RemoteAnimationStack::ValuesChanged::Yes)
+                appliedEffects = true;
         }
 
         // We can clear the effect stack if it's empty, but the previous
