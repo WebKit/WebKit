@@ -3392,25 +3392,44 @@ class AnalyzeCompileWebKitResults(buildstep.BuildStep, AddToLogMixin, GitHubMixi
     name = 'analyze-compile-webkit-results'
     description = ['analyze-compile-webkit-results']
     descriptionDone = ['analyze-compile-webkit-results']
+    DISK_FULL_ERROR = 'No space left on device'
 
     @defer.inlineCallbacks
     def run(self):
         self.error_logs = {}
         self.compile_webkit_step = CompileWebKit.name
+        self.compile_without_change_step = CompileWebKitWithoutChange.name
         if shouldBuildJSCOnly(self.getProperty('group'), self.getProperty('platform')):
             self.compile_webkit_step = CompileJSC.name
+            self.compile_without_change_step = CompileJSCWithoutChange.name
         yield self.getResults(self.compile_webkit_step)
+        yield self.getResults(self.compile_without_change_step)
         rc = yield self.analyzeResults()
         defer.returnValue(rc)
 
+    def ran_out_of_disk_space(self, compile_without_change_result):
+        steps_to_check = [self.compile_webkit_step]
+        if compile_without_change_result == FAILURE:
+            steps_to_check.append(self.compile_without_change_step)
+        for step_name in steps_to_check:
+            for line in (self.error_logs.get(step_name) or '').splitlines():
+                if self.DISK_FULL_ERROR in line and 'error' in line.lower():
+                    return True
+        return False
+
     @defer.inlineCallbacks
     def analyzeResults(self):
-        compile_without_change_step = CompileWebKitWithoutChange.name
-        if shouldBuildJSCOnly(self.getProperty('group'), self.getProperty('platform')):
-            compile_without_change_step = CompileJSCWithoutChange.name
-        compile_without_change_result = self.getStepResult(compile_without_change_step)
+        compile_without_change_result = self.getStepResult(self.compile_without_change_step)
 
         pr_number = self.getProperty('github.number')
+
+        if self.ran_out_of_disk_space(compile_without_change_result):
+            message = 'Ran out of disk space, retrying build'
+            self.descriptionDone = message
+            yield self.send_email_for_disk_full()
+            self.build.workerforbuilder.worker.putInQuarantine()
+            self.build.buildFinished([message], RETRY)
+            return defer.returnValue(FAILURE)
 
         if compile_without_change_result == FAILURE:
             if pr_number and self.getProperty('github.base.ref') != 'main':
@@ -3552,6 +3571,19 @@ class AnalyzeCompileWebKitResults(buildstep.BuildStep, AddToLogMixin, GitHubMixi
             send_email_to_bot_watchers(email_subject, email_text, builder_name, reference)
         except Exception as e:
             yield self._addToLog('stdio', f'Error in sending email for build failure: {e}')
+
+    @defer.inlineCallbacks
+    def send_email_for_disk_full(self):
+        try:
+            builder_name = self.getProperty('buildername', '')
+            worker_name = self.getProperty('workername', '')
+            build_url = f'{self.master.config.buildbotURL}#/builders/{self.build._builderid}/builds/{self.build.number}'
+            email_subject = f'{worker_name} ran out of disk space while building WebKit'
+            email_text = f'{worker_name} ran out of disk space while building WebKit.'
+            email_text += f'\n\nBuild: {build_url}\n\nBuilder: {builder_name}\n'
+            send_email_to_bot_watchers(email_subject, email_text, builder_name, f'disk-full-{worker_name}')
+        except Exception as e:
+            yield self._addToLog('stdio', f'Error in sending email for disk full: {e}')
 
 
 class CompileJSC(CompileWebKit):

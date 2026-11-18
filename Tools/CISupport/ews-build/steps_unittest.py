@@ -1574,6 +1574,93 @@ class TestAnalyzeCompileWebKitResults(BuildStepMixinAdditions, unittest.TestCase
         self.expect_outcome(result=FAILURE, state_string='Unable to build WebKit without PR, please check manually (failure)')
         return self.run_step()
 
+    def setup_step_with_error_logs(self, error_logs, without_change_result=SUCCESS, jsc_only=False):
+        compile_step = CompileJSC() if jsc_only else CompileWebKit()
+        compile_without_change_step = CompileJSCWithoutChange() if jsc_only else CompileWebKitWithoutChange()
+        previous_steps = [
+            mock_step(compile_step, results=FAILURE),
+            mock_step(compile_without_change_step, results=without_change_result),
+        ]
+        previous_steps[0].name = compile_step.name
+        previous_steps[1].name = compile_without_change_step.name
+        self.setup_step(AnalyzeCompileWebKitResults(), previous_steps=previous_steps)
+        if jsc_only:
+            self.setProperty('group', 'jsc')
+            self.setProperty('platform', 'mac')
+        self.setProperty('github.number', '1234')
+        self.setProperty('github.head.sha', '7496f8ecc4cc8011f19c8cc1bc7b18fe4a88ad5c')
+        self.setProperty('workername', 'ews193')
+
+        def get_results(step, name):
+            step.error_logs[name] = error_logs.get(name)
+            return defer.succeed(None)
+
+        self.finished = []
+        self.steps_added = []
+        self.patch(AnalyzeCompileWebKitResults, 'getResults', get_results)
+        self.patch(self.build, 'buildFinished', lambda text, results: self.finished.append((text, results)))
+        self.patch(self.build, 'addStepsAfterCurrentStep', lambda steps: self.steps_added.extend(steps))
+
+    @defer.inlineCallbacks
+    def test_disk_full_in_build_with_change_is_retried(self):
+        self.setup_step_with_error_logs({
+            CompileWebKit.name: "error: unable to open output file 'WebKitBuild/SwiftExplicitPrecompiledModules/WebCore_Private.pcm': 'No space left on device'",
+        })
+        self.expect_outcome(result=FAILURE, state_string='Ran out of disk space, retrying build (failure)')
+        yield self.run_step()
+        self.assertEqual(self.finished, [(['Ran out of disk space, retrying build'], RETRY)])
+        self.assertEqual(self.steps_added, [])
+        self.build.workerforbuilder.worker.putInQuarantine.assert_called_once_with()
+        self.assertEqual(len(self._emails_list), 1)
+        self.assertIn('Subject: ews193 ran out of disk space while building WebKit', self._emails_list[0])
+
+    @defer.inlineCallbacks
+    def test_disk_full_in_build_without_change_is_retried(self):
+        self.setup_step_with_error_logs({
+            CompileWebKit.name: 'error: no member named isListMarker',
+            CompileWebKitWithoutChange.name: 'error: CAS operation failed: No space left on device',
+        }, without_change_result=FAILURE)
+        self.setProperty('github.base.ref', 'safari-7614-branch')
+        self.expect_outcome(result=FAILURE, state_string='Ran out of disk space, retrying build (failure)')
+        yield self.run_step()
+        self.assertEqual(self.finished, [(['Ran out of disk space, retrying build'], RETRY)])
+
+    @defer.inlineCallbacks
+    def test_disk_full_in_jsc_build_is_retried(self):
+        self.setup_step_with_error_logs({CompileJSC.name: 'error: CAS operation failed: No space left on device'}, jsc_only=True)
+        self.expect_outcome(result=FAILURE, state_string='Ran out of disk space, retrying build (failure)')
+        yield self.run_step()
+        self.assertEqual(self.finished, [(['Ran out of disk space, retrying build'], RETRY)])
+
+    @defer.inlineCallbacks
+    def test_disk_full_in_successful_build_without_change_still_blocks_pull_request(self):
+        self.setup_step_with_error_logs({
+            CompileWebKit.name: 'error: no member named isListMarker',
+            CompileWebKitWithoutChange.name: 'error: CAS operation failed: No space left on device',
+        })
+        self.expect_outcome(result=FAILURE, state_string='Hash 7496f8ec for PR 1234 does not build (failure)')
+        yield self.run_step()
+        self.assertEqual(self.finished, [])
+        self.assertEqual([step.name for step in self.steps_added], [BlockPullRequest.name])
+        self.build.workerforbuilder.worker.putInQuarantine.assert_not_called()
+
+    @defer.inlineCallbacks
+    def test_disk_full_text_in_quoted_source_still_blocks_pull_request(self):
+        self.setup_step_with_error_logs({
+            CompileWebKit.name: "status.cc:42:5: error: use of undeclared identifier 'kNoSpace'\n    return \"No space left on device\";",
+        })
+        self.expect_outcome(result=FAILURE, state_string='Hash 7496f8ec for PR 1234 does not build (failure)')
+        yield self.run_step()
+        self.assertEqual([step.name for step in self.steps_added], [BlockPullRequest.name])
+
+    @defer.inlineCallbacks
+    def test_compile_errors_without_disk_full_still_block_pull_request(self):
+        self.setup_step_with_error_logs({CompileWebKit.name: 'error: no member named isListMarker'})
+        self.expect_outcome(result=FAILURE, state_string='Hash 7496f8ec for PR 1234 does not build (failure)')
+        yield self.run_step()
+        self.assertEqual(self.finished, [])
+        self.assertEqual([step.name for step in self.steps_added], [BlockPullRequest.name])
+
     def test_filter_logs_containing_error(self):
         logs = 'In file included from WebCore/unified-sources/UnifiedSource263.cpp:4:\nImageBufferIOSurfaceBackend.cpp:108:30: error: definition of implicitly declared destructor'
         expected_output = 'ImageBufferIOSurfaceBackend.cpp:108:30: error: definition of implicitly declared destructor'
