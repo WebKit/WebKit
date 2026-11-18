@@ -84,7 +84,7 @@ public:
     FloatSize size(ImageOrientation orientation = ImageOrientation::Orientation::FromImage) const { return m_source->size(orientation); }
     bool hasSomethingToDraw() const final { return !size().isEmpty(); }
     FloatSize density() const { return m_source->density(); }
-    ColorSpace colorSpace() final { return m_source->colorSpace(); }
+    ColorSpace colorSpace(const ColorSpace& = ColorSpace::SRGB()) final { return m_source->colorSpace(); }
     bool hasHDRContent() const final { return m_source->hasHDRContent(); }
     ImageOrientation orientation() const final { return m_source->orientation(); }
     unsigned frameCount() const final { return m_source->frameCount(); }

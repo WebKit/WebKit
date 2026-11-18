@@ -122,7 +122,7 @@ public:
     FragmentedSharedBuffer* data() { return m_encodedImageData.get(); }
     const FragmentedSharedBuffer* data() const { return m_encodedImageData.get(); }
 
-    virtual ColorSpace colorSpace();
+    virtual ColorSpace colorSpace(const ColorSpace& defaultColorSpace = ColorSpace::SRGB());
     virtual bool hasHDRContent() const { return false; }
     virtual bool hasHDRContentForTesting() const { return false; }
 

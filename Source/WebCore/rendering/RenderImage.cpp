@@ -496,6 +496,9 @@ RefPtr<ShareableBitmap> RenderImage::createShareableBitmap(const CreateShareable
         bitmapSize = scaledSize.width() < bitmapSize.width() ? scaledSize : bitmapSize;
     }
 
+    if (options.resultColorSpace == CreateShareableBitmapFromImageOptions::ResultColorSpace::FromImage)
+        colorSpaceForBitmap = styleImage->colorSpace().asRGBModelMayBeExtended().value_or(ColorSpace::SRGB());
+
     // FIXME: Only select ExtendedColor on images known to need wide gamut.
     auto sharedBitmap = ShareableBitmap::create({ IntSize(bitmapSize), WTF::move(colorSpaceForBitmap) });
     if (!sharedBitmap)
@@ -533,7 +536,9 @@ RefPtr<ShareableBitmap> RenderImage::createShareableBitmapForImageBitmapRequest(
 
 RefPtr<ShareableBitmap> RenderImage::createShareableBitmapForFullScreen() const
 {
-    return createShareableBitmap();
+    CreateShareableBitmapFromImageOptions options;
+    options.resultColorSpace = CreateShareableBitmapFromImageOptions::ResultColorSpace::FromImage;
+    return createShareableBitmap(options);
 }
 
 RefPtr<ShareableBitmap> RenderImage::createShareableBitmapForImageServices() const

@@ -382,9 +382,9 @@ void Image::startAnimationAsynchronously()
     m_animationStartTimer->startOneShot(0_s);
 }
 
-ColorSpace Image::colorSpace()
+ColorSpace Image::colorSpace(const ColorSpace& defaultColorSpace)
 {
-    return ColorSpace::SRGB();
+    return defaultColorSpace;
 }
 
 RefPtr<ShareableBitmap> Image::toShareableBitmap(ConcreteObjectSize concreteObjectSize) const

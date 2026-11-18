@@ -102,6 +102,7 @@ public:
     NODELETE virtual WebCore::CachedImage* cachedImage() const { return nullptr; }
     virtual bool currentFrameIsComplete(const RenderElement*) const { return true; }
     virtual std::optional<IntPoint> hotSpot() const { return std::nullopt; }
+    virtual ColorSpace colorSpace(const ColorSpace& defaultColorSpace = ColorSpace::SRGB()) const { return defaultColorSpace; }
 
     // Multiple Image selection.
     virtual Image* selectedImage() { return this; }

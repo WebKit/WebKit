@@ -532,6 +532,14 @@ std::optional<IntPoint> CachedImage::hotSpot() const
     return image ? image->hotSpot() : std::nullopt;
 }
 
+ColorSpace CachedImage::colorSpace(const ColorSpace& defaultColorSpace) const
+{
+    if (m_isPending)
+        return defaultColorSpace;
+    RefPtr image = resolvedImage();
+    return image ? image->colorSpace(defaultColorSpace) : defaultColorSpace;
+}
+
 bool CachedImage::drawsSVGImage() const
 {
     RefPtr image = m_cachedImage ? protect(m_cachedImage)->image() : nullptr;

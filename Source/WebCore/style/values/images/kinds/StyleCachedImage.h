@@ -89,6 +89,7 @@ public:
     RefPtr<NativeImage> nativeImage(const RenderElement&, const ImageDrawDescriptor&, float resolutionScale) const final;
     bool currentFrameIsComplete(const RenderElement*) const final;
     std::optional<IntPoint> hotSpot() const final;
+    ColorSpace colorSpace(const ColorSpace& defaultColorSpace = ColorSpace::SRGB()) const final;
     Resolution<> imageResolution() const final;
     bool knownToBeOpaque(const RenderElement&) const final;
     bool canDraw(const RenderElement&) const final;
