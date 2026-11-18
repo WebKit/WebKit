@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            height: 2000px;
+            margin: 0;
+        }
+
+        #container {
+            position: fixed;
+            z-index: 10;
+            top: 100px;
+            left: 50px;
+            width: 200px;
+            height: 50px;
+        }
+
+        #child {
+            position: absolute;
+            z-index: 10;
+            top: 0;
+            left: 0;
+            width: 100px;
+            height: 40px;
+            background-color: orange;
+            display: none;
+        }
+    </style>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+
+        if (window.internals)
+            internals.settings.setAcceleratedCompositingForFixedPositionEnabled(true);
+
+        function layerTreeHasFixedLayer()
+        {
+            // The fixed container is 200px wide; the child is 100px wide.
+            return /\(bounds 200\.00 50\.00\)|\(position 50\.00 100\.00\)/.test(internals.layerTreeAsText(document));
+        }
+
+        addEventListener("load", () => {
+            let result = document.getElementById("result");
+            let child = document.getElementById("child");
+
+            // The container has no visible content at this point, so it is not composited.
+            let before = layerTreeHasFixedLayer();
+
+            // Show the child, as a "scroll to top" button would after the page is scrolled.
+            child.style.display = "block";
+
+            setTimeout(() => {
+                let after = layerTreeHasFixedLayer();
+                if (before)
+                    result.innerText = "FAIL: fixed container was composited before it had visible content";
+                else if (!after)
+                    result.innerText = "FAIL: fixed container was not composited after its child became visible";
+                else
+                    result.innerText = "PASS: fixed container was composited after its child became visible";
+                testRunner.notifyDone();
+            }, 0);
+        }, false);
+    </script>
+</head>
+<body>
+    <div id="container"><div id="child"></div></div>
+    <pre id="result"></pre>
+</body>
+</html>
