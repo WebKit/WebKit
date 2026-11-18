@@ -36,7 +36,6 @@ namespace Layout {
 
 struct GridAutoFlowOptions;
 struct LeadingImplicitTracks;
-struct UnplacedGridItems;
 
 // https://drafts.csswg.org/css-grid-1/#implicit-grids
 class ImplicitGrid {
@@ -53,7 +52,7 @@ public:
 
     GridAreaLines insertUnplacedGridItem(const UnplacedGridItem&);
     GridAreaLines insertDefiniteRowItem(const UnplacedGridItem&, GridAutoFlowOptions);
-    void determineImplicitGridColumns(const Vector<UnplacedGridItem>&);
+    void determineImplicitGridColumns(const UnplacedGridItems&);
     GridAreaLines insertAutoPositionedItem(const UnplacedGridItem&, GridAutoFlowOptions);
 
 private:

@@ -262,7 +262,6 @@ layout/formattingContexts/flex/FlexFormattingContext.cpp
 layout/formattingContexts/grid/AutoRepeatResolver.cpp
 layout/formattingContexts/grid/ExtraSpaceDistributor.cpp
 layout/formattingContexts/grid/GridFormattingContext.cpp
-layout/formattingContexts/grid/GridItemPlacer.cpp
 layout/formattingContexts/grid/GridLayout.cpp
 layout/formattingContexts/grid/GridLayoutUtils.cpp
 layout/formattingContexts/grid/GridSizer.cpp
@@ -531,10 +530,10 @@ rendering/RenderView.cpp
 rendering/StyledMarkedText.cpp
 rendering/SubtreeScrollbarChangesState.cpp
 rendering/cocoa/RenderThemeCocoa.mm
-rendering/paint/OutlinePainter.cpp
-rendering/paint/TextBoxPainter.cpp
 [ iOS ] rendering/ios/RenderThemeIOS.mm
 rendering/mathml/MathOperator.cpp
+rendering/paint/OutlinePainter.cpp
+rendering/paint/TextBoxPainter.cpp
 rendering/shapes/PathLayoutShape.cpp
 rendering/svg/RenderSVGPath.cpp
 rendering/svg/RenderSVGResourceContainer.cpp

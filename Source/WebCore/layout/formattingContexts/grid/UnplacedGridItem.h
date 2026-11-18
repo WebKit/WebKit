@@ -111,14 +111,12 @@ private:
 };
 
 // https://drafts.csswg.org/css-grid-1/#auto-placement-algo
-struct UnplacedGridItems {
-    // 1. Position anything that’s not auto-positioned.
-    Vector<UnplacedGridItem> nonAutoPositionedItems;
-    // 2. Process the items locked to a given row.
-    Vector<UnplacedGridItem> definiteRowPositionedItems;
-    // 4. Position the remaining grid items.
-    Vector<UnplacedGridItem> autoPositionedItems;
-};
+// 1. Position anything that’s not auto-positioned.
+inline bool isNonAutoPositioned(const UnplacedGridItem& item) { return item.hasDefiniteColumnPosition() && item.hasDefiniteRowPosition(); }
+// 2. Process the items locked to a given row.
+inline bool isDefiniteRowPositioned(const UnplacedGridItem& item) { return item.hasDefiniteRowPosition() && !item.hasDefiniteColumnPosition(); }
+// 4. Position the remaining grid items.
+inline bool isAutoPositioned(const UnplacedGridItem& item) { return !item.hasDefiniteRowPosition(); }
 
 }
 }

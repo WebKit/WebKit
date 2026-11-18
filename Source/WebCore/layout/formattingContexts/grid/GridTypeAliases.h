@@ -66,6 +66,7 @@ using TrackIndexes = Vector<size_t>;
 using TrackSizes = Vector<LayoutUnit>;
 using TrackSizingFunctionsList = Vector<TrackSizingFunctions>;
 using TrackSizingItemList = Vector<TrackSizingItem>;
+using UnplacedGridItems = Vector<UnplacedGridItem>;
 using UnsizedTracks = Vector<UnsizedTrack>;
 using UsedBlockSizes = Vector<LayoutUnit>;
 using UsedInlineSizes = Vector<LayoutUnit>;

@@ -72,9 +72,9 @@ static GridDimensions calculateInitialImplicitGridDimensions(const UnplacedGridI
         }
     };
 
-    for (const auto& item : unplacedGridItems.nonAutoPositionedItems)
+    for (auto& item : unplacedGridItems | std::views::filter(isNonAutoPositioned))
         updateGridBounds(item);
-    for (const auto& item : unplacedGridItems.definiteRowPositionedItems)
+    for (auto& item : unplacedGridItems | std::views::filter(isDefiniteRowPositioned))
         updateGridBounds(item);
 
     // The implicit grid always starts with at least one row. Grid coverage guarantees at least one
@@ -95,7 +95,7 @@ ImplicitGrid ImplicitGrid::createInitialGrid(const UnplacedGridItems& unplacedGr
 
     ImplicitGrid implicitGrid(initialDimensions.totalColumnsCount, initialDimensions.totalRowsCount);
     // 3. Determine the columns in the implicit grid.
-    implicitGrid.determineImplicitGridColumns(unplacedGridItems.autoPositionedItems);
+    implicitGrid.determineImplicitGridColumns(unplacedGridItems);
 
     return implicitGrid;
 }
@@ -141,9 +141,10 @@ GridAreaLines ImplicitGrid::insertDefiniteRowItem(const UnplacedGridItem& unplac
 
 // https://drafts.csswg.org/css-grid-1/#auto-placement-algo
 // Step 3: Determine the columns in the implicit grid.
-void ImplicitGrid::determineImplicitGridColumns(const Vector<UnplacedGridItem>& autoPositionedItems)
+void ImplicitGrid::determineImplicitGridColumns(const UnplacedGridItems& unplacedGridItems)
 {
     size_t requiredColumns = columnsCount();
+    auto autoPositionedItems = unplacedGridItems | std::views::filter(isAutoPositioned);
 
     // Part 1: "Among all the items with a definite column position, add columns to the end
     // of the implicit grid as necessary to accommodate those items."
