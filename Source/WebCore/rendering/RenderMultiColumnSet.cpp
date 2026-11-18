@@ -408,7 +408,7 @@ void RenderMultiColumnSet::prepareForLayout(bool initial)
     setNeedsLayout(MarkingBehavior::OnlyThis);
 }
 
-void RenderMultiColumnSet::beginFlow(RenderBlock* container)
+void RenderMultiColumnSet::beginFlow(RenderBox* container)
 {
     RenderMultiColumnFlow* fragmentedFlow = multiColumnFlow();
 
@@ -418,7 +418,7 @@ void RenderMultiColumnSet::beginFlow(RenderBlock* container)
     setLogicalTopInFragmentedFlow(logicalTopInFragmentedFlow);
 }
 
-void RenderMultiColumnSet::endFlow(RenderBlock* container, LayoutUnit bottomInContainer)
+void RenderMultiColumnSet::endFlow(RenderBox* container, LayoutUnit bottomInContainer)
 {
     RenderMultiColumnFlow* fragmentedFlow = multiColumnFlow();
 
