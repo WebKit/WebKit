@@ -76,13 +76,14 @@ void BifurcatedGraphicsContext::save(GraphicsContextState::Purpose purpose)
     VERIFY_STATE_SYNCHRONIZATION();
 }
 
-void BifurcatedGraphicsContext::restore(GraphicsContextState::Purpose purpose)
+bool BifurcatedGraphicsContext::restore(GraphicsContextState::Purpose purpose)
 {
-    GraphicsContext::restore(purpose);
+    bool restored = GraphicsContext::restore(purpose);
     m_primaryContext.restore(purpose);
     m_secondaryContext.restore(purpose);
 
     VERIFY_STATE_SYNCHRONIZATION();
+    return restored;
 }
 
 void BifurcatedGraphicsContext::drawRect(const FloatRect& rect, float borderThickness)
@@ -511,6 +512,23 @@ void BifurcatedGraphicsContext::setCTM(const AffineTransform& transform)
     m_secondaryContext.setCTM(transform);
 
     VERIFY_STATE_SYNCHRONIZATION();
+}
+
+void BifurcatedGraphicsContext::saveTransform()
+{
+    m_primaryContext.saveTransform();
+    m_secondaryContext.saveTransform();
+
+    VERIFY_STATE_SYNCHRONIZATION();
+}
+
+bool BifurcatedGraphicsContext::restoreTransform()
+{
+    bool restored = m_primaryContext.restoreTransform();
+    m_secondaryContext.restoreTransform();
+
+    VERIFY_STATE_SYNCHRONIZATION();
+    return restored;
 }
 
 AffineTransform BifurcatedGraphicsContext::getCTM(IncludeDeviceScale includeDeviceScale) const

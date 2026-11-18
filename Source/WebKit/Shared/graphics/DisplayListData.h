@@ -78,8 +78,10 @@ using DisplayListDataItem = Variant
     , WebCore::DisplayList::FillRoundedRect
     , WebCore::DisplayList::ResetClip
     , WebCore::DisplayList::Restore
+    , WebCore::DisplayList::RestoreTransform
     , WebCore::DisplayList::Rotate
     , WebCore::DisplayList::Save
+    , WebCore::DisplayList::SaveTransform
     , WebCore::DisplayList::Scale
     , WebCore::DisplayList::SetCTM
     , WebCore::DisplayList::SetInlineFillColor

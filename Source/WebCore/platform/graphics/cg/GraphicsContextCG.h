@@ -52,7 +52,7 @@ public:
     const ColorSpace& colorSpace() const final;
 
     void save(GraphicsContextState::Purpose = GraphicsContextState::Purpose::SaveRestore) final;
-    void restore(GraphicsContextState::Purpose = GraphicsContextState::Purpose::SaveRestore) final;
+    bool restore(GraphicsContextState::Purpose = GraphicsContextState::Purpose::SaveRestore) final;
 
     using GraphicsContext::drawNativeImage;
     void drawNativeImage(const NativeImage&, const FloatRect& destRect, const FloatRect& srcRect, RasterDrawingOptions = { }) final;

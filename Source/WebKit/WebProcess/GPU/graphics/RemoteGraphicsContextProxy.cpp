@@ -140,12 +140,13 @@ void RemoteGraphicsContextProxy::save(GraphicsContextState::Purpose purpose)
     send(Messages::RemoteGraphicsContext::Save());
 }
 
-void RemoteGraphicsContextProxy::restore(GraphicsContextState::Purpose purpose)
+bool RemoteGraphicsContextProxy::restore(GraphicsContextState::Purpose purpose)
 {
     sendPendingDrawsIfNecessary();
     if (!updateStateForRestore(purpose))
-        return;
+        return false;
     send(Messages::RemoteGraphicsContext::Restore());
+    return true;
 }
 
 void RemoteGraphicsContextProxy::translate(float x, float y)
@@ -185,6 +186,22 @@ void RemoteGraphicsContextProxy::concatCTM(const AffineTransform& transform)
     if (!updateStateForConcatCTM(transform))
         return;
     send(Messages::RemoteGraphicsContext::ConcatCTM(transform));
+}
+
+void RemoteGraphicsContextProxy::saveTransform()
+{
+    sendPendingDrawsIfNecessary();
+    updateStateForSaveTransform();
+    send(Messages::RemoteGraphicsContext::SaveTransform());
+}
+
+bool RemoteGraphicsContextProxy::restoreTransform()
+{
+    sendPendingDrawsIfNecessary();
+    if (!updateStateForRestoreTransform())
+        return false;
+    send(Messages::RemoteGraphicsContext::RestoreTransform());
+    return true;
 }
 
 void RemoteGraphicsContextProxy::setLineCap(LineCap lineCap)

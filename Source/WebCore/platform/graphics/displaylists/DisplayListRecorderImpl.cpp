@@ -75,16 +75,17 @@ void RecorderImpl::save(GraphicsContextState::Purpose purpose)
     m_items.append(Save());
 }
 
-void RecorderImpl::restore(GraphicsContextState::Purpose purpose)
+bool RecorderImpl::restore(GraphicsContextState::Purpose purpose)
 {
     if (stateStack().size() <= 1) {
-        LOG_ERROR("ERROR void RecorderImpl::restore() stack is empty");
-        return;
+        LOG_ERROR("ERROR bool RecorderImpl::restore() stack is empty");
+        return false;
     }
 
     if (!updateStateForRestore(purpose))
-        return;
+        return false;
     m_items.append(Restore());
+    return true;
 }
 
 void RecorderImpl::translate(float x, float y)
@@ -119,6 +120,20 @@ void RecorderImpl::concatCTM(const AffineTransform& transform)
     if (!updateStateForConcatCTM(transform))
         return;
     m_items.append(ConcatenateCTM(transform));
+}
+
+void RecorderImpl::saveTransform()
+{
+    updateStateForSaveTransform();
+    m_items.constructAndAppend(WTF::InPlaceType<SaveTransform>);
+}
+
+bool RecorderImpl::restoreTransform()
+{
+    if (!updateStateForRestoreTransform())
+        return false;
+    m_items.constructAndAppend(WTF::InPlaceType<RestoreTransform>);
+    return true;
 }
 
 void RecorderImpl::setLineCap(LineCap lineCap)

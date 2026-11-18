@@ -190,14 +190,15 @@ void GraphicsContextSkia::save(GraphicsContextState::Purpose purpose)
     m_canvas.save();
 }
 
-void GraphicsContextSkia::restore(GraphicsContextState::Purpose purpose)
+bool GraphicsContextSkia::restore(GraphicsContextState::Purpose purpose)
 {
-    if (!stackSize())
-        return;
+    if (!canRestore(purpose))
+        return false;
 
     GraphicsContext::restore(purpose);
     m_canvas.restore();
     popSkiaState();
+    return true;
 }
 
 // Draws a filled rectangle with a stroked border.

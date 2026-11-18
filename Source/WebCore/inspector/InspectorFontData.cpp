@@ -371,7 +371,7 @@ private:
     void clip(const FloatRect&) final { }
     void clipOut(const FloatRect&) final { }
     void save(GraphicsContextState::Purpose = GraphicsContextState::Purpose::SaveRestore) final { }
-    void restore(GraphicsContextState::Purpose = GraphicsContextState::Purpose::SaveRestore) final { }
+    bool restore(GraphicsContextState::Purpose = GraphicsContextState::Purpose::SaveRestore) final { return true; }
 
     void drawRaisedEllipse(const FloatRect&, const Color&, const Color&) final { }
 

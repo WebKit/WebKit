@@ -106,7 +106,11 @@ void RemoteGraphicsContext::save()
 
 void RemoteGraphicsContext::restore()
 {
-    context().restore();
+    // After the GPU process is relaunched, the web process restores the states it saved in the previous
+    // GPU process. They were not saved in this one, so the stack is empty for them.
+    if (!context().stackSize())
+        return;
+    MESSAGE_CHECK(context().restore());
 }
 
 void RemoteGraphicsContext::translate(float x, float y)
@@ -132,6 +136,19 @@ void RemoteGraphicsContext::setCTM(const AffineTransform& ctm)
 void RemoteGraphicsContext::concatCTM(const AffineTransform& ctm)
 {
     context().concatCTM(ctm);
+}
+
+void RemoteGraphicsContext::saveTransform()
+{
+    context().saveTransform();
+}
+
+void RemoteGraphicsContext::restoreTransform()
+{
+    // See restore().
+    if (!context().stackSize())
+        return;
+    MESSAGE_CHECK(context().restoreTransform());
 }
 
 void RemoteGraphicsContext::setFillPackedColor(PackedColor::RGBA color)

@@ -449,6 +449,32 @@ struct TrivialRotate {
     }
 };
 
+struct RestoreTransformKeepsClip {
+    void operator()(WebCore::GraphicsContext& c)
+    {
+        c.saveTransform();
+        c.translate(1, 2);
+        c.clip({ 0, 0, 9.f, 7.7f });
+        c.restoreTransform(); // This is being tested. The CTM should be restored, the clip should be kept.
+        c.drawRect({ 0, 0, 1, 1 });
+    }
+
+    static String description()
+    {
+        return R"DL(
+(save-transform)
+(translate
+  (x 1.00)
+  (y 2.00))
+(clip
+  (rect at (0,0) size 9x7.70))
+(restore-transform)
+(draw-rect
+  (rect at (0,0) size 1x1)
+  (border-thickness 1.00)))DL"_s;
+    }
+};
+
 // When the recorder does not know the replay target's state, setting a state property to its default
 // value must still be recorded: the target may not be at that default.
 
@@ -685,7 +711,7 @@ struct SetDefaultShadowsIgnoreTransforms {
 using AllOperations = testing::Types<NoCommands, ChangeAntialias, ChangeAntialiasBeforeSave,
     ChangeAntialiasBeforeAndAfterSave, ChangeAntialiasInEmptySaveRestore, DrawSystemImage, ChangeAntialiasBeforeClipRect,
     ChangeAntialiasBeforeClipOutRect, ChangeAntialiasBeforeClipOutPath, ChangeAntialiasBeforeClipPath,
-    ChangeAntialiasBeforeClipToNativeImage, TrivialTranslate, TrivialScale, TrivialRotate, ResetClipRect,
+    ChangeAntialiasBeforeClipToNativeImage, TrivialTranslate, TrivialScale, TrivialRotate, ResetClipRect, RestoreTransformKeepsClip,
     SetDefaultFillBrush, SetDefaultFillRule, SetDefaultStrokeBrush, SetDefaultStrokeThickness, SetDefaultStrokeStyle,
     SetDefaultCompositeMode, SetDefaultDropShadow, SetDefaultStyle, SetDefaultAlpha, SetDefaultImageInterpolationQuality,
     SetDefaultTextDrawingMode, SetDefaultShouldAntialias, SetDefaultShouldSmoothFonts, SetDefaultShouldSubpixelQuantizeFonts,
@@ -761,6 +787,84 @@ TEST(DisplayListRecorderTest, ClipToNativeImageClipsReplayedDrawing)
     EXPECT_TRUE(imageBufferPixelIs(WebCore::Color::green, *target, { 1, 0 }));
     EXPECT_TRUE(imageBufferPixelIs(WebCore::Color::transparentBlack, *target, { 2, 0 }));
     EXPECT_TRUE(imageBufferPixelIs(WebCore::Color::transparentBlack, *target, { 3, 0 }));
+}
+
+TEST(DisplayListRecorderTest, RestoreTransformRestoresCTM)
+{
+    Ref recorder = WebCore::DisplayList::RecorderImpl::create(WebCore::GraphicsContextState::initialIndeterminate(), { 0, 0, testContextWidth, testContextHeight }, WebCore::AffineTransform::makeScale({ 2, 3 }));
+    WebCore::GraphicsContext& context = recorder.get();
+    auto initialCTM = context.getCTM();
+    EXPECT_EQ(WebCore::AffineTransform::makeScale({ 2, 3 }), initialCTM);
+
+    context.saveTransform();
+    context.translate(3, 4);
+    auto translatedCTM = context.getCTM();
+    context.save();
+    context.rotate(1);
+    context.restore();
+    EXPECT_EQ(translatedCTM, context.getCTM());
+    context.restoreTransform();
+    EXPECT_EQ(initialCTM, context.getCTM());
+
+    // Unbalanced restoreTransform() is ignored and not recorded.
+    EXPECT_FALSE(context.restoreTransform());
+    EXPECT_EQ(initialCTM, context.getCTM());
+
+    Ref displayList = recorder->takeDisplayList();
+    auto description = displayList->asText({ }).trim(deprecatedIsSpaceOrNewline);
+    String expectedDescription = R"DL(
+(save-transform)
+(translate
+  (x 3.00)
+  (y 4.00))
+(save)
+(rotate
+  (angle 1.00))
+(restore)
+(restore-transform))DL"_s;
+    EXPECT_EQ(expectedDescription.trim(deprecatedIsSpaceOrNewline), description);
+}
+
+TEST(DisplayListRecorderTest, RestoreDoesNotRestoreSaveTransform)
+{
+    Ref recorder = WebCore::DisplayList::RecorderImpl::create({ 0, 0, testContextWidth, testContextHeight });
+    WebCore::GraphicsContext& context = recorder.get();
+    context.save();
+    context.saveTransform();
+    EXPECT_FALSE(context.restore()); // A restore() that does not match the saveTransform() is ignored and not recorded.
+    EXPECT_EQ(2u, context.stackSize());
+    EXPECT_TRUE(context.restoreTransform());
+    EXPECT_TRUE(context.restore());
+    EXPECT_EQ(0u, context.stackSize());
+
+    Ref displayList = recorder->takeDisplayList();
+    auto description = displayList->asText({ }).trim(deprecatedIsSpaceOrNewline);
+    String expectedDescription = R"DL(
+(save)
+(save-transform)
+(restore-transform)
+(restore))DL"_s;
+    EXPECT_EQ(expectedDescription.trim(deprecatedIsSpaceOrNewline), description);
+}
+
+TEST(DisplayListRecorderTest, RestoreTransformReplaysUnderDifferentBaseTransform)
+{
+    Ref recorder = WebCore::DisplayList::RecorderImpl::create({ 0, 0, testContextWidth, testContextHeight });
+    WebCore::GraphicsContext& context = recorder.get();
+    context.saveTransform();
+    context.translate(3, 4);
+    context.scale({ 2, 2 });
+    context.restoreTransform();
+    Ref displayList = recorder->takeDisplayList();
+
+    RefPtr resultTarget = createReferenceTarget();
+    auto& result = resultTarget->context();
+    result.translate(5, 6);
+    result.rotate(0.5f);
+    auto baseCTM = result.getCTM();
+    result.drawDisplayList(displayList);
+    EXPECT_EQ(baseCTM, result.getCTM());
+    EXPECT_EQ(0u, result.stackSize());
 }
 
 #if USE(CORE_TEXT)

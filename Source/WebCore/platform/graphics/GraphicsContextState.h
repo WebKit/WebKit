@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <WebCore/AffineTransform.h>
 #include <WebCore/GraphicsStyle.h>
 #include <WebCore/GraphicsTypes.h>
 #include <WebCore/SourceBrush.h>
@@ -66,7 +67,9 @@ public:
     enum class Purpose : uint8_t {
         Initial,
         SaveRestore,
-        TransparencyLayer
+        TransparencyLayer,
+        // Restoring restores only the CTM.
+        Transform
     };
 
     WEBCORE_EXPORT GraphicsContextState(const ChangeFlags& = { }, InterpolationQuality = InterpolationQuality::Default);
@@ -163,6 +166,18 @@ public:
 
     Purpose purpose() const { return m_purpose; }
 
+    const AffineTransform& ctm() const LIFETIME_BOUND { return m_ctm; }
+    void setCTM(const AffineTransform& ctm) { m_ctm = ctm; }
+
+    // Restores from the state saved for Purpose::Transform: the CTM and the purpose are restored, the
+    // properties keep their current values.
+    void restoreTransform(const GraphicsContextState& saved)
+    {
+        ASSERT(m_purpose == Purpose::Transform);
+        m_ctm = saved.m_ctm;
+        m_purpose = saved.m_purpose;
+    }
+
     WTF::TextStream& dump(WTF::TextStream&) const;
 
 private:
@@ -192,6 +207,11 @@ private:
         m_changeFlags.add(change);
     }
 
+    // The CTM. DisplayList::Recorder keeps its CTM here. The platform contexts keep the CTM in the platform
+    // context: for them this is set only in the state saved by GraphicsContext::saveTransform(), for
+    // GraphicsContext::restoreTransform(), and does not follow the CTM otherwise. Not one of the properties
+    // copied, compared or serialized with the state.
+    AffineTransform m_ctm;
     SourceBrush m_fillBrush { Color::black };
     SourceBrush m_strokeBrush { Color::black };
     // Changes not appiled to the underlying platform context.

@@ -35,6 +35,8 @@ messages -> RemoteGraphicsContext Stream {
     Scale(WebCore::FloatSize scale) StreamBatched
     SetCTM(WebCore::AffineTransform ctm) StreamBatched
     ConcatCTM(WebCore::AffineTransform ctm) StreamBatched
+    SaveTransform() StreamBatched
+    RestoreTransform() StreamBatched
     SetFillPackedColor(struct WebCore::PackedColor::RGBA color) StreamBatched
     SetFillColor(WebCore::Color color) StreamBatched
     SetFillCachedGradient(WebKit::RemoteGradientIdentifier identifier, WebCore::AffineTransform spaceTransform) StreamBatched

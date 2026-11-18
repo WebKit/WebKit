@@ -108,15 +108,15 @@ void GraphicsContextCairo::save(GraphicsContextState::Purpose purpose)
     cairo_save(m_cr.get());
 }
 
-void GraphicsContextCairo::restore(GraphicsContextState::Purpose purpose)
+bool GraphicsContextCairo::restore(GraphicsContextState::Purpose purpose)
 {
-    if (!stackSize())
-        return;
+    if (!canRestore(purpose))
+        return false;
 
     GraphicsContext::restore(purpose);
 
     if (m_cairoStateStack.isEmpty())
-        return;
+        return true;
 
     if (m_cairoState->m_mask.pattern) {
         cairo_pop_group_to_source(m_cr.get());
@@ -133,6 +133,7 @@ void GraphicsContextCairo::restore(GraphicsContextState::Purpose purpose)
     m_cairoState = &m_cairoStateStack.last();
 
     cairo_restore(m_cr.get());
+    return true;
 }
 
 // Draws a filled rectangle with a stroked border.

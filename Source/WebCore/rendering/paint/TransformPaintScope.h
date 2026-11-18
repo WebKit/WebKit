@@ -31,10 +31,12 @@ class TransformPaintScope {
 public:
     TransformPaintScope(GraphicsContext& context, const RenderLayer::LayerPaintingInfo& paintingInfo, const TransformationMatrix& transform, float deviceScaleFactor, const LayoutSize& adjustedSubpixelOffset, CheckedPtr<RenderLayer> newRootLayer = nullptr, StateSavedByCaller stateSavedByCaller = StateSavedByCaller::No)
         : m_context(context)
-        , m_oldTransform(stateSavedByCaller == StateSavedByCaller::No ? std::optional { context.getCTM() } : std::nullopt)
         , m_affineTransform(transform.toAffineTransform())
         , m_transformedPaintingInfo(paintingInfo)
+        , m_savedTransform(stateSavedByCaller == StateSavedByCaller::No)
     {
+        if (m_savedTransform)
+            m_context.saveTransform();
         m_context.concatCTM(m_affineTransform);
 
         if (CheckedPtr regionContext = m_transformedPaintingInfo.regionContext)
@@ -61,8 +63,8 @@ public:
         if (auto* regionContext = m_transformedPaintingInfo.regionContext.get())
             regionContext->popTransform();
 
-        if (m_oldTransform)
-            m_context.setCTM(*m_oldTransform);
+        if (m_savedTransform)
+            m_context.restoreTransform();
     }
 
     const RenderLayer::LayerPaintingInfo& transformedPaintingInfo() const { return m_transformedPaintingInfo; }
@@ -70,9 +72,9 @@ public:
 
 private:
     GraphicsContext& m_context;
-    std::optional<AffineTransform> m_oldTransform;
     AffineTransform m_affineTransform;
     RenderLayer::LayerPaintingInfo m_transformedPaintingInfo;
+    const bool m_savedTransform;
 };
 
 } // namespace WebCore
