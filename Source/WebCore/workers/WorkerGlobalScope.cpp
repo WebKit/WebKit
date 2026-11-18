@@ -55,6 +55,7 @@
 #include "RTCDataChannelRemoteHandlerConnection.h"
 #include "ReportingScope.h"
 #include "ScheduledAction.h"
+#include "Scheduler.h"
 #include "ScriptExecutionContextInlines.h"
 #include "ScriptSourceCode.h"
 #include "SecurityOrigin.h"
@@ -161,6 +162,7 @@ WorkerGlobalScope::~WorkerGlobalScope()
 
     m_performance = nullptr;
     m_crypto = nullptr;
+    m_scheduler = nullptr;
 
     // Notify proxy that we are going away. This can free the WorkerThread object and the proxy, so do not access them after this.
     // FIXME: A CheckedPtr cannot be used here since the proxy may get destroyed on the main thread before it goes out of scope.
@@ -578,6 +580,13 @@ Crypto& WorkerGlobalScope::crypto()
 Performance& WorkerGlobalScope::performance() const
 {
     return *m_performance;
+}
+
+Scheduler& WorkerGlobalScope::scheduler()
+{
+    if (!m_scheduler)
+        m_scheduler = Scheduler::create(this);
+    return *m_scheduler;
 }
 
 CacheStorageConnection& WorkerGlobalScope::cacheStorageConnection()

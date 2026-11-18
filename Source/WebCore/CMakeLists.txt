@@ -1237,6 +1237,9 @@ set(WebCore_NON_SVG_IDL_FILES
     dom/Range.idl
     dom/ReducerCallback.idl
     dom/RequestAnimationFrameCallback.idl
+    dom/Scheduler.idl
+    dom/SchedulerPostTaskCallback.idl
+    dom/SchedulerPostTaskOptions.idl
     dom/SecurityPolicyViolationEvent.idl
     dom/SecurityPolicyViolationEventDisposition.idl
     dom/ShadowRoot.idl
@@ -1251,6 +1254,7 @@ set(WebCore_NON_SVG_IDL_FILES
     dom/SubscriberCallback.idl
     dom/SubscriptionObserver.idl
     dom/SubscriptionObserverCallback.idl
+    dom/TaskPriority.idl
     dom/Text.idl
     dom/TextDecoder.idl
     dom/TextDecoderStream.idl
@@ -2124,6 +2128,7 @@ set(WebCore_SUPPLEMENTAL_IDL_FILES
     dom/Range+DOMParsing.idl
     dom/Slotable.idl
     dom/ViewTransition+Types.idl
+    dom/WindowOrWorkerGlobalScope+Scheduler.idl
     dom/WindowOrWorkerGlobalScope+TrustedTypes.idl
 
     html/HTMLBodyElement+Compat.idl

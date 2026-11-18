@@ -5160,6 +5160,14 @@ PreferSpatialAudioExperience:
   defaultsOverridable: true
   sharedPreferenceForWebProcess: true
 
+PrioritizedTaskSchedulingEnabled:
+  type: bool
+  status: unstable
+  category: dom
+  humanReadableName: "Prioritized Task Scheduling API"
+  humanReadableDescription: "Enable the Prioritized Task Scheduling API (scheduler.postTask() and scheduler.yield())"
+  defaultValue: false
+
 PrivateClickMeasurementDebugModeEnabled:
   type: bool
   status: developer

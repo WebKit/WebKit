@@ -1615,6 +1615,9 @@ $(PROJECT_DIR)/dom/Range+DOMParsing.idl
 $(PROJECT_DIR)/dom/Range.idl
 $(PROJECT_DIR)/dom/ReducerCallback.idl
 $(PROJECT_DIR)/dom/RequestAnimationFrameCallback.idl
+$(PROJECT_DIR)/dom/Scheduler.idl
+$(PROJECT_DIR)/dom/SchedulerPostTaskCallback.idl
+$(PROJECT_DIR)/dom/SchedulerPostTaskOptions.idl
 $(PROJECT_DIR)/dom/SecurityPolicyViolationEvent.idl
 $(PROJECT_DIR)/dom/SecurityPolicyViolationEventDisposition.idl
 $(PROJECT_DIR)/dom/ShadowRoot.idl
@@ -1630,6 +1633,7 @@ $(PROJECT_DIR)/dom/Subscriber.idl
 $(PROJECT_DIR)/dom/SubscriberCallback.idl
 $(PROJECT_DIR)/dom/SubscriptionObserver.idl
 $(PROJECT_DIR)/dom/SubscriptionObserverCallback.idl
+$(PROJECT_DIR)/dom/TaskPriority.idl
 $(PROJECT_DIR)/dom/Text.idl
 $(PROJECT_DIR)/dom/TextDecoder.idl
 $(PROJECT_DIR)/dom/TextDecoderStream.idl
@@ -1662,6 +1666,7 @@ $(PROJECT_DIR)/dom/ViewTransitionUpdateCallback.idl
 $(PROJECT_DIR)/dom/VisibilityState.idl
 $(PROJECT_DIR)/dom/VisitorCallback.idl
 $(PROJECT_DIR)/dom/WheelEvent.idl
+$(PROJECT_DIR)/dom/WindowOrWorkerGlobalScope+Scheduler.idl
 $(PROJECT_DIR)/dom/WindowOrWorkerGlobalScope+TrustedTypes.idl
 $(PROJECT_DIR)/dom/XMLDocument.idl
 $(PROJECT_DIR)/dom/make-event-names.py

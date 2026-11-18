@@ -59,6 +59,7 @@
 #include "RemoteDOMWindow.h"
 #include "ResourceLoadObserver.h"
 #include "ScheduledAction.h"
+#include "Scheduler.h"
 #include "Screen.h"
 #include "SecurityOrigin.h"
 #include "Site.h"
@@ -647,6 +648,14 @@ ExceptionOr<Crypto&> DOMWindow::crypto() const
     if (!localThis)
         return Exception { ExceptionCode::SecurityError };
     return localThis->crypto();
+}
+
+ExceptionOr<Scheduler&> DOMWindow::scheduler() const
+{
+    auto* localThis = dynamicDowncast<LocalDOMWindow>(*this);
+    if (!localThis)
+        return Exception { ExceptionCode::SecurityError };
+    return localThis->scheduler();
 }
 
 ExceptionOr<RefPtr<WindowProxy>> DOMWindow::open(LocalDOMWindow& activeWindow, LocalDOMWindow& firstWindow, const String& urlString, const AtomString& frameName, const String& windowFeaturesString)

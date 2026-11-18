@@ -2998,6 +2998,12 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSSVGViewSpec.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSSVGViewSpec.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSSVGZoomAndPan.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSSVGZoomAndPan.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSScheduler.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSScheduler.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSSchedulerPostTaskCallback.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSSchedulerPostTaskCallback.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSSchedulerPostTaskOptions.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSSchedulerPostTaskOptions.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSScreen.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSScreen.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSScreenOrientation.cpp
@@ -3152,6 +3158,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSSubscriptionObserverCallback.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSSubscriptionObserverCallback.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSSubtleCrypto.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSSubtleCrypto.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSTaskPriority.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSTaskPriority.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSText.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSText.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSTextDecoder.cpp
@@ -3674,6 +3682,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWindowOrWorkerGlobalScope+Indexed
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWindowOrWorkerGlobalScope+IndexedDatabase.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWindowOrWorkerGlobalScope+Performance.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWindowOrWorkerGlobalScope+Performance.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWindowOrWorkerGlobalScope+Scheduler.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWindowOrWorkerGlobalScope+Scheduler.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWindowOrWorkerGlobalScope+TrustedTypes.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWindowOrWorkerGlobalScope+TrustedTypes.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWindowOrWorkerGlobalScope.cpp

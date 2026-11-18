@@ -138,6 +138,7 @@ public:
     Screen& screen();
     WEBCORE_EXPORT History& history();
     Crypto& crypto() const;
+    Scheduler& scheduler() const;
     BarProp& locationbar();
     BarProp& menubar();
     BarProp& personalbar();
@@ -468,6 +469,7 @@ private:
     mutable RefPtr<BarProp> m_menubar;
     mutable RefPtr<Navigator> m_navigator;
     mutable RefPtr<BarProp> m_personalbar;
+    mutable RefPtr<Scheduler> m_scheduler;
     mutable RefPtr<Screen> m_screen;
     mutable RefPtr<BarProp> m_scrollbars;
     mutable RefPtr<DOMSelection> m_selection;

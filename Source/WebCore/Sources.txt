@@ -1479,6 +1479,7 @@ dom/QualifiedNameCache.cpp
 dom/RadioButtonGroups.cpp
 dom/Range.cpp
 dom/RejectedPromiseTracker.cpp
+dom/Scheduler.cpp
 dom/ScopedEventQueue.cpp
 dom/ScriptElement.cpp
 dom/ScriptElementCachedScriptFetcher.cpp
@@ -5175,6 +5176,9 @@ JSSVGUseElement.cpp
 JSSVGViewElement.cpp
 JSSVGViewSpec.cpp
 JSSVGZoomAndPan.cpp
+JSScheduler.cpp
+JSSchedulerPostTaskCallback.cpp
+JSSchedulerPostTaskOptions.cpp
 JSScreen.cpp
 JSScreenOrientation.cpp
 JSScriptProcessorNode.cpp
@@ -5245,6 +5249,7 @@ JSSubscriberCallback.cpp
 JSSubscriptionObserver.cpp
 JSSubscriptionObserverCallback.cpp
 JSSubtleCrypto.cpp
+JSTaskPriority.cpp
 JSText.cpp
 JSTextDecoder.cpp
 JSTextDecoderStream.cpp

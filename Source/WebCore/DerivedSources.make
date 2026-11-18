@@ -1285,6 +1285,9 @@ JS_BINDING_IDLS := \
     $(WebCore)/dom/Range.idl \
     $(WebCore)/dom/ReducerCallback.idl \
     $(WebCore)/dom/RequestAnimationFrameCallback.idl \
+    $(WebCore)/dom/Scheduler.idl \
+    $(WebCore)/dom/SchedulerPostTaskCallback.idl \
+    $(WebCore)/dom/SchedulerPostTaskOptions.idl \
     $(WebCore)/dom/SecurityPolicyViolationEvent.idl \
     $(WebCore)/dom/SecurityPolicyViolationEventDisposition.idl \
     $(WebCore)/dom/ShadowRoot.idl \
@@ -1300,6 +1303,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/dom/SubscriberCallback.idl \
     $(WebCore)/dom/SubscriptionObserver.idl \
     $(WebCore)/dom/SubscriptionObserverCallback.idl \
+    $(WebCore)/dom/TaskPriority.idl \
     $(WebCore)/dom/Text.idl \
     $(WebCore)/dom/TextDecoder.idl \
     $(WebCore)/dom/TextDecoderStream.idl \
@@ -1326,6 +1330,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/dom/VisibilityState.idl \
     $(WebCore)/dom/VisitorCallback.idl \
     $(WebCore)/dom/WheelEvent.idl \
+    $(WebCore)/dom/WindowOrWorkerGlobalScope+Scheduler.idl \
     $(WebCore)/dom/WindowOrWorkerGlobalScope+TrustedTypes.idl \
     $(WebCore)/dom/XMLDocument.idl \
     $(WebCore)/fileapi/Blob.idl \

@@ -426,6 +426,7 @@ namespace WebCore {
     macro(SQLResultSet) \
     macro(SQLResultSetRowList) \
     macro(SQLTransaction) \
+    macro(Scheduler) \
     macro(ScreenLuminance) \
     macro(ScreenOrientation) \
     macro(ScrollTimeline) \
@@ -730,6 +731,7 @@ namespace WebCore {
     macro(response) \
     macro(responseCacheIsValid) \
     macro(retrieveResponse) \
+    macro(scheduler) \
     macro(self) \
     macro(sessionStorage) \
     macro(setBody) \

@@ -132,6 +132,7 @@
 #include "ResourceLoadInfo.h"
 #include "ResourceLoadObserver.h"
 #include "ScheduledAction.h"
+#include "Scheduler.h"
 #include "Screen.h"
 #include "ScrollAnimator.h"
 #include "ScrollToOptions.h"
@@ -781,6 +782,14 @@ Crypto& LocalDOMWindow::crypto() const
         m_crypto = Crypto::create(protect(document()).get());
     ASSERT(m_crypto->scriptExecutionContext() == document());
     return *m_crypto;
+}
+
+Scheduler& LocalDOMWindow::scheduler() const
+{
+    if (!m_scheduler)
+        m_scheduler = Scheduler::create(protect(document()).get());
+    ASSERT(m_scheduler->scriptExecutionContext() == document());
+    return *m_scheduler;
 }
 
 BarProp& LocalDOMWindow::locationbar()

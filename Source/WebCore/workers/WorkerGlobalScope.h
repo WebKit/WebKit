@@ -61,6 +61,7 @@ class MessagePortChannelProvider;
 class Performance;
 class ReportingScope;
 class ScheduledAction;
+class Scheduler;
 class ScriptBuffer;
 class ScriptBufferSourceProvider;
 class TrustedScriptURL;
@@ -149,6 +150,7 @@ public:
 
     Crypto& crypto();
     NODELETE Performance& performance() const;
+    Scheduler& scheduler();
     ReportingScope& reportingScope() const { return m_reportingScope.get(); }
 
     void prepareForDestruction() override;
@@ -249,6 +251,7 @@ private:
     RefPtr<Performance> m_performance;
     const Ref<ReportingScope> m_reportingScope;
     mutable RefPtr<Crypto> m_crypto;
+    RefPtr<Scheduler> m_scheduler;
 
     WeakPtr<ScriptBufferSourceProvider> m_mainScriptSourceProvider;
     MemoryCompactRobinHoodHashMap<URL, WeakHashSet<ScriptBufferSourceProvider>> m_importedScriptsSourceProviders;
