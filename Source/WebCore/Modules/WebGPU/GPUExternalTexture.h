@@ -27,6 +27,8 @@
 
 #include "EventTarget.h"
 #include <WebCore/WebGPUCppAPI.h>
+#include <optional>
+#include <utility>
 #include <wtf/Ref.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/WeakPtr.h>
@@ -50,6 +52,14 @@ public:
     const ::WebGPU::ExternalTexture& backing() const { return m_backing; }
     void destroy();
     void undestroy();
+    bool isDestroyed() const { return m_destroyed; }
+    void activate() { m_active = true; }
+    void deactivate() { m_active = false; }
+    bool isActive() const { return m_active; }
+#if ENABLE(VIDEO)
+    std::optional<unsigned> takeVideoFrameCallbackIdentifier() { return std::exchange(m_videoFrameCallbackIdentifier, std::nullopt); }
+    void setVideoFrameCallbackIdentifier(std::optional<unsigned> identifier) { m_videoFrameCallbackIdentifier = identifier; }
+#endif
 
     NODELETE GPUDevice* device() const;
 
@@ -61,6 +71,11 @@ private:
     const Ref<::WebGPU::ExternalTexture> m_backing;
     String m_label;
     WeakPtr<GPUDevice, WeakPtrImplWithEventTargetData> m_device;
+    bool m_destroyed { false };
+    bool m_active { false };
+#if ENABLE(VIDEO)
+    std::optional<unsigned> m_videoFrameCallbackIdentifier;
+#endif
 };
 
 }

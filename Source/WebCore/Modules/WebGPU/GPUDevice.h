@@ -171,7 +171,7 @@ public:
     NODELETE size_t memoryCost() const;
 
 #if ENABLE(VIDEO)
-    WeakPtr<GPUExternalTexture> takeExternalTextureForVideoElement(const HTMLVideoElement&);
+    bool removeExternalTextureForVideoElement(const HTMLVideoElement&, const GPUExternalTexture&);
 #endif
 
     bool hasActiveInspectorCanvasCallTracer() const { return m_hasActiveInspectorCanvasCallTracer; }
@@ -191,6 +191,7 @@ private:
 
     // FIXME: We probably need to override more methods to make this work properly.
     RefPtr<GPUPipelineLayout> createAutoPipelineLayout();
+    ExceptionOr<Ref<GPUExternalTexture>> importOrUpdateExternalTexture(const GPUExternalTextureDescriptor&);
 
     // ActiveDOMObject.
     bool virtualHasPendingActivity() const final;

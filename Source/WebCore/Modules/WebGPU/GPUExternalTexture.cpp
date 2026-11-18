@@ -61,11 +61,18 @@ void GPUExternalTexture::setLabel(String&& label)
 
 void GPUExternalTexture::destroy()
 {
+    m_active = false;
+    if (m_destroyed)
+        return;
+    m_destroyed = true;
     m_backing->destroy();
 }
 
 void GPUExternalTexture::undestroy()
 {
+    if (!m_destroyed)
+        return;
+    m_destroyed = false;
     m_backing->undestroy();
 }
 

@@ -202,7 +202,6 @@ void RemoteDevice::updateExternalTexture(WebKit::WebGPUIdentifier externalTextur
     if (!externalTexture.get())
         return;
 
-    externalTexture.get()->destroy();
     if (auto connection = m_gpuConnectionToWebProcess.get()) {
         RetainPtr<CVPixelBufferRef> pixelBuffer { nullptr };
         connection->performWithMediaPlayerOnMainThread(mediaPlayerIdentifier, [externalTexture, &pixelBuffer] (auto& player) mutable {
