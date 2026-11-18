@@ -534,9 +534,13 @@ void RenderTreeBuilder::attachToRenderElementInternal(RenderElement& parent, Ren
     if (!parent.normalChildNeedsLayout()) {
         if (isOutOfFlowBox) {
             auto isEligibleForStaticPositionLayoutOnly = [&] {
+                // Only a block runs normal flow layout for its out-of-flow child's static position (see RenderBlock::canPerformSimplifiedLayout()).
+                CheckedPtr block = dynamicDowncast<RenderBlock>(parent);
+                if (!block)
+                    return false;
                 // setNeedsLayoutAndInvalidateContentLogicalWidths above already takes care of propagating dirty bits on the ancestor chain, but
                 // in order to compute static position for out of flow boxes, the parent has to run normal flow layout as well (as opposed to simplified)
-                if (newChild->containingBlock() != &parent)
+                if (newChild->containingBlock() != block.get())
                     return false;
 #if ENABLE(VIDEO)
                 // FIXME: RenderVideo's setNeedsLayout pattern does not play well with this optimization: see webkit.org/b/276253
@@ -545,9 +549,7 @@ void RenderTreeBuilder::attachToRenderElementInternal(RenderElement& parent, Ren
 #endif
                 // Since we can't actually run static position only layout for a block container (RenderBlockFlow::layoutBlock() does not have such fine grained layout flow)
                 // floats get rebuilt which assumes (see intruding floats) parent block containers do the same.
-                if (auto* renderBlock = dynamicDowncast<RenderBlock>(parent))
-                    return !renderBlock->containsFloats();
-                return true;
+                return !block->containsFloats();
             };
             if (isEligibleForStaticPositionLayoutOnly()) {
                 // FIXME: Introduce a dirty bit to bridge the gap between parent and containing block which would
