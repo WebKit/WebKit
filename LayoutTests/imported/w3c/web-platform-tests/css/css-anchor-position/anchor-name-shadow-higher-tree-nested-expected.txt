@@ -1,0 +1,3 @@
+
+PASS anchor() nested two shadow trees deep can reference an anchor-name defined in a higher tree
+

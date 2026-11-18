@@ -1217,11 +1217,28 @@ static RefPtr<Element> findLastAcceptableAnchorWithName(ResolvedScopedName ancho
     if (anchorName.name() == implicitAnchorElementName().name)
         return findImplicitAnchor(anchorPositioned);
 
-    const auto& anchors = anchorsForAnchorName.get(anchorName);
+    auto findInScope = [&](ResolvedScopedName scopedName) -> RefPtr<Element> {
+        const auto& anchors = anchorsForAnchorName.get(scopedName);
 
-    for (auto& anchor : anchors | std::views::reverse) {
-        if (isAcceptableAnchorElement(protect(anchor.get()), anchorPositioned, anchorName))
-            return anchor->element();
+        for (auto& anchor : anchors | std::views::reverse) {
+            if (isAcceptableAnchorElement(protect(anchor.get()), anchorPositioned, scopedName))
+                return anchor->element();
+        }
+
+        return { };
+    };
+
+    if (RefPtr anchor = findInScope(anchorName))
+        return anchor;
+
+    // An anchor name is a loosely matched tree-scoped name, so a reference may match a name
+    // declared in an ancestor tree. https://drafts.csswg.org/css-shadow-1/#tree-scoped-name
+    if (anchorPositioned.element->document().settings().cssAnchorNameHigherTreeEnabled()) {
+        for (RefPtr host = anchorPositioned.element->shadowHost(); host; host = host->shadowHost()) {
+            CheckedPtr scope = &Scope::forNode(*host);
+            if (RefPtr anchor = findInScope(ResolvedScopedName { anchorName.name(), scope->identifier() }))
+                return anchor;
+        }
     }
 
     return { };

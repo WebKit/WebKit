@@ -126,6 +126,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-anchor-position/anchor-name-dynamic-reflow-root.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-anchor-position/anchor-name-in-shadow-002.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-anchor-position/anchor-name-in-shadow.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-anchor-position/anchor-name-shadow-higher-tree.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-anchor-position/anchor-name-shadow-higher-tree-nested.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-anchor-position/anchor-name-shadow-lower-tree.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-anchor-position/anchor-name-inline-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-anchor-position/anchor-name-multicol-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-anchor-position/anchor-name-multicol-002.html
