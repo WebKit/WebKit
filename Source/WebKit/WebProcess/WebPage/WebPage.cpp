@@ -7867,20 +7867,14 @@ void WebPage::drawFrameToSnapshot(FrameIdentifier frameID, const IntRect& rectRe
     FloatSize recordingScale { recordingScaleComponent(scale.width()), recordingScaleComponent(scale.height()) };
 
     bool recorded = recordRemoteSnapshot(snapshotIdentifier, frameID, RemoteSnapshotRole::Frame, renderingMode, rectRelativeToVisibleContent, recordingScale, { }, MainRunLoopSuccessCallbackAggregator::create([](bool) { }), [&](GraphicsContext& context) {
-        LocalFrameView::SelectionInSnapshot shouldPaintSelection = LocalFrameView::IncludeSelection;
-        // FIXME: Painting in document coordinates leaves out the scroll bars of the frame. Paint in view coordinates,
-        // which applies the scroll position and paints the scroll bars, as ScrollView::paint() does in the parent process.
-        LocalFrameView::CoordinateSpaceForSnapshot coordinateSpace = LocalFrameView::DocumentCoordinates;
-
-        // Map the rect into the document with the frame's current scroll position (see paintRemoteFrameContents()),
-        // as ScrollView::paint() does. Layout can change it.
-        frameView->updateLayoutAndStyleIfNeededRecursive();
-        auto scrollPosition = frameView->scrollPosition();
+        // Painting in view coordinates applies the current scroll position (see paintRemoteFrameContents()) and paints the
+        // scroll bars. The frame view is at the location of the frame in its parent, and the rect is relative to the frame.
+        auto location = frameView->location();
         GraphicsContextStateSaver stateSaver(context);
-        context.translate(-scrollPosition.x(), -scrollPosition.y());
-        IntRect documentRect { { saturatingSum(rectRelativeToVisibleContent.x(), scrollPosition.x()), saturatingSum(rectRelativeToVisibleContent.y(), scrollPosition.y()) }, rectRelativeToVisibleContent.size() };
+        context.translate(-location.x(), -location.y());
+        IntRect viewRect { { saturatingSum(rectRelativeToVisibleContent.x(), location.x()), saturatingSum(rectRelativeToVisibleContent.y(), location.y()) }, rectRelativeToVisibleContent.size() };
 
-        frameView->paintContentsForSnapshot(context, documentRect, nullptr, shouldPaintSelection, coordinateSpace);
+        frameView->paintContentsForSnapshot(context, viewRect, nullptr, LocalFrameView::IncludeSelection, LocalFrameView::ViewCoordinates);
     });
     if (!recorded)
         abandon();

@@ -1439,6 +1439,60 @@ TEST(SiteIsolation, RemoteSnapshotIncludesLegacyScrollbars)
     [NSNotificationCenter.defaultCenter postNotificationName:NSPreferredScrollerStyleDidChangeNotification object:nil];
 }
 
+// A cross-site frame paints itself into remote snapshots in its own process, so its process has to paint its scroll bars.
+TEST(SiteIsolation, RemoteSnapshotIncludesCrossSiteFrameScrollbars)
+{
+    static constexpr auto frameHTML = "<body style='margin: 0; height: 1000px; background-color: rgb(0, 255, 0)'></body>"_s;
+    HTTPServer server({
+        { "/mainframe"_s, { "<body style='margin: 0; background-color: rgb(0, 255, 0)'><iframe style='display: block; width: 200px; height: 200px; border: none;' src='https://webkit.org/iframe'></iframe></body>"_s } },
+        { "/iframe"_s, { frameHTML } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    {
+        // Web processes take their scroller style from the UI process.
+        siteIsolationScrollerStyle = NSScrollerStyleLegacy;
+        ClassMethodSwizzler swizzler(NSScroller.class, @selector(preferredScrollerStyle), reinterpret_cast<IMP>(siteIsolationPreferredScrollerStyle));
+
+        RetainPtr configuration = server.httpsProxyConfiguration();
+        setFeatureEnabled(configuration.get(), @"RemoteSnapshottingEnabled", true);
+        setFeatureEnabled(configuration.get(), @"UseGPUProcessForDOMRenderingEnabled", true);
+        CGFloat viewSize = 400;
+        auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(configuration, CGRectMake(0, 0, viewSize, viewSize));
+        [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/mainframe"]]];
+        [navigationDelegate waitForDidFinishNavigationAndLoadInSubframe];
+        RetainPtr childFrame = [webView firstChildFrame];
+        EXPECT_NE([webView mainFrame].info._processIdentifier, [childFrame _processIdentifier]);
+
+        // Legacy scroll bars take up space. The scroll bar track starts where the client area ends.
+        int clientWidth = [webView stringByEvaluatingJavaScript:@"document.documentElement.clientWidth" inFrame:childFrame.get()].intValue;
+        ASSERT_GT(clientWidth, 0);
+        EXPECT_LT(clientWidth, 200);
+
+        RetainPtr snapshotConfiguration = adoptNS([[WKSnapshotConfiguration alloc] init]);
+        [snapshotConfiguration setRect:NSMakeRect(0, 0, viewSize, viewSize)];
+        [snapshotConfiguration setSnapshotWidth:@(viewSize)];
+
+        __block RetainPtr<CGImageRef> image;
+        __block bool done = false;
+        [webView takeSnapshotWithConfiguration:snapshotConfiguration.get() completionHandler:^(NSImage *snapshotImage, NSError *error) {
+            EXPECT_NULL(error);
+            image = Util::convertToCGImage(snapshotImage);
+            done = true;
+        }];
+        Util::run(&done);
+        ASSERT_NOT_NULL(image.get());
+
+        CGImagePixelReader reader { image.get() };
+        unsigned scale = reader.width() / viewSize;
+        EXPECT_WK_STREQ("rgb(0, 255, 0)", reader.cssColorAt(40 * scale, 100 * scale));
+        EXPECT_WK_STRNE("rgb(0, 255, 0)", reader.cssColorAt((clientWidth + 200) / 2 * scale, 100 * scale));
+        EXPECT_WK_STREQ("rgb(0, 255, 0)", reader.cssColorAt(300 * scale, 100 * scale));
+    }
+
+    // Put anything that observed the swizzled style back on the real one.
+    [NSNotificationCenter.defaultCenter postNotificationName:NSPreferredScrollerStyleDidChangeNotification object:nil];
+}
+
 TEST(SiteIsolation, OverlayScrollbarStyleChangeUpdatesCrossOriginIframe)
 {
     HTTPServer server({
