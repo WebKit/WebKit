@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="200" font-family="Ahem" font-size="40" fill="green">
+    <!-- text-top and text-bottom are the CSS names of the legacy text-before-edge and text-after-edge values. -->
+    <text x="10" y="100">X<tspan dominant-baseline="text-top">X</tspan><tspan dominant-baseline="text-bottom">X</tspan></text>
+    <text x="10" y="180" style="font-size: 20px">X<tspan style="dominant-baseline: text-top">X</tspan><tspan style="dominant-baseline: text-bottom">X</tspan></text>
+</svg>

@@ -90,6 +90,10 @@ AlignmentBaseline SVGTextLayoutEngineBaseline::dominantBaselineToAlignmentBaseli
         return AlignmentBaseline::TextAfterEdge;
     case DominantBaseline::TextBeforeEdge:
         return AlignmentBaseline::TextBeforeEdge;
+    case DominantBaseline::TextTop:
+        return AlignmentBaseline::TextTop;
+    case DominantBaseline::TextBottom:
+        return AlignmentBaseline::TextBottom;
     default:
         ASSERT_NOT_REACHED();
         return AlignmentBaseline::Baseline;

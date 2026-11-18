@@ -1493,6 +1493,8 @@ TextStream& operator<<(TextStream& ts, DominantBaseline value)
     case DominantBaseline::Middle: ts << "middle"_s; break;
     case DominantBaseline::TextAfterEdge: ts << "text-after-edge"_s; break;
     case DominantBaseline::TextBeforeEdge: ts << "text-before-edge"_s; break;
+    case DominantBaseline::TextTop: ts << "text-top"_s; break;
+    case DominantBaseline::TextBottom: ts << "text-bottom"_s; break;
     }
     return ts;
 }

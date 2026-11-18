@@ -1165,7 +1165,9 @@ enum class DominantBaseline : uint8_t {
     Central,
     Middle,
     TextAfterEdge,
-    TextBeforeEdge
+    TextBeforeEdge,
+    TextTop,
+    TextBottom
 };
 
 enum class VectorEffect : uint8_t {
