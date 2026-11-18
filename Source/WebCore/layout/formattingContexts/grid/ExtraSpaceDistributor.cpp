@@ -131,8 +131,9 @@ static void distributeSpaceAmongFlexibleTracks(LayoutUnit& spaceToDistribute, co
         for (auto trackIndex : spannedAffectedTracks)
             distributeToTrack(trackIndex, equalShare);
     }
-    // All space should be distributed to flexible tracks as they do not have growth limits.
-    ASSERT(spaceToDistribute < LayoutUnit::epsilon());
+    // All space should be distributed to flexible tracks as they do not have growth limits, though
+    // flooring each share in double can leave a LayoutUnit undistributed or over-distributed.
+    ASSERT(spaceToDistribute.abs() <= LayoutUnit::epsilon());
 }
 
 // https://drafts.csswg.org/css-grid-1/#extra-space
