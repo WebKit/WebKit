@@ -1,0 +1,32 @@
+Unrelated class added on a child, :nth-child(2 of .foo-*) rule
+  Traversal count: 0
+Matching class added on a child, :nth-child(2 of .foo-*) rule
+  Traversal count: 40
+Classes reordered on a child, :nth-child(2 of .foo-*) rule
+  Traversal count: 0
+Matching class replaced by another matching class, :nth-child(2 of .foo-*) rule
+  Traversal count: 0
+Non-matching class with the same leading characters added, :nth-child(2 of .foo-*) rule
+  Traversal count: 0
+Matching class removed, :nth-child(2 of .foo-*) rule
+  Traversal count: 40
+Matching class added, .bar-* ~ div rule
+  Traversal count: 19
+Matching class replaced by another matching class, .bar-* ~ div rule
+  Traversal count: 0
+Unrelated class added, .bar-* ~ div rule
+  Traversal count: 0
+  Last sibling color: rgb(0, 128, 0)
+Unrelated class added on <input> with ::placeholder rules
+  Placeholder needs style recalc: false
+  Placeholder color: rgb(169, 169, 169)
+Matching class added on <input> with .baz-*::placeholder rule
+  Placeholder needs style recalc: true
+  Placeholder color: rgb(0, 128, 0)
+Matching class replaced by another matching class on <input> with .baz-*::placeholder rule
+  Placeholder needs style recalc: false
+  Placeholder color: rgb(0, 128, 0)
+Matching class removed on <input> with .baz-*::placeholder rule
+  Placeholder needs style recalc: true
+  Placeholder color: rgb(169, 169, 169)
+

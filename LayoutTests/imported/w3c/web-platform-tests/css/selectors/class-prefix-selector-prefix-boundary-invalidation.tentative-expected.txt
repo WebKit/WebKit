@@ -1,0 +1,8 @@
+
+PASS a class name invalidates every prefix selector it matches, and only those
+PASS switching between a single and a double hyphen after the prefix invalidates both prefix selectors
+PASS a class name equal to the prefix never matches, before or after a class change
+PASS replacing one matching class by another in a single mutation keeps the prefix selector matching
+PASS class prefix selectors with non-Latin-1 characters are invalidated
+PASS class prefix selector invalidation is case-sensitive in no-quirks mode
+

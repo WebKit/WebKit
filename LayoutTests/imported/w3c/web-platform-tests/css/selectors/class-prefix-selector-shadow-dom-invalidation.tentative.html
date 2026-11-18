@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>CSS Selectors: class prefix selector inside :host() and ::slotted() invalidates style correctly</title>
+<link rel="author" title="Tim Nguyen" href="https://github.com/nt1m">
+<link rel="help" href="https://drafts.csswg.org/selectors-5/#class-prefix">
+<link rel="help" href="https://drafts.csswg.org/css-scoping/#host-selector">
+<link rel="help" href="https://drafts.csswg.org/css-scoping/#slotted-pseudo">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<div id="host"><span id="slotted"></span><span id="slotted-sibling"></span></div>
+<script>
+const black = 'rgb(0, 0, 0)';
+
+const host = document.getElementById('host');
+const root = host.attachShadow({ mode: 'open' });
+root.innerHTML = `
+  <style>
+    :host(.foo-*) { color: rgb(1, 2, 3); }
+    :host(:not(.bar-*)) { background-color: rgb(4, 5, 6); }
+    :host(.baz-*) #inner { color: rgb(7, 8, 9); }
+    ::slotted(.foo-*) { color: rgb(10, 11, 12); }
+  </style>
+  <div id="inner"></div>
+  <slot></slot>
+`;
+const inner = root.getElementById('inner');
+const slotted = document.getElementById('slotted');
+const slottedSibling = document.getElementById('slotted-sibling');
+
+function color(element) {
+  return getComputedStyle(element).color;
+}
+
+function backgroundColor(element) {
+  return getComputedStyle(element).backgroundColor;
+}
+
+test(() => {
+  assert_equals(color(host), black);
+
+  host.classList.add('foo-x');
+  assert_equals(color(host), 'rgb(1, 2, 3)');
+
+  host.classList.remove('foo-x');
+  assert_equals(color(host), black);
+}, ':host(.foo-*) is invalidated when the host gains/loses a matching class');
+
+test(() => {
+  assert_equals(backgroundColor(host), 'rgb(4, 5, 6)');
+
+  host.classList.add('bar-x');
+  assert_equals(backgroundColor(host), 'rgba(0, 0, 0, 0)');
+
+  host.classList.remove('bar-x');
+  assert_equals(backgroundColor(host), 'rgb(4, 5, 6)');
+}, ':host(:not(.bar-*)) is invalidated when the host gains/loses a matching class');
+
+test(() => {
+  assert_equals(color(inner), black);
+
+  host.classList.add('baz-x');
+  assert_equals(color(inner), 'rgb(7, 8, 9)');
+
+  host.classList.remove('baz-x');
+  assert_equals(color(inner), black);
+}, ':host(.baz-*) #inner is invalidated in the shadow tree when the host gains/loses a matching class');
+
+test(() => {
+  assert_equals(color(slotted), black);
+
+  slotted.classList.add('foo-x');
+  assert_equals(color(slotted), 'rgb(10, 11, 12)');
+  assert_equals(color(slottedSibling), black);
+
+  slotted.classList.remove('foo-x');
+  assert_equals(color(slotted), black);
+}, '::slotted(.foo-*) is invalidated when a slotted element gains/loses a matching class');
+</script>

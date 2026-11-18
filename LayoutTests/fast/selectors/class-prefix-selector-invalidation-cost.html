@@ -1,0 +1,78 @@
+<!DOCTYPE html><!-- webkit-test-runner [ CSSClassPrefixSelectorEnabled=true ] -->
+<html>
+<head>
+<style>
+#nth-container > :nth-child(2 of .foo-*) { color: green; }
+#sibling-container > .bar-* ~ div { color: green; }
+#ua-shadow.baz-*::placeholder { color: green; }
+#ua-shadow::placeholder { background-color: white; }
+</style>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+</script>
+</head>
+<body>
+<pre id="log"></pre>
+<div id="nth-container"></div>
+<div id="sibling-container"></div>
+<input id="ua-shadow" placeholder="placeholder">
+<script>
+function log(message) {
+    document.getElementById("log").textContent += message + "\n";
+}
+
+function fillContainer(id, count) {
+    const container = document.getElementById(id);
+    for (let i = 0; i < count; ++i)
+        container.appendChild(document.createElement("div"));
+    return container;
+}
+
+function measure(description, mutate) {
+    document.body.offsetHeight;
+    internals.resetStyleInvalidationTraversalCount();
+    mutate();
+    document.body.offsetHeight;
+    log(description);
+    log("  Traversal count: " + internals.styleInvalidationTraversalCount);
+}
+
+function measureUserAgentShadowTreeInvalidation(description, input, mutate) {
+    document.body.offsetHeight;
+    const placeholder = [...internals.shadowRoot(input).querySelectorAll("*")].find(element => internals.userAgentPart(element) == "placeholder");
+    mutate();
+    log(description);
+    log("  Placeholder needs style recalc: " + internals.nodeNeedsStyleRecalc(placeholder));
+    document.body.offsetHeight;
+    log("  Placeholder color: " + getComputedStyle(placeholder).color);
+}
+
+if (window.internals) {
+    const nthContainer = fillContainer("nth-container", 20);
+    const nthFirst = nthContainer.firstElementChild;
+
+    measure("Unrelated class added on a child, :nth-child(2 of .foo-*) rule", () => nthFirst.classList.add("unrelated"));
+    measure("Matching class added on a child, :nth-child(2 of .foo-*) rule", () => nthFirst.className = "foo-a unrelated");
+    measure("Classes reordered on a child, :nth-child(2 of .foo-*) rule", () => nthFirst.className = "unrelated foo-a");
+    measure("Matching class replaced by another matching class, :nth-child(2 of .foo-*) rule", () => nthFirst.className = "unrelated foo-b");
+    measure("Non-matching class with the same leading characters added, :nth-child(2 of .foo-*) rule", () => nthFirst.classList.add("foo--x"));
+    measure("Matching class removed, :nth-child(2 of .foo-*) rule", () => nthFirst.className = "unrelated");
+
+    const siblingContainer = fillContainer("sibling-container", 20);
+    const siblingFirst = siblingContainer.firstElementChild;
+
+    measure("Matching class added, .bar-* ~ div rule", () => siblingFirst.classList.add("bar-a"));
+    measure("Matching class replaced by another matching class, .bar-* ~ div rule", () => siblingFirst.className = "bar-b");
+    measure("Unrelated class added, .bar-* ~ div rule", () => siblingFirst.classList.add("unrelated"));
+    log("  Last sibling color: " + getComputedStyle(siblingContainer.lastElementChild).color);
+
+    const input = document.getElementById("ua-shadow");
+    measureUserAgentShadowTreeInvalidation("Unrelated class added on <input> with ::placeholder rules", input, () => input.classList.add("unrelated"));
+    measureUserAgentShadowTreeInvalidation("Matching class added on <input> with .baz-*::placeholder rule", input, () => input.classList.add("baz-x"));
+    measureUserAgentShadowTreeInvalidation("Matching class replaced by another matching class on <input> with .baz-*::placeholder rule", input, () => input.className = "unrelated baz-y");
+    measureUserAgentShadowTreeInvalidation("Matching class removed on <input> with .baz-*::placeholder rule", input, () => input.classList.remove("baz-y"));
+}
+</script>
+</body>
+</html>

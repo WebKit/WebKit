@@ -1,0 +1,8 @@
+
+PASS :not(.foo-*) in subject position is invalidated when the element gains/loses a matching class
+PASS :not(.foo-*) on an ancestor invalidates descendants when the ancestor gains/loses a matching class
+PASS :is(.foo-*) on a preceding sibling invalidates the following sibling
+PASS :nth-child(2 of .foo-*) is invalidated on siblings when an earlier sibling gains/loses a matching class
+PASS :nth-last-child(1 of .foo-*) is invalidated on siblings when a later sibling gains/loses a matching class
+PASS :nth-child(1 of :not(.foo-*)) is invalidated on siblings when an earlier sibling gains/loses a matching class
+
