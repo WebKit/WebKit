@@ -1,0 +1,8 @@
+
+FAIL serialization test ML-KEM-512 promise_test: Unhandled rejection with value: object "TypeError: Type error"
+FAIL serialization test {name: ML-KEM-512} promise_test: Unhandled rejection with value: object "TypeError: Type error"
+FAIL serialization test ML-KEM-768 promise_test: Unhandled rejection with value: object "TypeError: Type error"
+FAIL serialization test {name: ML-KEM-768} promise_test: Unhandled rejection with value: object "TypeError: Type error"
+FAIL serialization test ML-KEM-1024 promise_test: Unhandled rejection with value: object "TypeError: Type error"
+FAIL serialization test {name: ML-KEM-1024} promise_test: Unhandled rejection with value: object "TypeError: Type error"
+
