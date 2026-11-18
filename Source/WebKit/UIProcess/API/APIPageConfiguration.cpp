@@ -361,6 +361,8 @@ void PageConfiguration::setURLSchemeHandlerForURLScheme(Ref<WebURLSchemeHandler>
 
 bool PageConfiguration::lockdownModeEnabled() const
 {
+    if (protect(preferences())->forceLockdownMode())
+        return true;
     if (RefPtr policies = m_data.defaultWebsitePolicies.getIfExists())
         return policies->lockdownModeEnabled();
     return lockdownModeEnabledBySystem();
