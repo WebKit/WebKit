@@ -34,6 +34,7 @@
 #import "RemoteMonotonicTimelineRegistry.h"
 #endif
 
+OBJC_CLASS CALayer;
 OBJC_CLASS UIScrollView;
 OBJC_CLASS WKBaseScrollView;
 
@@ -85,7 +86,12 @@ public:
     HashSet<Ref<RemoteMonotonicTimeline>> monotonicTimelinesForProcessForTesting(WebCore::ProcessIdentifier) const override;
     void progressBasedTimelinesWereUpdatedForNode(const WebCore::ScrollingTreeScrollingNode&) override;
     bool hasHighImpactMonotonicAnimations() const override;
+    bool hasMonotonicAnimationsThatMayBeVisible() const override;
+    void setAnimatedContentVisibilityNeedsUpdate() override { m_animatedContentVisibilityNeedsUpdate = true; }
+    void updateAnimatedContentVisibilityIfNeeded() override;
 #endif
+
+    void viewportChangedViaDelegatedScrolling(const WebCore::FloatPoint& scrollPosition, const WebCore::FloatRect& layoutViewport, double scale) override;
 
     void displayDidRefresh(WebCore::PlatformDisplayID) override;
 
@@ -120,8 +126,9 @@ private:
 #if ENABLE(THREADED_ANIMATIONS)
     void updateTimeDependentAnimationStacks();
     void updateAnimationStacksDependentOnScrollingNode(const WebCore::ScrollingTreeScrollingNode&);
-    void updateAnimationStacks(NOESCAPE const Function<bool(const RemoteAnimationStack&)>&);
-    bool animatedContentMayBeVisible(const RemoteLayerTreeNode&) const;
+    void updateAnimationStacks(NOESCAPE const Function<bool(WebCore::PlatformLayerIdentifier, const RemoteAnimationStack&)>&);
+    void animatedContentGeometryMayHaveChanged();
+    bool animatedContentMayBeVisible(const RemoteLayerTreeNode&, CALayer *webViewLayer, HashMap<WebCore::PlatformLayerIdentifier, bool>&) const;
 #endif
 
     HashMap<unsigned, OptionSet<WebCore::TouchAction>> m_touchActionsByTouchIdentifier;
@@ -142,6 +149,8 @@ private:
 
 #if ENABLE(THREADED_ANIMATIONS)
     HashSet<WebCore::PlatformLayerIdentifier> m_animatedNodeLayerIDs;
+    HashSet<WebCore::PlatformLayerIdentifier> m_animatedNodeLayerIDsThatMayBeVisible;
+    bool m_animatedContentVisibilityNeedsUpdate { false };
     std::unique_ptr<RemoteMonotonicTimelineRegistry> m_monotonicTimelineRegistry;
 #endif
 };

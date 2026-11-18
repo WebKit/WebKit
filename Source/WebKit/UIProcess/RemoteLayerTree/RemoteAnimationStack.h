@@ -67,6 +67,7 @@ public:
     bool isDependentOnScrollingNodeWithID(WebCore::ScrollingNodeID) const;
     bool hasTimeBasedAnimations() const { return m_hasTimeBasedAnimations; }
     bool hasProgressBasedAnimations() const { return m_hasProgressBasedAnimations; }
+    bool affectsTransform() const { return m_affectedLayerProperties.contains(LayerProperty::Transform); }
 
     void clear(PlatformLayer*);
 

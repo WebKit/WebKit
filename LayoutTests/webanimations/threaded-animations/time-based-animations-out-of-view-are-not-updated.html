@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<body>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="../../resources/ui-helper.js"></script>
+<script src="threaded-animations-utils.js"></script>
+<style>
+
+.box {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100px;
+    height: 100px;
+    background-color: black;
+}
+
+</style>
+<script>
+
+const duration = 1000 * 1000; // 1000s.
+const farOutOfView = 20000;
+
+const createBox = (test, parent = document.body) => {
+    const box = document.createElement("div");
+    box.className = "box";
+    parent.appendChild(box);
+    test.add_cleanup(() => box.remove());
+    return box;
+};
+
+const presentationUpdate = async () => {
+    await threadedAnimationsCommit();
+    await UIHelper.ensurePresentationUpdate();
+};
+
+const startTimeBasedAnimation = async target => {
+    const animation = target.animate({ translate: "100px" }, duration);
+    await animationAcceleration(animation);
+    assert_true(internals.acceleratedAnimationsForElement(target)[0].isThreaded, "The animation runs in the remote layer tree");
+    await presentationUpdate();
+};
+
+const assertUpdated = async (expected, description) => {
+    assert_equals(await UIHelper.displayRefreshUpdatesTimeBasedAnimations(), expected, description);
+};
+
+promise_test(async test => {
+    const target = createBox(test);
+    await startTimeBasedAnimation(target);
+    await assertUpdated(true, "An animation in view is updated as the display refreshes");
+}, "Time-based animations in view are updated as the display refreshes.");
+
+promise_test(async test => {
+    const target = createBox(test);
+    target.style.top = `${farOutOfView}px`;
+    await startTimeBasedAnimation(target);
+    await assertUpdated(false, "An animation far out of view is not updated");
+
+    target.style.top = "0";
+    await presentationUpdate();
+    await assertUpdated(true, "Moving the animated element into view updates the animation again");
+
+    target.style.top = `${farOutOfView}px`;
+    await presentationUpdate();
+    await assertUpdated(false, "Moving the animated element back out of view stops updating the animation");
+}, "Time-based animations are only updated while their element may be visible.");
+
+promise_test(async test => {
+    test.add_cleanup(async () => {
+        window.scrollTo(0, 0);
+        await presentationUpdate();
+    });
+
+    const target = createBox(test);
+    target.style.top = `${farOutOfView}px`;
+    await startTimeBasedAnimation(target);
+    await assertUpdated(false, "An animation far out of view is not updated");
+
+    window.scrollTo(0, farOutOfView - 100);
+    await presentationUpdate();
+    await assertUpdated(true, "Scrolling to the animated element updates the animation again");
+
+    window.scrollTo(0, 0);
+    await presentationUpdate();
+    await assertUpdated(false, "Scrolling away from the animated element stops updating the animation");
+}, "Time-based animations are updated as the page scrolls programmatically.");
+
+promise_test(async test => {
+    test.add_cleanup(async () => {
+        window.scrollTo(0, 0);
+        await presentationUpdate();
+    });
+
+    const target = createBox(test);
+    if (UIHelper.isIOSFamily()) {
+        // Scroll the main scroll view in the UI process.
+        target.style.top = `${farOutOfView}px`;
+        await startTimeBasedAnimation(target);
+        await assertUpdated(false, "An animation far out of view is not updated");
+
+        await UIHelper.immediateScrollTo(0, farOutOfView - 100);
+        await presentationUpdate();
+        await assertUpdated(true, "Scrolling to the animated element updates the animation again");
+    } else {
+        // Scroll just enough to bring the element into view with the mouse wheel, which is handled on the scrolling thread.
+        target.style.top = `${innerHeight + 10}px`;
+        await startTimeBasedAnimation(target);
+        await assertUpdated(false, "An animation just out of view is not updated");
+
+        await UIHelper.mouseWheelScrollAt(50, 50, 0, -1, 0, -10);
+        await presentationUpdate();
+        assert_greater_than(scrollY, 10, "The page scrolled");
+        await assertUpdated(true, "Scrolling the animated element into view updates the animation again");
+    }
+}, "Time-based animations are updated as the page is scrolled by the user.");
+
+promise_test(async test => {
+    const container = createBox(test);
+    container.style.top = `${farOutOfView}px`;
+
+    // A composited descendant positioned back in view, with an animation of its own, is moved by the container's animation.
+    const descendant = createBox(test, container);
+    descendant.style.top = `-${farOutOfView}px`;
+    descendant.style.willChange = "transform";
+
+    await startTimeBasedAnimation(container);
+    const descendantAnimation = descendant.animate({ rotate: "360deg" }, duration);
+    await animationAcceleration(descendantAnimation);
+    await presentationUpdate();
+    await assertUpdated(true, "Animations of an element whose composited descendants are in view are updated");
+
+    descendant.style.top = "0";
+    await presentationUpdate();
+    await assertUpdated(false, "Once the descendant is out of view too, neither animation is updated");
+}, "Time-based animations account for the composited descendants of their element.");
+
+promise_test(async test => {
+    const clipper = createBox(test);
+    clipper.style.overflow = "hidden";
+
+    // The target is in the viewport, but entirely clipped by its container.
+    const target = createBox(test, clipper);
+    target.style.left = "1000px";
+
+    await startTimeBasedAnimation(target);
+    await assertUpdated(false, "An animation on an element clipped out by an ancestor is not updated");
+
+    target.style.left = "0";
+    await presentationUpdate();
+    await assertUpdated(true, "Moving the animated element within its clipping ancestor updates the animation again");
+}, "Time-based animations on clipped out elements are not updated.");
+
+</script>
+</body>

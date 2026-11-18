@@ -1024,6 +1024,15 @@ void RemoteLayerTreeDrawingAreaProxy::sizeToContentAutoSizeMaximumSizeDidChange(
 }
 
 #if ENABLE(THREADED_ANIMATIONS)
+bool RemoteLayerTreeDrawingAreaProxy::displayRefreshUpdatesTimeBasedAnimationsForTesting() const
+{
+    if (RefPtr page = this->page()) {
+        if (RefPtr scrollingCoordinatorProxy = page->scrollingCoordinatorProxy())
+            return scrollingCoordinatorProxy->hasMonotonicAnimationsThatMayBeVisible();
+    }
+    return false;
+}
+
 void RemoteLayerTreeDrawingAreaProxy::animationsWereAddedToNode(RemoteLayerTreeNode& node)
 {
     if (RefPtr page = this->page()) {

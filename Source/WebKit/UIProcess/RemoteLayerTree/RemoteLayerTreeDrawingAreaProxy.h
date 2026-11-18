@@ -143,6 +143,9 @@ public:
 
     virtual void didRefreshDisplay();
     virtual bool displayLinkWantsHighFrameRateForTesting() const { return false; };
+#if ENABLE(THREADED_ANIMATIONS)
+    bool displayRefreshUpdatesTimeBasedAnimationsForTesting() const;
+#endif
 
     // True while this layer's transform is the page scale owned by the UI process (unified macOS zoom).
     // RemoteLayerTreePropertyApplier has to leave the committed transform alone in that case.

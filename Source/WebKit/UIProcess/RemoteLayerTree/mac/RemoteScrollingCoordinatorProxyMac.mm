@@ -294,6 +294,9 @@ void RemoteScrollingCoordinatorProxyMac::applyScrollingTreeLayerPositionsAfterCo
 {
     RemoteScrollingCoordinatorProxy::applyScrollingTreeLayerPositionsAfterCommit();
     m_eventDispatcher->renderingUpdateComplete();
+#if ENABLE(THREADED_ANIMATIONS)
+    m_eventDispatcher->updateAnimatedContentVisibilityAfterCommit();
+#endif
 }
 
 void RemoteScrollingCoordinatorProxyMac::flushMainThreadTransactionIfNeeded()
@@ -325,6 +328,11 @@ void RemoteScrollingCoordinatorProxyMac::removeTimelines(WebCore::ProcessIdentif
 RefPtr<const RemoteAnimationTimeline> RemoteScrollingCoordinatorProxyMac::timeline(const TimelineID& timelineID) const
 {
     return m_eventDispatcher->timeline(timelineID);
+}
+
+bool RemoteScrollingCoordinatorProxyMac::hasMonotonicAnimationsThatMayBeVisible() const
+{
+    return m_eventDispatcher->hasTimeBasedAnimationsThatMayBeVisible();
 }
 
 String RemoteScrollingCoordinatorProxyMac::animationStackJSONForNodeWithIDForTesting(WebCore::PlatformLayerIdentifier layerID) const
