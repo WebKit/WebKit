@@ -27,6 +27,7 @@
 
 #include <optional>
 #include <span>
+#include <wtf/Atomics.h>
 #include <wtf/EnumTraits.h>
 
 namespace IPC {
@@ -41,7 +42,8 @@ struct ArgumentCoder<bool> {
     template<typename Encoder>
     static void encode(Encoder& encoder, bool value)
     {
-        uint8_t data = value ? 1 : 0;
+        // The compiler assumes a bool is 0 or 1, so launder the byte through WTF::opaque() in case a caller passed another value.
+        uint8_t data = WTF::opaque(static_cast<uint8_t>(value)) ? 1 : 0;
         encoder << data;
     }
 

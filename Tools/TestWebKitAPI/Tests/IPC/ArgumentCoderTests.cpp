@@ -992,4 +992,37 @@ TEST(ArgumentCoderQuirkTable, NumberOfIDsIsNotADecodableBehaviorID)
     EXPECT_FALSE(decoder->decode<WebCore::QuirkBehavior>().has_value());
 }
 
+static NEVER_INLINE void encodeBoolArgument(IPC::Encoder& encoder, bool value)
+{
+    encoder << value;
+}
+
+TEST(ArgumentCoderBool, NonCanonicalBoolIsEncodedAsTrue)
+{
+    // Calling a BOOL API through an untyped objc_msgSend() or -performSelector:withObject: leaves
+    // the whole register in the bool argument. Call a bool function the same way.
+    auto encodeUntypedArgument = std::bit_cast<void(*)(IPC::Encoder&, uintptr_t)>(&encodeBoolArgument);
+
+    IPC::Encoder encoder(IPC::MessageName::IPCTester_EmptyMessage, 0);
+    encodeUntypedArgument(encoder, 0x12345603);
+
+    auto decoder = IPC::Decoder::create(encoder.span(), { });
+    ASSERT_TRUE(decoder);
+    auto value = decoder->decode<bool>();
+    ASSERT_TRUE(value.has_value());
+    EXPECT_TRUE(*value);
+    EXPECT_TRUE(decoder->isValid());
+}
+
+TEST(ArgumentCoderBool, NonCanonicalByteIsRejected)
+{
+    IPC::Encoder encoder(IPC::MessageName::IPCTester_EmptyMessage, 0);
+    encoder << static_cast<uint8_t>(0x50);
+
+    auto decoder = IPC::Decoder::create(encoder.span(), { });
+    ASSERT_TRUE(decoder);
+    EXPECT_FALSE(decoder->decode<bool>().has_value());
+    EXPECT_FALSE(decoder->isValid());
+}
+
 } // namespace TestWebKitAPI
