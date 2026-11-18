@@ -1087,6 +1087,47 @@ TEST(SiteIsolation, UserInterfaceLayoutDirectionInCrossOriginIframe)
     }));
 }
 
+#if PLATFORM(MAC)
+
+TEST(SiteIsolation, ToggleSmartInsertDeleteInCrossOriginIframe)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { "<body style='margin: 0; font-size: 40px'><iframe style='display: block; width: 400px; height: 100px; border: none' src='https://webkit.org/iframe'></iframe>hello world</body>"_s } },
+        { "/iframe"_s, { "<body style='margin: 0; font-size: 40px'>hello world</body>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server, CGRectMake(0, 0, 800, 600));
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    RetainPtr childFrame = [webView firstChildFrame];
+
+    // Smart insert and delete decides whether double-clicking a word also selects its trailing space.
+    auto selectionAfterDoubleClick = [&](NSPoint point, WKFrameInfo *frame) {
+        [webView objectByEvaluatingJavaScript:@"getSelection().removeAllRanges(); true" inFrame:frame];
+        [webView sendClicksAtPoint:point numberOfClicks:2];
+        String selection;
+        EXPECT_TRUE(Util::waitFor([&] {
+            selection = [webView stringByEvaluatingJavaScript:@"getSelection().toString()" inFrame:frame];
+            return !selection.isEmpty();
+        }));
+        return selection;
+    };
+    auto mainFrameWord = NSMakePoint(40, 477);
+    auto childFrameWord = NSMakePoint(40, 577);
+
+    auto mainFrameSelectionBeforeToggle = selectionAfterDoubleClick(mainFrameWord, nil);
+    EXPECT_WK_STREQ(selectionAfterDoubleClick(childFrameWord, childFrame.get()), mainFrameSelectionBeforeToggle);
+
+    [webView performSelector:@selector(toggleSmartInsertDelete:) withObject:nil];
+    auto mainFrameSelectionAfterToggle = selectionAfterDoubleClick(mainFrameWord, nil);
+    EXPECT_FALSE(mainFrameSelectionAfterToggle == mainFrameSelectionBeforeToggle);
+    EXPECT_WK_STREQ(selectionAfterDoubleClick(childFrameWord, childFrame.get()), mainFrameSelectionAfterToggle);
+
+    [webView performSelector:@selector(toggleSmartInsertDelete:) withObject:nil];
+}
+
+#endif // PLATFORM(MAC)
+
 #if PLATFORM(IOS_FAMILY)
 
 static NSUInteger markerCountInFrame(TestWKWebView *webView, WKFrameInfo *frame, NSString *markerType)
