@@ -36,7 +36,7 @@ class InlineFormattingContext;
 
 class IntrinsicWidthHandler {
 public:
-    IntrinsicWidthHandler(InlineFormattingContext&, const InlineContentCache::InlineItems&);
+    IntrinsicWidthHandler(InlineFormattingContext&, const InlineContentCache::InlineItems&, std::span<const float> shapingAdjustments);
 
     InlineLayoutUnit minimumContentSize();
     InlineLayoutUnit maximumContentSize();
@@ -61,6 +61,7 @@ private:
 private:
     InlineFormattingContext& m_inlineFormattingContext;
     const InlineContentCache::InlineItems& m_inlineItems;
+    std::span<const float> m_shapingAdjustments;
     InlineItemRange m_inlineItemRange;
     bool m_mayUseSimplifiedTextOnlyInlineLayoutInRange { false };
 
