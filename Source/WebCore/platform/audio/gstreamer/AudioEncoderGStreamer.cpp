@@ -278,7 +278,7 @@ String GStreamerInternalAudioEncoder::initialize(const String& codecName, const 
             if (config.bitRate >= 4000 && config.bitRate <= 650000)
                 g_object_set(m_encoder.get(), "bitrate", static_cast<int>(config.bitRate), nullptr);
             else
-                return makeString("Opus bitrate out of range: "_s, config.bitRate, "not in [4000, 650000]"_s);
+                return makeString("Opus bitrate out of range: "_s, config.bitRate, " not in [4000, 650000]"_s);
         }
 
         if (config.numberOfChannels > 255)
@@ -304,8 +304,7 @@ String GStreamerInternalAudioEncoder::initialize(const String& codecName, const 
             auto frameSize = makeString(parameters->frameDuration / 1000);
             gst_util_set_object_arg(G_OBJECT(m_encoder.get()), "frame-size", frameSize.ascii().data());
         }
-        int channelMappingFamily = config.numberOfChannels <= 2 ? 0 : 1;
-        m_outputCaps = adoptGRef(gst_caps_new_simple("audio/x-opus", "channel-mapping-family", G_TYPE_INT, channelMappingFamily, nullptr));
+        m_outputCaps = adoptGRef(gst_caps_new_empty_simple("audio/x-opus"));
     } else if (codecName == "alaw"_s)
         m_outputCaps = adoptGRef(gst_caps_new_empty_simple("audio/x-alaw"));
     else if (codecName == "ulaw"_s)
