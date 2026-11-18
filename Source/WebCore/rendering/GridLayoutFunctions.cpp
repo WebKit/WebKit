@@ -63,8 +63,8 @@ static bool gridItemHasMargin(const RenderBox& gridItem, Style::GridTrackSizingD
 
 LayoutUnit computeMarginLogicalSizeForGridItem(const RenderGrid& grid, Style::GridTrackSizingDirection direction, const RenderBox& gridItem)
 {
-    auto flowAwareDirection = flowAwareDirectionForGridItem(grid, gridItem, direction);
-    if (!gridItemHasMargin(gridItem, flowAwareDirection))
+    auto gridItemDirection = flowAwareDirection(grid, gridItem, direction);
+    if (!gridItemHasMargin(gridItem, gridItemDirection))
         return 0;
 
     LayoutUnit marginStart;
@@ -73,7 +73,7 @@ LayoutUnit computeMarginLogicalSizeForGridItem(const RenderGrid& grid, Style::Gr
         gridItem.computeInlineDirectionMargins(grid, gridItem.containingBlockLogicalWidthForContent(), { }, gridItem.logicalWidth(), marginStart, marginEnd);
     else
         gridItem.computeBlockDirectionMargins(grid, marginStart, marginEnd);
-    return marginStartIsAuto(gridItem, flowAwareDirection) ? marginEnd : marginEndIsAuto(gridItem, flowAwareDirection) ? marginStart : marginStart + marginEnd;
+    return marginStartIsAuto(gridItem, gridItemDirection) ? marginEnd : marginEndIsAuto(gridItem, gridItemDirection) ? marginStart : marginStart + marginEnd;
 }
 
 bool hasRelativeOrKeywordOrAutoSizeForGridItem(const RenderBox& gridItem, Style::GridTrackSizingDirection direction)
@@ -123,7 +123,7 @@ LayoutUnit marginLogicalSizeForGridItem(const RenderGrid& grid, Style::GridTrack
     auto margin = computeMarginLogicalSizeForGridItem(grid, direction, gridItem);
 
     if (&grid != gridItem.parent()) {
-        auto subgridDirection = flowAwareDirectionForGridItem(grid, *downcast<RenderGrid>(gridItem.parent()), direction);
+        auto subgridDirection = flowAwareDirection(grid, *downcast<RenderGrid>(gridItem.parent()), direction);
         margin += extraMarginForSubgridAncestors(subgridDirection, gridItem).extraTotalMargin();
     }
 
@@ -182,14 +182,9 @@ bool isGridItemInlineSizeDependentOnBlockConstraints(const RenderBox& gridItem, 
     return false;
 }
 
-Style::GridTrackSizingDirection flowAwareDirectionForGridItem(const RenderGrid& grid, const RenderBox& gridItem, Style::GridTrackSizingDirection direction)
+Style::GridTrackSizingDirection flowAwareDirection(const RenderGrid& grid, const RenderElement& renderer, Style::GridTrackSizingDirection direction)
 {
-    return !isOrthogonalGridItem(grid, gridItem) ? direction : orthogonalDirection(direction);
-}
-
-Style::GridTrackSizingDirection flowAwareDirectionForParent(const RenderGrid& grid, const RenderElement& parent, Style::GridTrackSizingDirection direction)
-{
-    return isOrthogonalParent(grid, parent) ? orthogonalDirection(direction) : direction;
+    return renderer.isHorizontalWritingMode() != grid.isHorizontalWritingMode() ? orthogonalDirection(direction) : direction;
 }
 
 std::optional<RenderBox::GridAreaSize> overridingContainingBlockContentSizeForGridItem(const RenderBox& gridItem, Style::GridTrackSizingDirection direction)
@@ -206,7 +201,7 @@ bool isFlippedDirection(const RenderGrid& grid, Style::GridTrackSizingDirection 
 
 bool isSubgridReversedDirection(const RenderGrid& grid, Style::GridTrackSizingDirection outerDirection, const RenderGrid& subgrid)
 {
-    auto subgridDirection = flowAwareDirectionForGridItem(grid, subgrid, outerDirection);
+    auto subgridDirection = flowAwareDirection(grid, subgrid, outerDirection);
     ASSERT(subgrid.isSubgrid(subgridDirection));
     return isFlippedDirection(grid, outerDirection) != isFlippedDirection(subgrid, subgridDirection);
 }
@@ -305,7 +300,7 @@ LayoutUnit availableAlignmentSpaceForGridItemBeforeStretching(const RenderGrid& 
     // Because we want to avoid multiple layouts, stretching logic might be performed before
     // grid items are laid out, so we can't use the grid item cached values. Hence, we need to
     // compute margins in order to determine the available height before stretching.
-    auto gridItemFlowDirection = flowAwareDirectionForGridItem(grid, gridItem, direction);
+    auto gridItemFlowDirection = flowAwareDirection(grid, gridItem, direction);
     return std::max(0_lu, gridAreaBreadthForGridItem - marginLogicalSizeForGridItem(grid, gridItemFlowDirection, gridItem));
 }
 
