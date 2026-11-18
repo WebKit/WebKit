@@ -4250,13 +4250,16 @@ LayoutRange RenderBox::containingBlockRangeForPositioned(const RenderBoxModelObj
     }
 
     // Inline containing blocks are formed by positioned (e.g. relative, sticky) inline boxes and by inline boxes with (backdrop-)filter.
-    if (container.isInlineBox()) {
+    // A replaced element with children (e.g. a positioned canvas with drawable content) is a containing block as well.
+    if (container.isInlineBox() || is<RenderReplaced>(container)) {
         return isContainerInlineAxis
             ? LayoutRange(startEdge, container.paddingBoxLogicalWidth())
             : LayoutRange(startEdge, container.paddingBoxLogicalHeight());
     }
 
-    auto* containingBlock = dynamicDowncast<RenderBlock>(container) ? : container.containingBlock();
+    // The block that keeps this out-of-flow box: the container itself, or the nearest non-anonymous block for a container that
+    // is not a block (e.g. a positioned table section).
+    auto* containingBlock = container.nearestNonAnonymousContainingBlockIncludingSelf();
     if (!containingBlock) {
         ASSERT_NOT_REACHED();
         return { };

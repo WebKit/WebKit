@@ -1,0 +1,3 @@
+This tests that the percentages of an absolutely positioned box in a relatively positioned drawable canvas resolve against the padding box of the canvas.
+
+PASS

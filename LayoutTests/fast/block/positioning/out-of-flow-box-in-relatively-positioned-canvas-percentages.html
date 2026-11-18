@@ -1,0 +1,17 @@
+<!DOCTYPE html><!-- webkit-test-runner [ HTMLInCanvasEnabled=true ] -->
+<html>
+<body>
+<p>This tests that the percentages of an absolutely positioned box in a relatively positioned drawable canvas resolve against the padding box of the canvas.</p>
+<div style="width: 300px"><canvas id="canvas" content="drawable" style="position: relative; width: 100px; height: 100px; padding: 10px"><div id="target" style="position: absolute; left: 10%; top: 20%; width: 50%; height: 25%"></div></canvas><div style="height: 200px"></div></div>
+<pre id="result"></pre>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+const canvasRect = canvas.getBoundingClientRect();
+const targetRect = target.getBoundingClientRect();
+const actual = [targetRect.left - canvasRect.left, targetRect.top - canvasRect.top, targetRect.width, targetRect.height];
+const expected = [12, 24, 60, 30];
+result.textContent = actual.every((value, index) => value == expected[index]) ? "PASS" : "FAIL: left, top, width and height are " + actual.join(", ") + ", expected " + expected.join(", ");
+</script>
+</body>
+</html>
