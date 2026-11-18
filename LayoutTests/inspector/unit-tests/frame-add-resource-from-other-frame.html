@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createSyncSuite("Frame.AddResource");
+
+    suite.addTestCase({
+        name: "Frame.AddResource.FromOtherFrame",
+        description: "Adding a resource that belongs to another frame should move it to the new frame.",
+        test() {
+            let oldFrame = new WI.Frame("frame-add-resource-old", "old", "http://old.test", "loader-old", new WI.Resource("http://old.test/"));
+            let newFrame = new WI.Frame("frame-add-resource-new", "new", "http://new.test", "loader-new", new WI.Resource("http://new.test/"));
+            let resource = new WI.Resource("http://old.test/script.js", {type: WI.Resource.Type.Script});
+
+            oldFrame.addResource(resource);
+            InspectorTest.expectEqual(resource.parentFrame, oldFrame, "The resource should belong to the old frame.");
+
+            let removedFromOldFrame = false;
+            oldFrame.singleFireEventListener(WI.Frame.Event.ResourceWasRemoved, (event) => {
+                removedFromOldFrame = event.data.resource === resource;
+            });
+
+            try {
+                newFrame.addResource(resource);
+                InspectorTest.pass("Moving the resource to the new frame should not throw.");
+            } catch (error) {
+                InspectorTest.fail(`Moving the resource to the new frame should not throw: ${error}`);
+            }
+
+            InspectorTest.expectEqual(resource.parentFrame, newFrame, "The resource should belong to the new frame.");
+            InspectorTest.expectThat(newFrame.resourceCollection.has(resource), "The new frame should hold the resource.");
+            InspectorTest.expectFalse(oldFrame.resourceCollection.has(resource), "The old frame should no longer hold the resource.");
+            InspectorTest.expectThat(removedFromOldFrame, "The old frame should dispatch ResourceWasRemoved for the resource.");
+
+            return true;
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests that WI.Frame.prototype.addResource moves a resource that belongs to another frame.</p>
+</body>
+</html>

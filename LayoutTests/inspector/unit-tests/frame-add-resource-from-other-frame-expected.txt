@@ -1,0 +1,12 @@
+Tests that WI.Frame.prototype.addResource moves a resource that belongs to another frame.
+
+
+== Running test suite: Frame.AddResource
+-- Running test case: Frame.AddResource.FromOtherFrame
+PASS: The resource should belong to the old frame.
+PASS: Moving the resource to the new frame should not throw.
+PASS: The resource should belong to the new frame.
+PASS: The new frame should hold the resource.
+PASS: The old frame should no longer hold the resource.
+PASS: The old frame should dispatch ResourceWasRemoved for the resource.
+
