@@ -44,6 +44,7 @@
 #include "FrameTimelineAgent.h"
 #include "FrameWorkerAgent.h"
 #include "InspectorBackendClient.h"
+#include "InspectorCPUProfilerAgent.h"
 #include "InspectorInstrumentation.h"
 #include "InspectorWebAgentBase.h"
 #include "InstrumentingAgents.h"
@@ -220,6 +221,10 @@ void FrameInspectorController::createLazyAgents()
     m_agents.append(makeUniqueRef<FrameTimelineAgent>(context));
     m_agents.append(makeUniqueRef<FrameAnimationAgent>(context));
     m_agents.append(makeUniqueRef<FrameWorkerAgent>(context));
+
+#if ENABLE(RESOURCE_USAGE)
+    m_agents.append(makeUniqueRef<InspectorCPUProfilerAgent>(context));
+#endif
 }
 
 void FrameInspectorController::connectFrontend(Inspector::FrontendChannel& frontendChannel, bool isAutomaticInspection, bool immediatelyPause)

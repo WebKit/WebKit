@@ -1,0 +1,28 @@
+Test that under Site Isolation, of two frame targets in one process, only the one that the frontend starts reports CPU usage, and that console.profile() in a frame does not make frame targets start CPUProfiler on their own.
+
+
+
+== Running test suite: SiteIsolation.CPUProfiler.SameProcessFrameTargets
+-- Running test case: SiteIsolation.CPUProfiler.SameProcessFrameTargets.Setup
+PASS: Should find the first iframe target.
+PASS: Should find the second iframe target.
+PASS: Both iframe targets should be in one process.
+PASS: The iframe targets should not be in the page's process.
+PASS: Found the worker target of each iframe.
+
+-- Running test case: SiteIsolation.CPUProfiler.SameProcessFrameTargets.OnlyStartedTargetReports
+PASS: The first iframe target sent trackingStart, two trackingUpdate events and trackingComplete.
+PASS: The first iframe target should send one trackingStart.
+PASS: The first iframe target should send one trackingComplete.
+PASS: The second iframe target should not send CPUProfiler events.
+PASS: Only the first iframe target should send CPUProfiler events.
+PASS: The update should have one main thread.
+PASS: The update should include the thread of the first iframe's worker.
+PASS: The update should include the thread of the second iframe's worker, which is in the same process.
+
+-- Running test case: SiteIsolation.CPUProfiler.SameProcessFrameTargets.ConsoleProfileDoesNotStartFrameTargets
+PASS: The first iframe target started Timeline.
+PASS: Capturing stopped.
+PASS: The first iframe target should report that Timeline stopped.
+PASS: No frame target should start CPUProfiler unless the frontend asked it to.
+
