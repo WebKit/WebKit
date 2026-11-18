@@ -28,6 +28,7 @@
 
 #if PLATFORM(COCOA)
 
+#import "Helpers/cocoa/HTTPServer.h"
 #import "Helpers/cocoa/PasteboardUtilities.h"
 #import "Helpers/PlatformUtilities.h"
 #import "Helpers/Test.h"
@@ -338,14 +339,19 @@ static NSArray<NSPasteboardType> *copyImageDocument(NSURL *imageURL, ImageCopySo
     return NSPasteboard.generalPasteboard.types;
 }
 
-TEST(CopyHTML, UserInitiatedImageCopyWritesOriginalImageData)
+static void expectUserInitiatedCopyWritesOriginalImageData(NSString *resourceName, NSString *extension, UTType *expectedType)
 {
-    RetainPtr imageURL = [NSBundle.test_resourcesBundle URLForResource:@"icon" withExtension:@"png"];
+    RetainPtr imageURL = [NSBundle.test_resourcesBundle URLForResource:resourceName withExtension:extension];
     NSArray<NSPasteboardType> *types = copyImageDocument(imageURL, ImageCopySource::User);
 
-    EXPECT_WK_STREQ(UTTypePNG.identifier, types.firstObject);
+    EXPECT_WK_STREQ(expectedType.identifier, types.firstObject);
     EXPECT_TRUE([types containsObject:NSPasteboardTypeTIFF]);
-    EXPECT_TRUE([[NSPasteboard.generalPasteboard dataForType:UTTypePNG.identifier] isEqualToData:[NSData dataWithContentsOfURL:imageURL]]);
+    EXPECT_TRUE([[NSPasteboard.generalPasteboard dataForType:expectedType.identifier] isEqualToData:[NSData dataWithContentsOfURL:imageURL]]);
+}
+
+TEST(CopyHTML, UserInitiatedImageCopyWritesOriginalImageData)
+{
+    expectUserInitiatedCopyWritesOriginalImageData(@"icon", @"png", UTTypePNG);
 }
 
 TEST(CopyHTML, ScriptInitiatedImageCopyDoesNotWriteOriginalImageData)
@@ -368,6 +374,37 @@ TEST(CopyHTML, UserInitiatedTIFFImageCopyOnlyWritesTIFF)
         if ([utType conformsToType:UTTypeImage])
             EXPECT_TRUE([utType conformsToType:UTTypeTIFF]);
     }
+}
+
+TEST(CopyHTML, UserInitiatedGIFImageCopyWritesOriginalImageData)
+{
+    expectUserInitiatedCopyWritesOriginalImageData(@"sunset-in-cupertino-400px", @"gif", UTTypeGIF);
+}
+
+TEST(CopyHTML, UserInitiatedJPEGImageCopyWritesOriginalImageData)
+{
+    expectUserInitiatedCopyWritesOriginalImageData(@"sunset-in-cupertino-600px", @"jpg", UTTypeJPEG);
+}
+
+TEST(CopyHTML, UserInitiatedWebPImageCopyWritesOriginalImageData)
+{
+    expectUserInitiatedCopyWritesOriginalImageData(@"green-400x400", @"webp", UTTypeWebP);
+}
+
+TEST(CopyHTML, UserInitiatedHEICImageCopyWritesOriginalImageData)
+{
+    expectUserInitiatedCopyWritesOriginalImageData(@"spatial", @"heic", UTTypeHEIC);
+}
+
+TEST(CopyHTML, UserInitiatedImageCopyUsesDecodedTypeRatherThanExtension)
+{
+    RetainPtr imageData = [NSData dataWithContentsOfURL:[NSBundle.test_resourcesBundle URLForResource:@"icon" withExtension:@"png"]];
+    TestWebKitAPI::HTTPServer server({ { "/image.qwerty"_s, { { { "Content-Type"_s, "image/png"_s } }, imageData } } });
+    RetainPtr types = copyImageDocument(server.request("/image.qwerty"_s).URL, ImageCopySource::User);
+
+    EXPECT_WK_STREQ(UTTypePNG.identifier, [types firstObject]);
+    EXPECT_TRUE([types containsObject:NSPasteboardTypeTIFF]);
+    EXPECT_TRUE([[NSPasteboard.generalPasteboard dataForType:UTTypePNG.identifier] isEqualToData:imageData]);
 }
 
 #endif // PLATFORM(MAC)
