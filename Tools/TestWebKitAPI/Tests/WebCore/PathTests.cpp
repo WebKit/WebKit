@@ -26,7 +26,9 @@
 #include "config.h"
 
 #include <WebCore/AffineTransform.h>
+#include <WebCore/GraphicsContext.h>
 #include <WebCore/Path.h>
+#include <numbers>
 
 namespace TestWebKitAPI {
 
@@ -174,6 +176,80 @@ TEST(Path, IsEmpty)
     ASSERT_TRUE(a.definitelyEqual(b));
 
 }
+
+#if USE(CG)
+
+TEST(Path, StrokeBoundingRectKeepsSegments)
+{
+    const Function<void(GraphicsContext&)> applyStroke = [](GraphicsContext& context) {
+        context.setStrokeThickness(10);
+        // Flushes the stroke thickness to the CGContext.
+        context.setLineCap(LineCap::Butt);
+    };
+
+    auto checkKeepsSegments = [&](Path path, const FloatRect& strokedArea) {
+        bool isSingleSegment = path.singleSegmentIfExists();
+        ASSERT_TRUE(isSingleSegment || path.segmentsIfExists());
+
+        auto bounds = path.strokeBoundingRect(applyStroke);
+        EXPECT_EQ(!!path.singleSegmentIfExists(), isSingleSegment);
+        EXPECT_EQ(!!path.segmentsIfExists(), !isSingleSegment);
+        EXPECT_TRUE(bounds.contains(strokedArea));
+
+        Path platformPath = path;
+        platformPath.platformPath();
+        EXPECT_EQ(bounds, platformPath.strokeBoundingRect(applyStroke));
+    };
+
+    Path line;
+    line.moveTo({ 0, 0 });
+    line.addLineTo({ 100, 0 });
+    checkKeepsSegments(line, { 0, -5, 100, 10 });
+
+    Path polyline;
+    polyline.moveTo({ 0, 0 });
+    polyline.addLineTo({ 100, 0 });
+    polyline.addLineTo({ 100, 50 });
+    checkKeepsSegments(polyline, { 0, -5, 100, 55 });
+
+    Path curves;
+    curves.moveTo({ 0, 0 });
+    curves.addQuadCurveTo({ 50, 100 }, { 100, 0 });
+    curves.addBezierCurveTo({ 120, -50 }, { 180, 50 }, { 200, 0 });
+    curves.closeSubpath();
+    checkKeepsSegments(curves, { 0, -5, 200, 10 });
+
+    Path arc;
+    arc.addArc({ 50, 50 }, 20, 0, std::numbers::pi_v<float>, RotationDirection::Clockwise);
+    checkKeepsSegments(arc, { 30, 50, 40, 20 });
+
+    Path ellipse;
+    ellipse.addEllipseInRect({ 10, 10, 80, 40 });
+    checkKeepsSegments(ellipse, { 10, 10, 80, 40 });
+
+    Path rect;
+    rect.addRect({ 10, 10, 80, 40 });
+    checkKeepsSegments(rect, { 5, 5, 90, 50 });
+
+    Path roundedRect;
+    roundedRect.addRoundedRect(FloatRoundedRect { { 10, 10, 80, 40 }, { 8, 8 }, { 8, 8 }, { 8, 8 }, { 8, 8 } }, PathRoundedRect::Strategy::PreferNative);
+    checkKeepsSegments(roundedRect, { 10, 10, 80, 40 });
+
+    // The stroke style applier can convert the measured path, as SVG strokes with pathLength do.
+    Path convertedArc = arc;
+    auto convertedArcBounds = convertedArc.strokeBoundingRect([&](GraphicsContext& context) {
+        applyStroke(context);
+        convertedArc.platformPath();
+    });
+    EXPECT_EQ(convertedArc.singleSegmentIfExists(), nullptr);
+    EXPECT_EQ(convertedArcBounds, arc.strokeBoundingRect(applyStroke));
+
+    Path empty;
+    EXPECT_EQ(empty.strokeBoundingRect(applyStroke), FloatRect { });
+    EXPECT_TRUE(empty.isEmpty());
+}
+
+#endif // USE(CG)
 
 TEST(Path, PieWedgeArc)
 {

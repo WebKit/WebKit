@@ -77,7 +77,7 @@ public:
     bool contains(const FloatPoint&, WindRule) const;
     bool strokeContains(const FloatPoint&, NOESCAPE const Function<void(GraphicsContext&)>& strokeStyleApplier) const;
 
-    FloatRect strokeBoundingRect(NOESCAPE const Function<void(GraphicsContext&)>& strokeStyleApplier) const;
+    static FloatRect strokeBoundingRect(const Path&, NOESCAPE const Function<void(GraphicsContext&)>& strokeStyleApplier);
 
 private:
     PathCG(RetainPtr<CGMutablePathRef>&&);

@@ -644,13 +644,13 @@ FloatRect PathCG::boundingRect() const
     return zeroRectIfNull(CGPathGetPathBoundingBox(m_platformPath));
 }
 
-FloatRect PathCG::strokeBoundingRect(NOESCAPE const Function<void(GraphicsContext&)>& strokeStyleApplier) const
+FloatRect PathCG::strokeBoundingRect(const Path& path, NOESCAPE const Function<void(GraphicsContext&)>& strokeStyleApplier)
 {
     RetainPtr context = scratchContext();
 
     CGContextSaveGState(context);
     CGContextBeginPath(context);
-    CGContextAddPath(context, m_platformPath);
+    addToCGContextPath(context.get(), path);
 
     if (strokeStyleApplier) {
         GraphicsContextCG graphicsContext(context);

@@ -473,7 +473,15 @@ FloatRect Path::boundingRect() const
 
 FloatRect Path::strokeBoundingRect(NOESCAPE const Function<void(GraphicsContext&)>& strokeStyleApplier) const
 {
+    if (isEmpty())
+        return { };
+
+#if USE(CG)
+    // Unlike ensurePlatformPathImpl(), this keeps the segments used by display lists and GPU process.
+    return PathCG::strokeBoundingRect(*this, strokeStyleApplier);
+#else
     return protect(const_cast<Path&>(*this).ensurePlatformPathImpl())->strokeBoundingRect(strokeStyleApplier);
+#endif
 }
 
 TextStream& operator<<(TextStream& ts, const Path& path)
