@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+window.internals?.evaluateInWorldIgnoringException("testInternalWorld", "0");
+
+window.addEventListener("message", function pageMessage(event) {
+    TestPage.dispatchEventToFrontend(event.data);
+});
+
+class DeferredBarFoo { }
+
+function runDeferredBarFoo() {
+    console.log("runFoo start");
+    runDeferredBar();
+    console.log("runFoo end");
+}
+
+class DeferredLineFoo { }
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("SymbolicBreakpoint.Construct.DefaultConstructor.Blackboxed");
+
+    const url = "BlackboxedScript.js";
+    const sourceURL = `//# sourceURL=${url}`;
+
+    async function setShouldBlackboxURL(shouldBlackbox) {
+        for (let target of WI.targets) {
+            if (target.hasDomain("Debugger"))
+                await target.DebuggerAgent.setShouldBlackboxURL(url, shouldBlackbox);
+        }
+    }
+
+    function addTestCase({name, description, symbol, breakpointDescriptions, internalWorld = false, blackbox = false, code, expectedPauses, setup, teardown}) {
+        suite.addTestCase({
+            name,
+            description,
+            async test() {
+                let pauses = [];
+                let pausedListener = WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.Paused, (event) => {
+                    let callFrame = WI.debuggerManager.activeCallFrame;
+                    if (!callFrame) {
+                        pauses.push({reason: "(no call frame)", functionName: "(none)"});
+                        WI.debuggerManager.resume();
+                        return;
+                    }
+
+                    pauses.push({
+                        reason: WI.debuggerManager.dataForTarget(callFrame.target).pauseReason,
+                        functionName: callFrame.functionName,
+                    });
+                    WI.debuggerManager.resume();
+                });
+
+                let breakpoints = (breakpointDescriptions ?? [{symbol}]).map(({symbol, options}) => {
+                    let breakpoint = new WI.SymbolicBreakpoint(symbol, options);
+                    WI.debuggerManager.addSymbolicBreakpoint(breakpoint);
+                    return breakpoint;
+                });
+                if (blackbox)
+                    await setShouldBlackboxURL(true);
+                if (setup)
+                    await setup();
+
+                let context = internalWorld
+                    ? WI.networkManager.mainFrame.executionContextList.contexts.find((context) => {
+                        return context.type === WI.ExecutionContext.Type.Internal && context.name === "testInternalWorld";
+                    })
+                    : WI.networkManager.mainFrame.executionContextList.pageExecutionContext;
+
+                let postMessagePromise = InspectorTest.awaitEvent("blackboxed-program-complete");
+                await context.target.RuntimeAgent.evaluate.invoke({
+                    contextId: context.id,
+                    expression: `${sourceURL}
+                        ${code}
+                        setTimeout("window.postMessage('blackboxed-program-complete', '*');\\n${sourceURL}");
+                    `,
+                });
+                await postMessagePromise;
+
+                InspectorTest.expectEqual(pauses.length, expectedPauses.length, `Should pause ${expectedPauses.length} time(s).`);
+                for (let [i, expected] of expectedPauses.entries()) {
+                    InspectorTest.expectEqual(pauses[i]?.reason, expected.reason, `Pause ${i + 1} should have the reason ${expected.reason}.`);
+                    InspectorTest.expectEqual(pauses[i]?.functionName, expected.functionName, `Pause ${i + 1} should be in ${expected.functionName}.`);
+                }
+
+                for (let breakpoint of breakpoints)
+                    breakpoint.remove();
+                if (blackbox)
+                    await setShouldBlackboxURL(false);
+                if (teardown)
+                    await teardown();
+                WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.Paused, pausedListener);
+            },
+        });
+    }
+
+    addTestCase({
+        name: "SymbolicBreakpoint.Construct.DefaultConstructor.InternalWorld.WithoutConstructor",
+        description: "A symbolic breakpoint on a class without a constructor in an internal world should not pause, like for a class with a constructor.",
+        symbol: "InternalWithoutConstructor",
+        internalWorld: true,
+        code: `class InternalWithoutConstructor { } globalThis.internalWithoutConstructor = new InternalWithoutConstructor();`,
+        expectedPauses: [],
+    });
+
+    addTestCase({
+        name: "SymbolicBreakpoint.Construct.DefaultConstructor.InternalWorld.WithConstructor",
+        description: "A symbolic breakpoint on a class with a constructor in an internal world should not pause.",
+        symbol: "InternalWithConstructor",
+        internalWorld: true,
+        code: `class InternalWithConstructor { constructor() { this.value = 1; } } globalThis.internalWithConstructor = new InternalWithConstructor();`,
+        expectedPauses: [],
+    });
+
+    addTestCase({
+        name: "SymbolicBreakpoint.Construct.DefaultConstructor.URL.WithoutConstructor",
+        description: "A symbolic breakpoint on a class without a constructor in a blackboxed script should pause after the blackboxed script, like for a class with a constructor.",
+        symbol: "BlackboxedWithoutConstructor",
+        blackbox: true,
+        code: `class BlackboxedWithoutConstructor { } function makeWithoutConstructor() { return new BlackboxedWithoutConstructor; } makeWithoutConstructor();`,
+        expectedPauses: [{reason: "blackboxed-script", functionName: "pageMessage"}],
+    });
+
+    addTestCase({
+        name: "SymbolicBreakpoint.Construct.DefaultConstructor.URL.WithConstructor",
+        description: "A symbolic breakpoint on a class with a constructor in a blackboxed script should pause after the blackboxed script.",
+        symbol: "BlackboxedWithConstructor",
+        blackbox: true,
+        code: `class BlackboxedWithConstructor { constructor() { this.value = 1; } } function makeWithConstructor() { return new BlackboxedWithConstructor; } makeWithConstructor();`,
+        expectedPauses: [{reason: "blackboxed-script", functionName: "pageMessage"}],
+    });
+
+    let deferredLineBreakpointIds = [];
+
+    addTestCase({
+        name: "SymbolicBreakpoint.Construct.DefaultConstructor.URL.DeferredLineBreakpoint",
+        description: "A symbolic breakpoint on a class without a constructor should not pause in the constructor while a line breakpoint deferred for a blackboxed script still waits; both pause after the script.",
+        symbol: "DeferredLineFoo",
+        blackbox: true,
+        code: `globalThis.deferredLine = 1;\nnew DeferredLineFoo;`,
+        expectedPauses: [{reason: "blackboxed-script", functionName: "pageMessage"}],
+        async setup() {
+            for (let target of WI.targets) {
+                if (target.hasDomain("Debugger")) {
+                    await target.DebuggerAgent.setBlackboxBreakpointEvaluations(true);
+                    let {breakpointId} = await target.DebuggerAgent.setBreakpointByUrl.invoke({lineNumber: 1, url: "BlackboxedScript.js"});
+                    deferredLineBreakpointIds.push(breakpointId);
+                }
+            }
+        },
+        async teardown() {
+            for (let target of WI.targets) {
+                if (target.hasDomain("Debugger")) {
+                    for (let breakpointId of deferredLineBreakpointIds)
+                        await target.DebuggerAgent.removeBreakpoint(breakpointId);
+                }
+            }
+            deferredLineBreakpointIds = [];
+        },
+    });
+
+    addTestCase({
+        name: "SymbolicBreakpoint.Construct.DefaultConstructor.URL.WithoutConstructor.EvaluateInBlackboxed",
+        description: "A symbolic breakpoint on a class without a constructor in a blackboxed script should pause after the blackboxed script when breakpoint evaluations are not blackboxed.",
+        symbol: "BlackboxedEvalWithoutConstructor",
+        blackbox: true,
+        code: `class BlackboxedEvalWithoutConstructor { } function makeEvalWithoutConstructor() { return new BlackboxedEvalWithoutConstructor; } makeEvalWithoutConstructor();`,
+        expectedPauses: [{reason: "blackboxed-script", functionName: "pageMessage"}],
+        async setup() {
+            for (let target of WI.targets) {
+                if (target.hasDomain("Debugger"))
+                    await target.DebuggerAgent.setBlackboxBreakpointEvaluations(false);
+            }
+        },
+        async teardown() {
+            for (let target of WI.targets) {
+                if (target.hasDomain("Debugger"))
+                    await target.DebuggerAgent.setBlackboxBreakpointEvaluations(true);
+            }
+        },
+    });
+
+    addTestCase({
+        name: "SymbolicBreakpoint.Construct.DefaultConstructor.URL.DeferredBreakpoint",
+        description: "A symbolic breakpoint on a class without a constructor with a false condition should not take over a pause that a symbolic breakpoint in a blackboxed script deferred.",
+        breakpointDescriptions: [
+            {symbol: "deferredBar"},
+            {symbol: "DeferredBarFoo", options: {condition: "false"}},
+        ],
+        blackbox: true,
+        code: `function deferredBar() { } function runDeferredBar() { deferredBar(); console.log("runBar start"); new DeferredBarFoo; console.log("runBar end"); } runDeferredBarFoo();`,
+        expectedPauses: [{reason: "blackboxed-script", functionName: "runDeferredBarFoo"}],
+        async setup() {
+            for (let target of WI.targets) {
+                if (target.hasDomain("Debugger"))
+                    await target.DebuggerAgent.setBlackboxBreakpointEvaluations(true);
+            }
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests that a symbolic breakpoint on a class without a constructor follows the blackboxing of the script of the class, in an internal world and for a script that is blackboxed by its URL.</p>
+</body>
+</html>

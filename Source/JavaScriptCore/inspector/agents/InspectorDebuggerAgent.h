@@ -126,6 +126,7 @@ public:
     void breakpointActionSound(JSC::BreakpointActionID) final;
     void breakpointActionProbe(JSC::JSGlobalObject*, JSC::BreakpointActionID, unsigned batchId, unsigned sampleId, JSC::JSValue sample) final;
     void didDeferBreakpointPause(JSC::BreakpointID) final;
+    void didNotPauseForSpecialBreakpoint(JSC::BreakpointID) final;
 
     NODELETE bool isPaused() const;
     NODELETE bool breakpointsActive() const;

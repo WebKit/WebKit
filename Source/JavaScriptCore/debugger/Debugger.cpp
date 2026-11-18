@@ -368,6 +368,17 @@ void Debugger::dispatchFunctionToObservers(Function<void(Observer&)> func)
         func(*observer);
 }
 
+void Debugger::dispatchDidNotPauseForSpecialBreakpoint(Breakpoint& breakpoint)
+{
+    // Only special breakpoints carry a pause reason and data that were set when they were scheduled, so only they leave stale details behind when they do not pause.
+    if (breakpoint.isLinked())
+        return;
+
+    dispatchFunctionToObservers([&](Observer& observer) {
+        observer.didNotPauseForSpecialBreakpoint(breakpoint.id());
+    });
+}
+
 void Debugger::setProfilingClient(ProfilingClient* client)
 {
     ASSERT(!!m_profilingClient != !!client);
@@ -1045,12 +1056,6 @@ Debugger::BlackboxFlags Debugger::blackboxFlagsAtPosition(SourceID sourceID, con
     return relevantBlackboxFlags;
 }
 
-static bool isExecutingBuiltinDefaultClassConstructor(CallFrame* callFrame)
-{
-    CodeBlock* codeBlock = callFrame->codeBlock();
-    return codeBlock && codeBlock->unlinkedCodeBlock()->isBuiltinDefaultClassConstructor();
-}
-
 void Debugger::pauseIfNeeded(JSGlobalObject* globalObject)
 {
     VM& vm = m_vm;
@@ -1073,15 +1078,75 @@ void Debugger::pauseIfNeeded(JSGlobalObject* globalObject)
     if (relevantBlackboxFlags.contains(BlackboxFlag::Ignore))
         return;
 
-    if (isExecutingBuiltinDefaultClassConstructor(m_currentCallFrame))
+    if (builtinDefaultClassConstructorExecutable(m_currentCallFrame)) {
+        // A builtin default class constructor has no script to pause in, so only a special breakpoint that was armed as it was entered can pause in it.
+        if (m_reasonForPause != PausedAtDefaultClassConstructor)
+            return;
+
+        // Only that breakpoint counts: a pending pause or an already deferred breakpoint must not be consumed in a constructor that has no script to pause in.
+        auto specialBreakpoint = m_specialBreakpoint.releaseNonNull();
+
+        if (!m_deferredBreakpoints.isEmpty()) {
+            // A deferred pause is already pending: merge into it, as pausing here would keep it from landing where it was deferred to.
+            m_deferredBreakpoints.add(WTF::move(specialBreakpoint));
+            return;
+        }
+
+        DebuggerPausedScope debuggerPausedScope(*this);
+        TemporaryPausedState pausedState(*this);
+
+        if (m_blackboxBreakpointEvaluations && relevantBlackboxFlags.contains(BlackboxFlag::Defer)) {
+            // Defer evaluating the breakpoint until after the blackboxed script, leaving a pending pause as it is, as marking it after a blackboxed script would make a false condition suppress it.
+            m_deferredBreakpoints.add(WTF::move(specialBreakpoint));
+            if (!m_pauseAtNextOpportunity) {
+                schedulePauseAtNextOpportunity();
+                m_afterBlackboxedScript = true;
+            }
+            return;
+        }
+
+        bool shouldPause = specialBreakpoint->shouldPause(*this, globalObject);
+        if (!m_currentCallFrame)
+            return;
+        if (shouldPause) {
+            evaluateBreakpointActions(specialBreakpoint, globalObject);
+            if (!m_currentCallFrame)
+                return;
+        }
+
+        if (!shouldPause || specialBreakpoint->isAutoContinue()) {
+            dispatchDidNotPauseForSpecialBreakpoint(specialBreakpoint);
+            return;
+        }
+
+        if (relevantBlackboxFlags.contains(BlackboxFlag::Defer)) {
+            // Defer the pause itself until after the blackboxed script.
+            m_afterBlackboxedScript = true;
+            schedulePauseAtNextOpportunity();
+            return;
+        }
+
+        resetImmediatePauseState();
+        resetAsyncPauseState();
+        resetEventualPauseState();
+
+        handlePause(globalObject);
+        scope.releaseAssertNoException();
+
+        if (!m_pauseAtNextOpportunity && !m_pauseOnCallFrame && !m_specialBreakpoint) {
+            setSteppingMode(SteppingModeDisabled);
+            m_currentCallFrame = nullptr;
+        }
         return;
+    }
 
     bool afterBlackboxedScript = m_afterBlackboxedScript;
     bool pauseNow = false;
     bool didPauseForStep = false;
     if (m_pauseAtNextOpportunity) {
         pauseNow = true;
-        didPauseForStep = !afterBlackboxedScript;
+        // A pause scheduled after a blackboxed script is not a step, but it may land where a step was headed; the step still lands there even if a deferred breakpoint does not pause.
+        didPauseForStep = !afterBlackboxedScript || m_pauseOnCallFrame == m_currentCallFrame;
     } else if (m_pauseOnCallFrame == m_currentCallFrame) {
         pauseNow = true;
         didPauseForStep = true;
@@ -1151,15 +1216,19 @@ void Debugger::pauseIfNeeded(JSGlobalObject* globalObject)
             bool shouldPause = deferredBreakpoint->shouldPause(*this, globalObject);
             if (!m_currentCallFrame)
                 return;
-            if (!shouldPause)
+            if (!shouldPause) {
+                dispatchDidNotPauseForSpecialBreakpoint(deferredBreakpoint);
                 continue;
+            }
 
             evaluateBreakpointActions(deferredBreakpoint, globalObject);
             if (!m_currentCallFrame)
                 return;
 
-            if (deferredBreakpoint->isAutoContinue())
+            if (deferredBreakpoint->isAutoContinue()) {
+                dispatchDidNotPauseForSpecialBreakpoint(deferredBreakpoint);
                 continue;
+            }
 
             shouldContinue = false;
 
@@ -1188,7 +1257,7 @@ void Debugger::pauseIfNeeded(JSGlobalObject* globalObject)
 
     {
         auto reason = m_reasonForPause;
-        if (afterBlackboxedScript)
+        if (afterBlackboxedScript && !didPauseForStep)
             reason = PausedAfterBlackboxedScript;
         else if (didPauseInAwait)
             reason = PausedAfterAwait;
@@ -1387,9 +1456,16 @@ void Debugger::callEvent(CallFrame* callFrame)
     updateCallFrame(lexicalGlobalObjectForCallFrame(m_vm, callFrame), callFrame, NoPause);
 
     if (callFrame) {
+        bool hadSpecialBreakpoint = !!m_specialBreakpoint;
         dispatchFunctionToObservers([&] (Observer& observer) {
             observer.willEnter(callFrame);
         });
+        if (!hadSpecialBreakpoint && m_specialBreakpoint && builtinDefaultClassConstructorExecutable(callFrame)) {
+            // A builtin default class constructor has no statement to pause at, so a special breakpoint armed as it was entered pauses right away.
+            PauseReasonDeclaration reason(*this, PausedAtDefaultClassConstructor);
+            updateCallFrameInternal(callFrame);
+            pauseIfNeeded(lexicalGlobalObjectForCallFrame(m_vm, callFrame));
+        }
     }
 }
 

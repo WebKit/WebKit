@@ -33,6 +33,7 @@
 #include "DebuggerEvalEnabler.h"
 #include "DebuggerScope.h"
 #include "DirectEvalExecutable.h"
+#include "FunctionExecutable.h"
 #include "Interpreter.h"
 #include "JSFunction.h"
 #include "JSWithScope.h"
@@ -58,6 +59,18 @@ public:
 private:
     mutable LineColumn m_lineColumn;
 };
+
+FunctionExecutable* builtinDefaultClassConstructorExecutable(CallFrame* callFrame)
+{
+    if (callFrame->isNativeCalleeFrame())
+        return nullptr;
+
+    CodeBlock* codeBlock = callFrame->codeBlock();
+    if (!codeBlock || !codeBlock->unlinkedCodeBlock()->isBuiltinDefaultClassConstructor())
+        return nullptr;
+
+    return dynamicDowncast<FunctionExecutable>(codeBlock->ownerExecutable());
+}
 
 Ref<DebuggerCallFrame> DebuggerCallFrame::create(VM& vm, CallFrame* callFrame)
 {
@@ -320,6 +333,15 @@ TextPosition DebuggerCallFrame::positionForCallFrame(VM& vm, CallFrame* callFram
     LineAndColumnFunctor functor;
     if (!callFrame)
         return TextPosition(OrdinalNumber::fromOneBasedInt(0), OrdinalNumber::fromOneBasedInt(0));
+
+    if (auto* defaultConstructor = builtinDefaultClassConstructorExecutable(callFrame)) {
+        SourceCode classSource = defaultConstructor->classSource();
+        if (!classSource.isNull()) {
+            auto [line, column] = classSource.derivedStartPosition();
+            return TextPosition(line, column);
+        }
+    }
+
     StackVisitor::visit(callFrame, vm, functor);
     return TextPosition(OrdinalNumber::fromOneBasedInt(functor.line()), OrdinalNumber::fromOneBasedInt(functor.column()));
 }
@@ -328,6 +350,13 @@ SourceID DebuggerCallFrame::sourceIDForCallFrame(CallFrame* callFrame)
 {
     if (!callFrame)
         return noSourceID;
+
+    if (auto* defaultConstructor = builtinDefaultClassConstructorExecutable(callFrame)) {
+        SourceCode classSource = defaultConstructor->classSource();
+        if (!classSource.isNull())
+            return classSource.providerID();
+    }
+
     if (callFrame->isNativeCalleeFrame())
         return noSourceID;
     CodeBlock* codeBlock = callFrame->codeBlock();
