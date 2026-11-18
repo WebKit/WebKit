@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+<style>
+    body {
+        margin: 0;
+    }
+    .truncated {
+        width: 100px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        font-family: Ahem;
+        font-size: 20px;
+        line-height: 1;
+    }
+</style>
+</head>
+<body>
+<div id="tests">
+    <div id="single-line" class="truncated" style="white-space: nowrap">XXXXXXXXXXXXXXXXXXXX</div>
+    <div id="multi-line" class="truncated" style="white-space: pre">XX
+XXXXXXXXXXXXXXXXXXXX</div>
+</div>
+<script>
+description("Tests that the selection bounds include the ellipsis only when the selection reaches the truncated text.");
+
+// Each X is 20px wide and the boxes are 100px wide. Whatever the width of the
+// ellipsis glyph, the visible text of a truncated line ends at or before 80px,
+// and the ellipsis ends after 80px.
+
+let singleLineText = document.getElementById("single-line").firstChild;
+let multiLineText = document.getElementById("multi-line").firstChild;
+let selectionBounds;
+
+function selectAndMeasure(text, start, end)
+{
+    getSelection().setBaseAndExtent(text, start, text, end);
+    selectionBounds = internals.selectionBounds();
+}
+
+if (window.internals) {
+    debug("Selection ending before the truncation point of a single line:");
+    selectAndMeasure(singleLineText, 0, 2);
+    shouldBe("selectionBounds.left", "0");
+    shouldBe("selectionBounds.right", "40");
+
+    debug("");
+    debug("Selection on the first line, before the truncated second line:");
+    selectAndMeasure(multiLineText, 0, 2);
+    shouldBe("selectionBounds.left", "0");
+    shouldBe("selectionBounds.right", "40");
+
+    debug("");
+    debug("Selection of all the text, including the ellipsis of the second line:");
+    selectAndMeasure(multiLineText, 0, multiLineText.length);
+    shouldBe("selectionBounds.left", "0");
+    shouldBeGreaterThan("selectionBounds.right", "80");
+    shouldBeTrue("selectionBounds.right <= 100");
+}
+
+getSelection().removeAllRanges();
+document.getElementById("tests").remove();
+</script>
+</body>
+</html>

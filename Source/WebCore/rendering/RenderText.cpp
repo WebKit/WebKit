@@ -725,12 +725,13 @@ static std::optional<IntRect> ellipsisRectForTextBox(const InlineIterator::TextB
     if (!selectableRange.truncation)
         return { };
 
-    auto ellipsisStartPosition = std::max<unsigned>(start - selectableRange.start, 0);
-    auto ellipsisEndPosition = std::min<unsigned>(end - selectableRange.start, selectableRange.length);
+    auto selectableEnd = selectableRange.start + selectableRange.length;
+    auto ellipsisStartPosition = std::clamp(start, selectableRange.start, selectableEnd) - selectableRange.start;
+    auto ellipsisEndPosition = std::clamp(end, selectableRange.start, selectableEnd) - selectableRange.start;
     // The ellipsis should be considered to be selected if the end of
     // the selection is past the beginning of the truncation and the
     // beginning of the selection is before or at the beginning of the truncation.
-    if (ellipsisEndPosition < *selectableRange.truncation && ellipsisStartPosition > *selectableRange.truncation)
+    if (ellipsisEndPosition < *selectableRange.truncation || ellipsisStartPosition > *selectableRange.truncation)
         return { };
 
     return IntRect { lineBox.ellipsisVisualRect(InlineIterator::LineBox::AdjustedForSelection::Yes) };
