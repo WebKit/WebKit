@@ -412,7 +412,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 namespace WebKit {
 
-void SystemPreviewController::begin(const URL& url, const WebCore::SecurityOriginData& topOrigin, const WebCore::SystemPreviewInfo& systemPreviewInfo, CompletionHandler<void()>&& completionHandler)
+void SystemPreviewController::begin(WebProcessProxy& process, const URL& url, const WebCore::SecurityOriginData& topOrigin, const WebCore::SystemPreviewInfo& systemPreviewInfo, CompletionHandler<void()>&& completionHandler)
 {
     if (m_state != State::Initial || m_allowPreviewCallback) {
         RELEASE_LOG(SystemPreview, "SystemPreview didn't start because an existing preview is in progress");
@@ -437,6 +437,7 @@ void SystemPreviewController::begin(const URL& url, const WebCore::SecurityOrigi
         return completionHandler();
 
     m_systemPreviewInfo = systemPreviewInfo;
+    m_process = process;
 
     auto successHandler = [completionHandler = WTF::move(completionHandler), topOrigin, weakThis = WeakPtr { *this }, url, presentingViewController] (bool success) mutable {
         if (!success || !weakThis)
@@ -574,6 +575,7 @@ void SystemPreviewController::loadFailed()
     if (m_testingCallback)
         m_testingCallback(false);
 
+    m_process = nullptr;
     m_state = State::Initial;
 }
 
@@ -588,6 +590,7 @@ void SystemPreviewController::end()
     m_wkSystemPreviewDataTaskDelegate = nullptr;
 #endif
 
+    m_process = nullptr;
     m_state = State::Initial;
 }
 
@@ -634,10 +637,11 @@ void SystemPreviewController::triggerSystemPreviewAction()
     RELEASE_LOG(SystemPreview, "SystemPreview action was triggered on %lld", m_systemPreviewInfo.element.nodeIdentifier ? m_systemPreviewInfo.element.nodeIdentifier->toUInt64() : 0);
 
     RefPtr page = this->page();
-    if (!page)
+    RefPtr process = m_process;
+    if (!page || !process)
         return;
 
-    page->systemPreviewActionTriggered(m_systemPreviewInfo, "_apple_ar_quicklook_button_tapped"_s);
+    page->systemPreviewActionTriggered(*process, m_systemPreviewInfo, "_apple_ar_quicklook_button_tapped"_s);
 }
 
 void SystemPreviewController::triggerSystemPreviewActionWithTargetForTesting(uint64_t nodeID, NSString* documentID, uint64_t pageID)
@@ -655,6 +659,7 @@ void SystemPreviewController::triggerSystemPreviewActionWithTargetForTesting(uin
         m_systemPreviewInfo.element.nodeIdentifier = std::nullopt;
     m_systemPreviewInfo.element.documentIdentifier = WebCore::ScriptExecutionContextIdentifier { *uuid, webPageProxy->legacyMainFrameProcess().coreProcessIdentifier() };
     m_systemPreviewInfo.element.webPageIdentifier = ObjectIdentifier<WebCore::PageIdentifierType>(pageID);
+    m_process = webPageProxy->legacyMainFrameProcess();
     triggerSystemPreviewAction();
 }
 

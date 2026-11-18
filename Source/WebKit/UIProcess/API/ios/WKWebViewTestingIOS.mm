@@ -512,6 +512,16 @@ static void dumpUIView(TextStream& ts, UIView *view, bool traverse)
 #endif
 }
 
+- (void)_triggerSystemPreviewActionForTesting
+{
+#if USE(SYSTEM_PREVIEW)
+    if (_page) {
+        if (RefPtr previewController = _page->systemPreviewController())
+            previewController->triggerSystemPreviewAction();
+    }
+#endif
+}
+
 - (void)_setDeviceOrientationUserPermissionHandlerForTesting:(BOOL (^)())handler
 {
     Function<bool()> handlerWrapper;

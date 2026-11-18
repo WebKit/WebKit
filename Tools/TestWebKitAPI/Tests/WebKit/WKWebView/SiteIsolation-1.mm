@@ -262,6 +262,30 @@
 @end
 #endif // ENABLE(WRITING_TOOLS)
 
+#if (PLATFORM(IOS) || PLATFORM(VISION)) && USE(SYSTEM_PREVIEW)
+@interface SiteIsolationSystemPreviewUIDelegate : NSObject <WKUIDelegatePrivate>
+- (instancetype)initWithViewController:(UIViewController *)viewController;
+@end
+
+@implementation SiteIsolationSystemPreviewUIDelegate {
+    RetainPtr<UIViewController> _viewController;
+}
+
+- (instancetype)initWithViewController:(UIViewController *)viewController
+{
+    if (!(self = [super init]))
+        return nil;
+    _viewController = viewController;
+    return self;
+}
+
+- (UIViewController *)_presentingViewControllerForWebView:(WKWebView *)webView
+{
+    return _viewController.get();
+}
+@end
+#endif // (PLATFORM(IOS) || PLATFORM(VISION)) && USE(SYSTEM_PREVIEW)
+
 namespace TestWebKitAPI {
 
 // Editing, font, and spelling commands act on the focused frame's selection, so they must be sent to
@@ -1214,6 +1238,52 @@ TEST(SiteIsolation, ToggleSmartInsertDeleteInCrossOriginIframe)
 }
 
 #endif // PLATFORM(MAC)
+
+#if (PLATFORM(IOS) || PLATFORM(VISION)) && USE(SYSTEM_PREVIEW)
+
+TEST(SiteIsolation, SystemPreviewActionTriggeredInCrossOriginIframe)
+{
+    RetainPtr modelData = [NSData dataWithContentsOfURL:[NSBundle.test_resourcesBundle URLForResource:@"UnitBox" withExtension:@"usdz"]];
+    HTTPResponse modelResponse { modelData.get() };
+    modelResponse.setHeaderField("Content-Type"_s, "model/vnd.usdz+zip"_s);
+
+    // The preview's own download rejects the test server's certificate, so the link points to a blob of the model.
+    HTTPServer server({
+        { "/mainframe"_s, { mainFrameTextWithCrossOriginIframe } },
+        { "/iframe"_s, { "<a rel='ar'><img></a><script>"
+            "const link = document.querySelector('a');"
+            "link.addEventListener('message', event => { window.receivedAction = event.data });"
+            "async function openPreview() { link.href = URL.createObjectURL(await (await fetch('/UnitBox.usdz')).blob()); link.click(); }"
+            "</script>"_s } },
+        { "/UnitBox.usdz"_s, modelResponse }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    RetainPtr configuration = server.httpsProxyConfiguration();
+    [configuration _setSystemPreviewEnabled:YES];
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(configuration);
+    RetainPtr viewController = adoptNS([UIViewController new]);
+    [viewController setView:webView.get()];
+    RetainPtr uiDelegate = adoptNS([[SiteIsolationSystemPreviewUIDelegate alloc] initWithViewController:viewController.get()]);
+    [webView setUIDelegate:uiDelegate.get()];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    __block bool loaded = false;
+    [webView _setSystemPreviewCompletionHandlerForLoadTesting:^(bool success) {
+        EXPECT_TRUE(success);
+        loaded = true;
+    }];
+    RetainPtr childFrame = [webView firstChildFrame];
+    [webView objectByEvaluatingJavaScript:@"openPreview(); true" inFrame:childFrame.get()];
+    Util::run(&loaded);
+
+    [webView _triggerSystemPreviewActionForTesting];
+    EXPECT_TRUE(Util::waitFor([&] {
+        return [[webView objectByEvaluatingJavaScript:@"window.receivedAction ?? ''" inFrame:childFrame.get()] isEqualToString:@"_apple_ar_quicklook_button_tapped"];
+    }));
+}
+
+#endif // (PLATFORM(IOS) || PLATFORM(VISION)) && USE(SYSTEM_PREVIEW)
 
 #if PLATFORM(IOS_FAMILY)
 

@@ -21110,9 +21110,9 @@ void WebPageProxy::removeDataDetectedLinks(CompletionHandler<void(DataDetectionR
 #endif
 
 #if USE(SYSTEM_PREVIEW)
-void WebPageProxy::systemPreviewActionTriggered(const WebCore::SystemPreviewInfo& previewInfo, const String& message)
+void WebPageProxy::systemPreviewActionTriggered(WebProcessProxy& process, const WebCore::SystemPreviewInfo& previewInfo, const String& message)
 {
-    send(Messages::WebPage::SystemPreviewActionTriggered(previewInfo, message));
+    process.send(Messages::WebPage::SystemPreviewActionTriggered(previewInfo, message), webPageIDInProcess(process));
 }
 #endif
 
@@ -22211,7 +22211,7 @@ void WebPageProxy::beginSystemPreview(IPC::Connection& connection, const URL& ur
     RefPtr systemPreviewController = m_systemPreviewController;
     if (!systemPreviewController)
         return completionHandler();
-    systemPreviewController->begin(url, topOrigin, systemPreviewInfo, WTF::move(completionHandler));
+    systemPreviewController->begin(sendingProcess, url, topOrigin, systemPreviewInfo, WTF::move(completionHandler));
 }
 
 void WebPageProxy::setSystemPreviewCompletionHandlerForLoadTesting(CompletionHandler<void(bool)>&& handler)

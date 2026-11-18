@@ -85,6 +85,7 @@
 - (void)_doAfterReceivingEditDragSnapshotForTesting:(dispatch_block_t)action;
 
 - (void)_triggerSystemPreviewActionOnElement:(uint64_t)elementID document:(NSString*)documentID page:(uint64_t)pageID;
+- (void)_triggerSystemPreviewActionForTesting;
 
 - (void)_setDeviceOrientationUserPermissionHandlerForTesting:(BOOL (^)(void))handler;
 

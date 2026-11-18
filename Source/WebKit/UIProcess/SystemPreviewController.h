@@ -54,6 +54,7 @@ class SecurityOriginData;
 namespace WebKit {
 
 class WebPageProxy;
+class WebProcessProxy;
 
 class SystemPreviewController : public RefCountedAndCanMakeWeakPtr<SystemPreviewController> {
     WTF_MAKE_TZONE_ALLOCATED(SystemPreviewController);
@@ -62,7 +63,7 @@ public:
 
     bool canPreview(const String& mimeType) const;
 
-    void begin(const URL&, const WebCore::SecurityOriginData& topOrigin, const WebCore::SystemPreviewInfo&, CompletionHandler<void()>&&);
+    void begin(WebProcessProxy&, const URL&, const WebCore::SecurityOriginData& topOrigin, const WebCore::SystemPreviewInfo&, CompletionHandler<void()>&&);
     void updateProgress(float);
     void loadStarted(const URL& localFileURL);
     void loadCompleted(const URL& localFileURL);
@@ -95,6 +96,7 @@ private:
     State m_state { State::Initial };
 
     WeakPtr<WebPageProxy> m_webPageProxy;
+    WeakPtr<WebProcessProxy> m_process;
     WebCore::SystemPreviewInfo m_systemPreviewInfo;
     URL m_downloadURL;
     URL m_localFileURL;

@@ -1001,7 +1001,7 @@ public:
 
 #if USE(SYSTEM_PREVIEW)
     SystemPreviewController* systemPreviewController() { return m_systemPreviewController.get(); }
-    void systemPreviewActionTriggered(const WebCore::SystemPreviewInfo&, const String&);
+    void systemPreviewActionTriggered(WebProcessProxy&, const WebCore::SystemPreviewInfo&, const String&);
 #endif
 
 #if ENABLE(APPLE_PAY)
