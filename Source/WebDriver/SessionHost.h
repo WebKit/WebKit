@@ -200,6 +200,7 @@ private:
     Function<void(bool, std::optional<String>)> m_startSessionCompletionHandler;
     bool m_browserMatchesCapabilities { true };
     pid_t m_browserProcessID { 0 };
+    String m_defaultDownloadsDirectory;
     OSObjectPtr<dispatch_io_t> m_channel;
     OSObjectPtr<dispatch_source_t> m_browserExitSource;
     Vector<uint8_t> m_receiveBuffer;

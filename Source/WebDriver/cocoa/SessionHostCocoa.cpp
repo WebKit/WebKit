@@ -115,11 +115,27 @@ static void terminateProcess(pid_t processID)
     }
 }
 
+// Downloads go to the default downloads directory unless the client picks a folder with
+// browser.setDownloadBehavior. The directory is deleted along with the session.
+// MiniBrowser's sandbox lets it write to /private/tmp, but not to $TMPDIR.
+static constexpr auto defaultDownloadsDirectoryTemplate = "/private/tmp/minidriver-downloads-XXXXXX"_s;
+
+static std::expected<String, String> createDefaultDownloadsDirectory()
+{
+    Vector<char> path(defaultDownloadsDirectoryTemplate.spanIncludingNullTerminator());
+    if (!mkdtemp(path.mutableSpan().data()))
+        return makeUnexpected(makeString("Failed to create a downloads folder at "_s, defaultDownloadsDirectoryTemplate, ": "_s, String::fromUTF8(safeStrerror(errno).span())));
+    return String::fromUTF8(unsafeSpan(path.span().data()));
+}
+
 SessionHost::~SessionHost()
 {
     if (m_channel)
         dispatch_io_close(m_channel.get(), DISPATCH_IO_STOP);
     terminateBrowser();
+
+    if (!m_defaultDownloadsDirectory.isNull())
+        FileSystem::deleteNonEmptyDirectory(m_defaultDownloadsDirectory);
 }
 
 bool SessionHost::isConnected() const
@@ -160,6 +176,11 @@ std::optional<String> SessionHost::launchBrowser()
     if (posixAccess(browserPath, X_OK))
         return makeString("There is no MiniBrowser next to minidriver, at "_s, browserPathString);
 
+    auto defaultDownloadsDirectory = createDefaultDownloadsDirectory();
+    if (!defaultDownloadsDirectory)
+        return defaultDownloadsDirectory.error();
+    m_defaultDownloadsDirectory = WTF::move(*defaultDownloadsDirectory);
+
     int sockets[2];
     if (socketpair(AF_UNIX, SOCK_STREAM, 0, sockets))
         return makeString("Failed to create the browser connection: "_s, String::fromUTF8(safeStrerror(errno).span()));
@@ -188,6 +209,8 @@ std::optional<String> SessionHost::launchBrowser()
     // abnormal exit, which automation can't dismiss. Turn it off for this launch only.
     for (auto argument : { "-NSQuitAlwaysKeepsWindows"_s, "NO"_s, "-ApplePersistenceIgnoreState"_s, "YES"_s })
         arguments.append(String(argument).utf8());
+    arguments.append(String("--downloads-directory"_s).utf8());
+    arguments.append(m_defaultDownloadsDirectory.utf8());
     if (m_capabilities.browserArguments) {
         for (auto& argument : *m_capabilities.browserArguments)
             arguments.append(argument.utf8());

@@ -1444,7 +1444,8 @@ static BOOL responseIsAttachment(NSURLResponse *response)
 
 static NSURL *availableDownloadURLWithFilename(NSString *filename)
 {
-    NSURL *downloadsDirectory = [NSFileManager.defaultManager URLsForDirectory:NSDownloadsDirectory inDomains:NSUserDomainMask].firstObject;
+    // FIXME: Under automation, use the folder from browser.setDownloadBehavior when there is one. https://bugs.webkit.org/show_bug.cgi?id=303204
+    NSURL *downloadsDirectory = [[NSApplication sharedApplication] browserAppDelegate].downloadsDirectory;
     if (!downloadsDirectory)
         return nil;
 

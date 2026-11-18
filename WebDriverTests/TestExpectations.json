@@ -6120,7 +6120,7 @@
     "imported/w3c/webdriver/tests/bidi/browsing_context/download_end/user_context_tentative.py": {
         "subtests": {
             "test_user_context[default]": {
-                "expected": {"mac": {"status": ["TIMEOUT"], "note": "Fails on Mac, not investigated yet"}, "glib": {"status": ["FAIL"], "bug": "webkit.org/b/303211"}}
+                "expected": {"mac": {"status": ["TIMEOUT"], "bug": "webkit.org/b/303211"}, "glib": {"status": ["FAIL"], "bug": "webkit.org/b/303211"}}
             },
             "test_user_context[new]": {
                 "expected": {"mac": {"status": ["FAIL"], "note": "User contexts aren't implemented on Mac"}, "glib": {"status": ["FAIL"], "bug": "webkit.org/b/303211"}}
@@ -6131,7 +6131,7 @@
     "imported/w3c/webdriver/tests/bidi/browsing_context/download_will_begin/user_context_tentative.py": {
         "subtests": {
             "test_user_context[default]": {
-                "expected": {"mac": {"status": ["TIMEOUT"], "note": "Fails on Mac, not investigated yet"}, "glib": {"status": ["FAIL"], "bug": "webkit.org/b/288338"}}
+                "expected": {"mac": {"status": ["TIMEOUT"], "bug": "webkit.org/b/288338"}, "glib": {"status": ["FAIL"], "bug": "webkit.org/b/288338"}}
             },
             "test_user_context[new]": {
                 "expected": {"mac": {"status": ["FAIL"], "note": "User contexts aren't implemented on Mac"}, "glib": {"status": ["FAIL"], "bug": "webkit.org/b/288338"}}

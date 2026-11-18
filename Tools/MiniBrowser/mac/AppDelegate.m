@@ -53,6 +53,7 @@ static const NSString * const kURLArgumentString = @"--url";
 static const NSString * const kSiteIsolationArgumentString = @"--force-site-isolation";
 static const NSString * const kWebInspectorArgumentString = @"--web-inspector";
 static const NSString * const kAutomationFileDescriptorArgumentString = @"--automation-fd";
+static const NSString * const kDownloadsDirectoryArgumentString = @"--downloads-directory";
 
 static NSString *sTargetURL = nil;
 
@@ -324,6 +325,12 @@ static NSNumber *_currentBadge;
 
     const NSUInteger webInspectorIndex = [args indexOfObject:kWebInspectorArgumentString];
     sOpenWebInspector = (webInspectorIndex != NSNotFound);
+
+    const NSUInteger downloadsDirectoryIndex = [args indexOfObject:kDownloadsDirectoryArgumentString];
+    if (downloadsDirectoryIndex != NSNotFound && downloadsDirectoryIndex + 1 < args.count)
+        _downloadsDirectory = [NSURL fileURLWithPath:args[downloadsDirectoryIndex + 1] isDirectory:YES];
+    else
+        _downloadsDirectory = [NSFileManager.defaultManager URLsForDirectory:NSDownloadsDirectory inDomains:NSUserDomainMask].firstObject;
 
     const NSUInteger automationFileDescriptorIndex = [args indexOfObject:kAutomationFileDescriptorArgumentString];
     if (automationFileDescriptorIndex != NSNotFound && automationFileDescriptorIndex + 1 < args.count) {
