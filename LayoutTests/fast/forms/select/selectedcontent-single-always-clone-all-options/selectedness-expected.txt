@@ -1,0 +1,11 @@
+
+
+PASS Initial state
+PASS Un-select first option by setting 'selected' attribute
+PASS Select second option by setting 'selected' attribute
+PASS Select option using 'selectedIndex'
+PASS Select option using 'value'
+PASS Setting 'selectedIndex' to -1
+PASS Resetting the form
+PASS Disabling a selected option
+

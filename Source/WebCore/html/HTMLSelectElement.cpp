@@ -1107,7 +1107,7 @@ void HTMLSelectElement::finishParsingChildren()
 {
     HTMLFormControlElement::finishParsingChildren();
 
-    if (m_multiple && isConnected())
+    if (isConnected() && shouldCloneAllOptionsToSelectedContent())
         cloneOptionsIntoSelectedContent();
 }
 
@@ -1916,7 +1916,7 @@ void HTMLSelectElement::parseMultipleAttribute(const AtomString& value)
             invalidateButtonText();
             updateSelectedContentIfEnabled();
         }
-        if (m_multiple)
+        if (shouldCloneAllOptionsToSelectedContent())
             cloneOptionsIntoSelectedContent();
     }
 }
@@ -2773,14 +2773,15 @@ void HTMLSelectElement::updateSelectedContent(HTMLOptionElement* selectedOption)
     ASSERT(!document().settings().mutationEventsEnabled());
 
     // For multiple this only updates the clones' selectedness, so a queued re-clone has to stay queued.
-    if (!m_multiple)
+    if (!shouldCloneAllOptionsToSelectedContent())
         m_hasQueuedSelectedContentUpdate = false;
     if (!m_selectedContentDescendantCount || !updatesSelectedContent())
         return;
 
-    if (m_multiple) {
+    if (shouldCloneAllOptionsToSelectedContent()) {
         for (Ref selectedContent : selectedContentElements())
             selectedContent->updateClonedOptionSelectedStates();
+
         return;
     }
 
@@ -2795,7 +2796,7 @@ void HTMLSelectElement::updateSelectedContent(HTMLOptionElement* selectedOption)
 
 bool HTMLSelectElement::updatesSelectedContent() const
 {
-    return !m_multiple || document().settings().htmlEnhancedSelectMultipleAndListBoxEnabled();
+    return !m_multiple || document().settings().htmlEnhancedSelectMultipleAndListBoxEnabled() || document().settings().htmlEnhancedSelectCloneAllOptionsIntoSelectedContent();
 }
 
 Vector<Ref<HTMLSelectedContentElement>> HTMLSelectElement::selectedContentElements() const
@@ -2812,7 +2813,7 @@ void HTMLSelectElement::cloneOptionsIntoSelectedContent()
 {
     ASSERT_WITH_SECURITY_IMPLICATION(ScriptDisallowedScope::InMainThread::isScriptAllowed());
 
-    if (!m_multiple || !m_selectedContentDescendantCount || !updatesSelectedContent())
+    if (!shouldCloneAllOptionsToSelectedContent() || !m_selectedContentDescendantCount || !updatesSelectedContent())
         return;
 
     for (Ref selectedContent : selectedContentElements())
@@ -2867,7 +2868,8 @@ void HTMLSelectElement::queueSelectedContentUpdate()
         RefPtr select = weakThis;
         if (!select || !std::exchange(select->m_hasQueuedSelectedContentUpdate, false))
             return;
-        if (select->m_multiple)
+
+        if (select->shouldCloneAllOptionsToSelectedContent())
             select->cloneOptionsIntoSelectedContent();
         else
             select->updateSelectedContentIfEnabled();
@@ -3153,6 +3155,11 @@ void HTMLSelectElement::didUpdateActiveOption(int optionIndex)
 
     if (renderer())
         axCache->onSelectedOptionChanged(*this, optionIndex);
+}
+
+bool HTMLSelectElement::shouldCloneAllOptionsToSelectedContent() const
+{
+    return m_multiple || protect(protect(document())->settings())->htmlEnhancedSelectCloneAllOptionsIntoSelectedContent();
 }
 
 } // namespace WebCore

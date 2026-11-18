@@ -176,6 +176,6 @@ select:not(:-internal-select-preferred-size-one) optgroup + option {
 
 /* selectedcontent. */
 
-select[multiple] selectedcontent > option:not(:checked) {
+select selectedcontent > option:not(:checked) {
     display: none;
 }

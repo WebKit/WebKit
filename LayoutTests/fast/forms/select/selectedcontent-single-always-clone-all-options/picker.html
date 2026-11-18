@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+
+<title>Clone all options on singular select element: toggling options in the UI picker</title>
+
+<script src="../../../../resources/testharness.js"></script>
+<script src="../../../../resources/testharnessreport.js"></script>
+<script src="../../../../resources/ui-helper.js"></script>
+
+<style>
+select, ::picker(select) {
+  appearance: base-select;
+}
+</style>
+
+<select size="1">
+  <button><selectedcontent></selectedcontent></button>
+  <option>One</option>
+  <option>Two</option>
+</select>
+
+<script>
+function activate(element) {
+  const rect = element.getBoundingClientRect();
+  return UIHelper.activateAt(rect.x + rect.width / 2, rect.y + rect.height / 2);
+}
+
+promise_test(async () => {
+  const select = document.querySelector("select");
+  const selectedcontent = select.querySelector("selectedcontent");
+  const [one, two] = select.options;
+  const clones = [...selectedcontent.children];
+  assert_equals(clones.length, 2);
+
+  function assertClonesFollowOptions(description) {
+    assert_array_equals([...selectedcontent.children], clones, `${description}: the clones are not replaced`);
+    assert_equals(clones[0].matches(":checked"), one.selected, `${description}: first clone`);
+    assert_equals(clones[1].matches(":checked"), two.selected, `${description}: second clone`);
+    assert_equals(getComputedStyle(clones[0]).display == "none", !one.selected, `${description}: first clone display`);
+    assert_equals(getComputedStyle(clones[1]).display == "none", !two.selected, `${description}: second clone display`);
+  }
+
+  assertClonesFollowOptions("Initially, first option is selected");
+
+  await activate(select);
+  await UIHelper.animationFrame();
+  assert_true(select.matches(":open"), "Open picker to select second option");
+
+  await activate(two);
+  await UIHelper.animationFrame();
+  assert_array_equals([...select.selectedOptions], [two]);
+  assertClonesFollowOptions("Second option is selected");
+
+  await activate(select);
+  await UIHelper.animationFrame();
+  assert_true(select.matches(":open"), "Open picker to select first option");
+
+  await activate(one);
+  await UIHelper.animationFrame();
+  assert_array_equals([...select.selectedOptions], [one]);
+  assertClonesFollowOptions("First option is selected");
+}, "Toggling options in the picker updates which clones match :checked");
+</script>

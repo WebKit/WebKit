@@ -1,0 +1,7 @@
+
+PASS The number of selected options
+PASS The label of the one selected option
+PASS No selected options
+PASS Resetting the form
+PASS A button without selectedcontent keeps its text
+

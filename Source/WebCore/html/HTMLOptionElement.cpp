@@ -208,7 +208,7 @@ void HTMLOptionElement::postConnectionSteps()
     if (!select || !select->hasSelectedContentDescendants())
         return;
 
-    if (select->multiple()) {
+    if (select->shouldCloneAllOptionsToSelectedContent()) {
         // The select clones its options once it finishes parsing them.
         if (select->isFinishedParsingChildren())
             select->queueSelectedContentUpdate(*this);
@@ -258,7 +258,7 @@ void HTMLOptionElement::movingSteps(MovingType movingType, ContainerNode& oldPar
         if (newSelect) {
             newSelect->setRecalcListItems();
             newSelect->invalidateButtonText();
-            if (newSelect->multiple()) {
+            if (newSelect->shouldCloneAllOptionsToSelectedContent()) {
                 if (oldParent.isInclusiveDescendantOf(*newSelect))
                     newSelect->queueSelectedContentUpdate(*this);
             } else if (selectedWithoutUpdate() && oldParent.isInclusiveDescendantOf(*newSelect))
