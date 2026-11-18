@@ -705,11 +705,6 @@ String AXFileUploadButtonText()
     return WEB_UI_STRING("file upload button", "accessibility role description for a file upload button");
 }
 
-String AXOutputText()
-{
-    return WEB_UI_STRING("output", "accessibility role description for an output element");
-}
-
 String AXAttachmentRoleText()
 {
     return WEB_UI_STRING("attachment", "accessibility role description for an attachment element");
@@ -823,7 +818,7 @@ String AXARIAContentGroupText(StringView ariaType)
     if (ariaType == "ARIAApplicationMarquee"_s)
         return WEB_UI_STRING("marquee", "An ARIA accessibility group that acts as a marquee.");
     if (ariaType == "ARIAApplicationStatus"_s)
-        return WEB_UI_STRING("application status", "An ARIA accessibility group that acts as a status update.");
+        return WEB_UI_STRING_KEY("status", "status (accessibility role description)", "An accessibility group that acts as a status update.");
     if (ariaType == "ARIAApplicationTimer"_s)
         return WEB_UI_STRING("timer", "An ARIA accessibility group that acts as an updating timer.");
     if (ariaType == "ARIADocument"_s)

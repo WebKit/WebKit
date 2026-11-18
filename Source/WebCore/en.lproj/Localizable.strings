@@ -1903,9 +1903,6 @@
 /* An ARIA accessibility group that acts as an alert. */
 "alert" = "alert";
 
-/* An ARIA accessibility group that acts as a status update. */
-"application status" = "application status";
-
 /* An ARIA accessibility group that acts as an article. */
 "article" = "article";
 
@@ -2128,9 +2125,6 @@
 /* Inspector Grid Item CSS order property label */
 "order: %d" = "order: %d";
 
-/* accessibility role description for an output element */
-"output" = "output";
-
 /* Label for the AutoFill credentials button inside a text field. */
 "password AutoFill" = "password AutoFill";
 
@@ -2202,6 +2196,9 @@
 
 /* accessibility label for movie status */
 "status" = "status";
+
+/* An accessibility group that acts as a status update. */
+"status (accessibility role description)" = "status";
 
 /* accessibility help text for hide closed captions button */
 "stop displaying closed captions" = "stop displaying closed captions";
