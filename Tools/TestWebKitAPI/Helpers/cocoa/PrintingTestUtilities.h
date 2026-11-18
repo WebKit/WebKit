@@ -33,6 +33,7 @@
 #import <array>
 #import <optional>
 #import <wtf/RetainPtr.h>
+#import <wtf/Vector.h>
 
 OBJC_CLASS NSData;
 OBJC_CLASS NSPrintInfo;
@@ -71,6 +72,7 @@ RetainPtr<TestPDFDocument> printToPDF(MakePrintOperation, NSWindow *);
 
 // Measured from top left.
 CGPoint firstCharacterPosition(TestPDFDocument *);
+Vector<CGPoint> firstCharacterPositions(TestPDFDocument *);
 
 #endif // PLATFORM(MAC) && HAVE(PDFKIT)
 

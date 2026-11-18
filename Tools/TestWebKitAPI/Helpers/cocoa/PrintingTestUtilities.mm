@@ -146,9 +146,19 @@ RetainPtr<TestPDFDocument> printToPDF(MakePrintOperation makePrintOperation, NSW
 CGPoint firstCharacterPosition(TestPDFDocument *document)
 {
     EXPECT_EQ([document pageCount], 1);
-    RetainPtr page = [document pageAtIndex:0];
-    CGRect characterRect = [page rectForCharacterAtIndex:0];
-    return CGPointMake(CGRectGetMinX(characterRect), CGRectGetMaxY([page bounds]) - CGRectGetMaxY(characterRect));
+    auto positions = firstCharacterPositions(document);
+    return positions.isEmpty() ? CGPointZero : positions[0];
+}
+
+Vector<CGPoint> firstCharacterPositions(TestPDFDocument *document)
+{
+    Vector<CGPoint> positions;
+    for (NSInteger i = 0; i < [document pageCount]; ++i) {
+        RetainPtr page = [document pageAtIndex:i];
+        CGRect characterRect = [page rectForCharacterAtIndex:0];
+        positions.append({ CGRectGetMinX(characterRect), CGRectGetMaxY([page bounds]) - CGRectGetMaxY(characterRect) });
+    }
+    return positions;
 }
 
 #endif // PLATFORM(MAC) && HAVE(PDFKIT)

@@ -210,12 +210,14 @@ TEST(Printing, PrintPageBorders)
 }
 
 #if HAVE(PDFKIT)
-static RetainPtr<TestPDFDocument> printToPDF(NSString *html)
+static RetainPtr<TestPDFDocument> printToPDF(NSString *html, void (^configurePrintInfo)(NSPrintInfo *) = nil)
 {
     RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
     [webView synchronouslyLoadHTMLString:html];
 
     return TestWebKitAPI::printToPDF(^(NSPrintInfo *printInfo) {
+        if (configurePrintInfo)
+            configurePrintInfo(printInfo);
         return [webView printOperationWithPrintInfo:printInfo];
     }, [webView hostWindow]);
 }
@@ -275,6 +277,51 @@ TEST(Printing, DrawnPDFPagesArePaperSized)
         auto size = drawnPDFPageSize(html);
         EXPECT_NEAR(size.width, TestWebKitAPI::usLetterPaperSizeInPoints.width, 1);
         EXPECT_NEAR(size.height, TestWebKitAPI::usLetterPaperSizeInPoints.height, 1);
+    }
+}
+
+// The print margins are 36pt at the top and bottom and 18pt on the sides.
+static Vector<CGPoint> printedFirstCharacterPositions(NSString *styleSheet, NSUInteger pageCount, NSPaperOrientation orientation)
+{
+    RetainPtr html = adoptNS([[NSMutableString alloc] initWithFormat:@"<style>%@ body { margin: 0 } div { break-after: page }</style>", styleSheet]);
+    for (NSUInteger i = 0; i < pageCount; ++i)
+        [html appendString:@"<div>Page</div>"];
+    RetainPtr document = printToPDF(html.get(), ^(NSPrintInfo *printInfo) {
+        printInfo.topMargin = 36;
+        printInfo.bottomMargin = 36;
+        printInfo.leftMargin = 18;
+        printInfo.rightMargin = 18;
+        printInfo.orientation = orientation;
+    });
+    return TestWebKitAPI::firstCharacterPositions(document.get());
+}
+
+TEST(Printing, PageMarginsReplacePrintInfoMargins)
+{
+    struct Case {
+        NSString *styleSheet;
+        CGFloat left;
+        CGFloat top;
+        NSUInteger pageCount { 1 };
+        NSPaperOrientation orientation { NSPaperOrientationPortrait };
+    } cases[] = {
+        { @"", 18, 36 },
+        { @"@page { margin: 1in }", 72, 72 },
+        { @"@page { margin: 4em }", 48, 48 },
+        { @"@page { margin: 1.5in 1in 0.5in 2in }", 144, 108 },
+        { @"@page { margin-top: 1in }", 18, 72 },
+        { @"@page { margin: 1in }", 72, 72, 3 },
+        { @"@page { margin: 1in 0.5in }", 36, 72, 1, NSPaperOrientationLandscape },
+    };
+    for (auto& [styleSheet, left, top, pageCount, orientation] : cases) {
+        auto positions = printedFirstCharacterPositions(styleSheet, pageCount, orientation);
+        auto zeroMarginPositions = printedFirstCharacterPositions([styleSheet stringByAppendingString:@" @page { margin: 0 }"], pageCount, orientation);
+        ASSERT_EQ(positions.size(), pageCount) << styleSheet.UTF8String;
+        ASSERT_EQ(zeroMarginPositions.size(), pageCount) << styleSheet.UTF8String;
+        for (size_t i = 0; i < pageCount; ++i) {
+            EXPECT_DOUBLE_EQ(positions[i].x - zeroMarginPositions[i].x, left) << styleSheet.UTF8String << " page " << i;
+            EXPECT_DOUBLE_EQ(positions[i].y - zeroMarginPositions[i].y, top) << styleSheet.UTF8String << " page " << i;
+        }
     }
 }
 #endif // HAVE(PDFKIT)
