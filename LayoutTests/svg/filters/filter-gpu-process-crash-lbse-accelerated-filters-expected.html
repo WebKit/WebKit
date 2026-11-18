@@ -1,0 +1,11 @@
+<!DOCTYPE html><!-- webkit-test-runner [ UseGPUProcessForDOMRenderingEnabled=true LayerBasedSVGEngineEnabled=true AcceleratedFiltersEnabled=true ] -->
+<svg width="300" height="150">
+    <filter id="swap-red-blue" x="0" y="0" width="1" height="1" color-interpolation-filters="sRGB">
+        <feColorMatrix type="matrix" values="0 0 1 0 0  0 1 0 0 0  1 0 0 0 0  0 0 0 1 0"/>
+    </filter>
+    <filter id="offset" x="0" y="0" width="1.5" height="1.5">
+        <feOffset dx="20" dy="20"/>
+    </filter>
+    <rect x="10" y="10" width="130" height="130" fill="red" filter="url(#swap-red-blue)"/>
+    <rect x="160" y="10" width="90" height="90" fill="green" filter="url(#offset)"/>
+</svg>

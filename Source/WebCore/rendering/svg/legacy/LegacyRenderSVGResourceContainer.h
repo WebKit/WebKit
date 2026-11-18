@@ -44,6 +44,8 @@ public:
     void removeClientFromCacheAndMarkForInvalidation(RenderElement&, bool markForInvalidation = true) override;
     void removeAllClientsFromCacheAndMarkForInvalidationIfNeeded(bool markForInvalidation, SingleThreadWeakHashSet<RenderObject>* visitedRenderers) override;
 
+    void clearRenderingCaches() override;
+
     void idChanged();
     void markAllClientsForRepaint();
     void addClientRenderLayer(RenderLayer&);

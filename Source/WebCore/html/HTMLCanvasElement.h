@@ -143,6 +143,7 @@ public:
     std::unique_ptr<CSSParserContext> createCSSParserContext() const final;
 
     NativeImage* copiedImage() const;
+    void clearCopiedImage() { m_copiedImage = nullptr; }
     RefPtr<ImageData> getImageData();
 
     SecurityOrigin* securityOrigin() const final;

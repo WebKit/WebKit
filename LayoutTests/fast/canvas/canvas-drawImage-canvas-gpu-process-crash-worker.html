@@ -1,0 +1,61 @@
+<!DOCTYPE html><!-- webkit-test-runner [ UseGPUProcessForDOMRenderingEnabled=true ] -->
+<title>A canvas drawn into another canvas in a worker after the GPU process crashes</title>
+<canvas id="source" width="100" height="100"></canvas>
+<canvas id="before" width="100" height="100"></canvas>
+<canvas id="after" width="100" height="100"></canvas>
+<script id="worker" type="text/worker">
+function nextFrame()
+{
+    return new Promise(resolve => requestAnimationFrame(() => resolve()));
+}
+
+let canvases;
+onmessage = async (event) => {
+    if (event.data.canvases) {
+        canvases = event.data.canvases;
+        const context = canvases.source.getContext("2d", { willReadFrequently: true });
+        context.fillStyle = "green";
+        context.fillRect(0, 0, 50, 50);
+        context.fillStyle = "blue";
+        context.fillRect(50, 50, 50, 50);
+        canvases.before.getContext("2d", { willReadFrequently: true }).drawImage(canvases.source, 0, 0);
+    } else
+        canvases.after.getContext("2d", { willReadFrequently: true }).drawImage(canvases.source, 0, 0);
+    await nextFrame();
+    await nextFrame();
+    postMessage("drawn");
+};
+</script>
+<script>
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+function nextFrame()
+{
+    return new Promise(resolve => requestAnimationFrame(() => resolve()));
+}
+
+window.addEventListener("load", async () => {
+    const worker = new Worker(URL.createObjectURL(new Blob([document.getElementById("worker").textContent])));
+    const drawn = () => new Promise(resolve => worker.addEventListener("message", resolve, { once: true }));
+    const canvases = {
+        source: source.transferControlToOffscreen(),
+        before: before.transferControlToOffscreen(),
+        after: after.transferControlToOffscreen(),
+    };
+    worker.postMessage({ canvases }, Object.values(canvases));
+    await drawn();
+    await nextFrame();
+    await nextFrame();
+    if (window.testRunner)
+        testRunner.terminateGPUProcess();
+    await new Promise(resolve => setTimeout(resolve, 100));
+    await nextFrame();
+    worker.postMessage({ });
+    await drawn();
+    await nextFrame();
+    await nextFrame();
+    if (window.testRunner)
+        testRunner.notifyDone();
+});
+</script>

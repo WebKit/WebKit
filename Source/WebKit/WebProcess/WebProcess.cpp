@@ -1635,6 +1635,8 @@ void WebProcess::gpuProcessConnectionClosed()
         closedConnection = std::exchange(m_gpuProcessConnection, nullptr);
     }
 
+    Document::clearRenderingCachesForAllDocuments();
+
     for (auto& page : m_pageMap.values())
         page->gpuProcessConnectionWasDestroyed();
 

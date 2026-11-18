@@ -145,5 +145,10 @@ bool MeshGradientImage::containsCurrentColor() const
     return m_containsCurrentColor;
 }
 
+void MeshGradientImage::clearRenderingCaches()
+{
+    m_gradients.clear();
+}
+
 } // namespace Style
 } // namespace WebCore

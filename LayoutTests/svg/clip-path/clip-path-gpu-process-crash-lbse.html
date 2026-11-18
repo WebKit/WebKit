@@ -1,0 +1,39 @@
+<!DOCTYPE html><!-- webkit-test-runner [ UseGPUProcessForDOMRenderingEnabled=true LayerBasedSVGEngineEnabled=true ] -->
+<title>SVG clip paths that clip through an image repaint after the GPU process crashes</title>
+<svg width="300" height="150">
+    <clipPath id="two-shapes">
+        <rect x="10" y="10" width="60" height="60"/>
+        <rect x="80" y="80" width="60" height="60"/>
+    </clipPath>
+    <clipPath id="half">
+        <rect x="160" y="10" width="65" height="130"/>
+    </clipPath>
+    <clipPath id="clipped-circle">
+        <circle cx="225" cy="75" r="65" clip-path="url(#half)"/>
+    </clipPath>
+    <rect x="10" y="10" width="130" height="130" fill="green" clip-path="url(#two-shapes)"/>
+    <rect x="160" y="10" width="130" height="130" fill="blue" clip-path="url(#clipped-circle)"/>
+</svg>
+<script>
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+function nextFrame()
+{
+    return new Promise(resolve => requestAnimationFrame(() => resolve()));
+}
+
+window.addEventListener("load", async () => {
+    // Let the first paint reach the GPU process, then crash it. The page repaints with the
+    // same content once the connection to the new GPU process is made.
+    await nextFrame();
+    await nextFrame();
+    if (window.testRunner)
+        testRunner.terminateGPUProcess();
+    await new Promise(resolve => setTimeout(resolve, 100));
+    await nextFrame();
+    await nextFrame();
+    if (window.testRunner)
+        testRunner.notifyDone();
+});
+</script>

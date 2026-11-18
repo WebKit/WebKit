@@ -1,0 +1,51 @@
+<!DOCTYPE html><!-- webkit-test-runner [ UseGPUProcessForDOMRenderingEnabled=true AcceleratedFiltersEnabled=true ] -->
+<title>CSS filters repaint their source after the GPU process crashes</title>
+<style>
+.box {
+    display: inline-block;
+    width: 120px;
+    height: 120px;
+    margin: 10px;
+    background-color: red;
+}
+.box > div {
+    width: 60px;
+    height: 60px;
+    background-color: blue;
+}
+</style>
+<svg width="0" height="0" style="position: absolute">
+    <filter id="swap-red-blue" color-interpolation-filters="sRGB">
+        <feColorMatrix type="matrix" values="0 0 1 0 0  0 1 0 0 0  1 0 0 0 0  0 0 0 1 0"/>
+    </filter>
+    <filter id="offset" x="0" y="0" width="1.5" height="1.5">
+        <feOffset dx="20" dy="20"/>
+    </filter>
+</svg>
+<div class="box" style="filter: url(#swap-red-blue)"><div></div></div>
+<div class="box" style="filter: url(#offset)"><div></div></div>
+<div class="box" style="filter: invert(1)"><div></div></div>
+<div class="box" style="filter: hue-rotate(90deg) saturate(0.5)"><div></div></div>
+<script>
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+function nextFrame()
+{
+    return new Promise(resolve => requestAnimationFrame(() => resolve()));
+}
+
+window.addEventListener("load", async () => {
+    // Let the first paint reach the GPU process, then crash it. The page repaints with the
+    // same content once the connection to the new GPU process is made.
+    await nextFrame();
+    await nextFrame();
+    if (window.testRunner)
+        testRunner.terminateGPUProcess();
+    await new Promise(resolve => setTimeout(resolve, 100));
+    await nextFrame();
+    await nextFrame();
+    if (window.testRunner)
+        testRunner.notifyDone();
+});
+</script>

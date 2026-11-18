@@ -1,0 +1,35 @@
+<!DOCTYPE html><!-- webkit-test-runner [ UseGPUProcessForDOMRenderingEnabled=true ] -->
+<title>SVG images repaint with their pattern and mask tiles after the GPU process crashes</title>
+<style>
+div {
+    display: inline-block;
+    width: 150px;
+    height: 150px;
+    background-image: url(resources/pattern-and-mask.svg);
+}
+</style>
+<img src="resources/pattern-and-mask.svg">
+<div></div>
+<script>
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+function nextFrame()
+{
+    return new Promise(resolve => requestAnimationFrame(() => resolve()));
+}
+
+window.addEventListener("load", async () => {
+    // Let the first paint reach the GPU process, then crash it. The page repaints with the
+    // same content once the connection to the new GPU process is made.
+    await nextFrame();
+    await nextFrame();
+    if (window.testRunner)
+        testRunner.terminateGPUProcess();
+    await new Promise(resolve => setTimeout(resolve, 100));
+    await nextFrame();
+    await nextFrame();
+    if (window.testRunner)
+        testRunner.notifyDone();
+});
+</script>

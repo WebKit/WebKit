@@ -438,6 +438,13 @@ void RenderElement::forEachStyleImage(NOESCAPE const ScopedLambda<void(Style::Im
         forEachRegisteredImageInStyle(*firstLineStyle, function);
 }
 
+void RenderElement::clearRenderingCaches()
+{
+    forEachStyleImage([](Style::Image& image) {
+        image.clearRenderingCaches();
+    });
+}
+
 template<typename FillLayers> void RenderElement::updateFillImages(const FillLayers* oldLayers, const FillLayers* newLayers)
 {
     auto fillImagesAreIdentical = [](const FillLayers* layers1, const FillLayers* layers2) -> bool {

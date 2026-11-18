@@ -126,6 +126,7 @@ public:
     }
 
     const Entries& entries() const LIFETIME_BOUND { return m_entries; }
+    void clear() { m_entries.clear(); }
 
 private:
     friend Entry;

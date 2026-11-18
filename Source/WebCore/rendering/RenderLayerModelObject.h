@@ -76,6 +76,8 @@ public:
     void styleWillChange(Style::Difference, const Style::ComputedStyle& newStyle) override;
     void styleDidChange(Style::Difference, const Style::ComputedStyle* oldStyle) override;
 
+    void clearRenderingCaches() override;
+
     virtual bool requiresLayer() const = 0;
     bool requiresLayerForSVGIntrinsicReasons() const;
     bool hasSVGGroupingWillChangeProperty() const;

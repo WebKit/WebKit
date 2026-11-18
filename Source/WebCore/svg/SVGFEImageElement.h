@@ -64,6 +64,10 @@ private:
     std::tuple<RefPtr<ImageBuffer>, FloatRect> imageBufferForEffect(const GraphicsContext& destinationContext) const;
     RefPtr<FilterEffect> imageEffect(const GraphicsContext& destinationContext) const;
 
+    // The effect keeps its image. The element keeps the effect also when it has no renderer,
+    // since CSS filters that reference a <filter> are built from its elements.
+    void clearRenderingCaches() final { markFilterEffectForRebuild(); }
+
     bool taintsOrigin() const final { return renderingTaintsOrigin(); }
     bool effectDependsOnPlacement() const final { return !!m_cachedImage; }
     RefPtr<FilterEffect> createFilterEffect(const FilterEffectVector&, const GraphicsContext& destinationContext) const override;

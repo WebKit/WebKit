@@ -172,5 +172,10 @@ bool GradientImage::containsCurrentColor() const
     return Style::containsCurrentColor(m_gradient);
 }
 
+void GradientImage::clearRenderingCaches()
+{
+    m_gradients.clear();
+}
+
 } // namespace Style
 } // namespace WebCore

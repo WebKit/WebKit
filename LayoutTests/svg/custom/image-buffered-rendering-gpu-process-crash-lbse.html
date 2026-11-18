@@ -1,0 +1,33 @@
+<!DOCTYPE html><!-- webkit-test-runner [ UseGPUProcessForDOMRenderingEnabled=true LayerBasedSVGEngineEnabled=true ] -->
+<title>SVG images with static buffered rendering repaint after the GPU process crashes</title>
+<svg width="300" height="150">
+    <g transform="translate(10 10)">
+        <image width="130" height="130" preserveAspectRatio="none" style="buffered-rendering: static" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80'%3E%3Crect width='40' height='40' fill='green'/%3E%3Crect x='40' y='40' width='40' height='40' fill='blue'/%3E%3C/svg%3E"/>
+    </g>
+    <g transform="translate(160 10)">
+        <image width="130" height="130" preserveAspectRatio="none" style="buffered-rendering: static" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80'%3E%3Crect width='40' height='40' fill='green'/%3E%3Crect x='40' y='40' width='40' height='40' fill='blue'/%3E%3C/svg%3E"/>
+    </g>
+</svg>
+<script>
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+function nextFrame()
+{
+    return new Promise(resolve => requestAnimationFrame(() => resolve()));
+}
+
+window.addEventListener("load", async () => {
+    // Let the first paint reach the GPU process, then crash it. The page repaints with the
+    // same content once the connection to the new GPU process is made.
+    await nextFrame();
+    await nextFrame();
+    if (window.testRunner)
+        testRunner.terminateGPUProcess();
+    await new Promise(resolve => setTimeout(resolve, 100));
+    await nextFrame();
+    await nextFrame();
+    if (window.testRunner)
+        testRunner.notifyDone();
+});
+</script>

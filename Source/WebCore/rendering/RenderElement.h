@@ -301,6 +301,9 @@ public:
 
     virtual void forEachStyleImage(NOESCAPE const ScopedLambda<void(Style::Image&)>&);
 
+    // Drops the rendered images and buffers that the renderer keeps between paints.
+    virtual void clearRenderingCaches();
+
 #if HAVE(SUPPORT_HDR_DISPLAY)
     bool hasHDRImages() const { return m_hasHDRImages; }
     void setHasHDRImages(bool b) { m_hasHDRImages = b; }

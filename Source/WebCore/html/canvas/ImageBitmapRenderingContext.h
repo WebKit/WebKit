@@ -58,6 +58,7 @@ public:
 
     RefPtr<ImageBuffer> surfaceBufferToImageBuffer(SurfaceBuffer) final;
     RefPtr<NativeImage> surfaceBufferToNativeImage(SurfaceBuffer) final;
+    void clearRenderingCaches() final { m_bufferNativeImage = nullptr; }
     bool isSurfaceBufferTransparentBlack(SurfaceBuffer) const final { return !m_buffer; }
     void didUpdateCanvasSizeProperties(bool) final { }
 
