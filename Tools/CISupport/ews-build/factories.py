@@ -163,6 +163,8 @@ class BuildFactory(Factory):
         self.addStep(ValidateChange(addURLs=False))
         if platform in ['gtk', 'wpe']:
             self.addStep(CleanDerivedSources())
+        if platform.split('-')[0] in CompileWebKit.APPLE_PLATFORMS:
+            self.addStep(EnsureFreeDiskSpace())
         self.addStep(CompileWebKit(skipUpload=self.skipUpload))
 
 

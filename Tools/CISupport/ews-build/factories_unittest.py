@@ -106,6 +106,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'validate-change-content',
             'kill-old-processes',
             'validate-change',
+            'ensure-free-disk-space',
             'compile-webkit'
         ],
         'iOS-27-Simulator-Build-EWS': [
@@ -126,6 +127,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'install-cmake',
             'install-ninja',
             'validate-change',
+            'ensure-free-disk-space',
             'compile-webkit'
         ],
         'iOS-27-Simulator-WK2-Tests-EWS': [
@@ -200,6 +202,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'install-cmake',
             'install-ninja',
             'validate-change',
+            'ensure-free-disk-space',
             'compile-webkit'
         ],
         'macOS-Golden-Gate-Debug-API-Tests-EWS': [
@@ -289,6 +292,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'validate-change-content',
             'kill-old-processes',
             'validate-change',
+            'ensure-free-disk-space',
             'compile-webkit'
         ],
         'macOS-Sequoia-Release-WK2-Tests-EWS': [
@@ -466,6 +470,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'validate-change-content',
             'kill-old-processes',
             'validate-change',
+            'ensure-free-disk-space',
             'compile-webkit'
         ],
         'visionOS-27-Simulator-Build-EWS': [
@@ -484,6 +489,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'validate-change-content',
             'kill-old-processes',
             'validate-change',
+            'ensure-free-disk-space',
             'compile-webkit'
         ],
         'visionOS-27-Simulator-WK2-Tests-EWS': [
@@ -528,6 +534,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'validate-change-content',
             'kill-old-processes',
             'validate-change',
+            'ensure-free-disk-space',
             'compile-webkit'
         ],
         'watchOS-27-Simulator-Build-EWS': [
@@ -546,6 +553,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'validate-change-content',
             'kill-old-processes',
             'validate-change',
+            'ensure-free-disk-space',
             'compile-webkit'
         ],
         'tvOS-27-Build-EWS': [
@@ -564,6 +572,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'validate-change-content',
             'kill-old-processes',
             'validate-change',
+            'ensure-free-disk-space',
             'compile-webkit'
         ],
         'tvOS-27-Simulator-Build-EWS': [
@@ -582,6 +591,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'validate-change-content',
             'kill-old-processes',
             'validate-change',
+            'ensure-free-disk-space',
             'compile-webkit'
         ],
         'PlayStation-Build-EWS': [

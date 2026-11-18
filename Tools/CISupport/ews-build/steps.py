@@ -7331,6 +7331,75 @@ class CleanWebKitBuildIfBaseChanged(steps.ShellSequence):
         return {'step': self.descriptionDone[0]}
 
 
+class EnsureFreeDiskSpace(shell.ShellCommand):
+    name = 'ensure-free-disk-space'
+    description = ['Checking free disk space']
+    descriptionDone = ['Checked free disk space']
+    MINIMUM_FREE_GB = 30
+    REPORT_PREFIX = 'DISK_SPACE_REPORT: '
+    haltOnFailure = False
+    flunkOnFailure = False
+    warnOnFailure = True
+
+    def __init__(self, **kwargs):
+        super().__init__(timeout=30 * 60, logEnviron=False, **kwargs)
+
+    @defer.inlineCallbacks
+    def run(self):
+        self.log_observer = logobserver.BufferLogObserver()
+        self.addLogObserver('stdio', self.log_observer)
+        self.command = ['python3', 'Tools/CISupport/ensure-free-disk-space', '--minimum-free-gb', str(self.MINIMUM_FREE_GB)]
+        rc = yield super().run()
+
+        report = self.parse_report(self.log_observer.getStdout())
+        if not report:
+            self.descriptionDone = ['Unable to check free disk space']
+            return defer.returnValue(WARNINGS)
+
+        free_gb = report.get('free_gb', {})
+        self.setProperty('free_disk_space_gb', free_gb)
+        removed = report.get('removed', [])
+        failed_to_remove = report.get('failed_to_remove', [])
+        lowest_free_gb = min(free_gb.values(), default=0)
+
+        if not report.get('sufficient'):
+            self.descriptionDone = [f'Only {lowest_free_gb} GB free after cleanup, retrying build']
+            self.send_email_for_low_disk_space(free_gb, removed)
+            self.build.workerforbuilder.worker.putInQuarantine()
+            return defer.returnValue(RETRY)
+        if failed_to_remove:
+            self.descriptionDone = [f"Failed to remove {', '.join(failed_to_remove)} directory, {lowest_free_gb} GB free"]
+            return defer.returnValue(WARNINGS)
+        if removed:
+            self.descriptionDone = [f"Removed {', '.join(removed)} directory to free disk space, {lowest_free_gb} GB free"]
+            return defer.returnValue(WARNINGS)
+        self.descriptionDone = [f'{lowest_free_gb} GB free']
+        return defer.returnValue(rc)
+
+    @classmethod
+    def parse_report(cls, stdout):
+        for line in reversed(stdout.splitlines()):
+            if line.startswith(cls.REPORT_PREFIX):
+                try:
+                    return json.loads(line[len(cls.REPORT_PREFIX):])
+                except json.JSONDecodeError:
+                    return None
+        return None
+
+    def send_email_for_low_disk_space(self, free_gb, removed):
+        try:
+            builder_name = self.getProperty('buildername', '')
+            worker_name = self.getProperty('workername', '')
+            build_url = f'{self.master.config.buildbotURL}#/builders/{self.build._builderid}/builds/{self.build.number}'
+            email_subject = f'{worker_name} is low on disk space'
+            email_text = f'{worker_name} has less than {self.MINIMUM_FREE_GB} GB free after removing {", ".join(removed) or "nothing"}.'
+            email_text += f' Free space (GB): {free_gb}. Builds on this worker will be retried until disk space is freed.'
+            email_text += f'\n\nBuild: {build_url}\n\nBuilder: {builder_name}\n'
+            send_email_to_bot_watchers(email_subject, email_text, builder_name, f'low-disk-space-{worker_name}')
+        except Exception as e:
+            print(f'Error in sending email for low disk space: {e}')
+
+
 class PushCommitToWebKitRepo(shell.ShellCommand):
     name = 'push-commit-to-webkit-repo'
     descriptionDone = ['Pushed commit to WebKit repository']

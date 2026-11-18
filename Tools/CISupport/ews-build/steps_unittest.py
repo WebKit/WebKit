@@ -9746,6 +9746,73 @@ class TestCleanWebKitBuildIfBaseChanged(BuildStepMixinAdditions, unittest.TestCa
         return self.run_step()
 
 
+class TestEnsureFreeDiskSpace(BuildStepMixinAdditions, unittest.TestCase):
+    COMMAND = ['python3', 'Tools/CISupport/ensure-free-disk-space', '--minimum-free-gb', '30']
+
+    def setUp(self):
+        self.longMessage = True
+        return self.setup_test_build_step()
+
+    def tearDown(self):
+        return self.tear_down_test_build_step()
+
+    def report(self, free_gb, removed=None, failed_to_remove=None, sufficient=True):
+        report = {'minimum_free_gb': 30, 'free_gb': free_gb, 'removed': removed or [], 'failed_to_remove': failed_to_remove or [], 'sufficient': sufficient}
+        return f'Checking volumes\nDISK_SPACE_REPORT: {json.dumps(report)}\n'
+
+    def test_enough_free_space(self):
+        self.setup_step(EnsureFreeDiskSpace())
+        self.expectRemoteCommands(
+            ExpectShell(command=self.COMMAND, workdir='wkdir', timeout=1800, log_environ=False).exit(0)
+            .log('stdio', stdout=self.report({'compilation-cache': 382.0, 'build': 75.5})),
+        )
+        self.expect_outcome(result=SUCCESS, state_string='75.5 GB free')
+        self.expect_property('free_disk_space_gb', {'compilation-cache': 382.0, 'build': 75.5})
+        return self.run_step()
+
+    def test_freed_space_by_removing_directories(self):
+        self.setup_step(EnsureFreeDiskSpace())
+        self.expectRemoteCommands(
+            ExpectShell(command=self.COMMAND, workdir='wkdir', timeout=1800, log_environ=False).exit(0)
+            .log('stdio', stdout=self.report({'compilation-cache': 140.0, 'build': 140.0}, removed=['compilation-cache', 'build'])),
+        )
+        self.expect_outcome(result=WARNINGS, state_string='Removed compilation-cache, build directory to free disk space, 140.0 GB free (warnings)')
+        return self.run_step()
+
+    @defer.inlineCallbacks
+    def test_not_enough_space_after_cleanup_retries_build(self):
+        self.setup_step(EnsureFreeDiskSpace())
+        self.expectRemoteCommands(
+            ExpectShell(command=self.COMMAND, workdir='wkdir', timeout=1800, log_environ=False).exit(2)
+            .log('stdio', stdout=self.report({'compilation-cache': 12.0, 'build': 140.0}, removed=['compilation-cache'], sufficient=False)),
+        )
+        self.expect_outcome(result=RETRY, state_string='Only 12.0 GB free after cleanup, retrying build (retry)')
+        self.setProperty('workername', 'ews193')
+        yield self.run_step()
+        self.assertEqual(len(self._emails_list), 1)
+        self.assertIn('Subject: ews193 is low on disk space', self._emails_list[0])
+        self.assertIn('Reference: low-disk-space-ews193', self._emails_list[0])
+        self.build.workerforbuilder.worker.putInQuarantine.assert_called_once_with()
+
+    def test_failed_removal_is_reported(self):
+        self.setup_step(EnsureFreeDiskSpace())
+        self.expectRemoteCommands(
+            ExpectShell(command=self.COMMAND, workdir='wkdir', timeout=1800, log_environ=False).exit(0)
+            .log('stdio', stdout=self.report({'compilation-cache': 45.0, 'build': 45.0}, removed=['compilation-cache'], failed_to_remove=['build'])),
+        )
+        self.expect_outcome(result=WARNINGS, state_string='Failed to remove build directory, 45.0 GB free (warnings)')
+        return self.run_step()
+
+    def test_missing_report_does_not_block_build(self):
+        self.setup_step(EnsureFreeDiskSpace())
+        self.expectRemoteCommands(
+            ExpectShell(command=self.COMMAND, workdir='wkdir', timeout=1800, log_environ=False).exit(1)
+            .log('stdio', stdout='Traceback (most recent call last):\n'),
+        )
+        self.expect_outcome(result=WARNINGS, state_string='Unable to check free disk space (warnings)')
+        return self.run_step()
+
+
 class TestValidateChange(BuildStepMixinAdditions, unittest.TestCase):
     def setUp(self):
         return self.setup_test_build_step()
