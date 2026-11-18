@@ -1,0 +1,271 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+body {
+    margin: 0;
+}
+#container {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100px;
+    height: 50px;
+    background-color: rgb(0, 0, 255);
+}
+iframe {
+    position: absolute;
+    width: 50px;
+    height: 50px;
+    border: none;
+}
+#container iframe {
+    left: 50px;
+    top: 0;
+}
+#nested-host {
+    left: 0;
+    top: 100px;
+    width: 100px;
+}
+#same-origin-frame {
+    left: 0;
+    top: 200px;
+}
+</style>
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="../debugger/resources/site-isolation-debugger-test-utilities.js"></script>
+<script>
+function test() {
+    function colorName([r, g, b, a]) {
+        const near = (value, expected) => Math.abs(value - expected) <= 10;
+        if (!a)
+            return "transparent";
+        if (near(r, 0) && near(g, 0) && near(b, 255))
+            return "blue";
+        if (near(r, 0) && near(g, 128) && near(b, 0))
+            return "green";
+        if (near(r, 255) && near(g, 0) && near(b, 0))
+            return "red";
+        return `rgb(${r}, ${g}, ${b})`;
+    }
+
+    // Decodes the PNG and returns its size in device pixels and the colors at the given points, in CSS pixels.
+    async function decodeSnapshot(dataURL, cssWidth, points) {
+        let bytes = Uint8Array.from(atob(dataURL.substring(dataURL.indexOf(",") + 1)), (c) => c.charCodeAt(0));
+        let bitmap = await createImageBitmap(new Blob([bytes], {type: "image/png"}));
+        let canvas = document.createElement("canvas");
+        canvas.width = bitmap.width;
+        canvas.height = bitmap.height;
+        let context = canvas.getContext("2d");
+        context.drawImage(bitmap, 0, 0);
+
+        let scale = bitmap.width / cssWidth;
+        let colors = {};
+        for (let [name, [x, y]] of Object.entries(points))
+            colors[name] = colorName(context.getImageData(Math.floor(x * scale), Math.floor(y * scale), 1, 1).data);
+        return {width: bitmap.width, height: bitmap.height, colors};
+    }
+
+    // A frame's process can paint after the main frame's load event, so retry until the frame shows.
+    async function snapshotUntil(takeSnapshot, cssWidth, points, isDone) {
+        let snapshot;
+        for (let attempt = 0; attempt < 50; ++attempt) {
+            snapshot = await decodeSnapshot(await takeSnapshot(), cssWidth, points);
+            if (isDone(snapshot.colors))
+                break;
+            await new Promise((resolve) => setTimeout(resolve, 50));
+        }
+        return snapshot;
+    }
+
+    async function errorFrom(promise) {
+        try {
+            await promise;
+            return null;
+        } catch (error) {
+            return error;
+        }
+    }
+
+    // The helpers throw rather than return null, so a missing frame or node fails only the case that needs it.
+    async function frameTarget(urlSubstring) {
+        let target = await waitForFrameTargetForURLContaining(urlSubstring);
+        if (!target)
+            throw new Error(`Missing frame target for ${urlSubstring}.`);
+        return target;
+    }
+
+    // Returns a child of the body, from the DOM tree of the frame target for the frame whose URL contains urlSubstring.
+    async function bodyChildForFrame(urlSubstring, id) {
+        let target = await frameTarget(urlSubstring);
+
+        let frameDocument;
+        while (!(frameDocument = WI.domManager.frameTargetDocumentForTarget(target)))
+            await WI.domManager.awaitEvent(WI.DOMManager.Event.FrameDocumentAvailable);
+
+        let htmlNode = frameDocument.children.find((child) => child.nodeName() === "HTML");
+        await new Promise((resolve) => htmlNode.getChildNodes(resolve));
+        let bodyNode = htmlNode.children.find((child) => child.nodeName() === "BODY");
+        await new Promise((resolve) => bodyNode.getChildNodes(resolve));
+        let node = bodyNode.children.find((child) => child.getAttribute("id") === id);
+        if (!node)
+            throw new Error(`Missing #${id} in ${urlSubstring}.`);
+        return {target, node};
+    }
+
+    // Returns a node from the page target's DOM tree.
+    async function mainFrameNode(selector) {
+        let documentNode = await new Promise((resolve) => WI.domManager.requestDocument(resolve));
+        let node = WI.domManager.nodeForId(await documentNode.querySelector(selector));
+        if (!node)
+            throw new Error(`Missing ${selector} in the main frame.`);
+        return node;
+    }
+
+    // Returns a node of the same-origin iframe from the page target's DOM tree.
+    async function sameOriginFrameNode(selector) {
+        let iframeNode = await mainFrameNode("#same-origin-frame");
+        let frameDocument = await new Promise((resolve) => iframeNode.getChildNodes((children) => resolve(children[0])));
+        let node = WI.domManager.nodeForId(await frameDocument.querySelector(selector));
+        if (!node)
+            throw new Error(`Missing ${selector} in the same-origin iframe.`);
+        return node;
+    }
+
+    async function devicePixelRatio() {
+        return InspectorTest.evaluateInPage("window.devicePixelRatio");
+    }
+
+    async function expectNodeColorAndSize(node, color) {
+        let scale = await devicePixelRatio();
+        let snapshot = await decodeSnapshot(await node.snapshot(), 30, {center: [15, 10]});
+        InspectorTest.expectEqual(snapshot.colors.center, color, "Snapshot should contain the node's color.");
+        InspectorTest.expectEqual(snapshot.width, 30 * scale, "Snapshot width should be the CSS width times devicePixelRatio.");
+        InspectorTest.expectEqual(snapshot.height, 20 * scale, "Snapshot height should be the CSS height times devicePixelRatio.");
+    }
+
+    // The node is 100px by 50px: its own color on the left, a cross-origin iframe on the right.
+    async function expectContainerColorsAndSize(node, ownColor) {
+        let scale = await devicePixelRatio();
+        let snapshot = await snapshotUntil(() => node.snapshot(), 100, {own: [25, 25], iframe: [75, 25]}, (colors) => colors.iframe === "green");
+        InspectorTest.expectEqual(snapshot.colors.own, ownColor, "Snapshot should contain the node's own color.");
+        InspectorTest.expectEqual(snapshot.colors.iframe, "green", "Snapshot should contain the cross-origin iframe.");
+        InspectorTest.expectEqual(snapshot.width, 100 * scale, "Snapshot width should be the CSS width times devicePixelRatio.");
+        InspectorTest.expectEqual(snapshot.height, 50 * scale, "Snapshot height should be the CSS height times devicePixelRatio.");
+    }
+
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Page.SnapshotNodeCrossOriginIFrame");
+
+    suite.addTestCase({
+        name: "SiteIsolation.Page.SnapshotNodeCrossOriginIFrame.FrameTargetNode",
+        description: "WI.DOMNode.prototype.snapshot should paint a node of a cross-origin iframe through the backend target. No frames of other processes are below the iframe, so its own process paints the node.",
+        async test() {
+            let {target, node} = await bodyChildForFrame("snapshot-node-frame.html", "target");
+            InspectorTest.expectEqual(node.owningTarget, target, "Node should belong to the frame target.");
+            InspectorTest.expectThat(WI.networkManager.enabledPageForSiteIsolation, "Backend target's Page agent should be enabled.");
+            await expectNodeColorAndSize(node, "red");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Page.SnapshotNodeCrossOriginIFrame.FrameTargetNodeWithNestedCrossOriginIFrame",
+        description: "A node of a cross-origin iframe should include the iframe it contains from another process.",
+        async test() {
+            let {node} = await bodyChildForFrame("snapshot-node-nested-host-frame.html", "container");
+            await frameTarget("snapshot-rect-frame.html");
+            await expectContainerColorsAndSize(node, "red");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Page.SnapshotNodeCrossOriginIFrame.MainFrameNode",
+        description: "WI.DOMNode.prototype.snapshot should include a cross-origin iframe inside a main frame node.",
+        async test() {
+            await frameTarget("snapshot-node-frame.html");
+            let node = await mainFrameNode("#container");
+            InspectorTest.expectNull(node.owningTarget, "Node should belong to the page target.");
+            await expectContainerColorsAndSize(node, "blue");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Page.SnapshotNodeCrossOriginIFrame.MainFrameNodeThroughFrameTarget",
+        description: "A main frame node from the main frame's own frame target should include a cross-origin iframe inside it.",
+        async test() {
+            await frameTarget("snapshot-node-frame.html");
+            let {target, node} = await bodyChildForFrame("snapshot-node-cross-origin-iframe.html", "container");
+            InspectorTest.expectEqual(node.owningTarget, target, "Node should belong to the main frame's frame target.");
+            await expectContainerColorsAndSize(node, "blue");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Page.SnapshotNodeCrossOriginIFrame.SameOriginIFrameNode",
+        description: "A page target node in a same-origin iframe should be painted from its own frame.",
+        async test() {
+            let node = await sameOriginFrameNode("#target");
+            InspectorTest.expectNull(node.owningTarget, "Node should belong to the page target.");
+            await expectNodeColorAndSize(node, "red");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Page.SnapshotNodeCrossOriginIFrame.SameOriginIFrameNodeThroughFrameTarget",
+        description: "A node from the frame target of a same-origin iframe should be painted by the main frame's process. No frames of other processes are below that iframe.",
+        async test() {
+            let {target, node} = await bodyChildForFrame("about:srcdoc", "target");
+            InspectorTest.expectEqual(node.owningTarget, target, "Node should belong to the iframe's frame target.");
+            await expectNodeColorAndSize(node, "red");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Page.SnapshotNodeCrossOriginIFrame.PageTarget",
+        description: "Page.snapshotNode on the page target paints only the frames of the main frame's process.",
+        async test() {
+            let containerNode = await mainFrameNode("#container");
+            let {dataURL} = await WI.pageTarget.PageAgent.snapshotNode(containerNode.id);
+            let snapshot = await decodeSnapshot(dataURL, 100, {own: [25, 25], iframe: [75, 25]});
+            InspectorTest.expectEqual(snapshot.colors.own, "blue", "Snapshot should contain the node's own color.");
+            InspectorTest.expectNotEqual(snapshot.colors.iframe, "green", "Snapshot should not contain the cross-origin iframe.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Page.SnapshotNodeCrossOriginIFrame.Errors",
+        description: "Page.snapshotNode should fail for an unknown target or node.",
+        async test() {
+            let {target, node} = await bodyChildForFrame("snapshot-node-frame.html", "target");
+            let containerNode = await mainFrameNode("#container");
+            const missingNodeId = 999999;
+
+            let error = await errorFrom(WI.backendTarget.PageAgent.snapshotNode(node.backendNodeId, "frame-0-0"));
+            InspectorTest.expectThat(error, "Should fail for an unknown targetId.");
+            InspectorTest.log("Error: " + error?.message);
+
+            error = await errorFrom(WI.backendTarget.PageAgent.snapshotNode(missingNodeId, target.identifier));
+            InspectorTest.expectThat(error, "Should fail for an unknown nodeId in a frame target.");
+            InspectorTest.log("Error: " + error?.message);
+
+            error = await errorFrom(WI.backendTarget.PageAgent.snapshotNode(missingNodeId));
+            InspectorTest.expectThat(error, "Should fail for an unknown nodeId in the page target.");
+            InspectorTest.log("Error: " + error?.message);
+
+            error = await errorFrom(WI.pageTarget.PageAgent.snapshotNode(containerNode.id, target.identifier));
+            InspectorTest.expectThat(error, "Page target should reject a targetId.");
+            InspectorTest.log("Error: " + error?.message);
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<div id="container"><iframe src="http://localhost:8000/site-isolation/inspector/page/resources/snapshot-node-frame.html"></iframe></div>
+<iframe id="nested-host" src="http://localhost:8000/site-isolation/inspector/page/resources/snapshot-node-nested-host-frame.html"></iframe>
+<iframe id="same-origin-frame" srcdoc="<style>body { margin: 0; } #target { width: 30px; height: 20px; background-color: rgb(255, 0, 0); }</style><div id='target'></div>"></iframe>
+</body>
+</html>

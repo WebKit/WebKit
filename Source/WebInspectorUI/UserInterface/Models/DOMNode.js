@@ -826,6 +826,20 @@ WI.DOMNode = class DOMNode extends WI.Object
         });
     }
 
+    async snapshot()
+    {
+        // Under Site Isolation only the backend target can draw frames that other processes host.
+        if (WI.backendTarget && WI.networkManager.enabledPageForSiteIsolation && WI.backendTarget.hasCommand("Page.snapshotNode", "targetId")) {
+            let {dataURL} = await WI.backendTarget.PageAgent.snapshotNode(this.backendNodeId, this.owningTarget?.identifier);
+            return dataURL;
+        }
+
+        console.assert(!this.owningTarget, this);
+        let target = WI.assumingMainTarget();
+        let {dataURL} = await target.PageAgent.snapshotNode(this.id);
+        return dataURL;
+    }
+
     getChildNodes(callback)
     {
         if (this.children) {

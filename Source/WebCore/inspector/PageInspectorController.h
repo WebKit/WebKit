@@ -115,6 +115,8 @@ public:
 
     void inspect(Node*);
     static bool isCoveredByPageDOMAgent(const LocalFrame&);
+    // The node that the page DOM agent gave this protocol id, if it still has one.
+    WEBCORE_EXPORT RefPtr<Node> nodeForId(int nodeId) const;
     NODELETE WEBCORE_EXPORT bool shouldShowOverlay() const;
     WEBCORE_EXPORT void drawHighlight(GraphicsContext&) const;
     WEBCORE_EXPORT void getHighlight(InspectorOverlay::Highlight&, InspectorOverlay::CoordinateSystem) const;
