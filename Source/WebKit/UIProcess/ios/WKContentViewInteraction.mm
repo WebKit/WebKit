@@ -9584,7 +9584,7 @@ static bool canUseQuickboardControllerFor(UITextContentType type)
                 return { };
             }();
             _lastSiblingBeforeSelectionHighlight = [self _siblingBeforeSelectionHighlight];
-            _lastSelectionContainerViewOrigin = [containerView frame].origin;
+            _lastSelectionContainerViewOrigin = [self _originOfSelectionContainerView:containerView.get()];
         }
 
         _selectionNeedsUpdate = NO;
@@ -9624,6 +9624,14 @@ static bool canUseQuickboardControllerFor(UITextContentType type)
     return [[_textInteractionWrapper selectionHighlightView] _wk_previousSibling];
 }
 
+- (CGPoint)_originOfSelectionContainerView:(UIView *)selectionContainer
+{
+    RetainPtr<UIView> referenceView = [selectionContainer _wk_parentScrollView];
+    if (!referenceView)
+        referenceView = self;
+    return [selectionContainer convertPoint:CGPointZero toView:referenceView.get()];
+}
+
 - (void)_updateSelectionViewsIfNeeded
 {
     RetainPtr selectionContainer = [self _selectionContainerViewInternal];
@@ -9651,8 +9659,9 @@ static bool canUseQuickboardControllerFor(UITextContentType type)
         if (selectionContainer == self)
             return NO;
 
-        auto previousOrigin = std::exchange(_lastSelectionContainerViewOrigin, [selectionContainer frame].origin);
-        return previousOrigin && !CGPointEqualToPoint(*previousOrigin, [selectionContainer frame].origin);
+        auto origin = [self _originOfSelectionContainerView:selectionContainer.get()];
+        auto previousOrigin = std::exchange(_lastSelectionContainerViewOrigin, origin);
+        return previousOrigin && !CGPointEqualToPoint(*previousOrigin, origin);
     };
 
     BOOL needsUpdateDueToScrolling = updateLastSelectionChildScrollViewContentOffset();
