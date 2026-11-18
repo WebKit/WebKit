@@ -44,6 +44,7 @@
 #include "HitTestResult.h"
 #include "ImageBuffer.h"
 #include "InlineIteratorInlineBox.h"
+#include "LayoutIntegrationLineLayout.h"
 #include "LayoutRepainter.h"
 #include "LayoutScope.h"
 #include "LocalFrame.h"
@@ -409,10 +410,14 @@ void RenderBlock::endAndCommitUpdateScrollInfoAfterLayoutTransaction()
         // (e.g. via prepareOutOfFlowBoxForPositionedLayout). Process them now since those containing blocks have
         // already completed their own layoutOutOfFlowBoxes pass.
         for (CheckedPtr ancestor = block->parent(); ancestor && ancestor != this; ancestor = ancestor->parent()) {
-            CheckedPtr renderBlock = dynamicDowncast<RenderBlock>(*ancestor);
-            if (!renderBlock || !renderBlock->outOfFlowChildNeedsLayout())
+            if (!ancestor->outOfFlowChildNeedsLayout())
                 continue;
-            renderBlock->layoutOutOfFlowBoxes(RelayoutChildren::No);
+            if (CheckedPtr renderBlock = dynamicDowncast<RenderBlock>(*ancestor))
+                renderBlock->layoutOutOfFlowBoxes(RelayoutChildren::No);
+            else if (ancestor->isInlineBox()) {
+                if (CheckedPtr lineLayout = LayoutIntegration::LineLayout::containing(*ancestor))
+                    lineLayout->layoutOutOfFlowBoxes(downcast<RenderBoxModelObject>(*ancestor), RelayoutChildren::No);
+            }
         }
     }
 }
@@ -663,6 +668,12 @@ static LayoutSize offsetFromBlock(const RenderBlock& block, const RenderBox& out
     return offset;
 }
 
+static LayoutIntegration::LineLayout* inlineFormattingContext(RenderBlock& block)
+{
+    auto* blockFlow = dynamicDowncast<RenderBlockFlow>(block);
+    return blockFlow ? blockFlow->inlineLayout() : nullptr;
+}
+
 void RenderBlock::addOverflowFromOutOfFlowBoxes()
 {
     TrackedRendererListHashSet* outOfFlowDescendants = outOfFlowBoxes();
@@ -778,19 +789,28 @@ bool RenderBlock::simplifiedLayout()
     if (needsSimplifiedNormalFlowLayout())
         simplifiedNormalFlowLayout();
 
-    // Recompute our overflow information.
-    // FIXME: Skip recalculation if we didn't actually relayout our in-flow boxes and don't have cached overflow.
-    auto contentArea = hasRenderOverflow() ? m_overflow->contentArea() : blockStartRelativeContentBoxRect();
-    computeInFlowOverflow(contentArea, ComputeOverflowOptions::RecomputeFloats);
-
     // Lay out our positioned objects if our positioned child bit is set.
     // Also, if an absolute position element inside a relative positioned container moves, and the absolute element has a fixed position
     // child, neither the fixed element nor its container learn of the movement since outOfFlowChildNeedsLayout() is only marked as far as the
     // relative positioned container. So if we can have fixed pos objects in our positioned objects list check if any of them
     // are statically positioned and thus need to move with their absolute ancestors.
     bool canContainFixedPosObjects = canContainFixedPositionObjects();
-    if (outOfFlowChildNeedsLayout() || canContainFixedPosObjects)
-        layoutOutOfFlowBoxes(RelayoutChildren::No, !outOfFlowChildNeedsLayout() && canContainFixedPosObjects);
+    auto needsOutOfFlowBoxesLayout = outOfFlowChildNeedsLayout() || canContainFixedPosObjects;
+    auto fixedPositionObjectsOnly = !outOfFlowChildNeedsLayout() && canContainFixedPosObjects ? FixedPositionObjectsOnly::Yes : FixedPositionObjectsOnly::No;
+    // Simplified layout doesn't run line layout, which lays out the out-of-flow boxes of the inline boxes. Their overflow is part
+    // of the overflow of the inline content, so they are laid out before it is collected.
+    if (needsOutOfFlowBoxesLayout) {
+        if (CheckedPtr inlineLayout = inlineFormattingContext(*this))
+            inlineLayout->layoutOutOfFlowBoxes(RelayoutChildren::No, fixedPositionObjectsOnly);
+    }
+
+    // Recompute our overflow information.
+    // FIXME: Skip recalculation if we didn't actually relayout our in-flow boxes and don't have cached overflow.
+    auto contentArea = hasRenderOverflow() ? m_overflow->contentArea() : blockStartRelativeContentBoxRect();
+    computeInFlowOverflow(contentArea, ComputeOverflowOptions::RecomputeFloats);
+
+    if (needsOutOfFlowBoxesLayout)
+        layoutOutOfFlowBoxes(RelayoutChildren::No, fixedPositionObjectsOnly);
     addOverflowFromOutOfFlowBoxes();
 
     // Transform-origin depends on box size. When simplified layout doesn't change our
@@ -808,13 +828,13 @@ bool RenderBlock::simplifiedLayout()
     return true;
 }
 
-void RenderBlock::markFixedPositionBoxForLayoutIfNeeded(RenderBox& positionedChild)
+static void markFixedPositionBoxForLayoutIfNeeded(RenderBox& positionedChild, const RenderBoxModelObject& containingBlock)
 {
     if (positionedChild.style().position() != PositionType::Fixed)
         return;
 
-    bool hasStaticBlockPosition = positionedChild.style().hasStaticBlockPosition(isHorizontalWritingMode());
-    bool hasStaticInlinePosition = positionedChild.style().hasStaticInlinePosition(isHorizontalWritingMode());
+    bool hasStaticBlockPosition = positionedChild.style().hasStaticBlockPosition(containingBlock.isHorizontalWritingMode());
+    bool hasStaticInlinePosition = positionedChild.style().hasStaticInlinePosition(containingBlock.isHorizontalWritingMode());
     if (!hasStaticBlockPosition && !hasStaticInlinePosition)
         return;
 
@@ -825,7 +845,7 @@ void RenderBlock::markFixedPositionBoxForLayoutIfNeeded(RenderBox& positionedChi
         return;
 
     if (hasStaticInlinePosition) {
-        LogicalExtentComputedValues computedValues;
+        RenderBox::LogicalExtentComputedValues computedValues;
         positionedChild.computeLogicalWidth(computedValues);
         LayoutUnit newLeft = computedValues.position;
         if (newLeft != positionedChild.logicalLeft())
@@ -847,22 +867,34 @@ std::pair<LayoutUnit, LayoutUnit> RenderBlock::intrinsicLogicalMarginStartAndEnd
     return { startValue, endValue };
 }
 
-void RenderBlock::layoutOutOfFlowBox(RenderBox& outOfFlowBox, RelayoutChildren relayoutChildren, bool fixedPositionObjectsOnly)
+void layoutOutOfFlowBox(RenderBox& outOfFlowBox, RenderBoxModelObject& containingBlock, RelayoutChildren relayoutChildren, FixedPositionObjectsOnly fixedPositionObjectsOnly)
 {
     ASSERT(outOfFlowBox.isOutOfFlowPositioned());
 
-    if (layoutContext().isSkippedContentRootForLayout(*this)) {
+    // An inline box has no fragment range or layout state of its own and can't skip its contents, so fragmentation, pagination
+    // and content-visibility use its block container.
+    CheckedRef enclosingBlock = [&] -> RenderBlock& {
+        if (containingBlock.isInlineBox())
+            return *LayoutIntegration::LineLayout::blockContainer(containingBlock);
+        return downcast<RenderBlock>(containingBlock);
+    }();
+
+    // A box that skips its contents also contains its out-of-flow descendants (layout containment).
+    if (enclosingBlock->layoutContext().isSkippedContentRootForLayout(enclosingBlock)) {
         outOfFlowBox.clearNeedsLayoutForSkippedContent();
         return;
     }
 
-    estimateFragmentRangeForBoxChild(outOfFlowBox);
+    if (CheckedPtr grid = dynamicDowncast<RenderGrid>(containingBlock))
+        grid->setGridAreaContentSizeForOutOfFlow(outOfFlowBox);
+
+    enclosingBlock->estimateFragmentRangeForBoxChild(outOfFlowBox);
 
     // A fixed position element with an absolute positioned ancestor has no way of knowing if the latter has changed position. So
     // if this is a fixed position element, mark it for layout if it has an abspos ancestor and needs to move with that ancestor, i.e. 
     // it has static position.
-    markFixedPositionBoxForLayoutIfNeeded(outOfFlowBox);
-    if (fixedPositionObjectsOnly) {
+    markFixedPositionBoxForLayoutIfNeeded(outOfFlowBox, containingBlock);
+    if (fixedPositionObjectsOnly == FixedPositionObjectsOnly::Yes) {
         outOfFlowBox.layoutIfNeeded();
         return;
     }
@@ -875,11 +907,11 @@ void RenderBlock::layoutOutOfFlowBox(RenderBox& outOfFlowBox, RelayoutChildren r
     auto needsLayout = [&] {
         if (relayoutChildren == RelayoutChildren::Yes)
             return true;
-        if (outOfFlowBox.parent() == this)
+        if (outOfFlowBox.parent() == &containingBlock)
             return false;
-        if (outOfFlowBoxStyle.hasStaticBlockPosition(isHorizontalWritingMode()))
+        if (outOfFlowBoxStyle.hasStaticBlockPosition(containingBlock.isHorizontalWritingMode()))
             return true;
-        if (outOfFlowBoxStyle.hasStaticInlinePosition(isHorizontalWritingMode())) {
+        if (outOfFlowBoxStyle.hasStaticInlinePosition(containingBlock.isHorizontalWritingMode())) {
             // FIXME: We could just set the logical left on this out-of-flow box since the box itself does not really need layout (we are just moving an out-of-flow renderer here).
             return outOfFlowBox.logicalLeft() != PositionedLayoutConstraints { outOfFlowBox, LogicalBoxAxis::Inline }.computedInlineStaticDistance();
         }
@@ -904,15 +936,18 @@ void RenderBlock::layoutOutOfFlowBox(RenderBox& outOfFlowBox, RelayoutChildren r
 
     // If we are paginated or in a line grid, compute a vertical position for our object now.
     // If it's wrong we'll lay out again.
+    auto logicalTopInContainingBlock = [&] {
+        return containingBlock.isHorizontalWritingMode() ? outOfFlowBox.y() : outOfFlowBox.x();
+    };
     LayoutUnit oldLogicalTop;
-    auto* layoutState = view().frameView().layoutContext().layoutState();
+    auto* layoutState = outOfFlowBox.layoutContext().layoutState();
     bool needsBlockDirectionLocationSetBeforeLayout = outOfFlowBox.needsLayout() && layoutState && layoutState->needsBlockDirectionLocationSetBeforeLayout();
     if (needsBlockDirectionLocationSetBeforeLayout) {
-        if (isHorizontalWritingMode() == outOfFlowBox.isHorizontalWritingMode())
+        if (containingBlock.isHorizontalWritingMode() == outOfFlowBox.isHorizontalWritingMode())
             outOfFlowBox.updateLogicalHeight();
         else
             outOfFlowBox.updateLogicalWidth();
-        oldLogicalTop = logicalTopForChild(outOfFlowBox);
+        oldLogicalTop = logicalTopInContainingBlock();
     }
 
     outOfFlowBox.layoutIfNeeded();
@@ -928,25 +963,25 @@ void RenderBlock::layoutOutOfFlowBox(RenderBox& outOfFlowBox, RelayoutChildren r
     }
 
     // Lay out again if our estimate was wrong.
-    if (layoutChanged || (needsBlockDirectionLocationSetBeforeLayout && logicalTopForChild(outOfFlowBox) != oldLogicalTop)) {
+    if (layoutChanged || (needsBlockDirectionLocationSetBeforeLayout && logicalTopInContainingBlock() != oldLogicalTop)) {
         outOfFlowBox.setChildNeedsLayout(MarkingBehavior::OnlyThis);
         outOfFlowBox.layoutIfNeeded();
     }
 
-    if (updateFragmentRangeForBoxChild(outOfFlowBox)) {
+    if (enclosingBlock->updateFragmentRangeForBoxChild(outOfFlowBox)) {
         outOfFlowBox.setNeedsLayout(MarkingBehavior::OnlyThis);
         outOfFlowBox.layoutIfNeeded();
     }
     
     if (layoutState && layoutState->isPaginated()) {
-        if (CheckedPtr blockFlow = dynamicDowncast<RenderBlockFlow>(*this)) {
-            auto offset = offsetFromBlock(*this, outOfFlowBox);
+        if (CheckedPtr blockFlow = dynamicDowncast<RenderBlockFlow>(enclosingBlock)) {
+            auto offset = offsetFromBlock(*blockFlow, outOfFlowBox);
             blockFlow->adjustSizeContainmentChildForPagination(outOfFlowBox, outOfFlowBox.isHorizontalWritingMode() ? offset.height() : offset.width());
         }
     }
 }
 
-void RenderBlock::layoutOutOfFlowBoxes(RelayoutChildren relayoutChildren, bool fixedPositionObjectsOnly)
+void RenderBlock::layoutOutOfFlowBoxes(RelayoutChildren relayoutChildren, FixedPositionObjectsOnly fixedPositionObjectsOnly)
 {
     auto* outOfFlowDescendants = outOfFlowBoxes();
     if (!outOfFlowDescendants)
@@ -955,7 +990,7 @@ void RenderBlock::layoutOutOfFlowBoxes(RelayoutChildren relayoutChildren, bool f
     // Do not cache outOfFlowDescendants->end() in a local variable, since |outOfFlowDescendants| can be mutated
     // as it is walked. We always need to fetch the new end() value dynamically.
     for (auto& descendant : *outOfFlowDescendants)
-        layoutOutOfFlowBox(descendant, relayoutChildren, fixedPositionObjectsOnly);
+        layoutOutOfFlowBox(descendant, *this, relayoutChildren, fixedPositionObjectsOnly);
     setOutOfFlowChildNeedsLayoutBit(false);
 }
 
@@ -1533,6 +1568,11 @@ GapRects RenderBlock::selectionGaps(RenderBlock& rootBlock, const LayoutPoint& r
         rootBlock.blockStartRelativeToPhysical(physicalBlockRect);
         physicalBlockRect.moveBy(rootBlockPhysicalPosition);
         clipOutOutOfFlowBoxes(paintInfo, physicalBlockRect.location(), outOfFlowBoxes());
+        if (CheckedPtr inlineLayout = inlineFormattingContext(*this)) {
+            // The out-of-flow boxes of an inline box are positioned relative to the inline box.
+            for (auto& inlineBox : inlineLayout->inlineBoxesThatCanContainOutOfFlowBoxes())
+                clipOutOutOfFlowBoxes(paintInfo, physicalBlockRect.location() + toLayoutSize(inlineBox->blockStartRelativeFirstFragmentBorderBoxRect().location()), inlineBox->outOfFlowBoxes());
+        }
         if (isBody() || isDocumentElementRenderer()) { // The <body> must make sure to examine its containingBlock's positioned objects.
             for (auto* ancestor = containingBlock(); ancestor && !is<RenderView>(*ancestor); ancestor = ancestor->containingBlock())
                 clipOutOutOfFlowBoxes(paintInfo, LayoutPoint(ancestor->x(), ancestor->y()), ancestor->outOfFlowBoxes()); // FIXME: Not right for flipped writing modes.

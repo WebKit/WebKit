@@ -42,6 +42,7 @@ struct RenderBlockRareData;
 
 enum CaretType { CursorCaret, DragCaret };
 enum class RelayoutChildren : bool { No, Yes };
+enum class FixedPositionObjectsOnly : bool { No, Yes };
 
 enum TextRunFlag {
     DefaultTextRunFlags = 0,
@@ -248,7 +249,10 @@ public:
 
     PaintInfo paintInfoForBlockChildren(const PaintInfo&) const;
 
-    void layoutOutOfFlowBoxes(RelayoutChildren, bool fixedPositionObjectsOnly = false);
+    void layoutOutOfFlowBoxes(RelayoutChildren, FixedPositionObjectsOnly = FixedPositionObjectsOnly::No);
+
+    void estimateFragmentRangeForBoxChild(const RenderBox&) const;
+    bool updateFragmentRangeForBoxChild(const RenderBox&) const;
 
     static void relayoutRenderBlockForScrollbarChange(RenderBlock&);
 
@@ -264,10 +268,6 @@ protected:
     bool establishesIndependentFormattingContextIgnoringDisplayType(const Style::ComputedStyle&) const;
 
     void layout() override;
-
-    virtual void layoutOutOfFlowBox(RenderBox&, RelayoutChildren, bool fixedPositionObjectsOnly);
-    
-    void markFixedPositionBoxForLayoutIfNeeded(RenderBox& child);
 
     std::pair<LayoutUnit, LayoutUnit> intrinsicLogicalMarginStartAndEnd(const RenderBox&) const;
     inline LayoutUnit marginIntrinsicLogicalWidthForChild(const RenderBox&) const;
@@ -313,9 +313,6 @@ protected:
     void addVisualOverflowFromTheme();
 
     void computeFragmentRangeForBoxChild(const RenderBox&) const;
-
-    void estimateFragmentRangeForBoxChild(const RenderBox&) const;
-    bool updateFragmentRangeForBoxChild(const RenderBox&) const;
 
     void updateBlockChildDirtyBitsBeforeLayout(RelayoutChildren, RenderBox&);
 
@@ -400,6 +397,8 @@ private:
 NODELETE LayoutUnit blockDirectionOffset(RenderBlock& rootBlock, const LayoutSize& offsetFromRootBlock);
 NODELETE LayoutUnit inlineDirectionOffset(RenderBlock& rootBlock, const LayoutSize& offsetFromRootBlock);
 PositionWithAffinity positionForPointRespectingEditingBoundaries(RenderBlock&, RenderBox&, const LayoutPoint&, HitTestSource);
+// The containing block is a block or an inline box.
+void layoutOutOfFlowBox(RenderBox& outOfFlowBox, RenderBoxModelObject& containingBlock, RelayoutChildren, FixedPositionObjectsOnly);
 
 } // namespace WebCore
 
