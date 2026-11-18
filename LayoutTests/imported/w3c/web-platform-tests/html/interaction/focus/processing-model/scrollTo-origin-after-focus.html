@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html class="reftest-wait">
+<meta charset="utf-8">
+<title>window.scrollTo(0, 0) right after focus() keeps the page at the top</title>
+<link rel="author" title="Manuel Rego Casasnovas" href="mailto:rego@igalia.com">
+<link rel="help" href="https://html.spec.whatwg.org/multipage/interaction.html#dom-focus">
+<link rel="help" href="https://drafts.csswg.org/cssom-view/#dom-window-scrollto">
+<link rel="match" href="/css/reference/ref-filled-green-100px-square-only.html">
+<meta name="assert" content="focus() scrolls the focused element into view, and a later window.scrollTo(0, 0) scrolls the page back to the top.">
+<style>
+  html {
+    overflow: hidden;
+  }
+  #target {
+    margin-top: 200vh;
+    width: 100px;
+    height: 100px;
+    background: red;
+    outline: none;
+  }
+</style>
+<p>Test passes if there is a filled green square.</p>
+<div style="width:100px; height:100px; background:green;"></div>
+<div id="target" tabindex="-1"></div>
+<script src="/common/reftest-wait.js"></script>
+<script>
+  target.focus();
+  window.scrollTo(0, 0);
+  requestAnimationFrame(() => requestAnimationFrame(takeScreenshot));
+</script>
+</html>
