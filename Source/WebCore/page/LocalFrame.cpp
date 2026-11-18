@@ -417,6 +417,7 @@ void LocalFrame::invalidateContentEventRegionsIfNeeded(InvalidateContentEventReg
     bool needsUpdateForTouchActionElements = false;
     bool needsUpdateForEditableElements = false;
     bool needsUpdateForInteractionRegions = false;
+    bool needsUpdateForControlTrackingRegions = false;
 #if ENABLE(WHEEL_EVENT_REGIONS)
     needsUpdateForWheelEventHandlers = document->hasWheelEventHandlers() || document->mayHaveListBoxes() || reason == InvalidateContentEventRegionsReason::EventHandlerChange;
 #else
@@ -440,8 +441,11 @@ void LocalFrame::invalidateContentEventRegionsIfNeeded(InvalidateContentEventReg
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
     needsUpdateForInteractionRegions = page()->shouldBuildInteractionRegions();
 #endif
+#if ENABLE(CONTROL_TRACKING_REGIONS)
+    needsUpdateForControlTrackingRegions = document->mayHaveControlTrackingRegions() && document->settings().controlTouchTrackingEnabled();
+#endif
 
-    if (!needsUpdateForTouchActionElements && !needsUpdateForEditableElements && !needsUpdateForWheelEventHandlers && !needsUpdateForInteractionRegions && !needsUpdateForTouchEventHandlers)
+    if (!needsUpdateForTouchActionElements && !needsUpdateForEditableElements && !needsUpdateForWheelEventHandlers && !needsUpdateForInteractionRegions && !needsUpdateForTouchEventHandlers && !needsUpdateForControlTrackingRegions)
         return;
 
     if (!protect(protect(document->renderView())->compositor())->viewNeedsToInvalidateEventRegionOfEnclosingCompositingLayerForRepaint())

@@ -1,0 +1,118 @@
+<!doctype html>
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="../../../../resources/js-test.js"></script>
+<script src="../../../../resources/ui-helper.js"></script>
+<script src="resources/switch-touch.js"></script>
+<style>
+#vertical { writing-mode: vertical-lr; }
+</style>
+<p><input type=checkbox switch id=horizontal></p>
+<p><input type=checkbox switch id=vertical></p>
+<div id="console"></div>
+<div style="height: 300vh"></div>
+<p><input type=checkbox switch id=further></p>
+<div style="height: 100vh"></div>
+<script>
+description("A drag that starts on a switch scrolls the page if the page can scroll along it. Otherwise, or after a hold, it moves the switch's thumb.");
+jsTestIsAsync = true;
+
+const horizontal = document.getElementById("horizontal");
+const vertical = document.getElementById("vertical");
+const further = document.getElementById("further");
+let input;
+let clicks = 0;
+let activeOnClick = false;
+for (const element of [horizontal, vertical, further])
+    element.addEventListener("click", () => ++clicks);
+
+async function reset(element, scrollTop = 0)
+{
+    input = element;
+    scrollTo(0, scrollTop);
+    input.checked = false;
+    getSelection().removeAllRanges();
+    await settle();
+    clicks = 0;
+}
+
+(async () => {
+    if (!UIHelper.isIOSFamily()) {
+        testPassed("Not applicable outside iOS.");
+        finishJSTest();
+        return;
+    }
+
+    debug("A tap:");
+    await reset(horizontal);
+    input.addEventListener("click", () => activeOnClick = navigator.userActivation.isActive, { once: true });
+    await touch(input, [{ wait: 0.05 }]);
+    shouldBeTrue("input.checked");
+    shouldBe("clicks", "1");
+    shouldBeTrue("activeOnClick");
+
+    debug("A drag right after a tap:");
+    await reset(horizontal);
+    await touch(input, [{ wait: 0.05 }], { waitOutDoubleTapInterval: false });
+    await touch(input, [{ move: [-2 * input.offsetWidth, 0] }]);
+    shouldBeFalse("input.checked");
+    shouldBe("clicks", "2");
+    shouldBeTrue("getSelection().isCollapsed");
+
+    debug("A drag sideways, which the page cannot scroll:");
+    await reset(horizontal);
+    await touch(input, [{ move: [2 * input.offsetWidth, 0] }]);
+    shouldBeTrue("input.checked");
+    shouldBe("clicks", "1");
+    shouldBe("Math.round(scrollY)", "0");
+
+    debug("A drag up, which the page can scroll:");
+    await reset(horizontal);
+    await touch(input, [{ move: [0, -150] }]);
+    shouldBeFalse("input.checked");
+    shouldBe("clicks", "0");
+    shouldBeTrue("scrollY > 0");
+
+    debug("A drag up on a vertical switch, which the page can scroll too:");
+    await reset(vertical);
+    await touch(input, [{ move: [0, -150] }]);
+    shouldBeFalse("input.checked");
+    shouldBe("clicks", "0");
+    shouldBeTrue("scrollY > 0");
+
+    debug("A drag down on a vertical switch after a hold:");
+    await reset(vertical);
+    await touch(input, [{ wait: 0.3 }, { move: [0, 2 * input.offsetHeight] }]);
+    shouldBeTrue("input.checked");
+    shouldBe("clicks", "1");
+    shouldBe("Math.round(scrollY)", "0");
+
+    debug("A hold, then a release:");
+    await reset(horizontal);
+    await touch(input, [{ wait: 0.3 }]);
+    shouldBeTrue("input.checked");
+    shouldBe("clicks", "1");
+
+    debug("A drag to the other end and back:");
+    await reset(horizontal);
+    await touch(input, [{ move: [2 * input.offsetWidth, 0] }, { move: [0, 0] }]);
+    shouldBeFalse("input.checked");
+    shouldBe("clicks", "0");
+
+    debug("A hold, then a release outside the switch without moving its thumb:");
+    await reset(horizontal);
+    await touch(input, [{ wait: 0.3 }, { move: [0, -4 * input.offsetHeight] }]);
+    shouldBeFalse("input.checked");
+    shouldBe("clicks", "0");
+    shouldBe("Math.round(scrollY)", "0");
+
+    debug("A hold, then a release, on a switch further down the page:");
+    await reset(further, scrollY + further.getBoundingClientRect().top - 200);
+    await touch(input, [{ wait: 0.3 }]);
+    shouldBeTrue("input.checked");
+    shouldBe("clicks", "1");
+
+    finishJSTest();
+})();
+</script>
+</html>

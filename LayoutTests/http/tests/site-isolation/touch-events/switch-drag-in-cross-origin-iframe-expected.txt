@@ -1,0 +1,27 @@
+A switch in a cross-origin iframe: a drag that the page can scroll scrolls it, and a sideways drag moves the switch's thumb.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+A tap:
+PASS state.checked is true
+PASS state.clicks is 1
+A drag up, which the page can scroll:
+PASS state.checked is false
+PASS state.clicks is 0
+PASS scrollY > 0 is true
+A drag sideways, which the page cannot scroll:
+PASS state.checked is true
+PASS state.clicks is 1
+PASS Math.round(scrollY) is 0
+A hold, then a release:
+PASS state.checked is true
+PASS state.clicks is 1
+A hold, then a release outside the switch without moving its thumb:
+PASS state.checked is false
+PASS state.clicks is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+

@@ -1,0 +1,50 @@
+
+
+A drag that starts on a switch scrolls the page if the page can scroll along it. Otherwise, or after a hold, it moves the switch's thumb.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+A tap:
+PASS input.checked is true
+PASS clicks is 1
+PASS activeOnClick is true
+A drag right after a tap:
+PASS input.checked is false
+PASS clicks is 2
+PASS getSelection().isCollapsed is true
+A drag sideways, which the page cannot scroll:
+PASS input.checked is true
+PASS clicks is 1
+PASS Math.round(scrollY) is 0
+A drag up, which the page can scroll:
+PASS input.checked is false
+PASS clicks is 0
+PASS scrollY > 0 is true
+A drag up on a vertical switch, which the page can scroll too:
+PASS input.checked is false
+PASS clicks is 0
+PASS scrollY > 0 is true
+A drag down on a vertical switch after a hold:
+PASS input.checked is true
+PASS clicks is 1
+PASS Math.round(scrollY) is 0
+A hold, then a release:
+PASS input.checked is true
+PASS clicks is 1
+A drag to the other end and back:
+PASS input.checked is false
+PASS clicks is 0
+A hold, then a release outside the switch without moving its thumb:
+PASS input.checked is false
+PASS clicks is 0
+PASS Math.round(scrollY) is 0
+A hold, then a release, on a switch further down the page:
+PASS input.checked is true
+PASS clicks is 1
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+
+

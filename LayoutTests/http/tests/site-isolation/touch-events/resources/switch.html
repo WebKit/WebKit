@@ -1,0 +1,16 @@
+<!doctype html>
+<style>body { margin: 20px; }</style>
+<input type=checkbox switch>
+<script>
+const input = document.querySelector("input");
+let clicks = 0;
+input.addEventListener("click", () => ++clicks);
+addEventListener("message", event => {
+    if (event.data == "reset") {
+        input.checked = false;
+        clicks = 0;
+    }
+    const rect = input.getBoundingClientRect();
+    event.source.postMessage({ checked: input.checked, clicks, x: rect.left + rect.width / 2, y: rect.top + rect.height / 2, width: rect.width }, "*");
+});
+</script>

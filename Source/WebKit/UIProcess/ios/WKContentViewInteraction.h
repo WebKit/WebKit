@@ -71,6 +71,9 @@
 #import <WebCore/DataOwnerType.h>
 #import <WebCore/DigitalCredentialsRequestData.h>
 #import <WebCore/FloatQuad.h>
+#if ENABLE(CONTROL_TRACKING_REGIONS)
+#import <WebCore/EventRegion.h>
+#endif
 #import <WebCore/MediaControlsContextMenuItem.h>
 #import <WebCore/PointerID.h>
 #import <WebCore/SelectionType.h>
@@ -148,6 +151,7 @@ enum class PickerDismissalReason : uint8_t;
 @class WebTextIndicatorLayer;
 @class WKActionSheetAssistant;
 @class WKContextMenuElementInfo;
+@class WKControlTrackingGestureRecognizer;
 @class WKDataListSuggestionsControl;
 @class WKFocusedFormControlView;
 @class WKFormInputSession;
@@ -338,6 +342,14 @@ struct ImageAnalysisContextMenuActionData {
     RetainPtr<UIMenu> machineReadableCodeMenu;
 };
 
+#if ENABLE(CONTROL_TRACKING_REGIONS)
+struct ControlTrackingEnd {
+    WebCore::ControlTrackingTarget target;
+    WebCore::IntPoint location;
+    bool isTap { false };
+};
+#endif
+
 } // namespace WebKit
 
 @class WKExtendedTextInputTraits;
@@ -379,6 +391,10 @@ struct ImageAnalysisContextMenuActionData {
     RetainPtr<WKSyntheticTapGestureRecognizer> _doubleTapGestureRecognizer;
 #if ENABLE(MODEL_PROCESS)
     RetainPtr<UIPanGestureRecognizer> _modelInteractionPanGestureRecognizer;
+#endif
+#if ENABLE(CONTROL_TRACKING_REGIONS)
+    RetainPtr<WKControlTrackingGestureRecognizer> _controlTrackingGestureRecognizer;
+    std::optional<WebKit::ControlTrackingEnd> _controlTrackingEndAwaitingTouchEnd;
 #endif
     RetainPtr<UITapGestureRecognizer> _nonBlockingDoubleTapGestureRecognizer;
     RetainPtr<UITapGestureRecognizer> _doubleTapGestureRecognizerForDoubleClick;

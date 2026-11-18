@@ -362,6 +362,10 @@
 #include "ImmersiveElementDetails.h"
 #endif
 
+#if ENABLE(CONTROL_TRACKING_REGIONS)
+#include <WebCore/EventRegion.h>
+#endif
+
 #if ENABLE(WEBDRIVER_BIDI)
 #include "BidiDigitalCredentialsAgent.h"
 #include "WebDriverBidiProcessor.h"
@@ -5000,6 +5004,39 @@ void WebPageProxy::modelDragEnded(const WebCore::NodeIdentifier nodeIdentifier)
     send(Messages::WebPage::ModelDragEnded(nodeIdentifier));
 }
 #endif
+#endif
+
+#if ENABLE(CONTROL_TRACKING_REGIONS)
+// The frame may have moved to another process since the touch started, and node identifiers are per process.
+static bool canSendControlTracking(const ControlTrackingTarget& target, const WebPageProxy& page)
+{
+    RefPtr frame = WebFrameProxy::webFrame(target.frameIdentifier);
+    return frame && frame->page() == &page && frame->process().coreProcessIdentifier() == target.processIdentifier;
+}
+
+void WebPageProxy::controlTrackingDidTap(const ControlTrackingTarget& target)
+{
+    if (canSendControlTracking(target, *this))
+        sendToProcessContainingFrame(target.frameIdentifier, Messages::WebPage::ControlTrackingDidTap(target.nodeIdentifier));
+}
+
+void WebPageProxy::controlTrackingDidBegin(const ControlTrackingTarget& target, IntPoint location)
+{
+    if (canSendControlTracking(target, *this))
+        sendToProcessContainingFrame(target.frameIdentifier, Messages::WebPage::ControlTrackingDidBegin(target.nodeIdentifier, location));
+}
+
+void WebPageProxy::controlTrackingDidUpdate(const ControlTrackingTarget& target, IntPoint location)
+{
+    if (canSendControlTracking(target, *this))
+        sendToProcessContainingFrame(target.frameIdentifier, Messages::WebPage::ControlTrackingDidUpdate(target.nodeIdentifier, location));
+}
+
+void WebPageProxy::controlTrackingDidEnd(const ControlTrackingTarget& target, IntPoint location, bool committed)
+{
+    if (canSendControlTracking(target, *this))
+        sendToProcessContainingFrame(target.frameIdentifier, Messages::WebPage::ControlTrackingDidEnd(target.nodeIdentifier, location, committed));
+}
 #endif
 
 #if ENABLE(MODEL_PROCESS)

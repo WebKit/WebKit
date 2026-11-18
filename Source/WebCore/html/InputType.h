@@ -42,6 +42,10 @@
 #include <wtf/TZoneMalloc.h>
 #include <wtf/ValueOrReference.h>
 
+#if ENABLE(CONTROL_TRACKING_REGIONS)
+#include <WebCore/LayoutPoint.h>
+#endif
+
 namespace WebCore {
 
 class BeforeTextInsertedEvent;
@@ -219,6 +223,14 @@ public:
 
 #if ENABLE(TOUCH_EVENTS)
     bool hasTouchEventHandler() const;
+#endif
+
+#if ENABLE(CONTROL_TRACKING_REGIONS)
+    NODELETE virtual bool contributesControlTrackingRegion() const { return false; }
+    virtual void controlTrackingDidTap() { }
+    virtual void controlTrackingDidBegin(LayoutPoint) { }
+    virtual void controlTrackingDidUpdate(LayoutPoint) { }
+    virtual void controlTrackingDidEnd(LayoutPoint, bool /* committed */) { }
 #endif
 
     // Form value functions.

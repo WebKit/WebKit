@@ -1,0 +1,81 @@
+<!-- webkit-test-runner [ AsyncOverflowScrollingEnabled=true ] -->
+<!doctype html>
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="../../../../resources/js-test.js"></script>
+<script src="../../../../resources/ui-helper.js"></script>
+<script src="resources/switch-touch.js"></script>
+<style>
+#scroller { overflow: scroll; height: 150px; width: 200px; }
+#vertical { writing-mode: vertical-lr; }
+</style>
+<div id="scroller">
+<p><input type=checkbox switch id=horizontal></p>
+<p><input type=checkbox switch id=vertical></p>
+<div style="height: 400px"></div>
+<p><input type=checkbox switch id=further></p>
+<div style="height: 100px"></div>
+</div>
+<div id="console"></div>
+<script>
+description("A switch inside an overflow scroller: a drag the scroller can scroll scrolls it, and once the switch has the touch the scroller doesn't scroll.");
+jsTestIsAsync = true;
+
+const scroller = document.getElementById("scroller");
+const horizontal = document.getElementById("horizontal");
+const vertical = document.getElementById("vertical");
+const further = document.getElementById("further");
+let input;
+let clicks = 0;
+for (const element of [horizontal, vertical, further])
+    element.addEventListener("click", () => ++clicks);
+
+async function reset(element, scrollTop = 0)
+{
+    input = element;
+    scroller.scrollTop = scrollTop;
+    input.checked = false;
+    getSelection().removeAllRanges();
+    await settle(scroller);
+    clicks = 0;
+}
+
+(async () => {
+    if (!UIHelper.isIOSFamily()) {
+        testPassed("Not applicable outside iOS.");
+        finishJSTest();
+        return;
+    }
+
+    debug("A drag up, which the scroller can scroll:");
+    await reset(horizontal);
+    await touch(input, [{ move: [0, -100] }], { scroller });
+    shouldBeFalse("input.checked");
+    shouldBe("clicks", "0");
+    shouldBeTrue("scroller.scrollTop > 0");
+    shouldBe("Math.round(scrollY)", "0");
+
+    debug("A drag sideways, which the scroller cannot scroll:");
+    await reset(horizontal);
+    await touch(input, [{ move: [2 * input.offsetWidth, 0] }], { scroller });
+    shouldBeTrue("input.checked");
+    shouldBe("clicks", "1");
+    shouldBe("scroller.scrollTop", "0");
+
+    debug("A drag down on a vertical switch after a hold:");
+    await reset(vertical);
+    await touch(input, [{ wait: 0.3 }, { move: [0, 2 * input.offsetHeight] }], { scroller });
+    shouldBeTrue("input.checked");
+    shouldBe("clicks", "1");
+    shouldBe("scroller.scrollTop", "0");
+
+    debug("A hold, then a release, on a switch the scroller scrolled to:");
+    await reset(further, further.offsetTop - scroller.offsetTop - 50);
+    await touch(input, [{ wait: 0.3 }], { scroller });
+    shouldBeTrue("input.checked");
+    shouldBe("clicks", "1");
+
+    finishJSTest();
+})();
+</script>
+</html>

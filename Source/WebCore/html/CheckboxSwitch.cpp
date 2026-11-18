@@ -207,6 +207,50 @@ bool CheckboxSwitch::handleTouchEvent(TouchEvent& event)
 }
 #endif
 
+#if ENABLE(CONTROL_TRACKING_REGIONS)
+void CheckboxSwitch::controlTrackingDidBegin(LayoutPoint absoluteLocation)
+{
+    ASSERT(element());
+    Ref element = *this->element();
+    if (element->isDisabledFormControl() || !element->renderer())
+        return;
+
+    startSwitchPointerTracking(absoluteLocation);
+    setIsSwitchHeld(true);
+}
+
+void CheckboxSwitch::controlTrackingDidUpdate(LayoutPoint absoluteLocation)
+{
+    if (!isSwitchPointerTracking())
+        return;
+
+    ASSERT(element());
+    if (!element()->renderer()) {
+        stopSwitchPointerTracking();
+        return;
+    }
+
+    updateIsSwitchVisuallyOnFromAbsoluteLocation(absoluteLocation);
+}
+
+bool CheckboxSwitch::controlTrackingDidEnd(LayoutPoint absoluteLocation, bool committed)
+{
+    ASSERT(element());
+    Ref element = *this->element();
+    if (std::exchange(m_isSwitchHeld, false))
+        performSwitchAnimation(SwitchAnimationType::Held);
+
+    bool thumbReachedOtherEnd = isSwitchPointerTracking() && m_hasSwitchVisuallyOnChanged;
+    if (committed && !hasSwitchThumbReturned() && (thumbReachedOtherEnd || switchContainsAbsoluteLocation(element, absoluteLocation)))
+        return true;
+
+    stopSwitchPointerTracking();
+    if (CheckedPtr renderer = element->renderer())
+        renderer->repaint();
+    return false;
+}
+#endif
+
 bool CheckboxSwitch::willSkipToggleForClick(bool checked)
 {
     if (isSwitchPointerTracking() && m_hasSwitchVisuallyOnChanged && m_isSwitchVisuallyOn == checked) {

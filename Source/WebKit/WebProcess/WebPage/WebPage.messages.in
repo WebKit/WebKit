@@ -429,6 +429,13 @@ messages -> WebPage WantsAsyncDispatchMessage {
     DragSourceEnded(WebCore::FrameIdentifier frameID, WebCore::IntPoint clientPositionInMainFrameView, WebCore::IntPoint globalPosition, OptionSet<WebCore::DragOperation> dragOperationMask)
 #endif
 
+#if ENABLE(CONTROL_TRACKING_REGIONS)
+    ControlTrackingDidTap(WebCore::NodeIdentifier nodeID)
+    ControlTrackingDidBegin(WebCore::NodeIdentifier nodeID, WebCore::IntPoint location)
+    ControlTrackingDidUpdate(WebCore::NodeIdentifier nodeID, WebCore::IntPoint location)
+    ControlTrackingDidEnd(WebCore::NodeIdentifier nodeID, WebCore::IntPoint location, bool committed)
+#endif
+
 #if ENABLE(MODEL_PROCESS)
     RequestInteractiveModelElementAtPoint(std::optional<WebCore::FrameIdentifier> frameID, WebCore::IntPoint clientPosition, WebCore::IntPoint interactionLocation) -> (WebCore::InteractiveModelElementHitTestResult result)
     StageModeSessionDidBegin(std::optional<WebCore::FrameIdentifier> frameID, WebCore::NodeIdentifier nodeID, WebCore::TransformationMatrix transform)
