@@ -1,8 +1,4 @@
 
-Harness Error (FAIL), message = Unhandled rejection: promise_rejects_js: getType(DOMString type) should reject with TypeError for invalid type function "function() { throw e; }" threw object "NotFoundError: The object can not be found here." ("NotFoundError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
-
 PASS ClipboardItem() succeeds with valid type strings
 PASS ClipboardItem() succeeds with multiple valid type strings
 PASS ClipboardItem() succeeds with empty options
@@ -10,7 +6,7 @@ PASS ClipboardItem({}) fails with empty dictionary input
 PASS ClipboardItem(Blob) fails
 PASS ClipboardItem() fails with null input
 PASS ClipboardItem() fails with no input
-FAIL ClipboardItem() fails with invalid type string assert_throws_js: function "() => {new ClipboardItem({"not a/real type": blob2});}" did not throw
+PASS ClipboardItem() fails with invalid type string
 FAIL ClipboardItem() fails with invalid web custom format assert_throws_js: function "() => {new ClipboardItem({"web notarealtype": blob3});}" did not throw
 PASS types() returns correct values
 PASS getType(DOMString valid type) succeeds with correct output

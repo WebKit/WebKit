@@ -40,7 +40,7 @@ PASS url is "https://www.w3.org/TR/clipboard-apis/"
 PASS text is "Async 📋 API"
 
 PASS Created new ClipboardItem with 5 type(s)
-PASS commaSeparated(item.types) is "text/plain, text/html, image/png, 🤔🤔🤔, מקור השם עברית"
+PASS commaSeparated(item.types) is "text/plain, text/html, image/png, web 🤔🤔🤔, web מקור השם עברית"
 PASS text is "謝謝"
 PASS customText1 is "מקור השם עברית"
 PASS customText2 is "🤔🤔🤔"
@@ -48,8 +48,8 @@ PASS Caught expected exception. (calling getType('text/html'))
 PASS Caught expected exception. (calling getType('image/png'))
 
 PASS Created new ClipboardItem with 5 type(s)
-PASS commaSeparated(item.types) is "!@#$%, image/png, text/html, text/uri-list, text/plain"
-PASS Caught expected exception. (calling getType('!@#$%'))
+PASS commaSeparated(item.types) is "web !@#$%, image/png, text/html, text/uri-list, text/plain"
+PASS Caught expected exception. (calling getType('web !@#$%'))
 PASS Caught expected exception. (calling getType('image/png'))
 PASS Caught expected exception. (calling getType('text/html'))
 PASS Caught expected exception. (calling getType('text/uri-list'))
