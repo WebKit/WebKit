@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<title>Collapsed row group borders are painted along rows with missing cells</title>
+<link rel="help" href="https://drafts.csswg.org/css-tables-3/#border-collapse-property">
+<link rel="match" href="border-collapse-row-group-border-missing-cells-ref.html">
+<meta name="assert" content="The inline-end border of a row group is painted along a row whose trailing cells are missing, in both directions.">
+<style>
+table {
+    border-collapse: collapse;
+    margin: 20px;
+}
+tbody {
+    border: 20px solid green;
+}
+td {
+    width: 50px;
+    height: 50px;
+    padding: 0;
+}
+tr.empty {
+    height: 50px;
+}
+</style>
+<p>Test passes if each green frame has no gaps.</p>
+<table>
+    <tbody>
+        <tr><td></td><td></td><td></td></tr>
+        <tr><td></td></tr>
+        <tr><td></td><td></td><td></td></tr>
+    </tbody>
+</table>
+<table style="direction: rtl">
+    <tbody>
+        <tr><td></td><td></td><td></td></tr>
+        <tr><td></td></tr>
+        <tr><td></td><td></td><td></td></tr>
+    </tbody>
+</table>

@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<title>CSS Reference</title>
+<style>
+table {
+    border-collapse: collapse;
+    margin: 20px;
+}
+tbody {
+    border: 20px solid green;
+}
+td {
+    width: 50px;
+    height: 50px;
+    padding: 0;
+}
+tr.empty {
+    height: 50px;
+}
+</style>
+<p>Test passes if each green frame has no gaps.</p>
+<table>
+    <tbody>
+        <tr><td></td><td></td><td></td></tr>
+        <tr><td></td><td></td><td></td></tr>
+        <tr><td></td><td></td><td></td></tr>
+    </tbody>
+</table>
+<table style="direction: rtl">
+    <tbody>
+        <tr><td></td><td></td><td></td></tr>
+        <tr><td></td><td></td><td></td></tr>
+        <tr><td></td><td></td><td></td></tr>
+    </tbody>
+</table>

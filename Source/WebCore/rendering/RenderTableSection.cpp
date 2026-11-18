@@ -824,12 +824,14 @@ LayoutUnit RenderTableSection::calcBlockDirectionOuterBorder(BlockBorderSide sid
             borderWidth = rowBorderWidth;
     }
 
+    bool hasCells = false;
     bool allHidden = true;
     unsigned rowIndex = (side == BlockBorderSide::BorderBefore) ? 0 : (m_grid.size() - 1);
     for (unsigned c = 0; c < totalCols; c++) {
         const CellStruct& current = cellAt(rowIndex, c);
         if (current.inColSpan || !current.hasCells())
             continue;
+        hasCells = true;
 
         // FIXME: Make this work with perpendicular and flipped cells.
         auto& cellBorderStyle = current.primaryCell()->style();
@@ -868,7 +870,7 @@ LayoutUnit RenderTableSection::calcBlockDirectionOuterBorder(BlockBorderSide sid
         }
     }
 
-    if (allHidden)
+    if (hasCells && allHidden)
         return -1;
     return CollapsedBorderValue::adjustedCollapsedBorderWidth(borderWidth, deviceScaleFactor, (side == BlockBorderSide::BorderAfter));
 }
@@ -905,11 +907,13 @@ LayoutUnit RenderTableSection::calcInlineDirectionOuterBorder(InlineBorderSide s
         }
     }
 
+    bool hasCells = false;
     bool allHidden = true;
     for (unsigned r = 0; r < m_grid.size(); r++) {
         const CellStruct& current = cellAt(r, colIndex);
         if (!current.hasCells())
             continue;
+        hasCells = true;
 
         // FIXME: Make this work with perpendicular and flipped cells.
         auto& cellBorderStyle = current.primaryCell()->style();
@@ -935,7 +939,7 @@ LayoutUnit RenderTableSection::calcInlineDirectionOuterBorder(InlineBorderSide s
         }
     }
 
-    if (allHidden)
+    if (hasCells && allHidden)
         return -1;
     return CollapsedBorderValue::adjustedCollapsedBorderWidth(borderWidth, deviceScaleFactor, (side == InlineBorderSide::BorderStart) ? writingMode.isInlineFlipped() : !writingMode.isInlineFlipped());
 }
@@ -1202,8 +1206,8 @@ LayoutUnit RenderTableSection::offsetLeftForRowGroupBorder(RenderTableCell* cell
 {
 
     if (table()->writingMode().isHorizontal()) {
-        if (table()->writingMode().isInlineLeftToRight())
-            return cell ? cell->x() + cell->borderBoxWidth() : 0_lu;
+        if (table()->writingMode().isInlineLeftToRight() && cell)
+            return cell->x() + cell->borderBoxWidth();
         return -outerBorderLeft(table()->writingMode());
     }
     bool isLastRow = row + 1 == m_grid.size();
@@ -1212,10 +1216,12 @@ LayoutUnit RenderTableSection::offsetLeftForRowGroupBorder(RenderTableCell* cell
 
 LayoutUnit RenderTableSection::offsetTopForRowGroupBorder(RenderTableCell* cell, BoxSide borderSide, unsigned row)
 {
-    bool isLastRow = row + 1 == m_grid.size();
-
-    if (table()->writingMode().isHorizontal())
-        return m_rowPos[row] + (!row && borderSide == BoxSide::Right ? -outerBorderTop(table()->writingMode()) : isLastRow && borderSide == BoxSide::Left ? outerBorderTop(table()->writingMode()) : 0_lu);
+    if (table()->writingMode().isHorizontal()) {
+        // rowGroupRect is already moved up by the outer top border for the left side.
+        if (borderSide == BoxSide::Left)
+            return m_rowPos[row] + (row ? outerBorderTop(table()->writingMode()) : 0_lu);
+        return m_rowPos[row] - (!row ? outerBorderTop(table()->writingMode()) : 0_lu);
+    }
     if (table()->writingMode().isInlineTopToBottom())
         return (cell ? cell->y() + cell->borderBoxHeight() : 0_lu) + (borderSide == BoxSide::Left ? outerBorderTop(table()->writingMode()) : 0_lu);
     return borderSide == BoxSide::Right ? -outerBorderTop(table()->writingMode()) : 0_lu;
@@ -1235,9 +1241,11 @@ LayoutUnit RenderTableSection::verticalRowGroupBorderHeight(RenderTableCell* cel
 LayoutUnit RenderTableSection::horizontalRowGroupBorderWidth(RenderTableCell* cell, const LayoutRect& rowGroupRect, unsigned row, unsigned column)
 {
     if (table()->writingMode().isHorizontal()) {
+        if (!cell)
+            return rowGroupRect.width() + outerBorderLeft(table()->writingMode()) + outerBorderRight(table()->writingMode());
         if (table()->writingMode().isInlineLeftToRight())
-            return rowGroupRect.width() - (cell ? cell->x() + cell->borderBoxWidth() : 0_lu) + (!column ? outerBorderLeft(table()->writingMode()) : column == table()->numEffCols() ? outerBorderRight(table()->writingMode()) : 0_lu);
-        return cell ? rowGroupRect.width() - (cell->x() - cell->borderBoxWidth()) : 0_lu;
+            return rowGroupRect.width() - (cell->x() + cell->borderBoxWidth()) + (!column ? outerBorderLeft(table()->writingMode()) : column == table()->numEffCols() ? outerBorderRight(table()->writingMode()) : 0_lu);
+        return rowGroupRect.width() - (cell->x() - cell->borderBoxWidth());
     }
     bool isLastRow = row + 1 == m_grid.size();
     return m_rowPos[row + 1] - m_rowPos[row] + (isLastRow ? outerBorderLeft(table()->writingMode()) : !row ? outerBorderRight(table()->writingMode()) : 0_lu);
@@ -1278,7 +1286,7 @@ void RenderTableSection::paintRowGroupBorderIfRequired(const PaintInfo& paintInf
             antialias,
             LayoutRect {
                 paintOffset.x() + offsetLeftForRowGroupBorder(cell, rowGroupRect, row),
-                rowGroupRect.y() + rowGroupRect.height(),
+                paintOffset.y() + rowGroupRect.height() - outerBorderBottom(table()->writingMode()),
                 horizontalRowGroupBorderWidth(cell, rowGroupRect, row, column),
                 Style::evaluate<LayoutUnit>(style.borderBottom().width, style.usedZoomForLength(), style.deviceScaleFactor()),
             },
@@ -1309,7 +1317,7 @@ void RenderTableSection::paintRowGroupBorderIfRequired(const PaintInfo& paintInf
             paintInfo,
             antialias,
             LayoutRect {
-                rowGroupRect.x() + rowGroupRect.width(),
+                paintOffset.x() + rowGroupRect.width() - outerBorderRight(table()->writingMode()),
                 rowGroupRect.y() + offsetTopForRowGroupBorder(cell, borderSide, row),
                 Style::evaluate<LayoutUnit>(style.borderRight().width, style.usedZoomForLength(), style.deviceScaleFactor()),
                 verticalRowGroupBorderHeight(cell, rowGroupRect, row),
@@ -1433,6 +1441,17 @@ void RenderTableSection::paintObject(PaintInfo& paintInfo, const LayoutPoint& pa
         }
     };
 
+    auto paintRowGroupBorderForSide = [&](unsigned row, unsigned column, CollapsedBorderSide side, RenderTableCell* cell) {
+        paintRowGroupBorderIfRequired(paintInfo, paintOffset, row, column, physicalBorderForDirection(table()->writingMode(), side), cell);
+    };
+
+    auto paintRowGroupBeforeOrAfterBorder = [&](unsigned row, unsigned column, RenderTableCell* cell) {
+        if (row + 1 == m_grid.size())
+            paintRowGroupBorderForSide(row, column, CollapsedBorderSide::After, cell);
+        else if (!row && !table()->sectionAbove(this))
+            paintRowGroupBorderForSide(row, column, CollapsedBorderSide::Before, cell);
+    };
+
     auto paintContiguousCellsWithCollapsedBorders = [&]() {
         // Collapsed borders are painted from the bottom right to the top left so that precedence
         // due to cell position is respected. We need to paint one row beyond the topmost dirtied
@@ -1446,10 +1465,10 @@ void RenderTableSection::paintObject(PaintInfo& paintInfo, const LayoutPoint& pa
                 CellStruct& current = cellAt(row, col);
                 RenderTableCell* cell = current.primaryCell();
                 if (!cell) {
-                    if (!c)
-                        paintRowGroupBorderIfRequired(paintInfo, paintOffset, row, col, physicalBorderForDirection(table()->writingMode(), CollapsedBorderSide::Start));
-                    else if (c == table()->numEffCols())
-                        paintRowGroupBorderIfRequired(paintInfo, paintOffset, row, col, physicalBorderForDirection(table()->writingMode(), CollapsedBorderSide::End));
+                    if (!col)
+                        paintRowGroupBorderForSide(row, col, CollapsedBorderSide::Start, nullptr);
+                    if (c == table()->numEffCols())
+                        paintRowGroupBorderForSide(row, col, CollapsedBorderSide::End, nullptr);
 
                     shouldPaintRowGroupBorder = true;
                     continue;
@@ -1461,11 +1480,7 @@ void RenderTableSection::paintObject(PaintInfo& paintInfo, const LayoutPoint& pa
                 // If we had a run of null cells paint their corresponding section of the row group's border if necessary. Note that
                 // this will only happen once within a row as the null cells will always be clustered together on one end of the row.
                 if (shouldPaintRowGroupBorder) {
-                    if (r == m_grid.size())
-                        paintRowGroupBorderIfRequired(paintInfo, paintOffset, row, col, physicalBorderForDirection(table()->writingMode(), CollapsedBorderSide::After), cell);
-                    else if (!row && !table()->sectionAbove(this))
-                        paintRowGroupBorderIfRequired(paintInfo, paintOffset, row, col, physicalBorderForDirection(table()->writingMode(), CollapsedBorderSide::Before), cell);
-
+                    paintRowGroupBeforeOrAfterBorder(row, col, cell);
                     shouldPaintRowGroupBorder = false;
                 }
 
@@ -1474,6 +1489,9 @@ void RenderTableSection::paintObject(PaintInfo& paintInfo, const LayoutPoint& pa
                 auto cellPoint = row.blockStartRelativeToPhysicalForChild(*cell, rowPaintOffset);
                 cell->paintCollapsedBorders(paintInfo, cellPoint);
             }
+
+            if (shouldPaintRowGroupBorder && !primaryCellAt(row, 0))
+                paintRowGroupBeforeOrAfterBorder(row, 0, nullptr);
         }
     };
 
