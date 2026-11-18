@@ -51,7 +51,7 @@ public:
 private:
     VideoPresentationInterfaceAVKit(WebCore::PlaybackSessionInterfaceCocoa&);
 
-    WebAVPlayerLayer *fullscreenPlayerLayer();
+    WebAVPlayerLayer *fullscreenPlayerLayer() const final;
 
     // VideoPresentationInterfaceIOS overrides
     bool pictureInPictureWasStartedWhenEnteringBackground() const final { return false; }

@@ -39,6 +39,9 @@
 #import "RemoteScrollingCoordinatorProxy.h"
 #import "RemoteScrollingCoordinatorTransaction.h"
 #import "RemoteScrollingTreeCocoa.h"
+#if ENABLE(VIDEO_PRESENTATION_MODE)
+#import "VideoPresentationManagerProxy.h"
+#endif
 #if PLATFORM(IOS_FAMILY) && ENABLE(OVERLAY_REGIONS_IN_EVENT_REGION)
 #import "RemoteScrollingCoordinatorProxyIOS.h"
 #endif
@@ -549,6 +552,11 @@ void RemoteLayerTreeDrawingAreaProxy::commitLayerTreeTransaction(IPC::Connection
         scrollingCoordinatorProxy->willCommitLayerAndScrollingTrees();
         commitLayerAndScrollingTrees();
         scrollingCoordinatorProxy->didCommitLayerAndScrollingTrees();
+
+#if ENABLE(VIDEO_PRESENTATION_MODE)
+        if (RefPtr videoPresentationManager = page->videoPresentationManager())
+            videoPresentationManager->syncProjectionContents(*m_remoteLayerTreeHost);
+#endif
 
         page->didCommitLayerTree(layerTreeTransaction, mainFrameData, pageData, transactionID);
         didCommitLayerTree(connection, layerTreeTransaction, scrollingTreeTransaction, mainFrameData, transactionID);

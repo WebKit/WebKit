@@ -39,6 +39,8 @@
 #import "PlaybackSessionInterfaceAVKit.h"
 #import "PlaybackSessionInterfaceLMK.h"
 #import "PlaybackSessionManagerProxy.h"
+#import "RemoteLayerTreeDrawingAreaProxy.h"
+#import "RemoteLayerTreeHost.h"
 #import "VideoPresentationInterfaceAVKit.h"
 #import "VideoPresentationInterfaceLMK.h"
 #import "VideoPresentationManagerMessages.h"
@@ -49,6 +51,7 @@
 #import "WebProcessPool.h"
 #import "WebProcessProxy.h"
 #import <QuartzCore/CoreAnimation.h>
+#import <WebCore/Color.h>
 #import <WebCore/HTMLMediaElement.h>
 #import <WebCore/MediaPlayerEnums.h>
 #import <WebCore/NullVideoPresentationInterface.h>
@@ -65,11 +68,13 @@
 #import <wtf/Borrow.h>
 #import <wtf/LoggerHelper.h>
 #import <wtf/MachSendRightAnnotated.h>
+#import <wtf/RunLoop.h>
 #import <wtf/WeakObjCPtr.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
 
+#import <pal/cocoa/AVFoundationSoftLink.h>
+
 #if PLATFORM(IOS_FAMILY)
-#import "RemoteLayerTreeDrawingAreaProxy.h"
 #import "UIKitSPI.h"
 #import <UIKit/UIView.h>
 #import <pal/spi/cocoa/AVKitSPI.h>
@@ -203,6 +208,36 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 @end
 
 #endif
+
+// Sizes the child during the wrapper's own layout, inside AVKit's transaction.
+//
+// Must be a subclass, not a CALayer delegate: -[WebAVPlayerLayerView videoView] returns the
+// videoSublayer's delegate cast to UIView* behind a debug-only ASSERT, and the substitution
+// depends on it returning nil so AVKit's view transfers bail. A delegate here crashes PiP.
+@interface WKProjectionWrapperLayer : CALayer
+@end
+
+@implementation WKProjectionWrapperLayer
+
+- (void)layoutSublayers
+{
+    [super layoutSublayers];
+
+    RetainPtr contentsLayer = dynamic_objc_cast<CALayer>([[self sublayers] firstObject]);
+    if (!contentsLayer)
+        return;
+
+    auto bounds = [self bounds];
+    if (CGRectEqualToRect([contentsLayer bounds], bounds))
+        return;
+
+    // -setFrame: is undefined for a layer with a non-identity transform, so drive bounds and
+    // position directly and flip about the centre using the default anchor point.
+    [contentsLayer setBounds:bounds];
+    [contentsLayer setPosition:CGPointMake(CGRectGetMidX(bounds), CGRectGetMidY(bounds))];
+}
+
+@end
 
 namespace WebKit {
 using namespace WebCore;
@@ -1098,7 +1133,282 @@ Ref<WebCore::PlatformVideoPresentationInterface> VideoPresentationManagerProxy::
 
 #pragma mark Messages from VideoPresentationManager
 
-void VideoPresentationManagerProxy::setupFullscreenWithID(IPC::Connection& connection, HTMLMediaElementIdentifier identifier, const WebCore::HostingContext& hostingContext, const WebCore::FloatRect& screenRect, const WebCore::FloatSize& initialSize, const WebCore::FloatSize& videoDimensions, float hostingDeviceScaleFactor, HTMLMediaElementEnums::VideoFullscreenMode videoFullscreenMode, bool allowsPictureInPicture, bool standby, bool blocksReturnToFullscreenFromPictureInPicture, bool hasObjectViewBox)
+void VideoPresentationManagerProxy::setProjectionLayerID(IPC::Connection& connection, HTMLMediaElementIdentifier identifier, std::optional<WebCore::PlatformLayerIdentifier> projectionLayerID)
+{
+    auto contextId = contextIdForConnection(connection, identifier);
+
+    // RemoteLayerTreeHost's node map is page-wide across processes, so without this a compromised
+    // frame could name a layer belonging to a cross-origin frame and have the UI process composite
+    // its pixels into a surface this process controls and can read back.
+    MESSAGE_CHECK(!projectionLayerID || projectionLayerID->processIdentifier() == contextId.processIdentifier());
+
+    if (projectionLayerID)
+        m_projectionLayerIDs.set(contextId, *projectionLayerID);
+    else
+        m_projectionLayerIDs.remove(contextId);
+    attachProjectionLayer(contextId);
+}
+
+// Assigning the videoSublayer's frame re-runs -[WebAVPlayerLayer layoutSublayers], which returns a
+// frame differing minutely from the assigned one, so an exact comparison loops forever.
+static bool projectionFramesEssentiallyEqual(CGRect a, CGRect b)
+{
+    static constexpr CGFloat tolerance = 0.01;
+    return std::abs(a.origin.x - b.origin.x) < tolerance
+        && std::abs(a.origin.y - b.origin.y) < tolerance
+        && std::abs(a.size.width - b.size.width) < tolerance
+        && std::abs(a.size.height - b.size.height) < tolerance;
+}
+
+// The videoView is iOS-only; the projection substitution is an AVKit arrangement and does nothing
+// on macOS, where the proxy still has to compile.
+static void setProjectionVideoViewHidden(PlatformVideoPresentationInterface& interface, bool hidden)
+{
+#if PLATFORM(IOS_FAMILY)
+    RetainPtr videoView = interface.videoView();
+    [videoView setHidden:hidden];
+#else
+    UNUSED_PARAM(interface);
+    UNUSED_PARAM(hidden);
+#endif
+}
+
+// Copies the frames the UI process already holds on the page's layer, so no new IPC is needed and
+// nothing untrusted crosses a boundary. Only ever reads the page's layer; moving it is unsound.
+void VideoPresentationManagerProxy::syncProjectionContents(const RemoteLayerTreeHost& layerTreeHost)
+{
+    if (m_ownedProjectionLayers.isEmpty())
+        return;
+
+    for (auto& [contextId, ownedLayer] : m_ownedProjectionLayers) {
+        pushProjectionViewportSize(contextId);
+
+        auto layerIDIterator = m_projectionLayerIDs.find(contextId);
+        if (layerIDIterator == m_projectionLayerIDs.end())
+            continue;
+
+        RetainPtr pageLayer = layerTreeHost.layerForID(layerIDIterator->value);
+        if (!pageLayer)
+            continue;
+
+        RetainPtr<CALayer> contentsLayer = dynamic_objc_cast<CALayer>([[ownedLayer sublayers] firstObject]);
+        if (!contentsLayer)
+            continue;
+
+        auto wrapperBounds = [ownedLayer bounds];
+        if (!CGRectEqualToRect([contentsLayer bounds], wrapperBounds)) {
+            [contentsLayer setBounds:wrapperBounds];
+            [contentsLayer setPosition:CGPointMake(CGRectGetMidX(wrapperBounds), CGRectGetMidY(wrapperBounds))];
+        }
+
+        RetainPtr contents = [pageLayer contents];
+        if (!contents)
+            continue;
+
+        if ([contentsLayer contents] != contents.get())
+            [contentsLayer setContents:contents.get()];
+    }
+}
+
+// Two layers because AVKit owns the wrapper's geometry: -[WebAVPlayerLayer resolveBounds] resets
+// its transform and anchorPoint, so the Y-flip that the delegate's BottomUp orientation needs has
+// to live on the child along with the contents.
+RetainPtr<CALayer> VideoPresentationManagerProxy::projectionLayerForContext(PlaybackSessionContextIdentifier contextId)
+{
+    return m_ownedProjectionLayers.ensure(contextId, [] {
+        RetainPtr<CALayer> wrapper = adoptNS([[WKProjectionWrapperLayer alloc] init]);
+        [wrapper setName:@"Projected video"];
+
+        RetainPtr<CALayer> contentsLayer = adoptNS([[CALayer alloc] init]);
+        [contentsLayer setName:@"Projected video contents"];
+        [contentsLayer setAffineTransform:CGAffineTransformMakeScale(1, -1)];
+        [wrapper addSublayer:contentsLayer.get()];
+
+        return wrapper;
+    }).iterator->value;
+}
+
+void VideoPresentationManagerProxy::attachProjectionLayer(PlaybackSessionContextIdentifier contextId)
+{
+    RefPtr page = m_page;
+    if (!page)
+        return;
+
+    if (!m_projectionActiveContexts.contains(contextId))
+        return;
+
+    auto layerIDIterator = m_projectionLayerIDs.find(contextId);
+    if (layerIDIterator == m_projectionLayerIDs.end())
+        return;
+
+    auto interfaceIterator = m_contextMap.find(contextId);
+    if (interfaceIterator == m_contextMap.end())
+        return;
+
+    Ref interface = std::get<1>(interfaceIterator->value);
+
+    // Only ever the fullscreen player layer: restoring the inline one mid-fullscreen pushes the
+    // hosted videoView's layer back into the page, which drops the canvas's backing store.
+    RetainPtr playerLayer = interface->fullscreenPlayerLayer();
+    bool isFullscreenLayer = !!playerLayer;
+    if (!isFullscreenLayer) {
+        // Runs only until AVKit creates the layer; the rest of the interval is transition time
+        // spent with the projection not yet substituted.
+        RunLoop::mainSingleton().dispatchAfter(32_ms, [weakThis = WeakPtr { *this }, contextId] {
+            if (RefPtr protectedThis = weakThis)
+                protectedThis->attachProjectionLayer(contextId);
+        });
+        return;
+    }
+
+    RetainPtr projectionLayer = projectionLayerForContext(contextId);
+    if (!projectionLayer)
+        return;
+
+    auto takeoverIterator = m_projectionLayerTakeovers.find(contextId);
+    bool haveTakeover = takeoverIterator != m_projectionLayerTakeovers.end();
+    if (haveTakeover && takeoverIterator->value.playerLayer != playerLayer) {
+        restoreVideoSublayer(takeoverIterator->value);
+        m_projectionLayerTakeovers.remove(takeoverIterator);
+        haveTakeover = false;
+    }
+
+    RetainPtr videoSublayer = [playerLayer videoSublayer];
+    bool alreadyOurs = videoSublayer.get() == projectionLayer.get();
+
+    RetainPtr<CALayer> parent;
+    if (alreadyOurs)
+        parent = [projectionLayer superlayer];
+    else if (videoSublayer)
+        parent = [videoSublayer superlayer];
+    if (!parent)
+        parent = playerLayer.get();
+
+    if (!alreadyOurs && !haveTakeover)
+        m_projectionLayerTakeovers.set(contextId, ProjectionLayerTakeover { playerLayer, videoSublayer });
+
+    if ([projectionLayer superlayer] != parent.get()) {
+        [projectionLayer removeFromSuperlayer];
+        [parent addSublayer:projectionLayer.get()];
+    }
+
+    if (!alreadyOurs) {
+        [videoSublayer removeFromSuperlayer];
+        [playerLayer setVideoSublayer:projectionLayer.get()];
+        // The projection is laid out from its own bounds, so it cannot ride out the deferred
+        // -resolveBounds that -layoutSublayers uses to animate a resize.
+        [playerLayer setResolvesVideoSublayerBoundsSynchronously:YES];
+    }
+
+    setProjectionVideoViewHidden(interface, true);
+
+    // Without this -layoutSublayers aspect-fits the videoSublayer inside the player layer using
+    // videoDimensions, letterboxing the projection a second time.
+    if (![[playerLayer videoGravity] isEqualToString:AVLayerVideoGravityResize]) {
+        if (auto takeover = m_projectionLayerTakeovers.find(contextId); takeover != m_projectionLayerTakeovers.end() && !takeover->value.originalVideoGravity)
+            takeover->value.originalVideoGravity = [playerLayer videoGravity];
+        [playerLayer setVideoGravity:AVLayerVideoGravityResize];
+    }
+
+#if PLATFORM(IOS_FAMILY)
+    // AVKit aspect-fits its player layer view from the content dimensions, so no reported size
+    // fills the screen; only gravity does. The getter already reports Resize, so invoking the
+    // setter -- not its value -- is what makes AVKit re-lay-out. Re-asserted whenever the layer is
+    // not filling, since the substitution can land before AVKit's fullscreen layout.
+    RetainPtr superlayer = [playerLayer superlayer];
+    bool fillsSuperlayer = !superlayer || projectionFramesEssentiallyEqual([playerLayer bounds], [superlayer bounds]);
+    if (!alreadyOurs || !fillsSuperlayer) {
+        if (RetainPtr playerViewController = interface->avPlayerViewController())
+            [playerViewController setVideoGravity:AVLayerVideoGravityResize];
+    }
+#endif
+
+    // Size it once: re-asserting the frame restarts -[WebAVPlayerLayer layoutSublayers] and the
+    // layer snaps between sizes forever.
+    auto frame = [parent bounds];
+    if (CGRectIsEmpty(frame))
+        frame = [playerLayer bounds];
+    bool resized = !alreadyOurs && !projectionFramesEssentiallyEqual([projectionLayer frame], frame);
+    if (resized)
+        [projectionLayer setFrame:frame];
+
+    // The page lays the canvas out at its inline size, so without this the backing store is
+    // upscaled to fill the presentation and the field of view uses the inline aspect ratio.
+    pushProjectionViewportSize(contextId);
+
+    RunLoop::mainSingleton().dispatchAfter(500_ms, [weakThis = WeakPtr { *this }, contextId] {
+        if (RefPtr protectedThis = weakThis)
+            protectedThis->attachProjectionLayer(contextId);
+    });
+}
+
+// Also called per layer tree commit, so a rotation reaches the renderer in a frame rather than on
+// the next poll; a stale value is visible as a stretched projection.
+void VideoPresentationManagerProxy::pushProjectionViewportSize(PlaybackSessionContextIdentifier contextId)
+{
+    auto takeover = m_projectionLayerTakeovers.find(contextId);
+    if (takeover == m_projectionLayerTakeovers.end())
+        return;
+
+    auto presentedSize = FloatSize([takeover->value.playerLayer bounds].size);
+
+    // The player layer is still aspect-fitted for a few milliseconds after takeover. Sending that
+    // letterbox flashes an inline-shaped frame on entry; the superlayer is the box it will fill.
+    if (RetainPtr superlayer = [takeover->value.playerLayer superlayer]) {
+        if (auto available = FloatSize([superlayer bounds].size); !available.isEmpty())
+            presentedSize = available;
+    }
+
+    if (presentedSize.isEmpty() || takeover->value.lastSentViewportSize == presentedSize)
+        return;
+
+    takeover->value.lastSentViewportSize = presentedSize;
+    sendToWebProcess(contextId, Messages::VideoPresentationManager::SetProjectionViewportSize(contextId.object(), presentedSize));
+}
+
+void VideoPresentationManagerProxy::restoreVideoSublayer(const ProjectionLayerTakeover& takeover)
+{
+    RetainPtr playerLayer = takeover.playerLayer;
+    if (!playerLayer)
+        return;
+
+    [playerLayer setResolvesVideoSublayerBoundsSynchronously:NO];
+
+    if (takeover.originalVideoGravity)
+        [playerLayer setVideoGravity:takeover.originalVideoGravity.get()];
+
+    RetainPtr original = takeover.originalVideoSublayer;
+    if (!original)
+        return;
+
+
+    RetainPtr current = [playerLayer videoSublayer];
+    if (current.get() != original.get())
+        [current removeFromSuperlayer];
+    [original setFrame:[playerLayer bounds]];
+    [playerLayer addSublayer:original.get()];
+    [playerLayer setVideoSublayer:original.get()];
+}
+
+void VideoPresentationManagerProxy::detachProjectionLayer(PlaybackSessionContextIdentifier contextId)
+{
+    m_projectionActiveContexts.remove(contextId);
+
+
+    if (m_projectionLayerTakeovers.contains(contextId))
+        sendToWebProcess(contextId, Messages::VideoPresentationManager::SetProjectionViewportSize(contextId.object(), FloatSize { }));
+
+    if (auto interfaceIterator = m_contextMap.find(contextId); interfaceIterator != m_contextMap.end())
+        setProjectionVideoViewHidden(std::get<1>(interfaceIterator->value), false);
+
+    auto takeover = m_projectionLayerTakeovers.take(contextId);
+    restoreVideoSublayer(takeover);
+
+    if (auto ownedLayer = m_ownedProjectionLayers.take(contextId))
+        [ownedLayer removeFromSuperlayer];
+}
+
+void VideoPresentationManagerProxy::setupFullscreenWithID(IPC::Connection& connection, HTMLMediaElementIdentifier identifier, const WebCore::HostingContext& hostingContext, const WebCore::FloatRect& screenRect, const WebCore::FloatSize& initialSize, const WebCore::FloatSize& videoDimensions, float hostingDeviceScaleFactor, HTMLMediaElementEnums::VideoFullscreenMode videoFullscreenMode, bool allowsPictureInPicture, bool standby, bool blocksReturnToFullscreenFromPictureInPicture, bool hasObjectViewBox, std::optional<WebCore::PlatformLayerIdentifier> projectionLayerID)
 {
     RefPtr page = m_page.get();
     if (!page)
@@ -1107,6 +1417,9 @@ void VideoPresentationManagerProxy::setupFullscreenWithID(IPC::Connection& conne
     m_lastSetupFullscreenRectForTesting = screenRect;
 
     auto contextId = contextIdForConnection(connection, identifier);
+
+    // Same ownership requirement as setProjectionLayerID().
+    MESSAGE_CHECK(!projectionLayerID || projectionLayerID->processIdentifier() == contextId.processIdentifier());
     auto [model, interface] = ensureModelAndInterface(contextId);
 
     bool shouldAddClient = interface->mode() == HTMLMediaElementEnums::VideoFullscreenModeNone || interface->mode() == HTMLMediaElementEnums::VideoFullscreenModeInWindow;
@@ -1145,6 +1458,18 @@ void VideoPresentationManagerProxy::setupFullscreenWithID(IPC::Connection& conne
 #endif
 
     RetainPtr view = interface->layerHostView() ? RetainPtr { static_cast<WKLayerHostView*>(interface->layerHostView()) } : createLayerHostViewWithID(contextId, hostingContext, initialSize, hostingDeviceScaleFactor);
+
+    if (projectionLayerID)
+        m_projectionLayerIDs.set(contextId, *projectionLayerID);
+    m_projectionActiveContexts.add(contextId);
+
+    // AVKit transfers the real videoView into its fullscreen layer during setup, before the
+    // projection can be substituted. Hidden for the whole fullscreen duration so no unprojected
+    // video shows while AVKit transitions.
+    if (m_projectionLayerIDs.contains(contextId))
+        setProjectionVideoViewHidden(interface, true);
+
+    attachProjectionLayer(contextId);
 #if HAVE(VISIBILITY_PROPAGATION_VIEW)
     RefPtr pageClient = page->pageClient();
     if (RetainPtr visibilityPropagationView = pageClient ? pageClient->createVisibilityPropagationView() : nil)
@@ -1305,6 +1630,10 @@ void VideoPresentationManagerProxy::exitFullscreenWithoutAnimationToMode(IPC::Co
     auto contextId = contextIdForConnection(connection, identifier);
     MESSAGE_CHECK((targetMode | HTMLMediaElementEnums::VideoFullscreenModeAllValidBitsMask) == HTMLMediaElementEnums::VideoFullscreenModeAllValidBitsMask);
 
+    // Hand AVKit back its own videoSublayer before it re-hosts the video for another mode: the
+    // substitution is only valid for the fullscreen presentation. PiP shows unprojected video.
+    detachProjectionLayer(contextId);
+
     if (m_mockVideoPresentationModeEnabled) {
         fullscreenModeChanged(contextId, targetMode);
         return;
@@ -1378,6 +1707,7 @@ void VideoPresentationManagerProxy::cleanupFullscreen(IPC::Connection& connectio
         return;
     }
 
+    detachProjectionLayer(contextId);
     ensureInterface(contextId)->cleanupFullscreen();
 }
 
@@ -1573,6 +1903,8 @@ void VideoPresentationManagerProxy::didEnterFullscreen(PlaybackSessionContextIde
         optionalSize = size;
 
     sendToWebProcess(contextId, Messages::VideoPresentationManager::DidEnterFullscreen(contextId.object(), optionalSize));
+
+    attachProjectionLayer(contextId);
 
 #if PLATFORM(IOS_FAMILY)
     if (ensureInterface(contextId)->changingStandbyOnly())

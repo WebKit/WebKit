@@ -36,11 +36,13 @@
 #include <WebCore/ImmersiveVideoMetadata.h>
 #include <WebCore/MediaPlayerIdentifier.h>
 #include <WebCore/PlatformLayer.h>
+#include <WebCore/PlatformLayerIdentifier.h>
 #include <WebCore/PlatformVideoPresentationInterface.h>
 #include <WebCore/ShareableBitmap.h>
 #include <WebCore/VideoPresentationModel.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
+#include <wtf/MachSendRight.h>
 #include <wtf/MachSendRightAnnotated.h>
 #include <wtf/Observer.h>
 #include <wtf/RefPtr.h>
@@ -62,6 +64,7 @@ class WebPageProxy;
 class PlaybackSessionManagerProxy;
 class PlaybackSessionModelContext;
 class VideoPresentationManagerProxy;
+class RemoteLayerTreeHost;
 #if ENABLE(ENDOWMENT_BASED_APPLICATION_STATE_TRACKING)
 class LayerHostingVisibilityPropagator;
 #endif
@@ -231,6 +234,14 @@ private:
     template <typename Message> void sendToWebProcess(PlaybackSessionContextIdentifier, Message&&);
 
     typedef std::pair<Ref<VideoPresentationModelContext>, Ref<WebCore::PlatformVideoPresentationInterface>> ModelInterfacePair;
+
+    struct ProjectionLayerTakeover {
+        RetainPtr<WebAVPlayerLayer> playerLayer;
+        RetainPtr<CALayer> originalVideoSublayer;
+        RetainPtr<NSString> originalVideoGravity;
+        WebCore::FloatSize lastSentViewportSize;
+    };
+
     ModelInterfacePair createModelAndInterface(PlaybackSessionContextIdentifier);
     const ModelInterfacePair& ensureModelAndInterface(PlaybackSessionContextIdentifier);
     NODELETE const ModelInterfacePair* findModelAndInterface(PlaybackSessionContextIdentifier) const;
@@ -255,7 +266,16 @@ private:
 #endif
 
     // Messages from VideoPresentationManager
-    void setupFullscreenWithID(IPC::Connection&, WebCore::HTMLMediaElementIdentifier, const WebCore::HostingContext&, const WebCore::FloatRect& screenRect, const WebCore::FloatSize& initialSize, const WebCore::FloatSize& videoDimensions, float hostingScaleFactor, WebCore::HTMLMediaElementEnums::VideoFullscreenMode, bool allowsPictureInPicture, bool standby, bool blocksReturnToFullscreenFromPictureInPicture, bool hasObjectViewBox);
+    void setupFullscreenWithID(IPC::Connection&, WebCore::HTMLMediaElementIdentifier, const WebCore::HostingContext&, const WebCore::FloatRect& screenRect, const WebCore::FloatSize& initialSize, const WebCore::FloatSize& videoDimensions, float hostingScaleFactor, WebCore::HTMLMediaElementEnums::VideoFullscreenMode, bool allowsPictureInPicture, bool standby, bool blocksReturnToFullscreenFromPictureInPicture, bool hasObjectViewBox, std::optional<WebCore::PlatformLayerIdentifier> projectionLayerID);
+    void setProjectionLayerID(IPC::Connection&, WebCore::HTMLMediaElementIdentifier, std::optional<WebCore::PlatformLayerIdentifier>);
+    void attachProjectionLayer(PlaybackSessionContextIdentifier);
+    void detachProjectionLayer(PlaybackSessionContextIdentifier);
+    void restoreVideoSublayer(const ProjectionLayerTakeover&);
+    void pushProjectionViewportSize(PlaybackSessionContextIdentifier);
+public:
+    void syncProjectionContents(const RemoteLayerTreeHost&);
+private:
+    RetainPtr<CALayer> projectionLayerForContext(PlaybackSessionContextIdentifier);
     void setInlineRect(IPC::Connection&, WebCore::HTMLMediaElementIdentifier, const WebCore::FloatRect& inlineRect, bool visible);
     void setHasVideoContentLayer(IPC::Connection&, WebCore::HTMLMediaElementIdentifier, bool value);
     void setHasVideo(IPC::Connection&, WebCore::HTMLMediaElementIdentifier, bool);
@@ -326,6 +346,10 @@ private:
     bool m_mockVideoPresentationModeEnabled { false };
     WebCore::FloatSize m_mockPictureInPictureWindowSize { DefaultMockPictureInPictureWindowWidth, DefaultMockPictureInPictureWindowHeight };
     WebCore::FloatRect m_lastSetupFullscreenRectForTesting;
+    HashMap<PlaybackSessionContextIdentifier, WebCore::PlatformLayerIdentifier> m_projectionLayerIDs;
+    HashMap<PlaybackSessionContextIdentifier, ProjectionLayerTakeover> m_projectionLayerTakeovers;
+    HashMap<PlaybackSessionContextIdentifier, RetainPtr<CALayer>> m_ownedProjectionLayers;
+    HashSet<PlaybackSessionContextIdentifier> m_projectionActiveContexts;
 
     WeakPtr<WebPageProxy> m_page;
     const Ref<PlaybackSessionManagerProxy> m_playbackSessionManagerProxy;

@@ -29,6 +29,7 @@
 #if ENABLE(VIDEO)
 
 #include <WebCore/HTMLMediaElement.h>
+#include <WebCore/PlatformLayerIdentifier.h>
 #include <WebCore/Supplementable.h>
 #include <WebCore/VideoFrameRequestCallback.h>
 #include <memory>
@@ -37,6 +38,7 @@
 namespace WebCore {
 
 class ColorSpace;
+class HTMLCanvasElement;
 class HTMLImageLoader;
 class ImageBuffer;
 class RenderVideo;
@@ -164,6 +166,11 @@ public:
     double pitch() const;
     double fieldOfView() const;
     void spatialCameraDidMove(double yaw, double pitch, double fieldOfView);
+    void projectionFrameDidRender(HTMLCanvasElement&);
+    void projectionRendererDidStop();
+    WEBCORE_EXPORT void setProjectionViewportSize(const FloatSize&);
+    FloatSize projectionViewportSize() const { return m_projectionViewportSize; }
+    std::optional<PlatformLayerIdentifier> projectionLayerID() const { return m_projectionLayerID; }
 
     bool hasSpatialVideoProjection() const;
 
@@ -220,6 +227,8 @@ private:
     std::optional<double> m_cameraFieldOfView;
 
     bool m_renderingCanBeAccelerated { false };
+    std::optional<PlatformLayerIdentifier> m_projectionLayerID;
+    FloatSize m_projectionViewportSize;
 
 #if ENABLE(VIDEO_PRESENTATION_MODE)
     bool m_enteringPictureInPicture { false };

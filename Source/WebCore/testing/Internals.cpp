@@ -3944,6 +3944,8 @@ ExceptionOr<uint64_t> Internals::layerIDForElement(Element& element, LayerType l
         return graphicsLayer->primaryLayerID() ? graphicsLayer->primaryLayerID()->object().toUInt64() : 0;
     case LayerType::Backdrop:
         return graphicsLayer->backdropLayerID() ? graphicsLayer->backdropLayerID()->object().toUInt64() : 0;
+    case LayerType::CanvasContents:
+        return graphicsLayer->contentsLayerIDForCanvas() ? graphicsLayer->contentsLayerIDForCanvas()->object().toUInt64() : 0;
     default:
         ASSERT_NOT_REACHED();
         return 0;

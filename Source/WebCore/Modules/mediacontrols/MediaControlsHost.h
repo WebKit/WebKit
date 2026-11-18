@@ -44,6 +44,7 @@ class DOMPromise;
 class DOMRect;
 class Element;
 class WeakPtrImplWithEventTargetData;
+class HTMLCanvasElement;
 class HTMLElement;
 class HTMLMediaElement;
 class MediaControlTextTrackContainerElement;
@@ -114,6 +115,10 @@ public:
     String spatialVideoProjectionKind() const;
     std::optional<int32_t> spatialVideoHorizontalFieldOfView() const;
     void spatialCameraDidMove(double yaw, double pitch, double fieldOfView);
+    void projectionFrameDidRender(HTMLCanvasElement&);
+    void projectionRendererDidStop();
+    int projectionViewportWidth() const;
+    int projectionViewportHeight() const;
     NODELETE bool isAVExperienceControllerFullscreenEnabled() const;
 
     void captionPreferencesChanged();

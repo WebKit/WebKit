@@ -31,6 +31,7 @@
 #include "CSSPropertyNames.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
+#include "ContainerNodeInlines.h"
 #include "Document.h"
 #include "DocumentPage.h"
 #include "DocumentQuirks.h"
@@ -38,6 +39,7 @@
 #include "ElementInlines.h"
 #include "EventNames.h"
 #include "FrameDestructionObserverInlines.h"
+#include "HTMLCanvasElement.h"
 #include "HTMLImageLoader.h"
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
@@ -53,6 +55,8 @@
 #include "Performance.h"
 #include "PictureInPictureSupport.h"
 #include "RenderImage.h"
+#include "RenderLayer.h"
+#include "RenderLayerBacking.h"
 #include "RenderLayerCompositor.h"
 #include "RenderObjectDocument.h"
 #include "RenderVideoInlines.h"
@@ -270,6 +274,50 @@ void HTMLVideoElement::spatialCameraDidMove(double yaw, double pitch, double fie
     m_cameraFieldOfView = fieldOfView;
 
     scheduleEvent(eventNames().webkitcameramovedEvent);
+}
+
+void HTMLVideoElement::projectionFrameDidRender(HTMLCanvasElement& canvas)
+{
+    CheckedPtr box = dynamicDowncast<RenderBoxModelObject>(canvas.renderer());
+    if (!box || !box->hasLayer())
+        return;
+
+    auto* backing = box->layer()->backing();
+    if (!backing)
+        return;
+
+    // A display delegate's output lives on GraphicsLayerCA's separate contents layer, not the
+    // primary layer -- see setContentsDisplayDelegate(). The primary layer has nil contents.
+    RefPtr graphicsLayer = backing->graphicsLayer();
+    auto layerID = graphicsLayer ? graphicsLayer->contentsLayerIDForCanvas() : std::nullopt;
+
+    if (layerID == m_projectionLayerID)
+        return;
+
+    m_projectionLayerID = layerID;
+    ALWAYS_LOG(LOGIDENTIFIER, "projection layer: ", layerID ? layerID->object().toUInt64() : 0);
+
+    if (RefPtr page = document().page())
+        page->chrome().client().videoProjectionLayerChanged(*this, layerID);
+}
+
+void HTMLVideoElement::projectionRendererDidStop()
+{
+    if (!m_projectionLayerID)
+        return;
+
+    m_projectionLayerID = std::nullopt;
+    if (RefPtr page = document().page())
+        page->chrome().client().videoProjectionLayerChanged(*this, std::nullopt);
+}
+
+void HTMLVideoElement::setProjectionViewportSize(const FloatSize& size)
+{
+    if (m_projectionViewportSize == size)
+        return;
+
+    ALWAYS_LOG(LOGIDENTIFIER, size);
+    m_projectionViewportSize = size;
 }
 
 bool HTMLVideoElement::hasSpatialVideoProjection() const

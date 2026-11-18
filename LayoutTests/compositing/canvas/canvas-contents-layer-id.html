@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<script src="../../resources/js-test.js"></script>
+<body>
+<canvas id="canvas" width="64" height="64" style="width: 320px; height: 240px;"></canvas>
+<div id="plain" style="width: 320px; height: 240px; transform: translateZ(0);"></div>
+<script type="text/javascript">
+
+description("A canvas with a display delegate paints into GraphicsLayerCA's separate contents layer, not its primary layer. Code that needs the canvas's pixels must therefore use the contents layer's identifier; the primary layer is structural and never carries contents.");
+
+jsTestIsAsync = true;
+
+const canvas = document.getElementById("canvas");
+const gl = canvas.getContext("webgl");
+
+if (!gl) {
+    testFailed("WebGL is unavailable, so the canvas has no display delegate.");
+    finishJSTest();
+} else {
+    gl.clearColor(0, 1, 0, 1);
+    gl.clear(gl.COLOR_BUFFER_BIT);
+    gl.finish();
+
+    debug("A live context is what supplies the display delegate; a lost one supplies nothing:");
+    shouldBeFalse("gl.isContextLost()");
+
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+        window.primary = internals.layerIDForElement(canvas, "primary");
+        window.contents = internals.layerIDForElement(canvas, "canvas-contents");
+
+        debug("");
+        debug("Both layers exist:");
+        shouldBeTrue("primary > 0");
+        shouldBeTrue("contents > 0");
+
+        debug("");
+        debug("They are distinct layers, which is the whole point:");
+        shouldBeFalse("primary === contents");
+
+        debug("");
+        debug("An element with no canvas contents layer reports zero:");
+        window.plain = document.getElementById("plain");
+        shouldBe("internals.layerIDForElement(plain, 'canvas-contents')", "0");
+        shouldBeTrue("internals.layerIDForElement(plain, 'primary') > 0");
+
+        finishJSTest();
+    }));
+}
+
+</script>
+</body>

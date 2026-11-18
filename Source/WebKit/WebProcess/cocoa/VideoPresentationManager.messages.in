@@ -45,6 +45,7 @@ messages -> VideoPresentationManager {
     SetVideoLayerFrameFenced(WebCore::MediaPlayerClientIdentifier contextId, WebCore::FloatRect bounds, struct MachSendRightAnnotated sendRightAnnotated)
     SetVideoLayerGravityEnum(WebCore::MediaPlayerClientIdentifier contextId, unsigned gravity)
     SetVideoFullscreenFrame(WebCore::MediaPlayerClientIdentifier contextId, WebCore::FloatRect frame)
+    SetProjectionViewportSize(WebCore::MediaPlayerClientIdentifier contextId, WebCore::FloatSize size)
     FullscreenModeChanged(WebCore::MediaPlayerClientIdentifier contextId, uint32_t videoFullscreenMode)
     FullscreenMayReturnToInline(WebCore::MediaPlayerClientIdentifier contextId, bool isPageVisible)
     RequestRouteSharingPolicyAndContextUID(WebCore::MediaPlayerClientIdentifier contextId) -> (enum:uint8_t WebCore::RouteSharingPolicy routeSharingPolicy, String routingContextUID)

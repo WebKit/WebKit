@@ -352,6 +352,7 @@ private:
     void setMockVideoPresentationModeEnabled(bool) final;
     void enterVideoFullscreenForVideoElement(WebCore::HTMLVideoElement&, WebCore::HTMLMediaElementEnums::VideoFullscreenMode, bool) final;
     void setPlayerIdentifierForVideoElement(WebCore::HTMLVideoElement&) final;
+    void videoProjectionLayerChanged(WebCore::HTMLVideoElement&, std::optional<WebCore::PlatformLayerIdentifier>) final;
     void exitVideoFullscreenForVideoElement(WebCore::HTMLVideoElement&, WTF::CompletionHandler<void(bool)>&& = [](bool) { }) final;
     void setUpPlaybackControlsManager(WebCore::HTMLMediaElement&) final;
     void clearPlaybackControlsManager() final;

@@ -611,7 +611,7 @@ public:
     };
     ExceptionOr<String> layerTreeAsText(Document&, unsigned short flags) const;
     String viewTransitionOldCaptureState(Document&, const AtomString& name) const;
-    enum class LayerType { Primary, Backdrop };
+    enum class LayerType { Primary, Backdrop, CanvasContents };
     ExceptionOr<uint64_t> layerIDForElement(Element&, LayerType);
     ExceptionOr<String> repaintRectsAsText() const;
 

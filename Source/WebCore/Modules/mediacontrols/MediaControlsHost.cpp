@@ -48,6 +48,7 @@
 #include "EventTarget.h"
 #include "FloatRect.h"
 #include "FrameDestructionObserverInlines.h"
+#include "HTMLCanvasElement.h"
 #include "HTMLElement.h"
 #include "HTMLMediaElement.h"
 #include "HTMLVideoElement.h"
@@ -82,6 +83,7 @@
 #include <wtf/Borrow.h>
 #include <wtf/Function.h>
 #include <wtf/JSONValues.h>
+#include <wtf/MathExtras.h>
 #include <wtf/Scope.h>
 #include <wtf/UUID.h>
 #include <wtf/text/TextStream.h>
@@ -409,6 +411,32 @@ void MediaControlsHost::spatialCameraDidMove(double yaw, double pitch, double fi
 {
     if (RefPtr videoElement = dynamicDowncast<HTMLVideoElement>(m_mediaElement.get()))
         videoElement->spatialCameraDidMove(yaw, pitch, fieldOfView);
+}
+
+void MediaControlsHost::projectionFrameDidRender(HTMLCanvasElement& canvas)
+{
+    RefPtr videoElement = dynamicDowncast<HTMLVideoElement>(m_mediaElement);
+    if (!videoElement)
+        return;
+    videoElement->projectionFrameDidRender(canvas);
+}
+
+void MediaControlsHost::projectionRendererDidStop()
+{
+    if (RefPtr videoElement = dynamicDowncast<HTMLVideoElement>(m_mediaElement))
+        videoElement->projectionRendererDidStop();
+}
+
+int MediaControlsHost::projectionViewportWidth() const
+{
+    RefPtr videoElement = dynamicDowncast<HTMLVideoElement>(m_mediaElement);
+    return videoElement ? clampTo<int>(videoElement->projectionViewportSize().width()) : 0;
+}
+
+int MediaControlsHost::projectionViewportHeight() const
+{
+    RefPtr videoElement = dynamicDowncast<HTMLVideoElement>(m_mediaElement);
+    return videoElement ? clampTo<int>(videoElement->projectionViewportSize().height()) : 0;
 }
 
 bool MediaControlsHost::isAVExperienceControllerFullscreenEnabled() const

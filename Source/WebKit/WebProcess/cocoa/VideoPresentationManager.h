@@ -167,6 +167,7 @@ public:
     NODELETE bool supportsVideoFullscreenStandby() const;
     void enterVideoFullscreenForVideoElement(WebCore::HTMLVideoElement&, WebCore::HTMLMediaElementEnums::VideoFullscreenMode, bool standby);
     void setPlayerIdentifierForVideoElement(WebCore::HTMLVideoElement&);
+    void videoProjectionLayerChanged(WebCore::HTMLVideoElement&, std::optional<WebCore::PlatformLayerIdentifier>);
     void exitVideoFullscreenForVideoElement(WebCore::HTMLVideoElement&, WTF::CompletionHandler<void(bool)>&& = [](bool) { });
     void exitVideoFullscreenToModeWithoutAnimation(WebCore::HTMLVideoElement&, WebCore::HTMLMediaElementEnums::VideoFullscreenMode);
     void setVideoFullscreenMode(WebCore::HTMLVideoElement&, WebCore::HTMLMediaElementEnums::VideoFullscreenMode);
@@ -222,6 +223,7 @@ protected:
     void setVideoLayerFrameFenced(WebCore::MediaPlayerClientIdentifier, WebCore::FloatRect bounds, WTF::MachSendRightAnnotated&&);
     void setVideoLayerGravityEnum(WebCore::MediaPlayerClientIdentifier, unsigned gravity);
     void setVideoFullscreenFrame(WebCore::MediaPlayerClientIdentifier, WebCore::FloatRect);
+    void setProjectionViewportSize(WebCore::MediaPlayerClientIdentifier, WebCore::FloatSize);
     void fullscreenModeChanged(WebCore::MediaPlayerClientIdentifier, WebCore::HTMLMediaElementEnums::VideoFullscreenMode);
     void fullscreenMayReturnToInline(WebCore::MediaPlayerClientIdentifier, bool isPageVisible);
     void requestRouteSharingPolicyAndContextUID(WebCore::MediaPlayerClientIdentifier, CompletionHandler<void(WebCore::RouteSharingPolicy, String)>&&);

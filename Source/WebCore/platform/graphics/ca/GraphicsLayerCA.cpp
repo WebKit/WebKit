@@ -1473,6 +1473,13 @@ std::optional<PlatformLayerIdentifier> GraphicsLayerCA::contentsLayerIDForModel(
 
 #endif
 
+std::optional<PlatformLayerIdentifier> GraphicsLayerCA::contentsLayerIDForCanvas() const
+{
+    if (m_contentsLayerPurpose != ContentsLayerPurpose::Canvas || !m_contentsLayer)
+        return std::nullopt;
+    return m_contentsLayer->layerID();
+}
+
 void GraphicsLayerCA::setContentsToPlatformLayer(PlatformLayer* platformLayer, ContentsLayerPurpose purpose)
 {
     // When platformLayer is non-null, skip if the same layer is already set.
