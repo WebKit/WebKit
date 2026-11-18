@@ -201,13 +201,14 @@ class Terminal(object):
                 return False
 
         if (url.startswith('http://') or url.startswith('https://')):
+            # webbrowser.open returns False, rather than raising, when no usable browser is found (common on headless systems)
             try:
-                webbrowser.open(url)
-                return True
+                if webbrowser.open(url):
+                    return True
             except webbrowser.Error:
-                sys.stderr.write(
-                    "Failed to open '{}' in the browser, continuing\n".format(url))
-                return False
+                pass
+            sys.stderr.write("Failed to open '{}' in the browser, continuing\n".format(url))
+            return False
         else:
             if sys.platform.startswith('win'):
                 process = run(['explorer', url])

@@ -157,6 +157,17 @@ class TerminalTests(unittest.TestCase):
 
             self.assertEqual(original, Terminal.isatty(file_like))
 
+    def test_open_url_no_browser(self):
+        with OutputCapture() as captured, Terminal.override_atty(sys.stdout, isatty=True), patch('webbrowser.open', return_value=False):
+            self.assertFalse(Terminal.open_url('https://example.com'))
+        self.assertEqual(captured.stderr.getvalue(), "Failed to open 'https://example.com' in the browser, continuing\n")
+
+    def test_open_url_browser(self):
+        with OutputCapture() as captured, Terminal.override_atty(sys.stdout, isatty=True), patch('webbrowser.open', return_value=True) as open_mock:
+            self.assertTrue(Terminal.open_url('https://example.com'))
+        open_mock.assert_called_once_with('https://example.com')
+        self.assertEqual(captured.stderr.getvalue(), '')
+
     def test_background_colors(self):
         self.assertEqual(Terminal.Text.red, '\033[31m')
         self.assertEqual(Terminal.Text.redBackground, '\033[41m')

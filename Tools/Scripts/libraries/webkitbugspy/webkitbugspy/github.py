@@ -146,15 +146,15 @@ class Tracker(GenericTracker):
 
         def prompt() -> str:
             result = "GitHub's API\nProvide {} username and access token to create and update pull requests".format(hostname)
-            if webkitcorepy.Terminal.open_url(
-                '{}?scopes=repo,workflow&description={}%20Local%20Automation'.format(token_url, self.name),
-                prompt='Please press Return key to open the GitHub token generation web page.\n'
-                        'Options are preconfigured, set your expiration date and then click "Generate token": ',
-            ):
+            generate_url = '{}?scopes=repo,workflow&description={}%20Local%20Automation'.format(token_url, self.name)
+            sys.stderr.write(
+                "A {host} 'Personal access token (classic)' with 'repo' and 'workflow' scopes is required.\n"
+                'Generate one at the following URL (options are preconfigured, set your expiration date and then click "Generate token"):\n'
+                '{url}\n'.format(host=hostname, url=generate_url),
+            )
+            if webkitcorepy.Terminal.choose('Would you like to open this URL in your browser?', default='Yes') == 'Yes' and webkitcorepy.Terminal.open_url(generate_url):
                 return result
-            return '''{}
-Please go to {token_url} and generate a new 'Personal access token' via 'Developer settings'
-with 'repo' and 'workflow' access and appropriate 'Expiration' for your {host} user'''.format(result, token_url=token_url, host=hostname)
+            return '{}\nIf you are on a system without a web browser, open the URL above on another machine'.format(result)
 
         return webkitcorepy.credentials(
             url=self.api_url,

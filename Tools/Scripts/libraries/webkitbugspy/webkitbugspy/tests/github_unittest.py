@@ -23,9 +23,10 @@
 import re
 import json
 import unittest
+from unittest.mock import patch
 
 from webkitbugspy import Issue, Tracker, User, github, mocks
-from webkitcorepy import OutputCapture, mocks as wkmocks
+from webkitcorepy import OutputCapture, Terminal, mocks as wkmocks
 
 
 class TestGitHub(unittest.TestCase):
@@ -204,6 +205,35 @@ class TestGitHub(unittest.TestCase):
             tracker = github.Tracker(self.URL)
             tracker.issue(1).add_comment('Is this related to #2?')
             self.assertEqual(tracker.issue(1).references, [tracker.issue(2)])
+
+    def credentials_prompt(self) -> str:
+        with patch('webkitcorepy.credentials') as credentials:
+            github.Tracker(self.URL).credentials()
+        return credentials.call_args.kwargs['prompt']
+
+    def test_credentials_prompt_open_browser(self):
+        prompt = self.credentials_prompt()
+        with wkmocks.Terminal.input('y'), patch.object(Terminal, 'open_url', return_value=True) as open_url, OutputCapture() as captured:
+            result = prompt()
+        token_url = 'https://github.example.com/settings/tokens/new?scopes=repo,workflow&description=WebKit%20Local%20Automation'
+        open_url.assert_called_once_with(token_url)
+        self.assertIn(token_url, captured.stderr.getvalue())
+        self.assertIn("'repo' and 'workflow' scopes", captured.stderr.getvalue())
+        self.assertNotIn('another machine', result)
+
+    def test_credentials_prompt_decline_browser(self):
+        prompt = self.credentials_prompt()
+        with wkmocks.Terminal.input('n'), patch.object(Terminal, 'open_url') as open_url, OutputCapture() as captured:
+            result = prompt()
+        open_url.assert_not_called()
+        self.assertIn('https://github.example.com/settings/tokens/new?scopes=repo,workflow', captured.stderr.getvalue())
+        self.assertIn('another machine', result)
+
+    def test_credentials_prompt_browser_fails(self):
+        prompt = self.credentials_prompt()
+        with wkmocks.Terminal.input('y'), patch.object(Terminal, 'open_url', return_value=False), OutputCapture():
+            result = prompt()
+        self.assertIn('another machine', result)
 
     def test_me(self):
         with mocks.GitHub(self.URL.split('://')[1], issues=mocks.ISSUES, environment=wkmocks.Environment(
