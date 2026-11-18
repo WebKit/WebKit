@@ -69,14 +69,8 @@ RefPtr<VideoFrame> VideoFrame::createNV12(std::span<const uint8_t> span, size_t 
     constexpr auto subsampling = PlanarImageConverter::ChromaSubsampling::HorizontalAndVertical;
     bool isFullRange = init.colorSpace.fullRange.value_or(false);
 
-    // The UV plane follows all the rows of the Y plane, cropped ones included.
-    CheckedSize offsetUV = std::max<size_t>(height, planeY.sourceHeight);
-    offsetUV *= planeY.sourceWidthBytes;
-    if (offsetUV.hasOverflowed())
-        return nullptr;
-
-    auto y = PlanarImageConverter::makePlane(span, 0, planeY.sourceWidthBytes, width, height, PlanarImageConverter::eightBit);
-    auto uv = PlanarImageConverter::makePlane(span, offsetUV.value(), planeUV.sourceWidthBytes, PlanarImageConverter::chromaWidth(subsampling, width), PlanarImageConverter::chromaHeight(subsampling, height), PlanarImageConverter::eightBit, 2);
+    auto y = PlanarImageConverter::makePlane(span, planeY.destinationOffset, planeY.destinationStride, width, height, PlanarImageConverter::eightBit);
+    auto uv = PlanarImageConverter::makePlane(span, planeUV.destinationOffset, planeUV.destinationStride, PlanarImageConverter::chromaWidth(subsampling, width), PlanarImageConverter::chromaHeight(subsampling, height), PlanarImageConverter::eightBit, 2);
     if (!y || !uv)
         return nullptr;
 
@@ -93,7 +87,8 @@ static constexpr std::array<uint8_t, 4> argbToRGBA { 1, 2, 3, 0 };
 
 static RetainPtr<CVPixelBufferRef> createPackedPixelBuffer(std::span<const uint8_t> span, size_t width, size_t height, const ComputedPlaneLayout& plane, OSType pixelFormat, std::array<uint8_t, 4> channelMap)
 {
-    auto source = PlanarImageConverter::makePlane(span, 0, plane.sourceWidthBytes, width, height, PlanarImageConverter::eightBit, 4);
+    constexpr uint8_t rgbaChannelCount = 4;
+    auto source = PlanarImageConverter::makePlane(span, plane.destinationOffset, plane.destinationStride, width, height, PlanarImageConverter::eightBit, rgbaChannelCount);
     if (!source)
         return nullptr;
 
@@ -146,22 +141,16 @@ static RetainPtr<CVPixelBufferRef> createPixelBufferFromI420(std::span<const uin
     size_t chromaWidth = PlanarImageConverter::chromaWidth(subsampling, width);
     size_t chromaHeight = PlanarImageConverter::chromaHeight(subsampling, height);
 
-    // Plane offsets must step over the full coded plane heights (layout*.sourceHeight), not the
-    // visible output height, otherwise a frame whose codedHeight exceeds visibleRect.height (e.g.
-    // a 1920x1088 frame cropped to 1920x1080) reads the chroma planes from the wrong offset.
-    size_t offsetU = layoutY.sourceLeftBytes + layoutY.sourceWidthBytes * layoutY.sourceHeight;
-    size_t offsetV = offsetU + layoutU.sourceLeftBytes + layoutU.sourceWidthBytes * layoutU.sourceHeight;
-    auto y = PlanarImageConverter::makePlane(buffer, layoutY.sourceLeftBytes, layoutY.sourceWidthBytes, width, height, format);
-    auto u = PlanarImageConverter::makePlane(buffer, offsetU, layoutU.sourceWidthBytes, chromaWidth, chromaHeight, format);
-    auto v = PlanarImageConverter::makePlane(buffer, offsetV, layoutV.sourceWidthBytes, chromaWidth, chromaHeight, format);
+    auto y = PlanarImageConverter::makePlane(buffer, layoutY.destinationOffset, layoutY.destinationStride, width, height, format);
+    auto u = PlanarImageConverter::makePlane(buffer, layoutU.destinationOffset, layoutU.destinationStride, chromaWidth, chromaHeight, format);
+    auto v = PlanarImageConverter::makePlane(buffer, layoutV.destinationOffset, layoutV.destinationStride, chromaWidth, chromaHeight, format);
     if (!y || !u || !v)
         return nullptr;
 
     std::optional<PlanarImageConverter::SourcePlane> alpha;
     std::optional<PlanarImageConverter::SampleFormat> alphaFormat;
     if (layoutA) {
-        size_t offsetA = offsetV + layoutV.sourceLeftBytes + layoutV.sourceWidthBytes * layoutV.sourceHeight;
-        alpha = PlanarImageConverter::makePlane(buffer, offsetA, layoutA->sourceWidthBytes, width, height, format);
+        alpha = PlanarImageConverter::makePlane(buffer, layoutA->destinationOffset, layoutA->destinationStride, width, height, format);
         if (!alpha)
             return nullptr;
         alphaFormat = format;

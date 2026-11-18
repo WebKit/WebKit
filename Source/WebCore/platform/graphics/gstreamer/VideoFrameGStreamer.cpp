@@ -32,6 +32,7 @@
 #include "ImageOrientation.h"
 #include "NativeImage.h"
 #include "PixelBuffer.h"
+#include "PlanarImageConverter.h"
 #include "PlatformDisplay.h"
 #include "VideoFrameContentHint.h"
 #include "VideoPixelFormat.h"
@@ -236,21 +237,20 @@ RefPtr<VideoFrame> VideoFrame::fromNativeImage(NativeImage& image)
     return VideoFrameGStreamer::create(WTF::move(sample), { { width, height }, WTF::move(info) });
 }
 
-static void copyToGstBufferPlane(std::span<uint8_t> destination, const GstVideoInfo& info, size_t planeIndex, std::span<const uint8_t> source, size_t height, uint32_t bytesPerRowSource)
+// width and height count the samples of the plane, each made of channels bytes.
+static bool copyToGstBufferPlane(std::span<uint8_t> destination, const GstVideoInfo& info, size_t planeIndex, std::span<const uint8_t> source, const ComputedPlaneLayout& layout, size_t width, size_t height, uint8_t channels)
 {
     WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN; // GLib port
-    auto destinationOffset = GST_VIDEO_INFO_PLANE_OFFSET(&info, planeIndex);
-    uint32_t bytesPerRowDestination = GST_VIDEO_INFO_PLANE_STRIDE(&info, planeIndex);
+    size_t destinationOffset = GST_VIDEO_INFO_PLANE_OFFSET(&info, planeIndex);
+    size_t destinationStride = GST_VIDEO_INFO_PLANE_STRIDE(&info, planeIndex);
     WTF_ALLOW_UNSAFE_BUFFER_USAGE_END; // GLib port
-    gsize sourceOffset = 0;
-    auto count = std::min(bytesPerRowSource, bytesPerRowDestination);
-    for (size_t i = 0; i < height; ++i) {
-        auto sourceSpan = source.subspan(sourceOffset, count);
-        auto destinationSpan = destination.subspan(destinationOffset, count);
-        memcpySpan(destinationSpan, sourceSpan);
-        sourceOffset += bytesPerRowSource;
-        destinationOffset += bytesPerRowDestination;
+    auto sourcePlane = PlanarImageConverter::makePlane(source, layout.destinationOffset, layout.destinationStride, width, height, PlanarImageConverter::eightBit, channels);
+    auto destinationPlane = PlanarImageConverter::makePlane(destination, destinationOffset, destinationStride, width, height, PlanarImageConverter::eightBit, channels);
+    if (!sourcePlane || !destinationPlane || !PlanarImageConverter::copyPlane(*sourcePlane, *destinationPlane)) {
+        GST_WARNING("Plane %zu doesn't fit in the source or destination buffer", planeIndex);
+        return false;
     }
+    return true;
 }
 
 static VideoFrameGStreamer::CreateOptions createOptionsWithInit(size_t width, size_t height, const GstVideoInfo& info, const VideoFrame::Init& init)
@@ -275,8 +275,10 @@ RefPtr<VideoFrame> VideoFrame::createNV12(std::span<const uint8_t> span, size_t 
     {
         GstMappedBuffer mappedBuffer(buffer, GST_MAP_WRITE);
         auto destinationSpan = mappedBuffer.mutableSpan<uint8_t>();
-        copyToGstBufferPlane(destinationSpan, info, 0, span, height, planeY.sourceWidthBytes);
-        copyToGstBufferPlane(destinationSpan, info, 1, span.subspan(planeUV.destinationOffset), (height + 1) / 2, planeUV.sourceWidthBytes);
+        constexpr auto subsampling = PlanarImageConverter::ChromaSubsampling::HorizontalAndVertical;
+        if (!copyToGstBufferPlane(destinationSpan, info, 0, span, planeY, width, height, 1)
+            || !copyToGstBufferPlane(destinationSpan, info, 1, span, planeUV, PlanarImageConverter::chromaWidth(subsampling, width), PlanarImageConverter::chromaHeight(subsampling, height), 2))
+            return nullptr;
     }
     gst_buffer_add_video_meta(buffer.get(), GST_VIDEO_FRAME_FLAG_NONE, GST_VIDEO_FORMAT_NV12, width, height);
 
@@ -298,7 +300,9 @@ static RefPtr<VideoFrame> createRGBFrame(GstVideoFormat format, std::span<const 
     {
         GstMappedBuffer mappedBuffer(buffer, GST_MAP_WRITE);
         auto destinationSpan = mappedBuffer.mutableSpan<uint8_t>();
-        copyToGstBufferPlane(destinationSpan, info, 0, span, height, plane.sourceWidthBytes);
+        constexpr uint8_t rgbaChannelCount = 4;
+        if (!copyToGstBufferPlane(destinationSpan, info, 0, span, plane, width, height, rgbaChannelCount))
+            return nullptr;
     }
 
     gst_buffer_add_video_meta(buffer.get(), GST_VIDEO_FRAME_FLAG_NONE, format, width, height);
@@ -341,13 +345,13 @@ RefPtr<VideoFrame> VideoFrame::createI420(std::span<const uint8_t> span, size_t 
     {
         GstMappedBuffer mappedBuffer(buffer, GST_MAP_WRITE);
         auto destinationSpan = mappedBuffer.mutableSpan<uint8_t>();
-        auto stride = ((height + 1) / 2);
-        // The source planes are laid out for the coded size; use each plane's coded offset (as the
-        // NV12 path does) rather than deriving it from the visible height, otherwise a frame whose
-        // codedHeight exceeds visibleRect.height reads the chroma planes from the wrong offset.
-        copyToGstBufferPlane(destinationSpan, info, GST_VIDEO_COMP_Y, span, height, planeY.sourceWidthBytes);
-        copyToGstBufferPlane(destinationSpan, info, GST_VIDEO_COMP_U, span.subspan(planeU.destinationOffset), stride, planeU.sourceWidthBytes);
-        copyToGstBufferPlane(destinationSpan, info, GST_VIDEO_COMP_V, span.subspan(planeV.destinationOffset), stride, planeV.sourceWidthBytes);
+        constexpr auto subsampling = PlanarImageConverter::ChromaSubsampling::HorizontalAndVertical;
+        auto chromaWidth = PlanarImageConverter::chromaWidth(subsampling, width);
+        auto chromaHeight = PlanarImageConverter::chromaHeight(subsampling, height);
+        if (!copyToGstBufferPlane(destinationSpan, info, GST_VIDEO_COMP_Y, span, planeY, width, height, 1)
+            || !copyToGstBufferPlane(destinationSpan, info, GST_VIDEO_COMP_U, span, planeU, chromaWidth, chromaHeight, 1)
+            || !copyToGstBufferPlane(destinationSpan, info, GST_VIDEO_COMP_V, span, planeV, chromaWidth, chromaHeight, 1))
+            return nullptr;
     }
     gst_buffer_add_video_meta(buffer.get(), GST_VIDEO_FRAME_FLAG_NONE, GST_VIDEO_FORMAT_I420, width, height);
 
@@ -367,12 +371,14 @@ RefPtr<VideoFrame> VideoFrame::createI420A(std::span<const uint8_t> span, size_t
     {
         GstMappedBuffer mappedBuffer(buffer, GST_MAP_WRITE);
         auto destinationSpan = mappedBuffer.mutableSpan<uint8_t>();
-        auto stride = ((height + 1) / 2);
-        // Use each plane's coded offset rather than deriving it from the visible height (see createI420).
-        copyToGstBufferPlane(destinationSpan, info, GST_VIDEO_COMP_Y, span, height, planeY.sourceWidthBytes);
-        copyToGstBufferPlane(destinationSpan, info, GST_VIDEO_COMP_U, span.subspan(planeU.destinationOffset), stride, planeU.sourceWidthBytes);
-        copyToGstBufferPlane(destinationSpan, info, GST_VIDEO_COMP_V, span.subspan(planeV.destinationOffset), stride, planeV.sourceWidthBytes);
-        copyToGstBufferPlane(destinationSpan, info, GST_VIDEO_COMP_A, span.subspan(planeA.destinationOffset), height, planeA.sourceWidthBytes);
+        constexpr auto subsampling = PlanarImageConverter::ChromaSubsampling::HorizontalAndVertical;
+        auto chromaWidth = PlanarImageConverter::chromaWidth(subsampling, width);
+        auto chromaHeight = PlanarImageConverter::chromaHeight(subsampling, height);
+        if (!copyToGstBufferPlane(destinationSpan, info, GST_VIDEO_COMP_Y, span, planeY, width, height, 1)
+            || !copyToGstBufferPlane(destinationSpan, info, GST_VIDEO_COMP_U, span, planeU, chromaWidth, chromaHeight, 1)
+            || !copyToGstBufferPlane(destinationSpan, info, GST_VIDEO_COMP_V, span, planeV, chromaWidth, chromaHeight, 1)
+            || !copyToGstBufferPlane(destinationSpan, info, GST_VIDEO_COMP_A, span, planeA, width, height, 1))
+            return nullptr;
     }
     gst_buffer_add_video_meta(buffer.get(), GST_VIDEO_FRAME_FLAG_NONE, GST_VIDEO_FORMAT_A420, width, height);
 
