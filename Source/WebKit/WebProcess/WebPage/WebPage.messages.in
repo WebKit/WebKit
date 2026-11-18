@@ -471,7 +471,7 @@ messages -> WebPage WantsAsyncDispatchMessage {
 #if ENABLE(CONTEXT_MENUS)
     # Context menu.
     DidDismissContextMenu()
-    DidSelectItemFromActiveContextMenu(WebKit::WebContextMenuItemData menuItem)
+    DidSelectItemFromActiveContextMenu(WebKit::WebContextMenuItemData menuItem) -> ()
     ContextMenuForKeyEvent()
 #endif
 

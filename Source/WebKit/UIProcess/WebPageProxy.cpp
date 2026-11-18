@@ -15556,7 +15556,13 @@ void WebPageProxy::contextMenuItemSelected(const WebContextMenuItemData& item, c
         RefPtr protectedThis { weakThis };
         if (!protectedThis || !protectedThis->contextMenuReplyReachesAskingProcess(targetFrameID))
             return;
-        protectedThis->sendToProcessContainingFrame(targetFrameID, Messages::WebPage::DidSelectItemFromActiveContextMenu(item));
+
+        CompletionHandler<void()> didHandleItem = [] { };
+#if PLATFORM(MAC)
+        if (item.action() == ContextMenuItemTagCopy || item.action() == ContextMenuItemTagCopyImageToClipboard)
+            didHandleItem = protectedThis->grantUserInitiatedCopy(targetFrameID);
+#endif
+        protectedThis->sendWithAsyncReplyToProcessContainingFrame(targetFrameID, Messages::WebPage::DidSelectItemFromActiveContextMenu(item), WTF::move(didHandleItem));
     });
 }
 

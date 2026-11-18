@@ -286,7 +286,7 @@ void Pasteboard::write(PasteboardImage&& pasteboardImage)
         types.append(UTTypeWebArchive.identifier);
     }
 
-    m_changeCount = writeURLForTypes(types, m_pasteboardName, pasteboardImage.url, context());
+    m_changeCount = platformStrategies()->pasteboardStrategy()->setTypesForImageCopy(types, pasteboardImage.resourceData, pasteboardImage.resourceUTI, m_pasteboardName, context());
     m_changeCount = platformStrategies()->pasteboardStrategy()->setBufferForType(tiffData.get(), legacyTIFFPasteboardTypeSingleton(), m_pasteboardName, context());
     if (auto archiveData = pasteboardImage.dataInWebArchiveFormat) {
         m_changeCount = platformStrategies()->pasteboardStrategy()->setBufferForType(archiveData.get(), WebArchivePboardType, m_pasteboardName, context());

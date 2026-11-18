@@ -131,6 +131,7 @@ struct PasteboardImage {
     RefPtr<SharedBuffer> dataInTIFFFormat;
     RefPtr<SharedBuffer> dataInWebArchiveFormat;
     String dataInHTMLFormat;
+    String resourceUTI;
 #endif
 #if PLATFORM(GTK) || PLATFORM(WPE) || PLATFORM(WIN)
     RefPtr<ShareableBitmap> bitmap;

@@ -3118,6 +3118,7 @@ static String commandNameForSelector(SEL selector)
 bool WebViewImpl::executeSavedCommandBySelector(SEL selector)
 {
     LOG(TextInput, "Executing previously saved command %s", sel_getName(selector));
+    SetForScope isExecutingSavedCommand { m_isExecutingSavedCommandBySelector, true };
     // The sink does two things: 1) Tells us if the responder went unhandled, and
     // 2) prevents any NSBeep; we don't ever want to beep here.
     RetainPtr<WKResponderChainSink> sink = adoptNS([[WKResponderChainSink alloc] initWithResponderChain:m_view.get().get()]);
@@ -3128,6 +3129,10 @@ bool WebViewImpl::executeSavedCommandBySelector(SEL selector)
 
 void WebViewImpl::executeEditCommandForSelector(SEL selector, const String& argument)
 {
+    if (selector == @selector(copy:) && !m_isExecutingSavedCommandBySelector) {
+        m_page->executeUserInitiatedCopyCommand();
+        return;
+    }
     m_page->executeEditCommand(commandNameForSelector(selector), argument);
 }
 

@@ -252,6 +252,7 @@ void Editor::writeImageToPasteboard(Pasteboard& pasteboard, Element& imageElemen
     if (RefPtr buffer = cachedImage->resourceBuffer())
         pasteboardImage.resourceData = buffer->makeContiguous();
     pasteboardImage.resourceMIMEType = cachedImage->response().mimeType();
+    pasteboardImage.resourceUTI = image->uti();
 
     pasteboard.write(WTF::move(pasteboardImage));
 }

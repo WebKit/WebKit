@@ -102,6 +102,9 @@ public:
     int getNumberOfFiles(const String&, const PasteboardContext*) final { return 0; }
     int64_t addTypes(const Vector<String>&, const String&, const PasteboardContext*) final { return 0; }
     int64_t setTypes(const Vector<String>&, const String&, const PasteboardContext*) final { return 0; }
+#if PLATFORM(MAC)
+    int64_t setTypesForImageCopy(const Vector<String>&, SharedBuffer*, const String&, const String&, const PasteboardContext*) final { return 0; }
+#endif
     int64_t setBufferForType(SharedBuffer*, const String&, const String&, const PasteboardContext*) final { return 0; }
     int64_t setURL(const PasteboardURL&, const String&, const PasteboardContext*) final { return 0; }
     int64_t setColor(const Color&, const String&, const PasteboardContext*) final { return 0; }

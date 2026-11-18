@@ -2748,7 +2748,7 @@ private:
     NODELETE void setCanUseCredentialStorage(bool);
 
 #if ENABLE(CONTEXT_MENUS)
-    void didSelectItemFromActiveContextMenu(const WebContextMenuItemData&);
+    void didSelectItemFromActiveContextMenu(const WebContextMenuItemData&, CompletionHandler<void()>&&);
 #endif
 
     void changeSelectedIndex(int32_t index);

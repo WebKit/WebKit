@@ -31,6 +31,7 @@
 #import "Helpers/cocoa/PasteboardUtilities.h"
 #import "Helpers/PlatformUtilities.h"
 #import "Helpers/Test.h"
+#import "Helpers/cocoa/TestNSBundleExtras.h"
 #import "Helpers/cocoa/TestWKWebView.h"
 #import <UniformTypeIdentifiers/UniformTypeIdentifiers.h>
 #import <WebCore/ColorCocoa.h>
@@ -316,6 +317,57 @@ TEST(CopyHTML, WriteRichTextSelectionToPasteboard)
     [webView writeSelectionToPasteboard:pasteboard types:@[ UTTypeWebArchive.identifier ]];
 
     EXPECT_GT([pasteboard dataForType:UTTypeWebArchive.identifier].length, 0U);
+}
+
+enum class ImageCopySource : bool { User, Script };
+
+static NSArray<NSPasteboardType> *copyImageDocument(NSURL *imageURL, ImageCopySource source)
+{
+    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [[configuration preferences] _setJavaScriptCanAccessClipboard:YES];
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400) configuration:configuration]);
+    [webView synchronouslyLoadRequest:[NSURLRequest requestWithURL:imageURL]];
+
+    clearPasteboard();
+    if (source == ImageCopySource::User)
+        [webView copy:nil];
+    else
+        [webView objectByEvaluatingJavaScript:@"document.execCommand('copy')"];
+    [webView waitForNextPresentationUpdate];
+
+    return NSPasteboard.generalPasteboard.types;
+}
+
+TEST(CopyHTML, UserInitiatedImageCopyWritesOriginalImageData)
+{
+    RetainPtr imageURL = [NSBundle.test_resourcesBundle URLForResource:@"icon" withExtension:@"png"];
+    NSArray<NSPasteboardType> *types = copyImageDocument(imageURL, ImageCopySource::User);
+
+    EXPECT_WK_STREQ(UTTypePNG.identifier, types.firstObject);
+    EXPECT_TRUE([types containsObject:NSPasteboardTypeTIFF]);
+    EXPECT_TRUE([[NSPasteboard.generalPasteboard dataForType:UTTypePNG.identifier] isEqualToData:[NSData dataWithContentsOfURL:imageURL]]);
+}
+
+TEST(CopyHTML, ScriptInitiatedImageCopyDoesNotWriteOriginalImageData)
+{
+    RetainPtr imageURL = [NSBundle.test_resourcesBundle URLForResource:@"icon" withExtension:@"png"];
+    NSArray<NSPasteboardType> *types = copyImageDocument(imageURL, ImageCopySource::Script);
+
+    EXPECT_TRUE([types containsObject:NSPasteboardTypeTIFF]);
+    EXPECT_FALSE([types containsObject:UTTypePNG.identifier]);
+}
+
+TEST(CopyHTML, UserInitiatedTIFFImageCopyOnlyWritesTIFF)
+{
+    RetainPtr imageURL = [NSBundle.test_resourcesBundle URLForResource:@"sunset-in-cupertino-100px" withExtension:@"tiff"];
+    NSArray<NSPasteboardType> *types = copyImageDocument(imageURL, ImageCopySource::User);
+
+    EXPECT_TRUE([types containsObject:NSPasteboardTypeTIFF]);
+    for (NSPasteboardType type in types) {
+        RetainPtr utType = [UTType typeWithIdentifier:type];
+        if ([utType conformsToType:UTTypeImage])
+            EXPECT_TRUE([utType conformsToType:UTTypeTIFF]);
+    }
 }
 
 #endif // PLATFORM(MAC)

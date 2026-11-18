@@ -1028,6 +1028,7 @@ private:
     bool m_willBecomeFirstResponderAgain { false };
     bool m_inBecomeFirstResponder { false };
     bool m_inResignFirstResponder { false };
+    bool m_isExecutingSavedCommandBySelector { false };
 
     CGRect m_contentPreparationRect { { 0, 0 }, { 0, 0 } };
     bool m_useContentPreparationRectForVisibleRect { false };

@@ -219,6 +219,15 @@ int64_t WebPlatformStrategies::setTypes(const Vector<String>& pasteboardTypes, c
     return newChangeCount;
 }
 
+#if PLATFORM(MAC)
+int64_t WebPlatformStrategies::setTypesForImageCopy(const Vector<String>& pasteboardTypes, SharedBuffer* originalImageData, const String& originalImageType, const String& pasteboardName, const PasteboardContext* context)
+{
+    auto sendResult = protect(WebProcess::singleton().parentProcessConnection())->sendSync(Messages::WebPasteboardProxy::SetPasteboardTypesForImageCopy(pasteboardName, pasteboardTypes, RefPtr { originalImageData }, originalImageType, pageIdentifier(context)), 0);
+    auto [newChangeCount] = sendResult.takeReplyOr(0);
+    return newChangeCount;
+}
+#endif
+
 int64_t WebPlatformStrategies::setBufferForType(SharedBuffer* buffer, const String& pasteboardType, const String& pasteboardName, const PasteboardContext* context)
 {
     // FIXME: Null check prevents crashing, but it is not great that we will have empty pasteboard content for this type,

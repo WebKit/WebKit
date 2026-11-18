@@ -56,6 +56,7 @@
 #import "WebPageMessages.h"
 #import "WebPageProxyInternals.h"
 #import "WebPageProxyMessages.h"
+#import "WebPasteboardProxy.h"
 #import "WebPreferencesKeys.h"
 #import "WebProcessProxy.h"
 #import <WebCore/AXObjectCache.h>
@@ -922,6 +923,25 @@ void WebPageProxy::platformDidSelectItemFromActiveContextMenu(const WebContextMe
 }
 
 #endif
+
+void WebPageProxy::executeUserInitiatedCopyCommand()
+{
+    if (!hasRunningProcess())
+        return;
+
+    RefPtr focusedFrame = focusedOrMainFrame();
+    auto frameID = focusedFrame ? std::optional(focusedFrame->frameID()) : std::nullopt;
+    executeEditCommand("copy"_s, { }, grantUserInitiatedCopy(frameID));
+}
+
+CompletionHandler<void()> WebPageProxy::grantUserInitiatedCopy(std::optional<FrameIdentifier> frameID)
+{
+    Ref process = processContainingFrame(frameID);
+    auto grantID = WebPasteboardProxy::singleton().grantUserInitiatedCopy(process, identifier());
+    return [process = WTF::move(process), grantID] {
+        WebPasteboardProxy::singleton().revokeUserInitiatedCopy(process, grantID);
+    };
+}
 
 std::optional<IPC::AsyncReplyID> WebPageProxy::willPerformPasteCommand(DOMPasteAccessCategory pasteAccessCategory, CompletionHandler<void()>&& completionHandler, std::optional<FrameIdentifier> frameID)
 {

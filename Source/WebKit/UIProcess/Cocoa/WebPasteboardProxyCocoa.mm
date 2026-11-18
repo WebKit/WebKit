@@ -103,6 +103,42 @@ static void addAllowedAttachmentFilePaths(const IPC::Connection& connection, std
 
 #endif // ENABLE(ATTACHMENT_ELEMENT)
 
+#if PLATFORM(MAC)
+
+static bool isOriginalImagePasteboardType(const String& type)
+{
+    if (type.isEmpty())
+        return false;
+
+    RetainPtr utType = [UTType typeWithIdentifier:type.createNSString()];
+    return [utType conformsToType:UTTypeImage] && ![utType conformsToType:UTTypeTIFF];
+}
+
+UserInitiatedCopyGrantIdentifier WebPasteboardProxy::grantUserInitiatedCopy(WebProcessProxy& process, WebPageProxyIdentifier pageID)
+{
+    auto grantID = UserInitiatedCopyGrantIdentifier::generate();
+    m_userInitiatedCopyGrants.set(process, std::pair { grantID, pageID });
+    return grantID;
+}
+
+void WebPasteboardProxy::revokeUserInitiatedCopy(WebProcessProxy& process, UserInitiatedCopyGrantIdentifier grantID)
+{
+    auto it = m_userInitiatedCopyGrants.find(process);
+    if (it != m_userInitiatedCopyGrants.end() && it->value.first == grantID)
+        m_userInitiatedCopyGrants.remove(it);
+}
+
+bool WebPasteboardProxy::consumeUserInitiatedCopy(WebProcessProxy& process, std::optional<WebPageProxyIdentifier> pageID)
+{
+    auto it = m_userInitiatedCopyGrants.find(process);
+    if (it == m_userInitiatedCopyGrants.end() || it->value.second != pageID)
+        return false;
+
+    m_userInitiatedCopyGrants.remove(it);
+    return true;
+}
+
+#endif // PLATFORM(MAC)
 
 void WebPasteboardProxy::grantAccessToCurrentTypes(WebProcessProxy& process, const String& pasteboardName)
 {
@@ -449,6 +485,45 @@ void WebPasteboardProxy::setPasteboardTypes(IPC::Connection& connection, const S
         completionHandler(newChangeCount);
     });
 }
+
+#if PLATFORM(MAC)
+void WebPasteboardProxy::setPasteboardTypesForImageCopy(IPC::Connection& connection, const String& pasteboardName, const Vector<String>& pasteboardTypes, RefPtr<SharedBuffer>&& originalImageData, const String& originalImageType, std::optional<WebPageProxyIdentifier> pageID, CompletionHandler<void(int64_t)>&& completionHandler)
+{
+    MESSAGE_CHECK_COMPLETION(!pasteboardName.isEmpty(), connection, completionHandler(0));
+
+    for (auto& type : borrow(pasteboardTypes))
+        MESSAGE_CHECK_COMPLETION(!type.isEmpty(), connection, completionHandler(0));
+
+    RefPtr process = webProcessProxyForConnection(connection);
+    MESSAGE_CHECK_COMPLETION(process, connection, completionHandler(0));
+
+    auto dataOwner = determineDataOwner(connection, pasteboardName, pageID, PasteboardAccessIntent::Write);
+    MESSAGE_CHECK_COMPLETION(dataOwner, connection, completionHandler(0));
+
+    auto dataLifeTime = determineDataLifetime(pageID);
+    auto types = pasteboardTypes;
+
+    bool shouldWriteOriginalImageData = originalImageData && !originalImageData->isEmpty()
+        && isOriginalImagePasteboardType(originalImageType)
+        && pasteboardName == String(NSPasteboardNameGeneral)
+        && consumeUserInitiatedCopy(*process, pageID);
+
+    if (shouldWriteOriginalImageData)
+        types.insert(0, originalImageType);
+
+    PlatformPasteboard::performAsDataOwner(*dataOwner, [&] {
+        PlatformPasteboard pasteboard(pasteboardName);
+        auto previousChangeCount = pasteboard.changeCount();
+        auto newChangeCount = pasteboard.setTypes(types, dataLifeTime);
+        if (shouldWriteOriginalImageData) {
+            if (auto changeCount = pasteboard.setBufferForType(originalImageData, originalImageType))
+                newChangeCount = changeCount;
+        }
+        didModifyContentsOfPasteboard(connection, pasteboardName, previousChangeCount, newChangeCount);
+        completionHandler(newChangeCount);
+    });
+}
+#endif
 
 void WebPasteboardProxy::setPasteboardURL(IPC::Connection& connection, const PasteboardURL& pasteboardURL, const String& pasteboardName, std::optional<WebPageProxyIdentifier> pageID, CompletionHandler<void(int64_t)>&& completionHandler)
 {

@@ -62,6 +62,9 @@ void WebPasteboardProxy::addWebProcessProxy(WebProcessProxy& webProcessProxy)
 void WebPasteboardProxy::removeWebProcessProxy(WebProcessProxy& webProcessProxy)
 {
     m_webProcessProxySet.remove(webProcessProxy);
+#if PLATFORM(MAC)
+    m_userInitiatedCopyGrants.remove(webProcessProxy);
+#endif
 }
 
 RefPtr<WebProcessProxy> WebPasteboardProxy::webProcessProxyForConnection(IPC::Connection& connection) const

@@ -80,6 +80,9 @@ private:
 
     int64_t addTypes(const Vector<String>& pasteboardTypes, const String& pasteboardName, const WebCore::PasteboardContext*) override;
     int64_t setTypes(const Vector<String>& pasteboardTypes, const String& pasteboardName, const WebCore::PasteboardContext*) override;
+#if PLATFORM(MAC)
+    int64_t setTypesForImageCopy(const Vector<String>& pasteboardTypes, WebCore::SharedBuffer* originalImageData, const String& originalImageType, const String& pasteboardName, const WebCore::PasteboardContext*) override;
+#endif
     int64_t setBufferForType(WebCore::SharedBuffer*, const String& pasteboardType, const String& pasteboardName, const WebCore::PasteboardContext*) override;
     int64_t setURL(const WebCore::PasteboardURL&, const String& pasteboardName, const WebCore::PasteboardContext*) override;
     int64_t setColor(const WebCore::Color&, const String& pasteboardName, const WebCore::PasteboardContext*) override;

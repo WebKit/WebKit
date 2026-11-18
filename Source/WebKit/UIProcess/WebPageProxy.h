@@ -2734,6 +2734,11 @@ public:
     void platformDidSelectItemFromActiveContextMenu(const WebContextMenuItemData&, std::optional<WebCore::FrameIdentifier>, CompletionHandler<void()>&&);
 #endif
 
+#if PLATFORM(MAC)
+    void executeUserInitiatedCopyCommand();
+    CompletionHandler<void()> grantUserInitiatedCopy(std::optional<WebCore::FrameIdentifier>);
+#endif
+
 #if ENABLE(MEDIA_USAGE)
     MediaUsageManager& mediaUsageManager() LIFETIME_BOUND;
     void addMediaUsageManagerSession(WebCore::MediaSessionIdentifier, const String&, const URL&);

@@ -57,6 +57,9 @@ messages -> WebPasteboardProxy {
     GetPasteboardURL(String pasteboardName, std::optional<WebKit::WebPageProxyIdentifier> pageID) -> (String urlString) Synchronous
     AddPasteboardTypes(String pasteboardName, Vector<String> pasteboardTypes, std::optional<WebKit::WebPageProxyIdentifier> pageID) -> (int64_t changeCount) Synchronous
     SetPasteboardTypes(String pasteboardName, Vector<String> pasteboardTypes, std::optional<WebKit::WebPageProxyIdentifier> pageID) -> (int64_t changeCount) Synchronous
+#if PLATFORM(MAC)
+    SetPasteboardTypesForImageCopy(String pasteboardName, Vector<String> pasteboardTypes, RefPtr<WebCore::SharedBuffer> originalImageData, String originalImageType, std::optional<WebKit::WebPageProxyIdentifier> pageID) -> (int64_t changeCount) Synchronous
+#endif
     SetPasteboardURL(struct WebCore::PasteboardURL pasteboardURL, String pasteboardName, std::optional<WebKit::WebPageProxyIdentifier> pageID) -> (int64_t changeCount) Synchronous
     SetPasteboardColor(String pasteboardName, WebCore::Color color, std::optional<WebKit::WebPageProxyIdentifier> pageID) -> (int64_t changeCount) Synchronous
     SetPasteboardStringForType(String pasteboardName, String pasteboardType, String string, std::optional<WebKit::WebPageProxyIdentifier> pageID) -> (int64_t changeCount) Synchronous

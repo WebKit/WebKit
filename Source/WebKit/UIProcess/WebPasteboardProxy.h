@@ -31,6 +31,7 @@
 #include <WebCore/FrameIdentifier.h>
 #include <WebCore/SharedMemory.h>
 #include <wtf/HashMap.h>
+#include <wtf/WeakHashMap.h>
 #include <wtf/WeakHashSet.h>
 
 namespace IPC {
@@ -60,6 +61,11 @@ enum class WriteWebArchiveToPasteBoardResult : uint8_t;
 class WebFrameProxy;
 class WebProcessProxy;
 
+#if PLATFORM(MAC)
+enum class UserInitiatedCopyGrantIdentifierType { };
+using UserInitiatedCopyGrantIdentifier = ObjectIdentifier<UserInitiatedCopyGrantIdentifierType>;
+#endif
+
 class WebPasteboardProxy : public IPC::MessageReceiver {
     WTF_MAKE_NONCOPYABLE(WebPasteboardProxy);
     friend NeverDestroyed<WebPasteboardProxy>;
@@ -77,6 +83,11 @@ public:
     void revokeAccess(WebProcessProxy&);
     std::optional<IPC::AsyncReplyID> grantAccessToCurrentData(WebProcessProxy&, const String& pasteboardName, CompletionHandler<void()>&&);
     void grantAccessToCurrentTypes(WebProcessProxy&, const String& pasteboardName);
+#endif
+
+#if PLATFORM(MAC)
+    UserInitiatedCopyGrantIdentifier grantUserInitiatedCopy(WebProcessProxy&, WebPageProxyIdentifier);
+    void revokeUserInitiatedCopy(WebProcessProxy&, UserInitiatedCopyGrantIdentifier);
 #endif
 
 #if PLATFORM(GTK)
@@ -113,6 +124,9 @@ private:
     void getPasteboardURL(IPC::Connection&, const String& pasteboardName, std::optional<WebPageProxyIdentifier>, CompletionHandler<void(const String&)>&&);
     void addPasteboardTypes(IPC::Connection&, const String& pasteboardName, const Vector<String>& pasteboardTypes, std::optional<WebPageProxyIdentifier>, CompletionHandler<void(int64_t)>&&);
     void setPasteboardTypes(IPC::Connection&, const String& pasteboardName, const Vector<String>& pasteboardTypes, std::optional<WebPageProxyIdentifier>, CompletionHandler<void(int64_t)>&&);
+#if PLATFORM(MAC)
+    void setPasteboardTypesForImageCopy(IPC::Connection&, const String& pasteboardName, const Vector<String>& pasteboardTypes, RefPtr<WebCore::SharedBuffer>&& originalImageData, const String& originalImageType, std::optional<WebPageProxyIdentifier>, CompletionHandler<void(int64_t)>&&);
+#endif
     void setPasteboardURL(IPC::Connection&, const WebCore::PasteboardURL&, const String& pasteboardName, std::optional<WebPageProxyIdentifier>, CompletionHandler<void(int64_t)>&&);
     void setPasteboardColor(IPC::Connection&, const String&, const WebCore::Color&, std::optional<WebPageProxyIdentifier>, CompletionHandler<void(int64_t)>&&);
     void setPasteboardStringForType(IPC::Connection&, const String& pasteboardName, const String& pasteboardType, const String&, std::optional<WebPageProxyIdentifier>, CompletionHandler<void(int64_t)>&&);
@@ -168,6 +182,10 @@ private:
     std::optional<WebCore::DataOwnerType> determineDataOwner(IPC::Connection&, const String& pasteboardName, std::optional<WebPageProxyIdentifier>, PasteboardAccessIntent) const;
 #endif
 
+#if PLATFORM(MAC)
+    bool consumeUserInitiatedCopy(WebProcessProxy&, std::optional<WebPageProxyIdentifier>);
+#endif
+
     WeakHashSet<WebProcessProxy> m_webProcessProxySet;
 
 #if PLATFORM(GTK)
@@ -186,6 +204,10 @@ private:
         std::optional<PasteboardAccessType> accessType(WebProcessProxy&) const;
     };
     HashMap<String, PasteboardAccessInformation> m_pasteboardNameToAccessInformationMap;
+#endif
+
+#if PLATFORM(MAC)
+    WeakHashMap<WebProcessProxy, std::pair<UserInitiatedCopyGrantIdentifier, WebPageProxyIdentifier>> m_userInitiatedCopyGrants;
 #endif
 };
 

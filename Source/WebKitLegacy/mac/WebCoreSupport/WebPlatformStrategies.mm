@@ -162,6 +162,13 @@ int64_t WebPlatformStrategies::setTypes(const Vector<String>& pasteboardTypes, c
     return WebCore::PlatformPasteboard(pasteboardName).setTypes(pasteboardTypes);
 }
 
+#if PLATFORM(MAC)
+int64_t WebPlatformStrategies::setTypesForImageCopy(const Vector<String>& pasteboardTypes, WebCore::SharedBuffer*, const String&, const String& pasteboardName, const WebCore::PasteboardContext*)
+{
+    return WebCore::PlatformPasteboard(pasteboardName).setTypes(pasteboardTypes);
+}
+#endif
+
 int64_t WebPlatformStrategies::setBufferForType(WebCore::SharedBuffer* buffer, const String& pasteboardType, const String& pasteboardName, const WebCore::PasteboardContext*)
 {
     return WebCore::PlatformPasteboard(pasteboardName).setBufferForType(buffer, pasteboardType);
