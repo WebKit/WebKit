@@ -198,8 +198,10 @@ WI.OpenResourceDialog = class OpenResourceDialog extends WI.Dialog
 
         for (let target of WI.targets) {
             if (target !== WI.mainTarget) {
-                // FIXME <https://webkit.org/b/298909> Add Debugger support for frame targets.
-                if (!(target instanceof WI.FrameTarget))
+                // The resources of a frame target are in the frame tree.
+                if (target instanceof WI.FrameTarget)
+                    this._addScriptsForTarget(target);
+                else
                     this._addResourcesForTarget(target);
             }
         }

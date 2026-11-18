@@ -1,0 +1,101 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="resources/site-isolation-debugger-test-utilities.js"></script>
+<script>
+eval("function mainEvalFunction() { return 1; } //# sourceURL=main-eval-script.js");
+
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Debugger.OpenResourceDialog.FrameTargetScripts");
+
+    let mainFrameTarget;
+    let childFrameTarget;
+    let dialog;
+
+    function loadFrontendScript(path) {
+        return new Promise((resolve, reject) => {
+            let script = document.createElement("script");
+            script.src = path;
+            script.onload = resolve;
+            script.onerror = () => reject(new Error("Failed to load " + path));
+            document.head.appendChild(script);
+        });
+    }
+
+    async function waitFor(callback) {
+        for (let i = 0; i < 100; ++i) {
+            let value = callback();
+            if (value)
+                return value;
+            await new Promise((resolve) => setTimeout(resolve, 100));
+        }
+        return null;
+    }
+
+    function hasScript(target, sourceURL) {
+        return WI.debuggerManager.dataForTarget(target).scripts.some((script) => script.sourceURL === sourceURL);
+    }
+
+    // What Open Quickly offers when the user types the name.
+    function offered(name) {
+        return dialog._queryController.executeQuery(name).map((result) => result.resource).filter((resource) => resource.displayName === name);
+    }
+
+    suite.addTestCase({
+        name: "SiteIsolation.Debugger.OpenResourceDialog.FrameTargetScripts.Setup",
+        async test() {
+            let frameTargets = WI.targets.filter((target) => target.type === WI.TargetType.Frame);
+            let urlTargetMap = await fetchDocumentURLsForTargets(frameTargets);
+            mainFrameTarget = urlTargetMap.get(WI.networkManager.mainFrame.url);
+            childFrameTarget = frameTargets.find((target) => target !== mainFrameTarget);
+            InspectorTest.expectNotNull(mainFrameTarget, "Should find the main frame target.");
+            InspectorTest.expectNotNull(childFrameTarget, "Should find the cross-origin iframe's frame target.");
+
+            await waitFor(() => hasScript(mainFrameTarget, "main-eval-script.js") && hasScript(childFrameTarget, "frame-eval-script.js"));
+            InspectorTest.expectEqual(WI.debuggerManager.dataForTarget(WI.assumingMainTarget()).scripts.length, 0, "The page target should own no scripts.");
+
+            await loadFrontendScript("Views/Dialog.js");
+            await loadFrontendScript("Views/OpenResourceDialog.js");
+            dialog = new WI.OpenResourceDialog(null);
+            dialog.didPresentDialog();
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Debugger.OpenResourceDialog.FrameTargetScripts.MainFrame",
+        async test() {
+            let resources = offered("main-eval-script.js");
+            InspectorTest.expectEqual(resources.length, 1, "Open Quickly should offer the main frame's eval script once.");
+            InspectorTest.expectThat(resources[0] instanceof WI.Script, "The offered item should be a script.");
+            InspectorTest.expectEqual(resources[0]?.target, mainFrameTarget, "The script should belong to the main frame target.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Debugger.OpenResourceDialog.FrameTargetScripts.CrossOriginIFrame",
+        async test() {
+            let resources = offered("frame-eval-script.js");
+            InspectorTest.expectEqual(resources.length, 1, "Open Quickly should offer the iframe's eval script once.");
+            InspectorTest.expectThat(resources[0] instanceof WI.Script, "The offered item should be a script.");
+            InspectorTest.expectEqual(resources[0]?.target, childFrameTarget, "The script should belong to the iframe's frame target.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Debugger.OpenResourceDialog.FrameTargetScripts.ScriptFileListedOnce",
+        description: "A script file is offered through its resource, so adding the frame target's scripts should not list it a second time.",
+        async test() {
+            let resources = offered("debugger-frame-script.js");
+            InspectorTest.expectEqual(resources.length, 1, "Open Quickly should offer the iframe's script file once.");
+            InspectorTest.expectThat(resources[0] instanceof WI.Resource, "The offered item should be the resource.");
+
+            dialog.didDismissDialog();
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+<body onload="runTest()">
+<p>Test that Open Quickly offers eval code with a sourceURL, in the main frame and in a cross-origin iframe, under Site Isolation.</p>
+<iframe src="http://localhost:8000/site-isolation/inspector/debugger/resources/frame-with-eval-script.html"></iframe>
+</body>
