@@ -35,6 +35,7 @@
 #include <WebCore/PageIdentifier.h>
 #include <WebCore/ProcessIdentifier.h>
 #include <wtf/CheckedRef.h>
+#include <wtf/CompletionHandler.h>
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/TZoneMalloc.h>
@@ -117,6 +118,9 @@ public:
 
     void setShowPaintRects(bool);
 
+    void timelineRecordingChanged(bool active);
+    void takeTimelineScreenshot(const WebCore::IntRect&, double timestamp, CompletionHandler<void()>&&);
+
     void disconnectFrameTargetForTesting(WebCore::FrameIdentifier);
 
     void debuggerPauseSessionDidChange(WebCore::DebuggerPauseSessionIdentifier, bool isPaused, const Vector<String>& stoppingTargetIDs);
@@ -131,6 +135,9 @@ private:
     void removeTarget(const String& targetId);
 
     bool shouldManageFrameTargets() const;
+
+    void finishTimelineScreenshot();
+    void sendTimelineScreenshotRecord(double timestamp, const String& imageData);
 
     const Ref<Inspector::FrontendRouter> m_frontendRouter;
     const Ref<Inspector::BackendDispatcher> m_backendDispatcher;
@@ -148,6 +155,12 @@ private:
     bool m_didCreateLazyAgents { false };
     std::unique_ptr<DebuggerPauseCoordinator> m_debuggerPauseCoordinator;
     bool m_isMainFrameNavigating { false };
+
+    bool m_isTimelineRecording { false };
+#if PLATFORM(COCOA)
+    uint64_t m_timelineScreenshotID { 0 };
+#endif
+    CompletionHandler<void()> m_timelineScreenshotCompletionHandler;
 };
 
 } // namespace WebKit

@@ -31,6 +31,7 @@ messages -> WebInspectorBackendProxy {
     BringToFront()
     ElementSelectionChanged(bool active)
     TimelineRecordingChanged(bool active)
+    TakeTimelineScreenshot(WebCore::IntRect rect, double timestamp) -> ()
     ShowPaintRectsChanged(bool show)
     SetDeveloperPreferenceOverride(enum:uint8_t WebCore::InspectorBackendClientDeveloperPreference developerPreference, std::optional<bool> overrideValue)
 #if ENABLE(INSPECTOR_NETWORK_THROTTLING)

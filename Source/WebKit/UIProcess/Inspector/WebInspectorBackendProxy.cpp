@@ -55,7 +55,12 @@ void WebInspectorBackendProxy::elementSelectionChanged(bool active)
 
 void WebInspectorBackendProxy::timelineRecordingChanged(bool active)
 {
-    m_proxy->timelineRecordingChanged(active);
+    protect(m_proxy)->timelineRecordingChanged(active);
+}
+
+void WebInspectorBackendProxy::takeTimelineScreenshot(const WebCore::IntRect& rect, double timestamp, CompletionHandler<void()>&& completionHandler)
+{
+    protect(m_proxy)->takeTimelineScreenshot(rect, timestamp, WTF::move(completionHandler));
 }
 
 void WebInspectorBackendProxy::showPaintRectsChanged(bool show)

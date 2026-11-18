@@ -1,0 +1,9 @@
+
+
+== Running test suite: SiteIsolation.Timeline.ScreenshotCrossOriginIFrame
+-- Running test case: SiteIsolation.Timeline.ScreenshotCrossOriginIFrame.IFrameContent
+PASS: Screenshot should contain the main frame's box.
+PASS: Screenshot should contain the cross-origin iframe's content.
+PASS: Every screenshot should contain image data.
+PASS: Every screenshot should have a time within the recording.
+

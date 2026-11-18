@@ -79,7 +79,7 @@ public:
     void mainFrameNavigated();
     void didCompleteRenderingFrame(const LocalFrame&);
 
-    bool isCapturingScreenshot() const { return m_isCapturingScreenshot; }
+    bool isCapturingScreenshot() const;
 
 private:
     bool enabled() const override;
@@ -93,6 +93,7 @@ private:
     bool shouldStartHeapInstrument() const override;
 
     void captureScreenshot();
+    void takeScreenshotInClient(double snapshotStartTime);
 
     Inspector::Protocol::DOM::NodeId nodeIdForNode(Node*) const;
     Inspector::Protocol::DOM::NodeId nodeIdForDocument(Document&) const;
@@ -112,6 +113,8 @@ private:
 #endif
     bool m_startedComposite { false };
     bool m_isCapturingScreenshot { false };
+    bool m_isWaitingForClientScreenshot { false };
+    std::optional<double> m_pendingClientScreenshotTime;
 };
 
 } // namespace WebCore
