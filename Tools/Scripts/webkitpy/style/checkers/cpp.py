@@ -1572,7 +1572,9 @@ class _EnumState(object):
 
 def regex_for_lambdas_and_blocks(line, line_number, file_state, error):
     cpp_result = search(r'\[.*?\]\s*[\(\{]', line)
-    objc_result = search(r'(\^(.*)?\(.*?\)|\^\s*\{)', line)
+    # Block type declarators like "void (^name)(int)" or "(void (^)(int))" are not block
+    # literals, so drop the "(^name)" part before looking for one.
+    objc_result = search(r'(\^(.*)?\(.*?\)|\^\s*\{)', sub(r'\(\s*\^[\w\s]*\)', '()', line))
     if cpp_result:
         group = cpp_result.group()
         targ_error = None

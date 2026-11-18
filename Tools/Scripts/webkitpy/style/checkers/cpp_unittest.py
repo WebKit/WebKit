@@ -5848,6 +5848,33 @@ class WebKitStyleTest(CppStyleTestBase):
             '[delegate setPolicyForURL:^_WKWebsitePolicy(NSURL *url) {\n'
             '    return _WKWebsitePolicyDoIt;\n'
             '}];', '', file_name='foo.mm')
+        self.assert_multi_line_lint(
+            'static void doSomething(NSString *name, void (^completionHandler)(NSInteger, NSArray<NSString *> *))\n'
+            '{\n'
+            '    completionHandler(0, nil);\n'
+            '}\n', '', file_name='foo.mm')
+        self.assert_multi_line_lint(
+            'static void doSomething(void (^ _Nullable completionHandler)(BOOL), id (^)(void))\n'
+            '{\n'
+            '}\n', '', file_name='foo.mm')
+        self.assert_multi_line_lint(
+            'static void doSomething(void (^completionHandler)(BOOL)) {\n'
+            '}\n',
+            'Place brace on its own line for function definitions.  [whitespace/braces] [4]', file_name='foo.mm')
+        self.assert_multi_line_lint(
+            'void foo()\n'
+            '{\n'
+            '    auto block = ^(int value)\n'
+            '    {\n'
+            '    };\n'
+            '}\n',
+            'This { should be at the end of the previous line  [whitespace/braces] [4]', file_name='foo.mm')
+        self.assert_multi_line_lint(
+            'void foo()\n'
+            '{\n'
+            '    auto block = ^(int value) {\n'
+            '    };\n'
+            '}\n', '', file_name='foo.mm')
 
         # 3. One-line control clauses should not use braces unless
         #    comments are included or a single statement spans multiple
