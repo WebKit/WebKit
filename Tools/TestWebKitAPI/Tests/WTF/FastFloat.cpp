@@ -61,11 +61,11 @@ static void expectSameAsParseJSONDouble(const String& text)
     ASSERT_TRUE(expected.has_value());
     EXPECT_EQ(parsedLength, characters.size());
 
-    double actual = WTF::parseJSONDoubleFromDigits(mantissa, exponent, digitCount);
+    double actual = WTF::parseDoubleFromDecimalDigits(mantissa, exponent, digitCount);
     EXPECT_EQ(std::bit_cast<uint64_t>(actual), std::bit_cast<uint64_t>(*expected)) << text.ascii().data();
 }
 
-TEST(WTF_FastFloat, ParseJSONDoubleFromDigits)
+TEST(WTF_FastFloat, ParseDoubleFromDecimalDigits)
 {
     for (auto text : {
         "0"_s, "0.0"_s, "0e999999"_s, "1"_s, "0.1"_s, "0.2"_s, "0.3"_s, "1e23"_s, "1e22"_s, "1e-22"_s, "1e-23"_s,

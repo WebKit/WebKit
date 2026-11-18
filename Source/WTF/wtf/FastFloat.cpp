@@ -91,7 +91,7 @@ std::optional<double> parseJSONDouble(std::span<const char16_t> string, size_t& 
     return doubleValue;
 }
 
-double parseJSONDoubleFromDigitsSlow(uint64_t mantissa, int64_t exponent)
+double parseDoubleFromDecimalDigitsSlow(uint64_t mantissa, int64_t exponent)
 {
     // compute_float needs the digits themselves, for a slower comparison, only when the mantissa has been
     // truncated, and a mantissa of at most 19 digits is exact.

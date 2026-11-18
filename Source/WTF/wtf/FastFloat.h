@@ -43,10 +43,10 @@ WTF_EXPORT_PRIVATE double parseFixedDouble(std::span<const char16_t> string, siz
 WTF_EXPORT_PRIVATE std::optional<double> parseJSONDouble(std::span<const Latin1Character> string, size_t& parsedLength);
 WTF_EXPORT_PRIVATE std::optional<double> parseJSONDouble(std::span<const char16_t> string, size_t& parsedLength);
 
-WTF_EXPORT_PRIVATE double parseJSONDoubleFromDigitsSlow(uint64_t mantissa, int64_t exponent);
+WTF_EXPORT_PRIVATE double parseDoubleFromDecimalDigitsSlow(uint64_t mantissa, int64_t exponent);
 
 // Requires a mantissa of at most |digitCount| <= 19 significant digits. The result is mantissa * 10^exponent.
-ALWAYS_INLINE double parseJSONDoubleFromDigits(uint64_t mantissa, int64_t exponent, size_t digitCount)
+ALWAYS_INLINE double parseDoubleFromDecimalDigits(uint64_t mantissa, int64_t exponent, size_t digitCount)
 {
     // Fifteen digits are always below 2^53. Unlike the mantissa, the digit count is known before the
     // mantissa is computed, and it does not alternate between full precision doubles of 16 and 17 digits.
@@ -62,7 +62,7 @@ ALWAYS_INLINE double parseJSONDoubleFromDigits(uint64_t mantissa, int64_t expone
         double value = static_cast<double>(mantissa);
         return exponent < 0 ? value / exactPowersOfTen[-exponent] : value * exactPowersOfTen[exponent];
     }
-    return parseJSONDoubleFromDigitsSlow(mantissa, exponent);
+    return parseDoubleFromDecimalDigitsSlow(mantissa, exponent);
 }
 
 } // namespace WTF

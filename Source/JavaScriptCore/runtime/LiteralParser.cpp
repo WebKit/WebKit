@@ -28,6 +28,7 @@
 #include "LiteralParser.h"
 
 #include "CodeBlock.h"
+#include "DecimalNumberScanner.h"
 #include "GCMemoryOperations.h"
 #include "JSArray.h"
 #include "JSCInlines.h"
@@ -38,9 +39,7 @@
 #include "SourceCharacters.h"
 #include <wtf/ASCIICType.h>
 #include <wtf/Range.h>
-#include <wtf/SIMDHelpers.h>
 #include <wtf/TZoneMallocInlines.h>
-#include <wtf/UnalignedAccess.h>
 #include <wtf/text/FastCharacterComparison.h>
 #include <wtf/text/MakeString.h>
 
@@ -758,7 +757,7 @@ NODELETE static ALWAYS_INLINE bool isJSONWhiteSpace(const CharType& c)
 }
 
 // Scans (0 | [1-9][0-9]*) from a digit and returns the end of the scan. The value can wrap beyond
-// maxMantissaDigitsForJSONDouble digits, so the caller must check the length before using it.
+// maxMantissaDigitsForDecimalNumber digits, so the caller must check the length before using it.
 template<typename CharType>
 static ALWAYS_INLINE const CharType* scanJSONIntegerDigits(const CharType* ptr, const CharType* end, uint64_t& accumulated)
 {
@@ -1277,112 +1276,6 @@ slowPathBegin:
     return TokString;
 }
 
-static constexpr size_t maxMantissaDigitsForJSONDouble = 19;
-
-template<typename CharType>
-struct JSONDecimal {
-    const CharType* end;
-    uint64_t mantissa;
-    int64_t exponent;
-    size_t digitCount;
-};
-
-// Finishes scanning a number without a sign whose integer part, start to integerEnd, has the value integer,
-// rather than having the double parser scan it again from the start. Returns std::nullopt for more than
-// maxMantissaDigitsForJSONDouble significant digits, and for every syntax error, which are left to the double parser.
-template<typename CharType>
-static ALWAYS_INLINE std::optional<JSONDecimal<CharType>> scanJSONDecimal(const CharType* start, const CharType* integerEnd, const CharType* end, uint64_t integer)
-{
-    size_t integerDigits = integerEnd - start;
-    if (integerDigits > maxMantissaDigitsForJSONDouble) [[unlikely]]
-        return std::nullopt;
-
-    uint64_t mantissa = integer;
-    const CharType* cursor = integerEnd;
-    const CharType* fractionStart = integerEnd;
-    if (cursor < end && *cursor == '.') [[likely]] {
-        fractionStart = ++cursor;
-        bool sawNonDigit = false;
-        // Full precision doubles have long fractions, so take eight digits at a time, and the digits
-        // left before the first non-digit in the last step.
-        static constexpr std::array<uint64_t, 8> powersOfTen { 1, 10, 100, 1000, 10000, 100000, 1000000, 10000000 };
-        auto valueOfDigits = [](uint64_t digits) ALWAYS_INLINE_LAMBDA {
-            digits = digits * 10 + (digits >> 8);
-            return static_cast<uint32_t>((((digits & 0x000000FF000000FFULL) * 0x000F424000000064ULL) + (((digits >> 16) & 0x000000FF000000FFULL) * 0x0000271000000001ULL)) >> 32);
-        };
-        while (end - cursor >= 8) {
-            uint64_t characters;
-            if constexpr (sizeof(CharType) == 1)
-                characters = WTF::unalignedLoad<uint64_t>(cursor);
-            else {
-                // Saturating each character to a byte turns every character above Latin-1 into a non-digit.
-                characters = SIMD::loadAndSaturateNarrowToU64(std::bit_cast<const uint16_t*>(cursor));
-            }
-#if CPU(BIG_ENDIAN)
-            // The arithmetic below needs the first character in the lowest byte.
-            characters = std::byteswap(characters);
-#endif
-            uint64_t nonDigits = ((characters + 0x4646464646464646ULL) | (characters - 0x3030303030303030ULL)) & 0x8080808080808080ULL;
-            uint64_t digits = characters - 0x3030303030303030ULL;
-            if (nonDigits) {
-                // Carries and borrows only reach later characters, so the first non-digit is flagged exactly.
-                unsigned count = std::countr_zero(nonDigits) / 8;
-                if (count) {
-                    mantissa = mantissa * powersOfTen[count] + valueOfDigits(digits << (64 - 8 * count));
-                    cursor += count;
-                }
-                sawNonDigit = true;
-                break;
-            }
-            mantissa = mantissa * 100000000 + valueOfDigits(digits);
-            cursor += 8;
-        }
-        if (!sawNonDigit) [[unlikely]] {
-            while (cursor < end && isASCIIDigit(*cursor)) {
-                mantissa = mantissa * 10 + (*cursor - '0');
-                ++cursor;
-            }
-        }
-        if (cursor == fractionStart) [[unlikely]]
-            return std::nullopt;
-    }
-    size_t fractionDigits = cursor - fractionStart;
-    int64_t exponent = -static_cast<int64_t>(fractionDigits);
-    if (cursor < end && (*cursor == 'e' || *cursor == 'E')) [[unlikely]] {
-        ++cursor;
-        bool negativeExponent = false;
-        if (cursor < end && (*cursor == '+' || *cursor == '-'))
-            negativeExponent = *cursor++ == '-';
-        if (cursor >= end || !isASCIIDigit(*cursor)) [[unlikely]]
-            return std::nullopt;
-        // An exponent this large gives zero or infinity, unless as many leading zeros in the fraction offset it,
-        // so it is left to the double parser.
-        constexpr int64_t maxExplicitExponent = 100000;
-        int64_t explicitExponent = 0;
-        while (cursor < end && isASCIIDigit(*cursor)) {
-            explicitExponent = explicitExponent * 10 + (*cursor - '0');
-            if (explicitExponent >= maxExplicitExponent) [[unlikely]]
-                return std::nullopt;
-            ++cursor;
-        }
-        exponent += negativeExponent ? -explicitExponent : explicitExponent;
-    }
-
-    size_t digitCount = integerDigits + fractionDigits;
-    if (digitCount > maxMantissaDigitsForJSONDouble) [[unlikely]] {
-        // An integer part of 0 and the zeros after it are not significant, and add nothing to the mantissa.
-        if (integer)
-            return std::nullopt;
-        const CharType* firstSignificant = fractionStart;
-        while (firstSignificant < cursor && *firstSignificant == '0')
-            ++firstSignificant;
-        digitCount = fractionStart + fractionDigits - firstSignificant;
-        if (digitCount > maxMantissaDigitsForJSONDouble)
-            return std::nullopt;
-    }
-    return JSONDecimal<CharType> { cursor, mantissa, exponent, digitCount };
-}
-
 template<typename CharType, JSONReviverMode reviverMode>
 TokenType LiteralParser<CharType, reviverMode>::Lexer::lexNumber(LiteralParserToken<CharType>& token)
 {
@@ -1444,8 +1337,8 @@ template<typename CharType, JSONReviverMode reviverMode>
 NEVER_INLINE TokenType LiteralParser<CharType, reviverMode>::Lexer::lexDouble(LiteralParserToken<CharType>& token, const CharType* initial, const CharType* start, uint64_t integer)
 {
     bool negative = initial != start;
-    if (auto decimal = scanJSONDecimal(start, m_ptr, m_end, integer)) {
-        double value = WTF::parseJSONDoubleFromDigits(decimal->mantissa, decimal->exponent, decimal->digitCount);
+    if (auto decimal = scanDecimalNumber<DecimalFractionSyntax::RequiresDigit>(start, m_ptr, m_end, integer)) {
+        double value = WTF::parseDoubleFromDecimalDigits(decimal->mantissa, decimal->exponent, decimal->digitCount);
         m_ptr = decimal->end;
         token.type = TokNumber;
         token.numberToken = negative ? -value : value;
@@ -1892,8 +1785,8 @@ JSValue LiteralParser<CharType, reviverMode>::parseRecursively(VM& vm, uint8_t* 
                             if (static_cast<size_t>(digits - cursor) <= numberOfDigitsForSafeInt32 && endsProperty(digits)) {
                                 value = jsNumber(static_cast<int32_t>(integer));
                                 cursor = digits;
-                            } else if (auto decimal = scanJSONDecimal(cursor, digits, end, integer); decimal && endsProperty(decimal->end)) {
-                                value = jsNumber(WTF::parseJSONDoubleFromDigits(decimal->mantissa, decimal->exponent, decimal->digitCount));
+                            } else if (auto decimal = scanDecimalNumber<DecimalFractionSyntax::RequiresDigit>(cursor, digits, end, integer); decimal && endsProperty(decimal->end)) {
+                                value = jsNumber(WTF::parseDoubleFromDecimalDigits(decimal->mantissa, decimal->exponent, decimal->digitCount));
                                 cursor = decimal->end;
                             }
                         }

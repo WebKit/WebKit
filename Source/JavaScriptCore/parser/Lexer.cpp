@@ -26,6 +26,7 @@
 #include "Lexer.h"
 
 #include "BuiltinNames.h"
+#include "DecimalNumberScanner.h"
 #include "Identifier.h"
 #include "KeywordLookup.h"
 #include "Lexer.lut.h"
@@ -34,6 +35,7 @@
 #include <limits.h>
 #include <string.h>
 #include <wtf/Assertions.h>
+#include <wtf/FastFloat.h>
 #include <wtf/HexNumber.h>
 #include <wtf/MathExtras.h>
 #include <wtf/dtoa.h>
@@ -1812,6 +1814,43 @@ ALWAYS_INLINE auto Lexer<T>::parseOctal() -> std::optional<NumberParseResult>
     return NumberParseResult { parseIntOverflow(m_buffer8.span(), 8) };
 }
 
+// Converts a decimal literal as it is scanned, rather than copying it into m_buffer8 for parseDouble. If the literal has
+// separators, a BigInt suffix, too many digits, or a syntax error, or is directly followed by an identifier, this consumes
+// nothing and returns ERRORTOK so that the general path handles it. Kept out of line so that lexing short integers, the
+// most common literals, does not pay for it.
+template <typename T>
+NEVER_INLINE JSTokenType Lexer<T>::lexDecimalWithoutSeparators(JSTokenData* tokenData, const T* start, const T* integerEnd, uint64_t integer)
+{
+    auto decimal = scanDecimalNumber<DecimalFractionSyntax::AllowsEmpty>(start, integerEnd, m_codeEnd, integer);
+    if (!decimal)
+        return ERRORTOK;
+    T next = decimal->end < m_codeEnd ? *decimal->end : T { };
+    if (!cannotBeIdentStart(next)) [[unlikely]]
+        return ERRORTOK;
+    double value = WTF::parseDoubleFromDecimalDigits(decimal->mantissa, decimal->exponent, decimal->digitCount);
+    tokenData->doubleValue = value;
+    m_code = decimal->end;
+    m_current = next;
+    if (integerEnd < m_codeEnd && *integerEnd == '.')
+        return DOUBLE;
+    return tokenTypeForIntegerLikeToken(value);
+}
+
+template <typename T>
+NEVER_INLINE JSTokenType Lexer<T>::scanDecimalArrayElementFollowedByComma(double& value, const T* start, const T* integerEnd, uint64_t integer)
+{
+    auto decimal = scanDecimalNumber<DecimalFractionSyntax::AllowsEmpty>(start, integerEnd, m_codeEnd, integer);
+    if (!decimal || decimal->end >= m_codeEnd || *decimal->end != ',')
+        return ERRORTOK;
+    value = WTF::parseDoubleFromDecimalDigits(decimal->mantissa, decimal->exponent, decimal->digitCount);
+    m_code = decimal->end + 1;
+    m_current = m_code < m_codeEnd ? *m_code : T { };
+    m_hasLineTerminatorBeforeToken = false;
+    if (*integerEnd == '.')
+        return DOUBLE;
+    return tokenTypeForIntegerLikeToken(value);
+}
+
 template <typename T>
 ALWAYS_INLINE auto Lexer<T>::parseDecimal() -> std::optional<NumberParseResult>
 {
@@ -2470,6 +2509,10 @@ start:
             token = DOT;
             break;
         }
+        if (auto type = lexDecimalWithoutSeparators(tokenData, m_code - 1, m_code - 1, 0); type != ERRORTOK) [[likely]] {
+            token = type;
+            break;
+        }
         if (!parseNumberAfterDecimalPoint()) [[unlikely]] {
             m_lexErrorMessage = "Non-number found after decimal point"_s;
             token = atEnd() ? UNTERMINATED_NUMERIC_LITERAL_ERRORTOK : INVALID_NUMERIC_LITERAL_ERRORTOK;
@@ -2644,6 +2687,12 @@ start:
                 token = INTEGER;
                 break;
             }
+            if (m_current == '.' || isASCIIAlphaCaselessEqual(m_current, 'e')) {
+                if (auto type = lexDecimalWithoutSeparators(tokenData, m_code - 1, m_code, 0); type != ERRORTOK) [[likely]] {
+                    token = type;
+                    break;
+                }
+            }
             record8('0');
         }
         [[fallthrough]];
@@ -2674,6 +2723,14 @@ start:
                     m_code = ptr;
                     m_current = *ptr;
                     break;
+                }
+
+                // Separators, BigInt suffixes, and identifiers cannot follow a literal that the fast path accepts.
+                if (ptr == m_codeEnd || *ptr == '.' || isASCIIAlphaCaselessEqual(*ptr, 'e') || cannotBeIdentStart(*ptr)) {
+                    if (auto type = lexDecimalWithoutSeparators(tokenData, start, ptr, result); type != ERRORTOK) [[likely]] {
+                        token = type;
+                        break;
+                    }
                 }
             }
 

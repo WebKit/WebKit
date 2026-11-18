@@ -4976,7 +4976,20 @@ template <class TreeBuilder> void Parser<LexerType>::parseSimpleArrayElementsAft
         type = elementType;
         location.startOffset = start;
         location.endOffset = m_lexer->currentOffset() - 1;
-        tail = context.createElementList(tail, 0, type == INTEGER ? context.createIntegerExpr(location, value) : context.createNull(location));
+        TreeExpression element;
+        switch (type) {
+        case INTEGER:
+            element = context.createIntegerExpr(location, value);
+            break;
+        case DOUBLE:
+            element = context.createDoubleExpr(location, value);
+            break;
+        default:
+            ASSERT(type == NULLTOKEN);
+            element = context.createNull(location);
+            break;
+        }
+        tail = context.createElementList(tail, 0, element);
     }
     if (type == ERRORTOK)
         return;
