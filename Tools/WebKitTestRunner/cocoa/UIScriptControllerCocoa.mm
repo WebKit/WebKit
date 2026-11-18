@@ -714,6 +714,11 @@ RefPtr<OpaqueJSString> UIScriptControllerCocoa::progressBasedTimelinesForScrolli
 {
     return adoptRef(JSStringCreateWithCFString((CFStringRef) [webView() _progressBasedTimelinesForScrollingNodeID:scrollingNodeID processID:processID]));
 }
+
+bool UIScriptControllerCocoa::displayRefreshUpdatesTimeBasedAnimations() const
+{
+    return [webView() _displayRefreshUpdatesTimeBasedAnimations];
+}
 #endif
 
 bool UIScriptControllerCocoa::displayLinkWantsHighFrameRate() const

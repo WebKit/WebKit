@@ -304,6 +304,7 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
 - (NSString *)_animationStackForLayerWithID:(unsigned long long)layerID processID:(uint64_t)processID;
 - (NSString *)_progressBasedTimelinesForScrollingNodeID:(uint64_t)scrollingNodeID processID:(uint64_t)processID;
 - (NSString *)_monotonicTimelinesForProcessID:(uint64_t)processID;
+- (bool)_displayRefreshUpdatesTimeBasedAnimations;
 #endif
 - (bool)_displayLinkWantsHighFrameRate;
 

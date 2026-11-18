@@ -1,0 +1,8 @@
+
+PASS Time-based animations in view are updated as the display refreshes.
+PASS Time-based animations are only updated while their element may be visible.
+PASS Time-based animations are updated as the page scrolls programmatically.
+PASS Time-based animations are updated as the page is scrolled by the user.
+PASS Time-based animations account for the composited descendants of their element.
+PASS Time-based animations on clipped out elements are not updated.
+

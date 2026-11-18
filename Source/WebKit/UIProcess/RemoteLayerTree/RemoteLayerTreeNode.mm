@@ -33,6 +33,7 @@
 #import <wtf/TZoneMallocInlines.h>
 
 #if PLATFORM(IOS_FAMILY)
+#import <UIKit/UIScrollView.h>
 #import <UIKit/UIView.h>
 #endif
 
@@ -422,6 +423,60 @@ void RemoteLayerTreeNode::removeFromHostingNode()
 }
 
 #if ENABLE(THREADED_ANIMATIONS)
+#if PLATFORM(IOS_FAMILY)
+// Content within this fraction of a scroll view's size outside of its visible area may soon be
+// scrolled into view, so it is considered visible.
+static constexpr CGFloat scrollViewVisibilityMarginRatio = 0.5;
+#endif
+
+bool RemoteLayerTreeNode::animatedContentMayBeVisible(CALayer *layer, CALayer *webViewLayer, const WebCore::FloatRect& animationExtent, NOESCAPE const Function<std::optional<bool>(CALayer *)>& animatedAncestorMayBeVisible)
+{
+    RetainPtr<CALayer> ancestor = [layer superlayer];
+    if (!ancestor)
+        return true;
+
+    if (!webViewLayer)
+        return true;
+
+    // The extent is in the layer's coordinate space without its transform, which is what time-based animations
+    // change, so map it to the superlayer's coordinate space using only the layer's position.
+    auto bounds = [layer bounds];
+    auto anchorPoint = [layer anchorPoint];
+    auto position = [layer position];
+    CGRect rect = CGRectOffset(animationExtent, position.x - bounds.origin.x - anchorPoint.x * bounds.size.width, position.y - bounds.origin.y - anchorPoint.y * bounds.size.height);
+
+    while (true) {
+        // Layers outside of the web view's layer don't affect the visibility of its content.
+        if (ancestor == webViewLayer)
+            return true;
+
+        // The extent of an ancestor's transform animations includes this layer's content, as it moves along.
+        if (auto ancestorMayBeVisible = animatedAncestorMayBeVisible(ancestor.get()))
+            return *ancestorMayBeVisible;
+
+        if ([ancestor isHidden] || ![ancestor opacity])
+            return false;
+
+        if ([ancestor masksToBounds]) {
+            auto clipRect = [ancestor bounds];
+#if PLATFORM(IOS_FAMILY)
+            if ([[ancestor delegate] isKindOfClass:UIScrollView.class])
+                clipRect = CGRectInset(clipRect, -clipRect.size.width * scrollViewVisibilityMarginRatio, -clipRect.size.height * scrollViewVisibilityMarginRatio);
+#endif
+            rect = CGRectIntersection(rect, clipRect);
+            if (CGRectIsEmpty(rect))
+                return false;
+        }
+
+        RetainPtr<CALayer> superlayer = [ancestor superlayer];
+        if (!superlayer)
+            return true;
+
+        rect = [ancestor convertRect:rect toLayer:superlayer.get()];
+        ancestor = WTF::move(superlayer);
+    }
+}
+
 void RemoteLayerTreeNode::setAcceleratedEffectsAndBaseValues(const WebCore::AcceleratedEffects& effects, const WebCore::AcceleratedEffectValues& baseValues, RemoteLayerTreeHost& host)
 {
     ASSERT_WITH_SECURITY_IMPLICATION(isUIThread());

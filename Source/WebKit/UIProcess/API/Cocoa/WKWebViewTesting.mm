@@ -1939,6 +1939,11 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse, _WKCALaye
     object->setArray("timelines"_s, WTF::move(convertedTimelines));
     return object->toJSONString().createNSString().autorelease();
 }
+
+- (bool)_displayRefreshUpdatesTimeBasedAnimations
+{
+    return downcast<WebKit::RemoteLayerTreeDrawingAreaProxy>(protect(_page->drawingArea()))->displayRefreshUpdatesTimeBasedAnimationsForTesting();
+}
 #endif
 
 - (bool)_displayLinkWantsHighFrameRate

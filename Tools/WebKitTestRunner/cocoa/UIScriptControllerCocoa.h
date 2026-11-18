@@ -112,6 +112,7 @@ private:
 #if ENABLE(THREADED_ANIMATIONS)
     RefPtr<OpaqueJSString> animationStackForLayerWithID(uint64_t layerID) const final;
     RefPtr<OpaqueJSString> progressBasedTimelinesForScrollingNodeID(unsigned long long scrollingNodeID, unsigned long long processID) const final;
+    bool displayRefreshUpdatesTimeBasedAnimations() const final;
 #endif
     bool displayLinkWantsHighFrameRate() const final;
 };

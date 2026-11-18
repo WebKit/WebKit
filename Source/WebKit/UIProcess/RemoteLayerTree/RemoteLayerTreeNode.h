@@ -33,6 +33,7 @@
 #include <WebCore/PlatformLayerIdentifier.h>
 #include <WebCore/RenderingResourceIdentifier.h>
 #include <WebCore/ScrollTypes.h>
+#include <wtf/Function.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeWeakPtr.h>
@@ -114,6 +115,10 @@ public:
 
     static std::optional<WebCore::PlatformLayerIdentifier> layerID(CALayer *);
     static RemoteLayerTreeNode* forCALayer(CALayer *);
+
+#if ENABLE(THREADED_ANIMATIONS)
+    static bool animatedContentMayBeVisible(CALayer *, CALayer *webViewLayer, const WebCore::FloatRect& animationExtent, NOESCAPE const Function<std::optional<bool>(CALayer *)>& animatedAncestorMayBeVisible);
+#endif
 
     static NSString *appendLayerDescription(NSString *description, CALayer *);
 

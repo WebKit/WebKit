@@ -496,6 +496,7 @@ public:
     // Animations
     virtual RefPtr<OpaqueJSString> animationStackForLayerWithID(uint64_t) const { notImplemented(); return nullptr; }
     virtual RefPtr<OpaqueJSString> progressBasedTimelinesForScrollingNodeID(unsigned long long, unsigned long long) const { notImplemented(); return nullptr; }
+    virtual bool displayRefreshUpdatesTimeBasedAnimations() const { notImplemented(); return false; }
 #endif
     virtual bool displayLinkWantsHighFrameRate() const { notImplemented(); return false; };
 
