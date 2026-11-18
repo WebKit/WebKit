@@ -29,7 +29,7 @@ const pageSize = 64 * 1024;
     assert.throws(
         () => new WebAssembly.Memory({ initial: 10n, maximum: 5n, address: "i64" }),
         RangeError,
-        "'maximum' page count must be than greater than or equal to the 'initial' page count"
+        "'maximum' page count must be greater than or equal to the 'initial' page count"
     );
 }
 

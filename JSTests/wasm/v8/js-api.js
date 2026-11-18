@@ -451,7 +451,7 @@ assertThrows(
     RangeError, /WebAssembly.Memory 'maximum' page count is too large/);
 assertThrows(
     () => new Memory({initial: 2, maximum: 1}), RangeError,
-    /'maximum' page count must be than greater than or equal to the 'initial' page count/);
+    /'maximum' page count must be greater than or equal to the 'initial' page count/);
 assertThrows(
     () => new Memory({maximum: -1}), TypeError, /Expect an integer argument in the range[\s\S]*2\^32 - 1/);
 assertTrue(new Memory({initial: 1}) instanceof Memory);

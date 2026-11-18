@@ -122,7 +122,7 @@ JSWebAssemblyMemory* WebAssemblyMemoryConstructor::createMemoryFromDescriptor(JS
 
             if (initialPageCount > maximumPageCount) {
                 throwException(globalObject, throwScope,
-                    createRangeError(globalObject, "'maximum' page count must be than greater than or equal to the 'initial' page count"_s));
+                    createRangeError(globalObject, "'maximum' page count must be greater than or equal to the 'initial' page count"_s));
                 return { };
             }
         }

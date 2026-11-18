@@ -14,7 +14,7 @@ function assert(b) {
         new WebAssembly.Memory({initial: 20, maximum: 19});
     } catch(e) {
         assert(e instanceof RangeError);
-        assert(e.message === "'maximum' page count must be than greater than or equal to the 'initial' page count");
+        assert(e.message === "'maximum' page count must be greater than or equal to the 'initial' page count");
         threw = true;
     }
     assert(threw);
