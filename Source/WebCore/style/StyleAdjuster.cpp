@@ -239,64 +239,126 @@ bool Adjuster::adjustEventListenerRegionTypesForRootStyle(Style::ComputedStyle& 
     return changed;
 }
 
+#if ENABLE(WHEEL_EVENT_REGIONS) || ENABLE(TOUCH_EVENT_REGIONS)
+struct EventListenerRegionTypePair {
+    EventListenerRegionType type;
+    EventListenerRegionType nonPassiveType;
+};
+#endif
+
+#if ENABLE(TOUCH_EVENT_REGIONS)
+static std::optional<EventListenerRegionTypePair> touchEventListenerRegionTypes(EventType eventType)
+{
+    switch (eventType) {
+    case EventType::touchstart:
+        return { { EventListenerRegionType::TouchStart, EventListenerRegionType::NonPassiveTouchStart } };
+    case EventType::touchend:
+        return { { EventListenerRegionType::TouchEnd, EventListenerRegionType::NonPassiveTouchEnd } };
+    case EventType::touchcancel:
+        // `touchcancel` is sent after the event has already been cancelled. Calling
+        // preventDefault() has no effect, so we don't need a synchronous version.
+        return { { EventListenerRegionType::TouchCancel, EventListenerRegionType::TouchCancel } };
+    case EventType::touchmove:
+        return { { EventListenerRegionType::TouchMove, EventListenerRegionType::NonPassiveTouchMove } };
+    case EventType::touchforcechange:
+        return { { EventListenerRegionType::TouchForceChange, EventListenerRegionType::NonPassiveTouchForceChange } };
+    case EventType::pointerdown:
+        return { { EventListenerRegionType::PointerDown, EventListenerRegionType::NonPassivePointerDown } };
+    case EventType::pointerenter:
+        return { { EventListenerRegionType::PointerEnter, EventListenerRegionType::NonPassivePointerEnter } };
+    case EventType::pointerleave:
+        return { { EventListenerRegionType::PointerLeave, EventListenerRegionType::NonPassivePointerLeave } };
+    case EventType::pointermove:
+        return { { EventListenerRegionType::PointerMove, EventListenerRegionType::NonPassivePointerMove } };
+    case EventType::pointerout:
+        return { { EventListenerRegionType::PointerOut, EventListenerRegionType::NonPassivePointerOut } };
+    case EventType::pointerover:
+        return { { EventListenerRegionType::PointerOver, EventListenerRegionType::NonPassivePointerOver } };
+    case EventType::pointerup:
+        return { { EventListenerRegionType::PointerUp, EventListenerRegionType::NonPassivePointerUp } };
+    case EventType::gesturechange:
+        return { { EventListenerRegionType::GestureChange, EventListenerRegionType::NonPassiveGestureChange } };
+    case EventType::gestureend:
+        return { { EventListenerRegionType::GestureEnd, EventListenerRegionType::NonPassiveGestureEnd } };
+    case EventType::gesturestart:
+        return { { EventListenerRegionType::GestureStart, EventListenerRegionType::NonPassiveGestureStart } };
+    default:
+        return std::nullopt;
+    }
+}
+
+static std::optional<EventListenerRegionTypePair> simulatedMouseEventListenerRegionTypes(EventType eventType)
+{
+    switch (eventType) {
+    case EventType::mousedown:
+        return { { EventListenerRegionType::MouseDown, EventListenerRegionType::NonPassiveMouseDown } };
+    case EventType::mouseup:
+        return { { EventListenerRegionType::MouseUp, EventListenerRegionType::NonPassiveMouseUp } };
+    case EventType::mousemove:
+        return { { EventListenerRegionType::MouseMove, EventListenerRegionType::NonPassiveMouseMove } };
+    default:
+        return std::nullopt;
+    }
+}
+#endif
+
+#if ENABLE(WHEEL_EVENT_REGIONS) || ENABLE(TOUCH_EVENT_REGIONS)
+static bool hasOnlyPassiveListeners(const EventListenerVector& listeners)
+{
+    for (auto& listener : listeners) {
+        if (!listener->isPassive())
+            return false;
+    }
+    return true;
+}
+#endif
+
 OptionSet<EventListenerRegionType> Adjuster::computeEventListenerRegionTypes(const Document& document, const Style::ComputedStyle& style, const EventTarget& eventTarget, OptionSet<EventListenerRegionType> parentTypes)
 {
     auto types = parentTypes;
 
 #if ENABLE(WHEEL_EVENT_REGIONS) || ENABLE(TOUCH_EVENT_REGIONS)
-    auto findListeners = [&](auto& eventName, auto type, auto nonPassiveType) {
-        auto* eventListenerVector = eventTarget.eventTargetData()->eventListenerMap.find(eventName);
-        if (!eventListenerVector)
-            return;
-
-        types.add(type);
-
-        auto isPassiveOnly = [&] {
-            for (auto& listener : *eventListenerVector) {
-                if (!listener->isPassive())
-                    return false;
-            }
-            return true;
-        }();
-
-        if (!isPassiveOnly)
-            types.add(nonPassiveType);
-    };
-#endif
-#if ENABLE(WHEEL_EVENT_REGIONS)
     if (eventTarget.hasEventListeners()) {
-        findListeners(eventNames().wheelEvent, EventListenerRegionType::Wheel, EventListenerRegionType::NonPassiveWheel);
-        findListeners(eventNames().mousewheelEvent, EventListenerRegionType::Wheel, EventListenerRegionType::NonPassiveWheel);
+        auto& eventNames = WebCore::eventNames();
+#if ENABLE(TOUCH_EVENT_REGIONS)
+        bool useTouchEventRegions = document.shouldUseTouchEventRegions();
+        std::optional<bool> shouldDispatchSimulatedMouseEvents;
+#endif
+        auto regionTypesForEventType = [&](EventType eventType) -> std::optional<EventListenerRegionTypePair> {
+#if ENABLE(WHEEL_EVENT_REGIONS)
+            if (eventType == EventType::wheel || eventType == EventType::mousewheel)
+                return { { EventListenerRegionType::Wheel, EventListenerRegionType::NonPassiveWheel } };
+#endif
+#if ENABLE(TOUCH_EVENT_REGIONS)
+            if (!useTouchEventRegions)
+                return std::nullopt;
+            if (auto regionTypes = touchEventListenerRegionTypes(eventType))
+                return regionTypes;
+            auto regionTypes = simulatedMouseEventListenerRegionTypes(eventType);
+            if (!regionTypes)
+                return std::nullopt;
+            if (!shouldDispatchSimulatedMouseEvents)
+                shouldDispatchSimulatedMouseEvents = document.quirks().shouldDispatchSimulatedMouseEvents(&eventTarget);
+            if (!*shouldDispatchSimulatedMouseEvents)
+                return std::nullopt;
+            return regionTypes;
+#else
+            return std::nullopt;
+#endif
+        };
+
+        for (auto& [eventName, listeners] : eventTarget.eventTargetData()->eventListenerMap) {
+            auto regionTypes = regionTypesForEventType(eventNames.typeInfoForEvent(eventName).type());
+            if (!regionTypes)
+                continue;
+
+            types.add(regionTypes->type);
+            if (!hasOnlyPassiveListeners(listeners))
+                types.add(regionTypes->nonPassiveType);
+        }
     }
 #endif
 #if ENABLE(TOUCH_EVENT_REGIONS)
-    if (document.shouldUseTouchEventRegions() && eventTarget.hasEventListeners()) {
-        findListeners(eventNames().touchstartEvent, EventListenerRegionType::TouchStart, EventListenerRegionType::NonPassiveTouchStart);
-        findListeners(eventNames().touchendEvent, EventListenerRegionType::TouchEnd, EventListenerRegionType::NonPassiveTouchEnd);
-        // `touchcancel` is sent after the event has already been cancelled. Calling preventDefault() has no effect, so we don't
-        // need a synchronous version.
-        findListeners(eventNames().touchcancelEvent, EventListenerRegionType::TouchCancel, EventListenerRegionType::TouchCancel);
-        findListeners(eventNames().touchmoveEvent, EventListenerRegionType::TouchMove, EventListenerRegionType::NonPassiveTouchMove);
-        findListeners(eventNames().touchforcechangeEvent, EventListenerRegionType::TouchForceChange, EventListenerRegionType::NonPassiveTouchForceChange);
-
-        findListeners(eventNames().pointerdownEvent, EventListenerRegionType::PointerDown, EventListenerRegionType::NonPassivePointerDown);
-        findListeners(eventNames().pointerenterEvent, EventListenerRegionType::PointerEnter, EventListenerRegionType::NonPassivePointerEnter);
-        findListeners(eventNames().pointerleaveEvent, EventListenerRegionType::PointerLeave, EventListenerRegionType::NonPassivePointerLeave);
-        findListeners(eventNames().pointermoveEvent, EventListenerRegionType::PointerMove, EventListenerRegionType::NonPassivePointerMove);
-        findListeners(eventNames().pointeroutEvent, EventListenerRegionType::PointerOut, EventListenerRegionType::NonPassivePointerOut);
-        findListeners(eventNames().pointeroverEvent, EventListenerRegionType::PointerOver, EventListenerRegionType::NonPassivePointerOver);
-        findListeners(eventNames().pointerupEvent, EventListenerRegionType::PointerUp, EventListenerRegionType::NonPassivePointerUp);
-        if (document.quirks().shouldDispatchSimulatedMouseEvents(&eventTarget)) {
-            findListeners(eventNames().mousedownEvent, EventListenerRegionType::MouseDown, EventListenerRegionType::NonPassiveMouseDown);
-            findListeners(eventNames().mouseupEvent, EventListenerRegionType::MouseUp, EventListenerRegionType::NonPassiveMouseUp);
-            findListeners(eventNames().mousemoveEvent, EventListenerRegionType::MouseMove, EventListenerRegionType::NonPassiveMouseMove);
-        }
-
-        findListeners(eventNames().gesturechangeEvent, EventListenerRegionType::GestureChange, EventListenerRegionType::NonPassiveGestureChange);
-        findListeners(eventNames().gestureendEvent, EventListenerRegionType::GestureEnd, EventListenerRegionType::NonPassiveGestureEnd);
-        findListeners(eventNames().gesturestartEvent, EventListenerRegionType::GestureStart, EventListenerRegionType::NonPassiveGestureStart);
-    }
-
     if (eventTarget.hasInternalTouchEventHandling()) {
         types.add(EventListenerRegionType::TouchCancel);
         types.add(EventListenerRegionType::TouchEnd);

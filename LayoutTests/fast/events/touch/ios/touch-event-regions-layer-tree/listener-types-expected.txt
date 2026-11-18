@@ -1,0 +1,69 @@
+(event region
+        (rect (0,0) width=800 height=600)
+      (wheel event listener region
+        (rect (580,2) width=30 height=30)
+        (rect (580,39) width=30 height=31)
+        (rect (230,77) width=30 height=30)
+        (non-passive
+          (rect (580,39) width=30 height=31)
+          (rect (230,77) width=30 height=30)
+        )
+      )
+      (touch event listener region: asynchronousDispatchRegion:
+        (rect (2,2) width=30 height=30)
+        (rect (36,2) width=30 height=30)
+        (rect (70,2) width=30 height=30)
+        (rect (104,2) width=30 height=30)
+        (rect (138,2) width=30 height=30)
+        (rect (172,2) width=30 height=30)
+        (rect (206,2) width=30 height=30)
+        (rect (240,2) width=30 height=30)
+        (rect (274,2) width=30 height=30)
+        (rect (308,2) width=30 height=30)
+        (rect (342,2) width=30 height=30)
+        (rect (376,2) width=30 height=30)
+        (rect (2,39) width=30 height=31)
+        (rect (36,39) width=30 height=31)
+        (rect (70,39) width=30 height=31)
+        (rect (104,39) width=30 height=31)
+        (rect (138,39) width=30 height=31)
+        (rect (172,39) width=30 height=31)
+        (rect (206,39) width=30 height=31)
+        (rect (240,39) width=30 height=31)
+        (rect (274,39) width=30 height=31)
+        (rect (308,39) width=30 height=31)
+        (rect (342,39) width=30 height=31)
+        (rect (376,39) width=30 height=31)
+        (rect (2,77) width=30 height=30)
+        (rect (40,77) width=30 height=30)
+        (rect (78,77) width=30 height=30)
+        (rect (116,77) width=30 height=30)
+        (rect (192,77) width=30 height=30)
+eventSpecificSynchronousDispatchRegions: eventName: pointerdown eventRect:
+        (rect (172,39) width=30 height=31)
+        (rect (40,77) width=30 height=30)
+eventSpecificSynchronousDispatchRegions: eventName: pointerenter eventRect:
+        (rect (342,39) width=30 height=31)
+eventSpecificSynchronousDispatchRegions: eventName: pointerleave eventRect:
+        (rect (376,39) width=30 height=31)
+eventSpecificSynchronousDispatchRegions: eventName: pointermove eventRect:
+        (rect (206,39) width=30 height=31)
+eventSpecificSynchronousDispatchRegions: eventName: pointerout eventRect:
+        (rect (308,39) width=30 height=31)
+eventSpecificSynchronousDispatchRegions: eventName: pointerover eventRect:
+        (rect (274,39) width=30 height=31)
+eventSpecificSynchronousDispatchRegions: eventName: pointerup eventRect:
+        (rect (240,39) width=30 height=31)
+eventSpecificSynchronousDispatchRegions: eventName: touchend eventRect:
+        (rect (70,39) width=30 height=31)
+eventSpecificSynchronousDispatchRegions: eventName: touchforcechange eventRect:
+        (rect (138,39) width=30 height=31)
+eventSpecificSynchronousDispatchRegions: eventName: touchmove eventRect:
+        (rect (36,39) width=30 height=31)
+        (rect (78,77) width=30 height=30)
+eventSpecificSynchronousDispatchRegions: eventName: touchstart eventRect:
+        (rect (2,39) width=30 height=31)
+        (rect (116,77) width=30 height=30)
+
+      )
+    )

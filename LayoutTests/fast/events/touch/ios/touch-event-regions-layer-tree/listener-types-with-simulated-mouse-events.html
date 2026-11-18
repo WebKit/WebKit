@@ -1,0 +1,50 @@
+<!DOCTYPE html><!-- webkit-test-runner [ MouseEventsSimulationEnabled=true ] -->
+<html>
+<head>
+    <script src="resources/touch-regions-helper.js"></script>
+    <style>
+        body {
+            margin: 0;
+        }
+
+        .box {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            margin: 2px;
+            background-color: silver;
+        }
+    </style>
+</head>
+<body>
+    <div id="passive"></div>
+    <div id="active"></div>
+    <div id="combinations">
+        <div id="clickAndActiveMouseDown" class="box"></div>
+        <div id="passiveTouchStartAndActiveMouseUp" class="box"></div>
+    </div>
+    <script>
+        const eventTypes = ["mousedown", "mousemove", "mouseup", "mouseover", "click", "pointerdown", "touchstart"];
+
+        for (const [containerID, passive] of [["passive", true], ["active", false]]) {
+            const container = document.getElementById(containerID);
+            for (const eventType of eventTypes) {
+                const box = document.createElement("div");
+                box.className = "box";
+                box.title = `${containerID} ${eventType}`;
+                box.addEventListener(eventType, () => { }, { passive });
+                container.appendChild(box);
+            }
+        }
+
+        clickAndActiveMouseDown.addEventListener("click", () => { });
+        clickAndActiveMouseDown.addEventListener("mousedown", () => { }, { passive: false });
+
+        passiveTouchStartAndActiveMouseUp.addEventListener("touchstart", () => { }, { passive: true });
+        passiveTouchStartAndActiveMouseUp.addEventListener("mouseup", () => { }, { passive: false });
+
+        prepareForTest();
+        window.addEventListener("load", dumpRegions, false);
+    </script>
+</body>
+</html>

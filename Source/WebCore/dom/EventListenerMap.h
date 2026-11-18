@@ -63,6 +63,8 @@ public:
     NODELETE WEBCORE_EXPORT EventListenerMap();
 
     bool isEmpty() const { return m_entries.isEmpty(); }
+    auto begin() const { return m_entries.begin(); }
+    auto end() const { return m_entries.end(); }
     bool contains(const AtomString& eventType) const { return find(eventType); }
     NODELETE bool containsCapturing(const AtomString& eventType) const;
     NODELETE bool containsActive(const AtomString& eventType) const;

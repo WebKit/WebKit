@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="resources/touch-regions-helper.js"></script>
+    <style>
+        body {
+            margin: 0;
+        }
+
+        .box {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            margin: 2px;
+            background-color: silver;
+        }
+    </style>
+</head>
+<body>
+    <div id="passive"></div>
+    <div id="active"></div>
+    <div id="combinations">
+        <div id="clickAndPassiveTouchStart" class="box"></div>
+        <div id="activePointerDownAndKeyDown" class="box"></div>
+        <div id="passiveAndActiveTouchMove" class="box"></div>
+        <div id="activeTouchStartAndPassivePointerUp" class="box"></div>
+        <div id="removedPointerUp" class="box"></div>
+        <div id="removedOneOfTwoPointerMoves" class="box"></div>
+        <div id="clickAndWheel" class="box"></div>
+    </div>
+    <script>
+        const eventTypes = [
+            "touchstart", "touchmove", "touchend", "touchcancel", "touchforcechange",
+            "pointerdown", "pointermove", "pointerup", "pointerover", "pointerout", "pointerenter", "pointerleave", "pointercancel",
+            "mousedown", "mousemove", "mouseup", "click", "wheel",
+        ];
+
+        for (const [containerID, passive] of [["passive", true], ["active", false]]) {
+            const container = document.getElementById(containerID);
+            for (const eventType of eventTypes) {
+                const box = document.createElement("div");
+                box.className = "box";
+                box.title = `${containerID} ${eventType}`;
+                box.addEventListener(eventType, () => { }, { passive });
+                container.appendChild(box);
+            }
+        }
+
+        clickAndPassiveTouchStart.addEventListener("click", () => { });
+        clickAndPassiveTouchStart.addEventListener("touchstart", () => { }, { passive: true });
+
+        activePointerDownAndKeyDown.addEventListener("keydown", () => { });
+        activePointerDownAndKeyDown.addEventListener("pointerdown", () => { }, { passive: false });
+
+        passiveAndActiveTouchMove.addEventListener("touchmove", () => { }, { passive: true });
+        passiveAndActiveTouchMove.addEventListener("touchmove", () => { }, { passive: false, capture: true });
+
+        activeTouchStartAndPassivePointerUp.addEventListener("touchstart", () => { }, { passive: false });
+        activeTouchStartAndPassivePointerUp.addEventListener("pointerup", () => { }, { passive: true });
+
+        const pointerUpListener = () => { };
+        removedPointerUp.addEventListener("pointerup", pointerUpListener);
+        removedPointerUp.addEventListener("click", () => { });
+        removedPointerUp.removeEventListener("pointerup", pointerUpListener);
+
+        const activePointerMoveListener = () => { };
+        removedOneOfTwoPointerMoves.addEventListener("pointermove", () => { }, { passive: true });
+        removedOneOfTwoPointerMoves.addEventListener("pointermove", activePointerMoveListener, { passive: false });
+        removedOneOfTwoPointerMoves.removeEventListener("pointermove", activePointerMoveListener);
+
+        clickAndWheel.addEventListener("click", () => { });
+        clickAndWheel.addEventListener("wheel", () => { }, { passive: false });
+
+        prepareForTest();
+        window.addEventListener("load", dumpRegions, false);
+    </script>
+</body>
+</html>
