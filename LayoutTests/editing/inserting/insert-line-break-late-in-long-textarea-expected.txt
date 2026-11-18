@@ -1,0 +1,12 @@
+Inserting a line break past the middle of a long textarea should not take time quadratic in the length of the text. This test passes if it does not time out.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS textarea.value.length is 1000001
+PASS textarea.value[caretOffset] is "\n"
+PASS textarea.selectionStart is caretOffset + 1
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

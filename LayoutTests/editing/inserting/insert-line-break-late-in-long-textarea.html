@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<body>
+<textarea id="textarea" spellcheck="false" style="width: 20ch; height: 100px; font-family: monospace;"></textarea>
+<script src="../../resources/js-test.js"></script>
+<script>
+description("Inserting a line break past the middle of a long textarea should not take time quadratic in the length of the text. This test passes if it does not time out.");
+jsTestIsAsync = true;
+
+const textarea = document.getElementById("textarea");
+textarea.value = "word ".repeat(200000);
+textarea.focus();
+const caretOffset = Math.floor(textarea.value.length * 0.75);
+textarea.setSelectionRange(caretOffset, caretOffset);
+
+// Let the editor UI update for the selection change run first, so that the line break
+// is applied with a previous selection that points past the split point.
+setTimeout(() => {
+    document.execCommand("insertLineBreak");
+
+    shouldBe("textarea.value.length", "1000001");
+    shouldBeEqualToString("textarea.value[caretOffset]", "\n");
+    shouldBe("textarea.selectionStart", "caretOffset + 1");
+
+    textarea.remove();
+    finishJSTest();
+}, 0);
+</script>
+</body>
+</html>

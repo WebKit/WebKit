@@ -435,6 +435,8 @@ editing/spelling/text-replacement-after-typing-to-word.html [ Skip ]
 editing/spelling/text-replacement-first-word-second-line.html [ Skip ]
 
 # Grammar correction panel is Mac-only (USE(AUTOCORRECTION_PANEL))
+editing/spelling/grammar-correction-shown-after-text-shifts-under-previous-caret.html [ Skip ]
+editing/spelling/grammar-correction-shown-again-after-leaving-word.html [ Skip ]
 editing/spelling/grammar-correction-shown-clicking-middle-of-word.html [ Skip ]
 editing/spelling/grammar-correction-shown-clicking-multiword-phrase.html [ Skip ]
 editing/spelling/grammar-arrow-upstream-into-multiword-phrase.html [ Skip ]

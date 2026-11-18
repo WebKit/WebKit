@@ -115,7 +115,7 @@ private:
     void recordSpellcheckerResponseForModifiedCorrection(const SimpleRange& rangeOfCorrection, const String& corrected, const String& correction);
 
     bool shouldStartTimerFor(const DocumentMarker&, int endOffset) const;
-    bool respondToMarkerAtEndOfWord(const DocumentMarker&, const Position& endOfWordPosition);
+    bool respondToMarkerAtEndOfWord(DocumentMarker&, const Position& endOfWordPosition);
 
     NODELETE EditorClient* editorClient();
     
@@ -125,6 +125,7 @@ private:
 
     EventLoopTimerHandle m_timer;
     std::optional<SimpleRange> m_rangeWithAlternative;
+    WeakPtr<DocumentMarker> m_markerForLastResponse;
     bool m_isActive { };
     bool m_isDismissedByEditing { };
     AlternativeTextType m_type;

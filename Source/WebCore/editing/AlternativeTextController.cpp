@@ -56,6 +56,7 @@
 #include "TextIterator.h"
 #include "VisibleUnits.h"
 #include "markup.h"
+#include <wtf/Scope.h>
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
@@ -413,28 +414,28 @@ void AlternativeTextController::respondToChangedSelection(const VisibleSelection
     // containing the original pre-correction word so that user can quickly revert the
     // undesired autocorrection. Here, we start correction panel timer once we confirm that
     // the new caret position is at the end of a word.
-    if (!currentSelection.isCaret() || currentSelection == oldSelection || !currentSelection.isContentEditable())
+    if (currentSelection == oldSelection)
+        return;
+
+    bool handled = false;
+    auto forgetMarkerIfUnhandled = makeScopeExit([&] {
+        if (!handled)
+            m_markerForLastResponse = nullptr;
+    });
+
+    if (!currentSelection.isCaret() || !currentSelection.isContentEditable())
         return;
 
     VisiblePosition selectionPosition = currentSelection.start();
-    VisiblePosition oldSelectionPosition = oldSelection.start();
-    
+
     // Creating a Visible position triggers a layout and there is no
     // guarantee that the selection is still valid.
     if (selectionPosition.isNull())
         return;
-    
-    VisiblePosition startPositionOfWord = startOfWord(selectionPosition, WordSide::RightWordIfOnBoundary);
+
     VisiblePosition endPositionOfWord = endOfWord(selectionPosition, WordSide::LeftWordIfOnBoundary);
     if (endPositionOfWord.isNull())
         return;
-
-    if (!oldSelectionPosition.isNull()) {
-        VisiblePosition oldStartPositionOfWord = startOfWord(oldSelectionPosition, WordSide::RightWordIfOnBoundary);
-        VisiblePosition oldEndPositionOfWord = endOfWord(oldSelectionPosition, WordSide::LeftWordIfOnBoundary);
-        if (startPositionOfWord == oldStartPositionOfWord || endPositionOfWord == oldEndPositionOfWord)
-            return;
-    }
 
     Position position = endPositionOfWord.deepEquivalent();
     if (position.anchorType() != Position::PositionIsOffsetInAnchor)
@@ -446,7 +447,6 @@ void AlternativeTextController::respondToChangedSelection(const VisibleSelection
     if (!markers)
         return;
 
-    bool handled = false;
     for (auto& marker : markers->markersFor(*node, DocumentMarkerType::Grammar)) {
         // Grammar markers take precedence.
         ASSERT(marker);
@@ -627,10 +627,12 @@ bool AlternativeTextController::shouldStartTimerFor(const WebCore::DocumentMarke
     }
 }
 
-bool AlternativeTextController::respondToMarkerAtEndOfWord(const DocumentMarker& marker, const Position& endOfWordPosition)
+bool AlternativeTextController::respondToMarkerAtEndOfWord(DocumentMarker& marker, const Position& endOfWordPosition)
 {
     if (!shouldStartTimerFor(marker, endOfWordPosition.offsetInContainerNode()))
         return false;
+    if (&marker == m_markerForLastResponse.get())
+        return true;
     RefPtr node = endOfWordPosition.containerNode();
     auto wordRange = makeSimpleRange(*node, marker);
     String currentWord = plainText(wordRange);
@@ -662,6 +664,7 @@ bool AlternativeTextController::respondToMarkerAtEndOfWord(const DocumentMarker&
         ASSERT_NOT_REACHED();
         break;
     }
+    m_markerForLastResponse = marker;
     return true;
 }
 

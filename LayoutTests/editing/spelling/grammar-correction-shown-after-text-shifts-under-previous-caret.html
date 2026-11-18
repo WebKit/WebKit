@@ -1,0 +1,98 @@
+<!DOCTYPE html><!-- webkit-test-runner [ spellCheckingDots=true ] -->
+<html lang="en">
+<meta charset="UTF-8">
+<style>
+div[contenteditable] {
+    font-family: monospace;
+    font-size: 32px;
+    width: 100%;
+}
+</style>
+<script src="../../resources/ui-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+
+<script>
+jsTestIsAsync = true;
+
+description(`This test verifies that grammar correction UI is triggered when the caret moves into a word
+    with a grammar marker after script changed the text, even if the previous caret offset now falls inside that word.
+    This test requires WebKitTestRunner to run.`);
+
+if (window.internals)
+    internals.setContinuousSpellCheckingEnabled(true);
+
+async function runTest()
+{
+    const editor = document.getElementById("editor");
+    const grammarText = "She have a dog";
+
+    await UIHelper.activateElementAndWaitForInputSession(editor);
+
+    document.execCommand("insertText", false, grammarText);
+    document.execCommand("insertParagraph");
+    await UIHelper.ensurePresentationUpdate();
+
+    const selection = window.getSelection();
+    const text = editor.firstChild;
+    selection.collapse(text, 0);
+
+    await shouldBecomeEqual('internals.hasGrammarMarker(4, 4)', 'true');
+
+    // Put the caret in "dog" (offset 12) and let the editor remember it.
+    selection.collapse(text, 12);
+    await UIHelper.ensurePresentationUpdate();
+
+    // Shift the text so that "have" moves to offsets 10-14, then move the caret into "have".
+    // The remembered offset 12 now falls inside "have", but the caret did enter a new word.
+    text.insertData(0, "Today ");
+    selection.collapse(text, 11);
+
+    await shouldBecomeEqual('internals.isAlternativeTextUIActive()', 'true');
+
+    editor.textContent = "";
+    editor.blur();
+    finishJSTest();
+}
+</script>
+<body>
+<div contenteditable="true" id="editor"></div>
+<script>
+UIHelper.setSpellCheckerResults({
+    "She have a dog" : [
+        {
+            type: "grammar",
+            from: 4,
+            to: 8,
+            details: [{ from: 0, to: 4, corrections: ["has"] }]
+        }
+    ],
+    "She have a dog\n" : [
+        {
+            type: "grammar",
+            from: 4,
+            to: 8,
+            details: [{ from: 0, to: 4, corrections: ["has"] }]
+        }
+    ],
+    "Today She have a dog" : [
+        {
+            type: "grammar",
+            from: 10,
+            to: 14,
+            details: [{ from: 0, to: 4, corrections: ["has"] }]
+        }
+    ],
+    "Today She have a dog\n" : [
+        {
+            type: "grammar",
+            from: 10,
+            to: 14,
+            details: [{ from: 0, to: 4, corrections: ["has"] }]
+        }
+    ]
+}).then(runTest);
+</script>
+<pre id="description"></pre>
+<pre id="console"></pre>
+</body>
+</html>
