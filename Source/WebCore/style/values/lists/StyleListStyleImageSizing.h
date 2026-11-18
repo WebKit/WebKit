@@ -35,7 +35,7 @@ namespace WebCore::Style {
 //   Default object size: a 1em square
 //   Algorithm:           the default sizing algorithm
 //
-// FIXME: Use a 1em square, rather than the size RenderListOutsideMarker passes in.
+// FIXME: Use a 1em square, rather than the size RenderListItem::markerImageSize() passes in.
 class ListStyleImageSizing final : public ImageSizingContext {
 public:
     explicit ListStyleImageSizing(float markerSide)

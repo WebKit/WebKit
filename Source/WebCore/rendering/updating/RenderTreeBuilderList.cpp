@@ -233,7 +233,7 @@ void RenderTreeBuilder::List::buildMarkerContentRenderers(RenderListOutsideMarke
 
         // list-style-type text that needs renderers of its own, so inline layout can bidi-resolve it.
         // The text itself is only known once counter values resolve, so start empty and let
-        // RenderListOutsideMarker::updateContent() fill it in at layout time.
+        // RenderListItem::updateMarkerContent() fill it in.
         m_builder.attach(container.get(), createMarkerTextRenderer(marker.document()));
         return;
     }
