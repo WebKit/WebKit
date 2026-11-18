@@ -386,12 +386,17 @@ void Frame::updateFrameTreeSyncData(Ref<FrameTreeSyncData>&& data)
 {
     m_frameTreeSyncData = WTF::move(data);
     updateLocalChildrenFrameOwnerZoom(*this);
+    if (RefPtr remoteFrame = dynamicDowncast<RemoteFrame>(*this))
+        remoteFrame->updateViewScrollPositionFromFrameTreeSyncData();
 }
 
 void Frame::updateFrameTreeSyncData(const FrameTreeSyncSerializationData& data)
 {
-    if (static_cast<FrameTreeSyncDataType>(data.value.index()) != FrameTreeSyncDataType::FrameGeometry) {
+    auto dataType = static_cast<FrameTreeSyncDataType>(data.value.index());
+    if (dataType != FrameTreeSyncDataType::FrameGeometry) {
         protect(frameTreeSyncData())->update(data);
+        if (RefPtr remoteFrame = dynamicDowncast<RemoteFrame>(*this); remoteFrame && dataType == FrameTreeSyncDataType::FrameViewportInfo)
+            remoteFrame->updateViewScrollPositionFromFrameTreeSyncData();
         return;
     }
 

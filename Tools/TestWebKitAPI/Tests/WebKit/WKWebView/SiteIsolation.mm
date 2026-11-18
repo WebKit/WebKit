@@ -5440,6 +5440,52 @@ TEST(SiteIsolation, ConvertRectToMainFrameCoordinatesInNestedSameOriginZoomedIfr
     runConvertRectToMainFrameCoordinatesInNestedZoomedIframeTest(false, true);
 }
 
+static RetainPtr<WKFrameInfo> waitForChildFrameInfo(TestWKWebView *webView, NSString *host)
+{
+    RetainPtr<WKFrameInfo> result;
+    EXPECT_TRUE(Util::waitFor([&] {
+        for (_WKFrameTreeNode *child in [[webView mainFrame] childFrames]) {
+            if ([child.info.securityOrigin.host isEqualToString:host]) {
+                result = child.info;
+                return true;
+            }
+        }
+        return false;
+    }));
+    return result;
+}
+
+TEST(SiteIsolation, ConvertRectToMainFrameCoordinatesInNewProcessAfterScrolling)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { "<body style='margin: 0; min-height: 3000px'><iframe style='position: absolute; left: 0; top: 0; width: 100px; height: 100px; border: none' src='https://domain2.com/subframe'></iframe></body>"_s } },
+        { "/subframe"_s, { "<body style='margin: 0; min-height: 1000px'></body>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegateWithoutSharedProcess(server, CGRectMake(0, 0, 800, 600));
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://domain1.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    [webView objectByEvaluatingJavaScript:@"window.scrollTo(0, 200)"];
+    EXPECT_TRUE(Util::waitFor([&] {
+        return [[webView objectByEvaluatingJavaScript:@"window.scrollY"] intValue] == 200;
+    }));
+    [webView waitForNextPresentationUpdate];
+
+    [webView objectByEvaluatingJavaScript:@"var iframe = document.createElement('iframe'); iframe.style = 'position: absolute; left: 60px; top: 420px; width: 100px; height: 80px; border: none'; iframe.src = 'https://domain3.com/subframe'; document.body.appendChild(iframe); 1;"];
+    RetainPtr info = waitForChildFrameInfo(webView.get(), @"domain3.com");
+
+    CGRect rect = CGRectZero;
+    EXPECT_TRUE(Util::waitFor([&] {
+        rect = convertRectToMainFrameCoordinatesInFrame(webView.get(), info.get(), CGRectMake(5, 7, 10, 15));
+        return rect.origin.x == 65;
+    }));
+    [webView waitForNextPresentationUpdate];
+
+    rect = convertRectToMainFrameCoordinatesInFrame(webView.get(), info.get(), CGRectMake(5, 7, 10, 15));
+    EXPECT_EQ(rect.origin.x, 65);
+    EXPECT_EQ(rect.origin.y, 227);
+}
+
 TEST(SiteIsolation, SetFocusedFrame)
 {
     auto mainframeHTML = "<iframe id='iframe' src='https://domain2.com/subframe'></iframe>"_s;

@@ -1439,11 +1439,8 @@ void WebPage::frameGeometryChangedInAnotherProcess(Vector<FrameGeometryUpdate>&&
         if (!coreFrame)
             continue;
 
-        if (update.viewportInfo) {
+        if (update.viewportInfo)
             coreFrame->updateFrameTreeSyncData(FrameTreeSyncSerializationData { WTF::move(*update.viewportInfo) });
-            if (RefPtr view = coreFrame->virtualView())
-                view->scrollTo(coreFrame->frameTreeSyncData().frameViewportInfo.scrollPosition);
-        }
 
         if (update.geometry) {
             coreFrame->updateFrameTreeSyncData(FrameTreeSyncSerializationData { WTF::move(*update.geometry) });
