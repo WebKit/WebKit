@@ -129,12 +129,7 @@ void ScrollerCoordinated::updateValues()
     state.thumbPosition = (values.visibleSize - state.thumbLength) * values.value;
     state.frameRect = rect;
 
-    float contentsScale;
-    {
-        Locker layerLocker { hostLayer->lock() };
-        contentsScale = hostLayer->contentsScale();
-    }
-
+    const float contentsScale = hostLayer->contentsScale();
     auto frameRect = enclosingIntRect(FloatRect(state.frameRect.x() * contentsScale, state.frameRect.y() * contentsScale,
         state.frameRect.width() * contentsScale, state.frameRect.height() * contentsScale));
 

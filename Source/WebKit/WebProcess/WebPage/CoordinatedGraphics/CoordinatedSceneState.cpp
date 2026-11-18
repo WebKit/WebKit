@@ -100,7 +100,14 @@ bool CoordinatedSceneState::flush()
             m_pendingLayersToRemove.addAll(std::exchange(m_layersToRemove, { }));
     }
 
+#if !USE(TEXTURE_MAPPER)
+    bool didCommitProperties = m_rootLayer->commitPendingRenderingUpdateProperties();
+    for (Ref layer : m_layers)
+        didCommitProperties |= layer->commitPendingRenderingUpdateProperties();
+    return didChangeLayers || didCommitProperties;
+#else
     return didChangeLayers;
+#endif
 }
 
 void CoordinatedSceneState::commitPendingScrollingPositions()

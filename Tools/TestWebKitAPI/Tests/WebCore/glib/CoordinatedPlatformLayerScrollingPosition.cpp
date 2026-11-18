@@ -48,13 +48,16 @@ public:
         : m_compositingQueue(WorkQueue::create("ScrollingPositionScene"_s))
         , m_layer(CoordinatedPlatformLayer::create())
     {
+        assertIsMainThread();
         {
             Locker locker { m_layer->lock() };
             m_layer->setSize({ 40, 40 });
             m_layer->setAnchorPoint({ 0, 0, 0 });
-            m_layer->setContentsColor(Color::green);
-            m_layer->setContentsRect({ 0, 0, 40, 40 });
         }
+        m_layer->setContentsColor(Color::green);
+        m_layer->setContentsRect({ 0, 0, 40, 40 });
+        m_layer->commitPendingRenderingUpdateProperties();
+
         m_compositingQueue->dispatchSync([this] {
             m_surface = SkSurfaces::Raster(SkImageInfo::MakeN32Premul(800, 600));
             m_root = SkiaCompositingLayer::create();
@@ -75,6 +78,7 @@ public:
 
     void setMainPosition(const FloatPoint& position)
     {
+        assertIsMainThread();
         Locker locker { m_layer->lock() };
         m_layer->setPosition(position);
     }
@@ -87,6 +91,10 @@ public:
 
     void compose(OptionSet<CompositionReason> reasons)
     {
+        assertIsMainThread();
+        if (reasons.contains(CompositionReason::RenderingUpdate))
+            m_layer->commitPendingRenderingUpdateProperties();
+
         m_compositingQueue->dispatchSync([&] {
             m_layer->flushCompositingState(reasons);
             m_layer->flushScrollingPositionChanges(reasons);

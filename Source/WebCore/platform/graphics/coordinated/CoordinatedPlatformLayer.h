@@ -26,6 +26,7 @@
 #pragma once
 
 #if USE(COORDINATED_GRAPHICS)
+#include "CoordinatedBackingStoreProxy.h"
 #include "CoordinatedCompositionReason.h"
 #include "Damage.h"
 #include "FloatPoint.h"
@@ -33,6 +34,7 @@
 #include "FloatSize.h"
 #include "PlatformLayerIdentifier.h"
 #include "TransformationMatrix.h"
+#include <wtf/Deque.h>
 #include <wtf/EnumSet.h>
 #include <wtf/Lock.h>
 #include <wtf/MainThread.h>
@@ -48,9 +50,14 @@ WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 #endif
 
+#if USE(TEXTURE_MAPPER)
+#define REQUIRE_LOCK_OR_MAIN_THREAD WTF_REQUIRES_LOCK(m_lock)
+#else
+#define REQUIRE_LOCK_OR_MAIN_THREAD WTF_REQUIRES_CAPABILITY(mainThread)
+#endif
+
 namespace WebCore {
 class CoordinatedBackingStore;
-class CoordinatedBackingStoreProxy;
 class CoordinatedImageBackingStore;
 class CoordinatedPlatformLayer;
 class CoordinatedPlatformLayerBuffer;
@@ -133,8 +140,7 @@ public:
 
     void setTransform(const TransformationMatrix&) WTF_REQUIRES_LOCK(m_lock);
     const TransformationMatrix& transform() const WTF_REQUIRES_LOCK(m_lock);
-    void setChildrenTransform(const TransformationMatrix&) WTF_REQUIRES_LOCK(m_lock);
-    const TransformationMatrix& childrenTransform() const WTF_REQUIRES_LOCK(m_lock);
+    void setChildrenTransform(const TransformationMatrix&) REQUIRE_LOCK_OR_MAIN_THREAD;
     void didUpdateLayerTransform();
 
     void setVisibleRect(const FloatRect&);
@@ -148,22 +154,28 @@ public:
     void setDrawsContent(bool);
     void setMasksToBounds(bool) WTF_REQUIRES_LOCK(m_lock);
     bool masksToBounds() const WTF_REQUIRES_LOCK(m_lock);
-    void setPreserves3D(bool) WTF_REQUIRES_LOCK(m_lock);
-    void setBackfaceVisibility(bool) WTF_REQUIRES_LOCK(m_lock);
-    void setBackgroundColor(const Color&) WTF_REQUIRES_LOCK(m_lock);
-    void setOpacity(float) WTF_REQUIRES_LOCK(m_lock);
-    void setBlendMode(BlendMode) WTF_REQUIRES_LOCK(m_lock);
+    void setPreserves3D(bool) REQUIRE_LOCK_OR_MAIN_THREAD;
+    void setBackfaceVisibility(bool) REQUIRE_LOCK_OR_MAIN_THREAD;
+    void setBackgroundColor(const Color&) REQUIRE_LOCK_OR_MAIN_THREAD;
+    void setOpacity(float) REQUIRE_LOCK_OR_MAIN_THREAD;
+    void setBlendMode(BlendMode) REQUIRE_LOCK_OR_MAIN_THREAD;
 
-    void setContentsVisible(bool) WTF_REQUIRES_LOCK(m_lock);
+    void setContentsVisible(bool) REQUIRE_LOCK_OR_MAIN_THREAD;
+#if USE(TEXTURE_MAPPER)
     bool contentsVisible() const WTF_REQUIRES_LOCK(m_lock);
-    void setContentsOpaque(bool) WTF_REQUIRES_LOCK(m_lock);
-    void setContentsRect(const FloatRect&) WTF_REQUIRES_LOCK(m_lock);
-    void setContentsRectClipsDescendants(bool) WTF_REQUIRES_LOCK(m_lock);
-    void setContentsClippingRect(const FloatRoundedRect&) WTF_REQUIRES_LOCK(m_lock);
-    void setContentsClipShapePath(const Path&) WTF_REQUIRES_LOCK(m_lock);
-    void setContentsScale(float) WTF_REQUIRES_LOCK(m_lock);
+#endif
+    void setContentsOpaque(bool) REQUIRE_LOCK_OR_MAIN_THREAD;
+    void setContentsRect(const FloatRect&) REQUIRE_LOCK_OR_MAIN_THREAD;
+    void setContentsRectClipsDescendants(bool) REQUIRE_LOCK_OR_MAIN_THREAD;
+    void setContentsClippingRect(const FloatRoundedRect&) REQUIRE_LOCK_OR_MAIN_THREAD;
+    void setContentsClipShapePath(const Path&) REQUIRE_LOCK_OR_MAIN_THREAD;
+    void setContentsScale(float) REQUIRE_LOCK_OR_MAIN_THREAD;
+#if USE(TEXTURE_MAPPER)
     float contentsScale() const WTF_REQUIRES_LOCK(m_lock);
-    void setContentsBuffer(std::unique_ptr<CoordinatedPlatformLayerBuffer>&&, std::optional<Damage>&& = std::nullopt) WTF_REQUIRES_LOCK(m_lock);
+#else
+    float contentsScale() const;
+#endif
+    void setContentsBuffer(std::unique_ptr<CoordinatedPlatformLayerBuffer>&&, std::optional<Damage>&& = std::nullopt) REQUIRE_LOCK_OR_MAIN_THREAD;
     void setScrollbarContentsBuffer(std::unique_ptr<CoordinatedPlatformLayerBuffer>&&, const FloatRect&);
     void clearScrollbarContentsBuffer();
     enum class RequireComposition : bool { No, Yes };
@@ -173,30 +185,30 @@ public:
 #if ENABLE(VIDEO) && USE(GSTREAMER_GL)
     void replaceCurrentContentsBufferWithCopy();
 #endif
-    void setContentsImage(NativeImage*) WTF_REQUIRES_LOCK(m_lock);
-    void setContentsColor(const Color&) WTF_REQUIRES_LOCK(m_lock);
-    void setContentsTileSize(const FloatSize&) WTF_REQUIRES_LOCK(m_lock);
-    void setContentsTilePhase(const FloatSize&) WTF_REQUIRES_LOCK(m_lock);
-    void setDirtyRegion(Damage&&) WTF_REQUIRES_LOCK(m_lock);
+    void setContentsImage(NativeImage*) REQUIRE_LOCK_OR_MAIN_THREAD;
+    void setContentsColor(const Color&) REQUIRE_LOCK_OR_MAIN_THREAD;
+    void setContentsTileSize(const FloatSize&) REQUIRE_LOCK_OR_MAIN_THREAD;
+    void setContentsTilePhase(const FloatSize&) REQUIRE_LOCK_OR_MAIN_THREAD;
+    void setDirtyRegion(Damage&&) REQUIRE_LOCK_OR_MAIN_THREAD;
 
-    void setFilters(const FilterOperations&) WTF_REQUIRES_LOCK(m_lock);
+    void setFilters(const FilterOperations&) REQUIRE_LOCK_OR_MAIN_THREAD;
     void setMask(CoordinatedPlatformLayer*) WTF_REQUIRES_LOCK(m_lock);
     CoordinatedPlatformLayer* mask() const WTF_REQUIRES_LOCK(m_lock);
-    void setReplica(CoordinatedPlatformLayer*) WTF_REQUIRES_LOCK(m_lock);
+    void setReplica(CoordinatedPlatformLayer*) REQUIRE_LOCK_OR_MAIN_THREAD;
 #if USE(TEXTURE_MAPPER)
     void setBackdrop(CoordinatedPlatformLayer*) WTF_REQUIRES_LOCK(m_lock);
     void notifyBackdropFiltersChanged() WTF_REQUIRES_LOCK(m_lock);
 #else
-    void setBackdropFilters(const FilterOperations&) WTF_REQUIRES_LOCK(m_lock);
+    void setBackdropFilters(const FilterOperations&) REQUIRE_LOCK_OR_MAIN_THREAD;
 #endif
-    void setBackdropRect(const FloatRoundedRect&) WTF_REQUIRES_LOCK(m_lock);
-    void setBackdropShapePath(const Path&) WTF_REQUIRES_LOCK(m_lock);
-    void setIsBackdropRoot(bool) WTF_REQUIRES_LOCK(m_lock);
+    void setBackdropRect(const FloatRoundedRect&) REQUIRE_LOCK_OR_MAIN_THREAD;
+    void setBackdropShapePath(const Path&) REQUIRE_LOCK_OR_MAIN_THREAD;
+    void setIsBackdropRoot(bool) REQUIRE_LOCK_OR_MAIN_THREAD;
 
 #if USE(TEXTURE_MAPPER)
     void setAnimations(const TextureMapperAnimations&) WTF_REQUIRES_LOCK(m_lock);
 #else
-    void setAnimations(const AcceleratedAnimations&) WTF_REQUIRES_LOCK(m_lock);
+    void setAnimations(const AcceleratedAnimations&) REQUIRE_LOCK_OR_MAIN_THREAD;
 #endif
 
     RefPtr<CoordinatedPlatformLayer> parent() const WTF_REQUIRES_LOCK(m_lock);
@@ -207,16 +219,21 @@ public:
     void setEventRegion(const EventRegion&) WTF_REQUIRES_LOCK(m_lock);
     const EventRegion& eventRegion() const WTF_REQUIRES_LOCK(m_lock);
 
-    void setClipPath(const Path&, WindRule) WTF_REQUIRES_LOCK(m_lock);
+    void setClipPath(const Path&, WindRule) REQUIRE_LOCK_OR_MAIN_THREAD;
 
-    void setDebugBorder(Color&&, float) WTF_REQUIRES_LOCK(m_lock);
-    void setShowRepaintCounter(bool) WTF_REQUIRES_LOCK(m_lock);
+    void setDebugBorder(Color&&, float) REQUIRE_LOCK_OR_MAIN_THREAD;
+    void setShowRepaintCounter(bool) REQUIRE_LOCK_OR_MAIN_THREAD;
 
-    void updateContents(bool affectedByTransformAnimation) WTF_REQUIRES_LOCK(m_lock);
+    void updateContents(bool affectedByTransformAnimation) REQUIRE_LOCK_OR_MAIN_THREAD;
     void updateBackingStore();
 
     void commitPendingScrollingPosition();
     void flushScrollingPositionChanges(const OptionSet<CompositionReason>&);
+
+#if !USE(TEXTURE_MAPPER)
+    bool commitPendingRenderingUpdateProperties();
+#endif
+
     void flushCompositingState(const OptionSet<CompositionReason>&);
 
 #if USE(CAIRO)
@@ -250,13 +267,15 @@ private:
     void purgeBackingStores();
 
 #if ENABLE(DAMAGE_TRACKING)
-    void addDamage(Damage&&) WTF_REQUIRES_LOCK(m_lock);
+    void addDamage(Damage&&) WTF_REQUIRES_CAPABILITY(mainThread);
 #endif
-    void damageWholeLayer() WTF_REQUIRES_LOCK(m_lock);
+    void damageWholeLayer() REQUIRE_LOCK_OR_MAIN_THREAD;
 
 #if USE(TEXTURE_MAPPER)
     void flushCompositingStateOnTarget(const OptionSet<CompositionReason>&, TextureMapperLayer&);
 #else
+    const FloatSize& sizeOnMainThread() const WTF_IGNORES_THREAD_SAFETY_ANALYSIS { assertIsMainThread(); return m_size; }
+
     void flushCompositingStateProperties(const OptionSet<CompositionReason>&);
     void flushCompositingStateScrollbarContents(const OptionSet<CompositionReason>&);
     void flushCompositingStateVideoContents(const OptionSet<CompositionReason>&);
@@ -272,6 +291,7 @@ private:
         BackfaceVisibility,
         BackgroundColor,
         BackingStore,
+        BackingStoreTiles,
         BlendMode,
         BoundsOrigin,
         Children,
@@ -302,6 +322,65 @@ private:
         Transform,
     };
 
+#if !USE(TEXTURE_MAPPER)
+    void addPendingChange(Change);
+
+    struct RenderingUpdateProperties {
+        RenderingUpdateProperties() = default;
+        RenderingUpdateProperties(RenderingUpdateProperties&&) = default;
+        RenderingUpdateProperties& operator=(RenderingUpdateProperties&&) = default;
+        RenderingUpdateProperties(const RenderingUpdateProperties&) = delete;
+        RenderingUpdateProperties& operator=(const RenderingUpdateProperties&) = delete;
+        ~RenderingUpdateProperties();
+
+        EnumSet<Change> changes;
+        FloatPoint position;
+        FloatPoint boundsOrigin;
+        FloatPoint3D anchorPoint { 0.5f, 0.5f, 0 };
+        FloatSize size;
+        TransformationMatrix transform;
+        TransformationMatrix childrenTransform;
+        bool masksToBounds { false };
+        bool preserves3D { false };
+        bool backfaceVisibility { true };
+        float opacity { 1. };
+        BlendMode blendMode { BlendMode::Normal };
+        bool contentsVisible { true };
+        bool contentsOpaque  { false };
+        FloatRect contentsRect;
+        bool contentsRectClipsDescendants { false };
+        FloatRoundedRect contentsClippingRect;
+        Path contentsClipShapePath;
+        Color backgroundColor;
+        Color contentsColor;
+        FloatSize contentsTileSize;
+        FloatSize contentsTilePhase;
+        RefPtr<CoordinatedImageBackingStore> imageBackingStore;
+        std::unique_ptr<CoordinatedPlatformLayerBuffer> contentsBuffer;
+        bool hasBackingStore { false };
+        RefPtr<CoordinatedAnimatedBackingStoreClient> animatedBackingStoreClient;
+        std::optional<CoordinatedBackingStoreProxy::Update> tilesUpdate;
+        float contentsScale { 1. };
+        Path clipPath;
+        WindRule clipPathWindRule { WindRule::NonZero };
+        FilterOperations filters;
+        RefPtr<CoordinatedPlatformLayer> mask;
+        RefPtr<CoordinatedPlatformLayer> replica;
+        FilterOperations backdropFilters;
+        FloatRoundedRect backdropRect;
+        Path backdropShapePath;
+        bool isBackdropRoot { false };
+        AcceleratedAnimations animations;
+        Vector<Ref<CoordinatedPlatformLayer>> children;
+        Color debugBorderColor;
+        float debugBorderWidth { 0 };
+        int repaintCount { -1 };
+#if ENABLE(DAMAGE_TRACKING)
+        std::optional<Damage> damage;
+#endif
+    };
+#endif
+
     // FIXME: remove the client when a subclass is added for the WebProcess.
     Client* m_client { nullptr };
 
@@ -324,6 +403,45 @@ private:
     FloatRect m_visibleRect WTF_GUARDED_BY_CAPABILITY(mainThread);
     IntRect m_transformedVisibleRect WTF_GUARDED_BY_CAPABILITY(mainThread);
     Vector<IntRect, 1> m_dirtyRegion WTF_GUARDED_BY_CAPABILITY(mainThread);
+#if !USE(TEXTURE_MAPPER)
+    EnumSet<Change> m_pendingChanges WTF_GUARDED_BY_CAPABILITY(mainThread);
+    TransformationMatrix m_childrenTransform WTF_GUARDED_BY_CAPABILITY(mainThread);
+    bool m_preserves3D WTF_GUARDED_BY_CAPABILITY(mainThread) { false };
+    bool m_backfaceVisibility WTF_GUARDED_BY_CAPABILITY(mainThread) { true };
+    float m_opacity WTF_GUARDED_BY_CAPABILITY(mainThread) { 1. };
+    BlendMode m_blendMode WTF_GUARDED_BY_CAPABILITY(mainThread) { BlendMode::Normal };
+    bool m_contentsVisible WTF_GUARDED_BY_CAPABILITY(mainThread) { true };
+    bool m_contentsOpaque WTF_GUARDED_BY_CAPABILITY(mainThread) { false };
+    FloatRect m_contentsRect WTF_GUARDED_BY_CAPABILITY(mainThread);
+    bool m_contentsRectClipsDescendants WTF_GUARDED_BY_CAPABILITY(mainThread) { false };
+    FloatRoundedRect m_contentsClippingRect WTF_GUARDED_BY_CAPABILITY(mainThread);
+    Path m_contentsClipShapePath WTF_GUARDED_BY_CAPABILITY(mainThread);
+    Color m_backgroundColor WTF_GUARDED_BY_CAPABILITY(mainThread);
+    Color m_contentsColor WTF_GUARDED_BY_CAPABILITY(mainThread);
+    FloatSize m_contentsTileSize WTF_GUARDED_BY_CAPABILITY(mainThread);
+    FloatSize m_contentsTilePhase WTF_GUARDED_BY_CAPABILITY(mainThread);
+    RefPtr<CoordinatedBackingStoreProxy> m_backingStoreProxy WTF_GUARDED_BY_CAPABILITY(mainThread);
+    std::optional<CoordinatedBackingStoreProxy::Update> m_tilesUpdate WTF_GUARDED_BY_CAPABILITY(mainThread);
+    RefPtr<CoordinatedImageBackingStore> m_imageBackingStore WTF_GUARDED_BY_CAPABILITY(mainThread);
+    std::unique_ptr<CoordinatedPlatformLayerBuffer> m_contentsBuffer WTF_GUARDED_BY_CAPABILITY(mainThread);
+    struct {
+        Path path;
+        WindRule windRule { WindRule::NonZero };
+    } m_clipPath WTF_GUARDED_BY_CAPABILITY(mainThread);
+    FilterOperations m_filters WTF_GUARDED_BY_CAPABILITY(mainThread);
+    RefPtr<CoordinatedPlatformLayer> m_replica WTF_GUARDED_BY_CAPABILITY(mainThread);
+    FilterOperations m_backdropFilters WTF_GUARDED_BY_CAPABILITY(mainThread);
+    FloatRoundedRect m_backdropRect WTF_GUARDED_BY_CAPABILITY(mainThread);
+    Path m_backdropShapePath WTF_GUARDED_BY_CAPABILITY(mainThread);
+    bool m_isBackdropRoot WTF_GUARDED_BY_CAPABILITY(mainThread) { false };
+    AcceleratedAnimations m_animations WTF_GUARDED_BY_CAPABILITY(mainThread);
+    Color m_debugBorderColor WTF_GUARDED_BY_CAPABILITY(mainThread);
+    float m_debugBorderWidth WTF_GUARDED_BY_CAPABILITY(mainThread) { 0 };
+    int m_repaintCount WTF_GUARDED_BY_CAPABILITY(mainThread) { -1 };
+#if ENABLE(DAMAGE_TRACKING)
+    std::optional<Damage> m_damage WTF_GUARDED_BY_CAPABILITY(mainThread);
+#endif
+#endif
 
 #if ENABLE(DAMAGE_TRACKING)
     bool m_damagePropagationEnabled { false };
@@ -331,14 +449,22 @@ private:
 #endif
 
     mutable Lock m_lock;
-    EnumSet<Change> m_pendingChanges WTF_GUARDED_BY_LOCK(m_lock);
     FloatPoint m_position WTF_GUARDED_BY_LOCK(m_lock);
     FloatPoint3D m_anchorPoint WTF_GUARDED_BY_LOCK(m_lock) { 0.5f, 0.5f, 0 };
     FloatSize m_size WTF_GUARDED_BY_LOCK(m_lock);
     FloatPoint m_boundsOrigin WTF_GUARDED_BY_LOCK(m_lock);
     TransformationMatrix m_transform WTF_GUARDED_BY_LOCK(m_lock);
-    TransformationMatrix m_childrenTransform WTF_GUARDED_BY_LOCK(m_lock);
+    EventRegion m_eventRegion WTF_GUARDED_BY_LOCK(m_lock);
     bool m_masksToBounds WTF_GUARDED_BY_LOCK(m_lock) { false };
+    RefPtr<CoordinatedPlatformLayer> m_mask WTF_GUARDED_BY_LOCK(m_lock);
+    ThreadSafeWeakPtr<CoordinatedPlatformLayer> m_parent WTF_GUARDED_BY_LOCK(m_lock);
+    Vector<Ref<CoordinatedPlatformLayer>> m_children WTF_GUARDED_BY_LOCK(m_lock);
+#if ENABLE(SCROLLING_THREAD)
+    Markable<ScrollingNodeID> m_scrollingNodeID WTF_GUARDED_BY_LOCK(m_lock);
+#endif
+#if USE(TEXTURE_MAPPER)
+    EnumSet<Change> m_pendingChanges WTF_GUARDED_BY_LOCK(m_lock);
+    TransformationMatrix m_childrenTransform WTF_GUARDED_BY_LOCK(m_lock);
     bool m_preserves3D WTF_GUARDED_BY_LOCK(m_lock) { false };
     bool m_backfaceVisibility WTF_GUARDED_BY_LOCK(m_lock) { true };
     float m_opacity WTF_GUARDED_BY_LOCK(m_lock) { 1. };
@@ -355,22 +481,34 @@ private:
     FloatSize m_contentsTilePhase WTF_GUARDED_BY_LOCK(m_lock);
     float m_contentsScale WTF_GUARDED_BY_LOCK(m_lock) { 1. };
     RefPtr<CoordinatedBackingStoreProxy> m_backingStoreProxy WTF_GUARDED_BY_LOCK(m_lock);
-#if USE(TEXTURE_MAPPER)
     RefPtr<CoordinatedBackingStore> m_backingStore WTF_GUARDED_BY_LOCK(m_lock);
-#endif
     struct {
         RefPtr<CoordinatedImageBackingStore> current;
         RefPtr<CoordinatedImageBackingStore> committed;
     } m_imageBackingStore WTF_GUARDED_BY_LOCK(m_lock);
-#if USE(TEXTURE_MAPPER)
     struct {
         std::unique_ptr<CoordinatedPlatformLayerBuffer> pending;
         std::unique_ptr<CoordinatedPlatformLayerBuffer> committed;
         bool hasCommitted { false };
     } m_contentsBuffer WTF_GUARDED_BY_LOCK(m_lock);
+    struct {
+        Path path;
+        WindRule windRule;
+    } m_clipPath WTF_GUARDED_BY_LOCK(m_lock);
+    FilterOperations m_filters WTF_GUARDED_BY_LOCK(m_lock);
+    RefPtr<CoordinatedPlatformLayer> m_replica WTF_GUARDED_BY_LOCK(m_lock);
+    RefPtr<CoordinatedPlatformLayer> m_backdrop WTF_GUARDED_BY_LOCK(m_lock);
+    FloatRoundedRect m_backdropRect WTF_GUARDED_BY_LOCK(m_lock);
+    Path m_backdropShapePath WTF_GUARDED_BY_LOCK(m_lock);
+    bool m_isBackdropRoot WTF_GUARDED_BY_LOCK(m_lock) { false };
+    TextureMapperAnimations m_animations WTF_GUARDED_BY_LOCK(m_lock);
+    Color m_debugBorderColor WTF_GUARDED_BY_LOCK(m_lock);
+    float m_debugBorderWidth WTF_GUARDED_BY_LOCK(m_lock) { 0 };
+    int m_repaintCount WTF_GUARDED_BY_LOCK(m_lock) { -1 };
 #else
-    std::unique_ptr<CoordinatedPlatformLayerBuffer> m_contentsBuffer WTF_GUARDED_BY_LOCK(m_lock);
+    std::atomic<float> m_contentsScale { 1. };
 #endif
+
     struct {
         Lock lock;
         std::optional<std::unique_ptr<CoordinatedPlatformLayerBuffer>> buffer WTF_GUARDED_BY_LOCK(lock);
@@ -380,38 +518,6 @@ private:
         Lock lock;
         std::optional<std::unique_ptr<CoordinatedPlatformLayerBuffer>> buffer WTF_GUARDED_BY_LOCK(lock);
     } m_videoContents;
-    struct {
-        Path path;
-        WindRule windRule;
-    } m_clipPath WTF_GUARDED_BY_LOCK(m_lock);
-    FilterOperations m_filters WTF_GUARDED_BY_LOCK(m_lock);
-    RefPtr<CoordinatedPlatformLayer> m_mask WTF_GUARDED_BY_LOCK(m_lock);
-    RefPtr<CoordinatedPlatformLayer> m_replica WTF_GUARDED_BY_LOCK(m_lock);
-#if USE(TEXTURE_MAPPER)
-    RefPtr<CoordinatedPlatformLayer> m_backdrop WTF_GUARDED_BY_LOCK(m_lock);
-#else
-    FilterOperations m_backdropFilters WTF_GUARDED_BY_LOCK(m_lock);
-#endif
-    FloatRoundedRect m_backdropRect WTF_GUARDED_BY_LOCK(m_lock);
-    Path m_backdropShapePath WTF_GUARDED_BY_LOCK(m_lock);
-    bool m_isBackdropRoot WTF_GUARDED_BY_LOCK(m_lock) { false };
-#if USE(TEXTURE_MAPPER)
-    TextureMapperAnimations m_animations WTF_GUARDED_BY_LOCK(m_lock);
-#else
-    AcceleratedAnimations m_animations WTF_GUARDED_BY_LOCK(m_lock);
-#endif
-    ThreadSafeWeakPtr<CoordinatedPlatformLayer> m_parent WTF_GUARDED_BY_LOCK(m_lock);
-    Vector<Ref<CoordinatedPlatformLayer>> m_children WTF_GUARDED_BY_LOCK(m_lock);
-    EventRegion m_eventRegion WTF_GUARDED_BY_LOCK(m_lock);
-    Color m_debugBorderColor WTF_GUARDED_BY_LOCK(m_lock);
-    float m_debugBorderWidth WTF_GUARDED_BY_LOCK(m_lock) { 0 };
-    int m_repaintCount WTF_GUARDED_BY_LOCK(m_lock) { -1 };
-#if ENABLE(DAMAGE_TRACKING)
-    std::optional<Damage> m_damage WTF_GUARDED_BY_LOCK(m_lock);
-#endif
-#if ENABLE(SCROLLING_THREAD)
-    Markable<ScrollingNodeID> m_scrollingNodeID WTF_GUARDED_BY_LOCK(m_lock);
-#endif
 
     struct {
         mutable Lock lock;
@@ -423,8 +529,15 @@ private:
         std::optional<FloatPoint> currentBoundsOrigin WTF_GUARDED_BY_LOCK(lock);
         bool didNotifyPositionChange WTF_GUARDED_BY_LOCK(lock) { false };
     } m_scrollingPosition;
+
+#if !USE(TEXTURE_MAPPER)
+    Lock m_committedRenderingUpdatesLock;
+    Deque<RenderingUpdateProperties> m_committedRenderingUpdates WTF_GUARDED_BY_LOCK(m_committedRenderingUpdatesLock);
+#endif
 };
 
 } // namespace WebCore
+
+#undef REQUIRE_LOCK_OR_MAIN_THREAD
 
 #endif // USE(COORDINATED_GRAPHICS)

@@ -43,7 +43,11 @@ void GraphicsLayerContentsDisplayDelegateCoordinated::setDisplayBuffer(std::uniq
 
 void GraphicsLayerContentsDisplayDelegateCoordinated::display(CoordinatedPlatformLayer& layer, std::optional<Damage>&& dirtyRegion)
 {
+    assertIsMainThread();
+#if USE(TEXTURE_MAPPER)
     assertIsHeld(layer.lock());
+#endif
+
     if (m_displayBuffer)
         layer.setContentsBuffer(WTF::move(m_displayBuffer), WTF::move(dirtyRegion));
 }

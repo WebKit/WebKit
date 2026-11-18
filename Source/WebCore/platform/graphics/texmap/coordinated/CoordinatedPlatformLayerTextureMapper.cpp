@@ -296,12 +296,6 @@ void CoordinatedPlatformLayer::setChildrenTransform(const TransformationMatrix& 
     notifyCompositionRequired();
 }
 
-const TransformationMatrix& CoordinatedPlatformLayer::childrenTransform() const
-{
-    assertIsHeld(m_lock);
-    return m_childrenTransform;
-}
-
 void CoordinatedPlatformLayer::didUpdateLayerTransform()
 {
     assertIsMainThread();

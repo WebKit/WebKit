@@ -164,7 +164,7 @@ void SkiaCompositingLayer::setUseBackingStore(bool useBackingStore, CoordinatedA
 
 void SkiaCompositingLayer::updateBackingStore(CoordinatedBackingStoreProxy::Update&& update, float scale)
 {
-    if (m_maskImage && !update.isEmpty())
+    if (m_maskImage)
         m_maskImage = nullptr;
 
     ASSERT(m_backingStore);
