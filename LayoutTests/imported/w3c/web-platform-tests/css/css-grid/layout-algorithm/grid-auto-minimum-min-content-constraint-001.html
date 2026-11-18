@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<link rel="author" title="Sammy Gill" href="mailto:sammy.gill@apple.com">
+<link rel="help" href="https://drafts.csswg.org/css-grid-1/#algo-single-span-items">
+<link rel="match" href="../../reference/ref-filled-green-100px-square.xht">
+<meta name="assert" content="When the grid container is sized under a min-content constraint, an 'auto' column's base size is its item's limited min-content contribution, which is not limited by a non-fixed max track sizing function, even though the item's minimum contribution is 0 because of 'min-width: 0'.">
+<style>
+  .red {
+    width: 100px;
+    height: 100px;
+    background-color: red;
+  }
+
+  .min-content {
+    width: min-content;
+  }
+
+  .grid {
+    display: grid;
+    background-color: green;
+  }
+
+  .grid-item {
+    min-width: 0;
+  }
+
+  .content {
+    width: 100px;
+    height: 100px;
+  }
+</style>
+
+<p>Test passes if there is a filled green square and <strong>no red</strong>.</p>
+
+<div class="red">
+  <div class="min-content">
+    <div class="grid">
+      <div class="grid-item">
+        <div class="content"></div>
+      </div>
+    </div>
+  </div>
+</div>
