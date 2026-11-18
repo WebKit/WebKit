@@ -324,6 +324,32 @@ struct SchedulingAttributes {
 // The kernel's utilization scale, on which 1024 means a fully utilized CPU.
 static constexpr uint32_t s_utilizationScale = 1024;
 
+static bool canSetNegativeNiceLevel()
+{
+    errno = 0;
+    int niceLevel = getpriority(PRIO_PROCESS, 0);
+    if (errno || niceLevel <= -20)
+        return false;
+    if (setpriority(PRIO_PROCESS, 0, std::min(niceLevel, 0) - 1))
+        return false;
+    setpriority(PRIO_PROCESS, 0, niceLevel);
+    return true;
+}
+
+bool Thread::mayLowerNiceLevelToZero()
+{
+    struct rlimit limit;
+    if (!getrlimit(RLIMIT_NICE, &limit) && (limit.rlim_cur == RLIM_INFINITY || limit.rlim_cur >= 20))
+        return true;
+
+    static std::once_flag onceFlag;
+    static bool isPrivileged;
+    std::call_once(onceFlag, [] {
+        isPrivileged = canSetNegativeNiceLevel();
+    });
+    return isPrivileged;
+}
+
 static SchedulingAttributes schedulingAttributesForQOS(Thread::QOS qos)
 {
     switch (qos) {
@@ -333,18 +359,23 @@ static SchedulingAttributes schedulingAttributesForQOS(Thread::QOS qos)
     case Thread::QOS::Default:
         return { SCHED_OTHER, 0, s_utilizationScale * 20 / 100 };
     case Thread::QOS::Utility:
-        return { SCHED_BATCH, 10, 0 };
+        // Unprivileged threads cannot go back from nice 10 to 0.
+        return { SCHED_BATCH, Thread::mayLowerNiceLevelToZero() ? 10 : 0, 0 };
     case Thread::QOS::Background:
         return { SCHED_IDLE, 19, 0 };
     }
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-static void logSchedulingAttributesFailure(ThreadIdentifier id)
+static void logSchedulingAttributesFailure(ThreadIdentifier id, int error)
 {
     // A thread that exited before its attributes were applied is expected, not a failure.
-    if (errno != ESRCH)
-        RELEASE_LOG_ERROR(Threading, "Failed to apply scheduling attributes to thread %d: %s", id, safeStrerror(errno));
+    if (error == ESRCH)
+        return;
+
+    static std::atomic<bool> reported { false };
+    if (!reported.exchange(true, std::memory_order_relaxed))
+        RELEASE_LOG_WITH_LEVEL(Threading, WTFLogLevel::Info, "Failed to apply scheduling attributes to thread %d: %s", id, safeStrerror(error));
     UNUSED_PARAM(id);
 }
 #endif
@@ -412,8 +443,12 @@ void Thread::updateSchedulingAttributes(SchedulingState state) const
     schedAttr.flags = SCHED_FLAG_RESET_ON_FORK;
     schedAttr.nice = attributes.niceLevel;
 
+    int error = 0;
     auto setAttributes = [&] {
-        return !syscall(SYS_sched_setattr, m_id, &schedAttr, 0);
+        if (!syscall(SYS_sched_setattr, m_id, &schedAttr, 0))
+            return true;
+        error = errno;
+        return false;
     };
 
     if (utilizationClampSupported.load(std::memory_order_relaxed)) {
@@ -425,25 +460,27 @@ void Thread::updateSchedulingAttributes(SchedulingState state) const
         // Did we fail because uclamp was rejected?
         schedAttr.flags = SCHED_FLAG_RESET_ON_FORK;
         schedAttr.utilMin = 0;
+        int clampError = error;
         if (!setAttributes()) {
             // No
-            logSchedulingAttributesFailure(m_id);
+            logSchedulingAttributesFailure(m_id, error);
             return;
         }
 
         // Yes, don't try uclamp again.
         if (utilizationClampSupported.exchange(false, std::memory_order_relaxed))
-            RELEASE_LOG_WITH_LEVEL(Threading, WTFLogLevel::Info, "Utilization clamping is unavailable, scheduling every thread without it: %s", safeStrerror(errno));
+            RELEASE_LOG_WITH_LEVEL(Threading, WTFLogLevel::Info, "Utilization clamping is unavailable, scheduling every thread without it: %s", safeStrerror(clampError));
+        UNUSED_VARIABLE(clampError);
         return;
     }
 
     if (!setAttributes())
-        logSchedulingAttributesFailure(m_id);
+        logSchedulingAttributesFailure(m_id, error);
 #else
     struct sched_param param = { };
     if (sched_setscheduler(m_id, attributes.policy | SCHED_RESET_ON_FORK, &param)
         || setpriority(PRIO_PROCESS, m_id, attributes.niceLevel))
-        logSchedulingAttributesFailure(m_id);
+        logSchedulingAttributesFailure(m_id, errno);
 #endif // HAVE(SCHED_SETATTR)
 #else
     UNUSED_PARAM(state);

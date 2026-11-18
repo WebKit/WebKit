@@ -32,6 +32,7 @@
 
 #if OS(LINUX)
 #include <sched.h>
+#include <sys/resource.h>
 #include <sys/syscall.h>
 #include <unistd.h>
 #include <wtf/linux/HighPriorityThreads.h>
@@ -201,10 +202,10 @@ TEST(WTF_Thread, SchedulingAttributesFollowQOS)
 
     // UserInteractive is left out: HighPriorityThreads asks rtkit to lower its nice level
     // asynchronously, so its nice level is not ours to predict.
-    static constexpr Expectation expectations[] = {
+    const Expectation expectations[] = {
         { Thread::QOS::UserInitiated, SCHED_OTHER, 0, 1024 },
         { Thread::QOS::Default, SCHED_OTHER, 0, 204 },
-        { Thread::QOS::Utility, SCHED_BATCH, 10, 0 },
+        { Thread::QOS::Utility, SCHED_BATCH, Thread::mayLowerNiceLevelToZero() ? 10 : 0, 0 },
         { Thread::QOS::Background, SCHED_IDLE, 19, 0 },
     };
 
@@ -218,6 +219,42 @@ TEST(WTF_Thread, SchedulingAttributesFollowQOS)
             EXPECT_EQ(expectation.niceLevel, observed->niceLevel);
         if (kernelSupportsUtilizationClamp())
             EXPECT_EQ(expectation.minUtil, observed->minUtil);
+    }
+}
+
+TEST(WTF_Thread, HelperThreadQOSReturnsToUserInitiated)
+{
+    struct rlimit originalLimit;
+    ASSERT_EQ(0, getrlimit(RLIMIT_NICE, &originalLimit));
+    struct rlimit restrictedLimit = originalLimit;
+    restrictedLimit.rlim_cur = 0;
+    ASSERT_EQ(0, setrlimit(RLIMIT_NICE, &restrictedLimit));
+    if (Thread::mayLowerNiceLevelToZero()) {
+        EXPECT_EQ(0, setrlimit(RLIMIT_NICE, &originalLimit));
+        return;
+    }
+
+    std::optional<ObservedAttributes> asUtility;
+    std::optional<ObservedAttributes> asUserInitiated;
+    Ref thread = Thread::create("HelperQOSProbe"_s, [&] {
+        Thread::setCurrentHelperThreadQOS(Thread::QOS::Utility);
+        asUtility = observeSchedulingAttributes(Thread::currentSingleton().id());
+        Thread::setCurrentHelperThreadQOS(Thread::QOS::UserInitiated);
+        asUserInitiated = observeSchedulingAttributes(Thread::currentSingleton().id());
+    }, ThreadType::Unknown, Thread::QOS::UserInitiated);
+    thread->waitForCompletion();
+
+    EXPECT_EQ(0, setrlimit(RLIMIT_NICE, &originalLimit));
+
+    ASSERT_TRUE(asUtility.has_value());
+    ASSERT_TRUE(asUserInitiated.has_value());
+    EXPECT_EQ(SCHED_BATCH, asUtility->policy);
+    EXPECT_EQ(0, asUtility->niceLevel);
+    EXPECT_EQ(SCHED_OTHER, asUserInitiated->policy);
+    EXPECT_EQ(0, asUserInitiated->niceLevel);
+    if (kernelSupportsUtilizationClamp()) {
+        EXPECT_EQ(0u, asUtility->minUtil);
+        EXPECT_EQ(1024u, asUserInitiated->minUtil);
     }
 }
 
