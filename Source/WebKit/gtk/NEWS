@@ -1,4 +1,22 @@
 ================
+WebKitGTK 2.54.3
+================
+
+What's new in WebKitGTK 2.54.3?
+
+  - Add User-Agent quirk for XBox Play.
+  - Fix usage of pre-warmed Web content processes.
+  - Reduce video format conversions when using the DMA-BUF video sink.
+  - Improve handling of text input methods focus handling.
+  - Improve handling of surrounding text for input methods.
+  - Fix CSS SVG image cursor scaling.
+  - Fix north and west face gamepad buttons that were swapped.
+  - Improve gamepad input latency.
+  - Support usage of GStreamer 1.28.
+  - Fix build issues with GCC 16.
+  - Fix several crashes and rendering issues.
+
+================
 WebKitGTK 2.54.2
 ================
 
