@@ -284,7 +284,7 @@ void RemoteLayerTreeDrawingArea::encodeFullState(IPC::Encoder& commitEncoder, co
     bool isFirstTransaction = true;
     auto transactions = WTF::map(bundle.transactions, [&](auto& rootFrameData) {
         auto transaction = std::exchange(isFirstTransaction, false) ? scope.buildLayersTransaction(m_remoteLayerTreeContext) : makeUniqueRef<RemoteLayerTreeTransaction>();
-        transaction->copyRootStateFrom(rootFrameData.first);
+        transaction->copyRootStateFrom(protect(rootFrameData.first));
         return transaction;
     });
 
