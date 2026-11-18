@@ -376,6 +376,17 @@ bool defaultCookieStoreAPIEnabled()
 #endif
 }
 
+#if !PLATFORM(COCOA)
+bool defaultCompressionDictionaryEnabled()
+{
+#if HAVE(SOUP_COMPRESSION_DICTIONARY_SUPPORT)
+    return true;
+#else
+    return false;
+#endif
+}
+#endif
+
 #if ENABLE(CONTENT_EXTENSIONS)
 bool defaultIFrameResourceMonitoringEnabled()
 {

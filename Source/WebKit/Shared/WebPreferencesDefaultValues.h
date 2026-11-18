@@ -208,6 +208,8 @@ NODELETE bool defaultRequiresUserGestureToStartAudiblePlaybackWhenHidden();
 
 NODELETE bool defaultCookieStoreAPIEnabled();
 
+bool defaultCompressionDictionaryEnabled();
+
 bool defaultContentInsetBackgroundFillEnabled();
 NODELETE bool defaultTopContentInsetBackgroundCanChangeAfterScrolling();
 

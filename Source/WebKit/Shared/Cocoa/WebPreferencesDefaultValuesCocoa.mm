@@ -79,11 +79,17 @@ NODELETE bool defaultWebContentRestrictionsAskToEnabled()
 }
 #endif
 
-}
+} // namespace WebKit
 
-#endif // namespace WebKit
+#endif // USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/WebPreferencesDefaultValuesCocoaAdditions.mm>)
 
 namespace WebKit {
+
+bool defaultCompressionDictionaryEnabled()
+{
+    static SEL sel = NSSelectorFromString(@"_supportsCompressionDictionary");
+    return [NSURLSession.class respondsToSelector:sel];
+}
 
 #if HAVE(LIQUID_GLASS)
 NODELETE static std::optional<bool>& cachedIsLiqudGlassEnabled()

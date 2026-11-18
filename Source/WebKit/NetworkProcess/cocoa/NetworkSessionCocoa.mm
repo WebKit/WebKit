@@ -44,6 +44,7 @@
 #import "WKURLSessionTaskDelegate.h"
 #import "WebErrors.h"
 #import "WebPageNetworkParameters.h"
+#import "WebPreferencesDefaultValues.h"
 #import "WebPrivacyHelpers.h"
 #import "WebSocketTask.h"
 #import <Foundation/NSURLSession.h>
@@ -2153,8 +2154,7 @@ void NetworkSessionCocoa::applyProxyConfigurationToSessionConfiguration(NSURLSes
 
 bool NetworkSessionCocoa::hasCompressionDictionarySupport() const
 {
-    static SEL sel = NSSelectorFromString(@"_supportsCompressionDictionary");
-    return [NSURLSession.class respondsToSelector:sel];
+    return defaultCompressionDictionaryEnabled();
 }
 
 bool NetworkSessionCocoa::proxyConfigurationRequiresTCPProtocols() const
