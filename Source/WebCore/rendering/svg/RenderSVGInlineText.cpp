@@ -172,7 +172,7 @@ PositionWithAffinity RenderSVGInlineText::positionForPoint(const LayoutPoint& po
     if (!firstTextBox || text().isEmpty())
         return createPositionWithAffinity(0, Affinity::Downstream);
 
-    float baseline = m_scaledFont.metricsOfPrimaryFont().ascent();
+    float baseline = m_scaledFont.metricsOfPrimaryFont().ascent() / m_scalingFactor;
 
     // Map local point to absolute point, as the character origins stored in the text fragments use absolute coordinates.
     FloatPoint absolutePoint(point);

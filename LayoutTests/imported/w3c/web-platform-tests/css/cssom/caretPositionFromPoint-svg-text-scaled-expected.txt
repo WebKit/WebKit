@@ -1,0 +1,5 @@
+AB
+
+PASS Point on the first glyph of a scaled SVG text resolves to that glyph
+PASS Point on the second glyph of a scaled SVG text resolves to that glyph
+
