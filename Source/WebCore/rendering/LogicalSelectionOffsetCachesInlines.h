@@ -58,39 +58,16 @@ LayoutUnit LogicalSelectionOffsetCaches::ContainingBlockInfo::logicalRightSelect
     return m_logicalRightSelectionOffset;
 }
 
-LogicalSelectionOffsetCaches::LogicalSelectionOffsetCaches(RenderBlock& rootBlock)
-{
-    // LogicalSelectionOffsetCaches should not be used on an orphaned tree.
-    m_containingBlockForFixedPosition.setBlock(RenderObject::containingBlockForPositionType(PositionType::Fixed, rootBlock), nullptr);
-    m_containingBlockForAbsolutePosition.setBlock(RenderObject::containingBlockForPositionType(PositionType::Absolute, rootBlock), nullptr);
-    m_containingBlockForInflowPosition.setBlock(RenderObject::containingBlockForPositionType(PositionType::Static, rootBlock), nullptr);
-}
-
 LogicalSelectionOffsetCaches::LogicalSelectionOffsetCaches(RenderBlock& block, const LogicalSelectionOffsetCaches& cache)
-    : m_containingBlockForFixedPosition(cache.m_containingBlockForFixedPosition)
-    , m_containingBlockForAbsolutePosition(cache.m_containingBlockForAbsolutePosition)
 {
-    if (block.canContainFixedPositionObjects())
-        m_containingBlockForFixedPosition.setBlock(&block, &cache, cache.m_containingBlockForFixedPosition.hasFloatsOrFragmentedFlows());
-
-    if (block.canContainAbsolutelyPositionedObjects() && !block.isInlineBox() && !block.isAnonymousBlock())
-        m_containingBlockForAbsolutePosition.setBlock(&block, &cache, cache.m_containingBlockForAbsolutePosition.hasFloatsOrFragmentedFlows());
-
     m_containingBlockForInflowPosition.setBlock(&block, &cache, cache.m_containingBlockForInflowPosition.hasFloatsOrFragmentedFlows());
 }
 
 auto LogicalSelectionOffsetCaches::containingBlockInfo(RenderBlock& block) const -> const ContainingBlockInfo&
 {
-    auto position = block.style().position();
-    if (position == PositionType::Fixed) {
-        ASSERT(block.containingBlock() == m_containingBlockForFixedPosition.block());
-        return m_containingBlockForFixedPosition;
-    }
-    if (position == PositionType::Absolute) {
-        ASSERT(block.containingBlock() == m_containingBlockForAbsolutePosition.block());
-        return m_containingBlockForAbsolutePosition;
-    }
-    ASSERT(block.containingBlock() == m_containingBlockForInflowPosition.block());
+    // Selection gaps skip out-of-flow boxes and a positioned block is a selection root, so only in-flow blocks below the root get here.
+    ASSERT(!block.isOutOfFlowPositioned());
+    ASSERT_UNUSED(block, block.containingBlock() == m_containingBlockForInflowPosition.block());
     return m_containingBlockForInflowPosition;
 }
 

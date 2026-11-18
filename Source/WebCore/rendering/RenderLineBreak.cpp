@@ -31,8 +31,7 @@
 #include "InlineIteratorSVGTextBox.h"
 #include "InlineRunAndOffset.h"
 #include "LayoutIntegrationLineLayout.h"
-#include "LogicalSelectionOffsetCachesInlines.h"
-#include "RenderBlock.h"
+#include "RenderBlockInlines.h"
 #include "RenderBoxModelObjectInlines.h"
 #include "RenderObjectInlines.h"
 #include "RenderView.h"
@@ -118,9 +117,8 @@ void RenderLineBreak::collectSelectionGeometries(Vector<SelectionGeometry>& rect
     // Selection extents span the lines of the block that establishes our inline formatting context.
     CheckedRef formattingContextRoot = LayoutIntegration::LineLayout::containing(*this)->flow();
     // Map rect, extended left to leftOffset, and right to rightOffset, through transforms to get minX and maxX.
-    LogicalSelectionOffsetCaches cache(formattingContextRoot);
-    LayoutUnit leftOffset = formattingContextRoot->logicalLeftSelectionOffset(formattingContextRoot, LayoutUnit(run->logicalTop()), cache);
-    LayoutUnit rightOffset = formattingContextRoot->logicalRightSelectionOffset(formattingContextRoot, LayoutUnit(run->logicalTop()), cache);
+    LayoutUnit leftOffset = formattingContextRoot->logicalLeftOffsetForLine(LayoutUnit(run->logicalTop()));
+    LayoutUnit rightOffset = formattingContextRoot->logicalRightOffsetForLine(LayoutUnit(run->logicalTop()));
     LayoutRect extentsRect = rect;
     if (run->isHorizontal()) {
         extentsRect.setX(leftOffset);

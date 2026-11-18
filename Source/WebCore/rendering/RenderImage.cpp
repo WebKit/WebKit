@@ -54,13 +54,13 @@
 #include "LayoutIntegrationLineLayout.h"
 #include "LocalFrame.h"
 #include "LocalFrameView.h"
-#include "LogicalSelectionOffsetCachesInlines.h"
 #include "NativeImage.h"
 #include "NaturalDimensions.h"
 #include "Page.h"
 #include "PaintInfo.h"
 #include "PlatformRenderTheme.h"
 #include "PlatformScreen.h"
+#include "RenderBlockInlines.h"
 #include "RenderBoxInlines.h"
 #include "RenderBoxModelObjectInlines.h"
 #include "RenderChildIterator.h"
@@ -149,9 +149,8 @@ void RenderImage::collectSelectionGeometries(Vector<SelectionGeometry>& geometri
         isLastOnLine = !run->nextLineRightwardOnLine();
         // An image on a line is laid out by the block that establishes its inline formatting context.
         CheckedRef formattingContextRoot = *LayoutIntegration::LineLayout::blockContainer(*this);
-        LogicalSelectionOffsetCaches cache(formattingContextRoot);
-        LayoutUnit leftOffset = formattingContextRoot->logicalLeftSelectionOffset(formattingContextRoot, LayoutUnit(run->logicalTop()), cache);
-        LayoutUnit rightOffset = formattingContextRoot->logicalRightSelectionOffset(formattingContextRoot, LayoutUnit(run->logicalTop()), cache);
+        LayoutUnit leftOffset = formattingContextRoot->logicalLeftOffsetForLine(LayoutUnit(run->logicalTop()));
+        LayoutUnit rightOffset = formattingContextRoot->logicalRightOffsetForLine(LayoutUnit(run->logicalTop()));
         lineExtentRect = IntRect(leftOffset - logicalLeft(), imageRect.y(), rightOffset - leftOffset, imageRect.height());
         if (!run->isHorizontal()) {
             imageRect = imageRect.transposedRect();

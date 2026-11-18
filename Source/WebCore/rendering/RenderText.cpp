@@ -40,13 +40,13 @@
 #include "InlineRunAndOffset.h"
 #include "LayoutInlineTextBox.h"
 #include "LayoutIntegrationLineLayout.h"
-#include "LogicalSelectionOffsetCachesInlines.h"
 #include "LineSelection.h"
 #include "LocalFrame.h"
 #include "LocalFrameView.h"
 #include "MathVariant.h"
 #include "Range.h"
 #include "RenderBlockFlowInlines.h"
+#include "RenderBlockInlines.h"
 #include "RenderElementInlines.h"
 #include "RenderLayer.h"
 #include "RenderObjectInlines.h"
@@ -685,9 +685,8 @@ void RenderText::collectSelectionGeometries(Vector<SelectionGeometry>& rects, un
         }
 
         // Map rect, extended left to leftOffset, and right to rightOffset, through transforms to get minX and maxX.
-        LogicalSelectionOffsetCaches cache(formattingContextRoot);
-        LayoutUnit leftOffset = formattingContextRoot->logicalLeftSelectionOffset(formattingContextRoot, LayoutUnit(textBox->logicalTop()), cache);
-        LayoutUnit rightOffset = formattingContextRoot->logicalRightSelectionOffset(formattingContextRoot, LayoutUnit(textBox->logicalTop()), cache);
+        LayoutUnit leftOffset = formattingContextRoot->logicalLeftOffsetForLine(LayoutUnit(textBox->logicalTop()));
+        LayoutUnit rightOffset = formattingContextRoot->logicalRightOffsetForLine(LayoutUnit(textBox->logicalTop()));
         LayoutRect extentsRect = rect;
         if (textBox->isHorizontal()) {
             extentsRect.setX(leftOffset);

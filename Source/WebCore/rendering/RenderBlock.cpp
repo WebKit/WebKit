@@ -1453,7 +1453,7 @@ GapRects RenderBlock::selectionGapRectsForRepaint(const RenderLayerModelObject* 
 #if ENABLE(TEXT_SELECTION)
     ASSERT(isSelectionRoot());
 #endif
-    LogicalSelectionOffsetCaches cache(*this);
+    LogicalSelectionOffsetCaches cache;
     LayoutUnit lastTop;
     LayoutUnit lastLeft = logicalLeftSelectionOffset(*this, lastTop, cache);
     LayoutUnit lastRight = logicalRightSelectionOffset(*this, lastTop, cache);
@@ -1466,7 +1466,7 @@ void RenderBlock::paintSelection(PaintInfo& paintInfo, const LayoutPoint& paintO
 #if ENABLE(TEXT_SELECTION)
     if (shouldPaintSelectionGaps() && paintInfo.phase == PaintPhase::Foreground) {
         ASSERT(isSelectionRoot());
-        LogicalSelectionOffsetCaches cache(*this);
+        LogicalSelectionOffsetCaches cache;
         LayoutUnit lastTop;
         LayoutUnit lastLeft = logicalLeftSelectionOffset(*this, lastTop, cache);
         LayoutUnit lastRight = logicalRightSelectionOffset(*this, lastTop, cache);

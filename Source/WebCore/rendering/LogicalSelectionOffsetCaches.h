@@ -52,14 +52,12 @@ public:
         mutable LayoutUnit m_logicalRightSelectionOffset;
     };
 
-    inline explicit LogicalSelectionOffsetCaches(RenderBlock&);
+    LogicalSelectionOffsetCaches() = default;
     inline LogicalSelectionOffsetCaches(RenderBlock&, const LogicalSelectionOffsetCaches&);
 
     inline const ContainingBlockInfo& containingBlockInfo(RenderBlock&) const LIFETIME_BOUND;
 
 private:
-    ContainingBlockInfo m_containingBlockForFixedPosition;
-    ContainingBlockInfo m_containingBlockForAbsolutePosition;
     ContainingBlockInfo m_containingBlockForInflowPosition;
 };
 
