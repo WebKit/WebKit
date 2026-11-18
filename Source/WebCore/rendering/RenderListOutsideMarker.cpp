@@ -343,28 +343,6 @@ RenderListItem* RenderListOutsideMarker::listItem() const
     return m_listItem.get();
 }
 
-void RenderListOutsideMarker::setExcludedPosition(ExcludedPosition excludedPosition)
-{
-    ASSERT(excludedPosition.firstFormattedLineRoot);
-
-    m_excludedPosition = excludedPosition;
-}
-
-void RenderListOutsideMarker::invalidateExcludedMarkerContainer()
-{
-    ASSERT(m_excludedPosition);
-
-    if (!m_excludedPosition || !m_excludedPosition->firstFormattedLineRoot) {
-        m_excludedPosition = { };
-        return;
-    }
-
-    if (m_excludedPosition->firstFormattedLineRoot->isDescendantOf(m_listItem.get()))
-        return m_excludedPosition->firstFormattedLineRoot->setNeedsLayout();
-
-    m_excludedPosition = { };
-}
-
 Node* RenderListOutsideMarker::nodeForHitTest() const
 {
     return m_listItem ? m_listItem->element() : nullptr;

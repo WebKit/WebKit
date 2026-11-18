@@ -401,8 +401,8 @@ void RenderListItem::updateValue()
     m_value = std::nullopt;
     if (CheckedPtr marker = markerBox()) {
         marker->setNeedsLayoutAndInvalidateContentLogicalWidths();
-        if (marker->excludedPosition())
-            marker->invalidateExcludedMarkerContainer();
+        if (m_excludedMarkerPosition)
+            invalidateExcludedMarkerContainer();
     }
 }
 
@@ -459,8 +459,8 @@ void RenderListItem::styleDidChange(Style::Difference diff, const Style::Compute
     if (diff == Style::DifferenceResult::Layout) {
         if (oldStyle && oldStyle->usedCounterDirectives().map.get("list-item"_s) != style().usedCounterDirectives().map.get("list-item"_s))
             usedCounterDirectivesChanged();
-        if (CheckedPtr marker = markerBox(); marker && marker->excludedPosition())
-            marker->invalidateExcludedMarkerContainer();
+        if (m_excludedMarkerPosition)
+            invalidateExcludedMarkerContainer();
     }
 }
 
@@ -481,10 +481,12 @@ RenderListOutsideMarker* RenderListItem::excludedMarker() const
 void RenderListItem::layoutBlock(RelayoutChildren relayoutChildren, LayoutUnit pageLogicalHeight)
 {
     CheckedPtr excludedMarker = this->excludedMarker();
-    if (!excludedMarker)
+    if (!excludedMarker) {
+        m_excludedMarkerPosition = { };
         return RenderBlockFlow::layoutBlock(relayoutChildren, pageLogicalHeight);
+    }
 
-    auto markerScope = ListItemExcludedMarkerScope { view().frameView().layoutContext(), *excludedMarker };
+    auto markerScope = ListItemExcludedMarkerScope { view().frameView().layoutContext(), *this };
     RenderBlockFlow::layoutBlock(relayoutChildren, pageLogicalHeight);
     placeExcludedMarker(*excludedMarker);
     addOverflowFromContainedBox(*excludedMarker);
@@ -517,8 +519,8 @@ void RenderListItem::layoutExcludedChildren(RelayoutChildren relayoutChildren)
     auto oldLayoutBounds = excludedMarker->layoutBounds();
     excludedMarker->layoutIfNeeded();
 
-    if (excludedMarker->excludedPosition() && excludedMarker->layoutBounds() != oldLayoutBounds)
-        excludedMarker->invalidateExcludedMarkerContainer();
+    if (m_excludedMarkerPosition && excludedMarker->layoutBounds() != oldLayoutBounds)
+        invalidateExcludedMarkerContainer();
 
     RenderBlockFlow::layoutExcludedChildren(relayoutChildren);
 }
@@ -636,7 +638,7 @@ bool RenderListItem::isInReversedOrderedList() const
 
 void RenderListItem::placeExcludedMarker(RenderListOutsideMarker& marker)
 {
-    auto excludedPosition = marker.excludedPosition();
+    auto& excludedPosition = m_excludedMarkerPosition;
     CheckedPtr firstFormattedLineRoot = excludedPosition ? excludedPosition->firstFormattedLineRoot.get() : nullptr;
     if (!firstFormattedLineRoot) {
         // Reached only when no line took the marker: we have no formatted line to align it with, either because we have no content at all.
@@ -740,21 +742,41 @@ RenderListItem::FirstFormattedLineCandidate RenderListItem::firstFormattedLineRo
     return { { }, fallbackParent };
 }
 
-Vector<CheckedPtr<RenderListOutsideMarker>> RenderListItem::excludedMarkersForContainer(const RenderBlockFlow& inlineRoot, const Vector<SingleThreadWeakPtr<RenderListOutsideMarker>>& allExcludedMarkers)
+Vector<CheckedPtr<RenderListItem>> RenderListItem::listItemsWithExcludedMarkerFor(const RenderBlockFlow& inlineRoot, const Vector<SingleThreadWeakPtr<RenderListItem>>& listItemsWithExcludedMarker)
 {
-    auto markersForContainer = Vector<CheckedPtr<RenderListOutsideMarker>> { };
-    for (auto& marker : allExcludedMarkers) {
-        ASSERT(marker->isExcludedMarker());
-        CheckedPtr listItem = marker->listItem();
-        if (!listItem) {
+    auto listItems = Vector<CheckedPtr<RenderListItem>> { };
+    for (auto& listItem : listItemsWithExcludedMarker) {
+        CheckedPtr marker = listItem ? listItem->excludedMarker() : nullptr;
+        if (!marker) {
             ASSERT_NOT_REACHED();
             continue;
         }
         auto candidate = firstFormattedLineRootFor(*listItem, *marker);
         if ((candidate.parent ? candidate.parent : candidate.fallbackParent) == &inlineRoot)
-            markersForContainer.append(marker.get());
+            listItems.append(listItem.get());
     }
-    return markersForContainer;
+    return listItems;
+}
+
+void RenderListItem::setExcludedMarkerPosition(ExcludedMarkerPosition&& excludedPosition)
+{
+    ASSERT(excludedPosition.firstFormattedLineRoot);
+    m_excludedMarkerPosition = WTF::move(excludedPosition);
+}
+
+void RenderListItem::invalidateExcludedMarkerContainer()
+{
+    ASSERT(m_excludedMarkerPosition);
+
+    if (!m_excludedMarkerPosition || !m_excludedMarkerPosition->firstFormattedLineRoot) {
+        m_excludedMarkerPosition = { };
+        return;
+    }
+
+    if (m_excludedMarkerPosition->firstFormattedLineRoot->isDescendantOf(this))
+        return m_excludedMarkerPosition->firstFormattedLineRoot->setNeedsLayout();
+
+    m_excludedMarkerPosition = { };
 }
 
 void setListMarkerInlineMargins(Style::ComputedStyle& markerStyle, WritingMode listItemWritingMode, LayoutUnit marginStart, LayoutUnit marginEnd)

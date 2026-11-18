@@ -519,17 +519,19 @@ static inline std::optional<Layout::BlockLayoutState::LineGrid> lineGrid(const R
 
 LineLayout::ExcludedMarkerList LineLayout::excludedMarkersForFirstFormattedLine(Layout::InlineLayoutState& layoutState)
 {
-    auto excludedMarkers = RenderListItem::excludedMarkersForContainer(protect(flow()), flow().view().frameView().layoutContext().excludedMarkers());
-    if (excludedMarkers.isEmpty())
+    auto listItems = RenderListItem::listItemsWithExcludedMarkerFor(protect(flow()), flow().view().frameView().layoutContext().listItemsWithExcludedMarker());
+    if (listItems.isEmpty())
         return { };
 
     auto layoutBounds = Vector<Layout::InlineLayoutState::AscentAndDescent> { };
-    layoutBounds.reserveInitialCapacity(excludedMarkers.size());
-    for (auto& marker : excludedMarkers)
+    layoutBounds.reserveInitialCapacity(listItems.size());
+    for (auto& listItem : listItems) {
+        CheckedPtr marker = listItem->markerBox();
         layoutBounds.append(marker->layoutBounds());
+    }
     layoutState.setExcludedMarkerLayoutBounds(WTF::move(layoutBounds));
 
-    return excludedMarkers;
+    return listItems;
 }
 
 void LineLayout::setExcludedMarkerPositions(const ExcludedMarkerList& excludedMarkers)
@@ -581,7 +583,10 @@ void LineLayout::setExcludedMarkerPositions(const ExcludedMarkerList& excludedMa
 
     auto contentBoxStartEdge = isLeftToRight ? 0.f : protect(flow())->contentBoxLogicalWidth().toFloat();
     auto isLineStartConstrainedByFloat = lineStartEdge != contentBoxStartEdge;
-    for (auto& marker : excludedMarkers) {
+    for (auto& listItem : excludedMarkers) {
+        CheckedPtr marker = listItem->markerBox();
+        if (!marker)
+            continue;
         auto markerLogicalTop = [&]() -> float {
             if (firstContentfulLine->baselineType() == FontBaseline::Ideographic)
                 return lineBoxLogicalRect.y() + (lineBoxLogicalRect.height() - marker->logicalHeight().toFloat()) / 2;
@@ -591,7 +596,7 @@ void LineLayout::setExcludedMarkerPositions(const ExcludedMarkerList& excludedMa
         auto markerMarginStart = marker->marginStart(flow().writingMode()).toFloat();
         auto markerLogicalLeft = isLeftToRight ? lineStartEdge + markerMarginStart : lineStartEdge - markerMarginStart - marker->logicalWidth().toFloat();
         auto topLeft = FloatPoint { markerLogicalLeft, markerLogicalTop };
-        marker->setExcludedPosition({ flow(), topLeft, isLineStartConstrainedByFloat });
+        listItem->setExcludedMarkerPosition({ flow(), topLeft, isLineStartConstrainedByFloat });
     }
 }
 
@@ -1679,13 +1684,13 @@ void LineLayout::shiftLinesByInBlockDirection(LayoutUnit blockShift)
     // An excluded marker is on one of these lines without being part of the content that moves with them, so the
     // position it was given has to move too (see RenderListItem::placeExcludedMarker). Nested list items can have
     // their markers on the same line.
-    for (auto& excludedMarker : flow().view().frameView().layoutContext().excludedMarkers()) {
-        CheckedPtr marker = excludedMarker.get();
-        auto excludedPosition = marker->excludedPosition();
+    for (auto& listItemWithExcludedMarker : flow().view().frameView().layoutContext().listItemsWithExcludedMarker()) {
+        CheckedPtr listItem = listItemWithExcludedMarker.get();
+        auto excludedPosition = listItem->excludedMarkerPosition();
         if (!excludedPosition || excludedPosition->firstFormattedLineRoot.get() != &flow())
             continue;
         excludedPosition->topLeft.move(0, blockShift.toFloat());
-        marker->setExcludedPosition(*excludedPosition);
+        listItem->setExcludedMarkerPosition(WTF::move(*excludedPosition));
     }
 
     auto deltaX = isHorizontalWritingMode ? 0_lu : blockShift;

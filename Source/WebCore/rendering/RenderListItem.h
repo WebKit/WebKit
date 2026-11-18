@@ -66,7 +66,11 @@ public:
     UniqueRef<Style::ComputedStyle> computeMarkerStyle() const;
 
     RenderBoxModelObject* markerRenderer() const { return m_marker.get(); }
-    void setMarkerRenderer(RenderBoxModelObject& marker) { m_marker = marker; }
+    void setMarkerRenderer(RenderBoxModelObject& marker)
+    {
+        m_marker = marker;
+        m_excludedMarkerPosition = { };
+    }
     NODELETE RenderListOutsideMarker* markerBox() const;
 
     // Fills in what the marker shows, in whichever shape it was built.
@@ -79,7 +83,16 @@ public:
         CheckedPtr<RenderBlock> fallbackParent;
     };
     static FirstFormattedLineCandidate firstFormattedLineRootFor(RenderBlock& blockContainer, const RenderBoxModelObject& marker);
-    static Vector<CheckedPtr<RenderListOutsideMarker>> excludedMarkersForContainer(const RenderBlockFlow& lineContainer, const Vector<SingleThreadWeakPtr<RenderListOutsideMarker>>&);
+    static Vector<CheckedPtr<RenderListItem>> listItemsWithExcludedMarkerFor(const RenderBlockFlow& inlineRoot, const Vector<SingleThreadWeakPtr<RenderListItem>>&);
+
+    // Where the line our excluded marker is aligned with put it.
+    struct ExcludedMarkerPosition {
+        SingleThreadWeakPtr<RenderBlockFlow> firstFormattedLineRoot;
+        FloatPoint topLeft;
+        bool isLineStartConstrainedByFloat { false };
+    };
+    void setExcludedMarkerPosition(ExcludedMarkerPosition&&);
+    const std::optional<ExcludedMarkerPosition>& excludedMarkerPosition() const LIFETIME_BOUND { return m_excludedMarkerPosition; }
 
 private:
     ASCIILiteral renderName() const final { return "RenderListItem"_s; }
@@ -94,6 +107,7 @@ private:
 
     void placeExcludedMarker(RenderListOutsideMarker&);
     NODELETE RenderListOutsideMarker* excludedMarker() const;
+    void invalidateExcludedMarkerContainer();
 
     void styleDidChange(Style::Difference, const Style::ComputedStyle* oldStyle) final;
 
@@ -104,6 +118,7 @@ private:
     void usedCounterDirectivesChanged();
 
     SingleThreadWeakPtr<RenderBoxModelObject> m_marker;
+    std::optional<ExcludedMarkerPosition> m_excludedMarkerPosition;
     mutable std::optional<int> m_value;
 };
 

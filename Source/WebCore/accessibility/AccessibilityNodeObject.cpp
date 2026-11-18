@@ -4233,7 +4233,7 @@ Vector<AXStitchGroup> AccessibilityNodeObject::stitchGroups() const
             CheckedPtr marker = listItem ? listItem->markerBox() : nullptr;
             if (!marker || !marker->isExcludedMarker() || listMarkerIsDisclosure(marker.get()))
                 continue;
-            auto excludedPosition = marker->excludedPosition();
+            auto& excludedPosition = listItem->excludedMarkerPosition();
             if (excludedPosition && excludedPosition->firstFormattedLineRoot.get() == renderBlockFlow.get())
                 return marker;
         }

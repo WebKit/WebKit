@@ -48,7 +48,7 @@ class RenderBlock;
 class RenderBlockFlow;
 class RenderBox;
 class RenderLayoutState;
-class RenderListOutsideMarker;
+class RenderListItem;
 class RenderView;
 namespace Layout {
 class LayoutState;
@@ -199,8 +199,9 @@ public:
 
     bool repaintsBlocked() const { return m_repaintsBlocked; }
 
-    using ExcludedMarkerList = Vector<SingleThreadWeakPtr<RenderListOutsideMarker>>;
-    const ExcludedMarkerList& excludedMarkers() const LIFETIME_BOUND { return m_excludedMarkers; }
+    // The list items laying out an excluded marker, which their first formatted line aligns with.
+    using ListItemList = Vector<SingleThreadWeakPtr<RenderListItem>>;
+    const ListItemList& listItemsWithExcludedMarker() const LIFETIME_BOUND { return m_listItemsWithExcludedMarker; }
 
 private:
     friend class ListItemExcludedMarkerScope;
@@ -288,7 +289,7 @@ private:
     bool m_revealedWhenFoundIgnored { false };
     bool m_updateCompositingLayersIsPending { false };
     bool m_repaintsBlocked { false };
-    ExcludedMarkerList m_excludedMarkers;
+    ListItemList m_listItemsWithExcludedMarker;
     LayoutPhase m_layoutPhase { LayoutPhase::OutsideLayout };
     enum class LayoutNestedState : uint8_t  { NotInLayout, NotNested, Nested };
     LayoutNestedState m_layoutNestedState { LayoutNestedState::NotInLayout };
@@ -363,7 +364,7 @@ private:
 
 class ListItemExcludedMarkerScope {
 public:
-    ListItemExcludedMarkerScope(LocalFrameViewLayoutContext&, RenderListOutsideMarker&);
+    ListItemExcludedMarkerScope(LocalFrameViewLayoutContext&, RenderListItem&);
     NODELETE ~ListItemExcludedMarkerScope();
 
 private:

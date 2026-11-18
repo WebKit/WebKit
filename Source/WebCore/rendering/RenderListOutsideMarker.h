@@ -51,16 +51,6 @@ public:
 
     std::pair<float, float> layoutBounds() const { return m_layoutBounds; }
 
-    struct ExcludedPosition {
-        SingleThreadWeakPtr<RenderBlockFlow> firstFormattedLineRoot;
-        FloatPoint topLeft;
-        bool isLineStartConstrainedByFloat { false };
-    };
-    void setExcludedPosition(ExcludedPosition);
-    std::optional<ExcludedPosition> excludedPosition() const { return m_excludedPosition; }
-
-    void invalidateExcludedMarkerContainer();
-
 private:
     void willBeDestroyed() final;
     ASCIILiteral renderName() const final { return "RenderListMarker"_s; }
@@ -90,7 +80,6 @@ private:
 private:
     SingleThreadWeakPtr<RenderListItem> m_listItem;
     std::pair<float, float> m_layoutBounds;
-    std::optional<ExcludedPosition> m_excludedPosition;
 };
 
 } // namespace WebCore
