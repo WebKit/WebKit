@@ -7,6 +7,23 @@
 	objects = {
 
 /* Begin PBXAggregateTarget section */
+		52FFC86FB9FD70E37E9950AD /* ANGLE Tests (Platform filters) */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = D4674269734421E596ACC1AE /* Build configuration list for PBXAggregateTarget "ANGLE Tests (Platform filters)" */;
+			buildPhases = (
+			);
+			dependencies = (
+				9A738851E26C66D27CB1BB41 /* PBXTargetDependency */,
+				6C5BA4CF19D092B189AE4465 /* PBXTargetDependency */,
+				D901C969AFF2F2AD99A95C62 /* PBXTargetDependency */,
+				E4FCAB684F98AFBFD3823531 /* PBXTargetDependency */,
+				BF2C3A876511F4237A43ABB3 /* PBXTargetDependency */,
+				E0815AEFAEC2563C6DEAC936 /* PBXTargetDependency */,
+				609997916969DFEF28BA7EA8 /* PBXTargetDependency */,
+			);
+			name = "ANGLE Tests (Platform filters)";
+			productName = "ANGLE Tests (Platform filters)";
+		};
 		31DB794F2491C33300982878 /* ANGLE */ = {
 			isa = PBXAggregateTarget;
 			buildConfigurationList = 31DB79532491C33300982878 /* Build configuration list for PBXAggregateTarget "ANGLE" */;
@@ -2572,6 +2589,55 @@
 /* End PBXBuildRule section */
 
 /* Begin PBXContainerItemProxy section */
+		C1C2DA1A59E3655C4C4BDEDF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FB39D0701200ED9200088E69 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 7BFAF6882DE6E9D900327F7F;
+			remoteInfo = ANGLEUnitTests;
+		};
+		34C3CFCFB0D6700ECBD1DAA2 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FB39D0701200ED9200088E69 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 7BE4AA532DE4544900A16F7E;
+			remoteInfo = ANGLEEnd2EndTests;
+		};
+		3661A22D0B29B694682AB475 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FB39D0701200ED9200088E69 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = A3E045FAB988D2834BEDCF23;
+			remoteInfo = ANGLEDeqpGLES2Tests;
+		};
+		8F2D471C6104353E8824A198 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FB39D0701200ED9200088E69 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 9FDB44EAA70594111A0ED0EA;
+			remoteInfo = ANGLEDeqpGLES3Tests;
+		};
+		CBC887AE6A4B797804B21547 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FB39D0701200ED9200088E69 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 7BD3D2002FCDB8A300C386DC;
+			remoteInfo = ANGLEEnd2EndTestsApp;
+		};
+		6B05A4E436CD36573E3B1791 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FB39D0701200ED9200088E69 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C78A46E3ACBA17BCCFD16A00;
+			remoteInfo = ANGLEDeqpGLES2TestsApp;
+		};
+		34BC8F5FB63AF2719FD9E06D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FB39D0701200ED9200088E69 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 624048FDA141D33D5E37C671;
+			remoteInfo = ANGLEDeqpGLES3TestsApp;
+		};
 		016E47F08BE45B242DDD9C33 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = FB39D0701200ED9200088E69 /* Project object */;
@@ -8902,6 +8968,9 @@
 					7BF554922C81ED9B002B101E = {
 						CreatedOnToolsVersion = 16.0;
 					};
+					52FFC86FB9FD70E37E9950AD = {
+						CreatedOnToolsVersion = 27.0;
+					};
 					7BF5549A2C81EDE0002B101E = {
 						CreatedOnToolsVersion = 16.0;
 					};
@@ -8942,6 +9011,7 @@
 				7BF5548D2C81ED90002B101E /* Fuzzers (ANGLE) */,
 				7BF554B52C81EEDB002B101E /* ANGLETranslatorFuzzer */,
 				7BF554922C81ED9B002B101E /* Tools (ANGLE) */,
+				52FFC86FB9FD70E37E9950AD /* ANGLE Tests (Platform filters) */,
 				7BF554A92C81EEB1002B101E /* ANGLETranslatorFuzzerCoverage */,
 				7BF554CB2C81F028002B101E /* ANGLETranslatorFuzzerStats */,
 				7BF554D52C81F02B002B101E /* ANGLETranslatorFuzzerDumpTestCase */,
@@ -8999,9 +9069,15 @@
 			files = (
 			);
 			inputPaths = (
+				"$(SRCROOT)/third_party/VK-GL-CTS/src/data/gles2",
+				"$(SRCROOT)/third_party/VK-GL-CTS/src/external/openglcts/data/gl_cts/data/mustpass/gles/aosp_mustpass/main/gles2-main.txt",
+				"$(SRCROOT)/src/tests/deqp_support/deqp_gles2_test_expectations.txt",
 			);
 			name = "Stage dEQP data";
 			outputPaths = (
+				"$(TARGET_BUILD_DIR)/$(UNLOCALIZED_RESOURCES_FOLDER_PATH)/vk_gl_cts_data/data/gles2",
+				"$(TARGET_BUILD_DIR)/$(UNLOCALIZED_RESOURCES_FOLDER_PATH)/third_party/VK-GL-CTS/src/external/openglcts/data/gl_cts/data/mustpass/gles/aosp_mustpass/main/gles2-main.txt",
+				"$(TARGET_BUILD_DIR)/$(UNLOCALIZED_RESOURCES_FOLDER_PATH)/src/tests/deqp_support/deqp_gles2_test_expectations.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -9014,9 +9090,15 @@
 			files = (
 			);
 			inputPaths = (
+				"$(SRCROOT)/third_party/VK-GL-CTS/src/data/gles2",
+				"$(SRCROOT)/third_party/VK-GL-CTS/src/external/openglcts/data/gl_cts/data/mustpass/gles/aosp_mustpass/main/gles2-main.txt",
+				"$(SRCROOT)/src/tests/deqp_support/deqp_gles2_test_expectations.txt",
 			);
 			name = "Stage dEQP data";
 			outputPaths = (
+				"$(BUILT_PRODUCTS_DIR)/vk_gl_cts_data/data/gles2",
+				"$(BUILT_PRODUCTS_DIR)/third_party/VK-GL-CTS/src/external/openglcts/data/gl_cts/data/mustpass/gles/aosp_mustpass/main/gles2-main.txt",
+				"$(BUILT_PRODUCTS_DIR)/src/tests/deqp_support/deqp_gles2_test_expectations.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -9029,9 +9111,15 @@
 			files = (
 			);
 			inputPaths = (
+				"$(SRCROOT)/third_party/VK-GL-CTS/src/data/gles3",
+				"$(SRCROOT)/third_party/VK-GL-CTS/src/external/openglcts/data/gl_cts/data/mustpass/gles/aosp_mustpass/main/gles3-main.txt",
+				"$(SRCROOT)/src/tests/deqp_support/deqp_gles3_test_expectations.txt",
 			);
 			name = "Stage dEQP data";
 			outputPaths = (
+				"$(BUILT_PRODUCTS_DIR)/vk_gl_cts_data/data/gles3",
+				"$(BUILT_PRODUCTS_DIR)/third_party/VK-GL-CTS/src/external/openglcts/data/gl_cts/data/mustpass/gles/aosp_mustpass/main/gles3-main.txt",
+				"$(BUILT_PRODUCTS_DIR)/src/tests/deqp_support/deqp_gles3_test_expectations.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -9126,9 +9214,15 @@
 			files = (
 			);
 			inputPaths = (
+				"$(SRCROOT)/third_party/VK-GL-CTS/src/data/gles3",
+				"$(SRCROOT)/third_party/VK-GL-CTS/src/external/openglcts/data/gl_cts/data/mustpass/gles/aosp_mustpass/main/gles3-main.txt",
+				"$(SRCROOT)/src/tests/deqp_support/deqp_gles3_test_expectations.txt",
 			);
 			name = "Stage dEQP data";
 			outputPaths = (
+				"$(TARGET_BUILD_DIR)/$(UNLOCALIZED_RESOURCES_FOLDER_PATH)/vk_gl_cts_data/data/gles3",
+				"$(TARGET_BUILD_DIR)/$(UNLOCALIZED_RESOURCES_FOLDER_PATH)/third_party/VK-GL-CTS/src/external/openglcts/data/gl_cts/data/mustpass/gles/aosp_mustpass/main/gles3-main.txt",
+				"$(TARGET_BUILD_DIR)/$(UNLOCALIZED_RESOURCES_FOLDER_PATH)/src/tests/deqp_support/deqp_gles3_test_expectations.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -11321,6 +11415,63 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		9A738851E26C66D27CB1BB41 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			platformFilters = (
+				ios,
+				macos,
+			);
+			target = 7BFAF6882DE6E9D900327F7F /* ANGLEUnitTests */;
+			targetProxy = C1C2DA1A59E3655C4C4BDEDF /* PBXContainerItemProxy */;
+		};
+		6C5BA4CF19D092B189AE4465 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			platformFilters = (
+				macos,
+			);
+			target = 7BE4AA532DE4544900A16F7E /* ANGLEEnd2EndTests */;
+			targetProxy = 34C3CFCFB0D6700ECBD1DAA2 /* PBXContainerItemProxy */;
+		};
+		D901C969AFF2F2AD99A95C62 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			platformFilters = (
+				macos,
+			);
+			target = A3E045FAB988D2834BEDCF23 /* ANGLEDeqpGLES2Tests */;
+			targetProxy = 3661A22D0B29B694682AB475 /* PBXContainerItemProxy */;
+		};
+		E4FCAB684F98AFBFD3823531 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			platformFilters = (
+				macos,
+			);
+			target = 9FDB44EAA70594111A0ED0EA /* ANGLEDeqpGLES3Tests */;
+			targetProxy = 8F2D471C6104353E8824A198 /* PBXContainerItemProxy */;
+		};
+		BF2C3A876511F4237A43ABB3 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			platformFilters = (
+				ios,
+			);
+			target = 7BD3D2002FCDB8A300C386DC /* ANGLEEnd2EndTestsApp */;
+			targetProxy = CBC887AE6A4B797804B21547 /* PBXContainerItemProxy */;
+		};
+		E0815AEFAEC2563C6DEAC936 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			platformFilters = (
+				ios,
+			);
+			target = C78A46E3ACBA17BCCFD16A00 /* ANGLEDeqpGLES2TestsApp */;
+			targetProxy = 6B05A4E436CD36573E3B1791 /* PBXContainerItemProxy */;
+		};
+		609997916969DFEF28BA7EA8 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			platformFilters = (
+				ios,
+			);
+			target = 624048FDA141D33D5E37C671 /* ANGLEDeqpGLES3TestsApp */;
+			targetProxy = 34BC8F5FB63AF2719FD9E06D /* PBXContainerItemProxy */;
+		};
 		081D43A790938AA82E4AA206 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 7BB971FF2DE47B8A00455D13 /* ANGLE (static) */;
@@ -11558,6 +11709,27 @@
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
+		95208A372615E568F0CA433A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+			};
+			name = Debug;
+		};
+		93F9CE64BF260B6D10D046FD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+			};
+			name = Release;
+		};
+		71CF6AA96C45F11CB4C92184 /* Production */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+			};
+			name = Production;
+		};
 		115742A5839458ABBD9E7566 /* Release */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 93274302A2932A3C776E787C /* ANGLEDeqpSupport.xcconfig */;
@@ -12079,6 +12251,16 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		D4674269734421E596ACC1AE /* Build configuration list for PBXAggregateTarget "ANGLE Tests (Platform filters)" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				95208A372615E568F0CA433A /* Debug */,
+				93F9CE64BF260B6D10D046FD /* Release */,
+				71CF6AA96C45F11CB4C92184 /* Production */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Production;
+		};
 		31CDFDF52491819E00486F27 /* Build configuration list for PBXNativeTarget "ANGLE (dynamic)" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
