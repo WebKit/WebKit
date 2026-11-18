@@ -766,7 +766,7 @@ QualifiedName MarkupAccumulator::xmlAttributeSerialization(const Attribute& attr
     return prefixedName;
 }
 
-LocalFrame* MarkupAccumulator::frameForAttributeReplacement(const Element& element) const
+Frame* MarkupAccumulator::frameForAttributeReplacement(const Element& element) const
 {
     if (inXMLFragmentSerialization())
         return nullptr;
@@ -775,7 +775,7 @@ LocalFrame* MarkupAccumulator::frameForAttributeReplacement(const Element& eleme
     if (!frameElement)
         return nullptr;
 
-    return dynamicDowncast<LocalFrame>(frameElement->contentFrame());
+    return frameElement->contentFrame();
 }
 
 Attribute MarkupAccumulator::replaceAttributeIfNecessary(const Element& element, const Attribute& attribute)
@@ -784,7 +784,7 @@ Attribute MarkupAccumulator::replaceAttributeIfNecessary(const Element& element,
         return attribute;
 
     if (element.isHTMLContentAttribute(attribute)) {
-        RefPtr frame = frameForAttributeReplacement(element);
+        RefPtr frame = dynamicDowncast<LocalFrame>(frameForAttributeReplacement(element));
         if (!frame || !frame->loader().documentLoader()->response().url().isAboutSrcDoc())
             return attribute;
 

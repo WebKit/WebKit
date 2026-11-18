@@ -1515,14 +1515,12 @@ void WebFrame::setTextDirection(const String& direction)
 }
 
 #if PLATFORM(COCOA)
-RetainPtr<CFDataRef> WebFrame::webArchiveData(FrameFilterFunction callback, void* context, const Vector<WebCore::MarkupExclusionRule>& exclusionRules, const String& mainResourceFileName)
+RetainPtr<CFDataRef> WebFrame::webArchiveData(FrameFilterFunction callback, void* context)
 {
     Ref document = *coreLocalFrame()->document();
     LegacyWebArchive::ArchiveOptions options {
         LegacyWebArchive::ShouldSaveScriptsFromMemoryCache::Yes,
-        LegacyWebArchive::ShouldArchiveSubframes::Yes,
-        exclusionRules,
-        mainResourceFileName
+        LegacyWebArchive::ShouldArchiveSubframes::Yes
     };
     auto archive = LegacyWebArchive::create(document, WTF::move(options), [this, callback, context](auto& frame) -> bool {
         if (!callback)

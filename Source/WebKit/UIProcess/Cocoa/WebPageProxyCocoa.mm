@@ -2162,10 +2162,7 @@ void WebPageProxy::getWebArchiveDataWithFrame(WebFrameProxy& frame, CompletionHa
 
 void WebPageProxy::getWebArchiveDataWithSelectedFrames(WebFrameProxy& rootFrame, const std::optional<HashSet<WebCore::FrameIdentifier>>& selectedFrameIdentifiers, CompletionHandler<void(API::Data*)>&& completionHandler)
 {
-    if (selectedFrameIdentifiers && !selectedFrameIdentifiers->contains(rootFrame.frameID()))
-        return completionHandler(nullptr);
-
-    auto callbackAggregator = LegacyWebArchiveCallbackAggregator::create(rootFrame.frameID(), { }, [completionHandler = WTF::move(completionHandler)](auto webArchive) mutable {
+    getWebArchiveForFrameTree(rootFrame, selectedFrameIdentifiers, { }, { }, [completionHandler = WTF::move(completionHandler)](auto webArchive) mutable {
         if (!webArchive)
             return completionHandler(nullptr);
 
@@ -2174,6 +2171,14 @@ void WebPageProxy::getWebArchiveDataWithSelectedFrames(WebFrameProxy& rootFrame,
             return completionHandler(nullptr);
         completionHandler(API::Data::create(span(data.get())).ptr());
     });
+}
+
+void WebPageProxy::getWebArchiveForFrameTree(WebFrameProxy& rootFrame, const std::optional<HashSet<WebCore::FrameIdentifier>>& selectedFrameIdentifiers, const Vector<WebCore::MarkupExclusionRule>& markupExclusionRules, const String& mainResourceFileName, CompletionHandler<void(RefPtr<WebCore::LegacyWebArchive>&&)>&& completionHandler)
+{
+    if (selectedFrameIdentifiers && !selectedFrameIdentifiers->contains(rootFrame.frameID()))
+        return completionHandler(nullptr);
+
+    auto callbackAggregator = LegacyWebArchiveCallbackAggregator::create(rootFrame.frameID(), { }, WTF::move(completionHandler));
     HashMap<Ref<WebProcessProxy>, Vector<WebCore::FrameIdentifier>> processFrames;
     RefPtr currentFrame = &rootFrame;
     while (currentFrame) {
@@ -2188,9 +2193,11 @@ void WebPageProxy::getWebArchiveDataWithSelectedFrames(WebFrameProxy& rootFrame,
 
     for (auto& [process, frameIDs] : processFrames) {
         Ref protectedProcess = process;
-        protectedProcess->sendWithAsyncReply(Messages::WebPage::GetWebArchivesForFrames(frameIDs), [frameIDs, callbackAggregator](auto&& result) {
-            if (result.size() > frameIDs.size())
-                return;
+        protectedProcess->sendWithAsyncReply(Messages::WebPage::GetWebArchivesForFrames(frameIDs, markupExclusionRules, mainResourceFileName), [frameIDs, callbackAggregator](auto&& result) {
+            for (auto& frameID : result.keys()) {
+                if (!frameIDs.contains(frameID))
+                    return;
+            }
 
             callbackAggregator->addResult(WTF::move(result));
         }, webPageIDInProcess(protectedProcess));

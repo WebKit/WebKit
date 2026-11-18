@@ -77,6 +77,7 @@
 #import <WebKit/WKWebpagePreferencesPrivate.h>
 #import <WebKit/WKWebsiteDataRecordPrivate.h>
 #import <WebKit/WKWebsiteDataStorePrivate.h>
+#import <WebKit/_WKArchiveConfiguration.h>
 #import <WebKit/_WKAutomationSession.h>
 #import <WebKit/_WKAutomationSessionConfiguration.h>
 #import <WebKit/_WKAutomationSessionDelegate.h>
@@ -12880,6 +12881,67 @@ TEST(SiteIsolation, CreateWebArchiveNestedFrameForCopy)
     EXPECT_NOT_NULL(actualNestedFrameArchives);
     EXPECT_EQ(actualNestedFrameArchives.count, 1u);
     validateWebArchiveMainResource([actualNestedFrameArchives.firstObject objectForKey:@"WebMainResource"], expectedNestedFrameResource);
+}
+
+static void runArchiveWithConfigurationCrossSiteIframeTest(bool siteIsolationEnabled)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { "<div>mainframe content</div><iframe src='https://webkit.org/iframe'></iframe>"_s } },
+        { "/iframe"_s, { { { "Content-Type"_s, "text/html"_s } }, "<link rel='stylesheet' href='style.css'><div>iframe content</div>"_s } },
+        { "/style.css"_s, { { { "Content-Type"_s, "text/css"_s } }, "div { color: green; }"_s } },
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server.httpsProxyConfiguration(), CGRectZero, siteIsolationEnabled);
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    RetainPtr directoryURL = [NSURL fileURLWithPath:[NSTemporaryDirectory() stringByAppendingPathComponent:NSUUID.UUID.UUIDString] isDirectory:YES];
+    RetainPtr archiveConfiguration = adoptNS([[_WKArchiveConfiguration alloc] init]);
+    [archiveConfiguration setDirectory:directoryURL.get()];
+    [archiveConfiguration setSuggestedFileName:@"host"];
+    [archiveConfiguration setOriginalURLsFileName:@"originalURLs.json"];
+
+    __block bool saved = false;
+    __block RetainPtr<NSError> saveError;
+    [webView _archiveWithConfiguration:archiveConfiguration.get() completionHandler:^(NSError *error) {
+        saveError = error;
+        saved = true;
+    }];
+    Util::run(&saved);
+    EXPECT_NULL(saveError.get());
+
+    RetainPtr mainResource = [NSString stringWithContentsOfURL:[directoryURL URLByAppendingPathComponent:@"host.html"] encoding:NSUTF8StringEncoding error:nil];
+    EXPECT_TRUE([mainResource containsString:@"mainframe content"]);
+    EXPECT_FALSE([mainResource containsString:@"https://webkit.org/iframe"]);
+
+    RetainPtr originalURLsData = [NSData dataWithContentsOfURL:[directoryURL URLByAppendingPathComponent:@"originalURLs.json"]];
+    ASSERT_NOT_NULL(originalURLsData.get());
+    RetainPtr<NSDictionary<NSString *, NSString *>> originalURLs = [NSJSONSerialization JSONObjectWithData:originalURLsData.get() options:0 error:nil];
+    EXPECT_EQ([originalURLs count], 3u);
+    EXPECT_WK_STREQ([originalURLs objectForKey:@"host.html"], "https://example.com/mainframe");
+    EXPECT_WK_STREQ([originalURLs objectForKey:@"host_files/style.css"], "https://webkit.org/style.css");
+
+    RetainPtr<NSString> iframeResourcePath;
+    for (NSString *path in originalURLs.get()) {
+        if ([path hasPrefix:@"host_files/frame_"])
+            iframeResourcePath = path;
+    }
+    ASSERT_NOT_NULL(iframeResourcePath.get());
+    EXPECT_WK_STREQ([originalURLs objectForKey:iframeResourcePath.get()], "https://webkit.org/iframe");
+    EXPECT_TRUE([mainResource containsString:iframeResourcePath.get()]);
+
+    RetainPtr iframeResource = [NSString stringWithContentsOfURL:[directoryURL URLByAppendingPathComponent:iframeResourcePath.get()] encoding:NSUTF8StringEncoding error:nil];
+    EXPECT_TRUE([iframeResource containsString:@"iframe content"]);
+    EXPECT_TRUE([iframeResource containsString:@"href=\"style.css\""]);
+    EXPECT_TRUE([[NSFileManager defaultManager] fileExistsAtPath:[directoryURL URLByAppendingPathComponent:@"host_files/style.css"].path]);
+
+    [[NSFileManager defaultManager] removeItemAtURL:directoryURL.get() error:nil];
+}
+
+TEST(SiteIsolation, ArchiveWithConfigurationCrossSiteIframe)
+{
+    runArchiveWithConfigurationCrossSiteIframeTest(false);
+    runArchiveWithConfigurationCrossSiteIframeTest(true);
 }
 
 #if !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)

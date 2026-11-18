@@ -9255,6 +9255,41 @@ static void addOriginalURLs(const Archive& archive, JSON::Object& originalURLs)
         addOriginalURLs(subframeArchive, originalURLs);
 }
 
+static bool isSingleFileNameComponent(StringView fileName)
+{
+    return !fileName.isEmpty() && !fileName.contains('/') && fileName != "."_s && fileName != ".."_s;
+}
+
+static bool hasValidRelativeFilePaths(const Archive& archive, const String& mainResourceName, const String& subresourcesDirectoryPrefix, bool isRootArchive)
+{
+    auto isValidSubresourcePath = [&](const String& path) {
+        return path.startsWith(subresourcesDirectoryPrefix) && isSingleFileNameComponent(StringView(path).substring(subresourcesDirectoryPrefix.length()));
+    };
+
+    RefPtr mainResource = archive.mainResource();
+    if (!mainResource)
+        return false;
+
+    auto& mainResourcePath = mainResource->relativeFilePath();
+    if (isRootArchive) {
+        if (!mainResourcePath.startsWith(mainResourceName) || StringView(mainResourcePath).substring(mainResourceName.length()).contains('/'))
+            return false;
+    } else if (!isValidSubresourcePath(mainResourcePath))
+        return false;
+
+    for (auto& subresource : archive.subresources()) {
+        if (!isValidSubresourcePath(subresource->relativeFilePath()))
+            return false;
+    }
+
+    for (auto& subframeArchive : archive.subframeArchives()) {
+        if (!hasValidRelativeFilePaths(subframeArchive, mainResourceName, subresourcesDirectoryPrefix, false))
+            return false;
+    }
+
+    return true;
+}
+
 static bool saveOriginalURLsToDisk(const Archive& archive, const String& directory, const String& fileName)
 {
     Ref originalURLs = JSON::Object::create();
@@ -9285,20 +9320,23 @@ void WebPageProxy::saveResources(WebFrameProxy* frame, const Vector<WebCore::Mar
         mainResourceName = host.isEmpty() ? "main"_s : host.toString();
     }
 
-    sendWithAsyncReply(Messages::WebPage::GetWebArchiveOfFrameWithFileName(frame->frameID(), markupExclusionRules, mainResourceName), [directory = directory, originalURLsFileName = originalURLsFileName, completionHandler = WTF::move(completionHandler)](const std::optional<IPC::SharedBufferReference>& data) mutable {
 #if PLATFORM(COCOA)
+    getWebArchiveForFrameTree(*frame, std::nullopt, markupExclusionRules, mainResourceName, [directory = directory, mainResourceName, originalURLsFileName = originalURLsFileName, completionHandler = WTF::move(completionHandler)](RefPtr<LegacyWebArchive>&& webArchive) mutable {
+        if (!webArchive)
+            return completionHandler(makeUnexpected(WebCore::ArchiveError::SerializationFailure));
+
+        RetainPtr data = webArchive->rawDataRepresentation();
         if (!data)
             return completionHandler(makeUnexpected(WebCore::ArchiveError::SerializationFailure));
 
-        auto buffer = data->unsafeBuffer();
-        if (!buffer)
-            return completionHandler(makeUnexpected(WebCore::ArchiveError::SerializationFailure));
-
-        sharedFileQueueSingleton().dispatch([directory = directory.isolatedCopy(), originalURLsFileName = originalURLsFileName.isolatedCopy(), buffer, completionHandler = WTF::move(completionHandler)] mutable {
-            RefPtr archive = LegacyWebArchive::create(*buffer);
-            auto result = archive->saveResourcesToDisk(directory);
+        sharedFileQueueSingleton().dispatch([directory = directory.isolatedCopy(), mainResourceName = mainResourceName.isolatedCopy(), originalURLsFileName = originalURLsFileName.isolatedCopy(), buffer = SharedBuffer::create(data.get()), completionHandler = WTF::move(completionHandler)] mutable {
+            RefPtr archive = LegacyWebArchive::create(buffer);
             std::optional<WebCore::ArchiveError> error;
-            if (!result)
+            if (!archive)
+                error = WebCore::ArchiveError::SerializationFailure;
+            else if (!hasValidRelativeFilePaths(*archive, mainResourceName, makeString(mainResourceName, "_files/"_s), true))
+                error = WebCore::ArchiveError::InvalidFilePath;
+            else if (auto result = archive->saveResourcesToDisk(directory); !result)
                 error = result.error();
             else if (!originalURLsFileName.isEmpty() && !saveOriginalURLsToDisk(*archive, directory, originalURLsFileName)) {
                 for (auto& filePath : borrow(*result))
@@ -9312,12 +9350,12 @@ void WebPageProxy::saveResources(WebFrameProxy* frame, const Vector<WebCore::Mar
                 completionHandler({ });
             });
         });
-#else
-        ASSERT_UNUSED(data, !data);
-        UNUSED_PARAM(originalURLsFileName);
-        completionHandler(makeUnexpected(WebCore::ArchiveError::NotImplemented));
-#endif
     });
+#else
+    UNUSED_PARAM(markupExclusionRules);
+    UNUSED_PARAM(originalURLsFileName);
+    completionHandler(makeUnexpected(WebCore::ArchiveError::NotImplemented));
+#endif
 }
 
 void WebPageProxy::getMainResourceDataOfFrame(WebFrameProxy* frame, CompletionHandler<void(API::Data*)>&& callback)

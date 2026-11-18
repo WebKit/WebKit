@@ -1209,7 +1209,7 @@ void WebPasteboardProxy::createOneWebArchiveFromFrames(WebProcessProxy& requeste
 
     for (auto& [process, frameIDs] : frameByProcess) {
         Ref protectedProcess = process;
-        protectedProcess->sendWithAsyncReply(Messages::WebPage::GetWebArchivesForFrames(frameIDs), [frameIDs, callbackAggregator](auto&& result) {
+        protectedProcess->sendWithAsyncReply(Messages::WebPage::GetWebArchivesForFrames(frameIDs, { }, { }), [frameIDs, callbackAggregator](auto&& result) {
             if (result.size() > frameIDs.size())
                 return;
             callbackAggregator->addResult(WTF::move(result));

@@ -180,6 +180,7 @@ class IntRect;
 class IntSize;
 class LayoutPoint;
 class LayoutSize;
+class LegacyWebArchive;
 class NotificationResources;
 class PlatformSpeechSynthesisUtterance;
 class PlatformSpeechSynthesizer;
@@ -3312,6 +3313,9 @@ public:
 
 private:
     WebPageProxy(PageClient&, WebProcessProxy&, Ref<API::PageConfiguration>&&);
+#if PLATFORM(COCOA)
+    void getWebArchiveForFrameTree(WebFrameProxy& rootFrame, const std::optional<HashSet<WebCore::FrameIdentifier>>& selectedFrameIdentifiers, const Vector<WebCore::MarkupExclusionRule>&, const String& mainResourceFileName, CompletionHandler<void(RefPtr<WebCore::LegacyWebArchive>&&)>&&);
+#endif
     void platformInitialize();
 
     template<typename M> void sendToEveryWebContentProcess();

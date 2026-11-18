@@ -115,6 +115,23 @@ static String getFileNameFromURIComponent(StringView input)
     return result.toString();
 }
 
+static String htmlFileExtension()
+{
+    auto extension = MIMETypeRegistry::preferredExtensionForMIMEType(textHTMLContentTypeAtom());
+    return extension.isEmpty() ? extension : makeString('.', extension);
+}
+
+static String subframeMainResourceFilePath(const String& subresourcesDirectoryName, FrameIdentifier frameID)
+{
+    return makeString(subresourcesDirectoryName, "/frame_"_s, frameID.toUInt64(), htmlFileExtension());
+}
+
+static bool hasResponseURLForSaving(LocalFrame& frame)
+{
+    RefPtr documentLoader = frame.loader().documentLoader();
+    return documentLoader && !documentLoader->response().url().isEmpty();
+}
+
 static String generateValidFileName(const URL& url, const HashSet<String>& existingFileNames, const String& extension = { })
 {
     String suffix = extension.isEmpty() ? emptyString() : makeString('.', extension);
@@ -727,6 +744,10 @@ RefPtr<LegacyWebArchive> LegacyWebArchive::createInternal(const String& markupSt
                 continue;
 
             if (options.shouldArchiveSubframes == ShouldArchiveSubframes::No) {
+                if (!subresourcesDirectoryName.isNull() && (!localChildFrame || hasResponseURLForSaving(*localChildFrame))) {
+                    auto subframeMainResourceRelativePath = subframeMainResourceFilePath(subresourcesDirectoryName, childFrame->frameID());
+                    uniqueSubresources.add(makeString(childFrame->frameID().toUInt64()), frame.isMainFrame() ? subframeMainResourceRelativePath : FileSystem::lastComponentOfPathIgnoringTrailingSlash(subframeMainResourceRelativePath));
+                }
                 subframeIdentifiers.append(childFrame->frameID());
                 continue;
             }
@@ -837,14 +858,12 @@ RefPtr<LegacyWebArchive> LegacyWebArchive::createInternal(const String& markupSt
         if (!document)
             return nullptr;
 
-        if (responseURL.isEmpty())
+        if (!hasResponseURLForSaving(frame))
             return nullptr;
 
-        auto extension = MIMETypeRegistry::preferredExtensionForMIMEType(textHTMLContentTypeAtom());
-        if (!extension.isEmpty())
-            extension = makeString('.', extension);
+        auto extension = htmlFileExtension();
         auto mainFrameFileNameWithExtension = options.mainResourceFileName.endsWith(extension) ? options.mainResourceFileName : makeString(options.mainResourceFileName, extension);
-        auto fileNameWithExtension = frame.isMainFrame() ? mainFrameFileNameWithExtension : makeString(subresourcesDirectoryName, "/frame_"_s, frame.frameID().toUInt64(), extension);
+        auto fileNameWithExtension = frame.isMainFrame() ? mainFrameFileNameWithExtension : subframeMainResourceFilePath(subresourcesDirectoryName, frame.frameID());
 
         ResolveURLs resolveURLs = ResolveURLs::NoExcludingURLsForPrivacy;
         // Base element is excluded, so all URLs should be replaced with absolute URL.

@@ -410,7 +410,6 @@
     [Legacy] MessageParamReply WebPage.GetResourceDataFromFrame buffer
     [Legacy] MessageParamReply WebPage.GetAccessibilityTreeData dataReference
     [SecurityGatedReply] MessageParamReply WebPage.GetWebArchiveOfFrame dataReference
-    [SecurityGatedReply] MessageParamReply WebPage.GetWebArchiveOfFrameWithFileName dataReference
     [SecurityGatedReply] MessageParamReply WebPage.GetWebArchiveData dataReference
 }
 

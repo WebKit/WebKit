@@ -5664,20 +5664,6 @@ void WebPage::getResourceDataFromFrame(FrameIdentifier frameID, const String& re
     callback(IPC::SharedBufferReference(WTF::move(buffer)));
 }
 
-void WebPage::getWebArchiveOfFrameWithFileName(WebCore::FrameIdentifier frameID, const Vector<WebCore::MarkupExclusionRule>& exclusionRules, const String& fileName, CompletionHandler<void(const std::optional<IPC::SharedBufferReference>&)>&& completionHandler)
-{
-    std::optional<IPC::SharedBufferReference> result;
-#if PLATFORM(COCOA)
-    if (RefPtr frame = WebProcess::singleton().webFrame(frameID)) {
-        if (RetainPtr<CFDataRef> data = frame->webArchiveData(nullptr, nullptr, exclusionRules, fileName))
-            result = IPC::SharedBufferReference(SharedBuffer::create(data.get()));
-    }
-#else
-    UNUSED_PARAM(frameID);
-#endif
-    completionHandler(result);
-}
-
 void WebPage::getAccessibilityTreeData(CompletionHandler<void(const std::optional<IPC::SharedBufferReference>&)>&& callback)
 {
     IPC::SharedBufferReference dataBuffer;

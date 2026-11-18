@@ -1819,7 +1819,7 @@ BoxSideSet WebPage::sidesRequiringFixedContainerEdges() const
     return sides;
 }
 
-void WebPage::getWebArchivesForFrames(const Vector<WebCore::FrameIdentifier>& frameIdentifiers, CompletionHandler<void(HashMap<WebCore::FrameIdentifier, Ref<WebCore::LegacyWebArchive>>&&)>&& completionHandler)
+void WebPage::getWebArchivesForFrames(const Vector<WebCore::FrameIdentifier>& frameIdentifiers, const Vector<WebCore::MarkupExclusionRule>& markupExclusionRules, const String& mainResourceFileName, CompletionHandler<void(HashMap<WebCore::FrameIdentifier, Ref<WebCore::LegacyWebArchive>>&&)>&& completionHandler)
 {
     if (!m_page)
         return completionHandler({ });
@@ -1840,7 +1840,9 @@ void WebPage::getWebArchivesForFrames(const Vector<WebCore::FrameIdentifier>& fr
 
         WebCore::LegacyWebArchive::ArchiveOptions options {
             LegacyWebArchive::ShouldSaveScriptsFromMemoryCache::Yes,
-            LegacyWebArchive::ShouldArchiveSubframes::No
+            LegacyWebArchive::ShouldArchiveSubframes::No,
+            markupExclusionRules,
+            mainResourceFileName
         };
         if (RefPtr archive = WebCore::LegacyWebArchive::create(*document, WTF::move(options)))
             result.add(localFrame->frameID(), archive.releaseNonNull());
