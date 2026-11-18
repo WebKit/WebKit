@@ -26,6 +26,8 @@
 import CoreGraphics
 import Foundation
 private import TestWebKitAPILibrary.Helpers.cocoa.WebExtensionUtilities
+private import WebKit_Private._WKFeature
+private import WebKit_Private.WKPreferencesPrivate
 public import WebKit
 
 public import struct Swift.String
@@ -89,6 +91,21 @@ public func loadWebExtension(
     try manager.checkCollectedFailures()
 
     return manager
+}
+
+/// Creates a non-persistent controller configuration whose web views have a feature turned on.
+///
+/// - Parameter featureKey: The key of the feature to turn on, such as `WebExtensionNotificationsEnabled`.
+/// - Returns: The configuration.
+@MainActor
+public func configurationEnablingFeature(_ featureKey: String) -> WKWebExtensionController.Configuration {
+    let configuration = WKWebExtensionController.Configuration.nonPersistent()
+
+    for feature in WKPreferences._features() where feature.key == featureKey {
+        configuration.webViewConfiguration.preferences._setEnabled(true, for: feature)
+    }
+
+    return configuration
 }
 
 extension TestWebExtensionManager {
