@@ -909,6 +909,12 @@ std::pair<LayoutUnit, LayoutUnit> RenderGrid::computeIntrinsicLogicalWidths() co
 
     auto [legendMinWidth, legendMaxWidth] = computeIntrinsicLogicalWidthsForFieldsetLegend();
 
+    if (isStackingAxis(Style::GridTrackSizingDirection::Columns) && shouldCheckExplicitIntrinsicInnerLogicalSize(Style::GridTrackSizingDirection::Columns)) {
+        auto logicalWidth = explicitIntrinsicInnerLogicalSize(Style::GridTrackSizingDirection::Columns).value_or(0_lu);
+        auto scrollbarWidth = intrinsicScrollbarLogicalWidthIncludingGutter();
+        return { std::max(logicalWidth, legendMinWidth) + scrollbarWidth, std::max(logicalWidth, legendMaxWidth) + scrollbarWidth };
+    }
+
     RenderGridLayoutState gridLayoutState;
     Grid grid;
     m_grid.m_currentGrid = std::ref(grid);
