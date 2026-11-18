@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,7 +26,10 @@
 #pragma once
 
 #include <algorithm>
+#include <bit>
 #include <cmath>
+#include <cstdint>
+#include <limits>
 #include <wtf/Seconds.h>
 
 namespace WebCore {
@@ -40,6 +43,8 @@ public:
     
     static SMILTime unresolved() { return unresolvedValue; }
     static SMILTime indefinite() { return indefiniteValue; }
+    // The largest finite value. Arithmetic on finite values is clamped to it, so that it can never produce a sentinel value.
+    static SMILTime latest() { return latestValue; }
     
     SMILTime& operator=(const SMILTime& o) { m_time = o.m_time; return *this; }
     double value() const { return m_time; }
@@ -49,8 +54,11 @@ public:
     bool isUnresolved() const { return m_time == unresolvedValue; }
     
 private:
-    static const double unresolvedValue;
-    static const double indefiniteValue;
+    static constexpr double unresolvedValue = std::numeric_limits<double>::max();
+    // Just a big value smaller than unresolvedValue. Our times are relative to 0, we don't really need the full range.
+    static constexpr double indefiniteValue = std::numeric_limits<float>::max();
+    // The largest double smaller than indefiniteValue.
+    static constexpr double latestValue = std::bit_cast<double>(std::bit_cast<uint64_t>(indefiniteValue) - 1);
 
     double m_time { 0 };
 };

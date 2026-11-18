@@ -1,0 +1,4 @@
+
+PASS Adding two finite times beyond the largest finite time yields a resolved begin
+PASS Multiplying a finite duration by a repeat count beyond the largest finite time yields a resolved end
+

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,13 +26,12 @@
 #include "config.h"
 #include "SMILTime.h"
 
-#include <float.h>
-
 namespace WebCore {
 
-const double SMILTime::unresolvedValue = DBL_MAX;
-// Just a big value smaller than DBL_MAX. Our times are relative to 0, we don't really need the full range.
-const double SMILTime::indefiniteValue = FLT_MAX;    
+static SMILTime clampToLatest(double value)
+{
+    return std::min(value, SMILTime::latest().value());
+}
 
 SMILTime operator+(const SMILTime& a, const SMILTime& b)
 {
@@ -40,7 +39,7 @@ SMILTime operator+(const SMILTime& a, const SMILTime& b)
         return SMILTime::unresolved();
     if (a.isIndefinite() || b.isIndefinite())
         return SMILTime::indefinite();
-    return a.value() + b.value();
+    return clampToLatest(a.value() + b.value());
 }
 
 SMILTime operator-(const SMILTime& a, const SMILTime& b)
@@ -49,7 +48,7 @@ SMILTime operator-(const SMILTime& a, const SMILTime& b)
         return SMILTime::unresolved();
     if (a.isIndefinite() || b.isIndefinite())
         return SMILTime::indefinite();
-    return a.value() - b.value();
+    return clampToLatest(a.value() - b.value());
 }
 
 SMILTime operator*(const SMILTime& a,  const SMILTime& b)
@@ -60,7 +59,7 @@ SMILTime operator*(const SMILTime& a,  const SMILTime& b)
         return SMILTime(0);
     if (a.isIndefinite() || b.isIndefinite())
         return SMILTime::indefinite();
-    return a.value() * b.value();
+    return clampToLatest(a.value() * b.value());
 }
 
 } // namespace WebCore
