@@ -590,7 +590,7 @@ https://en.wikipedia.org/
     ShouldIgnoreViewportArgumentsToAvoidExcessiveZoomQuirk
     ShouldLayOutAtMinimumWindowWidthWhenIgnoringScalingConstraintsQuirk
 https://weather.com/
-    (none)
+    ShouldDisableElementFullscreenQuirk
 https://www.webex.com/
     (none)
 https://www.weebly.com/

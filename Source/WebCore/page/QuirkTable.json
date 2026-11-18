@@ -1401,6 +1401,13 @@
             "behaviors": [{ "id": "NeedsFormControlToBeMouseFocusableQuirk" }]
         },
         {
+            "bugs": ["rdar://192913439"],
+            "matches": ["*://*.weather.com/*", "*://weather.com/*"],
+            "environment": "SmallScreen",
+            "available": "iOS",
+            "behaviors": [{ "id": "ShouldDisableElementFullscreenQuirk" }]
+        },
+        {
             "matches": ["*://*.webex.com/*"],
             "available": "appleTV",
             "environment": "HomeView",
