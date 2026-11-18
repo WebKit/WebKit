@@ -1,4 +1,4 @@
-Testing that a projected video is projected without the controls attribute, and that it gets none of the control chrome. A video that opts out with projection=none, or that has no projection at all, gets no media controls shadow tree.
+Testing that a projected video is projected without the controls attribute, and that it gets none of the control chrome. A video that opts out with projection=rectilinear, or that has no projection at all, gets no media controls shadow tree.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
@@ -7,6 +7,10 @@ PASS hasMediaControls(projected) is true
 
 A video that opts out of projection does not need them:
 PASS hasMediaControls(optedOut) is false
+
+Neither does one that defers to a container declaring no projection, whether it says so with auto or with a keyword this build does not know:
+PASS hasMediaControls(auto) is false
+PASS hasMediaControls(unrecognized) is false
 
 Neither does a video with no projection at all:
 PASS hasMediaControls(plain) is false

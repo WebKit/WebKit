@@ -272,14 +272,34 @@ void HTMLVideoElement::spatialCameraDidMove(double yaw, double pitch, double fie
     scheduleEvent(eventNames().webkitcameramovedEvent);
 }
 
+enum class DeclaredProjection : uint8_t { Auto, Rectilinear, Projection };
+
+// Mirrors ProjectionAttributeValues in spatial-video-support.js, which resolves the same attribute
+// for the renderer. "auto" is both the missing value default and the invalid value default, so an
+// absent, empty or unrecognized value all defer to the container's own metadata.
+static DeclaredProjection declaredProjection(const AtomString& attributeValue)
+{
+    auto declared = attributeValue.string().trim(isASCIIWhitespace<char16_t>);
+    if (equalLettersIgnoringASCIICase(declared, "rectilinear"_s))
+        return DeclaredProjection::Rectilinear;
+    if (equalLettersIgnoringASCIICase(declared, "equirectangular"_s) || equalLettersIgnoringASCIICase(declared, "half-equirectangular"_s) || equalLettersIgnoringASCIICase(declared, "fisheye"_s) || equalLettersIgnoringASCIICase(declared, "parametric"_s) || equalLettersIgnoringASCIICase(declared, "equiangular-cubemap"_s))
+        return DeclaredProjection::Projection;
+    return DeclaredProjection::Auto;
+}
+
 bool HTMLVideoElement::hasSpatialVideoProjection() const
 {
     if (!document().settings().spatialVideoRenderingEnabled())
         return false;
 
-    auto declared = attributeWithoutSynchronization(projectionAttr).string().trim(isASCIIWhitespace<char16_t>);
-    if (!declared.isEmpty())
-        return !equalLettersIgnoringASCIICase(declared, "none"_s);
+    switch (declaredProjection(attributeWithoutSynchronization(projectionAttr))) {
+    case DeclaredProjection::Rectilinear:
+        return false;
+    case DeclaredProjection::Projection:
+        return true;
+    case DeclaredProjection::Auto:
+        break;
+    }
 
     RefPtr videoTracks = this->videoTracks();
     if (!videoTracks)

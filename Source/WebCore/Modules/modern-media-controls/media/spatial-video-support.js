@@ -120,7 +120,7 @@ class SpatialVideoSupport extends MediaControllerSupport
     _resolveProjection(media, host)
     {
         const declared = ProjectionAttributeValues[media.getAttribute("projection")?.trim().toLowerCase()];
-        if (declared === "none")
+        if (declared === "rectilinear")
             return null;
         if (declared)
             return { projection: declared, fovDegrees: null };
@@ -606,16 +606,13 @@ SpatialVideoSupport.CubemapRows = 2;
 SpatialVideoSupport.MinimumCubemapFaceTexels = 8;
 SpatialVideoSupport.UnlimitedMipmapLevel = 1000;
 const ProjectionAttributeValues = {
-    "none": "none",
+    "auto": null,
+    "rectilinear": "rectilinear",
     "equirectangular": "equirect360",
-    "360": "equirect360",
-    "halfequirectangular": "equirect180",
-    "180": "equirect180",
-    "parametric": "wideFOV",
-    "wfov": "wideFOV",
+    "half-equirectangular": "equirect180",
     "fisheye": "fisheye",
-    "equiangularcubemap": "equiAngularCubemap",
-    "eac": "equiAngularCubemap",
+    "parametric": "wideFOV",
+    "equiangular-cubemap": "equiAngularCubemap",
 };
 
 const EquiAngularCubemapFaces = [
