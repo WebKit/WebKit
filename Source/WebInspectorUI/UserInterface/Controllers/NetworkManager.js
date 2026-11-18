@@ -825,7 +825,7 @@ WI.NetworkManager = class NetworkManager extends WI.Object
         if (creationInfo.frameId) {
             frame = this.frameForIdentifier(creationInfo.frameId);
             if (!frame && creationInfo.frameId.startsWith("frame-"))
-                frame = this._createPlaceholderFrame(creationInfo.frameId);
+                frame = this._createPlaceholderFrame(creationInfo.frameId, creationInfo.loaderId);
         }
         if (!frame)
             frame = this._mainFrame;
@@ -1296,10 +1296,10 @@ WI.NetworkManager = class NetworkManager extends WI.Object
             frame.addExecutionContext(context);
     }
 
-    _createPlaceholderFrame(frameIdentifier, frameOptions = {})
+    _createPlaceholderFrame(frameIdentifier, loaderIdentifier, frameOptions = {})
     {
         let mainResource = new WI.Resource("about:blank");
-        let frame = new WI.Frame(frameIdentifier, frameOptions.name, frameOptions.securityOrigin, null, mainResource);
+        let frame = new WI.Frame(frameIdentifier, frameOptions.name, frameOptions.securityOrigin, loaderIdentifier, mainResource);
         this._frameIdentifierMap.set(frame.id, frame);
         this._associateTargetExecutionContextsWithFrame(frame);
         mainResource.markAsFinished();
@@ -1336,7 +1336,7 @@ WI.NetworkManager = class NetworkManager extends WI.Object
         // A document request is the frame's own load, so it takes the new-frame path below instead.
         let isDocument = resourceOptions.type === InspectorBackend.Enum.Page.ResourceType.Document;
         if (!frame && !isDocument && frameIdentifier.startsWith("frame-"))
-            frame = this._createPlaceholderFrame(frameIdentifier, frameOptions);
+            frame = this._createPlaceholderFrame(frameIdentifier, resourceOptions.loaderIdentifier, frameOptions);
 
         if (frame) {
             if (isDocument && frame.provisionalMainResource && frame.provisionalMainResource.url === url && frame.provisionalLoaderIdentifier === resourceOptions.loaderIdentifier)
