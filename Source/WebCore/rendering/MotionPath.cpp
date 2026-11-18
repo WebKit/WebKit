@@ -68,7 +68,7 @@ static FloatRoundedRect containingBlockRectForRenderer(const RenderObject& rende
 NODELETE static FloatPoint normalPositionForOffsetPath(const Style::OffsetPath& offsetPath, const FloatRect& referenceRect)
 {
     if (WTF::holdsAlternative<Style::RayPath>(offsetPath) || WTF::holdsAlternative<Style::BasicShapePath>(offsetPath))
-        return referenceRect.center();
+        return FloatPoint { referenceRect.width() / 2, referenceRect.height() / 2 };
     return { };
 }
 

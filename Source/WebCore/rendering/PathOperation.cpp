@@ -185,7 +185,8 @@ std::optional<Path> RayPathOperation::getPath(const TransformOperationData& data
 
 bool RayPathOperation::operator==(const RayPathOperation& other) const
 {
-    return m_ray == other.m_ray;
+    return m_ray == other.m_ray
+        && m_referenceBox == other.m_referenceBox;
 }
 
 bool RayPathOperation::operator==(const PathOperation& other) const
