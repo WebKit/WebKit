@@ -427,8 +427,10 @@ void WebFrameProxy::didCommitLoad(const String& contentType, bool containsPlugin
     m_frameViewportInfo = { };
 
     RefPtr webPage = page();
-    if (webPage && protect(webPage->preferences())->siteIsolationEnabled())
+    if (webPage && protect(webPage->preferences())->siteIsolationEnabled()) {
         broadcastFrameTreeSyncData(calculateFrameTreeSyncData());
+        webPage->sendMainFrameViewportInfoIfNeeded(*this);
+    }
 }
 
 void WebFrameProxy::didFinishLoad()
