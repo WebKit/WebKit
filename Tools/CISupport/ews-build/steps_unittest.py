@@ -3415,8 +3415,37 @@ Failed to upload test results to https://results.webkit.org/ (1 failed), exiting
             .exit(2),
         )
         self.expect_outcome(result=FAILURE, state_string='layout-tests (failure)')
+        self.expect_no_property('clean_tree_run_results')
         with current_hostname(EWS_BUILD_HOSTNAMES[0]):
             return self.run_step()
+
+    def test_sets_clean_tree_run_results(self):
+        self.configureStep()
+        self.setProperty('fullPlatform', 'ios-simulator')
+        self.setProperty('configuration', 'release')
+        results_json = '''ADD_RESULTS({"tests":{"fast":{"flaky.html":{"report":"FLAKY","expected":"PASS","actual":"TIMEOUT PASS"},"failing.html":{"report":"REGRESSION","expected":"PASS","actual":"TEXT"}}},"interrupted":false});'''
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        logfiles={'json': self.jsonFileName},
+                        log_environ=False,
+                        timeout=19800,
+                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', f'python3 Tools/Scripts/run-webkit-tests --no-build --no-show-results --no-new-test-results --clobber-old-results --release --results-directory layout-test-results --debug-rwt-logging --exit-after-n-failures 60 --skip-failing-tests --builder-name iOS-13-Simulator-WK2-Tests-EWS --build-number 123 --buildbot-worker ews126 --buildbot-master {EWS_BUILD_HOSTNAMES[0]} --report https://results.webkit.org/ 2>&1 | Tools/Scripts/filter-test-logs layout'],
+                        env={'RESULTS_SERVER_API_KEY': 'test-api-key'}
+                        )
+            .log('stdio', stdout='1 failures found.')
+            .log('json', stdout=results_json)
+            .exit(2),
+        )
+        self.expect_outcome(result=FAILURE, state_string='layout-tests (failure)')
+        with current_hostname(EWS_BUILD_HOSTNAMES[0]):
+            rc = self.run_step()
+        self.expect_property(self.property_failures, ['fast/failing.html'])
+        self.expect_property('clean_tree_run_flakies', ['fast/flaky.html'])
+        self.expect_property('clean_tree_run_results', {
+            'fast/flaky.html': {'report': 'FLAKY', 'expected': 'PASS', 'actual': 'TIMEOUT PASS'},
+            'fast/failing.html': {'report': 'REGRESSION', 'expected': 'PASS', 'actual': 'TEXT'},
+        })
+        return rc
 
 
 class TestRunWebKitTestsEWSSiteIsolation(BuildStepMixinAdditions, unittest.TestCase):
@@ -3651,6 +3680,96 @@ class TestAnalyzeLayoutTestsResults(BuildStepMixinAdditions, unittest.TestCase):
         self.setProperty('first_run_failures', ["jquery/offset.html"])
         self.setProperty('second_run_failures', ["jquery/offset.html"])
         self.expect_outcome(result=FAILURE, state_string='Found 1 new test failure: jquery/offset.html (failure)')
+        return self.run_step()
+
+    def setFlakyOnCleanTree(self, test, actual='TIMEOUT PASS'):
+        self.setProperty('clean_tree_run_flakies', [test])
+        self.setProperty('clean_tree_run_results', {test: {'actual': actual, 'expected': 'PASS', 'report': 'FLAKY'}})
+
+    def setResultsWithChange(self, first_run_results, second_run_results):
+        self.setProperty('first_run_results', {test: {'actual': actual, 'expected': 'PASS', 'report': 'REGRESSION'} for test, actual in first_run_results.items()})
+        self.setProperty('second_run_results', {test: {'actual': actual, 'expected': 'PASS', 'report': 'REGRESSION'} for test, actual in second_run_results.items()})
+
+    def test_consistent_failure_flaky_on_clean_tree_same_type(self):
+        self.configureStep()
+        self.setProperty('first_run_failures', ['fast/flaky.html'])
+        self.setProperty('second_run_failures', ['fast/flaky.html'])
+        self.setResultsWithChange({'fast/flaky.html': 'TIMEOUT'}, {'fast/flaky.html': 'TIMEOUT'})
+        self.setFlakyOnCleanTree('fast/flaky.html')
+        self.expect_outcome(result=SUCCESS, state_string='Passed layout tests')
+        self.expect_property('build_summary', ' Found test flaky on the clean tree: fast/flaky.html')
+        return self.run_step()
+
+    def test_consistent_failure_flaky_on_clean_tree_different_type(self):
+        self.configureStep()
+        self.setProperty('first_run_failures', ['fast/flaky.html'])
+        self.setProperty('second_run_failures', ['fast/flaky.html'])
+        self.setResultsWithChange({'fast/flaky.html': 'CRASH'}, {'fast/flaky.html': 'CRASH'})
+        self.setFlakyOnCleanTree('fast/flaky.html')
+        self.expect_outcome(result=FAILURE, state_string='Found 1 new test failure: fast/flaky.html (failure)')
+        self.expect_property('build_finish_summary', 'Found 1 new test failure: fast/flaky.html')
+        return self.run_step()
+
+    def test_consistent_failure_flaky_on_clean_tree_missing_results(self):
+        self.configureStep()
+        self.setProperty('first_run_failures', ['fast/flaky.html'])
+        self.setProperty('second_run_failures', ['fast/flaky.html'])
+        self.setResultsWithChange({'fast/flaky.html': 'TIMEOUT'}, {'fast/flaky.html': 'TIMEOUT'})
+        self.setProperty('clean_tree_run_flakies', ['fast/flaky.html'])
+        self.expect_outcome(result=FAILURE, state_string='Found 1 new test failure: fast/flaky.html (failure)')
+        return self.run_step()
+
+    def test_partial_excuse(self):
+        self.configureStep()
+        self.setProperty('first_run_failures', ['fast/flaky.html', 'fast/broken.html'])
+        self.setProperty('second_run_failures', ['fast/flaky.html', 'fast/broken.html'])
+        self.setResultsWithChange(
+            {'fast/flaky.html': 'TIMEOUT', 'fast/broken.html': 'TEXT'},
+            {'fast/flaky.html': 'TIMEOUT', 'fast/broken.html': 'TEXT'},
+        )
+        self.setFlakyOnCleanTree('fast/flaky.html')
+        self.expect_outcome(result=FAILURE, state_string='Found 1 new test failure: fast/broken.html (failure)')
+        self.expect_property('build_finish_summary', 'Found 1 new test failure: fast/broken.html')
+        return self.run_step()
+
+    def test_inconsistent_runs_with_consistent_failure_flaky_on_clean_tree(self):
+        self.configureStep()
+        self.setProperty('first_run_failures', ['fast/flaky.html', 'fast/other.html'])
+        self.setProperty('second_run_failures', ['fast/flaky.html'])
+        self.setResultsWithChange({'fast/flaky.html': 'TIMEOUT', 'fast/other.html': 'TEXT'}, {'fast/flaky.html': 'TIMEOUT'})
+        self.setFlakyOnCleanTree('fast/flaky.html')
+        self.expect_outcome(result=SUCCESS, state_string='Passed layout tests')
+        self.expect_property('build_summary', ' Found flaky test: fast/other.html Found test flaky on the clean tree: fast/flaky.html')
+        return self.run_step()
+
+    def test_second_run_exceed_failure_limit_with_failure_flaky_on_clean_tree(self):
+        self.configureStep()
+        self.setProperty('first_run_failures', ['fast/flaky.html'])
+        self.setProperty('second_results_exceed_failure_limit', True)
+        self.setProperty('second_run_failures', ['fast/flaky.html'] + [f'test{i}' for i in range(0, 30)])
+        self.setResultsWithChange({'fast/flaky.html': 'TIMEOUT'}, {'fast/flaky.html': 'TIMEOUT'})
+        self.setFlakyOnCleanTree('fast/flaky.html')
+        self.expect_outcome(result=RETRY, state_string='Unable to confirm if test failures are introduced by change, retrying build (retry)')
+        return self.run_step()
+
+    def test_first_run_exceed_failure_limit_with_failure_flaky_on_clean_tree(self):
+        self.configureStep()
+        self.setProperty('first_results_exceed_failure_limit', True)
+        self.setProperty('first_run_failures', ['fast/flaky.html'] + [f'test{i}' for i in range(0, 30)])
+        self.setProperty('second_run_failures', ['fast/flaky.html'])
+        self.setResultsWithChange({'fast/flaky.html': 'TIMEOUT'}, {'fast/flaky.html': 'TIMEOUT'})
+        self.setFlakyOnCleanTree('fast/flaky.html')
+        self.expect_outcome(result=RETRY, state_string='Unable to confirm if test failures are introduced by change, retrying build (retry)')
+        return self.run_step()
+
+    def test_consistent_failure_flaky_on_clean_tree_types_differ_between_runs(self):
+        self.configureStep()
+        self.setProperty('first_run_failures', ['fast/flaky.html'])
+        self.setProperty('second_run_failures', ['fast/flaky.html'])
+        self.setResultsWithChange({'fast/flaky.html': 'TEXT'}, {'fast/flaky.html': 'TIMEOUT'})
+        self.setFlakyOnCleanTree('fast/flaky.html', actual='TIMEOUT PASS')
+        self.expect_outcome(result=FAILURE, state_string='Found 1 new test failure: fast/flaky.html (failure)')
+        self.expect_property('build_finish_summary', 'Found 1 new test failure: fast/flaky.html')
         return self.run_step()
 
     def test_failure_on_clean_tree(self):
