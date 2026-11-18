@@ -2752,17 +2752,18 @@ void WebPageProxy::potentialTapAtPosition(std::optional<WebCore::FrameIdentifier
     hideValidationMessage();
     if (!remoteFrameID)
         internals().potentialTap = Internals::PotentialTap { requestID };
-    sendWithAsyncReplyToProcessContainingFrame(remoteFrameID, Messages::WebPage::PotentialTapAtPosition(remoteFrameID, requestID, position, shouldRequestMagnificationInformation, inputSource), Messages::WebPage::PotentialTapAtPosition::Reply { [weakThis = WeakPtr { *this }, shouldRequestMagnificationInformation, requestID, inputSource](auto data) {
-        if (!data)
-            return;
+    sendWithAsyncReplyToProcessContainingFrame(remoteFrameID, Messages::WebPage::PotentialTapAtPosition(remoteFrameID, requestID, position, shouldRequestMagnificationInformation, inputSource), ReplyWithConnection<Messages::WebPage::PotentialTapAtPosition> { [weakThis = WeakPtr { *this }, remoteFrameID, shouldRequestMagnificationInformation, requestID, inputSource](IPC::Connection* connection, std::optional<WebCore::RemoteUserInputEventData> data) {
         RefPtr protectedThis = weakThis.get();
-        if (!protectedThis)
+        if (!protectedThis || !data)
+            return;
+        RefPtr targetFrame = protectedThis->frameForRemoteUserInputEventRedispatch(connection, remoteFrameID, data->targetFrameID);
+        if (!targetFrame)
             return;
         auto& potentialTap = protectedThis->internals().potentialTap;
         if (!potentialTap || potentialTap->identifier != requestID)
             return;
-        potentialTap->forwardedFrameIDs.append(data->targetFrameID);
-        protectedThis->potentialTapAtPosition(data->targetFrameID, FloatPoint(data->transformedPoint), shouldRequestMagnificationInformation, requestID, inputSource);
+        potentialTap->forwardedFrameIDs.append(targetFrame->frameID());
+        protectedThis->potentialTapAtPosition(targetFrame->frameID(), FloatPoint(data->transformedPoint), shouldRequestMagnificationInformation, requestID, inputSource);
     } });
 }
 
@@ -2774,13 +2775,14 @@ void WebPageProxy::commitPotentialTap(std::optional<WebCore::FrameIdentifier> re
     if (auto& potentialTap = internals().potentialTap; !remoteFrameID && potentialTap)
         potentialTap->isCommitted = true;
 
-    sendWithAsyncReplyToProcessContainingFrame(remoteFrameID, Messages::WebPage::CommitPotentialTap(remoteFrameID, modifiers, layerTreeTransactionIdAtLastTouchStart, pointerId, completesDoubleClick), Messages::WebPage::CommitPotentialTap::Reply { [weakThis = WeakPtr { *this }, modifiers, layerTreeTransactionIdAtLastTouchStart, pointerId, completesDoubleClick](auto targetFrameID) {
-        if (!targetFrameID)
-            return;
+    sendWithAsyncReplyToProcessContainingFrame(remoteFrameID, Messages::WebPage::CommitPotentialTap(remoteFrameID, modifiers, layerTreeTransactionIdAtLastTouchStart, pointerId, completesDoubleClick), ReplyWithConnection<Messages::WebPage::CommitPotentialTap> { [weakThis = WeakPtr { *this }, remoteFrameID, modifiers, layerTreeTransactionIdAtLastTouchStart, pointerId, completesDoubleClick](IPC::Connection* connection, std::optional<WebCore::FrameIdentifier> targetFrameID) {
         RefPtr protectedThis = weakThis.get();
-        if (!protectedThis)
+        if (!protectedThis || !targetFrameID)
             return;
-        protectedThis->commitPotentialTap(targetFrameID, modifiers, layerTreeTransactionIdAtLastTouchStart, pointerId, completesDoubleClick);
+        RefPtr targetFrame = protectedThis->frameForRemoteUserInputEventRedispatch(connection, remoteFrameID, *targetFrameID);
+        if (!targetFrame)
+            return;
+        protectedThis->commitPotentialTap(targetFrame->frameID(), modifiers, layerTreeTransactionIdAtLastTouchStart, pointerId, completesDoubleClick);
     } });
 }
 
@@ -2831,13 +2833,14 @@ void WebPageProxy::handleDoubleTapForDoubleClickAtPointInFrame(std::optional<Web
 
     frame->notifyActivated(MonotonicTime::now());
 
-    sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::WebPage::HandleDoubleTapForDoubleClickAtPoint(frameID, point, modifiers, layerTreeTransactionIdAtLastInteractionStart, inputSource, syntheticClickType), Messages::WebPage::HandleDoubleTapForDoubleClickAtPoint::Reply { [weakThis = WeakPtr { *this }, modifiers, layerTreeTransactionIdAtLastInteractionStart, inputSource, syntheticClickType](auto remoteUserInputEventData) {
-        if (!remoteUserInputEventData)
-            return;
+    sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::WebPage::HandleDoubleTapForDoubleClickAtPoint(frameID, point, modifiers, layerTreeTransactionIdAtLastInteractionStart, inputSource, syntheticClickType), ReplyWithConnection<Messages::WebPage::HandleDoubleTapForDoubleClickAtPoint> { [weakThis = WeakPtr { *this }, frameID, modifiers, layerTreeTransactionIdAtLastInteractionStart, inputSource, syntheticClickType](IPC::Connection* connection, std::optional<WebCore::RemoteUserInputEventData> remoteUserInputEventData) {
         RefPtr protectedThis = weakThis.get();
-        if (!protectedThis)
+        if (!protectedThis || !remoteUserInputEventData)
             return;
-        protectedThis->handleDoubleTapForDoubleClickAtPointInFrame(remoteUserInputEventData->targetFrameID, roundedIntPoint(FloatPoint { remoteUserInputEventData->transformedPoint }), modifiers, layerTreeTransactionIdAtLastInteractionStart, inputSource, syntheticClickType);
+        RefPtr targetFrame = protectedThis->frameForRemoteUserInputEventRedispatch(connection, frameID, remoteUserInputEventData->targetFrameID);
+        if (!targetFrame)
+            return;
+        protectedThis->handleDoubleTapForDoubleClickAtPointInFrame(targetFrame->frameID(), roundedIntPoint(FloatPoint { remoteUserInputEventData->transformedPoint }), modifiers, layerTreeTransactionIdAtLastInteractionStart, inputSource, syntheticClickType);
     } });
 }
 

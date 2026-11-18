@@ -1,0 +1,4 @@
+main frame text
+
+Tests that the UI process rejects a potential tap's redispatch to a frame two processes away, which would skip the process hosting the frame in between.
+PASS

@@ -1,0 +1,4 @@
+main frame text
+
+Tests that the UI process rejects a tap commit's redispatch to the frame it was sent to.
+PASS

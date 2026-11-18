@@ -500,13 +500,14 @@ void WebPageProxy::handleTwoFingerTapAtPointInFrame(std::optional<FrameIdentifie
 
     frame->notifyActivated(MonotonicTime::now());
 
-    sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::WebPage::HandleTwoFingerTapAtPoint(frameID, point, modifiers, requestID), Messages::WebPage::HandleTwoFingerTapAtPoint::Reply { [weakThis = WeakPtr { *this }, modifiers, requestID](auto remoteUserInputEventData) {
-        if (!remoteUserInputEventData)
-            return;
+    sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::WebPage::HandleTwoFingerTapAtPoint(frameID, point, modifiers, requestID), ReplyWithConnection<Messages::WebPage::HandleTwoFingerTapAtPoint> { [weakThis = WeakPtr { *this }, frameID, modifiers, requestID](IPC::Connection* connection, std::optional<WebCore::RemoteUserInputEventData> remoteUserInputEventData) {
         RefPtr protectedThis = weakThis;
-        if (!protectedThis)
+        if (!protectedThis || !remoteUserInputEventData)
             return;
-        protectedThis->handleTwoFingerTapAtPointInFrame(remoteUserInputEventData->targetFrameID, roundedIntPoint(FloatPoint { remoteUserInputEventData->transformedPoint }), modifiers, requestID);
+        RefPtr targetFrame = protectedThis->frameForRemoteUserInputEventRedispatch(connection, frameID, remoteUserInputEventData->targetFrameID);
+        if (!targetFrame)
+            return;
+        protectedThis->handleTwoFingerTapAtPointInFrame(targetFrame->frameID(), roundedIntPoint(FloatPoint { remoteUserInputEventData->transformedPoint }), modifiers, requestID);
     } });
 }
 
@@ -836,13 +837,14 @@ void WebPageProxy::tapHighlightAtPositionInFrame(std::optional<FrameIdentifier> 
     if (!frame || frame->page() != this)
         return;
 
-    sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::WebPage::TapHighlightAtPosition(frameID, requestID, position), Messages::WebPage::TapHighlightAtPosition::Reply { [weakThis = WeakPtr { *this }, requestID](auto remoteUserInputEventData) {
-        if (!remoteUserInputEventData)
-            return;
+    sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::WebPage::TapHighlightAtPosition(frameID, requestID, position), ReplyWithConnection<Messages::WebPage::TapHighlightAtPosition> { [weakThis = WeakPtr { *this }, frameID, requestID](IPC::Connection* connection, std::optional<WebCore::RemoteUserInputEventData> remoteUserInputEventData) {
         RefPtr protectedThis = weakThis;
-        if (!protectedThis)
+        if (!protectedThis || !remoteUserInputEventData)
             return;
-        protectedThis->tapHighlightAtPositionInFrame(remoteUserInputEventData->targetFrameID, FloatPoint { remoteUserInputEventData->transformedPoint }, requestID);
+        RefPtr targetFrame = protectedThis->frameForRemoteUserInputEventRedispatch(connection, frameID, remoteUserInputEventData->targetFrameID);
+        if (!targetFrame)
+            return;
+        protectedThis->tapHighlightAtPositionInFrame(targetFrame->frameID(), FloatPoint { remoteUserInputEventData->transformedPoint }, requestID);
     } });
 }
 
@@ -859,13 +861,14 @@ void WebPageProxy::attemptSyntheticClickInFrame(std::optional<FrameIdentifier> f
 
     frame->notifyActivated(MonotonicTime::now());
 
-    sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::WebPage::AttemptSyntheticClick(frameID, point, modifiers, layerTreeTransactionIdAtLastTouchStart), Messages::WebPage::AttemptSyntheticClick::Reply { [weakThis = WeakPtr { *this }, modifiers, layerTreeTransactionIdAtLastTouchStart](auto remoteUserInputEventData) {
-        if (!remoteUserInputEventData)
-            return;
+    sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::WebPage::AttemptSyntheticClick(frameID, point, modifiers, layerTreeTransactionIdAtLastTouchStart), ReplyWithConnection<Messages::WebPage::AttemptSyntheticClick> { [weakThis = WeakPtr { *this }, frameID, modifiers, layerTreeTransactionIdAtLastTouchStart](IPC::Connection* connection, std::optional<WebCore::RemoteUserInputEventData> remoteUserInputEventData) {
         RefPtr protectedThis = weakThis;
-        if (!protectedThis)
+        if (!protectedThis || !remoteUserInputEventData)
             return;
-        protectedThis->attemptSyntheticClickInFrame(remoteUserInputEventData->targetFrameID, roundedIntPoint(FloatPoint { remoteUserInputEventData->transformedPoint }), modifiers, layerTreeTransactionIdAtLastTouchStart);
+        RefPtr targetFrame = protectedThis->frameForRemoteUserInputEventRedispatch(connection, frameID, remoteUserInputEventData->targetFrameID);
+        if (!targetFrame)
+            return;
+        protectedThis->attemptSyntheticClickInFrame(targetFrame->frameID(), roundedIntPoint(FloatPoint { remoteUserInputEventData->transformedPoint }), modifiers, layerTreeTransactionIdAtLastTouchStart);
     } });
 }
 

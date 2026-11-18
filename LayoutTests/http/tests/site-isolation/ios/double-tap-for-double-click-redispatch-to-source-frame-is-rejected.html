@@ -1,0 +1,41 @@
+<!DOCTYPE html><!-- webkit-test-runner [ SiteIsolationEnabled=true IPCTestingAPIEnabled=true IgnoreInvalidMessageWhenIPCTestingAPIEnabled=true useFlexibleViewport=true ] -->
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<script src="/js-test-resources/ui-helper.js"></script>
+<script src="/site-isolation/resources/tap-redispatch.js"></script>
+<script>
+// The IPC testing API exists only in debug and ASan builds; this test passes either way.
+const summary = "Tests that the UI process rejects a double tap's redispatch to the frame it was sent to.";
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+async function runTest()
+{
+    if (!window.IPC || !window.testRunner) {
+        finishRedispatchTest(summary, "PASS");
+        return;
+    }
+
+    const forgedTargetFrameID = undefined;
+    const otherProcessRequestCount = undefined;
+    await UIHelper.ensurePresentationUpdate();
+    finishRedispatchTest(summary, await expectRedispatchIsRejected({
+        messageName: 'WebPage_HandleDoubleTapForDoubleClickAtPoint',
+        forgedTargetFrameID,
+        gesture: () => UIHelper.humanSpeedDoubleTapAt(50, 30),
+        otherProcessRequestCount,
+    }));
+}
+
+addEventListener('load', runTest);
+</script>
+<body style="margin: 0">
+<p style="margin: 0; height: 60px">main frame text</p>
+<script>document.querySelector('p').addEventListener('dblclick', () => { });</script>
+<iframe style="position: absolute; left: 0; top: 300px; width: 300px; height: 200px; border: none" src="http://localhost:8000/site-isolation/resources/100x100-blue-box-green-background.html"></iframe>
+<pre id="result"></pre>
+</body>
+</html>
