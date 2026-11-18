@@ -1,0 +1,71 @@
+{
+  'stderr' => '',
+  'stdout' => '',
+  'ranges' => [
+    [
+      '38',
+      '41',
+      'square'
+    ],
+    [
+      '43',
+      '46',
+      'rotate'
+    ],
+    [
+      '49',
+      '52',
+      'clampToUnit'
+    ],
+    [
+      '55',
+      '61',
+      'sumWeights'
+    ],
+    [
+      '67',
+      '70',
+      'Transform::apply const'
+    ],
+    [
+      '72',
+      '75',
+      'Transform::translate'
+    ],
+    [
+      '84',
+      '87',
+      'Shader::Kernel::tap const'
+    ],
+    [
+      '90',
+      '93',
+      'Shader::blend'
+    ],
+    [
+      '96',
+      '104',
+      'basic_vertex'
+    ],
+    [
+      '106',
+      '112',
+      'basic_fragment'
+    ],
+    [
+      '114',
+      '118',
+      'clear_buffer'
+    ],
+    [
+      '121',
+      '129',
+      'blur_kernel'
+    ],
+    [
+      '142',
+      '145',
+      'Effects::vignette'
+    ]
+  ]
+}

@@ -721,7 +721,7 @@ sub get_function_line_ranges($$)
 
     # Try to determine the source language based on the file extension.
 
-    return get_function_line_ranges_for_cpp($file_handle, $file_name) if $file_name =~ /\.(c|cpp|m|mm|h)$/;
+    return get_function_line_ranges_for_cpp($file_handle, $file_name) if $file_name =~ /\.(c|cpp|m|mm|h|metal)$/;
     return get_function_line_ranges_for_java($file_handle, $file_name) if $file_name =~ /\.java$/;
     return get_function_line_ranges_for_javascript($file_handle, $file_name) if $file_name =~ /\.js$/;
     return get_selector_line_ranges_for_css($file_handle, $file_name) if $file_name =~ /\.css$/;
@@ -1068,15 +1068,15 @@ sub get_function_line_ranges_for_cpp($$)
                 $in_braces--;
                 $brace_end = $. if (!$in_braces);
 
+                # This is the end of an array definition at the top level, not the end of a method.
+                if (!$in_braces and $in_toplevel_array_brace) {
+                    $in_toplevel_array_brace = 0;
+                    next if $name;
+                }
+
                 # End of an outer level set of braces.
                 # This could be a function body.
                 if (!$in_braces and $name) {
-                    # This is the end of an array definition at the top level, not the end of a method.
-                    if ($in_toplevel_array_brace) {
-                        $in_toplevel_array_brace = 0;
-                        next;
-                    }
-
                     push @ranges, [ $start, $., $name ];
                     if (@namespaces) {
                         $name = $namespaces[-1];

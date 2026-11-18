@@ -46,6 +46,7 @@ my %methodForFileExtension = (
     ".css" => "get_selector_line_ranges_for_css",
     ".java" => "get_function_line_ranges_for_java",
     ".js" => "get_function_line_ranges_for_javascript",
+    ".metal" => "get_function_line_ranges_for_cpp",
     ".pl" => "get_function_line_ranges_for_perl",
     ".py" => "get_function_line_ranges_for_python",
     ".swift" => "get_function_line_ranges_for_swift",
