@@ -1,6 +1,6 @@
 2d.color.space.toBlob.toDataURL.png.linear.float
 
 
-FAIL Test convertToBlob creates a png image using an appropriate encoding to not lose precision from a srgb-linear float16 canvas assert_greater_than: image/png encoding should produce >1000 unique values (this guarantees 16-bit encoding, but does not guarantee that the encoding was linear) expected a number greater than 1000 but got 183
-FAIL Test convertToBlob creates a png image using an appropriate encoding to not lose precision from a display-p3-linear float16 canvas assert_greater_than: image/png encoding should produce >1000 unique values (this guarantees 16-bit encoding, but does not guarantee that the encoding was linear) expected a number greater than 1000 but got 183
+PASS Test convertToBlob creates a png image using an appropriate encoding to not lose precision from a srgb-linear float16 canvas
+PASS Test convertToBlob creates a png image using an appropriate encoding to not lose precision from a display-p3-linear float16 canvas
 

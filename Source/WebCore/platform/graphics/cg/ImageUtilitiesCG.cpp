@@ -319,6 +319,30 @@ static RetainPtr<CFDictionaryRef> imagePropertiesForDestinationUTIAndQuality(CFS
     // in the calling functions, but it doesn't seem to work.
 }
 
+// When given an extended-range image to encode as PNG, CG converts it to a standard-range color space itself, and writes
+// 8 bits per component, which loses precision from float16 canvases.
+// So give it the same pixels in the standard-range version of the image's color space instead, which it encodes with
+// 16 bits per component.
+static RetainPtr<CGImageRef> createStandardRangeImageForPNGEncoding(CGImageRef image)
+{
+    RetainPtr colorSpace = CGImageGetColorSpace(image);
+    if (!CGColorSpaceUsesExtendedRange(colorSpace.get()))
+        return image;
+
+    RetainPtr standardRangeColorSpace = adoptCF(CGColorSpaceCreateCopyWithStandardRange(colorSpace.get()));
+    if (!standardRangeColorSpace)
+        return image;
+
+    RetainPtr dataProvider = CGImageGetDataProvider(image);
+    if (!dataProvider)
+        return image;
+
+    if (RetainPtr standardRangeImage = adoptCF(CGImageCreate(CGImageGetWidth(image), CGImageGetHeight(image), CGImageGetBitsPerComponent(image), CGImageGetBitsPerPixel(image), CGImageGetBytesPerRow(image), standardRangeColorSpace.get(), CGImageGetBitmapInfo(image), dataProvider.get(), CGImageGetDecode(image), CGImageGetShouldInterpolate(image), CGImageGetRenderingIntent(image))))
+        return standardRangeImage;
+
+    return image;
+}
+
 static bool encode(CGImageRef image, const String& mimeType, std::optional<double> quality, NOESCAPE const ScopedLambda<PutBytesCallback>& function)
 {
     if (!image)
@@ -340,7 +364,10 @@ static bool encode(CGImageRef image, const String& mimeType, std::optional<doubl
     auto destination = adoptCF(CGImageDestinationCreateWithDataConsumer(consumer.get(), destinationUTI.get(), 1, nullptr));
 
     auto imageProperties = imagePropertiesForDestinationUTIAndQuality(destinationUTI.get(), quality);
-    CGImageDestinationAddImage(destination.get(), image, imageProperties.get());
+    RetainPtr imageToEncode = image;
+    if (CFEqual(destinationUTI.get(), CFSTR("public.png")))
+        imageToEncode = createStandardRangeImageForPNGEncoding(image);
+    CGImageDestinationAddImage(destination.get(), imageToEncode.get(), imageProperties.get());
 
     return CGImageDestinationFinalize(destination.get());
 }
