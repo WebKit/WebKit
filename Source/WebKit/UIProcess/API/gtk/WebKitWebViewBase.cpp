@@ -3820,7 +3820,7 @@ void webkitWebViewBaseSetCursor(WebKitWebViewBase* webViewBase, const Cursor& cu
 
     auto cursorScale = cursor.imageScaleFactor();
     IntPoint effectiveHotSpot = determineHotSpot(cursor.image().get(), cursor.hotSpot()).scaled(1 / cursorScale);
-    auto& platformImage = nativeImage->platformImage();
+    auto platformImage = nativeImage->platformImage();
 
 #if USE(GTK4)
     if (cursorScale != 1) {
