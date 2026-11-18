@@ -1,0 +1,15 @@
+Tests that a layer is unregistered from an SVG filter it no longer references, and stays registered with the one it does reference.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Changing a filter that is no longer referenced should not repaint the element:
+PASS repaintRects.includes('300 300 50 50') is false
+PASS repaintRects.includes('400 300 50 50') is false
+
+Changing the newly referenced filter should repaint the element:
+PASS repaintRects.includes('400 300 50 50') is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
