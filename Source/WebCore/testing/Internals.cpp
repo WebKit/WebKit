@@ -667,6 +667,7 @@ void Internals::resetToConsistentState(Page& page)
 
     CachedMatchFinder::setMaximumRunCountForTesting(std::nullopt);
     UserGestureToken::setMaximumIntervalForUserGestureForwardingForFetchForTesting(std::nullopt);
+    Style::GridPosition::setMaxPositionForTesting(std::nullopt);
 
     if (auto enabled = std::exchange(trackingPreventionEnabledBeforeTest(), std::nullopt))
         DeprecatedGlobalSettings::setTrackingPreventionEnabled(*enabled);
