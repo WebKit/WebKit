@@ -59,7 +59,7 @@ void WakeLock::request(WakeLockType lockType, Ref<DeferredPromise>&& promise)
 {
     RefPtr document = this->document();
     if (!document || !document->isFullyActive() || !document->page()) {
-        promise->reject(Exception { ExceptionCode::NotAllowedError, "Document is not fully active"_s });
+        promise->reject(Exception { ExceptionCode::InvalidStateError, "Document is not fully active"_s });
         return;
     }
     if (!PermissionsPolicy::isFeatureEnabled(PermissionsPolicy::Feature::ScreenWakeLock, *document, PermissionsPolicy::ShouldReportViolation::Yes)) {
@@ -67,7 +67,7 @@ void WakeLock::request(WakeLockType lockType, Ref<DeferredPromise>&& promise)
         return;
     }
     if (document->visibilityState() == VisibilityState::Hidden) {
-        promise->reject(Exception { ExceptionCode::NotAllowedError, "Document is hidden"_s });
+        promise->reject(Exception { ExceptionCode::InvalidStateError, "Document is hidden"_s });
         return;
     }
 
@@ -89,11 +89,11 @@ void WakeLock::request(WakeLockType lockType, Ref<DeferredPromise>&& promise)
                 return;
             }
             if (!document->isFullyActive()) {
-                promise->reject(Exception { ExceptionCode::NotAllowedError, "Document is not fully active"_s });
+                promise->reject(Exception { ExceptionCode::AbortError, "Document is not fully active"_s });
                 return;
             }
             if (document->visibilityState() == VisibilityState::Hidden) {
-                promise->reject(Exception { ExceptionCode::NotAllowedError, "Document is hidden"_s });
+                promise->reject(Exception { ExceptionCode::InvalidStateError, "Document is hidden"_s });
                 return;
             }
             auto lock = WakeLockSentinel::create(document, lockType);
