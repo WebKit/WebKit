@@ -950,7 +950,11 @@ target_include_directories(WebKitSwift PRIVATE
     ${PAL_FRAMEWORK_HEADERS_DIR}
 )
 
+# The shared -Xcc set _WebKit_SwiftUI uses, so the two share module builds.
+_WEBKIT_COMPUTE_SWIFT_SHARED_CLANG_FLAGS(_wks_shared_cc_flags)
+list(TRANSFORM _wks_shared_cc_flags PREPEND "-Xcc ")
 webkit_target_add_swift_options(WebKitSwift
+    ${_wks_shared_cc_flags}
     -parse-as-library
     "-library-level other"
     -I${WEBKIT_DIR}/Platform/spi/Cocoa
@@ -1045,6 +1049,8 @@ list(APPEND WebKit_CODE_SIGN_INPUTS $<TARGET_FILE:WebKitSwift>)
 
 WEBKIT_RAISE_SWIFT_NINJA_PRIORITY(WebKit)
 WEBKIT_RAISE_SWIFT_NINJA_PRIORITY(WebKitSwift)
+
+WEBKIT_ADD_SWIFT_PREWARM(WebKitSwift SwiftPrewarmObjC.swift)
 
 unset(_wks_dir)
 
@@ -2291,6 +2297,13 @@ function(WEBKIT_DEFINE_PROCESS_EXTENSIONS)
         WEBKIT_EMBED_ENTITLEMENTS(${_name} ${_entitlements})
 
         WEBKIT_EXECUTABLE(${_name})
+
+        # The extensions share flags, so they share one prewarm.
+        if (NOT TARGET SwiftPrewarmIOSExtensions)
+            WEBKIT_ADD_SWIFT_PREWARM(${_name} SwiftPrewarmIOSExtensions.swift 12)
+        else ()
+            add_dependencies(${_name} SwiftPrewarmIOSExtensions)
+        endif ()
     endfunction()
 
     WEBKIT_RESOLVE_ENTITLEMENTS(_webcontent_ext_ents "WebContentProcessExtension.entitlements")
