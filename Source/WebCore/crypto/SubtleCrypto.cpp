@@ -435,6 +435,14 @@ NODELETE static CryptoKeyUsageBitmap toCryptoKeyUsageBitmap(CryptoKeyUsage usage
         return CryptoKeyUsageWrapKey;
     case CryptoKeyUsage::UnwrapKey:
         return CryptoKeyUsageUnwrapKey;
+    case CryptoKeyUsage::EncapsulateKey:
+        return CryptoKeyUsageEncapsulateKey;
+    case CryptoKeyUsage::EncapsulateBits:
+        return CryptoKeyUsageEncapsulateBits;
+    case CryptoKeyUsage::DecapsulateKey:
+        return CryptoKeyUsageDecapsulateKey;
+    case CryptoKeyUsage::DecapsulateBits:
+        return CryptoKeyUsageDecapsulateBits;
     }
 
     RELEASE_ASSERT_NOT_REACHED();
@@ -448,6 +456,14 @@ NODELETE static CryptoKeyUsageBitmap toCryptoKeyUsageBitmap(const Vector<CryptoK
         result |= toCryptoKeyUsageBitmap(usage);
 
     return result;
+}
+
+// Key encapsulation usages are valid KeyUsage values, but none of the algorithms we implement
+// support them. Most per-algorithm usage checks reject an explicit list of disallowed usages, so
+// these bits must be rejected here rather than relying on those checks.
+static bool LEGACY_NODELETE containsKeyEncapsulationUsage(CryptoKeyUsageBitmap usages)
+{
+    return usages & (CryptoKeyUsageEncapsulateKey | CryptoKeyUsageEncapsulateBits | CryptoKeyUsageDecapsulateKey | CryptoKeyUsageDecapsulateBits);
 }
 
 // Maybe we want more specific error messages?
@@ -782,6 +798,10 @@ void SubtleCrypto::generateKey(JSC::JSGlobalObject& state, AlgorithmIdentifier&&
     auto params = paramsOrException.releaseReturnValue();
 
     auto keyUsagesBitmap = toCryptoKeyUsageBitmap(keyUsages);
+    if (containsKeyEncapsulationUsage(keyUsagesBitmap)) {
+        promise->reject(Exception { ExceptionCode::SyntaxError });
+        return;
+    }
 
     auto algorithm = CryptoAlgorithmRegistry::singleton().create(params->identifier);
 
@@ -851,6 +871,11 @@ void SubtleCrypto::deriveKey(JSC::JSGlobalObject& state, AlgorithmIdentifier&& a
 
     if (!baseKey.allows(CryptoKeyUsageDeriveKey)) {
         promise->reject(ExceptionCode::InvalidAccessError, "CryptoKey doesn't support CryptoKey derivation"_s);
+        return;
+    }
+
+    if (containsKeyEncapsulationUsage(keyUsagesBitmap)) {
+        promise->reject(Exception { ExceptionCode::SyntaxError });
         return;
     }
 
@@ -949,6 +974,10 @@ void SubtleCrypto::importKey(JSC::JSGlobalObject& state, KeyFormat format, KeyDa
 
     auto keyData = *keyDataOrNull;
     auto keyUsagesBitmap = toCryptoKeyUsageBitmap(keyUsages);
+    if (containsKeyEncapsulationUsage(keyUsagesBitmap)) {
+        promise->reject(Exception { ExceptionCode::SyntaxError });
+        return;
+    }
 
     auto algorithm = CryptoAlgorithmRegistry::singleton().create(params->identifier);
 
@@ -1153,6 +1182,11 @@ void SubtleCrypto::unwrapKey(JSC::JSGlobalObject& state, KeyFormat format, Buffe
 
     if (!unwrappingKey.allows(CryptoKeyUsageUnwrapKey)) {
         promise->reject(ExceptionCode::InvalidAccessError, "Unwrapping CryptoKey doesn't support unwrapKey operation"_s);
+        return;
+    }
+
+    if (containsKeyEncapsulationUsage(keyUsagesBitmap)) {
+        promise->reject(Exception { ExceptionCode::SyntaxError });
         return;
     }
 

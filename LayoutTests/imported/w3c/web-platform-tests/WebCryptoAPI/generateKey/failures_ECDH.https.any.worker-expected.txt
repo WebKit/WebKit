@@ -29,26 +29,26 @@ PASS Bad usages: generateKey({name: ECDH, namedCurve: P-256}, true, [deriveKey, 
 PASS Bad usages: generateKey({name: ECDH, namedCurve: P-256}, true, [deriveBits, deriveKey, unwrapKey])
 PASS Bad usages: generateKey({name: ECDH, namedCurve: P-256}, true, [deriveBits, unwrapKey])
 PASS Bad usages: generateKey({name: ECDH, namedCurve: P-256}, true, [deriveKey, deriveBits, deriveKey, deriveBits, deriveKey, deriveBits, unwrapKey])
-FAIL Bad usages: generateKey({name: ECDH, namedCurve: P-256}, true, [encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({name: ECDH, namedCurve: P-256}, true, [deriveKey, encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({name: ECDH, namedCurve: P-256}, true, [deriveBits, deriveKey, encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({name: ECDH, namedCurve: P-256}, true, [deriveBits, encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({name: ECDH, namedCurve: P-256}, true, [deriveKey, deriveBits, deriveKey, deriveBits, deriveKey, deriveBits, encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({name: ECDH, namedCurve: P-256}, true, [encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({name: ECDH, namedCurve: P-256}, true, [deriveKey, encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({name: ECDH, namedCurve: P-256}, true, [deriveBits, deriveKey, encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({name: ECDH, namedCurve: P-256}, true, [deriveBits, encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({name: ECDH, namedCurve: P-256}, true, [deriveKey, deriveBits, deriveKey, deriveBits, deriveKey, deriveBits, encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({name: ECDH, namedCurve: P-256}, true, [decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({name: ECDH, namedCurve: P-256}, true, [deriveKey, decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({name: ECDH, namedCurve: P-256}, true, [deriveBits, deriveKey, decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({name: ECDH, namedCurve: P-256}, true, [deriveBits, decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({name: ECDH, namedCurve: P-256}, true, [deriveKey, deriveBits, deriveKey, deriveBits, deriveKey, deriveBits, decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({name: ECDH, namedCurve: P-256}, true, [decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({name: ECDH, namedCurve: P-256}, true, [deriveKey, decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({name: ECDH, namedCurve: P-256}, true, [deriveBits, deriveKey, decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({name: ECDH, namedCurve: P-256}, true, [deriveBits, decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({name: ECDH, namedCurve: P-256}, true, [deriveKey, deriveBits, deriveKey, deriveBits, deriveKey, deriveBits, decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+PASS Bad usages: generateKey({name: ECDH, namedCurve: P-256}, true, [encapsulateKey])
+PASS Bad usages: generateKey({name: ECDH, namedCurve: P-256}, true, [deriveKey, encapsulateKey])
+PASS Bad usages: generateKey({name: ECDH, namedCurve: P-256}, true, [deriveBits, deriveKey, encapsulateKey])
+PASS Bad usages: generateKey({name: ECDH, namedCurve: P-256}, true, [deriveBits, encapsulateKey])
+PASS Bad usages: generateKey({name: ECDH, namedCurve: P-256}, true, [deriveKey, deriveBits, deriveKey, deriveBits, deriveKey, deriveBits, encapsulateKey])
+PASS Bad usages: generateKey({name: ECDH, namedCurve: P-256}, true, [encapsulateBits])
+PASS Bad usages: generateKey({name: ECDH, namedCurve: P-256}, true, [deriveKey, encapsulateBits])
+PASS Bad usages: generateKey({name: ECDH, namedCurve: P-256}, true, [deriveBits, deriveKey, encapsulateBits])
+PASS Bad usages: generateKey({name: ECDH, namedCurve: P-256}, true, [deriveBits, encapsulateBits])
+PASS Bad usages: generateKey({name: ECDH, namedCurve: P-256}, true, [deriveKey, deriveBits, deriveKey, deriveBits, deriveKey, deriveBits, encapsulateBits])
+PASS Bad usages: generateKey({name: ECDH, namedCurve: P-256}, true, [decapsulateKey])
+PASS Bad usages: generateKey({name: ECDH, namedCurve: P-256}, true, [deriveKey, decapsulateKey])
+PASS Bad usages: generateKey({name: ECDH, namedCurve: P-256}, true, [deriveBits, deriveKey, decapsulateKey])
+PASS Bad usages: generateKey({name: ECDH, namedCurve: P-256}, true, [deriveBits, decapsulateKey])
+PASS Bad usages: generateKey({name: ECDH, namedCurve: P-256}, true, [deriveKey, deriveBits, deriveKey, deriveBits, deriveKey, deriveBits, decapsulateKey])
+PASS Bad usages: generateKey({name: ECDH, namedCurve: P-256}, true, [decapsulateBits])
+PASS Bad usages: generateKey({name: ECDH, namedCurve: P-256}, true, [deriveKey, decapsulateBits])
+PASS Bad usages: generateKey({name: ECDH, namedCurve: P-256}, true, [deriveBits, deriveKey, decapsulateBits])
+PASS Bad usages: generateKey({name: ECDH, namedCurve: P-256}, true, [deriveBits, decapsulateBits])
+PASS Bad usages: generateKey({name: ECDH, namedCurve: P-256}, true, [deriveKey, deriveBits, deriveKey, deriveBits, deriveKey, deriveBits, decapsulateBits])
 PASS Bad usages: generateKey({name: ECDH, namedCurve: P-384}, true, [encrypt])
 PASS Bad usages: generateKey({name: ECDH, namedCurve: P-384}, true, [deriveKey, encrypt])
 PASS Bad usages: generateKey({name: ECDH, namedCurve: P-384}, true, [deriveBits, deriveKey, encrypt])
@@ -79,26 +79,26 @@ PASS Bad usages: generateKey({name: ECDH, namedCurve: P-384}, true, [deriveKey, 
 PASS Bad usages: generateKey({name: ECDH, namedCurve: P-384}, true, [deriveBits, deriveKey, unwrapKey])
 PASS Bad usages: generateKey({name: ECDH, namedCurve: P-384}, true, [deriveBits, unwrapKey])
 PASS Bad usages: generateKey({name: ECDH, namedCurve: P-384}, true, [deriveKey, deriveBits, deriveKey, deriveBits, deriveKey, deriveBits, unwrapKey])
-FAIL Bad usages: generateKey({name: ECDH, namedCurve: P-384}, true, [encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({name: ECDH, namedCurve: P-384}, true, [deriveKey, encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({name: ECDH, namedCurve: P-384}, true, [deriveBits, deriveKey, encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({name: ECDH, namedCurve: P-384}, true, [deriveBits, encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({name: ECDH, namedCurve: P-384}, true, [deriveKey, deriveBits, deriveKey, deriveBits, deriveKey, deriveBits, encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({name: ECDH, namedCurve: P-384}, true, [encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({name: ECDH, namedCurve: P-384}, true, [deriveKey, encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({name: ECDH, namedCurve: P-384}, true, [deriveBits, deriveKey, encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({name: ECDH, namedCurve: P-384}, true, [deriveBits, encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({name: ECDH, namedCurve: P-384}, true, [deriveKey, deriveBits, deriveKey, deriveBits, deriveKey, deriveBits, encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({name: ECDH, namedCurve: P-384}, true, [decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({name: ECDH, namedCurve: P-384}, true, [deriveKey, decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({name: ECDH, namedCurve: P-384}, true, [deriveBits, deriveKey, decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({name: ECDH, namedCurve: P-384}, true, [deriveBits, decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({name: ECDH, namedCurve: P-384}, true, [deriveKey, deriveBits, deriveKey, deriveBits, deriveKey, deriveBits, decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({name: ECDH, namedCurve: P-384}, true, [decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({name: ECDH, namedCurve: P-384}, true, [deriveKey, decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({name: ECDH, namedCurve: P-384}, true, [deriveBits, deriveKey, decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({name: ECDH, namedCurve: P-384}, true, [deriveBits, decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({name: ECDH, namedCurve: P-384}, true, [deriveKey, deriveBits, deriveKey, deriveBits, deriveKey, deriveBits, decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+PASS Bad usages: generateKey({name: ECDH, namedCurve: P-384}, true, [encapsulateKey])
+PASS Bad usages: generateKey({name: ECDH, namedCurve: P-384}, true, [deriveKey, encapsulateKey])
+PASS Bad usages: generateKey({name: ECDH, namedCurve: P-384}, true, [deriveBits, deriveKey, encapsulateKey])
+PASS Bad usages: generateKey({name: ECDH, namedCurve: P-384}, true, [deriveBits, encapsulateKey])
+PASS Bad usages: generateKey({name: ECDH, namedCurve: P-384}, true, [deriveKey, deriveBits, deriveKey, deriveBits, deriveKey, deriveBits, encapsulateKey])
+PASS Bad usages: generateKey({name: ECDH, namedCurve: P-384}, true, [encapsulateBits])
+PASS Bad usages: generateKey({name: ECDH, namedCurve: P-384}, true, [deriveKey, encapsulateBits])
+PASS Bad usages: generateKey({name: ECDH, namedCurve: P-384}, true, [deriveBits, deriveKey, encapsulateBits])
+PASS Bad usages: generateKey({name: ECDH, namedCurve: P-384}, true, [deriveBits, encapsulateBits])
+PASS Bad usages: generateKey({name: ECDH, namedCurve: P-384}, true, [deriveKey, deriveBits, deriveKey, deriveBits, deriveKey, deriveBits, encapsulateBits])
+PASS Bad usages: generateKey({name: ECDH, namedCurve: P-384}, true, [decapsulateKey])
+PASS Bad usages: generateKey({name: ECDH, namedCurve: P-384}, true, [deriveKey, decapsulateKey])
+PASS Bad usages: generateKey({name: ECDH, namedCurve: P-384}, true, [deriveBits, deriveKey, decapsulateKey])
+PASS Bad usages: generateKey({name: ECDH, namedCurve: P-384}, true, [deriveBits, decapsulateKey])
+PASS Bad usages: generateKey({name: ECDH, namedCurve: P-384}, true, [deriveKey, deriveBits, deriveKey, deriveBits, deriveKey, deriveBits, decapsulateKey])
+PASS Bad usages: generateKey({name: ECDH, namedCurve: P-384}, true, [decapsulateBits])
+PASS Bad usages: generateKey({name: ECDH, namedCurve: P-384}, true, [deriveKey, decapsulateBits])
+PASS Bad usages: generateKey({name: ECDH, namedCurve: P-384}, true, [deriveBits, deriveKey, decapsulateBits])
+PASS Bad usages: generateKey({name: ECDH, namedCurve: P-384}, true, [deriveBits, decapsulateBits])
+PASS Bad usages: generateKey({name: ECDH, namedCurve: P-384}, true, [deriveKey, deriveBits, deriveKey, deriveBits, deriveKey, deriveBits, decapsulateBits])
 PASS Bad usages: generateKey({name: ECDH, namedCurve: P-521}, true, [encrypt])
 PASS Bad usages: generateKey({name: ECDH, namedCurve: P-521}, true, [deriveKey, encrypt])
 PASS Bad usages: generateKey({name: ECDH, namedCurve: P-521}, true, [deriveBits, deriveKey, encrypt])
@@ -129,26 +129,26 @@ PASS Bad usages: generateKey({name: ECDH, namedCurve: P-521}, true, [deriveKey, 
 PASS Bad usages: generateKey({name: ECDH, namedCurve: P-521}, true, [deriveBits, deriveKey, unwrapKey])
 PASS Bad usages: generateKey({name: ECDH, namedCurve: P-521}, true, [deriveBits, unwrapKey])
 PASS Bad usages: generateKey({name: ECDH, namedCurve: P-521}, true, [deriveKey, deriveBits, deriveKey, deriveBits, deriveKey, deriveBits, unwrapKey])
-FAIL Bad usages: generateKey({name: ECDH, namedCurve: P-521}, true, [encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({name: ECDH, namedCurve: P-521}, true, [deriveKey, encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({name: ECDH, namedCurve: P-521}, true, [deriveBits, deriveKey, encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({name: ECDH, namedCurve: P-521}, true, [deriveBits, encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({name: ECDH, namedCurve: P-521}, true, [deriveKey, deriveBits, deriveKey, deriveBits, deriveKey, deriveBits, encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({name: ECDH, namedCurve: P-521}, true, [encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({name: ECDH, namedCurve: P-521}, true, [deriveKey, encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({name: ECDH, namedCurve: P-521}, true, [deriveBits, deriveKey, encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({name: ECDH, namedCurve: P-521}, true, [deriveBits, encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({name: ECDH, namedCurve: P-521}, true, [deriveKey, deriveBits, deriveKey, deriveBits, deriveKey, deriveBits, encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({name: ECDH, namedCurve: P-521}, true, [decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({name: ECDH, namedCurve: P-521}, true, [deriveKey, decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({name: ECDH, namedCurve: P-521}, true, [deriveBits, deriveKey, decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({name: ECDH, namedCurve: P-521}, true, [deriveBits, decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({name: ECDH, namedCurve: P-521}, true, [deriveKey, deriveBits, deriveKey, deriveBits, deriveKey, deriveBits, decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({name: ECDH, namedCurve: P-521}, true, [decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({name: ECDH, namedCurve: P-521}, true, [deriveKey, decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({name: ECDH, namedCurve: P-521}, true, [deriveBits, deriveKey, decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({name: ECDH, namedCurve: P-521}, true, [deriveBits, decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({name: ECDH, namedCurve: P-521}, true, [deriveKey, deriveBits, deriveKey, deriveBits, deriveKey, deriveBits, decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+PASS Bad usages: generateKey({name: ECDH, namedCurve: P-521}, true, [encapsulateKey])
+PASS Bad usages: generateKey({name: ECDH, namedCurve: P-521}, true, [deriveKey, encapsulateKey])
+PASS Bad usages: generateKey({name: ECDH, namedCurve: P-521}, true, [deriveBits, deriveKey, encapsulateKey])
+PASS Bad usages: generateKey({name: ECDH, namedCurve: P-521}, true, [deriveBits, encapsulateKey])
+PASS Bad usages: generateKey({name: ECDH, namedCurve: P-521}, true, [deriveKey, deriveBits, deriveKey, deriveBits, deriveKey, deriveBits, encapsulateKey])
+PASS Bad usages: generateKey({name: ECDH, namedCurve: P-521}, true, [encapsulateBits])
+PASS Bad usages: generateKey({name: ECDH, namedCurve: P-521}, true, [deriveKey, encapsulateBits])
+PASS Bad usages: generateKey({name: ECDH, namedCurve: P-521}, true, [deriveBits, deriveKey, encapsulateBits])
+PASS Bad usages: generateKey({name: ECDH, namedCurve: P-521}, true, [deriveBits, encapsulateBits])
+PASS Bad usages: generateKey({name: ECDH, namedCurve: P-521}, true, [deriveKey, deriveBits, deriveKey, deriveBits, deriveKey, deriveBits, encapsulateBits])
+PASS Bad usages: generateKey({name: ECDH, namedCurve: P-521}, true, [decapsulateKey])
+PASS Bad usages: generateKey({name: ECDH, namedCurve: P-521}, true, [deriveKey, decapsulateKey])
+PASS Bad usages: generateKey({name: ECDH, namedCurve: P-521}, true, [deriveBits, deriveKey, decapsulateKey])
+PASS Bad usages: generateKey({name: ECDH, namedCurve: P-521}, true, [deriveBits, decapsulateKey])
+PASS Bad usages: generateKey({name: ECDH, namedCurve: P-521}, true, [deriveKey, deriveBits, deriveKey, deriveBits, deriveKey, deriveBits, decapsulateKey])
+PASS Bad usages: generateKey({name: ECDH, namedCurve: P-521}, true, [decapsulateBits])
+PASS Bad usages: generateKey({name: ECDH, namedCurve: P-521}, true, [deriveKey, decapsulateBits])
+PASS Bad usages: generateKey({name: ECDH, namedCurve: P-521}, true, [deriveBits, deriveKey, decapsulateBits])
+PASS Bad usages: generateKey({name: ECDH, namedCurve: P-521}, true, [deriveBits, decapsulateBits])
+PASS Bad usages: generateKey({name: ECDH, namedCurve: P-521}, true, [deriveKey, deriveBits, deriveKey, deriveBits, deriveKey, deriveBits, decapsulateBits])
 PASS Bad algorithm property: generateKey({name: ECDH, namedCurve: P-512}, false, [deriveKey])
 PASS Bad algorithm property: generateKey({name: ECDH, namedCurve: P-512}, true, [deriveKey])
 PASS Bad algorithm property: generateKey({name: ECDH, namedCurve: P-512}, false, [deriveBits, deriveKey])
