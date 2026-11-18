@@ -58,7 +58,9 @@ public:
     static void updateFromPathElement(SVGMarkerData& markerData, const PathElement& element)
     {
         // First update the outslope for the previous element.
-        if (element.type != PathElement::Type::MoveToPoint)
+        if (element.type == PathElement::Type::CloseSubpath)
+            markerData.updateOutslope(markerData.m_subpathStart);
+        else if (element.type != PathElement::Type::MoveToPoint)
             markerData.updateOutslope(element.points[0]);
 
         // Record the marker for the previous element.
@@ -147,9 +149,9 @@ private:
             m_origin = points[0];
             break;
         case PathElement::Type::CloseSubpath:
-            updateInslope(points[0]);
+            updateInslope(m_subpathStart);
             m_origin = m_subpathStart;
-            m_subpathStart = FloatPoint();
+            break;
         }
     }
 
