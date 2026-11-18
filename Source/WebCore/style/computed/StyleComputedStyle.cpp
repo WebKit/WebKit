@@ -575,10 +575,7 @@ BlendMode ComputedStyle::usedBlendMode() const
 
 Color ComputedStyle::usedBackgroundColor() const
 {
-    if (auto overrideColor = m_nonInheritedData->rareData->overrideBackgroundColor) [[unlikely]]
-        return *overrideColor;
-
-    return backgroundColor();
+    return m_nonInheritedData->backgroundData->usedBackgroundColor();
 }
 
 WebCore::Color ComputedStyle::usedBackgroundColorResolvingCurrentColor(StyleColorOptionsPurpose purpose) const

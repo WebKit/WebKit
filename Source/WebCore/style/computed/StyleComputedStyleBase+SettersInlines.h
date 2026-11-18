@@ -249,7 +249,8 @@ inline void ComputedStyleBase::setUsedAppearance(StyleAppearance a)
 
 inline void ComputedStyleBase::setOverrideBackgroundColor(std::optional<Color>&& color)
 {
-    SET_NESTED(m_nonInheritedData, rareData, overrideBackgroundColor, WTF::move(color));
+    if (color != m_nonInheritedData->backgroundData->overrideBackgroundColor)
+        m_nonInheritedData.access().backgroundData.access().overrideBackgroundColor = WTF::move(color);
 }
 
 inline void ComputedStyleBase::setUsedUserSelect(UserSelect userSelect)

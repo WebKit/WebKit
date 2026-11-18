@@ -49,10 +49,12 @@ public:
 
     BackgroundLayers background;
     Color backgroundColor;
+    Markable<Color> overrideBackgroundColor;
     OutlineValue outline;
 
     void dump(TextStream&, DumpStyleValues = DumpStyleValues::All) const;
 
+    Color usedBackgroundColor() const;
     bool containsCurrentColor() const;
     bool backgroundContainsCurrentColor() const;
 
