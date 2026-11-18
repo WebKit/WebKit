@@ -773,6 +773,9 @@ imported/w3c/web-platform-tests/css/css-inline/alignment-baseline/alignment-base
 # Passing since 2026-11-15 (326780@main..326784@main).
 imported/w3c/web-platform-tests/css/css-backgrounds/background-clip/clip-text-background-table-cell.html [ Pass ]
 
+# Passing since 326993@main.
+imported/w3c/web-platform-tests/svg/text/reftests/text-bidi-controls-anchors-1.svg [ Pass ]
+
 # Passing since 312965@main.
 imported/w3c/web-platform-tests/css/css-tables/calc-percent-plus-0px-auto.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-tables/calc-percent-plus-0px-fixed.html [ Pass ]
@@ -5035,9 +5038,6 @@ webkit.org/b/227061 imported/w3c/web-platform-tests/css/css-ui/outline-negative-
 
 imported/w3c/web-platform-tests/dom/events/scrolling/scrollend-event-fires-for-repeat-key-ending-after-scroll-container-end-is-reached.html [ Failure ] # Different outputs
 
-webkit.org/b/224596 imported/w3c/web-platform-tests/css/css-grid/grid-model/grid-container-scrollbar-vertical-lr-001.html [ ImageOnlyFailure ]
-webkit.org/b/224596 imported/w3c/web-platform-tests/css/css-grid/grid-model/grid-container-scrollbar-vertical-rl-001.html [ ImageOnlyFailure ]
-webkit.org/b/306384 imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-rendering.html [ ImageOnlyFailure ]
 webkit.org/b/306384 imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-target-margin-002.html [ ImageOnlyFailure ]
 webkit.org/b/306384 imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-target-margin-004.html [ ImageOnlyFailure ]
 webkit.org/b/306384 imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-target-padding-002.html [ ImageOnlyFailure ]
@@ -5243,6 +5243,29 @@ webkit.org/b/327259 imported/w3c/web-platform-tests/html/browsers/browsing-the-w
 webkit.org/b/331423 imported/w3c/web-platform-tests/gpc/navigator-globalPrivacyControl.https.html [ Failure Pass ]
 webkit.org/b/331425 http/tests/workers/service/Client-properties-subframe.html [ Crash Pass ]
 webkit.org/b/297001 http/tests/local/blob/navigate-blob.html [ Crash Failure Pass ]
+
+webkit.org/b/332135 [ Debug ] inspector/layers/layerTreeDidChange.html [ Failure Pass ]
+
+webkit.org/b/332153 imported/w3c/web-platform-tests/upgrade-insecure-requests/gen/srcdoc-inherit.meta/unset/fetch.https.html [ Failure Pass ]
+webkit.org/b/332153 imported/w3c/web-platform-tests/upgrade-insecure-requests/gen/srcdoc-inherit.meta/unset/sharedworker-classic.https.html [ Failure Pass ]
+webkit.org/b/332153 imported/w3c/web-platform-tests/upgrade-insecure-requests/gen/srcdoc-inherit.meta/unset/sharedworker-module.https.html [ Failure Pass ]
+webkit.org/b/332153 imported/w3c/web-platform-tests/upgrade-insecure-requests/gen/srcdoc-inherit.meta/unset/worker-import-data.https.html [ Failure Pass ]
+webkit.org/b/332153 imported/w3c/web-platform-tests/upgrade-insecure-requests/gen/srcdoc-inherit.meta/unset/worker-import.https.html [ Failure Pass ]
+webkit.org/b/332153 imported/w3c/web-platform-tests/upgrade-insecure-requests/gen/srcdoc-inherit.meta/unset/worklet-audio.https.html [ Failure Pass ]
+webkit.org/b/332153 imported/w3c/web-platform-tests/upgrade-insecure-requests/gen/srcdoc-inherit.meta/unset/worklet-audio-import-data.https.html [ Failure Pass ]
+webkit.org/b/332153 imported/w3c/web-platform-tests/upgrade-insecure-requests/gen/srcdoc-inherit.meta/unset/xhr.https.html [ Failure Pass ]
+webkit.org/b/332153 imported/w3c/web-platform-tests/upgrade-insecure-requests/gen/top.meta/unset/fetch.https.html [ Failure Pass ]
+webkit.org/b/332153 imported/w3c/web-platform-tests/upgrade-insecure-requests/gen/top.meta/unset/sharedworker-classic.https.html [ Failure Pass ]
+webkit.org/b/332153 imported/w3c/web-platform-tests/upgrade-insecure-requests/gen/top.meta/unset/sharedworker-module.https.html [ Failure Pass ]
+webkit.org/b/332153 imported/w3c/web-platform-tests/upgrade-insecure-requests/gen/top.meta/unset/worker-import-data.https.html [ Failure Pass ]
+webkit.org/b/332153 imported/w3c/web-platform-tests/upgrade-insecure-requests/gen/top.meta/unset/worker-import.https.html [ Failure Pass ]
+webkit.org/b/332153 imported/w3c/web-platform-tests/upgrade-insecure-requests/gen/top.meta/unset/worklet-audio.https.html [ Failure Pass ]
+webkit.org/b/332153 imported/w3c/web-platform-tests/upgrade-insecure-requests/gen/top.meta/unset/worklet-audio-import-data.https.html [ Failure Pass ]
+webkit.org/b/332153 imported/w3c/web-platform-tests/upgrade-insecure-requests/gen/top.meta/unset/xhr.https.html [ Failure Pass ]
+webkit.org/b/332153 imported/w3c/web-platform-tests/upgrade-insecure-requests/gen/worker-classic-data.meta/unset/fetch.https.html [ Failure Pass ]
+webkit.org/b/332153 imported/w3c/web-platform-tests/upgrade-insecure-requests/gen/worker-classic-data.meta/unset/xhr.https.html [ Failure Pass ]
+webkit.org/b/332153 imported/w3c/web-platform-tests/upgrade-insecure-requests/gen/worker-module-data.meta/unset/fetch.https.html [ Failure Pass ]
+webkit.org/b/332153 imported/w3c/web-platform-tests/upgrade-insecure-requests/gen/worker-module-data.meta/unset/xhr.https.html [ Failure Pass ]
 
 # End: Common failures between GTK and WPE.
 

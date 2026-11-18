@@ -151,24 +151,34 @@ https://www.goodreads.com/
 https://www.google.com/
     NeedsSingleOwnerMainFrameCNAMECloakingCookieCapQuirk
         secondaryURL: [*://*.youtube.com/*, *://*.google.com/*]
+    NeedsStorageAccessForGoogleMyAccountProfilePictureIframeQuirk
+        secondaryURL: [*://myaccount.google.com/*?*startPath=profile-picture*]
     ShouldBypassBackForwardCacheWhenElementMatchesQuirk
         documentSelector: body > div.docs-homescreen-freeze-el-full:first-child
 https://www.google.com/search
     NeedsSingleOwnerMainFrameCNAMECloakingCookieCapQuirk
         secondaryURL: [*://*.youtube.com/*, *://*.google.com/*]
+    NeedsStorageAccessForGoogleMyAccountProfilePictureIframeQuirk
+        secondaryURL: [*://myaccount.google.com/*?*startPath=profile-picture*]
     ShouldBypassBackForwardCacheWhenElementMatchesQuirk
         documentSelector: body > div.docs-homescreen-freeze-el-full:first-child
 https://www.google.com/search/howsearchworks
     NeedsSingleOwnerMainFrameCNAMECloakingCookieCapQuirk
         secondaryURL: [*://*.youtube.com/*, *://*.google.com/*]
+    NeedsStorageAccessForGoogleMyAccountProfilePictureIframeQuirk
+        secondaryURL: [*://myaccount.google.com/*?*startPath=profile-picture*]
     ShouldBypassBackForwardCacheWhenElementMatchesQuirk
         documentSelector: body > div.docs-homescreen-freeze-el-full:first-child
 https://www.google.co.jp/search
+    NeedsStorageAccessForGoogleMyAccountProfilePictureIframeQuirk
+        secondaryURL: [*://myaccount.google.com/*?*startPath=profile-picture*]
     ShouldBypassBackForwardCacheWhenElementMatchesQuirk
         documentSelector: body > div.docs-homescreen-freeze-el-full:first-child
 https://www.google.com/maps
     NeedsSingleOwnerMainFrameCNAMECloakingCookieCapQuirk
         secondaryURL: [*://*.youtube.com/*, *://*.google.com/*]
+    NeedsStorageAccessForGoogleMyAccountProfilePictureIframeQuirk
+        secondaryURL: [*://myaccount.google.com/*?*startPath=profile-picture*]
     ShouldAvoidResizingWhenInputViewBoundsChangeQuirk
     ShouldBypassBackForwardCacheWhenElementMatchesQuirk
         documentSelector: body > div.docs-homescreen-freeze-el-full:first-child
@@ -176,6 +186,8 @@ https://www.google.com/maps
 https://www.google.com/maps/
     NeedsSingleOwnerMainFrameCNAMECloakingCookieCapQuirk
         secondaryURL: [*://*.youtube.com/*, *://*.google.com/*]
+    NeedsStorageAccessForGoogleMyAccountProfilePictureIframeQuirk
+        secondaryURL: [*://myaccount.google.com/*?*startPath=profile-picture*]
     ShouldAvoidResizingWhenInputViewBoundsChangeQuirk
     ShouldBypassBackForwardCacheWhenElementMatchesQuirk
         documentSelector: body > div.docs-homescreen-freeze-el-full:first-child
@@ -183,6 +195,8 @@ https://www.google.com/maps/
 https://www.google.com/maps/@37.33,-122.01,15z
     NeedsSingleOwnerMainFrameCNAMECloakingCookieCapQuirk
         secondaryURL: [*://*.youtube.com/*, *://*.google.com/*]
+    NeedsStorageAccessForGoogleMyAccountProfilePictureIframeQuirk
+        secondaryURL: [*://myaccount.google.com/*?*startPath=profile-picture*]
     ShouldAvoidResizingWhenInputViewBoundsChangeQuirk
     ShouldBypassBackForwardCacheWhenElementMatchesQuirk
         documentSelector: body > div.docs-homescreen-freeze-el-full:first-child
@@ -190,11 +204,15 @@ https://www.google.com/maps/@37.33,-122.01,15z
 https://www.google.com/mapsearch
     NeedsSingleOwnerMainFrameCNAMECloakingCookieCapQuirk
         secondaryURL: [*://*.youtube.com/*, *://*.google.com/*]
+    NeedsStorageAccessForGoogleMyAccountProfilePictureIframeQuirk
+        secondaryURL: [*://myaccount.google.com/*?*startPath=profile-picture*]
     ShouldBypassBackForwardCacheWhenElementMatchesQuirk
         documentSelector: body > div.docs-homescreen-freeze-el-full:first-child
 https://maps.google.com/maps/
     NeedsSingleOwnerMainFrameCNAMECloakingCookieCapQuirk
         secondaryURL: [*://*.youtube.com/*, *://*.google.com/*]
+    NeedsStorageAccessForGoogleMyAccountProfilePictureIframeQuirk
+        secondaryURL: [*://myaccount.google.com/*?*startPath=profile-picture*]
     ShouldAvoidResizingWhenInputViewBoundsChangeQuirk
     ShouldBypassBackForwardCacheWhenElementMatchesQuirk
         documentSelector: body > div.docs-homescreen-freeze-el-full:first-child
@@ -203,21 +221,29 @@ https://docs.google.com/
     InputMethodUsesCorrectKeyEventOrder
     NeedsSingleOwnerMainFrameCNAMECloakingCookieCapQuirk
         secondaryURL: [*://*.youtube.com/*, *://*.google.com/*]
+    NeedsStorageAccessForGoogleMyAccountProfilePictureIframeQuirk
+        secondaryURL: [*://myaccount.google.com/*?*startPath=profile-picture*]
     ShouldBypassBackForwardCacheWhenElementMatchesQuirk
         documentSelector: body > div.docs-homescreen-freeze-el-full:first-child
 https://translate.google.com/
     NeedsSingleOwnerMainFrameCNAMECloakingCookieCapQuirk
         secondaryURL: [*://*.youtube.com/*, *://*.google.com/*]
+    NeedsStorageAccessForGoogleMyAccountProfilePictureIframeQuirk
+        secondaryURL: [*://myaccount.google.com/*?*startPath=profile-picture*]
     ShouldBypassBackForwardCacheWhenElementMatchesQuirk
         documentSelector: body > div.docs-homescreen-freeze-el-full:first-child
 https://mail.google.com/
     NeedsSingleOwnerMainFrameCNAMECloakingCookieCapQuirk
         secondaryURL: [*://*.youtube.com/*, *://*.google.com/*]
+    NeedsStorageAccessForGoogleMyAccountProfilePictureIframeQuirk
+        secondaryURL: [*://myaccount.google.com/*?*startPath=profile-picture*]
     ShouldBypassBackForwardCacheWhenElementMatchesQuirk
         documentSelector: body > div.docs-homescreen-freeze-el-full:first-child
 https://sites.google.com/
     NeedsSingleOwnerMainFrameCNAMECloakingCookieCapQuirk
         secondaryURL: [*://*.youtube.com/*, *://*.google.com/*]
+    NeedsStorageAccessForGoogleMyAccountProfilePictureIframeQuirk
+        secondaryURL: [*://myaccount.google.com/*?*startPath=profile-picture*]
     ShouldBypassBackForwardCacheWhenElementMatchesQuirk
         documentSelector: body > div.docs-homescreen-freeze-el-full:first-child
     ShouldPreventTouchEndDispatchQuirk
@@ -225,10 +251,14 @@ https://sites.google.com/
 https://meet.google.com/
     NeedsSingleOwnerMainFrameCNAMECloakingCookieCapQuirk
         secondaryURL: [*://*.youtube.com/*, *://*.google.com/*]
+    NeedsStorageAccessForGoogleMyAccountProfilePictureIframeQuirk
+        secondaryURL: [*://myaccount.google.com/*?*startPath=profile-picture*]
     ShouldBypassBackForwardCacheWhenElementMatchesQuirk
         documentSelector: body > div.docs-homescreen-freeze-el-full:first-child
     ShouldEnableCameraBackgroundPlayback
 https://www.google.co.uk/
+    NeedsStorageAccessForGoogleMyAccountProfilePictureIframeQuirk
+        secondaryURL: [*://myaccount.google.com/*?*startPath=profile-picture*]
     ShouldBypassBackForwardCacheWhenElementMatchesQuirk
         documentSelector: body > div.docs-homescreen-freeze-el-full:first-child
 https://www.hbomax.com/
@@ -518,7 +548,8 @@ https://www.yahoo.com/
         styleSheet: div.vjs-volume-control { min-height: 100%; align-items: center; }
     ShouldAvoidStartingSelectionOnMouseDownOverPointerCursor
 https://news.yahoo.co.jp/
-    NeedsYahooVolumeSliderQuirk
+    NeedsStyleSheetInjectedQuirk
+        styleSheet: div.vjs-volume-control { min-height: 100%; align-items: center; }
     ShouldAvoidStartingSelectionOnMouseDownOverPointerCursor
     ShouldDisableCSSSizeShorthandQuirk
 https://news.ycombinator.com/

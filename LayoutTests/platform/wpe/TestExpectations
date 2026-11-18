@@ -1222,12 +1222,13 @@ webkit.org/b/329972 [ arm64 ] media/modern-media-controls/scrubber-support/scrub
 webkit.org/b/310411 [ arm64 ] fast/events/site-isolation/event-timing-back-forward-cache-duration.html [ Pass Failure ]
 [ arm64 ] imported/w3c/web-platform-tests/event-timing/pointerdown-pointerup-no-overlap.html [ Failure ]
 webkit.org/b/330312 [ arm64 ] accessibility/accessible-name-chain-depth-no-crash.html [ Timeout Pass ]
-webkit.org/b/330315 [ arm64 ] imported/w3c/web-platform-tests/webrtc-encoded-transform/script-metadata-transform.https.html [ Crash Pass ]
+webkit.org/b/330315 [ Release ] imported/w3c/web-platform-tests/webrtc-encoded-transform/script-metadata-transform.https.html [ Crash Pass ]
 
 webkit.org/b/331816 imported/w3c/web-platform-tests/screen-orientation/nested-documents.html [ Pass Failure Crash ]
 webkit.org/b/331816 imported/w3c/web-platform-tests/screen-orientation/fullscreen-interactions.html [ Pass Crash ]
 webkit.org/b/331816 imported/w3c/web-platform-tests/screen-orientation/idlharness.window.html [ Pass Crash ]
 
-webkit.org/b/331957 fast/quirks/active-quirks-by-domain.html [ Failure ]
-
 webkit.org/b/217938 [ arm64 ] http/wpt/service-workers/mac/throttleable.https.html [ Pass Timeout ]
+
+webkit.org/b/332136 [ x86_64 ] imported/w3c/web-platform-tests/html/browsers/origin/api/origin-from-extendablemessageevent.any.serviceworker.html [ Failure Pass ]
+webkit.org/b/332136 [ x86_64 ] imported/w3c/web-platform-tests/html/browsers/origin/api/origin-from-global.any.serviceworker.html [ Failure Pass ]
