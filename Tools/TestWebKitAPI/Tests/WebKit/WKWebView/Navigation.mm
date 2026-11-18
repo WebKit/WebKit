@@ -4970,7 +4970,6 @@ PrivateTokenTestSetupState setupWebViewForPrivateTokenTests(bool& didDecideServi
     return { webView, WTF::move(server), storeConfiguration, dataStore, websiteDataStoreDelegate, navigationDelegate };
 }
 
-#if HAVE(ALLOW_PRIVATE_ACCESS_TOKENS_FOR_THIRD_PARTY)
 TEST(WKNavigation, FrameNavigationWithPrivateTokenPermission)
 {
     using namespace TestWebKitAPI;
@@ -5261,7 +5260,6 @@ TEST(WKNavigation, FrameNavigationWithPrivateTokenPermissionAndAllowOriginsAndWi
     didDecideServiceWorkerRequest = false;
     didReceiveAllowPrivateToken = false;
 }
-#endif
 
 @interface SessionDelegate : NSObject <NSURLSessionDelegate>
 @end
