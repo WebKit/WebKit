@@ -39,13 +39,13 @@
 
 namespace WebCore {
 
-static FloatPoint offsetFromContainer(const RenderObject& renderer, RenderBlock& container, const FloatRect& referenceRect)
+static FloatPoint offsetFromContainer(const RenderObject& renderer, const RenderBoxModelObject& container, const FloatRect& referenceRect)
 {
     auto offsetFromContainingBlock = renderer.offsetFromContainer(container, LayoutPoint());
     return FloatPoint(FloatPoint(offsetFromContainingBlock) - referenceRect.location());
 }
 
-static FloatRoundedRect containingBlockRectForRenderer(const RenderObject& renderer, RenderBlock& container, const Style::OffsetPath& offsetPath)
+static FloatRoundedRect containingBlockRectForRenderer(const RenderObject& renderer, const RenderBoxModelObject& container, const Style::OffsetPath& offsetPath)
 {
     return WTF::switchOn(offsetPath,
         [&](const Style::BoxPath& offsetPath) -> FloatRoundedRect {
@@ -92,7 +92,7 @@ std::optional<MotionPathData> MotionPath::motionPathDataForRenderer(const Render
     if (!canBuildMotionPathData)
         return std::nullopt;
 
-    auto startingPositionForOffsetPosition = [&](const Style::OffsetPosition& offsetPosition, const FloatRect& referenceRect, RenderBlock& container, Style::ZoomFactor zoom) -> FloatPoint {
+    auto startingPositionForOffsetPosition = [&](const Style::OffsetPosition& offsetPosition, const FloatRect& referenceRect, const RenderBoxModelObject& container, Style::ZoomFactor zoom) -> FloatPoint {
         return WTF::switchOn(offsetPosition,
             [&](const CSS::Keyword::Normal&) {
                 // If offset-position is normal, the element does not have an offset starting position.
@@ -108,13 +108,13 @@ std::optional<MotionPathData> MotionPath::motionPathDataForRenderer(const Render
         );
     };
 
-    CheckedPtr container = renderer.containingBlock();
+    CheckedPtr<const RenderBoxModelObject> container = renderer.containingBlock();
     if (!container)
         return std::nullopt;
 
     MotionPathData data;
     data.containingBlockBoundingRect = containingBlockRectForRenderer(renderer, *container, offsetPath);
-    data.cornerCurvatures = BorderShape::shapeForBorderRect(container->usedStyle(), container->borderBoxRect()).cornerCurvatures();
+    data.cornerCurvatures = BorderShape::shapeForBorderRect(container->usedStyle(), LayoutRect { container->referenceBoxRect(CSSBoxType::BorderBox) }).cornerCurvatures();
     data.offsetFromContainingBlock = offsetFromContainer(renderer, *container, data.containingBlockBoundingRect.rect());
 
     auto zoom = renderer.style().usedZoomForLength();
