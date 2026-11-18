@@ -260,6 +260,15 @@ static void dumpChangedLayers(TextStream& ts, const LayerPropertiesMap& changedL
         if (layerProperties.changedProperties & LayerChange::HidesFromScreenCaptureChanged)
             ts.dumpProperty("hidesFromScreenCapture"_s, layerProperties.hidesFromScreenCapture);
 
+#if ENABLE(THREADED_ANIMATIONS)
+        if (layerProperties.changedProperties & LayerChange::AnimationExtentChanged) {
+            if (auto& animationExtent = layerProperties.animationExtent)
+                ts.dumpProperty("animationExtent"_s, *animationExtent);
+            else
+                ts.dumpProperty("animationExtent"_s, "unknown");
+        }
+#endif
+
         if (auto displayOnlyImage = layerProperties.displayOnlyImage)
             ts.dumpProperty("displayOnlyImage"_s, *displayOnlyImage);
     }

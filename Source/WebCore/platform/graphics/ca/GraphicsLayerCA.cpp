@@ -2233,8 +2233,13 @@ void GraphicsLayerCA::recursiveCommitChanges(CommitState& commitState, const Tra
 
     commitState.totalBackdropFilterArea = childCommitState.totalBackdropFilterArea;
 
-    if (RefPtr replicaLayer = downcast<GraphicsLayerCA>(m_replicaLayer.get()))
+    if (RefPtr replicaLayer = downcast<GraphicsLayerCA>(m_replicaLayer))
         replicaLayer->recursiveCommitChanges(childCommitState, localState, pageScaleFactor, baseRelativePosition, affectedByPageScale);
+
+#if ENABLE(THREADED_ANIMATIONS)
+    if (acceleratedEffectStack())
+        protect(primaryLayer())->setAnimationExtent(animationExtent());
+#endif
 
     if (RefPtr maskLayer = downcast<GraphicsLayerCA>(m_maskLayer.get()))
         maskLayer->commitLayerChangesAfterSublayers(childCommitState);

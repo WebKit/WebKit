@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<body>
+<style>
+
+.box {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100px;
+    height: 100px;
+    background-color: black;
+}
+
+</style>
+
+<script src="../../../resources/testharness.js"></script>
+<script src="../../../resources/testharnessreport.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+<script src="../threaded-animations-utils.js"></script>
+
+<script>
+
+const duration = 1000 * 1000;
+const farOutOfView = 20000;
+
+const createBox = (test, parent = document.body) => {
+    const box = document.createElement("div");
+    box.className = "box";
+    parent.appendChild(box);
+    test.add_cleanup(() => box.remove());
+    return box;
+};
+
+const presentationUpdate = async () => {
+    await threadedAnimationsCommit();
+    await UIHelper.ensurePresentationUpdate();
+};
+
+const startHighImpactAnimation = async target => {
+    const animation = target.animate({ translate: "100px" }, duration);
+    await animationAcceleration(animation);
+    const acceleratedAnimations = internals.acceleratedAnimationsForElement(target);
+    assert_equals(acceleratedAnimations.length, 1);
+    assert_equals(acceleratedAnimations[0].property, "translate");
+    assert_true(acceleratedAnimations[0].hasHighImpact, "Animating 'translate' has a high impact");
+    await presentationUpdate();
+};
+
+const assertHighFrameRate = async (expected, description) => {
+    assert_equals(await UIHelper.displayLinkWantsHighFrameRate(), expected, description);
+};
+
+promise_test(async test => {
+    const target = createBox(test);
+    target.style.top = `${innerHeight + 10}px`;
+    await startHighImpactAnimation(target);
+    await assertHighFrameRate(true, "An animation just below the viewport yields high frame rate display link updates");
+}, "High-impact animations close to the viewport opt into high frame rate updates.");
+
+promise_test(async test => {
+    const target = createBox(test);
+    target.style.top = `${farOutOfView}px`;
+    await startHighImpactAnimation(target);
+    await assertHighFrameRate(false, "An animation far below the viewport does not yield high frame rate display link updates");
+
+    target.style.top = "0";
+    await presentationUpdate();
+    await assertHighFrameRate(true, "Moving the animated element into view yields high frame rate display link updates");
+
+    target.style.top = `${farOutOfView}px`;
+    await presentationUpdate();
+    await assertHighFrameRate(false, "Moving the animated element back out of view no longer yields high frame rate display link updates");
+}, "High-impact animations only opt into high frame rate updates while their element is near the viewport.");
+
+promise_test(async test => {
+    test.add_cleanup(() => UIHelper.immediateScrollTo(0, 0));
+
+    const target = createBox(test);
+    target.style.top = `${farOutOfView}px`;
+    await startHighImpactAnimation(target);
+    await assertHighFrameRate(false, "An animation far below the viewport does not yield high frame rate display link updates");
+
+    await UIHelper.immediateScrollTo(0, farOutOfView - 100);
+    await presentationUpdate();
+    await assertHighFrameRate(true, "Scrolling to the animated element yields high frame rate display link updates");
+
+    await UIHelper.immediateScrollTo(0, 0);
+    await presentationUpdate();
+    await assertHighFrameRate(false, "Scrolling away from the animated element no longer yields high frame rate display link updates");
+}, "High-impact animations opt in and out of high frame rate updates as the page scrolls.");
+
+promise_test(async test => {
+    const container = createBox(test);
+    container.style.top = `${farOutOfView}px`;
+
+    // A composited descendant positioned back in view is moved by the container's animation.
+    const descendant = createBox(test, container);
+    descendant.style.top = `-${farOutOfView}px`;
+    descendant.style.willChange = "transform";
+
+    await startHighImpactAnimation(container);
+    await assertHighFrameRate(true, "An animation moving a composited descendant in view yields high frame rate display link updates");
+}, "High-impact animations account for the composited descendants of their element.");
+
+promise_test(async test => {
+    const clipper = createBox(test);
+    clipper.style.overflow = "hidden";
+
+    // The target is in the viewport, but entirely clipped by its container.
+    const target = createBox(test, clipper);
+    target.style.left = "1000px";
+
+    await startHighImpactAnimation(target);
+    await assertHighFrameRate(false, "An animation on an element clipped out by an ancestor does not yield high frame rate display link updates");
+
+    target.style.left = "0";
+    await presentationUpdate();
+    await assertHighFrameRate(true, "Moving the animated element within its clipping ancestor yields high frame rate display link updates");
+}, "High-impact animations on clipped out elements do not opt into high frame rate updates.");
+
+</script>
+</body>

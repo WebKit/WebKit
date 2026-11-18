@@ -1253,6 +1253,15 @@ void PlatformCALayerRemote::setAcceleratedEffectsAndBaseValues(const Accelerated
 
     m_properties.notePropertiesChanged(LayerChange::AnimationsChanged);
 }
+
+void PlatformCALayerRemote::setAnimationExtent(std::optional<FloatRect> animationExtent)
+{
+    if (m_properties.animationExtent == animationExtent)
+        return;
+
+    m_properties.animationExtent = animationExtent;
+    m_properties.notePropertiesChanged(LayerChange::AnimationExtentChanged);
+}
 #endif
 
 void PlatformCALayerRemote::purgeFrontBufferForTesting()

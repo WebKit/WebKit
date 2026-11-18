@@ -1,0 +1,7 @@
+
+PASS High-impact animations close to the viewport opt into high frame rate updates.
+PASS High-impact animations only opt into high frame rate updates while their element is near the viewport.
+PASS High-impact animations opt in and out of high frame rate updates as the page scrolls.
+PASS High-impact animations account for the composited descendants of their element.
+PASS High-impact animations on clipped out elements do not opt into high frame rate updates.
+

@@ -484,6 +484,20 @@ void RemoteLayerTreeDrawingAreaProxyIOS::highImpactMonotonicAnimationsWereRemove
     }
 }
 
+void RemoteLayerTreeDrawingAreaProxyIOS::updateHighImpactMonotonicAnimations()
+{
+    if (!m_needsDisplayRefreshCallbacksForMonotonicAnimations)
+        return;
+
+    if (RefPtr page = this->page()) {
+        if (RefPtr scrollingCoordinatorProxy = page->scrollingCoordinatorProxy())
+            m_hasHighImpactMonotonicAnimations = scrollingCoordinatorProxy->hasHighImpactMonotonicAnimations();
+    }
+
+    if (wantsHighFrameRate() != [protect(displayLinkHandler()) wantsHighFrameRate])
+        scheduleDisplayLinkAndSetFrameRate();
+}
+
 void RemoteLayerTreeDrawingAreaProxyIOS::pauseDisplayRefreshCallbacksForMonotonicAnimations()
 {
     m_needsDisplayRefreshCallbacksForMonotonicAnimations = false;
@@ -491,7 +505,7 @@ void RemoteLayerTreeDrawingAreaProxyIOS::pauseDisplayRefreshCallbacksForMonotoni
     pauseDisplayLinkIfNeeded();
 }
 
-void RemoteLayerTreeDrawingAreaProxyIOS::scheduleDisplayLinkAndSetFrameRate()
+bool RemoteLayerTreeDrawingAreaProxyIOS::wantsHighFrameRate() const
 {
     auto shouldUpdateMonotonicAnimationsAtHighFrameRate = [&] {
         return page() && protect(page()->preferences())->threadedTimeBasedAnimationsAtHighFrameRateEnabled();
@@ -502,10 +516,14 @@ void RemoteLayerTreeDrawingAreaProxyIOS::scheduleDisplayLinkAndSetFrameRate()
     };
 
     ASSERT_IMPLIES(m_hasHighImpactMonotonicAnimations, m_needsDisplayRefreshCallbacksForMonotonicAnimations);
-    auto wantsHighFrameRate = (m_hasHighImpactMonotonicAnimations && shouldUpdateMonotonicAnimationsAtHighFrameRate())
+    return (m_hasHighImpactMonotonicAnimations && shouldUpdateMonotonicAnimationsAtHighFrameRate())
         || (m_needsDisplayRefreshCallbacksForDrawing && shouldUpdatePageRenderingAtHighFrameRate());
+}
+
+void RemoteLayerTreeDrawingAreaProxyIOS::scheduleDisplayLinkAndSetFrameRate()
+{
     RetainPtr displayLinkHandler = this->displayLinkHandler();
-    [displayLinkHandler setWantsHighFrameRate:wantsHighFrameRate];
+    [displayLinkHandler setWantsHighFrameRate:wantsHighFrameRate()];
     [displayLinkHandler schedule];
 }
 
@@ -539,6 +557,10 @@ UIView *RemoteLayerTreeDrawingAreaProxyIOS::viewWithLayerIDForTesting(WebCore::P
 
 void RemoteLayerTreeDrawingAreaProxyIOS::didCommitLayerTree(IPC::Connection&, const RemoteLayerTreeTransaction& transaction, const RemoteScrollingCoordinatorTransaction&, const std::optional<MainFrameData>& mainFrameData, const TransactionID&)
 {
+#if ENABLE(THREADED_ANIMATIONS)
+    updateHighImpactMonotonicAnimations();
+#endif
+
     if (!mainFrameData)
         return;
 

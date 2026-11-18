@@ -527,6 +527,11 @@ void RemoteLayerTreePropertyApplier::applyPropertiesToLayer(CALayer *layer, Remo
     if (properties.changedProperties & LayerChange::FiltersChanged)
         PlatformCAFilters::setFiltersOnLayer(layer, properties.filters ? *properties.filters : FilterOperations(), layerTreeNode && layerTreeNode->backdropRootIsOpaque());
 
+#if ENABLE(THREADED_ANIMATIONS)
+    if (properties.changedProperties & LayerChange::AnimationExtentChanged && layerTreeNode)
+        layerTreeNode->setAnimationExtent(properties.animationExtent);
+#endif
+
     if (properties.changedProperties & LayerChange::AnimationsChanged) {
 #if ENABLE(THREADED_ANIMATIONS)
         // FIXME: layerTreeHost will be null if this method is called from within the Web process.

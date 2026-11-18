@@ -236,6 +236,10 @@ void PlatformCALayer::clearAcceleratedEffectsAndBaseValues()
 void PlatformCALayer::setAcceleratedEffectsAndBaseValues(const AcceleratedEffects&, const AcceleratedEffectValues&)
 {
 }
+
+void PlatformCALayer::setAnimationExtent(std::optional<FloatRect>)
+{
+}
 #endif
 
 #if HAVE(SUPPORT_HDR_DISPLAY)

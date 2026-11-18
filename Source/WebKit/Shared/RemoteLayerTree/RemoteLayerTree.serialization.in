@@ -82,6 +82,9 @@ header: "RemoteLayerTreeTransaction.h"
     ShadowPathChanged
     DisplayOnlyImageChanged
     HidesFromScreenCaptureChanged
+#if ENABLE(THREADED_ANIMATIONS)
+    AnimationExtentChanged
+#endif
 };
 
 header: "RemoteLayerBackingStore.h"
@@ -248,6 +251,9 @@ headers: "LayerProperties.h" "PlatformCALayerRemote.h"
     [OptionalTupleBit=WebKit::LayerChange::ShadowPathChanged] WebCore::Path shadowPath;
     [OptionalTupleBit=WebKit::LayerChange::DisplayOnlyImageChanged] Markable<WebKit::RemoteSnapshotIdentifier> displayOnlyImage;
     [OptionalTupleBit=WebKit::LayerChange::HidesFromScreenCaptureChanged] bool hidesFromScreenCapture;
+#if ENABLE(THREADED_ANIMATIONS)
+    [OptionalTupleBit=WebKit::LayerChange::AnimationExtentChanged] std::optional<WebCore::FloatRect> animationExtent;
+#endif
 };
 
 using WebKit::LayerHostingContextID = uint32_t;
