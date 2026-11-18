@@ -31,6 +31,7 @@
 #include <wtf/RefPtr.h>
 #include <wtf/Seconds.h>
 #include <wtf/TZoneMalloc.h>
+#include <wtf/Vector.h>
 #include <wtf/WeakRef.h>
 #include <wtf/text/AtomString.h>
 #include <wtf/text/AtomStringHash.h>
@@ -63,9 +64,7 @@ class EnvironmentVariables {
 public:
     explicit EnvironmentVariables(Document&);
 
-    using Values = HashMap<AtomString, Ref<const CustomProperty>>;
-
-    RefPtr<const CustomProperty> valueForName(const AtomString&) const;
+    RefPtr<const CustomProperty> valueForName(const AtomString&, std::span<const unsigned> indices = { }) const;
 
     void didChangeSafeAreaInsets();
     void didChangeFullscreenInsets();
@@ -75,21 +74,30 @@ public:
     void setLinkParameters(const LinkParameters&);
 
 private:
+    // https://drafts.csswg.org/css-env-1/#env-function
+    // A variable may be multi-dimensional, in which case it is referenced with one index per dimension.
+    // The values of a multi-dimensional variable are stored with the first index varying slowest.
+    struct Variable {
+        Vector<unsigned, 2> dimensions;
+        Vector<Ref<const CustomProperty>, 1> values;
+    };
+
+    using Values = HashMap<AtomString, Variable>;
+    using LinkParameterValues = HashMap<AtomString, Ref<const CustomProperty>>;
+
     const Values& userAgentDefinedValues() const LIFETIME_BOUND;
     void buildValues();
 
     const AtomString& nameForVariable(UADefinedVariable) const;
     void setValueForVariable(UADefinedVariable, Ref<CSSVariableData>&&);
-    void setValueForName(const AtomString&, Ref<CSSVariableData>&&);
 
     void updateSafeAreaInsetVariables();
     void updateFullscreenVariables();
     void updateViewportSegmentVariables();
 
-
     std::optional<Values> m_values;
 
-    Values m_linkParameterValues;
+    LinkParameterValues m_linkParameterValues;
 
     WeakRef<Document, WeakPtrImplWithEventTargetData> m_document;
 };

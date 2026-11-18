@@ -71,7 +71,6 @@
 #include <wtf/IndexedRange.h>
 #include <wtf/Scope.h>
 #include <wtf/SetForScope.h>
-#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 namespace Style {
@@ -124,10 +123,11 @@ SubstitutionResolver::SubstitutionResolver(Builder& builder, const CSSRegistered
 {
 }
 
-RefPtr<const CustomProperty> SubstitutionResolver::propertyValueForVariableName(const AtomString& variableName, CSSValueID functionId)
+RefPtr<const CustomProperty> SubstitutionResolver::propertyValueForVariableName(const AtomString& variableName, CSSValueID functionId, std::span<const unsigned> envIndices)
 {
     if (functionId == CSSValueID::Env)
-        return protect(m_styleBuilder.state().document().styleScope())->environmentVariables().valueForName(variableName);
+        return protect(m_styleBuilder.state().document().styleScope())->environmentVariables().valueForName(variableName, envIndices);
+    ASSERT(envIndices.empty());
 
     // Every parameter of the function whose arguments are being resolved shadows the calling element's
     // custom property of the same name, resolved or not, so a default can reference an earlier
@@ -212,31 +212,19 @@ bool SubstitutionResolver::substituteVarFunction(CSSParserTokenRange range, Vect
 bool SubstitutionResolver::substituteEnvFunction(CSSParserTokenRange range, Vector<CSSParserToken>& tokens, const CSSParserContext& context)
 {
     // https://drafts.csswg.org/css-env-1/#env-function
+    // env() = env( <custom-ident> <integer [0,∞]>*, <declaration-value>? )
     // FIXME: env()'s argument grammar is env( <declaration-value>, <declaration-value>? ) like var()'s,
     // so the name argument should be substituted and only then parsed as <custom-ident> <integer>*.
-    // Only a literal <ident> name is supported here, the same limitation as the unsupported indices.
-    // Special logic for viewport-segment-* with indices exists, but that should be made generic for
-    // any <custom-ident> to support env( <custom-ident> <integer [0,∞]>*, <declaration-value>? ).
-    // https://bugs.webkit.org/show_bug.cgi?id=327437
+    // Only a literal <ident> name and literal <integer> indices are supported here.
 
     range.consumeWhitespace();
     if (range.peek().type() != IdentToken)
         return false;
     auto name = range.consumeIncludingWhitespace().value().toAtomString();
 
-    // viewport-segment-* env() variables are looked up with composite names of the form
-    // "viewport-segment-<prop> <col> <row>" — consume the two integer indices here.
-    if (context.viewportSegmentsAPIEnabled && name.startsWith("viewport-segment-"_s)) {
-        if (range.peek().type() == NumberToken) {
-            int col = static_cast<int>(range.consumeIncludingWhitespace().numericValue());
-            if (range.peek().type() == NumberToken) {
-                int row = static_cast<int>(range.consumeIncludingWhitespace().numericValue());
-                // FIXME: Rather than constructing a string which needs to be reparsed, the logic
-                // should be updated to pass in an index vector and name.
-                name = makeAtomString(name, ' ', col, ' ', row);
-            }
-        }
-    }
+    auto indices = CSSSubstitutionParser::consumeEnvVariableIndices(range);
+    if (!indices)
+        return false;
 
     std::optional<CSSParserTokenRange> fallbackRange;
     if (!range.atEnd()) {
@@ -247,15 +235,16 @@ bool SubstitutionResolver::substituteEnvFunction(CSSParserTokenRange range, Vect
         fallbackRange = range;
     }
 
-    return substituteNamedValueOrFallback(name, fallbackRange, CSSValueID::Env, tokens, context);
+    return substituteNamedValueOrFallback(name, fallbackRange, CSSValueID::Env, tokens, context, *indices);
 }
 
-bool SubstitutionResolver::substituteNamedValueOrFallback(const std::optional<AtomString>& name, const std::optional<CSSParserTokenRange>& fallbackRange, CSSValueID functionId, Vector<CSSParserToken>& tokens, const CSSParserContext& context)
+bool SubstitutionResolver::substituteNamedValueOrFallback(const std::optional<AtomString>& name, const std::optional<CSSParserTokenRange>& fallbackRange, CSSValueID functionId, Vector<CSSParserToken>& tokens, const CSSParserContext& context, std::span<const unsigned> envIndices)
 {
     ASSERT(functionId == CSSValueID::Var || functionId == CSSValueID::Env);
+    ASSERT(functionId == CSSValueID::Env || envIndices.empty());
 
     // A name that failed to parse leaves the reference guaranteed-invalid, which still permits the fallback.
-    RefPtr property = name ? propertyValueForVariableName(*name, functionId) : nullptr;
+    RefPtr property = name ? propertyValueForVariableName(*name, functionId, envIndices) : nullptr;
 
     if (functionId == CSSValueID::Var && name)
         m_varSubstitutions.append({ *name, property });

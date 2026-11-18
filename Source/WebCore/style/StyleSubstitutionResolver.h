@@ -69,7 +69,7 @@ private:
 
     bool substituteVarFunction(CSSParserTokenRange, Vector<CSSParserToken>&, const CSSParserContext&);
     bool substituteEnvFunction(CSSParserTokenRange, Vector<CSSParserToken>&, const CSSParserContext&);
-    bool substituteNamedValueOrFallback(const std::optional<AtomString>& name, const std::optional<CSSParserTokenRange>& fallbackRange, CSSValueID, Vector<CSSParserToken>&, const CSSParserContext&);
+    bool substituteNamedValueOrFallback(const std::optional<AtomString>& name, const std::optional<CSSParserTokenRange>& fallbackRange, CSSValueID, Vector<CSSParserToken>&, const CSSParserContext&, std::span<const unsigned> envIndices = { });
     bool substituteFirstValid(CSSParserTokenRange, Vector<CSSParserToken>&, const CSSParserContext&);
     bool substituteInheritFunction(CSSParserTokenRange, Vector<CSSParserToken>&, const CSSParserContext&);
     bool substituteDashedFunction(StringView functionName, CSSParserTokenRange, Vector<CSSParserToken>&);
@@ -109,7 +109,7 @@ private:
     };
     std::optional<Vector<IfBranch>> substituteIfArgumentGrammar(CSSParserTokenRange, const CSSParserContext&);
 
-    RefPtr<const CustomProperty> propertyValueForVariableName(const AtomString&, CSSValueID);
+    RefPtr<const CustomProperty> propertyValueForVariableName(const AtomString&, CSSValueID, std::span<const unsigned> envIndices = { });
     RefPtr<CSSVariableData> trySimpleSubstitution(const CSSSubstitutionValue&);
     NODELETE bool isBaseAppearance();
     bool isInURLContext() const { return m_urlContextDepth; }

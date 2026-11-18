@@ -32,6 +32,7 @@
 #include "CSSVariableData.h"
 #include "DocumentPage.h"
 #include "ElementInlines.h"
+#include "Settings.h"
 #include "StyleCustomProperty.h"
 #include "StyleDocumentScope.h"
 #include "StyleLinkParameters.h"
@@ -39,7 +40,7 @@
 #include "ViewportSegments.h"
 #include <wtf/NeverDestroyed.h>
 #include <wtf/TZoneMallocInlines.h>
-#include <wtf/text/MakeString.h>
+#include <wtf/ZippedRange.h>
 
 namespace WebCore {
 namespace Style {
@@ -59,11 +60,31 @@ const EnvironmentVariables::Values& EnvironmentVariables::userAgentDefinedValues
     return *m_values;
 }
 
-RefPtr<const CustomProperty> EnvironmentVariables::valueForName(const AtomString& name) const
+RefPtr<const CustomProperty> EnvironmentVariables::valueForName(const AtomString& name, std::span<const unsigned> indices) const
 {
-    if (auto value = m_linkParameterValues.get(name))
-        return value;
-    return userAgentDefinedValues().get(name);
+    if (indices.empty()) {
+        if (auto value = m_linkParameterValues.get(name))
+            return value;
+    }
+
+    auto it = userAgentDefinedValues().find(name);
+    if (it == userAgentDefinedValues().end())
+        return nullptr;
+
+    // The number of indices must match the variable's dimensions, and each index must be in bounds.
+    auto& variable = it->value;
+    if (indices.size() != variable.dimensions.size())
+        return nullptr;
+
+    size_t flatIndex = 0;
+    for (auto [index, dimension] : zippedRange(indices, variable.dimensions)) {
+        if (index >= dimension)
+            return nullptr;
+        flatIndex = flatIndex * dimension + index;
+    }
+
+    ASSERT(flatIndex < variable.values.size());
+    return variable.values[flatIndex].ptr();
 }
 
 const AtomString& EnvironmentVariables::nameForVariable(UADefinedVariable variable) const
@@ -108,15 +129,7 @@ void EnvironmentVariables::setValueForVariable(UADefinedVariable variable, Ref<C
         buildValues();
 
     auto& name = nameForVariable(variable);
-    m_values->set(name, CustomProperty::createForVariableData(name, WTF::move(data)));
-}
-
-void EnvironmentVariables::setValueForName(const AtomString& name, Ref<CSSVariableData>&& data)
-{
-    if (!m_values)
-        buildValues();
-
-    m_values->set(name, CustomProperty::createForVariableData(name, WTF::move(data)));
+    m_values->set(name, Variable { { }, { CustomProperty::createForVariableData(name, WTF::move(data)) } });
 }
 
 void EnvironmentVariables::setLinkParameters(const LinkParameters& parameters)
@@ -221,9 +234,24 @@ void EnvironmentVariables::updateViewportSegmentVariables()
     if (!m_values)
         return;
 
-    m_values->removeIf([](auto& entry) {
-        return entry.key.startsWith("viewport-segment-"_s);
-    });
+    struct ViewportSegmentVariable {
+        ASCIILiteral name;
+        float (*length)(const FloatRect&);
+    };
+    static constexpr std::array viewportSegmentVariables {
+        ViewportSegmentVariable { "viewport-segment-width"_s, [](const FloatRect& rect) { return rect.width(); } },
+        ViewportSegmentVariable { "viewport-segment-height"_s, [](const FloatRect& rect) { return rect.height(); } },
+        ViewportSegmentVariable { "viewport-segment-top"_s, [](const FloatRect& rect) { return rect.y(); } },
+        ViewportSegmentVariable { "viewport-segment-right"_s, [](const FloatRect& rect) { return rect.maxX(); } },
+        ViewportSegmentVariable { "viewport-segment-bottom"_s, [](const FloatRect& rect) { return rect.maxY(); } },
+        ViewportSegmentVariable { "viewport-segment-left"_s, [](const FloatRect& rect) { return rect.x(); } },
+    };
+
+    for (auto& variable : viewportSegmentVariables)
+        m_values->remove(AtomString { variable.name });
+
+    if (!m_document->settings().viewportSegmentsAPIEnabled())
+        return;
 
     RefPtr page = m_document->page();
     if (!page)
@@ -235,19 +263,24 @@ void EnvironmentVariables::updateViewportSegmentVariables()
     if (segments.columns == 1 && segments.rows == 1)
         return;
 
-    for (unsigned y = 0; y < segments.rows; ++y) {
+    // The segments come from the UI process; ignore them if they are inconsistent.
+    if (segments.segmentRects.size() != static_cast<size_t>(segments.columns) * segments.rows)
+        return;
+
+    // https://drafts.csswg.org/css-env-1/#viewport-segments
+    // The variables are two-dimensional, indexed by column then row, e.g. env(viewport-segment-top 1 0).
+    for (auto& [literal, length] : viewportSegmentVariables) {
+        AtomString name { literal };
+        Variable variable { { segments.columns, segments.rows }, { } };
+        variable.values.reserveInitialCapacity(segments.segmentRects.size());
         for (unsigned x = 0; x < segments.columns; ++x) {
-            const FloatRect& rect = segments.segmentRects[y * segments.columns + x];
-            auto makeName = [&](ASCIILiteral base) {
-                return makeAtomString(base, ' ', x, ' ', y);
-            };
-            setValueForName(makeName("viewport-segment-width"_s), variableDataForPositivePixelLength(rect.width()));
-            setValueForName(makeName("viewport-segment-height"_s), variableDataForPositivePixelLength(rect.height()));
-            setValueForName(makeName("viewport-segment-top"_s), variableDataForPositivePixelLength(rect.y()));
-            setValueForName(makeName("viewport-segment-right"_s), variableDataForPositivePixelLength(rect.maxX()));
-            setValueForName(makeName("viewport-segment-bottom"_s), variableDataForPositivePixelLength(rect.maxY()));
-            setValueForName(makeName("viewport-segment-left"_s), variableDataForPositivePixelLength(rect.x()));
+            for (unsigned y = 0; y < segments.rows; ++y) {
+                // segmentRects is row-major.
+                auto& rect = segments.segmentRects[y * segments.columns + x];
+                variable.values.append(CustomProperty::createForVariableData(name, variableDataForPositivePixelLength(length(rect))));
+            }
         }
+        m_values->set(name, WTF::move(variable));
     }
 }
 

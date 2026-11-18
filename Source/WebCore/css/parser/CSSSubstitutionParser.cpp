@@ -61,6 +61,18 @@ NODELETE static bool isValidEnvVariableName(const CSSParserToken& token)
     return token.type() == IdentToken;
 }
 
+std::optional<Vector<unsigned, 2>> CSSSubstitutionParser::consumeEnvVariableIndices(CSSParserTokenRange& range)
+{
+    Vector<unsigned, 2> indices;
+    while (range.peek().type() == NumberToken) {
+        auto& token = range.consumeIncludingWhitespace();
+        if (token.numericValueType() != IntegerValueType || token.numericValue() < 0)
+            return std::nullopt;
+        indices.append(clampTo<unsigned>(token.numericValue()));
+    }
+    return indices;
+}
+
 static bool isValidVariableReference(CSSParserTokenRange, const CSSParserContext&);
 static bool isValidEnvReference(CSSParserTokenRange, const CSSParserContext&);
 static bool isValidDashedFunction(CSSParserTokenRange, const CSSParserContext&);
@@ -259,6 +271,8 @@ bool isValidVariableReference(CSSParserTokenRange range, const CSSParserContext&
     return !!classifyBlock(range, parserContext);
 }
 
+// https://drafts.csswg.org/css-env-1/#env-function
+// env() = env( <custom-ident> <integer [0,∞]>*, <declaration-value>? )
 bool isValidEnvReference(CSSParserTokenRange range, const CSSParserContext& parserContext)
 {
     range.consumeWhitespace();
@@ -266,15 +280,8 @@ bool isValidEnvReference(CSSParserTokenRange range, const CSSParserContext& pars
     if (!isValidEnvVariableName(nameToken))
         return false;
 
-    // viewport-segment-* env() variables require two space-separated integer indices (column, row).
-    if (parserContext.viewportSegmentsAPIEnabled && nameToken.value().startsWith("viewport-segment-"_s)) {
-        if (range.atEnd() || range.peek().type() != NumberToken)
-            return false;
-        range.consumeIncludingWhitespace();
-        if (range.atEnd() || range.peek().type() != NumberToken)
-            return false;
-        range.consumeIncludingWhitespace();
-    }
+    if (!CSSSubstitutionParser::consumeEnvVariableIndices(range))
+        return false;
 
     if (range.atEnd())
         return true;
