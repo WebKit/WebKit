@@ -1,0 +1,45 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ SpatialPortalEnabled=true ModelElementEnabled=true allowTestOnlyIPC=true ] -->
+<html>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="../../model-element/resources/model-utils.js"></script>
+<script src="../resources/spatial-portal-utils.js"></script>
+<style>
+    body {
+        margin: 0;
+    }
+    .portal {
+        spatial: portal;
+        position: relative;
+        width: 400px;
+        height: 300px;
+    }
+    .child {
+        position: absolute;
+        left: 100px;
+        top: 100px;
+        width: 80px;
+        height: 40px;
+        background-color: rgb(70, 70, 140);
+        transform-style: preserve-3d;
+        transform: translateZ(-100px);
+    }
+</style>
+<body>
+<script>
+'use strict';
+
+const hostedLayer = entities => entities.find(entity => entity.element === "#child" && entity.parent?.name === "WebKit:PortalHostedLayerContainer");
+
+promise_test(async test => {
+    const portal = createPortal(test);
+    portal.innerHTML = `<div id="child" class="child"></div>`;
+    await waitForHostedPromotedChildren(portal, 1);
+
+    const entities = await waitForSceneGraph(portal, entities => hostedLayer(entities), "the child's layer is in the scene");
+    assert_equals(hostedLayer(entities).name, "WebKit:PortalHostedLayer");
+}, "A promoted child is hosted in the portal scene");
+
+</script>
+</body>
+</html>

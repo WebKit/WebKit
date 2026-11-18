@@ -117,9 +117,14 @@ public:
     void setPortalAction(PortalActionKind);
 
     bool hasPortalContent() const { return !m_hostedModels.isEmpty() || !m_promotedChildren.isEmpty(); }
+    WEBCORE_EXPORT unsigned numberOfHostedPromotedChildren() const;
     void updatePromotedChildren(Vector<PortalPromotedChild>&&);
     bool hostsPromotedChild(NodeIdentifier) const;
     void promotedChildDidPaint();
+#if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
+    void promotedChildEventRegionDidChange();
+#endif
+    TransformationMatrix hostedContentProjection() const;
     static std::optional<TransformationMatrix> transformForHostedLayer(RenderLayer&, RenderLayer& promotedChild, bool* isAnimating = nullptr);
     static bool canHostPromotedChild(RenderLayerModelObject&);
 
@@ -203,6 +208,7 @@ private:
     void pushPromotedChildrenToPlayer();
     bool refreshPromotedChildTransforms();
     void hostedPromotedChildrenDidChange();
+    Vector<NodeIdentifier> promotedChildRoots() const;
 
 #if ENABLE(MODEL_ELEMENT_ENVIRONMENT_MAP)
 

@@ -89,6 +89,17 @@ async function waitForEntityTransform(model, predicate, description, timeout = 5
     }
 }
 
+async function waitForHostedPromotedChildren(portal, count, timeout = 5000) {
+    const startTime = Date.now();
+
+    while (internals.numberOfHostedPromotedChildrenInSpatialPortal(portal) !== count) {
+        if (Date.now() - startTime > timeout)
+            throw new Error(`Timeout waiting for ${count} promoted children to be hosted in the portal`);
+
+        await new Promise(resolve => setTimeout(resolve, 50));
+    }
+}
+
 async function snapshotOnceModelsRender(afterReady)
 {
     window.testRunner?.waitUntilDone();
@@ -173,3 +184,19 @@ const parseSceneGraph = text => {
 const parentOfElement = (entities, label) => entities.find(entity => entity.element === label)?.parent;
 
 const modelSceneGraph = async element => parseSceneGraph(await internals.modelSceneGraphAsText(element));
+
+// The entities of hosted layers follow them as Core Animation commits, so a test waits for the scene graph it expects.
+async function waitForSceneGraph(element, predicate, description, timeout = 5000) {
+    const startTime = Date.now();
+
+    while (true) {
+        const entities = await modelSceneGraph(element);
+        if (predicate(entities))
+            return entities;
+
+        if (Date.now() - startTime > timeout)
+            throw new Error(`Timeout waiting for the scene graph: ${description}`);
+
+        await sleepForSeconds(0.1);
+    }
+}

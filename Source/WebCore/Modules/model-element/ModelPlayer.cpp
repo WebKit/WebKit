@@ -224,6 +224,12 @@ void ModelPlayer::portalPromotedChildDidPaint()
 {
 }
 
+#if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
+void ModelPlayer::portalPromotedChildEventRegionDidChange()
+{
+}
+#endif
+
 bool ModelPlayer::hostsPortalPromotedChild(NodeIdentifier) const
 {
     return false;

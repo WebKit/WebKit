@@ -35,6 +35,10 @@ namespace WebKit {
 
 void updateLayersForInteractionRegions(RemoteLayerTreeNode&, RemoteLayerTreeHost* = nullptr);
 
+// Keeps the glow layers in `container` in sync with `interactionRegions`, which are in its coordinates. Only the regions
+// that intersect `visibleRect` get a layer. The model process uses this for the layers it draws in a portal scene.
+void updateLayersForInteractionRegions(CALayer *container, const Vector<WebCore::InteractionRegion>& interactionRegions, const WebCore::FloatRect& visibleRect, RemoteLayerTreeHost* = nullptr);
+
 } // namespace WebKit
 
 #endif

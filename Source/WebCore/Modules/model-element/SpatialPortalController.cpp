@@ -30,6 +30,7 @@
 
 #include "AbortSignal.h"
 #include "CSSPropertyNames.h"
+#include "CSSUnits.h"
 #include "ContainerNodeInlines.h"
 #include "Document.h"
 #include "DocumentEventLoop.h"
@@ -654,6 +655,23 @@ bool SpatialPortalController::hostsPromotedChild(NodeIdentifier rootNodeID) cons
     return player && player->hostsPortalPromotedChild(rootNodeID);
 }
 
+Vector<NodeIdentifier> SpatialPortalController::promotedChildRoots() const
+{
+    Vector<NodeIdentifier> roots;
+    for (auto& child : m_promotedChildren) {
+        if (!roots.contains(child.rootNodeID))
+            roots.append(child.rootNodeID);
+    }
+    return roots;
+}
+
+unsigned SpatialPortalController::numberOfHostedPromotedChildren() const
+{
+    return std::ranges::count_if(promotedChildRoots(), [&](auto rootNodeID) {
+        return hostsPromotedChild(rootNodeID);
+    });
+}
+
 static RenderLayer* layerForNode(NodeIdentifier nodeID)
 {
     RefPtr element = dynamicDowncast<Element>(Node::fromIdentifier(nodeID));
@@ -679,6 +697,42 @@ void SpatialPortalController::promotedChildDidPaint()
 {
     if (RefPtr player = m_modelPlayer)
         player->portalPromotedChildDidPaint();
+}
+
+#if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
+void SpatialPortalController::promotedChildEventRegionDidChange()
+{
+    if (RefPtr player = m_modelPlayer)
+        player->portalPromotedChildEventRegionDidChange();
+}
+#endif
+
+// The distance, in CSS pixels, from the portal's center to the viewer that hosted content is projected for.
+static constexpr double hostedContentViewerDistance()
+{
+#if PLATFORM(VISION)
+    // visionOS draws the scene for the viewer's real eyes, which a hit test can't know, so this assumes a viewer
+    // 1 m in front of the portal, at the 1360 points per meter the model process lays the scene out with.
+    return 1 * 1360;
+#else
+    // The GPU process camera, 0.5 m in front of the portal.
+    return 0.5 * CSS::pixelsPerCm * 100;
+#endif
+}
+
+TransformationMatrix SpatialPortalController::hostedContentProjection() const
+{
+    RefPtr element = m_portalElement;
+    CheckedPtr portalBox = element ? dynamicDowncast<RenderBox>(element->renderer()) : nullptr;
+    if (!portalBox)
+        return { };
+
+    auto center = FloatRect { portalBox->paddingBoxRect() }.center();
+    TransformationMatrix projection;
+    projection.translate(center.x(), center.y());
+    projection.applyPerspective(hostedContentViewerDistance());
+    projection.translate(-center.x(), -center.y());
+    return projection;
 }
 
 bool SpatialPortalController::canHostPromotedChild(RenderLayerModelObject& renderer)
@@ -975,12 +1029,25 @@ void SpatialPortalController::sceneGraphAsTextForTesting(std::optional<NodeIdent
 
     updateAnchors();
 
-    Vector<std::pair<NodeIdentifier, String>> modelLabels;
+    Vector<std::pair<NodeIdentifier, String>> labels;
     unsigned treeOrderPosition = 0;
     for (Ref model : hostedModelsInTreeOrder())
-        modelLabels.append({ model->nodeIdentifier(), model->dumpLabelForTesting(++treeOrderPosition) });
+        labels.append({ model->nodeIdentifier(), model->dumpLabelForTesting(++treeOrderPosition) });
 
-    player->sceneGraphAsTextForTesting(rootNode, WTF::move(modelLabels), options, WTF::move(completionHandler));
+    // The layers of promoted children are labeled by the elements they belong to.
+    unsigned promotedPosition = 0;
+    for (auto& child : m_promotedChildren) {
+        if (labels.containsIf([&](auto& label) { return label.first == child.nodeID; }))
+            continue;
+        RefPtr element = dynamicDowncast<Element>(Node::fromIdentifier(child.nodeID));
+        if (!element)
+            continue;
+        ++promotedPosition;
+        auto& id = element->getIdAttribute();
+        labels.append({ child.nodeID, id.isEmpty() ? makeString(element->localName(), '[', promotedPosition, ']') : makeString('#', id) });
+    }
+
+    player->sceneGraphAsTextForTesting(rootNode, WTF::move(labels), options, WTF::move(completionHandler));
 }
 #endif
 

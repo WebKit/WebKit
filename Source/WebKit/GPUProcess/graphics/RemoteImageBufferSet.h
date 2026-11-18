@@ -38,6 +38,9 @@
 #include "StreamMessageReceiver.h"
 #include <WebCore/ImageBuffer.h>
 
+#if HAVE(IOSURFACE)
+#include <wtf/MachSendRight.h>
+#endif
 #if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
 #include <WebCore/DynamicContentScalingDisplayList.h>
 #endif
@@ -72,6 +75,15 @@ private:
     void startListeningForIPC();
     NODELETE IPC::StreamConnectionWorkQueue& workQueue() const;
 
+#if HAVE(IOSURFACE)
+    struct ExternalReadSendRight {
+        std::optional<MachSendRight> sendRight;
+        uint64_t bufferIdentifier { 0 };
+        bool isBusy { false };
+    };
+    ExternalReadSendRight frontBufferSendRightForExternalRead(const Vector<uint64_t>& alreadyMappedBuffers);
+#endif
+
     // Tries to swap one of the existing back buffers to the new front buffer, if any are
     // not currently in-use.
     SwapBuffersDisplayRequirement swapBuffersForDisplay(bool hasEmptyDirtyRegion, bool supportsPartialRepaint);
@@ -87,6 +99,10 @@ private:
 #if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
     void dynamicContentScalingDisplayList(CompletionHandler<void(std::optional<WebCore::DynamicContentScalingDisplayList>&&)>&&);
     WebCore::DynamicContentScalingResourceCache ensureDynamicContentScalingResourceCache();
+#endif
+
+#if ENABLE(MODEL_PROCESS) && ENABLE(SPATIAL_PORTAL)
+    void frontBufferForExternalRead(CompletionHandler<void(std::optional<MachSendRight>&&)>&&);
 #endif
 
     bool isOpaque() const

@@ -2832,6 +2832,12 @@ void RenderLayerBacking::updateEventRegion()
     }
 #endif
 
+#if ENABLE(SPATIAL_PORTAL) && ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
+    // A portal scene draws the layers of promoted children, and so their interaction regions too.
+    if (CheckedPtr controller = promotedChildPortalController())
+        controller->promotedChildEventRegionDidChange();
+#endif
+
     setNeedsEventRegionUpdate(false);
 }
 #endif

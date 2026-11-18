@@ -32,6 +32,11 @@
 #include <WebCore/TransformationMatrix.h>
 #include <wtf/WeakPtr.h>
 
+#if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
+#include <WebCore/InteractionRegion.h>
+#include <wtf/Vector.h>
+#endif
+
 namespace WebCore {
 
 class GraphicsLayer;
@@ -56,6 +61,23 @@ struct PortalPromotedChild {
     // The border box of the promoted child, whose center goes on the anchor when the child is anchored to a model.
     FloatSize childSize;
     TransformationMatrix transform;
+};
+
+// A PortalPromotedChild as a portal scene in another process places it; its contents are shared separately.
+struct PortalHostedLayer {
+    NodeIdentifier nodeID;
+    NodeIdentifier rootNodeID;
+    FloatRect quadRectInChildSpace;
+    FloatPoint childOriginInPortal;
+    FloatSize childSize;
+    TransformationMatrix transform;
+    bool isOpaque { false };
+#if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
+    // In the coordinates of the layer, for the scene to light up where the user looks.
+    Vector<InteractionRegion> interactionRegions;
+#endif
+
+    bool operator==(const PortalHostedLayer&) const = default;
 };
 
 } // namespace WebCore

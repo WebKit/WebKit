@@ -36,6 +36,9 @@
 #import "ModelProcessModelPlayerMessages.h"
 #import "WKModelProcessModelLayer.h"
 #import "WKRKEntity.h"
+#if ENABLE(SPATIAL_PORTAL) && ENABLE(GAZE_GLOW_FOR_INTERACTION_REGIONS)
+#import "RemoteLayerTreeInteractionRegionLayers.h"
+#endif
 #if HAVE(CORE_RE)
 #import "WKStageMode.h"
 #import "WKUSDStageConverter.h"
@@ -43,6 +46,7 @@
 #import <SurfBoardServices/SurfBoardServices.h>
 #endif
 #import <WebCore/Color.h>
+#import <WebCore/IOSurface.h>
 #import <WebCore/LayerHostingContextIdentifier.h>
 #import <WebCore/Model.h>
 #import <WebCore/ModelPlayerGraphicsLayerConfiguration.h>
@@ -1362,6 +1366,10 @@ void ModelProcessModelPlayerProxy::sizeDidChange(WebCore::LayoutSize layoutSize)
 
     m_layoutSize = layoutSize;
 
+#if ENABLE(SPATIAL_PORTAL)
+    updatePortalSceneLayerGeometry();
+#endif
+
     if (!isPresentedInline())
         return;
 
@@ -1773,6 +1781,284 @@ void ModelProcessModelPlayerProxy::setPortalAction(WebCore::PortalActionKind kin
     updateForCurrentStageMode();
 }
 
+static bool isFinite(const WebCore::TransformationMatrix& matrix)
+{
+    return std::isfinite(matrix.m11()) && std::isfinite(matrix.m12()) && std::isfinite(matrix.m13()) && std::isfinite(matrix.m14())
+        && std::isfinite(matrix.m21()) && std::isfinite(matrix.m22()) && std::isfinite(matrix.m23()) && std::isfinite(matrix.m24())
+        && std::isfinite(matrix.m31()) && std::isfinite(matrix.m32()) && std::isfinite(matrix.m33()) && std::isfinite(matrix.m34())
+        && std::isfinite(matrix.m41()) && std::isfinite(matrix.m42()) && std::isfinite(matrix.m43()) && std::isfinite(matrix.m44());
+}
+
+static bool isValidHostedLayer(const WebCore::PortalHostedLayer& layer)
+{
+    auto& rect = layer.quadRectInChildSpace;
+    return std::isfinite(rect.x()) && std::isfinite(rect.y()) && std::isfinite(rect.width()) && std::isfinite(rect.height()) && !rect.isEmpty()
+        && std::isfinite(layer.childOriginInPortal.x()) && std::isfinite(layer.childOriginInPortal.y()) && isFinite(layer.transform);
+}
+
+// The portal clips whatever comes out in front of its plane, like the near side of a child turned toward the viewer,
+// which the scene the GPU process draws on macOS and iOS still shows. So the layers of promoted children cross the
+// portal plane, while the models stay clipped by it. RealityKit's Core Animation bridge sets portal crossing on the
+// entity of a layer from this option, inherited by the entities of its sublayers, and removes it otherwise.
+static void allowCrossingPortal(CALayer *layer)
+{
+    [layer setValue:@YES forKeyPath:@"separatedOptions.isPortalCrossingEnabled"];
+}
+
+static RetainPtr<CALayer> makePortalSceneLayer()
+{
+    RetainPtr layer = adoptNS([[CALayer alloc] init]);
+    [layer setName:@"WebKit:PortalHostedLayer"];
+    [layer setDelegate:[WebActionDisablingCALayerDelegate shared]];
+    // The transform maps the layer's top left corner, so it is positioned entirely by the transform.
+    [layer setAnchorPoint:CGPointZero];
+    [layer setPosition:CGPointZero];
+    // Hidden until the child it belongs to can be shown whole.
+    [layer setHidden:YES];
+
+    // A separated layer is drawn by RealityKit, in the scene of the portal, where it intersects the models. It has no
+    // collider, so input lands on the portal, and WebCore hit tests through the projection of the scene.
+    [layer setSeparatedState:kCALayerSeparatedStateSeparated];
+    [layer setValue:@0 forKeyPath:@"separatedOptions.separatedThickness"];
+    [layer setValue:@YES forKeyPath:@"separatedOptions.updates.transform"];
+    [layer setValue:@YES forKeyPath:@"separatedOptions.updates.mesh"];
+    [layer setValue:@YES forKeyPath:@"separatedOptions.updates.material"];
+    [layer setValue:@YES forKeyPath:@"separatedOptions.updates.texture"];
+    allowCrossingPortal(layer.get());
+    return layer;
+}
+
+#if ENABLE(GAZE_GLOW_FOR_INTERACTION_REGIONS)
+// As in the UI process, the interaction regions of a hosted layer get glow layers, which light up where the user looks.
+static void updateInteractionRegionLayers(CALayer *sceneLayer, const WebCore::PortalHostedLayer& hostedLayer)
+{
+    // The regions are in the coordinates of the layer they come from, which are those of the scene layer, whose only
+    // sublayer holds their layers.
+    RetainPtr<CALayer> container = [[sceneLayer sublayers] firstObject];
+    if (hostedLayer.interactionRegions.isEmpty()) {
+        [container removeFromSuperlayer];
+        return;
+    }
+
+    if (!container) {
+        container = adoptNS([[CALayer alloc] init]);
+        [container setName:@"InteractionRegions Container"];
+        [container setDelegate:[WebActionDisablingCALayerDelegate shared]];
+        [sceneLayer addSublayer:container.get()];
+    }
+
+    updateLayersForInteractionRegions(container.get(), hostedLayer.interactionRegions, WebCore::FloatRect { { }, hostedLayer.quadRectInChildSpace.size() });
+}
+#endif
+
+void ModelProcessModelPlayerProxy::PortalSceneLayerContentsDeleter::operator()(WebCore::IOSurface* surface) const
+{
+    IOSurfaceDecrementUseCount(surface->surface());
+    delete surface;
+}
+
+void ModelProcessModelPlayerProxy::setPortalHostedLayers(Vector<WebCore::PortalHostedLayer>&& hostedLayers)
+{
+    MESSAGE_CHECK_BASE(hostedLayers.size() <= maximumPortalHostedLayers, m_webProcessConnection.get());
+
+    if (!m_layer)
+        return;
+
+    if (!m_portalSceneLayerContainer && !hostedLayers.isEmpty()) {
+        m_portalSceneLayerContainer = adoptNS([[CALayer alloc] init]);
+        [m_portalSceneLayerContainer setName:@"WebKit:PortalHostedLayerContainer"];
+        [m_portalSceneLayerContainer setDelegate:[WebActionDisablingCALayerDelegate shared]];
+        [m_portalSceneLayerContainer setAnchorPoint:CGPointZero];
+        [m_portalSceneLayerContainer setSeparatedState:kCALayerSeparatedStateTracked];
+        allowCrossingPortal(m_portalSceneLayerContainer.get());
+        [m_layer addSublayer:m_portalSceneLayerContainer.get()];
+    }
+
+#if HAVE(CORE_RE)
+    // The model process only draws its layers in the portal scene once it has a root entity for them, which a portal
+    // without models has to create here.
+    if (!hostedLayers.isEmpty() && !m_hostingEntity) {
+        WKREEngine::singleton().runWithSharedScene([weakThis = WeakPtr { *this }](RESceneRef scene) {
+            RefPtr protectedThis = weakThis;
+            if (!protectedThis || protectedThis->m_hostingEntity)
+                return;
+
+            protectedThis->m_scene = scene;
+            protectedThis->ensurePortalEntityHierarchy();
+            protectedThis->updateDisplayedPortalChildren();
+        });
+    }
+#endif
+
+    Vector<PortalSceneLayer> sceneLayers;
+    sceneLayers.reserveInitialCapacity(hostedLayers.size());
+    for (auto& hostedLayer : hostedLayers) {
+        // A layer that can't be placed is never drawn, which keeps the child it belongs to flat.
+        if (!isValidHostedLayer(hostedLayer)) {
+            sceneLayers.append({ hostedLayer, nullptr, nullptr });
+            continue;
+        }
+
+        // A layer the scene already draws keeps its contents until the next ones arrive.
+        auto existingIndex = m_portalSceneLayers.findIf([&](auto& sceneLayer) {
+            return sceneLayer.layer && sceneLayer.hostedLayer.nodeID == hostedLayer.nodeID;
+        });
+
+        bool isNewSceneLayer = existingIndex == notFound;
+        auto sceneLayer = isNewSceneLayer ? PortalSceneLayer { hostedLayer, makePortalSceneLayer(), nullptr } : WTF::move(m_portalSceneLayers[existingIndex]);
+#if ENABLE(GAZE_GLOW_FOR_INTERACTION_REGIONS)
+        if (isNewSceneLayer || sceneLayer.hostedLayer.interactionRegions != hostedLayer.interactionRegions)
+            updateInteractionRegionLayers(sceneLayer.layer.get(), hostedLayer);
+#endif
+        sceneLayer.hostedLayer = hostedLayer;
+
+        [sceneLayer.layer setContentsOpaque:hostedLayer.isOpaque];
+        sceneLayers.append(WTF::move(sceneLayer));
+    }
+
+    m_portalSceneLayers = WTF::move(sceneLayers);
+
+    updatePortalSceneLayerHierarchy();
+    updatePortalSceneLayerGeometry();
+    updateDisplayedPortalChildren();
+}
+
+void ModelProcessModelPlayerProxy::setPortalHostedLayerContents(WebCore::NodeIdentifier nodeID, MachSendRight&& sendRight)
+{
+    auto index = m_portalSceneLayers.findIf([&](auto& sceneLayer) {
+        return sceneLayer.layer && sceneLayer.hostedLayer.nodeID == nodeID;
+    });
+    if (index == notFound)
+        return;
+
+    auto surface = WebCore::IOSurface::createFromSendRight(WTF::move(sendRight));
+    if (!surface)
+        return;
+
+    auto& sceneLayer = m_portalSceneLayers[index];
+
+    // The GPU process doesn't paint a buffer while it is in use, so the one the layer shows is still current.
+    if (sceneLayer.contents && sceneLayer.contents->surfaceID() == surface->surfaceID())
+        return;
+
+    // Put the new front buffer in use before the previous one leaves it, so that the GPU process always paints its next
+    // frames into a buffer the scene doesn't show.
+    IOSurfaceIncrementUseCount(surface->surface());
+
+    RetainPtr layer = sceneLayer.layer;
+    [layer setContents:surface->asCAIOSurfaceLayerContents().get()];
+
+    // The layer may have shown this surface before it was painted again, so all of it is new. The rect is in the
+    // surface's pixels, not in the layer's points.
+    if ([CALayer instancesRespondToSelector:@selector(setContentsDirtyRect:)]) {
+        auto size = surface->size();
+        [layer setContentsDirtyRect:CGRectMake(0, 0, size.width(), size.height())];
+    }
+
+    sceneLayer.contents = std::unique_ptr<WebCore::IOSurface, PortalSceneLayerContentsDeleter> { surface.release() };
+    updateDisplayedPortalChildren();
+}
+
+void ModelProcessModelPlayerProxy::updatePortalSceneLayerGeometry()
+{
+    if (m_portalSceneLayers.isEmpty())
+        return;
+
+    float width = m_layoutSize.width().toFloat();
+    float height = m_layoutSize.height().toFloat();
+    [m_portalSceneLayerContainer setBounds:CGRectMake(0, 0, width, height)];
+    [m_portalSceneLayerContainer setPosition:CGPointZero];
+
+    for (auto& sceneLayer : m_portalSceneLayers) {
+        if (!sceneLayer.layer)
+            continue;
+
+        auto& hostedLayer = sceneLayer.hostedLayer;
+        auto quadRect = hostedLayer.quadRectInChildSpace;
+
+        WebCore::TransformationMatrix transform;
+        transform.translate(hostedLayer.childOriginInPortal.x(), hostedLayer.childOriginInPortal.y());
+        transform.multiply(hostedLayer.transform);
+        transform.translate(quadRect.x(), quadRect.y());
+
+        RetainPtr layer = sceneLayer.layer;
+        [layer setBounds:CGRectMake(0, 0, quadRect.width(), quadRect.height())];
+        [layer setTransform:transform];
+    }
+}
+
+void ModelProcessModelPlayerProxy::updateDisplayedPortalChildren()
+{
+    Vector<WebCore::NodeIdentifier> displayedRoots;
+#if HAVE(CORE_RE)
+    // Hosted layers are only drawn in the portal scene once the layer of the model has its root entity.
+    bool canDisplay = !!m_hostingEntity;
+#else
+    bool canDisplay = false;
+#endif
+    if (canDisplay) {
+        // A child is shown when every one of its layers has contents, so that it never appears in pieces.
+        Vector<WebCore::NodeIdentifier> incompleteRoots;
+        for (auto& sceneLayer : m_portalSceneLayers) {
+            auto rootNodeID = sceneLayer.hostedLayer.rootNodeID;
+            auto& roots = sceneLayer.contents ? displayedRoots : incompleteRoots;
+            if (!roots.contains(rootNodeID))
+                roots.append(rootNodeID);
+        }
+        displayedRoots.removeAllMatching([&](auto rootNodeID) {
+            return incompleteRoots.contains(rootNodeID);
+        });
+    }
+
+    for (auto& sceneLayer : m_portalSceneLayers)
+        [sceneLayer.layer setHidden:!displayedRoots.contains(sceneLayer.hostedLayer.rootNodeID)];
+
+    if (displayedRoots == m_displayedPortalChildren)
+        return;
+
+    m_displayedPortalChildren = displayedRoots;
+    send(Messages::ModelProcessModelPlayer::DidUpdateDisplayedPortalChildren(WTF::move(displayedRoots)));
+}
+
+#if HAVE(CORE_RE)
+static REEntityRef entityForCALayer(CALayer *layer)
+{
+    REPtr<REComponentRef> clientComponent = layer ? RECALayerGetCALayerClientComponent(layer) : nullptr;
+    return clientComponent ? REComponentGetEntity(clientComponent.get()) : nullptr;
+}
+
+static void setEntityNameForCALayer(CALayer *layer, ASCIILiteral name)
+{
+    REEntityRef entity = entityForCALayer(layer);
+    if (entity && !equalSpans(unsafeSpan(REEntityGetName(entity)), name.span()))
+        REEntitySetName(entity, name.characters());
+}
+#endif
+
+void ModelProcessModelPlayerProxy::updatePortalSceneLayerHierarchy()
+{
+    if (!m_portalSceneLayerContainer)
+        return;
+
+    // Sublayers are drawn in order, which keeps hosted layers in the same plane in paint order.
+    RetainPtr containerSublayers = adoptNS([[NSMutableArray alloc] initWithCapacity:m_portalSceneLayers.size()]);
+    for (auto& sceneLayer : m_portalSceneLayers) {
+        if (sceneLayer.layer)
+            [containerSublayers addObject:sceneLayer.layer.get()];
+    }
+
+    [m_portalSceneLayerContainer setSublayers:containerSublayers.get()];
+
+#if HAVE(CORE_RE)
+    // Named so that the scene graph dumps for testing find them.
+    setEntityNameForCALayer(m_portalSceneLayerContainer.get(), "WebKit:PortalHostedLayerContainer"_s);
+    for (auto& sceneLayer : m_portalSceneLayers) {
+        if (sceneLayer.layer)
+            setEntityNameForCALayer(sceneLayer.layer.get(), "WebKit:PortalHostedLayer"_s);
+    }
+#endif
+}
+
 #endif
 
 WebCore::StageModeOperation ModelProcessModelPlayerProxy::effectiveStageModeOperation() const
@@ -2046,6 +2332,10 @@ void ModelProcessModelPlayerProxy::sceneGraphAsTextForTesting(std::optional<WebC
 {
 #if HAVE(CORE_RE)
     [m_layer layoutIfNeeded];
+#if ENABLE(SPATIAL_PORTAL)
+    // The entities of hosted layers follow their layers as Core Animation commits them.
+    [CATransaction flush];
+#endif
 
     REEntityRef rootEntity = rootNode ? [entityForNode(*rootNode) coreEntity] : m_containerEntity.get();
     if (!rootEntity) {
@@ -2055,17 +2345,37 @@ void ModelProcessModelPlayerProxy::sceneGraphAsTextForTesting(std::optional<WebC
 
     Vector<std::pair<REEntityRef, String>> labels;
     for (auto& [nodeID, label] : modelLabels) {
-        RetainPtr entity = entityForNode(nodeID);
-        if (entity)
+        if (RetainPtr entity = entityForNode(nodeID)) {
             labels.append({ [entity coreEntity], WTF::move(label) });
+            continue;
+        }
+#if ENABLE(SPATIAL_PORTAL)
+        // The layers of promoted children are labeled by their elements.
+        for (auto& sceneLayer : m_portalSceneLayers) {
+            if (sceneLayer.layer && sceneLayer.hostedLayer.nodeID == nodeID) {
+                if (REEntityRef entity = entityForCALayer(sceneLayer.layer.get()))
+                    labels.append({ entity, label });
+            }
+        }
+#endif
     }
 
-    HashSet<REEntityRef> entitiesWithWebKitDescendants;
-    if (!options.includeAssetEntities)
-        collectEntitiesWithWebKitDescendants(rootEntity, entitiesWithWebKitDescendants);
-
     TextStream ts;
-    dumpSceneGraphEntity(ts, rootEntity, options, entitiesWithWebKitDescendants, labels);
+    auto dump = [&](REEntityRef entity) {
+        HashSet<REEntityRef> entitiesWithWebKitDescendants;
+        if (!options.includeAssetEntities)
+            collectEntitiesWithWebKitDescendants(entity, entitiesWithWebKitDescendants);
+        dumpSceneGraphEntity(ts, entity, options, entitiesWithWebKitDescendants, labels);
+    };
+
+    dump(rootEntity);
+#if ENABLE(SPATIAL_PORTAL)
+    // The layers of promoted children are drawn beside the container of the models, unless anchored to one of them.
+    if (!rootNode && !m_portalSceneLayers.isEmpty()) {
+        if (REEntityRef hostedLayerContainerEntity = entityForCALayer(m_portalSceneLayerContainer.get()))
+            dump(hostedLayerContainerEntity);
+    }
+#endif
     completionHandler(ts.release());
 #else
     UNUSED_PARAM(rootNode);

@@ -39,6 +39,11 @@
 #include <wtf/Lock.h>
 #include <wtf/TZoneMallocInlines.h>
 
+#if ENABLE(MODEL_PROCESS) && ENABLE(SPATIAL_PORTAL)
+#include <wtf/CompletionHandler.h>
+#include <wtf/MachSendRight.h>
+#endif
+
 #if ENABLE(GPU_PROCESS)
 
 namespace IPC {
@@ -118,6 +123,12 @@ public:
 
 #if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
     std::optional<WebCore::DynamicContentScalingDisplayList> dynamicContentScalingDisplayList();
+#endif
+
+#if ENABLE(MODEL_PROCESS) && ENABLE(SPATIAL_PORTAL)
+    // Shares the current front buffer so another process can display it, replying on the main run loop. There is no
+    // buffer to share while one is being prepared for display, or before the first one is painted.
+    void frontBufferForExternalRead(CompletionHandler<void(std::optional<MachSendRight>&&)>&&);
 #endif
 
     unsigned generation() const { return m_generation; }
