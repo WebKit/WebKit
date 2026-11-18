@@ -54,18 +54,30 @@
                         type : "wheel",
                         viewX : 100,
                         viewY : 100,
-                        deltaX : -10,
+                        deltaY : -10,
                         phase : "began"
                     },
                     {
                         type : "wheel",
-                        deltaX : -100,
+                        deltaY : -100,
                         phase : "changed"
                     },
                     {
                         type : "wheel",
                         viewX : 101, // defeat coalescing
-                        deltaX : -100,
+                        deltaY : -100,
+                        phase : "changed"
+                    },
+                    {
+                        type : "wheel",
+                        viewX : 100, // defeat coalescing
+                        deltaY : 120,
+                        phase : "changed"
+                    },
+                    {
+                        type : "wheel",
+                        viewX : 101, // defeat coalescing
+                        deltaY : 120,
                         phase : "changed"
                     },
                     {

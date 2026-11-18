@@ -12,6 +12,13 @@
     <script>
         var jsTestIsAsync = true;
 
+        // The test event sender advances the event timestamp by 1/60s for each event, so zero-delta events
+        // simulate a pause with fingers held down. The OS axis-locking filter needs a pause of more than
+        // ~600ms before it allows the gesture to switch from vertical to horizontal, so pause for at least 650ms.
+        const eventIntervalMilliseconds = 1000 / 60;
+        const pauseDurationMilliseconds = 650;
+        const pauseEventCount = Math.ceil(pauseDurationMilliseconds / eventIntervalMilliseconds) + 1;
+
         var initialScrollX;
         var initialScrollY;
 
@@ -26,7 +33,7 @@
         {
             // An "L-shaped" gesture with fingers held down throughout: scroll vertically, hold still
             // (zero-delta events, which still advance the 16ms-per-event timestamp so a real pause
-            // elapses), then scroll horizontally. viewX is toggled to defeat event coalescing.
+            // elapses; see pauseEventCount), then scroll horizontally. viewX is toggled to defeat event coalescing.
             const wheelEventSequence = {
                 "events" : [
                     { type : "wheel", viewX : 100, viewY : 100, deltaY : -10, phase : "began" },
@@ -34,9 +41,7 @@
                     { type : "wheel", viewX : 100, deltaY : -40, phase : "changed" },
                     { type : "wheel", viewX : 101, deltaY : -40, phase : "changed" },
                     // Pause with fingers down.
-                    { type : "wheel", viewX : 100, deltaX : 0, deltaY : 0, phase : "changed" },
-                    { type : "wheel", viewX : 101, deltaX : 0, deltaY : 0, phase : "changed" },
-                    { type : "wheel", viewX : 100, deltaX : 0, deltaY : 0, phase : "changed" },
+                    ...Array.from({ length : pauseEventCount }, (_, i) => ({ type : "wheel", viewX : 100 + (i % 2), deltaX : 0, deltaY : 0, phase : "changed" })),
                     // Now scroll horizontally.
                     { type : "wheel", viewX : 101, deltaX : -40, phase : "changed" },
                     { type : "wheel", viewX : 100, deltaX : -40, phase : "changed" },

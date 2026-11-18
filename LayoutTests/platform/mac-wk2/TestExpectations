@@ -2627,7 +2627,6 @@ webkit.org/b/323902 [ x86_64 ] http/tests/webgpu/webgpu/shader/execution/express
 [ GoldenGate ] editing/inserting/typing-space-to-trigger-smart-link.html [ Failure ]
 [ GoldenGate ] fast/events/input-event-insert-link.html [ Failure ]
 [ GoldenGate ] fast/quirks/active-quirks-by-domain.html [ Failure ]
-[ GoldenGate ] fast/scrolling/mac/vertical-then-horizontal-scroll.html [ Failure ]
 [ GoldenGate arm64 ] fast/webgpu/nocrash/fuzz-283943.html [ Failure ]
 [ GoldenGate arm64 ] fast/webgpu/nocrash/fuzz-284326.html [ Failure ]
 [ GoldenGate ] http/tests/resourceLoadStatistics/website-data-removal-for-site-navigated-to-with-filtered-link-decoration-after-long-deletion.html [ Failure ]
@@ -2642,7 +2641,6 @@ webkit.org/b/323902 [ x86_64 ] http/tests/webgpu/webgpu/shader/execution/express
 webkit.org/b/330805 [ GoldenGate ] tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-2d-overflow.html [ Pass Failure ]
 [ GoldenGate ] webaudio/audioworklet-stops-on-document-stop.html [ Failure ]
 [ GoldenGate ] webgl/video-formats/upload-path-av1-420-bt709-videorange.html [ Failure ]
-[ GoldenGate ] fast/scrolling/mac/rubberband-overflow-in-wheel-region.html [ Timeout ]
 
 # webkit.org/b/304362 REGRESSION(Tahoe): editing/selection/select-across-readonly-input* broken by Liquid Glass
 editing/selection/select-across-readonly-input-2.html [ Failure ]
