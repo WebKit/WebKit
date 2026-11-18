@@ -115,7 +115,7 @@ RefPtr<Filter> CanvasRenderingContext2D::createFilter(const FloatRect& bounds) c
     if (bounds.isEmpty())
         return nullptr;
 
-    auto* context = effectiveDrawingContext();
+    auto* context = effectiveDrawingContextNoSync();
     if (!context)
         return nullptr;
 

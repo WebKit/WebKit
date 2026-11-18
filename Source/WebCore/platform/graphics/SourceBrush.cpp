@@ -36,28 +36,28 @@ const AffineTransform& SourceBrush::gradientSpaceTransform() const
     return identity;
 }
 
-Gradient* SourceBrush::gradient() const
+const Gradient* SourceBrush::gradient() const
 {
     if (auto* logicalGradient = std::get_if<SourceBrushLogicalGradient>(&m_patternGradient))
         return logicalGradient->gradient.ptr();
     return nullptr;
 }
 
-Pattern* SourceBrush::pattern() const
+const Pattern* SourceBrush::pattern() const
 {
-    if (auto* pattern = std::get_if<Ref<Pattern>>(&m_patternGradient))
+    if (auto* pattern = std::get_if<Ref<const Pattern>>(&m_patternGradient))
         return pattern->ptr();
     return nullptr;
 }
 
-void SourceBrush::setGradient(Ref<Gradient>&& gradient, const AffineTransform& spaceTransform)
+void SourceBrush::setGradient(Ref<const Gradient>&& gradient, const AffineTransform& spaceTransform)
 {
     m_patternGradient = SourceBrushLogicalGradient { WTF::move(gradient), spaceTransform };
 }
 
-void SourceBrush::setPattern(Ref<Pattern>&& pattern)
+void SourceBrush::setPattern(Ref<const Pattern>&& pattern)
 {
-    m_patternGradient.emplace<Ref<Pattern>>(WTF::move(pattern));
+    m_patternGradient.emplace<Ref<const Pattern>>(WTF::move(pattern));
 }
 
 WTF::TextStream& operator<<(TextStream& ts, const SourceBrush& brush)

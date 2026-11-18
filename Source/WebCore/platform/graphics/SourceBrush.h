@@ -34,7 +34,7 @@ namespace WebCore {
 
 class SourceBrush {
 public:
-    using OptionalPatternGradient = Variant<std::monostate, SourceBrushLogicalGradient, Ref<Pattern>>;
+    using OptionalPatternGradient = Variant<std::monostate, SourceBrushLogicalGradient, Ref<const Pattern>>;
 
     SourceBrush() = default;
     SourceBrush(const Color& color)
@@ -57,13 +57,13 @@ public:
     // Packed color accessor takes into account the discrimination between color, gradient, pattern.
     std::optional<PackedColor::RGBA> packedColor() const;
 
-    NODELETE WEBCORE_EXPORT Gradient* gradient() const;
-    NODELETE WEBCORE_EXPORT Pattern* pattern() const;
+    NODELETE WEBCORE_EXPORT const Gradient* gradient() const;
+    NODELETE WEBCORE_EXPORT const Pattern* pattern() const;
     NODELETE WEBCORE_EXPORT const AffineTransform& gradientSpaceTransform() const;
     WEBCORE_EXPORT std::optional<RenderingResourceIdentifier> gradientIdentifier() const;
 
-    WEBCORE_EXPORT void setGradient(Ref<Gradient>&&, const AffineTransform& spaceTransform = { });
-    WEBCORE_EXPORT void setPattern(Ref<Pattern>&&);
+    WEBCORE_EXPORT void setGradient(Ref<const Gradient>&&, const AffineTransform& spaceTransform = { });
+    WEBCORE_EXPORT void setPattern(Ref<const Pattern>&&);
 
     std::optional<SourceBrushLogicalGradient> logicalGradient() const
     {
@@ -97,8 +97,8 @@ inline bool operator==(const SourceBrush& a, const SourceBrush& b)
             return false;
         if (auto* aGradient = std::get_if<SourceBrushLogicalGradient>(&a))
             return *aGradient == std::get<SourceBrushLogicalGradient>(b);
-        if (auto* aPattern = std::get_if<Ref<Pattern>>(&a))
-            return aPattern->ptr() == std::get<Ref<Pattern>>(b).ptr();
+        if (auto* aPattern = std::get_if<Ref<const Pattern>>(&a))
+            return aPattern->ptr() == std::get<Ref<const Pattern>>(b).ptr();
         return true;
     };
     return a.m_color == b.m_color && patternGradientEqual(a.m_patternGradient, b.m_patternGradient);

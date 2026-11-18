@@ -40,10 +40,6 @@ WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 
 namespace WebCore {
 
-void Gradient::stopsChanged()
-{
-}
-
 inline SkScalar webCoreDoubleToSkScalar(double d)
 {
     return SkDoubleToScalar(std::isfinite(d) ? d : 0);
@@ -134,7 +130,7 @@ static SkGradient::Interpolation toSkiaInterpolation(const ColorInterpolationMet
     return interpolation;
 }
 
-sk_sp<SkShader> Gradient::shader(float globalAlpha, const AffineTransform& gradientSpaceTransform)
+sk_sp<SkShader> Gradient::shader(float globalAlpha, const AffineTransform& gradientSpaceTransform) const
 {
     auto interpolation = toSkiaInterpolation(colorInterpolationMethod());
 
@@ -204,7 +200,7 @@ sk_sp<SkShader> Gradient::shader(float globalAlpha, const AffineTransform& gradi
     return shader;
 }
 
-void Gradient::fill(GraphicsContext& context, const FloatRect& rect)
+void Gradient::fill(GraphicsContext& context, const FloatRect& rect) const
 {
     auto paint = static_cast<GraphicsContextSkia*>(&context)->createFillPaint();
     paint.setShader(shader(context.alpha(), context.fillGradientSpaceTransform()));

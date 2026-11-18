@@ -69,12 +69,12 @@ private:
     void didAddClient(RenderElement&) final { }
     void didRemoveClient(RenderElement&) final { }
 
-    using CachedGradient = GeneratedImageCacheEntry<WebCore::Gradient>;
-    Ref<WebCore::Gradient> gradientForSize(const RenderElement&, FloatSize, bool isForFirstLine, CachedGradient*&) const;
+    using CachedGradient = GeneratedImageCacheEntry<const WebCore::Gradient>;
+    Ref<const WebCore::Gradient> gradientForSize(const RenderElement&, FloatSize, bool isForFirstLine, CachedGradient*&) const;
 
     Gradient m_gradient;
     bool m_stopsAreCacheable { false };
-    mutable GeneratedImageCache<WebCore::Gradient> m_gradients;
+    mutable GeneratedImageCache<const WebCore::Gradient> m_gradients;
 };
 
 } // namespace Style

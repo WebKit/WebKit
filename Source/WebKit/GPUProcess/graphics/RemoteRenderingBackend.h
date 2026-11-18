@@ -174,7 +174,7 @@ private:
     void releaseNativeImage(WebCore::RenderingResourceIdentifier);
     void cachePathImpl(Ref<WebCore::PathImpl>&&, RemotePathImplIdentifier);
     void releasePathImpl(RemotePathImplIdentifier);
-    void cacheGradient(Ref<WebCore::Gradient>&&, RemoteGradientIdentifier);
+    void cacheGradient(Ref<const WebCore::Gradient>&&, RemoteGradientIdentifier);
     void releaseGradient(RemoteGradientIdentifier);
     void cacheMeshGradient(Ref<WebCore::MeshGradient>&&, RemoteMeshGradientIdentifier);
     void releaseMeshGradient(RemoteMeshGradientIdentifier);

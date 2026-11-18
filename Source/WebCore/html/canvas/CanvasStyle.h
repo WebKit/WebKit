@@ -30,7 +30,9 @@
 #include "CanvasPattern.h"
 #include "Color.h"
 #include "ColorSerialization.h"
+#include <atomic>
 #include <optional>
+#include <wtf/Markable.h>
 
 namespace WebCore {
 
@@ -38,6 +40,12 @@ class CanvasBase;
 class Document;
 class GraphicsContext;
 class ScriptExecutionContext;
+
+// The version of the gradients and patterns of canvas styles. Invalid is never a version, so that
+// Markable<CanvasStyleVersion> can hold either a version or no version.
+enum class CanvasStyleVersion : uint64_t {
+    Invalid = std::numeric_limits<uint64_t>::max()
+};
 
 class CanvasStyle {
 public:
@@ -50,6 +58,11 @@ public:
     RefPtr<CanvasGradient> canvasGradient() const;
     RefPtr<CanvasPattern> canvasPattern() const;
     bool isGradientOrPattern() const { return !std::holds_alternative<Color>(m_style); }
+
+    // Changes whenever CanvasGradient::addColorStop() or CanvasPattern::setTransform() changes any gradient or
+    // pattern. While it doesn't change, a drawing context brush that was set to match a style still matches it.
+    static CanvasStyleVersion gradientPatternVersion() { return static_cast<CanvasStyleVersion>(s_gradientPatternVersion.load(std::memory_order_relaxed)); }
+    static void gradientOrPatternDidChange() { s_gradientPatternVersion.fetch_add(1, std::memory_order_relaxed); }
 
     template<typename... F>
     decltype(auto) visit(NOESCAPE F&&... f) const
@@ -70,6 +83,10 @@ public:
 
 private:
     Variant<Color, Ref<CanvasGradient>, Ref<CanvasPattern>> m_style;
+
+    // Gradients and patterns of OffscreenCanvas contexts in workers change it too. A context only uses gradients
+    // and patterns of its own thread, so the ordering of the changes between threads doesn't matter.
+    static std::atomic<uint64_t> s_gradientPatternVersion;
 };
 
 Color parseColor(const String& colorString, CanvasBase&);
@@ -119,3 +136,9 @@ inline Color CanvasStyle::color() const
 }
 
 } // namespace WebCore
+
+namespace WTF {
+
+template<> struct MarkableTraits<WebCore::CanvasStyleVersion> : EnumMarkableTraits<WebCore::CanvasStyleVersion, static_cast<uint64_t>(WebCore::CanvasStyleVersion::Invalid)> { };
+
+} // namespace WTF

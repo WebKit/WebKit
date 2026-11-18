@@ -74,7 +74,7 @@ public:
     RemoteNativeImageReadReference recordSharedNativeImageUse(RemoteNativeImageProxy&);
     RemotePathImplIdentifier recordPathImplUse(const WebCore::PathImpl&);
     void recordFontUse(WebCore::FontBase&);
-    RemoteGradientIdentifier recordGradientUse(WebCore::Gradient&);
+    RemoteGradientIdentifier recordGradientUse(const WebCore::Gradient&);
     RemoteMeshGradientIdentifier recordMeshGradientUse(WebCore::MeshGradient&);
     void recordFilterUse(WebCore::Filter&);
     void recordFontCustomPlatformDataUse(const WebCore::FontCustomPlatformData&);

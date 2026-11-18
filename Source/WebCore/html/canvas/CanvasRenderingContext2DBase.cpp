@@ -799,6 +799,9 @@ void CanvasRenderingContext2DBase::realizeSavesLoop()
 {
     ASSERT(m_unrealizedSaveCount);
     ASSERT(m_stateStack.size() >= 1);
+    // Set the brushes to match the styles before the saves, so that they still match after the restores. Otherwise
+    // each draw between repeated save(), fill/stroke...(), restore() would set them again.
+    effectiveDrawingContext();
     GraphicsContext* context = drawingContext();
     do {
         if (m_stateStack.size() > MaxSaveCount)
@@ -880,10 +883,9 @@ void CanvasRenderingContext2DBase::setStrokeColorImpl(Color&& color, String&& un
         return;
 
     realizeSaves();
-    if (auto* c = effectiveDrawingContext())
-        c->setStrokeColor(color);
     auto& state = modifiableState();
     state.strokeStyle = color;
+    state.drawingContextStyleVersion = std::nullopt;
     state.unparsedStrokeColor = WTF::move(unparsedColor);
 }
 
@@ -894,10 +896,9 @@ void CanvasRenderingContext2DBase::setFillColorImpl(Color&& color, String&& unpa
         return;
 
     realizeSaves();
-    if (auto* c = effectiveDrawingContext())
-        c->setFillColor(color);
     auto& state = modifiableState();
     state.fillStyle = color;
+    state.drawingContextStyleVersion = std::nullopt;
     state.unparsedFillColor = WTF::move(unparsedColor);
 }
 
@@ -1078,7 +1079,7 @@ void CanvasRenderingContext2DBase::setLineDashOffset(double offset)
 
 void CanvasRenderingContext2DBase::applyLineDash() const
 {
-    GraphicsContext* c = effectiveDrawingContext();
+    GraphicsContext* c = effectiveDrawingContextNoSync();
     if (!c)
         return;
     auto& state = this->state();
@@ -1086,6 +1087,40 @@ void CanvasRenderingContext2DBase::applyLineDash() const
     for (size_t i = 0; i < state.lineDash.size(); ++i)
         convertedLineDash[i] = static_cast<DashArrayElement>(state.lineDash[i]);
     c->setLineDash(convertedLineDash, state.lineDashOffset);
+}
+
+// Sets the brushes to match the styles. The setters of the styles and CanvasGradient::addColorStop() and
+// CanvasPattern::setTransform() leave the brushes as they are, and the context may also hold older brushes after
+// restore(). The version is only recorded without a target switcher. A switcher's context lives only during a draw
+// or a layer, and the base context can be restored when the switcher ends: TransparencyLayerContextSwitcher draws
+// into the base context between a save() and a restore(). The version is recorded without realizeSaves(), because
+// unrealized saves share both the state and the drawing context state with the level below.
+GraphicsContext* CanvasRenderingContext2DBase::effectiveDrawingContextSync()
+{
+    auto* context = effectiveDrawingContextNoSync();
+    if (!context)
+        return nullptr;
+    const auto& fillStyle = state().fillStyle;
+    if (RefPtr canvasGradient = fillStyle.canvasGradient()) {
+        if (Ref gradient = canvasGradient->gradient(); context->fillGradient() != gradient.ptr())
+            context->setFillGradient(WTF::move(gradient));
+    } else if (RefPtr canvasPattern = fillStyle.canvasPattern()) {
+        if (Ref pattern = canvasPattern->pattern(); context->fillPattern() != pattern.ptr())
+            context->setFillPattern(WTF::move(pattern));
+    } else
+        context->setFillColor(fillStyle.color());
+    const auto& strokeStyle = state().strokeStyle;
+    if (RefPtr canvasGradient = strokeStyle.canvasGradient()) {
+        if (Ref gradient = canvasGradient->gradient(); context->strokeGradient() != gradient.ptr())
+            context->setStrokeGradient(WTF::move(gradient));
+    } else if (RefPtr canvasPattern = strokeStyle.canvasPattern()) {
+        if (Ref pattern = canvasPattern->pattern(); context->strokePattern() != pattern.ptr())
+            context->setStrokePattern(WTF::move(pattern));
+    } else
+        context->setStrokeColor(strokeStyle.color());
+    if (!state().targetSwitcher)
+        m_stateStack.last().drawingContextStyleVersion = CanvasStyle::gradientPatternVersion();
+    return context;
 }
 
 void CanvasRenderingContext2DBase::setTargetSwitcherForDraw(RefPtr<CanvasLayerContextSwitcher>&& targetSwitcher)
@@ -2646,10 +2681,9 @@ void CanvasRenderingContext2DBase::setStrokeStyle(String&& colorString)
 void CanvasRenderingContext2DBase::setStrokeStyle(Ref<CanvasGradient>&& gradient)
 {
     realizeSaves();
-    if (auto* c = effectiveDrawingContext())
-        c->setStrokeGradient(gradient->gradient());
     auto& state = modifiableState();
     state.strokeStyle = WTF::move(gradient);
+    state.drawingContextStyleVersion = std::nullopt;
     state.unparsedStrokeColor = String();
 }
 
@@ -2657,10 +2691,9 @@ void CanvasRenderingContext2DBase::setStrokeStyle(Ref<CanvasPattern>&& pattern)
 {
     checkOrigin(pattern.ptr());
     realizeSaves();
-    if (auto* c = effectiveDrawingContext())
-        c->setStrokePattern(pattern->pattern());
     auto& state = modifiableState();
     state.strokeStyle = WTF::move(pattern);
+    state.drawingContextStyleVersion = std::nullopt;
     state.unparsedStrokeColor = String();
 }
 
@@ -2684,10 +2717,9 @@ void CanvasRenderingContext2DBase::setFillStyle(String&& colorString)
 void CanvasRenderingContext2DBase::setFillStyle(Ref<CanvasGradient>&& gradient)
 {
     realizeSaves();
-    if (auto* c = effectiveDrawingContext())
-        c->setFillGradient(gradient->gradient());
     auto& state = modifiableState();
     state.fillStyle = WTF::move(gradient);
+    state.drawingContextStyleVersion = std::nullopt;
     state.unparsedFillColor = String();
 }
 
@@ -2695,10 +2727,9 @@ void CanvasRenderingContext2DBase::setFillStyle(Ref<CanvasPattern>&& pattern)
 {
     checkOrigin(pattern.ptr());
     realizeSaves();
-    if (auto* c = effectiveDrawingContext())
-        c->setFillPattern(pattern->pattern());
     auto& state = modifiableState();
     state.fillStyle = WTF::move(pattern);
+    state.drawingContextStyleVersion = std::nullopt;
     state.unparsedFillColor = String();
 }
 
@@ -3019,7 +3050,7 @@ GraphicsContext* CanvasRenderingContext2DBase::drawingContext() const
     return nullptr;
 }
 
-GraphicsContext* CanvasRenderingContext2DBase::effectiveDrawingContext() const
+GraphicsContext* CanvasRenderingContext2DBase::effectiveDrawingContextNoSync() const
 {
     auto context = drawingContext();
     if (!context)

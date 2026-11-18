@@ -93,7 +93,7 @@ public:
     // isTransient may affect backend rendering implementation caching decisions.
     // Transient instances may be assumed to be drawn only few times or seldomly and as such the backend
     // may not persist caches related to the instance.
-    NODELETE WEBCORE_EXPORT static Ref<Gradient> create(Data&&, ColorInterpolationMethod, GradientSpreadMethod = GradientSpreadMethod::Pad, GradientColorStops&& = { }, bool isTransient = true);
+    NODELETE WEBCORE_EXPORT static Ref<const Gradient> create(Data&&, ColorInterpolationMethod, GradientSpreadMethod = GradientSpreadMethod::Pad, GradientColorStops&& = { }, bool isTransient = true);
     WEBCORE_EXPORT ~Gradient();
 
     const Data& data() const { return m_data; }
@@ -102,24 +102,22 @@ public:
     const GradientColorStops& stops() const LIFETIME_BOUND { return m_stops; }
     bool isTransient() const { return m_isTransient; }
 
-    WEBCORE_EXPORT void addColorStop(GradientColorStop&&);
-
     bool isZeroSize() const;
 
-    void fill(GraphicsContext&, const FloatRect&);
-    void adjustParametersForTiledDrawing(FloatSize&, FloatRect&, const FloatSize& spacing);
+    void fill(GraphicsContext&, const FloatRect&) const;
+    void adjustParametersForTiledDrawing(FloatSize&, FloatRect&, const FloatSize& spacing) const;
 
 #if USE(CAIRO)
-    RefPtr<cairo_pattern_t> createPattern(float globalAlpha, const AffineTransform&);
+    RefPtr<cairo_pattern_t> createPattern(float globalAlpha, const AffineTransform&) const;
 #endif
 
 #if USE(CG)
-    void paint(GraphicsContext&);
-    void paint(CGContextRef, std::optional<ColorSpace> = { });
+    void paint(GraphicsContext&) const;
+    void paint(CGContextRef, std::optional<ColorSpace> = { }) const;
 #endif
 
 #if USE(SKIA)
-    sk_sp<SkShader> shader(float globalAlpha, const AffineTransform&);
+    sk_sp<SkShader> shader(float globalAlpha, const AffineTransform&) const;
 #endif
 
     void addObserver(WeakRef<RenderingResourceObserver>&& observer) const
@@ -130,15 +128,13 @@ public:
 private:
     Gradient(Data&&, ColorInterpolationMethod, GradientSpreadMethod, GradientColorStops&&, bool isTransient);
 
-    void stopsChanged();
-
     Data m_data;
     ColorInterpolationMethod m_colorInterpolationMethod;
     GradientSpreadMethod m_spreadMethod;
     GradientColorStops m_stops;
 
 #if USE(CG)
-    std::optional<GradientRendererCG> m_platformRenderer;
+    mutable std::optional<GradientRendererCG> m_platformRenderer;
 #endif
 
     mutable WeakHashSet<RenderingResourceObserver> m_observers;

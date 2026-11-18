@@ -25,14 +25,14 @@
 
 #pragma once
 
+#include "Pattern.h"
+#include "SourceImage.h"
 #include <wtf/Forward.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
 
-class Pattern;
-class SourceImage;
 struct DOMMatrix2DInit;
 template<typename> class ExceptionOr;
 
@@ -43,8 +43,17 @@ public:
 
     static bool parseRepetitionType(const String&, bool& repeatX, bool& repeatY);
 
-    Pattern& pattern() { return m_pattern; }
-    const Pattern& pattern() const { return m_pattern; }
+    // An immutable snapshot of the pattern. The same snapshot is returned until setTransform() is called.
+    Ref<const Pattern> pattern() const
+    {
+        if (m_pattern) [[likely]]
+            return *m_pattern;
+        return createPattern();
+    }
+
+    const SourceImage& tileImage() const LIFETIME_BOUND { return m_tileImage; }
+    bool repeatX() const { return m_parameters.repeatX; }
+    bool repeatY() const { return m_parameters.repeatY; }
 
     bool originClean() const { return m_originClean; }
     
@@ -53,7 +62,11 @@ public:
 private:
     CanvasPattern(SourceImage&&, bool repeatX, bool repeatY, bool originClean);
 
-    const Ref<Pattern> m_pattern;
+    Ref<const Pattern> createPattern() const;
+
+    SourceImage m_tileImage;
+    PatternParameters m_parameters;
+    mutable RefPtr<const Pattern> m_pattern;
     bool m_originClean;
 };
 

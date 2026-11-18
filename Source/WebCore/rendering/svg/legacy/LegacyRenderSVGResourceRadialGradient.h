@@ -46,7 +46,7 @@ private:
 
     SVGUnitTypes::SVGUnitType gradientUnits() const final { return m_attributes.gradientUnits(); }
     AffineTransform gradientTransform() const final { return m_attributes.gradientTransform(); }
-    Ref<Gradient> buildGradient(const Style::ComputedStyle&) const final;
+    Ref<const Gradient> buildGradient(const Style::ComputedStyle&) const final;
 
     void gradientElement() const = delete;
 
