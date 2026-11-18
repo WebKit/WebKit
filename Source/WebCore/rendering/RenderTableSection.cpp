@@ -124,6 +124,35 @@ void RenderTableSection::willBeRemovedFromTree()
 {
     RenderBox::willBeRemovedFromTree();
 
+    // Removing a section changes which borders collapse with the neighbouring sections' cells,
+    // so those cells need fresh collapsed borders and a new layout.
+    auto hasSiblingSection = [](const RenderTableSection& section) {
+        for (CheckedPtr sibling = section.previousSibling(); sibling; sibling = sibling->previousSibling()) {
+            if (sibling->isRenderTableSection())
+                return true;
+        }
+        for (CheckedPtr sibling = section.nextSibling(); sibling; sibling = sibling->nextSibling()) {
+            if (sibling->isRenderTableSection())
+                return true;
+        }
+        return false;
+    };
+    auto markCellsDirty = [](RenderTableSection* section, bool useLastRow) {
+        CheckedPtr checkedSection = section;
+        if (!checkedSection)
+            return;
+        CheckedPtr row = useLastRow ? checkedSection->lastRow() : checkedSection->firstRow();
+        if (!row)
+            return;
+        for (CheckedPtr cell = row->firstCell(); cell; cell = cell->nextCell())
+            cell->setNeedsLayoutAndInvalidateContentLogicalWidths();
+    };
+    if (CheckedPtr table = this->table(); table && !renderTreeBeingDestroyed() && table->collapseBorders() && hasSiblingSection(*this)) {
+        table->invalidateCollapsedBorders();
+        markCellsDirty(table->sectionAbove(this, SkipEmptySections::Yes), true);
+        markCellsDirty(table->sectionBelow(this, SkipEmptySections::Yes), false);
+    }
+
     // Preventively invalidate our cells as we may be re-inserted into
     // a new table which would require us to rebuild our structure.
     setNeedsCellRecalc();

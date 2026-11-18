@@ -1,0 +1,19 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Removing the only row group of a collapsed-borders table</title>
+<link rel="help" href="https://drafts.csswg.org/css-tables/#border-collapse-property">
+<link rel="match" href="collapsed-border-remove-row-group-only-ref.html">
+<style>
+  table { border-collapse: collapse; }
+  td { padding: 5px; }
+  .thick { border-top: 10px solid green; }
+</style>
+<table>
+  <tbody id="removeMe"><tr><td class="thick">Removed</td></tr></tbody>
+</table>
+<script>
+  onload = function () {
+    removeMe.getBoundingClientRect();
+    removeMe.remove();
+  };
+</script>
