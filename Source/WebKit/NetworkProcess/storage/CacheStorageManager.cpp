@@ -577,6 +577,10 @@ static void queryCaches(Vector<Ref<CacheStorageCache>>&& caches, size_t index, W
             });
             return;
         }
+        if (!shouldIterate) {
+            callback({ });
+            return;
+        }
         queryCaches(WTF::move(caches), index + 1, WTF::move(options), shouldIterate, WTF::move(callback));
     });
 }

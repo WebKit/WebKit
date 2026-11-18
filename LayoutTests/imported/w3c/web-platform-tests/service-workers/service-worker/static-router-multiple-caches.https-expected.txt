@@ -1,0 +1,7 @@
+
+PASS Cache source finds a response stored only in a later cache
+PASS Cache source uses the first cache that contains the request
+PASS Cache source with a cacheName finds the response in the named cache
+PASS Cache source with a cacheName does not search other caches
+PASS Cache source falls back to the network when no cache has the request
+
