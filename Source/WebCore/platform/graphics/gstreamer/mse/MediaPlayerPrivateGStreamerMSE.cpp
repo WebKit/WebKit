@@ -113,7 +113,25 @@ MediaPlayerPrivateGStreamerMSE::~MediaPlayerPrivateGStreamerMSE()
 {
     GST_TRACE("destroying the player (%p)", this);
 
-    m_source.clear();
+    // We need to call tearDown() here instead of just relying that it will be called by the
+    // superclass because it will call the willSetPipelineToNull() overridden method. If we
+    // just relied in the call done by the superclass, the virtual method would already be
+    // deinitialized by C++ and the superclass willSetPipelineToNull() implementation would
+    // be called instead, defeating the purpose of the virtual method override.
+    // The second tearDown() call done by the superclass destructor is harmless, as there are
+    // a number of checks in place to avoid operating on empty attributes.
+    tearDown(true);
+}
+
+void MediaPlayerPrivateGStreamerMSE::willSetPipelineToNull()
+{
+    if (m_source) {
+        // Stop the source element first to ensure streaming threads are stopped before
+        // transitioning the pipeline to GST_STATE_NULL, avoiding decryptor hangs caused by
+        // HDCP related issues.
+        GST_DEBUG_OBJECT(m_pipeline.get(), "Reset source to READY before pipeline destruction");
+        gst_element_set_state(m_source.get(), GST_STATE_READY);
+    }
 }
 
 void MediaPlayerPrivateGStreamerMSE::load(const String&)
