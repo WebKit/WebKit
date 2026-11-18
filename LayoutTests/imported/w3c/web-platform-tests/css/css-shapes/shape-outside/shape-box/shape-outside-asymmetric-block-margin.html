@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<title>CSS Shapes: shape-outside on a float with unequal block-start and block-end margins</title>
+<link rel="help" href="https://drafts.csswg.org/css-shapes/#shape-outside-property">
+<link rel="help" href="https://drafts.csswg.org/css-writing-modes/#logical-directions">
+<link rel="stylesheet" href="/fonts/ahem.css">
+<meta name="assert" content="The float area defined by shape-outside is positioned relative to the float's border box, whose block-start edge is offset by the block-start margin of the containing block's writing mode (e.g. margin-left in vertical-lr).">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<style>
+.container {
+    font: 20px/1 Ahem;
+    inline-size: 300px;
+    block-size: 200px;
+    margin: 10px;
+}
+.float {
+    float: left;
+    inline-size: 100px;
+    block-size: 20px;
+    /* Only a block-start margin: the border box covers line 4. */
+    margin-block: 60px 0;
+    margin-inline: 0;
+}
+</style>
+
+<p>Each line is 20px thick in the block direction. The float has a 60px block-start margin, so its border box covers line 4 only.
+Shapes referencing the border box must shorten line 4 only; shapes referencing the margin box must shorten lines 1-4.</p>
+
+<div id="tests"></div>
+
+<script>
+const writingModes = ["horizontal-tb", "vertical-rl", "vertical-lr", "sideways-rl", "sideways-lr"];
+// Shapes covering the border box shorten line 4 only. Shapes covering the margin box (the default
+// reference box for basic shapes) shorten lines 1-4.
+const borderBoxOffsets = [0, 0, 0, 100, 0];
+const marginBoxOffsets = [100, 100, 100, 100, 0];
+const shapes = [
+    { shape: "border-box", expected: borderBoxOffsets },
+    { shape: "inset(0) border-box", expected: borderBoxOffsets },
+    { shape: "polygon(0 0, 100% 0, 100% 100%, 0 100%) border-box", expected: borderBoxOffsets },
+    { shape: "margin-box", expected: marginBoxOffsets },
+    { shape: "inset(0)", expected: marginBoxOffsets },
+    { shape: "polygon(0 0, 100% 0, 100% 100%, 0 100%)", expected: marginBoxOffsets },
+];
+
+function inlineStartOffset(container, span, writingMode) {
+    const c = container.getBoundingClientRect();
+    const r = span.getBoundingClientRect();
+    switch (writingMode) {
+    case "horizontal-tb":
+        return r.left - c.left;
+    case "sideways-lr":
+        return c.bottom - r.bottom;
+    default:
+        return r.top - c.top;
+    }
+}
+
+const tests = document.getElementById("tests");
+const cases = [];
+for (const writingMode of writingModes) {
+    for (const { shape, expected } of shapes) {
+        const container = document.createElement("div");
+        container.className = "container";
+        container.style.writingMode = writingMode;
+        container.innerHTML = `<div class="float"></div><span>X</span><br><span>X</span><br><span>X</span><br><span>X</span><br><span>X</span>`;
+        container.firstChild.style.shapeOutside = shape;
+        tests.appendChild(container);
+        cases.push({ container, writingMode, shape, expected });
+    }
+}
+
+const fontsReady = document.fonts.ready;
+
+for (const { container, writingMode, shape, expected } of cases) {
+    promise_test(async () => {
+        await fontsReady;
+        assert_implements_optional(CSS.supports("writing-mode", writingMode), `writing-mode: ${writingMode}`);
+        const offsets = Array.from(container.querySelectorAll("span"), span => Math.round(inlineStartOffset(container, span, writingMode)) || 0);
+        assert_array_equals(offsets, expected);
+    }, `shape-outside: ${shape} in ${writingMode}`);
+}
+</script>

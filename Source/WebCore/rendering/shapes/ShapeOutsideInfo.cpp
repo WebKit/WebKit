@@ -190,7 +190,7 @@ static inline LayoutUnit marginBorderAndPaddingStartWithStyleForWritingMode(cons
 
 static inline LayoutUnit marginBorderAndPaddingBeforeWithStyleForWritingMode(const RenderBox& renderer, WritingMode writingMode)
 {
-    return (writingMode.isHorizontal() ? renderer.marginTop() : renderer.marginRight()) + borderAndPaddingBeforeInWritingMode(renderer, writingMode);
+    return renderer.marginBefore(writingMode) + borderAndPaddingBeforeInWritingMode(renderer, writingMode);
 }
 
 static LayoutUnit logicalLeftOffset(const RenderBox& renderer)
@@ -321,6 +321,13 @@ Ref<const LayoutShape> makeShapeForShapeOutside(const RenderBox& renderer)
                     else { // vertical-rl, sideways-rl
                         shapeRect.setRadii({ radiiForBlockDirection.topRight(), radiiForBlockDirection.bottomRight(), radiiForBlockDirection.topLeft(), radiiForBlockDirection.bottomLeft() });
                         mapContour(mirrorVertically);
+                        // Shape coordinates are block-start relative and the block-start edge is the physical right edge.
+                        // Mirroring within the shape's own bounds is not enough when they are not centered on the border box (e.g. margin-box with unequal margins).
+                        auto blockOffset = renderer.borderBoxWidth() - (shapeRect.rect().y() + shapeRect.rect().maxY());
+                        shapeRect.move({ 0_lu, blockOffset });
+                        mapContour([&](FloatPoint point) {
+                            return FloatPoint { point.x(), point.y() + blockOffset.toFloat() };
+                        });
                     }
                 }
                 if (writingMode.isBidiRTL()) {

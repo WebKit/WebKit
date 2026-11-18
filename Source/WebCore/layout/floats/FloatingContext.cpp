@@ -33,6 +33,7 @@
 #include "LayoutElementBox.h"
 #include "LayoutShape.h"
 #include "LayoutState.h"
+#include "RenderElement.h"
 #include "StyleComputedStyle+GettersInlines.h"
 #include <ranges>
 #include <wtf/TZoneMallocInlines.h>
@@ -364,6 +365,15 @@ static std::optional<std::pair<LayoutUnit, LayoutUnit>> computeShapeEdge(const P
         return { };
 
     auto borderRect = floatItem.absoluteBorderBoxRect();
+    if (CheckedPtr floatBox = floatItem.layoutBox()) {
+        // Shapes are block-start relative, but the block-axis margins of floats placed by this formatting
+        // context are line-relative (line-over, line-under). They differ when line-over is block-end (vertical-lr).
+        auto writingMode = floatBox->parent().writingMode();
+        if (writingMode.isVertical() && writingMode.isLineInverted()) {
+            auto boxGeometry = floatItem.boxGeometry();
+            borderRect.moveVertically(boxGeometry.marginAfter() - boxGeometry.marginBefore());
+        }
+    }
     auto positionInShape = candidateTop - borderRect.top();
 
     if (!shape->lineOverlapsShapeMarginBounds(positionInShape, candidateHeight))
