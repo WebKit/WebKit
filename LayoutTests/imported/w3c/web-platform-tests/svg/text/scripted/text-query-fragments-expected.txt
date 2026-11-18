@@ -3,5 +3,5 @@ text
 curved text
 
 PASS getSubStringLength() on characters positioned one by one
-FAIL getCharNumAtPosition() on text on a curved path assert_equals: character 1 expected 1 but got 0
+PASS getCharNumAtPosition() on text on a curved path
 

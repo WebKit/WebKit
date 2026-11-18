@@ -19,12 +19,7 @@
 
 #pragma once
 
-#include <wtf/text/WTFString.h>
-
 namespace WebCore {
-
-class RenderSVGInlineText;
-class TextRun;
 
 class SVGTextMetrics {
 public:
@@ -35,16 +30,11 @@ public:
         , m_length(length)
     { }
 
-    static SVGTextMetrics measureCharacterRange(const RenderSVGInlineText&, unsigned position, unsigned length);
-    static TextRun constructTextRun(const RenderSVGInlineText&, unsigned position = 0, unsigned length = std::numeric_limits<unsigned>::max());
-
     float width() const { return m_width; }
     float height() const { return m_height; }
     unsigned length() const { return m_length; }
 
 private:
-    SVGTextMetrics(const RenderSVGInlineText&, const TextRun&);
-
     float m_width { 0 };
     float m_height { 0 };
     unsigned m_length { 0 };

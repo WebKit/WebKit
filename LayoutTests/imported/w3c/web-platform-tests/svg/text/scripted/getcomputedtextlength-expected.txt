@@ -7,11 +7,11 @@ A BC
 
 PASS The sum of the advances
 PASS The positions of the characters do not count
-FAIL Letter spacing counts assert_equals: expected 45 but got 30
-FAIL Word spacing counts assert_equals: expected 45 but got 40
+PASS Letter spacing counts
+PASS Word spacing counts
 PASS The characters of a tspan
 PASS Vertical text
 PASS No characters
 PASS An element that is not rendered
-FAIL The same as getSubStringLength() of all characters assert_equals: tspans expected 10 but got 40
+PASS The same as getSubStringLength() of all characters
 

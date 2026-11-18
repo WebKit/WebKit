@@ -98,5 +98,5 @@ layer at (0,0) size 800x585
               RenderText {#text} at (0,135) size 32x15
                 text run at (0,135) width 32: "FAIL"
             RenderText {#text} at (32,135) size 432x15
-              text run at (32,135) width 432: " t.getStartPositionOfChar(9).x should be 490. Was 700."
+              text run at (32,135) width 432: " t.getStartPositionOfChar(9).x should be 490. Was 680."
           RenderBR {br} at (464,135) size 0x15

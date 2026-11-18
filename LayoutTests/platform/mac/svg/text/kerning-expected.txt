@@ -92,11 +92,11 @@ layer at (0,0) size 800x585
             RenderText {#text} at (31,120) size 477x15
               text run at (31,120) width 477: " t.getStartPositionOfChar(8).x is 0 + 70 + 100 + 70 + 70 + 80"
           RenderBR {br} at (507,120) size 1x15
-        RenderInline {span} at (0,135) size 453x15
-          RenderInline {span} at (0,135) size 453x15
+        RenderInline {span} at (0,135) size 554x15
+          RenderInline {span} at (0,135) size 554x15
             RenderInline {span} at (0,135) size 32x15
               RenderText {#text} at (0,135) size 32x15
-                text run at (0,135) width 32: "FAIL"
-            RenderText {#text} at (31,135) size 422x15
-              text run at (31,135) width 422: " t.getStartPositionOfChar(9).x should be 490. Was 510."
-          RenderBR {br} at (452,135) size 1x15
+                text run at (0,135) width 32: "PASS"
+            RenderText {#text} at (31,135) size 523x15
+              text run at (31,135) width 523: " t.getStartPositionOfChar(9).x is 0 + 70 + 100 + 70 + 70 + 80 + 100"
+          RenderBR {br} at (553,135) size 1x15

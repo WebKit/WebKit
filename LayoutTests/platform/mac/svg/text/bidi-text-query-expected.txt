@@ -15,5 +15,5 @@ layer at (0,0) size 800x600
       RenderSVGContainer {g} at (16,56) size 212x84
         RenderSVGRect {svg:rect} at (16,56) size 137x34 [fill={[type=SOLID] [color=#FF0000] [opacity=0.40]}] [x=10.00] [y=33.71] [width=81.54] [height=20.11]
         RenderSVGRect {svg:rect} at (160,56) size 68x34 [fill={[type=SOLID] [color=#008000] [opacity=0.40]}] [x=96.54] [y=33.71] [width=40.00] [height=20.11]
-        RenderSVGRect {svg:rect} at (16,106) size 132x34 [fill={[type=SOLID] [color=#FF0000] [opacity=0.40]}] [x=10.00] [y=63.71] [width=78.50] [height=20.11]
+        RenderSVGRect {svg:rect} at (122,106) size 26x34 [fill={[type=SOLID] [color=#FF0000] [opacity=0.40]}] [x=73.64] [y=63.71] [width=14.85] [height=20.11]
         RenderSVGRect {svg:rect} at (155,106) size 68x34 [fill={[type=SOLID] [color=#008000] [opacity=0.40]}] [x=93.50] [y=63.71] [width=40.00] [height=20.11]
