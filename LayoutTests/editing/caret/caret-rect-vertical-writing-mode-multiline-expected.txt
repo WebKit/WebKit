@@ -1,0 +1,8 @@
+
+PASS Caret positions on every line of a horizontal-tb contenteditable element
+PASS Caret positions on every line of a vertical-lr contenteditable element
+PASS Caret positions on every line of a vertical-rl contenteditable element
+PASS Caret positions on every line of a horizontal-tb textarea
+PASS Caret positions on every line of a vertical-lr textarea
+PASS Caret positions on every line of a vertical-rl textarea
+

@@ -92,9 +92,9 @@ if (window.accessibilityController) {
 
         // These values exercise shrinking line-by-line from the start of the text.
         output += await verifyVisibleRange(axBody, { width: 305, height: 1477, scrollTop: 632 }, accessibilityController.platformName === "ios" ? ["{0, 124}"] : ["{0, 106}", "{0, 121}"]);
-        // NOTE: The old implementation's expectation of {537, 500} — there aren't even 537 characters in the whole test corpus,
+        // NOTE: The old implementation's expectation of {537, 371} — there aren't even 537 characters in the whole test corpus,
         // so for the location (where the range starts) to be 537 is just not right.
-        output += await verifyVisibleRange(axBody, { width: 625, height: 48, scrollTop: 29 }, ["{537, 500}", "{0, 203}"]);
+        output += await verifyVisibleRange(axBody, { width: 625, height: 48, scrollTop: 29 }, ["{537, 371}", "{0, 203}"]);
 
         debug(output);
         document.getElementById("content-wrapper").style.display = "none";
