@@ -26,10 +26,12 @@
 
 namespace WebCore {
 
-class TransformPaintScope {
-    WTF_MAKE_NONCOPYABLE(TransformPaintScope);
+namespace Paint {
+
+class TransformScope {
+    WTF_MAKE_NONCOPYABLE(TransformScope);
 public:
-    TransformPaintScope(GraphicsContext& context, const RenderLayer::LayerPaintingInfo& paintingInfo, const TransformationMatrix& transform, float deviceScaleFactor, const LayoutSize& adjustedSubpixelOffset, CheckedPtr<RenderLayer> newRootLayer = nullptr, StateSavedByCaller stateSavedByCaller = StateSavedByCaller::No)
+    TransformScope(GraphicsContext& context, const RenderLayer::LayerPaintingInfo& paintingInfo, const TransformationMatrix& transform, float deviceScaleFactor, const LayoutSize& adjustedSubpixelOffset, CheckedPtr<RenderLayer> newRootLayer = nullptr, StateSavedByCaller stateSavedByCaller = StateSavedByCaller::No)
         : m_context(context)
         , m_affineTransform(transform.toAffineTransform())
         , m_transformedPaintingInfo(paintingInfo)
@@ -58,7 +60,7 @@ public:
         m_transformedPaintingInfo.subpixelOffset = adjustedSubpixelOffset;
     }
 
-    ~TransformPaintScope()
+    ~TransformScope()
     {
         if (auto* regionContext = m_transformedPaintingInfo.regionContext.get())
             regionContext->popTransform();
@@ -80,4 +82,5 @@ private:
     const bool m_savedTransform;
 };
 
+} // namespace Paint
 } // namespace WebCore

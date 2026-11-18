@@ -86,7 +86,9 @@ class HitTestRequest;
 class HitTestResult;
 class HitTestingTransformState;
 class Region;
-class ClipPathPaintScope;
+namespace Paint {
+class ClipPathScope;
+}
 class RegionContext;
 class RenderFragmentedFlow;
 class RenderLayerBacking;
@@ -1260,7 +1262,7 @@ private:
 
     bool setupFontSubpixelQuantization(GraphicsContext&, bool& didQuantizeFonts);
 
-    void setupClipPath(std::optional<ClipPathPaintScope>&, GraphicsContext&, const LayerPaintingInfo&, OptionSet<PaintLayerFlag>&, const LayoutSize& offsetFromRoot);
+    void setupClipPath(std::optional<Paint::ClipPathScope>&, GraphicsContext&, const LayerPaintingInfo&, OptionSet<PaintLayerFlag>&, const LayoutSize& offsetFromRoot);
     void clearLayerClipPath();
 
     RenderLayerFilters& ensureLayerFilters();
@@ -1587,7 +1589,7 @@ private:
     };
     const std::unique_ptr<SVGData> m_svgData;
 
-    PaintFrequencyTracker m_paintFrequencyTracker;
+    Paint::FrequencyTracker m_paintFrequencyTracker;
 };
 
 inline void RenderLayer::clearZOrderLists()

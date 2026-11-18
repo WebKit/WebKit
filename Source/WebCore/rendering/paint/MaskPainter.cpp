@@ -44,6 +44,7 @@
 #include "StyleImage.h"
 
 namespace WebCore {
+namespace Paint {
 
 MaskPainter::MaskPainter(RenderBox& renderer, PaintInfo& paintInfo, const LayoutPoint& paintOffset)
     : m_renderer(renderer)
@@ -121,4 +122,5 @@ void MaskPainter::paintMaskImages(const LayoutRect& paintRect)
         m_paintInfo.context().endTransparencyLayer();
 }
 
-}
+} // namespace Paint
+} // namespace WebCore

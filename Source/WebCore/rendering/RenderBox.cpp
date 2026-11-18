@@ -1966,14 +1966,14 @@ bool RenderBox::getBackgroundPaintedExtent(const LayoutPoint& paintOffset, Layou
         return true;
     }
 
-    auto geometry = BackgroundPainter::calculateFillLayerImageGeometry(*this, nullptr, layers.usedFirst(), style().usedZoomForLength(), paintOffset, backgroundRect);
+    auto geometry = Paint::BackgroundPainter::calculateFillLayerImageGeometry(*this, nullptr, layers.usedFirst(), style().usedZoomForLength(), paintOffset, backgroundRect);
     paintedExtent = geometry.destinationRect;
     return !geometry.hasNonLocalGeometry;
 }
 
 bool RenderBox::backgroundIsKnownToBeOpaqueInRect(const LayoutRect& localRect) const
 {
-    if (!BackgroundPainter::paintsOwnBackground(*this))
+    if (!Paint::BackgroundPainter::paintsOwnBackground(*this))
         return false;
 
     Color backgroundColor = style().visitedDependentUsedBackgroundColorApplyingColorFilter();
@@ -2115,7 +2115,7 @@ LayoutRect RenderBox::maskClipRect(const LayoutPoint& paintOffset)
     for (auto& maskLayer : style().maskLayers().usedValues()) {
         if (maskLayer.hasImage()) {
             // Masks should never have fixed attachment, so it's OK for paintContainer to be null.
-            result.unite(BackgroundPainter::calculateFillLayerImageGeometry(*this, nullptr, maskLayer, zoom, paintOffset, borderBox).destinationRect);
+            result.unite(Paint::BackgroundPainter::calculateFillLayerImageGeometry(*this, nullptr, maskLayer, zoom, paintOffset, borderBox).destinationRect);
         }
     }
     return result;
@@ -2226,7 +2226,7 @@ bool RenderBox::repaintLayerRectsForImage(WrappedImagePtr image, const Layers& l
                 }
             }
             // FIXME: Figure out how to pass absolute position to calculateFillLayerImageGeometry (for pixel snapping)
-            auto geometry = BackgroundPainter::calculateFillLayerImageGeometry(*layerRenderer, nullptr, layer, zoom, LayoutPoint(), rendererRect);
+            auto geometry = Paint::BackgroundPainter::calculateFillLayerImageGeometry(*layerRenderer, nullptr, layer, zoom, LayoutPoint(), rendererRect);
             if (geometry.hasNonLocalGeometry) {
                 // Rather than incur the costs of computing the paintContainer for renderers with fixed backgrounds
                 // in order to get the right destRect, just repaint the entire renderer.

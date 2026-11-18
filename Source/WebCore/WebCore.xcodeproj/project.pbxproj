@@ -6918,7 +6918,8 @@
 		E444B0A128C7437900CA560E /* BorderPainter.h in Headers */ = {isa = PBXBuildFile; fileRef = E444B0A028C7437900CA560E /* BorderPainter.h */; };
 		9E73BBA26303CDD5AC0FC2BD /* BoxDecorationPainter.h in Headers */ = {isa = PBXBuildFile; fileRef = E9EFE3E593EFEB8A7D082769 /* BoxDecorationPainter.h */; };
 		DED455D86AFC6F27CAED7FD0 /* MaskPainter.h in Headers */ = {isa = PBXBuildFile; fileRef = 67DCCCAC39DA40C5774677AC /* MaskPainter.h */; };
-		3A257E33CCFA0AF52DD3E2CF /* TransformPaintScope.h in Headers */ = {isa = PBXBuildFile; fileRef = 43C6D41BC4AA85D259FF1215 /* TransformPaintScope.h */; };
+		D5BED17B11A73E7021AA8090 /* TextPaintStyle.h in Headers */ = {isa = PBXBuildFile; fileRef = 273211FAAB837343D620CB8D /* TextPaintStyle.h */; };
+		3A257E33CCFA0AF52DD3E2CF /* PaintTransformScope.h in Headers */ = {isa = PBXBuildFile; fileRef = 43C6D41BC4AA85D259FF1215 /* PaintTransformScope.h */; };
 		E444B0A928C8B19A00CA560E /* BackgroundPainter.h in Headers */ = {isa = PBXBuildFile; fileRef = E444B0A828C8B19900CA560E /* BackgroundPainter.h */; };
 		E44613A20CD6331000FADA75 /* HTMLAudioElement.h in Headers */ = {isa = PBXBuildFile; fileRef = E44613900CD6331000FADA75 /* HTMLAudioElement.h */; };
 		E44613A50CD6331000FADA75 /* HTMLMediaElement.h in Headers */ = {isa = PBXBuildFile; fileRef = E44613930CD6331000FADA75 /* HTMLMediaElement.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -7020,7 +7021,7 @@
 		E4C279590CF9741900E97B98 /* RenderMedia.h in Headers */ = {isa = PBXBuildFile; fileRef = E4C279570CF9741900E97B98 /* RenderMedia.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E4C3B1FA0F0E4161009693F6 /* LegacyTileCache.h in Headers */ = {isa = PBXBuildFile; fileRef = E4C3B1F90F0E4161009693F6 /* LegacyTileCache.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E4C4C61A27452A7900A040E7 /* ChildChangeInvalidation.h in Headers */ = {isa = PBXBuildFile; fileRef = E4C4C61827452A7900A040E7 /* ChildChangeInvalidation.h */; };
-		E4C91A0E1802343100A17F6D /* TextPaintStyle.h in Headers */ = {isa = PBXBuildFile; fileRef = E4C91A0D1802343100A17F6D /* TextPaintStyle.h */; };
+		E4C91A0E1802343100A17F6D /* PaintTextStyle.h in Headers */ = {isa = PBXBuildFile; fileRef = E4C91A0D1802343100A17F6D /* PaintTextStyle.h */; };
 		E4D33F3B252AEECD00837D05 /* InlineRunAndOffset.h in Headers */ = {isa = PBXBuildFile; fileRef = E4D33F39252AEECC00837D05 /* InlineRunAndOffset.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E4D33F41252C4B8300837D05 /* InlineIteratorLineBox.h in Headers */ = {isa = PBXBuildFile; fileRef = E4D33F3F252C4B8200837D05 /* InlineIteratorLineBox.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E4D58EB517B4DBDC00CBDCA8 /* StyleResolveForDocument.h in Headers */ = {isa = PBXBuildFile; fileRef = E4D58EB317B4DBDC00CBDCA8 /* StyleResolveForDocument.h */; };
@@ -21010,8 +21011,8 @@
 		C0E2F3252412BF29009C73EC /* libAccessibility.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libAccessibility.tbd; path = usr/lib/libAccessibility.tbd; sourceTree = SDKROOT; };
 		C0E8ADC4294B5A620076CBDC /* AXTreeStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AXTreeStore.h; sourceTree = "<group>"; };
 		C0F2A43F13869A280066C534 /* preprocessor.pm */ = {isa = PBXFileReference; lastKnownFileType = text.script.perl; name = preprocessor.pm; path = scripts/preprocessor.pm; sourceTree = "<group>"; };
-		C11FFA7E5C09E00000000001 /* ClipPathPaintScope.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ClipPathPaintScope.cpp; sourceTree = "<group>"; };
-		C11FFA7E5C09E00000000002 /* ClipPathPaintScope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ClipPathPaintScope.h; sourceTree = "<group>"; };
+		C11FFA7E5C09E00000000001 /* PaintClipPathScope.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PaintClipPathScope.cpp; sourceTree = "<group>"; };
+		C11FFA7E5C09E00000000002 /* PaintClipPathScope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PaintClipPathScope.h; sourceTree = "<group>"; };
 		C137846B242BEEBA00E86FA8 /* PlatformScreen.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PlatformScreen.cpp; sourceTree = "<group>"; };
 		C149380522342719000CD707 /* SpeechSynthesisClient.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SpeechSynthesisClient.h; sourceTree = "<group>"; };
 		C149D559242EA4F8003EBB12 /* SleepDisabler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SleepDisabler.cpp; sourceTree = "<group>"; };
@@ -22924,7 +22925,8 @@
 		E9EFE3E593EFEB8A7D082769 /* BoxDecorationPainter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BoxDecorationPainter.h; sourceTree = "<group>"; };
 		D14F6BB279C841B98039C41A /* MaskPainter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MaskPainter.cpp; sourceTree = "<group>"; };
 		67DCCCAC39DA40C5774677AC /* MaskPainter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MaskPainter.h; sourceTree = "<group>"; };
-		43C6D41BC4AA85D259FF1215 /* TransformPaintScope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TransformPaintScope.h; sourceTree = "<group>"; };
+		273211FAAB837343D620CB8D /* TextPaintStyle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextPaintStyle.h; sourceTree = "<group>"; };
+		43C6D41BC4AA85D259FF1215 /* PaintTransformScope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PaintTransformScope.h; sourceTree = "<group>"; };
 		E444B0A828C8B19900CA560E /* BackgroundPainter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BackgroundPainter.h; sourceTree = "<group>"; };
 		E444B0AA28C8B1A800CA560E /* BackgroundPainter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BackgroundPainter.cpp; sourceTree = "<group>"; };
 		E4451077202C7E0100657D33 /* CompiledSelector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CompiledSelector.h; sourceTree = "<group>"; };
@@ -23121,8 +23123,8 @@
 		E4C3B1FB0F0E4170009693F6 /* LegacyTileCache.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LegacyTileCache.mm; sourceTree = "<group>"; };
 		E4C4C61827452A7900A040E7 /* ChildChangeInvalidation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChildChangeInvalidation.h; sourceTree = "<group>"; };
 		E4C4C61B27452A8A00A040E7 /* ChildChangeInvalidation.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ChildChangeInvalidation.cpp; sourceTree = "<group>"; };
-		E4C91A0D1802343100A17F6D /* TextPaintStyle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextPaintStyle.h; sourceTree = "<group>"; };
-		E4C91A0F1802343900A17F6D /* TextPaintStyle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextPaintStyle.cpp; sourceTree = "<group>"; };
+		E4C91A0D1802343100A17F6D /* PaintTextStyle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PaintTextStyle.h; sourceTree = "<group>"; };
+		E4C91A0F1802343900A17F6D /* PaintTextStyle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PaintTextStyle.cpp; sourceTree = "<group>"; };
 		E4D33F39252AEECC00837D05 /* InlineRunAndOffset.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InlineRunAndOffset.h; sourceTree = "<group>"; };
 		E4D33F3F252C4B8200837D05 /* InlineIteratorLineBox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InlineIteratorLineBox.h; sourceTree = "<group>"; };
 		E4D33F42252C50A800837D05 /* InlineIteratorLineBox.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = InlineIteratorLineBox.cpp; sourceTree = "<group>"; };
@@ -28164,8 +28166,6 @@
 				E444B0A028C7437900CA560E /* BorderPainter.h */,
 				8F270972C8C362869283E6B3 /* BoxDecorationPainter.cpp */,
 				E9EFE3E593EFEB8A7D082769 /* BoxDecorationPainter.h */,
-				C11FFA7E5C09E00000000001 /* ClipPathPaintScope.cpp */,
-				C11FFA7E5C09E00000000002 /* ClipPathPaintScope.h */,
 				CA7E9B4824361DC5004E89F6 /* ContentfulPaintChecker.cpp */,
 				CA7E9B4724361DC5004E89F6 /* ContentfulPaintChecker.h */,
 				6FD1EBC128AEECDA00FFF5D2 /* EllipsisBoxPainter.cpp */,
@@ -28178,19 +28178,22 @@
 				BCEF43DC0E674012001C1287 /* NinePieceImagePainter.h */,
 				E48359572ED73A1700F72EF6 /* OutlinePainter.cpp */,
 				E48359552ED73A0D00F72EF6 /* OutlinePainter.h */,
+				C11FFA7E5C09E00000000001 /* PaintClipPathScope.cpp */,
+				C11FFA7E5C09E00000000002 /* PaintClipPathScope.h */,
 				55EC95972069C92D007DD0A9 /* PaintFrequencyTracker.h */,
 				0885067D11DA045B00182B98 /* PaintInfo.h */,
 				CD671C932F5BA34F00B387A2 /* PaintInfoInlines.h */,
 				0885067E11DA045B00182B98 /* PaintPhase.h */,
+				E4C91A0F1802343900A17F6D /* PaintTextStyle.cpp */,
+				E4C91A0D1802343100A17F6D /* PaintTextStyle.h */,
+				43C6D41BC4AA85D259FF1215 /* PaintTransformScope.h */,
 				E440DF5726EB53EA004AF06B /* TextBoxPainter.cpp */,
 				E440DF5426EB53DF004AF06B /* TextBoxPainter.h */,
 				582DE3221C30C85400BE02A8 /* TextDecorationPainter.cpp */,
 				582DE3231C30C85400BE02A8 /* TextDecorationPainter.h */,
 				1C18DA56181AF6A500C4EF22 /* TextPainter.cpp */,
 				1C18DA57181AF6A500C4EF22 /* TextPainter.h */,
-				E4C91A0F1802343900A17F6D /* TextPaintStyle.cpp */,
-				E4C91A0D1802343100A17F6D /* TextPaintStyle.h */,
-				43C6D41BC4AA85D259FF1215 /* TransformPaintScope.h */,
+				273211FAAB837343D620CB8D /* TextPaintStyle.h */,
 			);
 			path = paint;
 			sourceTree = "<group>";
@@ -48290,6 +48293,8 @@
 				CD671C942F5BA34F00B387A2 /* PaintInfoInlines.h in Headers */,
 				0885068011DA045B00182B98 /* PaintPhase.h in Headers */,
 				4B1E13EB217937B30042CF98 /* PaintRenderingContext2D.h in Headers */,
+				E4C91A0E1802343100A17F6D /* PaintTextStyle.h in Headers */,
+				3A257E33CCFA0AF52DD3E2CF /* PaintTransformScope.h in Headers */,
 				4B6B5CC02164386400603817 /* PaintWorkletGlobalScope.h in Headers */,
 				FD3160A312B026F700C1A359 /* Panner.h in Headers */,
 				FD31601A12B0267600C1A359 /* PannerNode.h in Headers */,
@@ -50137,7 +50142,7 @@
 				E4D988B417BFD1F60084FB88 /* TextNodeTraversal.h in Headers */,
 				DDA3D5CF2A7D844D000ECEE1 /* TextOnlySimpleLineBuilder.h in Headers */,
 				1C18DA59181AF6A500C4EF22 /* TextPainter.h in Headers */,
-				E4C91A0E1802343100A17F6D /* TextPaintStyle.h in Headers */,
+				D5BED17B11A73E7021AA8090 /* TextPaintStyle.h in Headers */,
 				CE212158240DBEB9006ED443 /* TextPlaceholderElement.h in Headers */,
 				F40B8D5A281072B800346417 /* TextRecognitionOptions.h in Headers */,
 				F48B7D5325C341E6009E75DD /* TextRecognitionResult.h in Headers */,
@@ -50215,7 +50220,6 @@
 				49E911CE0EF86D47009D0CAF /* TransformOperation.h in Headers */,
 				4970AD822AE59BCE00AD3909 /* TransformOperationData.h in Headers */,
 				49E911D00EF86D47009D0CAF /* TransformOperations.h in Headers */,
-				3A257E33CCFA0AF52DD3E2CF /* TransformPaintScope.h in Headers */,
 				5DB1BC6A10715A6400EFAA49 /* TransformSource.h in Headers */,
 				4945BFD413CF809000CC3B38 /* TransformState.h in Headers */,
 				416E6FE81BBD12DF000A3F74 /* TransformStreamInternalsBuiltins.h in Headers */,

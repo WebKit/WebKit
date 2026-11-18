@@ -765,10 +765,10 @@ void RenderImage::paintMissingImageState(PaintInfo& paintInfo, const LayoutPoint
         adjustedPaintOffset.setY(roundToDevicePixel(adjustedPaintOffset.y(), document().deviceScaleFactor()));
 
         auto rotationRect = LayoutRect { visualLeft, adjustedPaintOffset.y(), textWidth, contentLogicalHeight };
-        context.concatCTM(rotation(rotationRect, RotationDirection::Clockwise));
+        context.concatCTM(Paint::rotation(rotationRect, RotationDirection::Clockwise));
         auto textOrigin = LayoutPoint { visualLeft, adjustedPaintOffset.y() + fontCascade.metricsOfPrimaryFont().ascent() };
         context.drawBidiText(fontCascade, textRun, roundPointToDevicePixels(textOrigin, document().deviceScaleFactor()));
-        context.concatCTM(rotation(rotationRect, RotationDirection::Counterclockwise));
+        context.concatCTM(Paint::rotation(rotationRect, RotationDirection::Counterclockwise));
     }
 }
 

@@ -33,6 +33,8 @@ namespace WebCore {
 class BorderShape;
 class UsedStyle;
 
+namespace Paint {
+
 class BorderPainter {
 public:
     BorderPainter(const RenderElement&, const PaintInfo&);
@@ -86,4 +88,5 @@ private:
 
 LayoutRect shrinkRectByOneDevicePixel(const GraphicsContext&, const LayoutRect&, float devicePixelRatio);
 
-}
+} // namespace Paint
+} // namespace WebCore

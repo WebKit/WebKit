@@ -30,10 +30,12 @@
 #include "ColorHash.h"
 #include "ContainerNodeInlines.h"
 #include "Document.h"
+#include "DocumentView.h"
 #include "Editing.h"
 #include "Editor.h"
 #include "Element.h"
 #include "ElementAncestorIteratorInlines.h"
+#include "FrameDestructionObserverInlines.h"
 #include "FrameSelection.h"
 #include "FrameSnapshotting.h"
 #include "GeometryUtilities.h"
@@ -43,9 +45,9 @@
 #include "IntRect.h"
 #include "LocalFrame.h"
 #include "LocalFrameInlines.h"
-#include "DocumentView.h"
 #include "LocalFrameView.h"
 #include "NodeTraversal.h"
+#include "PaintTextStyle.h"
 #include "Range.h"
 #include "RenderElement.h"
 #include "RenderLayer.h"
@@ -53,8 +55,6 @@
 #include "RenderText.h"
 #include "StyleComputedStyle+GettersInlines.h"
 #include "TextIterator.h"
-#include "TextPaintStyle.h"
-#include "FrameDestructionObserverInlines.h"
 
 #if PLATFORM(IOS_FAMILY)
 #include "SelectionGeometry.h"
@@ -299,12 +299,12 @@ static bool hasAnyIllegibleColors(TextIndicatorData& data, const Color& backgrou
     bool hasOnlyLegibleTextColors = true;
     if (data.options.contains(TextIndicatorOption::RespectTextColor)) {
         for (auto& textColor : textColors) {
-            hasOnlyLegibleTextColors = textColorIsLegibleAgainstBackgroundColor(textColor, backgroundColor);
+            hasOnlyLegibleTextColors = Paint::textColorIsLegibleAgainstBackgroundColor(textColor, backgroundColor);
             if (!hasOnlyLegibleTextColors)
                 break;
         }
     } else
-        hasOnlyLegibleTextColors = textColorIsLegibleAgainstBackgroundColor(Color::black, backgroundColor);
+        hasOnlyLegibleTextColors = Paint::textColorIsLegibleAgainstBackgroundColor(Color::black, backgroundColor);
 
     return !hasOnlyLegibleTextColors || textColors.isEmpty();
 }

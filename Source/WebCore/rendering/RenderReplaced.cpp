@@ -340,15 +340,15 @@ void RenderReplaced::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
     }
 
     if (hasVisibleBoxDecorations() && paintInfo.phase == PaintPhase::Foreground)
-        BoxDecorationPainter { *this, paintInfo, adjustedPaintOffset }.paintBoxDecorations();
+        Paint::BoxDecorationPainter { *this, paintInfo, adjustedPaintOffset }.paintBoxDecorations();
     
     if (paintInfo.phase == PaintPhase::Mask) {
-        MaskPainter { *this, paintInfo, adjustedPaintOffset }.paintMask();
+        Paint::MaskPainter { *this, paintInfo, adjustedPaintOffset }.paintMask();
         return;
     }
 
     if (paintInfo.phase == PaintPhase::ClippingMask && usedStyle().visibility() == UsedVisibility::Visible) {
-        MaskPainter { *this, paintInfo, adjustedPaintOffset }.paintClippingMask();
+        Paint::MaskPainter { *this, paintInfo, adjustedPaintOffset }.paintClippingMask();
         return;
     }
 

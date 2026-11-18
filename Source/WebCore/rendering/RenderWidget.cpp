@@ -367,10 +367,10 @@ void RenderWidget::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
     LayoutPoint adjustedPaintOffset = paintOffset + location();
 
     if (hasVisibleBoxDecorations() && (paintInfo.phase == PaintPhase::Foreground || paintInfo.phase == PaintPhase::Selection))
-        BoxDecorationPainter { *this, paintInfo, adjustedPaintOffset }.paintBoxDecorations();
+        Paint::BoxDecorationPainter { *this, paintInfo, adjustedPaintOffset }.paintBoxDecorations();
 
     if (paintInfo.phase == PaintPhase::Mask) {
-        MaskPainter { *this, paintInfo, adjustedPaintOffset }.paintMask();
+        Paint::MaskPainter { *this, paintInfo, adjustedPaintOffset }.paintMask();
         return;
     }
 

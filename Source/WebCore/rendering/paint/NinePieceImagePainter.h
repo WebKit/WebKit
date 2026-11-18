@@ -45,10 +45,13 @@ struct BorderImage;
 struct MaskBorder;
 }
 
+namespace Paint {
+
 class NinePieceImagePainter {
 public:
     static void paint(const Style::BorderImage&, GraphicsContext&, const RenderElement&, const UsedStyle&, const LayoutRect& destination, const LayoutSize& source, float deviceScaleFactor, const ImageDrawDescriptor&);
     static void paint(const Style::MaskBorder&, GraphicsContext&, const RenderElement&, const UsedStyle&, const LayoutRect& destination, const LayoutSize& source, float deviceScaleFactor, const ImageDrawDescriptor&);
 };
 
+} // namespace Paint
 } // namespace WebCore

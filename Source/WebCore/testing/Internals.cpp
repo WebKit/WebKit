@@ -830,7 +830,7 @@ void Internals::resetToConsistentState(Page& page)
     setOverrideEnhanceTextLegibility(false);
 #endif
 
-    TextPainter::setForceUseGlyphDisplayListForTesting(false);
+    Paint::TextPainter::setForceUseGlyphDisplayListForTesting(false);
 
 #if ENABLE(DAMAGE_TRACKING)
     page.chrome().client().resetDamageHistoryForTesting();
@@ -4366,12 +4366,12 @@ ExceptionOr<String> Internals::replayDisplayListForElement(Element& element, uns
 
 void Internals::setForceUseGlyphDisplayListForTesting(bool enabled)
 {
-    TextPainter::setForceUseGlyphDisplayListForTesting(enabled);
+    Paint::TextPainter::setForceUseGlyphDisplayListForTesting(enabled);
 }
 
 void Internals::clearGlyphDisplayListCacheForTesting()
 {
-    TextPainter::clearGlyphDisplayListCacheForTesting();
+    Paint::TextPainter::clearGlyphDisplayListCacheForTesting();
 }
 
 ExceptionOr<String> Internals::cachedGlyphDisplayListsForTextNode(Node& node, unsigned short flags)
@@ -4389,7 +4389,7 @@ ExceptionOr<String> Internals::cachedGlyphDisplayListsForTextNode(Node& node, un
     if (!node.renderer())
         return Exception { ExceptionCode::InvalidAccessError };
 
-    return TextPainter::cachedGlyphDisplayListsForTextNodeAsText(*textNode, toDisplayListFlags(flags));
+    return Paint::TextPainter::cachedGlyphDisplayListsForTextNodeAsText(*textNode, toDisplayListFlags(flags));
 }
 
 ExceptionOr<void> Internals::garbageCollectDocumentResources() const

@@ -43,11 +43,12 @@
 #include "LineSelection.h"
 #include "PaintInfo.h"
 #include "PaintInfoInlines.h"
+#include "PaintTextStyle.h"
 #include "PlatformRenderTheme.h"
 #include "RenderBlock.h"
 #include "RenderBoxModelObjectInlines.h"
-#include "RenderElementStyleInlines.h"
 #include "RenderElementInlines.h"
+#include "RenderElementStyleInlines.h"
 #include "RenderObjectInlines.h"
 #include "RenderText.h"
 #include "RenderTheme.h"
@@ -58,7 +59,6 @@
 #include "StyleTextDecorationLine.h"
 #include "StyleTextDecorationThickness.h"
 #include "StyledMarkedText.h"
-#include "TextPaintStyle.h"
 #include "TextPainter.h"
 #include <numeric>
 #include <ranges>
@@ -68,6 +68,7 @@
 #endif
 
 namespace WebCore {
+namespace Paint {
 
 static FloatRect calculateDocumentMarkerBounds(const InlineIterator::TextBoxIterator&, const MarkedText&);
 
@@ -675,7 +676,7 @@ void TextBoxPainter::paintBackgroundFillForRange(unsigned startOffset, unsigned 
 
     GraphicsContext& context = m_paintInfo.context();
     GraphicsContextStateSaver stateSaver { context };
-    updateGraphicsContext(context, TextPaintStyle { color }); // Don't draw text at all!
+    updateGraphicsContext(context, TextStyle { color }); // Don't draw text at all!
 
     auto backgroundRect = snapRectToDevicePixels(backgroundRectForRange(startOffset, endOffset, logicalTop, logicalBottom), m_document->deviceScaleFactor());
     if (!textBox().isHorizontal() && !m_isCombinedText) {
@@ -1160,7 +1161,7 @@ void TextBoxPainter::paintBackgroundDecorations(TextDecorationPainter& decoratio
     collectDecoratingBoxesForBackgroundPainting(decoratingBoxList, textBox, textBoxPaintRect, markedText.style.textDecorationStyles);
 
     for (auto& decoratingBox : decoratingBoxList | std::views::reverse) {
-        auto computedTextDecorationType = WebCore::computedTextDecorationType(decoratingBox.style.get(), decoratingBox.textDecorationStyles);
+        auto computedTextDecorationType = Paint::computedTextDecorationType(decoratingBox.style.get(), decoratingBox.textDecorationStyles);
         auto computedBackgroundDecorationGeometry = [&] {
             // text-decoration-thickness is set on the originating box and applies to every line that box paints,
             // so the per-line slots in textDecorationStyles all carry the same value. We pick whichever line
@@ -1270,7 +1271,7 @@ void TextBoxPainter::paintForegroundDecorations(TextDecorationPainter& decoratio
 
     auto deviceScaleFactor = m_document->deviceScaleFactor();
     for (auto& decoratingBox : decoratingBoxList | std::views::reverse) {
-        if (!WebCore::computedTextDecorationType(decoratingBox.style.get(), decoratingBox.textDecorationStyles).hasLineThrough())
+        if (!Paint::computedTextDecorationType(decoratingBox.style.get(), decoratingBox.textDecorationStyles).hasLineThrough())
             continue;
 
         auto textDecorationThickness = resolveTextDecorationThicknessForPaintingBox(decoratingBox.textDecorationStyles.linethrough.thickness, decoratingBox.style.get(), deviceScaleFactor);
@@ -1794,4 +1795,5 @@ bool TextBoxPainter::isInsideShapedContent() const
     return textContent.isAtShapingBoundaryStart() || textContent.isAtShapingBoundaryEnd() || textContent.isInsideShapingBoundary();
 }
 
-}
+} // namespace Paint
+} // namespace WebCore

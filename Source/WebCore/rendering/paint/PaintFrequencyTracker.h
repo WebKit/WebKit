@@ -30,15 +30,17 @@
 
 namespace WebCore {
 
+namespace Paint {
+
 // This class is used to detect when we are painting frequently so that - even in a painting model
 // without display lists - we can build and cache portions of display lists and reuse them only when
 // animating. Once we transition fully to display lists, we can probably just pull from the previous
 // paint's display list if it is still around and get rid of this code.
-class PaintFrequencyTracker {
-    WTF_MAKE_TZONE_ALLOCATED_INLINE(PaintFrequencyTracker);
+class FrequencyTracker {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(FrequencyTracker);
 
 public:
-    PaintFrequencyTracker() = default;
+    FrequencyTracker() = default;
 
     void track(MonotonicTime timestamp)
     {
@@ -74,4 +76,5 @@ private:
     PaintFrequency m_paintFrequency { PaintFrequency::Low };
 };
 
+} // namespace Paint
 } // namespace WebCore

@@ -27,6 +27,7 @@
 #include "RenderView.h"
 
 namespace WebCore {
+namespace Paint {
 
 bool ContentfulPaintChecker::qualifiesForContentfulPaint(LocalFrameView& frameView)
 {
@@ -50,4 +51,5 @@ bool ContentfulPaintChecker::qualifiesForContentfulPaint(LocalFrameView& frameVi
     return checkerContext.contentfulPaintDetected();
 }
 
-}
+} // namespace Paint
+} // namespace WebCore

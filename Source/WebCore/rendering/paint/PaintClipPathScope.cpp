@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "ClipPathPaintScope.h"
+#include "PaintClipPathScope.h"
 
 #include "BoxLayoutShape.h"
 #include "LegacyRenderSVGResourceClipper.h"
@@ -38,8 +38,9 @@
 #include "StylePathOperationWrappers.h"
 
 namespace WebCore {
+namespace Paint {
 
-ClipPathPaintScope::ClipPathPaintScope(GraphicsContext& context, RegionContext* regionContext, RenderLayerModelObject& renderer, const LayoutSize& offsetFromRoot, const LayoutSize& subpixelOffset, const LayoutRect& clippedContentBounds, bool isCollectingEventRegion, CoordinateMode mode, StateSavedByCaller stateSavedByCaller)
+ClipPathScope::ClipPathScope(GraphicsContext& context, RegionContext* regionContext, RenderLayerModelObject& renderer, const LayoutSize& offsetFromRoot, const LayoutSize& subpixelOffset, const LayoutRect& clippedContentBounds, bool isCollectingEventRegion, CoordinateMode mode, StateSavedByCaller stateSavedByCaller)
     : m_clipSaver(context, false)
     , m_regionSaver(regionContext)
     , m_savesContextState(stateSavedByCaller == StateSavedByCaller::No)
@@ -55,13 +56,13 @@ ClipPathPaintScope::ClipPathPaintScope(GraphicsContext& context, RegionContext* 
         applyLegacySVGResourceClip(context, renderer, *legacyClipper, offsetFromRoot, clippedContentBounds);
 }
 
-void ClipPathPaintScope::saveContextStateIfNeeded()
+void ClipPathScope::saveContextStateIfNeeded()
 {
     if (m_savesContextState)
         m_clipSaver.save();
 }
 
-FloatRect ClipPathPaintScope::referenceBoxRectForClipPath(const RenderLayerModelObject& renderer, CSSBoxType boxType, const LayoutSize& offsetFromRoot, const LayoutRect& rootRelativeBounds)
+FloatRect ClipPathScope::referenceBoxRectForClipPath(const RenderLayerModelObject& renderer, CSSBoxType boxType, const LayoutSize& offsetFromRoot, const LayoutRect& rootRelativeBounds)
 {
     bool isReferenceBox = renderer.isSVGLayerAwareRenderer() ? true : renderer.isRenderBox();
 
@@ -75,7 +76,7 @@ FloatRect ClipPathPaintScope::referenceBoxRectForClipPath(const RenderLayerModel
     return referenceBoxRect;
 }
 
-std::pair<Path, WindRule> ClipPathPaintScope::computeClipPath(const RenderLayerModelObject& renderer, const LayoutSize& offsetFromRoot, const LayoutRect& rootRelativeBoundsForNonBoxes)
+std::pair<Path, WindRule> ClipPathScope::computeClipPath(const RenderLayerModelObject& renderer, const LayoutSize& offsetFromRoot, const LayoutRect& rootRelativeBoundsForNonBoxes)
 {
     CheckedRef style = renderer.style();
 
@@ -111,7 +112,7 @@ std::pair<Path, WindRule> ClipPathPaintScope::computeClipPath(const RenderLayerM
     );
 }
 
-void ClipPathPaintScope::applyBasicShapeOrBoxClip(GraphicsContext& context, RenderLayerModelObject& renderer, const LayoutSize& offsetFromRoot, const LayoutSize& subpixelOffset, const LayoutRect& clippedContentBounds, bool isCollectingEventRegion, CoordinateMode mode)
+void ClipPathScope::applyBasicShapeOrBoxClip(GraphicsContext& context, RenderLayerModelObject& renderer, const LayoutSize& offsetFromRoot, const LayoutSize& subpixelOffset, const LayoutRect& clippedContentBounds, bool isCollectingEventRegion, CoordinateMode mode)
 {
     auto offset = offsetFromRoot + subpixelOffset;
 
@@ -139,7 +140,7 @@ void ClipPathPaintScope::applyBasicShapeOrBoxClip(GraphicsContext& context, Rend
     context.clipPath(path, windRule);
 }
 
-void ClipPathPaintScope::applySVGResourceClip(GraphicsContext& context, RenderLayerModelObject& renderer, RenderSVGResourceClipper& svgClipper, const LayoutSize& offsetFromRoot, const LayoutSize& subpixelOffset, const LayoutRect& clippedContentBounds, CoordinateMode mode)
+void ClipPathScope::applySVGResourceClip(GraphicsContext& context, RenderLayerModelObject& renderer, RenderSVGResourceClipper& svgClipper, const LayoutSize& offsetFromRoot, const LayoutSize& subpixelOffset, const LayoutRect& clippedContentBounds, CoordinateMode mode)
 {
     RefPtr graphicsElement = svgClipper.shouldApplyPathClipping();
     if (!graphicsElement) {
@@ -178,7 +179,7 @@ void ClipPathPaintScope::applySVGResourceClip(GraphicsContext& context, RenderLa
         context.translate(-userSpaceClipTranslation);
 }
 
-void ClipPathPaintScope::applyLegacySVGResourceClip(GraphicsContext& context, RenderLayerModelObject& renderer, LegacyRenderSVGResourceClipper& svgClipper, const LayoutSize& offsetFromRoot, const LayoutRect& clippedContentBounds)
+void ClipPathScope::applyLegacySVGResourceClip(GraphicsContext& context, RenderLayerModelObject& renderer, LegacyRenderSVGResourceClipper& svgClipper, const LayoutSize& offsetFromRoot, const LayoutRect& clippedContentBounds)
 {
     // Use the border box as the reference box, not clearly specified: https://github.com/w3c/csswg-drafts/issues/5786.
     // clippedContentBounds is the reference box for inlines, poorly specified: https://github.com/w3c/csswg-drafts/issues/6383.
@@ -197,4 +198,5 @@ void ClipPathPaintScope::applyLegacySVGResourceClip(GraphicsContext& context, Re
     // FIXME: Support event regions.
 }
 
+} // namespace Paint
 } // namespace WebCore

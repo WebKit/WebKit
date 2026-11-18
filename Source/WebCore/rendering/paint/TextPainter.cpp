@@ -42,6 +42,7 @@
 #include <wtf/unicode/CharacterNames.h>
 
 namespace WebCore {
+namespace Paint {
 
 ShadowApplier::ShadowApplier(const Style::ComputedStyle& style, GraphicsContext& context, const Style::TextShadow* shadow, const Style::AppleColorFilter& colorFilter, const FloatRect& textRect, bool isLastShadowIteration, bool lastShadowIterationShouldDrawText, bool opaque, bool ignoreWritingMode)
     : m_context { context }
@@ -102,7 +103,7 @@ ShadowApplier::~ShadowApplier()
         m_context.clearDropShadow();
 }
 
-TextPainter::TextPainter(GraphicsContext& context, const FontCascade& font, const Style::ComputedStyle& renderStyle, const TextPaintStyle& textPaintStyle, const Style::TextShadows& shadow, const Style::AppleColorFilter& shadowColorFilter, const AtomString& emphasisMark, float emphasisMarkOffset, bool isCombinedText)
+TextPainter::TextPainter(GraphicsContext& context, const FontCascade& font, const Style::ComputedStyle& renderStyle, const TextStyle& textPaintStyle, const Style::TextShadows& shadow, const Style::AppleColorFilter& shadowColorFilter, const AtomString& emphasisMark, float emphasisMarkOffset, bool isCombinedText)
     : m_context(context)
     , m_font(font)
     , m_renderStyle(renderStyle)
@@ -179,7 +180,7 @@ void TextPainter::paintTextWithShadows(const Style::TextShadows* shadows, const 
 }
 
 void TextPainter::paintTextAndEmphasisMarksIfNeeded(const TextRun& textRun, const FloatRect& boxRect, const FloatPoint& textOrigin, unsigned startOffset, unsigned endOffset,
-    const TextPaintStyle& paintStyle, const Style::TextShadows& shadow, const Style::AppleColorFilter& shadowColorFilter)
+    const TextStyle& paintStyle, const Style::TextShadows& shadow, const Style::AppleColorFilter& shadowColorFilter)
 {
     if (paintStyle.paintOrder.isNormal()) {
         // FIXME: Truncate right-to-left text correctly.
@@ -285,4 +286,5 @@ String TextPainter::cachedGlyphDisplayListsForTextNodeAsText(Text& textNode, Opt
     return builder.toString();
 }
 
+} // namespace Paint
 } // namespace WebCore

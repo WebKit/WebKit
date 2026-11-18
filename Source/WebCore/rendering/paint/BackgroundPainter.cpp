@@ -62,6 +62,7 @@
 #endif
 
 namespace WebCore {
+namespace Paint {
 
 template<typename> struct FillLayerSizingKind;
 template<> struct FillLayerSizingKind<Style::BackgroundLayer> { using type = Style::BackgroundImageSizing; };
@@ -1221,4 +1222,5 @@ const RenderView& BackgroundPainter::view() const
     return m_renderer.view();
 }
 
-}
+} // namespace Paint
+} // namespace WebCore

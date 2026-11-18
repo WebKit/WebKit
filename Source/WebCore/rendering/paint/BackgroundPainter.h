@@ -38,6 +38,8 @@ namespace Style {
 enum class ShadowStyle : bool;
 }
 
+namespace Paint {
+
 enum BaseBackgroundColorUsage {
     BaseBackgroundColorUse,
     BaseBackgroundColorOnly,
@@ -112,4 +114,9 @@ private:
     std::optional<FillBox> m_overrideOrigin;
 };
 
-}
+} // namespace Paint
+
+// FIXME: Remove once all clients use Paint::BackgroundPainter.
+using BackgroundPainter = Paint::BackgroundPainter;
+
+} // namespace WebCore

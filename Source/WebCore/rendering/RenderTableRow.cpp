@@ -251,7 +251,7 @@ void RenderTableRow::paintShadowForRowIfNeeded(PaintInfo& paintInfo, const Layou
     LayoutRect rect(adjustedPaintOffset, borderBoxSize());
     adjustBorderBoxRectForPainting(rect);
 
-    BackgroundPainter backgroundPainter { *this, paintInfo };
+    Paint::BackgroundPainter backgroundPainter { *this, paintInfo };
     backgroundPainter.paintBoxShadow(rect, usedStyle(), Style::ShadowStyle::Normal);
 }
 

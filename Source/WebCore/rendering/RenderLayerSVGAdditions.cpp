@@ -20,9 +20,10 @@
 #include "RenderLayer.h"
 
 #include "CSSFilterRenderer.h"
-#include "ClipPathPaintScope.h"
 #include "HitTestRequest.h"
 #include "HitTestResult.h"
+#include "PaintClipPathScope.h"
+#include "PaintTransformScope.h"
 #include "ReferencedSVGResources.h"
 #include "RenderAncestorIterator.h"
 #include "RenderBoxInlines.h"
@@ -53,7 +54,6 @@
 #include "SVGSVGElement.h"
 #include "Settings.h"
 #include "StyleTransformResolver.h"
-#include "TransformPaintScope.h"
 #include "TransformationMatrix.h"
 #include <wtf/TZoneMallocInlines.h>
 
@@ -62,7 +62,7 @@ namespace WebCore {
 WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(RenderLayer::SVGData);
 
 // Applies clip-path and mask to a non-layer SVG renderer for the lifetime of the scope, the
-// non-layer counterpart of the layer paint flow. A clip-path clips with a path via ClipPathPaintScope
+// non-layer counterpart of the layer paint flow. A clip-path clips with a path via ClipPathScope
 // when possible. A mask, and a clip-path that cannot be a path, need a transparency layer capturing
 // the renderer's foreground, which the destructor composites the mask and the clipper over with
 // destination-in once the content is done.
@@ -84,7 +84,7 @@ public:
         m_offsetFromRoot = *offsetFromRoot;
 
         if (child.hasClipPath())
-            m_clipScope.emplace(context, paintingInfo.regionContext, *svgChild, *offsetFromRoot, LayoutSize(), LayoutRect(), isCollectingEventRegion, ClipPathPaintScope::CoordinateMode::NonLayerPaint, stateSavedByCaller);
+            m_clipScope.emplace(context, paintingInfo.regionContext, *svgChild, *offsetFromRoot, LayoutSize(), LayoutRect(), isCollectingEventRegion, Paint::ClipPathScope::CoordinateMode::NonLayerPaint, stateSavedByCaller);
 
         // The mask, and a clip that can't be a path, composite over the foreground, so they need a
         // painting context. While only the event region is collected there is nothing to composite.
@@ -141,7 +141,7 @@ private:
     CheckedRef<RenderLayer> m_hostLayer;
     CheckedPtr<RenderLayerModelObject> m_renderer;
     LayoutSize m_offsetFromRoot;
-    std::optional<ClipPathPaintScope> m_clipScope;
+    std::optional<Paint::ClipPathScope> m_clipScope;
     std::optional<TransparencyLayerScope> m_maskLayer;
     bool m_paintsMask : 1 { false };
     bool m_paintsClippingMask : 1 { false };
@@ -720,7 +720,7 @@ void RenderLayer::paintChildrenInDOMOrderForSVG(GraphicsContext& context, const 
                     clipToRect(context, *stateSaver, *regionContextStateSaver, paintingInfo, paintBehavior, fragment.dirtyForegroundRect());
                 }
 
-                // nominalCorrection is applied inside the scope, so TransformPaintScope concatenates it
+                // nominalCorrection is applied inside the scope, so TransformScope concatenates it
                 // onto the CTM and inverse-maps paintDirtyRect through it together. The leaf
                 // visual-overflow cull (RenderSVGShape::paint) then compares the shifted subtree against
                 // a matching damage rect, so overhanging leaves survive incremental repaints
@@ -834,7 +834,7 @@ void RenderLayer::paintRendererByApplyingTransformForSVG(GraphicsContext& contex
     LayoutSize adjustedSubpixelOffset;
 
     // Fold the container's nominal pre-translation into the scope transform rather than a separate
-    // context.translate, so TransformPaintScope concatenates it onto the CTM and inverse-maps
+    // context.translate, so TransformScope concatenates it onto the CTM and inverse-maps
     // paintDirtyRect through it together, keeping content and the leaf visual-overflow cull in one
     // coordinate space. translateRight post-multiplies, placing the offset in this container's own
     // space, where nominal lives.
@@ -845,7 +845,7 @@ void RenderLayer::paintRendererByApplyingTransformForSVG(GraphicsContext& contex
     bool paintsShapeWithSharedState = is<RenderSVGShape>(rendererToPaint.get()) && !rendererToPaint->hasSelfPaintingLayer() && !rendererToPaint->hasOutline() && !rendererToPaint->hasMask();
     auto stateSavedByCaller = paintsShapeWithSharedState ? StateSavedByCaller::Yes : StateSavedByCaller::No;
     GraphicsContextStateSaver sharedStateSaver(context, paintsShapeWithSharedState);
-    TransformPaintScope scope(context, paintingInfo, scopeTransform, deviceScaleFactor, adjustedSubpixelOffset, nullptr, stateSavedByCaller);
+    Paint::TransformScope scope(context, paintingInfo, scopeTransform, deviceScaleFactor, adjustedSubpixelOffset, nullptr, stateSavedByCaller);
 
     auto adjustedPaintFlags = paintFlags;
     adjustedPaintFlags.remove(PaintLayerFlag::PaintingOverflowContents);

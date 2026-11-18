@@ -30,6 +30,8 @@ namespace WebCore {
 
 struct PaintInfo;
 
+namespace Paint {
+
 class EllipsisBoxPainter {
 public:
     EllipsisBoxPainter(const InlineIterator::LineBox&, PaintInfo&, const LayoutPoint& paintOffset, Color selectionForegroundColor, Color selectionBackgroundColor);
@@ -46,4 +48,5 @@ private:
     Color m_selectionBackgroundColor;
 };
 
-}
+} // namespace Paint
+} // namespace WebCore

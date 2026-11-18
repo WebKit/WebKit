@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "TextPaintStyle.h"
+#include "PaintTextStyle.h"
 
 #include "ColorLuminance.h"
 #include "DocumentView.h"
@@ -62,6 +62,8 @@ bool TextPaintStyle::operator==(const TextPaintStyle& other) const
         && strokeWidth == other.strokeWidth && paintOrder == other.paintOrder && lineJoin == other.lineJoin
         && lineCap == other.lineCap && miterLimit == other.miterLimit;
 }
+
+namespace Paint {
 
 bool textColorIsLegibleAgainstBackgroundColor(const Color& textColor, const Color& backgroundColor)
 {
@@ -121,11 +123,11 @@ static Color adjustColorForPunchedOutBackground(const Color& textColor, const Re
     return textColor;
 }
 
-TextPaintStyle computeTextPaintStyle(const RenderText& renderer, const Style::ComputedStyle& lineStyle, const PaintInfo& paintInfo)
+TextStyle computeTextStyle(const RenderText& renderer, const Style::ComputedStyle& lineStyle, const PaintInfo& paintInfo)
 {
     Ref frame = renderer.frame();
     RefPtr frameView = frame->view();
-    TextPaintStyle paintStyle;
+    TextStyle paintStyle;
 
     auto viewportSize = frameView ? frameView->size() : IntSize();
     paintStyle.strokeWidth = lineStyle.usedStrokeWidth(viewportSize);
@@ -206,9 +208,9 @@ TextPaintStyle computeTextPaintStyle(const RenderText& renderer, const Style::Co
     return paintStyle;
 }
 
-TextPaintStyle computeTextSelectionPaintStyle(const TextPaintStyle& textPaintStyle, const RenderText& renderer, const Style::ComputedStyle& lineStyle, const PaintInfo& paintInfo, Style::TextShadows& selectionShadow)
+TextStyle computeTextSelectionStyle(const TextStyle& textPaintStyle, const RenderText& renderer, const Style::ComputedStyle& lineStyle, const PaintInfo& paintInfo, Style::TextShadows& selectionShadow)
 {
-    TextPaintStyle selectionPaintStyle = textPaintStyle;
+    TextStyle selectionPaintStyle = textPaintStyle;
 
 #if ENABLE(TEXT_SELECTION)
     Color foreground = paintInfo.forceTextColor() ? paintInfo.forcedTextColor() : renderer.selectionForegroundColor();
@@ -242,7 +244,7 @@ TextPaintStyle computeTextSelectionPaintStyle(const TextPaintStyle& textPaintSty
     return selectionPaintStyle;
 }
 
-void updateGraphicsContext(GraphicsContext& context, const TextPaintStyle& paintStyle, FillColorType fillColorType)
+void updateGraphicsContext(GraphicsContext& context, const TextStyle& paintStyle, FillColorType fillColorType)
 {
     TextDrawingModeFlags mode = context.textDrawingMode();
     TextDrawingModeFlags newMode = mode;
@@ -269,4 +271,5 @@ void updateGraphicsContext(GraphicsContext& context, const TextPaintStyle& paint
     }
 }
 
-}
+} // namespace Paint
+} // namespace WebCore

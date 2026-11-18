@@ -47,6 +47,7 @@
 #include "StyleMaskBorder.h"
 
 namespace WebCore {
+namespace Paint {
 
 InlineBoxPainter::InlineBoxPainter(const LayoutIntegration::InlineContent& inlineContent, const InlineDisplay::Box& box, PaintInfo& paintInfo, const LayoutPoint& paintOffset)
     : InlineBoxPainter(InlineIterator::inlineBoxFor(inlineContent, box), paintInfo, paintOffset)
@@ -362,4 +363,5 @@ UsedStyle InlineBoxPainter::usedStyle() const
     return m_isFirstLineBox ? renderer().firstLineUsedStyle() : renderer().usedStyle();
 }
 
-}
+} // namespace Paint
+} // namespace WebCore

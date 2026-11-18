@@ -1195,7 +1195,7 @@ void RenderTableSection::paintRowGroupBorder(const PaintInfo& paintInfo, bool an
     rect.intersect(paintInfo.rect);
     if (rect.isEmpty())
         return;
-    BorderPainter::drawLineForBoxSide(paintInfo.context(), protect(document()), rect, side, rowGroupBorderColor(borderColor), borderStyle, 0, 0, antialias);
+    Paint::BorderPainter::drawLineForBoxSide(paintInfo.context(), protect(document()), rect, side, rowGroupBorderColor(borderColor), borderStyle, 0, 0, antialias);
 }
 
 LayoutUnit RenderTableSection::offsetLeftForRowGroupBorder(RenderTableCell* cell, const LayoutRect& rowGroupRect, unsigned row)
@@ -1251,7 +1251,7 @@ void RenderTableSection::paintRowGroupBorderIfRequired(const PaintInfo& paintInf
         return;
 
     const Style::ComputedStyle& style = this->style();
-    bool antialias = BorderPainter::shouldAntialiasLines(paintInfo.context());
+    bool antialias = Paint::BorderPainter::shouldAntialiasLines(paintInfo.context());
     LayoutRect rowGroupRect = LayoutRect(paintOffset, borderBoxSize());
     rowGroupRect.moveBy(-LayoutPoint(outerBorderLeft(table()->writingMode()), (borderSide == BoxSide::Right) ? 0_lu : outerBorderTop(table()->writingMode())));
 

@@ -42,6 +42,7 @@
 #endif
 
 namespace WebCore {
+namespace Paint {
 
 template<typename WidthValue>
 static LayoutUnit computeSlice(const WidthValue& length, LayoutUnit width, LayoutUnit slice, LayoutUnit extent, const Style::ZoomFactor& zoom)
@@ -258,4 +259,5 @@ void NinePieceImagePainter::paint(const Style::MaskBorder& ninePieceImage, Graph
     return paintNinePieceImage(ninePieceImage, graphicsContext, renderer, usedStyle, destination, source, deviceScaleFactor, descriptor);
 }
 
+} // namespace Paint
 } // namespace WebCore

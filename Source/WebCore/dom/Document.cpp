@@ -4525,7 +4525,7 @@ void Document::enqueuePaintTimingEntryIfNeeded()
         if (m_didEnqueueFirstContentfulPaint)
             return;
 
-        if (!ContentfulPaintChecker::qualifiesForContentfulPaint(*view))
+        if (!Paint::ContentfulPaintChecker::qualifiesForContentfulPaint(*view))
             return;
 
         WTFEmitSignpost(this, NavigationAndPaintTiming, "firstContentfulPaint");

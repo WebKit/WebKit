@@ -24,9 +24,12 @@ namespace WebCore {
 
 class LocalFrameView;
 
+namespace Paint {
+
 class ContentfulPaintChecker {
 public:
     static bool qualifiesForContentfulPaint(LocalFrameView&);
 };
 
-}
+} // namespace Paint
+} // namespace WebCore

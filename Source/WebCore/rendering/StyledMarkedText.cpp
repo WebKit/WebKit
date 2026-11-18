@@ -43,7 +43,7 @@ namespace WebCore {
 
 static void computeDecorationStylesForPseudoElementStyle(StyledMarkedText::Style& style, const Style::ComputedStyle& pseudoElementStyle, const PaintInfo& paintInfo)
 {
-    auto color = TextDecorationPainter::decorationColor(pseudoElementStyle, paintInfo.paintBehavior);
+    auto color = Paint::TextDecorationPainter::decorationColor(pseudoElementStyle, paintInfo.paintBehavior);
     auto decorationStyle = pseudoElementStyle.textDecorationStyle();
     auto thickness = pseudoElementStyle.textDecorationThickness();
     auto decorations = pseudoElementStyle.textDecorationLine();
@@ -154,7 +154,7 @@ static StyledMarkedText resolveStyleForMarkedText(const MarkedText& markedText, 
             style.alpha = std::get<DocumentMarker::DictationStreamingOpacityData>(marker->data()).opacity;
         break;
     case MarkedText::Type::Selection: {
-        style.textStyles = computeTextSelectionPaintStyle(style.textStyles, renderer, lineStyle, paintInfo, style.textShadow);
+        style.textStyles = Paint::computeTextSelectionStyle(style.textStyles, renderer, lineStyle, paintInfo, style.textShadow);
 
         if (CheckedPtr selectionStyle = renderer.selectionPseudoStyle())
             computeDecorationStylesForPseudoElementStyle(style, *selectionStyle, paintInfo);
@@ -183,15 +183,15 @@ static StyledMarkedText resolveStyleForMarkedText(const MarkedText& markedText, 
 StyledMarkedText::Style StyledMarkedText::computeStyleForUnmarkedMarkedText(const RenderText& renderer, const WebCore::Style::ComputedStyle& lineStyle, bool isFirstLine, const PaintInfo& paintInfo)
 {
     StyledMarkedText::Style style;
-    style.textDecorationStyles = TextDecorationPainter::stylesForRenderer(renderer, lineStyle.textDecorationLineInEffect(), isFirstLine, paintInfo.paintBehavior);
-    style.textStyles = computeTextPaintStyle(renderer, lineStyle, paintInfo);
+    style.textDecorationStyles = Paint::TextDecorationPainter::stylesForRenderer(renderer, lineStyle.textDecorationLineInEffect(), isFirstLine, paintInfo.paintBehavior);
+    style.textStyles = Paint::computeTextStyle(renderer, lineStyle, paintInfo);
     style.textShadow = paintInfo.forceTextColor() ? WebCore::Style::TextShadows { CSS::Keyword::None { } } : lineStyle.textShadow();
     return style;
 }
 
-static TextDecorationPainter::Styles computeStylesForTextDecorations(const TextDecorationPainter::Styles& previousTextDecorationStyles, const TextDecorationPainter::Styles& currentTextDecorationStyles)
+static Paint::TextDecorationPainter::Styles computeStylesForTextDecorations(const Paint::TextDecorationPainter::Styles& previousTextDecorationStyles, const Paint::TextDecorationPainter::Styles& currentTextDecorationStyles)
 {
-    auto textDecorations = TextDecorationPainter::textDecorationsInEffectForStyle(currentTextDecorationStyles);
+    auto textDecorations = Paint::TextDecorationPainter::textDecorationsInEffectForStyle(currentTextDecorationStyles);
 
     if (textDecorations.isNone())
         return previousTextDecorationStyles;

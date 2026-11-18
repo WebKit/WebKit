@@ -38,6 +38,7 @@
 #include "TextPainter.h"
 
 namespace WebCore {
+namespace Paint {
 
 EllipsisBoxPainter::EllipsisBoxPainter(const InlineIterator::LineBox& lineBox, PaintInfo& paintInfo, const LayoutPoint& paintOffset, Color selectionForegroundColor, Color selectionBackgroundColor)
     : m_lineBox(lineBox)
@@ -152,4 +153,5 @@ void EllipsisBoxPainter::paintSelection()
     context.fillRect(snapRectToDevicePixelsWithWritingDirection(visualRect, m_lineBox.formattingContextRoot().document().deviceScaleFactor(), ellipsisText.ltr()), backgroundColor);
 }
 
-}
+} // namespace Paint
+} // namespace WebCore

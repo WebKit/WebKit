@@ -40,6 +40,7 @@
 #include "TextRun.h"
 
 namespace WebCore {
+namespace Paint {
 
 NODELETE static StrokeStyle textDecorationStyleToStrokeStyle(TextDecorationStyle decorationStyle)
 {
@@ -430,4 +431,5 @@ Style::TextDecorationLine TextDecorationPainter::textDecorationsInEffectForStyle
     return decorations;
 }
 
+} // namespace Paint
 } // namespace WebCore

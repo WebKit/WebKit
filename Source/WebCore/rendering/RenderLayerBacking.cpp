@@ -35,7 +35,6 @@
 #include "CachedImage.h"
 #include "CanvasRenderingContext2DBase.h"
 #include "Chrome.h"
-#include "ClipPathPaintScope.h"
 #include "ColorBlending.h"
 #include "ContainerNodeInlines.h"
 #include "CornerRadii.h"
@@ -69,6 +68,7 @@
 #include "Model.h"
 #include "NullGraphicsContext.h"
 #include "Page.h"
+#include "PaintClipPathScope.h"
 #include "PaintInfo.h"
 #include "PathOperation.h"
 #include "PerformanceLoggingClient.h"
@@ -2397,7 +2397,7 @@ void RenderLayerBacking::updateMaskingLayerGeometry()
             LayoutRect boundingBox = owningLayer->boundingBox(owningLayer.ptr());
             LayoutRect referenceBoxForClippedInline = LayoutRect(snapRectToDevicePixelsIfNeeded(boundingBox, renderer));
             LayoutSize offset = LayoutSize(snapSizeToDevicePixel(-m_subpixelOffsetFromRenderer, LayoutPoint(), pixelSnappingScaleFactor()));
-            auto [clipPath, windRule] = ClipPathPaintScope::computeClipPath(renderer, offset, referenceBoxForClippedInline);
+            auto [clipPath, windRule] = Paint::ClipPathScope::computeClipPath(renderer, offset, referenceBoxForClippedInline);
 
             FloatSize pathOffset = maskLayer->offsetFromRenderer();
             if (!pathOffset.isZero())
@@ -3870,7 +3870,7 @@ void RenderLayerBacking::updateDirectlyCompositedBackgroundColor(PaintedContents
         return;
     }
 
-    if (!contentsInfo.isSimpleContainer() || (is<RenderBox>(renderer()) && !BackgroundPainter::paintsOwnBackground(*renderBox()))) {
+    if (!contentsInfo.isSimpleContainer() || (is<RenderBox>(renderer()) && !Paint::BackgroundPainter::paintsOwnBackground(*renderBox()))) {
         m_graphicsLayer->setContentsToSolidColor(Color());
         return;
     }
@@ -3921,7 +3921,7 @@ void RenderLayerBacking::updateDirectlyCompositedBackgroundImage(PaintedContents
     auto& backgroundLayer = backgroundLayers.usedFirst();
     auto backgroundBox = LayoutRect { backgroundBoxForSimpleContainerPainting() };
     // FIXME: Absolute paint location is required here.
-    auto geometry = BackgroundPainter::calculateFillLayerImageGeometry(*renderBox(), renderBox(), backgroundLayer, renderer().style().usedZoomForLength(), { }, backgroundBox);
+    auto geometry = Paint::BackgroundPainter::calculateFillLayerImageGeometry(*renderBox(), renderBox(), backgroundLayer, renderer().style().usedZoomForLength(), { }, backgroundBox);
 
     m_graphicsLayer->setContentsTileSize(geometry.tileSize);
     m_graphicsLayer->setContentsTilePhase(geometry.phase);

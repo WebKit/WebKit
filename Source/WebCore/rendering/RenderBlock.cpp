@@ -1186,7 +1186,7 @@ void RenderBlock::paintObject(PaintInfo& paintInfo, const LayoutPoint& paintOffs
     // 1. paint background, borders etc
     if ((paintPhase == PaintPhase::BlockBackground || paintPhase == PaintPhase::ChildBlockBackground) && usedStyle().visibility() == UsedVisibility::Visible) {
         if (hasVisibleBoxDecorations())
-            BoxDecorationPainter { *this, paintInfo, paintOffset }.paintBoxDecorations();
+            Paint::BoxDecorationPainter { *this, paintInfo, paintOffset }.paintBoxDecorations();
         paintDebugBoxShadowIfApplicable(paintInfo.context(), { paintOffset, borderBoxSize() });
     }
     
@@ -1195,12 +1195,12 @@ void RenderBlock::paintObject(PaintInfo& paintInfo, const LayoutPoint& paintOffs
         paintExcludedChildrenInBorder(paintInfo, paintOffset);
     
     if (paintPhase == PaintPhase::Mask && usedStyle().visibility() == UsedVisibility::Visible) {
-        MaskPainter { *this, paintInfo, paintOffset }.paintMask();
+        Paint::MaskPainter { *this, paintInfo, paintOffset }.paintMask();
         return;
     }
 
     if (paintPhase == PaintPhase::ClippingMask && usedStyle().visibility() == UsedVisibility::Visible) {
-        MaskPainter { *this, paintInfo, paintOffset }.paintClippingMask();
+        Paint::MaskPainter { *this, paintInfo, paintOffset }.paintClippingMask();
         return;
     }
 

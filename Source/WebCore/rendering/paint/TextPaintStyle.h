@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,49 +25,5 @@
 
 #pragma once
 
-#include "Color.h"
-#include "GraphicsTypes.h"
-#include "RenderStyleConstants.h"
-#include "StyleSVGPaintOrder.h"
-#include <wtf/Forward.h>
-
-namespace WebCore {
-
-class GraphicsContext;
-class LocalFrame;
-class RenderText;
-struct PaintInfo;
-
-namespace Style {
-class ComputedStyle;
-struct TextShadow;
-template<typename> struct Shadows;
-using TextShadows = Shadows<TextShadow>;
-}
-
-struct TextPaintStyle {
-    TextPaintStyle() = default;
-    TextPaintStyle(const Color&);
-
-    NODELETE bool operator==(const TextPaintStyle&) const;
-
-    Color fillColor;
-    Color strokeColor;
-    Color emphasisMarkColor;
-    float strokeWidth { 0 };
-    // This is not set for -webkit-text-fill-color.
-    bool hasExplicitlySetFillColor { false };
-    Style::SVGPaintOrder paintOrder { CSS::Keyword::Normal { } };
-    LineJoin lineJoin { LineJoin::Miter };
-    LineCap lineCap { LineCap::Butt };
-    float miterLimit { defaultMiterLimit };
-};
-
-bool textColorIsLegibleAgainstBackgroundColor(const Color& textColor, const Color& backgroundColor);
-TextPaintStyle computeTextPaintStyle(const RenderText&, const Style::ComputedStyle&, const PaintInfo&);
-TextPaintStyle computeTextSelectionPaintStyle(const TextPaintStyle&, const RenderText&, const Style::ComputedStyle&, const PaintInfo&, Style::TextShadows& selectionShadow);
-
-enum class FillColorType : bool { Normal, EmphasisMark };
-void updateGraphicsContext(GraphicsContext&, const TextPaintStyle&, FillColorType = FillColorType::Normal);
-
-} // namespace WebCore
+// FIXME: Remove once all clients include PaintTextStyle.h.
+#include "PaintTextStyle.h"

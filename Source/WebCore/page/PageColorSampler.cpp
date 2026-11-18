@@ -198,7 +198,7 @@ std::optional<Color> PageColorSampler::sampleTop(Page& page)
         return std::nullopt;
 
     // Don't attempt to hit test or sample if we don't have any content yet.
-    if (!frameView->isVisuallyNonEmpty() || !frameView->hasContentfulDescendants() || !ContentfulPaintChecker::qualifiesForContentfulPaint(*frameView))
+    if (!frameView->isVisuallyNonEmpty() || !frameView->hasContentfulDescendants() || !Paint::ContentfulPaintChecker::qualifiesForContentfulPaint(*frameView))
         return std::nullopt;
 
     // Decrease the width by one pixel so that the last sample is within bounds and not off-by-one.

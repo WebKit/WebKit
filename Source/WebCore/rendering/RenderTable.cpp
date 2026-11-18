@@ -883,10 +883,10 @@ void RenderTable::paintObject(PaintInfo& paintInfo, const LayoutPoint& paintOffs
 {
     PaintPhase paintPhase = paintInfo.phase;
     if ((paintPhase == PaintPhase::BlockBackground || paintPhase == PaintPhase::ChildBlockBackground) && hasVisibleBoxDecorations() && usedStyle().visibility() == UsedVisibility::Visible)
-        BoxDecorationPainter { *this, paintInfo, paintOffset }.paintBoxDecorations();
+        Paint::BoxDecorationPainter { *this, paintInfo, paintOffset }.paintBoxDecorations();
 
     if (paintPhase == PaintPhase::Mask) {
-        MaskPainter { *this, paintInfo, paintOffset }.paintMask();
+        Paint::MaskPainter { *this, paintInfo, paintOffset }.paintMask();
         return;
     }
 

@@ -54,6 +54,7 @@
 #include <numeric>
 
 namespace WebCore {
+namespace Paint {
 
 template<typename> struct NinePieceImageSizingKind;
 template<> struct NinePieceImageSizingKind<Style::BorderImage> { using type = Style::BorderImageSizing; };
@@ -1282,4 +1283,5 @@ const Document& BorderPainter::document() const
     return m_renderer->document();
 }
 
-}
+} // namespace Paint
+} // namespace WebCore

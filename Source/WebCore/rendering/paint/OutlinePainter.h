@@ -35,6 +35,8 @@ namespace Style {
 struct BorderRadius;
 }
 
+namespace Paint {
+
 class OutlinePainter {
 public:
     NODELETE OutlinePainter(const PaintInfo&);
@@ -62,4 +64,5 @@ private:
     const PaintInfo& m_paintInfo;
 };
 
-}
+} // namespace Paint
+} // namespace WebCore

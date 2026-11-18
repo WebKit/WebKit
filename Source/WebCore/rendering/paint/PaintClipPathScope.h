@@ -38,6 +38,8 @@ namespace WebCore {
 class LegacyRenderSVGResourceClipper;
 class RenderSVGResourceClipper;
 
+namespace Paint {
+
 // Applies a clip-path to a renderer and keeps it active for the scope's lifetime, or, with
 // StateSavedByCaller::Yes, until the caller restores its saved state. Handles CSS basic-shape and
 // box clip-paths and SVG clipper resources, so it works for both CSS boxes and SVG.
@@ -46,8 +48,8 @@ class RenderSVGResourceClipper;
 //
 // needsMaskClipping() is true when the clip can't be a path and the caller must paint the clipper as a
 // destination-in mask, using the layer's transparency layer on the layer path and its own otherwise.
-class ClipPathPaintScope {
-    WTF_MAKE_NONCOPYABLE(ClipPathPaintScope);
+class ClipPathScope {
+    WTF_MAKE_NONCOPYABLE(ClipPathScope);
 public:
     // Where the CTM sits when the clip is applied, which sets how the clip origin is computed:
     //   LayerPaint    - CTM is at the renderer (the layer transform already placed it).
@@ -58,7 +60,7 @@ public:
         NonLayerPaint
     };
 
-    ClipPathPaintScope(GraphicsContext&, RegionContext*, RenderLayerModelObject&, const LayoutSize& offsetFromRoot, const LayoutSize& subpixelOffset, const LayoutRect& clippedContentBounds, bool isCollectingEventRegion, CoordinateMode, StateSavedByCaller = StateSavedByCaller::No);
+    ClipPathScope(GraphicsContext&, RegionContext*, RenderLayerModelObject&, const LayoutSize& offsetFromRoot, const LayoutSize& subpixelOffset, const LayoutRect& clippedContentBounds, bool isCollectingEventRegion, CoordinateMode, StateSavedByCaller = StateSavedByCaller::No);
 
     bool needsMaskClipping() const { return m_needsMaskClipping; }
 
@@ -78,4 +80,5 @@ private:
     bool m_savesContextState : 1 { true };
 };
 
+} // namespace Paint
 } // namespace WebCore

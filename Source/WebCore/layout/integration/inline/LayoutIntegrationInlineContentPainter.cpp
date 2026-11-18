@@ -67,7 +67,7 @@ void InlineContentPainter::paintEllipsis(size_t lineIndex)
     auto lineBox = InlineIterator::LineBox { m_inlineContent, lineIndex };
     if (!lineBox.hasEllipsis())
         return;
-    EllipsisBoxPainter { lineBox, m_paintInfo, m_paintOffset, root().selectionForegroundColor(), root().selectionBackgroundColor() }.paint();
+    Paint::EllipsisBoxPainter { lineBox, m_paintInfo, m_paintOffset, root().selectionForegroundColor(), root().selectionBackgroundColor() }.paint();
 }
 
 void InlineContentPainter::paintDisplayBox(const InlineDisplay::Box& box)
@@ -118,7 +118,7 @@ void InlineContentPainter::paintDisplayBox(const InlineDisplay::Box& box)
         inlineBoxPaintInfo.phase = m_paintInfo.phase == PaintPhase::ChildOutlines ? PaintPhase::Outline : m_paintInfo.phase;
         inlineBoxPaintInfo.outlineObjects = &m_outlineObjects;
 
-        InlineBoxPainter { m_inlineContent, box, inlineBoxPaintInfo, m_paintOffset }.paint();
+        Paint::InlineBoxPainter { m_inlineContent, box, inlineBoxPaintInfo, m_paintOffset }.paint();
         return;
     }
 
@@ -141,7 +141,7 @@ void InlineContentPainter::paintDisplayBox(const InlineDisplay::Box& box)
                 return;
         }
 
-        TextBoxPainter { m_inlineContent, box, protect(box.style()), m_paintInfo, m_paintOffset }.paint();
+        Paint::TextBoxPainter { m_inlineContent, box, protect(box.style()), m_paintInfo, m_paintOffset }.paint();
         return;
     }
 
@@ -213,7 +213,7 @@ void InlineContentPainter::paint()
     }
     paintLineEndingEllipsisIfApplicable({ });
 
-    OutlinePainter outlinePainter { m_paintInfo };
+    Paint::OutlinePainter outlinePainter { m_paintInfo };
     for (CheckedRef inlineBox : m_outlineObjects)
         outlinePainter.paintOutline(inlineBox, m_paintOffset);
 }

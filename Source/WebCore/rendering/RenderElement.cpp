@@ -2327,12 +2327,12 @@ void RenderElement::paintOutline(PaintInfo& paintInfo, const LayoutRect& paintRe
     if (!hasOutline())
         return;
 
-    OutlinePainter { paintInfo }.paintOutline(*this, paintRect);
+    Paint::OutlinePainter { paintInfo }.paintOutline(*this, paintRect);
 }
 
 void RenderElement::issueRepaintForOutlineAuto(float outlineSize)
 {
-    auto focusRingRects = OutlinePainter::collectFocusRingRects(*this, LayoutPoint(), containerForRepaint().renderer.get());
+    auto focusRingRects = Paint::OutlinePainter::collectFocusRingRects(*this, LayoutPoint(), containerForRepaint().renderer.get());
 
     LayoutRect repaintRect;
     for (auto rect : focusRingRects) {

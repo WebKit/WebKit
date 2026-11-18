@@ -83,7 +83,7 @@ void RenderReplica::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
         OptionSet<RenderLayer::PaintLayerFlag> flags { RenderLayer::PaintLayerFlag::HaveTransparency, RenderLayer::PaintLayerFlag::AppliedTransform, RenderLayer::PaintLayerFlag::TemporaryClipRects, RenderLayer::PaintLayerFlag::PaintingReflection };
         layer()->parent()->paintLayer(paintInfo.context(), paintingInfo, flags);
     } else if (paintInfo.phase == PaintPhase::Mask)
-        MaskPainter { *this, paintInfo, adjustedPaintOffset }.paintMask();
+        Paint::MaskPainter { *this, paintInfo, adjustedPaintOffset }.paintMask();
 }
 
 } // namespace WebCore

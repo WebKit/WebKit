@@ -26,9 +26,9 @@
 #pragma once
 
 #include "MarkedText.h"
+#include "PaintTextStyle.h"
 #include "StyleTextShadow.h"
 #include "TextDecorationPainter.h"
-#include "TextPaintStyle.h"
 
 namespace WebCore {
 
@@ -44,8 +44,8 @@ struct StyledMarkedText final : MarkedText {
 
     struct Style {
         Color backgroundColor;
-        TextPaintStyle textStyles;
-        TextDecorationPainter::Styles textDecorationStyles;
+        Paint::TextStyle textStyles;
+        Paint::TextDecorationPainter::Styles textDecorationStyles;
         WebCore::Style::TextShadows textShadow { CSS::Keyword::None { } };
         float alpha { 1 };
     };

@@ -37,6 +37,8 @@ namespace WebCore {
 class RenderBox;
 struct PaintInfo;
 
+namespace Paint {
+
 class MaskPainter {
 public:
     MaskPainter(RenderBox&, PaintInfo&, const LayoutPoint& paintOffset);
@@ -52,4 +54,5 @@ private:
     const LayoutPoint m_paintOffset;
 };
 
-}
+} // namespace Paint
+} // namespace WebCore

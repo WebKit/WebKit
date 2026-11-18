@@ -42,6 +42,8 @@ namespace Style {
 class ComputedStyle;
 }
 
+namespace Paint {
+
 class TextDecorationPainter {
 public:
     NODELETE TextDecorationPainter(GraphicsContext&, const FontCascade&, const Style::TextShadows&, const Style::AppleColorFilter&, bool isPrinting, WritingMode);
@@ -106,4 +108,5 @@ private:
     const FontCascade& m_font;
 };
 
+} // namespace Paint
 } // namespace WebCore

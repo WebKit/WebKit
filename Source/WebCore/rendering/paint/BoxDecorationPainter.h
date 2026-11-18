@@ -40,6 +40,8 @@ class RenderTableCell;
 class RenderView;
 struct PaintInfo;
 
+namespace Paint {
+
 class BoxDecorationPainter {
 public:
     BoxDecorationPainter(RenderBox&, PaintInfo&, const LayoutPoint& paintOffset);
@@ -59,4 +61,5 @@ private:
     const LayoutPoint m_paintOffset;
 };
 
-}
+} // namespace Paint
+} // namespace WebCore

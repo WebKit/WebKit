@@ -35,13 +35,16 @@ class Color;
 class RenderBoxModelObject;
 class UsedStyle;
 struct PaintInfo;
-template<typename> struct FillLayerToPaint;
 
 namespace Style {
 class ComputedStyle;
 struct ZoomFactor;
 enum class ShadowStyle : bool;
 }
+
+namespace Paint {
+
+template<typename> struct FillLayerToPaint;
 
 class InlineBoxPainter {
 public:
@@ -77,4 +80,5 @@ private:
     const bool m_isHorizontal;
 };
 
-}
+} // namespace Paint
+} // namespace WebCore

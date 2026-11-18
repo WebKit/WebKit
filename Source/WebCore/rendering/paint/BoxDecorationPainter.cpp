@@ -58,6 +58,7 @@
 #include "StyleImage.h"
 
 namespace WebCore {
+namespace Paint {
 BoxDecorationPainter::BoxDecorationPainter(RenderBox& renderer, PaintInfo& paintInfo, const LayoutPoint& paintOffset)
     : m_renderer(renderer)
     , m_paintInfo(paintInfo)
@@ -386,4 +387,5 @@ bool BoxDecorationPainter::backgroundHasOpaqueTopLayer() const
     return false;
 }
 
-}
+} // namespace Paint
+} // namespace WebCore

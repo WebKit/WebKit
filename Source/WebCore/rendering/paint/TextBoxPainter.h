@@ -43,11 +43,14 @@ class RenderText;
 struct CompositionUnderline;
 struct MarkedText;
 struct StyledMarkedText;
-class TextPainter;
 
 namespace Style {
 class ComputedStyle;
 }
+
+namespace Paint {
+
+class TextPainter;
 
 class TextBoxPainter {
 public:
@@ -152,4 +155,5 @@ inline FloatSize TextBoxPainter::rotateShadowOffset(const SpaceSeparatedPoint<St
     };
 }
 
+} // namespace Paint
 } // namespace WebCore

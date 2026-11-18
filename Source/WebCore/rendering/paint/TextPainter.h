@@ -25,9 +25,9 @@
 #include "AffineTransform.h"
 #include "FloatRect.h"
 #include "GlyphDisplayListCache.h"
+#include "PaintTextStyle.h"
 #include "RotationDirection.h"
 #include "TextFlags.h"
-#include "TextPaintStyle.h"
 #include <wtf/text/AtomString.h>
 
 namespace WebCore {
@@ -36,7 +36,6 @@ class FilterOperations;
 class FontCascade;
 class TextRun;
 class Text;
-
 struct TextPaintStyle;
 
 namespace Style {
@@ -45,6 +44,10 @@ struct TextShadow;
 template<typename> struct Shadows;
 using TextShadows = Shadows<TextShadow>;
 }
+
+namespace Paint {
+
+using TextStyle = TextPaintStyle;
 
 static inline AffineTransform rotation(const FloatRect& boxRect, RotationDirection direction)
 {
@@ -55,7 +58,7 @@ static inline AffineTransform rotation(const FloatRect& boxRect, RotationDirecti
 
 class TextPainter {
 public:
-    TextPainter(GraphicsContext&, const FontCascade&, const Style::ComputedStyle&, const TextPaintStyle&, const Style::TextShadows&, const Style::AppleColorFilter&, const AtomString& emphasisMark, float emphasisMarkOffset, bool isCombinedText);
+    TextPainter(GraphicsContext&, const FontCascade&, const Style::ComputedStyle&, const TextStyle&, const Style::TextShadows&, const Style::AppleColorFilter&, const AtomString& emphasisMark, float emphasisMarkOffset, bool isCombinedText);
 
     void paintRange(const TextRun&, const FloatRect& boxRect, const FloatPoint& textOrigin, unsigned start, unsigned end);
 
@@ -72,12 +75,12 @@ private:
     void paintTextWithShadows(const Style::TextShadows*, const Style::AppleColorFilter&, const FontCascade&, const TextRun&, const FloatRect& boxRect, const FloatPoint& textOrigin,
         unsigned startOffset, unsigned endOffset, const AtomString& emphasisMark, float emphasisMarkOffset, bool stroked);
     void paintTextAndEmphasisMarksIfNeeded(const TextRun&, const FloatRect& boxRect, const FloatPoint& textOrigin, unsigned startOffset, unsigned endOffset,
-        const TextPaintStyle&, const Style::TextShadows&, const Style::AppleColorFilter&);
+        const TextStyle&, const Style::TextShadows&, const Style::AppleColorFilter&);
 
     GraphicsContext& m_context;
     const CheckedRef<const FontCascade> m_font;
     const CheckedRef<const Style::ComputedStyle> m_renderStyle;
-    TextPaintStyle m_style;
+    TextStyle m_style;
     AtomString m_emphasisMark;
     const Style::TextShadows& m_shadow;
     const Style::AppleColorFilter& m_shadowColorFilter;
@@ -107,4 +110,5 @@ private:
     bool m_didSaveContext : 1;
 };
 
+} // namespace Paint
 } // namespace WebCore

@@ -60,6 +60,7 @@
 #endif
 
 namespace WebCore {
+namespace Paint {
 
 OutlinePainter::OutlinePainter(const PaintInfo& paintInfo)
     : m_paintInfo(paintInfo)
@@ -214,7 +215,7 @@ void OutlinePainter::paintOutlineWithLineRects(const RenderBoxModelObject& rende
     auto styleToUse = CheckedRef { renderer.style() };
 
     auto zoom = styleToUse->usedZoomForLength();
-    auto deviceScaleFactor = WebCore::deviceScaleFactor(renderer);
+    auto deviceScaleFactor = Paint::deviceScaleFactor(renderer);
 
     auto usedStyle = renderer.usedStyle();
     auto outlineOffset = usedStyle.outlineOffset<float>();
@@ -239,7 +240,7 @@ void OutlinePainter::paintOutlineWithLineRects(const RenderBoxModelObject& rende
     }
 
     auto& graphicsContext = m_paintInfo.context();
-    auto outlineColor = WebCore::outlineColor(renderer, styleToUse);
+    auto outlineColor = Paint::outlineColor(renderer, styleToUse);
     auto useTransparencyLayer = !outlineColor.isOpaque();
     if (useTransparencyLayer) {
         graphicsContext.beginTransparencyLayer(outlineColor.alphaAsFloat());
@@ -289,7 +290,7 @@ void OutlinePainter::paintFocusRing(const RenderElement& renderer, const Vector<
 
     ASSERT(style->outlineStyle() == OutlineStyle::Auto);
 
-    auto deviceScaleFactor = WebCore::deviceScaleFactor(renderer);
+    auto deviceScaleFactor = Paint::deviceScaleFactor(renderer);
     auto zoom = style->usedZoomForLength();
 
     auto usedStyle = renderer.usedStyle();
@@ -754,4 +755,5 @@ void OutlinePainter::addPDFURLAnnotationForLink(const RenderElement& renderer, c
     m_paintInfo.context().setURLForRect(protect(element->document())->encodingParseURL(href), urlRect);
 }
 
+} // namespace Paint
 } // namespace WebCore

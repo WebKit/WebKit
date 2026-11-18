@@ -235,7 +235,7 @@ void SVGTextBoxPainter::paint()
     // Finally, paint the outline if any.
     if (parentRenderer.style().hasOutline()) {
         if (parentRenderer.isInlineBox())
-            OutlinePainter { m_paintInfo }.paintOutline(parentRenderer, m_paintOffset);
+            Paint::OutlinePainter { m_paintInfo }.paintOutline(parentRenderer, m_paintOffset);
     }
 
     ASSERT(!m_legacyPaintingResource);
@@ -581,7 +581,7 @@ void SVGTextBoxPainter::paintTextWithShadows(const Style::ComputedStyle& style, 
                 }
             }
 
-            ShadowApplier shadowApplier(style, *usedContext, shadow, Style::AppleColorFilter::none(), shadowRect, lastShadowInIteration);
+            Paint::ShadowApplier shadowApplier(style, *usedContext, shadow, Style::AppleColorFilter::none(), shadowRect, lastShadowInIteration);
 
             if (!shadowApplier.didSaveContext())
                 usedContext->save();

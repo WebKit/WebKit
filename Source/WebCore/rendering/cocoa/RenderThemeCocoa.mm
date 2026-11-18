@@ -1644,7 +1644,7 @@ static void drawShapeWithBorder(GraphicsContext& context, float deviceScaleFacto
     // Despite the border and background being painted with the same clip, the background
     // may bleed past the border unless we scale it down slightly.
 
-    const auto shrunkRect = shrinkRectByOneDevicePixel(context, LayoutRect(boundingRect), deviceScaleFactor);
+    const auto shrunkRect = Paint::shrinkRectByOneDevicePixel(context, LayoutRect(boundingRect), deviceScaleFactor);
     const auto backgroundScale = shrunkRect.size() / boundingRect.size();
 
     context.clipPath(path);
