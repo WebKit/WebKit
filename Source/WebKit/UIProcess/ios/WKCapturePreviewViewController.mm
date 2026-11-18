@@ -51,7 +51,7 @@
 
 using PreviewDeviceType = WebKit::CapturePreviewDeviceType;
 
-constexpr CGFloat previewAspectRatio = 4.0 / 3.0;
+constexpr CGFloat previewAspectRatio = 16.0 / 9.0;
 constexpr CGFloat contentSpacing = 16;
 constexpr CGFloat contentInset = 20;
 constexpr CGFloat informativeTextSpacing = 4;
@@ -343,7 +343,7 @@ static CGFloat promptWidthForAvailableWidth(CGFloat availableWidth)
     [titleLabel setTextAlignment:NSTextAlignmentCenter];
 
     _previewContainer = adoptNS([[UIView alloc] init]);
-    [_previewContainer setBackgroundColor:[UIColor blackColor]];
+    [_previewContainer setBackgroundColor:[UIColor secondarySystemGroupedBackgroundColor]];
     [_previewContainer setClipsToBounds:YES];
     [[_previewContainer layer] setCornerRadius:previewCornerRadius];
 
