@@ -521,6 +521,7 @@ platform/graphics/coretext/SimpleFontDataCoreText.cpp
 platform/graphics/cv/CVUtilities.mm @nonARC
 platform/graphics/cv/ImageTransferSessionVT.mm @nonARC
 platform/graphics/cv/PixelBufferConformerCV.cpp
+platform/graphics/cv/PlanarImageConverterCV.mm @nonARC
 platform/graphics/cv/VideoFrameCV.mm @nonARC
 platform/graphics/coreimage/FEBlendCoreImageApplier.mm @nonARC
 platform/graphics/coreimage/FEColorMatrixCoreImageApplier.mm @nonARC

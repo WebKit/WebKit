@@ -2968,6 +2968,8 @@
 		7299BC6723D6A53200CC6883 /* AlphaPremultiplication.h in Headers */ = {isa = PBXBuildFile; fileRef = 7299BC6423D686A600CC6883 /* AlphaPremultiplication.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7299BC6823D6A53E00CC6883 /* RenderingMode.h in Headers */ = {isa = PBXBuildFile; fileRef = 7299BC6623D686C600CC6883 /* RenderingMode.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		B649E7A027AE425E7A6AA9C9 /* PlaceholderFrameIdentifier.h in Headers */ = {isa = PBXBuildFile; fileRef = A9B89CA5BE67878133E151A8 /* PlaceholderFrameIdentifier.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		7C3A1E2F4B5D6A7081920006 /* PlanarImageConverter.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C3A1E2F4B5D6A7081920001 /* PlanarImageConverter.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		7C3A1E2F4B5D6A7081920007 /* PlanarImageConverterCV.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C3A1E2F4B5D6A7081920004 /* PlanarImageConverterCV.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		729D05302531424300422098 /* RenderingResourceIdentifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 729D052E25313E2600422098 /* RenderingResourceIdentifier.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		72A5D192275E8FFE0065833E /* SVGFilterExpression.h in Headers */ = {isa = PBXBuildFile; fileRef = 726CDE25275B489700A445B2 /* SVGFilterExpression.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		72A64520294903CE00C14BA3 /* ControlPart.h in Headers */ = {isa = PBXBuildFile; fileRef = 722623C229486B4A006DCCF1 /* ControlPart.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -14529,6 +14531,11 @@
 		7299BC6423D686A600CC6883 /* AlphaPremultiplication.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AlphaPremultiplication.h; sourceTree = "<group>"; };
 		7299BC6623D686C600CC6883 /* RenderingMode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RenderingMode.h; sourceTree = "<group>"; };
 		A9B89CA5BE67878133E151A8 /* PlaceholderFrameIdentifier.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PlaceholderFrameIdentifier.h; sourceTree = "<group>"; };
+		7C3A1E2F4B5D6A7081920001 /* PlanarImageConverter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PlanarImageConverter.h; sourceTree = "<group>"; };
+		7C3A1E2F4B5D6A7081920002 /* PlanarImageConverter.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = PlanarImageConverter.cpp; sourceTree = "<group>"; };
+		7C3A1E2F4B5D6A7081920003 /* libYUV.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = libYUV.h; sourceTree = "<group>"; };
+		7C3A1E2F4B5D6A7081920004 /* PlanarImageConverterCV.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PlanarImageConverterCV.h; sourceTree = "<group>"; };
+		7C3A1E2F4B5D6A7081920005 /* PlanarImageConverterCV.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = PlanarImageConverterCV.mm; sourceTree = "<group>"; };
 		729D052E25313E2600422098 /* RenderingResourceIdentifier.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RenderingResourceIdentifier.h; sourceTree = "<group>"; };
 		729E39483066D74800AFE142 /* UpdateElementGeometryOptions.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = UpdateElementGeometryOptions.idl; sourceTree = "<group>"; };
 		729E39493066D76E00AFE142 /* UpdateElementGeometryOptions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UpdateElementGeometryOptions.h; sourceTree = "<group>"; };
@@ -37095,6 +37102,7 @@
 				0F36E7381BD184B9002DB891 /* LayoutSize.cpp */,
 				141DC04E164834B900371E5A /* LayoutSize.h */,
 				CDDE02E918B3DFC700CF7FF1 /* LegacyCDMSession.h */,
+				7C3A1E2F4B5D6A7081920003 /* libYUV.h */,
 				07E3DFD01A9E786500764CA8 /* MediaPlaybackTarget.h */,
 				079216531AA560AA00A3C049 /* MediaPlaybackTargetClient.h */,
 				078E43D71ABB6C7E001C2FA6 /* MediaPlaybackTargetPicker.cpp */,
@@ -37171,6 +37179,8 @@
 				BC635E90264C469F000EF33A /* PixelFormat.cpp */,
 				BCA55912263DBD79007F19B3 /* PixelFormat.h */,
 				A9B89CA5BE67878133E151A8 /* PlaceholderFrameIdentifier.h */,
+				7C3A1E2F4B5D6A7081920002 /* PlanarImageConverter.cpp */,
+				7C3A1E2F4B5D6A7081920001 /* PlanarImageConverter.h */,
 				CDD08ABF277E54F000EA3755 /* PlatformAudioTrackConfiguration.h */,
 				BC3E62422659791700548ACD /* PlatformColorSpace.h */,
 				726516E52C9CB59900647896 /* PlatformDynamicRangeLimit.cpp */,
@@ -40548,6 +40558,8 @@
 				CD7D33411C7A123F00041293 /* PixelBufferConformerCV.cpp */,
 				CD7D33421C7A123F00041293 /* PixelBufferConformerCV.h */,
 				41B71FFB2DE076DD00467A31 /* PixelBufferConformerCV.mm */,
+				7C3A1E2F4B5D6A7081920004 /* PlanarImageConverterCV.h */,
+				7C3A1E2F4B5D6A7081920005 /* PlanarImageConverterCV.mm */,
 				7BE37F8627BBB6FF007A6CD3 /* VideoFrameCV.h */,
 				7BE37F8527BBB6FE007A6CD3 /* VideoFrameCV.mm */,
 			);
@@ -48419,6 +48431,8 @@
 				B649E7A027AE425E7A6AA9C9 /* PlaceholderFrameIdentifier.h in Headers */,
 				3DADD7E8080911858F0AC9DF /* PlaceholderRenderingContextIdentifier.h in Headers */,
 				42E88F7F164135AB4EC29FD7 /* PlaceholderRenderingContextSource.h in Headers */,
+				7C3A1E2F4B5D6A7081920006 /* PlanarImageConverter.h in Headers */,
+				7C3A1E2F4B5D6A7081920007 /* PlanarImageConverterCV.h in Headers */,
 				4158707D28EC799E00C163C5 /* PlaneLayout.h in Headers */,
 				CDEFA2281E7669E8000AE99C /* PlatformAudioData.h in Headers */,
 				CDD08AC0277E54F000EA3755 /* PlatformAudioTrackConfiguration.h in Headers */,

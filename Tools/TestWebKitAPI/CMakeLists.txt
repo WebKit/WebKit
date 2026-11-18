@@ -347,6 +347,7 @@ if (ENABLE_WEBCORE)
         Tests/WebCore/ParsedContentType.cpp
         Tests/WebCore/PathTests.cpp
         Tests/WebCore/PixelBufferConversionTests.cpp
+        Tests/WebCore/PlanarImageConverterTests.cpp
         Tests/WebCore/PlatformDynamicRangeLimitTests.cpp
         Tests/WebCore/PlatformMediaSessionManagerTests.cpp
         Tests/WebCore/PrivateClickMeasurement.cpp
