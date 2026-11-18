@@ -68,6 +68,8 @@ private:
     std::optional<PseudoClassChangeInvalidation> m_emptyInvalidation;
 };
 
+void invalidateForSiblingCombinators(Element* sibling);
+
 inline ChildChangeInvalidation::ChildChangeInvalidation(ContainerNode& container, const ContainerNode::ChildChange& childChange)
     : m_parentElement(dynamicDowncast<Element>(container))
     , m_childChange(childChange)
