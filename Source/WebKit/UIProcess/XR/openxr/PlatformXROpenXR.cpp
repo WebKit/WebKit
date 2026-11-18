@@ -493,6 +493,7 @@ void OpenXRCoordinator::scheduleAnimationFrame(WebPageProxy& page, std::optional
             if (active.renderState->terminateRequested) {
                 RELEASE_LOG(XR, "OpenXRCoordinator: trying to schedule frame for terminating session");
                 onFrameUpdateCallback({ });
+                return;
             }
 
             active.renderQueue->dispatch([this, renderState = active.renderState, requestData = WTF::move(requestData), onFrameUpdateCallback = WTF::move(onFrameUpdateCallback)]() mutable {
