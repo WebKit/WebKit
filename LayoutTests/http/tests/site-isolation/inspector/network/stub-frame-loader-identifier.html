@@ -1,0 +1,57 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createSyncSuite("SiteIsolation.Network.StubFrameLoaderIdentifier");
+
+    suite.addTestCase({
+        name: "SiteIsolation.Network.StubFrameLoaderIdentifier.SubresourceBeforeFrame",
+        description: "A subresource request for a frame the frontend does not know yet should create a frame that has the request's loader identifier.",
+        test() {
+            const frameId = "frame-stub-loader-identifier-test";
+            const loaderId = "loader-stub-loader-identifier-test";
+
+            let loaderIdentifierWhenAdded = null;
+            let frameWasAddedListener = WI.networkManager.addEventListener(WI.NetworkManager.Event.FrameWasAdded, (event) => {
+                if (event.data.frame.id === frameId)
+                    loaderIdentifierWhenAdded = event.data.frame.loaderIdentifier;
+            });
+
+            let failedAsserts = 0;
+            let originalAssert = console.assert;
+            console.assert = function(condition, ...args) {
+                if (!condition)
+                    ++failedAsserts;
+                return originalAssert.call(this, condition, ...args);
+            };
+
+            try {
+                WI.networkManager.resourceRequestWillBeSent("stub-loader-identifier-test-request", frameId, loaderId, {url: "http://localhost:8000/stub-loader-identifier-test.js", method: "GET", headers: {}}, InspectorBackend.Enum.Page.ResourceType.Script, null, 0, 0, {type: "other"});
+            } finally {
+                console.assert = originalAssert;
+                WI.networkManager.removeEventListener(WI.NetworkManager.Event.FrameWasAdded, frameWasAddedListener);
+            }
+
+            let frame = WI.networkManager.frameForIdentifier(frameId);
+            InspectorTest.expectNotNull(frame, "Should create a frame for the request.");
+            InspectorTest.expectEqual(loaderIdentifierWhenAdded, loaderId, "The frame should have the request's loader identifier when it is added.");
+            InspectorTest.expectEqual(frame?.resourceCollection.size, 1, "The request's resource should be added to the frame.");
+            InspectorTest.expectEqual(failedAsserts, 0, "No console.assert should fail.");
+
+            WI.networkManager.frameDidDetach(frameId);
+            return true;
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests that the frame NetworkManager creates for an early subresource request has a loader identifier.</p>
+</body>
+</html>
