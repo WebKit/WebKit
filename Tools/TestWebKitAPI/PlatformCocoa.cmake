@@ -577,6 +577,7 @@ if (WEBKIT_PLATFORM_MAC)
 else ()
     list(APPEND TestWebKit_LIBRARIES
         "-framework AVKit"
+        "-framework CoreLocation"
         "-framework GameController"
         "-framework MobileCoreServices"
         "-framework PDFKit"
