@@ -588,6 +588,11 @@
     (iokit-property "IOGVAH264EncodeCapabilities") ;; <rdar://problem/49498040>
     (iokit-property "IOAVDHEVCDecodeCapabilities") ;; <rdar://problem/71100188>
     (iokit-property "AVCEncoderChromaFormat") ;; <rdar://188029698>
+    (iokit-property "HEVCEncoderChromaFormat") ;; <rdar://192853168>
+    (iokit-property "IOAVEHEVCEncode") ;; <rdar://192853168>
+    (iokit-property "IOAVDAV1DecodeCapabilities") ;; <rdar://192853168>
+    (iokit-property "IOProResHWDecode") ;; <rdar://192853168>
+    (iokit-property "IOProResHWEncode") ;; <rdar://192853168>
 )
 
 ;; <rdar://problem/60088861>
