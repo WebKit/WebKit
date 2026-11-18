@@ -53,7 +53,6 @@ enum class GridAvoidanceReason : uint8_t {
     GridHasOutOfFlowChild,
     GridHasNonVisibleOverflow,
     GridItemIsReplacedElement,
-    GridItemDoesNotHaveElement,
     GridItemIsSubgrid,
     GridIsEmpty,
     GridHasGridTemplateAreas,
@@ -221,10 +220,13 @@ static bool gridItemHasValidWidth(const Style::PreferredSize& width)
 // the axis. GFC does not implement the remaining cases from grid item sizing, where a replaced
 // item uses its natural size and an item with a preferred aspect ratio transfers its size through
 // that ratio.
+// Note: the per-item loop rejects replaced items with GridItemIsReplacedElement before it reaches
+// this check, so the replaced test here only matters when collecting every reason
+// (ReasonCollectionMode::All).
 // https://drafts.csswg.org/css-grid-1/#grid-item-sizing
 static bool canComputeAutomaticSize(const RenderBox& gridItem)
 {
-    return !protect(gridItem.element())->isReplaced()
+    return !gridItem.isRenderReplaced()
         && !gridItem.style().aspectRatio().hasRatio();
 }
 
@@ -393,11 +395,7 @@ static EnumSet<GridAvoidanceReason> gridLayoutAvoidanceReason(const RenderGrid& 
     for (CheckedRef gridItem : childrenOfType<RenderBox>(renderGrid)) {
         // We do not yet support grid item sizing spec for replaced elements.
         // See: https://drafts.csswg.org/css-grid/#grid-item-sizing
-        RefPtr gridItemElement = gridItem->element();
-        if (!gridItemElement)
-            ADD_REASON_AND_RETURN_IF_NEEDED(GridAvoidanceReason::GridItemDoesNotHaveElement, reasons, reasonCollectionMode);
-
-        if (gridItemElement->isReplaced())
+        if (gridItem->isRenderReplaced())
             ADD_REASON_AND_RETURN_IF_NEEDED(GridAvoidanceReason::GridItemIsReplacedElement, reasons, reasonCollectionMode);
 
         // GFC has no subgrid support, so a subgrid item would fall through to the legacy
@@ -560,8 +558,7 @@ static EnumSet<GridAvoidanceReason> gridLayoutAvoidanceReason(const RenderGrid& 
         auto gridItemHasChildWithInlineSizeComputedFromAspectRatio = [&] {
             for (CheckedRef gridItemChild : childrenOfType<RenderBox>(gridItem.get())) {
                 CheckedRef gridItemChildStyle = gridItemChild->style();
-                RefPtr gridItemChildElement = gridItemChild->element();
-                bool hasAspectRatio = (gridItemChildElement && gridItemChildElement->isReplaced()) || gridItemChildStyle->aspectRatio().hasRatio();
+                bool hasAspectRatio = gridItemChild->isRenderReplaced() || gridItemChildStyle->aspectRatio().hasRatio();
                 if (hasAspectRatio && gridItemChildStyle->width().isAuto() && gridItemChildStyle->height().isPercent())
                     return true;
             }
@@ -629,9 +626,6 @@ static void printReason(GridAvoidanceReason reason, TextStream& stream)
         break;
     case GridAvoidanceReason::GridHasNonVisibleOverflow:
         stream << "grid has non-visible overflow";
-        break;
-    case GridAvoidanceReason::GridItemDoesNotHaveElement:
-        stream << "grid item does not have a corresponding element";
         break;
     case GridAvoidanceReason::GridItemIsReplacedElement:
         stream << "grid item is a replaced element";
