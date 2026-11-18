@@ -56,8 +56,9 @@ NODELETE RenderTable* RenderTableCaption::table() const
 
 LayoutUnit RenderTableCaption::containingBlockLogicalWidthForContent() const
 {
-    if (auto* containingBlock = this->containingBlock())
-        return containingBlock->logicalWidth();
+    // A caption is an in-flow child of its table.
+    if (CheckedPtr table = this->table())
+        return table->logicalWidth();
     return { };
 }
 
