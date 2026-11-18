@@ -4643,6 +4643,7 @@ private:
     std::optional<WebCore::NavigationIdentifier> m_committedMainFrameNavigationID;
 #endif
     bool m_isLockdownModeExplicitlySet { false };
+    bool m_lastForceLockdownMode { false };
 
     bool m_needsScrollGeometryUpdates { false };
 
