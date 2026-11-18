@@ -177,8 +177,7 @@ RefPtr<VideoFrame> VideoFrame::createI420(std::span<const uint8_t> buffer, size_
 
 RefPtr<VideoFrame> VideoFrame::createI420A(std::span<const uint8_t> buffer, size_t width, size_t height, const ComputedPlaneLayout& layoutY, const ComputedPlaneLayout& layoutU, const ComputedPlaneLayout& layoutV, const ComputedPlaneLayout& layoutA, Init&& init)
 {
-    // The 8-bit formats with an alpha plane are video range only, so the samples are stored unchanged.
-    RetainPtr pixelBuffer = createPixelBufferFromI420(buffer, width, height, layoutY, layoutU, layoutV, &layoutA, false);
+    RetainPtr pixelBuffer = createPixelBufferFromI420(buffer, width, height, layoutY, layoutU, layoutV, &layoutA, init.colorSpace.fullRange.value_or(false));
     if (!pixelBuffer)
         return nullptr;
 

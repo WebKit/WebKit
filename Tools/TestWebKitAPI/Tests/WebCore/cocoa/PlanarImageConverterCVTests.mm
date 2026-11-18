@@ -487,47 +487,68 @@ TEST(PlanarImageConverterCV, CopyLumaToAlpha)
     EXPECT_FALSE(copyLumaToAlphaPlane(alphaSource.get(), opaque.get()));
 }
 
-TEST(PlanarImageConverterCV, CopyAlphaPlaneToBGRA)
+static void testCopyAlphaPlaneToPackedPixelBuffer(OSType sourceFormat, OSType destinationFormat, uint8_t alphaChannel)
 {
-    RetainPtr source = createPixelBuffer(kCVPixelFormatType_420YpCbCr8VideoRange_8A_TriPlanar);
+    auto description = pixelFormatDescription(sourceFormat);
+    ASSERT_TRUE(description && description->alpha);
+    RetainPtr source = createPixelBuffer(sourceFormat);
     FrameStorage sourceStorage;
-    auto frame = allocateFrame(sourceStorage, ChromaSubsampling::HorizontalAndVertical, eightBit, false, eightBit);
+    auto color = description->color.bitDepth > 8 ? tenBitLSB : eightBit;
+    auto frame = allocateFrame(sourceStorage, description->subsampling, color, false, description->alpha);
     fillFrame(frame);
-    ASSERT_TRUE(copyFrame(asSource(frame), source.get()));
+    if (description->alpha->bitDepth > 8) {
+        for (size_t y = 0; y < testHeight; ++y) {
+            for (size_t x = 0; x < testWidth; ++x)
+                setSampleAt(*frame.alpha, x, y, ((x * 7 + y * 13) % 256) << 8 | 0x5a);
+        }
+    }
+    ASSERT_TRUE(copyFrame(asSource(frame), source));
 
-    RetainPtr bgra = createPixelBuffer(kCVPixelFormatType_32BGRA);
-    size_t bytesPerRow = CVPixelBufferGetBytesPerRow(bgra.get());
+    RetainPtr packed = createPixelBuffer(destinationFormat);
+    size_t bytesPerRow = CVPixelBufferGetBytesPerRow(packed);
     {
-        PixelBufferLock lock { bgra.get(), 0 };
-        auto bytes = unsafeMakeSpan(static_cast<uint8_t*>(CVPixelBufferGetBaseAddress(bgra.get())), bytesPerRow * testHeight);
+        PixelBufferLock lock { packed, 0 };
+        auto bytes = unsafeMakeSpan(static_cast<uint8_t*>(CVPixelBufferGetBaseAddress(packed)), bytesPerRow * testHeight);
         auto pixels = *makePlane(bytes, 0, bytesPerRow, testWidth, testHeight, eightBit, 4);
         for (size_t y = 0; y < testHeight; ++y) {
             auto row = pixels.row(y);
             for (size_t x = 0; x < testWidth; ++x) {
-                row[4 * x] = 1;
-                row[4 * x + 1] = 2;
-                row[4 * x + 2] = 3;
-                row[4 * x + 3] = 4;
+                for (uint8_t channel = 0; channel < 4; ++channel)
+                    row[4 * x + channel] = channel + 1;
             }
         }
     }
 
-    ASSERT_TRUE(copyAlphaPlaneToBGRA(source.get(), bgra.get()));
+    ASSERT_TRUE(copyAlphaPlaneToPackedPixelBuffer(source, packed));
 
-    PixelBufferLock lock { bgra.get(), kCVPixelBufferLock_ReadOnly };
-    auto bytes = unsafeMakeSpan(static_cast<const uint8_t*>(CVPixelBufferGetBaseAddress(bgra.get())), bytesPerRow * testHeight);
+    PixelBufferLock lock { packed, kCVPixelBufferLock_ReadOnly };
+    auto bytes = unsafeMakeSpan(static_cast<const uint8_t*>(CVPixelBufferGetBaseAddress(packed)), bytesPerRow * testHeight);
     auto pixels = *makePlane(bytes, 0, bytesPerRow, testWidth, testHeight, eightBit, 4);
     for (size_t y = 0; y < testHeight; ++y) {
         for (size_t x = 0; x < testWidth; ++x) {
-            EXPECT_EQ(sampleAt(pixels, x, y, 0), 1);
-            EXPECT_EQ(sampleAt(pixels, x, y, 1), 2);
-            EXPECT_EQ(sampleAt(pixels, x, y, 2), 3);
-            EXPECT_EQ(sampleAt(pixels, x, y, 3), sampleAt(PlanarImageConverter::asSource(*frame.alpha), x, y));
+            for (uint8_t channel = 0; channel < 4; ++channel) {
+                if (channel == alphaChannel)
+                    EXPECT_EQ(sampleAt(pixels, x, y, channel), sampleAt(PlanarImageConverter::asSource(*frame.alpha), x, y) >> (description->alpha->bitDepth - 8));
+                else
+                    EXPECT_EQ(sampleAt(pixels, x, y, channel), channel + 1);
+            }
         }
     }
+}
 
+TEST(PlanarImageConverterCV, CopyAlphaPlaneToPackedPixelBuffer)
+{
+    testCopyAlphaPlaneToPackedPixelBuffer(kCVPixelFormatType_420YpCbCr8VideoRange_8A_TriPlanar, kCVPixelFormatType_32BGRA, 3);
+    testCopyAlphaPlaneToPackedPixelBuffer(kCVPixelFormatType_420YpCbCr8VideoRange_8A_TriPlanar, kCVPixelFormatType_32ARGB, 0);
+    testCopyAlphaPlaneToPackedPixelBuffer(kCVPixelFormatType_422YpCbCr10VideoRange_16A_TriPlanar, kCVPixelFormatType_32BGRA, 3);
+    testCopyAlphaPlaneToPackedPixelBuffer(kCVPixelFormatType_444YpCbCr10VideoRange_16A_TriPlanar, kCVPixelFormatType_32ARGB, 0);
+
+    RetainPtr source = createPixelBuffer(kCVPixelFormatType_420YpCbCr8VideoRange_8A_TriPlanar);
     RetainPtr opaque = createPixelBuffer(kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange);
-    EXPECT_FALSE(copyAlphaPlaneToBGRA(opaque.get(), bgra.get()));
+    RetainPtr bgra = createPixelBuffer(kCVPixelFormatType_32BGRA);
+    RetainPtr rgba = createPixelBuffer(kCVPixelFormatType_32RGBA);
+    EXPECT_FALSE(copyAlphaPlaneToPackedPixelBuffer(opaque, bgra));
+    EXPECT_FALSE(copyAlphaPlaneToPackedPixelBuffer(source, rgba));
 }
 
 TEST(PlanarImageConverterCV, CopyBiPlanarFrame)

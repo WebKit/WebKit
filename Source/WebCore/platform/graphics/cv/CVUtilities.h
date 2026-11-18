@@ -57,15 +57,19 @@ WEBCORE_EXPORT CGImageAlphaInfo alphaInfoForCVPixelBuffer(CVPixelBufferRef);
 void setAlphaInfoForCVPixelBuffer(CVPixelBufferRef, CGImageAlphaInfo);
 
 std::span<const OSType> pixelFormatsWithAlphaPlane();
-bool isPixelFormatWithAlphaPlane(OSType);
+WEBCORE_EXPORT bool isPixelFormatWithAlphaPlane(OSType);
 std::optional<int> bitDepthOfPixelFormatWithAlphaPlane(OSType);
 std::optional<OSType> pixelFormatWithAlpha(OSType colorFormat);
 std::expected<RetainPtr<CVPixelBufferRef>, CVReturn> createPixelBufferWithAlpha(CVPixelBufferRef colorBuffer, CVPixelBufferRef alphaBuffer, CVPixelBufferPoolRef);
 bool copyAlphaIntoAlphaPlane(CVPixelBufferRef destination, CVPixelBufferRef alphaBuffer);
 bool copyAlphaFromLumaPlane(CVPixelBufferRef alphaBuffer, std::span<uint8_t> destination, size_t destinationBytesPerRow);
 bool copyI420ToPixelBuffer(std::span<const uint8_t> source, size_t width, size_t height, CVPixelBufferRef destination);
-RetainPtr<CVPixelBufferRef> createBiPlanarPixelBufferFromColorPlanes(CVPixelBufferRef);
-bool copyAlphaPlaneToBGRAPixelBuffer(CVPixelBufferRef source, CVPixelBufferRef destination);
+// The color planes of a pixel buffer with an alpha plane, in the bi-planar format with the same layout.
+WEBCORE_EXPORT RetainPtr<CVPixelBufferRef> createBiPlanarPixelBufferFromColorPlanes(CVPixelBufferRef);
+// VideoToolbox doesn't support the pixel formats WebKit registers: those are replaced by their color planes, without alpha.
+// Returns null when the buffer is null or the copy fails.
+RetainPtr<CVPixelBufferRef> pixelBufferForVideoToolbox(CVPixelBufferRef);
+bool copyAlphaPlaneToPackedPixelBuffer(CVPixelBufferRef source, CVPixelBufferRef destination);
 
 // Should be called with non-empty ProcessIdentity.
 WEBCORE_EXPORT void setOwnershipIdentityForCVPixelBuffer(CVPixelBufferRef, const ProcessIdentity&);
