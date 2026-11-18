@@ -849,7 +849,9 @@ TEST(DisplayListRecorderTest, RestoreDoesNotRestoreSaveTransform)
 
 TEST(DisplayListRecorderTest, RestoreTransformReplaysUnderDifferentBaseTransform)
 {
-    Ref recorder = WebCore::DisplayList::RecorderImpl::create({ 0, 0, testContextWidth, testContextHeight });
+    // A recording CTM that differs from the replay CTM, so that restoring an absolute CTM recorded from
+    // the recorder would not restore the replay CTM.
+    Ref recorder = WebCore::DisplayList::RecorderImpl::create(WebCore::GraphicsContextState::initialIndeterminate(), { 0, 0, testContextWidth, testContextHeight }, WebCore::AffineTransform::makeScale({ 2, 3 }));
     WebCore::GraphicsContext& context = recorder.get();
     context.saveTransform();
     context.translate(3, 4);

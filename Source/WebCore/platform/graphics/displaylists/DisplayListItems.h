@@ -74,7 +74,7 @@ public:
 
 class SaveTransform {
 public:
-    static constexpr char name[] = "save-transform";
+    static constexpr ASCIILiteral name = "save-transform"_s;
 
     WEBCORE_EXPORT void apply(GraphicsContext&) const;
     void dump(TextStream&, OptionSet<AsTextFlag>) const { }
@@ -82,7 +82,7 @@ public:
 
 class RestoreTransform {
 public:
-    static constexpr char name[] = "restore-transform";
+    static constexpr ASCIILiteral name = "restore-transform"_s;
 
     WEBCORE_EXPORT void apply(GraphicsContext&) const;
     void dump(TextStream&, OptionSet<AsTextFlag>) const { }

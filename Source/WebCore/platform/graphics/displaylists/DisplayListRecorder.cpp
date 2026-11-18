@@ -150,7 +150,7 @@ bool Recorder::updateStateForTranslate(float x, float y)
 {
     if (!x && !y)
         return false;
-    m_state.setCTM(AffineTransform { ctm() }.translate(x, y));
+    m_state.ctm().translate(x, y);
     return true;
 }
 
@@ -158,7 +158,7 @@ bool Recorder::updateStateForRotate(float angleInRadians)
 {
     if (WTF::areEssentiallyEqual(0.f, fmodf(angleInRadians, std::numbers::pi_v<float> * 2.f)))
         return false;
-    m_state.setCTM(AffineTransform { ctm() }.rotate(rad2deg(static_cast<double>(angleInRadians))));
+    m_state.ctm().rotate(rad2deg(static_cast<double>(angleInRadians)));
     return true;
 }
 
@@ -166,7 +166,7 @@ bool Recorder::updateStateForScale(const FloatSize& size)
 {
     if (areEssentiallyEqual(size, FloatSize { 1.f, 1.f }))
         return false;
-    m_state.setCTM(AffineTransform { ctm() }.scale(size));
+    m_state.ctm().scale(size);
     return true;
 }
 
@@ -175,7 +175,7 @@ bool Recorder::updateStateForConcatCTM(const AffineTransform& transform)
     if (transform.isIdentity())
         return false;
 
-    m_state.setCTM(ctm() * transform);
+    m_state.ctm() *= transform;
     return true;
 }
 
@@ -320,7 +320,7 @@ void Recorder::updateStateForApplyDeviceScaleFactor(float deviceScaleFactor)
 {
     // We modify the state directly here instead of calling GraphicsContext::scale()
     // because the recorded item will scale() when replayed.
-    m_state.setCTM(AffineTransform { ctm() }.scale({ deviceScaleFactor, deviceScaleFactor }));
+    m_state.ctm().scale({ deviceScaleFactor, deviceScaleFactor });
 
     // FIXME: this changes the baseCTM, which will invalidate all of our cached extents.
     // Assert that it's only called early on?

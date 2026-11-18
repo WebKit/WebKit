@@ -167,6 +167,7 @@ public:
     Purpose purpose() const { return m_purpose; }
 
     const AffineTransform& ctm() const LIFETIME_BOUND { return m_ctm; }
+    AffineTransform& ctm() LIFETIME_BOUND { return m_ctm; }
     void setCTM(const AffineTransform& ctm) { m_ctm = ctm; }
 
     // Restores from the state saved for Purpose::Transform: the CTM and the purpose are restored, the

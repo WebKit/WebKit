@@ -63,8 +63,11 @@ public:
         if (auto* regionContext = m_transformedPaintingInfo.regionContext.get())
             regionContext->popTransform();
 
-        if (m_savedTransform)
-            m_context.restoreTransform();
+        if (m_savedTransform) {
+            // Fails if the painting inside the scope left a save(), a transparency layer or a saveTransform() open.
+            bool restored = m_context.restoreTransform();
+            ASSERT_UNUSED(restored, restored);
+        }
     }
 
     const RenderLayer::LayerPaintingInfo& transformedPaintingInfo() const { return m_transformedPaintingInfo; }

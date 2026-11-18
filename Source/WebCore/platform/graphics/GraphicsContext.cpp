@@ -81,7 +81,7 @@ void GraphicsContext::save(GraphicsContextState::Purpose purpose)
 bool GraphicsContext::restore(GraphicsContextState::Purpose purpose)
 {
     if (!canRestore(purpose)) {
-        LOG_ERROR("no matching save");
+        LOG_ERROR("ERROR bool GraphicsContext::restore() no matching save()");
         return false;
     }
 
