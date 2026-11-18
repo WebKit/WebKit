@@ -603,6 +603,14 @@ WI.CPUTimelineView = class CPUTimelineView extends WI.TimelineView
         if (discontinuities.length)
             visibleEndTime = discontinuities[0].startTime;
 
+        // The last data point is extended to `visibleEndTime`, so don't let the graph
+        // show data past the end of the last received record, matching the overview graph.
+        let lastRecord = this.representedObject.records.lastValue;
+        if (lastRecord && lastRecord.endTime < visibleEndTime)
+            visibleEndTime = lastRecord.endTime;
+
+        this._visibleEndTimeInLayout = visibleEndTime;
+
         function bestThreadLayoutMax(value) {
             if (value > 100)
                 return Math.ceil(value);
@@ -1703,8 +1711,9 @@ WI.CPUTimelineView = class CPUTimelineView extends WI.TimelineView
             }
         }
 
-        // Snap to end time if closer.
-        let visibleEndTime = Math.min(this.endTime, this.currentTime);
+        // Snap to end time if closer. Use the end time the graph was drawn with, so the
+        // overlay cannot snap past the clamped end of the graph.
+        let visibleEndTime = this._visibleEndTimeInLayout ?? (Math.min(this.endTime, this.currentTime) || this.endTime);
         let distance = Math.abs(time - visibleEndTime);
         if (distance < nearestDistance) {
             bestTime = visibleEndTime;
