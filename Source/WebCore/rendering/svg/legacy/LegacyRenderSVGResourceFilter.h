@@ -57,7 +57,7 @@ class LegacyRenderSVGResourceFilter final : public LegacyRenderSVGResourceContai
     WTF_MAKE_TZONE_ALLOCATED(LegacyRenderSVGResourceFilter);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(LegacyRenderSVGResourceFilter);
 public:
-    LegacyRenderSVGResourceFilter(SVGFilterElement&, Style::ComputedStyle&&);
+    LegacyRenderSVGResourceFilter(SVGFilterElement&, UniqueRef<Style::ComputedStyle>&&);
     virtual ~LegacyRenderSVGResourceFilter();
 
     inline SVGFilterElement& filterElement() const;

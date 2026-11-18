@@ -3229,7 +3229,7 @@ bool Element::rendererIsNeeded(const Style::ComputedStyle& style)
     return style.display().doesGenerateBox();
 }
 
-RenderPtr<RenderElement> Element::createElementRenderer(Style::ComputedStyle&& style, const RenderTreePosition&)
+RenderPtr<RenderElement> Element::createElementRenderer(UniqueRef<Style::ComputedStyle>&& style, const RenderTreePosition&)
 {
     return RenderElement::createFor(*this, WTF::move(style));
 }

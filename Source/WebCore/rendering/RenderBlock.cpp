@@ -190,13 +190,13 @@ public:
 using RenderBlockRareDataMap = SingleThreadWeakHashMap<const RenderBlock, std::unique_ptr<RenderBlockRareData>>;
 static RenderBlockRareDataMap* gRareDataMap;
 
-RenderBlock::RenderBlock(Type type, Element& element, Style::ComputedStyle&& style, OptionSet<TypeFlag> baseTypeFlags, TypeSpecificFlags typeSpecificFlags)
+RenderBlock::RenderBlock(Type type, Element& element, UniqueRef<Style::ComputedStyle>&& style, OptionSet<TypeFlag> baseTypeFlags, TypeSpecificFlags typeSpecificFlags)
     : RenderBox(type, element, WTF::move(style), baseTypeFlags | TypeFlag::IsRenderBlock, typeSpecificFlags)
 {
     ASSERT(isRenderBlock());
 }
 
-RenderBlock::RenderBlock(Type type, Document& document, Style::ComputedStyle&& style, OptionSet<TypeFlag> baseTypeFlags, TypeSpecificFlags typeSpecificFlags)
+RenderBlock::RenderBlock(Type type, Document& document, UniqueRef<Style::ComputedStyle>&& style, OptionSet<TypeFlag> baseTypeFlags, TypeSpecificFlags typeSpecificFlags)
     : RenderBox(type, document, WTF::move(style), baseTypeFlags | TypeFlag::IsRenderBlock, typeSpecificFlags)
 {
     ASSERT(isRenderBlock());

@@ -65,8 +65,8 @@ public:
     FloatRect decoratedBoundingBox() const final { return SVGBoundingBoxComputation::computeDecoratedBoundingBox(*this); }
 
 protected:
-    RenderSVGContainer(Type, Document&, Style::ComputedStyle&&, OptionSet<SVGModelObjectFlag> = { });
-    RenderSVGContainer(Type, SVGElement&, Style::ComputedStyle&&, OptionSet<SVGModelObjectFlag> = { });
+    RenderSVGContainer(Type, Document&, UniqueRef<Style::ComputedStyle>&&, OptionSet<SVGModelObjectFlag> = { });
+    RenderSVGContainer(Type, SVGElement&, UniqueRef<Style::ComputedStyle>&&, OptionSet<SVGModelObjectFlag> = { });
 
     ASCIILiteral renderName() const override { return "RenderSVGContainer"_s; }
     bool canHaveChildren() const final { return true; }

@@ -55,7 +55,7 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderSVGImage);
 
-RenderSVGImage::RenderSVGImage(SVGImageElement& element, Style::ComputedStyle&& style)
+RenderSVGImage::RenderSVGImage(SVGImageElement& element, UniqueRef<Style::ComputedStyle>&& style)
     : RenderSVGModelObject(Type::SVGImage, element, WTF::move(style))
     , m_imageResource(makeUniqueRef<RenderImageResource>())
 {

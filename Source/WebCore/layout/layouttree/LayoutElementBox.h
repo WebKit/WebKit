@@ -59,7 +59,7 @@ public:
     inline RenderElement* rendererForIntegration() const;
 
 protected:
-    ElementBox(Style::ComputedStyle&&, ElementAttributes, EnumSet<BaseTypeFlag> = { });
+    ElementBox(UniqueRef<Style::ComputedStyle>&&, ElementAttributes, EnumSet<BaseTypeFlag> = { });
     ~ElementBox();
 
 private:

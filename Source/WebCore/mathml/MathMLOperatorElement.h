@@ -69,7 +69,7 @@ public:
 
 private:
     MathMLOperatorElement(const QualifiedName&, Document&);
-    RenderPtr<RenderElement> createElementRenderer(Style::ComputedStyle&&, const RenderTreePosition&) final;
+    RenderPtr<RenderElement> createElementRenderer(UniqueRef<Style::ComputedStyle>&&, const RenderTreePosition&) final;
     void childrenChanged(const ChildChange&) final;
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;
 

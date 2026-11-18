@@ -64,14 +64,14 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderFlexibleBox);
 
-RenderFlexibleBox::RenderFlexibleBox(Type type, Element& element, Style::ComputedStyle&& style)
+RenderFlexibleBox::RenderFlexibleBox(Type type, Element& element, UniqueRef<Style::ComputedStyle>&& style)
     : RenderBlock(type, element, WTF::move(style), TypeFlag::IsFlexibleBox)
 {
     ASSERT(isRenderFlexibleBox());
     setChildrenInline(false); // All of our children must be block-level.
 }
 
-RenderFlexibleBox::RenderFlexibleBox(Type type, Document& document, Style::ComputedStyle&& style)
+RenderFlexibleBox::RenderFlexibleBox(Type type, Document& document, UniqueRef<Style::ComputedStyle>&& style)
     : RenderBlock(type, document, WTF::move(style), TypeFlag::IsFlexibleBox)
 {
     ASSERT(isRenderFlexibleBox());

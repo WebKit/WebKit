@@ -44,7 +44,7 @@ protected:
     bool acceptsLegacyMathVariantAttribute() override;
 
 private:
-    RenderPtr<RenderElement> createElementRenderer(Style::ComputedStyle&&, const RenderTreePosition&) override;
+    RenderPtr<RenderElement> createElementRenderer(UniqueRef<Style::ComputedStyle>&&, const RenderTreePosition&) override;
     bool isMathMLRowElement() const final { return true; }
 };
 

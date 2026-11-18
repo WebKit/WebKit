@@ -56,7 +56,7 @@ Ref<MathMLAnchorElement> MathMLAnchorElement::create(const QualifiedName& tagNam
     return adoptRef(*new MathMLAnchorElement(tagName, document));
 }
 
-RenderPtr<RenderElement> MathMLAnchorElement::createElementRenderer(Style::ComputedStyle&& style, const RenderTreePosition&)
+RenderPtr<RenderElement> MathMLAnchorElement::createElementRenderer(UniqueRef<Style::ComputedStyle>&& style, const RenderTreePosition&)
 {
     return createRenderer<RenderMathMLRow>(RenderObject::Type::MathMLRow, *this, WTF::move(style));
 }

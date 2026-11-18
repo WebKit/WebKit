@@ -86,7 +86,7 @@ static constexpr auto replacementTextRoundedRectColor = SRGBA<uint8_t> { 125, 12
 static constexpr auto replacementTextColor = SRGBA<uint8_t> { 240, 240, 240 };
 static constexpr auto unavailablePluginBorderColor = Color::white.colorWithAlphaByte(216);
 
-RenderEmbeddedObject::RenderEmbeddedObject(HTMLFrameOwnerElement& element, Style::ComputedStyle&& style)
+RenderEmbeddedObject::RenderEmbeddedObject(HTMLFrameOwnerElement& element, UniqueRef<Style::ComputedStyle>&& style)
     : RenderWidget(Type::EmbeddedObject, element, WTF::move(style))
 {
     ASSERT(isRenderEmbeddedObject());

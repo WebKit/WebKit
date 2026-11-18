@@ -76,8 +76,8 @@ class RenderBoxModelObject : public RenderLayerModelObject {
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderBoxModelObject);
 public:
     // An inline box is a RenderBoxModelObject of its own. Boxes and line breaks use the protected constructors.
-    RenderBoxModelObject(Type, Element&, Style::ComputedStyle&&);
-    RenderBoxModelObject(Type, Document&, Style::ComputedStyle&&);
+    RenderBoxModelObject(Type, Element&, UniqueRef<Style::ComputedStyle>&&);
+    RenderBoxModelObject(Type, Document&, UniqueRef<Style::ComputedStyle>&&);
     virtual ~RenderBoxModelObject();
 
     ASCIILiteral renderName() const override;
@@ -264,8 +264,8 @@ public:
 
 
 protected:
-    RenderBoxModelObject(Type, Element&, Style::ComputedStyle&&, OptionSet<TypeFlag>, TypeSpecificFlags);
-    RenderBoxModelObject(Type, Document&, Style::ComputedStyle&&, OptionSet<TypeFlag>, TypeSpecificFlags);
+    RenderBoxModelObject(Type, Element&, UniqueRef<Style::ComputedStyle>&&, OptionSet<TypeFlag>, TypeSpecificFlags);
+    RenderBoxModelObject(Type, Document&, UniqueRef<Style::ComputedStyle>&&, OptionSet<TypeFlag>, TypeSpecificFlags);
 
     void willBeDestroyed() override;
 

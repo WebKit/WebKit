@@ -3161,12 +3161,11 @@ std::unique_ptr<Style::ComputedStyle> Document::styleForElementIgnoringPendingSt
     ASSERT(!pseudoElementIdentifier || parentStyleArg);
     ASSERT(Style::postResolutionCallbacksAreSuspended());
 
-    std::optional<Style::ComputedStyle> updatedDocumentStyle;
+    std::unique_ptr<Style::ComputedStyle> updatedDocumentStyle;
     CheckedPtr parentStyle = parentStyleArg;
     if (!parentStyle && m_needsFullStyleRebuild && renderTreeState() == RenderTreeState::Built) {
-        auto documentStyle = Style::resolveForDocument(*this);
-        updatedDocumentStyle.emplace(WTF::move(documentStyle));
-        parentStyle = &*updatedDocumentStyle;
+        updatedDocumentStyle = Style::resolveForDocument(*this).moveToUniquePtr();
+        parentStyle = updatedDocumentStyle.get();
     }
 
     SetForScope change(m_ignorePendingStylesheets, true);

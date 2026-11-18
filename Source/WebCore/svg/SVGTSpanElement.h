@@ -33,7 +33,7 @@ public:
 private:
     SVGTSpanElement(const QualifiedName&, Document&);
             
-    RenderPtr<RenderElement> createElementRenderer(Style::ComputedStyle&&, const RenderTreePosition&) override;
+    RenderPtr<RenderElement> createElementRenderer(UniqueRef<Style::ComputedStyle>&&, const RenderTreePosition&) override;
     bool childShouldCreateRenderer(const Node&) const override;
     bool rendererIsNeeded(const Style::ComputedStyle&) override;
 };

@@ -33,7 +33,7 @@ class RenderSVGGradientStop final : public RenderElement {
     WTF_MAKE_TZONE_ALLOCATED(RenderSVGGradientStop);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderSVGGradientStop);
 public:
-    RenderSVGGradientStop(SVGStopElement&, Style::ComputedStyle&&);
+    RenderSVGGradientStop(SVGStopElement&, UniqueRef<Style::ComputedStyle>&&);
     virtual ~RenderSVGGradientStop();
 
     inline SVGStopElement& element() const;

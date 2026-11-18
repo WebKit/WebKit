@@ -74,9 +74,9 @@ void HTMLBRElement::collectPresentationalHintsForAttribute(const QualifiedName& 
         HTMLElement::collectPresentationalHintsForAttribute(name, value, style);
 }
 
-RenderPtr<RenderElement> HTMLBRElement::createElementRenderer(Style::ComputedStyle&& style, const RenderTreePosition&)
+RenderPtr<RenderElement> HTMLBRElement::createElementRenderer(UniqueRef<Style::ComputedStyle>&& style, const RenderTreePosition&)
 {
-    if (RenderElement::isContentDataSupported(style.content()))
+    if (RenderElement::isContentDataSupported(style->content()))
         return RenderElement::createFor(*this, WTF::move(style));
 
     return createRenderer<RenderLineBreak>(*this, WTF::move(style));

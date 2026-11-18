@@ -59,7 +59,7 @@ using namespace HTMLNames;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderVideo);
 
-RenderVideo::RenderVideo(HTMLVideoElement& element, Style::ComputedStyle&& style)
+RenderVideo::RenderVideo(HTMLVideoElement& element, UniqueRef<Style::ComputedStyle>&& style)
     : RenderMedia(Type::Video, element, WTF::move(style))
 {
     setIntrinsicSize(calculateIntrinsicSize());

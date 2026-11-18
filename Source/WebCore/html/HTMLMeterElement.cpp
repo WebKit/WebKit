@@ -69,9 +69,9 @@ bool HTMLMeterElement::supportsBaseAppearance(StyleAppearance appearance) const
     return appearance == StyleAppearance::Base;
 }
 
-RenderPtr<RenderElement> HTMLMeterElement::createElementRenderer(Style::ComputedStyle&& style, const RenderTreePosition&)
+RenderPtr<RenderElement> HTMLMeterElement::createElementRenderer(UniqueRef<Style::ComputedStyle>&& style, const RenderTreePosition&)
 {
-    if (!RenderTheme::singleton().supportsMeter(style.usedAppearance()))
+    if (!RenderTheme::singleton().supportsMeter(style->usedAppearance()))
         return RenderElement::createFor(*this, WTF::move(style));
 
     return createRenderer<RenderMeter>(*this, WTF::move(style));

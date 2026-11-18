@@ -56,7 +56,7 @@ bool BaseButtonInputType::appendFormData(DOMFormData&) const
     return false;
 }
 
-RenderPtr<RenderElement> BaseButtonInputType::createInputRenderer(Style::ComputedStyle&& style)
+RenderPtr<RenderElement> BaseButtonInputType::createInputRenderer(UniqueRef<Style::ComputedStyle>&& style)
 {
     ASSERT(element());
     return createRenderer<RenderButton>(*protect(element()), WTF::move(style));

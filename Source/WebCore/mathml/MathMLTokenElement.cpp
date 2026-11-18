@@ -69,7 +69,7 @@ void MathMLTokenElement::childrenChanged(const ChildChange& change)
         mathmlRenderer->updateTokenContent();
 }
 
-RenderPtr<RenderElement> MathMLTokenElement::createElementRenderer(Style::ComputedStyle&& style, const RenderTreePosition&)
+RenderPtr<RenderElement> MathMLTokenElement::createElementRenderer(UniqueRef<Style::ComputedStyle>&& style, const RenderTreePosition&)
 {
     ASSERT(hasTagName(MathMLNames::miTag) || hasTagName(MathMLNames::mnTag) || hasTagName(MathMLNames::msTag) || hasTagName(MathMLNames::mtextTag));
 

@@ -72,7 +72,7 @@ YouTubePluginReplacement::YouTubePluginReplacement(HTMLPlugInElement& plugin, co
 
 YouTubePluginReplacement::~YouTubePluginReplacement() = default;
 
-RenderPtr<RenderElement> YouTubePluginReplacement::createElementRenderer(HTMLPlugInElement& plugin, Style::ComputedStyle&& style, const RenderTreePosition& insertionPosition)
+RenderPtr<RenderElement> YouTubePluginReplacement::createElementRenderer(HTMLPlugInElement& plugin, UniqueRef<Style::ComputedStyle>&& style, const RenderTreePosition& insertionPosition)
 {
     ASSERT_UNUSED(plugin, m_parentElement == &plugin);
 

@@ -47,7 +47,7 @@ public:
 private:
     template<class T, class... Args> friend RenderPtr<T> createRenderer(Args&&...);
 
-    RenderMultiColumnSpannerPlaceholder(RenderMultiColumnFlow&, RenderBox& spanner, Style::ComputedStyle&&);
+    RenderMultiColumnSpannerPlaceholder(RenderMultiColumnFlow&, RenderBox& spanner, UniqueRef<Style::ComputedStyle>&&);
     std::pair<LayoutUnit, LayoutUnit> computeIntrinsicLogicalWidths() const override { ASSERT_NOT_REACHED(); return { }; }
 
     bool canHaveChildren() const override { return false; }

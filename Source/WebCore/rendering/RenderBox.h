@@ -619,8 +619,8 @@ public:
     NODELETE bool requiresLayerWithScrollableArea() const;
 
 protected:
-    RenderBox(Type, Element&, Style::ComputedStyle&&, OptionSet<TypeFlag> = { }, TypeSpecificFlags = { });
-    RenderBox(Type, Document&, Style::ComputedStyle&&, OptionSet<TypeFlag> = { }, TypeSpecificFlags = { });
+    RenderBox(Type, Element&, UniqueRef<Style::ComputedStyle>&&, OptionSet<TypeFlag> = { }, TypeSpecificFlags = { });
+    RenderBox(Type, Document&, UniqueRef<Style::ComputedStyle>&&, OptionSet<TypeFlag> = { }, TypeSpecificFlags = { });
 
     void styleWillChange(Style::Difference, const Style::ComputedStyle& newStyle) override;
     void styleDidChange(Style::Difference, const Style::ComputedStyle* oldStyle) override;

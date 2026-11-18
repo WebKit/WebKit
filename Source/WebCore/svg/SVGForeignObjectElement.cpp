@@ -99,7 +99,7 @@ void SVGForeignObjectElement::svgAttributeChanged(const QualifiedName& attrName)
     SVGGraphicsElement::svgAttributeChanged(attrName);
 }
 
-RenderPtr<RenderElement> SVGForeignObjectElement::createElementRenderer(Style::ComputedStyle&& style, const RenderTreePosition&)
+RenderPtr<RenderElement> SVGForeignObjectElement::createElementRenderer(UniqueRef<Style::ComputedStyle>&& style, const RenderTreePosition&)
 {
     document().setMayHaveRenderedSVGForeignObjects();
     if (document().settings().layerBasedSVGEngineEnabled())

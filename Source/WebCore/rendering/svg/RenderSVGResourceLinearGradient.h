@@ -34,7 +34,7 @@ class RenderSVGResourceLinearGradient final : public RenderSVGResourceGradient {
     WTF_MAKE_TZONE_ALLOCATED(RenderSVGResourceLinearGradient);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderSVGResourceLinearGradient);
 public:
-    RenderSVGResourceLinearGradient(SVGLinearGradientElement&, Style::ComputedStyle&&);
+    RenderSVGResourceLinearGradient(SVGLinearGradientElement&, UniqueRef<Style::ComputedStyle>&&);
     virtual ~RenderSVGResourceLinearGradient();
 
     inline SVGLinearGradientElement& linearGradientElement() const;

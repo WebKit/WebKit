@@ -134,7 +134,7 @@ bool HTMLVideoElement::rendererIsNeeded(const Style::ComputedStyle& style)
     return HTMLElement::rendererIsNeeded(style);
 }
 
-RenderPtr<RenderElement> HTMLVideoElement::createElementRenderer(Style::ComputedStyle&& style, const RenderTreePosition&)
+RenderPtr<RenderElement> HTMLVideoElement::createElementRenderer(UniqueRef<Style::ComputedStyle>&& style, const RenderTreePosition&)
 {
     return createRenderer<RenderVideo>(*this, WTF::move(style));
 }

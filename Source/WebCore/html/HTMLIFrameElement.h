@@ -75,7 +75,7 @@ private:
     bool isInteractiveContent() const final { return true; }
 
     bool rendererIsNeeded(const Style::ComputedStyle&) final;
-    RenderPtr<RenderElement> createElementRenderer(Style::ComputedStyle&&, const RenderTreePosition&) final;
+    RenderPtr<RenderElement> createElementRenderer(UniqueRef<Style::ComputedStyle>&&, const RenderTreePosition&) final;
     bool isReplaced(const Style::ComputedStyle* = nullptr) const final { return true; }
 
     ReferrerPolicy referrerPolicyFromAttribute() const;

@@ -191,7 +191,7 @@ bool FileInputType::allowsShowPickerAcrossFrames()
     return true;
 }
 
-RenderPtr<RenderElement> FileInputType::createInputRenderer(Style::ComputedStyle&& style)
+RenderPtr<RenderElement> FileInputType::createInputRenderer(UniqueRef<Style::ComputedStyle>&& style)
 {
     ASSERT(element());
     return createRenderer<RenderFileUploadControl>(*protect(element()), WTF::move(style));

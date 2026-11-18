@@ -78,7 +78,7 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderSVGText);
 
-RenderSVGText::RenderSVGText(SVGTextElement& element, Style::ComputedStyle&& style)
+RenderSVGText::RenderSVGText(SVGTextElement& element, UniqueRef<Style::ComputedStyle>&& style)
     : RenderSVGBlock(Type::SVGText, element, WTF::move(style))
 {
     ASSERT(isRenderSVGText());

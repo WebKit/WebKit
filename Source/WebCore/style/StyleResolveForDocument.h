@@ -34,7 +34,7 @@ namespace Style {
 
 class ComputedStyle;
 
-ComputedStyle resolveForDocument(const Document&);
+UniqueRef<ComputedStyle> resolveForDocument(const Document&);
 
 } // namespace Style
 } // namespace WebCore

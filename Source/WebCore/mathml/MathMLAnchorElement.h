@@ -67,7 +67,7 @@ public:
 
 private:
     MathMLAnchorElement(const QualifiedName&, Document&);
-    RenderPtr<RenderElement> createElementRenderer(Style::ComputedStyle&&, const RenderTreePosition&) final;
+    RenderPtr<RenderElement> createElementRenderer(UniqueRef<Style::ComputedStyle>&&, const RenderTreePosition&) final;
 
     AtomString effectiveTarget() const;
 

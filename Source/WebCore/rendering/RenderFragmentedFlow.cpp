@@ -71,7 +71,7 @@ static void forEachFragmentInRange(FragmentList& fragmentList, const RenderFragm
     }
 }
 
-RenderFragmentedFlow::RenderFragmentedFlow(Type type, Document& document, Style::ComputedStyle&& style)
+RenderFragmentedFlow::RenderFragmentedFlow(Type type, Document& document, UniqueRef<Style::ComputedStyle>&& style)
     : RenderBlockFlow(type, document, WTF::move(style), BlockFlowFlag::IsFragmentedFlow)
     , m_fragmentsInvalidated(false)
     , m_fragmentsHaveUniformLogicalHeight(true)

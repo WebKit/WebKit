@@ -33,7 +33,7 @@ class RenderSVGTextPath final : public RenderSVGInline {
     WTF_MAKE_TZONE_ALLOCATED(RenderSVGTextPath);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderSVGTextPath);
 public:
-    RenderSVGTextPath(SVGTextPathElement&, Style::ComputedStyle&&);
+    RenderSVGTextPath(SVGTextPathElement&, UniqueRef<Style::ComputedStyle>&&);
     virtual ~RenderSVGTextPath();
 
     NODELETE SVGTextPathElement& textPathElement() const;

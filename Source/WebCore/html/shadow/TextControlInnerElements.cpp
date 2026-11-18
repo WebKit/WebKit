@@ -82,7 +82,7 @@ Ref<TextControlInnerContainer> TextControlInnerContainer::create(Document& docum
     return adoptRef(*new TextControlInnerContainer(document));
 }
     
-RenderPtr<RenderElement> TextControlInnerContainer::createElementRenderer(Style::ComputedStyle&& style, const RenderTreePosition&)
+RenderPtr<RenderElement> TextControlInnerContainer::createElementRenderer(UniqueRef<Style::ComputedStyle>&& style, const RenderTreePosition&)
 {
     return createRenderer<RenderTextControlInnerContainer>(*this, WTF::move(style));
 }
@@ -196,7 +196,7 @@ void TextControlInnerTextElement::defaultEventHandler(Event& event)
         HTMLDivElement::defaultEventHandler(event);
 }
 
-RenderPtr<RenderElement> TextControlInnerTextElement::createElementRenderer(Style::ComputedStyle&& style, const RenderTreePosition&)
+RenderPtr<RenderElement> TextControlInnerTextElement::createElementRenderer(UniqueRef<Style::ComputedStyle>&& style, const RenderTreePosition&)
 {
     return createRenderer<RenderTextControlInnerBlock>(*this, WTF::move(style));
 }
@@ -214,7 +214,7 @@ std::optional<Style::UnadjustedStyle> TextControlInnerTextElement::resolveCustom
     if (shadowHostStyle)
         RenderTheme::singleton().adjustTextControlInnerTextStyle(style, *shadowHostStyle, shadowHost.ptr());
 
-    return Style::UnadjustedStyle { makeUnique<Style::ComputedStyle>(WTF::move(style)) };
+    return Style::UnadjustedStyle { style.moveToUniquePtr() };
 }
 
 // MARK: TextControlPlaceholderElement

@@ -58,7 +58,7 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderGrid);
 
-RenderGrid::RenderGrid(Element& element, Style::ComputedStyle&& style)
+RenderGrid::RenderGrid(Element& element, UniqueRef<Style::ComputedStyle>&& style)
     : RenderBlock(Type::Grid, element, WTF::move(style), { })
     , m_trackSizingAlgorithm(this, currentGrid())
 {

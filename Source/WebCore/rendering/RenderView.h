@@ -48,7 +48,7 @@ class RenderView final : public RenderBlockFlow {
     WTF_MAKE_TZONE_ALLOCATED(RenderView);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderView);
 public:
-    RenderView(Document&, Style::ComputedStyle&&);
+    RenderView(Document&, UniqueRef<Style::ComputedStyle>&&);
     virtual ~RenderView();
 
     ASCIILiteral renderName() const override { return "RenderView"_s; }

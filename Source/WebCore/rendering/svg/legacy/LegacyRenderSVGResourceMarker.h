@@ -33,7 +33,7 @@ class LegacyRenderSVGResourceMarker final : public LegacyRenderSVGResourceContai
     WTF_MAKE_TZONE_ALLOCATED(LegacyRenderSVGResourceMarker);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(LegacyRenderSVGResourceMarker);
 public:
-    LegacyRenderSVGResourceMarker(SVGMarkerElement&, Style::ComputedStyle&&);
+    LegacyRenderSVGResourceMarker(SVGMarkerElement&, UniqueRef<Style::ComputedStyle>&&);
     virtual ~LegacyRenderSVGResourceMarker();
 
     inline SVGMarkerElement& markerElement() const;

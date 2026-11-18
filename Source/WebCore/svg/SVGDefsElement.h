@@ -40,7 +40,7 @@ private:
     bool isValid() const final;
     bool supportsFocus() const final { return false; }
 
-    RenderPtr<RenderElement> createElementRenderer(Style::ComputedStyle&&, const RenderTreePosition&) final;
+    RenderPtr<RenderElement> createElementRenderer(UniqueRef<Style::ComputedStyle>&&, const RenderTreePosition&) final;
 };
 
 } // namespace WebCore

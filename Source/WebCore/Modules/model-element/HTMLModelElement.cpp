@@ -426,7 +426,7 @@ void HTMLModelElement::didMoveToNewDocument(Document& oldDocument, Document& new
 
 // MARK: - Rendering overrides.
 
-RenderPtr<RenderElement> HTMLModelElement::createElementRenderer(Style::ComputedStyle&& style, const RenderTreePosition& position)
+RenderPtr<RenderElement> HTMLModelElement::createElementRenderer(UniqueRef<Style::ComputedStyle>&& style, const RenderTreePosition& position)
 {
 #if ENABLE(SPATIAL_PORTAL)
     if (isInsidePortal())

@@ -1912,8 +1912,18 @@ void KeyframeEffect::setAnimatedPropertiesInStyle(Style::ComputedStyle& targetSt
             continue;
         }
 
-        auto startKeyframeStyle = Style::ComputedStyle::clone(*startBlendingKeyframe->style());
-        auto endKeyframeStyle = Style::ComputedStyle::clone(*endBlendingKeyframe->style());
+        // Keyframe styles are only cloned when composited or accumulated into.
+        std::unique_ptr<Style::ComputedStyle> startKeyframeStyleClone;
+        std::unique_ptr<Style::ComputedStyle> endKeyframeStyleClone;
+        CheckedPtr<const Style::ComputedStyle> startKeyframeStyle = startBlendingKeyframe->style();
+        CheckedPtr<const Style::ComputedStyle> endKeyframeStyle = endBlendingKeyframe->style();
+        auto mutableKeyframeStyle = [](std::unique_ptr<Style::ComputedStyle>& clone, CheckedPtr<const Style::ComputedStyle>& style) -> Style::ComputedStyle& {
+            if (!clone) {
+                clone = Style::ComputedStyle::clonePtr(*style);
+                style = clone.get();
+            }
+            return *clone;
+        };
 
         interpolateKeyframes(property, interval, iterationProgress, currentIteration, iterationDuration(), before, [&](const KeyframeInterpolation::Keyframe& keyframe, CompositeOperation compositeOperation) {
             auto* blendingKeyframe = dynamicDowncast<BlendingKeyframe>(keyframe);
@@ -1923,9 +1933,9 @@ void KeyframeEffect::setAnimatedPropertiesInStyle(Style::ComputedStyle& targetSt
             }
 
             if (blendingKeyframe->offset() == startBlendingKeyframe->offset())
-                Style::Interpolation::interpolate(property, startKeyframeStyle, targetStyle, *protect(blendingKeyframe->style()), 1, compositeOperation, *this);
+                Style::Interpolation::interpolate(property, protect(mutableKeyframeStyle(startKeyframeStyleClone, startKeyframeStyle)), targetStyle, *protect(blendingKeyframe->style()), 1, compositeOperation, *this);
             else
-                Style::Interpolation::interpolate(property, endKeyframeStyle, targetStyle, *protect(blendingKeyframe->style()), 1, compositeOperation, *this);
+                Style::Interpolation::interpolate(property, protect(mutableKeyframeStyle(endKeyframeStyleClone, endKeyframeStyle)), targetStyle, *protect(blendingKeyframe->style()), 1, compositeOperation, *this);
         }, [&](const KeyframeInterpolation::Keyframe& keyframe) {
             auto* blendingKeyframe = dynamicDowncast<BlendingKeyframe>(keyframe);
             if (!blendingKeyframe) {
@@ -1933,14 +1943,17 @@ void KeyframeEffect::setAnimatedPropertiesInStyle(Style::ComputedStyle& targetSt
                 return;
             }
 
-            if (blendingKeyframe->offset() == startBlendingKeyframe->offset())
-                Style::Interpolation::interpolate(property, startKeyframeStyle, *protect(endBlendingKeyframe->style()), startKeyframeStyle, 1, CompositeOperation::Accumulate, *this);
-            else
-                Style::Interpolation::interpolate(property, endKeyframeStyle, *protect(endBlendingKeyframe->style()), endKeyframeStyle, 1, CompositeOperation::Accumulate, *this);
+            if (blendingKeyframe->offset() == startBlendingKeyframe->offset()) {
+                CheckedRef style = mutableKeyframeStyle(startKeyframeStyleClone, startKeyframeStyle);
+                Style::Interpolation::interpolate(property, style, *protect(endBlendingKeyframe->style()), style, 1, CompositeOperation::Accumulate, *this);
+            } else {
+                CheckedRef style = mutableKeyframeStyle(endKeyframeStyleClone, endKeyframeStyle);
+                Style::Interpolation::interpolate(property, style, *protect(endBlendingKeyframe->style()), style, 1, CompositeOperation::Accumulate, *this);
+            }
         }, [&](double intervalProgress, double currentIteration, IterationCompositeOperation iterationCompositeOperation) {
-            Style::Interpolation::interpolate(property, targetStyle, startKeyframeStyle, endKeyframeStyle, intervalProgress, CompositeOperation::Replace, iterationCompositeOperation, currentIteration, *this);
+            Style::Interpolation::interpolate(property, targetStyle, *startKeyframeStyle, *endKeyframeStyle, intervalProgress, CompositeOperation::Replace, iterationCompositeOperation, currentIteration, *this);
         }, [&] {
-            return Style::Interpolation::requiresInterpolationForAccumulativeIteration(property, startKeyframeStyle, endKeyframeStyle, *this);
+            return Style::Interpolation::requiresInterpolationForAccumulativeIteration(property, *startKeyframeStyle, *endKeyframeStyle, *this);
         });
     }
 

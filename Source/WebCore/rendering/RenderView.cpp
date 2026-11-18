@@ -83,7 +83,7 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderView);
 
-RenderView::RenderView(Document& document, Style::ComputedStyle&& style)
+RenderView::RenderView(Document& document, UniqueRef<Style::ComputedStyle>&& style)
     : RenderBlockFlow(Type::View, document, WTF::move(style))
     , m_frameView(*document.view())
     , m_initialContainingBlock(makeUniqueRef<Layout::InitialContainingBlock>(*this, Style::ComputedStyle::clone(this->style())))

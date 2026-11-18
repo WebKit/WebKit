@@ -180,7 +180,7 @@ public:
 
     RefPtr<TextControlInnerTextElement> innerTextElement() const final;
     RefPtr<TextControlInnerTextElement> innerTextElementCreatingShadowSubtreeIfNeeded() final;
-    Style::ComputedStyle createInnerTextStyle(const Style::ComputedStyle&) final;
+    UniqueRef<Style::ComputedStyle> createInnerTextStyle(const Style::ComputedStyle&) final;
 
     HTMLElement* innerBlockElement() const;
     HTMLElement* innerSpinButtonElement() const;
@@ -222,7 +222,7 @@ public:
 
     bool rendererIsNeeded(const Style::ComputedStyle&) final;
     NODELETE bool supportsBaseAppearance(StyleAppearance) const final;
-    RenderPtr<RenderElement> createElementRenderer(Style::ComputedStyle&&, const RenderTreePosition&) final;
+    RenderPtr<RenderElement> createElementRenderer(UniqueRef<Style::ComputedStyle>&&, const RenderTreePosition&) final;
     bool isReplaced(const Style::ComputedStyle* = nullptr) const final;
     void willAttachRenderers() final;
     void didAttachRenderers() final;

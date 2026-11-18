@@ -101,7 +101,7 @@ public:
     virtual ExceptionOr<void> setValue(const String&, TextFieldEventBehavior = DispatchNoEvent, TextControlSetValueSelection = TextControlSetValueSelection::SetSelectionToEnd) = 0;
     virtual RefPtr<TextControlInnerTextElement> innerTextElement() const = 0;
     virtual RefPtr<TextControlInnerTextElement> innerTextElementCreatingShadowSubtreeIfNeeded() = 0;
-    virtual Style::ComputedStyle createInnerTextStyle(const Style::ComputedStyle&) = 0;
+    virtual UniqueRef<Style::ComputedStyle> createInnerTextStyle(const Style::ComputedStyle&) = 0;
 
     virtual bool dirAutoUsesValue() const = 0;
 

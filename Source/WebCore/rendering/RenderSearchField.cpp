@@ -34,7 +34,7 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderSearchField);
 
-RenderSearchField::RenderSearchField(HTMLInputElement& element, Style::ComputedStyle&& style)
+RenderSearchField::RenderSearchField(HTMLInputElement& element, UniqueRef<Style::ComputedStyle>&& style)
     : RenderTextControlSingleLine(Type::SearchField, element, WTF::move(style))
 {
     ASSERT(element.isSearchField());

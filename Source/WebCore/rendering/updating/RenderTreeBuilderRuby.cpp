@@ -44,14 +44,14 @@ RenderTreeBuilder::Ruby::Ruby(RenderTreeBuilder& builder)
 {
 }
 
-Style::ComputedStyle createAnonymousStyleForRuby(const Style::ComputedStyle& parentStyle, Style::Display display)
+UniqueRef<Style::ComputedStyle> createAnonymousStyleForRuby(const Style::ComputedStyle& parentStyle, Style::Display display)
 {
     ASSERT(display == Style::DisplayType::InlineRuby || display == Style::DisplayType::RubyBase);
 
     auto style = Style::ComputedStyle::createAnonymousStyleWithDisplay(parentStyle, display);
-    style.setUnicodeBidi(UnicodeBidi::Isolate);
+    style->setUnicodeBidi(UnicodeBidi::Isolate);
     if (display == Style::DisplayType::RubyBase)
-        style.setTextWrapMode(TextWrapMode::NoWrap);
+        style->setTextWrapMode(TextWrapMode::NoWrap);
     return style;
 }
 

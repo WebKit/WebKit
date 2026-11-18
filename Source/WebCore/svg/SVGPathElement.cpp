@@ -233,7 +233,7 @@ FloatRect SVGPathElement::getBBox(StyleUpdateStrategy styleUpdateStrategy)
     return { };
 }
 
-RenderPtr<RenderElement> SVGPathElement::createElementRenderer(Style::ComputedStyle&& style, const RenderTreePosition&)
+RenderPtr<RenderElement> SVGPathElement::createElementRenderer(UniqueRef<Style::ComputedStyle>&& style, const RenderTreePosition&)
 {
     if (document().settings().layerBasedSVGEngineEnabled())
         return createRenderer<RenderSVGPath>(*this, WTF::move(style));

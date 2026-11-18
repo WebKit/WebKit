@@ -72,7 +72,7 @@ private:
     void requestImageResource();
 
     String imageSourceURL() const final;
-    RenderPtr<RenderElement> createElementRenderer(Style::ComputedStyle&&, const RenderTreePosition&) final;
+    RenderPtr<RenderElement> createElementRenderer(UniqueRef<Style::ComputedStyle>&&, const RenderTreePosition&) final;
     RenderImageResource* imageResource() const;
     void updateImageResource();
     void didAttachRenderers() final;

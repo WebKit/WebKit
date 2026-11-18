@@ -36,7 +36,7 @@ class RenderMathMLSpace final : public RenderMathMLBlock {
     WTF_MAKE_TZONE_ALLOCATED(RenderMathMLSpace);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderMathMLSpace);
 public:
-    RenderMathMLSpace(MathMLSpaceElement&, Style::ComputedStyle&&);
+    RenderMathMLSpace(MathMLSpaceElement&, UniqueRef<Style::ComputedStyle>&&);
     virtual ~RenderMathMLSpace();
 
     NODELETE MathMLSpaceElement& element() const;

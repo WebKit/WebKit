@@ -42,7 +42,7 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(LegacyRenderSVGPath);
 
-LegacyRenderSVGPath::LegacyRenderSVGPath(SVGGraphicsElement& element, Style::ComputedStyle&& style)
+LegacyRenderSVGPath::LegacyRenderSVGPath(SVGGraphicsElement& element, UniqueRef<Style::ComputedStyle>&& style)
     : LegacyRenderSVGShape(Type::LegacySVGPath, element, WTF::move(style))
 {
     ASSERT(isLegacyRenderSVGPath());

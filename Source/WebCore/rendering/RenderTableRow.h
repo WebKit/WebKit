@@ -37,8 +37,8 @@ class RenderTableRow final : public RenderBlock {
     WTF_MAKE_TZONE_ALLOCATED(RenderTableRow);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderTableRow);
 public:
-    RenderTableRow(Element&, Style::ComputedStyle&&);
-    RenderTableRow(Document&, Style::ComputedStyle&&);
+    RenderTableRow(Element&, UniqueRef<Style::ComputedStyle>&&);
+    RenderTableRow(Document&, UniqueRef<Style::ComputedStyle>&&);
     virtual ~RenderTableRow();
 
     RenderTableRow* nextRow() const;

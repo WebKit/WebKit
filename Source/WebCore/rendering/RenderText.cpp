@@ -428,7 +428,7 @@ static FontCascade::CodePath computeFontCodePath(const String& text, bool contai
 inline RenderText::RenderText(Type type, Node& node, const String& text, std::optional<SynthesizedGlyph> contentGlyph)
     : RenderObject(type, node, TypeFlag::IsText, { })
     // The initial values of an anonymous inline box. The inherited ones come on attach, see inheritStyleFromParent().
-    , Layout::InlineTextBox(Style::ComputedStyle::create(), contentGlyph)
+    , Layout::InlineTextBox(Style::ComputedStyle::defaultStyleSingleton(), contentGlyph)
     , m_text(text)
     , m_containsOnlyASCII(text.impl()->containsOnlyASCII())
     , m_fontCodePath(std::to_underlying(computeFontCodePath(m_text, m_containsOnlyASCII)))
@@ -501,7 +501,7 @@ void RenderText::inheritStyleFromParent()
         LayoutIntegration::BoxTreeUpdater::updateSimplifiedMeasuring(*this);
 }
 
-void RenderText::setStyleInheritedFromDisplayContentsParent(Style::ComputedStyle&& style)
+void RenderText::setStyleInheritedFromDisplayContentsParent(UniqueRef<Style::ComputedStyle>&& style)
 {
     bool didChangeStyleSource = !inheritsStyleFromDisplayContentsParent();
     setInheritsStyleFromDisplayContentsParent(true);

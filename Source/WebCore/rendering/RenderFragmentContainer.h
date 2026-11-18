@@ -104,8 +104,8 @@ public:
     virtual bool contentRectSpansFragments(const LayoutRect&) const = 0;
 
 protected:
-    RenderFragmentContainer(Type, Element&, Style::ComputedStyle&&, RenderFragmentedFlow*);
-    RenderFragmentContainer(Type, Document&, Style::ComputedStyle&&, RenderFragmentedFlow*);
+    RenderFragmentContainer(Type, Element&, UniqueRef<Style::ComputedStyle>&&, RenderFragmentedFlow*);
+    RenderFragmentContainer(Type, Document&, UniqueRef<Style::ComputedStyle>&&, RenderFragmentedFlow*);
     virtual ~RenderFragmentContainer();
 
     RenderOverflow* overflowForBox(const RenderBox&) const;

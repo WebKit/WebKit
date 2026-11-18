@@ -179,13 +179,13 @@ static bool canHaveBoxInfoInFragment(auto& renderer)
 }
 #endif
 
-RenderBox::RenderBox(Type type, Element& element, Style::ComputedStyle&& style, OptionSet<TypeFlag> flags, TypeSpecificFlags typeSpecificFlags)
+RenderBox::RenderBox(Type type, Element& element, UniqueRef<Style::ComputedStyle>&& style, OptionSet<TypeFlag> flags, TypeSpecificFlags typeSpecificFlags)
     : RenderBoxModelObject(type, element, WTF::move(style), flags | TypeFlag::IsBox, typeSpecificFlags)
 {
     ASSERT(isRenderBox());
 }
 
-RenderBox::RenderBox(Type type, Document& document, Style::ComputedStyle&& style, OptionSet<TypeFlag> flags, TypeSpecificFlags typeSpecificFlags)
+RenderBox::RenderBox(Type type, Document& document, UniqueRef<Style::ComputedStyle>&& style, OptionSet<TypeFlag> flags, TypeSpecificFlags typeSpecificFlags)
     : RenderBoxModelObject(type, document, WTF::move(style), flags | TypeFlag::IsBox, typeSpecificFlags)
 {
     ASSERT(isRenderBox());

@@ -578,7 +578,7 @@ bool SVGSVGElement::rendererIsNeeded(const Style::ComputedStyle& style)
     return StyledElement::rendererIsNeeded(style);
 }
 
-RenderPtr<RenderElement> SVGSVGElement::createElementRenderer(Style::ComputedStyle&& style, const RenderTreePosition&)
+RenderPtr<RenderElement> SVGSVGElement::createElementRenderer(UniqueRef<Style::ComputedStyle>&& style, const RenderTreePosition&)
 {
     if (isOutermostSVGSVGElement()) {
         if (document().settings().layerBasedSVGEngineEnabled()) {

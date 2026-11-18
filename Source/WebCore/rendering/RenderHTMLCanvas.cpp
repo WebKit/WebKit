@@ -58,7 +58,7 @@ using namespace HTMLNames;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderHTMLCanvas);
 
-RenderHTMLCanvas::RenderHTMLCanvas(HTMLCanvasElement& element, Style::ComputedStyle&& style)
+RenderHTMLCanvas::RenderHTMLCanvas(HTMLCanvasElement& element, UniqueRef<Style::ComputedStyle>&& style)
     : RenderReplaced(Type::HTMLCanvas, element, WTF::move(style), element.size())
 {
     ASSERT(isRenderHTMLCanvas());

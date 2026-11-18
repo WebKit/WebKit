@@ -106,7 +106,7 @@ protected:
     void didMoveToNewDocument(Document& oldDocument, Document& newDocument) override;
 
     bool requestObject(const String& url, const String& mimeType, const Vector<AtomString>& paramNames, const Vector<AtomString>& paramValues);
-    RenderPtr<RenderElement> createElementRenderer(Style::ComputedStyle&&, const RenderTreePosition&) override;
+    RenderPtr<RenderElement> createElementRenderer(UniqueRef<Style::ComputedStyle>&&, const RenderTreePosition&) override;
     bool isReplaced(const Style::ComputedStyle* = nullptr) const final;
     void didAddUserAgentShadowRoot(ShadowRoot&) final;
 
@@ -138,7 +138,7 @@ private:
     bool canLoadPlugInContent(const String& relativeURL, const String& mimeType) const;
     bool canLoadURL(const URL&) const;
 
-    RenderPtr<RenderElement> createPluginRenderer(Style::ComputedStyle&&, const RenderTreePosition&);
+    RenderPtr<RenderElement> createPluginRenderer(UniqueRef<Style::ComputedStyle>&&, const RenderTreePosition&);
     bool childShouldCreateRenderer(const Node&) const override;
     void willRecalcStyle(OptionSet<Style::Change>) final;
     void didRecalcStyle(OptionSet<Style::Change>) final;

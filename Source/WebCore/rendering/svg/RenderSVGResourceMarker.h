@@ -32,7 +32,7 @@ class RenderSVGResourceMarker final : public RenderSVGResourceContainer {
     WTF_MAKE_TZONE_ALLOCATED(RenderSVGResourceMarker);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderSVGResourceMarker);
 public:
-    RenderSVGResourceMarker(SVGMarkerElement&, Style::ComputedStyle&&);
+    RenderSVGResourceMarker(SVGMarkerElement&, UniqueRef<Style::ComputedStyle>&&);
     virtual ~RenderSVGResourceMarker();
 
     inline bool hasReverseStart() const;

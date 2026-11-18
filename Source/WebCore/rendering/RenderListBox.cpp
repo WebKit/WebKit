@@ -92,7 +92,7 @@ const int optionsSpacingInlineStart = 2;
 // Default size when the multiple attribute is present but size attribute is absent.
 const int defaultSize = 4;
 
-RenderListBox::RenderListBox(HTMLSelectElement& element, Style::ComputedStyle&& style)
+RenderListBox::RenderListBox(HTMLSelectElement& element, UniqueRef<Style::ComputedStyle>&& style)
     : RenderBlockFlow(Type::ListBox, element, WTF::move(style))
 {
     protect(view().frameView())->addScrollableArea(this);

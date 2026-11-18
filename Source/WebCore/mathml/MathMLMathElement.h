@@ -45,7 +45,7 @@ private:
 
     bool acceptsLegacyMathVariantAttribute() final;
 
-    RenderPtr<RenderElement> createElementRenderer(Style::ComputedStyle&&, const RenderTreePosition&) final;
+    RenderPtr<RenderElement> createElementRenderer(UniqueRef<Style::ComputedStyle>&&, const RenderTreePosition&) final;
 };
 
 }

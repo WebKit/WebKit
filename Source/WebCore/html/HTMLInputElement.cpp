@@ -984,7 +984,7 @@ bool HTMLInputElement::supportsBaseAppearance(StyleAppearance appearance) const
     return appearance == StyleAppearance::Base;
 }
 
-RenderPtr<RenderElement> HTMLInputElement::createElementRenderer(Style::ComputedStyle&& style, const RenderTreePosition&)
+RenderPtr<RenderElement> HTMLInputElement::createElementRenderer(UniqueRef<Style::ComputedStyle>&& style, const RenderTreePosition&)
 {
     return protect(m_inputType)->createInputRenderer(WTF::move(style));
 }
@@ -2438,44 +2438,44 @@ static Ref<Style::GradientImage> autoFillStrongPasswordMaskImage()
     );
 }
 
-Style::ComputedStyle HTMLInputElement::createInnerTextStyle(const Style::ComputedStyle& style)
+UniqueRef<Style::ComputedStyle> HTMLInputElement::createInnerTextStyle(const Style::ComputedStyle& style)
 {
     auto textBlockStyle = Style::ComputedStyle::create();
-    textBlockStyle.inheritFrom(style);
+    textBlockStyle->inheritFrom(style);
     adjustInnerTextStyle(style, textBlockStyle);
 
-    textBlockStyle.setWhiteSpaceCollapse(WhiteSpaceCollapse::Preserve);
-    textBlockStyle.setTextWrapMode(TextWrapMode::NoWrap);
-    textBlockStyle.setOverflowWrap(OverflowWrap::Normal);
-    textBlockStyle.setOverflowX(Overflow::Hidden);
-    textBlockStyle.setOverflowY(Overflow::Hidden);
+    textBlockStyle->setWhiteSpaceCollapse(WhiteSpaceCollapse::Preserve);
+    textBlockStyle->setTextWrapMode(TextWrapMode::NoWrap);
+    textBlockStyle->setOverflowWrap(OverflowWrap::Normal);
+    textBlockStyle->setOverflowX(Overflow::Hidden);
+    textBlockStyle->setOverflowY(Overflow::Hidden);
     if (shouldTruncateText(style))
-        textBlockStyle.setTextOverflow(Style::TextOverflow { style.textOverflow() });
+        textBlockStyle->setTextOverflow(Style::TextOverflow { style.textOverflow() });
     else
-        textBlockStyle.setTextOverflow(CSS::Keyword::Clip { });
+        textBlockStyle->setTextOverflow(CSS::Keyword::Clip { });
 
-    textBlockStyle.setDisplay(Style::DisplayType::BlockFlow);
+    textBlockStyle->setDisplay(Style::DisplayType::BlockFlow);
 
     if (hasAutofillStrongPasswordButton() && isMutable()) {
-        textBlockStyle.setDisplay(Style::DisplayType::InlineFlowRoot);
-        textBlockStyle.setLogicalMaxWidth(100_css_percentage);
-        textBlockStyle.setColor(Color::black.colorWithAlphaByte(153));
-        textBlockStyle.setTextOverflow(CSS::Keyword::Clip { });
-        textBlockStyle.setMaskLayers(Style::MaskLayer { autoFillStrongPasswordMaskImage() });
+        textBlockStyle->setDisplay(Style::DisplayType::InlineFlowRoot);
+        textBlockStyle->setLogicalMaxWidth(100_css_percentage);
+        textBlockStyle->setColor(Color::black.colorWithAlphaByte(153));
+        textBlockStyle->setTextOverflow(CSS::Keyword::Clip { });
+        textBlockStyle->setMaskLayers(Style::MaskLayer { autoFillStrongPasswordMaskImage() });
         // A stacking context is needed for the mask.
-        if (textBlockStyle.usedZIndex().isAuto())
-            textBlockStyle.setUsedZIndex(0);
+        if (textBlockStyle->usedZIndex().isAuto())
+            textBlockStyle->setUsedZIndex(0);
     }
 
     auto shouldUseInitialLineHeight = [&] {
         // Do not allow line-height to be smaller than our default.
-        if (textBlockStyle.metricsOfPrimaryFont().intLineSpacing() > style.usedLineHeight())
+        if (textBlockStyle->metricsOfPrimaryFont().intLineSpacing() > style.usedLineHeight())
             return true;
         return isText() && !style.logicalHeight().isAuto() && !hasAutofillStrongPasswordButton();
     };
     if (shouldUseInitialLineHeight()) {
-        textBlockStyle.setLineHeight(Style::ComputedStyle::initialLineHeight());
-        textBlockStyle.setTextAutosizingAdjustedLineHeight(Style::ComputedStyle::initialLineHeight());
+        textBlockStyle->setLineHeight(Style::ComputedStyle::initialLineHeight());
+        textBlockStyle->setTextAutosizingAdjustedLineHeight(Style::ComputedStyle::initialLineHeight());
     }
 
     return textBlockStyle;

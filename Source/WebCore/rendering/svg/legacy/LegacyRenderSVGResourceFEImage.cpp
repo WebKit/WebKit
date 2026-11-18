@@ -35,7 +35,7 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(LegacyRenderSVGResourceFEImage);
 
-LegacyRenderSVGResourceFEImage::LegacyRenderSVGResourceFEImage(SVGFEImageElement& element, Style::ComputedStyle&& style)
+LegacyRenderSVGResourceFEImage::LegacyRenderSVGResourceFEImage(SVGFEImageElement& element, UniqueRef<Style::ComputedStyle>&& style)
     : LegacyRenderSVGResourceFilterPrimitive(Type::LegacySVGResourceFEImage, element, WTF::move(style))
     , m_imageResource(makeUniqueRef<RenderImageResource>())
 {

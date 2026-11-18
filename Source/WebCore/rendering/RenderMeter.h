@@ -31,7 +31,7 @@ class RenderMeter final : public RenderBlockFlow {
     WTF_MAKE_TZONE_ALLOCATED(RenderMeter);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderMeter);
 public:
-    RenderMeter(HTMLElement&, Style::ComputedStyle&&);
+    RenderMeter(HTMLElement&, UniqueRef<Style::ComputedStyle>&&);
     virtual ~RenderMeter();
 
     NODELETE HTMLMeterElement* meterElement() const;

@@ -58,7 +58,7 @@ public:
         GlobalCoordinateSpace,
         LocalCoordinateSpace
     };
-    LegacyRenderSVGShape(Type, SVGGraphicsElement&, Style::ComputedStyle&&);
+    LegacyRenderSVGShape(Type, SVGGraphicsElement&, UniqueRef<Style::ComputedStyle>&&);
     virtual ~LegacyRenderSVGShape();
 
     inline SVGGraphicsElement& graphicsElement() const;

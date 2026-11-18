@@ -300,7 +300,7 @@ private:
     void collectPresentationalHintsForAttribute(const QualifiedName&, const AtomString&, MutableStyleProperties&) final;
 
     // Rendering overrides.
-    RenderPtr<RenderElement> createElementRenderer(Style::ComputedStyle&&, const RenderTreePosition&) final;
+    RenderPtr<RenderElement> createElementRenderer(UniqueRef<Style::ComputedStyle>&&, const RenderTreePosition&) final;
     bool isReplaced(const Style::ComputedStyle* = nullptr) const final;
     NODELETE bool rendersFallbackContent() const;
     bool rendererIsNeeded(const Style::ComputedStyle&) final;

@@ -77,7 +77,7 @@ using namespace HTMLNames;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderTable);
 
-RenderTable::RenderTable(Type type, Element& element, Style::ComputedStyle&& style)
+RenderTable::RenderTable(Type type, Element& element, UniqueRef<Style::ComputedStyle>&& style)
     : RenderBlock(type, element, WTF::move(style), { })
     , m_columnPos(FillWith { }, 1, 0)
 {
@@ -85,7 +85,7 @@ RenderTable::RenderTable(Type type, Element& element, Style::ComputedStyle&& sty
     ASSERT(isRenderTable());
 }
 
-RenderTable::RenderTable(Type type, Document& document, Style::ComputedStyle&& style)
+RenderTable::RenderTable(Type type, Document& document, UniqueRef<Style::ComputedStyle>&& style)
     : RenderBlock(type, document, WTF::move(style), { })
     , m_columnPos(FillWith { }, 1, 0)
 {

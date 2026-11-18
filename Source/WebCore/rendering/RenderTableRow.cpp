@@ -51,14 +51,14 @@ using namespace HTMLNames;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderTableRow);
 
-RenderTableRow::RenderTableRow(Element& element, Style::ComputedStyle&& style)
+RenderTableRow::RenderTableRow(Element& element, UniqueRef<Style::ComputedStyle>&& style)
     : RenderBlock(Type::TableRow, element, WTF::move(style), { })
 {
     setInline(false);
     ASSERT(isRenderTableRow());
 }
 
-RenderTableRow::RenderTableRow(Document& document, Style::ComputedStyle&& style)
+RenderTableRow::RenderTableRow(Document& document, UniqueRef<Style::ComputedStyle>&& style)
     : RenderBlock(Type::TableRow, document, WTF::move(style), { })
 {
     setInline(false);

@@ -62,7 +62,7 @@ class LegacyRenderSVGResourceClipper final : public LegacyRenderSVGResourceConta
     WTF_MAKE_TZONE_ALLOCATED(LegacyRenderSVGResourceClipper);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(LegacyRenderSVGResourceClipper);
 public:
-    LegacyRenderSVGResourceClipper(SVGClipPathElement&, Style::ComputedStyle&&);
+    LegacyRenderSVGResourceClipper(SVGClipPathElement&, UniqueRef<Style::ComputedStyle>&&);
     virtual ~LegacyRenderSVGResourceClipper();
 
     inline SVGClipPathElement& clipPathElement() const;

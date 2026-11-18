@@ -458,7 +458,7 @@ public:
 
     virtual void copyNonAttributePropertiesFromElement(const Element&) { }
 
-    virtual RenderPtr<RenderElement> createElementRenderer(Style::ComputedStyle&&, const RenderTreePosition&);
+    virtual RenderPtr<RenderElement> createElementRenderer(UniqueRef<Style::ComputedStyle>&&, const RenderTreePosition&);
     virtual bool rendererIsNeeded(const Style::ComputedStyle&);
     virtual bool isReplaced(const Style::ComputedStyle* = nullptr) const { return false; }
 

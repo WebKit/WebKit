@@ -97,7 +97,7 @@ protected:
 private:
     bool isFilterEffect() const override { return true; }
 
-    RenderPtr<RenderElement> createElementRenderer(Style::ComputedStyle&&, const RenderTreePosition&) override;
+    RenderPtr<RenderElement> createElementRenderer(UniqueRef<Style::ComputedStyle>&&, const RenderTreePosition&) override;
     bool rendererIsNeeded(const Style::ComputedStyle&) override;
     bool childShouldCreateRenderer(const Node&) const override { return false; }
 

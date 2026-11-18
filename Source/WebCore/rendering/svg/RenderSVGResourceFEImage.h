@@ -36,7 +36,7 @@ class RenderSVGResourceFEImage final : public RenderSVGResourceFilterPrimitive {
     WTF_MAKE_TZONE_ALLOCATED(RenderSVGResourceFEImage);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderSVGResourceFEImage);
 public:
-    RenderSVGResourceFEImage(SVGFEImageElement&, Style::ComputedStyle&&);
+    RenderSVGResourceFEImage(SVGFEImageElement&, UniqueRef<Style::ComputedStyle>&&);
     virtual ~RenderSVGResourceFEImage();
 
     RenderImageResource& imageResource() const { return m_imageResource; }

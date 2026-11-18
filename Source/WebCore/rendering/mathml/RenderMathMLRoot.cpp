@@ -51,7 +51,7 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderMathMLRoot);
 
-RenderMathMLRoot::RenderMathMLRoot(MathMLRootElement& element, Style::ComputedStyle&& style)
+RenderMathMLRoot::RenderMathMLRoot(MathMLRootElement& element, UniqueRef<Style::ComputedStyle>&& style)
     : RenderMathMLRow(Type::MathMLRoot, element, WTF::move(style))
 {
     m_radicalOperator.setOperator(protect(RenderMathMLRoot::style()), gRadicalCharacter, MathOperator::Type::VerticalOperator);

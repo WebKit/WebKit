@@ -47,7 +47,7 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderVTTCue);
 
-RenderVTTCue::RenderVTTCue(VTTCueBox& element, Style::ComputedStyle&& style)
+RenderVTTCue::RenderVTTCue(VTTCueBox& element, UniqueRef<Style::ComputedStyle>&& style)
     : RenderBlockFlow(Type::VTTCue, element, WTF::move(style))
     , m_cue(downcast<VTTCue>(element.getCue()))
 {

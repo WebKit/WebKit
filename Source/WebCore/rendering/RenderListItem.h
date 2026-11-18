@@ -33,7 +33,7 @@ class RenderListItem final : public RenderBlockFlow {
     WTF_MAKE_TZONE_ALLOCATED(RenderListItem);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderListItem);
 public:
-    RenderListItem(Element&, Style::ComputedStyle&&);
+    RenderListItem(Element&, UniqueRef<Style::ComputedStyle>&&);
     virtual ~RenderListItem();
 
     int value() const;
@@ -47,7 +47,7 @@ public:
     static unsigned itemCountForOrderedList(const HTMLOListElement&);
     static int startForReversedOrderedList(const HTMLOListElement&);
 
-    Style::ComputedStyle computeMarkerStyle() const;
+    UniqueRef<Style::ComputedStyle> computeMarkerStyle() const;
 
     RenderBoxModelObject* markerRenderer() const { return m_marker.get(); }
     void setMarkerRenderer(RenderBoxModelObject& marker) { m_marker = marker; }

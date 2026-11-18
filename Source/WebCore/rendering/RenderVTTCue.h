@@ -43,7 +43,7 @@ class RenderVTTCue final : public RenderBlockFlow {
     WTF_MAKE_TZONE_ALLOCATED(RenderVTTCue);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderVTTCue);
 public:
-    RenderVTTCue(VTTCueBox&, Style::ComputedStyle&&);
+    RenderVTTCue(VTTCueBox&, UniqueRef<Style::ComputedStyle>&&);
     virtual ~RenderVTTCue();
 
 private:

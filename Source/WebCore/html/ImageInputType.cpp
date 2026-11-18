@@ -109,7 +109,7 @@ void ImageInputType::handleDOMActivateEvent(Event& event)
     event.setDefaultHandled();
 }
 
-RenderPtr<RenderElement> ImageInputType::createInputRenderer(Style::ComputedStyle&& style)
+RenderPtr<RenderElement> ImageInputType::createInputRenderer(UniqueRef<Style::ComputedStyle>&& style)
 {
     ASSERT(element());
     return createRenderer<RenderImage>(RenderObject::Type::Image, *protect(element()), WTF::move(style));

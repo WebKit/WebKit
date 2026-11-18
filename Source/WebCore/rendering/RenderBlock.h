@@ -63,8 +63,8 @@ public:
     virtual ~RenderBlock();
 
 protected:
-    RenderBlock(Type, Element&, Style::ComputedStyle&&, OptionSet<TypeFlag>, TypeSpecificFlags = { });
-    RenderBlock(Type, Document&, Style::ComputedStyle&&, OptionSet<TypeFlag>, TypeSpecificFlags = { });
+    RenderBlock(Type, Element&, UniqueRef<Style::ComputedStyle>&&, OptionSet<TypeFlag>, TypeSpecificFlags = { });
+    RenderBlock(Type, Document&, UniqueRef<Style::ComputedStyle>&&, OptionSet<TypeFlag>, TypeSpecificFlags = { });
 
 public:
     String debugDescription() const override;

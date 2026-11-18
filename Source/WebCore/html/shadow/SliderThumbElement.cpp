@@ -92,7 +92,7 @@ class RenderSliderContainer final : public RenderFlexibleBox {
     WTF_MAKE_TZONE_ALLOCATED(RenderSliderContainer);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderSliderContainer);
 public:
-    RenderSliderContainer(SliderContainerElement& element, Style::ComputedStyle&& style)
+    RenderSliderContainer(SliderContainerElement& element, UniqueRef<Style::ComputedStyle>&& style)
         : RenderFlexibleBox(Type::SliderContainer, element, WTF::move(style))
     {
     }
@@ -621,7 +621,7 @@ Ref<SliderContainerElement> SliderContainerElement::create(Document& document)
     return element;
 }
 
-RenderPtr<RenderElement> SliderContainerElement::createElementRenderer(Style::ComputedStyle&& style, const RenderTreePosition&)
+RenderPtr<RenderElement> SliderContainerElement::createElementRenderer(UniqueRef<Style::ComputedStyle>&& style, const RenderTreePosition&)
 {
     return createRenderer<RenderSliderContainer>(*this, WTF::move(style));
 }

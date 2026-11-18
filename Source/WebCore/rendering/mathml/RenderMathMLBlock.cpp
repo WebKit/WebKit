@@ -53,14 +53,14 @@ using namespace MathMLNames;
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderMathMLBlock);
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderMathMLTable);
 
-RenderMathMLBlock::RenderMathMLBlock(Type type, MathMLPresentationElement& container, Style::ComputedStyle&& style)
+RenderMathMLBlock::RenderMathMLBlock(Type type, MathMLPresentationElement& container, UniqueRef<Style::ComputedStyle>&& style)
     : RenderBlock(type, container, WTF::move(style), { })
     , m_mathMLStyle(MathMLStyle::create())
 {
     setChildrenInline(false); // All of our children must be block-level.
 }
 
-RenderMathMLBlock::RenderMathMLBlock(Type type, Document& document, Style::ComputedStyle&& style)
+RenderMathMLBlock::RenderMathMLBlock(Type type, Document& document, UniqueRef<Style::ComputedStyle>&& style)
     : RenderBlock(type, document, WTF::move(style), { })
     , m_mathMLStyle(MathMLStyle::create())
 {

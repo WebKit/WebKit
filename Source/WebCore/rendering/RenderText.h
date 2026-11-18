@@ -96,7 +96,7 @@ public:
     // On attach and parent style change.
     void inheritStyleFromParent();
     bool inheritsStyleFromDisplayContentsParent() const { return Layout::InlineTextBox::inheritsStyleFromDisplayContentsParent(); }
-    void setStyleInheritedFromDisplayContentsParent(Style::ComputedStyle&&);
+    void setStyleInheritedFromDisplayContentsParent(UniqueRef<Style::ComputedStyle>&&);
     void clearStyleInheritedFromDisplayContentsParent();
     const Style::ComputedStyle* lazyPseudoElementStyle(const Style::PseudoElementIdentifier&, const Style::ComputedStyle* parentStyle = nullptr) const LIFETIME_BOUND;
 

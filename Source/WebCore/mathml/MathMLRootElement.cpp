@@ -60,7 +60,7 @@ Ref<MathMLRootElement> MathMLRootElement::create(const QualifiedName& tagName, D
     return adoptRef(*new MathMLRootElement(tagName, document));
 }
 
-RenderPtr<RenderElement> MathMLRootElement::createElementRenderer(Style::ComputedStyle&& style, const RenderTreePosition&)
+RenderPtr<RenderElement> MathMLRootElement::createElementRenderer(UniqueRef<Style::ComputedStyle>&& style, const RenderTreePosition&)
 {
     ASSERT(hasTagName(msqrtTag) || hasTagName(mrootTag));
     return createRenderer<RenderMathMLRoot>(*this, WTF::move(style));

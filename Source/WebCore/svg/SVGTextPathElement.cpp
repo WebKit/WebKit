@@ -137,7 +137,7 @@ Path SVGTextPathElement::pathForPathAttribute() const
     return Ref { m_pathAttribute }->currentPath();
 }
 
-RenderPtr<RenderElement> SVGTextPathElement::createElementRenderer(Style::ComputedStyle&& style, const RenderTreePosition&)
+RenderPtr<RenderElement> SVGTextPathElement::createElementRenderer(UniqueRef<Style::ComputedStyle>&& style, const RenderTreePosition&)
 {
     return createRenderer<RenderSVGTextPath>(*this, WTF::move(style));
 }

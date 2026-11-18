@@ -37,7 +37,7 @@ class RenderButton final : public RenderFlexibleBox {
     WTF_MAKE_TZONE_ALLOCATED(RenderButton);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderButton);
 public:
-    RenderButton(HTMLFormControlElement&, Style::ComputedStyle&&);
+    RenderButton(HTMLFormControlElement&, UniqueRef<Style::ComputedStyle>&&);
     virtual ~RenderButton();
 
     NODELETE HTMLFormControlElement& formControlElement() const;

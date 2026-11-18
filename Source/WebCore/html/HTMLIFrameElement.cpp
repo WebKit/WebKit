@@ -164,7 +164,7 @@ bool HTMLIFrameElement::rendererIsNeeded(const Style::ComputedStyle& style)
     return style.display() != Style::DisplayType::None && canLoad();
 }
 
-RenderPtr<RenderElement> HTMLIFrameElement::createElementRenderer(Style::ComputedStyle&& style, const RenderTreePosition&)
+RenderPtr<RenderElement> HTMLIFrameElement::createElementRenderer(UniqueRef<Style::ComputedStyle>&& style, const RenderTreePosition&)
 {
     return createRenderer<RenderIFrame>(*this, WTF::move(style));
 }

@@ -17,11 +17,6 @@ inline ComputedStyleProperties::ComputedStyleProperties(const ComputedStylePrope
     : ComputedStyleBase { other, tag }
 {
 }
-
-inline ComputedStyleProperties::ComputedStyleProperties(ComputedStyleProperties& a, ComputedStyleProperties&& b)
-    : ComputedStyleBase { a, WTF::move(b) }
-{
-}
 } // namespace WebCore
 } // namespace Style
 

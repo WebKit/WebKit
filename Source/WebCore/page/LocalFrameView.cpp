@@ -5716,9 +5716,9 @@ void LocalFrameView::updateScrollCorner()
         m_scrollCorner = nullptr;
     else {
         if (CheckedPtr scrollCorner = m_scrollCorner.get())
-            scrollCorner->setStyle(WTF::move(*cornerStyle));
+            scrollCorner->setStyle(makeUniqueRefFromNonNullUniquePtr(WTF::move(cornerStyle)));
         else {
-            m_scrollCorner = createRenderer<RenderScrollbarPart>(protect(renderer->document()), WTF::move(*cornerStyle));
+            m_scrollCorner = createRenderer<RenderScrollbarPart>(protect(renderer->document()), makeUniqueRefFromNonNullUniquePtr(WTF::move(cornerStyle)));
             protect(m_scrollCorner)->initializeStyle();
         }
         invalidateScrollCorner(cornerRect);

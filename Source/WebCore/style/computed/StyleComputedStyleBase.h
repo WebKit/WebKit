@@ -462,7 +462,7 @@ using WebkitBoxOrdinalGroup = Integer<CSS::Positive>;
 using PseudoElementStyles = HashMap<PseudoElementIdentifier, std::unique_ptr<ComputedStyle>>;
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(ComputedStyleBase);
-class ComputedStyleBase : public CanMakeCheckedPtr<ComputedStyleBase, WTF::DefaultedOperatorEqual::No, WTF::CheckedPtrDeleteCheckException::Yes> {
+class ComputedStyleBase : public CanMakeCheckedPtr<ComputedStyleBase> {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(ComputedStyleBase, ComputedStyleBase);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(ComputedStyleBase);
 public:
@@ -470,6 +470,9 @@ public:
     enum CreateDefaultStyleTag { CreateDefaultStyle };
 
     WEBCORE_EXPORT ~ComputedStyleBase();
+
+    ComputedStyleBase(const ComputedStyleBase&) = delete;
+    ComputedStyleBase& operator=(const ComputedStyleBase&) = delete;
 
 #if ASSERT_ENABLED || ENABLE(SECURITY_ASSERTIONS)
     bool deletionHasBegun() const { return m_deletionHasBegun; }
@@ -895,12 +898,12 @@ protected:
     friend class DifferenceFunctions;
 
     ComputedStyleBase(ComputedStyleBase&&);
-    ComputedStyleBase& operator=(ComputedStyleBase&&);
 
     ComputedStyleBase(CreateDefaultStyleTag);
     ComputedStyleBase(const ComputedStyleBase&, CloneTag);
 
-    ComputedStyleBase(ComputedStyleBase&, ComputedStyleBase&&);
+    void swapData(ComputedStyleBase&);
+    void cloneDataFrom(const ComputedStyleBase&);
 
     const NonInheritedFlags& nonInheritedFlags() const LIFETIME_BOUND { return m_nonInheritedFlags; }
     const NonInheritedData& nonInheritedData() const LIFETIME_BOUND { return m_nonInheritedData; }

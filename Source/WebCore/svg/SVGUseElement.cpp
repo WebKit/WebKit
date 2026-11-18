@@ -324,9 +324,9 @@ RefPtr<SVGElement> SVGUseElement::targetClone() const
     return root ? downcast<SVGElement>(root->firstChild()) : nullptr;
 }
 
-RenderPtr<RenderElement> SVGUseElement::createElementRenderer(Style::ComputedStyle&& style, const RenderTreePosition&)
+RenderPtr<RenderElement> SVGUseElement::createElementRenderer(UniqueRef<Style::ComputedStyle>&& style, const RenderTreePosition&)
 {
-    if (style.display() == Style::DisplayType::Contents)
+    if (style->display() == Style::DisplayType::Contents)
         return nullptr;
     if (document().settings().layerBasedSVGEngineEnabled())
         return createRenderer<RenderSVGTransformableContainer>(*this, WTF::move(style));

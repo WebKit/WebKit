@@ -44,8 +44,8 @@ class RenderFlexibleBox : public RenderBlock {
     WTF_MAKE_TZONE_ALLOCATED(RenderFlexibleBox);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderFlexibleBox);
 public:
-    RenderFlexibleBox(Type, Element&, Style::ComputedStyle&&);
-    RenderFlexibleBox(Type, Document&, Style::ComputedStyle&&);
+    RenderFlexibleBox(Type, Element&, UniqueRef<Style::ComputedStyle>&&);
+    RenderFlexibleBox(Type, Document&, UniqueRef<Style::ComputedStyle>&&);
     virtual ~RenderFlexibleBox();
 
     using Direction = FlowDirection;

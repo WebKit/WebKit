@@ -52,7 +52,7 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(LegacyRenderSVGModelObject);
 
-LegacyRenderSVGModelObject::LegacyRenderSVGModelObject(Type type, SVGElement& element, Style::ComputedStyle&& style, OptionSet<SVGModelObjectFlag> typeFlags)
+LegacyRenderSVGModelObject::LegacyRenderSVGModelObject(Type type, SVGElement& element, UniqueRef<Style::ComputedStyle>&& style, OptionSet<SVGModelObjectFlag> typeFlags)
     : RenderElement(type, element, WTF::move(style), { }, typeFlags | SVGModelObjectFlag::IsLegacy | SVGModelObjectFlag::UsesBoundaryCaching)
 {
     ASSERT(isLegacyRenderSVGModelObject());

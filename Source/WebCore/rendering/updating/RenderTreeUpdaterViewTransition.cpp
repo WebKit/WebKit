@@ -87,14 +87,14 @@ void RenderTreeUpdater::ViewTransition::updatePseudoElementTree(RenderElement* d
     WeakPtr viewTransitionContainingBlock = documentElementRenderer->view().viewTransitionContainingBlock();
     if (!viewTransitionContainingBlock) {
         auto containingBlockStyle = Style::ComputedStyle::createAnonymousStyleWithDisplay(documentElementRenderer->view().style(), Style::DisplayType::BlockFlow);
-        containingBlockStyle.setPosition(PositionType::Fixed);
-        containingBlockStyle.setPointerEvents(PointerEvents::None);
+        containingBlockStyle->setPosition(PositionType::Fixed);
+        containingBlockStyle->setPointerEvents(PointerEvents::None);
 
         auto containingBlockRect = activeViewTransition->containingBlockRect();
-        containingBlockStyle.setLeft(Style::InsetEdge::Fixed { containingBlockRect.x() });
-        containingBlockStyle.setTop(Style::InsetEdge::Fixed { containingBlockRect.y() });
-        containingBlockStyle.setWidth(Style::PreferredSize::Fixed { containingBlockRect.width() });
-        containingBlockStyle.setHeight(Style::PreferredSize::Fixed { containingBlockRect.height() });
+        containingBlockStyle->setLeft(Style::InsetEdge::Fixed { containingBlockRect.x() });
+        containingBlockStyle->setTop(Style::InsetEdge::Fixed { containingBlockRect.y() });
+        containingBlockStyle->setWidth(Style::PreferredSize::Fixed { containingBlockRect.width() });
+        containingBlockStyle->setHeight(Style::PreferredSize::Fixed { containingBlockRect.height() });
 
         auto newViewTransitionContainingBlock = WebCore::createRenderer<RenderBlockFlow>(RenderObject::Type::BlockFlow, document, WTF::move(containingBlockStyle), RenderObject::BlockFlowFlag::IsViewTransitionContainingBlock);
         newViewTransitionContainingBlock->initializeStyle();

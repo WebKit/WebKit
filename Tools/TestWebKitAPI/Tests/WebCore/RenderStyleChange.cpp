@@ -38,10 +38,10 @@ TEST(RenderStyleChangeTest, None)
 {
     auto style1 = ComputedStyle::create();
     FontCascadeDescription fontDescription1;
-    style1.setFontDescription(WTF::move(fontDescription1));
+    style1->setFontDescription(WTF::move(fontDescription1));
     auto style2 = ComputedStyle::create();
     FontCascadeDescription fontDescription2;
-    style1.setFontDescription(WTF::move(fontDescription2));
+    style1->setFontDescription(WTF::move(fontDescription2));
     auto changes = determineChanges(style1, style2);
     EXPECT_EQ(changes, OptionSet<Change> { });
 }

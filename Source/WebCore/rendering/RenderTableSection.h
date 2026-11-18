@@ -58,8 +58,8 @@ class RenderTableSection final : public RenderBox {
     WTF_MAKE_TZONE_ALLOCATED(RenderTableSection);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderTableSection);
 public:
-    RenderTableSection(Element&, Style::ComputedStyle&&);
-    RenderTableSection(Document&, Style::ComputedStyle&&);
+    RenderTableSection(Element&, UniqueRef<Style::ComputedStyle>&&);
+    RenderTableSection(Document&, UniqueRef<Style::ComputedStyle>&&);
     virtual ~RenderTableSection();
 
     RenderTableRow* firstRow() const;

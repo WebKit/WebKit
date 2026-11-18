@@ -119,8 +119,8 @@ public:
     void invalidateCachedTransformOrigin() const { m_cachedTransformOrigin = std::nullopt; }
 
 protected:
-    RenderSVGModelObject(Type, Document&, Style::ComputedStyle&&, OptionSet<SVGModelObjectFlag> = { });
-    RenderSVGModelObject(Type, SVGElement&, Style::ComputedStyle&&, OptionSet<SVGModelObjectFlag> = { });
+    RenderSVGModelObject(Type, Document&, UniqueRef<Style::ComputedStyle>&&, OptionSet<SVGModelObjectFlag> = { });
+    RenderSVGModelObject(Type, SVGElement&, UniqueRef<Style::ComputedStyle>&&, OptionSet<SVGModelObjectFlag> = { });
 
     void updateFromStyle() override;
 

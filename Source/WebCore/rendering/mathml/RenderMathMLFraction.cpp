@@ -47,7 +47,7 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderMathMLFraction);
 
-RenderMathMLFraction::RenderMathMLFraction(MathMLFractionElement& element, Style::ComputedStyle&& style)
+RenderMathMLFraction::RenderMathMLFraction(MathMLFractionElement& element, UniqueRef<Style::ComputedStyle>&& style)
     : RenderMathMLRow(Type::MathMLFraction, element, WTF::move(style))
 {
     ASSERT(isRenderMathMLFraction());

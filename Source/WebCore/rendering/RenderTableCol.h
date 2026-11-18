@@ -37,8 +37,8 @@ class RenderTableCol final : public RenderBox {
     WTF_MAKE_TZONE_ALLOCATED(RenderTableCol);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderTableCol);
 public:
-    RenderTableCol(Element&, Style::ComputedStyle&&);
-    RenderTableCol(Document&, Style::ComputedStyle&&);
+    RenderTableCol(Element&, UniqueRef<Style::ComputedStyle>&&);
+    RenderTableCol(Document&, UniqueRef<Style::ComputedStyle>&&);
     virtual ~RenderTableCol();
 
     NODELETE void clearContentLogicalWidthsInvalidation();

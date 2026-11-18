@@ -106,7 +106,7 @@ void SVGClipPathElement::childrenChanged(const ChildChange& change)
     updateSVGRendererForElementChange();
 }
 
-RenderPtr<RenderElement> SVGClipPathElement::createElementRenderer(Style::ComputedStyle&& style, const RenderTreePosition&)
+RenderPtr<RenderElement> SVGClipPathElement::createElementRenderer(UniqueRef<Style::ComputedStyle>&& style, const RenderTreePosition&)
 {
     if (document().settings().layerBasedSVGEngineEnabled())
         return createRenderer<RenderSVGResourceClipper>(*this, WTF::move(style));

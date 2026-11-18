@@ -41,7 +41,7 @@ class LegacyRenderSVGRoot final : public RenderReplaced {
     WTF_MAKE_TZONE_ALLOCATED(LegacyRenderSVGRoot);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(LegacyRenderSVGRoot);
 public:
-    LegacyRenderSVGRoot(SVGSVGElement&, Style::ComputedStyle&&);
+    LegacyRenderSVGRoot(SVGSVGElement&, UniqueRef<Style::ComputedStyle>&&);
     virtual ~LegacyRenderSVGRoot();
 
     NODELETE SVGSVGElement& svgSVGElement() const;

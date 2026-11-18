@@ -33,7 +33,7 @@ class LegacyRenderSVGPath final : public LegacyRenderSVGShape {
     WTF_MAKE_TZONE_ALLOCATED(LegacyRenderSVGPath);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(LegacyRenderSVGPath);
 public:
-    LegacyRenderSVGPath(SVGGraphicsElement&, Style::ComputedStyle&&);
+    LegacyRenderSVGPath(SVGGraphicsElement&, UniqueRef<Style::ComputedStyle>&&);
     virtual ~LegacyRenderSVGPath();
 
     void drawMarkers(PaintInfo&) final;

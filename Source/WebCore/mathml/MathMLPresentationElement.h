@@ -55,7 +55,7 @@ protected:
     std::optional<MathVariant> m_mathVariant;
 
 private:
-    RenderPtr<RenderElement> createElementRenderer(Style::ComputedStyle&&, const RenderTreePosition&) override;
+    RenderPtr<RenderElement> createElementRenderer(UniqueRef<Style::ComputedStyle>&&, const RenderTreePosition&) override;
     bool isPresentationMathML() const override { return true; }
 
     static Length parseNumberAndUnit(StringView, bool acceptLegacyMathMLLengths);

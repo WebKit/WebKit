@@ -37,7 +37,7 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderTextControlMultiLine);
 
-RenderTextControlMultiLine::RenderTextControlMultiLine(HTMLTextAreaElement& element, Style::ComputedStyle&& style)
+RenderTextControlMultiLine::RenderTextControlMultiLine(HTMLTextAreaElement& element, UniqueRef<Style::ComputedStyle>&& style)
     : RenderTextControl(Type::TextControlMultiLine, element, WTF::move(style))
 {
     ASSERT(isRenderTextControlMultiLine());

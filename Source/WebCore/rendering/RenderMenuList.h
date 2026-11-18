@@ -34,7 +34,7 @@ class RenderMenuList final : public RenderFlexibleBox {
     WTF_MAKE_TZONE_ALLOCATED(RenderMenuList);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderMenuList);
 public:
-    RenderMenuList(HTMLSelectElement&, Style::ComputedStyle&&);
+    RenderMenuList(HTMLSelectElement&, UniqueRef<Style::ComputedStyle>&&);
     virtual ~RenderMenuList();
 
     NODELETE HTMLSelectElement& selectElement() const;

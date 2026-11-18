@@ -81,7 +81,7 @@ public:
     NODELETE RemoteFrame* remoteFrame() const;
 
 protected:
-    RenderWidget(Type, HTMLFrameOwnerElement&, Style::ComputedStyle&&);
+    RenderWidget(Type, HTMLFrameOwnerElement&, UniqueRef<Style::ComputedStyle>&&);
 
     void willBeDestroyed() override;
     void styleDidChange(Style::Difference, const Style::ComputedStyle* oldStyle) override;

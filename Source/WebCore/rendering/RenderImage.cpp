@@ -172,7 +172,7 @@ void RenderImage::collectSelectionGeometries(Vector<SelectionGeometry>& geometri
 
 using namespace HTMLNames;
 
-RenderImage::RenderImage(Type type, Element& element, Style::ComputedStyle&& style, OptionSet<ReplacedFlag> flags, Style::Image* styleImage, float currentPixelDensity)
+RenderImage::RenderImage(Type type, Element& element, UniqueRef<Style::ComputedStyle>&& style, OptionSet<ReplacedFlag> flags, Style::Image* styleImage, float currentPixelDensity)
     : RenderReplaced(type, element, WTF::move(style), IntSize(), flags | ReplacedFlag::IsImage)
     , m_imageResource(makeUnique<RenderImageResource>(styleImage))
     , m_hasImageOverlay([&] {
@@ -192,12 +192,12 @@ RenderImage::RenderImage(Type type, Element& element, Style::ComputedStyle&& sty
 #endif
 }
 
-RenderImage::RenderImage(Type type, Element& element, Style::ComputedStyle&& style, Style::Image* styleImage, float currentPixelDensity)
+RenderImage::RenderImage(Type type, Element& element, UniqueRef<Style::ComputedStyle>&& style, Style::Image* styleImage, float currentPixelDensity)
     : RenderImage(type, element, WTF::move(style), ReplacedFlag::IsImage, styleImage, currentPixelDensity)
 {
 }
 
-RenderImage::RenderImage(Type type, Document& document, Style::ComputedStyle&& style, Style::Image* styleImage)
+RenderImage::RenderImage(Type type, Document& document, UniqueRef<Style::ComputedStyle>&& style, Style::Image* styleImage)
     : RenderReplaced(type, document, WTF::move(style), IntSize(), ReplacedFlag::IsImage)
     , m_imageResource(makeUnique<RenderImageResource>(styleImage))
 {

@@ -33,7 +33,7 @@ class LegacyRenderSVGForeignObject final : public RenderSVGBlock {
     WTF_MAKE_TZONE_ALLOCATED(LegacyRenderSVGForeignObject);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(LegacyRenderSVGForeignObject);
 public:
-    LegacyRenderSVGForeignObject(SVGForeignObjectElement&, Style::ComputedStyle&&);
+    LegacyRenderSVGForeignObject(SVGForeignObjectElement&, UniqueRef<Style::ComputedStyle>&&);
     virtual ~LegacyRenderSVGForeignObject();
 
     NODELETE SVGForeignObjectElement& foreignObjectElement() const;

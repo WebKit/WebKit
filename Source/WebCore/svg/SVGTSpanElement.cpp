@@ -42,7 +42,7 @@ Ref<SVGTSpanElement> SVGTSpanElement::create(const QualifiedName& tagName, Docum
     return adoptRef(*new SVGTSpanElement(tagName, document));
 }
 
-RenderPtr<RenderElement> SVGTSpanElement::createElementRenderer(Style::ComputedStyle&& style, const RenderTreePosition&)
+RenderPtr<RenderElement> SVGTSpanElement::createElementRenderer(UniqueRef<Style::ComputedStyle>&& style, const RenderTreePosition&)
 {
     return createRenderer<RenderSVGInline>(RenderObject::Type::SVGInline, *this, WTF::move(style));
 }

@@ -180,7 +180,7 @@ void HTMLCanvasElement::attributeChanged(const QualifiedName& name, const AtomSt
     HTMLElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 }
 
-RenderPtr<RenderElement> HTMLCanvasElement::createElementRenderer(Style::ComputedStyle&& style, const RenderTreePosition& insertionPosition)
+RenderPtr<RenderElement> HTMLCanvasElement::createElementRenderer(UniqueRef<Style::ComputedStyle>&& style, const RenderTreePosition& insertionPosition)
 {
     RefPtr frame = document().frame();
     if (frame && protect(frame->script())->canExecuteScripts(ReasonForCallingCanExecuteScripts::NotAboutToExecuteScript))

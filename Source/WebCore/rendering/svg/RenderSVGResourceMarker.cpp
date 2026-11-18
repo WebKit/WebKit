@@ -43,7 +43,7 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderSVGResourceMarker);
 
-RenderSVGResourceMarker::RenderSVGResourceMarker(SVGMarkerElement& element, Style::ComputedStyle&& style)
+RenderSVGResourceMarker::RenderSVGResourceMarker(SVGMarkerElement& element, UniqueRef<Style::ComputedStyle>&& style)
     : RenderSVGResourceContainer(Type::SVGResourceMarker, element, WTF::move(style))
 {
 }

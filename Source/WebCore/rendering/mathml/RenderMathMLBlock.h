@@ -42,8 +42,8 @@ class RenderMathMLBlock : public RenderBlock {
     WTF_MAKE_TZONE_ALLOCATED(RenderMathMLBlock);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderMathMLBlock);
 public:
-    RenderMathMLBlock(Type, MathMLPresentationElement&, Style::ComputedStyle&&);
-    RenderMathMLBlock(Type, Document&, Style::ComputedStyle&&);
+    RenderMathMLBlock(Type, MathMLPresentationElement&, UniqueRef<Style::ComputedStyle>&&);
+    RenderMathMLBlock(Type, Document&, UniqueRef<Style::ComputedStyle>&&);
     virtual ~RenderMathMLBlock();
 
     MathMLStyle& mathMLStyle() const { return m_mathMLStyle; }
@@ -111,7 +111,7 @@ class RenderMathMLTable final : public RenderTable {
     WTF_MAKE_TZONE_ALLOCATED(RenderMathMLTable);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderMathMLTable);
 public:
-    inline RenderMathMLTable(MathMLElement&, Style::ComputedStyle&&);
+    inline RenderMathMLTable(MathMLElement&, UniqueRef<Style::ComputedStyle>&&);
     virtual ~RenderMathMLTable();
 
     MathMLStyle& mathMLStyle() const { return m_mathMLStyle; }

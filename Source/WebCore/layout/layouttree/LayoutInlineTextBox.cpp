@@ -44,8 +44,8 @@ static HashMap<const InlineTextBox*, std::unique_ptr<InlineTextBox::CombinedText
 static_assert(std::to_underlying(InlineTextBox::ContentCharacteristic::HighestEnumValue) < 6, "Content characteristics must fit in Box::m_textContentCharacteristics");
 static_assert(std::to_underlying(SynthesizedGlyph::PickerDown) + 1 < 4, "Content glyph must fit in Box::m_textContentGlyph");
 
-InlineTextBox::InlineTextBox(Style::ComputedStyle&& style, std::optional<SynthesizedGlyph> contentGlyph)
-    : Box(WTF::move(style), { NodeType::Text, IsAnonymous::Yes }, Box::InlineTextBoxFlag)
+InlineTextBox::InlineTextBox(const Style::ComputedStyle& style, std::optional<SynthesizedGlyph> contentGlyph)
+    : Box(style, { NodeType::Text, IsAnonymous::Yes }, Box::InlineTextBoxFlag)
 {
     m_textContentGlyph = contentGlyph ? std::to_underlying(*contentGlyph) + 1 : 0;
 }

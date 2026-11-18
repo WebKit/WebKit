@@ -54,7 +54,7 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderMenuList);
 
-RenderMenuList::RenderMenuList(HTMLSelectElement& element, Style::ComputedStyle&& style)
+RenderMenuList::RenderMenuList(HTMLSelectElement& element, UniqueRef<Style::ComputedStyle>&& style)
     : RenderFlexibleBox(Type::MenuList, element, WTF::move(style))
     , m_needsOptionsWidthUpdate(true)
     , m_optionsWidth(0)

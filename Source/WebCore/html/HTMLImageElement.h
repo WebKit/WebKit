@@ -244,7 +244,7 @@ private:
 #endif
 
     void didAttachRenderers() override;
-    RenderPtr<RenderElement> createElementRenderer(Style::ComputedStyle&&, const RenderTreePosition&) override;
+    RenderPtr<RenderElement> createElementRenderer(UniqueRef<Style::ComputedStyle>&&, const RenderTreePosition&) override;
     bool isReplaced(const Style::ComputedStyle* = nullptr) const final;
     void setBestFitURLAndDPRFromImageCandidate(const ImageCandidate&);
 

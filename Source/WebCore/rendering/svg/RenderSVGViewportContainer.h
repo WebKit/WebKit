@@ -34,8 +34,8 @@ class RenderSVGViewportContainer final : public RenderSVGContainer {
     WTF_MAKE_TZONE_ALLOCATED(RenderSVGViewportContainer);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderSVGViewportContainer);
 public:
-    RenderSVGViewportContainer(RenderSVGRoot&, Style::ComputedStyle&&);
-    RenderSVGViewportContainer(SVGSVGElement&, Style::ComputedStyle&&);
+    RenderSVGViewportContainer(RenderSVGRoot&, UniqueRef<Style::ComputedStyle>&&);
+    RenderSVGViewportContainer(SVGSVGElement&, UniqueRef<Style::ComputedStyle>&&);
     virtual ~RenderSVGViewportContainer();
 
     NODELETE SVGSVGElement& svgSVGElement() const;

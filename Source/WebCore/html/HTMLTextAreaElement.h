@@ -102,7 +102,7 @@ private:
     bool hasPresentationalHintsForAttribute(const QualifiedName&) const final;
     void collectPresentationalHintsForAttribute(const QualifiedName&, const AtomString&, MutableStyleProperties&) final;
     NODELETE bool supportsBaseAppearance(StyleAppearance) const final;
-    RenderPtr<RenderElement> createElementRenderer(Style::ComputedStyle&&, const RenderTreePosition&) final;
+    RenderPtr<RenderElement> createElementRenderer(UniqueRef<Style::ComputedStyle>&&, const RenderTreePosition&) final;
     bool appendFormData(DOMFormData&) final;
     void reset() final;
     NODELETE bool hasCustomFocusLogic() const final { return true; }
@@ -126,7 +126,7 @@ private:
     bool tooLong(StringView valueOverride, NeedsToCheckDirtyFlag) const;
 
     RefPtr<TextControlInnerTextElement> innerTextElementCreatingShadowSubtreeIfNeeded() final;
-    Style::ComputedStyle createInnerTextStyle(const Style::ComputedStyle&) final;
+    UniqueRef<Style::ComputedStyle> createInnerTextStyle(const Style::ComputedStyle&) final;
     void copyNonAttributePropertiesFromElement(const Element&) final;
 
     bool willRespondToMouseClickEventsWithEditability(Editability) const final { return !isDisabledFormControl(); }

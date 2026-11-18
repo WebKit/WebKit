@@ -78,7 +78,7 @@ public:
 
     // "base class" methods for all the elements which render as paths
     virtual Path toClipPath();
-    RenderPtr<RenderElement> createElementRenderer(Style::ComputedStyle&&, const RenderTreePosition&) override;
+    RenderPtr<RenderElement> createElementRenderer(UniqueRef<Style::ComputedStyle>&&, const RenderTreePosition&) override;
 
     size_t approximateMemoryCost() const override { return sizeof(*this); }
 

@@ -93,10 +93,10 @@ bool HTMLButtonElement::supportsBaseAppearance(StyleAppearance appearance) const
     return appearance == StyleAppearance::Base;
 }
 
-RenderPtr<RenderElement> HTMLButtonElement::createElementRenderer(Style::ComputedStyle&& style, const RenderTreePosition& position)
+RenderPtr<RenderElement> HTMLButtonElement::createElementRenderer(UniqueRef<Style::ComputedStyle>&& style, const RenderTreePosition& position)
 {
     // https://html.spec.whatwg.org/multipage/rendering.html#button-layout
-    if (style.display().isFlexibleOrGridFormattingContextBox())
+    if (style->display().isFlexibleOrGridFormattingContextBox())
         return HTMLFormControlElement::createElementRenderer(WTF::move(style), position);
     return createRenderer<RenderButton>(*this, WTF::move(style));
 }

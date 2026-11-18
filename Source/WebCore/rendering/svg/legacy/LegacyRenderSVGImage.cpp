@@ -53,7 +53,7 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(LegacyRenderSVGImage);
 
-LegacyRenderSVGImage::LegacyRenderSVGImage(SVGImageElement& element, Style::ComputedStyle&& style)
+LegacyRenderSVGImage::LegacyRenderSVGImage(SVGImageElement& element, UniqueRef<Style::ComputedStyle>&& style)
     : LegacyRenderSVGModelObject(Type::LegacySVGImage, element, WTF::move(style), SVGModelObjectFlag::UsesBoundaryCaching)
     , m_imageResource(makeUniqueRef<RenderImageResource>())
 {

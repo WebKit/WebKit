@@ -61,7 +61,7 @@ private:
 
     bool needsPendingResourceHandling() const final { return false; }
 
-    RenderPtr<RenderElement> createElementRenderer(Style::ComputedStyle&&, const RenderTreePosition&) final;
+    RenderPtr<RenderElement> createElementRenderer(UniqueRef<Style::ComputedStyle>&&, const RenderTreePosition&) final;
     bool childShouldCreateRenderer(const Node&) const final;
 
     bool selfHasRelativeLengths() const final { return true; }

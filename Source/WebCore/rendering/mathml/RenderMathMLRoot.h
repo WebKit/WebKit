@@ -42,7 +42,7 @@ class RenderMathMLRoot final : public RenderMathMLRow {
     WTF_MAKE_TZONE_ALLOCATED(RenderMathMLRoot);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderMathMLRoot);
 public:
-    RenderMathMLRoot(MathMLRootElement&, Style::ComputedStyle&&);
+    RenderMathMLRoot(MathMLRootElement&, UniqueRef<Style::ComputedStyle>&&);
     virtual ~RenderMathMLRoot();
 
     void updateStyle();

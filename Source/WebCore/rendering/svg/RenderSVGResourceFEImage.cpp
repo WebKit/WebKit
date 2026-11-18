@@ -36,7 +36,7 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderSVGResourceFEImage);
 
-RenderSVGResourceFEImage::RenderSVGResourceFEImage(SVGFEImageElement& element, Style::ComputedStyle&& style)
+RenderSVGResourceFEImage::RenderSVGResourceFEImage(SVGFEImageElement& element, UniqueRef<Style::ComputedStyle>&& style)
     : RenderSVGResourceFilterPrimitive(Type::SVGResourceFEImage, element, WTF::move(style))
     , m_imageResource(makeUniqueRef<RenderImageResource>())
 {

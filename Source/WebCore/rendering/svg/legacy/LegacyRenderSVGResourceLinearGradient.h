@@ -31,7 +31,7 @@ class LegacyRenderSVGResourceLinearGradient final : public LegacyRenderSVGResour
     WTF_MAKE_TZONE_ALLOCATED(LegacyRenderSVGResourceLinearGradient);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(LegacyRenderSVGResourceLinearGradient);
 public:
-    LegacyRenderSVGResourceLinearGradient(SVGLinearGradientElement&, Style::ComputedStyle&&);
+    LegacyRenderSVGResourceLinearGradient(SVGLinearGradientElement&, UniqueRef<Style::ComputedStyle>&&);
     virtual ~LegacyRenderSVGResourceLinearGradient();
 
     inline SVGLinearGradientElement& linearGradientElement() const;

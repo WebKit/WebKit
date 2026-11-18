@@ -33,7 +33,7 @@ class RenderDeprecatedFlexibleBox final : public RenderBlock {
     WTF_MAKE_TZONE_ALLOCATED(RenderDeprecatedFlexibleBox);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderDeprecatedFlexibleBox);
 public:
-    RenderDeprecatedFlexibleBox(Element&, Style::ComputedStyle&&);
+    RenderDeprecatedFlexibleBox(Element&, UniqueRef<Style::ComputedStyle>&&);
     virtual ~RenderDeprecatedFlexibleBox();
 
     Element& element() const { return downcast<Element>(nodeForNonAnonymous()); }

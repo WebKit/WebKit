@@ -38,7 +38,7 @@ class RenderSVGText final : public RenderSVGBlock {
     WTF_MAKE_TZONE_ALLOCATED(RenderSVGText);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderSVGText);
 public:
-    RenderSVGText(SVGTextElement&, Style::ComputedStyle&&);
+    RenderSVGText(SVGTextElement&, UniqueRef<Style::ComputedStyle>&&);
     virtual ~RenderSVGText();
 
     NODELETE SVGTextElement& textElement() const;

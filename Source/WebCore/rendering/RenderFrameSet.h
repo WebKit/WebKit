@@ -58,7 +58,7 @@ class RenderFrameSet final : public RenderBox {
     WTF_MAKE_TZONE_ALLOCATED(RenderFrameSet);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderFrameSet);
 public:
-    RenderFrameSet(HTMLFrameSetElement&, Style::ComputedStyle&&);
+    RenderFrameSet(HTMLFrameSetElement&, UniqueRef<Style::ComputedStyle>&&);
     virtual ~RenderFrameSet();
 
     NODELETE HTMLFrameSetElement& frameSetElement() const;

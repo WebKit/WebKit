@@ -87,9 +87,9 @@ public:
     std::optional<LayoutUnit> stretchFitLogicalWidthWithoutNaturalSize() const;
 
 protected:
-    RenderReplaced(Type, Element&, Style::ComputedStyle&&, OptionSet<ReplacedFlag> = { });
-    RenderReplaced(Type, Element&, Style::ComputedStyle&&, const LayoutSize& intrinsicSize, OptionSet<ReplacedFlag> = { });
-    RenderReplaced(Type, Document&, Style::ComputedStyle&&, const LayoutSize& intrinsicSize, OptionSet<ReplacedFlag> = { });
+    RenderReplaced(Type, Element&, UniqueRef<Style::ComputedStyle>&&, OptionSet<ReplacedFlag> = { });
+    RenderReplaced(Type, Element&, UniqueRef<Style::ComputedStyle>&&, const LayoutSize& intrinsicSize, OptionSet<ReplacedFlag> = { });
+    RenderReplaced(Type, Document&, UniqueRef<Style::ComputedStyle>&&, const LayoutSize& intrinsicSize, OptionSet<ReplacedFlag> = { });
 
     void layout() override;
 

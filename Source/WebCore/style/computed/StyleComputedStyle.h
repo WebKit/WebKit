@@ -28,34 +28,36 @@
 
 #include <WebCore/DocumentEnums.h>
 #include <WebCore/StyleComputedStyleProperties.h>
+#include <wtf/UniqueRef.h>
 
 namespace WebCore {
+
+namespace Layout {
+class Box;
+}
+
 namespace Style {
 
 class ComputedStyle final : public ComputedStyleProperties {
 public:
-    ComputedStyle(ComputedStyle&&);
-    ComputedStyle& operator=(ComputedStyle&&);
-
-    explicit ComputedStyle(CreateDefaultStyleTag);
-    ComputedStyle(const ComputedStyle&, CloneTag);
-
-    NODELETE [[nodiscard]] ComputedStyle replace(ComputedStyle&&);
+    NODELETE [[nodiscard]] UniqueRef<ComputedStyle> replace(UniqueRef<ComputedStyle>&&);
+    // Same result as replace(clone(other)), without allocating.
+    void cloneFrom(const ComputedStyle&);
 
     NODELETE static ComputedStyle& defaultStyleSingleton();
 
     // MARK: - Initialization
 
-    NODELETE WEBCORE_EXPORT static ComputedStyle create();
+    NODELETE WEBCORE_EXPORT static UniqueRef<ComputedStyle> create();
     static std::unique_ptr<ComputedStyle> createPtr();
     static std::unique_ptr<ComputedStyle> createPtrWithRegisteredInitialValues(const Style::CustomPropertyRegistry&);
 
-    NODELETE static ComputedStyle clone(const ComputedStyle&);
-    static ComputedStyle cloneIncludingPseudoElements(const ComputedStyle&);
+    NODELETE static UniqueRef<ComputedStyle> clone(const ComputedStyle&);
+    static UniqueRef<ComputedStyle> cloneIncludingPseudoElements(const ComputedStyle&);
     static std::unique_ptr<ComputedStyle> clonePtr(const ComputedStyle&);
 
-    static ComputedStyle createAnonymousStyleWithDisplay(const ComputedStyle& parentStyle, Style::Display);
-    static ComputedStyle createStyleInheritingFromPseudoStyle(const ComputedStyle& pseudoStyle);
+    static UniqueRef<ComputedStyle> createAnonymousStyleWithDisplay(const ComputedStyle& parentStyle, Style::Display);
+    static UniqueRef<ComputedStyle> createStyleInheritingFromPseudoStyle(const ComputedStyle& pseudoStyle);
 
     void inheritFrom(const ComputedStyle&);
     void inheritIgnoringCustomPropertiesFrom(const ComputedStyle&);
@@ -227,7 +229,12 @@ public:
     inline bool has3DTransformOperation() const;
 
 private:
-    ComputedStyle(ComputedStyle&, ComputedStyle&&);
+    // Layout::Box stores its style inline and folds it into its CheckedPtr deletion check.
+    friend class Layout::Box;
+    ComputedStyle(ComputedStyle&&);
+
+    explicit ComputedStyle(CreateDefaultStyleTag);
+    ComputedStyle(const ComputedStyle&, CloneTag);
 };
 
 // The outline and column rule widths after the used-value rules: zero for style none (and hidden for

@@ -34,7 +34,7 @@ class RenderSVGPath final : public RenderSVGShape {
     WTF_MAKE_TZONE_ALLOCATED(RenderSVGPath);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderSVGPath);
 public:
-    RenderSVGPath(SVGGraphicsElement&, Style::ComputedStyle&&);
+    RenderSVGPath(SVGGraphicsElement&, UniqueRef<Style::ComputedStyle>&&);
     virtual ~RenderSVGPath();
 
     FloatRect computeMarkerBoundingBox(const SVGBoundingBoxComputation::DecorationOptions&) const;

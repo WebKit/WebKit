@@ -79,7 +79,7 @@ struct SameSizeAsRenderTableCell : public RenderBlockFlow {
 static_assert(sizeof(RenderTableCell) == sizeof(SameSizeAsRenderTableCell), "RenderTableCell should stay small");
 static_assert(sizeof(CollapsedBorderValue) <= 24, "CollapsedBorderValue should stay small");
 
-RenderTableCell::RenderTableCell(Element& element, Style::ComputedStyle&& style)
+RenderTableCell::RenderTableCell(Element& element, UniqueRef<Style::ComputedStyle>&& style)
     : RenderBlockFlow(Type::TableCell, element, WTF::move(style))
 {
     // We only update the flags when notified of DOM changes in colSpanOrRowSpanChanged()
@@ -88,7 +88,7 @@ RenderTableCell::RenderTableCell(Element& element, Style::ComputedStyle&& style)
     ASSERT(isRenderTableCell());
 }
 
-RenderTableCell::RenderTableCell(Document& document, Style::ComputedStyle&& style)
+RenderTableCell::RenderTableCell(Document& document, UniqueRef<Style::ComputedStyle>&& style)
     : RenderBlockFlow(Type::TableCell, document, WTF::move(style))
 {
     ASSERT(isRenderTableCell());

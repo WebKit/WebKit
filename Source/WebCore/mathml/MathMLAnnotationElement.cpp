@@ -58,7 +58,7 @@ Ref<MathMLAnnotationElement> MathMLAnnotationElement::create(const QualifiedName
     return adoptRef(*new MathMLAnnotationElement(tagName, document));
 }
 
-RenderPtr<RenderElement> MathMLAnnotationElement::createElementRenderer(Style::ComputedStyle&& style, const RenderTreePosition& insertionPosition)
+RenderPtr<RenderElement> MathMLAnnotationElement::createElementRenderer(UniqueRef<Style::ComputedStyle>&& style, const RenderTreePosition& insertionPosition)
 {
     if (document().settings().coreMathMLEnabled() || hasTagName(MathMLNames::annotationTag))
         return MathMLElement::createElementRenderer(WTF::move(style), insertionPosition);

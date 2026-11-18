@@ -38,7 +38,7 @@ class RenderSVGRect final : public RenderSVGShape {
     WTF_MAKE_TZONE_ALLOCATED(RenderSVGRect);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderSVGRect);
 public:
-    RenderSVGRect(SVGRectElement&, Style::ComputedStyle&&);
+    RenderSVGRect(SVGRectElement&, UniqueRef<Style::ComputedStyle>&&);
     virtual ~RenderSVGRect();
 
     NODELETE SVGRectElement& rectElement() const;

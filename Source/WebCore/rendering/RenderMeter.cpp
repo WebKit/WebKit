@@ -34,7 +34,7 @@ using namespace HTMLNames;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderMeter);
 
-RenderMeter::RenderMeter(HTMLElement& element, Style::ComputedStyle&& style)
+RenderMeter::RenderMeter(HTMLElement& element, UniqueRef<Style::ComputedStyle>&& style)
     : RenderBlockFlow(Type::Meter, element, WTF::move(style))
 {
     ASSERT(isRenderMeter());

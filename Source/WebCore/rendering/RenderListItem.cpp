@@ -146,7 +146,7 @@ static LayoutUnit excludedMarkerLogicalLeftOffsetFor(const RenderBlockFlow& firs
     return toEnclosingListItem + toAssociatedListItem;
 }
 
-RenderListItem::RenderListItem(Element& element, Style::ComputedStyle&& style)
+RenderListItem::RenderListItem(Element& element, UniqueRef<Style::ComputedStyle>&& style)
     : RenderBlockFlow(Type::ListItem, element, WTF::move(style))
 {
     ASSERT(isRenderListItem());
@@ -159,7 +159,7 @@ RenderListItem::~RenderListItem()
     ASSERT(!m_marker);
 }
 
-Style::ComputedStyle RenderListItem::computeMarkerStyle() const
+UniqueRef<Style::ComputedStyle> RenderListItem::computeMarkerStyle() const
 {
     auto markerStyle = [&] {
         if (!is<PseudoElement>(element())) {
@@ -170,42 +170,42 @@ Style::ComputedStyle RenderListItem::computeMarkerStyle() const
         // The marker always inherits from the list item, regardless of where it might end
         // up (e.g., in some deeply nested line box). See CSS3 spec.
         auto markerStyle = Style::ComputedStyle::create();
-        markerStyle.inheritFrom(style());
+        markerStyle->inheritFrom(style());
 
         // In the case of a ::before or ::after pseudo-element, we manually apply the properties
         // otherwise set in the user-agent stylesheet since we don't support ::before::marker or
         // ::after::marker. See bugs.webkit.org/b/218897.
         auto fontDescription = style().fontDescription();
         fontDescription.setVariantNumericSpacing(FontVariantNumericSpacing::TabularNumbers);
-        markerStyle.setFontDescription(WTF::move(fontDescription));
-        markerStyle.setUnicodeBidi(UnicodeBidi::Isolate);
-        markerStyle.setWhiteSpaceCollapse(WhiteSpaceCollapse::Preserve);
-        markerStyle.setTextWrapMode(TextWrapMode::NoWrap);
-        markerStyle.setTextTransform({ });
+        markerStyle->setFontDescription(WTF::move(fontDescription));
+        markerStyle->setUnicodeBidi(UnicodeBidi::Isolate);
+        markerStyle->setWhiteSpaceCollapse(WhiteSpaceCollapse::Preserve);
+        markerStyle->setTextWrapMode(TextWrapMode::NoWrap);
+        markerStyle->setTextTransform({ });
         return markerStyle;
     }();
 
-    markerStyle.setPseudoElementIdentifier({ { PseudoElementType::Marker } });
+    markerStyle->setPseudoElementIdentifier({ { PseudoElementType::Marker } });
 
     // A disclosure triangle is drawn from the system font rather than from the one the marker inherited, so that is the
     // font the marker has: it is what the glyph is measured with too, the way it is for every other marker.
     if (listMarkerIsDisclosure(markerStyle, protect(document()))) {
-        auto fontDescription = FontCascadeDescription { markerStyle.fontDescription() };
+        auto fontDescription = FontCascadeDescription { markerStyle->fontDescription() };
         fontDescription.setFamilies({ { "system-ui"_s, FontFamilyKind::Generic } });
-        markerStyle.setFontDescription(WTF::move(fontDescription));
-        markerStyle.fontCascade().update(&protect(document())->fontSelector());
+        markerStyle->setFontDescription(WTF::move(fontDescription));
+        markerStyle->fontCascade().update(&protect(document())->fontSelector());
     }
 
     // The marker box is a text-decoration boundary: the originating element's text-decoration must
     // not propagate into the marker's generated contents, matching list-style-type markers which are
     // never decorated by the list's text-decoration.
-    markerStyle.setTextDecorationLineInEffect(markerStyle.textDecorationLine());
+    markerStyle->setTextDecorationLineInEffect(markerStyle->textDecorationLine());
 
     // text-align neither applies to nor is inherited by ::marker (css-pseudo-4): reset the value
     // inherited from the originating element so it cannot leak into generated marker contents.
     // (list-style-type markers ignore text-align as well.)
-    markerStyle.setTextAlign(Style::ComputedStyle::initialTextAlign());
-    markerStyle.setTextAlignLast(Style::ComputedStyle::initialTextAlignLast());
+    markerStyle->setTextAlign(Style::ComputedStyle::initialTextAlign());
+    markerStyle->setTextAlignLast(Style::ComputedStyle::initialTextAlignLast());
 
     return markerStyle;
 }

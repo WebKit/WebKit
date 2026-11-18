@@ -722,10 +722,10 @@ void RenderTreeUpdater::GeneratedContent::updateBeforeOrAfterPseudoElement(Eleme
         Style::ElementUpdate contentsUpdate { WTF::move(contentsStyle), styleChanges, elementUpdate.recompositeLayer };
         m_updater.updateElementRenderer(*pseudoElement, WTF::move(contentsUpdate));
         auto pseudoElementUpdateStyle = Style::ComputedStyle::cloneIncludingPseudoElements(*updateStyle);
-        pseudoElement->storeDisplayContentsOrNoneStyle(makeUnique<Style::ComputedStyle>(WTF::move(pseudoElementUpdateStyle)));
+        pseudoElement->storeDisplayContentsOrNoneStyle(pseudoElementUpdateStyle.moveToUniquePtr());
     } else {
         auto pseudoElementUpdateStyle = Style::ComputedStyle::cloneIncludingPseudoElements(*updateStyle);
-        Style::ElementUpdate pseudoElementUpdate { makeUnique<Style::ComputedStyle>(WTF::move(pseudoElementUpdateStyle)), styleChanges, elementUpdate.recompositeLayer };
+        Style::ElementUpdate pseudoElementUpdate { pseudoElementUpdateStyle.moveToUniquePtr(), styleChanges, elementUpdate.recompositeLayer };
         m_updater.updateElementRenderer(*pseudoElement, WTF::move(pseudoElementUpdate));
     }
 
@@ -871,7 +871,7 @@ void RenderTreeUpdater::GeneratedContent::updateWritingSuggestionsRenderer(Rende
     nodeBeforeWritingSuggestionsTextRenderer->setText(prefix);
 
     auto newStyle = Style::ComputedStyle::clone(*style);
-    newStyle.setDisplay(Style::DisplayType::InlineFlow);
+    newStyle->setDisplay(Style::DisplayType::InlineFlow);
 
     if (auto writingSuggestionsRenderer = editor->writingSuggestionRenderer()) {
         writingSuggestionsRenderer->setStyle(WTF::move(newStyle), minimalStyleDifference);

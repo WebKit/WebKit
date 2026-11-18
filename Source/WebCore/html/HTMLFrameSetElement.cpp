@@ -147,9 +147,9 @@ void HTMLFrameSetElement::attributeChanged(const QualifiedName& name, const Atom
     }
 }
 
-RenderPtr<RenderElement> HTMLFrameSetElement::createElementRenderer(Style::ComputedStyle&& style, const RenderTreePosition&)
+RenderPtr<RenderElement> HTMLFrameSetElement::createElementRenderer(UniqueRef<Style::ComputedStyle>&& style, const RenderTreePosition&)
 {
-    if (style.content().isData())
+    if (style->content().isData())
         return RenderElement::createFor(*this, WTF::move(style));
     
     return createRenderer<RenderFrameSet>(*this, WTF::move(style));

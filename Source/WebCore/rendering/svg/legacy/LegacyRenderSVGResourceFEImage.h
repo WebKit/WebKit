@@ -36,7 +36,7 @@ class LegacyRenderSVGResourceFEImage final : public LegacyRenderSVGResourceFilte
     WTF_MAKE_TZONE_ALLOCATED(LegacyRenderSVGResourceFEImage);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(LegacyRenderSVGResourceFEImage);
 public:
-    LegacyRenderSVGResourceFEImage(SVGFEImageElement&, Style::ComputedStyle&&);
+    LegacyRenderSVGResourceFEImage(SVGFEImageElement&, UniqueRef<Style::ComputedStyle>&&);
     virtual ~LegacyRenderSVGResourceFEImage();
 
     RenderImageResource& imageResource() const { return m_imageResource; }

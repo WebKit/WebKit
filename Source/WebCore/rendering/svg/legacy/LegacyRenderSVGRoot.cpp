@@ -61,7 +61,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(LegacyRenderSVGRoot);
 const int legacySVGRootDefaultWidth = 300;
 const int legacySVGRootDefaultHeight = 150;
 
-LegacyRenderSVGRoot::LegacyRenderSVGRoot(SVGSVGElement& element, Style::ComputedStyle&& style)
+LegacyRenderSVGRoot::LegacyRenderSVGRoot(SVGSVGElement& element, UniqueRef<Style::ComputedStyle>&& style)
     : RenderReplaced(Type::LegacySVGRoot, element, WTF::move(style), ReplacedFlag::UsesBoundaryCaching)
 {
     ASSERT(isLegacyRenderSVGRoot());

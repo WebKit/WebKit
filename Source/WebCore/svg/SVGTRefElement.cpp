@@ -182,7 +182,7 @@ void SVGTRefElement::svgAttributeChanged(const QualifiedName& attrName)
     }
 }
 
-RenderPtr<RenderElement> SVGTRefElement::createElementRenderer(Style::ComputedStyle&& style, const RenderTreePosition&)
+RenderPtr<RenderElement> SVGTRefElement::createElementRenderer(UniqueRef<Style::ComputedStyle>&& style, const RenderTreePosition&)
 {
     return createRenderer<RenderSVGInline>(RenderObject::Type::SVGInline, *this, WTF::move(style));
 }

@@ -172,7 +172,7 @@ const std::optional<CachedMatchResult> MatchResultCache::resultWithCurrentInline
 
 void MatchResultCache::update(CachedMatchResult& result, const Style::ComputedStyle& style)
 {
-    result.styleToUpdate.get() = ComputedStyle::clone(style);
+    result.styleToUpdate->cloneFrom(style);
 }
 
 void MatchResultCache::updateForFastPathInherit(const Element& element, const Style::ComputedStyle& parentStyle)

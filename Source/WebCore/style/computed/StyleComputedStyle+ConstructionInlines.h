@@ -42,10 +42,5 @@ inline ComputedStyle::ComputedStyle(const ComputedStyle& other, CloneTag tag)
 {
 }
 
-inline ComputedStyle::ComputedStyle(ComputedStyle& a, ComputedStyle&& b)
-    : ComputedStyleProperties { a, WTF::move(b) }
-{
-}
-
 } // namespace Style
 } // namespace WebCore

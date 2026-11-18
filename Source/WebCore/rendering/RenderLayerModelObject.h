@@ -184,8 +184,8 @@ public:
     bool hasAcceleratedCompositing() const;
 
 protected:
-    RenderLayerModelObject(Type, Element&, Style::ComputedStyle&&, OptionSet<TypeFlag>, TypeSpecificFlags);
-    RenderLayerModelObject(Type, Document&, Style::ComputedStyle&&, OptionSet<TypeFlag>, TypeSpecificFlags);
+    RenderLayerModelObject(Type, Element&, UniqueRef<Style::ComputedStyle>&&, OptionSet<TypeFlag>, TypeSpecificFlags);
+    RenderLayerModelObject(Type, Document&, UniqueRef<Style::ComputedStyle>&&, OptionSet<TypeFlag>, TypeSpecificFlags);
 
     void createLayer();
     void willBeDestroyed() override;

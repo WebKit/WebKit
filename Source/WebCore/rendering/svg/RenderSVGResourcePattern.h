@@ -34,7 +34,7 @@ class RenderSVGResourcePattern final : public RenderSVGResourcePaintServer {
     WTF_MAKE_TZONE_ALLOCATED(RenderSVGResourcePattern);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderSVGResourcePattern);
 public:
-    RenderSVGResourcePattern(SVGElement&, Style::ComputedStyle&&);
+    RenderSVGResourcePattern(SVGElement&, UniqueRef<Style::ComputedStyle>&&);
     virtual ~RenderSVGResourcePattern();
 
     inline SVGPatternElement& patternElement() const;

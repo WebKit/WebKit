@@ -63,7 +63,7 @@ public:
         GlobalCoordinateSpace,
         LocalCoordinateSpace
     };
-    RenderSVGShape(Type, SVGGraphicsElement&, Style::ComputedStyle&&);
+    RenderSVGShape(Type, SVGGraphicsElement&, UniqueRef<Style::ComputedStyle>&&);
     virtual ~RenderSVGShape();
 
     inline SVGGraphicsElement& graphicsElement() const;

@@ -34,7 +34,7 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(LegacyRenderSVGTransformableContainer);
 
-LegacyRenderSVGTransformableContainer::LegacyRenderSVGTransformableContainer(SVGGraphicsElement& element, Style::ComputedStyle&& style)
+LegacyRenderSVGTransformableContainer::LegacyRenderSVGTransformableContainer(SVGGraphicsElement& element, UniqueRef<Style::ComputedStyle>&& style)
     : LegacyRenderSVGContainer(Type::LegacySVGTransformableContainer, element, WTF::move(style))
 {
     ASSERT(isLegacyRenderSVGTransformableContainer());

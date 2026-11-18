@@ -66,7 +66,7 @@ void MathMLRowElement::childrenChanged(const ChildChange& change)
     MathMLPresentationElement::childrenChanged(change);
 }
 
-RenderPtr<RenderElement> MathMLRowElement::createElementRenderer(Style::ComputedStyle&& style, const RenderTreePosition&)
+RenderPtr<RenderElement> MathMLRowElement::createElementRenderer(UniqueRef<Style::ComputedStyle>&& style, const RenderTreePosition&)
 {
     if (!document().settings().coreMathMLEnabled() && hasTagName(mfencedTag))
         return createRenderer<RenderMathMLFenced>(*this, WTF::move(style));

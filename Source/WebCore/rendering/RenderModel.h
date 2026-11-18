@@ -41,7 +41,7 @@ class RenderModel final : public RenderReplaced {
     WTF_MAKE_TZONE_ALLOCATED(RenderModel);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderModel);
 public:
-    RenderModel(HTMLModelElement&, Style::ComputedStyle&&);
+    RenderModel(HTMLModelElement&, UniqueRef<Style::ComputedStyle>&&);
     virtual ~RenderModel();
 
     NODELETE HTMLModelElement& modelElement() const;

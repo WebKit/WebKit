@@ -74,7 +74,7 @@ public:
     void setHasScalingAncestor(bool value) { m_hasScalingAncestor = value; }
 
 protected:
-    LegacyRenderSVGModelObject(Type, SVGElement&, Style::ComputedStyle&&, OptionSet<SVGModelObjectFlag> = { });
+    LegacyRenderSVGModelObject(Type, SVGElement&, UniqueRef<Style::ComputedStyle>&&, OptionSet<SVGModelObjectFlag> = { });
 
     void willBeDestroyed() override;
     void insertedIntoTree() override;

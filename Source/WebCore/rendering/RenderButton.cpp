@@ -44,7 +44,7 @@ using namespace HTMLNames;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderButton);
 
-RenderButton::RenderButton(HTMLFormControlElement& element, Style::ComputedStyle&& style)
+RenderButton::RenderButton(HTMLFormControlElement& element, UniqueRef<Style::ComputedStyle>&& style)
     : RenderFlexibleBox(Type::Button, element, WTF::move(style))
 {
     ASSERT(isRenderButton());

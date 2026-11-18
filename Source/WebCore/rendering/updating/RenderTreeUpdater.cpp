@@ -192,7 +192,7 @@ void RenderTreeUpdater::updateRebuildRoots()
 
         RefPtr parent = composedTreeAncestors(element).first();
         m_styleUpdate->addElement(element, parent, Style::ElementUpdate {
-            makeUnique<Style::ComputedStyle>(Style::ComputedStyle::cloneIncludingPseudoElements(*existingStyle)),
+            Style::ComputedStyle::cloneIncludingPseudoElements(*existingStyle).moveToUniquePtr(),
             Style::Change::Renderer
         });
         return true;
@@ -394,11 +394,23 @@ void RenderTreeUpdater::updateAfterDescendants(Element& element, const Style::El
         element.didAttachRenderers();
 }
 
-void RenderTreeUpdater::updateRendererStyle(RenderElement& renderer, Style::ComputedStyle&& newStyle, Style::DifferenceResult minimalStyleDifference)
+void RenderTreeUpdater::updateRendererStyle(RenderElement& renderer, UniqueRef<Style::ComputedStyle>&& newStyle, Style::DifferenceResult minimalStyleDifference)
 {
-    auto oldStyle = Style::ComputedStyle::clone(renderer.style());
-    renderer.setStyle(WTF::move(newStyle), minimalStyleDifference);
+    auto oldStyle = renderer.setStyle(WTF::move(newStyle), minimalStyleDifference);
     m_builder.normalizeTreeAfterStyleChange(renderer, oldStyle);
+    // Drop the references to the old style data so the renderer's style data doesn't get shared.
+    oldStyle->cloneFrom(Style::ComputedStyle::defaultStyleSingleton());
+    m_spareStyle = oldStyle.moveToUniquePtr();
+}
+
+UniqueRef<Style::ComputedStyle> RenderTreeUpdater::cloneIncludingPseudoElements(const Style::ComputedStyle& style)
+{
+    auto spareStyle = std::exchange(m_spareStyle, nullptr);
+    if (!spareStyle)
+        return Style::ComputedStyle::cloneIncludingPseudoElements(style);
+    spareStyle->cloneFrom(style);
+    spareStyle->copyPseudoElementsFrom(style);
+    return makeUniqueRefFromNonNullUniquePtr(WTF::move(spareStyle));
 }
 
 void RenderTreeUpdater::updateSVGRenderer(Element& element)
@@ -427,7 +439,7 @@ void RenderTreeUpdater::updateElementRenderer(Element& element, const Style::Ele
     ContentChangeObserver::StyleChangeScope observingScope(m_document, element);
 #endif
 
-    auto elementUpdateStyle = Style::ComputedStyle::cloneIncludingPseudoElements(*elementUpdate.style);
+    auto elementUpdateStyle = cloneIncludingPseudoElements(*elementUpdate.style);
 
     bool shouldTearDownRenderers = [&]() {
         if (element.isInTopLayer() && elementUpdate.changes.contains(Style::Change::Inherited) && elementUpdate.style->isSkippedRootOrSkippedContent())
@@ -457,14 +469,14 @@ void RenderTreeUpdater::updateElementRenderer(Element& element, const Style::Ele
     bool hasDisplayNonePreventingRendererCreation = elementUpdate.style->display() == Style::DisplayType::None && !element.rendererIsNeeded(elementUpdateStyle);
     bool hasDisplayContentsOrNone = hasDisplayContents || hasDisplayNonePreventingRendererCreation;
     if (hasDisplayContentsOrNone)
-        element.storeDisplayContentsOrNoneStyle(makeUnique<Style::ComputedStyle>(WTF::move(elementUpdateStyle)));
+        element.storeDisplayContentsOrNoneStyle(elementUpdateStyle.moveToUniquePtr());
     else
         element.clearDisplayContentsOrNoneStyle();
 
     if (!hasDisplayContentsOrNone) {
-        if (!elementUpdateStyle.logicalContainIntrinsicWidth().hasAuto())
+        if (!elementUpdateStyle->logicalContainIntrinsicWidth().hasAuto())
             element.clearLastRememberedLogicalWidth();
-        if (!elementUpdateStyle.logicalContainIntrinsicHeight().hasAuto())
+        if (!elementUpdateStyle->logicalContainIntrinsicHeight().hasAuto())
             element.clearLastRememberedLogicalHeight();
     }
 
@@ -519,7 +531,7 @@ void RenderTreeUpdater::updateElementRenderer(Element& element, const Style::Ele
     updateRendererStyle(renderer, WTF::move(elementUpdateStyle), Style::DifferenceResult::Equal);
 }
 
-void RenderTreeUpdater::createRenderer(Element& element, Style::ComputedStyle&& style)
+void RenderTreeUpdater::createRenderer(Element& element, UniqueRef<Style::ComputedStyle>&& style)
 {
     auto computeInsertionPosition = [this, &element] () {
         renderTreePosition().computeNextSibling(element);

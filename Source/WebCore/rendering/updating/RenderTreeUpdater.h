@@ -67,9 +67,10 @@ private:
     void createTextRenderer(Text&, const Style::TextUpdate*);
     void updateElementRenderer(Element&, const Style::ElementUpdate&);
     void updateSVGRenderer(Element&);
-    void updateRendererStyle(RenderElement&, Style::ComputedStyle&&, Style::DifferenceResult);
+    void updateRendererStyle(RenderElement&, UniqueRef<Style::ComputedStyle>&&, Style::DifferenceResult);
+    UniqueRef<Style::ComputedStyle> cloneIncludingPseudoElements(const Style::ComputedStyle&);
     void updateRenderViewStyle();
-    void createRenderer(Element&, Style::ComputedStyle&&);
+    void createRenderer(Element&, UniqueRef<Style::ComputedStyle>&&);
     void updateBeforeDescendants(Element&, const Style::ElementUpdate*);
     void updateAfterDescendants(Element&, const Style::ElementUpdate*);
     bool textRendererIsNeeded(const Text& textNode);
@@ -125,6 +126,9 @@ private:
     const UniqueRef<ViewTransition> m_viewTransition;
 
     RenderTreeBuilder m_builder;
+
+    // Recycled old renderer style, to avoid a heap allocation per style update.
+    std::unique_ptr<Style::ComputedStyle> m_spareStyle;
 };
 
 } // namespace WebCore

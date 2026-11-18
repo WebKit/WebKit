@@ -1360,7 +1360,7 @@ private:
     void createReflection();
     void removeReflection();
 
-    Style::ComputedStyle createReflectionStyle();
+    UniqueRef<Style::ComputedStyle> createReflectionStyle();
     bool paintingInsideReflection() const { return m_paintingInsideReflection; }
     void setPaintingInsideReflection(bool b) { m_paintingInsideReflection = b; }
 

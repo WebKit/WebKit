@@ -38,7 +38,7 @@ class RenderFrameBase : public RenderWidget {
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderFrameBase);
 
 protected:
-    RenderFrameBase(Type, HTMLFrameElementBase&, Style::ComputedStyle&&);
+    RenderFrameBase(Type, HTMLFrameElementBase&, UniqueRef<Style::ComputedStyle>&&);
     virtual ~RenderFrameBase();
 
     void styleDidChange(Style::Difference, const Style::ComputedStyle* oldStyle) final;

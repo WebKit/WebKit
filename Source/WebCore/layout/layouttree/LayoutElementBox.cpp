@@ -32,7 +32,7 @@
 namespace WebCore {
 namespace Layout {
 
-ElementBox::ElementBox(Style::ComputedStyle&& style, ElementAttributes elementAttributes, EnumSet<BaseTypeFlag> baseTypeFlags)
+ElementBox::ElementBox(UniqueRef<Style::ComputedStyle>&& style, ElementAttributes elementAttributes, EnumSet<BaseTypeFlag> baseTypeFlags)
     : Box(WTF::move(style), elementAttributes, baseTypeFlags | ElementBoxFlag)
 {
 }

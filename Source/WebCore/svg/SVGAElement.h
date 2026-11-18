@@ -62,7 +62,7 @@ private:
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;
     void svgAttributeChanged(const QualifiedName&) final;
 
-    RenderPtr<RenderElement> createElementRenderer(Style::ComputedStyle&&, const RenderTreePosition&) final;
+    RenderPtr<RenderElement> createElementRenderer(UniqueRef<Style::ComputedStyle>&&, const RenderTreePosition&) final;
     bool childShouldCreateRenderer(const Node&) const final;
 
     bool isValid() const final { return SVGTests::isValid(); }

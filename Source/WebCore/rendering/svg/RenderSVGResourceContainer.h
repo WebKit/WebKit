@@ -39,7 +39,7 @@ public:
     virtual void removeReferencingCSSClient(const RenderElement&) { }
 
 protected:
-    RenderSVGResourceContainer(Type, SVGElement&, Style::ComputedStyle&&);
+    RenderSVGResourceContainer(Type, SVGElement&, UniqueRef<Style::ComputedStyle>&&);
 
     virtual void clearCacheBeforeLayout() { }
 

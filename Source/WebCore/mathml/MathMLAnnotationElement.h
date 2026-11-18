@@ -38,7 +38,7 @@ public:
     static Ref<MathMLAnnotationElement> create(const QualifiedName& tagName, Document&);
 private:
     MathMLAnnotationElement(const QualifiedName& tagName, Document&);
-    RenderPtr<RenderElement> createElementRenderer(Style::ComputedStyle&&, const RenderTreePosition&) final;
+    RenderPtr<RenderElement> createElementRenderer(UniqueRef<Style::ComputedStyle>&&, const RenderTreePosition&) final;
 
     bool isSemanticAnnotation() const final { return true; }
 

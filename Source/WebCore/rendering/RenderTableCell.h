@@ -41,8 +41,8 @@ class RenderTableCell final : public RenderBlockFlow {
     WTF_MAKE_TZONE_ALLOCATED(RenderTableCell);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderTableCell);
 public:
-    RenderTableCell(Element&, Style::ComputedStyle&&);
-    RenderTableCell(Document&, Style::ComputedStyle&&);
+    RenderTableCell(Element&, UniqueRef<Style::ComputedStyle>&&);
+    RenderTableCell(Document&, UniqueRef<Style::ComputedStyle>&&);
     virtual ~RenderTableCell();
     
     unsigned colSpan() const;

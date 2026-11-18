@@ -48,12 +48,12 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderSVGContainer);
 
-RenderSVGContainer::RenderSVGContainer(Type type, Document& document, Style::ComputedStyle&& style, OptionSet<SVGModelObjectFlag> svgFlags)
+RenderSVGContainer::RenderSVGContainer(Type type, Document& document, UniqueRef<Style::ComputedStyle>&& style, OptionSet<SVGModelObjectFlag> svgFlags)
     : RenderSVGModelObject(type, document, WTF::move(style), svgFlags | SVGModelObjectFlag::IsContainer)
 {
 }
 
-RenderSVGContainer::RenderSVGContainer(Type type, SVGElement& element, Style::ComputedStyle&& style, OptionSet<SVGModelObjectFlag> svgFlags)
+RenderSVGContainer::RenderSVGContainer(Type type, SVGElement& element, UniqueRef<Style::ComputedStyle>&& style, OptionSet<SVGModelObjectFlag> svgFlags)
     : RenderSVGModelObject(type, element, WTF::move(style), svgFlags | SVGModelObjectFlag::IsContainer)
 {
 }

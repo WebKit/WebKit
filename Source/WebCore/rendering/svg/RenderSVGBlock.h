@@ -36,7 +36,7 @@ public:
     void setCurrentSVGLayoutLocation(const LayoutPoint& location) final { setLocation(location); }
 
 protected:
-    RenderSVGBlock(Type, SVGGraphicsElement&, Style::ComputedStyle&&);
+    RenderSVGBlock(Type, SVGGraphicsElement&, UniqueRef<Style::ComputedStyle>&&);
     virtual ~RenderSVGBlock();
 
     void willBeDestroyed() override;

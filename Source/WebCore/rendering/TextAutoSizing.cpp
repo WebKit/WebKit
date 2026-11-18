@@ -168,18 +168,18 @@ void TextAutoSizingHashTranslator::translate(TextAutoSizingKey* key, const Style
 
 // MARK: - TextAutoSizingValue
 
-static Style::ComputedStyle cloneRenderStyleWithState(const Style::ComputedStyle& currentStyle)
+static UniqueRef<Style::ComputedStyle> cloneRenderStyleWithState(const Style::ComputedStyle& currentStyle)
 {
     auto newStyle = Style::ComputedStyle::clone(currentStyle);
 
     // FIXME: This should probably handle at least ::first-line too.
     if (auto* firstLetterStyle = currentStyle.pseudoElementStyle({ PseudoElementType::FirstLetter }))
-        newStyle.addPseudoElementStyle(makeUnique<Style::ComputedStyle>(Style::ComputedStyle::clone(*firstLetterStyle)));
+        newStyle->addPseudoElementStyle(Style::ComputedStyle::clonePtr(*firstLetterStyle));
 
     if (currentStyle.lastChildState())
-        newStyle.setLastChildState();
+        newStyle->setLastChildState();
     if (currentStyle.firstChildState())
-        newStyle.setFirstChildState();
+        newStyle->setFirstChildState();
     return newStyle;
 }
 
@@ -235,9 +235,9 @@ auto TextAutoSizingValue::adjustTextNodeSizes() -> StillHasNodes
         auto* parentRenderer = renderer.parent();
 
         auto style = cloneRenderStyleWithState(parentRenderer->style());
-        auto fontDescription = style.fontDescription();
+        auto fontDescription = style->fontDescription();
         fontDescription.setUsedSize(averageSize);
-        style.setFontDescription(FontCascadeDescription { fontDescription });
+        style->setFontDescription(FontCascadeDescription { fontDescription });
         parentRenderer->setStyle(WTF::move(style));
 
         if (parentRenderer->isAnonymousBlock())
@@ -246,7 +246,7 @@ auto TextAutoSizingValue::adjustTextNodeSizes() -> StillHasNodes
         // If we have a list we should resize ListMarkers separately.
         if (auto* listMarkerRenderer = dynamicDowncast<RenderListOutsideMarker>(*parentRenderer->firstChild())) {
             auto style = cloneRenderStyleWithState(listMarkerRenderer->style());
-            style.setFontDescription(FontCascadeDescription { fontDescription });
+            style->setFontDescription(FontCascadeDescription { fontDescription });
             listMarkerRenderer->setStyle(WTF::move(style));
         }
 
@@ -272,12 +272,12 @@ auto TextAutoSizingValue::adjustTextNodeSizes() -> StillHasNodes
             continue;
 
         auto newParentStyle = cloneRenderStyleWithState(parentStyle);
-        newParentStyle.setTextAutosizingAdjustedLineHeight(parentLineHeight.isNormal()
+        newParentStyle->setTextAutosizingAdjustedLineHeight(parentLineHeight.isNormal()
             ? Style::LineHeight { parentLineHeight }
             : Style::LineHeight { Style::LineHeight::Length { static_cast<float>(parentEvaluatedLineHeight) } }
         );
-        newParentStyle.setLineHeight(Style::LineHeight { parentLineHeight });
-        newParentStyle.setFontDescription(WTF::move(fontDescription));
+        newParentStyle->setLineHeight(Style::LineHeight { parentLineHeight });
+        newParentStyle->setFontDescription(WTF::move(fontDescription));
         parentRenderer->setStyle(WTF::move(newParentStyle));
 
         builder.updateAfterDescendants(*parentRenderer);
@@ -330,7 +330,7 @@ void TextAutoSizingValue::reset()
         if (fontDescription.usedSize() != originalSize) {
             fontDescription.setUsedSize(originalSize);
             auto style = cloneRenderStyleWithState(parentRenderer->style());
-            style.setFontDescription(FontCascadeDescription { fontDescription });
+            style->setFontDescription(FontCascadeDescription { fontDescription });
             parentRenderer->setStyle(WTF::move(style));
         }
 
@@ -344,8 +344,8 @@ void TextAutoSizingValue::reset()
             continue;
 
         auto newParentStyle = cloneRenderStyleWithState(parentStyle);
-        newParentStyle.setTextAutosizingAdjustedLineHeight(Style::LineHeight { originalLineHeight });
-        newParentStyle.setFontDescription(WTF::move(fontDescription));
+        newParentStyle->setTextAutosizingAdjustedLineHeight(Style::LineHeight { originalLineHeight });
+        newParentStyle->setFontDescription(WTF::move(fontDescription));
         parentRenderer->setStyle(WTF::move(newParentStyle));
     }
 }

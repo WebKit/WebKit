@@ -50,7 +50,7 @@ Ref<MathMLMathElement> MathMLMathElement::create(const QualifiedName& tagName, D
     return adoptRef(*new MathMLMathElement(tagName, document));
 }
 
-RenderPtr<RenderElement> MathMLMathElement::createElementRenderer(Style::ComputedStyle&& style, const RenderTreePosition&)
+RenderPtr<RenderElement> MathMLMathElement::createElementRenderer(UniqueRef<Style::ComputedStyle>&& style, const RenderTreePosition&)
 {
     return createRenderer<RenderMathMLMath>(*this, WTF::move(style));
 }

@@ -818,7 +818,7 @@ protected:
 
     bool isMediaElement() const final { return true; }
 
-    RenderPtr<RenderElement> createElementRenderer(Style::ComputedStyle&&, const RenderTreePosition&) override;
+    RenderPtr<RenderElement> createElementRenderer(UniqueRef<Style::ComputedStyle>&&, const RenderTreePosition&) override;
     bool isReplaced(const Style::ComputedStyle* = nullptr) const override { return true; }
 
     SecurityOriginData documentSecurityOrigin() const final;

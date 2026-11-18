@@ -79,7 +79,7 @@ class RenderGrid final : public RenderBlock {
     WTF_MAKE_TZONE_ALLOCATED(RenderGrid);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderGrid);
 public:
-    RenderGrid(Element&, Style::ComputedStyle&&);
+    RenderGrid(Element&, UniqueRef<Style::ComputedStyle>&&);
     virtual ~RenderGrid();
 
     Element& element() const { return downcast<Element>(nodeForNonAnonymous()); }

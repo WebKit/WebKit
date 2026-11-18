@@ -295,7 +295,7 @@ bool HTMLPlugInElement::supportsFocus() const
     return renderer && !renderer->isPluginUnavailable();
 }
 
-RenderPtr<RenderElement> HTMLPlugInElement::createPluginRenderer(Style::ComputedStyle&& style, const RenderTreePosition& insertionPosition)
+RenderPtr<RenderElement> HTMLPlugInElement::createPluginRenderer(UniqueRef<Style::ComputedStyle>&& style, const RenderTreePosition& insertionPosition)
 {
     if (m_pluginReplacement && m_pluginReplacement->willCreateRenderer()) {
         RenderPtr<RenderElement> renderer = m_pluginReplacement->createElementRenderer(*this, WTF::move(style), insertionPosition);
@@ -307,7 +307,7 @@ RenderPtr<RenderElement> HTMLPlugInElement::createPluginRenderer(Style::Computed
     return createRenderer<RenderEmbeddedObject>(*this, WTF::move(style));
 }
 
-RenderPtr<RenderElement> HTMLPlugInElement::createElementRenderer(Style::ComputedStyle&& style, const RenderTreePosition& insertionPosition)
+RenderPtr<RenderElement> HTMLPlugInElement::createElementRenderer(UniqueRef<Style::ComputedStyle>&& style, const RenderTreePosition& insertionPosition)
 {
     ASSERT(document().backForwardCacheState() == Document::NotInBackForwardCache);
 

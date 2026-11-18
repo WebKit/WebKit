@@ -62,9 +62,9 @@ bool HTMLProgressElement::supportsBaseAppearance(StyleAppearance appearance) con
     return appearance == StyleAppearance::Base;
 }
 
-RenderPtr<RenderElement> HTMLProgressElement::createElementRenderer(Style::ComputedStyle&& style, const RenderTreePosition&)
+RenderPtr<RenderElement> HTMLProgressElement::createElementRenderer(UniqueRef<Style::ComputedStyle>&& style, const RenderTreePosition&)
 {
-    if (!style.hasUsedAppearance())
+    if (!style->hasUsedAppearance())
         return RenderElement::createFor(*this, WTF::move(style));
 
     return createRenderer<RenderProgress>(*this, WTF::move(style));

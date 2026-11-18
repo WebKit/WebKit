@@ -66,7 +66,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderSVGRoot);
 const int defaultWidth = 300;
 const int defaultHeight = 150;
 
-RenderSVGRoot::RenderSVGRoot(SVGSVGElement& element, Style::ComputedStyle&& style)
+RenderSVGRoot::RenderSVGRoot(SVGSVGElement& element, UniqueRef<Style::ComputedStyle>&& style)
     : RenderReplaced(Type::SVGRoot, element, WTF::move(style))
 {
     ASSERT(isRenderSVGRoot());

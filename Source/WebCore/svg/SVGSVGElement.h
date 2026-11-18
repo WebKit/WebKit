@@ -154,7 +154,7 @@ private:
     bool isValid() const override;
 
     bool rendererIsNeeded(const Style::ComputedStyle&) override;
-    RenderPtr<RenderElement> createElementRenderer(Style::ComputedStyle&&, const RenderTreePosition&) override;
+    RenderPtr<RenderElement> createElementRenderer(UniqueRef<Style::ComputedStyle>&&, const RenderTreePosition&) override;
     bool isReplaced(const Style::ComputedStyle* = nullptr) const final;
     NeedsPostConnectionSteps insertionSteps(InsertionType, ContainerNode&) override;
     void removingSteps(RemovalType, ContainerNode&) override;

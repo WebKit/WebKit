@@ -49,7 +49,7 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderSVGResourceClipper);
 
-RenderSVGResourceClipper::RenderSVGResourceClipper(SVGClipPathElement& element, Style::ComputedStyle&& style)
+RenderSVGResourceClipper::RenderSVGResourceClipper(SVGClipPathElement& element, UniqueRef<Style::ComputedStyle>&& style)
     : RenderSVGResourceContainer(Type::SVGResourceClipper, element, WTF::move(style))
 {
     ASSERT(isRenderSVGResourceClipper());

@@ -82,11 +82,16 @@ public:
     };
 
     // Counts CheckedPtrs to the box. RenderElement and RenderText add it to the RenderObject counter.
+    // The deletion check also covers CheckedPtrs to the inline style.
     NODELETE ALWAYS_INLINE uint32_t checkedPtrCount() const { return m_checkedPtrCounter.checkedPtrCount(); }
-    ALWAYS_INLINE uint32_t checkedPtrCountWithoutThreadCheck() const { return m_checkedPtrCounter.checkedPtrCountWithoutThreadCheck(); }
+    ALWAYS_INLINE uint32_t checkedPtrCountWithoutThreadCheck() const { return m_checkedPtrCounter.checkedPtrCountWithoutThreadCheck() + m_style.checkedPtrCountWithoutThreadCheck(); }
     NODELETE ALWAYS_INLINE void incrementCheckedPtrCount() const { m_checkedPtrCounter.incrementCheckedPtrCount(); }
     NODELETE SUPPRESS_NODELETE ALWAYS_INLINE void decrementCheckedPtrCount() const { m_checkedPtrCounter.decrementCheckedPtrCount(); }
-    ALWAYS_INLINE void setDidBeginCheckedPtrDeletion() { m_checkedPtrCounter.setDidBeginCheckedPtrDeletion(); }
+    ALWAYS_INLINE void setDidBeginCheckedPtrDeletion()
+    {
+        m_checkedPtrCounter.setDidBeginCheckedPtrDeletion();
+        m_style.setDidBeginCheckedPtrDeletion();
+    }
 
     bool establishesFormattingContext() const;
     bool establishesBlockFormattingContext() const;
@@ -222,7 +227,9 @@ public:
     void clearFormattingContextData();
 
 protected:
-    Box(Style::ComputedStyle&&, ElementAttributes, EnumSet<BaseTypeFlag>);
+    Box(UniqueRef<Style::ComputedStyle>&&, ElementAttributes, EnumSet<BaseTypeFlag>);
+    // Clones the style directly into the box, without a temporary heap allocation.
+    Box(const Style::ComputedStyle&, ElementAttributes, EnumSet<BaseTypeFlag>);
     ~Box();
 
     ALWAYS_INLINE Style::ComputedStyle& mutableStyle() LIFETIME_BOUND { return m_style; }

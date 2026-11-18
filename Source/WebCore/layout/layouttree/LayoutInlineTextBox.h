@@ -78,7 +78,7 @@ public:
     void setCombinedText(std::unique_ptr<CombinedText>&&);
 
 protected:
-    InlineTextBox(Style::ComputedStyle&&, std::optional<SynthesizedGlyph>);
+    InlineTextBox(const Style::ComputedStyle&, std::optional<SynthesizedGlyph>);
     ~InlineTextBox();
 
     void setInheritsStyleFromDisplayContentsParent(bool value) { m_textInheritsStyleFromDisplayContentsParent = value; }

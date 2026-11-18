@@ -207,7 +207,7 @@ void SVGFilterPrimitiveStandardAttributes::childrenChanged(const ChildChange& ch
     updateSVGRendererForElementChange();
 }
 
-RenderPtr<RenderElement> SVGFilterPrimitiveStandardAttributes::createElementRenderer(Style::ComputedStyle&& style, const RenderTreePosition&)
+RenderPtr<RenderElement> SVGFilterPrimitiveStandardAttributes::createElementRenderer(UniqueRef<Style::ComputedStyle>&& style, const RenderTreePosition&)
 {
     if (document().settings().layerBasedSVGEngineEnabled())
         return createRenderer<RenderSVGResourceFilterPrimitive>(*this, WTF::move(style));

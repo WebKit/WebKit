@@ -125,8 +125,8 @@ class RenderBlockFlow : public RenderBlock {
     WTF_MAKE_TZONE_ALLOCATED(RenderBlockFlow);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderBlockFlow);
 public:
-    RenderBlockFlow(Type, Element&, Style::ComputedStyle&&, OptionSet<BlockFlowFlag> = { });
-    RenderBlockFlow(Type, Document&, Style::ComputedStyle&&, OptionSet<BlockFlowFlag> = { });
+    RenderBlockFlow(Type, Element&, UniqueRef<Style::ComputedStyle>&&, OptionSet<BlockFlowFlag> = { });
+    RenderBlockFlow(Type, Document&, UniqueRef<Style::ComputedStyle>&&, OptionSet<BlockFlowFlag> = { });
     virtual ~RenderBlockFlow();
         
     void layoutBlock(RelayoutChildren, LayoutUnit pageLogicalHeight = 0_lu) override;

@@ -43,7 +43,7 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderViewTransitionCapture);
 
-RenderViewTransitionCapture::RenderViewTransitionCapture(Type type, Document& document, Style::ComputedStyle&& style, bool isRootElement)
+RenderViewTransitionCapture::RenderViewTransitionCapture(Type type, Document& document, UniqueRef<Style::ComputedStyle>&& style, bool isRootElement)
     : RenderReplaced(type, document, WTF::move(style), { }, ReplacedFlag::IsViewTransitionCapture)
     , m_isRootElementCapture(isRootElement)
 {

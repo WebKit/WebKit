@@ -42,7 +42,7 @@ public:
 
 private:
     explicit TextControlInnerContainer(Document&);
-    RenderPtr<RenderElement> createElementRenderer(Style::ComputedStyle&&, const RenderTreePosition&) final;
+    RenderPtr<RenderElement> createElementRenderer(UniqueRef<Style::ComputedStyle>&&, const RenderTreePosition&) final;
     std::optional<Style::UnadjustedStyle> resolveCustomStyle(const Style::ResolutionContext&, const Style::ComputedStyle* shadowHostStyle) final;
 };
 
@@ -79,7 +79,7 @@ private:
     void updateInnerTextElementEditabilityImpl(bool isEditable, bool initialization);
 
     explicit TextControlInnerTextElement(Document&);
-    RenderPtr<RenderElement> createElementRenderer(Style::ComputedStyle&&, const RenderTreePosition&) final;
+    RenderPtr<RenderElement> createElementRenderer(UniqueRef<Style::ComputedStyle>&&, const RenderTreePosition&) final;
     std::optional<Style::UnadjustedStyle> resolveCustomStyle(const Style::ResolutionContext&, const Style::ComputedStyle* shadowHostStyle) final;
     bool isMouseFocusable() const final { return false; }
     bool isTextControlInnerTextElement() const final { return true; }

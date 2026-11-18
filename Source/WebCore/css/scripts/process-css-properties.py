@@ -8020,7 +8020,6 @@ class GenerateStyleComputedStyleProperties(object):
 
                 with writer.indent():
                     writer.write(f"ComputedStyleProperties(ComputedStyleProperties&&) = default;")
-                    writer.write(f"ComputedStyleProperties& operator=(ComputedStyleProperties&&) = default;")
                     writer.newline()
 
                     # Constructor bodies live in StyleComputedStyleProperties+ConstructionInlines.h
@@ -8028,9 +8027,6 @@ class GenerateStyleComputedStyleProperties(object):
                     # emit them (which would reference unexported ComputedStyleBase constructors).
                     writer.write(f"inline ComputedStyleProperties(CreateDefaultStyleTag);")
                     writer.write(f"inline ComputedStyleProperties(const ComputedStyleProperties&, CloneTag);")
-                    writer.newline()
-
-                    writer.write(f"inline ComputedStyleProperties(ComputedStyleProperties&, ComputedStyleProperties&&);")
 
                 writer.write(f"}};")
                 writer.newline()
@@ -8097,12 +8093,6 @@ class GenerateStyleComputedStyleProperties(object):
 
                 writer.write(f"inline ComputedStyleProperties::ComputedStyleProperties(const ComputedStyleProperties& other, CloneTag tag)")
                 writer.write(f"    : ComputedStyleBase {{ other, tag }}")
-                writer.write(f"{{")
-                writer.write(f"}}")
-                writer.newline()
-
-                writer.write(f"inline ComputedStyleProperties::ComputedStyleProperties(ComputedStyleProperties& a, ComputedStyleProperties&& b)")
-                writer.write(f"    : ComputedStyleBase {{ a, WTF::move(b) }}")
                 writer.write(f"{{")
                 writer.write(f"}}")
 

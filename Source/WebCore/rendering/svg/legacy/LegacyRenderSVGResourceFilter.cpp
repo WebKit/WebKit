@@ -45,7 +45,7 @@ namespace WebCore {
 WTF_MAKE_TZONE_ALLOCATED_IMPL(FilterData);
 WTF_MAKE_TZONE_ALLOCATED_IMPL(LegacyRenderSVGResourceFilter);
 
-LegacyRenderSVGResourceFilter::LegacyRenderSVGResourceFilter(SVGFilterElement& element, Style::ComputedStyle&& style)
+LegacyRenderSVGResourceFilter::LegacyRenderSVGResourceFilter(SVGFilterElement& element, UniqueRef<Style::ComputedStyle>&& style)
     : LegacyRenderSVGResourceContainer(Type::LegacySVGResourceFilter, element, WTF::move(style))
 {
 }

@@ -79,13 +79,13 @@ bool RenderLayerModelObject::s_hadLayer = false;
 bool RenderLayerModelObject::s_wasTransformed = false;
 bool RenderLayerModelObject::s_layerWasSelfPainting = false;
 
-RenderLayerModelObject::RenderLayerModelObject(Type type, Element& element, Style::ComputedStyle&& style, OptionSet<TypeFlag> baseTypeFlags, TypeSpecificFlags typeSpecificFlags)
+RenderLayerModelObject::RenderLayerModelObject(Type type, Element& element, UniqueRef<Style::ComputedStyle>&& style, OptionSet<TypeFlag> baseTypeFlags, TypeSpecificFlags typeSpecificFlags)
     : RenderElement(type, element, WTF::move(style), baseTypeFlags | TypeFlag::IsLayerModelObject, typeSpecificFlags)
 {
     ASSERT(isRenderLayerModelObject());
 }
 
-RenderLayerModelObject::RenderLayerModelObject(Type type, Document& document, Style::ComputedStyle&& style, OptionSet<TypeFlag> baseTypeFlags, TypeSpecificFlags typeSpecificFlags)
+RenderLayerModelObject::RenderLayerModelObject(Type type, Document& document, UniqueRef<Style::ComputedStyle>&& style, OptionSet<TypeFlag> baseTypeFlags, TypeSpecificFlags typeSpecificFlags)
     : RenderElement(type, document, WTF::move(style), baseTypeFlags | TypeFlag::IsLayerModelObject, typeSpecificFlags)
 {
     ASSERT(isRenderLayerModelObject());

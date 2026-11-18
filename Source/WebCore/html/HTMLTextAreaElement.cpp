@@ -211,7 +211,7 @@ bool HTMLTextAreaElement::supportsBaseAppearance(StyleAppearance appearance) con
     return appearance == StyleAppearance::Base;
 }
 
-RenderPtr<RenderElement> HTMLTextAreaElement::createElementRenderer(Style::ComputedStyle&& style, const RenderTreePosition&)
+RenderPtr<RenderElement> HTMLTextAreaElement::createElementRenderer(UniqueRef<Style::ComputedStyle>&& style, const RenderTreePosition&)
 {
     return createRenderer<RenderTextControlMultiLine>(*this, WTF::move(style));
 }
@@ -547,12 +547,12 @@ void HTMLTextAreaElement::updatePlaceholderText()
     protect(m_placeholder)->setInnerText(String { attributeWithoutSynchronization(placeholderAttr) });
 }
 
-Style::ComputedStyle HTMLTextAreaElement::createInnerTextStyle(const Style::ComputedStyle& style)
+UniqueRef<Style::ComputedStyle> HTMLTextAreaElement::createInnerTextStyle(const Style::ComputedStyle& style)
 {
     auto textBlockStyle = Style::ComputedStyle::create();
-    textBlockStyle.inheritFrom(style);
+    textBlockStyle->inheritFrom(style);
     adjustInnerTextStyle(style, textBlockStyle);
-    textBlockStyle.setDisplay(Style::DisplayType::BlockFlow);
+    textBlockStyle->setDisplay(Style::DisplayType::BlockFlow);
     return textBlockStyle;
 }
 

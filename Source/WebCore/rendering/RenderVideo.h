@@ -37,7 +37,7 @@ class RenderVideo final : public RenderMedia {
     WTF_MAKE_TZONE_ALLOCATED(RenderVideo);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderVideo);
 public:
-    RenderVideo(HTMLVideoElement&, Style::ComputedStyle&&);
+    RenderVideo(HTMLVideoElement&, UniqueRef<Style::ComputedStyle>&&);
     virtual ~RenderVideo();
 
     NODELETE WEBCORE_EXPORT HTMLVideoElement& videoElement() const;

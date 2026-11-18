@@ -149,7 +149,7 @@ NODELETE static Visibility visibilityIncludingForceHidden(const Style::ComputedS
     return style.isForceHidden() ? Visibility::Hidden : style.visibility();
 }
 
-inline RenderElement::RenderElement(Type type, ContainerNode& elementOrDocument, Style::ComputedStyle&& style, OptionSet<TypeFlag> flags, TypeSpecificFlags typeSpecificFlags)
+inline RenderElement::RenderElement(Type type, ContainerNode& elementOrDocument, UniqueRef<Style::ComputedStyle>&& style, OptionSet<TypeFlag> flags, TypeSpecificFlags typeSpecificFlags)
     : RenderObject(type, elementOrDocument, flags, typeSpecificFlags)
     , Layout::ElementBox(WTF::move(style), LayoutIntegration::BoxTreeUpdater::elementAttributes(*this))
     , m_firstChild(nullptr)
@@ -159,12 +159,12 @@ inline RenderElement::RenderElement(Type type, ContainerNode& elementOrDocument,
     ASSERT(&RenderObject::layoutBox() == &layoutBox());
 }
 
-RenderElement::RenderElement(Type type, Element& element, Style::ComputedStyle&& style, OptionSet<TypeFlag> baseTypeFlags, TypeSpecificFlags typeSpecificFlags)
+RenderElement::RenderElement(Type type, Element& element, UniqueRef<Style::ComputedStyle>&& style, OptionSet<TypeFlag> baseTypeFlags, TypeSpecificFlags typeSpecificFlags)
     : RenderElement(type, static_cast<ContainerNode&>(element), WTF::move(style), baseTypeFlags, typeSpecificFlags)
 {
 }
 
-RenderElement::RenderElement(Type type, Document& document, Style::ComputedStyle&& style, OptionSet<TypeFlag> baseTypeFlags, TypeSpecificFlags typeSpecificFlags)
+RenderElement::RenderElement(Type type, Document& document, UniqueRef<Style::ComputedStyle>&& style, OptionSet<TypeFlag> baseTypeFlags, TypeSpecificFlags typeSpecificFlags)
     : RenderElement(type, static_cast<ContainerNode&>(document), WTF::move(style), baseTypeFlags, typeSpecificFlags)
 {
 }
@@ -196,10 +196,10 @@ bool RenderElement::isContentDataSupported(const Style::Content& content)
     return minimallySupportedContentDataImage(content) != nullptr;
 }
 
-RenderPtr<RenderElement> RenderElement::createFor(Element& element, Style::ComputedStyle&& style, OptionSet<ConstructBlockLevelRendererFor> rendererTypeOverride)
+RenderPtr<RenderElement> RenderElement::createFor(Element& element, UniqueRef<Style::ComputedStyle>&& style, OptionSet<ConstructBlockLevelRendererFor> rendererTypeOverride)
 {
     if (!rendererTypeOverride) {
-        if (RefPtr styleImage = minimallySupportedContentDataImage(style.content()); styleImage && !element.isPseudoElement()) {
+        if (RefPtr styleImage = minimallySupportedContentDataImage(style->content()); styleImage && !element.isPseudoElement()) {
             Style::loadPendingResources(style, protect(element.document()), &element);
             auto image = createRenderer<RenderImage>(RenderObject::Type::Image, element, WTF::move(style), styleImage.get());
             image->setIsGeneratedContent();
@@ -208,7 +208,7 @@ RenderPtr<RenderElement> RenderElement::createFor(Element& element, Style::Compu
         }
     }
 
-    switch (style.display().value) {
+    switch (style->display().value) {
     case Style::DisplayType::None:
     case Style::DisplayType::Contents:
         return nullptr;
@@ -247,10 +247,10 @@ RenderPtr<RenderElement> RenderElement::createFor(Element& element, Style::Compu
         return createRenderer<RenderBlockFlow>(RenderObject::Type::BlockFlow, element, WTF::move(style));
 
     default: {
-        if (style.display().isTableOrTablePart() && rendererTypeOverride.contains(ConstructBlockLevelRendererFor::TableOrTablePart))
+        if (style->display().isTableOrTablePart() && rendererTypeOverride.contains(ConstructBlockLevelRendererFor::TableOrTablePart))
             return createRenderer<RenderBlockFlow>(RenderObject::Type::BlockFlow, element, WTF::move(style));
 
-        switch (style.display().value) {
+        switch (style->display().value) {
         case Style::DisplayType::BlockTable:
         case Style::DisplayType::InlineTable:
             return createRenderer<RenderTable>(RenderObject::Type::Table, element, WTF::move(style));
@@ -636,7 +636,7 @@ static void logStyleDifference(const RenderElement& renderer, const Style::Compu
 }
 #endif
 
-void RenderElement::setStyle(Style::ComputedStyle&& style, Style::DifferenceResult minimalStyleDifference)
+UniqueRef<Style::ComputedStyle> RenderElement::setStyle(UniqueRef<Style::ComputedStyle>&& style, Style::DifferenceResult minimalStyleDifference)
 {
     // FIXME: Should change RenderView so it can use initializeStyle too.
     // If we do that, we can assert m_hasInitializedStyle unconditionally,
@@ -687,7 +687,7 @@ void RenderElement::setStyle(Style::ComputedStyle&& style, Style::DifferenceResu
     // we will safely bail out with the detachedFromParent flag. We might want to broaden this condition
     // in the future as we move renderer changes out of layout and into style changes.
     if (detachedFromParent)
-        return;
+        return oldStyle;
 
     // Now that the layer (if any) has been updated, we need to adjust the diff again,
     // check whether we should layout now, and decide if we need to repaint.
@@ -701,6 +701,8 @@ void RenderElement::setStyle(Style::ComputedStyle&& style, Style::DifferenceResu
         // not having an outline to having an outline.
         repaint();
     }
+
+    return oldStyle;
 }
 
 void RenderElement::didAttachChild(RenderObject& child, RenderObject*)
@@ -970,9 +972,9 @@ void RenderElement::propagateStyleToAnonymousChildren(StylePropagationType propa
 
         if (style().specifiesColumns()) {
             if (elementChild->style().specifiesColumns())
-                newStyle.inheritColumnPropertiesFrom(style());
+                newStyle->inheritColumnPropertiesFrom(style());
             if (elementChild->style().columnSpan() == ColumnSpan::All)
-                newStyle.setColumnSpan(ColumnSpan::All);
+                newStyle->setColumnSpan(ColumnSpan::All);
         }
 
         updateAnonymousChildStyle(newStyle);

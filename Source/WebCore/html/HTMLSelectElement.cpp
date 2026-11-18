@@ -944,7 +944,7 @@ bool HTMLSelectElement::supportsBaseAppearance(StyleAppearance appearance) const
     return (appearance == StyleAppearance::Base || appearance == StyleAppearance::BaseSelect) && canHaveBaseAppearance();
 }
 
-RenderPtr<RenderElement> HTMLSelectElement::createElementRenderer(Style::ComputedStyle&& style, const RenderTreePosition& position)
+RenderPtr<RenderElement> HTMLSelectElement::createElementRenderer(UniqueRef<Style::ComputedStyle>&& style, const RenderTreePosition& position)
 {
     if (isBaseListBox(&style))
         return HTMLElement::createElementRenderer(WTF::move(style), position);

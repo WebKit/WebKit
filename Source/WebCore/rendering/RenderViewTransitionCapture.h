@@ -35,7 +35,7 @@ class RenderViewTransitionCapture final : public RenderReplaced {
     WTF_MAKE_TZONE_ALLOCATED(RenderViewTransitionCapture);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderViewTransitionCapture);
 public:
-    RenderViewTransitionCapture(Type, Document&, Style::ComputedStyle&&, bool isRootElement);
+    RenderViewTransitionCapture(Type, Document&, UniqueRef<Style::ComputedStyle>&&, bool isRootElement);
     virtual ~RenderViewTransitionCapture();
 
     void setImage(RefPtr<ImageBuffer>);

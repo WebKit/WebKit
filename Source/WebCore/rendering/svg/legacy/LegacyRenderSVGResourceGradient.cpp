@@ -38,7 +38,7 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(LegacyRenderSVGResourceGradient);
 
-LegacyRenderSVGResourceGradient::LegacyRenderSVGResourceGradient(Type type, SVGGradientElement& node, Style::ComputedStyle&& style)
+LegacyRenderSVGResourceGradient::LegacyRenderSVGResourceGradient(Type type, SVGGradientElement& node, UniqueRef<Style::ComputedStyle>&& style)
     : LegacyRenderSVGResourceContainer(type, node, WTF::move(style))
 {
 }

@@ -55,7 +55,7 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(LegacyRenderSVGResourceClipper);
 
-LegacyRenderSVGResourceClipper::LegacyRenderSVGResourceClipper(SVGClipPathElement& element, Style::ComputedStyle&& style)
+LegacyRenderSVGResourceClipper::LegacyRenderSVGResourceClipper(SVGClipPathElement& element, UniqueRef<Style::ComputedStyle>&& style)
     : LegacyRenderSVGResourceContainer(Type::LegacySVGResourceClipper, element, WTF::move(style))
 {
 }

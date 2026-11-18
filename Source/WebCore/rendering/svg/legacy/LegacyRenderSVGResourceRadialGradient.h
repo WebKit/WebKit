@@ -31,7 +31,7 @@ class LegacyRenderSVGResourceRadialGradient final : public LegacyRenderSVGResour
     WTF_MAKE_TZONE_ALLOCATED(LegacyRenderSVGResourceRadialGradient);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(LegacyRenderSVGResourceRadialGradient);
 public:
-    LegacyRenderSVGResourceRadialGradient(SVGRadialGradientElement&, Style::ComputedStyle&&);
+    LegacyRenderSVGResourceRadialGradient(SVGRadialGradientElement&, UniqueRef<Style::ComputedStyle>&&);
     virtual ~LegacyRenderSVGResourceRadialGradient();
 
     inline SVGRadialGradientElement& radialGradientElement() const;

@@ -48,7 +48,7 @@ using namespace HTMLNames;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderAttachment);
 
-RenderAttachment::RenderAttachment(HTMLAttachmentElement& element, Style::ComputedStyle&& style)
+RenderAttachment::RenderAttachment(HTMLAttachmentElement& element, UniqueRef<Style::ComputedStyle>&& style)
     : RenderReplaced(Type::Attachment, element, WTF::move(style), LayoutSize())
     , m_isWideLayout(element.isWideLayout())
 {

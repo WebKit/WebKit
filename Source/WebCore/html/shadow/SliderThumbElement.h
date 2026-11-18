@@ -116,7 +116,7 @@ public:
 
 private:
     explicit SliderContainerElement(Document&);
-    RenderPtr<RenderElement> createElementRenderer(Style::ComputedStyle&&, const RenderTreePosition&) final;
+    RenderPtr<RenderElement> createElementRenderer(UniqueRef<Style::ComputedStyle>&&, const RenderTreePosition&) final;
     NODELETE bool isSliderContainerElement() const final { return true; }
 };
 

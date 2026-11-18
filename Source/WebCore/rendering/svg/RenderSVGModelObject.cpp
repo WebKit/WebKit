@@ -55,14 +55,14 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderSVGModelObject);
 
-RenderSVGModelObject::RenderSVGModelObject(Type type, Document& document, Style::ComputedStyle&& style, OptionSet<SVGModelObjectFlag> typeFlags)
+RenderSVGModelObject::RenderSVGModelObject(Type type, Document& document, UniqueRef<Style::ComputedStyle>&& style, OptionSet<SVGModelObjectFlag> typeFlags)
     : RenderLayerModelObject(type, document, WTF::move(style), { }, typeFlags)
 {
     ASSERT(!isLegacyRenderSVGModelObject());
     ASSERT(isRenderSVGModelObject());
 }
 
-RenderSVGModelObject::RenderSVGModelObject(Type type, SVGElement& element, Style::ComputedStyle&& style, OptionSet<SVGModelObjectFlag> typeFlags)
+RenderSVGModelObject::RenderSVGModelObject(Type type, SVGElement& element, UniqueRef<Style::ComputedStyle>&& style, OptionSet<SVGModelObjectFlag> typeFlags)
     : RenderLayerModelObject(type, element, WTF::move(style), { }, typeFlags)
 {
     ASSERT(!isLegacyRenderSVGModelObject());

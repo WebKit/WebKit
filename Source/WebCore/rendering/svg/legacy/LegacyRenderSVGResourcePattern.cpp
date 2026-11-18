@@ -42,7 +42,7 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(LegacyRenderSVGResourcePattern);
 
-LegacyRenderSVGResourcePattern::LegacyRenderSVGResourcePattern(SVGPatternElement& element, Style::ComputedStyle&& style)
+LegacyRenderSVGResourcePattern::LegacyRenderSVGResourcePattern(SVGPatternElement& element, UniqueRef<Style::ComputedStyle>&& style)
     : LegacyRenderSVGResourceContainer(Type::LegacySVGResourcePattern, element, WTF::move(style))
 {
 }

@@ -115,7 +115,7 @@ String SVGFEImageElement::imageSourceURL() const
     return href();
 }
 
-RenderPtr<RenderElement> SVGFEImageElement::createElementRenderer(Style::ComputedStyle&& style, const RenderTreePosition&)
+RenderPtr<RenderElement> SVGFEImageElement::createElementRenderer(UniqueRef<Style::ComputedStyle>&& style, const RenderTreePosition&)
 {
     if (document().settings().layerBasedSVGEngineEnabled())
         return createRenderer<RenderSVGResourceFEImage>(*this, WTF::move(style));

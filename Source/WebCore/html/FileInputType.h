@@ -72,7 +72,7 @@ private:
     bool appendFormData(DOMFormData&) const final;
     String valueMissingText() const final;
     void handleDOMActivateEvent(Event&) final;
-    RenderPtr<RenderElement> createInputRenderer(Style::ComputedStyle&&) final;
+    RenderPtr<RenderElement> createInputRenderer(UniqueRef<Style::ComputedStyle>&&) final;
     enum class RequestIcon : bool { No, Yes };
     void setFiles(RefPtr<FileList>&&, RequestIcon, WasSetByJavaScript);
     NODELETE String displayString() const final;

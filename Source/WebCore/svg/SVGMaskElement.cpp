@@ -145,7 +145,7 @@ void SVGMaskElement::childrenChanged(const ChildChange& change)
     updateSVGRendererForElementChange();
 }
 
-RenderPtr<RenderElement> SVGMaskElement::createElementRenderer(Style::ComputedStyle&& style, const RenderTreePosition&)
+RenderPtr<RenderElement> SVGMaskElement::createElementRenderer(UniqueRef<Style::ComputedStyle>&& style, const RenderTreePosition&)
 {
     if (document().settings().layerBasedSVGEngineEnabled())
         return createRenderer<RenderSVGResourceMasker>(*this, WTF::move(style));

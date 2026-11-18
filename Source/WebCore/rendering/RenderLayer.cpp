@@ -6624,37 +6624,37 @@ void RenderLayer::removeReflection()
     m_reflection = nullptr;
 }
 
-Style::ComputedStyle RenderLayer::createReflectionStyle()
+UniqueRef<Style::ComputedStyle> RenderLayer::createReflectionStyle()
 {
     auto newStyle = Style::ComputedStyle::create();
-    newStyle.inheritFrom(renderer().style());
+    newStyle->inheritFrom(renderer().style());
     
     auto reflection = renderer().style().boxReflect().tryReflection();
 
     switch (reflection->direction) {
     case ReflectionDirection::Below:
-        newStyle.setTransform({
+        newStyle->setTransform({
             { Style::TranslateTransformFunction::create(0_css_px, 100_css_percentage, Style::TransformFunctionType::Translate) },
             { Style::TranslateTransformFunction::create(0_css_px, reflection->offset, Style::TransformFunctionType::Translate) },
             { Style::ScaleTransformFunction::create(1_css_number, -1_css_number, Style::TransformFunctionType::Scale) },
         });
         break;
     case ReflectionDirection::Above:
-        newStyle.setTransform({
+        newStyle->setTransform({
             { Style::ScaleTransformFunction::create(1_css_number, -1_css_number, Style::TransformFunctionType::Scale) },
             { Style::TranslateTransformFunction::create(0_css_px, 100_css_percentage, Style::TransformFunctionType::Translate) },
             { Style::TranslateTransformFunction::create(0_css_px, reflection->offset, Style::TransformFunctionType::Translate) },
         });
         break;
     case ReflectionDirection::Right:
-        newStyle.setTransform({
+        newStyle->setTransform({
             { Style::TranslateTransformFunction::create(100_css_percentage, 0_css_px, Style::TransformFunctionType::Translate) },
             { Style::TranslateTransformFunction::create(reflection->offset, 0_css_px, Style::TransformFunctionType::Translate) },
             { Style::ScaleTransformFunction::create(-1_css_number, 1_css_number, Style::TransformFunctionType::Scale) },
         });
         break;
     case ReflectionDirection::Left:
-        newStyle.setTransform({
+        newStyle->setTransform({
             { Style::ScaleTransformFunction::create(-1_css_number, 1_css_number, Style::TransformFunctionType::Scale) },
             { Style::TranslateTransformFunction::create(100_css_percentage, 0_css_px, Style::TransformFunctionType::Translate) },
             { Style::TranslateTransformFunction::create(reflection->offset, 0_css_px, Style::TransformFunctionType::Translate) },
@@ -6663,10 +6663,10 @@ Style::ComputedStyle RenderLayer::createReflectionStyle()
     }
 
     // Map in our mask.
-    newStyle.setMaskBorder(Style::MaskBorder { reflection->mask });
+    newStyle->setMaskBorder(Style::MaskBorder { reflection->mask });
 
     // Style has transform and mask, so needs to be stacking context.
-    newStyle.setUsedZIndex(0);
+    newStyle->setUsedZIndex(0);
 
     return newStyle;
 }

@@ -34,8 +34,8 @@ class RenderSVGInline : public RenderBoxModelObject {
     WTF_MAKE_TZONE_ALLOCATED(RenderSVGInline);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderSVGInline);
 public:
-    RenderSVGInline(Type, SVGGraphicsElement&, Style::ComputedStyle&&);
-    RenderSVGInline(Type, Document&, Style::ComputedStyle&&);
+    RenderSVGInline(Type, SVGGraphicsElement&, UniqueRef<Style::ComputedStyle>&&);
+    RenderSVGInline(Type, Document&, UniqueRef<Style::ComputedStyle>&&);
     virtual ~RenderSVGInline();
 
     inline SVGGraphicsElement& graphicsElement() const;

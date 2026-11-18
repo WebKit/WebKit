@@ -45,7 +45,7 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderSVGForeignObject);
 
-RenderSVGForeignObject::RenderSVGForeignObject(SVGForeignObjectElement& element, Style::ComputedStyle&& style)
+RenderSVGForeignObject::RenderSVGForeignObject(SVGForeignObjectElement& element, UniqueRef<Style::ComputedStyle>&& style)
     : RenderSVGBlock(Type::SVGForeignObject, element, WTF::move(style))
 {
     ASSERT(isRenderSVGForeignObject());

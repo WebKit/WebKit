@@ -621,7 +621,7 @@ bool InputType::shouldSubmitImplicitly(Event& event)
     return keyboardEvent && event.type() == eventNames().keypressEvent && keyboardEvent->charCode() == '\r';
 }
 
-RenderPtr<RenderElement> InputType::createInputRenderer(Style::ComputedStyle&& style)
+RenderPtr<RenderElement> InputType::createInputRenderer(UniqueRef<Style::ComputedStyle>&& style)
 {
     ASSERT(element());
     return RenderPtr<RenderElement>(RenderElement::createFor(*protect(element()), WTF::move(style)));

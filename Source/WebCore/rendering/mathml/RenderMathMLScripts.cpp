@@ -49,7 +49,7 @@ NODELETE static bool isPrescriptDelimiter(const RenderObject& renderObject)
     return renderObject.node() && renderObject.node()->hasTagName(MathMLNames::mprescriptsTag);
 }
 
-RenderMathMLScripts::RenderMathMLScripts(Type type, MathMLScriptsElement& element, Style::ComputedStyle&& style)
+RenderMathMLScripts::RenderMathMLScripts(Type type, MathMLScriptsElement& element, UniqueRef<Style::ComputedStyle>&& style)
     : RenderMathMLRow(type, element, WTF::move(style))
 {
 }

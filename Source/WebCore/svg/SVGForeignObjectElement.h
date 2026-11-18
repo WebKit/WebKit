@@ -52,7 +52,7 @@ private:
 
     bool rendererIsNeeded(const Style::ComputedStyle&) final;
     bool childShouldCreateRenderer(const Node&) const final;
-    RenderPtr<RenderElement> createElementRenderer(Style::ComputedStyle&&, const RenderTreePosition&) final;
+    RenderPtr<RenderElement> createElementRenderer(UniqueRef<Style::ComputedStyle>&&, const RenderTreePosition&) final;
 
     bool isValid() const final { return SVGTests::isValid(); }
     bool selfHasRelativeLengths() const final { return true; }

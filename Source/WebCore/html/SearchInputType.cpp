@@ -341,7 +341,7 @@ void SearchInputType::attributeChanged(const QualifiedName& name)
     BaseTextInputType::attributeChanged(name);
 }
 
-RenderPtr<RenderElement> SearchInputType::createInputRenderer(Style::ComputedStyle&& style)
+RenderPtr<RenderElement> SearchInputType::createInputRenderer(UniqueRef<Style::ComputedStyle>&& style)
 {
     ASSERT(element());
     return createRenderer<RenderSearchField>(*protect(element()), WTF::move(style));

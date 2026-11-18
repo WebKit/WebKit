@@ -41,7 +41,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderSVGResourcePattern);
 
 static constexpr size_t maximumCachedTilesPerClient = 4;
 
-RenderSVGResourcePattern::RenderSVGResourcePattern(SVGElement& element, Style::ComputedStyle&& style)
+RenderSVGResourcePattern::RenderSVGResourcePattern(SVGElement& element, UniqueRef<Style::ComputedStyle>&& style)
     : RenderSVGResourcePaintServer(Type::SVGResourcePattern, element, WTF::move(style))
 {
 }

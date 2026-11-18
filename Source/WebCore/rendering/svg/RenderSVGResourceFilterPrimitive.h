@@ -37,7 +37,7 @@ class RenderSVGResourceFilterPrimitive : public RenderSVGHiddenContainer {
     WTF_MAKE_TZONE_ALLOCATED(RenderSVGResourceFilterPrimitive);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderSVGResourceFilterPrimitive);
 public:
-    RenderSVGResourceFilterPrimitive(SVGFilterPrimitiveStandardAttributes&, Style::ComputedStyle&&);
+    RenderSVGResourceFilterPrimitive(SVGFilterPrimitiveStandardAttributes&, UniqueRef<Style::ComputedStyle>&&);
     NODELETE SVGFilterPrimitiveStandardAttributes& filterPrimitiveElement() const;
 
     void markFilterEffectForRepaint(FilterEffect*);
@@ -46,7 +46,7 @@ public:
     void styleDidChange(Style::Difference, const Style::ComputedStyle*) override;
 
 protected:
-    RenderSVGResourceFilterPrimitive(Type, SVGFilterPrimitiveStandardAttributes&, Style::ComputedStyle&&);
+    RenderSVGResourceFilterPrimitive(Type, SVGFilterPrimitiveStandardAttributes&, UniqueRef<Style::ComputedStyle>&&);
 };
 
 } // namespace WebCore

@@ -42,7 +42,7 @@ public:
 
 private:
     MathMLSelectElement(const QualifiedName& tagName, Document&);
-    RenderPtr<RenderElement> createElementRenderer(Style::ComputedStyle&&, const RenderTreePosition&) final;
+    RenderPtr<RenderElement> createElementRenderer(UniqueRef<Style::ComputedStyle>&&, const RenderTreePosition&) final;
 
     bool childShouldCreateRenderer(const Node&) const final;
 

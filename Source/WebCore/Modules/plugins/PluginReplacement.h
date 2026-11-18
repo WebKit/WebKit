@@ -46,7 +46,7 @@ public:
     virtual void installReplacement(ShadowRoot&) = 0;
 
     virtual bool willCreateRenderer() { return false; }
-    virtual RenderPtr<RenderElement> createElementRenderer(HTMLPlugInElement&, Style::ComputedStyle&&, const RenderTreePosition&) = 0;
+    virtual RenderPtr<RenderElement> createElementRenderer(HTMLPlugInElement&, UniqueRef<Style::ComputedStyle>&&, const RenderTreePosition&) = 0;
 };
 
 typedef Ref<PluginReplacement> (*CreatePluginReplacement)(HTMLPlugInElement&, const Vector<AtomString>& paramNames, const Vector<AtomString>& paramValues);

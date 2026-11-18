@@ -193,26 +193,26 @@ void RenderBoxModelObject::setSelectionState(HighlightState state)
         containingBlock->setSelectionState(state);
 }
 
-RenderBoxModelObject::RenderBoxModelObject(Type type, Element& element, Style::ComputedStyle&& style, OptionSet<TypeFlag> baseTypeFlags, TypeSpecificFlags typeSpecificFlags)
+RenderBoxModelObject::RenderBoxModelObject(Type type, Element& element, UniqueRef<Style::ComputedStyle>&& style, OptionSet<TypeFlag> baseTypeFlags, TypeSpecificFlags typeSpecificFlags)
     : RenderLayerModelObject(type, element, WTF::move(style), baseTypeFlags | TypeFlag::IsBoxModelObject, typeSpecificFlags)
 {
     ASSERT(isRenderBoxModelObject());
     setChildrenInline(isInlineBox());
 }
 
-RenderBoxModelObject::RenderBoxModelObject(Type type, Document& document, Style::ComputedStyle&& style, OptionSet<TypeFlag> baseTypeFlags, TypeSpecificFlags typeSpecificFlags)
+RenderBoxModelObject::RenderBoxModelObject(Type type, Document& document, UniqueRef<Style::ComputedStyle>&& style, OptionSet<TypeFlag> baseTypeFlags, TypeSpecificFlags typeSpecificFlags)
     : RenderLayerModelObject(type, document, WTF::move(style), baseTypeFlags | TypeFlag::IsBoxModelObject, typeSpecificFlags)
 {
     ASSERT(isRenderBoxModelObject());
     setChildrenInline(isInlineBox());
 }
 
-RenderBoxModelObject::RenderBoxModelObject(Type type, Element& element, Style::ComputedStyle&& style)
+RenderBoxModelObject::RenderBoxModelObject(Type type, Element& element, UniqueRef<Style::ComputedStyle>&& style)
     : RenderBoxModelObject(type, element, WTF::move(style), TypeFlag::IsInlineBox, { })
 {
 }
 
-RenderBoxModelObject::RenderBoxModelObject(Type type, Document& document, Style::ComputedStyle&& style)
+RenderBoxModelObject::RenderBoxModelObject(Type type, Document& document, UniqueRef<Style::ComputedStyle>&& style)
     : RenderBoxModelObject(type, document, WTF::move(style), TypeFlag::IsInlineBox, { })
 {
 }

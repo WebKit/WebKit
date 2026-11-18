@@ -186,7 +186,7 @@ RenderBlockFlow::MarginInfo::MarginInfo(bool canCollapseWithChildren, bool canCo
 {
 }
 
-RenderBlockFlow::RenderBlockFlow(Type type, Element& element, Style::ComputedStyle&& style, OptionSet<BlockFlowFlag> flags)
+RenderBlockFlow::RenderBlockFlow(Type type, Element& element, UniqueRef<Style::ComputedStyle>&& style, OptionSet<BlockFlowFlag> flags)
     : RenderBlock(type, element, WTF::move(style), { }, flags)
     , m_widthForTextAutosizing(-1)
     , m_lineCountForTextAutosizing(NOT_SET)
@@ -195,7 +195,7 @@ RenderBlockFlow::RenderBlockFlow(Type type, Element& element, Style::ComputedSty
     setChildrenInline(true);
 }
 
-RenderBlockFlow::RenderBlockFlow(Type type, Document& document, Style::ComputedStyle&& style, OptionSet<BlockFlowFlag> flags)
+RenderBlockFlow::RenderBlockFlow(Type type, Document& document, UniqueRef<Style::ComputedStyle>&& style, OptionSet<BlockFlowFlag> flags)
     : RenderBlock(type, document, WTF::move(style), { }, flags)
     , m_widthForTextAutosizing(-1)
     , m_lineCountForTextAutosizing(NOT_SET)

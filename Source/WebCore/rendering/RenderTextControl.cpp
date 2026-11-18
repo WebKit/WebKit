@@ -47,7 +47,7 @@ namespace WebCore {
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderTextControl);
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderTextControlInnerContainer);
 
-RenderTextControl::RenderTextControl(Type type, HTMLTextFormControlElement& element, Style::ComputedStyle&& style)
+RenderTextControl::RenderTextControl(Type type, HTMLTextFormControlElement& element, UniqueRef<Style::ComputedStyle>&& style)
     : RenderBlockFlow(type, element, WTF::move(style), BlockFlowFlag::IsTextControl)
 {
     ASSERT(isRenderTextControl());
@@ -78,7 +78,7 @@ void RenderTextControl::styleDidChange(Style::Difference diff, const Style::Comp
         // See if the original has changed before setting it and triggering a layout.
         auto newInnerTextStyle = formControlElement->createInnerTextStyle(style());
         auto oldInnerTextStyle = formControlElement->createInnerTextStyle(*oldStyle);
-        if (newInnerTextStyle != oldInnerTextStyle)
+        if (newInnerTextStyle.get() != oldInnerTextStyle.get())
             innerTextRenderer->setStyle(WTF::move(newInnerTextStyle));
         else if (diff == Style::DifferenceResult::RepaintIfText || diff == Style::DifferenceResult::Repaint) {
             // Repaint is expected to be propagated down to the shadow tree when non-inherited style property changes
@@ -266,7 +266,7 @@ int RenderTextControl::innerLineHeight() const
 }
 #endif
 
-RenderTextControlInnerContainer::RenderTextControlInnerContainer(Element& element, Style::ComputedStyle&& style)
+RenderTextControlInnerContainer::RenderTextControlInnerContainer(Element& element, UniqueRef<Style::ComputedStyle>&& style)
     : RenderFlexibleBox(Type::TextControlInnerContainer, element, WTF::move(style))
 {
 

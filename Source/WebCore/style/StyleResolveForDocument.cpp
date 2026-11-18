@@ -50,7 +50,7 @@
 namespace WebCore {
 namespace Style {
 
-Style::ComputedStyle resolveForDocument(const Document& document)
+UniqueRef<Style::ComputedStyle> resolveForDocument(const Document& document)
 {
     ASSERT(document.renderTreeState() == Document::RenderTreeState::Built);
 
@@ -58,19 +58,19 @@ Style::ComputedStyle resolveForDocument(const Document& document)
 
     auto documentStyle = Style::ComputedStyle::create();
 
-    documentStyle.setDisplay(DisplayType::BlockFlow);
-    documentStyle.setRTLOrdering(document.visuallyOrdered() ? WebCore::Order::Visual : WebCore::Order::Logical);
-    documentStyle.setZoom(!document.printing() ? renderView->frame().effectiveZoomFactor() : 1);
+    documentStyle->setDisplay(DisplayType::BlockFlow);
+    documentStyle->setRTLOrdering(document.visuallyOrdered() ? WebCore::Order::Visual : WebCore::Order::Logical);
+    documentStyle->setZoom(!document.printing() ? renderView->frame().effectiveZoomFactor() : 1);
     if (auto frameScaleFactor = protect(renderView->frame())->frameScaleFactor(); frameScaleFactor != 1) {
-        documentStyle.setTransform(Style::Transform { Style::TransformFunction { Style::ScaleTransformFunction::create(frameScaleFactor, frameScaleFactor, Style::TransformFunctionType::Scale) } });
-        documentStyle.setTransformOrigin(Style::TransformOrigin { 0_css_px, 0_css_px, 0_css_px });
+        documentStyle->setTransform(Style::Transform { Style::TransformFunction { Style::ScaleTransformFunction::create(frameScaleFactor, frameScaleFactor, Style::TransformFunctionType::Scale) } });
+        documentStyle->setTransformOrigin(Style::TransformOrigin { 0_css_px, 0_css_px, 0_css_px });
     }
 
     // This overrides any -webkit-user-modify inherited from the parent iframe.
-    documentStyle.setUserModify(document.inDesignMode() ? UserModify::ReadWrite : UserModify::ReadOnly);
+    documentStyle->setUserModify(document.inDesignMode() ? UserModify::ReadWrite : UserModify::ReadOnly);
 #if PLATFORM(IOS_FAMILY)
     if (document.inDesignMode())
-        documentStyle.setTextSizeAdjust(CSS::Keyword::None { });
+        documentStyle->setTextSizeAdjust(CSS::Keyword::None { });
 #endif
 
     Adjuster::adjustEventListenerRegionTypesForRootStyle(documentStyle, document);
@@ -78,7 +78,7 @@ Style::ComputedStyle resolveForDocument(const Document& document)
     auto& pagination = renderView->frameView().pagination();
     if (pagination.mode != Pagination::Mode::Unpaginated) {
         Adjuster::adjustColumnStylesForPaginationMode(documentStyle, pagination.mode);
-        documentStyle.setColumnGap(GapGutter::Fixed { static_cast<float>(pagination.gap) });
+        documentStyle->setColumnGap(GapGutter::Fixed { static_cast<float>(pagination.gap) });
         if (renderView->multiColumnFlow())
             renderView->updateColumnProgressionFromStyle(documentStyle);
     }
@@ -98,20 +98,20 @@ Style::ComputedStyle resolveForDocument(const Document& document)
         auto usedFontSize = usedFontSizeFromComputedSize(size, fontDescription.isAbsoluteSize(), useSVGZoomRules, documentStyle, document);
         fontDescription.setUsedSize(usedFontSize.size, usedFontSize.zoomFactor);
 
-        auto [fontOrientation, glyphOrientation] = documentStyle.fontAndGlyphOrientation();
+        auto [fontOrientation, glyphOrientation] = documentStyle->fontAndGlyphOrientation();
         fontDescription.setOrientation(fontOrientation);
         fontDescription.setNonCJKGlyphOrientation(glyphOrientation);
         return fontDescription;
     }();
 
-    auto fontCascade = FontCascade { WTF::move(fontDescription), protect(documentStyle.fontCascade()) };
+    auto fontCascade = FontCascade { WTF::move(fontDescription), protect(documentStyle->fontCascade()) };
 
     // We don't just call setFontDescription() because we need to provide the fontSelector to the FontCascade.
     RefPtr fontSelector = document.fontSelector();
     fontCascade.update(WTF::move(fontSelector));
-    documentStyle.setFontCascade(WTF::move(fontCascade));
+    documentStyle->setFontCascade(WTF::move(fontCascade));
 
-    documentStyle.setDeviceScaleFactor(document.deviceScaleFactor());
+    documentStyle->setDeviceScaleFactor(document.deviceScaleFactor());
 
     return documentStyle;
 }

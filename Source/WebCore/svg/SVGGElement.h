@@ -38,7 +38,7 @@ public:
 private:
     SVGGElement(const QualifiedName&, Document&);
 
-    RenderPtr<RenderElement> createElementRenderer(Style::ComputedStyle&&, const RenderTreePosition&) final;
+    RenderPtr<RenderElement> createElementRenderer(UniqueRef<Style::ComputedStyle>&&, const RenderTreePosition&) final;
 
     bool isValid() const final { return SVGTests::isValid(); }
     bool rendererIsNeeded(const Style::ComputedStyle&) final;

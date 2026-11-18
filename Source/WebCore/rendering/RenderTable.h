@@ -48,8 +48,8 @@ class RenderTable : public RenderBlock {
     WTF_MAKE_TZONE_ALLOCATED(RenderTable);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderTable);
 public:
-    RenderTable(Type, Element&, Style::ComputedStyle&&);
-    RenderTable(Type, Document&, Style::ComputedStyle&&);
+    RenderTable(Type, Element&, UniqueRef<Style::ComputedStyle>&&);
+    RenderTable(Type, Document&, UniqueRef<Style::ComputedStyle>&&);
     virtual ~RenderTable();
 
     // Per CSS 3 writing-mode: "The first and second values of the 'border-spacing' property represent spacing between columns

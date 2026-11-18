@@ -62,7 +62,7 @@ private:
     void svgAttributeChanged(const QualifiedName&) final;
     void childrenChanged(const ChildChange&) final;
 
-    RenderPtr<RenderElement> createElementRenderer(Style::ComputedStyle&&, const RenderTreePosition&) final;
+    RenderPtr<RenderElement> createElementRenderer(UniqueRef<Style::ComputedStyle>&&, const RenderTreePosition&) final;
 
     bool needsPendingResourceHandling() const final { return false; }
     bool selfHasRelativeLengths() const final { return true; }

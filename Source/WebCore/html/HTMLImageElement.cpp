@@ -556,9 +556,9 @@ const AtomString& HTMLImageElement::altText() const
     return attributeWithoutSynchronization(titleAttr);
 }
 
-RenderPtr<RenderElement> HTMLImageElement::createElementRenderer(Style::ComputedStyle&& style, const RenderTreePosition&)
+RenderPtr<RenderElement> HTMLImageElement::createElementRenderer(UniqueRef<Style::ComputedStyle>&& style, const RenderTreePosition&)
 {
-    if (style.content().isData())
+    if (style->content().isData())
         return RenderElement::createFor(*this, WTF::move(style));
 
     return createRenderer<RenderImage>(RenderObject::Type::Image, *this, WTF::move(style), nullptr, m_currentPixelDensity);

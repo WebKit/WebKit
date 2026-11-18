@@ -83,7 +83,7 @@ public:
     FloatRect resourceBoundingBox(const RenderObject&, RepaintRectCalculation) final { return FloatRect(); }
 
 protected:
-    LegacyRenderSVGResourceGradient(Type, SVGGradientElement&, Style::ComputedStyle&&);
+    LegacyRenderSVGResourceGradient(Type, SVGGradientElement&, UniqueRef<Style::ComputedStyle>&&);
 
     static GradientColorStops stopsByApplyingColorFilter(const GradientColorStops&, const Style::ComputedStyle&);
     NODELETE static GradientSpreadMethod platformSpreadMethodFromSVGType(SVGSpreadMethodType);

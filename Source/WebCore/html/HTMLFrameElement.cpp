@@ -56,7 +56,7 @@ bool HTMLFrameElement::rendererIsNeeded(const Style::ComputedStyle& style)
     return HTMLFrameElementBase::rendererIsNeeded(style) && canLoad();
 }
 
-RenderPtr<RenderElement> HTMLFrameElement::createElementRenderer(Style::ComputedStyle&& style, const RenderTreePosition&)
+RenderPtr<RenderElement> HTMLFrameElement::createElementRenderer(UniqueRef<Style::ComputedStyle>&& style, const RenderTreePosition&)
 {
     return createRenderer<RenderFrame>(*this, WTF::move(style));
 }

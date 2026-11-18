@@ -53,7 +53,7 @@ class RenderListOutsideMarker final : public RenderBox {
     WTF_MAKE_TZONE_ALLOCATED(RenderListOutsideMarker);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderListOutsideMarker);
 public:
-    RenderListOutsideMarker(RenderListItem&, Style::ComputedStyle&&);
+    RenderListOutsideMarker(RenderListItem&, UniqueRef<Style::ComputedStyle>&&);
     virtual ~RenderListOutsideMarker();
 
     bool isDisclosureMarker() const;

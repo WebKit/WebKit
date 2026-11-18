@@ -90,14 +90,14 @@ static inline void updateLogicalHeightForCell(RenderTableSection::RowStruct& row
     }
 }
 
-RenderTableSection::RenderTableSection(Element& element, Style::ComputedStyle&& style)
+RenderTableSection::RenderTableSection(Element& element, UniqueRef<Style::ComputedStyle>&& style)
     : RenderBox(Type::TableSection, element, WTF::move(style))
 {
     setInline(false);
     ASSERT(isRenderTableSection());
 }
 
-RenderTableSection::RenderTableSection(Document& document, Style::ComputedStyle&& style)
+RenderTableSection::RenderTableSection(Document& document, UniqueRef<Style::ComputedStyle>&& style)
     : RenderBox(Type::TableSection, document, WTF::move(style))
 {
     setInline(false);

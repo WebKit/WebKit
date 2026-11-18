@@ -44,7 +44,7 @@ class LegacyRenderSVGResourceMasker final : public LegacyRenderSVGResourceContai
     WTF_MAKE_TZONE_ALLOCATED(LegacyRenderSVGResourceMasker);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(LegacyRenderSVGResourceMasker);
 public:
-    LegacyRenderSVGResourceMasker(SVGMaskElement&, Style::ComputedStyle&&);
+    LegacyRenderSVGResourceMasker(SVGMaskElement&, UniqueRef<Style::ComputedStyle>&&);
     virtual ~LegacyRenderSVGResourceMasker();
 
     inline SVGMaskElement& maskElement() const;

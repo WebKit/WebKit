@@ -97,7 +97,7 @@ public:
     WEBCORE_EXPORT bool shouldDisplayPosterImage() const;
 
     URL posterImageURL() const;
-    RenderPtr<RenderElement> createElementRenderer(Style::ComputedStyle&&, const RenderTreePosition&) final;
+    RenderPtr<RenderElement> createElementRenderer(UniqueRef<Style::ComputedStyle>&&, const RenderTreePosition&) final;
     bool isReplaced(const Style::ComputedStyle* = nullptr) const final { return true; }
 
 #if ENABLE(VIDEO_PRESENTATION_MODE)

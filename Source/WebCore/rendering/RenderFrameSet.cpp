@@ -56,7 +56,7 @@ static constexpr auto borderFillColor = SRGBA<uint8_t> { 208, 208, 208 };
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderFrameSet);
 
-RenderFrameSet::RenderFrameSet(HTMLFrameSetElement& frameSet, Style::ComputedStyle&& style)
+RenderFrameSet::RenderFrameSet(HTMLFrameSetElement& frameSet, UniqueRef<Style::ComputedStyle>&& style)
     : RenderBox(Type::FrameSet, frameSet, WTF::move(style))
 {
     ASSERT(isRenderFrameSet());

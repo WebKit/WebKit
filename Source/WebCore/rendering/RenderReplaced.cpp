@@ -89,7 +89,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderReplaced);
 const int cDefaultWidth = 300;
 const int cDefaultHeight = 150;
 
-RenderReplaced::RenderReplaced(Type type, Element& element, Style::ComputedStyle&& style, OptionSet<ReplacedFlag> flags)
+RenderReplaced::RenderReplaced(Type type, Element& element, UniqueRef<Style::ComputedStyle>&& style, OptionSet<ReplacedFlag> flags)
     : RenderBox(type, element, WTF::move(style), { }, flags)
     , m_intrinsicSize(cDefaultWidth, cDefaultHeight)
 {
@@ -98,7 +98,7 @@ RenderReplaced::RenderReplaced(Type type, Element& element, Style::ComputedStyle
     ASSERT(isRenderReplaced());
 }
 
-RenderReplaced::RenderReplaced(Type type, Element& element, Style::ComputedStyle&& style, const LayoutSize& intrinsicSize, OptionSet<ReplacedFlag> flags)
+RenderReplaced::RenderReplaced(Type type, Element& element, UniqueRef<Style::ComputedStyle>&& style, const LayoutSize& intrinsicSize, OptionSet<ReplacedFlag> flags)
     : RenderBox(type, element, WTF::move(style), { }, flags)
     , m_intrinsicSize(intrinsicSize)
 {
@@ -107,7 +107,7 @@ RenderReplaced::RenderReplaced(Type type, Element& element, Style::ComputedStyle
     ASSERT(isRenderReplaced());
 }
 
-RenderReplaced::RenderReplaced(Type type, Document& document, Style::ComputedStyle&& style, const LayoutSize& intrinsicSize, OptionSet<ReplacedFlag> flags)
+RenderReplaced::RenderReplaced(Type type, Document& document, UniqueRef<Style::ComputedStyle>&& style, const LayoutSize& intrinsicSize, OptionSet<ReplacedFlag> flags)
     : RenderBox(type, document, WTF::move(style), { }, flags)
     , m_intrinsicSize(intrinsicSize)
 {

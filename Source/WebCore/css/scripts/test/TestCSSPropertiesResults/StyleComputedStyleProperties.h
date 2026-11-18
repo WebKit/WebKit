@@ -146,12 +146,9 @@ public:
 
 protected:
     ComputedStyleProperties(ComputedStyleProperties&&) = default;
-    ComputedStyleProperties& operator=(ComputedStyleProperties&&) = default;
 
     inline ComputedStyleProperties(CreateDefaultStyleTag);
     inline ComputedStyleProperties(const ComputedStyleProperties&, CloneTag);
-
-    inline ComputedStyleProperties(ComputedStyleProperties&, ComputedStyleProperties&&);
 };
 
 template<> struct ColorPropertyTraits<PropertyNameConstant<CSSPropertyID::TestColor>> {

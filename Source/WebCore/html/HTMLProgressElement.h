@@ -53,7 +53,7 @@ private:
     bool canContainRangeEndPoint() const final { return false; }
 
     NODELETE bool supportsBaseAppearance(StyleAppearance) const final;
-    RenderPtr<RenderElement> createElementRenderer(Style::ComputedStyle&&, const RenderTreePosition&) final;
+    RenderPtr<RenderElement> createElementRenderer(UniqueRef<Style::ComputedStyle>&&, const RenderTreePosition&) final;
     NODELETE RenderProgress* renderProgress() const;
     bool childShouldCreateRenderer(const Node&) const final;
 

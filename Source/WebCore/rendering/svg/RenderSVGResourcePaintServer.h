@@ -37,7 +37,7 @@ public:
     virtual bool prepareStrokeOperation(GraphicsContext&, const RenderLayerModelObject&, const Style::ComputedStyle&) { return false; }
 
 protected:
-    RenderSVGResourcePaintServer(Type, SVGElement&, Style::ComputedStyle&&);
+    RenderSVGResourcePaintServer(Type, SVGElement&, UniqueRef<Style::ComputedStyle>&&);
 };
 
 using SVGPaintServerOrColor = Variant<std::monostate, RenderSVGResourcePaintServer*, Color>;

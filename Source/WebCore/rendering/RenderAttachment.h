@@ -36,7 +36,7 @@ class RenderAttachment final : public RenderReplaced {
     WTF_MAKE_TZONE_ALLOCATED(RenderAttachment);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderAttachment);
 public:
-    RenderAttachment(HTMLAttachmentElement&, Style::ComputedStyle&&);
+    RenderAttachment(HTMLAttachmentElement&, UniqueRef<Style::ComputedStyle>&&);
     virtual ~RenderAttachment();
 
     NODELETE HTMLAttachmentElement& attachmentElement() const;

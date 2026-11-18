@@ -44,7 +44,7 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderScrollbarPart);
 
-RenderScrollbarPart::RenderScrollbarPart(Document& document, Style::ComputedStyle&& style, RenderScrollbar* scrollbar, ScrollbarPart part)
+RenderScrollbarPart::RenderScrollbarPart(Document& document, UniqueRef<Style::ComputedStyle>&& style, RenderScrollbar* scrollbar, ScrollbarPart part)
     : RenderBlock(Type::ScrollbarPart, document, WTF::move(style), { })
     , m_scrollbar(scrollbar)
     , m_part(part)

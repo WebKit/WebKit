@@ -31,7 +31,7 @@ class RenderSVGTransformableContainer final : public RenderSVGContainer {
     WTF_MAKE_TZONE_ALLOCATED(RenderSVGTransformableContainer);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderSVGTransformableContainer);
 public:
-    RenderSVGTransformableContainer(SVGGraphicsElement&, Style::ComputedStyle&&);
+    RenderSVGTransformableContainer(SVGGraphicsElement&, UniqueRef<Style::ComputedStyle>&&);
     virtual ~RenderSVGTransformableContainer();
 
     FloatSize additionalContainerTranslation() const;

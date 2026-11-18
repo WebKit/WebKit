@@ -45,7 +45,7 @@ class LegacyRenderSVGResourcePattern final : public LegacyRenderSVGResourceConta
     WTF_MAKE_TZONE_ALLOCATED(LegacyRenderSVGResourcePattern);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(LegacyRenderSVGResourcePattern);
 public:
-    LegacyRenderSVGResourcePattern(SVGPatternElement&, Style::ComputedStyle&&);
+    LegacyRenderSVGResourcePattern(SVGPatternElement&, UniqueRef<Style::ComputedStyle>&&);
     virtual ~LegacyRenderSVGResourcePattern();
 
     NODELETE SVGPatternElement& patternElement() const;

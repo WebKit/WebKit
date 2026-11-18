@@ -59,7 +59,7 @@ private:
     const AtomString& formControlType() const final;
 
     NODELETE bool supportsBaseAppearance(StyleAppearance) const final;
-    RenderPtr<RenderElement> createElementRenderer(Style::ComputedStyle&&, const RenderTreePosition&) final;
+    RenderPtr<RenderElement> createElementRenderer(UniqueRef<Style::ComputedStyle>&&, const RenderTreePosition&) final;
 
     int defaultTabIndex() const final;
 

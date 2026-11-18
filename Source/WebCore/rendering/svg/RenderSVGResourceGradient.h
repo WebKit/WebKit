@@ -44,7 +44,7 @@ public:
     virtual SVGUnitTypes::SVGUnitType gradientUnits() const = 0;
 
 protected:
-    RenderSVGResourceGradient(Type, SVGElement&, Style::ComputedStyle&&);
+    RenderSVGResourceGradient(Type, SVGElement&, UniqueRef<Style::ComputedStyle>&&);
 
     virtual void collectGradientAttributesIfNeeded() = 0;
     virtual RefPtr<const Gradient> createGradient(const Style::ComputedStyle&) = 0;

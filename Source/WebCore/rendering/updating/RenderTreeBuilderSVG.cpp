@@ -128,9 +128,9 @@ RenderSVGViewportContainer& RenderTreeBuilder::SVG::findOrCreateParentForChild(R
 RenderSVGViewportContainer& RenderTreeBuilder::SVG::createViewportContainer(RenderSVGRoot& parent)
 {
     auto viewportContainerStyle = Style::ComputedStyle::createAnonymousStyleWithDisplay(parent.style(), Style::ComputedStyle::initialDisplay());
-    viewportContainerStyle.setUsedZIndex(0); // Enforce a stacking context.
-    viewportContainerStyle.setTransformOriginX(0_css_px);
-    viewportContainerStyle.setTransformOriginY(0_css_px);
+    viewportContainerStyle->setUsedZIndex(0); // Enforce a stacking context.
+    viewportContainerStyle->setTransformOriginX(0_css_px);
+    viewportContainerStyle->setTransformOriginY(0_css_px);
 
     auto viewportContainer = createRenderer<RenderSVGViewportContainer>(parent, WTF::move(viewportContainerStyle));
     viewportContainer->initializeStyle();

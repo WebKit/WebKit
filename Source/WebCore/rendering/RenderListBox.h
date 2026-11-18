@@ -44,7 +44,7 @@ class RenderListBox final : public RenderBlockFlow, public ScrollableArea {
     WTF_MAKE_TZONE_ALLOCATED(RenderListBox);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderListBox);
 public:
-    RenderListBox(HTMLSelectElement&, Style::ComputedStyle&&);
+    RenderListBox(HTMLSelectElement&, UniqueRef<Style::ComputedStyle>&&);
     virtual ~RenderListBox();
 
     // CheckedPtr interface

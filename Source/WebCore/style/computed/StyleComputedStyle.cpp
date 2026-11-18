@@ -81,15 +81,14 @@ IGNORE_CLANG_WARNINGS_END
 static_assert(sizeof(ComputedStyle) == sizeof(SameSizeAsComputedStyle), "ComputedStyle should stay small");
 
 ComputedStyle::ComputedStyle(ComputedStyle&&) = default;
-ComputedStyle& ComputedStyle::operator=(ComputedStyle&&) = default;
 
 SUPPRESS_NODELETE ComputedStyle& ComputedStyle::defaultStyleSingleton()
 {
-    static NeverDestroyed<ComputedStyle> style { CreateDefaultStyle };
-    return style;
+    static NeverDestroyed<UniqueRef<ComputedStyle>> style { UniqueRef { *new ComputedStyle(CreateDefaultStyle) } };
+    return style.get();
 }
 
-ComputedStyle ComputedStyle::create()
+UniqueRef<ComputedStyle> ComputedStyle::create()
 {
     return clone(defaultStyleSingleton());
 }
@@ -104,33 +103,33 @@ std::unique_ptr<ComputedStyle> ComputedStyle::createPtrWithRegisteredInitialValu
     return clonePtr(protect(registry.initialValuePrototypeStyle()));
 }
 
-SUPPRESS_NODELETE ComputedStyle ComputedStyle::clone(const ComputedStyle& style)
+SUPPRESS_NODELETE UniqueRef<ComputedStyle> ComputedStyle::clone(const ComputedStyle& style)
 {
-    return ComputedStyle(style, Clone);
+    return UniqueRef { *new ComputedStyle(style, Clone) };
 }
 
-ComputedStyle ComputedStyle::cloneIncludingPseudoElements(const ComputedStyle& style)
+UniqueRef<ComputedStyle> ComputedStyle::cloneIncludingPseudoElements(const ComputedStyle& style)
 {
-    auto newStyle = ComputedStyle(style, Clone);
-    newStyle.copyPseudoElementsFrom(style);
+    auto newStyle = clone(style);
+    newStyle->copyPseudoElementsFrom(style);
     return newStyle;
 }
 
 std::unique_ptr<ComputedStyle> ComputedStyle::clonePtr(const ComputedStyle& style)
 {
-    return makeUnique<ComputedStyle>(style, Clone);
+    return std::unique_ptr<ComputedStyle>(new ComputedStyle(style, Clone));
 }
 
-ComputedStyle ComputedStyle::createAnonymousStyleWithDisplay(const ComputedStyle& parentStyle, Style::Display display)
+UniqueRef<ComputedStyle> ComputedStyle::createAnonymousStyleWithDisplay(const ComputedStyle& parentStyle, Style::Display display)
 {
     auto newStyle = create();
-    newStyle.inheritFrom(parentStyle);
-    newStyle.inheritUnicodeBidiFrom(parentStyle);
-    newStyle.setDisplay(display);
+    newStyle->inheritFrom(parentStyle);
+    newStyle->inheritUnicodeBidiFrom(parentStyle);
+    newStyle->setDisplay(display);
     return newStyle;
 }
 
-ComputedStyle ComputedStyle::createStyleInheritingFromPseudoStyle(const ComputedStyle& pseudoStyle)
+UniqueRef<ComputedStyle> ComputedStyle::createStyleInheritingFromPseudoStyle(const ComputedStyle& pseudoStyle)
 {
     ASSERT(pseudoStyle.pseudoElementType() == PseudoElementType::Before
         || pseudoStyle.pseudoElementType() == PseudoElementType::After
@@ -139,13 +138,19 @@ ComputedStyle ComputedStyle::createStyleInheritingFromPseudoStyle(const Computed
         || pseudoStyle.pseudoElementType() == PseudoElementType::PickerIcon);
 
     auto style = create();
-    style.inheritFrom(pseudoStyle);
+    style->inheritFrom(pseudoStyle);
     return style;
 }
 
-SUPPRESS_NODELETE ComputedStyle ComputedStyle::replace(ComputedStyle&& newStyle)
+SUPPRESS_NODELETE UniqueRef<ComputedStyle> ComputedStyle::replace(UniqueRef<ComputedStyle>&& newStyle)
 {
-    return ComputedStyle { *this, WTF::move(newStyle) };
+    swapData(newStyle);
+    return WTF::move(newStyle);
+}
+
+void ComputedStyle::cloneFrom(const ComputedStyle& other)
+{
+    cloneDataFrom(other);
 }
 
 void ComputedStyle::copyPseudoElementsFrom(const ComputedStyle& other)
@@ -155,8 +160,7 @@ void ComputedStyle::copyPseudoElementsFrom(const ComputedStyle& other)
             ASSERT_NOT_REACHED();
             continue;
         }
-        auto clone = cloneIncludingPseudoElements(protect(*pseudoElementStyle));
-        addPseudoElementStyle(makeUnique<ComputedStyle>(WTF::move(clone)));
+        addPseudoElementStyle(cloneIncludingPseudoElements(protect(*pseudoElementStyle)).moveToUniquePtr());
     }
 }
 
