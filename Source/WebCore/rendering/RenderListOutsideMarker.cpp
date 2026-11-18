@@ -40,17 +40,14 @@
 #include "RenderBlockInlines.h"
 #include "RenderBoxInlines.h"
 #include "RenderElementInlines.h"
-#include "RenderImage.h"
 #include "RenderLayer.h"
 #include "RenderListItem.h"
 #include "RenderMenuList.h"
 #include "RenderObjectInlines.h"
 #include "RenderTable.h"
-#include "RenderText.h"
 #include "RenderView.h"
 #include "StyleComputedStyle+GettersInlines.h"
 #include "StyleComputedStyle+SettersInlines.h"
-#include "StyleListStyleImageSizing.h"
 #include "StyleListStyleType.h"
 #include "StyleScope.h"
 #include "TextUtil.h"
@@ -236,77 +233,14 @@ void RenderListOutsideMarker::imageChanged(WrappedImagePtr o, const IntRect* rec
                 if (element)
                     element->invalidateStyleAndRenderersForSubtree();
                 setNeedsLayoutAndInvalidateContentLogicalWidths();
-            } else if (borderBoxSize() != markerImageSize(*image)) {
-                updateContent();
+            } else if (CheckedPtr listItem = m_listItem; listItem && borderBoxSize() != listItem->markerImageSize(*image)) {
+                listItem->updateMarkerContent();
                 setNeedsLayoutAndInvalidateContentLogicalWidths();
             } else
                 repaint();
         }
     }
     RenderBox::imageChanged(o, rect);
-}
-
-LayoutSize RenderListOutsideMarker::markerImageSize(const Style::Image& image) const
-{
-    // FIXME: The spec says this should be 1em - https://drafts.csswg.org/css-lists-3/#valdef-list-style-image-image
-    LayoutUnit bulletWidth = style().metricsOfPrimaryFont().intAscent() / 2_lu;
-    return calculateImageIntrinsicDimensions(image, Style::ListStyleImageSizing { bulletWidth }, ScaleByUsedZoom::Yes);
-}
-
-void RenderListOutsideMarker::updateContent()
-{
-    if (listMarkerHasContent(style(), document())) {
-        // css-lists-3 §3.3: `content` (not normal) supersedes list-style-image/type. The generated
-        // content lives in the anonymous inline-block contentContainer(); the marker has no text/image.
-        return;
-    }
-
-    if (RefPtr image = listMarkerImage(style())) {
-        setContentContainerImageSize(markerImageSize(*image));
-        return;
-    }
-
-    // The marker text is only known here (counter values resolve at layout), while the renderers
-    // holding it were created from style. Push the text down so the inline formatting context has something to lay out.
-    updateContentContainerText(listMarkerTextContent(style(), *m_listItem));
-}
-
-void RenderListOutsideMarker::setContentContainerImageSize(LayoutSize imageSize)
-{
-    CheckedPtr container = contentContainer();
-    CheckedPtr imageRenderer = container ? dynamicDowncast<RenderImage>(container->firstChild()) : nullptr;
-    if (!imageRenderer)
-        return;
-
-    auto usedZoom = imageRenderer->style().usedZoomForLength();
-    auto logicalWidth = Style::PreferredSize { Style::PreferredSize::Fixed { imageSize.width() / usedZoom.value } };
-    auto logicalHeight = Style::PreferredSize { Style::PreferredSize::Fixed { imageSize.height() / usedZoom.value } };
-    if (imageRenderer->style().width() == logicalWidth && imageRenderer->style().height() == logicalHeight)
-        return;
-
-    imageRenderer->mutableStyle().setWidth(WTF::move(logicalWidth));
-    imageRenderer->mutableStyle().setHeight(WTF::move(logicalHeight));
-    imageRenderer->setNeedsLayout();
-}
-
-void RenderListOutsideMarker::updateContentContainerText(const ListMarkerTextContent& textContent)
-{
-    CheckedPtr container = contentContainer();
-    if (!container) {
-        ASSERT_NOT_REACHED();
-        return;
-    }
-
-    CheckedPtr textRenderer = dynamicDowncast<RenderText>(container->firstChild());
-    if (!textRenderer)
-        return;
-
-    if (listMarkerSynthesizesGlyph(style(), protect(document()))) {
-        textRenderer->setText(textContent.textWithoutSuffix().toString());
-        return;
-    }
-
-    textRenderer->setText(textContent.textWithSuffix);
 }
 
 std::pair<LayoutUnit, LayoutUnit> RenderListOutsideMarker::computeIntrinsicLogicalWidthContributions()

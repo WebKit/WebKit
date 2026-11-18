@@ -30,7 +30,6 @@ class CSSRegisteredCounterStyle;
 class RenderBlockFlow;
 class RenderListItem;
 class StyleRuleCounterStyle;
-struct ListMarkerTextContent;
 
 // Used to render the list item's marker.
 // The RenderListOutsideMarker always has to be a child of a RenderListItem.
@@ -40,8 +39,6 @@ class RenderListOutsideMarker final : public RenderBox {
 public:
     RenderListOutsideMarker(RenderListItem&, UniqueRef<Style::ComputedStyle>&&);
     virtual ~RenderListOutsideMarker();
-
-    void updateContent();
 
     bool isImage() const final;
 
@@ -72,9 +69,6 @@ private:
     void element() const = delete;
 
     std::pair<LayoutUnit, LayoutUnit> inlineMargins() const;
-    LayoutSize markerImageSize(const Style::Image&) const;
-    void updateContentContainerText(const ListMarkerTextContent&);
-    void setContentContainerImageSize(LayoutSize);
     void layoutContentContainer(RenderBlockFlow&);
 
 private:

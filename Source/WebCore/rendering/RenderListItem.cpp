@@ -57,6 +57,7 @@
 #include "StyleComputedStyle+GettersInlines.h"
 #include "StyleComputedStyle+SettersInlines.h"
 #include "StyleContent.h"
+#include "StyleListStyleImageSizing.h"
 #include "StyleListStyleType.h"
 #include "UnicodeBidi.h"
 #include <wtf/StackStats.h>
@@ -406,10 +407,58 @@ void RenderListItem::updateValue()
     }
 }
 
+RenderImage* RenderListItem::markerImage() const
+{
+    CheckedPtr marker = markerBox();
+    if (!marker || listMarkerHasContent(marker->style(), document()) || !listMarkerImage(marker->style()))
+        return nullptr;
+    CheckedPtr contentContainer = marker->contentContainer();
+    return contentContainer ? dynamicDowncast<RenderImage>(contentContainer->firstChild()) : nullptr;
+}
+
+LayoutSize RenderListItem::markerImageSize(const Style::Image& image) const
+{
+    CheckedPtr marker = markerBox();
+    if (!marker)
+        return { };
+    // FIXME: The spec says this should be 1em - https://drafts.csswg.org/css-lists-3/#valdef-list-style-image-image
+    LayoutUnit bulletWidth = marker->style().metricsOfPrimaryFont().intAscent() / 2_lu;
+    return marker->calculateImageIntrinsicDimensions(image, Style::ListStyleImageSizing { bulletWidth }, ScaleByUsedZoom::Yes);
+}
+
 void RenderListItem::updateMarkerContent()
 {
     if (CheckedPtr markerBox = this->markerBox()) {
-        markerBox->updateContent();
+        // css-lists-3 §3.3: with a non-normal `content` the marker's contents are the author's, not ours to fill in.
+        if (listMarkerHasContent(markerBox->style(), document()))
+            return;
+
+        if (CheckedPtr imageRenderer = markerImage()) {
+            RefPtr image = listMarkerImage(markerBox->style());
+            auto imageSize = markerImageSize(*image);
+            auto usedZoom = imageRenderer->style().usedZoomForLength();
+            auto logicalWidth = Style::PreferredSize { Style::PreferredSize::Fixed { imageSize.width() / usedZoom.value } };
+            auto logicalHeight = Style::PreferredSize { Style::PreferredSize::Fixed { imageSize.height() / usedZoom.value } };
+            if (imageRenderer->style().width() == logicalWidth && imageRenderer->style().height() == logicalHeight)
+                return;
+            imageRenderer->mutableStyle().setWidth(WTF::move(logicalWidth));
+            imageRenderer->mutableStyle().setHeight(WTF::move(logicalHeight));
+            imageRenderer->setNeedsLayout();
+            return;
+        }
+
+        // The marker text is only known here (counter values resolve at layout), while the renderer holding it was
+        // created from style. Push the text down so the inline formatting context has something to lay out.
+        CheckedPtr contentContainer = markerBox->contentContainer();
+        CheckedPtr textRenderer = contentContainer ? dynamicDowncast<RenderText>(contentContainer->firstChild()) : nullptr;
+        if (!textRenderer)
+            return;
+        auto textContent = listMarkerTextContent(markerBox->style(), *this);
+        if (listMarkerSynthesizesGlyph(markerBox->style(), protect(document()))) {
+            textRenderer->setText(textContent.textWithoutSuffix().toString());
+            return;
+        }
+        textRenderer->setText(textContent.textWithSuffix);
         return;
     }
 

@@ -28,6 +28,7 @@
 namespace WebCore {
 
 class HTMLOListElement;
+class RenderImage;
 
 enum class ListMarkerIncludeSuffix : bool { No, Yes };
 
@@ -75,6 +76,9 @@ public:
 
     // Fills in what the marker shows, in whichever shape it was built.
     void updateMarkerContent();
+    // The image an image marker shows.
+    RenderImage* markerImage() const;
+    LayoutSize markerImageSize(const Style::Image&) const;
 
     bool isInReversedOrderedList() const;
 
