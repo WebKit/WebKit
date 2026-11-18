@@ -1,0 +1,9 @@
+
+
+
+
+PASS Fixed width, zoom 1.25
+PASS Percentage width with padding and border, zoom 1.25
+PASS Fixed width, zoom 1.5
+PASS Multiple rows with padding and border, zoom 2
+
