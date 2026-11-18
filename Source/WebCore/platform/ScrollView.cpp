@@ -1529,13 +1529,7 @@ void ScrollView::paintScrollCorner(GraphicsContext& context, const IntRect& corn
 
 void ScrollView::paintScrollbar(GraphicsContext& context, Scrollbar& bar, const IntRect& rect, OptionSet<ScrollbarPaintBehavior> paintBehavior)
 {
-    // FIXME: Pass the paint behavior to Scrollbar::paint() instead of setting it on the scroll bar (https://webkit.org/b/331966).
-    bool paintingIntoSnapshot = paintBehavior.contains(ScrollbarPaintBehavior::Snapshot);
-    if (paintingIntoSnapshot)
-        bar.setPaintingIntoSnapshot(true);
-    bar.paint(context, rect);
-    if (paintingIntoSnapshot)
-        bar.setPaintingIntoSnapshot(false);
+    bar.paint(context, rect, paintBehavior);
 }
 
 void ScrollView::invalidateScrollCornerRect(const IntRect& rect)

@@ -627,24 +627,24 @@ static void paintScrollbarUsingLegacyAppearance(Scrollbar& scrollbar, GraphicsCo
         [scrollerImp drawKnob];
 }
 
-static void paintScrollbar(Scrollbar& scrollbar, GraphicsContext& context)
+static void paintScrollbar(Scrollbar& scrollbar, GraphicsContext& context, OptionSet<ScrollbarPaintBehavior> paintBehavior)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
-    if (scrollbar.paintingIntoSnapshot() && scrollbar.supportsUpdateOnSecondaryThread())
+    if (paintBehavior.contains(ScrollbarPaintBehavior::Snapshot) && scrollbar.supportsUpdateOnSecondaryThread())
         paintScrollbarUsingLayersForSnapshot(scrollbar, context);
     else
         paintScrollbarUsingLegacyAppearance(scrollbar, context);
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
-bool ScrollbarThemeMac::paint(Scrollbar& scrollbar, GraphicsContext& context, const IntRect& damageRect)
+bool ScrollbarThemeMac::paint(Scrollbar& scrollbar, GraphicsContext& context, const IntRect& damageRect, OptionSet<ScrollbarPaintBehavior> paintBehavior)
 {
     if (context.paintingDisabled())
         return false;
 
     setPaintCharacteristicsForScrollbar(protect(scrollerImpForScrollbar(scrollbar)).get(), scrollbar);
 
-    if (scrollbar.supportsUpdateOnSecondaryThread() && !scrollbar.paintingIntoSnapshot())
+    if (scrollbar.supportsUpdateOnSecondaryThread() && !paintBehavior.contains(ScrollbarPaintBehavior::Snapshot))
         return true;
 
     SetForScope isCurrentlyDrawingIntoLayer(g_isCurrentlyDrawingIntoLayer, context.isCALayerContext());
@@ -655,13 +655,13 @@ bool ScrollbarThemeMac::paint(Scrollbar& scrollbar, GraphicsContext& context, co
     auto scrollbarRect = scrollbar.frameRect();
     if (context.hasPlatformContext()) {
         context.translate(scrollbarRect.location());
-        paintScrollbar(scrollbar, context);
+        paintScrollbar(scrollbar, context, paintBehavior);
     } else {
         // AppKit draws the scroll bar into a CGContext, so display list and PDF contexts get an Unaccelerated buffer.
         auto renderingMode = context.renderingMode() == RenderingMode::Accelerated ? RenderingMode::Accelerated : RenderingMode::Unaccelerated;
         if (auto imageBuffer = [&] -> RefPtr<ImageBuffer> {
             if (auto buffer = context.createImageBuffer(scrollbarRect.size(), scrollbar.deviceScaleFactor(), ColorSpace::SRGB(), renderingMode, RenderingMethod::Local)) {
-                paintScrollbar(scrollbar, buffer->context());
+                paintScrollbar(scrollbar, buffer->context(), paintBehavior);
                 return buffer;
             }
             return nullptr;

@@ -36,7 +36,7 @@ public:
     ScrollbarThemeIOS();
     virtual ~ScrollbarThemeIOS();
 
-    bool paint(Scrollbar&, GraphicsContext&, const IntRect& damageRect) override;
+    bool paint(Scrollbar&, GraphicsContext&, const IntRect& damageRect, OptionSet<ScrollbarPaintBehavior>) override;
 
     int scrollbarThickness(ScrollbarWidth = ScrollbarWidth::Auto, OverlayScrollbarSizeRelevancy = OverlayScrollbarSizeRelevancy::IncludeOverlayScrollbarSize) override;
     

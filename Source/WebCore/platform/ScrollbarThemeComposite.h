@@ -37,7 +37,7 @@ namespace WebCore {
 class ScrollbarThemeComposite : public ScrollbarTheme {
 public:
     // Implement ScrollbarTheme interface
-    bool paint(Scrollbar&, GraphicsContext&, const IntRect& damageRect) override;
+    bool paint(Scrollbar&, GraphicsContext&, const IntRect& damageRect, OptionSet<ScrollbarPaintBehavior>) override;
     ScrollbarPart hitTest(Scrollbar&, const IntPoint&, ScrollbarHitTestTolerance) override;
     void invalidatePart(Scrollbar&, ScrollbarPart) override;
     int thumbPosition(Scrollbar&) override;

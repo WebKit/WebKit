@@ -111,7 +111,7 @@ int ScrollbarThemeIOS::minimumThumbLength(Scrollbar&)
     return 0;
 }
 
-bool ScrollbarThemeIOS::paint(Scrollbar&, GraphicsContext&, const IntRect& /*damageRect*/)
+bool ScrollbarThemeIOS::paint(Scrollbar&, GraphicsContext&, const IntRect& /*damageRect*/, OptionSet<ScrollbarPaintBehavior>)
 {
     return true;
 }

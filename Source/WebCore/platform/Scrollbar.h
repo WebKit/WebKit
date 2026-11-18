@@ -91,6 +91,7 @@ public:
     void setPressedPos(int p) { m_pressedPos = p; }
 
     void paint(GraphicsContext&, const IntRect& damageRect, Widget::SecurityOriginPaintPolicy = SecurityOriginPaintPolicy::AnyOrigin, RegionContext* = nullptr) override;
+    void paint(GraphicsContext&, const IntRect& damageRect, OptionSet<ScrollbarPaintBehavior>);
 
     bool enabled() const { return m_enabled; }
     virtual void setEnabled(bool);
@@ -122,9 +123,6 @@ public:
 
     bool suppressInvalidation() const { return m_suppressInvalidation; }
     void setSuppressInvalidation(bool s) { m_suppressInvalidation = s; }
-
-    bool paintingIntoSnapshot() const { return m_paintingIntoSnapshot; }
-    void setPaintingIntoSnapshot(bool value) { m_paintingIntoSnapshot = value; }
 
     virtual void styleChanged() { }
 
@@ -191,7 +189,6 @@ protected:
     Timer m_scrollTimer;
 
     bool m_suppressInvalidation { false };
-    bool m_paintingIntoSnapshot { false };
 
 #if !PLATFORM(COCOA)
     float m_opacity { 1 };

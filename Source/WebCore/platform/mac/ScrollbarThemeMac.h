@@ -43,7 +43,7 @@ public:
 
     void updateEnabledState(Scrollbar&) override;
 
-    bool paint(Scrollbar&, GraphicsContext&, const IntRect& damageRect) override;
+    bool paint(Scrollbar&, GraphicsContext&, const IntRect& damageRect, OptionSet<ScrollbarPaintBehavior>) override;
     void paintScrollCorner(ScrollableArea&, GraphicsContext&, const IntRect& cornerRect) override;
 
     int scrollbarThickness(ScrollbarWidth = ScrollbarWidth::Auto, OverlayScrollbarSizeRelevancy = OverlayScrollbarSizeRelevancy::IncludeOverlayScrollbarSize) override;

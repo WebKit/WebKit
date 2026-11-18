@@ -46,7 +46,7 @@ protected:
 
     void updateScrollbarOverlayStyle(Scrollbar&) override;
 
-    bool paint(Scrollbar&, GraphicsContext&, const IntRect&) override;
+    bool paint(Scrollbar&, GraphicsContext&, const IntRect&, OptionSet<ScrollbarPaintBehavior>) override;
     void paintScrollCorner(ScrollableArea&, GraphicsContext&, const IntRect&) override;
     ScrollbarButtonPressAction handleMousePressEvent(Scrollbar&, const PlatformMouseEvent&, ScrollbarPart) override;
 

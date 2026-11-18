@@ -106,7 +106,7 @@ IntRect ScrollbarThemeAdwaita::trackRect(Scrollbar& scrollbar, bool)
     return scrollbar.frameRect();
 }
 
-bool ScrollbarThemeAdwaita::paint(Scrollbar& scrollbar, GraphicsContext& graphicsContext, const IntRect& damageRect)
+bool ScrollbarThemeAdwaita::paint(Scrollbar& scrollbar, GraphicsContext& graphicsContext, const IntRect& damageRect, OptionSet<ScrollbarPaintBehavior>)
 {
 #if USE(COORDINATED_GRAPHICS_ASYNC_SCROLLBAR)
     if (auto scrollableArea = protect(scrollbar.scrollableArea())) {

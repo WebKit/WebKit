@@ -31,7 +31,7 @@
 
 namespace WebCore {
 
-bool ScrollbarThemeComposite::paint(Scrollbar& scrollbar, GraphicsContext& graphicsContext, const IntRect& damageRect)
+bool ScrollbarThemeComposite::paint(Scrollbar& scrollbar, GraphicsContext& graphicsContext, const IntRect& damageRect, OptionSet<ScrollbarPaintBehavior>)
 {
     // Create the ScrollbarControlPartMask based on the damageRect
     ScrollbarControlPartMask scrollMask = NoPart;

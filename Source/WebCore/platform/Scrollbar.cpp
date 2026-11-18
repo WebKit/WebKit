@@ -184,6 +184,11 @@ void Scrollbar::setFrameRect(const IntRect& rect)
 
 void Scrollbar::paint(GraphicsContext& context, const IntRect& damageRect, Widget::SecurityOriginPaintPolicy, RegionContext*)
 {
+    paint(context, damageRect, OptionSet<ScrollbarPaintBehavior> { });
+}
+
+void Scrollbar::paint(GraphicsContext& context, const IntRect& damageRect, OptionSet<ScrollbarPaintBehavior> paintBehavior)
+{
     if (context.invalidatingControlTints() && theme().supportsControlTints()) {
         invalidate();
         return;
@@ -192,7 +197,7 @@ void Scrollbar::paint(GraphicsContext& context, const IntRect& damageRect, Widge
     if (context.paintingDisabled() || !frameRect().intersects(damageRect))
         return;
 
-    if (!theme().paint(*this, context, damageRect))
+    if (!theme().paint(*this, context, damageRect, paintBehavior))
         Widget::paint(context, damageRect);
 }
 
