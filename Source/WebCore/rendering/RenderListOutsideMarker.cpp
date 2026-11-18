@@ -26,8 +26,6 @@
 #include "RenderListOutsideMarker.h"
 
 #include "BaselineAlignment.h"
-#include "CSSCounterStyleDescriptors.h"
-#include "CSSCounterStyleRegistry.h"
 #include "CSSFontSelector.h"
 #include "Document.h"
 #include "DocumentInlines.h"
@@ -50,10 +48,8 @@
 #include "RenderTable.h"
 #include "RenderText.h"
 #include "RenderView.h"
-#include "Settings.h"
 #include "StyleComputedStyle+GettersInlines.h"
 #include "StyleComputedStyle+SettersInlines.h"
-#include "StyleContent.h"
 #include "StyleListStyleImageSizing.h"
 #include "StyleListStyleType.h"
 #include "StyleScope.h"
@@ -61,7 +57,6 @@
 #include <wtf/ScopedLambda.h>
 #include <wtf/StackStats.h>
 #include <wtf/TZoneMallocInlines.h>
-#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 
@@ -126,12 +121,7 @@ bool RenderListOutsideMarker::isImage() const
 {
     // `content` supersedes list-style-image (css-lists-3 §3.3), so a marker with generated content
     // is never treated as an image marker (affects inline margins, baseline, and layout attributes).
-    return !hasContentProperty() && listMarkerImage(style());
-}
-
-bool RenderListOutsideMarker::hasContentProperty() const
-{
-    return listMarkerHasContent(style(), document());
+    return !listMarkerHasContent(style(), document()) && listMarkerImage(style());
 }
 
 RenderBlockFlow* RenderListOutsideMarker::contentContainer() const
@@ -204,7 +194,7 @@ void RenderListOutsideMarker::layoutContentContainer(RenderBlockFlow& container)
         // content box along the block axis so its own first-line baseline lands on that font baseline —
         // otherwise the content's line-box half-leading shifts it off the list item's baseline. Logical
         // setters keep this correct in vertical writing modes.
-        if (hasContentProperty()) {
+        if (listMarkerHasContent(style(), document())) {
             setLogicalHeight(container.logicalHeight());
             m_layoutBounds = { contentBaseline, container.logicalHeight() - contentBaseline };
         } else {
@@ -265,7 +255,7 @@ LayoutSize RenderListOutsideMarker::markerImageSize(const Style::Image& image) c
 
 void RenderListOutsideMarker::updateContent()
 {
-    if (hasContentProperty()) {
+    if (listMarkerHasContent(style(), document())) {
         // css-lists-3 §3.3: `content` (not normal) supersedes list-style-image/type. The generated
         // content lives in the anonymous inline-block contentContainer(); the marker has no text/image.
         return;
@@ -311,7 +301,7 @@ void RenderListOutsideMarker::updateContentContainerText(const ListMarkerTextCon
     if (!textRenderer)
         return;
 
-    if (synthesizesGlyph()) {
+    if (listMarkerSynthesizesGlyph(style(), protect(document()))) {
         textRenderer->setText(textContent.textWithoutSuffix().toString());
         return;
     }
@@ -342,31 +332,10 @@ std::pair<LayoutUnit, LayoutUnit> RenderListOutsideMarker::inlineMargins() const
         return { -logicalWidth - markerPadding, markerPadding };
 
     int offset = style().metricsOfPrimaryFont().intAscent() * 2 / 3;
-    if (synthesizesGlyph())
+    if (listMarkerSynthesizesGlyph(style(), protect(document())))
         return { -offset - markerPadding - 1, offset + markerPadding + 1 - logicalWidth };
 
     return { -logicalWidth, 0 };
-}
-
-void setListMarkerInlineMargins(Style::ComputedStyle& markerStyle, WritingMode listItemWritingMode, LayoutUnit marginStart, LayoutUnit marginEnd)
-{
-    auto zoom = markerStyle.usedZoomForLength().value;
-    auto startEdge = Style::MarginEdge::Fixed { marginStart / zoom };
-    auto endEdge = Style::MarginEdge::Fixed { marginEnd / zoom };
-    if (listItemWritingMode.isHorizontal()) {
-        auto startIsLeft = listItemWritingMode.isInlineLeftToRight();
-        markerStyle.setMarginLeft(startIsLeft ? startEdge : endEdge);
-        markerStyle.setMarginRight(startIsLeft ? endEdge : startEdge);
-        return;
-    }
-    auto startIsTop = listItemWritingMode.isInlineTopToBottom();
-    markerStyle.setMarginTop(startIsTop ? startEdge : endEdge);
-    markerStyle.setMarginBottom(startIsTop ? endEdge : startEdge);
-}
-
-bool RenderListOutsideMarker::isDisclosureMarker() const
-{
-    return listMarkerIsDisclosure(style(), protect(document()));
 }
 
 RenderListItem* RenderListOutsideMarker::listItem() const
@@ -405,68 +374,6 @@ LayoutRect RenderListOutsideMarker::selectionRectForRepaint(const RenderLayerMod
 {
     ASSERT(!needsLayout());
     return { };
-}
-
-bool listMarkerIsDisclosure(const Style::ComputedStyle& markerStyle, Document& document)
-{
-    auto counterStyle = markerStyle.listStyleType().tryCounterStyle();
-    if (!counterStyle)
-        return false;
-    auto system = document.counterStyleRegistry().resolvedCounterStyle(*counterStyle)->system();
-    return system == CSSCounterStyleDescriptors::System::DisclosureClosed || system == CSSCounterStyleDescriptors::System::DisclosureOpen;
-}
-
-bool listMarkerIsDisclosure(const RenderElement* renderer)
-{
-    if (!renderer || !renderer->style().isListMarkerStyle())
-        return false;
-    return listMarkerIsDisclosure(renderer->style(), protect(renderer->document()));
-}
-
-RefPtr<Style::Image> listMarkerImage(const Style::ComputedStyle& markerStyle)
-{
-    RefPtr image = markerStyle.listStyleImage().tryStyleImage();
-    if (!image || image->errorOccurred())
-        return nullptr;
-    return image;
-}
-
-bool listMarkerHasContent(const Style::ComputedStyle& markerStyle, Document& document)
-{
-    return document.settings().cssMarkerContentEnabled() && markerStyle.content().isData();
-}
-
-bool listMarkerSynthesizesGlyph(const Style::ComputedStyle& markerStyle, Document& document)
-{
-    // css-lists-3 §3.3: a non-normal `content` supersedes list-style-type, and a list-style-image draws in place of
-    // the glyph unless it failed to load, so neither leaves us a glyph to draw.
-    if (listMarkerHasContent(markerStyle, document) || listMarkerImage(markerStyle))
-        return false;
-
-    auto& listType = markerStyle.listStyleType();
-    return listType.isCircle() || listType.isDisc() || listType.isSquare();
-}
-
-ListMarkerTextContent listMarkerTextContent(const Style::ComputedStyle& markerStyle, RenderListItem& listItem)
-{
-    return WTF::switchOn(markerStyle.listStyleType(),
-        [&](const CSS::Keyword::None&) {
-            return ListMarkerTextContent { .textWithSuffix = " "_s, .textWithoutSuffixLength = 0 };
-        },
-        [&](const Style::String& identifier) {
-            return ListMarkerTextContent { .textWithSuffix = identifier.value, .textWithoutSuffixLength = identifier.value.length() };
-        },
-        [&](const auto& counterStyle) {
-            auto counter = listItem.document().counterStyleRegistry().resolvedCounterStyle(counterStyle);
-            auto text = makeString(counter->prefix().text, counter->text(listItem.value(), markerStyle.writingMode()));
-            return ListMarkerTextContent { .textWithSuffix = makeString(text, counter->suffix().text), .textWithoutSuffixLength = text.length() };
-        }
-    );
-}
-
-bool RenderListOutsideMarker::synthesizesGlyph() const
-{
-    return listMarkerSynthesizesGlyph(style(), protect(document()));
 }
 
 std::pair<float, float> RenderListOutsideMarker::layoutBoundForTextContent(String text) const

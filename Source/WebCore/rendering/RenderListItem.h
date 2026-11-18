@@ -29,6 +29,22 @@ namespace WebCore {
 
 class HTMLOListElement;
 
+enum class ListMarkerIncludeSuffix : bool { No, Yes };
+
+struct ListMarkerTextContent {
+    String textWithSuffix;
+    uint32_t textWithoutSuffixLength { 0 };
+    bool isEmpty() const
+    {
+        return textWithSuffix.isEmpty();
+    }
+
+    StringView textWithoutSuffix() const LIFETIME_BOUND
+    {
+        return StringView { textWithSuffix }.left(textWithoutSuffixLength);
+    }
+};
+
 class RenderListItem final : public RenderBlockFlow {
     WTF_MAKE_TZONE_ALLOCATED(RenderListItem);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderListItem);
@@ -92,6 +108,16 @@ private:
 };
 
 NODELETE bool isHTMLListElement(const Node&);
+
+// The room an image marker keeps between itself and the content it labels.
+constexpr int listMarkerImagePadding = 7;
+ListMarkerTextContent listMarkerTextContent(const Style::ComputedStyle& markerStyle, RenderListItem&);
+NODELETE bool listMarkerHasContent(const Style::ComputedStyle& markerStyle, Document&);
+bool listMarkerSynthesizesGlyph(const Style::ComputedStyle& markerStyle, Document&);
+RefPtr<Style::Image> listMarkerImage(const Style::ComputedStyle& markerStyle);
+bool listMarkerIsDisclosure(const Style::ComputedStyle& markerStyle, Document&);
+bool listMarkerIsDisclosure(const RenderElement*);
+void setListMarkerInlineMargins(Style::ComputedStyle& markerStyle, WritingMode listItemWritingMode, LayoutUnit marginStart, LayoutUnit marginEnd);
 
 inline int RenderListItem::value() const
 {

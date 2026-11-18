@@ -922,7 +922,7 @@ bool AccessibilityNodeObject::canHaveChildren() const
         return false;
 
     if (CheckedPtr listMarker = dynamicDowncast<RenderListOutsideMarker>(renderer()))
-        return listMarker->hasContentProperty();
+        return listMarkerHasContent(listMarker->style(), protect(listMarker->document()));
 
     if (optGroupForLabel())
         return false;
@@ -4231,7 +4231,7 @@ Vector<AXStitchGroup> AccessibilityNodeObject::stitchGroups() const
         for (CheckedPtr<const RenderBoxModelObject> ancestor = renderBlockFlow; ancestor; ancestor = ancestor->containingBlock()) {
             CheckedPtr listItem = dynamicDowncast<RenderListItem>(ancestor.get());
             CheckedPtr marker = listItem ? listItem->markerBox() : nullptr;
-            if (!marker || !marker->isExcludedMarker() || marker->isDisclosureMarker())
+            if (!marker || !marker->isExcludedMarker() || listMarkerIsDisclosure(marker.get()))
                 continue;
             auto excludedPosition = marker->excludedPosition();
             if (excludedPosition && excludedPosition->firstFormattedLineRoot.get() == renderBlockFlow.get())

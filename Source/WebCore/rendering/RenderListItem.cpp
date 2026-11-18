@@ -24,6 +24,8 @@
 #include "config.h"
 #include "RenderListItem.h"
 
+#include "CSSCounterStyleDescriptors.h"
+#include "CSSCounterStyleRegistry.h"
 #include "ContainerNodeInlines.h"
 #include "CSSFontSelector.h"
 #include "DocumentInlines.h"
@@ -51,12 +53,16 @@
 #include "RenderText.h"
 #include "RenderTreeBuilder.h"
 #include "RenderView.h"
+#include "Settings.h"
 #include "StyleComputedStyle+GettersInlines.h"
 #include "StyleComputedStyle+SettersInlines.h"
+#include "StyleContent.h"
+#include "StyleListStyleType.h"
 #include "UnicodeBidi.h"
 #include <wtf/StackStats.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/TZoneMallocInlines.h>
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 
@@ -749,6 +755,79 @@ Vector<CheckedPtr<RenderListOutsideMarker>> RenderListItem::excludedMarkersForCo
             markersForContainer.append(marker.get());
     }
     return markersForContainer;
+}
+
+void setListMarkerInlineMargins(Style::ComputedStyle& markerStyle, WritingMode listItemWritingMode, LayoutUnit marginStart, LayoutUnit marginEnd)
+{
+    auto zoom = markerStyle.usedZoomForLength().value;
+    auto startEdge = Style::MarginEdge::Fixed { marginStart / zoom };
+    auto endEdge = Style::MarginEdge::Fixed { marginEnd / zoom };
+    if (listItemWritingMode.isHorizontal()) {
+        auto startIsLeft = listItemWritingMode.isInlineLeftToRight();
+        markerStyle.setMarginLeft(startIsLeft ? startEdge : endEdge);
+        markerStyle.setMarginRight(startIsLeft ? endEdge : startEdge);
+        return;
+    }
+    auto startIsTop = listItemWritingMode.isInlineTopToBottom();
+    markerStyle.setMarginTop(startIsTop ? startEdge : endEdge);
+    markerStyle.setMarginBottom(startIsTop ? endEdge : startEdge);
+}
+
+bool listMarkerIsDisclosure(const Style::ComputedStyle& markerStyle, Document& document)
+{
+    auto counterStyle = markerStyle.listStyleType().tryCounterStyle();
+    if (!counterStyle)
+        return false;
+    auto system = document.counterStyleRegistry().resolvedCounterStyle(*counterStyle)->system();
+    return system == CSSCounterStyleDescriptors::System::DisclosureClosed || system == CSSCounterStyleDescriptors::System::DisclosureOpen;
+}
+
+bool listMarkerIsDisclosure(const RenderElement* renderer)
+{
+    if (!renderer || !renderer->style().isListMarkerStyle())
+        return false;
+    return listMarkerIsDisclosure(renderer->style(), protect(renderer->document()));
+}
+
+RefPtr<Style::Image> listMarkerImage(const Style::ComputedStyle& markerStyle)
+{
+    RefPtr image = markerStyle.listStyleImage().tryStyleImage();
+    if (!image || image->errorOccurred())
+        return nullptr;
+    return image;
+}
+
+bool listMarkerHasContent(const Style::ComputedStyle& markerStyle, Document& document)
+{
+    return document.settings().cssMarkerContentEnabled() && markerStyle.content().isData();
+}
+
+bool listMarkerSynthesizesGlyph(const Style::ComputedStyle& markerStyle, Document& document)
+{
+    // css-lists-3 §3.3: a non-normal `content` supersedes list-style-type, and a list-style-image draws in place of
+    // the glyph unless it failed to load, so neither leaves us a glyph to draw.
+    if (listMarkerHasContent(markerStyle, document) || listMarkerImage(markerStyle))
+        return false;
+
+    auto& listType = markerStyle.listStyleType();
+    return listType.isCircle() || listType.isDisc() || listType.isSquare();
+}
+
+ListMarkerTextContent listMarkerTextContent(const Style::ComputedStyle& markerStyle, RenderListItem& listItem)
+{
+    return WTF::switchOn(markerStyle.listStyleType(),
+        [&](const CSS::Keyword::None&) {
+            return ListMarkerTextContent { .textWithSuffix = " "_s, .textWithoutSuffixLength = 0 };
+        },
+        [&](const Style::String& identifier) {
+            return ListMarkerTextContent { .textWithSuffix = identifier.value, .textWithoutSuffixLength = identifier.value.length() };
+        },
+        [&](const auto& counterStyle) {
+            auto counter = listItem.document().counterStyleRegistry().resolvedCounterStyle(counterStyle);
+            auto text = makeString(counter->prefix().text, counter->text(listItem.value(), markerStyle.writingMode()));
+            return ListMarkerTextContent { .textWithSuffix = makeString(text, counter->suffix().text), .textWithoutSuffixLength = text.length() };
+        }
+    );
 }
 
 } // namespace WebCore
