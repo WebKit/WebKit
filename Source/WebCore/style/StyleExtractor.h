@@ -29,6 +29,7 @@
 #include <WebCore/PseudoElementIdentifier.h>
 #include <span>
 #include <wtf/RefPtr.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -55,7 +56,7 @@ class ComputedStyle;
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(Extractor);
 class Extractor {
 public:
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(Extractor, Extractor);
+    WTF_MAKE_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER(Extractor, Extractor);
 public:
     Extractor(Node*, bool allowVisitedStyle = false);
     Extractor(Node*, bool allowVisitedStyle, const std::optional<Style::PseudoElementIdentifier>&);

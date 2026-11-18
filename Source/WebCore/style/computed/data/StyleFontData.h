@@ -31,13 +31,14 @@
 #include <WebCore/StyleWordSpacing.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 namespace Style {
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(FontData);
 class FontData : public RefCounted<FontData> {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(FontData, FontData);
+    WTF_MAKE_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER(FontData, FontData);
 public:
     static Ref<FontData> create() { return adoptRef(*new FontData); }
     Ref<FontData> copy() const;

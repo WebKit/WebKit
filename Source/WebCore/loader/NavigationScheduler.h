@@ -37,6 +37,7 @@
 #include <wtf/CanMakeWeakPtr.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/Forward.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakRef.h>
 
 namespace WebCore {
@@ -53,7 +54,7 @@ enum class ScheduleLocationChangeResult : uint8_t { Stopped, Completed, Started 
 enum class ScheduleHistoryNavigationResult : bool { Completed, Aborted };
 
 class NavigationScheduler final : public CanMakeWeakPtr<NavigationScheduler> {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(NavigationScheduler, Loader);
+    WTF_MAKE_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER(NavigationScheduler, Loader);
 public:
     explicit NavigationScheduler(Frame&);
     ~NavigationScheduler();

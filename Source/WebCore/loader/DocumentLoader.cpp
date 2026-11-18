@@ -117,6 +117,7 @@
 #include <wtf/Ref.h>
 #include <wtf/Scope.h>
 #include <wtf/SetForScope.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/WTFString.h>
@@ -153,6 +154,8 @@
 #define DOCUMENTLOADER_RELEASE_LOG_FORWARDABLE(fmt, ...) RELEASE_LOG_FORWARDABLE(Network, fmt, PAGE_ID, FRAME_ID, IS_MAIN_FRAME, ##__VA_ARGS__)
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER_IMPL(DocumentLoader);
 
 #if ENABLE(CONTENT_FILTERING)
 NODELETE static bool& contentFilterInDocumentLoader()

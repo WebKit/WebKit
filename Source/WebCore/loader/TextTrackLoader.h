@@ -35,6 +35,7 @@
 #include <memory>
 #include <wtf/AbstractRefCountedAndCanMakeWeakPtr.h>
 #include <wtf/CheckedPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -57,7 +58,7 @@ public:
 
 class TextTrackLoader final : public CachedResourceClient, private WebVTTParserClient, public RefCounted<TextTrackLoader> {
     WTF_MAKE_NONCOPYABLE(TextTrackLoader); 
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(TextTrackLoader, Loader);
+    WTF_MAKE_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER(TextTrackLoader, Loader);
 public:
     NODELETE static Ref<TextTrackLoader> create(TextTrackLoaderClient&, Document&);
     virtual ~TextTrackLoader();

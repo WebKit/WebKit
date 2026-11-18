@@ -38,6 +38,8 @@
 
 namespace WebCore {
 
+WTF_MAKE_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER_IMPL(FontCascadeFonts);
+
 class MixedFontGlyphPage {
     WTF_MAKE_TZONE_ALLOCATED_INLINE(MixedFontGlyphPage);
 public:

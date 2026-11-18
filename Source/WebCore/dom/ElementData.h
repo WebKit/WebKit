@@ -29,6 +29,7 @@
 #include <WebCore/SpaceSplitString.h>
 #include <wtf/IndexedRange.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/TypeCasts.h>
 #include <wtf/Vector.h>
 
@@ -148,7 +149,7 @@ private:
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(ShareableElementData);
 class ShareableElementData : public ElementData {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(ShareableElementData, ShareableElementData);
+    WTF_MAKE_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER(ShareableElementData, ShareableElementData);
 public:
     static Ref<ShareableElementData> createWithAttributes(std::span<const Attribute>);
 

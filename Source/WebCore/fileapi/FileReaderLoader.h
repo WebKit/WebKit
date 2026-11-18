@@ -38,6 +38,7 @@
 #include <pal/text/TextEncoding.h>
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/URL.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/StringBuilder.h>
@@ -57,7 +58,7 @@ class ThreadableLoader;
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(FileReaderLoader);
 class FileReaderLoader final : public ThreadableLoaderClient, public RefCounted<FileReaderLoader> {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(FileReaderLoader, FileReaderLoader);
+    WTF_MAKE_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER(FileReaderLoader, FileReaderLoader);
 public:
     enum ReadType {
         ReadAsArrayBuffer,

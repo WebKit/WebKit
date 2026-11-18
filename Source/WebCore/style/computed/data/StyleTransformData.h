@@ -30,13 +30,14 @@
 #include <WebCore/StyleTransformOrigin.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 namespace Style {
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(TransformData);
 class TransformData : public RefCounted<TransformData> {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(TransformData, TransformData);
+    WTF_MAKE_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER(TransformData, TransformData);
 public:
     static Ref<TransformData> create() { return adoptRef(*new TransformData); }
     Ref<TransformData> copy() const;

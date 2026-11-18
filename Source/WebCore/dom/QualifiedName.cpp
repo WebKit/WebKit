@@ -26,8 +26,13 @@
 #include "QualifiedNameCache.h"
 #include "ThreadGlobalData.h"
 #include <wtf/Assertions.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_STRUCT_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER_IMPL(QualifiedName);
+
+WTF_MAKE_STRUCT_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER_IMPL(QualifiedName::QualifiedNameImpl);
 
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(QualifiedName);
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(QualifiedNameQualifiedNameImpl);

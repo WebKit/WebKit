@@ -23,12 +23,13 @@
 #pragma once
 
 #include "ImageLoader.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(HTMLImageLoader);
 class HTMLImageLoader final : public ImageLoader {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(HTMLImageLoader, HTMLImageLoader);
+    WTF_MAKE_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER(HTMLImageLoader, HTMLImageLoader);
 public:
     explicit HTMLImageLoader(Element&);
     virtual ~HTMLImageLoader();

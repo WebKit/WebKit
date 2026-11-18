@@ -32,12 +32,13 @@
 #include <JavaScriptCore/RegisterAtOffset.h>
 #include <JavaScriptCore/RegisterSet.h>
 #include <wtf/FixedVector.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace JSC {
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(RegisterAtOffsetList);
 class RegisterAtOffsetList {
-    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(RegisterAtOffsetList, RegisterAtOffsetList);
+    WTF_MAKE_STRUCT_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER(RegisterAtOffsetList, RegisterAtOffsetList);
 public:
     enum OffsetBaseType { FramePointerBased, ZeroBased };
 

@@ -26,6 +26,7 @@
 #include <WebCore/GlyphMetricsMap.h>
 #include <WebCore/TrustedFonts.h>
 #include <wtf/Platform.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 #if PLATFORM(WIN)
@@ -55,7 +56,7 @@ using IPCFontData = Variant<WebCore::InstalledFont, WebCore::CustomFontCreationD
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(Font);
 class Font : public FontBase, public RefCounted<Font>, public CanMakeSingleThreadWeakPtr<Font> {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(Font, Font);
+    WTF_MAKE_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER_EXPORT(Font, Font, WEBCORE_EXPORT);
 public:
     WEBCORE_EXPORT static Ref<Font> create(const FontPlatformData&, Origin = Origin::Local, IsInterstitial = IsInterstitial::No, Visibility = Visibility::Visible, IsOrientationFallback = IsOrientationFallback::No, IsSmallCapsFace = IsSmallCapsFace::No, std::optional<RenderingResourceIdentifier> = std::nullopt);
     WEBCORE_EXPORT static Ref<Font> create(Ref<SharedBuffer>&& fontFaceData, Font::Origin, float fontSize, bool syntheticBold, bool syntheticItalic, DownloadableBinaryFontTrustedTypes);

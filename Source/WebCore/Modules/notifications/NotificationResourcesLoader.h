@@ -58,7 +58,7 @@ private:
     NODELETE static bool resourceIsSupportedInPlatform(Resource);
 
     class ResourceLoader final : public ThreadableLoaderClient, public RefCounted<ResourceLoader> {
-        WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(ResourceLoader, ResourceLoader);
+        WTF_MAKE_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER(ResourceLoader, ResourceLoader);
     public:
         static Ref<ResourceLoader> create(ScriptExecutionContext&, const URL&, CompletionHandler<void(ResourceLoader*, RefPtr<NativeImage>&&)>&&);
         ~ResourceLoader();

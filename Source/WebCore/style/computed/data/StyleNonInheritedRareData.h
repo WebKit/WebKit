@@ -90,6 +90,7 @@
 #include <wtf/DataRef.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 
 #if ENABLE(SPATIAL_PORTAL)
 #include <WebCore/StyleEnvironmentMap.h>
@@ -110,7 +111,7 @@ class MaskBorderData;
 // uses one of these properties.
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(NonInheritedRareData);
 class NonInheritedRareData : public RefCounted<NonInheritedRareData> {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(NonInheritedRareData, NonInheritedRareData);
+    WTF_MAKE_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER(NonInheritedRareData, NonInheritedRareData);
 public:
     static Ref<NonInheritedRareData> create() { return adoptRef(*new NonInheritedRareData); }
     Ref<NonInheritedRareData> copy() const;

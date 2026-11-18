@@ -44,8 +44,11 @@
 #include "VTTCue.h"
 #include "WebVTTParser.h"
 #include <wtf/NeverDestroyed.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER_IMPL(TextTrackLoader);
 
 Ref<TextTrackLoader> TextTrackLoader::create(TextTrackLoaderClient& client, Document& document)
 {

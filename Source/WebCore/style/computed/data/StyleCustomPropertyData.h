@@ -28,6 +28,7 @@
 #include <wtf/IterationStatus.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/AtomStringHash.h>
 
 namespace WebCore {
@@ -35,7 +36,7 @@ namespace Style {
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(CustomPropertyData);
 class CustomPropertyData : public RefCounted<CustomPropertyData> {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(CustomPropertyData, CustomPropertyData);
+    WTF_MAKE_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER(CustomPropertyData, CustomPropertyData);
 private:
     using CustomPropertyValueMap = HashMap<AtomString, Ref<const CustomProperty>>;
 

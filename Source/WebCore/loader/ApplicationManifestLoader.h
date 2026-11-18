@@ -34,6 +34,7 @@
 #include <wtf/CheckedRef.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/URL.h>
 
 namespace WebCore {
@@ -43,7 +44,7 @@ class DocumentLoader;
 
 class ApplicationManifestLoader final : public RefCounted<ApplicationManifestLoader>, private CachedRawResourceClient {
     WTF_MAKE_NONCOPYABLE(ApplicationManifestLoader);
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(ApplicationManifestLoader, Loader);
+    WTF_MAKE_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER(ApplicationManifestLoader, Loader);
 public:
     typedef Function<void (CachedResourceHandle<CachedApplicationManifest>)> CompletionHandlerType;
 

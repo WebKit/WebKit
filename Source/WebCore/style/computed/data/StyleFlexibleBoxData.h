@@ -34,13 +34,14 @@
 #include <WebCore/StyleFlexWrap.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 namespace Style {
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(FlexibleBoxData);
 class FlexibleBoxData : public RefCounted<FlexibleBoxData> {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(FlexibleBoxData, FlexibleBoxData);
+    WTF_MAKE_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER(FlexibleBoxData, FlexibleBoxData);
 public:
     static Ref<FlexibleBoxData> create() { return adoptRef(*new FlexibleBoxData); }
     NODELETE Ref<FlexibleBoxData> copy() const;

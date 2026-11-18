@@ -30,6 +30,7 @@
 #include <WebCore/FrameIdentifier.h>
 #include <wtf/HashMap.h>
 #include <wtf/MonotonicTime.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
 
@@ -276,7 +277,7 @@ using AccessibilitySearchResults = Vector<AccessibilitySearchResult>;
 using RemoteFrameSearchCallback = Function<void(FrameIdentifier, size_t, unsigned)>;
 
 class AXSearchManager {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(AXSearchManager, AXSearchManager);
+    WTF_MAKE_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER(AXSearchManager, AXSearchManager);
 public:
     // Primary search API - returns results that may include both local objects and remote tokens.
     // The optional callback is invoked when a remote frame is encountered, allowing eager IPC dispatch.

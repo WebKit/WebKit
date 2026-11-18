@@ -29,6 +29,7 @@
 
 #pragma once
 
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/StringView.h>
 
 namespace WebCore {
@@ -38,7 +39,7 @@ constexpr Latin1Character kEndOfFileMarker = 0;
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(CSSTokenizerInputStream);
 class CSSTokenizerInputStream {
     WTF_MAKE_NONCOPYABLE(CSSTokenizerInputStream);
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(CSSTokenizerInputStream, CSSTokenizerInputStream);
+    WTF_MAKE_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER(CSSTokenizerInputStream, CSSTokenizerInputStream);
 public:
     NODELETE explicit CSSTokenizerInputStream(StringView string LIFETIME_BOUND);
 

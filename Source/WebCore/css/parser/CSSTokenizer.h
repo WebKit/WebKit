@@ -32,6 +32,7 @@
 #include <WebCore/CSSParserToken.h>
 #include <WebCore/CSSTokenizerInputStream.h>
 #include <climits>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/StringView.h>
 
 namespace WebCore {
@@ -43,7 +44,7 @@ class CSSParserTokenRange;
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(CSSTokenizer);
 class CSSTokenizer {
     WTF_MAKE_NONCOPYABLE(CSSTokenizer);
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(CSSTokenizer, CSSTokenizer);
+    WTF_MAKE_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER(CSSTokenizer, CSSTokenizer);
 public:
     static std::unique_ptr<CSSTokenizer> tryCreate(StringView string LIFETIME_BOUND);
     static std::unique_ptr<CSSTokenizer> tryCreate(StringView string LIFETIME_BOUND, CSSParserObserverWrapper&); // For the inspector

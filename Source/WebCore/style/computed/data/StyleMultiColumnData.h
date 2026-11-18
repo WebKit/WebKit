@@ -32,13 +32,14 @@
 #include <WebCore/StyleLineWidth.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 namespace Style {
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(MultiColumnData);
 class MultiColumnData : public RefCounted<MultiColumnData> {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(MultiColumnData, MultiColumnData);
+    WTF_MAKE_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER(MultiColumnData, MultiColumnData);
 public:
     static Ref<MultiColumnData> create() { return adoptRef(*new MultiColumnData); }
     Ref<MultiColumnData> copy() const;

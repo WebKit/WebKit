@@ -31,6 +31,7 @@
 #include <wtf/DataRef.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 namespace Style {
@@ -39,7 +40,7 @@ class FontData;
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(InheritedData);
 class InheritedData : public RefCounted<InheritedData> {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(InheritedData, InheritedData);
+    WTF_MAKE_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER(InheritedData, InheritedData);
 public:
     static Ref<InheritedData> create() { return adoptRef(*new InheritedData); }
     Ref<InheritedData> copy() const;

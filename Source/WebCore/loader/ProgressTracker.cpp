@@ -35,11 +35,14 @@
 #include "Logging.h"
 #include "ProgressTrackerClient.h"
 #include "ResourceResponse.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/CString.h>
 
 #define PROGRESS_TRACKER_RELEASE_LOG(fmt, ...) RELEASE_LOG_FORWARDABLE(Network, fmt, ##__VA_ARGS__)
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER_IMPL(ProgressTracker);
 
 // Always start progress at initialProgressValue. This helps provide feedback as
 // soon as a load starts.

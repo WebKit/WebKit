@@ -166,6 +166,7 @@
 #include <wtf/SetForScope.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/SystemTracing.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/URL.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/MakeString.h>
@@ -211,6 +212,8 @@ NODELETE static void verifyUserAgent(const String&)
 #endif
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER_IMPL(FrameLoader);
 
 using namespace HTMLNames;
 using namespace SVGNames;

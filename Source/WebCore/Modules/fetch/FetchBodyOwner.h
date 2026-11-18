@@ -47,7 +47,7 @@ template<typename> class ExceptionOr;
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(FetchBodyOwner);
 
 class FetchBodyOwner : public RefCounted<FetchBodyOwner>, public ActiveDOMObject {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(FetchBodyOwner, FetchBodyOwner);
+    WTF_MAKE_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER(FetchBodyOwner, FetchBodyOwner);
 public:
     void ref() const final { RefCounted::ref(); }
     void deref() const final { RefCounted::deref(); }

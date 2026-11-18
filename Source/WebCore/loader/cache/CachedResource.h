@@ -40,6 +40,7 @@
 #include <wtf/HashCountedSet.h>
 #include <wtf/HashSet.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/TypeCasts.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakHashCountedSet.h>
@@ -363,7 +364,7 @@ private:
 
     struct ResponseData {
         WTF_MAKE_NONCOPYABLE(ResponseData);
-        WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(ResponseData, CachedResourceResponseData);
+        WTF_MAKE_STRUCT_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER(ResponseData, CachedResourceResponseData);
 
     public:
         ResponseData(CachedResource&);
@@ -436,7 +437,7 @@ private:
 };
 
 class CachedResourceCallback {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(CachedResourceCallback, Loader);
+    WTF_MAKE_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER(CachedResourceCallback, Loader);
 public:
     CachedResourceCallback(CachedResource&, CachedResourceClient&);
     void cancel();

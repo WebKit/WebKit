@@ -59,8 +59,11 @@
 #include "StylePropertiesInlines.h"
 #include "StyleResolveForFont.h"
 #include "StyleRule.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER_IMPL(CSSFontFace);
 
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(CSSFontFace);
 

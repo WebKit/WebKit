@@ -32,6 +32,7 @@
 #include <WebCore/BackForwardItemIdentifier.h>
 #include <WebCore/FrameLoader.h>
 #include <WebCore/ShouldTreatAsContinuingLoad.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -48,7 +49,7 @@ struct StringWithDirection;
 
 class HistoryController final : public CanMakeWeakPtr<HistoryController>  {
     WTF_MAKE_NONCOPYABLE(HistoryController);
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(HistoryController, Loader);
+    WTF_MAKE_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER(HistoryController, Loader);
 public:
     enum HistoryUpdateType { UpdateAll, UpdateAllExceptBackForwardList };
     enum WasCreatedByJSWithoutUserInteraction : bool { No, Yes };

@@ -34,6 +34,7 @@
 #include <wtf/Markable.h>
 #include <wtf/ReducedResolutionSeconds.h>
 #include <wtf/Seconds.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakHashSet.h>
 
 namespace WebCore {
@@ -52,7 +53,7 @@ class AcceleratedEffectStackUpdater;
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(AnimationTimelinesController);
 class AnimationTimelinesController final : public CanMakeCheckedPtr<AnimationTimelinesController> {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(AnimationTimelinesController, AnimationTimelinesController);
+    WTF_MAKE_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER(AnimationTimelinesController, AnimationTimelinesController);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(AnimationTimelinesController);
 public:
     explicit AnimationTimelinesController(Document&);

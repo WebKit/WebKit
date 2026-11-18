@@ -30,6 +30,7 @@
 
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -58,7 +59,7 @@ private:
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(DOMCSSPaintWorklet);
 class DOMCSSPaintWorklet final : public Supplement<DOMCSSNamespace> {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(DOMCSSPaintWorklet, DOMCSSPaintWorklet);
+    WTF_MAKE_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER(DOMCSSPaintWorklet, DOMCSSPaintWorklet);
 public:
     explicit DOMCSSPaintWorklet(DOMCSSNamespace&) { }
 

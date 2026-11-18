@@ -32,6 +32,7 @@
 #include <WebCore/FrameLoader.h>
 #include <WebCore/LocalFrameLoaderClient.h>
 #include <WebCore/ResourceRequest.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
@@ -67,7 +68,7 @@ enum class PolicyDecisionMode { Synchronous, Asynchronous };
 
 class PolicyChecker final : public CanMakeWeakPtr<PolicyChecker>, public CanMakeCheckedPtr<PolicyChecker> {
     WTF_MAKE_NONCOPYABLE(PolicyChecker);
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(PolicyChecker, Loader);
+    WTF_MAKE_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER(PolicyChecker, Loader);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(PolicyChecker);
 public:
     explicit PolicyChecker(LocalFrame&);

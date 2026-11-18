@@ -41,8 +41,11 @@
 #include "RenderStyleConstants.h"
 #include "ScrollTimeline.h"
 #include "Styleable.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER_IMPL(AcceleratedEffectStackUpdater);
 
 void AcceleratedEffectStackUpdater::update()
 {

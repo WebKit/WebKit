@@ -31,6 +31,7 @@
 #include <wtf/RefCounted.h>
 
 #include <wtf/SystemMalloc.h>
+#include <wtf/TZoneMalloc.h>
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
@@ -59,7 +60,7 @@ struct MetadataStatistics {
 
 
 class UnlinkedMetadataTable : public ThreadSafeRefCounted<UnlinkedMetadataTable> {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(UnlinkedMetadataTable, UnlinkedMetadataTable);
+    WTF_MAKE_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER(UnlinkedMetadataTable, UnlinkedMetadataTable);
     friend class LLIntOffsetsExtractor;
     friend class MetadataTable;
     friend class CachedMetadataTable;

@@ -53,6 +53,7 @@
 #include <ranges>
 #include <wtf/HashSet.h>
 #include <wtf/Ref.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/TextStream.h>
 
 #if ENABLE(THREADED_ANIMATIONS)
@@ -60,6 +61,9 @@
 #endif
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER_IMPL(AnimationTimelinesController);
+
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(AnimationTimelinesController);
 
 AnimationTimelinesController::AnimationTimelinesController(Document& document)

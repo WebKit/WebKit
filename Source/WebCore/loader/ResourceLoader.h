@@ -41,6 +41,7 @@
 #include <wtf/Forward.h>
 #include <wtf/Platform.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 #if ENABLE(CONTENT_EXTENSIONS)
@@ -67,7 +68,7 @@ class ResourceMonitor;
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(CoreResourceLoader);
 class ResourceLoader : public RefCountedAndCanMakeWeakPtr<ResourceLoader>, protected ResourceHandleClient {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(ResourceLoader, CoreResourceLoader);
+    WTF_MAKE_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER(ResourceLoader, CoreResourceLoader);
 public:
     virtual ~ResourceLoader() = 0;
 

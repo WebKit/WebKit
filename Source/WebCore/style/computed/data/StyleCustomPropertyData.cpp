@@ -27,8 +27,12 @@
 #include "config.h"
 #include "StyleCustomPropertyData.h"
 
+#include <wtf/TZoneMallocInlines.h>
+
 namespace WebCore {
 namespace Style {
+
+WTF_MAKE_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER_IMPL(CustomPropertyData);
 
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(CustomPropertyData);
 

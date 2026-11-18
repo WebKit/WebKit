@@ -39,6 +39,7 @@
 #include "CachedTextTrack.h"
 #include <wtf/AbstractRefCounted.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -78,7 +79,7 @@ private:
 };
 
 class LinkPreloadDefaultResourceClient : public LinkPreloadResourceClient, CachedResourceClient, public RefCounted<LinkPreloadDefaultResourceClient> {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(LinkPreloadDefaultResourceClient, Loader);
+    WTF_MAKE_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER(LinkPreloadDefaultResourceClient, Loader);
 public:
     static Ref<LinkPreloadDefaultResourceClient> create(LinkLoader& loader, CachedResource& resource)
     {
@@ -102,7 +103,7 @@ private:
 };
 
 class LinkPreloadStyleResourceClient : public LinkPreloadResourceClient, public CachedStyleSheetClient, public RefCounted<LinkPreloadStyleResourceClient> {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(LinkPreloadStyleResourceClient, Loader);
+    WTF_MAKE_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER(LinkPreloadStyleResourceClient, Loader);
 public:
     static Ref<LinkPreloadStyleResourceClient> create(LinkLoader& loader, CachedCSSStyleSheet& resource)
     {
@@ -131,7 +132,7 @@ private:
 };
 
 class LinkPreloadImageResourceClient : public LinkPreloadResourceClient, public CachedImageClient, public RefCounted<LinkPreloadImageResourceClient> {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(LinkPreloadImageResourceClient, Loader);
+    WTF_MAKE_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER(LinkPreloadImageResourceClient, Loader);
 public:
     static Ref<LinkPreloadImageResourceClient> create(LinkLoader& loader, CachedImage& resource)
     {
@@ -155,7 +156,7 @@ private:
 };
 
 class LinkPreloadFontResourceClient : public LinkPreloadResourceClient, public CachedFontClient, public RefCounted<LinkPreloadFontResourceClient> {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(LinkPreloadFontResourceClient, Loader);
+    WTF_MAKE_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER(LinkPreloadFontResourceClient, Loader);
 public:
     static Ref<LinkPreloadFontResourceClient> create(LinkLoader& loader, CachedFont& resource)
     {
@@ -184,7 +185,7 @@ private:
 };
 
 class LinkPreloadRawResourceClient : public LinkPreloadResourceClient, public CachedRawResourceClient, public RefCounted<LinkPreloadRawResourceClient> {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(LinkPreloadRawResourceClient, Loader);
+    WTF_MAKE_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER(LinkPreloadRawResourceClient, Loader);
 public:
     static Ref<LinkPreloadRawResourceClient> create(LinkLoader& loader, CachedRawResource& resource)
     {

@@ -35,13 +35,14 @@
 #include <WebCore/StyleSVGStrokeDashoffset.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 namespace Style {
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(SVGStrokeData);
 class SVGStrokeData : public RefCounted<SVGStrokeData> {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(SVGStrokeData, SVGStrokeData);
+    WTF_MAKE_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER(SVGStrokeData, SVGStrokeData);
 public:
     static Ref<SVGStrokeData> create() { return adoptRef(*new SVGStrokeData); }
     Ref<SVGStrokeData> copy() const;

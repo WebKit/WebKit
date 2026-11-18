@@ -29,12 +29,13 @@
 #include <JavaScriptCore/SourceProviderCacheItem.h>
 #include <wtf/HashMap.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace JSC {
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(SourceProviderCache);
 class SourceProviderCache : public RefCounted<SourceProviderCache> {
-    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(SourceProviderCache, SourceProviderCache);
+    WTF_MAKE_STRUCT_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER(SourceProviderCache, SourceProviderCache);
 public:
     static Ref<SourceProviderCache> create(unsigned sourceLength)
     {

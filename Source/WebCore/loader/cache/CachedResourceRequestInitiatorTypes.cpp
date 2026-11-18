@@ -26,7 +26,11 @@
 #include "config.h"
 #include "CachedResourceRequestInitiatorTypes.h"
 
+#include <wtf/TZoneMallocInlines.h>
+
 namespace WebCore {
+
+WTF_MAKE_STRUCT_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER_IMPL(CachedResourceRequestInitiatorTypes);
 
 CachedResourceRequestInitiatorTypes::CachedResourceRequestInitiatorTypes()
     : css("css"_s)

@@ -69,6 +69,7 @@
 #include "URLKeepingBlobAlive.h"
 #include "UserContentProvider.h"
 #include <wtf/CompletionHandler.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #if USE(QUICK_LOOK)
 #include "QuickLook.h"
@@ -84,6 +85,8 @@
 #define POLICYCHECKER_RELEASE_LOG_FORWARDABLE_WITH_THIS(thisPtr, fmt, ...) RELEASE_LOG_FORWARDABLE(Loading, fmt, PAGE_ID_WITH_THIS(thisPtr), FRAME_ID_WITH_THIS(thisPtr), ##__VA_ARGS__)
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER_IMPL(PolicyChecker);
 
 static bool isAllowedByContentSecurityPolicy(const URL& url, const Element* ownerElement, bool didReceiveRedirectResponse, const URL& originalRequestURL)
 {

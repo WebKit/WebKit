@@ -33,8 +33,12 @@
 #include "FontDescription.h"
 #include "FontPaletteValues.h"
 #include "FontSelector.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER_IMPL(CSSSegmentedFontFace);
+
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(CSSSegmentedFontFace);
 
 CSSSegmentedFontFace::CSSSegmentedFontFace() = default;

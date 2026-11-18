@@ -69,6 +69,7 @@
 #include <wtf/OptionSet.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 
 #if HAVE(CORE_MATERIAL)
 #include <WebCore/AppleVisualEffect.h>
@@ -89,7 +90,7 @@ class CustomPropertyData;
 // uses one of these properties.
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(InheritedRareData);
 class InheritedRareData : public RefCounted<InheritedRareData> {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(InheritedRareData, InheritedRareData);
+    WTF_MAKE_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER(InheritedRareData, InheritedRareData);
 public:
     static Ref<InheritedRareData> create() { return adoptRef(*new InheritedRareData); }
     Ref<InheritedRareData> copy() const;

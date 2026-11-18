@@ -31,13 +31,14 @@
 #include <WebCore/StyleWebKitBoxOrdinalGroup.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Ref.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 namespace Style {
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(DeprecatedFlexibleBoxData);
 class DeprecatedFlexibleBoxData : public RefCounted<DeprecatedFlexibleBoxData> {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(DeprecatedFlexibleBoxData, DeprecatedFlexibleBoxData);
+    WTF_MAKE_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER(DeprecatedFlexibleBoxData, DeprecatedFlexibleBoxData);
 public:
     static Ref<DeprecatedFlexibleBoxData> create() { return adoptRef(*new DeprecatedFlexibleBoxData); }
     NODELETE Ref<DeprecatedFlexibleBoxData> copy() const;

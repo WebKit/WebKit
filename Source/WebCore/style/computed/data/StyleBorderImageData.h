@@ -28,13 +28,14 @@
 #include <WebCore/StyleBorderImage.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 namespace Style {
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(BorderImageData);
 class BorderImageData : public RefCounted<BorderImageData> {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(BorderImageData, BorderImageData);
+    WTF_MAKE_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER(BorderImageData, BorderImageData);
 public:
     static Ref<BorderImageData> create() { return adoptRef(*new BorderImageData); }
     NODELETE Ref<BorderImageData> copy() const;

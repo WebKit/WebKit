@@ -30,6 +30,7 @@
 #include <wtf/DataRef.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 namespace Style {
@@ -43,7 +44,7 @@ class SVGStrokeData;
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(SVGData);
 class SVGData : public RefCounted<SVGData> {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(SVGData, SVGData);
+    WTF_MAKE_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER(SVGData, SVGData);
 public:
     NODELETE static Ref<SVGData> createDefaultStyle();
     static Ref<SVGData> create() { return adoptRef(*new SVGData); }

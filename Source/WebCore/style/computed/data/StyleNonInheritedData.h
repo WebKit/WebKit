@@ -30,6 +30,7 @@
 #include <wtf/DataRef.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 namespace Style {
@@ -42,7 +43,7 @@ class SurroundData;
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(NonInheritedData);
 class NonInheritedData : public RefCounted<NonInheritedData> {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(NonInheritedData, NonInheritedData);
+    WTF_MAKE_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER(NonInheritedData, NonInheritedData);
 public:
     static Ref<NonInheritedData> create();
     Ref<NonInheritedData> copy() const;

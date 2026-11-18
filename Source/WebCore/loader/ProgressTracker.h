@@ -32,6 +32,7 @@
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/WeakRef.h>
@@ -45,7 +46,7 @@ struct ProgressItem;
 
 class ProgressTracker final : public CanMakeCheckedPtr<ProgressTracker> {
     WTF_MAKE_NONCOPYABLE(ProgressTracker);
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(ProgressTracker, Loader);
+    WTF_MAKE_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER(ProgressTracker, Loader);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(ProgressTracker);
 public:
     explicit ProgressTracker(Page&, UniqueRef<ProgressTrackerClient>&&);

@@ -26,8 +26,11 @@
 #include "EventNames.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGImageElement.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER_IMPL(SVGImageLoader);
 
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(SVGImageLoader);
 

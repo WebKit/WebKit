@@ -31,13 +31,14 @@
 #include <WebCore/StyleWebKitMarqueeSpeed.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 namespace Style {
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(MarqueeData);
 class MarqueeData : public RefCounted<MarqueeData> {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(MarqueeData, MarqueeData);
+    WTF_MAKE_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER(MarqueeData, MarqueeData);
 public:
     static Ref<MarqueeData> create() { return adoptRef(*new MarqueeData); }
     NODELETE Ref<MarqueeData> copy() const;

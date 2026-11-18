@@ -37,8 +37,11 @@
 #include "ScopedEventQueue.h"
 #include "TypedElementDescendantIteratorInlines.h"
 #include <ranges>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER_IMPL(SMILTimeContainer);
 
 static const Seconds SMILAnimationFrameDelay { 1_s / 60. };
 static const Seconds SMILAnimationFrameThrottledDelay { 1_s / 30. };

@@ -28,6 +28,7 @@
 #include <WebCore/MediaQuery.h>
 #include <WebCore/StyleRule.h>
 #include <WebCore/StyleSheetContents.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/TypeCasts.h>
 
 namespace WebCore {
@@ -36,7 +37,7 @@ class CachedCSSStyleSheet;
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StyleRuleImport);
 class StyleRuleImport final : public StyleRuleBase, public CanMakeWeakPtr<StyleRuleImport> {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(StyleRuleImport, StyleRuleImport);
+    WTF_MAKE_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER(StyleRuleImport, StyleRuleImport);
 public:
     struct SupportsCondition {
         String text;

@@ -31,13 +31,14 @@
 #include <WebCore/AnimationMalloc.h>
 #include <WebCore/TimelineIdentifier.h>
 #include <wtf/HashSet.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class ScrollTimeline;
 
 class AcceleratedTimelinesUpdater {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(AcceleratedTimelinesUpdater, Animation);
+    WTF_MAKE_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER(AcceleratedTimelinesUpdater, Animation);
 public:
     AcceleratedTimelinesUpdater() = default;
 

@@ -28,8 +28,11 @@
 #include "CSSTokenizerInputStream.h"
 #include "HTMLTreeBuilder.h"
 #include "ScriptElement.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER_IMPL(TextDocumentParser);
 
 using namespace HTMLNames;
 

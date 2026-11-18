@@ -29,9 +29,12 @@
 #include "StyleComputedStyle+DifferenceLogging.h"
 #include "StyleComputedStyle+InitialInlines.h"
 #include "StylePrimitiveNumericTypes+Logging.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 namespace Style {
+
+WTF_MAKE_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER_IMPL(BorderImageData);
 
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(BorderImageData);
 

@@ -71,6 +71,7 @@
 #include <wtf/RefPtr.h>
 #include <wtf/RobinHoodHashMap.h>
 #include <wtf/RobinHoodHashSet.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 
 #if ENABLE(APPLICATION_MANIFEST)
@@ -158,7 +159,7 @@ class DocumentLoader
     , public ContentFilterClient
 #endif
     , public CachedRawResourceClient {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(DocumentLoader, DocumentLoader);
+    WTF_MAKE_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER_EXPORT(DocumentLoader, DocumentLoader, WEBCORE_EXPORT);
     friend class ContentFilter;
 public:
     static Ref<DocumentLoader> create(ResourceRequest&& request, SubstituteData&& data, ResourceRequest&& originalRequest)

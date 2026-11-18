@@ -81,10 +81,13 @@
 #include "WebAnimationTypes.h"
 #include "WebAnimationUtilities.h"
 #include <ranges>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
 namespace Style {
+
+WTF_MAKE_STRUCT_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER_IMPL(TreeResolver::Scope);
 
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(TreeResolverScope);
 

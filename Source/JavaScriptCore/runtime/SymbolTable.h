@@ -41,6 +41,7 @@
 #include <JavaScriptCore/Watchpoint.h>
 #include <memory>
 #include <wtf/HashTraits.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace JSC {
 
@@ -322,7 +323,7 @@ private:
     static const intptr_t FlagBits = 6;
     
     class FatEntry {
-        WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(FatEntry, SymbolTableEntryFatEntry);
+        WTF_MAKE_STRUCT_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER(FatEntry, SymbolTableEntryFatEntry);
     public:
         FatEntry(intptr_t bits)
             : m_bits(bits & ~SlimFlag)

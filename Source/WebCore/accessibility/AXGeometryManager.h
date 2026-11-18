@@ -30,6 +30,7 @@
 #include <WebCore/Path.h>
 #include <wtf/Lock.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
@@ -51,7 +52,7 @@ struct HitTestCacheEntry {
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(AXGeometryManager);
 class AXGeometryManager final : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<AXGeometryManager> {
     WTF_MAKE_NONCOPYABLE(AXGeometryManager);
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(AXGeometryManager, AXGeometryManager);
+    WTF_MAKE_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER(AXGeometryManager, AXGeometryManager);
 public:
     explicit AXGeometryManager(AXObjectCache&);
     AXGeometryManager();

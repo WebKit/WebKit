@@ -47,6 +47,7 @@
 #include <wtf/BitVector.h>
 #include <wtf/FixedVector.h>
 #include <wtf/RobinHoodHashMap.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/TriState.h>
 #include <wtf/Vector.h>
 #include <wtf/text/UniquedStringImpl.h>
@@ -436,7 +437,7 @@ private:
 
 public:
     struct RareData {
-        WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(RareData, UnlinkedCodeBlock_RareData);
+        WTF_MAKE_STRUCT_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER(RareData, UnlinkedCodeBlock_RareData);
 
         NODELETE size_t sizeInBytes(const AbstractLocker&) const;
 

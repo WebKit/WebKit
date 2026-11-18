@@ -38,8 +38,11 @@
 #include <JavaScriptCore/JSCInlines.h>
 #include <JavaScriptCore/JSLock.h>
 #include <WebCore/HTTPStatusCodes.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER_IMPL(HTMLImageLoader);
 
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(HTMLImageLoader);
 
