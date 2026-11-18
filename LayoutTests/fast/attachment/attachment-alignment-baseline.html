@@ -1,3 +1,9 @@
 <!DOCTYPE html><!-- webkit-test-runner [ AttachmentElementEnabled=true ] -->
+<html class="reftest-wait">
 <!-- An attachment has a baseline of its own, so lining up its alphabetic baseline with its parent's leaves it where it is. -->
 <div>X<attachment title="file.txt" subtitle="10 KB" style="alignment-baseline: alphabetic"></attachment></div>
+<script src="resources/attachment-test-utils.js"></script>
+<script>
+takeActualScreenshotWhenAttachmentsSettled();
+</script>
+</html>
