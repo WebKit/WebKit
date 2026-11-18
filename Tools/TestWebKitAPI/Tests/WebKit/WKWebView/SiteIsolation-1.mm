@@ -84,6 +84,11 @@
 #import <WebCore/LocalizedStrings.h>
 #import <WebKit/_WKTextInputContext.h>
 
+@interface WKContentView (SiteIsolationTapRedispatch)
+- (void)_singleTapIdentified:(UITapGestureRecognizer *)gestureRecognizer;
+- (void)_singleTapRecognized:(UITapGestureRecognizer *)gestureRecognizer;
+@end
+
 @interface UIView (SiteIsolationAccessibilitySelectionRects)
 - (void)_accessibilityRetrieveRectsEnclosingSelectionOffset:(NSInteger)offset withGranularity:(UITextGranularity)granularity;
 - (void)_accessibilityDidGetSelectionRects:(NSArray *)selectionRects withGranularity:(UITextGranularity)granularity atOffset:(NSInteger)offset;
@@ -4996,11 +5001,11 @@ TEST(SiteIsolation, PositionInformationRedispatchToFrameInAnotherPageIsRejected)
     EXPECT_TRUE([takeInvalidMessageStringForTesting(webView.get()) containsString:@"Message check failed"]);
 }
 
-using SendSelectionGestureRequest = void (^)(TestWKWebView *);
+using SendRedispatchRequest = void (^)(TestWKWebView *);
 
-// Each selection gesture request below is answered with the frame it was sent to. Following that reply would send the
+// Each request below is answered with the frame it was sent to. Following that reply would send the
 // same request back to the same process, forever.
-static void expectRedispatchToTheSourceFrameIsRejected(NSString *messageName, NSString *replyArguments, SendSelectionGestureRequest sendRequest)
+static void expectRedispatchToTheSourceFrameIsRejected(NSString *messageName, NSString *replyArguments, SendRedispatchRequest sendRequest)
 {
     HTTPServer server({
         { "/mainframe"_s, { mainFrameTextWithCrossOriginIframe } },
@@ -5065,6 +5070,73 @@ TEST(SiteIsolation, SelectWithTwoTouchesRedispatchToTheSourceFrameIsRejected)
 {
     expectRedispatchToTheSourceFrameIsRejected(@"WebPage_SelectWithTwoTouches", gestureSelectionRedispatchReply, ^(TestWKWebView *webView) {
         [[webView textInputContentView] changeSelectionWithTouchesFrom:CGPointMake(10, 10) to:CGPointMake(20, 10) withGesture:UIWKGestureLoupe withState:UIGestureRecognizerStateEnded];
+    });
+}
+
+// The tap tests that WebKitTestRunner can drive are layout tests in http/tests/site-isolation/ios. It can't make a highlight
+// long press click an element, and a window it opens takes the taps meant for its opener, so these stay here.
+
+TEST(SiteIsolation, SyntheticClickRedispatchToTheSourceFrameIsRejected)
+{
+    expectRedispatchToTheSourceFrameIsRejected(@"WebPage_AttemptSyntheticClick", optionalRedispatchReply, ^(TestWKWebView *webView) {
+        [webView _simulateElementAction:_WKElementActionTypeOpen atLocation:CGPointMake(10, 10)];
+    });
+}
+
+// Each request below is answered with another web view's main frame. Following that reply would send the request on with
+// the other page's frame, and a tap commit would also mark that frame as user activated.
+static void expectRedispatchToFrameInAnotherPageIsRejected(NSString *messageName, NSString *replyArguments, SendRedispatchRequest sendRequest)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { mainFrameTextWithCrossOriginIframe } },
+        { "/iframe"_s, { "<body>subframe text</body>"_s } },
+        { "/other"_s, { "<body>another page</body>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    RetainPtr configuration = ipcTestingConfiguration(server);
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(configuration, CGRectMake(0, 0, 800, 600));
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    auto [otherWebView, otherNavigationDelegate] = siteIsolatedViewAndDelegate(configuration, CGRectMake(0, 0, 800, 600));
+    [otherWebView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://apple.com/other"]]];
+    [otherNavigationDelegate waitForDidFinishNavigation];
+    EXPECT_NE([webView _webProcessIdentifier], [otherWebView _webProcessIdentifier]);
+
+    countRequestsAndForgeRedispatch(otherWebView.get(), messageName);
+    countRequestsAndForgeRedispatch(webView.get(), messageName, ipcFrameIdentifier(otherWebView.get()).get(), replyArguments);
+    sendRequest(webView.get());
+
+    EXPECT_TRUE(Util::waitFor([&] {
+        return redispatchRequestCount(webView.get(), messageName) >= 1;
+    }));
+    Util::runFor(0.5_s);
+    EXPECT_EQ(1, redispatchRequestCount(webView.get(), messageName));
+    EXPECT_EQ(0, redispatchRequestCount(otherWebView.get(), messageName));
+    EXPECT_TRUE([takeInvalidMessageStringForTesting(webView.get()) containsString:@"Message check failed"]);
+}
+
+static void sendPotentialTap(TestWKWebView *webView)
+{
+    [[webView wkContentView] _singleTapIdentified:[webView _singleTapGestureRecognizer]];
+}
+
+TEST(SiteIsolation, PotentialTapRedispatchToFrameInAnotherPageIsRejected)
+{
+    expectRedispatchToFrameInAnotherPageIsRejected(@"WebPage_PotentialTapAtPosition", optionalRedispatchReply, ^(TestWKWebView *webView) {
+        sendPotentialTap(webView);
+    });
+}
+
+TEST(SiteIsolation, CommitPotentialTapRedispatchToFrameInAnotherPageIsRejected)
+{
+    // std::optional<FrameIdentifier>.
+    expectRedispatchToFrameInAnotherPageIsRejected(@"WebPage_CommitPotentialTap", @"[{ type: 'bool', value: 1 }, remote[0]]", ^(TestWKWebView *webView) {
+        RetainPtr gestureRecognizer = [webView _singleTapGestureRecognizer];
+        // A tap commit needs the layer tree transaction from the start of the interaction, which a touch would have recorded.
+        [webView _simulateDoubleClickAtLocation:CGPointMake(10, 10)];
+        sendPotentialTap(webView);
+        [[webView wkContentView] _singleTapRecognized:gestureRecognizer.get()];
     });
 }
 
