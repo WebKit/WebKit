@@ -871,8 +871,7 @@ LayoutUnit blockPreferredSize(const PlacedGridItem& placedGridItem, LayoutUnit b
 
         // FIXME: Otherwise, a replaced grid item with an automatic size uses its natural size in the axis
         // (i.e. it is sized consistent with the block-level replaced element sizing rules). Replaced grid
-        // items are not supported yet (GridAvoidanceReason::GridItemIsReplacedElement). Also handle
-        // non-replaced items with a preferred aspect ratio.
+        // items are not supported yet (GridAvoidanceReason::GridItemIsReplacedElement).
         ASSERT_NOT_IMPLEMENTED_YET();
         return { };
     }
