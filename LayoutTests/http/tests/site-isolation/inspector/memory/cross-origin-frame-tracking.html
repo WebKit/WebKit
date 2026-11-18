@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="../debugger/resources/site-isolation-debugger-test-utilities.js"></script>
+<script src="resources/memory-test-utilities.js"></script>
+<script>
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Memory.CrossOriginFrameTracking");
+
+    let crossOriginFrameTarget;
+
+    suite.addTestCase({
+        name: "SiteIsolation.Memory.CrossOriginFrameTracking.Setup",
+        description: "Find the frame target of the cross-origin iframe, and check which targets have the Memory domain.",
+        async test() {
+            crossOriginFrameTarget = await waitForFrameTargetForURLContaining("frame.html?cross-origin-frame-tracking");
+            InspectorTest.expectNotNull(crossOriginFrameTarget, "Should find the cross-origin iframe target.");
+            if (!crossOriginFrameTarget)
+                throw new Error("Missing the frame target.");
+
+            InspectorTest.expectNotEqual(crossOriginFrameTarget.processIdentifier, WI.mainTarget.processIdentifier, "The cross-origin iframe target should be in another process than the page target.");
+            InspectorTest.expectThat(WI.mainTarget.hasDomain("Memory"), "The page target should have the Memory domain.");
+            let frameTargets = WI.targets.filter((target) => target.type === WI.TargetType.Frame);
+            InspectorTest.expectThat(frameTargets.every((target) => target.hasDomain("Memory")), "Every frame target should have the Memory domain.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Memory.CrossOriginFrameTracking.CrossOriginFrameTarget",
+        description: "Tracking on the cross-origin iframe target should report memory, and only that target should report.",
+        async test() {
+            await MemoryTest.trackOnTarget(crossOriginFrameTarget);
+            let targets = MemoryTest.targetsThatSentEvents();
+            InspectorTest.expectThat(targets.size === 1 && targets.has(crossOriginFrameTarget), "Only the cross-origin iframe target should send Memory events.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Memory.CrossOriginFrameTracking.SecondStartTrackingDoesNothing",
+        description: "A second startTracking on the cross-origin iframe target should do nothing, and a second stopTracking too.",
+        async test() {
+            MemoryTest.clearEvents();
+
+            let updatePromise = MemoryTest.awaitEvent(crossOriginFrameTarget, "trackingUpdate");
+            await crossOriginFrameTarget.MemoryAgent.startTracking();
+            InspectorTest.expectNull(await MemoryTest.commandError(crossOriginFrameTarget.MemoryAgent.startTracking()), "The second startTracking should not fail.");
+            await updatePromise;
+            InspectorTest.pass("The cross-origin iframe target sent a trackingUpdate.");
+
+            await crossOriginFrameTarget.MemoryAgent.stopTracking();
+            InspectorTest.expectNull(await MemoryTest.commandError(crossOriginFrameTarget.MemoryAgent.stopTracking()), "The second stopTracking should not fail.");
+
+            // A target sends the events of a command before it answers the command.
+            InspectorTest.expectEqual(MemoryTest.events(crossOriginFrameTarget, "trackingStart").length, 1, "The cross-origin iframe target should send one trackingStart.");
+            InspectorTest.expectEqual(MemoryTest.events(crossOriginFrameTarget, "trackingComplete").length, 1, "The cross-origin iframe target should send one trackingComplete.");
+            let targets = MemoryTest.targetsThatSentEvents();
+            InspectorTest.expectThat(targets.size === 1 && targets.has(crossOriginFrameTarget), "Only the cross-origin iframe target should send Memory events.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Memory.CrossOriginFrameTracking.PageTarget",
+        description: "Tracking on the page target should work as before, and only the page target should report.",
+        async test() {
+            await MemoryTest.trackOnTarget(WI.mainTarget);
+            let targets = MemoryTest.targetsThatSentEvents();
+            InspectorTest.expectThat(targets.size === 1 && targets.has(WI.mainTarget), "Only the page target should send Memory events.");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+
+<body onload="runTest()">
+<p>Test that under Site Isolation, Memory tracking works on the frame target of a cross-origin iframe, and still works on the page target.</p>
+<iframe src="http://localhost:8000/site-isolation/inspector/memory/resources/frame.html?cross-origin-frame-tracking"></iframe>
+</body>

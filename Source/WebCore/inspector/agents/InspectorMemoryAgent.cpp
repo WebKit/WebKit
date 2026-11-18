@@ -41,7 +41,7 @@ using namespace Inspector;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(InspectorMemoryAgent);
 
-InspectorMemoryAgent::InspectorMemoryAgent(PageAgentContext& context)
+InspectorMemoryAgent::InspectorMemoryAgent(WebAgentContext& context)
     : InspectorAgentBase("Memory"_s, context)
     , m_frontendDispatcher(makeUniqueRef<Inspector::MemoryFrontendDispatcher>(context.frontendRouter))
     , m_backendDispatcher(Inspector::MemoryBackendDispatcher::create(protect(context.backendDispatcher), this))

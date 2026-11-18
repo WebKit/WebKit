@@ -1,9 +1,9 @@
 {
     "domain": "CPUProfiler",
-    "description": "CPUProfiler domain exposes cpu usage tracking.",
+    "description": "CPUProfiler domain exposes cpu usage tracking. On a frame target, the values cover the whole process that hosts the frame, and every target in one process reports the same numbers.",
     "condition": "defined(ENABLE_RESOURCE_USAGE) && ENABLE_RESOURCE_USAGE",
     "debuggableTypes": ["web-page"],
-    "targetTypes": ["page"],
+    "targetTypes": ["frame", "page"],
     "types": [
         {
             "id": "ThreadInfo",
@@ -22,7 +22,7 @@
             "properties": [
                 { "name": "timestamp", "type": "number" },
                 { "name": "usage", "type": "number", "description": "Percent of total cpu usage. If there are multiple cores the usage may be greater than 100%." },
-                { "name": "threads", "type": "array", "items": { "$ref": "ThreadInfo" }, "optional": true, "description": "Per-thread CPU usage information. Does not include the main thread." }
+                { "name": "threads", "type": "array", "items": { "$ref": "ThreadInfo" }, "optional": true, "description": "Per-thread CPU usage information, including the main thread." }
             ]
         }
     ],

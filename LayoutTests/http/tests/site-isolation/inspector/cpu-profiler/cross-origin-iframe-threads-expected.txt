@@ -1,0 +1,35 @@
+Test that under Site Isolation, CPUProfiler tracking on a cross-origin iframe's frame target samples the iframe's process, and tracking on the page target still samples only the page's process.
+
+
+
+== Running test suite: SiteIsolation.CPUProfiler.CrossOriginIframeThreads
+-- Running test case: SiteIsolation.CPUProfiler.CrossOriginIframeThreads.Setup
+PASS: Should find the same-origin iframe target.
+PASS: Should find the cross-origin iframe target.
+PASS: The same-origin iframe target should be in the main frame's process.
+PASS: The cross-origin iframe target should be in another process.
+PASS: Found the worker target of each iframe.
+PASS: The page target should have the CPUProfiler domain.
+PASS: Every frame target should have the CPUProfiler domain.
+PASS: The same-origin iframe's worker target should not have the CPUProfiler domain.
+PASS: The cross-origin iframe's worker target should not have the CPUProfiler domain.
+
+-- Running test case: SiteIsolation.CPUProfiler.CrossOriginIframeThreads.CrossOriginFrameTarget
+PASS: The cross-origin iframe target sent trackingStart, two trackingUpdate events and trackingComplete.
+PASS: The cross-origin iframe target should send one trackingStart.
+PASS: The cross-origin iframe target should send one trackingComplete.
+PASS: Only the cross-origin iframe target should send CPUProfiler events.
+PASS: The update should have a usage.
+PASS: The update should have one main thread.
+PASS: The update should include the thread of the cross-origin iframe's worker.
+PASS: The update should not include the thread of the same-origin iframe's worker.
+
+-- Running test case: SiteIsolation.CPUProfiler.CrossOriginIframeThreads.PageTarget
+PASS: The page target sent trackingStart, two trackingUpdate events and trackingComplete.
+PASS: The page target should send one trackingStart.
+PASS: The page target should send one trackingComplete.
+PASS: Only the page target should send CPUProfiler events.
+PASS: The update should have one main thread.
+PASS: The update should include the thread of the same-origin iframe's worker.
+PASS: The update should not include the thread of the cross-origin iframe's worker.
+

@@ -40,7 +40,7 @@ using namespace Inspector;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(InspectorCPUProfilerAgent);
 
-InspectorCPUProfilerAgent::InspectorCPUProfilerAgent(PageAgentContext& context)
+InspectorCPUProfilerAgent::InspectorCPUProfilerAgent(WebAgentContext& context)
     : InspectorAgentBase("CPUProfiler"_s, context)
     , m_frontendDispatcher(makeUniqueRef<Inspector::CPUProfilerFrontendDispatcher>(context.frontendRouter))
     , m_backendDispatcher(Inspector::CPUProfilerBackendDispatcher::create(protect(context.backendDispatcher), this))
