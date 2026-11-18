@@ -1,0 +1,164 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="stylesheet" href="resources/linked-stylesheet.css">
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="../debugger/resources/site-isolation-debugger-test-utilities.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.CSS.StyleSheetLookup.FrameTarget");
+
+    const green = "rgb(0, 128, 0)";
+    const frameResourcePath = "/site-isolation/inspector/css/resources/frame-with-linked-stylesheet.html";
+
+    let mainFrame = null;
+    let mainFrameTarget = null;
+    let sameSiteFrame = null;
+    let sameSiteFrameTarget = null;
+    let crossSiteFrame = null;
+    let crossSiteFrameTarget = null;
+
+    async function waitFor(predicate) {
+        for (let i = 0; i < 50; ++i) {
+            let value = predicate();
+            if (value)
+                return value;
+            await Promise.delay(100);
+        }
+        return null;
+    }
+
+    function styleSheetURL(frame) {
+        return new URL(frame === mainFrame ? "resources/linked-stylesheet.css" : "linked-stylesheet.css", frame.url).href;
+    }
+
+    function styleSheetsForURL(url) {
+        return WI.cssManager.styleSheets.filter((styleSheet) => styleSheet.url === url);
+    }
+
+    async function backgroundColor(frame) {
+        let {result} = await frame.pageExecutionContext.target.RuntimeAgent.evaluate.invoke({expression: `getComputedStyle(document.getElementById("target")).backgroundColor`, objectGroup: "test", returnByValue: true});
+        return result.value;
+    }
+
+    async function findFrame(origin) {
+        let target = await waitForFrameTargetForURLContaining(origin + frameResourcePath);
+        let frame = await waitFor(() => WI.networkManager.frames.find((frame) => frame.url === origin + frameResourcePath && frame.pageExecutionContext?.target === target));
+        return {frame, target};
+    }
+
+    // Does what the Sources editor does: change the resource's content, which CSSManager applies to the matching style sheet.
+    async function editResourceAndWaitForColor(frame) {
+        let resource = frame.resourcesForURL(styleSheetURL(frame)).firstValue;
+        await resource.requestContent();
+        resource.editableRevision.updateRevisionContent(`#target { background-color: green; }`);
+
+        let color = null;
+        for (let i = 0; i < 30; ++i) {
+            color = await backgroundColor(frame);
+            if (color === green)
+                break;
+            await Promise.delay(100);
+        }
+        return color;
+    }
+
+    function preferredInspectorStyleSheet(frame) {
+        return Promise.race([
+            new Promise((resolve) => WI.cssManager.preferredInspectorStyleSheetForFrame(frame, resolve)),
+            Promise.delay(3000).then(() => null),
+        ]);
+    }
+
+    function addEditTestCase(name, label, getFrame, getExpectedTarget) {
+        suite.addTestCase({
+            name: `SiteIsolation.CSS.StyleSheetLookup.FrameTarget.Edit${name}Resource`,
+            description: `Editing the ${label}'s style sheet resource should change that frame, through the style sheet of the target that reports it.`,
+            async test() {
+                let frame = getFrame();
+                InspectorTest.expectEqual(await backgroundColor(frame), "rgb(255, 0, 0)", `The ${label}'s #target should start red.`);
+                InspectorTest.expectEqual(await editResourceAndWaitForColor(frame), green, `The ${label}'s #target should become green.`);
+
+                let styleSheets = styleSheetsForURL(styleSheetURL(frame));
+                InspectorTest.expectEqual(styleSheets.length, 1, `There should be one style sheet object for the ${label}'s style sheet.`);
+
+                let expectedTarget = getExpectedTarget();
+                if (expectedTarget)
+                    InspectorTest.expectEqual(styleSheets[0]?.owningTarget, expectedTarget, `The ${label}'s style sheet should be owned by its frame target.`);
+                else
+                    InspectorTest.expectFalse(styleSheets[0]?.owningTarget instanceof WI.FrameTarget, `The ${label}'s style sheet should not be owned by a frame target.`);
+            }
+        });
+    }
+
+    function addInspectorStyleSheetTestCase(name, label, getFrame, getExpectedTarget) {
+        suite.addTestCase({
+            name: `SiteIsolation.CSS.StyleSheetLookup.FrameTarget.${name}InspectorStyleSheet`,
+            description: `Creating an Inspector Style Sheet for the ${label} without a target, as the Sources sidebar does, should use the target that reports the frame's style sheets.`,
+            async test() {
+                let frame = getFrame();
+                let styleSheet = await preferredInspectorStyleSheet(frame);
+                InspectorTest.expectNotNull(styleSheet, `Should create an Inspector Style Sheet for the ${label}.`);
+                if (!styleSheet)
+                    return;
+
+                InspectorTest.expectThat(styleSheet.isInspectorStyleSheet(), "The style sheet should be an Inspector Style Sheet.");
+                InspectorTest.expectEqual(styleSheet.parentFrame, frame, `The style sheet should belong to the ${label}.`);
+
+                let expectedTarget = getExpectedTarget();
+                if (!expectedTarget) {
+                    InspectorTest.expectFalse(styleSheet.owningTarget instanceof WI.FrameTarget, "The style sheet should not be owned by a frame target.");
+                    return;
+                }
+
+                InspectorTest.expectEqual(styleSheet.owningTarget, expectedTarget, `The style sheet should be owned by the ${label}'s target.`);
+                let {text} = await expectedTarget.CSSAgent.getStyleSheetText(styleSheet.id);
+                InspectorTest.expectEqual(text, "", `The ${label}'s target should know the new, empty style sheet.`);
+            }
+        });
+    }
+
+    suite.addTestCase({
+        name: "SiteIsolation.CSS.StyleSheetLookup.FrameTarget.Setup",
+        description: "Find the frames, their frame targets and their linked style sheet resources.",
+        async test() {
+            mainFrame = WI.networkManager.mainFrame;
+            mainFrameTarget = await waitFor(() => mainFrame.pageExecutionContext?.target instanceof WI.FrameTarget && mainFrame.pageExecutionContext.target);
+            InspectorTest.expectNotNull(mainFrameTarget, "Should find the main frame's target.");
+
+            ({frame: sameSiteFrame, target: sameSiteFrameTarget} = await findFrame("http://127.0.0.1:8080"));
+            InspectorTest.expectNotNull(sameSiteFrame, "Should find the same-site, cross-origin frame, with its frame target's execution context.");
+            InspectorTest.expectEqual(sameSiteFrameTarget?.processIdentifier, mainFrameTarget.processIdentifier, "The same-site frame should be in the main frame's process.");
+
+            ({frame: crossSiteFrame, target: crossSiteFrameTarget} = await findFrame("http://localhost:8000"));
+            InspectorTest.expectNotNull(crossSiteFrame, "Should find the cross-site frame, with its frame target's execution context.");
+            InspectorTest.expectNotEqual(crossSiteFrameTarget?.processIdentifier, mainFrameTarget.processIdentifier, "The cross-site frame should be in another process than the main frame.");
+
+            for (let [frame, label] of [[mainFrame, "main frame"], [sameSiteFrame, "same-site frame"], [crossSiteFrame, "cross-site frame"]]) {
+                let resource = await waitFor(() => frame && frame.resourcesForURL(styleSheetURL(frame)).firstValue);
+                InspectorTest.expectNotNull(resource, `Should find the ${label}'s style sheet resource.`);
+            }
+        }
+    });
+
+    addEditTestCase("MainFrame", "main frame", () => mainFrame, () => null);
+    addEditTestCase("SameSiteFrame", "same-site frame", () => sameSiteFrame, () => null);
+    addEditTestCase("CrossSiteFrame", "cross-site frame", () => crossSiteFrame, () => crossSiteFrameTarget);
+
+    addInspectorStyleSheetTestCase("MainFrame", "main frame", () => mainFrame, () => null);
+    addInspectorStyleSheetTestCase("SameSiteFrame", "same-site frame", () => sameSiteFrame, () => null);
+    addInspectorStyleSheetTestCase("CrossSiteFrame", "cross-site frame", () => crossSiteFrame, () => crossSiteFrameTarget);
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests that style sheet lookups for Sources edits and Inspector Style Sheets use the target that reports the frame's style sheets under Site Isolation.</p>
+<div id="target">Main frame.</div>
+<iframe src="http://127.0.0.1:8080/site-isolation/inspector/css/resources/frame-with-linked-stylesheet.html"></iframe>
+<iframe src="http://localhost:8000/site-isolation/inspector/css/resources/frame-with-linked-stylesheet.html"></iframe>
+</body>
+</html>

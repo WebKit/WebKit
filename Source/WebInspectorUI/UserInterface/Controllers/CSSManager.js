@@ -487,6 +487,8 @@ WI.CSSManager = class CSSManager extends WI.Object
             }
         }
 
+        target ||= this._frameTargetReportingStyleSheetsForFrame(frame);
+
         let agentTarget = target || WI.assumingMainTarget();
         agentTarget.CSSAgent.createStyleSheet(frame.id, function(error, styleSheetId) {
             if (error || !styleSheetId) {
@@ -778,10 +780,10 @@ WI.CSSManager = class CSSManager extends WI.Object
         if (styleSheet)
             callback(styleSheet);
         else
-            this._fetchInfoForAllStyleSheets(styleSheetsFetched.bind(this));
+            this._fetchInfoForAllStyleSheets(styleSheetsFetched.bind(this), this._frameTargetReportingStyleSheetsForFrame(frame));
     }
 
-    _fetchInfoForAllStyleSheets(callback)
+    _fetchInfoForAllStyleSheets(callback, target)
     {
         console.assert(typeof callback === "function");
 
@@ -798,7 +800,7 @@ WI.CSSManager = class CSSManager extends WI.Object
                 let parentFrame = WI.networkManager.frameForIdentifier(styleSheetInfo.frameId);
                 let origin = WI.CSSManager.protocolStyleSheetOriginToEnum(styleSheetInfo.origin);
 
-                let styleSheet = this.styleSheetForIdentifier(styleSheetInfo.styleSheetId);
+                let styleSheet = this.styleSheetForIdentifier(styleSheetInfo.styleSheetId, target);
                 styleSheet.updateInfo(styleSheetInfo.sourceURL, parentFrame, origin, styleSheetInfo.isInline, styleSheetInfo.startLine, styleSheetInfo.startColumn);
 
                 let key = this._frameURLMapKey(parentFrame, styleSheetInfo.sourceURL);
@@ -808,8 +810,27 @@ WI.CSSManager = class CSSManager extends WI.Object
             callback();
         }
 
-        let target = WI.assumingMainTarget();
-        target.CSSAgent.getAllStyleSheets(processStyleSheets.bind(this));
+        let agentTarget = target || WI.assumingMainTarget();
+        agentTarget.CSSAgent.getAllStyleSheets(processStyleSheets.bind(this));
+    }
+
+    // FIXME: <https://webkit.org/b/320938> Until frame targets report all local content, the page target reports
+    // the style sheets of every frame in the main frame's process. Only a frame in another process needs its frame target.
+    _frameTargetReportingStyleSheetsForFrame(frame)
+    {
+        if (frame.isMainFrame())
+            return null;
+
+        let target = frame.pageExecutionContext?.target;
+        let mainFrameTarget = WI.networkManager.mainFrame?.pageExecutionContext?.target;
+        if (!(target instanceof WI.FrameTarget) || !(mainFrameTarget instanceof WI.FrameTarget))
+            return null;
+
+        // Compare with the main frame's target: a frame target never changes process, but the page target can.
+        if (target.processIdentifier === mainFrameTarget.processIdentifier)
+            return null;
+
+        return target;
     }
 
     _resourceContentDidChange(event)
