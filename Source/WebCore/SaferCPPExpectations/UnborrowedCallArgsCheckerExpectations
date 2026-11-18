@@ -216,7 +216,6 @@ platform/graphics/FloatPointGraph.cpp
 platform/graphics/Font.cpp
 platform/graphics/FontPaletteMix.cpp
 platform/graphics/FontSelectionAlgorithm.cpp
-platform/graphics/GraphicsContext.cpp
 platform/graphics/GraphicsContextGL.cpp
 platform/graphics/GraphicsLayer.cpp
 platform/graphics/MeshGradient.cpp
