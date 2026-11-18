@@ -127,6 +127,10 @@ public:
     void setOutputDeviceId(const String&) final;
     void setOutputDeviceIdOnRenderer(AVSampleBufferAudioRenderer *);
 #endif
+#if HAVE(AVCAPTIONTRANSCRIBER)
+    void setCaptionAudioObserver(CaptionAudioObserver&&) final;
+    CMTimebaseRef captionTimebase() const final;
+#endif
 
     // VideoInterface
     void setIsVisible(bool);
@@ -425,6 +429,11 @@ private:
 #endif
 #endif
     bool m_keyframeNeeded { true };
+
+#if HAVE(AVCAPTIONTRANSCRIBER)
+    CaptionAudioObserver m_captionAudioObserver;
+    std::optional<TrackIdentifier> m_captionAudioTrackId;
+#endif
 };
 
 } // namespace WebCore

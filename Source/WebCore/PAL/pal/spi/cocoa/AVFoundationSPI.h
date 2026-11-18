@@ -318,6 +318,84 @@ NS_ASSUME_NONNULL_END
 #import <CoreMedia/CMSampleBuffer.h>
 #import <CoreMedia/CMSync.h>
 
+#if HAVE(AVCAPTIONTRANSCRIBER) && !__has_include(<AVFoundation/AVCaptionTranscriber.h>)
+
+#if __has_include(<AVFoundation/AVCaptionGroup.h>)
+#import <AVFoundation/AVCaptionGroup.h>
+#endif
+
+NS_HEADER_AUDIT_BEGIN(nullability, sendability)
+
+#if !__has_include(<AVFoundation/AVCaptionGroup.h>)
+@interface AVCaptionGroup : NSObject
+@property (nonatomic, readonly) CMTimeRange timeRange;
+@end
+#endif
+
+@protocol AVCaptionTranscriberDelegate;
+
+typedef NS_ENUM(NSInteger, AVCaptionGenerationAvailability) {
+    AVCaptionGenerationAvailabilityAvailable = 0,
+    AVCaptionGenerationAvailabilityAssetsNotInstalled = 1,
+    AVCaptionGenerationAvailabilityUnsupported = 2,
+    AVCaptionGenerationAvailabilityTimedOut = 3,
+};
+
+typedef NS_ENUM(NSInteger, AVCaptionGenerationStatus) {
+    AVCaptionGenerationStatusRunning = 0,
+    AVCaptionGenerationStatusCompleted = 1,
+    AVCaptionGenerationStatusFailed = 2,
+    AVCaptionGenerationStatusCancelled = 3,
+};
+
+typedef NS_OPTIONS(NSUInteger, AVCaptionTranscriberContentTypes) {
+    AVCaptionTranscriberContentTypeSpeech = 1UL << 0,
+    AVCaptionTranscriberContentTypeSoundDescriptions = 1UL << 1,
+};
+
+typedef NS_OPTIONS(NSUInteger, AVCaptionTranscriberOutputFlags) {
+    AVCaptionTranscriberOutputFlagSequenceWasRestarted = 1UL << 0,
+};
+
+@interface AVCaptionTranscriberConfiguration : NSObject <NSCopying>
+- (instancetype)initWithSourceLocale:(NSLocale *)sourceLocale targetLocale:(NSLocale *)targetLocale;
+@property (nonatomic, copy) NSLocale *sourceLocale;
+@property (nonatomic, copy) NSLocale *targetLocale;
+@property (nonatomic) AVCaptionTranscriberContentTypes contentTypes;
+@property (nonatomic) double minimumWordConfidence;
+@property (nonatomic, retain, nullable) __attribute__((NSObject)) CMTimebaseRef timebase;
+@end
+
+@interface AVCaptionTranscriber : NSObject
++ (void)getAvailabilityForConfiguration:(AVCaptionTranscriberConfiguration *)configuration completionHandler:(void (^)(AVCaptionGenerationAvailability availability))completionHandler;
++ (void)getPreferredAudioFormatForConfiguration:(AVCaptionTranscriberConfiguration *)configuration completionHandler:(void (^)(CMAudioFormatDescriptionRef _Nullable preferredAudioFormat))completionHandler;
++ (NSProgress *)downloadAssetsForConfiguration:(AVCaptionTranscriberConfiguration *)configuration completionHandler:(void (^)(NSError * _Nullable error))completionHandler;
+- (nullable instancetype)initWithConfiguration:(AVCaptionTranscriberConfiguration *)configuration error:(NSError * _Nullable * _Nullable)outError;
+@property (nonatomic, readonly, copy) AVCaptionTranscriberConfiguration *configuration;
+@property (nonatomic, readonly, getter=isReadyForMoreInput) BOOL readyForMoreInput;
+@property (nonatomic, readonly) AVCaptionGenerationStatus status;
+@property (nonatomic, readonly, nullable) NSError *error;
+- (BOOL)appendSampleBuffer:(CMSampleBufferRef)sampleBuffer error:(NSError * _Nullable * _Nullable)outError;
+- (void)reset;
+- (void)markAsFinished;
+- (void)cancel;
+- (nullable AVCaptionGroup *)nextCaptionGroup;
+- (nullable AVCaptionGroup *)nextCaptionGroupWithFlags:(nullable AVCaptionTranscriberOutputFlags *)outFlags;
+- (void)setDelegate:(nullable id<AVCaptionTranscriberDelegate>)delegate queue:(nullable dispatch_queue_t)queue;
+@end
+
+@protocol AVCaptionTranscriberDelegate <NSObject>
+- (void)captionTranscriberDidOutputCaptionGroups:(AVCaptionTranscriber *)transcriber;
+- (void)captionTranscriber:(AVCaptionTranscriber *)transcriber didFinishWithError:(nullable NSError *)error;
+@end
+
+@interface AVCaptionGroup (AVCaptionTranscriberFallback)
+- (NSArray<NSAttributedString *> *)attributedStrings;
+@end
+
+NS_HEADER_AUDIT_END(nullability, sendability)
+#endif
+
 #if __has_include(<AVFoundation/AVSampleBufferDisplayLayer_Private.h>)
 #import <AVFoundation/AVSampleBufferDisplayLayer_Private.h>
 #elif __has_include(<AVFoundation/AVSampleBufferDisplayLayer.h>)

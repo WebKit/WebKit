@@ -1,0 +1,105 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ MediaSourceEnabled=true MediaGeneratedCaptionsEnabled=true allowTestOnlyIPC=true ] -->
+<html>
+<head>
+    <title>media-source-generated-captions</title>
+    <script src="media-source-loader.js"></script>
+    <script src="../video-test.js"></script>
+    <script>
+    var loader;
+    var source;
+    var sourceBuffer;
+    var track;
+    var nowPlaying;
+
+    function loaderPromise(loader) {
+        return new Promise((resolve, reject) => {
+            loader.onload = resolve;
+            loader.onerror = reject;
+        });
+    }
+
+    async function appendSegment(index) {
+        sourceBuffer.appendBuffer(loader.mediaSegment(index));
+        await waitFor(sourceBuffer, 'update', true);
+    }
+
+    window.addEventListener('load', async event => {
+        try {
+            findMediaElement();
+
+            if (!window.internals) {
+                failTest("This test requires the Internals API");
+                return;
+            }
+
+            await internals.setMockCaptionTranscriptionEnabled(true);
+
+            loader = new MediaSourceLoader('content/test-48khz-manifest.json');
+            await loaderPromise(loader);
+
+            waitFor(video, 'error').then(failTest);
+
+            source = new MediaSource();
+            const sourceOpen = waitFor(source, 'sourceopen');
+            run('video.src = URL.createObjectURL(source)');
+            await sourceOpen;
+
+            run('sourceBuffer = source.addSourceBuffer(loader.type())');
+            run('sourceBuffer.appendBuffer(loader.initSegment())');
+            await waitFor(sourceBuffer, 'update');
+
+            consoleWrite('');
+            testExpected('video.textTracks.length', 0);
+
+            const trackAdded = waitFor(video.textTracks, 'addtrack', true);
+
+            await appendSegment(0);
+            run('video.volume = 0.001');
+            run('internals.withUserGesture(() => video.play())');
+            await waitFor(video, 'playing');
+
+            nowPlaying = false;
+            for (let i = 0; i < 100 && !nowPlaying; ++i) {
+                nowPlaying = await internals.elementIsActiveNowPlayingSessionInGPUProcess(video);
+                if (!nowPlaying)
+                    await sleepFor(50);
+            }
+            testExpected('nowPlaying', true);
+
+            await trackAdded;
+            consoleWrite('');
+            testExpected('video.textTracks.length', 1);
+            track = video.textTracks[0];
+            testExpected('track.kind', 'captions');
+            testExpected('track.language', 'eng');
+
+            run('track.mode = "showing"');
+            testExpected('track.cues.length', 0);
+
+            consoleWrite('');
+            for (let i = 1; i < loader.mediaSegmentsLength(); ++i)
+                await appendSegment(i);
+            run('source.endOfStream()');
+
+            await waitForConditionOrTimeout('track.cues.length >= 2', false, 10000, 50);
+            testExpected('track.cues[0].text === "Mock caption " + track.cues[0].startTime', true);
+            testExpected('track.cues[0].endTime - track.cues[0].startTime', 1);
+            testExpected('track.cues[1].text === "Mock caption " + track.cues[1].startTime', true);
+            testExpected('track.cues[1].startTime - track.cues[0].startTime', 1);
+
+            consoleWrite('');
+            await waitForConditionOrTimeout('track.activeCues && track.activeCues.length > 0', false, 10000, 50);
+            testExpected('track.activeCues[0].text.startsWith("Mock caption ")', true);
+
+            await internals.setMockCaptionTranscriptionEnabled(false);
+            endTest();
+        } catch (e) {
+            failTest(`Caught exception: "${e}"`);
+        }
+    });
+    </script>
+</head>
+<body>
+    <video controls></video>
+</body>
+</html>

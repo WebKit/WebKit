@@ -94,6 +94,10 @@ svg/hixie/text/003.html [ Pass Failure ]
 # <rdar://problem/42627562>
 media/video-restricted-invisible-autoplay-not-allowed-source.html [ Skip ]
 media/video-restricted-invisible-autoplay-not-allowed.html [ Skip ]
+
+media/media-source/media-source-generated-captions.html [ Skip ]
+media/media-source/media-source-generated-captions-disabled.html [ Skip ]
+media/media-source/media-source-generated-captions-unknown-language.html [ Skip ]
 # <rdar://problem/42736213>
 displaylists/layer-dispay-list.html [ Failure ]
 # rdar://problem/52515114 REGRESSION: CrashTracer: com.apple.WebKit.WebContent.Development at com.apple.Photos: +[AVAssetCollection(Utilities) fragmentParamsFromURL:]

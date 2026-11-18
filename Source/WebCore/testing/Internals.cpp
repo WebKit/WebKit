@@ -6426,6 +6426,13 @@ void Internals::elementIsRemoteCommandTargetInGPUProcess(HTMLMediaElement& eleme
     });
 }
 
+void Internals::setMockCaptionTranscriptionEnabled(bool enabled, DOMPromiseDeferred<void>&& promise)
+{
+    platformStrategies()->mediaStrategy()->setMockCaptionTranscriptionEnabledInGPUProcessForTesting(enabled, [promise = WTF::move(promise)] mutable {
+        promise.resolve();
+    });
+}
+
 #endif // ENABLE(VIDEO)
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)

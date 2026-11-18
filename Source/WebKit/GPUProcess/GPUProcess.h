@@ -48,12 +48,14 @@
 #include <WebCore/ShareableBitmap.h>
 #include <WebCore/Timer.h>
 #include <pal/SessionID.h>
+#include <wtf/AbstractCanMakeCheckedPtr.h>
 #include <wtf/Function.h>
 #include <wtf/Lock.h>
 #include <wtf/Markable.h>
 #include <wtf/MemoryPressureHandler.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/NativePromise.h>
+#include <wtf/WeakHashSet.h>
 #include <wtf/WeakPtr.h>
 
 #if PLATFORM(MAC)
@@ -101,6 +103,10 @@ struct GPUProcessCreationParameters;
 struct GPUProcessSessionParameters;
 struct SharedPreferencesForWebProcess;
 
+#if HAVE(AVCAPTIONTRANSCRIBER)
+class CaptionTranscriberManager;
+#endif
+
 class GPUProcess final : public AuxiliaryProcess, public ThreadSafeRefCounted<GPUProcess> {
     WTF_MAKE_NONCOPYABLE(GPUProcess);
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED(GPUProcess);
@@ -134,6 +140,28 @@ public:
 #endif
 
     WebCore::NowPlayingManager& nowPlayingManager() LIFETIME_BOUND;
+
+    struct NowPlayingOwner {
+        WebCore::ProcessIdentifier process;
+        WebCore::PageIdentifier page;
+        WebCore::MediaSessionIdentifier session;
+
+        friend bool operator==(const NowPlayingOwner&, const NowPlayingOwner&) = default;
+    };
+
+    class NowPlayingOwnerObserver : public CanMakeWeakPtr<NowPlayingOwnerObserver>, public AbstractCanMakeCheckedPtr {
+    public:
+        virtual ~NowPlayingOwnerObserver() = default;
+        virtual void nowPlayingOwnerDidChange(const std::optional<NowPlayingOwner>&) = 0;
+    };
+    void registerForNowPlayingOwnerChanges(NowPlayingOwnerObserver&);
+    void unregisterForNowPlayingOwnerChanges(NowPlayingOwnerObserver&);
+    const std::optional<NowPlayingOwner>& nowPlayingOwner() const LIFETIME_BOUND { return m_activeNowPlayingOwner; }
+
+#if HAVE(AVCAPTIONTRANSCRIBER)
+    CaptionTranscriberManager& captionTranscriberManager() LIFETIME_BOUND;
+    CaptionTranscriberManager* captionTranscriberManagerIfExists() { return m_captionTranscriberManager.get(); }
+#endif
 
     void recomputeNowPlayingOwner();
     void setNowPlayingFallbackSession(std::optional<WebCore::QualifiedMediaSessionIdentifier>);
@@ -388,12 +416,11 @@ private:
     HashMap<PAL::SessionID, GPUSession> m_sessions;
     WebCore::Timer m_idleExitTimer;
     const std::unique_ptr<WebCore::NowPlayingManager> m_nowPlayingManager;
-    struct NowPlayingOwner {
-        WebCore::ProcessIdentifier process;
-        WebCore::PageIdentifier page;
-        WebCore::MediaSessionIdentifier session;
-    };
     std::optional<NowPlayingOwner> m_activeNowPlayingOwner;
+    WeakHashSet<NowPlayingOwnerObserver> m_nowPlayingOwnerObservers;
+#if HAVE(AVCAPTIONTRANSCRIBER)
+    std::unique_ptr<CaptionTranscriberManager> m_captionTranscriberManager;
+#endif
     std::optional<WebCore::QualifiedMediaSessionIdentifier> m_nowPlayingFallbackSession;
     std::optional<WebCore::QualifiedMediaSessionIdentifier> m_remoteCommandTarget;
     String m_applicationVisibleName;

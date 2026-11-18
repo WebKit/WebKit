@@ -992,6 +992,10 @@ private:
     void mediaPlayerVideoLayerSizeDidChange(const FloatSize& size) final { m_videoLayerSize = size; }
 
     MediaPlayerClientIdentifier mediaPlayerClientIdentifier() const final { return identifier(); }
+    std::optional<MediaSessionIdentifier> mediaPlayerMediaSessionIdentifier() const final { return mediaSession().mediaSessionIdentifier(); }
+#if HAVE(AVCAPTIONTRANSCRIBER)
+    bool mediaPlayerGeneratedCaptionsEnabled() const final;
+#endif
     SoundStageSize mediaPlayerSoundStageSize() const final { return soundStageSize(); }
 
     void pendingActionTimerFired();

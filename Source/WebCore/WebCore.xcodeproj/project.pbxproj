@@ -8179,6 +8179,8 @@
 		07A6D8491FEB700C006441DE /* DisplayCaptureManagerCocoa.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DisplayCaptureManagerCocoa.h; sourceTree = "<group>"; };
 		07AA6B69166D019500D45671 /* InbandTextTrackPrivateAVFObjC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InbandTextTrackPrivateAVFObjC.h; sourceTree = "<group>"; };
 		07AA6B6A166D019500D45671 /* InbandTextTrackPrivateAVFObjC.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = InbandTextTrackPrivateAVFObjC.mm; sourceTree = "<group>"; };
+		F608EB181590FA961077F15A /* InbandTextTrackPrivateGenerated.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InbandTextTrackPrivateGenerated.h; sourceTree = "<group>"; };
+		C014A6682DE7917B023E5DC1 /* InbandTextTrackPrivateGenerated.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InbandTextTrackPrivateGenerated.cpp; sourceTree = "<group>"; };
 		07AB996518DA3C010018771E /* RTCConfiguration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCConfiguration.h; sourceTree = "<group>"; };
 		07AB996618DA3C010018771E /* RTCConfiguration.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = RTCConfiguration.idl; sourceTree = "<group>"; };
 		07AB996718DA3C010018771E /* RTCIceServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCIceServer.h; sourceTree = "<group>"; };
@@ -41005,6 +41007,8 @@
 				070E2D0C26F15B180014AAC3 /* InbandChapterTrackPrivateAVFObjC.mm */,
 				07AA6B69166D019500D45671 /* InbandTextTrackPrivateAVFObjC.h */,
 				07AA6B6A166D019500D45671 /* InbandTextTrackPrivateAVFObjC.mm */,
+				C014A6682DE7917B023E5DC1 /* InbandTextTrackPrivateGenerated.cpp */,
+				F608EB181590FA961077F15A /* InbandTextTrackPrivateGenerated.h */,
 				414598C023C8AD78002B9CC8 /* LocalSampleBufferDisplayLayer.h */,
 				414598C123C8AD79002B9CC8 /* LocalSampleBufferDisplayLayer.mm */,
 				078E43DB1ABB6F6F001C2FA6 /* MediaPlaybackTargetPickerMac.h */,

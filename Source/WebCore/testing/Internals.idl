@@ -1468,6 +1468,7 @@ enum LayerType {
     [Conditional=VIDEO] Promise<boolean> elementIsActiveNowPlayingSessionInGPUProcess(HTMLMediaElement element);
     [Conditional=VIDEO] Promise<boolean> elementIsRemoteCommandTargetInGPUProcess(HTMLMediaElement element);
     [Conditional=VIDEO] Promise<DOMRect> hostedVideoLayerBoundsInGPUProcess(HTMLMediaElement element);
+    [Conditional=VIDEO] Promise<undefined> setMockCaptionTranscriptionEnabled(boolean enabled);
     [Conditional=VIDEO] attribute double nowPlayingUpdateInterval;
     [Conditional=VIDEO] readonly attribute unsigned long mediaSessionStatusUpdateCount;
 

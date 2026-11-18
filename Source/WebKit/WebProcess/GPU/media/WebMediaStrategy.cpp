@@ -201,6 +201,20 @@ void WebMediaStrategy::isRemoteCommandTargetSessionInGPUProcessForTesting(WebCor
     completion(false);
 }
 
+void WebMediaStrategy::setMockCaptionTranscriptionEnabledInGPUProcessForTesting(bool enabled, CompletionHandler<void()>&& completion)
+{
+#if ENABLE(GPU_PROCESS) && HAVE(AVCAPTIONTRANSCRIBER)
+    if (m_useGPUProcess) {
+        protect(WebProcess::singleton().ensureGPUProcessConnection())->connection().sendWithAsyncReply(Messages::GPUConnectionToWebProcess::SetMockCaptionTranscriptionEnabledForTesting(enabled), WTF::move(completion), 0);
+        return;
+    }
+#else
+    UNUSED_PARAM(enabled);
+#endif
+
+    completion();
+}
+
 bool WebMediaStrategy::postNowPlayingRemoteControlCommandToGPUProcessForTesting(WebCore::PlatformMediaSession::RemoteControlCommandType type, const WebCore::PlatformMediaSession::RemoteCommandArgument& argument)
 {
 #if ENABLE(GPU_PROCESS)

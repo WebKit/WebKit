@@ -186,6 +186,7 @@ public:
 
 #if ENABLE(VIDEO)
     RemoteAudioVideoRendererProxyManager& remoteAudioVideoRendererProxyManager();
+    RemoteAudioVideoRendererProxyManager* remoteAudioVideoRendererProxyManagerIfExists() { return m_remoteAudioVideoRendererProxyManager.get(); }
     void canDecodeExtendedType(WebCore::PlatformMediaDecodingType, WebCore::ContentType, CompletionHandler<void(bool)>&&) const;
 #endif
 
@@ -328,6 +329,9 @@ private:
     void nowPlayingClientDidClose();
     void isActiveNowPlayingSessionForTesting(WebCore::MediaSessionIdentifier, CompletionHandler<void(bool)>&&);
     void isRemoteCommandTargetSessionForTesting(WebCore::MediaSessionIdentifier, CompletionHandler<void(bool)>&&);
+#if HAVE(AVCAPTIONTRANSCRIBER)
+    void setMockCaptionTranscriptionEnabledForTesting(bool, CompletionHandler<void()>&&);
+#endif
     void postNowPlayingRemoteControlCommandForTesting(WebCore::PlatformMediaSessionRemoteControlCommandType, const WebCore::PlatformMediaSessionRemoteCommandArgument&);
 #if PLATFORM(COCOA) && ENABLE(VIDEO)
     void hostedVideoLayerBoundsForTesting(WebCore::MediaPlayerClientIdentifier, CompletionHandler<void(std::optional<WebCore::FloatRect>)>&&);

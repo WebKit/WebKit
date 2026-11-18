@@ -67,6 +67,7 @@ public:
 
     virtual void isActiveNowPlayingSessionInGPUProcessForTesting(MediaSessionIdentifier, CompletionHandler<void(bool)>&&);
     virtual void isRemoteCommandTargetSessionInGPUProcessForTesting(MediaSessionIdentifier, CompletionHandler<void(bool)>&&);
+    virtual void setMockCaptionTranscriptionEnabledInGPUProcessForTesting(bool, CompletionHandler<void()>&&);
     virtual bool postNowPlayingRemoteControlCommandToGPUProcessForTesting(PlatformMediaSession::RemoteControlCommandType, const PlatformMediaSession::RemoteCommandArgument&);
 #if ENABLE(VIDEO)
     virtual void hostedVideoLayerBoundsInGPUProcessForTesting(HTMLMediaElementIdentifier, CompletionHandler<void(std::optional<FloatRect>)>&&);

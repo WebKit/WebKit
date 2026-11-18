@@ -6353,6 +6353,8 @@
 		51C0C9791DDD78540032CAD3 /* _WKLinkIconParameters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKLinkIconParameters.h; sourceTree = "<group>"; };
 		51C0C97A1DDD78540032CAD3 /* _WKLinkIconParameters.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = _WKLinkIconParameters.mm; sourceTree = "<group>"; };
 		51C0C97B1DDD78540032CAD3 /* _WKLinkIconParametersInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKLinkIconParametersInternal.h; sourceTree = "<group>"; };
+		6A2107CAFD56071B068B36C4 /* CaptionTranscriberManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CaptionTranscriberManager.h; sourceTree = "<group>"; };
+		673FD61E584CCB129AC4C8A3 /* CaptionTranscriberManager.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = CaptionTranscriberManager.mm; sourceTree = "<group>"; };
 		51C5B7D62E8412A7005C9555 /* VideoReceiverEndpointManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VideoReceiverEndpointManager.h; sourceTree = "<group>"; };
 		51C5B7D72E8412A7005C9555 /* VideoReceiverEndpointManager.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = VideoReceiverEndpointManager.mm; sourceTree = "<group>"; };
 		51C8E19B1F21617200BF731B /* WebIconDatabase.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebIconDatabase.h; sourceTree = "<group>"; };
@@ -11983,6 +11985,8 @@
 		1D0ECEA923FC84BB00D172F6 /* cocoa */ = {
 			isa = PBXGroup;
 			children = (
+				6A2107CAFD56071B068B36C4 /* CaptionTranscriberManager.h */,
+				673FD61E584CCB129AC4C8A3 /* CaptionTranscriberManager.mm */,
 				1D0ECEAA23FC858400D172F6 /* RemoteMediaPlayerProxyCocoa.mm */,
 				51C5B7D62E8412A7005C9555 /* VideoReceiverEndpointManager.h */,
 				51C5B7D72E8412A7005C9555 /* VideoReceiverEndpointManager.mm */,
