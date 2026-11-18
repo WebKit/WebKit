@@ -6116,8 +6116,6 @@ fast/text/install-font-style-recalc.html [ Failure ]
 
 # These tests have been timing out since their import.
 
-webkit.org/b/239533 [ Debug ] editing/inserting/insert-list-user-select-none-crash.html [ Skip ]
-
 # Incorrect expectation (test leads to timeout)
 webkit.org/b/246584 fast/text/scroll-text-overflow-ellipsis.html [ Skip ]
 
