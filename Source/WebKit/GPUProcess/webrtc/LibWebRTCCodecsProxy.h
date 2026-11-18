@@ -90,10 +90,9 @@ private:
     void createDecoder(VideoDecoderIdentifier, WebCore::VideoCodecType, const String& codecString, bool useRemoteFrames, bool enableAdditionalLogging, std::optional<WebCore::PlatformVideoColorSpace>&& colorSpaceOverride, WebCore::VideoFrameRotation, bool isMirrored, CompletionHandler<void(bool)>&&);
     void releaseDecoder(VideoDecoderIdentifier);
     void flushDecoder(VideoDecoderIdentifier, CompletionHandler<void()>&&);
-    void setDecoderFormatDescription(VideoDecoderIdentifier, std::span<const uint8_t>, RefPtr<WebCore::VideoInfo>&&, uint16_t width, uint16_t height);
+    void setDecoderVideoInfo(VideoDecoderIdentifier, Ref<WebCore::VideoInfo>&&, CompletionHandler<void(bool)>&&);
     void setDecoderColorSpaceOverride(VideoDecoderIdentifier, std::optional<WebCore::PlatformVideoColorSpace>&&);
-    void decodeFrame(VideoDecoderIdentifier, int64_t timeStamp, std::span<const uint8_t>, RefPtr<WebCore::VideoInfo>&&, CompletionHandler<void(bool)>&&);
-    void setFrameSize(VideoDecoderIdentifier, uint16_t width, uint16_t height);
+    void decodeFrame(VideoDecoderIdentifier, int64_t timeStamp, std::span<const uint8_t>, CompletionHandler<void(bool)>&&);
 
     void createEncoder(VideoEncoderIdentifier, WebCore::VideoCodecType, const String& codecString, const Vector<std::pair<String, String>>&, bool useLowLatency, bool useAnnexB, WebCore::VideoEncoderScalabilityMode, CompletionHandler<void(bool)>&&);
     void releaseEncoder(VideoEncoderIdentifier);

@@ -177,7 +177,25 @@ struct VideoSpecificInfoData {
     std::optional<ImmersiveVideoMetadata> immersiveVideoMetadata { };
 #endif
 
-    bool operator==(const VideoSpecificInfoData&) const = default;
+    bool operator==(const VideoSpecificInfoData& other) const
+    {
+#if PLATFORM(VISION)
+        if (immersiveVideoMetadata != other.immersiveVideoMetadata)
+            return false;
+#endif
+        return size == other.size
+            && displaySize == other.displaySize
+            && bitDepth == other.bitDepth
+            && colorSpace == other.colorSpace
+            && fieldCount == other.fieldCount
+            && fieldDetail == other.fieldDetail
+            && std::ranges::equal(extensionAtoms, other.extensionAtoms, [](auto& atom, auto& otherAtom) {
+                return atom.first == otherAtom.first && atom.second.get() == otherAtom.second.get();
+            })
+            && reorderQueueMaxSize == other.reorderQueueMaxSize
+            && pixelFormat == other.pixelFormat
+            && hasSeparateAlphaStream == other.hasSeparateAlphaStream;
+    }
 };
 
 using VideoInfoData = std::pair<TrackInfoData, VideoSpecificInfoData>;

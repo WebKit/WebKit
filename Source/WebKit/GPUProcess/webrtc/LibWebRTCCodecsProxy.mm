@@ -257,11 +257,16 @@ void LibWebRTCCodecsProxy::flushDecoder(VideoDecoderIdentifier identifier, Compl
     });
 }
 
-void LibWebRTCCodecsProxy::setDecoderFormatDescription(VideoDecoderIdentifier identifier, std::span<const uint8_t> data, RefPtr<WebCore::VideoInfo>&& videoInfo, uint16_t width, uint16_t height)
+void LibWebRTCCodecsProxy::setDecoderVideoInfo(VideoDecoderIdentifier identifier, Ref<WebCore::VideoInfo>&& videoInfo, CompletionHandler<void(bool)>&& callback)
 {
-    doDecoderTask(identifier, [&](auto& decoder) {
-        decoder.webrtcDecoder->setFormat(data, width, height, WTF::move(videoInfo));
-    });
+    assertIsCurrent(workQueue());
+    auto iterator = m_decoders.find(identifier);
+    if (iterator == m_decoders.end()) {
+        callback(false);
+        return;
+    }
+
+    callback(iterator->value.webrtcDecoder->setVideoInfo(WTF::move(videoInfo)));
 }
 
 void LibWebRTCCodecsProxy::setDecoderColorSpaceOverride(VideoDecoderIdentifier identifier, std::optional<WebCore::PlatformVideoColorSpace>&& colorSpaceOverride)
@@ -271,24 +276,17 @@ void LibWebRTCCodecsProxy::setDecoderColorSpaceOverride(VideoDecoderIdentifier i
     });
 }
 
-void LibWebRTCCodecsProxy::decodeFrame(VideoDecoderIdentifier identifier, int64_t timeStamp, std::span<const uint8_t> data, RefPtr<WebCore::VideoInfo>&& videoInfo, CompletionHandler<void(bool)>&& callback) WTF_IGNORES_THREAD_SAFETY_ANALYSIS
+void LibWebRTCCodecsProxy::decodeFrame(VideoDecoderIdentifier identifier, int64_t timeStamp, std::span<const uint8_t> data, CompletionHandler<void(bool)>&& callback) WTF_IGNORES_THREAD_SAFETY_ANALYSIS
 {
-    doDecoderTask(identifier, [identifier, connection = Ref { m_connection }, timeStamp, data, videoInfo = WTF::move(videoInfo), callback = WTF::move(callback)] (auto& decoder) mutable {
+    doDecoderTask(identifier, [identifier, connection = Ref { m_connection }, timeStamp, data, callback = WTF::move(callback)](auto& decoder) mutable {
         if (decoder.frameRateMonitor)
             decoder.frameRateMonitor->update();
-        if (decoder.webrtcDecoder->decodeFrame(timeStamp, data, WTF::move(videoInfo))) {
+        if (decoder.webrtcDecoder->decodeFrame(timeStamp, data)) {
             connection->send(Messages::LibWebRTCCodecs::FailedDecoding { identifier }, 0);
             callback(false);
             return;
         }
         decoder.decodingCallbacks.append(WTF::move(callback));
-    });
-}
-
-void LibWebRTCCodecsProxy::setFrameSize(VideoDecoderIdentifier identifier, uint16_t width, uint16_t height) WTF_IGNORES_THREAD_SAFETY_ANALYSIS
-{
-    doDecoderTask(identifier, [&](auto& decoder) {
-        decoder.webrtcDecoder->setFrameSize(width, height);
     });
 }
 
