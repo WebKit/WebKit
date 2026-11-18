@@ -469,6 +469,7 @@ https://www.ralphlauren.com/
     ShouldIgnoreAriaForFastPathContentObservationCheckQuirk
 https://www.reddit.com/
     RequiresUserGestureToPauseInPictureInPictureQuirk
+    ShouldDisableElementFullscreenQuirk
     ShouldDisableScrollAnchoringQuirk
         documentSelector: #sink-it-back-to-top
 https://www.scribd.com/

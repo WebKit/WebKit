@@ -1126,6 +1126,13 @@
             "behaviors": [{ "id": "ShouldDisableScrollAnchoringQuirk", "documentSelector": "#sink-it-back-to-top" }]
         },
         {
+            "bugs": ["rdar://192757830"],
+            "matches": ["*://*.reddit.com/*"],
+            "available": "iOS",
+            "environment": "SmallScreen",
+            "behaviors": [{ "id": "ShouldDisableElementFullscreenQuirk" }]
+        },
+        {
             "bugs": ["rdar://61733101"],
             "matches": ["*://*.roblox.com/*"],
             "behaviors": [{ "id": "NeedsIPadMiniUserAgentQuirk" }]
