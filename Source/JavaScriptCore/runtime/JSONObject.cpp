@@ -1433,6 +1433,51 @@ static ALWAYS_INLINE void copyEarlierText(CharType* buffer, unsigned destination
 #endif
 }
 
+static ALWAYS_INLINE void appendEscapedLatin1JSONStringContent(std::span<Latin1Character>& output, std::span<const Latin1Character> input)
+{
+#if JSON_STRING_COPY_HAS_SIMD
+    constexpr size_t stride = SIMD::stride<Latin1Character>;
+    constexpr unsigned bitsPerLane = SIMD::bitsPerLaneInMask<uint8_t>;
+    constexpr auto quoteMask = SIMD::splat<uint8_t>('"');
+    constexpr auto escapeMask = SIMD::splat<uint8_t>('\\');
+    constexpr auto controlMask = SIMD::splat<uint8_t>(' ');
+    const Latin1Character* cursor = input.data();
+    const Latin1Character* end = cursor + input.size();
+    Latin1Character* out = output.data();
+    // Each escape re-stores the rest of its block from the input, so a block needs one more block of input behind it.
+    while (static_cast<size_t>(end - cursor) >= 2 * stride) {
+        auto chunk = SIMD::load(std::bit_cast<const uint8_t*>(cursor));
+        SIMD::store(chunk, std::bit_cast<uint8_t*>(out));
+        uint64_t mask = SIMD::laneMask(SIMD::bitOr(SIMD::equal(chunk, quoteMask), SIMD::equal(chunk, escapeMask), SIMD::lessThan(chunk, controlMask)));
+        while (mask) {
+            unsigned index = std::countr_zero(mask) / bitsPerLane;
+            Latin1Character character = cursor[index];
+            char escaped = WTF::escapedFormsForJSON[character];
+            Latin1Character* escapeOut = out + index;
+            escapeOut[0] = '\\';
+            escapeOut[1] = escaped;
+            unsigned escapeLength = 2;
+            if (escaped == 'u') [[unlikely]] {
+                escapeOut[2] = '0';
+                escapeOut[3] = '0';
+                escapeOut[4] = upperNibbleToLowercaseASCIIHexDigit(character);
+                escapeOut[5] = lowerNibbleToLowercaseASCIIHexDigit(character);
+                escapeLength = 6;
+            }
+            SIMD::store(SIMD::load(std::bit_cast<const uint8_t*>(cursor + index + 1)), std::bit_cast<uint8_t*>(escapeOut + escapeLength));
+            out += escapeLength - 1;
+            unsigned consumedBits = (index + 1) * bitsPerLane;
+            mask = consumedBits < 64 ? mask & (~0ULL << consumedBits) : 0;
+        }
+        cursor += stride;
+        out += stride;
+    }
+    skip(output, out - output.data());
+    skip(input, cursor - input.data());
+#endif
+    WTF::appendEscapedJSONStringContent(output, input);
+}
+
 #undef JSON_STRING_COPY_HAS_SIMD
 
 template<typename CharType, BufferMode bufferMode>
@@ -1981,7 +2026,7 @@ void FastStringifier<CharType, bufferMode>::append(JSValue value)
                 WTF::appendEscapedJSONStringContent(output, string.data.span16());
         } else {
             if (string.data.is8Bit())
-                WTF::appendEscapedJSONStringContent(output, string.data.span8());
+                appendEscapedLatin1JSONStringContent(output, string.data.span8());
             else {
                 // It's possible the UTF-16 string is actually Latin-1. We try to avoid that but bailing out here is _way_ more expensive if it does sometimes happen.
                 bool success = WTF::appendEscapedJSONStringContent(output, string.data.span16());
