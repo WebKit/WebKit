@@ -1179,7 +1179,7 @@ Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Protocol::Debugger::Location>>> Inspec
 
 void InspectorDebuggerAgent::schedulePauseAtNextOpportunity(DebuggerFrontendDispatcher::Reason reason, RefPtr<JSON::Object>&& data)
 {
-    if (m_javaScriptPauseScheduled)
+    if (m_javaScriptPauseScheduled && m_debugger.isPauseAtNextOpportunityScheduled())
         return;
 
     m_javaScriptPauseScheduled = true;
@@ -2095,6 +2095,15 @@ void InspectorDebuggerAgent::didDeferBreakpointPause(JSC::BreakpointID breakpoin
     updatePauseReasonAndData(DebuggerFrontendDispatcher::Reason::Breakpoint, buildBreakpointPauseReason(breakpointId));
 }
 
+void InspectorDebuggerAgent::didDropPauseAtNextOpportunity()
+{
+    if (!m_javaScriptPauseScheduled)
+        return;
+
+    m_javaScriptPauseScheduled = false;
+    clearPauseDetails();
+}
+
 void InspectorDebuggerAgent::breakProgram(DebuggerFrontendDispatcher::Reason reason, RefPtr<JSON::Object>&& data, RefPtr<JSC::Breakpoint>&& specialBreakpoint)
 {
     updatePauseReasonAndData(reason, WTF::move(data));
@@ -2185,7 +2194,7 @@ void InspectorDebuggerAgent::clearDebuggerBreakpointState()
     m_continueToLocationDebuggerBreakpoint = nullptr;
     m_hasExceptionValue = false;
 
-    // JSC keeps the pause when the global object is replaced, but can drop it without telling the agent, such as at the end of a program.
+    // JSC keeps the pause when the global object is replaced, but may have dropped it before.
     m_javaScriptPauseScheduled = m_javaScriptPauseScheduled && m_debugger.isPauseAtNextOpportunityScheduled();
 
     if (isPaused()) {

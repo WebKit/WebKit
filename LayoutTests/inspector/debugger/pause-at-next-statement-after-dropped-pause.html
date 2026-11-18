@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/protocol-test.js"></script>
+<script>
+function createPageFunction()
+{
+    eval("window.pageFunction = function pageFunction() {\n    return 1;\n};\n//# sourceURL=PageFunction.js");
+}
+
+function createOtherFunction()
+{
+    eval("window.otherFunction = function otherFunction() {\n    return 2;\n};\n//# sourceURL=OtherFunction.js");
+}
+
+function test()
+{
+    let suite = ProtocolTest.createAsyncSuite("Debugger.PauseAtNextStatement.AfterDroppedPause");
+
+    const blackboxedURL = "BlackboxedScript.js";
+
+    let pauseReasons = [];
+    InspectorProtocol.eventHandler["Debugger.paused"] = (messageObject) => {
+        pauseReasons.push(messageObject.params.reason);
+        InspectorProtocol.sendCommand("Debugger.resume", {});
+    };
+
+    // The pause is deferred past the blackboxed script, and the debugger drops it at the breakpoint with a false
+    // condition in pageFunction.
+    // FIXME: <https://webkit.org/b/332051> The debugger should pause in pageFunction, which is not blackboxed.
+    async function dropPendingPause() {
+        pauseReasons = [];
+
+        // Logging evaluates code in the page, which would take a pending pause.
+        await InspectorProtocol.awaitCommand({method: "Debugger.pause", params: {}});
+        await ProtocolTest.evaluateInPage(`pageFunction();\n//# sourceURL=${blackboxedURL}`);
+        ProtocolTest.expectEqual(pauseReasons.length, 0, "Should drop the pending pause at the breakpoint with a false condition after the blackboxed script.");
+    }
+
+    suite.addTestCase({
+        name: "Debugger.PauseAtNextStatement.AfterDroppedPause.BreakpointAfterBlackboxedScript",
+        description: "Debugger.pause should pause after the debugger dropped a pending pause at a breakpoint that does not pause after a blackboxed script.",
+        async test() {
+            await InspectorProtocol.awaitCommand({method: "Debugger.enable", params: {}});
+            await InspectorProtocol.awaitCommand({method: "Debugger.setBreakpointsActive", params: {active: true}});
+            await InspectorProtocol.awaitCommand({method: "Debugger.setShouldBlackboxURL", params: {url: blackboxedURL, shouldBlackbox: true}});
+            await InspectorProtocol.awaitCommand({method: "Debugger.setBreakpointByUrl", params: {url: "PageFunction.js", lineNumber: 1, options: {condition: "false"}}});
+            await ProtocolTest.evaluateInPage("createPageFunction()");
+
+            await dropPendingPause();
+
+            pauseReasons = [];
+            await InspectorProtocol.awaitCommand({method: "Debugger.pause", params: {}});
+            await ProtocolTest.evaluateInPage("pageFunction()");
+            ProtocolTest.expectEqual(pauseReasons.join(), "PauseOnNextStatement", "Should pause when asked to again.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "Debugger.PauseAtNextStatement.AfterDroppedPause.LineBreakpointAfterDroppedPause",
+        description: "A line breakpoint after the debugger dropped a pending pause should be reported as a breakpoint.",
+        async test() {
+            await InspectorProtocol.awaitCommand({method: "Debugger.setBreakpointByUrl", params: {url: "OtherFunction.js", lineNumber: 1}});
+            await ProtocolTest.evaluateInPage("createOtherFunction()");
+
+            await dropPendingPause();
+
+            pauseReasons = [];
+            await ProtocolTest.evaluateInPage("otherFunction()");
+            ProtocolTest.expectEqual(pauseReasons.join(), "Breakpoint", "Should pause for the breakpoint.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "Debugger.PauseAtNextStatement.AfterDroppedPause.ResumeAfterDroppedPause",
+        description: "Debugger.resume should fail after the debugger dropped a pending pause, because nothing is pending.",
+        async test() {
+            await dropPendingPause();
+
+            let error = null;
+            await InspectorProtocol.awaitCommand({method: "Debugger.resume", params: {}}).catch((e) => { error = e; });
+            ProtocolTest.expectThat(error, "Debugger.resume should fail.");
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests that pausing at the next statement works after the debugger dropped a pending pause.</p>
+</body>
+</html>
