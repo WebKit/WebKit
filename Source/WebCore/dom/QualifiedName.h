@@ -90,6 +90,7 @@ public:
     friend bool operator==(const QualifiedName&, const QualifiedName&) = default;
 
     bool matches(const QualifiedName& other) const { return m_impl == other.m_impl || (localName() == other.localName() && namespaceURI() == other.namespaceURI()); }
+    inline bool matches(StringView qualifiedName) const;
     bool hasLocalName(const AtomString& other) const { return localName() == other; }
 
     bool hasPrefix() const { return !m_impl->m_prefix.isNull(); }
@@ -153,6 +154,19 @@ struct QualifiedNameHash {
     static constexpr bool safeToCompareToEmptyOrDeleted = false;
     static constexpr bool hasHashInValue = true;
 };
+
+inline bool QualifiedName::matches(StringView qualifiedName) const
+{
+    if (!hasPrefix())
+        return qualifiedName == localName();
+    auto& prefix = this->prefix();
+    auto& localName = this->localName();
+    unsigned prefixLength = prefix.length();
+    return qualifiedName.length() == prefixLength + 1 + localName.length()
+        && qualifiedName[prefixLength] == ':'
+        && qualifiedName.startsWith(prefix)
+        && qualifiedName.endsWith(localName);
+}
 
 inline String QualifiedName::toString() const
 {
