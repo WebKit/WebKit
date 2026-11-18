@@ -2445,11 +2445,11 @@ table.attachment_entry {
 }
 
 .bz_comment_text.markdown :not(pre) > code {
-    background-color: var(--code-background-color);
-    border: 1px solid var(--code-border-color);
     border-radius: 0.3rem;
     font-family: "SF Mono", monospace;
-    font-size-adjust: 0.45;
+    font-size: inherit;
+    font-size-adjust: 0.5;
+    font-weight: 600;
     padding: 0.1rem 0.3rem;
 }
 
