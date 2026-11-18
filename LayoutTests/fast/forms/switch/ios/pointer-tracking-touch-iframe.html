@@ -1,0 +1,78 @@
+<!doctype html>
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="../../../../resources/js-test.js"></script>
+<script src="../../../../resources/ui-helper.js"></script>
+<script src="resources/switch-touch.js"></script>
+<style>
+body { margin: 0; }
+iframe { margin: 30px; width: 200px; height: 100px; border: 1px solid; }
+</style>
+<iframe srcdoc="<!doctype html><style>body { margin: 20px; }</style><input type=checkbox switch>"></iframe>
+<div id="console"></div>
+<div style="height: 300vh"></div>
+<script>
+description("A switch in an iframe: a drag that the page can scroll scrolls it, and a sideways drag moves the switch's thumb.");
+jsTestIsAsync = true;
+
+let input;
+let clicks = 0;
+
+async function reset()
+{
+    scrollTo(0, 0);
+    input.checked = false;
+    await settle();
+    clicks = 0;
+}
+
+(async () => {
+    if (!UIHelper.isIOSFamily()) {
+        testPassed("Not applicable outside iOS.");
+        finishJSTest();
+        return;
+    }
+
+    const iframe = document.querySelector("iframe");
+    if (!iframe.contentDocument.querySelector("input"))
+        await new Promise(resolve => iframe.onload = resolve);
+    input = iframe.contentDocument.querySelector("input");
+    input.addEventListener("click", () => ++clicks);
+    await UIHelper.ensurePresentationUpdate();
+
+    debug("A tap:");
+    await reset();
+    await touch(input, [{ wait: 0.05 }]);
+    shouldBeTrue("input.checked");
+    shouldBe("clicks", "1");
+
+    debug("A drag up, which the page can scroll:");
+    await reset();
+    await touch(input, [{ move: [0, -150] }]);
+    shouldBeFalse("input.checked");
+    shouldBe("clicks", "0");
+    shouldBeTrue("scrollY > 0");
+
+    debug("A drag sideways, which the page cannot scroll:");
+    await reset();
+    await touch(input, [{ move: [2 * input.offsetWidth, 0] }]);
+    shouldBeTrue("input.checked");
+    shouldBe("clicks", "1");
+    shouldBe("Math.round(scrollY)", "0");
+
+    debug("A drag to the other end and back:");
+    await reset();
+    await touch(input, [{ move: [2 * input.offsetWidth, 0] }, { move: [0, 0] }]);
+    shouldBeFalse("input.checked");
+    shouldBe("clicks", "0");
+
+    debug("A hold, then a release:");
+    await reset();
+    await touch(input, [{ wait: 0.3 }]);
+    shouldBeTrue("input.checked");
+    shouldBe("clicks", "1");
+
+    finishJSTest();
+})();
+</script>
+</html>

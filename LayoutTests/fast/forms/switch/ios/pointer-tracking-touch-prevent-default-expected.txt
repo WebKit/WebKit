@@ -1,0 +1,29 @@
+
+Touch event listeners that cancel the touch keep the switch out of it.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Canceling touchstart, then a drag sideways:
+PASS input.checked is false
+PASS clicks is 0
+Canceling touchstart, then a hold and a drag up:
+PASS input.checked is false
+PASS clicks is 0
+PASS Math.round(scrollY) is 0
+Canceling touchmove, then a drag sideways:
+PASS input.checked is false
+PASS clicks is 0
+Canceling touchend, then a tap:
+PASS input.checked is false
+PASS clicks is 0
+Canceling touchend, then a hold and a release:
+PASS input.checked is false
+PASS clicks is 0
+Canceling touchend, then a drag sideways:
+PASS input.checked is false
+PASS clicks is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

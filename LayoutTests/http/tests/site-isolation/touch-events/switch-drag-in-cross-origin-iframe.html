@@ -1,0 +1,98 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<!doctype html>
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="/js-test-resources/js-test.js"></script>
+<script src="/js-test-resources/ui-helper.js"></script>
+<style>
+body { margin: 0; }
+iframe { position: absolute; top: 100px; left: 30px; width: 200px; height: 100px; border: 0; }
+</style>
+<iframe src="http://localhost:8000/site-isolation/touch-events/resources/switch.html"></iframe>
+<div style="height: 300vh"></div>
+<script>
+description("A switch in a cross-origin iframe: a drag that the page can scroll scrolls it, and a sideways drag moves the switch's thumb.");
+jsTestIsAsync = true;
+
+const iframe = document.querySelector("iframe");
+let state;
+
+function send(message)
+{
+    return new Promise(resolve => {
+        addEventListener("message", event => resolve(event.data), { once: true });
+        iframe.contentWindow.postMessage(message, "*");
+    });
+}
+
+async function settle()
+{
+    let stable = 0;
+    let previous = -1;
+    for (let i = 0; i < 100 && stable < 4; ++i) {
+        stable = previous === Math.round(scrollY) ? stable + 1 : 0;
+        previous = Math.round(scrollY);
+        await UIHelper.delayFor(50);
+    }
+    await UIHelper.ensurePresentationUpdate();
+}
+
+async function touch(hold, deltaX, deltaY)
+{
+    scrollTo(0, 0);
+    await settle();
+    state = await send("reset");
+    const x = Math.round(iframe.offsetLeft + state.x);
+    const y = Math.round(iframe.offsetTop + state.y);
+    const stream = new UIHelper.EventStreamBuilder().begin(x, y);
+    if (hold)
+        stream.wait(hold);
+    if (deltaX || deltaY)
+        stream.move(x + deltaX, y + deltaY, 0.25);
+    await UIHelper.sendEventStream(stream.end().takeResult());
+    await settle();
+    await UIHelper.delayFor(500);
+    state = await send("state");
+}
+
+(async () => {
+    if (!UIHelper.isIOSFamily()) {
+        testPassed("Not applicable outside iOS.");
+        finishJSTest();
+        return;
+    }
+
+    if (!iframe.contentWindow || document.readyState != "complete")
+        await new Promise(resolve => addEventListener("load", resolve, { once: true }));
+
+    debug("A tap:");
+    await touch(0.05, 0, 0);
+    shouldBeTrue("state.checked");
+    shouldBe("state.clicks", "1");
+
+    debug("A drag up, which the page can scroll:");
+    await touch(0, 0, -150);
+    shouldBeFalse("state.checked");
+    shouldBe("state.clicks", "0");
+    shouldBeTrue("scrollY > 0");
+
+    debug("A drag sideways, which the page cannot scroll:");
+    await touch(0, 80, 0);
+    shouldBeTrue("state.checked");
+    shouldBe("state.clicks", "1");
+    shouldBe("Math.round(scrollY)", "0");
+
+    debug("A hold, then a release:");
+    await touch(0.3, 0, 0);
+    shouldBeTrue("state.checked");
+    shouldBe("state.clicks", "1");
+
+    debug("A hold, then a release outside the switch without moving its thumb:");
+    await touch(0.3, 0, -60);
+    shouldBeFalse("state.checked");
+    shouldBe("state.clicks", "0");
+
+    finishJSTest();
+})();
+</script>
+</html>

@@ -1,0 +1,80 @@
+<!doctype html>
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="../../../../resources/js-test.js"></script>
+<script src="../../../../resources/ui-helper.js"></script>
+<script src="resources/switch-touch.js"></script>
+<p><input type=checkbox switch id=input></p>
+<div id="console"></div>
+<div style="height: 300vh"></div>
+<script>
+description("Touch event listeners that cancel the touch keep the switch out of it.");
+jsTestIsAsync = true;
+
+const input = document.getElementById("input");
+let clicks = 0;
+input.addEventListener("click", () => ++clicks);
+
+const preventDefault = event => event.preventDefault();
+
+async function reset(type)
+{
+    scrollTo(0, 0);
+    input.checked = false;
+    await settle();
+    clicks = 0;
+    for (const otherType of ["touchstart", "touchmove", "touchend"])
+        document.removeEventListener(otherType, preventDefault);
+    document.addEventListener(type, preventDefault, { passive: false });
+    await UIHelper.ensurePresentationUpdate();
+    await UIHelper.ensurePresentationUpdate();
+}
+
+(async () => {
+    if (!UIHelper.isIOSFamily()) {
+        testPassed("Not applicable outside iOS.");
+        finishJSTest();
+        return;
+    }
+
+    debug("Canceling touchstart, then a drag sideways:");
+    await reset("touchstart");
+    await touch(input, [{ move: [2 * input.offsetWidth, 0] }]);
+    shouldBeFalse("input.checked");
+    shouldBe("clicks", "0");
+
+    debug("Canceling touchstart, then a hold and a drag up:");
+    await reset("touchstart");
+    await touch(input, [{ wait: 0.3 }, { move: [0, -150] }]);
+    shouldBeFalse("input.checked");
+    shouldBe("clicks", "0");
+    shouldBe("Math.round(scrollY)", "0");
+
+    debug("Canceling touchmove, then a drag sideways:");
+    await reset("touchmove");
+    await touch(input, [{ move: [2 * input.offsetWidth, 0] }]);
+    shouldBeFalse("input.checked");
+    shouldBe("clicks", "0");
+
+    debug("Canceling touchend, then a tap:");
+    await reset("touchend");
+    await touch(input, [{ wait: 0.05 }]);
+    shouldBeFalse("input.checked");
+    shouldBe("clicks", "0");
+
+    debug("Canceling touchend, then a hold and a release:");
+    await reset("touchend");
+    await touch(input, [{ wait: 0.3 }]);
+    shouldBeFalse("input.checked");
+    shouldBe("clicks", "0");
+
+    debug("Canceling touchend, then a drag sideways:");
+    await reset("touchend");
+    await touch(input, [{ move: [2 * input.offsetWidth, 0] }]);
+    shouldBeFalse("input.checked");
+    shouldBe("clicks", "0");
+
+    finishJSTest();
+})();
+</script>
+</html>

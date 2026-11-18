@@ -34,6 +34,8 @@
 #import "RemoteLayerTreeNode.h"
 #import "UIKitSPI.h"
 #import "WKDeferringGestureRecognizer.h"
+#import "WebFrameProxy.h"
+#import "WebProcessProxy.h"
 #import <WebCore/Region.h>
 #import <WebCore/RenderStyleConstants.h>
 #import <WebCore/TouchAction.h>
@@ -191,66 +193,79 @@ static bool isScrolledBy(WKChildScrollView* scrollView, UIView *hitView)
     return false;
 }
 
-OptionSet<WebCore::TouchAction> touchActionsForPoint(UIView *rootView, const WebCore::IntPoint& point)
+// We only hit WKChildScrollView directly if its content layer doesn't have an event region, as there is nothing interesting in it.
+enum class ChildScrollViewBehavior : bool { Occludes, Ignore };
+
+struct HitRemoteLayerTreeNode {
+    Ref<RemoteLayerTreeNode> node;
+    WebCore::IntPoint pointInNode;
+};
+
+static std::optional<HitRemoteLayerTreeNode> remoteLayerTreeNodeAtPoint(UIView *rootView, const WebCore::IntPoint& point, ChildScrollViewBehavior childScrollViewBehavior)
 {
     Vector<RetainPtr<UIView>, 16> viewsAtPoint;
     collectDescendantViewsAtPoint(viewsAtPoint, rootView, point, nil);
 
-    if (viewsAtPoint.isEmpty())
-        return { WebCore::TouchAction::Auto };
-
-    RetainPtr<UIView> hitView;
     for (RetainPtr view : viewsAtPoint | std::views::reverse) {
-        // We only hit WKChildScrollView directly if its content layer doesn't have an event region.
-        // We don't generate the region if there is nothing interesting in it, meaning the touch-action is auto.
-        if ([view isKindOfClass:[WKChildScrollView class]])
-            return WebCore::TouchAction::Auto;
+        if (childScrollViewBehavior == ChildScrollViewBehavior::Occludes && [view isKindOfClass:[WKChildScrollView class]])
+            return std::nullopt;
 
-        if ([view isKindOfClass:[WKCompositingView class]]) {
-            hitView = WTF::move(view);
-            break;
-        }
+        if (![view isKindOfClass:[WKCompositingView class]])
+            continue;
+
+        RefPtr node = RemoteLayerTreeNode::forCALayer([view layer]);
+        if (!node)
+            return std::nullopt;
+
+        return HitRemoteLayerTreeNode { node.releaseNonNull(), WebCore::IntPoint { [view convertPoint:point fromView:rootView] } };
     }
 
-    if (!hitView)
-        return { WebCore::TouchAction::Auto };
-
-    CGPoint hitViewPoint = [hitView convertPoint:point fromView:rootView];
-
-    RefPtr node = RemoteLayerTreeNode::forCALayer(hitView.get().layer);
-    if (!node)
-        return { WebCore::TouchAction::Auto };
-
-    return node->eventRegion().touchActionsForPoint(WebCore::IntPoint(hitViewPoint));
+    return std::nullopt;
 }
+
+OptionSet<WebCore::TouchAction> touchActionsForPoint(UIView *rootView, const WebCore::IntPoint& point)
+{
+    auto hit = remoteLayerTreeNodeAtPoint(rootView, point, ChildScrollViewBehavior::Occludes);
+    if (!hit)
+        return { WebCore::TouchAction::Auto };
+
+    return hit->node->eventRegion().touchActionsForPoint(hit->pointInNode);
+}
+
+#if ENABLE(CONTROL_TRACKING_REGIONS)
+std::optional<ControlTrackingHit> controlTrackingHitForPoint(UIView *rootView, const WebCore::IntPoint& point)
+{
+    auto hit = remoteLayerTreeNodeAtPoint(rootView, point, ChildScrollViewBehavior::Occludes);
+    if (!hit)
+        return std::nullopt;
+
+    auto target = hit->node->eventRegion().controlTrackingTargetForPoint(hit->pointInNode);
+    if (!target)
+        return std::nullopt;
+
+    // The target must be in a frame of the process that painted this layer.
+    auto processIdentifier = hit->node->layerID().processIdentifier();
+    RefPtr frame = WebFrameProxy::webFrame(target->frameIdentifier);
+    if (!frame || target->processIdentifier != processIdentifier || frame->process().coreProcessIdentifier() != processIdentifier)
+        return std::nullopt;
+
+    // Locations for a frame in another process than its parent are relative to the root of its hosted layer tree.
+    for (RetainPtr view = hit->node->uiView(); view && view != rootView; view = [view superview]) {
+        if (RefPtr node = RemoteLayerTreeNode::forCALayer([view layer]); node && node->remoteContextHostedIdentifier())
+            return ControlTrackingHit { *target, WTF::move(view) };
+    }
+    return ControlTrackingHit { *target, rootView };
+}
+#endif
 
 #if ENABLE(WHEEL_EVENT_REGIONS)
 OptionSet<WebCore::EventListenerRegionType> eventListenerTypesAtPoint(UIView *rootView, const WebCore::IntPoint& point)
 {
-    Vector<RetainPtr<UIView>, 16> viewsAtPoint;
-    collectDescendantViewsAtPoint(viewsAtPoint, rootView, point, nil);
-
-    if (viewsAtPoint.isEmpty())
+    auto hit = remoteLayerTreeNodeAtPoint(rootView, point, ChildScrollViewBehavior::Ignore);
+    if (!hit)
         return { };
 
-    RetainPtr<UIView> hitView;
-    for (RetainPtr view : viewsAtPoint | std::views::reverse) {
-        if ([view isKindOfClass:[WKCompositingView class]]) {
-            hitView = WTF::move(view);
-            break;
-        }
-    }
-
-    if (!hitView)
-        return { };
-
-    CGPoint hitViewPoint = [hitView convertPoint:point fromView:rootView];
-
-    RefPtr node = RemoteLayerTreeNode::forCALayer(hitView.get().layer);
-    if (!node)
-        return { };
-
-    return node->eventRegion().eventListenerRegionTypesForPoint(WebCore::IntPoint(hitViewPoint));
+    return hit->node->eventRegion().eventListenerRegionTypesForPoint(hit->pointInNode);
 }
 #endif
 

@@ -71,12 +71,22 @@ private:
 #if ENABLE(IOS_TOUCH_EVENTS)
     void handleTouchEvent(TouchEvent&) final;
 #endif
+#if ENABLE(CONTROL_TRACKING_REGIONS)
+    NODELETE bool contributesControlTrackingRegion() const final;
+    void controlTrackingDidTap() final;
+    void controlTrackingDidBegin(LayoutPoint) final;
+    void controlTrackingDidUpdate(LayoutPoint) final;
+    void controlTrackingDidEnd(LayoutPoint, bool committed) final;
+#endif
     void willDispatchClick(InputElementClickState&) final;
     void didDispatchClick(Event&, const InputElementClickState&) final;
     bool matchesIndeterminatePseudoClass() const final;
     void willUpdateCheckedness(bool /* nowChecked */, WasSetByJavaScript);
     void disabledStateChanged() final;
     void attributeChanged(const QualifiedName&) final;
+#if ENABLE(CONTROL_TRACKING_REGIONS)
+    void detach() final;
+#endif
     CheckboxSwitch& ensureSwitch();
 
     std::unique_ptr<CheckboxSwitch> m_switch;

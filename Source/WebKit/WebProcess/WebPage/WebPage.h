@@ -1544,6 +1544,13 @@ public:
 #endif
 #endif
 
+#if ENABLE(CONTROL_TRACKING_REGIONS)
+    void controlTrackingDidTap(WebCore::NodeIdentifier);
+    void controlTrackingDidBegin(WebCore::NodeIdentifier, WebCore::IntPoint location);
+    void controlTrackingDidUpdate(WebCore::NodeIdentifier, WebCore::IntPoint location);
+    void controlTrackingDidEnd(WebCore::NodeIdentifier, WebCore::IntPoint location, bool committed);
+#endif
+
 #if ENABLE(MODEL_PROCESS)
     void requestInteractiveModelElementAtPoint(std::optional<WebCore::FrameIdentifier>, WebCore::IntPoint clientPosition, WebCore::IntPoint interactionLocation, CompletionHandler<void(WebCore::InteractiveModelElementHitTestResult&&)>&&);
     void stageModeSessionDidBegin(std::optional<WebCore::FrameIdentifier>, WebCore::NodeIdentifier, const WebCore::TransformationMatrix&);

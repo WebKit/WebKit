@@ -47,6 +47,12 @@
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/TextStream.h>
 
+#if ENABLE(CONTROL_TRACKING_REGIONS)
+#include "HTMLInputElement.h"
+#include "Settings.h"
+#include <ranges>
+#endif
+
 namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(EventRegionContext);
@@ -625,6 +631,9 @@ EventRegion::EventRegion(Region&& region
 #if ENABLE(EDITABLE_REGION)
     , std::optional<WebCore::Region> editableRegion
 #endif
+#if ENABLE(CONTROL_TRACKING_REGIONS)
+    , Vector<WebCore::ControlTrackingRegion> controlTrackingRegions
+#endif
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
     , Vector<WebCore::InteractionRegion> interactionRegions
 #endif
@@ -642,6 +651,9 @@ EventRegion::EventRegion(Region&& region
 #endif
 #if ENABLE(EDITABLE_REGION)
     , m_editableRegion(WTF::move(editableRegion))
+#endif
+#if ENABLE(CONTROL_TRACKING_REGIONS)
+    , m_controlTrackingRegions(WTF::move(controlTrackingRegions))
 #endif
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
     , m_interactionRegions(WTF::move(interactionRegions))
@@ -671,6 +683,10 @@ void EventRegion::unite(const Region& region, const RenderObject& renderer, cons
         eventListenerRegionTypes.add(EventListenerRegionType::NonPassiveWheel);
 #endif
     uniteEventListeners(region, eventListenerRegionTypes);
+
+#if ENABLE(CONTROL_TRACKING_REGIONS)
+    uniteControlTrackingRegion(region, renderer);
+#endif
 
 #if ENABLE(EDITABLE_REGION)
     if (m_editableRegion && (overrideUserModifyIsEditable || style.usedUserModify() != UserModify::ReadOnly)) {
@@ -707,6 +723,11 @@ void EventRegion::translate(const IntSize& offset)
 #if ENABLE(EDITABLE_REGION)
     if (m_editableRegion)
         m_editableRegion->translate(offset);
+#endif
+
+#if ENABLE(CONTROL_TRACKING_REGIONS)
+    for (auto& controlTrackingRegion : m_controlTrackingRegions)
+        controlTrackingRegion.region.translate(offset);
 #endif
 
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
@@ -810,6 +831,41 @@ OptionSet<TouchAction> EventRegion::touchActionsForPoint(const IntPoint& point) 
         return { TouchAction::Auto };
 
     return actions;
+}
+#endif
+
+#if ENABLE(CONTROL_TRACKING_REGIONS)
+void EventRegion::uniteControlTrackingRegion(const Region& region, const RenderObject& renderer)
+{
+    if (renderer.document().mayHaveControlTrackingRegions() && renderer.settings().controlTouchTrackingEnabled()) {
+        RefPtr node = renderer.node();
+        RefPtr control = dynamicDowncast<HTMLInputElement>(node);
+        if (!control && node)
+            control = dynamicDowncast<HTMLInputElement>(node->shadowHost());
+        if (control && control->contributesControlTrackingRegion()) {
+            if (RefPtr frame = renderer.document().frame(); frame && control == node)
+                m_controlTrackingRegions.append({ region, { control->nodeIdentifier(), frame->frameID(), Process::identifier() } });
+            return;
+        }
+    }
+
+    if (m_controlTrackingRegions.isEmpty())
+        return;
+
+    for (auto& controlTrackingRegion : m_controlTrackingRegions)
+        controlTrackingRegion.region.subtract(region);
+    m_controlTrackingRegions.removeAllMatching([](auto& controlTrackingRegion) {
+        return controlTrackingRegion.region.isEmpty();
+    });
+}
+
+std::optional<ControlTrackingTarget> EventRegion::controlTrackingTargetForPoint(const IntPoint& point) const
+{
+    for (auto& controlTrackingRegion : m_controlTrackingRegions | std::views::reverse) {
+        if (controlTrackingRegion.region.contains(point))
+            return controlTrackingRegion.target;
+    }
+    return std::nullopt;
 }
 #endif
 
@@ -1121,6 +1177,13 @@ void EventRegion::dump(TextStream& ts) const
 #if ENABLE(EDITABLE_REGION)
     if (m_editableRegion && !m_editableRegion->isEmpty()) {
         ts << indent << "(editable region"_s << *m_editableRegion;
+        ts << indent << ")\n"_s;
+    }
+#endif
+
+#if ENABLE(CONTROL_TRACKING_REGIONS)
+    for (auto& controlTrackingRegion : m_controlTrackingRegions) {
+        ts << indent << "(control tracking region"_s << controlTrackingRegion.region;
         ts << indent << ")\n"_s;
     }
 #endif

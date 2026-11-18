@@ -1215,7 +1215,12 @@ bool InputType::hasTouchEventHandler() const
 #if ENABLE(IOS_TOUCH_EVENTS)
     if (isSwitch()) {
         ASSERT(element());
-        return !protect(element())->isDisabledFormControl();
+        Ref element = *this->element();
+#if ENABLE(CONTROL_TRACKING_REGIONS)
+        if (element->document().settings().controlTouchTrackingEnabled())
+            return false;
+#endif
+        return !element->isDisabledFormControl();
     }
 #else
     if (isRangeControl())

@@ -1653,6 +1653,10 @@ public:
     bool mayHaveEditableElements() const { return m_mayHaveEditableElements; }
     void setMayHaveEditableElements() { m_mayHaveEditableElements = true; }
 #endif
+#if ENABLE(CONTROL_TRACKING_REGIONS)
+    bool mayHaveControlTrackingRegions() const { return m_mayHaveControlTrackingRegions; }
+    void setMayHaveControlTrackingRegions();
+#endif
 
     bool mayHaveRenderedSVGRootElements() const { return m_mayHaveRenderedSVGRootElements; }
     void setMayHaveRenderedSVGRootElements() { m_mayHaveRenderedSVGRootElements = true; }
@@ -2986,6 +2990,9 @@ private:
 #endif
 #if ENABLE(EDITABLE_REGION)
     bool m_mayHaveEditableElements : 1 { false };
+#endif
+#if ENABLE(CONTROL_TRACKING_REGIONS)
+    bool m_mayHaveControlTrackingRegions : 1 { false };
 #endif
     bool m_mayHaveListBoxes : 1 { false };
 #if ENABLE(TELEPHONE_NUMBER_DETECTION)

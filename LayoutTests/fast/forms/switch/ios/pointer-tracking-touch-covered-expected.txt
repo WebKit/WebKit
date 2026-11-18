@@ -1,0 +1,29 @@
+
+
+
+A touch that starts on an element over a switch goes to that element, unless it has pointer-events: none.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+A drag sideways on #cover:
+PASS input.checked is false
+PASS clicks is 0
+A tap on #cover:
+PASS input.checked is false
+PASS clicks is 0
+PASS coverClicks is 1
+A drag sideways on #composited:
+PASS input.checked is false
+PASS clicks is 0
+A tap on #composited:
+PASS input.checked is false
+PASS clicks is 0
+PASS coverClicks is 1
+A drag sideways on #transparent:
+PASS input.checked is true
+PASS clicks is 1
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
