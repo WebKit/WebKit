@@ -87,7 +87,8 @@ https://chatgpt.com/
     ShouldUseLayoutViewportForClientRectsQuirk
 https://www.cnn.com/
     NeedsCNNCaptionQuirk
-    NeedsFullscreenObjectFitQuirk
+    NeedsStyleSheetInjectedQuirk
+        styleSheet: video.top-player-video-element:fullscreen { object-fit: contain; }
     RequiresUserGestureToPauseInFullscreenAfterOrientationChangeQuirk
     ShouldDisableThreadedAnimationsQuirk
 https://configurator.audi.com/
@@ -486,7 +487,8 @@ https://soundcloud.com/
 https://soylent.com/
     (none)
 https://open.spotify.com/
-    NeedsBodyScrollbarWidthNoneDisabledQuirk
+    NeedsStyleSheetInjectedQuirk
+        styleSheet: body { scrollbar-width: auto; }
     NeedsWebKitMediaKeysTransportStreamIsTypeSupportedQuirk
     ShouldAvoidStartingSelectionOnMouseDownOverPointerCursor
     ShouldBlockAudiblePlaybackWhileAudioIsPlaying
@@ -636,9 +638,10 @@ https://www.youtube.com/
     NeedsScrollbarWidthThinDisabledQuirk
     NeedsSingleOwnerMainFrameCNAMECloakingCookieCapQuirk
         secondaryURL: [*://*.youtube.com/*, *://*.google.com/*]
+    NeedsStyleSheetInjectedQuirk
+        styleSheet: #guide-inner-content { overflow-y: auto; }
     NeedsYouTubeCaptionQuirk
     NeedsYouTubeMouseOutQuirk
-    NeedsYouTubeOverflowScrollQuirk
     ShouldSilenceResizeObservers
 https://www.youtube-nocookie.com/
     (none)

@@ -295,20 +295,20 @@ TEST_F(QuirksTest, RowsWithStructuralErrorsAreRejected)
     using enum WebCore::QuirkTableParseErrorKind;
 
     expectRowRejected(R"("not an object")"_s, InvalidRow);
-    expectRowRejected(R"({ "behaviors": [{ "id": "NeedsBodyScrollbarWidthNoneDisabledQuirk" }] })"_s, MissingMatches);
+    expectRowRejected(R"({ "behaviors": [{ "id": "ShouldAvoidStartingSelectionOnMouseDownOverPointerCursor" }] })"_s, MissingMatches);
     expectRowRejected(R"({ "matches": ["*://*.example.com/*"], "behaviors": [] })"_s, InvalidBehaviors, "behaviors"_s);
-    expectRowRejected(R"({ "matches": ["*://*.example.com/*"], "matchez": [], "behaviors": [{ "id": "NeedsBodyScrollbarWidthNoneDisabledQuirk" }] })"_s, UnknownField, "matchez"_s);
-    expectRowRejected(R"({ "matches": [], "behaviors": [{ "id": "NeedsBodyScrollbarWidthNoneDisabledQuirk" }] })"_s, InvalidStringArray, "matches"_s);
-    expectRowRejected(R"({ "matches": ["example.com"], "behaviors": [{ "id": "NeedsBodyScrollbarWidthNoneDisabledQuirk" }] })"_s, InvalidMatchPattern, "matches"_s, "example.com"_s);
-    expectRowRejected(R"({ "comment": 5, "matches": ["*://*.example.com/*"], "behaviors": [{ "id": "NeedsBodyScrollbarWidthNoneDisabledQuirk" }] })"_s, InvalidString, "comment"_s);
-    expectRowRejected(R"({ "comment": ["two", "lines"], "matches": ["*://*.example.com/*"], "behaviors": [{ "id": "NeedsBodyScrollbarWidthNoneDisabledQuirk" }] })"_s, InvalidString, "comment"_s);
-    expectRowRejected(R"({ "bugs": [], "matches": ["*://*.example.com/*"], "behaviors": [{ "id": "NeedsBodyScrollbarWidthNoneDisabledQuirk" }] })"_s, InvalidBugs);
-    expectRowRejected(R"({ "bugs": ["rdar://problem/123"], "matches": ["*://*.example.com/*"], "behaviors": [{ "id": "NeedsBodyScrollbarWidthNoneDisabledQuirk" }] })"_s, InvalidBugs);
-    expectRowRejected(R"({ "bugs": ["https://bugs.webkit.org/show_bug.cgi?id=123"], "matches": ["*://*.example.com/*"], "behaviors": [{ "id": "NeedsBodyScrollbarWidthNoneDisabledQuirk" }] })"_s, InvalidBugs);
-    expectRowRejected(R"({ "bugs": ["rdar://"], "matches": ["*://*.example.com/*"], "behaviors": [{ "id": "NeedsBodyScrollbarWidthNoneDisabledQuirk" }] })"_s, InvalidBugs);
-    expectRowRejected(R"({ "bugs": ["rdar://123", "rdar://123"], "matches": ["*://*.example.com/*"], "behaviors": [{ "id": "NeedsBodyScrollbarWidthNoneDisabledQuirk" }] })"_s, DuplicateBug, "bugs"_s, "rdar://123"_s);
-    expectRowRejected(R"({ "matches": ["*://*.example.com/*"], "queryContains": "", "behaviors": [{ "id": "NeedsBodyScrollbarWidthNoneDisabledQuirk" }] })"_s, InvalidString, "queryContains"_s);
-    expectRowRejected(R"({ "matches": ["*://*.example.com/*"], "environment": "Toaster", "behaviors": [{ "id": "NeedsBodyScrollbarWidthNoneDisabledQuirk" }] })"_s, InvalidEnvironment, "environment"_s, "Toaster"_s);
+    expectRowRejected(R"({ "matches": ["*://*.example.com/*"], "matchez": [], "behaviors": [{ "id": "ShouldAvoidStartingSelectionOnMouseDownOverPointerCursor" }] })"_s, UnknownField, "matchez"_s);
+    expectRowRejected(R"({ "matches": [], "behaviors": [{ "id": "ShouldAvoidStartingSelectionOnMouseDownOverPointerCursor" }] })"_s, InvalidStringArray, "matches"_s);
+    expectRowRejected(R"({ "matches": ["example.com"], "behaviors": [{ "id": "ShouldAvoidStartingSelectionOnMouseDownOverPointerCursor" }] })"_s, InvalidMatchPattern, "matches"_s, "example.com"_s);
+    expectRowRejected(R"({ "comment": 5, "matches": ["*://*.example.com/*"], "behaviors": [{ "id": "ShouldAvoidStartingSelectionOnMouseDownOverPointerCursor" }] })"_s, InvalidString, "comment"_s);
+    expectRowRejected(R"({ "comment": ["two", "lines"], "matches": ["*://*.example.com/*"], "behaviors": [{ "id": "ShouldAvoidStartingSelectionOnMouseDownOverPointerCursor" }] })"_s, InvalidString, "comment"_s);
+    expectRowRejected(R"({ "bugs": [], "matches": ["*://*.example.com/*"], "behaviors": [{ "id": "ShouldAvoidStartingSelectionOnMouseDownOverPointerCursor" }] })"_s, InvalidBugs);
+    expectRowRejected(R"({ "bugs": ["rdar://problem/123"], "matches": ["*://*.example.com/*"], "behaviors": [{ "id": "ShouldAvoidStartingSelectionOnMouseDownOverPointerCursor" }] })"_s, InvalidBugs);
+    expectRowRejected(R"({ "bugs": ["https://bugs.webkit.org/show_bug.cgi?id=123"], "matches": ["*://*.example.com/*"], "behaviors": [{ "id": "ShouldAvoidStartingSelectionOnMouseDownOverPointerCursor" }] })"_s, InvalidBugs);
+    expectRowRejected(R"({ "bugs": ["rdar://"], "matches": ["*://*.example.com/*"], "behaviors": [{ "id": "ShouldAvoidStartingSelectionOnMouseDownOverPointerCursor" }] })"_s, InvalidBugs);
+    expectRowRejected(R"({ "bugs": ["rdar://123", "rdar://123"], "matches": ["*://*.example.com/*"], "behaviors": [{ "id": "ShouldAvoidStartingSelectionOnMouseDownOverPointerCursor" }] })"_s, DuplicateBug, "bugs"_s, "rdar://123"_s);
+    expectRowRejected(R"({ "matches": ["*://*.example.com/*"], "queryContains": "", "behaviors": [{ "id": "ShouldAvoidStartingSelectionOnMouseDownOverPointerCursor" }] })"_s, InvalidString, "queryContains"_s);
+    expectRowRejected(R"({ "matches": ["*://*.example.com/*"], "environment": "Toaster", "behaviors": [{ "id": "ShouldAvoidStartingSelectionOnMouseDownOverPointerCursor" }] })"_s, InvalidEnvironment, "environment"_s, "Toaster"_s);
 }
 
 TEST_F(QuirksTest, RowsWithBehaviorErrorsAreRejected)
@@ -319,15 +319,15 @@ TEST_F(QuirksTest, RowsWithBehaviorErrorsAreRejected)
     expectRowRejected(R"({ "matches": ["*://*.example.com/*"], "behaviors": [{ "comment": "No id." }] })"_s, MissingField, "id"_s);
     expectRowRejected(R"({ "matches": ["*://*.example.com/*"], "behaviors": [{ "id": 5 }] })"_s, InvalidString, "id"_s);
     expectRowRejected(R"({ "matches": ["*://*.example.com/*"], "behaviors": [{ "id": "" }] })"_s, InvalidString, "id"_s);
-    expectRowRejected(R"({ "matches": ["*://*.example.com/*"], "behaviors": [{ "id": "NeedsBodyScrollbarWidthNoneDisabledQuirk" }, { "id": "NeedsBodyScrollbarWidthNoneDisabledQuirk" }] })"_s, DuplicateBehavior, "behaviors"_s, "NeedsBodyScrollbarWidthNoneDisabledQuirk"_s);
+    expectRowRejected(R"({ "matches": ["*://*.example.com/*"], "behaviors": [{ "id": "ShouldAvoidStartingSelectionOnMouseDownOverPointerCursor" }, { "id": "ShouldAvoidStartingSelectionOnMouseDownOverPointerCursor" }] })"_s, DuplicateBehavior, "behaviors"_s, "ShouldAvoidStartingSelectionOnMouseDownOverPointerCursor"_s);
     expectRowRejected(R"({ "matches": ["*://*.example.com/*"], "behaviors": [{ "id": "NeedsUserAgentStringOverrideQuirk", "userAgent": "A" }, { "id": "NeedsUserAgentStringOverrideQuirk", "userAgent": "B" }] })"_s, DuplicateBehavior, "behaviors"_s, "NeedsUserAgentStringOverrideQuirk"_s);
 
     expectRowRejected(R"({ "matches": ["*://*.example.com/*"], "behaviors": [{ "id": "NeedsGoogleTranslateScrollingQuirk" }, { "id": "NeedsGoogleTranslateScrollingQuirk" }] })"_s, DuplicateBehavior, "behaviors"_s, "NeedsGoogleTranslateScrollingQuirk"_s);
-    expectRowRejected(R"({ "matches": ["*://*.example.com/*"], "behaviors": [{ "id": "NeedsBodyScrollbarWidthNoneDisabledQuirk", "colour": "red" }] })"_s, UnknownField, "colour"_s);
-    expectRowRejected(R"({ "matches": ["*://*.example.com/*"], "behaviors": [{ "id": "NeedsBodyScrollbarWidthNoneDisabledQuirk", "bugs": ["nope"] }] })"_s, InvalidBugs);
+    expectRowRejected(R"({ "matches": ["*://*.example.com/*"], "behaviors": [{ "id": "ShouldAvoidStartingSelectionOnMouseDownOverPointerCursor", "colour": "red" }] })"_s, UnknownField, "colour"_s);
+    expectRowRejected(R"({ "matches": ["*://*.example.com/*"], "behaviors": [{ "id": "ShouldAvoidStartingSelectionOnMouseDownOverPointerCursor", "bugs": ["nope"] }] })"_s, InvalidBugs);
     expectRowRejected(R"({ "matches": ["*://*.example.com/*"], "behaviors": [{ "id": "NeedsUserAgentStringOverrideQuirk" }] })"_s, MissingField, "userAgent"_s);
-    expectRowRejected(R"({ "matches": ["*://*.example.com/*"], "behaviors": [{ "id": "NeedsBodyScrollbarWidthNoneDisabledQuirk", "script": "x" }] })"_s, DisallowedField, "script"_s);
-    expectRowRejected(R"({ "matches": ["*://*.example.com/*"], "behaviors": [{ "id": "NeedsBodyScrollbarWidthNoneDisabledQuirk", "elementSelector": ".x" }] })"_s, DisallowedField, "elementSelector"_s);
+    expectRowRejected(R"({ "matches": ["*://*.example.com/*"], "behaviors": [{ "id": "ShouldAvoidStartingSelectionOnMouseDownOverPointerCursor", "script": "x" }] })"_s, DisallowedField, "script"_s);
+    expectRowRejected(R"({ "matches": ["*://*.example.com/*"], "behaviors": [{ "id": "ShouldAvoidStartingSelectionOnMouseDownOverPointerCursor", "elementSelector": ".x" }] })"_s, DisallowedField, "elementSelector"_s);
     expectRowRejected(R"({ "matches": ["*://*.example.com/*"], "behaviors": [{ "id": "NeedsMediaRewriteRangeRequestQuirk" }] })"_s, MissingField, "secondaryURL"_s);
     expectRowRejected(R"({ "matches": ["*://*.example.com/*"], "behaviors": [{ "id": "NeedsUserAgentStringOverrideQuirk", "userAgent": "" }] })"_s, InvalidString, "userAgent"_s);
     expectRowRejected(R"({ "matches": ["*://*.example.com/*"], "behaviors": [{ "id": "NeedsScriptToEvaluateBeforeRunningScriptFromURLQuirk", "script": "x", "secondaryURL": ["nope"] }] })"_s, InvalidMatchPattern, "secondaryURL"_s, "nope"_s);
@@ -343,7 +343,7 @@ TEST_F(QuirksTest, ParseErrorsDescribeWhereTheyAre)
 
     EXPECT_EQ(onlyErrorDescription("[]"_s), "the top level must be an object with a \"quirks\" array of rows and an optional \"constants\" object"_str);
     EXPECT_EQ(onlyErrorDescription(R"({ "quirks": [5] })"_s), "quirks[0]: a row must be an object"_str);
-    EXPECT_EQ(onlyErrorDescription(R"({ "quirks": [{ "matches": ["example.com"], "behaviors": [{ "id": "NeedsBodyScrollbarWidthNoneDisabledQuirk" }] }] })"_s), "quirks[0] (example.com): invalid match pattern \"example.com\" in \"matches\""_str);
+    EXPECT_EQ(onlyErrorDescription(R"({ "quirks": [{ "matches": ["example.com"], "behaviors": [{ "id": "ShouldAvoidStartingSelectionOnMouseDownOverPointerCursor" }] }] })"_s), "quirks[0] (example.com): invalid match pattern \"example.com\" in \"matches\""_str);
     EXPECT_EQ(onlyErrorDescription(R"({ "quirks": [{ "matches": ["*://*.example.com/*"], "behaviors": [{ "id": "NeedsUserAgentStringOverrideQuirk" }] }] })"_s), "quirks[0] (*://*.example.com/*).behaviors[0] NeedsUserAgentStringOverrideQuirk: needs \"userAgent\""_str);
     EXPECT_EQ(onlyErrorDescription(R"({ "quirks": [{ "matches": ["*://*.example.com/*"], "behaviors": [{ "id": "NoSuchQuirk" }] }] })"_s), "quirks[0] (*://*.example.com/*).behaviors[0]: \"id\" \"NoSuchQuirk\" is not a behavior in QuirkBehaviors.yaml"_str);
 }
@@ -439,7 +439,7 @@ TEST_F(QuirksTest, BugsAndCommentsAreAcceptedOnRowsAndBehaviors)
         "bugs": ["rdar://123", "https://webkit.org/b/456"],
         "comment": "Why this row looks the way it does.",
         "matches": ["*://*.example.com/*"],
-        "behaviors": [{ "id": "NeedsBodyScrollbarWidthNoneDisabledQuirk", "bugs": ["rdar://789"], "comment": "Why this behavior applies." }]
+        "behaviors": [{ "id": "ShouldAvoidStartingSelectionOnMouseDownOverPointerCursor", "bugs": ["rdar://789"], "comment": "Why this behavior applies." }]
     })"_s));
 }
 
@@ -447,7 +447,7 @@ TEST_F(QuirksTest, ABadRowDoesNotAffectTheOtherRows)
 {
     auto result = WebCore::parseQuirkTable(R"({ "quirks": [
         { "matches": ["*://*.example.com/*"], "behaviors": [{ "id": "NoSuchQuirk" }] },
-        { "matches": ["*://*.example.org/*"], "behaviors": [{ "id": "NeedsBodyScrollbarWidthNoneDisabledQuirk" }] }
+        { "matches": ["*://*.example.org/*"], "behaviors": [{ "id": "ShouldAvoidStartingSelectionOnMouseDownOverPointerCursor" }] }
     ] })"_s);
 
     ASSERT_EQ(result.errors.size(), 1u);
@@ -462,53 +462,53 @@ TEST_F(QuirksTest, AvailableExpressionsFollowTheBuildConditions)
     using enum WebCore::BuildConditionID;
     using enum WebCore::QuirkTableParseErrorKind;
 
-    EXPECT_EQ(rowIsKept(R"({ "matches": ["*://*.example.com/*"], "available": "iOS", "behaviors": [{ "id": "NeedsBodyScrollbarWidthNoneDisabledQuirk" }] })"_s), isEnabled(iOS));
-    EXPECT_EQ(rowIsKept(R"({ "matches": ["*://*.example.com/*"], "available": "iOS || vision", "behaviors": [{ "id": "NeedsBodyScrollbarWidthNoneDisabledQuirk" }] })"_s), isEnabled(iOS) || isEnabled(vision));
-    EXPECT_EQ(rowIsKept(R"({ "matches": ["*://*.example.com/*"], "available": "iOSFamily && touchEvents", "behaviors": [{ "id": "NeedsBodyScrollbarWidthNoneDisabledQuirk" }] })"_s), isEnabled(iOSFamily) && isEnabled(touchEvents));
+    EXPECT_EQ(rowIsKept(R"({ "matches": ["*://*.example.com/*"], "available": "iOS", "behaviors": [{ "id": "ShouldAvoidStartingSelectionOnMouseDownOverPointerCursor" }] })"_s), isEnabled(iOS));
+    EXPECT_EQ(rowIsKept(R"({ "matches": ["*://*.example.com/*"], "available": "iOS || vision", "behaviors": [{ "id": "ShouldAvoidStartingSelectionOnMouseDownOverPointerCursor" }] })"_s), isEnabled(iOS) || isEnabled(vision));
+    EXPECT_EQ(rowIsKept(R"({ "matches": ["*://*.example.com/*"], "available": "iOSFamily && touchEvents", "behaviors": [{ "id": "ShouldAvoidStartingSelectionOnMouseDownOverPointerCursor" }] })"_s), isEnabled(iOSFamily) && isEnabled(touchEvents));
 
-    EXPECT_EQ(rowIsKept(R"({ "matches": ["*://*.example.com/*"], "available": "vision || iOSFamily && touchEvents", "behaviors": [{ "id": "NeedsBodyScrollbarWidthNoneDisabledQuirk" }] })"_s), isEnabled(vision) || (isEnabled(iOSFamily) && isEnabled(touchEvents)));
+    EXPECT_EQ(rowIsKept(R"({ "matches": ["*://*.example.com/*"], "available": "vision || iOSFamily && touchEvents", "behaviors": [{ "id": "ShouldAvoidStartingSelectionOnMouseDownOverPointerCursor" }] })"_s), isEnabled(vision) || (isEnabled(iOSFamily) && isEnabled(touchEvents)));
 
-    EXPECT_EQ(rowIsKept(R"({ "matches": ["*://*.example.com/*"], "available": "mac", "behaviors": [{ "id": "NeedsBodyScrollbarWidthNoneDisabledQuirk" }] })"_s), isEnabled(mac));
-    EXPECT_EQ(rowIsKept(R"({ "matches": ["*://*.example.com/*"], "available": "mediaStream && webRTC", "behaviors": [{ "id": "NeedsBodyScrollbarWidthNoneDisabledQuirk" }] })"_s), isEnabled(mediaStream) && isEnabled(webRTC));
+    EXPECT_EQ(rowIsKept(R"({ "matches": ["*://*.example.com/*"], "available": "mac", "behaviors": [{ "id": "ShouldAvoidStartingSelectionOnMouseDownOverPointerCursor" }] })"_s), isEnabled(mac));
+    EXPECT_EQ(rowIsKept(R"({ "matches": ["*://*.example.com/*"], "available": "mediaStream && webRTC", "behaviors": [{ "id": "ShouldAvoidStartingSelectionOnMouseDownOverPointerCursor" }] })"_s), isEnabled(mediaStream) && isEnabled(webRTC));
 
-    EXPECT_EQ(rowIsKept(R"({ "matches": ["*://*.example.com/*"], "available": "!mac", "behaviors": [{ "id": "NeedsBodyScrollbarWidthNoneDisabledQuirk" }] })"_s), !isEnabled(mac));
-    EXPECT_EQ(rowIsKept(R"({ "matches": ["*://*.example.com/*"], "available": "!!mac", "behaviors": [{ "id": "NeedsBodyScrollbarWidthNoneDisabledQuirk" }] })"_s), isEnabled(mac));
-    EXPECT_EQ(rowIsKept(R"({ "matches": ["*://*.example.com/*"], "available": "!mac && cocoa", "behaviors": [{ "id": "NeedsBodyScrollbarWidthNoneDisabledQuirk" }] })"_s), !isEnabled(mac) && isEnabled(cocoa));
-    EXPECT_EQ(rowIsKept(R"json({ "matches": ["*://*.example.com/*"], "available": "!(mac || iOS)", "behaviors": [{ "id": "NeedsBodyScrollbarWidthNoneDisabledQuirk" }] })json"_s), !(isEnabled(mac) || isEnabled(iOS)));
-    EXPECT_EQ(rowIsKept(R"({ "matches": ["*://*.example.com/*"], "available": "(iOS || vision) && touchEvents", "behaviors": [{ "id": "NeedsBodyScrollbarWidthNoneDisabledQuirk" }] })"_s), (isEnabled(iOS) || isEnabled(vision)) && isEnabled(touchEvents));
-    EXPECT_EQ(rowIsKept(R"json({ "matches": ["*://*.example.com/*"], "available": "((mac))", "behaviors": [{ "id": "NeedsBodyScrollbarWidthNoneDisabledQuirk" }] })json"_s), isEnabled(mac));
+    EXPECT_EQ(rowIsKept(R"({ "matches": ["*://*.example.com/*"], "available": "!mac", "behaviors": [{ "id": "ShouldAvoidStartingSelectionOnMouseDownOverPointerCursor" }] })"_s), !isEnabled(mac));
+    EXPECT_EQ(rowIsKept(R"({ "matches": ["*://*.example.com/*"], "available": "!!mac", "behaviors": [{ "id": "ShouldAvoidStartingSelectionOnMouseDownOverPointerCursor" }] })"_s), isEnabled(mac));
+    EXPECT_EQ(rowIsKept(R"({ "matches": ["*://*.example.com/*"], "available": "!mac && cocoa", "behaviors": [{ "id": "ShouldAvoidStartingSelectionOnMouseDownOverPointerCursor" }] })"_s), !isEnabled(mac) && isEnabled(cocoa));
+    EXPECT_EQ(rowIsKept(R"json({ "matches": ["*://*.example.com/*"], "available": "!(mac || iOS)", "behaviors": [{ "id": "ShouldAvoidStartingSelectionOnMouseDownOverPointerCursor" }] })json"_s), !(isEnabled(mac) || isEnabled(iOS)));
+    EXPECT_EQ(rowIsKept(R"({ "matches": ["*://*.example.com/*"], "available": "(iOS || vision) && touchEvents", "behaviors": [{ "id": "ShouldAvoidStartingSelectionOnMouseDownOverPointerCursor" }] })"_s), (isEnabled(iOS) || isEnabled(vision)) && isEnabled(touchEvents));
+    EXPECT_EQ(rowIsKept(R"json({ "matches": ["*://*.example.com/*"], "available": "((mac))", "behaviors": [{ "id": "ShouldAvoidStartingSelectionOnMouseDownOverPointerCursor" }] })json"_s), isEnabled(mac));
 
-    expectRowRejected(R"({ "matches": ["*://*.example.com/*"], "available": "!", "behaviors": [{ "id": "NeedsBodyScrollbarWidthNoneDisabledQuirk" }] })"_s, InvalidAvailableExpression, "available"_s);
-    expectRowRejected(R"({ "matches": ["*://*.example.com/*"], "available": "(mac", "behaviors": [{ "id": "NeedsBodyScrollbarWidthNoneDisabledQuirk" }] })"_s, InvalidAvailableExpression, "available"_s);
-    expectRowRejected(R"json({ "matches": ["*://*.example.com/*"], "available": "mac)", "behaviors": [{ "id": "NeedsBodyScrollbarWidthNoneDisabledQuirk" }] })json"_s, InvalidAvailableExpression, "available"_s);
-    expectRowRejected(R"json({ "matches": ["*://*.example.com/*"], "available": "()", "behaviors": [{ "id": "NeedsBodyScrollbarWidthNoneDisabledQuirk" }] })json"_s, InvalidAvailableExpression, "available"_s);
-    expectRowRejected(R"({ "matches": ["*://*.example.com/*"], "available": "mac iOS", "behaviors": [{ "id": "NeedsBodyScrollbarWidthNoneDisabledQuirk" }] })"_s, InvalidAvailableExpression, "available"_s);
-    expectRowRejected(R"({ "matches": ["*://*.example.com/*"], "available": "mac ! iOS", "behaviors": [{ "id": "NeedsBodyScrollbarWidthNoneDisabledQuirk" }] })"_s, InvalidAvailableExpression, "available"_s);
-    expectRowRejected(R"({ "matches": ["*://*.example.com/*"], "available": "mac & iOS", "behaviors": [{ "id": "NeedsBodyScrollbarWidthNoneDisabledQuirk" }] })"_s, InvalidAvailableExpression, "available"_s);
-    expectRowRejected(R"({ "matches": ["*://*.example.com/*"], "available": "mac &", "behaviors": [{ "id": "NeedsBodyScrollbarWidthNoneDisabledQuirk" }] })"_s, InvalidAvailableExpression, "available"_s);
-    expectRowRejected(R"({ "matches": ["*://*.example.com/*"], "available": "mac |", "behaviors": [{ "id": "NeedsBodyScrollbarWidthNoneDisabledQuirk" }] })"_s, InvalidAvailableExpression, "available"_s);
-    expectRowRejected(R"({ "matches": ["*://*.example.com/*"], "available": "!toaster", "behaviors": [{ "id": "NeedsBodyScrollbarWidthNoneDisabledQuirk" }] })"_s, InvalidAvailableExpression, "available"_s);
+    expectRowRejected(R"({ "matches": ["*://*.example.com/*"], "available": "!", "behaviors": [{ "id": "ShouldAvoidStartingSelectionOnMouseDownOverPointerCursor" }] })"_s, InvalidAvailableExpression, "available"_s);
+    expectRowRejected(R"({ "matches": ["*://*.example.com/*"], "available": "(mac", "behaviors": [{ "id": "ShouldAvoidStartingSelectionOnMouseDownOverPointerCursor" }] })"_s, InvalidAvailableExpression, "available"_s);
+    expectRowRejected(R"json({ "matches": ["*://*.example.com/*"], "available": "mac)", "behaviors": [{ "id": "ShouldAvoidStartingSelectionOnMouseDownOverPointerCursor" }] })json"_s, InvalidAvailableExpression, "available"_s);
+    expectRowRejected(R"json({ "matches": ["*://*.example.com/*"], "available": "()", "behaviors": [{ "id": "ShouldAvoidStartingSelectionOnMouseDownOverPointerCursor" }] })json"_s, InvalidAvailableExpression, "available"_s);
+    expectRowRejected(R"({ "matches": ["*://*.example.com/*"], "available": "mac iOS", "behaviors": [{ "id": "ShouldAvoidStartingSelectionOnMouseDownOverPointerCursor" }] })"_s, InvalidAvailableExpression, "available"_s);
+    expectRowRejected(R"({ "matches": ["*://*.example.com/*"], "available": "mac ! iOS", "behaviors": [{ "id": "ShouldAvoidStartingSelectionOnMouseDownOverPointerCursor" }] })"_s, InvalidAvailableExpression, "available"_s);
+    expectRowRejected(R"({ "matches": ["*://*.example.com/*"], "available": "mac & iOS", "behaviors": [{ "id": "ShouldAvoidStartingSelectionOnMouseDownOverPointerCursor" }] })"_s, InvalidAvailableExpression, "available"_s);
+    expectRowRejected(R"({ "matches": ["*://*.example.com/*"], "available": "mac &", "behaviors": [{ "id": "ShouldAvoidStartingSelectionOnMouseDownOverPointerCursor" }] })"_s, InvalidAvailableExpression, "available"_s);
+    expectRowRejected(R"({ "matches": ["*://*.example.com/*"], "available": "mac |", "behaviors": [{ "id": "ShouldAvoidStartingSelectionOnMouseDownOverPointerCursor" }] })"_s, InvalidAvailableExpression, "available"_s);
+    expectRowRejected(R"({ "matches": ["*://*.example.com/*"], "available": "!toaster", "behaviors": [{ "id": "ShouldAvoidStartingSelectionOnMouseDownOverPointerCursor" }] })"_s, InvalidAvailableExpression, "available"_s);
 
     StringBuilder deeplyNested;
     deeplyNested.append("{ \"quirks\": [{ \"matches\": [\"*://*.example.com/*\"], \"available\": \""_s);
     for (size_t index = 0; index < 100000; ++index)
         deeplyNested.append('(');
-    deeplyNested.append("mac\", \"behaviors\": [{ \"id\": \"NeedsBodyScrollbarWidthNoneDisabledQuirk\" }] }] }"_s);
+    deeplyNested.append("mac\", \"behaviors\": [{ \"id\": \"ShouldAvoidStartingSelectionOnMouseDownOverPointerCursor\" }] }] }"_s);
     auto deeplyNestedResult = WebCore::parseQuirkTable(deeplyNested.toString());
     EXPECT_TRUE(deeplyNestedResult.table.quirks.isEmpty());
     ASSERT_EQ(deeplyNestedResult.errors.size(), 1u);
     EXPECT_EQ(deeplyNestedResult.errors[0].kind, InvalidAvailableExpression);
 
-    expectRowRejected(R"({ "matches": ["*://*.example.com/*"], "available": "iOS &&", "behaviors": [{ "id": "NeedsBodyScrollbarWidthNoneDisabledQuirk" }] })"_s, InvalidAvailableExpression, "available"_s);
-    expectRowRejected(R"({ "matches": ["*://*.example.com/*"], "available": "toaster", "behaviors": [{ "id": "NeedsBodyScrollbarWidthNoneDisabledQuirk" }] })"_s, InvalidAvailableExpression, "available"_s);
-    expectRowRejected(R"({ "matches": ["*://*.example.com/*"], "available": "", "behaviors": [{ "id": "NeedsBodyScrollbarWidthNoneDisabledQuirk" }] })"_s, InvalidAvailableExpression, "available"_s);
+    expectRowRejected(R"({ "matches": ["*://*.example.com/*"], "available": "iOS &&", "behaviors": [{ "id": "ShouldAvoidStartingSelectionOnMouseDownOverPointerCursor" }] })"_s, InvalidAvailableExpression, "available"_s);
+    expectRowRejected(R"({ "matches": ["*://*.example.com/*"], "available": "toaster", "behaviors": [{ "id": "ShouldAvoidStartingSelectionOnMouseDownOverPointerCursor" }] })"_s, InvalidAvailableExpression, "available"_s);
+    expectRowRejected(R"({ "matches": ["*://*.example.com/*"], "available": "", "behaviors": [{ "id": "ShouldAvoidStartingSelectionOnMouseDownOverPointerCursor" }] })"_s, InvalidAvailableExpression, "available"_s);
 }
 
 TEST_F(QuirksTest, BehaviorsUnavailableInThisBuildAreDroppedWithoutAnError)
 {
     auto result = parseRow(R"({ "matches": ["*://*.example.com/*"], "behaviors": [
         { "id": "NeedsGoogleTranslateScrollingQuirk" },
-        { "id": "NeedsBodyScrollbarWidthNoneDisabledQuirk" }
+        { "id": "ShouldAvoidStartingSelectionOnMouseDownOverPointerCursor" }
     ] })"_s);
 
     EXPECT_TRUE(result.errors.isEmpty());
@@ -520,7 +520,7 @@ TEST_F(QuirksTest, BehaviorsUnavailableInThisBuildAreDroppedWithoutAnError)
 
 TEST_F(QuirksTest, SiteSpecificQuirksResolveWithoutADocument)
 {
-    EXPECT_TRUE(resolveQuirksForTopURL("https://open.spotify.com/"_s).isBehaviorEnabled(WebCore::QuirkBehaviorID::NeedsBodyScrollbarWidthNoneDisabledQuirk));
+    EXPECT_TRUE(resolveQuirksForTopURL("https://open.spotify.com/"_s).isBehaviorEnabled(WebCore::QuirkBehaviorID::ShouldAvoidStartingSelectionOnMouseDownOverPointerCursor));
     EXPECT_TRUE(resolveQuirksForTopURL("https://www.scribd.com/"_s).isBehaviorEnabled(WebCore::QuirkBehaviorID::NeedsReuseLiveRangeForSelectionUpdateQuirk));
 
     EXPECT_FALSE(resolveQuirksForTopURL("https://www.example.com/"_s).hasBehaviors());
@@ -626,7 +626,7 @@ static WebCore::QuirkBehavior behaviorWithElementSelector(ASCIILiteral selector)
 TEST_F(QuirksTest, ParametersAreOnlyReturnedForTheBehaviorThatSuppliedThem)
 {
     const auto behaviors = WTF::toArray({
-        WebCore::QuirkBehavior { .id = WebCore::QuirkBehaviorID::NeedsBodyScrollbarWidthNoneDisabledQuirk },
+        WebCore::QuirkBehavior { .id = WebCore::QuirkBehaviorID::ShouldAvoidStartingSelectionOnMouseDownOverPointerCursor },
         behaviorWithScript("script"_s),
     });
 
@@ -636,7 +636,7 @@ TEST_F(QuirksTest, ParametersAreOnlyReturnedForTheBehaviorThatSuppliedThem)
 
     WebCore::URLMatchContext context { URL { "https://www.example.com/app.js"_s } };
 
-    EXPECT_TRUE(quirks.isBehaviorEnabled(WebCore::QuirkBehaviorID::NeedsBodyScrollbarWidthNoneDisabledQuirk));
+    EXPECT_TRUE(quirks.isBehaviorEnabled(WebCore::QuirkBehaviorID::ShouldAvoidStartingSelectionOnMouseDownOverPointerCursor));
     EXPECT_EQ(scriptsForScriptURL(quirks, "https://www.example.com/app.js"_s), Vector<String> { "script"_str });
 }
 
@@ -744,10 +744,10 @@ TEST_F(QuirksTest, ASecondaryURLConditionIsRecordedOnTheBehavior)
 TEST_F(QuirksTest, BehaviorAppliesToURLRequiresTheBehaviorToBeEnabled)
 {
     WebCore::QuirksData quirks;
-    quirks.addBehavior(WebCore::QuirkBehavior { .id = WebCore::QuirkBehaviorID::NeedsBodyScrollbarWidthNoneDisabledQuirk });
+    quirks.addBehavior(WebCore::QuirkBehavior { .id = WebCore::QuirkBehaviorID::ShouldAvoidStartingSelectionOnMouseDownOverPointerCursor });
 
     EXPECT_FALSE(quirks.behaviorAppliesToURL(WebCore::QuirkBehaviorID::NeedsScriptToEvaluateBeforeRunningScriptFromURLQuirk, URL { "https://www.example.com/a.js"_s }));
-    EXPECT_TRUE(quirks.behaviorAppliesToURL(WebCore::QuirkBehaviorID::NeedsBodyScrollbarWidthNoneDisabledQuirk, URL { "https://www.example.com/a.js"_s }));
+    EXPECT_TRUE(quirks.behaviorAppliesToURL(WebCore::QuirkBehaviorID::ShouldAvoidStartingSelectionOnMouseDownOverPointerCursor, URL { "https://www.example.com/a.js"_s }));
 }
 
 TEST_F(QuirksTest, MediaRangeRewriteAppliesOnlyToBingRequestURLs)
@@ -861,12 +861,12 @@ TEST_F(QuirksTest, MergeUnionsFlagsAndConcatenatesBehaviors)
 
     WebCore::QuirksData other;
     other.addBehavior(onSecond);
-    other.addBehavior(WebCore::QuirkBehavior { .id = WebCore::QuirkBehaviorID::NeedsBodyScrollbarWidthNoneDisabledQuirk });
+    other.addBehavior(WebCore::QuirkBehavior { .id = WebCore::QuirkBehaviorID::ShouldAvoidStartingSelectionOnMouseDownOverPointerCursor });
 
     quirks.merge(other);
 
     EXPECT_TRUE(quirks.isBehaviorEnabled(WebCore::QuirkBehaviorID::ShouldDispatchSimulatedMouseEventsQuirk));
-    EXPECT_TRUE(quirks.isBehaviorEnabled(WebCore::QuirkBehaviorID::NeedsBodyScrollbarWidthNoneDisabledQuirk));
+    EXPECT_TRUE(quirks.isBehaviorEnabled(WebCore::QuirkBehaviorID::ShouldAvoidStartingSelectionOnMouseDownOverPointerCursor));
     EXPECT_EQ(elementSelectorsFor(quirks, WebCore::QuirkBehaviorID::ShouldDispatchSimulatedMouseEventsQuirk), (Vector<String> { ".first"_str, ".second"_str }));
 }
 
