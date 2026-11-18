@@ -20,7 +20,7 @@ try {
     Symbol(2) < o;
     assert(true, false, "")
 } catch(e) {
-    assert(e instanceof TypeError, true, "Bad Exception when Symbol is left operand");
+    assert(e.message, "Calling @toPrimitive", "Bad Exception when Symbol is left operand");
 }
 
 o = {
