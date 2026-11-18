@@ -56,6 +56,7 @@
 - (IBAction)showTabs:(id)sender;
 - (IBAction)showSettings:(id)sender;
 
+- (void)updateCapturePreviewPreference;
 - (void)selectWebViewAtIndex:(NSUInteger)index;
 - (void)removeWebViewAtIndex:(NSUInteger)index;
 - (void)addWebView;

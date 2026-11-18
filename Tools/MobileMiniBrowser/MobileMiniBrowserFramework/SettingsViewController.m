@@ -29,6 +29,7 @@
 
 static NSString * const defaultURL = @"https://webkit.org";
 static NSString * const DefaultURLPreferenceKey = @"DefaultURL";
+static NSString * const CapturePreviewPreferenceKey = @"ShowCapturePreviewInPrompt";
 
 @implementation SettingsViewController
 
@@ -38,6 +39,23 @@ static NSString * const DefaultURLPreferenceKey = @"DefaultURL";
     if (customDefaultURL)
         return customDefaultURL;
     return defaultURL;
+}
+
+- (BOOL)showsCapturePreviewInPrompt
+{
+    return [[NSUserDefaults standardUserDefaults] boolForKey:CapturePreviewPreferenceKey];
+}
+
+- (void)viewDidLoad
+{
+    [super viewDidLoad];
+    self.capturePreviewSwitch.on = [self showsCapturePreviewInPrompt];
+}
+
+- (IBAction)toggleCapturePreview:(id)sender
+{
+    [[NSUserDefaults standardUserDefaults] setBool:self.capturePreviewSwitch.on forKey:CapturePreviewPreferenceKey];
+    [self.parent updateCapturePreviewPreference];
 }
 
 - (IBAction)setDefaultURLToCurrentURL:(id)sender

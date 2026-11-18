@@ -30,10 +30,13 @@
 @interface SettingsViewController : UIViewController
 
 @property (strong, nonatomic) IBOutlet UIButton *defaultURLButton;
+@property (strong, nonatomic) IBOutlet UISwitch *capturePreviewSwitch;
 @property (weak, nonatomic) WebViewController *parent;
 
 - (IBAction)setDefaultURLToCurrentURL:(id)sender;
+- (IBAction)toggleCapturePreview:(id)sender;
 - (IBAction)closeModal:(id)sender;
 - (NSString *)defaultURL;
+- (BOOL)showsCapturePreviewInPrompt;
 
 @end

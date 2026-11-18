@@ -34,6 +34,7 @@
 #import <WebKit/WKWebView.h>
 #import <WebKit/WKWebViewConfiguration.h>
 #import <WebKit/WKWebsiteDataStorePrivate.h>
+#import <WebKit/_WKFeature.h>
 #import <WebKit/_WKProcessPoolConfiguration.h>
 #import <WebKit/_WKWebsiteDataStoreConfiguration.h>
 
@@ -261,11 +262,31 @@ void* URLContext = &URLContext;
 
 #pragma mark Internal methods
 
+- (void)updateCapturePreviewPreference
+{
+    BOOL enabled = [self.settingsViewController showsCapturePreviewInPrompt];
+    for (WKWebView *webView in self.webViews)
+        [self setCapturePreviewEnabled:enabled forPreferences:webView.configuration.preferences];
+}
+
+- (void)setCapturePreviewEnabled:(BOOL)enabled forPreferences:(WKPreferences *)preferences
+{
+    for (_WKFeature *feature in [WKPreferences _features]) {
+        if ([feature.key isEqualToString:@"CaptureDevicePreviewInPromptEnabled"]) {
+            [preferences _setEnabled:enabled forFeature:feature];
+            return;
+        }
+    }
+}
+
 - (WKWebView *)createWebView
 {
     WKWebViewConfiguration *configuration = [[WKWebViewConfiguration alloc] init];
 
+#if TARGET_OS_SIMULATOR
     configuration.preferences._mockCaptureDevicesEnabled = YES;
+#endif
+    [self setCapturePreviewEnabled:[self.settingsViewController showsCapturePreviewInPrompt] forPreferences:configuration.preferences];
     configuration.preferences._notificationsEnabled = YES;
     configuration.preferences._pushAPIEnabled = YES;
     configuration.preferences._notificationEventEnabled = YES;

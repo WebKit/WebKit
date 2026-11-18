@@ -200,6 +200,23 @@
                                             <action selector="setDefaultURLToCurrentURL:" destination="aJ5-0L-JDf" eventType="touchUpInside" id="6ge-wG-0Vi"/>
                                         </connections>
                                     </button>
+                                    <stackView opaque="NO" contentMode="scaleToFill" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="Cp1-Rw-Stk" userLabel="Capture Preview Row">
+                                        <rect key="frame" x="0.0" y="176" width="280" height="31"/>
+                                        <subviews>
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Preview in Camera/Microphone Prompt" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Cp1-Lb-Lbl">
+                                                <rect key="frame" x="0.0" y="0.0" width="223" height="31"/>
+                                                <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
+                                                <nil key="textColor"/>
+                                                <nil key="highlightedColor"/>
+                                            </label>
+                                            <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="Cp1-Sw-Swt">
+                                                <rect key="frame" x="231" y="0.0" width="51" height="31"/>
+                                                <connections>
+                                                    <action selector="toggleCapturePreview:" destination="aJ5-0L-JDf" eventType="valueChanged" id="Cp1-Ac-Tgl"/>
+                                                </connections>
+                                            </switch>
+                                        </subviews>
+                                    </stackView>
                                 </subviews>
                             </stackView>
                         </subviews>
@@ -209,6 +226,9 @@
                             <constraint firstItem="UK0-Lb-N0g" firstAttribute="top" secondItem="OVt-56-WEs" secondAttribute="bottom" constant="50" id="vSb-Yl-4Ei"/>
                         </constraints>
                     </view>
+                    <connections>
+                        <outlet property="capturePreviewSwitch" destination="Cp1-Sw-Swt" id="Cp1-Ou-Tlt"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="jS8-Pw-4A3" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
