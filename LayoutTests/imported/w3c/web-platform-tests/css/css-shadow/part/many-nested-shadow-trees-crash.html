@@ -1,0 +1,10 @@
+<!doctype html>
+<link rel="help" href="https://drafts.csswg.org/css-shadow-parts/#part">
+<div id="host"></div>
+<script>
+let element = document.getElementById("host");
+for (let i = 0; i < 200; i++)
+  element = element.attachShadow({ mode: "open" }).appendChild(document.createElement("div"));
+element.setAttribute("part", "p");
+document.body.offsetWidth;
+</script>

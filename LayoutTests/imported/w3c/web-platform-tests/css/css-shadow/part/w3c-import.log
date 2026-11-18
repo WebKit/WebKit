@@ -54,6 +54,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-shadow/part/invalidation-complex-selector-forward.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-shadow/part/invalidation-complex-selector.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-shadow/part/invalidation-part-pseudo.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shadow/part/many-nested-shadow-trees-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-shadow/part/multiple-parts.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-shadow/part/multiple-scopes.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-shadow/part/part-after-combinator-invalidation-expected.html

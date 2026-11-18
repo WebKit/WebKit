@@ -279,6 +279,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-shadow/slotted-text-with-flex-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-shadow/slotted-text-with-flex.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-shadow/slotted-user-agent-part-invalidation.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shadow/slotted-user-agent-part-many-slots-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-shadow/slotted-with-pseudo-element-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-shadow/slotted-with-pseudo-element-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-shadow/slotted-with-pseudo-element.html

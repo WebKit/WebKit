@@ -453,7 +453,7 @@ void ElementRuleCollector::matchSlottedPseudoElementRules(DeclarationOrigin orig
     auto* slot = element().assignedSlot();
     auto styleScopeOrdinal = ScopeOrdinal::FirstSlot;
 
-    for (; slot; slot = slot->assignedSlot(), ++styleScopeOrdinal) {
+    for (; slot && styleScopeOrdinal < ScopeOrdinal::SlotLimit; slot = slot->assignedSlot(), ++styleScopeOrdinal) {
         auto& styleScope = Scope::forNode(*slot);
         if (!styleScope.resolver().ruleSets().isAuthorStyleDefined())
             continue;
@@ -464,9 +464,6 @@ void ElementRuleCollector::matchSlottedPseudoElementRules(DeclarationOrigin orig
 
         MatchRequest scopeMatchRequest(*scopeRules, styleScopeOrdinal);
         collectMatchingRulesForList(&scopeRules->slottedPseudoElementRules(), scopeMatchRequest);
-
-        if (styleScopeOrdinal == ScopeOrdinal::SlotLimit)
-            break;
     }
 }
 
@@ -490,7 +487,7 @@ void ElementRuleCollector::matchPartPseudoElementRulesForScope(const Element& pa
     auto* element = &partMatchingElement;
     auto styleScopeOrdinal = ScopeOrdinal::Element;
 
-    for (; element; element = element->shadowHost(), --styleScopeOrdinal) {
+    for (; element && styleScopeOrdinal > ScopeOrdinal::ContainingHostLimit; element = element->shadowHost(), --styleScopeOrdinal) {
         auto& styleScope = Scope::forNode(const_cast<Element&>(*element));
         if (!styleScope.resolver().ruleSets().isAuthorStyleDefined())
             continue;
@@ -506,9 +503,6 @@ void ElementRuleCollector::matchPartPseudoElementRulesForScope(const Element& pa
 
         // Element may only be exposed to styling from enclosing scopes via exportparts attributes.
         if (element != &partMatchingElement && element->shadowRoot()->partMappings().isEmpty())
-            break;
-
-        if (styleScopeOrdinal == ScopeOrdinal::ContainingHostLimit)
             break;
     }
 }
@@ -527,7 +521,7 @@ void ElementRuleCollector::matchSlottedPseudoElementRulesInUserAgentShadowTree(D
     auto* slot = host->assignedSlot();
     auto styleScopeOrdinal = ScopeOrdinal::FirstSlot;
 
-    for (; slot; slot = slot->assignedSlot(), ++styleScopeOrdinal) {
+    for (; slot && styleScopeOrdinal < ScopeOrdinal::SlotLimit; slot = slot->assignedSlot(), ++styleScopeOrdinal) {
         auto& styleScope = Scope::forNode(*slot);
         if (!styleScope.resolver().ruleSets().isAuthorStyleDefined())
             continue;
@@ -538,9 +532,6 @@ void ElementRuleCollector::matchSlottedPseudoElementRulesInUserAgentShadowTree(D
 
         MatchRequest scopeMatchRequest(*scopeRules, styleScopeOrdinal);
         collectMatchingRulesForList(&scopeRules->slottedPseudoElementRules(), scopeMatchRequest);
-
-        if (styleScopeOrdinal == ScopeOrdinal::SlotLimit)
-            break;
     }
 }
 
