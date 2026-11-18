@@ -1287,7 +1287,7 @@ public:
     void getRectsForGranularityWithSelectionOffset(WebCore::TextGranularity, int32_t, CompletionHandler<void(const Vector<WebCore::SelectionGeometry>&)>&&);
     void getRectsAtSelectionOffsetWithText(int32_t, const String&, CompletionHandler<void(const Vector<WebCore::SelectionGeometry>&)>&&);
     void storeSelectionForAccessibility(bool);
-    void requestEvasionRectsAboveSelection(CompletionHandler<void(const Vector<WebCore::FloatRect>&)>&&);
+    void requestEvasionRectsAboveSelection(std::optional<WebCore::FloatRect> selectionBoundsInMainFrameView, double pageScaleFactor, double contextMenuAreaLimit, CompletionHandler<void(const Vector<WebCore::FloatRect>&)>&&);
 
     void contentSizeCategoryDidChange(const String&);
 

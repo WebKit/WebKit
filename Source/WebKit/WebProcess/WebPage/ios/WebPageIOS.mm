@@ -1955,67 +1955,49 @@ void WebPage::moveSelectionByOffset(int32_t offset, CompletionHandler<void()>&& 
     completionHandler();
 }
 
-void WebPage::requestEvasionRectsAboveSelection(CompletionHandler<void(const Vector<FloatRect>&)>&& reply)
+void WebPage::requestEvasionRectsAboveSelection(std::optional<FloatRect> selectionBoundsInMainFrameView, double scaleFactor, double contextMenuAreaLimit, CompletionHandler<void(const Vector<FloatRect>&)>&& reply)
 {
     RefPtr frame = m_page->focusController().focusedOrMainFrame();
     if (!frame)
         return reply({ });
 
-    RefPtr frameView = frame->view();
-    if (!frameView) {
-        reply({ });
-        return;
-    }
-
-    auto selection = frame->selection().selection();
-    if (selection.isNone()) {
-        reply({ });
-        return;
-    }
-
-    auto selectedRange = selection.toNormalizedRange();
-    if (!selectedRange) {
-        reply({ });
-        return;
-    }
-
-    if (!m_focusedElement || !m_focusedElement->renderer() || isTransparentOrFullyClipped(*protect(m_focusedElement))) {
-        reply({ });
-        return;
-    }
-
-    float scaleFactor = pageScaleFactor();
-    const double factorOfContentArea = 0.5;
-    RefPtr localMainFrame = protect(m_page)->localMainFrame();
-    if (!localMainFrame) {
-        reply({ });
-        return;
-    }
-
-    auto unobscuredContentArea = RefPtr(localMainFrame->view())->unobscuredContentRect().area<RecordOverflow>();
-    if (unobscuredContentArea.hasOverflowed()) {
-        reply({ });
-        return;
-    }
-
-    double contextMenuAreaLimit = factorOfContentArea * scaleFactor * unobscuredContentArea.value();
+    Ref localRootFrame = frame->rootFrame();
+    RefPtr localRootView = localRootFrame->view();
+    if (!localRootView)
+        return reply({ });
 
     FloatRect selectionBoundsInRootViewCoordinates;
-    if (selection.isRange())
-        selectionBoundsInRootViewCoordinates = frameView->contentsToRootView(unionRect(RenderObject::absoluteTextRects(*selectedRange)));
-    else
-        selectionBoundsInRootViewCoordinates = frameView->contentsToRootView(protect(frame->selection())->absoluteCaretBounds());
+    if (selectionBoundsInMainFrameView) {
+        // The selection is in another frame's process. Look for what to evade in this process's frames around it.
+        selectionBoundsInRootViewCoordinates = localRootView->convertFromRootViewAcrossIsolatedFrames(*selectionBoundsInMainFrameView);
+    } else {
+        RefPtr frameView = frame->view();
+        if (!frameView)
+            return reply({ });
+
+        auto selection = frame->selection().selection();
+        if (selection.isNone())
+            return reply({ });
+
+        auto selectedRange = selection.toNormalizedRange();
+        if (!selectedRange)
+            return reply({ });
+
+        if (!m_focusedElement || !m_focusedElement->renderer() || isTransparentOrFullyClipped(*protect(m_focusedElement)))
+            return reply({ });
+
+        if (selection.isRange())
+            selectionBoundsInRootViewCoordinates = frameView->contentsToRootView(unionRect(RenderObject::absoluteTextRects(*selectedRange)));
+        else
+            selectionBoundsInRootViewCoordinates = frameView->contentsToRootView(protect(frame->selection())->absoluteCaretBounds());
+    }
 
     auto centerOfTargetBounds = selectionBoundsInRootViewCoordinates.center();
     FloatPoint centerTopInRootViewCoordinates { centerOfTargetBounds.x(), selectionBoundsInRootViewCoordinates.y() };
 
     auto clickableNonEditableNode = [&](const FloatPoint& locationInRootViewCoordinates) -> RefPtr<Node> {
-        RefPtr localMainFrame = protect(m_page)->localMainFrame();
-        if (!localMainFrame)
-            return nullptr;
-
         FloatPoint adjustedPoint;
-        RefPtr hitNode = Ref(*localMainFrame)->nodeRespondingToClickEvents(locationInRootViewCoordinates, adjustedPoint);
+        RefPtr hitNode = localRootFrame->nodeRespondingToClickEvents(locationInRootViewCoordinates, adjustedPoint);
         if (!hitNode || is<HTMLBodyElement>(hitNode) || is<Document>(hitNode) || hitNode->hasEditableStyle())
             return nullptr;
 
@@ -2029,7 +2011,7 @@ void WebPage::requestEvasionRectsAboveSelection(CompletionHandler<void(const Vec
     // Additionally, exclude any hit-tested nodes that are either very large relative to the size of the root view, or completely
     // encompass the selection bounds. The resulting rects are the bounds of these hit-tested nodes in root view coordinates.
     HashSet<Ref<Node>> hitTestedNodes;
-    Vector<FloatRect> rectsToAvoidInRootViewCoordinates;
+    Vector<FloatRect> rectsToAvoidInMainFrameView;
     const Vector<FloatPoint, 5> offsetsForHitTesting { { -30, -50 }, { 30, -50 }, { -60, -35 }, { 60, -35 }, { 0, -20 } };
     for (auto offset : offsetsForHitTesting) {
         offset.scale(1 / scaleFactor);
@@ -2056,17 +2038,18 @@ void WebPage::requestEvasionRectsAboveSelection(CompletionHandler<void(const Vec
             continue;
 
         auto bounds = frameView->contentsToRootView(renderer->absoluteBoundingBoxRect());
-        auto area = bounds.area();
+        auto boundsInMainFrameView = localRootView->convertToRootViewAcrossIsolatedFrames(bounds);
+        auto area = boundsInMainFrameView.area();
         if (area.hasOverflowed() || area > contextMenuAreaLimit)
             continue;
 
         if (bounds.contains(enclosingIntRect(selectionBoundsInRootViewCoordinates)))
             continue;
 
-        rectsToAvoidInRootViewCoordinates.append(WTF::move(bounds));
+        rectsToAvoidInMainFrameView.append(WTF::move(boundsInMainFrameView));
     }
 
-    reply(WTF::move(rectsToAvoidInRootViewCoordinates));
+    reply(WTF::move(rectsToAvoidInMainFrameView));
 }
 
 void WebPage::getRectsForGranularityWithSelectionOffset(WebCore::TextGranularity granularity, int32_t offset, CompletionHandler<void(const Vector<WebCore::SelectionGeometry>&)>&& completionHandler)

@@ -1290,7 +1290,33 @@ void WebPageProxy::requestEvasionRectsAboveSelection(CompletionHandler<void(cons
         return;
     }
 
-    protect(legacyMainFrameProcess())->sendWithAsyncReply(Messages::WebPage::RequestEvasionRectsAboveSelection(), WTF::move(callback), webPageIDInMainFrameProcess());
+    // Only the main frame's view knows the page's scale and unobscured area, so pass them to every process we ask.
+    double scaleFactor = pageScaleFactor();
+    double contextMenuAreaLimit = 0.5 * scaleFactor * unobscuredContentRect().area();
+
+    auto rects = Box<Vector<FloatRect>>::create();
+    Ref aggregator = CallbackAggregator::create([rects, callback = WTF::move(callback)] mutable {
+        callback(*rects);
+    });
+
+    RefPtr focusedFrame = focusedOrMainFrame();
+    std::optional<FrameIdentifier> focusedFrameID = focusedFrame ? std::optional(focusedFrame->frameID()) : std::nullopt;
+    sendWithAsyncReplyToProcessContainingFrame(focusedFrameID, Messages::WebPage::RequestEvasionRectsAboveSelection(std::nullopt, scaleFactor, contextMenuAreaLimit), Messages::WebPage::RequestEvasionRectsAboveSelection::Reply { [rects, aggregator](Vector<FloatRect>&& focusedFrameRects) {
+        rects->appendVector(WTF::move(focusedFrameRects));
+    } });
+
+    // The controls to evade can be in the main frame even when the selection is in an iframe in another process.
+    RefPtr mainFrame = m_mainFrame;
+    if (!focusedFrame || !mainFrame || &focusedFrame->process() == &mainFrame->process())
+        return;
+
+    auto selectionBounds = selectionBoundingRectInRootViewCoordinates();
+    if (selectionBounds.isEmpty())
+        return;
+
+    sendWithAsyncReplyToProcessContainingFrame(mainFrame->frameID(), Messages::WebPage::RequestEvasionRectsAboveSelection(selectionBounds, scaleFactor, contextMenuAreaLimit), Messages::WebPage::RequestEvasionRectsAboveSelection::Reply { [rects, aggregator](Vector<FloatRect>&& mainFrameRects) {
+        rects->appendVector(WTF::move(mainFrameRects));
+    } });
 }
 
 void WebPageProxy::updateSelectionWithDelta(int64_t locationDelta, int64_t lengthDelta, CompletionHandler<void()>&& completionHandler)

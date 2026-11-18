@@ -1806,6 +1806,41 @@ TEST(SiteIsolation, AutocorrectionRectsInCrossOriginIframe)
     expectRectInPositionedCrossOriginIframe(lastRect);
 }
 
+#if HAVE(UI_EDIT_MENU_INTERACTION)
+
+// The edit menu shows beneath the selection when there are controls just above it, so it doesn't cover them. With the
+// selection in a cross-origin iframe, controls above the iframe are in the main frame's process.
+static constexpr auto mainFrameWithControlsAboveCrossOriginIframe = "<meta name='viewport' content='width=device-width, initial-scale=1'>"
+    "<body style='margin: 0'>"
+    "<div style='position: absolute; left: 0; top: 220px;'><input type='button' value='1'><input type='button' value='2'><input type='button' value='3'><input type='button' value='4'><input type='button' value='5'><input type='button' value='6'></div>"
+    "<iframe id='iframe' style='position: absolute; left: 0; top: 260px; width: 320px; height: 100px; border: none;' src='https://webkit.org/iframe'></iframe>"
+    "</body>"_s;
+
+TEST(SiteIsolation, EditMenuAvoidsControlsAboveCrossOriginIframe)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { mainFrameWithControlsAboveCrossOriginIframe } },
+        { "/iframe"_s, { editableIframeWithText } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate, childFrame] = webViewWithFocusedCrossOriginIframe(server);
+    RetainPtr inputDelegate = startInputSessionInCrossOriginIframe(webView.get(), childFrame.get());
+    setSelectionInFrame(webView.get(), childFrame.get(), @"getSelection().selectAllChildren(document.body)", _WKSelectionAttributeIsRange);
+
+    __block bool done = false;
+    __block UIEditMenuArrowDirection arrowDirection = UIEditMenuArrowDirectionAutomatic;
+    [[webView textInputContentView] requestPreferredArrowDirectionForEditMenuWithCompletionHandler:^(UIEditMenuArrowDirection direction) {
+        arrowDirection = direction;
+        done = true;
+    }];
+    Util::run(&done);
+
+    // An upward arrow puts the menu beneath the selection.
+    EXPECT_EQ(UIEditMenuArrowDirectionUp, arrowDirection);
+}
+
+#endif // HAVE(UI_EDIT_MENU_INTERACTION)
+
 TEST(SiteIsolation, AccessibilityRectsAtSelectionOffsetInCrossOriginIframe)
 {
     HTTPServer server({
