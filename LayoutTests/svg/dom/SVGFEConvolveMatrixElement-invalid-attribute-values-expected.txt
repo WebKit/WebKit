@@ -1,0 +1,89 @@
+CONSOLE MESSAGE: Warning: feConvolveMatrix: problem parsing preserveAlpha="foo". Using the initial value false.
+CONSOLE MESSAGE: Warning: feConvolveMatrix: problem parsing preserveAlpha="TRUE". Using the initial value false.
+CONSOLE MESSAGE: Warning: feConvolveMatrix: problem parsing preserveAlpha="foo". Using the initial value false.
+CONSOLE MESSAGE: Warning: feConvolveMatrix: problem parsing divisor="abc". Using the default value.
+CONSOLE MESSAGE: Warning: feConvolveMatrix: problem parsing divisor="abc". Using the default value.
+CONSOLE MESSAGE: Warning: feConvolveMatrix: problem parsing targetX="-1". Using the default value.
+CONSOLE MESSAGE: Warning: feConvolveMatrix: problem parsing targetX="abc". Using the default value.
+CONSOLE MESSAGE: Warning: feConvolveMatrix: problem parsing targetY="-1". Using the default value.
+CONSOLE MESSAGE: Warning: feConvolveMatrix: problem parsing targetY="abc". Using the default value.
+CONSOLE MESSAGE: Warning: feConvolveMatrix: problem parsing order="0". Using the initial value 3.
+CONSOLE MESSAGE: Warning: feConvolveMatrix: problem parsing order="-3". Using the initial value 3.
+CONSOLE MESSAGE: Warning: feConvolveMatrix: problem parsing order="0.9". Using the initial value 3.
+CONSOLE MESSAGE: Warning: feConvolveMatrix: problem parsing order="2 0". Using the initial value 3.
+CONSOLE MESSAGE: Warning: feConvolveMatrix: problem parsing order="abc". Using the initial value 3.
+CONSOLE MESSAGE: Warning: feConvolveMatrix: problem parsing kernelMatrix="1 1 abc". The filter primitive acts as a pass through filter.
+CONSOLE MESSAGE: Warning: feConvolveMatrix: problem parsing edgeMode="foo". Using the initial value duplicate.
+CONSOLE MESSAGE: Warning: feConvolveMatrix: problem parsing edgeMode="WRAP". Using the initial value duplicate.
+Checks that invalid feConvolveMatrix attribute values are kept as set, and what the SVG DOM returns for them.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+preserveAlpha values other than 'true' and 'false' are the initial value false
+PASS element.getAttribute('preserveAlpha') is "foo"
+PASS element.preserveAlpha.baseVal is false
+PASS element.preserveAlpha.baseVal is true
+PASS element.getAttribute('preserveAlpha') is "TRUE"
+PASS element.preserveAlpha.baseVal is false
+PASS element.getAttribute('preserveAlpha') is null
+PASS element.preserveAlpha.baseVal is false
+PASS element.getAttribute('preserveAlpha') is "true"
+PASS element.preserveAlpha.baseVal is true
+
+A divisor that does not parse is the initial value
+PASS element.getAttribute('divisor') is "abc"
+PASS element.divisor.baseVal is 1
+PASS element.divisor.baseVal is 18
+PASS element.divisor.baseVal is 1
+PASS element.getAttribute('divisor') is "18"
+PASS element.divisor.baseVal is 18
+
+targetX and targetY keep out of range values, and one that does not parse is the initial value
+PASS element.getAttribute('targetX') is "-1"
+PASS element.targetX.baseVal is -1
+PASS element.targetX.baseVal is 3
+PASS element.getAttribute('targetX') is "abc"
+PASS element.targetX.baseVal is 0
+PASS element.getAttribute('targetX') is "-1"
+PASS element.targetX.baseVal is -1
+PASS element.getAttribute('targetY') is "-1"
+PASS element.targetY.baseVal is -1
+PASS element.targetY.baseVal is 3
+PASS element.getAttribute('targetY') is "abc"
+PASS element.targetY.baseVal is 0
+PASS element.getAttribute('targetY') is "-1"
+PASS element.targetY.baseVal is -1
+
+An order that does not parse or is below 1 is the initial value 3
+PASS element.getAttribute('order') is "0"
+PASS element.orderX.baseVal is 3
+PASS element.orderY.baseVal is 3
+PASS element.orderX.baseVal is 2
+PASS element.orderY.baseVal is 4
+PASS element.orderX.baseVal is 3
+PASS element.orderY.baseVal is 3
+PASS element.orderX.baseVal is 3
+PASS element.orderY.baseVal is 3
+PASS element.getAttribute('order') is "2 0"
+PASS element.orderX.baseVal is 3
+PASS element.orderY.baseVal is 3
+PASS element.orderX.baseVal is 3
+PASS element.orderY.baseVal is 3
+
+A kernelMatrix that does not parse is an empty list, and one with the wrong number of entries is kept
+PASS element.getAttribute('kernelMatrix') is "1 1 abc"
+PASS element.kernelMatrix.baseVal.numberOfItems is 0
+PASS element.kernelMatrix.baseVal.numberOfItems is 2
+PASS element.kernelMatrix.baseVal.numberOfItems is 10
+
+An edgeMode that does not parse is the initial value duplicate
+PASS element.getAttribute('edgeMode') is "foo"
+PASS element.edgeMode.baseVal is SVGFEConvolveMatrixElement.SVG_EDGEMODE_DUPLICATE
+PASS element.edgeMode.baseVal is SVGFEConvolveMatrixElement.SVG_EDGEMODE_WRAP
+PASS element.edgeMode.baseVal is SVGFEConvolveMatrixElement.SVG_EDGEMODE_DUPLICATE
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
