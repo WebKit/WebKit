@@ -672,6 +672,19 @@ RenderListOutsideMarker* RenderListItem::markerBox() const
     return dynamicDowncast<RenderListOutsideMarker>(m_marker.get());
 }
 
+RenderListItem* RenderListItem::listItemForMarker(const RenderObject& marker)
+{
+    if (CheckedPtr outsideMarker = dynamicDowncast<RenderListOutsideMarker>(marker))
+        return outsideMarker->listItem();
+    // An inside marker is an anonymous inline box in the item's content, so find the item that holds it.
+    for (CheckedPtr ancestor = marker.parent(); ancestor; ancestor = ancestor->parent()) {
+        auto* listItem = dynamicDowncast<RenderListItem>(ancestor);
+        if (listItem && listItem->markerRenderer() == &marker)
+            return listItem;
+    }
+    return nullptr;
+}
+
 String RenderListItem::markerText(ListMarkerIncludeSuffix includeSuffix) const
 {
     CheckedPtr marker = m_marker.get();
@@ -694,6 +707,13 @@ String RenderListItem::markerText(ListMarkerIncludeSuffix includeSuffix) const
 
     auto textContent = listMarkerTextContent(marker->style(), const_cast<RenderListItem&>(*this));
     return includeSuffix == ListMarkerIncludeSuffix::Yes ? textContent.textWithSuffix : textContent.textWithoutSuffix().toString();
+}
+
+String RenderListItem::markerText(const RenderObject& marker, ListMarkerIncludeSuffix includeSuffix)
+{
+    CheckedPtr listItem = listItemForMarker(marker);
+    // A marker that is being detached from its item has no item to ask.
+    return listItem ? listItem->markerText(includeSuffix) : String();
 }
 
 void RenderListItem::usedCounterDirectivesChanged()

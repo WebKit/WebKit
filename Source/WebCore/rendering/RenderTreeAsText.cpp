@@ -367,8 +367,7 @@ void RenderTreeAsText::writeRenderObject(TextStream& ts, const RenderObject& o, 
         ts << " [r="_s << cell->rowIndex() << " c="_s << cell->col() << " rs="_s << cell->rowSpan() << " cs="_s << cell->colSpan() << ']';
 
     if (auto* listMarker = dynamicDowncast<RenderListOutsideMarker>(o)) {
-        CheckedPtr listItem = listMarker->listItem();
-        auto text = listItem ? listItem->markerText(ListMarkerIncludeSuffix::No) : String();
+        auto text = RenderListItem::markerText(*listMarker, ListMarkerIncludeSuffix::No);
         if (!text.isEmpty()) {
             if (text.length() != 1)
                 text = quoteAndEscapeNonPrintables(text);

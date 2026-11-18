@@ -104,6 +104,11 @@ inline void RenderObject::setNeedsLayoutAndInvalidateContentLogicalWidths()
     invalidateContentLogicalWidths();
 }
 
+inline bool RenderObject::isListMarkerBox() const
+{
+    return isRenderElement() && style().isListMarkerStyle();
+}
+
 inline bool RenderObject::isNonReplacedAtomicInlineLevelBox() const
 {
     // FIXME: Check if iframe should really behave like non-replaced here.

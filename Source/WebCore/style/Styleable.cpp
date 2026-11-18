@@ -86,13 +86,9 @@ const std::optional<const Styleable> Styleable::fromRenderer(const RenderElement
         }
         break;
     case PseudoElementType::Marker: {
-        auto* ancestor = renderer.parent();
-        while (ancestor) {
-            auto* renderListItem = dynamicDowncast<RenderListItem>(ancestor);
-            if (renderListItem && ancestor->element() && renderListItem->markerRenderer() == &renderer)
-                return Styleable(*ancestor->element(), Style::PseudoElementIdentifier { PseudoElementType::Marker });
-            ancestor = ancestor->parent();
-        }
+        auto* renderListItem = RenderListItem::listItemForMarker(renderer);
+        if (renderListItem && renderListItem->element())
+            return Styleable(*renderListItem->element(), Style::PseudoElementIdentifier { PseudoElementType::Marker });
         break;
     }
     case PseudoElementType::Checkmark:

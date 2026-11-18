@@ -927,6 +927,10 @@ bool AccessibilityNodeObject::canHaveChildren() const
     if (CheckedPtr listMarker = dynamicDowncast<RenderListOutsideMarker>(renderer()))
         return listMarkerHasContent(listMarker->style(), protect(listMarker->document()));
 
+    // Markers are exposed as markerText(), so ignore any children.
+    if (CheckedPtr renderer = this->renderer(); renderer && renderer->isListMarkerBox())
+        return false;
+
     if (optGroupForLabel())
         return false;
 
@@ -4429,11 +4433,10 @@ String AccessibilityNodeObject::stringValue() const
                 if (!runStartNode)
                     runStartNode = memberNode;
                 runEndNode = memberNode;
-            } else if (CheckedPtr renderListMarker = dynamicDowncast<RenderListOutsideMarker>(object->renderer())) {
+            } else if (CheckedPtr renderer = object->renderer(); renderer && renderer->isListMarkerBox()) {
                 // List markers have no DOM node. Flush any pending text run, then append marker text.
                 flushRun();
-                if (CheckedPtr listItem = renderListMarker->listItem())
-                    builder.append(listItem->markerText());
+                builder.append(RenderListItem::markerText(*renderer));
             }
         }
         flushRun();

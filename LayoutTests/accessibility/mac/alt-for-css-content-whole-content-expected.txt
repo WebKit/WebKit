@@ -88,10 +88,10 @@ AXValue: ALT MARKER IMAGEStext
 
 markerInsidePlain children: 2
 child 0
-AXRole: AXStaticText
+AXRole: AXListMarker
 AXDescription:
 AXTitle:
-AXValue:
+AXValue: •
 
 child 1
 AXRole: AXStaticText
@@ -101,10 +101,10 @@ AXValue: text
 
 markerInsideContent children: 2
 child 0
-AXRole: AXStaticText
+AXRole: AXListMarker
 AXDescription:
 AXTitle:
-AXValue:
+AXValue: *
 
 child 1
 AXRole: AXStaticText
@@ -114,7 +114,7 @@ AXValue: text
 
 markerInsideMultipleStrings children: 2
 child 0
-AXRole: AXStaticText
+AXRole: AXListMarker
 AXDescription:
 AXTitle:
 AXValue: ALT MARKER INSIDE MULTIPLE STRINGS
@@ -127,7 +127,7 @@ AXValue: text
 
 markerInsideCounter children: 2
 child 0
-AXRole: AXStaticText
+AXRole: AXListMarker
 AXDescription:
 AXTitle:
 AXValue: ALT MARKER INSIDE COUNTER
@@ -147,10 +147,10 @@ AXValue: text
 
 markerInsideImages children: 2
 child 0
-AXRole: AXImage
-AXDescription: ALT MARKER INSIDE IMAGES
+AXRole: AXListMarker
+AXDescription:
 AXTitle:
-AXValue:
+AXValue: ALT MARKER INSIDE IMAGES
 
 child 1
 AXRole: AXStaticText

@@ -299,8 +299,8 @@ AccessibilityObject* AccessibilityRenderObject::parentObject() const
 #endif // !USE(ATSPI)
 
     // Expose markers that are not direct children of a list item too.
-    if (CheckedPtr marker = dynamicDowncast<RenderListOutsideMarker>(*m_renderer)) {
-        if (CheckedPtr listItem = marker->listItem(); listItem && listItem->markerBox() == marker) {
+    if (m_renderer->isListMarkerBox()) {
+        if (CheckedPtr listItem = RenderListItem::listItemForMarker(protect(*m_renderer))) {
             if (RefPtr parent = cache->getOrCreate(*listItem); parent && parent->isListItem())
                 return parent.unsafeGet();
         }
@@ -402,11 +402,14 @@ String AccessibilityRenderObject::textUnderElement(TextUnderElementMode mode) co
     if (!m_renderer || mode.isHidden())
         return AccessibilityNodeObject::textUnderElement(WTF::move(mode));
 
-    if (auto contentAlt = altTextFromStyle(); !contentAlt.isNull()) {
-        if (m_renderer->style().isListMarkerStyle() && mode.includeListMarkers == IncludeListMarkerText::No)
+    if (m_renderer->isListMarkerBox()) {
+        if (mode.includeListMarkers == IncludeListMarkerText::No)
             return { };
-        return contentAlt;
+        return RenderListItem::markerText(protect(*m_renderer));
     }
+
+    if (auto contentAlt = altTextFromStyle(); !contentAlt.isNull())
+        return contentAlt;
 
     if (CheckedPtr fileUpload = dynamicDowncast<RenderFileUploadControl>(*m_renderer))
         return fileUpload->buttonValue();
@@ -415,13 +418,6 @@ String AccessibilityRenderObject::textUnderElement(TextUnderElementMode mode) co
         if (mode.includeListMarkers == IncludeListMarkerText::Yes)
             return downcast<RenderText>(*m_renderer).text();
         return { };
-    }
-
-    if (CheckedPtr listMarker = dynamicDowncast<RenderListOutsideMarker>(*m_renderer)) {
-        if (mode.includeListMarkers == IncludeListMarkerText::No)
-            return { };
-        CheckedPtr listItem = listMarker->listItem();
-        return listItem ? listItem->markerText() : String();
     }
 
     // Reflect when a content author has explicitly marked a line break.
@@ -583,14 +579,11 @@ String AccessibilityRenderObject::stringValue() const
         return textUnderElement();
 #endif
 
-    if (CheckedPtr renderListMarker = dynamicDowncast<RenderListOutsideMarker>(m_renderer.get())) {
-        CheckedPtr listItem = renderListMarker->listItem();
-        if (!listItem)
-            return { };
+    if (m_renderer->isListMarkerBox()) {
 #if USE(ATSPI)
-        return listItem->markerText();
+        return RenderListItem::markerText(protect(*m_renderer));
 #else
-        return listItem->markerText(ListMarkerIncludeSuffix::No);
+        return RenderListItem::markerText(protect(*m_renderer), ListMarkerIncludeSuffix::No);
 #endif
     }
 
@@ -1129,6 +1122,12 @@ bool AccessibilityRenderObject::computeIsIgnored() const
     if (auto contentAlt = altTextFromStyle(); !contentAlt.isNull())
         return objectInclusionFromAltText(contentAlt) == AccessibilityObjectInclusion::IgnoreObject;
 
+    // A marker is exposed as the marker of its list item, and only when that is what its parent is.
+    if (m_renderer->isListMarkerBox()) {
+        RefPtr parent = parentObjectUnignored();
+        return parent && !parent->isListItem();
+    }
+
     if (CheckedPtr renderText = dynamicDowncast<RenderText>(m_renderer.get())) {
         // Text elements with no rendered text, or only whitespace should not be part of the AX tree.
         if (!renderText->hasRenderedText()) {
@@ -1333,11 +1332,6 @@ bool AccessibilityRenderObject::computeIsIgnored() const
                 return true;
         }
         // Otherwise fall through; use presence of help text, title, or description to decide.
-    }
-
-    if (m_renderer->isRenderListOutsideMarker()) {
-        RefPtr parent = parentObjectUnignored();
-        return parent && !parent->isListItem();
     }
 
     if (isWebArea())
@@ -1773,9 +1767,8 @@ AXTextRuns AccessibilityRenderObject::textRuns()
 
 String AccessibilityRenderObject::listMarkerText() const
 {
-    CheckedPtr marker = dynamicDowncast<RenderListOutsideMarker>(renderer());
-    CheckedPtr listItem = marker ? marker->listItem() : nullptr;
-    return listItem ? listItem->markerText() : String();
+    CheckedPtr renderer = this->renderer();
+    return renderer && renderer->isListMarkerBox() ? RenderListItem::markerText(*renderer) : String();
 }
 #endif // ENABLE(ACCESSIBILITY_ISOLATED_TREE)
 
@@ -2526,7 +2519,7 @@ AccessibilityRole AccessibilityRenderObject::determineAccessibilityRole()
             return AccessibilityRole::ListItem;
     }
 
-    if (m_renderer->isRenderListOutsideMarker())
+    if (m_renderer->isListMarkerBox())
         return AccessibilityRole::ListMarker;
     if (m_renderer->isBR())
         return AccessibilityRole::LineBreak;
@@ -3028,7 +3021,7 @@ void AccessibilityRenderObject::addChildren()
     auto addChildIfNeeded = [this](AccessibilityObject& object) {
 #if USE(ATSPI)
         // FIXME: Consider removing this ATSPI-only branch with https://bugs.webkit.org/show_bug.cgi?id=282117.
-        if (object.renderer() && object.renderer()->isRenderListOutsideMarker())
+        if (object.renderer() && object.renderer()->isListMarkerBox())
             return;
 #endif
         addChild(object);

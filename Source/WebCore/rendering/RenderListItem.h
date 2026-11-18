@@ -57,6 +57,7 @@ public:
     void updateValue();
 
     WEBCORE_EXPORT String markerText(ListMarkerIncludeSuffix = ListMarkerIncludeSuffix::Yes) const;
+    static String markerText(const RenderObject& marker, ListMarkerIncludeSuffix = ListMarkerIncludeSuffix::Yes);
 
     Vector<CheckedRef<RenderListItem>> updateListMarkerNumbers();
 
@@ -73,6 +74,7 @@ public:
         m_excludedMarkerPosition = { };
     }
     NODELETE RenderListOutsideMarker* markerBox() const;
+    static RenderListItem* listItemForMarker(const RenderObject&);
 
     // Fills in what the marker shows, in whichever shape it was built.
     void updateMarkerContent();
