@@ -21,6 +21,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/registries/Document-createElementNS.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/registries/Document-customElementRegistry.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/registries/Document-importNode-cross-document.window.js
+/LayoutTests/imported/w3c/web-platform-tests/custom-elements/registries/Document-importNode-explicit-registry.window.js
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/registries/Document-importNode.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/registries/Element-attachShadow-disabled-shadow.window.js
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/registries/Element-customElementRegistry-exceptions.html
@@ -58,6 +59,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/registries/scoped-registry-initialize-upgrades.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/registries/scoped-registry-initialize.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/registries/scoped-registry-registry-define-get-etc.html
+/LayoutTests/imported/w3c/web-platform-tests/custom-elements/registries/scoped-registry-static-clone-print-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/custom-elements/registries/scoped-registry-static-clone-print.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/registries/template.window.js
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/registries/upgrade.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/registries/valid-custom-element-names.html

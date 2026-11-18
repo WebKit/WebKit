@@ -1,0 +1,11 @@
+
+FAIL Non-empty, empty, and duplicate attributes: parser attribute mutation records on a customized built-in element Spread syntax requires ...iterable not be null or undefined
+FAIL An empty class attribute: parser attribute mutation records on a customized built-in element Spread syntax requires ...iterable not be null or undefined
+FAIL A non-empty name attribute: parser attribute mutation records on a customized built-in element Spread syntax requires ...iterable not be null or undefined
+FAIL An empty name attribute: parser attribute mutation records on a customized built-in element Spread syntax requires ...iterable not be null or undefined
+FAIL Attributes appended by the parser queue mutation records when the constructor inserted the element into an observed subtree assert_array_equals: lengths differ, expected array [Element node <div class="parser-class" data-atom="1" data-string="pars..., [...], [...], [...], [...], [...], Element node <div class="" is="class-div"></div>, [...]] length 8, got [] length 0
+FAIL Live getElementsByClassName reflects a non-empty class attribute appended by the parser after the constructor inserted the element assert_array_equals: value is undefined, expected array
+FAIL Live getElementsByClassName reflects a empty class attribute appended by the parser after the constructor inserted the element assert_array_equals: value is undefined, expected array
+FAIL Live document.anchors reflects a non-empty name attribute appended by the parser after the constructor inserted the element assert_array_equals: value is undefined, expected array
+FAIL Live document.anchors reflects a empty name attribute appended by the parser after the constructor inserted the element assert_array_equals: value is undefined, expected array
+

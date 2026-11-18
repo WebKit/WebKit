@@ -1,0 +1,5 @@
+
+PASS innerHTML on an XML document must upgrade custom elements after insertion, not construct them during parsing
+PASS insertAdjacentHTML on an XML document must upgrade custom elements after insertion, not construct them during parsing
+PASS outerHTML on an XML document must upgrade custom elements after insertion, not construct them during parsing
+

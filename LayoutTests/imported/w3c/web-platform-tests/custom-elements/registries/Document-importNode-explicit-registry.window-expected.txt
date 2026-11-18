@@ -1,0 +1,6 @@
+
+PASS Cloning with explicit global registry (scoped registry target)
+PASS Cloning with null registry (scoped registry target)
+PASS Cloning with scoped registry (scoped registry target)
+PASS Cloning including shadow tree with explicit global registry (scoped registry target)
+

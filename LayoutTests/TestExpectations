@@ -2488,6 +2488,13 @@ imported/w3c/web-platform-tests/css/css-shadow/css-scoping-shadow-host-namespace
 webkit.org/b/187800 imported/w3c/web-platform-tests/custom-elements/Document-createElement-svg.svg [ Skip ]
 webkit.org/b/187800 imported/w3c/web-platform-tests/custom-elements/parser/parser-uses-create-an-element-for-a-token-svg.svg [ Skip ]
 
+# Customized built-ins are not supported, so these never construct their element and never finish.
+imported/w3c/web-platform-tests/custom-elements/custom-button-abort-insertion-crash.html [ Skip ]
+imported/w3c/web-platform-tests/custom-elements/custom-image-abort-insertion-crash.html [ Skip ]
+
+# Crashes in Style::operator++(ScopeOrdinal&) from ElementRuleCollector::matchSlottedPseudoElementRules().
+imported/w3c/web-platform-tests/custom-elements/many-slots-crash.html [ Skip ]
+
 # selectors
 webkit.org/b/185859 imported/w3c/web-platform-tests/css/selectors/focus-visible-002.html [ Skip ]
 webkit.org/b/185859 imported/w3c/web-platform-tests/css/selectors/focus-visible-003.html [ Skip ]

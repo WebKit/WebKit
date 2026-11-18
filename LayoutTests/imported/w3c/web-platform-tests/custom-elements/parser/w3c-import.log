@@ -20,8 +20,13 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/parser/parser-constructs-custom-elements.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/parser/parser-custom-element-in-foreign-content.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/parser/parser-fallsback-to-unknown-element.html
+/LayoutTests/imported/w3c/web-platform-tests/custom-elements/parser/parser-sets-attributes-after-autonomous-constructor.html
+/LayoutTests/imported/w3c/web-platform-tests/custom-elements/parser/parser-sets-attributes-after-built-in-constructor.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/parser/parser-sets-attributes-and-children.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/parser/parser-uses-constructed-element.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/parser/parser-uses-create-an-element-for-a-token-svg.svg
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/parser/parser-uses-registry-of-owner-document.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/parser/serializing-html-fragments-customized-builtins.html
+/LayoutTests/imported/w3c/web-platform-tests/custom-elements/parser/xml-fragment-parser-does-not-construct-synchronously.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/custom-elements/parser/xml-parser-custom-element-reparents-during-construction.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/custom-elements/parser/xml-parser-customized-builtin-input.xhtml

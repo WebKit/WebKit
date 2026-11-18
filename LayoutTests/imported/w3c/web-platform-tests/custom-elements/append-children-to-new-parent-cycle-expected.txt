@@ -1,0 +1,3 @@
+
+PASS Adoption agency reparenting a customized built-in clone must not create a cyclic DOM
+

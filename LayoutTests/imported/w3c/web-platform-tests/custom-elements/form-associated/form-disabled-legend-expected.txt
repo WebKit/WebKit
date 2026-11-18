@@ -1,0 +1,14 @@
+
+
+
+
+
+
+
+PASS Custom element inside the first legend of a disabled fieldset is not disabled
+PASS Custom element inside a legend other than the first one is disabled
+PASS Legend of an inner fieldset does not shield from an outer disabled fieldset
+PASS Toggling disabled on the fieldset does not affect a custom element inside its first legend
+PASS Changing the first legend updates the disabled state of a custom element
+PASS fieldset.elements includes custom elements inside the legend
+

@@ -1,0 +1,4 @@
+
+
+PASS Upgrading form-associated custom elements updates all ancestor fieldsets, including inside legend
+

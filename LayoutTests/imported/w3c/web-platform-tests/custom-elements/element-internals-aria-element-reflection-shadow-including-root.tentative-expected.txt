@@ -1,0 +1,9 @@
+
+FAIL ariaActiveDescendantElement on ElementInternals ignores an element with a different shadow-including root assert_equals: disconnected element is not returned expected null but got Element node <div></div>
+FAIL ARIA element reflection on ElementInternals returns an element in the custom element's own shadow tree assert_equals: expected Element node <div></div> but got null
+FAIL ariaActiveDescendantElement on ElementInternals returns an element in another shadow tree in the same document assert_equals: expected Element node <div></div> but got null
+PASS ariaActiveDescendantElement on ElementInternals returns an element in a shadow-including ancestor tree
+PASS ariaActiveDescendantElement on ElementInternals returns an element in the same disconnected tree
+FAIL ariaActiveDescendantElement on ElementInternals of a disconnected element assert_equals: document element, seen from a disconnected element expected null but got Element node <div></div>
+FAIL ariaLabelledByElements on ElementInternals skips elements with a different shadow-including root assert_array_equals: disconnected element is skipped lengths differ, expected array [Element node <div></div>] length 1, got [Element node <div></div>, Element node <div></div>] length 2
+

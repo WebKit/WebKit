@@ -1,0 +1,8 @@
+
+PASS Detached upgrade, enabled
+PASS Detached upgrade, disabled by attribute
+PASS Detached upgrade, disabled by fieldset
+PASS Connected upgrade, enabled
+PASS Connected upgrade, disabled by attribute
+PASS Connected upgrade, disabled by fieldset
+

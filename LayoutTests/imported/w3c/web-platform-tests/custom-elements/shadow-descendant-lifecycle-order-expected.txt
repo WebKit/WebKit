@@ -1,0 +1,4 @@
+
+FAIL Upgrade, connection, removal, and adoption visit closed and nested shadow trees before light children assert_array_equals: lengths differ, expected array ["upgrade:root", "upgrade:shadow", "upgrade:nested", "upgrade:light", "upgrade:leaf"] length 5, got ["upgrade:root", "upgrade:light", "upgrade:leaf"] length 3
+PASS A failed upgrade does not skip shadow descendants or following siblings
+

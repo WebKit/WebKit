@@ -1,0 +1,4 @@
+
+FAIL Customized built-in reparented during synchronous XML parser construction is moved, not double-appended assert_true: constructor ran synchronously during parse expected true got false
+FAIL Autonomous custom element reparented during synchronous XML parser construction is moved, not double-appended assert_true: custom element instance exists expected true got false
+

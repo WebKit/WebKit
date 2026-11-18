@@ -1,0 +1,4 @@
+
+
+PASS Form associated custom element isn't a fieldset listed element until fully custom
+

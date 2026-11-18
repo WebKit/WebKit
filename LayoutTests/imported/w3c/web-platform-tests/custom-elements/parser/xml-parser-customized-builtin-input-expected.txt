@@ -1,0 +1,4 @@
+
+FAIL Customized built-in input created synchronously by the XML parser gets its attributes assert_true: constructor ran synchronously during parse expected true got false
+FAIL Customized built-in input is fully constructed when its constructor runs during XML parsing assert_true: constructor ran synchronously during parse expected true got false
+

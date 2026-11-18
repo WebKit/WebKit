@@ -1,0 +1,5 @@
+
+FAIL Non-empty, empty, and duplicate attributes: parser attribute mutation records on an autonomous custom element without observedAttributes assert_array_equals: lengths differ, expected array ["class", "data-atom", "data-string", "data-empty", "data-duplicate"] length 5, got [] length 0
+FAIL An empty class attribute: parser attribute mutation records on an autonomous custom element without observedAttributes assert_array_equals: lengths differ, expected array ["class"] length 1, got [] length 0
+PASS No attributes: parser attribute mutation records on an autonomous custom element without observedAttributes
+
