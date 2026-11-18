@@ -49,15 +49,12 @@ public:
     std::pair<float, float> layoutBounds() const { return m_layoutBounds; }
 
 private:
-    void willBeDestroyed() final;
     ASCIILiteral renderName() const final { return "RenderListMarker"_s; }
     std::pair<LayoutUnit, LayoutUnit> computeIntrinsicLogicalWidthContributions() final;
     bool canHaveChildren() const final { return true; }
     bool canHaveGeneratedChildren() const final { return true; }
     void paint(PaintInfo&, const LayoutPoint&) final;
     void layout() final;
-    void imageChanged(WrappedImagePtr, const IntRect*) final;
-    void forEachStyleImage(NOESCAPE const ScopedLambda<void(Style::Image&)>&) override final;
     NODELETE LayoutRect selectionRectForRepaint(const RenderLayerModelObject* repaintContainer, bool clipToVisibleContent) final;
     bool canBeSelectionLeaf() const final { return true; }
     void styleWillChange(Style::Difference, const Style::ComputedStyle& newStyle) final;

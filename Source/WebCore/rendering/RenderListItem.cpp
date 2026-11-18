@@ -60,6 +60,7 @@
 #include "StyleListStyleImageSizing.h"
 #include "StyleListStyleType.h"
 #include "UnicodeBidi.h"
+#include <wtf/ScopedLambda.h>
 #include <wtf/StackStats.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -501,6 +502,23 @@ void RenderListItem::updateValueAndMarkerContent()
     updateMarkerContent();
 }
 
+// An outside marker shows its list item's list-style-image (it can't have one of its own), so the list item is the image's
+// client and updates the marker in imageChanged(): a failed load turns it into a text marker. An inside marker's RenderImage
+// is a client of the image itself.
+static RefPtr<Style::Image> outsideMarkerImage(const Style::ComputedStyle& style)
+{
+    if (style.listStylePosition() != ListStylePosition::Outside)
+        return nullptr;
+    return style.listStyleImage().tryStyleImage();
+}
+
+void RenderListItem::willBeDestroyed()
+{
+    if (RefPtr image = outsideMarkerImage(style()))
+        image->removeClient(*this);
+    RenderBlockFlow::willBeDestroyed();
+}
+
 void RenderListItem::styleDidChange(Style::Difference diff, const Style::ComputedStyle* oldStyle)
 {
     RenderBlockFlow::styleDidChange(diff, oldStyle);
@@ -511,6 +529,43 @@ void RenderListItem::styleDidChange(Style::Difference diff, const Style::Compute
         if (m_excludedMarkerPosition)
             invalidateExcludedMarkerContainer();
     }
+
+    RefPtr oldImage = oldStyle ? outsideMarkerImage(*oldStyle) : nullptr;
+    RefPtr newImage = outsideMarkerImage(style());
+    if (oldImage != newImage) {
+        if (oldImage)
+            oldImage->removeClient(*this);
+        if (newImage)
+            newImage->addClient(*this);
+    }
+}
+
+void RenderListItem::forEachStyleImage(NOESCAPE const ScopedLambda<void(Style::Image&)>& function)
+{
+    RenderBlockFlow::forEachStyleImage(function);
+    if (RefPtr image = outsideMarkerImage(style()))
+        function(*image);
+}
+
+void RenderListItem::imageChanged(WrappedImagePtr changedImage, const IntRect* rect)
+{
+    RefPtr image = outsideMarkerImage(style());
+    if (CheckedPtr marker = markerBox(); marker && image && changedImage == image->data()) {
+        if (image->errorOccurred()) {
+            // A failed image turns this into a text marker, and that text needs renderers the marker was not built with.
+            RefPtr element = this->element();
+            if (RefPtr pseudoElement = dynamicDowncast<PseudoElement>(element))
+                element = pseudoElement->hostElement();
+            if (element)
+                element->invalidateStyleAndRenderersForSubtree();
+            marker->setNeedsLayoutAndInvalidateContentLogicalWidths();
+        } else if (CheckedPtr imageRenderer = markerImage(); imageRenderer && imageRenderer->borderBoxSize() != markerImageSize(*image)) {
+            updateMarkerContent();
+            marker->setNeedsLayoutAndInvalidateContentLogicalWidths();
+        } else
+            marker->repaint();
+    }
+    RenderBlockFlow::imageChanged(changedImage, rect);
 }
 
 std::pair<LayoutUnit, LayoutUnit> RenderListItem::computeIntrinsicLogicalWidths() const

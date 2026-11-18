@@ -78,7 +78,6 @@ public:
     void updateMarkerContent();
     // The image an image marker shows.
     RenderImage* markerImage() const;
-    LayoutSize markerImageSize(const Style::Image&) const;
 
     bool isInReversedOrderedList() const;
 
@@ -112,8 +111,12 @@ private:
     void placeExcludedMarker(RenderListOutsideMarker&);
     NODELETE RenderListOutsideMarker* excludedMarker() const;
     void invalidateExcludedMarkerContainer();
+    LayoutSize markerImageSize(const Style::Image&) const;
 
+    void willBeDestroyed() final;
     void styleDidChange(Style::Difference, const Style::ComputedStyle* oldStyle) final;
+    void imageChanged(WrappedImagePtr, const IntRect* = nullptr) final;
+    void forEachStyleImage(NOESCAPE const ScopedLambda<void(Style::Image&)>&) final;
 
     std::pair<LayoutUnit, LayoutUnit> computeIntrinsicLogicalWidths() const final;
 

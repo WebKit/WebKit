@@ -35,7 +35,6 @@
 #include "GraphicsContext.h"
 #include "InlineIteratorBoxInlines.h"
 #include "PaintInfoInlines.h"
-#include "PseudoElement.h"
 #include "RenderBlockFlow.h"
 #include "RenderBlockInlines.h"
 #include "RenderBoxInlines.h"
@@ -51,7 +50,6 @@
 #include "StyleListStyleType.h"
 #include "StyleScope.h"
 #include "TextUtil.h"
-#include <wtf/ScopedLambda.h>
 #include <wtf/StackStats.h>
 #include <wtf/TZoneMallocInlines.h>
 
@@ -68,15 +66,7 @@ RenderListOutsideMarker::RenderListOutsideMarker(RenderListItem& listItem, Uniqu
     ASSERT(isRenderListOutsideMarker());
 }
 
-// Do not add any code in below destructor. Add it to willBeDestroyed() instead.
 RenderListOutsideMarker::~RenderListOutsideMarker() = default;
-
-void RenderListOutsideMarker::willBeDestroyed()
-{
-    if (RefPtr image = style().listStyleImage().tryStyleImage())
-        image->removeClient(*this);
-    RenderBox::willBeDestroyed();
-}
 
 static Style::Difference adjustedStyleDifference(Style::Difference diff, const Style::ComputedStyle& oldStyle, const Style::ComputedStyle& newStyle)
 {
@@ -101,17 +91,6 @@ void RenderListOutsideMarker::styleDidChange(Style::Difference diff, const Style
     RenderBox::styleDidChange(diff, oldStyle);
 
     propagateStyleToAnonymousChildren(StylePropagationType::AllChildren);
-
-    // A marker that shows an image is the image's client, so that it hears about the image loading, and about it
-    // failing to load, which turns the marker into a text marker (see imageChanged).
-    RefPtr oldImage = oldStyle ? oldStyle->listStyleImage().tryStyleImage() : nullptr;
-    RefPtr newImage = style().listStyleImage().tryStyleImage();
-    if (oldImage != newImage) {
-        if (oldImage)
-            oldImage->removeClient(*this);
-        if (newImage)
-            newImage->addClient(*this);
-    }
 }
 
 bool RenderListOutsideMarker::isImage() const
@@ -211,36 +190,6 @@ void RenderListOutsideMarker::layoutContentContainer(RenderBlockFlow& container)
     auto contentVisualOverflow = container.visualOverflowRect();
     contentVisualOverflow.moveBy(container.location());
     addVisualOverflow(contentVisualOverflow);
-}
-
-void RenderListOutsideMarker::forEachStyleImage(NOESCAPE const ScopedLambda<void(Style::Image&)>& function)
-{
-    RenderBox::forEachStyleImage(function);
-    if (RefPtr image = style().listStyleImage().tryStyleImage())
-        function(*image);
-}
-
-void RenderListOutsideMarker::imageChanged(WrappedImagePtr o, const IntRect* rect)
-{
-    if (parent()) {
-        RefPtr image = style().listStyleImage().tryStyleImage();
-        if (image && o == image->data()) {
-            if (image->errorOccurred()) {
-                // A failed image turns this into a text marker, and that text needs renderers the marker was not built with.
-                RefPtr element = m_listItem ? m_listItem->element() : nullptr;
-                if (RefPtr pseudoElement = dynamicDowncast<PseudoElement>(element.get()))
-                    element = pseudoElement->hostElement();
-                if (element)
-                    element->invalidateStyleAndRenderersForSubtree();
-                setNeedsLayoutAndInvalidateContentLogicalWidths();
-            } else if (CheckedPtr listItem = m_listItem; listItem && borderBoxSize() != listItem->markerImageSize(*image)) {
-                listItem->updateMarkerContent();
-                setNeedsLayoutAndInvalidateContentLogicalWidths();
-            } else
-                repaint();
-        }
-    }
-    RenderBox::imageChanged(o, rect);
 }
 
 std::pair<LayoutUnit, LayoutUnit> RenderListOutsideMarker::computeIntrinsicLogicalWidthContributions()
