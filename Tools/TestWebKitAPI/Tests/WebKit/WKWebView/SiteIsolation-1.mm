@@ -4686,4 +4686,34 @@ TEST(SiteIsolation, PositionInformationRedispatchToFrameInAnotherPageIsRejected)
 
 #endif // PLATFORM(IOS_FAMILY) && ENABLE(IPC_TESTING_API)
 
+TEST(SiteIsolation, GetPDFFirstPageSizeInCrossSiteIframe)
+{
+    RetainPtr pdfData = [NSData dataWithContentsOfURL:[NSBundle.test_resourcesBundle URLForResource:@"test_print" withExtension:@"pdf"]];
+    EXPECT_TRUE(!!pdfData);
+    HTTPServer server({
+        { "/mainframe"_s, { "<iframe src='https://webkit.org/iframe'></iframe>"_s } },
+        { "/iframe"_s, { { { "Content-Type"_s, "application/pdf"_s } }, pdfData.get() } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server, CGRectMake(0, 0, 800, 600));
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    RetainPtr childFrame = [webView firstChildFrame];
+
+    __block CGSize size = CGSizeZero;
+    for (int attempt = 0; attempt < 30 && CGSizeEqualToSize(size, CGSizeZero); ++attempt) {
+        __block bool done = false;
+        [webView _getPDFFirstPageSizeInFrame:[childFrame _handle] completionHandler:^(CGSize requestedSize) {
+            size = requestedSize;
+            done = true;
+        }];
+        Util::run(&done);
+        if (CGSizeEqualToSize(size, CGSizeZero))
+            Util::runFor(0.2_s);
+    }
+
+    EXPECT_EQ(size.width, 612.0);
+    EXPECT_EQ(size.height, 792.0);
+}
+
 } // namespace TestWebKitAPI
