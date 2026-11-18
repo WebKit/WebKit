@@ -56,7 +56,7 @@ class WebDriverW3CWebServer(object):
         # FIXME: We use the runtime path for now for log output, since we don't have a results directory yet.
         self._output_log_path = os.path.join(self._runtime_path, '%s_process_log.out.txt' % (self._name))
 
-    def _wait_for_server(self, wait_secs=20, sleep_secs=1):
+    def _wait_for_server(self, wait_secs=20, sleep_secs=0.1):
         def check_port(host, port):
             s = socket.socket()
             try:
@@ -78,7 +78,8 @@ class WebDriverW3CWebServer(object):
             time.sleep(sleep_secs)
         return False
 
-    def start(self):
+    def start(self, wait=True):
+        # Without wait, call wait_until_started() before using the server.
         assert not self._pid, '%s server is already running' % self._name
 
         # Stop any stale servers left over from previous instances.
@@ -110,7 +111,10 @@ class WebDriverW3CWebServer(object):
         self._process = self._port._executive.popen(cmd, cwd=self._layout_doc_root, shell=False, stdin=self._port._executive.PIPE, stdout=self._wsout, stderr=self._wsout)
         self._pid = self._process.pid
         self._port.host.filesystem.write_text_file(self._pid_file, str(self._pid))
+        if wait:
+            self.wait_until_started()
 
+    def wait_until_started(self):
         if not self._wait_for_server():
             _log.error('WPT Server process exited prematurely with status code %s' % self._process.returncode)
             self.stop()

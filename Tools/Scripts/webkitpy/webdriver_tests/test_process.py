@@ -25,6 +25,7 @@ import logging
 import multiprocessing
 import os
 import signal
+import threading
 import time
 
 _log = logging.getLogger(__name__)
@@ -40,6 +41,10 @@ class TestProcess(object):
     is called (for example, to restart the WebDriver driver and the browser it controls), and the rest of the test file
     runs in a new test process. Nothing is interrupted inside the test process, so an asyncio event loop there can't
     be left in a bad state, and a hang in a fixture times out just like a hang in a test.
+
+    Launching the browser doesn't count against the time of the subtest that does it: the first launch of a newly
+    built browser can take much longer than later ones, for example while the system checks the new executables.
+    A launch gets the deadline of the time outside of subtests instead.
     """
 
     STOP_TIMEOUT_SECONDS = 10
@@ -51,7 +56,8 @@ class TestProcess(object):
 
     def __init__(self, run_file, timeout, restart=None):
         # run_file(path, deselected, report) runs in the test process. It runs the test file at path with
-        # pytest_runner.run(), passing deselected and report on, and returns its harness result.
+        # pytest_runner.run(), passing deselected and report on, and returns its harness result. It also reports
+        # ('launch', 'start', id) and ('launch', 'end', id) around each launch of the browser, with an id of its choice.
         # A timeout of 0 means no deadlines.
         self._run_file = run_file
         self._timeout = timeout
@@ -128,17 +134,29 @@ class TestProcess(object):
         # Inherited from run-webdriver-tests, which exits through its cleanup on SIGTERM. The test process has
         # nothing to clean up.
         signal.signal(signal.SIGTERM, signal.SIG_DFL)
+        # Launches can be reported from other threads, and a large event is written to the pipe in more than one part.
+        lock = threading.Lock()
+
+        def report(event):
+            with lock:
+                events.send(event)
+
         while True:
             test = tests.get()
             if test is None:
                 return
             path, deselected = test
-            events.send(('done', run_file(path, deselected, events.send)))
+            report(('done', run_file(path, deselected, report)))
 
     def _wait(self, results, started):
         subtest = phase = expected = None
         timeout = self._timeout_outside_of_subtests
         deadline = time.monotonic() + timeout if timeout else None
+        # The launches under way in the current subtest, or outside of subtests, which can overlap, for example in
+        # different threads of a test. While there are any, the time that was left before the first of them, and the
+        # timeout to report after them.
+        launches = set()
+        after_launch = None
         while True:
             # Wake up regularly to notice if the test process exited.
             wait = self.POLL_SECONDS if deadline is None else max(0, min(self.POLL_SECONDS, deadline - time.monotonic()))
@@ -158,15 +176,42 @@ class TestProcess(object):
                 _, subtest, timeout, expected = event
                 phase = None
                 started.append(subtest)
+                # A launch that's still under way, for example in a thread that a subtest left behind, belongs to an
+                # earlier subtest, so its end mustn't give this one any time.
+                launches.clear()
+                after_launch = None
             elif kind == 'phase':
                 phase = event[1]
                 continue
             elif kind == 'result':
                 results.append(event[1])
                 continue
+            elif kind == 'launch':
+                _, what, launch = event
+                if deadline is None:
+                    continue
+                if what == 'start':
+                    launches.add(launch)
+                    if len(launches) > 1:
+                        continue
+                    after_launch = (deadline - time.monotonic(), timeout)
+                    timeout = self._timeout_outside_of_subtests
+                else:
+                    if launch not in launches:
+                        continue
+                    launches.remove(launch)
+                    if launches:
+                        continue
+                    # The subtest gets the time it had left before the first launch.
+                    time_left, timeout = after_launch
+                    after_launch = None
+                    deadline = time.monotonic() + time_left
+                    continue
             elif kind == 'finish':
                 subtest = None
                 timeout = self._timeout_outside_of_subtests
+                launches.clear()
+                after_launch = None
             elif kind == 'done':
                 return ('done', event[1])
             deadline = time.monotonic() + timeout if timeout else None
