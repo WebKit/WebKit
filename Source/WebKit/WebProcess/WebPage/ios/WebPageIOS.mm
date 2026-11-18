@@ -562,10 +562,10 @@ FloatSize WebPage::overrideAvailableScreenSize() const
     return m_overrideAvailableScreenSize;
 }
 
-void WebPage::didReceiveMobileDocType(bool isMobileDoctype)
+void WebPage::updateViewportDefaultConfiguration(bool hasMobileDoctype)
 {
-    m_isMobileDoctype = isMobileDoctype;
-    resetViewportDefaultConfiguration(m_mainFrame.ptr(), isMobileDoctype);
+    m_isMobileDoctype = hasMobileDoctype;
+    resetViewportDefaultConfiguration(m_mainFrame.ptr());
 }
 
 void WebPage::savePageState(HistoryItem& historyItem)
@@ -3246,7 +3246,7 @@ void WebPage::dynamicViewportSizeUpdate(const DynamicViewportSizeUpdate& target)
     m_pendingDynamicViewportSizeUpdateID = target.identifier;
 }
 
-void WebPage::resetViewportDefaultConfiguration(WebFrame* frame, bool hasMobileDocType)
+void WebPage::resetViewportDefaultConfiguration(WebFrame* frame)
 {
     LOG_WITH_STREAM(VisibleRects, stream << "WebPage " << m_identifier << " resetViewportDefaultConfiguration");
     if (m_useTestingViewportConfiguration) {
@@ -3273,7 +3273,7 @@ void WebPage::resetViewportDefaultConfiguration(WebFrame* frame, bool hasMobileD
 
     RefPtr document = localFrame->document();
 
-    auto updateViewportConfigurationForMobileDocType = [this, protectedThis = Ref { *this }, document] {
+    auto updateViewportConfigurationForMobileDoctype = [this, protectedThis = Ref { *this }, document] {
         m_viewportConfiguration.setDefaultConfiguration(ViewportConfiguration::xhtmlMobileParameters());
 
         // Do not update the viewport arguments if they are already configured by the website.
@@ -3294,8 +3294,8 @@ void WebPage::resetViewportDefaultConfiguration(WebFrame* frame, bool hasMobileD
         viewportPropertiesDidChange(viewportArguments);
     };
 
-    if (hasMobileDocType) {
-        return updateViewportConfigurationForMobileDocType();
+    if (m_isMobileDoctype) {
+        return updateViewportConfigurationForMobileDoctype();
     }
 
     bool configureWithParametersForStandardFrame = !document;

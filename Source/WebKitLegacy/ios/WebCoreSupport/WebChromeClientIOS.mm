@@ -185,10 +185,10 @@ void WebChromeClientIOS::didPreventDefaultForEvent()
 
 #endif
 
-void WebChromeClientIOS::didReceiveMobileDocType(bool isMobileDoctype)
+void WebChromeClientIOS::updateViewportDefaultConfiguration(bool hasMobileDoctype)
 {
     RetainPtr webView = this->webView();
-    if (isMobileDoctype)
+    if (hasMobileDoctype)
         [[webView _UIKitDelegateForwarder] webViewDidReceiveMobileDocType:webView];
 }
 

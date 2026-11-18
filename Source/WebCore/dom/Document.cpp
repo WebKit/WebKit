@@ -1629,11 +1629,9 @@ void Document::childrenChanged(const ChildChange& change)
 {
     ContainerNode::childrenChanged(change);
 
-    // FIXME: Chrome::didReceiveDocType() used to be called only when the doctype changed. We need to check the
-    // impact of calling this systematically. If the overhead is negligible, we need to rename didReceiveDocType,
-    // otherwise, we need to detect the doc type changes before updating the viewport.
-    if (RefPtr page = this->page())
-        page->chrome().didReceiveDocType(*protect(frame()));
+#if PLATFORM(IOS_FAMILY)
+    updateViewportDefaultConfiguration();
+#endif
 
     RefPtr newDocumentElement = childrenOfType<Element>(*this).first();
     if (newDocumentElement == m_documentElement)
@@ -5570,8 +5568,24 @@ void Document::updateViewportArguments()
         return;
 
     page->chrome().dispatchViewportPropertiesDidChange(viewportArguments());
-    page->chrome().didReceiveDocType(protect(frame()).releaseNonNull());
+#if PLATFORM(IOS_FAMILY)
+    updateViewportDefaultConfiguration();
+#endif
 }
+
+#if PLATFORM(IOS_FAMILY)
+void Document::updateViewportDefaultConfiguration()
+{
+    RefPtr page = this->page();
+    if (!page || !m_frame->isMainFrame() || m_frame->document() != this)
+        return;
+
+    // FIXME: The doctype only needs checking when the parser inserts it, but the client also relies on these calls to
+    // recompute the rest of its default viewport configuration, such as after a back/forward cache restore.
+    RefPtr doctype = this->doctype();
+    page->chrome().client().updateViewportDefaultConfiguration(doctype && doctype->publicId().containsIgnoringASCIICase("xhtml mobile"_s));
+}
+#endif
 
 void Document::updateSafeAreaInsetOptIn()
 {

@@ -1214,6 +1214,9 @@ public:
     WEBCORE_EXPORT bool isViewportDocument() const;
     void processDisabledAdaptations(const String& adaptations);
     void updateViewportArguments();
+#if PLATFORM(IOS_FAMILY)
+    void updateViewportDefaultConfiguration();
+#endif
     void processReferrerPolicy(const String& policy, ReferrerPolicySource);
 
     void metaElementThemeColorChanged(HTMLMetaElement&);

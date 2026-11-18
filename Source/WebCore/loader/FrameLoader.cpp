@@ -2843,9 +2843,10 @@ IGNORE_GCC_WARNINGS_END
         history().updateForClientRedirect();
 
     if (m_loadingFromCachedPage) {
-        // Note, didReceiveDocType is expected to be called for cached pages. See <rdar://problem/5906758> for more details.
-        if (RefPtr page = frame->page())
-            page->chrome().didReceiveDocType(frame);
+#if PLATFORM(IOS_FAMILY)
+        // Note, updateViewportDefaultConfiguration is expected to be called for cached pages. See <rdar://problem/5906758> for more details.
+        protect(frame->document())->updateViewportDefaultConfiguration();
+#endif
         protect(frame->document())->resume(ReasonForSuspension::BackForwardCache);
 
         // Force a layout to update view size and thereby update scrollbars.

@@ -68,7 +68,7 @@ private:
     void didPreventDefaultForEvent() final;
 #endif
 
-    void didReceiveMobileDocType(bool) final;
+    void updateViewportDefaultConfiguration(bool hasMobileDoctype) final;
     void setNeedsScrollNotifications(WebCore::LocalFrame&, bool) final;
     WebCore::FloatSize screenSize() const final;
     WebCore::FloatSize availableScreenSize() const final;

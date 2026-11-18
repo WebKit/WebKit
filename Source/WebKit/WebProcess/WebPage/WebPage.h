@@ -1222,7 +1222,7 @@ public:
     WebCore::FloatSize overrideScreenSize() const;
     WebCore::FloatSize overrideAvailableScreenSize() const;
     WebCore::IntDegrees deviceOrientation() const { return m_deviceOrientation; }
-    void didReceiveMobileDocType(bool);
+    void updateViewportDefaultConfiguration(bool hasMobileDoctype);
 
     bool screenIsBeingCaptured() const { return m_screenIsBeingCaptured; }
     void setScreenIsBeingCaptured(bool);
@@ -2414,7 +2414,7 @@ private:
 #endif
 
 #if ENABLE(META_VIEWPORT)
-    void resetViewportDefaultConfiguration(WebFrame* mainFrame, bool hasMobileDocType = false);
+    void resetViewportDefaultConfiguration(WebFrame* mainFrame);
     enum class ZoomToInitialScale : bool { No, Yes };
     void viewportConfigurationChanged(ZoomToInitialScale = ZoomToInitialScale::No);
     bool shouldIgnoreMetaViewport() const;

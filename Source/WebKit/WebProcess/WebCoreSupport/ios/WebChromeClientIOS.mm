@@ -66,10 +66,10 @@ void WebChromeClient::didPreventDefaultForEvent()
 
 #endif
 
-void WebChromeClient::didReceiveMobileDocType(bool isMobileDoctype)
+void WebChromeClient::updateViewportDefaultConfiguration(bool hasMobileDoctype)
 {
     if (RefPtr page = m_page.get())
-        page->didReceiveMobileDocType(isMobileDoctype);
+        page->updateViewportDefaultConfiguration(hasMobileDoctype);
 }
 
 void WebChromeClient::setNeedsScrollNotifications(WebCore::LocalFrame&, bool)

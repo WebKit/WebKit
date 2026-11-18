@@ -197,7 +197,7 @@ private:
 #endif
 
 #if PLATFORM(IOS_FAMILY)
-    void didReceiveMobileDocType(bool) final;
+    void updateViewportDefaultConfiguration(bool hasMobileDoctype) final;
     void setNeedsScrollNotifications(WebCore::LocalFrame&, bool) final;
     void notifyRevealedSelectionByScrollingFrame(WebCore::LocalFrame&) final;
     bool isStopping() final;

@@ -1,0 +1,34 @@
+<!DOCTYPE html PUBLIC "-//WAPFORUM//DTD XHTML Mobile 1.0//EN" "http://www.wapforum.org/DTD/xhtml-mobile10.dtd"> <!-- webkit-test-runner [ UsesBackForwardCache=true ] -->
+<html>
+<head>
+<title>A page with an XHTML Mobile Profile doctype keeps its viewport when restored from the back/forward cache</title>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+let widthOnLoad;
+
+addEventListener("load", () => {
+    setTimeout(() => {
+        widthOnLoad = innerWidth;
+        location.href = "resources/go-back.html";
+    });
+});
+
+addEventListener("pageshow", event => {
+    if (!event.persisted)
+        return;
+
+    setTimeout(() => {
+        result.textContent = innerWidth == widthOnLoad ? "PASS" : `FAIL: window width is ${innerWidth} after the restore and was ${widthOnLoad} on load`;
+        testRunner.notifyDone();
+    });
+});
+</script>
+</head>
+<body>
+<p id="result"></p>
+</body>
+</html>

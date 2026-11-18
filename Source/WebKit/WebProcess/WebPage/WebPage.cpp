@@ -6281,7 +6281,7 @@ void WebPage::isInFullscreenChanged(IsInFullscreenMode isInFullscreenMode)
     m_isInFullscreenMode = isInFullscreenMode;
 
 #if ENABLE(META_VIEWPORT)
-    resetViewportDefaultConfiguration(m_mainFrame.ptr(), m_isMobileDoctype);
+    resetViewportDefaultConfiguration(m_mainFrame.ptr());
 #endif
 }
 
@@ -8968,6 +8968,7 @@ void WebPage::didCommitLoad(WebFrame* frame)
 
     RefPtr coreFrame = frame->coreLocalFrame();
 #if ENABLE(META_VIEWPORT)
+    m_isMobileDoctype = false;
     resetViewportDefaultConfiguration(frame);
 
     bool viewportChanged = false;

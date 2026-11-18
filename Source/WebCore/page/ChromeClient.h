@@ -404,7 +404,7 @@ public:
     virtual Seconds eventThrottlingDelay() { return 0_s; };
 
 #if PLATFORM(IOS_FAMILY)
-    virtual void didReceiveMobileDocType(bool) = 0;
+    virtual void updateViewportDefaultConfiguration(bool hasMobileDoctype) = 0;
     virtual void setNeedsScrollNotifications(LocalFrame&, bool) = 0;
     virtual void notifyRevealedSelectionByScrollingFrame(LocalFrame&) = 0;
 

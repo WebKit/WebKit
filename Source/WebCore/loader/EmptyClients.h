@@ -185,7 +185,7 @@ class EmptyChromeClient : public ChromeClient {
 #endif
 
 #if PLATFORM(IOS_FAMILY)
-    void didReceiveMobileDocType(bool) final { }
+    void updateViewportDefaultConfiguration(bool) final { }
     void setNeedsScrollNotifications(LocalFrame&, bool) final { }
     void notifyRevealedSelectionByScrollingFrame(LocalFrame&) final { }
     void didLayout(LayoutType) final { }
