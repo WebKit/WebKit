@@ -26,6 +26,8 @@
 #include "config.h"
 #include "KeepaliveRequestTracker.h"
 
+#include <wtf/Borrow.h>
+
 namespace WebCore {
 
 constexpr uint64_t maxInflightKeepaliveBytes { 65536 }; // 64 kibibytes as per Fetch specification.
@@ -41,7 +43,7 @@ KeepaliveRequestTracker::~KeepaliveRequestTracker()
         return RefPtr { request.get() };
     });
     m_inflightKeepaliveRequests.clear();
-    for (auto& resource : inflightRequests)
+    for (auto& resource : borrow(inflightRequests))
         resource->removeClient(*this);
 }
 

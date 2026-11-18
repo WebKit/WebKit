@@ -163,15 +163,6 @@ layout/integration/grid/LayoutIntegrationGridLayout.cpp
 layout/integration/inline/InlineIteratorSVGTextBox.cpp
 layout/integration/inline/LayoutIntegrationInlineContent.h
 layout/integration/inline/LayoutIntegrationLineLayout.cpp
-loader/DocumentPrefetcher.cpp
-loader/SubresourceIntegrity.cpp
-loader/TextResourceDecoder.cpp
-loader/archive/ArchiveResource.cpp
-loader/archive/cf/LegacyWebArchive.cpp
-loader/cache/MemoryCache.cpp
-loader/cocoa/PrivateClickMeasurementCocoa.mm
-loader/images/Image.cpp
-loader/images/bitmap/BitmapImageSource.cpp
 page/DebugPageOverlays.cpp
 page/ElementTargetingController.cpp
 page/EventSource.cpp

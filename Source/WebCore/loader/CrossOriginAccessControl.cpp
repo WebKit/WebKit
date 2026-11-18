@@ -45,6 +45,7 @@
 #include "SecurityPolicy.h"
 #include <mutex>
 #include <ranges>
+#include <wtf/Borrow.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/RuntimeApplicationChecks.h>
 #include <wtf/text/AtomString.h>
@@ -116,7 +117,7 @@ ResourceRequest createAccessControlPreflightRequest(const ResourceRequest& reque
         StringBuilder headerBuffer;
 
         bool appendComma = false;
-        for (const auto& headerField : unsafeHeaders) {
+        for (const auto& headerField : borrow(unsafeHeaders)) {
             if (appendComma)
                 headerBuffer.append(',');
             else

@@ -25,6 +25,7 @@
 #pragma once
 
 #include "SVGImageInstance.h"
+#include <wtf/Borrow.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
@@ -48,7 +49,7 @@ public:
     {
         if (RefPtr defaultInstance = m_defaultInstance)
             function(*defaultInstance);
-        for (auto& instance : m_otherInstances)
+        for (auto& instance : borrow(m_otherInstances))
             function(instance.get());
     }
 

@@ -29,6 +29,7 @@
 #include "config.h"
 #include "Archive.h"
 
+#include <wtf/Borrow.h>
 #include <wtf/RunLoop.h>
 #include <wtf/Scope.h>
 
@@ -46,7 +47,7 @@ void Archive::clearAllSubframeArchives()
 void Archive::clearAllSubframeArchives(HashSet<Ref<Archive>>& clearedArchives)
 {
     ASSERT(clearedArchives.contains(*this));
-    for (auto& archive : m_subframeArchives) {
+    for (auto& archive : borrow(m_subframeArchives)) {
         if (clearedArchives.add(archive).isNewEntry)
             archive->clearAllSubframeArchives(clearedArchives);
     }

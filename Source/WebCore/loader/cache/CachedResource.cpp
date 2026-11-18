@@ -51,6 +51,7 @@
 #include "ProgressTracker.h"
 #include "SecurityOrigin.h"
 #include "SubresourceLoader.h"
+#include <wtf/Borrow.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/MathExtras.h>
 #include <wtf/StdLibExtras.h>
@@ -130,7 +131,7 @@ CachedResource::~CachedResource()
     ASSERT(url().isNull() || !allowsCaching() || MemoryCache::singleton().resourceForRequest(resourceRequest(), sessionID()) != this);
 
     auto callbacks = std::exchange(m_loadedCallbacks, { });
-    for (auto& callback : callbacks)
+    for (auto& callback : borrow(callbacks))
         callback();
 }
 
@@ -368,7 +369,7 @@ void CachedResource::setLoading(bool b)
     if (m_loading)
         return;
     auto callbacks = std::exchange(m_loadedCallbacks, { });
-    for (auto& callback : callbacks)
+    for (auto& callback : borrow(callbacks))
         callback();
 }
 
@@ -746,17 +747,17 @@ void CachedResource::switchClientsToRevalidatedResource()
         }
     }
 
-    for (auto& client : clientsToMove) {
+    for (auto& client : borrow(clientsToMove)) {
         if (RefPtr protectedClient = client)
             removeClient(*protectedClient);
     }
     ASSERT(!m_clients.computeSize());
 
-    for (auto& client : clientsToMove) {
+    for (auto& client : borrow(clientsToMove)) {
         if (RefPtr protectedClient = client)
             protect(m_resourceToRevalidate)->addClientToSet(*protectedClient);
     }
-    for (auto& client : clientsToMove) {
+    for (auto& client : borrow(clientsToMove)) {
         // Calling didAddClient may do anything, including trying to cancel revalidation.
         // Assert that it didn't succeed.
         ASSERT(m_resourceToRevalidate);

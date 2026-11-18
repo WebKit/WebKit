@@ -47,6 +47,7 @@
 #include "Settings.h"
 #include <JavaScriptCore/RegularExpression.h>
 #include <WebCore/HTTPStatusCodes.h>
+#include <wtf/Borrow.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/SortedArrayMap.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -433,7 +434,7 @@ void MediaResource::dataReceived(CachedResource& resource, const SharedBuffer& b
 
         m_partialPlaylistLine = lines.takeLast();
 
-        for (auto& line : lines)
+        for (auto& line : borrow(lines))
             sendPartialPlaylistLine(line);
         return;
     }

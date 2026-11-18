@@ -33,6 +33,7 @@
 #include <pal/text/TextEncodingDetector.h>
 #include <pal/text/TextEncodingRegistry.h>
 #include <wtf/ASCIICType.h>
+#include <wtf/Borrow.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/ParsingUtilities.h>
@@ -376,7 +377,8 @@ size_t TextResourceDecoder::checkForBOM(std::span<const uint8_t> data)
 
     size_t bufferLength = m_buffer.size();
 
-    auto buffer1 = m_buffer.span();
+    Borrow buffer { m_buffer };
+    auto buffer1 = buffer->span();
     auto buffer2 = data;
     uint8_t c1 = !buffer1.empty() ? consume(buffer1) : !buffer2.empty() ? consume(buffer2) : 0;
     uint8_t c2 = !buffer1.empty() ? consume(buffer1) : !buffer2.empty() ? consume(buffer2) : 0;
@@ -466,7 +468,8 @@ bool TextResourceDecoder::checkForHeadCharset(std::span<const uint8_t> data, boo
     if (m_charsetParser)
         return checkForMetaCharset(data);
 
-    auto bufferData = m_buffer.span();
+    Borrow buffer { m_buffer };
+    auto bufferData = buffer->span();
 
     // Is there enough data available to check for XML declaration?
     if (bufferData.size() < 8)
@@ -597,7 +600,7 @@ String TextResourceDecoder::decode(std::span<const uint8_t> data)
         memcpySpan(m_buffer.mutableSpan().subspan(oldSize), data);
     }
 
-    String result = m_codec->decode(m_buffer.subspan(lengthOfBOM), false, m_contentType == ContentType::XML && !m_useLenientXMLDecoding, m_sawError);
+    String result = m_codec->decode(borrow(m_buffer)->subspan(lengthOfBOM), false, m_contentType == ContentType::XML && !m_useLenientXMLDecoding, m_sawError);
     m_buffer.clear();
     return result;
 }
@@ -610,14 +613,14 @@ String TextResourceDecoder::flush()
     if (m_buffer.size() && shouldAutoDetect()
         && ((!m_checkedForHeadCharset && (m_contentType == ContentType::HTML || m_contentType == ContentType::XML)) || (!m_checkedForCSSCharset && (m_contentType == ContentType::CSS)))) {
         PAL::TextEncoding detectedEncoding;
-        if (detectTextEncoding(m_buffer.span(), m_parentFrameAutoDetectedEncoding, &detectedEncoding))
+        if (detectTextEncoding(borrow(m_buffer)->span(), m_parentFrameAutoDetectedEncoding, &detectedEncoding))
             setEncoding(detectedEncoding, EncodingSource::AutoDetected);
     }
 
     if (!m_codec)
         m_codec = newTextCodec(m_encoding);
 
-    String result = m_codec->decode(m_buffer.span(), true, m_contentType == ContentType::XML && !m_useLenientXMLDecoding, m_sawError);
+    String result = m_codec->decode(borrow(m_buffer)->span(), true, m_contentType == ContentType::XML && !m_useLenientXMLDecoding, m_sawError);
     m_buffer.clear();
     m_codec = nullptr;
     m_checkedForBOM = false; // Skip BOM again when re-decoding.

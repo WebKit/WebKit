@@ -27,6 +27,7 @@
 #include "PrivateClickMeasurement.h"
 
 #include "Logging.h"
+#include <wtf/Borrow.h>
 #include <wtf/CrossThreadCopier.h>
 #include <wtf/CryptographicallyRandomNumber.h>
 #include <wtf/URL.h>
@@ -158,7 +159,7 @@ std::expected<PCM::AttributionTriggerData, String> PrivateClickMeasurement::pars
 
     PCM::EphemeralNonce destinationNonce;
     RegistrableDomain sourceDomain;
-    for (auto& parameter : parameters) {
+    for (auto& parameter : borrow(parameters)) {
         if (parameter.key == "attributionSource"_s) {
             if (parameter.value.isEmpty())
                 return makeUnexpected("[Private Click Measurement] Triggering event was not accepted because the URL's attributionSource query parameter had no value."_s);

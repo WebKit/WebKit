@@ -34,6 +34,7 @@
 #include "Logging.h"
 #include "SharedBuffer.h"
 #include "SubresourceLoader.h"
+#include <wtf/Borrow.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/SetForScope.h>
 #include <wtf/text/StringView.h>
@@ -164,8 +165,9 @@ void CachedRawResource::didAddClient(CachedResourceClient& c)
 {
     auto& client = downcast<CachedRawResourceClient>(c);
     size_t redirectCount = m_redirectChain.size();
+    Borrow redirectChain { m_redirectChain };
     Vector<std::pair<ResourceRequest, ResourceResponse>> redirectsInReverseOrder(redirectCount, [&](size_t i) {
-        const auto& pair = m_redirectChain[redirectCount - i - 1];
+        const auto& pair = redirectChain[redirectCount - i - 1];
         return std::pair<ResourceRequest, ResourceResponse> { pair.m_request, pair.m_redirectResponse };
     });
 

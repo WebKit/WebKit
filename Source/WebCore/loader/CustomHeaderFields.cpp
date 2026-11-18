@@ -29,6 +29,8 @@
 #include "HTTPHeaderField.h"
 #include "RegistrableDomain.h"
 
+#include <wtf/Borrow.h>
+
 namespace WebCore {
 
 bool CustomHeaderFields::thirdPartyDomainsMatch(const URL& url) const
@@ -37,7 +39,7 @@ bool CustomHeaderFields::thirdPartyDomainsMatch(const URL& url) const
         return false;
 
     auto registrableDomainLength = RegistrableDomain(url).string().length();
-    for (const auto& domainOrPattern : thirdPartyDomains) {
+    for (const auto& domainOrPattern : borrow(thirdPartyDomains)) {
         if (domainOrPattern == url.host())
             return true;
         if (domainOrPattern.startsWith("*."_s)

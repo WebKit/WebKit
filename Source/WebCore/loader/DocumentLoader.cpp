@@ -112,6 +112,7 @@
 #include "ViewTransition.h"
 #include "ViolationReportType.h"
 #include <wtf/Assertions.h>
+#include <wtf/Borrow.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Ref.h>
@@ -1486,7 +1487,7 @@ void DocumentLoader::commitData(const SharedBuffer& data)
         for (auto& pendingStyleSheet : m_pendingNamedContentExtensionStyleSheets)
             extensionStyleSheets->maybeAddContentExtensionSheet(pendingStyleSheet.key, Ref { pendingStyleSheet.value });
         for (auto& pendingSelectorEntry : m_pendingContentExtensionDisplayNoneSelectors) {
-            for (const auto& pendingSelector : pendingSelectorEntry.value)
+            for (const auto& pendingSelector : borrow(pendingSelectorEntry.value))
                 extensionStyleSheets->addDisplayNoneSelector(pendingSelectorEntry.key, pendingSelector.first, pendingSelector.second);
         }
         m_pendingNamedContentExtensionStyleSheets.clear();

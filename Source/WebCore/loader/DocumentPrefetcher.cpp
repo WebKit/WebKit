@@ -48,6 +48,8 @@
 #include "SecurityPolicy.h"
 #include "Settings.h"
 
+#include <wtf/Borrow.h>
+
 namespace WebCore {
 
 DocumentPrefetcher::DocumentPrefetcher(LocalFrame& frame)
@@ -111,7 +113,7 @@ static ResourceRequest makePrefetchRequest(URL&& url, const Vector<String>& tags
             if (tags[i] == nullAtom())
                 builder.append("null"_s);
             else
-                builder.append(tags[i]);
+                builder.append(borrow(tags)[i]);
         }
         request.setHTTPHeaderField(HTTPHeaderName::SecSpeculationTags, builder.toString());
     }

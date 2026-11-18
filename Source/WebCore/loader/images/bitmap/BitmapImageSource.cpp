@@ -36,6 +36,8 @@
 #include "ImageObserver.h"
 #include "Logging.h"
 
+#include <wtf/Borrow.h>
+
 namespace WebCore {
 
 Ref<BitmapImageSource> BitmapImageSource::create(BitmapImage& bitmapImage, AlphaOption alphaOption, GammaAndColorProfileOption gammaAndColorProfileOption)
@@ -132,7 +134,7 @@ void BitmapImageSource::destroyDecodedFrames(bool destroyAll)
         if (!destroyAll && index > currentFrameIndex)
             break;
 
-        decodedSize += m_frames[index].clearImage();
+        decodedSize += borrow(m_frames)[index].clearImage();
     }
 
     decodedSizeReset(decodedSize);
@@ -200,7 +202,7 @@ void BitmapImageSource::destroyNativeImageAtIndex(unsigned index, std::optional<
     if (index >= m_frames.size())
         return;
 
-    decodedSizeDecreased(m_frames[index].clearImage(decodingDestination));
+    decodedSizeDecreased(borrow(m_frames)[index].clearImage(decodingDestination));
 }
 
 bool BitmapImageSource::canDestroyDecodedData() const
@@ -406,7 +408,7 @@ void BitmapImageSource::callDecodeCallbacks(DecodingStatus status)
 {
     if (m_decodeCallbacks.isEmpty())
         return;
-    for (auto& decodeCallback : m_decodeCallbacks)
+    for (auto& decodeCallback : borrow(m_decodeCallbacks))
         decodeCallback(status);
     m_decodeCallbacks.clear();
 }
@@ -468,7 +470,8 @@ void BitmapImageSource::cacheMetadataAtIndex(unsigned index, SubsamplingLevel su
     if (index >= m_frames.size())
         return;
 
-    auto& frame = m_frames[index];
+    Borrow frames { m_frames };
+    auto& frame = frames[index];
 
     protect(m_decoder)->fetchFrameMetaDataAtIndex(index, subsamplingLevel, options, frame);
 
@@ -490,14 +493,16 @@ void BitmapImageSource::cacheNativeImageAtIndex(unsigned index, SubsamplingLevel
     if (!isInBounds<unsigned>(sizeInBytes + m_decodedSize))
         return;
 
-    auto& frame = m_frames[index];
-    auto& destination = frame.destination(options.decodingDestination());
-    destination.nativeImage = nativeImage.copyRef();
-    destination.decodingOptions = options;
-    destination.headroom = nativeImage->headroom();
+    {
+        Borrow frames { m_frames };
+        auto& destination = frames[index].destination(options.decodingDestination());
+        destination.nativeImage = nativeImage.copyRef();
+        destination.decodingOptions = options;
+        destination.headroom = nativeImage->headroom();
+    }
 
     cacheMetadataAtIndex(index, subsamplingLevel, options);
-    decodedSizeIncreased(destination.sizeInBytes());
+    decodedSizeIncreased(borrow(m_frames)[index].destination(options.decodingDestination()).sizeInBytes());
 }
 
 void BitmapImageSource::drawNativeImage(GraphicsContext& context, NativeImage& nativeImage, const FloatRect& destinationRect, const FloatRect& sourceRect, RasterDrawingOptions options)
@@ -537,17 +542,20 @@ const ImageFrame& BitmapImageSource::frameAtIndexCacheIfNeeded(unsigned index, c
     if (index >= m_frames.size())
         return ImageFrame::defaultFrame();
 
-    auto& frame = m_frames[index];
-    auto subsamplingLevelValue = subsamplingLevel.value_or(frame.subsamplingLevel());
-
-    if (frame.isComplete() && subsamplingLevelValue == frame.subsamplingLevel())
-        return frame;
+    auto subsamplingLevelValue = SubsamplingLevel::Default;
+    {
+        Borrow frames { m_frames };
+        auto& frame = frames[index];
+        subsamplingLevelValue = subsamplingLevel.value_or(frame.subsamplingLevel());
+        if (frame.isComplete() && subsamplingLevelValue == frame.subsamplingLevel())
+            return m_frames[index];
+    }
 
     destroyNativeImageAtIndex(index);
 
     // Retrieve the metadata from ImageDecoder if the ImageFrame isn't complete.
     cacheMetadataAtIndex(index, subsamplingLevelValue, { });
-    return frame;
+    return m_frames[index];
 }
 
 DecodingStatus BitmapImageSource::requestNativeImageAtIndex(unsigned index, SubsamplingLevel subsamplingLevel, ImageAnimatingState animatingState, const DecodingOptions& options)

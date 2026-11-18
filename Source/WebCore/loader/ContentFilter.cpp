@@ -42,6 +42,7 @@
 #include "ScriptController.h"
 #include "SharedBuffer.h"
 #include <array>
+#include <wtf/Borrow.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Ref.h>
 #include <wtf/SetForScope.h>
@@ -449,7 +450,7 @@ void ContentFilter::handleProvisionalLoadFailure(const ResourceError& error)
 
 void ContentFilter::deliverStoredResourceData()
 {
-    for (auto& buffer : m_buffers)
+    for (auto& buffer : borrow(m_buffers))
         deliverResourceData(Ref { *buffer.buffer });
     m_buffers.clear();
 }

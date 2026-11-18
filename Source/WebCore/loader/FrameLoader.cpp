@@ -160,6 +160,7 @@
 #include "WindowFeatures.h"
 #include "XMLDocumentParser.h"
 #include <ranges>
+#include <wtf/Borrow.h>
 #include <wtf/CheckedPtr.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/Ref.h>
@@ -2827,7 +2828,7 @@ void FrameLoader::commitProvisionalLoad()
                 targetFrames.append(localChild.releaseNonNull());
         }
 
-        for (auto& frame : targetFrames)
+        for (auto& frame : borrow(targetFrames))
             frame->loader().checkCompleted();
     } else
         didOpenURL();
@@ -3531,7 +3532,7 @@ void FrameLoader::detachChildren()
         if (RefPtr localChild = dynamicDowncast<LocalFrame>(child))
             childrenToDetach.append(localChild.releaseNonNull());
     }
-    for (auto& child : childrenToDetach)
+    for (auto& child : borrow(childrenToDetach))
         child->loader().detachFromParent();
 }
 
@@ -5304,7 +5305,7 @@ void FrameLoader::dispatchDidClearWindowObjectsInAllWorlds()
 
     Vector<Ref<DOMWrapperWorld>> worlds;
     ScriptController::getAllWorlds(worlds);
-    for (auto& world : worlds)
+    for (auto& world : borrow(worlds))
         dispatchDidClearWindowObjectInWorld(world);
 }
 
@@ -5326,7 +5327,7 @@ void FrameLoader::dispatchGlobalObjectAvailableInAllWorlds()
 {
     Vector<Ref<DOMWrapperWorld>> worlds;
     ScriptController::getAllWorlds(worlds);
-    for (auto& world : worlds)
+    for (auto& world : borrow(worlds))
         m_client->dispatchGlobalObjectAvailable(world);
 }
 
@@ -5370,7 +5371,7 @@ void FrameLoader::tellClientAboutPastMemoryCacheLoads()
     Vector<ResourceRequest> pastLoads;
     documentLoader->takeMemoryCacheLoadsForClientNotification(pastLoads);
 
-    for (auto& pastLoad : pastLoads) {
+    for (auto& pastLoad : borrow(pastLoads)) {
         RefPtr resource = MemoryCache::singleton().resourceForRequest(pastLoad, page->sessionID());
 
         // FIXME: These loads, loaded from cache, but now gone from the cache by the time

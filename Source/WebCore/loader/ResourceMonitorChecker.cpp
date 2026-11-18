@@ -28,6 +28,7 @@
 
 #include "Logging.h"
 #include "ResourceMonitor.h"
+#include <wtf/Borrow.h>
 #include <wtf/CryptographicallyRandomNumber.h>
 #include <wtf/Seconds.h>
 #include <wtf/StdLibExtras.h>
@@ -117,7 +118,7 @@ void ResourceMonitorChecker::finishPendingQueries(Function<Eligibility(const Con
 {
     RESOURCEMONITOR_RELEASE_LOG("finishPendingQueries: Finish pending queries: count=%zu", m_pendingQueries.size());
 
-    for (auto& pair : m_pendingQueries) {
+    for (auto& pair : borrow(m_pendingQueries)) {
         auto& [info, completionHandler] = pair;
 
         Eligibility eligibility = checker(info);

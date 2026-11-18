@@ -35,6 +35,7 @@
 #include "ResourceResponse.h"
 #include "SecurityContext.h"
 #include "SubresourceIntegrity.h"
+#include <wtf/Borrow.h>
 #include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
@@ -43,7 +44,7 @@ namespace WebCore {
 static void reportViolation(const URL& requestURL, Document& document, bool block, bool reportBlock, const IntegrityPolicy* integrityPolicy, const IntegrityPolicy* integrityPolicyReportOnly)
 {
     auto sendReport = [&document, &requestURL](bool reportOnly, const Vector<String>& endpoints) {
-        for (const auto& endpoint : endpoints) {
+        for (const auto& endpoint : borrow(endpoints)) {
             const URL& documentURL = document.url();
 
             auto reportBody = IntegrityPolicyViolationReportBody::create(documentURL.string(), requestURL.string(), "script"_s, reportOnly);
@@ -67,7 +68,7 @@ static void reportViolation(const URL& requestURL, Document& document, bool bloc
 std::unique_ptr<IntegrityPolicy> processIntegrityPolicy(const ResourceResponse& response, HTTPHeaderName headerName)
 {
     auto parseInnerList = [](auto& innerList, auto& vector, std::optional<String> match) {
-        for (auto& itemAndParameters : innerList) {
+        for (auto& itemAndParameters : borrow(innerList)) {
             auto& item = itemAndParameters.first;
             auto* token = std::get_if<RFC8941::Token>(&item);
             if (!token)

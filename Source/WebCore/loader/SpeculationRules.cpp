@@ -29,6 +29,7 @@
 #include "Node.h"
 #include "ReferrerPolicy.h"
 #include <algorithm>
+#include <wtf/Borrow.h>
 #include <wtf/HashSet.h>
 #include <wtf/JSONValues.h>
 #include <wtf/NeverDestroyed.h>
@@ -176,7 +177,8 @@ static std::optional<SpeculationRules::Rule> parseSingleRule(const JSON::Object&
         "referrer_policy"_s, "relative_to"_s, "eagerness"_s,
         "expects_no_vary_search"_s, "tag"_s
     };
-    for (const auto& key : input.keys()) {
+    auto keys = input.keys();
+    for (const auto& key : borrow(keys)) {
         if (!allowedKeys->contains(key))
             return std::nullopt;
     }
@@ -402,8 +404,8 @@ Vector<URL> SpeculationRules::unregisterSpeculationRules(Node& sourceNode)
     Vector<URL> removedURLs;
     auto it = m_prefetchRulesByNode.find(sourceNode);
     if (it != m_prefetchRulesByNode.end()) {
-        for (const auto& rule : it->value) {
-            for (const auto& url : rule.urls)
+        for (const auto& rule : borrow(it->value)) {
+            for (const auto& url : borrow(rule.urls))
                 removedURLs.append(url);
         }
         m_prefetchRulesByNode.remove(it);

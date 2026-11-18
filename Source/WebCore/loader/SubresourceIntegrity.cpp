@@ -37,6 +37,7 @@
 #include "SharedBuffer.h"
 #include "SubresourceLoader.h"
 #include "ViolationReportType.h"
+#include <wtf/Borrow.h>
 #include <wtf/ScopedLambda.h>
 #include <wtf/text/Base64.h>
 #include <wtf/text/MakeString.h>
@@ -160,7 +161,7 @@ static Vector<EncodedResourceCryptographicDigest> strongestMetadataFromSet(Vecto
     std::optional<EncodedResourceCryptographicDigest::Algorithm> strongest;
 
     // 2. For each item in set:
-    for (auto& item : set) {
+    for (auto& item : borrow(set)) {
         // 1. Assert: item["alg"] is a valid SRI hash algorithm token.
         // NOTE: Algorithm can only hold valid tokens at this point.
         ASSERT(item.algorithm == EncodedResourceCryptographicDigest::Algorithm::SHA256
@@ -282,8 +283,10 @@ void reportHashesIfNeeded(const CachedResource& resource)
             return;
 
         String hash = ""_s;
-        if (canExposeHashes)
-            hash = addHashPrefix(hashAlgorithm.value(), base64EncodeToString(resource.cryptographicDigest(hashAlgorithm.value()).value));
+        if (canExposeHashes) {
+            auto digest = resource.cryptographicDigest(hashAlgorithm.value());
+            hash = addHashPrefix(hashAlgorithm.value(), base64EncodeToString(borrow(digest.value)->span()));
+        }
         Ref report = createReportFormData("csp-hash"_s, documentURL, document->httpUserAgent(), [&](auto& body) {
             body.setString("documentURL"_s, documentURL.strippedForUseAsReferrer().string);
             body.setString("subresourceURL"_s, resource.url().strippedForUseAsReferrer().string);
@@ -313,7 +316,7 @@ bool doBytesMatchMetadataList(ResourceResponse::Tainting tainting, NOESCAPE cons
     auto metadata = strongestMetadataFromSet(WTF::move(parsedMetadata));
 
     // 4. For each item in metadata:
-    for (auto& item : metadata) {
+    for (auto& item : borrow(metadata)) {
         // 1. Let algorithm be item["alg"].
         auto algorithm = item.algorithm;
 
@@ -325,7 +328,7 @@ bool doBytesMatchMetadataList(ResourceResponse::Tainting tainting, NOESCAPE cons
         //   1. Let result be the result of applying algorithm to bytes.
         //   2. Return the result of base64 encoding result.
         auto digest = digestForAlgorithm(algorithm);
-        auto actualValue = base64EncodeToString(digest.value);
+        auto actualValue = base64EncodeToString(borrow(digest.value)->span());
 
         // 4. If actualValue is a case-sensitive match for expectedValue, return true.
         if (actualValue == expectedValue)

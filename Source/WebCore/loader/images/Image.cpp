@@ -42,6 +42,7 @@
 #include "ShareableBitmap.h"
 #include "SharedBuffer.h"
 #include <math.h>
+#include <wtf/Borrow.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/MainThread.h>
 #include <wtf/StdLibExtras.h>
@@ -235,7 +236,7 @@ void Image::decodeToShareableBitmaps(std::span<const uint8_t> data, std::span<co
             completionHandler({ });
             return;
         }
-        completionHandler(createBitmapsFromSVGImage(*svgImage, lengthsVector.span()));
+        completionHandler(createBitmapsFromSVGImage(*svgImage, borrow(lengthsVector)->span()));
     });
 }
 

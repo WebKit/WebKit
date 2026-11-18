@@ -61,6 +61,7 @@
 #include "StyleSheetList.h"
 #include "markup.h"
 #include <algorithm>
+#include <wtf/Borrow.h>
 #include <wtf/OrderedHashSet.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/URLHash.h>
@@ -318,7 +319,7 @@ Ref<LegacyWebArchive> LegacyWebArchive::create(Ref<ArchiveResource>&& mainResour
     auto archive = adoptRef(*new LegacyWebArchive(mainFrameIdentifier, WTF::move(subframeIdentifiers)));
     archive->setMainResource(WTF::move(mainResource));
 
-    for (auto& subresource : subresources)
+    for (auto& subresource : borrow(subresources))
         archive->addSubresource(WTF::move(subresource));
 
     return archive;
@@ -329,10 +330,10 @@ Ref<LegacyWebArchive> LegacyWebArchive::create(Ref<ArchiveResource>&& mainResour
     auto archive = adoptRef(*new LegacyWebArchive(mainFrameIdentifier, { }));
     archive->setMainResource(WTF::move(mainResource));
 
-    for (auto& subresource : subresources)
+    for (auto& subresource : borrow(subresources))
         archive->addSubresource(WTF::move(subresource));
 
-    for (auto& subframeArchive : subframeArchives)
+    for (auto& subframeArchive : borrow(subframeArchives))
         archive->addSubframeArchive(WTF::move(subframeArchive));
 
     return archive;
@@ -652,7 +653,7 @@ static HashMap<Ref<CSSStyleSheet>, String> addSubresourcesForCSSStyleSheetsIfNec
                 return subresource->url() == url;
             });
             if (index != notFound) {
-                auto fileName = FileSystem::lastComponentOfPathIgnoringTrailingSlash(subresources[index]->relativeFilePath());
+                auto fileName = FileSystem::lastComponentOfPathIgnoringTrailingSlash(borrow(subresources)[index]->relativeFilePath());
                 uniqueFileNames.remove(fileName);
                 uniqueSubresources.remove(url.string());
                 subresources.removeAt(index);
@@ -717,7 +718,7 @@ RefPtr<LegacyWebArchive> LegacyWebArchive::createInternal(const String& markupSt
     HashSet<String> uniqueFileNames;
     String subresourcesDirectoryName = options.mainResourceFileName.isNull() ? String { } : makeString(options.mainResourceFileName, "_files"_s);
 
-    for (auto& node : nodes) {
+    for (auto& node : borrow(nodes)) {
         RefPtr frameOwnerElement = dynamicDowncast<HTMLFrameOwnerElement>(node);
         RefPtr childFrame = frameOwnerElement ? frameOwnerElement->contentFrame() : nullptr;
         RefPtr localChildFrame = dynamicDowncast<LocalFrame>(childFrame.get());
