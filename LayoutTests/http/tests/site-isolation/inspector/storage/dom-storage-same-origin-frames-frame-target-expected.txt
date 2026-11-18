@@ -1,0 +1,36 @@
+Tests that DOM storage of an origin stays readable when frames of that origin are removed under Site Isolation.
+
+
+== Running test suite: SiteIsolation.DOMStorage.SameOriginFrames
+-- Running test case: SiteIsolation.DOMStorage.SameOriginFrames.Setup
+PASS: Should find the first frame's target.
+PASS: The second frame should have its frame target's execution context.
+PASS: The second frame should have the same origin as the first frame.
+PASS: The third frame should have its frame target's execution context.
+PASS: The third frame should have the same origin as the first frame.
+PASS: Each frame should have its own frame target.
+PASS: Should have a DOMStorageObject for the origin's localStorage.
+PASS: The localStorage object should use the first frame's target.
+PASS: Should read the localStorage entries.
+PASS: Should have a DOMStorageObject for the origin's sessionStorage.
+PASS: The sessionStorage object should use the first frame's target.
+PASS: Should read the sessionStorage entries.
+
+-- Running test case: SiteIsolation.DOMStorage.SameOriginFrames.RemoveLastFrame
+PASS: The third frame's target should be destroyed.
+PASS: Should have a DOMStorageObject for the origin's localStorage.
+PASS: The localStorage object should use the first frame's target.
+PASS: Should read the localStorage entries.
+PASS: Should have a DOMStorageObject for the origin's sessionStorage.
+PASS: The sessionStorage object should use the first frame's target.
+PASS: Should read the sessionStorage entries.
+
+-- Running test case: SiteIsolation.DOMStorage.SameOriginFrames.RemoveFirstFrame
+PASS: The first frame's target should be destroyed.
+PASS: Should have a DOMStorageObject for the origin's localStorage.
+PASS: The localStorage object should use the second frame's target.
+PASS: Should read the localStorage entries.
+PASS: Should have a DOMStorageObject for the origin's sessionStorage.
+PASS: The sessionStorage object should use the second frame's target.
+PASS: Should read the sessionStorage entries.
+

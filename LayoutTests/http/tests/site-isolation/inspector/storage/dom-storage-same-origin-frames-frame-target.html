@@ -1,0 +1,121 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="../debugger/resources/site-isolation-debugger-test-utilities.js"></script>
+<script src="resources/site-isolation-storage-test-utilities.js"></script>
+<script>
+function addFrame(id)
+{
+    let iframe = document.createElement("iframe");
+    iframe.id = id;
+    iframe.src = "http://localhost:8000/site-isolation/inspector/storage/resources/dom-storage-frame.html?" + id;
+    document.body.appendChild(iframe);
+}
+
+function removeFrame(id)
+{
+    document.getElementById(id).remove();
+}
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.DOMStorage.SameOriginFrames");
+
+    let frameTargets = {};
+    let frameOrigin = null;
+
+    async function waitFor(predicate) {
+        for (let i = 0; i < 50; ++i) {
+            let value = predicate();
+            if (value)
+                return value;
+            await Promise.delay(100);
+        }
+        return null;
+    }
+
+    function storageLabel(isLocalStorage) {
+        return isLocalStorage ? "localStorage" : "sessionStorage";
+    }
+
+    async function addFrameAndWaitForTarget(id) {
+        InspectorTest.evaluateInPage(`addFrame("${id}")`);
+        let target = await waitForFrameTargetForURLContaining(`dom-storage-frame.html?${id}`);
+        let frame = await waitFor(() => WI.networkManager.frames.find((frame) => frame.url.endsWith(`?${id}`) && frame.pageExecutionContext?.target === target));
+        InspectorTest.expectNotNull(frame, `The ${id} frame should have its frame target's execution context.`);
+        InspectorTest.expectEqual(frame?.securityOrigin, frameOrigin, `The ${id} frame should have the same origin as the first frame.`);
+        return target;
+    }
+
+    async function removeFrameAndWaitForTarget(id) {
+        InspectorTest.evaluateInPage(`removeFrame("${id}")`);
+        InspectorTest.expectThat(await waitFor(() => frameTargets[id].isDestroyed), `The ${id} frame's target should be destroyed.`);
+    }
+
+    async function expectStorageServedBy(expectedTarget, label) {
+        for (let isLocalStorage of [true, false]) {
+            let storage = storageLabel(isLocalStorage);
+            let domStorage = InspectorTest.SiteIsolationStorage.objectForOrigin(frameOrigin, isLocalStorage);
+            InspectorTest.expectNotNull(domStorage, `Should have a DOMStorageObject for the origin's ${storage}.`);
+            if (!domStorage)
+                continue;
+
+            InspectorTest.expectEqual(domStorage.target, expectedTarget, `The ${storage} object should use the ${label} frame's target.`);
+            try {
+                let {entries} = await domStorage.target.DOMStorageAgent.getDOMStorageItems(domStorage.id);
+                InspectorTest.expectEqual(JSON.stringify(entries), `[["foo","bar"]]`, `Should read the ${storage} entries.`);
+            } catch (error) {
+                InspectorTest.fail(`Should read the ${storage} entries: ${error}`);
+            }
+        }
+    }
+
+    suite.addTestCase({
+        name: "SiteIsolation.DOMStorage.SameOriginFrames.Setup",
+        description: "Add two more frames of the first frame's origin, so each of the three frames has its own frame target.",
+        async test() {
+            frameTargets.first = await waitForFrameTargetForURLContaining("dom-storage-frame.html");
+            InspectorTest.expectNotNull(frameTargets.first, "Should find the first frame's target.");
+
+            let {result} = await frameTargets.first.RuntimeAgent.evaluate.invoke({expression: "origin", objectGroup: "test", returnByValue: true});
+            frameOrigin = result.value;
+            await InspectorTest.SiteIsolationStorage.evaluateInFrame(frameTargets.first, "clearStorageAreas()");
+
+            frameTargets.second = await addFrameAndWaitForTarget("second");
+            frameTargets.third = await addFrameAndWaitForTarget("third");
+            InspectorTest.expectEqual(new Set(Object.values(frameTargets)).size, 3, "Each frame should have its own frame target.");
+
+            await expectStorageServedBy(frameTargets.first, "first");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.DOMStorage.SameOriginFrames.RemoveLastFrame",
+        description: "After the last of three same-origin frames is removed, the origin's storage should stay readable.",
+        async test() {
+            await removeFrameAndWaitForTarget("third");
+            await expectStorageServedBy(frameTargets.first, "first");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.DOMStorage.SameOriginFrames.RemoveFirstFrame",
+        description: "After the frame whose target serves the origin's storage is removed, another frame of the origin should take over.",
+        async test() {
+            await removeFrameAndWaitForTarget("first");
+            await expectStorageServedBy(frameTargets.second, "second");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests that DOM storage of an origin stays readable when frames of that origin are removed under Site Isolation.</p>
+<iframe id="first" src="http://localhost:8000/site-isolation/inspector/storage/resources/dom-storage-frame.html"></iframe>
+</body>
+</html>
