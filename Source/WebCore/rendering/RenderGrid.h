@@ -243,6 +243,7 @@ private:
 
     void layoutGridItems(RenderGridLayoutState&, GridLanesResultRef);
     void layoutGridLanesItems(RenderGridLayoutState&, const GridLanesResult&);
+    LayoutUnit gridLanesContentBoxLogicalHeightForMaxContent(const GridTrackSizingAlgorithm&) const;
 
     void populateGridPositionsForDirection(const GridTrackSizingAlgorithm&, Style::GridTrackSizingDirection, GridLanesResultRef);
 
