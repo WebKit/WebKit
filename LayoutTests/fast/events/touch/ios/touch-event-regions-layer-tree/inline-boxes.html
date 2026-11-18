@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="resources/touch-regions-helper.js"></script>
+    <style>
+        body {
+            margin: 0;
+            font-family: Ahem;
+            font-size: 10px;
+            line-height: 20px;
+            width: 300px;
+        }
+
+        .decorated {
+            padding: 4px 8px;
+            border: 3px solid black;
+            background-color: silver;
+        }
+
+        .positioned {
+            position: relative;
+            top: 5px;
+        }
+
+        #firstLine::first-line {
+            background-color: yellow;
+        }
+
+        #clamped {
+            display: -webkit-box;
+            -webkit-box-orient: vertical;
+            -webkit-line-clamp: 2;
+            overflow: hidden;
+        }
+    </style>
+</head>
+<body>
+    <p>Plain <span id="target1">span with listener</span> and text after it.</p>
+    <p>Text <span id="target2" class="decorated">decorated span with listener</span> wrapping across more than one line of text.</p>
+    <p id="nestedContainer">Outer <span id="target3">target <span class="decorated">nested decorated <b>bold</b></span> end</span> after.</p>
+    <p>Text <span id="target4" class="positioned decorated">positioned span with listener</span> after.</p>
+    <p id="firstLine">First line style on a paragraph whose listener is on the paragraph itself, with more text.</p>
+    <p id="clamped">Clamped text that does not fit in two lines of the paragraph, so the rest of it is truncated with an ellipsis.</p>
+    <p><span id="empty" class="decorated"></span> Empty decorated span with a listener.</p>
+    <script>
+        for (const id of ["target1", "target2", "target3", "target4", "firstLine", "clamped", "empty"])
+            document.getElementById(id).addEventListener("touchstart", () => { }, { passive: id != "target2" });
+
+        prepareForTest();
+        window.addEventListener("load", dumpRegions, false);
+    </script>
+</body>
+</html>

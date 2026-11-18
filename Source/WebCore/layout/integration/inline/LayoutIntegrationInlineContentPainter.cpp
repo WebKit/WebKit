@@ -198,6 +198,9 @@ void InlineContentPainter::paint()
             case PaintPhase::ChildBlockBackground:
             case PaintPhase::ChildBlockBackgrounds:
                 return box.isBlockLevelBox();
+            case PaintPhase::EventRegion:
+                // InlineBoxPainter is a no-op here; text and atomic inlines inherit its style.
+                return !box.isInlineBox();
             default:
                 return true;
             }
