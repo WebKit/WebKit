@@ -91,6 +91,7 @@
 #include <JavaScriptCore/ArrayBuffer.h>
 #include <JavaScriptCore/ScriptCallStack.h>
 #include <wtf/Atomics.h>
+#include <wtf/Borrow.h>
 #include <wtf/MainThread.h>
 #include <wtf/NativePromise.h>
 #include <wtf/Ref.h>
@@ -235,7 +236,7 @@ void BaseAudioContext::uninitialize()
         derefFinishedSourceNodes();
         // Any still-playing scheduled source nodes were registered as automatic pull nodes; remove
         // them before their references are dropped so m_automaticPullNodes ends up empty.
-        for (auto& node : m_referencedSourceNodes) {
+        for (auto& node : borrow(m_referencedSourceNodes)) {
             if (is<AudioScheduledSourceNode>(node.get()))
                 removeAutomaticPullNode(node.get());
         }
@@ -254,7 +255,7 @@ void BaseAudioContext::addReaction(State state, DOMPromiseDeferred<void>&& promi
     if (stateIndex >= m_stateReactions.size())
         m_stateReactions.grow(stateIndex + 1);
 
-    m_stateReactions[stateIndex].append(WTF::move(promise));
+    borrow(m_stateReactions)[stateIndex].append(WTF::move(promise));
 }
 
 void BaseAudioContext::setState(State state)
@@ -273,7 +274,7 @@ void BaseAudioContext::setState(State state)
     Vector<DOMPromiseDeferred<void>> reactions;
     m_stateReactions[stateIndex].swap(reactions);
 
-    for (auto& promise : reactions)
+    for (auto& promise : borrow(reactions))
         promise.resolve();
 }
 
@@ -712,8 +713,7 @@ void BaseAudioContext::updateTailProcessingNodes()
     // Go backwards as the current node may be removed from m_tailProcessingNodes as we iterate.
     // We are on the audio thread so we want to avoid allocations as much as possible.
     for (auto i = m_tailProcessingNodes.size(); i > 0; --i) {
-        auto& node = m_tailProcessingNodes[i - 1];
-        if (!protect(node.node())->propagatesSilence())
+        if (!protect(borrow(m_tailProcessingNodes)[i - 1].node())->propagatesSilence())
             continue; // Node is not done processing its tail.
 
         // Ideally we'd find a way to avoid this vector append since we try to avoid potential heap allocations
@@ -722,8 +722,8 @@ void BaseAudioContext::updateTailProcessingNodes()
 
         // Disabling of outputs should happen on the main thread we add the node to m_finishedTailProcessingNodes
         // for disableOutputsForFinishedTailProcessingNodes() to process later on the main thread.
-        ASSERT(!m_finishedTailProcessingNodes.contains(node));
-        m_finishedTailProcessingNodes.append(WTF::move(node));
+        ASSERT(!m_finishedTailProcessingNodes.contains(borrow(m_tailProcessingNodes)[i - 1]));
+        m_finishedTailProcessingNodes.append(WTF::move(borrow(m_tailProcessingNodes)[i - 1]));
         m_tailProcessingNodes.removeAt(i - 1);
     }
 
@@ -955,7 +955,7 @@ void BaseAudioContext::processAutomaticPullNodes(size_t framesToProcess)
 {
     ASSERT_WITH_SECURITY_IMPLICATION(isAudioThread());
 
-    for (auto& node : m_renderingAutomaticPullNodes)
+    for (auto& node : borrow(m_renderingAutomaticPullNodes))
         node->processIfNecessary(framesToProcess);
 }
 

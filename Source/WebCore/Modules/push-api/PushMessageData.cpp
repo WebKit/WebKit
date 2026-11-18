@@ -34,6 +34,7 @@
 #include <JavaScriptCore/JSCJSValueInlines.h>
 #include <JavaScriptCore/JSLock.h>
 #include <JavaScriptCore/JSONObject.h>
+#include <wtf/Borrow.h>
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
@@ -42,7 +43,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(PushMessageData);
 
 ExceptionOr<Ref<JSC::ArrayBuffer>> PushMessageData::arrayBuffer()
 {
-    RefPtr buffer = ArrayBuffer::tryCreate(m_data.span());
+    RefPtr buffer = ArrayBuffer::tryCreate(borrow(m_data)->span());
     if (!buffer)
         return Exception { ExceptionCode::OutOfMemoryError };
     return buffer.releaseNonNull();
@@ -55,7 +56,7 @@ Ref<Blob> PushMessageData::blob(ScriptExecutionContext& context)
 
 ExceptionOr<Ref<JSC::Uint8Array>> PushMessageData::bytes()
 {
-    RefPtr view = Uint8Array::tryCreate(m_data.span());
+    RefPtr view = Uint8Array::tryCreate(borrow(m_data)->span());
     if (!view)
         return Exception { ExceptionCode::OutOfMemoryError };
     return view.releaseNonNull();
@@ -74,7 +75,7 @@ ExceptionOr<JSC::JSValue> PushMessageData::json(JSDOMGlobalObject& globalObject)
 
 String PushMessageData::text()
 {
-    return TextResourceDecoder::textFromUTF8(m_data.span());
+    return TextResourceDecoder::textFromUTF8(borrow(m_data)->span());
 }
 
 } // namespace WebCore

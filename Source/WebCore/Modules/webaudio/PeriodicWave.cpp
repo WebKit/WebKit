@@ -39,6 +39,7 @@
 #include "VectorMath.h"
 #include <algorithm>
 #include <numbers>
+#include <wtf/Borrow.h>
 #include <wtf/StdLibExtras.h>
 
 // The number of bands per octave. Each octave will have this many entries in the wave tables.
@@ -95,7 +96,7 @@ ExceptionOr<Ref<PeriodicWave>> PeriodicWave::create(BaseAudioContext& context, P
     imag[0] = 0;
     
     auto waveTable = adoptRef(*new PeriodicWave(context.sampleRate()));
-    waveTable->createBandLimitedTables(real, imag, options.disableNormalization ? ShouldDisableNormalization::Yes : ShouldDisableNormalization::No);
+    waveTable->createBandLimitedTables(borrow(real)->span(), borrow(imag)->span(), options.disableNormalization ? ShouldDisableNormalization::Yes : ShouldDisableNormalization::No);
     return waveTable;
 }
 
@@ -233,7 +234,8 @@ void PeriodicWave::createBandLimitedTables(std::span<const float> realData, std:
         m_bandLimitedTables.append(makeUnique<AudioFloatArray>(fftSize));
 
         // Apply an inverse FFT to generate the time-domain table data.
-        auto data = m_bandLimitedTables[rangeIndex]->span();
+        Borrow bandLimitedTables { m_bandLimitedTables };
+        auto data = bandLimitedTables[rangeIndex]->span();
         frame.doInverseFFT(data);
 
         // For the first range (which has the highest power), calculate its peak value then compute normalization scale.

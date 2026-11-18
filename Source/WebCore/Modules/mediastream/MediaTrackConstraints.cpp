@@ -28,6 +28,7 @@
 #if ENABLE(MEDIA_STREAM)
 
 #include "MediaConstraints.h"
+#include <wtf/Borrow.h>
 
 namespace WebCore {
 
@@ -113,10 +114,10 @@ static void set(MediaTrackConstraintSetMap& map, ConstraintSetType setType, Medi
         },
         [&] (const Vector<String>& vector) {
             if (setType == ConstraintSetType::Mandatory) {
-                for (auto& string : vector)
+                for (auto& string : borrow(vector))
                     constraint.appendIdeal(string);
             } else {
-                for (auto& string : vector)
+                for (auto& string : borrow(vector))
                     constraint.appendExact(string);
             }
         },
@@ -127,7 +128,7 @@ static void set(MediaTrackConstraintSetMap& map, ConstraintSetType setType, Medi
                         constraint.appendExact(string);
                     },
                     [&] (const Vector<String>& vector) {
-                        for (auto& string : vector)
+                        for (auto& string : borrow(vector))
                             constraint.appendExact(string);
                     }
                 );
@@ -138,7 +139,7 @@ static void set(MediaTrackConstraintSetMap& map, ConstraintSetType setType, Medi
                         constraint.appendIdeal(string);
                     },
                     [&] (const Vector<String>& vector) {
-                        for (auto& string : vector)
+                        for (auto& string : borrow(vector))
                             constraint.appendIdeal(string);
                     }
                 );

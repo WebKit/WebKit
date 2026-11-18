@@ -26,6 +26,7 @@
 #include "config.h"
 #include "GamepadManager.h"
 
+#include <wtf/Borrow.h>
 #include <wtf/text/TextStream.h>
 
 #if ENABLE(GAMEPAD)
@@ -85,7 +86,7 @@ void GamepadManager::platformGamepadConnected(PlatformGamepad& platformGamepad, 
         return;
 
     // Notify blind Navigators and Windows about all gamepads except for this one.
-    for (auto& weakGamepad : GamepadProvider::singleton().platformGamepads()) {
+    for (auto& weakGamepad : borrow(GamepadProvider::singleton().platformGamepads())) {
         CheckedPtr gamepad = weakGamepad.get();
         if (!gamepad || gamepad == &platformGamepad)
             continue;
@@ -156,7 +157,7 @@ void GamepadManager::platformGamepadInputActivity(EventMakesGamepadsVisible even
     if (m_gamepadBlindNavigators.computeIsEmpty() && m_gamepadBlindDOMWindows.computeIsEmpty())
         return;
 
-    for (auto& weakGamepad : GamepadProvider::singleton().platformGamepads()) {
+    for (auto& weakGamepad : borrow(GamepadProvider::singleton().platformGamepads())) {
         if (CheckedPtr gamepad = weakGamepad.get())
             makeGamepadVisible(*gamepad, m_gamepadBlindNavigators, m_gamepadBlindDOMWindows);
     }

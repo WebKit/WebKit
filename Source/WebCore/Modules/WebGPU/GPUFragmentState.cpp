@@ -26,6 +26,7 @@
 #include "config.h"
 #include "GPUFragmentState.h"
 
+#include <wtf/Borrow.h>
 #include <wtf/JSONValues.h>
 
 namespace WebCore {
@@ -34,7 +35,7 @@ Ref<JSON::Object> GPUFragmentState::toJSON() const
 {
     Ref json = GPUProgrammableStage::toJSON();
     auto targetsJSON = JSON::Array::create();
-    for (auto& target : targets) {
+    for (auto& target : borrow(targets)) {
         if (target)
             targetsJSON->pushObject(target->toJSON());
         else

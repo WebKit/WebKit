@@ -30,6 +30,7 @@
 #include "GPUDevice.h"
 #include "InspectorInstrumentation.h"
 #include <WebCore/WebGPUCppAPI.h>
+#include <wtf/Borrow.h>
 #include <wtf/Locker.h>
 #include <wtf/NeverDestroyed.h>
 
@@ -188,8 +189,9 @@ void GPURenderPipeline::createPipelineForInspectorHighlight(unsigned canvasColor
     descriptor.vertex.module = *vertexShaderModule;
     descriptor.fragment->module = *fragmentShaderModule;
     bool changedBlendState = false;
-    for (size_t i = 0; i < descriptor.fragment->targets.size() && i < 8; ++i) {
-        auto& target = descriptor.fragment->targets[i];
+    Borrow targets { descriptor.fragment->targets };
+    for (size_t i = 0; i < targets->size() && i < 8; ++i) {
+        auto& target = targets[i];
         if (!(canvasColorAttachmentMask & (1 << i))) {
             // The blend constant is shared by every color attachment in a render pass, so changing it for highlighting must not affect a non-canvas target.
             if (target && usesBlendConstant(target->blend)) {

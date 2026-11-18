@@ -32,6 +32,7 @@
 #include "config.h"
 #include "SourceBuffer.h"
 
+#include <wtf/Borrow.h>
 #include <wtf/text/TextStream.h>
 
 #if ENABLE(MEDIA_SOURCE)
@@ -818,7 +819,7 @@ Ref<MediaPromise> SourceBuffer::sourceBufferPrivateDidReceiveInitializationSegme
 
         // 3.2 Add the appropriate track descriptions from this initialization segment to each of the track buffers.
         ASSERT(segment.audioTracks.size() == audioTracks->length());
-        for (auto& audioTrackInfo : segment.audioTracks) {
+        for (auto& audioTrackInfo : borrow(segment.audioTracks)) {
             Ref audioTrackPrivate { *audioTrackInfo.track };
             if (audioTracks->length() == 1) {
                 RefPtr track = audioTracks->item(0);
@@ -836,7 +837,7 @@ Ref<MediaPromise> SourceBuffer::sourceBufferPrivateDidReceiveInitializationSegme
         }
 
         ASSERT(segment.videoTracks.size() == videoTracks->length());
-        for (auto& videoTrackInfo : segment.videoTracks) {
+        for (auto& videoTrackInfo : borrow(segment.videoTracks)) {
             Ref videoTrackPrivate { *videoTrackInfo.track };
             if (videoTracks->length() == 1) {
                 RefPtr track = videoTracks->item(0);
@@ -854,7 +855,7 @@ Ref<MediaPromise> SourceBuffer::sourceBufferPrivateDidReceiveInitializationSegme
         }
 
         ASSERT(segment.textTracks.size() == textTracks->length());
-        for (auto& textTrackInfo : segment.textTracks) {
+        for (auto& textTrackInfo : borrow(segment.textTracks)) {
             Ref textTrackPrivate { *textTrackInfo.track };
             if (textTracks->length() == 1) {
                 RefPtr track = downcast<InbandTextTrack>(textTracks->item(0));
@@ -889,7 +890,7 @@ Ref<MediaPromise> SourceBuffer::sourceBufferPrivateDidReceiveInitializationSegme
         // appendError will be called once sourceBufferPrivateAppendComplete gets called once the completionHandler is run.
         if (RefPtr document = dynamicDowncast<Document>(scriptExecutionContext())) {
             if (auto& allowedMediaAudioCodecIDs = document->settings().allowedMediaAudioCodecIDs()) {
-                for (auto& audioTrackInfo : segment.audioTracks) {
+                for (auto& audioTrackInfo : borrow(segment.audioTracks)) {
                     if (audioTrackInfo.description && allowedMediaAudioCodecIDs->contains(FourCC::fromString(audioTrackInfo.description->codec())))
                         continue;
                     return MediaPromise::createAndReject(PlatformMediaError::AppendError);
@@ -897,7 +898,7 @@ Ref<MediaPromise> SourceBuffer::sourceBufferPrivateDidReceiveInitializationSegme
             }
 
             if (auto& allowedMediaVideoCodecIDs = document->settings().allowedMediaVideoCodecIDs()) {
-                for (auto& videoTrackInfo : segment.videoTracks) {
+                for (auto& videoTrackInfo : borrow(segment.videoTracks)) {
                     if (videoTrackInfo.description && allowedMediaVideoCodecIDs->contains(FourCC::fromString(videoTrackInfo.description->codec())))
                         continue;
                     return MediaPromise::createAndReject(PlatformMediaError::AppendError);
@@ -906,7 +907,7 @@ Ref<MediaPromise> SourceBuffer::sourceBufferPrivateDidReceiveInitializationSegme
         }
 
         // 5.2 For each audio track in the initialization segment, run following steps:
-        for (auto& audioTrackInfo : segment.audioTracks) {
+        for (auto& audioTrackInfo : borrow(segment.audioTracks)) {
             Ref audioTrackPrivate { *audioTrackInfo.track };
 
             // FIXME: Implement steps 5.2.1-5.2.8.1 as per Editor's Draft 09 January 2015, and reorder this
@@ -955,7 +956,7 @@ Ref<MediaPromise> SourceBuffer::sourceBufferPrivateDidReceiveInitializationSegme
         }
 
         // 5.3 For each video track in the initialization segment, run following steps:
-        for (auto& videoTrackInfo : segment.videoTracks) {
+        for (auto& videoTrackInfo : borrow(segment.videoTracks)) {
             Ref videoTrackPrivate { *videoTrackInfo.track };
 
             // FIXME: Implement steps 5.3.1-5.3.8.1 as per Editor's Draft 09 January 2015, and reorder this
@@ -1004,7 +1005,7 @@ Ref<MediaPromise> SourceBuffer::sourceBufferPrivateDidReceiveInitializationSegme
         }
 
         // 5.4 For each text track in the initialization segment, run following steps:
-        for (auto& textTrackInfo : segment.textTracks) {
+        for (auto& textTrackInfo : borrow(segment.textTracks)) {
             Ref textTrackPrivate = *textTrackInfo.track;
 
             // FIXME: Implement steps 5.4.1-5.4.8.1 as per Editor's Draft 09 January 2015, and reorder this
@@ -1502,7 +1503,7 @@ Ref<MediaPromise> SourceBuffer::sourceBufferPrivateDidAttach(SourceBufferPrivate
     RefPtr source = m_source.get();
     // 3.2 Add the appropriate track descriptions from this initialization segment to each of the track buffers.
     ASSERT(segment.audioTracks.size() == protect(audioTracksIfExists())->length());
-    for (auto& audioTrackInfo : segment.audioTracks) {
+    for (auto& audioTrackInfo : borrow(segment.audioTracks)) {
         Ref audioTrackPrivate { *audioTrackInfo.track };
         auto audioTrack = protect(audioTracksIfExists())->getTrackById(audioTrackPrivate->id());
         ASSERT(audioTrack);
@@ -1521,7 +1522,7 @@ Ref<MediaPromise> SourceBuffer::sourceBufferPrivateDidAttach(SourceBufferPrivate
 
     Ref videoTracks = this->videoTracks();
     ASSERT(segment.videoTracks.size() == videoTracks->length());
-    for (auto& videoTrackInfo : segment.videoTracks) {
+    for (auto& videoTrackInfo : borrow(segment.videoTracks)) {
         Ref videoTrackPrivate { *videoTrackInfo.track };
         auto videoTrack = videoTracks->getTrackById(videoTrackPrivate->id());
         ASSERT(videoTrack);
@@ -1544,7 +1545,7 @@ Ref<MediaPromise> SourceBuffer::sourceBufferPrivateDidAttach(SourceBufferPrivate
 
     Ref textTracks = this->textTracks();
     ASSERT(segment.textTracks.size() == textTracks->length());
-    for (auto& textTrackInfo : segment.textTracks) {
+    for (auto& textTrackInfo : borrow(segment.textTracks)) {
         Ref textTrackPrivate { *textTrackInfo.track };
         auto textTrack = textTracks->getTrackById(textTrackPrivate->id());
         ASSERT(textTrack);

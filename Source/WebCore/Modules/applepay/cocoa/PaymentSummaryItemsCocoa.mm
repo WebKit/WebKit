@@ -29,6 +29,7 @@
 #if ENABLE(APPLE_PAY)
 
 #import "ApplePayLineItem.h"
+#import <wtf/Borrow.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
 
 #import <pal/cocoa/PassKitSoftLink.h>
@@ -199,7 +200,7 @@ RetainPtr<PKPaymentSummaryItem> platformSummaryItem(const ApplePayLineItem& line
 RetainPtr<NSArray> platformDisbursementSummaryItems(const Vector<ApplePayLineItem>& lineItems)
 {
     RetainPtr paymentSummaryItems = adoptNS([[NSMutableArray alloc] initWithCapacity:lineItems.size()]);
-    for (auto& lineItem : lineItems) {
+    for (auto& lineItem : borrow(lineItems)) {
         if (RetainPtr summaryItem = platformSummaryItem(lineItem))
             [paymentSummaryItems addObject:summaryItem.get()];
     }
@@ -210,7 +211,7 @@ RetainPtr<NSArray> platformDisbursementSummaryItems(const Vector<ApplePayLineIte
 RetainPtr<NSArray> platformSummaryItems(const ApplePayLineItem& total, const Vector<ApplePayLineItem>& lineItems)
 {
     RetainPtr paymentSummaryItems = adoptNS([[NSMutableArray alloc] initWithCapacity:lineItems.size() + 1]);
-    for (auto& lineItem : lineItems) {
+    for (auto& lineItem : borrow(lineItems)) {
         if (RetainPtr summaryItem = platformSummaryItem(lineItem))
             [paymentSummaryItems addObject:summaryItem.get()];
     }

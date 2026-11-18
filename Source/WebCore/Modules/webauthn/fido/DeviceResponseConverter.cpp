@@ -38,6 +38,7 @@
 #include "Pin.h"
 #include "WebAuthenticationConstants.h"
 #include "WebAuthenticationUtils.h"
+#include <wtf/Borrow.h>
 #include <wtf/StdSet.h>
 #include <wtf/Vector.h>
 
@@ -65,7 +66,7 @@ std::optional<cbor::CBORValue> decodeResponseMap(const Vector<uint8_t>& inBuffer
         return std::nullopt;
 
     auto buffer = inBuffer.subvector(1);
-    std::optional<CBOR> decodedResponse = cbor::CBORReader::read(buffer);
+    std::optional<CBOR> decodedResponse = cbor::CBORReader::read(borrow(buffer)->span());
     if (!decodedResponse || !decodedResponse->isMap())
         return std::nullopt;
     return decodedResponse;
@@ -91,7 +92,7 @@ static Vector<uint8_t> getCredentialId(const Vector<uint8_t>& authenticatorData)
     if (authenticatorData.size() < credentialIdLengthOffset + credentialIdLengthLength + credentialIdLength)
         return { };
 
-    return Vector<uint8_t>(authenticatorData.subspan(credentialIdLengthOffset + credentialIdLengthLength, credentialIdLength));
+    return Vector<uint8_t>(borrow(authenticatorData)->subspan(credentialIdLengthOffset + credentialIdLengthLength, credentialIdLength));
 }
 
 static std::optional<AuthenticationExtensionsClientOutputs> parseAuthenticatorDataExtensions(const Vector<uint8_t>& authData, const std::optional<pin::HmacSecretRequest>& hmacSecretRequest = std::nullopt)
@@ -119,8 +120,7 @@ static std::optional<AuthenticationExtensionsClientOutputs> parseAuthenticatorDa
         if (authData.size() <= offset)
             return std::nullopt;
 
-        auto publicKeyBytes = authData.subspan(offset);
-        auto publicKeyResult = cbor::CBORReader::readWithBytesConsumed(publicKeyBytes);
+        auto publicKeyResult = cbor::CBORReader::readWithBytesConsumed(borrow(authData)->subspan(offset));
         if (!publicKeyResult)
             return std::nullopt;
 
@@ -130,8 +130,7 @@ static std::optional<AuthenticationExtensionsClientOutputs> parseAuthenticatorDa
     if (authData.size() <= offset)
         return std::nullopt;
 
-    auto extensionsBytes = authData.subspan(offset);
-    auto extensionsCBOR = cbor::CBORReader::read(extensionsBytes);
+    auto extensionsCBOR = cbor::CBORReader::read(borrow(authData)->subspan(offset));
     if (!extensionsCBOR || !extensionsCBOR->isMap())
         return std::nullopt;
 
@@ -157,11 +156,11 @@ static std::optional<AuthenticationExtensionsClientOutputs> parseAuthenticatorDa
             if (decryptedResponse) {
                 auto& decryptedOutput = decryptedResponse->output();
                 RefPtr<ArrayBuffer> first = ArrayBuffer::tryCreate(
-                    decryptedOutput.span().first(std::min<size_t>(hmacSecretOutputLength, decryptedOutput.size()))
+                    borrow(decryptedOutput)->span().first(std::min<size_t>(hmacSecretOutputLength, decryptedOutput.size()))
                 );
                 RefPtr<ArrayBuffer> second;
                 if (decryptedOutput.size() == hmacSecretDualOutputLength)
-                    second = ArrayBuffer::tryCreate(decryptedOutput.span().subspan(hmacSecretOutputLength, hmacSecretOutputLength));
+                    second = ArrayBuffer::tryCreate(borrow(decryptedOutput)->span().subspan(hmacSecretOutputLength, hmacSecretOutputLength));
 
                 if (first) {
                     if (!outputs.prf)
@@ -301,7 +300,7 @@ std::optional<AuthenticatorGetInfoResponse> readCTAPGetInfoResponse(const Vector
     if (it == responseMap.end() || !it->second.isArray())
         return std::nullopt;
     StdSet<ProtocolVersion> protocolVersions;
-    for (const auto& version : it->second.getArray()) {
+    for (const auto& version : borrow(it->second.getArray())) {
         if (!version.isString())
             return std::nullopt;
 
@@ -329,7 +328,7 @@ std::optional<AuthenticatorGetInfoResponse> readCTAPGetInfoResponse(const Vector
             return std::nullopt;
 
         Vector<String> extensions;
-        for (const auto& extension : it->second.getArray()) {
+        for (const auto& extension : borrow(it->second.getArray())) {
             if (!extension.isString())
                 return std::nullopt;
 
@@ -408,7 +407,7 @@ std::optional<AuthenticatorGetInfoResponse> readCTAPGetInfoResponse(const Vector
             return std::nullopt;
 
         StdSet<PINUVAuthProtocol> supportedPinProtocols;
-        for (const auto& protocol : it->second.getArray()) {
+        for (const auto& protocol : borrow(it->second.getArray())) {
             if (!protocol.isUnsigned())
                 return std::nullopt;
 
@@ -443,7 +442,7 @@ std::optional<AuthenticatorGetInfoResponse> readCTAPGetInfoResponse(const Vector
             return std::nullopt;
 
         Vector<AuthenticatorTransport> transports;
-        for (const auto& transportString : it->second.getArray()) {
+        for (const auto& transportString : borrow(it->second.getArray())) {
             if (!transportString.isString())
                 return std::nullopt;
             auto transport = convertStringToAuthenticatorTransport(transportString.getString());

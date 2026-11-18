@@ -32,6 +32,7 @@
 #include "ExceptionOr.h"
 #include "HTTPParsers.h"
 #include <ranges>
+#include <wtf/Borrow.h>
 #include <wtf/text/MakeString.h>
 
 namespace WebCore {
@@ -122,16 +123,16 @@ static ExceptionOr<void> fillHeaderMap(HTTPHeaderMap& headers, Vector<String>& s
 {
     if (std::holds_alternative<Vector<Vector<String>>>(headersInit)) {
         auto& sequence = std::get<Vector<Vector<String>>>(headersInit);
-        for (auto& header : sequence) {
+        for (auto& header : borrow(sequence)) {
             if (header.size() != 2)
                 return Exception { ExceptionCode::TypeError, "Header sub-sequence must contain exactly two items"_s };
-            auto result = appendToHeaderMap(header[0], header[1], headers, setCookieValues, guard);
+            auto result = appendToHeaderMap(borrow(header)[0], borrow(header)[1], headers, setCookieValues, guard);
             if (result.hasException())
                 return result.releaseException();
         }
     } else {
         auto& record = std::get<Vector<KeyValuePair<String, String>>>(headersInit);
-        for (auto& header : record) {
+        for (auto& header : borrow(record)) {
             auto result = appendToHeaderMap(header.key, header.value, headers, setCookieValues, guard);
             if (result.hasException())
                 return result.releaseException();
@@ -167,7 +168,7 @@ ExceptionOr<void> FetchHeaders::fill(const FetchHeaders& otherHeaders)
         if (result.hasException())
             return result.releaseException();
     }
-    for (auto& setCookieValue : otherHeaders.m_setCookieValues) {
+    for (auto& setCookieValue : borrow(otherHeaders.m_setCookieValues)) {
         auto result = appendSetCookie(setCookieValue, m_setCookieValues, m_guard);
         if (result.hasException())
             return result.releaseException();

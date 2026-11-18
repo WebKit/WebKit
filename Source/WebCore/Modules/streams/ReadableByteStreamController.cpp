@@ -49,6 +49,7 @@
 #include <JavaScriptCore/JSCJSValue.h>
 #include <JavaScriptCore/JSGenericTypedArrayViewInlines.h>
 #include <JavaScriptCore/TypedArrayType.h>
+#include <wtf/Borrow.h>
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
@@ -400,7 +401,7 @@ ExceptionOr<void> ReadableByteStreamController::enqueue(JSDOMGlobalObject& globa
     } else if (RefPtr byobReader = stream->byobReader()) {
         enqueueChunkToQueue(transferredBufferOrException.releaseReturnValue(), byteOffset, byteLength);
         auto filledPullIntos = processPullIntoDescriptorsUsingQueue();
-        for (auto& pullInto : filledPullIntos)
+        for (auto& pullInto : borrow(filledPullIntos))
             commitPullIntoDescriptor(globalObject, pullInto);
     } else {
         ASSERT(!stream->isLocked());
@@ -934,7 +935,7 @@ void ReadableByteStreamController::respondInReadableState(JSDOMGlobalObject& glo
     if (pullIntoDescriptor.readerType == ReaderType::None) {
         enqueueDetachedPullIntoToQueue(globalObject, pullIntoDescriptor);
         auto filledPullIntos = processPullIntoDescriptorsUsingQueue();
-        for (auto& pullInto : filledPullIntos)
+        for (auto& pullInto : borrow(filledPullIntos))
             commitPullIntoDescriptor(globalObject, pullInto);
         return;
     }
@@ -952,7 +953,7 @@ void ReadableByteStreamController::respondInReadableState(JSDOMGlobalObject& glo
     pullInto.bytesFilled -= remainderSize;
     commitPullIntoDescriptor(globalObject, pullInto);
     auto filledPullIntos = processPullIntoDescriptorsUsingQueue();
-    for (auto& pullInto : filledPullIntos)
+    for (auto& pullInto : borrow(filledPullIntos))
         commitPullIntoDescriptor(globalObject, pullInto);
 }
 

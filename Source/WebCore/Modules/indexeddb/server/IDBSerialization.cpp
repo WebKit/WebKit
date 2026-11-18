@@ -29,6 +29,7 @@
 #include "IDBKeyData.h"
 #include "IDBKeyPath.h"
 #include "KeyedCoding.h"
+#include <wtf/Borrow.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/ParsingUtilities.h>
 
@@ -240,7 +241,7 @@ static void encodeKey(Vector<uint8_t>& data, const IDBKeyData& key)
         auto* bufferData = buffer.data();
         ASSERT(bufferData || !size);
         if (bufferData)
-            data.append(bufferData->span());
+            data.append(borrow(*bufferData)->span());
 
         break;
     }
@@ -248,7 +249,7 @@ static void encodeKey(Vector<uint8_t>& data, const IDBKeyData& key)
         auto& array = key.array();
         uint64_t size = array.size();
         writeLittleEndian(data, size);
-        for (auto& key : array)
+        for (auto& key : borrow(array))
             encodeKey(data, key);
 
         break;

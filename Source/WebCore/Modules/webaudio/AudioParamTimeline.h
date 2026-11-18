@@ -209,7 +209,7 @@ private:
     void processCancelValues(const AutomationState&, std::span<float> values, size_t& currentFrame, float& value, unsigned& writeIndex) WTF_REQUIRES_LOCK(m_eventsLock);
     void processSetTarget(const AutomationState&, std::span<float> values, size_t& currentFrame, float& value, unsigned& writeIndex);
     void processSetValueCurve(const AutomationState&, std::span<float> values, size_t& currentFrame, float& value, unsigned& writeIndex);
-    void processSetTargetFollowedByRamp(size_t eventIndex, ParamEvent*&, ParamEvent::Type nextEventType, size_t currentFrame, double samplingPeriod, double controlRate, float& value) WTF_REQUIRES_LOCK(m_eventsLock);
+    void processSetTargetFollowedByRamp(ParamEvent*&, ParamEvent::Type nextEventType, size_t currentFrame, double samplingPeriod, double controlRate, float& value) WTF_REQUIRES_LOCK(m_eventsLock);
 
     Vector<ParamEvent> m_events WTF_GUARDED_BY_LOCK(m_eventsLock);
 

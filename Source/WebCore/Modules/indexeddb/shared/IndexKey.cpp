@@ -26,6 +26,7 @@
 #include "config.h"
 #include "IndexKey.h"
 
+#include <wtf/Borrow.h>
 #include <wtf/CrossThreadCopier.h>
 
 namespace WebCore {
@@ -69,12 +70,12 @@ Vector<IDBKeyData> IndexKey::multiEntry() const
         if (keyData.isValid())
             multiEntry.append(keyData);
     }, [&](const Vector<IDBKeyData>& keyDataVector) {
-        for (auto& key : keyDataVector) {
+        for (auto& key : borrow(keyDataVector)) {
             if (!key.isValid())
                 continue;
 
             bool skip = false;
-            for (auto& otherKey : multiEntry) {
+            for (auto& otherKey : borrow(multiEntry)) {
                 if (key == otherKey) {
                     skip = true;
                     break;
@@ -98,7 +99,7 @@ void IndexKey::updatePlaceholderKeys(const IDBKeyData& newKeyData)
         if (!keyData.isValid() && keyData.isPlaceholder())
             keyData = newKeyData;
     }, [&](Vector<IDBKeyData>& keyDataVector) {
-        for (auto& keyData : keyDataVector) {
+        for (auto& keyData : borrow(keyDataVector)) {
             if (!keyData.isValid() && keyData.isPlaceholder())
                 keyData = newKeyData;
         }

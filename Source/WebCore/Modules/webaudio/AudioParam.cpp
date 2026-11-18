@@ -37,6 +37,7 @@
 #include "Logging.h"
 #include "VectorMath.h"
 #include <algorithm>
+#include <wtf/Borrow.h>
 #include <wtf/MathExtras.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -330,7 +331,7 @@ void AudioParam::calculateFinalValues(std::span<float> values, bool sampleAccura
     ASSERT(values.size() <= AudioUtilities::renderQuantumSize);
     m_summingBus->setChannelMemory(0, values.first(sampleAccurate ? values.size() : 1));
 
-    for (auto& output : m_renderingOutputs) {
+    for (auto& output : borrow(m_renderingOutputs)) {
         ASSERT(output);
 
         // Render audio from this output.

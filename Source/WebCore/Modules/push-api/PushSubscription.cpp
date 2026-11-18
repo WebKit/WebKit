@@ -35,6 +35,7 @@
 #include "ScriptExecutionContext.h"
 #include "ServiceWorkerContainer.h"
 #include <JavaScriptCore/ArrayBuffer.h>
+#include <wtf/Borrow.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/Base64.h>
 
@@ -96,7 +97,7 @@ ExceptionOr<RefPtr<JSC::ArrayBuffer>> PushSubscription::getKey(PushEncryptionKey
         }
     }();
 
-    auto buffer = ArrayBuffer::tryCreate(source);
+    auto buffer = ArrayBuffer::tryCreate(borrow(source)->span());
     if (!buffer)
         return Exception { ExceptionCode::OutOfMemoryError };
     return buffer;
@@ -120,8 +121,8 @@ PushSubscriptionJSON PushSubscription::toJSON() const
         endpoint(),
         expirationTime(),
         Vector<KeyValuePair<String, String>> {
-            { "p256dh"_s, base64URLEncodeToString(clientECDHPublicKey()) },
-            { "auth"_s, base64URLEncodeToString(sharedAuthenticationSecret()) }
+            { "p256dh"_s, base64URLEncodeToString(borrow(clientECDHPublicKey())->span()) },
+            { "auth"_s, base64URLEncodeToString(borrow(sharedAuthenticationSecret())->span()) }
         }
     };
 }

@@ -67,6 +67,7 @@
 #include "SecurityOrigin.h"
 #include "Settings.h"
 #include "UserGestureIndicator.h"
+#include <wtf/Borrow.h>
 #include <wtf/RunLoop.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
@@ -134,7 +135,7 @@ static ExceptionOr<Vector<ApplePayShippingMethod>> convertAndValidate(Vector<App
 {
     Vector<ApplePayShippingMethod> result(ReserveCapacityTag { }, shippingMethods.size());
 
-    for (auto& shippingMethod : shippingMethods) {
+    for (auto& shippingMethod : borrow(shippingMethods)) {
         auto convertedShippingMethod = convertAndValidate(WTF::move(shippingMethod));
         if (convertedShippingMethod.hasException())
             return convertedShippingMethod.releaseException();
@@ -215,7 +216,7 @@ static ExceptionOr<Vector<ApplePayPaymentTokenContext>> convertAndValidate(Vecto
 {
     Vector<ApplePayPaymentTokenContext> result(ReserveCapacityTag { }, tokenContexts.size());
 
-    for (auto& tokenContext : tokenContexts) {
+    for (auto& tokenContext : borrow(tokenContexts)) {
         auto convertedTokenContext = convertAndValidate(WTF::move(tokenContext));
         if (convertedTokenContext.hasException())
             return convertedTokenContext.releaseException();

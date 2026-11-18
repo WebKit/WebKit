@@ -34,6 +34,7 @@
 #include "FloatConversion.h"
 #include "VectorMath.h"
 #include <algorithm>
+#include <wtf/Borrow.h>
 #include <wtf/MathExtras.h>
 #include <wtf/TZoneMallocInlines.h>
 
@@ -154,7 +155,7 @@ ExceptionOr<void> AudioParamTimeline::insertEvent(ParamEvent&& event)
     unsigned i = 0;
     auto insertTime = event.time();
 
-    for (auto& paramEvent : m_events) {
+    for (auto& paramEvent : borrow(m_events)) {
         if (event.type() == ParamEvent::SetValueCurve) {
             if (paramEvent.type() != ParamEvent::CancelValues) {
                 // If this event is a SetValueCurve, make sure it doesn't overlap any existing event.
@@ -240,68 +241,71 @@ ExceptionOr<void> AudioParamTimeline::cancelAndHoldAtTime(Seconds cancelTime)
         return { };
     }
 
-    // cancelledEvent is the event that is being cancelled.
-    auto& cancelledEvent = m_events[cancelledEventIndex];
-    auto eventType = cancelledEvent.type();
-
     // New event to be inserted, if any, and a SetValueEvent if needed.
     std::optional<ParamEvent> newEvent;
     std::optional<ParamEvent> newSetValueEvent;
 
-    switch (eventType) {
-    case ParamEvent::LinearRampToValue:
-    case ParamEvent::ExponentialRampToValue: {
-        // For these events we need to remember the parameters of the event
-        // for a CancelValues event so that we can properly cancel the event
-        // and hold the value.
-        auto savedEvent = ParamEvent::SavedEvent { eventType, cancelledEvent.value(), cancelledEvent.time() };
-        newEvent = ParamEvent::createCancelValuesEvent(cancelTime, WTF::move(savedEvent));
-        break;
-    }
-    case ParamEvent::SetTarget: {
-        if (cancelledEvent.time() < cancelTime) {
-            // Don't want to remove the SetTarget event if it started before the
-            // cancel time, so bump the index. But we do want to insert a
-            // cancelEvent so that we stop this automation and hold the value when
-            // we get there.
-            ++cancelledEventIndex;
+    {
+        Borrow events { m_events };
+        // cancelledEvent is the event that is being cancelled.
+        auto& cancelledEvent = events[cancelledEventIndex];
+        auto eventType = cancelledEvent.type();
 
-            newEvent = ParamEvent::createCancelValuesEvent(cancelTime, std::nullopt);
+        switch (eventType) {
+        case ParamEvent::LinearRampToValue:
+        case ParamEvent::ExponentialRampToValue: {
+            // For these events we need to remember the parameters of the event
+            // for a CancelValues event so that we can properly cancel the event
+            // and hold the value.
+            auto savedEvent = ParamEvent::SavedEvent { eventType, cancelledEvent.value(), cancelledEvent.time() };
+            newEvent = ParamEvent::createCancelValuesEvent(cancelTime, WTF::move(savedEvent));
+            break;
         }
-        break;
-    }
-    case ParamEvent::SetValueCurve: {
-        // If the setValueCurve event started strictly before the cancel time,
-        // there might be something to do....
-        if (cancelledEvent.time() < cancelTime) {
-            if (cancelTime > cancelledEvent.time() + cancelledEvent.duration()) {
-                // If the cancellation time is past the end of the curve there's
-                // nothing to do except remove the following events.
+        case ParamEvent::SetTarget: {
+            if (cancelledEvent.time() < cancelTime) {
+                // Don't want to remove the SetTarget event if it started before the
+                // cancel time, so bump the index. But we do want to insert a
+                // cancelEvent so that we stop this automation and hold the value when
+                // we get there.
                 ++cancelledEventIndex;
-            } else {
-                // Cancellation time is in the middle of the curve. Therefore,
-                // create a new SetValueCurve event with the appropriate new
-                // parameters to cancel this event properly. Since it's illegal
-                // to insert any event within a SetValueCurve event, we can
-                // compute the new end value now instead of doing when running
-                // the timeline.
-                auto newDuration = cancelTime - cancelledEvent.time();
-                float endValue = valueCurveAtTime(cancelTime, cancelledEvent.time(), cancelledEvent.duration(), cancelledEvent.curve().span(), cancelledEvent.curve().size());
 
-                // Replace the existing SetValueCurve with this new one that is identical except for the duration.
-                newEvent = ParamEvent { eventType, cancelledEvent.value(), cancelledEvent.time(), cancelledEvent.timeConstant(), newDuration, Vector<float> { cancelledEvent.curve() }, cancelledEvent.curvePointsPerSecond(), endValue, std::nullopt };
-                newSetValueEvent = ParamEvent::createSetValueEvent(endValue, cancelledEvent.time() + newDuration);
+                newEvent = ParamEvent::createCancelValuesEvent(cancelTime, std::nullopt);
             }
+            break;
         }
-        break;
-    }
-    case ParamEvent::SetValue:
-    case ParamEvent::CancelValues:
-        // Nothing needs to be done for a SetValue or CancelValues event.
-        break;
-    case ParamEvent::LastType:
-        ASSERT_NOT_REACHED();
-        break;
+        case ParamEvent::SetValueCurve: {
+            // If the setValueCurve event started strictly before the cancel time,
+            // there might be something to do....
+            if (cancelledEvent.time() < cancelTime) {
+                if (cancelTime > cancelledEvent.time() + cancelledEvent.duration()) {
+                    // If the cancellation time is past the end of the curve there's
+                    // nothing to do except remove the following events.
+                    ++cancelledEventIndex;
+                } else {
+                    // Cancellation time is in the middle of the curve. Therefore,
+                    // create a new SetValueCurve event with the appropriate new
+                    // parameters to cancel this event properly. Since it's illegal
+                    // to insert any event within a SetValueCurve event, we can
+                    // compute the new end value now instead of doing when running
+                    // the timeline.
+                    auto newDuration = cancelTime - cancelledEvent.time();
+                    float endValue = valueCurveAtTime(cancelTime, cancelledEvent.time(), cancelledEvent.duration(), cancelledEvent.curve().span(), cancelledEvent.curve().size());
+
+                    // Replace the existing SetValueCurve with this new one that is identical except for the duration.
+                    newEvent = ParamEvent { eventType, cancelledEvent.value(), cancelledEvent.time(), cancelledEvent.timeConstant(), newDuration, Vector<float> { cancelledEvent.curve() }, cancelledEvent.curvePointsPerSecond(), endValue, std::nullopt };
+                    newSetValueEvent = ParamEvent::createSetValueEvent(endValue, cancelledEvent.time() + newDuration);
+                }
+            }
+            break;
+        }
+        case ParamEvent::SetValue:
+        case ParamEvent::CancelValues:
+            // Nothing needs to be done for a SetValue or CancelValues event.
+            break;
+        case ParamEvent::LastType:
+            ASSERT_NOT_REACHED();
+            break;
+        }
     }
 
     // Now remove all the following events from the timeline.
@@ -418,83 +422,86 @@ float AudioParamTimeline::valuesForFrameRangeImpl(size_t startFrame, size_t endF
     // FIXME: could try to optimize by avoiding having to iterate starting from the very first event
     // and keeping track of a "current" event index.
     size_t n = m_events.size();
-    for (size_t i = 0; i < n && writeIndex < values.size(); ++i) {
-        auto* event = &m_events[i];
-        auto* nextEvent = i + 1 < n ? &m_events[i + 1] : nullptr;
+    {
+        Borrow events { m_events };
+        for (size_t i = 0; i < n && writeIndex < values.size(); ++i) {
+            auto* event = &events[i];
+            auto* nextEvent = i + 1 < n ? &events[i + 1] : nullptr;
 
-        // Wait until we get a more recent event.
-        if (!isEventCurrent(*event, nextEvent, currentFrame, sampleRate)) {
-            ++numberOfSkippedEvents;
-            continue;
-        }
+            // Wait until we get a more recent event.
+            if (!isEventCurrent(*event, nextEvent, currentFrame, sampleRate)) {
+                ++numberOfSkippedEvents;
+                continue;
+            }
 
-        auto nextEventType = nextEvent ? static_cast<ParamEvent::Type>(nextEvent->type()) : ParamEvent::LastType /* unknown */;
+            auto nextEventType = nextEvent ? static_cast<ParamEvent::Type>(nextEvent->type()) : ParamEvent::LastType /* unknown */;
 
-        processSetTargetFollowedByRamp(i, event, nextEventType, currentFrame, sampleRate, controlRate, value);
+            processSetTargetFollowedByRamp(event, nextEventType, currentFrame, sampleRate, controlRate, value);
 
-        float value1 = event->value();
-        auto time1 = event->time();
-        float value2 = nextEvent ? nextEvent->value() : value1;
-        auto time2 = nextEvent ? nextEvent->time() : Seconds { endFrame * samplingPeriod + 1 };
+            float value1 = event->value();
+            auto time1 = event->time();
+            float value2 = nextEvent ? nextEvent->value() : value1;
+            auto time2 = nextEvent ? nextEvent->time() : Seconds { endFrame * samplingPeriod + 1 };
 
-        ASSERT(time2 >= time1);
+            ASSERT(time2 >= time1);
 
-        handleCancelValues(*event, nextEvent, value2, time2, nextEventType);
+            handleCancelValues(*event, nextEvent, value2, time2, nextEventType);
 
-        size_t fillToEndFrame = endFrame;
-        if (endFrame > time2.value() * sampleRate)
-            fillToEndFrame = static_cast<size_t>(ceil(time2.value() * sampleRate));
+            size_t fillToEndFrame = endFrame;
+            if (endFrame > time2.value() * sampleRate)
+                fillToEndFrame = static_cast<size_t>(ceil(time2.value() * sampleRate));
 
-        ASSERT(fillToEndFrame >= startFrame);
-        size_t fillToFrame = fillToEndFrame - startFrame;
-        fillToFrame = std::min(fillToFrame, values.size());
+            ASSERT(fillToEndFrame >= startFrame);
+            size_t fillToFrame = fillToEndFrame - startFrame;
+            fillToFrame = std::min(fillToFrame, values.size());
 
-        const AutomationState currentState = {
-            values.size(),
-            startFrame,
-            endFrame,
-            sampleRate,
-            controlRate,
-            samplingPeriod,
-            fillToFrame,
-            fillToEndFrame,
-            time1,
-            time2,
-            event,
-            i,
-            value1,
-            value2,
-        };
+            const AutomationState currentState = {
+                values.size(),
+                startFrame,
+                endFrame,
+                sampleRate,
+                controlRate,
+                samplingPeriod,
+                fillToFrame,
+                fillToEndFrame,
+                time1,
+                time2,
+                event,
+                i,
+                value1,
+                value2,
+            };
 
-        // First handle linear and exponential ramps which require looking ahead to the next event.
-        if (nextEventType == ParamEvent::LinearRampToValue)
-            processLinearRamp(currentState, values, currentFrame, value, writeIndex);
-        else if (nextEventType == ParamEvent::ExponentialRampToValue)
-            processExponentialRamp(currentState, values, currentFrame, value, writeIndex);
-        else {
-            // Handle event types not requiring looking ahead to the next event.
-            switch (event->type()) {
-            case ParamEvent::SetValue:
-            case ParamEvent::LinearRampToValue:
-            case ParamEvent::ExponentialRampToValue:
-                currentFrame = fillToEndFrame;
+            // First handle linear and exponential ramps which require looking ahead to the next event.
+            if (nextEventType == ParamEvent::LinearRampToValue)
+                processLinearRamp(currentState, values, currentFrame, value, writeIndex);
+            else if (nextEventType == ParamEvent::ExponentialRampToValue)
+                processExponentialRamp(currentState, values, currentFrame, value, writeIndex);
+            else {
+                // Handle event types not requiring looking ahead to the next event.
+                switch (event->type()) {
+                case ParamEvent::SetValue:
+                case ParamEvent::LinearRampToValue:
+                case ParamEvent::ExponentialRampToValue:
+                    currentFrame = fillToEndFrame;
 
-                // Simply stay at a constant value.
-                value = event->value();
-                fillWithValue(values, value, fillToFrame, writeIndex);
-                break;
-            case ParamEvent::CancelValues:
-                processCancelValues(currentState, values, currentFrame, value, writeIndex);
-                break;
-            case ParamEvent::SetTarget:
-                processSetTarget(currentState, values, currentFrame, value, writeIndex);
-                break;
-            case ParamEvent::SetValueCurve:
-                processSetValueCurve(currentState, values, currentFrame, value, writeIndex);
-                break;
-            case ParamEvent::LastType:
-                ASSERT_NOT_REACHED();
-                break;
+                    // Simply stay at a constant value.
+                    value = event->value();
+                    fillWithValue(values, value, fillToFrame, writeIndex);
+                    break;
+                case ParamEvent::CancelValues:
+                    processCancelValues(currentState, values, currentFrame, value, writeIndex);
+                    break;
+                case ParamEvent::SetTarget:
+                    processSetTarget(currentState, values, currentFrame, value, writeIndex);
+                    break;
+                case ParamEvent::SetValueCurve:
+                    processSetValueCurve(currentState, values, currentFrame, value, writeIndex);
+                    break;
+                case ParamEvent::LastType:
+                    ASSERT_NOT_REACHED();
+                    break;
+                }
             }
         }
     }
@@ -805,7 +812,7 @@ void AudioParamTimeline::processSetValueCurve(const AutomationState& currentStat
     currentFrame += nextEventFillToFrame;
 }
 
-void AudioParamTimeline::processSetTargetFollowedByRamp(size_t eventIndex, ParamEvent*& event, ParamEvent::Type nextEventType, size_t currentFrame, double sampleRate, double controlRate, float& value)
+void AudioParamTimeline::processSetTargetFollowedByRamp(ParamEvent*& event, ParamEvent::Type nextEventType, size_t currentFrame, double sampleRate, double controlRate, float& value)
 {
     // If the current event is SetTarget and the next event is a LinearRampToValue or ExponentialRampToValue,
     // special handling is needed. In this case, the linear and exponential ramp should start at wherever
@@ -844,10 +851,7 @@ void AudioParamTimeline::processSetTargetFollowedByRamp(size_t eventIndex, Param
     }
     // Insert a SetValueEvent to mark the starting value and time.
     // Clear the clamp check because this doesn't need it.
-    m_events[eventIndex] = ParamEvent::createSetValueEvent(value, Seconds { currentFrame / sampleRate });
-
-    // Update our pointer to the current event because we just changed it.
-    event = &m_events[eventIndex];
+    *event = ParamEvent::createSetValueEvent(value, Seconds { currentFrame / sampleRate });
 }
 
 

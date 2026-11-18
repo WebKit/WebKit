@@ -26,6 +26,7 @@
 #include "config.h"
 #include "GPUProgrammableStage.h"
 
+#include <wtf/Borrow.h>
 #include <wtf/JSONValues.h>
 
 namespace WebCore {
@@ -38,7 +39,7 @@ Ref<JSON::Object> GPUProgrammableStage::toJSON() const
         json->setString("entryPoint"_s, entryPoint);
     if (!constants.isEmpty()) {
         auto constantsJSON = JSON::Object::create();
-        for (auto& constant : constants)
+        for (auto& constant : borrow(constants))
             constantsJSON->setDouble(constant.key, constant.value);
         json->setObject("constants"_s, WTF::move(constantsJSON));
     }

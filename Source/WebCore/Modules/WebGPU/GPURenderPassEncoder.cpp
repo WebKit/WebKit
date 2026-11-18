@@ -35,6 +35,7 @@
 #include "GPURenderBundle.h"
 #include "GPURenderPipeline.h"
 #include "InspectorInstrumentation.h"
+#include <wtf/Borrow.h>
 #include <wtf/Scope.h>
 
 namespace WebCore {
@@ -250,7 +251,7 @@ void GPURenderPassEncoder::executeBundles(Vector<Ref<GPURenderBundle>>&& bundles
     auto result = WTF::map(bundles, [](auto& bundle) -> Ref<WebGPU::RenderBundle> {
         return bundle->backing();
     });
-    protect(backing())->executeBundles(result.span());
+    protect(backing())->executeBundles(borrow(result)->span());
     m_currentPipeline = nullptr;
 }
 

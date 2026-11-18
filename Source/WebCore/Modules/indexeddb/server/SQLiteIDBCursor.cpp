@@ -34,6 +34,7 @@
 #include "SQLiteIDBTransaction.h"
 #include "SQLiteStatement.h"
 #include <sqlite3.h>
+#include <wtf/Borrow.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/TextStream.h>
@@ -549,7 +550,7 @@ SQLiteIDBCursor::FetchResult SQLiteIDBCursor::internalFetchNextRecord(SQLiteCurs
             record.record.value = WTF::move(*valueResult);
         }
     } else {
-        if (!deserializeIDBKeyData(keyData.span(), record.record.primaryKey)) {
+        if (!deserializeIDBKeyData(borrow(keyData)->span(), record.record.primaryKey)) {
             LOG_ERROR("Unable to deserialize value data from database while advancing index cursor");
             markAsErrored(record);
             return FetchResult::Failure;
@@ -562,7 +563,7 @@ SQLiteIDBCursor::FetchResult SQLiteIDBCursor::internalFetchNextRecord(SQLiteCurs
 
         CheckedPtr cachedObjectStoreStatement = m_cachedObjectStoreStatement.get();
         if (!cachedObjectStoreStatement
-            || cachedObjectStoreStatement->bindBlob(1, keyData) != SQLITE_OK
+            || cachedObjectStoreStatement->bindBlob(1, borrow(keyData)->span()) != SQLITE_OK
             || cachedObjectStoreStatement->bindInt64(2, m_objectStoreID.toUInt64()) != SQLITE_OK) {
             LOG_ERROR("Could not create index cursor statement into object store records (%i) '%s'", database->lastError(), database->lastErrorMsg());
             markAsErrored(record);

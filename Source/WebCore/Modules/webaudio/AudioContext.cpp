@@ -48,6 +48,7 @@
 #include "PermissionsPolicy.h"
 #include "PlatformMediaSessionManager.h"
 #include "Settings.h"
+#include <wtf/Borrow.h>
 #include <wtf/CryptographicallyRandomNumber.h>
 #include <wtf/MainThread.h>
 #include <wtf/MediaTime.h>
@@ -981,7 +982,7 @@ WeakPtr<PlatformMediaSessionInterface> AudioContext::selectBestMediaSession(cons
         return nullptr;
 
     WeakPtr<PlatformMediaSessionInterface> audibleSession;
-    for (auto& session : sessions) {
+    for (auto& session : borrow(sessions)) {
         if (!isNowPlayingEligible())
             continue;
 

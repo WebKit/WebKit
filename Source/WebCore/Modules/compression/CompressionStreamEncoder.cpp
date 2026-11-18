@@ -31,6 +31,7 @@
 #include <JavaScriptCore/GenericTypedArrayViewInlines.h>
 #include <JavaScriptCore/JSCInlines.h>
 #include <JavaScriptCore/JSGenericTypedArrayViewInlines.h>
+#include <wtf/Borrow.h>
 
 namespace WebCore {
 
@@ -147,7 +148,7 @@ ExceptionOr<Ref<JSC::ArrayBuffer>> CompressionStreamEncoder::compressZlib(std::s
                 allocateSize *= 2;
         }
 
-        storage.append(output);
+        storage.append(borrow(output)->span());
     }
 
     RefPtr compressedData = storage.takeBufferAsArrayBuffer();

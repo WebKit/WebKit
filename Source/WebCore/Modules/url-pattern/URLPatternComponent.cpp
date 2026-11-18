@@ -34,6 +34,7 @@
 #include <JavaScriptCore/YarrFlags.h>
 #include <JavaScriptCore/YarrInterpreter.h>
 #include <JavaScriptCore/YarrPattern.h>
+#include <wtf/Borrow.h>
 #include <wtf/BumpPointerAllocator.h>
 #include <wtf/text/MakeString.h>
 
@@ -126,7 +127,7 @@ ExceptionOr<URLPatternComponent> URLPatternComponent::compileWithoutRegExp(Strin
         return Exception { ExceptionCode::TypeError, "URLPattern contains a regular expression group, which is not supported without a regular-expression engine."_s };
 
     Vector<String> nameList;
-    for (auto& part : partList) {
+    for (auto& part : borrow(partList)) {
         if (part.type != PartType::FixedText)
             nameList.append(part.name);
     }
@@ -169,7 +170,7 @@ std::optional<Vector<unsigned>> URLPatternComponent::componentExec(StringView co
     Vector<unsigned> output(outputSize);
     std::ranges::fill(output, std::numeric_limits<unsigned>::max());
 
-    unsigned result = JSC::Yarr::interpret(m_compiledPattern->bytecode.ptr(), comparedString, 0, output.begin());
+    unsigned result = JSC::Yarr::interpret(m_compiledPattern->bytecode.ptr(), comparedString, 0, borrow(output)->begin());
     if (result == std::numeric_limits<unsigned>::max())
         return std::nullopt;
 
@@ -192,7 +193,7 @@ URLPatternComponentResult URLPatternComponent::createComponentMatchResult(String
         if (start != std::numeric_limits<unsigned>::max() && end != std::numeric_limits<unsigned>::max())
             value = StringView(input).substring(start, end - start).toString();
 
-        groups.append(URLPatternComponentResult::NameMatchPair { m_groupNameList[index], WTF::move(value) });
+        groups.append(URLPatternComponentResult::NameMatchPair { borrow(m_groupNameList)[index], WTF::move(value) });
     }
 
     return URLPatternComponentResult { !input.isEmpty() ? WTF::move(input) : emptyString(), WTF::move(groups) };

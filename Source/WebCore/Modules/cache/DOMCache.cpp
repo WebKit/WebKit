@@ -41,6 +41,7 @@
 #include "JSFetchResponse.h"
 #include "OriginAccessPatterns.h"
 #include "ScriptExecutionContextInlines.h"
+#include <wtf/Borrow.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/URL.h>
 
@@ -204,8 +205,9 @@ public:
             return false;
 
         CacheQueryOptions options;
+        Borrow borrowedRecords = m_records;
         for (auto position : iterator->value) {
-            auto& record = m_records[position];
+            auto& record = borrowedRecords[position];
             if (DOMCacheEngine::queryCacheMatch(request, record.request, record.response, options))
                 return true;
         }
@@ -227,7 +229,8 @@ public:
     void addResponseBody(size_t position, FetchResponse& response, DOMCacheEngine::ResponseBody&& data)
     {
         ASSERT(!isDone());
-        auto& record = m_records[position];
+        Borrow borrowedRecords = m_records;
+        auto& record = borrowedRecords[position];
         record.responseBodySize = m_domCache->connection().computeRecordBodySize(response, data);
         record.responseBody = WTF::move(data);
     }
@@ -286,7 +289,7 @@ void DOMCache::addAll(Vector<RequestInfo>&& infos, DOMPromiseDeferred<void>&& pr
         return;
 
     Vector<Ref<FetchRequest>> requests(ReserveCapacityTag { }, infos.size());
-    for (auto& info : infos) {
+    for (auto& info : borrow(infos)) {
         bool ignoreMethod = false;
         auto requestOrException = requestFromInfo(WTF::move(info), ignoreMethod);
         if (requestOrException.hasException()) {
@@ -522,7 +525,7 @@ static void queueCORPViolationReports(ScriptExecutionContext& context, const Vec
         return;
 
     // The network process decided what to block, so this only queues the reports.
-    for (auto& violation : violations) {
+    for (auto& violation : borrow(violations)) {
         CORPViolationReportContext reportContext { *client, context.url(), FetchOptions::Destination::EmptyString, violation.blockedURL };
         performCrossOriginResourcePolicyCheck(context.crossOriginEmbedderPolicy(), context.documentIsolationPolicy(), *protect(context.securityOrigin()), violation.blockedURL, false, violation.responseURL, violation.crossOriginResourcePolicy, violation.requestIncludesCredentials, ForNavigation::No, OriginAccessPatternsForWebProcess::singleton(), &reportContext);
     }

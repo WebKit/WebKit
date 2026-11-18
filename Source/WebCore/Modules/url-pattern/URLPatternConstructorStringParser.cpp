@@ -33,6 +33,8 @@
 #include "URLPatternParser.h"
 #include "URLPatternTokenizer.h"
 
+#include <wtf/Borrow.h>
+
 namespace WebCore {
 
 URLPatternConstructorStringParser::URLPatternConstructorStringParser(StringView input)
@@ -103,7 +105,8 @@ bool URLPatternConstructorStringParser::isAuthoritySlashesNext() const
 // https://urlpattern.spec.whatwg.org/#make-a-component-string
 String URLPatternConstructorStringParser::makeComponentString() const
 {
-    const auto& token = m_tokenList[m_tokenIndex];
+    Borrow borrowedTokenList = m_tokenList;
+    const auto& token = borrowedTokenList[m_tokenIndex];
 
     auto componentStartToken = getSafeToken(m_componentStart);
     auto componentStartIndex = *componentStartToken.index;

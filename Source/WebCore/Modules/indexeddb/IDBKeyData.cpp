@@ -28,6 +28,7 @@
 
 #include "KeyedCoding.h"
 #include <algorithm>
+#include <wtf/Borrow.h>
 #include <wtf/CrossThreadCopier.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
@@ -49,7 +50,7 @@ IDBKeyData::IDBKeyData(const IDBKey* key)
     case IndexedDB::KeyType::Array: {
         m_value = Vector<IDBKeyData>();
         auto& array = std::get<Vector<IDBKeyData>>(m_value);
-        for (auto& key2 : key->array())
+        for (auto& key2 : borrow(key->array()))
             array.append(IDBKeyData(key2.ptr()));
         break;
     }
@@ -161,7 +162,7 @@ void IDBKeyData::encode(KeyedEncoder& encoder) const
         auto* data = std::get<ThreadSafeDataBuffer>(m_value).data();
         encoder.encodeBool("hasBinary"_s, !!data);
         if (data)
-            encoder.encodeBytes("binary"_s, data->span());
+            encoder.encodeBytes("binary"_s, borrow(*data)->span());
         return;
     }
     case IndexedDB::KeyType::String:
@@ -393,7 +394,7 @@ bool IDBKeyData::isValid() const
         return false;
     
     if (type() == IndexedDB::KeyType::Array) {
-        for (auto& key : array()) {
+        for (auto& key : borrow(array())) {
             if (!key.isValid())
                 return false;
         }

@@ -31,6 +31,7 @@
 #include "AudioContext.h"
 #include "AudioNodeOutput.h"
 #include <algorithm>
+#include <wtf/Borrow.h>
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
@@ -105,7 +106,7 @@ void AudioSummingJunction::updateRenderingState()
     if (m_renderingStateNeedUpdating && canUpdateState()) {
         // Copy from m_outputs to m_renderingOutputs.
         m_renderingOutputs = std::exchange(m_pendingRenderingOutputs, { });
-        for (auto& output : m_renderingOutputs)
+        for (auto& output : borrow(m_renderingOutputs))
             output->updateRenderingState();
 
         didUpdate();

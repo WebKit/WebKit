@@ -26,6 +26,7 @@
 #include "config.h"
 #include "GPURenderPassDescriptor.h"
 
+#include <wtf/Borrow.h>
 #include <wtf/JSONValues.h>
 
 namespace WebCore {
@@ -35,7 +36,7 @@ Ref<JSON::Object> GPURenderPassDescriptor::toJSON() const
     Ref json = GPUObjectDescriptorBase::toJSON();
 
     auto colorAttachmentsJSON = JSON::Array::create();
-    for (auto& colorAttachment : colorAttachments) {
+    for (auto& colorAttachment : borrow(colorAttachments)) {
         if (colorAttachment)
             colorAttachmentsJSON->pushObject(colorAttachment->toJSON());
         else

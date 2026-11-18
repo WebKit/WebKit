@@ -35,6 +35,7 @@
 #include "SQLiteMemoryIDBBackingStore.h"
 #include "SecurityOrigin.h"
 #include <algorithm>
+#include <wtf/Borrow.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/MainThread.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -509,7 +510,7 @@ void IDBServer::openDBRequestCancelled(const IDBOpenRequestData& requestData)
 static void getDatabaseNameAndVersionFromOriginDirectory(const String& directory, HashSet<String>& excludedDatabasePaths, Vector<IDBDatabaseNameAndVersion>& result)
 {
     Vector<String> databaseDirectoryNames = FileSystem::listDirectory(directory);
-    for (auto& databaseDirectoryName : databaseDirectoryNames) {
+    for (auto& databaseDirectoryName : borrow(databaseDirectoryNames)) {
         auto fullDatabasePath = SQLiteIDBBackingStore::fullDatabasePathForDirectory(FileSystem::pathByAppendingComponent(directory, databaseDirectoryName));
         if (excludedDatabasePaths.contains(fullDatabasePath))
             continue;
@@ -637,7 +638,7 @@ static void removeAllDatabasesForFullOriginPath(const String& originPath, WallTi
     LOG_WITH_STREAM(IndexedDB, stream << "removeAllDatabasesForOriginPath with originPath "_s << originPath);
     Vector<String> databaseNames = FileSystem::listDirectory(originPath);
 
-    for (auto& databaseName : databaseNames) {
+    for (auto& databaseName : borrow(databaseNames)) {
         auto databasePath = FileSystem::pathByAppendingComponent(originPath, databaseName);
         String databaseFile = FileSystem::pathByAppendingComponent(databasePath, "IndexedDB.sqlite3"_s);
         if (modifiedSince > -WallTime::infinity() && FileSystem::fileExists(databaseFile)) {
@@ -696,7 +697,7 @@ static void removeAllDatabasesForOriginPath(const String& originPath, WallTime m
         return;
     
     auto directoryNames = FileSystem::listDirectory(originPath);
-    for (auto& databaseIdentifier : directoryNames) {
+    for (auto& databaseIdentifier : borrow(directoryNames)) {
         if (auto securityOrigin = SecurityOriginData::fromDatabaseIdentifier(databaseIdentifier))
             removeAllDatabasesForFullOriginPath(FileSystem::pathByAppendingComponent(originPath, databaseIdentifier), modifiedSince);
     }
@@ -716,7 +717,7 @@ void IDBServer::removeDatabasesModifiedSinceForVersion(WallTime modifiedSince, c
 void IDBServer::removeDatabasesWithOriginsForVersion(const Vector<SecurityOriginData> &origins, const String& version)
 {
     String versionPath = FileSystem::pathByAppendingComponent(m_databaseDirectoryPath, version);
-    for (const auto& origin : origins) {
+    for (const auto& origin : borrow(origins)) {
         String originPath = FileSystem::pathByAppendingComponent(versionPath, origin.databaseIdentifier());
         removeAllDatabasesForOriginPath(originPath, -WallTime::infinity());
         

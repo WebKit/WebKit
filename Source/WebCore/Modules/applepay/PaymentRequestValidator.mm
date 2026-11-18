@@ -32,6 +32,7 @@
 #import "ApplePayShippingMethod.h"
 #import <unicode/ucurr.h>
 #import <unicode/uloc.h>
+#import <wtf/Borrow.h>
 #import <wtf/text/MakeString.h>
 #import <wtf/unicode/icu/ICUHelpers.h>
 
@@ -172,7 +173,7 @@ static ExceptionOr<void> validateShippingMethod(const ApplePayShippingMethod& sh
 
 static ExceptionOr<void> validateShippingMethods(const Vector<ApplePayShippingMethod>& shippingMethods)
 {
-    for (const auto& shippingMethod : shippingMethods) {
+    for (const auto& shippingMethod : borrow(shippingMethods)) {
         auto validatedShippingMethod = validateShippingMethod(shippingMethod);
         if (validatedShippingMethod.hasException())
             return validatedShippingMethod.releaseException();

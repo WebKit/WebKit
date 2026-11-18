@@ -50,6 +50,7 @@
 #include "PlatformMediaSessionManager.h"
 #include "Settings.h"
 #include "UserMediaController.h"
+#include <wtf/Borrow.h>
 #include <wtf/CryptographicallyRandomNumber.h>
 #include <wtf/JSONValues.h>
 #include <wtf/SortedArrayMap.h>
@@ -260,7 +261,7 @@ ExceptionOr<void> MediaSession::setPlaylist(ScriptExecutionContext& context, Vec
 
     Vector<Ref<MediaMetadata>> resolvedPlaylist(ReserveCapacityTag { }, playlist.size());
 
-    for (auto& entry : playlist) {
+    for (auto& entry : borrow(playlist)) {
         auto resolvedEntry = MediaMetadata::create(context, { entry->metadata() });
         if (resolvedEntry.hasException())
             return resolvedEntry.releaseException();

@@ -49,6 +49,7 @@
 #include "WebCodecsVideoFrame.h"
 #include <JavaScriptCore/ArrayBuffer.h>
 #include <JavaScriptCore/ConsoleTypes.h>
+#include <wtf/Borrow.h>
 #include <wtf/Scope.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -430,7 +431,7 @@ ExceptionOr<void> WebCodecsVideoEncoder::resetEncoder(const Exception& exception
     clearControlMessageQueueAndMaybeScheduleDequeueEvent();
 
     auto promises = std::exchange(m_pendingFlushPromises, { });
-    for (auto& promise : promises)
+    for (auto& promise : borrow(promises))
         promise->reject(exception);
 
     return { };

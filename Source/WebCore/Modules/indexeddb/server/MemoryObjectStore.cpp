@@ -38,6 +38,7 @@
 #include <JavaScriptCore/JSCJSValue.h>
 #include <JavaScriptCore/JSCJSValueInlines.h>
 #include <JavaScriptCore/JSLock.h>
+#include <wtf/Borrow.h>
 
 namespace WebCore {
 using namespace JSC;
@@ -349,7 +350,7 @@ IDBError MemoryObjectStore::checkIndexConstraintsForPut(const IDBKeyData& keyDat
         else
             keys.append(indexKey.asOneKey());
 
-        for (auto& key : keys) {
+        for (auto& key : borrow(keys)) {
             if (!key.isValid())
                 continue;
             if (index->hasRecordForOtherPrimaryKey(key, keyData))
@@ -433,7 +434,7 @@ IDBError MemoryObjectStore::updateIndexesForPutRecord(const IDBKeyData& key, con
 
     // If any of the index puts failed, revert all of the ones that went through.
     if (!error.isNull()) {
-        for (auto& record : changedIndexRecords)
+        for (auto& record : borrow(changedIndexRecords))
             Ref { record.first }->removeRecord(key, record.second);
     }
 

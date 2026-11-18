@@ -39,7 +39,7 @@ public:
         return adoptRef(*new GPUAdapterInfo(WTF::move(name), subgroupMinSize, subgroupMaxSize));
     }
 
-    String vendor() const { auto v = m_name.split(' '); return v.size() ? normalizedIdentifier(v[0]) : ""_s; }
+    String vendor() const { const auto v = m_name.split(' '); return v.size() ? normalizedIdentifier(v[0]) : ""_s; }
     String architecture() const { return vendor(); }
     String device() const { return vendor(); }
     String description() const { return vendor(); }

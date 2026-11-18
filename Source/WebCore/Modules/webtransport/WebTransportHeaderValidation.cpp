@@ -29,6 +29,8 @@
 #include "ExceptionOr.h"
 #include "HTTPParsers.h"
 
+#include <wtf/Borrow.h>
+
 namespace WebCore {
 
 // https://fetch.spec.whatwg.org/#headers-validate with guard "request", plus the
@@ -82,7 +84,7 @@ ExceptionOr<Vector<KeyValuePair<String, String>>> validateAndNormalizeWebTranspo
 
 bool areValidWebTransportHeaders(const Vector<KeyValuePair<String, String>>& headers)
 {
-    for (auto& header : headers) {
+    for (auto& header : borrow(headers)) {
         auto name = header.key;
         auto value = header.value;
         auto result = validateWebTransportHeader(name, value);

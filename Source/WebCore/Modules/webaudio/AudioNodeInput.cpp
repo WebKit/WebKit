@@ -34,6 +34,7 @@
 #include "AudioUtilities.h"
 #include "ChannelCountMode.h"
 #include <algorithm>
+#include <wtf/Borrow.h>
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
@@ -214,7 +215,7 @@ void AudioNodeInput::sumAllConnections(AudioBus& summingBus, size_t framesToProc
 
     auto interpretation = node()->channelInterpretation();
 
-    for (auto& output : m_renderingOutputs) {
+    for (auto& output : borrow(m_renderingOutputs)) {
         ASSERT(output);
 
         // Render audio from this output.

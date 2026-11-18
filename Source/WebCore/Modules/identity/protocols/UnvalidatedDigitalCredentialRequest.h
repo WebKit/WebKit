@@ -30,6 +30,7 @@
 #include <WebCore/OpenID4VPSignedRequest.h>
 #include <WebCore/OpenID4VPUnsignedRequest.h>
 #include <optional>
+#include <wtf/Borrow.h>
 #include <wtf/JSONValues.h>
 #include <wtf/Variant.h>
 
@@ -55,7 +56,7 @@ inline std::optional<std::pair<DigitalCredentialPresentationProtocol, String>> o
         },
         [](const OpenID4VPMultisignedRequest& multisignedRequest) -> std::optional<std::pair<DigitalCredentialPresentationProtocol, String>> {
             Ref signatures = JSON::Array::create();
-            for (auto& signature : multisignedRequest.signatures) {
+            for (auto& signature : borrow(multisignedRequest.signatures)) {
                 Ref signatureObject = JSON::Object::create();
                 signatureObject->setString("protected"_s, signature.protectedHeader);
                 signatureObject->setString("signature"_s, signature.signature);

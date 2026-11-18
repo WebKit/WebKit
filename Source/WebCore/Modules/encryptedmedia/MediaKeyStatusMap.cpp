@@ -36,6 +36,7 @@
 #include "SharedBuffer.h"
 #include <JavaScriptCore/JSCJSValueInlines.h>
 #include <ranges>
+#include <wtf/Borrow.h>
 #include <wtf/StdLibExtras.h>
 
 namespace WebCore {
@@ -102,7 +103,7 @@ std::optional<KeyValuePair<BufferSource, MediaKeyStatus>> MediaKeyStatusMap::Ite
     if (m_index >= statuses.size())
         return std::nullopt;
 
-    auto& pair = statuses[m_index++];
+    auto pair = borrow(statuses)[m_index++];
     Ref buffer = ArrayBuffer::create(Ref { pair.first }->makeContiguous()->span());
     return KeyValuePair<BufferSource, MediaKeyStatus> { WTF::move(buffer), pair.second };
 }

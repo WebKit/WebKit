@@ -43,6 +43,7 @@
 #include "SecurityOriginData.h"
 #include "Settings.h"
 #include "SharedBuffer.h"
+#include <wtf/Borrow.h>
 #include <wtf/FileSystem.h>
 #include <wtf/Logger.h>
 #include <wtf/LoggerHelper.h>
@@ -52,7 +53,7 @@ namespace WebCore {
 
 bool CDM::supportsKeySystem(const String& keySystem)
 {
-    for (auto& weakFactory : CDMFactory::registeredFactories()) {
+    for (auto& weakFactory : borrow(CDMFactory::registeredFactories())) {
         if (Ref { weakFactory.get() }->supportsKeySystem(keySystem))
             return true;
     }
@@ -74,7 +75,7 @@ CDM::CDM(Document& document, const String& keySystem, const String& mediaKeysHas
     , m_mediaKeysHashSalt { mediaKeysHashSalt }
 {
     ASSERT(supportsKeySystem(keySystem));
-    for (auto& weakFactory : CDMFactory::registeredFactories()) {
+    for (auto& weakFactory : borrow(CDMFactory::registeredFactories())) {
         Ref factory = weakFactory.get();
         if (factory->supportsKeySystem(keySystem)) {
             lazyInitialize(m_private, factory->createCDM(keySystem, m_mediaKeysHashSalt, *this));

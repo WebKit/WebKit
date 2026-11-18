@@ -30,6 +30,7 @@
 #include "URLPatternCanonical.h"
 #include "URLPatternTokenizer.h"
 #include <ranges>
+#include <wtf/Borrow.h>
 #include <wtf/text/MakeString.h>
 
 namespace WebCore {
@@ -361,7 +362,7 @@ std::pair<String, Vector<String>> generateRegexAndNameList(const Vector<Part>& p
 
     Vector<String> nameList;
 
-    for (auto& part : partList) {
+    for (auto& part : borrow(partList)) {
         if (part.type == PartType::FixedText) {
             if (part.modifier == Modifier::None)
                 result.append(escapeRegexString(part.value));
@@ -429,16 +430,17 @@ String generatePatternString(const Vector<Part>& partList, const URLPatternStrin
 {
     StringBuilder result;
 
+    Borrow borrowedPartList = partList;
     for (size_t index = 0; index < partList.size(); ++index) {
-        auto& part = partList[index];
+        auto& part = borrowedPartList[index];
 
         std::optional<Part> previousPart;
         if (index > 0)
-            previousPart = partList[index - 1];
+            previousPart = borrowedPartList[index - 1];
 
         std::optional<Part> nextPart;
         if (index < partList.size() - 1)
-            nextPart = partList[index + 1];
+            nextPart = borrowedPartList[index + 1];
 
         if (part.type == PartType::FixedText) {
             if (part.modifier == Modifier::None) {

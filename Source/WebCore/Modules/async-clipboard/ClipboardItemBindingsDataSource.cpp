@@ -52,6 +52,7 @@
 #include "markup.h"
 #include <JavaScriptCore/HeapCellInlines.h>
 #include <JavaScriptCore/JSCJSValueStructure.h>
+#include <wtf/Borrow.h>
 #include <wtf/Function.h>
 #include <wtf/TZoneMallocInlines.h>
 
@@ -135,7 +136,7 @@ void ClipboardItemBindingsDataSource::getType(const String& type, Ref<DeferredPr
 void ClipboardItemBindingsDataSource::clearItemTypeLoaders()
 {
     auto itemTypeLoaders = std::exchange(m_itemTypeLoaders, { });
-    for (auto& itemTypeLoader : itemTypeLoaders)
+    for (auto& itemTypeLoader : borrow(itemTypeLoaders))
         itemTypeLoader->invokeCompletionHandler();
 }
 
@@ -224,7 +225,7 @@ void ClipboardItemBindingsDataSource::invokeCompletionHandler()
     }
 
     PasteboardCustomData customData;
-    for (auto& itemTypeLoader : itemTypeLoaders) {
+    for (auto& itemTypeLoader : borrow(itemTypeLoaders)) {
         auto type = itemTypeLoader->type();
         bool didWrite = WTF::switchOn(itemTypeLoader->data(),
             [&](const String& string) {

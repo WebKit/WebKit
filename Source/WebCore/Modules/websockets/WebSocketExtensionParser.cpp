@@ -33,6 +33,7 @@
 #include "WebSocketExtensionParser.h"
 
 #include <wtf/ASCIICType.h>
+#include <wtf/Borrow.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/ParsingUtilities.h>
 
@@ -94,7 +95,7 @@ bool WebSocketExtensionParser::consumeQuotedString()
     }
     if (m_data.empty() || m_data[0] != '"')
         return false;
-    m_currentToken = String::fromUTF8(buffer.span());
+    m_currentToken = String::fromUTF8(borrow(buffer)->span());
     if (m_currentToken.isNull())
         return false;
     skip(m_data, 1);

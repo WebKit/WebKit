@@ -30,9 +30,11 @@
 
 #import "ApplePayPaymentContact.h"
 #import <Contacts/Contacts.h>
-#import <pal/cocoa/PassKitSoftLink.h>
+#import <wtf/Borrow.h>
 #import <wtf/SoftLinking.h>
 #import <wtf/text/StringBuilder.h>
+
+#import <pal/cocoa/PassKitSoftLink.h>
 
 SOFT_LINK_FRAMEWORK(Contacts)
 SOFT_LINK_CLASS(Contacts, CNMutablePostalAddress)
@@ -84,7 +86,7 @@ static RetainPtr<PKContact> convert(unsigned version, const ApplePayPaymentConta
 
         StringBuilder builder;
         for (unsigned i = 0; i < contact.addressLines->size(); ++i) {
-            builder.append(contact.addressLines->at(i));
+            builder.append(borrow(*contact.addressLines)[i]);
             if (i != contact.addressLines->size() - 1)
                 builder.append('\n');
         }

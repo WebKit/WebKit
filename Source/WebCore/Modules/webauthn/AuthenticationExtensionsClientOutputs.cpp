@@ -31,6 +31,7 @@
 #include "CBORReader.h"
 #include "CBORWriter.h"
 #include "CredentialPropertiesOutput.h"
+#include <wtf/Borrow.h>
 #include <wtf/text/Base64.h>
 
 namespace WebCore {
@@ -43,7 +44,7 @@ static bool booleanValue(const cbor::CBORValue::MapValue& map, ASCIILiteral key)
 
 std::optional<AuthenticationExtensionsClientOutputs> AuthenticationExtensionsClientOutputs::fromCBOR(const Vector<uint8_t>& buffer)
 {
-    std::optional<cbor::CBORValue> decodedValue = cbor::CBORReader::read(buffer);
+    std::optional<cbor::CBORValue> decodedValue = cbor::CBORReader::read(borrow(buffer)->span());
     if (!decodedValue || !decodedValue->isMap())
         return std::nullopt;
     AuthenticationExtensionsClientOutputs clientOutputs;
@@ -70,7 +71,7 @@ std::optional<AuthenticationExtensionsClientOutputs> AuthenticationExtensionsCli
 
         largeBlobIt = largeBlobMap.find(cbor::CBORValue("blob"));
         if (largeBlobIt != largeBlobMap.end() && largeBlobIt->second.isByteString()) {
-            RefPtr<ArrayBuffer> blob = ArrayBuffer::create(largeBlobIt->second.getByteString());
+            RefPtr<ArrayBuffer> blob = ArrayBuffer::create(borrow(largeBlobIt->second.getByteString())->span());
             largeBlob.blob = WTF::move(blob);
         }
 

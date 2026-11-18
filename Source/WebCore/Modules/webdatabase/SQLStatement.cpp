@@ -38,6 +38,7 @@
 #include "SQLValue.h"
 #include "SQLiteDatabase.h"
 #include "SQLiteStatement.h"
+#include <wtf/Borrow.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/CString.h>
 
@@ -134,7 +135,7 @@ bool SQLStatement::execute(Database& db)
     }
 
     for (unsigned i = 0; i < m_arguments.size(); ++i) {
-        int result = statement->bindValue(i + 1, m_arguments[i]);
+        int result = statement->bindValue(i + 1, borrow(m_arguments)[i]);
         if (result == SQLITE_FULL) {
             setFailureDueToQuota();
             return false;

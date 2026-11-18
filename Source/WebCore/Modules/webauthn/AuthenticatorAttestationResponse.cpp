@@ -34,6 +34,7 @@
 #include "CryptoKeyEC.h"
 #include "ExceptionOr.h"
 #include "WebAuthenticationUtils.h"
+#include <wtf/Borrow.h>
 #include <wtf/text/Base64.h>
 
 namespace WebCore {
@@ -62,8 +63,8 @@ static std::optional<cbor::CBORValue> coseKeyForAttestationObject(Ref<ArrayBuffe
         return std::nullopt;
 
     const size_t cosePublicKeyLength = authData.size() - cosePublicKeyOffset;
-    Vector<uint8_t> cosePublicKey(authData.subspan(cosePublicKeyOffset, cosePublicKeyLength));
-    return cbor::CBORReader::read(cosePublicKey);
+    Vector<uint8_t> cosePublicKey(borrow(authData)->subspan(cosePublicKeyOffset, cosePublicKeyLength));
+    return cbor::CBORReader::read(borrow(cosePublicKey)->span());
 }
 
 Ref<AuthenticatorAttestationResponse> AuthenticatorAttestationResponse::create(Ref<ArrayBuffer>&& rawId, Ref<ArrayBuffer>&& attestationObject, AuthenticatorAttachment attachment, Vector<AuthenticatorTransport>&& transports)
@@ -73,12 +74,12 @@ Ref<AuthenticatorAttestationResponse> AuthenticatorAttestationResponse::create(R
 
 Ref<AuthenticatorAttestationResponse> AuthenticatorAttestationResponse::create(const Vector<uint8_t>& rawId, const Vector<uint8_t>& attestationObject, AuthenticatorAttachment attachment, Vector<AuthenticatorTransport>&& transports)
 {
-    return create(ArrayBuffer::create(rawId), ArrayBuffer::create(attestationObject), attachment, WTF::move(transports));
+    return create(ArrayBuffer::create(borrow(rawId)->span()), ArrayBuffer::create(borrow(attestationObject)->span()), attachment, WTF::move(transports));
 }
 
 Ref<AuthenticatorAttestationResponse> AuthenticatorAttestationResponse::create(const Vector<uint8_t>& rawId, const Vector<uint8_t>& attestationObject, std::optional<AuthenticationExtensionsClientOutputs>&& extensions, AuthenticatorAttachment attachment, Vector<AuthenticatorTransport>&& transports)
 {
-    auto response = create(ArrayBuffer::create(rawId), ArrayBuffer::create(attestationObject), attachment, WTF::move(transports));
+    auto response = create(ArrayBuffer::create(borrow(rawId)->span()), ArrayBuffer::create(borrow(attestationObject)->span()), attachment, WTF::move(transports));
     if (extensions)
         response->setExtensions(WTF::move(*extensions));
     return response;
@@ -114,7 +115,7 @@ RefPtr<ArrayBuffer> AuthenticatorAttestationResponse::getAuthenticatorData() con
         return nullptr;
     }
     auto authData = it->second.getByteString();
-    return ArrayBuffer::tryCreate(authData);
+    return ArrayBuffer::tryCreate(borrow(authData)->span());
 }
 
 int64_t AuthenticatorAttestationResponse::getPublicKeyAlgorithm() const
@@ -181,7 +182,7 @@ RefPtr<ArrayBuffer> AuthenticatorAttestationResponse::getPublicKey() const
         if (!peerKey)
             return nullptr;
         auto keySpki = peerKey->exportSpki().releaseReturnValue();
-        return ArrayBuffer::tryCreate(keySpki);
+        return ArrayBuffer::tryCreate(borrow(keySpki)->span());
     }
     default:
         break;

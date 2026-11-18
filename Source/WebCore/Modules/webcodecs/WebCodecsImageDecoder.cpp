@@ -43,6 +43,7 @@
 #include "WebCodecsControlMessage.h"
 #include "WebCodecsImageDecodeResult.h"
 #include "WebCodecsVideoFrame.h"
+#include <wtf/Borrow.h>
 #include <wtf/TZoneMallocInlines.h>
 
 #if USE(CG)
@@ -301,7 +302,7 @@ ExceptionOr<void> WebCodecsImageDecoder::resetDecoder(const Exception& exception
     // Reject pendding decoding promises with exception.
     auto pendingDecodePromises = std::exchange(m_pendingDecodePromises, { });
     for (auto& framePromises : pendingDecodePromises.values()) {
-        for (auto& promise : framePromises)
+        for (auto& promise : borrow(framePromises))
             promise->reject(exception);
     }
 

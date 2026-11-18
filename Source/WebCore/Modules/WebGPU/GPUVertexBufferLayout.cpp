@@ -27,6 +27,7 @@
 #include "GPUVertexBufferLayout.h"
 
 #include "JSGPUVertexStepMode.h"
+#include <wtf/Borrow.h>
 #include <wtf/JSONValues.h>
 
 namespace WebCore {
@@ -38,7 +39,7 @@ Ref<JSON::Object> GPUVertexBufferLayout::toJSON() const
     json->setString("stepMode"_s, convertEnumerationToString(stepMode));
 
     Ref attributesJSON = JSON::Array::create();
-    for (auto& attribute : attributes)
+    for (auto& attribute : borrow(attributes))
         attributesJSON->pushObject(attribute.toJSON());
     json->setArray("attributes"_s, WTF::move(attributesJSON));
     return json;

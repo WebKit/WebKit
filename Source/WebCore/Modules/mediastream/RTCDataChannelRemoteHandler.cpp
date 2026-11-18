@@ -32,6 +32,7 @@
 #include "RTCDataChannelRemoteHandlerConnection.h"
 #include "ScriptExecutionContextIdentifier.h"
 #include "SharedBuffer.h"
+#include <wtf/Borrow.h>
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
@@ -87,7 +88,7 @@ void RTCDataChannelRemoteHandler::readyToSend()
 {
     m_isReadyToSend = true;
 
-    for (auto& message : m_pendingMessages)
+    for (auto& message : borrow(m_pendingMessages))
         m_connection->sendData(m_remoteIdentifier, message.isRaw, protect(message.buffer)->makeContiguous()->span());
     m_pendingMessages.clear();
 

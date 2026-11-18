@@ -26,6 +26,7 @@
 #include "config.h"
 #include "GPUShaderModuleDescriptor.h"
 
+#include <wtf/Borrow.h>
 #include <wtf/JSONValues.h>
 
 namespace WebCore {
@@ -36,7 +37,7 @@ Ref<JSON::Object> GPUShaderModuleDescriptor::toJSON() const
     json->setString("code"_s, code);
     // `sourceMap` is not JSON serializable.
     auto hintsJSON = JSON::Object::create();
-    for (auto& hint : hints)
+    for (auto& hint : borrow(hints))
         hintsJSON->setObject(hint.key, hint.value.toJSON());
     json->setObject("hints"_s, WTF::move(hintsJSON));
     return json;

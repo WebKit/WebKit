@@ -27,6 +27,7 @@
 #include "GPURenderPassLayout.h"
 
 #include "JSGPUTextureFormat.h"
+#include <wtf/Borrow.h>
 #include <wtf/JSONValues.h>
 
 namespace WebCore {
@@ -35,7 +36,7 @@ Ref<JSON::Object> GPURenderPassLayout::toJSON() const
 {
     Ref json = GPUObjectDescriptorBase::toJSON();
     auto colorFormatsJSON = JSON::Array::create();
-    for (auto& colorFormat : colorFormats) {
+    for (auto& colorFormat : borrow(colorFormats)) {
         if (colorFormat)
             colorFormatsJSON->pushString(convertEnumerationToString(*colorFormat));
         else

@@ -79,6 +79,7 @@
 #include "VideoTrackList.h"
 #include "VoidCallback.h"
 #include <JavaScriptCore/JSCJSValueInlines.h>
+#include <wtf/Borrow.h>
 #include <wtf/Function.h>
 #include <wtf/JSONValues.h>
 #include <wtf/Scope.h>
@@ -520,7 +521,7 @@ private:
 
     void populateContextMenu(ContextMenu* menu) override
     {
-        for (auto& item : m_items)
+        for (auto& item : borrow(m_items))
             menu->appendItem(item);
     }
 
@@ -725,7 +726,7 @@ auto MediaControlsHost::mediaControlsContextMenuItems(String&& optionsJSONString
                 subtitleMenuItems.append(createSeparator());
 
                 Vector<MenuItem> languages;
-                for (auto& textTrack : sortedTextTracks) {
+                for (auto& textTrack : borrow(sortedTextTracks)) {
                     if (textTrack.ptr() == &TextTrack::captionMenuOffItemSingleton()
                         || textTrack.ptr() == &TextTrack::captionMenuOnItemSingleton()
                         || textTrack.ptr() == &TextTrack::captionMenuAutomaticItemSingleton())

@@ -34,6 +34,7 @@
 #include "WorkerLoaderProxy.h"
 #include "WorkerThread.h"
 #include <JavaScriptCore/VMManager.h>
+#include <wtf/Borrow.h>
 #include <wtf/Scope.h>
 
 namespace WebCore {
@@ -404,7 +405,7 @@ void WorkerFileSystemStorageConnection::executeCommandForWritable(FileSystemHand
             }, WorkerRunLoop::defaultMode());
         };
 
-        mainThreadConnection->executeCommandForWritable(identifier, streamIdentifier, type, position, size, bytes.span(), hasDataError, WTF::move(mainThreadCallback));
+        mainThreadConnection->executeCommandForWritable(identifier, streamIdentifier, type, position, size, borrow(bytes)->span(), hasDataError, WTF::move(mainThreadCallback));
     });
 }
 

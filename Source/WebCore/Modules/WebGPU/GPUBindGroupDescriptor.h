@@ -29,6 +29,7 @@
 #include "GPUBindGroupLayout.h"
 #include "GPUObjectDescriptorBase.h"
 #include <WebCore/WebGPUCppAPI.h>
+#include <wtf/Borrow.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -56,8 +57,9 @@ struct GPUBindGroupDescriptor : public GPUObjectDescriptorBase {
             matched = false;
 
         const Ref<GPUExternalTexture>* result = nullptr;
+        Borrow borrowedEntries { entries };
         for (size_t i = 0; i < entriesSize; ++i) {
-            auto& entry = entries[i];
+            auto& entry = borrowedEntries[i];
             if (matched && !GPUBindGroupEntry::equal(entry, comparisonEntries[i]))
                 matched = false;
 

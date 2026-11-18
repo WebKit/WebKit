@@ -42,6 +42,7 @@
 #include "JSDOMFormData.h"
 #include "JSDOMPromiseDeferred.h"
 #include "TextResourceDecoder.h"
+#include <wtf/Borrow.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/URLParser.h>
 #include <wtf/text/MakeString.h>
@@ -496,7 +497,7 @@ Ref<Blob> FetchBodyConsumer::takeAsBlob(ScriptExecutionContext* context, const S
     buffer = nullptr; // So that the segments above hold each a single refcount to allow extractData to move the content.
 
     SharedBufferBuilder bufferBuilder;
-    for (auto&& segment : segments) {
+    for (auto&& segment : borrow(segments)) {
         if (segment->size() >= MinimumBlobSize) {
             if (packedBuffer.size()) {
                 bufferBuilder.append(std::exchange(packedBuffer, { }));

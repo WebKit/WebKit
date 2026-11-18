@@ -33,6 +33,7 @@
 #include "FileSystemFileEntry.h"
 #include "ScriptExecutionContext.h"
 #include "ScriptWrappableInlines.h"
+#include <wtf/Borrow.h>
 #include <wtf/CrossThreadCopier.h>
 #include <wtf/FileSystem.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -211,7 +212,7 @@ static String resolveRelativeVirtualPath(StringView baseVirtualPath, StringView 
         return "/"_s;
 
     StringBuilder builder;
-    for (auto& segment : virtualPathSegments)
+    for (auto& segment : borrow(virtualPathSegments))
         builder.append('/', segment);
     return builder.toString();
 }
@@ -233,7 +234,7 @@ String DOMFileSystem::evaluatePath(StringView virtualPath)
         resolvedComponents.append(component);
     }
 
-    return FileSystem::pathByAppendingComponents(m_rootPath, resolvedComponents);
+    return FileSystem::pathByAppendingComponents(m_rootPath, borrow(resolvedComponents)->span());
 }
 
 void DOMFileSystem::listDirectory(ScriptExecutionContext& context, FileSystemDirectoryEntry& directory, DirectoryListingCallback&& completionHandler)

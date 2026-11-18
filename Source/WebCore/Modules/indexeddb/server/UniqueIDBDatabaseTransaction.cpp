@@ -34,6 +34,7 @@
 #include "UniqueIDBDatabaseConnection.h"
 #include "UniqueIDBDatabaseManager.h"
 #include <algorithm>
+#include <wtf/Borrow.h>
 
 namespace WebCore {
 namespace IDBServer {
@@ -139,8 +140,7 @@ bool UniqueIDBDatabaseTransaction::shouldAbortDueToUnhandledRequestError(uint64_
         return false;
     }
 
-    auto pendingRequestResults = m_requestResults.subspan(handledRequestResultsCount);
-    return std::ranges::any_of(pendingRequestResults, [&](auto& error) {
+    return std::ranges::any_of(borrow(m_requestResults)->subspan(handledRequestResultsCount), [&](auto& error) {
         return !error.isNull();
     });
 }

@@ -34,6 +34,8 @@
 
 #include "CBORBinary.h"
 
+#include <wtf/Borrow.h>
+
 namespace cbor {
 
 CBORWriter::~CBORWriter() = default;
@@ -95,7 +97,7 @@ bool CBORWriter::encodeCBOR(const CBORValue& node, int maxNestingLevel)
     case CBORValue::Type::Array: {
         const CBORValue::ArrayValue& array = node.getArray();
         startItem(CBORValue::Type::Array, array.size());
-        for (const auto& value : array) {
+        for (const auto& value : borrow(array)) {
             if (!encodeCBOR(value, maxNestingLevel - 1))
                 return false;
         }

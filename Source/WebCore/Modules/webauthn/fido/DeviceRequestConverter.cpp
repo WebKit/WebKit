@@ -41,6 +41,7 @@
 #include "PublicKeyCredentialUserEntity.h"
 #include "ResidentKeyRequirement.h"
 #include "WebAuthenticationConstants.h"
+#include <wtf/Borrow.h>
 #include <wtf/Vector.h>
 
 namespace fido {
@@ -95,13 +96,13 @@ static Vector<PublicKeyCredentialParameters> trimmedParameters(const Vector<Publ
 {
     HashSet<int64_t> authenticatorSupportedAlgorithms;
     if (authenticatorSupportedParameters) {
-        for (auto& parameters : *authenticatorSupportedParameters) {
+        for (auto& parameters : borrow(*authenticatorSupportedParameters)) {
             if (parameters.type == PublicKeyCredentialType::PublicKey)
                 authenticatorSupportedAlgorithms.add(parameters.alg);
         }
     }
 
-    for (auto& parameter : parameters) {
+    for (auto& parameter : borrow(parameters)) {
         if (parameter.type != PublicKeyCredentialType::PublicKey)
             continue;
         if (authenticatorSupportedAlgorithms.contains(parameter.alg))
@@ -129,13 +130,13 @@ Vector<uint8_t> encodeMakeCredentialRequestAsCBOR(const Vector<uint8_t>& hash, c
     if (overrideExcludeCredentials) {
         if (!overrideExcludeCredentials->isEmpty()) {
             CBORValue::ArrayValue excludeListArray;
-            for (const auto& descriptor : *overrideExcludeCredentials)
+            for (const auto& descriptor : borrow(*overrideExcludeCredentials))
                 excludeListArray.append(convertDescriptorToCBOR(descriptor));
             cborMap[CBORValue(kCtapMakeCredentialExcludeListKey)] = CBORValue(WTF::move(excludeListArray));
         }
     } else if (!options.excludeCredentials.isEmpty()) {
         CBORValue::ArrayValue excludeListArray;
-        for (const auto& descriptor : options.excludeCredentials)
+        for (const auto& descriptor : borrow(options.excludeCredentials))
             excludeListArray.append(convertDescriptorToCBOR(descriptor));
         cborMap[CBORValue(kCtapMakeCredentialExcludeListKey)] = CBORValue(WTF::move(excludeListArray));
     }
@@ -220,7 +221,7 @@ Vector<uint8_t> encodeSilentGetAssertion(const String& rpId, const Vector<uint8_
     cborMap[CBORValue(kCtapGetAssertionClientDataHashKey)] = CBORValue(hash);
 
     CBORValue::ArrayValue allowListArray;
-    for (const auto& descriptor : credentials)
+    for (const auto& descriptor : borrow(credentials))
         allowListArray.append(convertDescriptorToCBOR(descriptor));
     cborMap[CBORValue(kCtapGetAssertionAllowListKey)] = CBORValue(WTF::move(allowListArray));
 
@@ -249,12 +250,12 @@ Vector<uint8_t> encodeGetAssertionRequestAsCBOR(const Vector<uint8_t>& hash, con
     cborMap[CBORValue(kCtapGetAssertionClientDataHashKey)] = CBORValue(hash);
     if (overrideAllowCredentials) {
         CBORValue::ArrayValue allowListArray;
-        for (const auto& descriptor : *overrideAllowCredentials)
+        for (const auto& descriptor : borrow(*overrideAllowCredentials))
             allowListArray.append(convertDescriptorToCBOR(descriptor));
         cborMap[CBORValue(kCtapGetAssertionAllowListKey)] = CBORValue(WTF::move(allowListArray));
     } else if (!options.allowCredentials.isEmpty()) {
         CBORValue::ArrayValue allowListArray;
-        for (const auto& descriptor : options.allowCredentials)
+        for (const auto& descriptor : borrow(options.allowCredentials))
             allowListArray.append(convertDescriptorToCBOR(descriptor));
         cborMap[CBORValue(kCtapGetAssertionAllowListKey)] = CBORValue(WTF::move(allowListArray));
     }

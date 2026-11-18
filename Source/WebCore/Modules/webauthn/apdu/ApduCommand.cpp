@@ -30,6 +30,8 @@
 #include "config.h"
 #include "ApduCommand.h"
 
+#include <wtf/Borrow.h>
+
 #if ENABLE(WEB_AUTHN)
 
 namespace apdu {
@@ -85,10 +87,10 @@ std::optional<ApduCommand> ApduCommand::createFromMessage(const Vector<uint8_t>&
 
         if (message.size() == dataLength + kApduCommandDataOffset) {
             // No response expected.
-            data.append(message.subspan(kApduCommandDataOffset));
+            data.append(borrow(message)->subspan(kApduCommandDataOffset));
         } else if (message.size() == dataLength + kApduCommandDataOffset + 2) {
             // Maximum response size is stored in final 2 bytes.
-            data.append(message.subspan(kApduCommandDataOffset, message.size() - kApduCommandDataOffset - 2));
+            data.append(borrow(message)->subspan(kApduCommandDataOffset, message.size() - kApduCommandDataOffset - 2));
             auto responseLengthOffset = kApduCommandDataOffset + dataLength;
             responseLength = parseMessageLength(message, responseLengthOffset);
             // Special case where response length of 0x0000 corresponds to 65536
@@ -127,7 +129,7 @@ Vector<uint8_t> ApduCommand::getEncodedCommand() const
         encoded.append(0x0);
         encoded.append((dataLength >> 8) & 0xff);
         encoded.append(dataLength & 0xff);
-        encoded.append(m_data.span().first(dataLength));
+        encoded.append(borrow(m_data)->span().first(dataLength));
     } else if (m_responseLength > 0)
         encoded.append(0x0);
 

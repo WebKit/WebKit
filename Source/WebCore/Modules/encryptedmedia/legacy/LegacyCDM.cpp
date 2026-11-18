@@ -34,6 +34,7 @@
 #include "LegacyCDMSession.h"
 #include "MediaPlayer.h"
 #include "WebKitMediaKeys.h"
+#include <wtf/Borrow.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/WTFString.h>
@@ -92,9 +93,10 @@ void LegacyCDM::registerCDMFactory(CreateCDM&& constructor, CDMSupportsKeySystem
 
 static LegacyCDMFactory* CDMFactoryForKeySystem(const String& keySystem)
 {
-    for (auto& factory : installedCDMFactories()) {
-        if (factory.supportsKeySystem(keySystem))
-            return &factory;
+    auto& factories = installedCDMFactories();
+    for (size_t i = 0; i < factories.size(); ++i) {
+        if (borrow(factories)[i].supportsKeySystem(keySystem))
+            return &factories[i];
     }
     return nullptr;
 }

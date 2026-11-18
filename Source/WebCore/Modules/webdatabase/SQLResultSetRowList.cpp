@@ -32,6 +32,8 @@
 #include "ExceptionCode.h"
 #include "ExceptionOr.h"
 
+#include <wtf/Borrow.h>
+
 namespace WebCore {
 
 unsigned SQLResultSetRowList::length() const
@@ -54,7 +56,7 @@ ExceptionOr<Vector<KeyValuePair<String, SQLValue>>> SQLResultSetRowList::item(un
     unsigned numberOfColumns = m_columns.size();
     unsigned valuesIndex = index * numberOfColumns;
     for (unsigned i = 0; i < numberOfColumns; i++)
-        result.append({ m_columns[i], m_result[valuesIndex + i] });
+        result.append({ borrow(m_columns)[i], borrow(m_result)[valuesIndex + i] });
 
     return result;
 }

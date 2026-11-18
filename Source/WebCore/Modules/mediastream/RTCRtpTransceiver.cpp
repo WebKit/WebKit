@@ -39,6 +39,7 @@
 #include "Logging.h"
 #include "RTCPeerConnection.h"
 #include "ScriptWrappableInlines.h"
+#include <wtf/Borrow.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/TZoneMallocInlines.h>
 
@@ -135,7 +136,7 @@ void RtpTransceiverSet::remove(const RTCRtpTransceiver& transceiver)
 Vector<std::reference_wrapper<RTCRtpSender>> RtpTransceiverSet::senders() const
 {
     Vector<std::reference_wrapper<RTCRtpSender>> senders;
-    for (auto& transceiver : m_transceivers) {
+    for (auto& transceiver : borrow(m_transceivers)) {
         if (transceiver->stopped())
             continue;
         senders.append(transceiver->sender());
@@ -146,7 +147,7 @@ Vector<std::reference_wrapper<RTCRtpSender>> RtpTransceiverSet::senders() const
 Vector<std::reference_wrapper<RTCRtpReceiver>> RtpTransceiverSet::receivers() const
 {
     Vector<std::reference_wrapper<RTCRtpReceiver>> receivers;
-    for (auto& transceiver : m_transceivers) {
+    for (auto& transceiver : borrow(m_transceivers)) {
         if (transceiver->stopped())
             continue;
         receivers.append(transceiver->receiver());

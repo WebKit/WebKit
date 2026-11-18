@@ -26,6 +26,7 @@
 #include "config.h"
 #include "GPUBindGroupLayoutDescriptor.h"
 
+#include <wtf/Borrow.h>
 #include <wtf/JSONValues.h>
 
 namespace WebCore {
@@ -34,7 +35,7 @@ Ref<JSON::Object> GPUBindGroupLayoutDescriptor::toJSON() const
 {
     Ref json = GPUObjectDescriptorBase::toJSON();
     auto entriesJSON = JSON::Array::create();
-    for (auto& entry : entries)
+    for (auto& entry : borrow(entries))
         entriesJSON->pushObject(entry.toJSON());
     json->setArray("entries"_s, WTF::move(entriesJSON));
     return json;

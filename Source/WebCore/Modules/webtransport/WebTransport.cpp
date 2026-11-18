@@ -72,6 +72,7 @@
 #include "WorkerGlobalScope.h"
 #include "WritableStream.h"
 #include <JavaScriptCore/JSGlobalObject.h>
+#include <wtf/Borrow.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/RunLoop.h>
 
@@ -89,7 +90,7 @@ ExceptionOr<Ref<WebTransport>> WebTransport::create(ScriptExecutionContext& cont
 
     HashSet<String> uniqueProtocols;
     Vector<String> escapedProtocols(ReserveCapacityTag { }, options.protocols.size());
-    for (auto& protocol : options.protocols) {
+    for (auto& protocol : borrow(options.protocols)) {
         auto escapedProtocol = RFC8941::escapeString(protocol);
         if (!escapedProtocol || escapedProtocol->isEmpty() || escapedProtocol->length() > 512)
             return Exception { ExceptionCode::SyntaxError };
@@ -201,7 +202,7 @@ WebTransport::WebTransport(ScriptExecutionContext& context, JSDOMGlobalObject& g
         strongThis->m_protocol = WTF::move(info->protocol);
         strongThis->m_reliability = info->reliabilityMode;
         HTTPHeaderMap headerMap;
-        for (auto& header : info->responseHeaders)
+        for (auto& header : borrow(info->responseHeaders))
             headerMap.add(header.key, header.value);
         Ref responseHeaders = FetchHeaders::create(FetchHeaders::Guard::Immutable);
         // Fill under a response guard so forbidden response header names are dropped.
@@ -234,7 +235,7 @@ void WebTransport::receiveDatagram(std::span<const uint8_t> datagram, bool withF
 
     // A burst delivered inline evicts itself, since IPC dispatch runs many messages per turn with no microtask checkpoint.
     queueTaskKeepingObjectAlive(*this, TaskSource::Networking, [datagram = Vector(datagram), withFin, exception = WTF::move(exception)](auto& transport) mutable {
-        transport.m_datagramSource->receiveDatagram(datagram.span(), withFin, WTF::move(exception));
+        transport.m_datagramSource->receiveDatagram(borrow(datagram)->span(), withFin, WTF::move(exception));
     });
 }
 
@@ -407,7 +408,7 @@ void WebTransport::exportKeyingMaterial(ScriptExecutionContext& scriptExecutionC
 
     scriptExecutionContext.enqueueTaskWhenSettled(m_session->exportKeyingMaterial(label.span(), context.span(), outputLength), WebCore::TaskSource::Networking, [promise = WTF::move(promise)] (auto&& keyingMaterial) mutable {
         if (keyingMaterial)
-            fulfillPromiseWithUint8ArrayFromSpan(WTF::move(promise), keyingMaterial->span());
+            fulfillPromiseWithUint8ArrayFromSpan(WTF::move(promise), borrow(*keyingMaterial)->span());
         else
             promise->reject(ExceptionCode::InvalidStateError);
     });

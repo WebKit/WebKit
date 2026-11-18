@@ -33,6 +33,7 @@
 #include "FidoConstants.h"
 #include "WebAuthenticationConstants.h"
 #include <pal/crypto/CryptoDigest.h>
+#include <wtf/Borrow.h>
 #include <wtf/JSONValues.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/URL.h>
@@ -133,7 +134,7 @@ cbor::CBORValue::MapValue buildAttestationMap(Vector<uint8_t>&& authData, String
     if (attestation == AttestationConveyancePreference::None) {
         const size_t aaguidOffset = rpIdHashLength + flagsLength + signCounterLength;
         if (authData.size() >= aaguidOffset + aaguidLength && shouldZero == ShouldZeroAAGUID::Yes)
-            zeroSpan(authData.mutableSpan().subspan(aaguidOffset, aaguidLength));
+            zeroSpan(borrow(authData)->mutableSpan().subspan(aaguidOffset, aaguidLength));
         format = String::fromLatin1(noneAttestationValue);
         statementMap.clear();
     }

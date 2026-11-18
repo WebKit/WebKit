@@ -63,6 +63,7 @@
 #include <JavaScriptCore/ArrayBuffer.h>
 #include <JavaScriptCore/ArrayBufferView.h>
 #include <JavaScriptCore/ScriptCallStack.h>
+#include <wtf/Borrow.h>
 #include <wtf/HashSet.h>
 #include <wtf/HexNumber.h>
 #include <wtf/NeverDestroyed.h>
@@ -130,7 +131,7 @@ static String joinStrings(const Vector<String>& strings, ASCIILiteral separator)
     for (size_t i = 0; i < strings.size(); ++i) {
         if (i)
             builder.append(separator);
-        builder.append(strings[i]);
+        builder.append(borrow(strings)[i]);
     }
     return builder.toString();
 }
@@ -310,7 +311,7 @@ ExceptionOr<void> WebSocket::connect(const String& url, const Vector<String>& pr
     //
     // Here, we throw SyntaxError if the given protocols do not meet the latter criteria. This behavior does not
     // comply with WebSocket API specification, but it seems to be the only reasonable way to handle this conflict.
-    for (auto& protocol : protocols) {
+    for (auto& protocol : borrow(protocols)) {
         if (!isValidProtocolString(protocol)) {
             context->addConsoleMessage(MessageSource::JS, MessageLevel::Error, makeString("Wrong protocol for WebSocket '"_s, encodeProtocolString(protocol), '\''));
             m_state = CLOSED;
@@ -318,7 +319,7 @@ ExceptionOr<void> WebSocket::connect(const String& url, const Vector<String>& pr
         }
     }
     HashSet<String> visited;
-    for (auto& protocol : protocols) {
+    for (auto& protocol : borrow(protocols)) {
         if (!visited.add(protocol).isNewEntry) {
             context->addConsoleMessage(MessageSource::JS, MessageLevel::Error, makeString("WebSocket protocols contain duplicates: '"_s, encodeProtocolString(protocol), '\''));
             m_state = CLOSED;
@@ -612,7 +613,7 @@ void WebSocket::didReceiveBinaryData(Vector<uint8_t>&& binaryData)
             socket.dispatchEvent(MessageEvent::create(Blob::create(protect(socket.scriptExecutionContext()).get(), WTF::move(binaryData), emptyString()), socket.m_origin.copyRef()));
             break;
         case BinaryType::Arraybuffer:
-            socket.dispatchEvent(MessageEvent::create(ArrayBuffer::create(binaryData), socket.m_origin.copyRef()));
+            socket.dispatchEvent(MessageEvent::create(ArrayBuffer::create(borrow(binaryData)->span()), socket.m_origin.copyRef()));
             break;
         }
     });

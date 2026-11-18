@@ -27,6 +27,7 @@
 #include "PushSubscriptionOptions.h"
 
 #include "ExceptionOr.h"
+#include <wtf/Borrow.h>
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
@@ -53,7 +54,7 @@ const Vector<uint8_t>& PushSubscriptionOptions::serverVAPIDPublicKey() const
 ExceptionOr<RefPtr<JSC::ArrayBuffer>> PushSubscriptionOptions::applicationServerKey() const
 {
     if (!m_applicationServerKey) {
-        m_applicationServerKey = ArrayBuffer::tryCreate(m_serverVAPIDPublicKey);
+        m_applicationServerKey = ArrayBuffer::tryCreate(borrow(m_serverVAPIDPublicKey)->span());
         if (!m_applicationServerKey)
             return Exception { ExceptionCode::OutOfMemoryError };
     }

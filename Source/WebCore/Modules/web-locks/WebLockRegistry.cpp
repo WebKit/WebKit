@@ -29,6 +29,7 @@
 #include "ScriptExecutionContext.h"
 #include "WebLockManager.h"
 #include "WebLockManagerSnapshot.h"
+#include <wtf/Borrow.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
@@ -142,7 +143,7 @@ void LocalWebLockRegistry::PerOriginRegistry::requestLock(WebLockIdentifier lock
     if (steal) {
         auto it = m_heldLocks.find(name);
         if (it != m_heldLocks.end()) {
-            for (auto& lockInfo : it->value)
+            for (auto& lockInfo : borrow(it->value))
                 lockInfo.lockStolenHandler();
             m_heldLocks.remove(it);
         }
@@ -263,7 +264,7 @@ void LocalWebLockRegistry::PerOriginRegistry::snapshot(CompletionHandler<void(We
             snapshot.pending.append({ pair.key, request.mode, request.clientID.toString() });
     }
     for (auto& pair : m_heldLocks) {
-        for (auto& lockInfo : pair.value)
+        for (auto& lockInfo : borrow(pair.value))
             snapshot.held.append({ pair.key, lockInfo.mode, lockInfo.clientID.toString() });
     }
 
@@ -308,7 +309,7 @@ void LocalWebLockRegistry::PerOriginRegistry::clientsAreGoingAway(NOESCAPE const
 void LocalWebLockRegistry::clientsAreGoingAway(ProcessIdentifier processIdentifier)
 {
     Vector<std::pair<PAL::SessionID, ClientOrigin>> clientOrigins = copyToVector(m_perOriginRegistries.keys());
-    for (auto& [sessionID, clientOrigin] : clientOrigins) {
+    for (auto& [sessionID, clientOrigin] : borrow(clientOrigins)) {
         if (auto registry = existingRegistryForOrigin(sessionID, clientOrigin))
             registry->clientsAreGoingAway([processIdentifier](auto& lockInfo) { return lockInfo.clientID.processIdentifier() == processIdentifier; });
     }

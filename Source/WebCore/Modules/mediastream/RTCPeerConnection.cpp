@@ -72,6 +72,7 @@
 #include <JavaScriptCore/StrongInlines.h>
 #include <JavaScriptCore/Uint8Array.h>
 #include <algorithm>
+#include <wtf/Borrow.h>
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/MainThread.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -198,7 +199,7 @@ static std::optional<Exception> validateSendEncodings(Vector<RTCRtpEncodingParam
 {
     size_t encodingIndex = 0;
     bool hasAnyScaleResolutionDownBy = !isAudio && std::ranges::any_of(encodings, [](auto& encoding) { return !!encoding.scaleResolutionDownBy; });
-    for (auto& encoding: encodings) {
+    for (auto& encoding : borrow(encodings)) {
         if (encoding.rid.length() > 16)
             return Exception { ExceptionCode::TypeError, "Rid is too long"_s };
         bool hasInvalidCharacter = encoding.rid.find([](auto character) {
@@ -581,7 +582,7 @@ ExceptionOr<Vector<MediaEndpointConfiguration::IceServerInfo>> RTCPeerConnection
         return Exception { ExceptionCode::InvalidModificationError, "IceTransportPolicy pool size does not match existing pool size"_s };
 
     Vector<MediaEndpointConfiguration::IceServerInfo> servers(ReserveCapacityTag { }, newConfiguration.iceServers.size());
-    for (auto& server : newConfiguration.iceServers) {
+    for (auto& server : borrow(newConfiguration.iceServers)) {
         Vector<String> urls;
         WTF::switchOn(server.urls, [&urls] (String& url) {
             urls = { WTF::move(url) };
@@ -606,7 +607,7 @@ ExceptionOr<Vector<MediaEndpointConfiguration::IceServerInfo>> RTCPeerConnection
         });
         server.urls = WTF::move(urls);
 
-        for (auto& serverURL : serverURLs) {
+        for (auto& serverURL : borrow(serverURLs)) {
             if (serverURL.isNull())
                 return Exception { ExceptionCode::TypeError, "Bad ICE server URL"_s };
             if (!serverURL.hasOpaquePath())
@@ -642,7 +643,7 @@ ExceptionOr<Vector<MediaEndpointConfiguration::CertificatePEM>> RTCPeerConnectio
     Ref origin = protect(document())->securityOrigin();
 
     Vector<MediaEndpointConfiguration::CertificatePEM> certificates(ReserveCapacityTag { }, configuration.certificates.size());
-    for (auto& certificate : configuration.certificates) {
+    for (auto& certificate : borrow(configuration.certificates)) {
         if (!origin->isSameOriginAs(certificate->origin()))
             return Exception { ExceptionCode::InvalidAccessError, "Certificate does not have a valid origin"_s };
 
@@ -697,7 +698,7 @@ ExceptionOr<void> RTCPeerConnection::setConfiguration(RTCConfiguration&& configu
         if (configuration.certificates.size() != m_configuration.certificates.size())
             return Exception { ExceptionCode::InvalidModificationError, "Certificates parameters are different"_s };
 
-        for (auto& certificate : configuration.certificates) {
+        for (auto& certificate : borrow(configuration.certificates)) {
             bool isThere = m_configuration.certificates.findIf([&certificate](const auto& item) {
                 return item == certificate;
             }) != notFound;

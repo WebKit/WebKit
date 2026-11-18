@@ -41,6 +41,7 @@
 #include "Page.h"
 #include "RealtimeMediaSource.h"
 #include "ScriptWrappableInlines.h"
+#include <wtf/Borrow.h>
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
@@ -68,7 +69,8 @@ Ref<MediaStream> MediaStream::create(Document& document, Vector<Ref<MediaStreamT
             if (!existingTracks.add(tracks[counter].ptr()).isNewEntry)
                 tracksToRemove.append(counter);
         }
-        for (auto iterator = tracksToRemove.rbegin(); iterator != tracksToRemove.rend(); ++iterator)
+        Borrow borrowedTracksToRemove { tracksToRemove };
+        for (auto iterator = borrowedTracksToRemove->rbegin(); iterator != borrowedTracksToRemove->rend(); ++iterator)
             tracks.removeAt(*iterator);
     }
 
@@ -97,7 +99,7 @@ MediaStream::MediaStream(Document& document, Vector<Ref<MediaStreamTrack>>&& tra
     // This constructor preserves MediaStreamTrack instances and must be used by calls originating
     // from the JavaScript MediaStream constructor.
 
-    for (auto& track : m_tracks)
+    for (auto& track : borrow(m_tracks))
         track->setMediaStreamId(id());
 
     setIsActive(m_private->active());

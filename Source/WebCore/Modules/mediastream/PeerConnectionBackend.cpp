@@ -51,6 +51,7 @@
 #include "RTCTrackEvent.h"
 #include "WebRTCProvider.h"
 #include <algorithm>
+#include <wtf/Borrow.h>
 #include <wtf/EnumTraits.h>
 #include <wtf/FilePrintStream.h>
 #include <wtf/UUID.h>
@@ -344,7 +345,7 @@ static void setAssociatedRemoteStreams(RTCRtpReceiver& receiver, const PeerConne
             removeList.append({ Ref { *currentStream }, Ref { receiver.track() } });
     }
 
-    for (auto& stream : state.receiverStreams) {
+    for (auto& stream : borrow(state.receiverStreams)) {
         if (std::ranges::none_of(receiver.associatedStreams(), [&stream](auto& currentStream) { return stream->id() == currentStream->id(); }))
             addList.append({ stream, Ref { receiver.track() } });
     }
@@ -405,7 +406,7 @@ void PeerConnectionBackend::setLocalDescriptionSucceeded(std::optional<Descripti
             Vector<MediaStreamAndTrackItem> removeList;
             Vector<Ref<MediaStreamTrack>> muteTrackList;
             Vector<MediaStreamAndTrackItem> addListNoOp;
-            for (auto& transceiverState : *transceiverStates) {
+            for (auto& transceiverState : borrow(*transceiverStates)) {
                 RefPtr<RTCRtpTransceiver> transceiver;
                 for (auto& item : peerConnection.currentTransceivers()) {
                     if (item->mid() == transceiverState.mid) {
@@ -421,7 +422,7 @@ void PeerConnectionBackend::setLocalDescriptionSucceeded(std::optional<Descripti
                 }
                 transceiver->setFiredDirection(transceiverState.firedDirection);
             }
-            for (auto& track : muteTrackList) {
+            for (auto& track : borrow(muteTrackList)) {
                 track->setShouldFireMuteEventImmediately(true);
                 protect(track->source())->setMuted(true);
                 track->setShouldFireMuteEventImmediately(false);
@@ -429,7 +430,7 @@ void PeerConnectionBackend::setLocalDescriptionSucceeded(std::optional<Descripti
                     return;
             }
 
-            for (auto& pair : removeList) {
+            for (auto& pair : borrow(removeList)) {
                 DEBUG_LOG(LOGIDENTIFIER, "Removing track "_s, pair.track->id(), " from MediaStream "_s, pair.stream->id());
                 protect(pair.stream->privateStream())->removeTrack(protect(pair.track->privateTrack()));
                 if (peerConnection.isClosed())
@@ -509,7 +510,7 @@ void PeerConnectionBackend::setRemoteDescriptionSucceeded(std::optional<Descript
             Vector<Ref<MediaStreamTrack>> muteTrackList;
             Vector<MediaStreamAndTrackItem> addList;
             Vector<Ref<RTCTrackEvent>> trackEventList;
-            for (auto& transceiverState : *transceiverStates) {
+            for (auto& transceiverState : borrow(*transceiverStates)) {
                 RefPtr<RTCRtpTransceiver> transceiver;
                 for (auto& item : peerConnection.currentTransceivers()) {
                     if (item->mid() == transceiverState.mid) {
@@ -522,7 +523,7 @@ void PeerConnectionBackend::setRemoteDescriptionSucceeded(std::optional<Descript
             }
 
             DEBUG_LOG_WITH_THIS(&peerConnection, logIdentifier, "Processing ", muteTrackList.size(), " muted tracks");
-            for (auto& track : muteTrackList) {
+            for (auto& track : borrow(muteTrackList)) {
                 track->setShouldFireMuteEventImmediately(true);
                 protect(track->source())->setMuted(true);
                 track->setShouldFireMuteEventImmediately(false);
@@ -533,7 +534,7 @@ void PeerConnectionBackend::setRemoteDescriptionSucceeded(std::optional<Descript
             }
 
             DEBUG_LOG_WITH_THIS(&peerConnection, logIdentifier, "Removing ", removeList.size(), " tracks");
-            for (auto& pair : removeList) {
+            for (auto& pair : borrow(removeList)) {
                 protect(pair.stream->privateStream())->removeTrack(protect(pair.track->privateTrack()));
                 if (peerConnection.isClosed()) {
                     DEBUG_LOG_WITH_THIS(&peerConnection, logIdentifier, "PeerConnection closed while removing tracks");
@@ -542,7 +543,7 @@ void PeerConnectionBackend::setRemoteDescriptionSucceeded(std::optional<Descript
             }
 
             DEBUG_LOG_WITH_THIS(&peerConnection, logIdentifier, "Adding ", addList.size(), " tracks");
-            for (auto& pair : addList) {
+            for (auto& pair : borrow(addList)) {
                 Ref { pair.stream }->addTrackFromPlatform(pair.track.copyRef());
                 if (peerConnection.isClosed()) {
                     DEBUG_LOG_WITH_THIS(&peerConnection, logIdentifier, "PeerConnection closed while adding tracks");
@@ -551,7 +552,7 @@ void PeerConnectionBackend::setRemoteDescriptionSucceeded(std::optional<Descript
             }
 
             DEBUG_LOG_WITH_THIS(&peerConnection, logIdentifier, "Dispatching ", trackEventList.size(), " track events");
-            for (auto& event : trackEventList) {
+            for (auto& event : borrow(trackEventList)) {
                 RefPtr track = event->track();
                 ALWAYS_LOG_WITH_THIS(&peerConnection, logIdentifier, "Dispatching track event for track ", track->id());
                 peerConnection.dispatchEvent(event);

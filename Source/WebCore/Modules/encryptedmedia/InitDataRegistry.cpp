@@ -32,6 +32,7 @@
 #include "ISOProtectionSystemSpecificHeaderBox.h"
 #include "NotImplemented.h"
 #include "SharedBuffer.h"
+#include <wtf/Borrow.h>
 #include <wtf/JSONValues.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/Base64.h>
@@ -112,7 +113,7 @@ static RefPtr<SharedBuffer> sanitizeKeyids(const SharedBuffer& buffer)
 
     auto object = JSON::Object::create();
     auto kidsArray = JSON::Array::create();
-    for (auto& buffer : keyIDBuffer.value())
+    for (auto& buffer : borrow(keyIDBuffer.value()))
         kidsArray->pushString(base64URLEncodeToString(buffer->span()));
     object->setArray("kids"_s, WTF::move(kidsArray));
 
@@ -193,7 +194,7 @@ std::optional<CDMKeyIDs> InitDataRegistry::extractKeyIDsCenc(const SharedBuffer&
     if (!psshBoxes)
         return std::nullopt;
 
-    for (auto& psshBox : psshBoxes.value()) {
+    for (auto& psshBox : borrow(psshBoxes.value())) {
         ASSERT(psshBox);
         if (!psshBox)
             return std::nullopt;
@@ -204,7 +205,7 @@ std::optional<CDMKeyIDs> InitDataRegistry::extractKeyIDsCenc(const SharedBuffer&
             if (CDMPrivateFairPlayStreaming::validFairPlayStreamingSchemes().contains(scheme)) {
                 for (const auto& request : fpsPssh->initDataBox().requests()) {
                     auto& keyID = request.requestInfo().keyID();
-                    keyIDs.append(SharedBuffer::create(keyID.span()));
+                    keyIDs.append(SharedBuffer::create(borrow(keyID)->span()));
                 }
             }
         }

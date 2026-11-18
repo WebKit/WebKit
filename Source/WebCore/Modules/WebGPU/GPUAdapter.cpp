@@ -30,6 +30,7 @@
 #include "JSDOMPromiseDeferred.h"
 #include "JSGPUAdapterInfo.h"
 #include "JSGPUDevice.h"
+#include <wtf/Borrow.h>
 #include <wtf/CheckedArithmetic.h>
 
 #include <wtf/HashSet.h>
@@ -113,7 +114,7 @@ static GPUFeatureName convertFeatureNameToEnum(const String& stringValue)
 static bool isSubset(const Vector<GPUFeatureName>& expectedSubset, const Vector<String>& expectedSuperset)
 {
     HashSet<uint32_t> expectedSupersetHashSet;
-    for (auto& featureName : expectedSuperset)
+    for (auto& featureName : borrow(expectedSuperset))
         expectedSupersetHashSet.add(static_cast<uint32_t>(convertFeatureNameToEnum(featureName)));
 
     for (auto& featureName : expectedSubset) {
@@ -166,7 +167,7 @@ static std::optional<::WebGPU::Limits> requiredLimits(const WebGPUDeviceDescript
 {
     auto limits = ::WebGPU::defaultLimits();
 
-    for (const auto& pair : descriptor.requiredLimits) {
+    for (const auto& pair : borrow(descriptor.requiredLimits)) {
 #define SET_MAX_VALUE(LIMIT) \
         else if (pair.key == #LIMIT ""_s) { \
             if (pair.value > supportedLimits.LIMIT || !setMaxIntegerValue(limits.LIMIT, pair.value)) { \

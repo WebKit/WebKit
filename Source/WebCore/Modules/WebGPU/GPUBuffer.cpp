@@ -30,6 +30,7 @@
 #include "JSDOMConvertNull.h"
 #include "JSDOMPromiseDeferred.h"
 #include "JSGPUBufferMapState.h"
+#include <wtf/Borrow.h>
 
 namespace WebCore {
 
@@ -236,7 +237,7 @@ void GPUBuffer::internalUnmap(ScriptExecutionContext& scriptExecutionContext)
 
     m_mapState = GPUBufferMapState::Unmapped;
 
-    for (auto& arrayBufferAndOffset : m_arrayBuffers) {
+    for (auto& arrayBufferAndOffset : borrow(m_arrayBuffers)) {
         auto& arrayBuffer = arrayBufferAndOffset.buffer;
         if (arrayBuffer && arrayBuffer->data() && arrayBuffer->byteLength()) {
             m_backing->copyFrom(arrayBuffer->span(), arrayBufferAndOffset.offset);

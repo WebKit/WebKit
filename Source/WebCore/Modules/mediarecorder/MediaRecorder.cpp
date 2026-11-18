@@ -40,6 +40,7 @@
 #include "Page.h"
 #include "SharedBuffer.h"
 #include "WindowEventLoop.h"
+#include <wtf/Borrow.h>
 #include <wtf/TZoneMallocInlines.h>
 
 #if PLATFORM(COCOA) && USE(AVFOUNDATION)
@@ -210,7 +211,7 @@ ExceptionOr<void> MediaRecorder::startRecording(std::optional<unsigned> timeSlic
         });
     });
 
-    for (auto& track : m_tracks)
+    for (auto& track : borrow(m_tracks))
         track->addObserver(*this);
 
     m_state = RecordingState::Recording;
@@ -367,7 +368,7 @@ void MediaRecorder::stopRecordingInternal(CompletionHandler<void()>&& completion
         return;
     }
 
-    for (auto& track : m_tracks)
+    for (auto& track : borrow(m_tracks))
         track->removeObserver(*this);
 
     m_state = RecordingState::Inactive;

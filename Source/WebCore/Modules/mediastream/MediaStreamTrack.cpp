@@ -67,6 +67,7 @@
 #include "Settings.h"
 #include "WebAudioSourceProvider.h"
 #include <JavaScriptCore/ConsoleTypes.h>
+#include <wtf/Borrow.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/NativePromise.h>
 #include <wtf/NeverDestroyed.h>
@@ -535,7 +536,7 @@ void MediaStreamTrack::trackEnded(MediaStreamTrackPrivate&)
     if (m_ended)
         return;
 
-    for (auto& observer : m_observers)
+    for (auto& observer : borrow(m_observers))
         observer->trackDidEnd();
 
     configureTrackRendering();

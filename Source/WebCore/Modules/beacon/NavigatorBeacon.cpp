@@ -34,6 +34,7 @@
 #include "LocalFrameInlines.h"
 #include "Navigator.h"
 #include "Page.h"
+#include <wtf/Borrow.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/URL.h>
 #include <wtf/text/MakeString.h>
@@ -49,7 +50,7 @@ NavigatorBeacon::NavigatorBeacon(Navigator& navigator)
 
 NavigatorBeacon::~NavigatorBeacon()
 {
-    for (auto& beacon : m_inflightBeacons)
+    for (auto& beacon : borrow(m_inflightBeacons))
         protect(beacon)->removeClient(*this);
 }
 

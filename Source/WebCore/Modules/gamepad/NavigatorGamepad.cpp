@@ -40,6 +40,7 @@
 #include "Navigator.h"
 #include "PermissionsPolicy.h"
 #include "PlatformGamepad.h"
+#include <wtf/Borrow.h>
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
@@ -152,7 +153,7 @@ void NavigatorGamepad::gamepadsBecameVisible()
 
     for (size_t i = 0; i < platformGamepads.size(); ++i) {
         if (CheckedPtr gamepad = platformGamepads[i].get())
-            m_gamepads[i] = Gamepad::create(protect(m_navigator->document()).get(), *gamepad);
+            borrow(m_gamepads)[i] = Gamepad::create(protect(m_navigator->document()).get(), *gamepad);
     }
 }
 
@@ -171,7 +172,7 @@ void NavigatorGamepad::gamepadConnected(PlatformGamepad& platformGamepad)
     ASSERT(index <= m_gamepads.size());
 
     if (index < m_gamepads.size())
-        m_gamepads[index] = Gamepad::create(protect(m_navigator->document()).get(), platformGamepad);
+        borrow(m_gamepads)[index] = Gamepad::create(protect(m_navigator->document()).get(), platformGamepad);
     else if (index == m_gamepads.size())
         m_gamepads.append(Gamepad::create(protect(m_navigator->document()).get(), platformGamepad));
 }
@@ -185,7 +186,7 @@ void NavigatorGamepad::gamepadDisconnected(PlatformGamepad& platformGamepad)
     ASSERT(platformGamepad.index() < m_gamepads.size());
     ASSERT(m_gamepads[platformGamepad.index()]);
 
-    m_gamepads[platformGamepad.index()] = nullptr;
+    borrow(m_gamepads)[platformGamepad.index()] = nullptr;
 }
 
 } // namespace WebCore

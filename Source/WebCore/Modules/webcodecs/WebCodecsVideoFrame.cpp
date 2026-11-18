@@ -57,6 +57,7 @@
 #include "WebCodecsBufferTransfer.h"
 #include "WebCodecsVideoFrameAlgorithms.h"
 #include <JavaScriptCore/ConsoleTypes.h>
+#include <wtf/Borrow.h>
 #include <wtf/Seconds.h>
 #include <wtf/text/MakeString.h>
 
@@ -328,25 +329,25 @@ ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::create(ScriptExecutio
     RefPtr<VideoFrame> videoFrame;
     switch (pixelFormat) {
     case VideoPixelFormat::NV12:
-        videoFrame = VideoFrame::createNV12(data.span(), parsedRect.width, parsedRect.height, layout.computedLayouts[0], layout.computedLayouts[1], WTF::move(videoFrameInit));
+        videoFrame = VideoFrame::createNV12(data.span(), parsedRect.width, parsedRect.height, borrow(layout.computedLayouts)[0], borrow(layout.computedLayouts)[1], WTF::move(videoFrameInit));
         break;
     case VideoPixelFormat::RGBA:
-        videoFrame = VideoFrame::createRGBA(data.span(), parsedRect.width, parsedRect.height, layout.computedLayouts[0], WTF::move(videoFrameInit));
+        videoFrame = VideoFrame::createRGBA(data.span(), parsedRect.width, parsedRect.height, borrow(layout.computedLayouts)[0], WTF::move(videoFrameInit));
         break;
     case VideoPixelFormat::RGBX:
-        videoFrame = VideoFrame::createRGBX(data.span(), parsedRect.width, parsedRect.height, layout.computedLayouts[0], WTF::move(videoFrameInit));
+        videoFrame = VideoFrame::createRGBX(data.span(), parsedRect.width, parsedRect.height, borrow(layout.computedLayouts)[0], WTF::move(videoFrameInit));
         break;
     case VideoPixelFormat::BGRA:
-        videoFrame = VideoFrame::createBGRA(data.span(), parsedRect.width, parsedRect.height, layout.computedLayouts[0], WTF::move(videoFrameInit));
+        videoFrame = VideoFrame::createBGRA(data.span(), parsedRect.width, parsedRect.height, borrow(layout.computedLayouts)[0], WTF::move(videoFrameInit));
         break;
     case VideoPixelFormat::BGRX:
-        videoFrame = VideoFrame::createBGRX(data.span(), parsedRect.width, parsedRect.height, layout.computedLayouts[0], WTF::move(videoFrameInit));
+        videoFrame = VideoFrame::createBGRX(data.span(), parsedRect.width, parsedRect.height, borrow(layout.computedLayouts)[0], WTF::move(videoFrameInit));
         break;
     case VideoPixelFormat::I420:
-        videoFrame = VideoFrame::createI420(data.span(), parsedRect.width, parsedRect.height, layout.computedLayouts[0], layout.computedLayouts[1], layout.computedLayouts[2], WTF::move(videoFrameInit));
+        videoFrame = VideoFrame::createI420(data.span(), parsedRect.width, parsedRect.height, borrow(layout.computedLayouts)[0], borrow(layout.computedLayouts)[1], borrow(layout.computedLayouts)[2], WTF::move(videoFrameInit));
         break;
     case VideoPixelFormat::I420A:
-        videoFrame = VideoFrame::createI420A(data.span(), parsedRect.width, parsedRect.height, layout.computedLayouts[0], layout.computedLayouts[1], layout.computedLayouts[2], layout.computedLayouts[3], WTF::move(videoFrameInit));
+        videoFrame = VideoFrame::createI420A(data.span(), parsedRect.width, parsedRect.height, borrow(layout.computedLayouts)[0], borrow(layout.computedLayouts)[1], borrow(layout.computedLayouts)[2], borrow(layout.computedLayouts)[3], WTF::move(videoFrameInit));
         break;
     default:
         return Exception { ExceptionCode::NotSupportedError, "VideoPixelFormat is not supported"_s };

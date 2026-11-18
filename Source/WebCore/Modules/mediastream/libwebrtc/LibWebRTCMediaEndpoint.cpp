@@ -67,6 +67,7 @@ IGNORE_CLANG_WARNINGS_BEGIN("nullability-completeness")
 IGNORE_CLANG_WARNINGS_END
 #include <webrtc/pc/peer_connection_factory.h>
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
+#include <wtf/Borrow.h>
 #include <wtf/MainThread.h>
 #include <wtf/SetForScope.h>
 #include <wtf/SharedTask.h>
@@ -377,7 +378,7 @@ void LibWebRTCMediaEndpoint::collectTransceivers(Vector<Ref<RTCRtpTransceiver>>&
         peerConnectionBackend->addInternalTransceiver(makeUniqueRef<LibWebRTCRtpTransceiverBackend>(toRef(WTF::move(rtcTransceiver))), rtcReceiver->media_type() == webrtc::MediaType::AUDIO ? RealtimeMediaSource::Type::Audio : RealtimeMediaSource::Type::Video);
     }
 
-    for (auto& transceiver : currentTransceivers)
+    for (auto& transceiver : borrow(currentTransceivers))
         peerConnectionBackend->removeTransceiver(transceiver);
 }
 

@@ -29,6 +29,7 @@
 #include "IIRProcessor.h"
 
 #include "IIRDSPKernel.h"
+#include <wtf/Borrow.h>
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
@@ -95,7 +96,7 @@ void IIRProcessor::process(const AudioBus& source, AudioBus& destination, size_t
     // For each channel of our input, process using the corresponding IIRDSPKernel
     // into the output channel.
     for (size_t i = 0; i < m_kernels.size(); ++i)
-        m_kernels[i]->process(source.channel(i)->span().first(framesToProcess), destination.channel(i)->mutableSpan());
+        borrow(m_kernels)[i]->process(source.channel(i)->span().first(framesToProcess), destination.channel(i)->mutableSpan());
 }
 
 void IIRProcessor::getFrequencyResponse(std::span<const float> frequencyHz, std::span<float> magResponse, std::span<float> phaseResponse)

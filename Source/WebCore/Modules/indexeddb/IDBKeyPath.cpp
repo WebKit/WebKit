@@ -28,6 +28,7 @@
 #include "IDBKeyPath.h"
 
 #include <wtf/ASCIICType.h>
+#include <wtf/Borrow.h>
 #include <wtf/dtoa.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
@@ -198,7 +199,7 @@ bool isIDBKeyPathValid(const IDBKeyPath& keyPath)
     }, [](const Vector<String>& vector) {
         if (vector.isEmpty())
             return false;
-        for (auto& key : vector) {
+        for (auto& key : borrow(vector)) {
             if (!IDBIsValidKeyPath(key))
                 return false;
         }

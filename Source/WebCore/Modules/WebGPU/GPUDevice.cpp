@@ -85,6 +85,7 @@
 #include "WebGPUShaderModuleDescriptor.h"
 #include "XRGPUBinding.h"
 #include <WebCore/WebGPUCppAPI.h>
+#include <wtf/Borrow.h>
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/RAMSize.h>
@@ -630,7 +631,7 @@ ExceptionOr<Ref<GPUExternalTexture>> GPUDevice::importExternalTexture(GPUExterna
 
 ExceptionOr<Ref<GPUBindGroupLayout>> GPUDevice::createBindGroupLayout(GPUBindGroupLayoutDescriptor&& bindGroupLayoutDescriptor)
 {
-    for (auto& entry : bindGroupLayoutDescriptor.entries) {
+    for (auto& entry : borrow(bindGroupLayoutDescriptor.entries)) {
         if (entry.storageTexture) {
             if (auto error = errorValidatingSupportedFormat(entry.storageTexture->format))
                 return Exception { ExceptionCode::TypeError, makeString("GPUDevice.createBindGroupLayout: Unsupported texture format: "_s, *error) };
@@ -733,7 +734,7 @@ ExceptionOr<Ref<GPUComputePipeline>> GPUDevice::createComputePipeline(UniquelyAn
 ExceptionOr<Ref<GPURenderPipeline>> GPUDevice::createRenderPipeline(UniquelyAnnotatedDescriptor<GPURenderPipelineDescriptor>&& renderPipelineDescriptor)
 {
     if (renderPipelineDescriptor->fragment) {
-        for (auto& colorState : renderPipelineDescriptor->fragment->targets) {
+        for (auto& colorState : borrow(renderPipelineDescriptor->fragment->targets)) {
             if (colorState) {
                 if (auto error = errorValidatingSupportedFormat(colorState->format))
                     return Exception { ExceptionCode::TypeError, makeString("GPUDevice.createRenderPipeline: Unsupported texture format for color target: "_s, *error) };
@@ -784,7 +785,7 @@ void GPUDevice::createComputePipelineAsync(UniquelyAnnotatedDescriptor<GPUComput
 ExceptionOr<void> GPUDevice::createRenderPipelineAsync(UniquelyAnnotatedDescriptor<GPURenderPipelineDescriptor>&& renderPipelineDescriptor, CreateRenderPipelineAsyncPromise&& promise)
 {
     if (renderPipelineDescriptor->fragment) {
-        for (auto& colorState : renderPipelineDescriptor->fragment->targets) {
+        for (auto& colorState : borrow(renderPipelineDescriptor->fragment->targets)) {
             if (colorState) {
                 if (auto error = errorValidatingSupportedFormat(colorState->format))
                     return Exception { ExceptionCode::TypeError, makeString("GPUDevice.createRenderBundleEncoder: Unsupported texture format for color format: "_s, *error) };
@@ -838,7 +839,7 @@ ExceptionOr<Ref<GPUCommandEncoder>> GPUDevice::createCommandEncoder(std::optiona
 
 ExceptionOr<Ref<GPURenderBundleEncoder>> GPUDevice::createRenderBundleEncoder(GPURenderBundleEncoderDescriptor&& renderBundleEncoderDescriptor)
 {
-    for (auto& colorFormat : renderBundleEncoderDescriptor.colorFormats) {
+    for (auto& colorFormat : borrow(renderBundleEncoderDescriptor.colorFormats)) {
         if (colorFormat) {
             if (auto error = errorValidatingSupportedFormat(*colorFormat))
                 return Exception { ExceptionCode::TypeError, makeString("GPUDevice.createRenderBundleEncoder: Unsupported texture format for color format."_s, *error) };

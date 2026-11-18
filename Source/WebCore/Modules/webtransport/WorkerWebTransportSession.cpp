@@ -35,6 +35,8 @@
 #include "WebTransportSendStreamStats.h"
 #include "WritableStreamSink.h"
 
+#include <wtf/Borrow.h>
+
 namespace WebCore {
 
 Ref<WorkerWebTransportSession> WorkerWebTransportSession::create(ScriptExecutionContextIdentifier contextID, WebTransportSessionClient& client)
@@ -65,7 +67,7 @@ void WorkerWebTransportSession::receiveDatagram(std::span<const uint8_t> span, b
         RefPtr client = weakClient.get();
         if (!client)
             return;
-        client->receiveDatagram(vector.span(), withFin, WTF::move(exception));
+        client->receiveDatagram(borrow(vector)->span(), withFin, WTF::move(exception));
     });
 }
 
@@ -120,7 +122,7 @@ void WorkerWebTransportSession::streamReceiveBytes(WebTransportStreamIdentifier 
         RefPtr client = weakClient.get();
         if (!client)
             return;
-        client->streamReceiveBytes(identifier, data.span(), withFin, WTF::move(exception));
+        client->streamReceiveBytes(identifier, borrow(data)->span(), withFin, WTF::move(exception));
     });
 }
 

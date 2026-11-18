@@ -48,6 +48,7 @@
 #include "WorkerThread.h"
 #include <JavaScriptCore/ArrayBuffer.h>
 #include <JavaScriptCore/VMManager.h>
+#include <wtf/Borrow.h>
 #include <wtf/MainThread.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -453,7 +454,7 @@ void WorkerThreadableWebSocketChannel::Bridge::send(const ArrayBuffer& binaryDat
         ASSERT(isMainThread());
         ASSERT_UNUSED(context, context.isDocument());
 
-        auto arrayBuffer = ArrayBuffer::create(data.span());
+        auto arrayBuffer = ArrayBuffer::create(borrow(data)->span());
         peer->send(arrayBuffer);
     });
 }

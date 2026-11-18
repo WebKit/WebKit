@@ -43,6 +43,7 @@
 #include "SQLiteFileSystem.h"
 #include "SQLiteStatement.h"
 #include "SQLiteTransaction.h"
+#include <wtf/Borrow.h>
 #include <wtf/CrossThreadCopier.h>
 #include <wtf/FileSystem.h>
 #include <wtf/MainThread.h>
@@ -748,7 +749,7 @@ void DatabaseTracker::deleteDatabasesModifiedSince(WallTime time)
     for (auto& origin : origins()) {
         Vector<String> databaseNames = this->databaseNames(origin);
         Vector<String> databaseNamesToDelete(ReserveCapacityTag { }, databaseNames.size());
-        for (const auto& databaseName : databaseNames) {
+        for (const auto& databaseName : borrow(databaseNames)) {
             auto fullPath = fullPathForDatabase(origin, databaseName, false);
 
             // If the file doesn't exist, we previously deleted it but failed to remove the information
@@ -769,7 +770,7 @@ void DatabaseTracker::deleteDatabasesModifiedSince(WallTime time)
         if (databaseNames.size() == databaseNamesToDelete.size())
             deleteOrigin(origin);
         else {
-            for (const auto& databaseName : databaseNamesToDelete)
+            for (const auto& databaseName : borrow(databaseNamesToDelete))
                 deleteDatabase(origin, databaseName);
         }
     }
@@ -805,7 +806,7 @@ bool DatabaseTracker::deleteOrigin(const SecurityOriginData& origin, DeletionMod
 
     // We drop the lock here because holding locks during a call to deleteDatabaseFile will deadlock.
     bool failedToDeleteAnyDatabaseFile = false;
-    for (auto& name : databaseNames) {
+    for (auto& name : borrow(databaseNames)) {
         if (FileSystem::fileExists(fullPathForDatabase(origin, name, false)) && !deleteDatabaseFile(origin, name, deletionMode)) {
             // Even if the file can't be deleted, we want to try and delete the rest, don't return early here.
             LOG_ERROR("Unable to delete file for database %s in origin %s", name.utf8(), origin.databaseIdentifier().utf8());
@@ -899,7 +900,7 @@ bool DatabaseTracker::deleteOrigin(const SecurityOriginData& origin, DeletionMod
         if (RefPtr client = m_client.get()) {
             client->dispatchDidModifyOrigin(origin);
             client->dispatchDidDeleteDatabaseOrigin();
-            for (auto& name : databaseNames)
+            for (auto& name : borrow(databaseNames))
                 client->dispatchDidModifyDatabase(origin, name);
         }
     }
@@ -1097,7 +1098,7 @@ bool DatabaseTracker::deleteDatabaseFile(const SecurityOriginData& origin, const
         }
     }
 
-    for (auto& database : deletedDatabases)
+    for (auto& database : borrow(deletedDatabases))
         database->markAsDeletedAndClose();
 
 #if PLATFORM(IOS_FAMILY)
@@ -1185,14 +1186,14 @@ void DatabaseTracker::removeDeletedOpenedDatabases() WTF_IGNORES_THREAD_SAFETY_A
         }
     }
     
-    for (auto& deletedDatabase : deletedDatabases)
+    for (auto& deletedDatabase : borrow(deletedDatabases))
         deletedDatabase->markAsDeletedAndClose();
 
     RefPtr client = m_client.get();
-    for (auto& deletedDatabase : deletedDatabaseNames) {
+    for (auto& deletedDatabase : borrow(deletedDatabaseNames)) {
         auto& origin = deletedDatabase.first;
         client->dispatchDidModifyOrigin(origin);
-        for (auto& databaseName : deletedDatabase.second)
+        for (auto& databaseName : borrow(deletedDatabase.second))
             client->dispatchDidModifyDatabase(origin, databaseName);
     }
 }
@@ -1313,7 +1314,7 @@ void DatabaseTracker::notifyDatabasesChanged()
     if (!client)
         return;
 
-    for (auto& notification : notifications)
+    for (auto& notification : borrow(notifications))
         client->dispatchDidModifyDatabase(notification.first, notification.second);
 }
 

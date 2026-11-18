@@ -43,6 +43,7 @@
 #include "RTCRtpCapabilities.h"
 #include "RTCRtpTransceiver.h"
 #include "ScriptWrappableInlines.h"
+#include <wtf/Borrow.h>
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
@@ -171,7 +172,7 @@ void RTCRtpSender::setParameters(RTCRtpSendParameters&& parameters, DOMPromiseDe
             encoding.maxFramerate = { };
         }
     } else {
-        for (auto& encoding : parameters.encodings) {
+        for (auto& encoding : borrow(parameters.encodings)) {
             if (!encoding.scaleResolutionDownBy)
                 encoding.scaleResolutionDownBy = 1;
             else if (encoding.scaleResolutionDownBy < 1) {

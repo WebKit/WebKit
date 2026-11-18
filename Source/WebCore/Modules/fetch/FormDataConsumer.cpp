@@ -33,6 +33,7 @@
 #include "PendingStreamState.h"
 #include "SWContextManager.h"
 #include "SharedBuffer.h"
+#include <wtf/Borrow.h>
 #include <wtf/Scope.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/WorkQueue.h>
@@ -89,7 +90,7 @@ void FormDataConsumer::read()
 
 void FormDataConsumer::consumeData(const Vector<uint8_t>& content)
 {
-    consume(content.span());
+    consume(borrow(content)->span());
 }
 
 void FormDataConsumer::consumeFile(const String& filename)
@@ -107,7 +108,7 @@ void FormDataConsumer::consumeFile(const String& filename)
                 return;
             }
 
-            protectedThis->consume(*content);
+            protectedThis->consume(borrow(*content)->span());
         });
     });
 }

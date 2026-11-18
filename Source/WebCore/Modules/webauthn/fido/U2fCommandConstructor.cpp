@@ -40,6 +40,8 @@
 #include "WebAuthenticationConstants.h"
 #include "WebAuthenticationUtils.h"
 
+#include <wtf/Borrow.h>
+
 namespace fido {
 using namespace WebCore;
 
@@ -101,7 +103,7 @@ std::optional<Vector<uint8_t>> convertToU2fRegisterCommand(const Vector<uint8_t>
         return std::nullopt;
 
     ASSERT(request.rp.id);
-    return constructU2fRegisterCommand(produceRpIdHash(request.rp.id), clientDataHash);
+    return constructU2fRegisterCommand(produceRpIdHash(request.rp.id), borrow(clientDataHash)->span());
 }
 
 std::optional<Vector<uint8_t>> convertToU2fCheckOnlySignCommand(const Vector<uint8_t>& clientDataHash, const PublicKeyCredentialCreationOptions& request, const PublicKeyCredentialDescriptor& keyHandle)

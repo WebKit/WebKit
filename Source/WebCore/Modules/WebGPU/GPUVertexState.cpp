@@ -26,6 +26,7 @@
 #include "config.h"
 #include "GPUVertexState.h"
 
+#include <wtf/Borrow.h>
 #include <wtf/JSONValues.h>
 
 namespace WebCore {
@@ -35,7 +36,7 @@ Ref<JSON::Object> GPUVertexState::toJSON() const
     Ref json = GPUProgrammableStage::toJSON();
     if (!buffers.isEmpty()) {
         auto buffersJSON = JSON::Array::create();
-        for (auto& buffer : buffers) {
+        for (auto& buffer : borrow(buffers)) {
             if (buffer)
                 buffersJSON->pushObject(buffer->toJSON());
             else

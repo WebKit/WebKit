@@ -42,6 +42,7 @@
 #include "WebCodecsEncodedAudioChunk.h"
 #include "WebCodecsErrorCallback.h"
 #include "WebCodecsUtilities.h"
+#include <wtf/Borrow.h>
 #include <wtf/Scope.h>
 #include <wtf/TZoneMallocInlines.h>
 
@@ -274,7 +275,7 @@ ExceptionOr<void> WebCodecsAudioDecoder::resetDecoder(const Exception& exception
     clearControlMessageQueueAndMaybeScheduleDequeueEvent();
 
     auto promises = std::exchange(m_pendingFlushPromises, { });
-    for (auto& promise : promises)
+    for (auto& promise : borrow(promises))
         promise->reject(exception);
 
     return { };

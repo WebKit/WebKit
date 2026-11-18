@@ -44,6 +44,7 @@
 #include "StaticRange.h"
 #include "TextIndicator.h"
 #include "TextIterator.h"
+#include <wtf/Borrow.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/UUID.h>
 
@@ -72,8 +73,9 @@ static std::pair<RefPtr<Node>, size_t> findNodeStartingAtPathComponentIndex(cons
 
     RefPtr currentNode = initialNode;
     size_t currentPathIndex = initialIndexToFollow;
+    Borrow borrowedPath = path;
     for (; currentPathIndex < path.size(); ++currentPathIndex) {
-        auto& component = path[currentPathIndex];
+        auto& component = borrowedPath[currentPathIndex];
         auto nextNode = findNodeByPathIndex(*currentNode, component.pathIndex, component.nodeName);
         if (!nextNode)
             return { nullptr, currentPathIndex };
@@ -100,8 +102,9 @@ static RefPtr<Node> findNode(const AppHighlightRangeData::NodePath& path, Docume
     if (foundNode)
         return foundNode;
 
+    Borrow borrowedPath = path;
     while (nextIndex < path.size()) {
-        auto& component = path[nextIndex++];
+        auto& component = borrowedPath[nextIndex++];
         if (component.identifier.isEmpty())
             continue;
 
@@ -295,7 +298,7 @@ void AppHighlightStorage::restoreUnrestoredAppHighlights()
 {
     Vector<AppHighlightRangeData> remainingRanges;
     
-    for (auto& highlight : m_unrestoredHighlights) {
+    for (auto& highlight : borrow(m_unrestoredHighlights)) {
         if (!attemptToRestoreHighlightAndScroll(highlight, ScrollToHighlight::No))
             remainingRanges.append(highlight);
     }

@@ -27,6 +27,7 @@
 
 #import "SharedBuffer.h"
 #include <compression.h>
+#include <wtf/Borrow.h>
 
 namespace WebCore {
 
@@ -88,7 +89,7 @@ ExceptionOr<Ref<JSC::ArrayBuffer>> CompressionStreamEncoder::compressAppleCompre
                 allocateSize *= 2;
         }
 
-        storage.append(output);
+        storage.append(borrow(output)->span());
     }
 
     RefPtr decompressedData = storage.takeBufferAsArrayBuffer();

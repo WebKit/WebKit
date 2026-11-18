@@ -51,6 +51,7 @@
 #include "WebCodecsVideoFrameAlgorithms.h"
 #include "WebCodecsVideoFrameOutputCallback.h"
 #include <wtf/ASCIICType.h>
+#include <wtf/Borrow.h>
 #include <wtf/Scope.h>
 #include <wtf/TZoneMallocInlines.h>
 
@@ -341,7 +342,7 @@ ExceptionOr<void> WebCodecsVideoDecoder::resetDecoder(const Exception& exception
     clearControlMessageQueueAndMaybeScheduleDequeueEvent();
 
     auto promises = std::exchange(m_pendingFlushPromises, { });
-    for (auto& promise : promises)
+    for (auto& promise : borrow(promises))
         promise->reject(exception);
 
     return { };

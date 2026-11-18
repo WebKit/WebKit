@@ -30,6 +30,8 @@
 
 #include "FidoConstants.h"
 
+#include <wtf/Borrow.h>
+
 namespace fido {
 
 Vector<uint8_t> getInitPacketData(const Vector<uint8_t>& data)
@@ -42,7 +44,7 @@ Vector<uint8_t> getContinuationPacketData(const Vector<uint8_t>& data, size_t be
     if (beginPosition > data.size())
         return { };
 
-    return data.subspan(beginPosition, std::min(kHidContinuationPacketDataSize, data.size() - beginPosition));
+    return borrow(data)->subspan(beginPosition, std::min(kHidContinuationPacketDataSize, data.size() - beginPosition));
 }
 
 } // namespace fido

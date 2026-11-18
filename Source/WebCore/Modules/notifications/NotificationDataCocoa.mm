@@ -27,6 +27,7 @@
 #import "NotificationData.h"
 
 #import "NotificationDirection.h"
+#import <wtf/Borrow.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/cocoa/VectorCocoa.h>
 
@@ -124,7 +125,7 @@ NSDictionary *NotificationData::dictionaryRepresentation() const
         WebNotificationUUIDStringKey : notificationID.toString().createNSString().get(),
         WebNotificationSessionIDKey : @(sourceSession.toUInt64()),
         WebNotificationCreationTimeKey : @(creationTime.secondsSinceEpoch().value()),
-        WebNotificationDataKey: toNSData(data).autorelease(),
+        WebNotificationDataKey: WTF::toNSData(borrow(data)->span()).autorelease(),
     }.mutableCopy);
 
     if (contextIdentifier)

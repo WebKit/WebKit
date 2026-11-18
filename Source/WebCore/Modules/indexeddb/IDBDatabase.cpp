@@ -44,6 +44,7 @@
 #include "ScriptExecutionContext.h"
 #include <JavaScriptCore/HeapInlines.h>
 #include <ranges>
+#include <wtf/Borrow.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/TextStream.h>
 
@@ -199,7 +200,7 @@ ExceptionOr<Ref<IDBTransaction>> IDBDatabase::transaction(StringOrVectorOfString
     } else
         objectStores = { std::get<String>(WTF::move(storeNames)) };
 
-    for (auto& objectStoreName : objectStores) {
+    for (auto& objectStoreName : borrow(objectStores)) {
         if (m_info.hasObjectStore(objectStoreName))
             continue;
         return Exception { ExceptionCode::NotFoundError, "Failed to execute 'transaction' on 'IDBDatabase': One of the specified object stores was not found."_s };
@@ -276,11 +277,11 @@ void IDBDatabase::connectionToServerLost(const IDBError& error)
     m_closedInServer = true;
 
     auto activeTransactions = copyToVector(m_activeTransactions.values());
-    for (auto& transaction : activeTransactions)
+    for (auto& transaction : borrow(activeTransactions))
         transaction->connectionClosedFromServer(error);
     
     auto committingTransactions = copyToVector(m_committingTransactions.values());
-    for (auto& transaction : committingTransactions)
+    for (auto& transaction : borrow(committingTransactions))
         transaction->connectionClosedFromServer(error);
 
     auto errorEvent = Event::create(m_eventNames.errorEvent, Event::CanBubble::Yes, Event::IsCancelable::No);

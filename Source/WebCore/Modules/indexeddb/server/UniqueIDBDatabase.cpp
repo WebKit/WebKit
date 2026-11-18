@@ -45,6 +45,7 @@
 #include "UniqueIDBDatabaseConnection.h"
 #include "UniqueIDBDatabaseManager.h"
 #include <algorithm>
+#include <wtf/Borrow.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/Scope.h>
 #include <wtf/SetForScope.h>
@@ -70,7 +71,7 @@ static inline uint64_t estimateSize(const IDBKeyData& keyData)
         break;
     }
     case IndexedDB::KeyType::Array:
-        for (auto& data : keyData.array())
+        for (auto& data : borrow(keyData.array()))
             size += estimateSize(data);
         break;
     default:
@@ -1677,7 +1678,7 @@ UniqueIDBDatabase::DidAbortAnyTransaction UniqueIDBDatabase::abortInProgressTran
     }
 
     bool abortedAnyTransaction = false;
-    for (auto& transaction : transactionsToAbort) {
+    for (auto& transaction : borrow(transactionsToAbort)) {
         auto transactionIdentifier = transaction->info().identifier();
         auto takenTransaction = m_inProgressTransactions.take(transactionIdentifier);
         if (!takenTransaction)

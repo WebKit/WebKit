@@ -37,6 +37,7 @@
 #include "ScriptExecutionContext.h"
 #include "SecurityOrigin.h"
 #include "TestReportBody.h"
+#include <wtf/Borrow.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/StringParsingBuffer.h>
 
@@ -96,7 +97,7 @@ void ReportingScope::notifyReportObservers(Ref<Report>&& report)
 
     // Step 4.2.1
     auto possibleReportObservers = copyToVector(m_reportingObservers);
-    for (auto& observer : possibleReportObservers)
+    for (auto& observer : borrow(possibleReportObservers))
         observer->appendQueuedReportIfCorrectType(report);
 
     auto currentReportType = protect(report->body())->reportBodyType();

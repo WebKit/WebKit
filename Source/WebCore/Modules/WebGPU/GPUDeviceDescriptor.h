@@ -30,6 +30,7 @@
 #include "GPUQueueDescriptor.h"
 #include "WebGPUDeviceDescriptor.h"
 #include <cstdint>
+#include <wtf/Borrow.h>
 #include <wtf/HashMap.h>
 #include <wtf/KeyValuePair.h>
 #include <wtf/RefPtr.h>
@@ -43,7 +44,7 @@ struct GPUDeviceDescriptor : public GPUObjectDescriptorBase {
         // An entry whose value is explicitly undefined requests nothing, so drop it rather than
         // letting the backing layer reject it as an unsupported limit.
         Vector<KeyValuePair<String, uint64_t>> specifiedLimits(ReserveCapacityTag { }, requiredLimits.size());
-        for (auto& requiredLimit : requiredLimits) {
+        for (auto& requiredLimit : borrow(requiredLimits)) {
             if (auto* value = std::get_if<uint64_t>(&requiredLimit.value))
                 specifiedLimits.append({ requiredLimit.key, *value });
         }

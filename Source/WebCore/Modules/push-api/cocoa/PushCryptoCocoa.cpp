@@ -28,6 +28,7 @@
 
 #include <CommonCrypto/CommonHMAC.h>
 #include <pal/spi/cocoa/CommonCryptoSPI.h>
+#include <wtf/Borrow.h>
 #include <wtf/Scope.h>
 #include <wtf/StdLibExtras.h>
 
@@ -100,7 +101,7 @@ std::optional<Vector<uint8_t>> computeP256DHSharedSecret(std::span<const uint8_t
 
     Vector<uint8_t> sharedSecret(p256dhSharedSecretLength);
     size_t sharedSecretLength = sharedSecret.size();
-    if (CCECCryptorComputeSharedSecret(ccPrivateKey, ccPublicKey, sharedSecret.begin(), &sharedSecretLength) != kCCSuccess || sharedSecretLength != p256dhSharedSecretLength)
+    if (CCECCryptorComputeSharedSecret(ccPrivateKey, ccPublicKey, borrow(sharedSecret)->begin(), &sharedSecretLength) != kCCSuccess || sharedSecretLength != p256dhSharedSecretLength)
         return std::nullopt;
 
     return sharedSecret;
@@ -109,7 +110,7 @@ std::optional<Vector<uint8_t>> computeP256DHSharedSecret(std::span<const uint8_t
 Vector<uint8_t> hmacSHA256(std::span<const uint8_t> key, std::span<const uint8_t> message)
 {
     Vector<uint8_t> result(sha256DigestLength);
-    CCHmac(kCCHmacAlgSHA256, key.data(), key.size(), message.data(), message.size(), result.begin());
+    CCHmac(kCCHmacAlgSHA256, key.data(), key.size(), message.data(), message.size(), borrow(result)->begin());
     return result;
 }
 
@@ -120,7 +121,7 @@ std::optional<Vector<uint8_t>> decryptAES128GCM(std::span<const uint8_t> key, st
 
     Vector<uint8_t> plainText(cipherTextWithTag.size() - aes128GCMTagLength);
     auto nonTagCipherTextLength = cipherTextWithTag.size() - aes128GCMTagLength;
-    auto result = CCCryptorGCMOneshotDecrypt(kCCAlgorithmAES, key.data(), key.size(), iv.data(), iv.size(), nullptr /* additionalData */, 0 /* additionalDataLength */, cipherTextWithTag.data(), nonTagCipherTextLength, plainText.mutableSpan().data(), cipherTextWithTag.subspan(nonTagCipherTextLength).data(), aes128GCMTagLength);
+    auto result = CCCryptorGCMOneshotDecrypt(kCCAlgorithmAES, key.data(), key.size(), iv.data(), iv.size(), nullptr /* additionalData */, 0 /* additionalDataLength */, cipherTextWithTag.data(), nonTagCipherTextLength, borrow(plainText)->mutableSpan().data(), cipherTextWithTag.subspan(nonTagCipherTextLength).data(), aes128GCMTagLength);
     if (result != kCCSuccess)
         return std::nullopt;
 

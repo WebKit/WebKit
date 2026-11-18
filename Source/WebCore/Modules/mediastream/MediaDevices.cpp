@@ -61,6 +61,7 @@
 #include "UserMediaController.h"
 #include "UserMediaRequest.h"
 #include <ranges>
+#include <wtf/Borrow.h>
 #include <wtf/CryptographicallyRandomNumber.h>
 #include <wtf/TZoneMallocInlines.h>
 
@@ -383,7 +384,7 @@ void MediaDevices::exposeDevices(Vector<CaptureDeviceWithCapabilities>&& newDevi
     m_audioOutputDeviceIdToPersistentId.clear();
 
     Vector<Variant<Ref<MediaDeviceInfo>, Ref<InputDeviceInfo>>> devices;
-    for (auto& newDeviceWithCapabilities : newDevices) {
+    for (auto& newDeviceWithCapabilities : borrow(newDevices)) {
         auto& newDevice = newDeviceWithCapabilities.device;
         if (!canAccessMicrophone && newDevice.type() == CaptureDevice::DeviceType::Microphone)
             continue;

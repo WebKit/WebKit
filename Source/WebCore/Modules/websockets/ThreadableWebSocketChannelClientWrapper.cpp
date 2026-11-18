@@ -33,6 +33,7 @@
 
 #include "ScriptExecutionContext.h"
 #include "WebSocketChannelClient.h"
+#include <wtf/Borrow.h>
 #include <wtf/RefPtr.h>
 #include <wtf/text/StringView.h>
 
@@ -87,7 +88,7 @@ void ThreadableWebSocketChannelClientWrapper::setSubprotocol(const String& subpr
 {
     unsigned length = subprotocol.length();
     m_subprotocol.resize(length);
-    StringView(subprotocol).getCharacters(m_subprotocol.mutableSpan());
+    StringView(subprotocol).getCharacters(borrow(m_subprotocol)->mutableSpan());
 }
 
 String ThreadableWebSocketChannelClientWrapper::extensions() const
@@ -101,7 +102,7 @@ void ThreadableWebSocketChannelClientWrapper::setExtensions(const String& extens
 {
     unsigned length = extensions.length();
     m_extensions.resize(length);
-    StringView(extensions).getCharacters(m_extensions.mutableSpan());
+    StringView(extensions).getCharacters(borrow(m_extensions)->mutableSpan());
 }
 
 void ThreadableWebSocketChannelClientWrapper::clearClient()
@@ -215,7 +216,7 @@ void ThreadableWebSocketChannelClientWrapper::processPendingTasks()
 
     Vector<std::unique_ptr<ScriptExecutionContext::Task>> pendingTasks = WTF::move(m_pendingTasks);
     Ref protectedContext = { *m_context };
-    for (auto& task : pendingTasks)
+    for (auto& task : borrow(pendingTasks))
         task->performTask(protectedContext.get());
 }
 

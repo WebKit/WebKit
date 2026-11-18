@@ -35,6 +35,7 @@
 #include "LibWebRTCUtils.h"
 #include "RTCPeerConnection.h"
 #include "RTCRtpCodec.h"
+#include <wtf/Borrow.h>
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
@@ -115,7 +116,7 @@ static inline ExceptionOr<webrtc::RtpCodecCapability> toRtpCodecCapability(const
 ExceptionOr<void> LibWebRTCRtpTransceiverBackend::setCodecPreferences(const Vector<RTCRtpCodec>& codecs)
 {
     std::vector<webrtc::RtpCodecCapability> rtcCodecs;
-    for (auto& codec : codecs) {
+    for (auto& codec : borrow(codecs)) {
         auto result = toRtpCodecCapability(codec);
         if (result.hasException())
             return result.releaseException();

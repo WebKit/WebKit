@@ -55,6 +55,7 @@
 #include <JavaScriptCore/JSONObject.h>
 #include <JavaScriptCore/ThrowScope.h>
 #include <wtf/ASCIICType.h>
+#include <wtf/Borrow.h>
 #include <wtf/RunLoop.h>
 #include <wtf/Scope.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -202,7 +203,7 @@ enum class IsUpdate {
 static ExceptionOr<std::tuple<String, Vector<String>>> checkAndCanonicalizeDetails(ScriptExecutionContext& context, PaymentDetailsBase& details, bool requestShipping, IsUpdate isUpdate)
 {
     if (details.displayItems) {
-        for (auto& item : *details.displayItems) {
+        for (auto& item : borrow(*details.displayItems)) {
             auto paymentItemResult = checkAndCanonicalizePaymentItem(item, NegativeAmountAllowed::Yes);
             if (paymentItemResult.hasException())
                 return paymentItemResult.releaseException();
@@ -214,7 +215,7 @@ static ExceptionOr<std::tuple<String, Vector<String>>> checkAndCanonicalizeDetai
         if (details.shippingOptions) {
             HashSet<String> seenShippingOptionIDs;
             bool didLog = false;
-            for (auto& shippingOption : *details.shippingOptions) {
+            for (auto& shippingOption : borrow(*details.shippingOptions)) {
                 auto exception = checkAndCanonicalizeAmount(shippingOption.amount);
                 if (exception.hasException())
                     return exception.releaseException();
@@ -245,7 +246,7 @@ static ExceptionOr<std::tuple<String, Vector<String>>> checkAndCanonicalizeDetai
     Vector<String> serializedModifierData;
     if (details.modifiers) {
         serializedModifierData.reserveInitialCapacity(details.modifiers->size());
-        for (auto& modifier : *details.modifiers) {
+        for (auto& modifier : borrow(*details.modifiers)) {
             if (isUpdate == IsUpdate::Yes) {
                 auto paymentMethodIdentifier = convertAndValidatePaymentMethodIdentifier(modifier.supportedMethods);
                 if (!paymentMethodIdentifier)
@@ -258,7 +259,7 @@ static ExceptionOr<std::tuple<String, Vector<String>>> checkAndCanonicalizeDetai
                     return totalResult.releaseException();
             }
 
-            for (auto& item : modifier.additionalDisplayItems) {
+            for (auto& item : borrow(modifier.additionalDisplayItems)) {
                 auto paymentItemResult = checkAndCanonicalizePaymentItem(item, NegativeAmountAllowed::Yes);
                 if (paymentItemResult.hasException())
                     return paymentItemResult.releaseException();
@@ -313,7 +314,7 @@ ExceptionOr<Ref<PaymentRequest>> PaymentRequest::create(Document& document, Vect
 
     Vector<Method> serializedMethodData(ReserveCapacityTag { }, methodData.size());
     HashSet<String> seenMethodIDs;
-    for (auto& paymentMethod : methodData) {
+    for (auto& paymentMethod : borrow(methodData)) {
         auto identifier = convertAndValidatePaymentMethodIdentifier(paymentMethod.supportedMethods);
         if (!identifier)
             return Exception { ExceptionCode::RangeError, makeString('"', paymentMethod.supportedMethods, "\" is an invalid payment method identifier."_s) };
@@ -405,7 +406,7 @@ void PaymentRequest::show(Document& document, RefPtr<DOMPromise>&& detailsPromis
     m_showPromise = makeUnique<ShowPromise>(WTF::move(promise));
 
     RefPtr<PaymentHandler> selectedPaymentHandler;
-    for (auto& paymentMethod : m_serializedMethodData) {
+    for (auto& paymentMethod : borrow(m_serializedMethodData)) {
         auto data = parse(document, paymentMethod.serializedData);
         if (data.hasException()) {
             settleShowPromise(data.releaseException());
@@ -539,7 +540,7 @@ void PaymentRequest::canMakePayment(Document& document, CanMakePaymentPromise&& 
         return;
     }
 
-    for (auto& paymentMethod : m_serializedMethodData) {
+    for (auto& paymentMethod : borrow(m_serializedMethodData)) {
         auto handler = PaymentHandler::create(document, *this, paymentMethod.identifier);
         if (!handler)
             continue;

@@ -30,6 +30,7 @@
 
 #include "AudioUtilities.h"
 #include "BiquadDSPKernel.h"
+#include <wtf/Borrow.h>
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
@@ -106,7 +107,7 @@ void BiquadProcessor::process(const AudioBus& source, AudioBus& destination, siz
             
     // For each channel of our input, process using the corresponding BiquadDSPKernel into the output channel.
     for (unsigned i = 0; i < m_kernels.size(); ++i)
-        m_kernels[i]->process(source.channel(i)->span().first(framesToProcess), destination.channel(i)->mutableSpan());
+        borrow(m_kernels)[i]->process(source.channel(i)->span().first(framesToProcess), destination.channel(i)->mutableSpan());
 }
 
 void BiquadProcessor::processOnlyAudioParams(size_t framesToProcess)

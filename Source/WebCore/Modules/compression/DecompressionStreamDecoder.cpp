@@ -30,6 +30,7 @@
 #include <JavaScriptCore/GenericTypedArrayViewInlines.h>
 #include <JavaScriptCore/JSCInlines.h>
 #include <JavaScriptCore/JSGenericTypedArrayViewInlines.h>
+#include <wtf/Borrow.h>
 
 namespace WebCore {
 
@@ -164,7 +165,7 @@ ExceptionOr<Ref<JSC::ArrayBuffer>> DecompressionStreamDecoder::decompressZlib(st
             m_didDetectExtraBytes = true;
             shouldDecompress = false;
             output.shrink(allocateSize - m_zstream.getPlatformStream().avail_out);
-            storage.append(output);
+            storage.append(borrow(output)->span());
             break;
         }
 
@@ -176,7 +177,7 @@ ExceptionOr<Ref<JSC::ArrayBuffer>> DecompressionStreamDecoder::decompressZlib(st
                 allocateSize *= 2;
         }
 
-        storage.append(output);
+        storage.append(borrow(output)->span());
     }
 
     RefPtr decompressedData = storage.takeBufferAsArrayBuffer();

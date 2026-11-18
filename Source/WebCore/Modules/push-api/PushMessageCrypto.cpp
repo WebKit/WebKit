@@ -28,6 +28,7 @@
 
 #include "PushCrypto.h"
 #include <array>
+#include <wtf/Borrow.h>
 #include <wtf/ByteOrder.h>
 #include <wtf/CryptographicallyRandomNumber.h>
 #include <wtf/StdLibExtras.h>
@@ -119,7 +120,7 @@ std::optional<Vector<uint8_t>> decryptAES128GCMPayload(const ClientKeys& clientK
      * # HKDF-Extract(salt=auth_secret, IKM=ecdh_secret)
      * PRK_key = HMAC-SHA-256(auth_secret, ecdh_secret)
      */
-    auto prkKey = hmacSHA256(clientKeys.sharedAuthSecret, *ecdhSecretResult);
+    auto prkKey = hmacSHA256(borrow(clientKeys.sharedAuthSecret)->span(), borrow(*ecdhSecretResult)->span());
 
     /*
      * # HKDF-Expand(PRK_key, key_info, L_key=32)
@@ -138,13 +139,13 @@ std::optional<Vector<uint8_t>> decryptAES128GCMPayload(const ClientKeys& clientK
     memcpySpan(std::span { keyInfo.clientKey }, clientKeys.clientP256DHKeyPair.publicKey.span().first(p256dhPublicKeyLength));
     memcpySpan(std::span { keyInfo.serverKey }, std::span { header.serverPublicKey });
 
-    auto ikm = hmacSHA256(prkKey, asByteSpan(keyInfo));
+    auto ikm = hmacSHA256(borrow(prkKey)->span(), asByteSpan(keyInfo));
 
     /*
      * # HKDF-Extract(salt, IKM)
      * PRK = HMAC-SHA-256(salt, IKM)
      */
-    auto prk = hmacSHA256(header.salt, ikm);
+    auto prk = hmacSHA256(header.salt, borrow(ikm)->span());
 
     /*
      * # HKDF-Expand(PRK, cek_info, L_cek=16)
@@ -152,7 +153,7 @@ std::optional<Vector<uint8_t>> decryptAES128GCMPayload(const ClientKeys& clientK
      * CEK = HMAC-SHA-256(PRK, cek_info || 0x01)[0..15]
      */
     static const auto cekInfo = "Content-Encoding: aes128gcm\x00\x01"_span8;
-    auto cek = hmacSHA256(prk, byteCast<uint8_t>(cekInfo));
+    auto cek = hmacSHA256(borrow(prk)->span(), byteCast<uint8_t>(cekInfo));
     cek.shrink(16);
 
     /*
@@ -161,12 +162,12 @@ std::optional<Vector<uint8_t>> decryptAES128GCMPayload(const ClientKeys& clientK
      * NONCE = HMAC-SHA-256(PRK, nonce_info || 0x01)[0..11]
      */
     static const auto nonceInfo = "Content-Encoding: nonce\x00\x01"_span8;
-    auto nonce = hmacSHA256(prk, byteCast<uint8_t>(nonceInfo));
+    auto nonce = hmacSHA256(borrow(prk)->span(), byteCast<uint8_t>(nonceInfo));
     nonce.shrink(12);
 
     // Finally, decrypt with AES128GCM and return the unpadded plaintext.
     auto cipherText = payload.subspan(sizeof(header));
-    auto plainTextResult = decryptAES128GCM(cek, nonce, cipherText);
+    auto plainTextResult = decryptAES128GCM(borrow(cek)->span(), borrow(nonce)->span(), cipherText);
     if (!plainTextResult)
         return std::nullopt;
 
@@ -237,9 +238,9 @@ std::optional<Vector<uint8_t>> decryptAESGCMPayload(const ClientKeys& clientKeys
      * PRK = HMAC-SHA-256(salt, IKM)
      */
     static const auto authInfo = "Content-Encoding: auth\x00\x01"_span8;
-    auto prkCombine = hmacSHA256(clientKeys.sharedAuthSecret, *ecdhSecretResult);
-    auto ikm = hmacSHA256(prkCombine, byteCast<uint8_t>(authInfo));
-    auto prk = hmacSHA256(salt, ikm);
+    auto prkCombine = hmacSHA256(borrow(clientKeys.sharedAuthSecret)->span(), borrow(*ecdhSecretResult)->span());
+    auto ikm = hmacSHA256(borrow(prkCombine)->span(), byteCast<uint8_t>(authInfo));
+    auto prk = hmacSHA256(salt, borrow(ikm)->span());
 
     /*
      * context = "P-256" || 0x00 ||
@@ -271,7 +272,7 @@ std::optional<Vector<uint8_t>> decryptAESGCMPayload(const ClientKeys& clientKeys
     memcpySpan(std::span { cekInfo }, cekInfoHeader.spanIncludingNullTerminator());
     memcpySpan(std::span { cekInfo }.subspan(cekInfoHeader.length() + 1), asByteSpan(context));
 
-    auto cek = hmacSHA256(prk, cekInfo);
+    auto cek = hmacSHA256(borrow(prk)->span(), cekInfo);
     cek.shrink(16);
 
     /*
@@ -283,11 +284,11 @@ std::optional<Vector<uint8_t>> decryptAESGCMPayload(const ClientKeys& clientKeys
     memcpySpan(std::span { nonceInfo }, nonceInfoHeader.spanIncludingNullTerminator());
     memcpySpan(std::span { nonceInfo }.subspan(nonceInfoHeader.length() + 1), asByteSpan(context));
 
-    auto nonce = hmacSHA256(prk, nonceInfo);
+    auto nonce = hmacSHA256(borrow(prk)->span(), nonceInfo);
     nonce.shrink(12);
 
     // Finally, decrypt with AES128GCM and return the unpadded plaintext.
-    auto plainTextResult = decryptAES128GCM(cek, nonce, payload);
+    auto plainTextResult = decryptAES128GCM(borrow(cek)->span(), borrow(nonce)->span(), payload);
     if (!plainTextResult)
         return std::nullopt;
 

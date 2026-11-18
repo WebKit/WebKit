@@ -31,6 +31,7 @@
 #include <JavaScriptCore/GenericTypedArrayViewInlines.h>
 #include <JavaScriptCore/TypedArrayAdaptors.h>
 #include <pal/text/TextEncoding.h>
+#include <wtf/Borrow.h>
 #include <wtf/JSONValues.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/UUID.h>
@@ -175,7 +176,7 @@ RefPtr<JSC::ArrayBuffer> CDMSessionClearKey::cachedKeyForKeyID(const String& key
         return nullptr;
 
     auto keyData = m_cachedKeys.get(keyId);
-    auto keyDataArray = JSC::Uint8Array::create(keyData.span());
+    auto keyDataArray = JSC::Uint8Array::create(borrow(keyData)->span());
     return keyDataArray->unsharedBuffer();
 }
 

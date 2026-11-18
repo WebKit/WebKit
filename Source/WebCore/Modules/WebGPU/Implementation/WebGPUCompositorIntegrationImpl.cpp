@@ -34,6 +34,7 @@
 #include <WebCore/NativeImage.h>
 #include <WebCore/WebGPUCppAPI.h>
 #include <pal/spi/cg/CoreGraphicsSPI.h>
+#include <wtf/Borrow.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/spi/cocoa/IOSurfaceSPI.h>
 
@@ -65,7 +66,7 @@ void WebGPUCompositorIntegrationImpl::updateContentsHeadroom(float headroom)
 {
 #if HAVE(SUPPORT_HDR_DISPLAY)
     m_contentsHeadroom = headroom;
-    for (auto& ioSurface : m_renderBuffers)
+    for (auto& ioSurface : borrow(m_renderBuffers))
         ioSurface->setContentEDRHeadroom(headroom);
 #else
     UNUSED_PARAM(headroom);
@@ -117,7 +118,7 @@ uint32_t WebGPUCompositorIntegrationImpl::recreateRenderBuffers(int width, int h
     auto renderBuffers = m_renderBuffers.map([](auto& ioSurface) {
         return ioSurface->surface();
     });
-    m_renderBuffersWereRecreatedCallback(renderBuffers.span());
+    m_renderBuffersWereRecreatedCallback(borrow(renderBuffers)->span());
 
     return m_renderBuffers.size();
 }
@@ -130,7 +131,7 @@ void WebGPUCompositorIntegrationImpl::prepareForDisplay(uint32_t frameIndex, Com
     MachSendRight displayBuffer;
     std::optional<uint32_t> replacedRenderBufferIndex;
     if (frameIndex < m_renderBuffers.size()) {
-        displayBuffer = m_renderBuffers[frameIndex]->createSendRight();
+        displayBuffer = borrow(m_renderBuffers)[frameIndex]->createSendRight();
         uint32_t nextFrameIndex = (frameIndex + 1) % m_renderBuffers.size();
         if (nextFrameIndex != frameIndex && replaceRenderBufferIfInUse(nextFrameIndex))
             replacedRenderBufferIndex = nextFrameIndex;
@@ -144,7 +145,7 @@ void WebGPUCompositorIntegrationImpl::prepareForDisplay(uint32_t frameIndex, Com
 bool WebGPUCompositorIntegrationImpl::replaceRenderBufferIfInUse(uint32_t index)
 {
     updateSpareRenderBuffers();
-    if (!m_renderBuffers[index]->isInUse())
+    if (!borrow(m_renderBuffers)[index]->isInUse())
         return false;
 
     auto replacement = takeSpareRenderBuffer();
@@ -157,7 +158,7 @@ bool WebGPUCompositorIntegrationImpl::replaceRenderBufferIfInUse(uint32_t index)
         replacement->setContentEDRHeadroom(*m_contentsHeadroom);
 #endif
 
-    m_spareRenderBuffers.append({ std::exchange(m_renderBuffers[index], makeUniqueRefFromNonNullUniquePtr(WTF::move(replacement))) });
+    m_spareRenderBuffers.append({ std::exchange(borrow(m_renderBuffers)[index], makeUniqueRefFromNonNullUniquePtr(WTF::move(replacement))) });
     if (m_spareRenderBuffers.size() > maxSpareRenderBuffers)
         m_spareRenderBuffers.removeAt(0);
     m_renderBufferWasReplacedCallback(index, RetainPtr { m_renderBuffers[index]->surface() }.get());
@@ -181,7 +182,7 @@ std::unique_ptr<WebCore::IOSurface> WebGPUCompositorIntegrationImpl::takeSpareRe
 
 void WebGPUCompositorIntegrationImpl::updateSpareRenderBuffers()
 {
-    for (auto& spare : m_spareRenderBuffers) {
+    for (auto& spare : borrow(m_spareRenderBuffers)) {
         if (spare.isVolatile || spare.surface->isInUse())
             continue;
         spare.surface->setVolatile(true);
@@ -212,7 +213,7 @@ void WebGPUCompositorIntegrationImpl::withDisplayBufferAsNativeImage(uint32_t bu
     // composite over the page; an opaque canvas forces the alpha to be ignored.
     // This matters for RGBA16F, whose IOSurface format cannot itself encode opacity.
     auto shouldForceOpaque = m_alphaMode == WebCore::AlphaPremultiplication::Premultiplied ? IOSurface::ShouldForceOpaque::No : IOSurface::ShouldForceOpaque::Yes;
-    m_renderBuffers[bufferIndex]->withNativeImage(shouldForceOpaque, [&](NativeImage* image) {
+    borrow(m_renderBuffers)[bufferIndex]->withNativeImage(shouldForceOpaque, [&](NativeImage* image) {
         if (image)
             CGImageSetCachingFlags(image->platformImage().get(), kCGImageCachingTransient);
         completion(image);

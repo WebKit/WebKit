@@ -27,6 +27,7 @@
 
 #include "ExceptionOr.h"
 #include <compression.h>
+#include <wtf/Borrow.h>
 
 namespace WebCore {
 
@@ -81,7 +82,7 @@ ExceptionOr<Ref<JSC::ArrayBuffer>> DecompressionStreamDecoder::decompressAppleCo
             m_didDetectExtraBytes = true;
             shouldDecompress = false;
             output.shrink(allocateSize - m_compressionStream.getPlatformStream().dst_size);
-            storage.append(output);
+            storage.append(borrow(output)->span());
             break;
         }
 
@@ -93,7 +94,7 @@ ExceptionOr<Ref<JSC::ArrayBuffer>> DecompressionStreamDecoder::decompressAppleCo
                 allocateSize *= 2;
         }
 
-        storage.append(output);
+        storage.append(borrow(output)->span());
     }
 
     RefPtr decompressedData = storage.takeBufferAsArrayBuffer();

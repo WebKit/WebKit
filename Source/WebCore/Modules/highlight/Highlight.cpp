@@ -36,6 +36,7 @@
 #include "RenderHighlight.h"
 #include "RenderObjectDocument.h"
 #include "StaticRange.h"
+#include <wtf/Borrow.h>
 #include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
@@ -72,7 +73,7 @@ Highlight::Highlight(FixedVector<std::reference_wrapper<AbstractRange>>&& initia
 
 void Highlight::initializeSetLike(DOMSetAdapter& set)
 {
-    for (auto& highlightRange : m_highlightRanges)
+    for (auto& highlightRange : borrow(m_highlightRanges))
         set.add<IDLInterface<AbstractRange>>(highlightRange->range());
 }
 
@@ -104,14 +105,15 @@ bool Highlight::addToSetLike(AbstractRange& range)
         return true;
     }
     // Move to last since SetLike is an ordered set.
-    m_highlightRanges.append(WTF::move(m_highlightRanges[index]));
+    Ref highlightRangeToMove = WTF::move(borrow(m_highlightRanges)[index]);
+    m_highlightRanges.append(WTF::move(highlightRangeToMove));
     m_highlightRanges.removeAt(index);
     return false;
 }
 
 void Highlight::repaint()
 {
-    for (auto& highlightRange : m_highlightRanges)
+    for (auto& highlightRange : borrow(m_highlightRanges))
         repaintRange(highlightRange->range());
 }
 
@@ -140,7 +142,7 @@ void Highlight::updateHighlightRangesForRendererIfNeeded(Document& document)
     m_highlightRangesForRendererRenderTreeVersion = document.renderTreeVersion();
 
     RenderHighlight renderHighlight;
-    for (auto& highlightRange : m_highlightRanges) {
+    for (auto& highlightRange : borrow(m_highlightRanges)) {
         if (!renderHighlight.setRenderRange(highlightRange))
             continue;
         if (&renderHighlight.start()->document() != &document)

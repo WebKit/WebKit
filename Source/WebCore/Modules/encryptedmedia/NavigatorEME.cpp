@@ -40,6 +40,7 @@
 #include "Logging.h"
 #include "MediaKeySystemRequest.h"
 #include <JavaScriptCore/HeapCellInlines.h>
+#include <wtf/Borrow.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WTF {
@@ -135,7 +136,7 @@ static void tryNextSupportedConfiguration(Document& document, RefPtr<CDM>&& impl
         // 6.3.1. Let candidate configuration be the value.
         // 6.3.2. Let supported configuration be the result of executing the Get Supported Configuration
         //        algorithm on implementation, candidate configuration, and origin.
-        MediaKeySystemConfiguration candidateConfiguration = WTF::move(supportedConfigurations.first());
+        MediaKeySystemConfiguration candidateConfiguration = WTF::move(borrow(supportedConfigurations)->first());
         supportedConfigurations.removeAt(0);
 
         CDM::SupportedConfigurationCallback callback = [weakDocument = WeakPtr { document }, implementation = implementation, supportedConfigurations = WTF::move(supportedConfigurations), promise, logger = WTF::move(logger), identifier = WTF::move(identifier)] (std::optional<MediaKeySystemConfiguration> supportedConfiguration) mutable {

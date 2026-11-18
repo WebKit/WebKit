@@ -49,6 +49,7 @@
 #include <JavaScriptCore/HeapInlines.h>
 #include <JavaScriptCore/JSCJSValueInlines.h>
 #include <JavaScriptCore/TopExceptionScope.h>
+#include <wtf/Borrow.h>
 #include <wtf/Locker.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
@@ -718,7 +719,7 @@ void IDBObjectStore::rollbackForVersionChangeAbort()
     for (auto& index : m_referencedIndexes.values())
         index->rollbackInfoForVersionChangeAbort();
 
-    for (auto& index : indexesToDelete) {
+    for (auto& index : borrow(indexesToDelete)) {
         index->rollbackInfoForVersionChangeAbort();
         auto indexIdentifier = index->info().identifier();
         m_deletedIndexes.set(indexIdentifier, std::exchange(index, nullptr));

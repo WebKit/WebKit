@@ -32,6 +32,8 @@
 #include "CBORReader.h"
 #include "CBORWriter.h"
 
+#include <wtf/Borrow.h>
+
 namespace WebCore {
 
 std::optional<AuthenticationExtensionsClientInputs> AuthenticationExtensionsClientInputs::fromCBOR(std::span<const uint8_t> buffer)
@@ -66,7 +68,7 @@ std::optional<AuthenticationExtensionsClientInputs> AuthenticationExtensionsClie
 
         largeBlobIt = largeBlobMap.find(cbor::CBORValue("write"));
         if (largeBlobIt != largeBlobMap.end() && largeBlobIt->second.isByteString())
-            largeBlob.write = BufferSource(ArrayBuffer::create(largeBlobIt->second.getByteString()));
+            largeBlob.write = BufferSource(ArrayBuffer::create(borrow(largeBlobIt->second.getByteString())->span()));
 
         clientInputs.largeBlob = largeBlob;
     }
@@ -110,7 +112,7 @@ Vector<uint8_t> AuthenticationExtensionsClientInputs::toCBOR() const
 
         if (prf->evalByCredential) {
             cbor::CBORValue::MapValue evalByCredentialMap;
-            for (const auto& entry : *prf->evalByCredential) {
+            for (const auto& entry : borrow(*prf->evalByCredential)) {
                 cbor::CBORValue::MapValue valuesMap;
                 valuesMap[cbor::CBORValue("first")] = cbor::CBORValue(entry.value.first);
                 if (entry.value.second)

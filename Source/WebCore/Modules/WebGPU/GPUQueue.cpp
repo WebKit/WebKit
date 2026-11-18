@@ -56,6 +56,7 @@
 #include "WebCodecsVideoFrame.h"
 #include <JavaScriptCore/HeapCellInlines.h>
 #include <array>
+#include <wtf/Borrow.h>
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/MallocSpan.h>
 
@@ -704,7 +705,7 @@ static void imageBytesForSource(WebGPUIntegration& gpu, WebGPU::Queue& backing, 
                     }
                 }
             }
-            callback(tempBuffer.span(), orientedWidth, orientedHeight);
+            callback(borrow(tempBuffer)->span(), orientedWidth, orientedHeight);
 #else
             return callback({ }, 0, 0);
 #endif

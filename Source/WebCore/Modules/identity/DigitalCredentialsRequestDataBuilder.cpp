@@ -30,6 +30,7 @@
 #include <WebCore/DigitalCredentialsRequestData.h>
 #include <WebCore/ISO18013DocumentRequest.h>
 #include <WebCore/SecurityOriginData.h>
+#include <wtf/Borrow.h>
 #include <wtf/Variant.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
@@ -48,8 +49,9 @@ ExceptionOr<std::pair<DigitalCredentialsRequestData, DigitalCredentialsRawReques
     Vector<UnvalidatedDigitalCredentialRequest> rawRequests;
     size_t openID4VPRequestCount = 0;
 
+    Borrow borrowedValidatedCredentialRequests = validatedCredentialRequests;
     for (size_t index = 0; index < validatedCredentialRequests.size(); ++index) {
-        auto& validatedRequest = validatedCredentialRequests[index];
+        auto& validatedRequest = borrowedValidatedCredentialRequests[index];
         if (!validatedRequest)
             continue;
 
@@ -62,7 +64,7 @@ ExceptionOr<std::pair<DigitalCredentialsRequestData, DigitalCredentialsRawReques
         }
 
         requests.append(WTF::move(*validatedRequest));
-        rawRequests.append(WTF::move(unvalidatedRequests[index]));
+        rawRequests.append(WTF::move(borrow(unvalidatedRequests)[index]));
     }
 
     return std::make_pair(

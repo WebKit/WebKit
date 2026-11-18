@@ -34,6 +34,7 @@
 #include "RTCIceCandidate.h"
 #include "RTCPeerConnection.h"
 #include "RTCRtpSendParameters.h"
+#include <wtf/Borrow.h>
 #include <wtf/text/WTFString.h>
 
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
@@ -331,7 +332,7 @@ void updateRTCRtpSendParameters(const RTCRtpSendParameters& parameters, webrtc::
     }
 
     rtcParameters.header_extensions.clear();
-    for (auto& extension : parameters.headerExtensions)
+    for (auto& extension : borrow(parameters.headerExtensions))
         rtcParameters.header_extensions.push_back(fromRTCHeaderExtensionParameters(extension));
     // Codecs parameters are readonly
 
@@ -397,14 +398,14 @@ webrtc::RtpTransceiverInit fromRtpTransceiverInit(const RTCRtpTransceiverInit& i
 {
     webrtc::RtpTransceiverInit rtcInit;
     rtcInit.direction = fromRTCRtpTransceiverDirection(init.direction);
-    for (auto& stream : init.streams)
+    for (auto& stream : borrow(init.streams))
         rtcInit.stream_ids.push_back(stream->id().utf8().toStdString());
 
     if (type == webrtc::MediaType::AUDIO) {
         if (!init.sendEncodings.isEmpty())
-            rtcInit.send_encodings.push_back(fromRTCEncodingParameters(init.sendEncodings[0], type));
+            rtcInit.send_encodings.push_back(fromRTCEncodingParameters(borrow(init.sendEncodings)[0], type));
     } else {
-        for (auto& encoding : init.sendEncodings)
+        for (auto& encoding : borrow(init.sendEncodings))
             rtcInit.send_encodings.push_back(fromRTCEncodingParameters(encoding, type));
     }
     return rtcInit;

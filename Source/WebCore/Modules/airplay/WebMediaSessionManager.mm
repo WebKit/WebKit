@@ -39,6 +39,7 @@
 #include "MediaPlaybackTargetPickerMock.h"
 #include "WebMediaSessionManagerClient.h"
 #include <algorithm>
+#include <wtf/Borrow.h>
 #include <wtf/Logger.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
@@ -238,7 +239,7 @@ void WebMediaSessionManager::removePlaybackTargetPickerClient(WebMediaSessionMan
     if (index == notFound)
         return;
 
-    ALWAYS_LOG_MEDIASESSIONMANAGER(__func__, m_clientState[index].get());
+    ALWAYS_LOG_MEDIASESSIONMANAGER(__func__, borrow(m_clientState)[index].get());
 
     m_clientState.removeAt(index);
     scheduleDelayedTask({ ConfigurationTaskFlags::TargetMonitoringConfiguration, ConfigurationTaskFlags::TargetClientsConfiguration });
@@ -251,7 +252,7 @@ void WebMediaSessionManager::removeAllPlaybackTargetPickerClients(WebMediaSessio
 
     for (size_t i = m_clientState.size(); i > 0; --i) {
         if (&m_clientState[i - 1]->client == &client) {
-            ALWAYS_LOG_MEDIASESSIONMANAGER(__func__, m_clientState[i - 1].get());
+            ALWAYS_LOG_MEDIASESSIONMANAGER(__func__, borrow(m_clientState)[i - 1].get());
             m_clientState.removeAt(i - 1);
         }
     }
@@ -265,13 +266,16 @@ void WebMediaSessionManager::showPlaybackTargetPicker(WebMediaSessionManagerClie
     if (index == notFound)
         return;
 
-    auto& clientRequestingPicker = m_clientState[index];
-    for (auto& state : m_clientState) {
-        state->requestedPicker = state == clientRequestingPicker;
-        state->previouslyRequestedPicker = state == clientRequestingPicker;
-    }
+    {
+        Borrow clientState { m_clientState };
+        auto* clientRequestingPicker = clientState[index].get();
+        for (auto& state : clientState) {
+            state->requestedPicker = state.get() == clientRequestingPicker;
+            state->previouslyRequestedPicker = state.get() == clientRequestingPicker;
+        }
 
-    ALWAYS_LOG_MEDIASESSIONMANAGER(__func__, m_clientState[index].get());
+        ALWAYS_LOG_MEDIASESSIONMANAGER(__func__, clientRequestingPicker);
+    }
 
     bool hasActiveRoute = flagsAreSet(m_clientState[index]->flags, MediaProducerMediaState::IsPlayingToExternalDevice);
     protect(targetPicker())->showPlaybackTargetPicker(client.platformView().get(), FloatRect(rect), hasActiveRoute, useDarkAppearance);
@@ -284,12 +288,13 @@ void WebMediaSessionManager::clientStateDidChange(WebMediaSessionManagerClient& 
     if (index == notFound)
         return;
 
-    auto& changedClientState = m_clientState[index];
+    Borrow clientState { m_clientState };
+    auto* changedClientState = clientState[index].get();
     MediaProducerMediaStateFlags oldFlags = changedClientState->flags;
     if (newFlags == oldFlags)
         return;
 
-    ALWAYS_LOG_MEDIASESSIONMANAGER(__func__, m_clientState[index].get(), "new flags = ", newFlags);
+    ALWAYS_LOG_MEDIASESSIONMANAGER(__func__, changedClientState, "new flags = ", newFlags);
 
     changedClientState->flags = newFlags;
 
@@ -309,8 +314,8 @@ void WebMediaSessionManager::clientStateDidChange(WebMediaSessionManagerClient& 
         return;
 
     // Do not interrupt another element already playing to a device.
-    for (auto& state : m_clientState) {
-        if (state == changedClientState)
+    for (auto& state : clientState) {
+        if (state.get() == changedClientState)
             continue;
 
         if (flagsAreSet(state->flags, MediaProducerMediaState::IsPlayingToExternalDevice) && flagsAreSet(state->flags, MediaProducerMediaState::IsPlayingVideo)) {
@@ -325,14 +330,14 @@ void WebMediaSessionManager::clientStateDidChange(WebMediaSessionManagerClient& 
         return;
     }
 
-    for (auto& state : m_clientState) {
-        if (state == changedClientState)
+    for (auto& state : clientState) {
+        if (state.get() == changedClientState)
             continue;
         ALWAYS_LOG_MEDIASESSIONMANAGER(__func__, state.get(), " calling setShouldPlayToPlaybackTarget(false)");
         state->client.setShouldPlayToPlaybackTarget(state->contextId, false);
     }
 
-    ALWAYS_LOG_MEDIASESSIONMANAGER(__func__, changedClientState.get(), " calling setShouldPlayToPlaybackTarget(true)");
+    ALWAYS_LOG_MEDIASESSIONMANAGER(__func__, changedClientState, " calling setShouldPlayToPlaybackTarget(true)");
     changedClientState->client.setShouldPlayToPlaybackTarget(changedClientState->contextId, true);
 
     if (index && m_clientState.size() > 1)
@@ -351,7 +356,7 @@ void WebMediaSessionManager::externalOutputDeviceAvailableDidChange(bool availab
 {
     ALWAYS_LOG_MEDIASESSIONMANAGER(__func__, available);
     m_externalOutputDeviceAvailable = available;
-    for (auto& state : m_clientState)
+    for (auto& state : borrow(m_clientState))
         state->client.externalOutputDeviceAvailableDidChange(state->contextId, available);
 }
 
@@ -364,7 +369,7 @@ void WebMediaSessionManager::playbackTargetPickerWasDismissed()
 
 void WebMediaSessionManager::configureNewClients()
 {
-    for (auto& state : m_clientState) {
+    for (auto& state : borrow(m_clientState)) {
         if (!state->configurationRequired)
             continue;
 
@@ -388,10 +393,11 @@ void WebMediaSessionManager::configurePlaybackTargetClients()
     RefPtr playbackTarget = m_playbackTarget;
     bool haveActiveRoute = playbackTarget && playbackTarget->hasActiveRoute();
 
-    for (size_t i = 0; i < m_clientState.size(); ++i) {
-        auto& state = m_clientState[i];
+    Borrow clientState { m_clientState };
+    for (size_t i = 0; i < clientState->size(); ++i) {
+        auto* state = clientState[i].get();
 
-        ALWAYS_LOG_MEDIASESSIONMANAGER(__func__, state.get(), ", requestedPicker = ", state->requestedPicker);
+        ALWAYS_LOG_MEDIASESSIONMANAGER(__func__, state, ", requestedPicker = ", state->requestedPicker);
 
         if ((m_targetChanged || m_playbackTargetPickerDismissed) && state->requestedPicker)
             indexOfClientThatRequestedPicker = i;
@@ -407,22 +413,22 @@ void WebMediaSessionManager::configurePlaybackTargetClients()
         indexOfClientWillPlayToTarget = indexOfClientThatRequestedPicker;
     if (indexOfClientWillPlayToTarget == notFound && indexOfLastClientToRequestPicker != notFound)
         indexOfClientWillPlayToTarget = indexOfLastClientToRequestPicker;
-    if (indexOfClientWillPlayToTarget == notFound && haveActiveRoute && flagsAreSet(m_clientState[0]->flags, MediaProducerMediaState::ExternalDeviceAutoPlayCandidate) && !flagsAreSet(m_clientState[0]->flags, MediaProducerMediaState::IsPlayingVideo))
+    if (indexOfClientWillPlayToTarget == notFound && haveActiveRoute && flagsAreSet(clientState[0]->flags, MediaProducerMediaState::ExternalDeviceAutoPlayCandidate) && !flagsAreSet(clientState[0]->flags, MediaProducerMediaState::IsPlayingVideo))
         indexOfClientWillPlayToTarget = 0;
 
-    for (size_t i = 0; i < m_clientState.size(); ++i) {
-        auto& state = m_clientState[i];
+    for (size_t i = 0; i < clientState->size(); ++i) {
+        auto* state = clientState[i].get();
 
         if (m_playbackTarget)
             state->client.setPlaybackTarget(state->contextId, *m_playbackTarget.copyRef());
 
         if (i != indexOfClientWillPlayToTarget || !haveActiveRoute) {
-            ALWAYS_LOG_MEDIASESSIONMANAGER(__func__, state.get(), " calling setShouldPlayToPlaybackTarget(false)");
+            ALWAYS_LOG_MEDIASESSIONMANAGER(__func__, state, " calling setShouldPlayToPlaybackTarget(false)");
             state->client.setShouldPlayToPlaybackTarget(state->contextId, false);
         }
 
         if (state->requestedPicker && m_playbackTargetPickerDismissed) {
-            ALWAYS_LOG_MEDIASESSIONMANAGER(__func__, state.get(), " calling playbackTargetPickerWasDismissed");
+            ALWAYS_LOG_MEDIASESSIONMANAGER(__func__, state, " calling playbackTargetPickerWasDismissed");
             state->client.playbackTargetPickerWasDismissed(state->contextId);
         }
 
@@ -432,9 +438,9 @@ void WebMediaSessionManager::configurePlaybackTargetClients()
     }
 
     if (haveActiveRoute && indexOfClientWillPlayToTarget != notFound) {
-        auto& state = m_clientState[indexOfClientWillPlayToTarget];
+        auto* state = clientState[indexOfClientWillPlayToTarget].get();
         if (!flagsAreSet(state->flags, MediaProducerMediaState::IsPlayingToExternalDevice)) {
-            ALWAYS_LOG_MEDIASESSIONMANAGER(__func__, state.get(), " calling setShouldPlayToPlaybackTarget(true)");
+            ALWAYS_LOG_MEDIASESSIONMANAGER(__func__, state, " calling setShouldPlayToPlaybackTarget(true)");
             state->client.setShouldPlayToPlaybackTarget(state->contextId, true);
         }
     }
@@ -448,7 +454,7 @@ void WebMediaSessionManager::configurePlaybackTargetMonitoring()
     bool monitoringRequired = false;
     bool hasAvailabilityListener = false;
     bool haveClientWithMedia = false;
-    for (auto& state : m_clientState) {
+    for (auto& state : borrow(m_clientState)) {
         ALWAYS_LOG_MEDIASESSIONMANAGER(__func__, state.get());
         if (state->flags & MediaProducerMediaState::RequiresPlaybackTargetMonitoring) {
             monitoringRequired = true;
@@ -517,7 +523,7 @@ void WebMediaSessionManager::configureWatchdogTimer()
 
     bool stopTimer = false;
     bool didPlayToEnd = false;
-    for (auto& state : m_clientState) {
+    for (auto& state : borrow(m_clientState)) {
 
         ALWAYS_LOG_MEDIASESSIONMANAGER(__func__, state.get(), " playedToEnd = ", state->playedToEnd);
 

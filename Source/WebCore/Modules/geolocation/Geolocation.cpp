@@ -46,6 +46,7 @@
 #include "ScriptWrappableInlines.h"
 #include "SecurityOrigin.h"
 #include <JavaScriptCore/ConsoleTypes.h>
+#include <wtf/Borrow.h>
 #include <wtf/Ref.h>
 #include <wtf/RuntimeApplicationChecks.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -207,7 +208,7 @@ void Geolocation::resumeTimerFired()
             notifier->startTimerIfNeeded();
         GeoNotifierVector watcherCopy;
         m_watchers.getNotifiersVector(watcherCopy);
-        for (auto& watcher : watcherCopy)
+        for (auto& watcher : borrow(watcherCopy))
             watcher->startTimerIfNeeded();
     }
 
@@ -268,7 +269,7 @@ void Geolocation::resetAllGeolocationPermission()
     // Go over the watchers and re-request permission.
     GeoNotifierVector watcherCopy;
     m_watchers.getNotifiersVector(watcherCopy);
-    for (auto& watcher : watcherCopy)
+    for (auto& watcher : borrow(watcherCopy))
         startRequest(watcher);
 }
 
@@ -517,19 +518,19 @@ void Geolocation::setIsAllowed(bool allowed, const String& authorizationToken)
 
 void Geolocation::sendError(GeoNotifierVector& notifiers, GeolocationPositionError& error)
 {
-    for (auto& notifier : notifiers)
+    for (auto& notifier : borrow(notifiers))
         notifier->runErrorCallback(error);
 }
 
 void Geolocation::sendPosition(GeoNotifierVector& notifiers, GeolocationPosition& position)
 {
-    for (auto& notifier : notifiers)
+    for (auto& notifier : borrow(notifiers))
         notifier->runSuccessCallback(&position);
 }
 
 void Geolocation::stopTimer(GeoNotifierVector& notifiers)
 {
-    for (auto& notifier : notifiers)
+    for (auto& notifier : borrow(notifiers))
         notifier->stopTimer();
 }
 
@@ -555,7 +556,7 @@ void Geolocation::stopTimers()
 
 void Geolocation::cancelRequests(GeoNotifierVector& notifiers)
 {
-    for (auto& notifier : notifiers)
+    for (auto& notifier : borrow(notifiers))
         notifier->setFatalError(GeolocationPositionError::create(GeolocationPositionError::POSITION_UNAVAILABLE, framelessDocumentErrorMessage));
 }
 
@@ -570,7 +571,7 @@ void Geolocation::cancelAllRequests()
 void Geolocation::extractNotifiersWithCachedPosition(GeoNotifierVector& notifiers, GeoNotifierVector* cached)
 {
     GeoNotifierVector nonCached;
-    for (auto& notifier : notifiers) {
+    for (auto& notifier : borrow(notifiers)) {
         if (notifier->useCachedPosition()) {
             if (cached)
                 cached->append(notifier.copyRef());
@@ -582,7 +583,7 @@ void Geolocation::extractNotifiersWithCachedPosition(GeoNotifierVector& notifier
 
 void Geolocation::copyToSet(const GeoNotifierVector& src, GeoNotifierSet& dest)
 {
-    for (auto& notifier : src)
+    for (auto& notifier : borrow(src))
         dest.add(notifier.copyRef());
 }
 

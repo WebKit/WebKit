@@ -37,6 +37,7 @@
 #include "MemoryObjectStore.h"
 #include "ThreadSafeDataBuffer.h"
 
+#include <wtf/Borrow.h>
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
@@ -192,7 +193,7 @@ void MemoryIndex::getAllRecords(const IDBKeyRangeData& keyRangeData, std::option
         range.lowerOpen = true;
 
         auto allValues = records->allValuesForKey(key, targetCount - currentCount);
-        for (auto& keyValue : allValues) {
+        for (auto& keyValue : borrow(allValues)) {
             result.addKey(IDBKeyData(keyValue));
             if (type == IndexedDB::GetAllType::Values)
                 result.addValue(objectStore->valueForKeyRange(keyValue));
@@ -222,13 +223,13 @@ IDBError MemoryIndex::putIndexKey(const IDBKeyData& valueKey, const IndexKey& in
 
     if (m_info.unique()) {
         CheckedRef records = *m_records;
-        for (auto& key : keys) {
+        for (auto& key : borrow(keys)) {
             if (records->contains(key))
                 return IDBError(ExceptionCode::ConstraintError);
         }
     }
 
-    for (auto& key : keys) {
+    for (auto& key : borrow(keys)) {
         auto error = addIndexRecord(key, valueKey);
         ASSERT_UNUSED(error, error.isNull());
         notifyCursorsOfValueChange(key, valueKey);
@@ -249,7 +250,7 @@ bool MemoryIndex::hasRecordForOtherPrimaryKey(const IDBKeyData& indexKey, const 
     if (!valueKeys)
         return false;
 
-    for (auto& valueKey : *valueKeys) {
+    for (auto& valueKey : borrow(*valueKeys)) {
         if (valueKey != primaryKey)
             return true;
     }
@@ -271,7 +272,7 @@ void MemoryIndex::removeRecord(const IDBKeyData& valueKey, const IndexKey& index
     }
 
     Vector<IDBKeyData> keys = indexKey.multiEntry();
-    for (auto& key : keys) {
+    for (auto& key : borrow(keys)) {
         removeIndexRecord(key, valueKey);
         notifyCursorsOfValueChange(key, valueKey);
     }

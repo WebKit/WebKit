@@ -38,6 +38,7 @@
 #include "EventNames.h"
 #include "SourceBuffer.h"
 #include "WebCoreOpaqueRoot.h"
+#include <wtf/Borrow.h>
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
@@ -98,7 +99,7 @@ void SourceBufferList::replaceWith(Vector<Ref<SourceBuffer>>&& other)
 {
     int changeInSize = other.size() - m_list.size();
     int addedEntries = 0;
-    for (auto& sourceBuffer : other) {
+    for (auto& sourceBuffer : borrow(other)) {
         if (!m_list.contains(sourceBuffer))
             ++addedEntries;
     }

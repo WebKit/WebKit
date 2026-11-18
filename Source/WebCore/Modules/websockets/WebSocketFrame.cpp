@@ -23,6 +23,7 @@
 #include "config.h"
 
 #include "WebSocketFrame.h"
+#include <wtf/Borrow.h>
 #include <wtf/CryptographicallyRandomNumber.h>
 #include <wtf/MathExtras.h>
 #include <wtf/text/MakeString.h>
@@ -134,7 +135,7 @@ static void appendFramePayload(const WebSocketFrame& frame, Vector<uint8_t>& fra
     frameData.append(frame.payload);
 
     if (frame.masked) {
-        cryptographicallyRandomValues(frameData.mutableSpan().subspan(maskingKeyStart, maskingKeyWidthInBytes));
+        cryptographicallyRandomValues(borrow(frameData)->mutableSpan().subspan(maskingKeyStart, maskingKeyWidthInBytes));
         for (size_t i = 0; i < frame.payload.size(); ++i)
             frameData[payloadStart + i] ^= frameData[maskingKeyStart + i % maskingKeyWidthInBytes];
     }

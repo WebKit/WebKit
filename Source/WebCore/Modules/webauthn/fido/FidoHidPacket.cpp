@@ -33,6 +33,7 @@
 #if ENABLE(WEB_AUTHN)
 
 #include <algorithm>
+#include <wtf/Borrow.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/TZoneMallocInlines.h>
 
@@ -104,7 +105,7 @@ Vector<uint8_t> FidoHidInitPacket::getSerializedData() const
     serialized.appendVector(m_data);
     auto offset = serialized.size();
     serialized.grow(kHidPacketSize);
-    zeroSpan(serialized.mutableSpan().subspan(offset, kHidPacketSize - offset));
+    zeroSpan(borrow(serialized)->mutableSpan().subspan(offset, kHidPacketSize - offset));
 
     return serialized;
 }
@@ -151,7 +152,7 @@ Vector<uint8_t> FidoHidContinuationPacket::getSerializedData() const
     serialized.appendVector(m_data);
     auto offset = serialized.size();
     serialized.grow(kHidPacketSize);
-    zeroSpan(serialized.mutableSpan().subspan(offset, kHidPacketSize - offset));
+    zeroSpan(borrow(serialized)->mutableSpan().subspan(offset, kHidPacketSize - offset));
 
     return serialized;
 }

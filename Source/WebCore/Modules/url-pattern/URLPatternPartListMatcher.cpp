@@ -28,6 +28,7 @@
 
 #include "URLPatternParser.h"
 #include <optional>
+#include <wtf/Borrow.h>
 
 namespace WebCore {
 namespace URLPatternUtilities {
@@ -149,7 +150,7 @@ static bool matchPartListFrom(const Vector<Part>& parts, unsigned partIndex, uns
         return *memo[key];
 
     Vector<bool> reachable(FillWith { }, length + 1, false);
-    markReachableEnds(parts[partIndex], input, position, delimiterCodepoint, reachable);
+    markReachableEnds(borrow(parts)[partIndex], input, position, delimiterCodepoint, reachable);
 
     bool result = false;
     for (unsigned end = 0; end <= length && !result; ++end) {
@@ -169,7 +170,7 @@ URLPatternPartListMatcher::URLPatternPartListMatcher(Vector<Part>&& partList, co
     ASSERT(m_delimiterCodepoint.isEmpty() || m_delimiterCodepoint == "."_s || m_delimiterCodepoint == "/"_s);
 
     if (m_ignoreCase) {
-        for (auto& part : m_partList) {
+        for (auto& part : borrow(m_partList)) {
             part.prefix = part.prefix.foldCase();
             part.value = part.value.foldCase();
             part.suffix = part.suffix.foldCase();

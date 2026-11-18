@@ -33,6 +33,7 @@
 #include <JavaScriptCore/JSCInlines.h>
 #include <JavaScriptCore/TypedArrayInlines.h>
 #include <JavaScriptCore/TypedArrays.h>
+#include <wtf/Borrow.h>
 #include <wtf/MainThread.h>
 #include <wtf/TZoneMallocInlines.h>
 
@@ -44,7 +45,7 @@ ExceptionOr<Ref<WaveShaperNode>> WaveShaperNode::create(BaseAudioContext& contex
 {
     RefPtr<Float32Array> curve;
     if (options.curve) {
-        curve = Float32Array::tryCreate(options.curve->span());
+        curve = Float32Array::tryCreate(borrow(*options.curve)->span());
         if (!curve)
             return Exception { ExceptionCode::InvalidStateError, "Invalid curve parameter"_s };
     }
@@ -96,7 +97,7 @@ RefPtr<Float32Array> WaveShaperNode::curveForBindings()
 
     // Make a clone of our internal array so that JS cannot modify our internal array
     // on the main thread while the audio thread is using it for rendering.
-    return Float32Array::create(curve.span());
+    return Float32Array::create(borrow(curve)->span());
 }
 
 NODELETE static inline WaveShaperProcessor::OverSampleType processorType(OverSampleType type)

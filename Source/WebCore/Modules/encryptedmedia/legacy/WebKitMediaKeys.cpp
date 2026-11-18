@@ -34,6 +34,7 @@
 #include "MediaKeySystemRequest.h"
 #include "WebKitMediaKeySession.h"
 #include <JavaScriptCore/Uint8Array.h>
+#include <wtf/Borrow.h>
 
 namespace WebCore {
 
@@ -71,7 +72,7 @@ WebKitMediaKeys::~WebKitMediaKeys()
 {
     // From <http://dvcs.w3.org/hg/html-media/raw-file/tip/encrypted-media/encrypted-media.html#dom-media-keys-constructor>:
     // When destroying a MediaKeys object, follow the steps in close().
-    for (auto& session : m_sessions) {
+    for (auto& session : borrow(m_sessions)) {
         session->close();
         session->detachKeys();
     }
@@ -176,7 +177,7 @@ void WebKitMediaKeys::keyAdded()
 
 RefPtr<ArrayBuffer> WebKitMediaKeys::cachedKeyForKeyId(const String& keyId) const
 {
-    for (auto& session : m_sessions) {
+    for (auto& session : borrow(m_sessions)) {
         if (auto key = session->cachedKeyForKeyId(keyId))
             return key;
     }

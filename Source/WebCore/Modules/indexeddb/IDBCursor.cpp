@@ -44,6 +44,7 @@
 #include <JavaScriptCore/JSCJSValueInlines.h>
 #include <JavaScriptCore/StrongInlines.h>
 #include <JavaScriptCore/TopExceptionScope.h>
+#include <wtf/Borrow.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/TextStream.h>
 
@@ -369,7 +370,7 @@ bool IDBCursor::setGetResult(IDBRequest& request, const IDBGetResult& getResult,
 
     auto prefetchedRecords = getResult.prefetchedRecords();
     if (!prefetchedRecords.isEmpty()) {
-        for (auto& record : prefetchedRecords)
+        for (auto& record : borrow(prefetchedRecords))
             m_prefetchedRecords.append(record);
         m_prefetchOperationID = operationID;
     }

@@ -39,12 +39,13 @@
 #include "SimpleRange.h"
 #include "StaticRange.h"
 #include <algorithm>
+#include <wtf/Borrow.h>
 
 namespace WebCore {
     
 void HighlightRegistry::initializeMapLike(DOMMapAdapter& map)
 {
-    for (auto& name : m_highlightNames) {
+    for (auto& name : borrow(m_highlightNames)) {
         if (RefPtr highlight = m_map.get(name))
             map.set<IDLDOMString, IDLInterface<Highlight>>(name, *highlight);
     }
@@ -81,7 +82,7 @@ Vector<HighlightHitResult> HighlightRegistry::highlightsFromPoint(Document& docu
 
         Vector<Ref<AbstractRange>> matchingRanges;
         auto highlightRanges = highlight->highlightRanges();
-        for (auto& highlightRange : highlightRanges) {
+        for (auto& highlightRange : borrow(highlightRanges)) {
             Ref abstractRange = highlightRange->range();
             if (abstractRange->collapsed())
                 continue;

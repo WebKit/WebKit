@@ -29,6 +29,8 @@
 #include "ApplePaySessionPaymentRequest.h"
 #include "ExceptionOr.h"
 
+#include <wtf/Borrow.h>
+
 #if ENABLE(APPLE_PAY)
 
 namespace WebCore {
@@ -37,7 +39,7 @@ ExceptionOr<ApplePaySessionPaymentRequestContactFields> convertAndValidate(unsig
 {
     ApplePaySessionPaymentRequestContactFields result;
 
-    for (auto& contactField : contactFields) {
+    for (auto& contactField : borrow(contactFields)) {
         switch (contactField) {
         case ApplePayContactField::Email:
             result.email = true;

@@ -49,6 +49,7 @@
 #include "Settings.h"
 #include "UnknownCredentialOptions.h"
 #include "WebAuthenticationUtils.h"
+#include <wtf/Borrow.h>
 #include <wtf/text/Base64.h>
 
 namespace WebCore {
@@ -129,7 +130,7 @@ PublicKeyCredentialJSON PublicKeyCredential::toJSON()
 template<typename ErrorStringFunction> static ExceptionOr<BufferSource> fromJSONBase64(String&& value, ErrorStringFunction&& errorStringFunction)
 {
     if (auto decodedValue = base64URLDecode(value))
-        return toBufferSource(decodedValue->span());
+        return toBufferSource(borrow(*decodedValue)->span());
     return Exception { ExceptionCode::EncodingError, errorStringFunction() };
 }
 

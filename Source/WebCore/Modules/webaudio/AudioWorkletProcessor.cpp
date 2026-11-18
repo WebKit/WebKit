@@ -46,6 +46,7 @@
 #include <JavaScriptCore/JSGlobalObjectInlines.h>
 #include <JavaScriptCore/JSTypedArrays.h>
 #include <JavaScriptCore/ObjectConstructor.h>
+#include <wtf/Borrow.h>
 #include <wtf/GetPtr.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -143,7 +144,7 @@ static JSArray* constructFrozenJSArray(VM& vm, JSGlobalObject& globalObject, con
     auto scope = DECLARE_THROW_SCOPE(vm);
     auto* array = JSArray::create(vm, globalObject.originalArrayStructureForIndexingType(ArrayWithContiguous), buses.size());
     for (unsigned i = 0; i < buses.size(); ++i) {
-        auto* innerArray = constructFrozenJSArray(vm, globalObject, buses[i], shouldPopulateWithBusData);
+        auto* innerArray = constructFrozenJSArray(vm, globalObject, borrow(buses)[i], shouldPopulateWithBusData);
         RETURN_IF_EXCEPTION(scope, nullptr);
         array->setIndexQuickly(vm, i, innerArray);
     }
@@ -157,8 +158,9 @@ static void copyDataFromJSArrayToBuses(VM& vm, JSGlobalObject& globalObject, JSA
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     // We can safely make assumptions about the structure of the JSArray since we use frozen arrays.
+    Borrow borrowedBuses { buses };
     for (unsigned i = 0; i < buses.size(); ++i) {
-        auto& bus = buses[i];
+        auto& bus = borrowedBuses[i];
         auto* channelsArray = getArrayAtIndex<JSArray>(jsArray, globalObject, i);
         RETURN_IF_EXCEPTION(scope, void());
         if (!channelsArray) [[unlikely]] {
@@ -184,8 +186,9 @@ static bool copyDataFromBusesToJSArray(VM& vm, JSGlobalObject& globalObject, con
     if (!jsArray)
         return false;
 
+    Borrow borrowedBuses { buses };
     for (size_t busIndex = 0; busIndex < buses.size(); ++busIndex) {
-        auto& bus = buses[busIndex];
+        auto& bus = borrowedBuses[busIndex];
         auto* jsChannelsArray = getArrayAtIndex<JSArray>(*jsArray, globalObject, busIndex);
         RETURN_IF_EXCEPTION(scope, false);
         unsigned numberOfChannels = busChannelCount(bus.get());
@@ -230,8 +233,9 @@ static bool zeroJSArray(VM& vm, JSGlobalObject& globalObject, const Vector<Ref<A
     if (!jsArray)
         return false;
 
+    Borrow borrowedOutputs { outputs };
     for (size_t busIndex = 0; busIndex < outputs.size(); ++busIndex) {
-        auto& bus = outputs[busIndex];
+        auto& bus = borrowedOutputs[busIndex];
         auto* jsChannelsArray = getArrayAtIndex<JSArray>(*jsArray, globalObject, busIndex);
         RETURN_IF_EXCEPTION(scope, false);
         unsigned numberOfChannels = busChannelCount(bus.get());

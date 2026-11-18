@@ -42,6 +42,7 @@
 #include "NodeInlinesLight.h"
 #include "SpaceSplitString.h"
 #include <ranges>
+#include <wtf/Borrow.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/URL.h>
 #include <wtf/text/StringToIntegerConversion.h>
@@ -168,7 +169,7 @@ ExceptionOr<void> MediaMetadata::setArtwork(ScriptExecutionContext& context, Vec
 {
     ASSERT(!m_defaultImages.size());
     Vector<MediaImage> resolvedArtwork(ReserveCapacityTag { }, artwork.size());
-    for (auto& image : artwork) {
+    for (auto& image : borrow(artwork)) {
         auto resolvedSrc = context.parseURL(image.src);
         if (!resolvedSrc.isValid())
             return Exception { ExceptionCode::TypeError };

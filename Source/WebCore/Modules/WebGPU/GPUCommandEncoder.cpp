@@ -31,6 +31,7 @@
 #include "GPUCommandBuffer.h"
 #include "GPUDevice.h"
 #include "GPUQuerySet.h"
+#include <wtf/Borrow.h>
 
 namespace WebCore {
 
@@ -44,8 +45,9 @@ static bool isCanvasBacking(const auto& textureOrView)
 static uint8_t canvasColorAttachmentMaskForDescriptor(const GPURenderPassDescriptor& descriptor)
 {
     uint8_t result = 0;
-    for (size_t i = 0; i < descriptor.colorAttachments.size() && i < 8; ++i) {
-        auto& colorAttachment = descriptor.colorAttachments[i];
+    Borrow colorAttachments { descriptor.colorAttachments };
+    for (size_t i = 0; i < colorAttachments->size() && i < 8; ++i) {
+        auto& colorAttachment = colorAttachments[i];
         if (!colorAttachment)
             continue;
         bool rendersDirectlyToCanvas = isCanvasBacking(colorAttachment->view);

@@ -49,6 +49,7 @@
 #include <JavaScriptCore/AuxiliaryBarrierInlines.h>
 #include <JavaScriptCore/JSCInlines.h>
 #include <JavaScriptCore/StrongInlines.h>
+#include <wtf/Borrow.h>
 #include <wtf/FileSystem.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -1499,7 +1500,7 @@ IDBError SQLiteIDBBackingStore::checkIndexConstraintsForPut(const IDBResourceIde
         else
             keys.append(indexKey.asOneKey());
 
-        for (auto& key : keys) {
+        for (auto& key : borrow(keys)) {
             if (!key.isValid())
                 continue;
 
@@ -1529,7 +1530,7 @@ IDBError SQLiteIDBBackingStore::uncheckedPutIndexKey(const IDBIndexInfo& info, c
     if (info.unique()) {
         std::optional<IDBKeyData> existingPrimaryKey;
         IDBError error;
-        for (auto& indexKey : indexKeys) {
+        for (auto& indexKey : borrow(indexKeys)) {
             if (!indexKey.isValid())
                 continue;
             error = uncheckedGetExistingPrimaryKeyForIndexKey(info, indexKey, existingPrimaryKey);
@@ -1540,7 +1541,7 @@ IDBError SQLiteIDBBackingStore::uncheckedPutIndexKey(const IDBIndexInfo& info, c
         }
     }
 
-    for (auto& indexKey : indexKeys) {
+    for (auto& indexKey : borrow(indexKeys)) {
         if (!indexKey.isValid())
             continue;
         auto error = uncheckedPutIndexRecord(info.objectStoreIdentifier(), info.identifier(), key, indexKey, recordID);
@@ -1921,7 +1922,7 @@ IDBError SQLiteIDBBackingStore::deleteRange(const IDBResourceIdentifier& transac
     }
 
     IDBError error;
-    for (auto& key : keys) {
+    for (auto& key : borrow(keys)) {
         error = deleteRecord(*transaction, objectStoreID, key);
         if (!error.isNull()) {
             LOG_ERROR("deleteRange: Error deleting keys in range");
@@ -2028,9 +2029,9 @@ IDBError SQLiteIDBBackingStore::addRecord(const IDBResourceIdentifier& transacti
         return error;
     }
 
-    const Vector<String>& blobURLs = value.blobURLs();
-    const Vector<String>& blobFiles = value.blobFilePaths();
-    for (size_t i = 0; i < blobURLs.size(); ++i) {
+    Borrow blobURLs = value.blobURLs();
+    Borrow blobFiles = value.blobFilePaths();
+    for (size_t i = 0; i < blobURLs->size(); ++i) {
         auto& url = blobURLs[i];
         {
             auto sql = cachedStatement(SQL::AddBlobRecord, "INSERT INTO BlobRecords VALUES (?, ?);"_s);
@@ -2150,7 +2151,7 @@ IDBError SQLiteIDBBackingStore::getBlobRecordsForObjectStoreRecord(int64_t objec
 
 IDBError SQLiteIDBBackingStore::addFileSystemHandleRecordsForObjectStoreRecord(int64_t recordID, const Vector<FileSystemHandleRecord>& records)
 {
-    for (auto& record : records) {
+    for (auto& record : borrow(records)) {
         auto sql = cachedStatement(SQL::AddFileSystemHandleRecord, "INSERT INTO FileSystemHandleRecords VALUES (?, ?, ?, ?, ?);"_s);
         CheckedPtr statement = sql.get();
         auto rawIdentifier = record.identifier;
@@ -2359,7 +2360,7 @@ IDBError SQLiteIDBBackingStore::getRecord(const IDBResourceIdentifier& transacti
     }
     
     IDBKeyData keyData;
-    if (!deserializeIDBKeyData(keyVector->span(), keyData)) {
+    if (!deserializeIDBKeyData(borrow(*keyVector)->span(), keyData)) {
         LOG_ERROR("Unable to deserialize key data from database for IDBObjectStore");
         return IDBError { ExceptionCode::UnknownError, "Error extracting key data from database executing IDBObjectStore get"_s };
     }
@@ -3006,7 +3007,7 @@ void SQLiteIDBBackingStore::deleteBackingStore()
             }
         }
 
-        for (auto& file : blobFiles) {
+        for (auto& file : borrow(blobFiles)) {
             String blobPath = FileSystem::pathByAppendingComponent(m_databaseDirectory, file);
             if (!FileSystem::deleteFile(blobPath))
                 LOG_ERROR("Error deleting blob file '%s'", blobPath.utf8());

@@ -51,6 +51,7 @@
 #include <JavaScriptCore/ConsoleTypes.h>
 #include <JavaScriptCore/JSONObject.h>
 #include <Logging.h>
+#include <wtf/Borrow.h>
 #include <wtf/JSONValues.h>
 #include <wtf/UUID.h>
 #include <wtf/text/Base64.h>
@@ -155,7 +156,7 @@ static ExceptionOr<std::optional<UnvalidatedDigitalCredentialRequest>> jsToCrede
 ExceptionOr<Vector<UnvalidatedDigitalCredentialRequest>> DigitalCredential::convertObjectsToDigitalPresentationRequests(const Document& document, const Vector<DigitalCredentialGetRequest>& requests)
 {
     Vector<UnvalidatedDigitalCredentialRequest> results;
-    for (auto& request : requests) {
+    for (auto& request : borrow(requests)) {
         auto result = jsToCredentialRequest(document, request);
         if (result.hasException())
             return result.releaseException();

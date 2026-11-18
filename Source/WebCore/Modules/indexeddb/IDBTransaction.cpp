@@ -57,6 +57,7 @@
 #include "WebCoreOpaqueRootInlines.h"
 #include "WorkerOrWorkletGlobalScope.h"
 #include "WorkerOrWorkletScriptController.h"
+#include <wtf/Borrow.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/TextStream.h>
@@ -248,7 +249,7 @@ void IDBTransaction::abortInternal()
         for (auto& objectStore : m_referencedObjectStores.values())
             objectStore->rollbackForVersionChangeAbort();
 
-        for (auto& objectStore : objectStoresToDelete) {
+        for (auto& objectStore : borrow(objectStoresToDelete)) {
             objectStore->rollbackForVersionChangeAbort();
             auto objectStoreIdentifier = objectStore->info().identifier();
             m_deletedObjectStores.set(objectStoreIdentifier, std::exchange(objectStore, nullptr));
@@ -272,7 +273,7 @@ void IDBTransaction::abortInProgressOperations(const IDBError& error)
     auto inProgressAbortVector = copyToVector(m_transactionOperationsInProgressQueue);
     m_transactionOperationsInProgressQueue.clear();
 
-    for (auto& operation : inProgressAbortVector) {
+    for (auto& operation : borrow(inProgressAbortVector)) {
         m_transactionOperationsInProgressQueue.append(operation.copyRef());
         m_currentlyCompletingRequest = nullptr;
         operation->doComplete(IDBResultData::error(operation->identifier(), error));
@@ -1493,7 +1494,7 @@ void IDBTransaction::connectionClosedFromServer(const IDBError& error)
     abortInProgressOperations(error);
 
     auto operations = copyToVector(m_transactionOperationMap.values());
-    for (auto& operation : operations) {
+    for (auto& operation : borrow(operations)) {
         m_currentlyCompletingRequest = nullptr;
         m_transactionOperationsInProgressQueue.append(operation.copyRef());
         ASSERT(m_transactionOperationsInProgressQueue.first().ptr() == operation.ptr());
