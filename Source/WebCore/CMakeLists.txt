@@ -1294,6 +1294,7 @@ set(WebCore_NON_SVG_IDL_FILES
     fileapi/FileReader.idl
     fileapi/FileReaderSync.idl
 
+    html/CameraMovedEvent.idl
     html/CaptionDisplaySettingsOptions.idl
     html/DOMFormData.idl
     html/DOMTokenList.idl

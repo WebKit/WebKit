@@ -12,6 +12,7 @@ BeforeLoadEvent interfaceName=Event
 BeforeUnloadEvent
 BufferedChangeEvent conditional=MEDIA_SOURCE
 ClipboardEvent
+CameraMovedEvent conditional=VIDEO
 CloseEvent
 CommandEvent
 CompositionEvent

@@ -1341,6 +1341,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/fileapi/FileList.idl \
     $(WebCore)/fileapi/FileReader.idl \
     $(WebCore)/fileapi/FileReaderSync.idl \
+    $(WebCore)/html/CameraMovedEvent.idl \
     $(WebCore)/html/CaptionDisplaySettingsOptions.idl \
     $(WebCore)/html/DOMFormData.idl \
     $(WebCore)/html/DOMTokenList.idl \

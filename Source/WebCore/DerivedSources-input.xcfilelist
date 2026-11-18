@@ -1682,6 +1682,7 @@ $(PROJECT_DIR)/fileapi/File.idl
 $(PROJECT_DIR)/fileapi/FileList.idl
 $(PROJECT_DIR)/fileapi/FileReader.idl
 $(PROJECT_DIR)/fileapi/FileReaderSync.idl
+$(PROJECT_DIR)/html/CameraMovedEvent.idl
 $(PROJECT_DIR)/html/CaptionDisplaySettingsOptions.idl
 $(PROJECT_DIR)/html/DOMFormData.idl
 $(PROJECT_DIR)/html/DOMTokenList.idl
