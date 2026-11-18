@@ -856,9 +856,7 @@ endif ()
 
 # TestWebKit target
 if (ENABLE_WEBKIT)
-    if (TestWebKit_UNIFIED_SOURCE_LIST_FILES)
-        WEBKIT_COMPUTE_SOURCES(TestWebKit)
-    endif ()
+    WEBKIT_UNIFY_SOURCES(TestWebKit)
     WEBKIT_TEST(TestWebKit)
     if (APPLE OR PORT STREQUAL "GTK" OR PORT STREQUAL "WPE")
         WEBKIT_TEST(TestIPC)
