@@ -687,6 +687,93 @@ TEST(SiteIsolation, SetResourceLoadDelegateAfterCrossOriginIframeLoads)
     webView.get()._resourceLoadDelegate = nil;
 }
 
+#if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
+
+static constexpr auto crossOriginIframeThatCopiesURLWithTrackingQueryParameters = "<body>subframe text<script>"
+    "document.addEventListener('copy', event => {"
+    "    event.clipboardData.setData('text/plain', 'https://example.org/?foo=hello&bar=hello&garply=hello');"
+    "    event.preventDefault();"
+    "});"
+    "</script></body>"_s;
+
+static RetainPtr<WKWebViewConfiguration> linkDecorationFilteringConfiguration(const HTTPServer& server)
+{
+    RetainPtr configuration = server.httpsProxyConfiguration();
+    [configuration websiteDataStore]._resourceLoadStatisticsEnabled = YES;
+    RetainPtr preferences = adoptNS([WKWebpagePreferences new]);
+    [preferences _setNetworkConnectionIntegrityPolicy:_WKWebsiteNetworkConnectionIntegrityPolicySanitizeLookalikeCharacters];
+    [configuration setDefaultWebpagePreferences:preferences.get()];
+    return configuration;
+}
+
+static void setLinkDecorationFilteringQueryParameters(WKWebsiteDataStore *dataStore, NSArray<NSString *> *queryParameters)
+{
+    __block bool done = false;
+    [dataStore _setLinkDecorationFilteringDataForTesting:queryParameters completionHandler:^{
+        done = true;
+    }];
+    Util::run(&done);
+}
+
+static RetainPtr<NSString> copyStringFromFocusedFrame(TestWKWebView *webView)
+{
+#if PLATFORM(MAC)
+    [NSPasteboard.generalPasteboard clearContents];
+#else
+    UIPasteboard.generalPasteboard.items = @[ ];
+#endif
+
+    [webView copy:nil];
+
+    RetainPtr<NSString> copiedString;
+    Util::waitFor([&] {
+#if PLATFORM(MAC)
+        copiedString = [NSPasteboard.generalPasteboard stringForType:NSPasteboardTypeString];
+#else
+        copiedString = UIPasteboard.generalPasteboard.string;
+#endif
+        return !!copiedString;
+    });
+    return copiedString;
+}
+
+TEST(SiteIsolation, CopyURLInCrossOriginIframeRemovesTrackingQueryParameters)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { mainFrameTextWithCrossOriginIframe } },
+        { "/iframe"_s, { crossOriginIframeThatCopiesURLWithTrackingQueryParameters } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    RetainPtr configuration = linkDecorationFilteringConfiguration(server);
+    setLinkDecorationFilteringQueryParameters([configuration websiteDataStore], @[ @"foo", @"bar" ]);
+
+    auto [webView, navigationDelegate, childFrame] = webViewWithFocusedCrossOriginIframe(server, configuration.get());
+    setSelectionInFrame(webView.get(), childFrame.get(), @"getSelection().selectAllChildren(document.body)", _WKSelectionAttributeIsRange);
+
+    EXPECT_WK_STREQ("https://example.org/?garply=hello", copyStringFromFocusedFrame(webView.get()).get());
+}
+
+TEST(SiteIsolation, UpdateLinkDecorationFilteringDataAfterCrossOriginIframeLoads)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { mainFrameTextWithCrossOriginIframe } },
+        { "/iframe"_s, { crossOriginIframeThatCopiesURLWithTrackingQueryParameters } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    RetainPtr configuration = linkDecorationFilteringConfiguration(server);
+    setLinkDecorationFilteringQueryParameters([configuration websiteDataStore], @[ @"foo" ]);
+
+    auto [webView, navigationDelegate, childFrame] = webViewWithFocusedCrossOriginIframe(server, configuration.get());
+    setSelectionInFrame(webView.get(), childFrame.get(), @"getSelection().selectAllChildren(document.body)", _WKSelectionAttributeIsRange);
+    EXPECT_WK_STREQ("https://example.org/?bar=hello&garply=hello", copyStringFromFocusedFrame(webView.get()).get());
+
+    // The iframe's process already exists, so it only gets the new data if the update goes to every process.
+    setLinkDecorationFilteringQueryParameters([configuration websiteDataStore], @[ @"foo", @"bar" ]);
+    EXPECT_WK_STREQ("https://example.org/?garply=hello", copyStringFromFocusedFrame(webView.get()).get());
+}
+
+#endif // ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
+
 #if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
 
 TEST(SiteIsolation, PauseAllAnimationsAfterCrossOriginIframeLoads)

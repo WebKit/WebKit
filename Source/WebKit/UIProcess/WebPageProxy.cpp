@@ -21997,11 +21997,14 @@ void WebPageProxy::sendCachedLinkDecorationFilteringData()
     if (!hasRunningProcess())
         return;
 
-    if (LinkDecorationFilteringController::sharedSingleton().cachedListData().isEmpty())
+    auto& data = LinkDecorationFilteringController::sharedSingleton().cachedListData();
+    if (data.isEmpty())
         return;
 
     m_needsInitialLinkDecorationFilteringData = false;
-    send(Messages::WebPage::SetLinkDecorationFilteringData(LinkDecorationFilteringController::sharedSingleton().cachedListData()));
+    forEachWebContentProcess([&](auto& process, auto pageID) {
+        process.send(Messages::WebPage::SetLinkDecorationFilteringData(data), pageID);
+    });
 #endif // ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
 }
 

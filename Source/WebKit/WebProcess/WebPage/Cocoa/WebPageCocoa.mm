@@ -1251,8 +1251,13 @@ std::pair<URL, DidFilterLinkDecoration> WebPage::applyLinkDecorationFilteringWit
         return { url, DidFilterLinkDecoration::No };
     }
 
+    if (!WebCore::DeprecatedGlobalSettings::trackingPreventionEnabled())
+        return { url, DidFilterLinkDecoration::No };
+
     RefPtr mainFrame = m_mainFrame->coreLocalFrame();
-    if (!mainFrame || !WebCore::DeprecatedGlobalSettings::trackingPreventionEnabled())
+    // FIXME: When the main frame is remote, a navigation's effective protections are on its in-flight loader, which
+    // only the caller knows. Have callers pass in the protections (and the source URL for the quirk) instead.
+    if (!mainFrame && trigger == LinkDecorationFilteringTrigger::Navigation)
         return { url, DidFilterLinkDecoration::No };
 
     auto isLinkDecorationFilteringEnabled = [&](const DocumentLoader* loader) {
@@ -1263,6 +1268,9 @@ std::pair<URL, DidFilterLinkDecoration> WebPage::applyLinkDecorationFilteringWit
     };
 
     bool hasOptedInToLinkDecorationFiltering = [&] {
+        if (!mainFrame)
+            return protect(m_page->mainFrame())->advancedPrivacyProtections().contains(AdvancedPrivacyProtections::LinkDecorationFiltering);
+
         if (isLinkDecorationFilteringEnabled(mainFrame->loader().activeDocumentLoader()))
             return true;
 
@@ -1277,7 +1285,7 @@ std::pair<URL, DidFilterLinkDecoration> WebPage::applyLinkDecorationFilteringWit
 
     auto sanitizedURL = url;
     bool needsConsistentQueryParameterFiltering { false };
-    if (RefPtr document = mainFrame->document(); document && trigger == LinkDecorationFilteringTrigger::Navigation) {
+    if (RefPtr document = mainFrame ? mainFrame->document() : nullptr; document && trigger == LinkDecorationFilteringTrigger::Navigation) {
         RegistrableDomain sourceDomain { document->url() };
         bool isCrossSiteNavigation = !sourceDomain.isEmpty() && !sourceDomain.matches(url);
         auto consistencyLevel = document->quirks().consistentQueryParameterFilteringLevel(document->url(), url);
