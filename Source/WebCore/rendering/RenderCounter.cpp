@@ -383,7 +383,10 @@ static CounterNode* makeCounterNode(RenderElement& renderer, const AtomString& i
         protect(place.parent)->insertAfter(newNode, place.previousSibling.get(), identifier);
 
     maps.add(renderer, makeUnique<CounterMap>()).iterator->value->add(identifier, newNode.copyRef());
-    renderer.setHasCounterNodeMap(true);
+    if (!renderer.hasCounterNodeMap()) {
+        renderer.setHasCounterNodeMap(true);
+        renderer.view().incrementRenderersWithCounterNodes();
+    }
 
     if (newNode->parent() || renderer.shouldApplyStyleContainment())
         return newNode.unsafePtr();
@@ -494,6 +497,12 @@ static void destroyCounterNodeWithoutMapRemoval(const AtomString& identifier, Co
         parent->removeChild(node);
 }
 
+void RenderCounter::createCounterNodes(RenderElement& owner)
+{
+    for (auto& identifier : owner.style().usedCounterDirectives().map.keys())
+        makeCounterNode(owner, identifier, false);
+}
+
 void RenderCounter::destroyCounterNodes(RenderElement& owner)
 {
     ASSERT(owner.hasCounterNodeMap());
@@ -503,6 +512,7 @@ void RenderCounter::destroyCounterNodes(RenderElement& owner)
     for (auto& counterMapEntry : *counterMap)
         destroyCounterNodeWithoutMapRemoval(counterMapEntry.key, counterMapEntry.value);
     owner.setHasCounterNodeMap(false);
+    owner.view().decrementRenderersWithCounterNodes();
 }
 
 void RenderCounter::destroyCounterNode(RenderElement& owner, const AtomString& identifier)

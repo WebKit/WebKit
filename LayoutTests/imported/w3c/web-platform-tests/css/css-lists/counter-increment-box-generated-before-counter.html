@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<title>CSS Lists: a counter displayed later counts an element that started generating a box before it</title>
+<link rel="help" href="https://drafts.csswg.org/css-lists/#auto-numbering">
+<link rel="match" href="counter-increment-box-generated-before-counter-ref.html">
+<style>
+div {
+  counter-reset: c;
+}
+.show::after {
+  content: counter(c);
+}
+.increment {
+  counter-increment: c;
+}
+.hidden {
+  display: none;
+}
+</style>
+<div><b><span id="nested" class="increment hidden"></span></b><span id="last"></span></div>
+<script>
+  document.documentElement.offsetTop;
+  document.getElementById("last").classList.add("increment");
+  document.documentElement.offsetTop;
+  document.getElementById("nested").classList.remove("hidden");
+  document.documentElement.offsetTop;
+  document.querySelector("div").classList.add("show");
+</script>
