@@ -3521,6 +3521,23 @@ void WebProcessProxy::takeInvalidMessageStringForTesting(CompletionHandler<void(
 }
 #endif
 
+WebCore::CertificateInfo WebProcessProxy::certificateInfoForHostAndPort(const String& hostAndPort) const
+{
+    if (!decltype(m_hostAndPortToCertificateInfo)::isValidKey(hostAndPort))
+        return { };
+
+    return m_hostAndPortToCertificateInfo.get(hostAndPort);
+}
+
+void WebProcessProxy::setCertificateInfoForHostAndPort(String&& hostAndPort, WebCore::CertificateInfo&& certificateInfo)
+{
+    if (!decltype(m_hostAndPortToCertificateInfo)::isValidKey(hostAndPort))
+        return;
+
+    // FIXME: This has no corresponding remove call. It is bounded by the number of distinct hosts and ports loaded in this process.
+    m_hostAndPortToCertificateInfo.set(WTF::move(hostAndPort), WTF::move(certificateInfo));
+}
+
 } // namespace WebKit
 
 #undef MESSAGE_CHECK

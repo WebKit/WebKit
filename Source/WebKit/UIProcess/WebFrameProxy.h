@@ -377,7 +377,6 @@ private:
     String m_frameName;
     bool m_containsPluginDocument { false };
     WebCore::CertificateInfo m_certificateInfo;
-    HashMap<String, WebCore::CertificateInfo> m_hostAndPortToCertificateInfo;
     RefPtr<WebFramePolicyListenerProxy> m_activeListener;
     WebCore::FrameIdentifier m_frameID;
     ListHashSet<Ref<WebFrameProxy>> m_childFrames;

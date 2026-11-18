@@ -46,6 +46,7 @@
 #include "WebPageProxyIdentifier.h"
 #include "WebPermissionControllerProxy.h"
 #include "WebProcessCreationParameters.h"
+#include <WebCore/CertificateInfo.h>
 #include <WebCore/CrossOriginMode.h>
 #include <WebCore/FrameIdentifier.h>
 #include <WebCore/MediaProducer.h>
@@ -249,6 +250,9 @@ public:
     enum class WillShutDown : bool { No, Yes };
     void setIsInProcessCache(bool, WillShutDown = WillShutDown::No);
     bool isInProcessCache() const { return m_isInProcessCache; }
+
+    WebCore::CertificateInfo certificateInfoForHostAndPort(const String&) const;
+    void setCertificateInfoForHostAndPort(String&&, WebCore::CertificateInfo&&);
 
     void enableRemoteWorkers(RemoteWorkerType, const WebUserContentControllerProxy&);
     void disableRemoteWorkers(OptionSet<RemoteWorkerType>);
@@ -866,6 +870,7 @@ private:
     HashSet<WebCore::RegistrableDomain> m_sharedProcessDomains;
     std::pair<LoadedWebArchive, HashSet<WebCore::RegistrableDomain>> m_allowedFirstPartiesForCookies { LoadedWebArchive::No, { } };
     bool m_isInProcessCache { false };
+    HashMap<String, WebCore::CertificateInfo> m_hostAndPortToCertificateInfo;
     bool m_isShuttingDown { false };
 
     IsolatedProcessType m_isolatedProcessType { IsolatedProcessType::Unspecified };
