@@ -565,6 +565,13 @@ void RemoteGraphicsContext::fillRectWithGradient(const FloatRect& rect, Ref<Grad
     context().fillRect(rect, gradient);
 }
 
+void RemoteGraphicsContext::fillRectWithCachedGradient(const FloatRect& rect, RemoteGradientIdentifier identifier)
+{
+    RefPtr gradient = resourceCache().cachedGradient(identifier);
+    MESSAGE_CHECK(gradient);
+    context().fillRect(rect, *gradient);
+}
+
 void RemoteGraphicsContext::fillRectWithGradientAndSpaceTransform(const FloatRect& rect, Ref<Gradient>&& gradient, const AffineTransform& transform, GraphicsContext::RequiresClipToRect requiresClipToRect)
 {
     context().fillRect(rect, gradient, transform, requiresClipToRect);

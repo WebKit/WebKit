@@ -570,6 +570,12 @@ void RemoteGraphicsContextProxy::fillRect(const FloatRect& rect, Gradient& gradi
 {
     sendPendingDrawsIfNecessary();
     appendStateChangeItemIfNecessary();
+    // A gradient that is drawn many times is sent to the GPU process once and drawn from there by identifier,
+    // so its color stops are neither encoded nor converted to the destination color space on every draw.
+    if (auto identifier = recordResourceUse(gradient)) {
+        send(Messages::RemoteGraphicsContext::FillRectWithCachedGradient(rect, *identifier));
+        return;
+    }
     send(Messages::RemoteGraphicsContext::FillRectWithGradient(rect, gradient));
 }
 

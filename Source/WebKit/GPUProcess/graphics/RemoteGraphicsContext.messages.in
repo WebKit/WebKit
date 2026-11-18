@@ -102,6 +102,7 @@ messages -> RemoteGraphicsContext Stream {
     FillRect(WebCore::FloatRect rect, enum:bool WebCore::RequiresClipToRect requiresClipToRect) StreamBatched
     FillRectWithColor(WebCore::FloatRect rect, WebCore::Color color) StreamBatched
     FillRectWithGradient(WebCore::FloatRect rect, Ref<WebCore::Gradient> gradient) StreamBatched
+    FillRectWithCachedGradient(WebCore::FloatRect rect, WebKit::RemoteGradientIdentifier identifier) StreamBatched
     FillRectWithGradientAndSpaceTransform(WebCore::FloatRect rect, Ref<WebCore::Gradient> gradient, WebCore::AffineTransform transform, enum:bool WebCore::RequiresClipToRect requiresClipToRect) StreamBatched
     FillCompositedRect(WebCore::FloatRect rect, WebCore::Color color, enum:uint8_t WebCore::CompositeOperator op, enum:uint8_t WebCore::BlendMode blendMode) StreamBatched
     FillRoundedRect(WebCore::FloatRoundedRect rect, WebCore::Color color, enum:uint8_t WebCore::BlendMode blendMode) StreamBatched

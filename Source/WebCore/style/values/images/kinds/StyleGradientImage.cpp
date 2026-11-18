@@ -109,8 +109,9 @@ Ref<WebCore::Gradient> GradientImage::gradientForSize(const RenderElement& rende
     if (!m_stopsAreCacheable)
         return createPlatformGradient(m_gradient, size, style);
 
+    // The cached gradient is drawn again on every paint until it is evicted.
     cached = &m_gradients.ensure(size, style->appleColorFilter(), [&] {
-        return createPlatformGradient(m_gradient, size, style);
+        return createPlatformGradient(m_gradient, size, style, IsTransient::No);
     });
     return cached->value();
 }
