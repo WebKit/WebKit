@@ -245,7 +245,7 @@ class TestRunner(object):
         if self._use_wpe_legacy_api():
             command.append('--wpe-legacy-api')
         try:
-            output = subprocess.check_output(command, env=self._glib_test_env(test_program)).decode('utf-8')
+            output = subprocess.check_output(command, env=self._test_env).decode('utf-8')
         except subprocess.CalledProcessError:
             sys.stderr.write("ERROR: could not list available tests for binary %s.\n" % (test_program))
             sys.stderr.flush()
