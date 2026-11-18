@@ -69,7 +69,7 @@ public:
 protected:
     MediaSessionManagerGLib(GRefPtr<GDBusNodeInfo>&&, PageIdentifier);
 
-    void scheduleSessionStatusUpdate() final;
+    void performSessionStatusUpdate() final;
     void updateNowPlayingInfo() final;
 
     void removeSession(PlatformMediaSessionInterface&) final;

@@ -261,17 +261,15 @@ String MediaSessionManagerCocoa::audioTimePitchAlgorithmForMediaPlayerPitchCorre
     }
 }
 
-void MediaSessionManagerCocoa::scheduleSessionStatusUpdate()
+void MediaSessionManagerCocoa::performSessionStatusUpdate()
 {
-    enqueueTaskOnMainThread([this, protectedThis = Ref { *this }] () mutable {
-        if (m_nowPlayingManager) {
-            m_nowPlayingManager->setSupportsSeeking(computeSupportsSeeking());
-            updateNowPlayingInfo();
-        }
+    if (m_nowPlayingManager) {
+        m_nowPlayingManager->setSupportsSeeking(computeSupportsSeeking());
+        updateNowPlayingInfo();
+    }
 
-        forEachSession([] (auto& session) {
-            session.updateMediaUsageIfChanged();
-        });
+    forEachSession([](auto& session) {
+        session.updateMediaUsageIfChanged();
     });
 }
 

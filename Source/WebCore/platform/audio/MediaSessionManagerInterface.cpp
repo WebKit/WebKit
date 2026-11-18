@@ -221,6 +221,23 @@ void MediaSessionManagerInterface::updateNowPlayingInfoIfNecessary()
     scheduleSessionStatusUpdate();
 }
 
+void MediaSessionManagerInterface::scheduleSessionStatusUpdate()
+{
+    if (m_sessionStatusUpdateIsPending)
+        return;
+
+    m_sessionStatusUpdateIsPending = true;
+    enqueueTaskOnMainThread([this, protectedThis = Ref { *this }] {
+        m_sessionStatusUpdateIsPending = false;
+        ++m_sessionStatusUpdateCountForTesting;
+        performSessionStatusUpdate();
+    });
+}
+
+void MediaSessionManagerInterface::performSessionStatusUpdate()
+{
+}
+
 void MediaSessionManagerInterface::updateNowPlayingInfo()
 {
     updateNowPlayingInfoIfNecessary();

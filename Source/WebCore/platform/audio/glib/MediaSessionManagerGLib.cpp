@@ -158,15 +158,13 @@ void MediaSessionManagerGLib::beginInterruption(PlatformMediaSession::Interrupti
     PlatformMediaSessionManager::beginInterruption(type);
 }
 
-void MediaSessionManagerGLib::scheduleSessionStatusUpdate()
+void MediaSessionManagerGLib::performSessionStatusUpdate()
 {
-    callOnMainThread([this] () mutable {
-        m_nowPlayingManager->setSupportsSeeking(computeSupportsSeeking());
-        updateNowPlayingInfo();
+    m_nowPlayingManager->setSupportsSeeking(computeSupportsSeeking());
+    updateNowPlayingInfo();
 
-        forEachSession([] (auto& session) {
-            session.updateMediaUsageIfChanged();
-        });
+    forEachSession([](auto& session) {
+        session.updateMediaUsageIfChanged();
     });
 }
 

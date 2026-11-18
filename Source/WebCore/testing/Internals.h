@@ -1349,6 +1349,7 @@ public:
     ExceptionOr<NowPlayingState> nowPlayingState() const;
     ExceptionOr<double> nowPlayingUpdateInterval() const;
     void setNowPlayingUpdateInterval(double);
+    ExceptionOr<unsigned> mediaSessionStatusUpdateCount() const;
 
     struct MediaUsageState {
         String mediaURL;

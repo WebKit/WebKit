@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+    audio { display: block; }
+</style>
+<script src="../resources/runner.js"></script>
+<script>
+    window.addEventListener('load', event => {
+        const parameters = new URLSearchParams(location.search);
+        const numberOfIterations = parseInt(parameters.get('iterations')) || 20;
+        const numberOfItems = parseInt(parameters.get('count')) || 442;
+        const syncTimes = [];
+
+        PerfTestRunner.prepareToMeasureValuesAsync({
+            customIterationCount: numberOfIterations,
+            unit: 'ms',
+            done: function () {
+                PerfTestRunner.gc();
+            }
+        });
+
+        function afterTwoFrames(callback)
+        {
+            requestAnimationFrame(() => requestAnimationFrame(callback));
+        }
+
+        function startIteration()
+        {
+            let target = document.createElement('div');
+            for (let i = 0; i < numberOfItems; ++i) {
+                let paragraph = document.createElement('p');
+                let audio = document.createElement('audio');
+                audio.controls = true;
+                audio.preload = 'none';
+                let source = document.createElement('source');
+                source.src = 'test-with-audio.mp4?' + i;
+                source.type = 'audio/mp4';
+                audio.appendChild(source);
+                paragraph.appendChild(audio);
+                target.appendChild(paragraph);
+            }
+            document.body.appendChild(target);
+
+            // Let the insertions settle before measuring the replacement.
+            afterTwoFrames(() => setTimeout(() => replaceAudioElements(target), 100));
+        }
+
+        function replaceAudioElements(target)
+        {
+            let startTime = PerfTestRunner.now();
+
+            // Replace each element the way MediaWiki's TimedMediaHandler does: drop controls, then swap
+            // in a shallow clone (no <source> children) wrapped in a placeholder span.
+            for (let audio of Array.from(target.querySelectorAll('audio'))) {
+                audio.removeAttribute('controls');
+                let clone = audio.cloneNode(false);
+                let wrapper = document.createElement('span');
+                wrapper.className = 'mw-tmh-player';
+                wrapper.appendChild(clone);
+                audio.replaceWith(wrapper);
+            }
+
+            syncTimes.push(PerfTestRunner.now() - startTime);
+
+            afterTwoFrames(() => {
+                // The first iteration is a warm-up that the runner ignores. Log before the final
+                // measurement because the runner writes its output as soon as it finishes.
+                if (syncTimes.length > numberOfIterations)
+                    PerfTestRunner.log("Synchronous loop times (ms): " + syncTimes.slice(1).map(value => value.toFixed(2)).join(", "));
+
+                let continueTesting = PerfTestRunner.measureValueAsync(PerfTestRunner.now() - startTime);
+                document.body.removeChild(target);
+                if (!continueTesting)
+                    return;
+
+                PerfTestRunner.gc();
+                setTimeout(startIteration, 0);
+            });
+        }
+
+        startIteration();
+    })
+</script>
+</head>
+<body>
+</body>
+</html>

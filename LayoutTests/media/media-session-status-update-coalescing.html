@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../resources/js-test.js"></script>
+<script src="media-file.js"></script>
+</head>
+<body>
+<div id="container"></div>
+<script>
+description("Tests that many media session changes in one turn queue one session status update, not one per change.");
+jsTestIsAsync = true;
+
+const elementCount = 50;
+let baseline;
+let delta;
+
+function waitForUpdates()
+{
+    return new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(() => setTimeout(resolve, 100))));
+}
+
+window.addEventListener("load", async () => {
+    if (!window.internals) {
+        testFailed("This test requires window.internals.");
+        finishJSTest();
+        return;
+    }
+
+    const container = document.getElementById("container");
+    const source = findMediaFile("audio", "content/silence");
+    for (let i = 0; i < elementCount; ++i) {
+        const audio = document.createElement("audio");
+        audio.preload = "none";
+        audio.src = source + "?" + i;
+        container.appendChild(audio);
+    }
+    await waitForUpdates();
+
+    // Replace every element in one turn. Each removal pauses the element, which notifies the
+    // document's MediaSession, which in turn notifies every element's media session.
+    baseline = internals.mediaSessionStatusUpdateCount;
+    for (const audio of Array.from(container.querySelectorAll("audio")))
+        audio.replaceWith(audio.cloneNode(false));
+    await waitForUpdates();
+    delta = internals.mediaSessionStatusUpdateCount - baseline;
+    // The pause tasks may be interleaved with a few updates on a slow configuration, but without
+    // coalescing there would be thousands.
+    shouldBeTrue("delta >= 1");
+    shouldBeTrue("delta < elementCount");
+
+    // A change after the pending update ran must schedule another one.
+    baseline = internals.mediaSessionStatusUpdateCount;
+    container.firstElementChild.remove();
+    await waitForUpdates();
+    delta = internals.mediaSessionStatusUpdateCount - baseline;
+    shouldBeTrue("delta >= 1");
+
+    finishJSTest();
+});
+</script>
+</body>
+</html>

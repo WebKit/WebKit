@@ -6279,6 +6279,15 @@ ExceptionOr<double> Internals::nowPlayingUpdateInterval() const
     return manager->nowPlayingUpdateInterval();
 }
 
+ExceptionOr<unsigned> Internals::mediaSessionStatusUpdateCount() const
+{
+    RefPtr manager = sessionManager();
+    if (!manager)
+        return Exception { ExceptionCode::InvalidAccessError };
+
+    return manager->sessionStatusUpdateCountForTesting();
+}
+
 
 #if ENABLE(VIDEO)
 RefPtr<HTMLMediaElement> Internals::bestMediaElementForRemoteControls(Internals::PlaybackControlsPurpose purpose)

@@ -77,7 +77,7 @@ protected:
 
     std::optional<NowPlayingInfo> nowPlayingInfo() const final { return m_nowPlayingInfo; }
 
-    void scheduleSessionStatusUpdate() final;
+    void performSessionStatusUpdate() final;
     void updateNowPlayingInfo() final;
     void setNowPlayingUpdateInterval(double) final;
     double nowPlayingUpdateInterval() final;
