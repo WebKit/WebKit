@@ -1048,6 +1048,45 @@ TEST(SiteIsolation, CanUseCredentialStorageInCrossOriginIframe)
     EXPECT_EQ(passwordChallenges, 2u);
 }
 
+TEST(SiteIsolation, UserInterfaceLayoutDirectionInCrossOriginIframe)
+{
+    RetainPtr<NSData> videoData = [NSData dataWithContentsOfFile:[NSBundle.test_resourcesBundle pathForResource:@"test-mse" ofType:@"mp4"] options:0 error:NULL];
+    HTTPResponse videoResponse { videoData.get() };
+    videoResponse.setHeaderField("Content-Type"_s, "video/mp4"_s);
+
+    HTTPServer server({
+        { "/mainframe"_s, { "<body><video controls src='/test-mse.mp4'></video><iframe src='https://webkit.org/iframe'></iframe></body>"_s } },
+        { "/iframe"_s, { "<body><video controls src='/test-mse.mp4'></video></body>"_s } },
+        { "/test-mse.mp4"_s, videoResponse }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(configurationWithInternals(server), CGRectMake(0, 0, 800, 600));
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    RetainPtr childFrame = [webView firstChildFrame];
+
+    // Media controls mark themselves with this class when the page's user interface layout direction is left to right.
+    auto controlsDirection = [&](WKFrameInfo *frame) -> String {
+        return [webView stringByEvaluatingJavaScript:@"(() => { const controls = internals.shadowRoot(document.querySelector('video'))?.querySelector('.media-controls'); return controls ? (controls.classList.contains('uses-ltr-user-interface-layout-direction') ? 'ltr' : 'rtl') : 'none' })()" inFrame:frame];
+    };
+
+    EXPECT_TRUE(Util::waitFor([&] {
+        return controlsDirection(nil) == "ltr"_s && controlsDirection(childFrame.get()) == "ltr"_s;
+    }));
+
+#if PLATFORM(MAC)
+    [webView setUserInterfaceLayoutDirection:NSUserInterfaceLayoutDirectionRightToLeft];
+#else
+    [webView setSemanticContentAttribute:UISemanticContentAttributeForceRightToLeft];
+#endif
+    EXPECT_TRUE(Util::waitFor([&] {
+        return controlsDirection(nil) == "rtl"_s;
+    }));
+    EXPECT_TRUE(Util::waitFor([&] {
+        return controlsDirection(childFrame.get()) == "rtl"_s;
+    }));
+}
+
 #if PLATFORM(IOS_FAMILY)
 
 static NSUInteger markerCountInFrame(TestWKWebView *webView, WKFrameInfo *frame, NSString *markerType)

@@ -20378,7 +20378,9 @@ void WebPageProxy::setUserInterfaceLayoutDirection(WebCore::UserInterfaceLayoutD
     if (!hasRunningProcess())
         return;
 
-    send(Messages::WebPage::SetUserInterfaceLayoutDirection(static_cast<uint32_t>(userInterfaceLayoutDirection)));
+    forEachWebContentProcess([&](auto& process, auto pageID) {
+        process.send(Messages::WebPage::SetUserInterfaceLayoutDirection(static_cast<uint32_t>(userInterfaceLayoutDirection)), pageID);
+    });
 }
 
 void WebPageProxy::hideValidationMessage()
