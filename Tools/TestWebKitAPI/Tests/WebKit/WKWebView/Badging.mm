@@ -25,7 +25,6 @@
 
 #import "config.h"
 
-#import "Helpers/DeprecatedGlobalValues.h"
 #import "Helpers/cocoa/HTTPServer.h"
 #import "Helpers/PlatformUtilities.h"
 #import "Helpers/Test.h"
