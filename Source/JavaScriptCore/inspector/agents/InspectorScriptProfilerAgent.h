@@ -29,11 +29,18 @@
 #include <JavaScriptCore/InspectorAgentBase.h>
 #include <JavaScriptCore/InspectorBackendDispatchers.h>
 #include <JavaScriptCore/InspectorFrontendDispatchers.h>
+#include <wtf/CheckedPtr.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/TZoneMalloc.h>
+#include <wtf/Vector.h>
 
 namespace JSC {
 class Profile;
+class VM;
+}
+
+namespace WTF {
+class Stopwatch;
 }
 
 namespace Inspector {
@@ -64,17 +71,21 @@ public:
     Seconds willEvaluateScript() final;
     void didEvaluateScript(Seconds, JSC::ProfilingReason) final;
 
-    // Called when a debugger comes into existence after tracking has already started, so that
-    // scripts evaluated against it are recorded for the rest of the session.
-    void installProfilingClientIfTracking(JSC::Debugger&);
-
 private:
-    void installProfilingClient(JSC::Debugger&);
-    void installProfilingClientOnCoveredDebuggers();
+    void installProfilingClient();
     void clearProfilingClientFromAllDebuggers();
     void addEvent(Seconds startTime, Seconds endTime, JSC::ProfilingReason);
     void trackingComplete();
-    void stopSamplingWhenDisconnecting();
+    void stopSamplingWhenDisconnecting(DisconnectReason);
+
+#if ENABLE(SAMPLING_PROFILER)
+    using SamplingAgents = Vector<CheckedPtr<InspectorScriptProfilerAgent>>;
+    enum class ShouldPauseSampling : bool { No, Yes };
+
+    void startSampling(WTF::Stopwatch&);
+    Ref<Protocol::ScriptProfiler::Samples> stopSampling();
+    static void distributeStackTraces(JSC::VM&, const SamplingAgents&, ShouldPauseSampling);
+#endif
 
     const UniqueRef<ScriptProfilerFrontendDispatcher> m_frontendDispatcher;
     const Ref<ScriptProfilerBackendDispatcher> m_backendDispatcher;
@@ -82,6 +93,9 @@ private:
     bool m_tracking { false };
 #if ENABLE(SAMPLING_PROFILER)
     bool m_enabledSamplingProfiler { false };
+    // Samples attributed to this agent so far, including ones that another agent sampling the same VM
+    // took out of the shared SamplingProfiler.
+    RefPtr<JSON::ArrayOf<Protocol::ScriptProfiler::StackTrace>> m_stackTraces;
 #endif
     bool m_activeEvaluateScript { false };
 };

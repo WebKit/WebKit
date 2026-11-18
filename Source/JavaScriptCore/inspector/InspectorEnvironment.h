@@ -27,8 +27,6 @@
 
 #include <JavaScriptCore/CallData.h>
 #include <wtf/AbstractCanMakeCheckedPtr.h>
-#include <wtf/Compiler.h>
-#include <wtf/Function.h>
 #include <wtf/WeakPtr.h>
 
 namespace WTF {
@@ -38,6 +36,7 @@ class Stopwatch;
 namespace JSC {
 class Debugger;
 class Exception;
+class JSGlobalObject;
 class SourceCode;
 class VM;
 }
@@ -63,15 +62,14 @@ public:
 
     virtual JSC::Debugger* debugger() = 0;
 
-    // JSC::Debugger is deliberately only forward declared here: including Debugger.h would pull the
-    // JSC debugger internals into everything that includes this header, which is most of the
-    // inspector. A raw pointer is the right type either way, since Debugger is neither
-    // ref-counted nor CanMakeCheckedPtr.
-    SUPPRESS_FORWARD_DECL_ARG virtual void forEachDebugger(NOESCAPE const WTF::Function<void(JSC::Debugger&)>& functor)
-    {
-        if (auto* debugger = this->debugger())
-            functor(*debugger);
-    }
+    // A VM has one sampling profiler, which several environments can sample at once (for example the frames
+    // in one web process under Site Isolation). Each sample then goes to the environment that covers the
+    // global object where its script was entered.
+    virtual bool coversGlobalObjectForSampling(JSC::JSGlobalObject&) const { return true; }
+
+    // Whether this environment also gets the samples that no sampling environment covers, for example
+    // samples of script in a page that is not being inspected.
+    virtual bool takesUncoveredSamples() const { return true; }
 
     virtual JSC::VM& vm() = 0;
 };
