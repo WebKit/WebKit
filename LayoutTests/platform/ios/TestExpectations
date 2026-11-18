@@ -9085,9 +9085,6 @@ http/tests/in-app-browser-privacy/top-frame-redirect-to-non-app-bound-domain-blo
 http/tests/site-isolation/window-opener-persists-after-iframe-navigation-cross-site.html [ Pass Timeout ] # rdar://176609953
 http/tests/site-isolation/focus-wrap-across-remote-frames.html [ Pass Timeout ] # rdar://176609953
 
-editing/selection/ios/selection-extends-into-overflow-area.html [ Pass Timeout ] # rdar://176610220
-editing/selection/ios/selection-after-resizing-composited-layer.html [ Pass Timeout ] # rdar://176610220
-
 fast/transforms/skew-y-135deg-with-gradient.html [ Pass ImageOnlyFailure ] # rdar://176610813
 fast/transforms/skew-x-135deg-with-gradient.html [ Pass ImageOnlyFailure ] # rdar://176610813
 
