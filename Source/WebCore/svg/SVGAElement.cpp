@@ -148,13 +148,15 @@ void SVGAElement::defaultEventHandler(Event& event)
             Ref document = this->document();
             URL completedURL = document->encodingParseURL(url);
 
+            auto downloadAttribute = parseDownloadAttribute(*this, completedURL, SVGNames::downloadAttr);
+
             auto target = this->target();
             if (target.isEmpty() && attributeWithoutSynchronization(XLinkNames::showAttr) == "new"_s)
                 target = blankTargetFrameName();
             event.setDefaultHandled();
 
             auto referrerPolicy = effectiveReferrerPolicy(m_linkRelations, this->referrerPolicy());
-            navigateHyperlink(*this, event, completedURL, target, m_linkRelations, referrerPolicy);
+            navigateHyperlink(*this, event, completedURL, target, m_linkRelations, referrerPolicy, downloadAttribute);
             return;
         }
     }

@@ -28,6 +28,7 @@
 ] interface SVGAElement : SVGGraphicsElement {
     readonly attribute SVGAnimatedString target;
 
+    [EnabledBySetting=DownloadAttributeEnabled, Reflect] attribute DOMString download;
     [Reflect] attribute DOMString hreflang;
     [Reflect] attribute DOMString rel;
     [SameObject, PutForwards=value] readonly attribute DOMTokenList relList;
