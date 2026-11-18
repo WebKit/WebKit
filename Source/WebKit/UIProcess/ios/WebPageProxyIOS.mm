@@ -1021,7 +1021,10 @@ void WebPageProxy::focusedElementDidChangeInputMode(WebCore::InputMode mode)
 
 void WebPageProxy::didReleaseAllTouchPoints()
 {
-    protect(legacyMainFrameProcess())->send(Messages::WebPage::DidReleaseAllTouchPoints(), webPageIDInMainFrameProcess());
+    // Every process was told about the touches in didBeginTouchPoint.
+    forEachWebContentProcess([](auto& process, auto pageID) {
+        process.send(Messages::WebPage::DidReleaseAllTouchPoints(), pageID);
+    });
 
     if (!m_pendingInputModeChange)
         return;

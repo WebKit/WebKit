@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<meta charset="utf-8">
+<body style="margin: 0; font-size: 18px; font-family: system-ui;">
+<p id="paragraph" style="display: inline-block; margin: 10px;"><span id="start" style="border: 1px solid tomato; padding: 4px;">Arabic</span> text <span id="arabic">هذه جملة باللغة العربية</span></p>
+<script>
+const frameName = new URLSearchParams(location.search).get("name");
+const report = (message) => window.top.postMessage({ frameName, ...message }, "*");
+const rectToObject = (rect) => ({ left: rect.left, top: rect.top, width: rect.width, height: rect.height });
+
+document.addEventListener("selectionchange", () => report({ type: "selection", text: getSelection().toString() }));
+addEventListener("message", (event) => {
+    if (event.data === "clear")
+        getSelection().removeAllRanges();
+});
+addEventListener("load", () => {
+    report({
+        type: "ready",
+        start: rectToObject(start.getBoundingClientRect()),
+        arabic: rectToObject(arabic.getBoundingClientRect()),
+    });
+});
+</script>
+</body>
+</html>

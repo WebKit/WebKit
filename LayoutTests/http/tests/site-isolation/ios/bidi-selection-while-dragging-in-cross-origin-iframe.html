@@ -1,0 +1,114 @@
+<!DOCTYPE html><!-- webkit-test-runner [ SiteIsolationEnabled=true useFlexibleViewport=true VisuallyContiguousBidiTextSelectionEnabled=true ] -->
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="utf-8">
+<script src="/js-test-resources/js-test.js"></script>
+<script src="/js-test-resources/ui-helper.js"></script>
+<style>
+iframe { position: absolute; left: 0; width: 400px; height: 100px; border: none; }
+</style>
+</head>
+<body style="margin: 0;">
+<iframe id="sameSite" style="top: 0;" src="/site-isolation/resources/bidi-text-frame.html?name=sameSite"></iframe>
+<iframe id="crossSite" style="top: 150px;" src="http://localhost:8000/site-isolation/resources/bidi-text-frame.html?name=crossSite"></iframe>
+<script>
+description("While a long press and drag across bidi text is in progress, a cross-origin iframe should select the same text as a same-site iframe. The selected range is only adjusted to be visually contiguous once the touch ends, so the cross-origin iframe's process must know that a touch is active.");
+jsTestIsAsync = true;
+
+const geometries = { };
+const selections = { };
+addEventListener("message", (event) => {
+    if (event.data.type === "ready") {
+        geometries[event.data.frameName] = event.data;
+        if (geometries.sameSite && geometries.crossSite)
+            runTest();
+    } else if (event.data.type === "selection")
+        selections[event.data.frameName] = event.data.text;
+});
+
+const containsArabic = (text) => /[\u0600-\u06FF]/.test(text || "");
+
+async function waitForFrames(count)
+{
+    for (let frame = 0; frame < count; ++frame)
+        await UIHelper.animationFrame();
+}
+
+// Returns the selected text while the touch is down and after it ends, or undefined if the gesture never extended the
+// selection into the Arabic text.
+async function longPressAndDragAcrossBidiText(frameName)
+{
+    const iframe = document.getElementById(frameName);
+    const { start, arabic } = geometries[frameName];
+    const startPoint = { x: iframe.offsetLeft + start.left + start.width / 2, y: iframe.offsetTop + start.top + start.height / 2 };
+    // Stop in the middle of the Arabic text, so that the logically selected part of it is not visually next to "text".
+    const endPoint = { x: iframe.offsetLeft + arabic.left + arabic.width / 2, y: startPoint.y };
+
+    // Gestures are occasionally delivered before the subframe is ready to process them, so retry the gesture if it
+    // didn't select anything.
+    for (let attempt = 0; attempt < 5; ++attempt) {
+        selections[frameName] = "";
+        await UIHelper.sendEventStream(new UIHelper.EventStreamBuilder()
+            .begin(startPoint.x, startPoint.y)
+            .wait(1.5)
+            .move(endPoint.x, endPoint.y, 0.25)
+            .wait(0.25)
+            .takeResult());
+
+        // The touch is still down.
+        for (let frame = 0; frame < 60 && !containsArabic(selections[frameName]); ++frame)
+            await UIHelper.animationFrame();
+        await UIHelper.ensurePresentationUpdate();
+        await waitForFrames(10);
+        const whileDragging = selections[frameName];
+
+        await UIHelper.sendEventStream(new UIHelper.EventStreamBuilder().end().takeResult());
+        await UIHelper.ensurePresentationUpdate();
+        await waitForFrames(10);
+        const afterTouchEnded = selections[frameName];
+        await UIHelper.waitForDoubleTapDelay();
+
+        if (containsArabic(whileDragging))
+            return { whileDragging, afterTouchEnded };
+    }
+    return undefined;
+}
+
+async function runTest()
+{
+    await UIHelper.ensurePresentationUpdate();
+
+    const sameSiteResult = await longPressAndDragAcrossBidiText("sameSite");
+    sameSite.contentWindow.postMessage("clear", "*");
+    await UIHelper.waitForSelectionToDisappear();
+    const crossSiteResult = await longPressAndDragAcrossBidiText("crossSite");
+
+    if (!sameSiteResult || !crossSiteResult) {
+        testFailed(`Long pressing and dragging did not extend the selection into the Arabic text (same-site iframe: '${selections.sameSite}', cross-origin iframe: '${selections.crossSite}').`);
+        finishJSTest();
+        return;
+    }
+
+    // Otherwise, the drag ended where adjusting the selection doesn't change it, and this test can't tell whether
+    // the cross-origin iframe adjusted it too early.
+    if (sameSiteResult.whileDragging !== sameSiteResult.afterTouchEnded)
+        testPassed("The selection in the same-site iframe was adjusted to be visually contiguous when the touch ended.");
+    else
+        testFailed(`The selection in the same-site iframe was not adjusted when the touch ended (selection: '${sameSiteResult.whileDragging}').`);
+
+    if (crossSiteResult.whileDragging === sameSiteResult.whileDragging)
+        testPassed("While dragging, the cross-origin iframe selected the same text as the same-site iframe.");
+    else
+        testFailed(`While dragging, the cross-origin iframe selected '${crossSiteResult.whileDragging}' but the same-site iframe selected '${sameSiteResult.whileDragging}'.`);
+
+    if (crossSiteResult.afterTouchEnded === sameSiteResult.afterTouchEnded)
+        testPassed("After the touch ended, the cross-origin iframe selected the same text as the same-site iframe.");
+    else
+        testFailed(`After the touch ended, the cross-origin iframe selected '${crossSiteResult.afterTouchEnded}' but the same-site iframe selected '${sameSiteResult.afterTouchEnded}'.`);
+
+    finishJSTest();
+}
+</script>
+</body>
+</html>

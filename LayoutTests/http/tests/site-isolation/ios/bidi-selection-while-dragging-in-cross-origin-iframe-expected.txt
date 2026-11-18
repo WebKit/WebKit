@@ -1,0 +1,12 @@
+While a long press and drag across bidi text is in progress, a cross-origin iframe should select the same text as a same-site iframe. The selected range is only adjusted to be visually contiguous once the touch ends, so the cross-origin iframe's process must know that a touch is active.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS The selection in the same-site iframe was adjusted to be visually contiguous when the touch ended.
+PASS While dragging, the cross-origin iframe selected the same text as the same-site iframe.
+PASS After the touch ended, the cross-origin iframe selected the same text as the same-site iframe.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

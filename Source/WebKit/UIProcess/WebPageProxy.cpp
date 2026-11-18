@@ -6092,7 +6092,11 @@ void WebPageProxy::didBeginTouchPoint(FloatPoint locationInRootView)
     if (!hasRunningProcess())
         return;
 
-    send(Messages::WebPage::DidBeginTouchPoint(locationInRootView));
+    // The touch may be over a frame in another process (e.g. a cross-origin iframe), and selection gestures that
+    // the touch starts are sent to the focused frame's process.
+    forEachWebContentProcess([&](auto& process, auto pageID) {
+        process.send(Messages::WebPage::DidBeginTouchPoint(locationInRootView), pageID);
+    });
 }
 
 void WebPageProxy::sendUnpreventableTouchEvent(WebCore::FrameIdentifier frameID, Ref<WebTouchEvent>&& event)
