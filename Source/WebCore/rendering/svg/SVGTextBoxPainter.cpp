@@ -329,6 +329,23 @@ bool SVGTextBoxPainter::acquireLegacyPaintingResource(GraphicsContext*& context,
     return true;
 }
 
+void SVGTextBoxPainter::adjustPaintServerForTextScale(GraphicsContext& context, float scalingFactor)
+{
+    // Text painting removes the scaling part of the context transform, see paintTextWithShadows
+    // and paintDecorationWithStyle. Scale the pattern accordingly, so that it tiles in user space
+    // like it does for shapes.
+    if (scalingFactor == 1)
+        return;
+    if (paintingResourceMode().contains(RenderSVGResourceMode::ApplyToFill)) {
+        if (RefPtr pattern = context.fillPattern())
+            context.setFillPattern(pattern->scaled(scalingFactor));
+    }
+    if (paintingResourceMode().contains(RenderSVGResourceMode::ApplyToStroke)) {
+        if (RefPtr pattern = context.strokePattern())
+            context.setStrokePattern(pattern->scaled(scalingFactor));
+    }
+}
+
 void SVGTextBoxPainter::releaseLegacyPaintingResource(GraphicsContext*& context, const Path* path)
 {
     ASSERT(m_legacyPaintingResource);
@@ -469,6 +486,8 @@ void SVGTextBoxPainter::paintDecorationWithStyle(Style::TextDecorationLine decor
     if (decorationRenderer.document().settings().layerBasedSVGEngineEnabled()) {
         SVGPaintServerHandling paintServerHandling { context };
         if (acquirePaintingResource(paintServerHandling, scalingFactor, decorationRenderer, decorationStyle)) {
+            adjustPaintServerForTextScale(context, scalingFactor);
+
             if (paintingResourceMode().contains(RenderSVGResourceMode::ApplyToFill))
                 context.fillPath(path);
             else if (paintingResourceMode().contains(RenderSVGResourceMode::ApplyToStroke))
@@ -480,8 +499,10 @@ void SVGTextBoxPainter::paintDecorationWithStyle(Style::TextDecorationLine decor
     }
 
     GraphicsContext* usedContext = &context;
-    if (acquireLegacyPaintingResource(usedContext, scalingFactor, const_cast<RenderBoxModelObject&>(decorationRenderer), decorationStyle))
+    if (acquireLegacyPaintingResource(usedContext, scalingFactor, const_cast<RenderBoxModelObject&>(decorationRenderer), decorationStyle)) {
+        adjustPaintServerForTextScale(*usedContext, scalingFactor);
         releaseLegacyPaintingResource(usedContext, &path);
+    }
 }
 
 void SVGTextBoxPainter::paintTextWithShadows(const Style::ComputedStyle& style, TextRun& textRun, const SVGTextFragment& fragment, unsigned startPosition, unsigned endPosition)
@@ -566,6 +587,16 @@ void SVGTextBoxPainter::paintTextWithShadows(const Style::ComputedStyle& style, 
                 usedContext->save();
 
             usedContext->scale(1 / scalingFactor);
+            if (gradient || pattern) {
+                // The glyphs act only as an alpha mask for the paint server painted above. Draw
+                // them opaque, so that the paint server's own alpha is not applied a second time.
+                if (paintingResourceMode().contains(RenderSVGResourceMode::ApplyToFill))
+                    usedContext->setFillColor(Color::black);
+                if (paintingResourceMode().contains(RenderSVGResourceMode::ApplyToStroke))
+                    usedContext->setStrokeColor(Color::black);
+            } else
+                adjustPaintServerForTextScale(*usedContext, scalingFactor);
+
             scaledFont.drawText(*usedContext, textRun, textOrigin + shadowApplier.extraOffset(), startPosition, endPosition);
 
             if (!shadowApplier.didSaveContext())

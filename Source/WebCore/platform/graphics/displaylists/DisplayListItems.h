@@ -1398,26 +1398,6 @@ private:
     ControlStyle m_style;
 };
 
-#if USE(CG)
-
-class ApplyStrokePattern {
-public:
-    static constexpr ASCIILiteral name = "apply-stroke-pattern"_s;
-
-    WEBCORE_EXPORT void apply(GraphicsContext&) const;
-    void dump(TextStream&, OptionSet<AsTextFlag>) const { }
-};
-
-class ApplyFillPattern {
-public:
-    static constexpr ASCIILiteral name = "apply-fill-pattern"_s;
-
-    WEBCORE_EXPORT void apply(GraphicsContext&) const;
-    void dump(TextStream&, OptionSet<AsTextFlag>) const { }
-};
-
-#endif
-
 class ApplyDeviceScaleFactor {
 public:
     static constexpr ASCIILiteral name = "apply-device-scale-factor"_s;

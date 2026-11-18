@@ -27,30 +27,6 @@ async function main() {
     const instance = executor.createInstance();
     const res_0 = encodeInitIdentifierValues(instance.getInitIdentifierValues());
 
-    let ref_105553176631104 = extractResult(res_0, [0]);
-    if (ref_105553176631104 !== null) {
-        instance.sendMessage(
-            [
-                // Reference
-                ...ref_105553176631104
-            ][0].value,
-            IPC.messages.RemoteGraphicsContext_ApplyStrokePattern.name,
-            [
-            ]
-        );
-    }
-    let ref_105553176631152 = extractResult(res_0, [0]);
-    if (ref_105553176631152 !== null) {
-        instance.sendMessage(
-            [
-                // Reference
-                ...ref_105553176631152
-            ][0].value,
-            IPC.messages.RemoteGraphicsContext_ApplyStrokePattern.name,
-            [
-            ]
-        );
-    }
     let ref_105553176631200 = extractResult(res_0, [0]);
     if (ref_105553176631200 !== null) {
         instance.sendMessage(
