@@ -86,15 +86,33 @@ class HTTPProxyConnector(object):
         return self.connectTCP(host, port, tlsFactory, timeout, bindAddress)
 
 
+class HTTPProxyTunnelConnector(object):
+    """Lets a cancel abort the proxy connection while the CONNECT tunnel is still being set up."""
+
+    def __init__(self, connector):
+        self._connector = connector
+
+    def stopConnecting(self):
+        try:
+            self._connector.stopConnecting()
+        except error.NotConnectingError:
+            self._connector.disconnect()
+
+    def __getattr__(self, name):
+        return getattr(self._connector, name)
+
+
 class HTTPProxiedClientFactory(protocol.ClientFactory):
     """ClientFactory wrapper that triggers an HTTP proxy CONNECT on connect"""
     def __init__(self, delegate, dst_host, dst_port):
         self.delegate = delegate
         self.dst_host = dst_host
         self.dst_port = dst_port
+        self.tunneled = False
+        self.tunnel_failure = None
 
     def startedConnecting(self, connector):
-        return self.delegate.startedConnecting(connector)
+        return self.delegate.startedConnecting(HTTPProxyTunnelConnector(connector))
 
     def buildProtocol(self, addr):
         p = HTTPConnectTunneler(self.dst_host, self.dst_port, addr)
@@ -105,6 +123,8 @@ class HTTPProxiedClientFactory(protocol.ClientFactory):
         return self.delegate.clientConnectionFailed(connector, reason)
 
     def clientConnectionLost(self, connector, reason):
+        if not self.tunneled:
+            return self.delegate.clientConnectionFailed(connector, self.tunnel_failure or reason)
         return self.delegate.clientConnectionLost(connector, reason)
 
 
@@ -136,6 +156,7 @@ class HTTPConnectTunneler(protocol.Protocol):
     def proxyConnected(self):
         # TODO: Bail if `self.factory` is unassigned or
         # does not have a `delegate`
+        self.factory.tunneled = True
         self.otherConn = self.factory.delegate.buildProtocol(self.orig_addr)
         self.otherConn.makeConnection(self.transport)
 
@@ -143,6 +164,10 @@ class HTTPConnectTunneler(protocol.Protocol):
         buf = self.http.clearLineBuffer()
         if buf:
             self.otherConn.dataReceived(buf)
+
+    def proxyFailed(self, reason):
+        self.factory.tunnel_failure = reason
+        self.transport.loseConnection()
 
     def dataReceived(self, data):
         if self.otherConn is not None:
@@ -162,6 +187,7 @@ class HTTPConnectSetup(http.HTTPClient):
     def __init__(self, host, port):
         self.host = f'[{host}]' if ':' in host else host
         self.port = port
+        self.failed = False
 
     def connectionMade(self):
         self.sendCommand(b'CONNECT', f'{self.host}:{self.port}'.encode('utf-8'))
@@ -169,11 +195,13 @@ class HTTPConnectSetup(http.HTTPClient):
 
     def handleStatus(self, version, status, message):
         if status != b'200':
-            raise error.ConnectError(f'Unexpected {status} status on CONNECT, {message}, {version}, host: {self.host}:{self.port}')
+            self.failed = True
+            self.parent.proxyFailed(error.ConnectError(f"proxy answered CONNECT {self.host}:{self.port} with {status.decode('utf-8', 'replace')} {message.decode('utf-8', 'replace')}"))
 
     def handleEndHeaders(self):
         # TODO: Make sure parent is assigned, and has a proxyConnected callback
-        self.parent.proxyConnected()
+        if not self.failed:
+            self.parent.proxyConnected()
 
     def handleResponse(self, body):
         pass
@@ -307,8 +335,8 @@ class TwistedAdditions(object):
             return
 
         except error.ConnectError as e:
-            logger(f'Failed to connect to {hostname}\n')
-        except defer.TimeoutError:
+            logger(f'Failed to connect to {hostname}: {e}\n')
+        except (defer.TimeoutError, error.ConnectingCancelledError):
             logger(f'Request to {hostname} timed out after {timeout} seconds\n')
         except _newclient.ResponseFailed:
             logger(f'No response from {hostname}\n')

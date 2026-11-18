@@ -14976,6 +14976,51 @@ class TestResultsDatabaseFailureHandling(unittest.TestCase):
             result = yield ResultsDatabase.make_request('results-summary', suite='layout-tests', test='foo')
         self.assertIsNone(result)
 
+    def _mock_twisted_request_sequence(self, responses):
+        calls = []
+
+        def fake_request(url, *args, **kwargs):
+            calls.append(url)
+            return defer.succeed(responses[len(calls) - 1])
+        return patch('ews-build.results_db.TwistedAdditions.request', fake_request), calls
+
+    @defer.inlineCallbacks
+    def test_make_request_retries_once_on_no_response(self):
+        mock, calls = self._mock_twisted_request_sequence([None, self._ok_response({'pass': 100})])
+        logs = []
+        with mock:
+            result = yield ResultsDatabase.make_request('results-summary', suite='layout-tests', test='foo', logger=logs.append)
+        self.assertEqual(result, {'pass': 100})
+        self.assertEqual(len(calls), 2)
+        self.assertEqual(logs, [f'Retrying {ResultsDatabase.HOSTNAME}/api/results-summary/layout-tests/foo\n'])
+
+    @defer.inlineCallbacks
+    def test_make_request_gives_up_after_one_retry(self):
+        mock, calls = self._mock_twisted_request_sequence([None, None])
+        with mock:
+            result = yield ResultsDatabase.make_request('results-summary', suite='layout-tests', test='foo')
+        self.assertIsNone(result)
+        self.assertEqual(len(calls), 2)
+
+    @defer.inlineCallbacks
+    def test_make_request_timeout(self):
+        timeouts = []
+
+        def fake_request(url, *args, **kwargs):
+            timeouts.append(kwargs.get('timeout'))
+            return defer.succeed(self._ok_response({}))
+        with patch('ews-build.results_db.TwistedAdditions.request', fake_request):
+            yield ResultsDatabase.make_request('results-summary', suite='layout-tests', test='foo')
+        self.assertEqual(timeouts, [20])
+
+    @defer.inlineCallbacks
+    def test_make_request_does_not_retry_on_non_200(self):
+        mock, calls = self._mock_twisted_request_sequence([TwistedAdditions.Response(status_code=500)])
+        with mock:
+            result = yield ResultsDatabase.make_request('results-summary', suite='layout-tests', test='foo')
+        self.assertIsNone(result)
+        self.assertEqual(len(calls), 1)
+
     @defer.inlineCallbacks
     def test_make_request_returns_payload_on_success(self):
         with self._mock_twisted_request(self._ok_response({'pass': 95})):

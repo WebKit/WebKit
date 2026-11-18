@@ -176,6 +176,7 @@ class ResultsDatabase(object):
 
     TESTS_PER_FLAKY_QUERY = 20
     FLAKY_QUERY_LIMIT = 100
+    QUERY_TIMEOUT_SECONDS = 20
     FLAKY_QUERY_TIMEOUT_SECONDS = 30
     FLAKY_WINDOW_SECONDS = 3 * 24 * 60 * 60
 
@@ -189,6 +190,16 @@ class ResultsDatabase(object):
     CLEAN_TREE_VERDICT = 'CleanTree'
     DIRTY_TREE_VERDICT = 'DirtyTree'
     BETWEEN_BUILDS_VERDICT = 'BetweenBuilds'
+
+    @classmethod
+    @defer.inlineCallbacks
+    def _get(cls, url, params=None, logger=None, timeout=QUERY_TIMEOUT_SECONDS):
+        logger = logger or (lambda _: None)
+        response = yield TwistedAdditions.request(url, params=params, logger=logger, timeout=timeout)
+        if response is None:
+            logger(f'Retrying {url}\n')
+            response = yield TwistedAdditions.request(url, params=params, logger=logger, timeout=timeout)
+        return response
 
     @classmethod
     def platform_for_query(cls, platform):
@@ -216,7 +227,7 @@ class ResultsDatabase(object):
             params['ref'] = commit
 
         url = f"{cls.HOSTNAME}/api/{endpoint}/{urllib.parse.quote(suite)}{f'/{urllib.parse.quote(test)}' if test else ''}"
-        response = yield TwistedAdditions.request(url, params=params, logger=logger)
+        response = yield cls._get(url, params=params, logger=logger)
 
         if not response:
             logger(f'No response from {url}\n')
@@ -312,7 +323,7 @@ class ResultsDatabase(object):
     @classmethod
     @defer.inlineCallbacks
     def has_commit(cls, commit, logger=None):
-        response = yield TwistedAdditions.request(f'{cls.HOSTNAME}/api/commits', params=dict(ref=commit), logger=logger)
+        response = yield cls._get(f'{cls.HOSTNAME}/api/commits', params=dict(ref=commit), logger=logger)
         defer.returnValue(response and response.status_code == 200)
 
     @classmethod
@@ -502,7 +513,7 @@ class ResultsDatabase(object):
         # paths overflows nginx's 8k request line, and a 414 fails every test in the batch.
         for index in range(0, len(tests), cls.TESTS_PER_FLAKY_QUERY):
             chunk = tests[index:index + cls.TESTS_PER_FLAKY_QUERY]
-            res = yield TwistedAdditions.request(
+            res = yield cls._get(
                 url, params=dict(base_params, tests=chunk), logger=logger,
                 timeout=cls.FLAKY_QUERY_TIMEOUT_SECONDS,
             )
