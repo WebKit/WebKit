@@ -593,10 +593,15 @@ void LineLayout::setExcludedMarkerPositions(const ExcludedMarkerList& excludedMa
             auto markerAscent = marker->isImage() ? marker->logicalHeight().toFloat() : protect(marker->style())->metricsOfPrimaryFont().ascent(FontBaseline::Alphabetic);
             return lineBoxLogicalRect.y() + firstContentfulLine->baseline() - markerAscent;
         }();
-        auto markerMarginStart = marker->marginStart(flow().writingMode()).toFloat();
-        auto markerLogicalLeft = isLeftToRight ? lineStartEdge + markerMarginStart : lineStartEdge - markerMarginStart - marker->logicalWidth().toFloat();
+        // The marker goes on the inline start side of its list item, in the list item's writing mode (css-lists-3
+        // marker-side: match-self), which is the line's end side when the line runs the other way.
+        auto listItemIsLeftToRight = listItem->writingMode().isLogicalLeftInlineStart();
+        auto isOnLineStart = listItemIsLeftToRight == isLeftToRight;
+        auto markerEdge = isOnLineStart ? lineStartEdge : listItemIsLeftToRight ? lineBoxLogicalRect.x() : lineBoxLogicalRect.maxX();
+        auto markerMarginStart = marker->marginStart(listItem->writingMode()).toFloat();
+        auto markerLogicalLeft = listItemIsLeftToRight ? markerEdge + markerMarginStart : markerEdge - markerMarginStart - marker->logicalWidth().toFloat();
         auto topLeft = FloatPoint { markerLogicalLeft, markerLogicalTop };
-        listItem->setExcludedMarkerPosition({ flow(), topLeft, isLineStartConstrainedByFloat });
+        listItem->setExcludedMarkerPosition({ flow(), topLeft, isOnLineStart && isLineStartConstrainedByFloat });
     }
 }
 

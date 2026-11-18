@@ -117,16 +117,22 @@ static LayoutUnit excludedMarkerLogicalLeftOffsetFor(const RenderBlockFlow& firs
     //            |<---------|         toAssociatedListItem = -40
     //            |<----------------|  return value = -45
     // Both markers on the same line and these values are for the outer marker. The second offset is zero unless the line is inside a nested list item.
+    // The marker is on the inline start side of its list item, which is not that of a box running the other way, so
+    // the boxes in between are measured on the list item's side.
+    auto isLeftToRight = listItem.writingMode().isLogicalLeftInlineStart();
+    auto borderAndPaddingOnMarkerSide = [&](const RenderBlock& box) {
+        return isLeftToRight ? box.borderAndPaddingLogicalLeft() : box.borderAndPaddingLogicalRight();
+    };
     auto toEnclosingListItem = LayoutUnit { };
     auto hasAccountedForBorderAndPadding = false;
     CheckedPtr<const RenderBlock> ancestor = &firstFormattedLineRoot;
     for (; ancestor; ancestor = ancestor->containingBlock()) {
         if (!hasAccountedForBorderAndPadding)
-            toEnclosingListItem -= ancestor->borderAndPaddingStart();
+            toEnclosingListItem -= borderAndPaddingOnMarkerSide(*ancestor);
         if (is<RenderListItem>(*ancestor))
             break;
 
-        toEnclosingListItem -= ancestor->marginStart(ancestor->writingMode());
+        toEnclosingListItem -= ancestor->marginStart(listItem.writingMode());
         if (ancestor->isFlexItem()) {
             toEnclosingListItem -= ancestor->logicalLeft();
             hasAccountedForBorderAndPadding = true;
@@ -138,7 +144,7 @@ static LayoutUnit excludedMarkerLogicalLeftOffsetFor(const RenderBlockFlow& firs
     auto toAssociatedListItem = LayoutUnit { };
     if (ancestor && ancestor.get() != &listItem) {
         for (CheckedPtr<const RenderBlock> box = ancestor->containingBlock(); box; box = box->containingBlock()) {
-            toAssociatedListItem -= (box->marginStart(box->writingMode()) + box->borderAndPaddingStart());
+            toAssociatedListItem -= (box->marginStart(listItem.writingMode()) + borderAndPaddingOnMarkerSide(*box));
             if (box.get() == &listItem)
                 break;
         }
@@ -149,7 +155,7 @@ static LayoutUnit excludedMarkerLogicalLeftOffsetFor(const RenderBlockFlow& firs
     }
 
     // The offsets above are inline start relative (negative means further towards the inline start), while what we return is a logical left offset, so in a right to left inline direction it points the other way.
-    if (!listItem.writingMode().isLogicalLeftInlineStart())
+    if (!isLeftToRight)
         return -(toEnclosingListItem + toAssociatedListItem);
     return toEnclosingListItem + toAssociatedListItem;
 }
