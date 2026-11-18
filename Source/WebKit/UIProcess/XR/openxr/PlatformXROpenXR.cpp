@@ -396,11 +396,12 @@ void OpenXRCoordinator::startSession(WebPageProxy& page, WeakPtr<PlatformXRCoord
                 createSessionIfNeeded();
                 if (m_session == XR_NULL_HANDLE) {
                     LOG(XR, "OpenXRCoordinator: failed to create the session");
+                    cleanupAllResourcesAndNotifySessionEnd();
                     return;
                 }
                 m_input = OpenXRInput::create(m_instance, m_session, systemProperties(m_instance, m_systemId));
                 if (!m_input) {
-                    cleanupAllResources();
+                    cleanupAllResourcesAndNotifySessionEnd();
                     return;
                 }
 #if ENABLE(WEBXR_PLANE_DETECTION)
@@ -950,6 +951,23 @@ void OpenXRCoordinator::cleanupAllResources()
     cleanupInstanceAndAssociatedResources();
 }
 
+// For session ends that the page did not ask for (the runtime ended or lost the session, or it could not be set up). Notify the page on those. For user initiated end sequences it'll do nothing (already handled).
+void OpenXRCoordinator::cleanupAllResourcesAndNotifySessionEnd()
+{
+    ASSERT(!RunLoop::isMain());
+
+    cleanupAllResources();
+    m_isSessionRunning = false;
+    callOnMainRunLoop([this] {
+        WTF::switchOn(m_state,
+            [&](Idle&) { },
+            [&](Active& active) {
+                if (RefPtr page = WebProcessProxy::webPage(active.pageIdentifier))
+                    endSessionIfExists(*page);
+            });
+    });
+}
+
 void OpenXRCoordinator::handleSessionStateChange()
 {
     ASSERT(!RunLoop::isMain());
@@ -980,7 +998,7 @@ void OpenXRCoordinator::handleSessionStateChange()
         break;
     case XR_SESSION_STATE_LOSS_PENDING:
     case XR_SESSION_STATE_EXITING:
-        cleanupAllResources();
+        cleanupAllResourcesAndNotifySessionEnd();
         break;
     default:
         break;
@@ -997,6 +1015,7 @@ OpenXRCoordinator::PollResult OpenXRCoordinator::pollEvents()
         switch (runtimeEvent.type) {
         case XR_TYPE_EVENT_DATA_INSTANCE_LOSS_PENDING:
             LOG(XR, "OpenXR instance loss");
+            cleanupAllResourcesAndNotifySessionEnd();
             return PollResult::Stop;
         case XR_TYPE_EVENT_DATA_SESSION_STATE_CHANGED: {
             auto* event = reinterpret_cast<XrEventDataSessionStateChanged*>(&runtimeEvent);

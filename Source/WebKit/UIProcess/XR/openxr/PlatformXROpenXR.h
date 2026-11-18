@@ -101,6 +101,7 @@ private:
     void createSessionIfNeeded();
     void handleSessionStateChange();
     void cleanupAllResources();
+    void cleanupAllResourcesAndNotifySessionEnd();
     void cleanupInstanceAndAssociatedResources();
     void cleanupSessionAndAssociatedResources();
     bool collectSwapchainFormatsIfNeeded();
