@@ -22299,6 +22299,40 @@ Ref<WebProcessProxy> WebPageProxy::processContainingFrame(std::optional<WebCore:
     return siteIsolatedProcess();
 }
 
+RefPtr<WebFrameProxy> WebPageProxy::frameForRemoteUserInputEventRedispatch(IPC::Connection* replyingConnection, WebCore::FrameIdentifier sourceFrameID, WebCore::FrameIdentifier targetFrameID)
+{
+    if (!replyingConnection)
+        return nullptr;
+
+    MESSAGE_CHECK_WITH_RETURN_VALUE_BASE(protect(preferences())->siteIsolationEnabled(), *replyingConnection, nullptr);
+
+    RefPtr sourceFrame = WebFrameProxy::webFrame(sourceFrameID);
+    RefPtr targetFrame = WebFrameProxy::webFrame(targetFrameID);
+    if (!sourceFrame || !targetFrame)
+        return nullptr;
+
+    MESSAGE_CHECK_WITH_RETURN_VALUE_BASE(sourceFrame->page() == this && targetFrame->page() == this, *replyingConnection, nullptr);
+
+    Ref replyingProcess = WebProcessProxy::fromConnection(*replyingConnection);
+    if (&sourceFrame->process() != replyingProcess.ptr())
+        return nullptr;
+
+    Ref sourceLocalRoot = sourceFrame->rootFrame();
+    bool targetIsBelowSourceLocalRoot = false;
+    for (RefPtr ancestor = targetFrame->parentFrame(); ancestor; ancestor = ancestor->parentFrame()) {
+        if (ancestor == sourceLocalRoot.ptr()) {
+            targetIsBelowSourceLocalRoot = true;
+            break;
+        }
+    }
+    MESSAGE_CHECK_WITH_RETURN_VALUE_BASE(targetIsBelowSourceLocalRoot, *replyingConnection, nullptr);
+
+    if (&targetFrame->process() == replyingProcess.ptr())
+        return nullptr;
+
+    return targetFrame;
+}
+
 WebCore::PageIdentifier WebPageProxy::webPageIDInProcessForFrame(std::optional<WebCore::FrameIdentifier> frameID)
 {
     // For the main frame this resolves to the main frame process and returns m_webPageID,

@@ -4578,4 +4578,112 @@ TEST(SiteIsolation, PopupNavigationWithWebsiteDataStoreOfOpenerKeepsOpener)
     EXPECT_WK_STREQ([opened.uiDelegate waitForAlert], "true");
 }
 
+#if PLATFORM(IOS_FAMILY) && ENABLE(IPC_TESTING_API)
+
+// When a web process's hit test reaches a frame hosted by another process, it replies with that frame and the point in
+// its coordinates, and the UI process re-sends the request there. A web process controls that reply, so the UI process
+// must only follow it to a frame inside the part of this page that the replying process hosts.
+
+static RetainPtr<WKWebViewConfiguration> ipcTestingConfiguration(const HTTPServer& server)
+{
+    RetainPtr configuration = server.httpsProxyConfiguration();
+    setFeatureEnabled(configuration.get(), @"IPCTestingAPIEnabled", true);
+    setFeatureEnabled(configuration.get(), @"IgnoreInvalidMessageWhenIPCTestingAPIEnabled", true);
+    return configuration;
+}
+
+static RetainPtr<NSString> ipcFrameIdentifier(TestWKWebView *webView, WKFrameInfo *frame = nil)
+{
+    return [webView stringByEvaluatingJavaScript:@"IPC.frameID[0].toString()" inFrame:frame];
+}
+
+// Counts the position information requests the frame's process receives. If a target frame is given, answers each one
+// as if the point were over that frame, hosted by another process.
+static void countPositionInformationRequests(TestWKWebView *webView, NSString *forgedTargetFrameID = nil)
+{
+    [webView objectByEvaluatingJavaScript:[NSString stringWithFormat:@"window.positionInformationRequestCount = 0;"
+        "IPC.addIncomingMessageListener('UI', message => {"
+        "    if (message.name !== IPC.messages.WebPage_RequestPositionInformation.name)"
+        "        return;"
+        "    ++window.positionInformationRequestCount;"
+        "    const target = '%@';"
+        "    if (!target || message.listenerID === undefined)"
+        "        return;"
+        "    IPC.sendMessage('UI', message.listenerID, IPC.messages.WebPage_RequestPositionInformationReply.name, ["
+        "        { type: 'uint8_t', value: 1 },"
+        "        { type: 'FrameID', value: [BigInt(target)] },"
+        "        { type: 'double', value: 10 },"
+        "        { type: 'double', value: 10 },"
+        "    ]);"
+        "}); true", forgedTargetFrameID ?: @""]];
+}
+
+static int positionInformationRequestCount(TestWKWebView *webView)
+{
+    return [[webView objectByEvaluatingJavaScript:@"window.positionInformationRequestCount"] intValue];
+}
+
+static RetainPtr<NSString> takeInvalidMessageStringForTesting(TestWKWebView *webView)
+{
+    return [webView stringByEvaluatingJavaScript:@"(() => {"
+        "const reply = IPC.sendSyncMessage('UI', 0, IPC.messages.WebProcessProxy_TakeInvalidMessageStringForTesting.name, 1000, []);"
+        "return reply?.arguments?.[0]?.value ?? '';"
+        "})()"];
+}
+
+TEST(SiteIsolation, PositionInformationRedispatchToTheSourceFrameIsRejected)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { mainFrameTextWithCrossOriginIframe } },
+        { "/iframe"_s, { "<body>subframe text</body>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(ipcTestingConfiguration(server), CGRectMake(0, 0, 800, 600));
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    // Following this reply would send the same request back to the same process, forever.
+    countPositionInformationRequests(webView.get(), ipcFrameIdentifier(webView.get()).get());
+    [webView _requestActivatedElementAtPosition:CGPointMake(10, 10) completionBlock:^(_WKActivatedElementInfo *) { }];
+
+    EXPECT_TRUE(Util::waitFor([&] {
+        return positionInformationRequestCount(webView.get()) >= 1;
+    }));
+    Util::runFor(0.5_s);
+    EXPECT_EQ(1, positionInformationRequestCount(webView.get()));
+    EXPECT_TRUE([takeInvalidMessageStringForTesting(webView.get()) containsString:@"Message check failed"]);
+}
+
+TEST(SiteIsolation, PositionInformationRedispatchToFrameInAnotherPageIsRejected)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { mainFrameTextWithCrossOriginIframe } },
+        { "/iframe"_s, { "<body>subframe text</body>"_s } },
+        { "/other"_s, { "<body>another page</body>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    RetainPtr configuration = ipcTestingConfiguration(server);
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(configuration, CGRectMake(0, 0, 800, 600));
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    auto [otherWebView, otherNavigationDelegate] = siteIsolatedViewAndDelegate(configuration, CGRectMake(0, 0, 800, 600));
+    [otherWebView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://apple.com/other"]]];
+    [otherNavigationDelegate waitForDidFinishNavigation];
+    EXPECT_NE([webView _webProcessIdentifier], [otherWebView _webProcessIdentifier]);
+
+    countPositionInformationRequests(otherWebView.get());
+    countPositionInformationRequests(webView.get(), ipcFrameIdentifier(otherWebView.get()).get());
+    [webView _requestActivatedElementAtPosition:CGPointMake(10, 10) completionBlock:^(_WKActivatedElementInfo *) { }];
+
+    EXPECT_TRUE(Util::waitFor([&] {
+        return positionInformationRequestCount(webView.get()) >= 1;
+    }));
+    Util::runFor(0.5_s);
+    EXPECT_EQ(0, positionInformationRequestCount(otherWebView.get()));
+    EXPECT_TRUE([takeInvalidMessageStringForTesting(webView.get()) containsString:@"Message check failed"]);
+}
+
+#endif // PLATFORM(IOS_FAMILY) && ENABLE(IPC_TESTING_API)
+
 } // namespace TestWebKitAPI

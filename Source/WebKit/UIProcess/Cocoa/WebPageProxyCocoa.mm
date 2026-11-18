@@ -2445,8 +2445,12 @@ void WebPageProxy::requestPositionInformationInFrame(std::optional<WebCore::Fram
     auto requestInFrame = request;
     requestInFrame.point = pointInFrameRootViewCoordinates;
 
+    std::optional<WebCore::FrameIdentifier> sourceFrameID = frameID;
+    if (!sourceFrameID && m_mainFrame)
+        sourceFrameID = m_mainFrame->frameID();
+
     Ref process = processContainingFrame(frameID);
-    auto replyID = process->sendWithAsyncReply(Messages::WebPage::RequestPositionInformation(frameID, requestInFrame), [weakThis = WeakPtr { *this }, frameID, request] (auto&& reply) {
+    auto replyID = process->sendWithAsyncReply(Messages::WebPage::RequestPositionInformation(frameID, requestInFrame), [weakThis = WeakPtr { *this }, frameID, sourceFrameID, request](IPC::Connection* connection, Variant<InteractionInformationAtPosition, WebCore::RemoteUserInputEventData>&& reply) {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return;
@@ -2462,7 +2466,10 @@ void WebPageProxy::requestPositionInformationInFrame(std::optional<WebCore::Fram
             information.request = request;
             protectedThis->didReceivePositionInformation(information, frameID);
         }, [&](WebCore::RemoteUserInputEventData&& remoteUserInputEventData) {
-            protectedThis->requestPositionInformationInFrame(remoteUserInputEventData.targetFrameID, roundedIntPoint(FloatPoint { remoteUserInputEventData.transformedPoint }), request);
+            if (!sourceFrameID)
+                return;
+            if (RefPtr targetFrame = protectedThis->frameForRemoteUserInputEventRedispatch(connection, *sourceFrameID, remoteUserInputEventData.targetFrameID))
+                protectedThis->requestPositionInformationInFrame(targetFrame->frameID(), roundedIntPoint(FloatPoint { remoteUserInputEventData.transformedPoint }), request);
         });
     }, webPageIDInProcessForFrame(frameID));
 
