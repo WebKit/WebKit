@@ -81,6 +81,10 @@ static pas_basic_heap_runtime_config* all_bmalloc_runtime_configs[] = {
 extern const pas_heap_config jit_heap_config;
 extern pas_heap_runtime_config jit_heap_runtime_config;
 #endif // PAS_ENABLE_JIT
+#if PAS_ENABLE_MARKED_BLOCK
+extern const pas_heap_config marked_block_heap_config;
+extern pas_basic_heap_runtime_config marked_block_primitive_runtime_config;
+#endif // PAS_ENABLE_MARKED_BLOCK
 #if PAS_ENABLE_ISO
 extern const pas_heap_config iso_heap_config;
 #endif // PAS_ENABLE_ISO
@@ -302,7 +306,7 @@ static void pas_report_page_config(const char* label,
     }
 
     /* The widths here must be kept in sync with the headers printed in pas_report_heap_config */
-    fprintf(stderr, "\n\t\t%-18s %7zuB %7zuB %4zuB %8s %7zuB %8s %7zuB  %-10s %4u",
+    fprintf(stderr, "\n\t\t%-18s %7zuB %7zuB %5zuB %8s %7zuB %8s %7zuB  %-10s %4u",
             label, base->page_size, payload_size,
             pas_page_base_config_min_align(*base), min_objects, max_object_size_for_page_config_sans_heap(base),
             handicap, base->granule_size, view_cache, base->allow_mte_tagging);
@@ -326,7 +330,7 @@ static void pas_report_heap_config(const char* name, const pas_heap_config* conf
 {
     fprintf(stderr, "\n\tHeap-Config %s:", name);
     /* The widths here must be kept in sync with the per-row widths printed in pas_report_page_config */
-    fprintf(stderr, "\n\t\t%-18s %8s %8s %5s %8s %8s %8s %8s  %-10s %4s",
+    fprintf(stderr, "\n\t\t%-18s %8s %8s %6s %8s %8s %8s %8s  %-10s %4s",
             "Page Configs:", "page", "payload", "align", "min-objs", "max obj", "handicap", "granule", "view-cache", "+MTE");
     pas_report_segregated_page_config("Small Segregated", &config->small_segregated_config, runtime_config);
     pas_report_segregated_page_config("Medium Segregated", &config->medium_segregated_config, runtime_config);
@@ -335,7 +339,7 @@ static void pas_report_heap_config(const char* name, const pas_heap_config* conf
     pas_report_bitfit_page_config("Marge Bitfit", &config->marge_bitfit_config);
 }
 
-#if PAS_ENABLE_BMALLOC || PAS_ENABLE_JIT
+#if PAS_ENABLE_BMALLOC || PAS_ENABLE_JIT || PAS_ENABLE_MARKED_BLOCK
 static void pas_report_runtime_config(const char* label, const pas_heap_runtime_config* runtime_config)
 {
     fprintf(stderr, "\n\t\t\t%s: %uB, %uB, %uB, %uB", label,
@@ -385,6 +389,11 @@ static void pas_report_config(void)
     pas_report_heap_config("jit", &jit_heap_config, NULL);
     pas_report_runtime_config_header();
     pas_report_runtime_config("Flex", &jit_heap_runtime_config);
+#endif
+#if PAS_ENABLE_MARKED_BLOCK
+    pas_report_heap_config("marked_block", &marked_block_heap_config, &marked_block_primitive_runtime_config.base);
+    pas_report_runtime_config_header();
+    pas_report_runtime_config("Primitive", &marked_block_primitive_runtime_config.base);
 #endif
 #if PAS_ENABLE_ISO
     pas_report_heap_config("iso", &iso_heap_config, NULL);

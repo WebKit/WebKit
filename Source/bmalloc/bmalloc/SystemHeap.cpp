@@ -261,6 +261,7 @@ bool pas_system_heap_is_enabled(pas_heap_config_kind kind)
     switch (kind) {
     case pas_heap_config_kind_bmalloc:
     case pas_heap_config_kind_tagged_bmalloc:
+    case pas_heap_config_kind_marked_block:
         return !!SystemHeap::tryGet();
     case pas_heap_config_kind_jit:
     case pas_heap_config_kind_pas_utility:
@@ -277,6 +278,7 @@ bool pas_system_heap_should_supplant_bmalloc(pas_heap_config_kind kind)
     switch (kind) {
     case pas_heap_config_kind_bmalloc:
     case pas_heap_config_kind_tagged_bmalloc:
+    case pas_heap_config_kind_marked_block:
         heap = SystemHeap::tryGet();
         if (!heap)
             return false;

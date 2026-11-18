@@ -400,6 +400,7 @@ void addIsoHeapPageSharingTests();
 void addIsoHeapPartialAndBaselineTests();
 void addIsoHeapReservedMemoryTests();
 void addJITHeapTests();
+void addMarkedBlockHeapTests();
 void addLargeFreeHeapTests();
 void addLargeSharingPoolTests();
 void addLockFreeReadPtrPtrHashtableTests();
@@ -903,6 +904,7 @@ int main(int argc, char** argv)
     ADD_SUITE(IsoHeapPageSharing);
     ADD_SUITE(IsoHeapReservedMemory);
     ADD_SUITE(JITHeap);
+    ADD_SUITE(MarkedBlockHeap);
     ADD_SUITE(LargeFreeHeap);
     ADD_SUITE(LargeSharingPool);
     ADD_SUITE(LockFreeReadPtrPtrHashtable);

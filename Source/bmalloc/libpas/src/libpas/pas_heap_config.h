@@ -342,6 +342,12 @@ static PAS_ALWAYS_INLINE size_t pas_heap_config_segregated_heap_min_align_shift(
         result = PAS_MIN(result, config.small_bitfit_config.base.min_align_shift);
     if (config.small_segregated_config.base.is_enabled)
         result = PAS_MIN(result, config.small_segregated_config.base.min_align_shift);
+    if (config.medium_segregated_config.base.is_enabled)
+        result = PAS_MIN(result, config.medium_segregated_config.base.min_align_shift);
+    if (config.medium_bitfit_config.base.is_enabled)
+        result = PAS_MIN(result, config.medium_bitfit_config.base.min_align_shift);
+    if (config.marge_bitfit_config.base.is_enabled)
+        result = PAS_MIN(result, config.marge_bitfit_config.base.min_align_shift);
     PAS_ASSERT(result != SIZE_MAX);
     return result;
 }
