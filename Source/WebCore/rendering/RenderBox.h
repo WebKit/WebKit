@@ -439,6 +439,7 @@ public:
     void setGridAreaContentLogicalWidth(GridAreaSize);
     void setGridAreaContentLogicalHeight(GridAreaSize);
     NODELETE void clearGridAreaContentSize();
+    NODELETE void clearGridAreaContentLogicalWidth();
     NODELETE void clearGridAreaContentLogicalHeight();
 
     // These are currently only used by Flexbox code. In some cases we must layout flex items with a different main size

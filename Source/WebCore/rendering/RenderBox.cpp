@@ -1671,10 +1671,14 @@ void RenderBox::setGridAreaContentLogicalHeight(GridAreaSize logicalHeight)
 
 void RenderBox::clearGridAreaContentSize()
 {
-    if (!m_overridingSizes)
-        return;
-    m_overridingSizes->gridAreaContentLogicalWidth = std::nullopt;
-    m_overridingSizes->gridAreaContentLogicalHeight = std::nullopt;
+    clearGridAreaContentLogicalWidth();
+    clearGridAreaContentLogicalHeight();
+}
+
+void RenderBox::clearGridAreaContentLogicalWidth()
+{
+    if (m_overridingSizes)
+        m_overridingSizes->gridAreaContentLogicalWidth = std::nullopt;
 }
 
 void RenderBox::clearGridAreaContentLogicalHeight()
