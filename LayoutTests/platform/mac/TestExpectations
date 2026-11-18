@@ -1780,6 +1780,9 @@ webkit.org/b/332044 imported/w3c/web-platform-tests/html/canvas/offscreen/wide-g
 [ x86_64 ] imported/w3c/web-platform-tests/html/canvas/element/pixel-manipulation/2d.imageData.put.basic.rgba.float16.html [ Failure ]
 [ x86_64 ] imported/w3c/web-platform-tests/html/canvas/offscreen/pixel-manipulation/2d.imageData.put.basic.rgba.float16.html [ Failure ]
 [ x86_64 ] imported/w3c/web-platform-tests/html/canvas/offscreen/pixel-manipulation/2d.imageData.put.basic.rgba.float16.worker.html [ Failure ]
+# It also quantizes those fills to 8 bits per component in the context's color space.
+[ x86_64 ] imported/w3c/web-platform-tests/html/canvas/element/wide-gamut-canvas/2d.color.space.toBlob.toDataURL.jpeg.linear.float.html [ Failure ]
+[ x86_64 ] imported/w3c/web-platform-tests/html/canvas/offscreen/wide-gamut-canvas/2d.color.space.toBlob.toDataURL.jpeg.linear.float.html [ Failure ]
 
 [ x86_64 ] imported/w3c/web-platform-tests/webcodecs/video-encoder-rescaling.https.any.html?h264_annexb [ Failure ]
 [ x86_64 ] imported/w3c/web-platform-tests/webcodecs/video-encoder-rescaling.https.any.html?h264_avc [ Failure ]
