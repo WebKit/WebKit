@@ -410,6 +410,8 @@ private:
         Inspector::CommandCallback<void> callback;
     };
     enum class UnboundWaits : bool { Keep, Complete };
+    void forgetFrameHandles(NOESCAPE const Function<bool(const WebFrameProxy*)>&);
+    void forgetFramesOutsideFrameTree(const WebPageProxy&);
     Vector<Inspector::CommandCallback<void>> takePendingPageNavigationCallbacks(HashMap<WebPageProxyIdentifier, Vector<PendingPageNavigationCallback>>&, const WebPageProxy&, API::Navigation* finishedNavigation, UnboundWaits, NavigationNotification = NavigationNotification::LoadEnded);
     enum class SameDocumentNavigation : bool { No, Yes };
     enum class UserPromptEndsEvaluation : bool { No, Yes };

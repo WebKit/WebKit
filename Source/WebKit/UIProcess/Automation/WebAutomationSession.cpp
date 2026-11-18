@@ -1406,30 +1406,55 @@ Vector<Inspector::CommandCallback<void>> WebAutomationSession::takePendingPageNa
     return completedCallbacks;
 }
 
+void WebAutomationSession::forgetFrameHandles(NOESCAPE const Function<bool(const WebFrameProxy*)>& shouldForget)
+{
+    Vector<FrameIdentifier> framesToForget;
+    for (auto frameID : m_webFrameHandleMap.keys()) {
+        RefPtr frame = WebFrameProxy::webFrame(frameID);
+        if (shouldForget(frame.get()))
+            framesToForget.append(frameID);
+    }
+    for (auto frameID : framesToForget)
+        didDestroyFrame(frameID);
+}
+
+void WebAutomationSession::forgetFramesOutsideFrameTree(const WebPageProxy& page)
+{
+    // A frame can leave the frame tree without being reported destroyed: the child frames of a document that goes
+    // into the back/forward cache still exist, and so do child frames detached from the previous main frame when a
+    // provisional page commits. Their handles must not reach those frames any more. Handles of frames that no longer
+    // exist at all are dropped too, whichever page they were in.
+    // FIXME: Child frames restored from the back/forward cache get new handles that no contextCreated event reported.
+    // They should keep their handles, and commands should fail while their document is in the cache. https://bugs.webkit.org/show_bug.cgi?id=332165
+    RefPtr mainFrame = page.mainFrame();
+    forgetFrameHandles([&](const WebFrameProxy* frame) {
+        if (!frame)
+            return true;
+        if (frame->page() != &page)
+            return false;
+        RefPtr ancestor = frame;
+        while (RefPtr parent = ancestor->parentFrame())
+            ancestor = WTF::move(parent);
+        return ancestor != mainFrame;
+    });
+}
+
 void WebAutomationSession::navigationOccurredForFrame(const WebFrameProxy& frame, API::Navigation* finishedNavigation, NavigationNotification notification)
 {
     if (frame.isMainFrame()) {
-        // New page loaded, clear frame handles previously cached for frame's page.
-        // FIXME: This also discards the handles of frames that still exist: the ones that the new document created while
-        // it loaded, and after a same-document navigation, all of them. Events and realms already reported those frames
-        // with the discarded handles, and the frames get new ones. Frames that go away lose their handles in
-        // didDestroyFrame() anyway. https://bugs.webkit.org/show_bug.cgi?id=330642
-        HashSet<String> handlesToRemove;
-        for (const auto& iter : m_handleWebFrameMap) {
-            RefPtr webFrame = WebFrameProxy::webFrame(iter.value);
-            if (webFrame && webFrame->page() == frame.page()) {
-                handlesToRemove.add(iter.key);
-                m_webFrameHandleMap.remove(iter.value);
-            }
-        }
-        m_handleWebFrameMap.removeIf([&](auto& iter) {
-            return handlesToRemove.contains(iter.key);
-        });
+        Ref page = *protect(frame.page());
+
+        // Child frames keep their handles across a load or a same-document navigation of the main frame: the frames
+        // that the new document created while it loaded, the frames of a document that only navigated within itself,
+        // and those of a document that stayed after a failed provisional load are still in the frame tree. The tree
+        // is the page's current one: after a failed cross-process provisional load, frame is the provisional page's
+        // main frame, which the current document's frames do not descend from.
+        if (notification == NavigationNotification::LoadEnded)
+            forgetFramesOutsideFrameTree(page);
 
         // A wait for the eager strategy normally ends when the document has loaded. The navigation it is bound
         // to may have failed and never get there, and a same-document target has no document load, so those
         // eager waits are completed here as well; the others are left to documentLoadedForFrame().
-        Ref page = *protect(frame.page());
         respondToPendingNavigationCallbacksWithSuccess(takePendingPageNavigationCallbacks(m_pendingNormalNavigationInBrowsingContextCallbacksPerPage, page, finishedNavigation, UnboundWaits::Complete, notification));
         respondToPendingNavigationCallbacksWithSuccess(takePendingPageNavigationCallbacks(m_pendingEagerNavigationInBrowsingContextCallbacksPerPage, page, finishedNavigation, UnboundWaits::Keep, notification));
         m_domainNotifier->browsingContextCleared(handleForWebPageProxy(page));
@@ -1955,6 +1980,11 @@ void WebAutomationSession::willClosePage(const WebPageProxy& page)
     contextDestroyedForPage(page);
     m_bidiProcessor->inputAgent().willClosePage(handle);
 #endif
+
+    // The web process does not report the frames of a closing page destroyed either, so their handles go here.
+    forgetFrameHandles([&](const WebFrameProxy* frame) {
+        return !frame || frame->page() == &page;
+    });
 
     // After the context is reported destroyed, so that browsingContext.close replies after its contextDestroyed event.
     for (auto& callback : m_pendingCloseBrowsingContextCallbacksPerPage.take(page.identifier()))
