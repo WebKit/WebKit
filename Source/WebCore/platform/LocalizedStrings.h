@@ -324,6 +324,9 @@ namespace WebCore {
 
     WEBCORE_EXPORT String multipleFileUploadText(unsigned numberOfFiles);
     String unknownFileSizeText();
+#if ENABLE(ATTACHMENT_ELEMENT)
+    String attachmentDownloadingText();
+#endif
 
     String htmlSelectMultipleItems(size_t num);
 

@@ -48,12 +48,16 @@
 #include "HTMLNames.h"
 #include "HTMLStyleElement.h"
 #include "LocalFrame.h"
+#include "LocalizedStrings.h"
 #include "Logging.h"
 #include "MIMETypeRegistry.h"
 #include "MouseEvent.h"
 #include "NodeName.h"
 #include "RenderAttachment.h"
 #include "RenderObjectInlines.h"
+#include "SVGCircleElement.h"
+#include "SVGNames.h"
+#include "SVGSVGElement.h"
 #include "Settings.h"
 #include "ShadowRoot.h"
 #include "SharedBuffer.h"
@@ -87,6 +91,13 @@ constexpr float attachmentIconSize = 72;
 #else
 constexpr float attachmentIconSize = 52;
 #endif
+
+#define DEFINE_STATIC_ATOM_STRING(name, literal) \
+    static const AtomString& name() \
+    { \
+        static MainThreadNeverDestroyed<const AtomString> atom(literal); \
+        return atom; \
+    }
 
 // FIXME: Remove after rdar://99228361 is fixed.
 #define ATTACHMENT_LOG_DOCUMENT_TRAFFIC !RELEASE_LOG_DISABLED
@@ -166,7 +177,7 @@ Ref<HTMLAttachmentElement> HTMLAttachmentElement::create(const QualifiedName& ta
     if (document.settings().attachmentWideLayoutEnabled()) {
         ASSERT(attachment->m_implementation == Implementation::NarrowLayout);
         ASSERT(!attachment->renderer()); // Switch to wide-layout style *must* be done before renderer is created!
-        attachment->m_implementation = Implementation::WideLayout;
+        attachment->m_implementation = document.settings().attachmentInlineProgressEnabled() ? Implementation::WideInlineProgressLayout : Implementation::WideLayout;
         attachment->ensureUserAgentShadowRoot();
     }
     return attachment;
@@ -174,109 +185,46 @@ Ref<HTMLAttachmentElement> HTMLAttachmentElement::create(const QualifiedName& ta
 
 void HTMLAttachmentElement::didAddUserAgentShadowRoot(ShadowRoot& root)
 {
-    if (m_implementation == Implementation::WideLayout)
+    if (isWideLayout())
         ensureWideLayoutShadowTree(root);
 }
 
-static const AtomString& attachmentContainerIdentifier()
-{
-    static MainThreadNeverDestroyed<const AtomString> identifier("attachment-container"_s);
-    return identifier;
-}
-
-static const AtomString& attachmentBackgroundIdentifier()
-{
-    static MainThreadNeverDestroyed<const AtomString> identifier("attachment-background"_s);
-    return identifier;
-}
-
-static const AtomString& attachmentPreviewAreaIdentifier()
-{
-    static MainThreadNeverDestroyed<const AtomString> identifier("attachment-preview-area"_s);
-    return identifier;
-}
-
-static const AtomString& attachmentPlaceholderIdentifier()
-{
-    static MainThreadNeverDestroyed<const AtomString> identifier("attachment-placeholder"_s);
-    return identifier;
-}
-
-static const AtomString& attachmentIconIdentifier()
-{
-    static MainThreadNeverDestroyed<const AtomString> identifier("attachment-icon"_s);
-    return identifier;
-}
-
-static const AtomString& attachmentProgressIdentifier()
-{
-    static MainThreadNeverDestroyed<const AtomString> identifier("attachment-progress"_s);
-    return identifier;
-}
-
-static const AtomString& attachmentProgressCSSProperty()
-{
-    static MainThreadNeverDestroyed<const AtomString> property("--progress"_s);
-    return property;
-}
-
-static const AtomString& attachmentInformationAreaIdentifier()
-{
-    static MainThreadNeverDestroyed<const AtomString> identifier("attachment-information-area"_s);
-    return identifier;
-}
-
-static const AtomString& attachmentInformationBlockIdentifier()
-{
-    static MainThreadNeverDestroyed<const AtomString> identifier("attachment-information-block"_s);
-    return identifier;
-}
-
-static const AtomString& attachmentActionIdentifier()
-{
-    static MainThreadNeverDestroyed<const AtomString> identifier("attachment-action"_s);
-    return identifier;
-}
-
-static const AtomString& attachmentTitleIdentifier()
-{
-    static MainThreadNeverDestroyed<const AtomString> identifier("attachment-title"_s);
-    return identifier;
-}
-
-static const AtomString& attachmentSubtitleIdentifier()
-{
-    static MainThreadNeverDestroyed<const AtomString> identifier("attachment-subtitle"_s);
-    return identifier;
-}
-
-static const AtomString& attachmentSaveAreaIdentifier()
-{
-    static MainThreadNeverDestroyed<const AtomString> identifier("attachment-save-area"_s);
-    return identifier;
-}
-
-static const AtomString& attachmentSaveButtonIdentifier()
-{
-    static MainThreadNeverDestroyed<const AtomString> identifier("attachment-save-button"_s);
-    return identifier;
-}
-
-static const AtomString& attachmentIconSizeProperty()
-{
-    static MainThreadNeverDestroyed<const AtomString> identifier("--icon-size"_s);
-    return identifier;
-}
-
-static const AtomString& saveAtom()
-{
-    static MainThreadNeverDestroyed<const AtomString> identifier("save"_s);
-    return identifier;
-}
+DEFINE_STATIC_ATOM_STRING(attachmentContainerIdentifier, "attachment-container"_s)
+DEFINE_STATIC_ATOM_STRING(attachmentBackgroundIdentifier, "attachment-background"_s)
+DEFINE_STATIC_ATOM_STRING(attachmentPreviewAreaIdentifier, "attachment-preview-area"_s)
+DEFINE_STATIC_ATOM_STRING(attachmentPlaceholderIdentifier, "attachment-placeholder"_s)
+DEFINE_STATIC_ATOM_STRING(attachmentIconIdentifier, "attachment-icon"_s)
+DEFINE_STATIC_ATOM_STRING(attachmentProgressIdentifier, "attachment-progress"_s)
+DEFINE_STATIC_ATOM_STRING(attachmentProgressCSSProperty, "--progress"_s)
+DEFINE_STATIC_ATOM_STRING(attachmentInformationAreaIdentifier, "attachment-information-area"_s)
+DEFINE_STATIC_ATOM_STRING(attachmentInformationBlockIdentifier, "attachment-information-block"_s)
+DEFINE_STATIC_ATOM_STRING(attachmentActionIdentifier, "attachment-action"_s)
+DEFINE_STATIC_ATOM_STRING(attachmentTitleIdentifier, "attachment-title"_s)
+DEFINE_STATIC_ATOM_STRING(attachmentSubtitleIdentifier, "attachment-subtitle"_s)
+DEFINE_STATIC_ATOM_STRING(attachmentSaveAreaIdentifier, "attachment-save-area"_s)
+DEFINE_STATIC_ATOM_STRING(attachmentSaveButtonIdentifier, "attachment-save-button"_s)
+DEFINE_STATIC_ATOM_STRING(attachmentPressedOverlayIdentifier, "attachment-pressed-overlay"_s)
+DEFINE_STATIC_ATOM_STRING(attachmentIconScaleIdentifier, "attachment-icon-scale"_s)
+DEFINE_STATIC_ATOM_STRING(attachmentIconPopIdentifier, "attachment-icon-pop"_s)
+DEFINE_STATIC_ATOM_STRING(attachmentProgressTrackIdentifier, "attachment-progress-track"_s)
+DEFINE_STATIC_ATOM_STRING(attachmentProgressBarIdentifier, "attachment-progress-bar"_s)
+DEFINE_STATIC_ATOM_STRING(attachmentProgressActionIdentifier, "attachment-progress-action"_s)
+DEFINE_STATIC_ATOM_STRING(attachmentProgressActionEntranceIdentifier, "attachment-progress-action-entrance"_s)
+DEFINE_STATIC_ATOM_STRING(attachmentProgressActionPulseIdentifier, "attachment-progress-action-pulse"_s)
+DEFINE_STATIC_ATOM_STRING(attachmentSaveButtonBackgroundIdentifier, "attachment-save-button-background"_s)
+DEFINE_STATIC_ATOM_STRING(attachmentSaveButtonGlyphIdentifier, "attachment-save-button-glyph"_s)
+DEFINE_STATIC_ATOM_STRING(attachmentIconSizeProperty, "--icon-size"_s)
+DEFINE_STATIC_ATOM_STRING(saveAtom, "save"_s)
 
 String HTMLAttachmentElement::shadowUserAgentStyleSheetText()
 {
     static MainThreadNeverDestroyed<const String> shadowStyle(StringImpl::createWithoutCopying(attachmentElementShadowUserAgentStyleSheet));
+    return shadowStyle;
+}
+
+String HTMLAttachmentElement::inlineProgressShadowUserAgentStyleSheetText()
+{
+    static MainThreadNeverDestroyed<const String> shadowStyle(StringImpl::createWithoutCopying(attachmentElementInlineProgressShadowUserAgentStyleSheet));
     return shadowStyle;
 }
 
@@ -323,13 +271,15 @@ static Ref<ElementType> createContainedElement(HTMLElement& container, const Ato
 
 void HTMLAttachmentElement::ensureWideLayoutShadowTree(ShadowRoot& root)
 {
-    ASSERT(m_implementation == Implementation::WideLayout);
+    ASSERT(isWideLayout());
     if (m_titleElement)
         return;
 
+    bool usesInlineProgress = this->usesInlineProgress();
+
     Ref document = this->document();
     Ref style = HTMLStyleElement::create(HTMLNames::styleTag, document, false);
-    style->setTextContent(shadowUserAgentStyleSheetText());
+    style->setTextContent(usesInlineProgress ? inlineProgressShadowUserAgentStyleSheetText() : shadowUserAgentStyleSheetText());
     root.appendChild(WTF::move(style));
 
     lazyInitialize(m_containerElement, HTMLDivElement::create(document));
@@ -338,17 +288,39 @@ void HTMLAttachmentElement::ensureWideLayoutShadowTree(ShadowRoot& root)
     root.appendChild(*m_containerElement);
 
     Ref background = createContainedElement<HTMLDivElement>(*m_containerElement, attachmentBackgroundIdentifier());
+    if (usesInlineProgress)
+        createContainedElement<HTMLDivElement>(background, attachmentPressedOverlayIdentifier());
 
     Ref previewArea = createContainedElement<HTMLDivElement>(background, attachmentPreviewAreaIdentifier());
 
-    lazyInitialize(m_imageElement, createContainedElement<HTMLImageElement>(previewArea, attachmentIconIdentifier()));
+    if (usesInlineProgress) {
+        // The icon is wrapped twice so that the completion "pop" can run two scale transitions with different timing.
+        Ref iconScale = createContainedElement<HTMLDivElement>(previewArea, attachmentIconScaleIdentifier());
+        Ref iconPop = createContainedElement<HTMLDivElement>(iconScale, attachmentIconPopIdentifier());
+        lazyInitialize(m_imageElement, createContainedElement<HTMLImageElement>(iconPop, attachmentIconIdentifier()));
+    } else
+        lazyInitialize(m_imageElement, createContainedElement<HTMLImageElement>(previewArea, attachmentIconIdentifier()));
     AttachmentImageEventsListener::addToImageForAttachment(*m_imageElement, *this);
     updateImage();
 
     lazyInitialize(m_placeholderElement, createContainedElement<HTMLDivElement>(previewArea, attachmentPlaceholderIdentifier()));
 
     lazyInitialize(m_progressElement, createContainedElement<HTMLDivElement>(previewArea, attachmentProgressIdentifier()));
-    updateProgress(attributeWithoutSynchronization(progressAttr));
+    if (usesInlineProgress) {
+        Ref progressRing = SVGSVGElement::create(document);
+        progressRing->setAttributeWithoutSynchronization(SVGNames::viewBoxAttr, "0 0 101 101"_s);
+        progressRing->setAttributeWithoutSynchronization(HTMLNames::aria_hiddenAttr, trueAtom());
+        m_progressElement->appendChild(progressRing);
+        for (auto& identifier : { attachmentProgressTrackIdentifier(), attachmentProgressBarIdentifier() }) {
+            Ref circle = SVGCircleElement::create(SVGNames::circleTag, document);
+            circle->setIdAttribute(identifier);
+            circle->setAttributeWithoutSynchronization(SVGNames::cxAttr, "50.5"_s);
+            circle->setAttributeWithoutSynchronization(SVGNames::cyAttr, "50.5"_s);
+            circle->setAttributeWithoutSynchronization(SVGNames::rAttr, "45.5"_s);
+            circle->setAttributeWithoutSynchronization(SVGNames::pathLengthAttr, "100"_s);
+            progressRing->appendChild(circle);
+        }
+    }
 
     Ref informationArea = createContainedElement<HTMLDivElement>(background, attachmentInformationAreaIdentifier());
 
@@ -357,32 +329,26 @@ void HTMLAttachmentElement::ensureWideLayoutShadowTree(ShadowRoot& root)
     lazyInitialize(m_actionTextElement, createContainedElement<HTMLDivElement>(*m_informationBlock, attachmentActionIdentifier(), String { attachmentActionForDisplay() }));
     m_actionTextElement->setAttributeWithoutSynchronization(HTMLNames::dirAttr, autoAtom());
 
+    if (usesInlineProgress) {
+        Ref progressAction = createContainedElement<HTMLDivElement>(*m_informationBlock, attachmentProgressActionIdentifier());
+        progressAction->setAttributeWithoutSynchronization(HTMLNames::dirAttr, autoAtom());
+        Ref progressActionEntrance = createContainedElement<HTMLDivElement>(progressAction, attachmentProgressActionEntranceIdentifier());
+        createContainedElement<HTMLDivElement>(progressActionEntrance, attachmentProgressActionPulseIdentifier(), attachmentDownloadingText());
+    }
+
     lazyInitialize(m_titleElement, createContainedElement<HTMLDivElement>(*m_informationBlock, attachmentTitleIdentifier(), String { attachmentTitleForDisplay() }));
     m_titleElement->setAttributeWithoutSynchronization(HTMLNames::dirAttr, autoAtom());
 
     lazyInitialize(m_subtitleElement, createContainedElement<HTMLDivElement>(*m_informationBlock, attachmentSubtitleIdentifier(), String { attachmentSubtitleForDisplay() }));
     m_subtitleElement->setAttributeWithoutSynchronization(HTMLNames::dirAttr, autoAtom());
 
+    updateProgress(attributeWithoutSynchronization(progressAttr));
     updateSaveButton(!attributeWithoutSynchronization(saveAttr).isNull());
 }
 
-static const AtomString& attachmentClassHasSelection()
-{
-    static MainThreadNeverDestroyed<const AtomString> identifier("attachment-has-selection"_s);
-    return identifier;
-}
-
-static const AtomString& attachmentClassSelectionContinuesLeft()
-{
-    static MainThreadNeverDestroyed<const AtomString> identifier("attachment-selection-continues-left"_s);
-    return identifier;
-}
-
-static const AtomString& attachmentClassSelectionContinuesRight()
-{
-    static MainThreadNeverDestroyed<const AtomString> identifier("attachment-selection-continues-right"_s);
-    return identifier;
-}
+DEFINE_STATIC_ATOM_STRING(attachmentClassHasSelection, "attachment-has-selection"_s)
+DEFINE_STATIC_ATOM_STRING(attachmentClassSelectionContinuesLeft, "attachment-selection-continues-left"_s)
+DEFINE_STATIC_ATOM_STRING(attachmentClassSelectionContinuesRight, "attachment-selection-continues-right"_s)
 
 void HTMLAttachmentElement::addSelectionClasses(HighlightState state)
 {
@@ -445,36 +411,124 @@ private:
     WeakPtr<HTMLAttachmentElement, WeakPtrImplWithEventTargetData> m_attachment;
 };
 
-void HTMLAttachmentElement::updateProgress(const AtomString& progress)
+DEFINE_STATIC_ATOM_STRING(attachmentClassIdle, "attachment-idle"_s)
+DEFINE_STATIC_ATOM_STRING(attachmentClassDownloading, "attachment-downloading"_s)
+DEFINE_STATIC_ATOM_STRING(attachmentClassComplete, "attachment-complete"_s)
+DEFINE_STATIC_ATOM_STRING(attachmentClassIndeterminate, "attachment-indeterminate"_s)
+DEFINE_STATIC_ATOM_STRING(attachmentClassWasIndeterminate, "attachment-was-indeterminate"_s)
+DEFINE_STATIC_ATOM_STRING(attachmentClassCanSave, "attachment-can-save"_s)
+
+#undef DEFINE_STATIC_ATOM_STRING
+
+struct AttachmentProgress {
+    enum class Kind : uint8_t { None, NotStarted, Determinate, Indeterminate };
+
+    static AttachmentProgress parse(const AtomString& attributeValue)
+    {
+        // "indeterminate" means downloading with unknown progress (only shown by WideInlineProgressLayout).
+        if (equalLettersIgnoringASCIICase(attributeValue, "indeterminate"_s))
+            return { Kind::Indeterminate, 0 };
+
+        // Anything else that isn't a number, including no attribute, means there is nothing to download.
+        bool isValid = false;
+        float value = attributeValue.toFloat(&isValid);
+        if (!isValid || !std::isfinite(value))
+            return { Kind::None, 0 };
+
+        // "0" means the file isn't downloaded yet.
+        if (!value)
+            return { Kind::NotStarted, 0 };
+
+        // A number above 0 is the fraction downloaded.
+        return { Kind::Determinate, std::clamp(value, 0.0f, 1.0f) };
+    }
+
+    Kind kind;
+    float value;
+};
+
+void HTMLAttachmentElement::updateProgress(const AtomString& attributeValue)
 {
     if (!m_progressElement)
         return;
 
-    bool validProgress = false;
-    float value = progress.toFloat(&validProgress);
-    if (validProgress && std::isfinite(value)) {
-        m_imageElement->setInlineStyleProperty(CSSPropertyID::Display, CSSValueID::None);
-        if (!value) {
-            m_placeholderElement->removeInlineStyleProperty(CSSPropertyID::Display);
-            m_progressElement->setInlineStyleProperty(CSSPropertyID::Display, CSSValueID::None);
-            m_progressElement->removeInlineStyleCustomProperty(attachmentProgressCSSProperty());
-            return;
+    auto progress = AttachmentProgress::parse(attributeValue);
+    using Kind = AttachmentProgress::Kind;
+
+    if (usesInlineProgress()) {
+        // An action (e.g. "Tap to Download") without progress also means the file isn't downloaded yet.
+        if (progress.kind == Kind::None && !m_inlineProgressHasStartedDownload && !attributeWithoutSynchronization(actionAttr).isEmpty())
+            progress.kind = Kind::NotStarted;
+
+        using enum InlineProgressState;
+        auto& state = m_inlineProgressState;
+        switch (progress.kind) {
+        case Kind::NotStarted:
+            state = Idle;
+            m_inlineProgressHasStartedDownload = false;
+            m_inlineProgressWasIndeterminate = false;
+            break;
+        case Kind::Determinate:
+        case Kind::Indeterminate:
+            if (state != Downloading) {
+                state = Downloading;
+                m_inlineProgressHasStartedDownload = true;
+                m_inlineProgressWasIndeterminate = false;
+            }
+            if (progress.kind == Kind::Indeterminate)
+                m_inlineProgressWasIndeterminate = true;
+            break;
+        case Kind::None:
+            state = Complete;
+            break;
         }
-        m_placeholderElement->setInlineStyleProperty(CSSPropertyID::Display, CSSValueID::None);
-        m_progressElement->removeInlineStyleProperty(CSSPropertyID::Display);
-        m_progressElement->setInlineStyleCustomProperty(attachmentProgressCSSProperty(), (value < 0.0) ? "0"_s : (value > 1.0) ? "1"_s : progress);
+
+        Ref classList = m_containerElement->classList();
+        classList->toggle(attachmentClassIdle(), state == Idle);
+        classList->toggle(attachmentClassDownloading(), state == Downloading);
+        classList->toggle(attachmentClassComplete(), state == Complete);
+        classList->toggle(attachmentClassIndeterminate(), progress.kind == Kind::Indeterminate);
+        classList->toggle(attachmentClassWasIndeterminate(), m_inlineProgressWasIndeterminate);
+
+        if (progress.kind != Kind::None)
+            m_progressElement->setInlineStyleCustomProperty(attachmentProgressCSSProperty(), String::number(progress.value));
         return;
     }
 
-    m_imageElement->removeInlineStyleProperty(CSSPropertyID::Display);
-    m_placeholderElement->setInlineStyleProperty(CSSPropertyID::Display, CSSValueID::None);
-    m_progressElement->setInlineStyleProperty(CSSPropertyID::Display, CSSValueID::None);
-    m_progressElement->removeInlineStyleCustomProperty(attachmentProgressCSSProperty());
+    switch (progress.kind) {
+    case Kind::NotStarted:
+        m_imageElement->setInlineStyleProperty(CSSPropertyID::Display, CSSValueID::None);
+        m_placeholderElement->removeInlineStyleProperty(CSSPropertyID::Display);
+        m_progressElement->setInlineStyleProperty(CSSPropertyID::Display, CSSValueID::None);
+        m_progressElement->removeInlineStyleCustomProperty(attachmentProgressCSSProperty());
+        return;
+    case Kind::Determinate:
+        m_imageElement->setInlineStyleProperty(CSSPropertyID::Display, CSSValueID::None);
+        m_placeholderElement->setInlineStyleProperty(CSSPropertyID::Display, CSSValueID::None);
+        m_progressElement->removeInlineStyleProperty(CSSPropertyID::Display);
+        m_progressElement->setInlineStyleCustomProperty(attachmentProgressCSSProperty(), String::number(progress.value));
+        return;
+    case Kind::None:
+    case Kind::Indeterminate:
+        m_imageElement->removeInlineStyleProperty(CSSPropertyID::Display);
+        m_placeholderElement->setInlineStyleProperty(CSSPropertyID::Display, CSSValueID::None);
+        m_progressElement->setInlineStyleProperty(CSSPropertyID::Display, CSSValueID::None);
+        m_progressElement->removeInlineStyleCustomProperty(attachmentProgressCSSProperty());
+        return;
+    }
 }
 
 void HTMLAttachmentElement::updateSaveButton(bool show)
 {
-    if (!show) {
+    // With inline progress, the save button stays in the tree so that the text doesn't reflow when it appears, and the
+    // save attribute only changes its visibility.
+    bool usesInlineProgress = this->usesInlineProgress();
+    if (usesInlineProgress && m_containerElement) {
+        Ref classList = m_containerElement->classList();
+        classList->toggle(attachmentClassCanSave(), show);
+    }
+
+    if (!show && !usesInlineProgress) {
         if (m_saveButton) {
             m_informationBlock->removeChild(Ref { *m_saveArea });
             m_saveButton = nullptr;
@@ -491,6 +545,11 @@ void HTMLAttachmentElement::updateSaveButton(bool show)
         m_saveButton = saveButton.copyRef();
         saveButton->addEventListener(eventNames().clickEvent, AttachmentSaveEventListener::create(*this));
         saveButton->addEventListener(eventNames().auxclickEvent, AttachmentSaveEventListener::create(*this));
+
+        if (usesInlineProgress) {
+            createContainedElement<HTMLDivElement>(saveButton, attachmentSaveButtonBackgroundIdentifier());
+            createContainedElement<HTMLDivElement>(saveButton, attachmentSaveButtonGlyphIdentifier());
+        }
     }
 }
 
@@ -498,6 +557,9 @@ DOMRectReadOnly* HTMLAttachmentElement::saveButtonClientRect() const
 {
     RefPtr saveButton = m_saveButton;
     if (!saveButton)
+        return nullptr;
+
+    if (usesInlineProgress() && !hasAttributeWithoutSynchronization(saveAttr))
         return nullptr;
 
     bool unusedIsReplaced;
@@ -652,10 +714,11 @@ Node::NeedsPostConnectionSteps HTMLAttachmentElement::insertionSteps(InsertionTy
 {
     auto result = HTMLElement::insertionSteps(type, ancestor);
     if (isWideLayout()) {
-        setInlineStyleProperty(CSSPropertyID::MarginLeft, 1, CSSUnitType::Px);
-        setInlineStyleProperty(CSSPropertyID::MarginRight, 1, CSSUnitType::Px);
-        setInlineStyleProperty(CSSPropertyID::MarginTop, 1, CSSUnitType::Px);
-        setInlineStyleProperty(CSSPropertyID::MarginBottom, 1, CSSUnitType::Px);
+        double margin = usesInlineProgress() ? 2 : 1;
+        setInlineStyleProperty(CSSPropertyID::MarginLeft, margin, CSSUnitType::Px);
+        setInlineStyleProperty(CSSPropertyID::MarginRight, margin, CSSUnitType::Px);
+        setInlineStyleProperty(CSSPropertyID::MarginTop, margin, CSSUnitType::Px);
+        setInlineStyleProperty(CSSPropertyID::MarginBottom, margin, CSSUnitType::Px);
     }
 
     Ref document = this->document();
@@ -756,6 +819,8 @@ void HTMLAttachmentElement::attributeChanged(const QualifiedName& name, const At
     case AttributeNames::actionAttr:
         if (m_actionTextElement)
             m_actionTextElement->setTextContent(String(attachmentActionForDisplay()));
+        if (usesInlineProgress())
+            updateProgress(attributeWithoutSynchronization(progressAttr));
         break;
     case AttributeNames::titleAttr:
         if (m_titleElement)

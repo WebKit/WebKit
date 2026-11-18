@@ -1,0 +1,67 @@
+Tests that the progress and save attributes drive the state of a wide-layout attachment with inline progress.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS internals.shadowRoot(attachment).getElementById('attachment-save-button') is not null
+PASS internals.shadowRoot(attachment).querySelector('#attachment-progress circle#attachment-progress-bar') is not null
+PASS progressAction.textContent is "Downloading"
+PASS getComputedStyle(attachment).margin is "2px"
+PASS getComputedStyle(internals.shadowRoot(attachment).getElementById('attachment-title')).fontSize is "13px"
+PASS getComputedStyle(internals.shadowRoot(attachment).getElementById('attachment-subtitle')).fontSize is "10px"
+
+progress="0"
+PASS containerClasses() is "attachment-idle"
+PASS progressValue() is "0"
+PASS attachment.saveButtonClientRect is null
+
+progress="indeterminate"
+PASS containerClasses() is "attachment-downloading attachment-indeterminate attachment-was-indeterminate"
+
+progress="0.5"
+PASS containerClasses() is "attachment-downloading attachment-was-indeterminate"
+PASS progressValue() is "0.5"
+
+progress="2"
+PASS progressValue() is "1"
+
+action and progress removed, save added
+PASS containerClasses() is "attachment-can-save attachment-complete attachment-was-indeterminate"
+PASS progressValue() is "1"
+PASS attachment.saveButtonClientRect is not null
+
+save removed
+PASS containerClasses() is "attachment-complete attachment-was-indeterminate"
+PASS attachment.saveButtonClientRect is null
+
+progress="0", then progress="0.25"
+PASS containerClasses() is "attachment-idle"
+PASS containerClasses() is "attachment-downloading"
+
+A new attachment without progress
+PASS containerClasses() is "attachment-complete"
+
+An action without progress
+PASS containerClasses() is "attachment-idle"
+PASS containerClasses() is "attachment-idle"
+PASS containerClasses() is "attachment-downloading"
+PASS containerClasses() is "attachment-downloading"
+PASS containerClasses() is "attachment-complete"
+
+A new action after completing
+PASS containerClasses() is "attachment-complete"
+
+progress removed before action
+PASS containerClasses() is "attachment-idle"
+PASS containerClasses() is "attachment-downloading"
+PASS containerClasses() is "attachment-complete"
+PASS containerClasses() is "attachment-complete"
+
+Determinate, then indeterminate progress
+PASS containerClasses() is "attachment-downloading"
+PASS containerClasses() is "attachment-downloading attachment-indeterminate attachment-was-indeterminate"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+

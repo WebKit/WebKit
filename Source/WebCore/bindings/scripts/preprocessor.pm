@@ -59,7 +59,7 @@ sub applyPreprocessor
     }
 
     # The file has preprocessor directives. Evaluate simple
-    # #if defined(X) && X / #if !(defined(X) && X) / #else / #endif
+    # #if defined(X) && X / #if !(defined(X) && X) / #elif / #else / #endif
     # patterns in Perl instead of forking clang.
     my %macros;
     if ($defines) {
@@ -68,11 +68,12 @@ sub applyPreprocessor
     return split(/^/m, _evaluatePreprocessorDirectives($content, \%macros));
 }
 
-# Simple #if / #else / #endif evaluator. Supports:
+# Simple #if / #elif / #else / #endif evaluator. Supports:
 #   #if defined(X) && X
 #   #if defined(X)
 #   #if defined(X) && X && defined(Y) && Y  (conjunctions)
 #   #if !(defined(X) && X)                  (negation)
+#   #elif <any of the #if conditions above>
 #   #else
 #   #endif
 #   #endif // comment
@@ -81,7 +82,7 @@ sub _evaluatePreprocessorDirectives
 {
     my ($content, $macros) = @_;
     my $output = "";
-    # Stack of [emittingBeforeThisIf, conditionWasTrue].
+    # Stack of [emittingBeforeThisIf, anyBranchWasTaken].
     my @ifStack = ();
     my $emitting = 1;
 
@@ -90,6 +91,15 @@ sub _evaluatePreprocessorDirectives
             my $cond = _evaluateCondition($1, $macros);
             push @ifStack, [$emitting, $cond];
             $emitting = $emitting && $cond;
+        } elsif ($line =~ /^\s*#\s*elif\s+(.*)/) {
+            my $frame = $ifStack[-1];
+            if ($frame->[1]) {
+                $emitting = 0;
+            } else {
+                my $cond = _evaluateCondition($1, $macros);
+                $frame->[1] = $cond;
+                $emitting = $frame->[0] && $cond;
+            }
         } elsif ($line =~ /^\s*#\s*else\b/) {
             my $frame = $ifStack[-1];
             $emitting = $frame->[0] && !$frame->[1];

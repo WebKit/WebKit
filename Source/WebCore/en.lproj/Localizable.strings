@@ -517,6 +517,9 @@
 /* Download Video To Disk context menu item */
 "Download Video" = "Download Video";
 
+/* Label shown in an attachment while its file is downloading */
+"Downloading (attachment)" = "Downloading";
+
 /* Undo action name */
 "Drag (Undo action name)" = "Drag";
 

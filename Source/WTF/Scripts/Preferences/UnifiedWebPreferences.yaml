@@ -617,6 +617,15 @@ AttachmentElementEnabled:
     WebKitLegacy: WebKit::defaultAttachmentElementEnabled()
   sharedPreferenceForWebProcess: true
 
+AttachmentInlineProgressEnabled:
+  type: bool
+  status: unstable
+  category: dom
+  humanReadableName: "Attachment inline download progress"
+  humanReadableDescription: "Use the inline download progress design for wide-layout attachments"
+  condition: ENABLE(ATTACHMENT_ELEMENT)
+  defaultValue: false
+
 AttachmentWideLayoutEnabled:
   type: bool
   status: embedder

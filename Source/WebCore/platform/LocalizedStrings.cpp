@@ -1068,6 +1068,13 @@ String unknownFileSizeText()
     return WEB_UI_STRING_KEY("Unknown", "Unknown (filesize)", "Unknown filesize FTP directory listing item");
 }
 
+#if ENABLE(ATTACHMENT_ELEMENT)
+String attachmentDownloadingText()
+{
+    return WEB_UI_STRING_KEY("Downloading", "Downloading (attachment)", "Label shown in an attachment while its file is downloading");
+}
+#endif
+
 String htmlSelectMultipleItems(size_t count)
 {
     switch (count) {

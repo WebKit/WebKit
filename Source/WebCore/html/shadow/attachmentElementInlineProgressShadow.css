@@ -1,0 +1,506 @@
+/*
+ * Copyright (C) 2026 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+/* MARK: Tokens */
+
+div#attachment-container {
+    /* visionOS and macOS use the sizes and spacing of the existing wide layout (attachmentElementShadow.css). */
+#if defined(WTF_PLATFORM_VISION) && WTF_PLATFORM_VISION
+    --icon-margin: 8px;
+    --preview-margin-end: var(--icon-margin);
+    --information-margin-end: 8px;
+    --width: 187px;
+    --title-font-size: x-small;
+    --title-line-height: 12px;
+    --subtitle-font-size: xx-small;
+    --subtitle-line-height: 11px;
+    --save-button-size: 28px;
+    --save-glyph-width: 11px;
+    --save-glyph-height: 14px;
+#elif defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY
+    --icon-margin: 10px;
+    --preview-margin-end: 4px;
+    --information-margin-end: 22px;
+    --width: 338px;
+    --title-font-size: small;
+    --title-line-height: 19px;
+    --subtitle-font-size: x-small;
+    --subtitle-line-height: 17px;
+    --save-button-size: 40px;
+    --save-glyph-width: 14.5px;
+    --save-glyph-height: 17.5px;
+#else
+    --icon-margin: 14px;
+    --preview-margin-end: var(--icon-margin);
+    --information-margin-end: 24px;
+    --width: 266px;
+    --title-font-size: small;
+    --title-line-height: 16px;
+    --subtitle-font-size: x-small;
+    --subtitle-line-height: 12px;
+    --save-button-size: 28px;
+    --save-glyph-width: 11px;
+    --save-glyph-height: 14px;
+#endif
+    --min-height: calc(var(--icon-size) + var(--icon-margin) * 2);
+    /* The iOS radius (26.4px at a 92px minimum height), scaled to each platform's minimum height. */
+    --corner-radius: calc(var(--min-height) * 26.4 / 92);
+    /* 24px at the iOS icon size. */
+    --progress-ring-size: calc(var(--icon-size) / 3);
+    --action-line-height: var(--title-line-height);
+    /* Re-centers the title and subtitle when the action line is hidden. */
+    --hidden-action-offset: calc(var(--action-line-height) / -2);
+    --progress-action-exit-offset: -13px;
+
+#if (defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY)
+    --attachment-fill: -apple-system-quaternary-fill;
+#else
+    --attachment-fill: -apple-system-tertiary-fill;
+#endif
+    --attachment-pressed-fill: light-dark(rgb(0 0 0 / 0.1), rgb(255 255 255 / 0.1));
+    --attachment-button-fill: -apple-system-tertiary-fill;
+    --attachment-label: -apple-system-label;
+    --attachment-secondary-label: -apple-system-secondary-label;
+#if (defined(WTF_PLATFORM_MAC) && WTF_PLATFORM_MAC)
+    --attachment-accent: -apple-system-control-accent;
+#else
+    --attachment-accent: -apple-system-blue;
+#endif
+
+    --attachment-ring-track: rgb(60 60 67 / 0.3);
+
+    /* In lieu of CSS Spring Animations, approximate: */
+    --spring-smooth: linear(0, 0.005 1.1%, 0.02 2.3%, 0.044 3.6%, 0.082 5.1%, 0.16 7.7%, 0.364 13.8%, 0.462 16.9%, 0.556 20.2%, 0.637 23.4%, 0.706 26.8%, 0.766 30.1%, 0.818 33.8%, 0.861 37.5%, 0.899 42%, 0.93 46.9%, 0.954 52.4%, 0.972 58.7%, 0.992 74.3%, 1);
+    --spring-gentle: linear(0, 0.007 1.1%, 0.028 2.2%, 0.063 3.5%, 0.113 4.9%, 0.225 7.3%, 0.489 12.4%, 0.605 14.8%, 0.713 17.3%, 0.803 19.8%, 0.878 22.2%, 0.938 24.6%, 0.985 27.3%, 1.019 29.9%, 1.035 31.9%, 1.047 34%, 1.055 38.8%, 1.048 43.5%, 1.013 57%, 1.001 65.1%, 0.997 75.6%, 1);
+    --spring-bouncy: linear(0, 0.01 0.8%, 0.042 1.6%, 0.092 2.4%, 0.167 3.2%, 0.241 4%, 0.334 4.9%, 0.698 7.9%, 0.839 9.2%, 0.97 10.4%, 1.073 11.7%, 1.156 12.8%, 1.217 14.1%, 1.258 15.2%, 1.28 16.5%, 1.284 17.2%, 1.282 18.1%, 1.258 19.7%, 1.21 21.6%, 1.057 26.2%, 0.991 28.5%, 0.963 29.8%, 0.942 31.1%, 0.928 32.4%, 0.921 33.7%, 0.92 35.3%, 0.927 37%, 1.002 45.8%, 1.016 48.2%, 1.022 50.8%, 1.021 54.4%, 1 62.9%, 0.994 67.8%, 1.002 84.5%, 1);
+    --spring-pop: linear(0, -0.01 1%, 0.003 2.1%, 0.04 3.2%, 0.102 4.5%, 0.167 5.5%, 0.252 6.8%, 0.594 11.1%, 0.731 13%, 0.854 14.8%, 0.952 16.7%, 1.024 18.3%, 1.079 20%, 1.119 21.6%, 1.144 23.4%, 1.156 25.8%, 1.147 28.4%, 1.124 30.9%, 1.049 37.2%, 1.016 40.5%, 0.992 44.1%, 0.978 47.9%, 0.977 53.2%, 0.997 65.1%, 1.003 72%, 1);
+    --settle: 0.8s var(--spring-smooth);
+}
+
+/* MARK: Layout */
+
+div#attachment-container {
+    width: var(--width);
+    min-height: var(--min-height);
+    background-color: canvas;
+    border-radius: var(--corner-radius);
+    corner-shape: superellipse(1.5);
+    font: caption;
+    direction: inherit;
+    text-align: start;
+    pointer-events: none;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    display: flex;
+}
+
+div#attachment-container.attachment-has-selection {
+    background-color: -apple-system-selected-text-background;
+}
+
+div#attachment-container.attachment-selection-continues-left,
+div#attachment-container.attachment-selection-continues-left div#attachment-background {
+    border-start-start-radius: 0;
+    border-end-start-radius: 0;
+}
+
+div#attachment-container.attachment-selection-continues-right,
+div#attachment-container.attachment-selection-continues-right div#attachment-background {
+    border-start-end-radius: 0;
+    border-end-end-radius: 0;
+}
+
+div#attachment-background {
+    position: relative;
+    display: flex;
+    width: 100%;
+    background-color: var(--attachment-fill);
+    border-radius: var(--corner-radius);
+    corner-shape: superellipse(1.5);
+}
+
+div#attachment-pressed-overlay {
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    corner-shape: inherit;
+    background-color: var(--attachment-pressed-fill);
+    opacity: 0;
+    transition: opacity 0.2s ease-in-out;
+}
+
+div#attachment-preview-area {
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    width: var(--icon-size);
+    height: var(--icon-size);
+    margin: var(--icon-margin);
+    margin-inline-end: var(--preview-margin-end);
+}
+
+div#attachment-preview-area > *,
+div#attachment-icon-scale > *,
+div#attachment-icon-pop > * {
+    grid-area: 1 / 1;
+}
+
+div#attachment-icon-scale,
+div#attachment-icon-pop {
+    display: grid;
+    place-items: center;
+    width: var(--icon-size);
+    height: var(--icon-size);
+    transition: scale var(--settle);
+}
+
+img#attachment-icon {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+/* MARK: Progress ring */
+
+div#attachment-progress {
+    width: var(--progress-ring-size);
+    height: var(--progress-ring-size);
+}
+
+div#attachment-progress > svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+    rotate: -90deg;
+}
+
+div#attachment-progress circle {
+    fill: none;
+    stroke-width: 10px;
+    stroke-linecap: round;
+    transform-origin: 50.5px 50.5px;
+}
+
+circle#attachment-progress-track {
+    stroke: var(--attachment-ring-track);
+    stroke-dasharray: 100 100;
+    transition: stroke-width var(--settle), stroke-dasharray 0.36s linear;
+}
+
+circle#attachment-progress-bar {
+    stroke: var(--attachment-accent);
+    stroke-dasharray: calc(var(--progress, 0) * 100) 100;
+    opacity: 0;
+    transition: stroke-width var(--settle), stroke-dasharray 0.25s linear, opacity 0s linear;
+}
+
+div#attachment-container:is(.attachment-downloading, .attachment-complete) circle#attachment-progress-bar {
+    /* An empty round-capped dash still draws a dot, so hide until there is progress. */
+    opacity: clamp(0, var(--progress, 0) * 10000, 1);
+}
+
+div#attachment-placeholder {
+    height: calc(var(--progress-ring-size) / 2);
+    aspect-ratio: 42 / 50; /* Equal to the mask's viewBox. */
+    background-color: var(--attachment-ring-track);
+    mask: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 42 50"><path d="M21 5V41M5 31L21 45L37 31" fill="none" stroke="black" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/></svg>') center / 100% 100% no-repeat;
+    transition: scale var(--settle), opacity var(--settle);
+}
+
+/* MARK: Text */
+
+div#attachment-information-area {
+    display: flex;
+    align-items: center;
+    flex: 1 1;
+    min-width: 0;
+    margin-inline-end: var(--information-margin-end);
+}
+
+div#attachment-information-block {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    width: 100%;
+}
+
+div#attachment-action,
+div#attachment-progress-action-pulse,
+div#attachment-title,
+div#attachment-subtitle {
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+div#attachment-action,
+div#attachment-progress-action {
+    grid-area: 1 / 1;
+    font-size: var(--title-font-size);
+    line-height: var(--action-line-height);
+    font-weight: 600;
+    color: var(--attachment-secondary-label);
+}
+
+div#attachment-title {
+    grid-area: 2 / 1;
+    font-size: var(--title-font-size);
+    line-height: var(--title-line-height);
+    font-weight: 600;
+    color: var(--attachment-label);
+    overflow-wrap: anywhere;
+    -webkit-line-clamp: 2;
+}
+
+div#attachment-subtitle {
+    grid-area: 3 / 1;
+    font-size: var(--subtitle-font-size);
+    line-height: var(--subtitle-line-height);
+    font-weight: 500;
+    color: var(--attachment-secondary-label);
+}
+
+div#attachment-action,
+div#attachment-title,
+div#attachment-subtitle,
+div#attachment-progress-action {
+    transition: translate var(--settle), opacity var(--settle);
+}
+
+div#attachment-progress-action {
+    opacity: 0;
+}
+
+/* MARK: Save button */
+
+div#attachment-save-area {
+    grid-area: 1 / 2 / 4;
+    align-self: center;
+    margin-inline-start: 10px;
+}
+
+button#attachment-save-button {
+    display: grid;
+    place-items: center;
+    width: var(--save-button-size);
+    height: var(--save-button-size);
+    border: 0;
+    border-radius: 50%;
+    padding: 0;
+    background: none;
+    pointer-events: none;
+    -webkit-tap-highlight-color: transparent;
+    visibility: hidden;
+    transition: visibility var(--settle);
+}
+
+button#attachment-save-button > * {
+    grid-area: 1 / 1;
+    scale: 0.5;
+    opacity: 0;
+    transition: scale var(--settle), opacity var(--settle);
+}
+
+div#attachment-save-button-background {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background-color: var(--attachment-button-fill);
+}
+
+div#attachment-save-button-glyph {
+    width: var(--save-glyph-width);
+    height: var(--save-glyph-height);
+    translate: 0 -1.5px;
+    background-color: var(--attachment-accent);
+    mask: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="10 0.5 61 73.5"><path d="M27 23H23A10 10 0 0 0 13 33V61A10 10 0 0 0 23 71H58A10 10 0 0 0 68 61V33A10 10 0 0 0 58 23H54M40.5 3.5V47M29 36.5L40.5 48L52 36.5" fill="none" stroke="black" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/></svg>') center / 100% 100% no-repeat;
+}
+
+div#attachment-container.attachment-can-save button#attachment-save-button {
+    pointer-events: initial;
+    visibility: visible;
+}
+
+div#attachment-container.attachment-can-save button#attachment-save-button > * {
+    scale: 1;
+    opacity: 1;
+}
+
+div#attachment-container.attachment-can-save div#attachment-save-button-background {
+    transition: scale 0.35s var(--spring-gentle), opacity 0.3s var(--spring-smooth);
+}
+
+div#attachment-container.attachment-can-save div#attachment-save-button-glyph {
+    transition: scale 0.6s var(--spring-bouncy) 0.12s, opacity 0.3s var(--spring-smooth) 0.12s;
+}
+
+/* MARK: Pressed */
+
+:host(:active) div#attachment-pressed-overlay {
+    opacity: 1;
+    transition-duration: 0.1s;
+}
+
+/* MARK: Downloading */
+
+div#attachment-container.attachment-downloading div#attachment-action {
+    opacity: 0;
+    transition: translate var(--settle), opacity 0.4s ease-in-out;
+}
+
+div#attachment-container.attachment-downloading div#attachment-progress-action {
+    opacity: 1;
+    transition: none;
+}
+
+div#attachment-container:not(.attachment-idle) div#attachment-progress-action-entrance {
+    animation: attachment-fade-in 0.54s ease-in-out 0.25s both;
+}
+
+div#attachment-container.attachment-was-indeterminate div#attachment-progress-action-entrance {
+    animation:
+        attachment-fade-in 0.8s var(--spring-smooth) 0.26s both,
+        attachment-rise-in 0.6s var(--spring-gentle) 0.26s both;
+}
+
+/* "Downloading" pulses 100% -> 50% -> 100% while progress is known. */
+div#attachment-container.attachment-downloading:not(.attachment-indeterminate) div#attachment-progress-action-pulse,
+div#attachment-container.attachment-complete div#attachment-progress-action-pulse {
+    animation: attachment-pulse 1s ease-in-out 0.79s infinite;
+}
+
+div#attachment-container.attachment-was-indeterminate div#attachment-progress-action-pulse {
+    animation-delay: 0.23s;
+}
+
+div#attachment-container.attachment-complete div#attachment-progress-action-pulse {
+    animation-play-state: paused;
+}
+
+div#attachment-container.attachment-indeterminate circle#attachment-progress-track {
+    stroke-dasharray: 85 100;
+    transition: stroke-width var(--settle), stroke-dasharray 0.36s linear 0.21s;
+}
+
+div#attachment-container.attachment-was-indeterminate.attachment-downloading circle#attachment-progress-track {
+    animation: attachment-spin 4s cubic-bezier(0.16, 0, 0.84, 1) infinite;
+}
+
+/* MARK: Complete */
+
+div#attachment-container.attachment-complete div#attachment-action,
+div#attachment-container.attachment-complete div#attachment-title,
+div#attachment-container.attachment-complete div#attachment-subtitle {
+    translate: 0 var(--hidden-action-offset);
+    transition: translate 0.7s var(--spring-smooth), opacity 0.4s ease-in-out;
+}
+
+div#attachment-container.attachment-complete div#attachment-action {
+    opacity: 0;
+}
+
+/* No action line at rest: center the title and subtitle without it. */
+div#attachment-container.attachment-idle:has(div#attachment-action:empty) div#attachment-title,
+div#attachment-container.attachment-idle:has(div#attachment-action:empty) div#attachment-subtitle {
+    translate: 0 var(--hidden-action-offset);
+}
+
+div#attachment-container.attachment-complete div#attachment-progress-action {
+    opacity: 0;
+    translate: 0 var(--progress-action-exit-offset);
+    transition: translate 1.1s var(--spring-smooth), opacity 0.46s var(--spring-smooth);
+}
+
+div#attachment-container.attachment-was-indeterminate {
+    --progress-action-exit-offset: -15px;
+}
+
+div#attachment-container.attachment-complete div#attachment-progress circle {
+    stroke-width: 0;
+}
+
+div#attachment-container.attachment-complete circle#attachment-progress-track {
+    transition: stroke-width 0.3s var(--spring-smooth), stroke-dasharray 0.36s linear;
+}
+
+div#attachment-container.attachment-complete circle#attachment-progress-bar {
+    transition: stroke-width 0.3s var(--spring-smooth), stroke-dasharray 0.25s linear, opacity 0s linear;
+}
+
+div#attachment-container.attachment-complete div#attachment-placeholder {
+    scale: 0.5;
+    opacity: 0;
+    transition: scale 0.3s var(--spring-smooth), opacity 0.3s var(--spring-smooth);
+}
+
+div#attachment-container.attachment-complete div#attachment-icon-pop {
+    scale: 1.18;
+    transition: scale 0.3s cubic-bezier(0.42, 0, 0.25, 1);
+}
+
+div#attachment-container.attachment-complete div#attachment-icon-scale {
+    scale: 0.85;
+    transition: scale 0.7s var(--spring-pop) 0.12s;
+}
+
+/* MARK: Keyframes */
+
+@keyframes attachment-fade-in {
+    from { opacity: 0; }
+}
+
+@keyframes attachment-rise-in {
+    from { translate: 0 2.4px; }
+}
+
+@keyframes attachment-pulse {
+    50% { opacity: 0.5; }
+}
+
+@keyframes attachment-spin {
+    to { transform: rotate(3turn); }
+}
+
+/* MARK: Reduced motion: keep the fades, drop other animations. */
+
+@media (prefers-reduced-motion: reduce) {
+    div#attachment-container *:not(div#attachment-pressed-overlay) {
+        transition: opacity 0.3s ease-in-out, stroke-dasharray 0.3s linear, visibility 0.3s !important;
+    }
+    div#attachment-container circle#attachment-progress-bar {
+        transition: stroke-dasharray 0.25s linear, opacity 0s !important;
+    }
+    div#attachment-container.attachment-downloading div#attachment-progress-action {
+        transition: none !important;
+    }
+    div#attachment-container div#attachment-progress-action-pulse,
+    div#attachment-container circle#attachment-progress-track {
+        animation: none !important;
+    }
+    div#attachment-container div#attachment-progress-action-entrance {
+        animation-name: attachment-fade-in !important;
+    }
+}

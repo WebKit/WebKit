@@ -1,0 +1,133 @@
+<!DOCTYPE html><!-- webkit-test-runner [ AttachmentElementEnabled=true AttachmentWideLayoutEnabled=true AttachmentInlineProgressEnabled=true ] -->
+<html>
+<head>
+<script src="../../../resources/js-test.js"></script>
+</head>
+<body>
+<div><attachment id="attachment" action="Tap to Download" title="Document.pdf" subtitle="701 KB" progress="0"></attachment></div>
+<script>
+description("Tests that the progress and save attributes drive the state of a wide-layout attachment with inline progress.");
+
+var attachment = document.getElementById("attachment");
+var container;
+var progress;
+var progressAction;
+
+function containerClasses()
+{
+    return Array.from(container.classList).filter(name => name !== "attachment-has-selection" && !name.startsWith("attachment-selection-")).sort().join(" ");
+}
+
+function progressValue()
+{
+    return progress.style.getPropertyValue("--progress");
+}
+
+if (!window.internals)
+    testFailed("This test requires internals.");
+else {
+    container = internals.shadowRoot(attachment).getElementById("attachment-container");
+    progress = internals.shadowRoot(attachment).getElementById("attachment-progress");
+    progressAction = internals.shadowRoot(attachment).getElementById("attachment-progress-action-pulse");
+
+    shouldNotBe("internals.shadowRoot(attachment).getElementById('attachment-save-button')", "null");
+    shouldNotBe("internals.shadowRoot(attachment).querySelector('#attachment-progress circle#attachment-progress-bar')", "null");
+    shouldBeEqualToString("progressAction.textContent", "Downloading");
+    shouldBeEqualToString("getComputedStyle(attachment).margin", "2px");
+    shouldBeEqualToString("getComputedStyle(internals.shadowRoot(attachment).getElementById('attachment-title')).fontSize", "13px");
+    shouldBeEqualToString("getComputedStyle(internals.shadowRoot(attachment).getElementById('attachment-subtitle')).fontSize", "10px");
+
+    debug("");
+    debug("progress=\"0\"");
+    shouldBeEqualToString("containerClasses()", "attachment-idle");
+    shouldBeEqualToString("progressValue()", "0");
+    shouldBeNull("attachment.saveButtonClientRect");
+
+    debug("");
+    debug("progress=\"indeterminate\"");
+    attachment.setAttribute("progress", "indeterminate");
+    shouldBeEqualToString("containerClasses()", "attachment-downloading attachment-indeterminate attachment-was-indeterminate");
+
+    debug("");
+    debug("progress=\"0.5\"");
+    attachment.setAttribute("progress", "0.5");
+    shouldBeEqualToString("containerClasses()", "attachment-downloading attachment-was-indeterminate");
+    shouldBeEqualToString("progressValue()", "0.5");
+
+    debug("");
+    debug("progress=\"2\"");
+    attachment.setAttribute("progress", "2");
+    shouldBeEqualToString("progressValue()", "1");
+
+    debug("");
+    debug("action and progress removed, save added");
+    attachment.removeAttribute("action");
+    attachment.removeAttribute("progress");
+    attachment.setAttribute("save", "");
+    shouldBeEqualToString("containerClasses()", "attachment-can-save attachment-complete attachment-was-indeterminate");
+    shouldBeEqualToString("progressValue()", "1");
+    shouldNotBe("attachment.saveButtonClientRect", "null");
+
+    debug("");
+    debug("save removed");
+    attachment.removeAttribute("save");
+    shouldBeEqualToString("containerClasses()", "attachment-complete attachment-was-indeterminate");
+    shouldBeNull("attachment.saveButtonClientRect");
+
+    debug("");
+    debug("progress=\"0\", then progress=\"0.25\"");
+    attachment.setAttribute("progress", "0");
+    shouldBeEqualToString("containerClasses()", "attachment-idle");
+    attachment.setAttribute("progress", "0.25");
+    shouldBeEqualToString("containerClasses()", "attachment-downloading");
+
+    debug("");
+    debug("A new attachment without progress");
+    var other = document.createElement("attachment");
+    other.setAttribute("title", "Other.pdf");
+    document.body.appendChild(other);
+    container = internals.shadowRoot(other).getElementById("attachment-container");
+    shouldBeEqualToString("containerClasses()", "attachment-complete");
+
+    debug("");
+    debug("An action without progress");
+    other.setAttribute("action", "Tap to Download");
+    shouldBeEqualToString("containerClasses()", "attachment-idle");
+    other.setAttribute("action", "Downloading");
+    other.setAttribute("progress", "0.0");
+    shouldBeEqualToString("containerClasses()", "attachment-idle");
+    other.setAttribute("progress", "0.5");
+    shouldBeEqualToString("containerClasses()", "attachment-downloading");
+    other.removeAttribute("action");
+    shouldBeEqualToString("containerClasses()", "attachment-downloading");
+    other.removeAttribute("progress");
+    shouldBeEqualToString("containerClasses()", "attachment-complete");
+
+    debug("");
+    debug("A new action after completing");
+    other.setAttribute("action", "Open");
+    shouldBeEqualToString("containerClasses()", "attachment-complete");
+
+    debug("");
+    debug("progress removed before action");
+    other.setAttribute("action", "Tap to Download");
+    other.setAttribute("progress", "0");
+    shouldBeEqualToString("containerClasses()", "attachment-idle");
+    other.setAttribute("progress", "0.5");
+    shouldBeEqualToString("containerClasses()", "attachment-downloading");
+    other.removeAttribute("progress");
+    shouldBeEqualToString("containerClasses()", "attachment-complete");
+    other.removeAttribute("action");
+    shouldBeEqualToString("containerClasses()", "attachment-complete");
+
+    debug("");
+    debug("Determinate, then indeterminate progress");
+    other.setAttribute("progress", "0");
+    other.setAttribute("progress", "0.4");
+    shouldBeEqualToString("containerClasses()", "attachment-downloading");
+    other.setAttribute("progress", "indeterminate");
+    shouldBeEqualToString("containerClasses()", "attachment-downloading attachment-indeterminate attachment-was-indeterminate");
+}
+</script>
+</body>
+</html>

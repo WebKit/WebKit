@@ -93,10 +93,12 @@ public:
     void setImageMenuEnabled(bool value) { m_isImageMenuEnabled = value; }
 #endif
 
-    bool isWideLayout() const { return m_implementation == Implementation::WideLayout; }
+    bool isWideLayout() const { return m_implementation == Implementation::WideLayout || usesInlineProgress(); }
+    bool usesInlineProgress() const { return m_implementation == Implementation::WideInlineProgressLayout; }
     HTMLElement* wideLayoutShadowContainer() const { return m_containerElement.get(); }
     NODELETE HTMLElement* wideLayoutImageElement() const;
     WEBCORE_EXPORT static String shadowUserAgentStyleSheetText();
+    static String inlineProgressShadowUserAgentStyleSheetText();
 
     enum class HighlightState : uint8_t {
         None, // The object is not selected.
@@ -137,7 +139,8 @@ private:
     bool childShouldCreateRenderer(const Node&) const final;
 #endif
 
-    enum class Implementation: uint8_t { NarrowLayout, WideLayout };
+    enum class Implementation: uint8_t { NarrowLayout, WideLayout, WideInlineProgressLayout };
+    enum class InlineProgressState : uint8_t { Idle, Downloading, Complete };
 
     RefPtr<File> m_file;
     String m_uniqueIdentifier;
@@ -159,6 +162,9 @@ private:
     mutable RefPtr<DOMRectReadOnly> m_saveButtonClientRect;
 
     Implementation m_implementation { Implementation::NarrowLayout };
+    InlineProgressState m_inlineProgressState { InlineProgressState::Complete };
+    bool m_inlineProgressHasStartedDownload { false };
+    bool m_inlineProgressWasIndeterminate { false };
     bool m_needsIconRequest { true };
 
 #if ENABLE(SERVICE_CONTROLS)
