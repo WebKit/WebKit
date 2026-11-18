@@ -26,8 +26,10 @@ import importlib.abc
 import importlib.util
 import os
 from pathlib import Path
+import re
 import sys
 import time
+from typing import Optional
 
 
 class WebDriverSeleniumFinder(importlib.abc.MetaPathFinder):
@@ -85,6 +87,8 @@ class WebDriverTestRunner(object):
         'CRASH': Upload.Expectations.CRASH,
         'TIMEOUT': Upload.Expectations.TIMEOUT,
     }
+    # These change on every run: masking them lets a failure that repeats upload the same log, which is stored once.
+    UUIDS_AND_OBJECT_ADDRESSES = re.compile(r'\b[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}\b|(?<= at 0x)[0-9a-f]+', re.IGNORECASE)
 
     def __init__(self, port):
         self._port = port
@@ -200,16 +204,25 @@ class WebDriverTestRunner(object):
         return retval
 
     @classmethod
+    def log_for_upload(cls, *texts: Optional[str]) -> Optional[str]:
+        log = '\n'.join(text for text in texts if text)
+        return Upload.truncate_log(cls.UUIDS_AND_OBJECT_ADDRESSES.sub('...', log)) if log else None
+
+    @classmethod
     def results_for_upload(cls, test_results):
         results = {}
         for result in test_results:
             if result.status != 'OK':
-                results[result.test] = Upload.create_test_result(actual=cls.UPLOAD_HARNESS_RESULTS.get(result.status, Upload.Expectations.ERROR))
+                results[result.test] = Upload.create_test_result(
+                    actual=cls.UPLOAD_HARNESS_RESULTS.get(result.status, Upload.Expectations.ERROR),
+                    log=cls.log_for_upload(result.message),
+                )
                 continue
-            for name, status, _, _ in result.subtest_results:
+            for name, status, message, backtrace in result.subtest_results:
                 if status in cls.UPLOAD_RESULTS:
                     expected, actual = cls.UPLOAD_RESULTS[status]
-                    results['%s/%s' % (result.test, name.split('::', 1)[1])] = Upload.create_test_result(expected=expected, actual=actual)
+                    log = cls.log_for_upload(message, backtrace) if actual and actual != expected else None
+                    results['%s/%s' % (result.test, name.split('::', 1)[1])] = Upload.create_test_result(expected=expected, actual=actual, log=log)
         return results
 
     def upload_results(self, options):
