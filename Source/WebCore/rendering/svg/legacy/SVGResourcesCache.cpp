@@ -27,6 +27,7 @@
 #include "SVGResources.h"
 #include "SVGResourcesCycleSolver.h"
 #include "Settings.h"
+#include <wtf/Borrow.h>
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
@@ -276,12 +277,26 @@ void SVGResourcesCache::resourceDestroyed(LegacyRenderSVGResourceContainer& reso
     // The resource itself may have clients, that need to be notified.
     cache.removeResourcesFromRenderer(resource);
 
-    for (auto& it : cache.m_cache) {
-        if (it.value->resourceDestroyed(resource)) {
-            // Mark users of destroyed resources as pending resolution based on the id of the old resource.
-            Ref clientElement = *it.key->element();
-            clientElement->treeScopeForSVGReferences().addPendingSVGResource(resource.element().getIdAttribute(), downcast<SVGElement>(clientElement));
-        }
+    // Only renderers registered as clients of the resource can reference it, so visit those
+    // rather than every renderer in the cache (which is quadratic when tearing down many resources).
+    // Snapshot the clients since notifying them can invalidate and mutate the client set.
+    Vector<SingleThreadWeakPtr<RenderElement>> clients;
+    clients.reserveInitialCapacity(resource.m_clients.computeSize());
+    for (auto& client : resource.m_clients | dereferenceView)
+        clients.append(client);
+
+    for (auto& weakClient : borrow(clients)) {
+        CheckedPtr client = weakClient.get();
+        if (!client)
+            continue;
+
+        auto* resources = cache.m_cache.get(*client);
+        if (!resources || !resources->resourceDestroyed(resource))
+            continue;
+
+        // Mark users of destroyed resources as pending resolution based on the id of the old resource.
+        Ref clientElement = *client->element();
+        clientElement->treeScopeForSVGReferences().addPendingSVGResource(resource.element().getIdAttribute(), downcast<SVGElement>(clientElement));
     }
 }
 
