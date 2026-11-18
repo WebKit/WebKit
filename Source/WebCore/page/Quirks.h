@@ -37,6 +37,7 @@
 
 namespace WebCore {
 
+class CSSValue;
 class Document;
 class Element;
 class EventListener;
@@ -54,6 +55,7 @@ class ResourceRequest;
 class SecurityOriginData;
 class WeakPtrImplWithEventTargetData;
 
+enum class CSSPropertyID : uint16_t;
 enum class IsSyntheticClick : bool;
 enum class StorageAccessWasGranted : uint8_t;
 enum class UserAgentType;
@@ -201,6 +203,7 @@ public:
     NODELETE WEBCORE_EXPORT bool shouldAvoidStartingSelectionOnMouseDownOverPointerCursor(const Node&) const;
 
     bool needsFacebookStoriesCreationFormQuirk(const Element&, const Style::ComputedStyle&) const;
+    Vector<std::pair<CSSPropertyID, Ref<CSSValue>>> computedStyleOverrides(Element&, const Style::ComputedStyle&) const;
 
     enum class TikTokOverflowingContentQuirkType : bool { VideoSectionQuirk, CommentsSectionQuirk };
     std::optional<TikTokOverflowingContentQuirkType> needsTikTokOverflowingContentQuirk(const Element&, const Style::ComputedStyle& parentStyle) const;

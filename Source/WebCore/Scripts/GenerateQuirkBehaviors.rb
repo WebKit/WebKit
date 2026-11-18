@@ -197,8 +197,8 @@ end
 class QuirkBehaviors
   FIELDS = %w{ available parameters conditions conditionsRequired implementation accessor static export }
   GENERATED_ONLY_FIELDS = %w{ accessor static export }
-  PARAMETERS = %w{ Script UserAgent ChromeCompatibilityVersion CookieNames StyleSheet }
-  CONDITIONS = %w{ ElementSelector SecondaryURL DocumentSelector }
+  PARAMETERS = %w{ Script UserAgent ChromeCompatibilityVersion CookieNames StyleSheet StyleOverride }
+  CONDITIONS = %w{ ElementSelector SecondaryURL DocumentSelector ComputedStyle }
 
   attr_reader :behaviors, :buildConditions
 

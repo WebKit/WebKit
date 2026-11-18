@@ -333,6 +333,93 @@ TEST_F(QuirksTest, RowsWithBehaviorErrorsAreRejected)
     expectRowRejected(R"({ "matches": ["*://*.example.com/*"], "behaviors": [{ "id": "NeedsScriptToEvaluateBeforeRunningScriptFromURLQuirk", "script": "x", "secondaryURL": ["nope"] }] })"_s, InvalidMatchPattern, "secondaryURL"_s, "nope"_s);
 }
 
+TEST_F(QuirksTest, StyleDeclarationsAreValidated)
+{
+    using enum WebCore::QuirkTableParseErrorKind;
+
+    const auto table = [](ASCIILiteral fields) {
+        return makeString(R"({ "quirks": [{ "matches": ["*://*.example.com/*"], "behaviors": [{ "id": "NeedsComputedStyleOverrideQuirk", "elementSelector": ".x", )"_s, fields, " }] }] }"_s);
+    };
+
+    const auto isKept = [&](ASCIILiteral fields) {
+        auto result = WebCore::parseQuirkTable(table(fields));
+        EXPECT_TRUE(result.errors.isEmpty()) << describeErrors(result.errors);
+        return !result.table.quirks.isEmpty();
+    };
+
+    const auto expectRejected = [&](ASCIILiteral fields, ASCIILiteral value = { }) {
+        auto result = WebCore::parseQuirkTable(table(fields));
+        EXPECT_TRUE(result.table.quirks.isEmpty()) << fields.characters();
+        EXPECT_TRUE(std::ranges::any_of(result.errors, [&](auto& error) {
+            return error.kind == InvalidStyleDeclarations && (value.isNull() || error.value == value);
+        })) << describeErrors(result.errors);
+    };
+
+    EXPECT_TRUE(isKept(R"json("computedStyle": { "background-color": "rgb(255, 255, 255)" }, "styleOverride": { "background-color": "transparent" })json"_s));
+    EXPECT_TRUE(isKept(R"("computedStyle": { "visibility": "hidden", "overflow-y": "hidden" }, "styleOverride": { "visibility": "visible" })"_s));
+
+    expectRejected(R"("computedStyle": { }, "styleOverride": { "visibility": "visible" })"_s);
+    expectRejected(R"("computedStyle": "hidden", "styleOverride": { "visibility": "visible" })"_s);
+    expectRejected(R"("computedStyle": { "visibility": 5 }, "styleOverride": { "visibility": "visible" })"_s, "visibility"_s);
+    expectRejected(R"("computedStyle": { "no-such-property": "x" }, "styleOverride": { "visibility": "visible" })"_s, "no-such-property"_s);
+    expectRejected(R"("computedStyle": { "margin": "0px" }, "styleOverride": { "visibility": "visible" })"_s, "margin"_s);
+    expectRejected(R"("computedStyle": { "--custom": "x" }, "styleOverride": { "visibility": "visible" })"_s, "--custom"_s);
+    expectRejected(R"("computedStyle": { "visibility": "hidden" }, "styleOverride": { "visibility": "not-a-visibility" })"_s, "visibility"_s);
+    expectRejected(R"("computedStyle": { "visibility": "hidden" }, "styleOverride": { "margin": "0px" })"_s, "margin"_s);
+
+    expectRowRejected(R"({ "matches": ["*://*.example.com/*"], "behaviors": [{ "id": "NeedsComputedStyleOverrideQuirk", "elementSelector": ".x", "styleOverride": { "visibility": "visible" } }] })"_s, MissingField, "computedStyle"_s);
+    expectRowRejected(R"({ "matches": ["*://*.example.com/*"], "behaviors": [{ "id": "NeedsComputedStyleOverrideQuirk", "elementSelector": ".x", "computedStyle": { "visibility": "hidden" } }] })"_s, MissingField, "styleOverride"_s);
+    expectRowRejected(R"({ "matches": ["*://*.example.com/*"], "behaviors": [{ "id": "NeedsBodyScrollbarWidthNoneDisabledQuirk", "computedStyle": { "visibility": "hidden" } }] })"_s, DisallowedField, "computedStyle"_s);
+}
+
+TEST_F(QuirksTest, StyleOverrideRowsAreCheckedAtParseTime)
+{
+    using enum WebCore::QuirkTableParseErrorKind;
+
+    const auto row = [](ASCIILiteral behaviorFields) {
+        return makeString(R"json({ "matches": ["*://*.example.com/*"], "behaviors": [{ "id": "NeedsComputedStyleOverrideQuirk", )json"_s, behaviorFields, " }] }"_s);
+    };
+
+    const auto rejected = [&](ASCIILiteral behaviorFields, WebCore::QuirkTableParseErrorKind kind, ASCIILiteral field, ASCIILiteral value = { }) {
+        auto result = WebCore::parseQuirkTable(makeString(R"json({ "quirks": [)json"_s, row(behaviorFields), "] }"_s));
+        EXPECT_TRUE(result.table.quirks.isEmpty()) << behaviorFields.characters();
+        EXPECT_TRUE(std::ranges::any_of(result.errors, [&](auto& error) {
+            return error.kind == kind && error.field == field && (value.isNull() || error.value == value);
+        })) << behaviorFields.characters() << ": " << describeErrors(result.errors);
+    };
+
+    const auto kept = [&](ASCIILiteral behaviorFields) {
+        auto result = WebCore::parseQuirkTable(makeString(R"json({ "quirks": [)json"_s, row(behaviorFields), "] }"_s));
+        EXPECT_TRUE(result.errors.isEmpty()) << behaviorFields.characters() << ": " << describeErrors(result.errors);
+        return !result.table.quirks.isEmpty();
+    };
+
+    rejected(R"json("elementSelector": "[role=navigation]", "styleOverride": { "overflow-y": "auto" })json"_s, MissingField, "computedStyle"_s);
+    rejected(R"json("elementSelector": "#guide-inner-content", "computedStyle": { "overflow-y": "hidden" })json"_s, MissingField, "styleOverride"_s);
+    rejected(R"json("computedStyle": { "overflow-y": "hidden" }, "styleOverride": { "overflow-y": "auto" })json"_s, MissingField, "elementSelector"_s);
+
+    EXPECT_TRUE(kept(R"json("elementSelector": "nothing", "computedStyle": { "scrollbar-width": "none" }, "styleOverride": { "scrollbar-width": "auto" })json"_s));
+    EXPECT_TRUE(kept(R"json("elementSelector": "[role=navigation]", "computedStyle": { "overflow-y": "hidden" }, "styleOverride": { "overflow-y": "auto" })json"_s));
+
+    rejected(R"json("elementSelector": "[role=navigation]", "computedStyle": { "overflow-y": "foobar" }, "styleOverride": { "overflow-y": "auto" })json"_s, InvalidStyleDeclarations, "computedStyle"_s, "overflow-y"_s);
+    rejected(R"json("elementSelector": "[role=navigation]", "computedStyle": { "overflow-y": "hidden" }, "styleOverride": { "overflow-y": "foobar" })json"_s, InvalidStyleDeclarations, "styleOverride"_s, "overflow-y"_s);
+
+    rejected(R"json("elementSelector": "[role=navigation]", "computedStyle": { "foobar": "hidden" }, "styleOverride": { "overflow-y": "auto" })json"_s, InvalidStyleDeclarations, "computedStyle"_s, "foobar"_s);
+    rejected(R"json("elementSelector": "[role=navigation]", "computedStyle": { "overflow-y": "hidden" }, "styleOverride": { "foobar": "auto" })json"_s, InvalidStyleDeclarations, "styleOverride"_s, "foobar"_s);
+}
+
+TEST_F(QuirksTest, ATableWithASyntaxErrorIsRejectedWhole)
+{
+    for (auto json : {
+        R"json({ "quirks": [{ "matches": ["*://*.a.com/*"], "behaviors": [{ "id": "NeedsBodyScrollbarWidthNoneDisabledQuirk" }] }, { "matches": ["*://*.b.com/*"], "behaviors": [{ "id": "NeedsBodyScrollbarWidthNoneDisabledQuirk", }] }] })json"_s,
+        R"json({ "quirks": [{ "matches": ["*://*.a.com/*"] "behaviors": [{ "id": "NeedsBodyScrollbarWidthNoneDisabledQuirk" }] }] })json"_s }) {
+        auto result = WebCore::parseQuirkTable(json);
+        EXPECT_TRUE(result.table.quirks.isEmpty());
+        ASSERT_EQ(result.errors.size(), 1u);
+        EXPECT_EQ(result.errors[0].kind, WebCore::QuirkTableParseErrorKind::InvalidDocument);
+    }
+}
+
 TEST_F(QuirksTest, ParseErrorsDescribeWhereTheyAre)
 {
     auto onlyErrorDescription = [](ASCIILiteral json) -> String {
@@ -1708,6 +1795,40 @@ static TestPageHarness createPageWithQuirksEnabled()
     return TestPageHarness::create({ .configureSettings = [](auto& settings) {
         settings.setNeedsSiteSpecificQuirks(true);
     } });
+}
+
+TEST_F(QuirksTest, StyleOverridesWithAnInvalidPropertyAreSkippedWhenTheTableDidNotComeFromTheParser)
+{
+    // Tables that arrive over IPC are never run through the parser's validation.
+    WebCore::Quirk quirk {
+        .matches = patterns({ "*://*.example.com/*"_s }),
+        .embeddedMatches = { },
+        .excludeMatches = { },
+        .queryContains = { },
+        .fragmentContains = { },
+        .environment = std::nullopt,
+        .behaviors = { {
+            .id = WebCore::QuirkBehaviorID::NeedsComputedStyleOverrideQuirk,
+            .styleOverride = {
+                { "no-such-property"_s, "inherit"_s },
+                { "margin"_s, "inherit"_s },
+                { "--custom"_s, "inherit"_s },
+                { "width"_s, "10px"_s },
+            },
+            .elementSelector = "#target"_s,
+            .computedStyle = { { "display"_s, "block"_s } },
+        } },
+    };
+    WebCore::setQuirkTable({ { WTF::move(quirk) } });
+
+    auto page = createPageWithQuirksEnabled();
+    page.loadHTML("<!DOCTYPE html><style>body { margin: 0 } #target { width: 100px }</style><div id='target'></div>"_s);
+
+    Ref document = page.document();
+    document->quirks().setTopDocumentURLForTesting(URL { "https://www.example.com/"_s });
+    document->scheduleFullStyleRebuild();
+
+    EXPECT_EQ(page.getElementById("target"_s)->offsetWidth(), 10);
 }
 
 TEST_F(QuirksTest, SameDocumentNavigationReresolvesQuirks)

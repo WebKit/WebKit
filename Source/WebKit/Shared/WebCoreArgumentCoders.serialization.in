@@ -7816,6 +7816,11 @@ webkit_platform_headers: <WebCore/QuirkMatchPattern.h> <WebCore/QuirksData.h> <W
     [Validator='WebCore::QuirkMatchPattern::parse(*string)'] String string()
 };
 
+[CustomHeader, WebKitPlatform] struct WebCore::QuirkStyleDeclaration {
+    String longhandProperty;
+    String value;
+};
+
 [CustomHeader, WebKitPlatform] struct WebCore::QuirkBehavior {
     [Validator='*id != WebCore::QuirkBehaviorID::NumberOfIDs'] WebCore::QuirkBehaviorID id;
     String script;
@@ -7823,8 +7828,10 @@ webkit_platform_headers: <WebCore/QuirkMatchPattern.h> <WebCore/QuirksData.h> <W
     String chromeCompatibilityVersion;
     Vector<String> cookieNames;
     String styleSheet;
+    Vector<WebCore::QuirkStyleDeclaration> styleOverride;
     String elementSelector;
     String documentSelector;
+    Vector<WebCore::QuirkStyleDeclaration> computedStyle;
     Vector<WebCore::QuirkMatchPattern> secondaryURL;
 };
 

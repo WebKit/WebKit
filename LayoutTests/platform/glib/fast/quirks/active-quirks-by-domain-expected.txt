@@ -572,7 +572,10 @@ https://www.zillow.com/
     ShouldAvoidScrollingWhenFocusedContentIsVisibleQuirk
     ShouldTranscodeHeicImagesQuirk
 https://www.zomato.com/
-    (none)
+    NeedsComputedStyleOverrideQuirk
+        styleOverride: [background-color: transparent]
+        elementSelector: label.eNjKGZ
+        computedStyle: [background-color: rgb(255, 255, 255)]
 https://zoom.us/
     ShouldAllowMediaStreamTrackSerializationQuirk
     ShouldAutoplayWebAudioForArbitraryUserGestureQuirk

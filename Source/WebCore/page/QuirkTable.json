@@ -1630,7 +1630,16 @@
         },
         {
             "matches": ["*://*.zomato.com/*"],
-            "behaviors": [{ "id": "NeedsZomatoEmailLoginLabelQuirk" }]
+            "behaviors": [
+                {
+                    "id": "NeedsComputedStyleOverrideQuirk",
+                    "bugs": ["rdar://128962778"],
+                    "comment": "The label's white background can hide the email input's caret at certain zoom levels.",
+                    "elementSelector": "label.eNjKGZ",
+                    "computedStyle": { "background-color": "rgb(255, 255, 255)" },
+                    "styleOverride": { "background-color": "transparent" }
+                }
+            ]
         },
         {
             "matches": ["*://*.zoom.us/*"],
