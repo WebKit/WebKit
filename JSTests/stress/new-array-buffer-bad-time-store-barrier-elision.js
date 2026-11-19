@@ -1,4 +1,3 @@
-//@ skip if $secAccel3Removed
 //@ runDefault("--verifyGC=1", "--collectContinuously=1", "--forceEagerCompilation=1", "--useFTLJIT=0")
 
 // --useFTLJIT=0 pins f to the DFG. FTL elides the same barrier, but both tiers reach the bug

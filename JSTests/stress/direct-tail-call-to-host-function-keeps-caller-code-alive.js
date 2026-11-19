@@ -1,4 +1,3 @@
-//@ skip if $secAccel3Removed
 //@ requireOptions("--sweepSynchronously=1", "--zeroExecutableMemoryOnFree=1")
 
 // A DFG/FTL DirectTailCall to a NoIntrinsic host function used to emit an

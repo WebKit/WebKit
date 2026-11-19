@@ -1,4 +1,3 @@
-//@ skip if $secAccel3Removed
 //@ runDefault("--useFTLJIT=0", "--thresholdForOptimizeAfterWarmUp=100", "--thresholdForOptimizeSoon=100", "--thresholdForOptimizeAfterLongWarmUp=100", "--gcMaxHeapSize=64000000", "--verifyGC=1")
 
 // StoreBarrierInsertionPhase stamps allocating nodes as fresh and elides the FencedStoreBarrier on

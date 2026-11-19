@@ -1,4 +1,3 @@
-//@ skip if $secAccel3Removed
 //@ runDefault("--useConcurrentJIT=false", "--thresholdForJITAfterWarmUp=20", "--thresholdForOptimizeAfterWarmUp=20000", "--thresholdForOptimizeAfterLongWarmUp=20000", "--thresholdForFTLOptimizeAfterWarmUp=100000000")
 
 function check(actual, expected) {

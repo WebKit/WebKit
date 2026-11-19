@@ -1,4 +1,3 @@
-//@ skip if $secAccel3Removed
 //@ runDefault("--jitPolicyScale=0")
 
 function shouldBe(actual, expected) {
