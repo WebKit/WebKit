@@ -40,6 +40,191 @@ static GRefPtr<GBytes> createGBytes(const UTF8CString& string)
     return gBytesNew(string.span());
 }
 
+static void testDefaultPermissionChecks(Test* test, gconstpointer)
+{
+    GUniqueOutPtr<GError> error;
+    auto parseExtensionManifest = [&](const gchar* manifestString) {
+        GRefPtr extension = adoptGRef(webkitWebExtensionCreate({ { "manifest.json"_s, createGBytes(manifestString) } }, &error.outPtr()));
+        test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(extension.get()));
+        return extension;
+    };
+
+    GRefPtr<WebKitWebExtension> extension = parseExtensionManifest("{ \"manifest_version\": 2, \"name\": \"Test\", \"description\": \"Test\", \"version\": \"1.0\", \"permissions\": [] }");
+    g_assert_no_error(error.get());
+    GRefPtr<WebKitWebExtensionContext> context = adoptGRef(webkit_web_extension_context_new_for_extension(extension.get(), &error.outPtr()));
+    test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(context.get()));
+    g_assert_no_error(error.get());
+
+    g_assert_false(webkit_web_extension_context_has_permission(context.get(), "tabs"));
+    g_assert_false(webkit_web_extension_context_has_permission(context.get(), "cookies"));
+    g_assert_cmpint(webkit_web_extension_context_get_permission_status(context.get(), "tabs"), ==, WEBKIT_WEB_EXTENSION_CONTEXT_PERMISSION_STATUS_UNKNOWN);
+    g_assert_cmpint(webkit_web_extension_context_get_permission_status(context.get(), "cookies"), ==, WEBKIT_WEB_EXTENSION_CONTEXT_PERMISSION_STATUS_UNKNOWN);
+    g_assert_null(webkit_web_extension_context_get_granted_permissions(context.get()));
+    g_assert_null(webkit_web_extension_context_get_denied_permissions(context.get()));
+
+    extension = parseExtensionManifest("{ \"manifest_version\": 2, \"name\": \"Test\", \"description\": \"Test\", \"version\": \"1.0\", \"permissions\": [ \"tabs\", \"https://*.example.com/*\" ] }");
+    g_assert_no_error(error.get());
+    context = adoptGRef(webkit_web_extension_context_new_for_extension(extension.get(), &error.outPtr()));
+    test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(context.get()));
+    g_assert_no_error(error.get());
+
+    g_assert_false(webkit_web_extension_context_has_permission(context.get(), "tabs"));
+    g_assert_false(webkit_web_extension_context_has_permission(context.get(), "cookies"));
+    g_assert_cmpint(webkit_web_extension_context_get_permission_status(context.get(), "tabs"), ==, WEBKIT_WEB_EXTENSION_CONTEXT_PERMISSION_STATUS_REQUESTED_EXPLICITLY);
+    g_assert_cmpint(webkit_web_extension_context_get_permission_status(context.get(), "cookies"), ==, WEBKIT_WEB_EXTENSION_CONTEXT_PERMISSION_STATUS_UNKNOWN);
+    g_assert_null(webkit_web_extension_context_get_granted_permissions(context.get()));
+    g_assert_null(webkit_web_extension_context_get_denied_permissions(context.get()));
+
+    extension = parseExtensionManifest("{ \"manifest_version\": 2, \"name\": \"Test\", \"description\": \"Test\", \"version\": \"1.0\", \"permissions\": [ \"tabs\", \"<all_urls>\" ] }");
+    g_assert_no_error(error.get());
+    context = adoptGRef(webkit_web_extension_context_new_for_extension(extension.get(), &error.outPtr()));
+    test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(context.get()));
+    g_assert_no_error(error.get());
+
+    g_assert_false(webkit_web_extension_context_has_permission(context.get(), "tabs"));
+    g_assert_false(webkit_web_extension_context_has_permission(context.get(), "cookies"));
+    g_assert_cmpint(webkit_web_extension_context_get_permission_status(context.get(), "tabs"), ==, WEBKIT_WEB_EXTENSION_CONTEXT_PERMISSION_STATUS_REQUESTED_EXPLICITLY);
+    g_assert_cmpint(webkit_web_extension_context_get_permission_status(context.get(), "cookies"), ==, WEBKIT_WEB_EXTENSION_CONTEXT_PERMISSION_STATUS_UNKNOWN);
+    g_assert_null(webkit_web_extension_context_get_granted_permissions(context.get()));
+    g_assert_null(webkit_web_extension_context_get_denied_permissions(context.get()));
+
+    extension = parseExtensionManifest("{ \"manifest_version\": 2, \"name\": \"Test\", \"description\": \"Test\", \"version\": \"1.0\", \"permissions\": [ \"tabs\", \"*://*/*\" ] }");
+    g_assert_no_error(error.get());
+    context = adoptGRef(webkit_web_extension_context_new_for_extension(extension.get(), &error.outPtr()));
+    test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(context.get()));
+    g_assert_no_error(error.get());
+
+    g_assert_false(webkit_web_extension_context_has_permission(context.get(), "tabs"));
+    g_assert_false(webkit_web_extension_context_has_permission(context.get(), "cookies"));
+    g_assert_cmpint(webkit_web_extension_context_get_permission_status(context.get(), "tabs"), ==, WEBKIT_WEB_EXTENSION_CONTEXT_PERMISSION_STATUS_REQUESTED_EXPLICITLY);
+    g_assert_cmpint(webkit_web_extension_context_get_permission_status(context.get(), "cookies"), ==, WEBKIT_WEB_EXTENSION_CONTEXT_PERMISSION_STATUS_UNKNOWN);
+    g_assert_null(webkit_web_extension_context_get_granted_permissions(context.get()));
+    g_assert_null(webkit_web_extension_context_get_denied_permissions(context.get()));
+
+    extension = parseExtensionManifest("{ \"manifest_version\": 3, \"name\": \"Test\", \"description\": \"Test\", \"version\": \"1.0\", \"permissions\": [ ], \"host_permissions\": [ ] }");
+    g_assert_no_error(error.get());
+    context = adoptGRef(webkit_web_extension_context_new_for_extension(extension.get(), &error.outPtr()));
+    test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(context.get()));
+    g_assert_no_error(error.get());
+
+    g_assert_false(webkit_web_extension_context_has_permission(context.get(), "tabs"));
+    g_assert_false(webkit_web_extension_context_has_permission(context.get(), "cookies"));
+    g_assert_cmpint(webkit_web_extension_context_get_permission_status(context.get(), "tabs"), ==, WEBKIT_WEB_EXTENSION_CONTEXT_PERMISSION_STATUS_UNKNOWN);
+    g_assert_cmpint(webkit_web_extension_context_get_permission_status(context.get(), "cookies"), ==, WEBKIT_WEB_EXTENSION_CONTEXT_PERMISSION_STATUS_UNKNOWN);
+    g_assert_null(webkit_web_extension_context_get_granted_permissions(context.get()));
+    g_assert_null(webkit_web_extension_context_get_denied_permissions(context.get()));
+
+    extension = parseExtensionManifest("{ \"manifest_version\": 3, \"name\": \"Test\", \"description\": \"Test\", \"version\": \"1.0\", \"permissions\": [ \"tabs\" ], \"host_permissions\": [ \"https://*.example.com/*\" ] }");
+    g_assert_no_error(error.get());
+    context = adoptGRef(webkit_web_extension_context_new_for_extension(extension.get(), &error.outPtr()));
+    test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(context.get()));
+    g_assert_no_error(error.get());
+
+    g_assert_false(webkit_web_extension_context_has_permission(context.get(), "tabs"));
+    g_assert_false(webkit_web_extension_context_has_permission(context.get(), "cookies"));
+    g_assert_cmpint(webkit_web_extension_context_get_permission_status(context.get(), "tabs"), ==, WEBKIT_WEB_EXTENSION_CONTEXT_PERMISSION_STATUS_REQUESTED_EXPLICITLY);
+    g_assert_cmpint(webkit_web_extension_context_get_permission_status(context.get(), "cookies"), ==, WEBKIT_WEB_EXTENSION_CONTEXT_PERMISSION_STATUS_UNKNOWN);
+    g_assert_null(webkit_web_extension_context_get_granted_permissions(context.get()));
+    g_assert_null(webkit_web_extension_context_get_denied_permissions(context.get()));
+
+    extension = parseExtensionManifest("{ \"manifest_version\": 3, \"name\": \"Test\", \"description\": \"Test\", \"version\": \"1.0\", \"permissions\": [ \"tabs\" ], \"host_permissions\": [ \"<all_urls>\" ] }");
+    g_assert_no_error(error.get());
+    context = adoptGRef(webkit_web_extension_context_new_for_extension(extension.get(), &error.outPtr()));
+    test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(context.get()));
+    g_assert_no_error(error.get());
+
+    g_assert_false(webkit_web_extension_context_has_permission(context.get(), "tabs"));
+    g_assert_false(webkit_web_extension_context_has_permission(context.get(), "cookies"));
+    g_assert_cmpint(webkit_web_extension_context_get_permission_status(context.get(), "tabs"), ==, WEBKIT_WEB_EXTENSION_CONTEXT_PERMISSION_STATUS_REQUESTED_EXPLICITLY);
+    g_assert_cmpint(webkit_web_extension_context_get_permission_status(context.get(), "cookies"), ==, WEBKIT_WEB_EXTENSION_CONTEXT_PERMISSION_STATUS_UNKNOWN);
+    g_assert_null(webkit_web_extension_context_get_granted_permissions(context.get()));
+    g_assert_null(webkit_web_extension_context_get_denied_permissions(context.get()));
+
+    extension = parseExtensionManifest("{ \"manifest_version\": 3, \"name\": \"Test\", \"description\": \"Test\", \"version\": \"1.0\", \"permissions\": [ \"tabs\" ], \"host_permissions\": [ \"*://*/*\" ] }");
+    g_assert_no_error(error.get());
+    context = adoptGRef(webkit_web_extension_context_new_for_extension(extension.get(), &error.outPtr()));
+    test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(context.get()));
+    g_assert_no_error(error.get());
+
+    g_assert_false(webkit_web_extension_context_has_permission(context.get(), "tabs"));
+    g_assert_false(webkit_web_extension_context_has_permission(context.get(), "cookies"));
+    g_assert_cmpint(webkit_web_extension_context_get_permission_status(context.get(), "tabs"), ==, WEBKIT_WEB_EXTENSION_CONTEXT_PERMISSION_STATUS_REQUESTED_EXPLICITLY);
+    g_assert_cmpint(webkit_web_extension_context_get_permission_status(context.get(), "cookies"), ==, WEBKIT_WEB_EXTENSION_CONTEXT_PERMISSION_STATUS_UNKNOWN);
+    g_assert_null(webkit_web_extension_context_get_granted_permissions(context.get()));
+    g_assert_null(webkit_web_extension_context_get_denied_permissions(context.get()));
+}
+
+static void assertStrvSignals(WebKitWebExtensionContext *context, gchar **permissions)
+{
+    if (permissions != nullptr)
+        g_assert_true(g_strv_contains(permissions, "tabs"));
+};
+
+static void testPermissionGranting(Test* test, gconstpointer)
+{
+    GUniqueOutPtr<GError> error;
+    auto parseExtensionManifest = [&](const gchar* manifestString) {
+        GRefPtr extension = adoptGRef(webkitWebExtensionCreate({ { "manifest.json"_s, createGBytes(manifestString) } }, &error.outPtr()));
+        test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(extension.get()));
+        return extension;
+    };
+
+    auto getArraySize = [&](auto array) {
+        guint arrayLength = 0;
+        for (; *array != nullptr; array++)
+            arrayLength++;
+        return arrayLength;
+    };
+
+    GRefPtr<WebKitWebExtension> extension = parseExtensionManifest("{ \"manifest_version\": 2, \"name\": \"Test\", \"description\": \"Test\", \"version\": \"1.0\", \"permissions\": [ \"tabs\", \"https://*.example.com/*\" ] }");
+    g_assert_no_error(error.get());
+    GRefPtr<WebKitWebExtensionContext> context = adoptGRef(webkit_web_extension_context_new_for_extension(extension.get(), &error.outPtr()));
+    g_assert_no_error(error.get());
+
+    g_assert_false(webkit_web_extension_context_has_permission(context.get(), "tabs"));
+    g_assert_false(webkit_web_extension_context_has_permission(context.get(), "cookies"));
+    g_assert_cmpint(webkit_web_extension_context_get_permission_status(context.get(), "tabs"), ==, WEBKIT_WEB_EXTENSION_CONTEXT_PERMISSION_STATUS_REQUESTED_EXPLICITLY);
+    g_assert_cmpint(webkit_web_extension_context_get_permission_status(context.get(), "cookies"), ==, WEBKIT_WEB_EXTENSION_CONTEXT_PERMISSION_STATUS_UNKNOWN);
+    g_assert_null(webkit_web_extension_context_get_granted_permissions(context.get()));
+    g_assert_null(webkit_web_extension_context_get_denied_permissions(context.get()));
+
+    g_signal_connect(context.get(), "permissions-granted", G_CALLBACK(assertStrvSignals), nullptr);
+    g_signal_connect(context.get(), "permissions-denied", G_CALLBACK(assertStrvSignals), nullptr);
+    g_signal_connect(context.get(), "denied-permissions-removed", G_CALLBACK(assertStrvSignals), nullptr);
+    g_signal_connect(context.get(), "granted-permissions-removed", G_CALLBACK(assertStrvSignals), nullptr);
+
+    // Grant a specific permission
+    webkit_web_extension_context_set_permission_status(context.get(), "tabs", WEBKIT_WEB_EXTENSION_CONTEXT_PERMISSION_STATUS_GRANTED_EXPLICITLY, nullptr);
+
+    g_assert_true(webkit_web_extension_context_has_permission(context.get(), "tabs"));
+    g_assert_cmpint(getArraySize(webkit_web_extension_context_get_granted_permissions(context.get())), ==, 1);
+
+    // Deny a specific permission
+    webkit_web_extension_context_set_permission_status(context.get(), "tabs", WEBKIT_WEB_EXTENSION_CONTEXT_PERMISSION_STATUS_DENIED_EXPLICITLY, nullptr);
+    g_assert_null(webkit_web_extension_context_get_granted_permissions(context.get()));
+    g_assert_cmpint(getArraySize(webkit_web_extension_context_get_denied_permissions(context.get())), ==, 1);
+
+    // Reset all permissions
+    webkit_web_extension_context_set_permission_status(context.get(), "tabs", WEBKIT_WEB_EXTENSION_CONTEXT_PERMISSION_STATUS_UNKNOWN, nullptr);
+
+    g_assert_null(webkit_web_extension_context_get_granted_permissions(context.get()));
+    g_assert_null(webkit_web_extension_context_get_denied_permissions(context.get()));
+
+    // Test granting a permission that expires in 1 second
+    GRefPtr<GDateTime> expirationDate = adoptGRef(g_date_time_new_now_local());
+    expirationDate = adoptGRef(g_date_time_add_seconds(expirationDate.get(), 1));
+    webkit_web_extension_context_set_permission_status(context.get(), "tabs", WEBKIT_WEB_EXTENSION_CONTEXT_PERMISSION_STATUS_GRANTED_EXPLICITLY, expirationDate.get());
+
+    g_assert_true(webkit_web_extension_context_has_permission(context.get(), "tabs"));
+    g_assert_cmpint(getArraySize(webkit_web_extension_context_get_granted_permissions(context.get())), ==, 1);
+
+    // Sleep until after the permission expires.
+    g_usleep(2 * G_USEC_PER_SEC);
+
+    g_assert_false(webkit_web_extension_context_has_permission(context.get(), "tabs"));
+    g_assert_null(webkit_web_extension_context_get_granted_permissions(context.get()));
+}
+
 static void testContentScriptsParsing(Test* test, gconstpointer)
 {
     GUniqueOutPtr<GError> error;
@@ -349,6 +534,8 @@ static void testBaseURI(Test* test, gconstpointer)
 
 void beforeAll()
 {
+    Test::add("WebKitWebExtensionContext", "default-permission-checks", testDefaultPermissionChecks);
+    Test::add("WebKitWebExtensionContext", "permission-granting", testPermissionGranting);
     Test::add("WebKitWebExtensionContext", "content-scripts-parsing", testContentScriptsParsing);
     Test::add("WebKitWebExtensionContext", "options-page-uri-parsing", testOptionsPageURIParsing);
     Test::add("WebKitWebExtensionContext", "uri-overrides-parsing", testURIOverridesParsing);
