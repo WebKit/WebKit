@@ -269,7 +269,7 @@ void RemotePlayback::shouldPlayToRemoteTargetChanged(bool shouldPlayToRemoteTarg
 
     // 10. If the user picked a remote playback device device to initiate remote playback with, the user agent
     //     must run the following steps:
-    if (shouldPlayToRemoteTarget) {
+    if (shouldPlayToRemoteTarget && m_state == State::Disconnected) {
         // 10.1 Set the state of the remote object to connecting.
         // 10.3 Queue a task to fire a simple event with the name connecting at the remote property of the media element.
         //      The event must not bubble, must not be cancelable, and has no default action.
